@@ -1,8 +1,10 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { apiServices } from "../../../infrastructure/api/networkServices";
 import {
   getInvitations,
   resendInvitation,
   revokeInvitation,
+  type Invitation,
 } from "../invitation.repository";
 
 vi.mock("../../../infrastructure/api/networkServices", () => {
@@ -17,91 +19,170 @@ vi.mock("../../../infrastructure/api/networkServices", () => {
   };
 });
 
-beforeEach(() => {
-  vi.clearAllMocks();
-});
+// ─── Shared fixtures ──────────────────────────────────────────────────────────
+
+const mockInvitation: Invitation = {
+  id: 1,
+  email: "user@example.com",
+  name: "John",
+  surname: "Doe",
+  role_id: 3,
+  status: "pending",
+  invited_by: 42,
+  created_at: "2026-03-01T00:00:00Z",
+  expires_at: "2026-03-08T00:00:00Z",
+  updated_at: "2026-03-01T00:00:00Z",
+  role_name: "Editor",
+};
+
+// ─── getInvitations ───────────────────────────────────────────────────────────
 
 describe("Test Invitation Repository", () => {
   describe("getInvitations", () => {
-    it("should call get /invitations and return response.data", async () => {
-      const mockData = {
-        invitations: [
-          {
-            id: 1,
-            email: "user@example.com",
-            name: "John",
-            surname: "Doe",
-            role_id: 2,
-            status: "pending",
-            invited_by: 1,
-            created_at: "2026-02-26T00:00:00.000Z",
-            expires_at: "2026-03-01T00:00:00.000Z",
-            updated_at: "2026-02-26T00:00:00.000Z",
-            role_name: "Reviewer",
-          },
-        ],
-      };
+    beforeEach(vi.clearAllMocks);
+    afterEach(vi.clearAllMocks);
 
-      vi.mocked(apiServices.get).mockResolvedValue({
+    it("should make a GET request to the correct URL", async () => {
+      const mockResponse = {
+        data: { invitations: [mockInvitation] },
         status: 200,
         statusText: "OK",
-        data: mockData,
-      });
+      };
+      vi.mocked(apiServices.get).mockResolvedValue(mockResponse);
 
-      const response = await getInvitations();
+      await getInvitations();
 
+      expect(apiServices.get).toHaveBeenCalledTimes(1);
       expect(apiServices.get).toHaveBeenCalledWith("/invitations");
-      expect(response).toEqual(mockData);
     });
 
-    it("should return empty invitations list", async () => {
-      const mockData = { invitations: [] };
-
-      vi.mocked(apiServices.get).mockResolvedValue({
+    it("should return the invitations data on successful API call", async () => {
+      const mockResponse = {
+        data: { invitations: [mockInvitation] },
         status: 200,
         statusText: "OK",
-        data: mockData,
-      });
+      };
+      vi.mocked(apiServices.get).mockResolvedValue(mockResponse);
 
-      const response = await getInvitations();
+      const result = await getInvitations();
 
-      expect(response).toEqual({ invitations: [] });
+      expect(result).toEqual(mockResponse.data);
+    });
+
+    it("should return an empty invitations array when there are no invitations", async () => {
+      const mockResponse = {
+        data: { invitations: [] },
+        status: 200,
+        statusText: "OK",
+      };
+      vi.mocked(apiServices.get).mockResolvedValue(mockResponse);
+
+      const result = await getInvitations();
+
+      expect(result.invitations).toEqual([]);
+    });
+
+    it("should throw an error if the API call fails", async () => {
+      const mockError = {
+        response: { status: 403, data: { message: "Forbidden" } },
+      };
+      vi.mocked(apiServices.get).mockRejectedValue(mockError);
+
+      await expect(getInvitations()).rejects.toEqual(mockError);
+    });
+
+    it("should throw error without response property for network errors", async () => {
+      vi.mocked(apiServices.get).mockRejectedValue(
+        new Error("Network timeout"),
+      );
+
+      await expect(getInvitations()).rejects.toThrow("Network timeout");
     });
   });
+
+  // ─── revokeInvitation ─────────────────────────────────────────────────────
 
   describe("revokeInvitation", () => {
-    it("should call delete with invitation id and return full response", async () => {
-      const id = 10;
-      const mockResponse = {
-        status: 200,
-        statusText: "OK",
-        data: { success: true },
-      };
+    beforeEach(vi.clearAllMocks);
+    afterEach(vi.clearAllMocks);
 
+    it("should make a DELETE request to the correct URL with the invitation ID", async () => {
+      const mockResponse = { data: {}, status: 200, statusText: "OK" };
       vi.mocked(apiServices.delete).mockResolvedValue(mockResponse);
 
-      const response = await revokeInvitation(id);
+      await revokeInvitation(1);
 
-      expect(apiServices.delete).toHaveBeenCalledWith("/invitations/10");
-      expect(response).toEqual(mockResponse);
+      expect(apiServices.delete).toHaveBeenCalledTimes(1);
+      expect(apiServices.delete).toHaveBeenCalledWith("/invitations/1");
+    });
+
+    it("should return the raw response on successful API call", async () => {
+      const mockResponse = { data: {}, status: 200, statusText: "OK" };
+      vi.mocked(apiServices.delete).mockResolvedValue(mockResponse);
+
+      const result = await revokeInvitation(1);
+
+      expect(result).toEqual(mockResponse);
+    });
+
+    it("should throw an error if the API call fails", async () => {
+      const mockError = {
+        response: { status: 404, data: { message: "Invitation not found" } },
+      };
+      vi.mocked(apiServices.delete).mockRejectedValue(mockError);
+
+      await expect(revokeInvitation(99)).rejects.toEqual(mockError);
+    });
+
+    it("should throw error without response property for network errors", async () => {
+      vi.mocked(apiServices.delete).mockRejectedValue(
+        new Error("Connection refused"),
+      );
+
+      await expect(revokeInvitation(1)).rejects.toThrow("Connection refused");
     });
   });
 
-  describe("resendInvitation", () => {
-    it("should call post with invitation id resend endpoint and return full response", async () => {
-      const id = 22;
-      const mockResponse = {
-        status: 200,
-        statusText: "OK",
-        data: { resent: true },
-      };
+  // ─── resendInvitation ─────────────────────────────────────────────────────
 
+  describe("resendInvitation", () => {
+    beforeEach(vi.clearAllMocks);
+    afterEach(vi.clearAllMocks);
+
+    it("should make a POST request to the correct URL with the invitation ID", async () => {
+      const mockResponse = { data: {}, status: 200, statusText: "OK" };
       vi.mocked(apiServices.post).mockResolvedValue(mockResponse);
 
-      const response = await resendInvitation(id);
+      await resendInvitation(1);
 
-      expect(apiServices.post).toHaveBeenCalledWith("/invitations/22/resend");
-      expect(response).toEqual(mockResponse);
+      expect(apiServices.post).toHaveBeenCalledTimes(1);
+      expect(apiServices.post).toHaveBeenCalledWith("/invitations/1/resend");
+    });
+
+    it("should return the raw response on successful API call", async () => {
+      const mockResponse = { data: {}, status: 200, statusText: "OK" };
+      vi.mocked(apiServices.post).mockResolvedValue(mockResponse);
+
+      const result = await resendInvitation(1);
+
+      expect(result).toEqual(mockResponse);
+    });
+
+    it("should throw an error if the API call fails", async () => {
+      const mockError = {
+        response: { status: 404, data: { message: "Invitation not found" } },
+      };
+      vi.mocked(apiServices.post).mockRejectedValue(mockError);
+
+      await expect(resendInvitation(99)).rejects.toEqual(mockError);
+    });
+
+    it("should throw error without response property for network errors", async () => {
+      vi.mocked(apiServices.post).mockRejectedValue(
+        new Error("Network timeout"),
+      );
+
+      await expect(resendInvitation(1)).rejects.toThrow("Network timeout");
     });
   });
 });
