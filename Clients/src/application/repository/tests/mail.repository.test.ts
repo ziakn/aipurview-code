@@ -36,6 +36,7 @@ describe("Test Mail Repository", () => {
       const mockResponse = {
         status: 200,
         data: { message: "Invitation sent" },
+        statusText: "OK",
       };
       vi.mocked(apiServices.post).mockResolvedValue(mockResponse);
 
@@ -49,6 +50,7 @@ describe("Test Mail Repository", () => {
       const mockResponse = {
         status: 200,
         data: { message: "Invitation sent" },
+        statusText: "OK",
       };
       vi.mocked(apiServices.post).mockResolvedValue(mockResponse);
 
