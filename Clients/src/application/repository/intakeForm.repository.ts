@@ -4,6 +4,7 @@ import {
   IntakeEntityType,
   IntakeSubmissionStatus,
 } from "../../domain/intake/enums";
+import type { FieldType, FormDesignSettings } from "../../presentation/pages/IntakeFormBuilder/types";
 
 // Re-export enums for convenience
 export { IntakeFormStatus, IntakeEntityType, IntakeSubmissionStatus };
@@ -39,7 +40,7 @@ export interface FieldValidation {
  */
 export interface FormField {
   id: string;
-  type: string;
+  type: FieldType;
   label: string;
   placeholder?: string;
   helpText?: string;
@@ -78,7 +79,7 @@ export interface IntakeForm {
   riskAssessmentConfig?: Record<string, unknown> | null;
   llmKeyId?: number | null;
   suggestedQuestionsEnabled?: boolean;
-  designSettings?: Record<string, unknown> | null;
+  designSettings?: FormDesignSettings | null;
   createdBy: number;
   createdAt: Date;
   updatedAt: Date;
@@ -88,7 +89,9 @@ export interface IntakeForm {
  * Risk dimension scores
  */
 export interface RiskDimensionScore {
-  name: string;
+  key: string;
+  label: string;
+  name?: string;
   score: number;
   weight: number;
   signals: string[];
@@ -132,6 +135,7 @@ export interface IntakeSubmission {
   createdEntityId?: number;
   createdEntityType?: string;
   resubmissionToken?: string;
+  originalSubmissionId?: number | null;
   resubmissionCount: number;
   ipAddress?: string;
   riskAssessment?: RiskAssessment | null;
@@ -165,7 +169,7 @@ export async function getAllIntakeForms(
 
   const url = `${BASE_URL}/forms${queryParams.toString() ? `?${queryParams}` : ""}`;
   const response = await apiServices.get(url, { signal });
-  return response.data;
+  return response.data as { data: IntakeForm[]; pagination?: { total: number; page: number; limit: number } };
 }
 
 /**
@@ -176,7 +180,7 @@ export async function getIntakeForm(
   signal?: AbortSignal
 ): Promise<{ data: IntakeForm }> {
   const response = await apiServices.get(`${BASE_URL}/forms/${formId}`, { signal });
-  return response.data;
+  return response.data as { data: IntakeForm };
 }
 
 /**
@@ -196,12 +200,12 @@ export async function createIntakeForm(
     riskTierSystem?: string;
     llmKeyId?: number | null;
     suggestedQuestionsEnabled?: boolean;
-    designSettings?: Record<string, unknown> | null;
+    designSettings?: FormDesignSettings | null;
   },
   signal?: AbortSignal
 ): Promise<{ data: IntakeForm }> {
   const response = await apiServices.post(`${BASE_URL}/forms`, data, { signal });
-  return response.data;
+  return response.data as { data: IntakeForm };
 }
 
 /**
@@ -221,12 +225,12 @@ export async function updateIntakeForm(
     riskTierSystem?: string;
     llmKeyId?: number | null;
     suggestedQuestionsEnabled?: boolean;
-    designSettings?: Record<string, unknown> | null;
+    designSettings?: FormDesignSettings | null;
   },
   signal?: AbortSignal
 ): Promise<{ data: IntakeForm }> {
   const response = await apiServices.patch(`${BASE_URL}/forms/${formId}`, data, { signal });
-  return response.data;
+  return response.data as { data: IntakeForm };
 }
 
 /**
@@ -237,7 +241,7 @@ export async function deleteIntakeForm(
   signal?: AbortSignal
 ): Promise<{ data: null }> {
   const response = await apiServices.delete(`${BASE_URL}/forms/${formId}`, { signal });
-  return response.data;
+  return response.data as { data: null };
 }
 
 /**
@@ -248,7 +252,7 @@ export async function archiveIntakeForm(
   signal?: AbortSignal
 ): Promise<{ data: IntakeForm }> {
   const response = await apiServices.post(`${BASE_URL}/forms/${formId}/archive`, undefined, { signal });
-  return response.data;
+  return response.data as { data: IntakeForm };
 }
 
 // ============================================================================
@@ -263,6 +267,7 @@ export async function getPendingSubmissions(
     page?: number;
     limit?: number;
     formId?: number;
+    status?: string;
   } = {},
   signal?: AbortSignal
 ): Promise<{ data: IntakeSubmission[]; pagination?: { total: number; page: number; limit: number } }> {
@@ -270,10 +275,11 @@ export async function getPendingSubmissions(
   if (params.page) queryParams.append("page", String(params.page));
   if (params.limit) queryParams.append("limit", String(params.limit));
   if (params.formId) queryParams.append("formId", String(params.formId));
+  if (params.status) queryParams.append("status", params.status);
 
   const url = `${BASE_URL}/submissions${queryParams.toString() ? `?${queryParams}` : ""}`;
   const response = await apiServices.get(url, { signal });
-  return response.data;
+  return response.data as { data: IntakeSubmission[]; pagination?: { total: number; page: number; limit: number } };
 }
 
 /**
@@ -299,7 +305,22 @@ export async function getSubmissionPreview(
   };
 }> {
   const response = await apiServices.get(`${BASE_URL}/submissions/${submissionId}/preview`, { signal });
-  return response.data;
+  return response.data as {
+    data: {
+      submission: IntakeSubmission;
+      riskAssessment: RiskAssessment | null;
+      entityPreview: Record<string, unknown>;
+      form: {
+        id: number;
+        name: string;
+        entityType: string;
+        schema: FormSchema;
+        riskTierSystem?: string;
+      };
+      riskTier?: string | null;
+      riskOverride?: RiskOverride | null;
+    };
+  };
 }
 
 /**
@@ -322,7 +343,7 @@ export async function approveSubmission(
     data || {},
     { signal }
   );
-  return response.data;
+  return response.data as { data: { submission: IntakeSubmission; createdEntity: unknown } };
 }
 
 /**
@@ -338,7 +359,107 @@ export async function rejectSubmission(
     { reason },
     { signal }
   );
-  return response.data;
+  return response.data as { data: IntakeSubmission };
+}
+
+/**
+ * Intake submission field as returned by the by-entity endpoint
+ */
+export interface IntakeSubmissionField {
+  fieldId: string;
+  label: string;
+  type: string;
+  value: unknown;
+  options: Array<{ label: string; value: string }> | null;
+  entityFieldMapping: string | null;
+  isMapped: boolean;
+}
+
+/**
+ * Response from the by-entity intake submission endpoint
+ */
+export interface EntityIntakeSubmission {
+  submissionId: number;
+  formName: string;
+  submitterName: string | null;
+  submitterEmail: string | null;
+  submittedAt: string;
+  reviewedAt: string | null;
+  riskTier: string | null;
+  fields: IntakeSubmissionField[];
+}
+
+/**
+ * Get the original intake submission data for an entity (project/model).
+ * Returns null (via 404) if the entity was not created from an intake form.
+ */
+export async function getEntityIntakeSubmission(
+  entityType: "use_case" | "model",
+  entityId: number,
+  signal?: AbortSignal
+): Promise<EntityIntakeSubmission | null> {
+  try {
+    const response = await apiServices.get(
+      `${BASE_URL}/submissions/by-entity/${entityType}/${entityId}`,
+      { signal }
+    );
+    return (response.data as { data: EntityIntakeSubmission }).data;
+  } catch (error: any) {
+    if (error?.response?.status === 404) {
+      return null;
+    }
+    throw error;
+  }
+}
+
+// ============================================================================
+// LLM Features API (Admin - Authenticated)
+// ============================================================================
+
+/**
+ * LLM-suggested question returned by the backend
+ */
+export interface LLMSuggestedQuestion {
+  label: string;
+  fieldType: "text" | "textarea" | "select";
+  category: string;
+  entityFieldMapping?: string;
+  guidanceText?: string;
+  options?: Array<{ value: string; label: string }>;
+}
+
+/**
+ * Generate LLM-suggested questions for intake form building
+ */
+export async function getLLMSuggestedQuestions(
+  entityType: string,
+  context: string,
+  llmKeyId: number,
+  signal?: AbortSignal
+): Promise<{ data: LLMSuggestedQuestion[] }> {
+  const response = await apiServices.post(
+    `${BASE_URL}/forms/suggested-questions`,
+    { entityType, context, llmKeyId },
+    { signal }
+  );
+  return response.data as { data: LLMSuggestedQuestion[] };
+}
+
+/**
+ * Generate LLM guidance text for a field
+ */
+export async function getLLMFieldGuidance(
+  fieldLabel: string,
+  entityType: string,
+  llmKeyId: number,
+  signal?: AbortSignal
+): Promise<{ data: { guidanceText: string } }> {
+  const response = await apiServices.post(
+    `${BASE_URL}/forms/field-guidance`,
+    { fieldLabel, entityType, llmKeyId },
+    { signal }
+  );
+  return response.data as { data: { guidanceText: string } };
 }
 
 // ============================================================================
@@ -350,7 +471,7 @@ export async function rejectSubmission(
  */
 export async function getCaptcha(): Promise<{ data: { question: string; token: string } }> {
   const response = await apiServices.get(`${BASE_URL}/public/captcha`);
-  return response.data;
+  return response.data as { data: { question: string; token: string } };
 }
 
 /**
@@ -370,8 +491,9 @@ export async function getPublicForm(
       entityType: IntakeEntityType;
       schema: FormSchema;
       submitButtonText: string;
-      designSettings?: Record<string, unknown> | null;
+      designSettings?: FormDesignSettings | null;
     };
+    organizationLogo?: string | null;
     previousData?: Record<string, unknown>;
     previousSubmitterName?: string;
     previousSubmitterEmail?: string;
@@ -379,7 +501,24 @@ export async function getPublicForm(
 }> {
   const queryParams = resubmissionToken ? `?token=${resubmissionToken}` : "";
   const response = await apiServices.get(`${BASE_URL}/public/${tenantSlug}/${formSlug}${queryParams}`);
-  return response.data;
+  return response.data as {
+    data: {
+      form: {
+        id: number;
+        name: string;
+        description: string;
+        slug: string;
+        entityType: IntakeEntityType;
+        schema: FormSchema;
+        submitButtonText: string;
+        designSettings?: FormDesignSettings | null;
+      };
+      organizationLogo?: string | null;
+      previousData?: Record<string, unknown>;
+      previousSubmitterName?: string;
+      previousSubmitterEmail?: string;
+    };
+  };
 }
 
 /**
@@ -404,7 +543,7 @@ export async function submitPublicForm(
   };
 }> {
   const response = await apiServices.post(`${BASE_URL}/public/${tenantSlug}/${formSlug}`, data);
-  return response.data;
+  return response.data as { data: { submissionId: number; resubmissionToken: string; message: string } };
 }
 
 /**
@@ -423,8 +562,9 @@ export async function getPublicFormById(
       entityType: IntakeEntityType;
       schema: FormSchema;
       submitButtonText: string;
-      designSettings?: Record<string, unknown> | null;
+      designSettings?: FormDesignSettings | null;
     };
+    organizationLogo?: string | null;
     previousData?: Record<string, unknown>;
     previousSubmitterName?: string;
     previousSubmitterEmail?: string;
@@ -432,7 +572,24 @@ export async function getPublicFormById(
 }> {
   const queryParams = resubmissionToken ? `?token=${resubmissionToken}` : "";
   const response = await apiServices.get(`${BASE_URL}/public/by-id/${publicId}${queryParams}`);
-  return response.data;
+  return response.data as {
+    data: {
+      form: {
+        id: number;
+        name: string;
+        description: string;
+        slug: string;
+        entityType: IntakeEntityType;
+        schema: FormSchema;
+        submitButtonText: string;
+        designSettings?: FormDesignSettings | null;
+      };
+      organizationLogo?: string | null;
+      previousData?: Record<string, unknown>;
+      previousSubmitterName?: string;
+      previousSubmitterEmail?: string;
+    };
+  };
 }
 
 // ============================================================================
@@ -460,5 +617,5 @@ export async function submitPublicFormById(
   };
 }> {
   const response = await apiServices.post(`${BASE_URL}/public/by-id/${publicId}`, data);
-  return response.data;
+  return response.data as { data: { submissionId: number; resubmissionToken: string; message: string } };
 }

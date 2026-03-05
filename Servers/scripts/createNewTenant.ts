@@ -181,9 +181,9 @@ export const createNewTenant = async (
         start_date timestamp with time zone NOT NULL,
         ai_risk_classification enum_projects_ai_risk_classification,
         type_of_high_risk_role enum_projects_type_of_high_risk_role,
-        goal character varying(255) NOT NULL,
+        goal TEXT NOT NULL,
         target_industry character varying(255),
-        description character varying(255),
+        description TEXT,
         geography integer NOT NULL,
         last_updated timestamp with time zone NOT NULL,
         last_updated_by integer,
@@ -307,6 +307,84 @@ export const createNewTenant = async (
           ON UPDATE CASCADE
           ON DELETE SET NULL
       );`, { transaction });
+
+    // Tamper-proof audit ledger (hash chain, append-only)
+    await sequelize.query(
+      `CREATE TABLE IF NOT EXISTS "${tenantHash}".audit_ledger (
+        id           BIGSERIAL PRIMARY KEY,
+        entry_type   VARCHAR(20)  NOT NULL,
+        user_id      INTEGER      REFERENCES public.users(id) ON DELETE SET NULL,
+        occurred_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+        event_type   VARCHAR(20),
+        entity_type  VARCHAR(60),
+        entity_id    INTEGER,
+        action       VARCHAR(20),
+        field_name   TEXT,
+        old_value    TEXT,
+        new_value    TEXT,
+        description  TEXT,
+        entry_hash   CHAR(64)     NOT NULL,
+        prev_hash    CHAR(64)     NOT NULL
+      );`, { transaction });
+
+    await Promise.all([
+      `CREATE INDEX IF NOT EXISTS idx_audit_ledger_occurred_at ON "${tenantHash}".audit_ledger (occurred_at DESC);`,
+      `CREATE INDEX IF NOT EXISTS idx_audit_ledger_user_id ON "${tenantHash}".audit_ledger (user_id);`,
+      `CREATE INDEX IF NOT EXISTS idx_audit_ledger_entity ON "${tenantHash}".audit_ledger (entity_type, entity_id);`,
+    ].map((query) => sequelize.query(query, { transaction })));
+
+    // Delete-prevention trigger
+    await sequelize.query(`
+      CREATE OR REPLACE FUNCTION "${tenantHash}".audit_ledger_prevent_delete()
+      RETURNS TRIGGER AS $$
+      BEGIN
+        RAISE EXCEPTION 'DELETE on audit_ledger is prohibited — append-only table';
+      END;
+      $$ LANGUAGE plpgsql;
+    `, { transaction });
+
+    await sequelize.query(`
+      DROP TRIGGER IF EXISTS trg_audit_ledger_no_delete ON "${tenantHash}".audit_ledger;
+      CREATE TRIGGER trg_audit_ledger_no_delete
+        BEFORE DELETE ON "${tenantHash}".audit_ledger
+        FOR EACH ROW
+        EXECUTE FUNCTION "${tenantHash}".audit_ledger_prevent_delete();
+    `, { transaction });
+
+    // Update-guard trigger: only allow sentinel→real hash transition
+    await sequelize.query(`
+      CREATE OR REPLACE FUNCTION "${tenantHash}".audit_ledger_guard_update()
+      RETURNS TRIGGER AS $$
+      BEGIN
+        IF OLD.entry_hash = RPAD('pending', 64, '0')
+           AND NEW.entry_hash ~ '^[a-f0-9]{64}$'
+           AND OLD.entry_type   = NEW.entry_type
+           AND OLD.user_id     IS NOT DISTINCT FROM NEW.user_id
+           AND OLD.occurred_at  = NEW.occurred_at
+           AND OLD.event_type  IS NOT DISTINCT FROM NEW.event_type
+           AND OLD.entity_type IS NOT DISTINCT FROM NEW.entity_type
+           AND OLD.entity_id   IS NOT DISTINCT FROM NEW.entity_id
+           AND OLD.action      IS NOT DISTINCT FROM NEW.action
+           AND OLD.field_name  IS NOT DISTINCT FROM NEW.field_name
+           AND OLD.old_value   IS NOT DISTINCT FROM NEW.old_value
+           AND OLD.new_value   IS NOT DISTINCT FROM NEW.new_value
+           AND OLD.description IS NOT DISTINCT FROM NEW.description
+           AND OLD.prev_hash    = NEW.prev_hash
+        THEN
+          RETURN NEW;
+        END IF;
+        RAISE EXCEPTION 'UPDATE on audit_ledger is prohibited — only sentinel hash finalization is allowed';
+      END;
+      $$ LANGUAGE plpgsql;
+    `, { transaction });
+
+    await sequelize.query(`
+      DROP TRIGGER IF EXISTS trg_audit_ledger_guard_update ON "${tenantHash}".audit_ledger;
+      CREATE TRIGGER trg_audit_ledger_guard_update
+        BEFORE UPDATE ON "${tenantHash}".audit_ledger
+        FOR EACH ROW
+        EXECUTE FUNCTION "${tenantHash}".audit_ledger_guard_update();
+    `, { transaction });
 
     await sequelize.query(
       `CREATE TABLE IF NOT EXISTS "${tenantHash}".vendors_projects
@@ -601,6 +679,33 @@ export const createNewTenant = async (
     );
     await sequelize.query(
       `CREATE INDEX IF NOT EXISTS idx_file_folder_mappings_assigned_by ON "${tenantHash}".file_folder_mappings(assigned_by);`,
+      { transaction }
+    );
+
+    // Policy folder mappings junction table
+    await sequelize.query(
+      `CREATE TABLE IF NOT EXISTS "${tenantHash}".policy_folder_mappings (
+        id SERIAL PRIMARY KEY,
+        policy_id INTEGER NOT NULL,
+        folder_id INTEGER NOT NULL REFERENCES "${tenantHash}".virtual_folders(id) ON DELETE CASCADE,
+        assigned_by INTEGER NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+        assigned_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        CONSTRAINT unique_policy_folder UNIQUE (policy_id, folder_id)
+      );`,
+      { transaction }
+    );
+
+    // Indexes for policy_folder_mappings table
+    await sequelize.query(
+      `CREATE INDEX IF NOT EXISTS idx_policy_folder_mappings_policy_id ON "${tenantHash}".policy_folder_mappings(policy_id);`,
+      { transaction }
+    );
+    await sequelize.query(
+      `CREATE INDEX IF NOT EXISTS idx_policy_folder_mappings_folder_id ON "${tenantHash}".policy_folder_mappings(folder_id);`,
+      { transaction }
+    );
+    await sequelize.query(
+      `CREATE INDEX IF NOT EXISTS idx_policy_folder_mappings_assigned_by ON "${tenantHash}".policy_folder_mappings(assigned_by);`,
       { transaction }
     );
 
@@ -1519,6 +1624,45 @@ export const createNewTenant = async (
       [
         `CREATE INDEX IF NOT EXISTS "${tenantHash}_task_assignees_task_id_idx" ON "${tenantHash}".task_assignees (task_id);`,
         `CREATE INDEX IF NOT EXISTS "${tenantHash}_task_assignees_user_id_idx" ON "${tenantHash}".task_assignees (user_id);`,
+      ].map((query) => sequelize.query(query, { transaction }))
+    );
+
+    // Create task_entity_links table
+    await sequelize.query(
+      `DO $$
+      BEGIN
+        IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'enum_task_entity_links_entity_type') THEN
+          CREATE TYPE enum_task_entity_links_entity_type AS ENUM (
+            'vendor', 'model', 'policy', 'nist_subcategory',
+            'iso42001_subclause', 'iso42001_annexcategory',
+            'iso27001_subclause', 'iso27001_annexcontrol',
+            'eu_control', 'eu_subcontrol'
+          );
+        END IF;
+      END $$;`,
+      { transaction }
+    );
+    await sequelize.query(
+      `CREATE TABLE IF NOT EXISTS "${tenantHash}".task_entity_links (
+        id SERIAL PRIMARY KEY,
+        task_id INTEGER NOT NULL,
+        entity_id INTEGER NOT NULL,
+        entity_type enum_task_entity_links_entity_type NOT NULL,
+        entity_name VARCHAR(500),
+        created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+        CONSTRAINT task_entity_links_task_id_fkey FOREIGN KEY (task_id)
+          REFERENCES "${tenantHash}".tasks (id) MATCH SIMPLE
+          ON UPDATE CASCADE ON DELETE CASCADE,
+        CONSTRAINT unique_task_entity_link UNIQUE (task_id, entity_id, entity_type)
+      );`,
+      { transaction }
+    );
+    await Promise.all(
+      [
+        `CREATE INDEX IF NOT EXISTS "${tenantHash}_task_entity_links_task_id_idx" ON "${tenantHash}".task_entity_links (task_id);`,
+        `CREATE INDEX IF NOT EXISTS "${tenantHash}_task_entity_links_entity_type_idx" ON "${tenantHash}".task_entity_links (entity_type);`,
+        `CREATE INDEX IF NOT EXISTS "${tenantHash}_task_entity_links_entity_id_entity_type_idx" ON "${tenantHash}".task_entity_links (entity_id, entity_type);`,
       ].map((query) => sequelize.query(query, { transaction }))
     );
 
@@ -2804,7 +2948,14 @@ export const createNewTenant = async (
           'file_uploaded',
           'comment_added',
           'mention',
-          'system'
+          'system',
+          'assignment_owner',
+          'assignment_reviewer',
+          'assignment_approver',
+          'assignment_member',
+          'assignment_assignee',
+          'assignment_action_owner',
+          'assignment_risk_owner'
         );
       EXCEPTION
         WHEN duplicate_object THEN null;
@@ -3257,6 +3408,7 @@ export const createNewTenant = async (
       CREATE TABLE IF NOT EXISTS "${tenantHash}".feature_settings (
         id SERIAL PRIMARY KEY,
         lifecycle_enabled BOOLEAN NOT NULL DEFAULT true,
+        audit_ledger_enabled BOOLEAN NOT NULL DEFAULT true,
         updated_at TIMESTAMP DEFAULT NOW(),
         updated_by INTEGER NULL REFERENCES public.users(id)
       );
@@ -3451,7 +3603,7 @@ export const createNewTenant = async (
         ttl_expires_at TIMESTAMPTZ,
         public_id VARCHAR(16) UNIQUE,
         recipients JSONB DEFAULT '[]',
-        risk_tier_system VARCHAR(20) DEFAULT 'generic',
+        risk_tier_system VARCHAR(20) DEFAULT 'eu_ai_act',
         risk_assessment_config JSONB,
         llm_key_id INTEGER,
         suggested_questions_enabled BOOLEAN DEFAULT false,
@@ -3475,8 +3627,8 @@ export const createNewTenant = async (
       CREATE TABLE IF NOT EXISTS "${tenantHash}".intake_submissions (
         id SERIAL PRIMARY KEY,
         form_id INTEGER NOT NULL REFERENCES "${tenantHash}".intake_forms(id) ON DELETE CASCADE,
-        submitter_email VARCHAR(255) NOT NULL,
-        submitter_name VARCHAR(255) NOT NULL,
+        submitter_email VARCHAR(255),
+        submitter_name VARCHAR(255),
         data JSONB NOT NULL DEFAULT '{}',
         entity_type VARCHAR(50) NOT NULL,
         entity_id INTEGER,

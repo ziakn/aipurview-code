@@ -28,6 +28,11 @@ import {
   hardDeleteTask,
   updateTaskPriority,
 } from "../../../application/repository/task.repository";
+import {
+  addTaskEntityLink,
+  removeTaskEntityLink,
+  getTaskEntityLinks,
+} from "../../../application/repository/taskEntityLink.repository";
 import TaskSummaryCards from "./TaskSummaryCards";
 import CreateTask from "../../components/Modals/CreateTask";
 import useUsers from "../../../application/hooks/useUsers";
@@ -44,9 +49,11 @@ import {
 } from "../../../application/hooks/useTableGrouping";
 import { GroupedTableView } from "../../components/Table/GroupedTableView";
 import { ExportMenu } from "../../components/Table/ExportMenu";
+import { ColumnSelector } from "../../components/Table/ColumnSelector";
 
 import { FilterBy, FilterColumn } from "../../components/Table/FilterBy";
 import { useFilterBy } from "../../../application/hooks/useFilterBy";
+import { useColumnVisibility, ColumnConfig } from "../../../application/hooks/useColumnVisibility";
 import { displayFormattedDate } from "../../tools/isoDateToString";
 import Alert from "../../components/Alert";
 import TabBar from "../../components/TabBar";
@@ -69,6 +76,17 @@ const STATUS_DISPLAY_MAP: Record<string, string> = {
   [TaskStatus.OVERDUE]: "Overdue",
   [TaskStatus.DELETED]: "Archived", // Show "Archived" instead of "Deleted" for better UX
 };
+
+type TaskColumnKey = "title" | "priority" | "status" | "due_date" | "assignees" | "actions";
+
+const TASKS_TABLE_COLUMNS: ColumnConfig<TaskColumnKey>[] = [
+  { key: "title", label: "Task", defaultVisible: true, alwaysVisible: true },
+  { key: "priority", label: "Priority", defaultVisible: true },
+  { key: "status", label: "Status", defaultVisible: true },
+  { key: "due_date", label: "Due date", defaultVisible: true },
+  { key: "assignees", label: "Assignees", defaultVisible: true },
+  { key: "actions", label: "Actions", defaultVisible: true, alwaysVisible: true },
+];
 
 const Tasks: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -116,6 +134,17 @@ const Tasks: React.FC = () => {
   const { groupBy, groupSortOrder, handleGroupChange } = useGroupByState();
   const isCreatingDisabled =
     !userRoleName || !["Admin", "Editor"].includes(userRoleName);
+
+  // Column visibility for the tasks table
+  const {
+    visibleColumns,
+    allColumns: allTaskColumns,
+    toggleColumn: toggleTaskColumn,
+    resetToDefaults: resetTaskColumns,
+  } = useColumnVisibility({
+    tableId: "tasks-table",
+    columns: TASKS_TABLE_COLUMNS,
+  });
 
   // Calculate summary from tasks data
   const summary: TaskSummary = useMemo(
@@ -331,8 +360,37 @@ const Tasks: React.FC = () => {
 
   const handleTaskCreated = async (formData: any) => {
     try {
-      const response = await createTask({ body: formData });
+      // Extract entity_links - we'll pass them to the API for notification purposes
+      // but also sync them separately after creation
+      const { entity_links, ...taskData } = formData;
+
+      const response = await createTask({
+        body: {
+          ...taskData,
+          // Include entity_links for notification email (backend uses these immediately)
+          entity_links: entity_links || [],
+        },
+      });
       if (response && response.data) {
+        const newTaskId = response.data.id;
+
+        // Save entity links if any
+        if (entity_links && entity_links.length > 0 && newTaskId) {
+          try {
+            for (const link of entity_links) {
+              await addTaskEntityLink(
+                newTaskId,
+                link.entity_id,
+                link.entity_type,
+                link.entity_name
+              );
+            }
+          } catch (linkError) {
+            console.error("Error saving entity links:", linkError);
+            // Don't fail the whole operation, just log the error
+          }
+        }
+
         // Add the new task to the list
         setTasks((prev) => [response.data, ...prev]);
         setAlert({
@@ -386,14 +444,73 @@ const Tasks: React.FC = () => {
     if (!editingTask) return;
 
     try {
+      // Extract entity_links - we'll pass them to the API for notification purposes
+      // but also sync them separately after the update
+      const { entity_links: newEntityLinks, ...taskData } = formData;
+
       const response = await updateTask({
         id: editingTask.id!,
-        body: formData,
+        body: {
+          ...taskData,
+          // Include entity_links for notification email (backend uses these immediately)
+          entity_links: newEntityLinks || [],
+        },
       });
       if (response && response.data) {
+        // Sync entity links: get existing, compare, remove old, add new
+        if (newEntityLinks) {
+          try {
+            const existingLinks = await getTaskEntityLinks(editingTask.id!);
+
+            // Find links to remove (in existing but not in new)
+            const linksToRemove = existingLinks.filter(
+              (existing) =>
+                !newEntityLinks.some(
+                  (newLink: any) =>
+                    newLink.entity_id === existing.entity_id &&
+                    newLink.entity_type === existing.entity_type
+                )
+            );
+
+            // Find links to add (in new but not in existing)
+            const linksToAdd = newEntityLinks.filter(
+              (newLink: any) =>
+                !existingLinks.some(
+                  (existing) =>
+                    existing.entity_id === newLink.entity_id &&
+                    existing.entity_type === newLink.entity_type
+                )
+            );
+
+            // Remove old links
+            for (const link of linksToRemove) {
+              await removeTaskEntityLink(editingTask.id!, link.id);
+            }
+
+            // Add new links
+            for (const link of linksToAdd) {
+              await addTaskEntityLink(
+                editingTask.id!,
+                link.entity_id,
+                link.entity_type,
+                link.entity_name
+              );
+            }
+          } catch (linkError) {
+            console.error("Error syncing entity links:", linkError);
+            // Don't fail the whole operation, just log the error
+          }
+        }
+
+        // Update task in state with new entity links
+        const updatedTaskWithLinks = {
+          ...response.data,
+          entity_links: newEntityLinks || [],
+        };
+
         setTasks((prev) =>
           prev.map((task) =>
-            task.id === editingTask.id ? response.data : task
+            task.id === editingTask.id ? updatedTaskWithLinks : task
           )
         );
 
@@ -716,47 +833,74 @@ const Tasks: React.FC = () => {
 
       {/* Filter Controls - Only show for List view */}
       {activeTab === "list" && (
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <Stack direction="row" gap={2} alignItems="center">
-          {/* FilterBy */}
-          <Box data-joyride-id="task-filters">
-            <FilterBy
-              columns={taskFilterColumns}
-              onFilterChange={handleTaskFilterChange}
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Stack direction="row" gap={2} alignItems="center">
+            {/* FilterBy */}
+            <Box data-joyride-id="task-filters">
+              <FilterBy
+                columns={taskFilterColumns}
+                onFilterChange={handleTaskFilterChange}
+              />
+            </Box>
+
+            {/* GroupBy */}
+            <GroupBy
+              options={[
+                { id: "status", label: "Status" },
+                { id: "priority", label: "Priority" },
+                { id: "assignees", label: "Assignees" },
+                { id: "due_date", label: "Due date" },
+              ]}
+              onGroupChange={handleGroupChange}
             />
-          </Box>
 
-          {/* GroupBy */}
-          <GroupBy
-            options={[
-              { id: "status", label: "Status" },
-              { id: "priority", label: "Priority" },
-              { id: "assignees", label: "Assignees" },
-              { id: "due_date", label: "Due date" },
-            ]}
-            onGroupChange={handleGroupChange}
-          />
-
-          {/* SearchBox */}
-          <Box data-joyride-id="task-search">
-            <SearchBox
-              placeholder="Search tasks..."
-              value={searchQuery}
-              onChange={setSearchQuery}
-              inputProps={{ "aria-label": "Search tasks" }}
-              fullWidth={false}
+            <ColumnSelector
+              columns={allTaskColumns}
+              visibleColumns={visibleColumns}
+              onToggleColumn={toggleTaskColumn}
+              onResetToDefaults={resetTaskColumns}
             />
-          </Box>
 
-          {/* My Tasks toggle - Admin only */}
-          {userRoleName === "Admin" && (
+            {/* SearchBox */}
+            <Box data-joyride-id="task-search">
+              <SearchBox
+                placeholder="Search tasks..."
+                value={searchQuery}
+                onChange={setSearchQuery}
+                inputProps={{ "aria-label": "Search tasks" }}
+                fullWidth={false}
+              />
+            </Box>
+
+            {/* My Tasks toggle - Admin only */}
+            {userRoleName === "Admin" && (
+              <Stack
+                sx={toggleContainerStyle}
+                data-joyride-id="my-tasks-toggle"
+              >
+                <Typography
+                  component="span"
+                  variant="body2"
+                  color="text.secondary"
+                  sx={toggleLabelStyle}
+                >
+                  My tasks only
+                </Typography>
+                <Toggle
+                  checked={showMyTasksOnly}
+                  onChange={(_, checked) => setShowMyTasksOnly(checked)}
+                />
+              </Stack>
+            )}
+
+            {/* Include archived toggle */}
             <Stack
               sx={toggleContainerStyle}
-              data-joyride-id="my-tasks-toggle"
+              data-joyride-id="include-archived-toggle"
             >
               <Typography
                 component="span"
@@ -764,62 +908,42 @@ const Tasks: React.FC = () => {
                 color="text.secondary"
                 sx={toggleLabelStyle}
               >
-                My tasks only
+                Include archived
               </Typography>
               <Toggle
-                checked={showMyTasksOnly}
-                onChange={(_, checked) => setShowMyTasksOnly(checked)}
+                checked={includeArchived}
+                onChange={(_, checked) => setIncludeArchived(checked)}
               />
             </Stack>
-          )}
+          </Stack>
 
-          {/* Include archived toggle */}
+          {/* Right side: Export and Add button */}
           <Stack
-            sx={toggleContainerStyle}
-            data-joyride-id="include-archived-toggle"
+            direction="row"
+            gap="8px"
+            alignItems="center"
+            data-joyride-id="add-task-button"
           >
-            <Typography
-              component="span"
-              variant="body2"
-              color="text.secondary"
-              sx={toggleLabelStyle}
-            >
-              Include archived
-            </Typography>
-            <Toggle
-              checked={includeArchived}
-              onChange={(_, checked) => setIncludeArchived(checked)}
+            <ExportMenu
+              data={exportData}
+              columns={exportColumns}
+              filename="tasks"
+              title="Task Management"
+            />
+            <CustomizableButton
+              variant="contained"
+              text="Add new task"
+              sx={{
+                backgroundColor: "#13715B",
+                border: "1px solid #13715B",
+                gap: 2,
+              }}
+              icon={<AddCircleIcon size={16} />}
+              onClick={handleCreateTask}
+              isDisabled={isCreatingDisabled}
             />
           </Stack>
         </Stack>
-
-        {/* Right side: Export and Add button */}
-        <Stack
-          direction="row"
-          gap="8px"
-          alignItems="center"
-          data-joyride-id="add-task-button"
-        >
-          <ExportMenu
-            data={exportData}
-            columns={exportColumns}
-            filename="tasks"
-            title="Task Management"
-          />
-          <CustomizableButton
-            variant="contained"
-            text="Add new task"
-            sx={{
-              backgroundColor: "#13715B",
-              border: "1px solid #13715B",
-              gap: 2,
-            }}
-            icon={<AddCircleIcon size={16} />}
-            onClick={handleCreateTask}
-            isDisabled={isCreatingDisabled}
-          />
-        </Stack>
-      </Stack>
       )}
 
       {/* Content Area */}
@@ -869,6 +993,7 @@ const Tasks: React.FC = () => {
                 onRestore={handleRestoreTask}
                 onHardDelete={handleHardDeleteTask}
                 flashRowId={flashRowId}
+                visibleColumns={visibleColumns}
               />
             )}
           />
