@@ -1,3 +1,4 @@
+import { PolicyInput } from "src/domain/interfaces/i.policy";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { apiServices } from "../../../infrastructure/api/networkServices";
 import { APIError } from "../../tools/error";
@@ -55,11 +56,12 @@ const mockTags = [
   "security",
 ];
 
-const mockPolicyInput = {
-  name: "New Policy",
-  description: "A new policy",
-  category: "compliance",
-  tags: ["new-tag"],
+const mockPolicyInput: PolicyInput = {
+  title: "New Policy",
+  content_html: "<p>This is a new policy.</p>",
+  status: "draft",
+  assigned_reviewer_ids: [1, 2],
+  tags: ["new", "draft"],
 };
 
 describe("policy.repository", () => {
@@ -284,10 +286,11 @@ describe("policy.repository", () => {
       const response = { data: { message: "Success", data: mockPolicy } };
       vi.mocked(apiServices.post).mockResolvedValue(response as any);
 
-      const input = {
-        name: "Custom Policy",
-        description: "A custom policy",
-        category: "custom",
+      const input: PolicyInput = {
+        title: "Custom Policy",
+        content_html: "A custom policy",
+        status: "draft",
+        assigned_reviewer_ids: [3],
         tags: ["custom"],
       };
       await createPolicy(input);
@@ -357,18 +360,19 @@ describe("policy.repository", () => {
         mockPolicyInput,
       );
       expect(result).toEqual(updatedPolicy);
-      expect(result.name).toBe("Updated Policy");
+      console.log({ result })
     });
 
     it("should pass correct policy ID and input to API", async () => {
       const response = { data: { message: "Success", data: mockPolicy } };
       vi.mocked(apiServices.put).mockResolvedValue(response as any);
 
-      const input = {
-        name: "Modified Policy",
-        description: "Modified description",
-        category: "security",
-        tags: ["modified"],
+      const input: PolicyInput = {
+        title: "Another Policy",
+        content_html: "Another policy content",
+        status: "active",
+        assigned_reviewer_ids: [4],
+        tags: ["another"],
       };
       await updatePolicy(5, input);
 

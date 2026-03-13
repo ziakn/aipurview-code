@@ -38,8 +38,12 @@ describe("organization.repository", () => {
     });
 
     it("should retrieve organization details with default parameters", async () => {
-      const mockResponse = { ...mockOrganizationData };
-      vi.mocked(apiServices.get).mockResolvedValue(mockResponse);
+      const mockResponse = {
+        data: mockOrganizationData,
+        status: 200,
+        statusText: "OK",
+      };
+      vi.mocked(apiServices.get).mockResolvedValue(mockResponse as any);
 
       const result = await GetMyOrganization({
         routeUrl: "/organizations/1",
@@ -53,8 +57,12 @@ describe("organization.repository", () => {
     });
 
     it("should retrieve organization with custom responseType", async () => {
-      const mockResponse = new Blob([JSON.stringify(mockOrganizationData)]);
-      vi.mocked(apiServices.get).mockResolvedValue(mockResponse);
+      const mockResponse = {
+        data: new Blob([JSON.stringify(mockOrganizationData)]),
+        status: 200,
+        statusText: "OK",
+      };
+      vi.mocked(apiServices.get).mockResolvedValue(mockResponse as any);
 
       const result = await GetMyOrganization({
         routeUrl: "/organizations/1",
@@ -69,8 +77,12 @@ describe("organization.repository", () => {
     });
 
     it("should retrieve organization with AbortSignal", async () => {
-      const mockResponse = { ...mockOrganizationData };
-      vi.mocked(apiServices.get).mockResolvedValue(mockResponse);
+      const mockResponse = {
+        data: mockOrganizationData,
+        status: 200,
+        statusText: "OK",
+      };
+      vi.mocked(apiServices.get).mockResolvedValue(mockResponse as any);
 
       const result = await GetMyOrganization({
         routeUrl: "/organizations/1",
@@ -123,10 +135,15 @@ describe("organization.repository", () => {
     });
 
     it("should create organization with default routeUrl", async () => {
-      const mockResponse = { id: 1, ...mockOrganizationData };
-      vi.mocked(apiServices.post).mockResolvedValue(mockResponse);
+      const mockResponse = {
+        data: mockOrganizationData,
+        status: 201,
+        statusText: "Created",
+      };
+      vi.mocked(apiServices.post).mockResolvedValue(mockResponse as any);
 
       const result = await CreateMyOrganization({
+        routeUrl: "/organizations",
         body: mockOrganizationData,
       });
 
@@ -139,8 +156,12 @@ describe("organization.repository", () => {
 
     it("should create organization with custom routeUrl", async () => {
       const customUrl = "/api/v2/organizations";
-      const mockResponse = { id: 2, ...mockOrganizationData };
-      vi.mocked(apiServices.post).mockResolvedValue(mockResponse);
+      const mockResponse = {
+        data: { ...mockOrganizationData, id: 2 },
+        status: 201,
+        statusText: "Created",
+      };
+      vi.mocked(apiServices.post).mockResolvedValue(mockResponse as any);
 
       const result = await CreateMyOrganization({
         routeUrl: customUrl,
@@ -159,7 +180,10 @@ describe("organization.repository", () => {
       vi.mocked(apiServices.post).mockRejectedValue(mockError);
 
       await expect(
-        CreateMyOrganization({ body: mockOrganizationData }),
+        CreateMyOrganization({
+          routeUrl: "/organizations",
+          body: mockOrganizationData,
+        }),
       ).rejects.toThrow("Failed to create organization");
     });
 
@@ -170,7 +194,10 @@ describe("organization.repository", () => {
       vi.mocked(apiServices.post).mockRejectedValue(mockError);
 
       await expect(
-        CreateMyOrganization({ body: { name: "" } }),
+        CreateMyOrganization({
+          routeUrl: "/organizations",
+          body: { name: "" },
+        }),
       ).rejects.toEqual(mockError);
     });
 
@@ -181,7 +208,10 @@ describe("organization.repository", () => {
       vi.mocked(apiServices.post).mockRejectedValue(mockError);
 
       await expect(
-        CreateMyOrganization({ body: mockOrganizationData }),
+        CreateMyOrganization({
+          routeUrl: "/organizations",
+          body: mockOrganizationData,
+        }),
       ).rejects.toEqual(mockError);
     });
   });
@@ -193,10 +223,15 @@ describe("organization.repository", () => {
 
     it("should update organization with default routeUrl", async () => {
       const updatedData = { name: "Updated Organization" };
-      const mockResponse = { data: { id: 1, ...updatedData } };
-      vi.mocked(apiServices.patch).mockResolvedValue(mockResponse);
+      const mockResponse = {
+        data: { id: 1, ...updatedData },
+        status: 200,
+        statusText: "OK",
+      };
+      vi.mocked(apiServices.patch).mockResolvedValue(mockResponse as any);
 
       const result = await UpdateMyOrganization({
+        routeUrl: "/organizations",
         body: updatedData,
       });
 
@@ -213,8 +248,12 @@ describe("organization.repository", () => {
     it("should update organization with custom routeUrl", async () => {
       const customUrl = "/organizations/1";
       const updatedData = { phone: "+9876543210" };
-      const mockResponse = { data: { id: 1, ...updatedData } };
-      vi.mocked(apiServices.patch).mockResolvedValue(mockResponse);
+      const mockResponse = {
+        data: { id: 1, ...updatedData },
+        status: 200,
+        statusText: "OK",
+      };
+      vi.mocked(apiServices.patch).mockResolvedValue(mockResponse as any);
 
       const result = await UpdateMyOrganization({
         routeUrl: customUrl,
@@ -230,10 +269,15 @@ describe("organization.repository", () => {
     it("should update organization with custom headers", async () => {
       const customHeaders = { "X-Custom-Header": "custom-value" };
       const updatedData = { name: "Updated Organization" };
-      const mockResponse = { data: { id: 1, ...updatedData } };
-      vi.mocked(apiServices.patch).mockResolvedValue(mockResponse);
+      const mockResponse = {
+        data: { id: 1, ...updatedData },
+        status: 200,
+        statusText: "OK",
+      };
+      vi.mocked(apiServices.patch).mockResolvedValue(mockResponse as any);
 
       const result = await UpdateMyOrganization({
+        routeUrl: "/organizations",
         body: updatedData,
         headers: customHeaders,
       });
@@ -252,11 +296,13 @@ describe("organization.repository", () => {
       const mockResponse = {
         data: { id: 1, name: "Updated" },
         status: 200,
+        statusText: "OK",
         headers: {},
       };
-      vi.mocked(apiServices.patch).mockResolvedValue(mockResponse);
+      vi.mocked(apiServices.patch).mockResolvedValue(mockResponse as any);
 
       const result = await UpdateMyOrganization({
+        routeUrl: "/organizations",
         body: { name: "Updated" },
       });
 
@@ -269,7 +315,10 @@ describe("organization.repository", () => {
       vi.mocked(apiServices.patch).mockRejectedValue(mockError);
 
       await expect(
-        UpdateMyOrganization({ body: { name: "Test" } }),
+        UpdateMyOrganization({
+          routeUrl: "/organizations",
+          body: { name: "Test" },
+        }),
       ).rejects.toThrow("Update failed");
     });
 
@@ -280,7 +329,10 @@ describe("organization.repository", () => {
       vi.mocked(apiServices.patch).mockRejectedValue(mockError);
 
       await expect(
-        UpdateMyOrganization({ body: { name: "Test" } }),
+        UpdateMyOrganization({
+          routeUrl: "/organizations",
+          body: { name: "Test" },
+        }),
       ).rejects.toEqual(mockError);
     });
   });
@@ -291,8 +343,12 @@ describe("organization.repository", () => {
     });
 
     it("should return true when organization exists", async () => {
-      const mockResponse = { data: { data: { exists: true } } };
-      vi.mocked(apiServices.get).mockResolvedValue(mockResponse);
+      const mockResponse = {
+        data: { data: { exists: true } },
+        status: 200,
+        statusText: "OK",
+      };
+      vi.mocked(apiServices.get).mockResolvedValue(mockResponse as any);
 
       const result = await checkOrganizationExists();
 
@@ -301,8 +357,12 @@ describe("organization.repository", () => {
     });
 
     it("should return false when organization does not exist", async () => {
-      const mockResponse = { data: { data: { exists: false } } };
-      vi.mocked(apiServices.get).mockResolvedValue(mockResponse);
+      const mockResponse = {
+        data: { data: { exists: false } },
+        status: 200,
+        statusText: "OK",
+      };
+      vi.mocked(apiServices.get).mockResolvedValue(mockResponse as any);
 
       const result = await checkOrganizationExists();
 
@@ -311,8 +371,8 @@ describe("organization.repository", () => {
     });
 
     it("should return false when data property is missing", async () => {
-      const mockResponse = { data: {} };
-      vi.mocked(apiServices.get).mockResolvedValue(mockResponse);
+      const mockResponse = { data: {}, status: 200, statusText: "OK" };
+      vi.mocked(apiServices.get).mockResolvedValue(mockResponse as any);
 
       const result = await checkOrganizationExists();
 
@@ -320,8 +380,12 @@ describe("organization.repository", () => {
     });
 
     it("should return false when nested data is missing", async () => {
-      const mockResponse = { data: { data: {} } };
-      vi.mocked(apiServices.get).mockResolvedValue(mockResponse);
+      const mockResponse = {
+        data: { data: {} },
+        status: 200,
+        statusText: "OK",
+      };
+      vi.mocked(apiServices.get).mockResolvedValue(mockResponse as any);
 
       const result = await checkOrganizationExists();
 
@@ -329,8 +393,12 @@ describe("organization.repository", () => {
     });
 
     it("should return false when exists property is undefined", async () => {
-      const mockResponse = { data: { data: { exists: undefined } } };
-      vi.mocked(apiServices.get).mockResolvedValue(mockResponse);
+      const mockResponse = {
+        data: { data: { exists: undefined } },
+        status: 200,
+        statusText: "OK",
+      };
+      vi.mocked(apiServices.get).mockResolvedValue(mockResponse as any);
 
       const result = await checkOrganizationExists();
 
@@ -338,8 +406,12 @@ describe("organization.repository", () => {
     });
 
     it("should return false when exists property is null", async () => {
-      const mockResponse = { data: { data: { exists: null } } };
-      vi.mocked(apiServices.get).mockResolvedValue(mockResponse);
+      const mockResponse = {
+        data: { data: { exists: null } },
+        status: 200,
+        statusText: "OK",
+      };
+      vi.mocked(apiServices.get).mockResolvedValue(mockResponse as any);
 
       const result = await checkOrganizationExists();
 
@@ -370,8 +442,12 @@ describe("organization.repository", () => {
 
     it("should update onboarding status to completed", async () => {
       const organizationId = 1;
-      const mockResponse = { data: { onboarding_status: "completed" } };
-      vi.mocked(apiServices.patch).mockResolvedValue(mockResponse);
+      const mockResponse = {
+        data: { onboarding_status: "completed" },
+        status: 200,
+        statusText: "OK",
+      };
+      vi.mocked(apiServices.patch).mockResolvedValue(mockResponse as any);
 
       const result = await updateOnboardingStatus(organizationId);
 
@@ -385,9 +461,10 @@ describe("organization.repository", () => {
       const mockResponse = {
         data: { onboarding_status: "completed" },
         status: 200,
+        statusText: "OK",
         headers: {},
       };
-      vi.mocked(apiServices.patch).mockResolvedValue(mockResponse);
+      vi.mocked(apiServices.patch).mockResolvedValue(mockResponse as any);
 
       const result = await updateOnboardingStatus(1);
 
@@ -397,8 +474,12 @@ describe("organization.repository", () => {
 
     it("should update onboarding status for different organization IDs", async () => {
       const organizationId = 42;
-      const mockResponse = { data: { id: 42, onboarding_status: "completed" } };
-      vi.mocked(apiServices.patch).mockResolvedValue(mockResponse);
+      const mockResponse = {
+        data: { id: 42, onboarding_status: "completed" },
+        status: 200,
+        statusText: "OK",
+      };
+      vi.mocked(apiServices.patch).mockResolvedValue(mockResponse as any);
 
       const result = await updateOnboardingStatus(organizationId);
 

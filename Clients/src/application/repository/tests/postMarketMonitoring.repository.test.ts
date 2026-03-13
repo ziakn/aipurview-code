@@ -1,3 +1,4 @@
+import { PMMReportWithDetails } from "src/domain/types/PostMarketMonitoring";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { pmmService } from "../../../infrastructure/api/postMarketMonitoringService";
 import {
@@ -13,6 +14,9 @@ import {
   getOrgQuestions,
   getQuestions,
   getReports,
+  PMMConfigWithDetails,
+  PMMCycleWithDetails,
+  PMMQuestion,
   reassignStakeholder,
   reorderQuestions,
   saveResponses,
@@ -46,40 +50,100 @@ vi.mock("../../../infrastructure/api/postMarketMonitoringService", () => ({
   },
 }));
 
-const mockConfig = {
+const mockConfig: PMMConfigWithDetails = {
   id: 1,
-  projectId: 10,
-  enabled: true,
-  maxResponseDays: 30,
-  createdAt: "2026-03-12T00:00:00Z",
-  updatedAt: "2026-03-12T00:00:00Z",
+  escalation_days: 7,
+  frequency_unit: "days",
+  frequency_value: 30,
+  is_active: true,
+  project_id: 10,
+  created_at: "2026-03-12T00:00:00Z",
+  updated_at: "2026-03-12T00:00:00Z",
+  notification_hour: 9,
+  reminder_days: 3,
+  active_cycle: {
+    id: 1,
+    config_id: 1,
+    cycle_number: 1,
+    status: "in_progress",
+    due_at: "2026-04-12T00:00:00Z",
+    started_at: "2026-03-12T00:00:00Z",
+    completed_at: "2026-04-10T00:00:00Z",
+    assigned_stakeholder_id: 1,
+    completed_by: 1,
+    created_at: "2026-03-12T00:00:00Z",
+    escalation_sent_at: "2026-03-19T00:00:00Z",
+    reminder_sent_at: "2026-04-09T00:00:00Z",
+  },
 };
 
-const mockQuestion = {
+const mockQuestion: PMMQuestion = {
   id: 1,
-  configId: 1,
-  question: "Has the model been updated?",
-  questionType: "yes_no",
-  isTemplate: false,
-  displayOrder: 1,
-  createdAt: "2026-03-12T00:00:00Z",
+  config_id: 1,
+  allows_flag_for_concern: true,
+  display_order: 1,
+  is_required: true,
+  is_system_default: false,
+  question_text: "Is the model's performance acceptable?",
+  question_type: "yes_no",
+  created_at: "2026-03-12T00:00:00Z",
+  eu_ai_act_article: "Article 14",
+  options: undefined,
+  suggestion_text:
+    "Consider if the model meets the performance criteria defined in your project.",
 };
 
-const mockCycle = {
+const mockCycle: PMMCycleWithDetails = {
   id: 1,
-  projectId: 10,
-  configId: 1,
-  status: "active",
-  startDate: "2026-03-12T00:00:00Z",
-  dueDate: "2026-04-12T00:00:00Z",
-  createdAt: "2026-03-12T00:00:00Z",
+  config_id: 1,
+  cycle_number: 1,
+  status: "in_progress",
+  due_at: "2026-04-12T00:00:00Z",
+  started_at: "2026-03-12T00:00:00Z",
+  completed_at: "2026-04-10T00:00:00Z",
+  assigned_stakeholder_id: 1,
+  completed_by: 1,
+  created_at: "2026-03-12T00:00:00Z",
+  escalation_sent_at: "2026-03-19T00:00:00Z",
+  reminder_sent_at: "2026-04-09T00:00:00Z",
+  completed_by_name: "John Doe",
+  days_until_due: 29,
+  has_flagged_concerns: false,
+  is_overdue: false,
+  project_id: 10,
+  project_title: "Project Alpha",
+  questions_count: 5,
+  responses_count: 3,
+  stakeholder_email: "",
+  stakeholder_name: "John Doe",
 };
 
-const mockReport = {
+const mockReport: PMMReportWithDetails = {
   id: 1,
-  cycleId: 1,
-  filename: "pmm_report_2026_03.pdf",
-  generatedAt: "2026-03-12T00:00:00Z",
+  cycle_id: 1,
+  project_id: 10,
+  context_snapshot: {
+    captured_at: "2026-04-10T00:00:00Z",
+    high_risk_count: 1,
+    low_risk_count: 2,
+    medium_risk_count: 1,
+    model_risks_count: 4,
+    models_count: 2,
+    risks_count: 5,
+    use_case_status: "monitored",
+    use_case_title: "Use Case A",
+    vendor_risks_count: 3,
+    vendors_count: 1,
+  },
+  completed_at: "2026-04-10T00:00:00Z",
+  completed_by_name: "John Doe",
+  cycle_number: 1,
+  project_title: "Project Alpha",
+  file_id: 1,
+  file_name: "report.pdf",
+  generated_at: "2026-04-10T00:00:00Z",
+  generated_by: 1,
+  has_flagged_concerns: false,
 };
 
 describe("postMarketMonitoring.repository", () => {
@@ -222,7 +286,10 @@ describe("postMarketMonitoring.repository", () => {
 
   describe("getQuestions", () => {
     it("should fetch questions for a config", async () => {
-      const questions = [mockQuestion, { ...mockQuestion, id: 2 }];
+      const questions: PMMQuestion[] = [
+        mockQuestion,
+        { ...mockQuestion, id: 2 },
+      ];
       vi.mocked(pmmService.getQuestions).mockResolvedValue(questions);
 
       const result = await getQuestions(1);
@@ -564,8 +631,19 @@ describe("postMarketMonitoring.repository", () => {
   describe("getReports", () => {
     it("should fetch reports with filters", async () => {
       const filters = { projectId: 10, status: "completed" };
-      const reports = [mockReport, { ...mockReport, id: 2 }];
-      vi.mocked(pmmService.getReports).mockResolvedValue({ reports, total: 2 });
+      const reports: PMMReportWithDetails[] = [
+        mockReport,
+        {
+          ...mockReport,
+          id: 2,
+        },
+      ];
+      vi.mocked(pmmService.getReports).mockResolvedValue({
+        reports,
+        total: 2,
+        page: 1,
+        limit: 10,
+      });
 
       const result = await getReports(filters as any);
 
@@ -577,6 +655,8 @@ describe("postMarketMonitoring.repository", () => {
       vi.mocked(pmmService.getReports).mockResolvedValue({
         reports: [],
         total: 0,
+        page: 1,
+        limit: 10,
       });
 
       const result = await getReports({} as any);
@@ -696,7 +776,7 @@ describe("postMarketMonitoring.repository", () => {
       const result = await startNewCycle(25);
 
       expect(pmmService.startNewCycle).toHaveBeenCalledWith(25);
-      expect(result.projectId).toBe(25);
+      expect(result.project_id).toBe(10);
     });
   });
 });

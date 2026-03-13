@@ -128,9 +128,9 @@ describe("policyFolder.repository", () => {
       const result = await getPolicyFolders(1);
 
       expect(result).toEqual(nestedFolders);
-      expect(result[0].parentId).toBeNull();
-      expect(result[1].parentId).toBe(1);
-      expect(result[2].parentId).toBe(2);
+      expect(result[0].parent_id).toBeNull();
+      expect(result[1].parent_id).toBe(1);
+      expect(result[2].parent_id).toBe(2);
     });
   });
 

@@ -255,7 +255,7 @@ describe("policyLinkedObjects.repository", () => {
     });
 
     it("should log errors to console", async () => {
-      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation();
+      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
       const error = new Error("Test error");
       vi.mocked(apiServices.post).mockRejectedValue(error);
 
