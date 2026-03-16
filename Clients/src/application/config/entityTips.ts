@@ -400,6 +400,20 @@ export const ENTITY_TIPS: EntityTips = {
       content: "Published prompts are resolved server-side. The gateway prepends the prompt's messages to every request through the bound endpoint. Variables come from the request metadata.",
     },
   ],
+  "ai-gateway-logs": [
+    {
+      header: "Every request through the gateway is logged here.",
+      content: "Each log entry shows the endpoint, model, user or virtual key, token counts, cost, status, and timestamp. Click a row to expand and see the full request messages, response text, and any errors.",
+    },
+    {
+      header: "Use filters to find what you're looking for.",
+      content: "Filter by status (success or error), source (playground or virtual key), and search by endpoint name or model. Logs are grouped by day with Today and Yesterday labels.",
+    },
+    {
+      header: "Turn on live updates to watch requests come in.",
+      content: "The \"Live updates\" toggle refreshes the log list every 10 seconds. Useful when you're testing a new endpoint or prompt and want to see requests as they happen.",
+    },
+  ],
   "ai-gateway-guardrails": [
     {
       header: "Guardrails protect every AI request automatically.",

@@ -260,22 +260,12 @@ export default function PromptEditorPage() {
 
   const removeMessage = (index: number) => setMessages((p) => p.filter((_, i) => i !== index));
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-    setMessages((prev) => {
-      const oldIndex = prev.findIndex((m) => (m._id || String(prev.indexOf(m))) === active.id);
-      const newIndex = prev.findIndex((m) => (m._id || String(prev.indexOf(m))) === over.id);
-      return arrayMove(prev, oldIndex, newIndex);
-    });
-  };
-
-  const handleSave = async () => {
-    if (!id || messages.length === 0) return;
+  const saveVersion = async (msgs: Message[]) => {
+    if (!id || msgs.length === 0) return;
     setIsSaving(true);
     try {
       const res = await apiServices.post(`/ai-gateway/prompts/${id}/versions`, {
-        content: messages,
+        content: msgs,
         model: model || null,
         config: Object.keys(config).length > 0 ? config : null,
       });
@@ -288,6 +278,20 @@ export default function PromptEditorPage() {
     } catch { /* silently handle */ }
     finally { setIsSaving(false); }
   };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    setMessages((prev) => {
+      const oldIndex = prev.findIndex((m) => (m._id || String(prev.indexOf(m))) === active.id);
+      const newIndex = prev.findIndex((m) => (m._id || String(prev.indexOf(m))) === over.id);
+      const reordered = arrayMove(prev, oldIndex, newIndex);
+      saveVersion(reordered);
+      return reordered;
+    });
+  };
+
+  const handleSave = () => saveVersion(messages);
 
   const handlePublish = async () => {
     if (!id || !currentVersion) return;
@@ -434,7 +438,7 @@ export default function PromptEditorPage() {
   return (
     <PageHeaderExtended
       title={
-        <Stack direction="row" alignItems="center" gap={1}>
+        <Stack direction="row" alignItems="center" gap="8px">
           {prompt.name}
           {currentVersion && <Chip label={`v${currentVersion}`} variant="info" />}
           <Chip label={currentStatus === "published" ? "Published" : "Draft"} />

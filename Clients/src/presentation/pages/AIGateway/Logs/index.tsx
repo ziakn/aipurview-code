@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { Tooltip as MuiTooltip } from "@mui/material";
 import { CustomizableButton } from "../../../components/button/customizable-button";
+import Toggle from "../../../components/Inputs/Toggle";
 import { ButtonToggle } from "../../../components/button-toggle";
 import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtended";
 import { EmptyState } from "../../../components/EmptyState";
@@ -262,18 +263,20 @@ export default function LogsPage() {
     <PageHeaderExtended
       title="Logs"
       description="View request and response logs for all AI Gateway traffic."
-      tipBoxEntity="ai-gateway-analytics"
-      helpArticlePath="ai-gateway/analytics"
+      tipBoxEntity="ai-gateway-logs"
+      helpArticlePath="ai-gateway/logs"
       actionButton={
         <Stack direction="row" gap="8px" alignItems="center">
-          <CustomizableButton
-            text="Auto"
-            onClick={() => setAutoRefresh((prev) => !prev)}
-            sx={{
-              fontWeight: autoRefresh ? 600 : 400,
-              color: autoRefresh ? palette.brand?.primary : palette.text.secondary,
-            }}
-          />
+          <Stack direction="row" alignItems="center" gap="6px">
+            <Toggle
+              checked={autoRefresh}
+              onChange={() => setAutoRefresh((prev) => !prev)}
+              size="small"
+            />
+            <Typography fontSize={12} color="text.secondary" sx={{ whiteSpace: "nowrap" }}>
+              Live updates
+            </Typography>
+          </Stack>
           <CustomizableButton
             text={loading ? "Loading..." : "Refresh"}
             icon={<RefreshCw size={14} strokeWidth={1.5} />}
