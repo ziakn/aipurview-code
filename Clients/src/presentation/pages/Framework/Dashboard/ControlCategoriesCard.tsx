@@ -23,6 +23,7 @@ import type { LucideIcon } from "lucide-react";
 import { getStatusColor } from "../../ISO/style";
 import { isISO42001, isISO27001 } from "../../../../application/constants/frameworks";
 import {
+import { background, border as borderPalette, status, text } from "../../../themes/palette";
   validateApiResponse,
   processSubItems,
   calculateItemPercentages,
@@ -250,7 +251,7 @@ const ControlCategoriesCard = ({ frameworksData, onNavigate }: ControlCategories
             width: 12,
             height: 12,
             borderRadius: "2px",
-            backgroundColor: "#E5E7EB",
+            backgroundColor: status.default.border,
             border: "1px solid #D1D5DB",
           }}
         />
@@ -286,7 +287,7 @@ const ControlCategoriesCard = ({ frameworksData, onNavigate }: ControlCategories
           sx={{
             fontSize: 15,
             fontWeight: 600,
-            color: "#000000",
+            color: text.black,
           }}
         >
           {title}
@@ -308,7 +309,7 @@ const ControlCategoriesCard = ({ frameworksData, onNavigate }: ControlCategories
               <Box
                 key={category.id}
                 sx={{
-                  border: "1px solid #d0d5dd",
+                  border: `1px solid ${borderPalette.dark}`,
                   borderRadius: "4px",
                   overflow: "hidden",
                   backgroundColor: "#FFFFFF",
@@ -319,7 +320,7 @@ const ControlCategoriesCard = ({ frameworksData, onNavigate }: ControlCategories
                   sx={{
                     backgroundColor: "#F1F3F4",
                     p: "10px 16px",
-                    borderBottom: "1px solid #d0d5dd",
+                    borderBottom: `1px solid ${borderPalette.dark}`,
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
@@ -331,7 +332,7 @@ const ControlCategoriesCard = ({ frameworksData, onNavigate }: ControlCategories
                       sx={{
                         fontSize: 13,
                         fontWeight: 600,
-                        color: "#000000",
+                        color: text.black,
                         lineHeight: "16px",
                         m: 0,
                       }}
@@ -385,7 +386,7 @@ const ControlCategoriesCard = ({ frameworksData, onNavigate }: ControlCategories
                       <Typography
                         sx={{
                           fontSize: 12,
-                          color: "#000000",
+                          color: text.black,
                           fontWeight: 600,
                         }}
                       >
@@ -405,7 +406,7 @@ const ControlCategoriesCard = ({ frameworksData, onNavigate }: ControlCategories
                       <Typography
                         sx={{
                           fontSize: 12,
-                          color: "#000000",
+                          color: text.black,
                           fontWeight: 600,
                         }}
                       >
@@ -453,12 +454,12 @@ const ControlCategoriesCard = ({ frameworksData, onNavigate }: ControlCategories
         sx={{
           textAlign: "center",
           py: 4,
-          backgroundColor: "#F9FAFB",
+          backgroundColor: background.accent,
           borderRadius: 2,
-          border: "1px solid #d0d5dd",
+          border: `1px solid ${borderPalette.dark}`,
         }}
       >
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" color=text.secondary>
           No ISO framework clauses data available.
         </Typography>
       </Box>

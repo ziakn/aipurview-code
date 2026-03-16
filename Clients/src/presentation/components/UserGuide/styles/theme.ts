@@ -1,3 +1,4 @@
+import { background, border as borderPalette, brand, status, text } from "../../../themes/palette";
 /**
  * Centralized Design Tokens (Single Source of Truth)
  * Use these constants throughout the app for consistent styling.
@@ -9,24 +10,24 @@ export const colors = {
   text: {
     primary: '#1a1a1a',
     secondary: '#374151',
-    muted: '#6b7280',
+    muted: status.default.text,
     white: '#ffffff',
     whiteMuted: 'rgba(255, 255, 255, 0.8)',
   },
   brand: {
-    primary: '#13715B',
+    primary: brand.primary,
     primaryDark: '#0A4A3A',
     success: '#17B26A',
     warning: '#F79009',
     error: '#F04438',
   },
   border: {
-    default: '#d0d5dd',
+    default: borderPalette.dark,
   },
   background: {
     white: '#ffffff',
-    alt: '#f9fafb',
-    code: '#1C2130',
+    alt: background.accent,
+    code: text.primary,
   },
 } as const;
 
@@ -101,7 +102,7 @@ export const imageStyles = {
 export const chipStyles = {
   // URL chips (light green)
   url: {
-    backgroundColor: '#e6f4ea',
+    backgroundColor: status.success.bg,
     color: '#1e7e34',
     padding: '2px 8px',
     borderRadius: '4px',

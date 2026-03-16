@@ -25,6 +25,7 @@ import {
   paginationStyle,
 } from "../styles";
 import { CustomizableButton } from "../../button/customizable-button";
+import { brand } from "../../../themes/palette";
 
 interface ProjectRiskMitigationTableBodyProps {
   rows: ProjectRiskMitigation[];
@@ -134,9 +135,9 @@ export const ProjectRiskMitigationTableBody: React.FC<
                 <TableCell>
                   <CustomizableButton
                     sx={{
-                      backgroundColor: "#13715B",
+                      backgroundColor: brand.primary,
                       color: "#fff",
-                      border: "1px solid #13715B",
+                      border: `1px solid ${brand.primary}`,
                     }}
                     variant="contained"
                     text="View"

@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { Box, Typography, Stack, Chip } from "@mui/material";
 import { IRiskTimelineProps } from "../../types/interfaces/i.risk";
 import { ITimelineEvent } from "../../../domain/interfaces/i.widget";
+import { background, status, text } from "../../themes/palette";
 
 const RiskTimeline: React.FC<IRiskTimelineProps> = ({
   risks,
@@ -112,15 +113,15 @@ const RiskTimeline: React.FC<IRiskTimelineProps> = ({
         sx={{
           p: 4,
           textAlign: "center",
-          backgroundColor: "#F9FAFB",
+          backgroundColor: background.accent,
           borderRadius: 2,
-          border: "1px solid #E5E7EB",
+          border: `1px solid ${status.default.border}`,
         }}
       >
-        <Typography variant="h6" sx={{ color: "#6B7280", mb: 1 }}>
+        <Typography variant="h6" sx={{ color: status.default.text, mb: 1 }}>
           No Timeline Data Available
         </Typography>
-        <Typography variant="body2" sx={{ color: "#9CA3AF" }}>
+        <Typography variant="body2" sx={{ color: text.disabled }}>
           Risk timeline data will appear here as risks are created and resolved.
         </Typography>
       </Box>
@@ -145,7 +146,7 @@ const RiskTimeline: React.FC<IRiskTimelineProps> = ({
             top: 0,
             bottom: 0,
             width: 2,
-            backgroundColor: "#E5E7EB",
+            backgroundColor: status.default.border,
           }}
         />
 
@@ -159,7 +160,7 @@ const RiskTimeline: React.FC<IRiskTimelineProps> = ({
                   sx={{
                     fontWeight: 600,
                     color: "#374151",
-                    backgroundColor: "#F3F4F6",
+                    backgroundColor: background.hover,
                     px: 2,
                     py: 1,
                     borderRadius: 1,
@@ -183,7 +184,7 @@ const RiskTimeline: React.FC<IRiskTimelineProps> = ({
                     "&:hover": onRiskSelect
                       ? {
                           "& .timeline-card": {
-                            backgroundColor: "#F9FAFB",
+                            backgroundColor: background.accent,
                             transform: "translateX(4px)",
                           },
                         }
@@ -211,7 +212,7 @@ const RiskTimeline: React.FC<IRiskTimelineProps> = ({
                     sx={{
                       flex: 1,
                       backgroundColor: "#FFFFFF",
-                      border: "1px solid #E5E7EB",
+                      border: `1px solid ${status.default.border}`,
                       borderRadius: 2,
                       p: 3,
                       transition: "all 0.2s ease-in-out",
@@ -228,7 +229,7 @@ const RiskTimeline: React.FC<IRiskTimelineProps> = ({
                         mb: 1,
                       }}
                     >
-                      <Typography variant="caption" sx={{ color: "#6B7280" }}>
+                      <Typography variant="caption" sx={{ color: status.default.text }}>
                         {formatTime(event.date)}
                       </Typography>
                     </Box>
@@ -265,7 +266,7 @@ const RiskTimeline: React.FC<IRiskTimelineProps> = ({
                         }}
                       />
                       {event.risk.risk_owner && (
-                        <Typography variant="caption" sx={{ color: "#6B7280" }}>
+                        <Typography variant="caption" sx={{ color: status.default.text }}>
                           Owner: {event.risk.risk_owner}
                         </Typography>
                       )}

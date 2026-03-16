@@ -1,6 +1,7 @@
 // src/presentation/components/CustomTextField.tsx
 import React from "react";
 import { Box, Typography, Skeleton, TextField } from "@mui/material";
+import { brand } from "../../../../themes/palette";
 
 interface CustomTextFieldProps {
   label: string;
@@ -10,7 +11,7 @@ interface CustomTextFieldProps {
 
 const CustomTextField: React.FC<CustomTextFieldProps> = ({ label, value, loading }) => (
   <Box sx={{ width: "33%", mb: 2 }}>
-    <Typography variant="subtitle2" color="#13715B" sx={{ mb: 1, fontWeight: 600 }}>
+    <Typography variant="subtitle2" color=brand.primary sx={{ mb: 1, fontWeight: 600 }}>
       {label}
     </Typography>
     <Box

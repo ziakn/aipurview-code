@@ -2,6 +2,7 @@ import React from "react";
 import { Stack, Typography, Box } from "@mui/material";
 import VWTooltip from "../../components/VWTooltip";
 import {
+import { status } from "../../themes/palette";
   statusCardsContainer,
   statusCardTile,
   statusCardKey,
@@ -25,7 +26,7 @@ const AgentStatusCards: React.FC<AgentStatusCardsProps> = ({ stats }) => {
     { key: "total", label: "Total", color: "#1976D2", count: stats.total },
     { key: "unreviewed", label: "Unreviewed", color: "#F9A825", count: stats.unreviewed },
     { key: "confirmed", label: "Confirmed", color: "#2E7D32", count: stats.confirmed },
-    { key: "rejected", label: "Rejected", color: "#D32F2F", count: stats.rejected },
+    { key: "rejected", label: "Rejected", color: status.error.text, count: stats.rejected },
     { key: "stale", label: "Stale", color: "#455A64", count: stats.stale },
   ];
 

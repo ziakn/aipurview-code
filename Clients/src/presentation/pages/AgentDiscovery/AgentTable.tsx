@@ -30,6 +30,7 @@ import {
   agentPagination,
 } from "./style";
 import { AgentTableProps } from "src/domain/interfaces/i.agentDiscovery";
+import { text } from "../../themes/palette";
 
 
 const cellStyle = singleTheme.tableStyles.primary.body.cell;
@@ -235,7 +236,7 @@ const AgentTable: React.FC<AgentTableProps> = ({
                       color:
                         sortConfig.key === column.label
                           ? "primary.main"
-                          : "#9CA3AF",
+                          : text.disabled,
                     }}
                   >
                     {sortConfig.key === column.label &&

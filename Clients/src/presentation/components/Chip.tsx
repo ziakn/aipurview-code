@@ -1,6 +1,7 @@
 import React from "react";
 import { Box } from "@mui/material";
 import {
+import { background, status } from "../themes/palette";
   IChipProps,
   ChipVariant,
   ChipColorConfig,
@@ -12,29 +13,29 @@ import {
  */
 const VARIANT_COLORS: Record<ChipVariant, ChipColorConfig> = {
   // Risk levels
-  critical: { backgroundColor: "#FFD6D6", textColor: "#D32F2F" },
+  critical: { backgroundColor: status.error.bg, textColor: status.error.text },
   high: { backgroundColor: "#FFE5D0", textColor: "#E64A19" },
-  medium: { backgroundColor: "#FFF8E1", textColor: "#795548" },
-  low: { backgroundColor: "#E6F4EA", textColor: "#138A5E" },
+  medium: { backgroundColor: status.warning.bg, textColor: status.warning.text },
+  low: { backgroundColor: status.success.bg, textColor: status.success.text },
   "very-low": { backgroundColor: "#E0F7FA", textColor: "#00695C" },
 
   // Status
-  success: { backgroundColor: "#E6F4EA", textColor: "#138A5E" },
-  warning: { backgroundColor: "#FFF8E1", textColor: "#795548" },
-  error: { backgroundColor: "#FFD6D6", textColor: "#D32F2F" },
-  info: { backgroundColor: "#E3F2FD", textColor: "#1565C0" },
-  default: { backgroundColor: "#F3F4F6", textColor: "#6B7280" },
+  success: { backgroundColor: status.success.bg, textColor: status.success.text },
+  warning: { backgroundColor: status.warning.bg, textColor: status.warning.text },
+  error: { backgroundColor: status.error.bg, textColor: status.error.text },
+  info: { backgroundColor: status.info.bg, textColor: status.info.text },
+  default: { backgroundColor: background.hover, textColor: status.default.text },
 
   // Severity (maps to same colors as risk levels)
-  catastrophic: { backgroundColor: "#FFD6D6", textColor: "#D32F2F" },
+  catastrophic: { backgroundColor: status.error.bg, textColor: status.error.text },
   major: { backgroundColor: "#FFE5D0", textColor: "#E64A19" },
-  moderate: { backgroundColor: "#FFF8E1", textColor: "#795548" },
-  minor: { backgroundColor: "#E6F4EA", textColor: "#138A5E" },
+  moderate: { backgroundColor: status.warning.bg, textColor: status.warning.text },
+  minor: { backgroundColor: status.success.bg, textColor: status.success.text },
   negligible: { backgroundColor: "#E0F7FA", textColor: "#00695C" },
 
   // Boolean
-  yes: { backgroundColor: "#E6F4EA", textColor: "#138A5E" },
-  no: { backgroundColor: "#FFD6D6", textColor: "#D32F2F" },
+  yes: { backgroundColor: status.success.bg, textColor: status.success.text },
+  no: { backgroundColor: status.error.bg, textColor: status.error.text },
 };
 
 /**

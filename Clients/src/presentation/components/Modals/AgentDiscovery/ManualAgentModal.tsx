@@ -14,6 +14,7 @@ import { CustomizableButton } from "../../button/customizable-button";
 import { apiServices } from "../../../../infrastructure/api/networkServices";
 import { getAllEntities } from "../../../../application/repository/entity.repository";
 import { AgentPrimitiveRow } from "../../../../domain/interfaces/i.agentDiscovery";
+import { background, border as borderPalette, brand } from "../../../themes/palette";
 
 interface ManualAgentModalProps {
   isOpen: boolean;
@@ -128,7 +129,7 @@ const ManualAgentModal: React.FC<ManualAgentModalProps> = ({
       anchor="right"
       open={isOpen}
       onClose={handleClose}
-      PaperProps={{ sx: { width: 440, backgroundColor: theme.palette.background.modal || "#FCFCFD" } }}
+      PaperProps={{ sx: { width: 440, backgroundColor: theme.palette.background.modal || background.alt } }}
     >
       {/* Header */}
       <Stack
@@ -209,14 +210,14 @@ const ManualAgentModal: React.FC<ManualAgentModalProps> = ({
       <Stack direction="row" justifyContent="flex-end" gap={1} sx={{ p: "16px 24px" }}>
         <CustomizableButton
           variant="outlined"
-          sx={{ border: "1px solid #d0d5dd" }}
+          sx={{ border: `1px solid ${borderPalette.dark}` }}
           onClick={handleClose}
         >
           Cancel
         </CustomizableButton>
         <CustomizableButton
           variant="contained"
-          sx={{ backgroundColor: "#13715B", border: "1px solid #13715B" }}
+          sx={{ backgroundColor: brand.primary, border: `1px solid ${brand.primary}` }}
           onClick={handleSubmit}
           isDisabled={isSubmitting}
         >

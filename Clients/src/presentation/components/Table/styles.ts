@@ -1,3 +1,4 @@
+import { text } from "../../themes/palette";
 export const tableWrapper = (theme: any) => ({
   '& .MuiTableCell-root.MuiTableCell-footer': {
     paddingX: theme.spacing(8),
@@ -54,7 +55,7 @@ export const emptyData = (theme: any) => ({
 export const styles = {
   textBase: {
     fontSize: "13px",
-    color: "#475467"
+    color: text.tertiary
   }
 }
 

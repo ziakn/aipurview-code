@@ -17,6 +17,7 @@ import { Save as SaveIcon } from "lucide-react";
 import CustomizableSkeleton from "../../../components/Skeletons";
 import CustomizableToast from "../../../components/Toast"; // Import CustomizableToast
 import { updatePassword } from "../../../../application/repository/user.repository";
+import { brand } from "../../../themes/palette";
 
 const PasswordForm: React.FC = () => {
   const theme = useTheme();
@@ -290,10 +291,10 @@ const PasswordForm: React.FC = () => {
                 variant="contained"
                 text="Save"
                 sx={{
-                  backgroundColor: "#13715B",
+                  backgroundColor: brand.primary,
                   border: isSaveDisabled
                     ? "1px solid rgba(0, 0, 0, 0.26)"
-                    : "1px solid #13715B",
+                    : `1px solid ${brand.primary}`,
                   gap: 2,
                 }}
                 icon={<SaveIcon size={16} />}

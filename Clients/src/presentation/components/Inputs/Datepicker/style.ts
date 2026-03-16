@@ -1,3 +1,4 @@
+import { brand } from "../../../themes/palette";
 import { Theme } from "@mui/material";
 
 export const getDatePickerStyle = (theme: Theme) => ({
@@ -119,12 +120,12 @@ export const DatePickerStyle = {
     borderColor: "#5FA896 !important",
   },
   "& .MuiPickersOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-    borderColor: "#13715B !important",
+    borderColor: `${brand.primary} !important`,
     borderWidth: "2px",
     boxShadow: "0 0 0 3px rgba(19, 113, 91, 0.1)",
   },
   "& .MuiPickersOutlinedInput-root.Mui-focused fieldset": {
-    borderColor: "#13715B !important",
+    borderColor: `${brand.primary} !important`,
     borderWidth: "2px",
     boxShadow: "0 0 0 3px rgba(19, 113, 91, 0.1)",
   },

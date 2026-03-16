@@ -1,12 +1,13 @@
 // style.ts
 import { SxProps, Theme } from "@mui/material";
+import { border as borderPalette } from "../../themes/palette";
 
 export const searchBoxStyle = (
   isSearchBarVisible: boolean
 ): SxProps<Theme> => ({
   display: "flex",
   alignItems: "center",
-  border: "1px solid #eaecf0",
+  border: `1px solid ${borderPalette.light}`,
   borderRadius: 1,
   p: "4px 6px",
   bgcolor: "#fff",

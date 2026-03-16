@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Box, Typography, Avatar } from '@mui/material';
 import { Building2 } from 'lucide-react';
 import { getBrandFetchUrl } from '../../../config/brandfetch.config';
+import { background, status, text } from "../../themes/palette";
 
 interface VendorLogoProps {
   /** Vendor's website URL or domain */
@@ -109,7 +110,7 @@ const VendorLogo: React.FC<VendorLogoProps> = ({
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: '6px',
-            border: '1px solid #E5E7EB',
+            border: `1px solid ${status.default.border}`,
             backgroundColor: '#FFFFFF',
             overflow: 'hidden',
             flexShrink: 0,
@@ -135,10 +136,10 @@ const VendorLogo: React.FC<VendorLogoProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: '#F3F4F6',
+                backgroundColor: background.hover,
               }}
             >
-              <Building2 size={size * 0.5} color="#9CA3AF" />
+              <Building2 size={size * 0.5} color=text.disabled />
             </Box>
           )}
         </Box>

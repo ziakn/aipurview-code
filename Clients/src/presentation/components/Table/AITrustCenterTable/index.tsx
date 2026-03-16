@@ -18,6 +18,7 @@ import TablePaginationActions from "../../TablePagination";
 import { ChevronsUpDown, ChevronUp, ChevronDown } from "lucide-react";
 import Placeholder from "../../../assets/imgs/empty-state.svg";
 import { IAITrustCenterTableProps } from "../../../types/interfaces/i.table";
+import { text } from "../../../themes/palette";
 
 const SelectorVertical = (props: any) => (
   <ChevronsUpDown size={16} {...props} />
@@ -218,7 +219,7 @@ const AITrustCenterTable = <T extends { id: number }>({
                       sx={{
                         display: "flex",
                         alignItems: "center",
-                        color: sortConfig.key === column.label ? "primary.main" : "#9CA3AF",
+                        color: sortConfig.key === column.label ? "primary.main" : text.disabled,
                       }}
                     >
                       {sortConfig.key === column.label && sortConfig.direction === "asc" && (
@@ -310,7 +311,7 @@ const AITrustCenterTable = <T extends { id: number }>({
         }}
       >
         <img src={Placeholder} alt="Empty state" />
-        <Typography sx={{ fontSize: "13px", color: "#475467" }}>
+        <Typography sx={{ fontSize: "13px", color: text.tertiary }}>
           {emptyStateText}
         </Typography>
       </Stack>
@@ -330,7 +331,7 @@ const AITrustCenterTable = <T extends { id: number }>({
           minHeight: 200,
         }}
       >
-        <Typography sx={{ fontSize: "13px", color: "#475467" }}>
+        <Typography sx={{ fontSize: "13px", color: text.tertiary }}>
           Loading...
         </Typography>
       </Stack>

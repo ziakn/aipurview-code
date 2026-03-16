@@ -48,6 +48,7 @@ import AuditRiskPopup from "../../RiskPopup/AuditRiskPopup";
 const LinkedRisksPopup = lazy(() => import("../../LinkedRisks").then(m => ({ default: m.LinkedRisksPopup })));
 import { ISO27001GetSubClauseById } from "../../../../application/repository/subClause_iso.repository";
 import { RiskFormValues } from "../../../../domain/types/riskForm.types";
+import { background, border as borderPalette, status, text } from "../../../themes/palette";
 
 export const inputStyles = {
   minWidth: 200,
@@ -851,7 +852,7 @@ const VWISO27001ClauseDrawerDialog = ({
                     sx={{
                       border: "1px solid #eee",
                       padding: "12px",
-                      backgroundColor: "background.accent",
+                      backgroundColor: background.accent,
                       borderRadius: "4px",
                     }}
                   >
@@ -1073,7 +1074,7 @@ const VWISO27001ClauseDrawerDialog = ({
                 <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                   Evidence files
                 </Typography>
-                <Typography variant="body2" color="text.tertiary">
+                <Typography variant="body2" color=text.tertiary>
                   Upload evidence files to document compliance with this
                   requirement.
                 </Typography>
@@ -1107,12 +1108,12 @@ const VWISO27001ClauseDrawerDialog = ({
                           minWidth: 155,
                           height: 25,
                           fontSize: 11,
-                          border: "1px solid #D0D5DD",
+                          border: `1px solid ${borderPalette.dark}`,
                           backgroundColor: "white",
-                          color: "#344054",
+                          color: text.secondary,
                           "&:hover": {
-                            backgroundColor: "#F9FAFB",
-                            border: "1px solid #D0D5DD",
+                            backgroundColor: background.accent,
+                            border: `1px solid ${borderPalette.dark}`,
                           },
                         }}
                         disableRipple={
@@ -1147,7 +1148,7 @@ const VWISO27001ClauseDrawerDialog = ({
                     </Stack>
 
                     <Stack direction="row" spacing={2}>
-                      <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
+                      <Typography sx={{ fontSize: 11, color: text.secondary }}>
                         {`${evidenceFiles.length || 0} files attached`}
                       </Typography>
                       {uploadFiles.length > 0 && (
@@ -1191,7 +1192,7 @@ const VWISO27001ClauseDrawerDialog = ({
                             borderRadius: "4px",
                             backgroundColor: "background.main",
                             "&:hover": {
-                              backgroundColor: "background.accent",
+                              backgroundColor: background.accent,
                             },
                           }}
                         >
@@ -1218,7 +1219,7 @@ const VWISO27001ClauseDrawerDialog = ({
                                 {file.fileName}
                               </Typography>
                               <Typography
-                                sx={{ fontSize: 11, color: "#6B7280" }}
+                                sx={{ fontSize: 11, color: status.default.text }}
                               >
                                 {file.size ? `${((file.size || 0) / 1024).toFixed(1)} KB` : ""}
                                 {file.size && file.source ? " • " : ""}
@@ -1237,7 +1238,7 @@ const VWISO27001ClauseDrawerDialog = ({
                                   )
                                 }
                                 sx={{
-                                  color: "text.tertiary",
+                                  color: text.tertiary,
                                   "&:hover": {
                                     color: "primary.main",
                                     backgroundColor: "rgba(19, 113, 91, 0.08)",
@@ -1255,7 +1256,7 @@ const VWISO27001ClauseDrawerDialog = ({
                                 }
                                 disabled={isEditingDisabled}
                                 sx={{
-                                  color: "text.tertiary",
+                                  color: text.tertiary,
                                   "&:hover": {
                                     color: "status.error.main",
                                     backgroundColor: "rgba(211, 47, 47, 0.08)",
@@ -1289,7 +1290,7 @@ const VWISO27001ClauseDrawerDialog = ({
                           padding: "10px 12px",
                           border: `1px solid ${theme.palette.status.warning.border}`,
                           borderRadius: "4px",
-                          backgroundColor: "status.warning.bg",
+                          backgroundColor: status.warning.bg,
                         }}
                       >
                         <Box
@@ -1397,7 +1398,7 @@ const VWISO27001ClauseDrawerDialog = ({
                             sx={{
                               color: "#4C7BF4",
                               "&:hover": {
-                                color: "#D32F2F",
+                                color: status.error.text,
                                 backgroundColor: "rgba(211, 47, 47, 0.08)",
                               },
                             }}
@@ -1416,16 +1417,16 @@ const VWISO27001ClauseDrawerDialog = ({
                     sx={{
                       textAlign: "center",
                       py: 4,
-                      color: "text.tertiary",
+                      color: text.tertiary,
                       border: `2px dashed ${theme.palette.border.dark}`,
                       borderRadius: 1,
-                      backgroundColor: "background.accent",
+                      backgroundColor: background.accent,
                     }}
                   >
                     <Typography variant="body2" sx={{ mb: 1 }}>
                       No evidence files uploaded yet
                     </Typography>
-                    <Typography variant="caption" color="#9CA3AF">
+                    <Typography variant="caption" color=text.disabled>
                       Click "Add evidence files" to upload documentation for
                       this requirement
                     </Typography>
@@ -1440,7 +1441,7 @@ const VWISO27001ClauseDrawerDialog = ({
                 <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                   Linked risks
                 </Typography>
-                <Typography variant="body2" color="text.tertiary">
+                <Typography variant="body2" color=text.tertiary>
                   Link risks from your risk database to track which risks are
                   addressed by this requirement.
                 </Typography>
@@ -1458,9 +1459,9 @@ const VWISO27001ClauseDrawerDialog = ({
                       fontSize: 11,
                       border: `1px solid ${theme.palette.border.dark}`,
                       backgroundColor: "background.main",
-                      color: "text.secondary",
+                      color: text.secondary,
                       "&:hover": {
-                        backgroundColor: "background.accent",
+                        backgroundColor: background.accent,
                         border: `1px solid ${theme.palette.border.dark}`,
                       },
                     }}
@@ -1472,7 +1473,7 @@ const VWISO27001ClauseDrawerDialog = ({
                   </Button>
 
                   <Stack direction="row" spacing={2}>
-                    <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
+                    <Typography sx={{ fontSize: 11, color: text.secondary }}>
                       {`${currentRisks.length || 0} risks linked`}
                     </Typography>
                     {selectedRisks.length > 0 && (
@@ -1505,7 +1506,7 @@ const VWISO27001ClauseDrawerDialog = ({
                             borderRadius: "4px",
                             backgroundColor: "background.main",
                             "&:hover": {
-                              backgroundColor: "background.accent",
+                              backgroundColor: background.accent,
                             },
                           }}
                         >
@@ -1524,7 +1525,7 @@ const VWISO27001ClauseDrawerDialog = ({
                             </Typography>
                             {risk.risk_level && (
                               <Typography
-                                sx={{ fontSize: 11, color: "text.tertiary" }}
+                                sx={{ fontSize: 11, color: text.tertiary }}
                               >
                                 Risk level: {risk.risk_level}
                               </Typography>
@@ -1537,7 +1538,7 @@ const VWISO27001ClauseDrawerDialog = ({
                                 size="small"
                                 onClick={() => handleViewRiskDetails(risk)}
                                 sx={{
-                                  color: "text.tertiary",
+                                  color: text.tertiary,
                                   "&:hover": {
                                     color: "primary.main",
                                     backgroundColor: "rgba(19, 113, 91, 0.08)",
@@ -1560,7 +1561,7 @@ const VWISO27001ClauseDrawerDialog = ({
                                 }}
                                 disabled={isEditingDisabled}
                                 sx={{
-                                  color: "text.tertiary",
+                                  color: text.tertiary,
                                   "&:hover": {
                                     color: "status.error.main",
                                     backgroundColor: "rgba(211, 47, 47, 0.08)",
@@ -1584,10 +1585,10 @@ const VWISO27001ClauseDrawerDialog = ({
                       borderRadius: "4px",
                       padding: "20px",
                       textAlign: "center",
-                      backgroundColor: "background.accent",
+                      backgroundColor: background.accent,
                     }}
                   >
-                    <Typography sx={{ color: "text.tertiary" }}>
+                    <Typography sx={{ color: text.tertiary }}>
                       No risks linked yet
                     </Typography>
                   </Box>

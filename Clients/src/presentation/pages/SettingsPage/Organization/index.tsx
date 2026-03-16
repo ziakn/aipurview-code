@@ -27,6 +27,7 @@ import { getAuthToken } from "../../../../application/redux/auth/getAuthToken";
 import { useAuth } from "../../../../application/hooks/useAuth";
 import { useLogoFetch } from "../../../../application/hooks/useLogoFetch";
 import { OrganizationModel } from "../../../../domain/models/Common/organization/organization.model";
+import { background, brand } from "../../../themes/palette";
 
 interface AlertState {
   variant: "success" | "info" | "warning" | "error";
@@ -429,7 +430,7 @@ const Organization = () => {
               text="Save"
               sx={{
                 width: 90,
-                backgroundColor: "#13715B",
+                backgroundColor: brand.primary,
                 border: "1px solid",
                 gap: 2,
                 mt: 3,
@@ -474,7 +475,7 @@ const Organization = () => {
                   overflow: "hidden",
                   "&:hover": {
                     borderColor: "#999",
-                    backgroundColor: "#f5f5f5",
+                    backgroundColor: background.surface,
                   },
                 }}
               >
@@ -561,7 +562,7 @@ const Organization = () => {
                 sx={{
                   fontSize: 12,
                   textTransform: "none",
-                  color: "#13715B",
+                  color: brand.primary,
                   "&:hover": {
                     backgroundColor: "transparent !important",
                   },

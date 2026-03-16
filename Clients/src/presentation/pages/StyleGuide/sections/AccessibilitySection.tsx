@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Stack, Typography, useTheme, Snackbar } from "@mui/material";
 import { Copy, Check } from "lucide-react";
 import CodeBlock from "../components/CodeBlock";
+import { brand, text } from "../../../themes/palette";
 
 const accessibilitySnippets = {
   altText: `// Always provide alt text for images
@@ -81,7 +82,7 @@ const accessibilitySnippets = {
 // Text on backgrounds must have 4.5:1 ratio
 
 // Good: Dark text on light background
-<Typography sx={{ color: "#1c2130" }}>
+<Typography sx={{ color: text.primary }}>
   On white background
 </Typography>
 
@@ -336,10 +337,10 @@ const AccessibilitySection: React.FC = () => {
             <SpecTable
               onCopy={handleCopy}
               specs={[
-                { property: "text.primary (#1c2130)", value: "21:1 ✓" },
-                { property: "text.secondary (#344054)", value: "10:1 ✓" },
-                { property: "text.tertiary (#475467)", value: "6.4:1 ✓" },
-                { property: "primary (#13715B)", value: "5.5:1 ✓" },
+                { property: "text.primary (text.primary)", value: "21:1 ✓" },
+                { property: "text.secondary (text.secondary)", value: "10:1 ✓" },
+                { property: "text.tertiary (text.tertiary)", value: "6.4:1 ✓" },
+                { property: "primary (brand.primary)", value: "5.5:1 ✓" },
                 { property: "error text (#f04438)", value: "4.5:1 ✓" },
               ]}
             />

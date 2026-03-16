@@ -18,6 +18,7 @@ import { useTableGrouping, useGroupByState } from "../../../application/hooks/us
 import { GroupedTableView } from "../../components/Table/GroupedTableView";
 import CustomizablePolicyTable from "../../components/Table/PolicyTable";
 import singleTheme from "../../themes/v1SingleTheme";
+import { background } from "../../themes/palette";
 
 // Define table headers in the format expected by CustomizablePolicyTable
 const tableHeaders = [
@@ -236,7 +237,7 @@ const PolicyTemplates: React.FC<PolicyTemplatesProps> = ({
                       sx={{
                         ...cellStyle,
                         fontWeight: 500,
-                        backgroundColor: sortConfig?.key?.toLowerCase().includes("id") ? "#f5f5f5" : "inherit",
+                        backgroundColor: sortConfig?.key?.toLowerCase().includes("id") ? background.surface : "inherit",
                       }}
                     >
                       {policy.id}
@@ -248,7 +249,7 @@ const PolicyTemplates: React.FC<PolicyTemplatesProps> = ({
                       maxWidth: 200,
                       overflow: "hidden",
                       textOverflow: "ellipsis",
-                      backgroundColor: sortConfig?.key?.toLowerCase().includes("title") ? "#f5f5f5" : "inherit",
+                      backgroundColor: sortConfig?.key?.toLowerCase().includes("title") ? background.surface : "inherit",
                     }}
                   >
                     {policy.title}
@@ -257,7 +258,7 @@ const PolicyTemplates: React.FC<PolicyTemplatesProps> = ({
                     <TableCell
                       sx={{
                         ...cellStyle,
-                        backgroundColor: sortConfig?.key?.toLowerCase().includes("tags") ? "#f5f5f5" : "inherit",
+                        backgroundColor: sortConfig?.key?.toLowerCase().includes("tags") ? background.surface : "inherit",
                       }}
                     >
                       <Stack direction="row" gap={1} flexWrap="wrap">
@@ -274,7 +275,7 @@ const PolicyTemplates: React.FC<PolicyTemplatesProps> = ({
                         maxWidth: 250,
                         overflow: "hidden",
                         textOverflow: "ellipsis",
-                        backgroundColor: sortConfig?.key?.toLowerCase().includes("description") ? "#f5f5f5" : "inherit",
+                        backgroundColor: sortConfig?.key?.toLowerCase().includes("description") ? background.surface : "inherit",
                       }}
                     >
                       {policy.description}

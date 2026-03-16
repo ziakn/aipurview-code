@@ -16,6 +16,7 @@ import AITrustCentreHeader from "./Components/Header/AITrustCentreHeader";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { ENV_VARs } from "../../../../env.vars";
+import { background, brand } from "../../themes/palette";
 
 const AITrustCentrePublic: React.FC = () => {
   const [tabValue, setTabValue] = React.useState("overview");
@@ -58,7 +59,7 @@ const AITrustCentrePublic: React.FC = () => {
     <Stack
       overflow={"hidden"}
       sx={{
-        backgroundColor: "#FCFCFD",
+        backgroundColor: background.alt,
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
@@ -103,7 +104,7 @@ const AITrustCentrePublic: React.FC = () => {
           >
             <TabList
               onChange={handleTabChange}
-              TabIndicatorProps={{ style: { backgroundColor: "#13715B" } }}
+              TabIndicatorProps={{ style: { backgroundColor: brand.primary } }}
               aria-label="AI Trust Center Public Tabs"
               sx={aiTrustCenterTabListStyle}
             >

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Stack, Typography, useTheme, Snackbar } from "@mui/material";
 import { Copy } from "lucide-react";
 import CodeBlock from "../components/CodeBlock";
+import { border as borderPalette } from "../../../themes/palette";
 
 const shadowSnippets = {
   themeShadow: `// Default theme shadow (dropdowns, popovers, cards)
@@ -315,8 +316,8 @@ const ShadowsSection: React.FC = () => {
             <SpecTable
               onCopy={handleCopy}
               specs={[
-                { property: "border.light", value: "#eaecf0" },
-                { property: "border.dark", value: "#d0d5dd" },
+                { property: "border.light", value: borderPalette.light },
+                { property: "border.dark", value: borderPalette.dark },
                 { property: "Border radius", value: "4px" },
                 { property: "Border width", value: "1px" },
               ]}

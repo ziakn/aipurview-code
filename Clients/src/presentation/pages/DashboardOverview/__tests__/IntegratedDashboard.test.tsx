@@ -133,7 +133,7 @@ vi.mock("../../../components/ActivityItem", () => ({
 }));
 
 vi.mock("../constants", () => ({
-  COLORS: { primary: "#13715B" },
+  COLORS: { primary: brand.primary },
   navIconButtonSx: {},
   getRiskLevelData: (d: any) => [{ name: "High", value: d.high, color: "red" }],
   getVendorRiskData: (d: any) => [{ name: "High", value: d.high, color: "red" }],
@@ -207,6 +207,7 @@ let mockHasCache = true;
 
 // Import the component under test
 import IntegratedDashboard from "../IntegratedDashboard";
+import { brand } from "../../../themes/palette";
 
 describe("IntegratedDashboard", () => {
   beforeEach(() => {

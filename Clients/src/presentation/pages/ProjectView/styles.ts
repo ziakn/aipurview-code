@@ -1,3 +1,4 @@
+import { brand } from "../../themes/palette";
 import { SxProps, Theme } from "@mui/material";
 
 // Tab styles
@@ -67,7 +68,7 @@ export const newProjectButtonStyle: SxProps<Theme> = (theme) => ({
 
 // Project section styles
 export const projectTitleStyle: SxProps<Theme> = {
-  color: "text.primary",
+  color: text.primary,
   fontWeight: 600,
   mb: "6px",
   fontSize: 16,
@@ -75,7 +76,7 @@ export const projectTitleStyle: SxProps<Theme> = {
 
 export const projectDescriptionStyle: SxProps<Theme> = {
   fontSize: (theme) => theme.typography.fontSize,
-  color: "text.secondary",
+  color: text.secondary,
 };
 
 export const tabContainerStyle: SxProps<Theme> = {
@@ -94,6 +95,6 @@ export const tabListStyle: SxProps<Theme> = {
   borderBottom: "none",
   "& .MuiTabs-flexContainer": { columnGap: "34px" },
   "& .MuiTabs-indicator": {
-    backgroundColor: "#13715B",
+    backgroundColor: brand.primary,
   },
 };

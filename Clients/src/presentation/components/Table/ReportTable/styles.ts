@@ -1,3 +1,4 @@
+import { text } from "../../../themes/palette";
 export const paginationStyle = ( theme:any ) => ({ 
   mt: theme.spacing(6),
   color: theme.palette.text.secondary,
@@ -53,7 +54,7 @@ export const emptyData = ( theme:any ) => ({
 export const styles = {
   textBase : {
     fontSize: "13px",
-    color: "#9CA3AF",
+    color: text.disabled,
     fontWeight: 400
   }
 }

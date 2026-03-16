@@ -42,6 +42,7 @@ import { FilterBy, FilterColumn } from "../../components/Table/FilterBy";
 import { useFilterBy } from "../../../application/hooks/useFilterBy";
 import { ColumnSelector } from "../../components/Table/ColumnSelector";
 import {
+import { brand } from "../../themes/palette";
   useColumnVisibility,
   ColumnConfig,
 } from "../../../application/hooks/useColumnVisibility";
@@ -608,8 +609,8 @@ const Training: React.FC = () => {
             <CustomizableButton
               variant="contained"
               sx={{
-                backgroundColor: "#13715B",
-                border: "1px solid #13715B",
+                backgroundColor: brand.primary,
+                border: `1px solid ${brand.primary}`,
                 gap: 2,
               }}
               text="New training"

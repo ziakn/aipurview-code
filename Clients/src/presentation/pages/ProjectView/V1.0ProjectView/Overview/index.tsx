@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { PluginSlot } from "../../../../components/PluginSlot";
 import { PLUGIN_SLOTS } from "../../../../../domain/constants/pluginSlots";
+import { brand } from "../../../../themes/palette";
 
 const VWProjectOverview = ({ project }: { project?: Project }) => {
   const [projectFrameworkId, setProjectFrameworkId] = useState<number | null>(
@@ -294,7 +295,7 @@ const VWProjectOverview = ({ project }: { project?: Project }) => {
                     completed={completedEuActNumbers}
                     total={totalEuActNumbers}
                     title={titleEuAct}
-                    progressbarColor="#13715B"
+                    progressbarColor=brand.primary
                   />
                 </Stack>
               )}
@@ -307,7 +308,7 @@ const VWProjectOverview = ({ project }: { project?: Project }) => {
                     completed={completedIso42001Numbers}
                     total={totalIso42001Numbers}
                     title={titleIso42001}
-                    progressbarColor="#13715B"
+                    progressbarColor=brand.primary
                   />
                 </Stack>
               )}

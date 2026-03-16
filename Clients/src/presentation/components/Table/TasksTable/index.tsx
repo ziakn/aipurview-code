@@ -31,6 +31,7 @@ import { CategoryChip } from "../../Chip/CategoryChip/CategoryChip";
 import { DISPLAY_TO_PRIORITY_MAP, PRIORITY_DISPLAY_MAP } from "../../../constants/priorityOptions";
 import { displayFormattedDate } from "../../../tools/isoDateToString";
 import { taskTableStyles } from "./styles";
+import { background, status, text } from "../../../themes/palette";
 
 const SelectorVertical = (props: any) => (
   <ChevronsUpDown size={16} {...props} />
@@ -129,7 +130,7 @@ const SortableTableHeader: React.FC<{
                     display: "flex",
                     alignItems: "center",
                     color:
-                      sortConfig.key === column.id ? "primary.main" : "#9CA3AF",
+                      sortConfig.key === column.id ? "primary.main" : text.disabled,
                   }}
                 >
                   {sortConfig.key === column.id &&
@@ -370,7 +371,7 @@ const TasksTable: React.FC<ITasksTableProps> = ({
                         sx={{
                           textTransform: "capitalize",
                           textDecoration: isArchived ? "line-through" : "none",
-                          color: isArchived ? "text.accent" : "inherit",
+                          color: isArchived ? text.accent : "inherit",
                         }}
                       >
                         {task.title}
@@ -452,7 +453,7 @@ const TasksTable: React.FC<ITasksTableProps> = ({
                             fontSize: 13,
                             color: task.isOverdue && task.status !== TaskStatus.COMPLETED
                               ? "error.main"
-                              : "text.secondary",
+                              : text.secondary,
                             fontWeight: task.isOverdue && task.status !== TaskStatus.COMPLETED ? 500 : 400,
                           }}
                         >
@@ -467,7 +468,7 @@ const TasksTable: React.FC<ITasksTableProps> = ({
                     ) : (
                       <Typography
                         variant="body2"
-                        color="text.disabled"
+                        color=text.disabled
                         sx={{ fontSize: 13 }}
                       >
                         No due date
@@ -501,7 +502,7 @@ const TasksTable: React.FC<ITasksTableProps> = ({
                                 width: 28,
                                 height: 28,
                                 borderRadius: "50%",
-                                backgroundColor: "#f3f4f6",
+                                backgroundColor: background.hover,
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
@@ -521,13 +522,13 @@ const TasksTable: React.FC<ITasksTableProps> = ({
                               width: 28,
                               height: 28,
                               borderRadius: "50%",
-                              backgroundColor: "#e5e7eb",
+                              backgroundColor: status.default.border,
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
                               fontSize: 10,
                               fontWeight: 500,
-                              color: "#6b7280",
+                              color: status.default.text,
                               border: "2px solid #fff",
                             }}
                           >
@@ -538,7 +539,7 @@ const TasksTable: React.FC<ITasksTableProps> = ({
                     ) : (
                       <Typography
                         variant="body2"
-                        color="text.disabled"
+                        color=text.disabled
                         sx={{ fontSize: 13 }}
                       >
                         Unassigned

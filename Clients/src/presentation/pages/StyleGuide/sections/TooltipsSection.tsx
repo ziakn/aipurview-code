@@ -3,6 +3,7 @@ import { Box, Stack, Typography, useTheme, Divider, Snackbar, Tooltip } from "@m
 import { Copy, Info, HelpCircle } from "lucide-react";
 import { EnhancedTooltip } from "../../../components/EnhancedTooltip";
 import CodeBlock from "../components/CodeBlock";
+import { text } from "../../../themes/palette";
 
 const tooltipSnippets = {
   muiBasic: `import { Tooltip } from "@mui/material";
@@ -156,7 +157,7 @@ const TooltipsSection: React.FC = () => {
               specs={[
                 { property: "Font size", value: "11px" },
                 { property: "Padding", value: "4px 8px" },
-                { property: "Background", value: "#1c2130" },
+                { property: "Background", value: text.primary },
                 { property: "Color", value: "#ffffff" },
                 { property: "Border radius", value: "4px" },
                 { property: "Max width", value: "300px" },

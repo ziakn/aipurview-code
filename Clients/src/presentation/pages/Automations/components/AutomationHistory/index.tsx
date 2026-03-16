@@ -23,6 +23,7 @@ import TablePaginationActions from '../../../../components/TablePagination';
 import { EmptyState } from '../../../../components/EmptyState';
 import singleTheme from '../../../../themes/v1SingleTheme';
 import { ChevronsUpDown } from 'lucide-react';
+import { border as borderPalette, status } from "../../../../themes/palette";
 
 interface AutomationHistoryProps {
   automationId: string;
@@ -162,7 +163,7 @@ const AutomationHistory: React.FC<AutomationHistoryProps> = ({ automationId }) =
         <Stack direction="row" spacing={4} mb={4} flexWrap="wrap">
           <Box
             sx={{
-              border: "1px solid #eaecf0",
+              border: `1px solid ${borderPalette.light}`,
               borderRadius: 2,
               background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
               minWidth: 228,
@@ -197,7 +198,7 @@ const AutomationHistory: React.FC<AutomationHistoryProps> = ({ automationId }) =
                 sx={{
                   width: '100%',
                   height: 6,
-                  backgroundColor: '#E5E7EB',
+                  backgroundColor: status.default.border,
                   borderRadius: 1,
                   overflow: 'hidden',
                 }}
@@ -218,7 +219,7 @@ const AutomationHistory: React.FC<AutomationHistoryProps> = ({ automationId }) =
           </Box>
           <Box
             sx={{
-              border: "1px solid #eaecf0",
+              border: `1px solid ${borderPalette.light}`,
               borderRadius: 2,
               background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
               minWidth: 228,
@@ -251,7 +252,7 @@ const AutomationHistory: React.FC<AutomationHistoryProps> = ({ automationId }) =
           </Box>
           <Box
             sx={{
-              border: "1px solid #eaecf0",
+              border: `1px solid ${borderPalette.light}`,
               borderRadius: 2,
               background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
               minWidth: 228,
@@ -492,8 +493,8 @@ const AutomationHistory: React.FC<AutomationHistoryProps> = ({ automationId }) =
                                             minWidth: '32px',
                                             height: '32px',
                                             borderRadius: '50%',
-                                            backgroundColor: isSuccess ? '#E6F4EA' : '#FFD6D6',
-                                            border: `2px solid ${isSuccess ? '#138A5E' : '#D32F2F'}`,
+                                            backgroundColor: isSuccess ? status.success.bg : status.error.bg,
+                                            border: `2px solid ${isSuccess ? status.success.text : status.error.text}`,
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
@@ -502,9 +503,9 @@ const AutomationHistory: React.FC<AutomationHistoryProps> = ({ automationId }) =
                                           }}
                                         >
                                           {isSuccess ? (
-                                            <CheckCircle size={16} color="#138A5E" />
+                                            <CheckCircle size={16} color=status.success.text />
                                           ) : (
-                                            <XCircle size={16} color="#D32F2F" />
+                                            <XCircle size={16} color=status.error.text />
                                           )}
                                         </Box>
 
@@ -554,7 +555,7 @@ const AutomationHistory: React.FC<AutomationHistoryProps> = ({ automationId }) =
                                                   mt: 1,
                                                 }}
                                               >
-                                                <Typography sx={{ fontSize: 12, color: '#D32F2F', fontWeight: 500 }}>
+                                                <Typography sx={{ fontSize: 12, color: status.error.text, fontWeight: 500 }}>
                                                   Error: {action.error_message}
                                                 </Typography>
                                               </Box>
@@ -588,20 +589,20 @@ const AutomationHistory: React.FC<AutomationHistoryProps> = ({ automationId }) =
                                     mt: 3,
                                     p: 2,
                                     borderRadius: '4px',
-                                    backgroundColor: log.status === 'success' ? '#E6F4EA' : log.status === 'failure' ? '#FFD6D6' : '#FFF8E1',
-                                    border: `1px solid ${log.status === 'success' ? '#138A5E' : log.status === 'failure' ? '#D32F2F' : '#795000'}`,
+                                    backgroundColor: log.status === 'success' ? status.success.bg : log.status === 'failure' ? status.error.bg : status.warning.bg,
+                                    border: `1px solid ${log.status === 'success' ? status.success.text : log.status === 'failure' ? status.error.text : '#795000'}`,
                                   }}
                                 >
                                   <Stack direction="row" alignItems="center" spacing={2}>
                                     {log.status === 'success' ? (
-                                      <CheckCircle size={20} color="#138A5E" />
+                                      <CheckCircle size={20} color=status.success.text />
                                     ) : log.status === 'failure' ? (
-                                      <XCircle size={20} color="#D32F2F" />
+                                      <XCircle size={20} color=status.error.text />
                                     ) : (
                                       <AlertCircle size={20} color="#795000" />
                                     )}
                                     <Box>
-                                      <Typography sx={{ fontSize: 13, fontWeight: 600, color: log.status === 'success' ? '#138A5E' : log.status === 'failure' ? '#D32F2F' : '#795000' }}>
+                                      <Typography sx={{ fontSize: 13, fontWeight: 600, color: log.status === 'success' ? status.success.text : log.status === 'failure' ? status.error.text : '#795000' }}>
                                         Overall Result: {log.status === 'partial_success' ? 'Partial Success' : log.status.charAt(0).toUpperCase() + log.status.slice(1)}
                                       </Typography>
                                       {log.status === 'partial_success' && (

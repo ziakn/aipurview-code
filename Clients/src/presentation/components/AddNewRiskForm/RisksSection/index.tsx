@@ -28,6 +28,7 @@ import useFrameworks from "../../../../application/hooks/useFrameworks";
 import allowedRoles from "../../../../application/constants/permissions";
 import styles from "../styles.module.css";
 import { getAutocompleteStyles as getCentralizedAutocompleteStyles } from "../../../utils/inputStyles";
+import { background } from "../../../themes/palette";
 
 const RiskLevel = React.lazy(() => import("../../RiskLevel"));
 
@@ -55,7 +56,7 @@ const FORM_CONSTANTS = {
 const FORM_STYLES = {
   fontSize: "13px",
   borderRadius: "8px",
-  focusedBackground: "#f9fafb",
+  focusedBackground: background.accent,
   padding: "12px",
   chipPadding: "4px",
 } as const;

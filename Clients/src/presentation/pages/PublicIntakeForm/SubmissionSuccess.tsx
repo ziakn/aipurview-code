@@ -3,6 +3,7 @@ import { Box, Typography } from "@mui/material";
 import { Edit, Hash, Clock } from "lucide-react";
 import { useEffect } from "react";
 import { CustomizableButton } from "../../components/button/customizable-button";
+import { brand } from "../../themes/palette";
 
 interface SubmissionState {
   submissionId: number;
@@ -144,10 +145,10 @@ export function SubmissionSuccess() {
                 startIcon={<Edit size={15} />}
                 text="Edit and resubmit"
                 sx={{
-                  width: "100%", height: 44, backgroundColor: "#13715B",
+                  width: "100%", height: 44, backgroundColor: brand.primary,
                   fontSize: "13px", fontWeight: 600, borderRadius: "8px", textTransform: "none",
                   boxShadow: "none",
-                  "&:hover": { backgroundColor: "#0F5A47" },
+                  "&:hover": { backgroundColor: brand.primaryHover },
                 }}
               />
             </Box>

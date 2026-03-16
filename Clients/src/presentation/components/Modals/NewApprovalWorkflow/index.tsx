@@ -26,6 +26,7 @@ import { entities, conditions } from "./arrays";
 import { ICreateApprovalWorkflowProps, NewApprovalWorkflowFormErrors } from "src/domain/interfaces/i.approvalForkflow";
 import { getAllUsers } from "../../../../application/repository/user.repository";
 import { User } from "../../../../domain/types/User";
+import { background, text } from "../../../themes/palette";
 
 const CreateNewApprovalWorkflow: FC<ICreateApprovalWorkflowProps> = ({
     isOpen,
@@ -279,7 +280,7 @@ const CreateNewApprovalWorkflow: FC<ICreateApprovalWorkflowProps> = ({
                                                     const { key, ...otherProps } = props;
                                                     return (
                                                         <Box component="li" key={key} {...otherProps}>
-                                                            <Typography sx={{ fontSize: "13px", color: "#1c2130" }}>
+                                                            <Typography sx={{ fontSize: "13px", color: text.primary }}>
                                                                 {option.name}{option.surname ? ` ${option.surname}` : ""}
                                                             </Typography>
                                                         </Box>
@@ -318,12 +319,12 @@ const CreateNewApprovalWorkflow: FC<ICreateApprovalWorkflowProps> = ({
                                                             "& .MuiAutocomplete-listbox": {
                                                                 "& .MuiAutocomplete-option": {
                                                                     fontSize: "13px",
-                                                                    color: "#1c2130",
+                                                                    color: text.primary,
                                                                     paddingLeft: "9px",
                                                                     paddingRight: "9px",
                                                                 },
                                                                 "& .MuiAutocomplete-option.Mui-focused": {
-                                                                    background: "#f9fafb",
+                                                                    background: background.accent,
                                                                 },
                                                             },
                                                             "& .MuiAutocomplete-noOptions": {

@@ -1,5 +1,6 @@
+import { border as borderPalette } from "../../../themes/palette";
 export const infoCardStyle = {
-  border: `1px solid #d0d5dd`,
+  border: `1px solid borderPalette.dark`,
   borderRadius: 2,
   background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
   minWidth: 228,

@@ -3,6 +3,7 @@ import { Box, Stack, Typography, useTheme, Divider, Snackbar, Dialog, DialogTitl
 import { Copy, X } from "lucide-react";
 import { CustomizableButton } from "../../../components/button/customizable-button";
 import CodeBlock from "../components/CodeBlock";
+import { background, border as borderPalette } from "../../../themes/palette";
 
 const modalCodeSnippet = `// Using StandardModal pattern
 const { isOpen, openModal, closeModal } = useStandardModal();
@@ -91,7 +92,7 @@ const ModalsSection: React.FC = () => {
         </DialogTitle>
         <DialogContent sx={{ p: "20px" }}>
           <Typography sx={{ fontSize: 13, color: theme.palette.text.secondary }}>
-            This is the modal content area. Modals use background.modal (#FCFCFD) and include a
+            This is the modal content area. Modals use background.modal (background.alt) and include a
             header with title and close button, content area, and action buttons in the footer.
           </Typography>
         </DialogContent>
@@ -209,8 +210,8 @@ const ModalsSection: React.FC = () => {
       {/* Modal Specifications */}
       <SpecSection title="Modal specifications">
         <SpecGrid>
-          <SpecCard title="Background" value="#FCFCFD" note="theme.palette.background.modal" onCopy={handleCopy} />
-          <SpecCard title="Border" value="1px solid #eaecf0" note="theme.palette.border.light" onCopy={handleCopy} />
+          <SpecCard title="Background" value=background.alt note="theme.palette.background.modal" onCopy={handleCopy} />
+          <SpecCard title="Border" value=`1px solid ${borderPalette.light}` note="theme.palette.border.light" onCopy={handleCopy} />
           <SpecCard title="Border radius" value="4px" note="Standard radius" onCopy={handleCopy} />
           <SpecCard title="Shadow" value="0px 4px 24px -4px rgba(16, 24, 40, 0.08)" note="theme.boxShadow" onCopy={handleCopy} />
           <SpecCard title="Header padding" value="16px 20px" note="Title section" onCopy={handleCopy} />
@@ -290,7 +291,7 @@ const ModalsSection: React.FC = () => {
         <SpecGrid columns={3}>
           <SpecCard title="Width" value="400px" note="Default drawer width" onCopy={handleCopy} />
           <SpecCard title="Anchor" value="right" note="Slide direction" onCopy={handleCopy} />
-          <SpecCard title="Background" value="#FCFCFD" note="Same as modal" onCopy={handleCopy} />
+          <SpecCard title="Background" value=background.alt note="Same as modal" onCopy={handleCopy} />
           <SpecCard title="Header height" value="~52px" note="With padding" onCopy={handleCopy} />
           <SpecCard title="Content padding" value="20px" note="Body area" onCopy={handleCopy} />
           <SpecCard title="Footer height" value="~68px" note="With buttons" onCopy={handleCopy} />
@@ -349,7 +350,7 @@ const ModalsSection: React.FC = () => {
           {[
             "Use StandardModal + useStandardModal hook for consistent behavior",
             "Modal pattern: useStandardModal + onSubmitRef for form handling",
-            "Background color: theme.palette.background.modal (#FCFCFD)",
+            "Background color: theme.palette.background.modal (background.alt)",
             "Include close button (X icon, 20px) in header",
             "Separate header, content, and footer with border-light",
             "Primary action on right, secondary (Cancel) on left",

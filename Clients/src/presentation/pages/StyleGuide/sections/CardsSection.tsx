@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Stack, Typography, useTheme, Divider, Snackbar } from "@mui/material";
 import { Copy, AlertCircle, CheckCircle, Info, AlertTriangle } from "lucide-react";
 import CodeBlock from "../components/CodeBlock";
+import { background, border as borderPalette, status } from "../../../themes/palette";
 
 const cardCodeSnippet = `<Box
   sx={{
@@ -84,7 +85,7 @@ const CardsSection: React.FC = () => {
       <SpecSection title="Card specifications">
         <SpecGrid>
           <SpecCard title="Background" value="#FFFFFF" note="theme.palette.background.main" onCopy={handleCopy} />
-          <SpecCard title="Border" value="1px solid #eaecf0" note="theme.palette.border.light" onCopy={handleCopy} />
+          <SpecCard title="Border" value=`1px solid ${borderPalette.light}` note="theme.palette.border.light" onCopy={handleCopy} />
           <SpecCard title="Border radius" value="4px" note="Standard radius" onCopy={handleCopy} />
           <SpecCard title="Padding" value="16px" note="Standard card padding" onCopy={handleCopy} />
           <SpecCard title="Shadow" value="none" note="Default no shadow" onCopy={handleCopy} />
@@ -240,7 +241,7 @@ const CardsSection: React.FC = () => {
                 Alternate background
               </Typography>
               <Typography sx={{ fontSize: 13, color: theme.palette.text.tertiary }}>
-                Uses background.alt (#FCFCFD) for subtle differentiation.
+                Uses background.alt (background.alt) for subtle differentiation.
               </Typography>
             </Box>
           </Box>
@@ -271,7 +272,7 @@ const CardsSection: React.FC = () => {
                 Accent background
               </Typography>
               <Typography sx={{ fontSize: 13, color: theme.palette.text.tertiary }}>
-                Uses background.accent (#f9fafb) for checklists, tips, and secondary content.
+                Uses background.accent (background.accent) for checklists, tips, and secondary content.
               </Typography>
             </Box>
           </Box>
@@ -290,8 +291,8 @@ const CardsSection: React.FC = () => {
           {/* Success Alert */}
           <Box
             sx={{
-              backgroundColor: "#E6F4EA",
-              border: "1px solid #138A5E",
+              backgroundColor: status.success.bg,
+              border: `1px solid ${status.success.text}`,
               borderRadius: "4px",
               p: "12px 16px",
               display: "flex",
@@ -299,8 +300,8 @@ const CardsSection: React.FC = () => {
               gap: "12px",
             }}
           >
-            <CheckCircle size={16} color="#138A5E" />
-            <Typography sx={{ fontSize: 13, color: "#138A5E" }}>
+            <CheckCircle size={16} color=status.success.text />
+            <Typography sx={{ fontSize: 13, color: status.success.text }}>
               Success! Your changes have been saved.
             </Typography>
           </Box>
@@ -308,8 +309,8 @@ const CardsSection: React.FC = () => {
           {/* Error Alert */}
           <Box
             sx={{
-              backgroundColor: "#FFD6D6",
-              border: "1px solid #D32F2F",
+              backgroundColor: status.error.bg,
+              border: `1px solid ${status.error.text}`,
               borderRadius: "4px",
               p: "12px 16px",
               display: "flex",
@@ -317,8 +318,8 @@ const CardsSection: React.FC = () => {
               gap: "12px",
             }}
           >
-            <AlertCircle size={16} color="#D32F2F" />
-            <Typography sx={{ fontSize: 13, color: "#D32F2F" }}>
+            <AlertCircle size={16} color=status.error.text />
+            <Typography sx={{ fontSize: 13, color: status.error.text }}>
               Error: Something went wrong. Please try again.
             </Typography>
           </Box>
@@ -326,8 +327,8 @@ const CardsSection: React.FC = () => {
           {/* Warning Alert */}
           <Box
             sx={{
-              backgroundColor: "#FFF8E1",
-              border: "1px solid #795548",
+              backgroundColor: status.warning.bg,
+              border: `1px solid ${status.warning.text}`,
               borderRadius: "4px",
               p: "12px 16px",
               display: "flex",
@@ -335,8 +336,8 @@ const CardsSection: React.FC = () => {
               gap: "12px",
             }}
           >
-            <AlertTriangle size={16} color="#795548" />
-            <Typography sx={{ fontSize: 13, color: "#795548" }}>
+            <AlertTriangle size={16} color=status.warning.text />
+            <Typography sx={{ fontSize: 13, color: status.warning.text }}>
               Warning: This action cannot be undone.
             </Typography>
           </Box>
@@ -344,8 +345,8 @@ const CardsSection: React.FC = () => {
           {/* Info Alert */}
           <Box
             sx={{
-              backgroundColor: "#E3F2FD",
-              border: "1px solid #1565C0",
+              backgroundColor: status.info.bg,
+              border: `1px solid ${status.info.text}`,
               borderRadius: "4px",
               p: "12px 16px",
               display: "flex",
@@ -353,8 +354,8 @@ const CardsSection: React.FC = () => {
               gap: "12px",
             }}
           >
-            <Info size={16} color="#1565C0" />
-            <Typography sx={{ fontSize: 13, color: "#1565C0" }}>
+            <Info size={16} color=status.info.text />
+            <Typography sx={{ fontSize: 13, color: status.info.text }}>
               Info: Here's some additional information.
             </Typography>
           </Box>
@@ -385,30 +386,30 @@ const CardsSection: React.FC = () => {
         >
           <AlertColorCard
             type="Success"
-            bgColor="#E6F4EA"
-            borderColor="#138A5E"
-            textColor="#138A5E"
+            bgColor=status.success.bg
+            borderColor=status.success.text
+            textColor=status.success.text
             onCopy={handleCopy}
           />
           <AlertColorCard
             type="Error"
-            bgColor="#FFD6D6"
-            borderColor="#D32F2F"
-            textColor="#D32F2F"
+            bgColor=status.error.bg
+            borderColor=status.error.text
+            textColor=status.error.text
             onCopy={handleCopy}
           />
           <AlertColorCard
             type="Warning"
-            bgColor="#FFF8E1"
-            borderColor="#795548"
-            textColor="#795548"
+            bgColor=status.warning.bg
+            borderColor=status.warning.text
+            textColor=status.warning.text
             onCopy={handleCopy}
           />
           <AlertColorCard
             type="Info"
-            bgColor="#E3F2FD"
-            borderColor="#1565C0"
-            textColor="#1565C0"
+            bgColor=status.info.bg
+            borderColor=status.info.text
+            textColor=status.info.text
             onCopy={handleCopy}
           />
         </Box>
@@ -423,9 +424,9 @@ const CardsSection: React.FC = () => {
         </Typography>
 
         <SpecGrid>
-          <SpecCard title="Modal bg" value="#FCFCFD" note="theme.palette.background.modal" onCopy={handleCopy} />
+          <SpecCard title="Modal bg" value=background.alt note="theme.palette.background.modal" onCopy={handleCopy} />
           <SpecCard title="Modal shadow" value="0px 4px 24px -4px rgba(16, 24, 40, 0.08)" note="theme.boxShadow" onCopy={handleCopy} />
-          <SpecCard title="Modal border" value="1px solid #eaecf0" note="Light border" onCopy={handleCopy} />
+          <SpecCard title="Modal border" value=`1px solid ${borderPalette.light}` note="Light border" onCopy={handleCopy} />
           <SpecCard title="Section padding" value="24px" note="Large section padding" onCopy={handleCopy} />
           <SpecCard title="Drawer width" value="400px" note="Side drawer default" onCopy={handleCopy} />
           <SpecCard title="Dialog max-width" value="600px" note="Standard dialog" onCopy={handleCopy} />
@@ -455,7 +456,7 @@ const CardsSection: React.FC = () => {
         <Stack spacing="8px">
           {[
             "Use border-radius: 4px for all cards and containers",
-            "Standard card border: 1px solid theme.palette.border.light (#eaecf0)",
+            "Standard card border: 1px solid theme.palette.border.light (borderPalette.light)",
             "Use theme.palette.background.main for standard cards",
             "Use theme.palette.background.alt for subtle differentiation",
             "Apply hover states with borderColor change to primary.main for interactive cards",

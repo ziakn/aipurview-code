@@ -6,6 +6,7 @@ import { ButtonToggle } from "../button-toggle";
 import CustomizableSkeleton from "../Skeletons";
 import { TrendingUp } from "lucide-react";
 import { EmptyState } from "../EmptyState";
+import { border as borderPalette, text } from "../../themes/palette";
 
 interface RiskHistoryChartProps {
   parameter?: string;
@@ -142,7 +143,7 @@ export function RiskHistoryChart({
     const series = Array.from(allValues).map((value) => ({
       label: value,
       data: timeseriesData.map((point) => point.data[value] || 0),
-      color: colorMap[value] || "#9CA3AF",
+      color: colorMap[value] || text.disabled,
       curve: "monotoneX" as const,
       showMark: false,
     }));
@@ -163,7 +164,7 @@ export function RiskHistoryChart({
       <Stack
         sx={{
           p: 3,
-          border: "1px solid #EAECF0",
+          border: `1px solid ${borderPalette.light}`,
           borderRadius: 2,
           height: height + 120,
           alignItems: "center",
@@ -181,7 +182,7 @@ export function RiskHistoryChart({
       <Stack
         sx={{
           p: 3,
-          border: "1px solid #EAECF0",
+          border: `1px solid ${borderPalette.light}`,
           borderRadius: 2,
           height: height + 120,
           alignItems: "center",
@@ -210,7 +211,7 @@ export function RiskHistoryChart({
     <Stack
       sx={{
         p: 3,
-        border: "1px solid #EAECF0",
+        border: `1px solid ${borderPalette.light}`,
         borderRadius: 2,
         background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
         boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.05)",
@@ -241,7 +242,7 @@ export function RiskHistoryChart({
                   },
                   tickLabelStyle: {
                     fontSize: 12,
-                    fill: "#475467",
+                    fill: text.tertiary,
                   },
                 },
               ]}
@@ -254,11 +255,11 @@ export function RiskHistoryChart({
                   valueFormatter: (value: number) => value.toString(),
                   labelStyle: {
                     fontSize: 13,
-                    fill: "#344054",
+                    fill: text.secondary,
                   },
                   tickLabelStyle: {
                     fontSize: 12,
-                    fill: "#475467",
+                    fill: text.tertiary,
                   },
                 },
               ]}
@@ -280,15 +281,15 @@ export function RiskHistoryChart({
                   strokeWidth: 3,
                 },
                 "& .MuiChartsGrid-line": {
-                  stroke: "#EAECF0",
+                  stroke: borderPalette.light,
                   strokeWidth: 1,
                 },
                 "& .MuiChartsAxis-line": {
-                  stroke: "#D0D5DD",
+                  stroke: borderPalette.dark,
                   strokeWidth: 1.5,
                 },
                 "& .MuiChartsAxis-tick": {
-                  stroke: "#D0D5DD",
+                  stroke: borderPalette.dark,
                 },
               }}
             />

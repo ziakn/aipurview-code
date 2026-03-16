@@ -8,6 +8,7 @@
 import React from "react";
 import { Stack, Typography } from "@mui/material";
 import OnboardingWizard from "../OnboardingWizard";
+import { text } from "../../../themes/palette";
 
 const STORAGE_KEY = "vw:ai-detection-onboarding-dismissed";
 
@@ -16,10 +17,10 @@ const StepContent: React.FC<{ title: string; detail: string }> = ({
   detail,
 }) => (
   <Stack spacing={2.5}>
-    <Typography sx={{ fontSize: 15, fontWeight: 600, color: "#1c2130" }}>
+    <Typography sx={{ fontSize: 15, fontWeight: 600, color: text.primary }}>
       {title}
     </Typography>
-    <Typography sx={{ fontSize: 13, color: "#475467", lineHeight: 1.7 }}>
+    <Typography sx={{ fontSize: 13, color: text.tertiary, lineHeight: 1.7 }}>
       {detail}
     </Typography>
   </Stack>

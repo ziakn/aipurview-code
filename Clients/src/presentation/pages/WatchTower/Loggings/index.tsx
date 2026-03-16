@@ -14,6 +14,7 @@ import { RefreshCw as RefreshIcon, ScrollText, Activity, AlertCircle, Search } f
 import EmptyStateTip from "../../../components/EmptyState/EmptyStateTip";
 import SearchBox from "../../../components/Search/SearchBox";
 import Select from "../../../components/Inputs/Select";
+import { border as borderPalette } from "../../../themes/palette";
 
 const WatchTowerLogs = () => {
   const theme = useTheme();
@@ -103,7 +104,7 @@ const WatchTowerLogs = () => {
           alignItems="center"
           justifyContent="center"
           sx={{
-            border: "1px solid #d0d5dd",
+            border: `1px solid ${borderPalette.dark}`,
             borderRadius: "4px",
             padding: theme.spacing(15, 5),
             minHeight: 200,

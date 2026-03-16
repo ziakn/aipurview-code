@@ -30,6 +30,7 @@ import {
 } from "./styles";
 
 import { COMPLIANCE_BADGES, SUCCESS_MESSAGE } from "./constants";
+import { brand } from "../../../themes/palette";
 
 // Using standard TextField with theme styling for consistency
 
@@ -820,8 +821,8 @@ const AITrustCenterOverview: React.FC = () => {
         <CustomizableButton
           sx={{
             ...styles.saveButton,
-            backgroundColor: hasUnsavedChanges ? "#13715B" : "#ccc",
-            border: `1px solid ${hasUnsavedChanges ? "#13715B" : "#ccc"}`,
+            backgroundColor: hasUnsavedChanges ? brand.primary : "#ccc",
+            border: `1px solid ${hasUnsavedChanges ? brand.primary : "#ccc"}`,
           }}
           icon={<SaveIcon size={16} />}
           variant="contained"

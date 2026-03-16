@@ -3,6 +3,7 @@ import { Box, Stack, Typography, CircularProgress } from "@mui/material";
 import { VWLink } from "../../../../components/Link";
 import axios from "axios";
 import { ENV_VARs } from "../../../../../../env.vars";
+import { text } from "../../../../themes/palette";
 
 interface AITrustCentreHeaderProps {
   data: any;
@@ -78,7 +79,7 @@ const AITrustCentreHeader: React.FC<AITrustCentreHeaderProps> = ({
               <Typography
                 variant="h5"
                 fontWeight="semibold"
-                sx={{ color: "#344054" }}
+                sx={{ color: text.secondary }}
               >
                 {data?.info?.title}
               </Typography>

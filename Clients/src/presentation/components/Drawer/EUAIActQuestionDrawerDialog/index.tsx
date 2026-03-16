@@ -70,6 +70,7 @@ import { getFileById, attachFilesToEntity, getEntityFiles } from "../../../../ap
 import { getAssessmentTopicById } from "../../../../application/repository/assesment.repository";
 import allowedRoles from "../../../../application/constants/permissions";
 import { FilePickerModal } from "../../FilePickerModal";
+import { status, text } from "../../../themes/palette";
 
 // Type for risk objects
 interface LinkedRisk {
@@ -968,14 +969,14 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                     sx={{
                       border: "1px solid #eee",
                       padding: "12px",
-                      backgroundColor: "background.accent",
+                      backgroundColor: background.accent,
                       borderRadius: "4px",
                     }}
                   >
                     <Typography fontSize={13} sx={{ marginBottom: "8px" }}>
                       <strong>Question:</strong>
                     </Typography>
-                    <Typography fontSize={13} color="text.secondary">
+                    <Typography fontSize={13} color=text.secondary>
                       {displayQuestion.question}
                     </Typography>
                   </Stack>
@@ -1054,7 +1055,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                         padding: "4px 12px",
                         borderRadius: "4px",
                         background:
-                          "linear-gradient(180deg, #E6F4EA 0%, #D4E8DB 100%)",
+                          "linear-gradient(180deg, status.success.bg 0%, #D4E8DB 100%)",
                         border: "1px solid #B8DCC5",
                         color: "primary.main",
                         fontSize: 11,
@@ -1126,7 +1127,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                 <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                   Evidence files
                 </Typography>
-                <Typography variant="body2" color="text.tertiary">
+                <Typography variant="body2" color=text.tertiary>
                   Upload evidence files to document compliance with this
                   question.
                 </Typography>
@@ -1160,9 +1161,9 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                         fontSize: 11,
                         border: `1px solid ${theme.palette.border.dark}`,
                         backgroundColor: "background.main",
-                        color: "text.secondary",
+                        color: text.secondary,
                         "&:hover": {
-                          backgroundColor: "background.accent",
+                          backgroundColor: background.accent,
                           border: `1px solid ${theme.palette.border.dark}`,
                         },
                       }}
@@ -1191,7 +1192,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                     </Button>
 
                     <Stack direction="row" spacing={2}>
-                      <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
+                      <Typography sx={{ fontSize: 11, color: text.secondary }}>
                         {`${evidenceFiles.length} files attached`}
                       </Typography>
                       {uploadFiles.length > 0 && (
@@ -1233,7 +1234,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                             borderRadius: "4px",
                             backgroundColor: "background.main",
                             "&:hover": {
-                              backgroundColor: "background.accent",
+                              backgroundColor: background.accent,
                             },
                           }}
                         >
@@ -1263,7 +1264,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                                 <Typography
                                   sx={{
                                     fontSize: 11,
-                                    color: "#6B7280",
+                                    color: status.default.text,
                                     mt: 0.25,
                                   }}
                                 >
@@ -1290,7 +1291,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                                   )
                                 }
                                 sx={{
-                                  color: "text.tertiary",
+                                  color: text.tertiary,
                                   "&:hover": {
                                     color: "primary.main",
                                     backgroundColor: "rgba(19, 113, 91, 0.08)",
@@ -1308,7 +1309,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                                 }
                                 disabled={isEditingDisabled}
                                 sx={{
-                                  color: "text.tertiary",
+                                  color: text.tertiary,
                                   "&:hover": {
                                     color: "status.error.main",
                                     backgroundColor: "rgba(211, 47, 47, 0.08)",
@@ -1342,7 +1343,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                           padding: "10px 12px",
                           border: `1px solid ${theme.palette.status.warning.border}`,
                           borderRadius: "4px",
-                          backgroundColor: "status.warning.bg",
+                          backgroundColor: status.warning.bg,
                         }}
                       >
                         <Box
@@ -1456,7 +1457,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                               sx={{
                                 color: "#4C7BF4",
                                 "&:hover": {
-                                  color: "#D32F2F",
+                                  color: status.error.text,
                                   backgroundColor: "rgba(211, 47, 47, 0.08)",
                                 },
                               }}
@@ -1476,16 +1477,16 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                     sx={{
                       textAlign: "center",
                       py: 4,
-                      color: "text.tertiary",
+                      color: text.tertiary,
                       border: `2px dashed ${theme.palette.border.dark}`,
                       borderRadius: 1,
-                      backgroundColor: "background.accent",
+                      backgroundColor: background.accent,
                     }}
                   >
                     <Typography variant="body2" sx={{ mb: 1 }}>
                       No evidence files uploaded yet
                     </Typography>
-                    <Typography variant="caption" color="#9CA3AF">
+                    <Typography variant="caption" color=text.disabled>
                       Click "Add evidence files" to upload documentation for
                       this question
                     </Typography>
@@ -1503,7 +1504,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                 <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                   Linked risks
                 </Typography>
-                <Typography variant="body2" color="text.tertiary">
+                <Typography variant="body2" color=text.tertiary>
                   Link risks from your risk database to track which risks are
                   addressed by this question.
                 </Typography>
@@ -1521,9 +1522,9 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                       fontSize: 11,
                       border: `1px solid ${theme.palette.border.dark}`,
                       backgroundColor: "background.main",
-                      color: "text.secondary",
+                      color: text.secondary,
                       "&:hover": {
-                        backgroundColor: "background.accent",
+                        backgroundColor: background.accent,
                         border: `1px solid ${theme.palette.border.dark}`,
                       },
                     }}
@@ -1532,7 +1533,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                   </Button>
 
                   <Stack direction="row" spacing={2}>
-                    <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
+                    <Typography sx={{ fontSize: 11, color: text.secondary }}>
                       {`${currentRisks.length || 0} risks linked`}
                     </Typography>
                     {selectedRisks.length > 0 && (
@@ -1565,7 +1566,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                             borderRadius: "4px",
                             backgroundColor: "background.main",
                             "&:hover": {
-                              backgroundColor: "background.accent",
+                              backgroundColor: background.accent,
                             },
                           }}
                         >
@@ -1584,7 +1585,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                             </Typography>
                             {risk.risk_level && (
                               <Typography
-                                sx={{ fontSize: 11, color: "text.tertiary" }}
+                                sx={{ fontSize: 11, color: text.tertiary }}
                               >
                                 Risk level: {risk.risk_level}
                               </Typography>
@@ -1597,7 +1598,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                                 size="small"
                                 onClick={() => handleViewRiskDetails(risk)}
                                 sx={{
-                                  color: "text.tertiary",
+                                  color: text.tertiary,
                                   "&:hover": {
                                     color: "primary.main",
                                     backgroundColor: "rgba(19, 113, 91, 0.08)",
@@ -1620,7 +1621,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                                 }}
                                 disabled={isEditingDisabled}
                                 sx={{
-                                  color: "text.tertiary",
+                                  color: text.tertiary,
                                   "&:hover": {
                                     color: "status.error.main",
                                     backgroundColor: "rgba(211, 47, 47, 0.08)",
@@ -1642,16 +1643,16 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                     sx={{
                       textAlign: "center",
                       py: 4,
-                      color: "text.tertiary",
+                      color: text.tertiary,
                       border: `2px dashed ${theme.palette.border.dark}`,
                       borderRadius: 1,
-                      backgroundColor: "background.accent",
+                      backgroundColor: background.accent,
                     }}
                   >
                     <Typography variant="body2" sx={{ mb: 1 }}>
                       No risks linked yet
                     </Typography>
-                    <Typography variant="caption" color="#9CA3AF">
+                    <Typography variant="caption" color=text.disabled>
                       Click "Add/remove risks" to link risks from your risk
                       database
                     </Typography>

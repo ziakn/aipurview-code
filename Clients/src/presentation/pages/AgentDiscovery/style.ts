@@ -1,3 +1,4 @@
+import { background, border as borderPalette, brand } from "../../themes/palette";
 import { Theme } from "@mui/material/styles";
 
 export const agentMainStack = {
@@ -13,13 +14,13 @@ export const agentToastContainer = {
 };
 
 export const addAgentButton = {
-  backgroundColor: "#13715B",
-  border: "1px solid #13715B",
+  backgroundColor: brand.primary,
+  border: `1px solid ${brand.primary}`,
   gap: "8px",
 };
 
 export const syncButton = {
-  border: "1px solid #d0d5dd",
+  border: `1px solid ${borderPalette.dark}`,
   gap: "8px",
 };
 
@@ -43,7 +44,7 @@ export const statusCardTile = {
   minWidth: { xs: "120px", sm: "140px" },
   width: { xs: "120px", sm: "140px" },
   backgroundColor: "#FFFFFF",
-  border: "1px solid #d0d5dd",
+  border: `1px solid ${borderPalette.dark}`,
   borderRadius: 2,
 };
 
@@ -60,7 +61,7 @@ export const statusCardValue = {
 export const permissionChip = {
   fontSize: 11,
   height: "20px",
-  backgroundColor: "#f5f5f5",
+  backgroundColor: background.surface,
   borderRadius: 4,
   color: "#666",
   margin: 0,

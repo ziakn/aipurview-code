@@ -40,6 +40,7 @@ import { TaskPriority, TaskStatus } from "../../../../domain/enums/task.enum";
 import { getAutocompleteStyles } from "../../../utils/inputStyles";
 import { CustomSelect } from "../../CustomSelect";
 import { PRIORITY_COLOR_MAP, PRIORITY_DISPLAY_MAP, TASK_PRIORITY_OPTIONS } from "../../../constants/priorityOptions";
+import { background, text } from "../../../themes/palette";
 
 const initialState: ICreateTaskFormValues = {
   title: "",
@@ -423,12 +424,12 @@ const CreateTask: FC<ICreateTaskProps> = ({
                     "& .MuiAutocomplete-listbox": {
                       "& .MuiAutocomplete-option": {
                         fontSize: "13px",
-                        color: "#1c2130",
+                        color: text.primary,
                         paddingLeft: "9px",
                         paddingRight: "9px",
                       },
                       "& .MuiAutocomplete-option.Mui-focused": {
-                        background: "#f9fafb",
+                        background: background.accent,
                       },
                     },
                     "& .MuiAutocomplete-noOptions": {

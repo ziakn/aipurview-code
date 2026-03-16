@@ -1,3 +1,4 @@
+import { background, status } from "../../../themes/palette";
 export const projectRisksCard = {
   width: "100%",
   height: "100%",
@@ -19,7 +20,7 @@ export const projectRisksTileCard = {
   height: { sm: "100px" },
   justifyContent: "center",
   background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
-  border: "1px solid #E5E7EB",
+  border: `1px solid ${status.default.border}`,
   borderRadius: 2,
   transition: "all 0.2s ease",
 };
@@ -55,7 +56,7 @@ export const trendIconDown = {
 };
 
 export const trendIconStable = {
-  color: "#6B7280", // Gray for stable risks
+  color: status.default.text, // Gray for stable risks
   fontSize: 14,
 };
 
@@ -64,8 +65,8 @@ export const riskMetricsContainer = {
   flexDirection: "column",
   gap: 2,
   padding: "16px 24px",
-  backgroundColor: "#F9FAFB",
-  border: `1px solid #E5E7EB`,
+  backgroundColor: background.accent,
+  border: `1px solid status.default.border`,
   borderRadius: 2,
   minWidth: "200px",
 };
@@ -78,7 +79,7 @@ export const riskMetricItem = {
 };
 
 export const riskMetricLabel = {
-  color: "#6B7280",
+  color: status.default.text,
   fontWeight: 500,
 };
 

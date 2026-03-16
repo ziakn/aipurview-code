@@ -22,6 +22,7 @@ import { useAuth } from "../../../../application/hooks/useAuth";
 import { handleAlert } from "../../../../application/tools/alertUtils";
 import Alert from "../../../components/Alert";
 import { AlertProps } from "../../../types/alert.types";
+import { border as borderPalette, text } from "../../../themes/palette";
 
 interface AccordionViewProps {
   subtopics: Array<Subtopic & { questions?: Question[] }>;
@@ -302,7 +303,7 @@ const AccordionView = ({
                 sx={{
                   ...styles.accordionSummary,
                   borderBottom:
-                    expandedSet.has(subtopic.id ?? 0) ? "1px solid #d0d5dd" : "none",
+                    expandedSet.has(subtopic.id ?? 0) ? `1px solid ${borderPalette.dark}` : "none",
                 }}
               >
                 {/* Arrow Icon */}
@@ -333,7 +334,7 @@ const AccordionView = ({
                           height: "20px",
                           fontSize: "12px",
                           backgroundColor: "#f0f0f0",
-                          color: "#344054",
+                          color: text.secondary,
                         }}
                       />
                     </Box>

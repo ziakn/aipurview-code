@@ -1,5 +1,6 @@
 import { styled } from "@mui/material/styles";
 import { Dialog, DialogContent } from "@mui/material";
+import { status } from "../../themes/palette";
 
 export const StyledDialog = styled(Dialog, {
   shouldForwardProp: (prop) => prop !== "modalHeight",
@@ -76,7 +77,7 @@ export const ButtonWrapper = styled("div")({
 
 export const fileListStyleFrame = {
   mt: 2,
-  borderTop: "1px solid #e5e7eb",
+  borderTop: `1px solid ${status.default.border}`,
   width: "100%",
   padding: "8px",
   maxHeight: "300px",

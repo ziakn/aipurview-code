@@ -22,6 +22,7 @@ const emptyStateSnippets = {
 />`,
   illustration: `import EmptyIllustration from "../EmptyState/EmptyIllustration";
 import { ListTodo } from "lucide-react";
+import { border as borderPalette } from "../../../themes/palette";
 
 <EmptyIllustration icon={ListTodo} />`,
 };
@@ -151,7 +152,7 @@ const EmptyStatesSection: React.FC = () => {
                 { property: "Message font size", value: "13px" },
                 { property: "Message font weight", value: "500" },
                 { property: "Message max width", value: "360px" },
-                { property: "Border (when shown)", value: "1px dashed #d0d5dd" },
+                { property: "Border (when shown)", value: `1px dashed ${borderPalette.dark}` },
                 { property: "Border radius", value: "4px" },
               ]}
             />

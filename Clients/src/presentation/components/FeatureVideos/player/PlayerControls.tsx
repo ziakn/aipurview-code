@@ -1,6 +1,7 @@
 import { Box, IconButton } from "@mui/material";
 import { Play, Pause } from "lucide-react";
 import type { FramePlayerState } from "./useFramePlayer";
+import { brand } from "../../../themes/palette";
 
 interface PlayerControlsProps {
   player: FramePlayerState;
@@ -52,7 +53,7 @@ export function PlayerControls({ player }: PlayerControlsProps) {
           sx={{
             height: "100%",
             borderRadius: 2,
-            backgroundColor: "#13715B",
+            backgroundColor: brand.primary,
             width: `${player.progress * 100}%`,
             transition: "width 0.05s linear",
           }}

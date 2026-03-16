@@ -25,6 +25,7 @@ import { useAuth } from "../../../../../application/hooks/useAuth";
 import allowedRoles from "../../../../../application/constants/permissions";
 import { Project } from "../../../../../domain/types/Project";
 import { TabFilterBar } from "../../../../components/FrameworkFilter/TabFilterBar";
+import { status } from "../../../../themes/palette";
 
 const ISO42001Clause = ({
   project: _project,
@@ -435,8 +436,8 @@ const ISO42001Clause = ({
         filteredClauses.map((clause: any) => {
           const count = filteredSubClausesCountMemo[clause.id ?? 0];
           const chipColor = count !== undefined && count > 0
-            ? { bg: "#E6F4EA", color: "#138A5E" }
-            : { bg: "#FFF8E1", color: "#795548" };
+            ? { bg: status.success.bg, color: status.success.text }
+            : { bg: status.warning.bg, color: status.warning.text };
           return (
             <Stack key={clause.id} sx={styles.container}>
               <Accordion

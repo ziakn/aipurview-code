@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Stack, Typography, useTheme, Snackbar, Button } from "@mui/material";
 import { Copy, RotateCcw } from "lucide-react";
 import CodeBlock from "../components/CodeBlock";
+import { brand } from "../../../themes/palette";
 
 const animationSnippets = {
   transitions: `// Standard transition patterns
@@ -246,7 +247,7 @@ const AnimationsSection: React.FC = () => {
                     backgroundColor: theme.palette.primary.main,
                     transition: "none",
                     "&:hover": {
-                      backgroundColor: "#10614d",
+                      backgroundColor: brand.primaryDark,
                     },
                   }}
                 >
@@ -258,7 +259,7 @@ const AnimationsSection: React.FC = () => {
                     backgroundColor: theme.palette.primary.main,
                     transition: "all 0.3s ease",
                     "&:hover": {
-                      backgroundColor: "#10614d",
+                      backgroundColor: brand.primaryDark,
                     },
                   }}
                 >

@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { Box, Typography, Tooltip, Stack, useTheme } from "@mui/material";
 import { IRiskHeatMapProps } from "../../types/interfaces/i.risk";
 import { IHeatMapCell } from "../../../domain/interfaces/i.widget";
+import { background, brand, status, text } from "../../themes/palette";
 
 const RiskHeatMap: React.FC<IRiskHeatMapProps> = ({
   risks,
@@ -139,7 +140,7 @@ const RiskHeatMap: React.FC<IRiskHeatMapProps> = ({
             width: { xs: 60, sm: 80 },
             height: { xs: 45, sm: 60 },
             backgroundColor: cell.color,
-            border: `2px solid ${isSelected ? "#13715B" : "transparent"}`,
+            border: `2px solid ${isSelected ? brand.primary : "transparent"}`,
             borderRadius: 1,
             display: "flex",
             flexDirection: "column",
@@ -152,7 +153,7 @@ const RiskHeatMap: React.FC<IRiskHeatMapProps> = ({
                 ? {
                   transform: "scale(1.05)",
                   boxShadow: theme.shadows[4],
-                  borderColor: "#13715B",
+                  borderColor: brand.primary,
                 }
                 : {},
           }}
@@ -166,7 +167,7 @@ const RiskHeatMap: React.FC<IRiskHeatMapProps> = ({
             variant="h6"
             sx={{
               fontWeight: 700,
-              color: cell.risks.length > 0 ? "#1A1919" : "#9CA3AF",
+              color: cell.risks.length > 0 ? "#1A1919" : text.disabled,
               fontSize: 18,
             }}
           >
@@ -259,7 +260,7 @@ const RiskHeatMap: React.FC<IRiskHeatMapProps> = ({
                     <Box sx={{ minWidth: 80, textAlign: "right", pr: 1 }}>
                       <Typography
                         variant="caption"
-                        sx={{ color: "#6B7280", fontWeight: 500 }}
+                        sx={{ color: status.default.text, fontWeight: 500 }}
                       >
                         {getSeverityLabel(row[0].severity)}
                       </Typography>
@@ -283,7 +284,7 @@ const RiskHeatMap: React.FC<IRiskHeatMapProps> = ({
                       >
                         <Typography
                           variant="caption"
-                          sx={{ color: "#6B7280", fontWeight: 500 }}
+                          sx={{ color: status.default.text, fontWeight: 500 }}
                         >
                           {getLikelihoodLabel(likelihood)}
                         </Typography>
@@ -322,9 +323,9 @@ const RiskHeatMap: React.FC<IRiskHeatMapProps> = ({
             display: { xs: "none", lg: "block" },
             minWidth: 200,
             p: 3,
-            backgroundColor: "#F9FAFB",
+            backgroundColor: background.accent,
             borderRadius: 2,
-            border: "1px solid #E5E7EB",
+            border: `1px solid ${status.default.border}`,
           }}
         >
           <Typography
@@ -355,7 +356,7 @@ const RiskHeatMap: React.FC<IRiskHeatMapProps> = ({
                     height: 16,
                     backgroundColor: item.color,
                     borderRadius: 0.5,
-                    border: "1px solid #E5E7EB",
+                    border: `1px solid ${status.default.border}`,
                   }}
                 />
                 <Stack>
@@ -367,7 +368,7 @@ const RiskHeatMap: React.FC<IRiskHeatMapProps> = ({
                   </Typography>
                   <Typography
                     variant="caption"
-                    sx={{ color: "#6B7280", fontSize: "0.7rem" }}
+                    sx={{ color: status.default.text, fontSize: "0.7rem" }}
                   >
                     Level {item.level}
                   </Typography>
@@ -388,14 +389,14 @@ const RiskHeatMap: React.FC<IRiskHeatMapProps> = ({
             backgroundColor: "#FFFFFF",
             p: 2,
             borderRadius: 2,
-            border: "1px solid #E5E7EB",
+            border: `1px solid ${status.default.border}`,
             boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
           }}
         >
           <Stack direction="row" spacing={2} alignItems="center">
             <Typography
               variant="caption"
-              sx={{ color: "#6B7280", fontWeight: 500 }}
+              sx={{ color: status.default.text, fontWeight: 500 }}
             >
               Risk Level:
             </Typography>
@@ -420,7 +421,7 @@ const RiskHeatMap: React.FC<IRiskHeatMapProps> = ({
                     height: 12,
                     backgroundColor: item.color,
                     borderRadius: 0.5,
-                    border: "1px solid #E5E7EB",
+                    border: `1px solid ${status.default.border}`,
                   }}
                 />
                 <Typography

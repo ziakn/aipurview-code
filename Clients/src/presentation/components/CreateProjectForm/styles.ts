@@ -1,3 +1,4 @@
+import { background, text } from "../../themes/palette";
 import { Theme } from "@mui/material/styles";
 
 export const createProjectFormStyles = {
@@ -76,12 +77,12 @@ export const createProjectFormStyles = {
         "& .MuiAutocomplete-listbox": {
           "& .MuiAutocomplete-option": {
             fontSize: "13px",
-            color: "#1c2130",
+            color: text.primary,
             paddingLeft: "9px",
             paddingRight: "9px",
           },
           "& .MuiAutocomplete-option.Mui-focused": {
-            background: "#f9fafb",
+            background: background.accent,
           },
         },
         "& .MuiAutocomplete-noOptions": {

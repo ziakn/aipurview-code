@@ -23,6 +23,7 @@ import Alert from "../../../components/Alert";
 import CustomizableToast from "../../../components/Toast";
 import { PluginSlot } from "../../../components/PluginSlot";
 import { PLUGIN_SLOTS } from "../../../../domain/constants/pluginSlots";
+import { background, border as borderPalette, brand, text } from "../../../themes/palette";
 
 interface FrameworkSettingsProps {
   organizationalProject: Project;
@@ -225,7 +226,7 @@ const FrameworkSettings: React.FC<FrameworkSettingsProps> = ({
             fontSize: 15,
             fontWeight: 600,
             mb: 3,
-            color: "#000000",
+            color: text.black,
           }}
         >
           Framework settings
@@ -242,7 +243,7 @@ const FrameworkSettings: React.FC<FrameworkSettingsProps> = ({
           <Box
             sx={{
               background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
-              border: "1px solid #d0d5dd",
+              border: `1px solid ${borderPalette.dark}`,
               borderRadius: "4px",
               p: "24px",
               display: "flex",
@@ -251,7 +252,7 @@ const FrameworkSettings: React.FC<FrameworkSettingsProps> = ({
             }}
           >
           <Box>
-            <Typography sx={{ fontSize: 13, fontWeight: 500, mb: 1, color: "#000000" }}>
+            <Typography sx={{ fontSize: 13, fontWeight: 500, mb: 1, color: text.black }}>
               {organizationalProject.project_title}
             </Typography>
             <Typography sx={{ fontSize: 13, color: "#666666" }}>
@@ -271,8 +272,8 @@ const FrameworkSettings: React.FC<FrameworkSettingsProps> = ({
                 width: "170px",
                 color: "#374151",
                 "&:hover": {
-                  borderColor: "#9CA3AF",
-                  backgroundColor: "#F9FAFB",
+                  borderColor: text.disabled,
+                  backgroundColor: background.accent,
                 },
               }}
             />
@@ -305,7 +306,7 @@ const FrameworkSettings: React.FC<FrameworkSettingsProps> = ({
             fontSize: 15,
             fontWeight: 600,
             mb: 3,
-            color: "#000000",
+            color: text.black,
           }}
         >
           Framework management
@@ -330,7 +331,7 @@ const FrameworkSettings: React.FC<FrameworkSettingsProps> = ({
                 key={fw.id}
                 sx={{
                   background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
-                  border: "1px solid #d0d5dd",
+                  border: `1px solid ${borderPalette.dark}`,
                   borderRadius: "4px",
                   p: "24px",
                   display: "flex",
@@ -339,7 +340,7 @@ const FrameworkSettings: React.FC<FrameworkSettingsProps> = ({
                 }}
               >
                 <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
-                  <Typography sx={{ fontSize: 13, fontWeight: 500, color: "#000000" }}>
+                  <Typography sx={{ fontSize: 13, fontWeight: 500, color: text.black }}>
                     {fw.name}
                   </Typography>
                   {isAdded && (
@@ -354,7 +355,7 @@ const FrameworkSettings: React.FC<FrameworkSettingsProps> = ({
                         py: 0.5,
                         fontSize: 13,
                         fontWeight: 600,
-                        color: "#13715B",
+                        color: brand.primary,
                       }}
                     >
                       <CheckGreenIcon size={16} />
@@ -402,7 +403,7 @@ const FrameworkSettings: React.FC<FrameworkSettingsProps> = ({
                       onClick={() => handleAddFramework(fw)}
                       sx={{
                         minWidth: 100,
-                        backgroundColor: "#13715B",
+                        backgroundColor: brand.primary,
                         color: "#fff",
                         "&:hover": { backgroundColor: "#0e5c47" },
                       }}

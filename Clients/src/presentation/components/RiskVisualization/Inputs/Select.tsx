@@ -6,6 +6,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import { SelectProps } from "../../../types/widget.types";
+import { status } from "../../../themes/palette";
 
 const Select: React.FC<SelectProps> = ({
   id,
@@ -55,7 +56,7 @@ const Select: React.FC<SelectProps> = ({
       </MuiSelect>
       {error && (
         <div
-          style={{ color: "#d32f2f", fontSize: "0.75rem", marginTop: "4px" }}
+          style={{ color: status.error.text, fontSize: "0.75rem", marginTop: "4px" }}
         >
           {error}
         </div>

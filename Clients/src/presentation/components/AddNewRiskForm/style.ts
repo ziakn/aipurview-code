@@ -1,3 +1,4 @@
+import { brand } from "../../themes/palette";
 import { Theme } from "@mui/material/styles";
 
 export const getTabStyle = (theme: Theme) => ({
@@ -23,6 +24,6 @@ export const tabStyle = {
   padding: "16px 0 7px",
   minHeight: "20px",
   "&.Mui-selected": {
-    color: "#13715B",
+    color: brand.primary,
   },
 };

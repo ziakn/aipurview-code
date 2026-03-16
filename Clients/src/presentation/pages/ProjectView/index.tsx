@@ -21,6 +21,7 @@ import useProjectData from "../../../application/hooks/useProjectData";
 import { getProjectById } from "../../../application/repository/project.repository";
 import { createTabLabelWithCount } from "../../utils/tabUtils";
 import {
+import { brand } from "../../themes/palette";
   tabStyle,
   noProjectContainerStyle,
   newProjectButtonStyle,
@@ -134,7 +135,7 @@ const ProjectView = () => {
           </Typography>
           <Typography sx={projectDescriptionStyle}>
             This page includes the governance process status of{" "}
-            <span style={{ color: "#13715B" }}>{project.project_title}</span>
+            <span style={{ color: brand.primary }}>{project.project_title}</span>
           </Typography>
           <Stack sx={tabContainerStyle}>
             <TabContext value={value}>

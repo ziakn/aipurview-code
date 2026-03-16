@@ -2,6 +2,7 @@ import { memo, useState } from "react";
 import { Link, Box } from "@mui/material";
 import { ExternalLink } from "lucide-react";
 import { IVWLinkProps } from "../../../types/link.types";
+import { brand } from "../../../themes/palette";
 
 /**
  * VWLink component
@@ -88,7 +89,7 @@ export const VWLink = memo(function VWLink({
           textDecoration: showUnderline ? "underline" : "none",
           textDecorationStyle: showUnderline ? "dashed" : undefined,
           textUnderlineOffset: "4px",
-          color: "#13715B",
+          color: brand.primary,
           fontSize: 13,
           fontWeight: 500,
           cursor: "pointer",
@@ -100,7 +101,7 @@ export const VWLink = memo(function VWLink({
           "&:hover": {
             textDecoration: showUnderline ? "underline" : "none",
             textDecorationStyle: showUnderline ? "dashed" : undefined,
-            color: "#0F5A47",
+            color: brand.primaryHover,
             border: "none !important",
             outline: "none !important",
           },
@@ -115,7 +116,7 @@ export const VWLink = memo(function VWLink({
             boxShadow: "none !important",
           },
           "&:focus-visible": {
-            outline: "2px solid #13715B",
+            outline: `2px solid ${brand.primary}`,
             outlineOffset: "2px",
             borderRadius: "2px",
             border: "none !important",
@@ -129,7 +130,7 @@ export const VWLink = memo(function VWLink({
         <ExternalLink
           size={14}
           style={{
-            color: "#13715B",
+            color: brand.primary,
             transition: "opacity 0.2s ease",
           }}
         />

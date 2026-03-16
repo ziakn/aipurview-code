@@ -1,3 +1,4 @@
+import { brand, text } from "../../../themes/palette";
 export const projectViewHeaderTitle = {
   color: "#1A1919",
   fontWeight: 600,
@@ -7,7 +8,7 @@ export const projectViewHeaderTitle = {
 
 export const projectViewHeaderDesc = {
   fontSize: 13,
-  color: "#344054",
+  color: text.secondary,
 };
 
 export const tabStyle = {
@@ -19,7 +20,7 @@ export const tabStyle = {
   minHeight: "20px",
   minWidth: "auto",
   "&.Mui-selected": {
-    color: "#13715B",
+    color: brand.primary,
   },
 };
 

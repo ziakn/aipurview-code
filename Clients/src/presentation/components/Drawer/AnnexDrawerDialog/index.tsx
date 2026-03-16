@@ -50,6 +50,7 @@ import { getFileById, attachFilesToEntity, getEntityFiles } from "../../../../ap
 import { getEntityById } from "../../../../application/repository/entity.repository";
 import { FilePickerModal } from "../../FilePickerModal";
 import { RiskFormValues } from "../../../../domain/types/riskForm.types";
+import { status } from "../../../themes/palette";
 
 const AuditRiskPopup = lazy(() => import("../../RiskPopup/AuditRiskPopup"));
 const LinkedRisksPopup = lazy(() => import("../../LinkedRisks").then(m => ({ default: m.LinkedRisksPopup })));
@@ -677,7 +678,7 @@ const VWISO42001AnnexDrawerDialog = ({
                 sx={{
                   border: `1px solid #eee`,
                   padding: "10px",
-                  backgroundColor: "background.accent",
+                  backgroundColor: background.accent,
                   borderRadius: "4px",
                 }}
               >
@@ -896,7 +897,7 @@ const VWISO42001AnnexDrawerDialog = ({
               <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                 Evidence files
               </Typography>
-              <Typography variant="body2" color="text.tertiary">
+              <Typography variant="body2" color=text.tertiary>
                 Upload evidence files to document how this requirement is implemented.
               </Typography>
 
@@ -930,9 +931,9 @@ const VWISO42001AnnexDrawerDialog = ({
                       fontSize: 11,
                       border: `1px solid ${theme.palette.border.dark}`,
                       backgroundColor: "background.main",
-                      color: "text.secondary",
+                      color: text.secondary,
                       "&:hover": {
-                        backgroundColor: "background.accent",
+                        backgroundColor: background.accent,
                         border: `1px solid ${theme.palette.border.dark}`,
                       },
                     }}
@@ -967,7 +968,7 @@ const VWISO42001AnnexDrawerDialog = ({
                   </Button>
 
                   <Stack direction="row" spacing={2}>
-                    <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
+                    <Typography sx={{ fontSize: 11, color: text.secondary }}>
                       {`${evidenceFiles.length || 0} files attached`}
                     </Typography>
                     {uploadFiles.length > 0 && (
@@ -1002,7 +1003,7 @@ const VWISO42001AnnexDrawerDialog = ({
                         border: `1px solid ${theme.palette.border.dark}`,
                         borderRadius: "4px",
                         padding: "8px 12px",
-                        backgroundColor: "background.accent",
+                        backgroundColor: background.accent,
                       }}
                     >
                       <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
@@ -1011,7 +1012,7 @@ const VWISO42001AnnexDrawerDialog = ({
                           <Typography sx={{ fontSize: 12, fontWeight: 500 }}>
                             {file.fileName}
                           </Typography>
-                          <Typography sx={{ fontSize: 11, color: "text.tertiary" }}>
+                          <Typography sx={{ fontSize: 11, color: text.tertiary }}>
                             {((file.size || 0) / 1024).toFixed(1)} KB
                             {file.source ? ` • Source: ${file.source}` : ""}
                           </Typography>
@@ -1061,7 +1062,7 @@ const VWISO42001AnnexDrawerDialog = ({
                         border: `1px solid ${theme.palette.status.warning.border}`,
                         borderRadius: "4px",
                         padding: "8px 12px",
-                        backgroundColor: "status.warning.bg",
+                        backgroundColor: status.warning.bg,
                       }}
                     >
                       <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
@@ -1070,7 +1071,7 @@ const VWISO42001AnnexDrawerDialog = ({
                           <Typography sx={{ fontSize: 12, fontWeight: 500 }}>
                             {file.fileName}
                           </Typography>
-                          <Typography sx={{ fontSize: 11, color: "text.tertiary" }}>
+                          <Typography sx={{ fontSize: 11, color: text.tertiary }}>
                             {((file.size || 0) / 1024).toFixed(1)} KB
                           </Typography>
                         </Box>
@@ -1110,7 +1111,7 @@ const VWISO42001AnnexDrawerDialog = ({
                           <Typography sx={{ fontSize: 12, fontWeight: 500 }}>
                             {file.fileName}
                           </Typography>
-                          <Typography sx={{ fontSize: 11, color: "#6B7280" }}>
+                          <Typography sx={{ fontSize: 11, color: status.default.text }}>
                             {file.size ? `${(file.size / 1024).toFixed(1)} KB` : ""}
                           </Typography>
                         </Box>
@@ -1133,10 +1134,10 @@ const VWISO42001AnnexDrawerDialog = ({
                     borderRadius: "4px",
                     padding: "20px",
                     textAlign: "center",
-                    backgroundColor: "background.accent",
+                    backgroundColor: background.accent,
                   }}
                 >
-                  <Typography sx={{ color: "text.tertiary" }}>
+                  <Typography sx={{ color: text.tertiary }}>
                     No evidence files uploaded yet
                   </Typography>
                 </Box>
@@ -1150,7 +1151,7 @@ const VWISO42001AnnexDrawerDialog = ({
               <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                 Linked risks
               </Typography>
-              <Typography variant="body2" color="text.tertiary">
+              <Typography variant="body2" color=text.tertiary>
                 Link risks from your risk database to track which risks are addressed by this annex category.
               </Typography>
 
@@ -1167,9 +1168,9 @@ const VWISO42001AnnexDrawerDialog = ({
                     fontSize: 11,
                     border: `1px solid ${theme.palette.border.dark}`,
                     backgroundColor: "background.main",
-                    color: "text.secondary",
+                    color: text.secondary,
                     "&:hover": {
-                      backgroundColor: "background.accent",
+                      backgroundColor: background.accent,
                       border: `1px solid ${theme.palette.border.dark}`,
                     },
                   }}
@@ -1181,7 +1182,7 @@ const VWISO42001AnnexDrawerDialog = ({
                 </Button>
 
                 <Stack direction="row" spacing={2}>
-                  <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
+                  <Typography sx={{ fontSize: 11, color: text.secondary }}>
                     {`${currentRisks.length || 0} risks linked`}
                   </Typography>
                   {selectedRisks.length > 0 && (
@@ -1212,14 +1213,14 @@ const VWISO42001AnnexDrawerDialog = ({
                           border: `1px solid ${theme.palette.border.dark}`,
                           borderRadius: "4px",
                           padding: "12px",
-                          backgroundColor: "background.accent",
+                          backgroundColor: background.accent,
                         }}
                       >
                         <Box sx={{ flex: 1 }}>
                           <Typography sx={{ fontSize: 12, fontWeight: 500 }}>
                             {risk.risk_name}
                           </Typography>
-                          <Typography sx={{ fontSize: 11, color: "text.tertiary" }}>
+                          <Typography sx={{ fontSize: 11, color: text.tertiary }}>
                             Risk level: {risk.risk_level}
                           </Typography>
                         </Box>
@@ -1254,10 +1255,10 @@ const VWISO42001AnnexDrawerDialog = ({
                     borderRadius: "4px",
                     padding: "20px",
                     textAlign: "center",
-                    backgroundColor: "background.accent",
+                    backgroundColor: background.accent,
                   }}
                 >
-                  <Typography sx={{ color: "text.tertiary" }}>
+                  <Typography sx={{ color: text.tertiary }}>
                     No risks linked yet
                   </Typography>
                 </Box>

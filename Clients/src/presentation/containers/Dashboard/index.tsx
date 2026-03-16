@@ -22,6 +22,7 @@ import { useActiveModule } from "../../../application/hooks/useActiveModule";
 import AppSwitcher from "../../components/AppSwitcher";
 import { ContextSidebar } from "../../components/ContextSidebar";
 import { useAuth } from "../../../application/hooks/useAuth";
+import { background, status } from "../../themes/palette";
 
 interface DashboardProps {
   reloadTrigger: boolean;
@@ -281,7 +282,7 @@ const Dashboard: FC<DashboardProps> = ({ reloadTrigger }) => {
           className="home-layout"
           flexDirection="row"
           gap={0}
-          sx={{ backgroundColor: "#FCFCFD", height: "100vh", overflow: "hidden" }}
+          sx={{ backgroundColor: background.alt, height: "100vh", overflow: "hidden" }}
         >
           <AppSwitcher
             activeModule={activeModule}
@@ -346,7 +347,7 @@ const Dashboard: FC<DashboardProps> = ({ reloadTrigger }) => {
             isSubmitting={showToastNotification}
             maxWidth="480px"
           >
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
+            <Typography variant="body2" sx={{ color: text.secondary }}>
               This will generate sample projects, risks, vendors, and policies to help you
               explore VerifyWise. You can remove this demo data at any time.
             </Typography>
@@ -360,10 +361,10 @@ const Dashboard: FC<DashboardProps> = ({ reloadTrigger }) => {
             submitButtonText="Delete demo data"
             onSubmit={handleDeleteDemoData}
             isSubmitting={showToastNotification}
-            submitButtonColor="#D32F2F"
+            submitButtonColor=status.error.text
             maxWidth="480px"
           >
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
+            <Typography variant="body2" sx={{ color: text.secondary }}>
               This will remove all sample projects, risks, vendors, and policies that
               were generated as demo data. Your real data will remain untouched.
             </Typography>

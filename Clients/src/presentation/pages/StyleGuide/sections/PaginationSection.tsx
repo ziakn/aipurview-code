@@ -14,6 +14,7 @@ const paginationSnippets = {
 />`,
   withTable: `import { TablePagination } from "@mui/material";
 import TablePaginationActions from "../TablePagination";
+import { border as borderPalette, text } from "../../../themes/palette";
 
 <TablePagination
   component="div"
@@ -259,10 +260,10 @@ const PaginationSection: React.FC = () => {
           onCopy={handleCopy}
           specs={[
             { property: "Background", value: "background.main (#FFFFFF)" },
-            { property: "Border", value: "1px solid #eaecf0" },
-            { property: "Button color", value: "text.tertiary (#475467)" },
+            { property: "Border", value: `1px solid ${borderPalette.light}` },
+            { property: "Button color", value: "text.tertiary (text.tertiary)" },
             { property: "Button border radius", value: "4px" },
-            { property: "First/last button border", value: "1px solid #eaecf0" },
+            { property: "First/last button border", value: `1px solid ${borderPalette.light}` },
             { property: "Selected background", value: "background.fill (#F4F4F4)" },
             { property: "Hover background", value: "background.fill (#F4F4F4)" },
           ]}

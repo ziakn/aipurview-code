@@ -24,6 +24,7 @@ import { StyledTableRow, AlertBox, styles } from "./styles";
 import { useSearchParams } from "react-router-dom";
 import useUsers from "../../../../application/hooks/useUsers";
 import {
+import { status } from "../../../themes/palette";
   getControlByIdAndProject,
   getControlsByControlCategoryId,
 } from "../../../../application/repository/control_eu_act.repository";
@@ -359,7 +360,7 @@ const ControlsTable: React.FC<ControlsTableProps> = ({
                             sx={{
                               height: 8,
                               borderRadius: 4,
-                              backgroundColor: "#E5E7EB",
+                              backgroundColor: status.default.border,
                               "& .MuiLinearProgress-bar": {
                                 backgroundColor:
                                   getProgressColor(completionPercentage),

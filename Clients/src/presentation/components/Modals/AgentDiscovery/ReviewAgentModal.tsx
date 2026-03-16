@@ -18,6 +18,7 @@ import { apiServices } from "../../../../infrastructure/api/networkServices";
 import { AgentPrimitiveRow } from "../../../../domain/interfaces/i.agentDiscovery";
 import { getAllEntities } from "../../../../application/repository/entity.repository";
 import LinkModelModal from "./LinkModelModal";
+import { background, border as borderPalette, brand, status } from "../../../themes/palette";
 
 interface ReviewAgentModalProps {
   isOpen: boolean;
@@ -107,7 +108,7 @@ const ReviewAgentModal: React.FC<ReviewAgentModalProps> = ({
         anchor="right"
         open={isOpen}
         onClose={() => setIsOpen(false)}
-        PaperProps={{ sx: { width: 480, backgroundColor: theme.palette.background.modal || "#FCFCFD" } }}
+        PaperProps={{ sx: { width: 480, backgroundColor: theme.palette.background.modal || background.alt } }}
       >
         {/* Header */}
         <Stack
@@ -136,7 +137,7 @@ const ReviewAgentModal: React.FC<ReviewAgentModalProps> = ({
           <DetailRow label="Last activity" value={formatDate(agent.last_activity)} />
           <DetailRow label="Created" value={formatDate(agent.created_at)} />
           <Box>
-            <Typography fontSize={12} fontWeight={600} color="text.secondary" mb={0.5}>
+            <Typography fontSize={12} fontWeight={600} color=text.secondary mb={0.5}>
               Review status
             </Typography>
             <VWChip
@@ -159,7 +160,7 @@ const ReviewAgentModal: React.FC<ReviewAgentModalProps> = ({
 
           {/* Permissions with toggle */}
           <Box>
-            <Typography fontSize={12} fontWeight={600} color="text.secondary" mb={1}>
+            <Typography fontSize={12} fontWeight={600} color=text.secondary mb={1}>
               Permissions
             </Typography>
             <TabContext value={permissionsTab}>
@@ -168,7 +169,7 @@ const ReviewAgentModal: React.FC<ReviewAgentModalProps> = ({
                 sx={{
                   minHeight: 28,
                   "& .MuiTab-root": { minHeight: 28, fontSize: 12, py: 0, textTransform: "none" },
-                  "& .MuiTabs-indicator": { backgroundColor: "#13715B" },
+                  "& .MuiTabs-indicator": { backgroundColor: brand.primary },
                 }}
               >
                 <Tab label="Categories" value="categories" />
@@ -186,7 +187,7 @@ const ReviewAgentModal: React.FC<ReviewAgentModalProps> = ({
                       />
                     ))
                   ) : (
-                    <Typography fontSize={13} color="text.secondary">
+                    <Typography fontSize={13} color=text.secondary>
                       None
                     </Typography>
                   )}
@@ -204,7 +205,7 @@ const ReviewAgentModal: React.FC<ReviewAgentModalProps> = ({
                       />
                     ))
                   ) : (
-                    <Typography fontSize={13} color="text.secondary">
+                    <Typography fontSize={13} color=text.secondary>
                       None
                     </Typography>
                   )}
@@ -215,7 +216,7 @@ const ReviewAgentModal: React.FC<ReviewAgentModalProps> = ({
 
           {/* Model link */}
           <Box>
-            <Typography fontSize={12} fontWeight={600} color="text.secondary" mb={1}>
+            <Typography fontSize={12} fontWeight={600} color=text.secondary mb={1}>
               Linked model
             </Typography>
             {agent.linked_model_inventory_id ? (
@@ -230,7 +231,7 @@ const ReviewAgentModal: React.FC<ReviewAgentModalProps> = ({
             ) : (
               <CustomizableButton
                 variant="outlined"
-                sx={{ border: "1px solid #d0d5dd" }}
+                sx={{ border: `1px solid ${borderPalette.dark}` }}
                 icon={<LinkIcon size={14} strokeWidth={1.5} />}
                 text="Link to model"
                 onClick={() => setIsLinkModalOpen(true)}
@@ -241,14 +242,14 @@ const ReviewAgentModal: React.FC<ReviewAgentModalProps> = ({
           {/* Metadata */}
           {Object.keys(agent.metadata || {}).length > 0 && (
             <Box>
-              <Typography fontSize={12} fontWeight={600} color="text.secondary" mb={1}>
+              <Typography fontSize={12} fontWeight={600} color=text.secondary mb={1}>
                 Metadata
               </Typography>
               <Box
                 sx={{
                   p: "12px",
                   borderRadius: "4px",
-                  border: `1px solid ${theme.palette.border?.light || "#d0d5dd"}`,
+                  border: `1px solid ${theme.palette.border?.light || borderPalette.dark}`,
                   backgroundColor: "#f9f9f9",
                   fontSize: 12,
                   fontFamily: "monospace",
@@ -269,7 +270,7 @@ const ReviewAgentModal: React.FC<ReviewAgentModalProps> = ({
         <Stack direction="row" justifyContent="flex-end" gap={1} sx={{ p: "16px 24px" }}>
           <CustomizableButton
             variant="outlined"
-            sx={{ border: "1px solid #d0d5dd" }}
+            sx={{ border: `1px solid ${borderPalette.dark}` }}
             onClick={() => setIsOpen(false)}
           >
             Cancel
@@ -277,7 +278,7 @@ const ReviewAgentModal: React.FC<ReviewAgentModalProps> = ({
           {agent.review_status !== "rejected" && (
             <CustomizableButton
               variant="outlined"
-              sx={{ border: "1px solid #D32F2F", color: "#D32F2F" }}
+              sx={{ border: `1px solid ${status.error.text}`, color: status.error.text }}
               onClick={() => handleReview("rejected")}
               isDisabled={isSubmitting}
             >
@@ -287,7 +288,7 @@ const ReviewAgentModal: React.FC<ReviewAgentModalProps> = ({
           {agent.review_status !== "confirmed" && (
             <CustomizableButton
               variant="contained"
-              sx={{ backgroundColor: "#13715B", border: "1px solid #13715B" }}
+              sx={{ backgroundColor: brand.primary, border: `1px solid ${brand.primary}` }}
               onClick={() => handleReview("confirmed")}
               isDisabled={isSubmitting}
             >
@@ -312,7 +313,7 @@ const DetailRow: React.FC<{
   value: string;
 }> = ({ label, value }) => (
   <Box>
-    <Typography fontSize={12} fontWeight={600} color="text.secondary" mb={0.5}>
+    <Typography fontSize={12} fontWeight={600} color=text.secondary mb={0.5}>
       {label}
     </Typography>
     <Typography fontSize={13}>{value}</Typography>

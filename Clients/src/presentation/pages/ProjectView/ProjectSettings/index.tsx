@@ -54,6 +54,7 @@ import { HighRiskRole } from "../../../../domain/enums/highRiskRole.enum";
 import RiskAnalysisModal from "../RiskAnalysisModal";
 import { getAutocompleteStyles } from "../../../utils/inputStyles";
 import { useStyles } from "./styles";
+import { background, brand, text } from "../../../themes/palette";
 
 const riskClassificationItems = [
   { _id: 1, name: AiRiskClassification.PROHIBITED },
@@ -1153,8 +1154,8 @@ const ProjectSettings = React.memo(
                                       sx={{
                                         fontSize: "13px",
                                         color: isComingSoon
-                                          ? "text.secondary"
-                                          : "text.primary",
+                                          ? text.secondary
+                                          : text.primary,
                                       }}
                                     >
                                       {option.name}
@@ -1233,12 +1234,12 @@ const ProjectSettings = React.memo(
                                     "& .MuiAutocomplete-listbox": {
                                       "& .MuiAutocomplete-option": {
                                         fontSize: "13px",
-                                        color: "#1c2130",
+                                        color: text.primary,
                                         paddingLeft: "9px",
                                         paddingRight: "9px",
                                       },
                                       "& .MuiAutocomplete-option.Mui-focused": {
-                                        background: "#f9fafb",
+                                        background: background.accent,
                                       },
                                     },
                                     "& .MuiAutocomplete-noOptions": {
@@ -1383,12 +1384,12 @@ const ProjectSettings = React.memo(
                           "& .MuiAutocomplete-listbox": {
                             "& .MuiAutocomplete-option": {
                               fontSize: "13px",
-                              color: "#1c2130",
+                              color: text.primary,
                               paddingLeft: "9px",
                               paddingRight: "9px",
                             },
                             "& .MuiAutocomplete-option.Mui-focused": {
-                              background: "#f9fafb",
+                              background: background.accent,
                             },
                           },
                           "& .MuiAutocomplete-noOptions": {
@@ -1473,10 +1474,10 @@ const ProjectSettings = React.memo(
                       ...styles.saveButton,
                       backgroundColor: isSaveDisabled
                         ? "#ccc"
-                        : "#13715B",
+                        : brand.primary,
                       border: isSaveDisabled
                         ? "1px solid rgba(0, 0, 0, 0.26)"
-                        : "1px solid #13715B",
+                        : `1px solid ${brand.primary}`,
                     }}
                     icon={<SaveIcon size={16} />}
                     variant="contained"
@@ -1502,7 +1503,7 @@ const ProjectSettings = React.memo(
                 <Typography
                   sx={{
                     fontSize: theme.typography.fontSize,
-                    color: "#667085",
+                    color: text.icon,
                     mb: 8,
                   }}
                 >

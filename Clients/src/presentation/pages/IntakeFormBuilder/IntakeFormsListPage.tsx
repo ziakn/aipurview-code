@@ -59,6 +59,7 @@ import SearchBox from "../../components/Search/SearchBox";
 import TablePaginationActions from "../../components/TablePagination";
 import singleTheme from "../../themes/v1SingleTheme";
 import {
+import { brand } from "../../themes/palette";
   tableFooterRowStyle,
   showingTextCellStyle,
   paginationStyle,
@@ -422,7 +423,7 @@ export function IntakeFormsListPage() {
                 height: 34,
                 fontSize: "13px",
                 backgroundColor: theme.palette.primary.main,
-                "&:hover": { backgroundColor: "#0F5A47" },
+                "&:hover": { backgroundColor: brand.primaryHover },
                 display: "flex",
                 alignItems: "center",
                 gap: "6px",

@@ -1,5 +1,6 @@
 import { styled } from "@mui/material/styles";
 import { Box, Card, Theme } from "@mui/material";
+import { background, brand } from "../../../themes/palette";
 
 export const SectionPaper = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(8),
@@ -40,7 +41,7 @@ export const PrivacyFields = styled(Box)(({ theme }) => ({
 
 export const styles = {
   description: {
-    color: 'text.secondary',
+    color: text.secondary,
     mb: 4,
     fontSize: 13,
   },
@@ -51,22 +52,22 @@ export const styles = {
   },
 
   sectionDescription: {
-    color: 'text.secondary',
+    color: text.secondary,
     my: 2,
     fontSize: 13,
   },
 
   cardText: {
-    color: 'text.secondary',
+    color: text.secondary,
     fontSize: 13,
     mt: 2,
   },
 
   checkbox: {
     "& .MuiCheckbox-root": {
-      color: '#13715B',
+      color: brand.primary,
       '&.Mui-checked': {
-        color: '#13715B',
+        color: brand.primary,
       },
       '&:hover': {
         backgroundColor: 'rgba(19, 113, 91, 0.04)',
@@ -75,7 +76,7 @@ export const styles = {
   },
 
   badge: {
-    background: 'background.accent',
+    background: background.accent,
     borderRadius: 2,
     p: 0,
     m: 0,
@@ -132,7 +133,7 @@ export const styles = {
       },
     },
     '& .MuiInputBase-root.Mui-disabled': {
-      backgroundColor: '#f5f5f5',
+      backgroundColor: background.surface,
       '& .MuiInputBase-input': {
         color: '#666',
         cursor: 'not-allowed',

@@ -28,6 +28,7 @@ import {
 } from "../../../../../application/interfaces/appStates";
 import { FileText, FileType, Sparkles } from "lucide-react";
 import { ReportFormat } from "../../../../../domain/interfaces/i.widget";
+import { brand } from "../../../../themes/palette";
 
 interface BasicFormValues {
   project: number | null;
@@ -227,7 +228,7 @@ const GenerateReportFrom: React.FC<ReportProps> = ({
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Sparkles size={16} color="#13715B" />
+              <Sparkles size={16} color=brand.primary />
               <Typography sx={{ fontSize: "13px", fontWeight: 500 }}>
                 AI-enhanced report
               </Typography>
@@ -262,10 +263,10 @@ const GenerateReportFrom: React.FC<ReportProps> = ({
                     label={label}
                     size="small"
                     uppercase={false}
-                    backgroundColor="#E6F0EC"
-                    textColor="#13715B"
+                    backgroundColor=brand.primaryLight
+                    textColor=brand.primary
                     icon={
-                      <Sparkles size={12} color="#13715B" />
+                      <Sparkles size={12} color=brand.primary />
                     }
                   />
                 ))}
@@ -372,8 +373,8 @@ const GenerateReportFrom: React.FC<ReportProps> = ({
               },
               "&.Mui-selected": {
                 backgroundColor: theme.palette.background.accent,
-                borderColor: "#13715B",
-                color: "#13715B",
+                borderColor: brand.primary,
+                color: brand.primary,
                 "&:hover": {
                   backgroundColor: theme.palette.background.accent,
                 },

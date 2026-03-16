@@ -27,6 +27,7 @@ import { PageHeaderExtended } from "../../components/Layout/PageHeaderExtended";
 import DatasetSummary from "../ModelInventory/DatasetSummary";
 import DatasetTable from "../ModelInventory/DatasetTable";
 import NewDataset from "../../components/Modals/NewDataset";
+import { brand } from "../../themes/palette";
 
 const Alert = React.lazy(() => import("../../components/Alert"));
 
@@ -446,7 +447,7 @@ const Datasets: React.FC = () => {
             />
             <CustomizableButton
               variant="contained"
-              sx={{ backgroundColor: "#13715B", border: "1px solid #13715B", gap: "8px" }}
+              sx={{ backgroundColor: brand.primary, border: `1px solid ${brand.primary}`, gap: "8px" }}
               text="Add new dataset"
               icon={<AddCircleOutlineIcon size={16} />}
               onClick={handleNewDatasetClick}

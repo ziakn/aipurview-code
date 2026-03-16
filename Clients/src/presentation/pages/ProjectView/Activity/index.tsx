@@ -25,6 +25,7 @@ import {
 } from "../../../../config/changeHistory.config";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { border as borderPalette, brand } from "../../../themes/palette";
 
 dayjs.extend(relativeTime);
 
@@ -239,7 +240,7 @@ const Activity: React.FC<ActivityProps> = ({ entityType, entityId }) => {
           padding: "16px",
           backgroundColor: theme.palette.background.main,
           borderRadius: "8px",
-          border: `1px solid #d0d5dd`,
+          border: `1px solid borderPalette.dark`,
           "&:last-child": {
             marginBottom: 0,
           },
@@ -443,7 +444,7 @@ const Activity: React.FC<ActivityProps> = ({ entityType, entityId }) => {
           padding: "0 24px",
         }}
       >
-        <Clock size={48} strokeWidth={1.5} color="#13715B" opacity={0.6} />
+        <Clock size={48} strokeWidth={1.5} color=brand.primary opacity={0.6} />
         <Typography
           sx={{
             fontSize: 16,
@@ -477,7 +478,7 @@ const Activity: React.FC<ActivityProps> = ({ entityType, entityId }) => {
             marginBottom: "24px",
             backgroundColor: "#F8FAFB",
             borderRadius: "4px",
-            border: `1px solid #d0d5dd`,
+            border: `1px solid borderPalette.dark`,
           }}
         >
           <Typography

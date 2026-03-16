@@ -25,6 +25,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Box, Modal, Stack, Typography } from "@mui/material";
 import { LucideIcon, Shield, Check, X } from "lucide-react";
 import { CustomizableButton } from "../../button/customizable-button";
+import { background, border as borderPalette, brand, text } from "../../../themes/palette";
 
 const useIsDarkMode = () => {
   const [isDark, setIsDark] = useState(() =>
@@ -205,7 +206,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                 sx={{
                   fontSize: 20,
                   fontWeight: 600,
-                  color: isDark ? "#000000" : "#FFFFFF",
+                  color: isDark ? text.black : "#FFFFFF",
                   lineHeight: 1.3,
                 }}
               >
@@ -322,7 +323,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                       color: isDone
                         ? isDark ? "#b52180" : "#4ADE80"
                         : isActive
-                        ? isDark ? "#000000" : "#FFFFFF"
+                        ? isDark ? text.black : "#FFFFFF"
                         : isDark ? "#6b5c47" : "#94A3B8",
                     }}
                   >
@@ -357,11 +358,11 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
               minWidth: "70px",
               height: 34,
               fontSize: 13,
-              border: "1px solid #D0D5DD",
-              color: "#344054",
+              border: `1px solid ${borderPalette.dark}`,
+              color: text.secondary,
               "&:hover": {
-                bgcolor: "#F9FAFB",
-                border: "1px solid #D0D5DD",
+                bgcolor: background.accent,
+                border: `1px solid ${borderPalette.dark}`,
               },
             }}
           />
@@ -373,9 +374,9 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
               minWidth: "70px",
               height: 34,
               fontSize: 13,
-              bgcolor: "#13715B",
+              bgcolor: brand.primary,
               "&:hover": {
-                bgcolor: "#0F5A47",
+                bgcolor: brand.primaryHover,
               },
             }}
           />

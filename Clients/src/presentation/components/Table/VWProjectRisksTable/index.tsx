@@ -19,6 +19,7 @@ import VWProjectRisksTableBody from "./VWProjectRisksTableBody";
 import { EmptyState } from "../../EmptyState";
 import { IVWProjectRisksTable } from "../../../types/interfaces/i.risk";
 import { RiskModel } from "../../../../domain/models/Common/risks/risk.model";
+import { text } from "../../../themes/palette";
 
 const SelectorVertical = (props: React.SVGAttributes<SVGSVGElement>) => (
   <ChevronsUpDown size={16} {...props} />
@@ -100,7 +101,7 @@ const SortableTableHead: React.FC<{
                   sx={{
                     display: "flex",
                     alignItems: "center",
-                    color: sortConfig.key === column.id ? "primary.main" : "#9CA3AF",
+                    color: sortConfig.key === column.id ? "primary.main" : text.disabled,
                   }}
                 >
                   {sortConfig.key === column.id && sortConfig.direction === "asc" && (

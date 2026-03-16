@@ -51,7 +51,7 @@ const iconSnippets = {
 // Using hex colors
 <AlertCircle
   size={16}
-  color="#D32F2F"  // Error red
+  color=status.error.text  // Error red
 />`,
   withStroke: `// Adjust stroke width (default: 2)
 <User size={16} strokeWidth={1.5} />  // Thinner
@@ -59,6 +59,7 @@ const iconSnippets = {
 <User size={16} strokeWidth={2.5} />  // Bolder`,
   inButton: `import { Plus } from "lucide-react";
 import { Button } from "@mui/material";
+import { brand, status, text } from "../../../themes/palette";
 
 <Button startIcon={<Plus size={16} />}>
   Add item
@@ -262,19 +263,19 @@ const IconsSection: React.FC = () => {
                   }}
                 >
                   <Box sx={{ textAlign: "center" }}>
-                    <LucideIcons.CheckCircle size={20} color="#138A5E" />
+                    <LucideIcons.CheckCircle size={20} color=status.success.text />
                     <Typography sx={{ fontSize: 10, color: theme.palette.text.tertiary, mt: "4px" }}>Success</Typography>
                   </Box>
                   <Box sx={{ textAlign: "center" }}>
-                    <LucideIcons.AlertCircle size={20} color="#D32F2F" />
+                    <LucideIcons.AlertCircle size={20} color=status.error.text />
                     <Typography sx={{ fontSize: 10, color: theme.palette.text.tertiary, mt: "4px" }}>Error</Typography>
                   </Box>
                   <Box sx={{ textAlign: "center" }}>
-                    <LucideIcons.AlertTriangle size={20} color="#795548" />
+                    <LucideIcons.AlertTriangle size={20} color=status.warning.text />
                     <Typography sx={{ fontSize: 10, color: theme.palette.text.tertiary, mt: "4px" }}>Warning</Typography>
                   </Box>
                   <Box sx={{ textAlign: "center" }}>
-                    <LucideIcons.Info size={20} color="#1565C0" />
+                    <LucideIcons.Info size={20} color=status.info.text />
                     <Typography sx={{ fontSize: 10, color: theme.palette.text.tertiary, mt: "4px" }}>Info</Typography>
                   </Box>
                 </Box>
@@ -334,12 +335,12 @@ const IconsSection: React.FC = () => {
             <SpecTable
               onCopy={handleCopy}
               specs={[
-                { property: "Default", value: "#667085 (text.tertiary)" },
-                { property: "Primary", value: "#13715B (primary.main)" },
-                { property: "Success", value: "#138A5E (status.success.main)" },
-                { property: "Error", value: "#D32F2F (status.error.main)" },
-                { property: "Warning", value: "#795548 (status.warning.main)" },
-                { property: "Info", value: "#1565C0 (status.info.main)" },
+                { property: "Default", value: "text.icon (text.tertiary)" },
+                { property: "Primary", value: "brand.primary (primary.main)" },
+                { property: "Success", value: "status.success.text (status.success.main)" },
+                { property: "Error", value: "status.error.text (status.error.main)" },
+                { property: "Warning", value: "status.warning.text (status.warning.main)" },
+                { property: "Info", value: "status.info.text (status.info.main)" },
               ]}
             />
 

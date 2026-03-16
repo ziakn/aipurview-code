@@ -1,6 +1,7 @@
 import React from 'react';
 import { Stack, Typography, Box } from "@mui/material";
 import {
+import { status } from "../../../themes/palette";
     stepDetailLabelStyle,
     stepDetailValueStyle,
     stepDetailValueWithWrapStyle
@@ -20,7 +21,7 @@ const DetailField: React.FC<DetailFieldProps> = ({ label, value, withWrap = fals
         <Stack direction="row" spacing={6} alignItems="flex-start">
             {icon && (
                 <Box sx={{
-                    color: "#6B7280",
+                    color: status.default.text,
                     mt: "2px",
                     display: "flex",
                     alignItems: "center"

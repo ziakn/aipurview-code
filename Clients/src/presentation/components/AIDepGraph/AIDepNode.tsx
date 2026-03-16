@@ -20,6 +20,7 @@ import {
 import VWTooltip from "../VWTooltip";
 import type { AIDepNodeData, DependencyNodeType } from "./types";
 import { NODE_TYPE_COLORS, NODE_TYPE_LABELS, RISK_LEVEL_COLORS } from "./types";
+import { text } from "../../themes/palette";
 
 // Icons for each node type
 const nodeTypeIcons: Record<DependencyNodeType, LucideIcon> = {
@@ -40,7 +41,7 @@ const AIDepNode: React.FC<NodeProps> = ({
   const theme = useTheme();
   const nodeData = data as unknown as AIDepNodeData;
   const IconComponent = nodeTypeIcons[nodeData.nodeType] || Package;
-  const color = NODE_TYPE_COLORS[nodeData.nodeType] || "#667085";
+  const color = NODE_TYPE_COLORS[nodeData.nodeType] || text.icon;
   const riskColor = RISK_LEVEL_COLORS[nodeData.riskLevel];
   const typeLabel = NODE_TYPE_LABELS[nodeData.nodeType];
 
@@ -161,7 +162,7 @@ const AIDepNode: React.FC<NodeProps> = ({
               sx={{
                 fontWeight: 600,
                 fontSize: theme.typography.caption.fontSize,
-                color: "text.primary",
+                color: text.primary,
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -174,7 +175,7 @@ const AIDepNode: React.FC<NodeProps> = ({
                 variant="caption"
                 sx={{
                   fontSize: 9,
-                  color: "text.secondary",
+                  color: text.secondary,
                   display: "block",
                   whiteSpace: "nowrap",
                   overflow: "hidden",
@@ -220,7 +221,7 @@ const AIDepNode: React.FC<NodeProps> = ({
             variant="caption"
             sx={{
               fontSize: 9,
-              color: "text.secondary",
+              color: text.secondary,
               ml: "auto",
             }}
           >

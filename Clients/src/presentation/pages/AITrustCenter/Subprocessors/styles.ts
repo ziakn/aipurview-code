@@ -1,5 +1,6 @@
 import { keyframes } from "@mui/system";
 import { SxProps, Theme } from '@mui/material';
+import { brand } from "../../../themes/palette";
 
 // Flash animation
 export const flashAnimation = keyframes`
@@ -141,8 +142,8 @@ export const useStyles = (theme: Theme): StylesType => ({
     alignSelf: "flex-end",
     width: "fit-content",
     gap: 2,
-    backgroundColor: '#13715B',
-    border: `1px solid #13715B`,
+    backgroundColor: brand.primary,
+    border: `1px solid brand.primary`,
   },
 
   // Modal styles
@@ -177,15 +178,15 @@ export const useStyles = (theme: Theme): StylesType => ({
   modalButton: {
     mt: 2,
     alignSelf: 'flex-end',
-    backgroundColor: '#13715B',
-    border: '1px solid #13715B',
+    backgroundColor: brand.primary,
+    border: `1px solid ${brand.primary}`,
     color: '#fff',
     borderRadius: theme.shape.borderRadius,
     textTransform: 'none',
     fontWeight: 600,
     gap: 1,
     '&:hover': {
-      backgroundColor: '#13715B',
+      backgroundColor: brand.primary,
     },
     '&:disabled': {
       backgroundColor: theme.palette.grey[300],

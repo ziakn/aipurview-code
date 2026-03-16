@@ -58,6 +58,7 @@ import {
   RegulatoryExposure
 } from "../../../../domain/enums/status.enum";
 import { calculateVendorRiskScore, getRiskScoreColor } from "../../../../domain/utils/vendorScorecard.utils";
+import { background, text } from "../../../themes/palette";
 
 const initialState = {
   vendorName: "",
@@ -598,12 +599,12 @@ const AddNewVendor: React.FC<AddNewVendorProps> = ({
                   "& .MuiAutocomplete-listbox": {
                     "& .MuiAutocomplete-option": {
                       fontSize: "13px",
-                      color: "#1c2130",
+                      color: text.primary,
                       paddingLeft: "9px",
                       paddingRight: "9px",
                     },
                     "& .MuiAutocomplete-option.Mui-focused": {
-                      background: "#f9fafb",
+                      background: background.accent,
                     },
                   },
                   "& .MuiAutocomplete-noOptions": {

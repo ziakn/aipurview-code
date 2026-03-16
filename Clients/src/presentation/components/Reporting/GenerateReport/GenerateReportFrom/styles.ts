@@ -1,3 +1,4 @@
+import { brand, text } from "../../../../themes/palette";
 import { Theme } from "@mui/material/styles";
 
 export const styles = {
@@ -9,18 +10,18 @@ export const styles = {
   },
   CustomizableButton: {
     width: { xs: "100%", sm: 160 },
-    backgroundColor: "#13715B",
+    backgroundColor: brand.primary,
     color: "#fff",
-    border: "1px solid #13715B",
+    border: `1px solid ${brand.primary}`,
     gap: 2,
   },
   titleText: {
     fontSize: 16,
-    color: "#344054",
+    color: text.secondary,
     fontWeight: "bold",
   },
   baseText: {
-    color: "#344054",
+    color: text.secondary,
     fontSize: 13,
   },
 };

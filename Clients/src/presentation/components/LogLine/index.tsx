@@ -1,3 +1,4 @@
+import { status } from "../../themes/palette";
 import { Typography, Box, useTheme } from "@mui/material";
 
 interface LogLineProps {
@@ -14,7 +15,7 @@ export function LogLine({ line, index }: LogLineProps) {
 
     if (lowerLine.includes("error")) {
       return {
-        color: "#d32f2f",
+        color: status.error.text,
         backgroundColor: "#ffebee",
         fontWeight: 600,
       };
@@ -36,7 +37,7 @@ export function LogLine({ line, index }: LogLineProps) {
     if (lowerLine.includes("info")) {
       return {
         color: "#1976d2",
-        backgroundColor: "#e3f2fd",
+        backgroundColor: status.info.bg,
         fontWeight: 400,
       };
     }

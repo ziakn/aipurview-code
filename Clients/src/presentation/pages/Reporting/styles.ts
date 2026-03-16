@@ -1,3 +1,4 @@
+import { text } from "../../themes/palette";
 export const styles = {
   vwHeadingTitle: {
     color: "#1A1919",
@@ -6,7 +7,7 @@ export const styles = {
     marginBottom: 8,
   },
   vwSubHeadingTitle: {
-    color: "#344054",
+    color: text.secondary,
     fontSize: 13,
   },
   reportButtonContainer: {

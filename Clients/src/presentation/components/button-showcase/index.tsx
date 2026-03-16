@@ -4,6 +4,7 @@ import { Plus, Eye, Filter, Edit3, Lock, Unlock, Save, Trash2, Download, Upload 
 import { CustomizableButton } from '../button/customizable-button';
 import VerifyWiseMultiSelect from '../VerifyWiseMultiSelect';
 import ViewToggle from '../ViewToggle';
+import { brand, status } from "../../themes/palette";
 
 function ButtonShowcase() {
   const theme = useTheme();
@@ -22,7 +23,7 @@ function ButtonShowcase() {
       <Typography variant="h4" gutterBottom>
         Button Component Showcase
       </Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+      <Typography variant="body1" color=text.secondary sx={{ mb: 4 }}>
         Test all button variants and their states for consistency
       </Typography>
 
@@ -335,7 +336,7 @@ function ButtonShowcase() {
                 <Box sx={{
                   height: 28,
                   width: 100,
-                  backgroundColor: '#13715B',
+                  backgroundColor: brand.primary,
                   color: 'white',
                   display: 'flex',
                   alignItems: 'center',
@@ -369,7 +370,7 @@ function ButtonShowcase() {
                 <Box sx={{
                   height: 32,
                   width: 100,
-                  backgroundColor: '#6B7280',
+                  backgroundColor: status.default.text,
                   color: 'white',
                   display: 'flex',
                   alignItems: 'center',
@@ -386,7 +387,7 @@ function ButtonShowcase() {
                 <Box sx={{
                   height: 34,
                   width: 100,
-                  backgroundColor: '#13715B',
+                  backgroundColor: brand.primary,
                   color: 'white',
                   display: 'flex',
                   alignItems: 'center',

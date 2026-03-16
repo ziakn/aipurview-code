@@ -24,6 +24,7 @@ import { SearchBox } from '../../../../components/Search';
 import Toggle from '../../../../components/Inputs/Toggle';
 import { Automation } from '../../../../../domain/types/Automation';
 import AutomationHistory from '../AutomationHistory';
+import { border as borderPalette } from "../../../../themes/palette";
 
 interface AutomationListProps {
   automations: Automation[];
@@ -173,7 +174,7 @@ const AutomationList: React.FC<AutomationListProps> = ({
                   mb: '8px',
                   py: '8px', // Reduce vertical padding
                   minHeight: '44px', // Reduced from default height
-                  border: `1px solid #d0d5dd`,
+                  border: `1px solid borderPalette.dark`,
                   background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.01) 100%)',
                   '&:hover': {
                     background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.04) 0%, rgba(0, 0, 0, 0.02) 100%)',

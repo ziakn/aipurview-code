@@ -1,5 +1,6 @@
 import { SxProps, Theme } from "@mui/material";
 import { keyframes } from "@mui/system";
+import { border as borderPalette } from "../../themes/palette";
 
 // Animation
 export const flashAnimation = keyframes`
@@ -30,7 +31,7 @@ export const commonStyles = {
 
   accordion: {
     marginTop: "9px",
-    border: "1px solid #d0d5dd",
+    border: `1px solid ${borderPalette.dark}`,
     width: "100%",
     marginLeft: "1.5px",
     borderRadius: "4px",

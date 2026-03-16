@@ -14,6 +14,7 @@ import { sendPasswordResetEmail } from "../../../../application/repository/auth.
 import { handleAlert } from "../../../../application/tools/alertUtils";
 import { AlertProps } from "../../../types/alert.types";
 import Alert from "../../../components/Alert";
+import { border as borderPalette } from "../../../themes/palette";
 
 // Define the shape of form values
 interface FormValues {
@@ -124,7 +125,7 @@ const ForgotPassword: React.FC = () => {
               justifyContent: "center",
               alignItems: "center",
               borderRadius: "12px",
-              border: "2px solid #EAECF0",
+              border: `2px solid ${borderPalette.light}`,
               gap: theme.spacing(12),
             }}
           >
