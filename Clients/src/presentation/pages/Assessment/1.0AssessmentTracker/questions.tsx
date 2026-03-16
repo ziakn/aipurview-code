@@ -4,7 +4,6 @@ import QuestionFrame from "../../../components/VWQuestion";
 import { Question } from "../../../../domain/types/Question";
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-import { text } from "../../../themes/palette";
 
 type QuestionsProps = {
   subtopic: Subtopic;
@@ -97,7 +96,7 @@ const Questions = ({
 
   return (
     <Stack mb={15}>
-      <Typography sx={{ fontSize: 16, color: text.secondary }}>
+      <Typography sx={{ fontSize: 16, color: "#344054" }}>
         {subtopic.title}
       </Typography>
       {questionsData

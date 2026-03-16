@@ -3,7 +3,6 @@ import { ReactNode, useState } from "react";
 import { Card, CardContent, Stack, Typography } from "@mui/material";
 import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { background, border as borderPalette, text } from "../../../themes/palette";
 
 interface DashboardCardProps {
   title: string;
@@ -27,7 +26,7 @@ export function DashboardCard({
     <Card
       elevation={0}
       sx={{
-        border: `1px solid ${borderPalette.dark}`,
+        border: "1px solid #d0d5dd",
         borderRadius: "4px",
         height: "100%",
         background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
@@ -35,8 +34,8 @@ export function DashboardCard({
         transition: "all 0.2s ease",
         "&:hover": navigateTo
           ? {
-              background: "linear-gradient(135deg, background.accent 0%, #f1f5f9 100%)",
-              borderColor: text.muted,
+              background: "linear-gradient(135deg, #f9fafb 0%, #f1f5f9 100%)",
+              borderColor: "#98A2B3",
             }
           : {},
       }}
@@ -67,7 +66,7 @@ export function DashboardCard({
                 style={{
                   opacity: isHovered ? 1 : 0.3,
                   transition: "opacity 0.2s ease",
-                  color: text.icon,
+                  color: "#667085",
                 }}
               />
             )}

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { background, border as borderPalette, text } from "../../../themes/palette";
 
 interface TaskRadarCardProps {
   overdue: number;
@@ -29,7 +28,7 @@ export function TaskRadarCard({
   return (
     <Stack
       sx={{
-        border: `1px solid ${borderPalette.dark}`,
+        border: "1px solid #d0d5dd",
         borderRadius: "4px",
         background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
         width: "100%",
@@ -39,8 +38,8 @@ export function TaskRadarCard({
         cursor: "pointer",
         transition: "all 0.2s ease",
         "&:hover": {
-          background: "linear-gradient(135deg, background.accent 0%, #f1f5f9 100%)",
-          borderColor: text.muted,
+          background: "linear-gradient(135deg, #f9fafb 0%, #f1f5f9 100%)",
+          borderColor: "#98A2B3",
         },
       }}
       onMouseEnter={() => setIsHovered(true)}
@@ -67,7 +66,7 @@ export function TaskRadarCard({
           style={{
             opacity: isHovered ? 1 : 0.3,
             transition: "opacity 0.2s ease",
-            color: text.icon,
+            color: "#667085",
           }}
         />
       </Stack>
@@ -92,7 +91,7 @@ export function TaskRadarCard({
                 minHeight: 4,
               }}
             />
-            <Typography sx={{ fontSize: 11, color: text.icon, textAlign: "center" }}>
+            <Typography sx={{ fontSize: 11, color: "#667085", textAlign: "center" }}>
               {item.label}
             </Typography>
           </Stack>

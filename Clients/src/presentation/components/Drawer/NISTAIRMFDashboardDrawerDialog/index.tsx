@@ -33,7 +33,6 @@ import { FileData } from "../../../../domain/types/File";
 import { getFileById } from "../../../../application/repository/file.repository";
 import allowedRoles from "../../../../application/constants/permissions";
 import { RiskFormValues } from "../../../../domain/types/riskForm.types";
-import { status, text } from "../../../themes/palette";
 
 // Type for risk objects
 interface LinkedRisk {
@@ -610,7 +609,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                       sx={{
                         border: `1px solid #eee`,
                         padding: "10px",
-                        backgroundColor: background.accent,
+                        backgroundColor: "background.accent",
                         borderRadius: "4px",
                       }}
                     >
@@ -786,7 +785,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                     <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                       Evidence files
                     </Typography>
-                    <Typography variant="body2" color=text.tertiary>
+                    <Typography variant="body2" color="text.tertiary">
                       Upload evidence files to document how this subcategory is being implemented.
                     </Typography>
 
@@ -819,7 +818,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                             fontSize: 11,
                             border: `1px solid ${theme.palette.border.dark}`,
                             backgroundColor: "background.main",
-                            color: text.secondary,
+                            color: "text.secondary",
                           }}
                           disableRipple={
                             theme.components?.MuiButton?.defaultProps?.disableRipple
@@ -831,7 +830,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                           <Typography
                             sx={{
                               fontSize: 11,
-                              color: text.secondary,
+                              color: "text.secondary",
                               display: "flex",
                               alignItems: "center",
                             }}
@@ -881,7 +880,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                               borderRadius: "4px",
                               backgroundColor: "background.main",
                               "&:hover": {
-                                backgroundColor: background.accent,
+                                backgroundColor: "background.accent",
                               },
                             }}
                           >
@@ -911,7 +910,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                                 <Typography
                                   sx={{
                                     fontSize: 11,
-                                    color: status.default.text,
+                                    color: "#6B7280",
                                   }}
                                 >
                                   {file.size ? `${(file.size / 1024).toFixed(1)} KB` : ""}
@@ -931,7 +930,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                                     );
                                   }}
                                   sx={{
-                                    color: text.tertiary,
+                                    color: "text.tertiary",
                                     "&:hover": {
                                       color: "primary.main",
                                       backgroundColor: "rgba(19, 113, 91, 0.08)",
@@ -949,7 +948,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                                   }
                                   disabled={isEditingDisabled}
                                   sx={{
-                                    color: text.tertiary,
+                                    color: "text.tertiary",
                                     "&:hover": {
                                       color: "status.error.main",
                                       backgroundColor: "rgba(211, 47, 47, 0.08)",
@@ -990,7 +989,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                               padding: "10px 12px",
                               border: `1px solid ${theme.palette.status.warning.border}`,
                               borderRadius: "4px",
-                              backgroundColor: status.warning.bg,
+                              backgroundColor: "status.warning.bg",
                             }}
                           >
                             <Box
@@ -1053,16 +1052,16 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                         sx={{
                           textAlign: "center",
                           py: 4,
-                          color: text.tertiary,
+                          color: "text.tertiary",
                           border: `2px dashed ${theme.palette.border.dark}`,
                           borderRadius: 1,
-                          backgroundColor: background.accent,
+                          backgroundColor: "background.accent",
                         }}
                       >
                         <Typography variant="body2" sx={{ mb: 1 }}>
                           No evidence files uploaded yet
                         </Typography>
-                        <Typography variant="caption" color=text.disabled>
+                        <Typography variant="caption" color="#9CA3AF">
                           Click "Add evidence files" to upload documentation for
                           this subcategory
                         </Typography>
@@ -1077,7 +1076,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                     <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                       Linked risks
                     </Typography>
-                    <Typography variant="body2" color=text.tertiary>
+                    <Typography variant="body2" color="text.tertiary">
                       Link risks from your risk database to this subcategory to
                       track which risks are being addressed by this implementation.
                     </Typography>
@@ -1092,7 +1091,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                           fontSize: 11,
                           border: `1px solid ${theme.palette.border.dark}`,
                           backgroundColor: "background.main",
-                          color: text.secondary,
+                          color: "text.secondary",
                         }}
                         disableRipple={
                           theme.components?.MuiButton?.defaultProps?.disableRipple
@@ -1106,7 +1105,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                         <Typography
                           sx={{
                             fontSize: 11,
-                            color: text.secondary,
+                            color: "text.secondary",
                             display: "flex",
                             alignItems: "center",
                           }}
@@ -1157,7 +1156,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                                 borderRadius: "4px",
                                 backgroundColor: "background.main",
                                 "&:hover": {
-                                  backgroundColor: background.accent,
+                                  backgroundColor: "background.accent",
                                 },
                               }}
                             >
@@ -1178,7 +1177,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                                   <Typography
                                     sx={{
                                       fontSize: 11,
-                                      color: text.tertiary,
+                                      color: "text.tertiary",
                                     }}
                                   >
                                     Risk level: {risk.risk_level}
@@ -1191,7 +1190,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                                     size="small"
                                     onClick={() => handleViewRiskDetails(risk)}
                                     sx={{
-                                      color: text.tertiary,
+                                      color: "text.tertiary",
                                       "&:hover": {
                                         color: "primary.main",
                                         backgroundColor: "rgba(19, 113, 91, 0.08)",
@@ -1214,7 +1213,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                                     }}
                                     disabled={isEditingDisabled}
                                     sx={{
-                                      color: text.tertiary,
+                                      color: "text.tertiary",
                                       "&:hover": {
                                         color: "status.error.main",
                                         backgroundColor: "rgba(211, 47, 47, 0.08)",
@@ -1239,16 +1238,16 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                           sx={{
                             textAlign: "center",
                             py: 4,
-                            color: text.tertiary,
+                            color: "text.tertiary",
                             border: `2px dashed ${theme.palette.border.dark}`,
                             borderRadius: 1,
-                            backgroundColor: background.accent,
+                            backgroundColor: "background.accent",
                           }}
                         >
                           <Typography variant="body2" sx={{ mb: 1 }}>
                             No risks linked yet
                           </Typography>
-                          <Typography variant="caption" color=text.disabled>
+                          <Typography variant="caption" color="#9CA3AF">
                             Click "Add/remove risks" to link risks from your
                             risk database
                           </Typography>

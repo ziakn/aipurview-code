@@ -7,7 +7,6 @@ import {
 import { IQuestion, IQuestionnaireAnswers } from "./iQuestion";
 import Checkbox from "../../../components/Inputs/Checkbox";
 import Radio from "../../../components/Inputs/Radio";
-import { brand } from "../../../themes/palette";
 
 const radioOptionStyle = {
   width: "100%",
@@ -20,11 +19,11 @@ const radioOptionStyle = {
   marginLeft: 0,
   marginRight: 0,
   "&:hover": {
-    borderColor: brand.primary,
+    borderColor: "#13715B",
     backgroundColor: "#F9F9F9",
   },
   "&.selected": {
-    borderColor: brand.primary,
+    borderColor: "#13715B",
     backgroundColor: "#F0F9F6",
   },
 };
@@ -42,7 +41,7 @@ const RiskAnalysisQuestion = ({
 }: RiskAnalysisQuestionProps) => {
   return (
     <Stack>
-      <Typography fontSize={15} fontWeight={600} my={4} color=text.primary>
+      <Typography fontSize={15} fontWeight={600} my={4} color="text.primary">
         {question.id}. {question.text}
       </Typography>
       {/* Options */}

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Box, Stack, Typography, useTheme, Snackbar } from "@mui/material";
 import { Check, X, Copy } from "lucide-react";
-import { border as borderPalette, text } from "../../../themes/palette";
 
 const DosAndDontsSection: React.FC = () => {
   const theme = useTheme();
@@ -109,8 +108,8 @@ const DosAndDontsSection: React.FC = () => {
             title: "Don't hardcode color values",
             example: null,
             code: `<Box sx={{
-  color: text.primary,
-  borderColor: borderPalette.dark,
+  color: "#1c2130",
+  borderColor: "#d0d5dd",
 }}>`,
           },
         },
@@ -168,9 +167,9 @@ const DosAndDontsSection: React.FC = () => {
       items: [
         {
           do: {
-            title: "Use borderPalette.dark for visible borders",
+            title: "Use #d0d5dd for visible borders",
             example: null,
-            code: `<Box sx={{ border: `1px solid ${borderPalette.dark}` }}>`,
+            code: `<Box sx={{ border: "1px solid #d0d5dd" }}>`,
           },
           dont: {
             title: "Don't use #EEEEEE for card borders",
@@ -383,7 +382,7 @@ const DosAndDontsSection: React.FC = () => {
               "Use VerifyWise components over MUI",
               "Use lucide-react for icons",
               "Use 4px border radius",
-              "Use borderPalette.dark for borders",
+              "Use #d0d5dd for borders",
             ].map((item, index) => (
               <Box key={index} sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <Check size={12} color={theme.palette.status.success.text} />

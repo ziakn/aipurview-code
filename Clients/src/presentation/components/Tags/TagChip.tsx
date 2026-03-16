@@ -1,6 +1,5 @@
 import React from "react";
 import { Box } from "@mui/material";
-import { background, status } from "../../themes/palette";
 
 export interface TagChipProps {
   tag: string;
@@ -13,12 +12,12 @@ const getTagStyle = (tag: string) => {
   // Color mapping based on official POLICY_TAGS from backend
   const tagStyles: Record<string, { bg: string; color: string }> = {
     // Ethics & Fairness - Green tones
-    "ai ethics": { bg: status.success.bg, color: status.success.text },
+    "ai ethics": { bg: "#E6F4EA", color: "#138A5E" },
     fairness: { bg: "#E8F5E9", color: "#2E7D32" },
     "bias mitigation": { bg: "#F1F8E9", color: "#558B2F" },
 
     // Transparency & Explainability - Blue tones
-    transparency: { bg: status.info.bg, color: status.info.text },
+    transparency: { bg: "#E3F2FD", color: "#1565C0" },
     explainability: { bg: "#E1F5FE", color: "#0277BD" },
 
     // Privacy & Data Governance - Purple tones
@@ -34,7 +33,7 @@ const getTagStyle = (tag: string) => {
     "human oversight": { bg: "#E8EAF6", color: "#3949AB" },
 
     // Compliance & Standards - Amber/Brown tones
-    "eu ai act": { bg: status.warning.bg, color: "#F57C00" },
+    "eu ai act": { bg: "#FFF8E1", color: "#F57C00" },
     "iso 42001": { bg: "#FFF3E0", color: "#EF6C00" },
     "nist rmf": { bg: "#FFECB3", color: "#F9A825" },
 
@@ -50,7 +49,7 @@ const getTagStyle = (tag: string) => {
   }
 
   // Default style for unmatched tags
-  return { bg: background.surface, color: "#616161" };
+  return { bg: "#F5F5F5", color: "#616161" };
 };
 
 const TagChip: React.FC<TagChipProps> = ({ tag }) => {

@@ -25,7 +25,6 @@ import allowedRoles from "../../../../../application/constants/permissions";
 import { Project } from "../../../../../domain/types/Project";
 import { useSearchParams } from "react-router-dom";
 import { TabFilterBar } from "../../../../components/FrameworkFilter/TabFilterBar";
-import { status } from "../../../../themes/palette";
 
 const ISO27001Annex = ({
   project,
@@ -374,8 +373,8 @@ const ISO27001Annex = ({
             filteredAnnexes.map((annex: any) => {
               const count = filteredControlsCountMemo[annex.id ?? 0];
               const chipColor = count !== undefined && count > 0
-                ? { bg: status.success.bg, color: status.success.text }
-                : { bg: status.warning.bg, color: status.warning.text };
+                ? { bg: "#E6F4EA", color: "#138A5E" }
+                : { bg: "#FFF8E1", color: "#795548" };
               return (
                 <Stack key={annex.id} sx={styles.container}>
                   <Accordion
@@ -441,7 +440,7 @@ const ISO27001Annex = ({
                         ))
                       ) : (
                         <Stack sx={{ p: 2, textAlign: "center" }}>
-                          <Typography variant="body2" color=text.secondary>
+                          <Typography variant="body2" color="text.secondary">
                             No matching controls
                           </Typography>
                         </Stack>

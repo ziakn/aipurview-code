@@ -31,7 +31,6 @@ import {
 } from "lucide-react";
 import { CustomizableButton } from "../button/customizable-button";
 import singleTheme from "../../themes/v1SingleTheme";
-import { background, border as borderPalette, status, text } from "../../themes/palette";
 
 // Types
 export interface UploadFile {
@@ -105,7 +104,7 @@ const BasicModalCancelButtonStyle = {
   textTransform: "none",
   fontSize: 13,
   borderRadius: "4px",
-  color: text.secondary,
+  color: "#344054",
   "&:hover": {
     backgroundColor: "rgba(19, 113, 91, 0.04)",
   },
@@ -239,8 +238,8 @@ const Uploader: React.FC<UploaderProps> = ({
         return {
           label: 'Pending',
           icon: PendingIcon,
-          backgroundColor: background.accent,
-          color: status.default.text,
+          backgroundColor: '#F9FAFB',
+          color: '#6B7280',
         };
     }
   };
@@ -477,7 +476,7 @@ const Uploader: React.FC<UploaderProps> = ({
     background: isDragging
       ? 'linear-gradient(135deg, rgba(19, 113, 91, 0.05) 0%, rgba(19, 113, 91, 0.1) 100%)'
       : '#FFFFFF',
-    border: `2px dashed ${isDragging ? singleTheme.buttons.primary.contained.backgroundColor : borderPalette.dark}`,
+    border: `2px dashed ${isDragging ? singleTheme.buttons.primary.contained.backgroundColor : '#d0d5dd'}`,
     boxShadow: 'none',
     transition: 'all 0.2s ease',
     cursor: 'pointer',
@@ -513,7 +512,7 @@ const Uploader: React.FC<UploaderProps> = ({
   const fileCardStyles: SxProps<Theme> = {
     borderRadius: '4px',
     background: '#FFFFFF',
-    border: `1px solid borderPalette.light`,
+    border: `1px solid #EAECF0`,
     boxShadow: 'none',
     transition: 'all 0.2s ease',
     overflow: 'hidden',
@@ -533,14 +532,14 @@ const Uploader: React.FC<UploaderProps> = ({
           mx: 'auto',
           borderRadius: '8px',
           background: '#FFFFFF',
-          border: `1px solid borderPalette.light`,
+          border: `1px solid #EAECF0`,
           boxShadow: 'none',
           overflow: 'hidden',
           ...sx,
         }}
       >
         {/* Header */}
-        <Box sx={{ p: 3, borderBottom: `1px solid borderPalette.light` }}>
+        <Box sx={{ p: 3, borderBottom: `1px solid #EAECF0` }}>
           <Stack direction="row" alignItems="center" spacing={2}>
             <Avatar
               sx={{
@@ -556,7 +555,7 @@ const Uploader: React.FC<UploaderProps> = ({
               <Typography variant="body1" sx={{ fontWeight: 600, color: theme.palette.text.primary, mb: 0.5, fontSize: '16px' }}>
                 Modern File Uploader
               </Typography>
-              <Typography variant="body2" color=text.secondary sx={{ fontSize: '13px' }}>
+              <Typography variant="body2" color="#344054" sx={{ fontSize: '13px' }}>
                 Drag & drop files or click to browse • Max {formatFileSize(maxFileSize)} per file
               </Typography>
             </Box>
@@ -595,7 +594,7 @@ const Uploader: React.FC<UploaderProps> = ({
                       : `${singleTheme.buttons.primary.contained.backgroundColor}10`,
                     color: isDragging
                       ? singleTheme.buttons.primary.contained.backgroundColor
-                      : text.tertiary,
+                      : '#475467',
                     width: 48,
                     height: 48,
                     mb: 2,
@@ -614,10 +613,10 @@ const Uploader: React.FC<UploaderProps> = ({
                     </>
                   )}
                 </Typography>
-                <Typography variant="body2" color=text.tertiary sx={{ mb: 2, fontSize: '13px' }}>
+                <Typography variant="body2" color="#475467" sx={{ mb: 2, fontSize: '13px' }}>
                   {multiple ? `Up to ${maxFiles} files` : 'Single file upload'}
                 </Typography>
-                <Typography variant="caption" color=status.default.text sx={{ fontSize: '12px' }}>
+                <Typography variant="caption" color="#6B7280" sx={{ fontSize: '12px' }}>
                   Supported formats: {acceptedTypes.slice(0, 4).join(', ')}
                   {acceptedTypes.length > 4 && ` +${acceptedTypes.length - 4} more`}
                 </Typography>
@@ -639,7 +638,7 @@ const Uploader: React.FC<UploaderProps> = ({
           <Fade in timeout={300}>
             <Box sx={{ px: 3, pb: 2 }}>
               <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 1 }}>
-                <Typography variant="body2" color=text.secondary sx={{ fontWeight: 500, fontSize: '13px' }}>
+                <Typography variant="body2" color="#344054" sx={{ fontWeight: 500, fontSize: '13px' }}>
                   Overall Progress
                 </Typography>
                 <Typography variant="body2" color={singleTheme.buttons.primary.contained.backgroundColor} sx={{ fontWeight: 600, fontSize: '13px' }}>
@@ -652,7 +651,7 @@ const Uploader: React.FC<UploaderProps> = ({
                 sx={{
                   height: 6,
                   borderRadius: 3,
-                  backgroundColor: background.hover,
+                  backgroundColor: '#F3F4F6',
                   '& .MuiLinearProgress-bar': {
                     backgroundColor: singleTheme.buttons.primary.contained.backgroundColor,
                     borderRadius: 3,
@@ -692,12 +691,12 @@ const Uploader: React.FC<UploaderProps> = ({
                                   ? '#FEF3C7'
                                   : file.type.includes('pdf')
                                   ? '#DBEAFE'
-                                  : background.hover,
+                                  : '#F3F4F6',
                                 color: file.type.startsWith('image/')
                                   ? '#D97706'
                                   : file.type.includes('pdf')
                                   ? '#2563EB'
-                                  : status.default.text,
+                                  : '#6B7280',
                                 width: 40,
                                 height: 40,
                                 flexShrink: 0,
@@ -723,10 +722,10 @@ const Uploader: React.FC<UploaderProps> = ({
                                 {file.name}
                               </Typography>
                               <Stack direction="row" alignItems="center" spacing={1}>
-                                <Typography variant="caption" color=text.tertiary sx={{ fontSize: '12px' }}>
+                                <Typography variant="caption" color="#475467" sx={{ fontSize: '12px' }}>
                                   {formatFileSize(file.size)}
                                 </Typography>
-                                <Typography variant="caption" color=text.tertiary sx={{ fontSize: '12px' }}>
+                                <Typography variant="caption" color="#475467" sx={{ fontSize: '12px' }}>
                                   •
                                 </Typography>
                                 <Chip
@@ -757,7 +756,7 @@ const Uploader: React.FC<UploaderProps> = ({
                                     sx={{
                                       height: 4,
                                       borderRadius: 2,
-                                      backgroundColor: background.hover,
+                                      backgroundColor: '#F3F4F6',
                                       '& .MuiLinearProgress-bar': {
                                         backgroundColor: singleTheme.buttons.primary.contained.backgroundColor,
                                         borderRadius: 2,
@@ -836,13 +835,13 @@ const Uploader: React.FC<UploaderProps> = ({
         {/* Action Buttons */}
         {files.length > 0 && (
           <Fade in timeout={500}>
-            <Box sx={{ p: 3, borderTop: `1px solid borderPalette.light` }}>
+            <Box sx={{ p: 3, borderTop: `1px solid #EAECF0` }}>
               <Stack direction="row" spacing={2} justifyContent="flex-end">
                 <CustomizableButton
                   variant="text"
                   onClick={handleClearAll}
                   text="Clear all"
-                  sx={{ color: text.secondary }}
+                  sx={{ color: "#344054" }}
                 />
                 <CustomizableButton
                   variant="contained"
@@ -875,8 +874,8 @@ const Uploader: React.FC<UploaderProps> = ({
               left: '50%',
               transform: 'translate(-50%, -50%)',
               width: 450,
-              bgcolor: background.alt,
-              border: `1px solid borderPalette.light`,
+              bgcolor: '#FCFCFD',
+              border: `1px solid #EAECF0`,
               borderRadius: '4px',
               boxShadow: 'none',
               outline: 'none',
@@ -903,7 +902,7 @@ const Uploader: React.FC<UploaderProps> = ({
                 variant="body2"
                 sx={{
                   fontSize: '13px',
-                  color: text.secondary,
+                  color: '#344054',
                   mb: 2,
                   lineHeight: 1.5,
                 }}
@@ -920,7 +919,7 @@ const Uploader: React.FC<UploaderProps> = ({
                 display: 'flex',
                 justifyContent: 'flex-end',
                 gap: 2,
-                borderTop: `1px solid borderPalette.light`,
+                borderTop: `1px solid #EAECF0`,
               }}
             >
               <Button

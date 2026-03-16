@@ -17,7 +17,6 @@ import NISTFunctionsOverviewCard from "./NISTFunctionsOverviewCard";
 import { PluginSlot } from "../../../components/PluginSlot";
 import { PLUGIN_SLOTS } from "../../../../domain/constants/pluginSlots";
 import { usePluginRegistry } from "../../../../application/contexts/PluginRegistry.context";
-import { background, border as borderPalette, brand, text } from "../../../themes/palette";
 
 // localStorage keys for framework controls navigation
 const FRAMEWORK_SELECTED_KEY = "verifywise_framework_selected";
@@ -102,7 +101,7 @@ const tabStyle = {
   minHeight: "20px",
   minWidth: "auto",
   "&.Mui-selected": {
-    color: brand.primary,
+    color: "#13715B",
   },
 };
 
@@ -472,12 +471,12 @@ const FrameworkDashboard = ({
         sx={{
           textAlign: "center",
           py: 8,
-          backgroundColor: background.accent,
+          backgroundColor: "#F9FAFB",
           borderRadius: 2,
-          border: `1px solid ${borderPalette.dark}`,
+          border: "1px solid #d0d5dd",
         }}
       >
-        <Typography variant="body1" color=text.secondary>
+        <Typography variant="body1" color="text.secondary">
           No frameworks enabled for this organization.
         </Typography>
       </Box>
@@ -510,7 +509,7 @@ const FrameworkDashboard = ({
           sx={{
             mb: 3,
             pb: 2,
-            borderBottom: `2px solid ${brand.primary}`,
+            borderBottom: "2px solid #13715B",
             display: "flex",
             alignItems: "center",
             gap: 1.5,
@@ -520,7 +519,7 @@ const FrameworkDashboard = ({
             sx={{
               width: 4,
               height: 20,
-              backgroundColor: brand.primary,
+              backgroundColor: "#13715B",
               borderRadius: 1,
             }}
           />
@@ -536,7 +535,7 @@ const FrameworkDashboard = ({
           <Typography
             sx={{
               fontSize: 12,
-              color: text.icon,
+              color: "#667085",
               ml: 1,
             }}
           >
@@ -571,7 +570,7 @@ const FrameworkDashboard = ({
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
               <TabList
                 onChange={handleTabChange}
-                TabIndicatorProps={{ style: { backgroundColor: brand.primary } }}
+                TabIndicatorProps={{ style: { backgroundColor: "#13715B" } }}
                 sx={tabListStyle}
               >
                 {tabs.map(tab => (

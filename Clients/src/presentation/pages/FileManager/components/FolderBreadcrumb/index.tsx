@@ -16,7 +16,6 @@ import {
   FileQuestion as UncategorizedIcon,
 } from "lucide-react";
 import {
-import { background, border as borderPalette, text } from "../../../../themes/palette";
   IVirtualFolder,
   SelectedFolder,
 } from "../../../../../domain/interfaces/i.virtualFolder";
@@ -71,17 +70,17 @@ export const FolderBreadcrumb: React.FC<FolderBreadcrumbProps> = ({
           padding: "4px 8px",
           borderRadius: "4px",
           "&:hover": {
-            backgroundColor: background.hover,
+            backgroundColor: "#F3F4F6",
           },
         }}
       >
-        <HomeIcon size={14} color=text.icon />
+        <HomeIcon size={14} color="#667085" />
       </Box>
 
       {/* Special folder views (all/uncategorized) */}
       {typeof selectedFolder === "string" && (
         <>
-          <ChevronRightIcon size={14} color=borderPalette.dark />
+          <ChevronRightIcon size={14} color="#D0D5DD" />
           <Box
             sx={{
               display: "flex",
@@ -89,17 +88,17 @@ export const FolderBreadcrumb: React.FC<FolderBreadcrumbProps> = ({
               gap: "6px",
               padding: "4px 8px",
               borderRadius: "4px",
-              backgroundColor: background.hover,
+              backgroundColor: "#F3F4F6",
             }}
           >
-            <Box sx={{ display: "flex", color: text.icon }}>
+            <Box sx={{ display: "flex", color: "#667085" }}>
               {getIcon(selectedFolder)}
             </Box>
             <Typography
               sx={{
                 fontSize: 13,
                 fontWeight: 500,
-                color: text.secondary,
+                color: "#344054",
               }}
             >
               {getDisplayName(selectedFolder)}
@@ -114,16 +113,16 @@ export const FolderBreadcrumb: React.FC<FolderBreadcrumbProps> = ({
           {breadcrumb.length === 0 && loading ? (
             // Only show loading if we don't have any breadcrumb yet
             <>
-              <ChevronRightIcon size={14} color=borderPalette.dark />
+              <ChevronRightIcon size={14} color="#D0D5DD" />
               <Box
                 sx={{
                   padding: "4px 8px",
                   borderRadius: "4px",
-                  backgroundColor: background.hover,
+                  backgroundColor: "#F3F4F6",
                   minWidth: "80px",
                 }}
               >
-                <Typography sx={{ fontSize: 13, color: text.muted }}>
+                <Typography sx={{ fontSize: 13, color: "#98A2B3" }}>
                   Loading...
                 </Typography>
               </Box>
@@ -135,7 +134,7 @@ export const FolderBreadcrumb: React.FC<FolderBreadcrumbProps> = ({
 
               return (
                 <React.Fragment key={folder.id}>
-                  <ChevronRightIcon size={14} color=borderPalette.dark />
+                  <ChevronRightIcon size={14} color="#D0D5DD" />
                   <Box
                     onClick={() => !isLast && onSelectFolder(folder.id)}
                     sx={{
@@ -145,16 +144,16 @@ export const FolderBreadcrumb: React.FC<FolderBreadcrumbProps> = ({
                       padding: "4px 8px",
                       borderRadius: "4px",
                       cursor: isLast ? "default" : "pointer",
-                      backgroundColor: isLast ? background.hover : "transparent",
+                      backgroundColor: isLast ? "#F3F4F6" : "transparent",
                       "&:hover": {
-                        backgroundColor: isLast ? background.hover : background.accent,
+                        backgroundColor: isLast ? "#F3F4F6" : "#F9FAFB",
                       },
                     }}
                   >
                     <Box
                       sx={{
                         display: "flex",
-                        color: folder.color || text.icon,
+                        color: folder.color || "#667085",
                       }}
                     >
                       <FolderIcon size={14} />
@@ -163,7 +162,7 @@ export const FolderBreadcrumb: React.FC<FolderBreadcrumbProps> = ({
                       sx={{
                         fontSize: 13,
                         fontWeight: isLast ? 500 : 400,
-                        color: isLast ? text.secondary : text.icon,
+                        color: isLast ? "#344054" : "#667085",
                         maxWidth: "150px",
                         overflow: "hidden",
                         textOverflow: "ellipsis",

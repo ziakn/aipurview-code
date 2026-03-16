@@ -1,6 +1,5 @@
 import React from "react";
 import singleTheme from "../../themes/v1SingleTheme";
-import { background } from "../../themes/palette";
 
 // A. Main Layout
 export const riskMainStackStyle = {
@@ -17,7 +16,7 @@ export const riskFilterRowStyle = {
 export const analyticsIconButtonStyle = {
   ...singleTheme.iconButtonsRectangle,
   "&:hover": {
-    backgroundColor: background.accent,
+    backgroundColor: "#f9fafb",
   },
 };
 
@@ -55,7 +54,7 @@ export const riskMenuItemStyle = {
   transition: "all 0.2s ease",
   mb: 2,
   "&:hover": {
-    backgroundColor: background.accent,
+    backgroundColor: "#f9fafb",
     border: "1px solid rgba(0, 0, 0, 0.12)",
   },
 };

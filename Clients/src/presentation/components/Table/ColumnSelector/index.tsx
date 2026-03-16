@@ -32,7 +32,6 @@ import {
 } from "@mui/material";
 import { Columns } from "lucide-react";
 import { ColumnConfig } from "../../../../application/hooks/useColumnVisibility";
-import { background, border as borderPalette, brand, text } from "../../../themes/palette";
 
 interface ColumnSelectorProps<TKey extends string = string> {
   /** All available column configurations */
@@ -86,15 +85,15 @@ export function ColumnSelector<TKey extends string = string>({
           minWidth: 100,
           padding: "6px 12px",
           borderRadius: "4px",
-          border: variant === "outlined" ? `1px solid ${borderPalette.dark}` : undefined,
+          border: variant === "outlined" ? "1px solid #D0D5DD" : undefined,
           backgroundColor: variant === "outlined" ? "white" : undefined,
-          color: text.secondary,
+          color: "#344054",
           fontSize: 13,
           fontWeight: 500,
           textTransform: "none",
           "&:hover": {
-            backgroundColor: variant === "outlined" ? background.accent : undefined,
-            borderColor: variant === "outlined" ? text.muted : undefined,
+            backgroundColor: variant === "outlined" ? "#F9FAFB" : undefined,
+            borderColor: variant === "outlined" ? "#98A2B3" : undefined,
           },
         }}
       >
@@ -140,7 +139,7 @@ export function ColumnSelector<TKey extends string = string>({
           <Typography
             sx={{
               fontSize: 12,
-              color: text.icon,
+              color: "#667085",
             }}
           >
             Select which columns to display
@@ -167,7 +166,7 @@ export function ColumnSelector<TKey extends string = string>({
                 "&:hover": {
                   backgroundColor: column.alwaysVisible
                     ? "transparent"
-                    : background.accent,
+                    : "#F9FAFB",
                 },
               }}
             >
@@ -184,19 +183,19 @@ export function ColumnSelector<TKey extends string = string>({
                 sx={{
                   padding: 0,
                   marginRight: 1.5,
-                  color: borderPalette.dark,
+                  color: "#D0D5DD",
                   "&.Mui-checked": {
-                    color: brand.primary,
+                    color: "#13715B",
                   },
                   "&.Mui-disabled": {
-                    color: borderPalette.dark,
+                    color: "#D0D5DD",
                   },
                 }}
               />
               <Typography
                 sx={{
                   fontSize: 13,
-                  color: text.secondary,
+                  color: "#344054",
                 }}
               >
                 {column.label}
@@ -205,7 +204,7 @@ export function ColumnSelector<TKey extends string = string>({
                 <Typography
                   sx={{
                     fontSize: 11,
-                    color: text.muted,
+                    color: "#98A2B3",
                     ml: "auto",
                   }}
                 >
@@ -228,13 +227,13 @@ export function ColumnSelector<TKey extends string = string>({
             sx={{
               fontSize: 13,
               fontWeight: 500,
-              color: text.icon,
+              color: "#667085",
               textTransform: "none",
               padding: "6px 12px",
               borderRadius: "4px",
               "&:hover": {
-                backgroundColor: background.accent,
-                color: text.secondary,
+                backgroundColor: "#F9FAFB",
+                color: "#344054",
               },
             }}
           >

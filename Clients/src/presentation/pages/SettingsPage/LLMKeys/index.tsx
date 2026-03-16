@@ -42,7 +42,6 @@ import { getModelsForProvider, getRecommendedModel } from "../../../utils/provid
 import anthropicLogo from "../../../assets/icons/anthropic_logo.svg";
 import openaiLogo from "../../../assets/icons/openai_logo.svg";
 import openrouterLogo from "../../../assets/icons/openrouter_logo.svg";
-import { border as borderPalette, brand, status, text } from "../../../themes/palette";
 
 const PROVIDER_LOGOS: Record<string, string> = {
   Anthropic: anthropicLogo,
@@ -389,7 +388,7 @@ const LLMKeys = () => {
         >
           <Box>
             <Typography
-              sx={{ fontSize: 15, fontWeight: 600, color: text.black }}
+              sx={{ fontSize: 15, fontWeight: 600, color: "#000000" }}
             >
               LLM Keys
             </Typography>
@@ -405,7 +404,7 @@ const LLMKeys = () => {
               onClick={() => setIsCreateModalOpen(true)}
               isDisabled={isDisabled}
               sx={{
-                backgroundColor: brand.primary,
+                backgroundColor: "#13715B",
                 color: "#fff",
                 "&:hover": { backgroundColor: "#0e5c47" },
               }}
@@ -420,7 +419,7 @@ const LLMKeys = () => {
         ) : keys.length === 0 ? (
           <Box
             sx={{
-              border: `2px dashed ${status.default.border}`,
+              border: "2px dashed #e5e7eb",
               borderRadius: "12px",
               p: 6,
               textAlign: "center",
@@ -440,10 +439,10 @@ const LLMKeys = () => {
                 mb: 2,
               }}
             >
-              <PlusIcon size={24} color=brand.primary />
+              <PlusIcon size={24} color="#13715B" />
             </Box>
             <Typography
-              sx={{ fontSize: 15, fontWeight: 600, color: text.black, mb: 1 }}
+              sx={{ fontSize: 15, fontWeight: 600, color: "#000000", mb: 1 }}
             >
               No LLM keys yet
             </Typography>
@@ -457,7 +456,7 @@ const LLMKeys = () => {
               onClick={() => setIsCreateModalOpen(true)}
               isDisabled={isDisabled}
               sx={{
-                backgroundColor: brand.primary,
+                backgroundColor: "#13715B",
                 color: "#fff",
                 "&:hover": { backgroundColor: "#0e5c47" },
               }}
@@ -475,7 +474,7 @@ const LLMKeys = () => {
                   onMouseEnter={() => setHoveredKeyId(key.id)}
                   onMouseLeave={() => setHoveredKeyId(null)}
                   sx={{
-                    border: "1.5px solid borderPalette.light",
+                    border: "1.5px solid #eaecf0",
                     borderRadius: "4px",
                     p: 4,
                     backgroundColor:
@@ -499,7 +498,7 @@ const LLMKeys = () => {
                   <Box sx={{ flex: 1 }}>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
                       {key.name === "Custom" ? (
-                        <ServerIcon size={20} color=text.tertiary strokeWidth={1.5} />
+                        <ServerIcon size={20} color="#475467" strokeWidth={1.5} />
                       ) : (
                         <img
                           src={PROVIDER_LOGOS[key.name]}
@@ -511,7 +510,7 @@ const LLMKeys = () => {
                         sx={{
                           fontSize: 14,
                           fontWeight: 600,
-                          color: text.black,
+                          color: "#000000",
                           letterSpacing: "0.01em",
                         }}
                       >
@@ -622,7 +621,7 @@ const LLMKeys = () => {
           <Box>
             <Typography
               component="label"
-              sx={{ fontSize: 13, fontWeight: 500, color: text.secondary, mb: 0.5, display: "block" }}
+              sx={{ fontSize: 13, fontWeight: 500, color: "#344054", mb: 0.5, display: "block" }}
             >
               Provider <span style={{ color: "#f04438" }}>*</span>
             </Typography>
@@ -647,21 +646,21 @@ const LLMKeys = () => {
                     borderRadius: "4px",
                     border: "0.5px solid",
                     borderColor: formData.name === provider.name
-                      ? brand.primary
-                      : borderPalette.light,
+                      ? "#13715B"
+                      : "#eaecf0",
                     backgroundColor: formData.name === provider.name
                       ? "#f0fdf4"
                       : "#ffffff",
                     cursor: "pointer",
                     transition: "all 0.15s ease",
                     "&:hover": {
-                      borderColor: brand.primary,
+                      borderColor: "#13715B",
                       backgroundColor: "#f8fffe",
                     },
                   }}
                 >
                   {provider.id === "custom" ? (
-                    <ServerIcon size={24} color=text.tertiary strokeWidth={1.5} />
+                    <ServerIcon size={24} color="#475467" strokeWidth={1.5} />
                   ) : (
                     <img
                       src={PROVIDER_LOGOS[provider.name]}
@@ -669,7 +668,7 @@ const LLMKeys = () => {
                       style={{ width: 24, height: 24 }}
                     />
                   )}
-                  <Typography sx={{ fontSize: 12, fontWeight: 500, color: text.secondary }}>
+                  <Typography sx={{ fontSize: 12, fontWeight: 500, color: "#344054" }}>
                     {provider.name}
                   </Typography>
                 </Box>
@@ -766,7 +765,7 @@ const LLMKeys = () => {
                   rel="noopener noreferrer"
                   sx={{
                     fontSize: 11,
-                    color: brand.primary,
+                    color: "#13715B",
                     textDecoration: "none",
                     display: "inline-flex",
                     alignItems: "center",
@@ -786,7 +785,7 @@ const LLMKeys = () => {
             <Box>
               <Typography
                 component="label"
-                sx={{ fontSize: 13, fontWeight: 500, color: text.secondary, mb: 1, display: "block" }}
+                sx={{ fontSize: 13, fontWeight: 500, color: "#344054", mb: 1, display: "block" }}
               >
                 Custom headers
               </Typography>
@@ -836,7 +835,7 @@ const LLMKeys = () => {
                     onClick={handleAddHeaderRow}
                     sx={{
                       fontSize: 12,
-                      color: brand.primary,
+                      color: "#13715B",
                       cursor: "pointer",
                       display: "inline-flex",
                       alignItems: "center",

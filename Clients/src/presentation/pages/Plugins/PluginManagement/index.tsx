@@ -45,7 +45,6 @@ import { BreadcrumbItem } from "../../../../domain/types/breadcrumbs.types";
 import { ENV_VARs } from "../../../../../env.vars";
 import { getConfigFields, ConfigField } from "./config-fields";
 import {
-import { background, brand, status, text } from "../../../themes/palette";
   backButton,
   pluginIconPlaceholder,
   installedStatusChip,
@@ -334,7 +333,7 @@ const PluginManagement: React.FC = () => {
       <Stack className="vwhome" gap="16px">
         <PageBreadcrumbs items={breadcrumbItems} autoGenerate={false} />
         <Box sx={{ textAlign: "center", py: 8 }}>
-          <Typography variant="h6" color=text.secondary>
+          <Typography variant="h6" color="text.secondary">
             Plugin not found
           </Typography>
           <Button
@@ -413,7 +412,7 @@ const PluginManagement: React.FC = () => {
                         />
                       )}
                     </Box>
-                    <Typography variant="body2" color=text.secondary fontSize={13}>
+                    <Typography variant="body2" color="text.secondary" fontSize={13}>
                       Version {plugin.version} • {plugin.author || "VerifyWise"}
                     </Typography>
                   </Box>
@@ -424,7 +423,7 @@ const PluginManagement: React.FC = () => {
                   <Typography variant="subtitle2" fontWeight={600} fontSize={14} mb="8px">
                     About
                   </Typography>
-                  <Typography variant="body2" color=text.secondary fontSize={13}>
+                  <Typography variant="body2" color="text.secondary" fontSize={13}>
                     {plugin.longDescription || plugin.description}
                   </Typography>
                 </Box>
@@ -485,7 +484,7 @@ const PluginManagement: React.FC = () => {
                             display: "flex",
                             gap: "12px",
                             padding: "12px",
-                            backgroundColor: background.accent,
+                            backgroundColor: "#f9fafb",
                             borderRadius: "6px",
                           }}
                         >
@@ -501,13 +500,13 @@ const PluginManagement: React.FC = () => {
                               flexShrink: 0,
                             }}
                           >
-                            <CheckIcon size={16} color=brand.primary />
+                            <CheckIcon size={16} color="#13715B" />
                           </Box>
                           <Box>
                             <Typography variant="body2" fontWeight={500} fontSize={13}>
                               {feature.name}
                             </Typography>
-                            <Typography variant="caption" color=text.secondary fontSize={12} sx={{ mt: "2px", display: "block" }}>
+                            <Typography variant="caption" color="text.secondary" fontSize={12} sx={{ mt: "2px", display: "block" }}>
                               {feature.description}
                             </Typography>
                           </Box>
@@ -530,8 +529,8 @@ const PluginManagement: React.FC = () => {
                           label={tag}
                           size="small"
                           uppercase={false}
-                          backgroundColor=background.hover
-                          textColor=status.default.text
+                          backgroundColor="#F3F4F6"
+                          textColor="#6B7280"
                         />
                       ))}
                     </Box>
@@ -617,7 +616,7 @@ const PluginManagement: React.FC = () => {
                 <Stack spacing={3}>
                   {/* Configuration Header */}
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                    <SettingsIcon size={20} color=brand.primary />
+                    <SettingsIcon size={20} color="#13715B" />
                     <Typography variant="h6" fontWeight={600} fontSize={15}>
                       Configuration
                     </Typography>
@@ -662,7 +661,7 @@ const PluginManagement: React.FC = () => {
                     {/* Generic Configuration Form - only for plugins without custom config UI (that don't require configuration) */}
                     {!connectingOAuth && pluginKey && !getComponentsForSlot(PLUGIN_SLOTS.PLUGIN_CONFIG).some(c => c.pluginKey === pluginKey) && !plugin.requiresConfiguration && (
                       <>
-                        <Typography variant="body2" color=text.secondary fontSize={13} sx={{ mb: 3 }}>
+                        <Typography variant="body2" color="text.secondary" fontSize={13} sx={{ mb: 3 }}>
                           Configure {plugin.displayName} settings and preferences.
                         </Typography>
 
@@ -760,7 +759,7 @@ const PluginManagement: React.FC = () => {
                                       />
                                     }
                                     label={
-                                      <Typography variant="body2" fontWeight={500} fontSize={13} sx={{ color: text.secondary }}>
+                                      <Typography variant="body2" fontWeight={500} fontSize={13} sx={{ color: "#344054" }}>
                                         {field.label}
                                       </Typography>
                                     }

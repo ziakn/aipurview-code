@@ -48,7 +48,6 @@ import {
   updatePolicyFolders,
 } from "../../../application/repository/policyFolder.repository";
 import type {
-import { border as borderPalette, brand, text } from "../../themes/palette";
   IFolderTreeNode,
   IVirtualFolder,
   IVirtualFolderInput,
@@ -545,7 +544,7 @@ const PolicyManager: React.FC<PolicyManagerProps> = ({
               onClick={() => setFolderSidebarOpen((prev) => !prev)}
               size="small"
               sx={{
-                color: folderSidebarOpen ? brand.primary : text.muted,
+                color: folderSidebarOpen ? "#13715B" : "#98A2B3",
                 padding: "4px",
                 borderRadius: "4px",
                 backgroundColor: folderSidebarOpen
@@ -572,8 +571,8 @@ const PolicyManager: React.FC<PolicyManagerProps> = ({
               variant="contained"
               text="Add new policy"
               sx={{
-                backgroundColor: brand.primary,
-                border: `1px solid ${brand.primary}`,
+                backgroundColor: "#13715B",
+                border: "1px solid #13715B",
               gap: 3,
             }}
             icon={<AddCircleOutlineIcon size={16} />}
@@ -592,7 +591,7 @@ const PolicyManager: React.FC<PolicyManagerProps> = ({
               width: folderSidebarCollapsed ? 48 : 260,
               minWidth: folderSidebarCollapsed ? 48 : 260,
               backgroundColor: "#FAFBFC",
-              border: `1px solid ${borderPalette.dark}`,
+              border: "1px solid #d0d5dd",
               borderRadius: "4px",
               overflow: "hidden",
               transition: "width 200ms ease, min-width 200ms ease",

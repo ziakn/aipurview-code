@@ -15,7 +15,6 @@ import { EvidenceType } from "../../../../domain/enums/evidenceHub.enum";
 import Field from "../../Inputs/Field";
 import { useTheme } from "@mui/material";
 import CustomizableMultiSelect from "../../Inputs/Select/Multi";
-import { background } from "../../../themes/palette";
 
 interface NewEvidenceHubProps {
   isOpen: boolean;
@@ -436,7 +435,7 @@ const NewEvidenceHub: FC<NewEvidenceHubProps> = ({
                     size="small"
                     sx={{
                       padding: "4px",
-                      bgcolor: background.surface,
+                      bgcolor: "#f5f5f5",
                       "&:hover": { bgcolor: "#e0e0e0" },
                     }}
                   >

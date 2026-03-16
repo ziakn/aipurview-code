@@ -27,7 +27,6 @@ import {
   Save as SaveIcon,
 } from "lucide-react";
 import { CustomizableButton } from "../button/customizable-button";
-import { background, border as borderPalette, brand, text } from "../../themes/palette";
 
 interface NoteComposerProps {
   onSubmit: (content: string) => void;
@@ -167,11 +166,11 @@ const NoteComposer: React.FC<NoteComposerProps> = ({
               sx={{
                 minWidth: "80px",
                 height: "34px",
-                border: `1px solid ${borderPalette.dark}`,
-                color: text.secondary,
+                border: "1px solid #D0D5DD",
+                color: "#344054",
                 "&:hover": {
-                  backgroundColor: background.accent,
-                  border: `1px solid ${borderPalette.dark}`,
+                  backgroundColor: "#F9FAFB",
+                  border: "1px solid #D0D5DD",
                 },
               }}
             />
@@ -186,8 +185,8 @@ const NoteComposer: React.FC<NoteComposerProps> = ({
               loading={isLoading}
               icon={<SaveIcon size={16} />}
               sx={{
-                backgroundColor: brand.primary,
-                border: `1px solid ${brand.primary}`,
+                backgroundColor: "#13715B",
+                border: "1px solid #13715B",
                 gap: 2,
                 width: "fit-content",
                 height: "34px",
@@ -202,8 +201,8 @@ const NoteComposer: React.FC<NoteComposerProps> = ({
               loading={isLoading}
               icon={<SendIcon size={16} />}
               sx={{
-                backgroundColor: brand.primary,
-                border: `1px solid ${brand.primary}`,
+                backgroundColor: "#13715B",
+                border: "1px solid #13715B",
                 gap: 2,
                 width: "fit-content",
                 height: "34px",

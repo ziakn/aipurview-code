@@ -6,7 +6,6 @@ import {
   Divider,
 } from "@mui/material";
 import { Check, FileText } from "lucide-react";
-import { background, brand, status, text } from "../../../themes/palette";
 
 // Re-export TemplateRow from this file to avoid circular dependency
 export interface TemplateRow {
@@ -52,7 +51,7 @@ const getCategoryStyles = (category: string) => {
     case "agent":
       return { backgroundColor: "#FEE2E2", color: "#DC2626" };
     default:
-      return { backgroundColor: background.hover, color: status.default.text };
+      return { backgroundColor: "#F3F4F6", color: "#6B7280" };
   }
 };
 
@@ -90,14 +89,14 @@ const TemplatesList: React.FC<TemplatesListProps> = ({
         sx={{
           p: compact ? 1 : 1.5,
           border: "1px solid",
-          borderColor: isSelected ? brand.primary : status.default.border,
+          borderColor: isSelected ? "#13715B" : "#E5E7EB",
           borderRadius: "8px",
           cursor: "pointer",
           backgroundColor: isSelected ? "#F0FDF4" : "#FFFFFF",
           transition: "all 0.15s ease",
           "&:hover": {
-            borderColor: brand.primary,
-            backgroundColor: isSelected ? "#F0FDF4" : background.accent,
+            borderColor: "#13715B",
+            backgroundColor: isSelected ? "#F0FDF4" : "#F9FAFB",
           },
         }}
       >
@@ -107,14 +106,14 @@ const TemplatesList: React.FC<TemplatesListProps> = ({
               width: compact ? 28 : 32,
               height: compact ? 28 : 32,
               borderRadius: "6px",
-              backgroundColor: isSelected ? brand.primary : background.hover,
+              backgroundColor: isSelected ? "#13715B" : "#F3F4F6",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               flexShrink: 0,
             }}
           >
-            <FileText size={compact ? 14 : 16} color={isSelected ? "#FFFFFF" : status.default.text} />
+            <FileText size={compact ? 14 : 16} color={isSelected ? "#FFFFFF" : "#6B7280"} />
           </Box>
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography
@@ -133,7 +132,7 @@ const TemplatesList: React.FC<TemplatesListProps> = ({
               <Typography
                 sx={{
                   fontSize: "11px",
-                  color: text.disabled,
+                  color: "#9CA3AF",
                   whiteSpace: "nowrap",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
@@ -156,7 +155,7 @@ const TemplatesList: React.FC<TemplatesListProps> = ({
               }}
             />
             {template.test_count && (
-              <Typography sx={{ fontSize: compact ? "10px" : "11px", color: text.disabled }}>
+              <Typography sx={{ fontSize: compact ? "10px" : "11px", color: "#9CA3AF" }}>
                 {template.test_count}
               </Typography>
             )}
@@ -172,7 +171,7 @@ const TemplatesList: React.FC<TemplatesListProps> = ({
                 "& .MuiChip-label": { px: 0.75 },
               }}
             />
-            {isSelected && <Check size={14} color=brand.primary />}
+            {isSelected && <Check size={14} color="#13715B" />}
           </Stack>
         </Stack>
       </Box>
@@ -182,7 +181,7 @@ const TemplatesList: React.FC<TemplatesListProps> = ({
   if (loading) {
     return (
       <Box sx={{ py: 3, textAlign: "center" }}>
-        <Typography sx={{ fontSize: "13px", color: status.default.text }}>Loading templates...</Typography>
+        <Typography sx={{ fontSize: "13px", color: "#6B7280" }}>Loading templates...</Typography>
       </Box>
     );
   }
@@ -190,7 +189,7 @@ const TemplatesList: React.FC<TemplatesListProps> = ({
   if (templates.length === 0) {
     return (
       <Box sx={{ py: 3, textAlign: "center" }}>
-        <Typography sx={{ fontSize: "13px", color: status.default.text }}>No templates available</Typography>
+        <Typography sx={{ fontSize: "13px", color: "#6B7280" }}>No templates available</Typography>
       </Box>
     );
   }
@@ -207,7 +206,7 @@ const TemplatesList: React.FC<TemplatesListProps> = ({
                   sx={{
                     fontSize: "11px",
                     fontWeight: 600,
-                    color: status.default.text,
+                    color: "#6B7280",
                     textTransform: "uppercase",
                     letterSpacing: "0.5px",
                   }}
@@ -220,8 +219,8 @@ const TemplatesList: React.FC<TemplatesListProps> = ({
                   sx={{
                     height: "16px",
                     fontSize: "10px",
-                    backgroundColor: status.info.bg,
-                    color: status.info.text,
+                    backgroundColor: "#E3F2FD",
+                    color: "#1565C0",
                     "& .MuiChip-label": { px: 0.75 },
                   }}
                 />
@@ -243,7 +242,7 @@ const TemplatesList: React.FC<TemplatesListProps> = ({
                   sx={{
                     fontSize: "11px",
                     fontWeight: 600,
-                    color: status.default.text,
+                    color: "#6B7280",
                     textTransform: "uppercase",
                     letterSpacing: "0.5px",
                   }}
@@ -281,7 +280,7 @@ const TemplatesList: React.FC<TemplatesListProps> = ({
                   sx={{
                     fontSize: "11px",
                     fontWeight: 600,
-                    color: status.default.text,
+                    color: "#6B7280",
                     textTransform: "uppercase",
                     letterSpacing: "0.5px",
                   }}
@@ -328,11 +327,11 @@ export const getTypeStyles = (type?: string) => {
     case "single-turn":
       return { backgroundColor: "#FEF3C7", color: "#92400E" };
     case "multi-turn":
-      return { backgroundColor: status.info.bg, color: status.info.text };
+      return { backgroundColor: "#E3F2FD", color: "#1565C0" };
     case "simulated":
       return { backgroundColor: "#EDE9FE", color: "#6D28D9" };
     default:
-      return { backgroundColor: background.hover, color: status.default.text };
+      return { backgroundColor: "#F3F4F6", color: "#6B7280" };
   }
 };
 

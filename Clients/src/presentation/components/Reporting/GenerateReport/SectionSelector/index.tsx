@@ -14,7 +14,6 @@ import {
 } from "@mui/material";
 import { ChevronDown, ChevronRight, Sparkles } from "lucide-react";
 import {
-import { brand } from "../../../../themes/palette";
   getAvailableSections,
   ReportSectionGroup,
 } from "../constants";
@@ -140,10 +139,10 @@ const SectionSelector: React.FC<SectionSelectorProps> = ({
     minWidth: "20px",
     minHeight: "20px",
     "&.Mui-checked": {
-      color: brand.primary,
+      color: "#13715B",
     },
     "&.MuiCheckbox-indeterminate": {
-      color: brand.primary,
+      color: "#13715B",
     },
     "& .MuiSvgIcon-root": {
       width: "16px",
@@ -278,7 +277,7 @@ const SectionSelector: React.FC<SectionSelectorProps> = ({
                     >
                       {section.label}
                       {aiEnhanced && (
-                        <Sparkles size={12} color=brand.primary />
+                        <Sparkles size={12} color="#13715B" />
                       )}
                     </Typography>
                   </Box>

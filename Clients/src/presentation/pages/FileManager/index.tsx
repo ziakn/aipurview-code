@@ -61,7 +61,6 @@ import { FileVersionHistoryDrawer } from "./components/FileVersionHistoryDrawer"
 
 // Event subscription for cross-component communication
 import { onFileApprovalChanged } from "../../../application/events/fileEvents";
-import { text } from "../../themes/palette";
 
 // Constants
 const FILE_MANAGER_CONTEXT = "FileManager";
@@ -848,7 +847,7 @@ const FileManager: React.FC = (): JSX.Element => {
           >
             {isLoading ? (
               <Box sx={{ padding: "24px", textAlign: "center" }}>
-                <Typography sx={{ color: text.icon }}>Loading files...</Typography>
+                <Typography sx={{ color: "#667085" }}>Loading files...</Typography>
                 <CustomizableSkeleton variant="rectangular" sx={{ ...filesTablePlaceholder, marginTop: 2 }} />
               </Box>
             ) : filesError ? (
@@ -889,7 +888,7 @@ const FileManager: React.FC = (): JSX.Element => {
                 <Typography
                   sx={{
                     fontSize: 13,
-                    color: text.icon,
+                    color: "#667085",
                     maxWidth: 400,
                     marginBottom: 2,
                   }}
@@ -965,7 +964,7 @@ const FileManager: React.FC = (): JSX.Element => {
         <ConfirmationModal
           title="Delete folder"
           body={
-            <Typography sx={{ color: text.secondary, fontSize: 14 }}>
+            <Typography sx={{ color: "#344054", fontSize: 14 }}>
               Are you sure you want to delete "{folderToDelete.name}"?
               {folderToDelete.children.length > 0 && " This will also delete all subfolders."}
               {" "}Files in this folder will not be deleted.

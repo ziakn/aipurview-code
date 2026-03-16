@@ -13,7 +13,6 @@ import { MoreVertical } from "lucide-react";
 import Chip from "../../Chip";
 import singleTheme from "../../../themes/v1SingleTheme";
 import { DatasetRow } from "./index";
-import { background, status, text } from "../../../themes/palette";
 
 interface DatasetsTableBodyProps {
   rows: DatasetRow[];
@@ -106,7 +105,7 @@ const DatasetsTableBody: React.FC<DatasetsTableBodyProps> = ({
                 ...singleTheme.tableStyles.primary.body.row,
                 cursor: onRowClick ? "pointer" : "default",
                 "&:hover": {
-                  backgroundColor: background.accent,
+                  backgroundColor: "#F9FAFB",
                 },
               }}
             >
@@ -141,17 +140,17 @@ const DatasetsTableBody: React.FC<DatasetsTableBodyProps> = ({
                     uppercase={false}
                     backgroundColor={
                       dataset.type === "single-turn" ? "#FEF3C7" :
-                      dataset.type === "multi-turn" ? status.info.bg :
+                      dataset.type === "multi-turn" ? "#E3F2FD" :
                       "#F3E8FF"
                     }
                     textColor={
                       dataset.type === "single-turn" ? "#92400E" :
-                      dataset.type === "multi-turn" ? status.info.text :
+                      dataset.type === "multi-turn" ? "#1565C0" :
                       "#7C3AED"
                     }
                   />
                 ) : (
-                  <Typography sx={{ fontSize: "13px", color: text.disabled }}>-</Typography>
+                  <Typography sx={{ fontSize: "13px", color: "#9CA3AF" }}>-</Typography>
                 )}
               </TableCell>
 
@@ -182,7 +181,7 @@ const DatasetsTableBody: React.FC<DatasetsTableBodyProps> = ({
                     }
                   />
                 ) : (
-                  <Typography sx={{ fontSize: "13px", color: text.disabled }}>-</Typography>
+                  <Typography sx={{ fontSize: "13px", color: "#9CA3AF" }}>-</Typography>
                 )}
               </TableCell>
 
@@ -195,7 +194,7 @@ const DatasetsTableBody: React.FC<DatasetsTableBodyProps> = ({
                 }}
               >
                 {metadata?.loading ? (
-                  <CircularProgress size={14} sx={{ color: text.disabled }} />
+                  <CircularProgress size={14} sx={{ color: "#9CA3AF" }} />
                 ) : metadata?.promptCount === 0 ? (
                   <Chip
                     label="Empty"
@@ -218,7 +217,7 @@ const DatasetsTableBody: React.FC<DatasetsTableBodyProps> = ({
                 }}
               >
                 {metadata?.loading ? (
-                  <CircularProgress size={14} sx={{ color: text.disabled }} />
+                  <CircularProgress size={14} sx={{ color: "#9CA3AF" }} />
                 ) : (
                   <Chip
                     label={metadata?.avgDifficulty ?? "Medium"}
@@ -254,7 +253,7 @@ const DatasetsTableBody: React.FC<DatasetsTableBodyProps> = ({
                   textTransform: "none",
                 }}
               >
-                <Typography sx={{ fontSize: "12px", color: status.default.text }}>
+                <Typography sx={{ fontSize: "12px", color: "#6B7280" }}>
                   {formatDate(dataset.createdAt)}
                 </Typography>
               </TableCell>
@@ -273,10 +272,10 @@ const DatasetsTableBody: React.FC<DatasetsTableBodyProps> = ({
                   size="small"
                   onClick={(e) => handleMenuOpen(e, dataset)}
                   sx={{
-                    color: text.icon,
+                    color: "#667085",
                     padding: "6px",
                     "&:hover": {
-                      backgroundColor: background.hover,
+                      backgroundColor: "#F3F4F6",
                     },
                   }}
                 >
@@ -315,7 +314,7 @@ const DatasetsTableBody: React.FC<DatasetsTableBodyProps> = ({
           </MenuItem>
         )}
         {onDelete && (
-          <MenuItem onClick={handleDeleteClick} sx={{ color: status.error.text }}>
+          <MenuItem onClick={handleDeleteClick} sx={{ color: "#d32f2f" }}>
             Delete
           </MenuItem>
         )}

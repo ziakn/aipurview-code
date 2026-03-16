@@ -30,7 +30,6 @@ import { TrainingRegistarModel } from "../../../domain/models/Common/trainingReg
 import { TrainingStatus } from "../../../domain/enums/status.enum";
 import Chip from "../../components/Chip";
 import { TrainingTableProps } from "../../types/interfaces/i.table";
-import { background, text } from "../../themes/palette";
 
 //const Alert = lazy(() => import("../../../components/Alert"));
 
@@ -117,7 +116,7 @@ const SortableTableHead: React.FC<{
                     display: "flex",
                     alignItems: "center",
                     color:
-                      sortConfig.key === column.id ? "primary.main" : text.disabled,
+                      sortConfig.key === column.id ? "primary.main" : "#9CA3AF",
                   }}
                 >
                   {sortConfig.key === column.id &&
@@ -376,7 +375,7 @@ const TrainingTable: React.FC<TrainingTableProps> = ({
                         cursor: "pointer",
                         textTransform: "none !important",
                         backgroundColor:
-                          sortConfig.key === "duration" ? background.surface : "inherit",
+                          sortConfig.key === "duration" ? "#f5f5f5" : "inherit",
                       }}
                     >
                       {training.duration}
@@ -389,7 +388,7 @@ const TrainingTable: React.FC<TrainingTableProps> = ({
                         cursor: "pointer",
                         textTransform: "none !important",
                         backgroundColor:
-                          sortConfig.key === "provider" ? background.surface : "inherit",
+                          sortConfig.key === "provider" ? "#f5f5f5" : "inherit",
                       }}
                     >
                       {training.provider}
@@ -402,7 +401,7 @@ const TrainingTable: React.FC<TrainingTableProps> = ({
                         cursor: "pointer",
                         textTransform: "none !important",
                         backgroundColor:
-                          sortConfig.key === "department" ? background.surface : "inherit",
+                          sortConfig.key === "department" ? "#f5f5f5" : "inherit",
                       }}
                     >
                       {training.department}
@@ -415,7 +414,7 @@ const TrainingTable: React.FC<TrainingTableProps> = ({
                         cursor: "pointer",
                         textTransform: "none !important",
                         backgroundColor:
-                          sortConfig.key === "status" ? background.surface : "inherit",
+                          sortConfig.key === "status" ? "#f5f5f5" : "inherit",
                       }}
                     >
                       <StatusBadge status={training.status} />
@@ -429,7 +428,7 @@ const TrainingTable: React.FC<TrainingTableProps> = ({
                         textTransform: "none !important",
                         backgroundColor:
                           sortConfig.key === "numberOfPeople"
-                            ? background.surface
+                            ? "#f5f5f5"
                             : "inherit",
                       }}
                     >
@@ -442,7 +441,7 @@ const TrainingTable: React.FC<TrainingTableProps> = ({
                         ...singleTheme.tableStyles.primary.body.cell,
                         minWidth: "50px",
                         backgroundColor:
-                          sortConfig.key === "actions" ? background.surface : "inherit",
+                          sortConfig.key === "actions" ? "#f5f5f5" : "inherit",
                       }}
                     >
                       {isDeletingAllowed && (

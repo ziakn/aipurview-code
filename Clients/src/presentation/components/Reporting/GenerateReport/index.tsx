@@ -26,7 +26,6 @@ import {
   ReportFormat,
 } from "../../../../domain/interfaces/i.widget";
 import {
-import { background, border as borderPalette, brand, status, text } from "../../../themes/palette";
   getDefaultSectionSelection,
   loadSectionPreferences,
   saveSectionPreferences,
@@ -268,11 +267,11 @@ const GenerateReportPopup: React.FC<IGenerateReportProps> = ({
               sx={{
                 minWidth: "80px",
                 height: "34px",
-                border: `1px solid ${borderPalette.dark}`,
-                color: text.secondary,
+                border: "1px solid #D0D5DD",
+                color: "#344054",
                 "&:hover": {
-                  backgroundColor: background.accent,
-                  border: `1px solid ${borderPalette.dark}`,
+                  backgroundColor: "#F9FAFB",
+                  border: "1px solid #D0D5DD",
                 },
               }}
             />
@@ -283,9 +282,9 @@ const GenerateReportPopup: React.FC<IGenerateReportProps> = ({
               sx={{
                 minWidth: "80px",
                 height: "34px",
-                backgroundColor: brand.primary,
+                backgroundColor: "#13715B",
                 "&:hover": {
-                  backgroundColor: brand.primaryHover,
+                  backgroundColor: "#0F5A47",
                 },
               }}
             />
@@ -304,11 +303,11 @@ const GenerateReportPopup: React.FC<IGenerateReportProps> = ({
             sx={{
               minWidth: "80px",
               height: "34px",
-              border: `1px solid ${borderPalette.dark}`,
-              color: text.secondary,
+              border: "1px solid #D0D5DD",
+              color: "#344054",
               "&:hover": {
-                backgroundColor: background.accent,
-                border: `1px solid ${borderPalette.dark}`,
+                backgroundColor: "#F9FAFB",
+                border: "1px solid #D0D5DD",
               },
             }}
           />
@@ -320,11 +319,11 @@ const GenerateReportPopup: React.FC<IGenerateReportProps> = ({
               sx={{
                 minWidth: "80px",
                 height: "34px",
-                border: `1px solid ${borderPalette.dark}`,
-                color: text.secondary,
+                border: "1px solid #D0D5DD",
+                color: "#344054",
                 "&:hover": {
-                  backgroundColor: background.accent,
-                  border: `1px solid ${borderPalette.dark}`,
+                  backgroundColor: "#F9FAFB",
+                  border: "1px solid #D0D5DD",
                 },
               }}
             />
@@ -336,13 +335,13 @@ const GenerateReportPopup: React.FC<IGenerateReportProps> = ({
               sx={{
                 minWidth: "120px",
                 height: "34px",
-                backgroundColor: brand.primary,
+                backgroundColor: "#13715B",
                 "&:hover:not(.Mui-disabled)": {
-                  backgroundColor: brand.primaryHover,
+                  backgroundColor: "#0F5A47",
                 },
                 "&.Mui-disabled": {
-                  backgroundColor: status.default.border,
-                  color: text.disabled,
+                  backgroundColor: "#E5E7EB",
+                  color: "#9CA3AF",
                 },
               }}
             />
@@ -372,19 +371,19 @@ const GenerateReportPopup: React.FC<IGenerateReportProps> = ({
             sx={{
               minWidth: "80px",
               height: "34px",
-              backgroundColor: brand.primary,
+              backgroundColor: "#13715B",
               "&:hover": {
-                backgroundColor: brand.primaryHover,
+                backgroundColor: "#0F5A47",
               },
             }}
           />
         }
       >
         <Stack spacing={2} sx={{ py: 2, textAlign: "center" }}>
-          <Typography sx={{ color: text.secondary, fontSize: 14 }}>
+          <Typography sx={{ color: "#344054", fontSize: 14 }}>
             Only administrators can generate and download reports.
           </Typography>
-          <Typography sx={{ color: text.icon, fontSize: 13 }}>
+          <Typography sx={{ color: "#667085", fontSize: 13 }}>
             Please contact your administrator if you need access to this feature.
           </Typography>
         </Stack>

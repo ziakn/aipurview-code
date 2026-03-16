@@ -17,7 +17,6 @@ import { useAuth } from "../../../application/hooks/useAuth";
 import { useProfilePhotoFetch } from "../../../application/hooks/useProfilePhotoFetch";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { brand, text } from "../../themes/palette";
 
 dayjs.extend(relativeTime);
 
@@ -468,7 +467,7 @@ const HistorySidebar: React.FC<HistorySidebarProps> = ({
                 background: "#C1C7CD",
               },
               "&::-webkit-scrollbar-thumb:hover": {
-                background: text.muted,
+                background: "#98A2B3",
               },
               // Firefox scrollbar styling
               scrollbarWidth: "thin",
@@ -501,7 +500,7 @@ const HistorySidebar: React.FC<HistorySidebarProps> = ({
                 padding: "0 24px",
               }}
             >
-              <Clock size={32} strokeWidth={1.5} color=brand.primary opacity={0.6} />
+              <Clock size={32} strokeWidth={1.5} color="#13715B" opacity={0.6} />
               <Typography
                 sx={{
                   fontSize: 13,

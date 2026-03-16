@@ -1,4 +1,3 @@
-import { brand } from "../../../themes/palette";
 export const styles = {
   BpIcon: {
     borderRadius: '50%',
@@ -15,7 +14,7 @@ export const styles = {
     }
   },
   BpCheckedIcon: {
-    backgroundColor: brand.primary,
+    backgroundColor: '#13715B',
     boxShadow: 'inset 0 0 0 1px #297af2, inset 0 -1px 0 #297af2',
     '&::before': {
       display: 'block',
@@ -25,7 +24,7 @@ export const styles = {
       content: '""',
     },
     'input:hover ~ &': {
-      backgroundColor: brand.primary,
+      backgroundColor: '#13715B',
     }
   }
 }

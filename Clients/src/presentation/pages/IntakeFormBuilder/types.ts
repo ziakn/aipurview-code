@@ -1,4 +1,3 @@
-import { brand } from "../../themes/palette";
 import { IntakeFormStatus, IntakeEntityType } from "../../../domain/intake/enums";
 
 /**
@@ -80,7 +79,7 @@ export interface FormDesignSettings {
 export const DEFAULT_DESIGN_SETTINGS: FormDesignSettings = {
   format: "narrow",
   alignment: "left",
-  colorTheme: brand.primary,
+  colorTheme: "#13715B",
   backgroundColor: "#fafafa",
   logoUrl: "",
   fontFamily: "Inter",

@@ -1,4 +1,3 @@
-import { brand, status } from "../../../themes/palette";
 import { SxProps, Theme } from '@mui/material';
 
 export const modalContainerStyle: SxProps<Theme> = {
@@ -22,18 +21,18 @@ export const modalHeaderStyle: SxProps<Theme> = {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  borderBottom: `1px solid ${status.default.border}`,
+  borderBottom: '1px solid #E5E7EB',
   p: 2,
 };
 
 export const modalCloseButtonStyle: SxProps<Theme> = {
-  color: status.default.text,
+  color: '#6B7280',
   '&:hover': { color: '#232B3A', background: '#e3f5e6' },
   p: 1,
 };
 
 export const modalDescriptionStyle: SxProps<Theme> = {
-  color: status.default.text,
+  color: '#6B7280',
   mb: 6,
   fontSize: 14,
   textAlign: 'left',
@@ -41,7 +40,7 @@ export const modalDescriptionStyle: SxProps<Theme> = {
 };
 
 export const frameworkCardStyle: SxProps<Theme> = {
-  border: '1.5px solid brand.primary',
+  border: '1.5px solid #13715B',
   borderRadius: 2,
   background: '#e3f5e6',
   p: 2.5,
@@ -57,13 +56,13 @@ export const frameworkCardTitleStyle: SxProps<Theme> = {
 export const frameworkCardAddedStyle: SxProps<Theme> = {
   display: 'flex',
   alignItems: 'center',
-  color: brand.primary,
+  color: '#13715B',
   gap: 1,
   fontSize: 14,
 };
 
 export const frameworkCardDescriptionStyle: SxProps<Theme> = {
-  color: status.default.text,
+  color: '#6B7280',
   fontSize: 14,
   textAlign: 'left',
   mb: 2,
@@ -76,10 +75,10 @@ export const modalDoneButtonStyle: SxProps<Theme> = {
   borderRadius: 2,
   boxShadow: 'none',
   fontSize: 15,
-  backgroundColor: brand.primary,
+  backgroundColor: '#13715B',
   color: '#fff',
-  border: `1px solid ${brand.primary}`,
+  border: '1px solid #13715B',
   '&:hover': {
-    backgroundColor: brand.primaryDark,
+    backgroundColor: '#10614d',
   },
 }; 

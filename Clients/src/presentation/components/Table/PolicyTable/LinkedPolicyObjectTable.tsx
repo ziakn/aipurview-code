@@ -31,7 +31,6 @@ import { EmptyState } from "../../EmptyState";
 import TablePaginationActions from "../../TablePagination";
 import { paginationStyle } from "../styles";
 import { useUserMap } from "../../../../../src/presentation/hooks/userMap";
-import { background, text } from "../../../themes/palette";
 
 interface LinkedPolicyObjectsTableProps {
     policies: any[];
@@ -134,7 +133,7 @@ const SortableTableHead = ({
                                         color:
                                             sortConfig.key === column.id
                                                 ? "primary.main"
-                                                : text.disabled,
+                                                : "#9CA3AF",
                                     }}
                                 >
                                     {sortConfig.key === column.id &&
@@ -315,7 +314,7 @@ const LinkedPolicyObjectsTable: React.FC<LinkedPolicyObjectsTableProps> = ({
                         ...cellStyle,
                         backgroundColor:
                           sortConfig?.key?.toLowerCase().includes("status")
-                            ? background.surface
+                            ? "#f5f5f5"
                             : "inherit",
                       }}
                     >
@@ -328,7 +327,7 @@ const LinkedPolicyObjectsTable: React.FC<LinkedPolicyObjectsTableProps> = ({
                         ...cellStyle,
                         backgroundColor:
                           sortConfig?.key?.toLowerCase().includes("tags")
-                            ? background.surface
+                            ? "#f5f5f5"
                             : "inherit",
                       }}
                     >
@@ -341,7 +340,7 @@ const LinkedPolicyObjectsTable: React.FC<LinkedPolicyObjectsTableProps> = ({
                         ...cellStyle,
                         backgroundColor:
                           sortConfig?.key?.toLowerCase().includes("author")
-                            ? background.surface
+                            ? "#f5f5f5"
                             : "inherit",
                       }}
                     >
@@ -359,7 +358,7 @@ const LinkedPolicyObjectsTable: React.FC<LinkedPolicyObjectsTableProps> = ({
                           (sortConfig.key.toLowerCase().includes("last") ||
                             sortConfig.key.toLowerCase().includes("updated")) &&
                           !sortConfig.key.toLowerCase().includes("by")
-                            ? background.surface
+                            ? "#f5f5f5"
                             : "inherit",
                       }}
                     >
@@ -376,7 +375,7 @@ const LinkedPolicyObjectsTable: React.FC<LinkedPolicyObjectsTableProps> = ({
                           sortConfig?.key
                             ?.toLowerCase()
                             .includes("updated by")
-                            ? background.surface
+                            ? "#f5f5f5"
                             : "inherit",
                       }}
                     >

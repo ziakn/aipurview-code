@@ -99,7 +99,7 @@ export function StepProgressDialog({
           backgroundColor: palette.border.light,
           "& .MuiLinearProgress-bar": {
             borderRadius: 3,
-            background: "linear-gradient(90deg, brand.primary 0%, #1a9e7a 100%)",
+            background: "linear-gradient(90deg, #13715B 0%, #1a9e7a 100%)",
             transition: "transform 0.8s ease",
           },
         }}

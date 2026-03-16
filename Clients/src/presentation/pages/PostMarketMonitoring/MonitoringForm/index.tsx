@@ -31,7 +31,6 @@ import {
 } from "../../../../domain/types/PostMarketMonitoring";
 import dayjs from "dayjs";
 import { AlertState } from "../../../../application/interfaces/appStates";
-import { brand } from "../../../themes/palette";
 
 interface LocalAlertState extends AlertState {
   isToast: boolean;
@@ -574,7 +573,7 @@ const MonitoringForm: React.FC = () => {
               height: "34px",
               backgroundColor: theme.palette.primary.main,
               "&:hover": {
-                backgroundColor: theme.palette.primary.dark || brand.primaryHover,
+                backgroundColor: theme.palette.primary.dark || "#0F5A47",
               },
             }}
           />

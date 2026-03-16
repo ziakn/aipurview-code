@@ -12,7 +12,6 @@ import SelectComponent from "../../Inputs/Select";
 import { CustomizableButton } from "../../button/customizable-button";
 import { getAllEntities } from "../../../../application/repository/entity.repository";
 import { apiServices } from "../../../../infrastructure/api/networkServices";
-import { background, border as borderPalette, brand } from "../../../themes/palette";
 
 interface LinkModelModalProps {
   isOpen: boolean;
@@ -82,7 +81,7 @@ const LinkModelModal: React.FC<LinkModelModalProps> = ({
       anchor="right"
       open={isOpen}
       onClose={handleClose}
-      PaperProps={{ sx: { width: 400, backgroundColor: theme.palette.background.modal || background.alt } }}
+      PaperProps={{ sx: { width: 400, backgroundColor: theme.palette.background.modal || "#FCFCFD" } }}
     >
       {/* Header */}
       <Stack
@@ -103,7 +102,7 @@ const LinkModelModal: React.FC<LinkModelModalProps> = ({
 
       {/* Content */}
       <Stack sx={{ p: "24px", gap: "20px", flex: 1 }}>
-        <Typography fontSize={13} color=text.secondary>
+        <Typography fontSize={13} color="text.secondary">
           Select a model from the inventory to link with this agent.
         </Typography>
 
@@ -123,14 +122,14 @@ const LinkModelModal: React.FC<LinkModelModalProps> = ({
       <Stack direction="row" justifyContent="flex-end" gap={1} sx={{ p: "16px 24px" }}>
         <CustomizableButton
           variant="outlined"
-          sx={{ border: `1px solid ${borderPalette.dark}` }}
+          sx={{ border: "1px solid #d0d5dd" }}
           onClick={handleClose}
         >
           Cancel
         </CustomizableButton>
         <CustomizableButton
           variant="contained"
-          sx={{ backgroundColor: brand.primary, border: `1px solid ${brand.primary}` }}
+          sx={{ backgroundColor: "#13715B", border: "1px solid #13715B" }}
           onClick={handleSubmit}
           isDisabled={isSubmitting || !selectedModelId}
         >

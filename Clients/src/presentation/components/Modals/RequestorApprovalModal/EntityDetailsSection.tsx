@@ -9,7 +9,6 @@ import React from "react";
 import { Stack, Typography } from "@mui/material";
 import DetailField from "./DetailField";
 import {
-import { background, status } from "../../../themes/palette";
     getEntityTypeConfig,
     isEntityDeleted,
     EntityTypeConfig,
@@ -25,8 +24,8 @@ const EntityDetailsSection: React.FC<EntityDetailsSectionProps> = ({ details }) 
 
     // Container styles
     const containerStyles = {
-        backgroundColor: background.accent,
-        border: `1px solid ${status.default.border}`,
+        backgroundColor: "#F9FAFB",
+        border: "1px solid #E5E7EB",
         borderRadius: "8px",
         padding: "16px",
     };
@@ -72,7 +71,7 @@ const EntityDetailsSection: React.FC<EntityDetailsSectionProps> = ({ details }) 
                     />
                 ))
             ) : (
-                <Typography fontSize={13} color=status.default.text fontStyle="italic">
+                <Typography fontSize={13} color="#6B7280" fontStyle="italic">
                     {config.noDataMessage}
                 </Typography>
             )}

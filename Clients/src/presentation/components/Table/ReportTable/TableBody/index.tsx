@@ -7,7 +7,6 @@ import singleTheme from "../../../../themes/v1SingleTheme";
 import { styles } from "./styles";
 import { handleDownload } from "../../../../../application/tools/fileDownload";
 import { IReportTableProps } from "../../../../types/interfaces/i.table";
-import { background, brand } from "../../../../themes/palette";
 
 const ReportTableBody: React.FC<IReportTableProps> = ({
   rows,
@@ -77,15 +76,15 @@ const ReportTableBody: React.FC<IReportTableProps> = ({
                         icon={
                           <Sparkles
                             size={10}
-                            color=brand.primary
+                            color="#13715B"
                             style={{ marginLeft: 6 }}
                           />
                         }
                         sx={{
                           fontSize: "10px",
                           height: "20px",
-                          backgroundColor: brand.primaryLight,
-                          color: brand.primary,
+                          backgroundColor: "#E6F0EC",
+                          color: "#13715B",
                           fontWeight: 600,
                           "& .MuiChip-label": { px: 0.5 },
                           "& .MuiChip-icon": { marginRight: "-2px" },
@@ -102,7 +101,7 @@ const ReportTableBody: React.FC<IReportTableProps> = ({
                 <TableCell
                   sx={{
                     ...cellStyle,
-                    backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("source") ? background.surface : "inherit",
+                    backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("source") ? "#f5f5f5" : "inherit",
                   }}
                 >
                   {row.source ? formatSource(row.source) : "-"}
@@ -112,7 +111,7 @@ const ReportTableBody: React.FC<IReportTableProps> = ({
                 <TableCell
                   sx={{
                     ...cellStyle,
-                    backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("project") ? background.surface : "inherit",
+                    backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("project") ? "#f5f5f5" : "inherit",
                   }}
                 >
                   {row.project_title ? row.project_title : "-"}
@@ -122,7 +121,7 @@ const ReportTableBody: React.FC<IReportTableProps> = ({
                 <TableCell
                   sx={{
                     ...cellStyle,
-                    backgroundColor: sortConfig?.key && (sortConfig.key.toLowerCase().includes("date") || sortConfig.key.toLowerCase().includes("upload") || sortConfig.key.toLowerCase().includes("time")) ? background.surface : "inherit",
+                    backgroundColor: sortConfig?.key && (sortConfig.key.toLowerCase().includes("date") || sortConfig.key.toLowerCase().includes("upload") || sortConfig.key.toLowerCase().includes("time")) ? "#f5f5f5" : "inherit",
                   }}
                 >
                   {row.uploaded_time
@@ -134,7 +133,7 @@ const ReportTableBody: React.FC<IReportTableProps> = ({
                 <TableCell
                   sx={{
                     ...cellStyle,
-                    backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("uploader") ? background.surface : "inherit",
+                    backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("uploader") ? "#f5f5f5" : "inherit",
                   }}
                 >
                   {row.uploader_name ? row.uploader_name : "-"}{" "}
@@ -146,7 +145,7 @@ const ReportTableBody: React.FC<IReportTableProps> = ({
                   sx={{
                     ...singleTheme.tableStyles.primary.body.cell,
                     ...styles.setting,
-                    backgroundColor: sortConfig?.key && (sortConfig.key.toLowerCase().includes("action") || sortConfig.key.toLowerCase().includes("setting")) ? background.surface : "inherit",
+                    backgroundColor: sortConfig?.key && (sortConfig.key.toLowerCase().includes("action") || sortConfig.key.toLowerCase().includes("setting")) ? "#f5f5f5" : "inherit",
                   }}
                 >
                   <IconButton

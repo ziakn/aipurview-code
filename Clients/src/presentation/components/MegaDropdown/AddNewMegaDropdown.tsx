@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Box, Popover, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import {
-import { background, brand } from "../../themes/palette";
   FolderTree,
   Building,
   ListIcon,
@@ -138,7 +137,7 @@ const AddNewMegaDropdown: React.FC<AddNewMegaDropdownProps> = ({
         startIcon={<Plus size={14} />}
         onClick={handleClick}
         sx={{
-          background: brand.primary,
+          background: "#13715B",
           color: "white",
           fontWeight: 500,
           fontSize: "13px",
@@ -215,7 +214,7 @@ const AddNewMegaDropdown: React.FC<AddNewMegaDropdownProps> = ({
                 alignItems: "center",
                 justifyContent: "center",
                 gap: 1,
-                backgroundColor: hoveredItem === item.id ? background.surface : "transparent",
+                backgroundColor: hoveredItem === item.id ? "#f5f5f5" : "transparent",
                 border: hoveredItem === item.id ? "1px solid #e0e0e0" : "1px solid transparent",
                 transition: "all 0.15s ease",
                 minWidth: "90px",

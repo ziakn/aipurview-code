@@ -3,7 +3,6 @@ import { Box, Stack, Typography, useTheme, Divider, Snackbar, Skeleton, Circular
 import { Copy } from "lucide-react";
 import CustomizableSkeleton from "../../../components/Skeletons";
 import CodeBlock from "../components/CodeBlock";
-import { brand } from "../../../themes/palette";
 
 const loadingSnippets = {
   skeleton: `import CustomizableSkeleton from "../Skeletons";
@@ -31,7 +30,7 @@ const loadingSnippets = {
 <CircularProgress size={20} />
 
 // Custom color
-<CircularProgress sx={{ color: brand.primary }} />`,
+<CircularProgress sx={{ color: "#13715B" }} />`,
   toast: `import CustomizableToast from "../Toast";
 
 // Full-page loading overlay
@@ -209,7 +208,7 @@ const LoadingStatesSection: React.FC = () => {
                   </Typography>
                 </Box>
                 <Box sx={{ textAlign: "center" }}>
-                  <CircularProgress size={24} sx={{ color: brand.primary }} />
+                  <CircularProgress size={24} sx={{ color: "#13715B" }} />
                   <Typography sx={{ fontSize: 11, color: theme.palette.text.accent, mt: "8px" }}>
                     Primary
                   </Typography>
@@ -343,7 +342,7 @@ const LoadingStatesSection: React.FC = () => {
                 gap: "8px",
                 px: "16px",
                 py: "8px",
-                backgroundColor: brand.primary,
+                backgroundColor: "#13715B",
                 color: "#fff",
                 borderRadius: "4px",
                 fontSize: 13,

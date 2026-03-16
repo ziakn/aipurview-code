@@ -26,7 +26,6 @@ import {
 export type { TemplateRow } from "./TemplatesList";
 import type { TemplateRow } from "./TemplatesList";
 import { getPredominantDifficultyLabel, getDifficultyStyles, getCategoryStyles, getTypeStyles } from "./TemplatesList";
-import { background, border as borderPalette, brand, status, text } from "../../../themes/palette";
 
 export type SortDirection = "asc" | "desc" | null;
 export type SortConfig = {
@@ -160,7 +159,7 @@ const TemplatesTable: React.FC<TemplatesTableProps> = ({
         >
           {label}
         </Typography>
-        <Box sx={{ color: sortConfig.key === sortKey ? "primary.main" : text.disabled, display: "flex", alignItems: "center" }}>
+        <Box sx={{ color: sortConfig.key === sortKey ? "primary.main" : "#9CA3AF", display: "flex", alignItems: "center" }}>
           {sortConfig.key === sortKey && sortConfig.direction === "asc" && <ChevronUp size={14} />}
           {sortConfig.key === sortKey && sortConfig.direction === "desc" && <ChevronDown size={14} />}
           {sortConfig.key !== sortKey && <ChevronsUpDown size={14} />}
@@ -190,13 +189,13 @@ const TemplatesTable: React.FC<TemplatesTableProps> = ({
           {loading ? (
             <TableRow>
               <TableCell colSpan={6} sx={{ textAlign: "center", py: 4 }}>
-                <CircularProgress size={24} sx={{ color: brand.primary }} />
+                <CircularProgress size={24} sx={{ color: "#13715B" }} />
               </TableCell>
             </TableRow>
           ) : paginatedRows.length === 0 ? (
             <TableRow>
               <TableCell colSpan={6} sx={{ textAlign: "center", py: 4 }}>
-                <Typography variant="body2" color=text.secondary>
+                <Typography variant="body2" color="text.secondary">
                   {emptyMessage}
                 </Typography>
               </TableCell>
@@ -211,7 +210,7 @@ const TemplatesTable: React.FC<TemplatesTableProps> = ({
                   sx={{
                     ...singleTheme.tableStyles.primary.body.row,
                     cursor: onRowClick ? "pointer" : "default",
-                    "&:hover": { backgroundColor: background.surface },
+                    "&:hover": { backgroundColor: "#f5f5f5" },
                   }}
                 >
                   <TableCell sx={{ ...singleTheme.tableStyles.primary.body.cell, maxWidth: "400px" }}>
@@ -222,7 +221,7 @@ const TemplatesTable: React.FC<TemplatesTableProps> = ({
                       <Typography
                         sx={{
                           fontSize: "11px",
-                          color: text.disabled,
+                          color: "#9CA3AF",
                           mt: 0.25,
                           overflow: "hidden",
                           textOverflow: "ellipsis",
@@ -245,7 +244,7 @@ const TemplatesTable: React.FC<TemplatesTableProps> = ({
                         textColor={getTypeStyles(template.type).color}
                       />
                     ) : (
-                      <Typography sx={{ fontSize: "13px", color: text.disabled }}>-</Typography>
+                      <Typography sx={{ fontSize: "13px", color: "#9CA3AF" }}>-</Typography>
                     )}
                   </TableCell>
                   <TableCell sx={{ ...singleTheme.tableStyles.primary.body.cell, textAlign: "center" }}>
@@ -258,7 +257,7 @@ const TemplatesTable: React.FC<TemplatesTableProps> = ({
                     />
                   </TableCell>
                   <TableCell sx={{ ...singleTheme.tableStyles.primary.body.cell, textAlign: "center" }}>
-                    <Typography sx={{ fontSize: compact ? "12px" : "13px", color: status.default.text }}>
+                    <Typography sx={{ fontSize: compact ? "12px" : "13px", color: "#6B7280" }}>
                       {template.test_count ?? "-"}
                     </Typography>
                   </TableCell>
@@ -285,11 +284,11 @@ const TemplatesTable: React.FC<TemplatesTableProps> = ({
                       sx={{
                         fontSize: compact ? "11px" : "12px",
                         minHeight: compact ? "24px" : "28px",
-                        borderColor: borderPalette.dark,
-                        color: text.secondary,
+                        borderColor: "#d0d5dd",
+                        color: "#344054",
                         "&:hover": {
-                          borderColor: brand.primary,
-                          color: brand.primary,
+                          borderColor: "#13715B",
+                          color: "#13715B",
                         },
                       }}
                     />

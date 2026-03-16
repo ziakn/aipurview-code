@@ -17,7 +17,6 @@ import singleTheme from "../../../themes/v1SingleTheme";
 import { ChevronsUpDown, ChevronUp, ChevronDown } from "lucide-react";
 import Placeholder from "../../../assets/imgs/empty-state.svg";
 import {
-import { background, border as borderPalette, status, text } from "../../../themes/palette";
   getPaginationRowCount,
   setPaginationRowCount,
 } from "../../../../application/utils/paginationStorage";
@@ -100,10 +99,10 @@ const parseLogLine = (line: string, index: number): ParsedLogEntry | null => {
 
 const StateBadge: React.FC<{ state: string }> = ({ state }) => {
   const stateStyles: Record<string, { bg: string; color: string }> = {
-    successful: { bg: status.success.bg, color: status.success.text },
-    success: { bg: status.success.bg, color: status.success.text },
-    processing: { bg: status.warning.bg, color: "#795000" },
-    error: { bg: status.error.bg, color: status.error.text },
+    successful: { bg: "#E6F4EA", color: "#138A5E" },
+    success: { bg: "#E6F4EA", color: "#138A5E" },
+    processing: { bg: "#FFF8E1", color: "#795000" },
+    error: { bg: "#FFD6D6", color: "#D32F2F" },
     info: { bg: "#DCEFFF", color: "#1976D2" },
     warn: { bg: "#FFE5D0", color: "#E64A19" },
     warning: { bg: "#FFE5D0", color: "#E64A19" },
@@ -317,7 +316,7 @@ const LogsTable: React.FC<LogsTableProps> = ({
                     display: "flex",
                     alignItems: "center",
                     color:
-                      sortConfig.key === column.label ? "primary.main" : text.disabled,
+                      sortConfig.key === column.label ? "primary.main" : "#9CA3AF",
                   }}
                 >
                   {sortConfig.key === column.label &&
@@ -348,7 +347,7 @@ const LogsTable: React.FC<LogsTableProps> = ({
                 key={`${log.id}-${index}`}
                 sx={{
                   ...singleTheme.tableStyles.primary.body.row,
-                  "&:hover": { backgroundColor: background.surface },
+                  "&:hover": { backgroundColor: "#f5f5f5" },
                 }}
               >
                 <TableCell
@@ -377,7 +376,7 @@ const LogsTable: React.FC<LogsTableProps> = ({
                     backgroundColor:
                       sortConfig.key &&
                       sortConfig.key.toLowerCase().includes("timestamp")
-                        ? background.surface
+                        ? "#f5f5f5"
                         : "inherit",
                   }}
                 >
@@ -391,7 +390,7 @@ const LogsTable: React.FC<LogsTableProps> = ({
                     backgroundColor:
                       sortConfig.key &&
                       sortConfig.key.toLowerCase().includes("state")
-                        ? background.surface
+                        ? "#f5f5f5"
                         : "inherit",
                   }}
                 >
@@ -405,7 +404,7 @@ const LogsTable: React.FC<LogsTableProps> = ({
                     backgroundColor:
                       sortConfig.key &&
                       sortConfig.key.toLowerCase().includes("description")
-                        ? background.surface
+                        ? "#f5f5f5"
                         : "inherit",
                   }}
                 >
@@ -422,7 +421,7 @@ const LogsTable: React.FC<LogsTableProps> = ({
                     backgroundColor:
                       sortConfig.key &&
                       sortConfig.key.toLowerCase().includes("function")
-                        ? background.surface
+                        ? "#f5f5f5"
                         : "inherit",
                   }}
                 >
@@ -439,7 +438,7 @@ const LogsTable: React.FC<LogsTableProps> = ({
                     backgroundColor:
                       sortConfig.key &&
                       sortConfig.key.toLowerCase().includes("file")
-                        ? background.surface
+                        ? "#f5f5f5"
                         : "inherit",
                   }}
                 >
@@ -469,7 +468,7 @@ const LogsTable: React.FC<LogsTableProps> = ({
         alignItems="center"
         justifyContent="center"
         sx={{
-          border: `1px solid ${borderPalette.dark}`,
+          border: "1px solid #d0d5dd",
           borderRadius: "4px",
           padding: theme.spacing(15, 5),
           minHeight: 200,
@@ -486,7 +485,7 @@ const LogsTable: React.FC<LogsTableProps> = ({
         alignItems="center"
         justifyContent="center"
         sx={{
-          border: `1px solid ${borderPalette.dark}`,
+          border: "1px solid #d0d5dd",
           borderRadius: "4px",
           padding: theme.spacing(15, 5),
           paddingBottom: theme.spacing(20),
@@ -495,7 +494,7 @@ const LogsTable: React.FC<LogsTableProps> = ({
         }}
       >
         <img src={Placeholder} alt="Placeholder" />
-        <Typography sx={{ fontSize: "13px", color: text.tertiary }}>
+        <Typography sx={{ fontSize: "13px", color: "#475467" }}>
           There are currently no logs available.
         </Typography>
       </Stack>

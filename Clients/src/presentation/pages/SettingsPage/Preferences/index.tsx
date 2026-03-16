@@ -13,7 +13,6 @@ import {
 } from "../../../../application/repository/userPreferences.repository";
 import { useAuth } from "../../../../application/hooks/useAuth";
 import Select from "../../../components/Inputs/Select";
-import { brand } from "../../../themes/palette";
 
 const Preferences: React.FC = () => {
   const theme = useTheme();
@@ -167,10 +166,10 @@ const Preferences: React.FC = () => {
                 variant="contained"
                 text="Save"
                 sx={{
-                  backgroundColor: brand.primary,
+                  backgroundColor: "#13715B",
                   border: isSaveDisabled
                     ? "1px solid rgba(0, 0, 0, 0.26)"
-                    : `1px solid ${brand.primary}`,
+                    : "1px solid #13715B",
                   gap: 2,
                 }}
                 icon={<SaveIcon size={16} />}

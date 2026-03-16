@@ -11,7 +11,6 @@ import {
   LinearProgress,
 } from "@mui/material";
 import Chip from "../../Chip";
-import { background, brand, status, text } from "../../../themes/palette";
 
 export interface UseCaseRow {
   id: number;
@@ -47,12 +46,12 @@ const defaultFormatDate = (dateString: string): string => {
 const headerCellStyle = {
   fontSize: 12,
   fontWeight: 600,
-  color: text.icon,
-  borderBottom: `1px solid ${status.default.border}`,
+  color: "#667085",
+  borderBottom: "1px solid #E5E7EB",
 };
 
 const bodyCellStyle = {
-  borderBottom: `1px solid ${background.hover}`,
+  borderBottom: "1px solid #F3F4F6",
 };
 
 const UseCasesTable: React.FC<UseCasesTableProps> = ({
@@ -76,7 +75,7 @@ const UseCasesTable: React.FC<UseCasesTableProps> = ({
             <TableRow
               key={useCase.id}
               sx={{
-                "&:hover": { backgroundColor: background.accent },
+                "&:hover": { backgroundColor: "#F9FAFB" },
                 cursor: onRowClick ? "pointer" : "default",
               }}
               onClick={(e) => {
@@ -96,14 +95,14 @@ const UseCasesTable: React.FC<UseCasesTableProps> = ({
                       width: 60,
                       height: 4,
                       borderRadius: 2,
-                      backgroundColor: status.default.border,
+                      backgroundColor: "#E5E7EB",
                       "& .MuiLinearProgress-bar": {
-                        backgroundColor: brand.primary,
+                        backgroundColor: "#13715B",
                         borderRadius: 2,
                       },
                     }}
                   />
-                  <Typography sx={{ fontSize: 12, color: text.icon }}>
+                  <Typography sx={{ fontSize: 12, color: "#667085" }}>
                     {useCase.progress}%
                   </Typography>
                 </Stack>
@@ -111,7 +110,7 @@ const UseCasesTable: React.FC<UseCasesTableProps> = ({
               <TableCell sx={bodyCellStyle}>
                 <Chip label={useCase.status} uppercase={false} />
               </TableCell>
-              <TableCell sx={{ fontSize: 12, color: text.disabled, ...bodyCellStyle }}>
+              <TableCell sx={{ fontSize: 12, color: "#9CA3AF", ...bodyCellStyle }}>
                 {formatDate(useCase.updated)}
               </TableCell>
             </TableRow>

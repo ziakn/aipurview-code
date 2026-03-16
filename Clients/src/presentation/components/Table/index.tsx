@@ -17,7 +17,6 @@ import { DashboardState, User, InputValues } from "../../../application/interfac
 import singleTheme from "../../themes/v1SingleTheme";
 import { RISK_LABELS } from "../../components/RiskLevel/constants";
 import { getAllVendors } from "../../../application/repository/vendor.repository";
-import { background } from "../../themes/palette";
 
 const DEFAULT_ROWS_PER_PAGE = 10;
 const RISKS_ROWS_PER_PAGE_KEY = 'verifywise_risks_rows_per_page';
@@ -160,7 +159,7 @@ const CustomizableBasicTable = ({
                 sx={{
                   ...singleTheme.tableStyles.primary.body.row,
                   height: "36px",
-                  "&:hover": { backgroundColor: background.surface, cursor: "pointer" },
+                  "&:hover": { backgroundColor: "#f5f5f5", cursor: "pointer" },
                 }}
                 onClick={(event) => onRowClickHandler(event, row)}
               >

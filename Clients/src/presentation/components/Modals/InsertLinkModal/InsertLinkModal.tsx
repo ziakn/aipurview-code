@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Box } from "@mui/material";
 import Field from "../../Inputs/Field";
 import { CustomizableButton } from "../../button/customizable-button";
-import { text } from "../../../themes/palette";
 
 interface InsertLinkModalProps {
   open: boolean;
@@ -68,10 +67,10 @@ const InsertLinkModal: React.FC<InsertLinkModalProps> = ({
               border: "1px solid #D9E0DD",
             }}
           >
-            <Typography sx={{ fontSize: 12, color: text.icon, mb: 0.5 }}>
+            <Typography sx={{ fontSize: 12, color: "#667085", mb: 0.5 }}>
               Selected text
             </Typography>
-            <Typography sx={{ fontSize: 13, color: text.secondary, fontWeight: 500 }}>
+            <Typography sx={{ fontSize: 13, color: "#344054", fontWeight: 500 }}>
               {selectedText}
             </Typography>
           </Box>
@@ -101,7 +100,7 @@ const InsertLinkModal: React.FC<InsertLinkModalProps> = ({
         <CustomizableButton
           text="Cancel"
           variant="text"
-          sx={{ color: text.secondary, px: "32px", width: 120 }}
+          sx={{ color: "#344054", px: "32px", width: 120 }}
           onClick={onClose}
         />
         <CustomizableButton

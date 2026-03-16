@@ -4,7 +4,6 @@ import { OnboardingStepProps } from "../../../types/interfaces/i.onboarding";
 import { CheckSquare, MessageSquare, BarChart3, Bell } from "lucide-react";
 import Alert from "../../Alert";
 import onboardingBanner from "../../../assets/onboarding-banner.svg";
-import { brand, status, text } from "../../../themes/palette";
 
 const TaskWorkflowStep: React.FC<OnboardingStepProps> = () => {
   const workflowSteps = [
@@ -70,7 +69,7 @@ const TaskWorkflowStep: React.FC<OnboardingStepProps> = () => {
         <Typography
           sx={{
             fontSize: "14px",
-            color: text.icon,
+            color: "#667085",
             marginBottom: 3,
             lineHeight: 1.6,
           }}
@@ -92,7 +91,7 @@ const TaskWorkflowStep: React.FC<OnboardingStepProps> = () => {
             sx={{
               padding: 10,
               background: "linear-gradient(135deg, #13715B08 0%, transparent 100%)",
-              border: `1px solid ${status.default.border}`,
+              border: "1px solid #E5E7EB",
               borderRadius: "4px",
               display: "flex",
               flexDirection: "column",
@@ -105,7 +104,7 @@ const TaskWorkflowStep: React.FC<OnboardingStepProps> = () => {
                 height: "32px",
                 borderRadius: "6px",
                 backgroundColor: "#13715B15",
-                color: brand.primary,
+                color: "#13715B",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -122,7 +121,7 @@ const TaskWorkflowStep: React.FC<OnboardingStepProps> = () => {
             >
               {step.title}
             </Typography>
-            <Typography sx={{ fontSize: "12px", color: status.default.text }}>
+            <Typography sx={{ fontSize: "12px", color: "#6B7280" }}>
               {step.description}
             </Typography>
           </Box>

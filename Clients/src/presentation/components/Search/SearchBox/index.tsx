@@ -3,7 +3,6 @@ import { Box, InputBase, SxProps, Theme, useTheme } from "@mui/material";
 import { Search } from "lucide-react";
 import { ISearchBoxProps } from "../../../types/widget.types";
 import { getSearchBoxStyles } from "../../../utils/inputStyles";
-import { status } from "../../../themes/palette";
 
 const SearchBox: React.FC<ISearchBoxProps> = ({
   placeholder = "Search...",
@@ -45,7 +44,7 @@ const SearchBox: React.FC<ISearchBoxProps> = ({
 
   return (
     <Box sx={searchBoxStyle}>
-      <Search size={16} style={{ color: status.default.text, marginRight: "8px" }} />
+      <Search size={16} style={{ color: "#6b7280", marginRight: "8px" }} />
       <InputBase
         placeholder={placeholder}
         value={value}

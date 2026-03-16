@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Box, Stack, Typography, useTheme, Divider, Snackbar } from "@mui/material";
 import { Copy, Info, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
 import CodeBlock from "../components/CodeBlock";
-import { status } from "../../../themes/palette";
 
 const alertSnippets = {
   success: `<Alert
@@ -98,7 +97,7 @@ const AlertsSection: React.FC = () => {
                 title="Success"
                 body="Your changes have been saved successfully."
                 icon={<CheckCircle size={20} />}
-                colors={{ text: status.success.text, bg: status.success.bg }}
+                colors={{ text: "#138A5E", bg: "#E6F4EA" }}
                 code={alertSnippets.success}
                 onCopy={handleCopy}
               />
@@ -107,7 +106,7 @@ const AlertsSection: React.FC = () => {
                 title="Error"
                 body="Something went wrong. Please try again."
                 icon={<XCircle size={20} />}
-                colors={{ text: status.error.text, bg: status.error.bg }}
+                colors={{ text: "#D32F2F", bg: "#FFD6D6" }}
                 code={alertSnippets.error}
                 onCopy={handleCopy}
               />
@@ -116,7 +115,7 @@ const AlertsSection: React.FC = () => {
                 title="Warning"
                 body="This action cannot be undone."
                 icon={<AlertTriangle size={20} />}
-                colors={{ text: status.warning.text, bg: status.warning.bg }}
+                colors={{ text: "#795548", bg: "#FFF8E1" }}
                 code={alertSnippets.warning}
                 onCopy={handleCopy}
               />
@@ -125,7 +124,7 @@ const AlertsSection: React.FC = () => {
                 title="Information"
                 body="New features are available."
                 icon={<Info size={20} />}
-                colors={{ text: status.info.text, bg: status.info.bg }}
+                colors={{ text: "#1565C0", bg: "#E3F2FD" }}
                 code={alertSnippets.info}
                 onCopy={handleCopy}
               />
@@ -167,29 +166,29 @@ const AlertsSection: React.FC = () => {
         <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "16px" }}>
           <AlertColorCard
             variant="Success"
-            textColor=status.success.text
-            bgColor=status.success.bg
+            textColor="#138A5E"
+            bgColor="#E6F4EA"
             themeKey="theme.palette.status.success"
             onCopy={handleCopy}
           />
           <AlertColorCard
             variant="Error"
-            textColor=status.error.text
-            bgColor=status.error.bg
+            textColor="#D32F2F"
+            bgColor="#FFD6D6"
             themeKey="theme.palette.status.error"
             onCopy={handleCopy}
           />
           <AlertColorCard
             variant="Warning"
-            textColor=status.warning.text
-            bgColor=status.warning.bg
+            textColor="#795548"
+            bgColor="#FFF8E1"
             themeKey="theme.palette.status.warning"
             onCopy={handleCopy}
           />
           <AlertColorCard
             variant="Info"
-            textColor=status.info.text
-            bgColor=status.info.bg
+            textColor="#1565C0"
+            bgColor="#E3F2FD"
             themeKey="theme.palette.status.info"
             onCopy={handleCopy}
           />
@@ -225,23 +224,23 @@ const AlertsSection: React.FC = () => {
                 alignItems: "center",
                 gap: "16px",
                 p: "16px",
-                backgroundColor: status.success.bg,
-                border: `1px solid ${status.success.text}`,
+                backgroundColor: "#E6F4EA",
+                border: "1px solid #138A5E",
                 borderRadius: "4px",
               }}
             >
-              <Box sx={{ color: status.success.text }}>
+              <Box sx={{ color: "#138A5E" }}>
                 <CheckCircle size={20} />
               </Box>
               <Stack spacing="2px" sx={{ flex: 1 }}>
-                <Typography sx={{ fontWeight: 700, color: status.success.text, fontSize: 13 }}>
+                <Typography sx={{ fontWeight: 700, color: "#138A5E", fontSize: 13 }}>
                   Success
                 </Typography>
-                <Typography sx={{ color: status.success.text, fontSize: 13 }}>
+                <Typography sx={{ color: "#138A5E", fontSize: 13 }}>
                   Your changes have been saved.
                 </Typography>
               </Stack>
-              <Box sx={{ color: status.success.text, cursor: "pointer", ml: "16px" }}>
+              <Box sx={{ color: "#138A5E", cursor: "pointer", ml: "16px" }}>
                 <XCircle size={16} />
               </Box>
             </Box>

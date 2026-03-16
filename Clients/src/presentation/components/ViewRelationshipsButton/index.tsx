@@ -14,7 +14,6 @@ import { IconButton } from '@mui/material';
 import { GitBranch } from 'lucide-react';
 import VWTooltip from '../VWTooltip';
 import { EntityGraphModal, FocusEntityType } from "../EntityGraphModal";
-import { brand, text } from "../../themes/palette";
 
 interface ViewRelationshipsButtonProps {
   entityId: string | number;
@@ -51,9 +50,9 @@ const ViewRelationshipsButton: React.FC<ViewRelationshipsButtonProps> = ({
           size={size}
           onClick={handleClick}
           sx={{
-            color: text.icon,
+            color: '#667085',
             '&:hover': {
-              color: brand.primary,
+              color: '#13715B',
               backgroundColor: 'rgba(19, 113, 91, 0.08)',
             },
           }}

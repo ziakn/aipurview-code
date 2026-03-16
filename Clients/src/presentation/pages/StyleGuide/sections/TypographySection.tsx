@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Box, Stack, Typography, useTheme, Divider, Snackbar } from "@mui/material";
 import { Copy } from "lucide-react";
-import { brand, text } from "../../../themes/palette";
 
 const TypographySection: React.FC = () => {
   const theme = useTheme();
@@ -91,7 +90,7 @@ const TypographySection: React.FC = () => {
             fontSize="24px"
             fontWeight="600"
             lineHeight="1.3"
-            color=text.primary
+            color="#1c2130"
             example="Dashboard overview"
             onCopy={handleCopy}
           />
@@ -100,7 +99,7 @@ const TypographySection: React.FC = () => {
             fontSize="18px"
             fontWeight="600"
             lineHeight="1.4"
-            color=text.primary
+            color="#1c2130"
             example="Risk management"
             onCopy={handleCopy}
           />
@@ -109,7 +108,7 @@ const TypographySection: React.FC = () => {
             fontSize="16px"
             fontWeight="600"
             lineHeight="1.4"
-            color=text.primary
+            color="#1c2130"
             example="Compliance status"
             onCopy={handleCopy}
           />
@@ -118,7 +117,7 @@ const TypographySection: React.FC = () => {
             fontSize="14px"
             fontWeight="600"
             lineHeight="1.5"
-            color=text.primary
+            color="#1c2130"
             example="Filter options"
             onCopy={handleCopy}
           />
@@ -139,7 +138,7 @@ const TypographySection: React.FC = () => {
             fontSize="14px"
             fontWeight="400"
             lineHeight="1.5"
-            color=text.secondary
+            color="#344054"
             example="This is body text used for longer form content and descriptions that require more space."
             onCopy={handleCopy}
           />
@@ -148,7 +147,7 @@ const TypographySection: React.FC = () => {
             fontSize="13px"
             fontWeight="400"
             lineHeight="1.5"
-            color=text.secondary
+            color="#344054"
             example="Standard body text for most UI content and form labels."
             onCopy={handleCopy}
           />
@@ -157,7 +156,7 @@ const TypographySection: React.FC = () => {
             fontSize="12px"
             fontWeight="400"
             lineHeight="1.5"
-            color=text.tertiary
+            color="#475467"
             example="Smaller text for secondary information and metadata."
             onCopy={handleCopy}
           />
@@ -166,7 +165,7 @@ const TypographySection: React.FC = () => {
             fontSize="11px"
             fontWeight="400"
             lineHeight="1.4"
-            color=text.accent
+            color="#838c99"
             example="Caption text for hints, timestamps, and footnotes"
             onCopy={handleCopy}
           />
@@ -215,14 +214,14 @@ const TypographySection: React.FC = () => {
             color="#FFFFFF"
             example="Save changes"
             onCopy={handleCopy}
-            bgColor=brand.primary
+            bgColor="#13715B"
           />
           <TypographyExample
             label="Form label"
             fontSize="13px"
             fontWeight="500"
             lineHeight="22px"
-            color=text.secondary
+            color="#344054"
             example="Email address"
             onCopy={handleCopy}
           />
@@ -231,7 +230,7 @@ const TypographySection: React.FC = () => {
             fontSize="13px"
             fontWeight="400"
             lineHeight="1.5"
-            color=text.primary
+            color="#1c2130"
             example="user@example.com"
             onCopy={handleCopy}
           />
@@ -240,7 +239,7 @@ const TypographySection: React.FC = () => {
             fontSize="13px"
             fontWeight="400"
             lineHeight="1.5"
-            color=text.accent
+            color="#838c99"
             example="Enter your email..."
             onCopy={handleCopy}
           />
@@ -258,7 +257,7 @@ const TypographySection: React.FC = () => {
             fontSize="12px"
             fontWeight="500"
             lineHeight="1.5"
-            color=text.tertiary
+            color="#475467"
             example="NAME"
             textTransform="uppercase"
             onCopy={handleCopy}
@@ -268,7 +267,7 @@ const TypographySection: React.FC = () => {
             fontSize="13px"
             fontWeight="400"
             lineHeight="1.5"
-            color=text.secondary
+            color="#344054"
             example="John Doe"
             onCopy={handleCopy}
           />
@@ -289,7 +288,7 @@ const TypographySection: React.FC = () => {
             color="#FFFFFF"
             example="Click to view details"
             onCopy={handleCopy}
-            bgColor=text.primary
+            bgColor="#1c2130"
           />
         </Stack>
       </SpecSection>

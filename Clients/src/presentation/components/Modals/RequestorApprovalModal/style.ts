@@ -1,4 +1,3 @@
-import { border as borderPalette, brand, text } from "../../../themes/palette";
 import { Theme } from "@mui/material";
 
 export const asideMenu = {
@@ -227,10 +226,10 @@ export const commentFieldStyle = {
     fontSize: '14px',
     backgroundColor: '#FFFFFF',
     '&:hover fieldset': {
-      borderColor: borderPalette.dark,
+      borderColor: '#D0D5DD',
     },
     '&.Mui-focused fieldset': {
-      borderColor: brand.primary,
+      borderColor: '#13715B',
     },
   },
 }
@@ -251,16 +250,16 @@ export const stepDetailFieldStack = {
 export const stepDetailLabelStyle = {
   fontWeight: 600,
   fontSize: 14,
-  color: text.secondary
+  color: "#344054"
 }
 
 export const stepDetailValueStyle = {
   fontSize: 14,
-  color: text.tertiary
+  color: "#475467"
 }
 
 export const stepDetailValueWithWrapStyle = {
   fontSize: 14,
-  color: text.tertiary,
+  color: "#475467",
   whiteSpace: "pre-wrap" as const
 }

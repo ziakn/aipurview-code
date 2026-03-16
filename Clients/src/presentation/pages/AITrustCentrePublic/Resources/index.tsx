@@ -19,7 +19,6 @@ import {
 } from "lucide-react";
 import { downloadResource } from "../../../../application/tools/downloadResource";
 import { aiTrustCenterTableCell } from "../style";
-import { background, border as borderPalette, brand, text } from "../../../themes/palette";
 
 const RESOURCES_SORTING_KEY = "verifywise_resources_sorting";
 
@@ -113,7 +112,7 @@ const Resources = ({
     <Box width="100%">
       <Typography
         variant="subtitle2"
-        color=brand.primary
+        color="#13715B"
         sx={{ fontWeight: 600, mb: 2 }}
       >
         Resources
@@ -128,7 +127,7 @@ const Resources = ({
               <TableCell
                 sx={{
                   fontWeight: 400,
-                  color: text.icon,
+                  color: "#667085",
                   fontSize: 12,
                   textTransform: "uppercase",
                   paddingLeft: 4,
@@ -149,7 +148,7 @@ const Resources = ({
                       color:
                         sortConfig.key === "document name"
                           ? "#1976D2"
-                          : text.disabled,
+                          : "#9CA3AF",
                     }}
                   >
                     {sortConfig.key === "document name" &&
@@ -167,7 +166,7 @@ const Resources = ({
               <TableCell
                 sx={{
                   fontWeight: 400,
-                  color: text.icon,
+                  color: "#667085",
                   fontSize: 12,
                   textTransform: "uppercase",
                   paddingRight: 11,
@@ -192,7 +191,7 @@ const Resources = ({
                       size={24}
                       style={{ color: "#10B981" }}
                     />
-                    <Typography color=text.secondary sx={{ fontSize: 13 }}>
+                    <Typography color="#344054" sx={{ fontSize: 13 }}>
                       {resource.name}
                     </Typography>
                   </Box>
@@ -201,7 +200,7 @@ const Resources = ({
                   align="right"
                   sx={{
                     ...aiTrustCenterTableCell,
-                    backgroundColor: sortConfig.key === "action" ? background.surface : "inherit",
+                    backgroundColor: sortConfig.key === "action" ? "#f5f5f5" : "inherit",
                   }}
                 >
                   <Button
@@ -211,8 +210,8 @@ const Resources = ({
                       fontSize: 13,
                       minWidth: 100,
                       backgroundColor: "#fff",
-                      color: text.secondary,
-                      border: `1px solid ${borderPalette.dark}`,
+                      color: "#344054",
+                      border: "1px solid #D0D5DD",
                       borderRadius: 1,
                     }}
                   >

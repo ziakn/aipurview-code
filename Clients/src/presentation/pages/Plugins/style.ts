@@ -1,4 +1,3 @@
-import { background, border as borderPalette, brand, text } from "../../themes/palette";
 import { SxProps, Theme } from "@mui/material";
 
 // Category sidebar styles - matching main app sidebar design
@@ -26,11 +25,11 @@ export const categoryMenuItem = (isSelected: boolean): SxProps<Theme> => ({
       : "#FAFAFA",
     border: isSelected ? "1px solid #E8E8E8" : "1px solid transparent",
     "& svg": {
-      color: `${brand.primary} !important`,
-      stroke: `${brand.primary} !important`,
+      color: "#13715B !important",
+      stroke: "#13715B !important",
     },
     "& svg path": {
-      stroke: `${brand.primary} !important`,
+      stroke: "#13715B !important",
     },
   },
   transition: "all 0.2s ease",
@@ -39,13 +38,13 @@ export const categoryMenuItem = (isSelected: boolean): SxProps<Theme> => ({
 export const categoryMenuText = (isSelected: boolean): SxProps<Theme> => ({
   fontSize: "13px",
   fontWeight: isSelected ? 600 : 400,
-  color: isSelected ? "#101828" : text.icon,
+  color: isSelected ? "#101828" : "#667085",
 });
 
 export const categoryHeader: SxProps<Theme> = {
   padding: "16px 20px",
-  backgroundColor: background.accent,
-  border: `1px solid ${borderPalette.dark}`,
+  backgroundColor: "#f9fafb",
+  border: "1px solid #d0d5dd",
   borderRadius: "4px",
 };
 
@@ -57,7 +56,7 @@ export const categoryHeaderTitle: SxProps<Theme> = {
 
 export const categoryHeaderDescription: SxProps<Theme> = {
   fontSize: "13px",
-  color: text.icon,
+  color: "#667085",
   lineHeight: 1.5,
 };
 
@@ -94,7 +93,7 @@ export const emptyStateContainer: SxProps<Theme> = {
 };
 
 export const emptyStateText: SxProps<Theme> = {
-  color: text.icon,
+  color: "#667085",
   fontSize: "14px",
 };
 
@@ -111,7 +110,7 @@ export const regionHeader = (theme: Theme): SxProps<Theme> => ({
   py: theme.spacing(3),
   px: theme.spacing(2),
   mx: theme.spacing(-2),
-  borderBottom: `1px solid ${theme.palette.border?.light || borderPalette.light}`,
+  borderBottom: `1px solid ${theme.palette.border?.light || "#eaecf0"}`,
   cursor: "pointer",
   borderRadius: theme.shape.borderRadius,
   transition: "all 0.2s ease",
@@ -145,7 +144,7 @@ export const regionNameStyle = (theme: Theme): SxProps<Theme> => ({
 
 export const regionCountStyle = (theme: Theme): SxProps<Theme> => ({
   fontSize: "13px",
-  color: theme.palette.text.tertiary || text.muted,
+  color: theme.palette.text.tertiary || "#98A2B3",
   fontWeight: 500,
 });
 

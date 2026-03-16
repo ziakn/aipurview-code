@@ -3,7 +3,6 @@ import { Box, Typography } from "@mui/material";
 import { RefreshCw } from "lucide-react";
 import Field from "../../components/Inputs/Field";
 import { getCaptcha } from "../../../application/repository/intakeForm.repository";
-import { brand, status, text } from "../../themes/palette";
 
 /**
  * Props for MathCaptcha component
@@ -83,8 +82,8 @@ export function MathCaptcha({ value, onChange, error, refreshTrigger }: MathCapt
             alignItems: "center",
             p: "4px",
             borderRadius: "6px",
-            color: status.default.text,
-            "&:hover": isLoading ? {} : { color: brand.primary, backgroundColor: "#f0fdf4" },
+            color: "#6b7280",
+            "&:hover": isLoading ? {} : { color: "#13715B", backgroundColor: "#f0fdf4" },
           }}
         >
           <RefreshCw size={16} strokeWidth={1.5} />
@@ -108,7 +107,7 @@ export function MathCaptcha({ value, onChange, error, refreshTrigger }: MathCapt
         >
           {isLoading ? "Loading..." : question}
         </Typography>
-        <Typography sx={{ fontSize: "16px", color: status.default.text }}>=</Typography>
+        <Typography sx={{ fontSize: "16px", color: "#6b7280" }}>=</Typography>
         <Field
           id="captcha-answer"
           label=""
@@ -135,7 +134,7 @@ export function MathCaptcha({ value, onChange, error, refreshTrigger }: MathCapt
         </Typography>
       )}
 
-      <Typography sx={{ color: text.disabled, fontSize: "11px", mt: 1.5 }}>
+      <Typography sx={{ color: "#9ca3af", fontSize: "11px", mt: 1.5 }}>
         Please solve this simple math problem to verify you are human
       </Typography>
     </Box>

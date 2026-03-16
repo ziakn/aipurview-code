@@ -1,9 +1,8 @@
-import { background, border as borderPalette, brand, text } from "../../../themes/palette";
 import { SxProps, Theme } from "@mui/material";
 
 // Back button
 export const backButton: SxProps<Theme> = {
-  color: text.secondary,
+  color: "#344054",
   fontSize: "13px",
   textTransform: "none",
   "&:hover": {
@@ -40,12 +39,12 @@ export const installedStatusChip: SxProps<Theme> = {
 
 // Install button
 export const installButton: SxProps<Theme> = {
-  backgroundColor: brand.primary,
+  backgroundColor: "#13715B",
   textTransform: "none",
   fontSize: "13px",
   fontWeight: 500,
   "&:hover": {
-    backgroundColor: brand.primaryHover,
+    backgroundColor: "#0f5a47",
   },
 };
 
@@ -65,37 +64,37 @@ export const uninstallButton: SxProps<Theme> = {
 // Form field label
 export const formFieldLabel: SxProps<Theme> = {
   mb: 0.75,
-  color: text.secondary,
+  color: "#344054",
 };
 
 // Test connection button
 export const testConnectionButton: SxProps<Theme> = {
-  borderColor: brand.primary,
-  color: brand.primary,
+  borderColor: "#13715B",
+  color: "#13715B",
   textTransform: "none",
   fontSize: "13px",
   fontWeight: 500,
   "&:hover": {
-    borderColor: brand.primaryHover,
+    borderColor: "#0f5a47",
     backgroundColor: "rgba(19, 113, 91, 0.04)",
   },
   "&:disabled": {
-    borderColor: borderPalette.dark,
-    color: text.muted,
+    borderColor: "#d0d5dd",
+    color: "#98a2b3",
   },
 };
 
 // Save configuration button
 export const saveConfigButton: SxProps<Theme> = {
-  backgroundColor: brand.primary,
+  backgroundColor: "#13715B",
   textTransform: "none",
   fontSize: "13px",
   fontWeight: 500,
   "&:hover": {
-    backgroundColor: brand.primaryHover,
+    backgroundColor: "#0f5a47",
   },
   "&:disabled": {
-    backgroundColor: borderPalette.dark,
+    backgroundColor: "#d0d5dd",
   },
 };
 
@@ -115,9 +114,9 @@ export const configSelect: SxProps<Theme> = {
 
 // Checkbox styling
 export const configCheckbox: SxProps<Theme> = {
-  color: brand.primary,
+  color: "#13715B",
   "&.Mui-checked": {
-    color: brand.primary,
+    color: "#13715B",
   },
 };
 
@@ -133,15 +132,15 @@ export const frameworkDetailItem: SxProps<Theme> = {
   flexDirection: "column",
   gap: 0.5,
   p: "16px",
-  backgroundColor: background.accent,
+  backgroundColor: "#f9fafb",
   borderRadius: "8px",
-  border: `1px solid ${borderPalette.light}`,
+  border: "1px solid #eaecf0",
 };
 
 export const frameworkDetailLabel: SxProps<Theme> = {
   fontSize: "11px",
   fontWeight: 600,
-  color: text.icon,
+  color: "#667085",
   textTransform: "uppercase",
   letterSpacing: "0.5px",
 };
@@ -149,7 +148,7 @@ export const frameworkDetailLabel: SxProps<Theme> = {
 export const frameworkDetailValue: SxProps<Theme> = {
   fontSize: "14px",
   fontWeight: 500,
-  color: text.secondary,
+  color: "#344054",
   display: "flex",
   alignItems: "center",
   gap: 1,
@@ -167,7 +166,7 @@ export const frameworkTypeChip = (isOrganizational: boolean): SxProps<Theme> => 
 
 export const frameworkTypeDescription: SxProps<Theme> = {
   fontSize: "12px",
-  color: text.icon,
+  color: "#667085",
   mt: 1,
   lineHeight: 1.5,
 };

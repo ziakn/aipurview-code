@@ -1,7 +1,6 @@
 import type { FC } from "react";
 import type { LucideIcon } from "lucide-react";
 import { useTheme } from "@mui/material";
-import { border as borderPalette, brand } from "../../themes/palette";
 
 interface EmptyIllustrationProps {
   /** Lucide icon to display in the center circle */
@@ -24,15 +23,15 @@ const EmptyIllustration: FC<EmptyIllustrationProps> = ({
   const h = 120 * scale;
 
   // Theme-aware colors
-  const primary = theme.palette.mode === "dark" ? "#4ADE80" : brand.primary;
+  const primary = theme.palette.mode === "dark" ? "#4ADE80" : "#13715B";
   const circleFill = theme.palette.mode === "dark" ? "#1a2e24" : "#e8f5f0";
   const circleStroke = theme.palette.mode === "dark" ? "#2d5a44" : "#b8e0d4";
-  const lineDash = theme.palette.mode === "dark" ? "#4a5568" : borderPalette.dark;
+  const lineDash = theme.palette.mode === "dark" ? "#4a5568" : "#d0d5dd";
   const cubeTop = theme.palette.mode === "dark" ? "#1e2433" : "#f0f4ff";
   const cubeLeft = theme.palette.mode === "dark" ? "#252d3d" : "#e8edf8";
   const cubeRight = theme.palette.mode === "dark" ? "#2a3348" : "#dde4f2";
   const cubeStroke = theme.palette.mode === "dark" ? "#3d4a60" : "#c8d4e8";
-  const dotFill = theme.palette.mode === "dark" ? "#4a5568" : borderPalette.dark;
+  const dotFill = theme.palette.mode === "dark" ? "#4a5568" : "#d0d5dd";
 
   return (
     <svg

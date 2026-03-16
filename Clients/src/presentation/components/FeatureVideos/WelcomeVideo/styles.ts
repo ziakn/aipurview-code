@@ -1,12 +1,11 @@
-import { brand } from "../../../themes/palette";
 export const COLORS = {
   background: "#0a0a0a",
-  primary: brand.primary,
+  primary: "#13715B",
   primaryLight: "#1a9d7e",
   white: "#ffffff",
   subtitle: "#999999",
   tag: "#666666",
-  accentLine: brand.primary,
+  accentLine: "#13715B",
 } as const;
 
 export const FPS = 30;

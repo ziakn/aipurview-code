@@ -31,7 +31,6 @@ import { ReviewStatus } from "../../../../domain/enums/status.enum";
 import { getRiskScoreColor } from "../../../../domain/utils/vendorScorecard.utils";
 import { VWLink } from "../../Link";
 import VendorLogo from "../../VendorLogo";
-import { background, text } from "../../../themes/palette";
 
 const VENDORS_ROWS_PER_PAGE_KEY = "verifywise_vendors_rows_per_page";
 const VENDORS_SORTING_KEY = "verifywise_vendors_sorting";
@@ -113,7 +112,7 @@ const SortableTableHead: React.FC<{
                     display: "flex",
                     alignItems: "center",
                     color:
-                      sortConfig.key === column.id ? "primary.main" : text.disabled,
+                      sortConfig.key === column.id ? "primary.main" : "#9CA3AF",
                   }}
                 >
                   {sortConfig.key === column.id &&
@@ -358,7 +357,7 @@ const TableWithPlaceholder: React.FC<ITableWithPlaceholderProps> = ({
                   ...singleTheme.tableStyles.primary.body.row,
                   cursor: "pointer",
                   "&:hover": {
-                    backgroundColor: background.surface,
+                    backgroundColor: "#f5f5f5",
                   },
                   outline: "none",
                 }}
@@ -391,7 +390,7 @@ const TableWithPlaceholder: React.FC<ITableWithPlaceholderProps> = ({
                   sx={{
                     ...cellStyle,
                     backgroundColor:
-                      sortConfig.key === "assignee" ? background.surface : "inherit",
+                      sortConfig.key === "assignee" ? "#f5f5f5" : "inherit",
                   }}
                 >
                   {row.assignee
@@ -406,7 +405,7 @@ const TableWithPlaceholder: React.FC<ITableWithPlaceholderProps> = ({
                     ...cellStyle,
                     backgroundColor:
                       sortConfig.key === "review_status"
-                        ? background.surface
+                        ? "#f5f5f5"
                         : "inherit",
                   }}
                 >
@@ -416,7 +415,7 @@ const TableWithPlaceholder: React.FC<ITableWithPlaceholderProps> = ({
                   sx={{
                     ...cellStyle,
                     backgroundColor:
-                      sortConfig.key === "risk" ? background.surface : "inherit",
+                      sortConfig.key === "risk" ? "#f5f5f5" : "inherit",
                   }}
                 >
                   {(() => {
@@ -432,7 +431,7 @@ const TableWithPlaceholder: React.FC<ITableWithPlaceholderProps> = ({
                         {riskCount} risk{riskCount !== 1 ? "s" : ""}
                       </VWLink>
                     ) : (
-                      <Typography variant="body2" sx={{ color: text.muted }}>
+                      <Typography variant="body2" sx={{ color: "#98A2B3" }}>
                         No risks
                       </Typography>
                     );
@@ -442,7 +441,7 @@ const TableWithPlaceholder: React.FC<ITableWithPlaceholderProps> = ({
                   sx={{
                     ...cellStyle,
                     backgroundColor:
-                      sortConfig.key === "scorecard" ? background.surface : "inherit",
+                      sortConfig.key === "scorecard" ? "#f5f5f5" : "inherit",
                   }}
                 >
                   <Box display="flex" alignItems="center" gap={1}>
@@ -491,7 +490,7 @@ const TableWithPlaceholder: React.FC<ITableWithPlaceholderProps> = ({
                   sx={{
                     ...cellStyle,
                     backgroundColor:
-                      sortConfig.key === "review_date" ? background.surface : "inherit",
+                      sortConfig.key === "review_date" ? "#f5f5f5" : "inherit",
                   }}
                 >
                   {row.review_date

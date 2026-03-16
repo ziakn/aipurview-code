@@ -22,7 +22,6 @@ import Select from "../../../../components/Inputs/Select";
 import DatePicker from "../../../../components/Inputs/Datepicker";
 import ChipInput from "../../../../components/Inputs/ChipInput";
 import StatusBadge from "../StatusBadge";
-import { background, text } from "../../../../themes/palette";
 
 interface FileMetadataEditorProps {
   isOpen: boolean;
@@ -135,7 +134,7 @@ export const FileMetadataEditor: React.FC<FileMetadataEditorProps> = ({
             }}
             sx={file.approval_workflow_id ? {
               "&.Mui-disabled": {
-                backgroundColor: background.accent,
+                backgroundColor: "#F9FAFB",
                 cursor: "not-allowed",
               },
               "& .MuiSelect-select.Mui-disabled": {
@@ -213,17 +212,17 @@ export const FileMetadataEditor: React.FC<FileMetadataEditorProps> = ({
         <Box
           sx={{
             padding: "12px",
-            backgroundColor: background.accent,
+            backgroundColor: "#F9FAFB",
             borderRadius: "4px",
             border: "1px solid #E0E4E9",
           }}
         >
-          <Typography sx={{ fontSize: 12, color: text.icon }}>
+          <Typography sx={{ fontSize: 12, color: "#667085" }}>
             Editing metadata for:{" "}
-            <strong style={{ color: text.secondary }}>{file.filename}</strong>
+            <strong style={{ color: "#344054" }}>{file.filename}</strong>
           </Typography>
           {file.uploader_name && (
-            <Typography sx={{ fontSize: 12, color: text.icon, mt: 0.5 }}>
+            <Typography sx={{ fontSize: 12, color: "#667085", mt: 0.5 }}>
               Uploaded by: {file.uploader_name} {file.uploader_surname}
             </Typography>
           )}

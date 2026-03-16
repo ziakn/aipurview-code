@@ -48,7 +48,6 @@ import { GetAnnexControlISO27001ById } from "../../../../application/repository/
 import Alert from "../../Alert";
 import { SelectChangeEvent } from "@mui/material";
 import { RiskFormValues } from "../../AddNewRiskForm/interface";
-import { background, border as borderPalette, status, text } from "../../../themes/palette";
 const AuditRiskPopup = lazy(() => import("../../RiskPopup/AuditRiskPopup"));
 const LinkedRisksPopup = lazy(() => import("../../LinkedRisks").then(m => ({ default: m.LinkedRisksPopup })));
 const NotesTab = lazy(() => import("../../Notes/NotesTab"));
@@ -757,7 +756,7 @@ const VWISO27001AnnexDrawerDialog = ({
                   sx={{
                     border: "1px solid #eee",
                     padding: "12px",
-                    backgroundColor: background.accent,
+                    backgroundColor: "background.accent",
                     borderRadius: "4px",
                   }}
                 >
@@ -968,7 +967,7 @@ const VWISO27001AnnexDrawerDialog = ({
               <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                 Evidence files
               </Typography>
-              <Typography variant="body2" color=text.tertiary>
+              <Typography variant="body2" color="text.tertiary">
                 Upload evidence files to document compliance with this
                 requirement.
               </Typography>
@@ -1002,12 +1001,12 @@ const VWISO27001AnnexDrawerDialog = ({
                         minWidth: 155,
                         height: 25,
                         fontSize: 11,
-                        border: `1px solid ${borderPalette.dark}`,
+                        border: "1px solid #D0D5DD",
                         backgroundColor: "white",
-                        color: text.secondary,
+                        color: "#344054",
                         "&:hover": {
-                          backgroundColor: background.accent,
-                          border: `1px solid ${borderPalette.dark}`,
+                          backgroundColor: "#F9FAFB",
+                          border: "1px solid #D0D5DD",
                         },
                       }}
                       disableRipple={
@@ -1042,7 +1041,7 @@ const VWISO27001AnnexDrawerDialog = ({
                   </Stack>
 
                   <Stack direction="row" spacing={2}>
-                    <Typography sx={{ fontSize: 11, color: text.secondary }}>
+                    <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
                       {`${evidenceFiles.length || 0} files attached`}
                     </Typography>
                     {uploadFiles.length > 0 && (
@@ -1088,7 +1087,7 @@ const VWISO27001AnnexDrawerDialog = ({
                           borderRadius: "4px",
                           backgroundColor: "background.main",
                           "&:hover": {
-                            backgroundColor: background.accent,
+                            backgroundColor: "background.accent",
                           },
                         }}
                       >
@@ -1115,7 +1114,7 @@ const VWISO27001AnnexDrawerDialog = ({
                               {file.fileName}
                             </Typography>
                             <Typography
-                              sx={{ fontSize: 11, color: status.default.text }}
+                              sx={{ fontSize: 11, color: "#6B7280" }}
                             >
                               {file.size ? `${((file.size || 0) / 1024).toFixed(1)} KB` : ""}
                               {file.size && file.source ? " • " : ""}
@@ -1137,7 +1136,7 @@ const VWISO27001AnnexDrawerDialog = ({
                                 )
                               }
                               sx={{
-                                color: text.tertiary,
+                                color: "text.tertiary",
                                 "&:hover": {
                                   color: "primary.main",
                                   backgroundColor: "rgba(19, 113, 91, 0.08)",
@@ -1155,7 +1154,7 @@ const VWISO27001AnnexDrawerDialog = ({
                               }
                               disabled={isEditingDisabled}
                               sx={{
-                                color: text.tertiary,
+                                color: "text.tertiary",
                                 "&:hover": {
                                   color: "status.error.main",
                                   backgroundColor: "rgba(211, 47, 47, 0.08)",
@@ -1189,7 +1188,7 @@ const VWISO27001AnnexDrawerDialog = ({
                         padding: "10px 12px",
                         border: `1px solid ${theme.palette.status.warning.border}`,
                         borderRadius: "4px",
-                        backgroundColor: status.warning.bg,
+                        backgroundColor: "status.warning.bg",
                       }}
                     >
                       <Box
@@ -1230,7 +1229,7 @@ const VWISO27001AnnexDrawerDialog = ({
                           sx={{
                             color: "#92400E",
                             "&:hover": {
-                              color: status.warning.text,
+                              color: "status.warning.text",
                               backgroundColor: "rgba(217, 119, 6, 0.08)",
                             },
                           }}
@@ -1295,7 +1294,7 @@ const VWISO27001AnnexDrawerDialog = ({
                           sx={{
                             color: "#4C7BF4",
                             "&:hover": {
-                              color: status.error.text,
+                              color: "#D32F2F",
                               backgroundColor: "rgba(211, 47, 47, 0.08)",
                             },
                           }}
@@ -1314,10 +1313,10 @@ const VWISO27001AnnexDrawerDialog = ({
                   sx={{
                     textAlign: "center",
                     py: 4,
-                    color: text.tertiary,
+                    color: "text.tertiary",
                     border: `2px dashed ${theme.palette.border.dark}`,
                     borderRadius: 1,
-                    backgroundColor: background.accent,
+                    backgroundColor: "background.accent",
                   }}
                 >
                   <Typography variant="body2" sx={{ mb: 1 }}>
@@ -1334,7 +1333,7 @@ const VWISO27001AnnexDrawerDialog = ({
               <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                 Linked risks
               </Typography>
-              <Typography variant="body2" color=text.tertiary>
+              <Typography variant="body2" color="text.tertiary">
                 Link risks from your risk database to track which risks are
                 addressed by this requirement.
               </Typography>
@@ -1349,7 +1348,7 @@ const VWISO27001AnnexDrawerDialog = ({
                     fontSize: 11,
                     border: `1px solid ${theme.palette.border.dark}`,
                     backgroundColor: "background.main",
-                    color: text.secondary,
+                    color: "text.secondary",
                   }}
                   onClick={() => setIsLinkedRisksModalOpen(true)}
                   disabled={isEditingDisabled}
@@ -1358,7 +1357,7 @@ const VWISO27001AnnexDrawerDialog = ({
                 </Button>
 
                 <Stack direction="row" spacing={2}>
-                  <Typography sx={{ fontSize: 11, color: text.secondary }}>
+                  <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
                     {`${currentRisks.length || 0} risks linked`}
                   </Typography>
                   {selectedRisks.length > 0 && (
@@ -1391,7 +1390,7 @@ const VWISO27001AnnexDrawerDialog = ({
                           borderRadius: "4px",
                           backgroundColor: "background.main",
                           "&:hover": {
-                            backgroundColor: background.accent,
+                            backgroundColor: "background.accent",
                           },
                         }}
                       >
@@ -1409,7 +1408,7 @@ const VWISO27001AnnexDrawerDialog = ({
                             {risk.risk_name}
                           </Typography>
                           {risk.risk_level && (
-                            <Typography sx={{ fontSize: 11, color: text.tertiary }}>
+                            <Typography sx={{ fontSize: 11, color: "text.tertiary" }}>
                               Risk level: {risk.risk_level}
                             </Typography>
                           )}
@@ -1421,7 +1420,7 @@ const VWISO27001AnnexDrawerDialog = ({
                               size="small"
                               onClick={() => handleViewRiskDetails(risk)}
                               sx={{
-                                color: text.tertiary,
+                                color: "text.tertiary",
                                 "&:hover": {
                                   color: "primary.main",
                                   backgroundColor: "rgba(19, 113, 91, 0.08)",
@@ -1445,7 +1444,7 @@ const VWISO27001AnnexDrawerDialog = ({
                               }}
                               disabled={isEditingDisabled}
                               sx={{
-                                color: text.tertiary,
+                                color: "text.tertiary",
                                 "&:hover": {
                                   color: "status.error.main",
                                   backgroundColor: "rgba(211, 47, 47, 0.08)",
@@ -1467,16 +1466,16 @@ const VWISO27001AnnexDrawerDialog = ({
                   sx={{
                     textAlign: "center",
                     py: 4,
-                    color: text.tertiary,
+                    color: "text.tertiary",
                     border: `2px dashed ${theme.palette.border.dark}`,
                     borderRadius: 1,
-                    backgroundColor: background.accent,
+                    backgroundColor: "background.accent",
                   }}
                 >
                   <Typography variant="body2" sx={{ mb: 1 }}>
                     No risks linked yet
                   </Typography>
-                  <Typography variant="caption" color=text.disabled>
+                  <Typography variant="caption" color="#9CA3AF">
                     Click "Add/remove risks" to link risks from your risk
                     database
                   </Typography>

@@ -56,7 +56,6 @@ import { addNewModelButtonStyle } from "../../../pages/ModelInventory/style";
 import { CirclePlus as AddCircleOutlineIcon } from "lucide-react";
 import { VWLink } from "../../Link/VWLink";
 import { useQueryClient } from "@tanstack/react-query";
-import { background, text } from "../../../themes/palette";
 
 dayjs.extend(utc);
 
@@ -588,12 +587,12 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
           "& .MuiAutocomplete-option": {
             fontSize: 13,
             fontWeight: 400,
-            color: text.primary,
+            color: "#1c2130",
             paddingLeft: "9px",
             paddingRight: "9px",
           },
           "& .MuiAutocomplete-option.Mui-focused": {
-            background: background.accent,
+            background: "#f9fafb",
           },
         },
         "& .MuiAutocomplete-noOptions": {

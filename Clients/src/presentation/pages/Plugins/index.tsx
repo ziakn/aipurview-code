@@ -17,7 +17,6 @@ import Chip from "../../components/Chip";
 import { EmptyState } from "../../components/EmptyState";
 import { CATEGORIES } from "./categories";
 import {
-import { brand, text } from "../../themes/palette";
   categorySidebar,
   categoryMenuItem,
   categoryMenuText,
@@ -303,12 +302,12 @@ const Plugins: React.FC = () => {
                           justifyContent: "center",
                           width: "16px",
                           "& svg": {
-                            color: isSelected ? `${brand.primary} !important` : `${text.icon} !important`,
-                            stroke: isSelected ? `${brand.primary} !important` : `${text.icon} !important`,
+                            color: isSelected ? "#13715B !important" : "#667085 !important",
+                            stroke: isSelected ? "#13715B !important" : "#667085 !important",
                             transition: "color 0.2s ease, stroke 0.2s ease",
                           },
                           "& svg path": {
-                            stroke: isSelected ? `${brand.primary} !important` : `${text.icon} !important`,
+                            stroke: isSelected ? "#13715B !important" : "#667085 !important",
                           },
                         }}
                       >
@@ -339,7 +338,7 @@ const Plugins: React.FC = () => {
                   <Stack direction="row" alignItems="center" gap={1.5} mb={1}>
                     {React.createElement(currentCategory.icon, {
                       size: 20,
-                      color: brand.primary,
+                      color: "#13715B",
                       strokeWidth: 1.5,
                     })}
                     <Typography sx={categoryHeaderTitle}>
@@ -395,7 +394,7 @@ const Plugins: React.FC = () => {
                 <Chip
                   label={`${installedPlugins.length} plugin${installedPlugins.length !== 1 ? "s" : ""} installed`}
                   backgroundColor="rgba(19, 113, 91, 0.1)"
-                  textColor=brand.primary
+                  textColor="#13715B"
                 />
               </Box>
             )}

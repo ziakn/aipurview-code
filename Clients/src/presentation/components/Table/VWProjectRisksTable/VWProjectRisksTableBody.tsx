@@ -17,7 +17,6 @@ import { RiskModel } from "../../../../domain/models/Common/risks/risk.model";
 import { User } from "../../../../domain/types/User";
 import Chip from "../../Chip";
 import ProjectRiskLinkedPolicies from "../../../components/ProjectRiskMitigation/ProjectRiskLinkedPolicies";
-import { background, text } from "../../../themes/palette";
 
 function getDummyEvent() {
   const realEvent = new Event("click", { bubbles: true, cancelable: true });
@@ -180,7 +179,7 @@ const VWProjectRisksTableBody = ({
                       backgroundColor: flashRow === row.id
                         ? singleTheme.flashColors.background
                         : sortConfig.key === "risk_owner"
-                        ? background.surface
+                        ? "#f5f5f5"
                         : "",
                     }}
                   >
@@ -196,7 +195,7 @@ const VWProjectRisksTableBody = ({
                       backgroundColor: flashRow === row.id
                         ? singleTheme.flashColors.background
                         : sortConfig.key === "severity"
-                        ? background.surface
+                        ? "#f5f5f5"
                         : "",
                     }}
                   >
@@ -214,7 +213,7 @@ const VWProjectRisksTableBody = ({
                       backgroundColor: flashRow === row.id
                         ? singleTheme.flashColors.background
                         : sortConfig.key === "ale_estimate"
-                        ? background.surface
+                        ? "#f5f5f5"
                         : "",
                     }}
                   >
@@ -230,7 +229,7 @@ const VWProjectRisksTableBody = ({
                       backgroundColor: flashRow === row.id
                         ? singleTheme.flashColors.background
                         : sortConfig.key === "mitigation_status"
-                        ? background.surface
+                        ? "#f5f5f5"
                         : "",
                     }}
                   >
@@ -248,7 +247,7 @@ const VWProjectRisksTableBody = ({
                       backgroundColor: flashRow === row.id
                         ? singleTheme.flashColors.background
                         : sortConfig.key === "risk_level_autocalculated"
-                        ? background.surface
+                        ? "#f5f5f5"
                         : "",
                     }}
                   >
@@ -266,7 +265,7 @@ const VWProjectRisksTableBody = ({
                       backgroundColor: flashRow === row.id
                         ? singleTheme.flashColors.background
                         : sortConfig.key === "deadline"
-                        ? background.surface
+                        ? "#f5f5f5"
                         : "",
                     }}
                   >
@@ -280,7 +279,7 @@ const VWProjectRisksTableBody = ({
                       backgroundColor: flashRow === row.id
                         ? singleTheme.flashColors.background
                         : sortConfig.key === "controls_mapping"
-                        ? background.surface
+                        ? "#f5f5f5"
                         : "",
                     }}
                   >
@@ -300,7 +299,7 @@ const VWProjectRisksTableBody = ({
                     backgroundColor: flashRow === row.id
                       ? singleTheme.flashColors.background
                       : sortConfig.key === "actions"
-                      ? background.surface
+                      ? "#f5f5f5"
                       : "",
                   }}
                 >
@@ -321,10 +320,10 @@ const VWProjectRisksTableBody = ({
                         warningTitle="Delete this project risk?"
                         warningMessage={
                           <Stack gap={2}>
-                            <Typography fontSize={13} color=text.secondary>
+                            <Typography fontSize={13} color="#344054">
                               Are you sure you want to delete this project risk?
                             </Typography>
-                            <Typography fontSize={13} color=text.secondary>
+                            <Typography fontSize={13} color="#344054">
                               This action is non-recoverable.
                             </Typography>
                           </Stack>

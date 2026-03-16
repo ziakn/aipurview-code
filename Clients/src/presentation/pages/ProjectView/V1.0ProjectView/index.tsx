@@ -31,7 +31,6 @@ import { getAllEntities } from "../../../../application/repository/entity.reposi
 import { usePluginRegistry } from "../../../../application/contexts/PluginRegistry.context";
 import { PLUGIN_SLOTS } from "../../../../domain/constants/pluginSlots";
 import { apiServices } from "../../../../infrastructure/api/networkServices";
-import { brand } from "../../../themes/palette";
 
 const VWProjectView = () => {
   const { userRoleName } = useAuth();
@@ -204,7 +203,7 @@ const VWProjectView = () => {
             </Typography>
             <Typography sx={projectViewHeaderDesc}>
               This use case includes all the governance process status of{" "}
-              <Typography component="span" sx={{ color: brand.primary, fontSize: "inherit" }}>
+              <Typography component="span" sx={{ color: "#13715B", fontSize: "inherit" }}>
                 {project.project_title}
               </Typography>
             </Typography>

@@ -26,7 +26,6 @@ import ConfirmationModal from "../../../components/Dialogs/ConfirmationModal";
 import { useModalKeyHandling } from "../../../../application/hooks/useModalKeyHandling";
 import { PluginSlot } from "../../../components/PluginSlot";
 import { PLUGIN_SLOTS } from "../../../../domain/constants/pluginSlots";
-import { brand } from "../../../themes/palette";
 
 interface AddFrameworkModalProps {
   open: boolean;
@@ -189,9 +188,9 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
             sx={{
               minWidth: "80px",
               height: "34px",
-              backgroundColor: brand.primary,
+              backgroundColor: "#13715B",
               "&:hover": {
-                backgroundColor: brand.primaryHover,
+                backgroundColor: "#0F5A47",
               },
             }}
           />
@@ -238,7 +237,7 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
                           py: 0.5,
                           fontSize: 13,
                           fontWeight: 600,
-                          color: brand.primary,
+                          color: "#13715B",
                         }}
                       >
                         <CheckGreenIcon size={16} />
@@ -270,7 +269,7 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
                         sx={{
                           minWidth: 100,
                           fontWeight: 600,
-                          backgroundColor: brand.primary,
+                          backgroundColor: "#13715B",
                           color: "#fff",
                           "&:hover": { backgroundColor: "#0e5c47" },
                         }}

@@ -41,7 +41,6 @@ import { WelcomeVideoPlayer } from "../../components/FeatureVideos/WelcomeVideo"
 import { VideoPlayerModal } from "../../components/FeatureVideos/player/VideoPlayerModal";
 import { buildExploreConfig } from "../../components/FeatureVideos/shared/buildExploreConfig";
 import { EXPLORE_VIDEO_DATA } from "../../components/FeatureVideos/exploreVideos";
-import { brand, status } from "../../themes/palette";
 
 // ── Keyframe animations ──
 const fadeInUp = keyframes`
@@ -105,7 +104,7 @@ const GS_CARDS = [
 ] as const;
 
 const EXPLORE_CARDS = [
-  { title: "AI governance", desc: "Manage models, track lifecycle, maintain documentation.", color: brand.primary, path: "/overview" },
+  { title: "AI governance", desc: "Manage models, track lifecycle, maintain documentation.", color: "#13715B", path: "/overview" },
   { title: "Compliance", desc: "EU AI Act, ISO 42001, NIST AI RMF frameworks and controls.", color: "#1E88E5", path: "/framework" },
   { title: "Risk management", desc: "Identify, assess, and mitigate risks across AI systems.", color: "#F4511E", path: "/risk-management" },
   { title: "LLM Evals", desc: "Evaluate and benchmark your LLM apps for quality and safety.", color: "#7B1FA2", path: "/evals" },
@@ -114,13 +113,13 @@ const EXPLORE_CARDS = [
   { title: "Policies", desc: "Create, manage, and track AI governance policies.", color: "#283593", path: "/policies" },
   { title: "Reporting", desc: "Generate compliance reports with optional AI enhancement.", color: "#558B2F", path: "/reporting" },
   { title: "Training", desc: "Track employee AI training and compliance certifications.", color: "#C2185B", path: "/training" },
-  { title: "Plugins", desc: "Extend with SOC 2, GDPR, HIPAA, Jira, Slack, and more.", color: status.info.text, path: "/plugins" },
+  { title: "Plugins", desc: "Extend with SOC 2, GDPR, HIPAA, Jira, Slack, and more.", color: "#1565C0", path: "/plugins" },
 ] as const;
 
 const SHORTCUTS = [
-  { label: "Use cases", tooltip: "Manage AI use cases, projects, and their lifecycle stages.", icon: LayoutGrid, path: "/overview", color: brand.primaryHover, bg: "linear-gradient(135deg, brand.primaryLight, status.success.border)" },
-  { label: "Risks", tooltip: "Identify, assess, and track risks across all AI systems.", icon: AlertTriangle, path: "/risk-management", color: status.info.text, bg: "linear-gradient(135deg, status.info.bg, status.info.border)" },
-  { label: "Models", tooltip: "Track AI/ML models, their versions, and deployment status.", icon: Brain, path: "/model-inventory", color: "#E65100", bg: "linear-gradient(135deg, status.warning.bg, #FFECB3)" },
+  { label: "Use cases", tooltip: "Manage AI use cases, projects, and their lifecycle stages.", icon: LayoutGrid, path: "/overview", color: "#0F5A47", bg: "linear-gradient(135deg, #E6F0EC, #C8E6D0)" },
+  { label: "Risks", tooltip: "Identify, assess, and track risks across all AI systems.", icon: AlertTriangle, path: "/risk-management", color: "#1565C0", bg: "linear-gradient(135deg, #E3F2FD, #BBDEFB)" },
+  { label: "Models", tooltip: "Track AI/ML models, their versions, and deployment status.", icon: Brain, path: "/model-inventory", color: "#E65100", bg: "linear-gradient(135deg, #FFF8E1, #FFECB3)" },
   { label: "Vendors", tooltip: "Manage third-party AI vendors and their risk profiles.", icon: Building, path: "/vendors", color: "#C2185B", bg: "linear-gradient(135deg, #FCE4EC, #F8BBD0)" },
   { label: "Tasks", tooltip: "View and manage compliance tasks assigned to your team.", icon: Calendar, path: "/tasks", color: "#7B1FA2", bg: "linear-gradient(135deg, #F3E5F5, #E1BEE7)" },
   { label: "Reporting", tooltip: "Generate compliance and governance reports for stakeholders.", icon: BarChart3, path: "/reporting", color: "#283593", bg: "linear-gradient(135deg, #E8EAF6, #C5CAE9)" },
@@ -268,8 +267,8 @@ const StartHere = () => {
       const timeLeft = animationEnd - Date.now();
       if (timeLeft <= 0) { clearInterval(interval); return; }
       const particleCount = 50 * (timeLeft / duration);
-      confetti({ ...defaults, particleCount, origin: { x: rand(0.1, 0.3), y: Math.random() - 0.2 }, colors: [brand.primary, "#10B981", "#D1FAE5", "#34D399", "#6EE7B7"] });
-      confetti({ ...defaults, particleCount, origin: { x: rand(0.7, 0.9), y: Math.random() - 0.2 }, colors: [brand.primary, "#10B981", "#D1FAE5", "#34D399", "#6EE7B7"] });
+      confetti({ ...defaults, particleCount, origin: { x: rand(0.1, 0.3), y: Math.random() - 0.2 }, colors: ["#13715B", "#10B981", "#D1FAE5", "#34D399", "#6EE7B7"] });
+      confetti({ ...defaults, particleCount, origin: { x: rand(0.7, 0.9), y: Math.random() - 0.2 }, colors: ["#13715B", "#10B981", "#D1FAE5", "#34D399", "#6EE7B7"] });
     }, 250);
 
     // Auto-dismiss card after confetti + a short pause
@@ -302,7 +301,7 @@ const StartHere = () => {
         {/* Greeting */}
         <Box sx={{ animation: `${fadeInUp} 0.5s ease-out` }}>
           <Typography variant="h5" sx={{ fontWeight: 400, fontSize: "20px" }}>
-            <Box component="span" sx={{ color: brand.primary }}>
+            <Box component="span" sx={{ color: "#13715B" }}>
               {greeting.greetingText}
             </Box>
             <Box component="span" sx={{ color: theme.palette.text.primary }}>
@@ -745,7 +744,7 @@ const StartHere = () => {
         {!progressDismissed && (
           <Box
             sx={{
-              background: "linear-gradient(135deg, brand.primaryHover, brand.primary)",
+              background: "linear-gradient(135deg, #0F5A47, #13715B)",
               borderRadius: "8px",
               p: "16px",
               color: "#fff",
@@ -889,7 +888,7 @@ const StartHere = () => {
                     "&:hover": {
                       background: "#F9F9F9",
                       "& .resource-icon svg": {
-                        stroke: brand.primary,
+                        stroke: "#13715B",
                       },
                     },
                   }}
@@ -949,7 +948,7 @@ const StartHere = () => {
                   "&:hover": {
                     background: "#F9F9F9",
                     "& .whatsnew-icon svg": {
-                      stroke: brand.primary,
+                      stroke: "#13715B",
                     },
                   },
                 }}

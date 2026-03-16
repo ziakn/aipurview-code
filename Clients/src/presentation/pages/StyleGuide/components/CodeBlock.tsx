@@ -5,7 +5,6 @@ import Prism from "prismjs";
 import "prismjs/components/prism-jsx";
 import "prismjs/components/prism-tsx";
 import "prismjs/themes/prism-tomorrow.css";
-import { text } from "../../../themes/palette";
 
 interface CodeBlockProps {
   code: string;
@@ -50,7 +49,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
           top: "8px",
           right: "8px",
           cursor: "pointer",
-          color: copied ? "#4ade80" : text.disabled,
+          color: copied ? "#4ade80" : "#9ca3af",
           display: "flex",
           alignItems: "center",
           gap: "4px",

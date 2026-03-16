@@ -48,7 +48,6 @@ import type {
   ArticleContent,
 } from '@user-guide-content/contentTypes';
 import './ContentRenderer.css';
-import { border as borderPalette, status } from "../../themes/palette";
 
 // Icon mapping
 const iconMap: Record<string, LucideIcon> = {
@@ -580,7 +579,7 @@ const ContentRenderer: React.FC<ContentRendererProps> = ({ content, onNavigate }
         style={{
           fontSize: typography.fontSize.sm,
           fontFamily: typography.fontFamily.mono,
-          color: status.default.border,
+          color: '#E5E7EB',
           margin: 0,
           whiteSpace: 'pre-wrap',
           wordBreak: 'break-all',
@@ -784,7 +783,7 @@ const ContentRenderer: React.FC<ContentRendererProps> = ({ content, onNavigate }
       <div
         style={{
           height: '1px',
-          backgroundColor: borderPalette.dark,
+          backgroundColor: '#d0d5dd',
           marginBottom: spacing.xl,
         }}
       />

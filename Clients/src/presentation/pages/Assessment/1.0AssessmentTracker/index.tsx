@@ -30,7 +30,6 @@ import { Project } from "../../../../domain/types/Project";
 import { Question } from "../../../../domain/types/Question";
 import { Subtopic } from "../../../../domain/types/Subtopic";
 import { useSearchParams } from "react-router-dom";
-import { brand } from "../../../themes/palette";
 
 const AssessmentTracker = ({
   project,
@@ -202,7 +201,7 @@ const AssessmentTracker = ({
             padding: 1,
             paddingLeft: 4,
             borderRadius: 2,
-            backgroundColor: index === activeTab ? brand.primary : "transparent",
+            backgroundColor: index === activeTab ? "#13715B" : "transparent",
             width: "100%",
             textWrap: "wrap",
           }}
@@ -271,7 +270,7 @@ const AssessmentTracker = ({
               total={assessmentProgress.totalQuestions}
               completed={assessmentProgress.answeredQuestions}
               title="Questions"
-              progressbarColor=brand.primary
+              progressbarColor="#13715B"
             />
           ) : (
             <Typography>

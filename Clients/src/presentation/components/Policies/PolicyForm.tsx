@@ -15,7 +15,6 @@ import { ChevronDown as GreyDownArrowIcon } from "lucide-react";
 import { useCallback } from "react";
 import { PolicyFormData, PolicyFormProps } from "../../types/interfaces/i.policy";
 import { getAutocompleteStyles } from "../../utils/inputStyles";
-import { background, text } from "../../themes/palette";
 
 
 const statuses: PolicyFormData["status"][] = [
@@ -62,12 +61,12 @@ const PolicyForm: React.FC<PolicyFormProps> = ({
         "& .MuiAutocomplete-listbox": {
           "& .MuiAutocomplete-option": {
             fontSize: "13px",
-            color: text.primary,
+            color: "#1c2130",
             paddingLeft: "9px",
             paddingRight: "9px",
           },
           "& .MuiAutocomplete-option.Mui-focused": {
-            background: background.accent,
+            background: "#f9fafb",
           },
         },
         "& .MuiAutocomplete-noOptions": {

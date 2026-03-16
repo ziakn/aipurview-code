@@ -9,7 +9,6 @@ import { sendInviteEmail } from "../../../../application/repository/mail.reposit
 import { useAuth } from "../../../../application/hooks/useAuth";
 import { useRoles } from "../../../../application/hooks/useRoles";
 import onboardingBanner from "../../../assets/onboarding-banner.svg";
-import { brand, text } from "../../../themes/palette";
 
 interface TeamMemberInvite {
   email: string;
@@ -153,7 +152,7 @@ const InviteTeamStep: React.FC<OnboardingStepProps> = () => {
         <Typography
           sx={{
             fontSize: "14px",
-            color: text.icon,
+            color: "#667085",
             marginBottom: 3,
             lineHeight: 1.6,
           }}
@@ -199,15 +198,15 @@ const InviteTeamStep: React.FC<OnboardingStepProps> = () => {
           startIcon={<UserPlus size={16} />}
           isDisabled={isSending}
           sx={{
-            backgroundColor: brand.primary,
+            backgroundColor: "#13715B",
             fontSize: "14px",
             padding: "10px 20px",
             alignSelf: "flex-start",
             "&:hover": {
-              backgroundColor: brand.primaryHover,
+              backgroundColor: "#0F5A47",
             },
             "&:disabled": {
-              backgroundColor: text.disabled,
+              backgroundColor: "#9CA3AF",
               color: "#FFFFFF",
             },
           }}
@@ -222,7 +221,7 @@ const InviteTeamStep: React.FC<OnboardingStepProps> = () => {
               padding: 2.5,
             }}
           >
-            <Typography sx={{ fontSize: "13px", color: brand.primary, lineHeight: 1.6 }}>
+            <Typography sx={{ fontSize: "13px", color: "#13715B", lineHeight: 1.6 }}>
               {successMessage}
             </Typography>
           </Box>
@@ -251,7 +250,7 @@ const InviteTeamStep: React.FC<OnboardingStepProps> = () => {
             padding: 2.5,
           }}
         >
-          <Typography sx={{ fontSize: "13px", color: brand.primary, lineHeight: 1.6 }}>
+          <Typography sx={{ fontSize: "13px", color: "#13715B", lineHeight: 1.6 }}>
             You can skip this step and invite team members later from the organization settings.
           </Typography>
         </Box>

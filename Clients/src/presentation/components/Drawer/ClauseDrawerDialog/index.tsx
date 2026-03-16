@@ -74,7 +74,6 @@ import {
 import { getFileById, attachFilesToEntity, getEntityFiles } from "../../../../application/repository/file.repository";
 import allowedRoles from "../../../../application/constants/permissions";
 import { FilePickerModal } from "../../FilePickerModal";
-import { status, text } from "../../../themes/palette";
 
 // Constants
 export const inputStyles = {
@@ -767,7 +766,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                     sx={{
                       border: "1px solid #eee",
                       padding: "12px",
-                      backgroundColor: background.accent,
+                      backgroundColor: "background.accent",
                       borderRadius: "4px",
                     }}
                   >
@@ -969,7 +968,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                   Evidence files
                 </Typography>
 
-                <Typography variant="body2" color=text.tertiary>
+                <Typography variant="body2" color="text.tertiary">
                   Upload evidence files to document how this requirement is
                   implemented.
                 </Typography>
@@ -1004,7 +1003,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                         fontSize: 11,
                         border: `1px solid ${theme.palette.border.dark}`,
                         backgroundColor: "background.main",
-                        color: text.secondary,
+                        color: "text.secondary",
                       }}
                     >
                       Upload new files
@@ -1031,7 +1030,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                     </Button>
 
                     <Stack direction="row" spacing={2}>
-                      <Typography sx={{ fontSize: 11, color: text.secondary }}>
+                      <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
                         {`${evidenceFiles.length || 0} files attached`}
                       </Typography>
                       {uploadFiles.length > 0 && (
@@ -1068,7 +1067,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                           borderRadius: "4px",
                           backgroundColor: "background.main",
                           "&:hover": {
-                            backgroundColor: background.accent,
+                            backgroundColor: "background.accent",
                           },
                         }}
                       >
@@ -1095,7 +1094,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                               {file.fileName}
                             </Typography>
                             <Typography
-                              sx={{ fontSize: 11, color: status.default.text }}
+                              sx={{ fontSize: 11, color: "#6B7280" }}
                             >
                               {file.size ? `${(file.size / 1024).toFixed(1)} KB` : ""}
                               {file.size && file.source ? " • " : ""}
@@ -1115,7 +1114,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                                 )
                               }
                               sx={{
-                                color: text.tertiary,
+                                color: "text.tertiary",
                                 "&:hover": {
                                   color: "primary.main",
                                   backgroundColor: "rgba(19, 113, 91, 0.08)",
@@ -1134,7 +1133,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                               }
                               disabled={isEditingDisabled}
                               sx={{
-                                color: text.tertiary,
+                                color: "text.tertiary",
                                 "&:hover": {
                                   color: "status.error.main",
                                   backgroundColor: "rgba(211, 47, 47, 0.08)",
@@ -1168,7 +1167,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                           padding: "10px 12px",
                           border: `1px solid ${theme.palette.status.warning.border}`,
                           borderRadius: "4px",
-                          backgroundColor: status.warning.bg,
+                          backgroundColor: "status.warning.bg",
                         }}
                       >
                         <Box
@@ -1278,7 +1277,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                             sx={{
                               color: "#4C7BF4",
                               "&:hover": {
-                                color: status.error.text,
+                                color: "#D32F2F",
                                 backgroundColor: "rgba(211, 47, 47, 0.08)",
                               },
                             }}
@@ -1297,16 +1296,16 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                     sx={{
                       textAlign: "center",
                       py: 4,
-                      color: text.tertiary,
+                      color: "text.tertiary",
                       border: `2px dashed ${theme.palette.border.dark}`,
                       borderRadius: 1,
-                      backgroundColor: background.accent,
+                      backgroundColor: "background.accent",
                     }}
                   >
                     <Typography variant="body2" sx={{ mb: 1 }}>
                       No evidence files uploaded yet
                     </Typography>
-                    <Typography variant="caption" color=text.disabled>
+                    <Typography variant="caption" color="#9CA3AF">
                       Click "Add evidence files" to upload documentation for
                       this requirement
                     </Typography>
@@ -1325,7 +1324,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                   Linked risks
                 </Typography>
 
-                <Typography variant="body2" color=text.tertiary>
+                <Typography variant="body2" color="text.tertiary">
                   Link risks from your risk database to track which risks are
                   being addressed by this implementation.
                 </Typography>
@@ -1340,7 +1339,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                       fontSize: 11,
                       border: `1px solid ${theme.palette.border.dark}`,
                       backgroundColor: "background.main",
-                      color: text.secondary,
+                      color: "text.secondary",
                     }}
                     onClick={() => setIsLinkedRisksModalOpen(true)}
                     disabled={isEditingDisabled}
@@ -1349,7 +1348,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                   </Button>
 
                   <Stack direction="row" spacing={2}>
-                    <Typography sx={{ fontSize: 11, color: text.secondary }}>
+                    <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
                       {`${currentRisks.length || 0} risks linked`}
                     </Typography>
                     {selectedRisks.length > 0 && (
@@ -1382,7 +1381,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                             borderRadius: "4px",
                             backgroundColor: "background.main",
                             "&:hover": {
-                              backgroundColor: background.accent,
+                              backgroundColor: "background.accent",
                             },
                           }}
                         >
@@ -1401,7 +1400,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                             </Typography>
                             {risk.risk_level && (
                               <Typography
-                                sx={{ fontSize: 11, color: text.tertiary }}
+                                sx={{ fontSize: 11, color: "text.tertiary" }}
                               >
                                 Risk level: {risk.risk_level}
                               </Typography>
@@ -1414,7 +1413,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                                 size="small"
                                 onClick={() => handleViewRiskDetails(risk)}
                                 sx={{
-                                  color: text.tertiary,
+                                  color: "text.tertiary",
                                   "&:hover": {
                                     color: "primary.main",
                                     backgroundColor: "rgba(19, 113, 91, 0.08)",
@@ -1437,7 +1436,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                                 }}
                                 disabled={isEditingDisabled}
                                 sx={{
-                                  color: text.tertiary,
+                                  color: "text.tertiary",
                                   "&:hover": {
                                     color: "status.error.main",
                                     backgroundColor: "rgba(211, 47, 47, 0.08)",
@@ -1459,16 +1458,16 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                     sx={{
                       textAlign: "center",
                       py: 4,
-                      color: text.tertiary,
+                      color: "text.tertiary",
                       border: `2px dashed ${theme.palette.border.dark}`,
                       borderRadius: 1,
-                      backgroundColor: background.accent,
+                      backgroundColor: "background.accent",
                     }}
                   >
                     <Typography variant="body2" sx={{ mb: 1 }}>
                       No risks linked yet
                     </Typography>
-                    <Typography variant="caption" color=text.disabled>
+                    <Typography variant="caption" color="#9CA3AF">
                       Click "Add/remove risks" to link risks from your risk
                       database
                     </Typography>

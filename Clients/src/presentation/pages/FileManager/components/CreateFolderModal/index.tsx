@@ -10,7 +10,6 @@ import React, { useState, useEffect } from "react";
 import { Stack, Box, Typography, TextField } from "@mui/material";
 import StandardModal from "../../../../components/Modals/StandardModal";
 import {
-import { border as borderPalette, brand, text } from "../../../../themes/palette";
   IVirtualFolderInput,
   IFolderTreeNode,
   FOLDER_COLORS,
@@ -140,7 +139,7 @@ export const CreateFolderModal: React.FC<CreateFolderModalProps> = ({
             sx={{
               fontSize: 13,
               fontWeight: 500,
-              color: text.secondary,
+              color: "#344054",
             }}
           >
             Folder name <span style={{ color: "#EF4444" }}>*</span>
@@ -161,13 +160,13 @@ export const CreateFolderModal: React.FC<CreateFolderModalProps> = ({
               "& .MuiOutlinedInput-root": {
                 borderRadius: "4px",
                 "& fieldset": {
-                  borderColor: error ? "#EF4444" : borderPalette.dark,
+                  borderColor: error ? "#EF4444" : "#D0D5DD",
                 },
                 "&:hover fieldset": {
-                  borderColor: error ? "#EF4444" : text.muted,
+                  borderColor: error ? "#EF4444" : "#98A2B3",
                 },
                 "&.Mui-focused fieldset": {
-                  borderColor: error ? "#EF4444" : brand.primary,
+                  borderColor: error ? "#EF4444" : "#13715B",
                 },
               },
               "& .MuiInputBase-input": {
@@ -184,7 +183,7 @@ export const CreateFolderModal: React.FC<CreateFolderModalProps> = ({
             sx={{
               fontSize: 13,
               fontWeight: 500,
-              color: text.secondary,
+              color: "#344054",
             }}
           >
             Description
@@ -201,13 +200,13 @@ export const CreateFolderModal: React.FC<CreateFolderModalProps> = ({
               "& .MuiOutlinedInput-root": {
                 borderRadius: "4px",
                 "& fieldset": {
-                  borderColor: borderPalette.dark,
+                  borderColor: "#D0D5DD",
                 },
                 "&:hover fieldset": {
-                  borderColor: text.muted,
+                  borderColor: "#98A2B3",
                 },
                 "&.Mui-focused fieldset": {
-                  borderColor: brand.primary,
+                  borderColor: "#13715B",
                 },
               },
               "& .MuiInputBase-input": {
@@ -223,7 +222,7 @@ export const CreateFolderModal: React.FC<CreateFolderModalProps> = ({
             sx={{
               fontSize: 13,
               fontWeight: 500,
-              color: text.secondary,
+              color: "#344054",
             }}
           >
             Folder color

@@ -1,11 +1,10 @@
 // style.ts for Tasks page
 import { SxProps, Theme } from "@mui/material";
-import { border as borderPalette } from "../../themes/palette";
 
 export const searchBoxStyle: SxProps<Theme> = {
   display: "flex",
   alignItems: "center",
-  border: `1px solid ${borderPalette.light}`,
+  border: "1px solid #eaecf0",
   borderRadius: 1,
   p: "4px 6px",
   bgcolor: "#fff",

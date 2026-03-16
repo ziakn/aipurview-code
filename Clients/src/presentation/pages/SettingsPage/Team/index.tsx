@@ -55,7 +55,6 @@ import {
 } from "../../../../application/repository/invitation.repository";
 import Chip from "../../../components/Chip";
 import { formatRelativeDate } from "../../../../application/utils/dateFormatter";
-import { background, brand, text } from "../../../themes/palette";
 
 interface AlertState {
   variant: "success" | "info" | "warning" | "error";
@@ -270,7 +269,7 @@ const TeamManagement: React.FC = (): JSX.Element => {
         sx={{
           fontSize: "13px",
           fontFamily: "Inter, sans-serif",
-          color: text.secondary,
+          color: "#344054",
         }}
       >
         {children}
@@ -526,8 +525,8 @@ const TeamManagement: React.FC = (): JSX.Element => {
                 variant="contained"
                 text="Invite team member"
                 sx={{
-                  backgroundColor: brand.primary,
-                  border: `1px solid ${brand.primary}`,
+                  backgroundColor: "#13715B",
+                  border: "1px solid #13715B",
                   gap: 2,
                 }}
                 icon={<GroupsIcon size={16} />}
@@ -598,7 +597,7 @@ const TeamManagement: React.FC = (): JSX.Element => {
                                     color:
                                       sortConfig.key === column.label
                                         ? "primary.main"
-                                        : text.disabled,
+                                        : "#9CA3AF",
                                   }}
                                 >
                                   {sortConfig.key === column.label &&
@@ -653,7 +652,7 @@ const TeamManagement: React.FC = (): JSX.Element => {
                                 backgroundColor:
                                   sortConfig.key &&
                                   sortConfig.key.toLowerCase().includes("email")
-                                    ? background.surface
+                                    ? "#f5f5f5"
                                     : "inherit",
                               }}
                             >
@@ -665,7 +664,7 @@ const TeamManagement: React.FC = (): JSX.Element => {
                                 backgroundColor:
                                   sortConfig.key &&
                                   sortConfig.key.toLowerCase().includes("role")
-                                    ? background.surface
+                                    ? "#f5f5f5"
                                     : "inherit",
                               }}
                             >
@@ -681,7 +680,7 @@ const TeamManagement: React.FC = (): JSX.Element => {
                                   minWidth: "120px",
                                   fontSize: "13px",
                                   fontFamily: "Inter, sans-serif",
-                                  color: text.secondary,
+                                  color: "#344054",
                                   "& .MuiOutlinedInput-notchedOutline": {
                                     border: "none",
                                   },
@@ -716,7 +715,7 @@ const TeamManagement: React.FC = (): JSX.Element => {
                                   sortConfig.key
                                     .toLowerCase()
                                     .includes("action")
-                                    ? background.surface
+                                    ? "#f5f5f5"
                                     : "inherit",
                               }}
                             >

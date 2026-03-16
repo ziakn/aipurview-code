@@ -14,7 +14,6 @@ import { useNavigate } from 'react-router-dom';
 import { useNotifications, Notification } from '../../../application/hooks/useNotifications';
 import VWTooltip from '../VWTooltip';
 import '../Layout/icon-shake.css';
-import { background, border as borderPalette, brand, status, text } from "../../themes/palette";
 
 /**
  * Format relative time from ISO string
@@ -110,7 +109,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
           sx={{
             fontSize: '13px',
             fontWeight: isRead ? 400 : 600,
-            color: text.primary,
+            color: 'text.primary',
             lineHeight: 1.4,
             mb: 0.25,
           }}
@@ -121,7 +120,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
           <Typography
             sx={{
               fontSize: '12px',
-              color: text.secondary,
+              color: 'text.secondary',
               lineHeight: 1.4,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -134,7 +133,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
         <Typography
           sx={{
             fontSize: '11px',
-            color: text.disabled,
+            color: 'text.disabled',
             mt: 0.5,
           }}
         >
@@ -146,7 +145,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       {notification.action_url && (
         <ExternalLink
           size={14}
-          color=text.disabled
+          color="#9CA3AF"
           style={{ flexShrink: 0, marginTop: 2 }}
         />
       )}
@@ -230,7 +229,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
     border: '1px solid #e5e5e5',
     '&:hover': {
       backgroundColor: 'rgba(0, 0, 0, 0.04)',
-      borderColor: borderPalette.dark,
+      borderColor: '#d0d5dd',
     },
     '&:hover svg': {
       animation: 'icon-shake 400ms ease-in-out',
@@ -288,7 +287,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
             maxHeight: 480,
             boxShadow: '0 4px 20px rgba(0, 0, 0, 0.12)',
             borderRadius: '8px',
-            border: `1px solid ${status.default.border}`,
+            border: '1px solid #e5e7eb',
             mt: 1,
             overflow: 'hidden',
           },
@@ -315,7 +314,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
                     height: '28px',
                     '&:hover': {
                       backgroundColor: 'rgba(19, 113, 91, 0.08)',
-                      color: brand.primary,
+                      color: '#13715B',
                     },
                   }}
                 >
@@ -351,7 +350,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
               borderRadius: '3px',
             },
             '&::-webkit-scrollbar-thumb:hover': {
-              background: borderPalette.dark,
+              background: '#d0d5dd',
             },
           }}
         >
@@ -364,7 +363,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
                 py: 6,
               }}
             >
-              <CircularProgress size={24} sx={{ color: brand.primary }} />
+              <CircularProgress size={24} sx={{ color: '#13715B' }} />
             </Box>
           ) : notifications.length === 0 ? (
             <Box
@@ -382,7 +381,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
               <Typography
                 sx={{
                   fontSize: '14px',
-                  color: text.secondary,
+                  color: 'text.secondary',
                   mt: 1.5,
                   textAlign: 'center',
                 }}
@@ -392,7 +391,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
               <Typography
                 sx={{
                   fontSize: '12px',
-                  color: text.disabled,
+                  color: 'text.disabled',
                   mt: 0.5,
                   textAlign: 'center',
                 }}
@@ -402,7 +401,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
             </Box>
           ) : (
             <>
-              <Stack divider={<Divider sx={{ borderColor: background.hover }} />}>
+              <Stack divider={<Divider sx={{ borderColor: '#f3f4f6' }} />}>
                 {notifications.map((notification) => (
                   <NotificationItem
                     key={notification.id || `${notification.type}-${notification.created_at}`}
@@ -420,7 +419,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
                     display: 'flex',
                     justifyContent: 'center',
                     py: '8px',
-                    borderTop: `1px solid ${background.hover}`,
+                    borderTop: '1px solid #f3f4f6',
                   }}
                 >
                   <Box
@@ -436,22 +435,22 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
                       py: 1,
                       fontSize: '13px',
                       fontWeight: 500,
-                      color: brand.primary,
+                      color: '#13715B',
                       backgroundColor: 'transparent',
-                      border: `1px solid ${borderPalette.dark}`,
+                      border: '1px solid #d0d5dd',
                       borderRadius: '4px',
                       cursor: isLoadingMore ? 'not-allowed' : 'pointer',
                       transition: 'all 0.15s ease',
                       opacity: isLoadingMore ? 0.6 : 1,
                       '&:hover': {
                         backgroundColor: 'rgba(19, 113, 91, 0.04)',
-                        borderColor: brand.primary,
+                        borderColor: '#13715B',
                       },
                     }}
                   >
                     {isLoadingMore ? (
                       <>
-                        <CircularProgress size={14} sx={{ color: brand.primary }} />
+                        <CircularProgress size={14} sx={{ color: '#13715B' }} />
                         Loading...
                       </>
                     ) : (
@@ -470,7 +469,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
             sx={{
               px: 2,
               py: 1,
-              borderTop: `1px solid ${status.default.border}`,
+              borderTop: '1px solid #e5e7eb',
               backgroundColor: '#FEF3C7',
             }}
           >

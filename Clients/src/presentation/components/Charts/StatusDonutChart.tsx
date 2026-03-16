@@ -1,7 +1,6 @@
 import { PieChart } from "@mui/x-charts";
 import { Box, Typography } from "@mui/material";
 import { StatusDonutChartProps } from "../../types/interfaces/i.chart";
-import { background, status, text } from "../../themes/palette";
 
 export function StatusDonutChart({
   data,
@@ -20,15 +19,15 @@ export function StatusDonutChart({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          border: `2px solid ${status.default.border}`,
+          border: "2px solid #E5E7EB",
           borderRadius: "50%",
-          backgroundColor: background.accent,
+          backgroundColor: "#F9FAFB",
         }}
       >
         <Typography
           variant="caption"
           sx={{
-            color: text.disabled,
+            color: "#9CA3AF",
             fontSize: "10px",
             textAlign: "center",
           }}
@@ -57,7 +56,7 @@ export function StatusDonutChart({
           width: size * 0.96,
           height: size * 0.96,
           borderRadius: "50%",
-          backgroundColor: background.hover,
+          backgroundColor: "#F3F4F6",
           boxShadow: "inset 0 2px 4px rgba(0,0,0,0.1)",
         }}
       />

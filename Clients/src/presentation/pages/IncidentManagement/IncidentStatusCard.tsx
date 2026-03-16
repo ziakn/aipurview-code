@@ -7,7 +7,6 @@ import {
   incidentManagementTileCard,
 } from "./style";
 import { AIIncidentManagementModel } from "../../../domain/models/Common/incidentManagement/incidentManagement.model";
-import { border as borderPalette } from "../../themes/palette";
 
 interface IncidentStatusCardProps {
   incidents: AIIncidentManagementModel[];
@@ -59,7 +58,7 @@ const IncidentStatusCard: React.FC<IncidentStatusCardProps> = ({
               sx={{
                 ...incidentManagementTileCard,
                 color: level.color,
-                border: `1px solid borderPalette.dark`,
+                border: `1px solid #d0d5dd`,
                 cursor: "default",
                 borderRadius: 2,
               }}

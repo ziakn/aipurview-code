@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import StandardModal from "../../../../components/Modals/StandardModal";
 import {
-import { background, brand, text } from "../../../../themes/palette";
   IFolderTreeNode,
   IVirtualFolder,
 } from "../../../../../domain/interfaces/i.virtualFolder";
@@ -75,7 +74,7 @@ const FolderCheckItem: React.FC<FolderCheckItemProps> = ({
           cursor: "pointer",
           borderRadius: "4px",
           "&:hover": {
-            backgroundColor: background.accent,
+            backgroundColor: "#F9FAFB",
           },
         }}
       >
@@ -95,9 +94,9 @@ const FolderCheckItem: React.FC<FolderCheckItemProps> = ({
         >
           {hasChildren && (
             isExpanded ? (
-              <ChevronDownIcon size={14} color=text.icon />
+              <ChevronDownIcon size={14} color="#667085" />
             ) : (
-              <ChevronRightIcon size={14} color=text.icon />
+              <ChevronRightIcon size={14} color="#667085" />
             )
           )}
         </Box>
@@ -114,7 +113,7 @@ const FolderCheckItem: React.FC<FolderCheckItemProps> = ({
               fontSize: 18,
             },
             "&.Mui-checked": {
-              color: brand.primary,
+              color: "#13715B",
             },
           }}
         />
@@ -125,7 +124,7 @@ const FolderCheckItem: React.FC<FolderCheckItemProps> = ({
             marginRight: "8px",
             display: "flex",
             alignItems: "center",
-            color: folder.color || brand.primary,
+            color: folder.color || "#13715B",
           }}
         >
           <FolderIcon size={16} />
@@ -136,7 +135,7 @@ const FolderCheckItem: React.FC<FolderCheckItemProps> = ({
           sx={{
             flex: 1,
             fontSize: 13,
-            color: text.secondary,
+            color: "#344054",
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
@@ -149,7 +148,7 @@ const FolderCheckItem: React.FC<FolderCheckItemProps> = ({
         <Typography
           sx={{
             fontSize: 12,
-            color: text.muted,
+            color: "#98A2B3",
             marginLeft: "4px",
           }}
         >
@@ -265,7 +264,7 @@ export const AssignToFolderModal: React.FC<AssignToFolderModalProps> = ({
     >
       <Stack spacing={2}>
         {/* Info text */}
-        <Typography sx={{ fontSize: 12, color: text.icon }}>
+        <Typography sx={{ fontSize: 12, color: "#667085" }}>
           Files can belong to multiple folders. Select all folders where this file should appear.
         </Typography>
 
@@ -281,7 +280,7 @@ export const AssignToFolderModal: React.FC<AssignToFolderModalProps> = ({
         >
           {folders.length === 0 ? (
             <Box sx={{ padding: "24px", textAlign: "center" }}>
-              <Typography sx={{ fontSize: 13, color: text.muted }}>
+              <Typography sx={{ fontSize: 13, color: "#98A2B3" }}>
                 No folders available. Create a folder first.
               </Typography>
             </Box>
@@ -304,7 +303,7 @@ export const AssignToFolderModal: React.FC<AssignToFolderModalProps> = ({
 
         {/* Selected count */}
         {selectedCount > 0 && (
-          <Typography sx={{ fontSize: 12, color: text.icon }}>
+          <Typography sx={{ fontSize: 12, color: "#667085" }}>
             File will appear in {selectedCount} folder{selectedCount !== 1 ? "s" : ""}.
           </Typography>
         )}

@@ -6,7 +6,6 @@ import { Settings } from "lucide-react";
 import Toggle from "../../../components/Inputs/Toggle";
 import { useRiskAssessmentMode } from "../../../../application/hooks/useRiskAssessmentMode";
 import { useAuth } from "../../../../application/hooks/useAuth";
-import { brand, text } from "../../../themes/palette";
 
 const Features: React.FC = () => {
   const theme = useTheme();
@@ -33,7 +32,7 @@ const Features: React.FC = () => {
       <Stack sx={{ pt: theme.spacing(20) }}>
         <Box sx={{ mb: 3 }}>
           <Typography
-            sx={{ fontSize: 15, fontWeight: 600, color: text.black }}
+            sx={{ fontSize: 15, fontWeight: 600, color: "#000000" }}
           >
             Features
           </Typography>
@@ -112,8 +111,8 @@ const Features: React.FC = () => {
               variant="contained"
               text="Manage plugins"
               sx={{
-                backgroundColor: brand.primary,
-                border: `1px solid ${brand.primary}`,
+                backgroundColor: "#13715B",
+                border: "1px solid #13715B",
                 gap: 2,
                 whiteSpace: "nowrap",
               }}

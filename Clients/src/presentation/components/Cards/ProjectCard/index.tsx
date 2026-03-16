@@ -151,7 +151,6 @@ function FrameworkButton({
 }
 
 import { displayFormattedDate } from "../../../tools/isoDateToString";
-import { brand } from "../../../themes/palette";
 
 export const ProjectCard = React.memo(function ProjectCard({ project, isLoading = false }: ProjectCardProps) {
   const navigate = useNavigateSearch();
@@ -490,8 +489,8 @@ export const ProjectCard = React.memo(function ProjectCard({ project, isLoading 
               })
             }
             sx={{
-              backgroundColor: brand.primary,
-              border: `1px solid ${brand.primary}`,
+              backgroundColor: "#13715B",
+              border: "1px solid #13715B",
               mb: 0,
               mt: 0,
             }}

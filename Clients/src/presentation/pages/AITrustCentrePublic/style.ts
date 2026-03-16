@@ -1,6 +1,5 @@
-import { brand, text } from "../../themes/palette";
 // Export individual styles for use in components
-const primaryColor = brand.primary;
+const primaryColor = "#13715B";
 
 export const aiTrustCenterHeaderTitle = {
     color: "#1A1919",
@@ -11,7 +10,7 @@ export const aiTrustCenterHeaderTitle = {
   
   export const aiTrustCenterHeaderDesc = {
     fontSize: 13,
-    color: text.secondary,
+    color: "#344054",
   };
   
   export const aiTrustCenterTabStyle = {

@@ -8,7 +8,6 @@ import {
 } from "@mui/material";
 import { ChevronDown, Eye } from "lucide-react";
 import Checkbox from "../Inputs/Checkbox";
-import { background, brand, status } from "../../themes/palette";
 
 export interface VerifyWiseMultiSelectOption {
   value: string;
@@ -58,11 +57,11 @@ const VerifyWiseMultiSelect: React.FC<VerifyWiseMultiSelectProps> = ({
 
   // Standardized color palette
   const colors = {
-    primary: brand.primary,
+    primary: "#13715B",
     primaryHover: "#0f604d",
-    secondary: status.default.text,
+    secondary: "#6B7280",
     secondaryHover: "#4B5563",
-    background: background.surface,
+    background: "#f5f5f5",
   };
 
   return (
@@ -159,7 +158,7 @@ const VerifyWiseMultiSelect: React.FC<VerifyWiseMultiSelectProps> = ({
                 backgroundColor: colors.background, // Standardized hover color
               },
               "&:active": {
-                backgroundColor: status.default.border, // Slightly darker on active
+                backgroundColor: "#E5E7EB", // Slightly darker on active
               },
             }}
           >

@@ -40,7 +40,6 @@ import { useAuth } from "../../../../application/hooks/useAuth";
 import { useProfilePhotoFetch } from "../../../../application/hooks/useProfilePhotoFetch";
 import Avatar from "../../../components/Avatar/VWAvatar";
 import { VerifyWiseContext } from "../../../../application/contexts/VerifyWise.context";
-import { background, brand, text } from "../../../themes/palette";
 
 /**
  * ProfileForm component for managing user profile information.
@@ -654,7 +653,7 @@ const ProfileForm: React.FC = () => {
                   mt: 1,
                   mb: { xs: 5, md: 0 },
                   display: "block",
-                  color: text.icon,
+                  color: "#667085",
                 }}
               >
                 This is your current email address — it cannot be changed.
@@ -676,10 +675,10 @@ const ProfileForm: React.FC = () => {
               variant="contained"
               text={saving ? "Saving..." : "Save"}
               sx={{
-                backgroundColor: brand.primary,
+                backgroundColor: "#13715B",
                 border: isSaveDisabled
                   ? "1px solid rgba(0, 0, 0, 0.26)"
-                  : `1px solid ${brand.primary}`,
+                  : "1px solid #13715B",
                 gap: 2,
               }}
               icon={<SaveIcon size={16} />}
@@ -715,7 +714,7 @@ const ProfileForm: React.FC = () => {
               <Typography
                 fontWeight={"400"}
                 variant="body2"
-                sx={{ mb: 8, mt: 4, color: text.icon }}
+                sx={{ mb: 8, mt: 4, color: "#667085" }}
               >
                 Note that deleting your account will remove all data from our
                 system. This is permanent and non-recoverable.
@@ -785,7 +784,7 @@ const ProfileForm: React.FC = () => {
               overflow: "hidden",
               "&:hover": {
                 borderColor: "#999",
-                backgroundColor: background.surface,
+                backgroundColor: "#f5f5f5",
               },
             }}
           >
@@ -849,7 +848,7 @@ const ProfileForm: React.FC = () => {
             sx={{
               fontSize: 12,
               textTransform: "none",
-              color: brand.primary,
+              color: "#13715B",
               "&:hover": {
                 backgroundColor: "transparent !important",
               },

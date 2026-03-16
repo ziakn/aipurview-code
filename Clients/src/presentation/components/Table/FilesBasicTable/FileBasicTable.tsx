@@ -29,7 +29,6 @@ import {
 import { IFileBasicTableProps } from "../../../types/interfaces/i.table";
 import { deleteEntityById } from "../../../../application/repository/entity.repository";
 import ProjectRiskLinkedPolicies from "../../ProjectRiskMitigation/ProjectRiskLinkedPolicies";
-import { background, text } from "../../../themes/palette";
 
 const DEFAULT_ROWS_PER_PAGE = 10;
 const FILES_BASIC_SORTING_KEY = "verifywise_files_basic_sorting";
@@ -152,7 +151,7 @@ const SortableTableHead: React.FC<{
                       color:
                         sortConfig.key === col.name
                           ? "primary.main"
-                          : text.disabled,
+                          : "#9CA3AF",
                     }}
                   >
                     {sortConfig.key === col.name &&
@@ -402,7 +401,7 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                   sx={{
                     ...singleTheme.tableStyles.primary.body.row,
                     height: "36px",
-                    "&:hover": { backgroundColor: background.surface },
+                    "&:hover": { backgroundColor: "#f5f5f5" },
                   }}
                 >
                   {/* File column */}
@@ -443,7 +442,7 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                           data.cols[colIndex++]?.name,
                           sortConfig
                         )
-                          ? background.surface
+                          ? "#f5f5f5"
                           : "inherit",
                       }}
                     >
@@ -459,7 +458,7 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                           data.cols[colIndex++]?.name,
                           sortConfig
                         )
-                          ? background.surface
+                          ? "#f5f5f5"
                           : "inherit",
                       }}
                     >
@@ -484,7 +483,7 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                             data.cols[colIndex++]?.name,
                             sortConfig
                           )
-                            ? background.surface
+                            ? "#f5f5f5"
                             : "inherit",
                         }}
                       >
@@ -508,7 +507,7 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                         ) : (
                           <Typography
                             variant="body2"
-                            sx={{ color: text.muted, fontSize: 13 }}
+                            sx={{ color: "#98A2B3", fontSize: 13 }}
                           >
                             Not linked
                           </Typography>
@@ -525,7 +524,7 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                           data.cols[colIndex++]?.name,
                           sortConfig
                         )
-                          ? background.surface
+                          ? "#f5f5f5"
                           : "inherit",
                       }}
                     >
@@ -551,7 +550,7 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                           data.cols[colIndex++]?.name,
                           sortConfig
                         )
-                          ? background.surface
+                          ? "#f5f5f5"
                           : "inherit",
                       }}
                     >
@@ -571,7 +570,7 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                           data.cols[data.cols.length - 1]?.name,
                           sortConfig
                         )
-                          ? background.surface
+                          ? "#f5f5f5"
                           : "inherit",
                       }}
                     >

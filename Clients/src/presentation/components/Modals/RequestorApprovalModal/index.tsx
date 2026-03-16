@@ -60,13 +60,12 @@ import DetailField from "./DetailField";
 import EntityDetailsSection from "./EntityDetailsSection";
 import { extractEntityDetails } from "./entityTypeConfig";
 import { dispatchFileApprovalChanged } from "../../../../application/events/fileEvents";
-import { background, status } from "../../../themes/palette";
 
 
 const getWorkflowChipProps = (value: string) => {
     const styles: Record<string, { bg: string; color: string }> = {
         [ApprovalStatus.APPROVED]: {
-            bg: status.success.bg,
+            bg: "#E6F4EA",
             color: "#2E7D32",
         },
         [ApprovalStatus.REJECTED]: {
@@ -78,12 +77,12 @@ const getWorkflowChipProps = (value: string) => {
             color: "#F57C00",
         },
         "withdrawn": {
-            bg: background.surface,
+            bg: "#F5F5F5",
             color: "#616161",
         },
     };
 
-    const style = styles[value] || { bg: background.surface, color: "#616161" };
+    const style = styles[value] || { bg: "#F5F5F5", color: "#616161" };
 
     return {
         label: value.charAt(0).toUpperCase() + value.slice(1),
@@ -681,8 +680,8 @@ const RequestorApprovalModal: FC<IRequestorApprovalProps> = ({
                         <>
                             {/* Request Information */}
                             <Stack spacing={8} sx={{
-                                backgroundColor: background.accent,
-                                border: `1px solid ${status.default.border}`,
+                                backgroundColor: "#F9FAFB",
+                                border: "1px solid #E5E7EB",
                                 borderRadius: "8px",
                                 padding: "16px",
                             }}>

@@ -23,7 +23,6 @@ import {
   setPaginationRowCount,
 } from "../../../../application/utils/paginationStorage";
 import { ITableProps } from "../../../types/interfaces/i.table";
-import { text } from "../../../themes/palette";
 
 const POLICY_TABLE_SORTING_KEY = "verifywise_policy_table_sorting";
 
@@ -234,7 +233,7 @@ const CustomizablePolicyTable = ({
                     sx={{
                       display: "flex",
                       alignItems: "center",
-                      color: sortConfig.key === col.name ? "primary.main" : text.disabled,
+                      color: sortConfig.key === col.name ? "primary.main" : "#9CA3AF",
                     }}
                   >
                     {sortConfig.key === col.name && sortConfig.direction === "asc" && (
@@ -307,7 +306,7 @@ const CustomizablePolicyTable = ({
             minHeight: 200,
           }}
         >
-          <Typography sx={{ fontSize: "13px", color: text.tertiary }}>
+          <Typography sx={{ fontSize: "13px", color: "#475467" }}>
             There is currently no data in this table.
           </Typography>
         </Stack>

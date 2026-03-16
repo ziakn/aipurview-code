@@ -12,7 +12,6 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import VWTooltip from '../../components/VWTooltip';
-import { text } from "../../themes/palette";
 
 export type EntityType = 'useCase' | 'model' | 'risk' | 'vendor' | 'evidence' | 'framework' | 'user';
 
@@ -125,7 +124,7 @@ const EntityNode: React.FC<NodeProps> = ({ data, sourcePosition, targetPosition 
               sx={{
                 fontWeight: 600,
                 fontSize: 11,
-                color: text.secondary,
+                color: '#344054',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -138,7 +137,7 @@ const EntityNode: React.FC<NodeProps> = ({ data, sourcePosition, targetPosition 
                 variant="caption"
                 sx={{
                   fontSize: 9,
-                  color: text.icon,
+                  color: '#667085',
                   display: 'block',
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
@@ -175,7 +174,7 @@ const EntityNode: React.FC<NodeProps> = ({ data, sourcePosition, targetPosition 
               variant="caption"
               sx={{
                 fontSize: 9,
-                color: riskColor || text.icon,
+                color: riskColor || '#667085',
                 fontWeight: 500,
               }}
             >

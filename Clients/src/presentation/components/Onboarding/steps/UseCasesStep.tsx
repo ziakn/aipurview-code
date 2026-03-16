@@ -3,7 +3,6 @@ import { Box, Typography, Stack } from "@mui/material";
 import { OnboardingStepProps } from "../../../types/interfaces/i.onboarding";
 import { FolderPlus, Users, TrendingUp, Shield } from "lucide-react";
 import onboardingBanner from "../../../assets/onboarding-banner.svg";
-import { status, text } from "../../../themes/palette";
 
 const UseCasesStep: React.FC<OnboardingStepProps> = () => {
   return (
@@ -46,7 +45,7 @@ const UseCasesStep: React.FC<OnboardingStepProps> = () => {
         <Typography
           sx={{
             fontSize: "14px",
-            color: text.icon,
+            color: "#667085",
             marginBottom: 3,
             lineHeight: 1.6,
           }}
@@ -93,7 +92,7 @@ const UseCasesStep: React.FC<OnboardingStepProps> = () => {
             sx={{
               padding: 12,
               background: `linear-gradient(135deg, ${feature.color}08 0%, transparent 100%)`,
-              border: `1px solid ${status.default.border}`,
+              border: "1px solid #E5E7EB",
               borderRadius: "4px",
               display: "flex",
               flexDirection: "column",
@@ -131,7 +130,7 @@ const UseCasesStep: React.FC<OnboardingStepProps> = () => {
               >
                 {feature.title}
               </Typography>
-              <Typography sx={{ fontSize: "13px", color: status.default.text }}>
+              <Typography sx={{ fontSize: "13px", color: "#6B7280" }}>
                 {feature.description}
               </Typography>
             </Box>

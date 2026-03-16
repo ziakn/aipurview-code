@@ -1,4 +1,3 @@
-import { text } from "../../themes/palette";
 import { Theme } from "@mui/material";
 
 // Define styles as constants to improve readability and reusability
@@ -28,7 +27,7 @@ const getStyles = (theme: Theme) => ({
     button: {
         border: '1px solid #A1A1A1',
         backgroundColor: theme.palette.background.main,
-        color: text.secondary,
+        color: '#344054',
         padding: '4px',
         borderRadius: '4px'
     }

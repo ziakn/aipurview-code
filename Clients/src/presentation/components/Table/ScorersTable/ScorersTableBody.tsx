@@ -12,7 +12,6 @@ import { Pencil, Trash2, MoreVertical } from "lucide-react";
 import singleTheme from "../../../themes/v1SingleTheme";
 import { ScorerRow } from "./index";
 import { CustomizableButton } from "../../button/customizable-button";
-import { background, border as borderPalette, brand, status, text } from "../../../themes/palette";
 
 interface ScorersTableBodyProps {
   rows: ScorerRow[];
@@ -101,7 +100,7 @@ const ScorersTableBody: React.FC<ScorersTableBodyProps> = ({
               ...singleTheme.tableStyles.primary.body.row,
               cursor: onRowClick ? "pointer" : "default",
               "&:hover": {
-                backgroundColor: background.accent,
+                backgroundColor: "#F9FAFB",
               },
             }}
           >
@@ -156,7 +155,7 @@ const ScorersTableBody: React.FC<ScorersTableBodyProps> = ({
                 textTransform: "none",
               }}
             >
-              <Typography sx={{ fontSize: "12px", color: status.default.text }}>
+              <Typography sx={{ fontSize: "12px", color: "#6B7280" }}>
                 {formatDate(scorer.createdAt)}
               </Typography>
             </TableCell>
@@ -175,10 +174,10 @@ const ScorersTableBody: React.FC<ScorersTableBodyProps> = ({
                 size="small"
                 onClick={(e) => handleMenuOpen(e, scorer)}
                 sx={{
-                  color: text.icon,
+                  color: "#667085",
                   padding: "6px",
                   "&:hover": {
-                    backgroundColor: background.hover,
+                    backgroundColor: "#F3F4F6",
                   },
                 }}
               >
@@ -200,7 +199,7 @@ const ScorersTableBody: React.FC<ScorersTableBodyProps> = ({
           "& .MuiPopover-paper": {
             minWidth: 120,
             borderRadius: "4px",
-            border: `1px solid ${borderPalette.dark}`,
+            border: "1px solid #d0d5dd",
             boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
             overflow: "hidden",
             mt: 0.5,
@@ -219,13 +218,13 @@ const ScorersTableBody: React.FC<ScorersTableBodyProps> = ({
                 fontSize: "13px",
                 fontWeight: 500,
                 color: "#374151",
-                borderColor: borderPalette.dark,
+                borderColor: "#d0d5dd",
                 backgroundColor: "transparent",
                 justifyContent: "flex-start",
                 "&:hover": {
                   backgroundColor: "#F0FDF4",
-                  borderColor: brand.primary,
-                  color: brand.primary,
+                  borderColor: "#13715B",
+                  color: "#13715B",
                 },
               }}
             >
@@ -242,7 +241,7 @@ const ScorersTableBody: React.FC<ScorersTableBodyProps> = ({
                 fontSize: "13px",
                 fontWeight: 500,
                 color: "#DC2626",
-                borderColor: borderPalette.dark,
+                borderColor: "#d0d5dd",
                 backgroundColor: "transparent",
                 justifyContent: "flex-start",
                 "&:hover": {

@@ -3,7 +3,6 @@ import { Box, Typography, Stack, FormControl, RadioGroup, FormControlLabel, Radi
 import { OnboardingStepProps } from "../../../types/interfaces/i.onboarding";
 import { OnboardingUseCase } from "../../../../domain/enums/onboarding.enum";
 import onboardingBanner from "../../../assets/onboarding-banner.svg";
-import { border as borderPalette, brand, text } from "../../../themes/palette";
 
 const PreferencesStep: React.FC<OnboardingStepProps> = ({
   preferences,
@@ -53,7 +52,7 @@ const PreferencesStep: React.FC<OnboardingStepProps> = ({
         <Typography
           sx={{
             fontSize: "14px",
-            color: text.icon,
+            color: "#667085",
             marginBottom: 3,
           }}
         >
@@ -68,7 +67,7 @@ const PreferencesStep: React.FC<OnboardingStepProps> = ({
             sx={{
               fontSize: "13px",
               fontWeight: 500,
-              color: text.secondary,
+              color: "#344054",
               marginBottom: 2,
             }}
           >
@@ -85,15 +84,15 @@ const PreferencesStep: React.FC<OnboardingStepProps> = ({
                 control={
                   <Radio
                     sx={{
-                      color: borderPalette.dark,
+                      color: "#D0D5DD",
                       "&.Mui-checked": {
-                        color: brand.primary,
+                        color: "#13715B",
                       },
                     }}
                   />
                 }
                 label={
-                  <Typography sx={{ fontSize: "13px", color: text.secondary }}>
+                  <Typography sx={{ fontSize: "13px", color: "#344054" }}>
                     {useCase}
                   </Typography>
                 }

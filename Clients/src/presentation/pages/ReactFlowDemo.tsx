@@ -13,7 +13,6 @@ import {
   BackgroundVariant,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { border as borderPalette, brand } from "../themes/palette";
 
 const initialNodes: Node[] = [
   {
@@ -21,31 +20,31 @@ const initialNodes: Node[] = [
     type: 'input',
     data: { label: 'AI Model' },
     position: { x: 250, y: 0 },
-    style: { background: brand.primary, color: 'white', border: 'none' },
+    style: { background: '#13715B', color: 'white', border: 'none' },
   },
   {
     id: '2',
     data: { label: 'Risk Assessment' },
     position: { x: 100, y: 100 },
-    style: { background: '#fff', border: `1px solid ${borderPalette.dark}` },
+    style: { background: '#fff', border: '1px solid #d0d5dd' },
   },
   {
     id: '3',
     data: { label: 'Compliance Check' },
     position: { x: 400, y: 100 },
-    style: { background: '#fff', border: `1px solid ${borderPalette.dark}` },
+    style: { background: '#fff', border: '1px solid #d0d5dd' },
   },
   {
     id: '4',
     data: { label: 'Evidence Collection' },
     position: { x: 100, y: 200 },
-    style: { background: '#fff', border: `1px solid ${borderPalette.dark}` },
+    style: { background: '#fff', border: '1px solid #d0d5dd' },
   },
   {
     id: '5',
     data: { label: 'Policy Validation' },
     position: { x: 400, y: 200 },
-    style: { background: '#fff', border: `1px solid ${borderPalette.dark}` },
+    style: { background: '#fff', border: '1px solid #d0d5dd' },
   },
   {
     id: '6',

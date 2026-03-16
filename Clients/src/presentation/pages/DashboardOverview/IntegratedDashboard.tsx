@@ -51,7 +51,6 @@ import { OrganizationalFrameworkData } from "../../../application/hooks/useDashb
 import { useRiskAssessmentMode } from "../../../application/hooks/useRiskAssessmentMode";
 import { useOrgPortfolio, usePortfolioTrend } from "../../../application/hooks/useQuantitativeRisk";
 import {
-import { text } from "../../themes/palette";
   navIconButtonSx,
   getRiskLevelData,
   getVendorRiskData,
@@ -427,7 +426,7 @@ const IntegratedDashboard: React.FC = () => {
                             sx={{
                               fontSize: 13,
                               fontWeight: 500,
-                              color: text.icon,
+                              color: "#667085",
                               minWidth: 55,
                               textAlign: "center",
                             }}
@@ -1058,7 +1057,7 @@ const IntegratedDashboard: React.FC = () => {
                             sx={{
                               fontSize: 13,
                               fontWeight: 500,
-                              color: text.icon,
+                              color: "#667085",
                               minWidth: 55,
                               textAlign: "center",
                             }}

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Box, Stack, Typography, useTheme, Divider, Snackbar } from "@mui/material";
 import { Copy } from "lucide-react";
-import { background, border as borderPalette, brand, status, text } from "../../../themes/palette";
 
 const ColorsSection: React.FC = () => {
   const theme = useTheme();
@@ -55,7 +54,7 @@ const ColorsSection: React.FC = () => {
         <ColorGrid>
           <ColorCard
             label="Primary"
-            color=brand.primary
+            color="#13715B"
             usage="Main action buttons, links, focus states"
             themeKey="theme.palette.primary.main"
             onCopy={handleCopy}
@@ -94,7 +93,7 @@ const ColorsSection: React.FC = () => {
         <ColorGrid>
           <ColorCard
             label="Primary text"
-            color=text.primary
+            color="#1c2130"
             usage="Main headings, important content"
             themeKey="theme.palette.text.primary"
             onCopy={handleCopy}
@@ -102,7 +101,7 @@ const ColorsSection: React.FC = () => {
           />
           <ColorCard
             label="Secondary text"
-            color=text.secondary
+            color="#344054"
             usage="Body text, labels"
             themeKey="theme.palette.text.secondary"
             onCopy={handleCopy}
@@ -110,7 +109,7 @@ const ColorsSection: React.FC = () => {
           />
           <ColorCard
             label="Tertiary text"
-            color=text.tertiary
+            color="#475467"
             usage="Descriptions, placeholders"
             themeKey="theme.palette.text.tertiary"
             onCopy={handleCopy}
@@ -118,7 +117,7 @@ const ColorsSection: React.FC = () => {
           />
           <ColorCard
             label="Accent text"
-            color=text.accent
+            color="#838c99"
             usage="Muted text, hints"
             themeKey="theme.palette.text.accent"
             onCopy={handleCopy}
@@ -145,7 +144,7 @@ const ColorsSection: React.FC = () => {
           />
           <ColorCard
             label="Alt background"
-            color=background.alt
+            color="#FCFCFD"
             usage="Alternate surfaces"
             themeKey="theme.palette.background.alt"
             onCopy={handleCopy}
@@ -153,7 +152,7 @@ const ColorsSection: React.FC = () => {
           />
           <ColorCard
             label="Modal background"
-            color=background.alt
+            color="#FCFCFD"
             usage="Modal/dialog surfaces"
             themeKey="theme.palette.background.modal"
             onCopy={handleCopy}
@@ -161,14 +160,14 @@ const ColorsSection: React.FC = () => {
           />
           <ColorCard
             label="Fill background"
-            color=brand.primaryLight
+            color="#E6F0EC"
             usage="Hover states, filled inputs"
             themeKey="theme.palette.background.fill"
             onCopy={handleCopy}
           />
           <ColorCard
             label="Accent background"
-            color=background.accent
+            color="#f9fafb"
             usage="Table headers, subtle fills"
             themeKey="theme.palette.background.accent"
             onCopy={handleCopy}
@@ -186,21 +185,21 @@ const ColorsSection: React.FC = () => {
         <ColorGrid>
           <ColorCard
             label="Light border"
-            color=borderPalette.light
+            color="#eaecf0"
             usage="Card borders, table rows"
             themeKey="theme.palette.border.light"
             onCopy={handleCopy}
           />
           <ColorCard
             label="Dark border"
-            color=borderPalette.dark
+            color="#d0d5dd"
             usage="Input borders, stronger dividers"
             themeKey="theme.palette.border.dark"
             onCopy={handleCopy}
           />
           <ColorCard
             label="Divider"
-            color=borderPalette.dark
+            color="#d0d5dd"
             usage="Section dividers"
             themeKey="theme.palette.divider"
             onCopy={handleCopy}
@@ -223,7 +222,7 @@ const ColorsSection: React.FC = () => {
         <ColorGrid columns={5} sx={{ mb: "24px" }}>
           <ColorCard
             label="Success text"
-            color=status.success.text
+            color="#138A5E"
             usage="Success messages"
             themeKey="theme.palette.status.success.text"
             onCopy={handleCopy}
@@ -231,7 +230,7 @@ const ColorsSection: React.FC = () => {
           />
           <ColorCard
             label="Success main"
-            color=status.success.text
+            color="#138A5E"
             usage="Success icons, indicators"
             themeKey="theme.palette.status.success.main"
             onCopy={handleCopy}
@@ -239,21 +238,21 @@ const ColorsSection: React.FC = () => {
           />
           <ColorCard
             label="Success light"
-            color=status.success.border
+            color="#C8E6D0"
             usage="Success badges"
             themeKey="theme.palette.status.success.light"
             onCopy={handleCopy}
           />
           <ColorCard
             label="Success bg"
-            color=status.success.bg
+            color="#E6F4EA"
             usage="Success backgrounds"
             themeKey="theme.palette.status.success.bg"
             onCopy={handleCopy}
           />
           <ColorCard
             label="Success border"
-            color=status.success.border
+            color="#C8E6D0"
             usage="Success borders"
             themeKey="theme.palette.status.success.border"
             onCopy={handleCopy}
@@ -267,7 +266,7 @@ const ColorsSection: React.FC = () => {
         <ColorGrid columns={5} sx={{ mb: "24px" }}>
           <ColorCard
             label="Error text"
-            color=status.error.text
+            color="#D32F2F"
             usage="Error messages"
             themeKey="theme.palette.status.error.text"
             onCopy={handleCopy}
@@ -275,7 +274,7 @@ const ColorsSection: React.FC = () => {
           />
           <ColorCard
             label="Error main"
-            color=status.error.text
+            color="#D32F2F"
             usage="Error icons"
             themeKey="theme.palette.status.error.main"
             onCopy={handleCopy}
@@ -283,21 +282,21 @@ const ColorsSection: React.FC = () => {
           />
           <ColorCard
             label="Error light"
-            color=status.error.border
+            color="#F5B8B8"
             usage="Error badges"
             themeKey="theme.palette.status.error.light"
             onCopy={handleCopy}
           />
           <ColorCard
             label="Error bg"
-            color=status.error.bg
+            color="#FFD6D6"
             usage="Error backgrounds"
             themeKey="theme.palette.status.error.bg"
             onCopy={handleCopy}
           />
           <ColorCard
             label="Error border"
-            color=status.error.border
+            color="#F5B8B8"
             usage="Error input borders"
             themeKey="theme.palette.status.error.border"
             onCopy={handleCopy}
@@ -311,7 +310,7 @@ const ColorsSection: React.FC = () => {
         <ColorGrid columns={5} sx={{ mb: "24px" }}>
           <ColorCard
             label="Warning text"
-            color=status.warning.text
+            color="#795548"
             usage="Warning messages"
             themeKey="theme.palette.status.warning.text"
             onCopy={handleCopy}
@@ -319,7 +318,7 @@ const ColorsSection: React.FC = () => {
           />
           <ColorCard
             label="Warning main"
-            color=status.warning.text
+            color="#795548"
             usage="Warning icons"
             themeKey="theme.palette.status.warning.main"
             onCopy={handleCopy}
@@ -327,21 +326,21 @@ const ColorsSection: React.FC = () => {
           />
           <ColorCard
             label="Warning light"
-            color=status.warning.border
+            color="#F5E6B8"
             usage="Warning badges"
             themeKey="theme.palette.status.warning.light"
             onCopy={handleCopy}
           />
           <ColorCard
             label="Warning bg"
-            color=status.warning.bg
+            color="#FFF8E1"
             usage="Warning backgrounds"
             themeKey="theme.palette.status.warning.bg"
             onCopy={handleCopy}
           />
           <ColorCard
             label="Warning border"
-            color=status.warning.border
+            color="#F5E6B8"
             usage="Warning borders"
             themeKey="theme.palette.status.warning.border"
             onCopy={handleCopy}
@@ -355,7 +354,7 @@ const ColorsSection: React.FC = () => {
         <ColorGrid columns={5}>
           <ColorCard
             label="Info text"
-            color=status.info.text
+            color="#1565C0"
             usage="Info messages"
             themeKey="theme.palette.status.info.text"
             onCopy={handleCopy}
@@ -363,7 +362,7 @@ const ColorsSection: React.FC = () => {
           />
           <ColorCard
             label="Info main"
-            color=status.info.text
+            color="#1565C0"
             usage="Info icons"
             themeKey="theme.palette.status.info.main"
             onCopy={handleCopy}
@@ -371,21 +370,21 @@ const ColorsSection: React.FC = () => {
           />
           <ColorCard
             label="Info light"
-            color=status.info.border
+            color="#BBDEFB"
             usage="Info badges"
             themeKey="theme.palette.status.info.light"
             onCopy={handleCopy}
           />
           <ColorCard
             label="Info bg"
-            color=status.info.bg
+            color="#E3F2FD"
             usage="Info backgrounds"
             themeKey="theme.palette.status.info.bg"
             onCopy={handleCopy}
           />
           <ColorCard
             label="Info border"
-            color=status.info.border
+            color="#BBDEFB"
             usage="Info borders"
             themeKey="theme.palette.status.info.border"
             onCopy={handleCopy}
@@ -403,7 +402,7 @@ const ColorsSection: React.FC = () => {
         <ColorGrid columns={6}>
           <ColorCard
             label="Primary"
-            color=brand.primary
+            color="#13715B"
             usage="Main actions"
             themeKey="primary"
             onCopy={handleCopy}
@@ -415,11 +414,11 @@ const ColorsSection: React.FC = () => {
             usage="Utility actions"
             themeKey="secondary"
             onCopy={handleCopy}
-            textColor=text.tertiary
+            textColor="#475467"
           />
           <ColorCard
             label="Success"
-            color=status.success.text
+            color="#138A5E"
             usage="Positive actions"
             themeKey="success"
             onCopy={handleCopy}
@@ -427,7 +426,7 @@ const ColorsSection: React.FC = () => {
           />
           <ColorCard
             label="Warning"
-            color=status.warning.text
+            color="#795548"
             usage="Caution actions"
             themeKey="warning"
             onCopy={handleCopy}
@@ -435,7 +434,7 @@ const ColorsSection: React.FC = () => {
           />
           <ColorCard
             label="Error"
-            color=status.error.text
+            color="#D32F2F"
             usage="Destructive actions"
             themeKey="error"
             onCopy={handleCopy}
@@ -443,7 +442,7 @@ const ColorsSection: React.FC = () => {
           />
           <ColorCard
             label="Info"
-            color=status.info.text
+            color="#1565C0"
             usage="Informational actions"
             themeKey="info"
             onCopy={handleCopy}
@@ -462,7 +461,7 @@ const ColorsSection: React.FC = () => {
         <ColorGrid>
           <ColorCard
             label="Icon default"
-            color=text.icon
+            color="#667085"
             usage="Default icon color"
             themeKey="theme.palette.other.icon"
             onCopy={handleCopy}
@@ -583,8 +582,8 @@ const ColorsSection: React.FC = () => {
         <Stack spacing="8px">
           {[
             "Always use theme.palette.* for colors - never hardcode hex values",
-            "Primary green brand.primary is the main brand color",
-            "Border color borderPalette.dark should be used for all input borders",
+            "Primary green #13715B is the main brand color",
+            "Border color #d0d5dd should be used for all input borders",
             "Use status colors for feedback (success, error, warning)",
             "Background colors have semantic meanings - use appropriately",
             "Text hierarchy: primary > secondary > tertiary > accent",
@@ -678,7 +677,7 @@ const ColorCard: React.FC<{
   onCopy: (text: string) => void;
   textColor?: string;
   hasBorder?: boolean;
-}> = ({ label, color, usage, themeKey, onCopy, textColor = text.primary, hasBorder = false }) => {
+}> = ({ label, color, usage, themeKey, onCopy, textColor = "#1c2130", hasBorder = false }) => {
   const theme = useTheme();
   const [isHovered, setIsHovered] = useState(false);
 

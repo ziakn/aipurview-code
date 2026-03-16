@@ -35,7 +35,6 @@ import { EmptyState } from "../EmptyState";
 import TablePaginationActions from "../TablePagination";
 import { paginationStyle } from "../Table/styles";
 import CustomizableToast from "../../components/Toast";
-import { text } from "../../themes/palette";
 
 const SORT_KEY = "vw_link_risk_selector_sort";
 
@@ -146,7 +145,7 @@ const SortableTableHead = ({
                                         color:
                                             sortConfig.key === column.id
                                                 ? "primary.main"
-                                                : text.disabled,
+                                                : "#9CA3AF",
                                     }}
                                 >
                                     {sortConfig.key === column.id &&

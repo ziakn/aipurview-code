@@ -26,7 +26,6 @@ import {
 import { extractUserToken } from "../../../../application/tools/extractToken";
 import { getAuthToken } from "../../../../application/redux/auth/getAuthToken";
 import { useLogoFetch } from "../../../../application/hooks/useLogoFetch";
-import { background, brand, text } from "../../../themes/palette";
 
 const AITrustCenterSettings: React.FC = () => {
   const styles = useStyles();
@@ -461,7 +460,7 @@ const AITrustCenterSettings: React.FC = () => {
                   overflow: "hidden",
                   "&:hover": {
                     borderColor: "#999",
-                    backgroundColor: background.surface,
+                    backgroundColor: "#f5f5f5",
                   },
                 }}
               >
@@ -623,7 +622,7 @@ const AITrustCenterSettings: React.FC = () => {
             {/* Color picker input positioned to the right and down */}
             <input
               type="color"
-              value={formData?.info?.header_color || text.black}
+              value={formData?.info?.header_color || "#000000"}
               onChange={(e) =>
                 handleFieldChange("info", "header_color", e.target.value)
               }
@@ -699,8 +698,8 @@ const AITrustCenterSettings: React.FC = () => {
         <CustomizableButton
           sx={{
             ...styles.saveButton,
-            backgroundColor: hasUnsavedChanges ? brand.primary : "#ccc",
-            border: `1px solid ${hasUnsavedChanges ? brand.primary : "#ccc"}`,
+            backgroundColor: hasUnsavedChanges ? "#13715B" : "#ccc",
+            border: `1px solid ${hasUnsavedChanges ? "#13715B" : "#ccc"}`,
           }}
           icon={<SaveIcon size={16} />}
           variant="contained"

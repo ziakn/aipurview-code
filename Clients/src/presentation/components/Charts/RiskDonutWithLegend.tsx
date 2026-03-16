@@ -1,6 +1,5 @@
 import { Box, Stack, Typography } from "@mui/material";
 import { StatusDonutChart } from "./StatusDonutChart";
-import { text } from "../../themes/palette";
 
 export interface RiskDataItem {
   label: string;
@@ -36,7 +35,7 @@ export function RiskDonutWithLegend({
                 flexShrink: 0,
               }}
             />
-            <Typography sx={{ fontSize: 13, color: text.icon }}>
+            <Typography sx={{ fontSize: 13, color: "#667085" }}>
               {item.label}: {item.value}
             </Typography>
           </Stack>

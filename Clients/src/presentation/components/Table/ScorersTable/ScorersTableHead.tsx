@@ -2,7 +2,6 @@ import { TableCell, TableHead, TableRow, Box, Typography } from "@mui/material";
 import { ChevronsUpDown, ChevronUp, ChevronDown } from "lucide-react";
 import singleTheme from "../../../themes/v1SingleTheme";
 import { SortConfig } from "./index";
-import { text } from "../../../themes/palette";
 
 interface Column {
   id: string;
@@ -78,7 +77,7 @@ const ScorersTableHead: React.FC<ScorersTableHeadProps> = ({
                     sx={{
                       display: "flex",
                       alignItems: "center",
-                      color: sortConfig.key === column.id ? "primary.main" : text.disabled,
+                      color: sortConfig.key === column.id ? "primary.main" : "#9CA3AF",
                     }}
                   >
                     {sortConfig.key === column.id && sortConfig.direction === "asc" && (

@@ -1,4 +1,3 @@
-import { background, border as borderPalette, brand, text } from "../../../themes/palette";
 export const textfieldStyle = {
   backgroundColor: "#FFFFFF",
   "& input": {
@@ -12,8 +11,8 @@ export const dropdownStyle = {
 };
 
 export const createProjectButtonStyle = {
-  backgroundColor: brand.primary,
-  border: `1px solid ${brand.primary}`,
+  backgroundColor: "#13715B",
+  border: "1px solid #13715B",
   gap: 2,
 };
 
@@ -44,12 +43,12 @@ export const teamMembersSlotProps = {
       "& .MuiAutocomplete-listbox": {
         "& .MuiAutocomplete-option": {
           fontSize: "13px",
-          color: text.primary,
+          color: "#1c2130",
           paddingLeft: "9px",
           paddingRight: "9px",
         },
         "& .MuiAutocomplete-option.Mui-focused": {
-          background: background.accent,
+          background: "#f9fafb",
         },
       },
       "& .MuiAutocomplete-noOptions": {
@@ -75,29 +74,29 @@ export const radioOptionStyle = {
   cursor: "pointer",
   transition: "all 0.2s ease-in-out",
   "&:hover": {
-    borderColor: brand.primary,
+    borderColor: "#13715B",
     backgroundColor: "#F9F9F9",
   },
   "&.selected": {
-    borderColor: brand.primary,
+    borderColor: "#13715B",
     backgroundColor: "#F0F9F6",
   },
 };
 
 export const continueButtonStyle = {
-  backgroundColor: brand.primary,
-  border: `1px solid ${brand.primary}`,
+  backgroundColor: "#13715B",
+  border: "1px solid #13715B",
   gap: 2,
   marginTop: 2,
 };
 
 export const backButtonStyle = {
   backgroundColor: "#FFFFFF",
-  border: `1px solid ${borderPalette.dark}`,
-  color: text.secondary,
+  border: "1px solid #D0D5DD",
+  color: "#344054",
   gap: 2,
   "&:hover": {
     backgroundColor: "#F9F9F9",
-    border: `1px solid ${borderPalette.dark}`,
+    border: "1px solid #D0D5DD",
   },
 };

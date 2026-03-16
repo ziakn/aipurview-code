@@ -31,7 +31,6 @@ import type { ExtendedNodeData } from './types';
 import { generateNodesAndEdges, getConnectedEntities } from './utils';
 import { useDebouncedSearch, useToastNotification, useFocusEntity } from './hooks';
 import {
-import { status, text } from "../../themes/palette";
   graphContainerStyle,
   loadingContainerSx,
   loadingTextSx,
@@ -166,7 +165,7 @@ const EntityGraphInner: React.FC = () => {
   if (hasNoData) {
     return (
       <Box sx={emptyStateContainerSx}>
-        <GitBranch size={48} color=text.disabled />
+        <GitBranch size={48} color="#9ca3af" />
         <Typography sx={emptyStateTitleSx}>No entities to display</Typography>
         <Typography sx={emptyStateDescriptionSx}>Add use cases, models, or vendors to visualize compliance relationships.</Typography>
       </Box>
@@ -208,10 +207,10 @@ const EntityGraphInner: React.FC = () => {
       >
         <Controls showInteractive={false} />
         <MiniMap
-          nodeColor={(n) => (n.data as ExtendedNodeData)?.color || text.icon}
+          nodeColor={(n) => (n.data as ExtendedNodeData)?.color || '#667085'}
           maskColor="rgba(0,0,0,0.1)"
         />
-        <Background variant={BackgroundVariant.Dots} gap={20} size={1} color=status.default.border />
+        <Background variant={BackgroundVariant.Dots} gap={20} size={1} color="#e5e7eb" />
 
         <Panel position="top-left">
           <Stack sx={controlPanelSx}>

@@ -1,4 +1,3 @@
-import { brand, text } from "../../../themes/palette";
 export const styles = {
   container: {
     display: "flex",
@@ -8,12 +7,12 @@ export const styles = {
   },
   buttonStyle: {
     width: { xs: "100%", sm: "180px" },
-    backgroundColor: brand.primary,
+    backgroundColor: "#13715B",
     color: "#fff",
     gap: 2,
   },
   baseText: {
-    color: text.secondary,
+    color: "#344054",
     fontSize: 13,
   },
 };

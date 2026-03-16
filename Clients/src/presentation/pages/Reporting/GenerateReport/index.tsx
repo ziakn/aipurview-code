@@ -12,7 +12,6 @@ const GenerateReportPopup = lazy(
 const ReportStatus = lazy(() => import("./ReportStatus"));
 import { styles } from "./styles";
 import { useProjects } from "../../../../application/hooks/useProjects";
-import { brand } from "../../../themes/palette";
 
 interface ReportTypeOption {
   id: "project" | "organization";
@@ -82,7 +81,7 @@ const GenerateReport: React.FC<GenerateReportProps> = ({
             sx={{
               ...styles.buttonStyle,
               width: "fit-content",
-              border: isDisabled ? "1px solid #dddddd" : `1px solid ${brand.primary}`,
+              border: isDisabled ? "1px solid #dddddd" : "1px solid #13715B",
             }}
           >
             Generate report
@@ -163,7 +162,7 @@ const GenerateReport: React.FC<GenerateReportProps> = ({
                     },
                   }}
                 >
-                  <Box sx={{ color: brand.primary }}>{option.icon}</Box>
+                  <Box sx={{ color: "#13715B" }}>{option.icon}</Box>
                   <Typography
                     variant="body2"
                     sx={{

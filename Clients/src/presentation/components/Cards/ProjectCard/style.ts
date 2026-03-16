@@ -1,6 +1,5 @@
-import { border as borderPalette, brand, text } from "../../../themes/palette";
 export const projectCardStyle = {
-  border: `1px solid ${borderPalette.dark}`,
+  border: "1px solid #d0d5dd",
   borderRadius: "4px",
   padding: "16px",
   minWidth: 300,
@@ -36,10 +35,10 @@ export const projectCardSpecsStyle = {
 
 export const projectCardSpecKeyStyle = { fontSize: 11, color: "#8594AC" };
 
-export const projectCardSpecValueStyle = { fontSize: 13, color: text.secondary };
+export const projectCardSpecValueStyle = { fontSize: 13, color: "#344054" };
 
 export const viewProjectButtonStyle = {
-  backgroundColor: brand.primary,
+  backgroundColor: "#13715B",
   color: "#fff",
   fontSize: 13,
   fontWeight: 600,

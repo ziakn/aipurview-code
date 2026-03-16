@@ -1,4 +1,3 @@
-import { background, border as borderPalette, text } from "../../../themes/palette";
 import { SxProps, Theme } from "@mui/material";
 
 /**
@@ -12,7 +11,7 @@ export const frameworkDashboardCardStyles = {
    * Main card container style
    */
   cardContainer: {
-    border: `1px solid ${borderPalette.dark}`,
+    border: "1px solid #d0d5dd",
     borderRadius: "4px",
     overflow: "hidden",
   } as SxProps<Theme>,
@@ -23,7 +22,7 @@ export const frameworkDashboardCardStyles = {
   cardHeader: {
     backgroundColor: "#F1F3F4",
     p: "10px 16px",
-    borderBottom: `1px solid ${borderPalette.dark}`,
+    borderBottom: "1px solid #d0d5dd",
   } as SxProps<Theme>,
 
   /**
@@ -32,7 +31,7 @@ export const frameworkDashboardCardStyles = {
   cardHeaderTitle: {
     fontSize: 15,
     fontWeight: 600,
-    color: text.black,
+    color: "#000000",
     lineHeight: "16px",
     m: 0,
   } as SxProps<Theme>,
@@ -49,7 +48,7 @@ export const frameworkDashboardCardStyles = {
    * Individual category/item box within cards (for Annex and Control Categories)
    */
   categoryBox: {
-    border: `1px solid ${borderPalette.dark}`,
+    border: "1px solid #d0d5dd",
     borderRadius: "4px",
     overflow: "hidden",
   } as SxProps<Theme>,
@@ -60,7 +59,7 @@ export const frameworkDashboardCardStyles = {
   categoryBoxHeader: {
     backgroundColor: "#F1F3F4",
     p: "10px 16px",
-    borderBottom: `1px solid ${borderPalette.dark}`,
+    borderBottom: "1px solid #d0d5dd",
   } as SxProps<Theme>,
 
   /**
@@ -69,8 +68,8 @@ export const frameworkDashboardCardStyles = {
   emptyStateContainer: {
     px: 4,
     py: 4,
-    backgroundColor: background.accent,
+    backgroundColor: "#F9FAFB",
     borderRadius: 2,
-    border: `1px solid ${borderPalette.dark}`,
+    border: "1px solid #d0d5dd",
   } as SxProps<Theme>,
 };

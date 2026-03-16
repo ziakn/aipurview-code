@@ -60,7 +60,6 @@ import TabBar from "../../components/TabBar";
 import DeadlineView from "./DeadlineView";
 import { toggleLabelStyle, toggleContainerStyle } from "./style";
 import { TASK_PRIORITY_OPTIONS, PRIORITY_DISPLAY_MAP, PRIORITY_COLOR_MAP } from "../../constants/priorityOptions";
-import { brand } from "../../themes/palette";
 
 // Task status options for CustomSelect
 const TASK_STATUS_OPTIONS = [
@@ -888,7 +887,7 @@ const Tasks: React.FC = () => {
                   <Typography
                     component="span"
                     variant="body2"
-                    color=text.secondary
+                    color="text.secondary"
                     sx={toggleLabelStyle}
                   >
                     My tasks only
@@ -908,7 +907,7 @@ const Tasks: React.FC = () => {
                 <Typography
                   component="span"
                   variant="body2"
-                  color=text.secondary
+                  color="text.secondary"
                   sx={toggleLabelStyle}
                 >
                   Include archived
@@ -938,8 +937,8 @@ const Tasks: React.FC = () => {
               variant="contained"
               text="Add new task"
               sx={{
-                backgroundColor: brand.primary,
-                border: `1px solid ${brand.primary}`,
+                backgroundColor: "#13715B",
+                border: "1px solid #13715B",
                 gap: 2,
               }}
               icon={<AddCircleIcon size={16} />}

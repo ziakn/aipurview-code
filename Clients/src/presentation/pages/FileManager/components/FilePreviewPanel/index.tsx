@@ -28,7 +28,6 @@ import {
   getOfficeFileLabel,
 } from "../../../../../application/utils/officePreview.utils";
 import { useIsAdmin } from "../../../../../application/hooks/useIsAdmin";
-import { background, border as borderPalette, brand, status, text } from "../../../../themes/palette";
 
 interface FilePreviewPanelProps {
   isOpen: boolean;
@@ -70,7 +69,7 @@ const getFileIcon = (mimetype?: string) => {
       }
       return <FileText size={48} color="#2B579A" />;
     default:
-      return <FileText size={48} color=status.default.text />;
+      return <FileText size={48} color="#6B7280" />;
   }
 };
 
@@ -247,7 +246,7 @@ export const FilePreviewPanel: React.FC<FilePreviewPanelProps> = ({
             height: 300,
           }}
         >
-          <CircularProgress size={40} sx={{ color: brand.primary }} />
+          <CircularProgress size={40} sx={{ color: "#13715B" }} />
         </Box>
       );
     }
@@ -261,13 +260,13 @@ export const FilePreviewPanel: React.FC<FilePreviewPanelProps> = ({
             justifyContent: "center",
             alignItems: "center",
             height: 300,
-            backgroundColor: background.accent,
+            backgroundColor: "#F9FAFB",
             borderRadius: "4px",
             border: "1px solid #E0E4E9",
           }}
         >
           {getFileIcon(file?.mimetype)}
-          <Typography sx={{ mt: 2, color: text.icon, fontSize: 13 }}>
+          <Typography sx={{ mt: 2, color: "#667085", fontSize: 13 }}>
             {error}
           </Typography>
         </Box>
@@ -283,16 +282,16 @@ export const FilePreviewPanel: React.FC<FilePreviewPanelProps> = ({
             justifyContent: "center",
             alignItems: "center",
             height: 300,
-            backgroundColor: background.accent,
+            backgroundColor: "#F9FAFB",
             borderRadius: "4px",
             border: "1px solid #E0E4E9",
           }}
         >
           {getFileIcon(file?.mimetype)}
-          <Typography sx={{ mt: 2, color: text.icon, fontSize: 13 }}>
+          <Typography sx={{ mt: 2, color: "#667085", fontSize: 13 }}>
             Preview not available for this file type
           </Typography>
-          <Typography sx={{ mt: 1, color: text.muted, fontSize: 12 }}>
+          <Typography sx={{ mt: 1, color: "#98A2B3", fontSize: 12 }}>
             Download the file to view its contents
           </Typography>
         </Box>
@@ -327,7 +326,7 @@ export const FilePreviewPanel: React.FC<FilePreviewPanelProps> = ({
             objectFit: "contain",
             border: "1px solid #E0E4E9",
             borderRadius: "4px",
-            backgroundColor: background.accent,
+            backgroundColor: "#F9FAFB",
           }}
         />
       );
@@ -342,7 +341,7 @@ export const FilePreviewPanel: React.FC<FilePreviewPanelProps> = ({
             maxHeight: 400,
             overflow: "auto",
             padding: 2,
-            backgroundColor: background.accent,
+            backgroundColor: "#F9FAFB",
             border: "1px solid #E0E4E9",
             borderRadius: "4px",
             fontSize: 12,
@@ -369,14 +368,14 @@ export const FilePreviewPanel: React.FC<FilePreviewPanelProps> = ({
               objectFit: "contain",
               border: "1px solid #E0E4E9",
               borderRadius: "4px",
-              backgroundColor: background.accent,
+              backgroundColor: "#F9FAFB",
             }}
           />
           <Typography
             sx={{
               mt: 1,
               fontSize: 11,
-              color: text.muted,
+              color: "#98A2B3",
               fontStyle: "italic",
               textAlign: "center",
             }}
@@ -430,7 +429,7 @@ export const FilePreviewPanel: React.FC<FilePreviewPanelProps> = ({
             <IconButton
               onClick={() => onEdit(file)}
               size="small"
-              sx={{ color: text.icon }}
+              sx={{ color: "#667085" }}
             >
               <Pencil size={18} />
             </IconButton>
@@ -441,17 +440,17 @@ export const FilePreviewPanel: React.FC<FilePreviewPanelProps> = ({
                 onClick={handleDownload}
                 size="small"
                 disabled={downloading || !isAdmin}
-                sx={{ color: !isAdmin ? borderPalette.dark : text.icon }}
+                sx={{ color: !isAdmin ? "#D0D5DD" : "#667085" }}
               >
                 {downloading ? (
-                  <CircularProgress size={18} sx={{ color: text.icon }} />
+                  <CircularProgress size={18} sx={{ color: "#667085" }} />
                 ) : (
                   <Download size={18} />
                 )}
               </IconButton>
             </span>
           </Tooltip>
-          <IconButton onClick={onClose} size="small" sx={{ color: text.icon }}>
+          <IconButton onClick={onClose} size="small" sx={{ color: "#667085" }}>
             <X size={18} />
           </IconButton>
         </Box>
@@ -483,7 +482,7 @@ export const FilePreviewPanel: React.FC<FilePreviewPanelProps> = ({
           {/* File details */}
           <Box>
             <Typography
-              sx={{ fontSize: 14, fontWeight: 600, color: text.secondary, mb: 2 }}
+              sx={{ fontSize: 14, fontWeight: 600, color: "#344054", mb: 2 }}
             >
               File details
             </Typography>
@@ -498,28 +497,28 @@ export const FilePreviewPanel: React.FC<FilePreviewPanelProps> = ({
               }}
             >
               {/* Size */}
-              <Typography sx={{ fontSize: 13, color: text.icon }}>
+              <Typography sx={{ fontSize: 13, color: "#667085" }}>
                 Size
               </Typography>
-              <Typography sx={{ fontSize: 13, color: text.secondary }}>
+              <Typography sx={{ fontSize: 13, color: "#344054" }}>
                 {formatFileSize(file.size)}
               </Typography>
 
               {/* Upload date */}
-              <Typography sx={{ fontSize: 13, color: text.icon }}>
+              <Typography sx={{ fontSize: 13, color: "#667085" }}>
                 Uploaded
               </Typography>
-              <Typography sx={{ fontSize: 13, color: text.secondary }}>
+              <Typography sx={{ fontSize: 13, color: "#344054" }}>
                 {formatDate(file.upload_date)}
               </Typography>
 
               {/* Uploader */}
               {file.uploader_name && (
                 <>
-                  <Typography sx={{ fontSize: 13, color: text.icon }}>
+                  <Typography sx={{ fontSize: 13, color: "#667085" }}>
                     Uploaded by
                   </Typography>
-                  <Typography sx={{ fontSize: 13, color: text.secondary }}>
+                  <Typography sx={{ fontSize: 13, color: "#344054" }}>
                     {file.uploader_name} {file.uploader_surname}
                   </Typography>
                 </>
@@ -528,7 +527,7 @@ export const FilePreviewPanel: React.FC<FilePreviewPanelProps> = ({
               {/* Status */}
               {file.review_status && (
                 <>
-                  <Typography sx={{ fontSize: 13, color: text.icon }}>
+                  <Typography sx={{ fontSize: 13, color: "#667085" }}>
                     Status
                   </Typography>
                   <Box>
@@ -540,10 +539,10 @@ export const FilePreviewPanel: React.FC<FilePreviewPanelProps> = ({
               {/* Version */}
               {file.version && (
                 <>
-                  <Typography sx={{ fontSize: 13, color: text.icon }}>
+                  <Typography sx={{ fontSize: 13, color: "#667085" }}>
                     Version
                   </Typography>
-                  <Typography sx={{ fontSize: 13, color: text.secondary }}>
+                  <Typography sx={{ fontSize: 13, color: "#344054" }}>
                     v{file.version}
                   </Typography>
                 </>
@@ -552,10 +551,10 @@ export const FilePreviewPanel: React.FC<FilePreviewPanelProps> = ({
               {/* Expiry Date */}
               {file.expiry_date && (
                 <>
-                  <Typography sx={{ fontSize: 13, color: text.icon }}>
+                  <Typography sx={{ fontSize: 13, color: "#667085" }}>
                     Expiry date
                   </Typography>
-                  <Typography sx={{ fontSize: 13, color: text.secondary }}>
+                  <Typography sx={{ fontSize: 13, color: "#344054" }}>
                     {formatDate(file.expiry_date)}
                   </Typography>
                 </>
@@ -564,7 +563,7 @@ export const FilePreviewPanel: React.FC<FilePreviewPanelProps> = ({
               {/* Tags */}
               {file.tags && file.tags.length > 0 && (
                 <>
-                  <Typography sx={{ fontSize: 13, color: text.icon, alignSelf: "start", pt: 0.5 }}>
+                  <Typography sx={{ fontSize: 13, color: "#667085", alignSelf: "start", pt: 0.5 }}>
                     Tags
                   </Typography>
                   <Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap" }}>
@@ -575,7 +574,7 @@ export const FilePreviewPanel: React.FC<FilePreviewPanelProps> = ({
                         size="small"
                         sx={{
                           backgroundColor: "#F2F4F7",
-                          color: text.secondary,
+                          color: "#344054",
                           fontSize: "11px",
                           height: 22,
                         }}
@@ -588,10 +587,10 @@ export const FilePreviewPanel: React.FC<FilePreviewPanelProps> = ({
               {/* Description */}
               {file.description && (
                 <>
-                  <Typography sx={{ fontSize: 13, color: text.icon, alignSelf: "start" }}>
+                  <Typography sx={{ fontSize: 13, color: "#667085", alignSelf: "start" }}>
                     Description
                   </Typography>
-                  <Typography sx={{ fontSize: 13, color: text.secondary }}>
+                  <Typography sx={{ fontSize: 13, color: "#344054" }}>
                     {file.description}
                   </Typography>
                 </>

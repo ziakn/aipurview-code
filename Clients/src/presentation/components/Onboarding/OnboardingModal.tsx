@@ -17,7 +17,6 @@ import TaskWorkflowStep from "./steps/TaskWorkflowStep";
 import SampleProjectStep from "./steps/SampleProjectStep";
 import InviteTeamStep from "./steps/InviteTeamStep";
 import CompletionStep from "./steps/CompletionStep";
-import { border as borderPalette, brand, status, text } from "../../themes/palette";
 
 const OnboardingModal: React.FC<OnboardingModalProps> = ({
   onComplete,
@@ -254,7 +253,7 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({
                     text="Skip onboarding"
                     onClick={handleSkipStep}
                     sx={{
-                      color: status.default.text,
+                      color: "#6B7280",
                       "&:hover": {
                         backgroundColor: "transparent",
                         color: "#374151",
@@ -270,10 +269,10 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({
                         onClick={handleBack}
                         startIcon={<ArrowLeft size={16} />}
                         sx={{
-                          borderColor: borderPalette.dark,
-                          color: text.secondary,
+                          borderColor: "#D0D5DD",
+                          color: "#344054",
                           "&:hover": {
-                            borderColor: text.muted,
+                            borderColor: "#98A2B3",
                           },
                         }}
                       />
@@ -284,9 +283,9 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       onClick={handleNext}
                       endIcon={<ArrowRight size={16} />}
                       sx={{
-                        backgroundColor: brand.primary,
+                        backgroundColor: "#13715B",
                         "&:hover": {
-                          backgroundColor: brand.primaryHover,
+                          backgroundColor: "#0F5A47",
                         },
                       }}
                     />

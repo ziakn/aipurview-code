@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { CustomStepWrapper } from "./CustomStep";
 import { Global } from "@emotion/react";
 import { IPageTourProps } from "../../types/interfaces/i.tour";
-import { brand } from "../../themes/palette";
 
 const PageTour: React.FC<IPageTourProps> = ({
   steps,
@@ -113,7 +112,7 @@ const PageTour: React.FC<IPageTourProps> = ({
         }}
         styles={{
           options: {
-            primaryColor: brand.primary,
+            primaryColor: "#13715B",
             zIndex: 900,
             beaconSize: 30,
           },

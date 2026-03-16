@@ -55,7 +55,6 @@ import Select from "../../components/Inputs/Select";
 import Checkbox from "../../components/Inputs/Checkbox";
 import Chip from "../../components/Chip";
 import { PageBreadcrumbs } from "../../components/breadcrumbs/PageBreadcrumbs";
-import { brand, status } from "../../themes/palette";
 
 // ============================================================================
 // Helpers
@@ -554,8 +553,8 @@ export function IntakeFormBuilder() {
                     <Chip
                       label={form.entityType === IntakeEntityType.USE_CASE ? "Type: AI use case" : "Type: Model inventory"}
                       uppercase={false}
-                      backgroundColor=status.info.bg
-                      textColor=status.info.text
+                      backgroundColor="#E3F2FD"
+                      textColor="#1565C0"
                     />
                     {isDirty && (
                       <Typography
@@ -596,7 +595,7 @@ export function IntakeFormBuilder() {
                       color: builderMode === "edit" ? theme.palette.background.main : theme.palette.text.secondary,
                       transition: "all 0.15s ease",
                       "&:hover": {
-                        backgroundColor: builderMode === "edit" ? brand.primaryHover : theme.palette.background.accent,
+                        backgroundColor: builderMode === "edit" ? "#0F5A47" : theme.palette.background.accent,
                       },
                     }}
                   >
@@ -620,7 +619,7 @@ export function IntakeFormBuilder() {
                       color: builderMode === "design" ? theme.palette.background.main : theme.palette.text.secondary,
                       transition: "all 0.15s ease",
                       "&:hover": {
-                        backgroundColor: builderMode === "design" ? brand.primaryHover : theme.palette.background.accent,
+                        backgroundColor: builderMode === "design" ? "#0F5A47" : theme.palette.background.accent,
                       },
                     }}
                   >
@@ -718,7 +717,7 @@ export function IntakeFormBuilder() {
                         height: 34,
                         fontSize: "13px",
                         backgroundColor: theme.palette.primary.main,
-                        "&:hover": { backgroundColor: brand.primaryHover },
+                        "&:hover": { backgroundColor: "#0F5A47" },
                       }}
                     />
                   )}
@@ -883,7 +882,7 @@ export function IntakeFormBuilder() {
                                         sx={{
                                           fontSize: 11,
                                           fontWeight: 500,
-                                          color: brand.primary,
+                                          color: "#13715B",
                                           cursor: "pointer",
                                           display: "flex",
                                           alignItems: "center",
@@ -924,7 +923,7 @@ export function IntakeFormBuilder() {
                                         sx={{
                                           fontSize: 11,
                                           fontWeight: 500,
-                                          color: brand.primary,
+                                          color: "#13715B",
                                           cursor: "pointer",
                                           display: "flex",
                                           alignItems: "center",

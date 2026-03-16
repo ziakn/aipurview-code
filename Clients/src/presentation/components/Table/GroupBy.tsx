@@ -3,7 +3,6 @@ import { Button, Stack, Popover, Box, Typography } from '@mui/material';
 import { X, Rows3 } from 'lucide-react';
 import Select from '../Inputs/Select';
 import { ButtonToggle } from '../button-toggle';
-import { border as borderPalette, status, text } from "../../themes/palette";
 
 export interface GroupByOption {
   id: string;
@@ -45,7 +44,7 @@ const GroupByHeader: React.FC<{
   onClose: () => void;
 }> = ({ selectedGroup, onClear, onClose }) => (
   <Stack direction="row" justifyContent="space-between" alignItems="center">
-    <Typography sx={{ fontSize: '11px', fontWeight: 600, color: status.default.text, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+    <Typography sx={{ fontSize: '11px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
       GROUP BY
     </Typography>
     <Box
@@ -57,7 +56,7 @@ const GroupByHeader: React.FC<{
         '&:hover': { opacity: 0.7 }
       }}
     >
-      <X size={16} color=status.default.text />
+      <X size={16} color="#6b7280" />
     </Box>
   </Stack>
 );
@@ -192,12 +191,12 @@ export const GroupBy: React.FC<GroupByProps> = ({
           padding: '6px 12px',
           textTransform: 'none',
           color: '#374151',
-          borderColor: borderPalette.dark,
+          borderColor: '#d0d5dd',
           height: '34px',
           minWidth: selectedGroup ? '110px' : '80px',
           backgroundColor: open ? '#f0fdf4' : 'transparent',
           '&:hover': {
-            borderColor: text.muted,
+            borderColor: '#98a2b3',
             backgroundColor: '#f0fdf4',
           },
         }}

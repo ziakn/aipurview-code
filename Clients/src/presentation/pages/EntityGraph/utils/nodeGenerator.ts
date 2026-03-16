@@ -3,7 +3,6 @@ import { Position, MarkerType } from '@xyflow/react';
 import type { EntityGraphData } from '../../../../application/repository/entityGraph.repository';
 import type { ExtendedNodeData } from '../types';
 import { entityColors, riskPriority, layoutConfig } from '../constants';
-import { text } from "../../../themes/palette";
 
 export interface NodeGeneratorOptions {
   visibleEntities: string[];
@@ -46,7 +45,7 @@ function createEdge(
     type: 'smoothstep',
     animated: options?.animated ?? false,
     label,
-    labelStyle: { fontSize: 9, fill: text.icon },
+    labelStyle: { fontSize: 9, fill: '#667085' },
     labelBgStyle: { fill: 'white', fillOpacity: 0.8 },
     style: {
       stroke: color,

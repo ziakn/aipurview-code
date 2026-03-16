@@ -14,7 +14,6 @@ import { VerifyWiseContext } from "../../../../application/contexts/VerifyWise.c
 import { ComplianceData } from "../../../../domain/interfaces/i.compliance";
 import { Project } from "../../../../domain/types/Project";
 import { getComplianceProgress, getControlsByControlCategoryId } from "../../../../application/repository/control_eu_act.repository";
-import { brand } from "../../../themes/palette";
 
 const ComplianceTracker = ({
   project,
@@ -191,7 +190,7 @@ const ComplianceTracker = ({
             completed={complianceData.allDonesubControls}
             total={complianceData.allsubControls}
             title="Subcontrols"
-            progressbarColor=brand.primary
+            progressbarColor="#13715B"
           />
         </Stack>
       )}

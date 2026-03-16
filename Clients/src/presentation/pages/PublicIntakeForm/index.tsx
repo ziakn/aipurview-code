@@ -16,7 +16,6 @@ import {
   IntakeEntityType,
 } from "../../../application/repository/intakeForm.repository";
 import {
-import { border as borderPalette, brand } from "../../themes/palette";
   FormDesignSettings,
   DEFAULT_DESIGN_SETTINGS,
 } from "../IntakeFormBuilder/types";
@@ -56,7 +55,7 @@ function GradientBanner({
   logoSrc?: string | null;
   children?: React.ReactNode;
 }) {
-  const gradient = buildGradient(colorTheme || brand.primary);
+  const gradient = buildGradient(colorTheme || "#13715B");
   return (
     <Box
       sx={{
@@ -311,7 +310,7 @@ export function PublicIntakeForm() {
       >
         <Loader2
           size={32}
-          color=brand.primary
+          color="#13715B"
           style={{ animation: "spin 1s linear infinite" }}
         />
         <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
@@ -388,7 +387,7 @@ export function PublicIntakeForm() {
             borderRadius: "12px",
             overflow: "hidden",
             backgroundColor: "#fff",
-            border: `1px solid ${borderPalette.dark}`,
+            border: "1px solid #d0d5dd",
             boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
           }}
         >

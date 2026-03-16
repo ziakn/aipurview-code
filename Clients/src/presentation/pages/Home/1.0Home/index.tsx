@@ -15,7 +15,6 @@ import { CirclePlus as AddCircleOutlineIcon } from "lucide-react";
 import StandardModal from "../../../components/Modals/StandardModal";
 import AiOrNotScreening from "../../../components/Modals/AiOrNotScreening";
 import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtended";
-import { brand } from "../../../themes/palette";
 
 const Home = () => {
   const location = useLocation();
@@ -104,8 +103,8 @@ const Home = () => {
               variant="contained"
               text="New use case"
               sx={{
-                backgroundColor: brand.primary,
-                border: `1px solid ${brand.primary}`,
+                backgroundColor: "#13715B",
+                border: "1px solid #13715B",
                 gap: 2,
               }}
               icon={<AddCircleOutlineIcon size={16} />}

@@ -6,7 +6,6 @@ import pdfIcon from '../../assets/icons/pdf_icon.svg';
 import csvIcon from '../../assets/icons/csv_icon.svg';
 import xlsIcon from '../../assets/icons/xls_icon.svg';
 import { singleTheme } from '../../themes';
-import { background, status } from "../../themes/palette";
 
 interface ExportColumn {
   id: string;
@@ -107,7 +106,7 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({
             fontSize: '13px',
             padding: '8px 12px',
             '&:hover': {
-              backgroundColor: `${background.accent} !important`,
+              backgroundColor: '#f9fafb !important',
             }
           }}
         >
@@ -130,9 +129,9 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            backgroundColor: exportAnchorEl ? background.accent : 'transparent',
+            backgroundColor: exportAnchorEl ? '#f9fafb' : 'transparent',
             '&:hover': {
-              backgroundColor: `${background.accent} !important`,
+              backgroundColor: '#f9fafb !important',
             }
           }}
         >
@@ -140,7 +139,7 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({
             primary="Export"
             primaryTypographyProps={{ fontSize: '13px' }}
           />
-          <ChevronRight size={16} color=status.default.text />
+          <ChevronRight size={16} color="#6b7280" />
         </MenuItem>
       </Menu>
 
@@ -172,7 +171,7 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({
             gap: '12px',
             alignItems: 'center',
             '&:hover': {
-              backgroundColor: background.accent,
+              backgroundColor: '#f9fafb',
             }
           }}
         >
@@ -192,7 +191,7 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({
             gap: '12px',
             alignItems: 'center',
             '&:hover': {
-              backgroundColor: background.accent,
+              backgroundColor: '#f9fafb',
             }
           }}
         >
@@ -212,7 +211,7 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({
             gap: '12px',
             alignItems: 'center',
             '&:hover': {
-              backgroundColor: background.accent,
+              backgroundColor: '#f9fafb',
             }
           }}
         >

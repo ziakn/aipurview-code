@@ -3,7 +3,6 @@ import { CustomizableButton } from "../button/customizable-button";
 import { AuditRiskTable } from "../Table/AuditRiskTable/AuditRiskTable";
 import { useState } from "react";
 import { IAuditRiskModalProps } from "../../../domain/interfaces/i.riskForm";
-import { background, brand, text } from "../../themes/palette";
 
 export const AuditRiskPopup: React.FC<IAuditRiskModalProps> = ({
   onClose,
@@ -35,7 +34,7 @@ export const AuditRiskPopup: React.FC<IAuditRiskModalProps> = ({
     <Stack
       sx={{
         width: "100%",
-        backgroundColor: background.alt,
+        backgroundColor: "#FCFCFD",
         padding: 10,
         borderRadius: "4px",
         gap: 10,
@@ -53,7 +52,7 @@ export const AuditRiskPopup: React.FC<IAuditRiskModalProps> = ({
           <Typography
             sx={{
               fontSize: 16,
-              color: text.secondary,
+              color: "#344054",
               fontWeight: "bold",
             }}
           >
@@ -69,7 +68,7 @@ export const AuditRiskPopup: React.FC<IAuditRiskModalProps> = ({
           <Typography
             sx={{
               fontSize: "14px",
-              color: text.tertiary,
+              color: "#475467",
             }}
           >
             This section has been been marked as done, but there's still a risk
@@ -97,7 +96,7 @@ export const AuditRiskPopup: React.FC<IAuditRiskModalProps> = ({
           <Typography
             sx={{
               fontSize: "14px",
-              color: text.tertiary,
+              color: "#475467",
             }}
           >
             Marking it as done doesn't automatically resolve this risk. What
@@ -115,9 +114,9 @@ export const AuditRiskPopup: React.FC<IAuditRiskModalProps> = ({
       >
         <CustomizableButton
           sx={{
-            backgroundColor: brand.primary,
+            backgroundColor: "#13715B",
             color: "#fff",
-            border: `1px solid ${brand.primary}`,
+            border: "1px solid #13715B",
           }}
           variant="contained"
           text="Keep risk as is"
@@ -125,9 +124,9 @@ export const AuditRiskPopup: React.FC<IAuditRiskModalProps> = ({
         />
         <CustomizableButton
           sx={{
-            backgroundColor: brand.primary,
+            backgroundColor: "#13715B",
             color: "#fff",
-            border: `1px solid ${brand.primary}`,
+            border: "1px solid #13715B",
           }}
           variant="contained"
           text="Unlink risk"

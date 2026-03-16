@@ -5,7 +5,6 @@ import RiskHeatMap from "./RiskHeatMap";
 import RiskCategories from "./RiskCategories";
 import TabBar from "../TabBar";
 import { IRiskVisualizationTabsProps } from "../../types/interfaces/i.risk";
-import { status } from "../../themes/palette";
 
 const RiskVisualizationTabs: React.FC<IRiskVisualizationTabsProps> = ({
   risks,
@@ -33,7 +32,7 @@ const RiskVisualizationTabs: React.FC<IRiskVisualizationTabsProps> = ({
         <Box
           sx={{
             backgroundColor: "#FFFFFF",
-            border: `1px solid ${status.default.border}`,
+            border: "1px solid #E5E7EB",
             borderRadius: 2,
             borderTop: "none",
             borderTopLeftRadius: 0,

@@ -40,7 +40,6 @@ import { PLUGIN_SLOTS } from "../../../domain/constants/pluginSlots";
 import { usePluginRegistry } from "../../../application/contexts/PluginRegistry.context";
 import { apiServices } from "../../../infrastructure/api/networkServices";
 import {
-import { text } from "../../themes/palette";
   riskMainStackStyle,
   riskFilterRowStyle,
   analyticsIconButtonStyle,
@@ -791,7 +790,7 @@ const RiskManagement = () => {
                 aria-label="Analytics"
                 sx={analyticsIconButtonStyle}
               >
-                <BarChart3 size={16} color=text.secondary />
+                <BarChart3 size={16} color="#344054" />
               </IconButton>
             </div>
             <div data-joyride-id="add-risk-button">

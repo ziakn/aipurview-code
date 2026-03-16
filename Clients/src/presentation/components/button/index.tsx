@@ -1,6 +1,5 @@
 import React, { memo } from "react";
 import {
-import { brand } from "../../themes/palette";
   Button as MUIButton,
   ButtonProps as MUIButtonProps,
   useTheme,
@@ -74,8 +73,8 @@ const Button = memo(React.forwardRef<HTMLButtonElement, ButtonProps>(function Bu
     fontSize: 11,
     px: 2, // Horizontal padding for better spacing
     py: 0.5, // Vertical padding for better text spacing
-    border: `1px solid ${theme.palette.primary.main || brand.primary}`,
-    backgroundColor: theme.palette.primary.main || brand.primary,
+    border: `1px solid ${theme.palette.primary.main || '#13715B'}`,
+    backgroundColor: theme.palette.primary.main || '#13715B',
     color: theme.palette.primary.contrastText || 'white',
     textTransform: 'none', // Prevent uppercase transformation
     fontWeight: 500,
@@ -99,7 +98,7 @@ const Button = memo(React.forwardRef<HTMLButtonElement, ButtonProps>(function Bu
     
     // Focus effects for accessibility
     '&:focus': {
-      outline: `2px solid ${theme.palette.primary.main || brand.primary}`,
+      outline: `2px solid ${theme.palette.primary.main || '#13715B'}`,
       outlineOffset: '2px',
     },
     

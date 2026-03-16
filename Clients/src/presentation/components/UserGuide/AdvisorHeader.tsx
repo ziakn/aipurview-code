@@ -3,7 +3,6 @@ import { Maximize2, Minimize2, X } from "lucide-react";
 import { colors, typography, spacing, border } from "./styles/theme";
 import { getLLMKeys } from "../../../application/repository/llmKeys.repository";
 import { LLMKeysModel } from "../../../domain/models/Common/llmKeys/llmKeys.model";
-import { status } from "../../themes/palette";
 
 interface AdvisorHeaderProps {
   onClose: () => void;
@@ -112,7 +111,7 @@ const AdvisorHeader: FC<AdvisorHeaderProps> = ({
                 fontSize: typography.fontSize.xs,
                 padding: `4px 8px`,
                 borderRadius: border.radius,
-                border: `1px solid ${colors.border?.default || status.default.border}`,
+                border: `1px solid ${colors.border?.default || "#e5e7eb"}`,
                 backgroundColor: colors.background.white,
                 color: colors.text.primary,
                 cursor: "pointer",

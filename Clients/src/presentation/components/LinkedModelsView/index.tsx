@@ -19,7 +19,6 @@ import { ModelInventoryStatus } from "../../../domain/enums/modelInventory.enum"
 import { EmptyState } from "../EmptyState";
 import { VWLink } from "../Link";
 import InfoBox from "../InfoBox";
-import { background, status } from "../../themes/palette";
 
 const TABLE_COLUMNS = [
   { id: "provider", label: "PROVIDER" },
@@ -30,10 +29,10 @@ const TABLE_COLUMNS = [
 
 function StatusBadge({ status }: { status: ModelInventoryStatus }) {
   const statusStyles = {
-    [ModelInventoryStatus.APPROVED]: { bg: status.success.bg, color: status.success.text },
-    [ModelInventoryStatus.PENDING]: { bg: status.warning.bg, color: status.warning.text },
+    [ModelInventoryStatus.APPROVED]: { bg: "#E6F4EA", color: "#138A5E" },
+    [ModelInventoryStatus.PENDING]: { bg: "#FFF8E1", color: "#795548" },
     [ModelInventoryStatus.RESTRICTED]: { bg: "#FFE5D0", color: "#E64A19" },
-    [ModelInventoryStatus.BLOCKED]: { bg: status.error.bg, color: status.error.text },
+    [ModelInventoryStatus.BLOCKED]: { bg: "#FFD6D6", color: "#D32F2F" },
   };
 
   const style = statusStyles[status] || { bg: "#E0E0E0", color: "#424242" };
@@ -176,10 +175,10 @@ export function LinkedModelsView({
                     ...singleTheme.tableStyles.primary.body.row,
                     "&:hover": {
                       cursor: model.id ? "pointer" : "default",
-                      backgroundColor: background.accent,
+                      backgroundColor: "#F9FAFB",
                     },
                     "&:hover td": {
-                      backgroundColor: background.accent,
+                      backgroundColor: "#F9FAFB",
                     },
                   }}
                 >

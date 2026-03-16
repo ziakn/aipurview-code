@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { Stack, Typography, LinearProgress, useTheme } from "@mui/material";
 import { styles } from "./styles";
 import { IStatusProps } from "../../../../../domain/interfaces/i.status";
-import { brand } from "../../../../themes/palette";
 
 const STANDARD_DURATION = 10; // seconds
 const AI_DURATION = 30; // seconds
@@ -80,7 +79,7 @@ const DownloadReportForm: React.FC<IStatusProps> = ({
               mb: 2,
               backgroundColor: theme.palette.border.light,
               "& .MuiLinearProgress-bar": {
-                backgroundColor: brand.primary,
+                backgroundColor: "#13715B",
                 borderRadius: 3,
                 transition: "transform 0.5s ease",
               },

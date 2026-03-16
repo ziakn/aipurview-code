@@ -1,6 +1,5 @@
 import { SxProps, Theme } from "@mui/material";
 import { layoutStyles } from "../../../themes";
-import { brand, status } from "../../../themes/palette";
 
 export const containerStyle: SxProps<Theme> = {
   width: "100%",
@@ -52,7 +51,7 @@ export const addButtonStyle: SxProps<Theme> = (theme) => ({
   borderRadius: theme.spacing(1),
   boxShadow: "none",
   "&:hover": {
-    backgroundColor: theme.palette.primary.dark || brand.primaryDark,
+    backgroundColor: theme.palette.primary.dark || "#10614d",
     boxShadow: "none",
   },
   "&:focus": {
@@ -88,7 +87,7 @@ export const modalHeaderStyle: SxProps<Theme> = (theme) => ({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  borderBottom: `1px solid ${theme.palette.border?.light || status.default.border}`,
+  borderBottom: `1px solid ${theme.palette.border?.light || "#E5E7EB"}`,
   padding: theme.spacing(1),
   marginBottom: theme.spacing(2),
 });
@@ -119,7 +118,7 @@ export const frameworkCardStyle: SxProps<Theme> = (theme) => ({
 
 export const frameworkCardTitleStyle: SxProps<Theme> = {
   fontWeight: 500,
-  color: text.primary,
+  color: "text.primary",
   fontSize: 16,
 };
 
@@ -132,7 +131,7 @@ export const frameworkCardAddedStyle: SxProps<Theme> = {
 };
 
 export const frameworkCardDescriptionStyle: SxProps<Theme> = {
-  color: text.tertiary,
+  color: "text.tertiary",
   fontSize: 14,
   textAlign: "left",
 };
@@ -150,7 +149,7 @@ export const modalDoneButtonStyle: SxProps<Theme> = (theme) => ({
   px: 4,
   py: 1,
   "&:hover": {
-    backgroundColor: theme.palette.primary.dark || brand.primaryDark,
+    backgroundColor: theme.palette.primary.dark || "#10614d",
     boxShadow: "none",
   },
   "&:focus": {

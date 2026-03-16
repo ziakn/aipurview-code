@@ -15,7 +15,6 @@ import { Info as GreyCircleInfoIcon } from "lucide-react";
 import RichTextEditor from "../../../../components/RichTextEditor";
 import { priorities, PriorityLevel } from "../priorities";
 import { Topic } from "../../../../../application/hooks/useAssessmentAnswers";
-import { background, border as borderPalette, text } from "../../../../themes/palette";
 
 interface AssessmentQuestionsProps {
   assessmentsValues: Topic[];
@@ -71,7 +70,7 @@ const AssessmentQuestions = ({
     <>
       {assessmentsValues[activeTab]?.subtopics.map((subtopic) => (
         <Stack key={subtopic.id} mb={15}>
-          <Typography sx={{ fontSize: 16, color: text.secondary }}>
+          <Typography sx={{ fontSize: 16, color: "#344054" }}>
             {subtopic.name}
           </Typography>
           {subtopic.questions.map((question) => (
@@ -83,14 +82,14 @@ const AssessmentQuestions = ({
                 alignItems="center"
                 bgcolor={"#FBFAFA"}
                 sx={{
-                  border: `1px solid ${borderPalette.dark}`,
+                  border: "1px solid #D0D5DD",
                   borderBottom: "none",
                   borderRadius: "4px 4px 0 0",
                   gap: 4,
                   justifyContent: "space-between",
                 }}
               >
-                <Typography sx={{ fontSize: 13, color: text.secondary }}>
+                <Typography sx={{ fontSize: 13, color: "#344054" }}>
                   {question.questionText}
                   {question.hint && (
                     <Box component="span" ml={2}>
@@ -137,10 +136,10 @@ const AssessmentQuestions = ({
                 headerSx={{
                   borderRadius: 0,
                   BorderTop: "none",
-                  borderColor: borderPalette.dark,
+                  borderColor: "#D0D5DD",
                 }}
                 bodySx={{
-                  borderColor: borderPalette.dark,
+                  borderColor: "#D0D5DD",
                   borderRadius: "0 0 4px 4px",
                   "& .ProseMirror > p": {
                     margin: 0,
@@ -164,12 +163,12 @@ const AssessmentQuestions = ({
                     minWidth: 155,      // ✅ minimum width
                     height: 25,
                     fontSize: 11,
-                    border: `1px solid ${borderPalette.dark}`,
+                    border: "1px solid #D0D5DD",
                     backgroundColor: "white",
-                    color: text.secondary,
+                    color: "#344054",
                     "&:hover": {
-                      backgroundColor: background.accent,
-                      border: `1px solid ${borderPalette.dark}`,
+                      backgroundColor: "#F9FAFB",
+                      border: "1px solid #D0D5DD",
                     },
                   }}
                   disableRipple={
@@ -180,7 +179,7 @@ const AssessmentQuestions = ({
                   Add, remove or download evidence
                 </Button>
                 <Typography
-                  sx={{ fontSize: 11, color: text.secondary, fontWeight: "300" }}
+                  sx={{ fontSize: 11, color: "#344054", fontWeight: "300" }}
                 >
                   {question.isRequired === true ? "required" : ""}
                 </Typography>

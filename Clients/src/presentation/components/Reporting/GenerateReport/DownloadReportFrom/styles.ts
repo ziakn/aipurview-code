@@ -1,4 +1,3 @@
-import { text } from "../../../../themes/palette";
 export const styles = {
   container: {
     textAlign: 'center', 
@@ -6,12 +5,12 @@ export const styles = {
   },
   titleText: {
     fontSize: 16,
-    color: text.secondary,
+    color: "#344054",
     fontWeight: "bold",
     mb: 2
   },
   baseText: {
-    color: text.secondary,
+    color: "#344054",
     fontSize: 13,
   }
 }

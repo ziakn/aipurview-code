@@ -3,7 +3,6 @@ import { Box, Typography, Stack } from "@mui/material";
 import { OnboardingStepProps } from "../../../types/interfaces/i.onboarding";
 import { AlertTriangle, CheckCircle, Clock, Users } from "lucide-react";
 import onboardingBanner from "../../../assets/onboarding-banner.svg";
-import { status, text } from "../../../themes/palette";
 
 const RiskManagementStep: React.FC<OnboardingStepProps> = () => {
   const capabilities = [
@@ -73,7 +72,7 @@ const RiskManagementStep: React.FC<OnboardingStepProps> = () => {
         <Typography
           sx={{
             fontSize: "14px",
-            color: text.icon,
+            color: "#667085",
             marginBottom: 3,
             lineHeight: 1.6,
           }}
@@ -95,7 +94,7 @@ const RiskManagementStep: React.FC<OnboardingStepProps> = () => {
             sx={{
               padding: 10,
               background: `linear-gradient(135deg, ${capability.color}08 0%, transparent 100%)`,
-              border: `1px solid ${status.default.border}`,
+              border: "1px solid #E5E7EB",
               borderRadius: "4px",
               display: "flex",
               flexDirection: "column",
@@ -125,7 +124,7 @@ const RiskManagementStep: React.FC<OnboardingStepProps> = () => {
             >
               {capability.title}
             </Typography>
-            <Typography sx={{ fontSize: "12px", color: status.default.text }}>
+            <Typography sx={{ fontSize: "12px", color: "#6B7280" }}>
               {capability.description}
             </Typography>
           </Box>

@@ -35,7 +35,6 @@ import { TABLE_COLUMNS, WARNING_MESSAGES } from "./constants";
 import { GroupBy } from "../../../components/Table/GroupBy";
 import { useTableGrouping, useGroupByState } from "../../../../application/hooks/useTableGrouping";
 import { GroupedTableView } from "../../../components/Table/GroupedTableView";
-import { background } from "../../../themes/palette";
 
 interface FormData {
   info?: {
@@ -80,7 +79,7 @@ const SubprocessorTableRow: React.FC<{
         sx={{
           cursor: "pointer",
           textTransform: "none !important",
-          backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("url") ? background.surface : "inherit",
+          backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("url") ? "#f5f5f5" : "inherit",
         }}
       >
         <Typography sx={styles.tableDataCell}>{subprocessor.url.replace(/^https?:\/\//, "")}</Typography>
@@ -90,7 +89,7 @@ const SubprocessorTableRow: React.FC<{
         sx={{
           cursor: "pointer",
           textTransform: "none !important",
-          backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("purpose") ? background.surface : "inherit",
+          backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("purpose") ? "#f5f5f5" : "inherit",
         }}
       >
         <Typography sx={styles.tableDataCell}>
@@ -102,7 +101,7 @@ const SubprocessorTableRow: React.FC<{
         sx={{
           cursor: "pointer",
           textTransform: "none !important",
-          backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("location") ? background.surface : "inherit",
+          backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("location") ? "#f5f5f5" : "inherit",
         }}
       >
         <Typography sx={styles.tableDataCell}>
@@ -111,7 +110,7 @@ const SubprocessorTableRow: React.FC<{
       </TableCell>
       <TableCell
         sx={{
-          backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("action") ? background.surface : "inherit",
+          backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("action") ? "#f5f5f5" : "inherit",
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>

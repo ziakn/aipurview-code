@@ -11,7 +11,6 @@ import { setAuthToken, setExpiration, setOnboardingStatus, setIsOrgCreator } fro
 import Alert from "../../../components/Alert";
 import { ENV_VARs } from "../../../../../env.vars";
 import { loginUser } from "../../../../application/repository/user.repository";
-import { brand, status } from "../../../themes/palette";
 
 // Animated loading component specifically for login
 const LoginLoadingOverlay: React.FC = () => {
@@ -73,10 +72,10 @@ const LoginLoadingOverlay: React.FC = () => {
                       animationDelay: `${totalIndex * 0.1}s`,
                       "@keyframes colorWave": {
                         "0%, 100%": {
-                          color: status.default.text,
+                          color: "#6b7280",
                         },
                         "50%": {
-                          color: brand.primary,
+                          color: "#13715B",
                         },
                       },
                     }}

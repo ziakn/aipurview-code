@@ -1,5 +1,4 @@
-import { brand } from "../../themes/palette";
-export const tabIndicatorStyle = { style: { backgroundColor: brand.primary } };
+export const tabIndicatorStyle = { style: { backgroundColor: "#13715B" } };
 
 export const tabContainerStyle = {
   minHeight: "20px",
@@ -15,6 +14,6 @@ export const settingTabStyle = {
   minWidth: "auto",
   minHeight: "20px",
   "&.Mui-selected": {
-    color: brand.primary,
+    color: "#13715B",
   },
 };

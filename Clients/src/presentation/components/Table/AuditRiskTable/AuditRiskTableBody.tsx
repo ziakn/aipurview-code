@@ -28,7 +28,6 @@ import Chip from "../../Chip";
 import { useSearchParams } from "react-router-dom";
 import { CustomizableButton } from "../../button/customizable-button";
 import {
-import { brand } from "../../../themes/palette";
   IAuditRiskTableBodyProps,
   ITypeRisk,
 } from "../../../types/interfaces/i.table";
@@ -136,9 +135,9 @@ export const AuditRiskTableBody: React.FC<IAuditRiskTableBodyProps> = ({
                 <TableCell>
                   <CustomizableButton
                     sx={{
-                      backgroundColor: brand.primary,
+                      backgroundColor: "#13715B",
                       color: "#fff",
-                      border: `1px solid ${brand.primary}`,
+                      border: "1px solid #13715B",
                     }}
                     variant="contained"
                     text="View"

@@ -1,4 +1,3 @@
-import { brand } from "../../../themes/palette";
 import { Theme } from "@mui/material";
 
 export const getToggleStyles = (theme: Theme) => ({
@@ -14,7 +13,7 @@ export const getToggleStyles = (theme: Theme) => ({
       transform: 'translateX(16px)',
       color: '#fff',
       '& + .MuiSwitch-track': {
-        backgroundColor: brand.primary,
+        backgroundColor: '#13715B',
         opacity: 1,
         border: 0,
       },

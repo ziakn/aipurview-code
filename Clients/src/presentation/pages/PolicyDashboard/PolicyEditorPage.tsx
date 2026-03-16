@@ -115,7 +115,6 @@ import { checkStringValidation } from "../../../application/validations/stringVa
 import { store } from "../../../application/redux/store";
 import policyTemplates from "../../../application/data/PolicyTemplates.json";
 import { PageBreadcrumbs } from "../../components/breadcrumbs/PageBreadcrumbs";
-import { background, border as borderPalette, brand, status, text } from "../../themes/palette";
 
 // ── Auth image node view with resize ─────────────────────────────────
 const AuthImage: React.FC<NodeViewProps> = ({ node, updateAttributes, selected }) => {
@@ -200,7 +199,7 @@ const AuthImage: React.FC<NodeViewProps> = ({ node, updateAttributes, selected }
             position: "relative",
             display: "inline-block",
             margin: "12px 0",
-            outline: selected ? `2px solid ${brand.primary}` : "none",
+            outline: selected ? "2px solid #13715B" : "none",
             borderRadius: 8,
           }}
         >
@@ -224,7 +223,7 @@ const AuthImage: React.FC<NodeViewProps> = ({ node, updateAttributes, selected }
                 bottom: -5,
                 width: 12,
                 height: 12,
-                backgroundColor: brand.primary,
+                backgroundColor: "#13715B",
                 border: "2px solid #fff",
                 borderRadius: 2,
                 cursor: "nwse-resize",
@@ -750,7 +749,7 @@ export default function PolicyEditorPage() {
 
   // ── Color palette ────────────────────────────────────────────────
   const colorPalette = [
-    text.black, text.secondary, text.tertiary, text.icon,
+    "#000000", "#344054", "#475467", "#667085",
     "#dc2626", "#ea580c", "#d97706", "#ca8a04",
     "#16a34a", "#059669", "#0d9488", "#0891b2",
     "#2563eb", "#4f46e5", "#7c3aed", "#9333ea",
@@ -1389,11 +1388,11 @@ export default function PolicyEditorPage() {
           sx={{
             p: 4,
             textAlign: "center",
-            border: `1px solid ${borderPalette.dark}`,
+            border: "1px solid #d0d5dd",
             borderRadius: "4px",
           }}
         >
-          <Typography sx={{ color: text.secondary, mb: 2 }}>{loadError}</Typography>
+          <Typography sx={{ color: "#344054", mb: 2 }}>{loadError}</Typography>
           <CustomizableButton
             variant="outlined"
             text="Back to policies"
@@ -1484,14 +1483,14 @@ export default function PolicyEditorPage() {
                 sx={{
                   padding: "4px",
                   borderRadius: "4px",
-                  color: text.muted,
-                  "&:hover": { backgroundColor: "#F2F4F7", color: text.secondary },
+                  color: "#98A2B3",
+                  "&:hover": { backgroundColor: "#F2F4F7", color: "#344054" },
                 }}
               >
                 <ArrowLeft size={18} />
               </IconButton>
             </Tooltip>
-            <Typography sx={{ fontSize: 16, color: text.secondary, fontWeight: 600 }}>
+            <Typography sx={{ fontSize: 16, color: "#344054", fontWeight: 600 }}>
               {pageTitle}
             </Typography>
           </Stack>
@@ -1520,7 +1519,7 @@ export default function PolicyEditorPage() {
                   onClick={() => setIsHistorySidebarOpen((prev) => !prev)}
                   size="small"
                   sx={{
-                    color: isHistorySidebarOpen ? brand.primary : text.muted,
+                    color: isHistorySidebarOpen ? "#13715B" : "#98A2B3",
                     padding: "4px",
                     borderRadius: "4px",
                     backgroundColor: isHistorySidebarOpen
@@ -1553,18 +1552,18 @@ export default function PolicyEditorPage() {
                   isDisabled={isExportingPDF || isExportingDOCX}
                   sx={{
                     backgroundColor: "#fff",
-                    border: `1px solid ${borderPalette.dark}`,
-                    color: text.secondary,
+                    border: "1px solid #D0D5DD",
+                    color: "#344054",
                     gap: 1,
                     minWidth: "90px",
                     "&:hover": {
-                      backgroundColor: background.accent,
-                      borderColor: text.muted,
+                      backgroundColor: "#F9FAFB",
+                      borderColor: "#98A2B3",
                     },
                     "&:disabled": {
-                      backgroundColor: background.accent,
+                      backgroundColor: "#F9FAFB",
                       borderColor: "#E4E7EC",
-                      color: text.muted,
+                      color: "#98A2B3",
                     },
                   }}
                   onClick={(e: React.MouseEvent<HTMLElement>) =>
@@ -1624,7 +1623,7 @@ export default function PolicyEditorPage() {
                         cursor: "pointer",
                         borderRadius: "4px",
                         fontSize: 13,
-                        color: text.secondary,
+                        color: "#344054",
                         width: "100%",
                         textAlign: "left",
                         "&:hover": { backgroundColor: "#F2F4F7" },
@@ -1645,18 +1644,18 @@ export default function PolicyEditorPage() {
               isDisabled={isImporting}
               sx={{
                 backgroundColor: "#fff",
-                border: `1px solid ${borderPalette.dark}`,
-                color: text.secondary,
+                border: "1px solid #D0D5DD",
+                color: "#344054",
                 gap: 1,
                 minWidth: "90px",
                 "&:hover": {
-                  backgroundColor: background.accent,
-                  borderColor: text.muted,
+                  backgroundColor: "#F9FAFB",
+                  borderColor: "#98A2B3",
                 },
                 "&:disabled": {
-                  backgroundColor: background.accent,
+                  backgroundColor: "#F9FAFB",
                   borderColor: "#E4E7EC",
-                  color: text.muted,
+                  color: "#98A2B3",
                 },
               }}
               onClick={() => docxInputRef.current?.click()}
@@ -1693,15 +1692,15 @@ export default function PolicyEditorPage() {
               }
               isDisabled={isSaving}
               sx={{
-                backgroundColor: saveSuccess ? "#079455" : brand.primary,
-                border: `1px solid ${saveSuccess ? "#079455" : brand.primary}`,
+                backgroundColor: saveSuccess ? "#079455" : "#13715B",
+                border: `1px solid ${saveSuccess ? "#079455" : "#13715B"}`,
                 gap: 2,
                 "&:hover": {
                   backgroundColor: saveSuccess ? "#079455" : "#0F5B4D",
                   borderColor: saveSuccess ? "#079455" : "#0F5B4D",
                 },
                 "&:disabled": {
-                  backgroundColor: brand.primary,
+                  backgroundColor: "#13715B",
                   opacity: 0.7,
                 },
               }}
@@ -1781,8 +1780,8 @@ export default function PolicyEditorPage() {
                   borderRadius: "3px",
                   backgroundColor: toolbarState[key] ? "#E0F7FA" : "#FFFFFF",
                   border: "1px solid",
-                  borderColor: toolbarState[key] ? brand.primary : "transparent",
-                  "&:hover": { backgroundColor: background.surface },
+                  borderColor: toolbarState[key] ? "#13715B" : "transparent",
+                  "&:hover": { backgroundColor: "#F5F5F5" },
                 }}
               >
                 {icon}
@@ -1793,10 +1792,10 @@ export default function PolicyEditorPage() {
           {/* Character / word count */}
           {editor && (
             <Box sx={{ ml: "auto", display: "flex", gap: 2, alignItems: "center" }}>
-              <Typography sx={{ fontSize: 11, color: text.muted }}>
+              <Typography sx={{ fontSize: 11, color: "#98A2B3" }}>
                 {editor.storage.characterCount.words()} words
               </Typography>
-              <Typography sx={{ fontSize: 11, color: text.muted }}>
+              <Typography sx={{ fontSize: 11, color: "#98A2B3" }}>
                 {editor.storage.characterCount.characters()} characters
               </Typography>
             </Box>
@@ -1815,7 +1814,7 @@ export default function PolicyEditorPage() {
               sx: {
                 p: 1.5,
                 borderRadius: "6px",
-                border: `1px solid ${borderPalette.dark}`,
+                border: "1px solid #D0D5DD",
                 boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
               },
             },
@@ -1850,9 +1849,9 @@ export default function PolicyEditorPage() {
               mt: 1,
               textAlign: "center",
               fontSize: 11,
-              color: text.icon,
+              color: "#667085",
               cursor: "pointer",
-              "&:hover": { color: text.secondary },
+              "&:hover": { color: "#344054" },
             }}
           >
             Reset to default
@@ -1877,7 +1876,7 @@ export default function PolicyEditorPage() {
               sx: {
                 width: 340,
                 borderRadius: "4px",
-                border: `1px solid ${borderPalette.dark}`,
+                border: "1px solid #D0D5DD",
                 boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
                 p: "16px",
               },
@@ -1909,10 +1908,10 @@ export default function PolicyEditorPage() {
                   sx={{
                     padding: "6px",
                     borderRadius: "4px",
-                    border: `1px solid ${borderPalette.dark}`,
-                    color: text.secondary,
-                    "&:hover": { backgroundColor: background.accent },
-                    "&:disabled": { color: borderPalette.dark, borderColor: borderPalette.light },
+                    border: "1px solid #D0D5DD",
+                    color: "#344054",
+                    "&:hover": { backgroundColor: "#F9FAFB" },
+                    "&:disabled": { color: "#D0D5DD", borderColor: "#EAECF0" },
                   }}
                 >
                   <ChevronUpIcon size={16} />
@@ -1926,10 +1925,10 @@ export default function PolicyEditorPage() {
                   sx={{
                     padding: "6px",
                     borderRadius: "4px",
-                    border: `1px solid ${borderPalette.dark}`,
-                    color: text.secondary,
-                    "&:hover": { backgroundColor: background.accent },
-                    "&:disabled": { color: borderPalette.dark, borderColor: borderPalette.light },
+                    border: "1px solid #D0D5DD",
+                    color: "#344054",
+                    "&:hover": { backgroundColor: "#F9FAFB" },
+                    "&:disabled": { color: "#D0D5DD", borderColor: "#EAECF0" },
                   }}
                 >
                   <ChevronDownIcon size={16} />
@@ -1939,7 +1938,7 @@ export default function PolicyEditorPage() {
 
             {/* Match count */}
             {searchText && (
-              <Typography sx={{ fontSize: 11, color: text.muted, mt: "-4px" }}>
+              <Typography sx={{ fontSize: 11, color: "#98A2B3", mt: "-4px" }}>
                 {searchMatchCount === 0
                   ? "No matches found"
                   : `${searchMatchCount} match${searchMatchCount !== 1 ? "es" : ""} found`}
@@ -1974,10 +1973,10 @@ export default function PolicyEditorPage() {
                       px: "10px",
                       fontSize: 12,
                       backgroundColor: "#fff",
-                      border: `1px solid ${borderPalette.dark}`,
-                      color: text.secondary,
+                      border: "1px solid #D0D5DD",
+                      color: "#344054",
                       whiteSpace: "nowrap",
-                      "&:hover": { backgroundColor: background.accent },
+                      "&:hover": { backgroundColor: "#F9FAFB" },
                     }}
                   />
                 </span>
@@ -1997,10 +1996,10 @@ export default function PolicyEditorPage() {
                   px: "10px",
                   fontSize: 12,
                   backgroundColor: "#fff",
-                  border: `1px solid ${borderPalette.dark}`,
-                  color: text.secondary,
+                  border: "1px solid #D0D5DD",
+                  color: "#344054",
                   whiteSpace: "nowrap",
-                  "&:hover": { backgroundColor: background.accent },
+                  "&:hover": { backgroundColor: "#F9FAFB" },
                 }}
               />
             </Box>
@@ -2019,7 +2018,7 @@ export default function PolicyEditorPage() {
               minWidth: 0,
               minHeight: 0,
               overflow: "auto",
-              border: `1px solid ${borderPalette.dark}`,
+              border: "1px solid #D0D5DD",
               borderRadius: "4px",
             }}
           >
@@ -2043,7 +2042,7 @@ export default function PolicyEditorPage() {
                     p: "4px",
                     alignItems: "center",
                     backgroundColor: "#fff",
-                    border: `1px solid ${borderPalette.dark}`,
+                    border: "1px solid #d0d5dd",
                     borderRadius: "6px",
                     boxShadow: "0 4px 12px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.08)",
                   }}
@@ -2062,7 +2061,7 @@ export default function PolicyEditorPage() {
                             borderRadius: "4px",
                             color: danger ? "#dc2626" : "#374151",
                             "&:hover": {
-                              backgroundColor: danger ? "#fef2f2" : background.hover,
+                              backgroundColor: danger ? "#fef2f2" : "#f3f4f6",
                             },
                           }}
                         >
@@ -2070,7 +2069,7 @@ export default function PolicyEditorPage() {
                         </IconButton>
                       </Tooltip>
                       {separator && (
-                        <Divider orientation="vertical" flexItem sx={{ mx: "2px", borderColor: status.default.border }} />
+                        <Divider orientation="vertical" flexItem sx={{ mx: "2px", borderColor: "#e5e7eb" }} />
                       )}
                     </React.Fragment>
                   ))}
@@ -2106,11 +2105,11 @@ export default function PolicyEditorPage() {
                 border-radius: 2px;
               }
               .policy-tiptap-editor .ProseMirror blockquote {
-                border-left: 3px solid borderPalette.dark;
+                border-left: 3px solid #d0d5dd;
                 margin: 8px 0;
                 padding: 8px 16px;
-                color: text.tertiary;
-                background-color: background.accent;
+                color: #475467;
+                background-color: #f9fafb;
                 border-radius: 0 4px 4px 0;
               }
               .policy-tiptap-editor .ProseMirror pre {
@@ -2136,7 +2135,7 @@ export default function PolicyEditorPage() {
               }
               .policy-tiptap-editor .ProseMirror hr {
                 border: none;
-                border-top: 1px solid borderPalette.dark;
+                border-top: 1px solid #d0d5dd;
                 margin: 16px 0;
               }
               .policy-tiptap-editor .ProseMirror table {
@@ -2148,7 +2147,7 @@ export default function PolicyEditorPage() {
               }
               .policy-tiptap-editor .ProseMirror th,
               .policy-tiptap-editor .ProseMirror td {
-                border: 1px solid borderPalette.dark;
+                border: 1px solid #d0d5dd;
                 padding: 8px 12px;
                 text-align: left;
                 vertical-align: top;
@@ -2162,8 +2161,8 @@ export default function PolicyEditorPage() {
               }
               /* Selected cell highlight */
               .policy-tiptap-editor .ProseMirror .selectedCell {
-                background-color: brand.primaryLight !important;
-                border-color: brand.primary !important;
+                background-color: #e6f0ec !important;
+                border-color: #13715B !important;
               }
               .policy-tiptap-editor .ProseMirror .selectedCell::after {
                 content: '';
@@ -2179,7 +2178,7 @@ export default function PolicyEditorPage() {
                 top: 0;
                 bottom: -2px;
                 width: 4px;
-                background-color: brand.primary;
+                background-color: #13715B;
                 cursor: col-resize;
                 z-index: 10;
               }
@@ -2239,14 +2238,14 @@ export default function PolicyEditorPage() {
                 width: 16px;
                 height: 16px;
                 cursor: pointer;
-                accent-color: brand.primary;
+                accent-color: #13715B;
               }
               .policy-tiptap-editor .ProseMirror ul[data-type="taskList"] li > div {
                 flex: 1;
               }
               .policy-tiptap-editor .ProseMirror ul[data-type="taskList"] li[data-checked="true"] > div > p {
                 text-decoration: line-through;
-                color: text.muted;
+                color: #98A2B3;
               }
               .policy-tiptap-editor .ProseMirror sup {
                 font-size: 0.75em;
@@ -2325,7 +2324,7 @@ export default function PolicyEditorPage() {
         isLoading={isImporting}
         title="Replace existing content?"
         body={
-          <Typography sx={{ fontSize: 13, color: text.tertiary }}>
+          <Typography sx={{ fontSize: 13, color: "#475467" }}>
             Importing this file will replace all current content in the editor.
             This action cannot be undone.
           </Typography>
@@ -2336,8 +2335,8 @@ export default function PolicyEditorPage() {
         onCancel={cancelImport}
         onProceed={confirmImport}
         confirmBtnSx={{
-          backgroundColor: brand.primary,
-          "&:hover": { backgroundColor: brand.primaryHover },
+          backgroundColor: "#13715B",
+          "&:hover": { backgroundColor: "#0F5A47" },
         }}
       />
     </>

@@ -1,4 +1,3 @@
-import { brand, text } from "../../themes/palette";
 // Export individual styles for use in components
 export const aiTrustCenterHeaderTitle = {
   color: "#1A1919",
@@ -9,7 +8,7 @@ export const aiTrustCenterHeaderTitle = {
 
 export const aiTrustCenterHeaderDesc = {
   fontSize: 13,
-  color: text.secondary,
+  color: "#344054",
 };
 
 export const aiTrustCenterTabStyle = {
@@ -21,7 +20,7 @@ export const aiTrustCenterTabStyle = {
   minHeight: "20px",
   minWidth: "auto",
   "&.Mui-selected": {
-    color: brand.primary,
+    color: "#13715B",
   },
 };
 
@@ -36,7 +35,7 @@ export const aiTrustCenterTabListStyle = {
 }; 
 
 export const aiTrustCenterPreviewButtonStyle = {
-  backgroundColor: brand.primary,
-  border: `1px solid ${brand.primary}`,
+  backgroundColor: "#13715B",
+  border: "1px solid #13715B",
   gap: 2,
 };

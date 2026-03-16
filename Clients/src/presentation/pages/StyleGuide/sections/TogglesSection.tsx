@@ -6,7 +6,6 @@ import Toggle from "../../../components/Inputs/Toggle";
 import ViewToggle from "../../../components/ViewToggle";
 import { ButtonToggle } from "../../../components/button-toggle";
 import CodeBlock from "../components/CodeBlock";
-import { brand } from "../../../themes/palette";
 
 // Code snippets
 const checkboxSnippets = {
@@ -287,7 +286,7 @@ const TogglesSection: React.FC = () => {
                 { property: "Border radius", value: "theme.shape.borderRadius" },
                 { property: "Ripple effect", value: "disabled" },
                 { property: "Label font size", value: "13px" },
-                { property: "Label color", value: text.tertiary },
+                { property: "Label color", value: "text.tertiary" },
               ]}
             />
           </Box>
@@ -385,7 +384,7 @@ const TogglesSection: React.FC = () => {
                 { property: "Thumb color", value: "#fff" },
                 { property: "Track radius", value: "4px" },
                 { property: "Thumb radius", value: "4px" },
-                { property: "Active color", value: brand.primary },
+                { property: "Active color", value: "#13715B" },
                 { property: "Inactive color", value: "border.light" },
                 { property: "Transition", value: "200ms" },
                 { property: "Ripple effect", value: "disabled" },
@@ -453,10 +452,10 @@ const TogglesSection: React.FC = () => {
                 { property: "Button padding", value: "6px 12px" },
                 { property: "Icon size", value: "16px" },
                 { property: "Border", value: "1px solid border.dark" },
-                { property: "Selected bg", value: brand.primary },
+                { property: "Selected bg", value: "#13715B" },
                 { property: "Selected color", value: "background.main" },
-                { property: "Unselected color", value: text.tertiary },
-                { property: "Hover bg", value: background.accent },
+                { property: "Unselected color", value: "text.tertiary" },
+                { property: "Hover bg", value: "background.accent" },
                 { property: "Options", value: "card | table" },
               ]}
             />

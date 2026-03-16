@@ -33,7 +33,6 @@ import { Command as CommandType, CommandContext } from '../../../application/com
 import { useWiseSearch, getEntityDisplayName } from '../../../application/hooks/useWiseSearch'
 import { SearchResult } from '../../../application/types/search.types'
 import './styles.css'
-import { brand } from "../../themes/palette";
 
 interface CommandPaletteProps {
   open: boolean
@@ -503,7 +502,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 padding: '3px 8px',
                 cursor: 'pointer',
                 fontSize: '12px',
-                color: reviewStatus ? brand.primary : '#666',
+                color: reviewStatus ? '#13715B' : '#666',
                 fontWeight: reviewStatus ? 500 : 400,
                 whiteSpace: 'nowrap',
                 transition: 'all 0.15s ease',
@@ -569,7 +568,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                         : 'transparent',
                       cursor: 'pointer',
                       fontSize: '13px',
-                      color: reviewStatus === option.value ? brand.primary : '#666',
+                      color: reviewStatus === option.value ? '#13715B' : '#666',
                       fontWeight: reviewStatus === option.value ? 500 : 400,
                       textAlign: 'left',
                       transition: 'all 0.1s ease',
@@ -630,7 +629,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
           {/* Loading state for search */}
           {isSearching && (
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 3 }}>
-              <CircularProgress size={20} sx={{ color: brand.primary }} />
+              <CircularProgress size={20} sx={{ color: '#13715B' }} />
               <Typography sx={{ ml: 2, color: '#666' }}>Searching...</Typography>
             </Box>
           )}
@@ -640,13 +639,13 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
             <Command.Empty className="command-empty">
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
                 <Search size={24} color="#999" />
-                <Typography color=text.secondary>
+                <Typography color="text.secondary">
                   {search
                     ? `No results found for "${search}"${reviewStatus ? ` with status "${REVIEW_STATUS_OPTIONS.find(o => o.value === reviewStatus)?.label}"` : ''}`
                     : `No files found with status "${REVIEW_STATUS_OPTIONS.find(o => o.value === reviewStatus)?.label}"`
                   }
                 </Typography>
-                <Typography variant="caption" color=text.secondary>
+                <Typography variant="caption" color="text.secondary">
                   {search ? 'Try different keywords or check spelling' : 'Try a different status or add a search term'}
                 </Typography>
               </Box>
@@ -660,7 +659,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 <Typography variant="caption" sx={{ color: '#999', fontWeight: 400 }}>
                   {actualTotalCount} result{actualTotalCount !== 1 ? 's' : ''} found
                   {reviewStatus && (
-                    <Typography component="span" variant="caption" sx={{ color: brand.primary, fontWeight: 500, ml: 0.5 }}>
+                    <Typography component="span" variant="caption" sx={{ color: '#13715B', fontWeight: 500, ml: 0.5 }}>
                       &middot; Filtered by: {REVIEW_STATUS_OPTIONS.find(o => o.value === reviewStatus)?.label}
                     </Typography>
                   )}
@@ -764,7 +763,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               )}
 
               <Command.Empty className="command-empty">
-                <Typography color=text.secondary>
+                <Typography color="text.secondary">
                   No commands found for "{search}"
                 </Typography>
               </Command.Empty>

@@ -29,7 +29,6 @@ import {
   setPaginationRowCount,
 } from "../../../../application/utils/paginationStorage";
 import { IReportTablePropsExtended } from "../../../types/interfaces/i.table";
-import { text } from "../../../themes/palette";
 
 const REPORTS_SORTING_KEY = "verifywise_reports_sorting";
 
@@ -114,7 +113,7 @@ const SortableTableHead: React.FC<{
                     sx={{
                       display: "flex",
                       alignItems: "center",
-                      color: sortConfig.key === column ? "primary.main" : text.disabled,
+                      color: sortConfig.key === column ? "primary.main" : "#9CA3AF",
                     }}
                   >
                     {sortConfig.key === column && sortConfig.direction === "asc" && (

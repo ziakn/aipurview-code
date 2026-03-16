@@ -7,7 +7,6 @@ import {
 } from "lucide-react";
 import { IViewMode } from "../../types/toggle.types";
 import { IViewToggleProps } from "../../types/toggle.types";
-import { brand } from "../../themes/palette";
 
 /**
  * ViewToggle - Reusable component for switching between card and table views
@@ -55,10 +54,10 @@ const ViewToggle: React.FC<IViewToggleProps> = ({
             padding: "6px 12px",
             height: "34px",
             "&.Mui-selected": {
-              backgroundColor: brand.primary,
+              backgroundColor: "#13715B",
               color: theme.palette.background.main,
               "&:hover": {
-                backgroundColor: brand.primary,
+                backgroundColor: "#13715B",
               },
             },
             "&:hover": {

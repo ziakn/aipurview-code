@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import { ResultsDisplayProps } from "./iQuestion";
 import { CustomizableButton } from "../../../components/button/customizable-button";
-import { brand, status } from "../../../themes/palette";
 
 const Results: React.FC<ResultsDisplayProps> = ({
   classification,
@@ -24,7 +23,7 @@ const Results: React.FC<ResultsDisplayProps> = ({
     switch (classification.level) {
       case "PROHIBITED":
         return {
-          color: status.error.text,
+          color: "#D32F2F",
           bgColor: "#FFEBEE",
           icon: <AlertCircle size={32} />,
           title: "Prohibited AI system",
@@ -95,7 +94,7 @@ const Results: React.FC<ResultsDisplayProps> = ({
             >
               {config.title}
             </Typography>
-            <Typography fontSize={13} color=text.primary>
+            <Typography fontSize={13} color="text.primary">
               {config.description}
             </Typography>
           </Stack>
@@ -119,8 +118,8 @@ const Results: React.FC<ResultsDisplayProps> = ({
             icon={<Save size={16} />}
             onClick={onSave}
             sx={{
-              backgroundColor: brand.primary,
-              border: `1px solid ${brand.primary}`,
+              backgroundColor: "#13715B",
+              border: "1px solid #13715B",
               "&:hover": {
                 backgroundColor: "#0F5A48",
               },

@@ -5,7 +5,6 @@ import { GetClausesByProjectFrameworkId } from "../../../../application/reposito
 import { GetAnnexesByProjectFrameworkId } from "../../../../application/repository/annex_struct_iso.repository";
 import { frameworkDashboardCardStyles } from "./styles";
 import {
-import { brand, status, text } from "../../../themes/palette";
   validateDataConsistency,
   createErrorLogData,
   type BaseFrameworkData
@@ -225,14 +224,14 @@ const AssignmentStatusCard = ({ frameworksData }: AssignmentStatusCardProps) => 
    * - Green Check: 100% complete (Fully assigned)
    */
   const getAssignmentIcon = (done: number, total: number) => {
-    if (total === 0) return <CircleDashed size={14} style={{ color: text.disabled }} />;
+    if (total === 0) return <CircleDashed size={14} style={{ color: "#9CA3AF" }} />;
     const percentage = (done / total) * 100;
     if (percentage === 0) return <CircleDashed size={14} style={{ color: "#DC2626" }} />;
     if (percentage < 30) return <CircleDashed size={14} style={{ color: "#DC2626" }} />;
     if (percentage < 60) return <CircleDot size={14} style={{ color: "#EA580C" }} />;
     if (percentage < 85) return <CircleDotDashed size={14} style={{ color: "#F59E0B" }} />;
-    if (percentage < 100) return <CircleDotDashed size={14} style={{ color: brand.primary }} />;
-    return <CircleCheck size={14} style={{ color: brand.primary }} />;
+    if (percentage < 100) return <CircleDotDashed size={14} style={{ color: "#13715B" }} />;
+    return <CircleCheck size={14} style={{ color: "#13715B" }} />;
   };
   return (
     <Box sx={frameworkDashboardCardStyles.cardContainer}>
@@ -287,7 +286,7 @@ const AssignmentStatusCard = ({ frameworksData }: AssignmentStatusCardProps) => 
                   <Box
                     sx={{
                       height: "1px",
-                      backgroundColor: status.default.border,
+                      backgroundColor: "#E5E7EB",
                       mx: "-16px", // Extend to card edges
                       mb: 4,
                       mt: 1,
@@ -300,7 +299,7 @@ const AssignmentStatusCard = ({ frameworksData }: AssignmentStatusCardProps) => 
                     fontSize: 13,
                     fontWeight: 500,
                     mb: 2,
-                    color: text.black,
+                    color: "#000000",
                   }}
                 >
                   {framework.frameworkName}
@@ -323,10 +322,10 @@ const AssignmentStatusCard = ({ frameworksData }: AssignmentStatusCardProps) => 
                         </Typography>
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                           {getAssignmentIcon(data.assigned, data.total)}
-                          <Typography sx={{ fontSize: 12, color: text.black, fontWeight: 500 }}>
+                          <Typography sx={{ fontSize: 12, color: "#000000", fontWeight: 500 }}>
                             {data.assigned}
                           </Typography>
-                          <Typography sx={{ fontSize: 12, color: text.black, fontWeight: 500 }}>
+                          <Typography sx={{ fontSize: 12, color: "#000000", fontWeight: 500 }}>
                             /
                           </Typography>
                           <Typography sx={{ fontSize: 12, color: "#999999", fontWeight: 500 }}>
@@ -358,7 +357,7 @@ const AssignmentStatusCard = ({ frameworksData }: AssignmentStatusCardProps) => 
                   <Box
                     sx={{
                       height: "1px",
-                      backgroundColor: status.default.border,
+                      backgroundColor: "#E5E7EB",
                       mx: "-16px", // Extend to card edges
                       mb: 4,
                       mt: 1,
@@ -371,7 +370,7 @@ const AssignmentStatusCard = ({ frameworksData }: AssignmentStatusCardProps) => 
                     fontSize: 13,
                     fontWeight: 500,
                     mb: 2,
-                    color: text.black,
+                    color: "#000000",
                   }}
                 >
                   {framework.frameworkName}
@@ -393,7 +392,7 @@ const AssignmentStatusCard = ({ frameworksData }: AssignmentStatusCardProps) => 
                 <Box
                   sx={{
                     height: "1px",
-                    backgroundColor: status.default.border,
+                    backgroundColor: "#E5E7EB",
                     mx: "-16px", // Extend to card edges
                     mb: 4,
                     mt: 1,
@@ -406,7 +405,7 @@ const AssignmentStatusCard = ({ frameworksData }: AssignmentStatusCardProps) => 
                   fontSize: 13,
                   fontWeight: 500,
                   mb: 2,
-                  color: text.black,
+                  color: "#000000",
                 }}
               >
                 {framework.frameworkName}
@@ -428,10 +427,10 @@ const AssignmentStatusCard = ({ frameworksData }: AssignmentStatusCardProps) => 
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     {/* Status icon with color-coded completion indicator */}
                     {getAssignmentIcon(counts.clauseAssigned, counts.clauseTotal)}
-                    <Typography sx={{ fontSize: 12, color: text.black, fontWeight: 500 }}>
+                    <Typography sx={{ fontSize: 12, color: "#000000", fontWeight: 500 }}>
                       {counts.clauseAssigned}
                     </Typography>
-                    <Typography sx={{ fontSize: 12, color: text.black, fontWeight: 500 }}>
+                    <Typography sx={{ fontSize: 12, color: "#000000", fontWeight: 500 }}>
                       /
                     </Typography>
                     <Typography sx={{ fontSize: 12, color: "#999999", fontWeight: 500 }}>
@@ -457,10 +456,10 @@ const AssignmentStatusCard = ({ frameworksData }: AssignmentStatusCardProps) => 
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     {/* Status icon with color-coded completion indicator */}
                     {getAssignmentIcon(counts.annexAssigned, counts.annexTotal)}
-                    <Typography sx={{ fontSize: 12, color: text.black, fontWeight: 500 }}>
+                    <Typography sx={{ fontSize: 12, color: "#000000", fontWeight: 500 }}>
                       {counts.annexAssigned}
                     </Typography>
-                    <Typography sx={{ fontSize: 12, color: text.black, fontWeight: 500 }}>
+                    <Typography sx={{ fontSize: 12, color: "#000000", fontWeight: 500 }}>
                       /
                     </Typography>
                     <Typography sx={{ fontSize: 12, color: "#999999", fontWeight: 500 }}>

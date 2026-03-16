@@ -1,6 +1,5 @@
 import React, { Component, ReactNode } from 'react'
 import { Box, Typography, Alert } from '@mui/material'
-import { background } from "../../themes/palette";
 
 interface CommandPaletteErrorBoundaryProps {
   children: ReactNode
@@ -119,7 +118,7 @@ class CommandPaletteErrorBoundary extends Component<
             {process.env.NODE_ENV === 'development' && this.state.error && (
               <Box
                 sx={{
-                  backgroundColor: background.surface,
+                  backgroundColor: '#f5f5f5',
                   padding: 2,
                   borderRadius: 1,
                   overflow: 'auto',

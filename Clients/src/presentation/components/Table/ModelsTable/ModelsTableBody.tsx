@@ -13,7 +13,6 @@ import { Trash2, MoreVertical } from "lucide-react";
 import singleTheme from "../../../themes/v1SingleTheme";
 import { ModelRow } from "./index";
 import { CustomizableButton } from "../../button/customizable-button";
-import { background, border as borderPalette, status, text } from "../../../themes/palette";
 
 interface ModelsTableBodyProps {
   rows: ModelRow[];
@@ -41,14 +40,14 @@ const getProviderColor = (provider: string): { bg: string; text: string } => {
     const colors: Record<string, { bg: string; text: string }> = {
         openai: { bg: "#E8F5E9", text: "#2E7D32" },
         anthropic: { bg: "#FFF3E0", text: "#E65100" },
-        google: { bg: status.info.bg, text: status.info.text },
+        google: { bg: "#E3F2FD", text: "#1565C0" },
         mistral: { bg: "#F3E5F5", text: "#7B1FA2" },
         ollama: { bg: "#ECEFF1", text: "#37474F" },
-        huggingface: { bg: status.warning.bg, text: "#F57F17" },
+        huggingface: { bg: "#FFF8E1", text: "#F57F17" },
         xai: { bg: "#FAFAFA", text: "#212121" },
         bedrock: { bg: "#FFF3E0", text: "#FF6F00" },
     };
-    return colors[provider.toLowerCase()] || { bg: background.surface, text: "#616161" };
+    return colors[provider.toLowerCase()] || { bg: "#F5F5F5", text: "#616161" };
 };
 
 const ModelsTableBody: React.FC<ModelsTableBodyProps> = ({
@@ -94,7 +93,7 @@ const ModelsTableBody: React.FC<ModelsTableBodyProps> = ({
                                 ...singleTheme.tableStyles.primary.body.row,
                                 cursor: onRowClick ? "pointer" : "default",
                                 "&:hover": {
-                                    backgroundColor: background.accent,
+                                    backgroundColor: "#F9FAFB",
                                 },
                             }}
                         >
@@ -143,7 +142,7 @@ const ModelsTableBody: React.FC<ModelsTableBodyProps> = ({
                                     textTransform: "none",
                                 }}
                             >
-                                <Typography sx={{ fontSize: "13px", color: status.default.text }}>
+                                <Typography sx={{ fontSize: "13px", color: "#6B7280" }}>
                                     {formatDate(model.updatedAt)}
                                 </Typography>
                             </TableCell>
@@ -162,10 +161,10 @@ const ModelsTableBody: React.FC<ModelsTableBodyProps> = ({
                                     size="small"
                                     onClick={(e) => handleMenuOpen(e, model)}
                                     sx={{
-                                        color: text.icon,
+                                        color: "#667085",
                                         padding: "6px",
                                         "&:hover": {
-                                            backgroundColor: background.hover,
+                                            backgroundColor: "#F3F4F6",
                                         },
                                     }}
                                 >
@@ -188,7 +187,7 @@ const ModelsTableBody: React.FC<ModelsTableBodyProps> = ({
                     "& .MuiPopover-paper": {
                         minWidth: 120,
                         borderRadius: "4px",
-                        border: `1px solid ${borderPalette.dark}`,
+                        border: "1px solid #d0d5dd",
                         boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
                         overflow: "hidden",
                         mt: 0.5,
@@ -207,7 +206,7 @@ const ModelsTableBody: React.FC<ModelsTableBodyProps> = ({
                                 fontSize: "13px",
                                 fontWeight: 500,
                                 color: "#DC2626",
-                                borderColor: borderPalette.dark,
+                                borderColor: "#d0d5dd",
                                 backgroundColor: "transparent",
                                 justifyContent: "flex-start",
                                 "&:hover": {

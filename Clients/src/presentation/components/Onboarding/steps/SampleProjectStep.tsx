@@ -6,7 +6,6 @@ import Select from "../../../components/Inputs/Select";
 import useFrameworks from "../../../../application/hooks/useFrameworks";
 import { Framework } from "../../../../domain/types/Framework";
 import onboardingBanner from "../../../assets/onboarding-banner.svg";
-import { background, border as borderPalette, brand, status, text } from "../../../themes/palette";
 
 const USE_CASE_TEMPLATES = [
   { _id: "demo-chatbot", name: "AI Chatbot for Customer Support" },
@@ -91,7 +90,7 @@ const SampleProjectStep: React.FC<OnboardingStepProps> = ({
         <Typography
           sx={{
             fontSize: "14px",
-            color: text.icon,
+            color: "#667085",
             marginBottom: 2,
             lineHeight: 1.6,
           }}
@@ -125,7 +124,7 @@ const SampleProjectStep: React.FC<OnboardingStepProps> = ({
             sx={{
               fontSize: "13px",
               fontWeight: 500,
-              color: text.secondary,
+              color: "#344054",
               marginBottom: 1,
             }}
           >
@@ -148,7 +147,7 @@ const SampleProjectStep: React.FC<OnboardingStepProps> = ({
             sx={{
               fontSize: "13px",
               fontWeight: 500,
-              color: text.secondary,
+              color: "#344054",
               marginBottom: 2,
             }}
           >
@@ -171,8 +170,8 @@ const SampleProjectStep: React.FC<OnboardingStepProps> = ({
                     padding: 2,
                     border: "1px solid",
                     borderColor: selectedFrameworks.includes(Number(framework.id))
-                      ? brand.primary
-                      : status.default.border,
+                      ? "#13715B"
+                      : "#E5E7EB",
                     borderRadius: "4px",
                     cursor: "pointer",
                     display: "flex",
@@ -187,8 +186,8 @@ const SampleProjectStep: React.FC<OnboardingStepProps> = ({
                     "&:hover": {
                       backgroundColor: selectedFrameworks.includes(Number(framework.id))
                         ? "#F0FDF4"
-                        : background.accent,
-                      borderColor: brand.primary,
+                        : "#F9FAFB",
+                      borderColor: "#13715B",
                     },
                   }}
                 >
@@ -197,9 +196,9 @@ const SampleProjectStep: React.FC<OnboardingStepProps> = ({
                     onChange={() => handleFrameworkToggle(Number(framework.id))}
                     sx={{
                       padding: 0,
-                      color: borderPalette.dark,
+                      color: "#D0D5DD",
                       "&.Mui-checked": {
-                        color: brand.primary,
+                        color: "#13715B",
                       },
                     }}
                   />
