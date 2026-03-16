@@ -140,9 +140,9 @@ const PluginCard: React.FC<PluginCardProps> = ({
         transition: 'all 0.2s ease',
         ...(cardStyles.base(theme) as any),
         margin: 0,
-        background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+        background: 'linear-gradient(135deg, background.main 0%, #f8fafc 100%)',
         '&:hover': {
-          background: 'linear-gradient(135deg, #f9fafb 0%, #f1f5f9 100%)',
+          background: 'linear-gradient(135deg, background.accent 0%, #f1f5f9 100%)',
           borderColor: '#D1D5DB',
           boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
         },
@@ -220,7 +220,7 @@ const PluginCard: React.FC<PluginCardProps> = ({
                         ? '#dc2626'
                         : getStatusColor(plugin.installationStatus) === 'warning'
                         ? '#d97706'
-                        : '#6b7280',
+                        : 'status.default.text',
                     border: `1px solid ${
                       getStatusColor(plugin.installationStatus) === 'success'
                         ? 'rgba(34, 197, 94, 0.2)'
@@ -273,11 +273,11 @@ const PluginCard: React.FC<PluginCardProps> = ({
                   backgroundColor: 'transparent',
                   color:
                     plugin.frameworkType === 'organizational'
-                      ? '#13715B'
+                      ? 'brand.primary'
                       : '#6366f1',
                   borderColor:
                     plugin.frameworkType === 'organizational'
-                      ? '#13715B'
+                      ? 'brand.primary'
                       : '#6366f1',
                   fontWeight: 500,
                   '& .MuiChip-icon': {
@@ -325,7 +325,7 @@ const PluginCard: React.FC<PluginCardProps> = ({
                 size="small"
                 onClick={handleMenuOpen}
                 sx={{
-                  color: '#13715B',
+                  color: 'brand.primary',
                   opacity: isHovered ? 1 : 0.7,
                   transition: 'opacity 0.3s ease',
                   '&:hover': {
@@ -346,7 +346,7 @@ const PluginCard: React.FC<PluginCardProps> = ({
                     minWidth: 160,
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                     borderRadius: '8px',
-                    border: '1px solid #d0d5dd',
+                    border: '1px solid borderPalette.dark',
                   },
                 }}
               >

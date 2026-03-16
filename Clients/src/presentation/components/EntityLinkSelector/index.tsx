@@ -818,7 +818,7 @@ const EntityLinkSelector: React.FC<EntityLinkSelectorProps> = ({
                 alignItems: "center",
                 justifyContent: "space-between",
                 padding: "6px 12px",
-                backgroundColor: theme.palette.action?.disabledBackground || "#f5f5f5",
+                backgroundColor: theme.palette.action?.disabledBackground || "background.surface",
                 borderRadius: theme.shape.borderRadius,
                 fontSize: "13px",
                 opacity: 0.7,

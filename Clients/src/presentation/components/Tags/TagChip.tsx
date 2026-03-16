@@ -1,5 +1,6 @@
 import React from "react";
 import { Box } from "@mui/material";
+import { background, status } from "../../themes/palette";
 
 export interface TagChipProps {
   tag: string;
@@ -12,7 +13,7 @@ const getTagStyle = (tag: string) => {
   // Color mapping based on official POLICY_TAGS from backend
   const tagStyles: Record<string, { bg: string; color: string }> = {
     // Ethics & Fairness - Green tones
-    "ai ethics": { bg: "#E6F4EA", color: "#138A5E" },
+    "ai ethics": { bg: "#E6F4EA", color: `${status.success.text}` },
     fairness: { bg: "#E8F5E9", color: "#2E7D32" },
     "bias mitigation": { bg: "#F1F8E9", color: "#558B2F" },
 
@@ -49,7 +50,7 @@ const getTagStyle = (tag: string) => {
   }
 
   // Default style for unmatched tags
-  return { bg: "#F5F5F5", color: "#616161" };
+  return { bg: `${background.surface}`, color: "#616161" };
 };
 
 const TagChip: React.FC<TagChipProps> = ({ tag }) => {

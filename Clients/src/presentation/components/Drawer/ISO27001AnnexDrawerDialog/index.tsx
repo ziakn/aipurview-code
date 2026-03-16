@@ -48,6 +48,7 @@ import { GetAnnexControlISO27001ById } from "../../../../application/repository/
 import Alert from "../../Alert";
 import { SelectChangeEvent } from "@mui/material";
 import { RiskFormValues } from "../../AddNewRiskForm/interface";
+import { text } from "../../../themes/palette";
 const AuditRiskPopup = lazy(() => import("../../RiskPopup/AuditRiskPopup"));
 const LinkedRisksPopup = lazy(() => import("../../LinkedRisks").then(m => ({ default: m.LinkedRisksPopup })));
 const NotesTab = lazy(() => import("../../Notes/NotesTab"));
@@ -1001,12 +1002,12 @@ const VWISO27001AnnexDrawerDialog = ({
                         minWidth: 155,
                         height: 25,
                         fontSize: 11,
-                        border: "1px solid #D0D5DD",
+                        border: "1px solid borderPalette.dark",
                         backgroundColor: "white",
-                        color: "#344054",
+                        color: "text.secondary",
                         "&:hover": {
-                          backgroundColor: "#F9FAFB",
-                          border: "1px solid #D0D5DD",
+                          backgroundColor: "background.accent",
+                          border: "1px solid borderPalette.dark",
                         },
                       }}
                       disableRipple={
@@ -1114,7 +1115,7 @@ const VWISO27001AnnexDrawerDialog = ({
                               {file.fileName}
                             </Typography>
                             <Typography
-                              sx={{ fontSize: 11, color: "#6B7280" }}
+                              sx={{ fontSize: 11, color: "status.default.text" }}
                             >
                               {file.size ? `${((file.size || 0) / 1024).toFixed(1)} KB` : ""}
                               {file.size && file.source ? " • " : ""}
@@ -1294,7 +1295,7 @@ const VWISO27001AnnexDrawerDialog = ({
                           sx={{
                             color: "#4C7BF4",
                             "&:hover": {
-                              color: "#D32F2F",
+                              color: "status.error.text",
                               backgroundColor: "rgba(211, 47, 47, 0.08)",
                             },
                           }}
@@ -1475,7 +1476,7 @@ const VWISO27001AnnexDrawerDialog = ({
                   <Typography variant="body2" sx={{ mb: 1 }}>
                     No risks linked yet
                   </Typography>
-                  <Typography variant="caption" color="#9CA3AF">
+                  <Typography variant="caption" color={text.disabled}>
                     Click "Add/remove risks" to link risks from your risk
                     database
                   </Typography>

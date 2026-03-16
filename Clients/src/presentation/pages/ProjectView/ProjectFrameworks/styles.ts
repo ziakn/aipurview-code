@@ -43,7 +43,7 @@ export const getFrameworkTabStyle = (isActive: boolean, isLast: boolean): SxProp
 export const addButtonStyle: SxProps<Theme> = (theme) => ({
   backgroundColor: theme.palette.primary.main,
   border: `1px solid ${theme.palette.primary.main}`,
-  color: "#fff",
+  color: "background.main",
   fontFamily: theme.typography.fontFamily,
   fontSize: theme.typography.fontSize,
   fontWeight: 400,
@@ -51,7 +51,7 @@ export const addButtonStyle: SxProps<Theme> = (theme) => ({
   borderRadius: theme.spacing(1),
   boxShadow: "none",
   "&:hover": {
-    backgroundColor: theme.palette.primary.dark || "#10614d",
+    backgroundColor: theme.palette.primary.dark || "brand.primaryDark",
     boxShadow: "none",
   },
   "&:focus": {
@@ -139,7 +139,7 @@ export const frameworkCardDescriptionStyle: SxProps<Theme> = {
 export const modalDoneButtonStyle: SxProps<Theme> = (theme) => ({
   backgroundColor: theme.palette.primary.main,
   border: `1px solid ${theme.palette.primary.main}`,
-  color: "#fff",
+  color: "background.main",
   fontFamily: theme.typography.fontFamily,
   fontSize: 15,
   fontWeight: 500,
@@ -149,7 +149,7 @@ export const modalDoneButtonStyle: SxProps<Theme> = (theme) => ({
   px: 4,
   py: 1,
   "&:hover": {
-    backgroundColor: theme.palette.primary.dark || "#10614d",
+    backgroundColor: theme.palette.primary.dark || "brand.primaryDark",
     boxShadow: "none",
   },
   "&:focus": {

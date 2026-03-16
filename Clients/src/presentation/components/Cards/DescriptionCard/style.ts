@@ -1,7 +1,7 @@
 export const infoCardStyle = {
   border: `1px solid #d0d5dd`,
   borderRadius: 2,
-  background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
+  background: "linear-gradient(135deg, background.main 0%, #f8fafc 100%)",
   minWidth: 228,
   width: "100%",
   padding: "8px 36px 14px 14px",

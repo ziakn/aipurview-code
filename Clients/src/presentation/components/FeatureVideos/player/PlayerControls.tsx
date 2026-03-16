@@ -1,6 +1,7 @@
 import { Box, IconButton } from "@mui/material";
 import { Play, Pause } from "lucide-react";
 import type { FramePlayerState } from "./useFramePlayer";
+import { brand, background } from "../../../themes/palette";
 
 interface PlayerControlsProps {
   player: FramePlayerState;
@@ -24,7 +25,7 @@ export function PlayerControls({ player }: PlayerControlsProps) {
       <IconButton
         onClick={player.toggle}
         sx={{
-          color: "#fff",
+          color: `${background.main}`,
           padding: "4px",
           "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
         }}
@@ -52,7 +53,7 @@ export function PlayerControls({ player }: PlayerControlsProps) {
           sx={{
             height: "100%",
             borderRadius: 2,
-            backgroundColor: "#13715B",
+            backgroundColor: `${brand.primary}`,
             width: `${player.progress * 100}%`,
             transition: "width 0.05s linear",
           }}

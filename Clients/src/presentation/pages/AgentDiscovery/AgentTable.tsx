@@ -235,7 +235,7 @@ const AgentTable: React.FC<AgentTableProps> = ({
                       color:
                         sortConfig.key === column.label
                           ? "primary.main"
-                          : "#9CA3AF",
+                          : "text.disabled",
                     }}
                   >
                     {sortConfig.key === column.label &&

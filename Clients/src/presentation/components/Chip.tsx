@@ -5,6 +5,7 @@ import {
   ChipVariant,
   ChipColorConfig,
 } from "../types/interfaces/i.chip";
+import { background, status } from "../themes/palette";
 
 /**
  * Color mappings for all chip variants
@@ -12,29 +13,29 @@ import {
  */
 const VARIANT_COLORS: Record<ChipVariant, ChipColorConfig> = {
   // Risk levels
-  critical: { backgroundColor: "#FFD6D6", textColor: "#D32F2F" },
+  critical: { backgroundColor: "#FFD6D6", textColor: `${status.error.text}` },
   high: { backgroundColor: "#FFE5D0", textColor: "#E64A19" },
   medium: { backgroundColor: "#FFF8E1", textColor: "#795548" },
-  low: { backgroundColor: "#E6F4EA", textColor: "#138A5E" },
+  low: { backgroundColor: "#E6F4EA", textColor: `${status.success.text}` },
   "very-low": { backgroundColor: "#E0F7FA", textColor: "#00695C" },
 
   // Status
-  success: { backgroundColor: "#E6F4EA", textColor: "#138A5E" },
+  success: { backgroundColor: "#E6F4EA", textColor: `${status.success.text}` },
   warning: { backgroundColor: "#FFF8E1", textColor: "#795548" },
-  error: { backgroundColor: "#FFD6D6", textColor: "#D32F2F" },
+  error: { backgroundColor: "#FFD6D6", textColor: `${status.error.text}` },
   info: { backgroundColor: "#E3F2FD", textColor: "#1565C0" },
-  default: { backgroundColor: "#F3F4F6", textColor: "#6B7280" },
+  default: { backgroundColor: `${background.hover}`, textColor: `${status.default.text}` },
 
   // Severity (maps to same colors as risk levels)
-  catastrophic: { backgroundColor: "#FFD6D6", textColor: "#D32F2F" },
+  catastrophic: { backgroundColor: "#FFD6D6", textColor: `${status.error.text}` },
   major: { backgroundColor: "#FFE5D0", textColor: "#E64A19" },
   moderate: { backgroundColor: "#FFF8E1", textColor: "#795548" },
-  minor: { backgroundColor: "#E6F4EA", textColor: "#138A5E" },
+  minor: { backgroundColor: "#E6F4EA", textColor: `${status.success.text}` },
   negligible: { backgroundColor: "#E0F7FA", textColor: "#00695C" },
 
   // Boolean
-  yes: { backgroundColor: "#E6F4EA", textColor: "#138A5E" },
-  no: { backgroundColor: "#FFD6D6", textColor: "#D32F2F" },
+  yes: { backgroundColor: "#E6F4EA", textColor: `${status.success.text}` },
+  no: { backgroundColor: "#FFD6D6", textColor: `${status.error.text}` },
 };
 
 /**

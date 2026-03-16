@@ -108,7 +108,7 @@ const NISTFunctionsOverviewCard = ({ frameworksData, onNavigate }: NISTFunctions
             width: 12,
             height: 12,
             borderRadius: "2px",
-            backgroundColor: "#E5E7EB",
+            backgroundColor: "status.default.border",
             border: "1px solid #D1D5DB",
           }}
         />
@@ -166,9 +166,9 @@ const NISTFunctionsOverviewCard = ({ frameworksData, onNavigate }: NISTFunctions
         sx={{
           textAlign: "center",
           py: 4,
-          backgroundColor: "#F9FAFB",
+          backgroundColor: "background.accent",
           borderRadius: 2,
-          border: "1px solid #d0d5dd",
+          border: "1px solid borderPalette.dark",
         }}
       >
         <Typography variant="body1" color="text.secondary">
@@ -194,10 +194,10 @@ const NISTFunctionsOverviewCard = ({ frameworksData, onNavigate }: NISTFunctions
     return (
       <Box
         sx={{
-          border: "1px solid #d0d5dd",
+          border: "1px solid borderPalette.dark",
           borderRadius: "4px",
           overflow: "hidden",
-          backgroundColor: "#FFFFFF",
+          backgroundColor: "background.main",
         }}
       >
         {/* Header Section */}
@@ -205,7 +205,7 @@ const NISTFunctionsOverviewCard = ({ frameworksData, onNavigate }: NISTFunctions
           sx={{
             backgroundColor: "#F1F3F4",
             p: "10px 16px",
-            borderBottom: "1px solid #d0d5dd",
+            borderBottom: "1px solid borderPalette.dark",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
@@ -217,7 +217,7 @@ const NISTFunctionsOverviewCard = ({ frameworksData, onNavigate }: NISTFunctions
               sx={{
                 fontSize: 13,
                 fontWeight: 600,
-                color: "#000000",
+                color: "text.black",
                 lineHeight: "16px",
                 m: 0,
                 textTransform: "capitalize",
@@ -272,7 +272,7 @@ const NISTFunctionsOverviewCard = ({ frameworksData, onNavigate }: NISTFunctions
               <Typography
                 sx={{
                   fontSize: 12,
-                  color: "#000000",
+                  color: "text.black",
                   fontWeight: 600,
                 }}
               >
@@ -291,7 +291,7 @@ const NISTFunctionsOverviewCard = ({ frameworksData, onNavigate }: NISTFunctions
               <Typography
                 sx={{
                   fontSize: 12,
-                  color: "#000000",
+                  color: "text.black",
                   fontWeight: 600,
                 }}
               >
@@ -338,7 +338,7 @@ const NISTFunctionsOverviewCard = ({ frameworksData, onNavigate }: NISTFunctions
               sx={{
                 fontSize: 15,
                 fontWeight: 600,
-                color: "#000000",
+                color: "text.black",
                 mb: 2,
                 textTransform: "capitalize",
               }}
@@ -356,7 +356,7 @@ const NISTFunctionsOverviewCard = ({ frameworksData, onNavigate }: NISTFunctions
               sx={{
                 fontSize: 15,
                 fontWeight: 600,
-                color: "#000000",
+                color: "text.black",
                 mb: 2,
                 textTransform: "capitalize",
               }}
@@ -389,7 +389,7 @@ const NISTFunctionsOverviewCard = ({ frameworksData, onNavigate }: NISTFunctions
               sx={{
                 fontSize: 15,
                 fontWeight: 600,
-                color: "#000000",
+                color: "text.black",
                 mb: 2,
                 textTransform: "capitalize",
               }}
@@ -407,7 +407,7 @@ const NISTFunctionsOverviewCard = ({ frameworksData, onNavigate }: NISTFunctions
               sx={{
                 fontSize: 15,
                 fontWeight: 600,
-                color: "#000000",
+                color: "text.black",
                 mb: 2,
                 textTransform: "capitalize",
               }}

@@ -124,7 +124,7 @@ const EntityNode: React.FC<NodeProps> = ({ data, sourcePosition, targetPosition 
               sx={{
                 fontWeight: 600,
                 fontSize: 11,
-                color: '#344054',
+                color: 'text.secondary',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -137,7 +137,7 @@ const EntityNode: React.FC<NodeProps> = ({ data, sourcePosition, targetPosition 
                 variant="caption"
                 sx={{
                   fontSize: 9,
-                  color: '#667085',
+                  color: 'text.icon',
                   display: 'block',
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
@@ -174,7 +174,7 @@ const EntityNode: React.FC<NodeProps> = ({ data, sourcePosition, targetPosition 
               variant="caption"
               sx={{
                 fontSize: 9,
-                color: riskColor || '#667085',
+                color: riskColor || 'text.icon',
                 fontWeight: 500,
               }}
             >

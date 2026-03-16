@@ -235,7 +235,7 @@ const RisksView = ({
             mb: 10,
           }}
         >
-          <Typography sx={{ fontSize: 16, fontWeight: 600, color: "#1A1919" }}>
+          <Typography sx={{ fontSize: 16, fontWeight: 600, color: "text.primary" }}>
             {title}
           </Typography>
 

@@ -748,7 +748,7 @@ const PostMarketMonitoring: React.FC = () => {
                 height: "34px",
                 backgroundColor: theme.palette.primary.main,
                 "&:hover": {
-                  backgroundColor: theme.palette.primary.dark || "#0F5A47",
+                  backgroundColor: theme.palette.primary.dark || "brand.primaryHover",
                 },
               }}
             />

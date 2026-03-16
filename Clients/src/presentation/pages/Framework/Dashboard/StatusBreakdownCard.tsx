@@ -3,6 +3,7 @@ import { PieChart } from "@mui/x-charts/PieChart";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { frameworkDashboardCardStyles } from "./styles";
+import { brand, text, border as borderPalette, status } from "../../../themes/palette";
 
 interface FrameworkData {
   frameworkId: number;
@@ -127,22 +128,22 @@ const StatusBreakdownCard = ({ frameworksData }: StatusBreakdownCardProps) => {
     if (total === 0) return [];
 
     return [
-      { id: 0, value: data["not started"], label: "Not started", color: "#9CA3AF" },
+      { id: 0, value: data["not started"], label: "Not started", color: `${text.disabled}` },
       { id: 1, value: data["draft"], label: "Draft", color: "#D1D5DB" },
       { id: 2, value: data["in progress"], label: "In progress", color: "#F59E0B" },
       { id: 3, value: data["awaiting review"], label: "Awaiting review", color: "#3B82F6" },
-      { id: 4, value: data["implemented"], label: "Implemented", color: "#13715B" },
+      { id: 4, value: data["implemented"], label: "Implemented", color: `${brand.primary}` },
       { id: 5, value: data["needs rework"], label: "Needs rework", color: "#EA580C" },
     ];
   };
 
   const getAllStatuses = (data: StatusData) => {
     return [
-      { id: 0, value: data["not started"], label: "Not started", color: "#9CA3AF" },
+      { id: 0, value: data["not started"], label: "Not started", color: `${text.disabled}` },
       { id: 1, value: data["draft"], label: "Draft", color: "#D1D5DB" },
       { id: 2, value: data["in progress"], label: "In progress", color: "#F59E0B" },
       { id: 3, value: data["awaiting review"], label: "Awaiting review", color: "#3B82F6" },
-      { id: 4, value: data["implemented"], label: "Implemented", color: "#13715B" },
+      { id: 4, value: data["implemented"], label: "Implemented", color: `${brand.primary}` },
       { id: 5, value: data["needs rework"], label: "Needs rework", color: "#EA580C" },
     ];
   };
@@ -152,7 +153,7 @@ const StatusBreakdownCard = ({ frameworksData }: StatusBreakdownCardProps) => {
       <Box
         sx={{
           background: "linear-gradient(135deg, #FEFFFE 0%, #F8F9FA 100%)",
-          border: "1px solid #d0d5dd",
+          border: `1px solid ${borderPalette.dark}`,
           borderRadius: "4px",
           p: "16px",
           display: "flex",
@@ -174,7 +175,7 @@ const StatusBreakdownCard = ({ frameworksData }: StatusBreakdownCardProps) => {
           sx={{
             fontSize: 15,
             fontWeight: 600,
-            color: "#000000",
+            color: `${text.black}`,
             lineHeight: "16px",
             m: 0,
           }}
@@ -227,7 +228,7 @@ const StatusBreakdownCard = ({ frameworksData }: StatusBreakdownCardProps) => {
                     <Box
                       sx={{
                         height: "1px",
-                        backgroundColor: "#E5E7EB",
+                        backgroundColor: `${status.default.border}`,
                         mx: "-16px", // Extend to card edges
                         mb: 4,
                         mt: 1,
@@ -239,7 +240,7 @@ const StatusBreakdownCard = ({ frameworksData }: StatusBreakdownCardProps) => {
                     sx={{
                       fontSize: 13,
                       fontWeight: 500,
-                      color: "#000000",
+                      color: `${text.black}`,
                       mb: 2,
                     }}
                   >
@@ -262,7 +263,7 @@ const StatusBreakdownCard = ({ frameworksData }: StatusBreakdownCardProps) => {
                   <Box
                     sx={{
                       height: "1px",
-                      backgroundColor: "#E5E7EB",
+                      backgroundColor: `${status.default.border}`,
                       mx: "-16px", // Extend to card edges
                       mb: 4,
                       mt: 1,
@@ -274,7 +275,7 @@ const StatusBreakdownCard = ({ frameworksData }: StatusBreakdownCardProps) => {
                   sx={{
                     fontSize: 13,
                     fontWeight: 500,
-                    color: "#000000",
+                    color: `${text.black}`,
                     mb: 1,
                   }}
                 >
@@ -366,7 +367,7 @@ const StatusBreakdownCard = ({ frameworksData }: StatusBreakdownCardProps) => {
                             {item.label}
                           </Typography>
                         </Box>
-                        <Typography sx={{ fontSize: 12, color: "#000000", fontWeight: 500 }}>
+                        <Typography sx={{ fontSize: 12, color: `${text.black}`, fontWeight: 500 }}>
                           {item.value}
                         </Typography>
                       </Box>
@@ -405,7 +406,7 @@ const StatusBreakdownCard = ({ frameworksData }: StatusBreakdownCardProps) => {
                   <Box
                     sx={{
                       height: "1px",
-                      backgroundColor: "#E5E7EB",
+                      backgroundColor: `${status.default.border}`,
                       mx: "-16px", // Extend to card edges
                       mb: 4,
                       mt: 1,
@@ -418,7 +419,7 @@ const StatusBreakdownCard = ({ frameworksData }: StatusBreakdownCardProps) => {
                     sx={{
                       fontSize: 13,
                       fontWeight: 500,
-                      color: "#000000",
+                      color: `${text.black}`,
                     }}
                   >
                     {framework.frameworkName} {currentViewMode}
@@ -459,7 +460,7 @@ const StatusBreakdownCard = ({ frameworksData }: StatusBreakdownCardProps) => {
                 <Box
                   sx={{
                     height: "1px",
-                    backgroundColor: "#E5E7EB",
+                    backgroundColor: `${status.default.border}`,
                     mx: "-16px", // Extend to card edges
                     mb: 4,
                     mt: 1,
@@ -472,7 +473,7 @@ const StatusBreakdownCard = ({ frameworksData }: StatusBreakdownCardProps) => {
                   sx={{
                     fontSize: 13,
                     fontWeight: 500,
-                    color: "#000000",
+                    color: `${text.black}`,
                   }}
                 >
                   {framework.frameworkName} {currentViewMode}
@@ -580,7 +581,7 @@ const StatusBreakdownCard = ({ frameworksData }: StatusBreakdownCardProps) => {
                           {item.label}
                         </Typography>
                       </Box>
-                      <Typography sx={{ fontSize: 12, color: "#000000", fontWeight: 500 }}>
+                      <Typography sx={{ fontSize: 12, color: `${text.black}`, fontWeight: 500 }}>
                         {item.value}
                       </Typography>
                     </Box>

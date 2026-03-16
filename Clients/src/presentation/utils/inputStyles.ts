@@ -97,10 +97,10 @@ export const getInputStyles = (theme: Theme, options: InputStylesOptions = {}) =
 
     // Disabled state
     '& .MuiOutlinedInput-root.Mui-disabled': {
-      backgroundColor: theme.palette.grey?.[50] || '#F9FAFB',
+      backgroundColor: theme.palette.grey?.[50] || 'background.accent',
       cursor: 'not-allowed',
       '& fieldset': {
-        borderColor: theme.palette.grey?.[300] || '#E5E7EB',
+        borderColor: theme.palette.grey?.[300] || 'status.default.border',
       },
     },
   };
@@ -159,10 +159,10 @@ export const getSelectStyles = (theme: Theme, options: InputStylesOptions = {}) 
 
     // Disabled state
     '&.Mui-disabled': {
-      backgroundColor: theme.palette.grey?.[50] || '#F9FAFB',
+      backgroundColor: theme.palette.grey?.[50] || 'background.accent',
       cursor: 'not-allowed',
       '& .MuiOutlinedInput-notchedOutline': {
-        borderColor: theme.palette.grey?.[300] || '#E5E7EB',
+        borderColor: theme.palette.grey?.[300] || 'status.default.border',
       },
     },
   };
@@ -230,9 +230,9 @@ export const getAutocompleteStyles = (theme: Theme, options: InputStylesOptions 
 
       // Disabled state
       '&.Mui-disabled': {
-        backgroundColor: theme.palette.grey?.[50] || '#F9FAFB',
+        backgroundColor: theme.palette.grey?.[50] || 'background.accent',
         '& fieldset': {
-          borderColor: theme.palette.grey?.[300] || '#E5E7EB',
+          borderColor: theme.palette.grey?.[300] || 'status.default.border',
         },
       },
     },

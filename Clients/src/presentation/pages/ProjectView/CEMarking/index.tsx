@@ -141,12 +141,12 @@ const ensureUrlProtocol = (url: string | null): string | null => {
 // Table styles - using the primary theme table styles
 const getTableHeaderRowStyles = () => ({
   textTransform: "uppercase",
-  borderBottom: "1px solid #d0d5dd",
-  background: "linear-gradient(180deg, #f9fafb 0%, #f3f4f6 100%)",
+  borderBottom: "1px solid borderPalette.dark",
+  background: "linear-gradient(180deg, background.accent 0%, background.hover 100%)",
 });
 
 const getTableHeaderCellStyles = () => ({
-  color: "#475467",
+  color: "text.tertiary",
   fontSize: "13px",
   fontWeight: 400,
   padding: "12px 10px",
@@ -155,7 +155,7 @@ const getTableHeaderCellStyles = () => ({
 
 const getTableBodyRowStyles = () => ({
   textTransform: "capitalize",
-  borderBottom: "1px solid #d0d5dd",
+  borderBottom: "1px solid borderPalette.dark",
   backgroundColor: "white",
   transition: "background-color 0.3s ease-in-out",
   "&:hover td": {
@@ -181,11 +181,11 @@ const getStatusColor = (status: ConformityStepStatus): string => {
     case ConformityStepStatus.InProgress:
       return "#3B82F6";
     case ConformityStepStatus.NotStarted:
-      return "#6B7280";
+      return "status.default.text";
     case ConformityStepStatus.NotNeeded:
-      return "#9CA3AF";
+      return "text.disabled";
     default:
-      return "#6B7280";
+      return "status.default.text";
   }
 };
 
@@ -868,7 +868,7 @@ const CEMarking: React.FC<CEMarkingProps> = ({ projectId }) => {
                   sx={{
                     height: 8,
                     borderRadius: 4,
-                    backgroundColor: "#F3F4F6",
+                    backgroundColor: "background.hover",
                     "& .MuiLinearProgress-bar": {
                       backgroundColor: "#FBBF24",
                       borderRadius: 4,
@@ -901,7 +901,7 @@ const CEMarking: React.FC<CEMarkingProps> = ({ projectId }) => {
                   sx={{
                     height: 8,
                     borderRadius: 4,
-                    backgroundColor: "#F3F4F6",
+                    backgroundColor: "background.hover",
                     "& .MuiLinearProgress-bar": {
                       backgroundColor: "#FBBF24",
                       borderRadius: 4,
@@ -957,7 +957,7 @@ const CEMarking: React.FC<CEMarkingProps> = ({ projectId }) => {
               sx={{
                 height: 6,
                 borderRadius: 3,
-                backgroundColor: "#F3F4F6",
+                backgroundColor: "background.hover",
                 "& .MuiLinearProgress-bar": {
                   backgroundColor: "#FBBF24",
                   borderRadius: 3,
@@ -1142,7 +1142,7 @@ const CEMarking: React.FC<CEMarkingProps> = ({ projectId }) => {
                     {data.declarationDocument}
                   </VWLink>
                 ) : (
-                  <Typography sx={{ color: "#667085", fontSize: "14px" }}>
+                  <Typography sx={{ color: "text.icon", fontSize: "14px" }}>
                     No declaration document linked
                   </Typography>
                 )}
@@ -1160,8 +1160,8 @@ const CEMarking: React.FC<CEMarkingProps> = ({ projectId }) => {
                     borderColor: "#D1D5DB",
                     color: "#374151",
                     "&:hover": {
-                      borderColor: "#9CA3AF",
-                      backgroundColor: "#F9FAFB",
+                      borderColor: "text.disabled",
+                      backgroundColor: "background.accent",
                     },
                   }}
                 />
@@ -1279,8 +1279,8 @@ const CEMarking: React.FC<CEMarkingProps> = ({ projectId }) => {
                     borderColor: "#D1D5DB",
                     color: "#374151",
                     "&:hover": {
-                      borderColor: "#9CA3AF",
-                      backgroundColor: "#F9FAFB",
+                      borderColor: "text.disabled",
+                      backgroundColor: "background.accent",
                     },
                   }}
                 />
@@ -1540,9 +1540,9 @@ const CEMarking: React.FC<CEMarkingProps> = ({ projectId }) => {
                         display: "flex",
                         alignItems: "center",
                         cursor: "pointer",
-                        color: "#9CA3AF",
+                        color: "text.disabled",
                         "&:hover": {
-                          color: "#6B7280",
+                          color: "status.default.text",
                         },
                       }}
                     >
@@ -1709,7 +1709,7 @@ const CEMarking: React.FC<CEMarkingProps> = ({ projectId }) => {
                       alignItems: 'flex-start',
                       padding: '12px',
                       borderBottom: index < availablePolicies.length - 1 ? `1px solid ${theme.palette.border?.light || '#e0e0e0'}` : 'none',
-                      '&:hover': { backgroundColor: theme.palette.action?.hover || '#f5f5f5' },
+                      '&:hover': { backgroundColor: theme.palette.action?.hover || 'background.surface' },
                       cursor: 'pointer',
                     }}
                     onClick={() => togglePolicy(policy.id)}
@@ -1780,7 +1780,7 @@ const CEMarking: React.FC<CEMarkingProps> = ({ projectId }) => {
                       alignItems: 'flex-start',
                       padding: '12px',
                       borderBottom: index < availableEvidences.length - 1 ? `1px solid ${theme.palette.border?.light || '#e0e0e0'}` : 'none',
-                      '&:hover': { backgroundColor: theme.palette.action?.hover || '#f5f5f5' },
+                      '&:hover': { backgroundColor: theme.palette.action?.hover || 'background.surface' },
                       cursor: 'pointer',
                     }}
                     onClick={() => toggleEvidence(evidence.id)}
@@ -1859,7 +1859,7 @@ const CEMarking: React.FC<CEMarkingProps> = ({ projectId }) => {
                       alignItems: 'flex-start',
                       padding: '12px',
                       borderBottom: index < availableIncidents.length - 1 ? `1px solid ${theme.palette.border?.light || '#e0e0e0'}` : 'none',
-                      '&:hover': { backgroundColor: theme.palette.action?.hover || '#f5f5f5' },
+                      '&:hover': { backgroundColor: theme.palette.action?.hover || 'background.surface' },
                       cursor: 'pointer',
                     }}
                     onClick={() => toggleIncident(incident.id)}

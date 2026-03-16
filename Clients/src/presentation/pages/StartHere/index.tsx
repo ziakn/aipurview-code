@@ -41,6 +41,7 @@ import { WelcomeVideoPlayer } from "../../components/FeatureVideos/WelcomeVideo"
 import { VideoPlayerModal } from "../../components/FeatureVideos/player/VideoPlayerModal";
 import { buildExploreConfig } from "../../components/FeatureVideos/shared/buildExploreConfig";
 import { EXPLORE_VIDEO_DATA } from "../../components/FeatureVideos/exploreVideos";
+import { background } from "../../themes/palette";
 
 // ── Keyframe animations ──
 const fadeInUp = keyframes`
@@ -104,7 +105,7 @@ const GS_CARDS = [
 ] as const;
 
 const EXPLORE_CARDS = [
-  { title: "AI governance", desc: "Manage models, track lifecycle, maintain documentation.", color: "#13715B", path: "/overview" },
+  { title: "AI governance", desc: "Manage models, track lifecycle, maintain documentation.", color: "brand.primary", path: "/overview" },
   { title: "Compliance", desc: "EU AI Act, ISO 42001, NIST AI RMF frameworks and controls.", color: "#1E88E5", path: "/framework" },
   { title: "Risk management", desc: "Identify, assess, and mitigate risks across AI systems.", color: "#F4511E", path: "/risk-management" },
   { title: "LLM Evals", desc: "Evaluate and benchmark your LLM apps for quality and safety.", color: "#7B1FA2", path: "/evals" },
@@ -117,7 +118,7 @@ const EXPLORE_CARDS = [
 ] as const;
 
 const SHORTCUTS = [
-  { label: "Use cases", tooltip: "Manage AI use cases, projects, and their lifecycle stages.", icon: LayoutGrid, path: "/overview", color: "#0F5A47", bg: "linear-gradient(135deg, #E6F0EC, #C8E6D0)" },
+  { label: "Use cases", tooltip: "Manage AI use cases, projects, and their lifecycle stages.", icon: LayoutGrid, path: "/overview", color: "brand.primaryHover", bg: "linear-gradient(135deg, brand.primaryLight, #C8E6D0)" },
   { label: "Risks", tooltip: "Identify, assess, and track risks across all AI systems.", icon: AlertTriangle, path: "/risk-management", color: "#1565C0", bg: "linear-gradient(135deg, #E3F2FD, #BBDEFB)" },
   { label: "Models", tooltip: "Track AI/ML models, their versions, and deployment status.", icon: Brain, path: "/model-inventory", color: "#E65100", bg: "linear-gradient(135deg, #FFF8E1, #FFECB3)" },
   { label: "Vendors", tooltip: "Manage third-party AI vendors and their risk profiles.", icon: Building, path: "/vendors", color: "#C2185B", bg: "linear-gradient(135deg, #FCE4EC, #F8BBD0)" },
@@ -267,8 +268,8 @@ const StartHere = () => {
       const timeLeft = animationEnd - Date.now();
       if (timeLeft <= 0) { clearInterval(interval); return; }
       const particleCount = 50 * (timeLeft / duration);
-      confetti({ ...defaults, particleCount, origin: { x: rand(0.1, 0.3), y: Math.random() - 0.2 }, colors: ["#13715B", "#10B981", "#D1FAE5", "#34D399", "#6EE7B7"] });
-      confetti({ ...defaults, particleCount, origin: { x: rand(0.7, 0.9), y: Math.random() - 0.2 }, colors: ["#13715B", "#10B981", "#D1FAE5", "#34D399", "#6EE7B7"] });
+      confetti({ ...defaults, particleCount, origin: { x: rand(0.1, 0.3), y: Math.random() - 0.2 }, colors: ["brand.primary", "#10B981", "#D1FAE5", "#34D399", "#6EE7B7"] });
+      confetti({ ...defaults, particleCount, origin: { x: rand(0.7, 0.9), y: Math.random() - 0.2 }, colors: ["brand.primary", "#10B981", "#D1FAE5", "#34D399", "#6EE7B7"] });
     }, 250);
 
     // Auto-dismiss card after confetti + a short pause
@@ -301,7 +302,7 @@ const StartHere = () => {
         {/* Greeting */}
         <Box sx={{ animation: `${fadeInUp} 0.5s ease-out` }}>
           <Typography variant="h5" sx={{ fontWeight: 400, fontSize: "20px" }}>
-            <Box component="span" sx={{ color: "#13715B" }}>
+            <Box component="span" sx={{ color: "brand.primary" }}>
               {greeting.greetingText}
             </Box>
             <Box component="span" sx={{ color: theme.palette.text.primary }}>
@@ -453,15 +454,15 @@ const StartHere = () => {
                       padding: "3px 8px",
                     }}
                   >
-                    <Play size={10} color="#fff" fill="#fff" />
-                    <Typography sx={{ fontSize: 10, color: "#fff", fontWeight: 500 }}>
+                    <Play size={10} color={background.main} fill={background.main} />
+                    <Typography sx={{ fontSize: 10, color: "background.main", fontWeight: 500 }}>
                       Video
                     </Typography>
                   </Box>
                 )}
 
                 <Box sx={{ position: "relative", zIndex: 1 }}>
-                  <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#fff", mb: "4px", textShadow: "0 1px 3px rgba(0,0,0,0.3)" }}>
+                  <Typography sx={{ fontSize: 14, fontWeight: 600, color: "background.main", mb: "4px", textShadow: "0 1px 3px rgba(0,0,0,0.3)" }}>
                     {card.title}
                   </Typography>
                   <Stack direction="row" justifyContent="space-between" alignItems="flex-end">
@@ -503,7 +504,7 @@ const StartHere = () => {
                 zIndex: 2,
                 width: 32,
                 height: 32,
-                background: "#fff",
+                background: "background.main",
                 border: `1px solid ${theme.palette.border.dark}`,
                 transition: "all 0.2s ease",
                 "&:hover": {
@@ -571,7 +572,7 @@ const StartHere = () => {
                 zIndex: 2,
                 width: 32,
                 height: 32,
-                background: "#fff",
+                background: "background.main",
                 border: `1px solid ${theme.palette.border.dark}`,
                 transition: "all 0.2s ease",
                 "&:hover": {
@@ -744,10 +745,10 @@ const StartHere = () => {
         {!progressDismissed && (
           <Box
             sx={{
-              background: "linear-gradient(135deg, #0F5A47, #13715B)",
+              background: "linear-gradient(135deg, brand.primaryHover, brand.primary)",
               borderRadius: "8px",
               p: "16px",
-              color: "#fff",
+              color: "background.main",
               position: "relative",
               overflow: "hidden",
               "&::before": {
@@ -759,7 +760,7 @@ const StartHere = () => {
               },
             }}
           >
-            <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#fff", mb: "12px", position: "relative" }}>
+            <Typography sx={{ fontSize: 13, fontWeight: 600, color: "background.main", mb: "12px", position: "relative" }}>
               Your progress
             </Typography>
             <Stack direction="row" alignItems="center" sx={{ gap: "16px", mb: "12px", position: "relative" }}>
@@ -771,7 +772,7 @@ const StartHere = () => {
                     cy="28"
                     r="22"
                     fill="none"
-                    stroke="#fff"
+                    stroke={background.main}
                     strokeWidth="5"
                     strokeLinecap="round"
                     strokeDasharray="138.23"
@@ -790,14 +791,14 @@ const StartHere = () => {
                     justifyContent: "center",
                     fontSize: 14,
                     fontWeight: 700,
-                    color: "#fff",
+                    color: "background.main",
                   }}
                 >
                   {progressPct}%
                 </Box>
               </Box>
               <Box>
-                <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>
+                <Typography sx={{ fontSize: 13, fontWeight: 600, color: "background.main" }}>
                   {progressPct === 100 ? "All done!" : "Getting started"}
                 </Typography>
                 <Typography sx={{ fontSize: 12, color: "rgba(255,255,255,0.8)" }}>
@@ -888,7 +889,7 @@ const StartHere = () => {
                     "&:hover": {
                       background: "#F9F9F9",
                       "& .resource-icon svg": {
-                        stroke: "#13715B",
+                        stroke: "brand.primary",
                       },
                     },
                   }}
@@ -948,7 +949,7 @@ const StartHere = () => {
                   "&:hover": {
                     background: "#F9F9F9",
                     "& .whatsnew-icon svg": {
-                      stroke: "#13715B",
+                      stroke: "brand.primary",
                     },
                   },
                 }}

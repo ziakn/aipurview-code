@@ -29,6 +29,7 @@ import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.cont
 import Alert from "../Alert";
 import allowedRoles from "../../../application/constants/permissions";
 import { useAuth } from "../../../application/hooks/useAuth";
+import { text } from "../../themes/palette";
 
 const SelectorVertical = (props: React.SVGAttributes<SVGSVGElement>) => (
   <ChevronsUpDown size={16} {...props} />
@@ -113,7 +114,7 @@ const SortableTableHeader: React.FC<{
                     display: "flex",
                     alignItems: "center",
                     color:
-                      sortConfig.key === column.id ? "primary.main" : "#9CA3AF",
+                      sortConfig.key === column.id ? "primary.main" : `${text.disabled}`,
                   }}
                 >
                   {sortConfig.key === column.id &&
@@ -467,7 +468,7 @@ const ProjectTableView: React.FC<IProjectTableViewProps> = ({
                     fontSize: "13px",
                     fontWeight: 500,
                     backgroundColor:
-                      sortConfig.key === "title" ? "#f5f5f5" : "inherit",
+                      sortConfig.key === "title" ? "background.surface" : "inherit",
                   }}
                 >
                   {project.project_title}
@@ -479,7 +480,7 @@ const ProjectTableView: React.FC<IProjectTableViewProps> = ({
                   sx={{
                     ...singleTheme.tableStyles.primary.body.cell,
                     backgroundColor:
-                      sortConfig.key === "risk" ? "#f5f5f5" : "inherit",
+                      sortConfig.key === "risk" ? "background.surface" : "inherit",
                   }}
                 >
                   <Chip label={project.ai_risk_classification || "—"} />
@@ -493,7 +494,7 @@ const ProjectTableView: React.FC<IProjectTableViewProps> = ({
                     fontSize: "13px",
                     textTransform: "capitalize",
                     backgroundColor:
-                      sortConfig.key === "role" ? "#f5f5f5" : "inherit",
+                      sortConfig.key === "role" ? "background.surface" : "inherit",
                   }}
                 >
                   {project.type_of_high_risk_role?.replace(/_/g, " ") || "—"}
@@ -505,9 +506,9 @@ const ProjectTableView: React.FC<IProjectTableViewProps> = ({
                   sx={{
                     ...singleTheme.tableStyles.primary.body.cell,
                     fontSize: "13px",
-                    color: "#475467",
+                    color: "text.tertiary",
                     backgroundColor:
-                      sortConfig.key === "startDate" ? "#f5f5f5" : "inherit",
+                      sortConfig.key === "startDate" ? "background.surface" : "inherit",
                   }}
                 >
                   {formatDate(project.start_date)}
@@ -519,9 +520,9 @@ const ProjectTableView: React.FC<IProjectTableViewProps> = ({
                   sx={{
                     ...singleTheme.tableStyles.primary.body.cell,
                     fontSize: "13px",
-                    color: "#475467",
+                    color: "text.tertiary",
                     backgroundColor:
-                      sortConfig.key === "lastUpdated" ? "#f5f5f5" : "inherit",
+                      sortConfig.key === "lastUpdated" ? "background.surface" : "inherit",
                   }}
                 >
                   {formatDate(project.last_updated)}

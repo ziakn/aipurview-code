@@ -24,7 +24,7 @@ import {
   Plus,
   LayoutGrid,
 } from "lucide-react";
-import { brand, background, border as borderPalette } from "../../themes/palette";
+import { brand, background, border as borderPalette } from "../../themes/palette";;
 import { toggleSidebar } from "../../../application/redux/ui/uiSlice";
 import "../Layout/icon-shake.css";
 import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.context";
@@ -823,7 +823,7 @@ const SidebarShell: FC<SidebarShellProps> = ({
                               fontWeight: isSelected ? 500 : 400,
                               transition: "all 0.15s ease",
                               "&:hover": {
-                                backgroundColor: isSelected ? "#f0fdf4" : "#f3f4f6",
+                                backgroundColor: isSelected ? "#f0fdf4" : "background.hover",
                               },
                             }}
                           >
