@@ -74,5 +74,29 @@ export const playgroundContent: ArticleContent = {
       type: 'paragraph',
       text: 'Every Playground message is logged in Analytics with cost and token tracking. If a conversation costs $0.02 per exchange, multiply by your expected daily volume to estimate monthly spend.',
     },
+    {
+      type: 'article-links',
+      title: 'Related articles',
+      items: [
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'endpoints',
+          title: 'Endpoints',
+          description: 'Create and configure the endpoints available in the Playground dropdown.',
+        },
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'guardrails',
+          title: 'Guardrails',
+          description: 'Configure rules that the Playground enforces on every message.',
+        },
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'prompts',
+          title: 'Prompts',
+          description: 'Build versioned prompt templates and test them in the editor chat.',
+        },
+      ],
+    },
   ],
 };

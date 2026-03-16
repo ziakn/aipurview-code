@@ -132,7 +132,13 @@ function SortableMessageBlock({
         value={msg.content}
         onChange={(e) => onUpdate(idx, "content", e.target.value)}
         minRows={3}
-        placeholder={`Enter ${msg.role} message...`}
+        placeholder={
+          msg.role === "system"
+            ? "You are a helpful assistant that... Define the AI's role, tone, and constraints here."
+            : msg.role === "user"
+              ? "Write a sample user message. Use {{variables}} for dynamic values, e.g. Summarize {{topic}} in {{style}} style."
+              : "Write a sample assistant response to guide the AI's behavior through few-shot examples."
+        }
         style={{
           width: "100%",
           border: "none",
@@ -446,6 +452,7 @@ export default function PromptEditorPage() {
       }
       description={prompt.description || "Edit prompt messages, test with variables, and publish versions."}
       tipBoxEntity="ai-gateway-prompts"
+      helpArticlePath="ai-gateway/prompts"
       actionButton={
         <Stack direction="row" alignItems="center" gap="8px">
           <CustomizableButton text="Save draft" onClick={handleSave} isDisabled={isSaving} variant="outlined" sx={{ height: 34 }} />

@@ -213,5 +213,35 @@ print(response.choices[0].message.content)`,
         { bold: 'Distribute virtual keys', text: 'Give each team or service its own key with a budget cap' },
       ],
     },
+    {
+      type: 'article-links',
+      title: 'Related articles',
+      items: [
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'endpoints',
+          title: 'Endpoints',
+          description: 'Configure provider, model, and rate limits for each endpoint.',
+        },
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'settings',
+          title: 'Settings',
+          description: 'Manage API keys, budgets, and guardrail configuration.',
+        },
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'playground',
+          title: 'Playground',
+          description: 'Test your endpoints interactively before going to production.',
+        },
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'virtual-keys',
+          title: 'Virtual keys',
+          description: 'Create API keys for developers to use the gateway programmatically.',
+        },
+      ],
+    },
   ],
 };

@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { Box, Typography, Stack, IconButton, Slider } from "@mui/material";
-import { Settings, Router } from "lucide-react";
+import { Settings, Router, MessageSquare, Zap, Coins } from "lucide-react";
 import { AssistantRuntimeProvider } from "@assistant-ui/react";
 import { ThreadPrimitive } from "@assistant-ui/react";
 import Select from "../../../components/Inputs/Select";
 import Field from "../../../components/Inputs/Field";
 import StandardModal from "../../../components/Modals/StandardModal";
 import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtended";
+import { EmptyState } from "../../../components/EmptyState";
+import EmptyStateTip from "../../../components/EmptyState/EmptyStateTip";
 import { apiServices } from "../../../../infrastructure/api/networkServices";
 import palette from "../../../themes/palette";
 import { usePlaygroundRuntime } from "./usePlaygroundRuntime";
@@ -162,16 +164,21 @@ export default function PlaygroundPage() {
           }}
         >
           {!selectedEndpoint ? (
-            <Stack
-              alignItems="center"
-              justifyContent="center"
-              sx={{ height: "100%", minHeight: 280 }}
+            <EmptyState
+              icon={MessageSquare}
+              message="Select an endpoint to start chatting"
             >
-              <Router size={32} color={palette.text.disabled} strokeWidth={1.5} />
-              <Typography sx={{ fontSize: 13, color: palette.text.tertiary, mt: 1 }}>
-                Select an endpoint to start testing
-              </Typography>
-            </Stack>
+              <EmptyStateTip
+                icon={Zap}
+                title="Test endpoints before production"
+                description="Send test messages to any configured endpoint and verify model behavior, system prompts, and response quality before routing production traffic."
+              />
+              <EmptyStateTip
+                icon={Coins}
+                title="Estimate cost per message"
+                description="Every playground message shows its cost and token usage. Multiply by your expected daily volume to forecast monthly spend before going live."
+              />
+            </EmptyState>
           ) : (
             <AssistantRuntimeProvider runtime={runtime}>
               <Box sx={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>

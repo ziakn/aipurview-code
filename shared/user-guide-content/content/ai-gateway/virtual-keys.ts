@@ -185,5 +185,29 @@ print(response.choices[0].message.content)`,
       title: 'Guardrails apply to virtual keys too',
       text: 'PII detection and content filters from the Guardrails page run on every virtual key request. There\'s no way around them.',
     },
+    {
+      type: 'article-links',
+      title: 'Related articles',
+      items: [
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'endpoints',
+          title: 'Endpoints',
+          description: 'Set up the endpoint slugs that virtual key users reference in API calls.',
+        },
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'settings',
+          title: 'Settings',
+          description: 'Manage org-wide budgets and API keys used by endpoints.',
+        },
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'logs',
+          title: 'Logs',
+          description: 'Filter logs by virtual key to review programmatic traffic.',
+        },
+      ],
+    },
   ],
 };

@@ -127,10 +127,10 @@ export default function SpendDashboardPage() {
   if (isFirstTime === true) {
     return (
       <PageHeaderExtended
-        title="Analytics"
+        title="Dashboard"
         description="Monitor LLM usage and costs across your organization."
-        tipBoxEntity="ai-gateway-analytics"
-        helpArticlePath="ai-gateway/analytics"
+        tipBoxEntity="ai-gateway-dashboard"
+        helpArticlePath="ai-gateway/dashboard"
       >
         <Box sx={{ position: "relative", borderRadius: "4px", overflow: "hidden", border: `1.5px dashed ${palette.border.dark}` }}>
           <Box sx={{ filter: "blur(3px)", pointerEvents: "none", userSelect: "none" }}>
@@ -152,10 +152,10 @@ export default function SpendDashboardPage() {
 
   return (
     <PageHeaderExtended
-      title="Analytics"
+      title="Dashboard"
       description="Monitor LLM usage and costs across your organization."
-      tipBoxEntity="ai-gateway-analytics"
-      helpArticlePath="ai-gateway/analytics"
+      tipBoxEntity="ai-gateway-dashboard"
+      helpArticlePath="ai-gateway/dashboard"
       actionButton={
         <Select
           id="analytics-period"

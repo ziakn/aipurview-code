@@ -151,7 +151,7 @@ export default function PromptsPage() {
 
   if (prompts.length === 0 && !isCreateOpen) {
     return (
-      <PageHeaderExtended title="Prompts" tipBoxEntity="ai-gateway-prompts" actionButton={actionButton}>
+      <PageHeaderExtended title="Prompts" description="Create versioned prompt templates with variables and bind them to endpoints." tipBoxEntity="ai-gateway-prompts" helpArticlePath="ai-gateway/prompts" actionButton={actionButton}>
         <EmptyState
           icon={BookOpen}
           message="No prompts yet. Create your first prompt template to centralize and version-control system instructions."
@@ -167,7 +167,7 @@ export default function PromptsPage() {
   const paginatedPrompts = prompts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
-    <PageHeaderExtended title="Prompts" tipBoxEntity="ai-gateway-prompts" actionButton={actionButton}>
+    <PageHeaderExtended title="Prompts" description="Create versioned prompt templates with variables and bind them to endpoints." tipBoxEntity="ai-gateway-prompts" helpArticlePath="ai-gateway/prompts" actionButton={actionButton}>
       <TableContainer sx={{ ...cardSx, p: 0 }}>
         <Table size="small">
           <TableHead>

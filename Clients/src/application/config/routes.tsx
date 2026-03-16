@@ -157,9 +157,9 @@ export const createRoutes = (
     <Route path="/shadow-ai/rules" element={<RulesPage />} />
     <Route path="/shadow-ai/rules/alerts" element={<RulesPage />} />
     <Route path="/shadow-ai/settings" element={<ShadowAISettingsPage />} />
-    <Route path="/ai-gateway" element={<Navigate to="/ai-gateway/endpoints" replace />} />
+    <Route path="/ai-gateway" element={<Navigate to="/ai-gateway/dashboard" replace />} />
     <Route path="/ai-gateway/endpoints" element={<AIGatewayEndpointsPage />} />
-    <Route path="/ai-gateway/analytics" element={<AIGatewayAnalyticsPage />} />
+    <Route path="/ai-gateway/dashboard" element={<AIGatewayAnalyticsPage />} />
     <Route path="/ai-gateway/playground" element={<AIGatewayPlaygroundPage />} />
     <Route path="/ai-gateway/guardrails" element={<AIGatewayGuardrailsPage />} />
     <Route path="/ai-gateway/logs" element={<AIGatewayLogsPage />} />

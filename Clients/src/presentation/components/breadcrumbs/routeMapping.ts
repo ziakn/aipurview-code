@@ -128,7 +128,7 @@ export const routeMapping: Record<string, string> = {
 
   // AI Gateway
   "/ai-gateway": "AI gateway",
-  "/ai-gateway/analytics": "Analytics",
+  "/ai-gateway/dashboard": "Dashboard",
   "/ai-gateway/endpoints": "Endpoints",
   "/ai-gateway/playground": "Playground",
   "/ai-gateway/guardrails": "Guardrails",
@@ -263,7 +263,7 @@ export const routeIconMapping: Record<string, () => React.ReactNode> = {
 
   // AI Gateway
   "/ai-gateway": () => React.createElement(Router, { size: 14, strokeWidth: 1.5 }),
-  "/ai-gateway/analytics": () => React.createElement(BarChart3, { size: 14, strokeWidth: 1.5 }),
+  "/ai-gateway/dashboard": () => React.createElement(BarChart3, { size: 14, strokeWidth: 1.5 }),
   "/ai-gateway/endpoints": () => React.createElement(Router, { size: 14, strokeWidth: 1.5 }),
   "/ai-gateway/playground": () => React.createElement(MessageSquare, { size: 14, strokeWidth: 1.5 }),
   "/ai-gateway/guardrails": () => React.createElement(ShieldCheck, { size: 14, strokeWidth: 1.5 }),

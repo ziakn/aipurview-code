@@ -169,5 +169,29 @@ export const logsContent: ArticleContent = {
       title: 'Compliance audit trail',
       text: 'Every gateway request is logged with timestamp, model, cost, tokens, and status. That\'s your evidence for EU AI Act Article 12 (record-keeping) and ISO 42001 Clause 9 (performance evaluation). The source filter is especially useful here: you can pull just the programmatic traffic and ignore test requests from the Playground.',
     },
+    {
+      type: 'article-links',
+      title: 'Related articles',
+      items: [
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'settings',
+          title: 'Settings',
+          description: 'Toggle request and response body logging on or off.',
+        },
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'guardrails',
+          title: 'Guardrails',
+          description: 'Configure rules whose blocks and masks appear in log error details.',
+        },
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'analytics',
+          title: 'Analytics',
+          description: 'See aggregated cost and usage trends from the same request data.',
+        },
+      ],
+    },
   ],
 };

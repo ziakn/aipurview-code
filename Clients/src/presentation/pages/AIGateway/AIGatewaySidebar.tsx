@@ -27,9 +27,9 @@ export default function AIGatewaySidebar({
 }: AIGatewaySidebarProps) {
   const flatItems: SidebarMenuItem[] = [
     {
-      id: "analytics",
-      label: "Analytics",
-      value: "analytics",
+      id: "dashboard",
+      label: "Dashboard",
+      value: "dashboard",
       icon: <BarChart3 size={16} strokeWidth={1.5} />,
     },
     {

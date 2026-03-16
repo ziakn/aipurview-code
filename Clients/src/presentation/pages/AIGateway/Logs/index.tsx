@@ -21,7 +21,7 @@ import {
 import { Tooltip as MuiTooltip } from "@mui/material";
 import { CustomizableButton } from "../../../components/button/customizable-button";
 import Toggle from "../../../components/Inputs/Toggle";
-import { ButtonToggle } from "../../../components/button-toggle";
+import Select from "../../../components/Inputs/Select";
 import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtended";
 import { EmptyState } from "../../../components/EmptyState";
 import EmptyStateTip from "../../../components/EmptyState/EmptyStateTip";
@@ -137,15 +137,15 @@ function ConversationView({ messages }: { messages: RequestMessage[] }) {
 }
 
 const STATUS_OPTIONS = [
-  { label: "All", value: "all" },
-  { label: "Success", value: "success" },
-  { label: "Error", value: "error" },
+  { _id: "all", name: "All" },
+  { _id: "success", name: "Success" },
+  { _id: "error", name: "Error" },
 ];
 
 const SOURCE_OPTIONS = [
-  { label: "All", value: "all" },
-  { label: "Playground", value: "playground" },
-  { label: "Virtual key", value: "virtual-key" },
+  { _id: "all", name: "All" },
+  { _id: "playground", name: "Playground" },
+  { _id: "virtual-key", name: "Virtual key" },
 ];
 
 export default function LogsPage() {
@@ -305,28 +305,22 @@ export default function LogsPage() {
               sx={{ width: "100%" }}
             />
           </Box>
-          <Stack direction="row" gap="8px" alignItems="center" flexWrap="wrap">
-            <Typography sx={{ fontSize: 12, color: palette.text.disabled, mr: "2px" }}>
-              Status
-            </Typography>
-            <ButtonToggle
-              options={STATUS_OPTIONS}
-              value={statusFilter}
-              onChange={(v) => setStatusFilter(v as StatusFilter)}
-              height={34}
-            />
-          </Stack>
-          <Stack direction="row" gap="8px" alignItems="center" flexWrap="wrap">
-            <Typography sx={{ fontSize: 12, color: palette.text.disabled, mr: "2px" }}>
-              Source
-            </Typography>
-            <ButtonToggle
-              options={SOURCE_OPTIONS}
-              value={sourceFilter}
-              onChange={(v) => setSourceFilter(v as SourceFilter)}
-              height={34}
-            />
-          </Stack>
+          <Select
+            id="status-filter"
+            label="Status"
+            value={statusFilter}
+            items={STATUS_OPTIONS}
+            onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
+            sx={{ minWidth: 130, maxWidth: 160 }}
+          />
+          <Select
+            id="source-filter"
+            label="Source"
+            value={sourceFilter}
+            items={SOURCE_OPTIONS}
+            onChange={(e) => setSourceFilter(e.target.value as SourceFilter)}
+            sx={{ minWidth: 140, maxWidth: 170 }}
+          />
         </Stack>
       </Box>
 

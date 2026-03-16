@@ -162,8 +162,8 @@ export function ContextSidebar({
       );
     }
     case "ai-gateway": {
-      const gatewayTab = location.pathname.includes("/ai-gateway/analytics")
-        ? "analytics"
+      const gatewayTab = location.pathname.includes("/ai-gateway/dashboard")
+        ? "dashboard"
         : location.pathname.includes("/ai-gateway/endpoints")
           ? "endpoints"
           : location.pathname.includes("/ai-gateway/playground")
@@ -178,7 +178,7 @@ export function ContextSidebar({
                     ? "virtual-keys"
                     : location.pathname.includes("/ai-gateway/settings")
                       ? "settings"
-                      : "analytics";
+                      : "dashboard";
 
       const handleGatewayTabChange = (newTab: string) => {
         navigate(`/ai-gateway/${newTab}`);

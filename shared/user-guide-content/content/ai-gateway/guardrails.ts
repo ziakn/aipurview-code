@@ -185,9 +185,32 @@ export const guardrailsContent: ArticleContent = {
     },
     {
       type: 'article-links',
+      title: 'Related articles',
       items: [
-        { title: 'Guardrail settings', collectionId: 'ai-gateway', articleId: 'settings' },
-        { title: 'Analytics — guardrails activity', collectionId: 'ai-gateway', articleId: 'analytics' },
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'settings',
+          title: 'Settings',
+          description: 'Configure error behavior, replacement text, and log retention for guardrails.',
+        },
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'analytics',
+          title: 'Analytics',
+          description: 'View blocked and masked request counts in the guardrails activity section.',
+        },
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'logs',
+          title: 'Logs',
+          description: 'Inspect individual requests that were blocked or masked by guardrail rules.',
+        },
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'endpoints',
+          title: 'Endpoints',
+          description: 'Guardrail rules apply globally to all endpoints listed here.',
+        },
       ],
     },
   ],

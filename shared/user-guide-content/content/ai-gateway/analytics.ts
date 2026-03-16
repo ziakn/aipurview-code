@@ -141,5 +141,29 @@ export const analyticsContent: ArticleContent = {
       title: 'Compliance evidence',
       text: 'Analytics data can be used as compliance evidence for EU AI Act Article 12 (record-keeping) and ISO 42001 Clause 9 (performance evaluation). Every request is logged with timestamps, model, cost, and guardrail results.',
     },
+    {
+      type: 'article-links',
+      title: 'Related articles',
+      items: [
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'logs',
+          title: 'Logs',
+          description: 'Inspect individual requests with full prompt and response details.',
+        },
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'guardrails',
+          title: 'Guardrails',
+          description: 'Configure the PII and content filter rules that appear in guardrails activity.',
+        },
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'endpoints',
+          title: 'Endpoints',
+          description: 'Manage the endpoints that generate the cost and usage data shown here.',
+        },
+      ],
+    },
   ],
 };

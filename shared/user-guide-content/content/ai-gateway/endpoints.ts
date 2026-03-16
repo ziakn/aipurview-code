@@ -126,5 +126,29 @@ export const endpointsContent: ArticleContent = {
       title: 'Model format',
       text: 'Models follow the LiteLLM format: "provider/model-name" (e.g., "openai/gpt-4o", "anthropic/claude-sonnet-4-20250514"). For OpenRouter, use "openrouter/provider/model" (e.g., "openrouter/meta-llama/llama-3.3-70b-instruct").',
     },
+    {
+      type: 'article-links',
+      title: 'Related articles',
+      items: [
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'settings',
+          title: 'Settings',
+          description: 'Add the API keys that endpoints use to authenticate with providers.',
+        },
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'guardrails',
+          title: 'Guardrails',
+          description: 'Set up PII detection and content filtering applied to all endpoints.',
+        },
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'prompts',
+          title: 'Prompts',
+          description: 'Create versioned prompt templates that can be bound to endpoints.',
+        },
+      ],
+    },
   ],
 };

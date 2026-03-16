@@ -338,7 +338,7 @@ export const ENTITY_TIPS: EntityTips = {
       content: "Add a system prompt to an endpoint to enforce consistent behavior across all requests. This is useful for adding safety guardrails, response formatting instructions, or context that should apply to every interaction.",
     },
   ],
-  "ai-gateway-analytics": [
+  "ai-gateway-dashboard": [
     {
       header: "Analytics gives you a unified view of all LLM usage and costs.",
       content: "The analytics dashboard aggregates costs, request volume, token usage, and latency from every provider and model into a single view. Use the period selector to compare daily, weekly, or monthly trends and identify unexpected usage spikes.",

@@ -144,10 +144,32 @@ export const aiGatewaySettingsContent: ArticleContent = {
     },
     {
       type: 'article-links',
+      title: 'Related articles',
       items: [
-        { title: 'Guardrail rules', collectionId: 'ai-gateway', articleId: 'guardrails' },
-        { title: 'Endpoints', collectionId: 'ai-gateway', articleId: 'endpoints' },
-        { title: 'Analytics', collectionId: 'ai-gateway', articleId: 'analytics' },
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'guardrails',
+          title: 'Guardrails',
+          description: 'Create and manage the PII and content filter rules configured here.',
+        },
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'endpoints',
+          title: 'Endpoints',
+          description: 'Endpoints reference the API keys and budgets managed in settings.',
+        },
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'virtual-keys',
+          title: 'Virtual keys',
+          description: 'Virtual keys have their own per-key budgets separate from the org budget.',
+        },
+        {
+          collectionId: 'ai-gateway',
+          articleId: 'logs',
+          title: 'Logs',
+          description: 'Request and response body logging is controlled by settings on this page.',
+        },
       ],
     },
   ],
