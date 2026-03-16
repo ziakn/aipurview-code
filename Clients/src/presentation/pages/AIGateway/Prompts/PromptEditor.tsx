@@ -684,7 +684,7 @@ export default function PromptEditorPage() {
         onClose={() => setIsHistoryOpen(false)}
         PaperProps={{ sx: { width: 380 } }}
       >
-        <Box sx={{ p: 2, height: "100%", display: "flex", flexDirection: "column" }}>
+        <Box sx={{ padding: "16px", height: "100%", display: "flex", flexDirection: "column" }}>
           {/* Header */}
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
             <Typography fontSize={15} fontWeight={600}>Version history</Typography>
