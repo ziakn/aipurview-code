@@ -97,6 +97,9 @@ export const text = {
   tertiary: "#475467",
   accent: "#838c99",
   disabled: "#9CA3AF",
+  black: "#000000",
+  icon: "#667085",
+  muted: "#98A2B3",
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -111,6 +114,7 @@ export const background = {
   accent: "#f9fafb",
   hover: "#F3F4F6",
   selected: "#E6F0EC",
+  surface: "#f5f5f5",
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -130,6 +134,7 @@ export const brand = {
   primary: "#13715B",
   primaryHover: "#0F5A47",
   primaryLight: "#E6F0EC",
+  primaryDark: "#10614d",
 } as const;
 
 // ---------------------------------------------------------------------------

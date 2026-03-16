@@ -50,12 +50,16 @@ declare module "@mui/material/styles" {
     modal: string;
     fill: string;
     accent: string;
+    surface: string;
   }
   interface TypeText {
     primary: string;
     secondary: string;
     tertiary: string;
     accent: string;
+    black: string;
+    icon: string;
+    muted: string;
   }
   interface PaletteColor {
     text?: string;
