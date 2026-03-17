@@ -31,7 +31,7 @@ import { EmptyState } from "../../../components/EmptyState";
 import EmptyStateTip from "../../../components/EmptyState/EmptyStateTip";
 import { apiServices } from "../../../../infrastructure/api/networkServices";
 import palette, { chart as chartPalette } from "../../../themes/palette";
-import { sectionTitleSx, useCardSx } from "../shared";
+import { sectionTitleSx, useCardSx, GUARDRAIL_ACTION_COLORS, formatEntityType } from "../shared";
 import { useUserGuideSidebarContext } from "../../../components/UserGuide/UserGuideSidebarContext";
 import MockDashboard from "./MockDashboard";
 import OnboardingOverlay from "./OnboardingOverlay";
@@ -227,19 +227,6 @@ export default function SpendDashboardPage() {
         </EmptyState>
       )}
 
-      {false && !loading && hasData && byDay.length === 0 && byModel.length === 0 && byEndpoint.length === 0 && byUser.length === 0 && (
-        <Box sx={{
-          p: "16px",
-          borderRadius: "4px",
-          border: `1px solid ${palette.border.light}`,
-          textAlign: "center",
-        }}>
-          <Typography fontSize={13} color="text.secondary">
-            No detailed breakdowns available for this period. Try selecting a longer time range.
-          </Typography>
-        </Box>
-      )}
-
       {/* Cost over time chart */}
       {!loading && (
         <Box sx={cardSx}>
@@ -432,7 +419,7 @@ export default function SpendDashboardPage() {
                 <ResponsiveContainer width="100%" height={180} style={{ outline: "none" }}>
                   <AreaChart data={errorRateByDay}>
                     <defs>
-                      <GradientDef id="errorGradient" color="#DC2626" />
+                      <GradientDef id="errorGradient" color={GUARDRAIL_ACTION_COLORS.blocked} />
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke={palette.border.light} />
                     <XAxis
@@ -449,7 +436,7 @@ export default function SpendDashboardPage() {
                       tickFormatter={(v) => `${v}%`}
                     />
                     <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number, name: string) => [name === "error_rate" ? `${value}%` : value, name === "error_rate" ? "Error rate" : "Errors"]} />
-                    <Area type="monotone" dataKey="error_rate" stroke="#DC2626" fill="url(#errorGradient)" strokeWidth={2} />
+                    <Area type="monotone" dataKey="error_rate" stroke={GUARDRAIL_ACTION_COLORS.blocked} fill="url(#errorGradient)" strokeWidth={2} />
                   </AreaChart>
                 </ResponsiveContainer>
               </Stack>
@@ -572,19 +559,19 @@ export default function SpendDashboardPage() {
                 </Stack>
                 <Stack direction="row" gap="12px" sx={{ mb: "4px" }}>
                   <Stack direction="row" alignItems="center" gap="4px">
-                    <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "#DC2626" }} />
+                    <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: GUARDRAIL_ACTION_COLORS.blocked }} />
                     <Typography sx={{ fontSize: 11, color: palette.text.tertiary }}>Blocked</Typography>
                   </Stack>
                   <Stack direction="row" alignItems="center" gap="4px">
-                    <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "#D97706" }} />
+                    <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: GUARDRAIL_ACTION_COLORS.masked }} />
                     <Typography sx={{ fontSize: 11, color: palette.text.tertiary }}>Masked</Typography>
                   </Stack>
                 </Stack>
                 <ResponsiveContainer width="100%" height={160} style={{ outline: "none" }}>
                   <AreaChart data={guardrailStats?.byDay || []} margin={{ left: 0, right: 0 }}>
                     <defs>
-                      <GradientDef id="blockedGradient" color="#DC2626" />
-                      <GradientDef id="maskedGradient" color="#D97706" />
+                      <GradientDef id="blockedGradient" color={GUARDRAIL_ACTION_COLORS.blocked} />
+                      <GradientDef id="maskedGradient" color={GUARDRAIL_ACTION_COLORS.masked} />
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke={palette.border.light} />
                     <XAxis
@@ -601,8 +588,8 @@ export default function SpendDashboardPage() {
                       width={30}
                     />
                     <Tooltip contentStyle={chartTooltipStyle} />
-                    <Area type="monotone" dataKey="blocked" stackId="1" stroke="#DC2626" fill="url(#blockedGradient)" strokeWidth={1.5} />
-                    <Area type="monotone" dataKey="masked" stackId="1" stroke="#D97706" fill="url(#maskedGradient)" strokeWidth={1.5} />
+                    <Area type="monotone" dataKey="blocked" stackId="1" stroke={GUARDRAIL_ACTION_COLORS.blocked} fill="url(#blockedGradient)" strokeWidth={1.5} />
+                    <Area type="monotone" dataKey="masked" stackId="1" stroke={GUARDRAIL_ACTION_COLORS.masked} fill="url(#maskedGradient)" strokeWidth={1.5} />
                   </AreaChart>
                 </ResponsiveContainer>
               </Stack>
@@ -672,15 +659,15 @@ export default function SpendDashboardPage() {
               {/* Summary badges */}
               <Stack direction="row" gap="12px" alignItems="center">
                 <Stack direction="row" alignItems="center" gap="4px">
-                  <ShieldOff size={13} strokeWidth={1.5} color="#DC2626" />
-                  <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#DC2626" }}>
+                  <ShieldOff size={13} strokeWidth={1.5} color={GUARDRAIL_ACTION_COLORS.blocked} />
+                  <Typography sx={{ fontSize: 13, fontWeight: 600, color: GUARDRAIL_ACTION_COLORS.blocked }}>
                     {guardrailStats?.summary?.blocked_count ?? 0}
                   </Typography>
                   <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>blocked</Typography>
                 </Stack>
                 <Stack direction="row" alignItems="center" gap="4px">
-                  <ShieldCheck size={13} strokeWidth={1.5} color="#D97706" />
-                  <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#D97706" }}>
+                  <ShieldCheck size={13} strokeWidth={1.5} color={GUARDRAIL_ACTION_COLORS.masked} />
+                  <Typography sx={{ fontSize: 13, fontWeight: 600, color: GUARDRAIL_ACTION_COLORS.masked }}>
                     {guardrailStats?.summary?.masked_count ?? 0}
                   </Typography>
                   <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>masked</Typography>
@@ -711,9 +698,9 @@ export default function SpendDashboardPage() {
                         sx={{ p: "4px 8px", borderRadius: "4px", "&:hover": { backgroundColor: palette.background.alt } }}
                       >
                         <Stack direction="row" alignItems="center" gap="6px">
-                          <Box sx={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: d.action_taken === "blocked" ? "#DC2626" : "#D97706", flexShrink: 0 }} />
+                          <Box sx={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: d.action_taken === "blocked" ? GUARDRAIL_ACTION_COLORS.blocked : GUARDRAIL_ACTION_COLORS.masked, flexShrink: 0 }} />
                           <Typography sx={{ fontSize: 12 }}>
-                            {(d.entity_type || "Unknown").replace(/_/g, " ")}
+                            {formatEntityType(d.entity_type)}
                           </Typography>
                         </Stack>
                         <Typography sx={{ fontSize: 12, fontWeight: 600, minWidth: "30px", textAlign: "right" }}>
@@ -744,8 +731,8 @@ export default function SpendDashboardPage() {
                       >
                         <Typography sx={{ fontSize: 12 }}>{ep.endpoint_name}</Typography>
                         <Stack direction="row" gap="8px" alignItems="center">
-                          {ep.blocked > 0 && <Typography sx={{ fontSize: 11, color: "#DC2626" }}>{ep.blocked} blocked</Typography>}
-                          {ep.masked > 0 && <Typography sx={{ fontSize: 11, color: "#D97706" }}>{ep.masked} masked</Typography>}
+                          {ep.blocked > 0 && <Typography sx={{ fontSize: 11, color: GUARDRAIL_ACTION_COLORS.blocked }}>{ep.blocked} blocked</Typography>}
+                          {ep.masked > 0 && <Typography sx={{ fontSize: 11, color: GUARDRAIL_ACTION_COLORS.masked }}>{ep.masked} masked</Typography>}
                           <Typography sx={{ fontSize: 12, fontWeight: 600, minWidth: "30px", textAlign: "right" }}>{ep.count}</Typography>
                         </Stack>
                       </Stack>

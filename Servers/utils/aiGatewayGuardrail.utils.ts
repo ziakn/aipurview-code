@@ -363,7 +363,8 @@ export async function getGuardrailLogsDetailQuery(
        gl.id, gl.guardrail_type, gl.action_taken, gl.matched_text,
        gl.entity_type, gl.execution_time_ms, gl.created_at,
        COALESCE(e.display_name, 'Unknown') AS endpoint_name,
-       g.name AS rule_name
+       g.name AS rule_name,
+       COUNT(*) OVER()::int AS total
      FROM ai_gateway_guardrail_logs gl
      LEFT JOIN ai_gateway_endpoints e ON gl.endpoint_id = e.id
      LEFT JOIN ai_gateway_guardrails g ON gl.guardrail_id = g.id
@@ -377,18 +378,9 @@ export async function getGuardrailLogsDetailQuery(
       type: QueryTypes.SELECT,
     }
   );
-  const countResult = await sequelize.query(
-    `SELECT COUNT(*)::int AS total
-     FROM ai_gateway_guardrail_logs
-     WHERE organization_id = :organizationId
-       AND created_at >= :startDate
-       AND created_at <= :endDate`,
-    {
-      replacements: { organizationId, startDate, endDate },
-      type: QueryTypes.SELECT,
-    }
-  );
-  return { logs: rows, total: (countResult as any)[0]?.total || 0 };
+  const total = (rows as any[])[0]?.total || 0;
+  const logs = (rows as any[]).map(({ total: _, ...rest }) => rest);
+  return { logs, total };
 }
 
 export async function purgeGuardrailLogsQuery(

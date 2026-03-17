@@ -34,10 +34,11 @@ import Chip from "../../../components/Chip";
 import { apiServices } from "../../../../infrastructure/api/networkServices";
 import { getPaginationRowCount, setPaginationRowCount } from "../../../../application/utils/paginationStorage";
 import palette from "../../../themes/palette";
-import { sectionTitleSx, useCardSx } from "../shared";
+import { sectionTitleSx, useCardSx, formatEntityType } from "../shared";
 
 const AUTO_REFRESH_INTERVAL_MS = 10_000;
 const SEARCH_DEBOUNCE_MS = 300;
+const GR_PAGE_SIZE = 50;
 
 type StatusFilter = "all" | "success" | "error";
 type SourceFilter = "all" | "playground" | "virtual-key";
@@ -166,7 +167,7 @@ export default function LogsPage() {
   const loadGuardrailLogs = useCallback(async () => {
     setGrLoading(true);
     try {
-      const res = await apiServices.get(`/ai-gateway/guardrails/logs/detail?period=30d&limit=50&offset=${grPage * 50}`);
+      const res = await apiServices.get(`/ai-gateway/guardrails/logs/detail?period=30d&limit=${GR_PAGE_SIZE}&offset=${grPage * GR_PAGE_SIZE}`);
       const data = res?.data?.data || {};
       setGrLogs(data.logs || []);
       setGrTotal(data.total || 0);
@@ -246,10 +247,10 @@ export default function LogsPage() {
     setExpandedId(null);
   }, [debouncedSearch, statusFilter, sourceFilter]);
 
-  // Reload when page/pagination/filters change
+  // Reload when page/pagination/filters change (skip when guardrails tab is active)
   useEffect(() => {
-    loadLogs(page, rowsPerPage);
-  }, [page, rowsPerPage, loadLogs]);
+    if (activeLogTab === "requests") loadLogs(page, rowsPerPage);
+  }, [page, rowsPerPage, loadLogs, activeLogTab]);
 
   // Auto-refresh: only restarts when toggled, reads page/rpp from refs
   const loadLogsRef = useRef(loadLogs);
@@ -726,7 +727,7 @@ export default function LogsPage() {
               ) : grLogs.length === 0 ? (
                 <Typography sx={{ fontSize: 13, color: palette.text.tertiary, py: "16px" }}>No guardrail detections in this period.</Typography>
               ) : (
-                <Stack gap="0px">
+                <Stack>
                   {/* Header */}
                   <Stack direction="row" sx={{ p: "8px 0", borderBottom: `1px solid ${palette.border.light}` }}>
                     <Typography sx={{ flex: 0.8, fontSize: 11, fontWeight: 600, color: palette.text.tertiary }}>TIME</Typography>
@@ -760,7 +761,7 @@ export default function LogsPage() {
                         <Chip label={log.action_taken === "blocked" ? "Blocked" : "Masked"} size="small" />
                       </Box>
                       <Typography sx={{ flex: 1, fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                        {(log.entity_type || "—").replace(/_/g, " ")}
+                        {formatEntityType(log.entity_type)}
                       </Typography>
                       <Typography sx={{ flex: 1.2, fontSize: 11, fontFamily: "monospace", color: palette.text.tertiary, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                         {log.matched_text || "—"}
@@ -775,14 +776,14 @@ export default function LogsPage() {
                   ))}
 
                   {/* Pagination */}
-                  {grTotal > 50 && (
+                  {grTotal > GR_PAGE_SIZE && (
                     <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pt: "12px" }}>
                       <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
-                        Page {grPage + 1} of {Math.ceil(grTotal / 50)}  ({grTotal} total)
+                        Page {grPage + 1} of {Math.ceil(grTotal / GR_PAGE_SIZE)}  ({grTotal} total)
                       </Typography>
                       <Stack direction="row" gap="8px">
                         <CustomizableButton text="Previous" variant="outlined" onClick={() => setGrPage(Math.max(0, grPage - 1))} isDisabled={grPage === 0} />
-                        <CustomizableButton text="Next" variant="outlined" onClick={() => setGrPage(grPage + 1)} isDisabled={(grPage + 1) * 50 >= grTotal} />
+                        <CustomizableButton text="Next" variant="outlined" onClick={() => setGrPage(grPage + 1)} isDisabled={(grPage + 1) * GR_PAGE_SIZE >= grTotal} />
                       </Stack>
                     </Stack>
                   )}

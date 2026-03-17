@@ -20,7 +20,6 @@ import {
   upsertGuardrailSettingsQuery,
   getGuardrailLogsQuery,
   getGuardrailStatsQuery,
-  getGuardrailStatsByTypeQuery,
   getGuardrailStatsByDayQuery,
   getGuardrailTopDetectionsQuery,
   getGuardrailByEndpointQuery,
@@ -1036,15 +1035,14 @@ export async function getGuardrailStats(req: Request, res: Response) {
     const period = (req.query.period as string) || "7d";
     const { startDate, endDate } = getDateRange(period);
 
-    const [summary, byType, byDay, topDetections, byEndpoint] = await Promise.all([
+    const [summary, byDay, topDetections, byEndpoint] = await Promise.all([
       getGuardrailStatsQuery(req.organizationId!, startDate, endDate),
-      getGuardrailStatsByTypeQuery(req.organizationId!, startDate, endDate),
       getGuardrailStatsByDayQuery(req.organizationId!, startDate, endDate),
       getGuardrailTopDetectionsQuery(req.organizationId!, startDate, endDate),
       getGuardrailByEndpointQuery(req.organizationId!, startDate, endDate),
     ]);
 
-    return res.status(200).json(STATUS_CODE[200]({ summary, byType, byDay, topDetections, byEndpoint }));
+    return res.status(200).json(STATUS_CODE[200]({ summary, byDay, topDetections, byEndpoint }));
   } catch (error) {
     logStructured("error", "failed to fetch guardrail stats", fn, fileName);
     return res.status(500).json(STATUS_CODE[500]("Internal server error"));
@@ -1056,7 +1054,7 @@ export async function getGuardrailLogsDetail(req: Request, res: Response) {
   try {
     const period = (req.query.period as string) || "7d";
     const limit = Math.min(Number(req.query.limit) || 50, 200);
-    const offset = Number(req.query.offset) || 0;
+    const offset = Math.max(0, Number(req.query.offset) || 0);
     const { startDate, endDate } = getDateRange(period);
     const result = await getGuardrailLogsDetailQuery(req.organizationId!, startDate, endDate, limit, offset);
     return res.status(200).json(STATUS_CODE[200](result));
