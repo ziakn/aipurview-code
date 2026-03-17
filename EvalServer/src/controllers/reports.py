@@ -6,6 +6,7 @@ import logging
 import os
 from typing import Any, Dict, List, Optional, Tuple
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives import padding as crypto_padding
 from cryptography.hazmat.backends import default_backend
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse, Response
@@ -17,7 +18,9 @@ from utils.report_summarizer import generate_all_summaries
 
 logger = logging.getLogger("uvicorn")
 
-ENCRYPTION_KEY = os.getenv("ENCRYPTION_KEY", "default-key-change-this-in-production-32chars!!")
+ENCRYPTION_KEY = os.getenv("ENCRYPTION_KEY", "")
+if not ENCRYPTION_KEY:
+    logger.warning("ENCRYPTION_KEY not set — report AI summaries requiring stored API keys will be unavailable")
 
 PREFERRED_PROVIDERS = ["openai", "anthropic", "google", "mistral", "xai"]
 DEFAULT_MODELS = {
@@ -31,18 +34,21 @@ DEFAULT_MODELS = {
 
 def _decrypt_api_key(encrypted_text: str) -> str:
     """Decrypt an API key encrypted by the Node.js backend (AES-256-CBC, hex-encoded)."""
+    if not ENCRYPTION_KEY:
+        raise ValueError("ENCRYPTION_KEY not configured")
     parts = encrypted_text.split(":")
     if len(parts) != 2:
         raise ValueError("Invalid encrypted format")
     iv_hex, data_hex = parts
-    key = ENCRYPTION_KEY.ljust(32, "0")[:32].encode("utf-8")
+    key = ENCRYPTION_KEY.encode("ascii").ljust(32, b"0")[:32]
     iv = bytes.fromhex(iv_hex)
     ct = bytes.fromhex(data_hex)
     cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
     decryptor = cipher.decryptor()
     padded = decryptor.update(ct) + decryptor.finalize()
-    pad_len = padded[-1]
-    return padded[:-pad_len].decode("utf-8")
+    unpadder = crypto_padding.PKCS7(128).unpadder()
+    plaintext = unpadder.update(padded) + unpadder.finalize()
+    return plaintext.decode("utf-8")
 
 
 async def _get_best_api_key(db, organization_id: int) -> Optional[Tuple[str, str]]:
@@ -83,6 +89,7 @@ async def _get_best_api_key(db, organization_id: int) -> Optional[Tuple[str, str
 async def generate_report_controller(
     body: Dict[str, Any],
     organization_id: int,
+    user_id: Optional[str] = None,
 ) -> Response:
     """Generate a PDF or CSV evaluation report."""
 
@@ -156,6 +163,7 @@ async def generate_report_controller(
                 experiment_ids=experiment_ids,
                 sections=sections,
                 project_id=project_id,
+                created_by=user_id,
             )
 
             return JSONResponse(content={

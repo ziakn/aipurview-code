@@ -21,6 +21,7 @@ async def generate_report(request: Request):
     return await controller.generate_report_controller(
         body=body,
         organization_id=_org_id(request),
+        user_id=getattr(request.state, "user_id", None),
     )
 
 

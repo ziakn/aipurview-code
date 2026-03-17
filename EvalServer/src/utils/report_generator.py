@@ -49,6 +49,7 @@ COLORS = {
 }
 
 SAFETY_METRICS = ["bias", "toxicity", "hallucination", "conversationsafety"]
+INVERTED_METRICS = ["bias", "toxicity", "hallucination", "conversationsafety"]
 
 PAGE_W, PAGE_H = A4
 MARGIN = 18 * mm
@@ -60,7 +61,7 @@ def _is_safety_metric(name: str) -> bool:
 
 
 def _is_inverted_metric(name: str) -> bool:
-    return any(m in name.lower() for m in ["bias", "toxicity", "hallucination"])
+    return any(m in name.lower() for m in INVERTED_METRICS)
 
 
 def _format_metric_name(name: str) -> str:

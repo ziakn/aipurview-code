@@ -27,6 +27,11 @@ PROVIDER_CONFIG = {
 }
 
 SAFETY_METRICS = ["bias", "toxicity", "hallucination", "conversationsafety"]
+INVERTED_METRICS = ["bias", "toxicity", "hallucination", "conversationsafety"]
+
+
+def _is_inverted_metric(name: str) -> bool:
+    return any(m in name.lower() for m in INVERTED_METRICS)
 
 
 def _get_client(provider: str, api_key: Optional[str] = None, endpoint_url: Optional[str] = None):
@@ -126,7 +131,7 @@ def generate_metric_summary(
         f"Threshold: {threshold * 100:.0f}%\n"
         f"Status: {status}\n"
         f"Samples evaluated: {total_evaluated}\n"
-        f"{'This is an inverted metric (lower is better).' if _is_safety_metric(metric_name) and any(m in metric_name.lower() for m in ['bias', 'toxicity', 'hallucination']) else ''}"
+        f"{'This is an inverted metric (lower is better).' if _is_safety_metric(metric_name) and _is_inverted_metric(metric_name) else ''}"
     )
 
     return _call_llm(client, model, METRIC_SYSTEM_PROMPT, user_prompt, max_tokens=200)
@@ -153,7 +158,7 @@ def generate_executive_summary(
         for mname, m in summaries.items():
             avg = m.get("averageScore", 0)
             thresh = thresholds.get(mname, 0.5)
-            inverted = any(k in mname.lower() for k in ["bias", "toxicity", "hallucination"])
+            inverted = _is_inverted_metric(mname)
             if (inverted and avg <= thresh) or (not inverted and avg >= thresh):
                 passing += 1
         avg_score = (sum(m.get("averageScore", 0) for m in summaries.values()) / total_metrics * 100) if total_metrics else 0
@@ -196,7 +201,7 @@ def generate_recommendations_summary(
         for mname, m in summaries.items():
             avg = m.get("averageScore", 0)
             thresh = thresholds.get(mname, 0.5)
-            inverted = any(k in mname.lower() for k in ["bias", "toxicity", "hallucination"])
+            inverted = _is_inverted_metric(mname)
             passed = (avg <= thresh) if inverted else (avg >= thresh)
             status = "PASSED" if passed else "FAILED"
             lines.append(
@@ -234,7 +239,7 @@ def generate_all_summaries(
             avg = m.get("averageScore", 0)
             threshold = thresholds.get(metric_name, 0.5)
             is_safety = _is_safety_metric(metric_name)
-            inverted = any(k in metric_name.lower() for k in ["bias", "toxicity", "hallucination"])
+            inverted = _is_inverted_metric(metric_name)
             passed = (avg <= threshold) if inverted else (avg >= threshold)
             total = m.get("totalEvaluated", 0)
 

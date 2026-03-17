@@ -30,7 +30,7 @@ def upgrade() -> None:
             experiment_ids JSONB NOT NULL DEFAULT '[]',
             sections JSONB NOT NULL DEFAULT '[]',
             project_id VARCHAR(255),
-            organization_id INTEGER NOT NULL REFERENCES public.organizations(id) ON DELETE CASCADE,
+            organization_id INTEGER NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
             created_by VARCHAR(255),
             created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
         );

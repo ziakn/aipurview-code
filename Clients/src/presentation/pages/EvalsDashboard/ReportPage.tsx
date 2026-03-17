@@ -96,7 +96,7 @@ export default function ReportPage({
 
   const loadReports = useCallback(async () => {
     try {
-      const res = await CustomAxios.get(`/deepeval/reports?project_id=${projectId}`);
+      const res = await CustomAxios.get(`/deepeval/reports?project_id=${encodeURIComponent(projectId)}`);
       setReports(res.data || []);
     } catch (err) {
       console.error("Failed to load reports:", err);
@@ -216,6 +216,9 @@ export default function ReportPage({
   };
 
   const handleDeleteReport = async (reportId: string) => {
+    const report = reports.find(r => r.id === reportId);
+    const confirmed = window.confirm(`Delete "${report?.title || "this report"}"? This cannot be undone.`);
+    if (!confirmed) return;
     try {
       await CustomAxios.delete(`/deepeval/reports/${reportId}`);
       setReports(prev => prev.filter(r => r.id !== reportId));
