@@ -92,24 +92,30 @@ const QuantitativeRiskForm: FC<QuantitativeRiskFormProps> = ({
 
   const handleBenchmarkApply = useCallback(
     (benchmark: IRiskBenchmark) => {
+      // Parse numeric values — PostgreSQL numeric columns arrive as strings via Sequelize
+      const toNum = (v: unknown): number | null => {
+        if (v == null) return null;
+        const n = Number(v);
+        return isNaN(n) ? null : n;
+      };
       onChange({
         ...values,
-        event_frequency_min: benchmark.event_frequency_min ?? null,
-        event_frequency_likely: benchmark.event_frequency_likely ?? null,
-        event_frequency_max: benchmark.event_frequency_max ?? null,
-        loss_regulatory_min: benchmark.loss_regulatory_min ?? null,
-        loss_regulatory_likely: benchmark.loss_regulatory_likely ?? null,
-        loss_regulatory_max: benchmark.loss_regulatory_max ?? null,
-        loss_operational_min: benchmark.loss_operational_min ?? null,
-        loss_operational_likely: benchmark.loss_operational_likely ?? null,
-        loss_operational_max: benchmark.loss_operational_max ?? null,
-        loss_litigation_min: benchmark.loss_litigation_min ?? null,
-        loss_litigation_likely: benchmark.loss_litigation_likely ?? null,
-        loss_litigation_max: benchmark.loss_litigation_max ?? null,
-        loss_reputational_min: benchmark.loss_reputational_min ?? null,
-        loss_reputational_likely: benchmark.loss_reputational_likely ?? null,
-        loss_reputational_max: benchmark.loss_reputational_max ?? null,
-        benchmark_id: benchmark.id ?? null,
+        event_frequency_min: toNum(benchmark.event_frequency_min),
+        event_frequency_likely: toNum(benchmark.event_frequency_likely),
+        event_frequency_max: toNum(benchmark.event_frequency_max),
+        loss_regulatory_min: toNum(benchmark.loss_regulatory_min),
+        loss_regulatory_likely: toNum(benchmark.loss_regulatory_likely),
+        loss_regulatory_max: toNum(benchmark.loss_regulatory_max),
+        loss_operational_min: toNum(benchmark.loss_operational_min),
+        loss_operational_likely: toNum(benchmark.loss_operational_likely),
+        loss_operational_max: toNum(benchmark.loss_operational_max),
+        loss_litigation_min: toNum(benchmark.loss_litigation_min),
+        loss_litigation_likely: toNum(benchmark.loss_litigation_likely),
+        loss_litigation_max: toNum(benchmark.loss_litigation_max),
+        loss_reputational_min: toNum(benchmark.loss_reputational_min),
+        loss_reputational_likely: toNum(benchmark.loss_reputational_likely),
+        loss_reputational_max: toNum(benchmark.loss_reputational_max),
+        benchmark_id: toNum(benchmark.id),
       });
     },
     [values, onChange]
