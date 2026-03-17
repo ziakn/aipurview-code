@@ -118,7 +118,7 @@ async function estimateCost(
   messages: Array<{ role: string; content: string }>
 ): Promise<number> {
   try {
-    const response = await fetch(`${AI_GATEWAY_URL}/v1/cost-estimate`, {
+    const response = await fetch(`${AI_GATEWAY_URL}/internal/v1/cost-estimate`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -224,7 +224,7 @@ async function runGuardrails(
       const guardrailTimeout = setTimeout(() => guardrailController.abort(), GUARDRAIL_TIMEOUT_MS);
       let response: Response;
       try {
-        response = await fetch(`${AI_GATEWAY_URL}/v1/guardrails/scan`, {
+        response = await fetch(`${AI_GATEWAY_URL}/internal/v1/guardrails/scan`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -659,7 +659,7 @@ export async function proxyCompletion(
     const completionTimeout = setTimeout(() => completionController.abort(), COMPLETION_TIMEOUT_MS);
     let response: Response;
     try {
-      response = await fetch(`${AI_GATEWAY_URL}/v1/chat/completions`, {
+      response = await fetch(`${AI_GATEWAY_URL}/internal/v1/chat/completions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -820,7 +820,7 @@ export async function proxyStream(
   const streamTimeout = setTimeout(() => streamController.abort(), STREAM_CONNECT_TIMEOUT_MS);
   let response: Response;
   try {
-    response = await fetch(`${AI_GATEWAY_URL}/v1/chat/completions`, {
+    response = await fetch(`${AI_GATEWAY_URL}/internal/v1/chat/completions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -990,7 +990,7 @@ export async function proxyEmbedding(
     const embeddingTimeout = setTimeout(() => embeddingController.abort(), EMBEDDING_TIMEOUT_MS);
     let response: Response;
     try {
-      response = await fetch(`${AI_GATEWAY_URL}/v1/embeddings`, {
+      response = await fetch(`${AI_GATEWAY_URL}/internal/v1/embeddings`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

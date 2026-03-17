@@ -754,7 +754,7 @@ export async function getProviders(_req: Request, res: Response) {
   const fn = "getProviders";
   logStructured("processing", "fetching providers from AI Gateway", fn, fileName);
   try {
-    const response = await fetch(`${AI_GATEWAY_URL}/v1/models`, {
+    const response = await fetch(`${AI_GATEWAY_URL}/internal/v1/models`, {
       headers: { "x-internal-key": AI_GATEWAY_KEY },
     });
 
@@ -958,7 +958,7 @@ export async function testGuardrails(req: Request, res: Response) {
       getGuardrailSettingsQuery(req.organizationId!),
     ]);
 
-    const response = await fetch(`${AI_GATEWAY_URL}/v1/guardrails/test`, {
+    const response = await fetch(`${AI_GATEWAY_URL}/internal/v1/guardrails/test`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

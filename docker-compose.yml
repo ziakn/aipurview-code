@@ -93,15 +93,24 @@ services:
       - REDIS_URL=redis://redis:6379/0
   ai_gateway:
     depends_on:
-      - backend
-      - redis
+      postgresdb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     image: ghcr.io/verifywise-ai/verifywise-ai-gateway:latest
-    expose:
-      - "8100"
+    ports:
+      - "8100:8100"
     environment:
       - AI_GATEWAY_PORT=8100
       - INTERNAL_API_KEY=$AI_GATEWAY_INTERNAL_KEY
       - REDIS_URL=redis://redis:6379/0
+      - DB_HOST=postgresdb
+      - DB_PORT=$DB_PORT
+      - DB_USER=$DB_USER
+      - DB_PASSWORD=$DB_PASSWORD
+      - DB_NAME=$DB_NAME
+      - ENCRYPTION_KEY=$ENCRYPTION_KEY
+      - BACKEND_URL=http://backend:$BACKEND_PORT
     restart: unless-stopped
 
 volumes:
