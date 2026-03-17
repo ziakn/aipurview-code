@@ -202,7 +202,7 @@ export default function InsightsPage() {
                   size={200}
                   innerRadius={0}
                   outerRadius={90}
-                  tooltipFormatter={(value) => [String(value), ""]}
+                  tooltipFormatter={(value, name) => [String(value), name]}
                 />
                 <Stack gap="8px">
                   {departments.map((dept, index) => (

@@ -58,6 +58,7 @@ const noOutlineStyle: React.CSSProperties = { outline: "none" };
 const ChartWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <Box
     sx={{
+      width: "100%",
       "& *:focus": { outline: "none !important" },
       "& svg *:focus": { outline: "none !important" },
     }}
