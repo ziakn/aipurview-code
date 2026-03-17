@@ -72,32 +72,47 @@ export function TaskRadarCard({
         />
       </Stack>
 
-      <Stack
-        direction="row"
-        justifyContent="space-around"
-        alignItems="flex-end"
-        sx={{ height: barHeight + 40, flex: 1 }}
-      >
-        {items.map((item) => (
-          <Stack key={item.label} alignItems="center" gap={0.5}>
-            <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#1F2937" }}>
-              {item.value}
-            </Typography>
-            <Box
-              sx={{
-                width: 40,
-                height: (item.value / max) * barHeight || 4,
-                backgroundColor: item.color,
-                borderRadius: "4px 4px 0 0",
-                minHeight: 4,
-              }}
-            />
-            <Typography sx={{ fontSize: 11, color: `${text.icon}`, textAlign: "center" }}>
-              {item.label}
-            </Typography>
-          </Stack>
+      <Box sx={{ position: "relative", flex: 1 }}>
+        {/* Dashed grid lines */}
+        {[0, 1, 2, 3].map((i) => (
+          <Box
+            key={i}
+            sx={{
+              position: "absolute",
+              top: i * (barHeight / 4),
+              left: 0,
+              right: 0,
+              borderTop: `1px dashed ${borderPalette.light}`,
+            }}
+          />
         ))}
-      </Stack>
+        <Stack
+          direction="row"
+          justifyContent="space-around"
+          alignItems="flex-end"
+          sx={{ height: barHeight + 40 }}
+        >
+          {items.map((item) => (
+            <Stack key={item.label} alignItems="center" gap="4px">
+              <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary }}>
+                {item.value}
+              </Typography>
+              <Box
+                sx={{
+                  width: 40,
+                  height: (item.value / max) * barHeight || 4,
+                  backgroundColor: item.color,
+                  borderRadius: "4px 4px 0 0",
+                  minHeight: 4,
+                }}
+              />
+              <Typography sx={{ fontSize: 11, color: text.icon, textAlign: "center" }}>
+                {item.label}
+              </Typography>
+            </Stack>
+          ))}
+        </Stack>
+      </Box>
     </Stack>
   );
 }
