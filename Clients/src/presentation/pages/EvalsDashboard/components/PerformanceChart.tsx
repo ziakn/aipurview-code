@@ -3,6 +3,7 @@ import { Box, Typography } from "@mui/material";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { getAllExperiments, type Experiment } from "../../../../application/repository/deepEval.repository";
 import { palette } from "../../../themes/palette";
+import { vwTooltipStyle } from "../../../components/Charts/VWCharts";
 
 export type TimeRange = "7d" | "30d" | "100d" | "all";
 
@@ -248,11 +249,7 @@ export default function PerformanceChart({ projectId, timeRange }: PerformanceCh
     return (
       <Box
         sx={{
-          backgroundColor: palette.background.main,
-          border: `1px solid ${palette.border.light}`,
-          borderRadius: "8px",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          padding: "12px",
+          ...vwTooltipStyle,
           minWidth: "180px",
         }}
       >
