@@ -392,7 +392,7 @@ export default function SpendDashboardPage() {
                             transition: "width 0.3s",
                           }} />
                           <Stack direction="row" alignItems="center" gap="8px" sx={{ flex: 1, minWidth: 0, position: "relative", zIndex: 1 }}>
-                            <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: getProviderColor(p.group_key, i), flexShrink: 0 }} />
+                            <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: chartPalette[i % chartPalette.length], flexShrink: 0 }} />
                             <Typography sx={{ fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                               {m.group_key}
                             </Typography>
@@ -581,7 +581,7 @@ export default function SpendDashboardPage() {
                   </Stack>
                 </Stack>
                 <ResponsiveContainer width="100%" height={160} style={{ outline: "none" }}>
-                  <AreaChart data={guardrailStats.byDay} margin={{ left: 0, right: 0 }}>
+                  <AreaChart data={guardrailStats?.byDay || []} margin={{ left: 0, right: 0 }}>
                     <defs>
                       <GradientDef id="blockedGradient" color="#DC2626" />
                       <GradientDef id="maskedGradient" color="#D97706" />
