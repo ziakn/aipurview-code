@@ -6,11 +6,11 @@ import litellm
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.config import settings
-from src.routers.completions import router as completions_router
-from src.routers.models import router as models_router
-from src.routers.guardrails import router as guardrails_router
-from src.routers.proxy import router as proxy_router
+from config import settings
+from routers.completions import router as completions_router
+from routers.models import router as models_router
+from routers.guardrails import router as guardrails_router
+from routers.proxy import router as proxy_router
 
 # Disable LiteLLM verbose logging to prevent key leakage
 litellm.suppress_debug_info = True

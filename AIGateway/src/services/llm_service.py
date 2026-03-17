@@ -3,7 +3,7 @@ from typing import AsyncIterator
 
 import litellm
 
-from src.services.cost_service import calculate_stream_cost
+from services.cost_service import calculate_stream_cost
 
 
 async def chat_completion(

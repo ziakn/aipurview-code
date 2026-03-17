@@ -3,8 +3,8 @@
 from fastapi import APIRouter, Request, HTTPException
 from pydantic import BaseModel
 
-from src.middlewares.auth import verify_internal_key
-from src.services.guardrail_service import scan_text
+from middlewares.auth import verify_internal_key
+from services.guardrail_service import scan_text
 
 router = APIRouter()
 

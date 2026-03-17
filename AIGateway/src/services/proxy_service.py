@@ -20,9 +20,9 @@ from cryptography.hazmat.backends import default_backend
 from fastapi import HTTPException
 from sqlalchemy import text
 
-from src.config import settings
-from src.database.db import get_db
-from src.services.guardrail_service import scan_text
+from config import settings
+from database.db import get_db
+from services.guardrail_service import scan_text
 
 logger = logging.getLogger("uvicorn")
 

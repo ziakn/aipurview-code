@@ -1,6 +1,6 @@
 # VerifyWise - Development Guide
 
-> **Last Updated:** 2026-03-06
+> **Last Updated:** 2026-03-17
 
 This document contains core rules and patterns for all development in the VerifyWise codebase. For detailed feature documentation, see the [Reference Index](#detailed-references) at the bottom.
 
@@ -41,7 +41,7 @@ VerifyWise is an AI governance platform supporting EU AI Act, ISO 42001, ISO 270
 | **Backend** | Node.js 22, Express.js 4, TypeScript, Sequelize 6 |
 | **Database** | PostgreSQL (shared schema, org_id isolation) |
 | **Cache/Queue** | Redis + BullMQ |
-| **Python Services** | FastAPI, Python 3.12 (EvalServer) |
+| **Python Services** | FastAPI, Python 3.12 (EvalServer, AIGateway) |
 
 ### Project Structure
 
@@ -64,6 +64,7 @@ verifywise/
 │   ├── templates/              # Email (MJML) & PDF (EJS) templates
 │   └── jobs/                   # BullMQ workers
 ├── EvalServer/                 # Python LLM evaluation service
+├── AIGateway/                  # Python AI proxy, guardrails, spend tracking (port 8100)
 └── docs/                       # Documentation
 ```
 
@@ -159,7 +160,24 @@ module.exports = {
 
 `Servers/scripts/migrateToSharedSchema.ts` migrates data from old `{tenantHash}` schemas → `verifywise` schema with `organization_id`. Config in `Servers/scripts/migrationConfig.ts` defines table order, FK mappings, and skip lists. Dedicated handlers exist for NIST AI RMF and custom frameworks (struct/impl split).
 
-### Running Migrations
+### Python Service Migrations (Alembic)
+
+EvalServer and AIGateway each own their table migrations via Alembic (not Sequelize). Both share the `verifywise` schema but use **separate version tables** to avoid collision:
+
+| Service | Tables | Version Table | Config |
+|---------|--------|---------------|--------|
+| **EvalServer** | `llm_evals_*` | `alembic_version` | `EvalServer/src/alembic.ini` |
+| **AIGateway** | `ai_gateway_*` | `aigateway_alembic_version` | `AIGateway/src/alembic.ini` |
+
+Pattern: `{Service}/src/database/config.py` (Pydantic Settings), `{Service}/src/database/db.py` (async SQLAlchemy engine with `search_path=verifywise`), `{Service}/src/database/migrations/` (Alembic env + versions). Migrations run automatically on container startup via Dockerfile CMD.
+
+```bash
+cd EvalServer/src && alembic upgrade head       # Run EvalServer migrations
+cd AIGateway/src && alembic upgrade head         # Run AIGateway migrations
+cd AIGateway/src && alembic stamp a0001          # Stamp existing DB (skip creation)
+```
+
+### Running Migrations (Sequelize — Backend)
 
 ```bash
 cd Servers
@@ -316,6 +334,7 @@ VITE_IS_MULTI_TENANT=false
 | Backend | 3000 | Yes |
 | Frontend | 5173 | Yes |
 | EvalServer | 8000 | For LLM Evals |
+| AIGateway | 8100 | For AI proxy/guardrails |
 
 ---
 
@@ -337,6 +356,9 @@ VITE_IS_MULTI_TENANT=false
 | Redux store | `Clients/src/application/redux/store.ts` |
 | Custom exceptions | `Servers/domain.layer/exceptions/custom.exception.ts` |
 | Log helper | `Servers/utils/logger/logHelper.ts` |
+| AIGateway entry | `AIGateway/src/app.py` |
+| AIGateway Alembic config | `AIGateway/src/alembic.ini` |
+| AIGateway migrations | `AIGateway/src/database/migrations/versions/` |
 
 ### Naming Conventions
 
@@ -358,6 +380,7 @@ cd Servers && npx sequelize migration:create --name name
 cd Servers && npm run build && npx sequelize db:migrate
 cd Servers && npm run watch                      # Start backend
 cd Clients && npm run dev                        # Start frontend
+cd AIGateway/src && alembic upgrade head          # Run AIGateway migrations
 ```
 
 ---
@@ -415,6 +438,7 @@ Read the relevant file BEFORE implementing changes in that area:
 | Authentication architecture | `docs/technical/architecture/authentication.md` |
 | Multi-tenancy architecture | `docs/technical/architecture/multi-tenancy.md` |
 | Testing guide | `docs/technical/guides/testing.md` |
+| AI Gateway | `docs/technical/infrastructure/ai-gateway.md` |
 
 ---
 

@@ -1,8 +1,8 @@
 import litellm
 from fastapi import APIRouter, Request
 
-from src.middlewares.auth import verify_internal_key
-from src.services.cost_service import validate_model
+from middlewares.auth import verify_internal_key
+from services.cost_service import validate_model
 
 router = APIRouter()
 

@@ -84,7 +84,7 @@ def _scan_pii(
     settings: dict,
 ) -> list[Detection]:
     """Run Presidio PII scan."""
-    from src.services.presidio_engine import analyze_text, is_available
+    from services.presidio_engine import analyze_text, is_available
 
     if not is_available():
         if settings.get("pii_on_error", "block") == "block":

@@ -2,7 +2,7 @@
 
 from fastapi import Request, HTTPException
 
-from src.config import settings
+from config import settings
 
 
 def verify_internal_key(request: Request):

@@ -22,7 +22,7 @@ from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import StreamingResponse, JSONResponse
 from pydantic import BaseModel, Field
 
-from src.services.proxy_service import (
+from services.proxy_service import (
     authenticate_virtual_key,
     resolve_endpoint_for_key,
     resolve_endpoint_by_id,
@@ -32,8 +32,8 @@ from src.services.proxy_service import (
     log_spend,
     run_guardrails,
 )
-from src.services.cost_service import estimate_prompt_cost
-from src.services.llm_service import chat_completion, embedding, stream_chat_completion
+from services.cost_service import estimate_prompt_cost
+from services.llm_service import chat_completion, embedding, stream_chat_completion
 
 logger = logging.getLogger("uvicorn")
 

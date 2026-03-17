@@ -2,9 +2,9 @@ from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
-from src.middlewares.auth import verify_internal_key
-from src.services.cost_service import estimate_prompt_cost
-from src.services.llm_service import (
+from middlewares.auth import verify_internal_key
+from services.cost_service import estimate_prompt_cost
+from services.llm_service import (
     chat_completion,
     embedding,
     stream_chat_completion,
