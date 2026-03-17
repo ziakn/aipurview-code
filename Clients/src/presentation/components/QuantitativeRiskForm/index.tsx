@@ -7,9 +7,9 @@ import BenchmarkSelector from "./BenchmarkSelector";
 import MitigationROI from "./MitigationROI";
 import ALESummaryCard from "./ALESummaryCard";
 
-// Layout constants matching RisksSection
+// Layout constants matching RisksSection (3 × 323px + 2 × 8px = 985px)
 const LAYOUT = {
-  FIELD_WIDTH: 200,
+  FIELD_WIDTH: 323,
   HORIZONTAL_GAP: 8,
   VERTICAL_GAP: 16,
 } as const;
@@ -213,7 +213,10 @@ const QuantitativeRiskForm: FC<QuantitativeRiskFormProps> = ({
   );
 
   return (
-    <Stack sx={{ gap: 3 }}>
+    <Stack sx={{ gap: "24px" }}>
+      {/* Live ALE Summary — at top for visibility */}
+      <ALESummaryCard fields={fairFields} />
+
       {/* Benchmark selector */}
       <BenchmarkSelector onApply={handleBenchmarkApply} disabled={disabled} />
 
@@ -285,8 +288,6 @@ const QuantitativeRiskForm: FC<QuantitativeRiskFormProps> = ({
         disabled={disabled}
       />
 
-      {/* Live ALE Summary */}
-      <ALESummaryCard fields={fairFields} />
     </Stack>
   );
 };

@@ -38,26 +38,28 @@ const MitigationROI: FC<MitigationROIProps> = ({
   );
 
   return (
-    <Stack sx={{ gap: "16px", maxWidth: "616px" }}>
-      <Typography
-        sx={{
-          fontSize: 13,
-          fontWeight: 600,
-          color: theme.palette.text.primary,
-        }}
-      >
-        Mitigation & ROI
-      </Typography>
-      <Typography
-        sx={{
-          fontSize: 13,
-          color: theme.palette.text.tertiary,
-          lineHeight: 1.5,
-        }}
-      >
-        Estimate how effective your controls are and the annual cost of
-        mitigation to calculate return on investment.
-      </Typography>
+    <Stack sx={{ gap: "16px", maxWidth: "985px" }}>
+      <Stack sx={{ gap: "4px" }}>
+        <Typography
+          sx={{
+            fontSize: 13,
+            fontWeight: 600,
+            color: theme.palette.text.primary,
+          }}
+        >
+          Mitigation & ROI
+        </Typography>
+        <Typography
+          sx={{
+            fontSize: 13,
+            color: theme.palette.text.tertiary,
+            lineHeight: 1.5,
+          }}
+        >
+          Estimate how effective your controls are and the annual cost of
+          mitigation to calculate return on investment.
+        </Typography>
+      </Stack>
 
       {/* Control Effectiveness Slider */}
       <Stack sx={{ gap: 1 }}>

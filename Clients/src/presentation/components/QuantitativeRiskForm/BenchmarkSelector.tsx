@@ -127,7 +127,7 @@ const BenchmarkSelector: FC<BenchmarkSelectorProps> = ({
         sx={{
           ...getAutocompleteStyles(theme, { hasError: false }),
           width: "100%",
-          maxWidth: 654,
+          maxWidth: 985,
           backgroundColor: theme.palette.background.main,
         }}
         slotProps={{
