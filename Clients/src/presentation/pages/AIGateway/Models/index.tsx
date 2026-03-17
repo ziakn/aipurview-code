@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Box, Typography, Stack, IconButton } from "@mui/material";
 import TabContext from "@mui/lab/TabContext";
 import {
@@ -68,7 +69,7 @@ const FEATURE_FILTERS = [
 const PAGE_SIZE = 25;
 
 const formatTokens = (n: number | null) => {
-  if (!n) return "—";
+  if (n == null) return "—";
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
   if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K`;
   return String(n);
@@ -84,9 +85,11 @@ const formatCost = (n: number) => {
 
 export default function ModelsPage() {
   const cardSx = useCardSx();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("catalog");
   const [models, setModels] = useState<ModelInfo[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   // Filters
   const [search, setSearch] = useState("");
@@ -107,8 +110,9 @@ export default function ModelsPage() {
     try {
       const res = await apiServices.get("/ai-gateway/models/catalog");
       setModels(res?.data?.data?.models || []);
+      setError("");
     } catch {
-      // Silently handle
+      setError("Failed to load model catalog. Is the AI Gateway running?");
     } finally {
       setLoading(false);
     }
@@ -137,8 +141,8 @@ export default function ModelsPage() {
     return result;
   }, [models, search, providerFilter, modeFilter, featureFilters]);
 
-  const pageCount = Math.ceil(filtered.length / PAGE_SIZE);
-  const pageModels = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const pageCount = useMemo(() => Math.ceil(filtered.length / PAGE_SIZE), [filtered]);
+  const pageModels = useMemo(() => filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE), [filtered, page]);
 
   // Cost calculator results
   const calcResults = useMemo(() => {
@@ -283,7 +287,9 @@ export default function ModelsPage() {
                 </Stack>
 
                 {/* Rows */}
-                {loading ? (
+                {error ? (
+                  <Typography sx={{ p: "16px", fontSize: 13, color: palette.status.error.text }}>{error}</Typography>
+                ) : loading ? (
                   <Typography sx={{ p: "16px", fontSize: 13, color: palette.text.tertiary }}>Loading models...</Typography>
                 ) : pageModels.length === 0 ? (
                   <Typography sx={{ p: "16px", fontSize: 13, color: palette.text.tertiary }}>No models match your filters.</Typography>
@@ -326,9 +332,7 @@ export default function ModelsPage() {
                             text="Add"
                             variant="outlined"
                             icon={<CirclePlus size={12} strokeWidth={1.5} />}
-                            onClick={() => {
-                              window.location.href = `/ai-gateway/endpoints?add=${encodeURIComponent(m.id)}&provider=${encodeURIComponent(m.provider)}`;
-                            }}
+                            onClick={() => navigate(`/ai-gateway/endpoints?add=${encodeURIComponent(m.id)}&provider=${encodeURIComponent(m.provider)}`)}
                           />
                         </Box>
                       </Stack>
@@ -495,9 +499,9 @@ export default function ModelsPage() {
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                     <thead>
                       <tr>
-                        <th style={{ textAlign: "left", padding: "8px", borderBottom: `1px solid ${palette.border.light}`, color: palette.text.tertiary, fontSize: 11, fontWeight: 600 }}>Feature</th>
+                        <th scope="col" style={{ textAlign: "left", padding: "8px", borderBottom: `1px solid ${palette.border.light}`, color: palette.text.tertiary, fontSize: 11, fontWeight: 600 }}>Feature</th>
                         {compareModels.map((m) => (
-                          <th key={m.id} style={{ textAlign: "center", padding: "8px", borderBottom: `1px solid ${palette.border.light}`, fontSize: 12, fontWeight: 500, minWidth: "140px" }}>
+                          <th scope="col" key={m.id} style={{ textAlign: "center", padding: "8px", borderBottom: `1px solid ${palette.border.light}`, fontSize: 12, fontWeight: 500, minWidth: "140px" }}>
                             {m.id}
                           </th>
                         ))}
