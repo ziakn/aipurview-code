@@ -14,6 +14,9 @@ import {
   CirclePlus,
   ChevronLeft,
   ChevronRight,
+  Check,
+  X,
+  Trash2,
 } from "lucide-react";
 import Field from "../../../components/Inputs/Field";
 import Select from "../../../components/Inputs/Select";
@@ -369,30 +372,26 @@ export default function ModelsPage() {
                 <Stack gap="12px">
                   <Typography sx={sectionTitleSx}>Cost calculator</Typography>
                   <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>
-                    Estimate monthly costs across models based on your expected usage.
+                    Estimate monthly costs across models based on your expected usage. Only chat models with known pricing are shown.
                   </Typography>
-                  <Stack direction="row" gap="8px">
-                    <Box sx={{ width: "140px" }}>
-                      <Field
-                        label="Requests/day"
-                        value={calcRequests}
-                        onChange={(e) => setCalcRequests(e.target.value)}
-                        sx={{ minWidth: "unset" }}
-                      />
+                  <Stack direction="row" gap="8px" flexWrap="wrap">
+                    <Box sx={{ width: "130px" }}>
+                      <Field label="Requests/day" value={calcRequests} onChange={(e) => setCalcRequests(e.target.value)} sx={{ minWidth: "unset" }} />
                     </Box>
                     <Box sx={{ width: "140px" }}>
-                      <Field
-                        label="Avg input tokens"
-                        value={calcInputTokens}
-                        onChange={(e) => setCalcInputTokens(e.target.value)}
-                        sx={{ minWidth: "unset" }}
-                      />
+                      <Field label="Avg input tokens" value={calcInputTokens} onChange={(e) => setCalcInputTokens(e.target.value)} sx={{ minWidth: "unset" }} />
                     </Box>
                     <Box sx={{ width: "140px" }}>
-                      <Field
-                        label="Avg output tokens"
-                        value={calcOutputTokens}
-                        onChange={(e) => setCalcOutputTokens(e.target.value)}
+                      <Field label="Avg output tokens" value={calcOutputTokens} onChange={(e) => setCalcOutputTokens(e.target.value)} sx={{ minWidth: "unset" }} />
+                    </Box>
+                    <Box sx={{ width: "160px" }}>
+                      <Select
+                        id="calc-provider"
+                        label="Provider"
+                        value={providerFilter}
+                        items={providers}
+                        onChange={(e) => setProviderFilter(e.target.value as string)}
+                        getOptionValue={(i) => i._id}
                         sx={{ minWidth: "unset" }}
                       />
                     </Box>
@@ -402,50 +401,58 @@ export default function ModelsPage() {
 
               {calcResults.length > 0 && (
                 <Box sx={cardSx}>
-                  <Stack gap="8px">
-                    <Typography sx={sectionTitleSx}>
-                      Estimated monthly cost ({Number(calcRequests).toLocaleString()} req/day)
+                  <Stack gap="0px">
+                    <Typography sx={{ ...sectionTitleSx, mb: "12px" }}>
+                      Estimated costs ({Number(calcRequests).toLocaleString()} req/day)
                     </Typography>
-                    {calcResults.map((m, i) => (
-                      <Stack
-                        key={m.id}
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        sx={{
-                          p: "8px 12px",
-                          borderRadius: "4px",
-                          border: `1px solid ${i === 0 ? palette.brand.primary : palette.border.light}`,
-                          backgroundColor: i === 0 ? `${palette.brand.primary}08` : "transparent",
-                        }}
-                      >
-                        <Stack direction="row" alignItems="center" gap="8px" flex={1}>
-                          <Typography sx={{ fontSize: 12, color: palette.text.disabled, fontWeight: 600, minWidth: "24px" }}>
-                            {i + 1}
-                          </Typography>
-                          <ProviderIcon provider={m.provider} size={14} />
-                          <Typography sx={{ fontSize: 13, fontWeight: i === 0 ? 600 : 400 }}>
-                            {m.id}
-                          </Typography>
-                          {i === 0 && (
-                            <Typography sx={{ fontSize: 11, color: palette.brand.primary, fontWeight: 500 }}>
-                              cheapest
+                    {/* Table header */}
+                    <Stack direction="row" sx={{ p: "6px 12px", borderBottom: `1px solid ${palette.border.light}` }}>
+                      <Typography sx={{ width: "28px", fontSize: 11, fontWeight: 600, color: palette.text.tertiary }}>#</Typography>
+                      <Typography sx={{ flex: 2, fontSize: 11, fontWeight: 600, color: palette.text.tertiary }}>MODEL</Typography>
+                      <Typography sx={{ flex: 0.6, fontSize: 11, fontWeight: 600, color: palette.text.tertiary, textAlign: "right" }}>CONTEXT</Typography>
+                      <Typography sx={{ flex: 0.8, fontSize: 11, fontWeight: 600, color: palette.text.tertiary, textAlign: "right" }}>$/REQ</Typography>
+                      <Typography sx={{ flex: 0.8, fontSize: 11, fontWeight: 600, color: palette.text.tertiary, textAlign: "right" }}>INPUT</Typography>
+                      <Typography sx={{ flex: 0.8, fontSize: 11, fontWeight: 600, color: palette.text.tertiary, textAlign: "right" }}>OUTPUT</Typography>
+                      <Typography sx={{ flex: 0.8, fontSize: 11, fontWeight: 600, color: palette.text.tertiary, textAlign: "right" }}>$/DAY</Typography>
+                      <Typography sx={{ flex: 1, fontSize: 11, fontWeight: 600, color: palette.text.tertiary, textAlign: "right" }}>$/MONTH</Typography>
+                    </Stack>
+                    {calcResults.map((m, i) => {
+                      const inputCostPerReq = (Number(calcInputTokens) * m.input_cost_per_million) / 1_000_000;
+                      const outputCostPerReq = (Number(calcOutputTokens) * m.output_cost_per_million) / 1_000_000;
+                      const costPerReq = inputCostPerReq + outputCostPerReq;
+                      return (
+                        <Stack
+                          key={m.id}
+                          direction="row"
+                          alignItems="center"
+                          sx={{
+                            p: "8px 12px",
+                            borderBottom: `1px solid ${palette.border.light}`,
+                            backgroundColor: i === 0 ? `${palette.brand.primary}06` : "transparent",
+                            "&:last-child": { borderBottom: "none" },
+                          }}
+                        >
+                          <Typography sx={{ width: "28px", fontSize: 12, color: palette.text.disabled, fontWeight: 600 }}>{i + 1}</Typography>
+                          <Stack direction="row" alignItems="center" gap="6px" sx={{ flex: 2 }}>
+                            <ProviderIcon provider={m.provider} size={13} />
+                            <Typography sx={{ fontSize: 12, fontWeight: i === 0 ? 600 : 400, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                              {m.id}
                             </Typography>
-                          )}
+                            {i === 0 && (
+                              <Typography sx={{ fontSize: 10, color: palette.brand.primary, fontWeight: 600, border: `1px solid ${palette.brand.primary}40`, borderRadius: "4px", px: "4px", py: "1px", whiteSpace: "nowrap" }}>
+                                cheapest
+                              </Typography>
+                            )}
+                          </Stack>
+                          <Typography sx={{ flex: 0.6, fontSize: 12, textAlign: "right", color: palette.text.tertiary }}>{formatTokens(m.max_input_tokens)}</Typography>
+                          <Typography sx={{ flex: 0.8, fontSize: 12, textAlign: "right", fontFamily: "monospace" }}>${costPerReq.toFixed(6)}</Typography>
+                          <Typography sx={{ flex: 0.8, fontSize: 12, textAlign: "right", color: palette.text.tertiary, fontFamily: "monospace" }}>${(inputCostPerReq * Number(calcRequests)).toFixed(4)}</Typography>
+                          <Typography sx={{ flex: 0.8, fontSize: 12, textAlign: "right", color: palette.text.tertiary, fontFamily: "monospace" }}>${(outputCostPerReq * Number(calcRequests)).toFixed(4)}</Typography>
+                          <Typography sx={{ flex: 0.8, fontSize: 12, textAlign: "right", fontFamily: "monospace" }}>${m.dailyCost.toFixed(4)}</Typography>
+                          <Typography sx={{ flex: 1, fontSize: 13, textAlign: "right", fontWeight: 600 }}>${m.monthlyCost.toFixed(2)}</Typography>
                         </Stack>
-                        <Stack direction="row" gap="16px" alignItems="center">
-                          <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
-                            {formatTokens(m.max_input_tokens)} ctx
-                          </Typography>
-                          <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
-                            ${m.dailyCost.toFixed(4)}/day
-                          </Typography>
-                          <Typography sx={{ fontSize: 13, fontWeight: 600, minWidth: "80px", textAlign: "right" }}>
-                            ${m.monthlyCost.toFixed(2)}/mo
-                          </Typography>
-                        </Stack>
-                      </Stack>
-                    ))}
+                      );
+                    })}
                   </Stack>
                 </Box>
               )}
@@ -459,10 +466,38 @@ export default function ModelsPage() {
                 <Stack gap="12px">
                   <Typography sx={sectionTitleSx}>Feature comparison</Typography>
                   <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>
-                    Select up to 5 models to compare side by side. Search and click to add.
+                    Select up to 5 models to compare side by side.
                   </Typography>
+
+                  {/* Popular models quick-select */}
+                  <Stack gap="4px">
+                    <Typography sx={{ fontSize: 11, color: palette.text.disabled, fontWeight: 600 }}>POPULAR MODELS</Typography>
+                    <Stack direction="row" gap="6px" flexWrap="wrap">
+                      {["gpt-4o", "gpt-4o-mini", "claude-sonnet-4-20250514", "claude-haiku-4-5-20251001", "gemini-2.0-flash", "gemini-2.5-pro-preview-06-05", "mistral-large-latest", "grok-3"].map((id) => {
+                        const selected = compareIds.includes(id);
+                        return (
+                          <Box
+                            key={id}
+                            onClick={() => toggleCompare(id)}
+                            sx={{
+                              display: "flex", alignItems: "center", gap: "4px",
+                              px: "8px", height: "28px", borderRadius: "4px", cursor: "pointer",
+                              border: `1px solid ${selected ? palette.brand.primary : palette.border.dark}`,
+                              backgroundColor: selected ? `${palette.brand.primary}10` : "transparent",
+                              fontSize: 11, fontWeight: 500, whiteSpace: "nowrap",
+                              color: selected ? palette.brand.primary : palette.text.secondary,
+                            }}
+                          >
+                            {id}
+                          </Box>
+                        );
+                      })}
+                    </Stack>
+                  </Stack>
+
+                  {/* Search */}
                   <Field
-                    placeholder="Search models to compare..."
+                    placeholder="Or search for any model..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     sx={{ minWidth: "unset" }}
@@ -503,8 +538,17 @@ export default function ModelsPage() {
                       <tr>
                         <th scope="col" style={{ textAlign: "left", padding: "8px", borderBottom: `1px solid ${palette.border.light}`, color: palette.text.tertiary, fontSize: 11, fontWeight: 600 }}>Feature</th>
                         {compareModels.map((m) => (
-                          <th scope="col" key={m.id} style={{ textAlign: "center", padding: "8px", borderBottom: `1px solid ${palette.border.light}`, fontSize: 12, fontWeight: 500, minWidth: "140px" }}>
-                            {m.id}
+                          <th scope="col" key={m.id} style={{ textAlign: "center", padding: "8px", borderBottom: `1px solid ${palette.border.light}`, fontSize: 12, fontWeight: 500, minWidth: "140px", position: "relative" }}>
+                            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
+                              {m.id}
+                              <span
+                                onClick={() => toggleCompare(m.id)}
+                                style={{ cursor: "pointer", opacity: 0.4, display: "inline-flex" }}
+                                title="Remove from comparison"
+                              >
+                                <Trash2 size={11} strokeWidth={1.5} />
+                              </span>
+                            </span>
                           </th>
                         ))}
                       </tr>
@@ -534,15 +578,18 @@ export default function ModelsPage() {
                           </td>
                           {compareModels.map((m) => {
                             const val = row.fn(m);
+                            const isYes = val === "Yes";
+                            const isNo = val === "No";
                             return (
                               <td key={m.id} style={{
                                 textAlign: "center", padding: "8px",
                                 borderBottom: `1px solid ${palette.border.light}`,
                                 fontSize: 12,
-                                color: val === "Yes" ? palette.brand.primary : val === "No" ? palette.text.disabled : palette.text.primary,
-                                fontWeight: val === "Yes" ? 500 : 400,
+                                color: isYes ? palette.brand.primary : isNo ? palette.text.disabled : palette.text.primary,
                               }}>
-                                {val}
+                                {isYes ? <Check size={15} strokeWidth={2} color={palette.brand.primary} /> :
+                                 isNo ? <X size={15} strokeWidth={1.5} color={palette.text.disabled} /> :
+                                 val}
                               </td>
                             );
                           })}
