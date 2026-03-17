@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Typography, Stack, Box } from "@mui/material";
-import { LineChart } from "@mui/x-charts/LineChart";
+import { Typography, Stack } from "@mui/material";
 import { getModelInventoryTimeseries } from "../../../application/repository/modelInventoryHistory.repository";
 import { ModelInventoryStatus } from "../../../domain/enums/modelInventory.enum";
 import { ButtonToggle } from "../button-toggle";
@@ -8,6 +7,7 @@ import CustomizableSkeleton from "../Skeletons";
 import { TrendingUp } from "lucide-react";
 import { EmptyState } from "../EmptyState";
 import { text, background, border as borderPalette } from "../../themes/palette";
+import { VWLineChart } from "./VWCharts";
 
 interface ModelInventoryHistoryChartProps {
   parameter?: string;
@@ -16,10 +16,10 @@ interface ModelInventoryHistoryChartProps {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  [ModelInventoryStatus.APPROVED]: "#10B981", // Emerald green
-  [ModelInventoryStatus.PENDING]: "#F59E0B", // Amber
-  [ModelInventoryStatus.RESTRICTED]: "#EF4444", // Red
-  [ModelInventoryStatus.BLOCKED]: "#DC2626", // Dark red
+  [ModelInventoryStatus.APPROVED]: "#10B981",
+  [ModelInventoryStatus.PENDING]: "#F59E0B",
+  [ModelInventoryStatus.RESTRICTED]: "#EF4444",
+  [ModelInventoryStatus.BLOCKED]: "#DC2626",
 };
 
 const TIMEFRAME_OPTIONS = [
@@ -37,10 +37,9 @@ export function ModelInventoryHistoryChart({
 }: ModelInventoryHistoryChartProps) {
   const storageKey = "analytics_timeframe_model";
 
-  // Initialize timeframe from localStorage or default
   const [timeframe, setTimeframe] = useState<string>(() => {
     const stored = localStorage.getItem(storageKey);
-    if (stored && TIMEFRAME_OPTIONS.some(opt => opt.value === stored)) {
+    if (stored && TIMEFRAME_OPTIONS.some((opt) => opt.value === stored)) {
       return stored;
     }
     return "1month";
@@ -48,9 +47,10 @@ export function ModelInventoryHistoryChart({
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [timeseriesData, setTimeseriesData] = useState<{ timestamp: string; data: Record<string, number> }[]>([]);
+  const [timeseriesData, setTimeseriesData] = useState<
+    { timestamp: string; data: Record<string, number> }[]
+  >([]);
 
-  // Persist timeframe to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem(storageKey, timeframe);
   }, [timeframe]);
@@ -65,7 +65,8 @@ export function ModelInventoryHistoryChart({
       }
     } catch (err: unknown) {
       console.error("Error fetching timeseries data:", err);
-      const message = err instanceof Error ? err.message : "Failed to load chart data";
+      const message =
+        err instanceof Error ? err.message : "Failed to load chart data";
       setError(message);
     } finally {
       setLoading(false);
@@ -80,34 +81,45 @@ export function ModelInventoryHistoryChart({
     setTimeframe(newTimeframe);
   };
 
-  // Prepare data for the chart
+  // Build Recharts-compatible flat data array and series config
   const prepareChartData = () => {
     if (!timeseriesData || timeseriesData.length === 0) {
-      return { timestamps: [], series: [], maxValue: 0 };
+      return { chartData: [], series: [], maxValue: 0 };
     }
 
-    const timestamps = timeseriesData.map((point) => new Date(point.timestamp));
-
-    // Get all unique status values
     const statusValues = Object.values(ModelInventoryStatus);
+
+    // Merge parallel arrays into a single array of objects for Recharts
+    const chartData = timeseriesData.map((point) => {
+      const date = new Date(point.timestamp);
+      const label = new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+      }).format(date);
+      const entry: Record<string, string | number> = { date: label };
+      statusValues.forEach((status) => {
+        entry[status] = point.data[status] || 0;
+      });
+      return entry;
+    });
+
     const series = statusValues.map((status) => ({
-      label: status,
-      data: timeseriesData.map((point) => point.data[status] || 0),
-      color: STATUS_COLORS[status] || `${text.disabled}`,
-      curve: "monotoneX" as const,
-      showMark: false,
+      dataKey: status,
+      name: status,
+      color: STATUS_COLORS[status] || text.disabled,
+      strokeWidth: 2,
+      dot: false as const,
     }));
 
-    // Calculate max value across all series for proper y-axis scaling
     const maxValue = Math.max(
-      ...series.flatMap((s) => s.data),
+      ...timeseriesData.flatMap((point) => Object.values(point.data)),
       0
     );
 
-    return { timestamps, series, maxValue };
+    return { chartData, series, maxValue };
   };
 
-  const { timestamps, series, maxValue } = prepareChartData();
+  const { chartData, series, maxValue } = prepareChartData();
 
   if (loading) {
     return (
@@ -177,75 +189,25 @@ export function ModelInventoryHistoryChart({
           />
         </Stack>
 
-        <Stack sx={{ width: "100%", mt: 2 }}>
-          <Box sx={{ position: "relative" }}>
-            <LineChart
-              xAxis={[
-                {
-                  data: timestamps,
-                  scaleType: "time",
-                  valueFormatter: (date) => {
-                    return new Intl.DateTimeFormat("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    }).format(date);
-                  },
-                  tickLabelStyle: {
-                    fontSize: 12,
-                    fill: `${text.tertiary}`,
-                  },
-                },
-              ]}
-              yAxis={[
-                {
-                  label: "Count",
-                  min: 0,
-                  max: maxValue > 0 ? Math.ceil(maxValue * 1.15) : 10,
-                  tickMinStep: 1,
-                  valueFormatter: (value: number) => value.toString(),
-                  labelStyle: {
-                    fontSize: 13,
-                    fill: `${text.secondary}`,
-                  },
-                  tickLabelStyle: {
-                    fontSize: 12,
-                    fill: `${text.tertiary}`,
-                  },
-                },
-              ]}
-              series={series}
-              height={height}
-              margin={{ top: 10, right: 30, bottom: 30, left: 70 }}
-              slotProps={{
-                legend: {
-                  direction: "horizontal",
-                  position: { vertical: "bottom", horizontal: "center" },
-                },
-              }}
-              grid={{
-                vertical: true,
-                horizontal: true,
-              }}
-              sx={{
-                "& .MuiLineElement-root": {
-                  strokeWidth: 3,
-                },
-                "& .MuiChartsGrid-line": {
-                  stroke: `${borderPalette.light}`,
-                  strokeWidth: 1,
-                },
-                "& .MuiChartsAxis-line": {
-                  stroke: `${borderPalette.dark}`,
-                  strokeWidth: 1.5,
-                },
-                "& .MuiChartsAxis-tick": {
-                  stroke: `${borderPalette.dark}`,
-                },
-              }}
-            />
-
-          </Box>
-        </Stack>
+        <VWLineChart
+          data={chartData}
+          series={series}
+          categoryKey="date"
+          height={height}
+          showLegend={true}
+          margin={{ top: 10, right: 30, bottom: 30, left: 70 }}
+          yAxisProps={{
+            domain: [0, maxValue > 0 ? Math.ceil(maxValue * 1.15) : 10],
+            tickFormatter: (v: number) => v.toString(),
+            label: {
+              value: "Count",
+              angle: -90,
+              position: "insideLeft",
+              offset: -50,
+              style: { fontSize: 13, fill: text.secondary },
+            },
+          }}
+        />
       </Stack>
     </Stack>
   );

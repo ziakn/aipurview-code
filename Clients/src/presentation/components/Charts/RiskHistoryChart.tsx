@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
-import { Typography, Stack, Box } from "@mui/material";
-import { LineChart } from "@mui/x-charts/LineChart";
+import { Typography, Stack } from "@mui/material";
 import { getRiskTimeseries } from "../../../application/repository/riskHistory.repository";
 import { ButtonToggle } from "../button-toggle";
 import CustomizableSkeleton from "../Skeletons";
 import { TrendingUp } from "lucide-react";
 import { EmptyState } from "../EmptyState";
 import { text, background, border as borderPalette } from "../../themes/palette";
+import { VWLineChart } from "./VWCharts";
 
 interface RiskHistoryChartProps {
   parameter?: string;
@@ -16,38 +16,38 @@ interface RiskHistoryChartProps {
 
 // Color schemes for different risk parameters
 const SEVERITY_COLORS: Record<string, string> = {
-  "Negligible": "#10B981", // Green
-  "Minor": "#84CC16", // Light green
-  "Moderate": "#F59E0B", // Amber
-  "Major": "#F97316", // Orange
-  "Catastrophic": "#DC2626", // Dark red
+  "Negligible": "#10B981",
+  "Minor": "#84CC16",
+  "Moderate": "#F59E0B",
+  "Major": "#F97316",
+  "Catastrophic": "#DC2626",
 };
 
 const LIKELIHOOD_COLORS: Record<string, string> = {
-  "Rare": "#10B981", // Green
-  "Unlikely": "#84CC16", // Light green
-  "Possible": "#F59E0B", // Amber
-  "Likely": "#F97316", // Orange
-  "Almost Certain": "#DC2626", // Dark red
+  "Rare": "#10B981",
+  "Unlikely": "#84CC16",
+  "Possible": "#F59E0B",
+  "Likely": "#F97316",
+  "Almost Certain": "#DC2626",
 };
 
 const MITIGATION_STATUS_COLORS: Record<string, string> = {
-  "Not Started": "#94A3B8", // Gray
-  "In Progress": "#3B82F6", // Blue
-  "Completed": "#10B981", // Green
-  "On Hold": "#F59E0B", // Amber
-  "Deferred": "#8B5CF6", // Purple
-  "Canceled": "#EF4444", // Red
-  "Requires review": "#F97316", // Orange
+  "Not Started": "#94A3B8",
+  "In Progress": "#3B82F6",
+  "Completed": "#10B981",
+  "On Hold": "#F59E0B",
+  "Deferred": "#8B5CF6",
+  "Canceled": "#EF4444",
+  "Requires review": "#F97316",
 };
 
 const RISK_LEVEL_COLORS: Record<string, string> = {
-  "No risk": "#10B981", // Green
-  "Very low risk": "#84CC16", // Light green
-  "Low risk": "#FCD34D", // Yellow
-  "Medium risk": "#F59E0B", // Amber
-  "High risk": "#F97316", // Orange
-  "Very high risk": "#DC2626", // Dark red
+  "No risk": "#10B981",
+  "Very low risk": "#84CC16",
+  "Low risk": "#FCD34D",
+  "Medium risk": "#F59E0B",
+  "High risk": "#F97316",
+  "Very high risk": "#DC2626",
 };
 
 const TIMEFRAME_OPTIONS = [
@@ -59,7 +59,6 @@ const TIMEFRAME_OPTIONS = [
   { value: "1year", label: "1 Year" },
 ];
 
-// Get color map based on parameter
 const getColorMap = (parameter: string): Record<string, string> => {
   switch (parameter) {
     case "severity":
@@ -81,10 +80,9 @@ export function RiskHistoryChart({
 }: RiskHistoryChartProps) {
   const storageKey = "analytics_timeframe_risk";
 
-  // Initialize timeframe from localStorage or default
   const [timeframe, setTimeframe] = useState<string>(() => {
     const stored = localStorage.getItem(storageKey);
-    if (stored && TIMEFRAME_OPTIONS.some(opt => opt.value === stored)) {
+    if (stored && TIMEFRAME_OPTIONS.some((opt) => opt.value === stored)) {
       return stored;
     }
     return "1month";
@@ -92,9 +90,10 @@ export function RiskHistoryChart({
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [timeseriesData, setTimeseriesData] = useState<{ timestamp: string; data: Record<string, number> }[]>([]);
+  const [timeseriesData, setTimeseriesData] = useState<
+    { timestamp: string; data: Record<string, number> }[]
+  >([]);
 
-  // Persist timeframe to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem(storageKey, timeframe);
   }, [timeframe]);
@@ -109,7 +108,8 @@ export function RiskHistoryChart({
       }
     } catch (err: unknown) {
       console.error("Error fetching timeseries data:", err);
-      const message = err instanceof Error ? err.message : "Failed to load chart data";
+      const message =
+        err instanceof Error ? err.message : "Failed to load chart data";
       setError(message);
     } finally {
       setLoading(false);
@@ -124,40 +124,53 @@ export function RiskHistoryChart({
     setTimeframe(newTimeframe);
   };
 
-  // Prepare data for the chart
+  // Build Recharts-compatible flat data array and series config
   const prepareChartData = () => {
     if (!timeseriesData || timeseriesData.length === 0) {
-      return { timestamps: [], series: [], maxValue: 0 };
+      return { chartData: [], series: [], maxValue: 0 };
     }
 
-    const timestamps = timeseriesData.map((point) => new Date(point.timestamp));
     const colorMap = getColorMap(parameter);
 
-    // Get all unique values from the data
+    // Collect all unique value keys across all timestamps
     const allValues = new Set<string>();
     timeseriesData.forEach((point) => {
       Object.keys(point.data).forEach((key) => allValues.add(key));
     });
 
-    // Create series for each value
-    const series = Array.from(allValues).map((value) => ({
-      label: value,
-      data: timeseriesData.map((point) => point.data[value] || 0),
-      color: colorMap[value] || `${text.disabled}`,
-      curve: "monotoneX" as const,
-      showMark: false,
+    const valueKeys = Array.from(allValues);
+
+    // Merge parallel arrays into a single array of objects for Recharts
+    const chartData = timeseriesData.map((point) => {
+      const date = new Date(point.timestamp);
+      const label = new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+      }).format(date);
+      const entry: Record<string, string | number> = { date: label };
+      valueKeys.forEach((key) => {
+        entry[key] = point.data[key] || 0;
+      });
+      return entry;
+    });
+
+    const series = valueKeys.map((value) => ({
+      dataKey: value,
+      name: value,
+      color: colorMap[value] || text.disabled,
+      strokeWidth: 2,
+      dot: false as const,
     }));
 
-    // Calculate max value across all series for proper y-axis scaling
     const maxValue = Math.max(
-      ...series.flatMap((s) => s.data),
+      ...timeseriesData.flatMap((point) => Object.values(point.data)),
       0
     );
 
-    return { timestamps, series, maxValue };
+    return { chartData, series, maxValue };
   };
 
-  const { timestamps, series, maxValue } = prepareChartData();
+  const { chartData, series, maxValue } = prepareChartData();
 
   if (loading) {
     return (
@@ -227,74 +240,25 @@ export function RiskHistoryChart({
           />
         </Stack>
 
-        <Stack sx={{ width: "100%", mt: 2 }}>
-          <Box sx={{ position: "relative" }}>
-            <LineChart
-              xAxis={[
-                {
-                  data: timestamps,
-                  scaleType: "time",
-                  valueFormatter: (date) => {
-                    return new Intl.DateTimeFormat("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    }).format(date);
-                  },
-                  tickLabelStyle: {
-                    fontSize: 12,
-                    fill: `${text.tertiary}`,
-                  },
-                },
-              ]}
-              yAxis={[
-                {
-                  label: "Count",
-                  min: 0,
-                  max: maxValue > 0 ? Math.ceil(maxValue * 1.15) : 10,
-                  tickMinStep: 1,
-                  valueFormatter: (value: number) => value.toString(),
-                  labelStyle: {
-                    fontSize: 13,
-                    fill: `${text.secondary}`,
-                  },
-                  tickLabelStyle: {
-                    fontSize: 12,
-                    fill: `${text.tertiary}`,
-                  },
-                },
-              ]}
-              series={series}
-              height={height}
-              margin={{ top: 10, right: 30, bottom: 30, left: 70 }}
-              slotProps={{
-                legend: {
-                  direction: "horizontal",
-                  position: { vertical: "bottom", horizontal: "center" },
-                },
-              }}
-              grid={{
-                vertical: true,
-                horizontal: true,
-              }}
-              sx={{
-                "& .MuiLineElement-root": {
-                  strokeWidth: 3,
-                },
-                "& .MuiChartsGrid-line": {
-                  stroke: `${borderPalette.light}`,
-                  strokeWidth: 1,
-                },
-                "& .MuiChartsAxis-line": {
-                  stroke: `${borderPalette.dark}`,
-                  strokeWidth: 1.5,
-                },
-                "& .MuiChartsAxis-tick": {
-                  stroke: `${borderPalette.dark}`,
-                },
-              }}
-            />
-          </Box>
-        </Stack>
+        <VWLineChart
+          data={chartData}
+          series={series}
+          categoryKey="date"
+          height={height}
+          showLegend={true}
+          margin={{ top: 10, right: 30, bottom: 30, left: 70 }}
+          yAxisProps={{
+            domain: [0, maxValue > 0 ? Math.ceil(maxValue * 1.15) : 10],
+            tickFormatter: (v: number) => v.toString(),
+            label: {
+              value: "Count",
+              angle: -90,
+              position: "insideLeft",
+              offset: -50,
+              style: { fontSize: 13, fill: text.secondary },
+            },
+          }}
+        />
       </Stack>
     </Stack>
   );
