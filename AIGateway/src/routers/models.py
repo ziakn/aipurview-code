@@ -56,8 +56,16 @@ def _get_model_catalog() -> list:
         return _cached_catalog
 
     catalog = []
+    # Skip metadata entries that aren't real models
+    skip_keys = {"sample_spec"}
     for model_key, info in litellm.model_cost.items():
         if not isinstance(info, dict):
+            continue
+        if model_key in skip_keys:
+            continue
+        # Skip entries with no provider or garbage mode strings
+        provider = info.get("litellm_provider", "")
+        if not provider or len(provider) > 50:
             continue
         catalog.append({
             "id": model_key,

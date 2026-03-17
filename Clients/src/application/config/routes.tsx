@@ -164,7 +164,8 @@ export const createRoutes = (
     <Route path="/ai-gateway/playground" element={<AIGatewayPlaygroundPage />} />
     <Route path="/ai-gateway/guardrails" element={<Navigate to="/ai-gateway/guardrails/pii" replace />} />
     <Route path="/ai-gateway/guardrails/:tab" element={<AIGatewayGuardrailsPage />} />
-    <Route path="/ai-gateway/models" element={<AIGatewayModelsPage />} />
+    <Route path="/ai-gateway/models" element={<Navigate to="/ai-gateway/models/catalog" replace />} />
+    <Route path="/ai-gateway/models/:tab" element={<AIGatewayModelsPage />} />
     <Route path="/ai-gateway/logs" element={<AIGatewayLogsPage />} />
     <Route path="/ai-gateway/prompts" element={<AIGatewayPromptsPage />} />
     <Route path="/ai-gateway/prompts/:id" element={<AIGatewayPromptEditorPage />} />

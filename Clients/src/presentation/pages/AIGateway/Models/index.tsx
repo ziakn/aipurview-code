@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Box, Typography, Stack, IconButton } from "@mui/material";
 import TabContext from "@mui/lab/TabContext";
 import {
@@ -86,7 +86,9 @@ const formatCost = (n: number) => {
 export default function ModelsPage() {
   const cardSx = useCardSx();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("catalog");
+  const { tab: urlTab } = useParams<{ tab: string }>();
+  const VALID_TABS = TABS.map((t) => t.value);
+  const activeTab = urlTab && VALID_TABS.includes(urlTab) ? urlTab : "catalog";
   const [models, setModels] = useState<ModelInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -203,7 +205,7 @@ export default function ModelsPage() {
         <TabBar
           tabs={TABS}
           activeTab={activeTab}
-          onChange={(_, v) => setActiveTab(v)}
+          onChange={(_, v) => navigate(`/ai-gateway/models/${v}`, { replace: true })}
         />
 
         <Box sx={{ mt: "16px" }}>
@@ -509,23 +511,26 @@ export default function ModelsPage() {
                     </thead>
                     <tbody>
                       {[
-                        { label: "Provider", fn: (m: ModelInfo) => m.provider },
-                        { label: "Mode", fn: (m: ModelInfo) => m.mode },
-                        { label: "Max input tokens", fn: (m: ModelInfo) => formatTokens(m.max_input_tokens) },
-                        { label: "Max output tokens", fn: (m: ModelInfo) => formatTokens(m.max_output_tokens) },
-                        { label: "Input $/1M tokens", fn: (m: ModelInfo) => formatCost(m.input_cost_per_million) },
-                        { label: "Output $/1M tokens", fn: (m: ModelInfo) => formatCost(m.output_cost_per_million) },
-                        { label: "Vision", fn: (m: ModelInfo) => m.supports_vision ? "Yes" : "No" },
-                        { label: "Function calling", fn: (m: ModelInfo) => m.supports_function_calling ? "Yes" : "No" },
-                        { label: "Parallel tools", fn: (m: ModelInfo) => m.supports_parallel_function_calling ? "Yes" : "No" },
-                        { label: "PDF input", fn: (m: ModelInfo) => m.supports_pdf_input ? "Yes" : "No" },
-                        { label: "Prompt caching", fn: (m: ModelInfo) => m.supports_prompt_caching ? "Yes" : "No" },
-                        { label: "Response schema", fn: (m: ModelInfo) => m.supports_response_schema ? "Yes" : "No" },
-                        { label: "System messages", fn: (m: ModelInfo) => m.supports_system_messages ? "Yes" : "No" },
+                        { label: "Provider", icon: null, fn: (m: ModelInfo) => m.provider },
+                        { label: "Mode", icon: null, fn: (m: ModelInfo) => m.mode },
+                        { label: "Max input tokens", icon: null, fn: (m: ModelInfo) => formatTokens(m.max_input_tokens) },
+                        { label: "Max output tokens", icon: null, fn: (m: ModelInfo) => formatTokens(m.max_output_tokens) },
+                        { label: "Input $/1M tokens", icon: null, fn: (m: ModelInfo) => formatCost(m.input_cost_per_million) },
+                        { label: "Output $/1M tokens", icon: null, fn: (m: ModelInfo) => formatCost(m.output_cost_per_million) },
+                        { label: "Vision", icon: Eye, fn: (m: ModelInfo) => m.supports_vision ? "Yes" : "No" },
+                        { label: "Function calling", icon: Wrench, fn: (m: ModelInfo) => m.supports_function_calling ? "Yes" : "No" },
+                        { label: "Parallel tools", icon: Wrench, fn: (m: ModelInfo) => m.supports_parallel_function_calling ? "Yes" : "No" },
+                        { label: "PDF input", icon: FileText, fn: (m: ModelInfo) => m.supports_pdf_input ? "Yes" : "No" },
+                        { label: "Prompt caching", icon: Database, fn: (m: ModelInfo) => m.supports_prompt_caching ? "Yes" : "No" },
+                        { label: "Response schema", icon: Layers, fn: (m: ModelInfo) => m.supports_response_schema ? "Yes" : "No" },
+                        { label: "System messages", icon: null, fn: (m: ModelInfo) => m.supports_system_messages ? "Yes" : "No" },
                       ].map((row) => (
                         <tr key={row.label}>
                           <td style={{ padding: "8px", borderBottom: `1px solid ${palette.border.light}`, fontSize: 12, color: palette.text.tertiary }}>
-                            {row.label}
+                            <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                              {row.icon && <row.icon size={13} strokeWidth={1.5} />}
+                              {row.label}
+                            </span>
                           </td>
                           {compareModels.map((m) => {
                             const val = row.fn(m);
