@@ -19,6 +19,13 @@ import {
   Area,
   Legend,
 } from "recharts";
+import {
+  GradientDef,
+  GradientProgressBar,
+  DonutCenterLabel,
+  chartTooltipStyle,
+  getProviderColor,
+} from "../../../components/Charts/chartEnhancements";
 import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtended";
 import { EmptyState } from "../../../components/EmptyState";
 import EmptyStateTip from "../../../components/EmptyState/EmptyStateTip";
@@ -245,6 +252,9 @@ export default function SpendDashboardPage() {
             </Stack>
             <ResponsiveContainer width="100%" height={260} style={{ outline: "none" }}>
               <BarChart data={byDay}>
+                <defs>
+                  <GradientDef id="costBarGradient" color={palette.brand.primary} />
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke={palette.border.light} />
                 <XAxis
                   dataKey="day"
@@ -259,11 +269,8 @@ export default function SpendDashboardPage() {
                   axisLine={{ stroke: palette.border.light }}
                   tickFormatter={(v) => `$${v}`}
                 />
-                <Tooltip
-                  contentStyle={{ fontSize: 12, borderRadius: 4, border: `1px solid ${palette.border.light}` }}
-                  formatter={(value: number) => [`$${value.toFixed(6)}`, "Cost"]}
-                />
-                <Bar dataKey="total_cost" fill={chartPalette[0]} radius={[4, 4, 0, 0]} />
+                <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number) => [`$${value.toFixed(6)}`, "Cost"]} />
+                <Bar dataKey="total_cost" fill={palette.brand.primary} fillOpacity={0.75} stroke={palette.brand.primary} strokeWidth={0.5} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </Stack>
@@ -385,7 +392,7 @@ export default function SpendDashboardPage() {
                             transition: "width 0.3s",
                           }} />
                           <Stack direction="row" alignItems="center" gap="8px" sx={{ flex: 1, minWidth: 0, position: "relative", zIndex: 1 }}>
-                            <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: chartPalette[i % chartPalette.length], flexShrink: 0 }} />
+                            <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: getProviderColor(p.group_key, i), flexShrink: 0 }} />
                             <Typography sx={{ fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                               {m.group_key}
                             </Typography>
@@ -424,6 +431,9 @@ export default function SpendDashboardPage() {
                 </Stack>
                 <ResponsiveContainer width="100%" height={180} style={{ outline: "none" }}>
                   <AreaChart data={errorRateByDay}>
+                    <defs>
+                      <GradientDef id="errorGradient" color="#DC2626" />
+                    </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke={palette.border.light} />
                     <XAxis
                       dataKey="day"
@@ -438,11 +448,8 @@ export default function SpendDashboardPage() {
                       axisLine={{ stroke: palette.border.light }}
                       tickFormatter={(v) => `${v}%`}
                     />
-                    <Tooltip
-                      contentStyle={{ fontSize: 12, borderRadius: 4, border: `1px solid ${palette.border.light}` }}
-                      formatter={(value: number, name: string) => [name === "error_rate" ? `${value}%` : value, name === "error_rate" ? "Error rate" : "Errors"]}
-                    />
-                    <Area type="monotone" dataKey="error_rate" stroke="#DC2626" fill="#DC262620" strokeWidth={2} />
+                    <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number, name: string) => [name === "error_rate" ? `${value}%` : value, name === "error_rate" ? "Error rate" : "Errors"]} />
+                    <Area type="monotone" dataKey="error_rate" stroke="#DC2626" fill="url(#errorGradient)" strokeWidth={2} />
                   </AreaChart>
                 </ResponsiveContainer>
               </Stack>
@@ -477,7 +484,7 @@ export default function SpendDashboardPage() {
                       width={120}
                     />
                     <Tooltip
-                      contentStyle={{ fontSize: 12, borderRadius: 4, border: `1px solid ${palette.border.light}` }}
+                      contentStyle={chartTooltipStyle}
                       formatter={(value: number, name: string) => [value.toLocaleString(), name === "avg_prompt_tokens" ? "Prompt" : "Completion"]}
                     />
                     <Legend wrapperStyle={{ fontSize: 11 }} />
@@ -505,29 +512,29 @@ export default function SpendDashboardPage() {
                   </MuiTooltip>
                 </Stack>
                 <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                  <ResponsiveContainer width={160} height={160} style={{ outline: "none" }}>
-                    <PieChart>
-                      <Pie
-                        data={byProvider}
-                        dataKey="total_cost"
-                        nameKey="group_key"
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={45}
-                        outerRadius={70}
-                        paddingAngle={2}
-                        strokeWidth={0}
-                      >
-                        {byProvider.map((_: any, i: number) => (
-                          <Cell key={i} fill={chartPalette[i % chartPalette.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        contentStyle={{ fontSize: 12, borderRadius: 4, border: `1px solid ${palette.border.light}` }}
-                        formatter={(value: number) => [`$${value.toFixed(4)}`, "Cost"]}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
+                  <Box sx={{ position: "relative", width: 160, height: 160 }}>
+                    <ResponsiveContainer width={160} height={160} style={{ outline: "none" }}>
+                      <PieChart>
+                        <Pie
+                          data={byProvider}
+                          dataKey="total_cost"
+                          nameKey="group_key"
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={45}
+                          outerRadius={70}
+                          paddingAngle={2}
+                          strokeWidth={0}
+                        >
+                          {byProvider.map((p: any, i: number) => (
+                            <Cell key={i} fill={getProviderColor(p.group_key, i)} />
+                          ))}
+                        </Pie>
+                        <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number) => [`$${value.toFixed(4)}`, "Cost"]} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <DonutCenterLabel value={`$${byProvider.reduce((s: number, p: any) => s + Number(p.total_cost), 0).toFixed(2)}`} />
+                  </Box>
                   <Stack gap="6px" flex={1}>
                     {(() => {
                       const totalProviderCost = byProvider.reduce((s: number, pp: any) => s + Number(pp.total_cost), 0);
@@ -536,7 +543,7 @@ export default function SpendDashboardPage() {
                       return (
                         <Stack key={p.group_key} direction="row" justifyContent="space-between" alignItems="center">
                           <Stack direction="row" alignItems="center" gap="8px">
-                            <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: chartPalette[i % chartPalette.length], flexShrink: 0 }} />
+                            <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: getProviderColor(p.group_key, i), flexShrink: 0 }} />
                             <Typography sx={{ fontSize: 12 }}>{p.group_key}</Typography>
                           </Stack>
                           <Stack direction="row" gap="8px" alignItems="center">
@@ -575,6 +582,10 @@ export default function SpendDashboardPage() {
                 </Stack>
                 <ResponsiveContainer width="100%" height={160} style={{ outline: "none" }}>
                   <AreaChart data={guardrailStats.byDay} margin={{ left: 0, right: 0 }}>
+                    <defs>
+                      <GradientDef id="blockedGradient" color="#DC2626" />
+                      <GradientDef id="maskedGradient" color="#D97706" />
+                    </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke={palette.border.light} />
                     <XAxis
                       dataKey="day"
@@ -589,9 +600,9 @@ export default function SpendDashboardPage() {
                       axisLine={{ stroke: palette.border.light }}
                       width={30}
                     />
-                    <Tooltip contentStyle={{ fontSize: 12, borderRadius: 4, border: `1px solid ${palette.border.light}` }} />
-                    <Area type="monotone" dataKey="blocked" stackId="1" stroke="#DC2626" fill="#DC262630" strokeWidth={1.5} />
-                    <Area type="monotone" dataKey="masked" stackId="1" stroke="#D97706" fill="#D9770630" strokeWidth={1.5} />
+                    <Tooltip contentStyle={chartTooltipStyle} />
+                    <Area type="monotone" dataKey="blocked" stackId="1" stroke="#DC2626" fill="url(#blockedGradient)" strokeWidth={1.5} />
+                    <Area type="monotone" dataKey="masked" stackId="1" stroke="#D97706" fill="url(#maskedGradient)" strokeWidth={1.5} />
                   </AreaChart>
                 </ResponsiveContainer>
               </Stack>
