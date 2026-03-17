@@ -297,6 +297,100 @@ export async function getGuardrailStatsByDayQuery(
   return rows;
 }
 
+export async function getGuardrailTopDetectionsQuery(
+  organizationId: number,
+  startDate: string,
+  endDate: string,
+  limit: number = 10
+) {
+  const rows = await sequelize.query(
+    `SELECT
+       entity_type,
+       action_taken,
+       COUNT(*)::int AS count
+     FROM ai_gateway_guardrail_logs
+     WHERE organization_id = :organizationId
+       AND created_at >= :startDate
+       AND created_at <= :endDate
+       AND entity_type IS NOT NULL AND entity_type != ''
+     GROUP BY entity_type, action_taken
+     ORDER BY count DESC
+     LIMIT :limit`,
+    {
+      replacements: { organizationId, startDate, endDate, limit },
+      type: QueryTypes.SELECT,
+    }
+  );
+  return rows;
+}
+
+export async function getGuardrailByEndpointQuery(
+  organizationId: number,
+  startDate: string,
+  endDate: string
+) {
+  const rows = await sequelize.query(
+    `SELECT
+       COALESCE(e.display_name, 'Unknown') AS endpoint_name,
+       COUNT(*)::int AS count,
+       COUNT(*) FILTER (WHERE gl.action_taken = 'blocked')::int AS blocked,
+       COUNT(*) FILTER (WHERE gl.action_taken = 'masked')::int AS masked
+     FROM ai_gateway_guardrail_logs gl
+     LEFT JOIN ai_gateway_endpoints e ON gl.endpoint_id = e.id
+     WHERE gl.organization_id = :organizationId
+       AND gl.created_at >= :startDate
+       AND gl.created_at <= :endDate
+     GROUP BY e.display_name
+     ORDER BY count DESC
+     LIMIT 10`,
+    {
+      replacements: { organizationId, startDate, endDate },
+      type: QueryTypes.SELECT,
+    }
+  );
+  return rows;
+}
+
+export async function getGuardrailLogsDetailQuery(
+  organizationId: number,
+  startDate: string,
+  endDate: string,
+  limit: number = 50,
+  offset: number = 0
+) {
+  const rows = await sequelize.query(
+    `SELECT
+       gl.id, gl.guardrail_type, gl.action_taken, gl.matched_text,
+       gl.entity_type, gl.execution_time_ms, gl.created_at,
+       COALESCE(e.display_name, 'Unknown') AS endpoint_name,
+       g.name AS rule_name
+     FROM ai_gateway_guardrail_logs gl
+     LEFT JOIN ai_gateway_endpoints e ON gl.endpoint_id = e.id
+     LEFT JOIN ai_gateway_guardrails g ON gl.guardrail_id = g.id
+     WHERE gl.organization_id = :organizationId
+       AND gl.created_at >= :startDate
+       AND gl.created_at <= :endDate
+     ORDER BY gl.created_at DESC
+     LIMIT :limit OFFSET :offset`,
+    {
+      replacements: { organizationId, startDate, endDate, limit, offset },
+      type: QueryTypes.SELECT,
+    }
+  );
+  const countResult = await sequelize.query(
+    `SELECT COUNT(*)::int AS total
+     FROM ai_gateway_guardrail_logs
+     WHERE organization_id = :organizationId
+       AND created_at >= :startDate
+       AND created_at <= :endDate`,
+    {
+      replacements: { organizationId, startDate, endDate },
+      type: QueryTypes.SELECT,
+    }
+  );
+  return { logs: rows, total: (countResult as any)[0]?.total || 0 };
+}
+
 export async function purgeGuardrailLogsQuery(
   organizationId: number,
   retentionDays: number

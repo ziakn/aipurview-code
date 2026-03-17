@@ -658,55 +658,113 @@ export default function SpendDashboardPage() {
           </Stack>
         </Box>
       )}
-      {/* Guardrails activity */}
-      {guardrailStats && (Number(guardrailStats.summary?.total_checks) > 0 || guardrailStats.byDay?.length > 0) && (
+      {/* Guardrails activity — redesigned */}
+      {!loading && (
         <Box sx={cardSx}>
           <Stack gap="12px">
-            <Stack direction="row" alignItems="center" gap="6px">
-              <Typography sx={sectionTitleSx}>Guardrails activity</Typography>
-              <MuiTooltip title="Guardrail detections for this period — blocked requests were rejected, masked requests had content redacted" arrow placement="top">
-                <Box sx={{ display: "flex", cursor: "help" }}><Info size={14} color={palette.text.disabled} /></Box>
-              </MuiTooltip>
-            </Stack>
-            <Stack direction="row" gap="16px">
-              <StatCard
-                title="Blocked"
-                value={String(guardrailStats.summary?.blocked_count ?? 0)}
-                Icon={ShieldOff}
-                highlight={Number(guardrailStats.summary?.blocked_count) > 0}
-                tooltip="Requests blocked by guardrail rules in this period"
-              />
-              <StatCard
-                title="Masked"
-                value={String(guardrailStats.summary?.masked_count ?? 0)}
-                Icon={ShieldCheck}
-                tooltip="Requests with content masked before reaching the LLM"
-              />
-            </Stack>
-            {guardrailStats.byType?.length > 0 && (
-              <Stack gap="8px">
-                {guardrailStats.byType.map((t: any, i: number) => (
-                  <Stack
-                    key={`${t.guardrail_type}-${t.action_taken}`}
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    sx={{
-                      p: "8px 12px",
-                      borderRadius: "4px",
-                      border: `1px solid ${palette.border.light}`,
-                    }}
-                  >
-                    <Typography sx={{ fontSize: 13 }}>
-                      {t.guardrail_type === "pii" ? "PII detection" : "Content filter"} — {t.action_taken}
-                    </Typography>
-                    <Typography sx={{ fontSize: 13, fontWeight: 600 }}>
-                      {Number(t.count).toLocaleString()}
-                    </Typography>
-                  </Stack>
-                ))}
+            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pb: "8px", borderBottom: `1px solid ${palette.border.light}` }}>
+              <Stack direction="row" alignItems="center" gap="6px">
+                <Typography sx={sectionTitleSx}>Guardrails activity</Typography>
+                <MuiTooltip title="What your guardrails caught in this period" arrow placement="top">
+                  <Box sx={{ display: "flex", cursor: "help" }}><Info size={14} color={palette.text.disabled} /></Box>
+                </MuiTooltip>
               </Stack>
-            )}
+              {/* Summary badges */}
+              <Stack direction="row" gap="12px" alignItems="center">
+                <Stack direction="row" alignItems="center" gap="4px">
+                  <ShieldOff size={13} strokeWidth={1.5} color="#DC2626" />
+                  <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#DC2626" }}>
+                    {guardrailStats?.summary?.blocked_count ?? 0}
+                  </Typography>
+                  <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>blocked</Typography>
+                </Stack>
+                <Stack direction="row" alignItems="center" gap="4px">
+                  <ShieldCheck size={13} strokeWidth={1.5} color="#D97706" />
+                  <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#D97706" }}>
+                    {guardrailStats?.summary?.masked_count ?? 0}
+                  </Typography>
+                  <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>masked</Typography>
+                </Stack>
+                <Typography sx={{ fontSize: 12, color: palette.text.disabled }}>
+                  {guardrailStats?.summary?.total_checks ?? 0} total
+                </Typography>
+              </Stack>
+            </Stack>
+
+            {/* Two-column: Top detections + By endpoint */}
+            <Stack direction={{ xs: "column", md: "row" }} gap="16px">
+              {/* Top detections */}
+              <Box flex={1}>
+                <Typography sx={{ fontSize: 11, fontWeight: 600, color: palette.text.tertiary, textTransform: "uppercase", mb: "8px" }}>
+                  Top detections
+                </Typography>
+                <Stack gap="4px">
+                  {(guardrailStats?.topDetections || []).length === 0 ? (
+                    <Typography sx={{ fontSize: 12, color: palette.text.disabled, py: "8px" }}>No detections in this period</Typography>
+                  ) : (
+                    (guardrailStats?.topDetections || []).slice(0, 6).map((d: any, i: number) => (
+                      <Stack
+                        key={`${d.entity_type}-${d.action_taken}-${i}`}
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        sx={{ p: "4px 8px", borderRadius: "4px", "&:hover": { backgroundColor: palette.background.alt } }}
+                      >
+                        <Stack direction="row" alignItems="center" gap="6px">
+                          <Box sx={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: d.action_taken === "blocked" ? "#DC2626" : "#D97706", flexShrink: 0 }} />
+                          <Typography sx={{ fontSize: 12 }}>
+                            {(d.entity_type || "Unknown").replace(/_/g, " ")}
+                          </Typography>
+                        </Stack>
+                        <Typography sx={{ fontSize: 12, fontWeight: 600, minWidth: "30px", textAlign: "right" }}>
+                          {d.count}
+                        </Typography>
+                      </Stack>
+                    ))
+                  )}
+                </Stack>
+              </Box>
+
+              {/* By endpoint */}
+              <Box flex={1}>
+                <Typography sx={{ fontSize: 11, fontWeight: 600, color: palette.text.tertiary, textTransform: "uppercase", mb: "8px" }}>
+                  By endpoint
+                </Typography>
+                <Stack gap="4px">
+                  {(guardrailStats?.byEndpoint || []).length === 0 ? (
+                    <Typography sx={{ fontSize: 12, color: palette.text.disabled, py: "8px" }}>No endpoint data</Typography>
+                  ) : (
+                    (guardrailStats?.byEndpoint || []).slice(0, 6).map((ep: any, i: number) => (
+                      <Stack
+                        key={ep.endpoint_name}
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        sx={{ p: "4px 8px", borderRadius: "4px", "&:hover": { backgroundColor: palette.background.alt } }}
+                      >
+                        <Typography sx={{ fontSize: 12 }}>{ep.endpoint_name}</Typography>
+                        <Stack direction="row" gap="8px" alignItems="center">
+                          {ep.blocked > 0 && <Typography sx={{ fontSize: 11, color: "#DC2626" }}>{ep.blocked} blocked</Typography>}
+                          {ep.masked > 0 && <Typography sx={{ fontSize: 11, color: "#D97706" }}>{ep.masked} masked</Typography>}
+                          <Typography sx={{ fontSize: 12, fontWeight: 600, minWidth: "30px", textAlign: "right" }}>{ep.count}</Typography>
+                        </Stack>
+                      </Stack>
+                    ))
+                  )}
+                </Stack>
+              </Box>
+            </Stack>
+
+            {/* View all logs link */}
+            <Box sx={{ pt: "4px", borderTop: `1px solid ${palette.border.light}` }}>
+              <Typography
+                component="a"
+                href="/ai-gateway/logs?tab=guardrails"
+                sx={{ fontSize: 12, color: palette.brand.primary, textDecoration: "none", "&:hover": { textDecoration: "underline" }, cursor: "pointer" }}
+              >
+                View all guardrail logs
+              </Typography>
+            </Box>
           </Stack>
         </Box>
       )}

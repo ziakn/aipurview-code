@@ -44,6 +44,7 @@ import {
   testGuardrails,
   getGuardrailLogs,
   getGuardrailStats,
+  getGuardrailLogsDetail,
   purgeGuardrailLogs,
   // Virtual Keys
   getVirtualKeys,
@@ -117,6 +118,7 @@ router.get("/guardrails/settings", getGuardrailSettings);
 router.put("/guardrails/settings", authorize(["Admin"]), updateGuardrailSettings);
 router.post("/guardrails/test", testGuardrails);
 router.get("/guardrails/logs", getGuardrailLogs);
+router.get("/guardrails/logs/detail", getGuardrailLogsDetail);
 router.get("/guardrails/stats", getGuardrailStats);
 router.post("/guardrails/logs/purge", authorize(["Admin"]), purgeGuardrailLogs);
 
