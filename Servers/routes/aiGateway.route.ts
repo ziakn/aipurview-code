@@ -6,6 +6,7 @@ import authorize from "../middleware/accessControl.middleware";
 import { generalApiLimiter } from "../middleware/rateLimit.middleware";
 import {
   // API Keys
+  verifyApiKey,
   getApiKeys,
   createApiKey,
   updateApiKey,
@@ -80,7 +81,8 @@ import {
 // All routes require authentication
 router.use(authenticateJWT);
 
-// API Key management — Admin only for create/update/delete
+// API Key management — verify before parameterized routes, Admin only for write
+router.post("/keys/verify", generalApiLimiter, authorize(["Admin"]), verifyApiKey);
 router.get("/keys", getApiKeys);
 router.post("/keys", authorize(["Admin"]), createApiKey);
 router.patch("/keys/:id", authorize(["Admin"]), updateApiKey);

@@ -16,6 +16,7 @@ import { apiServices } from "../../../../infrastructure/api/networkServices";
 import palette from "../../../themes/palette";
 import { sectionTitleSx, useCardSx, ProviderIcon, TOP_PROVIDERS } from "../shared";
 import VirtualKeysTab from "../VirtualKeys/index";
+import { validateApiKeyFormat } from "../../../../application/utils/apiKeyValidation";
 
 const TOP_IDS = new Set(TOP_PROVIDERS.map((p) => p._id));
 
@@ -222,9 +223,29 @@ export default function AIGatewaySettingsPage() {
       setKeyError("All fields are required");
       return;
     }
+
+    // Step 1: Client-side format validation
+    const formatCheck = validateApiKeyFormat(keyForm.provider, keyForm.api_key);
+    if (!formatCheck.valid) {
+      setKeyError(formatCheck.error || "Invalid key format");
+      return;
+    }
+
     setKeySubmitting(true);
     setKeyError("");
     try {
+      // Step 2: Live provider verification
+      const verifyRes = await apiServices.post("/ai-gateway/keys/verify", {
+        provider: keyForm.provider,
+        api_key: keyForm.api_key,
+      });
+      if (verifyRes?.data?.data?.valid === false) {
+        setKeyError(verifyRes.data.data.message || "API key verification failed");
+        setKeySubmitting(false);
+        return;
+      }
+
+      // Step 3: Save
       await apiServices.post("/ai-gateway/keys", keyForm);
       setIsKeyModalOpen(false);
       setKeyForm({ key_name: "", provider: "", api_key: "" });

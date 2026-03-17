@@ -130,6 +130,66 @@ function parseId(raw: string | string[]): number {
 
 // ─── API Keys ────────────────────────────────────────────────────────────────
 
+// ─── API Key Verification ─────────────────────────────────────────────────────
+
+const PROVIDER_VERIFY_ENDPOINTS: Record<string, { url: string; buildHeaders: (key: string) => Record<string, string> }> = {
+  openai: { url: "https://api.openai.com/v1/models", buildHeaders: (k) => ({ Authorization: `Bearer ${k}` }) },
+  anthropic: { url: "https://api.anthropic.com/v1/models", buildHeaders: (k) => ({ "x-api-key": k, "anthropic-version": "2023-06-01" }) },
+  xai: { url: "https://api.x.ai/v1/models", buildHeaders: (k) => ({ Authorization: `Bearer ${k}` }) },
+  mistral: { url: "https://api.mistral.ai/v1/models", buildHeaders: (k) => ({ Authorization: `Bearer ${k}` }) },
+  openrouter: { url: "https://openrouter.ai/api/v1/models", buildHeaders: (k) => ({ Authorization: `Bearer ${k}` }) },
+};
+
+export async function verifyApiKey(req: Request, res: Response) {
+  const fn = "verifyApiKey";
+  logStructured("processing", "verifying API key", fn, fileName);
+  try {
+    const { provider, api_key } = req.body;
+    if (!provider || !api_key) {
+      throw new ValidationException("provider and api_key are required");
+    }
+
+    const trimmedKey = api_key.trim();
+    const verifyConfig = PROVIDER_VERIFY_ENDPOINTS[provider.toLowerCase()];
+
+    if (!verifyConfig) {
+      // Unknown provider — skip verification, assume valid
+      return res.status(200).json(STATUS_CODE[200]({ valid: true, message: "Provider does not support live verification" }));
+    }
+
+    // Gemini uses query param instead of header
+    let url = verifyConfig.url;
+    let headers = verifyConfig.buildHeaders(trimmedKey);
+    if (provider.toLowerCase() === "gemini") {
+      url = `https://generativelanguage.googleapis.com/v1beta/models?key=${trimmedKey}`;
+      headers = {};
+    }
+
+    const response = await fetch(url, { method: "GET", headers });
+
+    if (response.status === 401 || response.status === 403) {
+      logStructured("successful", `API key verification failed: ${response.status}`, fn, fileName);
+      return res.status(200).json(STATUS_CODE[200]({ valid: false, message: "Invalid API key — authentication failed" }));
+    }
+
+    if (response.status === 429) {
+      // Rate limited — key is valid, just throttled
+      logStructured("successful", "API key verified (rate limited)", fn, fileName);
+      return res.status(200).json(STATUS_CODE[200]({ valid: true, message: "Key is valid (rate limited)" }));
+    }
+
+    logStructured("successful", "API key verified", fn, fileName);
+    return res.status(200).json(STATUS_CODE[200]({ valid: true, message: "Key is valid" }));
+  } catch (error: any) {
+    if (error instanceof ValidationException) {
+      return res.status(400).json(STATUS_CODE[400](error.message));
+    }
+    // Network errors — assume valid (provider might be down)
+    logStructured("successful", "API key verification skipped (network error)", fn, fileName);
+    return res.status(200).json(STATUS_CODE[200]({ valid: true, message: "Could not reach provider — key assumed valid" }));
+  }
+}
+
 export async function getApiKeys(req: Request, res: Response) {
   const fn = "getApiKeys";
   logStructured("processing", "fetching all gateway API keys", fn, fileName);
