@@ -107,6 +107,7 @@ export default function ModelsPage() {
   const [calcRequests, setCalcRequests] = useState("1000");
   const [calcInputTokens, setCalcInputTokens] = useState("2000");
   const [calcOutputTokens, setCalcOutputTokens] = useState("500");
+  const [calcShowAll, setCalcShowAll] = useState(false);
 
   // Feature comparison
   const [compareIds, setCompareIds] = useState<string[]>([]);
@@ -164,8 +165,12 @@ export default function ModelsPage() {
         const monthlyCost = (dailyInputCost + dailyOutputCost) * 30;
         return { ...m, monthlyCost, dailyCost: dailyInputCost + dailyOutputCost };
       })
-      .sort((a, b) => a.monthlyCost - b.monthlyCost)
-      .slice(0, 50);
+      .sort((a, b) => a.monthlyCost - b.monthlyCost);
+  }, [filtered, calcRequests, calcInputTokens, calcOutputTokens]);
+
+  const calcResultsTotal = calcResults.length;
+  const calcResultsVisible = useMemo(() => {
+    return calcShowAll ? calcResults : calcResults.slice(0, 50);
   }, [filtered, calcRequests, calcInputTokens, calcOutputTokens]);
 
   // Compare models
@@ -399,7 +404,7 @@ export default function ModelsPage() {
                 </Stack>
               </Box>
 
-              {calcResults.length > 0 && (
+              {calcResultsVisible.length > 0 && (
                 <Box sx={cardSx}>
                   <Stack gap="0px">
                     <Typography sx={{ ...sectionTitleSx, mb: "12px" }}>
@@ -416,7 +421,7 @@ export default function ModelsPage() {
                       <Typography sx={{ flex: 0.8, fontSize: 11, fontWeight: 600, color: palette.text.tertiary, textAlign: "right" }}>$/DAY</Typography>
                       <Typography sx={{ flex: 1, fontSize: 11, fontWeight: 600, color: palette.text.tertiary, textAlign: "right" }}>$/MONTH</Typography>
                     </Stack>
-                    {calcResults.map((m, i) => {
+                    {calcResultsVisible.map((m, i) => {
                       const inputCostPerReq = (Number(calcInputTokens) * m.input_cost_per_million) / 1_000_000;
                       const outputCostPerReq = (Number(calcOutputTokens) * m.output_cost_per_million) / 1_000_000;
                       const costPerReq = inputCostPerReq + outputCostPerReq;
@@ -433,13 +438,16 @@ export default function ModelsPage() {
                           }}
                         >
                           <Typography sx={{ width: "28px", fontSize: 12, color: palette.text.disabled, fontWeight: 600 }}>{i + 1}</Typography>
-                          <Stack direction="row" alignItems="center" gap="6px" sx={{ flex: 2 }}>
+                          <Stack direction="row" alignItems="center" gap="6px" sx={{ flex: 2, minWidth: 0, overflow: "hidden" }}>
                             <ProviderIcon provider={m.provider} size={13} />
-                            <Typography sx={{ fontSize: 12, fontWeight: i === 0 ? 600 : 400, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                              {m.id}
+                            <Typography component="span" sx={{ fontSize: 12, color: palette.text.tertiary, flexShrink: 0 }}>
+                              {m.provider}/
+                            </Typography>
+                            <Typography component="span" sx={{ fontSize: 12, fontWeight: i === 0 ? 600 : 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                              {m.id.includes("/") ? m.id.split("/").slice(1).join("/") : m.id}
                             </Typography>
                             {i === 0 && (
-                              <Typography sx={{ fontSize: 10, color: palette.brand.primary, fontWeight: 600, border: `1px solid ${palette.brand.primary}40`, borderRadius: "4px", px: "4px", py: "1px", whiteSpace: "nowrap" }}>
+                              <Typography sx={{ fontSize: 10, color: palette.brand.primary, fontWeight: 600, border: `1px solid ${palette.brand.primary}40`, borderRadius: "4px", px: "4px", py: "1px", whiteSpace: "nowrap", flexShrink: 0 }}>
                                 cheapest
                               </Typography>
                             )}
@@ -453,6 +461,15 @@ export default function ModelsPage() {
                         </Stack>
                       );
                     })}
+                    {calcResultsTotal > 50 && (
+                      <Stack direction="row" justifyContent="center" sx={{ pt: "12px" }}>
+                        <CustomizableButton
+                          text={calcShowAll ? `Show top 50 of ${calcResultsTotal}` : `Show all ${calcResultsTotal} models`}
+                          variant="outlined"
+                          onClick={() => setCalcShowAll(!calcShowAll)}
+                        />
+                      </Stack>
+                    )}
                   </Stack>
                 </Box>
               )}
@@ -536,9 +553,9 @@ export default function ModelsPage() {
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                     <thead>
                       <tr>
-                        <th scope="col" style={{ textAlign: "left", padding: "8px", borderBottom: `1px solid ${palette.border.light}`, color: palette.text.tertiary, fontSize: 11, fontWeight: 600 }}>Feature</th>
+                        <th scope="col" style={{ textAlign: "left", padding: "8px", borderBottom: `1px solid ${palette.border.light}`, color: palette.text.tertiary, fontSize: 11, fontWeight: 600, textTransform: "uppercase" as const }}>Feature</th>
                         {compareModels.map((m) => (
-                          <th scope="col" key={m.id} style={{ textAlign: "center", padding: "8px", borderBottom: `1px solid ${palette.border.light}`, fontSize: 12, fontWeight: 500, minWidth: "140px", position: "relative" }}>
+                          <th scope="col" key={m.id} style={{ textAlign: "center", padding: "8px", borderBottom: `1px solid ${palette.border.light}`, fontSize: 11, fontWeight: 600, minWidth: "140px", position: "relative", color: palette.text.tertiary, textTransform: "uppercase" as const }}>
                             <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
                               {m.id}
                               <span
