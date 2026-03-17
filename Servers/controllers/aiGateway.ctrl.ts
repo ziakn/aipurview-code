@@ -777,6 +777,27 @@ export async function getProviders(_req: Request, res: Response) {
   }
 }
 
+export async function getModelCatalog(_req: Request, res: Response) {
+  const fn = "getModelCatalog";
+  logStructured("processing", "fetching model catalog from AI Gateway", fn, fileName);
+  try {
+    const response = await fetch(`${AI_GATEWAY_URL}/internal/v1/models/catalog`, {
+      headers: { "x-internal-key": AI_GATEWAY_KEY },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!response.ok) {
+      logger.warn(`AI Gateway /v1/models/catalog returned ${response.status}`);
+      return res.status(200).json(STATUS_CODE[200]({ models: [], total: 0 }));
+    }
+    const data = await response.json();
+    logStructured("successful", `model catalog fetched: ${data.total} models`, fn, fileName);
+    return res.status(200).json(STATUS_CODE[200](data));
+  } catch (err) {
+    logger.warn("AI Gateway catalog unavailable:", (err as Error).message);
+    return res.status(200).json(STATUS_CODE[200]({ models: [], total: 0 }));
+  }
+}
+
 // ─── Guardrail Rules ─────────────────────────────────────────────────────────
 
 export async function getGuardrails(req: Request, res: Response) {

@@ -5,7 +5,7 @@
  * Follows the SidebarShell pattern established by ShadowAISidebar.
  */
 
-import { Router, BarChart3, MessageSquare, ShieldCheck, FileText, Settings, BookOpen } from "lucide-react";
+import { Router, BarChart3, MessageSquare, ShieldCheck, FileText, Settings, BookOpen, Layers } from "lucide-react";
 import SidebarShell, {
   SidebarMenuItem,
 } from "../../components/Sidebar/SidebarShell";
@@ -57,6 +57,12 @@ export default function AIGatewaySidebar({
       value: "prompts",
       icon: <BookOpen size={16} strokeWidth={1.5} />,
       count: promptsCount,
+    },
+    {
+      id: "models",
+      label: "Models",
+      value: "models",
+      icon: <Layers size={16} strokeWidth={1.5} />,
     },
     {
       id: "logs",

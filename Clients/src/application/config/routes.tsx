@@ -61,6 +61,7 @@ import AIGatewayAnalyticsPage from "../../presentation/pages/AIGateway/SpendDash
 import AIGatewayPlaygroundPage from "../../presentation/pages/AIGateway/Playground";
 import AIGatewayGuardrailsPage from "../../presentation/pages/AIGateway/Guardrails";
 import AIGatewayLogsPage from "../../presentation/pages/AIGateway/Logs";
+import AIGatewayModelsPage from "../../presentation/pages/AIGateway/Models";
 import AIGatewaySettingsPage from "../../presentation/pages/AIGateway/Settings";
 import AIGatewayVirtualKeysPage from "../../presentation/pages/AIGateway/VirtualKeys";
 import AIGatewayPromptsPage from "../../presentation/pages/AIGateway/Prompts";
@@ -163,6 +164,7 @@ export const createRoutes = (
     <Route path="/ai-gateway/playground" element={<AIGatewayPlaygroundPage />} />
     <Route path="/ai-gateway/guardrails" element={<Navigate to="/ai-gateway/guardrails/pii" replace />} />
     <Route path="/ai-gateway/guardrails/:tab" element={<AIGatewayGuardrailsPage />} />
+    <Route path="/ai-gateway/models" element={<AIGatewayModelsPage />} />
     <Route path="/ai-gateway/logs" element={<AIGatewayLogsPage />} />
     <Route path="/ai-gateway/prompts" element={<AIGatewayPromptsPage />} />
     <Route path="/ai-gateway/prompts/:id" element={<AIGatewayPromptEditorPage />} />

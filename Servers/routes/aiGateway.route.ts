@@ -28,8 +28,9 @@ import {
   chatCompletion,
   chatCompletionStream,
   embeddingProxy,
-  // Providers
+  // Providers / Models
   getProviders,
+  getModelCatalog,
   getSpendByTag,
   getSpendLogs,
   purgeSpendLogs,
@@ -109,6 +110,7 @@ router.put("/budget", authorize(["Admin"]), upsertBudget);
 
 // Utility
 router.get("/providers", getProviders);
+router.get("/models/catalog", getModelCatalog);
 
 // Guardrail settings (specific routes BEFORE parameterized :id) — Admin only for write
 router.get("/guardrails/settings", getGuardrailSettings);

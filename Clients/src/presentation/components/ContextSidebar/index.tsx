@@ -162,23 +162,19 @@ export function ContextSidebar({
       );
     }
     case "ai-gateway": {
-      const gatewayTab = location.pathname.includes("/ai-gateway/dashboard")
-        ? "dashboard"
-        : location.pathname.includes("/ai-gateway/endpoints")
-          ? "endpoints"
-          : location.pathname.includes("/ai-gateway/playground")
-            ? "playground"
-            : location.pathname.includes("/ai-gateway/guardrails")
-              ? "guardrails"
-              : location.pathname.includes("/ai-gateway/prompts")
-                ? "prompts"
-                : location.pathname.includes("/ai-gateway/logs")
-                  ? "logs"
-                  : location.pathname.includes("/ai-gateway/virtual-keys")
-                    ? "virtual-keys"
-                    : location.pathname.includes("/ai-gateway/settings")
-                      ? "settings"
-                      : "dashboard";
+      const gatewayTab = (() => {
+        const p = location.pathname;
+        if (p.includes("/ai-gateway/dashboard")) return "dashboard";
+        if (p.includes("/ai-gateway/endpoints")) return "endpoints";
+        if (p.includes("/ai-gateway/playground")) return "playground";
+        if (p.includes("/ai-gateway/guardrails")) return "guardrails";
+        if (p.includes("/ai-gateway/prompts")) return "prompts";
+        if (p.includes("/ai-gateway/models")) return "models";
+        if (p.includes("/ai-gateway/logs")) return "logs";
+        if (p.includes("/ai-gateway/virtual-keys")) return "virtual-keys";
+        if (p.includes("/ai-gateway/settings")) return "settings";
+        return "dashboard";
+      })();
 
       const handleGatewayTabChange = (newTab: string) => {
         navigate(`/ai-gateway/${newTab}`);
