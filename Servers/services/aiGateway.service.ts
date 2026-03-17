@@ -102,8 +102,9 @@ async function buildFinalMessages(
 const INTERNAL_KEY =
   process.env.AI_GATEWAY_INTERNAL_KEY || "";
 
-/** Fallback estimated cost when cost-estimate endpoint is unavailable */
-const FALLBACK_ESTIMATED_COST = 0.01;
+/** Fallback estimated cost when cost-estimate endpoint is unavailable.
+ *  Zero means no pre-reservation — actual cost is reconciled post-request via adjustBudgetSpendQuery. */
+const FALLBACK_ESTIMATED_COST = 0;
 
 /** Maximum fallback chain depth to prevent infinite recursion */
 const MAX_FALLBACK_DEPTH = 3;
