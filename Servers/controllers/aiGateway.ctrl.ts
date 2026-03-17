@@ -969,6 +969,7 @@ export async function testGuardrails(req: Request, res: Response) {
         guardrail_rules: rules,
         settings: settings || {},
       }),
+      signal: AbortSignal.timeout(30000),
     });
 
     if (!response.ok) {

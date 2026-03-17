@@ -206,9 +206,9 @@ async function runGuardrails(
     return messages;
   }
 
-  // Scan ALL user messages (not just the last one — earlier messages can contain PII too)
+  // Scan ALL user messages with string content (skip multi-modal/array content)
   const userIndices = messages
-    .map((m, i) => (m.role === "user" ? i : -1))
+    .map((m, i) => (m.role === "user" && typeof m.content === "string" ? i : -1))
     .filter((i) => i !== -1);
   if (userIndices.length === 0) return messages;
 
@@ -322,13 +322,15 @@ async function resolveEndpoint(organizationId: number, endpointSlug: string, rol
     );
   }
 
-  // Enforce role-based access — allowed_role_ids defaults to [1,2,3,4] (all roles)
-  if (roleId && endpoint.allowed_role_ids && !endpoint.allowed_role_ids.includes(roleId)) {
-    throw new BusinessLogicException(
-      `Your role does not have access to endpoint: ${endpointSlug}`,
-      "role_not_allowed",
-      { slug: endpointSlug, allowed_roles: endpoint.allowed_role_ids }
-    );
+  // Enforce role-based access — deny if allowed_role_ids is set and role is missing or not in list
+  if (endpoint.allowed_role_ids?.length) {
+    if (!roleId || !endpoint.allowed_role_ids.includes(roleId)) {
+      throw new BusinessLogicException(
+        `Your role does not have access to endpoint: ${endpointSlug}`,
+        "role_not_allowed",
+        { slug: endpointSlug, allowed_roles: endpoint.allowed_role_ids }
+      );
+    }
   }
 
   const apiKeyRecord = await getApiKeyByIdQuery(
@@ -391,14 +393,21 @@ async function tryReserveBudget(
   return true;
 }
 
-/** Settings cache to avoid DB query on every request (60s TTL) */
+/** Settings cache to avoid DB query on every request (60s TTL, max 500 orgs) */
+const SETTINGS_CACHE_MAX = 500;
 const settingsCache = new Map<number, { data: any; expiry: number }>();
 function getCachedSettings(organizationId: number): any | null {
   const cached = settingsCache.get(organizationId);
   if (cached && cached.expiry > Date.now()) return cached.data;
+  if (cached) settingsCache.delete(organizationId); // evict expired
   return null;
 }
 function setCachedSettings(organizationId: number, data: any): void {
+  // Evict oldest entries if cache is full
+  if (settingsCache.size >= SETTINGS_CACHE_MAX) {
+    const firstKey = settingsCache.keys().next().value;
+    if (firstKey !== undefined) settingsCache.delete(firstKey);
+  }
   settingsCache.set(organizationId, { data, expiry: Date.now() + 60_000 });
 }
 
@@ -743,8 +752,8 @@ export async function proxyCompletion(
         const fallbackEp = await getEndpointByIdQuery(organizationId, endpoint.fallback_endpoint_id);
         if (fallbackEp && fallbackEp.is_active) {
           logger.info(`Falling back from ${endpointSlug} to ${fallbackEp.slug} (depth ${_fallbackDepth + 1}/${MAX_FALLBACK_DEPTH})`);
-          // Pass scanned (masked) messages to fallback — NOT the originals, to preserve guardrail masking
-          return proxyCompletion(organizationId, fallbackEp.slug, scannedMessages, options, userId, _fallbackDepth + 1);
+          // Pass scanned (masked) messages + roleId to fallback
+          return proxyCompletion(organizationId, fallbackEp.slug, scannedMessages, options, userId, _fallbackDepth + 1, roleId);
         }
       } catch (fallbackErr) {
         logger.error("Fallback resolution failed:", fallbackErr);
@@ -786,7 +795,7 @@ export async function proxyStream(
     }
   }
 
-  // Run guardrails on input (scan last user message)
+  // Run guardrails on all user messages
   const scannedMessages = await runGuardrails(
     organizationId,
     messages,
@@ -843,8 +852,8 @@ export async function proxyStream(
         const fallbackEp = await getEndpointByIdQuery(organizationId, endpoint.fallback_endpoint_id);
         if (fallbackEp && fallbackEp.is_active) {
           logger.info(`Stream falling back from ${endpointSlug} to ${fallbackEp.slug} (depth ${_fallbackDepth + 1}/${MAX_FALLBACK_DEPTH})`);
-          // Pass scanned (masked) messages to fallback — NOT the originals, to preserve guardrail masking
-          return proxyStream(organizationId, fallbackEp.slug, scannedMessages, options, userId, _fallbackDepth + 1);
+          // Pass scanned (masked) messages + roleId to fallback
+          return proxyStream(organizationId, fallbackEp.slug, scannedMessages, options, userId, _fallbackDepth + 1, roleId);
         }
       } catch (fallbackErr) {
         logger.error("Stream fallback resolution failed:", fallbackErr);
@@ -954,15 +963,23 @@ export async function proxyEmbedding(
     roleId
   );
 
-  // Run guardrails on embedding input (PII can leak via embeddings too)
-  const inputText = Array.isArray(input) ? input.join(" ") : input;
-  const embeddingMessages = [{ role: "user", content: inputText }];
-  const scannedMessages = await runGuardrails(organizationId, embeddingMessages, endpoint.id, userId);
-  const scannedInput = scannedMessages[0]?.content || inputText;
-  // Use the scanned input for the actual embedding request
-  const finalInput = Array.isArray(input) ? [scannedInput] : scannedInput;
+  // Run guardrails on embedding input — scan each element individually to preserve array shape
+  let finalInput: string | string[];
+  if (Array.isArray(input)) {
+    const scannedItems = await Promise.all(
+      input.map(async (text) => {
+        const msgs = await runGuardrails(organizationId, [{ role: "user", content: text }], endpoint.id, userId);
+        return msgs[0]?.content || text;
+      })
+    );
+    finalInput = scannedItems;
+  } else {
+    const msgs = await runGuardrails(organizationId, [{ role: "user", content: input }], endpoint.id, userId);
+    finalInput = msgs[0]?.content || input;
+  }
 
-  const estimatedCost = await estimateCost(endpoint.model, scannedMessages);
+  const costInput = Array.isArray(finalInput) ? finalInput.join(" ") : finalInput;
+  const estimatedCost = await estimateCost(endpoint.model, [{ role: "user", content: costInput }]);
   await tryReserveBudget(organizationId, estimatedCost);
 
   const startTime = Date.now();
