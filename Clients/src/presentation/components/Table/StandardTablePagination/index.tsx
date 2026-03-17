@@ -41,8 +41,6 @@ const StandardTablePagination: React.FC<StandardTablePaginationProps> = ({
 }) => {
   const theme = useTheme();
   const plural = entityLabelPlural ?? `${entityLabel}s`;
-  const capitalLabel =
-    entityLabel.charAt(0).toUpperCase() + entityLabel.slice(1);
   const capitalPlural = plural.charAt(0).toUpperCase() + plural.slice(1);
 
   return (
