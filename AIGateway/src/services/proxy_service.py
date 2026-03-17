@@ -1,12 +1,13 @@
 """
 Proxy service — virtual key authentication, endpoint resolution, budget enforcement,
-rate limiting, and spend logging for the AI Gateway.
+rate limiting, spend logging, and guardrail scanning for the AI Gateway.
 
-This is the core orchestration layer that replaces the Express proxy flow,
-enabling employees to use the gateway directly with virtual keys.
+This is the core orchestration layer that enables employees to use the gateway
+directly with virtual keys — no VerifyWise account required.
 """
 
 import hashlib
+import json
 import logging
 import time
 from datetime import datetime, timezone
@@ -16,11 +17,12 @@ import redis.asyncio as aioredis
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import padding as crypto_padding
 from cryptography.hazmat.backends import default_backend
+from fastapi import HTTPException
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config import settings
 from src.database.db import get_db
+from src.services.guardrail_service import scan_text
 
 logger = logging.getLogger("uvicorn")
 
@@ -67,16 +69,13 @@ def hash_virtual_key(plain_key: str) -> str:
 async def authenticate_virtual_key(bearer_token: str) -> dict:
     """
     Validate a virtual key and return its metadata.
-    Returns: { id, organization_id, name, allowed_endpoint_ids, max_budget_usd,
-               current_spend_usd, rate_limit_rpm, is_active, expires_at }
     Raises ValueError if invalid.
     """
     if not bearer_token.startswith("sk-vw-"):
         raise ValueError("Invalid virtual key format")
 
     key_hash = hash_virtual_key(bearer_token)
-    db = await get_db()
-    try:
+    async with get_db() as db:
         result = await db.execute(
             text("""
                 SELECT id, organization_id, name, allowed_endpoint_ids,
@@ -90,22 +89,16 @@ async def authenticate_virtual_key(bearer_token: str) -> dict:
         row = result.mappings().fetchone()
         if not row:
             raise ValueError("Virtual key not found")
-
         if not row["is_active"]:
             raise ValueError("Virtual key is inactive")
         if row["revoked_at"]:
             raise ValueError("Virtual key has been revoked")
         if row["expires_at"] and row["expires_at"] < datetime.now(timezone.utc):
             raise ValueError("Virtual key has expired")
-
-        # Check per-key budget
         if row["max_budget_usd"] is not None:
             if float(row["current_spend_usd"]) >= float(row["max_budget_usd"]):
                 raise ValueError("Virtual key budget exhausted")
-
         return dict(row)
-    finally:
-        await db.close()
 
 
 # ─── Endpoint Resolution ─────────────────────────────────────────────────────
@@ -115,15 +108,8 @@ async def resolve_endpoint_for_key(
     endpoint_slug: str,
     allowed_endpoint_ids: list[int],
 ) -> dict:
-    """
-    Resolve an endpoint by slug, verify it's in the key's allowed list,
-    and decrypt the provider API key.
-    Returns: { id, provider, model, max_tokens, temperature, system_prompt,
-               rate_limit_rpm, prompt_id, prompt_label, fallback_endpoint_id,
-               is_active, decrypted_key }
-    """
-    db = await get_db()
-    try:
+    """Resolve an endpoint by slug, verify access, and decrypt the provider API key."""
+    async with get_db() as db:
         result = await db.execute(
             text("""
                 SELECT e.id, e.slug, e.display_name, e.provider, e.model,
@@ -144,22 +130,15 @@ async def resolve_endpoint_for_key(
             raise ValueError(f"Endpoint is inactive: {endpoint_slug}")
         if not row["key_is_active"]:
             raise ValueError(f"API key is inactive for endpoint: {endpoint_slug}")
-
-        # Check if endpoint is in the key's allowed list (empty = all allowed)
         if allowed_endpoint_ids and row["id"] not in allowed_endpoint_ids:
             raise ValueError(f"Virtual key does not have access to endpoint: {endpoint_slug}")
-
         decrypted_key = decrypt_api_key(row["encrypted_key"])
-
         return {**dict(row), "decrypted_key": decrypted_key}
-    finally:
-        await db.close()
 
 
 async def resolve_endpoint_by_id(organization_id: int, endpoint_id: int) -> Optional[dict]:
     """Resolve an endpoint by ID (for fallback chains)."""
-    db = await get_db()
-    try:
+    async with get_db() as db:
         result = await db.execute(
             text("""
                 SELECT e.id, e.slug, e.display_name, e.provider, e.model,
@@ -175,38 +154,29 @@ async def resolve_endpoint_by_id(organization_id: int, endpoint_id: int) -> Opti
         if not row or not row["is_active"] or not row["key_is_active"]:
             return None
         return {**dict(row), "decrypted_key": decrypt_api_key(row["encrypted_key"])}
-    finally:
-        await db.close()
 
 
 # ─── Budget Enforcement ──────────────────────────────────────────────────────
 
 async def check_org_budget(organization_id: int, estimated_cost: float) -> bool:
-    """
-    Check if org budget allows the request. Returns True if allowed.
-    Uses atomic UPDATE with WHERE clause to prevent TOCTOU.
-    """
+    """Check if org budget allows the request. Atomic UPDATE prevents TOCTOU."""
     if estimated_cost <= 0:
         return True
 
-    db = await get_db()
-    try:
+    async with get_db() as db:
         result = await db.execute(
             text("""
                 UPDATE ai_gateway_budgets
-                SET current_spend_usd = current_spend_usd + :cost,
-                    updated_at = NOW()
+                SET current_spend_usd = current_spend_usd + :cost, updated_at = NOW()
                 WHERE organization_id = :org_id
                   AND (NOT is_hard_limit OR current_spend_usd + :cost <= monthly_limit_usd)
-                RETURNING id, current_spend_usd, monthly_limit_usd, is_hard_limit, alert_threshold_pct
+                RETURNING id
             """),
             {"org_id": organization_id, "cost": estimated_cost},
         )
         await db.commit()
         row = result.mappings().fetchone()
-        # If no row returned and budget exists with hard limit, it means budget exceeded
         if row is None:
-            # Check if budget exists at all
             check = await db.execute(
                 text("SELECT is_hard_limit FROM ai_gateway_budgets WHERE organization_id = :org_id"),
                 {"org_id": organization_id},
@@ -214,11 +184,7 @@ async def check_org_budget(organization_id: int, estimated_cost: float) -> bool:
             budget = check.mappings().fetchone()
             if budget and budget["is_hard_limit"]:
                 return False
-            # No budget configured or soft limit — allow through
-            return True
         return True
-    finally:
-        await db.close()
 
 
 async def reconcile_budget(organization_id: int, estimated_cost: float, actual_cost: float):
@@ -226,20 +192,16 @@ async def reconcile_budget(organization_id: int, estimated_cost: float, actual_c
     adjustment = actual_cost - estimated_cost
     if abs(adjustment) < 0.000001:
         return
-    db = await get_db()
-    try:
+    async with get_db() as db:
         await db.execute(
             text("""
                 UPDATE ai_gateway_budgets
-                SET current_spend_usd = GREATEST(0, current_spend_usd + :adjustment),
-                    updated_at = NOW()
+                SET current_spend_usd = GREATEST(0, current_spend_usd + :adjustment), updated_at = NOW()
                 WHERE organization_id = :org_id
             """),
             {"org_id": organization_id, "adjustment": adjustment},
         )
         await db.commit()
-    finally:
-        await db.close()
 
 
 # ─── Rate Limiting ───────────────────────────────────────────────────────────
@@ -251,7 +213,6 @@ async def check_rate_limit(key: str, rpm: int) -> bool:
     """Check RPM rate limit using Redis sorted set. Returns True if allowed."""
     if rpm <= 0:
         return True
-
     r = await _get_redis()
     redis_key = f"gw:rate:{key}"
     now = time.time()
@@ -264,8 +225,18 @@ async def check_rate_limit(key: str, rpm: int) -> bool:
     pipe.expire(redis_key, RATE_LIMIT_WINDOW + 10)
     results = await pipe.execute()
 
-    count = results[1]  # zcard result
+    count = results[1]  # zcard result before zadd
     return count < rpm
+
+
+async def enforce_rate_limits(endpoint: dict, vk: dict):
+    """Check both endpoint and virtual key rate limits. Raises HTTPException(429) if exceeded."""
+    if endpoint.get("rate_limit_rpm") and endpoint["rate_limit_rpm"] > 0:
+        if not await check_rate_limit(f"ep:{endpoint['id']}", endpoint["rate_limit_rpm"]):
+            raise HTTPException(status_code=429, detail="Endpoint rate limit exceeded")
+    if vk.get("rate_limit_rpm") and vk["rate_limit_rpm"] > 0:
+        if not await check_rate_limit(f"vk:{vk['id']}", vk["rate_limit_rpm"]):
+            raise HTTPException(status_code=429, detail="Virtual key rate limit exceeded")
 
 
 # ─── Spend Logging ───────────────────────────────────────────────────────────
@@ -285,62 +256,53 @@ async def log_spend(
     metadata: Optional[dict] = None,
 ):
     """Insert a spend log entry and update virtual key spend."""
-    db = await get_db()
     try:
-        # Insert spend log
-        await db.execute(
-            text("""
-                INSERT INTO ai_gateway_spend_logs
-                    (organization_id, endpoint_id, provider, model,
-                     prompt_tokens, completion_tokens, total_tokens,
-                     cost_usd, latency_ms, status_code, metadata, virtual_key_id)
-                VALUES
-                    (:org_id, :endpoint_id, :provider, :model,
-                     :prompt_tokens, :completion_tokens, :total_tokens,
-                     :cost_usd, :latency_ms, :status_code, :metadata::jsonb, :vk_id)
-            """),
-            {
-                "org_id": organization_id,
-                "endpoint_id": endpoint_id,
-                "provider": provider,
-                "model": model,
-                "prompt_tokens": prompt_tokens,
-                "completion_tokens": completion_tokens,
-                "total_tokens": total_tokens,
-                "cost_usd": cost_usd,
-                "latency_ms": latency_ms,
-                "status_code": status_code,
-                "metadata": "{}" if not metadata else str(metadata).replace("'", '"'),
-                "vk_id": virtual_key_id,
-            },
-        )
-
-        # Update virtual key spend
-        if cost_usd > 0:
+        async with get_db() as db:
             await db.execute(
                 text("""
-                    UPDATE ai_gateway_virtual_keys
-                    SET current_spend_usd = current_spend_usd + :cost,
-                        updated_at = NOW()
-                    WHERE id = :vk_id
+                    INSERT INTO ai_gateway_spend_logs
+                        (organization_id, endpoint_id, provider, model,
+                         prompt_tokens, completion_tokens, total_tokens,
+                         cost_usd, latency_ms, status_code, metadata, virtual_key_id)
+                    VALUES
+                        (:org_id, :endpoint_id, :provider, :model,
+                         :prompt_tokens, :completion_tokens, :total_tokens,
+                         :cost_usd, :latency_ms, :status_code, :metadata::jsonb, :vk_id)
                 """),
-                {"cost": cost_usd, "vk_id": virtual_key_id},
+                {
+                    "org_id": organization_id,
+                    "endpoint_id": endpoint_id,
+                    "provider": provider,
+                    "model": model,
+                    "prompt_tokens": prompt_tokens,
+                    "completion_tokens": completion_tokens,
+                    "total_tokens": total_tokens,
+                    "cost_usd": cost_usd,
+                    "latency_ms": latency_ms,
+                    "status_code": status_code,
+                    "metadata": json.dumps(metadata or {}),
+                    "vk_id": virtual_key_id,
+                },
             )
-
-        await db.commit()
+            if cost_usd > 0:
+                await db.execute(
+                    text("""
+                        UPDATE ai_gateway_virtual_keys
+                        SET current_spend_usd = current_spend_usd + :cost, updated_at = NOW()
+                        WHERE id = :vk_id
+                    """),
+                    {"cost": cost_usd, "vk_id": virtual_key_id},
+                )
+            await db.commit()
     except Exception as e:
         logger.error(f"Failed to log spend: {e}")
-        await db.rollback()
-    finally:
-        await db.close()
 
 
 # ─── Guardrail Scanning ─────────────────────────────────────────────────────
 
 async def get_guardrail_config(organization_id: int) -> tuple[list, dict]:
     """Fetch active guardrail rules and settings for an org."""
-    db = await get_db()
-    try:
+    async with get_db() as db:
         rules_result = await db.execute(
             text("""
                 SELECT id, guardrail_type, name, config, scope, action, is_active
@@ -363,14 +325,10 @@ async def get_guardrail_config(organization_id: int) -> tuple[list, dict]:
             {"org_id": organization_id},
         )
         settings_row = settings_result.mappings().fetchone()
-        guardrail_settings = dict(settings_row) if settings_row else {}
-
-        return rules, guardrail_settings
-    finally:
-        await db.close()
+        return rules, dict(settings_row) if settings_row else {}
 
 
-async def log_guardrail_detection(
+async def _log_guardrail_detection(
     organization_id: int,
     guardrail_id: Optional[int],
     endpoint_id: int,
@@ -380,34 +338,83 @@ async def log_guardrail_detection(
     entity_type: str,
     execution_time_ms: int,
 ):
-    """Log a guardrail detection."""
-    db = await get_db()
+    """Log a single guardrail detection."""
     try:
-        await db.execute(
-            text("""
-                INSERT INTO ai_gateway_guardrail_logs
-                    (organization_id, guardrail_id, endpoint_id,
-                     guardrail_type, action_taken, matched_text,
-                     entity_type, execution_time_ms)
-                VALUES
-                    (:org_id, :guardrail_id, :endpoint_id,
-                     :guardrail_type, :action_taken, :matched_text,
-                     :entity_type, :exec_time)
-            """),
-            {
-                "org_id": organization_id,
-                "guardrail_id": guardrail_id,
-                "endpoint_id": endpoint_id,
-                "guardrail_type": guardrail_type,
-                "action_taken": action_taken,
-                "matched_text": matched_text,
-                "entity_type": entity_type,
-                "exec_time": execution_time_ms,
-            },
-        )
-        await db.commit()
+        async with get_db() as db:
+            await db.execute(
+                text("""
+                    INSERT INTO ai_gateway_guardrail_logs
+                        (organization_id, guardrail_id, endpoint_id,
+                         guardrail_type, action_taken, matched_text,
+                         entity_type, execution_time_ms)
+                    VALUES
+                        (:org_id, :guardrail_id, :endpoint_id,
+                         :guardrail_type, :action_taken, :matched_text,
+                         :entity_type, :exec_time)
+                """),
+                {
+                    "org_id": organization_id,
+                    "guardrail_id": guardrail_id,
+                    "endpoint_id": endpoint_id,
+                    "guardrail_type": guardrail_type,
+                    "action_taken": action_taken,
+                    "matched_text": matched_text,
+                    "entity_type": entity_type,
+                    "exec_time": execution_time_ms,
+                },
+            )
+            await db.commit()
     except Exception as e:
         logger.error(f"Failed to log guardrail detection: {e}")
-        await db.rollback()
-    finally:
-        await db.close()
+
+
+async def run_guardrails(
+    organization_id: int,
+    messages: list[dict],
+    endpoint_id: int,
+) -> list[dict]:
+    """
+    Scan all user messages through guardrails. Returns possibly-masked messages.
+    Raises HTTPException(400) if any message is blocked.
+    """
+    rules, guardrail_settings = await get_guardrail_config(organization_id)
+    if not rules:
+        return messages
+
+    updated = list(messages)
+    for i, msg in enumerate(updated):
+        if msg.get("role") != "user" or not isinstance(msg.get("content"), str):
+            continue
+
+        result = scan_text(
+            text=msg["content"],
+            guardrail_rules=[
+                {"guardrail_type": r["guardrail_type"], "config": r["config"],
+                 "action": r["action"], "is_active": True, "id": r["id"], "name": r["name"]}
+                for r in rules
+            ],
+            settings=guardrail_settings,
+        )
+
+        for detection in result.get("detections", []):
+            await _log_guardrail_detection(
+                organization_id=organization_id,
+                guardrail_id=detection.get("guardrail_id"),
+                endpoint_id=endpoint_id,
+                guardrail_type=detection.get("guardrail_type", ""),
+                action_taken="blocked" if result.get("blocked") else detection.get("action", "allowed"),
+                matched_text=detection.get("matched_text", ""),
+                entity_type=detection.get("entity_type", ""),
+                execution_time_ms=result.get("execution_time_ms", 0),
+            )
+
+        if result.get("blocked"):
+            raise HTTPException(
+                status_code=400,
+                detail=f"Request blocked by guardrail: {result.get('block_reason', 'policy violation')}",
+            )
+
+        if result.get("masked_text"):
+            updated[i] = {**msg, "content": result["masked_text"]}
+
+    return updated

@@ -28,14 +28,12 @@ from src.services.proxy_service import (
     resolve_endpoint_by_id,
     check_org_budget,
     reconcile_budget,
-    check_rate_limit,
+    enforce_rate_limits,
     log_spend,
-    get_guardrail_config,
-    log_guardrail_detection,
+    run_guardrails,
 )
 from src.services.cost_service import estimate_prompt_cost
 from src.services.llm_service import chat_completion, embedding, stream_chat_completion
-from src.services.guardrail_service import scan_text
 
 logger = logging.getLogger("uvicorn")
 
@@ -74,59 +72,6 @@ async def _extract_virtual_key(request: Request) -> dict:
         raise HTTPException(status_code=401, detail=str(e))
 
 
-# ─── Guardrail Scanning ─────────────────────────────────────────────────────
-
-async def _run_guardrails(
-    organization_id: int,
-    messages: list[dict],
-    endpoint_id: int,
-) -> list[dict]:
-    """Scan all user messages through guardrails. Returns possibly-masked messages."""
-    rules, guardrail_settings = await get_guardrail_config(organization_id)
-    if not rules:
-        return messages
-
-    updated = list(messages)
-    for i, msg in enumerate(updated):
-        if msg.get("role") != "user" or not isinstance(msg.get("content"), str):
-            continue
-
-        result = scan_text(
-            text=msg["content"],
-            guardrail_rules=[{"guardrail_type": r["guardrail_type"], "config": r["config"],
-                              "action": r["action"], "is_active": True, "id": r["id"], "name": r["name"]}
-                             for r in rules],
-            settings=guardrail_settings,
-        )
-
-        # Log detections
-        for detection in result.get("detections", []):
-            try:
-                await log_guardrail_detection(
-                    organization_id=organization_id,
-                    guardrail_id=detection.get("guardrail_id"),
-                    endpoint_id=endpoint_id,
-                    guardrail_type=detection.get("guardrail_type", ""),
-                    action_taken="blocked" if result.get("blocked") else detection.get("action", "allowed"),
-                    matched_text=detection.get("matched_text", ""),
-                    entity_type=detection.get("entity_type", ""),
-                    execution_time_ms=result.get("execution_time_ms", 0),
-                )
-            except Exception as e:
-                logger.error(f"Failed to log guardrail detection: {e}")
-
-        if result.get("blocked"):
-            raise HTTPException(
-                status_code=400,
-                detail=f"Request blocked by guardrail: {result.get('block_reason', 'policy violation')}",
-            )
-
-        if result.get("masked_text"):
-            updated[i] = {**msg, "content": result["masked_text"]}
-
-    return updated
-
-
 # ─── Chat Completions ────────────────────────────────────────────────────────
 
 @router.post("/v1/chat/completions")
@@ -144,12 +89,7 @@ async def proxy_chat(request: Request, body: ProxyChatRequest):
         raise HTTPException(status_code=404, detail=str(e))
 
     # Rate limit: per-endpoint + per-key
-    if endpoint.get("rate_limit_rpm") and endpoint["rate_limit_rpm"] > 0:
-        if not await check_rate_limit(f"ep:{endpoint['id']}", endpoint["rate_limit_rpm"]):
-            raise HTTPException(status_code=429, detail="Endpoint rate limit exceeded")
-    if vk.get("rate_limit_rpm") and vk["rate_limit_rpm"] > 0:
-        if not await check_rate_limit(f"vk:{vk['id']}", vk["rate_limit_rpm"]):
-            raise HTTPException(status_code=429, detail="Virtual key rate limit exceeded")
+    await enforce_rate_limits(endpoint, vk)
 
     # Cost estimation + budget check
     estimated_cost = estimate_prompt_cost(
@@ -161,7 +101,7 @@ async def proxy_chat(request: Request, body: ProxyChatRequest):
         raise HTTPException(status_code=402, detail="Organization budget limit exceeded")
 
     # Guardrails
-    scanned_messages = await _run_guardrails(org_id, body.messages, endpoint["id"])
+    scanned_messages = await run_guardrails(org_id, body.messages, endpoint["id"])
 
     # Build final messages (system prompt prepended if configured)
     final_messages = scanned_messages
@@ -321,15 +261,13 @@ async def proxy_embeddings(request: Request, body: ProxyEmbeddingRequest):
         raise HTTPException(status_code=404, detail=str(e))
 
     # Rate limit
-    if endpoint.get("rate_limit_rpm") and endpoint["rate_limit_rpm"] > 0:
-        if not await check_rate_limit(f"ep:{endpoint['id']}", endpoint["rate_limit_rpm"]):
-            raise HTTPException(status_code=429, detail="Rate limit exceeded")
+    await enforce_rate_limits(endpoint, vk)
 
     # Guardrails on embedding input
     input_texts = body.input if isinstance(body.input, list) else [body.input]
     scanned_texts = []
     for text_item in input_texts:
-        scanned = await _run_guardrails(
+        scanned = await run_guardrails(
             org_id, [{"role": "user", "content": text_item}], endpoint["id"],
         )
         scanned_texts.append(scanned[0].get("content", text_item))

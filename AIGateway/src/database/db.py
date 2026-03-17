@@ -4,6 +4,8 @@ Uses the verifywise schema via search_path.
 """
 
 import logging
+from contextlib import asynccontextmanager
+
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import text
@@ -40,13 +42,16 @@ def get_session_factory():
     return _session_factory
 
 
-async def get_db() -> AsyncSession:
-    """Get a DB session with verifywise search_path set."""
+@asynccontextmanager
+async def get_db():
+    """Async context manager: yields a DB session with verifywise search_path set."""
     factory = get_session_factory()
     session = factory()
     try:
         await session.execute(text("SET search_path TO verifywise, public"))
-        return session
+        yield session
     except Exception:
-        await session.close()
+        await session.rollback()
         raise
+    finally:
+        await session.close()
