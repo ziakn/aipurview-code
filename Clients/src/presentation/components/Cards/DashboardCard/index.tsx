@@ -35,8 +35,8 @@ export function DashboardCard({
         transition: "all 0.2s ease",
         "&:hover": navigateTo
           ? {
-              background: `linear-gradient(135deg, ${background.accent} 0%, #f1f5f9 100%)`,
-              borderColor: `${text.muted}`,
+              background: `linear-gradient(135deg, ${background.accent} 0%, ${background.gradientStop} 100%)`,
+              borderColor: `${borderPalette.light}`,
             }
           : {},
       }}

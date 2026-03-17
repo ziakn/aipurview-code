@@ -1,9 +1,9 @@
 import { Box, Typography, Stack, IconButton } from "@mui/material";
-import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { frameworkDashboardCardStyles } from "./styles";
 import { brand, text, border as borderPalette, status } from "../../../themes/palette";
+import { VWDonutChart } from "../../../components/Charts/VWCharts";
 
 interface FrameworkData {
   frameworkId: number;
@@ -45,6 +45,24 @@ interface StatusData {
   "implemented": number;
   "needs rework": number;
 }
+
+const STATUS_COLORS = [
+  `${text.disabled}`,
+  "#D1D5DB",
+  "#F59E0B",
+  "#3B82F6",
+  `${brand.primary}`,
+  "#EA580C",
+];
+
+const STATUS_LABELS = [
+  "Not started",
+  "Draft",
+  "In progress",
+  "Awaiting review",
+  "Implemented",
+  "Needs rework",
+];
 
 const StatusBreakdownCard = ({ frameworksData }: StatusBreakdownCardProps) => {
   const [clauseStatusData, setClauseStatusData] = useState<Map<number, StatusData>>(new Map());
@@ -128,23 +146,23 @@ const StatusBreakdownCard = ({ frameworksData }: StatusBreakdownCardProps) => {
     if (total === 0) return [];
 
     return [
-      { id: 0, value: data["not started"], label: "Not started", color: `${text.disabled}` },
-      { id: 1, value: data["draft"], label: "Draft", color: "#D1D5DB" },
-      { id: 2, value: data["in progress"], label: "In progress", color: "#F59E0B" },
-      { id: 3, value: data["awaiting review"], label: "Awaiting review", color: "#3B82F6" },
-      { id: 4, value: data["implemented"], label: "Implemented", color: `${brand.primary}` },
-      { id: 5, value: data["needs rework"], label: "Needs rework", color: "#EA580C" },
+      { name: "Not started", value: data["not started"] },
+      { name: "Draft", value: data["draft"] },
+      { name: "In progress", value: data["in progress"] },
+      { name: "Awaiting review", value: data["awaiting review"] },
+      { name: "Implemented", value: data["implemented"] },
+      { name: "Needs rework", value: data["needs rework"] },
     ];
   };
 
   const getAllStatuses = (data: StatusData) => {
     return [
-      { id: 0, value: data["not started"], label: "Not started", color: `${text.disabled}` },
-      { id: 1, value: data["draft"], label: "Draft", color: "#D1D5DB" },
-      { id: 2, value: data["in progress"], label: "In progress", color: "#F59E0B" },
-      { id: 3, value: data["awaiting review"], label: "Awaiting review", color: "#3B82F6" },
-      { id: 4, value: data["implemented"], label: "Implemented", color: `${brand.primary}` },
-      { id: 5, value: data["needs rework"], label: "Needs rework", color: "#EA580C" },
+      { id: 0, value: data["not started"], label: "Not started", color: STATUS_COLORS[0] },
+      { id: 1, value: data["draft"], label: "Draft", color: STATUS_COLORS[1] },
+      { id: 2, value: data["in progress"], label: "In progress", color: STATUS_COLORS[2] },
+      { id: 3, value: data["awaiting review"], label: "Awaiting review", color: STATUS_COLORS[3] },
+      { id: 4, value: data["implemented"], label: "Implemented", color: STATUS_COLORS[4] },
+      { id: 5, value: data["needs rework"], label: "Needs rework", color: STATUS_COLORS[5] },
     ];
   };
 
@@ -292,28 +310,15 @@ const StatusBreakdownCard = ({ frameworksData }: StatusBreakdownCardProps) => {
                 >
                   {/* Donut Chart Column */}
                   <Box sx={{ display: "flex", justifyContent: "center" }}>
-                    <Box sx={{ position: "relative", width: "120px", height: "120px" }}>
-                      <PieChart width={120} height={120}>
-                        <Pie
-                          data={pieData}
-                          dataKey="value"
-                          nameKey="label"
-                          cx={60}
-                          cy={60}
-                          innerRadius={30}
-                          outerRadius={48}
-                          paddingAngle={2}
-                          strokeWidth={0}
-                        >
-                          {pieData.map((item) => (
-                            <Cell key={item.id} fill={item.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip
-                          contentStyle={{ fontSize: 12, borderRadius: 4 }}
-                        />
-                      </PieChart>
-                    </Box>
+                    <VWDonutChart
+                      data={pieData}
+                      dataKey="value"
+                      nameKey="name"
+                      colors={STATUS_COLORS}
+                      size={120}
+                      innerRadius={30}
+                      outerRadius={48}
+                    />
                   </Box>
 
                   {/* Status Table Column */}
@@ -479,55 +484,15 @@ const StatusBreakdownCard = ({ frameworksData }: StatusBreakdownCardProps) => {
               >
                 {/* Donut Chart Column */}
                 <Box sx={{ display: "flex", justifyContent: "center" }}>
-                  <Box sx={{ position: "relative", width: "120px", height: "120px" }}>
-                    <PieChart
-                      series={[
-                        {
-                          data: pieData,
-                          innerRadius: 30,
-                          outerRadius: 48,
-                          paddingAngle: 2,
-                          cornerRadius: 3,
-                          cx: 60,
-                          cy: 60,
-                        },
-                      ]}
-                      width={120}
-                      height={120}
-                      slotProps={{
-                        legend: { hidden: true } as any,
-                      }}
-                      sx={{
-                        "& .MuiChartsLegend-root": {
-                          display: "none !important",
-                        },
-                        "& .MuiChartsTooltip-root": {
-                          fontSize: "13px !important",
-                        },
-                        "& .MuiChartsTooltip-root *": {
-                          fontSize: "13px !important",
-                        },
-                        "& .MuiChartsTooltip-mark": {
-                          fontSize: "13px !important",
-                        },
-                        "& .MuiChartsTooltip-labelCell": {
-                          fontSize: "13px !important",
-                        },
-                        "& .MuiChartsTooltip-valueCell": {
-                          fontSize: "13px !important",
-                        },
-                        "& .MuiChartsTooltip-table": {
-                          fontSize: "13px !important",
-                        },
-                        "& .MuiChartsTooltip-table td": {
-                          fontSize: "13px !important",
-                        },
-                        "& .MuiChartsTooltip-table th": {
-                          fontSize: "13px !important",
-                        },
-                      }}
-                    />
-                  </Box>
+                  <VWDonutChart
+                    data={pieData}
+                    dataKey="value"
+                    nameKey="name"
+                    colors={STATUS_COLORS}
+                    size={120}
+                    innerRadius={30}
+                    outerRadius={48}
+                  />
                 </Box>
 
                 {/* Status Table Column */}

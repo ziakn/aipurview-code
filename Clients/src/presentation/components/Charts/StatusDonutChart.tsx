@@ -1,7 +1,7 @@
-import { PieChart } from "@mui/x-charts";
 import { Box, Typography } from "@mui/material";
 import { StatusDonutChartProps } from "../../types/interfaces/i.chart";
 import { text, background, status } from "../../themes/palette";
+import { VWDonutChart } from "./VWCharts";
 
 export function StatusDonutChart({
   data,
@@ -39,6 +39,16 @@ export function StatusDonutChart({
     );
   }
 
+  // VWDonutChart expects data with a single dataKey and a parallel colors array
+  const chartData = filteredData.map((item) => ({
+    value: item.value,
+    label: item.label,
+  }));
+  const colors = filteredData.map((item) => item.color);
+
+  const innerRadius = Math.round(size * 0.28);
+  const outerRadius = Math.round(size * 0.48);
+
   return (
     <Box
       sx={{
@@ -61,51 +71,14 @@ export function StatusDonutChart({
           boxShadow: "inset 0 2px 4px rgba(0,0,0,0.1)",
         }}
       />
-      <PieChart
-        series={[
-          {
-            data: filteredData.map((item, index) => ({
-              id: index,
-              value: item.value,
-              label: item.label,
-              color: item.color,
-            })),
-            innerRadius: size * 0.28,
-            outerRadius: size * 0.48,
-            paddingAngle: 1,
-            cornerRadius: 3,
-          },
-        ]}
-        width={size}
-        height={size}
-        slotProps={{
-          tooltip: {
-            sx: {
-              "& .MuiChartsTooltip-root": {
-                fontSize: "13px !important",
-              },
-              "& .MuiChartsTooltip-table": {
-                fontSize: "13px !important",
-              },
-              "& .MuiChartsTooltip-cell": {
-                fontSize: "13px !important",
-              },
-              "& .MuiChartsTooltip-labelCell": {
-                fontSize: "13px !important",
-              },
-              "& .MuiChartsTooltip-valueCell": {
-                fontSize: "13px !important",
-              },
-            },
-          },
-        }}
-        sx={{
-          "& .MuiChartsLegend-root": {
-            display: "none !important",
-          },
-          position: "relative",
-          zIndex: 1,
-        }}
+      <VWDonutChart
+        data={chartData}
+        dataKey="value"
+        nameKey="label"
+        colors={colors}
+        size={size}
+        innerRadius={innerRadius}
+        outerRadius={outerRadius}
       />
       {/* Center circle with total */}
       <Box
@@ -119,7 +92,7 @@ export function StatusDonutChart({
           alignItems: "center",
           justifyContent: "center",
           pointerEvents: "none",
-          zIndex: 2,
+          zIndex: 1,
         }}
       >
         <Box
@@ -139,7 +112,7 @@ export function StatusDonutChart({
             sx={{
               fontWeight: 600,
               fontSize: "16px",
-              color: "#1F2937",
+              color: text.primary,
             }}
           >
             {total}
