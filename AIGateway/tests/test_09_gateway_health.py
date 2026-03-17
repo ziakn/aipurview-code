@@ -2,14 +2,13 @@
 
 import pytest
 
-pytestmark = pytest.mark.asyncio
 
 GATEWAY_URL = "http://localhost:8100"
 
 
-async def test_gateway_health(http):
+def test_gateway_health(http):
     """Gateway health check — should return ok."""
-    res = await http.get(f"{GATEWAY_URL}/health")
+    res = http.get(f"{GATEWAY_URL}/health")
     assert res.status_code == 200
     data = res.json()
     assert data["status"] == "ok"
@@ -17,9 +16,9 @@ async def test_gateway_health(http):
     assert data["models_in_cost_db"] > 0
 
 
-async def test_providers_list(api):
+def test_providers_list(api):
     """Providers list — should return providers and models from LiteLLM."""
-    res = await api.get("/providers")
+    res = api.get("/providers")
     assert res.status_code == 200
     data = res.json()["data"]
     assert "providers" in data
@@ -30,12 +29,12 @@ async def test_providers_list(api):
     assert "openai" in providers or "anthropic" in providers
 
 
-async def test_guardrail_settings_crud(api):
+def test_guardrail_settings_crud(api):
     """Guardrail settings — get and update."""
-    res = await api.get("/guardrails/settings")
+    res = api.get("/guardrails/settings")
     assert res.status_code == 200
 
-    res = await api.put("/guardrails/settings", json={
+    res = api.put("/guardrails/settings", json={
         "pii_on_error": "block",
         "content_filter_on_error": "allow",
         "log_retention_days": 90,

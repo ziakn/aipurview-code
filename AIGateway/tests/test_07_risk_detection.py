@@ -2,12 +2,11 @@
 
 import pytest
 
-pytestmark = pytest.mark.asyncio
 
 
-async def test_get_risk_settings(api):
+def test_get_risk_settings(api):
     """Get risk settings — should return all 8 conditions with defaults."""
-    res = await api.get("/risk-settings")
+    res = api.get("/risk-settings")
     assert res.status_code == 200
     settings = res.json()["data"]
     assert len(settings) == 8
@@ -22,45 +21,45 @@ async def test_get_risk_settings(api):
     assert "unused_endpoint" in condition_ids
 
 
-async def test_update_risk_setting(api):
+def test_update_risk_setting(api):
     """Update a condition threshold."""
-    res = await api.put("/risk-settings/pii_exposure", json={
+    res = api.put("/risk-settings/pii_exposure", json={
         "is_enabled": True,
         "threshold": {"count": 50, "period_days": 14},
     })
     assert res.status_code == 200
 
 
-async def test_toggle_risk_condition(api):
+def test_toggle_risk_condition(api):
     """Disable and re-enable a condition."""
-    res = await api.put("/risk-settings/provider_concentration", json={
+    res = api.put("/risk-settings/provider_concentration", json={
         "is_enabled": False,
     })
     assert res.status_code == 200
-    res = await api.put("/risk-settings/provider_concentration", json={
+    res = api.put("/risk-settings/provider_concentration", json={
         "is_enabled": True,
     })
     assert res.status_code == 200
 
 
-async def test_run_manual_detection(api):
+def test_run_manual_detection(api):
     """Run manual risk detection — should return count."""
-    res = await api.post("/risk-suggestions/detect")
+    res = api.post("/risk-suggestions/detect")
     assert res.status_code == 200
     data = res.json()["data"]
     assert "new_suggestions" in data
 
 
-async def test_get_risk_suggestions(api):
+def test_get_risk_suggestions(api):
     """Get risk suggestions — should return a list."""
-    res = await api.get("/risk-suggestions")
+    res = api.get("/risk-suggestions")
     assert res.status_code == 200
     assert isinstance(res.json()["data"], list)
 
 
-async def test_get_risk_suggestions_filtered(api):
+def test_get_risk_suggestions_filtered(api):
     """Get risk suggestions filtered by status."""
-    res = await api.get("/risk-suggestions?status=pending")
+    res = api.get("/risk-suggestions?status=pending")
     assert res.status_code == 200
     for s in res.json()["data"]:
         assert s["status"] == "pending"
