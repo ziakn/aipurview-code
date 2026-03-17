@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Box, Typography, Stack, IconButton } from "@mui/material";
+import { Box, Typography, Stack, IconButton, Tooltip } from "@mui/material";
 import TabContext from "@mui/lab/TabContext";
 import {
   Search,
@@ -17,6 +17,9 @@ import {
   Check,
   X,
   Trash2,
+  Medal,
+  Trophy,
+  Award,
 } from "lucide-react";
 import Field from "../../../components/Inputs/Field";
 import Select from "../../../components/Inputs/Select";
@@ -99,7 +102,7 @@ export default function ModelsPage() {
   // Filters
   const [search, setSearch] = useState("");
   const [providerFilter, setProviderFilter] = useState("");
-  const [modeFilter, setModeFilter] = useState("");
+  const [modeFilter, setModeFilter] = useState("chat");
   const [featureFilters, setFeatureFilters] = useState<Set<string>>(new Set());
   const [page, setPage] = useState(0);
 
@@ -110,7 +113,7 @@ export default function ModelsPage() {
   const [calcShowAll, setCalcShowAll] = useState(false);
 
   // Feature comparison
-  const [compareIds, setCompareIds] = useState<string[]>([]);
+  const [compareIds, setCompareIds] = useState<string[]>(["gpt-4o", "claude-sonnet-4-20250514", "gemini-2.0-flash"]);
 
   const loadModels = useCallback(async () => {
     try {
@@ -195,10 +198,10 @@ export default function ModelsPage() {
 
   const featureIcons = (m: ModelInfo) => (
     <Stack direction="row" gap="4px" alignItems="center">
-      {m.supports_vision && <Eye size={12} strokeWidth={1.5} color={palette.brand.primary} />}
-      {m.supports_function_calling && <Wrench size={12} strokeWidth={1.5} color={palette.brand.primary} />}
-      {m.supports_pdf_input && <FileText size={12} strokeWidth={1.5} color={palette.brand.primary} />}
-      {m.supports_prompt_caching && <Database size={12} strokeWidth={1.5} color={palette.text.tertiary} />}
+      {m.supports_vision && <Tooltip title="Vision" arrow><span style={{ display: "inline-flex" }}><Eye size={12} strokeWidth={1.5} color={palette.brand.primary} /></span></Tooltip>}
+      {m.supports_function_calling && <Tooltip title="Function calling" arrow><span style={{ display: "inline-flex" }}><Wrench size={12} strokeWidth={1.5} color={palette.brand.primary} /></span></Tooltip>}
+      {m.supports_pdf_input && <Tooltip title="PDF input" arrow><span style={{ display: "inline-flex" }}><FileText size={12} strokeWidth={1.5} color={palette.brand.primary} /></span></Tooltip>}
+      {m.supports_prompt_caching && <Tooltip title="Prompt caching" arrow><span style={{ display: "inline-flex" }}><Database size={12} strokeWidth={1.5} color={palette.text.tertiary} /></span></Tooltip>}
     </Stack>
   );
 
@@ -433,11 +436,16 @@ export default function ModelsPage() {
                           sx={{
                             p: "8px 12px",
                             borderBottom: `1px solid ${palette.border.light}`,
-                            backgroundColor: i === 0 ? `${palette.brand.primary}06` : "transparent",
+                            backgroundColor: i === 0 ? "#F0FDF4" : i === 1 ? "#F8FAFC" : i === 2 ? "#FFFBEB" : i < 10 ? `${palette.background.alt}` : "transparent",
                             "&:last-child": { borderBottom: "none" },
                           }}
                         >
-                          <Typography sx={{ width: "28px", fontSize: 12, color: palette.text.disabled, fontWeight: 600 }}>{i + 1}</Typography>
+                          <Box sx={{ width: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            {i === 0 ? <Trophy size={14} strokeWidth={1.5} color="#D4AF37" /> :
+                             i === 1 ? <Medal size={14} strokeWidth={1.5} color="#9CA3AF" /> :
+                             i === 2 ? <Award size={14} strokeWidth={1.5} color="#CD7F32" /> :
+                             <Typography sx={{ fontSize: 12, color: palette.text.disabled, fontWeight: 600 }}>{i + 1}</Typography>}
+                          </Box>
                           <Stack direction="row" alignItems="center" gap="6px" sx={{ flex: 2, minWidth: 0, overflow: "hidden" }}>
                             <ProviderIcon provider={m.provider} size={13} />
                             <Typography component="span" sx={{ fontSize: 12, color: palette.text.tertiary, flexShrink: 0 }}>
@@ -593,23 +601,45 @@ export default function ModelsPage() {
                               {row.label}
                             </span>
                           </td>
-                          {compareModels.map((m) => {
-                            const val = row.fn(m);
-                            const isYes = val === "Yes";
-                            const isNo = val === "No";
-                            return (
-                              <td key={m.id} style={{
-                                textAlign: "center", padding: "8px",
-                                borderBottom: `1px solid ${palette.border.light}`,
-                                fontSize: 12,
-                                color: isYes ? palette.brand.primary : isNo ? palette.text.disabled : palette.text.primary,
-                              }}>
-                                {isYes ? <Check size={15} strokeWidth={2} color={palette.brand.primary} /> :
-                                 isNo ? <X size={15} strokeWidth={1.5} color={palette.text.disabled} /> :
-                                 val}
-                              </td>
-                            );
-                          })}
+                          {(() => {
+                            const vals = compareModels.map((m) => row.fn(m));
+                            // Determine "best" value for highlighting
+                            const numVals = vals.map((v) => {
+                              if (v === "Yes") return 1;
+                              if (v === "No") return 0;
+                              const n = parseFloat(String(v).replace(/[^0-9.]/g, ""));
+                              return isNaN(n) ? null : n;
+                            });
+                            // For cost rows (contains $), lower is better; for tokens/features, higher is better
+                            const isCostRow = row.label.includes("$/");
+                            const validNums = numVals.filter((n) => n !== null && n > 0) as number[];
+                            const bestVal = validNums.length > 0
+                              ? (isCostRow ? Math.min(...validNums) : Math.max(...validNums))
+                              : null;
+
+                            return compareModels.map((m, mi) => {
+                              const val = vals[mi];
+                              const isYes = val === "Yes";
+                              const isNo = val === "No";
+                              const numVal = numVals[mi];
+                              const isBest = bestVal !== null && numVal === bestVal && validNums.length > 1;
+
+                              return (
+                                <td key={m.id} style={{
+                                  textAlign: "center", padding: "8px",
+                                  borderBottom: `1px solid ${palette.border.light}`,
+                                  fontSize: 12,
+                                  color: isYes ? palette.brand.primary : isNo ? palette.text.disabled : palette.text.primary,
+                                  backgroundColor: isBest ? "#F0FDF4" : "transparent",
+                                  fontWeight: isBest ? 600 : 400,
+                                }}>
+                                  {isYes ? <Check size={15} strokeWidth={2} color={palette.brand.primary} /> :
+                                   isNo ? <X size={15} strokeWidth={1.5} color={palette.text.disabled} /> :
+                                   val}
+                                </td>
+                              );
+                            });
+                          })()}
                         </tr>
                       ))}
                     </tbody>
