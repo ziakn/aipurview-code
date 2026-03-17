@@ -187,17 +187,11 @@ export function ModelInventoryHistoryChart({
           categoryKey="date"
           height={height}
           showLegend={true}
-          margin={{ top: 10, right: 30, bottom: 30, left: 70 }}
+          margin={{ top: 10, right: 16, bottom: 10, left: 0 }}
           yAxisProps={{
             domain: [0, maxValue > 0 ? Math.ceil(maxValue * 1.15) : 10],
             tickFormatter: (v: number) => v.toString(),
-            label: {
-              value: "Count",
-              angle: -90,
-              position: "insideLeft",
-              offset: -50,
-              style: { fontSize: 13, fill: text.secondary },
-            },
+            width: 35,
           }}
         />
       </Stack>

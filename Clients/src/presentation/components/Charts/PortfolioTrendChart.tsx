@@ -73,7 +73,7 @@ export function PortfolioTrendChart({
       categoryKey="label"
       height={height}
       showLegend={true}
-      margin={{ left: 60, right: 20, top: 20, bottom: 30 }}
+      margin={{ left: 8, right: 16, top: 10, bottom: 10 }}
       legendFormatter={(value: string) => value}
     />
   );
