@@ -335,7 +335,7 @@ export const VWDonutChart: React.FC<VWDonutChartProps> = ({
 }) => {
   const computedOuter = outerRadius || Math.floor(size / 2) - 5;
   return (
-    <Box sx={{ position: "relative", width: size, height: size, "& *:focus": { outline: "none !important" }, "& svg *:focus": { outline: "none !important" } }}>
+    <Box sx={{ position: "relative", width: size, height: size, "& .recharts-tooltip-wrapper": { zIndex: "10 !important" }, "& *:focus": { outline: "none !important" }, "& svg *:focus": { outline: "none !important" } }}>
       <ResponsiveContainer width="100%" height="100%" style={noOutlineStyle}>
         <PieChart>
           <Pie

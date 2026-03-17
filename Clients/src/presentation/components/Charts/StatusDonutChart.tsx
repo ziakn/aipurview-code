@@ -92,6 +92,7 @@ export function StatusDonutChart({
           alignItems: "center",
           justifyContent: "center",
           pointerEvents: "none",
+          zIndex: 1,
         }}
       >
         <Box
