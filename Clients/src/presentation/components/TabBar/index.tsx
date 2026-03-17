@@ -128,7 +128,7 @@ const TabBar: React.FC<TabBarProps> = ({
   };
 
   return (
-    <Box sx={{ borderBottom: 1, borderColor: "borderPalette.dark" }}>
+    <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
       <TabList
         onChange={handleChange}
         TabIndicatorProps={{ style: { backgroundColor: indicatorColor } }}
