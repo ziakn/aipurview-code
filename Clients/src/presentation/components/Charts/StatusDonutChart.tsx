@@ -112,7 +112,7 @@ export function StatusDonutChart({
             sx={{
               fontWeight: 600,
               fontSize: "16px",
-              color: "#1F2937",
+              color: text.primary,
             }}
           >
             {total}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Typography, Stack } from "@mui/material";
 import { getModelInventoryTimeseries } from "../../../application/repository/modelInventoryHistory.repository";
 import { ModelInventoryStatus } from "../../../domain/enums/modelInventory.enum";
@@ -11,7 +11,6 @@ import { VWLineChart } from "./VWCharts";
 
 interface ModelInventoryHistoryChartProps {
   parameter?: string;
-  title?: string;
   height?: number;
 }
 
@@ -82,21 +81,16 @@ export function ModelInventoryHistoryChart({
   };
 
   // Build Recharts-compatible flat data array and series config
-  const prepareChartData = () => {
+  const { chartData, series, maxValue } = useMemo(() => {
     if (!timeseriesData || timeseriesData.length === 0) {
       return { chartData: [], series: [], maxValue: 0 };
     }
 
     const statusValues = Object.values(ModelInventoryStatus);
+    const fmt = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" });
 
-    // Merge parallel arrays into a single array of objects for Recharts
     const chartData = timeseriesData.map((point) => {
-      const date = new Date(point.timestamp);
-      const label = new Intl.DateTimeFormat("en-US", {
-        month: "short",
-        day: "numeric",
-      }).format(date);
-      const entry: Record<string, string | number> = { date: label };
+      const entry: Record<string, string | number> = { date: fmt.format(new Date(point.timestamp)) };
       statusValues.forEach((status) => {
         entry[status] = point.data[status] || 0;
       });
@@ -117,9 +111,7 @@ export function ModelInventoryHistoryChart({
     );
 
     return { chartData, series, maxValue };
-  };
-
-  const { chartData, series, maxValue } = prepareChartData();
+  }, [timeseriesData, parameter]);
 
   if (loading) {
     return (

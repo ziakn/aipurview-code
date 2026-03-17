@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Typography, Stack } from "@mui/material";
 import { getRiskTimeseries } from "../../../application/repository/riskHistory.repository";
 import { ButtonToggle } from "../button-toggle";
@@ -10,7 +10,6 @@ import { VWLineChart } from "./VWCharts";
 
 interface RiskHistoryChartProps {
   parameter?: string;
-  title?: string;
   height?: number;
 }
 
@@ -125,12 +124,13 @@ export function RiskHistoryChart({
   };
 
   // Build Recharts-compatible flat data array and series config
-  const prepareChartData = () => {
+  const { chartData, series, maxValue } = useMemo(() => {
     if (!timeseriesData || timeseriesData.length === 0) {
       return { chartData: [], series: [], maxValue: 0 };
     }
 
     const colorMap = getColorMap(parameter);
+    const fmt = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" });
 
     // Collect all unique value keys across all timestamps
     const allValues = new Set<string>();
@@ -142,12 +142,7 @@ export function RiskHistoryChart({
 
     // Merge parallel arrays into a single array of objects for Recharts
     const chartData = timeseriesData.map((point) => {
-      const date = new Date(point.timestamp);
-      const label = new Intl.DateTimeFormat("en-US", {
-        month: "short",
-        day: "numeric",
-      }).format(date);
-      const entry: Record<string, string | number> = { date: label };
+      const entry: Record<string, string | number> = { date: fmt.format(new Date(point.timestamp)) };
       valueKeys.forEach((key) => {
         entry[key] = point.data[key] || 0;
       });
@@ -168,9 +163,7 @@ export function RiskHistoryChart({
     );
 
     return { chartData, series, maxValue };
-  };
-
-  const { chartData, series, maxValue } = prepareChartData();
+  }, [timeseriesData, parameter]);
 
   if (loading) {
     return (

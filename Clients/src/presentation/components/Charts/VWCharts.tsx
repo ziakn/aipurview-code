@@ -35,6 +35,7 @@ import {
   Area,
   LineChart,
   Line,
+  Legend,
   TooltipProps,
 } from "recharts";
 import palette from "../../themes/palette";
@@ -67,11 +68,11 @@ export const ChartOutlineWrapper: React.FC<{ children: React.ReactNode }> = ({ c
   </Box>
 );
 
-/** Default axis tick style */
-const axisTick = { fontSize: 11, fill: palette.text.tertiary };
-const axisTickDisabled = { fontSize: 11, fill: palette.text.disabled };
-const axisLine = { stroke: palette.border.light };
-const gridStroke = palette.border.light;
+/** Default axis tick style — exported for custom charts */
+export const axisTick = { fontSize: 11, fill: palette.text.tertiary };
+export const axisTickDisabled = { fontSize: 11, fill: palette.text.disabled };
+export const axisLine = { stroke: palette.border.light };
+export const gridStroke = palette.border.light;
 
 // ─── VWGradient ─────────────────────────────────────────────────────────────
 
@@ -418,9 +419,6 @@ export const VWLineChart: React.FC<VWLineChartProps> = ({
   showLegend = false,
   legendFormatter,
 }) => {
-  // Dynamic import to avoid pulling Legend when not needed
-  const Legend = showLegend ? require("recharts").Legend : null;
-
   return (
     <ChartOutlineWrapper>
     <ResponsiveContainer width="100%" height={height} style={noOutlineStyle}>
@@ -446,7 +444,7 @@ export const VWLineChart: React.FC<VWLineChartProps> = ({
         ) : (
           <Tooltip contentStyle={vwTooltipStyle} formatter={tooltipFormatter} />
         )}
-        {showLegend && Legend && (
+        {showLegend && (
           <Legend
             wrapperStyle={{ paddingTop: 12, fontSize: 13 }}
             formatter={legendFormatter}

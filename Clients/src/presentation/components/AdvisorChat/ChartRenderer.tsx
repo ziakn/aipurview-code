@@ -11,14 +11,13 @@ import {
   LineChart,
   Line,
 } from 'recharts';
-import { VWDonutChart, vwTooltipStyle } from '../Charts/VWCharts';
-import palette from '../../themes/palette';
+import { VWDonutChart, vwTooltipStyle, axisTick, axisLine, gridStroke } from '../Charts/VWCharts';
+import palette, { chart as chartPalette } from '../../themes/palette';
 
 interface ChartData {
   type: 'bar' | 'pie' | 'table' | 'donut' | 'line';
   data: {label: string, value: number, color?: string}[] ;
   title: string;
-  // For line charts with multiple series (timeseries data)
   series?: Array<{
     label: string;
     data: number[];
@@ -29,21 +28,6 @@ interface ChartData {
 interface ChartRendererProps {
   chartData: ChartData;
 }
-
-/** Default chart palette colors to use when item.color is not provided */
-const DEFAULT_CHART_COLORS: string[] = [
-  palette.brand.primary,
-  '#3B82F6',
-  '#F59E0B',
-  '#EA580C',
-  '#8B5CF6',
-  '#EC4899',
-  '#10B981',
-  '#6B7280',
-];
-
-const axisTick = { fontSize: 11, fill: palette.text.tertiary };
-const axisLine = { stroke: palette.border.light };
 
 const ChartRendererComponent: FC<ChartRendererProps> = ({ chartData }) => {
   const theme = useTheme();
@@ -90,7 +74,7 @@ const ChartRendererComponent: FC<ChartRendererProps> = ({ chartData }) => {
           return (
             <ResponsiveContainer width={300} height={250}>
               <LineChart data={lineData} margin={{ left: 0, right: 20, top: 20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={palette.border.light} />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
                 <XAxis dataKey="label" tick={axisTick} tickLine={false} axisLine={axisLine} />
                 <YAxis tick={axisTick} tickLine={false} axisLine={axisLine} />
                 <Tooltip contentStyle={vwTooltipStyle} />
@@ -99,7 +83,7 @@ const ChartRendererComponent: FC<ChartRendererProps> = ({ chartData }) => {
                     key={s.label}
                     type="linear"
                     dataKey={s.label}
-                    stroke={DEFAULT_CHART_COLORS[i % DEFAULT_CHART_COLORS.length]}
+                    stroke={chartPalette[i % chartPalette.length]}
                     strokeWidth={1.5}
                     dot={{ r: 3 }}
                     isAnimationActive={false}
@@ -116,7 +100,7 @@ const ChartRendererComponent: FC<ChartRendererProps> = ({ chartData }) => {
         return (
           <ResponsiveContainer width={320} height={250}>
             <LineChart data={simpleLineData} margin={{ left: 0, right: 20, top: 20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={palette.border.light} />
+              <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
               <XAxis dataKey="label" tick={axisTick} tickLine={false} axisLine={axisLine} />
               <YAxis tick={axisTick} tickLine={false} axisLine={axisLine} />
               <Tooltip contentStyle={vwTooltipStyle} />
@@ -138,7 +122,7 @@ const ChartRendererComponent: FC<ChartRendererProps> = ({ chartData }) => {
         return (
           <ResponsiveContainer width={300} height={size}>
             <BarChart data={barChartData} margin={{ left: 0, right: 20, top: 20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={palette.border.light} />
+              <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
               <XAxis dataKey="label" tick={axisTick} tickLine={false} axisLine={axisLine} />
               <YAxis tick={axisTick} tickLine={false} axisLine={axisLine} />
               <Tooltip contentStyle={vwTooltipStyle} />
@@ -153,38 +137,22 @@ const ChartRendererComponent: FC<ChartRendererProps> = ({ chartData }) => {
         );
       }
 
-      case 'pie': {
-        const pieData = data.map(item => ({ name: item.label, value: item.value }));
-        const pieColors = data.map(
-          (item, i) => item.color || DEFAULT_CHART_COLORS[i % DEFAULT_CHART_COLORS.length]
-        );
-        return (
-          <VWDonutChart
-            data={pieData}
-            dataKey="value"
-            nameKey="name"
-            colors={pieColors}
-            size={size}
-            innerRadius={0}
-            outerRadius={Math.floor(size / 2) - 5}
-          />
-        );
-      }
-
+      case 'pie':
       case 'donut': {
-        const donutData = data.map(item => ({ name: item.label, value: item.value }));
-        const donutColors = data.map(
-          (item, i) => item.color || DEFAULT_CHART_COLORS[i % DEFAULT_CHART_COLORS.length]
+        const isPie = type === 'pie';
+        const chartData = data.map(item => ({ name: item.label, value: item.value }));
+        const colors = data.map(
+          (item, i) => item.color || chartPalette[i % chartPalette.length]
         );
         return (
           <VWDonutChart
-            data={donutData}
+            data={chartData}
             dataKey="value"
             nameKey="name"
-            colors={donutColors}
+            colors={colors}
             size={size}
-            innerRadius={Math.floor(size * 0.35)}
-            outerRadius={Math.floor(size * 0.45)}
+            innerRadius={isPie ? 0 : Math.floor(size * 0.35)}
+            outerRadius={isPie ? Math.floor(size / 2) - 5 : Math.floor(size * 0.45)}
           />
         );
       }
