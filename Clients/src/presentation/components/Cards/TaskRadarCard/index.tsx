@@ -103,7 +103,7 @@ export function TaskRadarCard({
               axisLine={false}
               allowDecimals={false}
             />
-            <Tooltip contentStyle={vwTooltipStyle} formatter={(value: number) => [value, ""]} />
+            <Tooltip contentStyle={vwTooltipStyle} />
             <Bar dataKey="value" radius={[4, 4, 0, 0]} maxBarSize={40}>
               {chartData.map((entry) => (
                 <Cell key={entry.name} fill={BAR_COLORS[entry.name]} />

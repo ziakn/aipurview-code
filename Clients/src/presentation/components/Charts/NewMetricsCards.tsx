@@ -52,7 +52,7 @@ function MetricBarChart({ data, height = 130 }: MetricBarChartProps) {
             axisLine={false}
             allowDecimals={false}
           />
-          <Tooltip contentStyle={vwTooltipStyle} formatter={(value: number) => [value, ""]} />
+          <Tooltip contentStyle={vwTooltipStyle} />
           <Bar dataKey="value" radius={[4, 4, 0, 0]} maxBarSize={36}>
             {data.map((entry) => (
               <Cell key={entry.name} fill={entry.color} />
