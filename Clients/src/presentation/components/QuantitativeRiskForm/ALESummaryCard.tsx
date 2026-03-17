@@ -82,10 +82,10 @@ const ALESummaryCard: FC<ALESummaryCardProps> = ({ fields }) => {
     >
       <Typography
         sx={{
-          fontSize: 14,
+          fontSize: 13,
           fontWeight: 600,
           color: theme.palette.text.primary,
-          mb: 1.5,
+          mb: "12px",
         }}
       >
         Risk Exposure Summary

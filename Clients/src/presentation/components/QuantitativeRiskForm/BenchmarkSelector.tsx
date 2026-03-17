@@ -41,7 +41,7 @@ const BenchmarkSelector: FC<BenchmarkSelectorProps> = ({
     <Stack sx={{ gap: 2 }}>
       <Typography
         sx={{
-          fontSize: 14,
+          fontSize: 13,
           fontWeight: 600,
           color: theme.palette.text.primary,
         }}
@@ -50,7 +50,7 @@ const BenchmarkSelector: FC<BenchmarkSelectorProps> = ({
       </Typography>
       <Typography
         sx={{
-          fontSize: theme.typography.fontSize,
+          fontSize: 13,
           color: theme.palette.text.tertiary,
           lineHeight: 1.5,
         }}
@@ -118,6 +118,7 @@ const BenchmarkSelector: FC<BenchmarkSelectorProps> = ({
               isLoading ? "Loading benchmarks..." : "Search benchmarks..."
             }
             sx={{
+              "& .MuiInputBase-input": { fontSize: 13 },
               "& ::placeholder": { fontSize: 13 },
             }}
           />
