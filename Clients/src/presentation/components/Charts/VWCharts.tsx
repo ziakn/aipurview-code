@@ -371,7 +371,7 @@ export const VWDonutChart: React.FC<VWDonutChartProps> = ({
           </Typography>
         </Box>
       )}
-    </ChartWrapper>
+    </Box>
   );
 };
 
