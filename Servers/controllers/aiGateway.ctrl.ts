@@ -650,12 +650,15 @@ export async function chatCompletion(req: Request, res: Response) {
       throw new ValidationException("endpoint_slug and messages are required");
     }
 
+    const roleId = ROLE_NAME_TO_ID[(req as any).role] || undefined;
     const result = await proxyCompletion(
       req.organizationId!,
       endpoint_slug,
       messages,
       { max_tokens, temperature, top_p, metadata },
-      Number(req.userId)
+      Number(req.userId),
+      0,
+      roleId
     );
 
     logStructured("successful", "chat completion proxied", fn, fileName);
@@ -684,12 +687,15 @@ export async function chatCompletionStream(req: Request, res: Response) {
       throw new ValidationException("endpoint_slug and messages are required");
     }
 
+    const roleId = ROLE_NAME_TO_ID[(req as any).role] || undefined;
     const { stream, cleanup } = await proxyStream(
       req.organizationId!,
       endpoint_slug,
       messages,
       { max_tokens, temperature, top_p, metadata },
-      Number(req.userId)
+      Number(req.userId),
+      0,
+      roleId
     );
 
     pipeStreamWithCleanup(stream, req, res, cleanup);
@@ -718,11 +724,13 @@ export async function embeddingProxy(req: Request, res: Response) {
       throw new ValidationException("endpoint_slug and input are required");
     }
 
+    const roleId = ROLE_NAME_TO_ID[(req as any).role] || undefined;
     const result = await proxyEmbedding(
       req.organizationId!,
       endpoint_slug,
       input,
-      Number(req.userId)
+      Number(req.userId),
+      roleId
     );
 
     logStructured("successful", "embedding proxied", fn, fileName);
@@ -1433,12 +1441,15 @@ export async function testPrompt(req: Request, res: Response) {
     if (config?.max_tokens !== undefined) options.max_tokens = config.max_tokens;
     if (config?.top_p !== undefined) options.top_p = config.top_p;
 
+    const testRoleId = ROLE_NAME_TO_ID[(req as any).role] || undefined;
     const { stream, cleanup } = await proxyStream(
       req.organizationId!,
       endpoint_slug,
       resolvedMessages,
       options,
-      Number(req.userId)
+      Number(req.userId),
+      0,
+      testRoleId
     );
 
     pipeStreamWithCleanup(stream, req, res, cleanup);

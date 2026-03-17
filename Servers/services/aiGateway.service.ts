@@ -304,7 +304,7 @@ async function runGuardrails(
 /**
  * Resolve endpoint and decrypt API key
  */
-async function resolveEndpoint(organizationId: number, endpointSlug: string) {
+async function resolveEndpoint(organizationId: number, endpointSlug: string, roleId?: number) {
   const endpoint = await getEndpointBySlugQuery(organizationId, endpointSlug);
   if (!endpoint) {
     throw new NotFoundException(
@@ -319,6 +319,15 @@ async function resolveEndpoint(organizationId: number, endpointSlug: string) {
       `Endpoint is inactive: ${endpointSlug}`,
       "endpoint_inactive",
       { slug: endpointSlug }
+    );
+  }
+
+  // Enforce role-based access — allowed_role_ids defaults to [1,2,3,4] (all roles)
+  if (roleId && endpoint.allowed_role_ids && !endpoint.allowed_role_ids.includes(roleId)) {
+    throw new BusinessLogicException(
+      `Your role does not have access to endpoint: ${endpointSlug}`,
+      "role_not_allowed",
+      { slug: endpointSlug, allowed_roles: endpoint.allowed_role_ids }
     );
   }
 
@@ -593,11 +602,13 @@ export async function proxyCompletion(
   messages: Array<{ role: string; content: string }>,
   options: CompletionOptions,
   userId: number,
-  _fallbackDepth: number = 0
+  _fallbackDepth: number = 0,
+  roleId?: number
 ): Promise<GatewayResponse> {
   const { endpoint, decryptedKey } = await resolveEndpoint(
     organizationId,
-    endpointSlug
+    endpointSlug,
+    roleId
   );
 
   // Rate limit check
@@ -612,7 +623,7 @@ export async function proxyCompletion(
     }
   }
 
-  // Run guardrails on input (scan last user message)
+  // Run guardrails on all user messages
   const scannedMessages = await runGuardrails(
     organizationId,
     messages,
@@ -732,7 +743,8 @@ export async function proxyCompletion(
         const fallbackEp = await getEndpointByIdQuery(organizationId, endpoint.fallback_endpoint_id);
         if (fallbackEp && fallbackEp.is_active) {
           logger.info(`Falling back from ${endpointSlug} to ${fallbackEp.slug} (depth ${_fallbackDepth + 1}/${MAX_FALLBACK_DEPTH})`);
-          return proxyCompletion(organizationId, fallbackEp.slug, messages, options, userId, _fallbackDepth + 1);
+          // Pass scanned (masked) messages to fallback — NOT the originals, to preserve guardrail masking
+          return proxyCompletion(organizationId, fallbackEp.slug, scannedMessages, options, userId, _fallbackDepth + 1);
         }
       } catch (fallbackErr) {
         logger.error("Fallback resolution failed:", fallbackErr);
@@ -753,11 +765,13 @@ export async function proxyStream(
   messages: Array<{ role: string; content: string }>,
   options: CompletionOptions,
   userId: number,
-  _fallbackDepth: number = 0
+  _fallbackDepth: number = 0,
+  roleId?: number
 ): Promise<{ stream: Readable; cleanup: () => Promise<void> }> {
   const { endpoint, decryptedKey } = await resolveEndpoint(
     organizationId,
-    endpointSlug
+    endpointSlug,
+    roleId
   );
 
   // Rate limit check
@@ -829,7 +843,8 @@ export async function proxyStream(
         const fallbackEp = await getEndpointByIdQuery(organizationId, endpoint.fallback_endpoint_id);
         if (fallbackEp && fallbackEp.is_active) {
           logger.info(`Stream falling back from ${endpointSlug} to ${fallbackEp.slug} (depth ${_fallbackDepth + 1}/${MAX_FALLBACK_DEPTH})`);
-          return proxyStream(organizationId, fallbackEp.slug, messages, options, userId, _fallbackDepth + 1);
+          // Pass scanned (masked) messages to fallback — NOT the originals, to preserve guardrail masking
+          return proxyStream(organizationId, fallbackEp.slug, scannedMessages, options, userId, _fallbackDepth + 1);
         }
       } catch (fallbackErr) {
         logger.error("Stream fallback resolution failed:", fallbackErr);
@@ -930,15 +945,24 @@ export async function proxyEmbedding(
   organizationId: number,
   endpointSlug: string,
   input: string | string[],
-  userId: number
+  userId: number,
+  roleId?: number
 ): Promise<EmbeddingResponse> {
   const { endpoint, decryptedKey } = await resolveEndpoint(
     organizationId,
-    endpointSlug
+    endpointSlug,
+    roleId
   );
 
+  // Run guardrails on embedding input (PII can leak via embeddings too)
   const inputText = Array.isArray(input) ? input.join(" ") : input;
-  const estimatedCost = await estimateCost(endpoint.model, [{ role: "user", content: inputText }]);
+  const embeddingMessages = [{ role: "user", content: inputText }];
+  const scannedMessages = await runGuardrails(organizationId, embeddingMessages, endpoint.id, userId);
+  const scannedInput = scannedMessages[0]?.content || inputText;
+  // Use the scanned input for the actual embedding request
+  const finalInput = Array.isArray(input) ? [scannedInput] : scannedInput;
+
+  const estimatedCost = await estimateCost(endpoint.model, scannedMessages);
   await tryReserveBudget(organizationId, estimatedCost);
 
   const startTime = Date.now();
@@ -959,7 +983,7 @@ export async function proxyEmbedding(
         body: JSON.stringify({
           provider: endpoint.provider,
           model: endpoint.model,
-          input,
+          input: finalInput,
         }),
         signal: embeddingController.signal,
       });
