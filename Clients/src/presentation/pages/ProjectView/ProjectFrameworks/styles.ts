@@ -1,5 +1,6 @@
 import { SxProps, Theme } from "@mui/material";
 import { layoutStyles } from "../../../themes";
+import { brand } from "../../../themes/palette";
 
 export const containerStyle: SxProps<Theme> = {
   width: "100%",
@@ -51,7 +52,7 @@ export const addButtonStyle: SxProps<Theme> = (theme) => ({
   borderRadius: theme.spacing(1),
   boxShadow: "none",
   "&:hover": {
-    backgroundColor: theme.palette.primary.dark || "brand.primaryDark",
+    backgroundColor: theme.palette.primary.dark || brand.primaryDark,
     boxShadow: "none",
   },
   "&:focus": {
@@ -149,7 +150,7 @@ export const modalDoneButtonStyle: SxProps<Theme> = (theme) => ({
   px: 4,
   py: 1,
   "&:hover": {
-    backgroundColor: theme.palette.primary.dark || "brand.primaryDark",
+    backgroundColor: theme.palette.primary.dark || brand.primaryDark,
     boxShadow: "none",
   },
   "&:focus": {

@@ -5,7 +5,7 @@ import {
   ChipVariant,
   ChipColorConfig,
 } from "../types/interfaces/i.chip";
-import { background, status } from "../themes/palette";
+import { background, status, risk } from "../themes/palette";
 
 /**
  * Color mappings for all chip variants
@@ -13,29 +13,29 @@ import { background, status } from "../themes/palette";
  */
 const VARIANT_COLORS: Record<ChipVariant, ChipColorConfig> = {
   // Risk levels
-  critical: { backgroundColor: "#FFD6D6", textColor: `${status.error.text}` },
-  high: { backgroundColor: "#FFE5D0", textColor: "#E64A19" },
-  medium: { backgroundColor: "#FFF8E1", textColor: "#795548" },
-  low: { backgroundColor: "#E6F4EA", textColor: `${status.success.text}` },
-  "very-low": { backgroundColor: "#E0F7FA", textColor: "#00695C" },
+  critical: { backgroundColor: `${risk.critical.bg}`, textColor: `${status.error.text}` },
+  high: { backgroundColor: `${risk.high.bg}`, textColor: `${risk.high.text}` },
+  medium: { backgroundColor: `${risk.medium.bg}`, textColor: `${risk.medium.text}` },
+  low: { backgroundColor: `${risk.low.bg}`, textColor: `${status.success.text}` },
+  "very-low": { backgroundColor: `${risk.veryLow.bg}`, textColor: `${risk.veryLow.text}` },
 
   // Status
-  success: { backgroundColor: "#E6F4EA", textColor: `${status.success.text}` },
-  warning: { backgroundColor: "#FFF8E1", textColor: "#795548" },
-  error: { backgroundColor: "#FFD6D6", textColor: `${status.error.text}` },
-  info: { backgroundColor: "#E3F2FD", textColor: "#1565C0" },
+  success: { backgroundColor: `${status.success.bg}`, textColor: `${status.success.text}` },
+  warning: { backgroundColor: `${status.warning.bg}`, textColor: `${status.warning.text}` },
+  error: { backgroundColor: `${status.error.bg}`, textColor: `${status.error.text}` },
+  info: { backgroundColor: `${status.info.bg}`, textColor: `${status.info.text}` },
   default: { backgroundColor: `${background.hover}`, textColor: `${status.default.text}` },
 
   // Severity (maps to same colors as risk levels)
-  catastrophic: { backgroundColor: "#FFD6D6", textColor: `${status.error.text}` },
-  major: { backgroundColor: "#FFE5D0", textColor: "#E64A19" },
-  moderate: { backgroundColor: "#FFF8E1", textColor: "#795548" },
-  minor: { backgroundColor: "#E6F4EA", textColor: `${status.success.text}` },
-  negligible: { backgroundColor: "#E0F7FA", textColor: "#00695C" },
+  catastrophic: { backgroundColor: `${risk.critical.bg}`, textColor: `${status.error.text}` },
+  major: { backgroundColor: `${risk.high.bg}`, textColor: `${risk.high.text}` },
+  moderate: { backgroundColor: `${risk.medium.bg}`, textColor: `${risk.medium.text}` },
+  minor: { backgroundColor: `${risk.low.bg}`, textColor: `${status.success.text}` },
+  negligible: { backgroundColor: `${risk.veryLow.bg}`, textColor: `${risk.veryLow.text}` },
 
   // Boolean
-  yes: { backgroundColor: "#E6F4EA", textColor: `${status.success.text}` },
-  no: { backgroundColor: "#FFD6D6", textColor: `${status.error.text}` },
+  yes: { backgroundColor: `${status.success.bg}`, textColor: `${status.success.text}` },
+  no: { backgroundColor: `${status.error.bg}`, textColor: `${status.error.text}` },
 };
 
 /**

@@ -23,7 +23,7 @@ import TablePaginationActions from '../../../../components/TablePagination';
 import { EmptyState } from '../../../../components/EmptyState';
 import singleTheme from '../../../../themes/v1SingleTheme';
 import { ChevronsUpDown } from 'lucide-react';
-import { status } from "../../../../themes/palette";
+import { status, background } from "../../../../themes/palette";
 
 interface AutomationHistoryProps {
   automationId: string;
@@ -165,7 +165,7 @@ const AutomationHistory: React.FC<AutomationHistoryProps> = ({ automationId }) =
             sx={{
               border: "1px solid borderPalette.light",
               borderRadius: 2,
-              background: "linear-gradient(135deg, background.main 0%, #f8fafc 100%)",
+              background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
               minWidth: 228,
               flex: 1,
               padding: "8px 14px 14px 14px",
@@ -221,7 +221,7 @@ const AutomationHistory: React.FC<AutomationHistoryProps> = ({ automationId }) =
             sx={{
               border: "1px solid borderPalette.light",
               borderRadius: 2,
-              background: "linear-gradient(135deg, background.main 0%, #f8fafc 100%)",
+              background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
               minWidth: 228,
               flex: 1,
               padding: "8px 14px 14px 14px",
@@ -254,7 +254,7 @@ const AutomationHistory: React.FC<AutomationHistoryProps> = ({ automationId }) =
             sx={{
               border: "1px solid borderPalette.light",
               borderRadius: 2,
-              background: "linear-gradient(135deg, background.main 0%, #f8fafc 100%)",
+              background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
               minWidth: 228,
               flex: 1,
               padding: "8px 14px 14px 14px",

@@ -18,7 +18,7 @@ import {
   IFolderTreeNode,
   IVirtualFolder,
 } from "../../../../../domain/interfaces/i.virtualFolder";
-import { text } from "../../../../themes/palette";
+import { text, brand } from "../../../../themes/palette";
 
 interface AssignToFolderModalProps {
   isOpen: boolean;
@@ -125,7 +125,7 @@ const FolderCheckItem: React.FC<FolderCheckItemProps> = ({
             marginRight: "8px",
             display: "flex",
             alignItems: "center",
-            color: folder.color || "brand.primary",
+            color: folder.color || brand.primary,
           }}
         >
           <FolderIcon size={16} />

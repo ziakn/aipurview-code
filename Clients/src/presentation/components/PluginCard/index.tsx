@@ -25,6 +25,7 @@ import {
   FolderKanban as ProjectIcon,
 } from 'lucide-react';
 import { cardStyles } from '../../themes/components';
+import { background } from '../../themes/palette';
 import { Plugin, PluginInstallationStatus } from '../../../domain/types/plugins';
 import ConfirmationModal from '../../components/Dialogs/ConfirmationModal';
 
@@ -140,9 +141,9 @@ const PluginCard: React.FC<PluginCardProps> = ({
         transition: 'all 0.2s ease',
         ...(cardStyles.base(theme) as any),
         margin: 0,
-        background: 'linear-gradient(135deg, background.main 0%, #f8fafc 100%)',
+        background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
         '&:hover': {
-          background: 'linear-gradient(135deg, background.accent 0%, #f1f5f9 100%)',
+          background: `linear-gradient(135deg, ${background.accent} 0%, #f1f5f9 100%)`,
           borderColor: '#D1D5DB',
           boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
         },

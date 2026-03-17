@@ -47,7 +47,7 @@ export function DashboardHeaderCard({ title, count, disableNavigation = false, i
       sx={{
         border: `1px solid ${borderPalette.dark}`,
         borderRadius: 2,
-        background: `linear-gradient(135deg, ${background.main} 0%, #f8fafc 100%)`,
+        background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
         width: "100%",
         padding: "8px 36px 14px 14px",
         cursor: isClickable ? "pointer" : "default",

@@ -31,7 +31,7 @@ export function TaskRadarCard({
       sx={{
         border: `1px solid ${borderPalette.dark}`,
         borderRadius: "4px",
-        background: `linear-gradient(135deg, ${background.main} 0%, #f8fafc 100%)`,
+        background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
         width: "100%",
         padding: "16px",
         height: "100%",

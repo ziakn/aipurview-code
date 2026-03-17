@@ -30,7 +30,7 @@ export function DashboardCard({
         border: `1px solid ${borderPalette.dark}`,
         borderRadius: "4px",
         height: "100%",
-        background: `linear-gradient(135deg, ${background.main} 0%, #f8fafc 100%)`,
+        background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
         cursor: navigateTo ? "pointer" : "default",
         transition: "all 0.2s ease",
         "&:hover": navigateTo

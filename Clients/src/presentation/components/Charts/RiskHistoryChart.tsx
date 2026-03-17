@@ -169,7 +169,7 @@ export function RiskHistoryChart({
           height: height + 120,
           alignItems: "center",
           justifyContent: "center",
-          background: `linear-gradient(135deg, ${background.main} 0%, #f8fafc 100%)`,
+          background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
         }}
       >
         <CustomizableSkeleton variant="circular" width={40} height={40} />
@@ -187,7 +187,7 @@ export function RiskHistoryChart({
           height: height + 120,
           alignItems: "center",
           justifyContent: "center",
-          background: `linear-gradient(135deg, ${background.main} 0%, #f8fafc 100%)`,
+          background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
         }}
       >
         <Typography sx={{ color: "#F04438", fontSize: 14, fontWeight: 500 }}>
@@ -213,7 +213,7 @@ export function RiskHistoryChart({
         p: 3,
         border: `1px solid ${borderPalette.light}`,
         borderRadius: 2,
-        background: `linear-gradient(135deg, ${background.main} 0%, #f8fafc 100%)`,
+        background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
         boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.05)",
       }}
     >

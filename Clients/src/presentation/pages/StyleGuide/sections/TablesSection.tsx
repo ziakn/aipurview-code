@@ -174,7 +174,7 @@ const TablesSection: React.FC = () => {
               >
                 <TableHead
                   sx={{
-                    background: "linear-gradient(180deg, background.accent 0%, background.hover 100%)",
+                    background: `linear-gradient(180deg, ${background.accent} 0%, ${background.hover} 100%)`,
                   }}
                 >
                   <TableRow

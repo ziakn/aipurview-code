@@ -56,7 +56,7 @@ function GradientBanner({
   logoSrc?: string | null;
   children?: React.ReactNode;
 }) {
-  const gradient = buildGradient(colorTheme || "brand.primary");
+  const gradient = buildGradient(colorTheme || brand.primary);
   return (
     <Box
       sx={{

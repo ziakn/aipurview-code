@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import dayjs, { Dayjs } from "dayjs";
 import { Info as GreyCircleInfoIcon } from "lucide-react";
 import { cardStyles } from "../../../themes";
+import { background } from "../../../themes/palette";
 import { CEMarkingData, ConformityStepStatus, ConformityStep } from "../../../../domain/types/ceMarking";
 import { VWLink } from "../../../components/Link/VWLink";
 import Select from "../../../components/Inputs/Select";
@@ -142,7 +143,7 @@ const ensureUrlProtocol = (url: string | null): string | null => {
 const getTableHeaderRowStyles = () => ({
   textTransform: "uppercase",
   borderBottom: "1px solid borderPalette.dark",
-  background: "linear-gradient(180deg, background.accent 0%, background.hover 100%)",
+  background: `linear-gradient(180deg, ${background.accent} 0%, ${background.hover} 100%)`,
 });
 
 const getTableHeaderCellStyles = () => ({
@@ -1709,7 +1710,7 @@ const CEMarking: React.FC<CEMarkingProps> = ({ projectId }) => {
                       alignItems: 'flex-start',
                       padding: '12px',
                       borderBottom: index < availablePolicies.length - 1 ? `1px solid ${theme.palette.border?.light || '#e0e0e0'}` : 'none',
-                      '&:hover': { backgroundColor: theme.palette.action?.hover || 'background.surface' },
+                      '&:hover': { backgroundColor: theme.palette.action?.hover || background.surface },
                       cursor: 'pointer',
                     }}
                     onClick={() => togglePolicy(policy.id)}
@@ -1780,7 +1781,7 @@ const CEMarking: React.FC<CEMarkingProps> = ({ projectId }) => {
                       alignItems: 'flex-start',
                       padding: '12px',
                       borderBottom: index < availableEvidences.length - 1 ? `1px solid ${theme.palette.border?.light || '#e0e0e0'}` : 'none',
-                      '&:hover': { backgroundColor: theme.palette.action?.hover || 'background.surface' },
+                      '&:hover': { backgroundColor: theme.palette.action?.hover || background.surface },
                       cursor: 'pointer',
                     }}
                     onClick={() => toggleEvidence(evidence.id)}
@@ -1859,7 +1860,7 @@ const CEMarking: React.FC<CEMarkingProps> = ({ projectId }) => {
                       alignItems: 'flex-start',
                       padding: '12px',
                       borderBottom: index < availableIncidents.length - 1 ? `1px solid ${theme.palette.border?.light || '#e0e0e0'}` : 'none',
-                      '&:hover': { backgroundColor: theme.palette.action?.hover || 'background.surface' },
+                      '&:hover': { backgroundColor: theme.palette.action?.hover || background.surface },
                       cursor: 'pointer',
                     }}
                     onClick={() => toggleIncident(incident.id)}

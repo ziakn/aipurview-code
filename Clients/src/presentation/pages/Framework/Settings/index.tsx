@@ -23,6 +23,7 @@ import Alert from "../../../components/Alert";
 import CustomizableToast from "../../../components/Toast";
 import { PluginSlot } from "../../../components/PluginSlot";
 import { PLUGIN_SLOTS } from "../../../../domain/constants/pluginSlots";
+import { background } from "../../../themes/palette";
 
 interface FrameworkSettingsProps {
   organizationalProject: Project;
@@ -241,7 +242,7 @@ const FrameworkSettings: React.FC<FrameworkSettingsProps> = ({
         >
           <Box
             sx={{
-              background: "linear-gradient(135deg, background.main 0%, #f8fafc 100%)",
+              background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
               border: "1px solid borderPalette.dark",
               borderRadius: "4px",
               p: "24px",
@@ -329,7 +330,7 @@ const FrameworkSettings: React.FC<FrameworkSettingsProps> = ({
               <Box
                 key={fw.id}
                 sx={{
-                  background: "linear-gradient(135deg, background.main 0%, #f8fafc 100%)",
+                  background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
                   border: "1px solid borderPalette.dark",
                   borderRadius: "4px",
                   p: "24px",

@@ -154,7 +154,7 @@ const FolderItem: React.FC<FolderItemProps> = ({
             marginRight: "8px",
             display: "flex",
             alignItems: "center",
-            color: folder.color || "brand.primary",
+            color: folder.color || brand.primary,
           }}
         >
           {isExpanded ? (

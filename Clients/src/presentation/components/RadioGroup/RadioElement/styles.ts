@@ -21,7 +21,7 @@ export const styles = {
       display: 'block',
       width: 20,
       height: 20,
-      backgroundImage: `radial-gradient(background.mainckground.main},#fff 28%,transparent 32%)`,
+      backgroundImage: `radial-gradient(${background.main},#fff 28%,transparent 32%)`,
       content: '""',
     },
     'input:hover ~ &': {

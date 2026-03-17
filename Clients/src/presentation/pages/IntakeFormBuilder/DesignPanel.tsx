@@ -203,7 +203,7 @@ function ColorGrid({
           <Box
             component="input"
             type="color"
-            value={customValue || "brand.primary"}
+            value={customValue || brand.primary}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               onCustomChange?.(e.target.value)
             }
@@ -223,7 +223,7 @@ function ColorGrid({
             }}
           />
           <Typography sx={{ fontSize: "11px", color: theme.palette.text.accent, fontFamily: "monospace" }}>
-            {customValue || "brand.primary"}
+            {customValue || brand.primary}
           </Typography>
         </Box>
       )}

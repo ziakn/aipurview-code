@@ -67,6 +67,12 @@ const light = createTheme({
       fill: "#e3e3e3",
       grid: "#a2a3a3",
     },
+    brand: {
+      primary: brand.primary,
+      primaryHover: brand.primaryHover,
+      primaryLight: brand.primaryLight,
+      primaryDark: brand.primaryDark,
+    },
     unresolved: { main: "#4e5ba6", light: "#e2eaf7", bg: "#f2f4f7" },
     divider: border.dark,
   },

@@ -23,7 +23,7 @@ const GradientCircles: React.FC = () => (
         width: "150px",
         height: "150px",
         borderRadius: "50%",
-        background: `linear-gradient(135deg, brand.primary 0%, ${brand.primaryHover} 100%)`,
+        background: `linear-gradient(135deg, ${brand.primary} 0%, ${brand.primaryHover} 100%)`,
         top: "-30px",
         left: "-30px",
         opacity: 0.8,
@@ -35,7 +35,7 @@ const GradientCircles: React.FC = () => (
         width: "120px",
         height: "120px",
         borderRadius: "50%",
-        background: `linear-gradient(135deg, brand.primaryHover 0%, ${brand.primary} 100%)`,
+        background: `linear-gradient(135deg, ${brand.primaryHover} 0%, ${brand.primary} 100%)`,
         bottom: "-20px",
         right: "20px",
         opacity: 0.6,
@@ -75,7 +75,7 @@ const GeometricShapes: React.FC = () => (
       sx={{
         width: "100px",
         height: "100px",
-        background: `linear-gradient(135deg, brand.primary 0%, ${brand.primaryHover} 100%)`,
+        background: `linear-gradient(135deg, ${brand.primary} 0%, ${brand.primaryHover} 100%)`,
         transform: "rotate(45deg)",
         opacity: 0.8,
       }}
@@ -116,7 +116,7 @@ const AbstractWaves: React.FC = () => (
       position: "relative",
       overflow: "hidden",
       borderRadius: "8px",
-      background: `linear-gradient(180deg, background.accent 0%, ${background.main} 100%)`,
+      background: `linear-gradient(180deg, ${background.accent} 0%, ${background.main} 100%)`,
     }}
   >
     <svg

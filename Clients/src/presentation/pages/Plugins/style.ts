@@ -145,7 +145,7 @@ export const regionNameStyle = (theme: Theme): SxProps<Theme> => ({
 
 export const regionCountStyle = (theme: Theme): SxProps<Theme> => ({
   fontSize: "13px",
-  color: theme.palette.text.tertiary || "text.muted",
+  color: theme.palette.text.tertiary || text.muted,
   fontWeight: 500,
 });
 

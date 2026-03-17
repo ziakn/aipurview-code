@@ -100,6 +100,7 @@ export const text = {
   black: "#000000",
   icon: "#667085",
   muted: "#98A2B3",
+  subdued: "#616161",
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -115,6 +116,7 @@ export const background = {
   hover: "#F3F4F6",
   selected: "#E6F0EC",
   surface: "#f5f5f5",
+  gradientStop: "#f8fafc",
 } as const;
 
 // ---------------------------------------------------------------------------
