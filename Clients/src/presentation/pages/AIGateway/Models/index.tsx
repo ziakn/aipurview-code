@@ -208,7 +208,7 @@ export default function ModelsPage() {
   return (
     <PageHeaderExtended
       title="Models"
-      description={`Browse ${models.length.toLocaleString()} LLM models across ${providers.length - 1} providers.`}
+      description={<>Browse <strong style={{ color: palette.text.primary }}>{models.length.toLocaleString()}</strong> LLM models across <strong style={{ color: palette.text.primary }}>{providers.length - 1}</strong> providers.</>}
       tipBoxEntity="ai-gateway-models"
       helpArticlePath="ai-gateway/models"
     >
