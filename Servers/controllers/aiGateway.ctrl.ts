@@ -132,12 +132,13 @@ function parseId(raw: string | string[]): number {
 
 // ─── API Key Verification ─────────────────────────────────────────────────────
 
-const PROVIDER_VERIFY_ENDPOINTS: Record<string, { url: string; buildHeaders: (key: string) => Record<string, string> }> = {
-  openai: { url: "https://api.openai.com/v1/models", buildHeaders: (k) => ({ Authorization: `Bearer ${k}` }) },
-  anthropic: { url: "https://api.anthropic.com/v1/models", buildHeaders: (k) => ({ "x-api-key": k, "anthropic-version": "2023-06-01" }) },
-  xai: { url: "https://api.x.ai/v1/models", buildHeaders: (k) => ({ Authorization: `Bearer ${k}` }) },
-  mistral: { url: "https://api.mistral.ai/v1/models", buildHeaders: (k) => ({ Authorization: `Bearer ${k}` }) },
-  openrouter: { url: "https://openrouter.ai/api/v1/models", buildHeaders: (k) => ({ Authorization: `Bearer ${k}` }) },
+const PROVIDER_VERIFY_ENDPOINTS: Record<string, { url: (key: string) => string; buildHeaders: (key: string) => Record<string, string> }> = {
+  openai: { url: () => "https://api.openai.com/v1/models", buildHeaders: (k) => ({ Authorization: `Bearer ${k}` }) },
+  anthropic: { url: () => "https://api.anthropic.com/v1/models", buildHeaders: (k) => ({ "x-api-key": k, "anthropic-version": "2023-06-01" }) },
+  gemini: { url: (k) => `https://generativelanguage.googleapis.com/v1beta/models?key=${k}`, buildHeaders: () => ({}) },
+  xai: { url: () => "https://api.x.ai/v1/models", buildHeaders: (k) => ({ Authorization: `Bearer ${k}` }) },
+  mistral: { url: () => "https://api.mistral.ai/v1/models", buildHeaders: (k) => ({ Authorization: `Bearer ${k}` }) },
+  openrouter: { url: () => "https://openrouter.ai/api/v1/models", buildHeaders: (k) => ({ Authorization: `Bearer ${k}` }) },
 };
 
 export async function verifyApiKey(req: Request, res: Response) {
@@ -157,14 +158,8 @@ export async function verifyApiKey(req: Request, res: Response) {
       return res.status(200).json(STATUS_CODE[200]({ valid: true, message: "Provider does not support live verification" }));
     }
 
-    // Gemini uses query param instead of header
-    let url = verifyConfig.url;
-    let headers = verifyConfig.buildHeaders(trimmedKey);
-    if (provider.toLowerCase() === "gemini") {
-      url = `https://generativelanguage.googleapis.com/v1beta/models?key=${trimmedKey}`;
-      headers = {};
-    }
-
+    const url = verifyConfig.url(trimmedKey);
+    const headers = verifyConfig.buildHeaders(trimmedKey);
     const response = await fetch(url, { method: "GET", headers });
 
     if (response.status === 401 || response.status === 403) {
