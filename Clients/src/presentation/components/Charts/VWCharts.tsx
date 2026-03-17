@@ -51,13 +51,20 @@ export const vwTooltipStyle: React.CSSProperties = {
   backgroundColor: palette.background.main,
 };
 
-/** Suppress blue focus outlines on all Recharts SVG elements */
-const noOutlineSx = {
-  "& *": { outline: "none !important" },
-  "& *:focus": { outline: "none !important" },
-  "& svg": { outline: "none !important" },
-  "& svg *": { outline: "none !important" },
-};
+/** Inline style to suppress blue focus outlines on Recharts SVG elements */
+const noOutlineStyle: React.CSSProperties = { outline: "none" };
+
+/** Wrapper that suppresses focus outlines on all chart children */
+const ChartWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <Box
+    sx={{
+      "& *:focus": { outline: "none !important" },
+      "& svg *:focus": { outline: "none !important" },
+    }}
+  >
+    {children}
+  </Box>
+);
 
 /** Default axis tick style */
 const axisTick = { fontSize: 11, fill: palette.text.tertiary };
@@ -135,8 +142,8 @@ export const VWBarChart: React.FC<VWBarChartProps> = ({
 }) => {
   const isVertical = layout === "vertical";
   return (
-    <Box sx={noOutlineSx}>
-    <ResponsiveContainer width="100%" height={height}>
+    <ChartWrapper>
+    <ResponsiveContainer width="100%" height={height} style={noOutlineStyle}>
       <BarChart data={data} layout={layout} margin={margin} barCategoryGap={barCategoryGap}>
         <CartesianGrid
           strokeDasharray="3 3"
@@ -201,7 +208,7 @@ export const VWBarChart: React.FC<VWBarChartProps> = ({
         ))}
       </BarChart>
     </ResponsiveContainer>
-    </Box>
+    </ChartWrapper>
   );
 };
 
@@ -244,8 +251,8 @@ export const VWAreaChart: React.FC<VWAreaChartProps> = ({
   margin,
   gradientOpacity = 0.12,
 }) => (
-  <Box sx={noOutlineSx}>
-  <ResponsiveContainer width="100%" height={height}>
+  <ChartWrapper>
+  <ResponsiveContainer width="100%" height={height} style={noOutlineStyle}>
     <AreaChart data={data} margin={margin}>
       <defs>
         {series.map((s) => (
@@ -291,7 +298,7 @@ export const VWAreaChart: React.FC<VWAreaChartProps> = ({
       ))}
     </AreaChart>
   </ResponsiveContainer>
-  </Box>
+  </ChartWrapper>
 );
 
 // ─── VWDonutChart ───────────────────────────────────────────────────────────
@@ -326,8 +333,8 @@ export const VWDonutChart: React.FC<VWDonutChartProps> = ({
 }) => {
   const computedOuter = outerRadius || Math.floor(size / 2) - 5;
   return (
-    <Box sx={{ position: "relative", width: size, height: size, ...noOutlineSx }}>
-      <ResponsiveContainer width="100%" height="100%">
+    <Box sx={{ position: "relative", width: size, height: size, "& *:focus": { outline: "none !important" }, "& svg *:focus": { outline: "none !important" } }}>
+      <ResponsiveContainer width="100%" height="100%" style={noOutlineStyle}>
         <PieChart>
           <Pie
             data={data}
@@ -364,7 +371,7 @@ export const VWDonutChart: React.FC<VWDonutChartProps> = ({
           </Typography>
         </Box>
       )}
-    </Box>
+    </ChartWrapper>
   );
 };
 
@@ -414,8 +421,8 @@ export const VWLineChart: React.FC<VWLineChartProps> = ({
   const Legend = showLegend ? require("recharts").Legend : null;
 
   return (
-    <Box sx={noOutlineSx}>
-    <ResponsiveContainer width="100%" height={height}>
+    <ChartWrapper>
+    <ResponsiveContainer width="100%" height={height} style={noOutlineStyle}>
       <LineChart data={data} margin={margin}>
         <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
         <XAxis
@@ -459,6 +466,6 @@ export const VWLineChart: React.FC<VWLineChartProps> = ({
         ))}
       </LineChart>
     </ResponsiveContainer>
-    </Box>
+    </ChartWrapper>
   );
 };
