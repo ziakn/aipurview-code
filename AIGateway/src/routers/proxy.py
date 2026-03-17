@@ -20,7 +20,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import StreamingResponse, JSONResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from src.services.proxy_service import (
     authenticate_virtual_key,
@@ -48,9 +48,9 @@ class ProxyChatRequest(BaseModel):
     model: str  # endpoint slug
     messages: list[dict]
     stream: bool = False
-    temperature: Optional[float] = None
-    max_tokens: Optional[int] = None
-    top_p: Optional[float] = None
+    temperature: Optional[float] = Field(None, ge=0, le=2)
+    max_tokens: Optional[int] = Field(None, ge=1, le=128000)
+    top_p: Optional[float] = Field(None, ge=0, le=1)
 
 
 class ProxyEmbeddingRequest(BaseModel):
@@ -186,7 +186,8 @@ async def _handle_completion(
                     org_id, vk, fallback, messages, kwargs, 0, time.time(), _depth + 1,
                 )
 
-        raise HTTPException(status_code=502, detail=f"LLM provider error: {str(e)[:200]}")
+        logger.error(f"LLM provider error: {e}")
+        raise HTTPException(status_code=502, detail="LLM provider request failed")
 
 
 async def _handle_stream(
@@ -227,7 +228,7 @@ async def _handle_stream(
 
         except Exception as e:
             logger.error(f"Stream error: {e}")
-            yield f"data: {json.dumps({'error': str(e)[:200]})}\n\n"
+            yield f"data: {json.dumps({'error': 'LLM provider stream failed'})}\n\n"
         finally:
             latency_ms = int((time.time() - start_time) * 1000)
             await log_spend(
@@ -315,7 +316,8 @@ async def proxy_embeddings(request: Request, body: ProxyEmbeddingRequest):
             total_tokens=0, cost_usd=0, latency_ms=latency_ms, status_code=500,
         )
         await reconcile_budget(org_id, estimated_cost, 0)
-        raise HTTPException(status_code=502, detail=f"Embedding error: {str(e)[:200]}")
+        logger.error(f"Embedding error: {e}")
+        raise HTTPException(status_code=502, detail="Embedding request failed")
 
 
 # ─── Models List ─────────────────────────────────────────────────────────────
