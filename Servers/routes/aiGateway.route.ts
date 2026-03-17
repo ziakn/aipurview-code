@@ -59,6 +59,22 @@ import {
   getPromptVersions,
   publishPromptVersion,
   testPrompt,
+  // Prompt Labels
+  getPromptLabels,
+  assignPromptLabel,
+  removePromptLabel,
+  // Test Datasets
+  getTestDatasets,
+  createTestDataset,
+  updateTestDataset,
+  deleteTestDataset,
+  // Risk Suggestions
+  getRiskSettings,
+  updateRiskSetting,
+  getRiskSuggestions,
+  acceptRiskSuggestion,
+  dismissRiskSuggestion,
+  runRiskDetectionManual,
 } from "../controllers/aiGateway.ctrl";
 
 // All routes require authentication
@@ -116,6 +132,15 @@ router.delete("/prompts/:id", authorize(["Admin"]), deletePrompt);
 router.get("/prompts/:id/versions", getPromptVersions);
 router.post("/prompts/:id/versions", authorize(["Admin"]), createPromptVersion);
 router.post("/prompts/:id/versions/:v/publish", authorize(["Admin"]), publishPromptVersion);
+// Prompt labels — Admin only for assign/remove
+router.get("/prompts/:id/labels", getPromptLabels);
+router.put("/prompts/:id/labels/:label", authorize(["Admin"]), assignPromptLabel);
+router.delete("/prompts/:id/labels/:label", authorize(["Admin"]), removePromptLabel);
+// Test datasets — Admin only for write
+router.get("/prompts/:id/test-datasets", getTestDatasets);
+router.post("/prompts/:id/test-datasets", authorize(["Admin"]), createTestDataset);
+router.patch("/prompts/:id/test-datasets/:datasetId", authorize(["Admin"]), updateTestDataset);
+router.delete("/prompts/:id/test-datasets/:datasetId", authorize(["Admin"]), deleteTestDataset);
 
 // Virtual key management — Admin only for write
 router.get("/virtual-keys", getVirtualKeys);
@@ -123,6 +148,14 @@ router.post("/virtual-keys", authorize(["Admin"]), createVirtualKey);
 router.patch("/virtual-keys/:id", authorize(["Admin"]), updateVirtualKey);
 router.post("/virtual-keys/:id/revoke", authorize(["Admin"]), revokeVirtualKey);
 router.delete("/virtual-keys/:id", authorize(["Admin"]), deleteVirtualKey);
+
+// Risk suggestions — detect route BEFORE :id to avoid param capture
+router.get("/risk-settings", getRiskSettings);
+router.put("/risk-settings/:conditionId", authorize(["Admin"]), updateRiskSetting);
+router.get("/risk-suggestions", getRiskSuggestions);
+router.post("/risk-suggestions/detect", authorize(["Admin"]), runRiskDetectionManual);
+router.post("/risk-suggestions/:id/accept", authorize(["Admin"]), acceptRiskSuggestion);
+router.post("/risk-suggestions/:id/dismiss", authorize(["Admin"]), dismissRiskSuggestion);
 
 // Proxy endpoints — rate limited
 router.post("/chat", generalApiLimiter, chatCompletion);

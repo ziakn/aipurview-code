@@ -207,7 +207,7 @@ function Select({
           ...sxWithoutLayoutProps,
         }}
       >
-        {items.map(
+        {items.flatMap(
           (item: {
             _id: string | number;
             name: string;
@@ -241,52 +241,56 @@ function Select({
 
             // Check single divider prop
             if (dividerAfterIndex !== undefined && index === dividerAfterIndex) {
-              return (
-                <React.Fragment key={`${id}-divider-${index}`}>
-                  <Divider sx={{ my: 0.5 }} />
-                  {dividerLabel && (
-                    <ListSubheader
-                      sx={{
-                        fontSize: 11,
-                        fontWeight: 600,
-                        color: theme.palette.text.tertiary,
-                        lineHeight: "28px",
-                        backgroundColor: "transparent",
-                      }}
-                    >
-                      {dividerLabel}
-                    </ListSubheader>
-                  )}
-                  {menuItem}
-                </React.Fragment>
-              );
+              const elements: React.ReactNode[] = [
+                <Divider key={`${id}-divider-${index}`} sx={{ my: 0.5 }} />,
+              ];
+              if (dividerLabel) {
+                elements.push(
+                  <ListSubheader
+                    key={`${id}-divider-label-${index}`}
+                    sx={{
+                      fontSize: 11,
+                      fontWeight: 600,
+                      color: theme.palette.text.tertiary,
+                      lineHeight: "28px",
+                      backgroundColor: "transparent",
+                    }}
+                  >
+                    {dividerLabel}
+                  </ListSubheader>
+                );
+              }
+              elements.push(menuItem);
+              return elements;
             }
 
             // Check multi-divider prop
             const dividerEntry = dividers?.find((d) => d.index === index);
             if (dividerEntry) {
-              return (
-                <React.Fragment key={`${id}-divider-${index}`}>
-                  <Divider sx={{ my: 0.5 }} />
-                  {dividerEntry.label && (
-                    <ListSubheader
-                      sx={{
-                        fontSize: 11,
-                        fontWeight: 600,
-                        color: theme.palette.text.tertiary,
-                        lineHeight: "28px",
-                        backgroundColor: "transparent",
-                      }}
-                    >
-                      {dividerEntry.label}
-                    </ListSubheader>
-                  )}
-                  {menuItem}
-                </React.Fragment>
-              );
+              const elements: React.ReactNode[] = [
+                <Divider key={`${id}-divider-${index}`} sx={{ my: 0.5 }} />,
+              ];
+              if (dividerEntry.label) {
+                elements.push(
+                  <ListSubheader
+                    key={`${id}-divider-label-${index}`}
+                    sx={{
+                      fontSize: 11,
+                      fontWeight: 600,
+                      color: theme.palette.text.tertiary,
+                      lineHeight: "28px",
+                      backgroundColor: "transparent",
+                    }}
+                  >
+                    {dividerEntry.label}
+                  </ListSubheader>
+                );
+              }
+              elements.push(menuItem);
+              return elements;
             }
 
-            return menuItem;
+            return [menuItem];
           }
         )}
       </MuiSelect>

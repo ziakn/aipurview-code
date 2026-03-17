@@ -64,6 +64,9 @@ import {
   getSpendLogsDetailQuery,
   ISpendLogFilters,
   purgeSpendLogsQuery,
+  getSpendByProviderQuery,
+  getErrorRateByDayQuery,
+  getTokensPerRequestByEndpointQuery,
 } from "../utils/aiGatewaySpendLog.utils";
 
 // Budget utils
@@ -90,7 +93,26 @@ import {
   getVersionsQuery,
   publishVersionQuery,
   resolveVariables,
+  getLabelsQuery,
+  assignLabelQuery,
+  removeLabelQuery,
+  getTestDatasetsQuery,
+  createTestDatasetQuery,
+  updateTestDatasetQuery,
+  deleteTestDatasetQuery,
 } from "../utils/aiGatewayPrompt.utils";
+
+// Risk suggestion utils
+import {
+  getRiskSettingsQuery,
+  upsertRiskSettingQuery,
+  getSuggestionsQuery,
+  updateSuggestionStatusQuery,
+  createSuggestionQuery,
+} from "../utils/aiGatewayRisk.utils";
+import { CONDITION_DEFINITIONS, evaluateAllConditions } from "../services/aiGateway/riskConditions";
+import { createRiskQuery } from "../utils/risk.utils";
+import { sequelize } from "../database/db";
 
 const fileName = "aiGateway.ctrl.ts";
 const ROLE_NAME_TO_ID: Record<string, number> = {
@@ -250,6 +272,8 @@ export async function createEndpoint(req: Request, res: Response) {
       temperature: req.body.temperature,
       system_prompt: req.body.system_prompt,
       rate_limit_rpm: req.body.rate_limit_rpm,
+      prompt_id: req.body.prompt_id || null,
+      prompt_label: req.body.prompt_label || null,
     });
     logStructured("successful", `gateway endpoint created: ${slug}`, fn, fileName);
 
@@ -336,6 +360,9 @@ export async function deleteEndpoint(req: Request, res: Response) {
 
     return res.status(200).json(STATUS_CODE[200]({ deleted: true }));
   } catch (error) {
+    if (error instanceof ValidationException) {
+      return res.status(400).json(STATUS_CODE[400](error.message));
+    }
     logStructured("error", "failed to delete gateway endpoint", fn, fileName);
     logger.error("Error deleting gateway endpoint:", error);
     return res.status(500).json(STATUS_CODE[500]("Internal server error"));
@@ -349,7 +376,7 @@ function getDateRange(period: string): { startDate: string; endDate: string } {
   const start = new Date();
   switch (period) {
     case "1d":
-      start.setDate(start.getDate() - 1);
+      start.setHours(0, 0, 0, 0);
       break;
     case "7d":
       start.setDate(start.getDate() - 7);
@@ -375,14 +402,17 @@ export async function getSpendSummary(req: Request, res: Response) {
   try {
     const period = (req.query.period as string) || "7d";
     const { startDate, endDate } = getDateRange(period);
-    const [summary, byDay, byModel] = await Promise.all([
+    const [summary, byDay, byModel, byProvider, errorRateByDay, tokensPerEndpoint] = await Promise.all([
       getSpendSummaryQuery(req.organizationId!, startDate, endDate),
       getSpendByDayQuery(req.organizationId!, startDate, endDate, period),
       getSpendByModelQuery(req.organizationId!, startDate, endDate),
+      getSpendByProviderQuery(req.organizationId!, startDate, endDate),
+      getErrorRateByDayQuery(req.organizationId!, startDate, endDate),
+      getTokensPerRequestByEndpointQuery(req.organizationId!, startDate, endDate),
     ]);
 
     logStructured("successful", "spend summary fetched", fn, fileName);
-    return res.status(200).json(STATUS_CODE[200]({ summary, byDay, byModel }));
+    return res.status(200).json(STATUS_CODE[200]({ summary, byDay, byModel, byProvider, errorRateByDay, tokensPerEndpoint }));
   } catch (error) {
     logStructured("error", "failed to fetch spend summary", fn, fileName);
     logger.error("Error fetching spend summary:", error);
@@ -672,11 +702,15 @@ export async function getProviders(_req: Request, res: Response) {
 
     const data = await response.json();
     logStructured("successful", "providers fetched", fn, fileName);
-    return res.status(200).json(STATUS_CODE[200]({ providers: data.providers || [] }));
+    return res.status(200).json(STATUS_CODE[200]({
+      providers: data.providers || [],
+      models: data.models || {},
+      total: data.total || 0,
+    }));
   } catch (err) {
     // AI Gateway not running — return empty list (not an error for the client)
     logger.warn("AI Gateway service unavailable:", (err as Error).message);
-    return res.status(200).json(STATUS_CODE[200]({ providers: [] }));
+    return res.status(200).json(STATUS_CODE[200]({ providers: [], models: {}, total: 0 }));
   }
 }
 
@@ -714,7 +748,7 @@ export async function createGuardrail(req: Request, res: Response) {
     // Validate regex patterns for content filter
     if (guardrail_type === "content_filter" && config?.type === "regex" && config?.pattern) {
       try {
-        new RegExp(config.pattern);
+        new RegExp(config.pattern, "i");
       } catch {
         throw new ValidationException("Invalid regex pattern");
       }
@@ -1236,7 +1270,7 @@ export async function createPromptVersion(req: Request, res: Response) {
   logStructured("processing", "creating prompt version", fn, fileName);
   try {
     const promptId = parseId(req.params.id);
-    const { content, model, config } = req.body;
+    const { content, model, config, commit_message } = req.body;
     if (!content || !Array.isArray(content) || content.length === 0) {
       throw new ValidationException("content must be a non-empty array of messages");
     }
@@ -1252,6 +1286,7 @@ export async function createPromptVersion(req: Request, res: Response) {
       model,
       config,
       created_by: Number(req.userId),
+      commit_message: commit_message || null,
     });
     logStructured("successful", `prompt version created: v${version.version}`, fn, fileName);
     return res.status(201).json(STATUS_CODE[201](version));
@@ -1361,5 +1396,357 @@ export async function testPrompt(req: Request, res: Response) {
     logStructured("error", "failed to test prompt", fn, fileName);
     logger.error("Error testing prompt:", error);
     res.status(500).json(STATUS_CODE[500]((error as Error).message || "Internal server error"));
+  }
+}
+
+// ─── Prompt Labels ─────────────────────────────────────────────────────────
+
+export async function getPromptLabels(req: Request, res: Response) {
+  const fn = "getPromptLabels";
+  logStructured("processing", "fetching prompt labels", fn, fileName);
+  try {
+    const promptId = parseId(req.params.id);
+    const labels = await getLabelsQuery(req.organizationId!, promptId);
+    logStructured("successful", `prompt labels fetched for prompt ${promptId}`, fn, fileName);
+    return res.status(200).json(STATUS_CODE[200](labels));
+  } catch (error) {
+    if (error instanceof ValidationException) {
+      return res.status(400).json(STATUS_CODE[400](error.message));
+    }
+    logStructured("error", "failed to fetch prompt labels", fn, fileName);
+    logger.error("Error fetching prompt labels:", error);
+    return res.status(500).json(STATUS_CODE[500]("Internal server error"));
+  }
+}
+
+export async function assignPromptLabel(req: Request, res: Response) {
+  const fn = "assignPromptLabel";
+  logStructured("processing", "assigning prompt label", fn, fileName);
+  try {
+    const promptId = parseId(req.params.id);
+    const labelName = String(req.params.label);
+    const { version_id } = req.body;
+    if (!labelName || !version_id) {
+      throw new ValidationException("label name and version_id are required");
+    }
+    if (!/^[a-z0-9][a-z0-9-]*$/.test(labelName) || labelName.length < 2 || labelName.length > 64) {
+      throw new ValidationException(
+        "Label must be 2-64 characters, lowercase alphanumeric and hyphens only"
+      );
+    }
+
+    const label = await assignLabelQuery(req.organizationId!, promptId, {
+      label_name: labelName,
+      version_id: Number(version_id),
+      assigned_by: Number(req.userId),
+    });
+    logStructured("successful", `label "${labelName}" assigned to prompt ${promptId}`, fn, fileName);
+    return res.status(200).json(STATUS_CODE[200](label));
+  } catch (error) {
+    if (error instanceof ValidationException) {
+      return res.status(400).json(STATUS_CODE[400](error.message));
+    }
+    logStructured("error", "failed to assign prompt label", fn, fileName);
+    logger.error("Error assigning prompt label:", error);
+    return res.status(500).json(STATUS_CODE[500]("Internal server error"));
+  }
+}
+
+export async function removePromptLabel(req: Request, res: Response) {
+  const fn = "removePromptLabel";
+  logStructured("processing", "removing prompt label", fn, fileName);
+  try {
+    const promptId = parseId(req.params.id);
+    const labelName = String(req.params.label);
+    const deleted = await removeLabelQuery(req.organizationId!, promptId, labelName);
+    if (!deleted) {
+      return res.status(404).json(STATUS_CODE[404]("Label not found"));
+    }
+    logStructured("successful", `label "${labelName}" removed from prompt ${promptId}`, fn, fileName);
+    return res.status(200).json(STATUS_CODE[200]({ deleted: true }));
+  } catch (error) {
+    if (error instanceof ValidationException) {
+      return res.status(400).json(STATUS_CODE[400](error.message));
+    }
+    logStructured("error", "failed to remove prompt label", fn, fileName);
+    logger.error("Error removing prompt label:", error);
+    return res.status(500).json(STATUS_CODE[500]("Internal server error"));
+  }
+}
+
+// ─── Test Datasets ─────────────────────────────────────────────────────────
+
+export async function getTestDatasets(req: Request, res: Response) {
+  const fn = "getTestDatasets";
+  logStructured("processing", "fetching test datasets", fn, fileName);
+  try {
+    const promptId = parseId(req.params.id);
+    const datasets = await getTestDatasetsQuery(req.organizationId!, promptId);
+    logStructured("successful", `test datasets fetched for prompt ${promptId}`, fn, fileName);
+    return res.status(200).json(STATUS_CODE[200](datasets));
+  } catch (error) {
+    if (error instanceof ValidationException) {
+      return res.status(400).json(STATUS_CODE[400](error.message));
+    }
+    logStructured("error", "failed to fetch test datasets", fn, fileName);
+    logger.error("Error fetching test datasets:", error);
+    return res.status(500).json(STATUS_CODE[500]("Internal server error"));
+  }
+}
+
+export async function createTestDataset(req: Request, res: Response) {
+  const fn = "createTestDataset";
+  logStructured("processing", "creating test dataset", fn, fileName);
+  try {
+    const promptId = parseId(req.params.id);
+    const { name, test_cases } = req.body;
+    if (!name) {
+      throw new ValidationException("name is required");
+    }
+
+    const dataset = await createTestDatasetQuery(req.organizationId!, promptId, {
+      name,
+      test_cases: test_cases || [],
+      created_by: Number(req.userId),
+    });
+    logStructured("successful", `test dataset created: ${name}`, fn, fileName);
+    return res.status(201).json(STATUS_CODE[201](dataset));
+  } catch (error) {
+    if (error instanceof ValidationException) {
+      return res.status(400).json(STATUS_CODE[400](error.message));
+    }
+    logStructured("error", "failed to create test dataset", fn, fileName);
+    logger.error("Error creating test dataset:", error);
+    return res.status(500).json(STATUS_CODE[500]("Internal server error"));
+  }
+}
+
+export async function updateTestDataset(req: Request, res: Response) {
+  const fn = "updateTestDataset";
+  logStructured("processing", "updating test dataset", fn, fileName);
+  try {
+    const promptId = parseId(req.params.id);
+    const datasetId = parseId(req.params.datasetId);
+    const { name, test_cases } = req.body;
+    const updated = await updateTestDatasetQuery(req.organizationId!, promptId, datasetId, { name, test_cases });
+    if (!updated) {
+      return res.status(404).json(STATUS_CODE[404]("Test dataset not found"));
+    }
+    logStructured("successful", `test dataset updated: ${datasetId}`, fn, fileName);
+    return res.status(200).json(STATUS_CODE[200](updated));
+  } catch (error) {
+    if (error instanceof ValidationException) {
+      return res.status(400).json(STATUS_CODE[400](error.message));
+    }
+    logStructured("error", "failed to update test dataset", fn, fileName);
+    logger.error("Error updating test dataset:", error);
+    return res.status(500).json(STATUS_CODE[500]("Internal server error"));
+  }
+}
+
+export async function deleteTestDataset(req: Request, res: Response) {
+  const fn = "deleteTestDataset";
+  logStructured("processing", "deleting test dataset", fn, fileName);
+  try {
+    const promptId = parseId(req.params.id);
+    const datasetId = parseId(req.params.datasetId);
+    const deleted = await deleteTestDatasetQuery(req.organizationId!, promptId, datasetId);
+    if (!deleted) {
+      return res.status(404).json(STATUS_CODE[404]("Test dataset not found"));
+    }
+    logStructured("successful", `test dataset deleted: ${datasetId}`, fn, fileName);
+    return res.status(200).json(STATUS_CODE[200]({ deleted: true }));
+  } catch (error) {
+    logStructured("error", "failed to delete test dataset", fn, fileName);
+    logger.error("Error deleting test dataset:", error);
+    return res.status(500).json(STATUS_CODE[500]("Internal server error"));
+  }
+}
+
+// ─── Risk Suggestions ─────────────────────────────────────────────────────────
+
+export async function getRiskSettings(req: Request, res: Response) {
+  const fn = "getRiskSettings";
+  logStructured("processing", "fetching risk detection settings", fn, fileName);
+  try {
+    const saved = await getRiskSettingsQuery(req.organizationId!);
+    const savedMap = new Map(saved.map((s) => [s.condition_id, s]));
+
+    // Merge saved settings with defaults so the UI always gets all conditions
+    const merged = CONDITION_DEFINITIONS.map((def) => {
+      const s = savedMap.get(def.id);
+      return {
+        condition_id: def.id,
+        label: def.label,
+        default_threshold: def.default_threshold,
+        default_severity: def.default_severity,
+        is_enabled: s ? s.is_enabled : true,
+        threshold: s ? { ...def.default_threshold, ...s.threshold } : def.default_threshold,
+        severity_override: s?.severity_override || null,
+      };
+    });
+
+    logStructured("successful", "risk detection settings fetched", fn, fileName);
+    return res.status(200).json(STATUS_CODE[200](merged));
+  } catch (error) {
+    logStructured("error", "failed to fetch risk detection settings", fn, fileName);
+    logger.error("Error fetching risk settings:", error);
+    return res.status(500).json(STATUS_CODE[500]("Internal server error"));
+  }
+}
+
+export async function updateRiskSetting(req: Request, res: Response) {
+  const fn = "updateRiskSetting";
+  logStructured("processing", "updating risk detection setting", fn, fileName);
+  try {
+    const conditionId = String(req.params.conditionId);
+    if (!conditionId) {
+      throw new ValidationException("conditionId is required");
+    }
+    const { is_enabled, threshold, severity_override } = req.body;
+    const updated = await upsertRiskSettingQuery(req.organizationId!, conditionId, {
+      is_enabled,
+      threshold,
+      severity_override,
+    });
+    logStructured("successful", `risk setting updated: ${conditionId}`, fn, fileName);
+    return res.status(200).json(STATUS_CODE[200](updated));
+  } catch (error) {
+    if (error instanceof ValidationException) {
+      return res.status(400).json(STATUS_CODE[400](error.message));
+    }
+    logStructured("error", "failed to update risk detection setting", fn, fileName);
+    logger.error("Error updating risk setting:", error);
+    return res.status(500).json(STATUS_CODE[500]("Internal server error"));
+  }
+}
+
+export async function getRiskSuggestions(req: Request, res: Response) {
+  const fn = "getRiskSuggestions";
+  logStructured("processing", "fetching risk suggestions", fn, fileName);
+  try {
+    const status = req.query.status as string | undefined;
+    const suggestions = await getSuggestionsQuery(req.organizationId!, status);
+    logStructured("successful", "risk suggestions fetched", fn, fileName);
+    return res.status(200).json(STATUS_CODE[200](suggestions));
+  } catch (error) {
+    logStructured("error", "failed to fetch risk suggestions", fn, fileName);
+    logger.error("Error fetching risk suggestions:", error);
+    return res.status(500).json(STATUS_CODE[500]("Internal server error"));
+  }
+}
+
+export async function acceptRiskSuggestion(req: Request, res: Response) {
+  const fn = "acceptRiskSuggestion";
+  logStructured("processing", "accepting risk suggestion", fn, fileName);
+  try {
+    const id = parseId(req.params.id);
+    const {
+      risk_name,
+      risk_description,
+      severity,
+      risk_category,
+      mitigation_plan,
+      projects,
+      frameworks,
+    } = req.body;
+
+    // Create the actual risk in the risk register
+    const transaction = await sequelize.transaction();
+    try {
+      const risk = await createRiskQuery(
+        {
+          risk_name: risk_name || "AI Gateway risk",
+          risk_description: risk_description || "",
+          severity: severity || "medium",
+          risk_category: risk_category || ["Operational"],
+          mitigation_plan: mitigation_plan || "",
+          mitigation_status: "Not Started",
+          current_risk_level: severity || "medium",
+          projects: projects || [],
+          frameworks: frameworks || [],
+        },
+        req.organizationId!,
+        transaction
+      );
+
+      // Mark suggestion as accepted with a link to the risk
+      const updated = await updateSuggestionStatusQuery(req.organizationId!, id, {
+        status: "accepted",
+        reviewed_by: Number(req.userId),
+        accepted_risk_id: risk.id,
+      });
+
+      if (!updated) {
+        await transaction.rollback();
+        return res.status(404).json(STATUS_CODE[404]("Suggestion not found or already reviewed"));
+      }
+
+      await transaction.commit();
+      logStructured("successful", `risk suggestion ${id} accepted → risk ${risk.id}`, fn, fileName);
+      return res.status(200).json(STATUS_CODE[200]({ suggestion: updated, risk_id: risk.id }));
+    } catch (err) {
+      await transaction.rollback();
+      throw err;
+    }
+  } catch (error) {
+    if (error instanceof ValidationException) {
+      return res.status(400).json(STATUS_CODE[400](error.message));
+    }
+    logStructured("error", "failed to accept risk suggestion", fn, fileName);
+    logger.error("Error accepting risk suggestion:", error);
+    return res.status(500).json(STATUS_CODE[500]("Internal server error"));
+  }
+}
+
+export async function dismissRiskSuggestion(req: Request, res: Response) {
+  const fn = "dismissRiskSuggestion";
+  logStructured("processing", "dismissing risk suggestion", fn, fileName);
+  try {
+    const id = parseId(req.params.id);
+    const { dismiss_reason } = req.body;
+    const updated = await updateSuggestionStatusQuery(req.organizationId!, id, {
+      status: "dismissed",
+      reviewed_by: Number(req.userId),
+      dismiss_reason,
+    });
+    if (!updated) {
+      return res.status(404).json(STATUS_CODE[404]("Suggestion not found or already reviewed"));
+    }
+    logStructured("successful", `risk suggestion ${id} dismissed`, fn, fileName);
+    return res.status(200).json(STATUS_CODE[200](updated));
+  } catch (error) {
+    logStructured("error", "failed to dismiss risk suggestion", fn, fileName);
+    logger.error("Error dismissing risk suggestion:", error);
+    return res.status(500).json(STATUS_CODE[500]("Internal server error"));
+  }
+}
+
+export async function runRiskDetectionManual(req: Request, res: Response) {
+  const fn = "runRiskDetectionManual";
+  logStructured("processing", "running manual risk detection", fn, fileName);
+  try {
+    const orgId = req.organizationId!;
+    const newSuggestions = await evaluateAllConditions(orgId);
+
+    // Create suggestion records
+    for (const suggestion of newSuggestions) {
+      await createSuggestionQuery(orgId, {
+        condition_id: suggestion.condition_id,
+        title: suggestion.title,
+        description: suggestion.description,
+        severity: suggestion.severity,
+        evidence: suggestion.evidence,
+        compliance_tags: suggestion.compliance_tags,
+        suggested_mitigation: suggestion.suggested_mitigation,
+      });
+    }
+
+    logStructured("successful", `manual risk detection: ${newSuggestions.length} new suggestions`, fn, fileName);
+    return res.status(200).json(STATUS_CODE[200]({ new_suggestions: newSuggestions.length }));
+  } catch (error) {
+    logStructured("error", "failed to run manual risk detection", fn, fileName);
+    logger.error("Error running manual risk detection:", error);
+    return res.status(500).json(STATUS_CODE[500]("Internal server error"));
   }
 }

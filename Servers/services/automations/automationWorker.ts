@@ -24,6 +24,7 @@ import { runAgentDiscoverySync } from "../agentDiscovery/agentDiscoverySync.serv
 import { processScheduledAiDetectionScans } from "../aiDetection/scheduledScanProcessor";
 import { resetAllBudgets } from "../../utils/aiGatewayBudget.utils";
 import { resetVirtualKeyBudgets } from "../../utils/aiGatewayVirtualKey.utils";
+import { runRiskDetection } from "../aiGateway/riskDetectionJob";
 import { compileMjmlToHtml } from "../../tools/mjmlCompiler";
 import { readFileSync } from "fs";
 import { join } from "path";
@@ -467,6 +468,8 @@ export const createAutomationWorker = () => {
         } else if (name === "ai_gateway_budget_reset") {
           await resetAllBudgets();
           await resetVirtualKeyBudgets();
+        } else if (name === "ai_gateway_risk_detection") {
+          await runRiskDetection();
         } else if (name === "send_pmm_notification") {
           // PMM notification handling - send email using MJML templates
           const { type, data } = job.data;

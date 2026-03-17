@@ -12,6 +12,12 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  PieChart,
+  Pie,
+  Cell,
+  AreaChart,
+  Area,
+  Legend,
 } from "recharts";
 import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtended";
 import { EmptyState } from "../../../components/EmptyState";
@@ -22,6 +28,13 @@ import { sectionTitleSx, useCardSx } from "../shared";
 import { useUserGuideSidebarContext } from "../../../components/UserGuide/UserGuideSidebarContext";
 import MockDashboard from "./MockDashboard";
 import OnboardingOverlay from "./OnboardingOverlay";
+
+/** Shared date tick formatter for all time-series charts */
+const formatDayTick = (v: string, period: string) => {
+  if (period === "1d") return v;
+  const d = new Date(v + "T00:00:00");
+  return isNaN(d.getTime()) ? v : d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+};
 
 const PERIOD_OPTIONS = [
   { _id: "1d", name: "Today" },
@@ -42,6 +55,7 @@ export default function SpendDashboardPage() {
   const [guardrailStats, setGuardrailStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isFirstTime, setIsFirstTime] = useState<boolean | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const [setupStatus, setSetupStatus] = useState({
     hasApiKey: false,
     hasEndpoint: false,
@@ -92,18 +106,21 @@ export default function SpendDashboardPage() {
       }
     };
     load();
-  }, [period]);
+  }, [period, reloadKey]);
 
   const summary = data?.summary;
   const byDay = data?.byDay || [];
   const byModel = data?.byModel || [];
+  const byProvider = data?.byProvider || [];
+  const errorRateByDay = data?.errorRateByDay || [];
+  const tokensPerEndpoint = data?.tokensPerEndpoint || [];
 
   const totalCost = summary ? `$${Number(summary.total_cost).toFixed(4)}` : "$0.00";
   const totalRequests = String(summary?.total_requests ?? 0);
   const totalTokens = summary ? Number(summary.total_tokens).toLocaleString() : "0";
   const avgLatency = summary ? `${Math.round(summary.avg_latency_ms || 0)}ms` : "0ms";
 
-  const hasData = byDay.length > 0 || byModel.length > 0 || byEndpoint.length > 0;
+  const hasData = byDay.length > 0 || byModel.length > 0 || byEndpoint.length > 0 || (summary?.total_requests > 0);
 
   const refreshSetupStatus = useCallback(async () => {
     const [keysRes, endpointsRes, vkeysRes, logsCheck] = await Promise.all([
@@ -121,6 +138,7 @@ export default function SpendDashboardPage() {
     setSetupStatus(newStatus);
     if (newStatus.hasRequests) {
       setIsFirstTime(false);
+      setReloadKey((k) => k + 1);
     }
   }, []);
 
@@ -202,6 +220,19 @@ export default function SpendDashboardPage() {
         </EmptyState>
       )}
 
+      {!loading && hasData && byDay.length === 0 && byModel.length === 0 && byEndpoint.length === 0 && byUser.length === 0 && (
+        <Box sx={{
+          p: "16px",
+          borderRadius: "4px",
+          border: `1px solid ${palette.border.light}`,
+          textAlign: "center",
+        }}>
+          <Typography fontSize={13} color="text.secondary">
+            No detailed breakdowns available for this period. Try selecting a longer time range.
+          </Typography>
+        </Box>
+      )}
+
       {/* Cost over time chart */}
       {!loading && byDay.length > 0 && (
         <Box sx={cardSx}>
@@ -220,11 +251,7 @@ export default function SpendDashboardPage() {
                   tick={{ fontSize: 11, fill: palette.text.tertiary }}
                   tickLine={false}
                   axisLine={{ stroke: palette.border.light }}
-                  tickFormatter={(v) => {
-                    if (period === "1d") return v;
-                    const d = new Date(v + "T00:00:00");
-                    return isNaN(d.getTime()) ? v : d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-                  }}
+                  tickFormatter={(v) => formatDayTick(v, period)}
                 />
                 <YAxis
                   tick={{ fontSize: 11, fill: palette.text.tertiary }}
@@ -371,6 +398,194 @@ export default function SpendDashboardPage() {
               </Stack>
             </Box>
           )}
+        </Stack>
+      )}
+
+      {/* Error rate + Tokens per request */}
+      {!loading && (errorRateByDay.length > 0 || tokensPerEndpoint.length > 0) && (
+        <Stack direction={{ xs: "column", md: "row" }} gap="16px">
+          {/* Error rate over time */}
+          {errorRateByDay.length > 0 && (
+            <Box sx={{ ...cardSx, flex: 1 }}>
+              <Stack gap="12px">
+                <Stack direction="row" alignItems="center" gap="6px">
+                  <Typography sx={sectionTitleSx}>Error rate</Typography>
+                  <MuiTooltip title="Percentage of non-200 responses per day — spikes indicate provider issues or misconfigured endpoints" arrow placement="top">
+                    <Box sx={{ display: "flex", cursor: "help" }}><Info size={14} color={palette.text.disabled} /></Box>
+                  </MuiTooltip>
+                </Stack>
+                <ResponsiveContainer width="100%" height={180} style={{ outline: "none" }}>
+                  <AreaChart data={errorRateByDay}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={palette.border.light} />
+                    <XAxis
+                      dataKey="day"
+                      tick={{ fontSize: 11, fill: palette.text.tertiary }}
+                      tickLine={false}
+                      axisLine={{ stroke: palette.border.light }}
+                      tickFormatter={(v) => formatDayTick(v, period)}
+                    />
+                    <YAxis
+                      tick={{ fontSize: 11, fill: palette.text.tertiary }}
+                      tickLine={false}
+                      axisLine={{ stroke: palette.border.light }}
+                      tickFormatter={(v) => `${v}%`}
+                    />
+                    <Tooltip
+                      contentStyle={{ fontSize: 12, borderRadius: 4, border: `1px solid ${palette.border.light}` }}
+                      formatter={(value: number, name: string) => [name === "error_rate" ? `${value}%` : value, name === "error_rate" ? "Error rate" : "Errors"]}
+                    />
+                    <Area type="monotone" dataKey="error_rate" stroke="#DC2626" fill="#DC262620" strokeWidth={2} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </Stack>
+            </Box>
+          )}
+
+          {/* Tokens per request by endpoint */}
+          {tokensPerEndpoint.length > 0 && (
+            <Box sx={{ ...cardSx, flex: 1 }}>
+              <Stack gap="12px">
+                <Stack direction="row" alignItems="center" gap="6px">
+                  <Typography sx={sectionTitleSx}>Tokens per request</Typography>
+                  <MuiTooltip title="Average token usage per request by endpoint — helps identify chatty prompts or missing max_token limits" arrow placement="top">
+                    <Box sx={{ display: "flex", cursor: "help" }}><Info size={14} color={palette.text.disabled} /></Box>
+                  </MuiTooltip>
+                </Stack>
+                <ResponsiveContainer width="100%" height={180} style={{ outline: "none" }}>
+                  <BarChart data={tokensPerEndpoint} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke={palette.border.light} />
+                    <XAxis
+                      type="number"
+                      tick={{ fontSize: 11, fill: palette.text.tertiary }}
+                      tickLine={false}
+                      axisLine={{ stroke: palette.border.light }}
+                    />
+                    <YAxis
+                      type="category"
+                      dataKey="endpoint"
+                      tick={{ fontSize: 11, fill: palette.text.tertiary }}
+                      tickLine={false}
+                      axisLine={{ stroke: palette.border.light }}
+                      width={120}
+                    />
+                    <Tooltip
+                      contentStyle={{ fontSize: 12, borderRadius: 4, border: `1px solid ${palette.border.light}` }}
+                      formatter={(value: number, name: string) => [value.toLocaleString(), name === "avg_prompt_tokens" ? "Prompt" : "Completion"]}
+                    />
+                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                    <Bar dataKey="avg_prompt_tokens" stackId="tokens" fill={chartPalette[0]} radius={[0, 0, 0, 0]} name="Prompt" />
+                    <Bar dataKey="avg_completion_tokens" stackId="tokens" fill={chartPalette[1]} radius={[0, 4, 4, 0]} name="Completion" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Stack>
+            </Box>
+          )}
+        </Stack>
+      )}
+
+      {/* Cost by provider + Guardrail detections */}
+      {!loading && (byProvider.length > 0 || guardrailStats?.byDay?.length > 0) && (
+        <Stack direction={{ xs: "column", md: "row" }} gap="16px">
+          {/* Cost by provider — donut chart */}
+          {byProvider.length > 0 && (
+            <Box sx={{ ...cardSx, flex: 1 }}>
+              <Stack gap="12px">
+                <Stack direction="row" alignItems="center" gap="6px">
+                  <Typography sx={sectionTitleSx}>Cost by provider</Typography>
+                  <MuiTooltip title="Spend distribution across LLM providers — high concentration on a single provider increases vendor risk" arrow placement="top">
+                    <Box sx={{ display: "flex", cursor: "help" }}><Info size={14} color={palette.text.disabled} /></Box>
+                  </MuiTooltip>
+                </Stack>
+                <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                  <ResponsiveContainer width={160} height={160} style={{ outline: "none" }}>
+                    <PieChart>
+                      <Pie
+                        data={byProvider}
+                        dataKey="total_cost"
+                        nameKey="group_key"
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={45}
+                        outerRadius={70}
+                        paddingAngle={2}
+                        strokeWidth={0}
+                      >
+                        {byProvider.map((_: any, i: number) => (
+                          <Cell key={i} fill={chartPalette[i % chartPalette.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        contentStyle={{ fontSize: 12, borderRadius: 4, border: `1px solid ${palette.border.light}` }}
+                        formatter={(value: number) => [`$${value.toFixed(4)}`, "Cost"]}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <Stack gap="6px" flex={1}>
+                    {(() => {
+                      const totalProviderCost = byProvider.reduce((s: number, pp: any) => s + Number(pp.total_cost), 0);
+                      return byProvider.map((p: any, i: number) => {
+                      const pct = totalProviderCost > 0 ? Math.round((Number(p.total_cost) / totalProviderCost) * 100) : 0;
+                      return (
+                        <Stack key={p.group_key} direction="row" justifyContent="space-between" alignItems="center">
+                          <Stack direction="row" alignItems="center" gap="8px">
+                            <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: chartPalette[i % chartPalette.length], flexShrink: 0 }} />
+                            <Typography sx={{ fontSize: 12 }}>{p.group_key}</Typography>
+                          </Stack>
+                          <Stack direction="row" gap="8px" alignItems="center">
+                            <Typography sx={{ fontSize: 11, color: palette.text.tertiary }}>{pct}%</Typography>
+                            <Typography sx={{ fontSize: 12, fontWeight: 600, minWidth: 60, textAlign: "right" }}>${Number(p.total_cost).toFixed(4)}</Typography>
+                          </Stack>
+                        </Stack>
+                      );
+                    });
+                    })()}
+                  </Stack>
+                </Box>
+              </Stack>
+            </Box>
+          )}
+
+        </Stack>
+      )}
+
+      {/* Cost by provider + Guardrail detections */}
+      {!loading && (byProvider.length > 0 || guardrailStats?.byDay?.length > 0) && (
+        <Stack direction={{ xs: "column", md: "row" }} gap="16px">
+          {/* Guardrail detections trend */}
+          {guardrailStats?.byDay?.length > 0 && (
+            <Box sx={{ ...cardSx, flex: 1 }}>
+              <Stack gap="12px">
+                <Stack direction="row" alignItems="center" gap="6px">
+                  <Typography sx={sectionTitleSx}>Guardrail detections</Typography>
+                  <MuiTooltip title="Daily trend of blocked and masked requests — rising detections may indicate increased PII exposure or attack attempts" arrow placement="top">
+                    <Box sx={{ display: "flex", cursor: "help" }}><Info size={14} color={palette.text.disabled} /></Box>
+                  </MuiTooltip>
+                </Stack>
+                <ResponsiveContainer width="100%" height={180} style={{ outline: "none" }}>
+                  <AreaChart data={guardrailStats.byDay}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={palette.border.light} />
+                    <XAxis
+                      dataKey="day"
+                      tick={{ fontSize: 11, fill: palette.text.tertiary }}
+                      tickLine={false}
+                      axisLine={{ stroke: palette.border.light }}
+                      tickFormatter={(v) => formatDayTick(v, period)}
+                    />
+                    <YAxis
+                      tick={{ fontSize: 11, fill: palette.text.tertiary }}
+                      tickLine={false}
+                      axisLine={{ stroke: palette.border.light }}
+                    />
+                    <Tooltip contentStyle={{ fontSize: 12, borderRadius: 4, border: `1px solid ${palette.border.light}` }} />
+                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                    <Area type="monotone" dataKey="blocked" stackId="1" stroke="#DC2626" fill="#DC262630" strokeWidth={1.5} name="Blocked" />
+                    <Area type="monotone" dataKey="masked" stackId="1" stroke="#D97706" fill="#D9770630" strokeWidth={1.5} name="Masked" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </Stack>
+            </Box>
+          )}
+
         </Stack>
       )}
 

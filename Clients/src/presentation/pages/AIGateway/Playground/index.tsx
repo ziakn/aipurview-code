@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Box, Typography, Stack, IconButton, Slider } from "@mui/material";
-import { Settings, Router, MessageSquare, Zap, Coins } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Settings, Router, MessageSquare, Zap, Coins, TriangleAlert, KeyRound } from "lucide-react";
 import { AssistantRuntimeProvider } from "@assistant-ui/react";
 import { ThreadPrimitive } from "@assistant-ui/react";
 import Select from "../../../components/Inputs/Select";
@@ -73,7 +74,7 @@ export default function PlaygroundPage() {
     >
       <Box sx={{ display: "flex", flexDirection: "column", minHeight: "calc(100vh - 280px)" }}>
         {/* Controls */}
-        <Stack direction="row" gap="8px" mb={2} alignItems="center">
+        <Stack direction="row" gap="8px" mb="8px" alignItems="center">
           <Box sx={{ minWidth: 320, maxWidth: 420 }}>
             <Select
               id="endpoint"
@@ -165,18 +166,48 @@ export default function PlaygroundPage() {
         >
           {!selectedEndpoint ? (
             <EmptyState
-              icon={MessageSquare}
-              message="Select an endpoint to start chatting"
+              icon={endpoints.length === 0 ? Router : MessageSquare}
+              message={endpoints.length === 0
+                ? "No endpoints available. Configure an endpoint before using the playground."
+                : "Select an endpoint to start chatting"}
             >
+              {endpoints.length === 0 && (
+                <Box sx={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "8px",
+                  p: "12px 16px",
+                  borderRadius: "4px",
+                  border: "1px solid #FEDF89",
+                  bgcolor: "#FFFAEB",
+                  mb: "8px",
+                }}>
+                  <TriangleAlert size={16} strokeWidth={1.5} color="#B54708" style={{ flexShrink: 0, marginTop: 1 }} />
+                  <Box>
+                    <Typography fontSize={13} fontWeight={500} color="#B54708">
+                      Setup required
+                    </Typography>
+                    <Typography fontSize={12} color="#93370D" mt="2px">
+                      The playground needs at least one active endpoint.{" "}
+                      <Link to="/ai-gateway/settings" style={{ color: "#B54708", fontWeight: 500 }}>Add an API key</Link> in Settings, then{" "}
+                      <Link to="/ai-gateway/endpoints" style={{ color: "#B54708", fontWeight: 500 }}>create an endpoint</Link> to get started.
+                    </Typography>
+                  </Box>
+                </Box>
+              )}
               <EmptyStateTip
-                icon={Zap}
-                title="Test endpoints before production"
-                description="Send test messages to any configured endpoint and verify model behavior, system prompts, and response quality before routing production traffic."
+                icon={endpoints.length === 0 ? KeyRound : Zap}
+                title={endpoints.length === 0 ? "Step 1: Add an API key" : "Test endpoints before production"}
+                description={endpoints.length === 0
+                  ? "Go to Settings and add your provider API key (OpenAI, Anthropic, etc.)."
+                  : "Send test messages to any configured endpoint and verify model behavior, system prompts, and response quality before routing production traffic."}
               />
               <EmptyStateTip
-                icon={Coins}
-                title="Estimate cost per message"
-                description="Every playground message shows its cost and token usage. Multiply by your expected daily volume to forecast monthly spend before going live."
+                icon={endpoints.length === 0 ? Router : Coins}
+                title={endpoints.length === 0 ? "Step 2: Create an endpoint" : "Estimate cost per message"}
+                description={endpoints.length === 0
+                  ? "Go to Endpoints and create one that pairs a model with your API key."
+                  : "Every playground message shows its cost and token usage. Multiply by your expected daily volume to forecast monthly spend before going live."}
               />
             </EmptyState>
           ) : (

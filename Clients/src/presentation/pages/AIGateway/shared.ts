@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useTheme } from "@mui/material";
 import { PROVIDER_ICONS } from "../../components/ProviderIcons";
+import { apiServices } from "../../../infrastructure/api/networkServices";
 
 export const sectionTitleSx = { fontWeight: 600, fontSize: 16 };
 
@@ -10,7 +11,7 @@ export function useCardSx() {
     background: theme.palette.background.paper,
     border: `1.5px solid ${theme.palette.border.light}`,
     borderRadius: theme.shape.borderRadius,
-    p: theme.spacing(5, 6),
+    p: "16px",
     boxShadow: "none",
   };
 }
@@ -83,52 +84,64 @@ export const TOP_PROVIDERS = [
   { _id: "cohere", name: "Cohere" },
 ];
 
-/** Model options for endpoint creation (provider/model format) */
-export const MODEL_OPTIONS = [
-  { id: "openai/gpt-4o", provider: "openai" },
-  { id: "openai/gpt-4o-mini", provider: "openai" },
-  { id: "openai/gpt-4.1", provider: "openai" },
-  { id: "openai/gpt-4.1-mini", provider: "openai" },
-  { id: "openai/gpt-4.1-nano", provider: "openai" },
-  { id: "openai/o3", provider: "openai" },
-  { id: "openai/o3-mini", provider: "openai" },
-  { id: "openai/o4-mini", provider: "openai" },
-  { id: "anthropic/claude-opus-4-20250514", provider: "anthropic" },
-  { id: "anthropic/claude-sonnet-4-20250514", provider: "anthropic" },
-  { id: "anthropic/claude-haiku-4-20250414", provider: "anthropic" },
-  { id: "anthropic/claude-3.5-sonnet-20240620", provider: "anthropic" },
-  { id: "gemini/gemini-2.5-pro-preview-06-05", provider: "gemini" },
-  { id: "gemini/gemini-2.5-flash-preview-05-20", provider: "gemini" },
-  { id: "gemini/gemini-2.0-flash", provider: "gemini" },
-  { id: "mistral/mistral-large-latest", provider: "mistral" },
-  { id: "mistral/mistral-medium-latest", provider: "mistral" },
-  { id: "mistral/mistral-small-latest", provider: "mistral" },
-  { id: "xai/grok-3", provider: "xai" },
-  { id: "xai/grok-3-mini", provider: "xai" },
-  { id: "bedrock/anthropic.claude-sonnet-4-20250514-v1:0", provider: "bedrock" },
-  { id: "bedrock/anthropic.claude-3-5-sonnet-20240620-v1:0", provider: "bedrock" },
-  { id: "bedrock/amazon.nova-pro-v1:0", provider: "bedrock" },
-  { id: "together_ai/meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo", provider: "together_ai" },
-  { id: "together_ai/meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo", provider: "together_ai" },
-  { id: "openrouter/openai/gpt-4o", provider: "openrouter" },
-  { id: "openrouter/anthropic/claude-sonnet-4", provider: "openrouter" },
-].sort((a, b) => a.provider.localeCompare(b.provider));
+/**
+ * Hook: fetch models from the AI Gateway (LiteLLM registry) and provide
+ * provider → model cascading data for Select components.
+ *
+ * Returns { providers, modelsByProvider, getModelsForProvider, loading }
+ */
+export function useGatewayModels() {
+  const [providers, setProviders] = useState<string[]>([]);
+  const [modelsByProvider, setModelsByProvider] = useState<Record<string, { id: string; mode: string }[]>>({});
+  const [loading, setLoading] = useState(true);
 
-/** Select-compatible model items */
-export const MODEL_SELECT_ITEMS = MODEL_OPTIONS.map((m) => ({ _id: m.id, name: m.id }));
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await apiServices.get("/ai-gateway/providers");
+        const data = res?.data?.data;
+        if (!cancelled && data) {
+          // Filter to chat-capable providers, sort alphabetically
+          const allProviders: string[] = (data.providers || []).sort();
+          const allModels: Record<string, { id: string; provider: string; mode: string }[]> = data.models || {};
 
-/** Divider positions between provider groups in the model Select */
-export const MODEL_DIVIDERS: { index: number; label: string }[] = (() => {
-  const dividers: { index: number; label: string }[] = [];
-  let prev = "";
-  MODEL_OPTIONS.forEach((m, i) => {
-    if (m.provider !== prev && i > 0) {
-      dividers.push({ index: i, label: m.provider.toUpperCase() });
-    }
-    prev = m.provider;
-  });
-  return dividers;
-})();
+          // Only keep providers that have chat models
+          const filtered: Record<string, { id: string; mode: string }[]> = {};
+          for (const p of allProviders) {
+            const models = (allModels[p] || [])
+              .filter((m: any) => m.mode === "chat" || m.mode === "completion")
+              .sort((a: any, b: any) => a.id.localeCompare(b.id));
+            if (models.length > 0) filtered[p] = models;
+          }
+
+          setProviders(Object.keys(filtered).sort());
+          setModelsByProvider(filtered);
+        }
+      } catch {
+        // Gateway unavailable — providers stay empty
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  /** Get Select-compatible items for a given provider (memoized) */
+  const getModelsForProvider = useCallback(
+    (provider: string) =>
+      (modelsByProvider[provider] || []).map((m) => ({
+        _id: `${provider}/${m.id}`,
+        name: m.id,
+      })),
+    [modelsByProvider]
+  );
+
+  /** Get Select-compatible provider items (memoized) */
+  const providerItems = useMemo(() => providers.map((p) => ({ _id: p, name: p })), [providers]);
+
+  return { providers, providerItems, modelsByProvider, getModelsForProvider, loading };
+}
 
 /** Convert a display name to a URL-safe slug */
 export function slugify(value: string): string {
@@ -150,3 +163,136 @@ export const WARNING_BG = "#FFFAEB";
 export const WARNING_BORDER = "#FEDF89";
 export const WARNING_TEXT = "#B54708";
 export const KEY_DISPLAY_BG = "#F9FAFB";
+
+/** Full API URL for gateway requests (avoids concatenating "/api" in every file) */
+export const GATEWAY_API_URL = GATEWAY_URL + "/api";
+
+// ─── Prompt utilities (shared across Prompt editor, Compare, TestDataset) ────
+
+const VARIABLE_PATTERN = /\{\{(\w+)\}\}/g;
+
+/** Extract unique {{varName}} tokens from message content. */
+export function extractVars(messages: Array<{ content: string }>): string[] {
+  const vars = new Set<string>();
+  for (const msg of messages) {
+    for (const [, name] of msg.content.matchAll(VARIABLE_PATTERN)) {
+      vars.add(name);
+    }
+  }
+  return Array.from(vars);
+}
+
+/** Extract unique @prompt:slug references from message content. */
+export function extractPromptRefs(messages: Array<{ content: string }>): string[] {
+  const refs = new Set<string>();
+  for (const msg of messages) {
+    for (const [, slug] of msg.content.matchAll(/@prompt:([a-z0-9-]+)/g)) {
+      refs.add(slug);
+    }
+  }
+  return Array.from(refs);
+}
+
+/** Replace {{varName}} placeholders in messages with provided values. */
+export function resolveMessageVariables(
+  messages: Array<{ role: string; content: string }>,
+  values: Record<string, string>
+): Array<{ role: string; content: string }> {
+  return messages.map((m) => ({
+    ...m,
+    content: m.content.replace(VARIABLE_PATTERN, (_, name) =>
+      values[name] !== undefined ? values[name] : `{{${name}}}`
+    ),
+  }));
+}
+
+/** Label name → Chip variant mapping. Used by PromptEditor and Prompts list. */
+export function getLabelVariant(labelName: string): "success" | "warning" | "info" {
+  if (labelName === "production") return "success";
+  if (labelName === "staging") return "warning";
+  return "info";
+}
+
+/** Stream a prompt test request and return results via callbacks. */
+export interface StreamPromptTestOptions {
+  endpointSlug: string;
+  messages: Array<{ role: string; content: string }>;
+  variables?: Record<string, string>;
+  config?: Record<string, any>;
+  onDelta: (accumulated: string) => void;
+  signal?: AbortSignal;
+}
+
+export interface StreamPromptTestResult {
+  content: string;
+  tokens: number;
+  cost: number;
+  latency: number;
+}
+
+// Raw fetch is intentional here — Axios does not support SSE streaming.
+// See: https://github.com/axios/axios/issues/1474
+import { getAuthToken } from "../../../application/redux/auth/getAuthToken";
+
+export async function streamPromptTest(
+  opts: StreamPromptTestOptions
+): Promise<StreamPromptTestResult> {
+  const startTime = Date.now();
+
+  const response = await fetch(`${GATEWAY_API_URL}/ai-gateway/prompts/test`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getAuthToken()}`,
+    },
+    body: JSON.stringify({
+      content: opts.messages,
+      variables: opts.variables || {},
+      config: opts.config || {},
+      endpoint_slug: opts.endpointSlug,
+    }),
+    signal: opts.signal,
+  });
+
+  if (!response.ok) {
+    const err = await response.text();
+    return { content: `Error: ${err}`, tokens: 0, cost: 0, latency: Date.now() - startTime };
+  }
+
+  const reader = response.body?.getReader();
+  if (!reader) {
+    return { content: "", tokens: 0, cost: 0, latency: Date.now() - startTime };
+  }
+
+  const decoder = new TextDecoder();
+  let content = "";
+  let tokens = 0;
+  let cost = 0;
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const text = decoder.decode(value, { stream: true });
+      for (const line of text.split("\n")) {
+        if (line.startsWith("data: ") && line !== "data: [DONE]") {
+          try {
+            const chunk = JSON.parse(line.slice(6));
+            const delta = chunk.choices?.[0]?.delta?.content;
+            if (delta) {
+              content += delta;
+              opts.onDelta(content);
+            }
+            if (chunk.usage) tokens = chunk.usage.total_tokens || tokens;
+            if (chunk.cost_usd) cost = chunk.cost_usd;
+          } catch { /* skip unparseable chunk */ }
+        }
+      }
+    }
+  } finally {
+    reader.releaseLock();
+  }
+
+  return { content, tokens, cost, latency: Date.now() - startTime };
+}

@@ -137,15 +137,15 @@ function ConversationView({ messages }: { messages: RequestMessage[] }) {
 }
 
 const STATUS_OPTIONS = [
-  { _id: "all", name: "All" },
-  { _id: "success", name: "Success" },
-  { _id: "error", name: "Error" },
+  { _id: "all", name: "Status: All" },
+  { _id: "success", name: "Status: Success" },
+  { _id: "error", name: "Status: Error" },
 ];
 
 const SOURCE_OPTIONS = [
-  { _id: "all", name: "All" },
-  { _id: "playground", name: "Playground" },
-  { _id: "virtual-key", name: "Virtual key" },
+  { _id: "all", name: "Source: All" },
+  { _id: "playground", name: "Source: Playground" },
+  { _id: "virtual-key", name: "Source: Virtual key" },
 ];
 
 export default function LogsPage() {
@@ -307,19 +307,17 @@ export default function LogsPage() {
           </Box>
           <Select
             id="status-filter"
-            label="Status"
             value={statusFilter}
             items={STATUS_OPTIONS}
             onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
-            sx={{ minWidth: 130, maxWidth: 160 }}
+            sx={{ minWidth: 140, maxWidth: 170 }}
           />
           <Select
             id="source-filter"
-            label="Source"
             value={sourceFilter}
             items={SOURCE_OPTIONS}
             onChange={(e) => setSourceFilter(e.target.value as SourceFilter)}
-            sx={{ minWidth: 140, maxWidth: 170 }}
+            sx={{ minWidth: 160, maxWidth: 190 }}
           />
         </Stack>
       </Box>

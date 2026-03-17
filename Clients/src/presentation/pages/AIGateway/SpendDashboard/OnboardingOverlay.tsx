@@ -25,8 +25,7 @@ import palette from "../../../themes/palette";
 import { apiServices } from "../../../../infrastructure/api/networkServices";
 import {
   TOP_PROVIDERS,
-  MODEL_SELECT_ITEMS,
-  MODEL_DIVIDERS,
+  useGatewayModels,
   slugify,
   GATEWAY_URL,
   CODE_BLOCK_BG,
@@ -227,7 +226,8 @@ export default function OnboardingOverlay({ onGetStarted, setupStatus, onStepCom
   const [topProviderCount, setTopProviderCount] = useState(TOP_PROVIDERS.length);
 
   // ── Endpoint modal state ──
-  const [endpointForm, setEndpointForm] = useState({ display_name: "", slug: "", model: "", api_key_id: "" });
+  const [endpointForm, setEndpointForm] = useState({ display_name: "", slug: "", provider: "", model: "", api_key_id: "" });
+  const { providerItems: gatewayProviders, getModelsForProvider } = useGatewayModels();
   const [endpointError, setEndpointError] = useState("");
   const [endpointSubmitting, setEndpointSubmitting] = useState(false);
   const [availableKeys, setAvailableKeys] = useState<{ _id: string; name: string }[]>([]);
@@ -315,7 +315,7 @@ export default function OnboardingOverlay({ onGetStarted, setupStatus, onStepCom
     setActiveModal(null);
     setKeyForm({ key_name: "", provider: "", api_key: "" });
     setKeyError("");
-    setEndpointForm({ display_name: "", slug: "", model: "", api_key_id: "" });
+    setEndpointForm({ display_name: "", slug: "", provider: "", model: "", api_key_id: "" });
     setEndpointError("");
     setVkeyName("");
     setVkeyError("");
@@ -374,18 +374,17 @@ export default function OnboardingOverlay({ onGetStarted, setupStatus, onStepCom
   };
 
   const handleCreateEndpoint = async () => {
-    if (!endpointForm.display_name || !endpointForm.slug || !endpointForm.model || !endpointForm.api_key_id) {
-      setEndpointError("Name, model, and API key are required");
+    if (!endpointForm.display_name || !endpointForm.slug || !endpointForm.provider || !endpointForm.model || !endpointForm.api_key_id) {
+      setEndpointError("Name, provider, model, and API key are required");
       return;
     }
     setEndpointSubmitting(true);
     setEndpointError("");
     try {
-      const provider = endpointForm.model.includes("/") ? endpointForm.model.split("/")[0] : "";
       await apiServices.post("/ai-gateway/endpoints", {
         display_name: endpointForm.display_name,
         slug: endpointForm.slug,
-        provider,
+        provider: endpointForm.provider,
         model: endpointForm.model,
         api_key_id: Number(endpointForm.api_key_id),
       });
@@ -490,7 +489,7 @@ export default function OnboardingOverlay({ onGetStarted, setupStatus, onStepCom
             </Box>
             <Box sx={{ flexShrink: 0, pt: "2px" }}>
               <CustomizableButton
-                text="Get started"
+                text="Read the guide"
                 onClick={onGetStarted}
                 endIcon={<ArrowRight size={14} strokeWidth={1.8} />}
               />
@@ -540,7 +539,14 @@ export default function OnboardingOverlay({ onGetStarted, setupStatus, onStepCom
               Endpoint slug: <strong>{endpointForm.slug}</strong>
             </Typography>
           )}
-          <Select id="onboarding-model" label="Model" placeholder="Select a model" value={endpointForm.model} items={MODEL_SELECT_ITEMS} onChange={(e) => setEndpointForm((p) => ({ ...p, model: e.target.value as string }))} getOptionValue={(item) => item._id} dividers={MODEL_DIVIDERS} isRequired />
+          <Stack direction="row" gap="8px">
+            <Box flex={1}>
+              <Select id="onboarding-provider" label="Provider" placeholder="Select provider" value={endpointForm.provider} items={gatewayProviders} onChange={(e) => setEndpointForm((p) => ({ ...p, provider: e.target.value as string, model: "" }))} getOptionValue={(item) => item._id} isRequired />
+            </Box>
+            <Box flex={2}>
+              <Select id="onboarding-model" label="Model" placeholder={endpointForm.provider ? "Select a model" : "Select a provider first"} value={endpointForm.model} items={endpointForm.provider ? getModelsForProvider(endpointForm.provider) : []} onChange={(e) => setEndpointForm((p) => ({ ...p, model: e.target.value as string }))} getOptionValue={(item) => item._id} isRequired />
+            </Box>
+          </Stack>
           {availableKeys.length > 0 ? (
             <Select id="onboarding-api-key" label="API key" placeholder="Select an API key" value={endpointForm.api_key_id} items={availableKeys} onChange={(e) => setEndpointForm((p) => ({ ...p, api_key_id: e.target.value as string }))} getOptionValue={(item) => item._id} isRequired />
           ) : (

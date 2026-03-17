@@ -5,7 +5,7 @@
  * Follows the SidebarShell pattern established by ShadowAISidebar.
  */
 
-import { Router, BarChart3, MessageSquare, ShieldCheck, FileText, Settings, KeyRound, BookOpen } from "lucide-react";
+import { Router, BarChart3, MessageSquare, ShieldCheck, FileText, Settings, BookOpen } from "lucide-react";
 import SidebarShell, {
   SidebarMenuItem,
 } from "../../components/Sidebar/SidebarShell";
@@ -63,13 +63,6 @@ export default function AIGatewaySidebar({
       label: "Logs",
       value: "logs",
       icon: <FileText size={16} strokeWidth={1.5} />,
-    },
-    {
-      id: "virtual-keys",
-      label: "Virtual keys",
-      value: "virtual-keys",
-      icon: <KeyRound size={16} strokeWidth={1.5} />,
-      count: virtualKeysCount,
     },
     {
       id: "settings",

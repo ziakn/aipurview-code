@@ -164,3 +164,17 @@ export async function scheduleAiDetectionScanCheck() {
     },
   );
 }
+
+export async function scheduleAiGatewayRiskDetection() {
+  logger.info("Adding AI Gateway risk detection jobs to the queue...");
+  // Daily risk detection at 6 AM
+  await automationQueue.add(
+    "ai_gateway_risk_detection",
+    { type: "ai_gateway_risk" },
+    {
+      repeat: { pattern: "0 6 * * *" },
+      removeOnComplete: true,
+      removeOnFail: false,
+    },
+  );
+}

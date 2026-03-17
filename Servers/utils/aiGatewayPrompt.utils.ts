@@ -37,9 +37,34 @@ export interface IAiGatewayPromptVersion {
   published_by: number | null;
   created_by: number | null;
   created_at: string;
+  commit_message: string | null;
   // Joined fields
   created_by_name?: string;
   published_by_name?: string;
+}
+
+export interface IAiGatewayPromptLabel {
+  id: number;
+  prompt_id: number;
+  organization_id: number;
+  label_name: string;
+  version_id: number;
+  assigned_by: number | null;
+  assigned_at: string;
+  // Joined fields
+  version_number?: number;
+  assigned_by_name?: string;
+}
+
+export interface IAiGatewayPromptTestDataset {
+  id: number;
+  prompt_id: number;
+  organization_id: number;
+  name: string;
+  test_cases: any[];
+  created_by: number | null;
+  created_at: string;
+  updated_at: string;
 }
 
 // ─── Variable resolution ────────────────────────────────────────────────────
@@ -246,19 +271,20 @@ export const createVersionQuery = async (
     model?: string | null;
     config?: Record<string, any> | null;
     created_by?: number;
+    commit_message?: string | null;
   }
 ): Promise<IAiGatewayPromptVersion> => {
   const variables = extractVariables(data.content);
 
   const result = (await sequelize.query(
     `INSERT INTO ai_gateway_prompt_versions
-       (prompt_id, organization_id, version, content, variables, model, config, status, created_by, created_at)
+       (prompt_id, organization_id, version, content, variables, model, config, status, created_by, commit_message, created_at)
      VALUES
        (:promptId, :organizationId,
         COALESCE((SELECT MAX(version) FROM ai_gateway_prompt_versions WHERE prompt_id = :promptId), 0) + 1,
-        :content, :variables, :model, :config, 'draft', :created_by, NOW())
+        :content, :variables, :model, :config, 'draft', :created_by, :commit_message, NOW())
      RETURNING id, prompt_id, organization_id, version, content, variables, model, config, status,
-               published_at, published_by, created_by, created_at`,
+               published_at, published_by, created_by, commit_message, created_at`,
     {
       replacements: {
         promptId,
@@ -268,6 +294,7 @@ export const createVersionQuery = async (
         model: data.model ?? null,
         config: data.config ? JSON.stringify(data.config) : null,
         created_by: data.created_by ?? null,
+        commit_message: data.commit_message ?? null,
       },
     }
   )) as [IAiGatewayPromptVersion[], number];
@@ -291,7 +318,7 @@ export const getVersionsQuery = async (
   const result = (await sequelize.query(
     `SELECT v.id, v.prompt_id, v.organization_id, v.version, v.content, v.variables,
             v.model, v.config, v.status, v.published_at, v.published_by,
-            v.created_by, v.created_at,
+            v.created_by, v.created_at, v.commit_message,
             cu.name AS created_by_name,
             pu.name AS published_by_name
      FROM ai_gateway_prompt_versions v
@@ -395,4 +422,283 @@ export const resolvePromptQuery = async (
   )) as [any[], number];
 
   return result[0].length > 0 ? result[0][0] : null;
+};
+
+// ─── Labels ────────────────────────────────────────────────────────────────
+
+/**
+ * List labels for a prompt with version info.
+ */
+export const getLabelsQuery = async (
+  organizationId: number,
+  promptId: number
+): Promise<IAiGatewayPromptLabel[]> => {
+  const result = (await sequelize.query(
+    `SELECT l.id, l.prompt_id, l.organization_id, l.label_name,
+            l.version_id, l.assigned_by, l.assigned_at,
+            v.version AS version_number,
+            u.name AS assigned_by_name
+     FROM ai_gateway_prompt_labels l
+     LEFT JOIN ai_gateway_prompt_versions v ON v.id = l.version_id
+     LEFT JOIN users u ON u.id = l.assigned_by
+     WHERE l.organization_id = :organizationId AND l.prompt_id = :promptId
+     ORDER BY l.assigned_at DESC`,
+    { replacements: { organizationId, promptId } }
+  )) as [IAiGatewayPromptLabel[], number];
+
+  return result[0];
+};
+
+/**
+ * Assign (or reassign) a label to a specific version. Uses UPSERT via ON CONFLICT.
+ */
+export const assignLabelQuery = async (
+  organizationId: number,
+  promptId: number,
+  data: { label_name: string; version_id: number; assigned_by?: number }
+): Promise<IAiGatewayPromptLabel> => {
+  const result = (await sequelize.query(
+    `INSERT INTO ai_gateway_prompt_labels
+       (prompt_id, organization_id, label_name, version_id, assigned_by, assigned_at)
+     VALUES
+       (:promptId, :organizationId, :label_name, :version_id, :assigned_by, NOW())
+     ON CONFLICT (prompt_id, label_name) DO UPDATE
+       SET version_id = EXCLUDED.version_id,
+           assigned_by = EXCLUDED.assigned_by,
+           assigned_at = NOW()
+     RETURNING id, prompt_id, organization_id, label_name, version_id, assigned_by, assigned_at`,
+    {
+      replacements: {
+        promptId,
+        organizationId,
+        label_name: data.label_name,
+        version_id: data.version_id,
+        assigned_by: data.assigned_by ?? null,
+      },
+    }
+  )) as [IAiGatewayPromptLabel[], number];
+
+  return result[0][0];
+};
+
+/**
+ * Remove a label from a prompt.
+ */
+export const removeLabelQuery = async (
+  organizationId: number,
+  promptId: number,
+  labelName: string
+): Promise<boolean> => {
+  const result = (await sequelize.query(
+    `DELETE FROM ai_gateway_prompt_labels
+     WHERE organization_id = :organizationId AND prompt_id = :promptId AND label_name = :labelName
+     RETURNING id`,
+    { replacements: { organizationId, promptId, labelName } }
+  )) as [{ id: number }[], number];
+
+  return (result[0] as any[]).length > 0;
+};
+
+/**
+ * Resolve prompt by label: join labels -> versions to get content/config.
+ * Falls back to status = 'published' if no label exists (backward compat).
+ */
+export const resolvePromptByLabelQuery = async (
+  organizationId: number,
+  promptId: number,
+  label: string
+): Promise<{
+  content: Array<{ role: string; content: string }>;
+  variables: string[] | null;
+  model: string | null;
+  config: Record<string, any> | null;
+} | null> => {
+  // Try label-based resolution first
+  const labelResult = (await sequelize.query(
+    `SELECT v.content, v.variables, v.model, v.config
+     FROM ai_gateway_prompt_labels l
+     JOIN ai_gateway_prompt_versions v ON v.id = l.version_id
+     WHERE l.organization_id = :organizationId
+       AND l.prompt_id = :promptId
+       AND l.label_name = :label
+     LIMIT 1`,
+    { replacements: { organizationId, promptId, label } }
+  )) as [any[], number];
+
+  if (labelResult[0].length > 0) return labelResult[0][0];
+
+  // Fallback: published version
+  return resolvePromptQuery(organizationId, promptId);
+};
+
+// ─── Composability ─────────────────────────────────────────────────────────
+
+const PROMPT_REF_PATTERN = /@prompt:([a-z0-9-]+)/g;
+
+/**
+ * Resolve @prompt:slug references in message content.
+ * Replaces each reference with the published version's messages from the referenced prompt.
+ * Depth-limited to prevent infinite recursion.
+ */
+export const resolvePromptReferences = async (
+  organizationId: number,
+  messages: Array<{ role: string; content: string }>,
+  depth: number = 0,
+  maxDepth: number = 3
+): Promise<Array<{ role: string; content: string }>> => {
+  if (depth >= maxDepth) return messages;
+
+  const resolved: Array<{ role: string; content: string }> = [];
+
+  for (const msg of messages) {
+    const refs: string[] = [];
+    let match: RegExpExecArray | null;
+    const re = new RegExp(PROMPT_REF_PATTERN.source, "g");
+    while ((match = re.exec(msg.content)) !== null) {
+      refs.push(match[1]);
+    }
+
+    if (refs.length === 0) {
+      resolved.push(msg);
+      continue;
+    }
+
+    // If the message content is ONLY a @prompt:slug reference, replace with referenced messages
+    const trimmed = msg.content.trim();
+    if (refs.length === 1 && trimmed === `@prompt:${refs[0]}`) {
+      const refPrompt = await getPromptBySlugQuery(organizationId, refs[0]);
+      if (refPrompt) {
+        const refData = await resolvePromptQuery(organizationId, refPrompt.id);
+        if (refData?.content) {
+          const inner = await resolvePromptReferences(
+            organizationId,
+            refData.content,
+            depth + 1,
+            maxDepth
+          );
+          resolved.push(...inner);
+          continue;
+        }
+      }
+      // If reference couldn't be resolved, keep original message
+      resolved.push(msg);
+    } else {
+      // Mixed content: replace references inline with content from referenced prompt
+      let newContent = msg.content;
+      for (const slug of refs) {
+        const refPrompt = await getPromptBySlugQuery(organizationId, slug);
+        if (refPrompt) {
+          const refData = await resolvePromptQuery(organizationId, refPrompt.id);
+          if (refData?.content) {
+            const inlineText = refData.content.map((m) => m.content).join("\n");
+            newContent = newContent.replace(`@prompt:${slug}`, inlineText);
+          }
+        }
+      }
+      resolved.push({ ...msg, content: newContent });
+    }
+  }
+
+  return resolved;
+};
+
+// ─── Test datasets ─────────────────────────────────────────────────────────
+
+/**
+ * Create a test dataset for a prompt.
+ */
+export const createTestDatasetQuery = async (
+  organizationId: number,
+  promptId: number,
+  data: { name: string; test_cases?: any[]; created_by?: number }
+): Promise<IAiGatewayPromptTestDataset> => {
+  const result = (await sequelize.query(
+    `INSERT INTO ai_gateway_prompt_test_datasets
+       (prompt_id, organization_id, name, test_cases, created_by, created_at, updated_at)
+     VALUES
+       (:promptId, :organizationId, :name, :test_cases, :created_by, NOW(), NOW())
+     RETURNING id, prompt_id, organization_id, name, test_cases, created_by, created_at, updated_at`,
+    {
+      replacements: {
+        promptId,
+        organizationId,
+        name: data.name,
+        test_cases: JSON.stringify(data.test_cases ?? []),
+        created_by: data.created_by ?? null,
+      },
+    }
+  )) as [IAiGatewayPromptTestDataset[], number];
+
+  return result[0][0];
+};
+
+/**
+ * List test datasets for a prompt.
+ */
+export const getTestDatasetsQuery = async (
+  organizationId: number,
+  promptId: number
+): Promise<IAiGatewayPromptTestDataset[]> => {
+  const result = (await sequelize.query(
+    `SELECT id, prompt_id, organization_id, name, test_cases, created_by, created_at, updated_at
+     FROM ai_gateway_prompt_test_datasets
+     WHERE organization_id = :organizationId AND prompt_id = :promptId
+     ORDER BY created_at DESC`,
+    { replacements: { organizationId, promptId } }
+  )) as [IAiGatewayPromptTestDataset[], number];
+
+  return result[0];
+};
+
+/**
+ * Update a test dataset.
+ */
+export const updateTestDatasetQuery = async (
+  organizationId: number,
+  promptId: number,
+  datasetId: number,
+  data: { name?: string; test_cases?: any[] }
+): Promise<IAiGatewayPromptTestDataset | null> => {
+  const setClauses: string[] = [];
+  const replacements: Record<string, any> = { organizationId, promptId, datasetId };
+
+  if (data.name !== undefined) {
+    setClauses.push("name = :name");
+    replacements.name = data.name;
+  }
+  if (data.test_cases !== undefined) {
+    setClauses.push("test_cases = :test_cases");
+    replacements.test_cases = JSON.stringify(data.test_cases);
+  }
+
+  if (setClauses.length === 0) return null;
+  setClauses.push("updated_at = NOW()");
+
+  const result = (await sequelize.query(
+    `UPDATE ai_gateway_prompt_test_datasets
+     SET ${setClauses.join(", ")}
+     WHERE organization_id = :organizationId AND prompt_id = :promptId AND id = :datasetId
+     RETURNING id, prompt_id, organization_id, name, test_cases, created_by, created_at, updated_at`,
+    { replacements }
+  )) as [IAiGatewayPromptTestDataset[], number];
+
+  return result[0].length > 0 ? result[0][0] : null;
+};
+
+/**
+ * Delete a test dataset.
+ */
+export const deleteTestDatasetQuery = async (
+  organizationId: number,
+  promptId: number,
+  datasetId: number
+): Promise<boolean> => {
+  const result = (await sequelize.query(
+    `DELETE FROM ai_gateway_prompt_test_datasets
+     WHERE organization_id = :organizationId AND prompt_id = :promptId AND id = :datasetId
+     RETURNING id`,
+    { replacements: { organizationId, promptId, datasetId } }
+  )) as [{ id: number }[], number];
+
+  return (result[0] as any[]).length > 0;
 };

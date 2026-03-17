@@ -66,7 +66,7 @@ export function useActiveModule() {
           navigate("/shadow-ai/insights");
           break;
         case "ai-gateway":
-          navigate("/ai-gateway/endpoints");
+          navigate("/ai-gateway/dashboard");
           break;
         case "main":
         default:

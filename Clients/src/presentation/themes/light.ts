@@ -86,6 +86,16 @@ const light = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: {},
+        // Remove blue focus outline on mouse click; preserve for keyboard navigation
+        "*, *::before, *::after": {
+          "&:focus:not(:focus-visible)": {
+            outline: "none",
+          },
+        },
+        // Remove focus outline on Recharts SVG containers and all SVG elements
+        ".recharts-wrapper, .recharts-surface, svg, svg *": {
+          outline: "none !important",
+        },
       },
     },
     MuiButton: {

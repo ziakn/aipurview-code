@@ -25,7 +25,8 @@ import TablePaginationActions from "../../../components/TablePagination";
 import { apiServices } from "../../../../infrastructure/api/networkServices";
 import { displayFormattedDate } from "../../../tools/isoDateToString";
 import { getPaginationRowCount, setPaginationRowCount } from "../../../../application/utils/paginationStorage";
-import { useCardSx, slugify, ProviderIcon } from "../shared";
+import { useCardSx, slugify, ProviderIcon, getLabelVariant } from "../shared";
+import singleTheme from "../../../themes/v1SingleTheme";
 
 interface Prompt {
   id: number;
@@ -37,10 +38,10 @@ interface Prompt {
   published_status: string | null;
   version_count: number;
   updated_at: string;
+  labels?: Array<{ label_name: string }>;
 }
 
-const CELL_SX = { fontSize: 13, py: 1.5, borderColor: "border.light" } as const;
-const HEAD_SX = { ...CELL_SX, fontWeight: 600, fontSize: 12, color: "text.secondary" } as const;
+const { header, body, frame } = singleTheme.tableStyles.primary;
 
 export default function PromptsPage() {
   const cardSx = useCardSx();
@@ -60,7 +61,15 @@ export default function PromptsPage() {
   const loadData = useCallback(async () => {
     try {
       const res = await apiServices.get("/ai-gateway/prompts");
-      setPrompts(res?.data?.data || []);
+      const promptList: Prompt[] = res?.data?.data || [];
+      // Fetch labels for each prompt in parallel
+      const labelsRes = await Promise.all(
+        promptList.map((p) => apiServices.get(`/ai-gateway/prompts/${p.id}/labels`).catch(() => null))
+      );
+      for (let i = 0; i < promptList.length; i++) {
+        promptList[i].labels = labelsRes[i]?.data?.data || [];
+      }
+      setPrompts(promptList);
     } catch { /* silently handle */ }
     finally { setLoading(false); }
   }, []);
@@ -147,7 +156,13 @@ export default function PromptsPage() {
     </StandardModal>
   );
 
-  if (loading) return null;
+  if (loading) {
+    return (
+      <PageHeaderExtended title="Prompts" description="Create versioned prompt templates with variables and bind them to endpoints." tipBoxEntity="ai-gateway-prompts" helpArticlePath="ai-gateway/prompts" actionButton={actionButton}>
+        <Box />
+      </PageHeaderExtended>
+    );
+  }
 
   if (prompts.length === 0 && !isCreateOpen) {
     return (
@@ -168,15 +183,16 @@ export default function PromptsPage() {
 
   return (
     <PageHeaderExtended title="Prompts" description="Create versioned prompt templates with variables and bind them to endpoints." tipBoxEntity="ai-gateway-prompts" helpArticlePath="ai-gateway/prompts" actionButton={actionButton}>
-      <TableContainer sx={{ ...cardSx, p: 0 }}>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell sx={HEAD_SX}>Name</TableCell>
-              <TableCell sx={HEAD_SX}>Version</TableCell>
-              <TableCell sx={HEAD_SX}>Model</TableCell>
-              <TableCell sx={HEAD_SX}>Updated</TableCell>
-              <TableCell sx={{ ...HEAD_SX, width: 48 }} />
+      <TableContainer sx={frame}>
+        <Table>
+          <TableHead sx={{ background: header.backgroundColors }}>
+            <TableRow sx={header.row}>
+              <TableCell style={header.cell}>Name</TableCell>
+              <TableCell style={header.cell}>Version</TableCell>
+              <TableCell style={header.cell}>Labels</TableCell>
+              <TableCell style={header.cell}>Model</TableCell>
+              <TableCell style={header.cell}>Updated</TableCell>
+              <TableCell style={{ ...header.cell, minWidth: 48, width: 48 }} />
             </TableRow>
           </TableHead>
           <TableBody>
@@ -185,29 +201,39 @@ export default function PromptsPage() {
               return (
                 <TableRow
                   key={p.id}
-                  hover
                   onClick={() => navigate(`/ai-gateway/prompts/${p.id}`)}
-                  sx={{ cursor: "pointer" }}
+                  sx={body.row}
                 >
-                  <TableCell sx={CELL_SX}>
+                  <TableCell style={body.cell}>
                     <Typography fontSize={13} fontWeight={500}>{p.name}</Typography>
                     {p.description && (
-                      <Typography fontSize={12} color="text.secondary" sx={{ mt: 0.25 }} noWrap>{p.description}</Typography>
+                      <Typography fontSize={12} color="text.secondary" sx={{ mt: "2px" }} noWrap>{p.description}</Typography>
                     )}
                   </TableCell>
-                  <TableCell sx={CELL_SX}>
+                  <TableCell style={body.cell}>
                     {p.published_version
                       ? <Chip label={`v${p.published_version}`} variant="success" />
                       : <Chip label={p.version_count > 0 ? "Draft" : "No versions"} />}
                   </TableCell>
-                  <TableCell sx={CELL_SX}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <TableCell style={body.cell}>
+                    {p.labels && p.labels.length > 0 ? (
+                      <Box sx={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                        {p.labels.map((l) => (
+                          <Chip key={l.label_name} label={l.label_name} variant={getLabelVariant(l.label_name)} />
+                        ))}
+                      </Box>
+                    ) : (
+                      <Typography fontSize={12} color="text.secondary">-</Typography>
+                    )}
+                  </TableCell>
+                  <TableCell style={body.cell}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
                       {provider && <ProviderIcon provider={provider} size={14} />}
                       <Typography fontSize={12} color="text.secondary" noWrap>{p.published_model || "-"}</Typography>
                     </Box>
                   </TableCell>
-                  <TableCell sx={{ ...CELL_SX, color: "text.secondary", fontSize: 12 }}>{displayFormattedDate(p.updated_at)}</TableCell>
-                  <TableCell sx={{ ...CELL_SX, width: 48 }}>
+                  <TableCell style={{ ...body.cell, color: "#475467" }}>{displayFormattedDate(p.updated_at)}</TableCell>
+                  <TableCell style={{ ...body.cell, width: 48, minWidth: 48 }}>
                     <IconButton
                       size="small"
                       onClick={(e) => { e.stopPropagation(); setDeleteTarget({ id: p.id, name: p.name }); }}

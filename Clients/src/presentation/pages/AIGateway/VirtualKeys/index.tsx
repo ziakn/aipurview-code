@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Box, Typography, Stack, IconButton } from "@mui/material";
-import { CirclePlus, KeyRound, Trash2, Ban, Copy, Check, Server } from "lucide-react";
+import { Link } from "react-router-dom";
+import { CirclePlus, KeyRound, Trash2, Ban, Copy, Check, Server, TriangleAlert, Router } from "lucide-react";
 import { EmptyState } from "../../../components/EmptyState";
 import EmptyStateTip from "../../../components/EmptyState/EmptyStateTip";
 import { CustomizableButton } from "../../../components/button/customizable-button";
@@ -22,6 +23,7 @@ import {
   WARNING_TEXT,
   KEY_DISPLAY_BG,
 } from "../shared";
+import { displayFormattedDate } from "../../../tools/isoDateToString";
 import dayjs from "dayjs";
 
 interface CreateVirtualKeyPayload {
@@ -47,9 +49,10 @@ interface VirtualKey {
   created_at: string;
 }
 
-export default function AIGatewayVirtualKeysPage() {
+export default function AIGatewayVirtualKeysPage({ embedded }: { embedded?: boolean } = {}) {
   const cardSx = useCardSx();
   const [keys, setKeys] = useState<VirtualKey[]>([]);
+  const [endpointCount, setEndpointCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Create modal
@@ -81,8 +84,13 @@ export default function AIGatewayVirtualKeysPage() {
 
   const loadData = useCallback(async () => {
     try {
-      const res = await apiServices.get("/ai-gateway/virtual-keys");
-      setKeys(res?.data?.data || []);
+      const [keysRes, endpointsRes] = await Promise.all([
+        apiServices.get("/ai-gateway/virtual-keys"),
+        apiServices.get("/ai-gateway/endpoints").catch(() => null),
+      ]);
+      setKeys(keysRes?.data?.data || []);
+      const eps = endpointsRes?.data?.data || [];
+      setEndpointCount(eps.filter((e: any) => e.is_active).length);
     } catch {
       // Silently handle
     } finally {
@@ -159,49 +167,67 @@ export default function AIGatewayVirtualKeysPage() {
     return "Inactive";
   };
 
-  return (
-    <PageHeaderExtended
-      title="Virtual keys"
-      description="Generate API keys for developers to use the gateway from their code."
-      tipBoxEntity="ai-gateway-virtual-keys"
-      helpArticlePath="ai-gateway/virtual-keys"
-      actionButton={
-        <CustomizableButton
-          text="Create key"
-          icon={<CirclePlus size={14} strokeWidth={1.5} />}
-          onClick={() => {
-            setCreateForm({ name: "", max_budget_usd: "", rate_limit_rpm: "", expires_at: "" });
-            setCreateError("");
-            setIsCreateOpen(true);
-          }}
-        />
-      }
-    >
-      <Box sx={cardSx}>
-        <Stack gap="12px">
-          <Typography sx={sectionTitleSx}>Virtual keys</Typography>
+  const createKeyButton = (
+    <CustomizableButton
+      text="Create key"
+      icon={<CirclePlus size={14} strokeWidth={1.5} />}
+      onClick={() => {
+        setCreateForm({ name: "", max_budget_usd: "", rate_limit_rpm: "", expires_at: "" });
+        setCreateError("");
+        setIsCreateOpen(true);
+      }}
+      isDisabled={!loading && endpointCount === 0}
+    />
+  );
 
-          {!loading && keys.length === 0 && (
-            <EmptyState
-              icon={KeyRound}
-              message="Give your developers a single API key to access any LLM through the gateway — no VerifyWise account needed."
-              showBorder
-            >
-              <EmptyStateTip
-                icon={Server}
-                title="Drop-in replacement for any OpenAI SDK"
-                description="Developers point their existing OpenAI SDK at the gateway URL and swap in the virtual key. No code changes beyond the base URL and key — all guardrails, logging, and budget controls apply automatically."
-              />
-              <EmptyStateTip
-                icon={KeyRound}
-                title="Per-key budgets and rate limits"
-                description="Each virtual key can have its own monthly spending cap and request-per-minute limit. When a key hits its budget, only that key is blocked — other keys and the rest of the gateway keep running."
-              />
-            </EmptyState>
+  const content = (
+    <>
+      {!loading && keys.length === 0 && (
+        <EmptyState
+          icon={KeyRound}
+          message="Give your developers a single API key to access any LLM through the gateway — no VerifyWise account needed."
+          showBorder
+        >
+          {endpointCount === 0 && (
+            <Box sx={{
+              display: "flex",
+              alignItems: "flex-start",
+              gap: "8px",
+              p: "12px 16px",
+              borderRadius: "4px",
+              border: "1px solid #FEDF89",
+              bgcolor: "#FFFAEB",
+              mb: "8px",
+            }}>
+              <TriangleAlert size={16} strokeWidth={1.5} color="#B54708" style={{ flexShrink: 0, marginTop: 1 }} />
+              <Box>
+                <Typography fontSize={13} fontWeight={500} color="#B54708">
+                  No endpoints configured
+                </Typography>
+                <Typography fontSize={12} color="#93370D" mt="2px">
+                  Virtual keys route requests through endpoints. You need at least one active endpoint before creating a virtual key.{" "}
+                  <Link to="/ai-gateway/endpoints" style={{ color: "#B54708", fontWeight: 500 }}>Go to Endpoints</Link> to set one up.
+                </Typography>
+              </Box>
+            </Box>
           )}
-          {!loading && keys.length > 0 && (
-            <Stack gap="8px">
-              {keys.map((key) => {
+          <EmptyStateTip
+            icon={Server}
+            title="Drop-in replacement for any OpenAI SDK"
+            description="Developers point their existing OpenAI SDK at the gateway URL and swap in the virtual key. No code changes beyond the base URL and key — all guardrails, logging, and budget controls apply automatically."
+          />
+          <EmptyStateTip
+            icon={KeyRound}
+            title="Per-key budgets and rate limits"
+            description="Each virtual key can have its own monthly spending cap and request-per-minute limit. When a key hits its budget, only that key is blocked — other keys and the rest of the gateway keep running."
+          />
+        </EmptyState>
+      )}
+
+      {!loading && keys.length > 0 && (
+        <Box sx={cardSx}>
+          <Stack gap="8px">
+            {keys.map((key) => {
                 const status = getStatusLabel(key);
                 const budgetPct =
                   key.max_budget_usd && Number(key.max_budget_usd) > 0
@@ -250,7 +276,7 @@ export default function AIGatewayVirtualKeysPage() {
                             </Typography>
                           )}
                           <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
-                            by {key.created_by_name}
+                            by {key.created_by_name} &middot; {displayFormattedDate(key.created_at)}
                           </Typography>
                         </Stack>
                         {budgetPct !== null && (
@@ -308,10 +334,9 @@ export default function AIGatewayVirtualKeysPage() {
                   </Stack>
                 );
               })}
-            </Stack>
-          )}
-        </Stack>
-      </Box>
+          </Stack>
+        </Box>
+      )}
 
       {/* Create Virtual Key Modal */}
       <StandardModal
@@ -371,6 +396,7 @@ export default function AIGatewayVirtualKeysPage() {
         description="Copy the key below. It will not be shown again."
         maxWidth="560px"
         hideSubmitButton
+        cancelButtonText="I copied, continue"
       >
         <Stack gap="16px">
           <Box
@@ -458,6 +484,37 @@ response = client.chat.completions.create(
         submitButtonText="Revoke key"
         maxWidth="440px"
       />
+    </>
+  );
+
+  if (embedded) {
+    return (
+      <Box sx={cardSx}>
+        <Stack gap="12px">
+          <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+            <Box>
+              <Typography sx={sectionTitleSx}>Virtual keys</Typography>
+              <Typography sx={{ fontSize: 13, color: palette.text.tertiary, mt: "4px" }}>
+                Generate API keys for developers to use the gateway from their code.
+              </Typography>
+            </Box>
+            {createKeyButton}
+          </Stack>
+          {content}
+        </Stack>
+      </Box>
+    );
+  }
+
+  return (
+    <PageHeaderExtended
+      title="Virtual keys"
+      description="Generate API keys for developers to use the gateway from their code."
+      tipBoxEntity="ai-gateway-virtual-keys"
+      helpArticlePath="ai-gateway/virtual-keys"
+      actionButton={createKeyButton}
+    >
+      {content}
     </PageHeaderExtended>
   );
 }

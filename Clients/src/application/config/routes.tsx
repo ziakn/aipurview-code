@@ -161,12 +161,14 @@ export const createRoutes = (
     <Route path="/ai-gateway/endpoints" element={<AIGatewayEndpointsPage />} />
     <Route path="/ai-gateway/dashboard" element={<AIGatewayAnalyticsPage />} />
     <Route path="/ai-gateway/playground" element={<AIGatewayPlaygroundPage />} />
-    <Route path="/ai-gateway/guardrails" element={<AIGatewayGuardrailsPage />} />
+    <Route path="/ai-gateway/guardrails" element={<Navigate to="/ai-gateway/guardrails/pii" replace />} />
+    <Route path="/ai-gateway/guardrails/:tab" element={<AIGatewayGuardrailsPage />} />
     <Route path="/ai-gateway/logs" element={<AIGatewayLogsPage />} />
     <Route path="/ai-gateway/prompts" element={<AIGatewayPromptsPage />} />
     <Route path="/ai-gateway/prompts/:id" element={<AIGatewayPromptEditorPage />} />
     <Route path="/ai-gateway/virtual-keys" element={<AIGatewayVirtualKeysPage />} />
-    <Route path="/ai-gateway/settings" element={<AIGatewaySettingsPage />} />
+    <Route path="/ai-gateway/settings" element={<Navigate to="/ai-gateway/settings/api-keys" replace />} />
+    <Route path="/ai-gateway/settings/:tab" element={<AIGatewaySettingsPage />} />
     <Route path="/monitoring/cycle/:cycleId" element={<MonitoringForm />} />
     <Route path="/monitoring/reports" element={<ReportsArchive />} />
     <Route path="/intake-forms" element={<IntakeFormsListPage />}>

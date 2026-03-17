@@ -41,8 +41,9 @@ import {
   insertGuardrailLogQuery,
 } from "../utils/aiGatewayGuardrail.utils";
 import {
-  resolvePromptQuery,
   resolveVariables,
+  resolvePromptByLabelQuery,
+  resolvePromptReferences,
 } from "../utils/aiGatewayPrompt.utils";
 
 const AI_GATEWAY_URL =
@@ -58,17 +59,25 @@ const AI_GATEWAY_URL =
  */
 async function buildFinalMessages(
   organizationId: number,
-  endpoint: { prompt_id: number | null; system_prompt: string | null },
+  endpoint: { prompt_id: number | null; prompt_label?: string | null; system_prompt: string | null },
   scannedMessages: Array<{ role: string; content: string }>,
   metadata?: Record<string, string>
 ): Promise<Array<{ role: string; content: string }>> {
   if (endpoint.prompt_id) {
     try {
-      const promptData = await resolvePromptQuery(organizationId, endpoint.prompt_id);
+      // 1. Resolve by label (defaults to "production"), falls back to published version
+      const label = endpoint.prompt_label || "production";
+      const promptData = await resolvePromptByLabelQuery(organizationId, endpoint.prompt_id, label);
       if (promptData?.content) {
+        // 2. Resolve @prompt:slug composability references (skip scan if no references present)
+        const hasRefs = promptData.content.some(m => m.content.includes("@prompt:"));
+        const composed = hasRefs
+          ? await resolvePromptReferences(organizationId, promptData.content)
+          : promptData.content;
+        // 3. Resolve {{variable}} placeholders
         const vars = metadata || {};
         return [
-          ...resolveVariables(promptData.content, vars),
+          ...resolveVariables(composed, vars),
           ...scannedMessages,
         ];
       }
@@ -163,18 +172,26 @@ async function runGuardrails(
   const lastUserMessage = messages[actualIdx];
 
   try {
-    const response = await fetch(`${AI_GATEWAY_URL}/v1/guardrails/scan`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-internal-key": INTERNAL_KEY,
-      },
-      body: JSON.stringify({
-        text: lastUserMessage.content,
-        guardrail_rules: rules,
-        settings: settings || {},
-      }),
-    });
+    const guardrailController = new AbortController();
+    const guardrailTimeout = setTimeout(() => guardrailController.abort(), 30000);
+    let response: Response;
+    try {
+      response = await fetch(`${AI_GATEWAY_URL}/v1/guardrails/scan`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-internal-key": INTERNAL_KEY,
+        },
+        body: JSON.stringify({
+          text: lastUserMessage.content,
+          guardrail_rules: rules,
+          settings: settings || {},
+        }),
+        signal: guardrailController.signal,
+      });
+    } finally {
+      clearTimeout(guardrailTimeout);
+    }
 
     if (!response.ok) {
       // Guardrail service error — check on_error settings
@@ -188,8 +205,8 @@ async function runGuardrails(
 
     const result = await response.json();
 
-    // Log each detection
-    for (const detection of result.detections || []) {
+    // Log each detection (parallel inserts)
+    await Promise.all((result.detections || []).map(async (detection: any) => {
       try {
         await insertGuardrailLogQuery(organizationId, {
           guardrail_id: detection.guardrail_id || null,
@@ -204,7 +221,7 @@ async function runGuardrails(
       } catch (logErr) {
         logger.error("Failed to write guardrail log:", logErr);
       }
-    }
+    }));
 
     // If blocked, throw with reason
     if (result.blocked) {
@@ -572,23 +589,31 @@ export async function proxyCompletion(
   );
 
   try {
-    const response = await fetch(`${AI_GATEWAY_URL}/v1/chat/completions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-internal-key": INTERNAL_KEY,
-        "x-provider-key": decryptedKey,
-      },
-      body: JSON.stringify({
-        provider: endpoint.provider,
-        model: endpoint.model,
-        messages: finalMessages,
-        max_tokens: options.max_tokens ?? endpoint.max_tokens ?? undefined,
-        temperature: options.temperature ?? endpoint.temperature ?? undefined,
-        top_p: options.top_p,
-        stream: false,
-      }),
-    });
+    const completionController = new AbortController();
+    const completionTimeout = setTimeout(() => completionController.abort(), 30000);
+    let response: Response;
+    try {
+      response = await fetch(`${AI_GATEWAY_URL}/v1/chat/completions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-internal-key": INTERNAL_KEY,
+          "x-provider-key": decryptedKey,
+        },
+        body: JSON.stringify({
+          provider: endpoint.provider,
+          model: endpoint.model,
+          messages: finalMessages,
+          max_tokens: options.max_tokens ?? endpoint.max_tokens ?? undefined,
+          temperature: options.temperature ?? endpoint.temperature ?? undefined,
+          top_p: options.top_p,
+          stream: false,
+        }),
+        signal: completionController.signal,
+      });
+    } finally {
+      clearTimeout(completionTimeout);
+    }
 
     statusCode = response.status;
 
@@ -722,23 +747,31 @@ export async function proxyStream(
     options.metadata
   );
 
-  const response = await fetch(`${AI_GATEWAY_URL}/v1/chat/completions`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-internal-key": INTERNAL_KEY,
-      "x-provider-key": decryptedKey,
-    },
-    body: JSON.stringify({
-      provider: endpoint.provider,
-      model: endpoint.model,
-      messages: finalMessages,
-      max_tokens: options.max_tokens ?? endpoint.max_tokens ?? undefined,
-      temperature: options.temperature ?? endpoint.temperature ?? undefined,
-      top_p: options.top_p,
-      stream: true,
-    }),
-  });
+  const streamController = new AbortController();
+  const streamTimeout = setTimeout(() => streamController.abort(), 30000);
+  let response: Response;
+  try {
+    response = await fetch(`${AI_GATEWAY_URL}/v1/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-internal-key": INTERNAL_KEY,
+        "x-provider-key": decryptedKey,
+      },
+      body: JSON.stringify({
+        provider: endpoint.provider,
+        model: endpoint.model,
+        messages: finalMessages,
+        max_tokens: options.max_tokens ?? endpoint.max_tokens ?? undefined,
+        temperature: options.temperature ?? endpoint.temperature ?? undefined,
+        top_p: options.top_p,
+        stream: true,
+      }),
+      signal: streamController.signal,
+    });
+  } finally {
+    clearTimeout(streamTimeout);
+  }
 
   if (!response.ok) {
     const errorBody = await response.text();
@@ -865,19 +898,27 @@ export async function proxyEmbedding(
   let statusCode = 200;
 
   try {
-    const response = await fetch(`${AI_GATEWAY_URL}/v1/embeddings`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-internal-key": INTERNAL_KEY,
-        "x-provider-key": decryptedKey,
-      },
-      body: JSON.stringify({
-        provider: endpoint.provider,
-        model: endpoint.model,
-        input,
-      }),
-    });
+    const embeddingController = new AbortController();
+    const embeddingTimeout = setTimeout(() => embeddingController.abort(), 30000);
+    let response: Response;
+    try {
+      response = await fetch(`${AI_GATEWAY_URL}/v1/embeddings`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-internal-key": INTERNAL_KEY,
+          "x-provider-key": decryptedKey,
+        },
+        body: JSON.stringify({
+          provider: endpoint.provider,
+          model: endpoint.model,
+          input,
+        }),
+        signal: embeddingController.signal,
+      });
+    } finally {
+      clearTimeout(embeddingTimeout);
+    }
 
     statusCode = response.status;
 

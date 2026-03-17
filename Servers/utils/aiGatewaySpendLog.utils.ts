@@ -412,3 +412,86 @@ export const purgeSpendLogsQuery = async (
 
   return totalDeleted;
 };
+
+/**
+ * Get spend grouped by provider within a date range
+ */
+export const getSpendByProviderQuery = async (
+  organizationId: number,
+  startDate: string,
+  endDate: string
+): Promise<ISpendByGroup[]> => {
+  const result = (await sequelize.query(
+    `SELECT
+       e.provider AS group_key,
+       COALESCE(SUM(s.cost_usd), 0)::float AS total_cost,
+       COUNT(*)::int AS total_requests,
+       COALESCE(SUM(s.total_tokens), 0)::int AS total_tokens
+     FROM ai_gateway_spend_logs s
+     JOIN ai_gateway_endpoints e ON s.endpoint_id = e.id
+     WHERE s.organization_id = :organizationId
+       AND s.created_at >= :startDate
+       AND s.created_at <= :endDate
+     GROUP BY e.provider
+     ORDER BY total_cost DESC`,
+    { replacements: { organizationId, startDate, endDate } }
+  )) as [ISpendByGroup[], number];
+
+  return result[0];
+};
+
+/**
+ * Get error rate by day within a date range
+ */
+export const getErrorRateByDayQuery = async (
+  organizationId: number,
+  startDate: string,
+  endDate: string
+): Promise<{ day: string; total: number; errors: number; error_rate: number }[]> => {
+  const result = (await sequelize.query(
+    `SELECT
+       DATE(created_at)::text AS day,
+       COUNT(*)::int AS total,
+       COUNT(*) FILTER (WHERE status_code != 200)::int AS errors,
+       CASE WHEN COUNT(*) > 0
+            THEN ROUND((COUNT(*) FILTER (WHERE status_code != 200)::numeric / COUNT(*)::numeric) * 100, 1)
+            ELSE 0 END::float AS error_rate
+     FROM ai_gateway_spend_logs
+     WHERE organization_id = :organizationId
+       AND created_at >= :startDate
+       AND created_at <= :endDate
+     GROUP BY DATE(created_at)
+     ORDER BY day ASC`,
+    { replacements: { organizationId, startDate, endDate } }
+  )) as [{ day: string; total: number; errors: number; error_rate: number }[], number];
+
+  return result[0];
+};
+
+/**
+ * Get average tokens per request grouped by endpoint
+ */
+export const getTokensPerRequestByEndpointQuery = async (
+  organizationId: number,
+  startDate: string,
+  endDate: string
+): Promise<{ endpoint: string; avg_prompt_tokens: number; avg_completion_tokens: number; avg_total_tokens: number; total_requests: number }[]> => {
+  const result = (await sequelize.query(
+    `SELECT
+       COALESCE(e.display_name, e.slug, 'Endpoint #' || s.endpoint_id::text, 'Other') AS endpoint,
+       ROUND(AVG(s.prompt_tokens))::int AS avg_prompt_tokens,
+       ROUND(AVG(s.completion_tokens))::int AS avg_completion_tokens,
+       ROUND(AVG(s.total_tokens))::int AS avg_total_tokens,
+       COUNT(*)::int AS total_requests
+     FROM ai_gateway_spend_logs s
+     LEFT JOIN ai_gateway_endpoints e ON s.endpoint_id = e.id
+     WHERE s.organization_id = :organizationId
+       AND s.created_at >= :startDate
+       AND s.created_at <= :endDate
+     GROUP BY e.display_name, e.slug, s.endpoint_id
+     ORDER BY avg_total_tokens DESC`,
+    { replacements: { organizationId, startDate, endDate } }
+  )) as [{ endpoint: string; avg_prompt_tokens: number; avg_completion_tokens: number; avg_total_tokens: number; total_requests: number }[], number];
+
+  return result[0];
+};

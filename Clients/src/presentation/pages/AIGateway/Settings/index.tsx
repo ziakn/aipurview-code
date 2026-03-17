@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
-import { Box, Typography, Stack, IconButton } from "@mui/material";
-import { CirclePlus, Key, Wallet, Trash2, Pencil, Lock, Router } from "lucide-react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Box, Typography, Stack, IconButton, Collapse } from "@mui/material";
+import TabContext from "@mui/lab/TabContext";
+import { CirclePlus, Key, Wallet, Trash2, Pencil, Lock, Router, AlertTriangle, ChevronDown, ChevronRight, Check, X, Play } from "lucide-react";
 import { EmptyState } from "../../../components/EmptyState";
 import EmptyStateTip from "../../../components/EmptyState/EmptyStateTip";
 import { CustomizableButton } from "../../../components/button/customizable-button";
@@ -8,20 +10,103 @@ import Field from "../../../components/Inputs/Field";
 import Select from "../../../components/Inputs/Select";
 import StandardModal from "../../../components/Modals/StandardModal";
 import Toggle from "../../../components/Inputs/Toggle";
+import TabBar from "../../../components/TabBar";
 import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtended";
 import { apiServices } from "../../../../infrastructure/api/networkServices";
 import palette from "../../../themes/palette";
 import { sectionTitleSx, useCardSx, ProviderIcon, TOP_PROVIDERS } from "../shared";
+import VirtualKeysTab from "../VirtualKeys/index";
 
 const TOP_IDS = new Set(TOP_PROVIDERS.map((p) => p._id));
 
+const TABS = [
+  { label: "API keys", value: "api-keys", icon: "Key" as const },
+  { label: "Budget", value: "budget", icon: "Wallet" as const },
+  { label: "Virtual keys", value: "virtual-keys", icon: "KeyRound" as const },
+  { label: "Guardrail settings", value: "guardrails", icon: "Shield" as const },
+  { label: "Suggested risks", value: "risks", icon: "AlertTriangle" as const },
+];
+
+const SEVERITY_COLORS: Record<string, string> = {
+  critical: "#DC2626",
+  high: "#EA580C",
+  medium: "#D97706",
+  low: "#2563EB",
+};
+
+/** Metadata for each risk condition — description + human-readable threshold labels */
+const CONDITION_META: Record<string, { description: string; thresholdLabels: Record<string, string> }> = {
+  pii_exposure: {
+    description: "Flags when users send personal data (names, emails, SSNs) to LLM providers above a threshold.",
+    thresholdLabels: { count: "Detections", period_days: "Window (days)" },
+  },
+  no_guardrails: {
+    description: "Flags when active endpoints have zero guardrail rules configured — all traffic flows unchecked.",
+    thresholdLabels: {},
+  },
+  budget_exhaustion: {
+    description: "Flags when monthly AI Gateway spend approaches the configured budget limit.",
+    thresholdLabels: { pct: "Alert at (%)" },
+  },
+  provider_concentration: {
+    description: "Flags when most of the spend is concentrated on a single LLM provider, increasing vendor risk.",
+    thresholdLabels: { pct: "Concentration (%)" },
+  },
+  error_rate_spike: {
+    description: "Flags when the 24-hour error rate exceeds a multiple of the 7-day average, indicating provider issues.",
+    thresholdLabels: { multiplier: "Spike factor (x)" },
+  },
+  cost_anomaly: {
+    description: "Flags when today's spend exceeds a multiple of the 7-day daily average, catching unexpected surges.",
+    thresholdLabels: { multiplier: "Spike factor (x)" },
+  },
+  stale_virtual_key: {
+    description: "Flags virtual keys that are old but still actively used — rotating keys reduces exposure.",
+    thresholdLabels: { age_days: "Key age (days)", min_spend_usd: "Min spend ($)" },
+  },
+  unused_endpoint: {
+    description: "Flags active endpoints with zero requests, which increase the attack surface unnecessarily.",
+    thresholdLabels: { inactive_days: "Inactive (days)" },
+  },
+};
+
+interface RiskSetting {
+  condition_id: string;
+  label: string;
+  default_threshold: Record<string, any>;
+  default_severity: string;
+  is_enabled: boolean;
+  threshold: Record<string, any>;
+  severity_override: string | null;
+}
+
+interface RiskSuggestion {
+  id: number;
+  condition_id: string;
+  title: string;
+  description: string;
+  severity: string;
+  evidence: Record<string, any>;
+  compliance_tags: string[];
+  suggested_mitigation: string | null;
+  status: "pending" | "accepted" | "dismissed";
+  accepted_risk_id?: number;
+  dismiss_reason?: string;
+  created_at: string;
+  reviewed_at?: string;
+  reviewed_by_name?: string;
+}
+
 export default function AIGatewaySettingsPage() {
   const cardSx = useCardSx();
+  const { tab: urlTab } = useParams<{ tab: string }>();
+  const navigate = useNavigate();
+  const VALID_TABS = TABS.map((t) => t.value);
+  const activeTab = urlTab && VALID_TABS.includes(urlTab) ? urlTab : "api-keys";
   const [apiKeys, setApiKeys] = useState<any[]>([]);
   const [budget, setBudget] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [providerItems, setProviderItems] = useState(TOP_PROVIDERS);
-  const [topProviderCount, setTopProviderCount] = useState(TOP_PROVIDERS.length);
 
   // API Key modal state
   const [isKeyModalOpen, setIsKeyModalOpen] = useState(false);
@@ -50,6 +135,24 @@ export default function AIGatewaySettingsPage() {
     log_response_body: false,
   });
   const [gsSaving, setGsSaving] = useState(false);
+  const [spendPurgeResult, setSpendPurgeResult] = useState("");
+
+  // Risk suggestions state
+  const [riskSettings, setRiskSettings] = useState<RiskSetting[]>([]);
+  const [riskSettingsDirty, setRiskSettingsDirty] = useState(false);
+  const [riskSettingsSaving, setRiskSettingsSaving] = useState(false);
+  const [suggestions, setSuggestions] = useState<RiskSuggestion[]>([]);
+  const [detecting, setDetecting] = useState(false);
+  const [detectResult, setDetectResult] = useState("");
+  const [showHistory, setShowHistory] = useState(false);
+  const [acceptModalOpen, setAcceptModalOpen] = useState(false);
+  const [acceptTarget, setAcceptTarget] = useState<RiskSuggestion | null>(null);
+  const [acceptForm, setAcceptForm] = useState({ risk_name: "", risk_description: "", severity: "", mitigation_plan: "" });
+  const [acceptSubmitting, setAcceptSubmitting] = useState(false);
+  const [dismissTarget, setDismissTarget] = useState<RiskSuggestion | null>(null);
+  const [dismissModalOpen, setDismissModalOpen] = useState(false);
+  const [dismissReason, setDismissReason] = useState("");
+  const [dismissSubmitting, setDismissSubmitting] = useState(false);
 
   const loadData = useCallback(async () => {
     try {
@@ -62,7 +165,6 @@ export default function AIGatewaySettingsPage() {
       setApiKeys(keysRes?.data?.data || []);
       setBudget(budgetRes?.data?.data || null);
 
-      // Build provider list: top providers first, then rest from LiteLLM SDK
       const dynamicProviders: string[] = providersRes?.data?.data?.providers || [];
       const otherProviders = dynamicProviders
         .filter((p) => !TOP_IDS.has(p))
@@ -71,10 +173,9 @@ export default function AIGatewaySettingsPage() {
 
       if (otherProviders.length > 0) {
         setProviderItems([...TOP_PROVIDERS, ...otherProviders]);
-        setTopProviderCount(TOP_PROVIDERS.length);
+        
       }
 
-      // Guardrail settings
       const gs = gsRes?.data?.data;
       if (gs) {
         setGuardrailSettings(gs);
@@ -95,9 +196,26 @@ export default function AIGatewaySettingsPage() {
     }
   }, []);
 
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
+  const loadRiskData = useCallback(async () => {
+    try {
+      const [settingsRes, suggestionsRes] = await Promise.all([
+        apiServices.get("/ai-gateway/risk-settings").catch(() => null),
+        apiServices.get("/ai-gateway/risk-suggestions").catch(() => null),
+      ]);
+      if (settingsRes?.data?.data) {
+        setRiskSettings(settingsRes.data.data);
+        setRiskSettingsDirty(false);
+      }
+      if (suggestionsRes?.data?.data) {
+        setSuggestions(suggestionsRes.data.data);
+      }
+    } catch {
+      // Silently handle
+    }
+  }, []);
+
+  useEffect(() => { loadData(); }, [loadData]);
+  useEffect(() => { if (activeTab === "risks") loadRiskData(); }, [activeTab, loadRiskData]);
 
   const handleCreateKey = async () => {
     if (!keyForm.key_name || !keyForm.provider || !keyForm.api_key) {
@@ -157,337 +275,723 @@ export default function AIGatewaySettingsPage() {
     setIsBudgetModalOpen(true);
   };
 
+  const handleSaveGuardrailSettings = async () => {
+    setGsSaving(true);
+    try {
+      await apiServices.put("/ai-gateway/guardrails/settings", {
+        ...gsForm,
+        log_retention_days: Number(gsForm.log_retention_days) || 90,
+      });
+      await loadData();
+    } catch {
+      // Silently handle
+    } finally {
+      setGsSaving(false);
+    }
+  };
+
+  // ─── Risk suggestion handlers ──────────────────────────────────────
+
+  const handleToggleCondition = (conditionId: string, enabled: boolean) => {
+    setRiskSettings((prev) =>
+      prev.map((s) => (s.condition_id === conditionId ? { ...s, is_enabled: enabled } : s))
+    );
+    setRiskSettingsDirty(true);
+  };
+
+  const handleThresholdChange = (conditionId: string, key: string, value: string) => {
+    setRiskSettings((prev) =>
+      prev.map((s) =>
+        s.condition_id === conditionId
+          ? { ...s, threshold: { ...s.threshold, [key]: Number(value) || 0 } }
+          : s
+      )
+    );
+    setRiskSettingsDirty(true);
+  };
+
+  const handleSaveRiskSettings = async () => {
+    setRiskSettingsSaving(true);
+    try {
+      await Promise.all(
+        riskSettings.map((s) =>
+          apiServices.put(`/ai-gateway/risk-settings/${s.condition_id}`, {
+            is_enabled: s.is_enabled,
+            threshold: s.threshold,
+            severity_override: s.severity_override,
+          })
+        )
+      );
+      setRiskSettingsDirty(false);
+    } catch {
+      // Silently handle
+    } finally {
+      setRiskSettingsSaving(false);
+    }
+  };
+
+  const handleRunDetection = async () => {
+    setDetecting(true);
+    setDetectResult("");
+    try {
+      const res = await apiServices.post("/ai-gateway/risk-suggestions/detect");
+      const count = res?.data?.data?.new_suggestions ?? 0;
+      setDetectResult(count > 0 ? `${count} new suggestion${count > 1 ? "s" : ""} found` : "No new risks detected");
+      await loadRiskData();
+      setTimeout(() => setDetectResult(""), 5000);
+    } catch {
+      setDetectResult("Detection failed");
+      setTimeout(() => setDetectResult(""), 3000);
+    } finally {
+      setDetecting(false);
+    }
+  };
+
+  const openAcceptModal = (s: RiskSuggestion) => {
+    setAcceptTarget(s);
+    setAcceptForm({
+      risk_name: s.title,
+      risk_description: `${s.description}\n\nEvidence: ${JSON.stringify(s.evidence, null, 2)}`,
+      severity: s.severity,
+      mitigation_plan: s.suggested_mitigation || "",
+    });
+    setAcceptModalOpen(true);
+  };
+
+  const handleAccept = async () => {
+    if (!acceptTarget) return;
+    setAcceptSubmitting(true);
+    try {
+      await apiServices.post(`/ai-gateway/risk-suggestions/${acceptTarget.id}/accept`, {
+        risk_name: acceptForm.risk_name,
+        risk_description: acceptForm.risk_description,
+        severity: acceptForm.severity,
+        risk_category: ["Operational"],
+        mitigation_plan: acceptForm.mitigation_plan,
+      });
+      setAcceptModalOpen(false);
+      setAcceptTarget(null);
+      await loadRiskData();
+    } catch {
+      // Silently handle
+    } finally {
+      setAcceptSubmitting(false);
+    }
+  };
+
+  const openDismissModal = (s: RiskSuggestion) => {
+    setDismissTarget(s);
+    setDismissReason("");
+    setDismissModalOpen(true);
+  };
+
+  const handleDismiss = async () => {
+    if (!dismissTarget) return;
+    setDismissSubmitting(true);
+    try {
+      await apiServices.post(`/ai-gateway/risk-suggestions/${dismissTarget.id}/dismiss`, {
+        dismiss_reason: dismissReason,
+      });
+      setDismissModalOpen(false);
+      setDismissTarget(null);
+      await loadRiskData();
+    } catch {
+      // Silently handle
+    } finally {
+      setDismissSubmitting(false);
+    }
+  };
+
+  const pendingSuggestions = suggestions.filter((s) => s.status === "pending");
+  const historySuggestions = suggestions.filter((s) => s.status !== "pending");
+
+  // no-op — threshold inputs are now inline in the condition row
+
   return (
     <PageHeaderExtended
       title="Settings"
-      description="Manage API keys and budget for the AI Gateway."
+      description="Manage API keys, budget, and guardrail settings for the AI Gateway."
       tipBoxEntity="ai-gateway-settings"
       helpArticlePath="ai-gateway/settings"
     >
-      {/* API Keys Section */}
-      <Box sx={cardSx}>
-        <Stack gap="12px">
-          <Stack gap="8px">
-            <Typography sx={sectionTitleSx}>API keys</Typography>
-            <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-              <Typography sx={{ fontSize: 13, color: palette.text.tertiary, maxWidth: "75%" }}>
-                Provider API keys are encrypted at rest (AES-256-CBC) and only decrypted when proxying a request. Each key is scoped to your organization and can be referenced by multiple endpoints.
-              </Typography>
-              <CustomizableButton
-                text="Add key"
-                icon={<CirclePlus size={14} strokeWidth={1.5} />}
-                onClick={() => {
-                  setKeyForm({ key_name: "", provider: "", api_key: "" });
-                  setKeyError("");
-                  setIsKeyModalOpen(true);
-                }}
-              />
-            </Stack>
-          </Stack>
+      <TabContext value={activeTab}>
+        <TabBar
+          tabs={TABS}
+          activeTab={activeTab}
+          onChange={(_, v) => navigate(`/ai-gateway/settings/${v}`, { replace: true })}
+        />
 
-          {loading ? null : apiKeys.length === 0 ? (
-            <EmptyState
-              icon={Key}
-              message="No API keys configured. Add a provider API key to start creating endpoints."
-              showBorder
-            >
-              <EmptyStateTip
-                icon={Lock}
-                title="Keys are encrypted at rest"
-                description="Your provider API keys are encrypted using AES-256-CBC before being stored. They are only decrypted when proxying a request and are never exposed in logs."
-              />
-              <EmptyStateTip
-                icon={Router}
-                title="Each endpoint references an API key"
-                description="After adding a key, create endpoints in the Endpoints tab. Each endpoint uses one API key to authenticate with the LLM provider."
-              />
-            </EmptyState>
-          ) : (
-            <Stack gap="8px">
-              {apiKeys.map((key) => (
-                <Stack
-                  key={key.id}
-                  direction="row"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  sx={{
-                    p: "12px 16px",
-                    border: `1px solid ${palette.border.dark}`,
-                    borderRadius: "4px",
-                  }}
-                >
-                  <Stack direction="row" alignItems="center" gap="10px">
-                    <ProviderIcon provider={key.provider} size={20} />
-                    <Box>
-                      <Typography sx={{ fontSize: 13, fontWeight: 500 }}>
-                        {key.key_name}
-                      </Typography>
-                      <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
-                        {key.provider} &middot; {key.masked_key}
+        <Box sx={{ mt: "16px" }}>
+          {/* ─── API Keys tab ─────────────────────────────────────────── */}
+          {activeTab === "api-keys" && (
+            <Box sx={cardSx}>
+              <Stack gap="12px">
+                <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+                  <Box>
+                    <Typography sx={sectionTitleSx}>API keys</Typography>
+                    <Typography sx={{ fontSize: 13, color: palette.text.tertiary, mt: "4px" }}>
+                      Provider API keys are encrypted at rest (AES-256-CBC) and only decrypted when proxying a request.
                     </Typography>
-                    </Box>
-                  </Stack>
-                  <Stack direction="row" alignItems="center" gap="8px">
-                    <Typography
-                      sx={{
-                        fontSize: 12,
-                        color: key.is_active ? palette.status.success.text : palette.text.disabled,
-                        fontWeight: 500,
-                      }}
-                    >
-                      {key.is_active ? "Active" : "Inactive"}
-                    </Typography>
-                    <IconButton size="small" onClick={() => handleDeleteKey(key.id)} sx={{ p: 0.5 }}>
-                      <Trash2 size={14} strokeWidth={1.5} color={palette.text.tertiary} />
-                    </IconButton>
-                  </Stack>
-                </Stack>
-              ))}
-            </Stack>
-          )}
-        </Stack>
-      </Box>
-
-      {/* Budget Section */}
-      <Box sx={cardSx}>
-        <Stack gap="12px">
-          <Stack gap="8px">
-            <Typography sx={sectionTitleSx}>Budget</Typography>
-            <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-              <Typography sx={{ fontSize: 13, color: palette.text.tertiary, maxWidth: "75%" }}>
-                Set a monthly spending limit across all endpoints. When the hard limit is enabled, requests are rejected once the budget is exceeded. Use the alert threshold for early warnings.
-              </Typography>
-              <CustomizableButton
-                text={budget ? "Edit budget" : "Set budget"}
-                icon={<Pencil size={14} strokeWidth={1.5} />}
-                onClick={openBudgetModal}
-              />
-            </Stack>
-          </Stack>
-
-          {loading ? null : budget ? (
-            <Stack gap="12px">
-              <Stack direction="row" justifyContent="space-between">
-                <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>Monthly limit</Typography>
-                <Typography sx={{ fontSize: 13, fontWeight: 500 }}>
-                  ${Number(budget.monthly_limit_usd).toFixed(2)}
-                </Typography>
-              </Stack>
-              <Stack direction="row" justifyContent="space-between">
-                <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>Current spend</Typography>
-                <Typography sx={{ fontSize: 13, fontWeight: 500 }}>
-                  ${Number(budget.current_spend_usd).toFixed(4)}
-                </Typography>
-              </Stack>
-              {Number(budget.monthly_limit_usd) > 0 && (
-                <Box
-                  sx={{
-                    height: 6,
-                    borderRadius: 3,
-                    backgroundColor: palette.border.light,
-                    overflow: "hidden",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      height: "100%",
-                      width: `${Math.min(100, (Number(budget.current_spend_usd) / Number(budget.monthly_limit_usd)) * 100)}%`,
-                      backgroundColor:
-                        (Number(budget.current_spend_usd) / Number(budget.monthly_limit_usd)) * 100 >= budget.alert_threshold_pct
-                          ? palette.status.error.text
-                          : palette.brand.primary,
-                      borderRadius: 3,
-                      transition: "width 0.3s",
+                  </Box>
+                  <CustomizableButton
+                    text="Add key"
+                    icon={<CirclePlus size={14} strokeWidth={1.5} />}
+                    onClick={() => {
+                      setKeyForm({ key_name: "", provider: "", api_key: "" });
+                      setKeyError("");
+                      setIsKeyModalOpen(true);
                     }}
                   />
+                </Stack>
+
+                {loading ? null : apiKeys.length === 0 ? (
+                  <EmptyState
+                    icon={Key}
+                    message="No API keys configured. Add a provider API key to start creating endpoints."
+                    showBorder
+                  >
+                    <EmptyStateTip
+                      icon={Lock}
+                      title="Keys are encrypted at rest"
+                      description="Your provider API keys are encrypted using AES-256-CBC before being stored. They are only decrypted when proxying a request and are never exposed in logs."
+                    />
+                    <EmptyStateTip
+                      icon={Router}
+                      title="Each endpoint references an API key"
+                      description="After adding a key, create endpoints in the Endpoints tab. Each endpoint uses one API key to authenticate with the LLM provider."
+                    />
+                  </EmptyState>
+                ) : (
+                  <Stack gap="8px">
+                    {apiKeys.map((key) => (
+                      <Stack
+                        key={key.id}
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        sx={{
+                          p: "12px 16px",
+                          border: `1px solid ${palette.border.dark}`,
+                          borderRadius: "4px",
+                        }}
+                      >
+                        <Stack direction="row" alignItems="center" gap="10px">
+                          <ProviderIcon provider={key.provider} size={20} />
+                          <Box>
+                            <Typography sx={{ fontSize: 13, fontWeight: 500 }}>
+                              {key.key_name}
+                            </Typography>
+                            <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
+                              {key.provider} &middot; {key.masked_key}
+                            </Typography>
+                          </Box>
+                        </Stack>
+                        <Stack direction="row" alignItems="center" gap="8px">
+                          <Typography
+                            sx={{
+                              fontSize: 12,
+                              color: key.is_active ? palette.status.success.text : palette.text.disabled,
+                              fontWeight: 500,
+                            }}
+                          >
+                            {key.is_active ? "Active" : "Inactive"}
+                          </Typography>
+                          <IconButton size="small" onClick={() => handleDeleteKey(key.id)} sx={{ p: 0.5 }}>
+                            <Trash2 size={14} strokeWidth={1.5} color={palette.text.tertiary} />
+                          </IconButton>
+                        </Stack>
+                      </Stack>
+                    ))}
+                  </Stack>
+                )}
+              </Stack>
+            </Box>
+          )}
+
+          {/* ─── Budget tab ───────────────────────────────────────────── */}
+          {activeTab === "budget" && (
+            <Box sx={cardSx}>
+              <Stack gap="12px">
+                <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+                  <Box>
+                    <Typography sx={sectionTitleSx}>Budget</Typography>
+                    <Typography sx={{ fontSize: 13, color: palette.text.tertiary, mt: "4px" }}>
+                      Set a monthly spending limit. When hard limit is enabled, requests are rejected once exceeded.
+                    </Typography>
+                  </Box>
+                  <CustomizableButton
+                    text={budget ? "Edit budget" : "Set budget"}
+                    icon={<Pencil size={14} strokeWidth={1.5} />}
+                    onClick={openBudgetModal}
+                  />
+                </Stack>
+
+                {loading ? null : budget ? (
+                  <Stack gap="12px">
+                    <Stack direction="row" justifyContent="space-between">
+                      <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>Monthly limit</Typography>
+                      <Typography sx={{ fontSize: 13, fontWeight: 500 }}>
+                        ${Number(budget.monthly_limit_usd).toFixed(2)}
+                      </Typography>
+                    </Stack>
+                    <Stack direction="row" justifyContent="space-between">
+                      <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>Current spend</Typography>
+                      <Typography sx={{ fontSize: 13, fontWeight: 500 }}>
+                        ${Number(budget.current_spend_usd).toFixed(4)}
+                      </Typography>
+                    </Stack>
+                    {Number(budget.monthly_limit_usd) > 0 && (
+                      <Box
+                        sx={{
+                          height: 6,
+                          borderRadius: 3,
+                          backgroundColor: palette.border.light,
+                          overflow: "hidden",
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            height: "100%",
+                            width: `${Math.min(100, (Number(budget.current_spend_usd) / Number(budget.monthly_limit_usd)) * 100)}%`,
+                            backgroundColor:
+                              (Number(budget.current_spend_usd) / Number(budget.monthly_limit_usd)) * 100 >= budget.alert_threshold_pct
+                                ? palette.status.error.text
+                                : palette.brand.primary,
+                            borderRadius: 3,
+                            transition: "width 0.3s",
+                          }}
+                        />
+                      </Box>
+                    )}
+                    <Stack direction="row" justifyContent="space-between">
+                      <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>Alert threshold</Typography>
+                      <Typography sx={{ fontSize: 13, fontWeight: 500 }}>
+                        {budget.alert_threshold_pct}%
+                      </Typography>
+                    </Stack>
+                    <Stack direction="row" justifyContent="space-between">
+                      <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>Hard limit</Typography>
+                      <Typography sx={{ fontSize: 13, fontWeight: 500 }}>
+                        {budget.is_hard_limit ? "Yes (requests rejected)" : "No (alert only)"}
+                      </Typography>
+                    </Stack>
+                  </Stack>
+                ) : (
+                  <EmptyState
+                    icon={Wallet}
+                    message="No budget configured. All requests are allowed without cost limits."
+                    showBorder
+                  />
+                )}
+              </Stack>
+            </Box>
+          )}
+
+          {/* ─── Virtual keys tab ─────────────────────────────────────── */}
+          {activeTab === "virtual-keys" && (
+            <VirtualKeysTab embedded />
+          )}
+
+          {/* ─── Guardrail settings tab ───────────────────────────────── */}
+          {activeTab === "guardrails" && (
+            <Stack gap="16px">
+              {/* Save button */}
+              <Stack direction="row" justifyContent="flex-end">
+                <CustomizableButton
+                  text={gsSaving ? "Saving..." : "Save settings"}
+                  onClick={handleSaveGuardrailSettings}
+                  isDisabled={gsSaving}
+                />
+              </Stack>
+
+              {/* Error behavior card */}
+              <Box sx={cardSx}>
+                <Stack gap="8px">
+                  <Typography sx={sectionTitleSx}>Error behavior</Typography>
+                  <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>
+                    What happens when the guardrail scanner itself fails (e.g., Presidio unavailable). "Fail-closed" blocks all requests for safety. "Fail-open" allows requests through.
+                  </Typography>
+                  <Stack direction="row" gap="16px" mt="8px">
+                    <Box flex={1}>
+                      <Select
+                        id="pii-on-error"
+                        label="PII scan on error"
+                        value={gsForm.pii_on_error}
+                        items={[
+                          { _id: "block", name: "Block request (fail-closed)" },
+                          { _id: "allow", name: "Allow request (fail-open)" },
+                        ]}
+                        onChange={(e) => setGsForm((p) => ({ ...p, pii_on_error: e.target.value as string }))}
+                        getOptionValue={(item) => item._id}
+                      />
+                    </Box>
+                    <Box flex={1}>
+                      <Select
+                        id="cf-on-error"
+                        label="Content filter on error"
+                        value={gsForm.content_filter_on_error}
+                        items={[
+                          { _id: "allow", name: "Allow request (fail-open)" },
+                          { _id: "block", name: "Block request (fail-closed)" },
+                        ]}
+                        onChange={(e) => setGsForm((p) => ({ ...p, content_filter_on_error: e.target.value as string }))}
+                        getOptionValue={(item) => item._id}
+                      />
+                    </Box>
+                  </Stack>
+                </Stack>
+              </Box>
+
+              {/* Replacement text card */}
+              <Box sx={cardSx}>
+                <Stack gap="8px">
+                  <Typography sx={sectionTitleSx}>Replacement text</Typography>
+                  <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>
+                    When a guardrail masks content, this text replaces the detected value. Use ENTITY_TYPE in the PII format to include the detected type (e.g., &lt;EMAIL_ADDRESS&gt;).
+                  </Typography>
+                  <Stack direction="row" gap="16px" mt="8px">
+                    <Box flex={1}>
+                      <Field
+                        label="PII replacement format"
+                        placeholder="<ENTITY_TYPE>"
+                        value={gsForm.pii_replacement_format}
+                        onChange={(e) => setGsForm((p) => ({ ...p, pii_replacement_format: e.target.value }))}
+                      />
+                    </Box>
+                    <Box flex={1}>
+                      <Field
+                        label="Content filter replacement"
+                        placeholder="[REDACTED]"
+                        value={gsForm.content_filter_replacement}
+                        onChange={(e) => setGsForm((p) => ({ ...p, content_filter_replacement: e.target.value }))}
+                      />
+                    </Box>
+                  </Stack>
+                </Stack>
+              </Box>
+
+              {/* Audit log retention card */}
+              <Box sx={cardSx}>
+                <Stack gap="8px">
+                  <Typography sx={sectionTitleSx}>Audit log retention</Typography>
+                  <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>
+                    How long to keep guardrail detection logs. These logs record every blocked or masked request for compliance auditing (EU AI Act Art. 12).
+                  </Typography>
+                  <Box sx={{ maxWidth: 200, mt: "8px" }}>
+                    <Field
+                      label="Retention period (days)"
+                      placeholder="90"
+                      value={gsForm.log_retention_days}
+                      onChange={(e) => setGsForm((p) => ({ ...p, log_retention_days: e.target.value }))}
+                    />
+                  </Box>
+                  <Box sx={{ mt: "8px" }}>
+                    <CustomizableButton
+                      text="Purge old logs"
+                      variant="outlined"
+                      onClick={async () => {
+                        try {
+                          await apiServices.post("/ai-gateway/guardrails/logs/purge");
+                        } catch {
+                          // Silently handle
+                        }
+                      }}
+                    />
+                  </Box>
+                </Stack>
+              </Box>
+
+              {/* Request body logging card */}
+              <Box sx={cardSx}>
+                <Stack gap="8px">
+                  <Typography sx={sectionTitleSx}>Request body logging</Typography>
+                  <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>
+                    When enabled, full request prompts and LLM responses are stored in the spend logs. Disabled by default for privacy. Bodies are truncated to 2,048 characters.
+                  </Typography>
+                  <Stack gap="12px" mt="8px">
+                    <Stack direction="row" justifyContent="space-between" alignItems="center">
+                      <Typography sx={{ fontSize: 13 }}>Log request body (prompts)</Typography>
+                      <Toggle
+                        checked={gsForm.log_request_body}
+                        onChange={() => setGsForm((p) => ({ ...p, log_request_body: !p.log_request_body }))}
+                      />
+                    </Stack>
+                    <Stack direction="row" justifyContent="space-between" alignItems="center">
+                      <Typography sx={{ fontSize: 13 }}>Log response body (LLM output)</Typography>
+                      <Toggle
+                        checked={gsForm.log_response_body}
+                        onChange={() => setGsForm((p) => ({ ...p, log_response_body: !p.log_response_body }))}
+                      />
+                    </Stack>
+                  </Stack>
+                </Stack>
+              </Box>
+
+              {/* Spend log cleanup card */}
+              <Box sx={cardSx}>
+                <Stack gap="8px">
+                  <Typography sx={sectionTitleSx}>Spend log cleanup</Typography>
+                  <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>
+                    Delete old spend log entries based on the retention period above.
+                  </Typography>
+                  <Box sx={{ mt: "8px" }}>
+                    <CustomizableButton
+                      text={spendPurgeResult || "Purge old spend logs"}
+                      variant="outlined"
+                      onClick={async () => {
+                        setSpendPurgeResult("Purging...");
+                        try {
+                          const res = await apiServices.post("/ai-gateway/spend/logs/purge");
+                          const count = res?.data?.data?.deleted_count || 0;
+                          setSpendPurgeResult(count > 0 ? `Deleted ${count} logs` : "No old logs to purge");
+                          if (count > 0) await loadData();
+                          setTimeout(() => setSpendPurgeResult(""), 3000);
+                        } catch {
+                          setSpendPurgeResult("Failed to purge");
+                          setTimeout(() => setSpendPurgeResult(""), 3000);
+                        }
+                      }}
+                    />
+                  </Box>
+                </Stack>
+              </Box>
+            </Stack>
+          )}
+
+          {/* ─── Suggested risks tab ──────────────────────────────────── */}
+          {activeTab === "risks" && (
+            <Stack gap="16px">
+              {/* Detection settings card */}
+              <Box sx={cardSx}>
+                <Stack gap="12px">
+                  <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+                    <Box>
+                      <Typography sx={sectionTitleSx}>Risk detection settings</Typography>
+                      <Typography sx={{ fontSize: 13, color: palette.text.tertiary, mt: "4px" }}>
+                        Configure which risk conditions to monitor. Detection runs daily at 6 AM or manually below.
+                      </Typography>
+                    </Box>
+                    <Stack direction="row" gap="8px" alignItems="center">
+                      {detectResult && (
+                        <Typography sx={{ fontSize: 12, color: detectResult.includes("found") ? palette.status.success.text : palette.text.tertiary, mr: "4px" }}>
+                          {detectResult}
+                        </Typography>
+                      )}
+                      <CustomizableButton
+                        text={detecting ? "Detecting..." : "Run detection now"}
+                        variant="outlined"
+                        icon={<Play size={14} strokeWidth={1.5} />}
+                        onClick={handleRunDetection}
+                        isDisabled={detecting}
+                      />
+                      <CustomizableButton
+                        text={riskSettingsSaving ? "Saving..." : "Save settings"}
+                        onClick={handleSaveRiskSettings}
+                        isDisabled={riskSettingsSaving || !riskSettingsDirty}
+                      />
+                    </Stack>
+                  </Stack>
+
+                  <Stack gap="0px" mt="4px">
+                    {riskSettings.map((s, idx) => {
+                      const meta = CONDITION_META[s.condition_id];
+                      const thresholdKeys = Object.keys(s.default_threshold);
+                      return (
+                        <Stack
+                          key={s.condition_id}
+                          direction="row"
+                          alignItems="flex-start"
+                          gap="12px"
+                          sx={{
+                            p: "12px 0",
+                            borderTop: idx > 0 ? `1px solid ${palette.border.light}` : "none",
+                            opacity: s.is_enabled ? 1 : 0.55,
+                          }}
+                        >
+                          <Box sx={{ pt: "2px" }}>
+                            <Toggle
+                              checked={s.is_enabled}
+                              onChange={() => handleToggleCondition(s.condition_id, !s.is_enabled)}
+                            />
+                          </Box>
+                          <Box flex={1} minWidth={0}>
+                            <Typography sx={{ fontSize: 13, fontWeight: 500 }}>
+                              {s.label}
+                            </Typography>
+                            {meta?.description && (
+                              <Typography sx={{ fontSize: 12, color: palette.text.tertiary, mt: "2px", lineHeight: 1.4 }}>
+                                {meta.description}
+                              </Typography>
+                            )}
+                            {thresholdKeys.length > 0 && (
+                              <Box sx={{ display: "flex", flexDirection: "row", mt: "8px" }}>
+                                {thresholdKeys.map((key, ki) => (
+                                  <Box key={key} sx={{ width: "110px", ml: ki > 0 ? "8px" : "0px" }}>
+                                    <Field
+                                      label={meta?.thresholdLabels[key] || key.replace(/_/g, " ")}
+                                      value={String(s.threshold[key] ?? s.default_threshold[key] ?? "")}
+                                      onChange={(e) => handleThresholdChange(s.condition_id, key, e.target.value)}
+                                      sx={{ minWidth: "unset", width: "100%" }}
+                                    />
+                                  </Box>
+                                ))}
+                              </Box>
+                            )}
+                          </Box>
+                        </Stack>
+                      );
+                    })}
+                  </Stack>
+                </Stack>
+              </Box>
+
+              {/* Pending suggestions */}
+              {pendingSuggestions.length > 0 ? (
+                <Box>
+                  <Typography sx={{ ...sectionTitleSx, mb: "12px" }}>
+                    Pending suggestions ({pendingSuggestions.length})
+                  </Typography>
+                  <Stack gap="12px">
+                    {pendingSuggestions.map((s) => (
+                      <Box key={s.id} sx={cardSx}>
+                        <Stack gap="8px">
+                          <Stack direction="row" alignItems="center" gap="8px">
+                            <Typography
+                              sx={{
+                                fontSize: 11,
+                                fontWeight: 600,
+                                color: SEVERITY_COLORS[s.severity] || palette.text.tertiary,
+                                backgroundColor: `${SEVERITY_COLORS[s.severity] || palette.text.tertiary}1a`,
+                                px: "8px",
+                                py: "2px",
+                                borderRadius: "4px",
+                                textTransform: "uppercase",
+                              }}
+                            >
+                              {s.severity}
+                            </Typography>
+                            <Typography sx={{ fontSize: 14, fontWeight: 500 }}>
+                              {s.title}
+                            </Typography>
+                          </Stack>
+
+                          <Typography sx={{ fontSize: 13, color: palette.text.secondary }}>
+                            {s.description}
+                          </Typography>
+
+                          {s.suggested_mitigation && (
+                            <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>
+                              <strong>Suggested:</strong> {s.suggested_mitigation}
+                            </Typography>
+                          )}
+
+                          {s.compliance_tags.length > 0 && (
+                            <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
+                              {s.compliance_tags.join(" \u00b7 ")}
+                            </Typography>
+                          )}
+
+                          {s.evidence && Object.keys(s.evidence).length > 0 && (
+                            <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
+                              Evidence: {Object.entries(s.evidence)
+                                .filter(([k]) => !k.startsWith("threshold"))
+                                .slice(0, 4)
+                                .map(([k, v]) => `${k.replace(/_/g, " ")}: ${Array.isArray(v) ? v.join(", ") : v}`)
+                                .join(" \u00b7 ")}
+                            </Typography>
+                          )}
+
+                          <Stack direction="row" justifyContent="flex-end" gap="8px" mt="4px">
+                            <CustomizableButton
+                              text="Dismiss"
+                              variant="outlined"
+                              icon={<X size={14} strokeWidth={1.5} />}
+                              onClick={() => openDismissModal(s)}
+                            />
+                            <CustomizableButton
+                              text="Accept as risk"
+                              icon={<Check size={14} strokeWidth={1.5} />}
+                              onClick={() => openAcceptModal(s)}
+                            />
+                          </Stack>
+                        </Stack>
+                      </Box>
+                    ))}
+                  </Stack>
+                </Box>
+              ) : (
+                <EmptyState
+                  icon={AlertTriangle}
+                  message="No pending risk suggestions. Run detection or wait for the next scheduled check."
+                  showBorder
+                />
+              )}
+
+              {/* History (collapsed) */}
+              {historySuggestions.length > 0 && (
+                <Box>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    gap="4px"
+                    sx={{ cursor: "pointer", mb: "8px" }}
+                    onClick={() => setShowHistory(!showHistory)}
+                  >
+                    {showHistory ? <ChevronDown size={16} strokeWidth={1.5} /> : <ChevronRight size={16} strokeWidth={1.5} />}
+                    <Typography sx={{ fontSize: 13, fontWeight: 500, color: palette.text.secondary }}>
+                      History ({historySuggestions.length})
+                    </Typography>
+                  </Stack>
+                  <Collapse in={showHistory}>
+                    <Stack gap="8px">
+                      {historySuggestions.map((s) => (
+                        <Stack
+                          key={s.id}
+                          direction="row"
+                          justifyContent="space-between"
+                          alignItems="center"
+                          sx={{
+                            p: "8px 12px",
+                            border: `1px solid ${palette.border.light}`,
+                            borderRadius: "4px",
+                            opacity: 0.7,
+                          }}
+                        >
+                          <Stack direction="row" alignItems="center" gap="8px">
+                            <Typography
+                              sx={{
+                                fontSize: 11,
+                                fontWeight: 600,
+                                color: s.status === "accepted" ? palette.status.success.text : palette.text.tertiary,
+                                textTransform: "uppercase",
+                              }}
+                            >
+                              {s.status}
+                            </Typography>
+                            <Typography sx={{ fontSize: 13 }}>{s.title}</Typography>
+                          </Stack>
+                          <Stack direction="row" alignItems="center" gap="8px">
+                            {s.reviewed_by_name && (
+                              <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
+                                by {s.reviewed_by_name}
+                              </Typography>
+                            )}
+                            {s.reviewed_at && (
+                              <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
+                                {new Date(s.reviewed_at).toLocaleDateString()}
+                              </Typography>
+                            )}
+                          </Stack>
+                        </Stack>
+                      ))}
+                    </Stack>
+                  </Collapse>
                 </Box>
               )}
-              <Stack direction="row" justifyContent="space-between">
-                <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>Alert threshold</Typography>
-                <Typography sx={{ fontSize: 13, fontWeight: 500 }}>
-                  {budget.alert_threshold_pct}%
-                </Typography>
-              </Stack>
-              <Stack direction="row" justifyContent="space-between">
-                <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>Hard limit</Typography>
-                <Typography sx={{ fontSize: 13, fontWeight: 500 }}>
-                  {budget.is_hard_limit ? "Yes (requests rejected)" : "No (alert only)"}
-                </Typography>
-              </Stack>
             </Stack>
-          ) : (
-            <EmptyState
-              icon={Wallet}
-              message="No budget configured. All requests are allowed without cost limits."
-              showBorder
-            />
           )}
-        </Stack>
-      </Box>
-
-      {/* Guardrail Settings Section */}
-      <Box sx={cardSx}>
-        <Stack gap="12px">
-          <Stack gap="8px">
-            <Typography sx={sectionTitleSx}>Guardrail settings</Typography>
-            <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-              <Typography sx={{ fontSize: 13, color: palette.text.tertiary, maxWidth: "75%" }}>
-                Configure how guardrails behave when scanning fails, what replacement text to use for masked content, and how long to retain guardrail audit logs.
-              </Typography>
-              <CustomizableButton
-              text={gsSaving ? "Saving..." : "Save"}
-              onClick={async () => {
-                setGsSaving(true);
-                try {
-                  await apiServices.put("/ai-gateway/guardrails/settings", {
-                    ...gsForm,
-                    log_retention_days: Number(gsForm.log_retention_days) || 90,
-                  });
-                  await loadData();
-                } catch {
-                  // Silently handle
-                } finally {
-                  setGsSaving(false);
-                }
-              }}
-            />
-            </Stack>
-          </Stack>
-
-          <Stack gap="20px">
-            <Box>
-              <Typography sx={{ fontSize: 13, fontWeight: 500, mb: 1 }}>Error behavior</Typography>
-              <Typography sx={{ fontSize: 12, color: palette.text.tertiary, mb: 1.5 }}>
-                What happens when the guardrail scanner itself fails (e.g., Presidio unavailable). "Fail-closed" blocks all requests for safety. "Fail-open" allows requests through and logs the error.
-              </Typography>
-              <Stack direction="row" gap="16px">
-                <Box flex={1}>
-                  <Select
-                    id="pii-on-error"
-                    label="PII scan on error"
-                    value={gsForm.pii_on_error}
-                    items={[
-                      { _id: "block", name: "Block request (fail-closed)" },
-                      { _id: "allow", name: "Allow request (fail-open)" },
-                    ]}
-                    onChange={(e) => setGsForm((p) => ({ ...p, pii_on_error: e.target.value as string }))}
-                    getOptionValue={(item) => item._id}
-                  />
-                </Box>
-                <Box flex={1}>
-                  <Select
-                    id="cf-on-error"
-                    label="Content filter on error"
-                    value={gsForm.content_filter_on_error}
-                    items={[
-                      { _id: "allow", name: "Allow request (fail-open)" },
-                      { _id: "block", name: "Block request (fail-closed)" },
-                    ]}
-                    onChange={(e) => setGsForm((p) => ({ ...p, content_filter_on_error: e.target.value as string }))}
-                    getOptionValue={(item) => item._id}
-                  />
-                </Box>
-              </Stack>
-            </Box>
-
-            <Box>
-              <Typography sx={{ fontSize: 13, fontWeight: 500, mb: 1 }}>Replacement text</Typography>
-              <Typography sx={{ fontSize: 12, color: palette.text.tertiary, mb: 1.5 }}>
-                When a guardrail masks content, this text replaces the detected value. Use ENTITY_TYPE in the PII format to include the detected type (e.g., &lt;EMAIL_ADDRESS&gt;).
-              </Typography>
-              <Stack direction="row" gap="16px">
-                <Box flex={1}>
-                  <Field
-                    label="PII replacement format"
-                    placeholder="<ENTITY_TYPE>"
-                    value={gsForm.pii_replacement_format}
-                    onChange={(e) => setGsForm((p) => ({ ...p, pii_replacement_format: e.target.value }))}
-                  />
-                </Box>
-                <Box flex={1}>
-                  <Field
-                    label="Content filter replacement"
-                    placeholder="[REDACTED]"
-                    value={gsForm.content_filter_replacement}
-                    onChange={(e) => setGsForm((p) => ({ ...p, content_filter_replacement: e.target.value }))}
-                  />
-                </Box>
-              </Stack>
-            </Box>
-
-            <Box>
-              <Typography sx={{ fontSize: 13, fontWeight: 500, mb: 1 }}>Audit log retention</Typography>
-              <Typography sx={{ fontSize: 12, color: palette.text.tertiary, mb: 1.5 }}>
-                How long to keep guardrail detection logs. These logs record every blocked or masked request for compliance auditing (EU AI Act Art. 12).
-              </Typography>
-              <Stack direction="row" gap={2} alignItems="flex-end">
-                <Box sx={{ maxWidth: 200 }}>
-                  <Field
-                    label="Retention period (days)"
-                    placeholder="90"
-                    value={gsForm.log_retention_days}
-                    onChange={(e) => setGsForm((p) => ({ ...p, log_retention_days: e.target.value }))}
-                  />
-                </Box>
-                <CustomizableButton
-                text="Purge old logs"
-                onClick={async () => {
-                  try {
-                    await apiServices.post("/ai-gateway/guardrails/logs/purge");
-                  } catch {
-                    // Silently handle
-                  }
-                }}
-              />
-            </Stack>
-            </Box>
-
-            <Box>
-              <Typography sx={{ fontSize: 13, fontWeight: 500, mb: 1 }}>Request body logging</Typography>
-              <Typography sx={{ fontSize: 12, color: palette.text.tertiary, mb: 1.5 }}>
-                When enabled, full request prompts and LLM responses are stored in the spend logs. Disabled by default for privacy. Bodies are truncated to 2,048 characters and only the last 3 messages are kept.
-              </Typography>
-              <Stack gap="12px">
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                  <Typography sx={{ fontSize: 13 }}>Log request body (prompts)</Typography>
-                  <Toggle
-                    checked={gsForm.log_request_body}
-                    onChange={() => setGsForm((p) => ({ ...p, log_request_body: !p.log_request_body }))}
-                  />
-                </Stack>
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                  <Typography sx={{ fontSize: 13 }}>Log response body (LLM output)</Typography>
-                  <Toggle
-                    checked={gsForm.log_response_body}
-                    onChange={() => setGsForm((p) => ({ ...p, log_response_body: !p.log_response_body }))}
-                  />
-                </Stack>
-              </Stack>
-            </Box>
-
-            <Box>
-              <Typography sx={{ fontSize: 13, fontWeight: 500, mb: 1 }}>Spend log cleanup</Typography>
-              <Typography sx={{ fontSize: 12, color: palette.text.tertiary, mb: 1.5 }}>
-                Delete old spend log entries based on the retention period above. Uses the same retention days as guardrail logs.
-              </Typography>
-              <CustomizableButton
-                text="Purge old spend logs"
-                onClick={async () => {
-                  try {
-                    const res = await apiServices.post("/ai-gateway/spend/logs/purge");
-                    const count = res?.data?.data?.deleted_count || 0;
-                    if (count > 0) {
-                      await loadData();
-                    }
-                  } catch {
-                    // Silently handle
-                  }
-                }}
-              />
-            </Box>
-          </Stack>
-        </Stack>
-      </Box>
+        </Box>
+      </TabContext>
 
       {/* Add API Key Modal */}
       <StandardModal
@@ -516,7 +1020,7 @@ export default function AIGatewaySettingsPage() {
             items={providerItems}
             onChange={(e) => setKeyForm((p) => ({ ...p, provider: e.target.value as string }))}
             getOptionValue={(item) => item._id}
-            dividerAfterIndex={topProviderCount}
+            dividerAfterIndex={TOP_PROVIDERS.length}
             dividerLabel="Other providers"
             isRequired
           />
@@ -576,6 +1080,75 @@ export default function AIGatewaySettingsPage() {
             />
           </Stack>
         </Stack>
+      </StandardModal>
+
+      {/* Accept as risk Modal */}
+      <StandardModal
+        isOpen={acceptModalOpen}
+        onClose={() => { setAcceptModalOpen(false); setAcceptTarget(null); }}
+        title="Accept as risk"
+        description="This will create a new risk in Risk Management pre-filled with the suggestion data."
+        onSubmit={handleAccept}
+        submitButtonText="Create risk"
+        isSubmitting={acceptSubmitting}
+        maxWidth="560px"
+      >
+        <Stack gap="16px">
+          <Field
+            label="Risk name"
+            value={acceptForm.risk_name}
+            onChange={(e) => setAcceptForm((p) => ({ ...p, risk_name: e.target.value }))}
+            isRequired
+          />
+          <Field
+            label="Description"
+            value={acceptForm.risk_description}
+            onChange={(e) => setAcceptForm((p) => ({ ...p, risk_description: e.target.value }))}
+            multiline
+            minRows={3}
+          />
+          <Select
+            id="severity"
+            label="Severity"
+            value={acceptForm.severity}
+            items={[
+              { _id: "critical", name: "Critical" },
+              { _id: "high", name: "High" },
+              { _id: "medium", name: "Medium" },
+              { _id: "low", name: "Low" },
+            ]}
+            onChange={(e) => setAcceptForm((p) => ({ ...p, severity: e.target.value as string }))}
+            getOptionValue={(item) => item._id}
+          />
+          <Field
+            label="Mitigation plan"
+            value={acceptForm.mitigation_plan}
+            onChange={(e) => setAcceptForm((p) => ({ ...p, mitigation_plan: e.target.value }))}
+            multiline
+            minRows={2}
+          />
+        </Stack>
+      </StandardModal>
+
+      {/* Dismiss Modal */}
+      <StandardModal
+        isOpen={dismissModalOpen}
+        onClose={() => { setDismissModalOpen(false); setDismissTarget(null); }}
+        title="Dismiss suggestion"
+        description={`Dismiss "${dismissTarget?.title || ""}" — optionally provide a reason.`}
+        onSubmit={handleDismiss}
+        submitButtonText="Dismiss"
+        isSubmitting={dismissSubmitting}
+        maxWidth="480px"
+      >
+        <Field
+          label="Reason (optional)"
+          placeholder="e.g., Already addressed, Not applicable"
+          value={dismissReason}
+          onChange={(e) => setDismissReason(e.target.value)}
+          multiline
+          minRows={2}
+        />
       </StandardModal>
     </PageHeaderExtended>
   );
