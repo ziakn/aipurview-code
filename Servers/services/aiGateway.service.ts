@@ -102,11 +102,51 @@ async function buildFinalMessages(
 const INTERNAL_KEY =
   process.env.AI_GATEWAY_INTERNAL_KEY || "";
 
-/** Estimated cost per token (rough default, overridden by FastAPI response) */
-const DEFAULT_ESTIMATED_COST = 0.005;
+/** Fallback estimated cost when cost-estimate endpoint is unavailable */
+const FALLBACK_ESTIMATED_COST = 0.01;
 
 /** Maximum fallback chain depth to prevent infinite recursion */
 const MAX_FALLBACK_DEPTH = 3;
+
+/**
+ * Estimate the cost of a request using the FastAPI gateway's cost-estimate endpoint.
+ * Falls back to FALLBACK_ESTIMATED_COST if the endpoint is unavailable.
+ */
+async function estimateCost(
+  model: string,
+  messages: Array<{ role: string; content: string }>
+): Promise<number> {
+  try {
+    const response = await fetch(`${AI_GATEWAY_URL}/v1/cost-estimate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-internal-key": INTERNAL_KEY,
+      },
+      body: JSON.stringify({ model, messages }),
+      signal: AbortSignal.timeout(5000),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      return data.estimated_cost_usd || FALLBACK_ESTIMATED_COST;
+    }
+  } catch {
+    // Cost estimation failed — use fallback
+  }
+  return FALLBACK_ESTIMATED_COST;
+}
+
+/** Timeout for non-streaming completions (reasoning models can take 60s+) */
+const COMPLETION_TIMEOUT_MS = 120_000;
+
+/** Timeout for initial stream connection (once SSE starts, no timeout) */
+const STREAM_CONNECT_TIMEOUT_MS = 30_000;
+
+/** Timeout for guardrail scans */
+const GUARDRAIL_TIMEOUT_MS = 30_000;
+
+/** Timeout for embedding requests */
+const EMBEDDING_TIMEOUT_MS = 60_000;
 
 interface CompletionOptions {
   max_tokens?: number;
@@ -165,82 +205,87 @@ async function runGuardrails(
     return messages;
   }
 
-  // Extract last user message for scanning
-  const lastUserIdx = [...messages].reverse().findIndex((m) => m.role === "user");
-  if (lastUserIdx === -1) return messages;
-  const actualIdx = messages.length - 1 - lastUserIdx;
-  const lastUserMessage = messages[actualIdx];
+  // Scan ALL user messages (not just the last one — earlier messages can contain PII too)
+  const userIndices = messages
+    .map((m, i) => (m.role === "user" ? i : -1))
+    .filter((i) => i !== -1);
+  if (userIndices.length === 0) return messages;
 
   try {
-    const guardrailController = new AbortController();
-    const guardrailTimeout = setTimeout(() => guardrailController.abort(), 30000);
-    let response: Response;
-    try {
-      response = await fetch(`${AI_GATEWAY_URL}/v1/guardrails/scan`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-internal-key": INTERNAL_KEY,
-        },
-        body: JSON.stringify({
-          text: lastUserMessage.content,
-          guardrail_rules: rules,
-          settings: settings || {},
-        }),
-        signal: guardrailController.signal,
-      });
-    } finally {
-      clearTimeout(guardrailTimeout);
-    }
+    const updatedMessages = [...messages];
+    let wasBlocked = false;
+    let blockReason = "";
 
-    if (!response.ok) {
-      // Guardrail service error — check on_error settings
-      const settingsObj = (settings as any) || {};
-      if (settingsObj.pii_on_error === "block" || settingsObj.content_filter_on_error === "block") {
-        throw new ValidationException("Guardrail scan failed and on_error is set to block");
-      }
-      logger.error(`Guardrail scan returned ${response.status}`);
-      return messages; // fail-open
-    }
+    for (const idx of userIndices) {
+      const userMessage = messages[idx];
 
-    const result = await response.json();
-
-    // Log each detection (parallel inserts)
-    await Promise.all((result.detections || []).map(async (detection: any) => {
+      const guardrailController = new AbortController();
+      const guardrailTimeout = setTimeout(() => guardrailController.abort(), GUARDRAIL_TIMEOUT_MS);
+      let response: Response;
       try {
-        await insertGuardrailLogQuery(organizationId, {
-          guardrail_id: detection.guardrail_id || null,
-          endpoint_id: endpointId || undefined,
-          user_id: userId,
-          guardrail_type: detection.guardrail_type,
-          action_taken: result.blocked ? "blocked" : detection.action === "mask" ? "masked" : "allowed",
-          matched_text: detection.matched_text,
-          entity_type: detection.entity_type,
-          execution_time_ms: result.execution_time_ms,
+        response = await fetch(`${AI_GATEWAY_URL}/v1/guardrails/scan`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-internal-key": INTERNAL_KEY,
+          },
+          body: JSON.stringify({
+            text: userMessage.content,
+            guardrail_rules: rules,
+            settings: settings || {},
+          }),
+          signal: guardrailController.signal,
         });
-      } catch (logErr) {
-        logger.error("Failed to write guardrail log:", logErr);
+      } finally {
+        clearTimeout(guardrailTimeout);
       }
-    }));
 
-    // If blocked, throw with reason
-    if (result.blocked) {
-      throw new ValidationException(
-        `Request blocked by guardrail: ${result.block_reason}`
-      );
+      if (!response.ok) {
+        const settingsObj = (settings as any) || {};
+        if (settingsObj.pii_on_error === "block" || settingsObj.content_filter_on_error === "block") {
+          throw new ValidationException("Guardrail scan failed and on_error is set to block");
+        }
+        logger.error(`Guardrail scan returned ${response.status}`);
+        continue; // fail-open for this message
+      }
+
+      const result = await response.json();
+
+      // Log each detection (parallel inserts)
+      await Promise.all((result.detections || []).map(async (detection: any) => {
+        try {
+          await insertGuardrailLogQuery(organizationId, {
+            guardrail_id: detection.guardrail_id || null,
+            endpoint_id: endpointId || undefined,
+            user_id: userId,
+            guardrail_type: detection.guardrail_type,
+            action_taken: result.blocked ? "blocked" : detection.action === "mask" ? "masked" : "allowed",
+            matched_text: detection.matched_text,
+            entity_type: detection.entity_type,
+            execution_time_ms: result.execution_time_ms,
+          });
+        } catch (logErr) {
+          logger.error("Failed to write guardrail log:", logErr);
+        }
+      }));
+
+      if (result.blocked) {
+        wasBlocked = true;
+        blockReason = result.block_reason;
+        break; // Stop scanning — request will be rejected
+      }
+
+      // If masked, replace this user message content
+      if (result.masked_text) {
+        updatedMessages[idx] = { ...updatedMessages[idx], content: result.masked_text };
+      }
     }
 
-    // If masked, replace the last user message content
-    if (result.masked_text) {
-      const updatedMessages = [...messages];
-      updatedMessages[actualIdx] = {
-        ...updatedMessages[actualIdx],
-        content: result.masked_text,
-      };
-      return updatedMessages;
+    if (wasBlocked) {
+      throw new ValidationException(`Request blocked by guardrail: ${blockReason}`);
     }
 
-    return messages;
+    return updatedMessages;
   } catch (err: any) {
     // Re-throw our own ValidationException (blocked)
     if (err instanceof ValidationException) throw err;
@@ -574,7 +619,7 @@ export async function proxyCompletion(
     userId
   );
 
-  const estimatedCost = DEFAULT_ESTIMATED_COST;
+  const estimatedCost = await estimateCost(endpoint.model, scannedMessages);
   await tryReserveBudget(organizationId, estimatedCost);
 
   const startTime = Date.now();
@@ -590,7 +635,7 @@ export async function proxyCompletion(
 
   try {
     const completionController = new AbortController();
-    const completionTimeout = setTimeout(() => completionController.abort(), 30000);
+    const completionTimeout = setTimeout(() => completionController.abort(), COMPLETION_TIMEOUT_MS);
     let response: Response;
     try {
       response = await fetch(`${AI_GATEWAY_URL}/v1/chat/completions`, {
@@ -734,7 +779,7 @@ export async function proxyStream(
     userId
   );
 
-  const estimatedCost = DEFAULT_ESTIMATED_COST;
+  const estimatedCost = await estimateCost(endpoint.model, scannedMessages);
   await tryReserveBudget(organizationId, estimatedCost);
 
   const startTime = Date.now();
@@ -748,7 +793,7 @@ export async function proxyStream(
   );
 
   const streamController = new AbortController();
-  const streamTimeout = setTimeout(() => streamController.abort(), 30000);
+  const streamTimeout = setTimeout(() => streamController.abort(), STREAM_CONNECT_TIMEOUT_MS);
   let response: Response;
   try {
     response = await fetch(`${AI_GATEWAY_URL}/v1/chat/completions`, {
@@ -891,7 +936,8 @@ export async function proxyEmbedding(
     endpointSlug
   );
 
-  const estimatedCost = DEFAULT_ESTIMATED_COST;
+  const inputText = Array.isArray(input) ? input.join(" ") : input;
+  const estimatedCost = await estimateCost(endpoint.model, [{ role: "user", content: inputText }]);
   await tryReserveBudget(organizationId, estimatedCost);
 
   const startTime = Date.now();
@@ -899,7 +945,7 @@ export async function proxyEmbedding(
 
   try {
     const embeddingController = new AbortController();
-    const embeddingTimeout = setTimeout(() => embeddingController.abort(), 30000);
+    const embeddingTimeout = setTimeout(() => embeddingController.abort(), EMBEDDING_TIMEOUT_MS);
     let response: Response;
     try {
       response = await fetch(`${AI_GATEWAY_URL}/v1/embeddings`, {
