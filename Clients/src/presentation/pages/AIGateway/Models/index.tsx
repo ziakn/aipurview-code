@@ -76,7 +76,7 @@ const formatTokens = (n: number | null) => {
 };
 
 const formatCost = (n: number) => {
-  if (!n) return "Free";
+  if (n == null || n === 0) return "—";
   if (n < 0.01) return `$${n.toFixed(4)}`;
   return `$${n.toFixed(2)}`;
 };
