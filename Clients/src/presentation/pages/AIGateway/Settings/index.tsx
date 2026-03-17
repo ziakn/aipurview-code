@@ -114,6 +114,8 @@ export default function AIGatewaySettingsPage() {
   const [keyForm, setKeyForm] = useState({ key_name: "", provider: "", api_key: "" });
   const [keyError, setKeyError] = useState("");
   const [keySubmitting, setKeySubmitting] = useState(false);
+  const [keyDeleteTarget, setKeyDeleteTarget] = useState<any>(null);
+  const [keyDeleting, setKeyDeleting] = useState(false);
 
   // Budget modal state
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
@@ -257,12 +259,17 @@ export default function AIGatewaySettingsPage() {
     }
   };
 
-  const handleDeleteKey = async (id: number) => {
+  const handleDeleteKeyConfirm = async () => {
+    if (!keyDeleteTarget) return;
+    setKeyDeleting(true);
     try {
-      await apiServices.delete(`/ai-gateway/keys/${id}`);
+      await apiServices.delete(`/ai-gateway/keys/${keyDeleteTarget.id}`);
+      setKeyDeleteTarget(null);
       await loadData();
     } catch {
       // Silently handle
+    } finally {
+      setKeyDeleting(false);
     }
   };
 
@@ -517,7 +524,7 @@ export default function AIGatewaySettingsPage() {
                           >
                             {key.is_active ? "Active" : "Inactive"}
                           </Typography>
-                          <IconButton size="small" onClick={() => handleDeleteKey(key.id)} sx={{ p: 0.5 }}>
+                          <IconButton size="small" onClick={() => setKeyDeleteTarget(key)} sx={{ p: 0.5 }}>
                             <Trash2 size={14} strokeWidth={1.5} color={palette.text.tertiary} />
                           </IconButton>
                         </Stack>
@@ -1058,6 +1065,28 @@ export default function AIGatewaySettingsPage() {
               {keyError}
             </Typography>
           )}
+        </Stack>
+      </StandardModal>
+
+      {/* Delete API Key Confirmation */}
+      <StandardModal
+        isOpen={!!keyDeleteTarget}
+        onClose={() => setKeyDeleteTarget(null)}
+        title="Remove API key"
+        description={`Are you sure you want to remove "${keyDeleteTarget?.key_name}"?`}
+        onSubmit={handleDeleteKeyConfirm}
+        submitButtonText="Remove key"
+        submitButtonColor="#D32F2F"
+        isSubmitting={keyDeleting}
+        maxWidth="480px"
+      >
+        <Stack gap="8px">
+          <Typography sx={{ fontSize: 13, color: palette.text.secondary }}>
+            This action takes effect immediately. Any endpoints using this key will lose their provider authentication and stop working.
+          </Typography>
+          <Typography sx={{ fontSize: 13, color: palette.text.secondary }}>
+            Provider: <strong>{keyDeleteTarget?.provider}</strong>
+          </Typography>
         </Stack>
       </StandardModal>
 

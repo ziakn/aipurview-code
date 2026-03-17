@@ -158,9 +158,8 @@ export const deleteApiKeyQuery = async (
   id: number
 ): Promise<boolean> => {
   const result = (await sequelize.query(
-    `UPDATE ai_gateway_api_keys
-     SET is_active = false, updated_at = NOW()
-     WHERE organization_id = :organizationId AND id = :id AND is_active = true
+    `DELETE FROM ai_gateway_api_keys
+     WHERE organization_id = :organizationId AND id = :id
      RETURNING id`,
     { replacements: { organizationId, id } }
   )) as [{ id: number }[], number];
