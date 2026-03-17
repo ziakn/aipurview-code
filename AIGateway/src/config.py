@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     internal_api_key: str = ""
     redis_url: str = "redis://localhost:6379/0"
     log_level: str = "INFO"
+    encryption_key: str = ""
 
 
 settings = Settings()
