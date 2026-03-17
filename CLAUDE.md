@@ -41,7 +41,7 @@ VerifyWise is an AI governance platform supporting EU AI Act, ISO 42001, ISO 270
 | **Backend** | Node.js 22, Express.js 4, TypeScript, Sequelize 6 |
 | **Database** | PostgreSQL (shared schema, org_id isolation) |
 | **Cache/Queue** | Redis + BullMQ |
-| **Python Services** | FastAPI, Python 3.12 (EvalServer, AIGateway) |
+| **Python Services** | FastAPI, Python 3.12 (EvalServer) |
 
 ### Project Structure
 
@@ -64,7 +64,15 @@ verifywise/
 │   ├── templates/              # Email (MJML) & PDF (EJS) templates
 │   └── jobs/                   # BullMQ workers
 ├── EvalServer/                 # Python LLM evaluation service
-├── AIGateway/                  # Python AI proxy, guardrails, spend tracking (port 8100)
+│   ├── src/
+│   │   ├── app.py              # FastAPI entry point
+│   │   ├── alembic.ini         # Alembic config
+│   │   ├── routers/            # API routes
+│   │   ├── database/           # DB config, Alembic migrations
+│   │   ├── scripts/            # Data migration scripts
+│   │   └── middlewares/        # Tenant middleware
+│   ├── Dockerfile              # Production (alembic + uvicorn)
+│   └── Dockerfile.dev          # Development (with --reload)
 └── docs/                       # Documentation
 ```
 
@@ -107,12 +115,16 @@ Shared-schema isolation with `organization_id` column on all tenant-scoped table
 
 | Schema | Purpose |
 |--------|---------|
-| `verifywise` | All tables — users, organizations, projects, vendors, risks, files, model_inventories, frameworks, etc. |
-| `public` | PostgreSQL extensions only (uuid-ossp, pgcrypto) |
+| `verifywise` | All tables — users, organizations, projects, vendors, risks, files, model_inventories, frameworks, llm_evals_*, etc. |
+| `public` | PostgreSQL extensions only (uuid-ossp, pgcrypto). Also `public.organizations` and `public.users` which EvalServer FKs reference (since EvalServer starts in parallel). |
 
 **Access:** `req.organizationId` from auth middleware. Queries use unqualified table names (resolved by `search_path`): `SELECT * FROM projects WHERE organization_id = :orgId AND id = :id`.
 
-**Legacy:** Previously used schema-per-tenant (`{tenantHash}` schemas). Migration script `Servers/scripts/migrateToSharedSchema.ts` moves data from old tenant schemas to shared verifywise schema with `organization_id`. Runs automatically on startup or via `npm run migrate:shared-schema`.
+**EvalServer:** Uses `search_path` for queries (unqualified `llm_evals_*` table names). FK references in DDL point to `public.organizations(id)` and `public.users(id)` — NOT `verifywise.*` — because EvalServer starts in parallel with the main server and can't depend on `verifywise` tables existing first.
+
+**Legacy:** Previously used schema-per-tenant (`{tenantHash}` schemas). Two migration scripts handle the transition:
+- `Servers/scripts/migrateToSharedSchema.ts` — Main server data migration (runs on startup)
+- `EvalServer/src/scripts/migrate_to_shared_schema.py` — EvalServer data migration (runs on startup with advisory lock for multi-worker safety)
 
 ---
 
@@ -160,30 +172,50 @@ module.exports = {
 
 `Servers/scripts/migrateToSharedSchema.ts` migrates data from old `{tenantHash}` schemas → `verifywise` schema with `organization_id`. Config in `Servers/scripts/migrationConfig.ts` defines table order, FK mappings, and skip lists. Dedicated handlers exist for NIST AI RMF and custom frameworks (struct/impl split).
 
-### Python Service Migrations (Alembic)
+Key behaviors:
+- `copySharedTables()` runs FIRST — copies `roles`, `organizations`, `users`, `tiers`, `subscriptions`, `frameworks` from `public` → `verifywise` with automatic type casting and COALESCE for NOT NULL columns
+- Then queries `verifywise.organizations` (via search_path) to discover orgs
+- Skips all `llm_evals_*` tables (owned by EvalServer, different schema structure)
+- NOT NULL safety check: skips tables where target has NOT NULL columns missing from source
+- `SKIP_TABLES` in `migrationConfig.ts` lists tables to skip (all 13 `llm_evals_*` tables + others)
 
-EvalServer and AIGateway each own their table migrations via Alembic (not Sequelize). Both share the `verifywise` schema but use **separate version tables** to avoid collision:
+### EvalServer Migrations (Alembic)
 
-| Service | Tables | Version Table | Config |
-|---------|--------|---------------|--------|
-| **EvalServer** | `llm_evals_*` | `alembic_version` | `EvalServer/src/alembic.ini` |
-| **AIGateway** | `ai_gateway_*` | `aigateway_alembic_version` | `AIGateway/src/alembic.ini` |
-
-Pattern: `{Service}/src/database/config.py` (Pydantic Settings), `{Service}/src/database/db.py` (async SQLAlchemy engine with `search_path=verifywise`), `{Service}/src/database/migrations/` (Alembic env + versions). Migrations run automatically on container startup via Dockerfile CMD.
+EvalServer uses Alembic (not Sequelize) for migrations. All `llm_evals_*` tables are defined in a single consolidated migration.
 
 ```bash
-cd EvalServer/src && alembic upgrade head       # Run EvalServer migrations
-cd AIGateway/src && alembic upgrade head         # Run AIGateway migrations
-cd AIGateway/src && alembic stamp a0001          # Stamp existing DB (skip creation)
+cd EvalServer/src
+alembic upgrade head                    # Run migrations
+alembic downgrade -1                    # Rollback last
 ```
 
-### Running Migrations (Sequelize — Backend)
+**Key files:**
+- `EvalServer/src/alembic.ini` — Alembic config
+- `EvalServer/src/database/migrations/env.py` — Migration environment (creates `verifywise` schema, sets `version_table_schema="verifywise"`)
+- `EvalServer/src/database/migrations/versions/c20260303115117_create_shared_schema_tables.py` — All 14 tables (13 `llm_evals_*` + `evalserver_migration_status`)
+
+**Alembic version tracking:** `verifywise.alembic_version` (NOT `public.alembic_version`). The `env.py` drops `public.alembic_version` on startup for backward compatibility with older EvalServer versions.
+
+**EvalServer startup order (Docker & local):**
+```bash
+alembic upgrade head && uvicorn app:app --host 0.0.0.0 --port 8000 --workers 4
+```
+Alembic runs ONCE before uvicorn spawns workers. Data migration (`run_data_migration()`) runs per-worker in the startup event but is protected by `pg_advisory_lock(8675309)` so only one worker executes it.
+
+**EvalServer data migration:** `EvalServer/src/scripts/migrate_to_shared_schema.py` migrates `llm_evals_*` data from old tenant schemas. Config in `EvalServer/src/scripts/migration_config.py`. Handles JSONB serialization (`json.dumps` for asyncpg), NOT NULL safety checks, and FK remapping with `IdMapping`.
+
+### Running Migrations
 
 ```bash
+# Main server (Sequelize)
 cd Servers
 npm run build                    # Build TypeScript first (migrations use dist/)
 npx sequelize db:migrate         # Run migrations
 npx sequelize db:migrate:undo    # Rollback last
+
+# EvalServer (Alembic)
+cd EvalServer/src
+alembic upgrade head             # Run migrations
 ```
 
 ---
@@ -268,6 +300,7 @@ const { authToken, role } = useSelector((state) => state.auth);
 cd Servers && npm install && npm run watch    # Backend (Terminal 1)
 cd Clients && npm install && npm run dev      # Frontend (Terminal 2)
 cd Servers && npm run worker                  # BullMQ Worker (Terminal 3, optional)
+cd EvalServer/src && alembic upgrade head && uvicorn app:app --port 8000 --workers 4  # EvalServer (Terminal 4, optional)
 ```
 
 ### Build
@@ -325,6 +358,12 @@ VITE_APP_PORT=5173
 VITE_IS_MULTI_TENANT=false
 ```
 
+### EvalServer (.env in EvalServer/)
+
+Key variables: `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT`, `DB_NAME`, `LLM_EVALS_PORT`
+
+**Note:** EvalServer `.env` is at `EvalServer/.env` (NOT `EvalServer/src/.env`). The `database/config.py` loads it via `Path(__file__).parent.parent.parent / ".env"`. EvalServer may use a different database/port than the main server (e.g., port `5433` vs `5432`).
+
 ### Required Services
 
 | Service | Default Port | Required |
@@ -334,7 +373,6 @@ VITE_IS_MULTI_TENANT=false
 | Backend | 3000 | Yes |
 | Frontend | 5173 | Yes |
 | EvalServer | 8000 | For LLM Evals |
-| AIGateway | 8100 | For AI proxy/guardrails |
 
 ---
 
@@ -349,16 +387,19 @@ VITE_IS_MULTI_TENANT=false
 | Route definitions (BE) | `Servers/routes/*.ts` |
 | Route definitions (FE) | `Clients/src/application/config/routes.tsx` |
 | Database models | `Servers/domain.layer/models/` |
-| Shared schema migration | `Servers/scripts/migrateToSharedSchema.ts` |
-| Migration config | `Servers/scripts/migrationConfig.ts` |
+| Shared schema migration (main) | `Servers/scripts/migrateToSharedSchema.ts` |
+| Migration config (main) | `Servers/scripts/migrationConfig.ts` |
+| EvalServer entry | `EvalServer/src/app.py` |
+| EvalServer DB config | `EvalServer/src/database/config.py` |
+| EvalServer Alembic env | `EvalServer/src/database/migrations/env.py` |
+| EvalServer DDL migration | `EvalServer/src/database/migrations/versions/c20260303115117_*.py` |
+| EvalServer data migration | `EvalServer/src/scripts/migrate_to_shared_schema.py` |
+| EvalServer migration config | `EvalServer/src/scripts/migration_config.py` |
 | Auth middleware | `Servers/middleware/auth.middleware.ts` |
 | Axios config | `Clients/src/infrastructure/api/customAxios.ts` |
 | Redux store | `Clients/src/application/redux/store.ts` |
 | Custom exceptions | `Servers/domain.layer/exceptions/custom.exception.ts` |
 | Log helper | `Servers/utils/logger/logHelper.ts` |
-| AIGateway entry | `AIGateway/src/app.py` |
-| AIGateway Alembic config | `AIGateway/src/alembic.ini` |
-| AIGateway migrations | `AIGateway/src/database/migrations/versions/` |
 
 ### Naming Conventions
 
@@ -380,7 +421,7 @@ cd Servers && npx sequelize migration:create --name name
 cd Servers && npm run build && npx sequelize db:migrate
 cd Servers && npm run watch                      # Start backend
 cd Clients && npm run dev                        # Start frontend
-cd AIGateway/src && alembic upgrade head          # Run AIGateway migrations
+cd EvalServer/src && alembic upgrade head && uvicorn app:app --port 8000 --workers 4  # EvalServer
 ```
 
 ---
@@ -438,7 +479,7 @@ Read the relevant file BEFORE implementing changes in that area:
 | Authentication architecture | `docs/technical/architecture/authentication.md` |
 | Multi-tenancy architecture | `docs/technical/architecture/multi-tenancy.md` |
 | Testing guide | `docs/technical/guides/testing.md` |
-| AI Gateway | `docs/technical/infrastructure/ai-gateway.md` |
+| EvalServer (LLM evaluations) | `EvalServer/src/app.py` (entry), `EvalServer/src/database/` (DB + migrations) |
 
 ---
 

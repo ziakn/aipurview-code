@@ -937,8 +937,8 @@ const Tasks: React.FC = () => {
               variant="contained"
               text="Add new task"
               sx={{
-                backgroundColor: "#13715B",
-                border: "1px solid #13715B",
+                backgroundColor: "brand.primary",
+                border: "1px solid brand.primary",
                 gap: 2,
               }}
               icon={<AddCircleIcon size={16} />}

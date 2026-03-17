@@ -16,6 +16,7 @@ import singleTheme from "../../../themes/v1SingleTheme";
 import { EmptyState } from "../../EmptyState";
 import { ChevronsUpDown, ChevronUp, ChevronDown, FileBarChart } from "lucide-react";
 import TablePaginationActions from "../../TablePagination";
+import { text } from "../../../themes/palette";
 const ReportTableBody = lazy(() => import("./TableBody"));
 import {
   tableWrapper,
@@ -113,7 +114,7 @@ const SortableTableHead: React.FC<{
                     sx={{
                       display: "flex",
                       alignItems: "center",
-                      color: sortConfig.key === column ? "primary.main" : "#9CA3AF",
+                      color: sortConfig.key === column ? "primary.main" : `${text.disabled}`,
                     }}
                   >
                     {sortConfig.key === column && sortConfig.direction === "asc" && (

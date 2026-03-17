@@ -58,6 +58,7 @@ import {
   getNistStatusData,
   getCompletionData,
 } from "./constants";
+import { text } from "../../themes/palette";
 
 type DashboardView = "executive" | "operations";
 
@@ -426,7 +427,7 @@ const IntegratedDashboard: React.FC = () => {
                             sx={{
                               fontSize: 13,
                               fontWeight: 500,
-                              color: "#667085",
+                              color: `${text.icon}`,
                               minWidth: 55,
                               textAlign: "center",
                             }}
@@ -1057,7 +1058,7 @@ const IntegratedDashboard: React.FC = () => {
                             sx={{
                               fontSize: 13,
                               fontWeight: 500,
-                              color: "#667085",
+                              color: "text.icon",
                               minWidth: 55,
                               textAlign: "center",
                             }}

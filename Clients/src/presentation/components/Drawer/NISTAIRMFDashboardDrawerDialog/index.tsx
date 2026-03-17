@@ -17,6 +17,7 @@ import Alert from "../../Alert";
 import TabBar from "../../TabBar";
 import { LinkedRisksPopup } from "../../LinkedRisks";
 import StandardModal from "../../Modals/StandardModal";
+import { text } from "../../../themes/palette";
 
 const AddNewRiskForm = lazy(() => import("../../AddNewRiskForm"));
 const NotesTab = lazy(() => import("../../Notes/NotesTab"));
@@ -910,7 +911,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                                 <Typography
                                   sx={{
                                     fontSize: 11,
-                                    color: "#6B7280",
+                                    color: "status.default.text",
                                   }}
                                 >
                                   {file.size ? `${(file.size / 1024).toFixed(1)} KB` : ""}
@@ -1061,7 +1062,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                         <Typography variant="body2" sx={{ mb: 1 }}>
                           No evidence files uploaded yet
                         </Typography>
-                        <Typography variant="caption" color="#9CA3AF">
+                        <Typography variant="caption" color={text.disabled}>
                           Click "Add evidence files" to upload documentation for
                           this subcategory
                         </Typography>
@@ -1247,7 +1248,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                           <Typography variant="body2" sx={{ mb: 1 }}>
                             No risks linked yet
                           </Typography>
-                          <Typography variant="caption" color="#9CA3AF">
+                          <Typography variant="caption" color={text.disabled}>
                             Click "Add/remove risks" to link risks from your
                             risk database
                           </Typography>

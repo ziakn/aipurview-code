@@ -36,6 +36,7 @@ import {
   Sun,
 } from "lucide-react";
 import Avatar from "../Avatar/VWAvatar";
+import { brand, text, background } from "../../themes/palette";
 import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.context";
 import { ROLES } from "../../../application/constants/roles";
 import useLogout from "../../../application/hooks/useLogout";
@@ -302,12 +303,12 @@ const SidebarFooter: FC<SidebarFooterProps> = ({
                             backgroundColor: "rgba(0, 0, 0, 0.04)",
                           },
                           "& svg": {
-                            color: "#667085 !important",
-                            stroke: "#667085 !important",
+                            color: `${text.icon} !important`,
+                            stroke: `${text.icon} !important`,
                           },
                           "&:hover svg": {
-                            color: "#344054 !important",
-                            stroke: "#344054 !important",
+                            color: `${text.secondary} !important`,
+                            stroke: `${text.secondary} !important`,
                           },
                         }}
                       >
@@ -366,11 +367,11 @@ const SidebarFooter: FC<SidebarFooterProps> = ({
                   : "1px solid transparent",
               },
               "&:hover svg": {
-                color: "#13715B !important",
-                stroke: "#13715B !important",
+                color: `${brand.primary} !important`,
+                stroke: `${brand.primary} !important`,
               },
               "&:hover svg path": {
-                stroke: "#13715B !important",
+                stroke: `${brand.primary} !important`,
               },
             }}
           >
@@ -384,16 +385,16 @@ const SidebarFooter: FC<SidebarFooterProps> = ({
                 mr: 0,
                 "& svg": {
                   color: isManagementActive
-                    ? "#13715B !important"
+                    ? `${brand.primary} !important`
                     : `${theme.palette.text.tertiary} !important`,
                   stroke: isManagementActive
-                    ? "#13715B !important"
+                    ? `${brand.primary} !important`
                     : `${theme.palette.text.tertiary} !important`,
                   transition: "color 0.2s ease, stroke 0.2s ease",
                 },
                 "& svg path": {
                   stroke: isManagementActive
-                    ? "#13715B !important"
+                    ? `${brand.primary} !important`
                     : `${theme.palette.text.tertiary} !important`,
                 },
               }}
@@ -473,11 +474,11 @@ const SidebarFooter: FC<SidebarFooterProps> = ({
                   backgroundColor: "#F9F9F9",
                 },
                 "&:hover svg": {
-                  color: "#13715B !important",
-                  stroke: "#13715B !important",
+                  color: `${brand.primary} !important`,
+                  stroke: `${brand.primary} !important`,
                 },
                 "&:hover svg path": {
-                  stroke: "#13715B !important",
+                  stroke: `${brand.primary} !important`,
                 },
               }}
             >
@@ -500,18 +501,18 @@ const SidebarFooter: FC<SidebarFooterProps> = ({
                     "& svg": {
                       color:
                         item.path && location.pathname.includes(item.path)
-                          ? "#13715B !important"
+                          ? `${brand.primary} !important`
                           : `${theme.palette.text.tertiary} !important`,
                       stroke:
                         item.path && location.pathname.includes(item.path)
-                          ? "#13715B !important"
+                          ? `${brand.primary} !important`
                           : `${theme.palette.text.tertiary} !important`,
                       transition: "color 0.2s ease, stroke 0.2s ease",
                     },
                     "& svg path": {
                       stroke:
                         item.path && location.pathname.includes(item.path)
-                          ? "#13715B !important"
+                          ? `${brand.primary} !important`
                           : `${theme.palette.text.tertiary} !important`,
                     },
                   }}
@@ -686,7 +687,7 @@ const SidebarFooter: FC<SidebarFooterProps> = ({
                       px: theme.spacing(4),
                       py: 1,
                       "&:hover": {
-                        backgroundColor: "#F9FAFB",
+                        backgroundColor: background.accent,
                       },
                     }}
                   >
@@ -735,14 +736,14 @@ const SidebarFooter: FC<SidebarFooterProps> = ({
                           stroke: theme.palette.text.tertiary,
                         },
                         "&:hover": {
-                          backgroundColor: "#F9FAFB",
+                          backgroundColor: background.accent,
                         },
                         "&:hover svg": {
-                          color: "#13715B !important",
-                          stroke: "#13715B !important",
+                          color: `${brand.primary} !important`,
+                          stroke: `${brand.primary} !important`,
                         },
                         "&:hover svg path": {
-                          stroke: "#13715B !important",
+                          stroke: `${brand.primary} !important`,
                         },
                       }}
                     >
@@ -769,14 +770,14 @@ const SidebarFooter: FC<SidebarFooterProps> = ({
                           stroke: theme.palette.text.tertiary,
                         },
                         "&:hover": {
-                          backgroundColor: "#F9FAFB",
+                          backgroundColor: background.accent,
                         },
                         "&:hover svg": {
-                          color: "#13715B !important",
-                          stroke: "#13715B !important",
+                          color: `${brand.primary} !important`,
+                          stroke: `${brand.primary} !important`,
                         },
                         "&:hover svg path": {
-                          stroke: "#13715B !important",
+                          stroke: `${brand.primary} !important`,
                         },
                       }}
                     >
@@ -826,14 +827,14 @@ const SidebarFooter: FC<SidebarFooterProps> = ({
                         stroke: theme.palette.text.tertiary,
                       },
                       "&:hover": {
-                        backgroundColor: "#F9FAFB",
+                        backgroundColor: background.accent,
                       },
                       "&:hover svg": {
-                        color: "#13715B !important",
-                        stroke: "#13715B !important",
+                        color: `${brand.primary} !important`,
+                        stroke: `${brand.primary} !important`,
                       },
                       "&:hover svg path": {
-                        stroke: "#13715B !important",
+                        stroke: `${brand.primary} !important`,
                       },
                     }}
                   >
@@ -859,14 +860,14 @@ const SidebarFooter: FC<SidebarFooterProps> = ({
                         stroke: theme.palette.text.tertiary,
                       },
                       "&:hover": {
-                        backgroundColor: "#F9FAFB",
+                        backgroundColor: background.accent,
                       },
                       "&:hover svg": {
-                        color: "#13715B !important",
-                        stroke: "#13715B !important",
+                        color: `${brand.primary} !important`,
+                        stroke: `${brand.primary} !important`,
                       },
                       "&:hover svg path": {
-                        stroke: "#13715B !important",
+                        stroke: `${brand.primary} !important`,
                       },
                     }}
                   >
@@ -890,14 +891,14 @@ const SidebarFooter: FC<SidebarFooterProps> = ({
                         stroke: theme.palette.text.tertiary,
                       },
                       "&:hover": {
-                        backgroundColor: "#F9FAFB",
+                        backgroundColor: background.accent,
                       },
                       "&:hover svg": {
-                        color: "#13715B !important",
-                        stroke: "#13715B !important",
+                        color: `${brand.primary} !important`,
+                        stroke: `${brand.primary} !important`,
                       },
                       "&:hover svg path": {
-                        stroke: "#13715B !important",
+                        stroke: `${brand.primary} !important`,
                       },
                     }}
                   >
@@ -921,14 +922,14 @@ const SidebarFooter: FC<SidebarFooterProps> = ({
                         stroke: theme.palette.text.tertiary,
                       },
                       "&:hover": {
-                        backgroundColor: "#F9FAFB",
+                        backgroundColor: background.accent,
                       },
                       "&:hover svg": {
-                        color: "#13715B !important",
-                        stroke: "#13715B !important",
+                        color: `${brand.primary} !important`,
+                        stroke: `${brand.primary} !important`,
                       },
                       "&:hover svg path": {
-                        stroke: "#13715B !important",
+                        stroke: `${brand.primary} !important`,
                       },
                     }}
                   >
@@ -952,14 +953,14 @@ const SidebarFooter: FC<SidebarFooterProps> = ({
                         stroke: theme.palette.text.tertiary,
                       },
                       "&:hover": {
-                        backgroundColor: "#F9FAFB",
+                        backgroundColor: background.accent,
                       },
                       "&:hover svg": {
-                        color: "#13715B !important",
-                        stroke: "#13715B !important",
+                        color: `${brand.primary} !important`,
+                        stroke: `${brand.primary} !important`,
                       },
                       "&:hover svg path": {
-                        stroke: "#13715B !important",
+                        stroke: `${brand.primary} !important`,
                       },
                     }}
                   >
@@ -983,14 +984,14 @@ const SidebarFooter: FC<SidebarFooterProps> = ({
                         stroke: theme.palette.text.tertiary,
                       },
                       "&:hover": {
-                        backgroundColor: "#F9FAFB",
+                        backgroundColor: background.accent,
                       },
                       "&:hover svg": {
-                        color: "#13715B !important",
-                        stroke: "#13715B !important",
+                        color: `${brand.primary} !important`,
+                        stroke: `${brand.primary} !important`,
                       },
                       "&:hover svg path": {
-                        stroke: "#13715B !important",
+                        stroke: `${brand.primary} !important`,
                       },
                     }}
                   >
@@ -1028,14 +1029,14 @@ const SidebarFooter: FC<SidebarFooterProps> = ({
                       stroke: theme.palette.text.tertiary,
                     },
                     "&:hover": {
-                      backgroundColor: "#F9FAFB",
+                      backgroundColor: background.accent,
                     },
                     "&:hover svg": {
-                      color: "#13715B !important",
-                      stroke: "#13715B !important",
+                      color: `${brand.primary} !important`,
+                      stroke: `${brand.primary} !important`,
                     },
                     "&:hover svg path": {
-                      stroke: "#13715B !important",
+                      stroke: `${brand.primary} !important`,
                     },
                   }}
                 >
@@ -1068,14 +1069,14 @@ const SidebarFooter: FC<SidebarFooterProps> = ({
                     stroke: theme.palette.text.tertiary,
                   },
                   "&:hover": {
-                    backgroundColor: "#F9FAFB",
+                    backgroundColor: background.accent,
                   },
                   "&:hover svg": {
-                    color: "#13715B !important",
-                    stroke: "#13715B !important",
+                    color: `${brand.primary} !important`,
+                    stroke: `${brand.primary} !important`,
                   },
                   "&:hover svg path": {
-                    stroke: "#13715B !important",
+                    stroke: `${brand.primary} !important`,
                   },
                 }}
               >

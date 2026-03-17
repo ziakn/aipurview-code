@@ -42,6 +42,7 @@ import TabBar from "../../TabBar";
 import { CustomizableButton } from "../../button/customizable-button";
 import Alert from "../../Alert";
 import StandardModal from "../../Modals/StandardModal";
+import { text } from "../../../themes/palette";
 
 // Lazy-loaded components
 const LinkedRisksPopup = lazy(() => import("../../LinkedRisks").then(m => ({ default: m.LinkedRisksPopup })));
@@ -1263,7 +1264,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                                 <Typography
                                   sx={{
                                     fontSize: 11,
-                                    color: "#6B7280",
+                                    color: "status.default.text",
                                     mt: 0.25,
                                   }}
                                 >
@@ -1456,7 +1457,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                               sx={{
                                 color: "#4C7BF4",
                                 "&:hover": {
-                                  color: "#D32F2F",
+                                  color: "status.error.text",
                                   backgroundColor: "rgba(211, 47, 47, 0.08)",
                                 },
                               }}
@@ -1485,7 +1486,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                     <Typography variant="body2" sx={{ mb: 1 }}>
                       No evidence files uploaded yet
                     </Typography>
-                    <Typography variant="caption" color="#9CA3AF">
+                    <Typography variant="caption" color={text.disabled}>
                       Click "Add evidence files" to upload documentation for
                       this question
                     </Typography>
@@ -1651,7 +1652,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                     <Typography variant="body2" sx={{ mb: 1 }}>
                       No risks linked yet
                     </Typography>
-                    <Typography variant="caption" color="#9CA3AF">
+                    <Typography variant="caption" color={text.disabled}>
                       Click "Add/remove risks" to link risks from your risk
                       database
                     </Typography>

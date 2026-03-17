@@ -60,6 +60,7 @@ import {
   aiRiskCardTitleStyle,
   aiRiskCardCaptionStyle,
 } from "./style";
+import { text } from "../../themes/palette";
 
 /**
  * Set initial loading status for all CRUD process
@@ -790,7 +791,7 @@ const RiskManagement = () => {
                 aria-label="Analytics"
                 sx={analyticsIconButtonStyle}
               >
-                <BarChart3 size={16} color="#344054" />
+                <BarChart3 size={16} color={text.secondary} />
               </IconButton>
             </div>
             <div data-joyride-id="add-risk-button">

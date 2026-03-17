@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { Copy } from "lucide-react";
 import CodeBlock from "../components/CodeBlock";
+import { text, background } from "../../../themes/palette";
 
 // Sample table data
 const sampleData = {
@@ -106,7 +107,7 @@ const TablesSection: React.FC = () => {
       {/* Shared Specifications */}
       <SpecSection title="Table specifications">
         <SpecGrid>
-          <SpecCard title="Border" value="1px solid #d0d5dd" note="Frame border" onCopy={handleCopy} />
+          <SpecCard title="Border" value="1px solid borderPalette.dark" note="Frame border" onCopy={handleCopy} />
           <SpecCard title="Border radius" value="4px" note="Container corners" onCopy={handleCopy} />
           <SpecCard title="Cell padding" value="12px 10px" note="Header and body cells" onCopy={handleCopy} />
           <SpecCard title="Min column width" value="120px" note="Prevents column collapse" onCopy={handleCopy} />
@@ -114,9 +115,9 @@ const TablesSection: React.FC = () => {
           <SpecCard title="Header font" value="13px" note="fontSizes.medium" onCopy={handleCopy} />
           <SpecCard title="Header weight" value="400" note="Regular weight" onCopy={handleCopy} />
           <SpecCard title="Header text" value="uppercase" note="Text transform" onCopy={handleCopy} />
-          <SpecCard title="Header color" value="#475467" note="text.tertiary" onCopy={handleCopy} />
-          <SpecCard title="Header bg" value="linear-gradient(180deg, #f9fafb 0%, #f3f4f6 100%)" note="Gradient background" onCopy={handleCopy} />
-          <SpecCard title="Body bg" value="#FFFFFF" note="White background" onCopy={handleCopy} />
+          <SpecCard title="Header color" value={text.tertiary} note="text.tertiary" onCopy={handleCopy} />
+          <SpecCard title="Header bg" value="linear-gradient(180deg, background.accent 0%, background.hover 100%)" note="Gradient background" onCopy={handleCopy} />
+          <SpecCard title="Body bg" value={background.main} note="White background" onCopy={handleCopy} />
           <SpecCard title="Row hover bg" value="#fafafa" note="Hover state" onCopy={handleCopy} />
         </SpecGrid>
       </SpecSection>
@@ -164,7 +165,7 @@ const TablesSection: React.FC = () => {
             <TableContainer>
               <Table
                 sx={{
-                  border: "1px solid #d0d5dd",
+                  border: "1px solid borderPalette.dark",
                   borderRadius: "4px",
                   "& td, & th": {
                     border: 0,
@@ -173,20 +174,20 @@ const TablesSection: React.FC = () => {
               >
                 <TableHead
                   sx={{
-                    background: "linear-gradient(180deg, #f9fafb 0%, #f3f4f6 100%)",
+                    background: `linear-gradient(180deg, ${background.accent} 0%, ${background.hover} 100%)`,
                   }}
                 >
                   <TableRow
                     sx={{
                       textTransform: "uppercase",
-                      borderBottom: "1px solid #d0d5dd",
+                      borderBottom: "1px solid borderPalette.dark",
                     }}
                   >
                     {sampleData.columns.map((col) => (
                       <TableCell
                         key={col}
                         sx={{
-                          color: "#475467",
+                          color: "text.tertiary",
                           fontSize: "13px",
                           fontWeight: 400,
                           padding: "12px 10px",
@@ -204,7 +205,7 @@ const TablesSection: React.FC = () => {
                       key={index}
                       sx={{
                         textTransform: "capitalize",
-                        borderBottom: "1px solid #d0d5dd",
+                        borderBottom: "1px solid borderPalette.dark",
                         backgroundColor: "white",
                         transition: "background-color 0.3s ease-in-out",
                         "&:hover td": {
@@ -236,7 +237,7 @@ const TablesSection: React.FC = () => {
                             borderRadius: "4px",
                             fontSize: "12px",
                             fontWeight: 500,
-                            backgroundColor: row.status === "Active" ? "#ecfdf3" : "#f9fafb",
+                            backgroundColor: row.status === "Active" ? "#ecfdf3" : "background.accent",
                             color: row.status === "Active" ? "#079455" : "#838c99",
                           }}
                         >
@@ -268,14 +269,14 @@ const TablesSection: React.FC = () => {
         <SpecTable
           onCopy={handleCopy}
           specs={[
-            { property: "backgroundColor", value: "linear-gradient(180deg, #f9fafb 0%, #f3f4f6 100%)" },
-            { property: "color", value: "#475467" },
+            { property: "backgroundColor", value: "linear-gradient(180deg, background.accent 0%, background.hover 100%)" },
+            { property: "color", value: "text.tertiary" },
             { property: "fontSize", value: "13px" },
             { property: "fontWeight", value: "400" },
             { property: "padding", value: "12px 10px" },
             { property: "textTransform", value: "uppercase" },
             { property: "whiteSpace", value: "nowrap" },
-            { property: "borderBottom", value: "1px solid #d0d5dd" },
+            { property: "borderBottom", value: "1px solid borderPalette.dark" },
             { property: "minWidth", value: "120px" },
           ]}
         />
@@ -292,11 +293,11 @@ const TablesSection: React.FC = () => {
         <SpecTable
           onCopy={handleCopy}
           specs={[
-            { property: "backgroundColor", value: "#FFFFFF" },
+            { property: "backgroundColor", value: "background.main" },
             { property: "fontSize", value: "13px" },
             { property: "padding", value: "12px 10px" },
             { property: "textTransform", value: "capitalize" },
-            { property: "borderBottom", value: "1px solid #d0d5dd" },
+            { property: "borderBottom", value: "1px solid borderPalette.dark" },
             { property: "transition", value: "background-color 0.3s ease-in-out" },
             { property: "hover:backgroundColor", value: "#fafafa" },
             { property: "hover:cursor", value: "pointer" },

@@ -34,6 +34,7 @@ import { CustomizableButton } from "../../button/customizable-button";
 import RichTextEditor from "../../RichTextEditor";
 import StandardModal from "../../Modals/StandardModal";
 import { FilePickerModal } from "../../FilePickerModal";
+import { text, status } from "../../../themes/palette";
 
 const NotesTab = lazy(() => import("../../Notes/NotesTab"));
 const LinkedRisksPopup = lazy(() => import("../../LinkedRisks").then(m => ({ default: m.LinkedRisksPopup })));
@@ -1063,7 +1064,7 @@ const NewControlPane = ({
         <Box
           sx={{
             padding: "16px 20px",
-            borderBottom: "1px solid #eaecf0",
+            borderBottom: "1px solid borderPalette.light",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "flex-start",
@@ -1105,7 +1106,7 @@ const NewControlPane = ({
             sx={{
               minWidth: "auto",
               padding: 0,
-              color: "#475467",
+              color: "text.tertiary",
             }}
           >
             <CloseIcon size={20} />
@@ -1128,10 +1129,10 @@ const NewControlPane = ({
                   backgroundColor: "transparent",
                 },
                 "&::-webkit-scrollbar-thumb": {
-                  backgroundColor: "#D0D5DD",
+                  backgroundColor: "borderPalette.dark",
                   borderRadius: "3px",
                   "&:hover": {
-                    backgroundColor: "#98A2B3",
+                    backgroundColor: "text.muted",
                   },
                 },
               }}
@@ -1419,7 +1420,7 @@ const NewControlPane = ({
                       <Typography
                         sx={{
                           fontSize: "13px",
-                          color: "#6B7280",
+                          color: "status.default.text",
                           mb: 2,
                         }}
                       >
@@ -1438,13 +1439,13 @@ const NewControlPane = ({
                             width: 155,
                             height: 25,
                             fontSize: 11,
-                            border: "1px solid #D0D5DD",
+                            border: "1px solid borderPalette.dark",
                             backgroundColor: "white",
-                            color: "#344054",
+                            color: "text.secondary",
                             textTransform: "none",
                             "&:hover": {
-                              backgroundColor: "#F9FAFB",
-                              border: "1px solid #D0D5DD",
+                              backgroundColor: "background.accent",
+                              border: "1px solid borderPalette.dark",
                             },
                           }}
                         >
@@ -1459,13 +1460,13 @@ const NewControlPane = ({
                             width: 155,
                             height: 25,
                             fontSize: 11,
-                            border: "1px solid #D0D5DD",
+                            border: "1px solid borderPalette.dark",
                             backgroundColor: "white",
-                            color: "#344054",
+                            color: "text.secondary",
                             textTransform: "none",
                             "&:hover": {
-                              backgroundColor: "#F9FAFB",
-                              border: "1px solid #D0D5DD",
+                              backgroundColor: "background.accent",
+                              border: "1px solid borderPalette.dark",
                             },
                           }}
                         >
@@ -1487,13 +1488,13 @@ const NewControlPane = ({
                         currentFormData.deletedEvidenceFileIds.length > 0) && (
                         <Stack direction="row" spacing={2} sx={{ mt: 1.5 }}>
                           {currentFormData.evidence_files.length > 0 && (
-                            <Typography sx={{ fontSize: 11, color: "#344054" }}>
+                            <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
                               {currentFormData.evidence_files.length} files
                               attached
                             </Typography>
                           )}
                           {currentFormData.uploadEvidenceFiles.length > 0 && (
-                            <Typography sx={{ fontSize: 11, color: "#13715B" }}>
+                            <Typography sx={{ fontSize: 11, color: "brand.primary" }}>
                               +{currentFormData.uploadEvidenceFiles.length}{" "}
                               pending upload
                             </Typography>
@@ -1506,7 +1507,7 @@ const NewControlPane = ({
                           )}
                           {currentFormData.deletedEvidenceFileIds.length >
                             0 && (
-                            <Typography sx={{ fontSize: 11, color: "#D32F2F" }}>
+                            <Typography sx={{ fontSize: 11, color: "status.error.text" }}>
                               -{currentFormData.deletedEvidenceFileIds.length}{" "}
                               pending delete
                             </Typography>
@@ -1525,11 +1526,11 @@ const NewControlPane = ({
                                 alignItems: "center",
                                 justifyContent: "space-between",
                                 padding: "10px 12px",
-                                border: "1px solid #EAECF0",
+                                border: "1px solid borderPalette.light",
                                 borderRadius: "4px",
-                                backgroundColor: "#FFFFFF",
+                                backgroundColor: "background.main",
                                 "&:hover": {
-                                  backgroundColor: "#F9FAFB",
+                                  backgroundColor: "background.accent",
                                 },
                               }}
                             >
@@ -1542,7 +1543,7 @@ const NewControlPane = ({
                                   minWidth: 0,
                                 }}
                               >
-                                <FileIcon size={18} color="#475467" />
+                                <FileIcon size={18} color={text.tertiary} />
                                 <Box sx={{ minWidth: 0, flex: 1 }}>
                                   <Typography
                                     sx={{
@@ -1560,7 +1561,7 @@ const NewControlPane = ({
                                     <Typography
                                       sx={{
                                         fontSize: 11,
-                                        color: "#6B7280",
+                                        color: "status.default.text",
                                         mt: 0.25,
                                       }}
                                     >
@@ -1779,10 +1780,10 @@ const NewControlPane = ({
                               textAlign: "center",
                               py: 4,
                               mt: 2,
-                              color: "#6B7280",
+                              color: "status.default.text",
                               border: "2px dashed #D1D5DB",
                               borderRadius: 1,
-                              backgroundColor: "#F9FAFB",
+                              backgroundColor: "background.accent",
                             }}
                           >
                             <Typography sx={{ fontSize: 13 }}>
@@ -1810,7 +1811,7 @@ const NewControlPane = ({
                       <Typography
                         sx={{
                           fontSize: "13px",
-                          color: "#6B7280",
+                          color: "status.default.text",
                           mb: 2,
                         }}
                       >
@@ -1829,13 +1830,13 @@ const NewControlPane = ({
                             width: 155,
                             height: 25,
                             fontSize: 11,
-                            border: "1px solid #D0D5DD",
+                            border: "1px solid borderPalette.dark",
                             backgroundColor: "white",
-                            color: "#344054",
+                            color: "text.secondary",
                             textTransform: "none",
                             "&:hover": {
-                              backgroundColor: "#F9FAFB",
-                              border: "1px solid #D0D5DD",
+                              backgroundColor: "background.accent",
+                              border: "1px solid borderPalette.dark",
                             },
                           }}
                         >
@@ -1850,13 +1851,13 @@ const NewControlPane = ({
                             width: 155,
                             height: 25,
                             fontSize: 11,
-                            border: "1px solid #D0D5DD",
+                            border: "1px solid borderPalette.dark",
                             backgroundColor: "white",
-                            color: "#344054",
+                            color: "text.secondary",
                             textTransform: "none",
                             "&:hover": {
-                              backgroundColor: "#F9FAFB",
-                              border: "1px solid #D0D5DD",
+                              backgroundColor: "background.accent",
+                              border: "1px solid borderPalette.dark",
                             },
                           }}
                         >
@@ -1879,13 +1880,13 @@ const NewControlPane = ({
                         currentFormData.deletedFeedbackFileIds.length > 0) && (
                         <Stack direction="row" spacing={2} sx={{ mt: 1.5 }}>
                           {currentFormData.feedback_files.length > 0 && (
-                            <Typography sx={{ fontSize: 11, color: "#344054" }}>
+                            <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
                               {currentFormData.feedback_files.length} files
                               attached
                             </Typography>
                           )}
                           {currentFormData.uploadFeedbackFiles.length > 0 && (
-                            <Typography sx={{ fontSize: 11, color: "#13715B" }}>
+                            <Typography sx={{ fontSize: 11, color: "brand.primary" }}>
                               +{currentFormData.uploadFeedbackFiles.length}{" "}
                               pending upload
                             </Typography>
@@ -1898,7 +1899,7 @@ const NewControlPane = ({
                           )}
                           {currentFormData.deletedFeedbackFileIds.length >
                             0 && (
-                            <Typography sx={{ fontSize: 11, color: "#D32F2F" }}>
+                            <Typography sx={{ fontSize: 11, color: "status.error.text" }}>
                               -{currentFormData.deletedFeedbackFileIds.length}{" "}
                               pending delete
                             </Typography>
@@ -1917,11 +1918,11 @@ const NewControlPane = ({
                                 alignItems: "center",
                                 justifyContent: "space-between",
                                 padding: "10px 12px",
-                                border: "1px solid #EAECF0",
+                                border: "1px solid borderPalette.light",
                                 borderRadius: "4px",
-                                backgroundColor: "#FFFFFF",
+                                backgroundColor: "background.main",
                                 "&:hover": {
-                                  backgroundColor: "#F9FAFB",
+                                  backgroundColor: "background.accent",
                                 },
                               }}
                             >
@@ -1934,7 +1935,7 @@ const NewControlPane = ({
                                   minWidth: 0,
                                 }}
                               >
-                                <FileIcon size={18} color="#475467" />
+                                <FileIcon size={18} color={text.tertiary} />
                                 <Box sx={{ minWidth: 0, flex: 1 }}>
                                   <Typography
                                     sx={{
@@ -1952,7 +1953,7 @@ const NewControlPane = ({
                                     <Typography
                                       sx={{
                                         fontSize: 11,
-                                        color: "#6B7280",
+                                        color: "status.default.text",
                                         mt: 0.25,
                                       }}
                                     >
@@ -2171,10 +2172,10 @@ const NewControlPane = ({
                               textAlign: "center",
                               py: 4,
                               mt: 2,
-                              color: "#6B7280",
+                              color: "status.default.text",
                               border: "2px dashed #D1D5DB",
                               borderRadius: 1,
-                              backgroundColor: "#F9FAFB",
+                              backgroundColor: "background.accent",
                             }}
                           >
                             <Typography sx={{ fontSize: 13 }}>
@@ -2193,7 +2194,7 @@ const NewControlPane = ({
                       Linked risks
                     </Typography>
 
-                    <Typography variant="body2" color="#6B7280">
+                    <Typography variant="body2" color={status.default.text}>
                       Link risks from your risk database to track which risks
                       are being addressed by this subcontrol.
                     </Typography>
@@ -2206,13 +2207,13 @@ const NewControlPane = ({
                           width: 155,
                           height: 25,
                           fontSize: 11,
-                          border: "1px solid #D0D5DD",
+                          border: "1px solid borderPalette.dark",
                           backgroundColor: "white",
-                          color: "#344054",
+                          color: "text.secondary",
                           textTransform: "none",
                           "&:hover": {
-                            backgroundColor: "#F9FAFB",
-                            border: "1px solid #D0D5DD",
+                            backgroundColor: "background.accent",
+                            border: "1px solid borderPalette.dark",
                           },
                         }}
                         onClick={() => setShowLinkedRisksPopup(true)}
@@ -2222,7 +2223,7 @@ const NewControlPane = ({
                       </Button>
 
                       <Stack direction="row" spacing={2}>
-                        <Typography sx={{ fontSize: 11, color: "#344054" }}>
+                        <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
                           {`${
                             currentFormData.linkedRiskObjects.filter(
                               (r) =>
@@ -2231,12 +2232,12 @@ const NewControlPane = ({
                           } risks linked`}
                         </Typography>
                         {currentFormData.selectedRisks.length > 0 && (
-                          <Typography sx={{ fontSize: 11, color: "#13715B" }}>
+                          <Typography sx={{ fontSize: 11, color: "brand.primary" }}>
                             {`+${currentFormData.selectedRisks.length} pending save`}
                           </Typography>
                         )}
                         {currentFormData.deletedRisks.length > 0 && (
-                          <Typography sx={{ fontSize: 11, color: "#D32F2F" }}>
+                          <Typography sx={{ fontSize: 11, color: "status.error.text" }}>
                             {`-${currentFormData.deletedRisks.length} pending delete`}
                           </Typography>
                         )}
@@ -2260,11 +2261,11 @@ const NewControlPane = ({
                                 alignItems: "center",
                                 justifyContent: "space-between",
                                 padding: "10px 12px",
-                                border: "1px solid #EAECF0",
+                                border: "1px solid borderPalette.light",
                                 borderRadius: "4px",
-                                backgroundColor: "#FFFFFF",
+                                backgroundColor: "background.main",
                                 "&:hover": {
-                                  backgroundColor: "#F9FAFB",
+                                  backgroundColor: "background.accent",
                                 },
                               }}
                             >
@@ -2283,7 +2284,7 @@ const NewControlPane = ({
                                 </Typography>
                                 {(risk.level || risk.risk_level) && (
                                   <Typography
-                                    sx={{ fontSize: 11, color: "#6B7280" }}
+                                    sx={{ fontSize: 11, color: "status.default.text" }}
                                   >
                                     Risk level: {risk.level || risk.risk_level}
                                   </Typography>
@@ -2296,9 +2297,9 @@ const NewControlPane = ({
                                     size="small"
                                     onClick={() => handleViewRiskDetail(risk)}
                                     sx={{
-                                      color: "#475467",
+                                      color: "text.tertiary",
                                       "&:hover": {
-                                        color: "#13715B",
+                                        color: "brand.primary",
                                         backgroundColor:
                                           "rgba(19, 113, 91, 0.08)",
                                       },
@@ -2314,9 +2315,9 @@ const NewControlPane = ({
                                     onClick={() => handleUnlinkRisk(risk.id)}
                                     disabled={isEditingDisabled}
                                     sx={{
-                                      color: "#475467",
+                                      color: "text.tertiary",
                                       "&:hover": {
-                                        color: "#D32F2F",
+                                        color: "status.error.text",
                                         backgroundColor:
                                           "rgba(211, 47, 47, 0.08)",
                                       },
@@ -2340,16 +2341,16 @@ const NewControlPane = ({
                           sx={{
                             textAlign: "center",
                             py: 4,
-                            color: "#6B7280",
+                            color: "status.default.text",
                             border: "2px dashed #D1D5DB",
                             borderRadius: 1,
-                            backgroundColor: "#F9FAFB",
+                            backgroundColor: "background.accent",
                           }}
                         >
                           <Typography variant="body2" sx={{ mb: 1 }}>
                             No risks linked yet
                           </Typography>
-                          <Typography variant="caption" color="#9CA3AF">
+                          <Typography variant="caption" color={text.disabled}>
                             Click "Add/remove risks" to link risks from your
                             risk database
                           </Typography>
@@ -2421,7 +2422,7 @@ const NewControlPane = ({
         <Box
           sx={{
             padding: "16px 20px",
-            borderTop: "1px solid #eaecf0",
+            borderTop: "1px solid borderPalette.light",
             display: "flex",
             justifyContent: "flex-end",
           }}
