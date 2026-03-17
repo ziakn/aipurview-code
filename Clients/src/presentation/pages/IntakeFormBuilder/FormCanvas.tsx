@@ -117,7 +117,7 @@ function EditableFormTitle({
               color: theme.palette.background.main,
               backgroundColor: theme.palette.primary.main,
               borderRadius: "4px",
-              "&:hover": { backgroundColor: "#0F5A47" },
+              "&:hover": { backgroundColor: "brand.primaryHover" },
             }}
           >
             <Check size={14} />
@@ -252,7 +252,7 @@ function EditableFormDescription({
               color: theme.palette.background.main,
               backgroundColor: theme.palette.primary.main,
               borderRadius: "4px",
-              "&:hover": { backgroundColor: "#0F5A47" },
+              "&:hover": { backgroundColor: "brand.primaryHover" },
             }}
           >
             <Check size={14} />

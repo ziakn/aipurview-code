@@ -294,7 +294,7 @@ const IncidentTable: React.FC<IncidentTableProps> = ({
                         color:
                           sortConfig.key === column.label
                             ? "primary.main"
-                            : "#9CA3AF",
+                            : "text.disabled",
                       }}
                     >
                       {sortConfig.key === column.label &&
@@ -367,7 +367,7 @@ const IncidentTable: React.FC<IncidentTableProps> = ({
                         sortConfig.key &&
                         sortConfig.key.toLowerCase().includes("ai") &&
                         sortConfig.key.toLowerCase().includes("project")
-                          ? "#f5f5f5"
+                          ? "background.surface"
                           : "inherit",
                     }}
                   >
@@ -381,7 +381,7 @@ const IncidentTable: React.FC<IncidentTableProps> = ({
                       backgroundColor:
                         sortConfig.key &&
                         sortConfig.key.toLowerCase().includes("type")
-                          ? "#f5f5f5"
+                          ? "background.surface"
                           : "inherit",
                     }}
                   >
@@ -395,7 +395,7 @@ const IncidentTable: React.FC<IncidentTableProps> = ({
                       backgroundColor:
                         sortConfig.key &&
                         sortConfig.key.toLowerCase().includes("severity")
-                          ? "#f5f5f5"
+                          ? "background.surface"
                           : "inherit",
                     }}
                   >
@@ -409,7 +409,7 @@ const IncidentTable: React.FC<IncidentTableProps> = ({
                       backgroundColor:
                         sortConfig.key &&
                         sortConfig.key.toLowerCase().includes("status")
-                          ? "#f5f5f5"
+                          ? "background.surface"
                           : "inherit",
                     }}
                   >
@@ -424,7 +424,7 @@ const IncidentTable: React.FC<IncidentTableProps> = ({
                         sortConfig.key &&
                         (sortConfig.key.toLowerCase().includes("occurred") ||
                           sortConfig.key.toLowerCase().includes("date"))
-                          ? "#f5f5f5"
+                          ? "background.surface"
                           : "inherit",
                     }}
                   >
@@ -441,7 +441,7 @@ const IncidentTable: React.FC<IncidentTableProps> = ({
                         sortConfig.key &&
                         sortConfig.key.toLowerCase().includes("approved") &&
                         sortConfig.key.toLowerCase().includes("by")
-                          ? "#f5f5f5"
+                          ? "background.surface"
                           : "inherit",
                     }}
                   >
@@ -455,7 +455,7 @@ const IncidentTable: React.FC<IncidentTableProps> = ({
                       backgroundColor:
                         sortConfig.key &&
                         sortConfig.key.toLowerCase().includes("actions")
-                          ? "#f5f5f5"
+                          ? "background.surface"
                           : "inherit",
                     }}
                   >

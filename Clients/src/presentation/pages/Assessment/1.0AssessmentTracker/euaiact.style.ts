@@ -27,9 +27,9 @@ export const getPriorityColors = (priority: string): { bg: string; text: string 
     case "medium priority":
       return { bg: "#FEF3C7", text: "#F59E0B" }; // Warning/Pending
     case "low priority":
-      return { bg: "#F3F4F6", text: "#6B7280" }; // Neutral
+      return { bg: "background.hover", text: "status.default.text" }; // Neutral
     default:
-      return { bg: "#F3F4F6", text: "#6B7280" }; // Neutral
+      return { bg: "background.hover", text: "status.default.text" }; // Neutral
   }
 };
 
@@ -44,7 +44,7 @@ export const styles = {
    */
   accordion: {
     marginTop: "9px",
-    border: "1px solid #d0d5dd",
+    border: "1px solid borderPalette.dark",
     width: "100%",
     borderRadius: "4px",
     overflow: "hidden",
@@ -65,7 +65,7 @@ export const styles = {
     paddingLeft: "16px",
     paddingRight: "16px",
     paddingY: "12px",
-    "&:hover": { backgroundColor: "#f5f5f5" },
+    "&:hover": { backgroundColor: "background.surface" },
   } as SxProps<Theme>,
 
   /**
@@ -91,12 +91,12 @@ export const styles = {
       justifyContent: "space-between",
       alignItems: "center",
       padding: "16px",
-      borderBottom: isLast ? "none" : "1px solid #d0d5dd",
+      borderBottom: isLast ? "none" : "1px solid borderPalette.dark",
       cursor: "pointer",
       fontSize: 13,
       animation: isFlashing ? `${flashAnimation} 2s ease-in-out` : "none",
       "&:hover": {
-        backgroundColor: isFlashing ? "transparent" : "#f5f5f5",
+        backgroundColor: isFlashing ? "transparent" : "background.surface",
       },
     } as SxProps<Theme>),
 
@@ -106,7 +106,7 @@ export const styles = {
    */
   questionText: {
     fontSize: 13,
-    color: "#344054",
+    color: "text.secondary",
     flex: 1,
     overflow: "hidden",
     textOverflow: "ellipsis",

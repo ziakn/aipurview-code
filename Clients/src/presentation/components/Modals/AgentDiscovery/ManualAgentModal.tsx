@@ -209,14 +209,14 @@ const ManualAgentModal: React.FC<ManualAgentModalProps> = ({
       <Stack direction="row" justifyContent="flex-end" gap={1} sx={{ p: "16px 24px" }}>
         <CustomizableButton
           variant="outlined"
-          sx={{ border: "1px solid #d0d5dd" }}
+          sx={{ border: "1px solid borderPalette.dark" }}
           onClick={handleClose}
         >
           Cancel
         </CustomizableButton>
         <CustomizableButton
           variant="contained"
-          sx={{ backgroundColor: "#13715B", border: "1px solid #13715B" }}
+          sx={{ backgroundColor: "brand.primary", border: "1px solid brand.primary" }}
           onClick={handleSubmit}
           isDisabled={isSubmitting}
         >

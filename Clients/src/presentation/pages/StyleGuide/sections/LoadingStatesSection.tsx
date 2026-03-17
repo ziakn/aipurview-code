@@ -208,7 +208,7 @@ const LoadingStatesSection: React.FC = () => {
                   </Typography>
                 </Box>
                 <Box sx={{ textAlign: "center" }}>
-                  <CircularProgress size={24} sx={{ color: "#13715B" }} />
+                  <CircularProgress size={24} sx={{ color: "brand.primary" }} />
                   <Typography sx={{ fontSize: 11, color: theme.palette.text.accent, mt: "8px" }}>
                     Primary
                   </Typography>
@@ -342,14 +342,14 @@ const LoadingStatesSection: React.FC = () => {
                 gap: "8px",
                 px: "16px",
                 py: "8px",
-                backgroundColor: "#13715B",
-                color: "#fff",
+                backgroundColor: "brand.primary",
+                color: "background.main",
                 borderRadius: "4px",
                 fontSize: 13,
                 fontWeight: 500,
               }}
             >
-              <CircularProgress size={16} sx={{ color: "#fff" }} />
+              <CircularProgress size={16} sx={{ color: "background.main" }} />
               Saving...
             </Box>
             <Typography sx={{ fontSize: 12, color: theme.palette.text.accent }}>

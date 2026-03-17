@@ -30,6 +30,7 @@ import {
   tabListContainerStyle,
   tabListStyle,
 } from "./styles";
+import { brand } from "../../themes/palette";
 
 const ProjectView = () => {
   const [searchParams] = useSearchParams();
@@ -134,7 +135,7 @@ const ProjectView = () => {
           </Typography>
           <Typography sx={projectDescriptionStyle}>
             This page includes the governance process status of{" "}
-            <span style={{ color: "#13715B" }}>{project.project_title}</span>
+            <span style={{ color: `${brand.primary}` }}>{project.project_title}</span>
           </Typography>
           <Stack sx={tabContainerStyle}>
             <TabContext value={value}>

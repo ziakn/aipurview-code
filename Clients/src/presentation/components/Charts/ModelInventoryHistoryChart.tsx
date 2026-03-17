@@ -7,6 +7,7 @@ import { ButtonToggle } from "../button-toggle";
 import CustomizableSkeleton from "../Skeletons";
 import { TrendingUp } from "lucide-react";
 import { EmptyState } from "../EmptyState";
+import { text, background, border as borderPalette } from "../../themes/palette";
 
 interface ModelInventoryHistoryChartProps {
   parameter?: string;
@@ -92,7 +93,7 @@ export function ModelInventoryHistoryChart({
     const series = statusValues.map((status) => ({
       label: status,
       data: timeseriesData.map((point) => point.data[status] || 0),
-      color: STATUS_COLORS[status] || "#9CA3AF",
+      color: STATUS_COLORS[status] || `${text.disabled}`,
       curve: "monotoneX" as const,
       showMark: false,
     }));
@@ -113,12 +114,12 @@ export function ModelInventoryHistoryChart({
       <Stack
         sx={{
           p: 3,
-          border: "1px solid #EAECF0",
+          border: `1px solid ${borderPalette.light}`,
           borderRadius: 2,
           height: height + 120,
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
+          background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
         }}
       >
         <CustomizableSkeleton variant="circular" width={40} height={40} />
@@ -131,12 +132,12 @@ export function ModelInventoryHistoryChart({
       <Stack
         sx={{
           p: 3,
-          border: "1px solid #EAECF0",
+          border: `1px solid ${borderPalette.light}`,
           borderRadius: 2,
           height: height + 120,
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
+          background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
         }}
       >
         <Typography sx={{ color: "#F04438", fontSize: 14, fontWeight: 500 }}>
@@ -160,9 +161,9 @@ export function ModelInventoryHistoryChart({
     <Stack
       sx={{
         p: 3,
-        border: "1px solid #EAECF0",
+        border: `1px solid ${borderPalette.light}`,
         borderRadius: 2,
-        background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
+        background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
         boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.05)",
       }}
     >
@@ -191,7 +192,7 @@ export function ModelInventoryHistoryChart({
                   },
                   tickLabelStyle: {
                     fontSize: 12,
-                    fill: "#475467",
+                    fill: `${text.tertiary}`,
                   },
                 },
               ]}
@@ -204,11 +205,11 @@ export function ModelInventoryHistoryChart({
                   valueFormatter: (value: number) => value.toString(),
                   labelStyle: {
                     fontSize: 13,
-                    fill: "#344054",
+                    fill: `${text.secondary}`,
                   },
                   tickLabelStyle: {
                     fontSize: 12,
-                    fill: "#475467",
+                    fill: `${text.tertiary}`,
                   },
                 },
               ]}
@@ -230,15 +231,15 @@ export function ModelInventoryHistoryChart({
                   strokeWidth: 3,
                 },
                 "& .MuiChartsGrid-line": {
-                  stroke: "#EAECF0",
+                  stroke: `${borderPalette.light}`,
                   strokeWidth: 1,
                 },
                 "& .MuiChartsAxis-line": {
-                  stroke: "#D0D5DD",
+                  stroke: `${borderPalette.dark}`,
                   strokeWidth: 1.5,
                 },
                 "& .MuiChartsAxis-tick": {
-                  stroke: "#D0D5DD",
+                  stroke: `${borderPalette.dark}`,
                 },
               }}
             />

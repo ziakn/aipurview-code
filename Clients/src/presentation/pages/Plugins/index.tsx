@@ -37,6 +37,7 @@ import {
   regionCountStyle,
   regionContent,
 } from "./style";
+import { brand } from "../../themes/palette";
 
 const Plugins: React.FC = () => {
   const location = useLocation();
@@ -302,12 +303,12 @@ const Plugins: React.FC = () => {
                           justifyContent: "center",
                           width: "16px",
                           "& svg": {
-                            color: isSelected ? "#13715B !important" : "#667085 !important",
-                            stroke: isSelected ? "#13715B !important" : "#667085 !important",
+                            color: isSelected ? "brand.primary !important" : "text.icon !important",
+                            stroke: isSelected ? "brand.primary !important" : "text.icon !important",
                             transition: "color 0.2s ease, stroke 0.2s ease",
                           },
                           "& svg path": {
-                            stroke: isSelected ? "#13715B !important" : "#667085 !important",
+                            stroke: isSelected ? "brand.primary !important" : "text.icon !important",
                           },
                         }}
                       >
@@ -338,7 +339,7 @@ const Plugins: React.FC = () => {
                   <Stack direction="row" alignItems="center" gap={1.5} mb={1}>
                     {React.createElement(currentCategory.icon, {
                       size: 20,
-                      color: "#13715B",
+                      color: "brand.primary",
                       strokeWidth: 1.5,
                     })}
                     <Typography sx={categoryHeaderTitle}>
@@ -394,7 +395,7 @@ const Plugins: React.FC = () => {
                 <Chip
                   label={`${installedPlugins.length} plugin${installedPlugins.length !== 1 ? "s" : ""} installed`}
                   backgroundColor="rgba(19, 113, 91, 0.1)"
-                  textColor="#13715B"
+                  textColor={brand.primary}
                 />
               </Box>
             )}

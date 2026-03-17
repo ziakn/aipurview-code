@@ -132,7 +132,7 @@ export function VideoPlayerModal({
             top: 8,
             right: 8,
             zIndex: 10,
-            color: "#fff",
+            color: "background.main",
             backgroundColor: "rgba(0,0,0,0.5)",
             "&:hover": { backgroundColor: "rgba(0,0,0,0.7)" },
           }}

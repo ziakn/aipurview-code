@@ -210,7 +210,7 @@ const ModalsSection: React.FC = () => {
       <SpecSection title="Modal specifications">
         <SpecGrid>
           <SpecCard title="Background" value="#FCFCFD" note="theme.palette.background.modal" onCopy={handleCopy} />
-          <SpecCard title="Border" value="1px solid #eaecf0" note="theme.palette.border.light" onCopy={handleCopy} />
+          <SpecCard title="Border" value="1px solid borderPalette.light" note="theme.palette.border.light" onCopy={handleCopy} />
           <SpecCard title="Border radius" value="4px" note="Standard radius" onCopy={handleCopy} />
           <SpecCard title="Shadow" value="0px 4px 24px -4px rgba(16, 24, 40, 0.08)" note="theme.boxShadow" onCopy={handleCopy} />
           <SpecCard title="Header padding" value="16px 20px" note="Title section" onCopy={handleCopy} />
