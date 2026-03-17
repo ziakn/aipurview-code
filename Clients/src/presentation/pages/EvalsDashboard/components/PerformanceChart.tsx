@@ -3,6 +3,7 @@ import { Box, Typography } from "@mui/material";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { getAllExperiments, type Experiment } from "../../../../application/repository/deepEval.repository";
 import { palette } from "../../../themes/palette";
+import { vwTooltipStyle, ChartOutlineWrapper } from "../../../components/Charts/VWCharts";
 
 export type TimeRange = "7d" | "30d" | "100d" | "all";
 
@@ -248,11 +249,7 @@ export default function PerformanceChart({ projectId, timeRange }: PerformanceCh
     return (
       <Box
         sx={{
-          backgroundColor: palette.background.main,
-          border: `1px solid ${palette.border.light}`,
-          borderRadius: "8px",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          padding: "12px",
+          ...vwTooltipStyle,
           minWidth: "180px",
         }}
       >
@@ -298,12 +295,7 @@ export default function PerformanceChart({ projectId, timeRange }: PerformanceCh
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
-    <Box sx={{
-      width: "100%",
-      "& *": { outline: "none !important" },
-      "& *:focus": { outline: "none !important" },
-    }}>
+    <ChartOutlineWrapper>
         <ResponsiveContainer key={`rc-${projectId}-${data.length}-${activeMetrics.join(",")}-${timeRange}`} width="100%" height={Math.max(dynamicHeight, 220)} debounce={1}>
         <LineChart data={data} margin={{ top: 5, right: 20, left: 10, bottom: 20 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={palette.border.light} />
@@ -360,8 +352,7 @@ export default function PerformanceChart({ projectId, timeRange }: PerformanceCh
           })}
         </LineChart>
       </ResponsiveContainer>
-      </Box>
-    </Box>
+    </ChartOutlineWrapper>
   );
 }
 
