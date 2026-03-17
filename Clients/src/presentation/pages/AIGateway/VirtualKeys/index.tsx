@@ -225,7 +225,6 @@ export default function AIGatewayVirtualKeysPage({ embedded }: { embedded?: bool
       )}
 
       {!loading && keys.length > 0 && (
-        <Box sx={cardSx}>
           <Stack gap="8px">
             {keys.map((key) => {
                 const status = getStatusLabel(key);
@@ -335,7 +334,6 @@ export default function AIGatewayVirtualKeysPage({ embedded }: { embedded?: bool
                 );
               })}
           </Stack>
-        </Box>
       )}
 
       {/* Create Virtual Key Modal */}
@@ -497,6 +495,11 @@ response = client.chat.completions.create(
               <Typography sx={{ fontSize: 13, color: palette.text.tertiary, mt: "4px" }}>
                 Generate API keys for developers to use the gateway from their code.
               </Typography>
+              {!loading && endpointCount === 0 && (
+                <Typography sx={{ fontSize: 12, color: "#B54708", fontWeight: 500, mt: "4px" }}>
+                  Create at least one endpoint before generating virtual keys.
+                </Typography>
+              )}
             </Box>
             {createKeyButton}
           </Stack>

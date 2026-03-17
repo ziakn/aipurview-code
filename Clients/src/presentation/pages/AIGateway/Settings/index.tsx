@@ -637,7 +637,7 @@ export default function AIGatewaySettingsPage() {
                 <Stack gap="8px">
                   <Typography sx={sectionTitleSx}>Error behavior</Typography>
                   <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>
-                    What happens when the guardrail scanner itself fails (e.g., Presidio unavailable). "Fail-closed" blocks all requests for safety. "Fail-open" allows requests through.
+                    What happens when the guardrail scanner itself fails. "Fail-closed" blocks all requests for safety. "Fail-open" allows requests through.
                   </Typography>
                   <Stack direction="row" gap="16px" mt="8px">
                     <Box flex={1}>
