@@ -431,7 +431,7 @@ function getDateRange(period: string): { startDate: string; endDate: string } {
   const start = new Date();
   switch (period) {
     case "1d":
-      start.setHours(0, 0, 0, 0);
+      start.setDate(start.getDate() - 1);
       break;
     case "7d":
       start.setDate(start.getDate() - 7);
