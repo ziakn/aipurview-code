@@ -4,7 +4,6 @@ const GenerateReport = lazy(() => import("./GenerateReport"));
 const ReportLists = lazy(() => import("./Reports"));
 import PageTour from "../../components/PageTour";
 import ReportingSteps from "./ReportingSteps";
-import CustomizableSkeleton from "../../components/Skeletons";
 
 const Reporting = () => {
   const [refreshKey, setRefreshKey] = useState(0);
@@ -22,7 +21,7 @@ const Reporting = () => {
       tipBoxEntity="reporting"
     >
       <div data-joyride-id="reports-list">
-        <Suspense fallback={<CustomizableSkeleton variant="rectangular" />}>
+        <Suspense fallback={null}>
           <ReportLists
             refreshKey={refreshKey}
             generateReportButton={
