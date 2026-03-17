@@ -74,8 +74,8 @@ const ALESummaryCard: FC<ALESummaryCardProps> = ({ fields }) => {
   return (
     <Box
       sx={{
-        p: 2,
-        borderRadius: 2,
+        p: "8px",
+        borderRadius: "4px",
         border: `1px solid ${theme.palette.divider}`,
         backgroundColor: theme.palette.background.default,
       }}
@@ -85,12 +85,12 @@ const ALESummaryCard: FC<ALESummaryCardProps> = ({ fields }) => {
           fontSize: 13,
           fontWeight: 600,
           color: theme.palette.text.primary,
-          mb: "12px",
+          mb: "8px",
         }}
       >
         Risk Exposure Summary
       </Typography>
-      <Stack direction="row" sx={{ gap: 3, flexWrap: "wrap" }}>
+      <Stack direction="row" sx={{ gap: "16px", flexWrap: "wrap" }}>
         {metrics.map((metric) => (
           <Stack key={metric.label} sx={{ minWidth: 140 }}>
             <Typography
