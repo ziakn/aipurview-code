@@ -220,7 +220,7 @@ export default function SpendDashboardPage() {
         </EmptyState>
       )}
 
-      {!loading && hasData && byDay.length === 0 && byModel.length === 0 && byEndpoint.length === 0 && byUser.length === 0 && (
+      {false && !loading && hasData && byDay.length === 0 && byModel.length === 0 && byEndpoint.length === 0 && byUser.length === 0 && (
         <Box sx={{
           p: "16px",
           borderRadius: "4px",
@@ -234,7 +234,7 @@ export default function SpendDashboardPage() {
       )}
 
       {/* Cost over time chart */}
-      {!loading && byDay.length > 0 && (
+      {!loading && (
         <Box sx={cardSx}>
           <Stack gap="12px">
             <Stack direction="row" alignItems="center" gap="6px">
@@ -271,10 +271,10 @@ export default function SpendDashboardPage() {
       )}
 
       {/* Two-column: Cost by model + Cost by endpoint */}
-      {!loading && (byModel.length > 0 || byEndpoint.length > 0) && (
+      {!loading && (
         <Stack direction={{ xs: "column", md: "row" }} gap="16px">
           {/* Cost by model */}
-          {byModel.length > 0 && (
+          {(
             <Box sx={{ ...cardSx, flex: 1 }}>
               <Stack gap="12px">
                 <Stack direction="row" alignItems="center" gap="6px">
@@ -343,7 +343,7 @@ export default function SpendDashboardPage() {
           )}
 
           {/* Cost by endpoint */}
-          {byEndpoint.length > 0 && (
+          {(
             <Box sx={{ ...cardSx, flex: 1 }}>
               <Stack gap="12px">
                 <Stack direction="row" alignItems="center" gap="6px">
@@ -402,10 +402,10 @@ export default function SpendDashboardPage() {
       )}
 
       {/* Error rate + Tokens per request */}
-      {!loading && (errorRateByDay.length > 0 || tokensPerEndpoint.length > 0) && (
+      {!loading && (
         <Stack direction={{ xs: "column", md: "row" }} gap="16px">
           {/* Error rate over time */}
-          {errorRateByDay.length > 0 && (
+          {(
             <Box sx={{ ...cardSx, flex: 1 }}>
               <Stack gap="12px">
                 <Stack direction="row" alignItems="center" gap="6px">
@@ -442,7 +442,7 @@ export default function SpendDashboardPage() {
           )}
 
           {/* Tokens per request by endpoint */}
-          {tokensPerEndpoint.length > 0 && (
+          {(
             <Box sx={{ ...cardSx, flex: 1 }}>
               <Stack gap="12px">
                 <Stack direction="row" alignItems="center" gap="6px">
@@ -484,10 +484,10 @@ export default function SpendDashboardPage() {
       )}
 
       {/* Cost by provider + Guardrail detections */}
-      {!loading && (byProvider.length > 0 || guardrailStats?.byDay?.length > 0) && (
+      {!loading && (
         <Stack direction={{ xs: "column", md: "row" }} gap="16px">
           {/* Cost by provider — donut chart */}
-          {byProvider.length > 0 && (
+          {(
             <Box sx={{ ...cardSx, flex: 1 }}>
               <Stack gap="12px">
                 <Stack direction="row" alignItems="center" gap="6px">
@@ -549,10 +549,10 @@ export default function SpendDashboardPage() {
       )}
 
       {/* Cost by provider + Guardrail detections */}
-      {!loading && (byProvider.length > 0 || guardrailStats?.byDay?.length > 0) && (
+      {!loading && (
         <Stack direction={{ xs: "column", md: "row" }} gap="16px">
           {/* Guardrail detections trend */}
-          {guardrailStats?.byDay?.length > 0 && (
+          {(
             <Box sx={{ ...cardSx, flex: 1 }}>
               <Stack gap="12px">
                 <Stack direction="row" alignItems="center" gap="6px">
@@ -590,7 +590,7 @@ export default function SpendDashboardPage() {
       )}
 
       {/* Top users */}
-      {!loading && byUser.length > 0 && (
+      {!loading && (
         <Box sx={cardSx}>
           <Stack gap="12px">
             <Stack direction="row" alignItems="center" gap="6px">
