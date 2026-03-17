@@ -214,7 +214,7 @@ export const getAllRisksQueryWithRelationships = async (
         JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
           'id', scr_27001.subclause_id,
           'meta_id', sc_27001.subclause_meta_id,
-          'sup_id', csi_27001.arrangement,
+          'sup_id', csi_27001.order_no,
           'title', scs_27001.title,
           'sub_id', scs_27001.order_no,
           'parent_id', csi_27001.id,
@@ -566,7 +566,7 @@ export const getRiskByIdQuery = async (
 
   const attachedSubClauses_27001 = (await sequelize.query(
     `SELECT
-        scr.subclause_id AS id, sc.subclause_meta_id AS meta_id, csi.arrangement AS sup_id, scs.title, scs.order_no AS sub_id, csi.id AS parent_id, pf.project_id AS project_id
+        scr.subclause_id AS id, sc.subclause_meta_id AS meta_id, csi.order_no AS sup_id, scs.title, scs.order_no AS sub_id, csi.id AS parent_id, pf.project_id AS project_id
       FROM subclauses_iso27001__risks scr JOIN subclauses_iso27001 sc ON scr.subclause_id = sc.id AND sc.organization_id = :organizationId
       JOIN subclauses_struct_iso27001 scs ON scs.id = sc.subclause_meta_id
       JOIN clauses_struct_iso27001 csi ON csi.id = scs.clause_id
