@@ -54,8 +54,8 @@ export const vwTooltipStyle: React.CSSProperties = {
 /** Inline style to suppress blue focus outlines on Recharts SVG elements */
 const noOutlineStyle: React.CSSProperties = { outline: "none" };
 
-/** Wrapper that suppresses focus outlines on all chart children */
-const ChartWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+/** Wrapper that suppresses focus outlines on all chart children. Export for custom charts. */
+export const ChartOutlineWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <Box
     sx={{
       width: "100%",
@@ -143,7 +143,7 @@ export const VWBarChart: React.FC<VWBarChartProps> = ({
 }) => {
   const isVertical = layout === "vertical";
   return (
-    <ChartWrapper>
+    <ChartOutlineWrapper>
     <ResponsiveContainer width="100%" height={height} style={noOutlineStyle}>
       <BarChart data={data} layout={layout} margin={margin} barCategoryGap={barCategoryGap}>
         <CartesianGrid
@@ -209,7 +209,7 @@ export const VWBarChart: React.FC<VWBarChartProps> = ({
         ))}
       </BarChart>
     </ResponsiveContainer>
-    </ChartWrapper>
+    </ChartOutlineWrapper>
   );
 };
 
@@ -252,7 +252,7 @@ export const VWAreaChart: React.FC<VWAreaChartProps> = ({
   margin,
   gradientOpacity = 0.12,
 }) => (
-  <ChartWrapper>
+  <ChartOutlineWrapper>
   <ResponsiveContainer width="100%" height={height} style={noOutlineStyle}>
     <AreaChart data={data} margin={margin}>
       <defs>
@@ -299,7 +299,7 @@ export const VWAreaChart: React.FC<VWAreaChartProps> = ({
       ))}
     </AreaChart>
   </ResponsiveContainer>
-  </ChartWrapper>
+  </ChartOutlineWrapper>
 );
 
 // ─── VWDonutChart ───────────────────────────────────────────────────────────
@@ -422,7 +422,7 @@ export const VWLineChart: React.FC<VWLineChartProps> = ({
   const Legend = showLegend ? require("recharts").Legend : null;
 
   return (
-    <ChartWrapper>
+    <ChartOutlineWrapper>
     <ResponsiveContainer width="100%" height={height} style={noOutlineStyle}>
       <LineChart data={data} margin={margin}>
         <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
@@ -467,6 +467,6 @@ export const VWLineChart: React.FC<VWLineChartProps> = ({
         ))}
       </LineChart>
     </ResponsiveContainer>
-    </ChartWrapper>
+    </ChartOutlineWrapper>
   );
 };
