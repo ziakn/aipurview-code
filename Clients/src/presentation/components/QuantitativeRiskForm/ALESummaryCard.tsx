@@ -75,6 +75,7 @@ const ALESummaryCard: FC<ALESummaryCardProps> = ({ fields }) => {
     <Box
       sx={{
         p: "8px",
+        maxWidth: "616px",
         borderRadius: "4px",
         border: `1px solid ${theme.palette.divider}`,
         backgroundColor: theme.palette.background.default,

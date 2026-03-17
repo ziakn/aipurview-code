@@ -101,7 +101,7 @@ const BenchmarkSelector: FC<BenchmarkSelectorProps> = ({
                 textTransform: "uppercase",
                 letterSpacing: "0.05em",
                 color: theme.palette.text.secondary,
-                backgroundColor: theme.palette.action.hover,
+                backgroundColor: theme.palette.background.default,
                 borderBottom: `1px solid ${theme.palette.divider}`,
               }}
             >

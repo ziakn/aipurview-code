@@ -38,7 +38,7 @@ const MitigationROI: FC<MitigationROIProps> = ({
   );
 
   return (
-    <Stack sx={{ gap: 2 }}>
+    <Stack sx={{ gap: "16px", maxWidth: "616px" }}>
       <Typography
         sx={{
           fontSize: 13,
