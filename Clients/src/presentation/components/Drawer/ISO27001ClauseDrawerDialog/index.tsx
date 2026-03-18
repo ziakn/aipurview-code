@@ -764,7 +764,7 @@ const VWISO27001ClauseDrawerDialog = ({
         open={open}
         onClose={onClose}
         sx={{
-          width: 780,
+          width: 850,
           margin: 0,
           "& .MuiDrawer-paper": {
             margin: 0,
@@ -775,7 +775,7 @@ const VWISO27001ClauseDrawerDialog = ({
       >
         <Stack
           sx={{
-            width: 780,
+            width: 850,
             height: "100%",
             display: "flex",
             justifyContent: "center",
@@ -796,10 +796,10 @@ const VWISO27001ClauseDrawerDialog = ({
         open={open}
         onClose={onClose}
         sx={{
-          width: 780,
+          width: 850,
           margin: 0,
           "& .MuiDrawer-paper": {
-            width: 780,
+            width: 850,
             margin: 0,
             borderRadius: 0,
             overflowX: "hidden",
@@ -810,12 +810,12 @@ const VWISO27001ClauseDrawerDialog = ({
         <Stack
           className="vw-iso-27001-clause-drawer-dialog-content"
           sx={{
-            width: 780,
+            width: 850,
           }}
         >
           <Stack
             sx={{
-              width: 780,
+              width: 850,
               padding: "15px 20px",
               display: "flex",
               flexDirection: "row",

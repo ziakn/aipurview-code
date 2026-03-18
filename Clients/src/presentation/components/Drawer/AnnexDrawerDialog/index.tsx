@@ -597,7 +597,7 @@ const VWISO42001AnnexDrawerDialog = ({
         open={open}
         onClose={onClose}
         sx={{
-          width: 780,
+          width: 850,
           margin: 0,
           "& .MuiDrawer-paper": {
             margin: 0,
@@ -608,7 +608,7 @@ const VWISO42001AnnexDrawerDialog = ({
       >
         <Stack
           sx={{
-            width: 780,
+            width: 850,
             height: "100%",
             display: "flex",
             justifyContent: "center",
@@ -629,7 +629,7 @@ const VWISO42001AnnexDrawerDialog = ({
       open={open}
       onClose={onClose}
       sx={{
-        width: 780,
+        width: 850,
         margin: 0,
         "& .MuiDrawer-paper": {
           margin: 0,
@@ -641,12 +641,12 @@ const VWISO42001AnnexDrawerDialog = ({
       <Stack
         className="vw-iso-42001-annex-drawer-dialog-content"
         sx={{
-          width: 780,
+          width: 850,
         }}
       >
         <Stack
           sx={{
-            width: 780,
+            width: 850,
             padding: "15px 20px",
             display: "flex",
             flexDirection: "row",

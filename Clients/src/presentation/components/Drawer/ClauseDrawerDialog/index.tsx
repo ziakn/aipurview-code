@@ -676,7 +676,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
       <Drawer open={open} onClose={onClose} anchor="right">
         <Stack
           sx={{
-            width: 780,
+            width: 850,
             height: "100%",
             display: "flex",
             justifyContent: "center",
@@ -701,10 +701,10 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
         open={open}
         onClose={onClose}
         sx={{
-          width: 780,
+          width: 850,
           margin: 0,
           "& .MuiDrawer-paper": {
-            width: 780,
+            width: 850,
             margin: 0,
             borderRadius: 0,
             overflowX: "hidden",
@@ -715,7 +715,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
       >
         <Stack
           className="iso42001-clause-drawer-dialog-content"
-          sx={{ width: 780 }}
+          sx={{ width: 850 }}
         >
           {/* HEADER */}
           <Stack
