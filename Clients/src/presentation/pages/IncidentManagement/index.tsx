@@ -107,6 +107,15 @@ const IncidentManagement: React.FC = () => {
   // Card filter state
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
 
+  // Auto-dismiss info alerts after 3 seconds
+  useEffect(() => {
+    if (alert && alert.variant === "info") {
+      const timer = setTimeout(() => setAlert(null), 3000);
+      return () => clearTimeout(timer);
+    }
+    return undefined;
+  }, [alert]);
+
   const [mode, setModalMode] = useState("");
 
   // GroupBy state
@@ -547,22 +556,13 @@ const IncidentManagement: React.FC = () => {
         tipBoxEntity="ai-incident-managements"
         alert={
           alert ? (
-            <Suspense fallback={<div>Loading...</div>}>
-              <Fade in={showAlert} timeout={300} style={incidentToastContainer}>
-                <Box mb={2}>
                   <Alert
                     variant={alert.variant}
                     title={alert.title}
                     body={alert.body}
                     isToast={true}
-                    onClick={() => {
-                      setShowAlert(false);
-                      setTimeout(() => setAlert(null), 300);
-                    }}
+                    onClick={() => setAlert(null)}
                   />
-                </Box>
-              </Fade>
-            </Suspense>
           ) : undefined
         }
         summaryCards={
@@ -577,7 +577,25 @@ const IncidentManagement: React.FC = () => {
               ]}
               entityName="incident"
               size="small"
-              onCardClick={(key) => setSelectedStatus(key === selectedStatus ? null : key)}
+              onCardClick={(key) => {
+                if (key === selectedStatus) {
+                  setSelectedStatus(null);
+                  setAlert(null);
+                } else {
+                  setSelectedStatus(key);
+                  const label = [
+                    { key: IncidentManagementStatus.OPEN, label: "Open" },
+                    { key: IncidentManagementStatus.INVESTIGATED, label: "Investigating" },
+                    { key: IncidentManagementStatus.MITIGATED, label: "Mitigated" },
+                    { key: IncidentManagementStatus.CLOSED, label: "Closed" },
+                  ].find((s) => s.key === key)?.label || key;
+                  setAlert({
+                    variant: "info",
+                    title: `Filtering by ${label}`,
+                    body: "Click the card again to see all incidents.",
+                  });
+                }
+              }}
               selectedKey={selectedStatus}
             />
           ) : undefined
