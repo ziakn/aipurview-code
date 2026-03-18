@@ -25,6 +25,7 @@ import CustomAxios from "../../../infrastructure/api/customAxios";
 import {
   getAllExperiments,
 } from "../../../application/repository/deepEval.repository";
+import { palette } from "../../themes/palette";
 import singleTheme from "../../themes/v1SingleTheme";
 
 interface ReportPageProps {
@@ -303,7 +304,7 @@ export default function ReportPage({
 
       {/* Header */}
       <Stack spacing={1}>
-        <Typography variant="h6" sx={{ fontSize: 15, fontWeight: 600, color: "#111827" }}>
+        <Typography variant="h6" sx={{ fontSize: 15, fontWeight: 600, color: palette.text.primary }}>
           Evaluation Reports
         </Typography>
         <Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.6, fontSize: 14 }}>
@@ -314,7 +315,7 @@ export default function ReportPage({
             href="https://arxiv.org/abs/2206.11249"
             target="_blank"
             rel="noopener noreferrer"
-            sx={{ fontSize: 14, color: "#13715B", fontWeight: 600, textDecoration: "none", "&:hover": { textDecoration: "underline" } }}
+            sx={{ fontSize: 14, color: palette.brand.primary, fontWeight: 600, textDecoration: "none", "&:hover": { textDecoration: "underline" } }}
           >
             EvalCards
           </Typography>{" "}
@@ -333,11 +334,11 @@ export default function ReportPage({
       >
         {isGenerating ? (
           <Stack spacing={2} alignItems="center" sx={{ py: 3 }}>
-            <CircularProgress size={32} sx={{ color: "#13715B" }} />
-            <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#111827" }}>
+            <CircularProgress size={32} sx={{ color: palette.brand.primary }} />
+            <Typography sx={{ fontSize: 14, fontWeight: 600, color: palette.text.primary }}>
               Generating report...
             </Typography>
-            <Typography sx={{ fontSize: 12, color: "#6B7280", textAlign: "center", maxWidth: 400 }}>
+            <Typography sx={{ fontSize: 12, color: palette.text.secondary, textAlign: "center", maxWidth: 400 }}>
               Analyzing evaluation results and generating AI-powered summaries. This may take up to a minute.
             </Typography>
           </Stack>
@@ -356,13 +357,13 @@ export default function ReportPage({
                     justifyContent: "center",
                   }}
                 >
-                  <FileText size={20} strokeWidth={1.5} color="#13715B" />
+                  <FileText size={20} strokeWidth={1.5} color=palette.brand.primary />
                 </Box>
                 <Box>
-                  <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#111827" }}>
+                  <Typography sx={{ fontSize: 14, fontWeight: 600, color: palette.text.primary }}>
                     Generate new report
                   </Typography>
-                  <Typography sx={{ fontSize: 12, color: "#6B7280" }}>
+                  <Typography sx={{ fontSize: 12, color: palette.text.secondary }}>
                     {completedCount} completed experiment{completedCount !== 1 ? "s" : ""} available
                   </Typography>
                 </Box>
@@ -374,8 +375,8 @@ export default function ReportPage({
                 icon={<Download size={14} />}
                 text="Generate Report"
                 sx={{
-                  backgroundColor: "#13715B",
-                  "&:hover": { backgroundColor: "#0f604d" },
+                  backgroundColor: palette.brand.primary,
+                  "&:hover": { backgroundColor: palette.brand.primaryHover },
                   textTransform: "none",
                   fontSize: 13,
                   fontWeight: 500,
@@ -392,15 +393,15 @@ export default function ReportPage({
                   mt: 2,
                   p: 2,
                   borderRadius: "6px",
-                  backgroundColor: "#FFFBEB",
+                  backgroundColor: palette.status.warning.bg,
                   border: "1px solid #FDE68A",
                   display: "flex",
                   alignItems: "center",
                   gap: 1.5,
                 }}
               >
-                <AlertTriangle size={16} color="#D97706" />
-                <Typography sx={{ fontSize: 12, color: "#92400E" }}>
+                <AlertTriangle size={16} color=palette.status.warning.text />
+                <Typography sx={{ fontSize: 12, color: palette.status.warning.text }}>
                   No completed experiments yet. Run at least one experiment to generate a report.
                 </Typography>
               </Box>
@@ -428,24 +429,24 @@ export default function ReportPage({
               px: 2.5,
               py: 1.5,
               borderBottom: "1px solid #E5E7EB",
-              backgroundColor: "#F9FAFB",
+              backgroundColor: palette.background.accent,
             }}
           >
             <Stack direction="row" alignItems="center" gap={1.5}>
-              <Eye size={16} color="#13715B" />
-              <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>
+              <Eye size={16} color=palette.brand.primary />
+              <Typography sx={{ fontSize: 13, fontWeight: 600, color: palette.text.primary }}>
                 {pdfTitle}
               </Typography>
             </Stack>
             <Stack direction="row" alignItems="center" gap={0.5}>
               <IconButton size="small" onClick={handleDownloadCurrent} title="Download PDF">
-                <Download size={16} color="#6B7280" />
+                <Download size={16} color=palette.text.secondary />
               </IconButton>
               <IconButton size="small" onClick={handleOpenInNewTab} title="Open in new tab">
-                <ExternalLink size={16} color="#6B7280" />
+                <ExternalLink size={16} color=palette.text.secondary />
               </IconButton>
               <IconButton size="small" onClick={closePdfViewer} title="Close viewer">
-                <X size={16} color="#6B7280" />
+                <X size={16} color=palette.text.secondary />
               </IconButton>
             </Stack>
           </Box>
@@ -469,7 +470,7 @@ export default function ReportPage({
           }}
         >
           <Box sx={{ px: "24px", pt: "20px", pb: "12px" }}>
-            <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#111827" }}>
+            <Typography sx={{ fontSize: 14, fontWeight: 600, color: palette.text.primary }}>
               Saved reports
             </Typography>
           </Box>
@@ -505,7 +506,7 @@ export default function ReportPage({
                   >
                     <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
                       <Stack direction="row" alignItems="center" gap={1}>
-                        <FileText size={14} strokeWidth={1.5} color="#13715B" />
+                        <FileText size={14} strokeWidth={1.5} color=palette.brand.primary />
                         <Typography sx={{ fontSize: 13, color: theme.palette.text.primary, fontWeight: 500 }}>
                           {report.title}
                         </Typography>
@@ -519,8 +520,8 @@ export default function ReportPage({
                           fontSize: 11,
                           height: 22,
                           fontWeight: 500,
-                          backgroundColor: report.format.toLowerCase() === "pdf" ? "#ECFDF5" : "#F0FDF4",
-                          color: "#13715B",
+                          backgroundColor: report.format.toLowerCase() === "pdf" ? palette.status.success.bg : palette.status.success.bg,
+                          color: palette.brand.primary,
                         }}
                       />
                     </TableCell>
@@ -593,23 +594,23 @@ export default function ReportPage({
       {/* EvalCards Standard Info */}
       <Box
         sx={{
-          background: "#F9FAFB",
+          background: palette.background.accent,
           border: "1px solid #E5E7EB",
           borderRadius: "4px",
           p: "20px",
         }}
       >
-        <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374054", mb: 1 }}>
+        <Typography sx={{ fontSize: 13, fontWeight: 600, color: palette.text.primary, mb: 1 }}>
           About EvalCards
         </Typography>
-        <Typography sx={{ fontSize: 12, color: "#6B7280", lineHeight: 1.8 }}>
+        <Typography sx={{ fontSize: 12, color: palette.text.secondary, lineHeight: 1.8 }}>
           Reports are structured following the{" "}
           <Typography
             component="a"
             href="https://arxiv.org/abs/2206.11249"
             target="_blank"
             rel="noopener noreferrer"
-            sx={{ fontSize: 12, color: "#13715B", fontWeight: 600, textDecoration: "none", "&:hover": { textDecoration: "underline" } }}
+            sx={{ fontSize: 12, color: palette.brand.primary, fontWeight: 600, textDecoration: "none", "&:hover": { textDecoration: "underline" } }}
           >
             EvalCards
           </Typography>{" "}
@@ -624,10 +625,10 @@ export default function ReportPage({
             ["Methodology", "Scoring criteria, thresholds, and evaluation pipeline details"],
           ].map(([title, desc]) => (
             <Stack key={title} direction="row" gap={1} alignItems="baseline">
-              <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#13715B", minWidth: 130, flexShrink: 0 }}>
+              <Typography sx={{ fontSize: 11, fontWeight: 600, color: palette.brand.primary, minWidth: 130, flexShrink: 0 }}>
                 {title}
               </Typography>
-              <Typography sx={{ fontSize: 11, color: "#6B7280" }}>{desc}</Typography>
+              <Typography sx={{ fontSize: 11, color: palette.text.secondary }}>{desc}</Typography>
             </Stack>
           ))}
         </Stack>
