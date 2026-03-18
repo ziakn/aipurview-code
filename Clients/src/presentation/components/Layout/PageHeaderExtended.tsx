@@ -44,8 +44,8 @@ export function PageHeaderExtended({
             <Stack gap="18px" sx={{ mt: "18px" }}>
                 {tipBoxEntity && <TipBox entityName={tipBoxEntity} />}
 
-                {alert}
-                {loadingToast}
+                {alert && <Box sx={{ height: 0, overflow: "visible" }}>{alert}</Box>}
+                {loadingToast && <Box sx={{ height: 0, overflow: "visible" }}>{loadingToast}</Box>}
 
                 {summaryCards && (
                     <Box

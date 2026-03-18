@@ -738,17 +738,13 @@ const RiskManagement = () => {
       summaryCardsJoyrideId="risk-summary-cards"
       alert={
         alert && (
-          <Suspense fallback={<div>Loading...</div>}>
-            <Box>
-              <Alert
-                variant={alert.variant}
-                title={alert.title}
-                body={alert.body}
-                isToast={true}
-                onClick={() => setAlert(null)}
-              />
-            </Box>
-          </Suspense>
+          <Alert
+            variant={alert.variant}
+            title={alert.title}
+            body={alert.body}
+            isToast={true}
+            onClick={() => setAlert(null)}
+          />
         )
       }
       loadingToast={isLoading.loading && <CustomizableToast title={isLoading.message} />}
