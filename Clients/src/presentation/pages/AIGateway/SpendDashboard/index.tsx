@@ -612,7 +612,7 @@ export default function SpendDashboardPage() {
             <Stack gap="8px">
               {byUser.slice(0, 10).map((user: any, i: number) => (
                 <Stack
-                  key={user.group_key}
+                  key={user.group_key || `user-${i}`}
                   direction="row"
                   justifyContent="space-between"
                   alignItems="center"
