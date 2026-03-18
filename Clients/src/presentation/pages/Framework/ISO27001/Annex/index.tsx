@@ -157,7 +157,7 @@ const ISO27001Annex = ({
 
     if (annexes) {
       annexes.forEach((annex: any) => {
-        const controls = annex.annexcontrols || [];
+        const controls = annex.annexControls || [];
         const filteredControls = filterControls(controls);
         counts[annex.id ?? 0] = filteredControls.length;
       });
@@ -197,7 +197,7 @@ const ISO27001Annex = ({
     const annex = annexes.find((a: any) => a.id === Number(activeAnnexId));
     if (annex) {
       handleAccordionChange(annex.id)(new Event("click") as any, true);
-      const annexControl = annex.annexcontrols?.find(
+      const annexControl = annex.annexControls?.find(
         (ac: any) => ac.id === Number(activeAnnexControlId),
       );
       if (annexControl) {
@@ -406,7 +406,7 @@ const ISO27001Annex = ({
                     </AccordionSummary>
                   <AccordionDetails sx={{ padding: 0 }}>
                     {(() => {
-                      const controls = annex.annexcontrols || [];
+                      const controls = annex.annexControls || [];
 
                       // Use shared filtering function
                       const filteredControls = filterControls(controls);
