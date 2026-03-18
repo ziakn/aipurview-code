@@ -478,133 +478,101 @@ export default function ReportPage({
 
       {/* Report History Table */}
       {reports.length > 0 && (
-        <Box
-          sx={{
-            background: "#fff",
-            border: "1px solid #d0d5dd",
-            borderRadius: "4px",
-          }}
-        >
-          <Box sx={{ px: "24px", pt: "20px", pb: "12px" }}>
-            <Typography sx={{ fontSize: 14, fontWeight: 600, color: palette.text.primary }}>
-              Saved reports
-            </Typography>
-          </Box>
-          <TableContainer sx={{ overflowX: "auto" }}>
-            <Table sx={singleTheme.tableStyles.primary.frame}>
-              <TableHead sx={{ backgroundColor: singleTheme.tableStyles.primary.header.backgroundColors }}>
-                <TableRow sx={singleTheme.tableStyles.primary.header.row}>
-                  <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "30%" }}>
-                    <Typography sx={{ fontWeight: 500, fontSize: 13 }}>Report</Typography>
+        <TableContainer sx={{ overflowX: "auto" }}>
+          <Table sx={singleTheme.tableStyles.primary.frame}>
+            <TableHead sx={{ backgroundColor: singleTheme.tableStyles.primary.header.backgroundColors }}>
+              <TableRow sx={singleTheme.tableStyles.primary.header.row}>
+                <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "30%" }}>
+                  <Typography sx={{ fontWeight: 500, fontSize: 13 }}>Report</Typography>
+                </TableCell>
+                <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "10%" }}>
+                  <Typography sx={{ fontWeight: 500, fontSize: 13 }}>Format</Typography>
+                </TableCell>
+                <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "12%" }}>
+                  <Typography sx={{ fontWeight: 500, fontSize: 13 }}>Experiments</Typography>
+                </TableCell>
+                <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "10%" }}>
+                  <Typography sx={{ fontWeight: 500, fontSize: 13 }}>Size</Typography>
+                </TableCell>
+                <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "23%" }}>
+                  <Typography sx={{ fontWeight: 500, fontSize: 13 }}>Generated</Typography>
+                </TableCell>
+                <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "15%", minWidth: 120 }}>
+                  <Typography sx={{ fontWeight: 500, fontSize: 13 }}>Actions</Typography>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {reports.map(report => (
+                <TableRow
+                  key={report.id}
+                  onClick={() => report.format.toLowerCase() === "pdf" ? handleViewReport(report) : handleDownloadReport(report)}
+                  sx={{ ...singleTheme.tableStyles.primary.body.row, cursor: "pointer", "&:hover": { backgroundColor: palette.background.accent } }}
+                >
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    <Stack direction="row" alignItems="center" gap={1}>
+                      <FileText size={14} strokeWidth={1.5} color={palette.brand.primary} />
+                      <Typography sx={{ fontSize: 13, color: theme.palette.text.primary, fontWeight: 500 }}>
+                        {report.title}
+                      </Typography>
+                    </Stack>
                   </TableCell>
-                  <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "10%" }}>
-                    <Typography sx={{ fontWeight: 500, fontSize: 13 }}>Format</Typography>
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    <Chip
+                      label={report.format.toUpperCase()}
+                      size="small"
+                      sx={{
+                        fontSize: 11,
+                        height: 22,
+                        fontWeight: 500,
+                        backgroundColor: palette.status.success.bg,
+                        color: palette.brand.primary,
+                      }}
+                    />
                   </TableCell>
-                  <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "12%" }}>
-                    <Typography sx={{ fontWeight: 500, fontSize: 13 }}>Experiments</Typography>
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    <Typography sx={{ fontSize: 13, color: theme.palette.text.secondary }}>
+                      {report.experiments} exp{report.experiments !== 1 ? "s" : ""}
+                    </Typography>
                   </TableCell>
-                  <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "10%" }}>
-                    <Typography sx={{ fontWeight: 500, fontSize: 13 }}>Size</Typography>
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    <Typography sx={{ fontSize: 13, color: theme.palette.text.secondary }}>
+                      {formatFileSize(report.fileSize)}
+                    </Typography>
                   </TableCell>
-                  <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "23%" }}>
-                    <Typography sx={{ fontWeight: 500, fontSize: 13 }}>Generated</Typography>
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    <Typography sx={{ fontSize: 13, color: theme.palette.text.secondary }}>
+                      {formatDate(report.createdAt)}
+                    </Typography>
                   </TableCell>
-                  <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "15%", minWidth: 120 }}>
-                    <Typography sx={{ fontWeight: 500, fontSize: 13 }}>Actions</Typography>
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell} onClick={(e) => e.stopPropagation()}>
+                    <Stack direction="row" spacing="4px">
+                      <Tooltip title="Download">
+                        <IconButton
+                          size="small"
+                          onClick={() => handleDownloadReport(report)}
+                          disabled={loadingReportId === report.id}
+                          sx={{ padding: "4px" }}
+                        >
+                          <Download size={16} strokeWidth={1.5} color={theme.palette.text.secondary} />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete">
+                        <IconButton
+                          size="small"
+                          onClick={() => handleDeleteReport(report.id)}
+                          sx={{ padding: "4px" }}
+                        >
+                          <Trash2 size={16} strokeWidth={1.5} color={theme.palette.text.secondary} />
+                        </IconButton>
+                      </Tooltip>
+                    </Stack>
                   </TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {reports.map(report => (
-                  <TableRow
-                    key={report.id}
-                    sx={singleTheme.tableStyles.primary.body.row}
-                  >
-                    <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                      <Stack direction="row" alignItems="center" gap={1}>
-                        <FileText size={14} strokeWidth={1.5} color={palette.brand.primary} />
-                        <Typography sx={{ fontSize: 13, color: theme.palette.text.primary, fontWeight: 500 }}>
-                          {report.title}
-                        </Typography>
-                      </Stack>
-                    </TableCell>
-                    <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                      <Chip
-                        label={report.format.toUpperCase()}
-                        size="small"
-                        sx={{
-                          fontSize: 11,
-                          height: 22,
-                          fontWeight: 500,
-                          backgroundColor: report.format.toLowerCase() === "pdf" ? palette.status.success.bg : palette.status.success.bg,
-                          color: palette.brand.primary,
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                      <Typography sx={{ fontSize: 13, color: theme.palette.text.secondary }}>
-                        {report.experiments} exp{report.experiments !== 1 ? "s" : ""}
-                      </Typography>
-                    </TableCell>
-                    <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                      <Typography sx={{ fontSize: 13, color: theme.palette.text.secondary }}>
-                        {formatFileSize(report.fileSize)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                      <Typography sx={{ fontSize: 13, color: theme.palette.text.secondary }}>
-                        {formatDate(report.createdAt)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell sx={singleTheme.tableStyles.primary.body.cell} onClick={(e) => e.stopPropagation()}>
-                      <Stack direction="row" spacing={0.5}>
-                        {report.format.toLowerCase() === "pdf" && (
-                          <Tooltip title="View report">
-                            <span>
-                              <IconButton
-                                size="small"
-                                onClick={() => handleViewReport(report)}
-                                disabled={loadingReportId === report.id}
-                                sx={{ padding: 0.5 }}
-                              >
-                                {loadingReportId === report.id ? (
-                                  <CircularProgress size={14} />
-                                ) : (
-                                  <Eye size={16} strokeWidth={1.5} color={theme.palette.text.secondary} />
-                                )}
-                              </IconButton>
-                            </span>
-                          </Tooltip>
-                        )}
-                        <Tooltip title="Download report">
-                          <span>
-                            <IconButton
-                              size="small"
-                              onClick={() => handleDownloadReport(report)}
-                              disabled={loadingReportId === report.id}
-                              sx={{ padding: 0.5 }}
-                            >
-                              <Download size={16} strokeWidth={1.5} color={theme.palette.text.secondary} />
-                            </IconButton>
-                          </span>
-                        </Tooltip>
-                        <Tooltip title="Delete report">
-                          <IconButton
-                            size="small"
-                            onClick={() => handleDeleteReport(report.id)}
-                            sx={{ padding: 0.5 }}
-                          >
-                            <Trash2 size={16} strokeWidth={1.5} color={theme.palette.text.secondary} />
-                          </IconButton>
-                        </Tooltip>
-                      </Stack>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       )}
 
       {/* Config Modal */}
