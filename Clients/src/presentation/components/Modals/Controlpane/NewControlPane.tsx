@@ -1046,10 +1046,10 @@ const NewControlPane = ({
         open={isOpen}
         onClose={handleClose}
         sx={{
-          width: 600,
+          width: 850,
           margin: 0,
           "& .MuiDrawer-paper": {
-            width: 600,
+            width: 850,
             margin: 0,
             borderRadius: 0,
             overflowX: "hidden",
@@ -1363,6 +1363,7 @@ const NewControlPane = ({
                         Evidence:
                       </Typography>
                       <RichTextEditor
+                        toolbar="full"
                         key={`evidence-${currentSubcontrol.id}`}
                         initialContent={currentFormData.evidence_description}
                         onContentChange={(content: string) =>
@@ -1383,6 +1384,7 @@ const NewControlPane = ({
                         Auditor feedback:
                       </Typography>
                       <RichTextEditor
+                        toolbar="full"
                         key={`feedback-${currentSubcontrol.id}`}
                         initialContent={currentFormData.feedback_description}
                         onContentChange={(content: string) =>

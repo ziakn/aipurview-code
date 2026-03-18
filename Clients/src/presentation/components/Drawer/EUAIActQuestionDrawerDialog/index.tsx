@@ -870,7 +870,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
         open={open}
         onClose={onClose}
         sx={{
-          width: 600,
+          width: 850,
           margin: 0,
           "& .MuiDrawer-paper": {
             margin: 0,
@@ -881,7 +881,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
       >
         <Stack
           sx={{
-            width: 600,
+            width: 850,
             height: "100%",
             display: "flex",
             justifyContent: "center",
@@ -906,10 +906,10 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
         open={open}
         onClose={onClose}
         sx={{
-          width: 600,
+          width: 850,
           margin: 0,
           "& .MuiDrawer-paper": {
-            width: 600,
+            width: 850,
             margin: 0,
             borderRadius: 0,
             overflowX: "hidden",
@@ -919,7 +919,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
       >
         <Stack
           className="eu-ai-act-question-drawer-dialog-content"
-          sx={{ width: 600 }}
+          sx={{ width: 850 }}
         >
           {/* HEADER */}
           <Stack
@@ -1077,6 +1077,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                     Answer:
                   </Typography>
                   <RichTextEditor
+                    toolbar="full"
                     key={`answer-editor-${displayQuestion?.answer_id}-${editorKey}`}
                     onContentChange={handleAnswerChange}
                     initialContent={formData.answer}
@@ -1096,8 +1097,6 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
                   />
                 </Stack>
               </Stack>
-
-              <Divider sx={{ my: 2 }} />
 
               {/* Status */}
               <Stack gap="24px">
@@ -1692,8 +1691,6 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
               </Suspense>
             </TabPanel>
           </TabContext>
-
-          <Divider />
 
           {/* FOOTER - SAVE BUTTON */}
           <Stack

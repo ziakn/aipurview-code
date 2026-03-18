@@ -122,6 +122,7 @@ const AssessmentQuestions = ({
               </Box>
 
               <RichTextEditor
+                toolbar="full"
                 key={`${assessmentsValues[activeTab].id}-${subtopic.id}-${question.id}`}
                 onContentChange={(content: string) => {
                   const cleanedContent =

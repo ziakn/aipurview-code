@@ -110,6 +110,7 @@ const AuditorFeedback: React.FC<IAuditorFeedbackProps> = ({
           </Typography>
 
           <RichTextEditor
+            toolbar="full"
             initialContent={feedback}
             onContentChange={handleContentChange}
             isEditable={!readOnly}
