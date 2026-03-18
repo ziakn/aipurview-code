@@ -9,6 +9,7 @@ import { Divider, Drawer, Typography } from "@mui/material";
 import { X as CloseIcon, Save as SaveIcon, Trash2 as DeleteIcon, Eye as ViewIcon, Download as DownloadIcon, FileText as FileIcon } from "lucide-react";
 
 import Field from "../../Inputs/Field";
+import RichTextEditor from "../../RichTextEditor";
 import Select from "../../Inputs/Select";
 import DatePicker from "../../Inputs/Datepicker";
 import ChipInput from "../../Inputs/ChipInput";
@@ -532,10 +533,10 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
           }
         }}
         sx={{
-          width: 600,
+          width: 850,
           margin: 0,
           "& .MuiDrawer-paper": {
-            width: 600,
+            width: 850,
             margin: 0,
             borderRadius: 0,
             overflowX: "hidden",
@@ -546,14 +547,14 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
         <Stack
           className="nist-ai-rmf-drawer-dialog-content"
           sx={{
-            width: 600,
+            width: 850,
           }}
         >
           {/* Loading State */}
           {isLoading && (
             <Stack
               sx={{
-                width: 600,
+                width: 850,
                 height: "100%",
                 display: "flex",
                 justifyContent: "center",
@@ -623,29 +624,21 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                       <Typography fontSize={13} sx={{ marginBottom: "5px" }}>
                         Implementation description:
                       </Typography>
-                      <Field
-                        type="description"
-                        value={formData.implementation_description}
-                        onChange={(e) =>
+                      <RichTextEditor
+                        toolbar="full"
+                        initialContent={formData.implementation_description}
+                        onContentChange={(content) =>
                           handleFieldChange(
                             "implementation_description",
-                            e.target.value
+                            content
                           )
                         }
-                        sx={{
-                          cursor: "text",
-                          "& .field field-decription field-input MuiInputBase-root MuiInputBase-input":
-                            {
-                              height: "73px",
-                            },
-                        }}
                         placeholder="Enter implementation details and how this subcategory is being addressed..."
-                        disabled={isEditingDisabled}
+                        isEditable={!isEditingDisabled}
+                        height="120px"
                       />
                     </Stack>
                   </Stack>
-
-                  <Divider />
 
                   {/* Status Assignment Section */}
                   <Stack padding="15px 20px" gap="24px">
@@ -1284,8 +1277,6 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                   />
                 </Suspense>
               )}
-
-              <Divider />
 
               {/* Footer */}
               <Stack

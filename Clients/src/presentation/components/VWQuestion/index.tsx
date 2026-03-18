@@ -282,6 +282,7 @@ const QuestionFrame = ({
         </Stack>
       </Box>
       <RichTextEditor
+        toolbar="full"
         key={question.question_id || "default"}
         onContentChange={handleContentChange}
         headerSx={{

@@ -1046,10 +1046,10 @@ const NewControlPane = ({
         open={isOpen}
         onClose={handleClose}
         sx={{
-          width: 600,
+          width: 850,
           margin: 0,
           "& .MuiDrawer-paper": {
-            width: 600,
+            width: 850,
             margin: 0,
             borderRadius: 0,
             overflowX: "hidden",
@@ -1196,7 +1196,7 @@ const NewControlPane = ({
 
               {/* INNER TABS - SECTIONS */}
               <TabContext value={activeTab}>
-                <Box sx={{ padding: "0 20px" }}>
+                <Box>
                   <TabBar
                     tabs={innerTabs}
                     activeTab={activeTab}
@@ -1206,28 +1206,27 @@ const NewControlPane = ({
 
                 {/* TAB 1: DETAILS */}
                 <TabPanel value="details" sx={{ padding: 0 }}>
-                  <Stack padding="15px 20px" gap="15px">
+                  <Stack padding="15px 0" gap="15px">
                     {/* Implementation Details */}
                     <Stack>
                       <Typography fontSize={13} sx={{ marginBottom: "5px" }}>
                         Implementation description:
                       </Typography>
-                      <Field
-                        type="description"
-                        value={currentFormData.implementation_details}
-                        onChange={(e) =>
+                      <RichTextEditor
+                        toolbar="full"
+                        initialContent={currentFormData.implementation_details}
+                        onContentChange={(content) =>
                           updateSubcontrolField(
                             currentSubcontrol.id!,
                             "implementation_details",
-                            e.target.value
+                            content
                           )
                         }
                         placeholder="Describe how this requirement is implemented..."
-                        disabled={isEditingDisabled}
+                        isEditable={!isEditingDisabled}
+                        height="120px"
                       />
                     </Stack>
-
-                    <Divider sx={{ my: 2 }} />
 
                     {/* Status & Assignments */}
                     <Stack gap="24px">
@@ -1354,14 +1353,13 @@ const NewControlPane = ({
                       />
                     </Stack>
 
-                    <Divider sx={{ my: 2 }} />
-
                     {/* Evidence Description */}
                     <Stack>
                       <Typography fontSize={13} sx={{ marginBottom: "5px" }}>
                         Evidence:
                       </Typography>
                       <RichTextEditor
+                        toolbar="full"
                         key={`evidence-${currentSubcontrol.id}`}
                         initialContent={currentFormData.evidence_description}
                         onContentChange={(content: string) =>
@@ -1382,6 +1380,7 @@ const NewControlPane = ({
                         Auditor feedback:
                       </Typography>
                       <RichTextEditor
+                        toolbar="full"
                         key={`feedback-${currentSubcontrol.id}`}
                         initialContent={currentFormData.feedback_description}
                         onContentChange={(content: string) =>
@@ -1399,7 +1398,7 @@ const NewControlPane = ({
                 </TabPanel>
 
                 {/* TAB 2: EVIDENCES */}
-                <TabPanel value="evidences" sx={{ padding: "15px 20px" }}>
+                <TabPanel value="evidences" sx={{ padding: "15px 0" }}>
                   <Stack spacing={3}>
                     {/* Evidence Files Section */}
                     {/* SECTION 1: EVIDENCE FILES */}
@@ -2188,7 +2187,7 @@ const NewControlPane = ({
                 </TabPanel>
 
                 {/* TAB 3: CROSS MAPPINGS */}
-                <TabPanel value="cross-mappings" sx={{ padding: "15px 20px" }}>
+                <TabPanel value="cross-mappings" sx={{ padding: "15px 0" }}>
                   <Stack spacing={3}>
                     <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                       Linked risks
@@ -2403,7 +2402,7 @@ const NewControlPane = ({
                 )}
 
                 {/* TAB 4: NOTES */}
-                <TabPanel value="notes" sx={{ padding: "15px 20px" }}>
+                <TabPanel value="notes" sx={{ padding: "15px 0" }}>
                   <Suspense fallback={<CircularProgress size={24} />}>
                     <NotesTab
                       attachedTo="EU_AI_ACT_SUBCONTROL"
