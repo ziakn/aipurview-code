@@ -18,6 +18,8 @@ import {
 import { FileText, Download, AlertTriangle, Eye, X, ExternalLink, Trash2 } from "lucide-react";
 import { CustomizableButton } from "../../components/button/customizable-button";
 import Alert from "../../components/Alert";
+import { EmptyState } from "../../components/EmptyState";
+import EmptyStateTip from "../../components/EmptyState/EmptyStateTip";
 import ReportConfigModal from "./ReportConfigModal";
 import ConfirmationModal from "../../components/Dialogs/ConfirmationModal";
 import type { ReportConfig } from "./types";
@@ -307,15 +309,15 @@ export default function ReportPage({
         <Typography variant="h6" sx={{ fontSize: 15, fontWeight: 600, color: palette.text.primary }}>
           Evaluation Reports
         </Typography>
-        <Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.6, fontSize: 14 }}>
-          Generate comprehensive evaluation reports from your experiment results.
+        <Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.8, fontSize: 13 }}>
+          Generate evaluation reports from your experiment results.
           Reports follow the{" "}
           <Typography
             component="a"
             href="https://arxiv.org/abs/2206.11249"
             target="_blank"
             rel="noopener noreferrer"
-            sx={{ fontSize: 14, color: palette.brand.primary, fontWeight: 600, textDecoration: "none", "&:hover": { textDecoration: "underline" } }}
+            sx={{ fontSize: 13, color: palette.brand.primary, fontWeight: 600, textDecoration: "none", "&:hover": { textDecoration: "underline" } }}
           >
             EvalCards
           </Typography>{" "}
@@ -373,16 +375,10 @@ export default function ReportPage({
                 onClick={() => setConfigModalOpen(true)}
                 disabled={completedCount === 0}
                 icon={<Download size={14} />}
-                text="Generate Report"
+                text="Generate report"
                 sx={{
-                  backgroundColor: palette.brand.primary,
-                  "&:hover": { backgroundColor: palette.brand.primaryHover },
-                  textTransform: "none",
+                  height: "34px",
                   fontSize: 13,
-                  fontWeight: 500,
-                  borderRadius: "6px",
-                  px: 3.5,
-                  py: 1.2,
                 }}
               />
             </Stack>
@@ -458,6 +454,26 @@ export default function ReportPage({
             />
           </Box>
         </Box>
+      )}
+
+      {/* Empty State — no reports yet */}
+      {reports.length === 0 && !isGenerating && (
+        <EmptyState
+          message="No reports generated yet"
+          icon={FileText}
+          showBorder
+        >
+          <EmptyStateTip
+            icon={FileText}
+            title="What are EvalCards?"
+            description="Reports follow the EvalCards standard — a structured documentation framework for AI evaluation results. Each report includes evaluation context, metric results, safety assessment, comparative analysis, and methodology."
+          />
+          <EmptyStateTip
+            icon={Download}
+            title="Generate your first report"
+            description={`You have ${completedCount} completed experiment${completedCount !== 1 ? "s" : ""}. Click "Generate report" above to create a PDF or CSV report with AI-powered summaries.`}
+          />
+        </EmptyState>
       )}
 
       {/* Report History Table */}
