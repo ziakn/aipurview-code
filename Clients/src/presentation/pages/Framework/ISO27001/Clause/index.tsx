@@ -345,7 +345,7 @@ const ISO27001Clause = ({
               )}
             >
               <Typography fontSize={13}>
-                {clause.arrangement + "." + (index + 1)}{" "}
+                {clause.order_no + "." + (index + 1)}{" "}
                 {subClause.title ?? "Untitled"}
               </Typography>
               <StatusDropdown
@@ -453,7 +453,7 @@ const ISO27001Clause = ({
                     style={styles.expandIcon(expanded === clause.id) as React.CSSProperties}
                   />
                   <Typography sx={{ paddingLeft: "2.5px", fontSize: 13 }}>
-                    {clause.arrangement} {clause.title}
+                    {clause.order_no} {clause.title}
                   </Typography>
                   {hasActiveFilters && count !== undefined && (
                     <Box component="span" sx={{

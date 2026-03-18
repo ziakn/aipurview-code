@@ -21,6 +21,7 @@ import {
   Eye as ViewIcon,
 } from "lucide-react";
 import Field from "../../Inputs/Field";
+import RichTextEditor from "../../RichTextEditor";
 import { inputStyles } from "../ClauseDrawerDialog";
 import DatePicker from "../../Inputs/Datepicker";
 import Select from "../../Inputs/Select";
@@ -674,7 +675,7 @@ const VWISO27001AnnexDrawerDialog = ({
         open={open}
         onClose={onClose}
         sx={{
-          width: 600,
+          width: 850,
           margin: 0,
           "& .MuiDrawer-paper": {
             margin: 0,
@@ -685,7 +686,7 @@ const VWISO27001AnnexDrawerDialog = ({
       >
         <Stack
           sx={{
-            width: 600,
+            width: 850,
             height: "100%",
             display: "flex",
             justifyContent: "center",
@@ -706,7 +707,7 @@ const VWISO27001AnnexDrawerDialog = ({
       open={open}
       onClose={onClose}
       sx={{
-        width: 600,
+        width: 850,
         margin: 0,
         "& .MuiDrawer-paper": {
           margin: 0,
@@ -717,11 +718,11 @@ const VWISO27001AnnexDrawerDialog = ({
     >
       <Stack
         className="vw-iso-27001-annex-drawer-dialog-content"
-        sx={{ width: 600 }}
+        sx={{ width: 850 }}
       >
         <Stack
           sx={{
-            width: 600,
+            width: 850,
             padding: "15px 20px",
             display: "flex",
             flexDirection: "row",
@@ -839,26 +840,20 @@ const VWISO27001AnnexDrawerDialog = ({
 
               <Stack>
                 <Typography fontSize={13} sx={{ marginBottom: "5px" }}>
-                  Implementation Description:
+                  Implementation description:
                 </Typography>
-                <Field
-                  type="description"
-                  value={formData.implementation_description}
-                  onChange={(e) =>
+                <RichTextEditor
+                  toolbar="full"
+                  initialContent={formData.implementation_description}
+                  onContentChange={(content) =>
                     handleFieldChange(
                       "implementation_description",
-                      e.target.value
+                      content
                     )
                   }
-                  disabled={isEditingDisabled}
-                  sx={{
-                    cursor: "text",
-                    "& .field field-decription field-input MuiInputBase-root MuiInputBase-input":
-                      {
-                        height: "73px",
-                      },
-                  }}
-                  placeholder="Describe how this requirement is implemented"
+                  placeholder="Describe how this requirement is implemented..."
+                  isEditable={!isEditingDisabled}
+                  height="120px"
                 />
               </Stack>
             </Stack>
@@ -1570,7 +1565,6 @@ const VWISO27001AnnexDrawerDialog = ({
           <Alert {...alert} isToast={true} onClick={() => setAlert(null)} />
         )}
 
-        <Divider />
         <Stack
           className="vw-iso-27001-annex-drawer-dialog-footer"
           sx={{
