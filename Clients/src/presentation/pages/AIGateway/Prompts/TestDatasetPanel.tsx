@@ -73,7 +73,7 @@ export default function TestDatasetPanel({
   const loadDatasets = useCallback(async () => {
     try {
       const res = await apiServices.get(`/ai-gateway/prompts/${promptId}/test-datasets`);
-      setDatasets(res?.data?.data || []);
+      setDatasets(res?.data?.test_datasets || res?.data?.data || []);
     } catch { /* silently handle */ }
   }, [promptId]);
 
@@ -128,7 +128,7 @@ export default function TestDatasetPanel({
           name: datasetName,
           test_cases: testCases,
         });
-        const created = res?.data?.data;
+        const created = res?.data?.test_dataset || res?.data?.data;
         if (created) {
           setSelectedDatasetId(created.id);
           setDatasets((prev) => [created, ...prev]);

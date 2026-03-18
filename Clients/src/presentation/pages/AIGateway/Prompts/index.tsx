@@ -67,7 +67,7 @@ export default function PromptsPage() {
         promptList.map((p) => apiServices.get(`/ai-gateway/prompts/${p.id}/labels`).catch(() => null))
       );
       for (let i = 0; i < promptList.length; i++) {
-        promptList[i].labels = labelsRes[i]?.data?.data || [];
+        promptList[i].labels = labelsRes[i]?.data?.labels || labelsRes[i]?.data?.data || [];
       }
       setPrompts(promptList);
     } catch { /* silently handle */ }
@@ -91,13 +91,13 @@ export default function PromptsPage() {
       const res = await apiServices.post("/ai-gateway/prompts", {
         name: form.name, slug: form.slug, description: form.description || null,
       });
-      const created = res?.data?.data;
+      const created = res?.data?.prompt || res?.data?.data;
       setIsCreateOpen(false);
       setForm({ name: "", slug: "", description: "" });
       if (created?.id) navigate(`/ai-gateway/prompts/${created.id}`);
       else loadData();
     } catch (err: any) {
-      setFormError(err?.response?.data?.data || err?.response?.data?.message || "Failed to create prompt");
+      setFormError(err?.response?.data?.detail || err?.response?.data?.message || "Failed to create prompt");
     } finally { setIsSubmitting(false); }
   };
 

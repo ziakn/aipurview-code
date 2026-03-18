@@ -276,11 +276,11 @@ export default function PromptEditorPage() {
         apiServices.get("/ai-gateway/endpoints"),
         apiServices.get(`/ai-gateway/prompts/${id}/labels`),
       ]);
-      setPrompt(promptRes?.data?.data);
-      const vers: Version[] = versionsRes?.data?.data || [];
+      setPrompt(promptRes?.data?.prompt || promptRes?.data?.data);
+      const vers: Version[] = versionsRes?.data?.versions || versionsRes?.data?.data || [];
       setVersions(vers);
       setEndpoints((endpointsRes?.data?.endpoints || []).filter((e: any) => e.is_active));
-      setLabels(labelsRes?.data?.data || []);
+      setLabels(labelsRes?.data?.labels || labelsRes?.data?.data || []);
       if (vers.length > 0) loadVersionIntoEditor(vers[0]);
     } catch { /* silently handle */ }
     finally { setLoading(false); }
@@ -310,7 +310,7 @@ export default function PromptEditorPage() {
         config: Object.keys(config).length > 0 ? config : null,
         commit_message: commitMsg || null,
       });
-      const newVer = res?.data?.data;
+      const newVer = res?.data?.version || res?.data?.data;
       if (newVer) {
         setCurrentVersion(newVer.version);
         setCurrentStatus("draft");
@@ -358,7 +358,7 @@ export default function PromptEditorPage() {
     if (!id) return;
     try {
       const res = await apiServices.post(`/ai-gateway/prompts/${id}/versions/${versionNumber}/publish`);
-      const published = res?.data?.data;
+      const published = res?.data?.version || res?.data?.data;
       if (published) {
         setVersions((prev) =>
           prev.map((v) =>
@@ -404,7 +404,7 @@ export default function PromptEditorPage() {
       });
       // Refresh labels
       const labelsRes = await apiServices.get(`/ai-gateway/prompts/${id}/labels`);
-      setLabels(labelsRes?.data?.data || []);
+      setLabels(labelsRes?.data?.labels || labelsRes?.data?.data || []);
       setIsLabelModalOpen(false);
       setNewLabelName("");
     } catch { /* silently handle */ }
