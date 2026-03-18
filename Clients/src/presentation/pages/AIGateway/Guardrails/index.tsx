@@ -183,7 +183,7 @@ export default function GuardrailsPage() {
   const loadRules = useCallback(async () => {
     try {
       const res = await apiServices.get("/ai-gateway/guardrails");
-      setRules(res?.data?.data || []);
+      setRules(res?.data?.rules || res?.data?.data || []);
     } catch {
       // Silently handle
     } finally {
