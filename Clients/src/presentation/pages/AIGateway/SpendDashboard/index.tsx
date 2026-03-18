@@ -102,8 +102,8 @@ export default function SpendDashboardPage() {
           apiServices.get(`/ai-gateway/guardrails/stats?period=${period}`).catch(() => null),
         ]);
         setData(spendRes?.data || null);
-        setByEndpoint(endpointRes?.data?.data || []);
-        setByUser(userRes?.data?.data || []);
+        setByEndpoint((endpointRes?.data?.data || []).map((d: any) => ({ ...d, group_key: d.group_key || d.endpoint_name })));
+        setByUser((userRes?.data?.data || []).map((d: any) => ({ ...d, group_key: d.group_key || d.user_name })));
         // Map Python guardrail stats field names to frontend expectations
         const rawGs = gsRes?.data || null;
         if (rawGs) {
