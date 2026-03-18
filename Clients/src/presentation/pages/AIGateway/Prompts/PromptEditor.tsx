@@ -279,7 +279,7 @@ export default function PromptEditorPage() {
       setPrompt(promptRes?.data?.data);
       const vers: Version[] = versionsRes?.data?.data || [];
       setVersions(vers);
-      setEndpoints((endpointsRes?.data?.data || []).filter((e: any) => e.is_active));
+      setEndpoints((endpointsRes?.data?.endpoints || []).filter((e: any) => e.is_active));
       setLabels(labelsRes?.data?.data || []);
       if (vers.length > 0) loadVersionIntoEditor(vers[0]);
     } catch { /* silently handle */ }

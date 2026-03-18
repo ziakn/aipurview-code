@@ -37,11 +37,11 @@ export const AIGatewaySidebarProvider: FC<{ children: ReactNode }> = ({ children
           apiServices.get("/ai-gateway/virtual-keys").catch(() => null),
         ]);
         if (cancelled) return;
-        const endpoints = endpointsRes?.data?.data;
+        const endpoints = endpointsRes?.data?.endpoints;
         if (Array.isArray(endpoints)) {
           setEndpointsCount(endpoints.filter((e: { is_active: boolean }) => e.is_active).length);
         }
-        const prompts = promptsRes?.data?.data;
+        const prompts = promptsRes?.data?.prompts;
         if (Array.isArray(prompts)) {
           setPromptsCount(prompts.length);
         }

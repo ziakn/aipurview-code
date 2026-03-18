@@ -68,9 +68,9 @@ export default function EndpointsPage() {
         apiServices.get("/ai-gateway/guardrails").catch(() => null),
         apiServices.get("/ai-gateway/prompts").catch(() => null),
       ]);
-      setEndpoints(endpointsRes?.data?.data || []);
+      setEndpoints(endpointsRes?.data?.endpoints || []);
       setApiKeys(keysRes?.data?.data || []);
-      setPrompts(promptsRes?.data?.data || []);
+      setPrompts(promptsRes?.data?.prompts || []);
       const allRules = grRes?.data?.data || [];
       setActiveGuardrailCount(allRules.filter((r: any) => r.is_active).length);
     } catch {

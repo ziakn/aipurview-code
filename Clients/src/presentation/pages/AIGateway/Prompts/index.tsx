@@ -61,7 +61,7 @@ export default function PromptsPage() {
   const loadData = useCallback(async () => {
     try {
       const res = await apiServices.get("/ai-gateway/prompts");
-      const promptList: Prompt[] = res?.data?.data || [];
+      const promptList: Prompt[] = res?.data?.prompts || [];
       // Fetch labels for each prompt in parallel
       const labelsRes = await Promise.all(
         promptList.map((p) => apiServices.get(`/ai-gateway/prompts/${p.id}/labels`).catch(() => null))

@@ -229,7 +229,7 @@ export default function LogsPage() {
       try {
         const qs = buildQuery(p, rpp);
         const res = await apiServices.get(`/ai-gateway/spend/logs?${qs}`);
-        const data = res?.data?.data || {};
+        const data = res?.data || {};
         setLogs(data.rows || []);
         setTotal(data.total || 0);
       } catch {

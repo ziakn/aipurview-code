@@ -89,7 +89,7 @@ export default function AIGatewayVirtualKeysPage({ embedded }: { embedded?: bool
         apiServices.get("/ai-gateway/endpoints").catch(() => null),
       ]);
       setKeys(keysRes?.data?.data || []);
-      const eps = endpointsRes?.data?.data || [];
+      const eps = endpointsRes?.data?.endpoints || [];
       setEndpointCount(eps.filter((e: any) => e.is_active).length);
     } catch {
       // Silently handle

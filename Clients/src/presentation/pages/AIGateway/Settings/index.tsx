@@ -179,7 +179,7 @@ export default function AIGatewaySettingsPage() {
         
       }
 
-      const gs = gsRes?.data?.data;
+      const gs = gsRes?.data?.settings;
       if (gs) {
         setGuardrailSettings(gs);
         setGsForm({
@@ -205,12 +205,12 @@ export default function AIGatewaySettingsPage() {
         apiServices.get("/ai-gateway/risk-settings").catch(() => null),
         apiServices.get("/ai-gateway/risk-suggestions").catch(() => null),
       ]);
-      if (settingsRes?.data?.data) {
-        setRiskSettings(settingsRes.data.data);
+      if (settingsRes?.data) {
+        setRiskSettings(settingsRes.data);
         setRiskSettingsDirty(false);
       }
-      if (suggestionsRes?.data?.data) {
-        setSuggestions(suggestionsRes.data.data);
+      if (suggestionsRes?.data) {
+        setSuggestions(suggestionsRes.data);
       }
     } catch {
       // Silently handle

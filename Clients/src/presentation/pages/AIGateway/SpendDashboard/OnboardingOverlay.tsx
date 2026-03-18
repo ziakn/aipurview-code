@@ -290,7 +290,7 @@ export default function OnboardingOverlay({ onGetStarted, setupStatus, onStepCom
       apiServices.get("/ai-gateway/virtual-keys").catch(() => null),
     ]).then(([epRes, vkRes]) => {
       if (cancelled) return;
-      const endpoints = epRes?.data?.data || [];
+      const endpoints = epRes?.data?.endpoints || [];
       const activeEp = endpoints.find((e: { is_active: boolean }) => e.is_active);
       if (activeEp) setFirstReqSlug(activeEp.slug);
       const vkeys = vkRes?.data?.data || [];

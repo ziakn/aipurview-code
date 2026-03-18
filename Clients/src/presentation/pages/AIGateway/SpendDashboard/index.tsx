@@ -76,7 +76,7 @@ export default function SpendDashboardPage() {
       try {
         // Check first-time status before loading period-based data
         const logsCheck = await apiServices.get("/ai-gateway/spend/logs?limit=1").catch(() => null);
-        const totalLogs = logsCheck?.data?.data?.total || 0;
+        const totalLogs = logsCheck?.data?.total || 0;
         if (totalLogs === 0) {
           const [keysRes, endpointsRes, vkeysRes] = await Promise.all([
             apiServices.get("/ai-gateway/keys").catch(() => null),
@@ -85,7 +85,7 @@ export default function SpendDashboardPage() {
           ]);
           setSetupStatus({
             hasApiKey: (keysRes?.data?.data || []).length > 0,
-            hasEndpoint: (endpointsRes?.data?.data || []).length > 0,
+            hasEndpoint: (endpointsRes?.data?.endpoints || []).length > 0,
             hasVirtualKey: (vkeysRes?.data?.data || []).length > 0,
             hasRequests: false,
           });
@@ -101,10 +101,10 @@ export default function SpendDashboardPage() {
           apiServices.get(`/ai-gateway/spend/by-user?period=${period}`).catch(() => null),
           apiServices.get(`/ai-gateway/guardrails/stats?period=${period}`).catch(() => null),
         ]);
-        setData(spendRes?.data?.data || null);
-        setByEndpoint(endpointRes?.data?.data || []);
-        setByUser(userRes?.data?.data || []);
-        setGuardrailStats(gsRes?.data?.data || null);
+        setData(spendRes?.data || null);
+        setByEndpoint(endpointRes?.data || []);
+        setByUser(userRes?.data || []);
+        setGuardrailStats(gsRes?.data || null);
       } catch {
         setData(null);
         setIsFirstTime(false);
@@ -138,9 +138,9 @@ export default function SpendDashboardPage() {
     ]);
     const newStatus = {
       hasApiKey: (keysRes?.data?.data || []).length > 0,
-      hasEndpoint: (endpointsRes?.data?.data || []).length > 0,
+      hasEndpoint: (endpointsRes?.data?.endpoints || []).length > 0,
       hasVirtualKey: (vkeysRes?.data?.data || []).length > 0,
-      hasRequests: (logsCheck?.data?.data?.total || 0) > 0,
+      hasRequests: (logsCheck?.data?.total || 0) > 0,
     };
     setSetupStatus(newStatus);
     if (newStatus.hasRequests) {
