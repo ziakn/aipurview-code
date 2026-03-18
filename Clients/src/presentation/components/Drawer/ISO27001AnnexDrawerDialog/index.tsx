@@ -21,6 +21,7 @@ import {
   Eye as ViewIcon,
 } from "lucide-react";
 import Field from "../../Inputs/Field";
+import RichTextEditor from "../../RichTextEditor";
 import { inputStyles } from "../ClauseDrawerDialog";
 import DatePicker from "../../Inputs/Datepicker";
 import Select from "../../Inputs/Select";
@@ -839,26 +840,20 @@ const VWISO27001AnnexDrawerDialog = ({
 
               <Stack>
                 <Typography fontSize={13} sx={{ marginBottom: "5px" }}>
-                  Implementation Description:
+                  Implementation description:
                 </Typography>
-                <Field
-                  type="description"
-                  value={formData.implementation_description}
-                  onChange={(e) =>
+                <RichTextEditor
+                  toolbar="full"
+                  initialContent={formData.implementation_description}
+                  onContentChange={(content) =>
                     handleFieldChange(
                       "implementation_description",
-                      e.target.value
+                      content
                     )
                   }
-                  disabled={isEditingDisabled}
-                  sx={{
-                    cursor: "text",
-                    "& .field field-decription field-input MuiInputBase-root MuiInputBase-input":
-                      {
-                        height: "73px",
-                      },
-                  }}
-                  placeholder="Describe how this requirement is implemented"
+                  placeholder="Describe how this requirement is implemented..."
+                  isEditable={!isEditingDisabled}
+                  height="120px"
                 />
               </Stack>
             </Stack>
