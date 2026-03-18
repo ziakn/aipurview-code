@@ -1196,7 +1196,7 @@ const NewControlPane = ({
 
               {/* INNER TABS - SECTIONS */}
               <TabContext value={activeTab}>
-                <Box sx={{ padding: "0 20px" }}>
+                <Box>
                   <TabBar
                     tabs={innerTabs}
                     activeTab={activeTab}
@@ -1206,7 +1206,7 @@ const NewControlPane = ({
 
                 {/* TAB 1: DETAILS */}
                 <TabPanel value="details" sx={{ padding: 0 }}>
-                  <Stack padding="15px 20px" gap="15px">
+                  <Stack padding="15px 0" gap="15px">
                     {/* Implementation Details */}
                     <Stack>
                       <Typography fontSize={13} sx={{ marginBottom: "5px" }}>
@@ -1398,7 +1398,7 @@ const NewControlPane = ({
                 </TabPanel>
 
                 {/* TAB 2: EVIDENCES */}
-                <TabPanel value="evidences" sx={{ padding: "15px 20px" }}>
+                <TabPanel value="evidences" sx={{ padding: "15px 0" }}>
                   <Stack spacing={3}>
                     {/* Evidence Files Section */}
                     {/* SECTION 1: EVIDENCE FILES */}
@@ -2187,7 +2187,7 @@ const NewControlPane = ({
                 </TabPanel>
 
                 {/* TAB 3: CROSS MAPPINGS */}
-                <TabPanel value="cross-mappings" sx={{ padding: "15px 20px" }}>
+                <TabPanel value="cross-mappings" sx={{ padding: "15px 0" }}>
                   <Stack spacing={3}>
                     <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                       Linked risks
@@ -2402,7 +2402,7 @@ const NewControlPane = ({
                 )}
 
                 {/* TAB 4: NOTES */}
-                <TabPanel value="notes" sx={{ padding: "15px 20px" }}>
+                <TabPanel value="notes" sx={{ padding: "15px 0" }}>
                   <Suspense fallback={<CircularProgress size={24} />}>
                     <NotesTab
                       attachedTo="EU_AI_ACT_SUBCONTROL"
