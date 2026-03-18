@@ -31,10 +31,10 @@ _PERIOD_DAYS: dict[str, int] = {
 }
 
 
-def get_date_range(period: str) -> tuple[str, str]:
+def get_date_range(period: str) -> tuple[datetime, datetime]:
     """
     Convert a period string ("1d" | "7d" | "30d" | "90d") to
-    (start_date_iso, end_date_iso) UTC strings.
+    (start_datetime, end_datetime) UTC datetime objects.
 
     Raises HTTPException 400 for unknown periods.
     """
@@ -46,7 +46,7 @@ def get_date_range(period: str) -> tuple[str, str]:
         )
     now = datetime.now(tz=timezone.utc)
     start = now - timedelta(days=days)
-    return start.isoformat(), now.isoformat()
+    return start, now
 
 
 # ---------------------------------------------------------------------------
