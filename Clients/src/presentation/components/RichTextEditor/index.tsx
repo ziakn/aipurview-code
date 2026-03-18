@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Box, Tooltip, IconButton, Stack, useTheme } from "@mui/material";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Table from "@tiptap/extension-table";
+import { Table } from "@tiptap/extension-table";
 import { TableRow } from "@tiptap/extension-table";
 import { TableCell } from "@tiptap/extension-table";
 import { TableHeader } from "@tiptap/extension-table";
-import Underline from "@tiptap/extension-underline";
-import Link from "@tiptap/extension-link";
-import Placeholder from "@tiptap/extension-placeholder";
+import { Underline } from "@tiptap/extension-underline";
+import { Link } from "@tiptap/extension-link";
+import { Placeholder } from "@tiptap/extension-placeholder";
 import {
   Bold,
   Italic,
