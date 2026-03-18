@@ -297,7 +297,7 @@ async def publish_version(
         await db.execute(
             text("""
                 UPDATE ai_gateway_prompt_versions
-                SET status = 'draft', published_at = NULL, published_by = NULL, updated_at = NOW()
+                SET status = 'draft', published_at = NULL, published_by = NULL
                 WHERE prompt_id = :prompt_id
                   AND EXISTS (
                       SELECT 1 FROM ai_gateway_prompts p
@@ -313,8 +313,7 @@ async def publish_version(
                 UPDATE ai_gateway_prompt_versions
                 SET status = 'published',
                     published_at = NOW(),
-                    published_by = :published_by,
-                    updated_at = NOW()
+                    published_by = :published_by
                 WHERE prompt_id = :prompt_id AND version = :version_number
                   AND EXISTS (
                       SELECT 1 FROM ai_gateway_prompts p
