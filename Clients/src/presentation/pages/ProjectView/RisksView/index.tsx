@@ -23,7 +23,7 @@ import { ProjectRisk } from "../../../../application/hooks/useProjectRisks";
 import { getAllEntities } from "../../../../application/repository/entity.repository";
 import { handleAlert } from "../../../../application/tools/alertUtils";
 import { VendorRisk } from "../../../../domain/types/VendorRisk";
-import { RisksCard } from "../../../components/Cards/RisksCard";
+import { StatusTileCards, StatusTileItem } from "../../../components/Cards/StatusTileCards";
 
 const Alert = lazy(() => import("../../../components/Alert"));
 
@@ -281,7 +281,18 @@ const RisksView: FC<RisksViewProps> = memo(
             </Box>
           </Suspense>
         )}
-        <RisksCard risksSummary={risksSummary} />
+        <StatusTileCards
+          items={[
+            { key: "Total", label: "Total", count: risksSummary.total, color: "#4B5563" },
+            { key: "Very high", label: "Very high", count: risksSummary.veryHighRisks, color: "#C63622" },
+            { key: "High", label: "High", count: risksSummary.highRisks, color: "#D68B61" },
+            { key: "Medium", label: "Medium", count: risksSummary.mediumRisks, color: "#D6B971" },
+            { key: "Low", label: "Low", count: risksSummary.lowRisks, color: "#52AB43" },
+            { key: "Very low", label: "Very low", count: risksSummary.veryLowRisks, color: "#B8D39C" },
+          ] satisfies StatusTileItem[]}
+          entityName="risk"
+          size="small"
+        />
         <Stack
           sx={{ mt: "32px", mb: "28px" }}
           direction="row"

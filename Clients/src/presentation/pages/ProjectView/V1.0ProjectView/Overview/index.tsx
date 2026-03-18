@@ -2,7 +2,7 @@ import { Divider, Stack, Typography } from "@mui/material";
 import { columnStyle, rowStyle } from "./style";
 import { GroupStatsCard } from "../../../../components/Cards/GroupStatsCard";
 import { projectRiskSection } from "../style";
-import { RisksCard } from "../../../../components/Cards/RisksCard";
+import { StatusTileCards, StatusTileItem } from "../../../../components/Cards/StatusTileCards";
 import { InfoCard } from "../../../../components/Cards/InfoCard";
 import { DescriptionCard } from "../../../../components/Cards/DescriptionCard";
 import { TeamCard } from "../../../../components/Cards/TeamCard";
@@ -342,7 +342,18 @@ const VWProjectOverview = ({ project }: { project?: Project }) => {
           {project ? (
             <>
               <Typography sx={projectRiskSection}>Use case risks</Typography>
-              <RisksCard risksSummary={projectRisksSummary} />
+              <StatusTileCards
+                items={[
+                  { key: "Total", label: "Total", count: projectRisksSummary.total, color: "#4B5563" },
+                  { key: "Very high", label: "Very high", count: projectRisksSummary.veryHighRisks, color: "#C63622" },
+                  { key: "High", label: "High", count: projectRisksSummary.highRisks, color: "#D68B61" },
+                  { key: "Medium", label: "Medium", count: projectRisksSummary.mediumRisks, color: "#D6B971" },
+                  { key: "Low", label: "Low", count: projectRisksSummary.lowRisks, color: "#52AB43" },
+                  { key: "Very low", label: "Very low", count: projectRisksSummary.veryLowRisks, color: "#B8D39C" },
+                ] satisfies StatusTileItem[]}
+                entityName="risk"
+                size="small"
+              />
             </>
           ) : (
             <>

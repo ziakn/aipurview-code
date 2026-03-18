@@ -31,7 +31,7 @@ import AddNewRisk from "../../components/Modals/NewRisk";
 import { CustomizableButton } from "../../components/button/customizable-button";
 import CustomizableSkeleton from "../../components/Skeletons";
 import CustomizableToast from "../../components/Toast";
-import { RisksCard } from "../../components/Cards/RisksCard";
+import { StatusTileCards, StatusTileItem } from "../../components/Cards/StatusTileCards";
 import useVendorRisks from "../../../application/hooks/useVendorRisks";
 import Select from "../../components/Inputs/Select";
 import allowedRoles from "../../../application/constants/permissions";
@@ -1077,10 +1077,25 @@ const Vendors = () => {
             height={100}
           />
         ) : (
-          <RisksCard
-            risksSummary={vendorRisksSummary}
-            onCardClick={handleRiskCardClick}
-            selectedLevel={selectedRiskLevel}
+          <StatusTileCards
+            items={[
+              { key: "Total", label: "Total", count: vendorRisksSummary.total, color: "#4B5563" },
+              { key: "Very high", label: "Very high", count: vendorRisksSummary.veryHighRisks, color: "#C63622" },
+              { key: "High", label: "High", count: vendorRisksSummary.highRisks, color: "#D68B61" },
+              { key: "Medium", label: "Medium", count: vendorRisksSummary.mediumRisks, color: "#D6B971" },
+              { key: "Low", label: "Low", count: vendorRisksSummary.lowRisks, color: "#52AB43" },
+              { key: "Very low", label: "Very low", count: vendorRisksSummary.veryLowRisks, color: "#B8D39C" },
+            ] satisfies StatusTileItem[]}
+            onCardClick={(key) => {
+              if (key === "Total" || key === selectedRiskLevel) {
+                handleRiskCardClick("");
+              } else {
+                handleRiskCardClick(key);
+              }
+            }}
+            selectedKey={selectedRiskLevel}
+            entityName="risk"
+            size="small"
           />
         ))
       }

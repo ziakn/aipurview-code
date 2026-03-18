@@ -34,7 +34,7 @@ import {
   Severity,
 } from "../../../domain/enums/aiIncidentManagement.enum";
 import { createIncidentManagement } from "../../../application/repository/incident_management.repository";
-import IncidentStatusCard from "./IncidentStatusCard";
+import { StatusTileCards } from "../../components/Cards/StatusTileCards";
 import PageTour from "../../components/PageTour";
 import IncidentManagementSteps from "./IncidentManagementSteps";
 import { AIIncidentManagementModel } from "../../../domain/models/Common/incidentManagement/incidentManagement.model";
@@ -560,7 +560,16 @@ const IncidentManagement: React.FC = () => {
         summaryCards={
           /* TODO: Refactor to always show cards (like Model Inventory) to prevent layout shift and beacon positioning issues */
           incidentsData.length > 0 ? (
-            <IncidentStatusCard incidents={incidentsData} />
+            <StatusTileCards
+              items={[
+                { key: IncidentManagementStatus.OPEN, label: "Open", color: "#F9A825", count: incidentsData.filter((i) => i.status === IncidentManagementStatus.OPEN && !i.archived).length },
+                { key: IncidentManagementStatus.INVESTIGATED, label: "Investigating", color: "#FB8C00", count: incidentsData.filter((i) => i.status === IncidentManagementStatus.INVESTIGATED && !i.archived).length },
+                { key: IncidentManagementStatus.MITIGATED, label: "Mitigated", color: "#2E7D32", count: incidentsData.filter((i) => i.status === IncidentManagementStatus.MITIGATED && !i.archived).length },
+                { key: IncidentManagementStatus.CLOSED, label: "Closed", color: "#455A64", count: incidentsData.filter((i) => i.status === IncidentManagementStatus.CLOSED && !i.archived).length },
+              ]}
+              entityName="incident"
+              size="small"
+            />
           ) : undefined
         }
         summaryCardsJoyrideId="incident-status-cards"
