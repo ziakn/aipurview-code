@@ -770,7 +770,7 @@ export default function AIGatewaySettingsPage() {
                         setSpendPurgeResult("Purging...");
                         try {
                           const res = await apiServices.post("/ai-gateway/spend/logs/purge");
-                          const count = res?.data?.data?.deleted_count || 0;
+                          const count = res?.data?.deleted ?? res?.data?.data?.deleted_count ?? 0;
                           setSpendPurgeResult(count > 0 ? `Deleted ${count} logs` : "No old logs to purge");
                           if (count > 0) await loadData();
                           setTimeout(() => setSpendPurgeResult(""), 3000);

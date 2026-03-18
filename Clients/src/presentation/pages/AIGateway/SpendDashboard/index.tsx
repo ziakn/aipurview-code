@@ -104,7 +104,21 @@ export default function SpendDashboardPage() {
         setData(spendRes?.data || null);
         setByEndpoint(endpointRes?.data?.data || []);
         setByUser(userRes?.data?.data || []);
-        setGuardrailStats(gsRes?.data || null);
+        // Map Python guardrail stats field names to frontend expectations
+        const gs = gsRes?.data || null;
+        if (gs?.summary) {
+          gs.summary.blocked_count = gs.summary.blocked_count ?? gs.summary.blocked ?? 0;
+          gs.summary.masked_count = gs.summary.masked_count ?? gs.summary.masked ?? 0;
+          gs.summary.total_checks = gs.summary.total_checks ?? gs.summary.total ?? 0;
+        }
+        // byType can serve as topDetections (grouped by type + action)
+        if (!gs?.topDetections && gs?.byType) {
+          gs.topDetections = gs.byType.map((d: any) => ({
+            ...d,
+            entity_type: d.entity_type || d.guardrail_type,
+          }));
+        }
+        setGuardrailStats(gs);
       } catch {
         setData(null);
         setIsFirstTime(false);
@@ -116,11 +130,18 @@ export default function SpendDashboardPage() {
   }, [period, reloadKey]);
 
   const summary = data?.summary;
-  const byDay = data?.byDay || [];
-  const byModel = data?.byModel || [];
-  const byProvider = data?.byProvider || [];
-  const errorRateByDay = data?.errorRateByDay || [];
-  const tokensPerEndpoint = data?.tokensPerEndpoint || [];
+  // Python returns "period" as the date key; charts expect "day"
+  const byDay = (data?.by_day || data?.byDay || []).map((d: any) => ({ ...d, day: d.day || d.period }));
+  const byModel = (data?.by_model || data?.byModel || []).map((d: any) => ({ ...d, group_key: d.group_key || d.model }));
+  const byProvider = (data?.by_provider || data?.byProvider || []).map((d: any) => ({ ...d, group_key: d.group_key || d.provider }));
+  const errorRateByDay = data?.error_rate_by_day || data?.errorRateByDay || [];
+  const tokensPerEndpoint = (data?.tokens_per_endpoint || data?.tokensPerEndpoint || []).map((d: any) => ({
+    ...d,
+    endpoint: d.endpoint || d.endpoint_name,
+    // Python returns avg_tokens_per_request as a single value; split not available
+    avg_prompt_tokens: d.avg_prompt_tokens ?? d.avg_tokens_per_request ?? 0,
+    avg_completion_tokens: d.avg_completion_tokens ?? 0,
+  }));
 
   const totalCost = summary ? `$${Number(summary.total_cost).toFixed(4)}` : "$0.00";
   const totalRequests = String(summary?.total_requests ?? 0);
