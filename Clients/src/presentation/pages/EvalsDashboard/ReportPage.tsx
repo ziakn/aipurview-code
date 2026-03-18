@@ -465,8 +465,8 @@ export default function ReportPage({
         >
           <EmptyStateTip
             icon={FileText}
-            title="What are EvalCards?"
-            description="Reports follow the EvalCards standard — a structured documentation framework for AI evaluation results. Each report includes evaluation context, metric results, safety assessment, comparative analysis, and methodology."
+            title="About EvalCards"
+            description="Reports are structured following the EvalCards standard — a structured documentation framework for AI evaluation results. Each report includes evaluation context, metric results, safety assessment, comparative analysis, and methodology."
           />
           <EmptyStateTip
             icon={Download}
@@ -606,49 +606,6 @@ export default function ReportPage({
           </TableContainer>
         </Box>
       )}
-
-      {/* EvalCards Standard Info */}
-      <Box
-        sx={{
-          background: palette.background.accent,
-          border: "1px solid #E5E7EB",
-          borderRadius: "4px",
-          p: "20px",
-        }}
-      >
-        <Typography sx={{ fontSize: 13, fontWeight: 600, color: palette.text.primary, mb: 1 }}>
-          About EvalCards
-        </Typography>
-        <Typography sx={{ fontSize: 12, color: palette.text.secondary, lineHeight: 1.8 }}>
-          Reports are structured following the{" "}
-          <Typography
-            component="a"
-            href="https://arxiv.org/abs/2206.11249"
-            target="_blank"
-            rel="noopener noreferrer"
-            sx={{ fontSize: 12, color: palette.brand.primary, fontWeight: 600, textDecoration: "none", "&:hover": { textDecoration: "underline" } }}
-          >
-            EvalCards
-          </Typography>{" "}
-          standard — a structured documentation framework for AI evaluation results. Each report includes:
-        </Typography>
-        <Stack spacing={0.5} sx={{ mt: 1.5 }}>
-          {[
-            ["Evaluation context", "Model identity, dataset, judge configuration, and use case"],
-            ["Metric results", "Per-metric averages, pass/fail rates, and score distributions"],
-            ["Safety assessment", "Dedicated section for bias, toxicity, and hallucination metrics"],
-            ["Comparative analysis", "Arena comparison results when multiple models are evaluated"],
-            ["Methodology", "Scoring criteria, thresholds, and evaluation pipeline details"],
-          ].map(([title, desc]) => (
-            <Stack key={title} direction="row" gap={1} alignItems="baseline">
-              <Typography sx={{ fontSize: 11, fontWeight: 600, color: palette.brand.primary, minWidth: 130, flexShrink: 0 }}>
-                {title}
-              </Typography>
-              <Typography sx={{ fontSize: 11, color: palette.text.secondary }}>{desc}</Typography>
-            </Stack>
-          ))}
-        </Stack>
-      </Box>
 
       {/* Config Modal */}
       <ReportConfigModal
