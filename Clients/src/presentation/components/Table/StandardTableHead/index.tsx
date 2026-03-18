@@ -1,22 +1,17 @@
+import { memo } from "react";
 import { TableCell, TableHead, TableRow, Box, Typography } from "@mui/material";
 import { ChevronsUpDown, ChevronUp, ChevronDown } from "lucide-react";
 import singleTheme from "../../../themes/v1SingleTheme";
-import { SortConfig } from "./index";
 import { text } from "../../../themes/palette";
+import type { SortConfig, StandardColumn } from "../../../../domain/types/standardTable";
 
-interface Column {
-  id: string;
-  label: string;
-  sortable: boolean;
-}
-
-interface ScorersTableHeadProps {
-  columns: Column[];
+interface StandardTableHeadProps {
+  columns: StandardColumn[];
   sortConfig: SortConfig;
   onSort: (columnId: string) => void;
 }
 
-const ScorersTableHead: React.FC<ScorersTableHeadProps> = ({
+const StandardTableHead: React.FC<StandardTableHeadProps> = memo(({
   columns,
   sortConfig,
   onSort,
@@ -31,13 +26,13 @@ const ScorersTableHead: React.FC<ScorersTableHeadProps> = ({
         {columns.map((column, index) => {
           const isFirstColumn = index === 0;
           const isActionColumn = column.id === "actions";
-          
+
           return (
             <TableCell
               key={column.id}
               sx={{
                 ...singleTheme.tableStyles.primary.header.cell,
-                textAlign: isFirstColumn ? "left" : "center",
+                textAlign: column.align ?? (isFirstColumn ? "left" : "center"),
                 ...(column.sortable
                   ? {
                       cursor: "pointer",
@@ -49,9 +44,13 @@ const ScorersTableHead: React.FC<ScorersTableHeadProps> = ({
                   : {}),
                 ...(isActionColumn
                   ? {
-                      minWidth: "80px",
+                      minWidth: column.minWidth ?? "80px",
                       maxWidth: "80px",
                     }
+                  : {}),
+                ...(column.width ? { width: column.width } : {}),
+                ...(column.minWidth && !isActionColumn
+                  ? { minWidth: column.minWidth }
                   : {}),
               }}
               onClick={() => column.sortable && onSort(column.id)}
@@ -68,7 +67,8 @@ const ScorersTableHead: React.FC<ScorersTableHeadProps> = ({
                   sx={{
                     fontWeight: 500,
                     fontSize: "13px",
-                    color: sortConfig.key === column.id ? "primary.main" : "inherit",
+                    color:
+                      sortConfig.key === column.id ? "primary.main" : "inherit",
                   }}
                 >
                   {column.label}
@@ -78,15 +78,20 @@ const ScorersTableHead: React.FC<ScorersTableHeadProps> = ({
                     sx={{
                       display: "flex",
                       alignItems: "center",
-                      color: sortConfig.key === column.id ? "primary.main" : `${text.disabled}`,
+                      color:
+                        sortConfig.key === column.id
+                          ? "primary.main"
+                          : `${text.disabled}`,
                     }}
                   >
-                    {sortConfig.key === column.id && sortConfig.direction === "asc" && (
-                      <ChevronUp size={14} />
-                    )}
-                    {sortConfig.key === column.id && sortConfig.direction === "desc" && (
-                      <ChevronDown size={14} />
-                    )}
+                    {sortConfig.key === column.id &&
+                      sortConfig.direction === "asc" && (
+                        <ChevronUp size={14} />
+                      )}
+                    {sortConfig.key === column.id &&
+                      sortConfig.direction === "desc" && (
+                        <ChevronDown size={14} />
+                      )}
                     {sortConfig.key !== column.id && (
                       <ChevronsUpDown size={14} />
                     )}
@@ -99,7 +104,6 @@ const ScorersTableHead: React.FC<ScorersTableHeadProps> = ({
       </TableRow>
     </TableHead>
   );
-};
+});
 
-export default ScorersTableHead;
-
+export default StandardTableHead;
