@@ -37,7 +37,7 @@ export-parquet:
 
 VERSION ?= grs_scenarios_v0.1
 
-publish-dataset:
+publish-dataset: export-parquet
 	@if [ -z "$(VERSION)" ]; then echo "Error: VERSION is required. Usage: make publish-dataset VERSION=grs_scenarios_v0.1"; exit 1; fi
 	@echo "Snapshotting configs/ → datasets/$(VERSION)/configs_snapshot/ ..."
 	cp -r configs/ datasets/$(VERSION)/configs_snapshot/
