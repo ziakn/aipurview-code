@@ -14,15 +14,13 @@ from datetime import datetime, timezone
 from typing import Optional
 
 import redis.asyncio as aioredis
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.primitives import padding as crypto_padding
-from cryptography.hazmat.backends import default_backend
 from fastapi import HTTPException
 from sqlalchemy import text
 
 from config import settings
 from database.db import get_db
 from services.guardrail_service import scan_text
+from utils.encryption import decrypt as decrypt_api_key  # noqa: F401 — re-export
 
 logger = logging.getLogger("uvicorn")
 
@@ -36,27 +34,6 @@ async def _get_redis() -> aioredis.Redis:
     if _redis is None:
         _redis = aioredis.from_url(settings.redis_url, decode_responses=True)
     return _redis
-
-
-# ─── Encryption ──────────────────────────────────────────────────────────────
-
-def decrypt_api_key(encrypted_text: str) -> str:
-    """Decrypt an API key encrypted by the Node.js backend (AES-256-CBC, hex IV:data)."""
-    if not settings.encryption_key:
-        raise ValueError("ENCRYPTION_KEY not configured")
-    parts = encrypted_text.split(":")
-    if len(parts) != 2:
-        raise ValueError("Invalid encrypted format")
-    iv_hex, data_hex = parts
-    key = settings.encryption_key.encode("ascii").ljust(32, b"0")[:32]
-    iv = bytes.fromhex(iv_hex)
-    ct = bytes.fromhex(data_hex)
-    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
-    decryptor = cipher.decryptor()
-    padded = decryptor.update(ct) + decryptor.finalize()
-    unpadder = crypto_padding.PKCS7(128).unpadder()
-    plaintext = unpadder.update(padded) + unpadder.finalize()
-    return plaintext.decode("utf-8")
 
 
 # ─── Virtual Key Authentication ──────────────────────────────────────────────

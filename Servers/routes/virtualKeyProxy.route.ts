@@ -1,21 +1,46 @@
 /**
- * Virtual Key Proxy Routes
+ * Virtual Key Proxy Routes — thin proxy to FastAPI AIGateway service.
  *
- * OpenAI-compatible /v1/* endpoints authenticated via virtual keys.
- * No JWT required. No CORS (server-to-server only).
+ * OpenAI-compatible /v1/* endpoints. No JWT required.
+ * Virtual key authentication is handled by the AIGateway Python service.
  */
 
-import express from "express";
-import authenticateVirtualKey from "../middleware/virtualKeyAuth.middleware";
-import { chatCompletions, embeddings } from "../controllers/virtualKeyProxy.ctrl";
+import { createProxyMiddleware } from "http-proxy-middleware";
+import { Router } from "express";
 
-const router = express.Router();
+const AI_GATEWAY_URL =
+  process.env.AI_GATEWAY_URL || "http://127.0.0.1:8100";
 
-// All routes require virtual key authentication
-router.use(authenticateVirtualKey);
+function virtualKeyProxyRoutes() {
+  const router = Router();
 
-// OpenAI-compatible endpoints
-router.post("/chat/completions", chatCompletions);
-router.post("/embeddings", embeddings);
+  const proxy = createProxyMiddleware({
+    target: AI_GATEWAY_URL,
+    changeOrigin: true,
+    // /v1/* → /v1/* (no rewrite — AIGateway already handles /v1/*)
+    on: {
+      error: (err, req, res) => {
+        const errAny = err as any;
+        console.error(
+          `[Virtual Key Proxy] Error for ${req.url}:`,
+          errAny.message || errAny.code || errAny
+        );
+        if (res && "writeHead" in res) {
+          (res as any).writeHead(502, { "Content-Type": "application/json" });
+          (res as any).end(
+            JSON.stringify({
+              error: "AI Gateway proxy error",
+              message: errAny.message || errAny.code || "Unknown error",
+            })
+          );
+        }
+      },
+    },
+  });
 
-export default router;
+  router.use("/", proxy);
+
+  return router;
+}
+
+export default virtualKeyProxyRoutes;

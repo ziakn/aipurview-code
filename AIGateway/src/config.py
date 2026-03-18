@@ -10,9 +10,11 @@ if env_path.exists():
 
 class Settings(BaseSettings):
     ai_gateway_port: int = 8100
-    internal_api_key: str = ""
+    ai_gateway_internal_key: str = ""
     redis_url: str = "redis://localhost:6379/0"
     log_level: str = "INFO"
+    encryption_key: str = ""
+    express_backend_url: str = "http://localhost:3000"
 
 
 settings = Settings()

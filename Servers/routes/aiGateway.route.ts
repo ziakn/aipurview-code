@@ -1,169 +1,77 @@
-import express from "express";
-const router = express.Router();
+/**
+ * AI Gateway Routes — thin proxy to FastAPI AIGateway service.
+ *
+ * All logic (CRUD, chat proxy, guardrails, spend, etc.) lives in the
+ * AIGateway Python service. Express only handles JWT authentication and
+ * forwards the request with tenant context headers.
+ */
 
+import { createProxyMiddleware, fixRequestBody } from "http-proxy-middleware";
 import authenticateJWT from "../middleware/auth.middleware";
-import authorize from "../middleware/accessControl.middleware";
-import { generalApiLimiter } from "../middleware/rateLimit.middleware";
-import {
-  // API Keys
-  verifyApiKey,
-  getApiKeys,
-  createApiKey,
-  updateApiKey,
-  deleteApiKey,
-  // Endpoints
-  getEndpoints,
-  getEndpoint,
-  createEndpoint,
-  updateEndpoint,
-  deleteEndpoint,
-  // Spend
-  getSpendSummary,
-  getSpendByEndpoint,
-  getSpendByUser,
-  // Budget
-  getBudget,
-  upsertBudget,
-  // Proxy
-  chatCompletion,
-  chatCompletionStream,
-  embeddingProxy,
-  // Providers / Models
-  getProviders,
-  getModelCatalog,
-  getSpendByTag,
-  getSpendLogs,
-  purgeSpendLogs,
-  // Guardrails
-  getGuardrails,
-  createGuardrail,
-  updateGuardrail,
-  deleteGuardrail,
-  getGuardrailSettings,
-  updateGuardrailSettings,
-  testGuardrails,
-  getGuardrailLogs,
-  getGuardrailStats,
-  purgeGuardrailLogs,
-  // Virtual Keys
-  getVirtualKeys,
-  createVirtualKey,
-  updateVirtualKey,
-  revokeVirtualKey,
-  deleteVirtualKey,
-  // Prompts
-  getPrompts,
-  createPrompt,
-  getPrompt,
-  updatePrompt,
-  deletePrompt,
-  createPromptVersion,
-  getPromptVersions,
-  publishPromptVersion,
-  testPrompt,
-  // Prompt Labels
-  getPromptLabels,
-  assignPromptLabel,
-  removePromptLabel,
-  // Test Datasets
-  getTestDatasets,
-  createTestDataset,
-  updateTestDataset,
-  deleteTestDataset,
-  // Risk Suggestions
-  getRiskSettings,
-  updateRiskSetting,
-  getRiskSuggestions,
-  acceptRiskSuggestion,
-  dismissRiskSuggestion,
-  runRiskDetectionManual,
-} from "../controllers/aiGateway.ctrl";
+import express, { Request, Router } from "express";
 
-// All routes require authentication
-router.use(authenticateJWT);
+const AI_GATEWAY_URL =
+  process.env.AI_GATEWAY_URL || "http://127.0.0.1:8100";
+const AI_GATEWAY_KEY =
+  process.env.AI_GATEWAY_INTERNAL_KEY || "";
 
-// API Key management — verify before parameterized routes, Admin only for write
-router.post("/keys/verify", generalApiLimiter, authorize(["Admin"]), verifyApiKey);
-router.get("/keys", getApiKeys);
-router.post("/keys", authorize(["Admin"]), createApiKey);
-router.patch("/keys/:id", authorize(["Admin"]), updateApiKey);
-router.delete("/keys/:id", authorize(["Admin"]), deleteApiKey);
+const jsonParser = express.json({ limit: "50mb" });
 
-// Endpoint management — Admin only for create/update/delete
-router.get("/endpoints", getEndpoints);
-router.get("/endpoints/:id", getEndpoint);
-router.post("/endpoints", authorize(["Admin"]), createEndpoint);
-router.patch("/endpoints/:id", authorize(["Admin"]), updateEndpoint);
-router.delete("/endpoints/:id", authorize(["Admin"]), deleteEndpoint);
+function aiGatewayRoutes() {
+  const router = Router();
 
-// Spend analytics
-router.get("/spend", getSpendSummary);
-router.get("/spend/by-endpoint", getSpendByEndpoint);
-router.get("/spend/by-user", getSpendByUser);
-router.get("/spend/by-tag", getSpendByTag);
-router.get("/spend/logs", getSpendLogs);
-router.post("/spend/logs/purge", authorize(["Admin"]), purgeSpendLogs);
+  const proxy = createProxyMiddleware({
+    target: AI_GATEWAY_URL,
+    changeOrigin: true,
+    // /api/ai-gateway/* → /internal/*
+    pathRewrite: { "^/": "/internal/" },
+    on: {
+      proxyReq: (proxyReq, req) => {
+        const expressReq = req as Request;
 
-// Budget management — Admin only for write
-router.get("/budget", getBudget);
-router.put("/budget", authorize(["Admin"]), upsertBudget);
+        // Forward internal API key
+        proxyReq.setHeader("x-internal-key", AI_GATEWAY_KEY);
 
-// Utility
-router.get("/providers", getProviders);
-router.get("/models/catalog", getModelCatalog);
+        // Forward tenant context from JWT
+        if (expressReq.organizationId) {
+          proxyReq.setHeader(
+            "x-organization-id",
+            expressReq.organizationId.toString()
+          );
+        }
+if (expressReq.userId) {
+          proxyReq.setHeader("x-user-id", expressReq.userId.toString());
+        }
+        if (expressReq.role) {
+          proxyReq.setHeader("x-role", expressReq.role);
+        }
 
-// Guardrail settings (specific routes BEFORE parameterized :id) — Admin only for write
-router.get("/guardrails/settings", getGuardrailSettings);
-router.put("/guardrails/settings", authorize(["Admin"]), updateGuardrailSettings);
-router.post("/guardrails/test", testGuardrails);
-router.get("/guardrails/logs", getGuardrailLogs);
-router.get("/guardrails/stats", getGuardrailStats);
-router.post("/guardrails/logs/purge", authorize(["Admin"]), purgeGuardrailLogs);
+        // Re-stream parsed body to proxy target
+        fixRequestBody(proxyReq, req as Request);
+      },
+      error: (err, req, res) => {
+        const errAny = err as any;
+        console.error(
+          `[AI Gateway Proxy] Error for ${req.url}:`,
+          errAny.message || errAny.code || errAny
+        );
+        if (res && "writeHead" in res) {
+          (res as any).writeHead(502, { "Content-Type": "application/json" });
+          (res as any).end(
+            JSON.stringify({
+              error: "AI Gateway proxy error",
+              message: errAny.message || errAny.code || "Unknown error",
+            })
+          );
+        }
+      },
+    },
+  });
 
-// Guardrail rule CRUD — Admin only for create/update/delete
-router.get("/guardrails", getGuardrails);
-router.post("/guardrails", authorize(["Admin"]), createGuardrail);
-router.patch("/guardrails/:id", authorize(["Admin"]), updateGuardrail);
-router.delete("/guardrails/:id", authorize(["Admin"]), deleteGuardrail);
+  // All routes: authenticate JWT, parse body, forward to AIGateway
+  router.use("/", authenticateJWT, jsonParser, proxy);
 
-// Prompt management — test route BEFORE :id to avoid param capture
-router.post("/prompts/test", testPrompt);
-router.get("/prompts", getPrompts);
-router.post("/prompts", authorize(["Admin"]), createPrompt);
-router.get("/prompts/:id", getPrompt);
-router.patch("/prompts/:id", authorize(["Admin"]), updatePrompt);
-router.delete("/prompts/:id", authorize(["Admin"]), deletePrompt);
-router.get("/prompts/:id/versions", getPromptVersions);
-router.post("/prompts/:id/versions", authorize(["Admin"]), createPromptVersion);
-router.post("/prompts/:id/versions/:v/publish", authorize(["Admin"]), publishPromptVersion);
-// Prompt labels — Admin only for assign/remove
-router.get("/prompts/:id/labels", getPromptLabels);
-router.put("/prompts/:id/labels/:label", authorize(["Admin"]), assignPromptLabel);
-router.delete("/prompts/:id/labels/:label", authorize(["Admin"]), removePromptLabel);
-// Test datasets — Admin only for write
-router.get("/prompts/:id/test-datasets", getTestDatasets);
-router.post("/prompts/:id/test-datasets", authorize(["Admin"]), createTestDataset);
-router.patch("/prompts/:id/test-datasets/:datasetId", authorize(["Admin"]), updateTestDataset);
-router.delete("/prompts/:id/test-datasets/:datasetId", authorize(["Admin"]), deleteTestDataset);
+  return router;
+}
 
-// Virtual key management — Admin only for write
-router.get("/virtual-keys", getVirtualKeys);
-router.post("/virtual-keys", authorize(["Admin"]), createVirtualKey);
-router.patch("/virtual-keys/:id", authorize(["Admin"]), updateVirtualKey);
-router.post("/virtual-keys/:id/revoke", authorize(["Admin"]), revokeVirtualKey);
-router.delete("/virtual-keys/:id", authorize(["Admin"]), deleteVirtualKey);
-
-// Risk suggestions — detect route BEFORE :id to avoid param capture
-router.get("/risk-settings", getRiskSettings);
-router.put("/risk-settings/:conditionId", authorize(["Admin"]), updateRiskSetting);
-router.get("/risk-suggestions", getRiskSuggestions);
-router.post("/risk-suggestions/detect", authorize(["Admin"]), runRiskDetectionManual);
-router.post("/risk-suggestions/:id/accept", authorize(["Admin"]), acceptRiskSuggestion);
-router.post("/risk-suggestions/:id/dismiss", authorize(["Admin"]), dismissRiskSuggestion);
-
-// Proxy endpoints — rate limited
-router.post("/chat", generalApiLimiter, chatCompletion);
-router.post("/chat/stream", generalApiLimiter, chatCompletionStream);
-router.post("/embeddings", generalApiLimiter, embeddingProxy);
-
-export default router;
+export default aiGatewayRoutes;

@@ -22,9 +22,56 @@ import {
 } from "../shadowAiAggregation.service";
 import { runAgentDiscoverySync } from "../agentDiscovery/agentDiscoverySync.service";
 import { processScheduledAiDetectionScans } from "../aiDetection/scheduledScanProcessor";
-import { resetAllBudgets } from "../../utils/aiGatewayBudget.utils";
-import { resetVirtualKeyBudgets } from "../../utils/aiGatewayVirtualKey.utils";
-import { runRiskDetection } from "../aiGateway/riskDetectionJob";
+// AI Gateway budget/risk jobs — call AIGateway HTTP endpoints via internal API
+const AI_GATEWAY_URL = process.env.AI_GATEWAY_URL || "http://127.0.0.1:8100";
+const AI_GATEWAY_KEY = process.env.AI_GATEWAY_INTERNAL_KEY || "";
+
+async function callAIGateway(method: string, path: string, body?: object): Promise<any> {
+  const response = await fetch(`${AI_GATEWAY_URL}${path}`, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      "x-internal-key": AI_GATEWAY_KEY,
+    },
+    body: body ? JSON.stringify(body) : undefined,
+    signal: AbortSignal.timeout(120_000),
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`AIGateway ${path} returned ${response.status}: ${text}`);
+  }
+  return response.json();
+}
+
+async function resetAllBudgets(): Promise<void> {
+  await callAIGateway("POST", "/internal/budget/reset");
+}
+
+async function resetVirtualKeyBudgets(): Promise<void> {
+  await callAIGateway("POST", "/internal/virtual-keys/reset-budgets");
+}
+
+async function runRiskDetection(): Promise<void> {
+  // Get all org IDs with gateway data, then run detection for each
+  const orgs = await callAIGateway("GET", "/internal/risk/detection-orgs");
+  for (const orgId of orgs.data || []) {
+    try {
+      await fetch(`${AI_GATEWAY_URL}/internal/risk/detect`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-internal-key": AI_GATEWAY_KEY,
+          "x-organization-id": String(orgId),
+          "x-user-id": "0",
+          "x-role": "Admin",
+        },
+        signal: AbortSignal.timeout(120_000),
+      });
+    } catch (err) {
+      console.error(`Risk detection failed for org ${orgId}:`, err);
+    }
+  }
+}
 import { compileMjmlToHtml } from "../../tools/mjmlCompiler";
 import { readFileSync } from "fs";
 import { join } from "path";

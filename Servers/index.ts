@@ -91,6 +91,7 @@ import riskBenchmarkRoutes from "./routes/riskBenchmark.route";
 import quantitativeRiskRoutes from "./routes/quantitativeRisk.route";
 import aiGatewayRoutes from "./routes/aiGateway.route";
 import virtualKeyProxyRoutes from "./routes/virtualKeyProxy.route";
+import internalRoutes from "./routes/internal.route";
 import { setupNotificationSubscriber } from "./services/notificationSubscriber.service";
 import { sequelize } from "./database/db";
 import redisClient from "./database/redis";
@@ -295,10 +296,13 @@ try {
   app.use("/api/feature-settings", featureSettingsRoutes);
   app.use("/api/risk-benchmarks", riskBenchmarkRoutes);
   app.use("/api/quantitative-risks", quantitativeRiskRoutes);
-  app.use("/api/ai-gateway", aiGatewayRoutes);
+  app.use("/api/ai-gateway", aiGatewayRoutes());
+
+  // Internal routes — callbacks from Python services (no JWT, internal key auth)
+  app.use("/api/internal", internalRoutes);
 
   // Virtual key proxy — OpenAI-compatible /v1/* routes (no JWT, no CORS)
-  app.use("/v1", virtualKeyProxyRoutes);
+  app.use("/v1", virtualKeyProxyRoutes());
 
   // Setup notification subscriber for real-time notifications
   (async () => {
