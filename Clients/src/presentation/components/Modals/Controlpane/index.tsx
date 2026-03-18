@@ -174,7 +174,7 @@ const CustomModal: React.FC<ICustomModalProps> = ({
             flexDirection: "row",
             justifyContent: "flex-start",
             borderRadius: "4px",
-            border: "1px solid borderPalette.light",
+            border: "1px solid border.light",
             width: "fit-content",
           }}
         >
@@ -188,7 +188,7 @@ const CustomModal: React.FC<ICustomModalProps> = ({
                 sx={{
                   ...buttonTabStyles,
                   backgroundColor:
-                    activeSection === section ? "borderPalette.light" : "transparent",
+                    activeSection === section ? "border.light" : "transparent",
                   fontWeight: activeSection === section ? "500" : 300,
                 }}
               >

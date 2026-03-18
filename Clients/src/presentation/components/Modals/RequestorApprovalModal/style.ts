@@ -226,7 +226,7 @@ export const commentFieldStyle = {
     fontSize: '14px',
     backgroundColor: 'background.main',
     '&:hover fieldset': {
-      borderColor: 'borderPalette.dark',
+      borderColor: 'border.dark',
     },
     '&.Mui-focused fieldset': {
       borderColor: 'brand.primary',

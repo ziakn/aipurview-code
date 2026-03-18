@@ -267,11 +267,11 @@ const GenerateReportPopup: React.FC<IGenerateReportProps> = ({
               sx={{
                 minWidth: "80px",
                 height: "34px",
-                border: "1px solid borderPalette.dark",
+                border: "1px solid border.dark",
                 color: "text.secondary",
                 "&:hover": {
                   backgroundColor: "background.accent",
-                  border: "1px solid borderPalette.dark",
+                  border: "1px solid border.dark",
                 },
               }}
             />
@@ -303,11 +303,11 @@ const GenerateReportPopup: React.FC<IGenerateReportProps> = ({
             sx={{
               minWidth: "80px",
               height: "34px",
-              border: "1px solid borderPalette.dark",
+              border: "1px solid border.dark",
               color: "text.secondary",
               "&:hover": {
                 backgroundColor: "background.accent",
-                border: "1px solid borderPalette.dark",
+                border: "1px solid border.dark",
               },
             }}
           />
@@ -319,11 +319,11 @@ const GenerateReportPopup: React.FC<IGenerateReportProps> = ({
               sx={{
                 minWidth: "80px",
                 height: "34px",
-                border: "1px solid borderPalette.dark",
+                border: "1px solid border.dark",
                 color: "text.secondary",
                 "&:hover": {
                   backgroundColor: "background.accent",
-                  border: "1px solid borderPalette.dark",
+                  border: "1px solid border.dark",
                 },
               }}
             />

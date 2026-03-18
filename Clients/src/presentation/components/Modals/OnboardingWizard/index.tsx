@@ -357,11 +357,11 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
               minWidth: "70px",
               height: 34,
               fontSize: 13,
-              border: "1px solid borderPalette.dark",
+              border: "1px solid border.dark",
               color: "text.secondary",
               "&:hover": {
                 bgcolor: "background.accent",
-                border: "1px solid borderPalette.dark",
+                border: "1px solid border.dark",
               },
             }}
           />

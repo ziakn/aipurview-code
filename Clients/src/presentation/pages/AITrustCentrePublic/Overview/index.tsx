@@ -168,7 +168,7 @@ const Overview = ({
                       minWidth: 100,
                       backgroundColor: "background.main",
                       color: "text.secondary",
-                      border: "1px solid borderPalette.dark",
+                      border: "1px solid border.dark",
                       borderRadius: 1,
                     }}
                   >

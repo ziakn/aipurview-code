@@ -231,7 +231,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
     border: '1px solid #e5e5e5',
     '&:hover': {
       backgroundColor: 'rgba(0, 0, 0, 0.04)',
-      borderColor: 'borderPalette.dark',
+      borderColor: 'border.dark',
     },
     '&:hover svg': {
       animation: 'icon-shake 400ms ease-in-out',
@@ -352,7 +352,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
               borderRadius: '3px',
             },
             '&::-webkit-scrollbar-thumb:hover': {
-              background: 'borderPalette.dark',
+              background: 'border.dark',
             },
           }}
         >
@@ -439,7 +439,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
                       fontWeight: 500,
                       color: 'brand.primary',
                       backgroundColor: 'transparent',
-                      border: '1px solid borderPalette.dark',
+                      border: '1px solid border.dark',
                       borderRadius: '4px',
                       cursor: isLoadingMore ? 'not-allowed' : 'pointer',
                       transition: 'all 0.15s ease',

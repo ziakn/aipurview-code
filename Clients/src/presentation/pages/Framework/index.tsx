@@ -921,7 +921,7 @@ const Framework = () => {
                   "& .MuiPopover-paper": {
                     borderRadius: "4px",
                     boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
-                    border: "1px solid borderPalette.dark",
+                    border: "1px solid border.dark",
                     overflow: "visible",
                     backgroundColor: "background.main",
                   },

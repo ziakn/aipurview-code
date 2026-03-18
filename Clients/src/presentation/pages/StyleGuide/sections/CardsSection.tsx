@@ -85,7 +85,7 @@ const CardsSection: React.FC = () => {
       <SpecSection title="Card specifications">
         <SpecGrid>
           <SpecCard title="Background" value={background.main} note="theme.palette.background.main" onCopy={handleCopy} />
-          <SpecCard title="Border" value="1px solid borderPalette.light" note="theme.palette.border.light" onCopy={handleCopy} />
+          <SpecCard title="Border" value="1px solid border.light" note="theme.palette.border.light" onCopy={handleCopy} />
           <SpecCard title="Border radius" value="4px" note="Standard radius" onCopy={handleCopy} />
           <SpecCard title="Padding" value="16px" note="Standard card padding" onCopy={handleCopy} />
           <SpecCard title="Shadow" value="none" note="Default no shadow" onCopy={handleCopy} />
@@ -426,7 +426,7 @@ const CardsSection: React.FC = () => {
         <SpecGrid>
           <SpecCard title="Modal bg" value="#FCFCFD" note="theme.palette.background.modal" onCopy={handleCopy} />
           <SpecCard title="Modal shadow" value="0px 4px 24px -4px rgba(16, 24, 40, 0.08)" note="theme.boxShadow" onCopy={handleCopy} />
-          <SpecCard title="Modal border" value="1px solid borderPalette.light" note="Light border" onCopy={handleCopy} />
+          <SpecCard title="Modal border" value="1px solid border.light" note="Light border" onCopy={handleCopy} />
           <SpecCard title="Section padding" value="24px" note="Large section padding" onCopy={handleCopy} />
           <SpecCard title="Drawer width" value="400px" note="Side drawer default" onCopy={handleCopy} />
           <SpecCard title="Dialog max-width" value="600px" note="Standard dialog" onCopy={handleCopy} />

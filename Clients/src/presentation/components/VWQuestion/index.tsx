@@ -287,10 +287,10 @@ const QuestionFrame = ({
         headerSx={{
           borderRadius: 0,
           borderTop: "none",
-          borderColor: "borderPalette.dark",
+          borderColor: "border.dark",
         }}
         bodySx={{
-          borderColor: "borderPalette.dark",
+          borderColor: "border.dark",
           borderRadius: `0 0 ${theme.shape.borderRadius}px ${theme.shape.borderRadius}px`,
           "& .ProseMirror > p": {
             margin: 0,
@@ -327,13 +327,13 @@ const QuestionFrame = ({
             variant="contained"
             sx={{
               minWidth: 155, // minimum width
-              border: "1px solid borderPalette.dark",
+              border: "1px solid border.dark",
               backgroundColor: "white",
               color: "text.secondary",
               flexShrink: 0, //  prevent shrinking in flex layouts
               "&:hover": {
                 backgroundColor: "background.accent",
-                border: "1px solid borderPalette.dark",
+                border: "1px solid border.dark",
               },
             }}
             disableRipple
@@ -390,12 +390,12 @@ const QuestionFrame = ({
                 width: 155,
                 height: 25,
                 fontSize: 11,
-                border: "1px solid borderPalette.dark",
+                border: "1px solid border.dark",
                 backgroundColor: "white",
                 color: "text.secondary",
                 "&:hover": {
                   backgroundColor: "background.accent",
-                  border: "1px solid borderPalette.dark",
+                  border: "1px solid border.dark",
                 },
               }}
               disableRipple

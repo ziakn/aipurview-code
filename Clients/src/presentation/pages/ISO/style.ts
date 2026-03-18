@@ -30,7 +30,7 @@ export const commonStyles = {
 
   accordion: {
     marginTop: "9px",
-    border: "1px solid borderPalette.dark",
+    border: "1px solid border.dark",
     width: "100%",
     marginLeft: "1.5px",
     borderRadius: "4px",

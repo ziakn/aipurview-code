@@ -469,7 +469,7 @@ const LogsTable: React.FC<LogsTableProps> = ({
         alignItems="center"
         justifyContent="center"
         sx={{
-          border: "1px solid borderPalette.dark",
+          border: "1px solid border.dark",
           borderRadius: "4px",
           padding: theme.spacing(15, 5),
           minHeight: 200,
@@ -486,7 +486,7 @@ const LogsTable: React.FC<LogsTableProps> = ({
         alignItems="center"
         justifyContent="center"
         sx={{
-          border: "1px solid borderPalette.dark",
+          border: "1px solid border.dark",
           borderRadius: "4px",
           padding: theme.spacing(15, 5),
           paddingBottom: theme.spacing(20),

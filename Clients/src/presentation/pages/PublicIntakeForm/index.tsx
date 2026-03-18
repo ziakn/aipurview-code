@@ -388,7 +388,7 @@ export function PublicIntakeForm() {
             borderRadius: "12px",
             overflow: "hidden",
             backgroundColor: "background.main",
-            border: "1px solid borderPalette.dark",
+            border: "1px solid border.dark",
             boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
           }}
         >
