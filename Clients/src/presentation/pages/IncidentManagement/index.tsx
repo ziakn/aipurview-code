@@ -104,6 +104,9 @@ const IncidentManagement: React.FC = () => {
   // Search state
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Card filter state
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+
   const [mode, setModalMode] = useState("");
 
   // GroupBy state
@@ -244,8 +247,13 @@ const IncidentManagement: React.FC = () => {
     // Filter out archived items first
     const nonArchivedData = incidentsData.filter((i) => !i.archived);
 
+    // Apply card filter by status
+    let result = selectedStatus
+      ? nonArchivedData.filter((i) => i.status === selectedStatus)
+      : nonArchivedData;
+
     // Apply FilterBy conditions
-    let result = filterIncidentData(nonArchivedData);
+    result = filterIncidentData(result);
 
     // Apply search filter last
     if (searchTerm) {
@@ -259,7 +267,7 @@ const IncidentManagement: React.FC = () => {
     }
 
     return result;
-  }, [filterIncidentData, incidentsData, searchTerm]);
+  }, [filterIncidentData, incidentsData, searchTerm, selectedStatus]);
 
   // Define how to get the group key for each incident
   const getIncidentGroupKey = (
@@ -569,6 +577,8 @@ const IncidentManagement: React.FC = () => {
               ]}
               entityName="incident"
               size="small"
+              onCardClick={(key) => setSelectedStatus(key === selectedStatus ? null : key)}
+              selectedKey={selectedStatus}
             />
           ) : undefined
         }
