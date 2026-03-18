@@ -201,9 +201,10 @@ async def create_version(
         result = await db.execute(
             text("""
                 INSERT INTO ai_gateway_prompt_versions
-                    (prompt_id, version, content, variables, model, config,
-                     commit_message, created_by, status, created_at, updated_at)
+                    (organization_id, prompt_id, version, content, variables, model, config,
+                     commit_message, created_by, status, created_at)
                 VALUES (
+                    :org_id,
                     :prompt_id,
                     COALESCE(
                         (SELECT MAX(version) FROM ai_gateway_prompt_versions WHERE prompt_id = :prompt_id),
@@ -216,12 +217,12 @@ async def create_version(
                     :commit_message,
                     :created_by,
                     'draft',
-                    NOW(),
                     NOW()
                 )
                 RETURNING *
             """),
             {
+                "org_id": org_id,
                 "prompt_id": prompt_id,
                 "content": content_json,
                 "variables": variables_json,
@@ -400,9 +401,9 @@ async def assign_label(
         result = await db.execute(
             text("""
                 INSERT INTO ai_gateway_prompt_labels
-                    (prompt_id, label_name, version_id, assigned_by, assigned_at)
+                    (organization_id, prompt_id, label_name, version_id, assigned_by, assigned_at)
                 VALUES
-                    (:prompt_id, :label_name, :version_id, :assigned_by, NOW())
+                    (:org_id, :prompt_id, :label_name, :version_id, :assigned_by, NOW())
                 ON CONFLICT (prompt_id, label_name)
                 DO UPDATE SET
                     version_id  = EXCLUDED.version_id,
@@ -411,6 +412,7 @@ async def assign_label(
                 RETURNING *
             """),
             {
+                "org_id": org_id,
                 "prompt_id": prompt_id,
                 "label_name": label_name,
                 "version_id": version_id,
