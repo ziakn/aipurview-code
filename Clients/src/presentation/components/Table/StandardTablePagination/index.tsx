@@ -1,3 +1,4 @@
+import { memo } from "react";
 import {
   Box,
   TableCell,
@@ -27,7 +28,7 @@ interface StandardTablePaginationProps {
   rowsPerPageOptions?: number[];
 }
 
-const StandardTablePagination: React.FC<StandardTablePaginationProps> = ({
+const StandardTablePagination: React.FC<StandardTablePaginationProps> = memo(({
   totalCount,
   page,
   rowsPerPage,
@@ -75,9 +76,7 @@ const StandardTablePagination: React.FC<StandardTablePaginationProps> = ({
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={rowsPerPageOptions}
                 onRowsPerPageChange={onRowsPerPageChange}
-                ActionsComponent={(props) => (
-                  <TablePaginationActions {...props} />
-                )}
+                ActionsComponent={TablePaginationActions}
                 labelRowsPerPage={`${capitalPlural} per page`}
                 labelDisplayedRows={({ page: p, count }) =>
                   `Page ${p + 1} of ${Math.max(
@@ -130,6 +129,6 @@ const StandardTablePagination: React.FC<StandardTablePaginationProps> = ({
       </TableRow>
     </TableFooter>
   );
-};
+});
 
 export default StandardTablePagination;

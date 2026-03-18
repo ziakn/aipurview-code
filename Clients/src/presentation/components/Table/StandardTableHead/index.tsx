@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { TableCell, TableHead, TableRow, Box, Typography } from "@mui/material";
 import { ChevronsUpDown, ChevronUp, ChevronDown } from "lucide-react";
 import singleTheme from "../../../themes/v1SingleTheme";
@@ -10,7 +11,7 @@ interface StandardTableHeadProps {
   onSort: (columnId: string) => void;
 }
 
-const StandardTableHead: React.FC<StandardTableHeadProps> = ({
+const StandardTableHead: React.FC<StandardTableHeadProps> = memo(({
   columns,
   sortConfig,
   onSort,
@@ -103,6 +104,6 @@ const StandardTableHead: React.FC<StandardTableHeadProps> = ({
       </TableRow>
     </TableHead>
   );
-};
+});
 
 export default StandardTableHead;
