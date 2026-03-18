@@ -1228,8 +1228,6 @@ const NewControlPane = ({
                       />
                     </Stack>
 
-                    <Divider sx={{ my: 2 }} />
-
                     {/* Status & Assignments */}
                     <Stack gap="24px">
                       <Select
@@ -1354,8 +1352,6 @@ const NewControlPane = ({
                         disabled={isEditingDisabled}
                       />
                     </Stack>
-
-                    <Divider sx={{ my: 2 }} />
 
                     {/* Evidence Description */}
                     <Stack>

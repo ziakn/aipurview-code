@@ -1099,7 +1099,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
               </Stack>
 
               {/* Status */}
-              <Stack gap="24px">
+              <Stack gap="24px" sx={{ mt: "8px" }}>
                 <Select
                   id="status"
                   label="Status:"
