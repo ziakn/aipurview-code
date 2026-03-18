@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from "react";
 import { Box, Tooltip, IconButton, Stack, useTheme } from "@mui/material";
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, BubbleMenu } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
 import { Table } from "@tiptap/extension-table";
 import { TableRow } from "@tiptap/extension-table";
@@ -20,8 +20,10 @@ import {
   Undo2,
   Redo2,
   Strikethrough,
-  Minus,
   Plus,
+  X,
+  Rows3,
+  Columns3,
   Trash2,
 } from "lucide-react";
 import "./index.css";
@@ -209,50 +211,7 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = ({
         ]
       : [];
 
-  // Table context actions (only when cursor is inside a table)
-  const isInTable = editor?.isActive("table") ?? false;
-  const tableActions: ToolbarItem[] =
-    isInTable && editor
-      ? [
-          {
-            key: "addCol",
-            title: "Add column",
-            icon: <Plus size={14} />,
-            action: () =>
-              run(() => editor.chain().focus().addColumnAfter().run()),
-          },
-          {
-            key: "delCol",
-            title: "Delete column",
-            icon: <Minus size={14} />,
-            action: () =>
-              run(() => editor.chain().focus().deleteColumn().run()),
-          },
-          {
-            key: "addRow",
-            title: "Add row",
-            icon: <Plus size={14} />,
-            action: () =>
-              run(() => editor.chain().focus().addRowAfter().run()),
-          },
-          {
-            key: "delRow",
-            title: "Delete row",
-            icon: <Minus size={14} />,
-            action: () =>
-              run(() => editor.chain().focus().deleteRow().run()),
-          },
-          {
-            key: "delTable",
-            title: "Delete table",
-            icon: <Trash2 size={14} />,
-            action: () =>
-              run(() => editor.chain().focus().deleteTable().run()),
-          },
-        ]
-      : [];
-
-  const allItems = [...basicItems, ...fullExtras, ...tableActions];
+  const allItems = [...basicItems, ...fullExtras];
 
   return (
     <Stack className="vw-rich-text-editor">
@@ -327,6 +286,59 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = ({
           fontSize: "13px",
         }}
       />
+
+      {/* Floating table toolbar — appears when cursor is inside a table */}
+      {editor && isFull && (
+        <BubbleMenu
+          editor={editor}
+          pluginKey="tableMenu"
+          shouldShow={({ editor: e }) => e.isActive("table")}
+          updateDelay={100}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              gap: "2px",
+              p: "4px",
+              alignItems: "center",
+              backgroundColor: theme.palette.background.default,
+              border: `1px solid ${borderPalette.dark}`,
+              borderRadius: "6px",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.08)",
+            }}
+          >
+            {[
+              { key: "addRowBefore", title: "Add row above", icon: <Plus size={14} />, action: () => editor.chain().focus().addRowBefore().run() },
+              { key: "addRowAfter", title: "Add row below", icon: <Rows3 size={14} />, action: () => editor.chain().focus().addRowAfter().run() },
+              { key: "deleteRow", title: "Delete row", icon: <X size={14} />, action: () => editor.chain().focus().deleteRow().run(), separator: true },
+              { key: "addColBefore", title: "Add column left", icon: <Plus size={14} />, action: () => editor.chain().focus().addColumnBefore().run() },
+              { key: "addColAfter", title: "Add column right", icon: <Columns3 size={14} />, action: () => editor.chain().focus().addColumnAfter().run() },
+              { key: "deleteCol", title: "Delete column", icon: <X size={14} />, action: () => editor.chain().focus().deleteColumn().run(), separator: true },
+              { key: "deleteTable", title: "Delete table", icon: <Trash2 size={14} />, action: () => editor.chain().focus().deleteTable().run(), danger: true },
+            ].map(({ key, title, icon, action, separator, danger }: { key: string; title: string; icon: React.ReactNode; action: () => void; separator?: boolean; danger?: boolean }) => (
+              <React.Fragment key={key}>
+                <Tooltip title={title} placement="top" arrow>
+                  <IconButton
+                    onMouseDown={(e) => { e.preventDefault(); action(); }}
+                    size="small"
+                    sx={{
+                      padding: "5px",
+                      borderRadius: "4px",
+                      color: danger ? "#dc2626" : "#374151",
+                      "&:hover": { backgroundColor: danger ? "#fef2f2" : theme.palette.action.hover },
+                    }}
+                  >
+                    {icon}
+                  </IconButton>
+                </Tooltip>
+                {separator && (
+                  <Box sx={{ width: "1px", height: "20px", backgroundColor: borderPalette.light, mx: "2px" }} />
+                )}
+              </React.Fragment>
+            ))}
+          </Box>
+        </BubbleMenu>
+      )}
 
       <style>
         {`
