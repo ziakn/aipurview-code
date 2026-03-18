@@ -167,10 +167,10 @@ export default function LogsPage() {
   const loadGuardrailLogs = useCallback(async () => {
     setGrLoading(true);
     try {
-      const res = await apiServices.get(`/ai-gateway/guardrails/logs/detail?period=30d&limit=${GR_PAGE_SIZE}&offset=${grPage * GR_PAGE_SIZE}`);
-      const data = res?.data?.data || {};
-      setGrLogs(data.logs || []);
-      setGrTotal(data.total || 0);
+      const res = await apiServices.get(`/ai-gateway/guardrails/logs?limit=${GR_PAGE_SIZE}&offset=${grPage * GR_PAGE_SIZE}`);
+      const data = res?.data || {};
+      setGrLogs(data.logs || data?.data?.logs || []);
+      setGrTotal(data.total || data.logs?.length || 0);
     } catch {
       // Silently handle
     } finally {

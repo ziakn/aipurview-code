@@ -71,7 +71,7 @@ export default function EndpointsPage() {
       setEndpoints(endpointsRes?.data?.endpoints || []);
       setApiKeys(keysRes?.data?.data || []);
       setPrompts(promptsRes?.data?.prompts || []);
-      const allRules = grRes?.data?.data || [];
+      const allRules = grRes?.data?.rules || grRes?.data?.data || [];
       setActiveGuardrailCount(allRules.filter((r: any) => r.is_active).length);
     } catch {
       // Silently handle
@@ -163,7 +163,7 @@ export default function EndpointsPage() {
       setForm({ ...EMPTY_FORM });
       await loadData();
     } catch (err: any) {
-      setFormError(err?.response?.data?.message || `Failed to ${editingId ? "update" : "create"} endpoint`);
+      setFormError(err?.response?.data?.detail || err?.response?.data?.message || `Failed to ${editingId ? "update" : "create"} endpoint`);
     } finally {
       setIsSubmitting(false);
     }
