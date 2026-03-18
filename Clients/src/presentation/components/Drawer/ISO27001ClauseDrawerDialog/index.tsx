@@ -764,7 +764,7 @@ const VWISO27001ClauseDrawerDialog = ({
         open={open}
         onClose={onClose}
         sx={{
-          width: 600,
+          width: 780,
           margin: 0,
           "& .MuiDrawer-paper": {
             margin: 0,
@@ -775,7 +775,7 @@ const VWISO27001ClauseDrawerDialog = ({
       >
         <Stack
           sx={{
-            width: 600,
+            width: 780,
             height: "100%",
             display: "flex",
             justifyContent: "center",
@@ -796,10 +796,10 @@ const VWISO27001ClauseDrawerDialog = ({
         open={open}
         onClose={onClose}
         sx={{
-          width: 600,
+          width: 780,
           margin: 0,
           "& .MuiDrawer-paper": {
-            width: 600,
+            width: 780,
             margin: 0,
             borderRadius: 0,
             overflowX: "hidden",
@@ -810,12 +810,12 @@ const VWISO27001ClauseDrawerDialog = ({
         <Stack
           className="vw-iso-27001-clause-drawer-dialog-content"
           sx={{
-            width: 600,
+            width: 780,
           }}
         >
           <Stack
             sx={{
-              width: 600,
+              width: 780,
               padding: "15px 20px",
               display: "flex",
               flexDirection: "row",
@@ -954,8 +954,6 @@ const VWISO27001ClauseDrawerDialog = ({
                   />
                 </Stack>
               </Stack>
-
-              <Divider sx={{ my: 2 }} />
 
               <Stack gap={"24px"}>
                 <Select
@@ -1620,7 +1618,6 @@ const VWISO27001ClauseDrawerDialog = ({
               </Suspense>
             </TabPanel>
           </TabContext>
-          <Divider />
           <Stack
             className="vw-iso-27001-clause-drawer-dialog-footer"
             sx={{

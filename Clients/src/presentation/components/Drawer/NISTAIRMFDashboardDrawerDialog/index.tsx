@@ -533,10 +533,10 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
           }
         }}
         sx={{
-          width: 600,
+          width: 780,
           margin: 0,
           "& .MuiDrawer-paper": {
-            width: 600,
+            width: 780,
             margin: 0,
             borderRadius: 0,
             overflowX: "hidden",
@@ -547,14 +547,14 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
         <Stack
           className="nist-ai-rmf-drawer-dialog-content"
           sx={{
-            width: 600,
+            width: 780,
           }}
         >
           {/* Loading State */}
           {isLoading && (
             <Stack
               sx={{
-                width: 600,
+                width: 780,
                 height: "100%",
                 display: "flex",
                 justifyContent: "center",
@@ -639,8 +639,6 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                       />
                     </Stack>
                   </Stack>
-
-                  <Divider />
 
                   {/* Status Assignment Section */}
                   <Stack padding="15px 20px" gap="24px">
@@ -1279,8 +1277,6 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                   />
                 </Suspense>
               )}
-
-              <Divider />
 
               {/* Footer */}
               <Stack

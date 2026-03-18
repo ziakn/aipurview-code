@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from "react";
-import { Box, Tooltip, IconButton, Stack, useTheme } from "@mui/material";
+import { Box, Tooltip, IconButton, Stack, useTheme, Select as MuiSelect, MenuItem } from "@mui/material";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
 import StarterKit from "@tiptap/starter-kit";
@@ -317,6 +317,39 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = ({
           ...headerSx,
         }}
       >
+        {/* Heading selector — only in full toolbar */}
+        {isFull && editor && (
+          <>
+            <MuiSelect
+              size="small"
+              value={
+                editor.isActive("heading", { level: 1 }) ? "h1" :
+                editor.isActive("heading", { level: 2 }) ? "h2" :
+                editor.isActive("heading", { level: 3 }) ? "h3" : "p"
+              }
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === "p") editor.chain().focus().setParagraph().run();
+                else if (val === "h1") editor.chain().focus().toggleHeading({ level: 1 }).run();
+                else if (val === "h2") editor.chain().focus().toggleHeading({ level: 2 }).run();
+                else if (val === "h3") editor.chain().focus().toggleHeading({ level: 3 }).run();
+              }}
+              disabled={!isEditable}
+              sx={{
+                height: "28px",
+                fontSize: 12,
+                minWidth: 90,
+                "& .MuiSelect-select": { py: "4px" },
+              }}
+            >
+              <MenuItem value="p" sx={{ fontSize: 12 }}>Text</MenuItem>
+              <MenuItem value="h1" sx={{ fontSize: 12 }}>Header 1</MenuItem>
+              <MenuItem value="h2" sx={{ fontSize: 12 }}>Header 2</MenuItem>
+              <MenuItem value="h3" sx={{ fontSize: 12 }}>Header 3</MenuItem>
+            </MuiSelect>
+            <Box sx={{ width: "1px", height: "28px", backgroundColor: borderPalette.light, mx: "2px", alignSelf: "center" }} />
+          </>
+        )}
         {allItems.map(({ key, title, icon, action, isActive, dividerAfter }) => (
           <React.Fragment key={key}>
             <Tooltip title={title}>
