@@ -20,23 +20,10 @@ interface PerformanceChartProps {
 }
 
 
-// 15 distinct colors for the chart - no repetition
+// Chart colors from unified palette (8 solid + 7 with 60% opacity for 15 total)
 const CHART_COLORS = [
-  "#2563EB", // Blue
-  "#DC2626", // Red
-  "#16A34A", // Green
-  "#7C3AED", // Purple
-  "#EA580C", // Orange
-  "#0891B2", // Cyan
-  "#DB2777", // Pink
-  "#CA8A04", // Yellow
-  "#0D9488", // Teal
-  "#4F46E5", // Indigo
-  "#059669", // Emerald
-  "#9333EA", // Violet
-  "#C026D3", // Fuchsia
-  "#65A30D", // Lime
-  "#0284C7", // Sky
+  ...palette.chart,
+  ...palette.chart.slice(0, 7).map((c) => c + "99"),
 ];
 
 // Metric definitions - maps camelCase keys to labels
@@ -297,7 +284,7 @@ export default function PerformanceChart({ projectId, timeRange }: PerformanceCh
                   flexShrink: 0,
                 }}
               />
-              <Typography sx={{ fontSize: "12px", color: "#374151" }}>
+              <Typography sx={{ fontSize: "12px", color: palette.text.secondary }}>
                 {metricLabel} : <span style={{ fontWeight: 600 }}>{value}%</span>
               </Typography>
             </Box>
@@ -311,7 +298,7 @@ export default function PerformanceChart({ projectId, timeRange }: PerformanceCh
     <ChartOutlineWrapper>
         <ResponsiveContainer key={`rc-${projectId}-${data.length}-${activeMetrics.join(",")}-${timeRange}`} width="100%" height={Math.max(dynamicHeight, 220)} debounce={1}>
         <LineChart data={data} margin={{ top: 5, right: 20, left: 10, bottom: 20 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+          <CartesianGrid strokeDasharray="3 3" stroke={palette.border.light} />
           <XAxis 
             dataKey="index"
             type="number"
@@ -321,8 +308,8 @@ export default function PerformanceChart({ projectId, timeRange }: PerformanceCh
             }
             ticks={data.map((_, i) => i)}
             tickFormatter={formatXAxisTick}
-            tick={{ fontSize: 10, fill: "#6B7280", dy: 10 }}
-            axisLine={{ stroke: "#E5E7EB" }}
+            tick={{ fontSize: 10, fill: palette.text.disabled, dy: 10 }}
+            axisLine={{ stroke: palette.border.light }}
             interval={0}
             angle={-25}
             textAnchor="end"
@@ -332,14 +319,14 @@ export default function PerformanceChart({ projectId, timeRange }: PerformanceCh
           />
           <YAxis 
             domain={[0, 1]} 
-            tick={{ fontSize: 10, fill: "#6B7280" }}
-            axisLine={{ stroke: "#E5E7EB" }}
+            tick={{ fontSize: 10, fill: palette.text.disabled }}
+            axisLine={{ stroke: palette.border.light }}
             tickFormatter={(value) => `${(value * 100).toFixed(0)}%`}
             width={40}
           />
           <Tooltip content={<CustomTooltip />} />
           <Legend 
-            wrapperStyle={{ paddingTop: 12, fontSize: 11 }}
+            wrapperStyle={{ paddingTop: 12, fontSize: 13 }}
             formatter={(value: string) => {
               const metricDef = metricDefinitions[value as keyof typeof metricDefinitions];
               return metricDef?.label || formatMetricLabel(value);

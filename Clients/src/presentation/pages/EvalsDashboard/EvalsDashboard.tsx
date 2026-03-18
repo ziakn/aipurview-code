@@ -68,7 +68,6 @@ import ExperimentDetailContent from "./ExperimentDetailContent";
 import ArenaPage from "./ArenaPage";
 import BiasAuditsList from "./BiasAuditsList";
 import BiasAuditDetail from "./BiasAuditDetail";
-import ReportPage from "./ReportPage";
 import type { DeepEvalProject } from "./types";
 
 // Track if Evals dashboard has been loaded before (persists across module switches)
@@ -1631,14 +1630,6 @@ export default function EvalsDashboard() {
                 ) : (
                   <BiasAuditsList orgId={orgId || currentProject?.orgId || ""} onViewAudit={(id) => setSelectedBiasAuditId(id)} />
                 )
-              )}
-
-              {tab === "reports" && (
-                <ReportPage
-                  projectId={projectId}
-                  projectName={currentProject?.name || ""}
-                  orgId={orgId || currentProject?.orgId || ""}
-                />
               )}
 
               {tab === "configuration" && (

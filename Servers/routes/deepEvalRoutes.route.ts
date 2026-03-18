@@ -15,12 +15,11 @@ const jsonParser = express.json({ limit: "50mb" });
  * This modifies req.body before the proxy forwards it
  */
 async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
-  // Only process POST requests to experiments, arena, or report endpoints
+  // Only process POST requests to experiments or arena endpoints
   const isExperiment = req.method === "POST" && req.url.includes("/experiments");
   const isArena = req.method === "POST" && req.url.includes("/arena/compare");
-  const isReport = req.method === "POST" && req.url.includes("/reports/generate");
 
-  if (!isExperiment && !isArena && !isReport) {
+  if (!isExperiment && !isArena) {
     return next();
   }
 
@@ -78,22 +77,6 @@ async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
         req.body.apiKeys = apiKeys;
       }
 
-      return next();
-    }
-
-    // Handle report generation — inject the judge LLM's API key for AI summaries
-    if (isReport) {
-      const judgeProvider = (body.judgeProvider || "").toLowerCase();
-      if (judgeProvider && VALID_PROVIDERS.includes(judgeProvider as LLMProvider)) {
-        try {
-          const apiKey = await getDecryptedKeyForProviderQuery(tenantId!, judgeProvider as LLMProvider);
-          if (apiKey) {
-            req.body.apiKey = apiKey;
-          }
-        } catch {
-          // No key found — report will be generated without AI summaries
-        }
-      }
       return next();
     }
 
