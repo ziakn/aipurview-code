@@ -590,13 +590,18 @@ export default function ReportPage({
         <ConfirmationModal
           isOpen={!!showDeleteConfirm}
           title="Delete report"
-          body={`Are you sure you want to delete "${reports.find(r => r.id === showDeleteConfirm)?.title || "this report"}"? This action cannot be undone.`}
+          body={
+            <Typography sx={{ fontSize: 13, color: "text.secondary" }}>
+              Are you sure you want to delete &quot;{reports.find(r => r.id === showDeleteConfirm)?.title || "this report"}&quot;? This action cannot be undone.
+            </Typography>
+          }
           proceedText="Delete"
           cancelText="Cancel"
           onProceed={confirmDeleteReport}
           onCancel={() => setShowDeleteConfirm(null)}
           proceedButtonVariant="contained"
           proceedButtonColor="error"
+          TitleFontSize={13}
         />
       )}
     </Box>

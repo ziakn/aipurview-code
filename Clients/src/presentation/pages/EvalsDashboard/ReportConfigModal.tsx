@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Box,
   Stack,
@@ -39,6 +39,12 @@ export default function ReportConfigModal({
   isGenerating = false,
 }: ReportConfigModalProps) {
   const [title, setTitle] = useState(`${projectName} - Evaluation Report`);
+  // Reset title when projectName changes or modal reopens
+  useEffect(() => {
+    if (open && projectName) {
+      setTitle(`${projectName} - Evaluation Report`);
+    }
+  }, [open, projectName]);
   const [format, setFormat] = useState<ReportFormat>("pdf");
   const [selectedExperimentIds, setSelectedExperimentIds] = useState<string[]>([]);
   const [sections, setSections] = useState<ReportSection[]>(() =>
