@@ -229,13 +229,19 @@ export const collections: Collection[] = [
     title: 'Risk management',
     description: 'Identify, assess, and mitigate risks across your AI systems and vendors.',
     icon: 'AlertTriangle',
-    articleCount: 4,
+    articleCount: 5,
     articles: [
       {
         id: 'risk-assessment',
         title: 'Conducting risk assessments',
         description: 'Learn how to identify and evaluate risks in your AI projects.',
         keywords: ['risk', 'assessment', 'evaluate', 'identify', 'analysis'],
+      },
+      {
+        id: 'quantitative-risk-assessment',
+        title: 'Quantitative risk assessment (FAIR)',
+        description: 'Use the FAIR model to quantify AI risks in financial terms with ALE calculations, industry benchmarks, and ROI analysis.',
+        keywords: ['quantitative', 'FAIR', 'ALE', 'annualized loss', 'benchmark', 'ROI', 'financial', 'monetary', 'PERT', 'frequency', 'magnitude'],
       },
       {
         id: 'risk-mitigation',

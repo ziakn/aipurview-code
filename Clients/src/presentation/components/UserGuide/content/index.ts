@@ -10,6 +10,7 @@ import { incidentManagementContent } from './ai-governance/incident-management';
 import { evidenceCollectionContent } from './ai-governance/evidence-collection';
 import { entityGraphContent } from './ai-governance/entity-graph';
 import { riskAssessmentContent } from './risk-management/risk-assessment';
+import { quantitativeRiskAssessmentContent } from './risk-management/quantitative-risk-assessment';
 import { riskMitigationContent } from './risk-management/risk-mitigation';
 import { vendorManagementContent } from './risk-management/vendor-management';
 import { vendorRisksContent } from './risk-management/vendor-risks';
@@ -51,6 +52,7 @@ export const articleContentMap: Record<string, ArticleContent> = {
   'ai-governance/entity-graph': entityGraphContent,
   // Risk Management
   'risk-management/risk-assessment': riskAssessmentContent,
+  'risk-management/quantitative-risk-assessment': quantitativeRiskAssessmentContent,
   'risk-management/risk-mitigation': riskMitigationContent,
   'risk-management/vendor-management': vendorManagementContent,
   'risk-management/vendor-risks': vendorRisksContent,
