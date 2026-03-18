@@ -14,8 +14,6 @@ from middlewares.auth import verify_internal_key
 from utils.auth import get_org_id, get_user_id, require_admin
 from utils.notifications import notify_config_change
 
-FRONTEND_URL = "http://localhost:5173"
-
 router = APIRouter(prefix="/virtual-keys", tags=["virtual-keys"])
 
 
@@ -93,13 +91,14 @@ async def create_key(request: Request):
         )
 
     await notify_config_change(
-        org_id=org_id,
-        user_id=user_id,
-        action="created",
-        entity_type="virtual_key",
-        entity_id=record["id"],
-        entity_name=name,
-        frontend_url=FRONTEND_URL,
+        organization_id=org_id,
+        changed_by_user_id=user_id,
+        event={
+            "action": "created",
+            "entity_type": "virtual_key",
+            "entity_id": str(record["id"]),
+            "entity_name": name,
+        },
     )
 
     return {
@@ -210,13 +209,14 @@ async def update_key(key_id: int, request: Request):
         )
 
     await notify_config_change(
-        org_id=org_id,
-        user_id=user_id,
-        action="updated",
-        entity_type="virtual_key",
-        entity_id=key_id,
-        entity_name=record.get("name"),
-        frontend_url=FRONTEND_URL,
+        organization_id=org_id,
+        changed_by_user_id=user_id,
+        event={
+            "action": "updated",
+            "entity_type": "virtual_key",
+            "entity_id": str(key_id),
+            "entity_name": record.get("name", ""),
+        },
     )
 
     return {"status": "success", "data": record}
@@ -242,13 +242,13 @@ async def revoke_key(key_id: int, request: Request):
         )
 
     await notify_config_change(
-        org_id=org_id,
-        user_id=user_id,
-        action="revoked",
-        entity_type="virtual_key",
-        entity_id=key_id,
-        entity_name=None,
-        frontend_url=FRONTEND_URL,
+        organization_id=org_id,
+        changed_by_user_id=user_id,
+        event={
+            "action": "revoked",
+            "entity_type": "virtual_key",
+            "entity_id": str(key_id),
+        },
     )
 
     return {"status": "success", "message": "Virtual key revoked"}
@@ -274,13 +274,13 @@ async def delete_key(key_id: int, request: Request):
         )
 
     await notify_config_change(
-        org_id=org_id,
-        user_id=user_id,
-        action="deleted",
-        entity_type="virtual_key",
-        entity_id=key_id,
-        entity_name=None,
-        frontend_url=FRONTEND_URL,
+        organization_id=org_id,
+        changed_by_user_id=user_id,
+        event={
+            "action": "deleted",
+            "entity_type": "virtual_key",
+            "entity_id": str(key_id),
+        },
     )
 
     return {"status": "success", "message": "Virtual key deleted"}

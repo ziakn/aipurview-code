@@ -102,7 +102,7 @@ export default function ModelsPage() {
   // Filters
   const [search, setSearch] = useState("");
   const [providerFilter, setProviderFilter] = useState("");
-  const [modeFilter, setModeFilter] = useState("chat");
+  const [modeFilter, setModeFilter] = useState("");
   const [featureFilters, setFeatureFilters] = useState<Set<string>>(new Set());
   const [page, setPage] = useState(0);
 
@@ -131,16 +131,24 @@ export default function ModelsPage() {
 
   // Derived: unique providers
   const providers = useMemo(() => {
-    const set = new Set(models.map((m) => m.provider));
+    const set = new Set(cleanModels.map((m) => m.provider));
     return [{ _id: "", name: "All providers" }, ...[...set].sort().map((p) => ({ _id: p, name: p }))];
+  }, [cleanModels]);
+
+  // Filter out LiteLLM's description/sample row
+  const cleanModels = useMemo(() => {
+    return models.filter((m) => {
+      const name = ((m as any).model || m.id || "").toLowerCase();
+      return name !== "sample_spec" && !m.provider?.includes("docs.litellm.ai");
+    });
   }, [models]);
 
   // Filtered + searched models
   const filtered = useMemo(() => {
-    let result = models;
+    let result = cleanModels;
     if (search) {
       const q = search.toLowerCase();
-      result = result.filter((m) => m.id.toLowerCase().includes(q) || m.provider.toLowerCase().includes(q));
+      result = result.filter((m) => (m.model || m.id || "").toLowerCase().includes(q) || m.provider.toLowerCase().includes(q));
     }
     if (providerFilter) result = result.filter((m) => m.provider === providerFilter);
     if (modeFilter) result = result.filter((m) => m.mode === modeFilter);
@@ -148,7 +156,7 @@ export default function ModelsPage() {
       result = result.filter((m) => (m as any)[feat] === true);
     }
     return result;
-  }, [models, search, providerFilter, modeFilter, featureFilters]);
+  }, [cleanModels, search, providerFilter, modeFilter, featureFilters]);
 
   const pageCount = useMemo(() => Math.ceil(filtered.length / PAGE_SIZE), [filtered]);
   const pageModels = useMemo(() => filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE), [filtered, page]);
@@ -208,7 +216,7 @@ export default function ModelsPage() {
   return (
     <PageHeaderExtended
       title="Models"
-      description={<>Browse <strong style={{ color: palette.text.primary }}>{models.length.toLocaleString()}</strong> LLM models across <strong style={{ color: palette.text.primary }}>{providers.length - 1}</strong> providers.</>}
+      description={<>Browse <strong style={{ color: palette.text.primary }}>{cleanModels.length.toLocaleString()}</strong> LLM models across <strong style={{ color: palette.text.primary }}>{providers.length - 1}</strong> providers.</>}
       tipBoxEntity="ai-gateway-models"
       helpArticlePath="ai-gateway/models"
     >
@@ -225,7 +233,7 @@ export default function ModelsPage() {
             <Stack gap="16px">
               {/* Filters */}
               <Stack direction="row" gap="8px" flexWrap="wrap" alignItems="flex-end">
-                <Box sx={{ flex: 1, minWidth: "200px" }}>
+                <Box sx={{ width: "240px", minWidth: "160px" }}>
                   <Field
                     placeholder="Search models..."
                     value={search}
@@ -310,7 +318,7 @@ export default function ModelsPage() {
                   <Stack gap="0px">
                     {pageModels.map((m) => (
                       <Stack
-                        key={m.id}
+                        key={(m as any).model || m.id}
                         direction="row"
                         alignItems="center"
                         sx={{
@@ -430,7 +438,7 @@ export default function ModelsPage() {
                       const costPerReq = inputCostPerReq + outputCostPerReq;
                       return (
                         <Stack
-                          key={m.id}
+                          key={(m as any).model || m.id}
                           direction="row"
                           alignItems="center"
                           sx={{
@@ -531,7 +539,7 @@ export default function ModelsPage() {
                     <Stack gap="4px" sx={{ maxHeight: "200px", overflowY: "auto" }}>
                       {filtered.slice(0, 20).map((m) => (
                         <Stack
-                          key={m.id}
+                          key={(m as any).model || m.id}
                           direction="row"
                           justifyContent="space-between"
                           alignItems="center"
@@ -563,7 +571,7 @@ export default function ModelsPage() {
                       <tr>
                         <th scope="col" style={{ textAlign: "left", padding: "8px", borderBottom: `1px solid ${palette.border.light}`, color: palette.text.tertiary, fontSize: 11, fontWeight: 600, textTransform: "uppercase" as const }}>Feature</th>
                         {compareModels.map((m) => (
-                          <th scope="col" key={m.id} style={{ textAlign: "center", padding: "8px", borderBottom: `1px solid ${palette.border.light}`, fontSize: 11, fontWeight: 600, minWidth: "140px", position: "relative", color: palette.text.tertiary, textTransform: "uppercase" as const }}>
+                          <th scope="col" key={(m as any).model || m.id} style={{ textAlign: "center", padding: "8px", borderBottom: `1px solid ${palette.border.light}`, fontSize: 11, fontWeight: 600, minWidth: "140px", position: "relative", color: palette.text.tertiary, textTransform: "uppercase" as const }}>
                             <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
                               {m.id}
                               <span
@@ -625,7 +633,7 @@ export default function ModelsPage() {
                               const isBest = bestVal !== null && numVal === bestVal && validNums.length > 1;
 
                               return (
-                                <td key={m.id} style={{
+                                <td key={(m as any).model || m.id} style={{
                                   textAlign: "center", padding: "8px",
                                   borderBottom: `1px solid ${palette.border.light}`,
                                   fontSize: 12,

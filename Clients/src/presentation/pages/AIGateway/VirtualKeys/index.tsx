@@ -120,14 +120,15 @@ export default function AIGatewayVirtualKeysPage({ embedded }: { embedded?: bool
       setIsCreateOpen(false);
       setCreateForm({ name: "", max_budget_usd: "", rate_limit_rpm: "", expires_at: "" });
 
-      if (created?.key) {
-        setNewKey(created.key);
+      if (created?.plain_key) {
+        setNewKey(created.plain_key);
         setIsKeyDisplayOpen(true);
       }
 
       await loadData();
     } catch (err: unknown) {
-      setCreateError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || "Failed to create virtual key");
+      const errData = (err as { response?: { data?: { detail?: string; message?: string } } })?.response?.data;
+      setCreateError(errData?.detail || errData?.message || "Failed to create virtual key");
     } finally {
       setCreateSubmitting(false);
     }
