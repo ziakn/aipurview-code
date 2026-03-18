@@ -1,4 +1,4 @@
-.PHONY: seeds render perturb all export-parquet publish-dataset
+.PHONY: seeds render perturb all export-parquet publish-dataset generate
 
 seeds:
 	uv run grs-scenarios generate --stage seeds
@@ -36,6 +36,9 @@ export-parquet:
 	uv run python scripts/export_parquet.py --dataset-dir datasets/grs_scenarios_v0.1
 
 VERSION ?= grs_scenarios_v0.1
+
+generate:
+	uv run python scripts/run_pipeline.py --version $(VERSION)
 
 publish-dataset: export-parquet
 	@if [ -z "$(VERSION)" ]; then echo "Error: VERSION is required. Usage: make publish-dataset VERSION=grs_scenarios_v0.1"; exit 1; fi
