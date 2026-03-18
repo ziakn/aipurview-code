@@ -34,6 +34,7 @@ import { sectionTitleSx, useCardSx, ProviderIcon } from "../shared";
 
 interface ModelInfo {
   id: string;
+  model?: string;
   provider: string;
   mode: string;
   max_input_tokens: number | null;
@@ -129,19 +130,19 @@ export default function ModelsPage() {
 
   useEffect(() => { loadModels(); }, [loadModels]);
 
+  // Filter out LiteLLM's description/sample row
+  const cleanModels = useMemo(() => {
+    return models.filter((m) => {
+      const name = (m.model || m.id || "").toLowerCase();
+      return name !== "sample_spec" && !m.provider?.includes("docs.litellm.ai");
+    });
+  }, [models]);
+
   // Derived: unique providers
   const providers = useMemo(() => {
     const set = new Set(cleanModels.map((m) => m.provider));
     return [{ _id: "", name: "All providers" }, ...[...set].sort().map((p) => ({ _id: p, name: p }))];
   }, [cleanModels]);
-
-  // Filter out LiteLLM's description/sample row
-  const cleanModels = useMemo(() => {
-    return models.filter((m) => {
-      const name = ((m as any).model || m.id || "").toLowerCase();
-      return name !== "sample_spec" && !m.provider?.includes("docs.litellm.ai");
-    });
-  }, [models]);
 
   // Filtered + searched models
   const filtered = useMemo(() => {
@@ -318,7 +319,7 @@ export default function ModelsPage() {
                   <Stack gap="0px">
                     {pageModels.map((m) => (
                       <Stack
-                        key={(m as any).model || m.id}
+                        key={m.model || m.id}
                         direction="row"
                         alignItems="center"
                         sx={{
@@ -438,7 +439,7 @@ export default function ModelsPage() {
                       const costPerReq = inputCostPerReq + outputCostPerReq;
                       return (
                         <Stack
-                          key={(m as any).model || m.id}
+                          key={m.model || m.id}
                           direction="row"
                           alignItems="center"
                           sx={{
@@ -539,7 +540,7 @@ export default function ModelsPage() {
                     <Stack gap="4px" sx={{ maxHeight: "200px", overflowY: "auto" }}>
                       {filtered.slice(0, 20).map((m) => (
                         <Stack
-                          key={(m as any).model || m.id}
+                          key={m.model || m.id}
                           direction="row"
                           justifyContent="space-between"
                           alignItems="center"
@@ -571,7 +572,7 @@ export default function ModelsPage() {
                       <tr>
                         <th scope="col" style={{ textAlign: "left", padding: "8px", borderBottom: `1px solid ${palette.border.light}`, color: palette.text.tertiary, fontSize: 11, fontWeight: 600, textTransform: "uppercase" as const }}>Feature</th>
                         {compareModels.map((m) => (
-                          <th scope="col" key={(m as any).model || m.id} style={{ textAlign: "center", padding: "8px", borderBottom: `1px solid ${palette.border.light}`, fontSize: 11, fontWeight: 600, minWidth: "140px", position: "relative", color: palette.text.tertiary, textTransform: "uppercase" as const }}>
+                          <th scope="col" key={m.model || m.id} style={{ textAlign: "center", padding: "8px", borderBottom: `1px solid ${palette.border.light}`, fontSize: 11, fontWeight: 600, minWidth: "140px", position: "relative", color: palette.text.tertiary, textTransform: "uppercase" as const }}>
                             <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
                               {m.id}
                               <span
@@ -633,7 +634,7 @@ export default function ModelsPage() {
                               const isBest = bestVal !== null && numVal === bestVal && validNums.length > 1;
 
                               return (
-                                <td key={(m as any).model || m.id} style={{
+                                <td key={m.model || m.id} style={{
                                   textAlign: "center", padding: "8px",
                                   borderBottom: `1px solid ${palette.border.light}`,
                                   fontSize: 12,

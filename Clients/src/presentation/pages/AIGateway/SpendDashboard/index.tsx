@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Box, Typography, Stack } from "@mui/material";
 import { DollarSign, Hash, Layers, Clock, BarChart3, Router, Users, ShieldCheck, ShieldOff, Info } from "lucide-react";
 import { Tooltip as MuiTooltip } from "@mui/material";
@@ -105,20 +105,27 @@ export default function SpendDashboardPage() {
         setByEndpoint(endpointRes?.data?.data || []);
         setByUser(userRes?.data?.data || []);
         // Map Python guardrail stats field names to frontend expectations
-        const gs = gsRes?.data || null;
-        if (gs?.summary) {
-          gs.summary.blocked_count = gs.summary.blocked_count ?? gs.summary.blocked ?? 0;
-          gs.summary.masked_count = gs.summary.masked_count ?? gs.summary.masked ?? 0;
-          gs.summary.total_checks = gs.summary.total_checks ?? gs.summary.total ?? 0;
+        const rawGs = gsRes?.data || null;
+        if (rawGs) {
+          const mapped: any = { ...rawGs };
+          if (rawGs.summary) {
+            mapped.summary = {
+              ...rawGs.summary,
+              blocked_count: rawGs.summary.blocked_count ?? rawGs.summary.blocked ?? 0,
+              masked_count: rawGs.summary.masked_count ?? rawGs.summary.masked ?? 0,
+              total_checks: rawGs.summary.total_checks ?? rawGs.summary.total ?? 0,
+            };
+          }
+          if (!rawGs.topDetections && rawGs.byType) {
+            mapped.topDetections = rawGs.byType.map((d: any) => ({
+              ...d,
+              entity_type: d.entity_type || d.guardrail_type,
+            }));
+          }
+          setGuardrailStats(mapped);
+        } else {
+          setGuardrailStats(null);
         }
-        // byType can serve as topDetections (grouped by type + action)
-        if (!gs?.topDetections && gs?.byType) {
-          gs.topDetections = gs.byType.map((d: any) => ({
-            ...d,
-            entity_type: d.entity_type || d.guardrail_type,
-          }));
-        }
-        setGuardrailStats(gs);
       } catch {
         setData(null);
         setIsFirstTime(false);
@@ -130,18 +137,17 @@ export default function SpendDashboardPage() {
   }, [period, reloadKey]);
 
   const summary = data?.summary;
-  // Python returns "period" as the date key; charts expect "day"
-  const byDay = (data?.by_day || data?.byDay || []).map((d: any) => ({ ...d, day: d.day || d.period }));
-  const byModel = (data?.by_model || data?.byModel || []).map((d: any) => ({ ...d, group_key: d.group_key || d.model }));
-  const byProvider = (data?.by_provider || data?.byProvider || []).map((d: any) => ({ ...d, group_key: d.group_key || d.provider }));
-  const errorRateByDay = data?.error_rate_by_day || data?.errorRateByDay || [];
-  const tokensPerEndpoint = (data?.tokens_per_endpoint || data?.tokensPerEndpoint || []).map((d: any) => ({
+  // Python returns snake_case keys; charts expect camelCase / specific field names
+  const byDay = useMemo(() => (data?.by_day || data?.byDay || []).map((d: any) => ({ ...d, day: d.day || d.period })), [data]);
+  const byModel = useMemo(() => (data?.by_model || data?.byModel || []).map((d: any) => ({ ...d, group_key: d.group_key || d.model })), [data]);
+  const byProvider = useMemo(() => (data?.by_provider || data?.byProvider || []).map((d: any) => ({ ...d, group_key: d.group_key || d.provider })), [data]);
+  const errorRateByDay = useMemo(() => data?.error_rate_by_day || data?.errorRateByDay || [], [data]);
+  const tokensPerEndpoint = useMemo(() => (data?.tokens_per_endpoint || data?.tokensPerEndpoint || []).map((d: any) => ({
     ...d,
     endpoint: d.endpoint || d.endpoint_name,
-    // Python returns avg_tokens_per_request as a single value; split not available
     avg_prompt_tokens: d.avg_prompt_tokens ?? d.avg_tokens_per_request ?? 0,
     avg_completion_tokens: d.avg_completion_tokens ?? 0,
-  }));
+  })), [data]);
 
   const totalCost = summary ? `$${Number(summary.total_cost).toFixed(4)}` : "$0.00";
   const totalRequests = String(summary?.total_requests ?? 0);
