@@ -76,8 +76,14 @@ export const collections: Collection[] = [
     title: 'AI governance',
     description: 'Manage your AI models, track their lifecycle, and maintain comprehensive documentation.',
     icon: 'Brain',
-    articleCount: 9,
+    articleCount: 10,
     articles: [
+      {
+        id: 'use-cases',
+        title: 'Use cases',
+        description: 'Create and manage AI use cases with risk classification, framework linking, team assignment, and approval workflows.',
+        keywords: ['use case', 'project', 'create', 'risk classification', 'high risk', 'deployer', 'provider', 'framework', 'approval', 'owner', 'team', 'scope', 'geography', 'industry'],
+      },
       {
         id: 'intake-forms',
         title: 'Intake forms',

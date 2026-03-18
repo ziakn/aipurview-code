@@ -3,6 +3,7 @@ import { welcomeContent } from './getting-started/welcome';
 import { installingContent } from './getting-started/installing';
 import { dashboardContent } from './getting-started/dashboard';
 import { quickStartContent } from './getting-started/quick-start';
+import { useCasesContent } from './ai-governance/use-cases';
 import { intakeFormsContent } from './ai-governance/intake-forms';
 import { modelInventoryContent } from './ai-governance/model-inventory';
 import { modelLifecycleContent } from './ai-governance/model-lifecycle';
@@ -44,6 +45,7 @@ export const articleContentMap: Record<string, ArticleContent> = {
   'getting-started/dashboard': dashboardContent,
   'getting-started/quick-start': quickStartContent,
   // AI Governance
+  'ai-governance/use-cases': useCasesContent,
   'ai-governance/intake-forms': intakeFormsContent,
   'ai-governance/model-inventory': modelInventoryContent,
   'ai-governance/model-lifecycle': modelLifecycleContent,
