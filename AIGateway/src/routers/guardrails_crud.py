@@ -185,10 +185,10 @@ async def update_guardrail_rule(rule_id: int, request: Request):
 
     # Record change history
     await record_guardrail_change(
-        org_id=org_id,
-        user_id=user_id,
-        rule_id=rule_id,
-        changes=body,
+        organization_id=org_id,
+        guardrail_id=rule_id,
+        changed_by=user_id,
+        action="updated",
     )
 
     # Notify on is_active toggle
