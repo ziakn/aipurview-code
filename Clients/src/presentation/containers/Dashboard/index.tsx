@@ -23,6 +23,7 @@ import { useActiveModule } from "../../../application/hooks/useActiveModule";
 import AppSwitcher from "../../components/AppSwitcher";
 import { ContextSidebar } from "../../components/ContextSidebar";
 import { useAuth } from "../../../application/hooks/useAuth";
+import { status } from "../../themes/palette";
 
 interface DashboardProps {
   reloadTrigger: boolean;
@@ -362,7 +363,7 @@ const Dashboard: FC<DashboardProps> = ({ reloadTrigger }) => {
             submitButtonText="Delete demo data"
             onSubmit={handleDeleteDemoData}
             isSubmitting={showToastNotification}
-            submitButtonColor="#D32F2F"
+            submitButtonColor={status.error.text}
             maxWidth="480px"
           >
             <Typography variant="body2" sx={{ color: "text.secondary" }}>

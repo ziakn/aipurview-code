@@ -168,7 +168,7 @@ const ReviewAgentModal: React.FC<ReviewAgentModalProps> = ({
                 sx={{
                   minHeight: 28,
                   "& .MuiTab-root": { minHeight: 28, fontSize: 12, py: 0, textTransform: "none" },
-                  "& .MuiTabs-indicator": { backgroundColor: "#13715B" },
+                  "& .MuiTabs-indicator": { backgroundColor: "brand.primary" },
                 }}
               >
                 <Tab label="Categories" value="categories" />
@@ -230,7 +230,7 @@ const ReviewAgentModal: React.FC<ReviewAgentModalProps> = ({
             ) : (
               <CustomizableButton
                 variant="outlined"
-                sx={{ border: "1px solid #d0d5dd" }}
+                sx={{ border: "1px solid borderPalette.dark" }}
                 icon={<LinkIcon size={14} strokeWidth={1.5} />}
                 text="Link to model"
                 onClick={() => setIsLinkModalOpen(true)}
@@ -269,7 +269,7 @@ const ReviewAgentModal: React.FC<ReviewAgentModalProps> = ({
         <Stack direction="row" justifyContent="flex-end" gap={1} sx={{ p: "16px 24px" }}>
           <CustomizableButton
             variant="outlined"
-            sx={{ border: "1px solid #d0d5dd" }}
+            sx={{ border: "1px solid borderPalette.dark" }}
             onClick={() => setIsOpen(false)}
           >
             Cancel
@@ -277,7 +277,7 @@ const ReviewAgentModal: React.FC<ReviewAgentModalProps> = ({
           {agent.review_status !== "rejected" && (
             <CustomizableButton
               variant="outlined"
-              sx={{ border: "1px solid #D32F2F", color: "#D32F2F" }}
+              sx={{ border: "1px solid status.error.text", color: "status.error.text" }}
               onClick={() => handleReview("rejected")}
               isDisabled={isSubmitting}
             >
@@ -287,7 +287,7 @@ const ReviewAgentModal: React.FC<ReviewAgentModalProps> = ({
           {agent.review_status !== "confirmed" && (
             <CustomizableButton
               variant="contained"
-              sx={{ backgroundColor: "#13715B", border: "1px solid #13715B" }}
+              sx={{ backgroundColor: "brand.primary", border: "1px solid brand.primary" }}
               onClick={() => handleReview("confirmed")}
               isDisabled={isSubmitting}
             >

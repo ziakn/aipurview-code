@@ -29,6 +29,7 @@ import { Dayjs } from "dayjs";
 import { useState, useEffect, Suspense, lazy, useRef } from "react";
 import { CustomizableButton } from "../../button/customizable-button";
 import TabBar from "../../TabBar";
+import { text } from "../../../themes/palette";
 const NotesTab = lazy(() => import("../../Notes/NotesTab"));
 const AddNewRiskForm = lazy(() => import("../../AddNewRiskForm"));
 import { useAuth } from "../../../../application/hooks/useAuth";
@@ -1107,12 +1108,12 @@ const VWISO27001ClauseDrawerDialog = ({
                           minWidth: 155,
                           height: 25,
                           fontSize: 11,
-                          border: "1px solid #D0D5DD",
+                          border: "1px solid borderPalette.dark",
                           backgroundColor: "white",
-                          color: "#344054",
+                          color: "text.secondary",
                           "&:hover": {
-                            backgroundColor: "#F9FAFB",
-                            border: "1px solid #D0D5DD",
+                            backgroundColor: "background.accent",
+                            border: "1px solid borderPalette.dark",
                           },
                         }}
                         disableRipple={
@@ -1218,7 +1219,7 @@ const VWISO27001ClauseDrawerDialog = ({
                                 {file.fileName}
                               </Typography>
                               <Typography
-                                sx={{ fontSize: 11, color: "#6B7280" }}
+                                sx={{ fontSize: 11, color: "status.default.text" }}
                               >
                                 {file.size ? `${((file.size || 0) / 1024).toFixed(1)} KB` : ""}
                                 {file.size && file.source ? " • " : ""}
@@ -1397,7 +1398,7 @@ const VWISO27001ClauseDrawerDialog = ({
                             sx={{
                               color: "#4C7BF4",
                               "&:hover": {
-                                color: "#D32F2F",
+                                color: "status.error.text",
                                 backgroundColor: "rgba(211, 47, 47, 0.08)",
                               },
                             }}
@@ -1425,7 +1426,7 @@ const VWISO27001ClauseDrawerDialog = ({
                     <Typography variant="body2" sx={{ mb: 1 }}>
                       No evidence files uploaded yet
                     </Typography>
-                    <Typography variant="caption" color="#9CA3AF">
+                    <Typography variant="caption" color={text.disabled}>
                       Click "Add evidence files" to upload documentation for
                       this requirement
                     </Typography>

@@ -5,6 +5,12 @@ import { apiServices } from "../../../infrastructure/api/networkServices";
 
 export const sectionTitleSx = { fontWeight: 600, fontSize: 16 };
 
+/** Guardrail action colors — blocked (red) and masked (amber) */
+export const GUARDRAIL_ACTION_COLORS = { blocked: "#DC2626", masked: "#D97706" } as const;
+
+/** Format entity_type from DB snake_case to human-readable */
+export const formatEntityType = (t?: string | null) => (t || "Unknown").replace(/_/g, " ");
+
 export function useCardSx() {
   const theme = useTheme();
   return {

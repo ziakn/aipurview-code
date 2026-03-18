@@ -19,12 +19,19 @@ import {
   Area,
   Legend,
 } from "recharts";
+import {
+  GradientDef,
+  GradientProgressBar,
+  DonutCenterLabel,
+  chartTooltipStyle,
+  getProviderColor,
+} from "../../../components/Charts/chartEnhancements";
 import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtended";
 import { EmptyState } from "../../../components/EmptyState";
 import EmptyStateTip from "../../../components/EmptyState/EmptyStateTip";
 import { apiServices } from "../../../../infrastructure/api/networkServices";
 import palette, { chart as chartPalette } from "../../../themes/palette";
-import { sectionTitleSx, useCardSx } from "../shared";
+import { sectionTitleSx, useCardSx, GUARDRAIL_ACTION_COLORS, formatEntityType } from "../shared";
 import { useUserGuideSidebarContext } from "../../../components/UserGuide/UserGuideSidebarContext";
 import MockDashboard from "./MockDashboard";
 import OnboardingOverlay from "./OnboardingOverlay";
@@ -37,7 +44,7 @@ const formatDayTick = (v: string, period: string) => {
 };
 
 const PERIOD_OPTIONS = [
-  { _id: "1d", name: "Today" },
+  { _id: "1d", name: "Last 24 hours" },
   { _id: "7d", name: "7 days" },
   { _id: "30d", name: "30 days" },
   { _id: "90d", name: "90 days" },
@@ -220,21 +227,8 @@ export default function SpendDashboardPage() {
         </EmptyState>
       )}
 
-      {!loading && hasData && byDay.length === 0 && byModel.length === 0 && byEndpoint.length === 0 && byUser.length === 0 && (
-        <Box sx={{
-          p: "16px",
-          borderRadius: "4px",
-          border: `1px solid ${palette.border.light}`,
-          textAlign: "center",
-        }}>
-          <Typography fontSize={13} color="text.secondary">
-            No detailed breakdowns available for this period. Try selecting a longer time range.
-          </Typography>
-        </Box>
-      )}
-
       {/* Cost over time chart */}
-      {!loading && byDay.length > 0 && (
+      {!loading && (
         <Box sx={cardSx}>
           <Stack gap="12px">
             <Stack direction="row" alignItems="center" gap="6px">
@@ -245,6 +239,9 @@ export default function SpendDashboardPage() {
             </Stack>
             <ResponsiveContainer width="100%" height={260} style={{ outline: "none" }}>
               <BarChart data={byDay}>
+                <defs>
+                  <GradientDef id="costBarGradient" color={palette.brand.primary} />
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke={palette.border.light} />
                 <XAxis
                   dataKey="day"
@@ -259,22 +256,19 @@ export default function SpendDashboardPage() {
                   axisLine={{ stroke: palette.border.light }}
                   tickFormatter={(v) => `$${v}`}
                 />
-                <Tooltip
-                  contentStyle={{ fontSize: 12, borderRadius: 4, border: `1px solid ${palette.border.light}` }}
-                  formatter={(value: number) => [`$${value.toFixed(6)}`, "Cost"]}
-                />
-                <Bar dataKey="total_cost" fill={chartPalette[0]} radius={[4, 4, 0, 0]} />
+                <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number) => [`$${value.toFixed(6)}`, "Cost"]} />
+                <Bar dataKey="total_cost" fill={palette.brand.primary} fillOpacity={0.75} stroke={palette.brand.primary} strokeWidth={0.5} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </Stack>
         </Box>
       )}
 
-      {/* Two-column: Cost by model + Cost by endpoint */}
-      {!loading && (byModel.length > 0 || byEndpoint.length > 0) && (
+      {/* Two-column: Cost by model + Cost per request */}
+      {!loading && (
         <Stack direction={{ xs: "column", md: "row" }} gap="16px">
           {/* Cost by model */}
-          {byModel.length > 0 && (
+          {(
             <Box sx={{ ...cardSx, flex: 1 }}>
               <Stack gap="12px">
                 <Stack direction="row" alignItems="center" gap="6px">
@@ -342,55 +336,63 @@ export default function SpendDashboardPage() {
             </Box>
           )}
 
-          {/* Cost by endpoint */}
-          {byEndpoint.length > 0 && (
+          {/* Cost per request by model */}
+          {(
             <Box sx={{ ...cardSx, flex: 1 }}>
               <Stack gap="12px">
                 <Stack direction="row" alignItems="center" gap="6px">
-                  <Typography sx={sectionTitleSx}>Cost by endpoint</Typography>
-                  <MuiTooltip title="Spend and request volume per configured endpoint" arrow placement="top">
+                  <Typography sx={sectionTitleSx}>Cost per request</Typography>
+                  <MuiTooltip title="Average cost per request by model — helps identify which models give the best value per call" arrow placement="top">
                     <Box sx={{ display: "flex", cursor: "help" }}><Info size={14} color={palette.text.disabled} /></Box>
                   </MuiTooltip>
                 </Stack>
                 <Stack gap="6px" sx={{ maxHeight: 270, overflowY: "auto" }}>
                   {(() => {
-                    const maxCost = Math.max(...byEndpoint.map((ep: any) => Number(ep.total_cost)), 0.000001);
-                    return byEndpoint.map((ep: any, i: number) => {
-                      const pct = (Number(ep.total_cost) / maxCost) * 100;
+                    const modelsWithCpr = byModel
+                      .map((m: any) => ({
+                        ...m,
+                        cost_per_req: Number(m.total_requests) > 0 ? Number(m.total_cost) / Number(m.total_requests) : 0,
+                      }))
+                      .sort((a: any, b: any) => b.cost_per_req - a.cost_per_req);
+                    const maxCpr = Math.max(...modelsWithCpr.map((m: any) => m.cost_per_req), 0.000001);
+                    return modelsWithCpr.map((m: any, i: number) => {
+                      const pct = (m.cost_per_req / maxCpr) * 100;
                       return (
-                    <Stack
-                      key={ep.group_key}
-                      direction="row"
-                      justifyContent="space-between"
-                      alignItems="center"
-                      sx={{
-                        p: "22px 14px",
-                        borderRadius: "4px",
-                        border: `1px solid ${palette.border.light}`,
-                        position: "relative",
-                        overflow: "hidden",
-                      }}
-                    >
-                      <Box sx={{
-                        position: "absolute", left: 0, top: 0, bottom: 0,
-                        width: `${pct}%`,
-                        backgroundColor: palette.border.light,
-                        opacity: 0.4,
-                        transition: "width 0.3s",
-                      }} />
-                      <Stack direction="row" alignItems="center" gap="8px" sx={{ position: "relative", zIndex: 1 }}>
-                        <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: chartPalette[i % chartPalette.length], flexShrink: 0 }} />
-                        <Typography sx={{ fontSize: 12 }}>{ep.group_key}</Typography>
-                      </Stack>
-                      <Stack direction="row" gap="12px" alignItems="center" sx={{ position: "relative", zIndex: 1 }}>
-                        <Typography sx={{ fontSize: 11, color: palette.text.tertiary }}>
-                          {Number(ep.total_requests).toLocaleString()} req
-                        </Typography>
-                        <Typography sx={{ fontSize: 12, fontWeight: 600, minWidth: 70, textAlign: "right" }}>
-                          ${Number(ep.total_cost).toFixed(4)}
-                        </Typography>
-                      </Stack>
-                    </Stack>
+                        <Stack
+                          key={m.group_key}
+                          direction="row"
+                          justifyContent="space-between"
+                          alignItems="center"
+                          sx={{
+                            p: "22px 14px",
+                            borderRadius: "4px",
+                            border: `1px solid ${palette.border.light}`,
+                            position: "relative",
+                            overflow: "hidden",
+                          }}
+                        >
+                          <Box sx={{
+                            position: "absolute", left: 0, top: 0, bottom: 0,
+                            width: `${pct}%`,
+                            backgroundColor: i === modelsWithCpr.length - 1 ? `${palette.brand.primary}15` : palette.border.light,
+                            opacity: 0.4,
+                            transition: "width 0.3s",
+                          }} />
+                          <Stack direction="row" alignItems="center" gap="8px" sx={{ flex: 1, minWidth: 0, position: "relative", zIndex: 1 }}>
+                            <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: chartPalette[i % chartPalette.length], flexShrink: 0 }} />
+                            <Typography sx={{ fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                              {m.group_key}
+                            </Typography>
+                          </Stack>
+                          <Stack direction="row" gap="12px" alignItems="center" sx={{ flexShrink: 0, position: "relative", zIndex: 1 }}>
+                            <Typography sx={{ fontSize: 11, color: palette.text.tertiary }}>
+                              {Number(m.total_requests).toLocaleString()} req
+                            </Typography>
+                            <Typography sx={{ fontSize: 12, fontWeight: 600, minWidth: 80, textAlign: "right", fontFamily: "monospace" }}>
+                              ${m.cost_per_req.toFixed(6)}
+                            </Typography>
+                          </Stack>
+                        </Stack>
                       );
                     });
                   })()}
@@ -402,10 +404,10 @@ export default function SpendDashboardPage() {
       )}
 
       {/* Error rate + Tokens per request */}
-      {!loading && (errorRateByDay.length > 0 || tokensPerEndpoint.length > 0) && (
+      {!loading && (
         <Stack direction={{ xs: "column", md: "row" }} gap="16px">
           {/* Error rate over time */}
-          {errorRateByDay.length > 0 && (
+          {(
             <Box sx={{ ...cardSx, flex: 1 }}>
               <Stack gap="12px">
                 <Stack direction="row" alignItems="center" gap="6px">
@@ -416,6 +418,9 @@ export default function SpendDashboardPage() {
                 </Stack>
                 <ResponsiveContainer width="100%" height={180} style={{ outline: "none" }}>
                   <AreaChart data={errorRateByDay}>
+                    <defs>
+                      <GradientDef id="errorGradient" color={GUARDRAIL_ACTION_COLORS.blocked} />
+                    </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke={palette.border.light} />
                     <XAxis
                       dataKey="day"
@@ -430,11 +435,8 @@ export default function SpendDashboardPage() {
                       axisLine={{ stroke: palette.border.light }}
                       tickFormatter={(v) => `${v}%`}
                     />
-                    <Tooltip
-                      contentStyle={{ fontSize: 12, borderRadius: 4, border: `1px solid ${palette.border.light}` }}
-                      formatter={(value: number, name: string) => [name === "error_rate" ? `${value}%` : value, name === "error_rate" ? "Error rate" : "Errors"]}
-                    />
-                    <Area type="monotone" dataKey="error_rate" stroke="#DC2626" fill="#DC262620" strokeWidth={2} />
+                    <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number, name: string) => [name === "error_rate" ? `${value}%` : value, name === "error_rate" ? "Error rate" : "Errors"]} />
+                    <Area type="monotone" dataKey="error_rate" stroke={GUARDRAIL_ACTION_COLORS.blocked} fill="url(#errorGradient)" strokeWidth={2} />
                   </AreaChart>
                 </ResponsiveContainer>
               </Stack>
@@ -442,7 +444,7 @@ export default function SpendDashboardPage() {
           )}
 
           {/* Tokens per request by endpoint */}
-          {tokensPerEndpoint.length > 0 && (
+          {(
             <Box sx={{ ...cardSx, flex: 1 }}>
               <Stack gap="12px">
                 <Stack direction="row" alignItems="center" gap="6px">
@@ -469,7 +471,7 @@ export default function SpendDashboardPage() {
                       width={120}
                     />
                     <Tooltip
-                      contentStyle={{ fontSize: 12, borderRadius: 4, border: `1px solid ${palette.border.light}` }}
+                      contentStyle={chartTooltipStyle}
                       formatter={(value: number, name: string) => [value.toLocaleString(), name === "avg_prompt_tokens" ? "Prompt" : "Completion"]}
                     />
                     <Legend wrapperStyle={{ fontSize: 11 }} />
@@ -484,10 +486,10 @@ export default function SpendDashboardPage() {
       )}
 
       {/* Cost by provider + Guardrail detections */}
-      {!loading && (byProvider.length > 0 || guardrailStats?.byDay?.length > 0) && (
+      {!loading && (
         <Stack direction={{ xs: "column", md: "row" }} gap="16px">
           {/* Cost by provider — donut chart */}
-          {byProvider.length > 0 && (
+          {(
             <Box sx={{ ...cardSx, flex: 1 }}>
               <Stack gap="12px">
                 <Stack direction="row" alignItems="center" gap="6px">
@@ -497,29 +499,29 @@ export default function SpendDashboardPage() {
                   </MuiTooltip>
                 </Stack>
                 <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                  <ResponsiveContainer width={160} height={160} style={{ outline: "none" }}>
-                    <PieChart>
-                      <Pie
-                        data={byProvider}
-                        dataKey="total_cost"
-                        nameKey="group_key"
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={45}
-                        outerRadius={70}
-                        paddingAngle={2}
-                        strokeWidth={0}
-                      >
-                        {byProvider.map((_: any, i: number) => (
-                          <Cell key={i} fill={chartPalette[i % chartPalette.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        contentStyle={{ fontSize: 12, borderRadius: 4, border: `1px solid ${palette.border.light}` }}
-                        formatter={(value: number) => [`$${value.toFixed(4)}`, "Cost"]}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
+                  <Box sx={{ position: "relative", width: 160, height: 160 }}>
+                    <ResponsiveContainer width={160} height={160} style={{ outline: "none" }}>
+                      <PieChart>
+                        <Pie
+                          data={byProvider}
+                          dataKey="total_cost"
+                          nameKey="group_key"
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={45}
+                          outerRadius={70}
+                          paddingAngle={2}
+                          strokeWidth={0}
+                        >
+                          {byProvider.map((p: any, i: number) => (
+                            <Cell key={i} fill={getProviderColor(p.group_key, i)} />
+                          ))}
+                        </Pie>
+                        <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number) => [`$${value.toFixed(4)}`, "Cost"]} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <DonutCenterLabel value={`$${byProvider.reduce((s: number, p: any) => s + Number(p.total_cost), 0).toFixed(2)}`} />
+                  </Box>
                   <Stack gap="6px" flex={1}>
                     {(() => {
                       const totalProviderCost = byProvider.reduce((s: number, pp: any) => s + Number(pp.total_cost), 0);
@@ -528,7 +530,7 @@ export default function SpendDashboardPage() {
                       return (
                         <Stack key={p.group_key} direction="row" justifyContent="space-between" alignItems="center">
                           <Stack direction="row" alignItems="center" gap="8px">
-                            <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: chartPalette[i % chartPalette.length], flexShrink: 0 }} />
+                            <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: getProviderColor(p.group_key, i), flexShrink: 0 }} />
                             <Typography sx={{ fontSize: 12 }}>{p.group_key}</Typography>
                           </Stack>
                           <Stack direction="row" gap="8px" alignItems="center">
@@ -545,14 +547,8 @@ export default function SpendDashboardPage() {
             </Box>
           )}
 
-        </Stack>
-      )}
-
-      {/* Cost by provider + Guardrail detections */}
-      {!loading && (byProvider.length > 0 || guardrailStats?.byDay?.length > 0) && (
-        <Stack direction={{ xs: "column", md: "row" }} gap="16px">
           {/* Guardrail detections trend */}
-          {guardrailStats?.byDay?.length > 0 && (
+          {(
             <Box sx={{ ...cardSx, flex: 1 }}>
               <Stack gap="12px">
                 <Stack direction="row" alignItems="center" gap="6px">
@@ -561,8 +557,22 @@ export default function SpendDashboardPage() {
                     <Box sx={{ display: "flex", cursor: "help" }}><Info size={14} color={palette.text.disabled} /></Box>
                   </MuiTooltip>
                 </Stack>
-                <ResponsiveContainer width="100%" height={180} style={{ outline: "none" }}>
-                  <AreaChart data={guardrailStats.byDay}>
+                <Stack direction="row" gap="12px" sx={{ mb: "4px" }}>
+                  <Stack direction="row" alignItems="center" gap="4px">
+                    <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: GUARDRAIL_ACTION_COLORS.blocked }} />
+                    <Typography sx={{ fontSize: 11, color: palette.text.tertiary }}>Blocked</Typography>
+                  </Stack>
+                  <Stack direction="row" alignItems="center" gap="4px">
+                    <Box sx={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: GUARDRAIL_ACTION_COLORS.masked }} />
+                    <Typography sx={{ fontSize: 11, color: palette.text.tertiary }}>Masked</Typography>
+                  </Stack>
+                </Stack>
+                <ResponsiveContainer width="100%" height={160} style={{ outline: "none" }}>
+                  <AreaChart data={guardrailStats?.byDay || []} margin={{ left: 0, right: 0 }}>
+                    <defs>
+                      <GradientDef id="blockedGradient" color={GUARDRAIL_ACTION_COLORS.blocked} />
+                      <GradientDef id="maskedGradient" color={GUARDRAIL_ACTION_COLORS.masked} />
+                    </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke={palette.border.light} />
                     <XAxis
                       dataKey="day"
@@ -575,11 +585,11 @@ export default function SpendDashboardPage() {
                       tick={{ fontSize: 11, fill: palette.text.tertiary }}
                       tickLine={false}
                       axisLine={{ stroke: palette.border.light }}
+                      width={30}
                     />
-                    <Tooltip contentStyle={{ fontSize: 12, borderRadius: 4, border: `1px solid ${palette.border.light}` }} />
-                    <Legend wrapperStyle={{ fontSize: 11 }} />
-                    <Area type="monotone" dataKey="blocked" stackId="1" stroke="#DC2626" fill="#DC262630" strokeWidth={1.5} name="Blocked" />
-                    <Area type="monotone" dataKey="masked" stackId="1" stroke="#D97706" fill="#D9770630" strokeWidth={1.5} name="Masked" />
+                    <Tooltip contentStyle={chartTooltipStyle} />
+                    <Area type="monotone" dataKey="blocked" stackId="1" stroke={GUARDRAIL_ACTION_COLORS.blocked} fill="url(#blockedGradient)" strokeWidth={1.5} />
+                    <Area type="monotone" dataKey="masked" stackId="1" stroke={GUARDRAIL_ACTION_COLORS.masked} fill="url(#maskedGradient)" strokeWidth={1.5} />
                   </AreaChart>
                 </ResponsiveContainer>
               </Stack>
@@ -590,7 +600,7 @@ export default function SpendDashboardPage() {
       )}
 
       {/* Top users */}
-      {!loading && byUser.length > 0 && (
+      {!loading && (
         <Box sx={cardSx}>
           <Stack gap="12px">
             <Stack direction="row" alignItems="center" gap="6px">
@@ -635,55 +645,113 @@ export default function SpendDashboardPage() {
           </Stack>
         </Box>
       )}
-      {/* Guardrails activity */}
-      {guardrailStats && (Number(guardrailStats.summary?.total_checks) > 0 || guardrailStats.byDay?.length > 0) && (
+      {/* Guardrails activity — redesigned */}
+      {!loading && (
         <Box sx={cardSx}>
           <Stack gap="12px">
-            <Stack direction="row" alignItems="center" gap="6px">
-              <Typography sx={sectionTitleSx}>Guardrails activity</Typography>
-              <MuiTooltip title="Guardrail detections for this period — blocked requests were rejected, masked requests had content redacted" arrow placement="top">
-                <Box sx={{ display: "flex", cursor: "help" }}><Info size={14} color={palette.text.disabled} /></Box>
-              </MuiTooltip>
-            </Stack>
-            <Stack direction="row" gap="16px">
-              <StatCard
-                title="Blocked"
-                value={String(guardrailStats.summary?.blocked_count ?? 0)}
-                Icon={ShieldOff}
-                highlight={Number(guardrailStats.summary?.blocked_count) > 0}
-                tooltip="Requests blocked by guardrail rules in this period"
-              />
-              <StatCard
-                title="Masked"
-                value={String(guardrailStats.summary?.masked_count ?? 0)}
-                Icon={ShieldCheck}
-                tooltip="Requests with content masked before reaching the LLM"
-              />
-            </Stack>
-            {guardrailStats.byType?.length > 0 && (
-              <Stack gap="8px">
-                {guardrailStats.byType.map((t: any, i: number) => (
-                  <Stack
-                    key={`${t.guardrail_type}-${t.action_taken}`}
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    sx={{
-                      p: "8px 12px",
-                      borderRadius: "4px",
-                      border: `1px solid ${palette.border.light}`,
-                    }}
-                  >
-                    <Typography sx={{ fontSize: 13 }}>
-                      {t.guardrail_type === "pii" ? "PII detection" : "Content filter"} — {t.action_taken}
-                    </Typography>
-                    <Typography sx={{ fontSize: 13, fontWeight: 600 }}>
-                      {Number(t.count).toLocaleString()}
-                    </Typography>
-                  </Stack>
-                ))}
+            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pb: "8px", borderBottom: `1px solid ${palette.border.light}` }}>
+              <Stack direction="row" alignItems="center" gap="6px">
+                <Typography sx={sectionTitleSx}>Guardrails activity</Typography>
+                <MuiTooltip title="What your guardrails caught in this period" arrow placement="top">
+                  <Box sx={{ display: "flex", cursor: "help" }}><Info size={14} color={palette.text.disabled} /></Box>
+                </MuiTooltip>
               </Stack>
-            )}
+              {/* Summary badges */}
+              <Stack direction="row" gap="12px" alignItems="center">
+                <Stack direction="row" alignItems="center" gap="4px">
+                  <ShieldOff size={13} strokeWidth={1.5} color={GUARDRAIL_ACTION_COLORS.blocked} />
+                  <Typography sx={{ fontSize: 13, fontWeight: 600, color: GUARDRAIL_ACTION_COLORS.blocked }}>
+                    {guardrailStats?.summary?.blocked_count ?? 0}
+                  </Typography>
+                  <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>blocked</Typography>
+                </Stack>
+                <Stack direction="row" alignItems="center" gap="4px">
+                  <ShieldCheck size={13} strokeWidth={1.5} color={GUARDRAIL_ACTION_COLORS.masked} />
+                  <Typography sx={{ fontSize: 13, fontWeight: 600, color: GUARDRAIL_ACTION_COLORS.masked }}>
+                    {guardrailStats?.summary?.masked_count ?? 0}
+                  </Typography>
+                  <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>masked</Typography>
+                </Stack>
+                <Typography sx={{ fontSize: 12, color: palette.text.disabled }}>
+                  {guardrailStats?.summary?.total_checks ?? 0} total
+                </Typography>
+              </Stack>
+            </Stack>
+
+            {/* Two-column: Top detections + By endpoint */}
+            <Stack direction={{ xs: "column", md: "row" }} gap="16px">
+              {/* Top detections */}
+              <Box flex={1}>
+                <Typography sx={{ fontSize: 11, fontWeight: 600, color: palette.text.tertiary, textTransform: "uppercase", mb: "8px" }}>
+                  Top detections
+                </Typography>
+                <Stack gap="4px">
+                  {(guardrailStats?.topDetections || []).length === 0 ? (
+                    <Typography sx={{ fontSize: 12, color: palette.text.disabled, py: "8px" }}>No detections in this period</Typography>
+                  ) : (
+                    (guardrailStats?.topDetections || []).slice(0, 6).map((d: any, i: number) => (
+                      <Stack
+                        key={`${d.entity_type}-${d.action_taken}-${i}`}
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        sx={{ p: "4px 8px", borderRadius: "4px", "&:hover": { backgroundColor: palette.background.alt } }}
+                      >
+                        <Stack direction="row" alignItems="center" gap="6px">
+                          <Box sx={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: d.action_taken === "blocked" ? GUARDRAIL_ACTION_COLORS.blocked : GUARDRAIL_ACTION_COLORS.masked, flexShrink: 0 }} />
+                          <Typography sx={{ fontSize: 12 }}>
+                            {formatEntityType(d.entity_type)}
+                          </Typography>
+                        </Stack>
+                        <Typography sx={{ fontSize: 12, fontWeight: 600, minWidth: "30px", textAlign: "right" }}>
+                          {d.count}
+                        </Typography>
+                      </Stack>
+                    ))
+                  )}
+                </Stack>
+              </Box>
+
+              {/* By endpoint */}
+              <Box flex={1}>
+                <Typography sx={{ fontSize: 11, fontWeight: 600, color: palette.text.tertiary, textTransform: "uppercase", mb: "8px" }}>
+                  By endpoint
+                </Typography>
+                <Stack gap="4px">
+                  {(guardrailStats?.byEndpoint || []).length === 0 ? (
+                    <Typography sx={{ fontSize: 12, color: palette.text.disabled, py: "8px" }}>No endpoint data</Typography>
+                  ) : (
+                    (guardrailStats?.byEndpoint || []).slice(0, 6).map((ep: any, i: number) => (
+                      <Stack
+                        key={ep.endpoint_name}
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        sx={{ p: "4px 8px", borderRadius: "4px", "&:hover": { backgroundColor: palette.background.alt } }}
+                      >
+                        <Typography sx={{ fontSize: 12 }}>{ep.endpoint_name}</Typography>
+                        <Stack direction="row" gap="8px" alignItems="center">
+                          {ep.blocked > 0 && <Typography sx={{ fontSize: 11, color: GUARDRAIL_ACTION_COLORS.blocked }}>{ep.blocked} blocked</Typography>}
+                          {ep.masked > 0 && <Typography sx={{ fontSize: 11, color: GUARDRAIL_ACTION_COLORS.masked }}>{ep.masked} masked</Typography>}
+                          <Typography sx={{ fontSize: 12, fontWeight: 600, minWidth: "30px", textAlign: "right" }}>{ep.count}</Typography>
+                        </Stack>
+                      </Stack>
+                    ))
+                  )}
+                </Stack>
+              </Box>
+            </Stack>
+
+            {/* View all logs link */}
+            <Box sx={{ pt: "4px", borderTop: `1px solid ${palette.border.light}` }}>
+              <Typography
+                component="a"
+                href="/ai-gateway/logs?tab=guardrails"
+                sx={{ fontSize: 12, color: palette.brand.primary, textDecoration: "none", "&:hover": { textDecoration: "underline" }, cursor: "pointer" }}
+              >
+                View all guardrail logs
+              </Typography>
+            </Box>
           </Stack>
         </Box>
       )}

@@ -205,7 +205,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                 sx={{
                   fontSize: 20,
                   fontWeight: 600,
-                  color: isDark ? "#000000" : "#FFFFFF",
+                  color: isDark ? "text.black" : "background.main",
                   lineHeight: 1.3,
                 }}
               >
@@ -322,7 +322,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                       color: isDone
                         ? isDark ? "#b52180" : "#4ADE80"
                         : isActive
-                        ? isDark ? "#000000" : "#FFFFFF"
+                        ? isDark ? "text.black" : "background.main"
                         : isDark ? "#6b5c47" : "#94A3B8",
                     }}
                   >
@@ -335,7 +335,7 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
         </Box>
 
         {/* ── Light body — renders step content (any ReactNode) ── */}
-        <Box sx={{ bgcolor: "#FFFFFF", padding: "32px" }}>
+        <Box sx={{ bgcolor: "background.main", padding: "32px" }}>
           {steps[step]?.content}
         </Box>
 
@@ -357,11 +357,11 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
               minWidth: "70px",
               height: 34,
               fontSize: 13,
-              border: "1px solid #D0D5DD",
-              color: "#344054",
+              border: "1px solid borderPalette.dark",
+              color: "text.secondary",
               "&:hover": {
-                bgcolor: "#F9FAFB",
-                border: "1px solid #D0D5DD",
+                bgcolor: "background.accent",
+                border: "1px solid borderPalette.dark",
               },
             }}
           />
@@ -373,9 +373,9 @@ const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
               minWidth: "70px",
               height: 34,
               fontSize: 13,
-              bgcolor: "#13715B",
+              bgcolor: "brand.primary",
               "&:hover": {
-                bgcolor: "#0F5A47",
+                bgcolor: "brand.primaryHover",
               },
             }}
           />

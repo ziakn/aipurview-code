@@ -22,7 +22,7 @@ export const commonStyles = {
   } as SxProps<Theme>,
 
   title: {
-    color: "#1A1919",
+    color: "text.primary",
     fontWeight: 600,
     mb: "6px",
     fontSize: 16,
@@ -30,7 +30,7 @@ export const commonStyles = {
 
   accordion: {
     marginTop: "9px",
-    border: "1px solid #d0d5dd",
+    border: "1px solid borderPalette.dark",
     width: "100%",
     marginLeft: "1.5px",
     borderRadius: "4px",

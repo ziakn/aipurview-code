@@ -175,10 +175,10 @@ export function LinkedModelsView({
                     ...singleTheme.tableStyles.primary.body.row,
                     "&:hover": {
                       cursor: model.id ? "pointer" : "default",
-                      backgroundColor: "#F9FAFB",
+                      backgroundColor: "background.accent",
                     },
                     "&:hover td": {
-                      backgroundColor: "#F9FAFB",
+                      backgroundColor: "background.accent",
                     },
                   }}
                 >

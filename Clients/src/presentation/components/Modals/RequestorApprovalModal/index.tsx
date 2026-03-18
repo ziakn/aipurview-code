@@ -60,6 +60,7 @@ import DetailField from "./DetailField";
 import EntityDetailsSection from "./EntityDetailsSection";
 import { extractEntityDetails } from "./entityTypeConfig";
 import { dispatchFileApprovalChanged } from "../../../../application/events/fileEvents";
+import { background } from "../../../themes/palette";
 
 
 const getWorkflowChipProps = (value: string) => {
@@ -77,12 +78,12 @@ const getWorkflowChipProps = (value: string) => {
             color: "#F57C00",
         },
         "withdrawn": {
-            bg: "#F5F5F5",
+            bg: `${background.surface}`,
             color: "#616161",
         },
     };
 
-    const style = styles[value] || { bg: "#F5F5F5", color: "#616161" };
+    const style = styles[value] || { bg: `${background.surface}`, color: "#616161" };
 
     return {
         label: value.charAt(0).toUpperCase() + value.slice(1),
@@ -680,8 +681,8 @@ const RequestorApprovalModal: FC<IRequestorApprovalProps> = ({
                         <>
                             {/* Request Information */}
                             <Stack spacing={8} sx={{
-                                backgroundColor: "#F9FAFB",
-                                border: "1px solid #E5E7EB",
+                                backgroundColor: "background.accent",
+                                border: "1px solid status.default.border",
                                 borderRadius: "8px",
                                 padding: "16px",
                             }}>
@@ -726,7 +727,7 @@ const RequestorApprovalModal: FC<IRequestorApprovalProps> = ({
                                             sx={stepCircleStyle(theme, step.status === ApprovalStepStatus.Completed)}
                                         >
                                             {step.status === ApprovalStepStatus.Completed ? (
-                                                <Check size={12} color="#FFFFFF" />
+                                                <Check size={12} color={background.main} />
                                             ) : (
                                                 <Check size={12} color="#CCCCCC" strokeWidth={3} />
                                             )}

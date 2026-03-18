@@ -446,7 +446,7 @@ const Datasets: React.FC = () => {
             />
             <CustomizableButton
               variant="contained"
-              sx={{ backgroundColor: "#13715B", border: "1px solid #13715B", gap: "8px" }}
+              sx={{ backgroundColor: "brand.primary", border: "1px solid brand.primary", gap: "8px" }}
               text="Add new dataset"
               icon={<AddCircleOutlineIcon size={16} />}
               onClick={handleNewDatasetClick}

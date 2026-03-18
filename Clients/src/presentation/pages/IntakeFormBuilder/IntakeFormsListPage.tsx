@@ -422,7 +422,7 @@ export function IntakeFormsListPage() {
                 height: 34,
                 fontSize: "13px",
                 backgroundColor: theme.palette.primary.main,
-                "&:hover": { backgroundColor: "#0F5A47" },
+                "&:hover": { backgroundColor: "brand.primaryHover" },
                 display: "flex",
                 alignItems: "center",
                 gap: "6px",

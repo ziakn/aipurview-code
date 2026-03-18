@@ -290,7 +290,7 @@ const RisksView: FC<RisksViewProps> = memo(
         >
           <Typography
             component="h2"
-            sx={{ fontSize: 16, fontWeight: 600, color: "#1A1919" }}
+            sx={{ fontSize: 16, fontWeight: 600, color: "text.primary" }}
           >
             {title} risks
           </Typography>

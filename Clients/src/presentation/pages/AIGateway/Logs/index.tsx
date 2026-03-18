@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -9,6 +10,8 @@ import {
   TablePagination,
   useTheme,
 } from "@mui/material";
+import TabContext from "@mui/lab/TabContext";
+import TabBar from "../../../components/TabBar";
 import {
   FileText,
   ChevronDown,
@@ -31,10 +34,11 @@ import Chip from "../../../components/Chip";
 import { apiServices } from "../../../../infrastructure/api/networkServices";
 import { getPaginationRowCount, setPaginationRowCount } from "../../../../application/utils/paginationStorage";
 import palette from "../../../themes/palette";
-import { sectionTitleSx, useCardSx } from "../shared";
+import { sectionTitleSx, useCardSx, formatEntityType } from "../shared";
 
 const AUTO_REFRESH_INTERVAL_MS = 10_000;
 const SEARCH_DEBOUNCE_MS = 300;
+const GR_PAGE_SIZE = 50;
 
 type StatusFilter = "all" | "success" | "error";
 type SourceFilter = "all" | "playground" | "virtual-key";
@@ -151,6 +155,32 @@ const SOURCE_OPTIONS = [
 export default function LogsPage() {
   const theme = useTheme();
   const cardSx = useCardSx();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeLogTab = searchParams.get("tab") || "requests";
+
+  // Guardrail logs state
+  const [grLogs, setGrLogs] = useState<any[]>([]);
+  const [grTotal, setGrTotal] = useState(0);
+  const [grPage, setGrPage] = useState(0);
+  const [grLoading, setGrLoading] = useState(false);
+
+  const loadGuardrailLogs = useCallback(async () => {
+    setGrLoading(true);
+    try {
+      const res = await apiServices.get(`/ai-gateway/guardrails/logs/detail?period=30d&limit=${GR_PAGE_SIZE}&offset=${grPage * GR_PAGE_SIZE}`);
+      const data = res?.data?.data || {};
+      setGrLogs(data.logs || []);
+      setGrTotal(data.total || 0);
+    } catch {
+      // Silently handle
+    } finally {
+      setGrLoading(false);
+    }
+  }, [grPage]);
+
+  useEffect(() => {
+    if (activeLogTab === "guardrails") loadGuardrailLogs();
+  }, [activeLogTab, loadGuardrailLogs]);
 
   const [logs, setLogs] = useState<GatewayLog[]>([]);
   const [total, setTotal] = useState(0);
@@ -217,10 +247,10 @@ export default function LogsPage() {
     setExpandedId(null);
   }, [debouncedSearch, statusFilter, sourceFilter]);
 
-  // Reload when page/pagination/filters change
+  // Reload when page/pagination/filters change (skip when guardrails tab is active)
   useEffect(() => {
-    loadLogs(page, rowsPerPage);
-  }, [page, rowsPerPage, loadLogs]);
+    if (activeLogTab === "requests") loadLogs(page, rowsPerPage);
+  }, [page, rowsPerPage, loadLogs, activeLogTab]);
 
   // Auto-refresh: only restarts when toggled, reads page/rpp from refs
   const loadLogsRef = useRef(loadLogs);
@@ -262,7 +292,7 @@ export default function LogsPage() {
   return (
     <PageHeaderExtended
       title="Logs"
-      description="View request and response logs for all AI Gateway traffic."
+      description="View request, response, and guardrail detection logs for all AI Gateway traffic."
       tipBoxEntity="ai-gateway-logs"
       helpArticlePath="ai-gateway/logs"
       actionButton={
@@ -285,6 +315,20 @@ export default function LogsPage() {
         </Stack>
       }
     >
+      <TabContext value={activeLogTab}>
+        <TabBar
+          tabs={[
+            { label: "Request logs", value: "requests", icon: "FileText" as const },
+            { label: "Guardrail logs", value: "guardrails", icon: "Shield" as const },
+          ]}
+          activeTab={activeLogTab}
+          onChange={(_, v) => setSearchParams({ tab: v })}
+        />
+
+        <Box sx={{ mt: "16px" }}>
+        {/* ─── Request logs tab ──────────────────────────────── */}
+        {activeLogTab === "requests" && (
+          <>
       {/* Filter bar */}
       <Box
         sx={{
@@ -666,6 +710,90 @@ export default function LogsPage() {
           </Table>
         </Box>
       )}
+          </>
+        )}
+
+        {/* ─── Guardrail logs tab ────────────────────────────── */}
+        {activeLogTab === "guardrails" && (
+          <Box sx={cardSx}>
+            <Stack gap="12px">
+              <Typography sx={sectionTitleSx}>Guardrail detection logs</Typography>
+              <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>
+                Every blocked or masked request across all endpoints for the last 30 days.
+              </Typography>
+
+              {grLoading ? (
+                <Typography sx={{ fontSize: 13, color: palette.text.tertiary, py: "16px" }}>Loading...</Typography>
+              ) : grLogs.length === 0 ? (
+                <Typography sx={{ fontSize: 13, color: palette.text.tertiary, py: "16px" }}>No guardrail detections in this period.</Typography>
+              ) : (
+                <Stack>
+                  {/* Header */}
+                  <Stack direction="row" sx={{ p: "8px 0", borderBottom: `1px solid ${palette.border.light}` }}>
+                    <Typography sx={{ flex: 0.8, fontSize: 11, fontWeight: 600, color: palette.text.tertiary }}>TIME</Typography>
+                    <Typography sx={{ flex: 0.7, fontSize: 11, fontWeight: 600, color: palette.text.tertiary }}>TYPE</Typography>
+                    <Typography sx={{ flex: 0.6, fontSize: 11, fontWeight: 600, color: palette.text.tertiary }}>ACTION</Typography>
+                    <Typography sx={{ flex: 1, fontSize: 11, fontWeight: 600, color: palette.text.tertiary }}>ENTITY</Typography>
+                    <Typography sx={{ flex: 1.2, fontSize: 11, fontWeight: 600, color: palette.text.tertiary }}>MATCHED</Typography>
+                    <Typography sx={{ flex: 0.8, fontSize: 11, fontWeight: 600, color: palette.text.tertiary }}>ENDPOINT</Typography>
+                    <Typography sx={{ flex: 0.5, fontSize: 11, fontWeight: 600, color: palette.text.tertiary }}>RULE</Typography>
+                  </Stack>
+
+                  {/* Rows */}
+                  {grLogs.map((log: any) => (
+                    <Stack
+                      key={log.id}
+                      direction="row"
+                      alignItems="center"
+                      sx={{
+                        p: "6px 0",
+                        borderBottom: `1px solid ${palette.border.light}`,
+                        "&:last-child": { borderBottom: "none" },
+                      }}
+                    >
+                      <Typography sx={{ flex: 0.8, fontSize: 12, color: palette.text.tertiary }}>
+                        {new Date(log.created_at).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                      </Typography>
+                      <Typography sx={{ flex: 0.7, fontSize: 12 }}>
+                        {log.guardrail_type === "pii" ? "PII" : "Filter"}
+                      </Typography>
+                      <Box sx={{ flex: 0.6 }}>
+                        <Chip label={log.action_taken === "blocked" ? "Blocked" : "Masked"} size="small" />
+                      </Box>
+                      <Typography sx={{ flex: 1, fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {formatEntityType(log.entity_type)}
+                      </Typography>
+                      <Typography sx={{ flex: 1.2, fontSize: 11, fontFamily: "monospace", color: palette.text.tertiary, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {log.matched_text || "—"}
+                      </Typography>
+                      <Typography sx={{ flex: 0.8, fontSize: 12, color: palette.text.tertiary, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {log.endpoint_name || "—"}
+                      </Typography>
+                      <Typography sx={{ flex: 0.5, fontSize: 12, color: palette.text.tertiary, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {log.rule_name || "—"}
+                      </Typography>
+                    </Stack>
+                  ))}
+
+                  {/* Pagination */}
+                  {grTotal > GR_PAGE_SIZE && (
+                    <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pt: "12px" }}>
+                      <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
+                        Page {grPage + 1} of {Math.ceil(grTotal / GR_PAGE_SIZE)}  ({grTotal} total)
+                      </Typography>
+                      <Stack direction="row" gap="8px">
+                        <CustomizableButton text="Previous" variant="outlined" onClick={() => setGrPage(Math.max(0, grPage - 1))} isDisabled={grPage === 0} />
+                        <CustomizableButton text="Next" variant="outlined" onClick={() => setGrPage(grPage + 1)} isDisabled={(grPage + 1) * GR_PAGE_SIZE >= grTotal} />
+                      </Stack>
+                    </Stack>
+                  )}
+                </Stack>
+              )}
+            </Stack>
+          </Box>
+        )}
+        </Box>
+      </TabContext>
     </PageHeaderExtended>
   );
 }

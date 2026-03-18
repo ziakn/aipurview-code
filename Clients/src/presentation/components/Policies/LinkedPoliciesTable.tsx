@@ -38,6 +38,7 @@ import {
 
 import { singleTheme } from "../../themes";
 import { useUserMap } from "../../../presentation/hooks/userMap";
+import { text } from "../../themes/palette";
 
 interface LinkedObjectsTableProps {
     items: any[];
@@ -141,7 +142,7 @@ const SortableTableHead = ({
                                       color:
                                           sortConfig.key === column.id
                                               ? "primary.main"
-                                              : "#9CA3AF",
+                                              : `${text.disabled}`,
                                   }}
                               >
                                   {sortConfig.key === column.id &&
