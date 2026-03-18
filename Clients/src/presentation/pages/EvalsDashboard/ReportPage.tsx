@@ -357,7 +357,7 @@ export default function ReportPage({
                     justifyContent: "center",
                   }}
                 >
-                  <FileText size={20} strokeWidth={1.5} color=palette.brand.primary />
+                  <FileText size={20} strokeWidth={1.5} color={palette.brand.primary} />
                 </Box>
                 <Box>
                   <Typography sx={{ fontSize: 14, fontWeight: 600, color: palette.text.primary }}>
@@ -400,7 +400,7 @@ export default function ReportPage({
                   gap: 1.5,
                 }}
               >
-                <AlertTriangle size={16} color=palette.status.warning.text />
+                <AlertTriangle size={16} color={palette.status.warning.text} />
                 <Typography sx={{ fontSize: 12, color: palette.status.warning.text }}>
                   No completed experiments yet. Run at least one experiment to generate a report.
                 </Typography>
@@ -433,20 +433,20 @@ export default function ReportPage({
             }}
           >
             <Stack direction="row" alignItems="center" gap={1.5}>
-              <Eye size={16} color=palette.brand.primary />
+              <Eye size={16} color={palette.brand.primary} />
               <Typography sx={{ fontSize: 13, fontWeight: 600, color: palette.text.primary }}>
                 {pdfTitle}
               </Typography>
             </Stack>
             <Stack direction="row" alignItems="center" gap={0.5}>
               <IconButton size="small" onClick={handleDownloadCurrent} title="Download PDF">
-                <Download size={16} color=palette.text.secondary />
+                <Download size={16} color={palette.text.secondary} />
               </IconButton>
               <IconButton size="small" onClick={handleOpenInNewTab} title="Open in new tab">
-                <ExternalLink size={16} color=palette.text.secondary />
+                <ExternalLink size={16} color={palette.text.secondary} />
               </IconButton>
               <IconButton size="small" onClick={closePdfViewer} title="Close viewer">
-                <X size={16} color=palette.text.secondary />
+                <X size={16} color={palette.text.secondary} />
               </IconButton>
             </Stack>
           </Box>
@@ -506,7 +506,7 @@ export default function ReportPage({
                   >
                     <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
                       <Stack direction="row" alignItems="center" gap={1}>
-                        <FileText size={14} strokeWidth={1.5} color=palette.brand.primary />
+                        <FileText size={14} strokeWidth={1.5} color={palette.brand.primary} />
                         <Typography sx={{ fontSize: 13, color: theme.palette.text.primary, fontWeight: 500 }}>
                           {report.title}
                         </Typography>
