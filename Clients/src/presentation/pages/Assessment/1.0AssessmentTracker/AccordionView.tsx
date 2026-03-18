@@ -303,7 +303,7 @@ const AccordionView = ({
                 sx={{
                   ...styles.accordionSummary,
                   borderBottom:
-                    expandedSet.has(subtopic.id ?? 0) ? "1px solid border.dark" : "none",
+                    expandedSet.has(subtopic.id ?? 0) ? "1px solid #d0d5dd" : "none",
                 }}
               >
                 {/* Arrow Icon */}

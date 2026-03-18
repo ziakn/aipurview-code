@@ -306,7 +306,7 @@ const LoadingStatesSection: React.FC = () => {
                 { property: "Backdrop", value: "blur(8px)" },
                 { property: "Backdrop bg", value: "rgba(255, 255, 255, 0.37)" },
                 { property: "Box padding", value: "20px 40px" },
-                { property: "Box border", value: "1px solid border.light" },
+                { property: "Box border", value: "1px solid #eaecf0" },
                 { property: "Box border radius", value: "theme.shape.borderRadius" },
                 { property: "Font size", value: "13px" },
               ]}

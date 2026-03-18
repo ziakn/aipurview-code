@@ -209,7 +209,7 @@ const ManualAgentModal: React.FC<ManualAgentModalProps> = ({
       <Stack direction="row" justifyContent="flex-end" gap={1} sx={{ p: "16px 24px" }}>
         <CustomizableButton
           variant="outlined"
-          sx={{ border: "1px solid border.dark" }}
+          sx={{ border: "1px solid #d0d5dd" }}
           onClick={handleClose}
         >
           Cancel

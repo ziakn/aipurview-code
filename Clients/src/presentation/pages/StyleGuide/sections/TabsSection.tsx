@@ -255,7 +255,7 @@ const TabsSection: React.FC = () => {
             <SpecTable
               onCopy={handleCopy}
               specs={[
-                { property: "Border bottom", value: "1px solid border.dark" },
+                { property: "Border bottom", value: "1px solid #d0d5dd" },
                 { property: "Tab gap", value: "34px" },
                 { property: "Tab padding", value: "16px 0 7px" },
                 { property: "Min height", value: "20px" },

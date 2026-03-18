@@ -268,11 +268,11 @@ const StepperModal: React.FC<StepperModalProps> = ({
               minWidth: "70px",
               height: "32px",
               fontSize: "13px",
-              border: "1px solid border.dark",
+              border: "1px solid #d0d5dd",
               color: "text.secondary",
               "&:hover": {
                 backgroundColor: "background.accent",
-                border: "1px solid border.dark",
+                border: "1px solid #d0d5dd",
               },
             }}
           />
@@ -286,12 +286,12 @@ const StepperModal: React.FC<StepperModalProps> = ({
                 sx={{
                   minWidth: "70px",
                   height: "32px",
-                  border: "1px solid border.dark",
+                  border: "1px solid #d0d5dd",
                   color: "text.secondary",
                   fontSize: "13px",
                   "&:hover": {
                     backgroundColor: "background.accent",
-                    border: "1px solid border.dark",
+                    border: "1px solid #d0d5dd",
                   },
                 }}
               />

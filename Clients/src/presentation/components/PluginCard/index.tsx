@@ -347,7 +347,7 @@ const PluginCard: React.FC<PluginCardProps> = ({
                     minWidth: 160,
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                     borderRadius: '8px',
-                    border: '1px solid border.dark',
+                    border: '1px solid #d0d5dd',
                   },
                 }}
               >

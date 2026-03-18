@@ -353,7 +353,7 @@ const ApiKeys = () => {
                   onMouseEnter={() => setHoveredTokenId(token.id)}
                   onMouseLeave={() => setHoveredTokenId(null)}
                   sx={{
-                    border: "1.5px solid border.light",
+                    border: "1.5px solid #eaecf0",
                     borderRadius: "4px",
                     p: 4,
                     backgroundColor:

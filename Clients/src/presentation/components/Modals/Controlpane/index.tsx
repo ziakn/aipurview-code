@@ -174,7 +174,7 @@ const CustomModal: React.FC<ICustomModalProps> = ({
             flexDirection: "row",
             justifyContent: "flex-start",
             borderRadius: "4px",
-            border: "1px solid border.light",
+            border: "1px solid #eaecf0",
             width: "fit-content",
           }}
         >

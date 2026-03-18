@@ -60,7 +60,7 @@ export const styles = {
       justifyContent: "space-between",
       alignItems: "center",
       padding: "16px",
-      borderBottom: isLast ? "none" : "1px solid border.dark",
+      borderBottom: isLast ? "none" : "1px solid #d0d5dd",
       cursor: "pointer",
       fontSize: 13,
       animation: isFlashing ? `${flashAnimation} 2s ease-in-out` : "none",

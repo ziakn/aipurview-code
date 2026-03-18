@@ -352,7 +352,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
               borderRadius: '3px',
             },
             '&::-webkit-scrollbar-thumb:hover': {
-              background: 'border.dark',
+              backgroundColor: 'border.dark',
             },
           }}
         >
@@ -439,7 +439,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
                       fontWeight: 500,
                       color: 'brand.primary',
                       backgroundColor: 'transparent',
-                      border: '1px solid border.dark',
+                      border: '1px solid #d0d5dd',
                       borderRadius: '4px',
                       cursor: isLoadingMore ? 'not-allowed' : 'pointer',
                       transition: 'all 0.15s ease',

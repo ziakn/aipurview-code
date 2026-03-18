@@ -1002,12 +1002,12 @@ const VWISO27001AnnexDrawerDialog = ({
                         minWidth: 155,
                         height: 25,
                         fontSize: 11,
-                        border: "1px solid border.dark",
+                        border: "1px solid #d0d5dd",
                         backgroundColor: "white",
                         color: "text.secondary",
                         "&:hover": {
                           backgroundColor: "background.accent",
-                          border: "1px solid border.dark",
+                          border: "1px solid #d0d5dd",
                         },
                       }}
                       disableRipple={

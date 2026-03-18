@@ -327,13 +327,13 @@ const QuestionFrame = ({
             variant="contained"
             sx={{
               minWidth: 155, // minimum width
-              border: "1px solid border.dark",
+              border: "1px solid #d0d5dd",
               backgroundColor: "white",
               color: "text.secondary",
               flexShrink: 0, //  prevent shrinking in flex layouts
               "&:hover": {
                 backgroundColor: "background.accent",
-                border: "1px solid border.dark",
+                border: "1px solid #d0d5dd",
               },
             }}
             disableRipple
@@ -390,12 +390,12 @@ const QuestionFrame = ({
                 width: 155,
                 height: 25,
                 fontSize: 11,
-                border: "1px solid border.dark",
+                border: "1px solid #d0d5dd",
                 backgroundColor: "white",
                 color: "text.secondary",
                 "&:hover": {
                   backgroundColor: "background.accent",
-                  border: "1px solid border.dark",
+                  border: "1px solid #d0d5dd",
                 },
               }}
               disableRipple
