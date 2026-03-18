@@ -1212,18 +1212,19 @@ const NewControlPane = ({
                       <Typography fontSize={13} sx={{ marginBottom: "5px" }}>
                         Implementation description:
                       </Typography>
-                      <Field
-                        type="description"
-                        value={currentFormData.implementation_details}
-                        onChange={(e) =>
+                      <RichTextEditor
+                        toolbar="full"
+                        initialContent={currentFormData.implementation_details}
+                        onContentChange={(content) =>
                           updateSubcontrolField(
                             currentSubcontrol.id!,
                             "implementation_details",
-                            e.target.value
+                            content
                           )
                         }
                         placeholder="Describe how this requirement is implemented..."
-                        disabled={isEditingDisabled}
+                        isEditable={!isEditingDisabled}
+                        height="120px"
                       />
                     </Stack>
 
