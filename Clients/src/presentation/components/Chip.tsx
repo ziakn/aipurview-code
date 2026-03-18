@@ -146,6 +146,10 @@ const LABEL_TO_VARIANT: Record<string, ChipVariant> = {
   // Automation execution status
   "partial success": "warning",
   failure: "error",
+
+  // Guardrail actions
+  block: "error",
+  mask: "warning",
 };
 
 /**

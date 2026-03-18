@@ -53,6 +53,15 @@ import { userActivityContent } from './shadow-ai/user-activity';
 import { rulesContent } from './shadow-ai/rules';
 import { settingsContent as shadowAiSettingsContent } from './shadow-ai/settings';
 import { integrationGuideContent } from './shadow-ai/integration-guide';
+import { gettingStartedContent as aiGatewayGettingStartedContent } from './ai-gateway/getting-started';
+import { analyticsContent as aiGatewayAnalyticsContent } from './ai-gateway/analytics';
+import { endpointsContent as aiGatewayEndpointsContent } from './ai-gateway/endpoints';
+import { playgroundContent as aiGatewayPlaygroundContent } from './ai-gateway/playground';
+import { guardrailsContent as aiGatewayGuardrailsContent } from './ai-gateway/guardrails';
+import { aiGatewaySettingsContent } from './ai-gateway/settings';
+import { virtualKeysContent as aiGatewayVirtualKeysContent } from './ai-gateway/virtual-keys';
+import { logsContent as aiGatewayLogsContent } from './ai-gateway/logs';
+import { promptsContent as aiGatewayPromptsContent } from './ai-gateway/prompts';
 
 // Map of article IDs to their content
 // Format: 'collectionId/articleId': ArticleContent
@@ -123,6 +132,16 @@ export const articleContentMap: Record<string, ArticleContent> = {
   'shadow-ai/rules': rulesContent,
   'shadow-ai/settings': shadowAiSettingsContent,
   'shadow-ai/integration-guide': integrationGuideContent,
+  // AI Gateway
+  'ai-gateway/getting-started': aiGatewayGettingStartedContent,
+  'ai-gateway/analytics': aiGatewayAnalyticsContent,
+  'ai-gateway/endpoints': aiGatewayEndpointsContent,
+  'ai-gateway/playground': aiGatewayPlaygroundContent,
+  'ai-gateway/guardrails': aiGatewayGuardrailsContent,
+  'ai-gateway/settings': aiGatewaySettingsContent,
+  'ai-gateway/virtual-keys': aiGatewayVirtualKeysContent,
+  'ai-gateway/logs': aiGatewayLogsContent,
+  'ai-gateway/prompts': aiGatewayPromptsContent,
 };
 
 // Helper to get article content

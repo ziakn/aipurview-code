@@ -89,7 +89,12 @@ import auditLedgerRoutes from "./routes/auditLedger.route";
 import featureSettingsRoutes from "./routes/featureSettings.route";
 import riskBenchmarkRoutes from "./routes/riskBenchmark.route";
 import quantitativeRiskRoutes from "./routes/quantitativeRisk.route";
+import aiGatewayRoutes from "./routes/aiGateway.route";
+import virtualKeyProxyRoutes from "./routes/virtualKeyProxy.route";
+import internalRoutes from "./routes/internal.route";
 import { setupNotificationSubscriber } from "./services/notificationSubscriber.service";
+import { sequelize } from "./database/db";
+import redisClient from "./database/redis";
 
 const swaggerDoc = YAML.load("./swagger.yaml");
 
@@ -158,6 +163,45 @@ try {
   });
   app.use(cookieParser());
   // app.use(csrf());
+
+  // Health endpoint — must be registered before JWT middleware so it is publicly reachable
+  app.get("/health", async (_req, res) => {
+    const AI_GATEWAY_URL = process.env.AI_GATEWAY_URL || "http://localhost:8100";
+    const checks: Record<string, { status: "ok" | "error"; error?: string }> = {};
+
+    // Database check
+    try {
+      await sequelize.query("SELECT 1");
+      checks.database = { status: "ok" };
+    } catch (err: any) {
+      checks.database = { status: "error", error: err.message };
+    }
+
+    // Redis check
+    try {
+      const pong = await redisClient.ping();
+      checks.redis = pong === "PONG" ? { status: "ok" } : { status: "error", error: `Unexpected PING response: ${pong}` };
+    } catch (err: any) {
+      checks.redis = { status: "error", error: err.message };
+    }
+
+    // FastAPI gateway check
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000);
+      try {
+        const gwRes = await fetch(`${AI_GATEWAY_URL}/health`, { signal: controller.signal });
+        checks.ai_gateway = gwRes.ok ? { status: "ok" } : { status: "error", error: `HTTP ${gwRes.status}` };
+      } finally {
+        clearTimeout(timeout);
+      }
+    } catch (err: any) {
+      checks.ai_gateway = { status: "error", error: err.message };
+    }
+
+    const allOk = Object.values(checks).every((c) => c.status === "ok");
+    res.status(allOk ? 200 : 503).json({ status: allOk ? "ok" : "degraded", checks });
+  });
 
   // Routes
   app.use("/api/users", userRoutes);
@@ -252,6 +296,13 @@ try {
   app.use("/api/feature-settings", featureSettingsRoutes);
   app.use("/api/risk-benchmarks", riskBenchmarkRoutes);
   app.use("/api/quantitative-risks", quantitativeRiskRoutes);
+  app.use("/api/ai-gateway", aiGatewayRoutes());
+
+  // Internal routes — callbacks from Python services (no JWT, internal key auth)
+  app.use("/api/internal", internalRoutes);
+
+  // Virtual key proxy — OpenAI-compatible /v1/* routes (no JWT, no CORS)
+  app.use("/v1", virtualKeyProxyRoutes());
 
   // Setup notification subscriber for real-time notifications
   (async () => {
@@ -290,9 +341,43 @@ try {
     }
   })();
 
-  app.listen(port, () => {
+  const server = app.listen(port, () => {
     console.log(`Server running on port http://${host}:${port}/`);
   });
+
+  async function shutdown(signal: string): Promise<void> {
+    console.log(`\n${signal} received — shutting down gracefully`);
+
+    // Stop accepting new connections; give in-flight requests 10 s to complete
+    server.close(async () => {
+      console.log("HTTP server closed");
+
+      try {
+        await redisClient.quit();
+        console.log("Redis connection closed");
+      } catch (err) {
+        console.error("Error closing Redis connection:", err);
+      }
+
+      try {
+        await sequelize.close();
+        console.log("Database connection closed");
+      } catch (err) {
+        console.error("Error closing database connection:", err);
+      }
+
+      process.exit(0);
+    });
+
+    // Force-exit if requests haven't drained within 10 seconds
+    setTimeout(() => {
+      console.error("Graceful shutdown timed out — forcing exit");
+      process.exit(1);
+    }, 10000).unref();
+  }
+
+  process.on("SIGTERM", () => shutdown("SIGTERM"));
+  process.on("SIGINT", () => shutdown("SIGINT"));
 } catch (error) {
   console.error("Error setting up the server:", error);
 }
