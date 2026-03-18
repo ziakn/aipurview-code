@@ -10,6 +10,10 @@ import { TableHeader } from "@tiptap/extension-table";
 import { Underline } from "@tiptap/extension-underline";
 import { Link } from "@tiptap/extension-link";
 import { Placeholder } from "@tiptap/extension-placeholder";
+import { Highlight } from "@tiptap/extension-highlight";
+import { TextAlign } from "@tiptap/extension-text-align";
+import { Subscript } from "@tiptap/extension-subscript";
+import { Superscript } from "@tiptap/extension-superscript";
 import {
   Bold,
   Italic,
@@ -26,6 +30,15 @@ import {
   Rows3,
   Columns3,
   Trash2,
+  Superscript as SuperscriptIcon,
+  Subscript as SubscriptIcon,
+  Highlighter,
+  Code,
+  Quote,
+  Minus,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
 } from "lucide-react";
 import "./index.css";
 import { IRichTextEditorProps } from "../../types/interfaces/i.editor";
@@ -55,7 +68,7 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = ({
   const isFull = toolbar === "full";
 
   const extensions = [
-    StarterKit,
+    StarterKit.configure({ heading: { levels: [1, 2, 3] } }),
     ...(isFull
       ? [
           Table.configure({ resizable: true }),
@@ -64,6 +77,10 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = ({
           TableHeader,
           Underline,
           Link.configure({ openOnClick: false }),
+          Highlight,
+          TextAlign.configure({ types: ["heading", "paragraph"] }),
+          Subscript,
+          Superscript,
         ]
       : []),
     ...(placeholder
@@ -173,20 +190,77 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = ({
             action: () =>
               run(() => editor.chain().focus().toggleUnderline().run()),
             isActive: editor.isActive("underline"),
+          },
+          {
+            key: "superscript",
+            title: "Superscript",
+            icon: <SuperscriptIcon size={ICON_SIZE} />,
+            action: () =>
+              run(() => editor.chain().focus().toggleSuperscript().run()),
+            isActive: editor.isActive("superscript"),
+          },
+          {
+            key: "subscript",
+            title: "Subscript",
+            icon: <SubscriptIcon size={ICON_SIZE} />,
+            action: () =>
+              run(() => editor.chain().focus().toggleSubscript().run()),
+            isActive: editor.isActive("subscript"),
+          },
+          {
+            key: "highlight",
+            title: "Highlight",
+            icon: <Highlighter size={ICON_SIZE} />,
+            action: () =>
+              run(() => editor.chain().focus().toggleHighlight().run()),
+            isActive: editor.isActive("highlight"),
+          },
+          {
+            key: "code",
+            title: "Code block",
+            icon: <Code size={ICON_SIZE} />,
+            action: () =>
+              run(() => editor.chain().focus().toggleCodeBlock().run()),
+            isActive: editor.isActive("codeBlock"),
             dividerAfter: true,
           },
           {
-            key: "table",
-            title: "Insert table",
-            icon: <TableIcon size={ICON_SIZE} />,
+            key: "blockquote",
+            title: "Blockquote",
+            icon: <Quote size={ICON_SIZE} />,
             action: () =>
-              run(() =>
-                editor
-                  .chain()
-                  .focus()
-                  .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
-                  .run()
-              ),
+              run(() => editor.chain().focus().toggleBlockquote().run()),
+            isActive: editor.isActive("blockquote"),
+          },
+          {
+            key: "hr",
+            title: "Horizontal rule",
+            icon: <Minus size={ICON_SIZE} />,
+            action: () =>
+              run(() => editor.chain().focus().setHorizontalRule().run()),
+            dividerAfter: true,
+          },
+          {
+            key: "align-left",
+            title: "Align left",
+            icon: <AlignLeft size={ICON_SIZE} />,
+            action: () =>
+              run(() => editor.chain().focus().setTextAlign("left").run()),
+          },
+          {
+            key: "align-center",
+            title: "Align center",
+            icon: <AlignCenter size={ICON_SIZE} />,
+            action: () =>
+              run(() => editor.chain().focus().setTextAlign("center").run()),
+          },
+          {
+            key: "align-right",
+            title: "Align right",
+            icon: <AlignRight size={ICON_SIZE} />,
+            action: () =>
+              run(() => editor.chain().focus().setTextAlign("right").run()),
+            dividerAfter: true,
           },
           {
             key: "link",
@@ -208,6 +282,19 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = ({
                 }
               }),
             isActive: editor.isActive("link"),
+          },
+          {
+            key: "table",
+            title: "Insert table",
+            icon: <TableIcon size={ICON_SIZE} />,
+            action: () =>
+              run(() =>
+                editor
+                  .chain()
+                  .focus()
+                  .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+                  .run()
+              ),
           },
         ]
       : [];
