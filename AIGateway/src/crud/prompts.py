@@ -495,12 +495,13 @@ async def create_test_dataset(
         result = await db.execute(
             text("""
                 INSERT INTO ai_gateway_prompt_test_datasets
-                    (prompt_id, name, test_cases, created_by, created_at, updated_at)
+                    (organization_id, prompt_id, name, test_cases, created_by, created_at, updated_at)
                 VALUES
-                    (:prompt_id, :name, CAST(:test_cases AS jsonb), :created_by, NOW(), NOW())
+                    (:org_id, :prompt_id, :name, CAST(:test_cases AS jsonb), :created_by, NOW(), NOW())
                 RETURNING *
             """),
             {
+                "org_id": org_id,
                 "prompt_id": prompt_id,
                 "name": name,
                 "test_cases": test_cases_json,
