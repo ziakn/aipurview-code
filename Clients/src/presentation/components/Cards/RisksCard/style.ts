@@ -1,4 +1,4 @@
-import { background, status } from "../../../themes/palette";
+import { background, status, border as borderPalette } from "../../../themes/palette";
 export const projectRisksCard = {
   width: "100%",
   height: "100%",
@@ -20,7 +20,7 @@ export const projectRisksTileCard = {
   height: { sm: "100px" },
   justifyContent: "center",
   background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
-  border: `1px solid ${status.default.border}`,
+  border: `1px solid ${borderPalette.dark}`,
   borderRadius: 2,
   transition: "all 0.2s ease",
 };

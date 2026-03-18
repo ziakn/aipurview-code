@@ -6,6 +6,7 @@ import {
   formatCurrency,
   formatPercentage,
 } from "../../tools/fairCalculator";
+import { background, border as borderPalette, text } from "../../themes/palette";
 
 interface ALESummaryCardProps {
   fields: Partial<IQuantitativeRiskFields>;
@@ -52,16 +53,17 @@ const ALESummaryCard: FC<ALESummaryCardProps> = ({ fields }) => {
     return (
       <Box
         sx={{
-          p: 2,
-          borderRadius: 2,
-          border: `1px dashed ${theme.palette.divider}`,
-          backgroundColor: theme.palette.background.default,
+          p: "16px",
+          maxWidth: "985px",
+          borderRadius: "4px",
+          border: `1px dashed ${borderPalette.light}`,
+          background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
         }}
       >
         <Typography
           sx={{
             fontSize: 13,
-            color: theme.palette.text.tertiary,
+            color: text.tertiary,
             textAlign: "center",
           }}
         >
@@ -74,40 +76,43 @@ const ALESummaryCard: FC<ALESummaryCardProps> = ({ fields }) => {
   return (
     <Box
       sx={{
-        p: 2,
-        borderRadius: 2,
-        border: `1px solid ${theme.palette.divider}`,
-        backgroundColor: theme.palette.background.default,
+        p: "16px",
+        maxWidth: "985px",
+        borderRadius: "4px",
+        border: `1px solid ${borderPalette.light}`,
+        background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
+        boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.05)",
       }}
     >
       <Typography
         sx={{
           fontSize: 14,
           fontWeight: 600,
-          color: theme.palette.text.primary,
-          mb: 1.5,
+          color: text.primary,
+          mb: "12px",
         }}
       >
         Risk Exposure Summary
       </Typography>
-      <Stack direction="row" sx={{ gap: 3, flexWrap: "wrap" }}>
+      <Stack direction="row" sx={{ gap: "24px", flexWrap: "wrap" }}>
         {metrics.map((metric) => (
           <Stack key={metric.label} sx={{ minWidth: 140 }}>
             <Typography
               sx={{
                 fontSize: 11,
-                color: theme.palette.text.tertiary,
+                color: text.tertiary,
                 textTransform: "uppercase",
                 letterSpacing: 0.5,
+                mb: "4px",
               }}
             >
               {metric.label}
             </Typography>
             <Typography
               sx={{
-                fontSize: 16,
-                fontWeight: 600,
-                color: metric.color || theme.palette.text.primary,
+                fontSize: 18,
+                fontWeight: 700,
+                color: metric.color || text.primary,
               }}
             >
               {metric.value}

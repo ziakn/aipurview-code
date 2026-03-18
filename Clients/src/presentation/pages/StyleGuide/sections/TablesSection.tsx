@@ -107,7 +107,7 @@ const TablesSection: React.FC = () => {
       {/* Shared Specifications */}
       <SpecSection title="Table specifications">
         <SpecGrid>
-          <SpecCard title="Border" value="1px solid borderPalette.dark" note="Frame border" onCopy={handleCopy} />
+          <SpecCard title="Border" value="1px solid #d0d5dd" note="Frame border" onCopy={handleCopy} />
           <SpecCard title="Border radius" value="4px" note="Container corners" onCopy={handleCopy} />
           <SpecCard title="Cell padding" value="12px 10px" note="Header and body cells" onCopy={handleCopy} />
           <SpecCard title="Min column width" value="120px" note="Prevents column collapse" onCopy={handleCopy} />
@@ -165,7 +165,7 @@ const TablesSection: React.FC = () => {
             <TableContainer>
               <Table
                 sx={{
-                  border: "1px solid borderPalette.dark",
+                  border: "1px solid #d0d5dd",
                   borderRadius: "4px",
                   "& td, & th": {
                     border: 0,
@@ -180,7 +180,7 @@ const TablesSection: React.FC = () => {
                   <TableRow
                     sx={{
                       textTransform: "uppercase",
-                      borderBottom: "1px solid borderPalette.dark",
+                      borderBottom: "1px solid #d0d5dd",
                     }}
                   >
                     {sampleData.columns.map((col) => (
@@ -205,7 +205,7 @@ const TablesSection: React.FC = () => {
                       key={index}
                       sx={{
                         textTransform: "capitalize",
-                        borderBottom: "1px solid borderPalette.dark",
+                        borderBottom: "1px solid #d0d5dd",
                         backgroundColor: "white",
                         transition: "background-color 0.3s ease-in-out",
                         "&:hover td": {
@@ -276,7 +276,7 @@ const TablesSection: React.FC = () => {
             { property: "padding", value: "12px 10px" },
             { property: "textTransform", value: "uppercase" },
             { property: "whiteSpace", value: "nowrap" },
-            { property: "borderBottom", value: "1px solid borderPalette.dark" },
+            { property: "borderBottom", value: "1px solid #d0d5dd" },
             { property: "minWidth", value: "120px" },
           ]}
         />
@@ -297,7 +297,7 @@ const TablesSection: React.FC = () => {
             { property: "fontSize", value: "13px" },
             { property: "padding", value: "12px 10px" },
             { property: "textTransform", value: "capitalize" },
-            { property: "borderBottom", value: "1px solid borderPalette.dark" },
+            { property: "borderBottom", value: "1px solid #d0d5dd" },
             { property: "transition", value: "background-color 0.3s ease-in-out" },
             { property: "hover:backgroundColor", value: "#fafafa" },
             { property: "hover:cursor", value: "pointer" },

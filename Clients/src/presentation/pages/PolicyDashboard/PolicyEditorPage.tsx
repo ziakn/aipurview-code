@@ -1388,7 +1388,7 @@ export default function PolicyEditorPage() {
           sx={{
             p: 4,
             textAlign: "center",
-            border: "1px solid borderPalette.dark",
+            border: "1px solid #d0d5dd",
             borderRadius: "4px",
           }}
         >
@@ -1552,7 +1552,7 @@ export default function PolicyEditorPage() {
                   isDisabled={isExportingPDF || isExportingDOCX}
                   sx={{
                     backgroundColor: "background.main",
-                    border: "1px solid borderPalette.dark",
+                    border: "1px solid #d0d5dd",
                     color: "text.secondary",
                     gap: 1,
                     minWidth: "90px",
@@ -1644,7 +1644,7 @@ export default function PolicyEditorPage() {
               isDisabled={isImporting}
               sx={{
                 backgroundColor: "background.main",
-                border: "1px solid borderPalette.dark",
+                border: "1px solid #d0d5dd",
                 color: "text.secondary",
                 gap: 1,
                 minWidth: "90px",
@@ -1814,7 +1814,7 @@ export default function PolicyEditorPage() {
               sx: {
                 p: 1.5,
                 borderRadius: "6px",
-                border: "1px solid borderPalette.dark",
+                border: "1px solid #d0d5dd",
                 boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
               },
             },
@@ -1876,7 +1876,7 @@ export default function PolicyEditorPage() {
               sx: {
                 width: 340,
                 borderRadius: "4px",
-                border: "1px solid borderPalette.dark",
+                border: "1px solid #d0d5dd",
                 boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
                 p: "16px",
               },
@@ -1908,10 +1908,10 @@ export default function PolicyEditorPage() {
                   sx={{
                     padding: "6px",
                     borderRadius: "4px",
-                    border: "1px solid borderPalette.dark",
+                    border: "1px solid #d0d5dd",
                     color: "text.secondary",
                     "&:hover": { backgroundColor: "background.accent" },
-                    "&:disabled": { color: "borderPalette.dark", borderColor: "borderPalette.light" },
+                    "&:disabled": { color: "border.dark", borderColor: "border.light" },
                   }}
                 >
                   <ChevronUpIcon size={16} />
@@ -1925,10 +1925,10 @@ export default function PolicyEditorPage() {
                   sx={{
                     padding: "6px",
                     borderRadius: "4px",
-                    border: "1px solid borderPalette.dark",
+                    border: "1px solid #d0d5dd",
                     color: "text.secondary",
                     "&:hover": { backgroundColor: "background.accent" },
-                    "&:disabled": { color: "borderPalette.dark", borderColor: "borderPalette.light" },
+                    "&:disabled": { color: "border.dark", borderColor: "border.light" },
                   }}
                 >
                   <ChevronDownIcon size={16} />
@@ -1973,7 +1973,7 @@ export default function PolicyEditorPage() {
                       px: "10px",
                       fontSize: 12,
                       backgroundColor: "background.main",
-                      border: "1px solid borderPalette.dark",
+                      border: "1px solid #d0d5dd",
                       color: "text.secondary",
                       whiteSpace: "nowrap",
                       "&:hover": { backgroundColor: "background.accent" },
@@ -1996,7 +1996,7 @@ export default function PolicyEditorPage() {
                   px: "10px",
                   fontSize: 12,
                   backgroundColor: "background.main",
-                  border: "1px solid borderPalette.dark",
+                  border: "1px solid #d0d5dd",
                   color: "text.secondary",
                   whiteSpace: "nowrap",
                   "&:hover": { backgroundColor: "background.accent" },
@@ -2018,7 +2018,7 @@ export default function PolicyEditorPage() {
               minWidth: 0,
               minHeight: 0,
               overflow: "auto",
-              border: "1px solid borderPalette.dark",
+              border: "1px solid #d0d5dd",
               borderRadius: "4px",
             }}
           >
@@ -2042,7 +2042,7 @@ export default function PolicyEditorPage() {
                     p: "4px",
                     alignItems: "center",
                     backgroundColor: "background.main",
-                    border: "1px solid borderPalette.dark",
+                    border: "1px solid #d0d5dd",
                     borderRadius: "6px",
                     boxShadow: "0 4px 12px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.08)",
                   }}

@@ -137,10 +137,10 @@ const AssessmentQuestions = ({
                 headerSx={{
                   borderRadius: 0,
                   BorderTop: "none",
-                  borderColor: "borderPalette.dark",
+                  borderColor: "border.dark",
                 }}
                 bodySx={{
-                  borderColor: "borderPalette.dark",
+                  borderColor: "border.dark",
                   borderRadius: "0 0 4px 4px",
                   "& .ProseMirror > p": {
                     margin: 0,
@@ -164,12 +164,12 @@ const AssessmentQuestions = ({
                     minWidth: 155,      // ✅ minimum width
                     height: 25,
                     fontSize: 11,
-                    border: "1px solid borderPalette.dark",
+                    border: "1px solid #d0d5dd",
                     backgroundColor: "white",
                     color: "text.secondary",
                     "&:hover": {
                       backgroundColor: "background.accent",
-                      border: "1px solid borderPalette.dark",
+                      border: "1px solid #d0d5dd",
                     },
                   }}
                   disableRipple={

@@ -11,7 +11,7 @@ import {
   trendIconStable,
 } from "./style";
 import { risksSummary, EnhancedRiskSummary, RiskTrend } from "../../../../domain/interfaces/i.riskSummary";
-import { status } from "../../../themes/palette";
+import { status, border as borderPalette } from "../../../themes/palette";
 
 interface RisksCardProps {
   risksSummary: risksSummary | EnhancedRiskSummary;
@@ -142,7 +142,7 @@ export function RisksCard({ risksSummary, onCardClick, selectedLevel }: RisksCar
                   ...projectRisksTileCard,
                   color: level.color,
                   cursor: isClickable ? 'pointer' : 'default',
-                  border: isSelected ? `1px solid ${level.color}` : '1px solid borderPalette.dark',
+                  border: isSelected ? `1px solid ${level.color}` : `1px solid ${borderPalette.dark}`,
                   background: isSelected ? 'rgba(146, 247, 224, 0.08)' : undefined,
                 }}
               >

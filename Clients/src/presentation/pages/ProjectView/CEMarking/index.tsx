@@ -142,7 +142,7 @@ const ensureUrlProtocol = (url: string | null): string | null => {
 // Table styles - using the primary theme table styles
 const getTableHeaderRowStyles = () => ({
   textTransform: "uppercase",
-  borderBottom: "1px solid borderPalette.dark",
+  borderBottom: "1px solid #d0d5dd",
   background: `linear-gradient(180deg, ${background.accent} 0%, ${background.hover} 100%)`,
 });
 
@@ -156,7 +156,7 @@ const getTableHeaderCellStyles = () => ({
 
 const getTableBodyRowStyles = () => ({
   textTransform: "capitalize",
-  borderBottom: "1px solid borderPalette.dark",
+  borderBottom: "1px solid #d0d5dd",
   backgroundColor: "white",
   transition: "background-color 0.3s ease-in-out",
   "&:hover td": {

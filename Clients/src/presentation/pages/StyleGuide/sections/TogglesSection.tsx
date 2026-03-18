@@ -451,7 +451,7 @@ const TogglesSection: React.FC = () => {
                 { property: "Height", value: "34px" },
                 { property: "Button padding", value: "6px 12px" },
                 { property: "Icon size", value: "16px" },
-                { property: "Border", value: "1px solid border.dark" },
+                { property: "Border", value: "1px solid #d0d5dd" },
                 { property: "Selected bg", value: "brand.primary" },
                 { property: "Selected color", value: "background.main" },
                 { property: "Unselected color", value: "text.tertiary" },

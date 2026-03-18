@@ -1108,12 +1108,12 @@ const VWISO27001ClauseDrawerDialog = ({
                           minWidth: 155,
                           height: 25,
                           fontSize: 11,
-                          border: "1px solid borderPalette.dark",
+                          border: "1px solid #d0d5dd",
                           backgroundColor: "white",
                           color: "text.secondary",
                           "&:hover": {
                             backgroundColor: "background.accent",
-                            border: "1px solid borderPalette.dark",
+                            border: "1px solid #d0d5dd",
                           },
                         }}
                         disableRipple={

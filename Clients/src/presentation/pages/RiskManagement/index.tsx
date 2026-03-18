@@ -1,7 +1,7 @@
 import { Suspense, useCallback, useEffect, useState, useMemo, useRef } from "react";
 import { Box, Stack, Popover, Typography, IconButton } from "@mui/material";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { RisksCard } from "../../components/Cards/RisksCard";
+import { StatusTileCards, StatusTileItem } from "../../components/Cards/StatusTileCards";
 import { CustomizableButton } from "../../components/button/customizable-button";
 import { BarChart3, ChevronDown } from "lucide-react"
 import ibmLogo from "../../assets/ibm_logo.svg";
@@ -714,26 +714,37 @@ const RiskManagement = () => {
       helpArticlePath="risk-management/risk-assessment"
       tipBoxEntity="risk-management"
       summaryCards={
-        <RisksCard
-          risksSummary={risksSummary}
-          onCardClick={handleRiskCardClick}
-          selectedLevel={selectedRiskLevel}
+        <StatusTileCards
+          items={[
+            { key: "Total", label: "Total", count: risksSummary.total, color: "#4B5563" },
+            { key: "Very high", label: "Very high", count: risksSummary.veryHighRisks, color: "#C63622" },
+            { key: "High", label: "High", count: risksSummary.highRisks, color: "#D68B61" },
+            { key: "Medium", label: "Medium", count: risksSummary.mediumRisks, color: "#D6B971" },
+            { key: "Low", label: "Low", count: risksSummary.lowRisks, color: "#52AB43" },
+            { key: "Very low", label: "Very low", count: risksSummary.veryLowRisks, color: "#B8D39C" },
+          ] satisfies StatusTileItem[]}
+          onCardClick={(key) => {
+            if (key === "Total" || key === selectedRiskLevel) {
+              handleRiskCardClick("");
+            } else {
+              handleRiskCardClick(key);
+            }
+          }}
+          selectedKey={selectedRiskLevel}
+          entityName="risk"
+          size="small"
         />
       }
       summaryCardsJoyrideId="risk-summary-cards"
       alert={
         alert && (
-          <Suspense fallback={<div>Loading...</div>}>
-            <Box>
-              <Alert
-                variant={alert.variant}
-                title={alert.title}
-                body={alert.body}
-                isToast={true}
-                onClick={() => setAlert(null)}
-              />
-            </Box>
-          </Suspense>
+          <Alert
+            variant={alert.variant}
+            title={alert.title}
+            body={alert.body}
+            isToast={true}
+            onClick={() => setAlert(null)}
+          />
         )
       }
       loadingToast={isLoading.loading && <CustomizableToast title={isLoading.message} />}

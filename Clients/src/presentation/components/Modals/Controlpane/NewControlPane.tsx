@@ -1064,7 +1064,7 @@ const NewControlPane = ({
         <Box
           sx={{
             padding: "16px 20px",
-            borderBottom: "1px solid borderPalette.light",
+            borderBottom: "1px solid #eaecf0",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "flex-start",
@@ -1129,7 +1129,7 @@ const NewControlPane = ({
                   backgroundColor: "transparent",
                 },
                 "&::-webkit-scrollbar-thumb": {
-                  backgroundColor: "borderPalette.dark",
+                  backgroundColor: "border.dark",
                   borderRadius: "3px",
                   "&:hover": {
                     backgroundColor: "text.muted",
@@ -1439,13 +1439,13 @@ const NewControlPane = ({
                             width: 155,
                             height: 25,
                             fontSize: 11,
-                            border: "1px solid borderPalette.dark",
+                            border: "1px solid #d0d5dd",
                             backgroundColor: "white",
                             color: "text.secondary",
                             textTransform: "none",
                             "&:hover": {
                               backgroundColor: "background.accent",
-                              border: "1px solid borderPalette.dark",
+                              border: "1px solid #d0d5dd",
                             },
                           }}
                         >
@@ -1460,13 +1460,13 @@ const NewControlPane = ({
                             width: 155,
                             height: 25,
                             fontSize: 11,
-                            border: "1px solid borderPalette.dark",
+                            border: "1px solid #d0d5dd",
                             backgroundColor: "white",
                             color: "text.secondary",
                             textTransform: "none",
                             "&:hover": {
                               backgroundColor: "background.accent",
-                              border: "1px solid borderPalette.dark",
+                              border: "1px solid #d0d5dd",
                             },
                           }}
                         >
@@ -1526,7 +1526,7 @@ const NewControlPane = ({
                                 alignItems: "center",
                                 justifyContent: "space-between",
                                 padding: "10px 12px",
-                                border: "1px solid borderPalette.light",
+                                border: "1px solid #eaecf0",
                                 borderRadius: "4px",
                                 backgroundColor: "background.main",
                                 "&:hover": {
@@ -1830,13 +1830,13 @@ const NewControlPane = ({
                             width: 155,
                             height: 25,
                             fontSize: 11,
-                            border: "1px solid borderPalette.dark",
+                            border: "1px solid #d0d5dd",
                             backgroundColor: "white",
                             color: "text.secondary",
                             textTransform: "none",
                             "&:hover": {
                               backgroundColor: "background.accent",
-                              border: "1px solid borderPalette.dark",
+                              border: "1px solid #d0d5dd",
                             },
                           }}
                         >
@@ -1851,13 +1851,13 @@ const NewControlPane = ({
                             width: 155,
                             height: 25,
                             fontSize: 11,
-                            border: "1px solid borderPalette.dark",
+                            border: "1px solid #d0d5dd",
                             backgroundColor: "white",
                             color: "text.secondary",
                             textTransform: "none",
                             "&:hover": {
                               backgroundColor: "background.accent",
-                              border: "1px solid borderPalette.dark",
+                              border: "1px solid #d0d5dd",
                             },
                           }}
                         >
@@ -1918,7 +1918,7 @@ const NewControlPane = ({
                                 alignItems: "center",
                                 justifyContent: "space-between",
                                 padding: "10px 12px",
-                                border: "1px solid borderPalette.light",
+                                border: "1px solid #eaecf0",
                                 borderRadius: "4px",
                                 backgroundColor: "background.main",
                                 "&:hover": {
@@ -2207,13 +2207,13 @@ const NewControlPane = ({
                           width: 155,
                           height: 25,
                           fontSize: 11,
-                          border: "1px solid borderPalette.dark",
+                          border: "1px solid #d0d5dd",
                           backgroundColor: "white",
                           color: "text.secondary",
                           textTransform: "none",
                           "&:hover": {
                             backgroundColor: "background.accent",
-                            border: "1px solid borderPalette.dark",
+                            border: "1px solid #d0d5dd",
                           },
                         }}
                         onClick={() => setShowLinkedRisksPopup(true)}
@@ -2261,7 +2261,7 @@ const NewControlPane = ({
                                 alignItems: "center",
                                 justifyContent: "space-between",
                                 padding: "10px 12px",
-                                border: "1px solid borderPalette.light",
+                                border: "1px solid #eaecf0",
                                 borderRadius: "4px",
                                 backgroundColor: "background.main",
                                 "&:hover": {
@@ -2422,7 +2422,7 @@ const NewControlPane = ({
         <Box
           sx={{
             padding: "16px 20px",
-            borderTop: "1px solid borderPalette.light",
+            borderTop: "1px solid #eaecf0",
             display: "flex",
             justifyContent: "flex-end",
           }}

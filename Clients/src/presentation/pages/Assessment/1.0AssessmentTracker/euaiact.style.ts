@@ -44,7 +44,7 @@ export const styles = {
    */
   accordion: {
     marginTop: "9px",
-    border: "1px solid borderPalette.dark",
+    border: "1px solid #d0d5dd",
     width: "100%",
     borderRadius: "4px",
     overflow: "hidden",
@@ -91,7 +91,7 @@ export const styles = {
       justifyContent: "space-between",
       alignItems: "center",
       padding: "16px",
-      borderBottom: isLast ? "none" : "1px solid borderPalette.dark",
+      borderBottom: isLast ? "none" : "1px solid #d0d5dd",
       cursor: "pointer",
       fontSize: 13,
       animation: isFlashing ? `${flashAnimation} 2s ease-in-out` : "none",

@@ -310,7 +310,7 @@ const ArenaTableBody: React.FC<ArenaTableBodyProps> = ({
           "& .MuiPopover-paper": {
             minWidth: 140,
             borderRadius: "4px",
-            border: "1px solid borderPalette.dark",
+            border: "1px solid #d0d5dd",
             boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
             overflow: "hidden",
             mt: 0.5,
@@ -329,7 +329,7 @@ const ArenaTableBody: React.FC<ArenaTableBodyProps> = ({
                 fontSize: "13px",
                 fontWeight: 500,
                 color: "#374151",
-                borderColor: "borderPalette.dark",
+                borderColor: "border.dark",
                 backgroundColor: "transparent",
                 justifyContent: "flex-start",
                 "&:hover": {
@@ -352,7 +352,7 @@ const ArenaTableBody: React.FC<ArenaTableBodyProps> = ({
                 fontSize: "13px",
                 fontWeight: 500,
                 color: "#374151",
-                borderColor: "borderPalette.dark",
+                borderColor: "border.dark",
                 backgroundColor: "transparent",
                 justifyContent: "flex-start",
                 "&:hover": {
@@ -375,7 +375,7 @@ const ArenaTableBody: React.FC<ArenaTableBodyProps> = ({
                 fontSize: "13px",
                 fontWeight: 500,
                 color: "#374151",
-                borderColor: "borderPalette.dark",
+                borderColor: "border.dark",
                 backgroundColor: "transparent",
                 justifyContent: "flex-start",
                 "&:hover": {
@@ -398,7 +398,7 @@ const ArenaTableBody: React.FC<ArenaTableBodyProps> = ({
                 fontSize: "13px",
                 fontWeight: 500,
                 color: "#DC2626",
-                borderColor: "borderPalette.dark",
+                borderColor: "border.dark",
                 backgroundColor: "transparent",
                 justifyContent: "flex-start",
                 "&:hover": {

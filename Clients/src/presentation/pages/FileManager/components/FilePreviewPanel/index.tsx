@@ -441,7 +441,7 @@ export const FilePreviewPanel: React.FC<FilePreviewPanelProps> = ({
                 onClick={handleDownload}
                 size="small"
                 disabled={downloading || !isAdmin}
-                sx={{ color: !isAdmin ? "borderPalette.dark" : "text.icon" }}
+                sx={{ color: !isAdmin ? "border.dark" : "text.icon" }}
               >
                 {downloading ? (
                   <CircularProgress size={18} sx={{ color: "text.icon" }} />

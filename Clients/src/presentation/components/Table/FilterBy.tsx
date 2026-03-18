@@ -505,7 +505,7 @@ export const FilterBy: React.FC<FilterByProps> = ({
           padding: '6px 12px',
           textTransform: 'none',
           color: '#374151',
-          borderColor: 'borderPalette.dark',
+          borderColor: 'border.dark',
           height: '34px',
           minWidth: activeFilterCount > 0 ? '100px' : '80px',
           backgroundColor: open ? '#eff6ff' : 'transparent',

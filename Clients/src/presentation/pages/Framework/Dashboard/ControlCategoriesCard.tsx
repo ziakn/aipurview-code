@@ -308,7 +308,7 @@ const ControlCategoriesCard = ({ frameworksData, onNavigate }: ControlCategories
               <Box
                 key={category.id}
                 sx={{
-                  border: "1px solid borderPalette.dark",
+                  border: "1px solid #d0d5dd",
                   borderRadius: "4px",
                   overflow: "hidden",
                   backgroundColor: "background.main",
@@ -319,7 +319,7 @@ const ControlCategoriesCard = ({ frameworksData, onNavigate }: ControlCategories
                   sx={{
                     backgroundColor: "#F1F3F4",
                     p: "10px 16px",
-                    borderBottom: "1px solid borderPalette.dark",
+                    borderBottom: "1px solid #d0d5dd",
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
@@ -455,7 +455,7 @@ const ControlCategoriesCard = ({ frameworksData, onNavigate }: ControlCategories
           py: 4,
           backgroundColor: "background.accent",
           borderRadius: 2,
-          border: "1px solid borderPalette.dark",
+          border: "1px solid #d0d5dd",
         }}
       >
         <Typography variant="body1" color="text.secondary">

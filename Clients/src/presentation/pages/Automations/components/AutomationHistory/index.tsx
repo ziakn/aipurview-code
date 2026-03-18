@@ -163,7 +163,7 @@ const AutomationHistory: React.FC<AutomationHistoryProps> = ({ automationId }) =
         <Stack direction="row" spacing={4} mb={4} flexWrap="wrap">
           <Box
             sx={{
-              border: "1px solid borderPalette.light",
+              border: "1px solid #eaecf0",
               borderRadius: 2,
               background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
               minWidth: 228,
@@ -219,7 +219,7 @@ const AutomationHistory: React.FC<AutomationHistoryProps> = ({ automationId }) =
           </Box>
           <Box
             sx={{
-              border: "1px solid borderPalette.light",
+              border: "1px solid #eaecf0",
               borderRadius: 2,
               background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
               minWidth: 228,
@@ -252,7 +252,7 @@ const AutomationHistory: React.FC<AutomationHistoryProps> = ({ automationId }) =
           </Box>
           <Box
             sx={{
-              border: "1px solid borderPalette.light",
+              border: "1px solid #eaecf0",
               borderRadius: 2,
               background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
               minWidth: 228,

@@ -91,7 +91,7 @@ const Home = () => {
       title="Use cases"
       description="Use case is a real-world scenario describing how an AI system is applied within an organization to achieve a defined purpose or outcome."
 
-      helpArticlePath="reporting/dashboard-analytics"
+      helpArticlePath="ai-governance/use-cases"
       tipBoxEntity="overview"
     >
       {/* Projects List */}

@@ -536,7 +536,7 @@ const FormInputsSection: React.FC = () => {
                 { property: "Icon size", value: "16px" },
                 { property: "Icon color", value: "status.default.text" },
                 { property: "Icon margin-right", value: "8px" },
-                { property: "Border", value: "1px solid borderPalette.dark" },
+                { property: "Border", value: "1px solid #d0d5dd" },
                 { property: "Border radius", value: "2px" },
                 { property: "Focus border", value: "2px" },
                 { property: "Focus padding", value: "9px" },

@@ -294,7 +294,7 @@ export const FileVersionHistoryDrawer: React.FC<FileVersionHistoryDrawerProps> =
                         width: 8,
                         height: 8,
                         borderRadius: "50%",
-                        backgroundColor: isCurrent ? "#16A34A" : "borderPalette.dark",
+                        backgroundColor: isCurrent ? "#16A34A" : "border.dark",
                         flexShrink: 0,
                       }}
                     />

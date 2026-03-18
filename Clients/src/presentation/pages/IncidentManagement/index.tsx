@@ -34,7 +34,7 @@ import {
   Severity,
 } from "../../../domain/enums/aiIncidentManagement.enum";
 import { createIncidentManagement } from "../../../application/repository/incident_management.repository";
-import IncidentStatusCard from "./IncidentStatusCard";
+import { StatusTileCards } from "../../components/Cards/StatusTileCards";
 import PageTour from "../../components/PageTour";
 import IncidentManagementSteps from "./IncidentManagementSteps";
 import { AIIncidentManagementModel } from "../../../domain/models/Common/incidentManagement/incidentManagement.model";
@@ -103,6 +103,18 @@ const IncidentManagement: React.FC = () => {
 
   // Search state
   const [searchTerm, setSearchTerm] = useState("");
+
+  // Card filter state
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+
+  // Auto-dismiss info alerts after 3 seconds
+  useEffect(() => {
+    if (alert && alert.variant === "info") {
+      const timer = setTimeout(() => setAlert(null), 3000);
+      return () => clearTimeout(timer);
+    }
+    return undefined;
+  }, [alert]);
 
   const [mode, setModalMode] = useState("");
 
@@ -244,8 +256,13 @@ const IncidentManagement: React.FC = () => {
     // Filter out archived items first
     const nonArchivedData = incidentsData.filter((i) => !i.archived);
 
+    // Apply card filter by status
+    let result = selectedStatus
+      ? nonArchivedData.filter((i) => i.status === selectedStatus)
+      : nonArchivedData;
+
     // Apply FilterBy conditions
-    let result = filterIncidentData(nonArchivedData);
+    result = filterIncidentData(result);
 
     // Apply search filter last
     if (searchTerm) {
@@ -259,7 +276,7 @@ const IncidentManagement: React.FC = () => {
     }
 
     return result;
-  }, [filterIncidentData, incidentsData, searchTerm]);
+  }, [filterIncidentData, incidentsData, searchTerm, selectedStatus]);
 
   // Define how to get the group key for each incident
   const getIncidentGroupKey = (
@@ -539,28 +556,48 @@ const IncidentManagement: React.FC = () => {
         tipBoxEntity="ai-incident-managements"
         alert={
           alert ? (
-            <Suspense fallback={<div>Loading...</div>}>
-              <Fade in={showAlert} timeout={300} style={incidentToastContainer}>
-                <Box mb={2}>
                   <Alert
                     variant={alert.variant}
                     title={alert.title}
                     body={alert.body}
                     isToast={true}
-                    onClick={() => {
-                      setShowAlert(false);
-                      setTimeout(() => setAlert(null), 300);
-                    }}
+                    onClick={() => setAlert(null)}
                   />
-                </Box>
-              </Fade>
-            </Suspense>
           ) : undefined
         }
         summaryCards={
           /* TODO: Refactor to always show cards (like Model Inventory) to prevent layout shift and beacon positioning issues */
           incidentsData.length > 0 ? (
-            <IncidentStatusCard incidents={incidentsData} />
+            <StatusTileCards
+              items={[
+                { key: IncidentManagementStatus.OPEN, label: "Open", color: "#F9A825", count: incidentsData.filter((i) => i.status === IncidentManagementStatus.OPEN && !i.archived).length },
+                { key: IncidentManagementStatus.INVESTIGATED, label: "Investigating", color: "#FB8C00", count: incidentsData.filter((i) => i.status === IncidentManagementStatus.INVESTIGATED && !i.archived).length },
+                { key: IncidentManagementStatus.MITIGATED, label: "Mitigated", color: "#2E7D32", count: incidentsData.filter((i) => i.status === IncidentManagementStatus.MITIGATED && !i.archived).length },
+                { key: IncidentManagementStatus.CLOSED, label: "Closed", color: "#455A64", count: incidentsData.filter((i) => i.status === IncidentManagementStatus.CLOSED && !i.archived).length },
+              ]}
+              entityName="incident"
+              size="small"
+              onCardClick={(key) => {
+                if (key === selectedStatus) {
+                  setSelectedStatus(null);
+                  setAlert(null);
+                } else {
+                  setSelectedStatus(key);
+                  const label = [
+                    { key: IncidentManagementStatus.OPEN, label: "Open" },
+                    { key: IncidentManagementStatus.INVESTIGATED, label: "Investigating" },
+                    { key: IncidentManagementStatus.MITIGATED, label: "Mitigated" },
+                    { key: IncidentManagementStatus.CLOSED, label: "Closed" },
+                  ].find((s) => s.key === key)?.label || key;
+                  setAlert({
+                    variant: "info",
+                    title: `Filtering by ${label}`,
+                    body: "Click the card again to see all incidents.",
+                  });
+                }
+              }}
+              selectedKey={selectedStatus}
+            />
           ) : undefined
         }
         summaryCardsJoyrideId="incident-status-cards"

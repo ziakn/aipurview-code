@@ -155,7 +155,7 @@ const DetailSidebar: React.FC<DetailSidebarProps> = ({
         width: 410,
         height: '100%',
         backgroundColor: 'white',
-        borderLeft: '1px solid borderPalette.dark',
+        borderLeft: '1px solid #d0d5dd',
         zIndex: 1000,
         display: 'flex',
         flexDirection: 'column',
@@ -166,7 +166,7 @@ const DetailSidebar: React.FC<DetailSidebarProps> = ({
       <Box
         sx={{
           p: 2,
-          borderBottom: '1px solid borderPalette.dark',
+          borderBottom: '1px solid #d0d5dd',
           display: 'flex',
           alignItems: 'flex-start',
           gap: 1.5,
@@ -504,7 +504,7 @@ const DetailSidebar: React.FC<DetailSidebarProps> = ({
       <Box
         sx={{
           p: 2,
-          borderTop: '1px solid borderPalette.dark',
+          borderTop: '1px solid #d0d5dd',
           display: 'flex',
           gap: 1,
         }}
@@ -515,7 +515,7 @@ const DetailSidebar: React.FC<DetailSidebarProps> = ({
           fullWidth
           onClick={onClose}
           sx={{
-            borderColor: 'borderPalette.dark',
+            borderColor: 'border.dark',
             color: 'text.secondary',
             textTransform: 'none',
             height: 34,

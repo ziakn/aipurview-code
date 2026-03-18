@@ -76,8 +76,14 @@ export const collections: Collection[] = [
     title: 'AI governance',
     description: 'Manage your AI models, track their lifecycle, and maintain comprehensive documentation.',
     icon: 'Brain',
-    articleCount: 9,
+    articleCount: 10,
     articles: [
+      {
+        id: 'use-cases',
+        title: 'Use cases',
+        description: 'Create and manage AI use cases with risk classification, framework linking, team assignment, and approval workflows.',
+        keywords: ['use case', 'project', 'create', 'risk classification', 'high risk', 'deployer', 'provider', 'framework', 'approval', 'owner', 'team', 'scope', 'geography', 'industry'],
+      },
       {
         id: 'intake-forms',
         title: 'Intake forms',
@@ -229,13 +235,19 @@ export const collections: Collection[] = [
     title: 'Risk management',
     description: 'Identify, assess, and mitigate risks across your AI systems and vendors.',
     icon: 'AlertTriangle',
-    articleCount: 4,
+    articleCount: 5,
     articles: [
       {
         id: 'risk-assessment',
         title: 'Conducting risk assessments',
         description: 'Learn how to identify and evaluate risks in your AI projects.',
         keywords: ['risk', 'assessment', 'evaluate', 'identify', 'analysis'],
+      },
+      {
+        id: 'quantitative-risk-assessment',
+        title: 'Quantitative risk assessment (FAIR)',
+        description: 'Use the FAIR model to quantify AI risks in financial terms with ALE calculations, industry benchmarks, and ROI analysis.',
+        keywords: ['quantitative', 'FAIR', 'ALE', 'annualized loss', 'benchmark', 'ROI', 'financial', 'monetary', 'PERT', 'frequency', 'magnitude'],
       },
       {
         id: 'risk-mitigation',

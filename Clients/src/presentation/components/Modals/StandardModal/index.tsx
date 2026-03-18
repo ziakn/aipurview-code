@@ -330,11 +330,11 @@ const StandardModal: React.FC<StandardModalProps> = ({
                       sx={{
                         minWidth: "80px",
                         height: "34px",
-                        border: "1px solid borderPalette.dark",
+                        border: "1px solid #d0d5dd",
                         color: "text.secondary",
                         "&:hover": {
                           backgroundColor: "background.accent",
-                          border: "1px solid borderPalette.dark",
+                          border: "1px solid #d0d5dd",
                         },
                       }}
                     />
