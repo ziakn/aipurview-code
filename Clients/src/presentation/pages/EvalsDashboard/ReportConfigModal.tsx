@@ -178,7 +178,7 @@ export default function ReportConfigModal({
                     alignItems: "center",
                     gap: 1,
                     px: 1.5,
-                    py: "10px",
+                    py: "8px",
                     cursor: "pointer",
                     borderBottom: "1px solid #F3F4F6",
                     "&:hover": { backgroundColor: "#F9FAFB" },
