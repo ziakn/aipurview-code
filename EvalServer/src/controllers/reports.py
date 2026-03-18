@@ -4,6 +4,7 @@ Controller for report generation and storage endpoints.
 
 import logging
 import os
+import re
 from typing import Any, Dict, List, Optional, Tuple
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import padding as crypto_padding
@@ -178,9 +179,10 @@ async def generate_report_controller(
     except HTTPException:
         raise
     except Exception as e:
+        logger.error(f"Report generation failed: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=500,
-            detail=f"Failed to generate report: {str(e)}",
+            detail="Failed to generate report. Please try again.",
         )
 
 
@@ -209,19 +211,20 @@ async def get_report_controller(
                 raise HTTPException(status_code=404, detail="Report not found")
 
             fmt = report["format"]
+            safe_title = re.sub(r'[^\w\s\-.]', '', report["title"]).strip()[:200]
             if fmt == "csv":
                 return Response(
                     content=report["file_data"],
                     media_type="text/csv",
                     headers={
-                        "Content-Disposition": f'attachment; filename="{report["title"]}.csv"',
+                        "Content-Disposition": f'attachment; filename="{safe_title}.csv"',
                     },
                 )
             return Response(
                 content=report["file_data"],
                 media_type="application/pdf",
                 headers={
-                    "Content-Disposition": f'inline; filename="{report["title"]}.pdf"',
+                    "Content-Disposition": f'inline; filename="{safe_title}.pdf"',
                 },
             )
     except HTTPException:

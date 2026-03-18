@@ -19,6 +19,7 @@ import { FileText, Download, AlertTriangle, Eye, X, ExternalLink, Trash2 } from 
 import { CustomizableButton } from "../../components/button/customizable-button";
 import Alert from "../../components/Alert";
 import ReportConfigModal from "./ReportConfigModal";
+import ConfirmationModal from "../../components/Dialogs/ConfirmationModal";
 import type { ReportConfig } from "./types";
 import CustomAxios from "../../../infrastructure/api/customAxios";
 import {
@@ -64,6 +65,8 @@ export default function ReportPage({
     body: string;
   } | null>(null);
   const [reports, setReports] = useState<StoredReport[]>([]);
+
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
 
   const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
   const [pdfTitle, setPdfTitle] = useState("");
@@ -216,9 +219,13 @@ export default function ReportPage({
   };
 
   const handleDeleteReport = async (reportId: string) => {
-    const report = reports.find(r => r.id === reportId);
-    const confirmed = window.confirm(`Delete "${report?.title || "this report"}"? This cannot be undone.`);
-    if (!confirmed) return;
+    setShowDeleteConfirm(reportId);
+  };
+
+  const confirmDeleteReport = async () => {
+    if (!showDeleteConfirm) return;
+    const reportId = showDeleteConfirm;
+    setShowDeleteConfirm(null);
     try {
       await CustomAxios.delete(`/deepeval/reports/${reportId}`);
       setReports(prev => prev.filter(r => r.id !== reportId));
@@ -635,6 +642,21 @@ export default function ReportPage({
         projectName={projectName}
         isGenerating={isGenerating}
       />
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <ConfirmationModal
+          isOpen={!!showDeleteConfirm}
+          title="Delete report"
+          body={`Are you sure you want to delete "${reports.find(r => r.id === showDeleteConfirm)?.title || "this report"}"? This action cannot be undone.`}
+          proceedText="Delete"
+          cancelText="Cancel"
+          onProceed={confirmDeleteReport}
+          onCancel={() => setShowDeleteConfirm(null)}
+          proceedButtonVariant="contained"
+          proceedButtonColor="error"
+        />
+      )}
     </Box>
   );
 }

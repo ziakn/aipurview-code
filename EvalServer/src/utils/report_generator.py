@@ -48,28 +48,16 @@ COLORS = {
     "safety_row": colors.HexColor("#FEF2F2"),
 }
 
-SAFETY_METRICS = ["bias", "toxicity", "hallucination", "conversationsafety"]
-INVERTED_METRICS = ["bias", "toxicity", "hallucination", "conversationsafety"]
+from utils.metric_constants import (
+    is_safety_metric as _is_safety_metric,
+    is_inverted_metric as _is_inverted_metric,
+    did_pass as _did_pass,
+    format_metric_name as _format_metric_name,
+)
 
 PAGE_W, PAGE_H = A4
 MARGIN = 18 * mm
 CONTENT_W = PAGE_W - 2 * MARGIN
-
-
-def _is_safety_metric(name: str) -> bool:
-    return any(m in name.lower() for m in SAFETY_METRICS)
-
-
-def _is_inverted_metric(name: str) -> bool:
-    return any(m in name.lower() for m in INVERTED_METRICS)
-
-
-def _format_metric_name(name: str) -> str:
-    if not name:
-        return name
-    spaced = re.sub(r"([a-z])([A-Z])", r"\1 \2", name)
-    spaced = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1 \2", spaced)
-    return " ".join(w.capitalize() for w in spaced.split())
 
 
 def _score_label(score: float, inverted: bool) -> str:
@@ -81,10 +69,6 @@ def _score_label(score: float, inverted: bool) -> str:
     if effective >= 0.4:
         return "Fair"
     return "Poor"
-
-
-def _did_pass(score: float, threshold: float, inverted: bool) -> bool:
-    return score <= threshold if inverted else score >= threshold
 
 
 def _safe_str(val: Any, default: str = "N/A") -> str:

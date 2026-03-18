@@ -26,12 +26,11 @@ PROVIDER_CONFIG = {
     "openrouter": {"env_var": "OPENROUTER_API_KEY", "base_url": "https://openrouter.ai/api/v1"},
 }
 
-SAFETY_METRICS = ["bias", "toxicity", "hallucination", "conversationsafety"]
-INVERTED_METRICS = ["bias", "toxicity", "hallucination", "conversationsafety"]
-
-
-def _is_inverted_metric(name: str) -> bool:
-    return any(m in name.lower() for m in INVERTED_METRICS)
+from utils.metric_constants import (
+    is_safety_metric as _is_safety_metric,
+    is_inverted_metric as _is_inverted_metric,
+    format_metric_name as _format_metric_name,
+)
 
 
 def _get_client(provider: str, api_key: Optional[str] = None, endpoint_url: Optional[str] = None):
@@ -67,17 +66,6 @@ def _call_llm(client, model: str, system_prompt: str, user_prompt: str, max_toke
         max_tokens=max_tokens,
     )
     return response.choices[0].message.content.strip()
-
-
-def _is_safety_metric(name: str) -> bool:
-    return any(m in name.lower() for m in SAFETY_METRICS)
-
-
-def _format_metric_name(name: str) -> str:
-    import re
-    spaced = re.sub(r"([a-z])([A-Z])", r"\1 \2", name)
-    spaced = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1 \2", spaced)
-    return " ".join(w.capitalize() for w in spaced.split())
 
 
 METRIC_SYSTEM_PROMPT = (
