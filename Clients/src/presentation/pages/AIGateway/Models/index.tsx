@@ -118,7 +118,7 @@ export default function ModelsPage() {
   const loadModels = useCallback(async () => {
     try {
       const res = await apiServices.get("/ai-gateway/models/catalog");
-      setModels(res?.data?.models || []);
+      setModels(res?.data?.data?.models || res?.data?.models || []);
       setError("");
     } catch {
       setError("Failed to load model catalog. Is the AI Gateway running?");
