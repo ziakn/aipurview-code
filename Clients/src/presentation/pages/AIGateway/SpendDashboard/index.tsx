@@ -102,8 +102,8 @@ export default function SpendDashboardPage() {
           apiServices.get(`/ai-gateway/guardrails/stats?period=${period}`).catch(() => null),
         ]);
         setData(spendRes?.data || null);
-        setByEndpoint(endpointRes?.data || []);
-        setByUser(userRes?.data || []);
+        setByEndpoint(endpointRes?.data?.data || []);
+        setByUser(userRes?.data?.data || []);
         setGuardrailStats(gsRes?.data || null);
       } catch {
         setData(null);
