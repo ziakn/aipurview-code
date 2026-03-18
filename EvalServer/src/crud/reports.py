@@ -81,7 +81,7 @@ async def get_experiments_for_report(
             "name": row["name"] or config.get("name", row["id"]),
             "status": row["status"] or "unknown",
             "model": config.get("model", {}).get("name") or config.get("model", {}).get("model_name") or results.get("model", "Unknown"),
-            "dataset": config.get("dataset", {}).get("name") or results.get("dataset", ""),
+            "dataset": (config.get("dataset", {}).get("name") if isinstance(config.get("dataset"), dict) else config.get("dataset", "")) or results.get("dataset", ""),
             "judge": config.get("judgeLlm", {}).get("model") or config.get("judge", {}).get("model_name", ""),
             "scorer": config.get("scorer", {}).get("name", ""),
             "useCase": config.get("use_case", ""),
