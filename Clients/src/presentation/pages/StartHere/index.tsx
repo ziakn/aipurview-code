@@ -136,6 +136,7 @@ const RESOURCES = [
 ] as const;
 
 const WHATS_NEW = [
+  { label: "AI regulation in the Middle East", sub: "Mar 17, 2026", url: "https://verifywise.ai/blog/ai-regulation-middle-east" },
   { label: "AI governance directory", sub: "Feb 22, 2026", url: "https://verifywise.ai/blog/list-your-ai-governance-company-on-verifywise-directory" },
   { label: "Shadow AI detection", sub: "Feb 13, 2026", url: "https://verifywise.ai/blog/shadow-ai-detection-visibility-risk-scoring-governance" },
   { label: "EU AI Act deployer policy pack", sub: "Dec 23, 2025", url: "https://verifywise.ai/blog/eu-ai-act-deployer-policy-pack" },
