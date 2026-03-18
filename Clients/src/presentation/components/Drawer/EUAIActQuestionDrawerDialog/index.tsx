@@ -919,7 +919,7 @@ const EUAIActQuestionDrawerDialog: React.FC<EUAIActQuestionDrawerProps> = ({
       >
         <Stack
           className="eu-ai-act-question-drawer-dialog-content"
-          sx={{ width: 850 }}
+          sx={{ width: 850, minHeight: "100vh" }}
         >
           {/* HEADER */}
           <Stack
