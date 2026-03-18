@@ -164,7 +164,7 @@ async def generate_report_controller(
                 experiment_ids=experiment_ids,
                 sections=sections,
                 project_id=project_id,
-                created_by=user_id,
+                created_by=str(user_id) if user_id else None,
             )
 
             return JSONResponse(content={
