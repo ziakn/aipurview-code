@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useCallback } from "react";
 import { Box, Tooltip, IconButton, Stack, useTheme } from "@mui/material";
 import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
+import { StarterKit } from "@tiptap/starter-kit";
 import { Table } from "@tiptap/extension-table";
 import { TableRow } from "@tiptap/extension-table";
 import { TableCell } from "@tiptap/extension-table";
@@ -17,20 +17,26 @@ import {
   Underline as UnderlineIcon,
   Table as TableIcon,
   Link as LinkIcon,
-  Trash2,
-  Plus,
+  Undo2,
+  Redo2,
+  Strikethrough,
   Minus,
+  Plus,
+  Trash2,
 } from "lucide-react";
 import "./index.css";
 import { IRichTextEditorProps } from "../../types/interfaces/i.editor";
+import { border as borderPalette } from "../../themes/palette";
 
-const ICON_SIZE = 18;
+const ICON_SIZE = 16;
 
 interface ToolbarItem {
+  key: string;
   title: string;
   icon: React.ReactNode;
-  action: string;
+  action: () => void;
   isActive?: boolean;
+  dividerAfter?: boolean;
 }
 
 const RichTextEditor: React.FC<IRichTextEditorProps> = ({
@@ -43,10 +49,6 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = ({
   placeholder,
 }) => {
   const theme = useTheme();
-  const [activeList, setActiveList] = useState<"bulleted" | "numbered" | null>(
-    null
-  );
-
   const isFull = toolbar === "full";
 
   const extensions = [
@@ -59,13 +61,11 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = ({
           TableHeader,
           Underline,
           Link.configure({ openOnClick: false }),
-          ...(placeholder
-            ? [Placeholder.configure({ placeholder })]
-            : []),
         ]
-      : placeholder
-        ? [Placeholder.configure({ placeholder })]
-        : []),
+      : []),
+    ...(placeholder
+      ? [Placeholder.configure({ placeholder, showOnlyWhenEditable: true, showOnlyCurrent: true })]
+      : []),
   ];
 
   const editor = useEditor({
@@ -95,205 +95,284 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = ({
     };
   }, [editor]);
 
-  const applyFormatting = (type: string) => {
-    if (!editor) return;
-
-    const actions: Record<string, () => void> = {
-      bold: () => editor.chain().focus().toggleBold().run(),
-      italic: () => editor.chain().focus().toggleItalic().run(),
-      underline: () => editor.chain().focus().toggleUnderline().run(),
-      bullets: () => {
-        editor.chain().focus().toggleBulletList().run();
-        setActiveList((prev) => (prev === "bulleted" ? null : "bulleted"));
-      },
-      numbers: () => {
-        editor.chain().focus().toggleOrderedList().run();
-        setActiveList((prev) => (prev === "numbered" ? null : "numbered"));
-      },
-      table: () =>
-        editor
-          .chain()
-          .focus()
-          .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
-          .run(),
-      addColumn: () => editor.chain().focus().addColumnAfter().run(),
-      removeColumn: () => editor.chain().focus().deleteColumn().run(),
-      addRow: () => editor.chain().focus().addRowAfter().run(),
-      removeRow: () => editor.chain().focus().deleteRow().run(),
-      deleteTable: () => editor.chain().focus().deleteTable().run(),
-      link: () => {
-        const url = window.prompt("Enter URL:");
-        if (url) {
-          editor.chain().focus().setLink({ href: url }).run();
-        }
-      },
-    };
-
-    actions[type]?.();
-  };
-
-  const basicItems: ToolbarItem[] = [
-    { title: "Bold", icon: <Bold size={ICON_SIZE} />, action: "bold" },
-    { title: "Italic", icon: <Italic size={ICON_SIZE} />, action: "italic" },
-    {
-      title: "Bullet list",
-      icon: <List size={ICON_SIZE} />,
-      action: "bullets",
-      isActive: activeList === "bulleted",
+  const run = useCallback(
+    (fn: () => void) => {
+      if (!editor || !isEditable) return;
+      fn();
     },
-    {
-      title: "Numbered list",
-      icon: <ListOrdered size={ICON_SIZE} />,
-      action: "numbers",
-      isActive: activeList === "numbered",
-    },
-  ];
+    [editor, isEditable]
+  );
 
-  const fullItems: ToolbarItem[] = [
-    ...basicItems,
-    {
-      title: "Underline",
-      icon: <UnderlineIcon size={ICON_SIZE} />,
-      action: "underline",
-    },
-    {
-      title: "Insert table",
-      icon: <TableIcon size={ICON_SIZE} />,
-      action: "table",
-    },
-    { title: "Link", icon: <LinkIcon size={ICON_SIZE} />, action: "link" },
-  ];
-
-  // Show table manipulation buttons when cursor is inside a table
-  const isInTable = editor?.isActive("table") ?? false;
-  const tableActions: ToolbarItem[] = isInTable
+  // Build toolbar items based on variant
+  const basicItems: ToolbarItem[] = editor
     ? [
         {
-          title: "Add column",
-          icon: <Plus size={14} />,
-          action: "addColumn",
+          key: "undo",
+          title: "Undo",
+          icon: <Undo2 size={ICON_SIZE} />,
+          action: () => run(() => editor.chain().focus().undo().run()),
         },
         {
-          title: "Remove column",
-          icon: <Minus size={14} />,
-          action: "removeColumn",
-        },
-        { title: "Add row", icon: <Plus size={14} />, action: "addRow" },
-        {
-          title: "Remove row",
-          icon: <Minus size={14} />,
-          action: "removeRow",
+          key: "redo",
+          title: "Redo",
+          icon: <Redo2 size={ICON_SIZE} />,
+          action: () => run(() => editor.chain().focus().redo().run()),
+          dividerAfter: true,
         },
         {
-          title: "Delete table",
-          icon: <Trash2 size={14} />,
-          action: "deleteTable",
+          key: "bold",
+          title: "Bold",
+          icon: <Bold size={ICON_SIZE} />,
+          action: () => run(() => editor.chain().focus().toggleBold().run()),
+          isActive: editor.isActive("bold"),
+        },
+        {
+          key: "italic",
+          title: "Italic",
+          icon: <Italic size={ICON_SIZE} />,
+          action: () => run(() => editor.chain().focus().toggleItalic().run()),
+          isActive: editor.isActive("italic"),
+        },
+        {
+          key: "strike",
+          title: "Strikethrough",
+          icon: <Strikethrough size={ICON_SIZE} />,
+          action: () => run(() => editor.chain().focus().toggleStrike().run()),
+          isActive: editor.isActive("strike"),
+          dividerAfter: true,
+        },
+        {
+          key: "ul",
+          title: "Bullet list",
+          icon: <List size={ICON_SIZE} />,
+          action: () =>
+            run(() => editor.chain().focus().toggleBulletList().run()),
+          isActive: editor.isActive("bulletList"),
+        },
+        {
+          key: "ol",
+          title: "Numbered list",
+          icon: <ListOrdered size={ICON_SIZE} />,
+          action: () =>
+            run(() => editor.chain().focus().toggleOrderedList().run()),
+          isActive: editor.isActive("orderedList"),
         },
       ]
     : [];
 
-  const toolbarItems = [
-    ...(isFull ? fullItems : basicItems),
-    ...tableActions,
-  ];
+  const fullExtras: ToolbarItem[] =
+    editor && isFull
+      ? [
+          {
+            key: "underline",
+            title: "Underline",
+            icon: <UnderlineIcon size={ICON_SIZE} />,
+            action: () =>
+              run(() => editor.chain().focus().toggleUnderline().run()),
+            isActive: editor.isActive("underline"),
+            dividerAfter: true,
+          },
+          {
+            key: "table",
+            title: "Insert table",
+            icon: <TableIcon size={ICON_SIZE} />,
+            action: () =>
+              run(() =>
+                editor
+                  .chain()
+                  .focus()
+                  .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+                  .run()
+              ),
+          },
+          {
+            key: "link",
+            title: editor.isActive("link") ? "Remove link" : "Insert link",
+            icon: <LinkIcon size={ICON_SIZE} />,
+            action: () =>
+              run(() => {
+                if (editor.isActive("link")) {
+                  editor.chain().focus().unsetLink().run();
+                  return;
+                }
+                const url = window.prompt("Enter URL:");
+                if (url) {
+                  editor
+                    .chain()
+                    .focus()
+                    .setLink({ href: url })
+                    .run();
+                }
+              }),
+            isActive: editor.isActive("link"),
+          },
+        ]
+      : [];
+
+  // Table context actions (only when cursor is inside a table)
+  const isInTable = editor?.isActive("table") ?? false;
+  const tableActions: ToolbarItem[] =
+    isInTable && editor
+      ? [
+          {
+            key: "addCol",
+            title: "Add column",
+            icon: <Plus size={14} />,
+            action: () =>
+              run(() => editor.chain().focus().addColumnAfter().run()),
+          },
+          {
+            key: "delCol",
+            title: "Delete column",
+            icon: <Minus size={14} />,
+            action: () =>
+              run(() => editor.chain().focus().deleteColumn().run()),
+          },
+          {
+            key: "addRow",
+            title: "Add row",
+            icon: <Plus size={14} />,
+            action: () =>
+              run(() => editor.chain().focus().addRowAfter().run()),
+          },
+          {
+            key: "delRow",
+            title: "Delete row",
+            icon: <Minus size={14} />,
+            action: () =>
+              run(() => editor.chain().focus().deleteRow().run()),
+          },
+          {
+            key: "delTable",
+            title: "Delete table",
+            icon: <Trash2 size={14} />,
+            action: () =>
+              run(() => editor.chain().focus().deleteTable().run()),
+          },
+        ]
+      : [];
+
+  const allItems = [...basicItems, ...fullExtras, ...tableActions];
 
   return (
-    <Stack>
-      {/* Toolbar */}
+    <Stack className="vw-rich-text-editor">
+      {/* Toolbar — matches Policy Editor design */}
       <Box
         sx={{
           display: "flex",
           flexWrap: "wrap",
-          border: "1px solid #d0d5dd",
+          gap: "2px",
+          padding: "4px",
+          border: `1px solid ${borderPalette.dark}`,
           borderBottom: "none",
           borderRadius: `${theme.shape.borderRadius}px ${theme.shape.borderRadius}px 0 0`,
+          backgroundColor: theme.palette.background.default,
           ...headerSx,
         }}
       >
-        {toolbarItems.map(({ title, icon, action, isActive }) => (
-          <Tooltip key={action} title={title} sx={{ fontSize: 13 }}>
-            {!isEditable ? (
-              <span style={{ display: "inline-block" }}>
+        {allItems.map(({ key, title, icon, action, isActive, dividerAfter }) => (
+          <React.Fragment key={key}>
+            <Tooltip title={title}>
+              <span>
                 <IconButton
-                  onClick={() => applyFormatting(action)}
-                  disableRipple
+                  onClick={action}
                   size="small"
-                  color={isActive ? "primary" : "default"}
-                  disabled
+                  disabled={!isEditable}
+                  sx={{
+                    padding: "6px",
+                    borderRadius: "3px",
+                    backgroundColor: isActive
+                      ? "#E0F7FA"
+                      : "transparent",
+                    border: "1px solid",
+                    borderColor: isActive
+                      ? theme.palette.primary.main
+                      : "transparent",
+                    "&:hover": {
+                      backgroundColor: theme.palette.action.hover,
+                    },
+                  }}
                 >
                   {icon}
                 </IconButton>
               </span>
-            ) : (
-              <IconButton
-                onClick={() => applyFormatting(action)}
-                disableRipple
-                size="small"
-                color={isActive ? "primary" : "default"}
-              >
-                {icon}
-              </IconButton>
+            </Tooltip>
+            {dividerAfter && (
+              <Box
+                sx={{
+                  width: "1px",
+                  height: "28px",
+                  backgroundColor: borderPalette.light,
+                  mx: "2px",
+                  alignSelf: "center",
+                }}
+              />
             )}
-          </Tooltip>
+          </React.Fragment>
         ))}
       </Box>
 
-      {/* Tiptap Editor */}
-      <Stack>
-        <EditorContent
-          className="custom-tip-tap-editor"
-          editor={editor}
-          style={{
-            border: "1px solid #d0d5dd",
-            minHeight: height,
-            overflowY: "auto",
-            padding: "8px",
-            paddingTop: "0px",
-            borderTop: "none",
-            borderRadius: `0 0 ${theme.shape.borderRadius}px ${theme.shape.borderRadius}px`,
-            marginBottom: "5px",
-            outline: "none",
-            display: "flex",
-            alignItems: "flex-start",
-          }}
-          disabled={!isEditable}
-        />
-      </Stack>
+      {/* Editor content */}
+      <EditorContent
+        className="vw-tiptap-content"
+        editor={editor}
+        style={{
+          border: `1px solid ${borderPalette.dark}`,
+          minHeight: height,
+          overflowY: "auto",
+          padding: "8px 12px",
+          borderTop: "none",
+          borderRadius: `0 0 ${theme.shape.borderRadius}px ${theme.shape.borderRadius}px`,
+          outline: "none",
+          fontSize: "13px",
+        }}
+      />
 
       <style>
         {`
-          .ProseMirror {
-            flex: 1;
+          .vw-tiptap-content .ProseMirror {
             outline: none !important;
             box-shadow: none !important;
-            white-space: pre-wrap;
+            min-height: ${height};
           }
-          .custom-tip-tap-editor .ProseMirror p {
-            margin: 0;
-          }
-          .custom-tip-tap-editor .ProseMirror table {
-            border-collapse: collapse;
-            width: 100%;
-            margin: 8px 0;
-          }
-          .custom-tip-tap-editor .ProseMirror th,
-          .custom-tip-tap-editor .ProseMirror td {
-            border: 1px solid #d0d5dd;
-            padding: 6px 8px;
+          .vw-tiptap-content .ProseMirror p {
+            margin: 4px 0;
             font-size: 13px;
-            min-width: 60px;
+            line-height: 1.5;
           }
-          .custom-tip-tap-editor .ProseMirror th {
-            background-color: #f3f4f6;
-            font-weight: 600;
-          }
-          .custom-tip-tap-editor .ProseMirror .is-empty::before {
+          .vw-tiptap-content .ProseMirror p.is-editor-empty:first-child::before {
             content: attr(data-placeholder);
             color: #98A2B3;
             pointer-events: none;
             float: left;
             height: 0;
             font-size: 13px;
+          }
+          .vw-tiptap-content .ProseMirror table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 8px 0;
+          }
+          .vw-tiptap-content .ProseMirror th,
+          .vw-tiptap-content .ProseMirror td {
+            border: 1px solid ${borderPalette.dark};
+            padding: 6px 8px;
+            font-size: 13px;
+            min-width: 60px;
+          }
+          .vw-tiptap-content .ProseMirror th {
+            background-color: #f3f4f6;
+            font-weight: 600;
+          }
+          .vw-tiptap-content .ProseMirror ul,
+          .vw-tiptap-content .ProseMirror ol {
+            padding-left: 20px;
+            margin: 4px 0;
+            font-size: 13px;
+          }
+          .vw-tiptap-content .ProseMirror a {
+            color: #13715B;
+            text-decoration: underline;
           }
         `}
       </style>
