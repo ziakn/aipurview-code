@@ -78,7 +78,7 @@ interface ISO27001SubClauseData {
 interface ISO27001ClauseRef {
   id?: number;
   title?: string;
-  arrangement?: number;
+  order_no?: number;
   clause_no?: number;
 }
 
@@ -824,7 +824,7 @@ const VWISO27001ClauseDrawerDialog = ({
             }}
           >
             <Typography fontSize={15} fontWeight={700}>
-              {clause?.arrangement + "." + (index + 1)} {displayData?.title}
+              {clause?.order_no + "." + (index + 1)} {displayData?.title}
             </Typography>
             <CloseIcon
               size={20}
