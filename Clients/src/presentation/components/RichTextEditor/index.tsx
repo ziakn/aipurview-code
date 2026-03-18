@@ -1,7 +1,8 @@
 import React, { useEffect, useCallback } from "react";
 import { Box, Tooltip, IconButton, Stack, useTheme } from "@mui/material";
-import { useEditor, EditorContent, BubbleMenu } from "@tiptap/react";
-import { StarterKit } from "@tiptap/starter-kit";
+import { useEditor, EditorContent } from "@tiptap/react";
+import { BubbleMenu } from "@tiptap/react/menus";
+import StarterKit from "@tiptap/starter-kit";
 import { Table } from "@tiptap/extension-table";
 import { TableRow } from "@tiptap/extension-table";
 import { TableCell } from "@tiptap/extension-table";
