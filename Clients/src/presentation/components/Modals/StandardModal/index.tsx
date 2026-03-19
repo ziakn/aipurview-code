@@ -131,6 +131,9 @@ interface StandardModalProps {
 
   /** When true, modal height fits content instead of using fixed maxHeight. Use for content-viewing modals where height varies. */
   fitContent?: boolean;
+
+  /** When true, hides the submit button while keeping the cancel button visible */
+  hideSubmitButton?: boolean;
 }
 
 const StandardModal: React.FC<StandardModalProps> = ({
@@ -151,6 +154,7 @@ const StandardModal: React.FC<StandardModalProps> = ({
   submitButtonColor = `${brand.primary}`,
   showCancelButton = true,
   fitContent = false,
+  hideSubmitButton = false,
 }) => {
   return (
     <Modal
@@ -340,7 +344,7 @@ const StandardModal: React.FC<StandardModalProps> = ({
                     />
                 )}
 
-                {onSubmit && (
+                {onSubmit && !hideSubmitButton && (
                   <CustomizableButton
                     variant="contained"
                     text={submitButtonText}

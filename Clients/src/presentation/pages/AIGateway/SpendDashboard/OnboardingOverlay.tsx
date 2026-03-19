@@ -252,7 +252,7 @@ export default function OnboardingOverlay({ onGetStarted, setupStatus, onStepCom
   useEffect(() => {
     if (activeModal !== "api-key") return;
     const topIds = new Set(TOP_PROVIDERS.map((p) => p._id));
-    apiServices.get("/ai-gateway/providers").then((res) => {
+    apiServices.get<{ data: any }>("/ai-gateway/providers").then((res) => {
       const dynamic: string[] = res?.data?.data?.providers || [];
       const others = dynamic
         .filter((p) => !topIds.has(p))
@@ -270,7 +270,7 @@ export default function OnboardingOverlay({ onGetStarted, setupStatus, onStepCom
     if (activeModal !== "endpoint") return;
     let cancelled = false;
     setAvailableKeys([]);
-    apiServices.get("/ai-gateway/keys").then((res) => {
+    apiServices.get<{ data: any }>("/ai-gateway/keys").then((res) => {
       if (cancelled) return;
       const keys = (res?.data?.data || []).filter((k: { is_active: boolean }) => k.is_active);
       setAvailableKeys(keys.map((k: { id: number; key_name: string; provider: string }) => ({
@@ -286,8 +286,8 @@ export default function OnboardingOverlay({ onGetStarted, setupStatus, onStepCom
     if (activeModal !== "first-request") return;
     let cancelled = false;
     Promise.all([
-      apiServices.get("/ai-gateway/endpoints").catch(() => null),
-      apiServices.get("/ai-gateway/virtual-keys").catch(() => null),
+      apiServices.get<{ data: any }>("/ai-gateway/endpoints").catch(() => null),
+      apiServices.get<{ data: any }>("/ai-gateway/virtual-keys").catch(() => null),
     ]).then(([epRes, vkRes]) => {
       if (cancelled) return;
       const endpoints = epRes?.data?.data || [];
@@ -373,7 +373,7 @@ export default function OnboardingOverlay({ onGetStarted, setupStatus, onStepCom
     setKeyError("");
     try {
       // Step 2: Live provider verification
-      const verifyRes = await apiServices.post("/ai-gateway/keys/verify", {
+      const verifyRes = await apiServices.post<{ data: any }>("/ai-gateway/keys/verify", {
         provider: keyForm.provider,
         api_key: keyForm.api_key,
       });
@@ -426,7 +426,7 @@ export default function OnboardingOverlay({ onGetStarted, setupStatus, onStepCom
     setVkeySubmitting(true);
     setVkeyError("");
     try {
-      const res = await apiServices.post("/ai-gateway/virtual-keys", { name: vkeyName.trim() });
+      const res = await apiServices.post<{ data: any }>("/ai-gateway/virtual-keys", { name: vkeyName.trim() });
       const created = res?.data?.data;
       if (created?.key) {
         setCreatedKey(created.key);
@@ -450,7 +450,7 @@ export default function OnboardingOverlay({ onGetStarted, setupStatus, onStepCom
     setFirstReqError("");
     setFirstReqResponse("");
     try {
-      const res = await apiServices.post("/ai-gateway/chat", {
+      const res = await apiServices.post<{ data: any }>("/ai-gateway/chat", {
         endpoint_slug: firstReqSlug,
         messages: [{ role: "user", content: "Say hello and introduce yourself in one sentence." }],
       });

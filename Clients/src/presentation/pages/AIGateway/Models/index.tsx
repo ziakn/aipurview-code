@@ -3,10 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Box, Typography, Stack, IconButton, Tooltip } from "@mui/material";
 import TabContext from "@mui/lab/TabContext";
 import {
-  Search,
   Layers,
-  Calculator,
-  GitCompare,
   Eye,
   Wrench,
   FileText,
@@ -117,7 +114,7 @@ export default function ModelsPage() {
 
   const loadModels = useCallback(async () => {
     try {
-      const res = await apiServices.get("/ai-gateway/models/catalog");
+      const res = await apiServices.get<{ data: any }>("/ai-gateway/models/catalog");
       setModels(res?.data?.data?.models || []);
       setError("");
     } catch {
@@ -208,7 +205,7 @@ export default function ModelsPage() {
   return (
     <PageHeaderExtended
       title="Models"
-      description={<>Browse <strong style={{ color: palette.text.primary }}>{models.length.toLocaleString()}</strong> LLM models across <strong style={{ color: palette.text.primary }}>{providers.length - 1}</strong> providers.</>}
+      description={`Browse ${models.length.toLocaleString()} LLM models across ${providers.length - 1} providers.`}
       tipBoxEntity="ai-gateway-models"
       helpArticlePath="ai-gateway/models"
     >

@@ -105,7 +105,7 @@ export function useGatewayModels() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await apiServices.get("/ai-gateway/providers");
+        const res = await apiServices.get<{ data: any }>("/ai-gateway/providers");
         const data = res?.data?.data;
         if (!cancelled && data) {
           // Filter to chat-capable providers, sort alphabetically

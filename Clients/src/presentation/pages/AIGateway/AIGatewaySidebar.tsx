@@ -23,7 +23,6 @@ export default function AIGatewaySidebar({
   onTabChange,
   endpointsCount = 0,
   promptsCount = 0,
-  virtualKeysCount = 0,
 }: AIGatewaySidebarProps) {
   const flatItems: SidebarMenuItem[] = [
     {

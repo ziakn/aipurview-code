@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Box, Typography, Stack, IconButton } from "@mui/material";
 import { Link } from "react-router-dom";
-import { CirclePlus, KeyRound, Trash2, Ban, Copy, Check, Server, TriangleAlert, Router } from "lucide-react";
+import { CirclePlus, KeyRound, Trash2, Ban, Copy, Check, Server, TriangleAlert } from "lucide-react";
 import { EmptyState } from "../../../components/EmptyState";
 import EmptyStateTip from "../../../components/EmptyState/EmptyStateTip";
 import { CustomizableButton } from "../../../components/button/customizable-button";
@@ -85,8 +85,8 @@ export default function AIGatewayVirtualKeysPage({ embedded }: { embedded?: bool
   const loadData = useCallback(async () => {
     try {
       const [keysRes, endpointsRes] = await Promise.all([
-        apiServices.get("/ai-gateway/virtual-keys"),
-        apiServices.get("/ai-gateway/endpoints").catch(() => null),
+        apiServices.get<{ data: any }>("/ai-gateway/virtual-keys"),
+        apiServices.get<{ data: any }>("/ai-gateway/endpoints").catch(() => null),
       ]);
       setKeys(keysRes?.data?.data || []);
       const eps = endpointsRes?.data?.data || [];
@@ -115,7 +115,7 @@ export default function AIGatewayVirtualKeysPage({ embedded }: { embedded?: bool
       if (createForm.rate_limit_rpm) payload.rate_limit_rpm = Number(createForm.rate_limit_rpm);
       if (createForm.expires_at) payload.expires_at = new Date(createForm.expires_at).toISOString();
 
-      const res = await apiServices.post("/ai-gateway/virtual-keys", payload);
+      const res = await apiServices.post<{ data: any }>("/ai-gateway/virtual-keys", payload);
       const created = res?.data?.data;
       setIsCreateOpen(false);
       setCreateForm({ name: "", max_budget_usd: "", rate_limit_rpm: "", expires_at: "" });

@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from "react";
 import { Box, Typography } from "@mui/material";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { getAllExperiments, type Experiment } from "../../../../application/repository/deepEval.repository";
-import { palette } from "../../../themes/palette";
 import { vwTooltipStyle, ChartOutlineWrapper } from "../../../components/Charts/VWCharts";
 
 export type TimeRange = "7d" | "30d" | "100d" | "all";

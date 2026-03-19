@@ -62,7 +62,7 @@ export function PlaygroundComposer({ disabled }: PlaygroundComposerProps) {
               width: 36,
               height: 36,
               borderRadius: "4px",
-              "&:hover": { backgroundColor: palette.brand.hover },
+              "&:hover": { backgroundColor: palette.brand.primaryHover },
               "&:disabled": {
                 backgroundColor: palette.border.light,
                 color: palette.text.disabled,

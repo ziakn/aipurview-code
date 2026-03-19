@@ -15,7 +15,6 @@ import {
   ScanLine,
   FileWarning,
   BookOpen,
-  Search,
   ChevronDown,
   ChevronRight,
   Shield,
@@ -182,7 +181,7 @@ export default function GuardrailsPage() {
 
   const loadRules = useCallback(async () => {
     try {
-      const res = await apiServices.get("/ai-gateway/guardrails");
+      const res = await apiServices.get<{ data: any }>("/ai-gateway/guardrails");
       setRules(res?.data?.data || []);
     } catch {
       // Silently handle
@@ -292,7 +291,7 @@ export default function GuardrailsPage() {
     setTestLoading(true);
     setTestResult(null);
     try {
-      const res = await apiServices.post("/ai-gateway/guardrails/test", { text: testText });
+      const res = await apiServices.post<{ data: any }>("/ai-gateway/guardrails/test", { text: testText });
       setTestResult(res?.data?.data);
     } catch (err: any) {
       setTestResult({ error: err?.response?.data?.message || "Test failed — is the AI Gateway service running?" });

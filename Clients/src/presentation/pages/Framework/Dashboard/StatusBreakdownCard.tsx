@@ -55,15 +55,6 @@ const STATUS_COLORS = [
   "#EA580C",
 ];
 
-const STATUS_LABELS = [
-  "Not started",
-  "Draft",
-  "In progress",
-  "Awaiting review",
-  "Implemented",
-  "Needs rework",
-];
-
 const StatusBreakdownCard = ({ frameworksData }: StatusBreakdownCardProps) => {
   const [clauseStatusData, setClauseStatusData] = useState<Map<number, StatusData>>(new Map());
   const [annexStatusData, setAnnexStatusData] = useState<Map<number, StatusData>>(new Map());

@@ -70,6 +70,8 @@ export interface SelectCorProps {
     color?: string;
   }[];
   isRequired?: boolean;
+  isOptional?: boolean;
+  optionalLabel?: string;
   error?: string;
   getOptionValue?: (item: any) => any;
   disabled?: boolean;
