@@ -291,7 +291,7 @@ export default function SpendDashboardPage() {
                   axisLine={{ stroke: palette.border.light }}
                   tickFormatter={(v) => `$${v}`}
                 />
-                <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number | undefined) => { const v = value ?? 0; return [`$${v.toFixed(6)}`, "Cost"]; }} />
+                <Tooltip contentStyle={chartTooltipStyle} formatter={(value) => { const v = Number(value) || 0; return [`$${v.toFixed(6)}`, "Cost"]; }} />
                 <Bar dataKey="total_cost" fill={palette.brand.primary} fillOpacity={0.75} stroke={palette.brand.primary} strokeWidth={0.5} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -470,7 +470,7 @@ export default function SpendDashboardPage() {
                       axisLine={{ stroke: palette.border.light }}
                       tickFormatter={(v) => `${v}%`}
                     />
-                    <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number | undefined, name: string | undefined) => { const v = value ?? 0; const n = name ?? ""; return [n === "error_rate" ? `${v}%` : v, n === "error_rate" ? "Error rate" : "Errors"]; }} />
+                    <Tooltip contentStyle={chartTooltipStyle} formatter={(value, name) => { const v = Number(value) || 0; const n = String(name ?? ""); return [n === "error_rate" ? `${v}%` : v, n === "error_rate" ? "Error rate" : "Errors"]; }} />
                     <Area type="monotone" dataKey="error_rate" stroke={GUARDRAIL_ACTION_COLORS.blocked} fill="url(#errorGradient)" strokeWidth={2} />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -507,7 +507,7 @@ export default function SpendDashboardPage() {
                     />
                     <Tooltip
                       contentStyle={chartTooltipStyle}
-                      formatter={(value: number | undefined, name: string | undefined) => { const v = value ?? 0; const n = name ?? ""; return [v.toLocaleString(), n === "avg_prompt_tokens" ? "Prompt" : "Completion"]; }}
+                      formatter={(value, name) => { const v = Number(value) || 0; const n = String(name ?? ""); return [v.toLocaleString(), n === "avg_prompt_tokens" ? "Prompt" : "Completion"]; }}
                     />
                     <Legend wrapperStyle={{ fontSize: 11 }} />
                     <Bar dataKey="avg_prompt_tokens" stackId="tokens" fill={chartPalette[0]} radius={[0, 0, 0, 0]} name="Prompt" />
@@ -552,7 +552,7 @@ export default function SpendDashboardPage() {
                             <Cell key={i} fill={getProviderColor(p.group_key, i)} />
                           ))}
                         </Pie>
-                        <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number | undefined) => { const v = value ?? 0; return [`$${v.toFixed(4)}`, "Cost"]; }} />
+                        <Tooltip contentStyle={chartTooltipStyle} formatter={(value) => { const v = Number(value) || 0; return [`$${v.toFixed(4)}`, "Cost"]; }} />
                       </PieChart>
                     </ResponsiveContainer>
                     <DonutCenterLabel value={`$${byProvider.reduce((s: number, p: any) => s + Number(p.total_cost), 0).toFixed(2)}`} />

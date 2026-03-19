@@ -71,7 +71,7 @@ export default function MockDashboard() {
               />
               <Tooltip
                 contentStyle={{ fontSize: 12, borderRadius: 4, border: `1px solid ${palette.border.light}` }}
-                formatter={(value: number | undefined) => { const v = value ?? 0; return [`$${v.toFixed(2)}`, "Cost"]; }}
+                formatter={(value) => { const v = Number(value) || 0; return [`$${v.toFixed(2)}`, "Cost"]; }}
               />
               <Bar dataKey="total_cost" fill={chartPalette[0]} radius={[4, 4, 0, 0]} />
             </BarChart>
