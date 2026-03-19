@@ -13,8 +13,9 @@ from run_pipeline import load_run_config, build_stage_args
 # ---------------------------------------------------------------------------
 
 def test_load_run_config_returns_dict(tmp_path):
-    cfg_file = tmp_path / "run_config.yaml"
-    cfg_file.write_text(
+    configs_dir = tmp_path / "configs"
+    configs_dir.mkdir()
+    (configs_dir / "run_config.yaml").write_text(
         "version: grs_scenarios_v0.1\n"
         "stages:\n"
         "  render:\n"
@@ -24,19 +25,22 @@ def test_load_run_config_returns_dict(tmp_path):
         "    k_per_base: 3\n"
         "    coverage: per_family\n"
     )
-    config = load_run_config(tmp_path)
+    config = load_run_config(configs_dir)
     assert isinstance(config, dict)
     assert config["version"] == "grs_scenarios_v0.1"
 
 
 def test_load_run_config_raises_if_missing(tmp_path):
+    configs_dir = tmp_path / "configs"
+    configs_dir.mkdir()
     with pytest.raises(FileNotFoundError):
-        load_run_config(tmp_path)
+        load_run_config(configs_dir)
 
 
 def test_load_run_config_stages_present(tmp_path):
-    cfg_file = tmp_path / "run_config.yaml"
-    cfg_file.write_text(
+    configs_dir = tmp_path / "configs"
+    configs_dir.mkdir()
+    (configs_dir / "run_config.yaml").write_text(
         "version: grs_scenarios_v0.1\n"
         "stages:\n"
         "  render:\n"
@@ -46,7 +50,7 @@ def test_load_run_config_stages_present(tmp_path):
         "    k_per_base: 3\n"
         "    coverage: per_family\n"
     )
-    config = load_run_config(tmp_path)
+    config = load_run_config(configs_dir)
     assert "render" in config["stages"]
     assert "perturb" in config["stages"]
 

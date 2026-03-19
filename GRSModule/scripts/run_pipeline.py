@@ -38,17 +38,20 @@ _STAGE_PARAM_MAPS: dict[str, dict[str, str]] = {
 }
 
 
-def load_run_config(dataset_dir: Path) -> dict:
-    """Load and return run_config.yaml from dataset_dir.
+def load_run_config(configs_dir: Path) -> dict:
+    """Load and return run_config.yaml from configs_dir.
+
+    Args:
+        configs_dir: Directory containing run_config.yaml (typically configs/).
 
     Raises:
-        FileNotFoundError: If run_config.yaml does not exist in dataset_dir.
+        FileNotFoundError: If run_config.yaml does not exist in configs_dir.
     """
-    config_path = dataset_dir / "run_config.yaml"
+    config_path = configs_dir / "run_config.yaml"
     if not config_path.exists():
         raise FileNotFoundError(
             f"run_config.yaml not found at {config_path}. "
-            "Create it before running the pipeline."
+            "Create run_config.yaml in the configs directory before running the pipeline."
         )
     with config_path.open() as f:
         return yaml.safe_load(f)
