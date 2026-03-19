@@ -73,14 +73,14 @@ class SemanticResult:
 
 Two locations need updating:
 
-1. **Validation** — add `realistic_scenario` to the required-keys tuple so a `SemanticParseError` is raised if it is missing or not a boolean.
+1. **Validation** — add `realistic_scenario` to the required-keys tuple so a `SemanticParseError` is raised if it is missing. (Presence check only, consistent with how `valid_scenario` is currently handled — no additional boolean type assertion.)
 2. **Extraction** — in `SemanticValidator.validate()`, extract `data["realistic_scenario"]` and pass it into the `SemanticResult` constructor alongside the existing fields.
 
 `realistic_scenario` is taken directly from the LLM's stated value with no recomputation. This is intentional and differs from `valid_scenario`, which is recomputed from the structured trigger/signal data and overrides the LLM's stated value when they disagree. Realism cannot be independently recomputed from structured signals, so the LLM's judgement is fully trusted here.
 
 ### 5. `_heuristic_fallback` (MockChatClient path)
 
-Return `realistic_scenario=True` unconditionally. Realism cannot be assessed by regex; mock runs should be unaffected. Update the `reasoning` string to `"[heuristic fallback — realism not assessed]"` to aid downstream debugging when `used_heuristic_fallback=True` appears in metadata.
+Pass `realistic_scenario=True` as a keyword argument in the `return SemanticResult(...)` constructor call inside `_heuristic_fallback`. Realism cannot be assessed by regex; mock runs should be unaffected. Since `SemanticResult` is a frozen dataclass, omitting this argument would raise a `TypeError` at runtime on the mock path. Also update the `reasoning` string to `"[heuristic fallback — realism not assessed]"` to aid downstream debugging when `used_heuristic_fallback=True` appears in metadata.
 
 ### 6. Acceptance logic (`validator.py`)
 
@@ -110,7 +110,7 @@ Rejection reason codes:
 
 ### 8. Metadata
 
-Store `realistic_scenario` in the accepted scenario's `metadata` block alongside existing fields (`tension_signals`, `semantic_reasoning`).
+Add `"realistic_scenario": result.realistic_scenario` to the accepted scenario's `metadata` dict in `validator.py`, alongside the existing keys (`prompt_hash`, `tension_signals`, `semantic_reasoning`, `used_heuristic_fallback`).
 
 ---
 
