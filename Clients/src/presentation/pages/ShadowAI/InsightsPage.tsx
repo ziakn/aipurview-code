@@ -19,7 +19,7 @@ import {
   AlertTriangle,
   Building2,
 } from "lucide-react";
-import { VWBarChart, VWDonutChart, vwTooltipStyle } from "../../components/Charts/VWCharts";
+import { VWBarChart, VWDonutChart } from "../../components/Charts/VWCharts";
 import {
   getInsightsSummary,
   getToolsByEvents,

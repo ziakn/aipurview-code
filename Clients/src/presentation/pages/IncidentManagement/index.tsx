@@ -3,11 +3,10 @@ import React, {
   useState,
   useEffect,
   useMemo,
-  Suspense,
   useCallback,
   useRef,
 } from "react";
-import { Box, Stack, Fade } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import { ReactComponent as AddCircleOutlineIcon } from "../../assets/icons/plus-circle-white.svg";
 import { SearchBox } from "../../components/Search";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
@@ -25,7 +24,6 @@ import { PageHeaderExtended } from "../../components/Layout/PageHeaderExtended";
 import {
   addNewIncidentButton,
   incidentFilterRow,
-  incidentToastContainer,
 } from "./style";
 import IncidentTable from "./IncidentTable";
 import NewIncident from "../../components/Modals/NewIncident";
@@ -94,7 +92,7 @@ const IncidentManagement: React.FC = () => {
     title?: string;
     body: string;
   } | null>(null);
-  const [showAlert, setShowAlert] = useState(false);
+  const [, setShowAlert] = useState(false);
   const [tableKey, setTableKey] = useState(0);
 
   const { userRoleName } = useAuth();

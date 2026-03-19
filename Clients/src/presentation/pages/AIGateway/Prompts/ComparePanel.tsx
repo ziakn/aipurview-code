@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Box, Typography, Stack, IconButton, TextareaAutosize } from "@mui/material";
+import { Box, Typography, IconButton, TextareaAutosize } from "@mui/material";
 import { Send, GitCompareArrows } from "lucide-react";
 import Select from "../../../components/Inputs/Select";
 import palette from "../../../themes/palette";
@@ -109,6 +109,7 @@ export default function ComparePanel({
       <Box sx={{ p: "16px", borderBottom: `1px solid ${palette.border.light}`, flexShrink: 0 }}>
         <Box sx={{ display: "flex", gap: "16px", mb: detectedVars.length > 0 ? "16px" : 0 }}>
           <Select
+            id="compare-select-left"
             label="Version A"
             value={String(versionA)}
             onChange={(e) => setVersionA(Number(e.target.value))}
@@ -117,6 +118,7 @@ export default function ComparePanel({
             sx={{ flex: 1 }}
           />
           <Select
+            id="compare-select-right"
             label="Version B"
             value={String(versionB)}
             onChange={(e) => setVersionB(Number(e.target.value))}
@@ -127,6 +129,7 @@ export default function ComparePanel({
         </Box>
         <Typography fontSize={13} fontWeight={500} color="text.secondary" mt="8px">Endpoint</Typography>
         <Select
+          id="compare-select-endpoint"
           value={selectedEndpoint}
           onChange={(e) => setLocalEndpoint(e.target.value as string)}
           items={endpoints.map((e) => ({ _id: e.slug, name: `${e.display_name} (${e.slug})` }))}

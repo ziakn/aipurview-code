@@ -8,7 +8,6 @@ import {
   SelectChangeEvent,
   IconButton,
   Tooltip,
-  Divider,
 } from "@mui/material";
 import { TabContext, TabPanel } from "@mui/lab";
 import {
@@ -22,7 +21,6 @@ import {
 import * as LucideIcons from "lucide-react";
 import { useState, useEffect, Suspense, lazy, useRef } from "react";
 import dayjs, { Dayjs } from "dayjs";
-import Field from "../../Inputs/Field";
 import Select from "../../Inputs/Select";
 import DatePicker from "../../Inputs/Datepicker";
 import { Control } from "../../../../domain/types/Control";

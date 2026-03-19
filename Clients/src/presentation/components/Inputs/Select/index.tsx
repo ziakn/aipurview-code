@@ -44,6 +44,8 @@ function Select({
   value,
   items,
   isRequired,
+  isOptional,
+  optionalLabel,
   error,
   onChange,
   sx,
@@ -141,6 +143,17 @@ function Select({
               color={theme.palette.error.text}
             >
               *
+            </Typography>
+          )}
+          {isOptional && (
+            <Typography
+              component="span"
+              fontSize="inherit"
+              fontWeight={400}
+              ml={theme.spacing(2)}
+              sx={{ opacity: 0.6 }}
+            >
+              {optionalLabel || "(optional)"}
             </Typography>
           )}
         </Typography>
@@ -241,7 +254,7 @@ function Select({
 
             // Check single divider prop
             if (dividerAfterIndex !== undefined && index === dividerAfterIndex) {
-              const elements: React.ReactNode[] = [
+              const elements: React.ReactElement[] = [
                 <Divider key={`${id}-divider-${index}`} sx={{ my: 0.5 }} />,
               ];
               if (dividerLabel) {
@@ -267,7 +280,7 @@ function Select({
             // Check multi-divider prop
             const dividerEntry = dividers?.find((d) => d.index === index);
             if (dividerEntry) {
-              const elements: React.ReactNode[] = [
+              const elements: React.ReactElement[] = [
                 <Divider key={`${id}-divider-${index}`} sx={{ my: 0.5 }} />,
               ];
               if (dividerEntry.label) {

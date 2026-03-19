@@ -197,7 +197,7 @@ export const VWBarChart: React.FC<VWBarChartProps> = ({
             cursor={isVertical ? { fill: "rgba(19, 113, 91, 0.04)" } : undefined}
           />
         )}
-        {series.map((s, i) => (
+        {series.map((s, _i) => (
           <Bar
             key={s.dataKey}
             dataKey={s.dataKey}

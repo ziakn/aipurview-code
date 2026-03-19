@@ -127,7 +127,7 @@ export default function AIGatewaySettingsPage() {
   const [budgetSubmitting, setBudgetSubmitting] = useState(false);
 
   // Guardrail settings state
-  const [guardrailSettings, setGuardrailSettings] = useState<any>(null);
+  const [, setGuardrailSettings] = useState<any>(null);
   const [gsForm, setGsForm] = useState({
     pii_on_error: "block",
     content_filter_on_error: "allow",
@@ -169,10 +169,10 @@ export default function AIGatewaySettingsPage() {
   const loadData = useCallback(async () => {
     try {
       const [keysRes, budgetRes, providersRes, gsRes] = await Promise.all([
-        apiServices.get("/ai-gateway/keys"),
-        apiServices.get("/ai-gateway/budget"),
-        apiServices.get("/ai-gateway/providers").catch(() => null),
-        apiServices.get("/ai-gateway/guardrails/settings").catch(() => null),
+        apiServices.get<Record<string, any>>("/ai-gateway/keys"),
+        apiServices.get<Record<string, any>>("/ai-gateway/budget"),
+        apiServices.get<{ data: any; providers?: string[] }>("/ai-gateway/providers").catch(() => null),
+        apiServices.get<Record<string, any>>("/ai-gateway/guardrails/settings").catch(() => null),
       ]);
       setApiKeys(keysRes?.data?.data || []);
       setBudget(budgetRes?.data?.data || null);
@@ -219,8 +219,8 @@ export default function AIGatewaySettingsPage() {
   const loadRiskData = useCallback(async () => {
     try {
       const [settingsRes, suggestionsRes] = await Promise.all([
-        apiServices.get("/ai-gateway/risk-settings").catch(() => null),
-        apiServices.get("/ai-gateway/risk-suggestions").catch(() => null),
+        apiServices.get<Record<string, any>>("/ai-gateway/risk-settings").catch(() => null),
+        apiServices.get<Record<string, any>>("/ai-gateway/risk-suggestions").catch(() => null),
       ]);
       if (settingsRes?.data) {
         setRiskSettings(settingsRes.data?.settings || settingsRes.data);
@@ -254,7 +254,7 @@ export default function AIGatewaySettingsPage() {
     setKeyError("");
     try {
       // Step 2: Live provider verification
-      const verifyRes = await apiServices.post("/ai-gateway/keys/verify", {
+      const verifyRes = await apiServices.post<Record<string, any>>("/ai-gateway/keys/verify", {
         provider: keyForm.provider,
         api_key: keyForm.api_key,
       });
@@ -395,7 +395,7 @@ export default function AIGatewaySettingsPage() {
     setDetecting(true);
     setDetectResult("");
     try {
-      const res = await apiServices.post("/ai-gateway/risk-suggestions/detect");
+      const res = await apiServices.post<Record<string, any>>("/ai-gateway/risk-suggestions/detect");
       const count = res?.data?.new_suggestions_count ?? res?.data?.data?.new_suggestions ?? 0;
       setDetectResult(count > 0 ? `${count} new suggestion${count > 1 ? "s" : ""} found` : "No new risks detected");
       await loadRiskData();
@@ -802,7 +802,7 @@ export default function AIGatewaySettingsPage() {
                       onClick={async () => {
                         setSpendPurgeResult("Purging...");
                         try {
-                          const res = await apiServices.post("/ai-gateway/spend/logs/purge");
+                          const res = await apiServices.post<Record<string, any>>("/ai-gateway/spend/logs/purge");
                           const count = res?.data?.deleted ?? res?.data?.data?.deleted_count ?? 0;
                           setSpendPurgeResult(count > 0 ? `Deleted ${count} logs` : "No old logs to purge");
                           if (count > 0) await loadData();

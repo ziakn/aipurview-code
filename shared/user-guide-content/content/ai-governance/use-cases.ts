@@ -309,7 +309,7 @@ export const useCasesContent: ArticleContent = {
       text: 'Practical tips',
     },
     {
-      type: 'numbered-list',
+      type: 'ordered-list',
       items: [
         { text: 'Keep it one-to-one. One AI system, one use case. Bundling unrelated systems together confuses auditors and weakens your compliance posture.' },
         { text: 'Classify risk early. The EU AI Act classification shapes how much documentation and oversight you need. Fix it at the start rather than retrofitting later.' },

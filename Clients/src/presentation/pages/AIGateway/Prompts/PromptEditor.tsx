@@ -271,10 +271,10 @@ export default function PromptEditorPage() {
     if (!id) return;
     try {
       const [promptRes, versionsRes, endpointsRes, labelsRes] = await Promise.all([
-        apiServices.get(`/ai-gateway/prompts/${id}`),
-        apiServices.get(`/ai-gateway/prompts/${id}/versions`),
-        apiServices.get("/ai-gateway/endpoints"),
-        apiServices.get(`/ai-gateway/prompts/${id}/labels`),
+        apiServices.get<Record<string, any>>(`/ai-gateway/prompts/${id}`),
+        apiServices.get<Record<string, any>>(`/ai-gateway/prompts/${id}/versions`),
+        apiServices.get<Record<string, any>>("/ai-gateway/endpoints"),
+        apiServices.get<Record<string, any>>(`/ai-gateway/prompts/${id}/labels`),
       ]);
       setPrompt(promptRes?.data?.prompt || promptRes?.data?.data);
       const vers: Version[] = versionsRes?.data?.versions || versionsRes?.data?.data || [];
@@ -304,7 +304,7 @@ export default function PromptEditorPage() {
     if (!id || msgs.length === 0) return;
     setIsSaving(true);
     try {
-      const res = await apiServices.post(`/ai-gateway/prompts/${id}/versions`, {
+      const res = await apiServices.post<Record<string, any>>(`/ai-gateway/prompts/${id}/versions`, {
         content: msgs,
         model: model || null,
         config: Object.keys(config).length > 0 ? config : null,
@@ -357,7 +357,7 @@ export default function PromptEditorPage() {
   const publishVersion = async (versionNumber: number) => {
     if (!id) return;
     try {
-      const res = await apiServices.post(`/ai-gateway/prompts/${id}/versions/${versionNumber}/publish`);
+      const res = await apiServices.post<Record<string, any>>(`/ai-gateway/prompts/${id}/versions/${versionNumber}/publish`);
       const published = res?.data?.version || res?.data?.data;
       if (published) {
         setVersions((prev) =>
@@ -403,7 +403,7 @@ export default function PromptEditorPage() {
         version_id: labelVersionId,
       });
       // Refresh labels
-      const labelsRes = await apiServices.get(`/ai-gateway/prompts/${id}/labels`);
+      const labelsRes = await apiServices.get<Record<string, any>>(`/ai-gateway/prompts/${id}/labels`);
       setLabels(labelsRes?.data?.labels || labelsRes?.data?.data || []);
       setIsLabelModalOpen(false);
       setNewLabelName("");
@@ -533,6 +533,7 @@ export default function PromptEditorPage() {
           {/* Model + config */}
           <Box sx={{ display: "flex", gap: "16px", mb: "16px", alignItems: "flex-end" }}>
             <Select
+              id="prompt-model-select"
               label="Model"
               value={model}
               onChange={(e) => setModel(e.target.value as string)}
@@ -655,6 +656,7 @@ export default function PromptEditorPage() {
               {/* Endpoint selector + variables */}
               <Box sx={{ p: "16px", borderBottom: `1px solid ${palette.border.light}`, flexShrink: 0 }}>
                 <Select
+                  id="prompt-endpoint-select"
                   label="Test endpoint"
                   value={selectedEndpoint}
                   onChange={(e) => setSelectedEndpoint(e.target.value as string)}

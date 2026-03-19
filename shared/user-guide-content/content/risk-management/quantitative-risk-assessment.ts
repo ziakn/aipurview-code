@@ -32,7 +32,7 @@ export const quantitativeRiskAssessmentContent: ArticleContent = {
       text: 'This is an organization-wide setting. An admin needs to flip the switch before anyone can use it.',
     },
     {
-      type: 'numbered-list',
+      type: 'ordered-list',
       items: [
         { text: 'Go to Settings in the sidebar' },
         { text: 'Open the Features tab' },
@@ -217,7 +217,7 @@ export const quantitativeRiskAssessmentContent: ArticleContent = {
       text: 'Getting the most out of it',
     },
     {
-      type: 'numbered-list',
+      type: 'ordered-list',
       items: [
         { text: 'Start from a benchmark, then adjust. The pre-loaded numbers come from published penalty data and real incidents, so they are a solid baseline. Tailor them to your size and context.' },
         { text: 'Do not pretend you know more than you do. Wide min-max ranges are honest; artificially narrow ranges create a false sense of precision.' },

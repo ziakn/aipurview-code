@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { MessagePrimitive } from "@assistant-ui/react";
 import { Bot, User } from "lucide-react";
 import ReactMarkdown from "react-markdown";

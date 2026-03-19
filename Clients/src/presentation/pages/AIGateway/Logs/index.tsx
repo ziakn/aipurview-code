@@ -167,7 +167,7 @@ export default function LogsPage() {
   const loadGuardrailLogs = useCallback(async () => {
     setGrLoading(true);
     try {
-      const res = await apiServices.get(`/ai-gateway/guardrails/logs?limit=${GR_PAGE_SIZE}&offset=${grPage * GR_PAGE_SIZE}`);
+      const res = await apiServices.get<Record<string, any>>(`/ai-gateway/guardrails/logs?limit=${GR_PAGE_SIZE}&offset=${grPage * GR_PAGE_SIZE}`);
       const data = res?.data || {};
       setGrLogs(data.logs || data?.data?.logs || []);
       setGrTotal(data.total || data.logs?.length || 0);
@@ -228,8 +228,8 @@ export default function LogsPage() {
       setLoading(true);
       try {
         const qs = buildQuery(p, rpp);
-        const res = await apiServices.get(`/ai-gateway/spend/logs?${qs}`);
-        const data = res?.data || {};
+        const res = await apiServices.get<Record<string, any>>(`/ai-gateway/spend/logs?${qs}`);
+        const data = res?.data?.data || res?.data || {};
         setLogs(data.rows || []);
         setTotal(data.total || 0);
       } catch {
@@ -505,7 +505,7 @@ export default function LogsPage() {
                         backgroundColor: palette.background.alt,
                       }}
                     >
-                      {log.request_messages && (
+                      {!!log.request_messages && (
                         <Box
                           sx={{
                             mb: 1.5,

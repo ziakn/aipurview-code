@@ -18,7 +18,7 @@ import StandardModal from "../../../components/Modals/StandardModal";
 import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtended";
 import { apiServices } from "../../../../infrastructure/api/networkServices";
 import palette from "../../../themes/palette";
-import { sectionTitleSx, useCardSx, ProviderIcon, useGatewayModels, slugify } from "../shared";
+import { useCardSx, ProviderIcon, useGatewayModels, slugify } from "../shared";
 import { displayFormattedDate } from "../../../tools/isoDateToString";
 
 interface EndpointForm {
@@ -66,10 +66,10 @@ export default function EndpointsPage() {
   const loadData = useCallback(async () => {
     try {
       const [endpointsRes, keysRes, grRes, promptsRes] = await Promise.all([
-        apiServices.get("/ai-gateway/endpoints"),
-        apiServices.get("/ai-gateway/keys"),
-        apiServices.get("/ai-gateway/guardrails").catch(() => null),
-        apiServices.get("/ai-gateway/prompts").catch(() => null),
+        apiServices.get<Record<string, any>>("/ai-gateway/endpoints"),
+        apiServices.get<Record<string, any>>("/ai-gateway/keys"),
+        apiServices.get<Record<string, any>>("/ai-gateway/guardrails").catch(() => null),
+        apiServices.get<Record<string, any>>("/ai-gateway/prompts").catch(() => null),
       ]);
       setEndpoints(endpointsRes?.data?.endpoints || []);
       setApiKeys(keysRes?.data?.data || []);

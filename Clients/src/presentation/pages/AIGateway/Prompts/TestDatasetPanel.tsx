@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import {
   Box,
   Typography,
-  Stack,
   IconButton,
   Table,
   TableBody,
@@ -52,7 +51,7 @@ export default function TestDatasetPanel({
   messages,
   detectedVars,
   variableValues,
-  endpoints,
+  endpoints: _endpoints,
   selectedEndpoint,
   config,
 }: TestDatasetPanelProps) {
@@ -72,7 +71,7 @@ export default function TestDatasetPanel({
 
   const loadDatasets = useCallback(async () => {
     try {
-      const res = await apiServices.get(`/ai-gateway/prompts/${promptId}/test-datasets`);
+      const res = await apiServices.get<Record<string, any>>(`/ai-gateway/prompts/${promptId}/test-datasets`);
       setDatasets(res?.data?.test_datasets || res?.data?.data || []);
     } catch { /* silently handle */ }
   }, [promptId]);
@@ -124,7 +123,7 @@ export default function TestDatasetPanel({
     setIsSaving(true);
     try {
       if (selectedDatasetId === "new") {
-        const res = await apiServices.post(`/ai-gateway/prompts/${promptId}/test-datasets`, {
+        const res = await apiServices.post<Record<string, any>>(`/ai-gateway/prompts/${promptId}/test-datasets`, {
           name: datasetName,
           test_cases: testCases,
         });
@@ -223,6 +222,7 @@ export default function TestDatasetPanel({
       <Box sx={{ p: "16px", borderBottom: `1px solid ${palette.border.light}`, flexShrink: 0 }}>
         <Box sx={{ display: "flex", gap: "16px", mb: "8px", alignItems: "flex-end" }}>
           <Select
+            id="dataset-select"
             label="Dataset"
             value={String(selectedDatasetId)}
             onChange={(e) => selectDataset(e.target.value as string)}

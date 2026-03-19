@@ -1115,8 +1115,8 @@ function VulnerabilityFindingRow({ finding, repositoryOwner, repositoryName, sca
             </Box>
           )}
           {/* Cross-reference badge */}
-          {finding.vulnerability_details?.related_finding_types &&
-           (finding.vulnerability_details.related_finding_types as string[]).length > 0 && (
+          {!!(finding.vulnerability_details?.related_finding_types &&
+           (finding.vulnerability_details.related_finding_types as string[]).length > 0) && (
             <Tooltip
               title={`Also detected in: ${(finding.vulnerability_details.related_finding_types as string[]).map((t: string) => {
                 const labels: Record<string, string> = {

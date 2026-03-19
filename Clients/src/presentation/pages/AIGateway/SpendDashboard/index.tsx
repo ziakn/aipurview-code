@@ -21,7 +21,6 @@ import {
 } from "recharts";
 import {
   GradientDef,
-  GradientProgressBar,
   DonutCenterLabel,
   chartTooltipStyle,
   getProviderColor,
@@ -76,13 +75,13 @@ export default function SpendDashboardPage() {
       setLoading(true);
       try {
         // Check first-time status before loading period-based data
-        const logsCheck = await apiServices.get("/ai-gateway/spend/logs?limit=1").catch(() => null);
+        const logsCheck = await apiServices.get<Record<string, any>>("/ai-gateway/spend/logs?limit=1").catch(() => null);
         const totalLogs = logsCheck?.data?.total || 0;
         if (totalLogs === 0) {
           const [keysRes, endpointsRes, vkeysRes] = await Promise.all([
-            apiServices.get("/ai-gateway/keys").catch(() => null),
-            apiServices.get("/ai-gateway/endpoints").catch(() => null),
-            apiServices.get("/ai-gateway/virtual-keys").catch(() => null),
+            apiServices.get<Record<string, any>>("/ai-gateway/keys").catch(() => null),
+            apiServices.get<Record<string, any>>("/ai-gateway/endpoints").catch(() => null),
+            apiServices.get<Record<string, any>>("/ai-gateway/virtual-keys").catch(() => null),
           ]);
           setSetupStatus({
             hasApiKey: (keysRes?.data?.data || []).length > 0,
@@ -97,11 +96,11 @@ export default function SpendDashboardPage() {
         setIsFirstTime(false);
 
         const [spendRes, endpointRes, userRes, gsRes, cacheRes] = await Promise.all([
-          apiServices.get(`/ai-gateway/spend?period=${period}`),
-          apiServices.get(`/ai-gateway/spend/by-endpoint?period=${period}`).catch(() => null),
-          apiServices.get(`/ai-gateway/spend/by-user?period=${period}`).catch(() => null),
-          apiServices.get(`/ai-gateway/guardrails/stats?period=${period}`).catch(() => null),
-          apiServices.get("/ai-gateway/cache/stats").catch(() => null),
+          apiServices.get<Record<string, any>>(`/ai-gateway/spend?period=${period}`),
+          apiServices.get<Record<string, any>>(`/ai-gateway/spend/by-endpoint?period=${period}`).catch(() => null),
+          apiServices.get<Record<string, any>>(`/ai-gateway/spend/by-user?period=${period}`).catch(() => null),
+          apiServices.get<Record<string, any>>(`/ai-gateway/guardrails/stats?period=${period}`).catch(() => null),
+          apiServices.get<Record<string, any>>("/ai-gateway/cache/stats").catch(() => null),
         ]);
         setData(spendRes?.data || null);
         setByEndpoint((endpointRes?.data?.data || []).map((d: any) => ({ ...d, group_key: d.group_key || d.endpoint_name })));
@@ -161,10 +160,10 @@ export default function SpendDashboardPage() {
 
   const refreshSetupStatus = useCallback(async () => {
     const [keysRes, endpointsRes, vkeysRes, logsCheck] = await Promise.all([
-      apiServices.get("/ai-gateway/keys").catch(() => null),
-      apiServices.get("/ai-gateway/endpoints").catch(() => null),
-      apiServices.get("/ai-gateway/virtual-keys").catch(() => null),
-      apiServices.get("/ai-gateway/spend/logs?limit=1").catch(() => null),
+      apiServices.get<Record<string, any>>("/ai-gateway/keys").catch(() => null),
+      apiServices.get<Record<string, any>>("/ai-gateway/endpoints").catch(() => null),
+      apiServices.get<Record<string, any>>("/ai-gateway/virtual-keys").catch(() => null),
+      apiServices.get<Record<string, any>>("/ai-gateway/spend/logs?limit=1").catch(() => null),
     ]);
     const newStatus = {
       hasApiKey: (keysRes?.data?.data || []).length > 0,
@@ -292,7 +291,7 @@ export default function SpendDashboardPage() {
                   axisLine={{ stroke: palette.border.light }}
                   tickFormatter={(v) => `$${v}`}
                 />
-                <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number) => [`$${value.toFixed(6)}`, "Cost"]} />
+                <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number | undefined) => { const v = value ?? 0; return [`$${v.toFixed(6)}`, "Cost"]; }} />
                 <Bar dataKey="total_cost" fill={palette.brand.primary} fillOpacity={0.75} stroke={palette.brand.primary} strokeWidth={0.5} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -471,7 +470,7 @@ export default function SpendDashboardPage() {
                       axisLine={{ stroke: palette.border.light }}
                       tickFormatter={(v) => `${v}%`}
                     />
-                    <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number, name: string) => [name === "error_rate" ? `${value}%` : value, name === "error_rate" ? "Error rate" : "Errors"]} />
+                    <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number | undefined, name: string | undefined) => { const v = value ?? 0; const n = name ?? ""; return [n === "error_rate" ? `${v}%` : v, n === "error_rate" ? "Error rate" : "Errors"]; }} />
                     <Area type="monotone" dataKey="error_rate" stroke={GUARDRAIL_ACTION_COLORS.blocked} fill="url(#errorGradient)" strokeWidth={2} />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -508,7 +507,7 @@ export default function SpendDashboardPage() {
                     />
                     <Tooltip
                       contentStyle={chartTooltipStyle}
-                      formatter={(value: number, name: string) => [value.toLocaleString(), name === "avg_prompt_tokens" ? "Prompt" : "Completion"]}
+                      formatter={(value: number | undefined, name: string | undefined) => { const v = value ?? 0; const n = name ?? ""; return [v.toLocaleString(), n === "avg_prompt_tokens" ? "Prompt" : "Completion"]; }}
                     />
                     <Legend wrapperStyle={{ fontSize: 11 }} />
                     <Bar dataKey="avg_prompt_tokens" stackId="tokens" fill={chartPalette[0]} radius={[0, 0, 0, 0]} name="Prompt" />
@@ -553,7 +552,7 @@ export default function SpendDashboardPage() {
                             <Cell key={i} fill={getProviderColor(p.group_key, i)} />
                           ))}
                         </Pie>
-                        <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number) => [`$${value.toFixed(4)}`, "Cost"]} />
+                        <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number | undefined) => { const v = value ?? 0; return [`$${v.toFixed(4)}`, "Cost"]; }} />
                       </PieChart>
                     </ResponsiveContainer>
                     <DonutCenterLabel value={`$${byProvider.reduce((s: number, p: any) => s + Number(p.total_cost), 0).toFixed(2)}`} />
@@ -757,7 +756,7 @@ export default function SpendDashboardPage() {
                   {(guardrailStats?.byEndpoint || []).length === 0 ? (
                     <Typography sx={{ fontSize: 12, color: palette.text.disabled, py: "8px" }}>No endpoint data</Typography>
                   ) : (
-                    (guardrailStats?.byEndpoint || []).slice(0, 6).map((ep: any, i: number) => (
+                    (guardrailStats?.byEndpoint || []).slice(0, 6).map((ep: any, _i: number) => (
                       <Stack
                         key={ep.endpoint_name}
                         direction="row"
