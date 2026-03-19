@@ -42,7 +42,7 @@ Add a `realistic_scenario` field definition alongside the existing governance tr
 
 ### 2. JSON Schema Extension
 
-The LLM response gains one required field:
+The LLM response gains one required field. Both the field definition text in the prompt (Section 1) **and** the JSON format example block at the end of `SYSTEM_PROMPT` must include `realistic_scenario` — omitting it from the format block would produce inconsistent LLM output:
 
 ```json
 {
@@ -56,29 +56,59 @@ The LLM response gains one required field:
 
 ### 3. `SemanticResult` dataclass
 
-Add `realistic_scenario: bool` field.
+Add `realistic_scenario: bool` as the second field, immediately after `valid_scenario` and before `governance_triggers`, to match the JSON schema order:
 
-### 4. `_parse_llm_response`
+```python
+@dataclass(frozen=True)
+class SemanticResult:
+    valid_scenario: bool
+    realistic_scenario: bool   # ← new
+    governance_triggers: Dict[str, bool]
+    tension_signals: Dict[str, bool]
+    reasoning: str
+    used_heuristic_fallback: bool
+```
 
-Validate that `realistic_scenario` is present and is a boolean. Raise `SemanticParseError` if missing or wrong type.
+### 4. `_parse_llm_response` and extraction site
+
+Two locations need updating:
+
+1. **Validation** — add `realistic_scenario` to the required-keys tuple so a `SemanticParseError` is raised if it is missing or not a boolean.
+2. **Extraction** — in `SemanticValidator.validate()`, extract `data["realistic_scenario"]` and pass it into the `SemanticResult` constructor alongside the existing fields.
+
+`realistic_scenario` is taken directly from the LLM's stated value with no recomputation. This is intentional and differs from `valid_scenario`, which is recomputed from the structured trigger/signal data and overrides the LLM's stated value when they disagree. Realism cannot be independently recomputed from structured signals, so the LLM's judgement is fully trusted here.
 
 ### 5. `_heuristic_fallback` (MockChatClient path)
 
-Return `realistic_scenario=True` unconditionally. Realism cannot be assessed by regex; mock runs should be unaffected by this change.
+Return `realistic_scenario=True` unconditionally. Realism cannot be assessed by regex; mock runs should be unaffected. Update the `reasoning` string to `"[heuristic fallback — realism not assessed]"` to aid downstream debugging when `used_heuristic_fallback=True` appears in metadata.
 
 ### 6. Acceptance logic (`validator.py`)
 
+Checks run sequentially — the existing `valid_scenario` gate fires first:
+
 ```python
-valid = any(governance_triggers.values()) and any(tension_signals.values())
-realistic = result.realistic_scenario
-accepted = valid and realistic
+# Existing gate (fires first)
+if not result.valid_scenario:
+    rejections.append({"reason_code": R.TRIG_SEMANTIC_INVALID, ...})
+    continue
+
+# New gate
+if not result.realistic_scenario:
+    rejections.append({"reason_code": R.TRIG_SEMANTIC_UNREALISTIC, ...})
+    continue
 ```
+
+When both `valid=False` and `realistic=False`, `TRIG_SEMANTIC_INVALID` takes precedence (the first check fires and the loop continues before realism is evaluated). Realism failures on structurally-invalid scenarios are therefore not separately recorded — this is acceptable because structural invalidity is the more fundamental failure.
 
 Rejection reason codes:
 - `TRIG_SEMANTIC_INVALID` — existing, fires when `valid=False`
 - `TRIG_SEMANTIC_UNREALISTIC` — new, fires when `valid=True` but `realistic=False`
 
-### 7. Metadata
+### 7. `max_tokens` budget
+
+`SemanticValidatorConfig` sets `max_tokens=400`. Adding one boolean field increases response length minimally (~10 tokens). 400 tokens remains sufficient; no change needed.
+
+### 8. Metadata
 
 Store `realistic_scenario` in the accepted scenario's `metadata` block alongside existing fields (`tension_signals`, `semantic_reasoning`).
 
