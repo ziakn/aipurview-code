@@ -93,6 +93,7 @@ async def resolve_endpoint_for_key(
                        e.max_tokens, e.temperature, e.system_prompt,
                        e.rate_limit_rpm, e.prompt_id, e.prompt_label,
                        e.fallback_endpoint_id, e.is_active,
+                       e.cache_enabled, e.cache_ttl_seconds,
                        k.encrypted_key, k.is_active AS key_is_active
                 FROM ai_gateway_endpoints e
                 JOIN ai_gateway_api_keys k ON e.api_key_id = k.id
@@ -120,6 +121,7 @@ async def resolve_endpoint_by_id(organization_id: int, endpoint_id: int) -> Opti
             text("""
                 SELECT e.id, e.slug, e.display_name, e.provider, e.model,
                        e.is_active, e.fallback_endpoint_id,
+                       e.cache_enabled, e.cache_ttl_seconds,
                        k.encrypted_key, k.is_active AS key_is_active
                 FROM ai_gateway_endpoints e
                 JOIN ai_gateway_api_keys k ON e.api_key_id = k.id
@@ -277,6 +279,34 @@ async def log_spend(
             await db.commit()
     except Exception as e:
         logger.error(f"Failed to log spend: {e}")
+
+
+async def log_cache_hit(
+    organization_id: int,
+    endpoint_id: int,
+    virtual_key_id: int,
+    provider: str,
+    model: str,
+    prompt_tokens: int,
+    completion_tokens: int,
+    total_tokens: int,
+    original_cost_usd: float,
+    latency_ms: int,
+):
+    """Log a cache hit as a spend entry with zero cost and cache metadata."""
+    await log_spend(
+        organization_id=organization_id,
+        endpoint_id=endpoint_id,
+        virtual_key_id=virtual_key_id,
+        provider=provider,
+        model=model,
+        prompt_tokens=prompt_tokens,
+        completion_tokens=completion_tokens,
+        total_tokens=total_tokens,
+        cost_usd=0.0,
+        latency_ms=latency_ms,
+        metadata={"cache_hit": True, "original_cost_usd": original_cost_usd},
+    )
 
 
 # ─── Guardrail Scanning ─────────────────────────────────────────────────────
