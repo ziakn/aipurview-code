@@ -245,9 +245,8 @@ const Reports: React.FC<ReportsProps> = ({
   const getUniqueGenerators = useCallback(() => {
     const generators = new Set<string>();
     generatedReports.forEach((report) => {
-      const generatorName = `${report.uploader_name || ""} ${
-        report.uploader_surname || ""
-      }`.trim();
+      const generatorName = `${report.uploader_name || ""} ${report.uploader_surname || ""
+        }`.trim();
       if (generatorName) {
         generators.add(generatorName);
       }
@@ -309,9 +308,8 @@ const Reports: React.FC<ReportsProps> = ({
         case "project_id":
           return item.project_id?.toString();
         case "generated_by":
-          return `${item.uploader_name || ""} ${
-            item.uploader_surname || ""
-          }`.trim();
+          return `${item.uploader_name || ""} ${item.uploader_surname || ""
+            }`.trim();
         case "uploaded_time":
           return item.uploaded_time;
         default:
@@ -352,9 +350,8 @@ const Reports: React.FC<ReportsProps> = ({
           return report.project_title || "Unknown";
         case "generated_by":
           return (
-            `${report.uploader_name || ""} ${
-              report.uploader_surname || ""
-            }`.trim() || "Unknown"
+            `${report.uploader_name || ""} ${report.uploader_surname || ""
+              }`.trim() || "Unknown"
           );
         default:
           return "Other";
@@ -382,17 +379,15 @@ const Reports: React.FC<ReportsProps> = ({
       }}
     >
       {alert && (
-        <Suspense fallback={null}>
-          <Box>
-            <Alert
-              variant={alert.variant}
-              title={alert.title}
-              body={alert.body}
-              isToast={true}
-              onClick={() => setAlert(null)}
-            />
-          </Box>
-        </Suspense>
+        <Box>
+          <Alert
+            variant={alert.variant}
+            title={alert.title}
+            body={alert.body}
+            isToast={true}
+            onClick={() => setAlert(null)}
+          />
+        </Box>
       )}
 
       <Stack
