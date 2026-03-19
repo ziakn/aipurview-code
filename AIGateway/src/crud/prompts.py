@@ -201,9 +201,10 @@ async def create_version(
         result = await db.execute(
             text("""
                 INSERT INTO ai_gateway_prompt_versions
-                    (prompt_id, version, content, variables, model, config,
-                     commit_message, created_by, status, created_at, updated_at)
+                    (organization_id, prompt_id, version, content, variables, model, config,
+                     commit_message, created_by, status, created_at)
                 VALUES (
+                    :org_id,
                     :prompt_id,
                     COALESCE(
                         (SELECT MAX(version) FROM ai_gateway_prompt_versions WHERE prompt_id = :prompt_id),
@@ -216,12 +217,12 @@ async def create_version(
                     :commit_message,
                     :created_by,
                     'draft',
-                    NOW(),
                     NOW()
                 )
                 RETURNING *
             """),
             {
+                "org_id": org_id,
                 "prompt_id": prompt_id,
                 "content": content_json,
                 "variables": variables_json,
@@ -297,7 +298,7 @@ async def publish_version(
         await db.execute(
             text("""
                 UPDATE ai_gateway_prompt_versions
-                SET status = 'draft', published_at = NULL, published_by = NULL, updated_at = NOW()
+                SET status = 'draft', published_at = NULL, published_by = NULL
                 WHERE prompt_id = :prompt_id
                   AND EXISTS (
                       SELECT 1 FROM ai_gateway_prompts p
@@ -313,8 +314,7 @@ async def publish_version(
                 UPDATE ai_gateway_prompt_versions
                 SET status = 'published',
                     published_at = NOW(),
-                    published_by = :published_by,
-                    updated_at = NOW()
+                    published_by = :published_by
                 WHERE prompt_id = :prompt_id AND version = :version_number
                   AND EXISTS (
                       SELECT 1 FROM ai_gateway_prompts p
@@ -401,9 +401,9 @@ async def assign_label(
         result = await db.execute(
             text("""
                 INSERT INTO ai_gateway_prompt_labels
-                    (prompt_id, label_name, version_id, assigned_by, assigned_at)
+                    (organization_id, prompt_id, label_name, version_id, assigned_by, assigned_at)
                 VALUES
-                    (:prompt_id, :label_name, :version_id, :assigned_by, NOW())
+                    (:org_id, :prompt_id, :label_name, :version_id, :assigned_by, NOW())
                 ON CONFLICT (prompt_id, label_name)
                 DO UPDATE SET
                     version_id  = EXCLUDED.version_id,
@@ -412,6 +412,7 @@ async def assign_label(
                 RETURNING *
             """),
             {
+                "org_id": org_id,
                 "prompt_id": prompt_id,
                 "label_name": label_name,
                 "version_id": version_id,
@@ -495,12 +496,13 @@ async def create_test_dataset(
         result = await db.execute(
             text("""
                 INSERT INTO ai_gateway_prompt_test_datasets
-                    (prompt_id, name, test_cases, created_by, created_at, updated_at)
+                    (organization_id, prompt_id, name, test_cases, created_by, created_at, updated_at)
                 VALUES
-                    (:prompt_id, :name, CAST(:test_cases AS jsonb), :created_by, NOW(), NOW())
+                    (:org_id, :prompt_id, :name, CAST(:test_cases AS jsonb), :created_by, NOW(), NOW())
                 RETURNING *
             """),
             {
+                "org_id": org_id,
                 "prompt_id": prompt_id,
                 "name": name,
                 "test_cases": test_cases_json,
