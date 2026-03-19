@@ -76,6 +76,9 @@ jobs:
             VITE_APP_VERSION=${{ env.TAG }}
 
       # Build Backend image
+      - name: Copy version.json into Servers context
+        run: cp version.json Servers/version.json
+
       - name: Build Servers image (for scanning)
         uses: docker/build-push-action@v7
         with:

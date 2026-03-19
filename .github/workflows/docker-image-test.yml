@@ -43,6 +43,9 @@ jobs:
             VITE_SLACK_CLIENT_ID=${{ secrets.SLACK_CLIENT_ID }}
             VITE_APP_VERSION=develop
 
+      - name: Copy version.json into Servers context
+        run: cp version.json Servers/version.json
+
       - name: Build and push Servers image
         uses: docker/build-push-action@v7
         with:

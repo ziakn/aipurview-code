@@ -2,11 +2,19 @@ import express from "express";
 import { readFileSync } from "fs";
 import { join } from "path";
 
-// Read from the shared root version.json so frontend and backend always
-// agree on the version string. From dist/routes/ → go up three levels
-// to reach the repository root.
-const versionPath = join(__dirname, "..", "..", "..", "version.json");
-const { version } = JSON.parse(readFileSync(versionPath, "utf-8"));
+// Read version from the shared root version.json.
+// Try multiple paths: repo root (local dev) and app root (Docker container).
+const candidates = [
+  join(__dirname, "..", "..", "..", "version.json"), // local dev: dist/routes/ → repo root
+  join(__dirname, "..", "..", "version.json"),       // Docker: dist/routes/ → /app/version.json
+];
+let version = "unknown";
+for (const p of candidates) {
+  try {
+    version = JSON.parse(readFileSync(p, "utf-8")).version;
+    break;
+  } catch { /* try next */ }
+}
 
 const router = express.Router();
 
