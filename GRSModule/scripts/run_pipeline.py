@@ -36,9 +36,14 @@ _PERTURB_PARAM_MAP: dict[str, str] = {
     "k_per_base": "--k-per-base",
     "coverage": "--coverage",
 }
+_VALIDATE_PARAM_MAP: dict[str, str] = {
+    "provider": "--provider",
+    "validator_model_id": "--validator-model-id",
+}
 _STAGE_PARAM_MAPS: dict[str, dict[str, str]] = {
     "render": _RENDER_PARAM_MAP,
     "perturb": _PERTURB_PARAM_MAP,
+    "validate": _VALIDATE_PARAM_MAP,
 }
 
 
@@ -77,7 +82,7 @@ def copy_run_config(configs_dir: Path, dataset_dir: Path) -> None:
 def build_stage_args(stage: str, config: dict) -> list[str]:
     """Build the CLI flag list for a single pipeline stage.
 
-    Returns [] for stages with no params (seeds, validate) or unknown stages.
+    Returns [] for stages with no params (seeds) or unknown stages.
     """
     param_map = _STAGE_PARAM_MAPS.get(stage)
     if param_map is None:
