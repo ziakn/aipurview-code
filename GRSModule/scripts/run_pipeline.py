@@ -14,6 +14,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -55,6 +56,19 @@ def load_run_config(configs_dir: Path) -> dict:
         )
     with config_path.open() as f:
         return yaml.safe_load(f)
+
+
+def copy_run_config(configs_dir: Path, dataset_dir: Path) -> None:
+    """Copy configs/run_config.yaml into dataset_dir for reproducibility.
+
+    Creates dataset_dir if it does not exist. Overwrites any existing copy.
+
+    Args:
+        configs_dir: Source directory containing run_config.yaml.
+        dataset_dir: Destination version folder (e.g. datasets/grs_scenarios_v0.1).
+    """
+    dataset_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(configs_dir / "run_config.yaml", dataset_dir / "run_config.yaml")
 
 
 def build_stage_args(stage: str, config: dict) -> list[str]:

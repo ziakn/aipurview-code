@@ -5,7 +5,7 @@ import pytest
 
 # Allow importing from scripts/
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
-from run_pipeline import load_run_config, build_stage_args
+from run_pipeline import load_run_config, build_stage_args, copy_run_config
 
 
 # ---------------------------------------------------------------------------
@@ -164,3 +164,55 @@ def test_build_stage_args_perturb_full():
 def test_build_stage_args_unknown_stage_returns_empty():
     config = {"stages": {}}
     assert build_stage_args("infer", config) == []
+
+
+# ---------------------------------------------------------------------------
+# copy_run_config
+# ---------------------------------------------------------------------------
+
+def test_copy_run_config_creates_dataset_dir(tmp_path):
+    """dataset_dir is created if it does not exist."""
+    configs_dir = tmp_path / "configs"
+    configs_dir.mkdir()
+    (configs_dir / "run_config.yaml").write_text("version: v0.1\n")
+
+    dataset_dir = tmp_path / "datasets" / "grs_scenarios_v0.1"
+    assert not dataset_dir.exists()
+
+    copy_run_config(configs_dir, dataset_dir)
+
+    assert dataset_dir.exists()
+
+
+def test_copy_run_config_writes_file(tmp_path):
+    """run_config.yaml is copied into dataset_dir."""
+    configs_dir = tmp_path / "configs"
+    configs_dir.mkdir()
+    content = "version: v0.1\nstages:\n  render:\n    seed: 42\n"
+    (configs_dir / "run_config.yaml").write_text(content)
+
+    dataset_dir = tmp_path / "datasets" / "grs_scenarios_v0.1"
+    copy_run_config(configs_dir, dataset_dir)
+
+    dest = dataset_dir / "run_config.yaml"
+    assert dest.exists()
+    assert dest.read_text() == content
+
+
+def test_copy_run_config_overwrites_existing(tmp_path):
+    """Calling copy_run_config again overwrites with latest content."""
+    configs_dir = tmp_path / "configs"
+    configs_dir.mkdir()
+    dataset_dir = tmp_path / "datasets" / "v0.1"
+    dataset_dir.mkdir(parents=True)
+
+    # Write an old version in dataset_dir
+    (dataset_dir / "run_config.yaml").write_text("version: old\n")
+
+    # New content in configs_dir
+    new_content = "version: new\n"
+    (configs_dir / "run_config.yaml").write_text(new_content)
+
+    copy_run_config(configs_dir, dataset_dir)
+
+    assert (dataset_dir / "run_config.yaml").read_text() == new_content
