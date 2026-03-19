@@ -179,7 +179,7 @@ export default function AIGatewaySettingsPage() {
         
       }
 
-      const gs = gsRes?.data?.data;
+      const gs = gsRes?.data?.settings;
       if (gs) {
         setGuardrailSettings(gs);
         setGsForm({
@@ -205,12 +205,12 @@ export default function AIGatewaySettingsPage() {
         apiServices.get("/ai-gateway/risk-settings").catch(() => null),
         apiServices.get("/ai-gateway/risk-suggestions").catch(() => null),
       ]);
-      if (settingsRes?.data?.data) {
-        setRiskSettings(settingsRes.data.data);
+      if (settingsRes?.data) {
+        setRiskSettings(settingsRes.data?.settings || settingsRes.data);
         setRiskSettingsDirty(false);
       }
-      if (suggestionsRes?.data?.data) {
-        setSuggestions(suggestionsRes.data.data);
+      if (suggestionsRes?.data) {
+        setSuggestions(suggestionsRes.data?.suggestions || suggestionsRes.data);
       }
     } catch {
       // Silently handle
@@ -253,7 +253,7 @@ export default function AIGatewaySettingsPage() {
       setKeyForm({ key_name: "", provider: "", api_key: "" });
       await loadData();
     } catch (err: any) {
-      setKeyError(err?.response?.data?.message || "Failed to create API key");
+      setKeyError(err?.response?.data?.detail || err?.response?.data?.message || "Failed to create API key");
     } finally {
       setKeySubmitting(false);
     }
@@ -363,7 +363,7 @@ export default function AIGatewaySettingsPage() {
     setDetectResult("");
     try {
       const res = await apiServices.post("/ai-gateway/risk-suggestions/detect");
-      const count = res?.data?.data?.new_suggestions ?? 0;
+      const count = res?.data?.new_suggestions_count ?? res?.data?.data?.new_suggestions ?? 0;
       setDetectResult(count > 0 ? `${count} new suggestion${count > 1 ? "s" : ""} found` : "No new risks detected");
       await loadRiskData();
       setTimeout(() => setDetectResult(""), 5000);
@@ -770,7 +770,7 @@ export default function AIGatewaySettingsPage() {
                         setSpendPurgeResult("Purging...");
                         try {
                           const res = await apiServices.post("/ai-gateway/spend/logs/purge");
-                          const count = res?.data?.data?.deleted_count || 0;
+                          const count = res?.data?.deleted ?? res?.data?.data?.deleted_count ?? 0;
                           setSpendPurgeResult(count > 0 ? `Deleted ${count} logs` : "No old logs to purge");
                           if (count > 0) await loadData();
                           setTimeout(() => setSpendPurgeResult(""), 3000);

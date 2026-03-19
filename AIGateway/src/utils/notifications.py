@@ -37,15 +37,31 @@ async def _send_notification(payload: dict[str, Any]) -> None:
 
 
 async def notify_config_change(
-    organization_id: int,
-    changed_by_user_id: int,
-    event: dict[str, str],
+    organization_id: Optional[int] = None,
+    changed_by_user_id: Optional[int] = None,
+    event: Optional[dict[str, Any]] = None,
+    **kwargs: Any,
 ) -> None:
-    """Notify admins of a config change (API key, endpoint, guardrail)."""
+    """Notify admins of a config change (API key, endpoint, guardrail).
+
+    Accepts both positional-style and keyword-style arguments to accommodate
+    various callers (virtual_keys, endpoints, guardrails, api_keys, prompts).
+    """
+    org_id = organization_id or kwargs.get("org_id")
+    user_id = changed_by_user_id or kwargs.get("user_id")
+
+    # Build event dict from explicit event param or from kwargs
+    if event is None:
+        event = {}
+        for k in ("action", "entity", "entity_type", "entity_name",
+                   "entity_id", "detail", "payload", "frontend_url"):
+            if k in kwargs:
+                event[k] = kwargs[k]
+
     await _send_notification({
         "type": "config_change",
-        "organization_id": organization_id,
-        "changed_by_user_id": changed_by_user_id,
+        "organization_id": org_id,
+        "changed_by_user_id": user_id,
         "event": event,
     })
 
