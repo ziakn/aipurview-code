@@ -407,25 +407,25 @@ async def run_guardrails(
             settings=guardrail_settings,
         )
 
-        for detection in result.get("detections", []):
+        for detection in (result.detections or []):
             await _log_guardrail_detection(
                 organization_id=organization_id,
-                guardrail_id=detection.get("guardrail_id"),
+                guardrail_id=getattr(detection, "guardrail_id", None),
                 endpoint_id=endpoint_id,
-                guardrail_type=detection.get("guardrail_type", ""),
-                action_taken="blocked" if result.get("blocked") else detection.get("action", "allowed"),
-                matched_text=detection.get("matched_text", ""),
-                entity_type=detection.get("entity_type", ""),
-                execution_time_ms=result.get("execution_time_ms", 0),
+                guardrail_type=getattr(detection, "guardrail_type", ""),
+                action_taken="blocked" if result.blocked else getattr(detection, "action", "allowed"),
+                matched_text=getattr(detection, "matched_text", ""),
+                entity_type=getattr(detection, "entity_type", ""),
+                execution_time_ms=result.execution_time_ms or 0,
             )
 
-        if result.get("blocked"):
+        if result.blocked:
             raise HTTPException(
                 status_code=400,
-                detail=f"Request blocked by guardrail: {result.get('block_reason', 'policy violation')}",
+                detail=f"Request blocked by guardrail: {result.block_reason or 'policy violation'}",
             )
 
-        if result.get("masked_text"):
-            updated[i] = {**msg, "content": result["masked_text"]}
+        if result.masked_text:
+            updated[i] = {**msg, "content": result.masked_text}
 
     return updated
