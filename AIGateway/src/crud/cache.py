@@ -3,11 +3,16 @@ CRUD operations for the AI Gateway response cache.
 All queries use parameterized SQL via SQLAlchemy text().
 """
 
+import time as _time
 from datetime import datetime
 from typing import Optional
 
 from sqlalchemy import text
 from database.db import get_db
+
+# In-memory cache for global settings (rarely changes, queried on every request)
+_global_settings_cache: dict[int, tuple[dict, float]] = {}
+_SETTINGS_CACHE_TTL = 30  # seconds
 
 
 async def get_cached_response(
@@ -187,7 +192,18 @@ async def clear_endpoint_cache(organization_id: int, endpoint_id: int) -> int:
 
 
 async def get_global_cache_settings(organization_id: int) -> dict:
-    """Read global cache settings from guardrail_settings."""
+    """Read global cache settings from guardrail_settings. Uses in-memory TTL cache (30s)."""
+    now = _time.time()
+    if organization_id in _global_settings_cache:
+        cached, ts = _global_settings_cache[organization_id]
+        if now - ts < _SETTINGS_CACHE_TTL:
+            return cached
+
+    defaults = {
+        "cache_global_enabled": True,
+        "cache_default_ttl_seconds": 14400,
+        "cache_max_entries_per_org": 50000,
+    }
     async with get_db() as db:
         result = await db.execute(
             text("""
@@ -198,13 +214,10 @@ async def get_global_cache_settings(organization_id: int) -> dict:
             {"org_id": organization_id},
         )
         row = result.mappings().fetchone()
-        if row:
-            return dict(row)
-        return {
-            "cache_global_enabled": True,
-            "cache_default_ttl_seconds": 14400,
-            "cache_max_entries_per_org": 50000,
-        }
+        settings = dict(row) if row else defaults
+
+    _global_settings_cache[organization_id] = (settings, now)
+    return settings
 
 
 async def update_global_cache_settings(
@@ -213,16 +226,24 @@ async def update_global_cache_settings(
     cache_default_ttl_seconds: int,
     cache_max_entries_per_org: int,
 ) -> dict:
-    """Update global cache settings (upsert into guardrail_settings)."""
+    """Update global cache settings (upsert into guardrail_settings).
+
+    Uses INSERT ON CONFLICT to only touch cache columns, leaving guardrail
+    columns untouched on existing rows.
+    """
     async with get_db() as db:
         result = await db.execute(
             text("""
-                UPDATE ai_gateway_guardrail_settings SET
-                    cache_global_enabled = :enabled,
-                    cache_default_ttl_seconds = :ttl,
-                    cache_max_entries_per_org = :max_entries,
+                INSERT INTO ai_gateway_guardrail_settings
+                    (organization_id, cache_global_enabled, cache_default_ttl_seconds,
+                     cache_max_entries_per_org, created_at, updated_at)
+                VALUES
+                    (:org_id, :enabled, :ttl, :max_entries, NOW(), NOW())
+                ON CONFLICT (organization_id) DO UPDATE SET
+                    cache_global_enabled = EXCLUDED.cache_global_enabled,
+                    cache_default_ttl_seconds = EXCLUDED.cache_default_ttl_seconds,
+                    cache_max_entries_per_org = EXCLUDED.cache_max_entries_per_org,
                     updated_at = NOW()
-                WHERE organization_id = :org_id
                 RETURNING cache_global_enabled, cache_default_ttl_seconds, cache_max_entries_per_org
             """),
             {
@@ -232,22 +253,8 @@ async def update_global_cache_settings(
                 "max_entries": cache_max_entries_per_org,
             },
         )
-        row = result.mappings().fetchone()
-        if not row:
-            result = await db.execute(
-                text("""
-                    INSERT INTO ai_gateway_guardrail_settings
-                        (organization_id, cache_global_enabled, cache_default_ttl_seconds, cache_max_entries_per_org)
-                    VALUES (:org_id, :enabled, :ttl, :max_entries)
-                    RETURNING cache_global_enabled, cache_default_ttl_seconds, cache_max_entries_per_org
-                """),
-                {
-                    "org_id": organization_id,
-                    "enabled": cache_global_enabled,
-                    "ttl": cache_default_ttl_seconds,
-                    "max_entries": cache_max_entries_per_org,
-                },
-            )
-            row = result.mappings().fetchone()
         await db.commit()
+        row = result.mappings().fetchone()
         return dict(row) if row else {}
+    # Invalidate in-memory cache
+    _global_settings_cache.pop(organization_id, None)

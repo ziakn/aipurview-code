@@ -343,6 +343,7 @@ export default function AIGatewaySettingsPage() {
         cache_default_ttl_seconds: Number(cacheSettings.cache_default_ttl_seconds) || 14400,
         cache_max_entries_per_org: Number(cacheSettings.cache_max_entries_per_org) || 50000,
       });
+      await loadData();
     } catch {
       // Silently handle
     } finally {

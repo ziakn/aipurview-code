@@ -208,12 +208,6 @@ async def update_endpoint(org_id: int, id: int, data: dict) -> Optional[dict]:
         # Nothing to update — return existing row
         return await get_endpoint_by_id(org_id, id)
 
-    # Auto-invalidate cache when response-affecting config changes
-    cache_invalidating_fields = {"model", "system_prompt", "temperature"}
-    if any(f in data for f in cache_invalidating_fields):
-        from crud.cache import clear_endpoint_cache
-        await clear_endpoint_cache(org_id, id)
-
     set_clauses.append("updated_at = NOW()")
     set_sql = ", ".join(set_clauses)
 
@@ -232,6 +226,13 @@ async def update_endpoint(org_id: int, id: int, data: dict) -> Optional[dict]:
         row = result.mappings().first()
         if not row:
             return None
+
+        # Auto-invalidate cache AFTER successful update
+        cache_invalidating_fields = {"model", "system_prompt", "temperature"}
+        if any(f in data for f in cache_invalidating_fields):
+            from crud.cache import clear_endpoint_cache
+            await clear_endpoint_cache(org_id, id)
+
         return {
             **dict(row),
             "created_at": str(row["created_at"]) if row["created_at"] else None,

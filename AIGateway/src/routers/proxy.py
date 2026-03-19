@@ -108,11 +108,12 @@ async def proxy_chat(request: Request, body: ProxyChatRequest):
     # --- Cache check (exact match, after guardrails for security) ---
     prompt_hash = None
     cache_hit = None
-    if endpoint.get("cache_enabled") and not body.stream:
-        # Check global cache setting
-        if not await is_cache_globally_enabled(org_id):
-            endpoint["cache_enabled"] = False  # Short-circuit
-    if endpoint.get("cache_enabled") and not body.stream:
+    use_cache = (
+        endpoint.get("cache_enabled")
+        and not body.stream
+        and await is_cache_globally_enabled(org_id)
+    )
+    if use_cache:
         # Include system prompt in hash — it affects the LLM response
         cache_messages = scanned_messages
         if endpoint.get("system_prompt"):
