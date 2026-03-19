@@ -64,6 +64,16 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Build and push AIGateway image
+        uses: docker/build-push-action@v7
+        with:
+          context: ./AIGateway
+          platforms: linux/amd64
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/verifywise-ai-gateway:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
       - name: Deploy to Testing
         uses: appleboy/ssh-action@v1.2.5
         with:
