@@ -531,9 +531,9 @@ export const createAutomationWorker = () => {
               }
             );
             const result = await response.json() as { deleted?: number };
-            logger.info(`AI Gateway cache cleanup: ${result.deleted ?? 0} expired entries purged`);
+            console.log(`AI Gateway cache cleanup: ${result.deleted ?? 0} expired entries purged`);
           } catch (err) {
-            logger.error(`AI Gateway cache cleanup failed: ${err}`);
+            console.error(`AI Gateway cache cleanup failed: ${err}`);
           }
         } else if (name === "send_pmm_notification") {
           // PMM notification handling - send email using MJML templates

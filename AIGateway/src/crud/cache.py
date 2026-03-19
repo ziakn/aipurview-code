@@ -255,6 +255,6 @@ async def update_global_cache_settings(
         )
         await db.commit()
         row = result.mappings().fetchone()
+        # Invalidate in-memory cache so next read sees updated values
+        _global_settings_cache.pop(organization_id, None)
         return dict(row) if row else {}
-    # Invalidate in-memory cache
-    _global_settings_cache.pop(organization_id, None)
