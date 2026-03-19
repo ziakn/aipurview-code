@@ -27,7 +27,9 @@ def validate_candidates(
     Validation pipeline:
       1. Length hygiene
       2. Deduplication
-      3. LLM semantic validation (dimension trigger + signal gate).
+      3. LLM semantic validation:
+         a. Structural validity (dimension trigger + signal gate).
+         b. Realism gate (plausible as a real workplace message).
          Falls back to heuristic regex when client is MockChatClient.
     """
     rejections: List[Dict[str, Any]] = []
