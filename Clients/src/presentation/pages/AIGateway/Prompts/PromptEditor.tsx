@@ -271,16 +271,16 @@ export default function PromptEditorPage() {
     if (!id) return;
     try {
       const [promptRes, versionsRes, endpointsRes, labelsRes] = await Promise.all([
-        apiServices.get<{ data: any }>(`/ai-gateway/prompts/${id}`),
-        apiServices.get<{ data: any }>(`/ai-gateway/prompts/${id}/versions`),
-        apiServices.get<{ data: any }>("/ai-gateway/endpoints"),
-        apiServices.get<{ data: any }>(`/ai-gateway/prompts/${id}/labels`),
+        apiServices.get<Record<string, any>>(`/ai-gateway/prompts/${id}`),
+        apiServices.get<Record<string, any>>(`/ai-gateway/prompts/${id}/versions`),
+        apiServices.get<Record<string, any>>("/ai-gateway/endpoints"),
+        apiServices.get<Record<string, any>>(`/ai-gateway/prompts/${id}/labels`),
       ]);
-      setPrompt(promptRes?.data?.data);
-      const vers: Version[] = versionsRes?.data?.data || [];
+      setPrompt(promptRes?.data?.prompt || promptRes?.data?.data);
+      const vers: Version[] = versionsRes?.data?.versions || versionsRes?.data?.data || [];
       setVersions(vers);
-      setEndpoints((endpointsRes?.data?.data || []).filter((e: any) => e.is_active));
-      setLabels(labelsRes?.data?.data || []);
+      setEndpoints((endpointsRes?.data?.endpoints || []).filter((e: any) => e.is_active));
+      setLabels(labelsRes?.data?.labels || labelsRes?.data?.data || []);
       if (vers.length > 0) loadVersionIntoEditor(vers[0]);
     } catch { /* silently handle */ }
     finally { setLoading(false); }
@@ -304,13 +304,13 @@ export default function PromptEditorPage() {
     if (!id || msgs.length === 0) return;
     setIsSaving(true);
     try {
-      const res = await apiServices.post<{ data: any }>(`/ai-gateway/prompts/${id}/versions`, {
+      const res = await apiServices.post<Record<string, any>>(`/ai-gateway/prompts/${id}/versions`, {
         content: msgs,
         model: model || null,
         config: Object.keys(config).length > 0 ? config : null,
         commit_message: commitMsg || null,
       });
-      const newVer = res?.data?.data;
+      const newVer = res?.data?.version || res?.data?.data;
       if (newVer) {
         setCurrentVersion(newVer.version);
         setCurrentStatus("draft");
@@ -357,8 +357,8 @@ export default function PromptEditorPage() {
   const publishVersion = async (versionNumber: number) => {
     if (!id) return;
     try {
-      const res = await apiServices.post<{ data: any }>(`/ai-gateway/prompts/${id}/versions/${versionNumber}/publish`);
-      const published = res?.data?.data;
+      const res = await apiServices.post<Record<string, any>>(`/ai-gateway/prompts/${id}/versions/${versionNumber}/publish`);
+      const published = res?.data?.version || res?.data?.data;
       if (published) {
         setVersions((prev) =>
           prev.map((v) =>
@@ -403,8 +403,8 @@ export default function PromptEditorPage() {
         version_id: labelVersionId,
       });
       // Refresh labels
-      const labelsRes = await apiServices.get<{ data: any }>(`/ai-gateway/prompts/${id}/labels`);
-      setLabels(labelsRes?.data?.data || []);
+      const labelsRes = await apiServices.get<Record<string, any>>(`/ai-gateway/prompts/${id}/labels`);
+      setLabels(labelsRes?.data?.labels || labelsRes?.data?.data || []);
       setIsLabelModalOpen(false);
       setNewLabelName("");
     } catch { /* silently handle */ }

@@ -71,8 +71,8 @@ export default function TestDatasetPanel({
 
   const loadDatasets = useCallback(async () => {
     try {
-      const res = await apiServices.get<{ data: any }>(`/ai-gateway/prompts/${promptId}/test-datasets`);
-      setDatasets(res?.data?.data || []);
+      const res = await apiServices.get<Record<string, any>>(`/ai-gateway/prompts/${promptId}/test-datasets`);
+      setDatasets(res?.data?.test_datasets || res?.data?.data || []);
     } catch { /* silently handle */ }
   }, [promptId]);
 
@@ -123,11 +123,11 @@ export default function TestDatasetPanel({
     setIsSaving(true);
     try {
       if (selectedDatasetId === "new") {
-        const res = await apiServices.post<{ data: any }>(`/ai-gateway/prompts/${promptId}/test-datasets`, {
+        const res = await apiServices.post<Record<string, any>>(`/ai-gateway/prompts/${promptId}/test-datasets`, {
           name: datasetName,
           test_cases: testCases,
         });
-        const created = res?.data?.data;
+        const created = res?.data?.test_dataset || res?.data?.data;
         if (created) {
           setSelectedDatasetId(created.id);
           setDatasets((prev) => [created, ...prev]);

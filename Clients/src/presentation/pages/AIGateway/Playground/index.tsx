@@ -47,8 +47,8 @@ export default function PlaygroundPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await apiServices.get<{ data: any }>("/ai-gateway/endpoints");
-        const eps = (res?.data?.data || []).filter((e: any) => e.is_active);
+        const res = await apiServices.get<Record<string, any>>("/ai-gateway/endpoints");
+        const eps = (res?.data?.endpoints || res?.data?.data || []).filter((e: any) => e.is_active);
         setEndpoints(eps);
         if (eps.length > 0) {
           setSelectedEndpoint((prev) => prev || eps[0].slug);

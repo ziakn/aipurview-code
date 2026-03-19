@@ -32,16 +32,16 @@ export const AIGatewaySidebarProvider: FC<{ children: ReactNode }> = ({ children
     const load = async () => {
       try {
         const [endpointsRes, promptsRes, vkeysRes] = await Promise.all([
-          apiServices.get<{ data: any }>("/ai-gateway/endpoints"),
-          apiServices.get<{ data: any }>("/ai-gateway/prompts").catch(() => null),
-          apiServices.get<{ data: any }>("/ai-gateway/virtual-keys").catch(() => null),
+          apiServices.get<Record<string, any>>("/ai-gateway/endpoints"),
+          apiServices.get<Record<string, any>>("/ai-gateway/prompts").catch(() => null),
+          apiServices.get<Record<string, any>>("/ai-gateway/virtual-keys").catch(() => null),
         ]);
         if (cancelled) return;
-        const endpoints = endpointsRes?.data?.data;
+        const endpoints = endpointsRes?.data?.endpoints;
         if (Array.isArray(endpoints)) {
           setEndpointsCount(endpoints.filter((e: { is_active: boolean }) => e.is_active).length);
         }
-        const prompts = promptsRes?.data?.data;
+        const prompts = promptsRes?.data?.prompts;
         if (Array.isArray(prompts)) {
           setPromptsCount(prompts.length);
         }

@@ -63,15 +63,15 @@ export default function EndpointsPage() {
   const loadData = useCallback(async () => {
     try {
       const [endpointsRes, keysRes, grRes, promptsRes] = await Promise.all([
-        apiServices.get<{ data: any }>("/ai-gateway/endpoints"),
-        apiServices.get<{ data: any }>("/ai-gateway/keys"),
-        apiServices.get<{ data: any }>("/ai-gateway/guardrails").catch(() => null),
-        apiServices.get<{ data: any }>("/ai-gateway/prompts").catch(() => null),
+        apiServices.get<Record<string, any>>("/ai-gateway/endpoints"),
+        apiServices.get<Record<string, any>>("/ai-gateway/keys"),
+        apiServices.get<Record<string, any>>("/ai-gateway/guardrails").catch(() => null),
+        apiServices.get<Record<string, any>>("/ai-gateway/prompts").catch(() => null),
       ]);
-      setEndpoints(endpointsRes?.data?.data || []);
+      setEndpoints(endpointsRes?.data?.endpoints || []);
       setApiKeys(keysRes?.data?.data || []);
-      setPrompts(promptsRes?.data?.data || []);
-      const allRules = grRes?.data?.data || [];
+      setPrompts(promptsRes?.data?.prompts || []);
+      const allRules = grRes?.data?.rules || grRes?.data?.data || [];
       setActiveGuardrailCount(allRules.filter((r: any) => r.is_active).length);
     } catch {
       // Silently handle
@@ -163,7 +163,7 @@ export default function EndpointsPage() {
       setForm({ ...EMPTY_FORM });
       await loadData();
     } catch (err: any) {
-      setFormError(err?.response?.data?.message || `Failed to ${editingId ? "update" : "create"} endpoint`);
+      setFormError(err?.response?.data?.detail || err?.response?.data?.message || `Failed to ${editingId ? "update" : "create"} endpoint`);
     } finally {
       setIsSubmitting(false);
     }

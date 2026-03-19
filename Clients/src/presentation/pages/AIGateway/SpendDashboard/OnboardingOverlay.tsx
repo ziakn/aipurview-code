@@ -252,7 +252,7 @@ export default function OnboardingOverlay({ onGetStarted, setupStatus, onStepCom
   useEffect(() => {
     if (activeModal !== "api-key") return;
     const topIds = new Set(TOP_PROVIDERS.map((p) => p._id));
-    apiServices.get<{ data: any }>("/ai-gateway/providers").then((res) => {
+    apiServices.get<Record<string, any>>("/ai-gateway/providers").then((res) => {
       const dynamic: string[] = res?.data?.data?.providers || [];
       const others = dynamic
         .filter((p) => !topIds.has(p))
@@ -270,7 +270,7 @@ export default function OnboardingOverlay({ onGetStarted, setupStatus, onStepCom
     if (activeModal !== "endpoint") return;
     let cancelled = false;
     setAvailableKeys([]);
-    apiServices.get<{ data: any }>("/ai-gateway/keys").then((res) => {
+    apiServices.get<Record<string, any>>("/ai-gateway/keys").then((res) => {
       if (cancelled) return;
       const keys = (res?.data?.data || []).filter((k: { is_active: boolean }) => k.is_active);
       setAvailableKeys(keys.map((k: { id: number; key_name: string; provider: string }) => ({
@@ -286,11 +286,11 @@ export default function OnboardingOverlay({ onGetStarted, setupStatus, onStepCom
     if (activeModal !== "first-request") return;
     let cancelled = false;
     Promise.all([
-      apiServices.get<{ data: any }>("/ai-gateway/endpoints").catch(() => null),
-      apiServices.get<{ data: any }>("/ai-gateway/virtual-keys").catch(() => null),
+      apiServices.get<Record<string, any>>("/ai-gateway/endpoints").catch(() => null),
+      apiServices.get<Record<string, any>>("/ai-gateway/virtual-keys").catch(() => null),
     ]).then(([epRes, vkRes]) => {
       if (cancelled) return;
-      const endpoints = epRes?.data?.data || [];
+      const endpoints = epRes?.data?.endpoints || [];
       const activeEp = endpoints.find((e: { is_active: boolean }) => e.is_active);
       if (activeEp) setFirstReqSlug(activeEp.slug);
       const vkeys = vkRes?.data?.data || [];
@@ -373,7 +373,7 @@ export default function OnboardingOverlay({ onGetStarted, setupStatus, onStepCom
     setKeyError("");
     try {
       // Step 2: Live provider verification
-      const verifyRes = await apiServices.post<{ data: any }>("/ai-gateway/keys/verify", {
+      const verifyRes = await apiServices.post<Record<string, any>>("/ai-gateway/keys/verify", {
         provider: keyForm.provider,
         api_key: keyForm.api_key,
       });
@@ -388,7 +388,8 @@ export default function OnboardingOverlay({ onGetStarted, setupStatus, onStepCom
       closeModal();
       onStepCompleted();
     } catch (err: unknown) {
-      setKeyError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || "Failed to create API key");
+      const errData = (err as { response?: { data?: { detail?: string; message?: string } } })?.response?.data;
+      setKeyError(errData?.detail || errData?.message || "Failed to create API key");
     } finally {
       setKeySubmitting(false);
     }
@@ -412,7 +413,8 @@ export default function OnboardingOverlay({ onGetStarted, setupStatus, onStepCom
       closeModal();
       onStepCompleted();
     } catch (err: unknown) {
-      setEndpointError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || "Failed to create endpoint");
+      const errData = (err as { response?: { data?: { detail?: string; message?: string } } })?.response?.data;
+      setEndpointError(errData?.detail || errData?.message || "Failed to create endpoint");
     } finally {
       setEndpointSubmitting(false);
     }
@@ -426,16 +428,17 @@ export default function OnboardingOverlay({ onGetStarted, setupStatus, onStepCom
     setVkeySubmitting(true);
     setVkeyError("");
     try {
-      const res = await apiServices.post<{ data: any }>("/ai-gateway/virtual-keys", { name: vkeyName.trim() });
+      const res = await apiServices.post<Record<string, any>>("/ai-gateway/virtual-keys", { name: vkeyName.trim() });
       const created = res?.data?.data;
-      if (created?.key) {
-        setCreatedKey(created.key);
+      if (created?.plain_key) {
+        setCreatedKey(created.plain_key);
         onStepCompleted();
       } else {
         setVkeyError("Key was created but could not be retrieved. Refresh the page.");
       }
     } catch (err: unknown) {
-      setVkeyError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || "Failed to create virtual key");
+      const errData = (err as { response?: { data?: { detail?: string; message?: string } } })?.response?.data;
+      setVkeyError(errData?.detail || errData?.message || "Failed to create virtual key");
     } finally {
       setVkeySubmitting(false);
     }
@@ -450,17 +453,17 @@ export default function OnboardingOverlay({ onGetStarted, setupStatus, onStepCom
     setFirstReqError("");
     setFirstReqResponse("");
     try {
-      const res = await apiServices.post<{ data: any }>("/ai-gateway/chat", {
+      const res = await apiServices.post<Record<string, any>>("/ai-gateway/chat", {
         endpoint_slug: firstReqSlug,
         messages: [{ role: "user", content: "Say hello and introduce yourself in one sentence." }],
       });
-      const data = res?.data?.data;
+      const data = res?.data?.data || res?.data;
       const text = data?.choices?.[0]?.message?.content || JSON.stringify(data, null, 2);
       setFirstReqResponse(text);
       onStepCompleted();
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      setFirstReqError(msg || "Request failed. Check that your endpoint and API key are configured correctly.");
+      const errData = (err as { response?: { data?: { detail?: string; message?: string } } })?.response?.data;
+      setFirstReqError(errData?.detail || errData?.message || "Request failed. Check that your endpoint and API key are configured correctly.");
     } finally {
       setFirstReqRunning(false);
     }

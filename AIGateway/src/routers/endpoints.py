@@ -113,11 +113,10 @@ async def update_endpoint(endpoint_id: int, request: Request) -> Any:
 
     try:
         await record_endpoint_change(
-            org_id=org_id,
-            user_id=user_id,
+            organization_id=org_id,
             endpoint_id=endpoint_id,
-            before=existing,
-            after=updated,
+            changed_by=user_id,
+            action="updated",
         )
     except Exception:
         logger.exception(

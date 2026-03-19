@@ -59,14 +59,14 @@ export default function PromptsPage() {
 
   const loadData = useCallback(async () => {
     try {
-      const res = await apiServices.get<{ data: any }>("/ai-gateway/prompts");
-      const promptList: Prompt[] = res?.data?.data || [];
+      const res = await apiServices.get<Record<string, any>>("/ai-gateway/prompts");
+      const promptList: Prompt[] = res?.data?.prompts || res?.data?.data || [];
       // Fetch labels for each prompt in parallel
       const labelsRes = await Promise.all(
-        promptList.map((p) => apiServices.get<{ data: any }>(`/ai-gateway/prompts/${p.id}/labels`).catch(() => null))
+        promptList.map((p) => apiServices.get<Record<string, any>>(`/ai-gateway/prompts/${p.id}/labels`).catch(() => null))
       );
       for (let i = 0; i < promptList.length; i++) {
-        promptList[i].labels = labelsRes[i]?.data?.data || [];
+        promptList[i].labels = labelsRes[i]?.data?.labels || labelsRes[i]?.data?.data || [];
       }
       setPrompts(promptList);
     } catch { /* silently handle */ }
@@ -87,16 +87,16 @@ export default function PromptsPage() {
     setIsSubmitting(true);
     setFormError("");
     try {
-      const res = await apiServices.post<{ data: any }>("/ai-gateway/prompts", {
+      const res = await apiServices.post<Record<string, any>>("/ai-gateway/prompts", {
         name: form.name, slug: form.slug, description: form.description || null,
       });
-      const created = res?.data?.data;
+      const created = res?.data?.prompt || res?.data?.data;
       setIsCreateOpen(false);
       setForm({ name: "", slug: "", description: "" });
       if (created?.id) navigate(`/ai-gateway/prompts/${created.id}`);
       else loadData();
     } catch (err: any) {
-      setFormError(err?.response?.data?.data || err?.response?.data?.message || "Failed to create prompt");
+      setFormError(err?.response?.data?.detail || err?.response?.data?.message || "Failed to create prompt");
     } finally { setIsSubmitting(false); }
   };
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Box, Typography, Stack } from "@mui/material";
 import { DollarSign, Hash, Layers, Clock, BarChart3, Router, Users, ShieldCheck, ShieldOff, Info } from "lucide-react";
 import { Tooltip as MuiTooltip } from "@mui/material";
@@ -74,17 +74,17 @@ export default function SpendDashboardPage() {
       setLoading(true);
       try {
         // Check first-time status before loading period-based data
-        const logsCheck = await apiServices.get<{ data: any }>("/ai-gateway/spend/logs?limit=1").catch(() => null);
-        const totalLogs = logsCheck?.data?.data?.total || 0;
+        const logsCheck = await apiServices.get<Record<string, any>>("/ai-gateway/spend/logs?limit=1").catch(() => null);
+        const totalLogs = logsCheck?.data?.total || 0;
         if (totalLogs === 0) {
           const [keysRes, endpointsRes, vkeysRes] = await Promise.all([
-            apiServices.get<{ data: any }>("/ai-gateway/keys").catch(() => null),
-            apiServices.get<{ data: any }>("/ai-gateway/endpoints").catch(() => null),
-            apiServices.get<{ data: any }>("/ai-gateway/virtual-keys").catch(() => null),
+            apiServices.get<Record<string, any>>("/ai-gateway/keys").catch(() => null),
+            apiServices.get<Record<string, any>>("/ai-gateway/endpoints").catch(() => null),
+            apiServices.get<Record<string, any>>("/ai-gateway/virtual-keys").catch(() => null),
           ]);
           setSetupStatus({
             hasApiKey: (keysRes?.data?.data || []).length > 0,
-            hasEndpoint: (endpointsRes?.data?.data || []).length > 0,
+            hasEndpoint: (endpointsRes?.data?.endpoints || []).length > 0,
             hasVirtualKey: (vkeysRes?.data?.data || []).length > 0,
             hasRequests: false,
           });
@@ -95,15 +95,36 @@ export default function SpendDashboardPage() {
         setIsFirstTime(false);
 
         const [spendRes, endpointRes, userRes, gsRes] = await Promise.all([
-          apiServices.get<{ data: any }>(`/ai-gateway/spend?period=${period}`),
-          apiServices.get<{ data: any }>(`/ai-gateway/spend/by-endpoint?period=${period}`).catch(() => null),
-          apiServices.get<{ data: any }>(`/ai-gateway/spend/by-user?period=${period}`).catch(() => null),
-          apiServices.get<{ data: any }>(`/ai-gateway/guardrails/stats?period=${period}`).catch(() => null),
+          apiServices.get<Record<string, any>>(`/ai-gateway/spend?period=${period}`),
+          apiServices.get<Record<string, any>>(`/ai-gateway/spend/by-endpoint?period=${period}`).catch(() => null),
+          apiServices.get<Record<string, any>>(`/ai-gateway/spend/by-user?period=${period}`).catch(() => null),
+          apiServices.get<Record<string, any>>(`/ai-gateway/guardrails/stats?period=${period}`).catch(() => null),
         ]);
-        setData(spendRes?.data?.data || null);
-        setByEndpoint(endpointRes?.data?.data || []);
-        setByUser(userRes?.data?.data || []);
-        setGuardrailStats(gsRes?.data?.data || null);
+        setData(spendRes?.data || null);
+        setByEndpoint((endpointRes?.data?.data || []).map((d: any) => ({ ...d, group_key: d.group_key || d.endpoint_name })));
+        setByUser((userRes?.data?.data || []).map((d: any) => ({ ...d, group_key: d.group_key || d.user_name })));
+        // Map Python guardrail stats field names to frontend expectations
+        const rawGs = gsRes?.data || null;
+        if (rawGs) {
+          const mapped: any = { ...rawGs };
+          if (rawGs.summary) {
+            mapped.summary = {
+              ...rawGs.summary,
+              blocked_count: rawGs.summary.blocked_count ?? rawGs.summary.blocked ?? 0,
+              masked_count: rawGs.summary.masked_count ?? rawGs.summary.masked ?? 0,
+              total_checks: rawGs.summary.total_checks ?? rawGs.summary.total ?? 0,
+            };
+          }
+          if (!rawGs.topDetections && rawGs.byType) {
+            mapped.topDetections = rawGs.byType.map((d: any) => ({
+              ...d,
+              entity_type: d.entity_type || d.guardrail_type,
+            }));
+          }
+          setGuardrailStats(mapped);
+        } else {
+          setGuardrailStats(null);
+        }
       } catch {
         setData(null);
         setIsFirstTime(false);
@@ -115,11 +136,17 @@ export default function SpendDashboardPage() {
   }, [period, reloadKey]);
 
   const summary = data?.summary;
-  const byDay = data?.byDay || [];
-  const byModel = data?.byModel || [];
-  const byProvider = data?.byProvider || [];
-  const errorRateByDay = data?.errorRateByDay || [];
-  const tokensPerEndpoint = data?.tokensPerEndpoint || [];
+  // Python returns snake_case keys; charts expect camelCase / specific field names
+  const byDay = useMemo(() => (data?.by_day || data?.byDay || []).map((d: any) => ({ ...d, day: d.day || d.period })), [data]);
+  const byModel = useMemo(() => (data?.by_model || data?.byModel || []).map((d: any) => ({ ...d, group_key: d.group_key || d.model })), [data]);
+  const byProvider = useMemo(() => (data?.by_provider || data?.byProvider || []).map((d: any) => ({ ...d, group_key: d.group_key || d.provider })), [data]);
+  const errorRateByDay = useMemo(() => data?.error_rate_by_day || data?.errorRateByDay || [], [data]);
+  const tokensPerEndpoint = useMemo(() => (data?.tokens_per_endpoint || data?.tokensPerEndpoint || []).map((d: any) => ({
+    ...d,
+    endpoint: d.endpoint || d.endpoint_name,
+    avg_prompt_tokens: d.avg_prompt_tokens ?? d.avg_tokens_per_request ?? 0,
+    avg_completion_tokens: d.avg_completion_tokens ?? 0,
+  })), [data]);
 
   const totalCost = summary ? `$${Number(summary.total_cost).toFixed(4)}` : "$0.00";
   const totalRequests = String(summary?.total_requests ?? 0);
@@ -130,16 +157,16 @@ export default function SpendDashboardPage() {
 
   const refreshSetupStatus = useCallback(async () => {
     const [keysRes, endpointsRes, vkeysRes, logsCheck] = await Promise.all([
-      apiServices.get<{ data: any }>("/ai-gateway/keys").catch(() => null),
-      apiServices.get<{ data: any }>("/ai-gateway/endpoints").catch(() => null),
-      apiServices.get<{ data: any }>("/ai-gateway/virtual-keys").catch(() => null),
-      apiServices.get<{ data: any }>("/ai-gateway/spend/logs?limit=1").catch(() => null),
+      apiServices.get<Record<string, any>>("/ai-gateway/keys").catch(() => null),
+      apiServices.get<Record<string, any>>("/ai-gateway/endpoints").catch(() => null),
+      apiServices.get<Record<string, any>>("/ai-gateway/virtual-keys").catch(() => null),
+      apiServices.get<Record<string, any>>("/ai-gateway/spend/logs?limit=1").catch(() => null),
     ]);
     const newStatus = {
       hasApiKey: (keysRes?.data?.data || []).length > 0,
-      hasEndpoint: (endpointsRes?.data?.data || []).length > 0,
+      hasEndpoint: (endpointsRes?.data?.endpoints || []).length > 0,
       hasVirtualKey: (vkeysRes?.data?.data || []).length > 0,
-      hasRequests: (logsCheck?.data?.data?.total || 0) > 0,
+      hasRequests: (logsCheck?.data?.total || 0) > 0,
     };
     setSetupStatus(newStatus);
     if (newStatus.hasRequests) {
@@ -611,7 +638,7 @@ export default function SpendDashboardPage() {
             <Stack gap="8px">
               {byUser.slice(0, 10).map((user: any, i: number) => (
                 <Stack
-                  key={user.group_key}
+                  key={user.group_key || `user-${i}`}
                   direction="row"
                   justifyContent="space-between"
                   alignItems="center"

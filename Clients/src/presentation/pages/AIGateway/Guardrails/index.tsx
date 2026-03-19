@@ -181,7 +181,7 @@ export default function GuardrailsPage() {
 
   const loadRules = useCallback(async () => {
     try {
-      const res = await apiServices.get<{ data: any }>("/ai-gateway/guardrails");
+      const res = await apiServices.get<Record<string, any>>("/ai-gateway/guardrails");
       setRules(res?.data?.data || []);
     } catch {
       // Silently handle
@@ -255,7 +255,7 @@ export default function GuardrailsPage() {
       setCfForm({ name: "", type: "keyword", pattern: "", action: "block" });
       await loadRules();
     } catch (err: any) {
-      setCfError(err?.response?.data?.message || "Failed to create rule");
+      setCfError(err?.response?.data?.detail || err?.response?.data?.message || "Failed to create rule");
     } finally {
       setCfSubmitting(false);
     }
@@ -291,10 +291,10 @@ export default function GuardrailsPage() {
     setTestLoading(true);
     setTestResult(null);
     try {
-      const res = await apiServices.post<{ data: any }>("/ai-gateway/guardrails/test", { text: testText });
+      const res = await apiServices.post<Record<string, any>>("/ai-gateway/guardrails/test", { text: testText });
       setTestResult(res?.data?.data);
     } catch (err: any) {
-      setTestResult({ error: err?.response?.data?.message || "Test failed — is the AI Gateway service running?" });
+      setTestResult({ error: err?.response?.data?.detail || err?.response?.data?.message || "Test failed — is the AI Gateway service running?" });
     } finally {
       setTestLoading(false);
     }

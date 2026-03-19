@@ -85,11 +85,11 @@ export default function AIGatewayVirtualKeysPage({ embedded }: { embedded?: bool
   const loadData = useCallback(async () => {
     try {
       const [keysRes, endpointsRes] = await Promise.all([
-        apiServices.get<{ data: any }>("/ai-gateway/virtual-keys"),
-        apiServices.get<{ data: any }>("/ai-gateway/endpoints").catch(() => null),
+        apiServices.get<Record<string, any>>("/ai-gateway/virtual-keys"),
+        apiServices.get<Record<string, any>>("/ai-gateway/endpoints").catch(() => null),
       ]);
       setKeys(keysRes?.data?.data || []);
-      const eps = endpointsRes?.data?.data || [];
+      const eps = endpointsRes?.data?.endpoints || [];
       setEndpointCount(eps.filter((e: any) => e.is_active).length);
     } catch {
       // Silently handle
@@ -115,19 +115,20 @@ export default function AIGatewayVirtualKeysPage({ embedded }: { embedded?: bool
       if (createForm.rate_limit_rpm) payload.rate_limit_rpm = Number(createForm.rate_limit_rpm);
       if (createForm.expires_at) payload.expires_at = new Date(createForm.expires_at).toISOString();
 
-      const res = await apiServices.post<{ data: any }>("/ai-gateway/virtual-keys", payload);
+      const res = await apiServices.post<Record<string, any>>("/ai-gateway/virtual-keys", payload);
       const created = res?.data?.data;
       setIsCreateOpen(false);
       setCreateForm({ name: "", max_budget_usd: "", rate_limit_rpm: "", expires_at: "" });
 
-      if (created?.key) {
-        setNewKey(created.key);
+      if (created?.plain_key) {
+        setNewKey(created.plain_key);
         setIsKeyDisplayOpen(true);
       }
 
       await loadData();
     } catch (err: unknown) {
-      setCreateError((err as { response?: { data?: { message?: string } } })?.response?.data?.message || "Failed to create virtual key");
+      const errData = (err as { response?: { data?: { detail?: string; message?: string } } })?.response?.data;
+      setCreateError(errData?.detail || errData?.message || "Failed to create virtual key");
     } finally {
       setCreateSubmitting(false);
     }
