@@ -61,6 +61,10 @@ def validate_candidates(
             rejections.append({"candidate_id": cid, "reason_code": R.TRIG_SEMANTIC_INVALID, "notes": result.reasoning})
             continue
 
+        if not result.realistic_scenario:
+            rejections.append({"candidate_id": cid, "reason_code": R.TRIG_SEMANTIC_UNREALISTIC, "notes": result.reasoning})
+            continue
+
         accepted.append(
             {
                 "scenario_id": c["candidate_id"].replace("cand_", "grs_"),
@@ -89,6 +93,7 @@ def validate_candidates(
                 "metadata": {
                     "prompt_hash": h,
                     "tension_signals": result.tension_signals,
+                    "realistic_scenario": result.realistic_scenario,
                     "semantic_reasoning": result.reasoning,
                     "used_heuristic_fallback": result.used_heuristic_fallback,
                 },
