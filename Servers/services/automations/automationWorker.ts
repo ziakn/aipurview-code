@@ -517,6 +517,24 @@ export const createAutomationWorker = () => {
           await resetVirtualKeyBudgets();
         } else if (name === "ai_gateway_risk_detection") {
           await runRiskDetection();
+        } else if (name === "ai_gateway_cache_cleanup") {
+          const AI_GATEWAY_URL = process.env.AI_GATEWAY_URL || "http://127.0.0.1:8100";
+          try {
+            const response = await fetch(
+              `${AI_GATEWAY_URL}/internal/cache/purge-expired`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "x-internal-key": process.env.AI_GATEWAY_INTERNAL_KEY || "",
+                },
+              }
+            );
+            const result = await response.json() as { deleted?: number };
+            logger.info(`AI Gateway cache cleanup: ${result.deleted ?? 0} expired entries purged`);
+          } catch (err) {
+            logger.error(`AI Gateway cache cleanup failed: ${err}`);
+          }
         } else if (name === "send_pmm_notification") {
           // PMM notification handling - send email using MJML templates
           const { type, data } = job.data;
