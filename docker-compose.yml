@@ -107,6 +107,7 @@ services:
       - DB_PASSWORD=$DB_PASSWORD
       - DB_NAME=$DB_NAME
       - AI_GATEWAY_INTERNAL_KEY=$AI_GATEWAY_INTERNAL_KEY
+      - AI_GATEWAY_PORT=8100
     restart: unless-stopped
 
 volumes:
