@@ -20,6 +20,7 @@ from routers.guardrails_crud import router as guardrails_crud_router
 from routers.virtual_keys import router as virtual_keys_router
 from routers.prompts import router as prompts_router
 from routers.risk import router as risk_router
+from routers.cache import router as cache_router
 from routers.tenant_chat import router as tenant_chat_router
 
 # Disable LiteLLM verbose logging to prevent key leakage
@@ -72,6 +73,7 @@ app.include_router(guardrails_crud_router, prefix="/internal", tags=["CRUD"])
 app.include_router(virtual_keys_router, prefix="/internal", tags=["CRUD"])
 app.include_router(prompts_router, prefix="/internal", tags=["CRUD"])
 app.include_router(risk_router, prefix="/internal", tags=["CRUD"])
+app.include_router(cache_router, prefix="/internal", tags=["CRUD"])
 
 # Tenant proxy routes (Express proxy → Gateway, JWT-authenticated via headers)
 # Chat, streaming, embeddings, providers, model catalog
