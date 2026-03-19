@@ -863,7 +863,7 @@ export default function AIGatewaySettingsPage() {
                       onClick={async () => {
                         setCachePurgeResult("Purging...");
                         try {
-                          const res = await apiServices.post("/ai-gateway/cache/purge");
+                          const res = await apiServices.post<Record<string, any>>("/ai-gateway/cache/purge");
                           const count = res?.data?.deleted ?? 0;
                           setCachePurgeResult(count > 0 ? `Deleted ${count} entries` : "No expired entries");
                           setTimeout(() => setCachePurgeResult(""), 3000);
