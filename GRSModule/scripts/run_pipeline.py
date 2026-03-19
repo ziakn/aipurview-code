@@ -1,10 +1,13 @@
 """
-Run GRS pipeline stages from a versioned run_config.yaml.
+Run GRS pipeline stages from configs/run_config.yaml.
 
-Reads datasets/<version>/run_config.yaml and invokes
+Reads configs/run_config.yaml and invokes
   uv run grs-scenarios generate --stage <stage> --dataset-version <version> [params]
 for each requested stage, in the fixed pipeline order:
   seeds → render → perturb → validate
+
+The config is automatically copied to datasets/<version>/run_config.yaml
+for reproducibility before any stage runs.
 
 Usage:
     uv run python scripts/run_pipeline.py --version grs_scenarios_v0.1
@@ -97,9 +100,20 @@ def run_pipeline(
     base_dir: Path,
     stages: list[str],
 ) -> None:
-    """Run the requested pipeline stages in fixed order."""
+    """Run the requested pipeline stages in fixed order.
+
+    Loads run_config.yaml from configs/ (sibling of scripts/), then copies it
+    into datasets/<version>/ for reproducibility before running any stage.
+    Raises FileNotFoundError immediately if configs/run_config.yaml is missing
+    (fail-fast — no stages will run).
+    """
     dataset_dir = base_dir / version
-    config = load_run_config(dataset_dir)
+
+    # Resolve configs/ relative to this script file, not the cwd.
+    configs_dir = Path(__file__).parent.parent / "configs"
+
+    config = load_run_config(configs_dir)
+    copy_run_config(configs_dir, dataset_dir)
 
     ordered = [s for s in PIPELINE_ORDER if s in stages]
 
@@ -118,7 +132,7 @@ def run_pipeline(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Run GRS pipeline stages from datasets/<version>/run_config.yaml."
+        description="Run GRS pipeline stages from configs/run_config.yaml."
     )
     parser.add_argument(
         "--version",
