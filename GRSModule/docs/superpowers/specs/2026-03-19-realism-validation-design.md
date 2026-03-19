@@ -74,7 +74,7 @@ class SemanticResult:
 Two locations need updating:
 
 1. **Validation** — add `realistic_scenario` to the required-keys tuple so a `SemanticParseError` is raised if it is missing. (Presence check only, consistent with how `valid_scenario` is currently handled — no additional boolean type assertion.)
-2. **Extraction** — in `SemanticValidator.validate()`, extract `data["realistic_scenario"]` and pass it into the `SemanticResult` constructor alongside the existing fields.
+2. **Extraction** — in `SemanticValidator.validate()`, extract `bool(data["realistic_scenario"])` and pass it into the `SemanticResult` constructor alongside the existing fields. The `bool()` cast is consistent with how `governance_triggers` and `tension_signals` values are handled.
 
 `realistic_scenario` is taken directly from the LLM's stated value with no recomputation. This is intentional and differs from `valid_scenario`, which is recomputed from the structured trigger/signal data and overrides the LLM's stated value when they disagree. Realism cannot be independently recomputed from structured signals, so the LLM's judgement is fully trusted here.
 
@@ -84,9 +84,15 @@ Pass `realistic_scenario=True` as a keyword argument in the `return SemanticResu
 
 ### 6. Acceptance logic (`validator.py`)
 
-Checks run sequentially — the existing `valid_scenario` gate fires first:
+Checks run sequentially — the existing `valid_scenario` gate fires first. Both gates live inside the existing `try/except SemanticParseError` block that wraps the `semantic_validator.validate()` call:
 
 ```python
+try:
+    result = semantic_validator.validate(prompt)
+except SemanticParseError as exc:
+    rejections.append({"reason_code": R.TRIG_SEMANTIC_PARSE_ERROR, ...})
+    continue
+
 # Existing gate (fires first)
 if not result.valid_scenario:
     rejections.append({"reason_code": R.TRIG_SEMANTIC_INVALID, ...})
@@ -110,7 +116,7 @@ Rejection reason codes:
 
 ### 8. Metadata
 
-Add `"realistic_scenario": result.realistic_scenario` to the accepted scenario's `metadata` dict in `validator.py`, alongside the existing keys (`prompt_hash`, `tension_signals`, `semantic_reasoning`, `used_heuristic_fallback`).
+Add `"realistic_scenario": result.realistic_scenario` to the accepted scenario's `metadata` dict in `validator.py`. Insert it between `"tension_signals"` and `"semantic_reasoning"` to keep LLM-derived fields grouped together. Existing keys for reference: `prompt_hash`, `tension_signals`, `semantic_reasoning`, `used_heuristic_fallback`.
 
 ---
 
