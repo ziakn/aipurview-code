@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { Box, Typography, Stack } from "@mui/material";
-import { DollarSign, Hash, Layers, Clock, BarChart3, Router, Users, ShieldCheck, ShieldOff, Info } from "lucide-react";
+import { DollarSign, Hash, Layers, Clock, BarChart3, Router, Users, ShieldCheck, ShieldOff, Info, Zap, BadgeDollarSign } from "lucide-react";
 import { Tooltip as MuiTooltip } from "@mui/material";
 import Select from "../../../components/Inputs/Select";
 import { StatCard } from "../../../components/Cards/StatCard";
@@ -60,6 +60,7 @@ export default function SpendDashboardPage() {
   const [byEndpoint, setByEndpoint] = useState<any[]>([]);
   const [byUser, setByUser] = useState<any[]>([]);
   const [guardrailStats, setGuardrailStats] = useState<any>(null);
+  const [cacheStats, setCacheStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isFirstTime, setIsFirstTime] = useState<boolean | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
@@ -95,11 +96,12 @@ export default function SpendDashboardPage() {
         }
         setIsFirstTime(false);
 
-        const [spendRes, endpointRes, userRes, gsRes] = await Promise.all([
+        const [spendRes, endpointRes, userRes, gsRes, cacheRes] = await Promise.all([
           apiServices.get(`/ai-gateway/spend?period=${period}`),
           apiServices.get(`/ai-gateway/spend/by-endpoint?period=${period}`).catch(() => null),
           apiServices.get(`/ai-gateway/spend/by-user?period=${period}`).catch(() => null),
           apiServices.get(`/ai-gateway/guardrails/stats?period=${period}`).catch(() => null),
+          apiServices.get("/ai-gateway/cache/stats").catch(() => null),
         ]);
         setData(spendRes?.data || null);
         setByEndpoint((endpointRes?.data?.data || []).map((d: any) => ({ ...d, group_key: d.group_key || d.endpoint_name })));
@@ -126,6 +128,7 @@ export default function SpendDashboardPage() {
         } else {
           setGuardrailStats(null);
         }
+        setCacheStats(cacheRes?.data?.stats || null);
       } catch {
         setData(null);
         setIsFirstTime(false);
@@ -222,11 +225,17 @@ export default function SpendDashboardPage() {
         />
       }
       summaryCards={
-        <Box sx={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px" }}>
+        <Box sx={{ display: "grid", gridTemplateColumns: cacheStats?.total_entries > 0 ? "repeat(6, 1fr)" : "repeat(4, 1fr)", gap: "16px" }}>
           <StatCard title="Total cost" value={totalCost} Icon={DollarSign} tooltip="Total spend across all endpoints for this period" />
           <StatCard title="Total requests" value={totalRequests} Icon={Hash} tooltip="Number of completion and embedding requests processed" />
           <StatCard title="Total tokens" value={totalTokens} Icon={Layers} tooltip="Combined prompt and completion tokens across all requests" />
           <StatCard title="Avg latency" value={avgLatency} Icon={Clock} tooltip="Average round-trip time from request to complete response" />
+          {cacheStats?.total_entries > 0 && (
+            <>
+              <StatCard title="Cache hit rate" value={`${cacheStats.hit_rate_pct || 0}%`} Icon={Zap} tooltip="Percentage of requests served from cache — higher means more cost savings" />
+              <StatCard title="Cost saved" value={`$${Number(cacheStats.total_cost_saved || 0).toFixed(2)}`} Icon={BadgeDollarSign} tooltip="Money saved by serving cached responses instead of calling the LLM" />
+            </>
+          )}
         </Box>
       }
     >

@@ -34,6 +34,8 @@ interface EndpointForm {
   fallback_endpoint_id: string;
   prompt_id: string;
   prompt_label: string;
+  cache_enabled: boolean;
+  cache_ttl_seconds: string;
 }
 
 const EMPTY_FORM: EndpointForm = {
@@ -41,6 +43,7 @@ const EMPTY_FORM: EndpointForm = {
   api_key_id: "", max_tokens: "", temperature: "", system_prompt: "",
   rate_limit_rpm: "", fallback_endpoint_id: "",
   prompt_id: "", prompt_label: "production",
+  cache_enabled: false, cache_ttl_seconds: "14400",
 };
 
 export default function EndpointsPage() {
@@ -121,6 +124,8 @@ export default function EndpointsPage() {
       fallback_endpoint_id: ep.fallback_endpoint_id ? String(ep.fallback_endpoint_id) : "",
       prompt_id: ep.prompt_id ? String(ep.prompt_id) : "",
       prompt_label: ep.prompt_label || "production",
+      cache_enabled: ep.cache_enabled || false,
+      cache_ttl_seconds: ep.cache_ttl_seconds != null ? String(ep.cache_ttl_seconds) : "14400",
     });
     setFormError("");
     setIsModalOpen(true);
@@ -150,6 +155,8 @@ export default function EndpointsPage() {
       fallback_endpoint_id: form.fallback_endpoint_id ? Number(form.fallback_endpoint_id) : null,
       prompt_id: form.prompt_id ? Number(form.prompt_id) : null,
       prompt_label: form.prompt_label || "production",
+      cache_enabled: form.cache_enabled,
+      cache_ttl_seconds: form.cache_ttl_seconds ? Number(form.cache_ttl_seconds) : 14400,
     };
 
     try {
@@ -310,6 +317,9 @@ export default function EndpointsPage() {
                         )}
                         {activeGuardrailCount > 0 && (
                           <span> &middot; {activeGuardrailCount} guardrail{activeGuardrailCount !== 1 ? "s" : ""}</span>
+                        )}
+                        {ep.cache_enabled && (
+                          <span> &middot; cached {Math.round((ep.cache_ttl_seconds || 14400) / 3600)}h</span>
                         )}
                       </Typography>
                       <Typography sx={{ fontSize: 11, color: palette.text.disabled, mt: "2px" }}>
@@ -512,6 +522,24 @@ export default function EndpointsPage() {
               ]}
               onChange={(e) => setForm((p) => ({ ...p, fallback_endpoint_id: e.target.value as string }))}
               getOptionValue={(item) => item._id}
+              isOptional
+            />
+          )}
+
+          {/* Caching */}
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Typography sx={{ fontSize: 13 }}>Enable response caching</Typography>
+            <Toggle
+              checked={form.cache_enabled}
+              onChange={() => setForm((p) => ({ ...p, cache_enabled: !p.cache_enabled }))}
+            />
+          </Stack>
+          {form.cache_enabled && (
+            <Field
+              label="Cache TTL (seconds)"
+              placeholder="14400 (4 hours)"
+              value={form.cache_ttl_seconds}
+              onChange={(e) => setForm((p) => ({ ...p, cache_ttl_seconds: e.target.value }))}
               isOptional
             />
           )}
