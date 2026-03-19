@@ -30,7 +30,9 @@ async def get_all_endpoints(org_id: int, role_id: Optional[int] = None) -> list[
                     e.allowed_role_ids,
                     e.is_active,
                     e.created_at,
-                    e.updated_at
+                    e.updated_at,
+                    e.cache_enabled,
+                    e.cache_ttl_seconds
                 FROM ai_gateway_endpoints e
                 LEFT JOIN ai_gateway_api_keys ak ON e.api_key_id = ak.id
                 WHERE e.organization_id = :org_id
@@ -73,7 +75,9 @@ async def get_endpoint_by_id(org_id: int, id: int) -> Optional[dict]:
                     e.allowed_role_ids,
                     e.is_active,
                     e.created_at,
-                    e.updated_at
+                    e.updated_at,
+                    e.cache_enabled,
+                    e.cache_ttl_seconds
                 FROM ai_gateway_endpoints e
                 LEFT JOIN ai_gateway_api_keys ak ON e.api_key_id = ak.id
                 WHERE e.organization_id = :org_id
@@ -108,7 +112,9 @@ async def create_endpoint(org_id: int, data: dict) -> Optional[dict]:
                     system_prompt,
                     rate_limit_rpm,
                     prompt_id,
-                    prompt_label
+                    prompt_label,
+                    cache_enabled,
+                    cache_ttl_seconds
                 ) VALUES (
                     :org_id,
                     :slug,
@@ -121,26 +127,11 @@ async def create_endpoint(org_id: int, data: dict) -> Optional[dict]:
                     :system_prompt,
                     :rate_limit_rpm,
                     :prompt_id,
-                    :prompt_label
+                    :prompt_label,
+                    :cache_enabled,
+                    :cache_ttl_seconds
                 )
-                RETURNING
-                    id,
-                    slug,
-                    display_name,
-                    provider,
-                    model,
-                    api_key_id,
-                    max_tokens,
-                    temperature,
-                    system_prompt,
-                    rate_limit_rpm,
-                    prompt_id,
-                    prompt_label,
-                    fallback_endpoint_id,
-                    allowed_role_ids,
-                    is_active,
-                    created_at,
-                    updated_at
+                RETURNING *
             """),
             {
                 "org_id": org_id,
@@ -155,6 +146,8 @@ async def create_endpoint(org_id: int, data: dict) -> Optional[dict]:
                 "rate_limit_rpm": data.get("rate_limit_rpm"),
                 "prompt_id": data.get("prompt_id"),
                 "prompt_label": data.get("prompt_label", "production"),
+                "cache_enabled": data.get("cache_enabled", False),
+                "cache_ttl_seconds": data.get("cache_ttl_seconds", 14400),
             },
         )
         await db.commit()
@@ -185,6 +178,8 @@ async def update_endpoint(org_id: int, id: int, data: dict) -> Optional[dict]:
         "fallback_endpoint_id",
         "allowed_role_ids",
         "is_active",
+        "cache_enabled",
+        "cache_ttl_seconds",
     }
 
     set_clauses: list[str] = []
@@ -223,24 +218,7 @@ async def update_endpoint(org_id: int, id: int, data: dict) -> Optional[dict]:
                 SET {set_sql}
                 WHERE organization_id = :org_id
                   AND id = :id
-                RETURNING
-                    id,
-                    slug,
-                    display_name,
-                    provider,
-                    model,
-                    api_key_id,
-                    max_tokens,
-                    temperature,
-                    system_prompt,
-                    rate_limit_rpm,
-                    prompt_id,
-                    prompt_label,
-                    fallback_endpoint_id,
-                    allowed_role_ids,
-                    is_active,
-                    created_at,
-                    updated_at
+                RETURNING *
             """),
             params,
         )
@@ -248,6 +226,13 @@ async def update_endpoint(org_id: int, id: int, data: dict) -> Optional[dict]:
         row = result.mappings().first()
         if not row:
             return None
+
+        # Auto-invalidate cache AFTER successful update
+        cache_invalidating_fields = {"model", "system_prompt", "temperature"}
+        if any(f in data for f in cache_invalidating_fields):
+            from crud.cache import clear_endpoint_cache
+            await clear_endpoint_cache(org_id, id)
+
         return {
             **dict(row),
             "created_at": str(row["created_at"]) if row["created_at"] else None,

@@ -30,8 +30,10 @@ from services.proxy_service import (
     reconcile_budget,
     enforce_rate_limits,
     log_spend,
+    log_cache_hit,
     run_guardrails,
 )
+from services.cache_service import generate_cache_key, check_cache, store_in_cache, is_cache_globally_enabled
 from services.cost_service import estimate_prompt_cost
 from services.llm_service import chat_completion, embedding, stream_chat_completion
 
@@ -103,6 +105,48 @@ async def proxy_chat(request: Request, body: ProxyChatRequest):
     # Guardrails
     scanned_messages = await run_guardrails(org_id, body.messages, endpoint["id"])
 
+    # --- Cache check (exact match, after guardrails for security) ---
+    prompt_hash = None
+    cache_hit = None
+    use_cache = (
+        endpoint.get("cache_enabled")
+        and not body.stream
+        and await is_cache_globally_enabled(org_id)
+    )
+    if use_cache:
+        # Include system prompt in hash — it affects the LLM response
+        cache_messages = scanned_messages
+        if endpoint.get("system_prompt"):
+            cache_messages = [{"role": "system", "content": endpoint["system_prompt"]}] + scanned_messages
+        prompt_hash = generate_cache_key(
+            model=endpoint["model"],
+            messages=cache_messages,
+            temperature=body.temperature if body.temperature is not None else endpoint.get("temperature"),
+            max_tokens=body.max_tokens or endpoint.get("max_tokens"),
+        )
+        cache_hit = await check_cache(org_id, endpoint["id"], prompt_hash)
+
+    if cache_hit is not None:
+        await log_cache_hit(
+            organization_id=org_id,
+            endpoint_id=endpoint["id"],
+            virtual_key_id=vk["id"],
+            provider=endpoint["provider"],
+            model=cache_hit.get("model", endpoint["model"]),
+            prompt_tokens=cache_hit.get("prompt_tokens", 0),
+            completion_tokens=cache_hit.get("completion_tokens", 0),
+            total_tokens=cache_hit.get("total_tokens", 0),
+            original_cost_usd=float(cache_hit.get("cost_usd", 0)),
+            latency_ms=0,
+        )
+        # Reverse the budget estimate (cache hits are free)
+        await reconcile_budget(org_id, estimated_cost, 0)
+        cached_response = json.loads(cache_hit["response_body"])
+        return JSONResponse(
+            content=cached_response,
+            headers={"x-vw-cache": "HIT"},
+        )
+
     # Build final messages (system prompt prepended if configured)
     final_messages = scanned_messages
     if endpoint.get("system_prompt"):
@@ -126,6 +170,8 @@ async def proxy_chat(request: Request, body: ProxyChatRequest):
 
     return await _handle_completion(
         org_id, vk, endpoint, final_messages, kwargs, estimated_cost, start_time,
+        _prompt_hash=prompt_hash,
+        _scanned_messages=scanned_messages if prompt_hash else None,
     )
 
 
@@ -134,8 +180,10 @@ async def _handle_completion(
     messages: list[dict], kwargs: dict,
     estimated_cost: float, start_time: float,
     _depth: int = 0,
+    _prompt_hash: Optional[str] = None,
+    _scanned_messages: Optional[list[dict]] = None,
 ):
-    """Non-streaming completion with fallback support."""
+    """Non-streaming completion with fallback support and optional cache store."""
     try:
         result = await chat_completion(
             model=endpoint["model"],
@@ -163,7 +211,23 @@ async def _handle_completion(
         )
         await reconcile_budget(org_id, estimated_cost, cost)
 
-        return JSONResponse(content=result)
+        # Store in cache if caching enabled
+        if _prompt_hash:
+            await store_in_cache(
+                organization_id=org_id,
+                endpoint_id=endpoint["id"],
+                prompt_hash=_prompt_hash,
+                model=result.get("model", endpoint["model"]),
+                messages=_scanned_messages or messages,
+                response_body=json.dumps(result),
+                prompt_tokens=usage.get("prompt_tokens", 0),
+                completion_tokens=usage.get("completion_tokens", 0),
+                total_tokens=usage.get("total_tokens", 0),
+                cost_usd=cost,
+                ttl_seconds=endpoint.get("cache_ttl_seconds", 14400),
+            )
+
+        return JSONResponse(content=result, headers={"x-vw-cache": "MISS" if _prompt_hash else "DISABLED"})
 
     except Exception as e:
         latency_ms = int((time.time() - start_time) * 1000)
@@ -177,13 +241,14 @@ async def _handle_completion(
         )
         await reconcile_budget(org_id, estimated_cost, 0)
 
-        # Fallback
+        # Fallback — don't cache fallback responses against original endpoint
         if endpoint.get("fallback_endpoint_id") and _depth < MAX_FALLBACK_DEPTH:
             fallback = await resolve_endpoint_by_id(org_id, endpoint["fallback_endpoint_id"])
             if fallback:
                 logger.info(f"Falling back to {fallback['slug']} (depth {_depth + 1})")
                 return await _handle_completion(
                     org_id, vk, fallback, messages, kwargs, 0, time.time(), _depth + 1,
+                    _prompt_hash=None, _scanned_messages=None,
                 )
 
         logger.error(f"LLM provider error: {e}")

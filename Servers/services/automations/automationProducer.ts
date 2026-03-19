@@ -178,3 +178,17 @@ export async function scheduleAiGatewayRiskDetection() {
     },
   );
 }
+
+export async function scheduleAiGatewayCacheCleanup() {
+  logger.info("Adding AI Gateway cache cleanup jobs to the queue...");
+  // Daily cache cleanup at 3 AM — purge expired entries
+  await automationQueue.add(
+    "ai_gateway_cache_cleanup",
+    { type: "ai_gateway_cache" },
+    {
+      repeat: { pattern: "0 3 * * *" },
+      removeOnComplete: true,
+      removeOnFail: false,
+    },
+  );
+}

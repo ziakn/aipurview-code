@@ -140,6 +140,15 @@ export default function AIGatewaySettingsPage() {
   const [gsSaving, setGsSaving] = useState(false);
   const [spendPurgeResult, setSpendPurgeResult] = useState("");
 
+  // Cache settings
+  const [cacheSettings, setCacheSettings] = useState({
+    cache_global_enabled: true,
+    cache_default_ttl_seconds: "14400",
+    cache_max_entries_per_org: "50000",
+  });
+  const [cacheSaving, setCacheSaving] = useState(false);
+  const [cachePurgeResult, setCachePurgeResult] = useState("");
+
   // Risk suggestions state
   const [riskSettings, setRiskSettings] = useState<RiskSetting[]>([]);
   const [riskSettingsDirty, setRiskSettingsDirty] = useState(false);
@@ -191,6 +200,14 @@ export default function AIGatewaySettingsPage() {
           log_request_body: gs.log_request_body || false,
           log_response_body: gs.log_response_body || false,
         });
+        // Cache settings live on the same guardrail_settings row
+        if (gs.cache_global_enabled !== undefined) {
+          setCacheSettings({
+            cache_global_enabled: gs.cache_global_enabled ?? true,
+            cache_default_ttl_seconds: String(gs.cache_default_ttl_seconds ?? 14400),
+            cache_max_entries_per_org: String(gs.cache_max_entries_per_org ?? 50000),
+          });
+        }
       }
     } catch {
       // Silently handle
@@ -315,6 +332,22 @@ export default function AIGatewaySettingsPage() {
       // Silently handle
     } finally {
       setGsSaving(false);
+    }
+  };
+
+  const handleSaveCacheSettings = async () => {
+    setCacheSaving(true);
+    try {
+      await apiServices.put("/ai-gateway/cache/settings", {
+        cache_global_enabled: cacheSettings.cache_global_enabled,
+        cache_default_ttl_seconds: Number(cacheSettings.cache_default_ttl_seconds) || 14400,
+        cache_max_entries_per_org: Number(cacheSettings.cache_max_entries_per_org) || 50000,
+      });
+      await loadData();
+    } catch {
+      // Silently handle
+    } finally {
+      setCacheSaving(false);
     }
   };
 
@@ -781,6 +814,66 @@ export default function AIGatewaySettingsPage() {
                       }}
                     />
                   </Box>
+                </Stack>
+              </Box>
+              {/* Response cache settings card */}
+              <Box sx={cardSx}>
+                <Stack gap="12px">
+                  <Typography sx={sectionTitleSx}>Response caching</Typography>
+                  <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>
+                    Cache identical LLM requests to reduce cost and latency. Enable caching globally here, then toggle it per-endpoint in the Endpoints tab.
+                  </Typography>
+
+                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Typography sx={{ fontSize: 13 }}>Enable caching globally</Typography>
+                    <Toggle
+                      checked={cacheSettings.cache_global_enabled}
+                      onChange={() => setCacheSettings((p) => ({ ...p, cache_global_enabled: !p.cache_global_enabled }))}
+                    />
+                  </Stack>
+
+                  <Stack direction="row" gap="16px">
+                    <Box sx={{ flex: 1 }}>
+                      <Field
+                        label="Default TTL (seconds)"
+                        placeholder="14400"
+                        value={cacheSettings.cache_default_ttl_seconds}
+                        onChange={(e) => setCacheSettings((p) => ({ ...p, cache_default_ttl_seconds: e.target.value }))}
+                      />
+                    </Box>
+                    <Box sx={{ flex: 1 }}>
+                      <Field
+                        label="Max entries per org"
+                        placeholder="50000"
+                        value={cacheSettings.cache_max_entries_per_org}
+                        onChange={(e) => setCacheSettings((p) => ({ ...p, cache_max_entries_per_org: e.target.value }))}
+                      />
+                    </Box>
+                  </Stack>
+
+                  <Stack direction="row" gap="8px" sx={{ mt: "8px" }}>
+                    <CustomizableButton
+                      text={cacheSaving ? "Saving..." : "Save cache settings"}
+                      variant="contained"
+                      onClick={handleSaveCacheSettings}
+                    />
+                    <CustomizableButton
+                      text={cachePurgeResult || "Purge expired entries"}
+                      variant="outlined"
+                      onClick={async () => {
+                        setCachePurgeResult("Purging...");
+                        try {
+                          const res = await apiServices.post("/ai-gateway/cache/purge");
+                          const count = res?.data?.deleted ?? 0;
+                          setCachePurgeResult(count > 0 ? `Deleted ${count} entries` : "No expired entries");
+                          setTimeout(() => setCachePurgeResult(""), 3000);
+                        } catch {
+                          setCachePurgeResult("Failed");
+                          setTimeout(() => setCachePurgeResult(""), 3000);
+                        }
+                      }}
+                    />
+                  </Stack>
                 </Stack>
               </Box>
             </Stack>
