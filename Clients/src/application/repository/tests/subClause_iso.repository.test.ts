@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { apiServices } from "../../../infrastructure/api/networkServices";
 import {
   GetSubClausesById,
@@ -18,22 +19,23 @@ vi.mock("../../../infrastructure/api/networkServices", () => {
   };
 });
 
-beforeEach(() => {
-  vi.clearAllMocks();
-});
+describe("subClause_iso.repository", () => {
+  beforeEach(vi.clearAllMocks);
+  afterEach(vi.clearAllMocks);
 
-describe("Test Sub Clause ISO Repository", () => {
   describe("GetSubClausesById", () => {
-    it("should make a get request with default responseType and return response.data", async () => {
+    it("should make GET request with params and return response.data", async () => {
       const routeUrl = "/iso27001/subClauses/byClauseId/1";
       const signal: AbortSignal = new AbortController().signal;
       const mockData = { subClauses: [{ id: 1, title: "1.1" }] };
 
-      vi.mocked(apiServices.get).mockResolvedValue({
+      const mockResponse = {
+        data: mockData,
         status: 200,
         statusText: "OK",
-        data: mockData,
-      });
+      };
+
+      vi.mocked(apiServices.get).mockResolvedValue(mockResponse);
 
       const response = await GetSubClausesById({ routeUrl, signal });
 
@@ -44,15 +46,18 @@ describe("Test Sub Clause ISO Repository", () => {
       expect(response).toEqual(mockData);
     });
 
-    it("should make a get request with custom responseType", async () => {
+    it("should make GET request with custom responseType", async () => {
       const routeUrl = "/iso27001/subClauses/export/1";
       const signal: AbortSignal = new AbortController().signal;
+      const mockData = "blob-content";
 
-      vi.mocked(apiServices.get).mockResolvedValue({
+      const mockResponse = {
+        data: mockData,
         status: 200,
         statusText: "OK",
-        data: "blob-content",
-      });
+      };
+
+      vi.mocked(apiServices.get).mockResolvedValue(mockResponse);
 
       const response = await GetSubClausesById({
         routeUrl,
@@ -64,20 +69,49 @@ describe("Test Sub Clause ISO Repository", () => {
         signal,
         responseType: "blob",
       });
-      expect(response).toEqual("blob-content");
+      expect(response).toEqual(mockData);
+    });
+
+    it("should throw error with status and data if API call fails", async () => {
+      const routeUrl = "/iso27001/subClauses/byClauseId/1";
+      const signal: AbortSignal = new AbortController().signal;
+
+      const mockError = {
+        response: {
+          status: 404,
+          data: { message: "Not Found" },
+        },
+      };
+
+      vi.mocked(apiServices.get).mockRejectedValue(mockError);
+
+      await expect(GetSubClausesById({ routeUrl, signal })).rejects.toThrow();
+    });
+
+    it("should throw error without response property for network errors", async () => {
+      const routeUrl = "/iso27001/subClauses/byClauseId/1";
+      const signal: AbortSignal = new AbortController().signal;
+      const networkError = new Error("Network timeout");
+
+      vi.mocked(apiServices.get).mockRejectedValue(networkError);
+
+      await expect(GetSubClausesById({ routeUrl, signal })).rejects.toThrow(
+        "Network timeout",
+      );
     });
   });
 
   describe("UpdateSubClauseById", () => {
-    it("should make a patch request with multipart/form-data header and return response", async () => {
+    it("should make PATCH request with FormData and multipart headers", async () => {
       const routeUrl = "/iso27001/subClauses/1";
       const body = new FormData();
       body.append("title", "Updated");
       const headers = { Authorization: "Bearer token" };
+
       const mockResponse = {
+        data: { success: true },
         status: 200,
         statusText: "OK",
-        data: { success: true },
       };
 
       vi.mocked(apiServices.patch).mockResolvedValue(mockResponse);
@@ -93,39 +127,71 @@ describe("Test Sub Clause ISO Repository", () => {
       expect(response).toEqual(mockResponse);
     });
 
-    it("should log and rethrow when patch request fails", async () => {
+    it("should make PATCH request without custom headers", async () => {
       const routeUrl = "/iso27001/subClauses/1";
       const body = new FormData();
-      const error = new Error("Patch failed");
-      const consoleErrorSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => undefined);
+      body.append("title", "Updated");
 
-      vi.mocked(apiServices.patch).mockRejectedValue(error);
+      const mockResponse = {
+        data: { success: true },
+        status: 200,
+        statusText: "OK",
+      };
+
+      vi.mocked(apiServices.patch).mockResolvedValue(mockResponse);
+
+      const response = await UpdateSubClauseById({ routeUrl, body });
+
+      expect(apiServices.patch).toHaveBeenCalledWith(routeUrl, body, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      expect(response).toEqual(mockResponse);
+    });
+
+    it("should throw error with status and data if API call fails", async () => {
+      const routeUrl = "/iso27001/subClauses/1";
+      const body = new FormData();
+
+      const mockError = {
+        response: {
+          status: 400,
+          data: { message: "Invalid data" },
+        },
+      };
+
+      vi.mocked(apiServices.patch).mockRejectedValue(mockError);
+
+      await expect(UpdateSubClauseById({ routeUrl, body })).rejects.toThrow();
+    });
+
+    it("should throw error without response property for network errors", async () => {
+      const routeUrl = "/iso27001/subClauses/1";
+      const body = new FormData();
+      const networkError = new Error("Connection refused");
+
+      vi.mocked(apiServices.patch).mockRejectedValue(networkError);
 
       await expect(UpdateSubClauseById({ routeUrl, body })).rejects.toThrow(
-        error,
+        "Connection refused",
       );
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        "Error updating subclause by ID:",
-        error,
-      );
-
-      consoleErrorSpy.mockRestore();
     });
   });
 
   describe("ISO27001GetSubClauseByClauseId", () => {
-    it("should make a get request with default responseType and return response.data", async () => {
+    it("should make GET request with params and return response.data", async () => {
       const routeUrl = "/iso27001/subClauses/byClauseId/3";
       const signal: AbortSignal = new AbortController().signal;
       const mockData = { items: [{ id: 10 }] };
 
-      vi.mocked(apiServices.get).mockResolvedValue({
+      const mockResponse = {
+        data: mockData,
         status: 200,
         statusText: "OK",
-        data: mockData,
-      });
+      };
+
+      vi.mocked(apiServices.get).mockResolvedValue(mockResponse);
 
       const response = await ISO27001GetSubClauseByClauseId({
         routeUrl,
@@ -139,15 +205,18 @@ describe("Test Sub Clause ISO Repository", () => {
       expect(response).toEqual(mockData);
     });
 
-    it("should make a get request with custom responseType", async () => {
+    it("should make GET request with custom responseType", async () => {
       const routeUrl = "/iso27001/subClauses/byClauseId/3/export";
       const signal: AbortSignal = new AbortController().signal;
+      const mockData = "blob-data";
 
-      vi.mocked(apiServices.get).mockResolvedValue({
+      const mockResponse = {
+        data: mockData,
         status: 200,
         statusText: "OK",
-        data: "blob-data",
-      });
+      };
+
+      vi.mocked(apiServices.get).mockResolvedValue(mockResponse);
 
       const response = await ISO27001GetSubClauseByClauseId({
         routeUrl,
@@ -159,21 +228,53 @@ describe("Test Sub Clause ISO Repository", () => {
         signal,
         responseType: "blob",
       });
-      expect(response).toEqual("blob-data");
+      expect(response).toEqual(mockData);
+    });
+
+    it("should throw error with status and data if API call fails", async () => {
+      const routeUrl = "/iso27001/subClauses/byClauseId/3";
+      const signal: AbortSignal = new AbortController().signal;
+
+      const mockError = {
+        response: {
+          status: 500,
+          data: { message: "Internal Server Error" },
+        },
+      };
+
+      vi.mocked(apiServices.get).mockRejectedValue(mockError);
+
+      await expect(
+        ISO27001GetSubClauseByClauseId({ routeUrl, signal }),
+      ).rejects.toThrow();
+    });
+
+    it("should throw error without response property for network errors", async () => {
+      const routeUrl = "/iso27001/subClauses/byClauseId/3";
+      const signal: AbortSignal = new AbortController().signal;
+      const networkError = new Error("Network timeout");
+
+      vi.mocked(apiServices.get).mockRejectedValue(networkError);
+
+      await expect(
+        ISO27001GetSubClauseByClauseId({ routeUrl, signal }),
+      ).rejects.toThrow("Network timeout");
     });
   });
 
   describe("ISO27001GetSubClauseById", () => {
-    it("should make a get request and return response.data", async () => {
+    it("should make GET request and return response.data", async () => {
       const routeUrl = "/iso27001/subClauses/5";
       const signal: AbortSignal = new AbortController().signal;
       const mockData = { id: 5, title: "5.1" };
 
-      vi.mocked(apiServices.get).mockResolvedValue({
+      const mockResponse = {
+        data: mockData,
         status: 200,
         statusText: "OK",
-        data: mockData,
-      });
+      };
+
+      vi.mocked(apiServices.get).mockResolvedValue(mockResponse);
 
       const response = await ISO27001GetSubClauseById({ routeUrl, signal });
 
@@ -184,25 +285,58 @@ describe("Test Sub Clause ISO Repository", () => {
       expect(response).toEqual(mockData);
     });
 
-    it("should log and rethrow when get request fails", async () => {
+    it("should make GET request with custom responseType", async () => {
       const routeUrl = "/iso27001/subClauses/5";
       const signal: AbortSignal = new AbortController().signal;
-      const error = new Error("Get failed");
-      const consoleErrorSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => undefined);
+      const mockData = "blob-content";
 
-      vi.mocked(apiServices.get).mockRejectedValue(error);
+      const mockResponse = {
+        data: mockData,
+        status: 200,
+        statusText: "OK",
+      };
 
-      await expect(
-        ISO27001GetSubClauseById({ routeUrl, signal }),
-      ).rejects.toThrow(error);
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        "Error getting subclause by ID:",
-        error,
+      vi.mocked(apiServices.get).mockResolvedValue(mockResponse);
+
+      const response = await ISO27001GetSubClauseById({
+        routeUrl,
+        signal,
+        responseType: "blob",
+      });
+
+      expect(apiServices.get).toHaveBeenCalledWith(routeUrl, {
+        signal,
+        responseType: "blob",
+      });
+      expect(response).toEqual(mockData);
+    });
+
+    it("should throw error with status and data if API call fails", async () => {
+      const routeUrl = "/iso27001/subClauses/5";
+      const signal: AbortSignal = new AbortController().signal;
+
+      const mockError = {
+        response: {
+          status: 404,
+          data: { message: "Subclause not found" },
+        },
+      };
+
+      vi.mocked(apiServices.get).mockRejectedValue(mockError);
+
+      await expect(ISO27001GetSubClauseById({ routeUrl, signal })).rejects.toThrow();
+    });
+
+    it("should throw error without response property for network errors", async () => {
+      const routeUrl = "/iso27001/subClauses/5";
+      const signal: AbortSignal = new AbortController().signal;
+      const networkError = new Error("Connection refused");
+
+      vi.mocked(apiServices.get).mockRejectedValue(networkError);
+
+      await expect(ISO27001GetSubClauseById({ routeUrl, signal })).rejects.toThrow(
+        "Connection refused",
       );
-
-      consoleErrorSpy.mockRestore();
     });
   });
 });
