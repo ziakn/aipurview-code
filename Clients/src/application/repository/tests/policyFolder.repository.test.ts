@@ -109,17 +109,17 @@ describe("policyFolder.repository", () => {
         {
           id: 1,
           name: "Parent Folder",
-          parentId: null,
+          parent_id: null,
         },
         {
           id: 2,
           name: "Child Folder",
-          parentId: 1,
+          parent_id: 1,
         },
         {
           id: 3,
           name: "Grandchild Folder",
-          parentId: 2,
+          parent_id: 2,
         },
       ];
       const response = { data: { data: nestedFolders } };

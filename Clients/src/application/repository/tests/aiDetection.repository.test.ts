@@ -847,6 +847,43 @@ describe("Test AI Detection Repository", () => {
         vi.useRealTimers();
       }
     });
+    it("should return early when signal is aborted during poll execution (line 340-342 check)", async () => {
+      vi.useFakeTimers();
+      try {
+        const scanId = 12345;
+        const abortController = new AbortController();
+        const signal = abortController.signal;
+
+        const mockResponse = {
+          data: {
+            data: {
+              id: scanId,
+              status: "in_progress",
+              progress: 50,
+              current_file: "file1.js",
+              files_scanned: 5,
+              total_files: 10,
+              findings_count: 3,
+              error_message: null,
+            },
+          },
+          status: 200,
+          statusText: "OK",
+        };
+
+        vi.mocked(apiServices.get).mockResolvedValueOnce(mockResponse);
+
+        const pollingPromise = pollScanStatus(scanId, undefined, 10000, signal);
+
+        await Promise.resolve();
+        abortController.abort();
+
+        await expect(pollingPromise).rejects.toThrow("Polling aborted");
+        expect(apiServices.get).toHaveBeenCalledTimes(1);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
   });
   describe("updateFindingGovernanceStatus", () => {
     it("should make a patch request to update the governance status of a scan finding with the correct parameters", async () => {
