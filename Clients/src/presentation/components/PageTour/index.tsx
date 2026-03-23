@@ -116,7 +116,7 @@ const PageTour: React.FC<IPageTourProps> = ({
             primaryColor: `${brand.primary}`,
             zIndex: 900,
             beaconSize: 30,
-          },
+          } as any,
           overlay: {
             backgroundColor: "transparent",
           },
