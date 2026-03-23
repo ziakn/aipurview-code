@@ -2193,6 +2193,11 @@ export async function getScan(
       risk_score_calculated_at: scan.risk_score_calculated_at
         ? (scan.risk_score_calculated_at as Date).toISOString()
         : null,
+      scan_mode: scan.scan_mode,
+      base_commit_sha: scan.base_commit_sha ?? null,
+      head_commit_sha: scan.head_commit_sha ?? null,
+      baseline_scan_id: scan.baseline_scan_id ?? null,
+      changed_files_count: scan.changed_files_count ?? null,
       created_at: scan.created_at!.toISOString(),
     },
     summary,
@@ -2254,6 +2259,8 @@ export async function getScanFindings(
       license_name: f.license_name,
       license_risk: f.license_risk,
       license_source: f.license_source,
+      // Incremental scan fields
+      finding_status: f.finding_status,
     })),
     pagination: {
       total,
@@ -2296,6 +2303,9 @@ export async function getScans(
       triggered_by: s.triggered_by_user,
       risk_score: s.risk_score != null ? parseFloat(String(s.risk_score)) : null,
       risk_score_grade: s.risk_score_grade ?? null,
+      scan_mode: s.scan_mode,
+      baseline_scan_id: s.baseline_scan_id ?? null,
+      changed_files_count: s.changed_files_count ?? null,
       created_at: s.created_at!.toISOString(),
     })),
     pagination: {
