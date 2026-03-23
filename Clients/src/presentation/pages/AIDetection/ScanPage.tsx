@@ -15,6 +15,7 @@ import {
   CircularProgress,
   InputAdornment,
   Skeleton,
+  FormControlLabel,
 } from "@mui/material";
 import {
   Search,
@@ -31,6 +32,8 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Field from "../../components/Inputs/Field";
+import Toggle from "../../components/Inputs/Toggle";
+import InfoBox from "../../components/InfoBox";
 import Alert from "../../components/Alert";
 import { CustomizableButton } from "../../components/button/customizable-button";
 import { PageHeaderExtended } from "../../components/Layout/PageHeaderExtended";
@@ -66,6 +69,9 @@ export default function ScanPage() {
   const [isCheckingActive, setIsCheckingActive] = useState(true);
   const [stats, setStats] = useState<AIDetectionStats | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
+  const [isIncremental, setIsIncremental] = useState(false);
+  const [baseCommitSha, setBaseCommitSha] = useState("");
+  const [headCommitSha, setHeadCommitSha] = useState("");
   const abortControllerRef = useRef<AbortController | null>(null);
   const currentScanIdRef = useRef<number | null>(null);
 
@@ -178,6 +184,18 @@ export default function ScanPage() {
       return;
     }
 
+    if (isIncremental) {
+      const shaPattern = /^[0-9a-f]{7,40}$/i;
+      if (!baseCommitSha.trim() || !headCommitSha.trim()) {
+        setError("Both commit SHAs are required for incremental scan");
+        return;
+      }
+      if (!shaPattern.test(baseCommitSha.trim()) || !shaPattern.test(headCommitSha.trim())) {
+        setError("Commit SHAs must be valid hex strings (7-40 characters)");
+        return;
+      }
+    }
+
     setError(null);
     setScanState("scanning");
     setProgress(null);
@@ -194,7 +212,14 @@ export default function ScanPage() {
       // Start the scan
       const scan = await startScan(
         normalizedUrl,
-        abortControllerRef.current.signal
+        abortControllerRef.current.signal,
+        isIncremental
+          ? {
+              scan_mode: "incremental",
+              base_commit_sha: baseCommitSha.trim(),
+              head_commit_sha: headCommitSha.trim(),
+            }
+          : undefined
       );
 
       // Store scan ID for cancellation
@@ -236,7 +261,7 @@ export default function ScanPage() {
       setError(errorMsg);
       showAlert("error", errorMsg);
     }
-  }, [repositoryUrl, refreshRecentScans]);
+  }, [repositoryUrl, isIncremental, baseCommitSha, headCommitSha, refreshRecentScans]);
 
   const handleCancel = useCallback(async () => {
     // Abort local HTTP requests
@@ -433,6 +458,55 @@ export default function ScanPage() {
                 }}
                 sx={{ mb: 0 }}
               />
+              <FormControlLabel
+                control={
+                  <Toggle
+                    size="small"
+                    checked={isIncremental}
+                    onChange={(e) => setIsIncremental(e.target.checked)}
+                  />
+                }
+                label={
+                  <Typography sx={{ fontSize: "13px", ml: "8px" }}>Incremental scan</Typography>
+                }
+                sx={{ mt: "16px", ml: 0 }}
+              />
+              {isIncremental && (
+                <Box sx={{ mt: "16px", display: "flex", flexDirection: "column", gap: "16px" }}>
+                  <InfoBox
+                    message="Only scans files changed between two commits. Findings from unchanged files are carried forward from the most recent full scan. Requires a completed full scan of this repository as a baseline."
+                    storageKey="incremental-scan-tip"
+                    variant="info"
+                    header="How incremental scans work"
+                  />
+                  <Box sx={{ display: "flex", gap: "16px" }}>
+                    <Box sx={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
+                      <Typography sx={{ fontSize: "12px", fontWeight: 500 }}>
+                        Base commit SHA (older)
+                      </Typography>
+                      <Field
+                        id="base-commit-sha"
+                        placeholder="e.g., abc1234..."
+                        value={baseCommitSha}
+                        onChange={(e) => setBaseCommitSha(e.target.value)}
+                        sx={{ mb: 0 }}
+                      />
+                    </Box>
+                    <Box sx={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
+                      <Typography sx={{ fontSize: "12px", fontWeight: 500 }}>
+                        Head commit SHA (newer)
+                      </Typography>
+                      <Field
+                        id="head-commit-sha"
+                        placeholder="e.g., def5678..."
+                        value={headCommitSha}
+                        onChange={(e) => setHeadCommitSha(e.target.value)}
+                        sx={{ mb: 0 }}
+                      />
+                    </Box>
+                  </Box>
+                </Box>
+              )}
             </Box>
             <Box sx={{ alignSelf: "flex-end" }}>
               <CustomizableButton
