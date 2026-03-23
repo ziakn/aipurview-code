@@ -92,44 +92,47 @@ const PageTour: React.FC<IPageTourProps> = ({
           },
         }}
       />
+      {/* Cast props for compat with both old and new react-joyride versions */}
       <Joyride
-        steps={steps as unknown as Step[]}
-        run={shouldRun}
-        continuous
-        hideCloseButton
-        showProgress={false}
-        showSkipButton={false}
-        callback={handleCallback}
-        disableOverlayClose
-        disableScrolling={true}
-        scrollToFirstStep={false}
-        spotlightClicks={false}
-        tooltipComponent={tooltipRenderer}
-        locale={{
-          last: "Finish",
-          next: "Next",
-          back: "Back",
-          skip: "Skip",
-        }}
-        styles={{
-          options: {
-            primaryColor: `${brand.primary}`,
-            zIndex: 900,
-            beaconSize: 30,
-          } as any,
-          overlay: {
-            backgroundColor: "transparent",
+        {...{
+          steps: steps as unknown as Step[],
+          run: shouldRun,
+          continuous: true,
+          hideCloseButton: true,
+          showProgress: false,
+          showSkipButton: false,
+          callback: handleCallback,
+          disableOverlayClose: true,
+          disableScrolling: true,
+          scrollToFirstStep: false,
+          spotlightClicks: false,
+          tooltipComponent: tooltipRenderer,
+          locale: {
+            last: "Finish",
+            next: "Next",
+            back: "Back",
+            skip: "Skip",
           },
-          tooltip: {
-            borderRadius: "4px",
+          styles: {
+            options: {
+              primaryColor: `${brand.primary}`,
+              zIndex: 900,
+              beaconSize: 30,
+            },
+            overlay: {
+              backgroundColor: "transparent",
+            },
+            tooltip: {
+              borderRadius: "4px",
+            },
+            tooltipContainer: {
+              textAlign: "left",
+            },
+            tooltipContent: {
+              padding: 0,
+            },
           },
-          tooltipContainer: {
-            textAlign: "left",
-          },
-          tooltipContent: {
-            padding: 0,
-          },
-        }}
+        } as any}
         floaterProps={{
           styles: {
             arrow: {
