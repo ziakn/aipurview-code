@@ -1,4 +1,4 @@
-import Joyride, { Step, TooltipRenderProps } from "react-joyride";
+import { Joyride, Step, TooltipRenderProps } from "react-joyride";
 import React, { useEffect, useState } from "react";
 import { CustomStepWrapper } from "./CustomStep";
 import { Global } from "@emotion/react";
