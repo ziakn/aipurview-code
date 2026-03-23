@@ -17,7 +17,6 @@ import {
   ICreateFindingInput,
   ScanStatus,
   GovernanceStatus,
-  FindingStatus,
 } from "../domain.layer/interfaces/i.aiDetection";
 import { ICreateModelSecurityFindingInput } from "../domain.layer/interfaces/i.modelSecurity";
 
