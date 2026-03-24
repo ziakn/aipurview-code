@@ -7,6 +7,7 @@ This document contains cross-cutting rules for the VerifyWise codebase. Director
 - **Backend:** `Servers/CLAUDE.md` — multi-tenancy, migrations, backend patterns
 - **Frontend:** `Clients/CLAUDE.md` — clean architecture, component patterns
 - **EvalServer:** `EvalServer/CLAUDE.md` — Alembic migrations, FastAPI patterns
+- **AI Gateway:** `AIGateway/CLAUDE.md` — LLM proxy, guardrails, spend tracking
 
 ---
 
@@ -137,6 +138,7 @@ fix(dashboard): resolve chart rendering issue
 | Backend | 3000 | Yes |
 | Frontend | 5173 | Yes |
 | EvalServer | 8000 | For LLM Evals |
+| AI Gateway | 8100 | For LLM governance |
 
 ---
 
@@ -160,53 +162,25 @@ Read the relevant file BEFORE implementing changes in that area:
 
 | When working on... | Read this file |
 |---------------------|---------------|
-| Backend controller/route/utils patterns | `docs/technical/guides/backend-patterns.md` |
-| Frontend component/page/hook patterns | `docs/technical/guides/frontend-patterns.md` |
 | Adding a new feature (full guide) | `docs/technical/guides/adding-new-feature.md` |
 | Adding a new framework | `docs/technical/guides/adding-new-framework.md` |
-| API conventions | `docs/technical/guides/api-conventions.md` |
 | Code style | `docs/technical/guides/code-style.md` |
 | Plugin system | `docs/technical/infrastructure/plugin-system.md` |
-| API routes & endpoints | `docs/technical/api/endpoints.md` |
-| Background jobs (BullMQ) | `docs/technical/infrastructure/automations.md` |
-| Email templates (MJML) | `docs/technical/infrastructure/email-service.md` |
-| PDF/DOCX reporting | `docs/technical/infrastructure/pdf-generation.md` |
-| File upload system | `docs/technical/infrastructure/file-storage.md` |
-| Change history tracking | `docs/claude/change-history.md` |
-| Error handling & exceptions | `docs/claude/error-handling.md` |
-| Logging system | `docs/claude/logging.md` |
-| Middleware (rate limit, RBAC, JWT, Redis) | `docs/claude/middleware.md` |
-| Assessments, subscriptions, tokens, etc. | `docs/claude/additional-apis.md` |
 | Approval workflows | `docs/technical/domains/approvals.md` |
 | AI Detection | `docs/technical/domains/ai-detection.md` |
-| Post-market monitoring | `docs/technical/domains/post-market-monitoring.md` |
-| Notifications | `docs/technical/domains/notifications.md` |
 | Risk management | `docs/technical/domains/risk-management.md` |
 | Vendors | `docs/technical/domains/vendors.md` |
 | Policies | `docs/technical/domains/policies.md` |
-| Datasets | `docs/technical/domains/datasets.md` |
 | Use cases / projects | `docs/technical/domains/use-cases.md` |
-| Tasks | `docs/technical/domains/tasks.md` |
-| Incidents | `docs/technical/domains/incidents.md` |
-| Evidence hub | `docs/technical/domains/evidence.md` |
 | Models / model inventory | `docs/technical/domains/models.md` |
-| Training registry | `docs/technical/domains/training.md` |
-| Search | `docs/technical/domains/search.md` |
-| Share links | `docs/technical/domains/share-links.md` |
-| Dashboard | `docs/technical/domains/dashboard.md` |
 | Compliance frameworks | `docs/technical/domains/compliance-frameworks.md` |
-| MUI theming & design tokens | `docs/technical/guides/design-tokens.md` |
-| Frontend styling | `docs/technical/frontend/styling.md` |
-| Frontend components | `docs/technical/frontend/components.md` |
-| Redux, Axios, frontend architecture | `docs/technical/frontend/overview.md` |
-| AI Advisor | `docs/technical/infrastructure/ai-advisor.md` |
-| Integrations (Slack, GitHub) | `docs/technical/infrastructure/integrations.md` |
 | Docker & deployment | `docs/deployment/PRODUCTION_DEPLOYMENT_GUIDE.md` |
-| CI/CD workflows | `docs/deployment/README.md` |
 | Database schema | `docs/technical/architecture/database-schema.md` |
 | Authentication architecture | `docs/technical/architecture/authentication.md` |
 | Multi-tenancy architecture | `docs/technical/architecture/multi-tenancy.md` |
-| Testing guide | `docs/technical/guides/testing.md` |
+
+> Backend-specific refs (middleware, logging, BullMQ, email, PDF) are in `Servers/CLAUDE.md`.
+> Frontend-specific refs (styling, components, design tokens) are in `Clients/CLAUDE.md`.
 
 ---
 
