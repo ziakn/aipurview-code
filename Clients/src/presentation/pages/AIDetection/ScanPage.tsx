@@ -403,120 +403,125 @@ export default function ScanPage() {
             p: 2,
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
-            <Box sx={{ flex: 1 }}>
-              <Typography sx={{ fontSize: "13px", fontWeight: 600, mb: 0.5 }}>
-                Repository URL
-              </Typography>
-              <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, mb: "4px" }}>
-                Configure a GitHub token in Settings to scan private repositories.
-                Try these examples:
-              </Typography>
-              <Box component="ul" sx={{ m: 0, pl: "20px", mb: "8px", display: "flex", flexDirection: "column", gap: "4px" }}>
-                {([
-                  {
-                    repo: "Shubhamsaboo/awesome-llm-apps",
-                    description: "Curated LLM apps — detects AI libraries, API calls, and provider dependencies",
-                  },
-                  {
-                    repo: "langchain-ai/chat-langchain",
-                    description: "LangChain chatbot — reveals RAG components, agent patterns, and model references",
-                  },
-                  {
-                    repo: "verifywise-ai/llm-security-tester",
-                    description: "Intentionally vulnerable — triggers prompt injection, PII exposure, excessive agency, and jailbreak findings",
-                  },
-                ] as const).map(({ repo, description }) => (
-                  <Box component="li" key={repo} sx={{ fontSize: "13px", color: palette.text.tertiary }}>
-                    <span
-                      onClick={() => setRepositoryUrl(repo)}
-                      style={{
-                        color: palette.brand.primary,
-                        cursor: "pointer",
-                        textDecoration: "underline",
-                        fontWeight: 500,
-                      }}
-                    >
-                      {repo}
-                    </span>
-                    {" — "}
-                    {description}
+          {/* Repository URL section */}
+          <Box>
+            <Typography sx={{ fontSize: "13px", fontWeight: 600, mb: 0.5 }}>
+              Repository URL
+            </Typography>
+            <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, mb: "4px" }}>
+              Configure a GitHub token in Settings to scan private repositories.
+              Try these examples:
+            </Typography>
+            <Box component="ul" sx={{ m: 0, pl: "20px", mb: "8px", display: "flex", flexDirection: "column", gap: "4px" }}>
+              {([
+                {
+                  repo: "Shubhamsaboo/awesome-llm-apps",
+                  description: "Curated LLM apps — detects AI libraries, API calls, and provider dependencies",
+                },
+                {
+                  repo: "langchain-ai/chat-langchain",
+                  description: "LangChain chatbot — reveals RAG components, agent patterns, and model references",
+                },
+                {
+                  repo: "verifywise-ai/llm-security-tester",
+                  description: "Intentionally vulnerable — triggers prompt injection, PII exposure, excessive agency, and jailbreak findings",
+                },
+              ] as const).map(({ repo, description }) => (
+                <Box component="li" key={repo} sx={{ fontSize: "13px", color: palette.text.tertiary }}>
+                  <span
+                    onClick={() => setRepositoryUrl(repo)}
+                    style={{
+                      color: palette.brand.primary,
+                      cursor: "pointer",
+                      textDecoration: "underline",
+                      fontWeight: 500,
+                    }}
+                  >
+                    {repo}
+                  </span>
+                  {" — "}
+                  {description}
+                </Box>
+              ))}
+            </Box>
+            <Field
+              id="repository-url"
+              placeholder="e.g., https://github.com/owner/repo or owner/repo"
+              value={repositoryUrl}
+              onChange={(e) => setRepositoryUrl(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Github size={16} color={palette.text.tertiary} />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ mb: 0 }}
+            />
+          </Box>
+
+          {/* Incremental scan section */}
+          <Box sx={{ mt: "16px" }}>
+            <FormControlLabel
+              control={
+                <Toggle
+                  size="small"
+                  checked={isIncremental}
+                  onChange={(e) => setIsIncremental(e.target.checked)}
+                />
+              }
+              label={
+                <Typography sx={{ fontSize: "13px", ml: "8px" }}>Incremental scan</Typography>
+              }
+              sx={{ ml: 0 }}
+            />
+            {isIncremental && (
+              <Box sx={{ mt: "16px", display: "flex", flexDirection: "column", gap: "16px" }}>
+                <InfoBox
+                  message="Only scans files changed between two commits. Findings from unchanged files are carried forward from the most recent full scan. Requires a completed full scan of this repository as a baseline."
+                  storageKey="incremental-scan-tip"
+                  variant="info"
+                  header="How incremental scans work"
+                />
+                <Box sx={{ display: "flex", gap: "16px" }}>
+                  <Box sx={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <Typography sx={{ fontSize: "12px", fontWeight: 500 }}>
+                      Base commit SHA (older)
+                    </Typography>
+                    <Field
+                      id="base-commit-sha"
+                      placeholder="e.g., abc1234..."
+                      value={baseCommitSha}
+                      onChange={(e) => setBaseCommitSha(e.target.value)}
+                      sx={{ mb: 0 }}
+                    />
                   </Box>
-                ))}
-              </Box>
-              <Field
-                id="repository-url"
-                placeholder="e.g., https://github.com/owner/repo or owner/repo"
-                value={repositoryUrl}
-                onChange={(e) => setRepositoryUrl(e.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Github size={16} color={palette.text.tertiary} />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{ mb: 0 }}
-              />
-              <FormControlLabel
-                control={
-                  <Toggle
-                    size="small"
-                    checked={isIncremental}
-                    onChange={(e) => setIsIncremental(e.target.checked)}
-                  />
-                }
-                label={
-                  <Typography sx={{ fontSize: "13px", ml: "8px" }}>Incremental scan</Typography>
-                }
-                sx={{ mt: "16px", ml: 0 }}
-              />
-              {isIncremental && (
-                <Box sx={{ mt: "16px", display: "flex", flexDirection: "column", gap: "16px" }}>
-                  <InfoBox
-                    message="Only scans files changed between two commits. Findings from unchanged files are carried forward from the most recent full scan. Requires a completed full scan of this repository as a baseline."
-                    storageKey="incremental-scan-tip"
-                    variant="info"
-                    header="How incremental scans work"
-                  />
-                  <Box sx={{ display: "flex", gap: "16px" }}>
-                    <Box sx={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
-                      <Typography sx={{ fontSize: "12px", fontWeight: 500 }}>
-                        Base commit SHA (older)
-                      </Typography>
-                      <Field
-                        id="base-commit-sha"
-                        placeholder="e.g., abc1234..."
-                        value={baseCommitSha}
-                        onChange={(e) => setBaseCommitSha(e.target.value)}
-                        sx={{ mb: 0 }}
-                      />
-                    </Box>
-                    <Box sx={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
-                      <Typography sx={{ fontSize: "12px", fontWeight: 500 }}>
-                        Head commit SHA (newer)
-                      </Typography>
-                      <Field
-                        id="head-commit-sha"
-                        placeholder="e.g., def5678..."
-                        value={headCommitSha}
-                        onChange={(e) => setHeadCommitSha(e.target.value)}
-                        sx={{ mb: 0 }}
-                      />
-                    </Box>
+                  <Box sx={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <Typography sx={{ fontSize: "12px", fontWeight: 500 }}>
+                      Head commit SHA (newer)
+                    </Typography>
+                    <Field
+                      id="head-commit-sha"
+                      placeholder="e.g., def5678..."
+                      value={headCommitSha}
+                      onChange={(e) => setHeadCommitSha(e.target.value)}
+                      sx={{ mb: 0 }}
+                    />
                   </Box>
                 </Box>
-              )}
-            </Box>
-            <Box sx={{ alignSelf: "flex-end" }}>
-              <CustomizableButton
-                text="Scan"
-                onClick={handleStartScan}
-                isDisabled={!repositoryUrl.trim()}
-                startIcon={<Search size={16} />}
-                sx={{ height: 34 }}
-              />
-            </Box>
+              </Box>
+            )}
+          </Box>
+
+          {/* Scan button */}
+          <Box sx={{ mt: "16px", display: "flex", justifyContent: "flex-end" }}>
+            <CustomizableButton
+              text="Scan"
+              onClick={handleStartScan}
+              isDisabled={!repositoryUrl.trim()}
+              startIcon={<Search size={16} />}
+              sx={{ height: 34 }}
+            />
           </Box>
 
           {error && (
