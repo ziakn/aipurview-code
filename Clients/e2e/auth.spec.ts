@@ -125,20 +125,17 @@ test.describe("Authentication", () => {
     await page.waitForLoadState("domcontentloaded");
 
     // Verify registration form fields are present
-    const nameField = page
-      .getByPlaceholder(/first name/i)
-      .or(page.getByRole("textbox", { name: /first name/i }))
-      .or(page.getByPlaceholder(/name/i));
-    const emailField = page
-      .getByPlaceholder(/email/i)
-      .or(page.getByRole("textbox", { name: /email/i }));
-    const passwordField = page
-      .getByPlaceholder(/password/i)
-      .first();
+    const nameField = page.getByPlaceholder("Your name");
+    const surnameField = page.getByPlaceholder("Your surname");
+    const emailField = page.getByPlaceholder("name.surname@companyname.com");
+    const passwordField = page.getByPlaceholder("Create a password");
+    const confirmField = page.getByPlaceholder("Confirm your password");
 
-    await expect(nameField.first()).toBeVisible({ timeout: 10_000 });
-    await expect(emailField.first()).toBeVisible({ timeout: 10_000 });
+    await expect(nameField).toBeVisible({ timeout: 10_000 });
+    await expect(surnameField).toBeVisible({ timeout: 10_000 });
+    await expect(emailField).toBeVisible({ timeout: 10_000 });
     await expect(passwordField).toBeVisible({ timeout: 10_000 });
+    await expect(confirmField).toBeVisible({ timeout: 10_000 });
   });
 
   test("registration form shows validation on empty submit", async ({
@@ -147,23 +144,22 @@ test.describe("Authentication", () => {
     await page.goto("/register");
     await page.waitForLoadState("domcontentloaded");
 
-    // Find and click submit button
-    const submitBtn = page
-      .getByRole("button", { name: /sign up|register|create account/i });
+    // The "Get started" button should be present
+    const submitBtn = page.getByRole("button", { name: /get started/i });
+    await expect(submitBtn).toBeVisible({ timeout: 10_000 });
 
-    if (await submitBtn.first().isVisible().catch(() => false)) {
-      await submitBtn.first().click();
-      await page.waitForTimeout(500);
+    // Click submit without filling any fields
+    await submitBtn.click();
+    await page.waitForTimeout(500);
 
-      // Verify validation errors appear
-      const error = page
-        .getByText(/required/i)
-        .or(page.getByText(/please/i))
-        .or(page.getByText(/invalid/i))
-        .or(page.locator(":invalid"))
-        .or(page.getByRole("alert"));
-      await expect(error.first()).toBeVisible({ timeout: 5_000 });
-    }
+    // Verify validation errors appear (required field messages or HTML5 :invalid)
+    const error = page
+      .getByText(/required/i)
+      .or(page.getByText(/please/i))
+      .or(page.getByText(/invalid/i))
+      .or(page.locator(".Mui-error"))
+      .or(page.getByRole("alert"));
+    await expect(error.first()).toBeVisible({ timeout: 5_000 });
   });
 
   // --- Password reset form ---
@@ -184,27 +180,22 @@ test.describe("Authentication", () => {
     await expect(submitBtn.first()).toBeVisible({ timeout: 10_000 });
   });
 
-  test("forgot password form shows validation on empty submit", async ({
+  test("forgot password button is disabled when email is empty", async ({
     page,
   }) => {
     await page.goto("/forgot-password");
     await page.waitForLoadState("domcontentloaded");
 
-    const submitBtn = page
-      .getByRole("button", { name: /send|reset|submit/i });
+    // The "Reset password" button should be disabled when email is empty
+    const submitBtn = page.getByRole("button", { name: /reset password/i });
+    await expect(submitBtn).toBeVisible({ timeout: 10_000 });
+    await expect(submitBtn).toBeDisabled();
 
-    if (await submitBtn.first().isVisible().catch(() => false)) {
-      await submitBtn.first().click();
-      await page.waitForTimeout(500);
+    // Fill email to verify button becomes enabled
+    const emailField = page.getByPlaceholder("Enter your email");
+    await emailField.fill("test@example.com");
+    await page.waitForTimeout(500);
 
-      // Verify validation error
-      const error = page
-        .getByText(/required/i)
-        .or(page.getByText(/please/i))
-        .or(page.getByText(/invalid/i))
-        .or(page.locator(":invalid"))
-        .or(page.getByRole("alert"));
-      await expect(error.first()).toBeVisible({ timeout: 5_000 });
-    }
+    await expect(submitBtn).toBeEnabled();
   });
 });
