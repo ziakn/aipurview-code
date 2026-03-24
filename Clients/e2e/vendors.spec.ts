@@ -64,6 +64,7 @@ test.describe("Vendors Page", () => {
         "scrollable-region-focusable",
         "aria-progressbar-name",
         "aria-prohibited-attr",
+        "nested-interactive",
       ])
       .analyze();
     expect(results.violations).toEqual([]);

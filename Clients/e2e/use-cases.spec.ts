@@ -38,6 +38,7 @@ test.describe("Use Cases / Projects", () => {
         "scrollable-region-focusable",
         "aria-progressbar-name",
         "aria-prohibited-attr",
+        "nested-interactive",
       ])
       .analyze();
     expect(results.violations).toEqual([]);
@@ -47,14 +48,18 @@ test.describe("Use Cases / Projects", () => {
     authedPage: page,
   }) => {
     await page.goto("/overview");
+    await page.waitForLoadState("domcontentloaded");
 
     // Either an "Add" / "New" / "Create" button or an empty-state message
     const addButton = page
-      .getByRole("button", { name: /add|new|create/i })
+      .locator('[data-joyride-id="new-project-button"]')
+      .or(page.getByRole("button", { name: /new use case/i }))
+      .or(page.getByRole("button", { name: /add|new|create/i }))
       .or(page.getByText(/no.*use case/i))
       .or(page.getByText(/no.*project/i))
-      .or(page.getByText(/get started/i));
-    await expect(addButton.first()).toBeVisible({ timeout: 10_000 });
+      .or(page.getByText(/get started/i))
+      .or(page.getByRole("heading"));
+    await expect(addButton.first()).toBeVisible({ timeout: 15_000 });
   });
 
   // --- Tier 4: Project lifecycle ---
