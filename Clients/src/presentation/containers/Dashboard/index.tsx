@@ -234,8 +234,8 @@ const Dashboard: FC<DashboardProps> = ({ reloadTrigger }) => {
 
         setShowToastNotification(false);
 
-        // Reload the page to refresh all dashboard metrics
-        window.location.reload();
+        // Navigate to overview to avoid 404s on deleted entity pages
+        window.location.href = "/overview";
       } else {
         setShowToastNotification(false);
         logEngine({
