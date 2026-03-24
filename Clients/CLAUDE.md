@@ -54,6 +54,8 @@ npm run build                    # Build → /dist
 npm run test                     # Vitest
 ```
 
+**Always run `npm run build` and verify it succeeds before opening a PR.** Build failures are the most common reason PRs fail CI.
+
 ---
 
 ## References

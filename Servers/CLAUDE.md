@@ -73,6 +73,10 @@ npx sequelize db:migrate         # Run migrations
 npx sequelize db:migrate:undo    # Rollback last
 ```
 
+### Before Creating a PR
+
+**Always run `npm run build` and verify it succeeds before opening a PR.** Build failures are the most common reason PRs fail CI.
+
 ---
 
 ## Backend Development
