@@ -360,7 +360,6 @@ describe("policy.repository", () => {
         mockPolicyInput,
       );
       expect(result).toEqual(updatedPolicy);
-      console.log({ result })
     });
 
     it("should pass correct policy ID and input to API", async () => {
