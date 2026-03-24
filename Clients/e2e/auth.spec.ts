@@ -83,42 +83,32 @@ test.describe("Authentication", () => {
     await page.getByRole("button", { name: /sign in/i }).click();
     await expect(page).toHaveURL("/", { timeout: 15_000 });
 
-    // Dismiss "Welcome to VerifyWise" dialog if it appears
+    // Dismiss "Welcome to VerifyWise" dialog if it appears.
+    // Note: locator.isVisible() does NOT auto-wait, use expect with try/catch.
     const welcomeSkip = page.getByRole("button", { name: /skip for now/i });
-    if (await welcomeSkip.isVisible({ timeout: 3_000 }).catch(() => false)) {
+    try {
+      await expect(welcomeSkip).toBeVisible({ timeout: 5_000 });
       await welcomeSkip.click();
       await page.waitForTimeout(1000);
+    } catch {
+      // Dialog didn't appear — continue
     }
 
-    // Find sidebar footer / more button / user menu to trigger logout
-    const logoutTrigger = page
-      .getByRole("button", { name: /logout|sign out/i })
-      .or(page.getByText(/logout/i))
-      .or(page.getByText(/sign out/i));
+    // The sidebar footer has a MoreVertical icon button (no accessible name)
+    // next to the user name/role. Navigate from "Admin" text up to the
+    // user footer container and find the button sibling.
+    const adminLabel = page.getByText("Admin", { exact: true });
+    await expect(adminLabel.first()).toBeVisible({ timeout: 10_000 });
+    // Admin text → parent (name+role container) → grandparent (user footer) → button
+    const moreBtn = adminLabel.first().locator("xpath=../../button");
+    await expect(moreBtn.first()).toBeVisible({ timeout: 5_000 });
+    await moreBtn.first().click();
+    await page.waitForTimeout(1000);
 
-    // Try direct logout button first
-    if (await logoutTrigger.first().isVisible().catch(() => false)) {
-      await logoutTrigger.first().click();
-    } else {
-      // Look for the three-dot menu button in sidebar footer (next to user name)
-      const moreBtn = page
-        .locator('[data-testid="more-menu"]')
-        .or(page.locator('[aria-label="more"]'))
-        .or(page.getByRole("button", { name: /more/i }));
-
-      if (await moreBtn.first().isVisible().catch(() => false)) {
-        await moreBtn.first().click();
-        await page.waitForTimeout(500);
-
-        const logoutBtn = page
-          .getByRole("menuitem", { name: /logout|sign out/i })
-          .or(page.getByText(/logout/i))
-          .or(page.getByText(/sign out/i));
-        if (await logoutBtn.first().isVisible().catch(() => false)) {
-          await logoutBtn.first().click();
-        }
-      }
-    }
+    // Click "Logout" in the drawer that appears
+    const logoutBtn = page.getByText("Logout", { exact: true });
+    await expect(logoutBtn.first()).toBeVisible({ timeout: 5_000 });
+    await logoutBtn.first().click();
 
     // Verify redirect to login
     await expect(page).toHaveURL(/\/login/, { timeout: 15_000 });
