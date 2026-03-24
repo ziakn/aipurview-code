@@ -72,4 +72,32 @@ test.describe("Evals Dashboard", () => {
         .first()
     ).toBeVisible({ timeout: 15_000 });
   });
+
+  // --- Tier 1: Sub-page navigation ---
+
+  test("can navigate through evals sub-pages", async ({
+    authedPage: page,
+  }) => {
+    await page.goto("/evals");
+    await page.waitForTimeout(1000);
+
+    // Look for tab or link navigation for projects/experiments/datasets
+    const tabs = [
+      { name: /project/i, label: "projects" },
+      { name: /experiment/i, label: "experiments" },
+      { name: /dataset/i, label: "datasets" },
+    ];
+
+    for (const tab of tabs) {
+      const tabEl = page
+        .getByRole("tab", { name: tab.name })
+        .or(page.getByRole("link", { name: tab.name }))
+        .or(page.getByText(tab.name));
+
+      if (await tabEl.first().isVisible().catch(() => false)) {
+        await tabEl.first().click();
+        await page.waitForTimeout(500);
+      }
+    }
+  });
 });

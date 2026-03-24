@@ -51,4 +51,25 @@ test.describe("Dashboard", () => {
       .or(page.locator('[class*="Sidebar" i]'));
     await expect(sidebar.first()).toBeVisible({ timeout: 10_000 });
   });
+
+  // --- Tier 1: Dashboard metrics ---
+
+  test("dashboard metrics and cards are visible", async ({
+    authedPage: page,
+  }) => {
+    // authedPage already navigates to "/"
+    await page.waitForTimeout(1000);
+
+    // Look for dashboard metric cards or summary widgets
+    const metrics = page
+      .getByText(/executive/i)
+      .or(page.getByText(/operations/i))
+      .or(page.getByText(/compliance/i))
+      .or(page.getByText(/risk/i))
+      .or(page.getByText(/overview/i))
+      .or(page.locator(".MuiCard-root"))
+      .or(page.locator('[class*="metric" i]'))
+      .or(page.locator('[class*="widget" i]'));
+    await expect(metrics.first()).toBeVisible({ timeout: 10_000 });
+  });
 });
