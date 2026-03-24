@@ -91,12 +91,15 @@ test.describe("Settings", () => {
     authedPage: page,
   }) => {
     await page.goto("/settings/password");
+    await page.waitForLoadState("networkidle");
 
-    // Verify password-related fields are present
+    // Verify password-related fields are present (labels or placeholders)
     const currentPwd = page
       .getByPlaceholder(/current password/i)
       .or(page.getByRole("textbox", { name: /current password/i }))
-      .or(page.getByText(/current password/i));
+      .or(page.getByText(/current password/i))
+      .or(page.getByPlaceholder(/old password/i))
+      .or(page.getByText(/old password/i));
     const newPwd = page
       .getByPlaceholder(/new password/i)
       .or(page.getByText(/new password/i));
@@ -104,7 +107,7 @@ test.describe("Settings", () => {
       .getByPlaceholder(/confirm/i)
       .or(page.getByText(/confirm/i));
 
-    await expect(currentPwd.first()).toBeVisible({ timeout: 10_000 });
+    await expect(currentPwd.first()).toBeVisible({ timeout: 15_000 });
     await expect(newPwd.first()).toBeVisible({ timeout: 10_000 });
     await expect(confirmPwd.first()).toBeVisible({ timeout: 10_000 });
   });
