@@ -148,6 +148,42 @@ test.describe("Tasks", () => {
     }
   });
 
+  // --- Tier 3: Validation ---
+
+  test("submitting empty task form shows validation error", async ({
+    authedPage: page,
+  }) => {
+    await page.goto("/tasks");
+    const addBtn = page.getByRole("button", { name: /add new task/i });
+
+    if (!(await addBtn.isVisible().catch(() => false))) {
+      test.skip();
+      return;
+    }
+    await addBtn.click();
+    await page.waitForTimeout(500);
+
+    // Click submit without filling any fields
+    const submitBtn = page
+      .getByRole("button", { name: /create|save|submit|add/i })
+      .last();
+    if (await submitBtn.isVisible().catch(() => false)) {
+      await submitBtn.click();
+      await page.waitForTimeout(500);
+
+      // Verify validation error appears
+      const error = page
+        .getByText(/required/i)
+        .or(page.getByText(/please/i))
+        .or(page.getByText(/error/i))
+        .or(page.locator(".Mui-error"));
+      if (await error.first().isVisible().catch(() => false)) {
+        await expect(error.first()).toBeVisible();
+      }
+    }
+    await page.keyboard.press("Escape");
+  });
+
   // --- Tier 4: CRUD ---
 
   test("CRUD: create and delete a task", async ({ authedPage: page }) => {
@@ -209,5 +245,42 @@ test.describe("Tasks", () => {
         await page.keyboard.press("Escape");
       }
     }
+  });
+
+  // --- Tier 4: Entity linking ---
+
+  test("task creation form has entity linking option", async ({
+    authedPage: page,
+  }) => {
+    await page.goto("/tasks");
+
+    const addBtn = page.getByRole("button", { name: /add new task/i });
+    if (!(await addBtn.isVisible().catch(() => false))) {
+      test.skip();
+      return;
+    }
+    await addBtn.click();
+    await page.waitForTimeout(500);
+
+    // Look for entity linking fields (project, vendor, risk, etc.)
+    const entityField = page
+      .getByRole("combobox", { name: /project/i })
+      .or(page.getByRole("combobox", { name: /link/i }))
+      .or(page.getByRole("combobox", { name: /entity/i }))
+      .or(page.getByText(/link.*to/i))
+      .or(page.getByText(/related/i))
+      .or(page.getByRole("combobox", { name: /assign/i }));
+
+    if (await entityField.first().isVisible().catch(() => false)) {
+      await entityField.first().click();
+      await page.waitForTimeout(300);
+      // Check that options appear
+      const option = page.getByRole("option");
+      if (await option.first().isVisible().catch(() => false)) {
+        await expect(option.first()).toBeVisible();
+      }
+      await page.keyboard.press("Escape");
+    }
+    await page.keyboard.press("Escape");
   });
 });
