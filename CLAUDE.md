@@ -1,6 +1,6 @@
 # VerifyWise - Development Guide
 
-> **Last Updated:** 2026-03-24
+> **Last Updated:** 2026-03-25
 
 This document contains cross-cutting rules for the VerifyWise codebase. Directory-scoped guides load automatically when working in each area:
 
@@ -8,6 +8,10 @@ This document contains cross-cutting rules for the VerifyWise codebase. Director
 - **Frontend:** `Clients/CLAUDE.md` — clean architecture, component patterns
 - **EvalServer:** `EvalServer/CLAUDE.md` — Alembic migrations, FastAPI patterns
 - **AI Gateway:** `AIGateway/CLAUDE.md` — LLM proxy, guardrails, spend tracking
+
+### Custom Agents
+
+- **verifywise-explorer** (`.claude/agents/verifywise-explorer.md`) — Codebase explorer agent that finds conventions, patterns, and relevant code for any task. Auto-delegates when implementing features, fixing bugs, or understanding existing functionality. Invoke explicitly with `@verifywise-explorer` or `claude --agent verifywise-explorer`.
 
 ---
 
