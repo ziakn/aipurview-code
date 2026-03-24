@@ -84,6 +84,7 @@ Express backend at `Servers/routes/aiGateway.route.ts` proxies `/api/ai-gateway/
 
 | When working on... | Read this file |
 |---------------------|---------------|
-| AI Gateway guardrails plan | `.claude/projects/.../memory/ai-gateway-guardrails-plan.md` |
-| AI Gateway v2 features | `.claude/projects/.../memory/ai-gateway-v2-plan.md` |
-| Risk integration plan | `.claude/projects/.../memory/ai-gateway-risk-integration-plan.md` |
+| AI Advisor | `docs/technical/infrastructure/ai-advisor.md` |
+| Integrations (Slack, GitHub) | `docs/technical/infrastructure/integrations.md` |
+
+> All `docs/` paths are relative to the repository root.

@@ -41,11 +41,11 @@ VerifyWise is an AI governance platform supporting EU AI Act, ISO 42001, ISO 270
 
 | Layer | Technologies |
 |-------|-------------|
-| **Frontend** | React 18, TypeScript, Vite, Material-UI 7, Redux Toolkit, React Query |
+| **Frontend** | React 19, TypeScript, Vite, Material-UI 7, Redux Toolkit, React Query |
 | **Backend** | Node.js 22, Express.js 4, TypeScript, Sequelize 6 |
 | **Database** | PostgreSQL (shared schema, org_id isolation) |
 | **Cache/Queue** | Redis + BullMQ |
-| **Python Services** | FastAPI, Python 3.12 (EvalServer) |
+| **Python Services** | FastAPI, Python 3.12 (EvalServer, AI Gateway) |
 
 ### Request Flow
 
@@ -68,7 +68,7 @@ interface TokenPayload {
   organizationId: number;
   tenantId: string;        // Tenant hash
   roleName: string;        // "Admin" | "Reviewer" | "Editor" | "Auditor"
-  expire: Date;
+  expire: number;            // Unix timestamp (Date.now() + ms)
 }
 ```
 
@@ -173,6 +173,16 @@ Read the relevant file BEFORE implementing changes in that area:
 | Policies | `docs/technical/domains/policies.md` |
 | Use cases / projects | `docs/technical/domains/use-cases.md` |
 | Models / model inventory | `docs/technical/domains/models.md` |
+| Datasets | `docs/technical/domains/datasets.md` |
+| Tasks | `docs/technical/domains/tasks.md` |
+| Incidents | `docs/technical/domains/incidents.md` |
+| Evidence hub | `docs/technical/domains/evidence.md` |
+| Training registry | `docs/technical/domains/training.md` |
+| Search | `docs/technical/domains/search.md` |
+| Notifications | `docs/technical/domains/notifications.md` |
+| Share links | `docs/technical/domains/share-links.md` |
+| Dashboard | `docs/technical/domains/dashboard.md` |
+| Post-market monitoring | `docs/technical/domains/post-market-monitoring.md` |
 | Compliance frameworks | `docs/technical/domains/compliance-frameworks.md` |
 | Docker & deployment | `docs/deployment/PRODUCTION_DEPLOYMENT_GUIDE.md` |
 | Database schema | `docs/technical/architecture/database-schema.md` |

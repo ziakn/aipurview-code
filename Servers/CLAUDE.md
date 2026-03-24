@@ -34,7 +34,7 @@ Key behaviors:
 
 ```bash
 date +%Y%m%d%H%M%S
-npx sequelize migration:create --name my-migration-name
+cd Servers && npx sequelize migration:create --name my-migration-name
 ```
 
 ### Schema Rules

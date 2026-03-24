@@ -75,3 +75,5 @@ Key variables: `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT`, `DB_NAME`, `LLM_E
 |---------------------|---------------|
 | EvalServer entry & routes | `src/app.py` |
 | Database & migrations | `src/database/` |
+
+> All `src/` paths are relative to `EvalServer/`. All `docs/` paths are relative to the repository root.
