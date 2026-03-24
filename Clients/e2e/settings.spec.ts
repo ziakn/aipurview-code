@@ -91,7 +91,7 @@ test.describe("Settings", () => {
     authedPage: page,
   }) => {
     await page.goto("/settings/password");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("domcontentloaded");
 
     // Verify password-related fields are present (labels or placeholders)
     const currentPwd = page
