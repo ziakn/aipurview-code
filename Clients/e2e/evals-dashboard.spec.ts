@@ -75,27 +75,28 @@ test.describe("Evals Dashboard", () => {
 
   // --- Tier 1: Sub-page navigation ---
 
-  test("can navigate through evals sub-pages", async ({
+  test("can navigate through evals sub-pages via sidebar", async ({
     authedPage: page,
   }) => {
     await page.goto("/evals");
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
 
-    // Look for tab or link navigation for projects/experiments/datasets
-    const tabs = [
-      { name: /project/i, label: "projects" },
-      { name: /experiment/i, label: "experiments" },
-      { name: /dataset/i, label: "datasets" },
+    // The evals page uses a sidebar with navigation buttons
+    // (Experiments, Datasets, Scorers, Models, etc.)
+    const sidebarItems = [
+      { name: /experiments/i },
+      { name: /datasets/i },
+      { name: /scorers/i },
     ];
 
-    for (const tab of tabs) {
-      const tabEl = page
-        .getByRole("tab", { name: tab.name })
-        .or(page.getByRole("link", { name: tab.name }))
-        .or(page.getByText(tab.name));
+    for (const item of sidebarItems) {
+      const sidebarBtn = page
+        .getByRole("button", { name: item.name })
+        .or(page.getByRole("link", { name: item.name }))
+        .or(page.getByRole("tab", { name: item.name }));
 
-      if (await tabEl.first().isVisible().catch(() => false)) {
-        await tabEl.first().click();
+      if (await sidebarBtn.first().isVisible().catch(() => false)) {
+        await sidebarBtn.first().click();
         await page.waitForTimeout(500);
       }
     }

@@ -83,6 +83,13 @@ test.describe("Authentication", () => {
     await page.getByRole("button", { name: /sign in/i }).click();
     await expect(page).toHaveURL("/", { timeout: 15_000 });
 
+    // Dismiss "Welcome to VerifyWise" dialog if it appears
+    const welcomeSkip = page.getByRole("button", { name: /skip for now/i });
+    if (await welcomeSkip.isVisible({ timeout: 3_000 }).catch(() => false)) {
+      await welcomeSkip.click();
+      await page.waitForTimeout(1000);
+    }
+
     // Find sidebar footer / more button / user menu to trigger logout
     const logoutTrigger = page
       .getByRole("button", { name: /logout|sign out/i })
@@ -93,12 +100,11 @@ test.describe("Authentication", () => {
     if (await logoutTrigger.first().isVisible().catch(() => false)) {
       await logoutTrigger.first().click();
     } else {
-      // Look for user menu / more button in sidebar footer
+      // Look for the three-dot menu button in sidebar footer (next to user name)
       const moreBtn = page
         .locator('[data-testid="more-menu"]')
         .or(page.locator('[aria-label="more"]'))
-        .or(page.getByRole("button", { name: /more/i }))
-        .or(page.locator('[class*="sidebar"] button').last());
+        .or(page.getByRole("button", { name: /more/i }));
 
       if (await moreBtn.first().isVisible().catch(() => false)) {
         await moreBtn.first().click();
