@@ -15,14 +15,7 @@ Shared-schema isolation with `organization_id` column on all tenant-scoped table
 
 **Access:** `req.organizationId` from auth middleware. Queries use unqualified table names (resolved by `search_path`): `SELECT * FROM projects WHERE organization_id = :orgId AND id = :id`.
 
-**Legacy:** Previously used schema-per-tenant (`{tenantHash}` schemas). Migration script: `scripts/migrateToSharedSchema.ts` (runs on startup). Config in `scripts/migrationConfig.ts` defines table order, FK mappings, and skip lists.
-
-Key behaviors:
-- `copySharedTables()` runs FIRST — copies `roles`, `organizations`, `users`, `tiers`, `subscriptions`, `frameworks` from `public` → `verifywise` with automatic type casting and COALESCE for NOT NULL columns
-- Then queries `verifywise.organizations` (via search_path) to discover orgs
-- Skips all `llm_evals_*` tables (owned by EvalServer, different schema structure)
-- NOT NULL safety check: skips tables where target has NOT NULL columns missing from source
-- `SKIP_TABLES` in `migrationConfig.ts` lists tables to skip (all 13 `llm_evals_*` tables + others)
+**Legacy data migration (existing installs only):** `scripts/migrateToSharedSchema.ts` migrates data from old schema-per-tenant (`{tenantHash}`) format to the shared `verifywise` schema. This only runs for organizations that still have data in old tenant schemas. Fresh installs don't need it. Config in `scripts/migrationConfig.ts`.
 
 ---
 
@@ -41,28 +34,50 @@ cd Servers && npx sequelize migration:create --name my-migration-name
 
 All tables live in the `verifywise` PostgreSQL schema. The `public` schema only holds extensions.
 
-- **Application SQL:** Use **unqualified** table names (e.g., `SELECT * FROM projects`). Resolved via `search_path = verifywise` set in Sequelize `afterConnect` hook.
-- **NEVER** use `public.tablename` or `verifywise.tablename` in application code (controllers, utils, services).
-- **Consolidated DDL migrations** (`20260226234300` through `20260226234302`): Use explicit `verifywise.` prefix for CREATE TABLE, CREATE TYPE, etc.
-- **Framework struct tables** (shared, no org_id): `*_struct_*` tables in `20260226234301-public-schema-tables.js`
-- **Tenant-scoped tables** (with org_id): in `20260226234302-tenant-tables.js`
-- **Seed data:** `20260302111132-seed-framework-struct-data.js`
+- **Application SQL (controllers, utils, services):** Use **unqualified** table names (e.g., `SELECT * FROM projects`). Resolved via `search_path = verifywise` set in Sequelize `afterConnect` hook.
+- **NEVER** use `public.tablename` or `verifywise.tablename` in application code.
+- **Migration DDL:** Use explicit `verifywise.` prefix for CREATE TABLE, ALTER TABLE, etc. This is the opposite of application code — migrations need the explicit schema because `search_path` may not be set during migration execution.
+
+### Consolidated Migrations
+
+The schema is defined in 3 consolidated migrations (not many small incremental ones):
+
+- `20260226234300-shared-schema-setup.js` — Extensions, types, enums
+- `20260226234301-public-schema-tables.js` — Framework struct tables (shared, no org_id)
+- `20260226234302-tenant-tables.js` — All tenant-scoped tables (with org_id)
+- `20260302111132-seed-framework-struct-data.js` — Framework seed data
+
+Post-consolidation migrations add new features incrementally (risk benchmarks, vulnerability detection, agent discovery, policy radar, etc.).
 
 ### Migration Pattern
+
+New migrations should use `verifywise.` prefix in DDL and `queryInterface.sequelize.query()` for raw SQL:
 
 ```javascript
 'use strict';
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    // Use unqualified table names — search_path resolves to verifywise
-    await queryInterface.addColumn('users', 'new_field', {
-      type: Sequelize.STRING, allowNull: true
-    });
+  async up(queryInterface) {
+    await queryInterface.sequelize.query(`
+      CREATE TABLE IF NOT EXISTS verifywise.my_new_table (
+        id SERIAL PRIMARY KEY,
+        organization_id INTEGER NOT NULL REFERENCES verifywise.organizations(id) ON DELETE CASCADE,
+        name VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      );
+    `);
   },
-  async down(queryInterface, Sequelize) {
-    await queryInterface.removeColumn('users', 'new_field');
+  async down(queryInterface) {
+    await queryInterface.sequelize.query('DROP TABLE IF EXISTS verifywise.my_new_table;');
   }
 };
+```
+
+For simple column additions, `queryInterface.addColumn` with unqualified names also works (Sequelize resolves via `search_path`):
+
+```javascript
+await queryInterface.addColumn('users', 'new_field', {
+  type: Sequelize.STRING, allowNull: true
+});
 ```
 
 ### Running Migrations
