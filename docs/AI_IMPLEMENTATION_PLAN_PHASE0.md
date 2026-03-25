@@ -70,9 +70,40 @@ AI agent that transforms the Evidence Hub from passive storage into an active co
 
 ## P0-2: Control Assessment Agent — Readiness Scoring (#3598)
 
-**Status:** NOT STARTED
+**Status:** IN PROGRESS
 
 AI agent that evaluates audit readiness per control, aggregates to framework/project level.
+
+### Completed
+
+| Task | File | Status |
+|------|------|--------|
+| Readiness Calculator (weighted formula) | `Servers/advisor/scoring/readinessCalculator.ts` | Done |
+| Level classification + aggregation | Included in readinessCalculator.ts | Done |
+| Control Assessment Agent definition | `Servers/advisor/agents/controlAssessment.agent.ts` | Done |
+| Tool schemas (4 tools) | `Servers/advisor/tools/readinessTools.ts` | Done |
+| Tool implementations | `Servers/advisor/functions/readinessFunctions.ts` | Done |
+| DB utils (upsert, queries) | `Servers/utils/readiness.utils.ts` | Done |
+| Controller (8 endpoints) | `Servers/controllers/readiness.ctrl.ts` | Done |
+| Routes | `Servers/routes/readiness.route.ts` | Done |
+| Route registration | `Servers/index.ts` | Done |
+| Unique constraints migration | `20260325183928-add-readiness-unique-constraints.js` | Done |
+| ReadinessScoreCard component | `Clients/src/presentation/components/ReadinessScoreCard/` | Done |
+| ReadinessHeatmap component | `Clients/src/presentation/components/ReadinessHeatmap/` | Done |
+| ReadinessTrend component | `Clients/src/presentation/components/ReadinessTrend/` | Done |
+| WeakControlsList component | `Clients/src/presentation/components/WeakControlsList/` | Done |
+| ReadinessDashboard page | `Clients/src/presentation/pages/ReadinessDashboard/` | Done |
+| React Query hooks | `Clients/src/application/hooks/useReadiness.ts` | Done |
+| Repository (Axios calls) | `Clients/src/application/repository/readiness.repository.ts` | Done |
+| Route `/readiness` | `Clients/src/application/config/routes.tsx` | Done |
+
+### Remaining
+
+| Task | Status |
+|------|--------|
+| Add readiness score badge to framework pages | Pending |
+| Add control readiness score to control detail pages | Pending |
+| Add overall readiness widget to main dashboard | Pending |
 
 ### Scoring Formula
 ```
@@ -85,21 +116,17 @@ overall = evidence_quality * 0.30
 Levels: ready (>=80) | needs_work (60-79) | at_risk (30-59) | not_started (<30)
 ```
 
-### Key Tables (already created)
-- `control_readiness_scores` — Per-control scores
-- `framework_readiness_scores` — Framework-level aggregation
-
-### Planned Endpoints
-| Route | Method |
-|-------|--------|
-| `/api/readiness/calculate` | POST |
-| `/api/readiness/calculate/:frameworkType` | POST |
-| `/api/readiness/scores` | GET |
-| `/api/readiness/scores/:frameworkType` | GET |
-| `/api/readiness/controls/:frameworkType` | GET |
-| `/api/readiness/weakest` | GET |
-| `/api/readiness/recommendations` | GET |
-| `/api/readiness/history` | GET |
+### API Endpoints (Implemented)
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `/api/readiness/calculate` | POST | Trigger calculation (all) |
+| `/api/readiness/calculate/:frameworkType` | POST | Trigger for framework |
+| `/api/readiness/scores` | GET | All framework scores |
+| `/api/readiness/scores/:frameworkType` | GET | Framework scores |
+| `/api/readiness/controls/:frameworkType` | GET | Per-control scores |
+| `/api/readiness/weakest` | GET | Weakest controls |
+| `/api/readiness/recommendations` | GET | Top recommendations |
+| `/api/readiness/history` | GET | Historical trend |
 
 ---
 

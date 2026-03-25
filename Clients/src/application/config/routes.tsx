@@ -40,6 +40,7 @@ import Tasks from "../../presentation/pages/Tasks";
 import IntegratedDashboard from "../../presentation/pages/DashboardOverview/IntegratedDashboard";
 import StartHere from "../../presentation/pages/StartHere";
 import RiskManagement from "../../presentation/pages/RiskManagement";
+import ReadinessDashboard from "../../presentation/pages/ReadinessDashboard";
 import AutomationsPage from "../../presentation/pages/Automations";
 import StyleGuide from "../../presentation/pages/StyleGuide";
 
@@ -136,6 +137,7 @@ export const createRoutes = (
     {/* Dynamic route for plugin tabs (e.g., mlflow, other future plugins) */}
     <Route path="/model-inventory/:pluginTab" element={<ModelInventory />} />
     <Route path="/risk-management" element={<RiskManagement />} />
+    <Route path="/readiness" element={<ReadinessDashboard />} />
     <Route path="/tasks" element={<Tasks />} />
     <Route path="/automations" element={<AutomationsPage />} />
     <Route path="/ai-incident-managements" element={<IncidentManagement />} />

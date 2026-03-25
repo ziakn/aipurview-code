@@ -87,6 +87,7 @@ import intakeFormRoutes from "./routes/intakeForm.route";
 import versionRoutes from "./routes/version.route";
 import auditLedgerRoutes from "./routes/auditLedger.route";
 import evidenceAiRoutes from "./routes/evidenceAi.route";
+import readinessRoutes from "./routes/readiness.route";
 import featureSettingsRoutes from "./routes/featureSettings.route";
 import riskBenchmarkRoutes from "./routes/riskBenchmark.route";
 import quantitativeRiskRoutes from "./routes/quantitativeRisk.route";
@@ -255,6 +256,7 @@ try {
   app.use("/api/nist-ai-rmf", nistAiRmfRoutes);
   app.use("/api/evidenceHub", evidenceHubRouter);
   app.use("/api/evidence-ai", evidenceAiRoutes);
+  app.use("/api/readiness", readinessRoutes);
   app.use("/api/advisor", advisorRouter);
   app.use("/api/policy-linked", policyLinkedObjects);
 
