@@ -26,6 +26,8 @@ import { getAllEntities } from "../../../application/repository/entity.repositor
 import { EmptyState } from "../../components/EmptyState";
 import EmptyStateTip from "../../components/EmptyState/EmptyStateTip";
 import { FileIcon } from "../../components/FileIcon";
+import EvidenceQualityBadge from "../../components/EvidenceQualityBadge";
+import { useQualityScores } from "../../../application/hooks/useEvidenceAi";
 import {
   loadingContainerStyle,
   paginationMenuProps,
@@ -61,6 +63,7 @@ const TABLE_COLUMNS = [
   { id: "uploaded_by", label: "UPLOADED BY", sortable: true },
   { id: "uploaded_on", label: "UPLOADED ON", sortable: true },
   { id: "expiry_date", label: "EXPIRY", sortable: true },
+  { id: "quality", label: "QUALITY", sortable: true },
   { id: "actions", label: "", sortable: false },
 ];
 
@@ -169,6 +172,7 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
   const theme = useTheme();
   const [users, setUsers] = useState<User[]>([]);
   const [page, setPage] = useState(0);
+  const { data: qualityScoresData } = useQualityScores();
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   // Filter columns based on visibleColumns prop
@@ -241,6 +245,19 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
 
     return map;
   }, [modelInventoryData]);
+
+  // Build a map of file_id → quality score from AI analysis data
+  const qualityMap = useMemo(() => {
+    const map = new Map<number, number>();
+    if (qualityScoresData && Array.isArray(qualityScoresData)) {
+      qualityScoresData.forEach((item: any) => {
+        if (item.file_id && item.overall_quality_score != null) {
+          map.set(item.file_id, item.overall_quality_score);
+        }
+      });
+    }
+    return map;
+  }, [qualityScoresData]);
 
   const handleChangePage = useCallback((_: unknown, newPage: number) => {
     setPage(newPage);
@@ -440,6 +457,19 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
                     {evidence.expiry_date
                       ? displayFormattedDate(evidence.expiry_date)
                       : "-"}
+                  </TableCell>
+                )}
+                {isColVisible("quality") && (
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    {(() => {
+                      const fileId = evidence.evidence_files?.[0]?.id;
+                      const score = fileId ? qualityMap.get(Number(fileId)) : undefined;
+                      return score != null ? (
+                        <EvidenceQualityBadge score={score} />
+                      ) : (
+                        <Typography sx={{ fontSize: 11, color: palette.text.disabled }}>-</Typography>
+                      );
+                    })()}
                   </TableCell>
                 )}
                 <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
