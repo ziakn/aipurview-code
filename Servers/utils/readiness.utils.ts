@@ -137,14 +137,19 @@ export async function upsertFrameworkScoreQuery(
  * Get all framework readiness scores for an organization.
  */
 export async function getFrameworkScoresQuery(
-  organizationId: number
+  organizationId: number,
+  projectId?: number | null
 ): Promise<any[]> {
   try {
+    const projectFilter = projectId != null
+      ? "AND project_id = :projectId"
+      : "AND project_id IS NULL";
     const [rows] = await sequelize.query(
       `SELECT * FROM framework_readiness_scores
        WHERE organization_id = :organizationId
+         ${projectFilter}
        ORDER BY avg_score ASC`,
-      { replacements: { organizationId } }
+      { replacements: { organizationId, ...(projectId != null ? { projectId } : {}) } }
     );
     return rows as any[];
   } catch (error) {
@@ -158,15 +163,20 @@ export async function getFrameworkScoresQuery(
  */
 export async function getFrameworkScoreByTypeQuery(
   frameworkType: string,
-  organizationId: number
+  organizationId: number,
+  projectId?: number | null
 ): Promise<any | null> {
   try {
+    const projectFilter = projectId != null
+      ? "AND project_id = :projectId"
+      : "AND project_id IS NULL";
     const [rows] = await sequelize.query(
       `SELECT * FROM framework_readiness_scores
        WHERE framework_type = :frameworkType
          AND organization_id = :organizationId
+         ${projectFilter}
        LIMIT 1`,
-      { replacements: { frameworkType, organizationId } }
+      { replacements: { frameworkType, organizationId, ...(projectId != null ? { projectId } : {}) } }
     );
     return (rows as any[])[0] || null;
   } catch (error) {
@@ -180,15 +190,20 @@ export async function getFrameworkScoreByTypeQuery(
  */
 export async function getControlScoresQuery(
   frameworkType: string,
-  organizationId: number
+  organizationId: number,
+  projectId?: number | null
 ): Promise<any[]> {
   try {
+    const projectFilter = projectId != null
+      ? "AND project_id = :projectId"
+      : "AND project_id IS NULL";
     const [rows] = await sequelize.query(
       `SELECT * FROM control_readiness_scores
        WHERE framework_type = :frameworkType
          AND organization_id = :organizationId
+         ${projectFilter}
        ORDER BY overall_score ASC`,
-      { replacements: { frameworkType, organizationId } }
+      { replacements: { frameworkType, organizationId, ...(projectId != null ? { projectId } : {}) } }
     );
     return rows as any[];
   } catch (error) {
@@ -202,9 +217,13 @@ export async function getControlScoresQuery(
  */
 export async function getWeakestControlsQuery(
   organizationId: number,
-  limit: number = 10
+  limit: number = 10,
+  projectId?: number | null
 ): Promise<any[]> {
   try {
+    const projectFilter = projectId != null
+      ? "AND project_id = :projectId"
+      : "AND project_id IS NULL";
     const [rows] = await sequelize.query(
       `SELECT control_id, framework_type, overall_score, readiness_level,
               evidence_quality_score, evidence_count_score,
@@ -212,9 +231,10 @@ export async function getWeakestControlsQuery(
               recommendations
        FROM control_readiness_scores
        WHERE organization_id = :organizationId
+         ${projectFilter}
        ORDER BY overall_score ASC
        LIMIT :limit`,
-      { replacements: { organizationId, limit } }
+      { replacements: { organizationId, limit, ...(projectId != null ? { projectId } : {}) } }
     );
     return rows as any[];
   } catch (error) {
@@ -275,24 +295,30 @@ export async function insertReadinessHistoryQuery(
  */
 export async function getReadinessHistoryQuery(
   organizationId: number,
-  frameworkType?: string
+  frameworkType?: string,
+  projectId?: number | null
 ): Promise<any[]> {
   try {
     const frameworkFilter = frameworkType
       ? "AND framework_type = :frameworkType"
       : "";
+    const projectFilter = projectId != null
+      ? "AND project_id = :projectId"
+      : "AND project_id IS NULL";
     const [rows] = await sequelize.query(
       `SELECT framework_type, avg_score, calculated_at,
               total_controls, ready_count, needs_work_count, at_risk_count, not_started_count
        FROM readiness_history
        WHERE organization_id = :organizationId
          ${frameworkFilter}
+         ${projectFilter}
        ORDER BY calculated_at DESC
        LIMIT 50`,
       {
         replacements: {
           organizationId,
           ...(frameworkType ? { frameworkType } : {}),
+          ...(projectId != null ? { projectId } : {}),
         },
       }
     );

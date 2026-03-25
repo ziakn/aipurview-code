@@ -16,20 +16,25 @@ import {
 
 export const readinessQueryKeys = {
   all: ["readiness"] as const,
-  scores: () => [...readinessQueryKeys.all, "scores"] as const,
-  scoresByFramework: (fw: string) => [...readinessQueryKeys.all, "scores", fw] as const,
-  controls: (fw: string) => [...readinessQueryKeys.all, "controls", fw] as const,
-  weakest: (limit?: number) => [...readinessQueryKeys.all, "weakest", limit] as const,
-  recommendations: (limit?: number) => [...readinessQueryKeys.all, "recommendations", limit] as const,
-  history: (fw?: string) => [...readinessQueryKeys.all, "history", fw] as const,
+  scores: (projectId?: number) => [...readinessQueryKeys.all, "scores", projectId] as const,
+  scoresByFramework: (fw: string, projectId?: number) =>
+    [...readinessQueryKeys.all, "scores", fw, projectId] as const,
+  controls: (fw: string, projectId?: number) =>
+    [...readinessQueryKeys.all, "controls", fw, projectId] as const,
+  weakest: (limit?: number, projectId?: number) =>
+    [...readinessQueryKeys.all, "weakest", limit, projectId] as const,
+  recommendations: (limit?: number, projectId?: number) =>
+    [...readinessQueryKeys.all, "recommendations", limit, projectId] as const,
+  history: (fw?: string, projectId?: number) =>
+    [...readinessQueryKeys.all, "history", fw, projectId] as const,
 };
 
 /** Fetch all framework readiness scores */
-export const useReadinessScores = () => {
+export const useReadinessScores = (projectId?: number) => {
   return useQuery({
-    queryKey: readinessQueryKeys.scores(),
+    queryKey: readinessQueryKeys.scores(projectId),
     queryFn: async () => {
-      const res = await getReadinessScores();
+      const res = await getReadinessScores(projectId);
       return res?.data ?? [];
     },
     staleTime: 5 * 60 * 1000,
@@ -37,11 +42,14 @@ export const useReadinessScores = () => {
 };
 
 /** Fetch readiness scores for a specific framework */
-export const useReadinessScoresByFramework = (frameworkType: string, options?: { enabled?: boolean }) => {
+export const useReadinessScoresByFramework = (
+  frameworkType: string,
+  options?: { enabled?: boolean; projectId?: number }
+) => {
   return useQuery({
-    queryKey: readinessQueryKeys.scoresByFramework(frameworkType),
+    queryKey: readinessQueryKeys.scoresByFramework(frameworkType, options?.projectId),
     queryFn: async () => {
-      const res = await getReadinessScoresByFramework(frameworkType);
+      const res = await getReadinessScoresByFramework(frameworkType, options?.projectId);
       return res?.data ?? null;
     },
     enabled: (options?.enabled ?? true) && !!frameworkType,
@@ -50,11 +58,14 @@ export const useReadinessScoresByFramework = (frameworkType: string, options?: {
 };
 
 /** Fetch per-control readiness scores */
-export const useControlScores = (frameworkType: string, options?: { enabled?: boolean }) => {
+export const useControlScores = (
+  frameworkType: string,
+  options?: { enabled?: boolean; projectId?: number }
+) => {
   return useQuery({
-    queryKey: readinessQueryKeys.controls(frameworkType),
+    queryKey: readinessQueryKeys.controls(frameworkType, options?.projectId),
     queryFn: async () => {
-      const res = await getControlScores(frameworkType);
+      const res = await getControlScores(frameworkType, options?.projectId);
       return res?.data ?? [];
     },
     enabled: (options?.enabled ?? true) && !!frameworkType,
@@ -62,12 +73,12 @@ export const useControlScores = (frameworkType: string, options?: { enabled?: bo
   });
 };
 
-/** Fetch weakest controls across all frameworks */
-export const useWeakestControls = (limit?: number) => {
+/** Fetch weakest controls */
+export const useWeakestControls = (limit?: number, projectId?: number) => {
   return useQuery({
-    queryKey: readinessQueryKeys.weakest(limit),
+    queryKey: readinessQueryKeys.weakest(limit, projectId),
     queryFn: async () => {
-      const res = await getWeakestControls(limit);
+      const res = await getWeakestControls(limit, projectId);
       return res?.data ?? [];
     },
     staleTime: 5 * 60 * 1000,
@@ -75,11 +86,11 @@ export const useWeakestControls = (limit?: number) => {
 };
 
 /** Fetch top recommendations */
-export const useRecommendations = (limit?: number) => {
+export const useRecommendations = (limit?: number, projectId?: number) => {
   return useQuery({
-    queryKey: readinessQueryKeys.recommendations(limit),
+    queryKey: readinessQueryKeys.recommendations(limit, projectId),
     queryFn: async () => {
-      const res = await getRecommendations(limit);
+      const res = await getRecommendations(limit, projectId);
       return res?.data ?? [];
     },
     staleTime: 5 * 60 * 1000,
@@ -87,11 +98,11 @@ export const useRecommendations = (limit?: number) => {
 };
 
 /** Fetch readiness history for trend chart */
-export const useReadinessHistory = (frameworkType?: string) => {
+export const useReadinessHistory = (frameworkType?: string, projectId?: number) => {
   return useQuery({
-    queryKey: readinessQueryKeys.history(frameworkType),
+    queryKey: readinessQueryKeys.history(frameworkType, projectId),
     queryFn: async () => {
-      const res = await getReadinessHistory(frameworkType);
+      const res = await getReadinessHistory(frameworkType, projectId);
       return res?.data ?? [];
     },
     staleTime: 5 * 60 * 1000,
@@ -122,13 +133,8 @@ export const useTriggerCalculateFramework = () => {
       const res = await triggerCalculateFramework(frameworkType, projectId);
       return res?.data;
     },
-    onSuccess: (_data, { frameworkType }) => {
-      queryClient.invalidateQueries({ queryKey: readinessQueryKeys.scoresByFramework(frameworkType) });
-      queryClient.invalidateQueries({ queryKey: readinessQueryKeys.controls(frameworkType) });
-      queryClient.invalidateQueries({ queryKey: readinessQueryKeys.scores() });
-      queryClient.invalidateQueries({ queryKey: readinessQueryKeys.weakest() });
-      queryClient.invalidateQueries({ queryKey: readinessQueryKeys.recommendations() });
-      queryClient.invalidateQueries({ queryKey: readinessQueryKeys.history() });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: readinessQueryKeys.all });
     },
   });
 };

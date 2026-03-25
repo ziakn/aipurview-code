@@ -248,6 +248,17 @@ export async function calculateForFramework(req: Request, res: Response) {
       not_started_count: agg.not_started_count,
     });
 
+    // Track AI content metadata
+    if (fwScore?.id) {
+      trackAIContent(organizationId, "readiness_score", fwScore.id, {
+        badgeType: "generated",
+        modelUsed: "readiness-calculator-v1",
+        modelProvider: "verifywise",
+        toolName: "readiness-calculation",
+        promptSummary: `Readiness calculated for ${frameworkType}: ${agg.avg_score}/100 (${agg.total_controls} controls)`,
+      }, req.userId ? Number(req.userId) : null).catch(() => {});
+    }
+
     logStructured("successful", `readiness calculated for ${frameworkType}`, functionName, fileName);
     return res.status(200).json(STATUS_CODE[200](fwScore));
   } catch (error) {
@@ -265,7 +276,8 @@ export async function getScores(req: Request, res: Response) {
   const functionName = "getScores";
 
   try {
-    const scores = await getFrameworkScoresQuery(req.organizationId!);
+    const projectId = req.query.project_id ? Number(req.query.project_id) : undefined;
+    const scores = await getFrameworkScoresQuery(req.organizationId!, projectId);
     logStructured("successful", "framework scores fetched", functionName, fileName);
     return res.status(200).json(STATUS_CODE[200](scores));
   } catch (error) {
@@ -284,7 +296,8 @@ export async function getScoresByFramework(req: Request, res: Response) {
   const frameworkType = req.params.frameworkType;
 
   try {
-    const score = await getFrameworkScoreByTypeQuery(frameworkType, req.organizationId!);
+    const projectId = req.query.project_id ? Number(req.query.project_id) : undefined;
+    const score = await getFrameworkScoreByTypeQuery(frameworkType, req.organizationId!, projectId);
     if (!score) {
       return res.status(204).json(STATUS_CODE[204](null));
     }
@@ -307,7 +320,8 @@ export async function getControlScores(req: Request, res: Response) {
   const frameworkType = req.params.frameworkType;
 
   try {
-    const scores = await getControlScoresQuery(frameworkType, req.organizationId!);
+    const projectId = req.query.project_id ? Number(req.query.project_id) : undefined;
+    const scores = await getControlScoresQuery(frameworkType, req.organizationId!, projectId);
     logStructured("successful", `control scores fetched for ${frameworkType}`, functionName, fileName);
     return res.status(200).json(STATUS_CODE[200](scores));
   } catch (error) {
@@ -326,7 +340,8 @@ export async function getWeakest(req: Request, res: Response) {
 
   try {
     const limit = req.query.limit ? Number(req.query.limit) : 10;
-    const weakest = await getWeakestControlsQuery(req.organizationId!, limit);
+    const projectId = req.query.project_id ? Number(req.query.project_id) : undefined;
+    const weakest = await getWeakestControlsQuery(req.organizationId!, limit, projectId);
 
     logStructured("successful", "weakest controls fetched", functionName, fileName);
     return res.status(200).json(STATUS_CODE[200](weakest));
@@ -346,7 +361,8 @@ export async function getRecommendations(req: Request, res: Response) {
 
   try {
     const limit = req.query.limit ? Number(req.query.limit) : 10;
-    const weakest = await getWeakestControlsQuery(req.organizationId!, limit);
+    const projectId = req.query.project_id ? Number(req.query.project_id) : undefined;
+    const weakest = await getWeakestControlsQuery(req.organizationId!, limit, projectId);
 
     const recommendations = weakest.map((ctrl: any) => {
       const recs: string[] = [];
@@ -391,8 +407,9 @@ export async function getHistory(req: Request, res: Response) {
     const frameworkType = req.query.framework_type
       ? String(req.query.framework_type)
       : undefined;
+    const projectId = req.query.project_id ? Number(req.query.project_id) : undefined;
 
-    const history = await getReadinessHistoryQuery(req.organizationId!, frameworkType);
+    const history = await getReadinessHistoryQuery(req.organizationId!, frameworkType, projectId);
 
     logStructured("successful", "readiness history fetched", functionName, fileName);
     return res.status(200).json(STATUS_CODE[200](history));

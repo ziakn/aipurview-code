@@ -2,6 +2,15 @@ import { apiServices } from "../../infrastructure/api/networkServices";
 
 const BASE_URL = "/readiness";
 
+function buildQuery(params: Record<string, string | number | undefined>): string {
+  const q = new URLSearchParams();
+  for (const [key, val] of Object.entries(params)) {
+    if (val !== undefined && val !== null) q.set(key, String(val));
+  }
+  const qs = q.toString();
+  return qs ? `?${qs}` : "";
+}
+
 export async function triggerCalculateAll(projectId?: number) {
   const response = await apiServices.post(`${BASE_URL}/calculate`, {
     project_id: projectId,
@@ -16,35 +25,38 @@ export async function triggerCalculateFramework(frameworkType: string, projectId
   return response.data;
 }
 
-export async function getReadinessScores() {
-  const response = await apiServices.get(`${BASE_URL}/scores`);
+export async function getReadinessScores(projectId?: number) {
+  const query = buildQuery({ project_id: projectId });
+  const response = await apiServices.get(`${BASE_URL}/scores${query}`);
   return response.data;
 }
 
-export async function getReadinessScoresByFramework(frameworkType: string) {
-  const response = await apiServices.get(`${BASE_URL}/scores/${frameworkType}`);
+export async function getReadinessScoresByFramework(frameworkType: string, projectId?: number) {
+  const query = buildQuery({ project_id: projectId });
+  const response = await apiServices.get(`${BASE_URL}/scores/${frameworkType}${query}`);
   return response.data;
 }
 
-export async function getControlScores(frameworkType: string) {
-  const response = await apiServices.get(`${BASE_URL}/controls/${frameworkType}`);
+export async function getControlScores(frameworkType: string, projectId?: number) {
+  const query = buildQuery({ project_id: projectId });
+  const response = await apiServices.get(`${BASE_URL}/controls/${frameworkType}${query}`);
   return response.data;
 }
 
-export async function getWeakestControls(limit?: number) {
-  const query = limit ? `?limit=${limit}` : "";
+export async function getWeakestControls(limit?: number, projectId?: number) {
+  const query = buildQuery({ limit, project_id: projectId });
   const response = await apiServices.get(`${BASE_URL}/weakest${query}`);
   return response.data;
 }
 
-export async function getRecommendations(limit?: number) {
-  const query = limit ? `?limit=${limit}` : "";
+export async function getRecommendations(limit?: number, projectId?: number) {
+  const query = buildQuery({ limit, project_id: projectId });
   const response = await apiServices.get(`${BASE_URL}/recommendations${query}`);
   return response.data;
 }
 
-export async function getReadinessHistory(frameworkType?: string) {
-  const query = frameworkType ? `?framework_type=${frameworkType}` : "";
+export async function getReadinessHistory(frameworkType?: string, projectId?: number) {
+  const query = buildQuery({ framework_type: frameworkType, project_id: projectId });
   const response = await apiServices.get(`${BASE_URL}/history${query}`);
   return response.data;
 }

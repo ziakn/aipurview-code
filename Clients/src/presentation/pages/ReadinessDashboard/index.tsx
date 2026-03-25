@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Typography, Button, CircularProgress, Stack, Tab, Tabs } from "@mui/material";
+import { Box, Typography, Button, CircularProgress, Tab, Tabs } from "@mui/material";
 import { text as textColors, background, border } from "../../themes/palette";
 import ReadinessScoreCard from "../../components/ReadinessScoreCard";
 import ReadinessHeatmap from "../../components/ReadinessHeatmap";
@@ -22,6 +22,7 @@ const FRAMEWORK_TABS = [
 export default function ReadinessDashboard() {
   const [selectedFramework, setSelectedFramework] = useState("eu_ai_act");
 
+  // All hooks use undefined projectId = org-wide (no project filter)
   const { data: scores, isLoading: scoresLoading } = useReadinessScores();
   const { data: controlScores, isLoading: controlsLoading } = useControlScores(selectedFramework);
   const { data: weakest, isLoading: weakestLoading } = useWeakestControls(10);
@@ -68,7 +69,7 @@ export default function ReadinessDashboard() {
         ) : scores && scores.length > 0 ? (
           scores.map((fw: any) => (
             <ReadinessScoreCard
-              key={fw.framework_type}
+              key={`${fw.framework_type}-${fw.project_id ?? "org"}`}
               frameworkType={fw.framework_type}
               overallScore={fw.avg_score}
               totalControls={fw.total_controls}
@@ -90,7 +91,7 @@ export default function ReadinessDashboard() {
             }}
           >
             <Typography sx={{ fontSize: 13, color: textColors.tertiary }}>
-              No readiness scores yet. Click "Calculate Readiness" to start.
+              No readiness scores yet. Click &quot;Calculate Readiness&quot; to start.
             </Typography>
           </Box>
         )}
