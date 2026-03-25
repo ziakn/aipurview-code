@@ -11,6 +11,7 @@ import {
   applySuggestionsQuery,
 } from "../utils/evidenceAi.utils";
 import { parseDocument, isSupportedMimeType } from "../advisor/parsers";
+import { trackAIContent } from "../middleware/aiContentTracker.middleware";
 
 const fileName = "evidenceAi.ctrl.ts";
 
@@ -163,6 +164,16 @@ export async function analyzeFile(req: Request, res: Response) {
       analysis_model: "heuristic-v1",
       analyzed_by: userId,
     });
+
+    // Track AI content metadata for transparency badge
+    trackAIContent(organizationId, "evidence", fileId, {
+      badgeType: "generated",
+      modelUsed: "heuristic-v1",
+      modelProvider: "verifywise",
+      toolName: "evidence-analysis",
+      confidenceScore: overall,
+      promptSummary: `Analyzed file ${file.filename}: ${foundAreas.length} compliance areas, ${keyFindings.length} findings`,
+    }, userId).catch(() => {});
 
     logStructured("successful", `file ${fileId} analyzed`, functionName, fileName);
     return res.status(200).json(STATUS_CODE[200](analysis));

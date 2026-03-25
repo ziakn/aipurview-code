@@ -86,14 +86,26 @@ const checkTaskCompletion = async (
   try {
     const { control_id, framework_type } = params;
 
-    // Tasks table has no control_id column — use org-wide task completion as proxy.
+    // Scope tasks via file_entity_links: tasks sharing files with this control
     const [rows] = await sequelize.query(
       `SELECT
          COUNT(*) AS total_tasks,
          COUNT(*) FILTER (WHERE t.status = 'done') AS completed_tasks
        FROM tasks t
-       WHERE t.organization_id = :organizationId`,
-      { replacements: { organizationId } }
+       WHERE t.organization_id = :organizationId
+         AND t.id IN (
+           SELECT fel_t.entity_id FROM file_entity_links fel_t
+           WHERE fel_t.entity_type = 'task'
+             AND fel_t.organization_id = :organizationId
+             AND fel_t.file_id IN (
+               SELECT fel_c.file_id FROM file_entity_links fel_c
+               WHERE fel_c.entity_type = 'control'
+                 AND fel_c.entity_id = :controlId
+                 AND fel_c.framework_type = :frameworkType
+                 AND fel_c.organization_id = :organizationId
+             )
+         )`,
+      { replacements: { controlId: control_id, frameworkType: framework_type, organizationId } }
     );
 
     const row = (rows as any[])[0] || {};
@@ -126,6 +138,7 @@ const analyzeRiskStatus = async (
   try {
     const { control_id, framework_type } = params;
 
+    // Scope risks via file_entity_links: risks sharing files with this control
     const [rows] = await sequelize.query(
       `SELECT
          COUNT(*) AS total_risks,
@@ -134,11 +147,18 @@ const analyzeRiskStatus = async (
        FROM risks r
        WHERE r.organization_id = :organizationId
          AND r.id IN (
-           SELECT entity_id FROM file_entity_links
-           WHERE framework_type = :frameworkType
-             AND organization_id = :organizationId
+           SELECT fel_r.entity_id FROM file_entity_links fel_r
+           WHERE fel_r.entity_type = 'risk'
+             AND fel_r.organization_id = :organizationId
+             AND fel_r.file_id IN (
+               SELECT fel_c.file_id FROM file_entity_links fel_c
+               WHERE fel_c.entity_type = 'control'
+                 AND fel_c.entity_id = :controlId
+                 AND fel_c.framework_type = :frameworkType
+                 AND fel_c.organization_id = :organizationId
+             )
          )`,
-      { replacements: { frameworkType: framework_type, organizationId } }
+      { replacements: { controlId: control_id, frameworkType: framework_type, organizationId } }
     );
 
     const row = (rows as any[])[0] || {};

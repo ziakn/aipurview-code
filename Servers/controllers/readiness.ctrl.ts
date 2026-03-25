@@ -12,6 +12,7 @@ import {
 import {
   upsertControlScoreQuery,
   upsertFrameworkScoreQuery,
+  insertReadinessHistoryQuery,
   getFrameworkScoresQuery,
   getFrameworkScoreByTypeQuery,
   getControlScoresQuery,
@@ -19,6 +20,7 @@ import {
   getReadinessHistoryQuery,
   getFrameworkControlsQuery,
 } from "../utils/readiness.utils";
+import { trackAIContent } from "../middleware/aiContentTracker.middleware";
 
 const fileName = "readiness.ctrl.ts";
 
@@ -52,29 +54,52 @@ async function calculateControlReadiness(
   const daysSinceLatest =
     ev.days_since_latest !== null ? parseInt(ev.days_since_latest, 10) : null;
 
-  // 2) Task completion — tasks table has no control_id column,
-  //    so use org-wide task completion as proxy metric.
+  // 2) Task completion — scope via file_entity_links: tasks sharing files with this control
   const [taskRows] = await sequelize.query(
     `SELECT
        COUNT(*) AS total,
-       COUNT(*) FILTER (WHERE status = 'done') AS completed
-     FROM tasks
-     WHERE organization_id = :organizationId`,
-    { replacements: { organizationId } }
+       COUNT(*) FILTER (WHERE t.status = 'done') AS completed
+     FROM tasks t
+     WHERE t.organization_id = :organizationId
+       AND t.id IN (
+         SELECT fel_t.entity_id FROM file_entity_links fel_t
+         WHERE fel_t.entity_type = 'task'
+           AND fel_t.organization_id = :organizationId
+           AND fel_t.file_id IN (
+             SELECT fel_c.file_id FROM file_entity_links fel_c
+             WHERE fel_c.entity_type = 'control'
+               AND fel_c.entity_id = :controlId
+               AND fel_c.framework_type = :frameworkType
+               AND fel_c.organization_id = :organizationId
+           )
+       )`,
+    { replacements: { controlId, frameworkType, organizationId } }
   );
   const tk = (taskRows as any[])[0] || {};
   const totalTasks = parseInt(tk.total, 10) || 0;
   const completedTasks = parseInt(tk.completed, 10) || 0;
   const taskRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
-  // 3) Risk mitigation
+  // 3) Risk mitigation — scope via file_entity_links: risks sharing files with this control
   const [riskRows] = await sequelize.query(
     `SELECT
        COUNT(*) AS total,
-       COUNT(*) FILTER (WHERE final_risk_level IS NOT NULL AND LOWER(final_risk_level) != 'high') AS mitigated
-     FROM risks
-     WHERE organization_id = :organizationId`,
-    { replacements: { organizationId } }
+       COUNT(*) FILTER (WHERE r.final_risk_level IS NOT NULL AND LOWER(r.final_risk_level) != 'high') AS mitigated
+     FROM risks r
+     WHERE r.organization_id = :organizationId
+       AND r.id IN (
+         SELECT fel_r.entity_id FROM file_entity_links fel_r
+         WHERE fel_r.entity_type = 'risk'
+           AND fel_r.organization_id = :organizationId
+           AND fel_r.file_id IN (
+             SELECT fel_c.file_id FROM file_entity_links fel_c
+             WHERE fel_c.entity_type = 'control'
+               AND fel_c.entity_id = :controlId
+               AND fel_c.framework_type = :frameworkType
+               AND fel_c.organization_id = :organizationId
+           )
+       )`,
+    { replacements: { controlId, frameworkType, organizationId } }
   );
   const rk = (riskRows as any[])[0] || {};
   const totalRisks = parseInt(rk.total, 10) || 0;
@@ -141,6 +166,28 @@ export async function calculateAll(req: Request, res: Response) {
         ...agg,
       });
       results.push(fwScore);
+
+      // Record snapshot in history table for trend tracking
+      await insertReadinessHistoryQuery(fw, organizationId, {
+        project_id: projectId,
+        avg_score: agg.avg_score,
+        total_controls: agg.total_controls,
+        ready_count: agg.ready_count,
+        needs_work_count: agg.needs_work_count,
+        at_risk_count: agg.at_risk_count,
+        not_started_count: agg.not_started_count,
+      });
+
+      // Track AI content metadata for each framework score
+      if (fwScore?.id) {
+        trackAIContent(organizationId, "readiness_score", fwScore.id, {
+          badgeType: "generated",
+          modelUsed: "readiness-calculator-v1",
+          modelProvider: "verifywise",
+          toolName: "readiness-calculation",
+          promptSummary: `Readiness calculated for ${fw}: ${agg.avg_score}/100 (${agg.total_controls} controls)`,
+        }, req.userId ? Number(req.userId) : null).catch(() => {});
+      }
     }
 
     logStructured("successful", "readiness calculated for all frameworks", functionName, fileName);
@@ -188,6 +235,17 @@ export async function calculateForFramework(req: Request, res: Response) {
     const fwScore = await upsertFrameworkScoreQuery(frameworkType, organizationId, {
       project_id: projectId,
       ...agg,
+    });
+
+    // Record snapshot in history table
+    await insertReadinessHistoryQuery(frameworkType, organizationId, {
+      project_id: projectId,
+      avg_score: agg.avg_score,
+      total_controls: agg.total_controls,
+      ready_count: agg.ready_count,
+      needs_work_count: agg.needs_work_count,
+      at_risk_count: agg.at_risk_count,
+      not_started_count: agg.not_started_count,
     });
 
     logStructured("successful", `readiness calculated for ${frameworkType}`, functionName, fileName);

@@ -35,9 +35,8 @@ export async function upsertControlScoreQuery(
          :taskCompletion, :riskMitigation,
          :overallScore, :readinessLevel, :recommendations,
          NOW(), :organizationId)
-       ON CONFLICT (control_id, framework_type, organization_id)
+       ON CONFLICT (control_id, framework_type, COALESCE(project_id, 0), organization_id)
        DO UPDATE SET
-         project_id = EXCLUDED.project_id,
          evidence_quality_score = EXCLUDED.evidence_quality_score,
          evidence_count_score = EXCLUDED.evidence_count_score,
          evidence_recency_score = EXCLUDED.evidence_recency_score,
@@ -101,9 +100,8 @@ export async function upsertFrameworkScoreQuery(
          :totalControls, :avgScore,
          :readyCount, :needsWorkCount, :atRiskCount, :notStartedCount,
          :weakestControls, NOW(), :organizationId)
-       ON CONFLICT (framework_type, organization_id)
+       ON CONFLICT (framework_type, COALESCE(project_id, 0), organization_id)
        DO UPDATE SET
-         project_id = EXCLUDED.project_id,
          total_controls = EXCLUDED.total_controls,
          avg_score = EXCLUDED.avg_score,
          ready_count = EXCLUDED.ready_count,
@@ -226,9 +224,54 @@ export async function getWeakestControlsQuery(
 }
 
 /**
- * Get historical readiness scores (framework level) for trend chart.
- * Since we overwrite current scores, we query the latest calculated_at per framework.
- * For a real trend we'd need a history table, so we return current + synthesized baseline.
+ * Insert a snapshot into readiness_history for trend tracking.
+ * Called after each framework score upsert — INSERT-only, never overwritten.
+ */
+export async function insertReadinessHistoryQuery(
+  frameworkType: string,
+  organizationId: number,
+  data: {
+    project_id?: number | null;
+    avg_score: number;
+    total_controls: number;
+    ready_count: number;
+    needs_work_count: number;
+    at_risk_count: number;
+    not_started_count: number;
+  }
+): Promise<void> {
+  try {
+    await sequelize.query(
+      `INSERT INTO readiness_history
+        (framework_type, project_id, avg_score, total_controls,
+         ready_count, needs_work_count, at_risk_count, not_started_count,
+         calculated_at, organization_id)
+       VALUES
+        (:frameworkType, :projectId, :avgScore, :totalControls,
+         :readyCount, :needsWorkCount, :atRiskCount, :notStartedCount,
+         NOW(), :organizationId)`,
+      {
+        replacements: {
+          frameworkType,
+          projectId: data.project_id ?? null,
+          avgScore: data.avg_score,
+          totalControls: data.total_controls,
+          readyCount: data.ready_count,
+          needsWorkCount: data.needs_work_count,
+          atRiskCount: data.at_risk_count,
+          notStartedCount: data.not_started_count,
+          organizationId,
+        },
+      }
+    );
+  } catch (error) {
+    logger.error("Error inserting readiness history:", error);
+    // Non-critical — don't throw
+  }
+}
+
+/**
+ * Get historical readiness scores from the history table for trend chart.
  */
 export async function getReadinessHistoryQuery(
   organizationId: number,
@@ -241,10 +284,11 @@ export async function getReadinessHistoryQuery(
     const [rows] = await sequelize.query(
       `SELECT framework_type, avg_score, calculated_at,
               total_controls, ready_count, needs_work_count, at_risk_count, not_started_count
-       FROM framework_readiness_scores
+       FROM readiness_history
        WHERE organization_id = :organizationId
          ${frameworkFilter}
-       ORDER BY calculated_at DESC`,
+       ORDER BY calculated_at DESC
+       LIMIT 50`,
       {
         replacements: {
           organizationId,

@@ -127,33 +127,49 @@ export const getEvidenceGapsQuery = async (
   frameworkType?: string,
   qualityThreshold: number = 50
 ) => {
-  // EU AI Act controls gap analysis
-  const [euGaps] = await sequelize.query(
-    `SELECT
-       'eu_ai_act' as framework_type,
-       cs.id as control_id,
-       cs.control_title,
-       COALESCE(stats.evidence_count, 0)::int as evidence_count,
-       COALESCE(stats.avg_quality, 0)::int as avg_quality
-     FROM control_category_eu_ai_act_struct cs
-     LEFT JOIN (
-       SELECT
-         fel.entity_id,
-         COUNT(DISTINCT fel.file_id) as evidence_count,
-         AVG(eaa.overall_quality_score) as avg_quality
-       FROM file_entity_links fel
-       LEFT JOIN evidence_ai_analysis eaa
-         ON eaa.file_id = fel.file_id AND eaa.organization_id = :organizationId
-       WHERE fel.organization_id = :organizationId
-         AND fel.framework_type = 'eu_ai_act'
-       GROUP BY fel.entity_id
-     ) stats ON stats.entity_id = cs.id
-     WHERE cs.control_title IS NOT NULL
-     ORDER BY COALESCE(stats.evidence_count, 0) ASC, COALESCE(stats.avg_quality, 0) ASC`,
-    { replacements: { organizationId } }
-  );
+  const fwTypes = frameworkType ? [frameworkType] : ["eu_ai_act", "iso_42001"];
+  const allGaps: any[] = [];
 
-  return (euGaps as any[]).map((g) => ({
+  for (const fw of fwTypes) {
+    let controlQuery: string;
+    let controlTitleCol: string;
+    if (fw === "iso_42001") {
+      controlQuery = "annex_category_struct_iso42001";
+      controlTitleCol = "annex_category_title";
+    } else {
+      controlQuery = "control_category_eu_ai_act_struct";
+      controlTitleCol = "control_title";
+    }
+
+    const [gaps] = await sequelize.query(
+      `SELECT
+         :fwType as framework_type,
+         cs.id as control_id,
+         cs.${controlTitleCol} as control_title,
+         COALESCE(stats.evidence_count, 0)::int as evidence_count,
+         COALESCE(stats.avg_quality, 0)::int as avg_quality
+       FROM ${controlQuery} cs
+       LEFT JOIN (
+         SELECT
+           fel.entity_id,
+           COUNT(DISTINCT fel.file_id) as evidence_count,
+           AVG(eaa.overall_quality_score) as avg_quality
+         FROM file_entity_links fel
+         LEFT JOIN evidence_ai_analysis eaa
+           ON eaa.file_id = fel.file_id AND eaa.organization_id = :organizationId
+         WHERE fel.organization_id = :organizationId
+           AND fel.framework_type = :fwType
+         GROUP BY fel.entity_id
+       ) stats ON stats.entity_id = cs.id
+       WHERE cs.${controlTitleCol} IS NOT NULL
+       ORDER BY COALESCE(stats.evidence_count, 0) ASC, COALESCE(stats.avg_quality, 0) ASC`,
+      { replacements: { organizationId, fwType: fw } }
+    );
+
+    allGaps.push(...(gaps as any[]));
+  }
+
+  return allGaps.map((g) => ({
     ...g,
     gap_type:
       g.evidence_count === 0
