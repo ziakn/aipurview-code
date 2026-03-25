@@ -132,12 +132,35 @@ Levels: ready (>=80) | needs_work (60-79) | at_risk (30-59) | not_started (<30)
 
 ## P0-3: AI-Generated Content Badge — Transparency System (#3599)
 
-**Status:** NOT STARTED
+**Status:** IN PROGRESS
 
 Transparency system marking all AI-generated/AI-assisted content. Required by EU AI Act Article 52.
 
-### Key Table (already created)
-- `ai_content_metadata` — Tracks badges, review status, model used
+### Completed
+
+| Task | File | Status |
+|------|------|--------|
+| AI content tracker middleware | `Servers/middleware/aiContentTracker.middleware.ts` | Done |
+| DB utils (badges, review, stats) | `Servers/utils/aiContent.utils.ts` | Done |
+| Controller (4 endpoints) | `Servers/controllers/aiContent.ctrl.ts` | Done |
+| Routes | `Servers/routes/aiContent.route.ts` | Done |
+| Route registration | `Servers/index.ts` | Done |
+| AIContentBadge (3 variants) | `Clients/src/presentation/components/AIContentBadge/` | Done |
+| AIContentReviewPanel | `Clients/src/presentation/components/AIContentReviewPanel/` | Done |
+| AIContentStats widget | `Clients/src/presentation/components/AIContentStats/` | Done |
+| React Query hooks | `Clients/src/application/hooks/useAIContent.ts` | Done |
+| Repository (Axios calls) | `Clients/src/application/repository/aiContent.repository.ts` | Done |
+
+### Remaining
+
+| Task | Status |
+|------|--------|
+| Integrate badge into risk detail/list | Pending |
+| Integrate badge into policy editor/list | Pending |
+| Integrate badge into Evidence Hub | Pending |
+| Integrate badge into assessment answers | Pending |
+| Integrate badge into task detail | Pending |
+| Add unreviewed content list to dashboard | Pending |
 
 ### Badge Types
 | Badge | Color | Meaning |
@@ -147,13 +170,13 @@ Transparency system marking all AI-generated/AI-assisted content. Required by EU
 | AI-Reviewed | Green (#059669) | Reviewed and approved by human |
 | AI-Suggested | Amber (#D97706) | Suggestion not yet applied |
 
-### Planned Endpoints
-| Route | Method |
-|-------|--------|
-| `/api/ai-content/:entityType/:entityId` | GET |
-| `/api/ai-content/:id/review` | PATCH |
-| `/api/ai-content/unreviewed` | GET |
-| `/api/ai-content/stats` | GET |
+### API Endpoints (Implemented)
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `/api/ai-content/:entityType/:entityId` | GET | Get badges for entity |
+| `/api/ai-content/:id/review` | PATCH | Mark as reviewed |
+| `/api/ai-content/unreviewed` | GET | List unreviewed content |
+| `/api/ai-content/stats` | GET | AI content statistics |
 
 ---
 

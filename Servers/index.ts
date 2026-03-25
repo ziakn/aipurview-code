@@ -88,6 +88,7 @@ import versionRoutes from "./routes/version.route";
 import auditLedgerRoutes from "./routes/auditLedger.route";
 import evidenceAiRoutes from "./routes/evidenceAi.route";
 import readinessRoutes from "./routes/readiness.route";
+import aiContentRoutes from "./routes/aiContent.route";
 import featureSettingsRoutes from "./routes/featureSettings.route";
 import riskBenchmarkRoutes from "./routes/riskBenchmark.route";
 import quantitativeRiskRoutes from "./routes/quantitativeRisk.route";
@@ -257,6 +258,7 @@ try {
   app.use("/api/evidenceHub", evidenceHubRouter);
   app.use("/api/evidence-ai", evidenceAiRoutes);
   app.use("/api/readiness", readinessRoutes);
+  app.use("/api/ai-content", aiContentRoutes);
   app.use("/api/advisor", advisorRouter);
   app.use("/api/policy-linked", policyLinkedObjects);
 
