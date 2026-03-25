@@ -86,23 +86,14 @@ const checkTaskCompletion = async (
   try {
     const { control_id, framework_type } = params;
 
-    // Check tasks linked to this control via tasks table
+    // Tasks table has no control_id column — use org-wide task completion as proxy.
     const [rows] = await sequelize.query(
       `SELECT
          COUNT(*) AS total_tasks,
          COUNT(*) FILTER (WHERE t.status = 'done') AS completed_tasks
        FROM tasks t
-       WHERE t.organization_id = :organizationId
-         AND (
-           t.control_id = :controlId
-           OR t.id IN (
-             SELECT entity_id FROM file_entity_links
-             WHERE framework_type = :frameworkType
-               AND entity_id = :controlId
-               AND organization_id = :organizationId
-           )
-         )`,
-      { replacements: { controlId: control_id, frameworkType: framework_type, organizationId } }
+       WHERE t.organization_id = :organizationId`,
+      { replacements: { organizationId } }
     );
 
     const row = (rows as any[])[0] || {};
@@ -138,8 +129,8 @@ const analyzeRiskStatus = async (
     const [rows] = await sequelize.query(
       `SELECT
          COUNT(*) AS total_risks,
-         COUNT(*) FILTER (WHERE r.risk_level_after IS NOT NULL AND r.risk_level_after != 'high') AS mitigated_risks,
-         COUNT(*) FILTER (WHERE r.risk_level_after = 'high' OR r.risk_level_after IS NULL) AS unmitigated_risks
+         COUNT(*) FILTER (WHERE r.final_risk_level IS NOT NULL AND LOWER(r.final_risk_level) != 'high') AS mitigated_risks,
+         COUNT(*) FILTER (WHERE r.final_risk_level IS NULL OR LOWER(r.final_risk_level) = 'high') AS unmitigated_risks
        FROM risks r
        WHERE r.organization_id = :organizationId
          AND r.id IN (
@@ -147,7 +138,7 @@ const analyzeRiskStatus = async (
            WHERE framework_type = :frameworkType
              AND organization_id = :organizationId
          )`,
-      { replacements: { controlId: control_id, frameworkType: framework_type, organizationId } }
+      { replacements: { frameworkType: framework_type, organizationId } }
     );
 
     const row = (rows as any[])[0] || {};

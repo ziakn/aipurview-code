@@ -52,15 +52,15 @@ async function calculateControlReadiness(
   const daysSinceLatest =
     ev.days_since_latest !== null ? parseInt(ev.days_since_latest, 10) : null;
 
-  // 2) Task completion
+  // 2) Task completion — tasks table has no control_id column,
+  //    so use org-wide task completion as proxy metric.
   const [taskRows] = await sequelize.query(
     `SELECT
        COUNT(*) AS total,
        COUNT(*) FILTER (WHERE status = 'done') AS completed
      FROM tasks
-     WHERE organization_id = :organizationId
-       AND control_id = :controlId`,
-    { replacements: { controlId, organizationId } }
+     WHERE organization_id = :organizationId`,
+    { replacements: { organizationId } }
   );
   const tk = (taskRows as any[])[0] || {};
   const totalTasks = parseInt(tk.total, 10) || 0;
@@ -71,7 +71,7 @@ async function calculateControlReadiness(
   const [riskRows] = await sequelize.query(
     `SELECT
        COUNT(*) AS total,
-       COUNT(*) FILTER (WHERE risk_level_after IS NOT NULL AND risk_level_after != 'high') AS mitigated
+       COUNT(*) FILTER (WHERE final_risk_level IS NOT NULL AND LOWER(final_risk_level) != 'high') AS mitigated
      FROM risks
      WHERE organization_id = :organizationId`,
     { replacements: { organizationId } }

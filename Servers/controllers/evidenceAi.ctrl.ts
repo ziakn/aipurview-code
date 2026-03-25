@@ -36,7 +36,7 @@ export async function analyzeFile(req: Request, res: Response) {
 
     // Get the file record to find the actual file content
     const [fileRows] = await sequelize.query(
-      `SELECT id, file_name, type FROM files
+      `SELECT id, filename, type FROM files
        WHERE id = :fileId AND organization_id = :organizationId`,
       { replacements: { fileId, organizationId } }
     );

@@ -109,7 +109,7 @@ export const getAnalysisByFileIdQuery = async (
  */
 export const getQualityScoresQuery = async (organizationId: number) => {
   const [rows] = await sequelize.query(
-    `SELECT eaa.*, f.file_name
+    `SELECT eaa.*, f.filename
      FROM evidence_ai_analysis eaa
      LEFT JOIN files f ON f.id = eaa.file_id
      WHERE eaa.organization_id = :organizationId
