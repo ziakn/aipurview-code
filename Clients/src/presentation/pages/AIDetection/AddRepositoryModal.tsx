@@ -174,7 +174,9 @@ export default function AddRepositoryModal({
     }
   };
 
-  const webhookUrl = `${window.location.origin}/api/webhooks/github`;
+  const backendBaseUrl = import.meta.env.VITE_APP_API_BASE_URL
+    || `${window.location.protocol}//${window.location.hostname}:3000`;
+  const webhookUrl = `${backendBaseUrl}/api/webhooks/github`;
 
   const copyToClipboard = (text: string, field: string) => {
     navigator.clipboard.writeText(text);

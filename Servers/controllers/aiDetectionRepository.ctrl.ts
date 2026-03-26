@@ -252,7 +252,8 @@ export async function updateRepository(req: Request, res: Response): Promise<any
 
     const { display_name, default_branch, github_token_id,
       schedule_enabled, schedule_frequency, schedule_day_of_week,
-      schedule_day_of_month, schedule_hour, schedule_minute, is_enabled } = req.body;
+      schedule_day_of_month, schedule_hour, schedule_minute, is_enabled,
+      ci_enabled, ci_min_score, ci_max_critical, ci_post_comments, ci_status_checks } = req.body;
 
     // Validate schedule fields if enabling
     const willBeEnabled = schedule_enabled !== undefined ? schedule_enabled : existing.schedule_enabled;
@@ -278,6 +279,11 @@ export async function updateRepository(req: Request, res: Response): Promise<any
         schedule_day_of_month,
         schedule_hour,
         schedule_minute,
+        ci_enabled,
+        ci_min_score,
+        ci_max_critical,
+        ci_post_comments,
+        ci_status_checks,
         is_enabled,
       },
       req.organizationId!
