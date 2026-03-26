@@ -556,6 +556,8 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
       onDelete,
       isColVisible,
       visibleTableColumns,
+      qualityMap,
+      triggerAnalysis,
     ]
   );
 

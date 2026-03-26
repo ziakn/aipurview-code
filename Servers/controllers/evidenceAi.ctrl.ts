@@ -165,6 +165,20 @@ export async function analyzeFile(req: Request, res: Response) {
       analyzed_by: userId,
     });
 
+    // Auto-apply suggested control links so readiness scores update immediately
+    if (suggestions.length > 0) {
+      try {
+        await applySuggestionsQuery(
+          fileId,
+          organizationId,
+          suggestions.map((s: any) => ({ control_id: s.control_id, framework_type: s.framework_type })),
+          userId ?? undefined
+        );
+      } catch (linkErr) {
+        logger.warn("Auto-apply suggestions failed (non-critical):", linkErr);
+      }
+    }
+
     // Track AI content metadata for transparency badge
     trackAIContent(organizationId, "evidence", fileId, {
       badgeType: "generated",
