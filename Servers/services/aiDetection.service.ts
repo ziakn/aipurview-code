@@ -97,6 +97,7 @@ import {
   CACHE_KEYS,
 } from "../utils/cache.utils";
 import { calculateAndStoreRiskScore } from "./aiDetection/riskScoring";
+import { reportScanToGitHub } from "./aiDetection/githubStatusReporter";
 import { scanFileForVulnerabilityIndicators, buildAnalysisContext, VulnerabilityCandidate } from "./aiDetection/vulnerabilityPreFilter";
 import { analyzeVulnerabilities } from "./aiDetection/vulnerabilityAnalyzer";
 import { getRiskScoringConfigQuery } from "../utils/aiDetectionRiskScoring.utils";
@@ -1545,6 +1546,11 @@ async function executeIncrementalScan(
       calculateAndStoreRiskScore(scanId, `${scan.repository_owner}/${scan.repository_name}`, ctx).catch((err) => {
         logger.error(`Failed to calculate risk score for scan ${scanId}:`, err);
       });
+
+      // Report to GitHub for webhook-triggered scans (fire-and-forget)
+      reportScanToGitHub(scan, ctx.organizationId).catch((err) => {
+        logger.error(`Failed to report scan #${scanId} to GitHub:`, err);
+      });
     }
   } catch (error) {
     await transaction.rollback();
@@ -2073,6 +2079,14 @@ async function executeScan(
       calculateAndStoreRiskScore(scanId, `${owner}/${repo}`, ctx).catch((err) => {
         logger.error(`Failed to calculate risk score for scan ${scanId}:`, err);
       });
+
+      // Report to GitHub for webhook-triggered scans (fire-and-forget)
+      const completedScan = await getScanByIdQuery(scanId, ctx.organizationId);
+      if (completedScan) {
+        reportScanToGitHub(completedScan, ctx.organizationId).catch((err) => {
+          logger.error(`Failed to report scan #${scanId} to GitHub:`, err);
+        });
+      }
     } catch (error) {
       await transaction.rollback();
       throw error;
