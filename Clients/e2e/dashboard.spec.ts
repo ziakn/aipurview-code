@@ -51,4 +51,25 @@ test.describe("Dashboard", () => {
       .or(page.locator('[class*="Sidebar" i]'));
     await expect(sidebar.first()).toBeVisible({ timeout: 10_000 });
   });
+
+  // --- Tier 1: Dashboard metrics ---
+
+  test("dashboard displays content or welcome dialog", async ({
+    authedPage: page,
+  }) => {
+    // authedPage already navigates to "/"
+    await page.waitForTimeout(2000);
+
+    // Dashboard may show a welcome dialog, metrics, or content
+    const content = page
+      .getByText(/welcome/i)
+      .or(page.getByText(/dashboard/i))
+      .or(page.getByText(/executive/i))
+      .or(page.getByText(/operations/i))
+      .or(page.getByText(/compliance/i))
+      .or(page.getByRole("heading"))
+      .or(page.getByRole("dialog"))
+      .or(page.locator(".MuiCard-root"));
+    await expect(content.first()).toBeVisible({ timeout: 15_000 });
+  });
 });
