@@ -24,7 +24,7 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/verifywise/verifywise"
+Homepage = "https://github.com/verifywise-ai/verifywise"
 Documentation = "https://docs.verifywise.ai"
 
 [tool.setuptools.packages.find]

@@ -8,7 +8,7 @@
 #
 #   jobs:
 #     eval:
-#       uses: verifywise/verifywise/.github/workflows/verifywise-eval.yml@main
+#       uses: verifywise-ai/verifywise/.github/workflows/verifywise-eval.yml@main
 #       with:
 #         api_url: https://your-verifywise-instance.com
 #         project_id: <uuid>
@@ -123,7 +123,7 @@ jobs:
         run: |
           curl -sL "${{ inputs.api_url }}/api/deepeval/ci/runner" -o ci_eval_runner.py 2>/dev/null || true
           if [ ! -f ci_eval_runner.py ]; then
-            curl -sL "https://raw.githubusercontent.com/verifywise/verifywise/main/EvalServer/scripts/ci_eval_runner.py" -o ci_eval_runner.py
+            curl -sL "https://raw.githubusercontent.com/verifywise-ai/verifywise/main/EvalServer/scripts/ci_eval_runner.py" -o ci_eval_runner.py
           fi
 
       - name: Run evaluation
