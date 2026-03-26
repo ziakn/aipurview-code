@@ -236,6 +236,10 @@ export async function updateRepositoryQuery(
     setClauses.push("schedule_minute = :schedule_minute");
     replacements.schedule_minute = input.schedule_minute;
   }
+  if ((input as any).webhook_secret !== undefined) {
+    setClauses.push("webhook_secret = :webhook_secret");
+    replacements.webhook_secret = (input as any).webhook_secret;
+  }
   if (input.ci_enabled !== undefined) {
     setClauses.push("ci_enabled = :ci_enabled");
     replacements.ci_enabled = input.ci_enabled;
