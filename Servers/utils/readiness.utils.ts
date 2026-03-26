@@ -338,18 +338,18 @@ export async function getFrameworkControlsQuery(
   try {
     let query: string;
     if (frameworkType === "eu_ai_act") {
-      query = `SELECT id AS control_id, control_title AS title
-               FROM control_category_eu_ai_act_struct
-               WHERE control_title IS NOT NULL`;
+      query = `SELECT id AS control_id, title
+               FROM controls_struct_eu
+               WHERE title IS NOT NULL`;
     } else if (frameworkType === "iso_42001") {
-      query = `SELECT id AS control_id, annex_category_title AS title
-               FROM annex_category_struct_iso42001
-               WHERE annex_category_title IS NOT NULL`;
+      query = `SELECT id AS control_id, title
+               FROM annexcategories_struct_iso
+               WHERE title IS NOT NULL`;
     } else {
       // Generic — try the eu_ai_act table as fallback
-      query = `SELECT id AS control_id, control_title AS title
-               FROM control_category_eu_ai_act_struct
-               WHERE control_title IS NOT NULL`;
+      query = `SELECT id AS control_id, title
+               FROM controls_struct_eu
+               WHERE title IS NOT NULL`;
     }
 
     const [rows] = await sequelize.query(query);

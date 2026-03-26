@@ -1,4 +1,5 @@
-import pdfParse from "pdf-parse";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const pdfParse = require("pdf-parse");
 import logger from "../../utils/logger/fileLogger";
 
 export interface ParsedDocument {

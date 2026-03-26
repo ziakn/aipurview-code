@@ -16,7 +16,8 @@ const fileName = "aiContent.ctrl.ts";
  */
 export async function getBadges(req: Request, res: Response) {
   const functionName = "getBadges";
-  const { entityType, entityId } = req.params;
+  const entityType = String(req.params.entityType);
+  const entityId = String(req.params.entityId);
   const parsedEntityId = parseInt(entityId);
 
   if (!entityType || isNaN(parsedEntityId)) {
@@ -45,7 +46,7 @@ export async function getBadges(req: Request, res: Response) {
  */
 export async function reviewContent(req: Request, res: Response) {
   const functionName = "reviewContent";
-  const id = parseInt(req.params.id);
+  const id = parseInt(String(req.params.id));
 
   if (isNaN(id)) {
     return res.status(400).json(STATUS_CODE[400]("Invalid content ID"));

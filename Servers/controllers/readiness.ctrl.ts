@@ -7,7 +7,6 @@ import {
   normalizeEvidenceCount,
   normalizeRecency,
   aggregateFrameworkScores,
-  classifyReadinessLevel,
 } from "../advisor/scoring/readinessCalculator";
 import {
   upsertControlScoreQuery,
@@ -58,7 +57,7 @@ async function calculateControlReadiness(
   const [taskRows] = await sequelize.query(
     `SELECT
        COUNT(*) AS total,
-       COUNT(*) FILTER (WHERE t.status = 'done') AS completed
+       COUNT(*) FILTER (WHERE t.status = 'Completed') AS completed
      FROM tasks t
      WHERE t.organization_id = :organizationId
        AND t.id IN (
@@ -205,7 +204,7 @@ export async function calculateAll(req: Request, res: Response) {
  */
 export async function calculateForFramework(req: Request, res: Response) {
   const functionName = "calculateForFramework";
-  const frameworkType = req.params.frameworkType;
+  const frameworkType = String(req.params.frameworkType);
 
   logStructured("processing", `calculating readiness for ${frameworkType}`, functionName, fileName);
 
@@ -293,7 +292,7 @@ export async function getScores(req: Request, res: Response) {
  */
 export async function getScoresByFramework(req: Request, res: Response) {
   const functionName = "getScoresByFramework";
-  const frameworkType = req.params.frameworkType;
+  const frameworkType = String(req.params.frameworkType);
 
   try {
     const projectId = req.query.project_id ? Number(req.query.project_id) : undefined;
@@ -317,7 +316,7 @@ export async function getScoresByFramework(req: Request, res: Response) {
  */
 export async function getControlScores(req: Request, res: Response) {
   const functionName = "getControlScores";
-  const frameworkType = req.params.frameworkType;
+  const frameworkType = String(req.params.frameworkType);
 
   try {
     const projectId = req.query.project_id ? Number(req.query.project_id) : undefined;

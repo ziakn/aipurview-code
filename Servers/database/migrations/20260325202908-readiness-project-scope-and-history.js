@@ -13,25 +13,25 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     // 1. Drop old org-only unique indexes (from earlier migration, if they ran)
     await queryInterface.sequelize.query(`
-      DROP INDEX IF EXISTS uq_ctrl_readiness_control_fw_org
+      DROP INDEX IF EXISTS verifywise.uq_ctrl_readiness_control_fw_org
     `);
     await queryInterface.sequelize.query(`
-      DROP INDEX IF EXISTS uq_fw_readiness_fw_org
+      DROP INDEX IF EXISTS verifywise.uq_fw_readiness_fw_org
     `);
 
     // 2. Create project-aware unique indexes
     await queryInterface.sequelize.query(`
       CREATE UNIQUE INDEX IF NOT EXISTS uq_ctrl_readiness_control_fw_proj_org
-        ON control_readiness_scores(control_id, framework_type, COALESCE(project_id, 0), organization_id)
+        ON verifywise.control_readiness_scores(control_id, framework_type, COALESCE(project_id, 0), organization_id)
     `);
     await queryInterface.sequelize.query(`
       CREATE UNIQUE INDEX IF NOT EXISTS uq_fw_readiness_fw_proj_org
-        ON framework_readiness_scores(framework_type, COALESCE(project_id, 0), organization_id)
+        ON verifywise.framework_readiness_scores(framework_type, COALESCE(project_id, 0), organization_id)
     `);
 
     // 3. Create readiness_history table (INSERT-only, never overwritten)
     await queryInterface.sequelize.query(`
-      CREATE TABLE IF NOT EXISTS readiness_history (
+      CREATE TABLE IF NOT EXISTS verifywise.readiness_history (
         id SERIAL PRIMARY KEY,
         framework_type VARCHAR(50) NOT NULL,
         project_id INTEGER,
@@ -48,23 +48,23 @@ module.exports = {
 
     await queryInterface.sequelize.query(`
       CREATE INDEX IF NOT EXISTS idx_readiness_history_lookup
-        ON readiness_history(framework_type, organization_id, calculated_at DESC)
+        ON verifywise.readiness_history(framework_type, organization_id, calculated_at DESC)
     `);
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.sequelize.query(`DROP INDEX IF EXISTS uq_ctrl_readiness_control_fw_proj_org`);
-    await queryInterface.sequelize.query(`DROP INDEX IF EXISTS uq_fw_readiness_fw_proj_org`);
-    await queryInterface.sequelize.query(`DROP TABLE IF EXISTS readiness_history CASCADE`);
+    await queryInterface.sequelize.query(`DROP INDEX IF EXISTS verifywise.uq_ctrl_readiness_control_fw_proj_org`);
+    await queryInterface.sequelize.query(`DROP INDEX IF EXISTS verifywise.uq_fw_readiness_fw_proj_org`);
+    await queryInterface.sequelize.query(`DROP TABLE IF EXISTS verifywise.readiness_history CASCADE`);
 
     // Restore old org-only indexes
     await queryInterface.sequelize.query(`
       CREATE UNIQUE INDEX IF NOT EXISTS uq_ctrl_readiness_control_fw_org
-        ON control_readiness_scores(control_id, framework_type, organization_id)
+        ON verifywise.control_readiness_scores(control_id, framework_type, organization_id)
     `);
     await queryInterface.sequelize.query(`
       CREATE UNIQUE INDEX IF NOT EXISTS uq_fw_readiness_fw_org
-        ON framework_readiness_scores(framework_type, organization_id)
+        ON verifywise.framework_readiness_scores(framework_type, organization_id)
     `);
   }
 };

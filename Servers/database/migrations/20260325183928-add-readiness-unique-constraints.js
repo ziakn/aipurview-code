@@ -9,12 +9,12 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.sequelize.query(`
       CREATE UNIQUE INDEX IF NOT EXISTS uq_ctrl_readiness_control_fw_org
-        ON control_readiness_scores(control_id, framework_type, organization_id)
+        ON verifywise.control_readiness_scores(control_id, framework_type, organization_id)
     `);
 
     await queryInterface.sequelize.query(`
       CREATE UNIQUE INDEX IF NOT EXISTS uq_fw_readiness_fw_org
-        ON framework_readiness_scores(framework_type, organization_id)
+        ON verifywise.framework_readiness_scores(framework_type, organization_id)
     `);
   },
 

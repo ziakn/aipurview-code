@@ -41,6 +41,7 @@ import IntegratedDashboard from "../../presentation/pages/DashboardOverview/Inte
 import StartHere from "../../presentation/pages/StartHere";
 import RiskManagement from "../../presentation/pages/RiskManagement";
 import ReadinessDashboard from "../../presentation/pages/ReadinessDashboard";
+import AIContentReview from "../../presentation/pages/AIContentReview";
 import AutomationsPage from "../../presentation/pages/Automations";
 import StyleGuide from "../../presentation/pages/StyleGuide";
 
@@ -138,6 +139,7 @@ export const createRoutes = (
     <Route path="/model-inventory/:pluginTab" element={<ModelInventory />} />
     <Route path="/risk-management" element={<RiskManagement />} />
     <Route path="/readiness" element={<ReadinessDashboard />} />
+    <Route path="/ai-content-review" element={<AIContentReview />} />
     <Route path="/tasks" element={<Tasks />} />
     <Route path="/automations" element={<AutomationsPage />} />
     <Route path="/ai-incident-managements" element={<IncidentManagement />} />

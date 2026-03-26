@@ -90,7 +90,7 @@ const checkTaskCompletion = async (
     const [rows] = await sequelize.query(
       `SELECT
          COUNT(*) AS total_tasks,
-         COUNT(*) FILTER (WHERE t.status = 'done') AS completed_tasks
+         COUNT(*) FILTER (WHERE t.status = 'Completed') AS completed_tasks
        FROM tasks t
        WHERE t.organization_id = :organizationId
          AND t.id IN (

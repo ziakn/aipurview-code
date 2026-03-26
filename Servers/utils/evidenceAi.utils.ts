@@ -134,11 +134,11 @@ export const getEvidenceGapsQuery = async (
     let controlQuery: string;
     let controlTitleCol: string;
     if (fw === "iso_42001") {
-      controlQuery = "annex_category_struct_iso42001";
-      controlTitleCol = "annex_category_title";
+      controlQuery = "annexcategories_struct_iso";
+      controlTitleCol = "title";
     } else {
-      controlQuery = "control_category_eu_ai_act_struct";
-      controlTitleCol = "control_title";
+      controlQuery = "controls_struct_eu";
+      controlTitleCol = "title";
     }
 
     const [gaps] = await sequelize.query(

@@ -32,7 +32,7 @@ export interface DetectGapsParams {
  */
 const analyzeDocument = async (
   params: AnalyzeDocumentParams,
-  organizationId: number
+  _organizationId: number
 ): Promise<any> => {
   try {
     const { file_id, document_text } = params;
@@ -89,7 +89,7 @@ const analyzeDocument = async (
  */
 const scoreEvidenceQuality = async (
   params: ScoreQualityParams,
-  organizationId: number
+  _organizationId: number
 ): Promise<any> => {
   try {
     const { file_id, summary, key_findings, compliance_areas } = params;
@@ -138,7 +138,7 @@ const scoreEvidenceQuality = async (
  */
 const matchControls = async (
   params: MatchControlsParams,
-  organizationId: number
+  _organizationId: number
 ): Promise<any> => {
   try {
     const { file_id, compliance_areas, framework_type } = params;
@@ -153,10 +153,10 @@ const matchControls = async (
 
     if (!framework_type || framework_type === "eu_ai_act") {
       const [euControls] = await sequelize.query(
-        `SELECT cs.id, cs.control_title as title, cs.control_description as description,
+        `SELECT cs.id, cs.title, cs.description,
                 'eu_ai_act' as framework_type
-         FROM control_category_eu_ai_act_struct cs
-         WHERE cs.control_title IS NOT NULL
+         FROM controls_struct_eu cs
+         WHERE cs.title IS NOT NULL
          LIMIT 50`,
       );
       controls = controls.concat(euControls);
@@ -164,10 +164,10 @@ const matchControls = async (
 
     if (!framework_type || framework_type === "iso_42001") {
       const [isoControls] = await sequelize.query(
-        `SELECT acs.id, acs.annex_category_title as title, acs.annex_category_description as description,
+        `SELECT acs.id, acs.title, acs.description,
                 'iso_42001' as framework_type
-         FROM annex_category_struct_iso42001 acs
-         WHERE acs.annex_category_title IS NOT NULL
+         FROM annexcategories_struct_iso acs
+         WHERE acs.title IS NOT NULL
          LIMIT 50`,
       );
       controls = controls.concat(isoControls);
@@ -218,17 +218,17 @@ const detectEvidenceGaps = async (
   organizationId: number
 ): Promise<any> => {
   try {
-    const { framework_type, project_id, quality_threshold = 50 } = params;
+    const { framework_type: _framework_type, project_id: _project_id, quality_threshold = 50 } = params;
 
     // Get controls with their evidence counts and quality scores
     const [gaps] = await sequelize.query(
       `SELECT
          'eu_ai_act' as framework_type,
          cs.id as control_id,
-         cs.control_title as control_title,
+         cs.title as control_title,
          COALESCE(ea.evidence_count, 0) as evidence_count,
          COALESCE(ea.avg_quality, 0) as avg_quality
-       FROM control_category_eu_ai_act_struct cs
+       FROM controls_struct_eu cs
        LEFT JOIN (
          SELECT
            fel.entity_id,
@@ -241,7 +241,7 @@ const detectEvidenceGaps = async (
            AND fel.framework_type = 'eu_ai_act'
          GROUP BY fel.entity_id
        ) ea ON ea.entity_id = cs.id
-       WHERE cs.control_title IS NOT NULL
+       WHERE cs.title IS NOT NULL
        ORDER BY COALESCE(ea.avg_quality, 0) ASC, COALESCE(ea.evidence_count, 0) ASC
        LIMIT 20`,
       { replacements: { organizationId } }

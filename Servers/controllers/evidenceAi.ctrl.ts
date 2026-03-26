@@ -131,9 +131,9 @@ export async function analyzeFile(req: Request, res: Response) {
 
     // Match against controls for suggestions
     const [euControls] = await sequelize.query(
-      `SELECT id, control_title, control_description
-       FROM control_category_eu_ai_act_struct
-       WHERE control_title IS NOT NULL
+      `SELECT id, title as control_title, description as control_description
+       FROM controls_struct_eu
+       WHERE title IS NOT NULL
        LIMIT 50`
     );
 
