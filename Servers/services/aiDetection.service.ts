@@ -1015,6 +1015,12 @@ export async function startScan(
     scan_mode?: ScanMode;
     base_commit_sha?: string;
     head_commit_sha?: string;
+  },
+  webhookFields?: {
+    trigger_type?: string;
+    pr_number?: number;
+    commit_sha?: string;
+    branch?: string;
   }
 ): Promise<IScan> {
   // Parse and validate URL
@@ -1081,6 +1087,10 @@ export async function startScan(
       base_commit_sha: scanMode === "incremental" ? incrementalOptions?.base_commit_sha : null,
       head_commit_sha: scanMode === "incremental" ? incrementalOptions?.head_commit_sha : null,
       baseline_scan_id: baselineScanId,
+      trigger_type: webhookFields?.trigger_type || "manual",
+      pr_number: webhookFields?.pr_number || null,
+      commit_sha: webhookFields?.commit_sha || null,
+      branch: webhookFields?.branch || null,
     };
 
     let scan: IScan;
