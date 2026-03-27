@@ -2,6 +2,7 @@ import { Stack, Typography, Box } from "@mui/material";
 import "./index.css";
 import { Outlet, useLocation } from "react-router";
 import { useContext, useEffect, FC, useState } from "react";
+import { useDispatch } from "react-redux";
 import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.context";
 import { EvalsSidebarProvider } from "../../../application/contexts/EvalsSidebar.context";
 import { AIDetectionSidebarProvider } from "../../../application/contexts/AIDetectionSidebar.context";
@@ -23,6 +24,9 @@ import { useActiveModule } from "../../../application/hooks/useActiveModule";
 import AppSwitcher from "../../components/AppSwitcher";
 import { ContextSidebar } from "../../components/ContextSidebar";
 import { useAuth } from "../../../application/hooks/useAuth";
+import ReadOnlyBanner from "../../components/ReadOnlyBanner";
+import { setActiveOrganizationId } from "../../../application/redux/auth/authSlice";
+import { getOrganizations } from "../../../application/repository/superAdmin.repository";
 import { status } from "../../themes/palette";
 
 interface DashboardProps {
@@ -33,8 +37,10 @@ const Dashboard: FC<DashboardProps> = ({ reloadTrigger }) => {
   const { setDashboardValues, setProjects } = useContext(VerifyWiseContext);
   const location = useLocation();
   const { activeModule, setActiveModule } = useActiveModule();
-  const { userRoleName } = useAuth();
+  const { userRoleName, isSuperAdmin, activeOrganizationId } = useAuth();
   const isAdmin = userRoleName === "Admin";
+  const dispatch = useDispatch();
+  const [superAdminHasNoOrgs, setSuperAdminHasNoOrgs] = useState(false);
 
   // Demo data state
   const [showToastNotification, setShowToastNotification] =
@@ -55,6 +61,22 @@ const Dashboard: FC<DashboardProps> = ({ reloadTrigger }) => {
     useState<boolean>(false);
 
   const { dashboard, fetchDashboard } = useDashboard();
+
+  // Auto-select first org for super-admin if none selected
+  useEffect(() => {
+    if (!isSuperAdmin || activeOrganizationId) return;
+    getOrganizations()
+      .then((res) => {
+        const orgsData = (res.data as any)?.data || [];
+        if (orgsData.length > 0) {
+          dispatch(setActiveOrganizationId(orgsData[0].id));
+          setSuperAdminHasNoOrgs(false);
+        } else {
+          setSuperAdminHasNoOrgs(true);
+        }
+      })
+      .catch(console.error);
+  }, [isSuperAdmin, activeOrganizationId, dispatch]);
 
   // Check for demo data existence
   useEffect(() => {
@@ -289,6 +311,7 @@ const Dashboard: FC<DashboardProps> = ({ reloadTrigger }) => {
           <AppSwitcher
             activeModule={activeModule}
             onModuleChange={setActiveModule}
+            isSuperAdmin={isSuperAdmin}
           />
           <ContextSidebar
             activeModule={activeModule}
@@ -302,17 +325,37 @@ const Dashboard: FC<DashboardProps> = ({ reloadTrigger }) => {
             hasDemoData={hasDemoData}
             isAdmin={isAdmin}
           />
-          <Stack 
-            className="main-content-area" 
-            sx={{ 
-              flex: 1, 
-              minWidth: 0, 
-              height: "100vh", 
-              display: "flex", 
+          <Stack
+            className="main-content-area"
+            sx={{
+              flex: 1,
+              minWidth: 0,
+              height: "100vh",
+              display: "flex",
               flexDirection: "column",
-              overflow: "hidden"
+              overflow: "hidden",
+              position: "relative",
             }}
           >
+            <ReadOnlyBanner />
+            {isSuperAdmin && superAdminHasNoOrgs && activeModule !== "super-admin" && (
+              <Box
+                sx={{
+                  position: "absolute",
+                  inset: 0,
+                  zIndex: 10,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backdropFilter: "blur(2px)",
+                  backgroundColor: "rgba(255,255,255,0.7)",
+                }}
+              >
+                <Typography variant="body1" sx={{ color: "text.secondary", textAlign: "center" }}>
+                  No organizations exist yet. Switch to the Super Admin tab to create one.
+                </Typography>
+              </Box>
+            )}
             <DemoAppBanner />
             {alertState && (
               <Alert

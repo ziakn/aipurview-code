@@ -166,6 +166,10 @@ export const routeMapping: Record<string, string> = {
   // Policies
   "/policies": "Policies",
 
+  // Super Admin
+  "/super-admin": "Super Admin",
+  "/super-admin/users": "Users",
+
   // Authentication
   "/login": "Sign in",
   "/register": "Create account",
@@ -294,6 +298,10 @@ export const routeIconMapping: Record<string, () => React.ReactNode> = {
   "/ai-gateway/settings/guardrails": () => React.createElement(Settings, { size: 14, strokeWidth: 1.5 }),
   "/ai-gateway/settings/risks": () => React.createElement(Settings, { size: 14, strokeWidth: 1.5 }),
 
+  // Super Admin
+  "/super-admin": () => React.createElement(Shield, { size: 14, strokeWidth: 1.5 }),
+  "/super-admin/users": () => React.createElement(Users, { size: 14, strokeWidth: 1.5 }),
+
   // Shadow AI
   "/shadow-ai": () => React.createElement(Eye, { size: 14, strokeWidth: 1.5 }),
   "/shadow-ai/insights": () => React.createElement(BarChart3, { size: 14, strokeWidth: 1.5 }),
@@ -358,6 +366,12 @@ export const dynamicRoutePatterns = [
     label: "Tool details",
     description: "Detailed view of specific AI tool",
     icon: () => React.createElement(Bot, { size: 14, strokeWidth: 1.5 }),
+  },
+  {
+    pattern: /\/super-admin\/organizations\/\d+\/users/,
+    label: "Organization users",
+    description: "Users in a specific organization",
+    icon: () => React.createElement(Users, { size: 14, strokeWidth: 1.5 }),
   },
   {
     pattern: /\/intake-forms\/\w+\/edit/,

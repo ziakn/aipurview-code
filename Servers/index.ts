@@ -92,6 +92,8 @@ import quantitativeRiskRoutes from "./routes/quantitativeRisk.route";
 import aiGatewayRoutes from "./routes/aiGateway.route";
 import virtualKeyProxyRoutes from "./routes/virtualKeyProxy.route";
 import internalRoutes from "./routes/internal.route";
+import superAdminRoutes from "./routes/superAdmin.route";
+// superAdminReadOnly is now enforced inside authenticateJWT middleware
 import { setupNotificationSubscriber } from "./services/notificationSubscriber.service";
 import { sequelize } from "./database/db";
 import redisClient from "./database/redis";
@@ -145,7 +147,7 @@ try {
         }
       },
       credentials: true,
-      allowedHeaders: ["Authorization", "Content-Type", "X-Requested-With"],
+      allowedHeaders: ["Authorization", "Content-Type", "X-Requested-With", "X-Organization-Id"],
     })
   );
   app.use(helmet()); // Use helmet for security headers
@@ -297,6 +299,9 @@ try {
   app.use("/api/risk-benchmarks", riskBenchmarkRoutes);
   app.use("/api/quantitative-risks", quantitativeRiskRoutes);
   app.use("/api/ai-gateway", aiGatewayRoutes());
+
+  // Super-admin routes (authenticated + super-admin only)
+  app.use("/api/super-admin", superAdminRoutes);
 
   // Internal routes — callbacks from Python services (no JWT, internal key auth)
   app.use("/api/internal", internalRoutes);
