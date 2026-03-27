@@ -170,13 +170,17 @@ const Login: React.FC = () => {
               const orgsData = (orgsResponse.data as any)?.data || [];
               if (orgsData.length > 0) {
                 dispatch(setActiveOrganizationId(orgsData[0].id));
+                setIsSubmitting(false);
+                navigate("/");
+                return;
               }
             } catch (err) {
               console.error("Failed to fetch organizations for auto-select:", err);
             }
 
+            // No orgs available — go to super-admin panel to create one
             setIsSubmitting(false);
-            navigate("/");
+            navigate("/super-admin");
             return;
           }
 

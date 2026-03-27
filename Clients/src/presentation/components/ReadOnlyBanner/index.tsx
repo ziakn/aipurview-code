@@ -46,6 +46,15 @@ const ReadOnlyBanner = () => {
     if (isSuperAdmin) fetchOrgs();
   }, [isSuperAdmin, fetchOrgs]);
 
+  // If the active org no longer exists (deleted), clear it and go to super-admin
+  useEffect(() => {
+    if (!isSuperAdmin || orgs.length === 0) return;
+    if (activeOrganizationId && !orgs.find((o) => o.id === activeOrganizationId)) {
+      dispatch(setActiveOrganizationId(null));
+      navigate("/super-admin");
+    }
+  }, [isSuperAdmin, orgs, activeOrganizationId, dispatch, navigate]);
+
   if (!isSuperAdmin || !activeOrganizationId || activeModule === "super-admin")
     return null;
 

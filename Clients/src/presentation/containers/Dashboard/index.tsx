@@ -62,17 +62,24 @@ const Dashboard: FC<DashboardProps> = ({ reloadTrigger }) => {
 
   const { dashboard, fetchDashboard } = useDashboard();
 
-  // Auto-select first org for super-admin if none selected
+  // Auto-select first org for super-admin, or redirect if active org was deleted
   useEffect(() => {
-    if (!isSuperAdmin || activeOrganizationId) return;
+    if (!isSuperAdmin) return;
     getOrganizations()
       .then((res) => {
         const orgsData = (res.data as any)?.data || [];
-        if (orgsData.length > 0) {
-          dispatch(setActiveOrganizationId(orgsData[0].id));
-          setSuperAdminHasNoOrgs(false);
-        } else {
+        if (orgsData.length === 0) {
+          // No orgs exist — clear active org and show overlay
+          dispatch(setActiveOrganizationId(null));
           setSuperAdminHasNoOrgs(true);
+          return;
+        }
+        setSuperAdminHasNoOrgs(false);
+        if (!activeOrganizationId || !orgsData.find((o: any) => o.id === activeOrganizationId)) {
+          // No org selected or active org was deleted — pick the first available one and reload
+          dispatch(setActiveOrganizationId(orgsData[0].id));
+          // Small delay so Redux persist writes before reload
+          setTimeout(() => window.location.reload(), 100);
         }
       })
       .catch(console.error);
@@ -338,47 +345,46 @@ const Dashboard: FC<DashboardProps> = ({ reloadTrigger }) => {
             }}
           >
             <ReadOnlyBanner />
-            {isSuperAdmin && superAdminHasNoOrgs && activeModule !== "super-admin" && (
+            {isSuperAdmin && superAdminHasNoOrgs && activeModule !== "super-admin" ? (
               <Box
                 sx={{
-                  position: "absolute",
-                  inset: 0,
-                  zIndex: 10,
+                  flex: 1,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  backdropFilter: "blur(2px)",
-                  backgroundColor: "rgba(255,255,255,0.7)",
                 }}
               >
                 <Typography variant="body1" sx={{ color: "text.secondary", textAlign: "center" }}>
                   No organizations exist yet. Switch to the Super Admin tab to create one.
                 </Typography>
               </Box>
+            ) : (
+              <>
+                <DemoAppBanner />
+                {alertState && (
+                  <Alert
+                    variant={alertState.variant}
+                    title={alertState.title}
+                    body={alertState.body}
+                    isToast={true}
+                    onClick={() => setAlertState(undefined)}
+                  />
+                )}
+                {showToastNotification && <CustomizableToast title={toastMessage} />}
+                <Box
+                  className="scrollable-content"
+                  sx={{
+                    flex: 1,
+                    minHeight: 0,
+                    overflowY: "auto",
+                    overflowX: "hidden",
+                    padding: "24px 8px 24px 24px"
+                  }}
+                >
+                  <Outlet />
+                </Box>
+              </>
             )}
-            <DemoAppBanner />
-            {alertState && (
-              <Alert
-                variant={alertState.variant}
-                title={alertState.title}
-                body={alertState.body}
-                isToast={true}
-                onClick={() => setAlertState(undefined)}
-              />
-            )}
-            {showToastNotification && <CustomizableToast title={toastMessage} />}
-            <Box 
-              className="scrollable-content"
-              sx={{ 
-                flex: 1, 
-                minHeight: 0,
-                overflowY: "auto", 
-                overflowX: "hidden",
-                padding: "24px 8px 24px 24px"
-              }}
-            >
-              <Outlet />
-            </Box>
           </Stack>
 
           {/* Demo Data Modals */}
