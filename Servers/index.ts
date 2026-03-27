@@ -94,7 +94,7 @@ import virtualKeyProxyRoutes from "./routes/virtualKeyProxy.route";
 import internalRoutes from "./routes/internal.route";
 import superAdminRoutes from "./routes/superAdmin.route";
 // superAdminReadOnly is now enforced inside authenticateJWT middleware
-import { setupNotificationSubscriber } from "./services/notificationSubscriber.service";
+import { setupNotificationSubscriber, closeNotificationSubscriber } from "./services/notificationSubscriber.service";
 import { sequelize } from "./database/db";
 import redisClient from "./database/redis";
 
@@ -356,6 +356,13 @@ try {
     // Stop accepting new connections; give in-flight requests 10 s to complete
     server.close(async () => {
       console.log("HTTP server closed");
+
+      try {
+        await closeNotificationSubscriber();
+        console.log("Notification subscriber closed");
+      } catch (err) {
+        console.error("Error closing notification subscriber:", err);
+      }
 
       try {
         await redisClient.quit();
