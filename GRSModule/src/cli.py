@@ -16,7 +16,7 @@ from reports.seed_report import build_seed_report
 from reports.render_report import build_render_report
 from reports.perturb_report import build_perturb_report
 
-from render.load_catalogs import load_render_inputs
+from render.load_catalogs import load_render_inputs, validate_render_inputs
 from render.renderer import render_base_scenarios, RenderConfig
 from render.dedup import prompt_hash
 
@@ -111,6 +111,7 @@ def _cmd_generate(args: argparse.Namespace) -> int:
         obligations_version, obligations = load_obligations_yaml(obligations_path)
 
         inputs = load_render_inputs(config_dir=Path("configs"))
+        validate_render_inputs(inputs)
         base_scenarios = render_base_scenarios(
             obligations=obligations,
             inputs=inputs,
