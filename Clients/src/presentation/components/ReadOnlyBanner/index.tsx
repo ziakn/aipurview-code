@@ -97,7 +97,7 @@ const ReadOnlyBanner = () => {
           color: status.info.text,
         }}
       >
-        Read-only mode
+        Super Admin view (read-only) — edits are disabled to protect organization data
       </Typography>
 
       <MuiSelect<number>
@@ -172,22 +172,26 @@ const ReadOnlyBanner = () => {
 
       <Button
         size="small"
-        variant="text"
+        variant="outlined"
         onClick={() => navigate("/super-admin")}
         sx={{
           textTransform: "none",
           fontSize: 12,
-          fontWeight: 500,
+          fontWeight: 600,
           minWidth: "auto",
-          px: 1,
+          px: 1.5,
+          py: 0.25,
           color: status.info.text,
+          borderColor: status.info.text,
+          borderRadius: theme.shape.borderRadius,
           "&:hover": {
             color: text.primary,
+            borderColor: text.primary,
             backgroundColor: "transparent",
           },
         }}
       >
-        Manage
+        Manage organizations
       </Button>
     </Stack>
   );
