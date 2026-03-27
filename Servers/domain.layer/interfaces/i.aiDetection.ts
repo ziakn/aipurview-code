@@ -66,6 +66,11 @@ export interface IScan {
   head_commit_sha?: string | null;
   baseline_scan_id?: number | null;
   changed_files_count?: number | null;
+  // Webhook CI/CD fields
+  trigger_type?: string;
+  pr_number?: number | null;
+  commit_sha?: string | null;
+  branch?: string | null;
   created_at?: Date;
   updated_at?: Date;
 }
@@ -86,6 +91,11 @@ export interface ICreateScanInput {
   base_commit_sha?: string | null;
   head_commit_sha?: string | null;
   baseline_scan_id?: number | null;
+  // Webhook CI/CD fields
+  trigger_type?: string;
+  pr_number?: number | null;
+  commit_sha?: string | null;
+  branch?: string | null;
 }
 
 /**

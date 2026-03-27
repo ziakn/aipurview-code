@@ -97,6 +97,7 @@ import {
   CACHE_KEYS,
 } from "../utils/cache.utils";
 import { calculateAndStoreRiskScore } from "./aiDetection/riskScoring";
+import { reportScanToGitHub } from "./aiDetection/githubStatusReporter";
 import { scanFileForVulnerabilityIndicators, buildAnalysisContext, VulnerabilityCandidate } from "./aiDetection/vulnerabilityPreFilter";
 import { analyzeVulnerabilities } from "./aiDetection/vulnerabilityAnalyzer";
 import { getRiskScoringConfigQuery } from "../utils/aiDetectionRiskScoring.utils";
@@ -1015,6 +1016,12 @@ export async function startScan(
     scan_mode?: ScanMode;
     base_commit_sha?: string;
     head_commit_sha?: string;
+  },
+  webhookFields?: {
+    trigger_type?: string;
+    pr_number?: number;
+    commit_sha?: string;
+    branch?: string;
   }
 ): Promise<IScan> {
   // Parse and validate URL
@@ -1081,6 +1088,10 @@ export async function startScan(
       base_commit_sha: scanMode === "incremental" ? incrementalOptions?.base_commit_sha : null,
       head_commit_sha: scanMode === "incremental" ? incrementalOptions?.head_commit_sha : null,
       baseline_scan_id: baselineScanId,
+      trigger_type: webhookFields?.trigger_type || "manual",
+      pr_number: webhookFields?.pr_number || null,
+      commit_sha: webhookFields?.commit_sha || null,
+      branch: webhookFields?.branch || null,
     };
 
     let scan: IScan;
@@ -1534,6 +1545,11 @@ async function executeIncrementalScan(
     if (scan) {
       calculateAndStoreRiskScore(scanId, `${scan.repository_owner}/${scan.repository_name}`, ctx).catch((err) => {
         logger.error(`Failed to calculate risk score for scan ${scanId}:`, err);
+      });
+
+      // Report to GitHub for webhook-triggered scans (fire-and-forget)
+      reportScanToGitHub(scan, ctx.organizationId).catch((err) => {
+        logger.error(`Failed to report scan #${scanId} to GitHub:`, err);
       });
     }
   } catch (error) {
@@ -2063,6 +2079,14 @@ async function executeScan(
       calculateAndStoreRiskScore(scanId, `${owner}/${repo}`, ctx).catch((err) => {
         logger.error(`Failed to calculate risk score for scan ${scanId}:`, err);
       });
+
+      // Report to GitHub for webhook-triggered scans (fire-and-forget)
+      const completedScan = await getScanByIdQuery(scanId, ctx.organizationId);
+      if (completedScan) {
+        reportScanToGitHub(completedScan, ctx.organizationId).catch((err) => {
+          logger.error(`Failed to report scan #${scanId} to GitHub:`, err);
+        });
+      }
     } catch (error) {
       await transaction.rollback();
       throw error;

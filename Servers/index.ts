@@ -72,6 +72,7 @@ import datasetChangeHistoryRoutes from "./routes/datasetChangeHistory.route";
 import policyLinkedObjects from "./routes/policyLinkedObjects.route";
 import approvalWorkflowRoutes from "./routes/approvalWorkflow.route";
 import approvalRequestRoutes from "./routes/approvalRequest.route";
+import webhookRoutes from "./routes/webhook.route";
 import aiDetectionRoutes from "./routes/aiDetection.route";
 import aiDetectionRepositoryRoutes from "./routes/aiDetectionRepository.route";
 import githubIntegrationRoutes from "./routes/githubIntegration.route";
@@ -157,6 +158,10 @@ try {
     // For deepeval experiment creation and arena comparisons, we need to parse body to inject API keys
     // For other deepeval routes, let proxy handle raw body
     if (req.url.includes("/api/deepeval/") && !req.url.includes("/experiments") && !req.url.includes("/arena/compare")) {
+      return next();
+    }
+    // Webhook routes use express.raw() for HMAC signature verification
+    if (req.url.startsWith("/api/webhooks/")) {
       return next();
     }
     express.json({ limit: '10mb' })(req, res, next);
@@ -279,6 +284,7 @@ try {
   app.use("/api/dataset-change-history", datasetChangeHistoryRoutes);
   app.use("/api/approval-workflows", approvalWorkflowRoutes);
   app.use("/api/approval-requests", approvalRequestRoutes);
+  app.use("/api/webhooks", webhookRoutes);
   app.use("/api/ai-detection", aiDetectionRoutes);
   app.use("/api/ai-detection/repositories", aiDetectionRepositoryRoutes);
   app.use("/api/integrations/github", githubIntegrationRoutes);
