@@ -332,10 +332,11 @@ test.describe("AI Gateway", () => {
       await page.goto("/ai-gateway/playground");
       await page.waitForTimeout(2000);
 
+      // MUI Select renders a hidden input#endpoint + a visible div[role=combobox]
       const endpointSelect = page
-        .locator("#endpoint")
-        .or(page.getByRole("combobox", { name: /endpoint/i }))
-        .or(page.getByPlaceholder(/select endpoint/i));
+        .locator('#endpoint ~ div[role="combobox"]')
+        .or(page.locator('#endpoint').locator('..').getByRole("combobox"))
+        .or(page.getByRole("combobox").first());
 
       if (!(await endpointSelect.first().isVisible().catch(() => false))) {
         test.skip();
