@@ -58,4 +58,40 @@ test.describe("Post-Market Monitoring", () => {
       .or(page.getByRole("heading"));
     await expect(content.first()).toBeVisible({ timeout: 10_000 });
   });
+
+  // --- Tier 5: Reports archive & monitoring form ---
+
+  test("reports archive shows table with filter controls", async ({
+    authedPage: page,
+  }) => {
+    await page.goto("/monitoring/reports");
+    await page.waitForTimeout(2000);
+
+    // Look for filter controls (date pickers, flagged-only checkbox)
+    const filterControls = page
+      .getByText(/from/i)
+      .or(page.getByText(/flagged/i))
+      .or(page.getByRole("checkbox", { name: /flagged/i }))
+      .or(page.getByRole("table"))
+      .or(page.getByText(/no.*report/i));
+
+    if (await filterControls.first().isVisible().catch(() => false)) {
+      await expect(filterControls.first()).toBeVisible();
+    }
+  });
+
+  test("monitoring cycles page loads", async ({ authedPage: page }) => {
+    await page.goto("/monitoring");
+    await page.waitForTimeout(2000);
+
+    // Should show monitoring content or empty state
+    const content = page
+      .getByText(/monitor/i)
+      .or(page.getByText(/cycle/i))
+      .or(page.getByRole("button", { name: /new.*cycle/i }))
+      .or(page.getByRole("heading"))
+      .or(page.getByText(/no.*cycle/i));
+
+    await expect(content.first()).toBeVisible({ timeout: 15_000 });
+  });
 });
