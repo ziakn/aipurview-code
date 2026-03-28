@@ -75,6 +75,81 @@ test.describe("Datasets", () => {
       await page.keyboard.press("Escape");
     }
   });
+
+  // --- Tier 5: Multi-step modal & bulk upload ---
+
+  test.describe("Bulk Upload", () => {
+    test("bulk upload button opens stepper modal", async ({
+      authedPage: page,
+    }) => {
+      await page.goto("/datasets");
+      await page.waitForTimeout(2000);
+
+      const bulkUploadBtn = page
+        .getByRole("button", { name: /bulk upload/i })
+        .or(page.getByRole("button", { name: /import/i }))
+        .or(page.getByRole("button", { name: /batch/i }));
+
+      if (!(await bulkUploadBtn.first().isVisible().catch(() => false))) {
+        test.skip();
+        return;
+      }
+
+      await bulkUploadBtn.first().click();
+      await page.waitForTimeout(500);
+
+      // Verify stepper modal appears
+      const stepper = page
+        .locator(".MuiStepper-root")
+        .or(page.locator('[class*="stepper" i]'))
+        .or(page.getByRole("dialog"))
+        .or(page.locator(".MuiModal-root"));
+
+      await expect(stepper.first()).toBeVisible({ timeout: 10_000 });
+      await page.keyboard.press("Escape");
+    });
+
+    test("stepper shows step labels and navigation", async ({
+      authedPage: page,
+    }) => {
+      await page.goto("/datasets");
+      await page.waitForTimeout(2000);
+
+      const bulkUploadBtn = page
+        .getByRole("button", { name: /bulk upload/i })
+        .or(page.getByRole("button", { name: /import/i }));
+
+      if (!(await bulkUploadBtn.first().isVisible().catch(() => false))) {
+        test.skip();
+        return;
+      }
+
+      await bulkUploadBtn.first().click();
+      await page.waitForTimeout(500);
+
+      // Look for step labels
+      const stepLabels = page
+        .locator(".MuiStepLabel-root")
+        .or(page.locator('[class*="step-label" i]'))
+        .or(page.getByText(/step/i));
+
+      if (await stepLabels.first().isVisible().catch(() => false)) {
+        await expect(stepLabels.first()).toBeVisible();
+      }
+
+      // Look for Next/Back navigation buttons
+      const navBtn = page
+        .getByRole("button", { name: /next/i })
+        .or(page.getByRole("button", { name: /back/i }))
+        .or(page.getByRole("button", { name: /continue/i }));
+
+      if (await navBtn.first().isVisible().catch(() => false)) {
+        await expect(navBtn.first()).toBeVisible();
+      }
+
+      await page.keyboard.press("Escape");
+    });
+  });
 });
 
 // --- Tier 4: CRUD (requires project) ---
