@@ -40,6 +40,7 @@ import { brand, text, background } from "../../themes/palette";
 import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.context";
 import { ROLES } from "../../../application/constants/roles";
 import useLogout from "../../../application/hooks/useLogout";
+import { getUserById } from "../../../application/repository/user.repository";
 import { User } from "../../../domain/types/User";
 import { useProfilePhotoFetch } from "../../../application/hooks/useProfilePhotoFetch";
 import ReadyToSubscribeBox from "../ReadyToSubscribeBox/ReadyToSubscribeBox";
@@ -112,6 +113,31 @@ const SidebarFooter: FC<SidebarFooterProps> = ({
   const location = useLocation();
   const logout = useLogout();
   const { userId, users, photoRefreshFlag } = useContext(VerifyWiseContext);
+  const [selfUser, setSelfUser] = useState<User | null>(null);
+
+  // Fetch current user directly when not in the org users list (e.g., super-admin)
+  useEffect(() => {
+    if (!userId) return;
+    const found = users?.find((u: User) => u.id === userId);
+    if (found) {
+      setSelfUser(null);
+      return;
+    }
+    getUserById({ userId })
+      .then((res) => {
+        const data = (res as any)?.data;
+        if (data) {
+          setSelfUser({
+            id: data.id,
+            name: data.name,
+            surname: data.surname,
+            email: data.email,
+            roleId: data.role_id,
+          });
+        }
+      })
+      .catch(() => {});
+  }, [userId, users]);
 
   const [managementAnchorEl, setManagementAnchorEl] = useState<null | HTMLElement>(null);
   const [slideoverOpen, setSlideoverOpen] = useState(false);
@@ -128,9 +154,9 @@ const SidebarFooter: FC<SidebarFooterProps> = ({
     localStorage.setItem("vw_dark_mode", String(darkMode));
   }, [darkMode]);
 
-  const user: User = users
-    ? users.find((u: User) => u.id === userId) || DEFAULT_USER
-    : DEFAULT_USER;
+  const user: User = selfUser
+    || (users ? users.find((u: User) => u.id === userId) : null)
+    || DEFAULT_USER;
 
   const [avatarUrl, setAvatarUrl] = useState<string>("");
   const { fetchProfilePhotoAsBlobUrl } = useProfilePhotoFetch();

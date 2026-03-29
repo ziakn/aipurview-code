@@ -5,9 +5,10 @@ import Plugins from "../../presentation/pages/Plugins";
 import PluginManagement from "../../presentation/pages/Plugins/PluginManagement";
 import Setting from "../../presentation/pages/SettingsPage";
 import Organization from "../../presentation/pages/SettingsPage/Organization";
-import RegisterAdmin from "../../presentation/pages/Authentication/RegisterAdmin";
 import RegisterUser from "../../presentation/pages/Authentication/RegisterUser";
-import RegisterMultiTenant from "../../presentation/pages/Authentication/RegisterMultiTenant";
+import SuperAdminOrganizations from "../../presentation/pages/SuperAdmin/Organizations";
+import SuperAdminUsers from "../../presentation/pages/SuperAdmin/Users";
+import SuperAdminAllUsers from "../../presentation/pages/SuperAdmin/AllUsers";
 import Login from "../../presentation/pages/Authentication/Login";
 import ForgotPassword from "../../presentation/pages/Authentication/ForgotPassword";
 import ResetPassword from "../../presentation/pages/Authentication/ResetPassword";
@@ -179,12 +180,10 @@ export const createRoutes = (
       <Route path="submissions" element={<IntakeFormsListPage />} />
     </Route>
     <Route path="/intake-forms/:formId/edit" element={<IntakeFormBuilder />} />
+    <Route path="/super-admin" element={<SuperAdminOrganizations />} />
+    <Route path="/super-admin/users" element={<SuperAdminAllUsers />} />
+    <Route path="/super-admin/organizations/:id/users" element={<SuperAdminUsers />} />
   </Route>,
-  <Route
-    key="admin-reg"
-    path="/admin-reg"
-    element={<ProtectedRoute Component={RegisterAdmin} />}
-  />,
   <Route
     key="user-reg"
     path="/user-reg"
@@ -193,7 +192,12 @@ export const createRoutes = (
   <Route
     key="register"
     path="/register"
-    element={<ProtectedRoute Component={RegisterMultiTenant} />}
+    element={<Navigate to="/login" replace />}
+  />,
+  <Route
+    key="admin-reg"
+    path="/admin-reg"
+    element={<Navigate to="/login" replace />}
   />,
   <Route
     key="login"
