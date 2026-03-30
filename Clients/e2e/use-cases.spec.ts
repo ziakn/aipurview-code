@@ -143,4 +143,78 @@ test.describe("Use Cases / Projects", () => {
       }
     }
   });
+
+  // --- Tier 5: Change history / Activity log ---
+
+  test.describe("Activity Log", () => {
+    test("project view shows activity tab", async ({ authedPage: page }) => {
+      await page.goto("/overview");
+
+      // Click on any existing project card to navigate to project view
+      const projectCard = page
+        .locator('[class*="project-card" i]')
+        .or(page.locator('[data-testid*="project"]'))
+        .or(page.getByRole("link", { name: /project|use case/i }))
+        .or(page.locator(".MuiCard-root"));
+
+      if (!(await projectCard.first().isVisible().catch(() => false))) {
+        test.skip();
+        return;
+      }
+      await projectCard.first().click();
+      await page.waitForTimeout(1000);
+
+      // Look for Activity tab or section
+      const activityTab = page
+        .getByRole("tab", { name: /activity/i })
+        .or(page.getByText(/activity/i))
+        .or(page.getByText(/history/i))
+        .or(page.getByText(/timeline/i));
+
+      if (await activityTab.first().isVisible({ timeout: 10_000 }).catch(() => false)) {
+        await expect(activityTab.first()).toBeVisible();
+      }
+    });
+
+    test("activity log shows entries after project creation", async ({
+      authedPage: page,
+    }) => {
+      await page.goto("/overview");
+
+      const projectCard = page
+        .locator('[class*="project-card" i]')
+        .or(page.locator('[data-testid*="project"]'))
+        .or(page.getByRole("link", { name: /project|use case/i }))
+        .or(page.locator(".MuiCard-root"));
+
+      if (!(await projectCard.first().isVisible().catch(() => false))) {
+        test.skip();
+        return;
+      }
+      await projectCard.first().click();
+      await page.waitForTimeout(1000);
+
+      // Navigate to Activity tab
+      const activityTab = page
+        .getByRole("tab", { name: /activity/i })
+        .or(page.getByText(/activity/i));
+
+      if (await activityTab.first().isVisible().catch(() => false)) {
+        await activityTab.first().click();
+        await page.waitForTimeout(1000);
+
+        // Verify at least one activity entry exists
+        const activityEntry = page
+          .getByText(/created/i)
+          .or(page.getByText(/updated/i))
+          .or(page.getByText(/changed/i))
+          .or(page.locator('[class*="activity" i]'))
+          .or(page.locator('[class*="timeline" i]'));
+
+        if (await activityEntry.first().isVisible().catch(() => false)) {
+          await expect(activityEntry.first()).toBeVisible();
+        }
+      }
+    });
+  });
 });

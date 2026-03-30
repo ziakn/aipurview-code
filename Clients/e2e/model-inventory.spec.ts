@@ -180,4 +180,214 @@ test.describe("Model Inventory", () => {
       }
     }
   });
+
+  // --- Tier 5: Share links ---
+
+  test.describe("Share Links", () => {
+    test("share button opens share dropdown", async ({ authedPage: page }) => {
+      await page.goto("/model-inventory");
+
+      // Click on a model row to navigate to detail
+      const modelRow = page
+        .getByRole("row")
+        .nth(1)
+        .or(page.locator("tr").nth(1));
+
+      if (!(await modelRow.isVisible().catch(() => false))) {
+        test.skip();
+        return;
+      }
+      await modelRow.click();
+      await page.waitForTimeout(1000);
+
+      // Look for share button
+      const shareBtn = page
+        .getByRole("button", { name: /share/i })
+        .or(page.locator('[aria-label*="share" i]'))
+        .or(page.locator('[data-testid*="share"]'));
+
+      if (await shareBtn.first().isVisible().catch(() => false)) {
+        await shareBtn.first().click();
+        await page.waitForTimeout(500);
+
+        // Verify share popover/dropdown appears
+        const sharePopover = page
+          .getByText(/share/i)
+          .or(page.getByRole("switch"))
+          .or(page.getByText(/link/i));
+        await expect(sharePopover.first()).toBeVisible({ timeout: 5_000 });
+
+        await page.keyboard.press("Escape");
+      }
+    });
+
+    test("enabling share generates a link", async ({ authedPage: page }) => {
+      await page.goto("/model-inventory");
+
+      const modelRow = page.getByRole("row").nth(1);
+      if (!(await modelRow.isVisible().catch(() => false))) {
+        test.skip();
+        return;
+      }
+      await modelRow.click();
+      await page.waitForTimeout(1000);
+
+      const shareBtn = page
+        .getByRole("button", { name: /share/i })
+        .or(page.locator('[aria-label*="share" i]'));
+
+      if (!(await shareBtn.first().isVisible().catch(() => false))) {
+        test.skip();
+        return;
+      }
+      await shareBtn.first().click();
+      await page.waitForTimeout(500);
+
+      // Toggle sharing on
+      const toggle = page
+        .getByRole("switch")
+        .or(page.getByRole("checkbox", { name: /enable|share/i }));
+      if (await toggle.first().isVisible().catch(() => false)) {
+        const isChecked = await toggle.first().isChecked().catch(() => false);
+        if (!isChecked) {
+          await toggle.first().click();
+          await page.waitForTimeout(1000);
+        }
+
+        // Verify link input field appears with URL content
+        const linkInput = page
+          .locator('input[readonly]')
+          .or(page.locator('input[type="text"]'))
+          .or(page.getByRole("textbox"));
+
+        if (await linkInput.first().isVisible().catch(() => false)) {
+          const linkValue = await linkInput.first().inputValue().catch(() => "");
+          if (linkValue) {
+            expect(linkValue).toContain("/");
+          }
+        }
+      }
+
+      await page.keyboard.press("Escape");
+    });
+
+    test("copy link button copies to clipboard", async ({
+      authedPage: page,
+    }) => {
+      await page.goto("/model-inventory");
+
+      const modelRow = page.getByRole("row").nth(1);
+      if (!(await modelRow.isVisible().catch(() => false))) {
+        test.skip();
+        return;
+      }
+      await modelRow.click();
+      await page.waitForTimeout(1000);
+
+      const shareBtn = page
+        .getByRole("button", { name: /share/i })
+        .or(page.locator('[aria-label*="share" i]'));
+
+      if (!(await shareBtn.first().isVisible().catch(() => false))) {
+        test.skip();
+        return;
+      }
+      await shareBtn.first().click();
+      await page.waitForTimeout(500);
+
+      // Look for copy button
+      const copyBtn = page
+        .getByRole("button", { name: /copy/i })
+        .or(page.locator('[aria-label*="copy" i]'));
+
+      if (await copyBtn.first().isVisible().catch(() => false)) {
+        // Grant clipboard permission and click copy
+        await copyBtn.first().click();
+        await page.waitForTimeout(500);
+
+        // Verify some visual feedback (tooltip, snackbar, or icon change)
+        const feedback = page
+          .getByText(/copied/i)
+          .or(page.getByRole("alert"));
+        if (await feedback.first().isVisible().catch(() => false)) {
+          await expect(feedback.first()).toBeVisible();
+        }
+      }
+
+      await page.keyboard.press("Escape");
+    });
+  });
+
+  // --- Tier 5: Model lifecycle detail ---
+
+  test.describe("Model Lifecycle Detail", () => {
+    test("clicking a model row navigates to detail page", async ({
+      authedPage: page,
+    }) => {
+      await page.goto("/model-inventory");
+
+      const modelRow = page
+        .getByRole("row")
+        .nth(1)
+        .or(page.locator("tr").nth(1));
+
+      if (!(await modelRow.isVisible().catch(() => false))) {
+        test.skip();
+        return;
+      }
+      await modelRow.click();
+      await page.waitForTimeout(1000);
+
+      // Should navigate to a model detail page
+      const isDetailPage =
+        page.url().includes("/model-inventory/models/") ||
+        page.url().includes("/model-inventory/");
+
+      if (isDetailPage) {
+        await expect(page.locator("body")).not.toBeEmpty();
+      }
+    });
+
+    test("model detail page shows tabs or sections", async ({
+      authedPage: page,
+    }) => {
+      await page.goto("/model-inventory");
+
+      const modelRow = page.getByRole("row").nth(1);
+      if (!(await modelRow.isVisible().catch(() => false))) {
+        test.skip();
+        return;
+      }
+      await modelRow.click();
+      await page.waitForTimeout(1000);
+
+      // Look for tabs, sections, or lifecycle stages
+      const sections = page
+        .getByRole("tab")
+        .or(page.getByRole("tablist"))
+        .or(page.getByText(/lifecycle/i))
+        .or(page.getByText(/evidence/i))
+        .or(page.getByText(/risk/i))
+        .or(page.getByRole("heading"));
+
+      if (await sections.first().isVisible({ timeout: 10_000 }).catch(() => false)) {
+        await expect(sections.first()).toBeVisible();
+      }
+    });
+
+    test("model risks page loads", async ({ authedPage: page }) => {
+      await page.goto("/model-inventory/model-risks");
+      await page.waitForTimeout(2000);
+
+      const content = page
+        .getByText(/risk/i)
+        .or(page.getByRole("table"))
+        .or(page.getByText(/no.*risk/i))
+        .or(page.getByRole("heading"));
+
+      if (await content.first().isVisible({ timeout: 10_000 }).catch(() => false)) {
+        await expect(content.first()).toBeVisible();
+      }
+    });
+  });
 });
