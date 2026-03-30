@@ -7,10 +7,11 @@ import singleTheme from "../../../themes/v1SingleTheme";
 import { useNavigate } from "react-router-dom";
 import { logEngine } from "../../../../application/tools/log.engine";
 import { useDispatch } from "react-redux";
-import { setAuthToken, setExpiration, setOnboardingStatus, setIsOrgCreator } from "../../../../application/redux/auth/authSlice";
+import { setAuthToken, setExpiration, setOnboardingStatus, setIsOrgCreator, setIsSuperAdmin, setActiveOrganizationId } from "../../../../application/redux/auth/authSlice";
 import Alert from "../../../components/Alert";
 import { ENV_VARs } from "../../../../../env.vars";
 import { loginUser } from "../../../../application/repository/user.repository";
+import { getOrganizations } from "../../../../application/repository/superAdmin.repository";
 
 // Animated loading component specifically for login
 const LoginLoadingOverlay: React.FC = () => {
@@ -142,13 +143,12 @@ const Login: React.FC = () => {
     await loginUser({
       body: values,
     })
-      .then((response) => {
+      .then(async (response) => {
         setValues(initialState);
 
         if (response.status === 202) {
           const token = response.data.data.token;
-          const onboardingStatus = response.data.data.onboarding_status || "completed";
-          const isOrgCreatorFlag = response.data.data.is_org_creator || false;
+          const isSuperAdminFlag = response.data.data.isSuperAdmin || false;
 
           if (values.rememberMe) {
             const expirationDate = Date.now() + 30 * 24 * 60 * 60 * 1000;
@@ -158,6 +158,34 @@ const Login: React.FC = () => {
             dispatch(setAuthToken(token));
             dispatch(setExpiration(null));
           }
+
+          if (isSuperAdminFlag) {
+            dispatch(setIsSuperAdmin(true));
+            localStorage.setItem("root_version", __APP_VERSION__);
+            logEngine({ type: "info", message: "Super-admin login successful." });
+
+            // Auto-select the first organization so super-admin sees the normal UI
+            try {
+              const orgsResponse = await getOrganizations();
+              const orgsData = (orgsResponse.data as any)?.data || [];
+              if (orgsData.length > 0) {
+                dispatch(setActiveOrganizationId(orgsData[0].id));
+                setIsSubmitting(false);
+                navigate("/");
+                return;
+              }
+            } catch (err) {
+              console.error("Failed to fetch organizations for auto-select:", err);
+            }
+
+            // No orgs available — go to super-admin panel to create one
+            setIsSubmitting(false);
+            navigate("/super-admin");
+            return;
+          }
+
+          const onboardingStatus = response.data.data.onboarding_status || "completed";
+          const isOrgCreatorFlag = response.data.data.is_org_creator || false;
 
           // Store onboarding status from server
           dispatch(setOnboardingStatus(onboardingStatus));
@@ -350,33 +378,6 @@ const Login: React.FC = () => {
             >
               Sign in
             </Button>
-              <Stack
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  gap: theme.spacing(1),
-                }}
-              >
-                <Typography
-                  sx={{ fontSize: 14, color: theme.palette.text.secondary }}
-                >
-                  Don't have an account yet?
-                </Typography>
-                <Typography
-                  sx={{
-                    color:
-                      singleTheme.buttons.primary.contained.backgroundColor,
-                    fontSize: 14,
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => navigate("/register")}
-                >
-                  Register here
-                </Typography>
-              </Stack>
           </Stack>
         </Stack>
       </form>
