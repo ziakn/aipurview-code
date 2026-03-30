@@ -9,6 +9,7 @@ import RegisterUser from "../../presentation/pages/Authentication/RegisterUser";
 import SuperAdminOrganizations from "../../presentation/pages/SuperAdmin/Organizations";
 import SuperAdminUsers from "../../presentation/pages/SuperAdmin/Users";
 import SuperAdminAllUsers from "../../presentation/pages/SuperAdmin/AllUsers";
+import SuperAdminSettings from "../../presentation/pages/SuperAdmin/Settings";
 import Login from "../../presentation/pages/Authentication/Login";
 import ForgotPassword from "../../presentation/pages/Authentication/ForgotPassword";
 import ResetPassword from "../../presentation/pages/Authentication/ResetPassword";
@@ -183,6 +184,8 @@ export const createRoutes = (
     <Route path="/super-admin" element={<SuperAdminOrganizations />} />
     <Route path="/super-admin/users" element={<SuperAdminAllUsers />} />
     <Route path="/super-admin/organizations/:id/users" element={<SuperAdminUsers />} />
+    <Route path="/super-admin/settings" element={<SuperAdminSettings />} />
+    <Route path="/super-admin/settings/:tab" element={<SuperAdminSettings />} />
   </Route>,
   <Route
     key="user-reg"

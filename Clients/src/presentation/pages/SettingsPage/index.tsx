@@ -122,7 +122,6 @@ export default function ProfilePage() {
     <PageHeaderExtended
       title="Settings"
       description="Manage your profile, security, team members, and application preferences."
-
       helpArticlePath="settings/user-management"
       tipBoxEntity="settings"
     >
@@ -196,36 +195,36 @@ export default function ProfilePage() {
           onChange={handleTabChange}
         />
 
-        <TabPanel value="profile">
+        <TabPanel sx={{ p: 0 }} value="profile">
           <Profile />
         </TabPanel>
 
-        <TabPanel value="password">
+        <TabPanel sx={{ p: 0 }} value="password">
           <Password />
         </TabPanel>
 
-        <TabPanel value="preferences">
+        <TabPanel sx={{ p: 0 }} value="preferences">
           <Preferences />
         </TabPanel>
 
-        <TabPanel value="team">
+        <TabPanel sx={{ p: 0 }} value="team">
           <TeamManagement />
         </TabPanel>
 
-        <TabPanel value="organization">
+        <TabPanel sx={{ p: 0 }} value="organization">
           <Organization />
         </TabPanel>
 
-        <TabPanel value="features">
+        <TabPanel sx={{ p: 0 }} value="features">
           <Features />
         </TabPanel>
 
-        <TabPanel value="apikeys">
+        <TabPanel sx={{ p: 0 }} value="apikeys">
           <ApiKeys />
         </TabPanel>
 
         {!isAuditLedgerDisabled && (
-          <TabPanel value="audit-ledger">
+          <TabPanel sx={{ p: 0 }} value="audit-ledger">
             <AuditLedger />
           </TabPanel>
         )}

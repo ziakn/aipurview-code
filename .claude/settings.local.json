@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx playwright test:*)"
+      "Bash(npx playwright test:*)",
+      "Bash(find /Users/harsh/Data/vw/verifywise/Clients/src -type f -name *login* -o -name *Login*)",
+      "Bash(grep -E \"\\\\.\\(ts|js\\)$\")",
+      "Bash(npm run:*)"
     ]
   }
 }
