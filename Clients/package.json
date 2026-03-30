@@ -76,7 +76,7 @@
     "jspdf-autotable": "^5.0.7",
     "jszip": "^3.10.1",
     "katex": "^0.16.40",
-    "lucide-react": "^0.577.0",
+    "lucide-react": "^1.7.0",
     "papaparse": "^5.5.3",
     "plotly.js-basic-dist": "^3.4.0",
     "prismjs": "^1.30.0",
