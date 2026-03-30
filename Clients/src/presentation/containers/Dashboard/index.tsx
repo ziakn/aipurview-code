@@ -345,46 +345,31 @@ const Dashboard: FC<DashboardProps> = ({ reloadTrigger }) => {
             }}
           >
             <ReadOnlyBanner />
-            {isSuperAdmin && superAdminHasNoOrgs && activeModule !== "super-admin" ? (
+            <>
+              <DemoAppBanner />
+              {alertState && (
+                <Alert
+                  variant={alertState.variant}
+                  title={alertState.title}
+                  body={alertState.body}
+                  isToast={true}
+                  onClick={() => setAlertState(undefined)}
+                />
+              )}
+              {showToastNotification && <CustomizableToast title={toastMessage} />}
               <Box
+                className="scrollable-content"
                 sx={{
                   flex: 1,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  minHeight: 0,
+                  overflowY: "auto",
+                  overflowX: "hidden",
+                  padding: "24px 8px 24px 24px"
                 }}
               >
-                <Typography variant="body1" sx={{ color: "text.secondary", textAlign: "center" }}>
-                  No organizations exist yet. Switch to the Super Admin tab to create one.
-                </Typography>
+                <Outlet />
               </Box>
-            ) : (
-              <>
-                <DemoAppBanner />
-                {alertState && (
-                  <Alert
-                    variant={alertState.variant}
-                    title={alertState.title}
-                    body={alertState.body}
-                    isToast={true}
-                    onClick={() => setAlertState(undefined)}
-                  />
-                )}
-                {showToastNotification && <CustomizableToast title={toastMessage} />}
-                <Box
-                  className="scrollable-content"
-                  sx={{
-                    flex: 1,
-                    minHeight: 0,
-                    overflowY: "auto",
-                    overflowX: "hidden",
-                    padding: "24px 8px 24px 24px"
-                  }}
-                >
-                  <Outlet />
-                </Box>
-              </>
-            )}
+            </>
           </Stack>
 
           {/* Demo Data Modals */}

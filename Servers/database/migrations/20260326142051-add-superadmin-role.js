@@ -44,32 +44,38 @@ module.exports = {
       const email = process.env.SUPERADMIN_EMAIL;
       const password = process.env.SUPERADMIN_PASSWORD;
 
-      if (!email || !password) {
+      const [[{ count }]] = await queryInterface.sequelize.query(`
+        SELECT COUNT(*) AS count FROM verifywise.organizations;
+      `, { transaction });
+
+      if (count <= 0 && (!email || !password)) {
         throw new Error(
           'SUPERADMIN_EMAIL and SUPERADMIN_PASSWORD environment variables are required. ' +
           'Set them in your .env file and re-run the migration.'
         );
+      } else {
+        if (password && password.length < 8) {
+          throw new Error(
+            'SUPERADMIN_PASSWORD must be at least 8 characters.'
+          );
+        }
       }
 
-      if (password.length < 8) {
-        throw new Error(
-          'SUPERADMIN_PASSWORD must be at least 8 characters.'
-        );
+      if (email && password) {
+        const passwordHash = await bcrypt.hash(password, 10);
+
+        // Insert super-admin (ON CONFLICT on the partial unique index)
+        await queryInterface.sequelize.query(`
+          INSERT INTO verifywise.users (name, surname, email, password_hash, role_id, organization_id, created_at, last_login, is_demo)
+          VALUES ('Super', 'Admin', :email, :passwordHash, 5, NULL, NOW(), NOW(), false)
+          ON CONFLICT ((role_id)) WHERE role_id = 5 DO NOTHING;
+        `, {
+          replacements: { email, passwordHash },
+          transaction,
+        });
+
+        console.log(`✅ Super-admin user seeded with email: ${email}`);
       }
-
-      const passwordHash = await bcrypt.hash(password, 10);
-
-      // Insert super-admin (ON CONFLICT on the partial unique index)
-      await queryInterface.sequelize.query(`
-        INSERT INTO verifywise.users (name, surname, email, password_hash, role_id, organization_id, created_at, last_login, is_demo)
-        VALUES ('Super', 'Admin', :email, :passwordHash, 5, NULL, NOW(), NOW(), false)
-        ON CONFLICT ((role_id)) WHERE role_id = 5 DO NOTHING;
-      `, {
-        replacements: { email, passwordHash },
-        transaction,
-      });
-
-      console.log(`✅ Super-admin user seeded with email: ${email}`);
 
       await transaction.commit();
       console.log('✅ SuperAdmin role migration completed!');
