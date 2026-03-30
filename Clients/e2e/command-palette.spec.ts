@@ -1,4 +1,44 @@
-import { test, expect } from "./fixtures/auth.fixture";
+import { test as base, expect, type Page } from "@playwright/test";
+
+/**
+ * Custom fixture for command palette tests.
+ * Uses 'domcontentloaded' wait strategy instead of 'load' to avoid
+ * timing out while the dashboard fetches many API resources.
+ */
+const test = base.extend<{ authedPage: Page }>({
+  authedPage: async ({ page }, use) => {
+    await page.goto("/vendors", { waitUntil: "domcontentloaded" });
+    await expect(page).not.toHaveURL(/\/login/, { timeout: 15_000 });
+    await use(page);
+  },
+});
+
+/**
+ * Helper to open the command palette by dispatching a synthetic keyboard event.
+ * We bypass page.keyboard.press("Control+k") because Chromium may intercept
+ * Ctrl+K as a browser shortcut before it reaches the page.
+ */
+async function openCommandPalette(page: Page) {
+  await page.evaluate(() => {
+    document.dispatchEvent(
+      new KeyboardEvent("keydown", {
+        key: "k",
+        ctrlKey: true,
+        bubbles: true,
+        cancelable: true,
+      })
+    );
+  });
+  await page.waitForTimeout(500);
+}
+
+/** Locator for the command palette search input */
+function getSearchInput(page: Page) {
+  return page
+    .locator("[cmdk-input]")
+    .or(page.locator(".command-input"))
+    .or(page.getByRole("combobox"));
+}
 
 test.describe("Command Palette (Ctrl+K)", () => {
   test("Ctrl+K opens command palette", async ({ authedPage: page }) => {
@@ -9,30 +49,25 @@ test.describe("Command Palette (Ctrl+K)", () => {
       await page.waitForTimeout(1000);
     }
 
-    // Press Ctrl+K to open command palette
-    await page.keyboard.press("Control+k");
-    await page.waitForTimeout(500);
+    // Open command palette via synthetic keyboard event
+    await openCommandPalette(page);
 
-    // Verify command palette dialog is visible
-    const palette = page
-      .locator("[cmdk-dialog]")
-      .or(page.locator(".cmdk-dialog"))
-      .or(page.locator(".command-input").locator("..").locator(".."))
-      .or(page.getByRole("dialog"));
-
-    if (await palette.first().isVisible({ timeout: 5_000 }).catch(() => false)) {
-      await expect(palette.first()).toBeVisible();
-
-      // Verify search input is present
-      const searchInput = page
-        .locator("[cmdk-input]")
-        .or(page.locator(".command-input"))
-        .or(page.getByRole("combobox"))
-        .or(page.getByPlaceholder(/search/i));
-      await expect(searchInput.first()).toBeVisible({ timeout: 5_000 });
-    } else {
+    // Verify search input is present (proves the palette opened)
+    const searchInput = getSearchInput(page);
+    if (
+      !(await searchInput
+        .first()
+        .isVisible({ timeout: 5_000 })
+        .catch(() => false))
+    ) {
       test.skip();
+      return;
     }
+    await expect(searchInput.first()).toBeVisible();
+
+    // Verify the dialog container is present
+    const dialog = page.locator(".command-dialog");
+    await expect(dialog).toBeVisible({ timeout: 3_000 });
 
     await page.keyboard.press("Escape");
   });
@@ -44,15 +79,15 @@ test.describe("Command Palette (Ctrl+K)", () => {
       await page.waitForTimeout(1000);
     }
 
-    await page.keyboard.press("Control+k");
-    await page.waitForTimeout(500);
+    await openCommandPalette(page);
 
-    const searchInput = page
-      .locator("[cmdk-input]")
-      .or(page.locator(".command-input"))
-      .or(page.getByRole("combobox"));
-
-    if (!(await searchInput.first().isVisible({ timeout: 5_000 }).catch(() => false))) {
+    const searchInput = getSearchInput(page);
+    if (
+      !(await searchInput
+        .first()
+        .isVisible({ timeout: 5_000 })
+        .catch(() => false))
+    ) {
       test.skip();
       return;
     }
@@ -84,15 +119,15 @@ test.describe("Command Palette (Ctrl+K)", () => {
       await page.waitForTimeout(1000);
     }
 
-    await page.keyboard.press("Control+k");
-    await page.waitForTimeout(500);
+    await openCommandPalette(page);
 
-    const searchInput = page
-      .locator("[cmdk-input]")
-      .or(page.locator(".command-input"))
-      .or(page.getByRole("combobox"));
-
-    if (!(await searchInput.first().isVisible({ timeout: 5_000 }).catch(() => false))) {
+    const searchInput = getSearchInput(page);
+    if (
+      !(await searchInput
+        .first()
+        .isVisible({ timeout: 5_000 })
+        .catch(() => false))
+    ) {
       test.skip();
       return;
     }
@@ -113,8 +148,7 @@ test.describe("Command Palette (Ctrl+K)", () => {
 
       // Verify navigation occurred
       const navigated =
-        page.url().includes("/tasks") ||
-        page.url().includes("/search");
+        page.url().includes("/tasks") || page.url().includes("/search");
       if (navigated) {
         expect(page.url()).toContain("/");
       }
@@ -133,15 +167,16 @@ test.describe("Command Palette (Ctrl+K)", () => {
     }
 
     // Open the command palette
-    await page.keyboard.press("Control+k");
-    await page.waitForTimeout(500);
+    await openCommandPalette(page);
 
-    const palette = page
-      .locator("[cmdk-dialog]")
-      .or(page.locator(".cmdk-dialog"))
-      .or(page.getByRole("dialog"));
-
-    if (!(await palette.first().isVisible({ timeout: 5_000 }).catch(() => false))) {
+    // Verify it opened by checking the search input
+    const searchInput = getSearchInput(page);
+    if (
+      !(await searchInput
+        .first()
+        .isVisible({ timeout: 5_000 })
+        .catch(() => false))
+    ) {
       test.skip();
       return;
     }
@@ -150,7 +185,8 @@ test.describe("Command Palette (Ctrl+K)", () => {
     await page.keyboard.press("Escape");
     await page.waitForTimeout(500);
 
-    // Verify the palette is no longer visible
-    await expect(palette.first()).not.toBeVisible({ timeout: 5_000 });
+    // Verify the command palette dialog is no longer visible
+    const dialog = page.locator(".command-dialog");
+    await expect(dialog).not.toBeVisible({ timeout: 5_000 });
   });
 });
