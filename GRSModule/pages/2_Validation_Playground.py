@@ -207,6 +207,7 @@ def _render_result(result: SemanticResult) -> None:
             "governance_triggers": result.governance_triggers,
             "tension_signals": result.tension_signals,
             "reasoning": result.reasoning,
+            "used_heuristic_fallback": result.used_heuristic_fallback,
         })
 
 
