@@ -123,6 +123,94 @@ def _render_right_column_inputs(api_key_ok: bool) -> tuple[str, bool]:
 
 
 # ---------------------------------------------------------------------------
+# Validation
+# ---------------------------------------------------------------------------
+
+def _run_validation(
+    model_id: str,
+    temperature: float,
+    system_prompt: str,
+    scenario: str,
+) -> SemanticResult:
+    """Call OpenRouter with the given system prompt and scenario. Returns SemanticResult.
+
+    Raises:
+        SemanticParseError: if the LLM response cannot be parsed.
+        RuntimeError: on API/network errors.
+    """
+    client = OpenRouterChatClient(model_id=model_id)
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": scenario},
+    ]
+    result = retry_with_backoff(
+        lambda: client.chat(
+            messages=messages,
+            temperature=temperature,
+            max_tokens=400,
+        ),
+        RetryConfig(),
+    )
+    data = _parse_llm_response(result.text)
+    governance_triggers = {k: bool(data["governance_triggers"][k]) for k in _GOVERNANCE_TRIGGER_KEYS}
+    tension_signals = {k: bool(data["tension_signals"][k]) for k in _TENSION_SIGNAL_KEYS}
+    return SemanticResult(
+        valid_scenario=bool(data["valid_scenario"]),
+        realistic_scenario=bool(data["realistic_scenario"]),
+        governance_triggers=governance_triggers,
+        tension_signals=tension_signals,
+        reasoning=str(data.get("reasoning", "")),
+        used_heuristic_fallback=False,
+    )
+
+
+def _render_result(result: SemanticResult) -> None:
+    """Render the structured SemanticResult as badges, pills, reasoning, and raw JSON."""
+    st.divider()
+
+    # Verdict badges
+    valid_color = "#2d7a2d" if result.valid_scenario else "#b22222"
+    valid_label = "VALID" if result.valid_scenario else "INVALID"
+    realistic_color = "#2d7a2d" if result.realistic_scenario else "#b22222"
+    realistic_label = "REALISTIC" if result.realistic_scenario else "UNREALISTIC"
+    st.markdown(
+        pill(valid_label, valid_color) + "&nbsp;&nbsp;" + pill(realistic_label, realistic_color),
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("**Governance triggers:**")
+    trigger_html = " ".join(
+        pill(k.replace("_", " "), "#1a6ab5") if v
+        else f'<span style="background:#ccc;color:#555;padding:2px 10px;border-radius:12px;'
+             f'font-size:0.8em;margin:2px;display:inline-block">{k.replace("_", " ")}</span>'
+        for k, v in result.governance_triggers.items()
+    )
+    st.markdown(trigger_html, unsafe_allow_html=True)
+
+    st.markdown("**Tension signals:**")
+    signal_html = " ".join(
+        pill(k.replace("_", " "), "#6a4c93") if v
+        else f'<span style="background:#ccc;color:#555;padding:2px 10px;border-radius:12px;'
+             f'font-size:0.8em;margin:2px;display:inline-block">{k.replace("_", " ")}</span>'
+        for k, v in result.tension_signals.items()
+    )
+    st.markdown(signal_html, unsafe_allow_html=True)
+
+    if result.reasoning:
+        st.markdown("**Reasoning:**")
+        st.markdown(result.reasoning)
+
+    with st.expander("Raw JSON"):
+        st.json({
+            "valid_scenario": result.valid_scenario,
+            "realistic_scenario": result.realistic_scenario,
+            "governance_triggers": result.governance_triggers,
+            "tension_signals": result.tension_signals,
+            "reasoning": result.reasoning,
+        })
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -141,6 +229,22 @@ def main() -> None:
     with right_col:
         st.subheader("Scenario")
         scenario, submitted = _render_right_column_inputs(api_key_ok)
+
+        if submitted:
+            with st.spinner("Calling model…"):
+                try:
+                    result = _run_validation(model_id, temperature, system_prompt, scenario)
+                    st.session_state["playground_result"] = result
+                except SemanticParseError as exc:
+                    st.session_state["playground_result"] = {"error": "parse", "detail": str(exc)}
+                except Exception as exc:
+                    st.session_state["playground_result"] = {"error": "api", "detail": str(exc)}
+
+        stored = st.session_state["playground_result"]
+        if stored is not None:
+            if isinstance(stored, SemanticResult):
+                _render_result(stored)
+            # Error states handled in Task 6
 
 
 main()
