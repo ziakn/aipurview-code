@@ -104,6 +104,24 @@ def _render_left_column() -> str:
     return system_prompt
 
 
+def _render_right_column_inputs(api_key_ok: bool) -> tuple[str, bool]:
+    """Render scenario text area and validate button. Returns (scenario_text, submitted)."""
+    scenario = st.text_area(
+        label="scenario",
+        placeholder="Paste a scenario here…",
+        height=200,
+        label_visibility="collapsed",
+    )
+
+    button_disabled = not api_key_ok or not scenario.strip()
+    submitted = st.button(
+        "▶ Validate",
+        disabled=button_disabled,
+        type="primary",
+    )
+    return scenario, submitted
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -122,6 +140,7 @@ def main() -> None:
 
     with right_col:
         st.subheader("Scenario")
+        scenario, submitted = _render_right_column_inputs(api_key_ok)
 
 
 main()
