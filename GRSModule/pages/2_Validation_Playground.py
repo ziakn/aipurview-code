@@ -89,6 +89,8 @@ def _render_left_column() -> str:
     st.subheader("System Prompt")
     if st.button("Reset to default"):
         st.session_state["playground_system_prompt"] = SYSTEM_PROMPT
+        if "playground_system_prompt_area" in st.session_state:
+            del st.session_state["playground_system_prompt_area"]
 
     system_prompt = st.text_area(
         label="system_prompt",
