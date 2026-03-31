@@ -136,7 +136,8 @@ def _run_validation(
 
     Raises:
         SemanticParseError: if the LLM response cannot be parsed.
-        RuntimeError: on API/network errors.
+        RuntimeError: on OpenRouter API HTTP errors (4xx/5xx).
+        Exception: other network/transport errors propagated from retry_with_backoff.
     """
     client = OpenRouterChatClient(model_id=model_id)
     messages = [
