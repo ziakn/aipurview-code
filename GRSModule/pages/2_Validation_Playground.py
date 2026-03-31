@@ -70,6 +70,39 @@ def _render_sidebar() -> tuple[str, float, bool]:
 
 
 # ---------------------------------------------------------------------------
+# Style helpers
+# ---------------------------------------------------------------------------
+
+def pill(text: str, color: str) -> str:
+    return (
+        f'<span style="background:{color};color:#fff;padding:2px 10px;'
+        f'border-radius:12px;font-size:0.8em;margin:2px;display:inline-block">{text}</span>'
+    )
+
+
+# ---------------------------------------------------------------------------
+# Column renderers
+# ---------------------------------------------------------------------------
+
+def _render_left_column() -> str:
+    """Render system prompt editor. Returns current system prompt text."""
+    st.subheader("System Prompt")
+    if st.button("Reset to default"):
+        st.session_state["playground_system_prompt"] = SYSTEM_PROMPT
+
+    system_prompt = st.text_area(
+        label="system_prompt",
+        value=st.session_state["playground_system_prompt"],
+        height=420,
+        label_visibility="collapsed",
+        key="playground_system_prompt_area",
+    )
+    # Keep session state in sync with the text area value
+    st.session_state["playground_system_prompt"] = system_prompt
+    return system_prompt
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -79,6 +112,14 @@ def main() -> None:
 
     _init_session_state()
     model_id, temperature, api_key_ok = _render_sidebar()
+
+    left_col, right_col = st.columns([1, 1.2])
+
+    with left_col:
+        system_prompt = _render_left_column()
+
+    with right_col:
+        st.subheader("Scenario")
 
 
 main()
