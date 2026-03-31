@@ -56,6 +56,8 @@ async def authenticate_virtual_key(bearer_token: str) -> dict:
         result = await db.execute(
             text("""
                 SELECT id, organization_id, name, allowed_endpoint_ids,
+                       allowed_models, blocked_models,
+                       allowed_providers, blocked_providers,
                        max_budget_usd, current_spend_usd, rate_limit_rpm,
                        is_active, revoked_at, expires_at
                 FROM ai_gateway_virtual_keys
@@ -76,6 +78,44 @@ async def authenticate_virtual_key(bearer_token: str) -> dict:
             if float(row["current_spend_usd"]) >= float(row["max_budget_usd"]):
                 raise ValueError("Virtual key budget exhausted")
         return dict(row)
+
+
+# ─── Model / Provider ACL Enforcement ────────────────────────────────────────
+
+def _matches_acl(value: str, patterns: list[str]) -> bool:
+    """Check if a value matches any pattern in the list. Supports trailing wildcard (e.g. 'gpt-4o*')."""
+    for pattern in patterns:
+        if pattern.endswith("*"):
+            if value.startswith(pattern[:-1]):
+                return True
+        elif value == pattern:
+            return True
+    return False
+
+
+def enforce_model_provider_acls(vk: dict, endpoint: dict):
+    """
+    Check virtual key model/provider ACLs against the resolved endpoint.
+    Raises ValueError if the request is denied.
+    """
+    provider = endpoint.get("provider", "")
+    model = endpoint.get("model", "")
+
+    allowed_providers = vk.get("allowed_providers") or []
+    if allowed_providers and not _matches_acl(provider, allowed_providers):
+        raise ValueError(f"Virtual key does not allow provider: {provider}")
+
+    blocked_providers = vk.get("blocked_providers") or []
+    if blocked_providers and _matches_acl(provider, blocked_providers):
+        raise ValueError(f"Virtual key blocks provider: {provider}")
+
+    allowed_models = vk.get("allowed_models") or []
+    if allowed_models and not _matches_acl(model, allowed_models):
+        raise ValueError(f"Virtual key does not allow model: {model}")
+
+    blocked_models = vk.get("blocked_models") or []
+    if blocked_models and _matches_acl(model, blocked_models):
+        raise ValueError(f"Virtual key blocks model: {model}")
 
 
 # ─── Endpoint Resolution ─────────────────────────────────────────────────────
