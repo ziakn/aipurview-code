@@ -154,8 +154,11 @@ def _run_validation(
     data = _parse_llm_response(result.text)
     governance_triggers = {k: bool(data["governance_triggers"][k]) for k in _GOVERNANCE_TRIGGER_KEYS}
     tension_signals = {k: bool(data["tension_signals"][k]) for k in _TENSION_SIGNAL_KEYS}
+    # Recompute valid_scenario from detected signals, mirroring SemanticValidator.validate()
+    # so the playground badge matches production validation behaviour.
+    valid_scenario = any(governance_triggers.values()) and any(tension_signals.values())
     return SemanticResult(
-        valid_scenario=bool(data["valid_scenario"]),
+        valid_scenario=valid_scenario,
         realistic_scenario=bool(data["realistic_scenario"]),
         governance_triggers=governance_triggers,
         tension_signals=tension_signals,
