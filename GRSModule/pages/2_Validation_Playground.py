@@ -248,7 +248,12 @@ def main() -> None:
         if stored is not None:
             if isinstance(stored, SemanticResult):
                 _render_result(stored)
-            # Error states handled in Task 6
+            elif isinstance(stored, dict) and stored.get("error") == "parse":
+                st.warning("LLM response could not be parsed.")
+                with st.expander("Raw response"):
+                    st.text(stored.get("detail", ""))
+            elif isinstance(stored, dict) and stored.get("error") == "api":
+                st.error(f"API error: {stored.get('detail', '')}")
 
 
 main()
