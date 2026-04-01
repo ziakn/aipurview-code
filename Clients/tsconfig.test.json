@@ -4,6 +4,10 @@
     "types": ["node", "vitest/globals"]
   },
   "include": [
+    "src/vite-env.d.ts",
+    "src/vitest-globals.d.ts",
+    "src/presentation/themes/theme.d.ts",
+    "src/presentation/configs/declarations.d.ts",
     "src/**/*.test.ts",
     "src/**/*.test.tsx",
     "src/**/*.spec.ts",
