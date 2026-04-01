@@ -177,24 +177,35 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
         open={menuOpen}
         onClose={handleMenuClose}
         PaperProps={{
+          elevation: 3,
           sx: {
-            minWidth: 260,
+            minWidth: 280,
             maxHeight: 400,
             mt: 1,
+            borderRadius: "8px",
+            border: `1px solid ${border.light}`,
+            boxShadow: "0px 4px 16px rgba(0, 0, 0, 0.08)",
           },
         }}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <Box sx={{ px: 2, py: 1 }}>
-          <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary }}>
+        <Box sx={{ px: 2, py: 1.5 }}>
+          <Typography
+            sx={{
+              fontSize: 14,
+              fontWeight: 600,
+              color: text.primary,
+              fontFamily: "'Red Hat Display', 'Geist', sans-serif",
+            }}
+          >
             Dashboard Tabs
           </Typography>
-          <Typography sx={{ fontSize: 11, color: text.secondary }}>
+          <Typography sx={{ fontSize: 11, color: text.accent, mt: 0.25 }}>
             Select which tabs to show
           </Typography>
         </Box>
-        <Divider />
+        <Divider sx={{ borderColor: border.light }} />
         {availableTabs.map((tab) => {
           const IconComponent = LucideIcons[tab.icon] as LucideIcon;
           const isActive = activeTabs.includes(tab.id);
@@ -205,22 +216,41 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
               key={tab.id}
               onClick={() => !isFixed && handleToggleTab(tab.id)}
               disabled={isFixed}
-              sx={{ py: 0.75 }}
+              sx={{
+                py: 1,
+                px: 2,
+                "&:hover": { backgroundColor: background.hover },
+                "&.Mui-disabled": { opacity: 0.7 },
+              }}
             >
               <Checkbox
                 checked={isActive}
                 disabled={isFixed}
                 size="small"
-                sx={{ p: 0, mr: 1.5 }}
+                sx={{
+                  p: 0,
+                  mr: 1.5,
+                  color: border.dark,
+                  "&.Mui-checked": { color: brand.primary },
+                  "&.Mui-disabled.Mui-checked": { color: brand.primary, opacity: 0.7 },
+                }}
               />
-              <ListItemIcon sx={{ minWidth: 28 }}>
+              <ListItemIcon sx={{ minWidth: 28, color: isActive ? brand.primary : text.icon }}>
                 {IconComponent && <IconComponent size={16} strokeWidth={1.5} />}
               </ListItemIcon>
               <ListItemText
                 primary={tab.label}
                 secondary={tab.description}
-                primaryTypographyProps={{ fontSize: 13 }}
-                secondaryTypographyProps={{ fontSize: 10 }}
+                primaryTypographyProps={{
+                  fontSize: 13,
+                  fontWeight: isActive ? 500 : 400,
+                  color: isActive ? text.primary : text.secondary,
+                }}
+                secondaryTypographyProps={{
+                  fontSize: 10,
+                  color: text.accent,
+                  mt: 0.25,
+                }}
               />
             </MenuItem>
           );
