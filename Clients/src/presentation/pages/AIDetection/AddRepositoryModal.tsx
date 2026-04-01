@@ -244,7 +244,7 @@ export default function AddRepositoryModal({
               placeholder="main"
               value={defaultBranch}
               onChange={(e) => setDefaultBranch(e.target.value)}
-              sx={{ width: 160 }}
+              sx={{ flex: 1 }}
             />
           </Stack>
         </Stack>
@@ -254,19 +254,19 @@ export default function AddRepositoryModal({
           <Stack
             direction="row"
             alignItems="center"
-            justifyContent="space-between"
+            spacing={4}
           >
+            <Toggle
+              checked={scheduleEnabled}
+              onChange={() => setScheduleEnabled(!scheduleEnabled)}
+              size="small"
+            />
             <Typography
               variant="subtitle2"
               sx={{ fontWeight: 600, color: theme.palette.text.primary }}
             >
               Scheduled scans
             </Typography>
-            <Toggle
-              checked={scheduleEnabled}
-              onChange={() => setScheduleEnabled(!scheduleEnabled)}
-              size="small"
-            />
           </Stack>
 
           {scheduleEnabled && (
@@ -331,19 +331,19 @@ export default function AddRepositoryModal({
           <Stack
             direction="row"
             alignItems="center"
-            justifyContent="space-between"
+            spacing={4}
           >
+            <Toggle
+              checked={ciEnabled}
+              onChange={() => setCiEnabled(!ciEnabled)}
+              size="small"
+            />
             <Typography
               variant="subtitle2"
               sx={{ fontWeight: 600, color: theme.palette.text.primary }}
             >
               CI/CD Integration
             </Typography>
-            <Toggle
-              checked={ciEnabled}
-              onChange={() => setCiEnabled(!ciEnabled)}
-              size="small"
-            />
           </Stack>
 
           {ciEnabled && (
