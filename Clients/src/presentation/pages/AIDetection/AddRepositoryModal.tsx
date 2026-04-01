@@ -251,21 +251,26 @@ export default function AddRepositoryModal({
 
         {/* Schedule section */}
         <Stack spacing={4}>
-          <Stack
-            direction="row"
-            alignItems="center"
-            spacing={4}
-          >
-            <Toggle
-              checked={scheduleEnabled}
-              onChange={() => setScheduleEnabled(!scheduleEnabled)}
-              size="small"
-            />
-            <Typography
-              variant="subtitle2"
-              sx={{ fontWeight: 600, color: theme.palette.text.primary }}
+          <Stack spacing={1}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={4}
             >
-              Scheduled scans
+              <Toggle
+                checked={scheduleEnabled}
+                onChange={() => setScheduleEnabled(!scheduleEnabled)}
+                size="small"
+              />
+              <Typography
+                variant="subtitle2"
+                sx={{ fontWeight: 600, color: theme.palette.text.primary }}
+              >
+                Scheduled scans
+              </Typography>
+            </Stack>
+            <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
+              Automatically scan this repository on a recurring schedule.
             </Typography>
           </Stack>
 
@@ -328,21 +333,26 @@ export default function AddRepositoryModal({
 
         {/* CI/CD Integration section */}
         <Stack spacing={4}>
-          <Stack
-            direction="row"
-            alignItems="center"
-            spacing={4}
-          >
-            <Toggle
-              checked={ciEnabled}
-              onChange={() => setCiEnabled(!ciEnabled)}
-              size="small"
-            />
-            <Typography
-              variant="subtitle2"
-              sx={{ fontWeight: 600, color: theme.palette.text.primary }}
+          <Stack spacing={1}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={4}
             >
-              CI/CD Integration
+              <Toggle
+                checked={ciEnabled}
+                onChange={() => setCiEnabled(!ciEnabled)}
+                size="small"
+              />
+              <Typography
+                variant="subtitle2"
+                sx={{ fontWeight: 600, color: theme.palette.text.primary }}
+              >
+                CI/CD Integration
+              </Typography>
+            </Stack>
+            <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
+              Run scans on pull requests and block merges that exceed risk thresholds.
             </Typography>
           </Stack>
 
