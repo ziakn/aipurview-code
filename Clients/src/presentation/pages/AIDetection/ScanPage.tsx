@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import {
   Search,
-  Github,
+  GitBranch as GithubIcon,
   AlertCircle,
   CheckCircle2,
   XCircle,
@@ -452,7 +452,7 @@ export default function ScanPage() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Github size={16} color={palette.text.tertiary} />
+                    <GithubIcon size={16} color={palette.text.tertiary} />
                   </InputAdornment>
                 ),
               }}

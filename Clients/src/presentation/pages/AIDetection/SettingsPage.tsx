@@ -293,7 +293,7 @@ export default function SettingsPage() {
             {
               label: "GitHub integration",
               value: "github",
-              icon: "Github",
+              icon: "GitBranch",
               tooltip: "Connect a GitHub token to scan private repositories",
             },
             {
