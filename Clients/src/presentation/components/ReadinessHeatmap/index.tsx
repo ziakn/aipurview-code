@@ -57,7 +57,6 @@ export default function ReadinessHeatmap({
           textAlign: "center",
           backgroundColor: background.accent,
           borderRadius: 2,
-          border: `1px solid ${border.light}`,
         }}
       >
         <Typography sx={{ fontSize: 13, color: textColors.tertiary }}>
@@ -72,8 +71,7 @@ export default function ReadinessHeatmap({
       sx={{
         p: 2,
         borderRadius: 2,
-        border: `1px solid ${border.light}`,
-        backgroundColor: background.main,
+        backgroundColor: "transparent",
       }}
     >
       <Typography sx={{ fontSize: 15, fontWeight: 600, color: textColors.primary, mb: 1.5 }}>

@@ -1,7 +1,24 @@
 import { useState } from "react";
-import { Box, Typography, Button, CircularProgress, Tab, Tabs } from "@mui/material";
-import { text as textColors, background, border } from "../../themes/palette";
-import ReadinessScoreCard from "../../components/ReadinessScoreCard";
+import {
+  Box,
+  Typography,
+  Button,
+  CircularProgress,
+  Stack,
+  Tab,
+  Tabs,
+  Card,
+  CardContent,
+} from "@mui/material";
+import { ShieldCheck, RefreshCw } from "lucide-react";
+import {
+  text as textColors,
+  background,
+  border as borderPalette,
+  brand,
+  status,
+  accent,
+} from "../../themes/palette";
 import ReadinessHeatmap from "../../components/ReadinessHeatmap";
 import ReadinessTrend from "../../components/ReadinessTrend";
 import WeakControlsList from "../../components/WeakControlsList";
@@ -13,20 +30,76 @@ import {
   useReadinessHistory,
   useTriggerCalculateAll,
 } from "../../../application/hooks/useReadiness";
+import type { ReadinessLevel } from "../../../domain/interfaces/i.readiness";
 
 const FRAMEWORK_TABS = [
   { value: "eu_ai_act", label: "EU AI Act" },
   { value: "iso_42001", label: "ISO 42001" },
 ];
 
+// Consistent card style matching DashboardCard / DashboardHeaderCard
+const cardSx = {
+  border: `1px solid ${borderPalette.dark}`,
+  borderRadius: "4px",
+  background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
+};
+
+function getLevelColor(level: ReadinessLevel | string | undefined) {
+  switch (level) {
+    case "ready":
+      return status.success.text;
+    case "needs_work":
+      return accent.primary.text;
+    case "at_risk":
+      return status.warning.text;
+    case "not_started":
+      return status.error.text;
+    default:
+      return textColors.accent;
+  }
+}
+
+function getLevelLabel(level: ReadinessLevel | string | undefined) {
+  switch (level) {
+    case "ready":
+      return "Ready";
+    case "needs_work":
+      return "Needs Work";
+    case "at_risk":
+      return "At Risk";
+    case "not_started":
+      return "Not Started";
+    default:
+      return "—";
+  }
+}
+
+function classifyLevel(score: number): ReadinessLevel {
+  if (score >= 80) return "ready";
+  if (score >= 60) return "needs_work";
+  if (score >= 30) return "at_risk";
+  return "not_started";
+}
+
+function formatFrameworkName(type: string): string {
+  const names: Record<string, string> = {
+    eu_ai_act: "EU AI Act",
+    iso_42001: "ISO 42001",
+    iso_27001: "ISO 27001",
+    nist_ai_rmf: "NIST AI RMF",
+  };
+  return names[type] || type.replace(/_/g, " ").toUpperCase();
+}
+
 export default function ReadinessDashboard() {
   const [selectedFramework, setSelectedFramework] = useState("eu_ai_act");
 
-  // All hooks use undefined projectId = org-wide (no project filter)
   const { data: scores, isLoading: scoresLoading } = useReadinessScores();
-  const { data: controlScores, isLoading: controlsLoading } = useControlScores(selectedFramework);
+  const { data: controlScores, isLoading: controlsLoading } =
+    useControlScores(selectedFramework);
   const { data: weakest, isLoading: weakestLoading } = useWeakestControls(10);
-  const { data: recommendations, isLoading: recsLoading } = useRecommendations(10);
+  const { data: recommendations, isLoading: recsLoading } =
+    useRecommendations(10);
   const { data: history, isLoading: historyLoading } = useReadinessHistory();
   const triggerCalculate = useTriggerCalculateAll();
 
@@ -35,15 +108,30 @@ export default function ReadinessDashboard() {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
-      {/* Header */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+    <Box>
+      {/* Header — matches dashboard style */}
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        mb="16px"
+      >
         <Box>
-          <Typography sx={{ fontSize: 22, fontWeight: 700, color: textColors.primary }}>
-            Audit Readiness Dashboard
+          <Typography
+            sx={{
+              fontWeight: 600,
+              fontSize: 20,
+              fontFamily: "'Red Hat Display', 'Geist', sans-serif",
+              color: textColors.primary,
+            }}
+          >
+            Audit Readiness
           </Typography>
-          <Typography sx={{ fontSize: 13, color: textColors.secondary, mt: 0.5 }}>
-            Per-control readiness scores, framework aggregations, and improvement recommendations.
+          <Typography
+            sx={{ fontSize: 13, color: textColors.secondary, mt: 0.25 }}
+          >
+            Per-control readiness scores, framework aggregations, and
+            improvement recommendations.
           </Typography>
         </Box>
         <Button
@@ -51,84 +139,235 @@ export default function ReadinessDashboard() {
           size="small"
           onClick={handleCalculate}
           disabled={triggerCalculate.isPending}
-          sx={{ textTransform: "none", minWidth: 140 }}
+          startIcon={
+            triggerCalculate.isPending ? (
+              <CircularProgress size={14} color="inherit" />
+            ) : (
+              <RefreshCw size={14} />
+            )
+          }
+          sx={{
+            textTransform: "none",
+            minWidth: 160,
+            backgroundColor: brand.primary,
+            borderRadius: "4px",
+            fontSize: 13,
+            fontWeight: 500,
+            boxShadow: "none",
+            "&:hover": {
+              backgroundColor: brand.primaryHover,
+              boxShadow: "none",
+            },
+          }}
         >
-          {triggerCalculate.isPending ? (
-            <CircularProgress size={16} sx={{ mr: 1 }} />
-          ) : null}
           {triggerCalculate.isPending ? "Calculating..." : "Calculate Readiness"}
         </Button>
-      </Box>
+      </Stack>
 
-      {/* Framework score cards */}
-      <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: 2, mb: 3 }}>
+      {/* Summary stat cards — matching DashboardHeaderCard layout */}
+      <Box
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "16px",
+          mb: "16px",
+          "& > *": { flex: "1 1 0", minWidth: "150px" },
+        }}
+      >
         {scoresLoading ? (
-          <Box sx={{ p: 3, textAlign: "center" }}>
-            <CircularProgress size={24} />
+          <Box sx={{ p: 2, textAlign: "center", width: "100%" }}>
+            <CircularProgress size={20} />
           </Box>
         ) : scores && scores.length > 0 ? (
-          scores.map((fw: any) => (
-            <ReadinessScoreCard
-              key={`${fw.framework_type}-${fw.project_id ?? "org"}`}
-              frameworkType={fw.framework_type}
-              overallScore={fw.avg_score}
-              totalControls={fw.total_controls}
-              readyCount={fw.ready_count}
-              needsWorkCount={fw.needs_work_count}
-              atRiskCount={fw.at_risk_count}
-              notStartedCount={fw.not_started_count}
-            />
-          ))
+          scores.map((fw: any) => {
+            const score = fw.avg_score ?? 0;
+            const level = classifyLevel(score);
+            return (
+              <Stack
+                key={`${fw.framework_type}-${fw.project_id ?? "org"}`}
+                sx={{
+                  ...cardSx,
+                  borderRadius: 2,
+                  padding: "8px 14px 14px 14px",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: 12,
+                    color: textColors.secondary,
+                    fontWeight: 500,
+                    mb: 0.5,
+                  }}
+                >
+                  {formatFrameworkName(fw.framework_type)}
+                </Typography>
+                <Stack direction="row" alignItems="baseline" spacing={1}>
+                  <Typography
+                    sx={{
+                      fontSize: 28,
+                      fontWeight: 700,
+                      color: getLevelColor(level),
+                      lineHeight: 1.1,
+                    }}
+                  >
+                    {score}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: 11,
+                      fontWeight: 600,
+                      color: getLevelColor(level),
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {getLevelLabel(level)}
+                  </Typography>
+                </Stack>
+                {/* Mini counts row */}
+                <Stack
+                  direction="row"
+                  spacing={1}
+                  sx={{ mt: 1, flexWrap: "wrap" }}
+                >
+                  {[
+                    {
+                      label: "Ready",
+                      count: fw.ready_count ?? 0,
+                      color: status.success.text,
+                    },
+                    {
+                      label: "Needs Work",
+                      count: fw.needs_work_count ?? 0,
+                      color: accent.primary.text,
+                    },
+                    {
+                      label: "At Risk",
+                      count: fw.at_risk_count ?? 0,
+                      color: status.warning.text,
+                    },
+                    {
+                      label: "Not Started",
+                      count: fw.not_started_count ?? 0,
+                      color: status.error.text,
+                    },
+                  ].map((item) => (
+                    <Typography
+                      key={item.label}
+                      sx={{ fontSize: 11, color: textColors.accent }}
+                    >
+                      <Box
+                        component="span"
+                        sx={{
+                          fontWeight: 600,
+                          color: item.count > 0 ? item.color : textColors.accent,
+                        }}
+                      >
+                        {item.count}
+                      </Box>{" "}
+                      {item.label}
+                    </Typography>
+                  ))}
+                </Stack>
+              </Stack>
+            );
+          })
         ) : (
-          <Box
-            sx={{
-              p: 3,
-              textAlign: "center",
-              gridColumn: "1/-1",
-              backgroundColor: background.accent,
-              borderRadius: 2,
-              border: `1px solid ${border.light}`,
-            }}
-          >
-            <Typography sx={{ fontSize: 13, color: textColors.tertiary }}>
-              No readiness scores yet. Click &quot;Calculate Readiness&quot; to start.
-            </Typography>
-          </Box>
+          <Card elevation={0} sx={{ ...cardSx, width: "100%" }}>
+            <CardContent
+              sx={{ textAlign: "center", py: 3, "&:last-child": { pb: 3 } }}
+            >
+              <ShieldCheck
+                size={32}
+                strokeWidth={1}
+                style={{ color: textColors.accent, marginBottom: 8 }}
+              />
+              <Typography
+                sx={{ fontSize: 13, color: textColors.tertiary }}
+              >
+                No readiness scores yet. Click &quot;Calculate Readiness&quot; to
+                start.
+              </Typography>
+            </CardContent>
+          </Card>
         )}
       </Box>
 
-      {/* Framework tabs for heatmap */}
+      {/* Framework tabs — same style as app's TabBar */}
       <Tabs
         value={selectedFramework}
         onChange={(_, v) => setSelectedFramework(v)}
-        sx={{ mb: 2 }}
+        TabIndicatorProps={{
+          style: { backgroundColor: brand.primary },
+        }}
+        sx={{
+          mb: "16px",
+          minHeight: "20px",
+          "& .MuiTab-root": {
+            textTransform: "none",
+            fontWeight: 400,
+            minHeight: "20px",
+            padding: "16px 0 7px",
+            fontSize: 13,
+          },
+          "& .Mui-selected": { color: brand.primary },
+          "& .MuiTabs-flexContainer": { columnGap: "34px" },
+        }}
       >
         {FRAMEWORK_TABS.map((tab) => (
-          <Tab key={tab.value} value={tab.value} label={tab.label} sx={{ textTransform: "none" }} />
+          <Tab key={tab.value} value={tab.value} label={tab.label} />
         ))}
       </Tabs>
 
-      {/* Two-column layout: Heatmap + Trend */}
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 2, mb: 3 }}>
-        <ReadinessHeatmap
-          controls={controlScores ?? []}
-          frameworkType={selectedFramework}
-          isLoading={controlsLoading}
-        />
-        <ReadinessTrend data={history ?? []} isLoading={historyLoading} />
+      {/* Two-column: Heatmap + Trend — using DashboardCard pattern */}
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+          gap: "16px",
+          mb: "16px",
+        }}
+      >
+        <Card elevation={0} sx={cardSx}>
+          <CardContent sx={{ p: "16px", "&:last-child": { pb: "16px" } }}>
+            <ReadinessHeatmap
+              controls={controlScores ?? []}
+              frameworkType={selectedFramework}
+              isLoading={controlsLoading}
+            />
+          </CardContent>
+        </Card>
+        <Card elevation={0} sx={cardSx}>
+          <CardContent sx={{ p: "16px", "&:last-child": { pb: "16px" } }}>
+            <ReadinessTrend data={history ?? []} isLoading={historyLoading} />
+          </CardContent>
+        </Card>
       </Box>
 
-      {/* Two-column layout: Weakest Controls + Recommendations */}
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 2 }}>
-        <WeakControlsList
-          controls={weakest ?? []}
-          isLoading={weakestLoading}
-        />
-        <WeakControlsList
-          controls={recommendations ?? []}
-          isLoading={recsLoading}
-          maxItems={10}
-        />
+      {/* Two-column: Weakest + Recommendations */}
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+          gap: "16px",
+        }}
+      >
+        <Card elevation={0} sx={cardSx}>
+          <CardContent sx={{ p: "16px", "&:last-child": { pb: "16px" } }}>
+            <WeakControlsList
+              controls={weakest ?? []}
+              isLoading={weakestLoading}
+            />
+          </CardContent>
+        </Card>
+        <Card elevation={0} sx={cardSx}>
+          <CardContent sx={{ p: "16px", "&:last-child": { pb: "16px" } }}>
+            <WeakControlsList
+              controls={recommendations ?? []}
+              isLoading={recsLoading}
+              maxItems={10}
+            />
+          </CardContent>
+        </Card>
       </Box>
     </Box>
   );
