@@ -1,4 +1,5 @@
 import { sequelize } from "../database/db";
+import { buildVisibilityFilterForEvidence } from "./visibility.utils";
 
 /**
  * Insert or update an AI analysis result for a file.
@@ -15,6 +16,7 @@ export const upsertAnalysisQuery = async (
     suggested_control_links: any;
     analysis_model: string;
     analyzed_by: number | null;
+    visibility?: string;
   }
 ) => {
   // Check if analysis already exists
@@ -38,7 +40,8 @@ export const upsertAnalysisQuery = async (
          analysis_model = :analysis_model,
          analysis_version = analysis_version + 1,
          analyzed_at = NOW(),
-         analyzed_by = :analyzed_by
+         analyzed_by = :analyzed_by,
+         visibility = :visibility
        WHERE id = :id AND organization_id = :organizationId
        RETURNING *`,
       {
@@ -53,6 +56,7 @@ export const upsertAnalysisQuery = async (
           suggested_control_links: JSON.stringify(data.suggested_control_links),
           analysis_model: data.analysis_model,
           analyzed_by: data.analyzed_by,
+          visibility: data.visibility || "public",
         },
       }
     );
@@ -63,11 +67,11 @@ export const upsertAnalysisQuery = async (
     `INSERT INTO evidence_ai_analysis (
        file_id, summary, key_findings, compliance_areas,
        quality_score, overall_quality_score, suggested_control_links,
-       analysis_model, analyzed_by, organization_id
+       analysis_model, analyzed_by, visibility, organization_id
      ) VALUES (
        :fileId, :summary, :key_findings, :compliance_areas,
        :quality_score, :overall_quality_score, :suggested_control_links,
-       :analysis_model, :analyzed_by, :organizationId
+       :analysis_model, :analyzed_by, :visibility, :organizationId
      ) RETURNING *`,
     {
       replacements: {
@@ -81,6 +85,7 @@ export const upsertAnalysisQuery = async (
         suggested_control_links: JSON.stringify(data.suggested_control_links),
         analysis_model: data.analysis_model,
         analyzed_by: data.analyzed_by,
+        visibility: data.visibility || "public",
       },
     }
   );
@@ -92,14 +97,18 @@ export const upsertAnalysisQuery = async (
  */
 export const getAnalysisByFileIdQuery = async (
   fileId: number,
-  organizationId: number
+  organizationId: number,
+  userId?: number | null,
+  visibility?: string
 ) => {
+  const vis = buildVisibilityFilterForEvidence(userId ?? null, visibility, "eaa");
   const [rows] = await sequelize.query(
-    `SELECT * FROM evidence_ai_analysis
-     WHERE file_id = :fileId AND organization_id = :organizationId
-     ORDER BY analyzed_at DESC
+    `SELECT * FROM evidence_ai_analysis eaa
+     WHERE eaa.file_id = :fileId AND eaa.organization_id = :organizationId
+     ${vis.clause}
+     ORDER BY eaa.analyzed_at DESC
      LIMIT 1`,
-    { replacements: { fileId, organizationId } }
+    { replacements: { fileId, organizationId, ...vis.replacements } }
   );
   return (rows as any[])[0] || null;
 };
@@ -107,14 +116,20 @@ export const getAnalysisByFileIdQuery = async (
 /**
  * Get quality scores for all analyzed files (dashboard view).
  */
-export const getQualityScoresQuery = async (organizationId: number) => {
+export const getQualityScoresQuery = async (
+  organizationId: number,
+  userId?: number | null,
+  visibility?: string
+) => {
+  const vis = buildVisibilityFilterForEvidence(userId ?? null, visibility, "eaa");
   const [rows] = await sequelize.query(
     `SELECT eaa.*, f.filename
      FROM evidence_ai_analysis eaa
      LEFT JOIN files f ON f.id = eaa.file_id
      WHERE eaa.organization_id = :organizationId
+     ${vis.clause}
      ORDER BY eaa.overall_quality_score ASC`,
-    { replacements: { organizationId } }
+    { replacements: { organizationId, ...vis.replacements } }
   );
   return rows as any[];
 };

@@ -12,6 +12,8 @@ import {
   LinearProgress,
 } from "@mui/material";
 import { Sparkles, CheckCircle, Clock, BarChart3 } from "lucide-react";
+import { VisibilityFilter } from "../../components/VisibilityToggle";
+import type { VisibilityFilterValue } from "../../components/VisibilityToggle";
 import {
   text as textColors,
   background,
@@ -44,6 +46,8 @@ const BADGE_COLORS: Record<string, { label: string; color: string }> = {
 
 export default function AIContentReview() {
   const [tab, setTab] = useState(0);
+  const [visFilter, setVisFilter] = useState<VisibilityFilterValue>("all");
+  const filterParam = visFilter === "all" ? undefined : visFilter;
   const { data: statsData, isLoading: statsLoading } = useAIContentStats();
   const { data: unreviewedData, isLoading: unreviewedLoading } =
     useUnreviewedContent(50);
@@ -86,8 +90,9 @@ export default function AIContentReview() {
             transparency compliance.
           </Typography>
         </Box>
-        {/* Badge legend */}
-        <Stack direction="row" spacing={0.75}>
+        {/* Badge legend + filter */}
+        <Stack direction="row" spacing={1.5} alignItems="center">
+          <VisibilityFilter value={visFilter} onChange={setVisFilter} />
           <AIContentBadge badgeType="generated" variant="tooltip" size="medium" />
           <AIContentBadge badgeType="assisted" variant="tooltip" size="medium" />
           <AIContentBadge badgeType="reviewed" variant="tooltip" size="medium" />

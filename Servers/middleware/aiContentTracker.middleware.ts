@@ -25,7 +25,7 @@ export async function trackAIContent(
   organizationId: number,
   entityType: string,
   entityId: number,
-  options: Partial<AIContentTrackOptions> & { badgeType: BadgeType },
+  options: Partial<AIContentTrackOptions> & { badgeType: BadgeType; visibility?: string },
   createdBy?: number | null
 ): Promise<any> {
   try {
@@ -34,12 +34,12 @@ export async function trackAIContent(
         (entity_type, entity_id, field_name, badge_type,
          model_used, model_provider, tool_name,
          confidence_score, prompt_summary,
-         human_reviewed, created_by, created_at, organization_id)
+         human_reviewed, created_by, visibility, created_at, organization_id)
        VALUES
         (:entityType, :entityId, :fieldName, :badgeType,
          :modelUsed, :modelProvider, :toolName,
          :confidenceScore, :promptSummary,
-         false, :createdBy, NOW(), :organizationId)
+         false, :createdBy, :visibility, NOW(), :organizationId)
        RETURNING *`,
       {
         replacements: {
@@ -53,6 +53,7 @@ export async function trackAIContent(
           confidenceScore: options.confidenceScore ?? null,
           promptSummary: options.promptSummary ?? null,
           createdBy: createdBy ?? null,
+          visibility: options.visibility || "public",
           organizationId,
         },
       }

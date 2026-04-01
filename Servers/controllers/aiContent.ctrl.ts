@@ -25,10 +25,13 @@ export async function getBadges(req: Request, res: Response) {
   }
 
   try {
+    const visFilter = req.query.visibility ? String(req.query.visibility) : undefined;
     const badges = await getBadgesByEntityQuery(
       entityType,
       parsedEntityId,
-      req.organizationId!
+      req.organizationId!,
+      req.userId ? Number(req.userId) : null,
+      visFilter
     );
 
     logStructured("successful", `badges fetched for ${entityType}:${entityId}`, functionName, fileName);
@@ -92,7 +95,8 @@ export async function getUnreviewed(req: Request, res: Response) {
     const limit = req.query.limit ? Number(req.query.limit) : 50;
     const offset = req.query.offset ? Number(req.query.offset) : 0;
 
-    const result = await getUnreviewedQuery(req.organizationId!, limit, offset);
+    const visFilter = req.query.visibility ? String(req.query.visibility) : undefined;
+    const result = await getUnreviewedQuery(req.organizationId!, limit, offset, req.userId ? Number(req.userId) : null, visFilter);
 
     logStructured("successful", `${result.items.length} unreviewed items fetched`, functionName, fileName);
     return res.status(200).json(STATUS_CODE[200](result));
@@ -111,7 +115,8 @@ export async function getStats(req: Request, res: Response) {
   const functionName = "getStats";
 
   try {
-    const stats = await getStatsQuery(req.organizationId!);
+    const visFilter = req.query.visibility ? String(req.query.visibility) : undefined;
+    const stats = await getStatsQuery(req.organizationId!, req.userId ? Number(req.userId) : null, visFilter);
 
     logStructured("successful", "AI content stats fetched", functionName, fileName);
     return res.status(200).json(STATUS_CODE[200](stats));

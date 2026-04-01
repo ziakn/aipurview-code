@@ -11,6 +11,8 @@ import {
   CardContent,
 } from "@mui/material";
 import { ShieldCheck, RefreshCw } from "lucide-react";
+import { VisibilityToggle, VisibilityFilter } from "../../components/VisibilityToggle";
+import type { VisibilityValue, VisibilityFilterValue } from "../../components/VisibilityToggle";
 import {
   text as textColors,
   background,
@@ -93,18 +95,21 @@ function formatFrameworkName(type: string): string {
 
 export default function ReadinessDashboard() {
   const [selectedFramework, setSelectedFramework] = useState("eu_ai_act");
+  const [visibility, setVisibility] = useState<VisibilityValue>("public");
+  const [visFilter, setVisFilter] = useState<VisibilityFilterValue>("all");
 
-  const { data: scores, isLoading: scoresLoading } = useReadinessScores();
+  const filterParam = visFilter === "all" ? undefined : visFilter;
+  const { data: scores, isLoading: scoresLoading } = useReadinessScores(undefined, filterParam);
   const { data: controlScores, isLoading: controlsLoading } =
-    useControlScores(selectedFramework);
-  const { data: weakest, isLoading: weakestLoading } = useWeakestControls(10);
+    useControlScores(selectedFramework, { visibility: filterParam });
+  const { data: weakest, isLoading: weakestLoading } = useWeakestControls(10, undefined, filterParam);
   const { data: recommendations, isLoading: recsLoading } =
-    useRecommendations(10);
-  const { data: history, isLoading: historyLoading } = useReadinessHistory();
+    useRecommendations(10, undefined, filterParam);
+  const { data: history, isLoading: historyLoading } = useReadinessHistory(undefined, undefined, filterParam);
   const triggerCalculate = useTriggerCalculateAll();
 
   const handleCalculate = () => {
-    triggerCalculate.mutate(undefined);
+    triggerCalculate.mutate({ visibility });
   };
 
   return (
@@ -134,10 +139,12 @@ export default function ReadinessDashboard() {
             improvement recommendations.
           </Typography>
         </Box>
-        <Button
-          variant="contained"
-          size="small"
-          onClick={handleCalculate}
+        <Stack direction="row" alignItems="center" spacing={1.5}>
+          <VisibilityToggle value={visibility} onChange={setVisibility} />
+          <Button
+            variant="contained"
+            size="small"
+            onClick={handleCalculate}
           disabled={triggerCalculate.isPending}
           startIcon={
             triggerCalculate.isPending ? (
@@ -161,7 +168,13 @@ export default function ReadinessDashboard() {
           }}
         >
           {triggerCalculate.isPending ? "Calculating..." : "Calculate Readiness"}
-        </Button>
+          </Button>
+        </Stack>
+      </Stack>
+
+      {/* Visibility filter */}
+      <Stack direction="row" justifyContent="flex-end" sx={{ mb: "12px" }}>
+        <VisibilityFilter value={visFilter} onChange={setVisFilter} />
       </Stack>
 
       {/* Summary stat cards — matching DashboardHeaderCard layout */}

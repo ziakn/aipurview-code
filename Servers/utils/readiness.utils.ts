@@ -1,5 +1,6 @@
 import { sequelize } from "../database/db";
 import logger from "./logger/fileLogger";
+import { buildVisibilityFilter } from "./visibility.utils";
 
 /**
  * Upsert a control readiness score.
@@ -11,6 +12,8 @@ export async function upsertControlScoreQuery(
   organizationId: number,
   data: {
     project_id?: number | null;
+    created_by?: number | null;
+    visibility?: string;
     evidence_quality_score: number;
     evidence_count_score: number;
     evidence_recency_score: number;
@@ -24,18 +27,18 @@ export async function upsertControlScoreQuery(
   try {
     const [rows] = await sequelize.query(
       `INSERT INTO control_readiness_scores
-        (control_id, framework_type, project_id,
+        (control_id, framework_type, project_id, created_by, visibility,
          evidence_quality_score, evidence_count_score, evidence_recency_score,
          task_completion_score, risk_mitigation_score,
          overall_score, readiness_level, recommendations,
          calculated_at, organization_id)
        VALUES
-        (:controlId, :frameworkType, :projectId,
+        (:controlId, :frameworkType, :projectId, :createdBy, :visibility,
          :evidenceQuality, :evidenceCount, :evidenceRecency,
          :taskCompletion, :riskMitigation,
          :overallScore, :readinessLevel, :recommendations,
          NOW(), :organizationId)
-       ON CONFLICT (control_id, framework_type, COALESCE(project_id, 0), organization_id)
+       ON CONFLICT (control_id, framework_type, COALESCE(project_id, 0), COALESCE(created_by, 0), organization_id)
        DO UPDATE SET
          evidence_quality_score = EXCLUDED.evidence_quality_score,
          evidence_count_score = EXCLUDED.evidence_count_score,
@@ -52,6 +55,8 @@ export async function upsertControlScoreQuery(
           controlId,
           frameworkType,
           projectId: data.project_id ?? null,
+          createdBy: data.created_by ?? null,
+          visibility: data.visibility || "public",
           evidenceQuality: data.evidence_quality_score,
           evidenceCount: data.evidence_count_score,
           evidenceRecency: data.evidence_recency_score,
@@ -79,6 +84,8 @@ export async function upsertFrameworkScoreQuery(
   organizationId: number,
   data: {
     project_id?: number | null;
+    created_by?: number | null;
+    visibility?: string;
     total_controls: number;
     avg_score: number;
     ready_count: number;
@@ -91,16 +98,16 @@ export async function upsertFrameworkScoreQuery(
   try {
     const [rows] = await sequelize.query(
       `INSERT INTO framework_readiness_scores
-        (framework_type, project_id,
+        (framework_type, project_id, created_by, visibility,
          total_controls, avg_score,
          ready_count, needs_work_count, at_risk_count, not_started_count,
          weakest_controls, calculated_at, organization_id)
        VALUES
-        (:frameworkType, :projectId,
+        (:frameworkType, :projectId, :createdBy, :visibility,
          :totalControls, :avgScore,
          :readyCount, :needsWorkCount, :atRiskCount, :notStartedCount,
          :weakestControls, NOW(), :organizationId)
-       ON CONFLICT (framework_type, COALESCE(project_id, 0), organization_id)
+       ON CONFLICT (framework_type, COALESCE(project_id, 0), COALESCE(created_by, 0), organization_id)
        DO UPDATE SET
          total_controls = EXCLUDED.total_controls,
          avg_score = EXCLUDED.avg_score,
@@ -115,6 +122,8 @@ export async function upsertFrameworkScoreQuery(
         replacements: {
           frameworkType,
           projectId: data.project_id ?? null,
+          createdBy: data.created_by ?? null,
+          visibility: data.visibility || "public",
           totalControls: data.total_controls,
           avgScore: data.avg_score,
           readyCount: data.ready_count,
@@ -138,18 +147,22 @@ export async function upsertFrameworkScoreQuery(
  */
 export async function getFrameworkScoresQuery(
   organizationId: number,
-  projectId?: number | null
+  projectId?: number | null,
+  userId?: number | null,
+  visibility?: string
 ): Promise<any[]> {
   try {
     const projectFilter = projectId != null
       ? "AND project_id = :projectId"
       : "AND project_id IS NULL";
+    const vis = buildVisibilityFilter(userId ?? null, visibility);
     const [rows] = await sequelize.query(
       `SELECT * FROM framework_readiness_scores
        WHERE organization_id = :organizationId
          ${projectFilter}
+         ${vis.clause}
        ORDER BY avg_score ASC`,
-      { replacements: { organizationId, ...(projectId != null ? { projectId } : {}) } }
+      { replacements: { organizationId, ...(projectId != null ? { projectId } : {}), ...vis.replacements } }
     );
     return rows as any[];
   } catch (error) {
@@ -164,19 +177,23 @@ export async function getFrameworkScoresQuery(
 export async function getFrameworkScoreByTypeQuery(
   frameworkType: string,
   organizationId: number,
-  projectId?: number | null
+  projectId?: number | null,
+  userId?: number | null,
+  visibility?: string
 ): Promise<any | null> {
   try {
     const projectFilter = projectId != null
       ? "AND project_id = :projectId"
       : "AND project_id IS NULL";
+    const vis = buildVisibilityFilter(userId ?? null, visibility);
     const [rows] = await sequelize.query(
       `SELECT * FROM framework_readiness_scores
        WHERE framework_type = :frameworkType
          AND organization_id = :organizationId
          ${projectFilter}
+         ${vis.clause}
        LIMIT 1`,
-      { replacements: { frameworkType, organizationId, ...(projectId != null ? { projectId } : {}) } }
+      { replacements: { frameworkType, organizationId, ...(projectId != null ? { projectId } : {}), ...vis.replacements } }
     );
     return (rows as any[])[0] || null;
   } catch (error) {
@@ -191,19 +208,23 @@ export async function getFrameworkScoreByTypeQuery(
 export async function getControlScoresQuery(
   frameworkType: string,
   organizationId: number,
-  projectId?: number | null
+  projectId?: number | null,
+  userId?: number | null,
+  visibility?: string
 ): Promise<any[]> {
   try {
     const projectFilter = projectId != null
       ? "AND project_id = :projectId"
       : "AND project_id IS NULL";
+    const vis = buildVisibilityFilter(userId ?? null, visibility);
     const [rows] = await sequelize.query(
       `SELECT * FROM control_readiness_scores
        WHERE framework_type = :frameworkType
          AND organization_id = :organizationId
          ${projectFilter}
+         ${vis.clause}
        ORDER BY overall_score ASC`,
-      { replacements: { frameworkType, organizationId, ...(projectId != null ? { projectId } : {}) } }
+      { replacements: { frameworkType, organizationId, ...(projectId != null ? { projectId } : {}), ...vis.replacements } }
     );
     return rows as any[];
   } catch (error) {
@@ -218,12 +239,15 @@ export async function getControlScoresQuery(
 export async function getWeakestControlsQuery(
   organizationId: number,
   limit: number = 10,
-  projectId?: number | null
+  projectId?: number | null,
+  userId?: number | null,
+  visibility?: string
 ): Promise<any[]> {
   try {
     const projectFilter = projectId != null
       ? "AND project_id = :projectId"
       : "AND project_id IS NULL";
+    const vis = buildVisibilityFilter(userId ?? null, visibility);
     const [rows] = await sequelize.query(
       `SELECT control_id, framework_type, overall_score, readiness_level,
               evidence_quality_score, evidence_count_score,
@@ -232,9 +256,10 @@ export async function getWeakestControlsQuery(
        FROM control_readiness_scores
        WHERE organization_id = :organizationId
          ${projectFilter}
+         ${vis.clause}
        ORDER BY overall_score ASC
        LIMIT :limit`,
-      { replacements: { organizationId, limit, ...(projectId != null ? { projectId } : {}) } }
+      { replacements: { organizationId, limit, ...(projectId != null ? { projectId } : {}), ...vis.replacements } }
     );
     return rows as any[];
   } catch (error) {
@@ -252,6 +277,8 @@ export async function insertReadinessHistoryQuery(
   organizationId: number,
   data: {
     project_id?: number | null;
+    created_by?: number | null;
+    visibility?: string;
     avg_score: number;
     total_controls: number;
     ready_count: number;
@@ -263,17 +290,19 @@ export async function insertReadinessHistoryQuery(
   try {
     await sequelize.query(
       `INSERT INTO readiness_history
-        (framework_type, project_id, avg_score, total_controls,
+        (framework_type, project_id, created_by, visibility, avg_score, total_controls,
          ready_count, needs_work_count, at_risk_count, not_started_count,
          calculated_at, organization_id)
        VALUES
-        (:frameworkType, :projectId, :avgScore, :totalControls,
+        (:frameworkType, :projectId, :createdBy, :visibility, :avgScore, :totalControls,
          :readyCount, :needsWorkCount, :atRiskCount, :notStartedCount,
          NOW(), :organizationId)`,
       {
         replacements: {
           frameworkType,
           projectId: data.project_id ?? null,
+          createdBy: data.created_by ?? null,
+          visibility: data.visibility || "public",
           avgScore: data.avg_score,
           totalControls: data.total_controls,
           readyCount: data.ready_count,
@@ -296,7 +325,9 @@ export async function insertReadinessHistoryQuery(
 export async function getReadinessHistoryQuery(
   organizationId: number,
   frameworkType?: string,
-  projectId?: number | null
+  projectId?: number | null,
+  userId?: number | null,
+  visibility?: string
 ): Promise<any[]> {
   try {
     const frameworkFilter = frameworkType
@@ -305,6 +336,7 @@ export async function getReadinessHistoryQuery(
     const projectFilter = projectId != null
       ? "AND project_id = :projectId"
       : "AND project_id IS NULL";
+    const vis = buildVisibilityFilter(userId ?? null, visibility);
     const [rows] = await sequelize.query(
       `SELECT framework_type, avg_score, calculated_at,
               total_controls, ready_count, needs_work_count, at_risk_count, not_started_count
@@ -312,6 +344,7 @@ export async function getReadinessHistoryQuery(
        WHERE organization_id = :organizationId
          ${frameworkFilter}
          ${projectFilter}
+         ${vis.clause}
        ORDER BY calculated_at DESC
        LIMIT 50`,
       {
@@ -319,6 +352,7 @@ export async function getReadinessHistoryQuery(
           organizationId,
           ...(frameworkType ? { frameworkType } : {}),
           ...(projectId != null ? { projectId } : {}),
+          ...vis.replacements,
         },
       }
     );

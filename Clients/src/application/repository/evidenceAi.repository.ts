@@ -2,8 +2,8 @@ import { apiServices } from "../../infrastructure/api/networkServices";
 
 const BASE_URL = "/evidence-ai";
 
-export async function triggerAnalysis(fileId: number) {
-  const response = await apiServices.post(`${BASE_URL}/analyze/${fileId}`, {});
+export async function triggerAnalysis(fileId: number, visibility?: string) {
+  const response = await apiServices.post(`${BASE_URL}/analyze/${fileId}`, { visibility });
   return response.data;
 }
 

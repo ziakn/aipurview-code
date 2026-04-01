@@ -1,5 +1,6 @@
 import { sequelize } from "../database/db";
 import logger from "./logger/fileLogger";
+import { buildVisibilityFilter } from "./visibility.utils";
 
 /**
  * Get AI content badges for a specific entity.
@@ -7,16 +8,20 @@ import logger from "./logger/fileLogger";
 export async function getBadgesByEntityQuery(
   entityType: string,
   entityId: number,
-  organizationId: number
+  organizationId: number,
+  userId?: number | null,
+  visibility?: string
 ): Promise<any[]> {
   try {
+    const vis = buildVisibilityFilter(userId ?? null, visibility);
     const [rows] = await sequelize.query(
       `SELECT * FROM ai_content_metadata
        WHERE entity_type = :entityType
          AND entity_id = :entityId
          AND organization_id = :organizationId
+         ${vis.clause}
        ORDER BY created_at DESC`,
-      { replacements: { entityType, entityId, organizationId } }
+      { replacements: { entityType, entityId, organizationId, ...vis.replacements } }
     );
     return rows as any[];
   } catch (error) {
@@ -69,14 +74,18 @@ export async function markReviewedQuery(
 export async function getUnreviewedQuery(
   organizationId: number,
   limit: number = 50,
-  offset: number = 0
+  offset: number = 0,
+  userId?: number | null,
+  visibility?: string
 ): Promise<{ items: any[]; total: number }> {
   try {
+    const vis = buildVisibilityFilter(userId ?? null, visibility);
     const [countResult] = await sequelize.query(
       `SELECT COUNT(*) AS total FROM ai_content_metadata
        WHERE human_reviewed = false
-         AND organization_id = :organizationId`,
-      { replacements: { organizationId } }
+         AND organization_id = :organizationId
+         ${vis.clause}`,
+      { replacements: { organizationId, ...vis.replacements } }
     );
     const total = parseInt((countResult as any[])[0]?.total, 10) || 0;
 
@@ -84,9 +93,10 @@ export async function getUnreviewedQuery(
       `SELECT * FROM ai_content_metadata
        WHERE human_reviewed = false
          AND organization_id = :organizationId
+         ${vis.clause}
        ORDER BY created_at DESC
        LIMIT :limit OFFSET :offset`,
-      { replacements: { organizationId, limit, offset } }
+      { replacements: { organizationId, limit, offset, ...vis.replacements } }
     );
 
     return { items: rows as any[], total };
@@ -100,9 +110,12 @@ export async function getUnreviewedQuery(
  * Get AI content statistics for dashboard.
  */
 export async function getStatsQuery(
-  organizationId: number
+  organizationId: number,
+  userId?: number | null,
+  visibility?: string
 ): Promise<any> {
   try {
+    const vis = buildVisibilityFilter(userId ?? null, visibility);
     const [rows] = await sequelize.query(
       `SELECT
          COUNT(*) AS total,
@@ -117,8 +130,9 @@ export async function getStatsQuery(
          COUNT(*) FILTER (WHERE review_action = 'rejected') AS rejected_count,
          ROUND(AVG(confidence_score)::numeric, 1) AS avg_confidence
        FROM ai_content_metadata
-       WHERE organization_id = :organizationId`,
-      { replacements: { organizationId } }
+       WHERE organization_id = :organizationId
+         ${vis.clause}`,
+      { replacements: { organizationId, ...vis.replacements } }
     );
 
     const stats = (rows as any[])[0] || {};

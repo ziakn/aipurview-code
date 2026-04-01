@@ -79,8 +79,10 @@ export const useTriggerAnalysis = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (fileId: number) => {
-      const res = await triggerAnalysis(fileId);
+    mutationFn: async (input: number | { fileId: number; visibility?: string }) => {
+      const fileId = typeof input === "number" ? input : input.fileId;
+      const visibility = typeof input === "number" ? undefined : input.visibility;
+      const res = await triggerAnalysis(fileId, visibility);
       return res?.data;
     },
     onSuccess: (_data, fileId) => {

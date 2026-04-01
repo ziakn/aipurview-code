@@ -154,6 +154,7 @@ export async function analyzeFile(req: Request, res: Response) {
       .slice(0, 10);
 
     // Persist
+    const visibility = req.body.visibility || "public";
     const analysis = await upsertAnalysisQuery(fileId, organizationId, {
       summary,
       key_findings: keyFindings,
@@ -163,6 +164,7 @@ export async function analyzeFile(req: Request, res: Response) {
       suggested_control_links: suggestions,
       analysis_model: "heuristic-v1",
       analyzed_by: userId,
+      visibility,
     });
 
     // Auto-apply suggested control links so readiness scores update immediately
@@ -213,7 +215,8 @@ export async function getAnalysis(req: Request, res: Response) {
   }
 
   try {
-    const analysis = await getAnalysisByFileIdQuery(fileId, req.organizationId!);
+    const visFilter = req.query.visibility ? String(req.query.visibility) : undefined;
+    const analysis = await getAnalysisByFileIdQuery(fileId, req.organizationId!, req.userId ? Number(req.userId) : null, visFilter);
 
     if (!analysis) {
       return res.status(204).json(STATUS_CODE[204](null));
@@ -236,7 +239,8 @@ export async function getQualityScores(req: Request, res: Response) {
   const functionName = "getQualityScores";
 
   try {
-    const scores = await getQualityScoresQuery(req.organizationId!);
+    const visFilter = req.query.visibility ? String(req.query.visibility) : undefined;
+    const scores = await getQualityScoresQuery(req.organizationId!, req.userId ? Number(req.userId) : null, visFilter);
 
     logStructured("successful", "quality scores fetched", functionName, fileName);
     return res.status(200).json(STATUS_CODE[200](scores));

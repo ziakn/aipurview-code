@@ -31,7 +31,9 @@ async function calculateControlReadiness(
   controlId: number,
   frameworkType: string,
   organizationId: number,
-  projectId: number | null
+  projectId: number | null,
+  createdBy: number | null = null,
+  visibility: string = "public"
 ) {
   // 1) Evidence metrics
   const [evidenceRows] = await sequelize.query(
@@ -125,6 +127,8 @@ async function calculateControlReadiness(
   // 6) Persist
   return upsertControlScoreQuery(controlId, frameworkType, organizationId, {
     project_id: projectId,
+    created_by: createdBy,
+    visibility,
     ...result,
     recommendations: recommendations.length > 0 ? recommendations : null,
   });
@@ -141,6 +145,8 @@ export async function calculateAll(req: Request, res: Response) {
   try {
     const organizationId = req.organizationId!;
     const projectId = req.body.project_id ? Number(req.body.project_id) : null;
+    const visibility = req.body.visibility || "public";
+    const userId = req.userId ? Number(req.userId) : null;
     const frameworkTypes = ["eu_ai_act", "iso_42001"];
     const results: any[] = [];
 
@@ -150,7 +156,7 @@ export async function calculateAll(req: Request, res: Response) {
 
       for (const ctrl of controls) {
         const score = await calculateControlReadiness(
-          ctrl.control_id, fw, organizationId, projectId
+          ctrl.control_id, fw, organizationId, projectId, userId, visibility
         );
         controlScores.push({
           control_id: ctrl.control_id,
@@ -162,6 +168,8 @@ export async function calculateAll(req: Request, res: Response) {
       const agg = aggregateFrameworkScores(controlScores, fw);
       const fwScore = await upsertFrameworkScoreQuery(fw, organizationId, {
         project_id: projectId,
+        created_by: userId,
+        visibility,
         ...agg,
       });
       results.push(fwScore);
@@ -169,6 +177,8 @@ export async function calculateAll(req: Request, res: Response) {
       // Record snapshot in history table for trend tracking
       await insertReadinessHistoryQuery(fw, organizationId, {
         project_id: projectId,
+        created_by: userId,
+        visibility,
         avg_score: agg.avg_score,
         total_controls: agg.total_controls,
         ready_count: agg.ready_count,
@@ -185,7 +195,7 @@ export async function calculateAll(req: Request, res: Response) {
           modelProvider: "verifywise",
           toolName: "readiness-calculation",
           promptSummary: `Readiness calculated for ${fw}: ${agg.avg_score}/100 (${agg.total_controls} controls)`,
-        }, req.userId ? Number(req.userId) : null).catch(() => {});
+        }, userId).catch(() => {});
       }
     }
 
@@ -211,6 +221,8 @@ export async function calculateForFramework(req: Request, res: Response) {
   try {
     const organizationId = req.organizationId!;
     const projectId = req.body.project_id ? Number(req.body.project_id) : null;
+    const visibility = req.body.visibility || "public";
+    const userId = req.userId ? Number(req.userId) : null;
 
     const controls = await getFrameworkControlsQuery(frameworkType);
     if (controls.length === 0) {
@@ -221,7 +233,7 @@ export async function calculateForFramework(req: Request, res: Response) {
 
     for (const ctrl of controls) {
       const score = await calculateControlReadiness(
-        ctrl.control_id, frameworkType, organizationId, projectId
+        ctrl.control_id, frameworkType, organizationId, projectId, userId, visibility
       );
       controlScores.push({
         control_id: ctrl.control_id,
@@ -233,12 +245,16 @@ export async function calculateForFramework(req: Request, res: Response) {
     const agg = aggregateFrameworkScores(controlScores, frameworkType);
     const fwScore = await upsertFrameworkScoreQuery(frameworkType, organizationId, {
       project_id: projectId,
+      created_by: userId,
+      visibility,
       ...agg,
     });
 
     // Record snapshot in history table
     await insertReadinessHistoryQuery(frameworkType, organizationId, {
       project_id: projectId,
+      created_by: userId,
+      visibility,
       avg_score: agg.avg_score,
       total_controls: agg.total_controls,
       ready_count: agg.ready_count,
@@ -255,7 +271,7 @@ export async function calculateForFramework(req: Request, res: Response) {
         modelProvider: "verifywise",
         toolName: "readiness-calculation",
         promptSummary: `Readiness calculated for ${frameworkType}: ${agg.avg_score}/100 (${agg.total_controls} controls)`,
-      }, req.userId ? Number(req.userId) : null).catch(() => {});
+      }, userId).catch(() => {});
     }
 
     logStructured("successful", `readiness calculated for ${frameworkType}`, functionName, fileName);
@@ -276,7 +292,8 @@ export async function getScores(req: Request, res: Response) {
 
   try {
     const projectId = req.query.project_id ? Number(req.query.project_id) : undefined;
-    const scores = await getFrameworkScoresQuery(req.organizationId!, projectId);
+    const visFilter = req.query.visibility ? String(req.query.visibility) : undefined;
+    const scores = await getFrameworkScoresQuery(req.organizationId!, projectId, req.userId ? Number(req.userId) : null, visFilter);
     logStructured("successful", "framework scores fetched", functionName, fileName);
     return res.status(200).json(STATUS_CODE[200](scores));
   } catch (error) {
@@ -296,7 +313,8 @@ export async function getScoresByFramework(req: Request, res: Response) {
 
   try {
     const projectId = req.query.project_id ? Number(req.query.project_id) : undefined;
-    const score = await getFrameworkScoreByTypeQuery(frameworkType, req.organizationId!, projectId);
+    const visFilter = req.query.visibility ? String(req.query.visibility) : undefined;
+    const score = await getFrameworkScoreByTypeQuery(frameworkType, req.organizationId!, projectId, req.userId ? Number(req.userId) : null, visFilter);
     if (!score) {
       return res.status(204).json(STATUS_CODE[204](null));
     }
@@ -320,7 +338,8 @@ export async function getControlScores(req: Request, res: Response) {
 
   try {
     const projectId = req.query.project_id ? Number(req.query.project_id) : undefined;
-    const scores = await getControlScoresQuery(frameworkType, req.organizationId!, projectId);
+    const visFilter = req.query.visibility ? String(req.query.visibility) : undefined;
+    const scores = await getControlScoresQuery(frameworkType, req.organizationId!, projectId, req.userId ? Number(req.userId) : null, visFilter);
     logStructured("successful", `control scores fetched for ${frameworkType}`, functionName, fileName);
     return res.status(200).json(STATUS_CODE[200](scores));
   } catch (error) {
@@ -340,7 +359,8 @@ export async function getWeakest(req: Request, res: Response) {
   try {
     const limit = req.query.limit ? Number(req.query.limit) : 10;
     const projectId = req.query.project_id ? Number(req.query.project_id) : undefined;
-    const weakest = await getWeakestControlsQuery(req.organizationId!, limit, projectId);
+    const visFilter = req.query.visibility ? String(req.query.visibility) : undefined;
+    const weakest = await getWeakestControlsQuery(req.organizationId!, limit, projectId, req.userId ? Number(req.userId) : null, visFilter);
 
     logStructured("successful", "weakest controls fetched", functionName, fileName);
     return res.status(200).json(STATUS_CODE[200](weakest));
@@ -361,7 +381,8 @@ export async function getRecommendations(req: Request, res: Response) {
   try {
     const limit = req.query.limit ? Number(req.query.limit) : 10;
     const projectId = req.query.project_id ? Number(req.query.project_id) : undefined;
-    const weakest = await getWeakestControlsQuery(req.organizationId!, limit, projectId);
+    const visFilter = req.query.visibility ? String(req.query.visibility) : undefined;
+    const weakest = await getWeakestControlsQuery(req.organizationId!, limit, projectId, req.userId ? Number(req.userId) : null, visFilter);
 
     const recommendations = weakest.map((ctrl: any) => {
       const recs: string[] = [];
@@ -407,8 +428,9 @@ export async function getHistory(req: Request, res: Response) {
       ? String(req.query.framework_type)
       : undefined;
     const projectId = req.query.project_id ? Number(req.query.project_id) : undefined;
+    const visFilter = req.query.visibility ? String(req.query.visibility) : undefined;
 
-    const history = await getReadinessHistoryQuery(req.organizationId!, frameworkType, projectId);
+    const history = await getReadinessHistoryQuery(req.organizationId!, frameworkType, projectId, req.userId ? Number(req.userId) : null, visFilter);
 
     logStructured("successful", "readiness history fetched", functionName, fileName);
     return res.status(200).json(STATUS_CODE[200](history));
