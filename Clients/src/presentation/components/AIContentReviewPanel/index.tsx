@@ -1,6 +1,21 @@
 import { useState } from "react";
-import { Box, Typography, Button, TextField, Stack, Chip } from "@mui/material";
-import { text as textColors, border, background } from "../../themes/palette";
+import {
+  Box,
+  Typography,
+  Button,
+  TextField,
+  Stack,
+  Chip,
+} from "@mui/material";
+import { Bot, Clock, Cpu, Wrench, Target, CheckCircle } from "lucide-react";
+import {
+  text as textColors,
+  border as borderPalette,
+  background,
+  brand,
+  status,
+  accent,
+} from "../../themes/palette";
 import AIContentBadge from "../AIContentBadge";
 import type { AIContentMetadata, ReviewAction } from "../../../domain/interfaces/i.aiContent";
 
@@ -9,12 +24,6 @@ interface AIContentReviewPanelProps {
   onReview: (id: number, action: ReviewAction, notes?: string) => void;
   isReviewing?: boolean;
 }
-
-const REVIEW_ACTIONS: { value: ReviewAction; label: string; color: string; description: string }[] = [
-  { value: "approved", label: "Approve", color: "#059669", description: "Content is accurate and acceptable" },
-  { value: "modified", label: "Modified", color: "#D97706", description: "Content was modified before acceptance" },
-  { value: "rejected", label: "Reject", color: "#DC2626", description: "Content is not acceptable" },
-];
 
 export default function AIContentReviewPanel({
   item,
@@ -36,122 +45,279 @@ export default function AIContentReviewPanel({
   return (
     <Box
       sx={{
-        p: 2,
-        borderRadius: 2,
-        border: `1px solid ${border.light}`,
-        backgroundColor: background.main,
+        borderRadius: "4px",
+        border: `1px solid ${borderPalette.dark}`,
+        background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
+        overflow: "hidden",
       }}
     >
-      {/* Header */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 1.5 }}>
-        <Box>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
-            <Typography sx={{ fontSize: 13, fontWeight: 600, color: textColors.primary }}>
-              {item.entity_type}#{item.entity_id}
+      {/* Header row */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          px: 2,
+          py: 1.25,
+          borderBottom: `1px solid ${borderPalette.light}`,
+        }}
+      >
+        <Stack direction="row" alignItems="center" spacing={1.5}>
+          <Typography
+            sx={{
+              fontSize: 13,
+              fontWeight: 600,
+              color: textColors.primary,
+              fontFamily: "'Red Hat Display', 'Geist', sans-serif",
+            }}
+          >
+            {item.entity_type.replace(/_/g, " ")}
+            <Box component="span" sx={{ color: textColors.accent, fontWeight: 400, ml: 0.5 }}>
+              #{item.entity_id}
+            </Box>
+          </Typography>
+          {item.field_name && (
+            <Chip
+              label={item.field_name}
+              size="small"
+              sx={{
+                height: 18,
+                fontSize: 9,
+                fontWeight: 500,
+                backgroundColor: background.hover,
+                color: textColors.secondary,
+                border: `1px solid ${borderPalette.light}`,
+              }}
+            />
+          )}
+        </Stack>
+
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <Stack direction="row" alignItems="center" spacing={0.5}>
+            <Clock size={11} style={{ color: textColors.accent }} />
+            <Typography sx={{ fontSize: 10, color: textColors.accent }}>
+              {createdDate}
             </Typography>
-            {item.field_name && (
-              <Chip
-                label={item.field_name}
-                size="small"
-                sx={{ height: 18, fontSize: 9, backgroundColor: background.hover, color: textColors.secondary }}
-              />
-            )}
-          </Box>
-          <Typography sx={{ fontSize: 11, color: textColors.accent }}>
-            Created: {createdDate}
-          </Typography>
-        </Box>
-        <AIContentBadge
-          badgeType={item.badge_type}
-          modelUsed={item.model_used}
-          confidenceScore={item.confidence_score}
-          humanReviewed={item.human_reviewed}
-          reviewAction={item.review_action}
-          variant="inline"
-        />
-      </Box>
-
-      {/* Metadata */}
-      <Box sx={{ display: "flex", gap: 2, mb: 1.5, flexWrap: "wrap" }}>
-        {item.model_used && (
-          <Typography sx={{ fontSize: 11, color: textColors.secondary }}>
-            <strong>Model:</strong> {item.model_used}
-          </Typography>
-        )}
-        {item.model_provider && (
-          <Typography sx={{ fontSize: 11, color: textColors.secondary }}>
-            <strong>Provider:</strong> {item.model_provider}
-          </Typography>
-        )}
-        {item.tool_name && (
-          <Typography sx={{ fontSize: 11, color: textColors.secondary }}>
-            <strong>Tool:</strong> {item.tool_name}
-          </Typography>
-        )}
-        {item.confidence_score !== null && (
-          <Typography sx={{ fontSize: 11, color: textColors.secondary }}>
-            <strong>Confidence:</strong> {item.confidence_score}%
-          </Typography>
-        )}
-      </Box>
-
-      {item.prompt_summary && (
-        <Box sx={{ mb: 1.5, p: 1, backgroundColor: background.hover, borderRadius: 1 }}>
-          <Typography sx={{ fontSize: 10, color: textColors.accent, mb: 0.3 }}>Prompt Summary</Typography>
-          <Typography sx={{ fontSize: 11, color: textColors.secondary }}>
-            {item.prompt_summary}
-          </Typography>
-        </Box>
-      )}
-
-      {/* Already reviewed */}
-      {item.human_reviewed && item.review_action && (
-        <Box sx={{ p: 1, backgroundColor: "#ECFDF5", borderRadius: 1, mb: 1.5 }}>
-          <Typography sx={{ fontSize: 11, color: "#059669", fontWeight: 500 }}>
-            Reviewed: {item.review_action.charAt(0).toUpperCase() + item.review_action.slice(1)}
-            {item.reviewed_at && ` on ${new Date(item.reviewed_at).toLocaleDateString()}`}
-          </Typography>
-        </Box>
-      )}
-
-      {/* Review actions (only if not yet reviewed) */}
-      {!item.human_reviewed && (
-        <>
-          <TextField
-            placeholder="Review notes (optional)"
+          </Stack>
+          <AIContentBadge
+            badgeType={item.badge_type}
+            modelUsed={item.model_used}
+            confidenceScore={item.confidence_score}
+            humanReviewed={item.human_reviewed}
+            reviewAction={item.review_action}
+            variant="inline"
             size="small"
-            fullWidth
-            multiline
-            rows={2}
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            sx={{ mb: 1.5, "& .MuiInputBase-input": { fontSize: 12 } }}
           />
-          <Stack direction="row" spacing={1}>
-            {REVIEW_ACTIONS.map((action) => (
+        </Stack>
+      </Box>
+
+      {/* Body */}
+      <Box sx={{ px: 2, py: 1.5 }}>
+        {/* Metadata chips row */}
+        <Stack direction="row" spacing={1} sx={{ mb: 1.25, flexWrap: "wrap" }}>
+          {item.model_used && (
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={0.5}
+              sx={{
+                backgroundColor: background.accent,
+                border: `1px solid ${borderPalette.light}`,
+                borderRadius: "4px",
+                px: 1,
+                py: 0.25,
+              }}
+            >
+              <Cpu size={10} style={{ color: textColors.icon }} />
+              <Typography sx={{ fontSize: 10, color: textColors.secondary }}>
+                {item.model_used}
+              </Typography>
+            </Stack>
+          )}
+          {item.model_provider && (
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={0.5}
+              sx={{
+                backgroundColor: background.accent,
+                border: `1px solid ${borderPalette.light}`,
+                borderRadius: "4px",
+                px: 1,
+                py: 0.25,
+              }}
+            >
+              <Bot size={10} style={{ color: textColors.icon }} />
+              <Typography sx={{ fontSize: 10, color: textColors.secondary }}>
+                {item.model_provider}
+              </Typography>
+            </Stack>
+          )}
+          {item.tool_name && (
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={0.5}
+              sx={{
+                backgroundColor: background.accent,
+                border: `1px solid ${borderPalette.light}`,
+                borderRadius: "4px",
+                px: 1,
+                py: 0.25,
+              }}
+            >
+              <Wrench size={10} style={{ color: textColors.icon }} />
+              <Typography sx={{ fontSize: 10, color: textColors.secondary }}>
+                {item.tool_name}
+              </Typography>
+            </Stack>
+          )}
+          {item.confidence_score !== null && item.confidence_score !== undefined && (
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={0.5}
+              sx={{
+                backgroundColor: accent.primary.bg,
+                border: `1px solid ${accent.primary.border}`,
+                borderRadius: "4px",
+                px: 1,
+                py: 0.25,
+              }}
+            >
+              <Target size={10} style={{ color: accent.primary.text }} />
+              <Typography sx={{ fontSize: 10, color: accent.primary.text, fontWeight: 600 }}>
+                {item.confidence_score}%
+              </Typography>
+            </Stack>
+          )}
+        </Stack>
+
+        {/* Prompt summary */}
+        {item.prompt_summary && (
+          <Box
+            sx={{
+              mb: 1.25,
+              p: 1,
+              backgroundColor: background.accent,
+              borderRadius: "4px",
+              borderLeft: `3px solid ${brand.primary}`,
+            }}
+          >
+            <Typography sx={{ fontSize: 11, color: textColors.secondary, lineHeight: 1.5 }}>
+              {item.prompt_summary}
+            </Typography>
+          </Box>
+        )}
+
+        {/* Already reviewed state */}
+        {item.human_reviewed && item.review_action && (
+          <Stack
+            direction="row"
+            alignItems="center"
+            spacing={0.75}
+            sx={{
+              p: 1,
+              backgroundColor: status.success.bg,
+              borderRadius: "4px",
+              border: `1px solid ${status.success.border}`,
+            }}
+          >
+            <CheckCircle size={12} style={{ color: status.success.text }} />
+            <Typography sx={{ fontSize: 11, color: status.success.text, fontWeight: 500 }}>
+              {item.review_action.charAt(0).toUpperCase() + item.review_action.slice(1)}
+              {item.reviewed_at && ` on ${new Date(item.reviewed_at).toLocaleDateString()}`}
+            </Typography>
+          </Stack>
+        )}
+
+        {/* Review actions */}
+        {!item.human_reviewed && (
+          <Box>
+            <TextField
+              placeholder="Review notes (optional)"
+              size="small"
+              fullWidth
+              multiline
+              rows={1}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              sx={{
+                mb: 1,
+                "& .MuiInputBase-input": { fontSize: 12, py: 0.75 },
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "4px",
+                  "& fieldset": { borderColor: borderPalette.light },
+                  "&:hover fieldset": { borderColor: borderPalette.dark },
+                  "&.Mui-focused fieldset": { borderColor: brand.primary },
+                },
+              }}
+            />
+            <Stack direction="row" spacing={1}>
               <Button
-                key={action.value}
-                variant="outlined"
+                variant="contained"
                 size="small"
                 disabled={isReviewing}
-                onClick={() => onReview(item.id, action.value, notes || undefined)}
+                onClick={() => onReview(item.id, "approved", notes || undefined)}
                 sx={{
                   textTransform: "none",
                   fontSize: 11,
-                  borderColor: action.color,
-                  color: action.color,
-                  "&:hover": {
-                    backgroundColor: `${action.color}10`,
-                    borderColor: action.color,
-                  },
+                  fontWeight: 500,
+                  borderRadius: "4px",
+                  backgroundColor: status.success.text,
+                  boxShadow: "none",
+                  px: 1.5,
+                  py: 0.5,
+                  minHeight: 0,
+                  "&:hover": { backgroundColor: "#0e7d52", boxShadow: "none" },
                 }}
               >
-                {action.label}
+                Approve
               </Button>
-            ))}
-          </Stack>
-        </>
-      )}
+              <Button
+                variant="outlined"
+                size="small"
+                disabled={isReviewing}
+                onClick={() => onReview(item.id, "modified", notes || undefined)}
+                sx={{
+                  textTransform: "none",
+                  fontSize: 11,
+                  fontWeight: 500,
+                  borderRadius: "4px",
+                  borderColor: status.warning.text,
+                  color: status.warning.text,
+                  px: 1.5,
+                  py: 0.5,
+                  minHeight: 0,
+                  "&:hover": { backgroundColor: status.warning.bg, borderColor: status.warning.text },
+                }}
+              >
+                Modified
+              </Button>
+              <Button
+                variant="outlined"
+                size="small"
+                disabled={isReviewing}
+                onClick={() => onReview(item.id, "rejected", notes || undefined)}
+                sx={{
+                  textTransform: "none",
+                  fontSize: 11,
+                  fontWeight: 500,
+                  borderRadius: "4px",
+                  borderColor: status.error.text,
+                  color: status.error.text,
+                  px: 1.5,
+                  py: 0.5,
+                  minHeight: 0,
+                  "&:hover": { backgroundColor: status.error.bg, borderColor: status.error.text },
+                }}
+              >
+                Reject
+              </Button>
+            </Stack>
+          </Box>
+        )}
+      </Box>
     </Box>
   );
 }
