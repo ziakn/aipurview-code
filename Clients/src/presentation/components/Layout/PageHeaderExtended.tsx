@@ -68,7 +68,7 @@ export function PageHeaderExtended({
                     {loadingToast}
 
                     {(tipBoxEntity || summaryCards) && (
-                        <Stack gap="18px" sx={{ mt: "18px", mb: summaryCards ? "16px" : 0 }}>
+                        <Stack gap="18px" sx={{ mt: "18px" }}>
                             {tipBoxEntity && <TipBox entityName={tipBoxEntity} />}
                             {summaryCards && (
                                 <Box
@@ -80,7 +80,7 @@ export function PageHeaderExtended({
                             )}
                         </Stack>
                     )}
-                    <Stack gap="16px">
+                    <Stack gap="16px" sx={{ mt: "16px" }}>
                         {children}
                     </Stack>
                 </>

@@ -36,6 +36,7 @@ import {
   Bot,
   Database,
   FileSearch,
+  FolderGit2,
   Search,
   History,
   Eye,
@@ -124,6 +125,7 @@ export const routeMapping: Record<string, string> = {
   "/ai-detection/scan": "Scan repository",
   "/ai-detection/history": "Scan history",
   "/ai-detection/scans": "Scan history",
+  "/ai-detection/repositories": "Repositories",
   "/ai-detection/settings": "Settings",
 
   // AI Gateway
@@ -270,6 +272,7 @@ export const routeIconMapping: Record<string, () => React.ReactNode> = {
   "/ai-detection/scan": () => React.createElement(Search, { size: 14, strokeWidth: 1.5 }),
   "/ai-detection/history": () => React.createElement(History, { size: 14, strokeWidth: 1.5 }),
   "/ai-detection/scans": () => React.createElement(History, { size: 14, strokeWidth: 1.5 }),
+  "/ai-detection/repositories": () => React.createElement(FolderGit2, { size: 14, strokeWidth: 1.5 }),
   "/ai-detection/settings": () => React.createElement(Settings, { size: 14, strokeWidth: 1.5 }),
 
   // Intake forms
