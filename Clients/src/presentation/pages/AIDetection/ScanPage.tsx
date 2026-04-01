@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import {
   Search,
-  Github,
+  GitFork,
   AlertCircle,
   CheckCircle2,
   XCircle,
@@ -449,7 +449,7 @@ export default function ScanPage() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Github size={16} color={palette.text.tertiary} />
+                    <GitFork size={16} color={palette.text.tertiary} />
                   </InputAdornment>
                 ),
               }}
