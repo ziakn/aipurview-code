@@ -274,6 +274,7 @@ export async function streamPromptTest(
   let content = "";
   let tokens = 0;
   let cost = 0;
+  let streamError = "";
 
   try {
     while (true) {
@@ -285,6 +286,9 @@ export async function streamPromptTest(
         if (line.startsWith("data: ") && line !== "data: [DONE]") {
           try {
             const chunk = JSON.parse(line.slice(6));
+            if (chunk.error) {
+              streamError = chunk.error;
+            }
             const delta = chunk.choices?.[0]?.delta?.content;
             if (delta) {
               content += delta;
@@ -298,6 +302,14 @@ export async function streamPromptTest(
     }
   } finally {
     reader.releaseLock();
+  }
+
+  if (!content && streamError) {
+    content = `Error: ${streamError}`;
+    opts.onDelta(content);
+  } else if (!content) {
+    content = "No response received from the model. Check that the endpoint has a valid API key configured.";
+    opts.onDelta(content);
   }
 
   return { content, tokens, cost, latency: Date.now() - startTime };
