@@ -279,7 +279,7 @@ export default function AIContentReview() {
               <CircularProgress size={20} />
             </Box>
           ) : items.length > 0 ? (
-            <Stack spacing="12px">
+            <Stack spacing="16px">
               {items.map((item: any) => (
                 <AIContentReviewPanel
                   key={item.id}
