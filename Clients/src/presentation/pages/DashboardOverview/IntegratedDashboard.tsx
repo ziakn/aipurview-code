@@ -6,6 +6,11 @@ import {
   IconButton,
   Fade,
 } from "@mui/material";
+import TabContext from "@mui/lab/TabContext";
+import DashboardTabs from "../../components/DashboardTabs";
+import type { DashboardTabConfig } from "../../components/DashboardTabs";
+import ReadinessDashboard from "../ReadinessDashboard";
+import AIContentReview from "../AIContentReview";
 import {
   ChevronLeft,
   ChevronRight,
@@ -63,12 +68,44 @@ import { text } from "../../themes/palette";
 type DashboardView = "executive" | "operations";
 
 const DASHBOARD_VIEW_KEY = "dashboard_view_preference";
+const DASHBOARD_TABS_KEY = "dashboard_active_tabs";
+const DASHBOARD_SELECTED_TAB_KEY = "dashboard_selected_tab";
+
+const AVAILABLE_DASHBOARD_TABS: DashboardTabConfig[] = [
+  { id: "overview", label: "Overview", icon: "LayoutDashboard", description: "Main dashboard with metrics and activity", removable: false },
+  { id: "readiness", label: "Audit Readiness", icon: "ShieldCheck", description: "Per-control readiness scores and audit preparation" },
+  { id: "ai-content", label: "AI Content Review", icon: "Sparkles", description: "Review and approve AI-generated content (EU AI Act Art. 52)" },
+];
+
+const DEFAULT_TABS = ["overview", "readiness", "ai-content"];
 
 const IntegratedDashboard: React.FC = () => {
   const navigateSearch = useNavigateSearch();
   const { dashboard, loading: dashboardLoading, fetchDashboard } = useDashboard();
 
   const [contentReady, setContentReady] = useState(false);
+
+  // Dashboard tab system — customizable by user
+  const [activeTabs, setActiveTabs] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem(DASHBOARD_TABS_KEY);
+      return saved ? JSON.parse(saved) : DEFAULT_TABS;
+    } catch { return DEFAULT_TABS; }
+  });
+  const [dashboardTab, setDashboardTab] = useState<string>(() => {
+    const saved = localStorage.getItem(DASHBOARD_SELECTED_TAB_KEY);
+    return saved && DEFAULT_TABS.includes(saved) ? saved : "overview";
+  });
+
+  const handleDashboardTabChange = useCallback((tabId: string) => {
+    setDashboardTab(tabId);
+    localStorage.setItem(DASHBOARD_SELECTED_TAB_KEY, tabId);
+  }, []);
+
+  const handleActiveTabsChange = useCallback((tabIds: string[]) => {
+    setActiveTabs(tabIds);
+    localStorage.setItem(DASHBOARD_TABS_KEY, JSON.stringify(tabIds));
+  }, []);
 
   // Check if there is any cached dashboard metrics data
   const hasAnyCache = useMemo(() => hasDashboardCache(), []);
@@ -336,6 +373,28 @@ const IntegratedDashboard: React.FC = () => {
         </Stack>
       </Stack>
 
+      {/* Dashboard Tab Bar */}
+      <TabContext value={dashboardTab}>
+        <Box sx={{ mb: 2 }}>
+          <DashboardTabs
+            availableTabs={AVAILABLE_DASHBOARD_TABS}
+            activeTabs={activeTabs}
+            activeTab={dashboardTab}
+            onTabChange={handleDashboardTabChange}
+            onTabsChange={handleActiveTabsChange}
+          />
+        </Box>
+      </TabContext>
+
+      {/* Tab: Readiness Dashboard */}
+      {dashboardTab === "readiness" && <ReadinessDashboard />}
+
+      {/* Tab: AI Content Review */}
+      {dashboardTab === "ai-content" && <AIContentReview />}
+
+      {/* Tab: Overview (original dashboard) */}
+      {dashboardTab === "overview" && (
+      <>
       {/* Quick Stats Row */}
       <Box
         data-joyride-id="dashboard-stats"
@@ -1090,6 +1149,8 @@ const IntegratedDashboard: React.FC = () => {
             </Box>
           )}
         </>
+      )}
+      </>
       )}
 
         {/* Page Tour */}
