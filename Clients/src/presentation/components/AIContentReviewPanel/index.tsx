@@ -57,8 +57,8 @@ export default function AIContentReviewPanel({
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          px: 2.5,
-          py: 1.5,
+          px: 3,
+          py: 2,
           borderBottom: `1px solid ${borderPalette.light}`,
         }}
       >
@@ -112,20 +112,20 @@ export default function AIContentReviewPanel({
       </Box>
 
       {/* Body */}
-      <Box sx={{ px: 2.5, py: 2 }}>
+      <Box sx={{ px: 3, py: 2.5 }}>
         {/* Metadata chips row */}
-        <Stack direction="row" spacing={1.25} sx={{ mb: 2, flexWrap: "wrap", gap: "8px" }}>
+        <Stack direction="row" spacing={1.5} sx={{ mb: 2.5, flexWrap: "wrap", gap: "10px" }}>
           {item.model_used && (
             <Stack
               direction="row"
               alignItems="center"
-              spacing={0.5}
+              spacing={0.75}
               sx={{
                 backgroundColor: background.accent,
                 border: `1px solid ${borderPalette.light}`,
                 borderRadius: "6px",
-                px: 1.25,
-                py: 0.5,
+                px: 1.5,
+                py: 0.75,
               }}
             >
               <Cpu size={12} style={{ color: textColors.icon }} />
@@ -138,13 +138,13 @@ export default function AIContentReviewPanel({
             <Stack
               direction="row"
               alignItems="center"
-              spacing={0.5}
+              spacing={0.75}
               sx={{
                 backgroundColor: background.accent,
                 border: `1px solid ${borderPalette.light}`,
                 borderRadius: "6px",
-                px: 1.25,
-                py: 0.5,
+                px: 1.5,
+                py: 0.75,
               }}
             >
               <Bot size={12} style={{ color: textColors.icon }} />
@@ -157,13 +157,13 @@ export default function AIContentReviewPanel({
             <Stack
               direction="row"
               alignItems="center"
-              spacing={0.5}
+              spacing={0.75}
               sx={{
                 backgroundColor: background.accent,
                 border: `1px solid ${borderPalette.light}`,
                 borderRadius: "6px",
-                px: 1.25,
-                py: 0.5,
+                px: 1.5,
+                py: 0.75,
               }}
             >
               <Wrench size={12} style={{ color: textColors.icon }} />
@@ -176,13 +176,13 @@ export default function AIContentReviewPanel({
             <Stack
               direction="row"
               alignItems="center"
-              spacing={0.5}
+              spacing={0.75}
               sx={{
                 backgroundColor: accent.primary.bg,
                 border: `1px solid ${accent.primary.border}`,
                 borderRadius: "6px",
-                px: 1.25,
-                py: 0.5,
+                px: 1.5,
+                py: 0.75,
               }}
             >
               <Target size={12} style={{ color: accent.primary.text }} />
@@ -197,8 +197,8 @@ export default function AIContentReviewPanel({
         {item.prompt_summary && (
           <Box
             sx={{
-              mb: 2,
-              p: 1.5,
+              mb: 2.5,
+              p: 2,
               backgroundColor: background.accent,
               borderRadius: "6px",
               borderLeft: `3px solid ${brand.primary}`,
@@ -243,8 +243,8 @@ export default function AIContentReviewPanel({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               sx={{
-                mb: 1.5,
-                "& .MuiInputBase-input": { fontSize: 12, py: 1 },
+                mb: 2,
+                "& .MuiInputBase-input": { fontSize: 13, py: 1.25 },
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "4px",
                   "& fieldset": { borderColor: borderPalette.light },
@@ -253,7 +253,7 @@ export default function AIContentReviewPanel({
                 },
               }}
             />
-            <Stack direction="row" spacing={1.5} sx={{ mt: 0.5 }}>
+            <Stack direction="row" spacing={1.5} sx={{ mt: 1 }}>
               <Button
                 variant="contained"
                 size="small"
@@ -261,13 +261,13 @@ export default function AIContentReviewPanel({
                 onClick={() => onReview(item.id, "approved", notes || undefined)}
                 sx={{
                   textTransform: "none",
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: 500,
                   borderRadius: "6px",
                   backgroundColor: status.success.text,
                   boxShadow: "none",
-                  px: 2.5,
-                  py: 0.75,
+                  px: 3,
+                  py: 1,
                   "&:hover": { backgroundColor: "#0e7d52", boxShadow: "none" },
                 }}
               >
@@ -280,13 +280,13 @@ export default function AIContentReviewPanel({
                 onClick={() => onReview(item.id, "modified", notes || undefined)}
                 sx={{
                   textTransform: "none",
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: 500,
                   borderRadius: "6px",
                   borderColor: status.warning.text,
                   color: status.warning.text,
-                  px: 2.5,
-                  py: 0.75,
+                  px: 3,
+                  py: 1,
                   "&:hover": { backgroundColor: status.warning.bg, borderColor: status.warning.text },
                 }}
               >
@@ -299,13 +299,13 @@ export default function AIContentReviewPanel({
                 onClick={() => onReview(item.id, "rejected", notes || undefined)}
                 sx={{
                   textTransform: "none",
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: 500,
                   borderRadius: "6px",
                   borderColor: status.error.text,
                   color: status.error.text,
-                  px: 2.5,
-                  py: 0.75,
+                  px: 3,
+                  py: 1,
                   "&:hover": { backgroundColor: status.error.bg, borderColor: status.error.text },
                 }}
               >
