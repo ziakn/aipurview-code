@@ -1,5 +1,6 @@
-import { Box, Typography, Stack, Chip } from "@mui/material";
-import { status, accent, text as textColors, border, background } from "../../themes/palette";
+import { Box, Typography, Stack, Chip, LinearProgress } from "@mui/material";
+import { AlertTriangle, ArrowDown, CheckCircle2, Lightbulb } from "lucide-react";
+import { status, accent, text as textColors, border as borderPalette, background, brand } from "../../themes/palette";
 
 interface WeakControl {
   control_id: number;
@@ -16,28 +17,30 @@ interface WeakControlsListProps {
   maxItems?: number;
 }
 
-function getPriorityColor(priority: string | undefined) {
-  switch (priority) {
-    case "critical": return status.error;
-    case "high": return status.warning;
-    case "medium": return accent.primary;
-    default: return { bg: background.hover, text: textColors.tertiary, border: border.light };
-  }
-}
-
-function getPriorityFromScore(score: number): string {
-  if (score < 30) return "critical";
-  if (score < 60) return "high";
-  return "medium";
+function getPriorityConfig(score: number) {
+  if (score < 30) return { label: "Critical", colors: status.error, Icon: AlertTriangle };
+  if (score < 60) return { label: "High", colors: status.warning, Icon: ArrowDown };
+  return { label: "Medium", colors: accent.primary, Icon: CheckCircle2 };
 }
 
 function formatFrameworkName(type: string): string {
   const names: Record<string, string> = {
     eu_ai_act: "EU AI Act",
     iso_42001: "ISO 42001",
+    iso_27001: "ISO 27001",
+    nist_ai_rmf: "NIST AI RMF",
   };
   return names[type] || type.replace(/_/g, " ").toUpperCase();
 }
+
+function getScoreColor(score: number) {
+  if (score >= 80) return status.success.text;
+  if (score >= 60) return accent.primary.text;
+  if (score >= 40) return status.warning.text;
+  return status.error.text;
+}
+
+const FIXED_HEIGHT = 340;
 
 export default function WeakControlsList({
   controls,
@@ -46,8 +49,8 @@ export default function WeakControlsList({
 }: WeakControlsListProps) {
   if (isLoading) {
     return (
-      <Box sx={{ p: 2 }}>
-        <Typography sx={{ fontSize: 13, color: textColors.tertiary }}>Loading...</Typography>
+      <Box sx={{ height: FIXED_HEIGHT, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Typography sx={{ fontSize: 13, color: textColors.muted }}>Loading...</Typography>
       </Box>
     );
   }
@@ -56,12 +59,18 @@ export default function WeakControlsList({
     return (
       <Box
         sx={{
+          height: FIXED_HEIGHT,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
           p: 3,
           textAlign: "center",
           backgroundColor: background.accent,
           borderRadius: 2,
         }}
       >
+        <CheckCircle2 size={28} strokeWidth={1.5} style={{ color: status.success.text, marginBottom: 8 }} />
         <Typography sx={{ fontSize: 13, color: textColors.tertiary }}>
           No weak controls found. Your compliance posture looks strong!
         </Typography>
@@ -70,102 +79,164 @@ export default function WeakControlsList({
   }
 
   return (
-    <Box
-      sx={{
-        p: 2,
-        borderRadius: 2,
-        backgroundColor: "transparent",
-      }}
-    >
-      <Typography sx={{ fontSize: 15, fontWeight: 600, color: textColors.primary, mb: 2 }}>
+    <Box sx={{ height: FIXED_HEIGHT, display: "flex", flexDirection: "column" }}>
+      {/* Header */}
+      <Typography
+        sx={{
+          fontSize: 15,
+          fontWeight: 600,
+          color: textColors.primary,
+          fontFamily: "'Red Hat Display', 'Geist', sans-serif",
+          mb: 1.5,
+          flexShrink: 0,
+        }}
+      >
         Weakest Controls
       </Typography>
 
-      <Stack spacing={1}>
-        {controls.slice(0, maxItems).map((ctrl, i) => {
-          const priority = ctrl.priority || getPriorityFromScore(ctrl.overall_score);
-          const priColor = getPriorityColor(priority);
+      {/* Scrollable list */}
+      <Box
+        sx={{
+          flex: 1,
+          overflowY: "auto",
+          overflowX: "hidden",
+          pr: 0.5,
+          "&::-webkit-scrollbar": { width: 4 },
+          "&::-webkit-scrollbar-track": { backgroundColor: "transparent" },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: background.hover,
+            borderRadius: 2,
+            "&:hover": { backgroundColor: textColors.muted },
+          },
+        }}
+      >
+        <Stack spacing={1.5}>
+          {controls.slice(0, maxItems).map((ctrl, i) => {
+            const priority = getPriorityConfig(ctrl.overall_score);
 
-          const recs: string[] = ctrl.recommendations
-            ? typeof ctrl.recommendations === "string"
-              ? JSON.parse(ctrl.recommendations as unknown as string)
-              : ctrl.recommendations
-            : [];
+            const recs: string[] = ctrl.recommendations
+              ? typeof ctrl.recommendations === "string"
+                ? JSON.parse(ctrl.recommendations as unknown as string)
+                : ctrl.recommendations
+              : [];
 
-          return (
-            <Box
-              key={`${ctrl.control_id}-${i}`}
-              sx={{
-                p: 1.5,
-                borderRadius: 1.5,
-                border: `1px solid ${priColor.border}`,
-                backgroundColor: priColor.bg,
-              }}
-            >
-              {/* Control header */}
-              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 0.5 }}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <Typography sx={{ fontSize: 12, fontWeight: 600, color: textColors.primary }}>
-                    Control #{ctrl.control_id}
-                  </Typography>
-                  <Chip
-                    label={formatFrameworkName(ctrl.framework_type)}
-                    size="small"
-                    sx={{
-                      height: 18,
-                      fontSize: 9,
-                      fontWeight: 500,
-                      backgroundColor: background.hover,
-                      color: textColors.secondary,
-                    }}
-                  />
-                </Box>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                  <Chip
-                    label={priority.toUpperCase()}
-                    size="small"
-                    sx={{
-                      height: 18,
-                      fontSize: 9,
-                      fontWeight: 700,
-                      backgroundColor: priColor.text,
-                      color: "#fff",
-                    }}
-                  />
-                  <Typography sx={{ fontSize: 13, fontWeight: 700, color: priColor.text }}>
-                    {ctrl.overall_score}
-                  </Typography>
-                </Box>
-              </Box>
-
-              {/* Recommendations */}
-              {recs.length > 0 && (
-                <Box sx={{ mt: 0.5 }}>
-                  {recs.slice(0, 3).map((rec, j) => (
-                    <Typography
-                      key={j}
+            return (
+              <Box
+                key={`${ctrl.control_id}-${i}`}
+                sx={{
+                  p: 2,
+                  borderRadius: "8px",
+                  border: `1px solid ${borderPalette.light}`,
+                  backgroundColor: background.main,
+                  transition: "all 0.2s ease",
+                  "&:hover": {
+                    borderColor: priority.colors.border,
+                    backgroundColor: priority.colors.bg,
+                  },
+                }}
+              >
+                {/* Top row: control info + score */}
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.25 }}>
+                  <Stack direction="row" alignItems="center" spacing={1.5}>
+                    {/* Priority icon */}
+                    <Box
                       sx={{
-                        fontSize: 11,
-                        color: textColors.secondary,
-                        pl: 1.5,
-                        position: "relative",
-                        "&::before": {
-                          content: '"\\2022"',
-                          position: "absolute",
-                          left: 0,
-                          color: textColors.accent,
-                        },
+                        width: 28,
+                        height: 28,
+                        borderRadius: "6px",
+                        backgroundColor: priority.colors.bg,
+                        border: `1px solid ${priority.colors.border}`,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexShrink: 0,
                       }}
                     >
-                      {rec}
+                      <priority.Icon size={14} style={{ color: priority.colors.text }} />
+                    </Box>
+                    <Box>
+                      <Typography
+                        sx={{
+                          fontSize: 13,
+                          fontWeight: 600,
+                          color: textColors.primary,
+                          lineHeight: 1.2,
+                        }}
+                      >
+                        Control #{ctrl.control_id}
+                      </Typography>
+                      <Typography sx={{ fontSize: 11, color: textColors.muted }}>
+                        {formatFrameworkName(ctrl.framework_type)}
+                      </Typography>
+                    </Box>
+                  </Stack>
+
+                  <Stack direction="row" alignItems="center" spacing={1.25}>
+                    <Chip
+                      label={priority.label}
+                      size="small"
+                      sx={{
+                        height: 22,
+                        fontSize: 10,
+                        fontWeight: 600,
+                        backgroundColor: priority.colors.bg,
+                        color: priority.colors.text,
+                        border: `1px solid ${priority.colors.border}`,
+                      }}
+                    />
+                    <Typography sx={{ fontSize: 18, fontWeight: 700, color: getScoreColor(ctrl.overall_score) }}>
+                      {ctrl.overall_score}
                     </Typography>
-                  ))}
-                </Box>
-              )}
-            </Box>
-          );
-        })}
-      </Stack>
+                  </Stack>
+                </Stack>
+
+                {/* Score bar */}
+                <LinearProgress
+                  variant="determinate"
+                  value={ctrl.overall_score}
+                  sx={{
+                    height: 4,
+                    borderRadius: 2,
+                    mb: recs.length > 0 ? 1.25 : 0,
+                    backgroundColor: background.hover,
+                    "& .MuiLinearProgress-bar": {
+                      borderRadius: 2,
+                      backgroundColor: getScoreColor(ctrl.overall_score),
+                    },
+                  }}
+                />
+
+                {/* Recommendations */}
+                {recs.length > 0 && (
+                  <Stack spacing={0.5}>
+                    {recs.slice(0, 3).map((rec, j) => (
+                      <Stack key={j} direction="row" alignItems="flex-start" spacing={1}>
+                        <Lightbulb
+                          size={12}
+                          style={{
+                            color: accent.amber.text,
+                            marginTop: 2,
+                            flexShrink: 0,
+                          }}
+                        />
+                        <Typography
+                          sx={{
+                            fontSize: 11,
+                            color: textColors.secondary,
+                            lineHeight: 1.5,
+                          }}
+                        >
+                          {rec}
+                        </Typography>
+                      </Stack>
+                    ))}
+                  </Stack>
+                )}
+              </Box>
+            );
+          })}
+        </Stack>
+      </Box>
     </Box>
   );
 }

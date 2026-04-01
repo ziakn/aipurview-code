@@ -188,7 +188,12 @@ export default function ReadinessDashboard() {
                 sx={{
                   ...cardSx,
                   borderRadius: 2,
-                  padding: "8px 14px 14px 14px",
+                  padding: "12px 18px 16px 18px",
+                  transition: "all 0.2s ease",
+                  "&:hover": {
+                    borderColor: getLevelColor(level),
+                    background: `linear-gradient(135deg, ${background.accent} 0%, ${background.gradientStop} 100%)`,
+                  },
                 }}
               >
                 <Typography
