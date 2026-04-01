@@ -1,5 +1,6 @@
-import { Button, Stack, Typography, useTheme, Box } from "@mui/material";
-import React, { Suspense, useState } from "react";
+import { Button, IconButton, Stack, Typography, useTheme, Box } from "@mui/material";
+import React, { Suspense, useEffect, useState } from "react";
+import { X } from "lucide-react";
 import { ReactComponent as Background } from "../../../assets/imgs/background-grid.svg";
 import Checkbox from "../../../components/Inputs/Checkbox";
 import Field from "../../../components/Inputs/Field";
@@ -12,6 +13,7 @@ import Alert from "../../../components/Alert";
 import { ENV_VARs } from "../../../../../env.vars";
 import { loginUser } from "../../../../application/repository/user.repository";
 import { getOrganizations } from "../../../../application/repository/superAdmin.repository";
+import { checkOrganizationExists } from "../../../../application/repository/organization.repository";
 
 // Animated loading component specifically for login
 const LoginLoadingOverlay: React.FC = () => {
@@ -127,6 +129,15 @@ const Login: React.FC = () => {
     title?: string;
     body: string;
   } | null>(null);
+  const [showSetupBanner, setShowSetupBanner] = useState(false);
+
+  useEffect(() => {
+    checkOrganizationExists()
+      .then((exists) => {
+        if (!exists) setShowSetupBanner(true);
+      })
+      .catch(() => {});
+  }, []);
 
   // Handle changes in input fields
   const handleChange =
@@ -315,6 +326,40 @@ const Login: React.FC = () => {
           <Typography sx={{ fontSize: 16, fontWeight: "bold" }}>
             {loginText}
           </Typography>
+          {showSetupBanner && (
+            <Stack
+              direction="row"
+              alignItems="flex-start"
+              gap={theme.spacing(8)}
+              sx={{
+                width: 360,
+                padding: theme.spacing(8),
+                backgroundColor: singleTheme.alertStyles.info.bg,
+                border: `1px solid ${singleTheme.alertStyles.info.border}`,
+                borderRadius: theme.shape.borderRadius,
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: 13,
+                  color: singleTheme.alertStyles.info.text,
+                  flex: 1,
+                }}
+              >
+                Welcome to VerifyWise! To get started, log in with your
+                superadmin credentials to create an organization and invite
+                users.
+              </Typography>
+              <IconButton
+                disableRipple
+                onClick={() => setShowSetupBanner(false)}
+                aria-label="Close banner"
+                sx={{ padding: 0 }}
+              >
+                <X size={16} color={singleTheme.alertStyles.info.text} />
+              </IconButton>
+            </Stack>
+          )}
           <Stack sx={{ gap: theme.spacing(7.5) }}>
             <Field
               label="Email"
