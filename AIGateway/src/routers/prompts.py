@@ -1,11 +1,15 @@
+import json as _json
 import re
 from typing import Any, Optional
 
 from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, field_validator
 
 from crud import prompts as crud
 from middlewares.auth import verify_internal_key
+from services.llm_service import stream_chat_completion
+from services.proxy_service import resolve_endpoint_for_key
 from utils.auth import get_org_id, get_user_id, require_admin
 from utils.notifications import notify_config_change
 
@@ -383,12 +387,6 @@ async def test_prompt(request: Request, body: TestPromptRequest):
     Test a prompt by resolving variables and streaming the LLM response.
     Returns an SSE stream compatible with the frontend's streamPromptTest().
     """
-    import json as _json
-
-    from fastapi.responses import StreamingResponse
-    from services.proxy_service import resolve_endpoint_for_key
-    from services.llm_service import stream_chat_completion
-
     verify_internal_key(request)
     org_id = get_org_id(request)
 
