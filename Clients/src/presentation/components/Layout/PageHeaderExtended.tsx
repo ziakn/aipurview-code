@@ -80,7 +80,9 @@ export function PageHeaderExtended({
                             )}
                         </Stack>
                     )}
-                    {children}
+                    <Stack gap="16px" sx={{ mt: "16px" }}>
+                        {children}
+                    </Stack>
                 </>
             )}
         </Stack>

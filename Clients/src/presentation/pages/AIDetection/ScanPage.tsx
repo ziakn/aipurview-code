@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import {
   Search,
-  GitBranch as GithubIcon,
+  GitFork,
   AlertCircle,
   CheckCircle2,
   XCircle,
@@ -310,8 +310,8 @@ export default function ScanPage() {
       }
     >
 
-      {/* Statistics Cards - 6 cards in 3x2 grid (only show if there are scans) */}
-      {!isCheckingActive && scanState === "idle" && !statsLoading && stats && stats.total_scans > 0 && (
+      {/* Statistics Cards - 6 cards in 3x2 grid */}
+      {!isCheckingActive && scanState === "idle" && !statsLoading && stats && (
         <Box
           sx={{
             display: "grid",
@@ -397,10 +397,7 @@ export default function ScanPage() {
       {!isCheckingActive && scanState === "idle" && (
         <Box
           sx={{
-            backgroundColor: palette.background.main,
-            border: `1px solid ${palette.border.dark}`,
-            borderRadius: "4px",
-            p: 2,
+            pt: "16px",
           }}
         >
           {/* Repository URL section */}
@@ -452,11 +449,11 @@ export default function ScanPage() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <GithubIcon size={16} color={palette.text.tertiary} />
+                    <GitFork size={16} color={palette.text.tertiary} />
                   </InputAdornment>
                 ),
               }}
-              sx={{ mb: 0 }}
+              sx={{ mb: 0, maxWidth: "480px" }}
             />
           </Box>
 
