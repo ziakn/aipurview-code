@@ -50,7 +50,7 @@ import {
 } from "../../../../application/hooks/useVendors";
 import { useModalKeyHandling } from "../../../../application/hooks/useModalKeyHandling";
 import { User } from "../../../../domain/types/User";
-import { AddNewVendorProps, VendorFormErrors } from "../../../../domain/interfaces/i.vendor";
+import { AddNewVendorProps } from "../../../../domain/interfaces/i.vendor";
 import { getAutocompleteStyles } from "../../../utils/inputStyles";
 import { 
   DataSensitivity,
@@ -160,7 +160,7 @@ const AddNewVendor: React.FC<AddNewVendorProps> = ({
     }),
     []
   );
-  const { errors, validateAll, validateField, clearFieldError, resetErrors } = useFormValidation<typeof initialState>(validators);
+  const { errors, validateAll, clearFieldError, resetErrors } = useFormValidation<typeof initialState>(validators);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [projectsLoaded, setProjectsLoaded] = useState(false); // Track if projects are loaded
   const [alert, setAlert] = useState<{
