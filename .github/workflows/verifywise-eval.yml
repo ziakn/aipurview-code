@@ -1,27 +1,75 @@
-# VerifyWise LLM Evaluation — Reusable GitHub Actions Workflow
+# VerifyWise LLM Evaluation — Reusable Workflow
 #
-# Triggers an LLM evaluation on a VerifyWise instance, polls for results,
-# and optionally posts a summary as a PR comment and/or fails CI if
-# thresholds are not met.
+# Runs an LLM evaluation on your VerifyWise instance, waits for results,
+# and optionally posts a summary on the PR and/or gates CI on thresholds.
 #
-# This workflow uses the standalone action from:
-#   https://github.com/verifywise-ai/verifywise-eval-action
+# Supports three use cases:
+#   - Chatbot: answer_relevancy, bias, toxicity, hallucination, ...
+#   - RAG:     faithfulness, contextual_relevancy, context_precision, context_recall, ...
+#   - Agent:   tool_correctness, task_completion, plan_quality, step_efficiency, ...
 #
-# Usage (in your repo's workflow):
+# ─── Quick start ────────────────────────────────────────────────────────
 #
+#   # Chatbot evaluation
 #   jobs:
 #     eval:
 #       uses: verifywise-ai/verifywise/.github/workflows/verifywise-eval.yml@main
 #       with:
-#         api_url: https://your-verifywise-instance.com
-#         project_id: <uuid>
-#         dataset_id: <uuid>
-#         metrics: "answerRelevancy,faithfulness,hallucination"
+#         api_url: https://app.verifywise.ai
+#         project_id: proj_abc123
+#         dataset_id: "42"
+#         metrics: answer_relevancy,bias,toxicity
+#         model_name: gpt-4o-mini
+#         model_provider: openai
+#       secrets:
+#         VW_API_TOKEN: ${{ secrets.VW_API_TOKEN }}
+#         LLM_API_KEY:  ${{ secrets.OPENAI_API_KEY }}
+#
+#   # RAG evaluation
+#   jobs:
+#     eval:
+#       uses: verifywise-ai/verifywise/.github/workflows/verifywise-eval.yml@main
+#       with:
+#         api_url: https://app.verifywise.ai
+#         project_id: proj_abc123
+#         dataset_id: "42"
+#         metrics: faithfulness,contextual_relevancy,answer_relevancy
 #         model_name: gpt-4o
 #         model_provider: openai
 #       secrets:
 #         VW_API_TOKEN: ${{ secrets.VW_API_TOKEN }}
-#         LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+#         LLM_API_KEY:  ${{ secrets.OPENAI_API_KEY }}
+#
+#   # Agent evaluation
+#   jobs:
+#     eval:
+#       uses: verifywise-ai/verifywise/.github/workflows/verifywise-eval.yml@main
+#       with:
+#         api_url: https://app.verifywise.ai
+#         project_id: proj_abc123
+#         dataset_id: "42"
+#         metrics: tool_correctness,task_completion,plan_quality
+#         model_name: gpt-4o
+#         model_provider: openai
+#       secrets:
+#         VW_API_TOKEN: ${{ secrets.VW_API_TOKEN }}
+#         LLM_API_KEY:  ${{ secrets.OPENAI_API_KEY }}
+#
+# ─── Available metrics ──────────────────────────────────────────────────
+#
+#   Universal:  answer_relevancy, correctness, completeness,
+#               hallucination*, toxicity*, bias*,
+#               instruction_following
+#
+#   RAG:        faithfulness, contextual_relevancy,
+#               context_precision, context_recall
+#
+#   Agent:      tool_correctness, argument_correctness,
+#               task_completion, step_efficiency,
+#               plan_quality, plan_adherence
+#
+#   (* = inverted metric — lower is better)
+# ────────────────────────────────────────────────────────────────────────
 
 name: VerifyWise LLM Evaluation
 
@@ -29,11 +77,11 @@ on:
   workflow_call:
     inputs:
       api_url:
-        description: "Base URL of the VerifyWise instance (e.g. https://app.verifywise.ai)"
+        description: "VerifyWise instance URL (e.g. https://app.verifywise.ai)"
         required: true
         type: string
       project_id:
-        description: "VerifyWise project ID"
+        description: "Project ID"
         required: true
         type: string
       dataset_id:
@@ -41,19 +89,19 @@ on:
         required: true
         type: string
       metrics:
-        description: "Comma-separated metric names (e.g. answerRelevancy,faithfulness,hallucination)"
+        description: "Comma-separated metric names"
         required: true
         type: string
       model_name:
-        description: "Model to evaluate (e.g. gpt-4o, claude-3.5-sonnet)"
+        description: "Model to evaluate (e.g. gpt-4o-mini)"
         required: true
         type: string
       model_provider:
-        description: "Model provider (openai, anthropic, google, mistral, xai, self-hosted)"
+        description: "Provider: openai, anthropic, google, mistral, xai, self-hosted"
         required: true
         type: string
       judge_model:
-        description: "Judge LLM model name"
+        description: "Judge LLM for scoring"
         required: false
         type: string
         default: "gpt-4o"
@@ -63,12 +111,12 @@ on:
         type: string
         default: "openai"
       threshold:
-        description: "Global pass threshold (0-1). Metrics below this fail CI."
+        description: "Pass/fail threshold (0.0–1.0)"
         required: false
         type: string
         default: "0.7"
       timeout_minutes:
-        description: "Max minutes to wait for evaluation to complete"
+        description: "Max wait time in minutes"
         required: false
         type: string
         default: "30"
@@ -78,37 +126,37 @@ on:
         type: string
         default: "15"
       experiment_name:
-        description: "Custom experiment name (defaults to commit-based name)"
+        description: "Custom experiment name"
         required: false
         type: string
         default: ""
       fail_on_threshold:
-        description: "Whether to fail the CI check when thresholds are not met"
+        description: "Fail CI when thresholds are not met"
         required: false
         type: boolean
         default: true
       post_pr_comment:
-        description: "Whether to post a summary comment on the PR"
+        description: "Post results as a PR comment"
         required: false
         type: boolean
         default: true
     secrets:
       VW_API_TOKEN:
-        description: "VerifyWise JWT token or API key for authentication"
+        description: "VerifyWise API token"
         required: true
       LLM_API_KEY:
-        description: "API key for the LLM provider being evaluated"
+        description: "LLM provider API key"
         required: true
 
 jobs:
   evaluate:
-    name: Run LLM Evaluation
+    name: LLM Evaluation
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
       contents: read
     steps:
-      - name: Run VerifyWise evaluation
+      - name: Run evaluation
         id: eval
         uses: verifywise-ai/verifywise-eval-action@v1
         with:
@@ -135,17 +183,14 @@ jobs:
           script: |
             const fs = require('fs');
             const summaryPath = '${{ steps.eval.outputs.summary_path }}';
-            if (!summaryPath || !fs.existsSync(summaryPath)) {
-              console.log('No summary file found, skipping PR comment');
-              return;
-            }
+            if (!summaryPath || !fs.existsSync(summaryPath)) return;
             const body = fs.readFileSync(summaryPath, 'utf8');
+            const marker = '<!-- verifywise-eval -->';
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
             });
-            const marker = '<!-- verifywise-eval-results -->';
             const existing = comments.find(c => c.body.includes(marker));
             const fullBody = `${marker}\n${body}`;
             if (existing) {

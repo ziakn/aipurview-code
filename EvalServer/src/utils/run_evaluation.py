@@ -767,13 +767,10 @@ async def run_evaluation(
         task_type = (config.get("taskType") or config.get("task_type") or "").strip().lower()
         bundles = config.get("bundles") or {}
         
-        # Map frontend metric names (camelCase) to backend metric names (snake_case)
-        # New metric structure:
-        # - Universal Core (all use cases): relevance, correctness, completeness, hallucination, instruction_following, toxicity, bias
-        # - RAG: context_relevancy, context_precision, context_recall, faithfulness
-        # - Agent: tool_selection, tool_correctness, action_relevance, planning_quality
+        # Map metric names to backend snake_case names.
+        # Accepts both camelCase (frontend) and snake_case (CI runner / API).
         metric_name_map = {
-            # Universal Core
+            # Universal Core — camelCase
             "answerRelevancy": "answer_relevancy",
             "correctness": "correctness",
             "completeness": "completeness",
@@ -781,16 +778,38 @@ async def run_evaluation(
             "instructionFollowing": "instruction_following",
             "toxicity": "toxicity",
             "bias": "bias",
-            # RAG-specific
+            # RAG — camelCase
             "contextRelevancy": "context_relevancy",
+            "contextualRelevancy": "context_relevancy",
             "contextPrecision": "context_precision",
             "contextRecall": "context_recall",
             "faithfulness": "faithfulness",
-            # Agent-specific
+            # Agent — camelCase
             "toolSelection": "tool_selection",
             "toolCorrectness": "tool_correctness",
             "actionRelevance": "action_relevance",
             "planningQuality": "planning_quality",
+            "planQuality": "planning_quality",
+            "planAdherence": "plan_adherence",
+            "argumentCorrectness": "argument_correctness",
+            "taskCompletion": "task_completion",
+            "stepEfficiency": "step_efficiency",
+            # snake_case identity (CI runner sends these)
+            "answer_relevancy": "answer_relevancy",
+            "instruction_following": "instruction_following",
+            "context_relevancy": "context_relevancy",
+            "contextual_relevancy": "context_relevancy",
+            "context_precision": "context_precision",
+            "context_recall": "context_recall",
+            "tool_selection": "tool_selection",
+            "tool_correctness": "tool_correctness",
+            "action_relevance": "action_relevance",
+            "planning_quality": "planning_quality",
+            "plan_quality": "planning_quality",
+            "plan_adherence": "plan_adherence",
+            "argument_correctness": "argument_correctness",
+            "task_completion": "task_completion",
+            "step_efficiency": "step_efficiency",
         }
 
         # Start with all metrics disabled
@@ -813,6 +832,10 @@ async def run_evaluation(
             "tool_correctness": False,
             "action_relevance": False,
             "planning_quality": False,
+            "plan_adherence": False,
+            "argument_correctness": False,
+            "task_completion": False,
+            "step_efficiency": False,
         }
         
         # Enable metrics based on UI selection

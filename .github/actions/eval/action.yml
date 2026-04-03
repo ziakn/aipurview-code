@@ -1,33 +1,48 @@
 name: 'VerifyWise LLM Evaluation'
 description: >
-  Run LLM evaluations against a VerifyWise instance, poll for results,
-  and gate CI on quality thresholds. Posts a Markdown summary as a PR
-  comment and uploads results as build artifacts.
+  Run LLM evaluations against a VerifyWise instance and gate CI on quality
+  thresholds. Supports chatbot, RAG, and agent use cases.
+
 branding:
   icon: 'check-circle'
   color: 'green'
 
+# ─── Available metrics ──────────────────────────────────────────────────
+#
+#   Universal:  answer_relevancy, correctness, completeness,
+#               hallucination*, toxicity*, bias*, instruction_following
+#
+#   RAG:        faithfulness, contextual_relevancy,
+#               context_precision, context_recall
+#
+#   Agent:      tool_correctness, argument_correctness,
+#               task_completion, step_efficiency,
+#               plan_quality, plan_adherence
+#
+#   (* = inverted — lower is better)
+# ────────────────────────────────────────────────────────────────────────
+
 inputs:
   api_url:
-    description: 'Base URL of the VerifyWise instance (e.g. https://app.verifywise.ai)'
+    description: 'VerifyWise instance URL'
     required: true
   project_id:
-    description: 'VerifyWise project ID'
+    description: 'Project ID'
     required: true
   dataset_id:
     description: 'Dataset ID to evaluate against'
     required: true
   metrics:
-    description: 'Comma-separated metric names (e.g. answerRelevancy,faithfulness,hallucination)'
+    description: 'Comma-separated metric names (e.g. answer_relevancy,bias,toxicity)'
     required: true
   model_name:
-    description: 'Model to evaluate (e.g. gpt-4o, claude-3.5-sonnet)'
+    description: 'Model to evaluate (e.g. gpt-4o-mini, claude-3.5-sonnet)'
     required: true
   model_provider:
-    description: 'Model provider (openai, anthropic, google, mistral, xai, self-hosted)'
+    description: 'Provider: openai | anthropic | google | mistral | xai | self-hosted'
     required: true
   judge_model:
-    description: 'Judge LLM model name'
+    description: 'Judge LLM for metric scoring'
     required: false
     default: 'gpt-4o'
   judge_provider:
@@ -35,11 +50,11 @@ inputs:
     required: false
     default: 'openai'
   threshold:
-    description: 'Global pass threshold (0-1). Metrics below this fail.'
+    description: 'Pass/fail threshold (0.0–1.0)'
     required: false
     default: '0.7'
   timeout_minutes:
-    description: 'Max minutes to wait for evaluation to complete'
+    description: 'Max wait time in minutes'
     required: false
     default: '30'
   poll_interval_seconds:
@@ -47,29 +62,29 @@ inputs:
     required: false
     default: '15'
   experiment_name:
-    description: 'Custom experiment name (defaults to commit-based name)'
+    description: 'Custom experiment name (auto-generated if empty)'
     required: false
     default: ''
   fail_on_threshold:
-    description: 'Whether to fail the step when thresholds are not met (true/false)'
+    description: 'Fail the step when thresholds are not met'
     required: false
     default: 'true'
   vw_api_token:
-    description: 'VerifyWise JWT token or API key'
+    description: 'VerifyWise API token'
     required: true
   llm_api_key:
-    description: 'API key for the LLM provider being evaluated'
+    description: 'LLM provider API key'
     required: true
 
 outputs:
   passed:
-    description: 'Whether all metrics passed their thresholds (true/false)'
+    description: 'Whether all metrics passed (true/false)'
     value: ${{ steps.check.outputs.passed }}
   results_path:
-    description: 'Path to the results JSON file'
+    description: 'Path to results JSON'
     value: ${{ steps.eval.outputs.results_path }}
   summary_path:
-    description: 'Path to the Markdown summary file'
+    description: 'Path to Markdown summary'
     value: ${{ steps.eval.outputs.summary_path }}
   experiment_id:
     description: 'ID of the created experiment'
@@ -106,32 +121,19 @@ runs:
         VW_EXPERIMENT_NAME: ${{ inputs.experiment_name }}
         LLM_API_KEY: ${{ inputs.llm_api_key }}
       run: |
-        RESULTS_PATH="${{ runner.temp }}/verifywise-results.json"
-        SUMMARY_PATH="${{ runner.temp }}/verifywise-summary.md"
+        RESULTS="${{ runner.temp }}/vw-results.json"
+        SUMMARY="${{ runner.temp }}/vw-summary.md"
 
         python "${{ github.action_path }}/ci_eval_runner.py" \
-          --api-url "$VW_API_URL" \
-          --token "$VW_API_TOKEN" \
-          --project-id "$VW_PROJECT_ID" \
-          --dataset-id "$VW_DATASET_ID" \
-          --metrics "$VW_METRICS" \
-          --model-name "$VW_MODEL_NAME" \
-          --model-provider "$VW_MODEL_PROVIDER" \
-          --judge-model "$VW_JUDGE_MODEL" \
-          --judge-provider "$VW_JUDGE_PROVIDER" \
-          --threshold "$VW_THRESHOLD" \
-          --timeout "$VW_TIMEOUT_MINUTES" \
-          --poll-interval "$VW_POLL_INTERVAL" \
-          --output "$RESULTS_PATH" \
-          --markdown-output "$SUMMARY_PATH" \
-          ${VW_EXPERIMENT_NAME:+--name "$VW_EXPERIMENT_NAME"} \
+          --output "$RESULTS" \
+          --markdown-output "$SUMMARY" \
           || true
 
-        echo "results_path=$RESULTS_PATH" >> "$GITHUB_OUTPUT"
-        echo "summary_path=$SUMMARY_PATH" >> "$GITHUB_OUTPUT"
+        echo "results_path=$RESULTS" >> "$GITHUB_OUTPUT"
+        echo "summary_path=$SUMMARY" >> "$GITHUB_OUTPUT"
 
-        if [ -f "$RESULTS_PATH" ]; then
-          EXP_ID=$(python -c "import json; print(json.load(open('$RESULTS_PATH')).get('experiment_id',''))" 2>/dev/null || echo "")
+        if [ -f "$RESULTS" ]; then
+          EXP_ID=$(python -c "import json; print(json.load(open('$RESULTS')).get('experiment_id',''))" 2>/dev/null || echo "")
           echo "experiment_id=$EXP_ID" >> "$GITHUB_OUTPUT"
         fi
 
@@ -139,41 +141,34 @@ runs:
       id: check
       shell: bash
       run: |
-        RESULTS_PATH="${{ steps.eval.outputs.results_path }}"
-        if [ ! -f "$RESULTS_PATH" ]; then
-          echo "::error::No results file found — evaluation may have failed to start."
+        RESULTS="${{ steps.eval.outputs.results_path }}"
+        if [ ! -f "$RESULTS" ]; then
+          echo "::error::No results file — evaluation may have failed."
           echo "passed=false" >> "$GITHUB_OUTPUT"
-          if [ "${{ inputs.fail_on_threshold }}" = "true" ]; then
-            exit 1
-          fi
+          [ "${{ inputs.fail_on_threshold }}" = "true" ] && exit 1
           exit 0
         fi
 
-        PASSED=$(python -c "import json; print(json.load(open('$RESULTS_PATH')).get('passed', False))" 2>/dev/null || echo "False")
+        PASSED=$(python -c "import json; print(json.load(open('$RESULTS')).get('passed', False))" 2>/dev/null || echo "False")
 
         if [ "$PASSED" = "True" ]; then
           echo "passed=true" >> "$GITHUB_OUTPUT"
-          echo "All metrics passed!"
+          echo "All metrics passed."
         else
           echo "passed=false" >> "$GITHUB_OUTPUT"
-
           python -c "
-        import json, sys
-        with open('$RESULTS_PATH') as f:
-            data = json.load(f)
+        import json
+        data = json.load(open('$RESULTS'))
         failed = [m for m in data.get('metrics', []) if not m.get('passed')]
         if failed:
-            print('::error::LLM evaluation failed. Metrics below threshold:')
+            print('::error::Metrics below threshold:')
             for m in failed:
-                print(f'  - {m[\"name\"]}: {m[\"score\"]*100:.1f}% (threshold: {m[\"threshold\"]*100:.0f}%)')
+                print(f'  {m[\"name\"]}: {m[\"score\"]*100:.1f}% (threshold: {m[\"threshold\"]*100:.0f}%)')
         " || true
-
-          if [ "${{ inputs.fail_on_threshold }}" = "true" ]; then
-            exit 1
-          fi
+          [ "${{ inputs.fail_on_threshold }}" = "true" ] && exit 1
         fi
 
-    - name: Upload results artifact
+    - name: Upload results
       if: always()
       uses: actions/upload-artifact@v7
       with:
