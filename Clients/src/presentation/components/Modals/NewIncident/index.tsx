@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { FC, useState, useEffect, useMemo, Suspense } from "react";
+import React, { FC, useState, useEffect, useMemo, Suspense, useCallback } from "react";
 import {
     Drawer,
     Stack,
@@ -22,6 +22,7 @@ import { useProjects } from "../../../../application/hooks/useProjects";
 import { User } from "../../../../domain/types/User";
 import { Project } from "../../../../domain/types/Project";
 import { useModalKeyHandling } from "../../../../application/hooks/useModalKeyHandling";
+import { useFormValidation } from "../../../../application/hooks/useFormValidation";
 import {
     Severity,
     IncidentManagementStatus,
@@ -69,18 +70,6 @@ export interface NewIncidentFormValues {
     approved_by?: string;
     approval_date?: string;
     approval_notes?: string;
-}
-
-interface NewIncidentFormErrors {
-    ai_project?: string;
-    type?: string;
-    severity?: string;
-    status?: string;
-    occurred_date?: string;
-    date_detected?: string;
-    reporter?: string;
-    categories_of_harm?: string;
-    description?: string;
 }
 
 const initialState: NewIncidentFormValues = {
@@ -144,10 +133,37 @@ const SideDrawerIncident: FC<SideDrawerIncidentProps> = ({
     const [values, setValues] = useState<NewIncidentFormValues>(
         initialData || initialState
     );
-    const [errors, setErrors] = useState<NewIncidentFormErrors>({});
     const [users, setUsers] = useState<User[]>([]);
     const [, setIsLoadingUsers] = useState(false);
     const [activeTab, setActiveTab] = useState("details");
+
+    const validators = useMemo(
+        () => ({
+            ai_project: (v: unknown) =>
+                !v ? "Project is required." : "",
+            occurred_date: (v: unknown) => {
+                if (!v) return "Occurred date is required.";
+                if (dayjs(v as string).isAfter(dayjs())) return "Cannot be in the future.";
+                return "";
+            },
+            date_detected: (v: unknown) =>
+                !v ? "Detected date is required." : "",
+            reporter: (v: unknown) =>
+                !v ? "Reporter is required." : "",
+            description: (v: unknown) =>
+                !v ? "Description is required." : "",
+            categories_of_harm: (v: unknown) => {
+                const cats = v as string[];
+                return !cats || cats.length < 1
+                    ? "Please select at least one Category of Harm."
+                    : "";
+            },
+        }),
+        []
+    );
+
+    const { errors, validateAll, clearFieldError, resetErrors } =
+        useFormValidation<NewIncidentFormValues>(validators);
 
     // Use the useProjects hook to get approved projects only
     const { approvedProjects } = useProjects();
@@ -206,30 +222,30 @@ const SideDrawerIncident: FC<SideDrawerIncidentProps> = ({
     );
 
     const handleOnTextFieldChange =
-        (prop: keyof NewIncidentFormValues) => (e: any) => {
+        useCallback((prop: keyof NewIncidentFormValues) => (e: any) => {
             const value = e.target.value;
             setValues((prev) => ({ ...prev, [prop]: value }));
-            setErrors((prev) => ({ ...prev, [prop]: "" }));
-        };
+            clearFieldError(prop);
+        }, [clearFieldError]);
 
     const handleSelectChange =
-        (prop: keyof NewIncidentFormValues) => (e: any) => {
+        useCallback((prop: keyof NewIncidentFormValues) => (e: any) => {
             const value = e.target.value;
             setValues((prev) => ({ ...prev, [prop]: value }));
-            setErrors((prev) => ({ ...prev, [prop]: "" }));
-        };
+            clearFieldError(prop);
+        }, [clearFieldError]);
 
     const handleDateChange =
-        (prop: "occurred_date" | "date_detected" | "approval_date") =>
+        useCallback((prop: "occurred_date" | "date_detected" | "approval_date") =>
         (newDate: Dayjs | null) => {
             if (newDate?.isValid()) {
                 setValues((prev) => ({
                     ...prev,
                     [prop]: newDate.format("YYYY-MM-DD"),
                 }));
-                setErrors((prev) => ({ ...prev, [prop]: "" }));
+                clearFieldError(prop);
             }
-        };
+        }, [clearFieldError]);
 
     const handleSwitchChange =
         (prop: "interim_report") =>
@@ -237,52 +253,26 @@ const SideDrawerIncident: FC<SideDrawerIncidentProps> = ({
             setValues((prev) => ({ ...prev, [prop]: e.target.checked }));
         };
 
-    const handleHarmCategoryChange = (category: string) => {
+    const handleHarmCategoryChange = useCallback((category: string) => {
         setValues((prev) => {
             const newCategories = prev.categories_of_harm.includes(category)
                 ? prev.categories_of_harm.filter((c) => c !== category)
                 : [...prev.categories_of_harm, category];
             return { ...prev, categories_of_harm: newCategories };
         });
-        setErrors((prev) => ({ ...prev, categories_of_harm: "" }));
-    };
-
-    const validateForm = (): boolean => {
-        const newErrors: NewIncidentFormErrors = {};
-        if (!values.ai_project) newErrors.ai_project = "Project is required.";
-        if (!values.occurred_date)
-            newErrors.occurred_date = "Occurred date is required.";
-        else if (dayjs(values.occurred_date).isAfter(dayjs()))
-            newErrors.occurred_date = "Cannot be in the future.";
-        if (!values.date_detected)
-            newErrors.date_detected = "Detected date is required.";
-        if (!values.reporter) newErrors.reporter = "Reporter is required.";
-        // ----- Description with min/max length -----
-        if (!values.description) {
-            newErrors.description = "Description is required.";
-        }
-        // ----- Impact Assessment: Categories of Harm -----
-        if (
-            !values.categories_of_harm ||
-            values.categories_of_harm.length < 1
-        ) {
-            newErrors.categories_of_harm =
-                "Please select at least one Category of Harm.";
-        }
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
+        clearFieldError("categories_of_harm");
+    }, [clearFieldError]);
 
     const handleClose = () => {
         setIsOpen(false);
         setValues(initialState);
-        setErrors({});
+        resetErrors();
         setActiveTab("details");
     };
 
     const handleSubmit = (e?: React.FormEvent) => {
         if (e) e.preventDefault();
-        if (validateForm()) {
+        if (validateAll(values)) {
             onSuccess?.(values);
             handleClose();
         }
