@@ -79,7 +79,7 @@ inputs:
 outputs:
   passed:
     description: 'Whether all metrics passed (true/false)'
-    value: ${{ steps.check.outputs.passed }}
+    value: ${{ steps.report.outputs.passed }}
   results_path:
     description: 'Path to results JSON'
     value: ${{ steps.eval.outputs.results_path }}
@@ -137,36 +137,66 @@ runs:
           echo "experiment_id=$EXP_ID" >> "$GITHUB_OUTPUT"
         fi
 
-    - name: Check thresholds
-      id: check
+    - name: Report results
+      id: report
+      if: always()
       shell: bash
+      env:
+        RESULTS_PATH: ${{ steps.eval.outputs.results_path }}
+        SUMMARY_PATH: ${{ steps.eval.outputs.summary_path }}
+        FAIL_ON_THRESHOLD: ${{ inputs.fail_on_threshold }}
       run: |
-        RESULTS="${{ steps.eval.outputs.results_path }}"
-        if [ ! -f "$RESULTS" ]; then
-          echo "::error::No results file — evaluation may have failed."
+        # If no results at all, report error
+        if [ ! -f "$RESULTS_PATH" ]; then
+          echo "::error title=VerifyWise Evaluation Failed::No results produced — the evaluation may have failed to start. Check the logs above."
           echo "passed=false" >> "$GITHUB_OUTPUT"
-          [ "${{ inputs.fail_on_threshold }}" = "true" ] && exit 1
+          echo "### ❌ VerifyWise Evaluation Failed" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "No results were produced. The evaluation may have failed to connect to the VerifyWise instance." >> "$GITHUB_STEP_SUMMARY"
+          [ "$FAIL_ON_THRESHOLD" = "true" ] && exit 1
           exit 0
         fi
 
-        PASSED=$(python -c "import json; print(json.load(open('$RESULTS')).get('passed', False))" 2>/dev/null || echo "False")
-
-        if [ "$PASSED" = "True" ]; then
-          echo "passed=true" >> "$GITHUB_OUTPUT"
-          echo "All metrics passed."
-        else
-          echo "passed=false" >> "$GITHUB_OUTPUT"
-          python -c "
-        import json
-        data = json.load(open('$RESULTS'))
-        failed = [m for m in data.get('metrics', []) if not m.get('passed')]
-        if failed:
-            print('::error::Metrics below threshold:')
-            for m in failed:
-                print(f'  {m[\"name\"]}: {m[\"score\"]*100:.1f}% (threshold: {m[\"threshold\"]*100:.0f}%)')
-        " || true
-          [ "${{ inputs.fail_on_threshold }}" = "true" ] && exit 1
+        # Write the Markdown summary to the Job Summary (visible on the run page)
+        if [ -f "$SUMMARY_PATH" ]; then
+          cat "$SUMMARY_PATH" >> "$GITHUB_STEP_SUMMARY"
         fi
+
+        # Parse pass/fail and annotate
+        python3 << 'PYEOF'
+        import json, os
+
+        results_path = os.environ["RESULTS_PATH"]
+        fail_on = os.environ.get("FAIL_ON_THRESHOLD", "true") == "true"
+
+        with open(results_path) as f:
+            data = json.load(f)
+
+        passed = data.get("passed", False)
+        metrics = data.get("metrics", [])
+        name = data.get("name", "Evaluation")
+        model = data.get("model", "unknown")
+
+        failing = [m for m in metrics if not m.get("passed")]
+        passing = [m for m in metrics if m.get("passed")]
+
+        # Write outputs
+        with open(os.environ["GITHUB_OUTPUT"], "a") as out:
+            out.write(f"passed={'true' if passed else 'false'}\n")
+
+        if passed:
+            print(f"::notice title=✅ {name} Passed::All {len(metrics)} metrics passed for {model}")
+        else:
+            for m in failing:
+                inv = " (inverted — lower is better)" if m.get("inverted") else ""
+                print(f"::error title=❌ {m['name']} failed threshold::{m['name']}: scored {m['score']*100:.1f}% against {m['threshold']*100:.0f}% threshold{inv}")
+
+            summary = ", ".join(f"{m['name']}={m['score']*100:.0f}%" for m in failing)
+            print(f"::error title=VerifyWise Evaluation Failed::{len(failing)}/{len(metrics)} metrics below threshold on {model}: {summary}")
+
+            if fail_on:
+                raise SystemExit(1)
+        PYEOF
 
     - name: Upload results
       if: always()
