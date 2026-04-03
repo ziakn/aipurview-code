@@ -4,6 +4,9 @@
 # and optionally posts a summary as a PR comment and/or fails CI if
 # thresholds are not met.
 #
+# This workflow uses the standalone action from:
+#   https://github.com/verifywise-ai/verifywise-eval-action
+#
 # Usage (in your repo's workflow):
 #
 #   jobs:
@@ -16,9 +19,6 @@
 #         metrics: "answerRelevancy,faithfulness,hallucination"
 #         model_name: gpt-4o
 #         model_provider: openai
-#         judge_model: gpt-4o
-#         judge_provider: openai
-#         threshold: "0.7"
 #       secrets:
 #         VW_API_TOKEN: ${{ secrets.VW_API_TOKEN }}
 #         LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
@@ -108,58 +108,25 @@ jobs:
       pull-requests: write
       contents: read
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: pip install requests
-
-      - name: Download CI eval runner
-        run: |
-          curl -sL "${{ inputs.api_url }}/api/deepeval/ci/runner" -o ci_eval_runner.py 2>/dev/null || true
-          if [ ! -f ci_eval_runner.py ]; then
-            curl -sL "https://raw.githubusercontent.com/verifywise-ai/verifywise/main/EvalServer/scripts/ci_eval_runner.py" -o ci_eval_runner.py
-          fi
-
-      - name: Run evaluation
+      - name: Run VerifyWise evaluation
         id: eval
-        env:
-          VW_API_URL: ${{ inputs.api_url }}
-          VW_API_TOKEN: ${{ secrets.VW_API_TOKEN }}
-          VW_PROJECT_ID: ${{ inputs.project_id }}
-          VW_DATASET_ID: ${{ inputs.dataset_id }}
-          VW_METRICS: ${{ inputs.metrics }}
-          VW_MODEL_NAME: ${{ inputs.model_name }}
-          VW_MODEL_PROVIDER: ${{ inputs.model_provider }}
-          VW_JUDGE_MODEL: ${{ inputs.judge_model }}
-          VW_JUDGE_PROVIDER: ${{ inputs.judge_provider }}
-          VW_THRESHOLD: ${{ inputs.threshold }}
-          VW_TIMEOUT_MINUTES: ${{ inputs.timeout_minutes }}
-          VW_POLL_INTERVAL: ${{ inputs.poll_interval_seconds }}
-          VW_EXPERIMENT_NAME: ${{ inputs.experiment_name }}
-          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
-        run: |
-          python ci_eval_runner.py \
-            --api-url "$VW_API_URL" \
-            --token "$VW_API_TOKEN" \
-            --project-id "$VW_PROJECT_ID" \
-            --dataset-id "$VW_DATASET_ID" \
-            --metrics "$VW_METRICS" \
-            --model-name "$VW_MODEL_NAME" \
-            --model-provider "$VW_MODEL_PROVIDER" \
-            --judge-model "$VW_JUDGE_MODEL" \
-            --judge-provider "$VW_JUDGE_PROVIDER" \
-            --threshold "$VW_THRESHOLD" \
-            --timeout "$VW_TIMEOUT_MINUTES" \
-            --poll-interval "$VW_POLL_INTERVAL" \
-            --output results.json \
-            --markdown-output summary.md \
-            ${VW_EXPERIMENT_NAME:+--name "$VW_EXPERIMENT_NAME"}
+        uses: verifywise-ai/verifywise-eval-action@v1
+        with:
+          api_url: ${{ inputs.api_url }}
+          project_id: ${{ inputs.project_id }}
+          dataset_id: ${{ inputs.dataset_id }}
+          metrics: ${{ inputs.metrics }}
+          model_name: ${{ inputs.model_name }}
+          model_provider: ${{ inputs.model_provider }}
+          judge_model: ${{ inputs.judge_model }}
+          judge_provider: ${{ inputs.judge_provider }}
+          threshold: ${{ inputs.threshold }}
+          timeout_minutes: ${{ inputs.timeout_minutes }}
+          poll_interval_seconds: ${{ inputs.poll_interval_seconds }}
+          experiment_name: ${{ inputs.experiment_name }}
+          fail_on_threshold: ${{ inputs.fail_on_threshold }}
+          vw_api_token: ${{ secrets.VW_API_TOKEN }}
+          llm_api_key: ${{ secrets.LLM_API_KEY }}
 
       - name: Post PR comment
         if: inputs.post_pr_comment && github.event_name == 'pull_request'
@@ -167,9 +134,9 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const summaryPath = 'summary.md';
-            if (!fs.existsSync(summaryPath)) {
-              console.log('No summary.md found, skipping PR comment');
+            const summaryPath = '${{ steps.eval.outputs.summary_path }}';
+            if (!summaryPath || !fs.existsSync(summaryPath)) {
+              console.log('No summary file found, skipping PR comment');
               return;
             }
             const body = fs.readFileSync(summaryPath, 'utf8');
@@ -196,31 +163,3 @@ jobs:
                 body: fullBody,
               });
             }
-
-      - name: Check thresholds
-        if: inputs.fail_on_threshold
-        run: |
-          if [ -f results.json ]; then
-            python -c "
-          import json, sys
-          with open('results.json') as f:
-              data = json.load(f)
-          if data.get('passed') == False:
-              failed = [m for m in data.get('metrics', []) if not m.get('passed')]
-              print('::error::LLM evaluation failed. Metrics below threshold:')
-              for m in failed:
-                  print(f'  - {m[\"name\"]}: {m[\"score\"]*100:.1f}% (threshold: {m[\"threshold\"]*100:.0f}%)')
-              sys.exit(1)
-          print('All metrics passed!')
-          "
-          fi
-
-      - name: Upload results artifact
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: verifywise-eval-results
-          path: |
-            results.json
-            summary.md
-          retention-days: 30

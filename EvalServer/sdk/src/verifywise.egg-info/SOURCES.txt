@@ -3,6 +3,7 @@ pyproject.toml
 src/verifywise/__init__.py
 src/verifywise/arena.py
 src/verifywise/bias_audits.py
+src/verifywise/cli.py
 src/verifywise/client.py
 src/verifywise/datasets.py
 src/verifywise/exceptions.py
@@ -18,5 +19,7 @@ src/verifywise/scorers.py
 src/verifywise.egg-info/PKG-INFO
 src/verifywise.egg-info/SOURCES.txt
 src/verifywise.egg-info/dependency_links.txt
+src/verifywise.egg-info/entry_points.txt
 src/verifywise.egg-info/requires.txt
 src/verifywise.egg-info/top_level.txt
+tests/test_sdk.py

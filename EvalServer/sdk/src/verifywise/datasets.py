@@ -39,6 +39,7 @@ class DatasetsAPI(_BaseAPI):
         file_path: str,
         name: str,
         *,
+        org_id: str = "1",
         dataset_type: str = "chatbot",
         turn_type: str = "single-turn",
     ) -> Dict[str, Any]:
@@ -47,7 +48,11 @@ class DatasetsAPI(_BaseAPI):
             return self._post(
                 "datasets/upload",
                 files={"dataset": (name, f, "application/json")},
-                data={"dataset_type": dataset_type, "turn_type": turn_type},
+                data={
+                    "org_id": org_id,
+                    "dataset_type": dataset_type,
+                    "turn_type": turn_type,
+                },
             )
 
     def delete(self, paths: List[str]) -> None:

@@ -758,7 +758,12 @@ async def run_evaluation(
         )
         
         # Read UI-selected metrics from config
-        ui_metrics = config.get("metrics") or {}
+        raw_metrics = config.get("metrics") or {}
+        # Handle list-of-dicts format from CI runner: [{"name": "answer_relevancy", "threshold": 0.5}]
+        if isinstance(raw_metrics, list):
+            ui_metrics = {m["name"]: True for m in raw_metrics if isinstance(m, dict) and "name" in m}
+        else:
+            ui_metrics = raw_metrics
         task_type = (config.get("taskType") or config.get("task_type") or "").strip().lower()
         bundles = config.get("bundles") or {}
         

@@ -1,0 +1,185 @@
+name: 'VerifyWise LLM Evaluation'
+description: >
+  Run LLM evaluations against a VerifyWise instance, poll for results,
+  and gate CI on quality thresholds. Posts a Markdown summary as a PR
+  comment and uploads results as build artifacts.
+branding:
+  icon: 'check-circle'
+  color: 'green'
+
+inputs:
+  api_url:
+    description: 'Base URL of the VerifyWise instance (e.g. https://app.verifywise.ai)'
+    required: true
+  project_id:
+    description: 'VerifyWise project ID'
+    required: true
+  dataset_id:
+    description: 'Dataset ID to evaluate against'
+    required: true
+  metrics:
+    description: 'Comma-separated metric names (e.g. answerRelevancy,faithfulness,hallucination)'
+    required: true
+  model_name:
+    description: 'Model to evaluate (e.g. gpt-4o, claude-3.5-sonnet)'
+    required: true
+  model_provider:
+    description: 'Model provider (openai, anthropic, google, mistral, xai, self-hosted)'
+    required: true
+  judge_model:
+    description: 'Judge LLM model name'
+    required: false
+    default: 'gpt-4o'
+  judge_provider:
+    description: 'Judge LLM provider'
+    required: false
+    default: 'openai'
+  threshold:
+    description: 'Global pass threshold (0-1). Metrics below this fail.'
+    required: false
+    default: '0.7'
+  timeout_minutes:
+    description: 'Max minutes to wait for evaluation to complete'
+    required: false
+    default: '30'
+  poll_interval_seconds:
+    description: 'Seconds between status polls'
+    required: false
+    default: '15'
+  experiment_name:
+    description: 'Custom experiment name (defaults to commit-based name)'
+    required: false
+    default: ''
+  fail_on_threshold:
+    description: 'Whether to fail the step when thresholds are not met (true/false)'
+    required: false
+    default: 'true'
+  vw_api_token:
+    description: 'VerifyWise JWT token or API key'
+    required: true
+  llm_api_key:
+    description: 'API key for the LLM provider being evaluated'
+    required: true
+
+outputs:
+  passed:
+    description: 'Whether all metrics passed their thresholds (true/false)'
+    value: ${{ steps.check.outputs.passed }}
+  results_path:
+    description: 'Path to the results JSON file'
+    value: ${{ steps.eval.outputs.results_path }}
+  summary_path:
+    description: 'Path to the Markdown summary file'
+    value: ${{ steps.eval.outputs.summary_path }}
+  experiment_id:
+    description: 'ID of the created experiment'
+    value: ${{ steps.eval.outputs.experiment_id }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      shell: bash
+      run: pip install requests
+
+    - name: Run evaluation
+      id: eval
+      shell: bash
+      env:
+        VW_API_URL: ${{ inputs.api_url }}
+        VW_API_TOKEN: ${{ inputs.vw_api_token }}
+        VW_PROJECT_ID: ${{ inputs.project_id }}
+        VW_DATASET_ID: ${{ inputs.dataset_id }}
+        VW_METRICS: ${{ inputs.metrics }}
+        VW_MODEL_NAME: ${{ inputs.model_name }}
+        VW_MODEL_PROVIDER: ${{ inputs.model_provider }}
+        VW_JUDGE_MODEL: ${{ inputs.judge_model }}
+        VW_JUDGE_PROVIDER: ${{ inputs.judge_provider }}
+        VW_THRESHOLD: ${{ inputs.threshold }}
+        VW_TIMEOUT_MINUTES: ${{ inputs.timeout_minutes }}
+        VW_POLL_INTERVAL: ${{ inputs.poll_interval_seconds }}
+        VW_EXPERIMENT_NAME: ${{ inputs.experiment_name }}
+        LLM_API_KEY: ${{ inputs.llm_api_key }}
+      run: |
+        RESULTS_PATH="${{ runner.temp }}/verifywise-results.json"
+        SUMMARY_PATH="${{ runner.temp }}/verifywise-summary.md"
+
+        python "${{ github.action_path }}/ci_eval_runner.py" \
+          --api-url "$VW_API_URL" \
+          --token "$VW_API_TOKEN" \
+          --project-id "$VW_PROJECT_ID" \
+          --dataset-id "$VW_DATASET_ID" \
+          --metrics "$VW_METRICS" \
+          --model-name "$VW_MODEL_NAME" \
+          --model-provider "$VW_MODEL_PROVIDER" \
+          --judge-model "$VW_JUDGE_MODEL" \
+          --judge-provider "$VW_JUDGE_PROVIDER" \
+          --threshold "$VW_THRESHOLD" \
+          --timeout "$VW_TIMEOUT_MINUTES" \
+          --poll-interval "$VW_POLL_INTERVAL" \
+          --output "$RESULTS_PATH" \
+          --markdown-output "$SUMMARY_PATH" \
+          ${VW_EXPERIMENT_NAME:+--name "$VW_EXPERIMENT_NAME"} \
+          || true
+
+        echo "results_path=$RESULTS_PATH" >> "$GITHUB_OUTPUT"
+        echo "summary_path=$SUMMARY_PATH" >> "$GITHUB_OUTPUT"
+
+        if [ -f "$RESULTS_PATH" ]; then
+          EXP_ID=$(python -c "import json; print(json.load(open('$RESULTS_PATH')).get('experiment_id',''))" 2>/dev/null || echo "")
+          echo "experiment_id=$EXP_ID" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Check thresholds
+      id: check
+      shell: bash
+      run: |
+        RESULTS_PATH="${{ steps.eval.outputs.results_path }}"
+        if [ ! -f "$RESULTS_PATH" ]; then
+          echo "::error::No results file found — evaluation may have failed to start."
+          echo "passed=false" >> "$GITHUB_OUTPUT"
+          if [ "${{ inputs.fail_on_threshold }}" = "true" ]; then
+            exit 1
+          fi
+          exit 0
+        fi
+
+        PASSED=$(python -c "import json; print(json.load(open('$RESULTS_PATH')).get('passed', False))" 2>/dev/null || echo "False")
+
+        if [ "$PASSED" = "True" ]; then
+          echo "passed=true" >> "$GITHUB_OUTPUT"
+          echo "All metrics passed!"
+        else
+          echo "passed=false" >> "$GITHUB_OUTPUT"
+
+          python -c "
+        import json, sys
+        with open('$RESULTS_PATH') as f:
+            data = json.load(f)
+        failed = [m for m in data.get('metrics', []) if not m.get('passed')]
+        if failed:
+            print('::error::LLM evaluation failed. Metrics below threshold:')
+            for m in failed:
+                print(f'  - {m[\"name\"]}: {m[\"score\"]*100:.1f}% (threshold: {m[\"threshold\"]*100:.0f}%)')
+        " || true
+
+          if [ "${{ inputs.fail_on_threshold }}" = "true" ]; then
+            exit 1
+          fi
+        fi
+
+    - name: Upload results artifact
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: verifywise-eval-results
+        path: |
+          ${{ steps.eval.outputs.results_path }}
+          ${{ steps.eval.outputs.summary_path }}
+        retention-days: 30
+        if-no-files-found: ignore

@@ -358,10 +358,10 @@ async def create_experiment(
             
             print(f"🚀 Starting background evaluation task...")
             
-            # Run evaluation in background
+            eval_config = {**experiment_data.config, "project_id": experiment_data.project_id}
             asyncio.create_task(run_evaluation_task(
                 experiment_id=experiment_id,
-                config=experiment_data.config,
+                config=eval_config,
                 organization_id=_get_organization_id(request),
             ))
         

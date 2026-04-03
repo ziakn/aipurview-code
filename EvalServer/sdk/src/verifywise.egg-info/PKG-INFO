@@ -3,7 +3,7 @@ Name: verifywise
 Version: 0.1.0
 Summary: Python SDK for the VerifyWise AI governance platform
 License: Apache-2.0
-Project-URL: Homepage, https://github.com/verifywise/verifywise
+Project-URL: Homepage, https://github.com/verifywise-ai/verifywise
 Project-URL: Documentation, https://docs.verifywise.ai
 Classifier: Development Status :: 3 - Alpha
 Classifier: Intended Audience :: Developers

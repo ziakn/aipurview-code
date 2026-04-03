@@ -16,14 +16,15 @@ class ProjectsAPI(_BaseAPI):
         items = data if isinstance(data, list) else data.get("projects", [])
         return [Project.from_dict(p) for p in items]
 
-    def create(self, name: str, *, description: str = "", use_case: str = "") -> Project:
+    def create(self, name: str, *, description: str = "", use_case: str = "chatbot") -> Project:
         """Create a new project."""
         data = self._post("projects", json={
             "name": name,
             "description": description,
-            "use_case": use_case,
+            "useCase": use_case,
         })
-        return Project.from_dict(data)
+        proj = data.get("project", data) if isinstance(data, dict) else data
+        return Project.from_dict(proj)
 
     def get(self, project_id: str) -> Project:
         """Get a project by ID."""
