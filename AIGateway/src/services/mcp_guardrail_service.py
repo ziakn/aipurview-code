@@ -9,23 +9,13 @@ import re
 import time
 from typing import Optional
 
-import redis.asyncio as aioredis
 from sqlalchemy import text
 
-from config import settings
 from database.db import get_db
 from services.guardrail_service import scan_text, ScanResult
+from utils.redis import get_redis
 
 logger = logging.getLogger("uvicorn")
-
-_redis: Optional[aioredis.Redis] = None
-
-
-async def _get_redis() -> aioredis.Redis:
-    global _redis
-    if _redis is None:
-        _redis = aioredis.from_url(settings.redis_url, decode_responses=True)
-    return _redis
 
 
 # ─── Prompt Injection Detection ─────────────────────────────────────────────
@@ -192,7 +182,7 @@ async def check_anomaly(agent_key_id: int, tool_name: str) -> bool:
     Fails open on Redis errors.
     """
     try:
-        r = await _get_redis()
+        r = await get_redis()
         rate_key = f"gw:mcp:anomaly:{agent_key_id}:{tool_name}"
         avg_key = f"gw:mcp:anomaly:avg:{agent_key_id}:{tool_name}"
         now = time.time()
@@ -247,7 +237,7 @@ class CircuitBreaker:
     async def is_open(server_id: int) -> bool:
         """Check if circuit is open (server is unhealthy). Returns True if requests should be blocked."""
         try:
-            r = await _get_redis()
+            r = await get_redis()
             state = await r.get(f"gw:mcp:cb:{server_id}:state")
             if state == "open":
                 # Check if recovery timeout has passed
@@ -265,7 +255,7 @@ class CircuitBreaker:
     async def record_success(server_id: int) -> None:
         """Record a successful request. Reset circuit breaker."""
         try:
-            r = await _get_redis()
+            r = await get_redis()
             pipe = r.pipeline()
             pipe.set(f"gw:mcp:cb:{server_id}:state", "closed", ex=300)
             pipe.delete(f"gw:mcp:cb:{server_id}:failures")
@@ -278,7 +268,7 @@ class CircuitBreaker:
     async def record_failure(server_id: int) -> None:
         """Record a failed request. Open circuit if threshold reached."""
         try:
-            r = await _get_redis()
+            r = await get_redis()
             key = f"gw:mcp:cb:{server_id}:failures"
             count = await r.incr(key)
             await r.expire(key, 120)

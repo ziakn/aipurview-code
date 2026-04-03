@@ -79,7 +79,7 @@ export default function MCPServersPage() {
   const loadData = useCallback(async () => {
     try {
       const res = await apiServices.get<Record<string, any>>("/ai-gateway/mcp/servers");
-      setServers(res?.data?.data || []);
+      setServers(res?.data?.servers || []);
     } catch {
       // Silently handle
     } finally {

@@ -11,25 +11,14 @@ from datetime import datetime, timezone
 from typing import Optional
 
 import httpx
-import redis.asyncio as aioredis
 from fastapi import HTTPException
 from sqlalchemy import text
 
 from config import settings
 from database.db import get_db
+from utils.rate_limit import check_rate_limit
 
 logger = logging.getLogger("uvicorn")
-
-# ─── Redis connection ────────────────────────────────────────────────────────
-
-_redis: Optional[aioredis.Redis] = None
-
-
-async def _get_redis() -> aioredis.Redis:
-    global _redis
-    if _redis is None:
-        _redis = aioredis.from_url(settings.redis_url, decode_responses=True)
-    return _redis
 
 
 # ─── Agent Key Authentication ───────────────────────────────────────────────
@@ -72,15 +61,7 @@ async def authenticate_agent_key(bearer_token: str) -> dict:
 
 # ─── Tool ACL Enforcement ──────────────────────────────────────────────────
 
-def _matches_acl(value: str, patterns: list[str]) -> bool:
-    """Check if a value matches any pattern in the list. Supports trailing wildcard (e.g. 'github*')."""
-    for pattern in patterns:
-        if pattern.endswith("*"):
-            if value.startswith(pattern[:-1]):
-                return True
-        elif value == pattern:
-            return True
-    return False
+from utils.acl import matches_acl
 
 
 def enforce_tool_acls(agent_key: dict, tool_name: str) -> None:
@@ -89,41 +70,15 @@ def enforce_tool_acls(agent_key: dict, tool_name: str) -> None:
     Raises ValueError if the tool is not permitted.
     """
     allowed_tools = agent_key.get("allowed_tools") or []
-    if allowed_tools and not _matches_acl(tool_name, allowed_tools):
+    if allowed_tools and not matches_acl(tool_name, allowed_tools):
         raise ValueError(f"Agent key does not allow tool: {tool_name}")
 
     blocked_tools = agent_key.get("blocked_tools") or []
-    if blocked_tools and _matches_acl(tool_name, blocked_tools):
+    if blocked_tools and matches_acl(tool_name, blocked_tools):
         raise ValueError(f"Agent key blocks tool: {tool_name}")
 
 
 # ─── Rate Limiting ──────────────────────────────────────────────────────────
-
-RATE_LIMIT_WINDOW = 60  # seconds
-
-
-async def check_rate_limit(key: str, rpm: int) -> bool:
-    """Check RPM rate limit using Redis sorted set. Returns True if allowed. Fail-open on Redis error."""
-    if rpm <= 0:
-        return True
-    try:
-        r = await _get_redis()
-        redis_key = f"gw:rate:mcp:{key}"
-        now = time.time()
-        window_start = now - RATE_LIMIT_WINDOW
-
-        pipe = r.pipeline()
-        pipe.zremrangebyscore(redis_key, 0, window_start)
-        pipe.zcard(redis_key)
-        pipe.zadd(redis_key, {str(now): now})
-        pipe.expire(redis_key, RATE_LIMIT_WINDOW + 10)
-        results = await pipe.execute()
-
-        count = results[1]  # zcard result before zadd
-        return count < rpm
-    except Exception as e:
-        logger.warning(f"Rate limit check failed (fail-open): {e}")
-        return True
 
 
 async def enforce_mcp_rate_limits(agent_key: dict, tool_name: str) -> None:
@@ -174,6 +129,25 @@ def _build_auth_headers(auth_type: str, auth_config: dict) -> dict:
     return {}
 
 
+# ─── SSE Response Parser ──────────────────────────────────────────────────
+
+def _parse_sse_response(text_body: str) -> dict:
+    """Parse a Server-Sent Events response and extract the JSON-RPC message."""
+    for line in text_body.strip().split("\n"):
+        line = line.strip()
+        if line.startswith("data: "):
+            return json.loads(line[6:])
+    raise ValueError(f"No data line found in SSE response: {text_body[:200]}")
+
+
+def _parse_response(resp: httpx.Response) -> dict:
+    """Parse an MCP response — handles both JSON and SSE content types."""
+    content_type = resp.headers.get("content-type", "")
+    if "text/event-stream" in content_type:
+        return _parse_sse_response(resp.text)
+    return resp.json()
+
+
 # ─── Server Tool Discovery ─────────────────────────────────────────────────
 
 async def discover_server_tools(
@@ -190,6 +164,7 @@ async def discover_server_tools(
     """
     headers = {
         "Content-Type": "application/json",
+        "Accept": "application/json, text/event-stream",
         **_build_auth_headers(auth_type, auth_config),
     }
 
@@ -210,7 +185,7 @@ async def discover_server_tools(
         }
         init_resp = await client.post(server_url, json=init_payload, headers=headers)
         init_resp.raise_for_status()
-        init_data = init_resp.json()
+        init_data = _parse_response(init_resp)
         if "error" in init_data:
             raise ValueError(f"MCP initialize failed: {init_data['error']}")
 
@@ -228,7 +203,7 @@ async def discover_server_tools(
         }
         list_resp = await client.post(server_url, json=list_payload, headers=headers)
         list_resp.raise_for_status()
-        list_data = list_resp.json()
+        list_data = _parse_response(list_resp)
         if "error" in list_data:
             raise ValueError(f"MCP tools/list failed: {list_data['error']}")
 
@@ -250,7 +225,7 @@ async def discover_server_tools(
                          input_schema, is_active)
                     VALUES
                         (:org_id, :server_id, :tool_name, :description,
-                         :input_schema::jsonb, true)
+                         CAST(:input_schema AS jsonb), true)
                     ON CONFLICT (organization_id, server_id, tool_name)
                     DO UPDATE SET
                         description = EXCLUDED.description,
@@ -321,37 +296,67 @@ async def forward_tool_call(
     tool_name: str,
     arguments: dict,
     session_id: Optional[str] = None,
-) -> dict:
+) -> tuple[dict, Optional[str]]:
     """
     Forward a tools/call request to the backend MCP server.
-    Returns the result dict from the JSON-RPC response.
-    Raises ValueError if the server returns an error.
+    Initializes a session if no session_id is provided.
+    Returns (result_dict, backend_session_id).
     """
     headers = {
         "Content-Type": "application/json",
+        "Accept": "application/json, text/event-stream",
         **_build_auth_headers(auth_type, auth_config),
     }
-    if session_id:
-        headers["Mcp-Session-Id"] = session_id
-
-    payload = {
-        "jsonrpc": "2.0",
-        "id": 1,
-        "method": "tools/call",
-        "params": {
-            "name": tool_name,
-            "arguments": arguments,
-        },
-    }
+    new_session = None
 
     async with httpx.AsyncClient(timeout=60) as client:
-        resp = await client.post(server_url, json=payload, headers=headers)
+        if not session_id:
+            init_resp = await client.post(
+                server_url,
+                json={
+                    "jsonrpc": "2.0",
+                    "id": 0,
+                    "method": "initialize",
+                    "params": {
+                        "protocolVersion": "2025-03-26",
+                        "capabilities": {},
+                        "clientInfo": {"name": "VerifyWise MCP Gateway", "version": "1.0.0"},
+                    },
+                },
+                headers=headers,
+            )
+            init_resp.raise_for_status()
+            session_id = init_resp.headers.get("mcp-session-id")
+            new_session = session_id
+
+            if session_id:
+                headers["Mcp-Session-Id"] = session_id
+
+            # notifications/initialized only after fresh handshake
+            await client.post(
+                server_url,
+                json={"jsonrpc": "2.0", "method": "notifications/initialized"},
+                headers=headers,
+            )
+        else:
+            headers["Mcp-Session-Id"] = session_id
+
+        resp = await client.post(
+            server_url,
+            json={
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "tools/call",
+                "params": {"name": tool_name, "arguments": arguments},
+            },
+            headers=headers,
+        )
         resp.raise_for_status()
-        data = resp.json()
+        data = _parse_response(resp)
 
     if "error" in data:
         error = data["error"]
         message = error.get("message", str(error)) if isinstance(error, dict) else str(error)
         raise ValueError(f"Tool call failed: {message}")
 
-    return data.get("result", {})
+    return data.get("result", {}), new_session

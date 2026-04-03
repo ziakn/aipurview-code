@@ -109,7 +109,7 @@ export default function MCPGuardrailsPage() {
   const loadData = useCallback(async () => {
     try {
       const res = await apiServices.get<Record<string, any>>("/ai-gateway/mcp/guardrails");
-      setRules(res?.data?.rules || res?.data?.data || []);
+      setRules(res?.data?.data || []);
     } catch {
       // Silently handle
     } finally {

@@ -7,7 +7,7 @@ from database.db import get_db
 
 
 async def create_approval_request(org_id: int, data: dict) -> dict:
-    arguments_json = json.dumps(data.get("arguments")) if data.get("arguments") is not None else None
+    arguments_json = json.dumps(data.get("arguments")) if data.get("arguments") is not None else "{}"
 
     async with get_db() as db:
         result = await db.execute(
@@ -24,7 +24,7 @@ async def create_approval_request(org_id: int, data: dict) -> dict:
                     :agent_key_id,
                     :tool_id,
                     :tool_name,
-                    :arguments::jsonb,
+                    CAST(:arguments AS jsonb),
                     :expires_at
                 )
                 RETURNING

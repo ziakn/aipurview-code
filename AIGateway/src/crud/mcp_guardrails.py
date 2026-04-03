@@ -47,7 +47,7 @@ async def create_mcp_guardrail(org_id: int, data: dict) -> Optional[dict]:
     config_value = data.get("config")
     config_json = json.dumps(config_value) if config_value is not None else "{}"
 
-    applies_to_tools = _to_text_array(data.get("applies_to_tools"))
+    applies_to_tools = data.get("applies_to_tools") or []
 
     async with get_db() as db:
         result = await db.execute(
@@ -66,10 +66,10 @@ async def create_mcp_guardrail(org_id: int, data: dict) -> Optional[dict]:
                     :org_id,
                     :name,
                     :rule_type,
-                    :config::jsonb,
+                    CAST(:config AS jsonb),
                     :scope,
                     :action,
-                    :applies_to_tools::text[],
+                    :applies_to_tools,
                     :is_active,
                     :created_by
                 )
@@ -121,7 +121,7 @@ async def update_mcp_guardrail(org_id: int, rule_id: int, data: dict) -> Optiona
         params["rule_type"] = data["rule_type"]
 
     if "config" in data:
-        set_clauses.append("config = :config::jsonb")
+        set_clauses.append("config = CAST(:config AS jsonb)")
         config_value = data["config"]
         params["config"] = json.dumps(config_value) if config_value is not None else "{}"
 
@@ -134,8 +134,8 @@ async def update_mcp_guardrail(org_id: int, rule_id: int, data: dict) -> Optiona
         params["action"] = data["action"]
 
     if "applies_to_tools" in data:
-        set_clauses.append("applies_to_tools = :applies_to_tools::text[]")
-        params["applies_to_tools"] = _to_text_array(data["applies_to_tools"])
+        set_clauses.append("applies_to_tools = :applies_to_tools")
+        params["applies_to_tools"] = data["applies_to_tools"] or []
 
     if "is_active" in data:
         set_clauses.append("is_active = :is_active")

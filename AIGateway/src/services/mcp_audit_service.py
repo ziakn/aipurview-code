@@ -40,15 +40,15 @@ async def log_tool_call(
                          latency_ms, session_id, metadata)
                     VALUES
                         (:org_id, :agent_key_id, :server_id, :tool_name,
-                         :arguments::jsonb, :result_status, :result_summary, :is_error,
-                         :latency_ms, :session_id, :metadata::jsonb)
+                         CAST(:arguments AS jsonb), :result_status, :result_summary, :is_error,
+                         :latency_ms, :session_id, CAST(:metadata AS jsonb))
                 """),
                 {
                     "org_id": organization_id,
                     "agent_key_id": agent_key_id,
                     "server_id": server_id,
                     "tool_name": tool_name,
-                    "arguments": json.dumps(arguments) if arguments else None,
+                    "arguments": json.dumps(arguments) if arguments else "{}",
                     "result_status": result_status,
                     "result_summary": result_summary,
                     "is_error": is_error,

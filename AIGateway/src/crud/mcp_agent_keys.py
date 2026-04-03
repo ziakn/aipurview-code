@@ -53,28 +53,16 @@ async def get_all_agent_keys(org_id: int) -> list[dict]:
 async def create_agent_key(org_id: int, data: dict) -> Optional[dict]:
     key_data = generate_agent_key()
 
-    allowed_server_ids = data.get("allowed_server_ids")
-    if allowed_server_ids and len(allowed_server_ids) > 0:
-        array_literal = "{" + ",".join(str(i) for i in allowed_server_ids) + "}"
-    else:
-        array_literal = "{}"
-
+    allowed_server_ids = data.get("allowed_server_ids") or []
     metadata_value = data.get("metadata")
-    metadata_json = json.dumps(metadata_value) if metadata_value is not None else None
-
+    metadata_json = json.dumps(metadata_value) if metadata_value is not None else "{}"
     expires_at = data.get("expires_at")
     created_by = data.get("created_by")
     rate_limit_rpm = data.get("rate_limit_rpm")
     name = data.get("name")
     description = data.get("description")
-
-    def _to_text_array(lst):
-        if lst and len(lst) > 0:
-            return "{" + ",".join(f'"{v}"' for v in lst) + "}"
-        return "{}"
-
-    allowed_tools = _to_text_array(data.get("allowed_tools"))
-    blocked_tools = _to_text_array(data.get("blocked_tools"))
+    allowed_tools = data.get("allowed_tools") or []
+    blocked_tools = data.get("blocked_tools") or []
 
     async with get_db() as db:
         result = await db.execute(
@@ -98,11 +86,11 @@ async def create_agent_key(org_id: int, data: dict) -> Optional[dict]:
                     :key_prefix,
                     :name,
                     :description,
-                    :allowed_tools::text[],
-                    :blocked_tools::text[],
-                    :allowed_server_ids::int[],
+                    :allowed_tools,
+                    :blocked_tools,
+                    :allowed_server_ids,
                     :rate_limit_rpm,
-                    :metadata::jsonb,
+                    CAST(:metadata AS jsonb),
                     :expires_at,
                     :created_by
                 )
@@ -131,7 +119,7 @@ async def create_agent_key(org_id: int, data: dict) -> Optional[dict]:
                 "description": description,
                 "allowed_tools": allowed_tools,
                 "blocked_tools": blocked_tools,
-                "allowed_server_ids": array_literal,
+                "allowed_server_ids": allowed_server_ids,
                 "rate_limit_rpm": rate_limit_rpm,
                 "metadata": metadata_json,
                 "expires_at": expires_at,
@@ -160,33 +148,23 @@ async def update_agent_key(org_id: int, key_id: int, data: dict) -> Optional[dic
         set_clauses.append("description = :description")
         params["description"] = data["description"]
 
-    def _to_text_array(lst):
-        if lst and len(lst) > 0:
-            return "{" + ",".join(f'"{v}"' for v in lst) + "}"
-        return "{}"
-
     for field in ("allowed_tools", "blocked_tools"):
         if field in data:
-            set_clauses.append(f"{field} = :{field}::text[]")
-            params[field] = _to_text_array(data[field])
+            set_clauses.append(f"{field} = :{field}")
+            params[field] = data[field] if data[field] else []
 
     if "allowed_server_ids" in data:
-        ids = data["allowed_server_ids"]
-        if ids and len(ids) > 0:
-            array_literal = "{" + ",".join(str(i) for i in ids) + "}"
-        else:
-            array_literal = "{}"
-        set_clauses.append("allowed_server_ids = :allowed_server_ids::int[]")
-        params["allowed_server_ids"] = array_literal
+        set_clauses.append("allowed_server_ids = :allowed_server_ids")
+        params["allowed_server_ids"] = data["allowed_server_ids"] or []
 
     if "rate_limit_rpm" in data:
         set_clauses.append("rate_limit_rpm = :rate_limit_rpm")
         params["rate_limit_rpm"] = data["rate_limit_rpm"]
 
     if "metadata" in data:
-        set_clauses.append("metadata = :metadata::jsonb")
+        set_clauses.append("metadata = CAST(:metadata AS jsonb)")
         metadata_value = data["metadata"]
-        params["metadata"] = json.dumps(metadata_value) if metadata_value is not None else None
+        params["metadata"] = json.dumps(metadata_value) if metadata_value is not None else "{}"
 
     if "expires_at" in data:
         set_clauses.append("expires_at = :expires_at")

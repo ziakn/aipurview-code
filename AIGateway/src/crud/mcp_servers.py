@@ -165,9 +165,9 @@ async def create_mcp_server(org_id: int, data: dict) -> Optional[dict]:
                     :slug,
                     :url,
                     :auth_type,
-                    :auth_config,
+                    CAST(:auth_config AS jsonb),
                     :description,
-                    :metadata,
+                    CAST(:metadata AS jsonb),
                     :created_by
                 )
                 RETURNING *
@@ -178,9 +178,9 @@ async def create_mcp_server(org_id: int, data: dict) -> Optional[dict]:
                 "slug": data.get("slug"),
                 "url": data.get("url"),
                 "auth_type": data.get("auth_type", "none"),
-                "auth_config": auth_config,
+                "auth_config": auth_config or "{}",
                 "description": data.get("description"),
-                "metadata": metadata,
+                "metadata": metadata or "{}",
                 "created_by": data.get("created_by"),
             },
         )

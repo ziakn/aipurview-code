@@ -79,8 +79,8 @@ export default function MCPToolCatalogPage() {
         apiServices.get<Record<string, any>>("/ai-gateway/mcp/tools"),
         apiServices.get<Record<string, any>>("/ai-gateway/mcp/servers"),
       ]);
-      setTools(toolsRes?.data?.tools || toolsRes?.data?.data || []);
-      setServers(serversRes?.data?.servers || serversRes?.data?.data || []);
+      setTools(toolsRes?.data?.tools || []);
+      setServers(serversRes?.data?.servers || []);
     } catch {
       // Silently handle
     } finally {

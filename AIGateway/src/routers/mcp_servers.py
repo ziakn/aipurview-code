@@ -73,7 +73,13 @@ async def create_mcp_server(request: Request) -> Any:
 
     body["created_by"] = user_id
 
-    server = await mcp_servers_crud.create_mcp_server(org_id, body)
+    try:
+        server = await mcp_servers_crud.create_mcp_server(org_id, body)
+    except Exception as e:
+        from sqlalchemy.exc import IntegrityError
+        if isinstance(e, IntegrityError):
+            raise HTTPException(status_code=409, detail=f"Slug '{body.get('slug')}' already exists")
+        raise HTTPException(status_code=500, detail="Failed to create MCP server")
     if not server:
         raise HTTPException(status_code=500, detail="Failed to create MCP server")
 
@@ -138,3 +144,32 @@ async def delete_mcp_server(server_id: int, request: Request) -> Any:
     )
 
     return {"deleted": True, "server_id": server_id}
+
+
+@router.post("/{server_id}/discover")
+async def discover_server_tools(server_id: int, request: Request) -> Any:
+    """Trigger tool discovery for a registered MCP server."""
+    verify_internal_key(request)
+    require_admin(request)
+
+    org_id = get_org_id(request)
+
+    server = await mcp_servers_crud.get_mcp_server(org_id, server_id)
+    if not server:
+        raise HTTPException(status_code=404, detail="MCP server not found")
+
+    from services.mcp_proxy_service import discover_server_tools as do_discover
+
+    try:
+        tools = await do_discover(
+            org_id=org_id,
+            server_id=server_id,
+            server_url=server["url"],
+            auth_type=server.get("auth_type", "none"),
+            auth_config=server.get("auth_config") or {},
+        )
+        await mcp_servers_crud.update_server_health(server_id, "healthy")
+        return {"status": "success", "tools_discovered": len(tools), "tools": tools}
+    except Exception as e:
+        await mcp_servers_crud.update_server_health(server_id, "unhealthy")
+        raise HTTPException(status_code=502, detail=f"Discovery failed: {str(e)}")
