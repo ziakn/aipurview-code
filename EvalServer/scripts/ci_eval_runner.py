@@ -172,11 +172,37 @@ def poll_experiment(
     raise TimeoutError(f"Experiment did not complete within {timeout_minutes} minutes")
 
 
+def fetch_logs(
+    base_url: str,
+    token: str,
+    experiment_id: str,
+) -> List[Dict[str, Any]]:
+    """Fetch per-prompt logs for an experiment (contains actual model responses)."""
+    url = f"{base_url}/api/deepeval/logs"
+    try:
+        resp = requests.get(
+            url,
+            headers=api_headers(token),
+            params={"experiment_id": experiment_id, "limit": 100},
+            timeout=30,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        return data.get("logs", [])
+    except Exception as e:
+        print(f"Warning: could not fetch logs: {e}")
+        return []
+
+
 def is_inverted(name: str) -> bool:
     return any(k in name.lower() for k in INVERTED_KEYWORDS)
 
 
-def parse_results(experiment: Dict[str, Any], threshold: float) -> Dict[str, Any]:
+def parse_results(
+    experiment: Dict[str, Any],
+    threshold: float,
+    logs: List[Dict[str, Any]],
+) -> Dict[str, Any]:
     results = experiment.get("results", {})
     if isinstance(results, str):
         results = json.loads(results)
@@ -208,13 +234,23 @@ def parse_results(experiment: Dict[str, Any], threshold: float) -> Dict[str, Any
             "inverted": inverted,
         })
 
+    # Build samples from detailed_results, enriched with log data
+    # Logs are ordered newest-first; reverse to match sample order
+    sorted_logs = list(reversed(logs))
+
     samples = []
     for i, sample in enumerate(detailed_results):
+        log = sorted_logs[i] if i < len(sorted_logs) else {}
+
+        input_text = sample.get("input", "") or log.get("input_text", "")
+        output_text = sample.get("output", "") or log.get("output_text", "")
+        expected_text = sample.get("expected", "")
+
         sample_entry = {
             "index": i + 1,
-            "input": sample.get("input", ""),
-            "output": sample.get("output", ""),
-            "expected": sample.get("expected", ""),
+            "input": input_text,
+            "output": output_text,
+            "expected": expected_text,
             "metric_scores": {},
         }
         raw_scores = sample.get("metric_scores", {})
@@ -223,15 +259,26 @@ def parse_results(experiment: Dict[str, Any], threshold: float) -> Dict[str, Any
                 sample_entry["metric_scores"][metric_name] = {
                     "score": metric_data.get("score"),
                     "passed": metric_data.get("passed"),
-                    "reason": metric_data.get("reason", ""),
+                    "explanation": metric_data.get("reason", ""),
                 }
             else:
                 sample_entry["metric_scores"][metric_name] = {
                     "score": metric_data,
                     "passed": None,
-                    "reason": "",
+                    "explanation": "",
                 }
         samples.append(sample_entry)
+
+    # If we have logs but no detailed_results, build samples from logs alone
+    if not detailed_results and sorted_logs:
+        for i, log in enumerate(sorted_logs):
+            samples.append({
+                "index": i + 1,
+                "input": log.get("input_text", ""),
+                "output": log.get("output_text", ""),
+                "expected": "",
+                "metric_scores": {},
+            })
 
     return {
         "experiment_id": experiment.get("id", ""),
@@ -246,13 +293,11 @@ def parse_results(experiment: Dict[str, Any], threshold: float) -> Dict[str, Any
     }
 
 
-def _truncate(text: str, max_len: int = 200) -> str:
+def _escape_md(text: str) -> str:
+    """Prepare text for display in markdown without truncation."""
     if not text:
-        return "(empty)"
-    text = text.replace("\n", " ").strip()
-    if len(text) <= max_len:
-        return text
-    return text[:max_len] + "..."
+        return ""
+    return text.replace("\n", " ").replace("|", "\\|").strip()
 
 
 def generate_markdown(results: Dict[str, Any]) -> str:
@@ -268,20 +313,21 @@ def generate_markdown(results: Dict[str, Any]) -> str:
     if results.get("duration_ms"):
         lines.append(f"**Duration:** {results['duration_ms'] / 1000:.1f}s  ")
 
+    icon = "\u2705" if results["passed"] else "\u274C"
     overall = "PASS" if results["passed"] else "FAIL"
     lines.extend([
         "",
-        f"### Overall: **{overall}**",
+        f"### Overall: {icon} {overall}",
         "",
         "| Metric | Score | Threshold | Result |",
         "|--------|------:|----------:|--------|",
     ])
 
     for m in results["metrics"]:
-        inv = " (inverted)" if m["inverted"] else ""
-        result = "PASS" if m["passed"] else "FAIL"
+        inv = " *(inverted)*" if m["inverted"] else ""
+        mi = "\u2705" if m["passed"] else "\u274C"
         lines.append(
-            f"| {m['name']}{inv} | {m['score']*100:.1f}% | {m['threshold']*100:.0f}% | {result} |"
+            f"| {m['name']}{inv} | {m['score']*100:.1f}% | {m['threshold']*100:.0f}% | {mi} |"
         )
 
     # Per-sample breakdown for failing metrics
@@ -291,35 +337,42 @@ def generate_markdown(results: Dict[str, Any]) -> str:
     if failing_metrics and samples:
         lines.extend(["", "---", "", "### Failure Details", ""])
         lines.append(
-            "Showing per-sample breakdown for metrics that did not meet the threshold."
+            "Per-sample breakdown for metrics that did not meet the threshold."
         )
 
         for sample in samples:
             sample_scores = sample.get("metric_scores", {})
-            has_failing = any(
-                _metric_name_matches(name, failing_metrics)
-                for name in sample_scores
-            )
-            if not has_failing:
+
+            # Show all samples that have metric scores (not just failing ones)
+            # so the user can compare passing vs failing on the same prompt
+            if not sample_scores:
                 continue
+
+            input_text = _escape_md(sample["input"])
+            output_text = _escape_md(sample["output"])
+            expected_text = _escape_md(sample.get("expected", ""))
 
             lines.extend([
                 "",
                 f"#### Sample {sample['index']}",
                 "",
-                f"> **Input:** {_truncate(sample['input'], 300)}",
+                f"**Input:** {input_text}" if input_text else "**Input:** *(empty)*",
                 "",
-                f"> **Response:** {_truncate(sample['output'], 300)}",
+                f"**Response:** {output_text}" if output_text else "**Response:** *(not captured)*",
             ])
 
-            if sample.get("expected"):
-                lines.append(f"> **Expected:** {_truncate(sample['expected'], 300)}")
+            if expected_text:
+                lines.extend(["", f"**Expected:** {expected_text}"])
 
-            lines.extend(["", "| Metric | Score | Result | Reason |", "|--------|------:|--------|--------|"])
+            lines.extend([
+                "",
+                "| Metric | Score | Result | Explanation |",
+                "|--------|------:|--------|-------------|",
+            ])
             for metric_name, score_data in sample_scores.items():
                 score_val = score_data.get("score")
                 passed = score_data.get("passed")
-                reason = score_data.get("reason", "")
+                explanation = _escape_md(score_data.get("explanation", ""))
 
                 if score_val is not None:
                     score_str = f"{score_val * 100:.1f}%" if isinstance(score_val, float) else str(score_val)
@@ -327,14 +380,13 @@ def generate_markdown(results: Dict[str, Any]) -> str:
                     score_str = "N/A"
 
                 if passed is True:
-                    result_str = "PASS"
+                    result_str = "\u2705"
                 elif passed is False:
-                    result_str = "FAIL"
+                    result_str = "\u274C"
                 else:
-                    result_str = "-"
+                    result_str = "\u2014"
 
-                reason_str = _truncate(reason, 120) if reason else "-"
-                lines.append(f"| {metric_name} | {score_str} | {result_str} | {reason_str} |")
+                lines.append(f"| {metric_name} | {score_str} | {result_str} | {explanation or '\u2014'} |")
 
     lines.extend([
         "",
@@ -402,7 +454,10 @@ def main():
             print(f"Experiment failed: {error}")
             sys.exit(2)
 
-        results = parse_results(experiment, args.threshold)
+        logs = fetch_logs(base_url, args.token, exp["id"])
+        print(f"Fetched {len(logs)} evaluation logs")
+
+        results = parse_results(experiment, args.threshold, logs)
 
         with open(args.output, "w") as f:
             json.dump(results, f, indent=2)
