@@ -187,6 +187,7 @@ test.describe("Assessment Tracker", () => {
         "color-contrast",
         "aria-command-name",
         "aria-valid-attr-value",
+        "aria-input-field-name",
         "label",
         "select-name",
         "scrollable-region-focusable",

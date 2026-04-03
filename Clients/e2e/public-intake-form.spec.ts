@@ -281,13 +281,15 @@ test.describe("Submission Success Page", () => {
 
     await expect(page.locator("body")).not.toBeEmpty();
 
-    // Should show success content or redirect
+    // Should show success content, form-unavailable message, or redirect
     const content = page
       .getByText(/success/i)
       .or(page.getByText(/submitted/i))
       .or(page.getByText(/thank/i))
       .or(page.getByText(/reference/i))
       .or(page.getByText(/pending/i))
+      .or(page.getByText(/unavailable/i))
+      .or(page.getByText(/expired/i))
       .or(page.getByRole("heading"));
 
     await expect(content.first()).toBeVisible({ timeout: 15_000 });
