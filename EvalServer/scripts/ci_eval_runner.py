@@ -329,7 +329,7 @@ def generate_markdown(results: Dict[str, Any]) -> str:
         f"### Overall: {overall_icon} {overall_word}",
         "",
         "| Metric | Score | Threshold | Result |",
-        "|--------|------:|----------:|--------|",
+        "|:------:|:-----:|:---------:|:------:|",
     ])
 
     for m in results["metrics"]:
@@ -373,7 +373,7 @@ def generate_markdown(results: Dict[str, Any]) -> str:
             lines.extend([
                 "",
                 "| Metric | Score | Result | Explanation |",
-                "|--------|------:|--------|-------------|",
+                "|:------:|:-----:|:------:|:------------|",
             ])
             for metric_name, score_data in sample_scores.items():
                 score_val = score_data.get("score")
