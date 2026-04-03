@@ -12,11 +12,6 @@
 # judge share the same provider, you only need LLM_API_KEY — the judge
 # will default to using the same key.
 #
-# Supports three use cases:
-#   - Chatbot: answer_relevancy, bias, toxicity, hallucination, ...
-#   - RAG:     faithfulness, contextual_relevancy, context_precision, ...
-#   - Agent:   tool_correctness, task_completion, plan_quality, ...
-#
 # ─── Quick start ────────────────────────────────────────────────────────
 #
 #   jobs:
@@ -31,24 +26,6 @@
 #         model_provider: openai
 #       secrets:
 #         LLM_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-#         VW_API_TOKEN: ${{ secrets.VW_API_TOKEN }}
-#
-#   # Different providers for model and judge:
-#   jobs:
-#     eval:
-#       uses: verifywise-ai/verifywise/.github/workflows/verifywise-eval.yml@main
-#       with:
-#         api_url: https://app.verifywise.ai
-#         project_id: proj_abc123
-#         dataset_id: "42"
-#         metrics: answer_relevancy,faithfulness
-#         model_name: claude-3-5-sonnet
-#         model_provider: anthropic
-#         judge_model: gpt-4o
-#         judge_provider: openai
-#       secrets:
-#         LLM_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-#         JUDGE_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 #         VW_API_TOKEN: ${{ secrets.VW_API_TOKEN }}
 #
 # ─── Available metrics ──────────────────────────────────────────────────
@@ -172,39 +149,7 @@ jobs:
           poll_interval_seconds: ${{ inputs.poll_interval_seconds }}
           experiment_name: ${{ inputs.experiment_name }}
           fail_on_threshold: ${{ inputs.fail_on_threshold }}
+          post_pr_comment: ${{ inputs.post_pr_comment }}
           vw_api_token: ${{ secrets.VW_API_TOKEN }}
           llm_api_key: ${{ secrets.LLM_API_KEY }}
           judge_api_key: ${{ secrets.JUDGE_API_KEY }}
-
-      - name: Post PR comment
-        if: inputs.post_pr_comment && github.event_name == 'pull_request'
-        uses: actions/github-script@v8
-        with:
-          script: |
-            const fs = require('fs');
-            const summaryPath = '${{ steps.eval.outputs.summary_path }}';
-            if (!summaryPath || !fs.existsSync(summaryPath)) return;
-            const body = fs.readFileSync(summaryPath, 'utf8');
-            const marker = '<!-- verifywise-eval -->';
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            });
-            const existing = comments.find(c => c.body.includes(marker));
-            const fullBody = `${marker}\n${body}`;
-            if (existing) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: existing.id,
-                body: fullBody,
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: fullBody,
-              });
-            }

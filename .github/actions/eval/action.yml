@@ -69,6 +69,10 @@ inputs:
     description: 'Fail the step when thresholds are not met'
     required: false
     default: 'true'
+  post_pr_comment:
+    description: 'Post results as a comment on the pull request'
+    required: false
+    default: 'true'
   vw_api_token:
     description: 'VerifyWise API token'
     required: true
@@ -164,12 +168,10 @@ runs:
           exit 0
         fi
 
-        # Write Markdown summary to Job Summary (shown on the run page)
         if [ -f "$SUMMARY_PATH" ]; then
           cat "$SUMMARY_PATH" >> "$GITHUB_STEP_SUMMARY"
         fi
 
-        # Parse results, create annotations, set outputs
         python3 << 'PYEOF'
         import json, os
 
@@ -206,6 +208,39 @@ runs:
             if fail_on:
                 raise SystemExit(1)
         PYEOF
+
+    - name: Post PR comment
+      if: always() && inputs.post_pr_comment == 'true' && github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const summaryPath = '${{ steps.eval.outputs.summary_path }}';
+          if (!summaryPath || !fs.existsSync(summaryPath)) return;
+          const body = fs.readFileSync(summaryPath, 'utf8');
+          const marker = '<!-- verifywise-eval -->';
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+          });
+          const existing = comments.find(c => c.body.includes(marker));
+          const fullBody = `${marker}\n${body}`;
+          if (existing) {
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: existing.id,
+              body: fullBody,
+            });
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: fullBody,
+            });
+          }
 
     - name: Upload results
       if: always()

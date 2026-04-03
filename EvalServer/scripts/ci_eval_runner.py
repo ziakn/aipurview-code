@@ -30,6 +30,8 @@ INVERTED_KEYWORDS = ("bias", "toxicity", "hallucination", "conversationsafety")
 EM_DASH = "\u2014"
 CHECK = "\u2705"
 CROSS = "\u274C"
+UP = "\u25B2"
+DOWN = "\u25BC"
 
 
 def parse_args() -> argparse.Namespace:
@@ -198,6 +200,41 @@ def fetch_logs(
         return []
 
 
+def fetch_baseline(
+    base_url: str,
+    token: str,
+    project_id: str,
+    current_experiment_id: str,
+) -> Optional[Dict[str, float]]:
+    """Fetch avg_scores from the most recent completed experiment before this one."""
+    url = f"{base_url}/api/deepeval/experiments"
+    try:
+        resp = requests.get(
+            url,
+            headers=api_headers(token),
+            params={"project_id": project_id, "status": "completed", "limit": 5},
+            timeout=15,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        experiments = data.get("experiments", [])
+
+        for exp in experiments:
+            if exp.get("id") == current_experiment_id:
+                continue
+            results = exp.get("results", {})
+            if isinstance(results, str):
+                results = json.loads(results)
+            scores = results.get("avg_scores", {})
+            if scores:
+                print(f"Baseline: {exp.get('name', exp.get('id'))} ({len(scores)} metrics)")
+                return scores
+        return None
+    except Exception as e:
+        print(f"Warning: could not fetch baseline: {e}")
+        return None
+
+
 def is_inverted(name: str) -> bool:
     return any(k in name.lower() for k in INVERTED_KEYWORDS)
 
@@ -206,6 +243,7 @@ def parse_results(
     experiment: Dict[str, Any],
     threshold: float,
     logs: List[Dict[str, Any]],
+    baseline: Optional[Dict[str, float]] = None,
 ) -> Dict[str, Any]:
     results = experiment.get("results", {})
     if isinstance(results, str):
@@ -230,15 +268,22 @@ def parse_results(
         passed = (score <= mt) if inverted else (score >= mt)
         if not passed:
             all_passed = False
+
+        delta = None
+        if baseline:
+            prev = _find_baseline_score(name, baseline)
+            if prev is not None:
+                delta = score - prev
+
         metrics_out.append({
             "name": name,
             "score": score,
             "threshold": mt,
             "passed": passed,
             "inverted": inverted,
+            "delta": delta,
         })
 
-    # Build samples from detailed_results, enriched with log data
     sorted_logs = list(reversed(logs))
 
     samples = []
@@ -296,7 +341,19 @@ def parse_results(
         "passed": all_passed,
         "metrics": metrics_out,
         "samples": samples,
+        "has_baseline": baseline is not None,
     }
+
+
+def _find_baseline_score(name: str, baseline: Dict[str, float]) -> Optional[float]:
+    """Find a metric score in the baseline, handling case/underscore differences."""
+    if name in baseline:
+        return float(baseline[name])
+    norm = name.lower().replace("_", "")
+    for k, v in baseline.items():
+        if k.lower().replace("_", "") == norm:
+            return float(v)
+    return None
 
 
 def _escape_md(text: str) -> str:
@@ -306,10 +363,28 @@ def _escape_md(text: str) -> str:
     return text.replace("\n", " ").replace("|", "\\|").strip()
 
 
+def _format_delta(delta: Optional[float], inverted: bool) -> str:
+    if delta is None:
+        return ""
+    pp = delta * 100
+    if abs(pp) < 0.1:
+        return " (no change)"
+    sign = "+" if pp > 0 else ""
+    # For inverted metrics (lower=better), a positive delta is bad
+    if inverted:
+        arrow = DOWN if pp < 0 else UP
+        color = "improvement" if pp < 0 else "regression"
+    else:
+        arrow = UP if pp > 0 else DOWN
+        color = "improvement" if pp > 0 else "regression"
+    return f" ({arrow} {sign}{pp:.1f}pp)"
+
+
 def generate_markdown(results: Dict[str, Any]) -> str:
     model = results["model"]
     overall_icon = CHECK if results["passed"] else CROSS
     overall_word = "PASS" if results["passed"] else "FAIL"
+    has_baseline = results.get("has_baseline", False)
 
     lines = [
         "## VerifyWise LLM Evaluation Results",
@@ -328,16 +403,31 @@ def generate_markdown(results: Dict[str, Any]) -> str:
         "",
         f"### Overall: {overall_icon} {overall_word}",
         "",
-        "| Metric | Score | Threshold | Result |",
-        "|:------:|:-----:|:---------:|:------:|",
     ])
 
-    for m in results["metrics"]:
-        inv = " *(inverted)*" if m["inverted"] else ""
-        mi = CHECK if m["passed"] else CROSS
-        lines.append(
-            f"| {m['name']}{inv} | {m['score']*100:.1f}% | {m['threshold']*100:.0f}% | {mi} |"
-        )
+    if has_baseline:
+        lines.extend([
+            "| Metric | Score | Delta | Threshold | Result |",
+            "|:------:|:-----:|:-----:|:---------:|:------:|",
+        ])
+        for m in results["metrics"]:
+            inv = " *(inverted)*" if m["inverted"] else ""
+            mi = CHECK if m["passed"] else CROSS
+            delta_str = _format_delta(m.get("delta"), m["inverted"])
+            lines.append(
+                f"| {m['name']}{inv} | {m['score']*100:.1f}% | {delta_str} | {m['threshold']*100:.0f}% | {mi} |"
+            )
+    else:
+        lines.extend([
+            "| Metric | Score | Threshold | Result |",
+            "|:------:|:-----:|:---------:|:------:|",
+        ])
+        for m in results["metrics"]:
+            inv = " *(inverted)*" if m["inverted"] else ""
+            mi = CHECK if m["passed"] else CROSS
+            lines.append(
+                f"| {m['name']}{inv} | {m['score']*100:.1f}% | {m['threshold']*100:.0f}% | {mi} |"
+            )
 
     # Per-sample breakdown for failing metrics
     failing_metrics = {m["name"] for m in results["metrics"] if not m["passed"]}
@@ -455,7 +545,9 @@ def main():
         logs = fetch_logs(base_url, args.token, exp["id"])
         print(f"Fetched {len(logs)} evaluation logs")
 
-        results = parse_results(experiment, args.threshold, logs)
+        baseline = fetch_baseline(base_url, args.token, args.project_id, exp["id"])
+
+        results = parse_results(experiment, args.threshold, logs, baseline)
 
         with open(args.output, "w") as f:
             json.dump(results, f, indent=2)
@@ -472,7 +564,12 @@ def main():
         print(f"Results: {passing}/{total} metrics passing")
         for m in results["metrics"]:
             icon = "PASS" if m["passed"] else "FAIL"
-            print(f"  [{icon}] {m['name']}: {m['score']*100:.1f}% (threshold: {m['threshold']*100:.0f}%)")
+            delta = ""
+            if m.get("delta") is not None:
+                pp = m["delta"] * 100
+                sign = "+" if pp > 0 else ""
+                delta = f" ({sign}{pp:.1f}pp)"
+            print(f"  [{icon}] {m['name']}: {m['score']*100:.1f}%{delta} (threshold: {m['threshold']*100:.0f}%)")
 
         if not results["passed"]:
             print("\nEvaluation FAILED -- one or more metrics below threshold")
