@@ -26,6 +26,7 @@ from routers.mcp_servers import router as mcp_servers_router
 from routers.mcp_approvals import router as mcp_approvals_router
 from routers.mcp_audit import router as mcp_audit_router
 from routers.mcp_guardrails import router as mcp_guardrails_router
+from routers.mcp_tools import router as mcp_tools_router
 from routers.mcp_proxy import router as mcp_proxy_router
 from routers.tenant_chat import router as tenant_chat_router
 
@@ -87,6 +88,7 @@ app.include_router(mcp_servers_router, prefix="/internal", tags=["MCP CRUD"])
 app.include_router(mcp_approvals_router, prefix="/internal", tags=["MCP CRUD"])
 app.include_router(mcp_audit_router, prefix="/internal", tags=["MCP CRUD"])
 app.include_router(mcp_guardrails_router, prefix="/internal", tags=["MCP CRUD"])
+app.include_router(mcp_tools_router, prefix="/internal", tags=["MCP CRUD"])
 
 # Tenant proxy routes (Express proxy → Gateway, JWT-authenticated via headers)
 # Chat, streaming, embeddings, providers, model catalog
