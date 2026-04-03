@@ -3,14 +3,22 @@
 # Runs an LLM evaluation on your VerifyWise instance, waits for results,
 # and optionally posts a summary on the PR and/or gates CI on thresholds.
 #
+# The evaluation uses two LLMs:
+#   1. The MODEL being evaluated (generates responses to prompts)
+#   2. The JUDGE that scores those responses against metrics
+#
+# You can use different providers for each. For example, evaluate a
+# self-hosted Llama model using GPT-4o as the judge. If the model and
+# judge share the same provider, you only need LLM_API_KEY — the judge
+# will default to using the same key.
+#
 # Supports three use cases:
 #   - Chatbot: answer_relevancy, bias, toxicity, hallucination, ...
-#   - RAG:     faithfulness, contextual_relevancy, context_precision, context_recall, ...
-#   - Agent:   tool_correctness, task_completion, plan_quality, step_efficiency, ...
+#   - RAG:     faithfulness, contextual_relevancy, context_precision, ...
+#   - Agent:   tool_correctness, task_completion, plan_quality, ...
 #
 # ─── Quick start ────────────────────────────────────────────────────────
 #
-#   # Chatbot evaluation
 #   jobs:
 #     eval:
 #       uses: verifywise-ai/verifywise/.github/workflows/verifywise-eval.yml@main
@@ -22,10 +30,10 @@
 #         model_name: gpt-4o-mini
 #         model_provider: openai
 #       secrets:
+#         LLM_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 #         VW_API_TOKEN: ${{ secrets.VW_API_TOKEN }}
-#         LLM_API_KEY:  ${{ secrets.OPENAI_API_KEY }}
 #
-#   # RAG evaluation
+#   # Different providers for model and judge:
 #   jobs:
 #     eval:
 #       uses: verifywise-ai/verifywise/.github/workflows/verifywise-eval.yml@main
@@ -33,27 +41,15 @@
 #         api_url: https://app.verifywise.ai
 #         project_id: proj_abc123
 #         dataset_id: "42"
-#         metrics: faithfulness,contextual_relevancy,answer_relevancy
-#         model_name: gpt-4o
-#         model_provider: openai
+#         metrics: answer_relevancy,faithfulness
+#         model_name: claude-3-5-sonnet
+#         model_provider: anthropic
+#         judge_model: gpt-4o
+#         judge_provider: openai
 #       secrets:
+#         LLM_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+#         JUDGE_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 #         VW_API_TOKEN: ${{ secrets.VW_API_TOKEN }}
-#         LLM_API_KEY:  ${{ secrets.OPENAI_API_KEY }}
-#
-#   # Agent evaluation
-#   jobs:
-#     eval:
-#       uses: verifywise-ai/verifywise/.github/workflows/verifywise-eval.yml@main
-#       with:
-#         api_url: https://app.verifywise.ai
-#         project_id: proj_abc123
-#         dataset_id: "42"
-#         metrics: tool_correctness,task_completion,plan_quality
-#         model_name: gpt-4o
-#         model_provider: openai
-#       secrets:
-#         VW_API_TOKEN: ${{ secrets.VW_API_TOKEN }}
-#         LLM_API_KEY:  ${{ secrets.OPENAI_API_KEY }}
 #
 # ─── Available metrics ──────────────────────────────────────────────────
 #
@@ -145,12 +141,15 @@ on:
         description: "VerifyWise API token"
         required: true
       LLM_API_KEY:
-        description: "LLM provider API key"
+        description: "API key for the model being evaluated"
         required: true
+      JUDGE_API_KEY:
+        description: "API key for the judge LLM (defaults to LLM_API_KEY if not set)"
+        required: false
 
 jobs:
   evaluate:
-    name: LLM Evaluation
+    name: "VerifyWise LLM Evaluation (${{ inputs.model_name }})"
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -175,6 +174,7 @@ jobs:
           fail_on_threshold: ${{ inputs.fail_on_threshold }}
           vw_api_token: ${{ secrets.VW_API_TOKEN }}
           llm_api_key: ${{ secrets.LLM_API_KEY }}
+          judge_api_key: ${{ secrets.JUDGE_API_KEY }}
 
       - name: Post PR comment
         if: inputs.post_pr_comment && github.event_name == 'pull_request'

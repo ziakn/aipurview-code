@@ -73,8 +73,12 @@ inputs:
     description: 'VerifyWise API token'
     required: true
   llm_api_key:
-    description: 'LLM provider API key'
+    description: 'API key for the model being evaluated'
     required: true
+  judge_api_key:
+    description: 'API key for the judge LLM (defaults to llm_api_key if not set)'
+    required: false
+    default: ''
 
 outputs:
   passed:
@@ -120,6 +124,7 @@ runs:
         VW_POLL_INTERVAL: ${{ inputs.poll_interval_seconds }}
         VW_EXPERIMENT_NAME: ${{ inputs.experiment_name }}
         LLM_API_KEY: ${{ inputs.llm_api_key }}
+        JUDGE_API_KEY: ${{ inputs.judge_api_key }}
       run: |
         RESULTS="${{ runner.temp }}/vw-results.json"
         SUMMARY="${{ runner.temp }}/vw-summary.md"
@@ -176,12 +181,10 @@ runs:
 
         passed = data.get("passed", False)
         metrics = data.get("metrics", [])
-        samples = data.get("samples", [])
         name = data.get("name", "Evaluation")
         model = data.get("model", "unknown")
 
         failing = [m for m in metrics if not m.get("passed")]
-        passing = [m for m in metrics if m.get("passed")]
 
         with open(os.environ["GITHUB_OUTPUT"], "a") as out:
             out.write(f"passed={'true' if passed else 'false'}\n")

@@ -27,6 +27,9 @@ except ImportError:
     sys.exit(2)
 
 INVERTED_KEYWORDS = ("bias", "toxicity", "hallucination", "conversationsafety")
+EM_DASH = "\u2014"
+CHECK = "\u2705"
+CROSS = "\u274C"
 
 
 def parse_args() -> argparse.Namespace:
@@ -84,7 +87,8 @@ def create_experiment(
     name: str,
 ) -> Dict[str, Any]:
     url = f"{base_url}/api/deepeval/experiments"
-    llm_api_key = os.getenv("LLM_API_KEY", "")
+    model_api_key = os.getenv("LLM_API_KEY", "")
+    judge_api_key = os.getenv("JUDGE_API_KEY", "") or model_api_key
 
     metric_configs = []
     for m in metrics:
@@ -110,7 +114,7 @@ def create_experiment(
                 "name": model_name,
                 "model_name": model_name,
                 "provider": model_provider,
-                "apiKey": llm_api_key if model_provider != "self-hosted" else "",
+                "apiKey": model_api_key if model_provider != "self-hosted" else "",
             },
             "dataset": {
                 "id": dataset_id,
@@ -122,7 +126,7 @@ def create_experiment(
             "judgeLlm": {
                 "provider": judge_provider,
                 "model": judge_model,
-                "apiKey": llm_api_key,
+                "apiKey": judge_api_key,
             },
         },
     }
@@ -235,7 +239,6 @@ def parse_results(
         })
 
     # Build samples from detailed_results, enriched with log data
-    # Logs are ordered newest-first; reverse to match sample order
     sorted_logs = list(reversed(logs))
 
     samples = []
@@ -269,7 +272,6 @@ def parse_results(
                 }
         samples.append(sample_entry)
 
-    # If we have logs but no detailed_results, build samples from logs alone
     if not detailed_results and sorted_logs:
         for i, log in enumerate(sorted_logs):
             samples.append({
@@ -294,18 +296,22 @@ def parse_results(
 
 
 def _escape_md(text: str) -> str:
-    """Prepare text for display in markdown without truncation."""
+    """Prepare text for display in markdown."""
     if not text:
         return ""
     return text.replace("\n", " ").replace("|", "\\|").strip()
 
 
 def generate_markdown(results: Dict[str, Any]) -> str:
+    model = results["model"]
+    overall_icon = CHECK if results["passed"] else CROSS
+    overall_word = "PASS" if results["passed"] else "FAIL"
+
     lines = [
         "## VerifyWise LLM Evaluation Results",
         "",
         f"**Experiment:** {results['name']}  ",
-        f"**Model:** {results['model']}  ",
+        f"**Model:** {model}  ",
         f"**Status:** {results['status']}  ",
         f"**Samples:** {results['total_prompts']}  ",
     ]
@@ -313,11 +319,9 @@ def generate_markdown(results: Dict[str, Any]) -> str:
     if results.get("duration_ms"):
         lines.append(f"**Duration:** {results['duration_ms'] / 1000:.1f}s  ")
 
-    icon = "\u2705" if results["passed"] else "\u274C"
-    overall = "PASS" if results["passed"] else "FAIL"
     lines.extend([
         "",
-        f"### Overall: {icon} {overall}",
+        f"### Overall: {overall_icon} {overall_word}",
         "",
         "| Metric | Score | Threshold | Result |",
         "|--------|------:|----------:|--------|",
@@ -325,7 +329,7 @@ def generate_markdown(results: Dict[str, Any]) -> str:
 
     for m in results["metrics"]:
         inv = " *(inverted)*" if m["inverted"] else ""
-        mi = "\u2705" if m["passed"] else "\u274C"
+        mi = CHECK if m["passed"] else CROSS
         lines.append(
             f"| {m['name']}{inv} | {m['score']*100:.1f}% | {m['threshold']*100:.0f}% | {mi} |"
         )
@@ -342,23 +346,20 @@ def generate_markdown(results: Dict[str, Any]) -> str:
 
         for sample in samples:
             sample_scores = sample.get("metric_scores", {})
-
-            # Show all samples that have metric scores (not just failing ones)
-            # so the user can compare passing vs failing on the same prompt
             if not sample_scores:
                 continue
 
-            input_text = _escape_md(sample["input"])
-            output_text = _escape_md(sample["output"])
+            input_text = _escape_md(sample["input"]) or "*(empty)*"
+            output_text = _escape_md(sample["output"]) or "*(not captured)*"
             expected_text = _escape_md(sample.get("expected", ""))
 
             lines.extend([
                 "",
                 f"#### Sample {sample['index']}",
                 "",
-                f"**Input:** {input_text}" if input_text else "**Input:** *(empty)*",
+                f"**Input:** {input_text}",
                 "",
-                f"**Response:** {output_text}" if output_text else "**Response:** *(not captured)*",
+                f"**Response:** {output_text}",
             ])
 
             if expected_text:
@@ -380,13 +381,14 @@ def generate_markdown(results: Dict[str, Any]) -> str:
                     score_str = "N/A"
 
                 if passed is True:
-                    result_str = "\u2705"
+                    result_str = CHECK
                 elif passed is False:
-                    result_str = "\u274C"
+                    result_str = CROSS
                 else:
-                    result_str = "\u2014"
+                    result_str = EM_DASH
 
-                lines.append(f"| {metric_name} | {score_str} | {result_str} | {explanation or '\u2014'} |")
+                explanation_str = explanation if explanation else EM_DASH
+                lines.append(f"| {metric_name} | {score_str} | {result_str} | {explanation_str} |")
 
     lines.extend([
         "",
@@ -395,15 +397,6 @@ def generate_markdown(results: Dict[str, Any]) -> str:
     ])
 
     return "\n".join(lines)
-
-
-def _metric_name_matches(name: str, targets: set) -> bool:
-    """Check if a metric name matches any target, case-insensitively."""
-    lower = name.lower()
-    for t in targets:
-        if t.lower() == lower or t.lower().replace("_", "") == lower.replace("_", ""):
-            return True
-    return False
 
 
 def main():
