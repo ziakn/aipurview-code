@@ -17,7 +17,7 @@ import json
 import os
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 try:
@@ -25,6 +25,8 @@ try:
 except ImportError:
     print("ERROR: 'requests' package required. Install with: pip install requests")
     sys.exit(2)
+
+INVERTED_KEYWORDS = ("bias", "toxicity", "hallucination", "conversationsafety")
 
 
 def parse_args() -> argparse.Namespace:
@@ -95,8 +97,8 @@ def create_experiment(
     dataset_name = dataset_info.get("name", f"dataset-{dataset_id}")
     print(f"Resolved dataset '{dataset_name}' -> {dataset_path}")
 
-    now = datetime.now(tz=__import__('datetime').timezone.utc)
-    experiment_name = name or f"CI Eval — {now.strftime('%Y-%m-%d %H:%M')}"
+    now = datetime.now(tz=timezone.utc)
+    experiment_name = name or f"CI Eval -- {now.strftime('%Y-%m-%d %H:%M')}"
 
     payload = {
         "project_id": project_id,
@@ -170,6 +172,10 @@ def poll_experiment(
     raise TimeoutError(f"Experiment did not complete within {timeout_minutes} minutes")
 
 
+def is_inverted(name: str) -> bool:
+    return any(k in name.lower() for k in INVERTED_KEYWORDS)
+
+
 def parse_results(experiment: Dict[str, Any], threshold: float) -> Dict[str, Any]:
     results = experiment.get("results", {})
     if isinstance(results, str):
@@ -177,6 +183,7 @@ def parse_results(experiment: Dict[str, Any], threshold: float) -> Dict[str, Any
 
     avg_scores = results.get("avg_scores", {})
     metric_thresholds_raw = results.get("metric_thresholds", {})
+    detailed_results = results.get("detailed_results", [])
 
     config = experiment.get("config", {})
     if isinstance(config, str):
@@ -189,7 +196,7 @@ def parse_results(experiment: Dict[str, Any], threshold: float) -> Dict[str, Any
         score = float(score)
         mt = metric_thresholds_raw.get(name)
         mt = float(mt) if mt is not None else threshold
-        inverted = any(k in name.lower() for k in ["bias", "toxicity", "hallucination", "conversationsafety"])
+        inverted = is_inverted(name)
         passed = (score <= mt) if inverted else (score >= mt)
         if not passed:
             all_passed = False
@@ -201,6 +208,31 @@ def parse_results(experiment: Dict[str, Any], threshold: float) -> Dict[str, Any
             "inverted": inverted,
         })
 
+    samples = []
+    for i, sample in enumerate(detailed_results):
+        sample_entry = {
+            "index": i + 1,
+            "input": sample.get("input", ""),
+            "output": sample.get("output", ""),
+            "expected": sample.get("expected", ""),
+            "metric_scores": {},
+        }
+        raw_scores = sample.get("metric_scores", {})
+        for metric_name, metric_data in raw_scores.items():
+            if isinstance(metric_data, dict):
+                sample_entry["metric_scores"][metric_name] = {
+                    "score": metric_data.get("score"),
+                    "passed": metric_data.get("passed"),
+                    "reason": metric_data.get("reason", ""),
+                }
+            else:
+                sample_entry["metric_scores"][metric_name] = {
+                    "score": metric_data,
+                    "passed": None,
+                    "reason": "",
+                }
+        samples.append(sample_entry)
+
     return {
         "experiment_id": experiment.get("id", ""),
         "name": experiment.get("name", ""),
@@ -210,45 +242,116 @@ def parse_results(experiment: Dict[str, Any], threshold: float) -> Dict[str, Any
         "duration_ms": results.get("duration"),
         "passed": all_passed,
         "metrics": metrics_out,
+        "samples": samples,
     }
+
+
+def _truncate(text: str, max_len: int = 200) -> str:
+    if not text:
+        return "(empty)"
+    text = text.replace("\n", " ").strip()
+    if len(text) <= max_len:
+        return text
+    return text[:max_len] + "..."
 
 
 def generate_markdown(results: Dict[str, Any]) -> str:
     lines = [
         "## VerifyWise LLM Evaluation Results",
         "",
-        f"**Experiment:** {results['name']}",
-        f"**Model:** {results['model']}",
-        f"**Status:** {results['status']}",
-        f"**Samples:** {results['total_prompts']}",
+        f"**Experiment:** {results['name']}  ",
+        f"**Model:** {results['model']}  ",
+        f"**Status:** {results['status']}  ",
+        f"**Samples:** {results['total_prompts']}  ",
     ]
 
     if results.get("duration_ms"):
-        lines.append(f"**Duration:** {results['duration_ms'] / 1000:.1f}s")
+        lines.append(f"**Duration:** {results['duration_ms'] / 1000:.1f}s  ")
 
     overall = "PASS" if results["passed"] else "FAIL"
-    emoji = "white_check_mark" if results["passed"] else "x"
     lines.extend([
         "",
-        f"### Overall: :{emoji}: **{overall}**",
+        f"### Overall: **{overall}**",
         "",
-        "| Metric | Score | Threshold | Status |",
-        "|--------|-------|-----------|--------|",
+        "| Metric | Score | Threshold | Result |",
+        "|--------|------:|----------:|--------|",
     ])
 
     for m in results["metrics"]:
-        status_icon = ":white_check_mark:" if m["passed"] else ":x:"
-        inv = " *(inverted)*" if m["inverted"] else ""
+        inv = " (inverted)" if m["inverted"] else ""
+        result = "PASS" if m["passed"] else "FAIL"
         lines.append(
-            f"| {m['name']}{inv} | {m['score']*100:.1f}% | {m['threshold']*100:.0f}% | {status_icon} |"
+            f"| {m['name']}{inv} | {m['score']*100:.1f}% | {m['threshold']*100:.0f}% | {result} |"
         )
+
+    # Per-sample breakdown for failing metrics
+    failing_metrics = {m["name"] for m in results["metrics"] if not m["passed"]}
+    samples = results.get("samples", [])
+
+    if failing_metrics and samples:
+        lines.extend(["", "---", "", "### Failure Details", ""])
+        lines.append(
+            "Showing per-sample breakdown for metrics that did not meet the threshold."
+        )
+
+        for sample in samples:
+            sample_scores = sample.get("metric_scores", {})
+            has_failing = any(
+                _metric_name_matches(name, failing_metrics)
+                for name in sample_scores
+            )
+            if not has_failing:
+                continue
+
+            lines.extend([
+                "",
+                f"#### Sample {sample['index']}",
+                "",
+                f"> **Input:** {_truncate(sample['input'], 300)}",
+                "",
+                f"> **Response:** {_truncate(sample['output'], 300)}",
+            ])
+
+            if sample.get("expected"):
+                lines.append(f"> **Expected:** {_truncate(sample['expected'], 300)}")
+
+            lines.extend(["", "| Metric | Score | Result | Reason |", "|--------|------:|--------|--------|"])
+            for metric_name, score_data in sample_scores.items():
+                score_val = score_data.get("score")
+                passed = score_data.get("passed")
+                reason = score_data.get("reason", "")
+
+                if score_val is not None:
+                    score_str = f"{score_val * 100:.1f}%" if isinstance(score_val, float) else str(score_val)
+                else:
+                    score_str = "N/A"
+
+                if passed is True:
+                    result_str = "PASS"
+                elif passed is False:
+                    result_str = "FAIL"
+                else:
+                    result_str = "-"
+
+                reason_str = _truncate(reason, 120) if reason else "-"
+                lines.append(f"| {metric_name} | {score_str} | {result_str} | {reason_str} |")
 
     lines.extend([
         "",
-        f"*Generated by [VerifyWise](https://verifywise.ai) at {datetime.now(tz=__import__('datetime').timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}*",
+        "---",
+        f"*Generated by [VerifyWise](https://verifywise.ai) at {datetime.now(tz=timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}*",
     ])
 
     return "\n".join(lines)
+
+
+def _metric_name_matches(name: str, targets: set) -> bool:
+    """Check if a metric name matches any target, case-insensitively."""
+    lower = name.lower()
+    for t in targets:
+        if t.lower() == lower or t.lower().replace("_", "") == lower.replace("_", ""):
+            return True
+    return False
 
 
 def main():
@@ -319,10 +422,10 @@ def main():
             print(f"  [{icon}] {m['name']}: {m['score']*100:.1f}% (threshold: {m['threshold']*100:.0f}%)")
 
         if not results["passed"]:
-            print("\nEvaluation FAILED — one or more metrics below threshold")
+            print("\nEvaluation FAILED -- one or more metrics below threshold")
             sys.exit(1)
         else:
-            print("\nEvaluation PASSED — all metrics within threshold")
+            print("\nEvaluation PASSED -- all metrics within threshold")
             sys.exit(0)
 
     except TimeoutError as e:

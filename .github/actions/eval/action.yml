@@ -146,23 +146,25 @@ runs:
         SUMMARY_PATH: ${{ steps.eval.outputs.summary_path }}
         FAIL_ON_THRESHOLD: ${{ inputs.fail_on_threshold }}
       run: |
-        # If no results at all, report error
         if [ ! -f "$RESULTS_PATH" ]; then
-          echo "::error title=VerifyWise Evaluation Failed::No results produced — the evaluation may have failed to start. Check the logs above."
+          echo "::error title=Evaluation Failed::No results produced. The evaluation may have failed to connect to the VerifyWise instance."
           echo "passed=false" >> "$GITHUB_OUTPUT"
-          echo "### ❌ VerifyWise Evaluation Failed" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "No results were produced. The evaluation may have failed to connect to the VerifyWise instance." >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "## VerifyWise Evaluation"
+            echo ""
+            echo "**FAILED** -- No results were produced. The evaluation may have failed to start."
+            echo "Check the logs in the \"Run evaluation\" step for details."
+          } >> "$GITHUB_STEP_SUMMARY"
           [ "$FAIL_ON_THRESHOLD" = "true" ] && exit 1
           exit 0
         fi
 
-        # Write the Markdown summary to the Job Summary (visible on the run page)
+        # Write Markdown summary to Job Summary (shown on the run page)
         if [ -f "$SUMMARY_PATH" ]; then
           cat "$SUMMARY_PATH" >> "$GITHUB_STEP_SUMMARY"
         fi
 
-        # Parse pass/fail and annotate
+        # Parse results, create annotations, set outputs
         python3 << 'PYEOF'
         import json, os
 
@@ -174,25 +176,29 @@ runs:
 
         passed = data.get("passed", False)
         metrics = data.get("metrics", [])
+        samples = data.get("samples", [])
         name = data.get("name", "Evaluation")
         model = data.get("model", "unknown")
 
         failing = [m for m in metrics if not m.get("passed")]
         passing = [m for m in metrics if m.get("passed")]
 
-        # Write outputs
         with open(os.environ["GITHUB_OUTPUT"], "a") as out:
             out.write(f"passed={'true' if passed else 'false'}\n")
 
         if passed:
-            print(f"::notice title=✅ {name} Passed::All {len(metrics)} metrics passed for {model}")
+            print(f"::notice title=All metrics passed::{len(metrics)} metrics passed for {model}")
         else:
             for m in failing:
-                inv = " (inverted — lower is better)" if m.get("inverted") else ""
-                print(f"::error title=❌ {m['name']} failed threshold::{m['name']}: scored {m['score']*100:.1f}% against {m['threshold']*100:.0f}% threshold{inv}")
+                inv = " (inverted -- lower is better)" if m.get("inverted") else ""
+                print(f"::error title={m['name']} failed threshold::"
+                      f"{m['name']}: scored {m['score']*100:.1f}% "
+                      f"against {m['threshold']*100:.0f}% threshold{inv}")
 
             summary = ", ".join(f"{m['name']}={m['score']*100:.0f}%" for m in failing)
-            print(f"::error title=VerifyWise Evaluation Failed::{len(failing)}/{len(metrics)} metrics below threshold on {model}: {summary}")
+            print(f"::error title=Evaluation Failed::"
+                  f"{len(failing)}/{len(metrics)} metrics below threshold "
+                  f"on {model}: {summary}")
 
             if fail_on:
                 raise SystemExit(1)
