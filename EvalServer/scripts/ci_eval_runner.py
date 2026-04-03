@@ -282,11 +282,15 @@ def parse_results(
                 "metric_scores": {},
             })
 
+    judge_cfg = config.get("judgeLlm", {})
+    judge_name = judge_cfg.get("model", "") or judge_cfg.get("name", "")
+
     return {
         "experiment_id": experiment.get("id", ""),
         "name": experiment.get("name", ""),
         "status": experiment.get("status", "unknown"),
         "model": config.get("model", {}).get("name", "Unknown"),
+        "judge": judge_name,
         "total_prompts": results.get("total_prompts", 0),
         "duration_ms": results.get("duration"),
         "passed": all_passed,
@@ -312,6 +316,7 @@ def generate_markdown(results: Dict[str, Any]) -> str:
         "",
         f"**Experiment:** {results['name']}  ",
         f"**Model:** {model}  ",
+        f"**Judge:** {results.get('judge') or 'gpt-4o'}  ",
         f"**Status:** {results['status']}  ",
         f"**Samples:** {results['total_prompts']}  ",
     ]
