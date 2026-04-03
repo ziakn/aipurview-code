@@ -21,6 +21,9 @@ from routers.virtual_keys import router as virtual_keys_router
 from routers.prompts import router as prompts_router
 from routers.risk import router as risk_router
 from routers.cache import router as cache_router
+from routers.mcp_approvals import router as mcp_approvals_router
+from routers.mcp_audit import router as mcp_audit_router
+from routers.mcp_guardrails import router as mcp_guardrails_router
 from routers.tenant_chat import router as tenant_chat_router
 
 # Disable LiteLLM verbose logging to prevent key leakage
@@ -74,6 +77,9 @@ app.include_router(virtual_keys_router, prefix="/internal", tags=["CRUD"])
 app.include_router(prompts_router, prefix="/internal", tags=["CRUD"])
 app.include_router(risk_router, prefix="/internal", tags=["CRUD"])
 app.include_router(cache_router, prefix="/internal", tags=["CRUD"])
+app.include_router(mcp_approvals_router, prefix="/internal", tags=["CRUD"])
+app.include_router(mcp_audit_router, prefix="/internal", tags=["CRUD"])
+app.include_router(mcp_guardrails_router, prefix="/internal", tags=["CRUD"])
 
 # Tenant proxy routes (Express proxy → Gateway, JWT-authenticated via headers)
 # Chat, streaming, embeddings, providers, model catalog
