@@ -32,11 +32,13 @@ from validate.enrich import enrich_with_obligations
 
 from infer.runner import run_inference, run_inference_resumable, InferConfig
 from infer.load_models import load_models_config
+from infer.models_config import ModelSpec
 from infer.paths import model_output_path
 from infer.stats import compute_model_stats
 from infer.manifest import write_infer_manifest
 from llm.mock import MockChatClient
 from llm.openrouter import OpenRouterChatClient
+from llm.factory import build_client
 
 from infer.resume import load_completed_pairs
 from reports.infer_report import build_infer_report
@@ -350,10 +352,6 @@ def _cmd_generate(args: argparse.Namespace) -> int:
             outputs = []
 
             for spec in models_cfg.models:
-                if spec.provider != "openrouter":
-                    console.print(f"[yellow]Skipping unsupported provider in v0.1:[/yellow] {spec.provider}")
-                    continue
-
                 out_path = model_output_path(final_dir, spec.model_id)
                 fail_path = out_path.with_suffix(out_path.suffix + ".failures.jsonl")
 
@@ -361,7 +359,7 @@ def _cmd_generate(args: argparse.Namespace) -> int:
                 if args.resume:
                     skip = load_completed_pairs(out_path)
 
-                client = OpenRouterChatClient(model_id=spec.model_id)
+                client = build_client(spec)
                 successes, failures = run_inference_resumable(
                     scenarios=scenarios,
                     client=client,
@@ -427,10 +425,7 @@ def _cmd_generate(args: argparse.Namespace) -> int:
 
             return 0
 
-        if args.provider == "openrouter":
-            client = OpenRouterChatClient(model_id=args.model_id)
-        else:
-            client = MockChatClient(model_id=args.model_id, provider=args.provider)
+        client = build_client(ModelSpec(provider=args.provider, model_id=args.model_id))
 
         cfg = InferConfig(
             model_id=args.model_id,
