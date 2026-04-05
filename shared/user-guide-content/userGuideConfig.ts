@@ -77,7 +77,7 @@ export const collections: Collection[] = [
     title: 'AI governance',
     description: 'Manage your AI models, track their lifecycle, and maintain comprehensive documentation.',
     icon: 'Brain',
-    articleCount: 10,
+    articleCount: 12,
     articles: [
       {
         id: 'use-cases',
@@ -138,6 +138,18 @@ export const collections: Collection[] = [
         title: 'AI Trust Center',
         description: 'Public transparency portal for sharing your AI governance practices.',
         keywords: ['trust', 'center', 'transparency', 'public', 'stakeholders', 'disclosure'],
+      },
+      {
+        id: 'datasets',
+        title: 'Datasets',
+        description: 'Register and track datasets used by your AI systems, with PII detection and bulk upload.',
+        keywords: ['dataset', 'data', 'pii', 'bulk upload', 'classification', 'training data', 'bias', 'governance'],
+      },
+      {
+        id: 'agent-discovery',
+        title: 'Agent discovery',
+        description: 'Discover and manage service accounts, technical users, and system identities across connected source systems.',
+        keywords: ['agent', 'discovery', 'service account', 'identity', 'technical user', 'non-human', 'permissions'],
       },
     ],
   },
@@ -275,7 +287,7 @@ export const collections: Collection[] = [
     title: 'Compliance frameworks',
     description: 'Stay compliant with AI regulations including EU AI Act, ISO 42001, and more.',
     icon: 'Shield',
-    articleCount: 6,
+    articleCount: 8,
     articles: [
       {
         id: 'assessments',
@@ -312,6 +324,18 @@ export const collections: Collection[] = [
         title: 'Fundamental Rights Impact Assessment',
         description: 'Assess the impact of high-risk AI systems on fundamental rights as required by EU AI Act Article 27.',
         keywords: ['fria', 'fundamental rights', 'impact assessment', 'article 27', 'eu ai act', 'charter', 'rights matrix', 'deployer'],
+      },
+      {
+        id: 'ce-marking',
+        title: 'CE Marking',
+        description: 'Manage the EU conformity assessment process for high-risk AI systems, from classification through registration.',
+        keywords: ['ce marking', 'conformity', 'declaration', 'registration', 'annex iii', 'high risk', 'notified body', 'eu database'],
+      },
+      {
+        id: 'post-market-monitoring',
+        title: 'Post-market monitoring',
+        description: 'Set up recurring monitoring cycles for deployed AI systems with automated reminders and PDF reports.',
+        keywords: ['post-market', 'monitoring', 'cycle', 'article 72', 'report', 'pdf', 'escalation', 'reminder', 'pmm'],
       },
     ],
   },
