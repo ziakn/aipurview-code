@@ -182,7 +182,7 @@ export const collections: Collection[] = [
     title: 'LLM Evals',
     description: 'Evaluate and benchmark your LLM applications for quality, safety, and performance.',
     icon: 'FlaskConical',
-    articleCount: 7,
+    articleCount: 8,
     articles: [
       {
         id: 'llm-evals-overview',
@@ -225,6 +225,12 @@ export const collections: Collection[] = [
         title: 'LLM Arena',
         description: 'Compare two models side by side on the same prompt.',
         keywords: ['arena', 'compare', 'side by side', 'model comparison', 'battle', 'head to head'],
+      },
+      {
+        id: 'ci-cd-integration',
+        title: 'CI/CD integration',
+        description: 'Run LLM evaluations automatically in GitHub Actions or any CI pipeline and block merges when quality drops.',
+        keywords: ['ci', 'cd', 'github actions', 'pipeline', 'automation', 'quality gate', 'pull request', 'ci/cd', 'continuous'],
       },
     ],
   },
