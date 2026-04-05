@@ -380,12 +380,17 @@ function generateYaml(endpoints: Endpoint[]): string {
   }
   lines.push("");
 
-  // Group by path
+  // Group by path (strip trailing slashes)
   const pathMap = new Map<string, Endpoint[]>();
   for (const ep of endpoints) {
-    const openApiPath = ep.path
+    let openApiPath = ep.path
       .replace(/\/:(\w+)/g, "/{$1}")
       .replace(/^\/api/, "");
+
+    // Strip trailing slash (but keep "/" itself)
+    if (openApiPath.length > 1 && openApiPath.endsWith("/")) {
+      openApiPath = openApiPath.slice(0, -1);
+    }
 
     if (!pathMap.has(openApiPath)) {
       pathMap.set(openApiPath, []);
@@ -394,6 +399,7 @@ function generateYaml(endpoints: Endpoint[]): string {
   }
 
   const sortedPaths = [...pathMap.keys()].sort();
+  const usedOperationIds = new Set<string>();
 
   lines.push("paths:");
   for (const pathKey of sortedPaths) {
@@ -403,11 +409,19 @@ function generateYaml(endpoints: Endpoint[]): string {
     for (const ep of eps) {
       const summary = humanizeHandlerName(ep.handlerName);
 
+      // Make operationId unique by prefixing with base path segment when needed
+      let operationId = ep.handlerName;
+      if (usedOperationIds.has(operationId)) {
+        const prefix = ep.basePath.replace("/api/", "").replace(/[^a-zA-Z0-9]/g, "_");
+        operationId = prefix + "_" + ep.handlerName;
+      }
+      usedOperationIds.add(operationId);
+
       lines.push("    " + ep.method + ":");
       lines.push("      tags:");
       lines.push("        - " + ep.tag);
       lines.push("      summary: " + summary);
-      lines.push("      operationId: " + ep.handlerName);
+      lines.push("      operationId: " + operationId);
 
       if (ep.auth) {
         lines.push("      security:");

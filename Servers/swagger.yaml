@@ -82,7 +82,7 @@ tags:
   - name: Webhooks
 
 paths:
-  /advisor/:
+  /advisor:
     post:
       tags:
         - AI Advisor
@@ -188,7 +188,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /agent-primitives/:
+  /agent-primitives:
     get:
       tags:
         - Agent Discovery
@@ -452,7 +452,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /ai-detection/repositories/:
+  /ai-detection/repositories:
     get:
       tags:
         - AI Detection
@@ -1036,7 +1036,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /ai-incident-managements/:
+  /ai-incident-managements:
     get:
       tags:
         - Incidents
@@ -1446,7 +1446,7 @@ paths:
           description: Success
         "500":
           description: Internal server error
-  /approval-requests/:
+  /approval-requests:
     post:
       tags:
         - Approval Workflows
@@ -1613,7 +1613,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /approval-workflows/:
+  /approval-workflows:
     get:
       tags:
         - Approval Workflows
@@ -1722,7 +1722,7 @@ paths:
           description: Forbidden - insufficient role
         "500":
           description: Internal server error
-  /assessments/:
+  /assessments:
     get:
       tags:
         - Assessments
@@ -1910,7 +1910,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /audit-ledger/:
+  /audit-ledger:
     get:
       tags:
         - Audit
@@ -1946,7 +1946,7 @@ paths:
           description: Forbidden - insufficient role
         "500":
           description: Internal server error
-  /autoDrivers/:
+  /autoDrivers:
     post:
       tags:
         - Demo Data
@@ -1986,7 +1986,7 @@ paths:
           description: Forbidden - insufficient role
         "500":
           description: Internal server error
-  /automations/:
+  /automations:
     get:
       tags:
         - Automations
@@ -2267,7 +2267,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /dashboard/:
+  /dashboard:
     get:
       tags:
         - Dashboard
@@ -2326,7 +2326,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /datasets/:
+  /datasets:
     get:
       tags:
         - Datasets
@@ -3042,7 +3042,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /evidenceHub/:
+  /evidenceHub:
     get:
       tags:
         - Evidence
@@ -3142,7 +3142,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /feature-settings/:
+  /feature-settings:
     get:
       tags:
         - Settings
@@ -3197,12 +3197,12 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /file-manager/:
+  /file-manager:
     post:
       tags:
         - Files
       summary: Handle Multer Error
-      operationId: handleMulterError
+      operationId: file_manager_handleMulterError
       security:
         - bearerAuth: []
       description: "Requires role: Admin or Reviewer or Editor"
@@ -3417,7 +3417,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /files/:
+  /files:
     get:
       tags:
         - Files
@@ -3803,7 +3803,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /frameworks/:
+  /frameworks:
     get:
       tags:
         - Frameworks
@@ -4897,7 +4897,7 @@ paths:
           description: Created successfully
         "500":
           description: Internal server error
-  /invitations/:
+  /invitations:
     get:
       tags:
         - Invitations
@@ -5377,7 +5377,7 @@ paths:
       tags:
         - ISO 42001
       summary: Get All Projects Annxes Progress
-      operationId: getAllProjectsAnnxesProgress
+      operationId: iso_42001_getAllProjectsAnnxesProgress
       security:
         - bearerAuth: []
       responses:
@@ -5392,7 +5392,7 @@ paths:
       tags:
         - ISO 42001
       summary: Get All Projects Clauses Progress
-      operationId: getAllProjectsClausesProgress
+      operationId: iso_42001_getAllProjectsClausesProgress
       security:
         - bearerAuth: []
       responses:
@@ -5470,7 +5470,7 @@ paths:
       tags:
         - ISO 42001
       summary: Get All Annexes
-      operationId: getAllAnnexes
+      operationId: iso_42001_getAllAnnexes
       security:
         - bearerAuth: []
       responses:
@@ -5485,7 +5485,7 @@ paths:
       tags:
         - ISO 42001
       summary: Get Project Annexes Assignments
-      operationId: getProjectAnnexesAssignments
+      operationId: iso_42001_getProjectAnnexesAssignments
       security:
         - bearerAuth: []
       parameters:
@@ -5506,7 +5506,7 @@ paths:
       tags:
         - ISO 42001
       summary: Get Annexes By Project Id
-      operationId: getAnnexesByProjectId
+      operationId: iso_42001_getAnnexesByProjectId
       security:
         - bearerAuth: []
       parameters:
@@ -5526,7 +5526,7 @@ paths:
       tags:
         - ISO 42001
       summary: Delete Reference Controls
-      operationId: deleteReferenceControls
+      operationId: iso_42001_deleteReferenceControls
       security:
         - bearerAuth: []
       parameters:
@@ -5547,7 +5547,7 @@ paths:
       tags:
         - ISO 42001
       summary: Get Project Annxes Progress
-      operationId: getProjectAnnxesProgress
+      operationId: iso_42001_getProjectAnnxesProgress
       security:
         - bearerAuth: []
       parameters:
@@ -5568,7 +5568,7 @@ paths:
       tags:
         - ISO 42001
       summary: Get All Annexes Struct For Project
-      operationId: getAllAnnexesStructForProject
+      operationId: iso_42001_getAllAnnexesStructForProject
       security:
         - bearerAuth: []
       parameters:
@@ -5589,7 +5589,7 @@ paths:
       tags:
         - ISO 42001
       summary: Get All Clauses
-      operationId: getAllClauses
+      operationId: iso_42001_getAllClauses
       security:
         - bearerAuth: []
       responses:
@@ -5604,7 +5604,7 @@ paths:
       tags:
         - ISO 42001
       summary: Get Project Clauses Assignments
-      operationId: getProjectClausesAssignments
+      operationId: iso_42001_getProjectClausesAssignments
       security:
         - bearerAuth: []
       parameters:
@@ -5625,7 +5625,7 @@ paths:
       tags:
         - ISO 42001
       summary: Get Clauses By Project Id
-      operationId: getClausesByProjectId
+      operationId: iso_42001_getClausesByProjectId
       security:
         - bearerAuth: []
       parameters:
@@ -5645,7 +5645,7 @@ paths:
       tags:
         - ISO 42001
       summary: Delete Management System Clauses
-      operationId: deleteManagementSystemClauses
+      operationId: iso_42001_deleteManagementSystemClauses
       security:
         - bearerAuth: []
       parameters:
@@ -5666,7 +5666,7 @@ paths:
       tags:
         - ISO 42001
       summary: Get Project Clauses Progress
-      operationId: getProjectClausesProgress
+      operationId: iso_42001_getProjectClausesProgress
       security:
         - bearerAuth: []
       parameters:
@@ -5687,7 +5687,7 @@ paths:
       tags:
         - ISO 42001
       summary: Get All Clauses Struct For Project
-      operationId: getAllClausesStructForProject
+      operationId: iso_42001_getAllClausesStructForProject
       security:
         - bearerAuth: []
       parameters:
@@ -5708,7 +5708,7 @@ paths:
       tags:
         - ISO 42001
       summary: Save Annexes
-      operationId: saveAnnexes
+      operationId: iso_42001_saveAnnexes
       security:
         - bearerAuth: []
       parameters:
@@ -5734,7 +5734,7 @@ paths:
       tags:
         - ISO 42001
       summary: Save Clauses
-      operationId: saveClauses
+      operationId: iso_42001_saveClauses
       security:
         - bearerAuth: []
       parameters:
@@ -5760,7 +5760,7 @@ paths:
       tags:
         - ISO 42001
       summary: Get Sub Clause By Id
-      operationId: getSubClauseById
+      operationId: iso_42001_getSubClauseById
       security:
         - bearerAuth: []
       parameters:
@@ -5781,7 +5781,7 @@ paths:
       tags:
         - ISO 42001
       summary: Get Sub Clauses By Clause Id
-      operationId: getSubClausesByClauseId
+      operationId: iso_42001_getSubClausesByClauseId
       security:
         - bearerAuth: []
       parameters:
@@ -5818,7 +5818,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /llm-keys/:
+  /llm-keys:
     get:
       tags:
         - LLM Keys
@@ -6021,7 +6021,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /modelInventory/:
+  /modelInventory:
     get:
       tags:
         - Model Inventory
@@ -6213,7 +6213,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /modelRisks/:
+  /modelRisks:
     get:
       tags:
         - Model Risks
@@ -6297,7 +6297,7 @@ paths:
       tags:
         - Model Risks
       summary: Update Model Risk By Id
-      operationId: updateModelRiskById
+      operationId: modelRisks_updateModelRiskById
       security:
         - bearerAuth: []
       parameters:
@@ -6605,7 +6605,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /notes/:
+  /notes:
     post:
       tags:
         - Notes
@@ -6685,7 +6685,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /notifications/:
+  /notifications:
     get:
       tags:
         - Notifications
@@ -6812,7 +6812,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /organizations/:
+  /organizations:
     post:
       tags:
         - Organizations
@@ -7439,7 +7439,7 @@ paths:
       tags:
         - Post-Market Monitoring
       summary: Get Questions
-      operationId: getQuestions
+      operationId: pmm_getQuestions
       security:
         - bearerAuth: []
       responses:
@@ -7665,7 +7665,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /projectRisks/:
+  /projectRisks:
     get:
       tags:
         - Project Risks
@@ -7807,7 +7807,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /projects/:
+  /projects:
     get:
       tags:
         - Projects
@@ -7981,7 +7981,7 @@ paths:
       tags:
         - Projects
       summary: Save Controls
-      operationId: saveControls
+      operationId: projects_saveControls
       security:
         - bearerAuth: []
       requestBody:
@@ -8225,7 +8225,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /questions/:
+  /questions:
     get:
       tags:
         - Assessments
@@ -8326,7 +8326,7 @@ paths:
       tags:
         - Assessments
       summary: Update Question By Id
-      operationId: updateQuestionById
+      operationId: questions_updateQuestionById
       security:
         - bearerAuth: []
       parameters:
@@ -8448,7 +8448,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /risk-benchmarks/:
+  /risk-benchmarks:
     get:
       tags:
         - Risk Benchmarks
@@ -8525,7 +8525,7 @@ paths:
       tags:
         - Risk History
       summary: Get Current Counts
-      operationId: getCurrentCounts
+      operationId: riskHistory_getCurrentCounts
       security:
         - bearerAuth: []
       responses:
@@ -8540,7 +8540,7 @@ paths:
       tags:
         - Risk History
       summary: Create Snapshot
-      operationId: createSnapshot
+      operationId: riskHistory_createSnapshot
       security:
         - bearerAuth: []
       requestBody:
@@ -8560,7 +8560,7 @@ paths:
       tags:
         - Risk History
       summary: Get Timeseries
-      operationId: getTimeseries
+      operationId: riskHistory_getTimeseries
       security:
         - bearerAuth: []
       responses:
@@ -8570,7 +8570,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /roles/:
+  /roles:
     get:
       tags:
         - Roles
@@ -8670,7 +8670,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /search/:
+  /search:
     get:
       tags:
         - Search
@@ -9184,7 +9184,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /shares/:
+  /shares:
     post:
       tags:
         - Share Links
@@ -9310,7 +9310,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /slackWebhooks/:
+  /slackWebhooks:
     get:
       tags:
         - Integrations
@@ -9436,7 +9436,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /subscriptions/:
+  /subscriptions:
     get:
       tags:
         - Subscriptions
@@ -9704,7 +9704,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /tasks/:
+  /tasks:
     get:
       tags:
         - Tasks
@@ -9944,7 +9944,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /tokens/:
+  /tokens:
     get:
       tags:
         - Authentication
@@ -9999,28 +9999,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /training-change-history/{id}:
-    get:
-      tags:
-        - Change History
-      summary: Get Training Change History By Id
-      operationId: getTrainingChangeHistoryById
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        "200":
-          description: Success
-        "401":
-          description: Unauthorized
-        "500":
-          description: Internal server error
-  /training/:
+  /training:
     get:
       tags:
         - Training
@@ -10050,6 +10029,27 @@ paths:
       responses:
         "201":
           description: Created successfully
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal server error
+  /training-change-history/{id}:
+    get:
+      tags:
+        - Change History
+      summary: Get Training Change History By Id
+      operationId: getTrainingChangeHistoryById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Success
         "401":
           description: Unauthorized
         "500":
@@ -10142,7 +10142,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /user-preferences/:
+  /user-preferences:
     post:
       tags:
         - Users
@@ -10208,7 +10208,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /users/:
+  /users:
     get:
       tags:
         - Users
@@ -10556,7 +10556,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /vendorRisks/:
+  /vendorRisks:
     post:
       tags:
         - Vendor Risks
@@ -10699,7 +10699,7 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /vendors/:
+  /vendors:
     get:
       tags:
         - Vendors
@@ -10825,18 +10825,18 @@ paths:
       tags:
         - System
       summary: Get application version
-      operationId: getVersion
+      operationId: getAppVersion
       responses:
         "200":
           description: Success
         "500":
           description: Internal server error
-  /virtual-folders/:
+  /virtual-folders:
     get:
       tags:
         - Files
       summary: Get All Folders
-      operationId: getAllFolders
+      operationId: virtual_folders_getAllFolders
       security:
         - bearerAuth: []
       responses:
@@ -10850,7 +10850,7 @@ paths:
       tags:
         - Files
       summary: Create Folder
-      operationId: createFolder
+      operationId: virtual_folders_createFolder
       security:
         - bearerAuth: []
       requestBody:
@@ -10870,7 +10870,7 @@ paths:
       tags:
         - Files
       summary: Get Folder Tree
-      operationId: getFolderTree
+      operationId: virtual_folders_getFolderTree
       security:
         - bearerAuth: []
       responses:
@@ -10885,7 +10885,7 @@ paths:
       tags:
         - Files
       summary: Get Uncategorized Files
-      operationId: getUncategorizedFiles
+      operationId: virtual_folders_getUncategorizedFiles
       security:
         - bearerAuth: []
       responses:
@@ -10900,7 +10900,7 @@ paths:
       tags:
         - Files
       summary: Get Folder By Id
-      operationId: getFolderById
+      operationId: virtual_folders_getFolderById
       security:
         - bearerAuth: []
       parameters:
@@ -10920,7 +10920,7 @@ paths:
       tags:
         - Files
       summary: Update Folder
-      operationId: updateFolder
+      operationId: virtual_folders_updateFolder
       security:
         - bearerAuth: []
       parameters:
@@ -10945,7 +10945,7 @@ paths:
       tags:
         - Files
       summary: Delete Folder
-      operationId: deleteFolder
+      operationId: virtual_folders_deleteFolder
       security:
         - bearerAuth: []
       parameters:
@@ -10966,7 +10966,7 @@ paths:
       tags:
         - Files
       summary: Get Files In Folder
-      operationId: getFilesInFolder
+      operationId: virtual_folders_getFilesInFolder
       security:
         - bearerAuth: []
       parameters:
@@ -10986,7 +10986,7 @@ paths:
       tags:
         - Files
       summary: Assign Files To Folder
-      operationId: assignFilesToFolder
+      operationId: virtual_folders_assignFilesToFolder
       security:
         - bearerAuth: []
       parameters:
@@ -11012,7 +11012,7 @@ paths:
       tags:
         - Files
       summary: Remove File From Folder
-      operationId: removeFileFromFolder
+      operationId: virtual_folders_removeFileFromFolder
       security:
         - bearerAuth: []
       parameters:
@@ -11038,7 +11038,7 @@ paths:
       tags:
         - Files
       summary: Get Folder Path
-      operationId: getFolderPath
+      operationId: virtual_folders_getFolderPath
       security:
         - bearerAuth: []
       parameters:
