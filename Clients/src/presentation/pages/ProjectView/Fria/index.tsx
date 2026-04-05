@@ -176,7 +176,7 @@ const FriaAssessment = ({ projectId }: FriaProps) => {
           title="Status"
           value={assessment.status}
           Icon={CheckCircle}
-          subtitle={`Version ${assessment.version}`}
+          subtitle={`${assessment.version - 1} ${assessment.version - 1 === 1 ? "snapshot" : "snapshots"} saved`}
         />
       </Box>
 
@@ -356,7 +356,7 @@ const FriaAssessment = ({ projectId }: FriaProps) => {
       >
         <Stack spacing={0} gap="16px">
           <Typography sx={{ fontSize: 13, color: "text.secondary", lineHeight: 1.5 }}>
-            {`This will save a snapshot of the current assessment (version ${assessment.version}) so you can refer back to it later. Your changes are already auto-saved as you type.`}
+            This will save a snapshot of the current assessment so you can refer back to it later. Your changes are already auto-saved as you type.
           </Typography>
           <Field
             id="submit-reason"
