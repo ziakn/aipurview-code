@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { sequelize } from "../database/db";
 import { QueryTypes } from "sequelize";
+import { FriaStatus } from "../domain.layer/enums/fria-status.enum";
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 import { appendToAuditLedger } from "../utils/auditLedger.utils";
@@ -29,6 +30,7 @@ import {
   getFriaSnapshotsQuery,
   getFriaSnapshotByVersionQuery,
   computeFriaScore,
+  recomputeAndPersistScore,
 } from "../utils/fria.utils";
 
 const FILE_NAME = "fria.ctrl.ts";
@@ -188,9 +190,11 @@ export async function updateFria(req: Request, res: Response): Promise<Response>
 
     const transaction = await sequelize.transaction();
     try {
-      // Fetch rights and risk items for score computation
-      const rights = await getFriaRightsQuery(existing.id!, organizationId);
-      const riskItems = await getFriaRiskItemsQuery(existing.id!, organizationId);
+      // Fetch rights and risk items in parallel for score computation
+      const [rights, riskItems] = await Promise.all([
+        getFriaRightsQuery(existing.id!, organizationId),
+        getFriaRiskItemsQuery(existing.id!, organizationId),
+      ]);
 
       // Merge user data with fresh scores in a single UPDATE
       const merged = { ...existing, ...data };
@@ -280,15 +284,15 @@ export async function updateFriaRights(req: Request, res: Response): Promise<Res
     try {
       await bulkUpsertFriaRightsQuery(friaId, rights, organizationId, transaction);
 
-      const updatedRights = await getFriaRightsQuery(friaId, organizationId);
-      const riskItems = await getFriaRiskItemsQuery(friaId, organizationId);
+      const [updatedRights, riskItems] = await Promise.all([
+        getFriaRightsQuery(friaId, organizationId),
+        getFriaRiskItemsQuery(friaId, organizationId),
+      ]);
       const scores = computeFriaScore(fria, updatedRights, riskItems);
 
       await updateFriaQuery(friaId, scores, organizationId, userId, transaction);
 
       await transaction.commit();
-
-      const result = await getFriaRightsQuery(friaId, organizationId);
 
       try {
         await appendToAuditLedger({
@@ -311,7 +315,7 @@ export async function updateFriaRights(req: Request, res: Response): Promise<Res
         organizationId,
       });
 
-      return res.status(200).json(STATUS_CODE[200](result));
+      return res.status(200).json(STATUS_CODE[200](updatedRights));
     } catch (error) {
       await transaction.rollback();
       throw error;
@@ -393,14 +397,7 @@ export async function addRiskItem(req: Request, res: Response): Promise<Response
 
     const item = await addFriaRiskItemQuery(friaId, data, organizationId);
 
-    // Recompute score
-    const fria = await getFriaByIdQuery(friaId, organizationId);
-    if (fria) {
-      const rights = await getFriaRightsQuery(friaId, organizationId);
-      const riskItems = await getFriaRiskItemsQuery(friaId, organizationId);
-      const scores = computeFriaScore(fria, rights, riskItems);
-      await updateFriaQuery(friaId, scores, organizationId, userId);
-    }
+    await recomputeAndPersistScore(friaId, organizationId, userId);
 
     try {
       await appendToAuditLedger({
@@ -466,14 +463,7 @@ export async function updateRiskItem(req: Request, res: Response): Promise<Respo
       return res.status(404).json(STATUS_CODE[404]("Risk item not found"));
     }
 
-    // Recompute score
-    const fria = await getFriaByIdQuery(friaId, organizationId);
-    if (fria) {
-      const rights = await getFriaRightsQuery(friaId, organizationId);
-      const riskItems = await getFriaRiskItemsQuery(friaId, organizationId);
-      const scores = computeFriaScore(fria, rights, riskItems);
-      await updateFriaQuery(friaId, scores, organizationId, userId);
-    }
+    await recomputeAndPersistScore(friaId, organizationId, userId);
 
     await logSuccess({
       eventType: "Update",
@@ -524,14 +514,7 @@ export async function deleteRiskItem(req: Request, res: Response): Promise<Respo
 
     await deleteFriaRiskItemQuery(itemId, organizationId, undefined, friaId);
 
-    // Recompute score
-    const fria = await getFriaByIdQuery(friaId, organizationId);
-    if (fria) {
-      const rights = await getFriaRightsQuery(friaId, organizationId);
-      const riskItems = await getFriaRiskItemsQuery(friaId, organizationId);
-      const scores = computeFriaScore(fria, rights, riskItems);
-      await updateFriaQuery(friaId, scores, organizationId, userId);
-    }
+    await recomputeAndPersistScore(friaId, organizationId, userId);
 
     try {
       await appendToAuditLedger({
@@ -758,7 +741,7 @@ export async function submitFria(req: Request, res: Response): Promise<Response>
 
       await updateFriaQuery(
         friaId,
-        { status: "submitted", version: fria.version + 1 },
+        { status: FriaStatus.SUBMITTED, version: fria.version + 1 },
         organizationId,
         userId,
         transaction

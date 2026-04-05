@@ -1,5 +1,6 @@
 import { sequelize } from "../database/db";
 import { QueryTypes, Transaction } from "sequelize";
+import { FriaRiskLevel } from "../domain.layer/enums/fria-status.enum";
 import {
   IFriaAssessmentJSON,
   IFriaRight,
@@ -191,28 +192,24 @@ export const initializeFriaRightsQuery = async (
   organizationId: number,
   transaction?: Transaction
 ) => {
-  const results = [];
-  for (const r of DEFAULT_RIGHTS) {
-    const query = `
-      INSERT INTO fria_rights (organization_id, fria_id, right_key, right_title, charter_ref, flagged, severity, confidence)
-      VALUES (:organizationId, :friaId, :rightKey, :rightTitle, :charterRef, FALSE, 0, 0)
-      ON CONFLICT (fria_id, right_key) DO NOTHING
-      RETURNING *
-    `;
-    const result = await sequelize.query(query, {
-      type: QueryTypes.INSERT,
-      replacements: {
-        organizationId,
-        friaId,
-        rightKey: r.right_key,
-        rightTitle: r.right_title,
-        charterRef: r.charter_ref,
-      },
-      transaction,
-    });
-    results.push(result);
-  }
-  return results;
+  const valuesClauses = DEFAULT_RIGHTS.map(
+    (_, i) => `(:orgId, :friaId, :rk${i}, :rt${i}, :cr${i}, FALSE, 0, 0)`
+  ).join(", ");
+
+  const replacements: Record<string, unknown> = { orgId: organizationId, friaId };
+  DEFAULT_RIGHTS.forEach((r, i) => {
+    replacements[`rk${i}`] = r.right_key;
+    replacements[`rt${i}`] = r.right_title;
+    replacements[`cr${i}`] = r.charter_ref;
+  });
+
+  return sequelize.query(
+    `INSERT INTO fria_rights (organization_id, fria_id, right_key, right_title, charter_ref, flagged, severity, confidence)
+     VALUES ${valuesClauses}
+     ON CONFLICT (fria_id, right_key) DO NOTHING
+     RETURNING *`,
+    { type: QueryTypes.INSERT, replacements, transaction }
+  );
 };
 
 export const upsertFriaRightQuery = async (
@@ -270,11 +267,9 @@ export const bulkUpsertFriaRightsQuery = async (
   organizationId: number,
   transaction?: Transaction
 ) => {
-  const results = [];
-  for (const right of rightsArray) {
-    const result = await upsertFriaRightQuery(friaId, right, organizationId, transaction);
-    results.push(result);
-  }
+  const results = await Promise.all(
+    rightsArray.map((right) => upsertFriaRightQuery(friaId, right, organizationId, transaction))
+  );
   return results;
 };
 
@@ -568,9 +563,9 @@ export const computeFriaScore = (
   riskScore = Math.min(riskScore, 100);
 
   // Determine level
-  let riskLevel = "Low";
-  if (riskScore >= 60) riskLevel = "High";
-  else if (riskScore >= 30) riskLevel = "Medium";
+  let riskLevel = FriaRiskLevel.LOW as string;
+  if (riskScore >= 60) riskLevel = FriaRiskLevel.HIGH;
+  else if (riskScore >= 30) riskLevel = FriaRiskLevel.MEDIUM;
 
   // Compute completion percentage
   const sectionFields = [
@@ -614,4 +609,23 @@ export const computeFriaScore = (
     completion_pct: completionPct,
     rights_flagged: rightsFlagged,
   };
+};
+
+/**
+ * Fetches current FRIA data, recomputes scores, and persists them.
+ * Used after mutations to rights/risk items to keep scores in sync.
+ */
+export const recomputeAndPersistScore = async (
+  friaId: number,
+  organizationId: number,
+  userId: number
+) => {
+  const [fria, rights, riskItems] = await Promise.all([
+    getFriaByIdQuery(friaId, organizationId),
+    getFriaRightsQuery(friaId, organizationId),
+    getFriaRiskItemsQuery(friaId, organizationId),
+  ]);
+  if (!fria) return;
+  const scores = computeFriaScore(fria, rights, riskItems);
+  await updateFriaQuery(friaId, scores, organizationId, userId);
 };

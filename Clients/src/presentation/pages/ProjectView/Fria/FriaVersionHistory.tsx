@@ -199,7 +199,6 @@ const FriaVersionHistory = ({ friaId, currentVersion, inline = false }: FriaVers
 
   useEffect(() => {
     if (!inline && !panelOpen) return;
-    if (versions.length > 0) return;
 
     const fetchVersions = async () => {
       setIsLoading(true);
@@ -215,7 +214,7 @@ const FriaVersionHistory = ({ friaId, currentVersion, inline = false }: FriaVers
     };
 
     fetchVersions();
-  }, [inline, panelOpen, friaId, versions.length]);
+  }, [inline, panelOpen, friaId, currentVersion]);
 
   const handleRowToggle = (id: number) => {
     setExpandedRow((prev) => (prev === id ? null : id));
