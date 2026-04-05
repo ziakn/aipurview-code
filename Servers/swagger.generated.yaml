@@ -1166,8 +1166,8 @@ paths:
     post:
       tags:
         - AI Trust Centre
-      summary: Upload company logo
-      operationId: uploadCompanyLogo
+      summary: Unknown
+      operationId: unknown
       security:
         - bearerAuth: []
       requestBody:
@@ -1591,8 +1591,8 @@ paths:
     post:
       tags:
         - Approval Workflows
-      summary: Withdraw approval request
-      operationId: withdrawApprovalRequest
+      summary: Unknown
+      operationId: unknown
       security:
         - bearerAuth: []
       parameters:
@@ -4885,8 +4885,8 @@ paths:
     post:
       tags:
         - Internal
-      summary: AI Gateway notification callback
-      operationId: aiGatewayNotify
+      summary: Unknown
+      operationId: unknown
       requestBody:
         content:
           application/json:
@@ -7113,8 +7113,8 @@ paths:
     get:
       tags:
         - Plugins
-      summary: Serve plugin UI assets
-      operationId: servePluginUI
+      summary: Unknown
+      operationId: unknown
       security:
         - bearerAuth: []
       parameters:
@@ -10436,8 +10436,8 @@ paths:
     post:
       tags:
         - Users
-      summary: Upload user profile photo
-      operationId: uploadUserProfilePhoto
+      summary: Unknown
+      operationId: unknown
       security:
         - bearerAuth: []
       parameters:
@@ -10820,12 +10820,12 @@ paths:
           description: Unauthorized
         "500":
           description: Internal server error
-  /version:
+  /version/:
     get:
       tags:
         - System
-      summary: Get application version
-      operationId: getVersion
+      summary: Unknown
+      operationId: unknown
       responses:
         "200":
           description: Success
