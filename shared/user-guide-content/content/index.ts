@@ -55,6 +55,7 @@ import { configuringScorersContent } from './llm-evals/configuring-scorers';
 import { biasAuditsContent } from './llm-evals/bias-audits';
 import { modelsContent } from './llm-evals/models';
 import { llmArenaContent } from './llm-evals/llm-arena';
+import { ciCdIntegrationContent } from './llm-evals/ci-cd-integration';
 import { scanningContent } from './ai-detection/scanning';
 import { riskScoringContent } from './ai-detection/risk-scoring';
 import { repositoriesContent } from './ai-detection/repositories';
@@ -145,6 +146,7 @@ export const articleContentMap: Record<string, ArticleContent> = {
   'llm-evals/bias-audits': biasAuditsContent,
   'llm-evals/models': modelsContent,
   'llm-evals/llm-arena': llmArenaContent,
+  'llm-evals/ci-cd-integration': ciCdIntegrationContent,
   // AI Detection
   'ai-detection/scanning': scanningContent,
   'ai-detection/risk-scoring': riskScoringContent,
