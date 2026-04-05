@@ -55,9 +55,13 @@ export async function getFria(req: Request, res: Response): Promise<Response> {
       return res.status(400).json(STATUS_CODE[400]("Invalid project ID"));
     }
 
-    // Verify project access
-    const projectResult = await sequelize.query<{ id: number; project_title: string; owner: number | null }>(
-      `SELECT id, project_title, owner FROM projects WHERE id = :projectId AND organization_id = :organizationId`,
+    // Verify project access and resolve owner name
+    const projectResult = await sequelize.query<{ id: number; project_title: string; owner: number | null; owner_name: string | null }>(
+      `SELECT p.id, p.project_title, p.owner,
+              u.name || ' ' || u.surname AS owner_name
+       FROM projects p
+       LEFT JOIN users u ON p.owner = u.id
+       WHERE p.id = :projectId AND p.organization_id = :organizationId`,
       { replacements: { projectId, organizationId }, type: QueryTypes.SELECT }
     );
 
@@ -77,7 +81,7 @@ export async function getFria(req: Request, res: Response): Promise<Response> {
           {
             project_id: projectId,
             created_by: userId,
-            assessment_owner: project.owner ? String(project.owner) : undefined,
+            assessment_owner: project.owner_name || undefined,
           },
           organizationId,
           transaction

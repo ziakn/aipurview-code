@@ -7,6 +7,7 @@ import { FriaAssessment } from "../../../../../application/hooks/useFria";
 import FriaEvidenceButton from "../FriaEvidenceButton";
 import FriaSectionCard from "../FriaSectionCard";
 import { EU_ACT_LINK } from "../friaConstants";
+import { brand } from "../../../../themes/palette";
 
 interface ConsultationSectionProps {
   assessment: FriaAssessment;
@@ -51,16 +52,16 @@ function ConsultationSection({
 
   return (
     <FriaSectionCard
-      title="7. Stakeholder consultation &amp; sign-off"
+      title="7. Stakeholder consultation & sign-off"
       subtitle="Record the consultation process and approvals required before deploying the AI system."
       euActContent={
         <>
           <strong>EU AI Act reference:</strong>{" "}
-          <a href={`${EU_ACT_LINK}#art_27`} target="_blank" rel="noopener noreferrer" style={{ color: "#13715B" }}>
+          <a href={`${EU_ACT_LINK}#art_27`} target="_blank" rel="noopener noreferrer" style={{ color: brand.primary }}>
             Article 27(3)
           </a>{" "}
           requires deployers to notify the relevant market surveillance authority of the FRIA results.{" "}
-          <a href={`${EU_ACT_LINK}#art_27`} target="_blank" rel="noopener noreferrer" style={{ color: "#13715B" }}>
+          <a href={`${EU_ACT_LINK}#art_27`} target="_blank" rel="noopener noreferrer" style={{ color: brand.primary }}>
             Article 27(4)
           </a>{" "}
           states that where data protection impact assessments (DPIAs) are already required, the FRIA may complement that process. Consultation with your DPO and legal team is recommended.

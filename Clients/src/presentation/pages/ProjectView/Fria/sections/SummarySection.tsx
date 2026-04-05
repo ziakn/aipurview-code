@@ -12,6 +12,7 @@ import {
 import FriaEvidenceButton from "../FriaEvidenceButton";
 import FriaSectionCard from "../FriaSectionCard";
 import { EU_ACT_LINK } from "../friaConstants";
+import { brand } from "../../../../themes/palette";
 
 interface SummarySectionProps {
   assessment: FriaAssessment;
@@ -53,16 +54,16 @@ function SummarySection({
 
   return (
     <FriaSectionCard
-      title="8. Summary &amp; recommendation"
+      title="8. Summary & recommendation"
       subtitle="Review the overall assessment and record the deployment decision."
       euActContent={
         <>
           <strong>EU AI Act reference:</strong>{" "}
-          <a href={`${EU_ACT_LINK}#art_27`} target="_blank" rel="noopener noreferrer" style={{ color: "#13715B" }}>
+          <a href={`${EU_ACT_LINK}#art_27`} target="_blank" rel="noopener noreferrer" style={{ color: brand.primary }}>
             Article 27(5)
           </a>{" "}
           requires deployers to inform the market surveillance authority of the outcome of the assessment, and to use the results as input when notifying authorities under{" "}
-          <a href={`${EU_ACT_LINK}#art_49`} target="_blank" rel="noopener noreferrer" style={{ color: "#13715B" }}>
+          <a href={`${EU_ACT_LINK}#art_49`} target="_blank" rel="noopener noreferrer" style={{ color: brand.primary }}>
             Article 49(1)
           </a>
           . The FRIA must be kept up to date and repeated when circumstances materially change.

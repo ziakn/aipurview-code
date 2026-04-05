@@ -4,6 +4,7 @@ import { FriaAssessment } from "../../../../../application/hooks/useFria";
 import FriaEvidenceButton from "../FriaEvidenceButton";
 import FriaSectionCard from "../FriaSectionCard";
 import { EU_ACT_LINK } from "../friaConstants";
+import { brand } from "../../../../themes/palette";
 
 interface OversightSectionProps {
   assessment: FriaAssessment;
@@ -43,20 +44,20 @@ function OversightSection({
 
   return (
     <FriaSectionCard
-      title="6. Human oversight, transparency &amp; contestability"
+      title="6. Human oversight, transparency & contestability"
       subtitle="Describe the measures in place to ensure human oversight, transparency, and the ability to contest AI-driven decisions."
       euActContent={
         <>
           <strong>EU AI Act reference:</strong>{" "}
-          <a href={`${EU_ACT_LINK}#art_14`} target="_blank" rel="noopener noreferrer" style={{ color: "#13715B" }}>
+          <a href={`${EU_ACT_LINK}#art_14`} target="_blank" rel="noopener noreferrer" style={{ color: brand.primary }}>
             Article 14
           </a>{" "}
           mandates human oversight for high-risk AI systems, including the ability to intervene or override.{" "}
-          <a href={`${EU_ACT_LINK}#art_13`} target="_blank" rel="noopener noreferrer" style={{ color: "#13715B" }}>
+          <a href={`${EU_ACT_LINK}#art_13`} target="_blank" rel="noopener noreferrer" style={{ color: brand.primary }}>
             Article 13
           </a>{" "}
           requires transparency and provision of information to deployers.{" "}
-          <a href={`${EU_ACT_LINK}#art_27`} target="_blank" rel="noopener noreferrer" style={{ color: "#13715B" }}>
+          <a href={`${EU_ACT_LINK}#art_27`} target="_blank" rel="noopener noreferrer" style={{ color: brand.primary }}>
             Article 27(1)(g)
           </a>{" "}
           requires the FRIA to describe accountability and governance processes, including complaint and redress mechanisms.

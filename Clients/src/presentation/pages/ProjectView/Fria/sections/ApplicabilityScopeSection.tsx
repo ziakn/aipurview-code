@@ -9,6 +9,7 @@ import { FriaAssessment } from "../../../../../application/hooks/useFria";
 import FriaEvidenceButton from "../FriaEvidenceButton";
 import FriaSectionCard from "../FriaSectionCard";
 import { EU_ACT_LINK } from "../friaConstants";
+import { brand } from "../../../../themes/palette";
 
 interface ApplicabilityScopeSectionProps {
   assessment: FriaAssessment;
@@ -90,24 +91,24 @@ function ApplicabilityScopeSection({
 
   return (
     <FriaSectionCard
-      title="2. Applicability &amp; scope"
+      title="2. Applicability & scope"
       subtitle="Determine if this AI system requires a FRIA under EU AI Act Article 27."
       euActContent={
         <>
           <strong>EU AI Act reference:</strong>{" "}
-          <a href={`${EU_ACT_LINK}#art_6`} target="_blank" rel="noopener noreferrer" style={{ color: "#13715B" }}>
+          <a href={`${EU_ACT_LINK}#art_6`} target="_blank" rel="noopener noreferrer" style={{ color: brand.primary }}>
             Article 6
           </a>{" "}
           defines classification rules for high-risk AI systems.{" "}
-          <a href={`${EU_ACT_LINK}#anx_I`} target="_blank" rel="noopener noreferrer" style={{ color: "#13715B" }}>
+          <a href={`${EU_ACT_LINK}#anx_I`} target="_blank" rel="noopener noreferrer" style={{ color: brand.primary }}>
             Annex I
           </a>{" "}
           lists Union harmonisation legislation, and{" "}
-          <a href={`${EU_ACT_LINK}#anx_III`} target="_blank" rel="noopener noreferrer" style={{ color: "#13715B" }}>
+          <a href={`${EU_ACT_LINK}#anx_III`} target="_blank" rel="noopener noreferrer" style={{ color: brand.primary }}>
             Annex III
           </a>{" "}
           enumerates high-risk use-case areas. A FRIA is mandatory under{" "}
-          <a href={`${EU_ACT_LINK}#art_27`} target="_blank" rel="noopener noreferrer" style={{ color: "#13715B" }}>
+          <a href={`${EU_ACT_LINK}#art_27`} target="_blank" rel="noopener noreferrer" style={{ color: brand.primary }}>
             Article 27(1)
           </a>{" "}
           for deployers that are bodies governed by public law or private entities providing public services.

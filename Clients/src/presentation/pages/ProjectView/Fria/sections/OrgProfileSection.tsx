@@ -7,6 +7,7 @@ import { FriaAssessment } from "../../../../../application/hooks/useFria";
 import FriaEvidenceButton from "../FriaEvidenceButton";
 import FriaSectionCard from "../FriaSectionCard";
 import { EU_ACT_LINK } from "../friaConstants";
+import { brand } from "../../../../themes/palette";
 
 interface OrgProfileSectionProps {
   assessment: FriaAssessment;
@@ -42,12 +43,12 @@ function OrgProfileSection({ assessment, onUpdate, isSaving }: OrgProfileSection
 
   return (
     <FriaSectionCard
-      title="1. Organisation &amp; system profile"
+      title="1. Organisation & system profile"
       subtitle="Identify the deployer organisation and the AI system under assessment."
       euActContent={
         <>
           <strong>EU AI Act reference:</strong>{" "}
-          <a href={`${EU_ACT_LINK}#art_27`} target="_blank" rel="noopener noreferrer" style={{ color: "#13715B" }}>
+          <a href={`${EU_ACT_LINK}#art_27`} target="_blank" rel="noopener noreferrer" style={{ color: brand.primary }}>
             Article 27(1)
           </a>{" "}
           requires deployers of high-risk AI systems to perform a fundamental rights impact assessment before putting the system into use.

@@ -9,6 +9,7 @@ import { FriaRight } from "../../../../../application/hooks/useFria";
 import FriaEvidenceButton from "../FriaEvidenceButton";
 import FriaSectionCard from "../FriaSectionCard";
 import { EU_ACT_LINK, EU_CHARTER_LINK } from "../friaConstants";
+import { brand } from "../../../../themes/palette";
 
 interface RightsMatrixSectionProps {
   friaId: number;
@@ -95,11 +96,11 @@ function RightsMatrixSection({
       euActContent={
         <>
           <strong>EU AI Act reference:</strong>{" "}
-          <a href={`${EU_ACT_LINK}#art_27`} target="_blank" rel="noopener noreferrer" style={{ color: "#13715B" }}>
+          <a href={`${EU_ACT_LINK}#art_27`} target="_blank" rel="noopener noreferrer" style={{ color: brand.primary }}>
             Article 27(1)(b)–(d)
           </a>{" "}
           requires assessing impacts on the right to human dignity, personal data protection, privacy, non-discrimination, equality, and other rights in the{" "}
-          <a href={EU_CHARTER_LINK} target="_blank" rel="noopener noreferrer" style={{ color: "#13715B" }}>
+          <a href={EU_CHARTER_LINK} target="_blank" rel="noopener noreferrer" style={{ color: brand.primary }}>
             EU Charter of Fundamental Rights
           </a>
           . Flag any right where the system may have a material adverse impact.

@@ -7,6 +7,7 @@ import { FriaAssessment } from "../../../../../application/hooks/useFria";
 import FriaEvidenceButton from "../FriaEvidenceButton";
 import FriaSectionCard from "../FriaSectionCard";
 import { EU_ACT_LINK } from "../friaConstants";
+import { brand } from "../../../../themes/palette";
 
 interface AffectedPersonsSectionProps {
   assessment: FriaAssessment;
@@ -62,12 +63,12 @@ function AffectedPersonsSection({
 
   return (
     <FriaSectionCard
-      title="3. Affected persons &amp; groups"
+      title="3. Affected persons & groups"
       subtitle="Identify the categories of natural persons and groups likely to be affected by the AI system."
       euActContent={
         <>
           <strong>EU AI Act reference:</strong>{" "}
-          <a href={`${EU_ACT_LINK}#art_27`} target="_blank" rel="noopener noreferrer" style={{ color: "#13715B" }}>
+          <a href={`${EU_ACT_LINK}#art_27`} target="_blank" rel="noopener noreferrer" style={{ color: brand.primary }}>
             Article 27(1)(a)
           </a>{" "}
           requires identifying the categories of natural persons and groups likely to be affected. Recital 96 highlights special consideration for vulnerable groups including minors, persons with disabilities, and those in asymmetric power relationships.

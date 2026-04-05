@@ -4,8 +4,6 @@ import {
   Stack,
   CircularProgress,
   Typography,
-  Snackbar,
-  Alert,
 } from "@mui/material";
 import {
   AlertTriangle,
@@ -20,6 +18,7 @@ import {
   Eye,
   MessageSquare,
   FileCheck,
+  History,
 } from "lucide-react";
 import { StatCard } from "../../../components/Cards/StatCard";
 import SectionSidebar, { SectionItem } from "../../../components/SectionSidebar";
@@ -72,21 +71,8 @@ const FriaAssessment = ({ projectId }: FriaProps) => {
   const [activeSection, setActiveSection] = useState("org-profile");
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [showVersionModal, setShowVersionModal] = useState(false);
   const [submitReason, setSubmitReason] = useState("");
-  const [snackbar, setSnackbar] = useState<{
-    open: boolean;
-    severity: "success" | "error";
-    message: string;
-  }>({ open: false, severity: "success", message: "" });
-
-  // Show snackbar when save status changes
-  useEffect(() => {
-    if (lastSaveStatus === "saved") {
-      setSnackbar({ open: true, severity: "success", message: "Changes saved" });
-    } else if (lastSaveStatus === "error") {
-      setSnackbar({ open: true, severity: "error", message: "Failed to save changes" });
-    }
-  }, [lastSaveStatus]);
 
   const handleSubmitConfirm = useCallback(async () => {
     await submitFria(submitReason || "Submitted for review");
@@ -103,7 +89,10 @@ const FriaAssessment = ({ projectId }: FriaProps) => {
   }, []);
 
   // IntersectionObserver to track active section
+  // Re-attach when assessment loads (sections only render after loading completes)
   useEffect(() => {
+    if (!assessment) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -115,13 +104,18 @@ const FriaAssessment = ({ projectId }: FriaProps) => {
       { threshold: 0.3, rootMargin: "-100px 0px -60% 0px" }
     );
 
-    Object.values(sectionRefs.current).forEach((ref) => {
-      if (ref) observer.observe(ref);
-    });
+    // Small delay to ensure refs are populated after render
+    const timer = setTimeout(() => {
+      Object.values(sectionRefs.current).forEach((ref) => {
+        if (ref) observer.observe(ref);
+      });
+    }, 100);
 
-    return () => observer.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
+  }, [assessment]);
 
   if (isLoading) {
     return (
@@ -186,10 +180,32 @@ const FriaAssessment = ({ projectId }: FriaProps) => {
         />
       </Box>
 
-      {/* Submit button — right-aligned */}
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+      {/* Action buttons row */}
+      <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "8px" }}>
+        {isSaving && (
+          <Typography sx={{ fontSize: 12, color: "text.secondary", mr: "8px" }}>
+            Saving...
+          </Typography>
+        )}
+        {!isSaving && lastSaveStatus === "saved" && (
+          <Typography sx={{ fontSize: 12, color: "#13715B", mr: "8px" }}>
+            Saved
+          </Typography>
+        )}
+        {!isSaving && lastSaveStatus === "error" && (
+          <Typography sx={{ fontSize: 12, color: "error.main", mr: "8px" }}>
+            Save failed
+          </Typography>
+        )}
         <CustomizableButton
-          text="Submit for review"
+          text="Version history"
+          variant="outlined"
+          onClick={() => setShowVersionModal(true)}
+          startIcon={<History size={14} />}
+          sx={{ height: 34 }}
+        />
+        <CustomizableButton
+          text="Save snapshot"
           variant="contained"
           onClick={() => setShowSubmitModal(true)}
           disabled={
@@ -323,52 +339,53 @@ const FriaAssessment = ({ projectId }: FriaProps) => {
                 isSaving={isSaving}
               />
             </div>
-
-            <FriaVersionHistory
-              friaId={assessment.id}
-              currentVersion={assessment.version}
-            />
           </Stack>
         </Box>
       </Box>
-      {/* Submit confirmation modal */}
+
+      {/* Save snapshot confirmation modal */}
       <StandardModal
         isOpen={showSubmitModal}
         onClose={() => {
           setShowSubmitModal(false);
           setSubmitReason("");
         }}
-        title="Submit for review"
-        description={`This will submit version ${assessment.version + 1} of the FRIA for review. You can optionally add a note.`}
+        title="Save snapshot"
         onSubmit={handleSubmitConfirm}
-        submitButtonText="Submit"
+        submitButtonText="Save snapshot"
       >
-        <Field
-          id="submit-reason"
-          label="Note (optional)"
-          value={submitReason}
-          onChange={(e) => setSubmitReason(e.target.value)}
-          placeholder="e.g. Initial assessment complete"
-          type="description"
-        />
+        <Stack spacing={0} gap="16px">
+          <Typography sx={{ fontSize: 13, color: "text.secondary", lineHeight: 1.5 }}>
+            {`This will save a snapshot of the current assessment (version ${assessment.version}) so you can refer back to it later. Your changes are already auto-saved as you type.`}
+          </Typography>
+          <Field
+            id="submit-reason"
+            label="Note (optional)"
+            value={submitReason}
+            onChange={(e) => setSubmitReason(e.target.value)}
+            placeholder="e.g. Completed sections 1-4"
+            type="description"
+          />
+        </Stack>
       </StandardModal>
 
-      {/* Save feedback snackbar */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={2000}
-        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      {/* Version history modal */}
+      <StandardModal
+        isOpen={showVersionModal}
+        onClose={() => setShowVersionModal(false)}
+        title="Version history"
+        description="Previously saved snapshots of this assessment."
+        hideSubmitButton
+        fitContent
       >
-        <Alert
-          severity={snackbar.severity}
-          variant="filled"
-          sx={{ fontSize: 13 }}
-          onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+        <Box sx={{ mx: "-12px", mb: "-12px" }}>
+          <FriaVersionHistory
+            friaId={assessment.id}
+            currentVersion={assessment.version}
+            inline
+          />
+        </Box>
+      </StandardModal>
     </Stack>
   );
 };

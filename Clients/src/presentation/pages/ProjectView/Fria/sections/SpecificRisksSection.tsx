@@ -18,6 +18,7 @@ import FriaEvidenceButton from "../FriaEvidenceButton";
 import FriaRiskImportModal from "../FriaRiskImportModal";
 import FriaSectionCard from "../FriaSectionCard";
 import { EU_ACT_LINK } from "../friaConstants";
+import { brand } from "../../../../themes/palette";
 import { getAllProjectRisksByProjectId } from "../../../../../application/repository/projectRisk.repository";
 
 interface SpecificRisksSectionProps {
@@ -267,11 +268,11 @@ function SpecificRisksSection({
       euActContent={
         <>
           <strong>EU AI Act reference:</strong>{" "}
-          <a href={`${EU_ACT_LINK}#art_27`} target="_blank" rel="noopener noreferrer" style={{ color: "#13715B" }}>
+          <a href={`${EU_ACT_LINK}#art_27`} target="_blank" rel="noopener noreferrer" style={{ color: brand.primary }}>
             Article 27(1)(e)–(f)
           </a>{" "}
           requires identifying specific risks to health, safety, and fundamental rights, and describing measures to mitigate those risks.{" "}
-          <a href={`${EU_ACT_LINK}#art_9`} target="_blank" rel="noopener noreferrer" style={{ color: "#13715B" }}>
+          <a href={`${EU_ACT_LINK}#art_9`} target="_blank" rel="noopener noreferrer" style={{ color: brand.primary }}>
             Article 9
           </a>{" "}
           (risk management system) provides the broader framework for identifying and addressing AI-related risks.
