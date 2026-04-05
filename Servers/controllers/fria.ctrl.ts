@@ -741,7 +741,7 @@ export async function submitFria(req: Request, res: Response): Promise<Response>
 
       await updateFriaQuery(
         friaId,
-        { status: FriaStatus.SUBMITTED, version: fria.version + 1 },
+        { status: FriaStatus.SUBMITTED },
         organizationId,
         userId,
         transaction
