@@ -1166,8 +1166,8 @@ paths:
     post:
       tags:
         - AI Trust Centre
-      summary: Upload company logo
-      operationId: uploadCompanyLogo
+      summary: Unknown
+      operationId: unknown
       security:
         - bearerAuth: []
       requestBody:
@@ -1591,8 +1591,8 @@ paths:
     post:
       tags:
         - Approval Workflows
-      summary: Withdraw approval request
-      operationId: withdrawApprovalRequest
+      summary: Unknown
+      operationId: approval_requests_unknown
       security:
         - bearerAuth: []
       parameters:
@@ -4885,8 +4885,8 @@ paths:
     post:
       tags:
         - Internal
-      summary: AI Gateway notification callback
-      operationId: aiGatewayNotify
+      summary: Unknown
+      operationId: internal_unknown
       requestBody:
         content:
           application/json:
@@ -7113,8 +7113,8 @@ paths:
     get:
       tags:
         - Plugins
-      summary: Serve plugin UI assets
-      operationId: servePluginUI
+      summary: Unknown
+      operationId: plugins_unknown
       security:
         - bearerAuth: []
       parameters:
@@ -10436,8 +10436,8 @@ paths:
     post:
       tags:
         - Users
-      summary: Upload user profile photo
-      operationId: uploadUserProfilePhoto
+      summary: Unknown
+      operationId: users_unknown
       security:
         - bearerAuth: []
       parameters:
@@ -10824,8 +10824,8 @@ paths:
     get:
       tags:
         - System
-      summary: Get application version
-      operationId: getAppVersion
+      summary: Unknown
+      operationId: version_unknown
       responses:
         "200":
           description: Success
