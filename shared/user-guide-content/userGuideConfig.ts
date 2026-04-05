@@ -77,7 +77,7 @@ export const collections: Collection[] = [
     title: 'AI governance',
     description: 'Manage your AI models, track their lifecycle, and maintain comprehensive documentation.',
     icon: 'Brain',
-    articleCount: 12,
+    articleCount: 16,
     articles: [
       {
         id: 'use-cases',
@@ -150,6 +150,30 @@ export const collections: Collection[] = [
         title: 'Agent discovery',
         description: 'Discover and manage service accounts, technical users, and system identities across connected source systems.',
         keywords: ['agent', 'discovery', 'service account', 'identity', 'technical user', 'non-human', 'permissions'],
+      },
+      {
+        id: 'project-overview',
+        title: 'Project overview',
+        description: 'View compliance progress, risk summary, and key metadata for a use case.',
+        keywords: ['project', 'overview', 'progress', 'compliance', 'risk summary', 'tab'],
+      },
+      {
+        id: 'linked-models',
+        title: 'Linked models',
+        description: 'View which AI models from the inventory are connected to a project.',
+        keywords: ['linked', 'models', 'project', 'model inventory', 'association'],
+      },
+      {
+        id: 'approval-workflows',
+        title: 'Approval workflows',
+        description: 'Set up multi-approver sign-off workflows for use cases, policies, and models.',
+        keywords: ['approval', 'workflow', 'approve', 'reject', 'sign-off', 'request', 'pending'],
+      },
+      {
+        id: 'share-links',
+        title: 'Share links',
+        description: 'Share read-only views of resources with external stakeholders via expiring links.',
+        keywords: ['share', 'link', 'external', 'read-only', 'token', 'expiration', 'public'],
       },
     ],
   },
@@ -407,7 +431,7 @@ export const collections: Collection[] = [
     title: 'Integrations',
     description: 'Connect VerifyWise with your existing tools and workflows.',
     icon: 'Plug',
-    articleCount: 3,
+    articleCount: 5,
     articles: [
       {
         id: 'integration-overview',
@@ -426,6 +450,18 @@ export const collections: Collection[] = [
         title: 'API access',
         description: 'Create and manage API keys for programmatic access.',
         keywords: ['api', 'access', 'keys', 'token', 'developer', 'integration', 'programmatic'],
+      },
+      {
+        id: 'automations',
+        title: 'Automations',
+        description: 'Set up trigger-condition-action rules to automate repetitive governance tasks.',
+        keywords: ['automation', 'trigger', 'action', 'condition', 'rule', 'automatic', 'workflow'],
+      },
+      {
+        id: 'plugins',
+        title: 'Plugins & marketplace',
+        description: 'Browse, install, and manage plugins that extend VerifyWise with new frameworks and integrations.',
+        keywords: ['plugin', 'marketplace', 'install', 'framework', 'soc 2', 'gdpr', 'hipaa', 'extension'],
       },
     ],
   },
@@ -542,7 +578,7 @@ export const collections: Collection[] = [
     title: 'Settings & configuration',
     description: 'Configure VerifyWise to match your organization\'s needs.',
     icon: 'Settings',
-    articleCount: 4,
+    articleCount: 5,
     articles: [
       {
         id: 'organization-settings',
@@ -567,6 +603,12 @@ export const collections: Collection[] = [
         title: 'Notification settings',
         description: 'Configure how you receive governance notifications.',
         keywords: ['notification', 'slack', 'alerts', 'configure', 'settings'],
+      },
+      {
+        id: 'super-admin',
+        title: 'Super admin panel',
+        description: 'Manage all organizations and users across the entire VerifyWise installation (super admin only).',
+        keywords: ['super admin', 'organizations', 'users', 'invite', 'global', 'system admin'],
       },
     ],
   },

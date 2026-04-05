@@ -27,6 +27,10 @@ import { ceMarkingContent } from './compliance/ce-marking';
 import { postMarketMonitoringContent } from './compliance/post-market-monitoring';
 import { datasetsContent } from './ai-governance/datasets';
 import { agentDiscoveryContent } from './ai-governance/agent-discovery';
+import { projectOverviewContent } from './ai-governance/project-overview';
+import { linkedModelsContent } from './ai-governance/linked-models';
+import { approvalWorkflowsContent } from './ai-governance/approval-workflows';
+import { shareLinksContent } from './ai-governance/share-links';
 import { policyManagementContent } from './policies/policy-management';
 import { policyVersioningContent } from './policies/policy-versioning';
 import { policyApprovalContent } from './policies/policy-approval';
@@ -40,6 +44,9 @@ import { notificationsContent } from './settings/notifications';
 import { integrationOverviewContent } from './integrations/integration-overview';
 import { slackIntegrationContent } from './integrations/slack-integration';
 import { apiAccessContent } from './integrations/api-access';
+import { automationsContent } from './integrations/automations';
+import { pluginsContent } from './integrations/plugins';
+import { superAdminContent } from './settings/super-admin';
 import { llmEvalsOverviewContent } from './llm-evals/llm-evals-overview';
 import { runningExperimentsContent } from './llm-evals/running-experiments';
 import { managingDatasetsContent } from './llm-evals/managing-datasets';
@@ -88,6 +95,10 @@ export const articleContentMap: Record<string, ArticleContent> = {
   'ai-governance/ai-trust-center': aiTrustCenterContent,
   'ai-governance/datasets': datasetsContent,
   'ai-governance/agent-discovery': agentDiscoveryContent,
+  'ai-governance/project-overview': projectOverviewContent,
+  'ai-governance/linked-models': linkedModelsContent,
+  'ai-governance/approval-workflows': approvalWorkflowsContent,
+  'ai-governance/share-links': shareLinksContent,
   // Risk Management
   'risk-management/risk-assessment': riskAssessmentContent,
   'risk-management/quantitative-risk-assessment': quantitativeRiskAssessmentContent,
@@ -117,10 +128,13 @@ export const articleContentMap: Record<string, ArticleContent> = {
   'settings/user-management': userManagementContent,
   'settings/role-configuration': roleConfigurationContent,
   'settings/notifications': notificationsContent,
+  'settings/super-admin': superAdminContent,
   // Integrations
   'integrations/integration-overview': integrationOverviewContent,
   'integrations/slack-integration': slackIntegrationContent,
   'integrations/api-access': apiAccessContent,
+  'integrations/automations': automationsContent,
+  'integrations/plugins': pluginsContent,
   // LLM Evals
   'llm-evals/llm-evals-overview': llmEvalsOverviewContent,
   'llm-evals/running-experiments': runningExperimentsContent,
