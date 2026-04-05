@@ -22,6 +22,7 @@ import { iso42001Content } from './compliance/iso-42001';
 import { iso27001Content } from './compliance/iso-27001';
 import { nistAiRmfContent } from './compliance/nist-ai-rmf';
 import { assessmentsContent } from './compliance/assessments';
+import { friaContent } from './compliance/fria';
 import { policyManagementContent } from './policies/policy-management';
 import { policyVersioningContent } from './policies/policy-versioning';
 import { policyApprovalContent } from './policies/policy-approval';
@@ -93,6 +94,7 @@ export const articleContentMap: Record<string, ArticleContent> = {
   'compliance/iso-27001': iso27001Content,
   'compliance/nist-ai-rmf': nistAiRmfContent,
   'compliance/assessments': assessmentsContent,
+  'compliance/fria': friaContent,
   // Policies
   'policies/policy-management': policyManagementContent,
   'policies/policy-versioning': policyVersioningContent,

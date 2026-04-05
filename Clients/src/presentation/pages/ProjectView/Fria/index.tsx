@@ -351,6 +351,7 @@ const FriaAssessment = ({ projectId }: FriaProps) => {
           setSubmitReason("");
         }}
         title="Save snapshot"
+        description=""
         onSubmit={handleSubmitConfirm}
         submitButtonText="Save snapshot"
       >

@@ -275,7 +275,7 @@ export const collections: Collection[] = [
     title: 'Compliance frameworks',
     description: 'Stay compliant with AI regulations including EU AI Act, ISO 42001, and more.',
     icon: 'Shield',
-    articleCount: 5,
+    articleCount: 6,
     articles: [
       {
         id: 'assessments',
@@ -306,6 +306,12 @@ export const collections: Collection[] = [
         title: 'NIST AI RMF',
         description: 'Implement the NIST AI Risk Management Framework.',
         keywords: ['nist', 'rmf', 'framework', 'risk', 'management'],
+      },
+      {
+        id: 'fria',
+        title: 'Fundamental Rights Impact Assessment',
+        description: 'Assess the impact of high-risk AI systems on fundamental rights as required by EU AI Act Article 27.',
+        keywords: ['fria', 'fundamental rights', 'impact assessment', 'article 27', 'eu ai act', 'charter', 'rights matrix', 'deployer'],
       },
     ],
   },
