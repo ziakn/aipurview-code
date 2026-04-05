@@ -12,6 +12,7 @@ import { incidentManagementContent } from './ai-governance/incident-management';
 import { evidenceCollectionContent } from './ai-governance/evidence-collection';
 import { watchtowerContent } from './ai-governance/watchtower';
 import { aiTrustCenterContent } from './ai-governance/ai-trust-center';
+import { entityGraphContent } from './ai-governance/entity-graph';
 import { riskAssessmentContent } from './risk-management/risk-assessment';
 import { quantitativeRiskAssessmentContent } from './risk-management/quantitative-risk-assessment';
 import { riskMitigationContent } from './risk-management/risk-mitigation';
@@ -93,6 +94,7 @@ export const articleContentMap: Record<string, ArticleContent> = {
   'ai-governance/evidence-collection': evidenceCollectionContent,
   'ai-governance/watchtower': watchtowerContent,
   'ai-governance/ai-trust-center': aiTrustCenterContent,
+  'ai-governance/entity-graph': entityGraphContent,
   'ai-governance/datasets': datasetsContent,
   'ai-governance/agent-discovery': agentDiscoveryContent,
   'ai-governance/project-overview': projectOverviewContent,
