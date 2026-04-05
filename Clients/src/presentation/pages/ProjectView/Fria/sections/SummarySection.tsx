@@ -41,7 +41,7 @@ function SummarySection({
 
   const flaggedRights = rights.filter((r) => r.flagged);
 
-  const handleDeploymentDecisionChange = (e: SelectChangeEvent<unknown>) => {
+  const handleDeploymentDecisionChange = (e: SelectChangeEvent<string | number>) => {
     onUpdate({ deployment_decision: e.target.value as string });
   };
 

@@ -54,6 +54,7 @@ export function VideoPlayerModal({
       const t = setTimeout(() => player.play(), 400);
       return () => clearTimeout(t);
     }
+    return undefined;
   }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -61,6 +62,7 @@ export function VideoPlayerModal({
       const t = setTimeout(() => triggerExit(), 800);
       return () => clearTimeout(t);
     }
+    return undefined;
   }, [player.finished, visible, exiting]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const triggerExit = useCallback(() => {
@@ -92,6 +94,7 @@ export function VideoPlayerModal({
 
   return (
     <Box
+      className="confirmation-backdrop"
       sx={{
         position: "fixed",
         inset: 0,
@@ -107,6 +110,9 @@ export function VideoPlayerModal({
       }}
     >
       <Box
+        role="dialog"
+        aria-modal="true"
+        className="feature-video-player"
         sx={{
           position: "relative",
           width: "min(960px, 90vw)",
@@ -126,7 +132,7 @@ export function VideoPlayerModal({
             top: 8,
             right: 8,
             zIndex: 10,
-            color: "#fff",
+            color: "background.main",
             backgroundColor: "rgba(0,0,0,0.5)",
             "&:hover": { backgroundColor: "rgba(0,0,0,0.7)" },
           }}

@@ -79,7 +79,7 @@ function RiskRow({
     };
 
   const handleSelectChange =
-    (field: keyof FriaRiskItem) => (e: SelectChangeEvent<unknown>) => {
+    (field: keyof FriaRiskItem) => (e: SelectChangeEvent<string | number>) => {
       onUpdateRiskItem(item.id, { [field]: e.target.value as string });
     };
 
@@ -154,7 +154,7 @@ function RiskRow({
           placeholder="Select risk…"
           value={item.linked_project_risk_id ? String(item.linked_project_risk_id) : ""}
           items={[{ _id: "", name: "None" }, ...projectRiskOptions]}
-          onChange={(e: SelectChangeEvent<unknown>) => {
+          onChange={(e: SelectChangeEvent<string | number>) => {
             const val = e.target.value as string;
             if (val === "") {
               onUpdateRiskItem(item.id, { linked_project_risk_id: null, linked_risk_name: null });

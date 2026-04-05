@@ -214,7 +214,7 @@ export const getAllRisksQueryWithRelationships = async (
         JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
           'id', scr_27001.subclause_id,
           'meta_id', sc_27001.subclause_meta_id,
-          'sup_id', csi_27001.arrangement,
+          'sup_id', csi_27001.order_no,
           'title', scs_27001.title,
           'sub_id', scs_27001.order_no,
           'parent_id', csi_27001.id,
@@ -566,7 +566,7 @@ export const getRiskByIdQuery = async (
 
   const attachedSubClauses_27001 = (await sequelize.query(
     `SELECT
-        scr.subclause_id AS id, sc.subclause_meta_id AS meta_id, csi.arrangement AS sup_id, scs.title, scs.order_no AS sub_id, csi.id AS parent_id, pf.project_id AS project_id
+        scr.subclause_id AS id, sc.subclause_meta_id AS meta_id, csi.order_no AS sup_id, scs.title, scs.order_no AS sub_id, csi.id AS parent_id, pf.project_id AS project_id
       FROM subclauses_iso27001__risks scr JOIN subclauses_iso27001 sc ON scr.subclause_id = sc.id AND sc.organization_id = :organizationId
       JOIN subclauses_struct_iso27001 scs ON scs.id = sc.subclause_meta_id
       JOIN clauses_struct_iso27001 csi ON csi.id = scs.clause_id
@@ -651,14 +651,28 @@ export const createRiskQuery = async (
       severity, risk_level_autocalculated, review_notes, mitigation_status,
       current_risk_level, deadline, mitigation_plan, implementation_strategy,
       mitigation_evidence_document, likelihood_mitigation, risk_severity,
-      final_risk_level, risk_approval, approval_status, date_of_assessment, is_demo
+      final_risk_level, risk_approval, approval_status, date_of_assessment, is_demo,
+      event_frequency_min, event_frequency_likely, event_frequency_max,
+      loss_regulatory_min, loss_regulatory_likely, loss_regulatory_max,
+      loss_operational_min, loss_operational_likely, loss_operational_max,
+      loss_litigation_min, loss_litigation_likely, loss_litigation_max,
+      loss_reputational_min, loss_reputational_likely, loss_reputational_max,
+      total_loss_likely, ale_estimate, control_effectiveness, residual_ale,
+      mitigation_cost_annual, roi_percentage, benchmark_id, currency
     ) VALUES (
       :organization_id, :risk_name, :risk_owner, :ai_lifecycle_phase, :risk_description,
       :risk_category::enum_projectrisks_risk_category[], :impact, :assessment_mapping, :controls_mapping, :likelihood,
       :severity, :risk_level_autocalculated, :review_notes, :mitigation_status,
       :current_risk_level, :deadline, :mitigation_plan, :implementation_strategy,
       :mitigation_evidence_document, :likelihood_mitigation, :risk_severity,
-      :final_risk_level, :risk_approval, :approval_status, :date_of_assessment, :is_demo
+      :final_risk_level, :risk_approval, :approval_status, :date_of_assessment, :is_demo,
+      :event_frequency_min, :event_frequency_likely, :event_frequency_max,
+      :loss_regulatory_min, :loss_regulatory_likely, :loss_regulatory_max,
+      :loss_operational_min, :loss_operational_likely, :loss_operational_max,
+      :loss_litigation_min, :loss_litigation_likely, :loss_litigation_max,
+      :loss_reputational_min, :loss_reputational_likely, :loss_reputational_max,
+      :total_loss_likely, :ale_estimate, :control_effectiveness, :residual_ale,
+      :mitigation_cost_annual, :roi_percentage, :benchmark_id, :currency
     ) RETURNING *`,
     {
       replacements: {
@@ -688,6 +702,29 @@ export const createRiskQuery = async (
         approval_status: projectRisk.approval_status,
         date_of_assessment: projectRisk.date_of_assessment,
         is_demo: projectRisk.is_demo || false,
+        event_frequency_min: projectRisk.event_frequency_min ?? null,
+        event_frequency_likely: projectRisk.event_frequency_likely ?? null,
+        event_frequency_max: projectRisk.event_frequency_max ?? null,
+        loss_regulatory_min: projectRisk.loss_regulatory_min ?? null,
+        loss_regulatory_likely: projectRisk.loss_regulatory_likely ?? null,
+        loss_regulatory_max: projectRisk.loss_regulatory_max ?? null,
+        loss_operational_min: projectRisk.loss_operational_min ?? null,
+        loss_operational_likely: projectRisk.loss_operational_likely ?? null,
+        loss_operational_max: projectRisk.loss_operational_max ?? null,
+        loss_litigation_min: projectRisk.loss_litigation_min ?? null,
+        loss_litigation_likely: projectRisk.loss_litigation_likely ?? null,
+        loss_litigation_max: projectRisk.loss_litigation_max ?? null,
+        loss_reputational_min: projectRisk.loss_reputational_min ?? null,
+        loss_reputational_likely: projectRisk.loss_reputational_likely ?? null,
+        loss_reputational_max: projectRisk.loss_reputational_max ?? null,
+        total_loss_likely: projectRisk.total_loss_likely ?? null,
+        ale_estimate: projectRisk.ale_estimate ?? null,
+        control_effectiveness: projectRisk.control_effectiveness ?? null,
+        residual_ale: projectRisk.residual_ale ?? null,
+        mitigation_cost_annual: projectRisk.mitigation_cost_annual ?? null,
+        roi_percentage: projectRisk.roi_percentage ?? null,
+        benchmark_id: projectRisk.benchmark_id ?? null,
+        currency: projectRisk.currency ?? 'USD',
       },
       mapToModel: true,
       model: RiskModel,
@@ -839,19 +876,53 @@ export const updateRiskByIdQuery = async (
     "risk_approval",
     "approval_status",
     "date_of_assessment",
+    // Quantitative (FAIR) fields
+    "event_frequency_min",
+    "event_frequency_likely",
+    "event_frequency_max",
+    "loss_regulatory_min",
+    "loss_regulatory_likely",
+    "loss_regulatory_max",
+    "loss_operational_min",
+    "loss_operational_likely",
+    "loss_operational_max",
+    "loss_litigation_min",
+    "loss_litigation_likely",
+    "loss_litigation_max",
+    "loss_reputational_min",
+    "loss_reputational_likely",
+    "loss_reputational_max",
+    "total_loss_likely",
+    "ale_estimate",
+    "control_effectiveness",
+    "residual_ale",
+    "mitigation_cost_annual",
+    "roi_percentage",
+    "benchmark_id",
+    "currency",
   ]
     .filter((f) => {
-      if (
-        projectRisk[f as keyof RiskModel] !== undefined &&
-        projectRisk[f as keyof RiskModel]
-      ) {
+      const value = projectRisk[f as keyof RiskModel];
+      // For quantitative FAIR fields, allow null and 0 as valid update values
+      const isQuantitativeField = [
+        "event_frequency_min", "event_frequency_likely", "event_frequency_max",
+        "loss_regulatory_min", "loss_regulatory_likely", "loss_regulatory_max",
+        "loss_operational_min", "loss_operational_likely", "loss_operational_max",
+        "loss_litigation_min", "loss_litigation_likely", "loss_litigation_max",
+        "loss_reputational_min", "loss_reputational_likely", "loss_reputational_max",
+        "total_loss_likely", "ale_estimate", "control_effectiveness", "residual_ale",
+        "mitigation_cost_annual", "roi_percentage", "benchmark_id", "currency",
+      ].includes(f);
+      const hasValue = isQuantitativeField
+        ? value !== undefined
+        : value !== undefined && value;
+      if (hasValue) {
         if (f === "risk_category") {
           // Format array for PostgreSQL
-          const arr = projectRisk[f as keyof RiskModel] as string[];
+          const arr = value as string[];
           updateProjectRisk[f as keyof RiskModel] = `{${(arr || []).join(',')}}` as any;
         } else {
-          updateProjectRisk[f as keyof RiskModel] =
-            projectRisk[f as keyof RiskModel];
+          updateProjectRisk[f as keyof RiskModel] = value;
         }
         return true;
       }

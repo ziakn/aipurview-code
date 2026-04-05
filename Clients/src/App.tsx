@@ -20,7 +20,8 @@ import Alert from "./presentation/components/Alert";
 import useUsers from "./application/hooks/useUsers";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useLocation, useNavigate } from "react-router-dom";
-import { DeploymentManager } from "./application/utils/deploymentHelpers";
+import { clearChunkReloadFlag } from "./application/utils/deploymentHelpers";
+import ChunkErrorBoundary from "./presentation/components/ChunkErrorBoundary";
 import { CommandPalette } from "./presentation/components/CommandPalette";
 import CommandPaletteErrorBoundary from "./presentation/components/CommandPalette/ErrorBoundary";
 import useCommandPalette from "./application/hooks/useCommandPalette";
@@ -141,10 +142,13 @@ function App() {
       setTimeout(() => setAlert(null), 5000);
     });
 
-    // Initialize deployment update checking
-    DeploymentManager.initializeUpdateCheck();
+    // App loaded successfully — clear the chunk reload guard so future
+    // chunk errors can trigger a reload again
+    clearChunkReloadFlag();
 
-    return () => setShowAlertCallback(() => {});
+    return () => {
+      setShowAlertCallback(() => {});
+    };
   }, []);
 
   useEffect(() => {
@@ -272,9 +276,11 @@ function App() {
                     onSkip={handleOnboardingDone}
                   />
                 )}
-                <Routes>
-                  {createRoutes(triggerSidebar, triggerSidebarReload)}
-                </Routes>
+                <ChunkErrorBoundary>
+                  <Routes>
+                    {createRoutes(triggerSidebar, triggerSidebarReload)}
+                  </Routes>
+                </ChunkErrorBoundary>
 
                 {/* User Guide Sidebar with Advisor Conversation persistence */}
                 <AdvisorConversationProvider>

@@ -4,7 +4,6 @@ import {
   Typography,
   Stack,
   IconButton,
-  useTheme,
   Fade,
 } from "@mui/material";
 import {
@@ -40,12 +39,17 @@ import {
   ModelLifecycleCard,
 } from "../../components/Charts/NewMetricsCards";
 import { GovernanceScoreCard } from "../../components/Charts/GovernanceScoreCard";
+import { PortfolioExposureCard } from "../../components/Charts/PortfolioExposureCard";
+import { PortfolioTrendChart } from "../../components/Charts/PortfolioTrendChart";
+import { LossCategoryBreakdown } from "../../components/Charts/LossCategoryBreakdown";
 import UseCasesTable from "../../components/Table/UseCasesTable";
 import { EmptyStateMessage } from "../../components/EmptyStateMessage";
 import ActivityItem from "../../components/ActivityItem";
 import { ButtonToggle } from "../../components/button-toggle";
 import { StepProgressDialog } from "../../components/StepProgressDialog";
 import { OrganizationalFrameworkData } from "../../../application/hooks/useDashboardMetrics";
+import { useRiskAssessmentMode } from "../../../application/hooks/useRiskAssessmentMode";
+import { useOrgPortfolio, usePortfolioTrend } from "../../../application/hooks/useQuantitativeRisk";
 import {
   navIconButtonSx,
   getRiskLevelData,
@@ -54,14 +58,16 @@ import {
   getNistStatusData,
   getCompletionData,
 } from "./constants";
+import { text } from "../../themes/palette";
 
 type DashboardView = "executive" | "operations";
 
 const DASHBOARD_VIEW_KEY = "dashboard_view_preference";
 
 const IntegratedDashboard: React.FC = () => {
-  const theme = useTheme();
   const navigateSearch = useNavigateSearch();
+  const { userId, isSuperAdmin, activeOrganizationId } = useAuth();
+  const isSuperAdminWithoutOrg = isSuperAdmin && !activeOrganizationId;
   const { dashboard, loading: dashboardLoading, fetchDashboard } = useDashboard();
 
   const [contentReady, setContentReady] = useState(false);
@@ -101,16 +107,18 @@ const IntegratedDashboard: React.FC = () => {
     progressSteps,
   } = useDashboardMetrics();
 
+  const { isQuantitative } = useRiskAssessmentMode();
+  const { portfolio } = useOrgPortfolio();
+  const { snapshots: trendSnapshots } = usePortfolioTrend(90);
+
   const loading = dashboardLoading || metricsLoading;
 
   // Mark content ready once loading completes
   useEffect(() => {
-    if (!loading) {
+    if (!loading || isSuperAdminWithoutOrg) {
       setContentReady(true);
     }
-  }, [loading]);
-
-  const { userId } = useAuth();
+  }, [loading, isSuperAdminWithoutOrg]);
 
   const [showOrgNameModal, setShowOrgNameModal] = useState(false);
   const [currentOrgName, setCurrentOrgName] = useState("");
@@ -285,7 +293,8 @@ const IntegratedDashboard: React.FC = () => {
   }
 
   // Don't render anything while loading (before content is ready)
-  if (loading) {
+  // Skip loading wait for super admin without org — API calls will fail, show zeroes immediately
+  if (loading && !isSuperAdminWithoutOrg) {
     return null;
   }
 
@@ -419,7 +428,7 @@ const IntegratedDashboard: React.FC = () => {
                             sx={{
                               fontSize: 13,
                               fontWeight: 500,
-                              color: "#667085",
+                              color: `${text.icon}`,
                               minWidth: 55,
                               textAlign: "center",
                             }}
@@ -494,7 +503,29 @@ const IntegratedDashboard: React.FC = () => {
             </DashboardCard>
           </Box>
 
-          {/* Executive Row 4: Recent activity + Recent use cases */}
+          {/* Executive Row 4b: Quantitative risk portfolio (conditional) */}
+          {isQuantitative && portfolio && portfolio.risk_count > 0 && (
+            <Box
+              sx={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px", mb: "16px" }}
+            >
+              <DashboardCard title="AI portfolio exposure" navigateTo="/risk-management">
+                <PortfolioExposureCard portfolio={portfolio} />
+              </DashboardCard>
+              <DashboardCard title="Exposure trend (90 days)">
+                <PortfolioTrendChart snapshots={trendSnapshots} height={200} />
+              </DashboardCard>
+              <DashboardCard title="Loss category breakdown">
+                <LossCategoryBreakdown
+                  regulatory={portfolio.loss_regulatory}
+                  operational={portfolio.loss_operational}
+                  litigation={portfolio.loss_litigation}
+                  reputational={portfolio.loss_reputational}
+                />
+              </DashboardCard>
+            </Box>
+          )}
+
+          {/* Executive Row 5: Recent activity + Recent use cases */}
           <Box
             sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", mb: "16px" }}
           >
@@ -1028,7 +1059,7 @@ const IntegratedDashboard: React.FC = () => {
                             sx={{
                               fontSize: 13,
                               fontWeight: 500,
-                              color: "#667085",
+                              color: "text.icon",
                               minWidth: 55,
                               textAlign: "center",
                             }}

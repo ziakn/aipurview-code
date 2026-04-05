@@ -72,6 +72,7 @@ import datasetChangeHistoryRoutes from "./routes/datasetChangeHistory.route";
 import policyLinkedObjects from "./routes/policyLinkedObjects.route";
 import approvalWorkflowRoutes from "./routes/approvalWorkflow.route";
 import approvalRequestRoutes from "./routes/approvalRequest.route";
+import webhookRoutes from "./routes/webhook.route";
 import aiDetectionRoutes from "./routes/aiDetection.route";
 import aiDetectionRepositoryRoutes from "./routes/aiDetectionRepository.route";
 import githubIntegrationRoutes from "./routes/githubIntegration.route";
@@ -84,10 +85,20 @@ import shadowAiIngestionRoutes from "./routes/shadowAiIngestion.route";
 import agentDiscoveryRoutes from "./routes/agentDiscovery.route";
 import invitationRoutes from "./routes/invitation.route";
 import intakeFormRoutes from "./routes/intakeForm.route";
+import versionRoutes from "./routes/version.route";
 import auditLedgerRoutes from "./routes/auditLedger.route";
 import featureSettingsRoutes from "./routes/featureSettings.route";
 import friaRoutes from "./routes/fria.route";
-import { setupNotificationSubscriber } from "./services/notificationSubscriber.service";
+import riskBenchmarkRoutes from "./routes/riskBenchmark.route";
+import quantitativeRiskRoutes from "./routes/quantitativeRisk.route";
+import aiGatewayRoutes from "./routes/aiGateway.route";
+import virtualKeyProxyRoutes from "./routes/virtualKeyProxy.route";
+import internalRoutes from "./routes/internal.route";
+import superAdminRoutes from "./routes/superAdmin.route";
+// superAdminReadOnly is now enforced inside authenticateJWT middleware
+import { setupNotificationSubscriber, closeNotificationSubscriber } from "./services/notificationSubscriber.service";
+import { sequelize } from "./database/db";
+import redisClient from "./database/redis";
 
 const swaggerDoc = YAML.load("./swagger.yaml");
 
@@ -138,7 +149,7 @@ try {
         }
       },
       credentials: true,
-      allowedHeaders: ["Authorization", "Content-Type", "X-Requested-With"],
+      allowedHeaders: ["Authorization", "Content-Type", "X-Requested-With", "X-Organization-Id"],
     })
   );
   app.use(helmet()); // Use helmet for security headers
@@ -152,10 +163,53 @@ try {
     if (req.url.includes("/api/deepeval/") && !req.url.includes("/experiments") && !req.url.includes("/arena/compare")) {
       return next();
     }
+    // Webhook routes use express.raw() for HMAC signature verification
+    if (req.url.startsWith("/api/webhooks/")) {
+      return next();
+    }
     express.json({ limit: '10mb' })(req, res, next);
   });
   app.use(cookieParser());
   // app.use(csrf());
+
+  // Health endpoint — must be registered before JWT middleware so it is publicly reachable
+  app.get("/health", async (_req, res) => {
+    const AI_GATEWAY_URL = process.env.AI_GATEWAY_URL || "http://localhost:8100";
+    const checks: Record<string, { status: "ok" | "error"; error?: string }> = {};
+
+    // Database check
+    try {
+      await sequelize.query("SELECT 1");
+      checks.database = { status: "ok" };
+    } catch (err: any) {
+      checks.database = { status: "error", error: err.message };
+    }
+
+    // Redis check
+    try {
+      const pong = await redisClient.ping();
+      checks.redis = pong === "PONG" ? { status: "ok" } : { status: "error", error: `Unexpected PING response: ${pong}` };
+    } catch (err: any) {
+      checks.redis = { status: "error", error: err.message };
+    }
+
+    // FastAPI gateway check
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000);
+      try {
+        const gwRes = await fetch(`${AI_GATEWAY_URL}/health`, { signal: controller.signal });
+        checks.ai_gateway = gwRes.ok ? { status: "ok" } : { status: "error", error: `HTTP ${gwRes.status}` };
+      } finally {
+        clearTimeout(timeout);
+      }
+    } catch (err: any) {
+      checks.ai_gateway = { status: "error", error: err.message };
+    }
+
+    const allOk = Object.values(checks).every((c) => c.status === "ok");
+    res.status(allOk ? 200 : 503).json({ status: allOk ? "ok" : "degraded", checks });
+  });
 
   // Routes
   app.use("/api/users", userRoutes);
@@ -233,6 +287,7 @@ try {
   app.use("/api/dataset-change-history", datasetChangeHistoryRoutes);
   app.use("/api/approval-workflows", approvalWorkflowRoutes);
   app.use("/api/approval-requests", approvalRequestRoutes);
+  app.use("/api/webhooks", webhookRoutes);
   app.use("/api/ai-detection", aiDetectionRoutes);
   app.use("/api/ai-detection/repositories", aiDetectionRepositoryRoutes);
   app.use("/api/integrations/github", githubIntegrationRoutes);
@@ -245,9 +300,22 @@ try {
   app.use("/api/v1/shadow-ai", shadowAiIngestionRoutes);
   app.use("/api/agent-primitives", agentDiscoveryRoutes);
   app.use("/api/intake", intakeFormRoutes);
+  app.use("/api/version", versionRoutes);
   app.use("/api/audit-ledger", auditLedgerRoutes);
   app.use("/api/feature-settings", featureSettingsRoutes);
   app.use("/api/fria", friaRoutes);
+  app.use("/api/risk-benchmarks", riskBenchmarkRoutes);
+  app.use("/api/quantitative-risks", quantitativeRiskRoutes);
+  app.use("/api/ai-gateway", aiGatewayRoutes());
+
+  // Super-admin routes (authenticated + super-admin only)
+  app.use("/api/super-admin", superAdminRoutes);
+
+  // Internal routes — callbacks from Python services (no JWT, internal key auth)
+  app.use("/api/internal", internalRoutes);
+
+  // Virtual key proxy — OpenAI-compatible /v1/* routes (no JWT, no CORS)
+  app.use("/v1", virtualKeyProxyRoutes());
 
   // Setup notification subscriber for real-time notifications
   (async () => {
@@ -286,9 +354,50 @@ try {
     }
   })();
 
-  app.listen(port, () => {
+  const server = app.listen(port, () => {
     console.log(`Server running on port http://${host}:${port}/`);
   });
+
+  async function shutdown(signal: string): Promise<void> {
+    console.log(`\n${signal} received — shutting down gracefully`);
+
+    // Stop accepting new connections; give in-flight requests 10 s to complete
+    server.close(async () => {
+      console.log("HTTP server closed");
+
+      try {
+        await closeNotificationSubscriber();
+        console.log("Notification subscriber closed");
+      } catch (err) {
+        console.error("Error closing notification subscriber:", err);
+      }
+
+      try {
+        await redisClient.quit();
+        console.log("Redis connection closed");
+      } catch (err) {
+        console.error("Error closing Redis connection:", err);
+      }
+
+      try {
+        await sequelize.close();
+        console.log("Database connection closed");
+      } catch (err) {
+        console.error("Error closing database connection:", err);
+      }
+
+      process.exit(0);
+    });
+
+    // Force-exit if requests haven't drained within 10 seconds
+    setTimeout(() => {
+      console.error("Graceful shutdown timed out — forcing exit");
+      process.exit(1);
+    }, 10000).unref();
+  }
+
+  process.on("SIGTERM", () => shutdown("SIGTERM"));
+  process.on("SIGINT", () => shutdown("SIGINT"));
 } catch (error) {
   console.error("Error setting up the server:", error);
 }

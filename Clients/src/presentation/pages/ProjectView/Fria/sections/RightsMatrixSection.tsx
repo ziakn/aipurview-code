@@ -67,7 +67,7 @@ function RightsMatrixSection({
 
   const handleSelectChange =
     (index: number, field: "severity" | "confidence") =>
-    (e: SelectChangeEvent<unknown>) => {
+    (e: SelectChangeEvent<string | number>) => {
       const patch = { [field]: Number(e.target.value) };
       const next = localRights.map((r, i) =>
         i === index ? { ...r, ...patch } : r

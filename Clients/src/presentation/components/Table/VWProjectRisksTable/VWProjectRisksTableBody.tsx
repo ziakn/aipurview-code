@@ -17,6 +17,7 @@ import { RiskModel } from "../../../../domain/models/Common/risks/risk.model";
 import { User } from "../../../../domain/types/User";
 import Chip from "../../Chip";
 import ProjectRiskLinkedPolicies from "../../../components/ProjectRiskMitigation/ProjectRiskLinkedPolicies";
+import { text } from "../../../themes/palette";
 
 function getDummyEvent() {
   const realEvent = new Event("click", { bubbles: true, cancelable: true });
@@ -179,7 +180,7 @@ const VWProjectRisksTableBody = ({
                       backgroundColor: flashRow === row.id
                         ? singleTheme.flashColors.background
                         : sortConfig.key === "risk_owner"
-                        ? "#f5f5f5"
+                        ? "background.surface"
                         : "",
                     }}
                   >
@@ -195,7 +196,7 @@ const VWProjectRisksTableBody = ({
                       backgroundColor: flashRow === row.id
                         ? singleTheme.flashColors.background
                         : sortConfig.key === "severity"
-                        ? "#f5f5f5"
+                        ? "background.surface"
                         : "",
                     }}
                   >
@@ -206,6 +207,22 @@ const VWProjectRisksTableBody = ({
                     )}
                   </TableCell>
                 )}
+                {isColVisible("ale_estimate") && (
+                  <TableCell
+                    sx={{
+                      ...getCellStyle(row),
+                      backgroundColor: flashRow === row.id
+                        ? singleTheme.flashColors.background
+                        : sortConfig.key === "ale_estimate"
+                        ? "background.surface"
+                        : "",
+                    }}
+                  >
+                    {row.ale_estimate != null
+                      ? `$${Number(row.ale_estimate).toLocaleString("en-US", { maximumFractionDigits: 0 })}`
+                      : "-"}
+                  </TableCell>
+                )}
                 {isColVisible("mitigation_status") && (
                   <TableCell
                     sx={{
@@ -213,7 +230,7 @@ const VWProjectRisksTableBody = ({
                       backgroundColor: flashRow === row.id
                         ? singleTheme.flashColors.background
                         : sortConfig.key === "mitigation_status"
-                        ? "#f5f5f5"
+                        ? "background.surface"
                         : "",
                     }}
                   >
@@ -231,7 +248,7 @@ const VWProjectRisksTableBody = ({
                       backgroundColor: flashRow === row.id
                         ? singleTheme.flashColors.background
                         : sortConfig.key === "risk_level_autocalculated"
-                        ? "#f5f5f5"
+                        ? "background.surface"
                         : "",
                     }}
                   >
@@ -249,7 +266,7 @@ const VWProjectRisksTableBody = ({
                       backgroundColor: flashRow === row.id
                         ? singleTheme.flashColors.background
                         : sortConfig.key === "deadline"
-                        ? "#f5f5f5"
+                        ? "background.surface"
                         : "",
                     }}
                   >
@@ -263,7 +280,7 @@ const VWProjectRisksTableBody = ({
                       backgroundColor: flashRow === row.id
                         ? singleTheme.flashColors.background
                         : sortConfig.key === "controls_mapping"
-                        ? "#f5f5f5"
+                        ? "background.surface"
                         : "",
                     }}
                   >
@@ -283,7 +300,7 @@ const VWProjectRisksTableBody = ({
                     backgroundColor: flashRow === row.id
                       ? singleTheme.flashColors.background
                       : sortConfig.key === "actions"
-                      ? "#f5f5f5"
+                      ? "background.surface"
                       : "",
                   }}
                 >
@@ -304,10 +321,10 @@ const VWProjectRisksTableBody = ({
                         warningTitle="Delete this project risk?"
                         warningMessage={
                           <Stack gap={2}>
-                            <Typography fontSize={13} color="#344054">
+                            <Typography fontSize={13} color={text.secondary}>
                               Are you sure you want to delete this project risk?
                             </Typography>
-                            <Typography fontSize={13} color="#344054">
+                            <Typography fontSize={13} color={text.secondary}>
                               This action is non-recoverable.
                             </Typography>
                           </Stack>

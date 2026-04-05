@@ -33,7 +33,7 @@ function ConsultationSection({
   );
 
   const handleSelectChange =
-    (field: keyof FriaAssessment) => (e: SelectChangeEvent<unknown>) => {
+    (field: keyof FriaAssessment) => (e: SelectChangeEvent<string | number>) => {
       onUpdate({ [field]: e.target.value as string });
     };
 

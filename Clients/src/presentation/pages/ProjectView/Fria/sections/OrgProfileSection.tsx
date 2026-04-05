@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Box } from "@mui/material";
+import dayjs from "dayjs";
 import Field from "../../../../components/Inputs/Field";
 import DatePicker from "../../../../components/Inputs/Datepicker";
 import { FriaAssessment } from "../../../../../application/hooks/useFria";
@@ -94,7 +95,7 @@ function OrgProfileSection({ assessment, onUpdate, isSaving }: OrgProfileSection
         />
         <DatePicker
           label="Assessment date"
-          date={assessment.assessment_date ?? null}
+          date={assessment.assessment_date ? dayjs(assessment.assessment_date) : null}
           handleDateChange={handleDateChange}
           disabled={isSaving}
         />

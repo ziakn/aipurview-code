@@ -64,6 +64,14 @@ export async function createScanQuery(
       triggered_by,
       repository_id,
       triggered_by_type,
+      scan_mode,
+      base_commit_sha,
+      head_commit_sha,
+      baseline_scan_id,
+      trigger_type,
+      pr_number,
+      commit_sha,
+      branch,
       created_at,
       updated_at
     ) VALUES (
@@ -75,6 +83,14 @@ export async function createScanQuery(
       :triggered_by,
       :repository_id,
       :triggered_by_type,
+      :scan_mode,
+      :base_commit_sha,
+      :head_commit_sha,
+      :baseline_scan_id,
+      :trigger_type,
+      :pr_number,
+      :commit_sha,
+      :branch,
       NOW(),
       NOW()
     )
@@ -91,6 +107,14 @@ export async function createScanQuery(
       triggered_by: input.triggered_by,
       repository_id: input.repository_id || null,
       triggered_by_type: input.triggered_by_type || "manual",
+      scan_mode: input.scan_mode || "full",
+      base_commit_sha: input.base_commit_sha || null,
+      head_commit_sha: input.head_commit_sha || null,
+      baseline_scan_id: input.baseline_scan_id || null,
+      trigger_type: input.trigger_type || "manual",
+      pr_number: input.pr_number || null,
+      commit_sha: input.commit_sha || null,
+      branch: input.branch || null,
     },
     transaction,
   });
@@ -484,6 +508,7 @@ export async function createFindingsBatchQuery(
       :license_name_${index},
       :license_risk_${index},
       :license_source_${index},
+      :finding_status_${index},
       NOW()
     )`;
   });
@@ -505,6 +530,7 @@ export async function createFindingsBatchQuery(
     replacements[`license_name_${index}`] = input.license_name || null;
     replacements[`license_risk_${index}`] = input.license_risk || null;
     replacements[`license_source_${index}`] = input.license_source || null;
+    replacements[`finding_status_${index}`] = input.finding_status || "active";
   });
 
   const query = `
@@ -525,6 +551,7 @@ export async function createFindingsBatchQuery(
       license_name,
       license_risk,
       license_source,
+      finding_status,
       created_at
     ) VALUES ${values.join(", ")}
     ON CONFLICT (scan_id, name, provider) DO UPDATE SET
@@ -533,14 +560,74 @@ export async function createFindingsBatchQuery(
       license_id = COALESCE(EXCLUDED.license_id, ai_detection_findings.license_id),
       license_name = COALESCE(EXCLUDED.license_name, ai_detection_findings.license_name),
       license_risk = COALESCE(EXCLUDED.license_risk, ai_detection_findings.license_risk),
-      license_source = COALESCE(EXCLUDED.license_source, ai_detection_findings.license_source);
+      license_source = COALESCE(EXCLUDED.license_source, ai_detection_findings.license_source),
+      finding_status = CASE
+        WHEN EXCLUDED.finding_status = 'active' THEN 'active'
+        ELSE ai_detection_findings.finding_status
+      END
+    RETURNING id, name, provider;
   `;
 
-  await sequelize.query(query, {
+  const [insertedRows] = await sequelize.query(query, {
     replacements,
     type: QueryTypes.INSERT,
     transaction,
   });
+
+  // Insert vulnerability details into separate table for findings that have them
+  const vulnInputs = deduplicatedInputs.filter(
+    (input) => input.mitigation || input.data_flow_summary || input.vulnerability_details
+  );
+
+  if (vulnInputs.length > 0 && Array.isArray(insertedRows) && insertedRows.length > 0) {
+    // Build a lookup from (name, provider) -> finding_id using RETURNING results
+    const findingIdMap = new Map<string, number>();
+    for (const row of insertedRows as { id: number; name: string; provider: string | null }[]) {
+      const key = `${row.name}::${row.provider || "NULL"}`;
+      findingIdMap.set(key, row.id);
+    }
+
+    const vulnValues: string[] = [];
+    const vulnReplacements: Record<string, unknown> = { organizationId };
+
+    vulnInputs.forEach((input, index) => {
+      const key = `${input.name}::${input.provider || "NULL"}`;
+      const findingId = findingIdMap.get(key);
+      if (!findingId) return;
+
+      vulnValues.push(`(
+        :organizationId,
+        :finding_id_${index},
+        :mitigation_${index},
+        :data_flow_summary_${index},
+        :vulnerability_details_${index},
+        NOW()
+      )`);
+      vulnReplacements[`finding_id_${index}`] = findingId;
+      vulnReplacements[`mitigation_${index}`] = input.mitigation || null;
+      vulnReplacements[`data_flow_summary_${index}`] = input.data_flow_summary || null;
+      vulnReplacements[`vulnerability_details_${index}`] = input.vulnerability_details
+        ? JSON.stringify(input.vulnerability_details) : null;
+    });
+
+    if (vulnValues.length > 0) {
+      const vulnQuery = `
+        INSERT INTO ai_detection_vulnerability_details (
+          organization_id, finding_id, mitigation, data_flow_summary, vulnerability_details, created_at
+        ) VALUES ${vulnValues.join(", ")}
+        ON CONFLICT (finding_id) DO UPDATE SET
+          mitigation = COALESCE(EXCLUDED.mitigation, ai_detection_vulnerability_details.mitigation),
+          data_flow_summary = COALESCE(EXCLUDED.data_flow_summary, ai_detection_vulnerability_details.data_flow_summary),
+          vulnerability_details = COALESCE(EXCLUDED.vulnerability_details, ai_detection_vulnerability_details.vulnerability_details);
+      `;
+
+      await sequelize.query(vulnQuery, {
+        replacements: vulnReplacements,
+        type: QueryTypes.INSERT,
+        transaction,
+      });
+    }
+  }
 
   return deduplicatedInputs.length;
 }
@@ -669,36 +756,37 @@ export async function getFindingsForScanQuery(
   validateOrganizationId(organizationId);
   const offset = (page - 1) * limit;
   const replacements: Record<string, unknown> = { scanId, organizationId, limit, offset };
-  let whereClause = "WHERE scan_id = :scanId AND organization_id = :organizationId";
+  let whereClause = "WHERE f.scan_id = :scanId AND f.organization_id = :organizationId";
 
   if (confidence) {
-    whereClause += " AND confidence = :confidence";
+    whereClause += " AND f.confidence = :confidence";
     replacements.confidence = confidence;
   }
 
   if (findingType) {
-    whereClause += " AND finding_type = :findingType";
+    whereClause += " AND f.finding_type = :findingType";
     replacements.findingType = findingType;
   }
 
   const countQuery = `
     SELECT COUNT(*) as total
-    FROM ai_detection_findings
+    FROM ai_detection_findings f
     ${whereClause};
   `;
 
   const dataQuery = `
-    SELECT *
-    FROM ai_detection_findings
+    SELECT f.*, vd.mitigation, vd.data_flow_summary, vd.vulnerability_details
+    FROM ai_detection_findings f
+    LEFT JOIN ai_detection_vulnerability_details vd ON vd.finding_id = f.id AND vd.organization_id = f.organization_id
     ${whereClause}
     ORDER BY
-      CASE confidence
+      CASE f.confidence
         WHEN 'high' THEN 1
         WHEN 'medium' THEN 2
         WHEN 'low' THEN 3
       END,
-      file_count DESC,
-      name ASC
+      f.file_count DESC,
+      f.name ASC
     LIMIT :limit OFFSET :offset;
   `;
 
@@ -742,11 +830,11 @@ export async function getAllFindingsForExportQuery(
   validateOrganizationId(organizationId);
 
   // First, get the total count
-  let whereClause = "WHERE scan_id = :scanId AND organization_id = :organizationId";
+  let whereClause = "WHERE f.scan_id = :scanId AND f.organization_id = :organizationId";
   const replacements: Record<string, unknown> = { scanId, organizationId };
 
   if (excludeTypes && excludeTypes.length > 0) {
-    whereClause += ` AND finding_type NOT IN (${excludeTypes.map((_, i) => `:excludeType${i}`).join(", ")})`;
+    whereClause += ` AND f.finding_type NOT IN (${excludeTypes.map((_, i) => `:excludeType${i}`).join(", ")})`;
     excludeTypes.forEach((type, i) => {
       replacements[`excludeType${i}`] = type;
     });
@@ -754,7 +842,7 @@ export async function getAllFindingsForExportQuery(
 
   const countQuery = `
     SELECT COUNT(*) as total
-    FROM ai_detection_findings
+    FROM ai_detection_findings f
     ${whereClause};
   `;
 
@@ -778,17 +866,18 @@ export async function getAllFindingsForExportQuery(
 
   while (offset < total) {
     const batchQuery = `
-      SELECT *
-      FROM ai_detection_findings
+      SELECT f.*, vd.mitigation, vd.data_flow_summary, vd.vulnerability_details
+      FROM ai_detection_findings f
+      LEFT JOIN ai_detection_vulnerability_details vd ON vd.finding_id = f.id AND vd.organization_id = f.organization_id
       ${whereClause}
       ORDER BY
-        CASE confidence
+        CASE f.confidence
           WHEN 'high' THEN 1
           WHEN 'medium' THEN 2
           WHEN 'low' THEN 3
         END,
-        file_count DESC,
-        name ASC
+        f.file_count DESC,
+        f.name ASC
       LIMIT :limit OFFSET :offset;
     `;
 
@@ -1276,4 +1365,66 @@ export async function markStaleScansFailed(
   );
 
   return results.length;
+}
+
+// ============================================================================
+// Incremental Scan Queries
+// ============================================================================
+
+/**
+ * Get the latest completed full scan for a repository.
+ * Used to find the baseline scan for incremental scans.
+ *
+ * @param owner - Repository owner
+ * @param repo - Repository name
+ * @param organizationId - Organization ID for multi-tenancy
+ * @returns The latest completed full scan, or null if none exists
+ */
+export async function getLatestCompletedFullScanQuery(
+  owner: string,
+  repo: string,
+  organizationId: number
+): Promise<IScan | null> {
+  validateOrganizationId(organizationId);
+
+  const results = await sequelize.query<IScan>(
+    `SELECT * FROM ai_detection_scans
+     WHERE repository_owner = :owner
+       AND repository_name = :repo
+       AND organization_id = :organizationId
+       AND status = 'completed'
+       AND scan_mode = 'full'
+     ORDER BY completed_at DESC
+     LIMIT 1`,
+    {
+      replacements: { owner, repo, organizationId },
+      type: QueryTypes.SELECT,
+    }
+  );
+
+  return results.length > 0 ? results[0] : null;
+}
+
+/**
+ * Get all findings from a baseline scan for carry-forward logic.
+ *
+ * @param baselineScanId - The baseline scan ID
+ * @param organizationId - Organization ID for multi-tenancy
+ * @returns All findings from the baseline scan
+ */
+export async function getBaselineFindingsQuery(
+  baselineScanId: number,
+  organizationId: number
+): Promise<IFinding[]> {
+  validateOrganizationId(organizationId);
+
+  return sequelize.query<IFinding>(
+    `SELECT * FROM ai_detection_findings
+     WHERE scan_id = :baselineScanId
+       AND organization_id = :organizationId`,
+    {
+      replacements: { baselineScanId, organizationId },
+      type: QueryTypes.SELECT,
+    }
+  );
 }

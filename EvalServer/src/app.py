@@ -10,6 +10,7 @@ from routers.evaluation_logs import router as evaluation_logs
 from routers.deepeval_orgs import router as deepeval_orgs
 from routers.deepeval_arena import router as deepeval_arena
 from routers.bias_audits import router as bias_audits
+from routers.reports import router as reports
 from middlewares.middleware import TenantMiddleware
 from database.redis import close_redis
 from database.config import settings
@@ -17,24 +18,6 @@ from database.config import settings
 import logging
 logger = logging.getLogger('uvicorn')
 
-def run_migrations():
-    logger.info("Running Alembic migrations...")
-    try:
-        import subprocess
-        result = subprocess.run(
-            ["alembic", "upgrade", "head"],
-            capture_output=True,
-            text=True,
-            timeout=60
-        )
-        if result.returncode == 0:
-            logger.info("Alembic migrations completed successfully")
-        else:
-            logger.warning(f"Alembic migrations failed: {result.stderr}")
-    except subprocess.TimeoutExpired:
-        logger.warning("Alembic migrations timed out, continuing anyway")
-    except Exception as e:
-        logger.warning(f"Alembic migrations skipped or failed: {e}")
 
 
 async def run_data_migration():
@@ -121,7 +104,7 @@ async def cleanup_orphaned_experiments():
 
 @app.on_event("startup")
 async def startup_event():
-    run_migrations()
+    # Alembic migrations run once in Dockerfile/CLI before uvicorn starts workers.
     await run_data_migration()
     await cleanup_orphaned_experiments()
 
@@ -135,6 +118,7 @@ app.include_router(deepeval_orgs, prefix="/deepeval", tags=["DeepEval Orgs"])
 app.include_router(deepeval_arena, prefix="/deepeval", tags=["DeepEval Arena"])
 app.include_router(bias_audits, prefix="/deepeval", tags=["Bias Audits"])
 app.include_router(evaluation_logs, tags=["Evaluation Logs & Monitoring"])
+app.include_router(reports, tags=["Reports"])
 
 if __name__ == "__main__":
     import uvicorn

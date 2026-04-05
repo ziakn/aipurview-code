@@ -1,8 +1,17 @@
 # VerifyWise - Development Guide
 
-> **Last Updated:** 2026-03-06
+> **Last Updated:** 2026-03-25
 
-This document contains core rules and patterns for all development in the VerifyWise codebase. For detailed feature documentation, see the [Reference Index](#detailed-references) at the bottom.
+This document contains cross-cutting rules for the VerifyWise codebase. Directory-scoped guides load automatically when working in each area:
+
+- **Backend:** `Servers/CLAUDE.md` — multi-tenancy, migrations, backend patterns
+- **Frontend:** `Clients/CLAUDE.md` — clean architecture, component patterns
+- **EvalServer:** `EvalServer/CLAUDE.md` — Alembic migrations, FastAPI patterns
+- **AI Gateway:** `AIGateway/CLAUDE.md` — LLM proxy, guardrails, spend tracking
+
+### Custom Agents
+
+- **verifywise-explorer** (`.claude/agents/verifywise-explorer.md`) — Codebase explorer agent that finds conventions, patterns, and relevant code for any task. Auto-delegates when implementing features, fixing bugs, or understanding existing functionality. Invoke explicitly with `@verifywise-explorer` or `claude --agent verifywise-explorer`.
 
 ---
 
@@ -11,11 +20,10 @@ This document contains core rules and patterns for all development in the Verify
 **Keep documentation up to date.**
 
 When making changes to the codebase:
-- **Core architecture changes** (new patterns, conventions, multi-tenancy, migration rules) → Update this CLAUDE.md
+- **Core architecture changes** (new patterns, conventions, multi-tenancy, migration rules) → Update this CLAUDE.md or the relevant directory CLAUDE.md
 - **Feature-specific changes** (new routes, APIs, middleware, services) → Update the relevant reference doc (see [Detailed References](#detailed-references))
-- **Both** when a change spans core + feature
 
-Always update the "Last Updated" date when modifying this file.
+Always update the "Last Updated" date when modifying any CLAUDE.md file.
 
 ---
 
@@ -29,7 +37,7 @@ Always update the "Last Updated" date when modifying this file.
 
 ---
 
-## 1. Project Overview
+## Project Overview
 
 VerifyWise is an AI governance platform supporting EU AI Act, ISO 42001, ISO 27001, NIST AI RMF, and plugin frameworks (SOC 2, GDPR, HIPAA, etc.).
 
@@ -37,58 +45,11 @@ VerifyWise is an AI governance platform supporting EU AI Act, ISO 42001, ISO 270
 
 | Layer | Technologies |
 |-------|-------------|
-| **Frontend** | React 18, TypeScript, Vite, Material-UI 7, Redux Toolkit, React Query |
+| **Frontend** | React 19, TypeScript, Vite, Material-UI 7, Redux Toolkit, React Query |
 | **Backend** | Node.js 22, Express.js 4, TypeScript, Sequelize 6 |
 | **Database** | PostgreSQL (shared schema, org_id isolation) |
 | **Cache/Queue** | Redis + BullMQ |
-| **Python Services** | FastAPI, Python 3.12 (EvalServer) |
-
-### Project Structure
-
-```
-verifywise/
-├── Clients/                    # React frontend
-│   └── src/
-│       ├── application/        # Business logic (hooks, redux, repository)
-│       ├── presentation/       # UI (pages, components, themes)
-│       ├── domain/             # Types, interfaces, enums
-│       └── infrastructure/     # API client, external services
-├── Servers/                    # Express backend
-│   ├── controllers/            # Request handlers
-│   ├── routes/                 # API endpoints
-│   ├── services/               # Business logic services
-│   ├── utils/                  # Database queries (repository pattern)
-│   ├── domain.layer/           # Models, interfaces, frameworks
-│   ├── middleware/             # Auth, rate limiting, multi-tenancy
-│   ├── database/               # DB config, migrations
-│   ├── templates/              # Email (MJML) & PDF (EJS) templates
-│   └── jobs/                   # BullMQ workers
-├── EvalServer/                 # Python LLM evaluation service
-└── docs/                       # Documentation
-```
-
----
-
-## 2. Architecture
-
-### Frontend Clean Architecture
-
-```
-presentation/     → UI components, pages (what user sees)
-application/      → Business logic, hooks, redux, contexts
-domain/           → Types, interfaces, enums (core entities)
-infrastructure/   → API clients, external services
-```
-
-### Backend Layered Architecture
-
-```
-routes/           → HTTP endpoint definitions
-controllers/      → Request handling, validation
-services/         → Complex business logic
-utils/            → Database queries (Sequelize)
-domain.layer/     → Models, interfaces, exceptions
-```
+| **Python Services** | FastAPI, Python 3.12 (EvalServer, AI Gateway) |
 
 ### Request Flow
 
@@ -100,110 +61,7 @@ Express Router → Middleware Chain → Controller → Service → Utils → Pos
 
 ---
 
-## 3. Multi-Tenancy
-
-Shared-schema isolation with `organization_id` column on all tenant-scoped tables. All data lives in the `verifywise` schema (via `search_path`).
-
-| Schema | Purpose |
-|--------|---------|
-| `verifywise` | All tables — users, organizations, projects, vendors, risks, files, model_inventories, frameworks, etc. |
-| `public` | PostgreSQL extensions only (uuid-ossp, pgcrypto) |
-
-**Access:** `req.organizationId` from auth middleware. Queries use unqualified table names (resolved by `search_path`): `SELECT * FROM projects WHERE organization_id = :orgId AND id = :id`.
-
-**Legacy:** Previously used schema-per-tenant (`{tenantHash}` schemas). Migration script `Servers/scripts/migrateToSharedSchema.ts` moves data from old tenant schemas to shared verifywise schema with `organization_id`. Runs automatically on startup or via `npm run migrate:shared-schema`.
-
----
-
-## 4. Database & Migrations
-
-### Creating Migrations
-
-**CRITICAL: Always generate timestamp with `date` command**
-
-```bash
-date +%Y%m%d%H%M%S
-cd Servers
-npx sequelize migration:create --name my-migration-name
-```
-
-### Schema Rules
-
-All tables live in the `verifywise` PostgreSQL schema. The `public` schema only holds extensions.
-
-- **Application SQL:** Use **unqualified** table names (e.g., `SELECT * FROM projects`). Resolved via `search_path = verifywise` set in Sequelize `afterConnect` hook.
-- **NEVER** use `public.tablename` or `verifywise.tablename` in application code (controllers, utils, services).
-- **Consolidated DDL migrations** (`20260226234300` through `20260226234302`): Use explicit `verifywise.` prefix for CREATE TABLE, CREATE TYPE, etc.
-- **Framework struct tables** (shared, no org_id): `*_struct_*` tables in `20260226234301-public-schema-tables.js`
-- **Tenant-scoped tables** (with org_id): in `20260226234302-tenant-tables.js`
-- **Seed data:** `20260302111132-seed-framework-struct-data.js`
-
-### Migration Pattern
-
-```javascript
-'use strict';
-module.exports = {
-  async up(queryInterface, Sequelize) {
-    // Use unqualified table names — search_path resolves to verifywise
-    await queryInterface.addColumn('users', 'new_field', {
-      type: Sequelize.STRING, allowNull: true
-    });
-  },
-  async down(queryInterface, Sequelize) {
-    await queryInterface.removeColumn('users', 'new_field');
-  }
-};
-```
-
-### Data Migration (Legacy Tenant Schemas)
-
-`Servers/scripts/migrateToSharedSchema.ts` migrates data from old `{tenantHash}` schemas → `verifywise` schema with `organization_id`. Config in `Servers/scripts/migrationConfig.ts` defines table order, FK mappings, and skip lists. Dedicated handlers exist for NIST AI RMF and custom frameworks (struct/impl split).
-
-### Running Migrations
-
-```bash
-cd Servers
-npm run build                    # Build TypeScript first (migrations use dist/)
-npx sequelize db:migrate         # Run migrations
-npx sequelize db:migrate:undo    # Rollback last
-```
-
----
-
-## 5. Backend Development (Summary)
-
-**Full patterns with code examples:** See `docs/technical/guides/backend-patterns.md`
-
-### Layer Flow
-
-1. **Route** (`Servers/routes/{entity}.route.ts`) — Define endpoints, apply `authenticateJWT`
-2. **Controller** (`Servers/controllers/{entity}.ctrl.ts`) — Handle request, validate, call utils, use `logProcessing`/`logSuccess`/`logFailure`, return `STATUS_CODE[xxx](...)`
-3. **Utils** (`Servers/utils/{entity}.utils.ts`) — Raw SQL via `sequelize.query()` with unqualified table names and `:replacements` (including `organization_id` for tenant isolation)
-4. **Model** (`Servers/domain.layer/models/{entity}/`) — Sequelize-typescript decorators
-
-**Don't forget:** Register new routes in `Servers/index.ts`:
-```typescript
-import entityRoutes from "./routes/entity.route";
-app.use("/api/entities", entityRoutes);
-```
-
----
-
-## 6. Frontend Development (Summary)
-
-**Full patterns with code examples:** See `docs/technical/guides/frontend-patterns.md`
-
-### Layer Flow
-
-1. **Component** (`Clients/src/presentation/components/{Name}/index.tsx`) — Hooks first, handlers, early returns, render
-2. **Page** (`Clients/src/presentation/pages/{Name}/index.tsx`) — Uses hooks, loading/error states, PageTitle
-3. **Repository** (`Clients/src/application/repository/{entity}.repository.ts`) — CustomAxios calls to API
-4. **Hook** (`Clients/src/application/hooks/use{Entity}.ts`) — React Query `useQuery`/`useMutation`
-5. **Route** (`Clients/src/application/config/routes.tsx`) — Add `<Route>` inside dashboard
-
----
-
-## 7. Authentication & Authorization
+## Authentication & Authorization
 
 ### JWT Token Payload
 
@@ -214,7 +72,7 @@ interface TokenPayload {
   organizationId: number;
   tenantId: string;        // Tenant hash
   roleName: string;        // "Admin" | "Reviewer" | "Editor" | "Auditor"
-  expire: Date;
+  expire: number;            // Unix timestamp (Date.now() + ms)
 }
 ```
 
@@ -227,22 +85,9 @@ interface TokenPayload {
 | 3 | Editor | Read + write |
 | 4 | Auditor | Read only |
 
-### Usage
-
-```typescript
-// Backend: protect routes
-import authenticateJWT from "../middleware/auth.middleware";
-router.use(authenticateJWT);
-
-// Frontend: check role
-const { authToken, role } = useSelector((state) => state.auth);
-```
-
-**Detailed middleware reference:** See `docs/claude/middleware.md`
-
 ---
 
-## 8. Development Workflow
+## Development Workflow
 
 ### Starting Development
 
@@ -250,13 +95,7 @@ const { authToken, role } = useSelector((state) => state.auth);
 cd Servers && npm install && npm run watch    # Backend (Terminal 1)
 cd Clients && npm install && npm run dev      # Frontend (Terminal 2)
 cd Servers && npm run worker                  # BullMQ Worker (Terminal 3, optional)
-```
-
-### Build
-
-```bash
-cd Servers && npm run build    # Backend → /dist
-cd Clients && npm run build    # Frontend → /dist
+cd EvalServer/src && alembic upgrade head && uvicorn app:app --port 8000 --workers 4  # EvalServer (Terminal 4, optional)
 ```
 
 ### Git Workflow
@@ -273,7 +112,7 @@ fix(dashboard): resolve chart rendering issue
 
 ### PR Checklist
 
-- [ ] Code deployed and tested locally
+- [ ] Build passes locally (`cd Servers && npm run build` and `cd Clients && npm run build`)
 - [ ] Self-review completed
 - [ ] Issue number included
 - [ ] No hardcoded values
@@ -284,28 +123,15 @@ fix(dashboard): resolve chart rendering issue
 
 ---
 
-## 9. Testing
+## Testing
 
 - **Minimum coverage:** 80%
 - **Frontend:** `cd Clients && npm run test` (Vitest)
 - **Backend:** `cd Servers && npm run test` (Jest)
-- **Convention:** `describe('ComponentName', () => { it('should do X when Y', ...) })`
 
 ---
 
-## 10. Environment Configuration
-
-### Backend (.env)
-
-Key variables: `PORT`, `DB_HOST/PORT/NAME/USER/PASSWORD`, `REDIS_HOST/PORT`, `JWT_SECRET`, `REFRESH_TOKEN_SECRET`, `MULTI_TENANCY_ENABLED`, `ENCRYPTION_KEY`, `EMAIL_PROVIDER`, `RESEND_API_KEY`
-
-### Frontend (.env.local)
-
-```env
-VITE_APP_API_URL=http://localhost:3000/api
-VITE_APP_PORT=5173
-VITE_IS_MULTI_TENANT=false
-```
+## Environment
 
 ### Required Services
 
@@ -316,29 +142,11 @@ VITE_IS_MULTI_TENANT=false
 | Backend | 3000 | Yes |
 | Frontend | 5173 | Yes |
 | EvalServer | 8000 | For LLM Evals |
+| AI Gateway | 8100 | For LLM governance |
 
 ---
 
-## Quick Reference
-
-### Key Files
-
-| Purpose | Path |
-|---------|------|
-| Backend entry | `Servers/index.ts` |
-| Frontend entry | `Clients/src/main.tsx` |
-| Route definitions (BE) | `Servers/routes/*.ts` |
-| Route definitions (FE) | `Clients/src/application/config/routes.tsx` |
-| Database models | `Servers/domain.layer/models/` |
-| Shared schema migration | `Servers/scripts/migrateToSharedSchema.ts` |
-| Migration config | `Servers/scripts/migrationConfig.ts` |
-| Auth middleware | `Servers/middleware/auth.middleware.ts` |
-| Axios config | `Clients/src/infrastructure/api/customAxios.ts` |
-| Redux store | `Clients/src/application/redux/store.ts` |
-| Custom exceptions | `Servers/domain.layer/exceptions/custom.exception.ts` |
-| Log helper | `Servers/utils/logger/logHelper.ts` |
-
-### Naming Conventions
+## Naming Conventions
 
 | Element | Convention | Example |
 |---------|------------|---------|
@@ -350,16 +158,6 @@ VITE_IS_MULTI_TENANT=false
 | Database Tables | snake_case | `user_profiles` |
 | API Endpoints | kebab-case | `/api/user-profiles` |
 
-### Common Commands
-
-```bash
-date +%Y%m%d%H%M%S                              # Get timestamp for migrations
-cd Servers && npx sequelize migration:create --name name
-cd Servers && npm run build && npx sequelize db:migrate
-cd Servers && npm run watch                      # Start backend
-cd Clients && npm run dev                        # Start frontend
-```
-
 ---
 
 ## Detailed References
@@ -368,53 +166,35 @@ Read the relevant file BEFORE implementing changes in that area:
 
 | When working on... | Read this file |
 |---------------------|---------------|
-| Backend controller/route/utils patterns | `docs/technical/guides/backend-patterns.md` |
-| Frontend component/page/hook patterns | `docs/technical/guides/frontend-patterns.md` |
 | Adding a new feature (full guide) | `docs/technical/guides/adding-new-feature.md` |
 | Adding a new framework | `docs/technical/guides/adding-new-framework.md` |
-| API conventions | `docs/technical/guides/api-conventions.md` |
 | Code style | `docs/technical/guides/code-style.md` |
 | Plugin system | `docs/technical/infrastructure/plugin-system.md` |
-| API routes & endpoints | `docs/technical/api/endpoints.md` |
-| Background jobs (BullMQ) | `docs/technical/infrastructure/automations.md` |
-| Email templates (MJML) | `docs/technical/infrastructure/email-service.md` |
-| PDF/DOCX reporting | `docs/technical/infrastructure/pdf-generation.md` |
-| File upload system | `docs/technical/infrastructure/file-storage.md` |
-| Change history tracking | `docs/claude/change-history.md` |
-| Error handling & exceptions | `docs/claude/error-handling.md` |
-| Logging system | `docs/claude/logging.md` |
-| Middleware (rate limit, RBAC, JWT, Redis) | `docs/claude/middleware.md` |
-| Assessments, subscriptions, tokens, etc. | `docs/claude/additional-apis.md` |
 | Approval workflows | `docs/technical/domains/approvals.md` |
 | AI Detection | `docs/technical/domains/ai-detection.md` |
-| Post-market monitoring | `docs/technical/domains/post-market-monitoring.md` |
-| Notifications | `docs/technical/domains/notifications.md` |
 | Risk management | `docs/technical/domains/risk-management.md` |
 | Vendors | `docs/technical/domains/vendors.md` |
 | Policies | `docs/technical/domains/policies.md` |
-| Datasets | `docs/technical/domains/datasets.md` |
 | Use cases / projects | `docs/technical/domains/use-cases.md` |
+| Models / model inventory | `docs/technical/domains/models.md` |
+| Datasets | `docs/technical/domains/datasets.md` |
 | Tasks | `docs/technical/domains/tasks.md` |
 | Incidents | `docs/technical/domains/incidents.md` |
 | Evidence hub | `docs/technical/domains/evidence.md` |
-| Models / model inventory | `docs/technical/domains/models.md` |
 | Training registry | `docs/technical/domains/training.md` |
 | Search | `docs/technical/domains/search.md` |
+| Notifications | `docs/technical/domains/notifications.md` |
 | Share links | `docs/technical/domains/share-links.md` |
 | Dashboard | `docs/technical/domains/dashboard.md` |
+| Post-market monitoring | `docs/technical/domains/post-market-monitoring.md` |
 | Compliance frameworks | `docs/technical/domains/compliance-frameworks.md` |
-| MUI theming & design tokens | `docs/technical/guides/design-tokens.md` |
-| Frontend styling | `docs/technical/frontend/styling.md` |
-| Frontend components | `docs/technical/frontend/components.md` |
-| Redux, Axios, frontend architecture | `docs/technical/frontend/overview.md` |
-| AI Advisor | `docs/technical/infrastructure/ai-advisor.md` |
-| Integrations (Slack, GitHub) | `docs/technical/infrastructure/integrations.md` |
 | Docker & deployment | `docs/deployment/PRODUCTION_DEPLOYMENT_GUIDE.md` |
-| CI/CD workflows | `docs/deployment/README.md` |
 | Database schema | `docs/technical/architecture/database-schema.md` |
 | Authentication architecture | `docs/technical/architecture/authentication.md` |
 | Multi-tenancy architecture | `docs/technical/architecture/multi-tenancy.md` |
-| Testing guide | `docs/technical/guides/testing.md` |
+
+> Backend-specific refs (middleware, logging, BullMQ, email, PDF) are in `Servers/CLAUDE.md`.
+> Frontend-specific refs (styling, components, design tokens) are in `Clients/CLAUDE.md`.
 
 ---
 

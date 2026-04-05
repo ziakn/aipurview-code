@@ -16,7 +16,7 @@ from reports.seed_report import build_seed_report
 from reports.render_report import build_render_report
 from reports.perturb_report import build_perturb_report
 
-from render.load_catalogs import load_render_inputs
+from render.load_catalogs import load_render_inputs, validate_render_inputs
 from render.renderer import render_base_scenarios, RenderConfig
 from render.dedup import prompt_hash
 
@@ -24,6 +24,7 @@ from perturb.load_catalog import load_mutation_catalog
 from perturb.perturbator import apply_mutations
 
 from validate.validator import validate_candidates, ValidateConfig
+from validate.semantic import SemanticValidator, SemanticValidatorConfig
 from reports.validate_report import build_validate_report
 
 from seeds.index import ObligationIndex
@@ -31,11 +32,13 @@ from validate.enrich import enrich_with_obligations
 
 from infer.runner import run_inference, run_inference_resumable, InferConfig
 from infer.load_models import load_models_config
+from infer.models_config import ModelSpec
 from infer.paths import model_output_path
 from infer.stats import compute_model_stats
 from infer.manifest import write_infer_manifest
 from llm.mock import MockChatClient
 from llm.openrouter import OpenRouterChatClient
+from llm.factory import build_client
 
 from infer.resume import load_completed_pairs
 from reports.infer_report import build_infer_report
@@ -110,6 +113,7 @@ def _cmd_generate(args: argparse.Namespace) -> int:
         obligations_version, obligations = load_obligations_yaml(obligations_path)
 
         inputs = load_render_inputs(config_dir=Path("configs"))
+        validate_render_inputs(inputs)
         base_scenarios = render_base_scenarios(
             obligations=obligations,
             inputs=inputs,
@@ -257,9 +261,16 @@ def _cmd_generate(args: argparse.Namespace) -> int:
             return 2
 
         candidates = list(read_jsonl(cand_in))
+        sem_client = (
+            MockChatClient()
+            if args.provider == "mock"
+            else OpenRouterChatClient(model_id=args.validator_model_id)
+        )
+        sem_validator = SemanticValidator(sem_client, SemanticValidatorConfig())
         accepted, rejections = validate_candidates(
             candidates=candidates,
             cfg=ValidateConfig(),
+            semantic_validator=sem_validator,
         )
 
         accepted = enrich_with_obligations(
@@ -341,10 +352,6 @@ def _cmd_generate(args: argparse.Namespace) -> int:
             outputs = []
 
             for spec in models_cfg.models:
-                if spec.provider != "openrouter":
-                    console.print(f"[yellow]Skipping unsupported provider in v0.1:[/yellow] {spec.provider}")
-                    continue
-
                 out_path = model_output_path(final_dir, spec.model_id)
                 fail_path = out_path.with_suffix(out_path.suffix + ".failures.jsonl")
 
@@ -352,7 +359,7 @@ def _cmd_generate(args: argparse.Namespace) -> int:
                 if args.resume:
                     skip = load_completed_pairs(out_path)
 
-                client = OpenRouterChatClient(model_id=spec.model_id)
+                client = build_client(spec)
                 successes, failures = run_inference_resumable(
                     scenarios=scenarios,
                     client=client,
@@ -418,10 +425,7 @@ def _cmd_generate(args: argparse.Namespace) -> int:
 
             return 0
 
-        if args.provider == "openrouter":
-            client = OpenRouterChatClient(model_id=args.model_id)
-        else:
-            client = MockChatClient(model_id=args.model_id, provider=args.provider)
+        client = build_client(ModelSpec(provider=args.provider, model_id=args.model_id))
 
         cfg = InferConfig(
             model_id=args.model_id,
@@ -614,6 +618,7 @@ def main() -> None:
     gen.add_argument("--inject-constraints-into-prompt", action="store_true")
     gen.add_argument("--model-id", default="mock-model")
     gen.add_argument("--provider", default="mock")
+    gen.add_argument("--validator-model-id", default="openai/gpt-4o-mini")
     gen.add_argument("--temperature", default="0.2")
     gen.add_argument("--max-tokens", default="2048")
     gen.add_argument("--limit", type=int, default=None, help="Max number of scenarios to run inference on")

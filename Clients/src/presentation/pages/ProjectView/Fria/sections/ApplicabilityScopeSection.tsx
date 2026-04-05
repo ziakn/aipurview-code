@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Box } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
+import dayjs from "dayjs";
 import Field from "../../../../components/Inputs/Field";
 import Select from "../../../../components/Inputs/Select";
 import DatePicker from "../../../../components/Inputs/Datepicker";
@@ -65,7 +66,7 @@ function ApplicabilityScopeSection({
   );
 
   const handleSelectChange =
-    (field: keyof FriaAssessment) => (e: SelectChangeEvent<unknown>) => {
+    (field: keyof FriaAssessment) => (e: SelectChangeEvent<string | number>) => {
       onUpdate({ [field]: e.target.value as string });
     };
 
@@ -180,7 +181,7 @@ function ApplicabilityScopeSection({
       >
         <DatePicker
           label="First use date"
-          date={assessment.first_use_date ?? null}
+          date={assessment.first_use_date ? dayjs(assessment.first_use_date) : null}
           handleDateChange={handleFirstUseDateChange}
           disabled={isSaving}
         />

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import {
-  Box,
   Stack,
   Typography,
   Table,
@@ -57,7 +56,7 @@ const FriaRiskImportModal = ({
     getAllProjectRisksByProjectId({ projectId, filter: "active" })
       .then((data: { data?: unknown[] } | unknown[]) => {
         const riskList = (data && typeof data === "object" && "data" in data ? data.data : data) || [];
-        setRisks(Array.isArray(riskList) ? riskList : []);
+        setRisks(Array.isArray(riskList) ? (riskList as typeof risks) : []);
       })
       .catch(() => setRisks([]))
       .finally(() => setIsLoading(false));
@@ -139,6 +138,7 @@ const FriaRiskImportModal = ({
                           id={`risk-${risk.id}`}
                           label=""
                           isChecked={selectedIds.includes(risk.id)}
+                          value={String(risk.id)}
                           onChange={() => toggleRisk(risk.id)}
                           size="small"
                         />
@@ -155,7 +155,7 @@ const FriaRiskImportModal = ({
                       </TableCell>
                       <TableCell>
                         {(risk.severity || risk.final_risk_level) && (
-                          <Chip label={risk.severity || risk.final_risk_level} size="small" />
+                          <Chip label={risk.severity || risk.final_risk_level || ""} size="small" />
                         )}
                       </TableCell>
                     </TableRow>
