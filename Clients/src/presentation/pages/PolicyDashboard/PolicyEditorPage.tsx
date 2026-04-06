@@ -497,7 +497,7 @@ export default function PolicyEditorPage() {
     []
   );
 
-  const { errors: validationErrors, validateAll, resetErrors } =
+  const { errors: validationErrors, validateAll, resetErrors, clearFieldError } =
     useFormValidation<PolicyFormData>(validators);
 
   const displayErrors = useMemo(
@@ -1740,7 +1740,7 @@ export default function PolicyEditorPage() {
             setFormData={setFormData}
             tags={tags}
             errors={displayErrors}
-            setErrors={() => {}}
+            clearFieldError={clearFieldError}
           />
         </Box>
 
