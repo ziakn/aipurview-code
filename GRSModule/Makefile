@@ -13,6 +13,7 @@ validate:
 	uv run grs-scenarios generate --stage validate
 
 backfill-base:
+	@if [ -z "$(VERSION)" ]; then echo "Error: VERSION is required. Usage: make backfill-base VERSION=grs_scenarios_v0.3"; exit 1; fi
 	uv run grs-scenarios generate --stage backfill-base --dataset-version $(VERSION)
 
 infer-mock-client:

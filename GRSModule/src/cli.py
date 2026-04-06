@@ -602,6 +602,7 @@ def _cmd_generate(args: argparse.Namespace) -> int:
             try:
                 return int(parts[1]) if len(parts) >= 2 else 0
             except (ValueError, IndexError):
+                console.print(f"[yellow]Warning: unrecognised scenario_id format '{sid}', treating as 0 for ID sequencing.[/yellow]")
                 return 0
 
         max_id = max((_parse_grs_id(s["scenario_id"]) for s in existing_scenarios), default=0)
