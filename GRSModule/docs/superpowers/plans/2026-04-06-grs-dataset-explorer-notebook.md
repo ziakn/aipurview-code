@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Write `experiment.ipynb` — an interactive Jupyter notebook for exploring GRS v3.0 dataset pool statistics across three source datasets before running the sampling operation.
+**Goal:** Write `pre_sampling_analysis.ipynb` — an interactive Jupyter notebook for exploring GRS v3.0 dataset pool statistics across three source datasets before running the sampling operation.
 
 **Architecture:** Single notebook, one `pd.DataFrame` built at load time, all 8 sections read from it. No file writes, no sampling code — read-only exploration. Each section is a self-contained block of markdown + code cells.
 
@@ -14,7 +14,7 @@
 
 | File | Action | Responsibility |
 |------|--------|---------------|
-| `experiment.ipynb` | **Replace** | The entire notebook — all 8 sections |
+| `pre_sampling_analysis.ipynb` | **Create** | The entire notebook — all 8 sections |
 | `configs/obligations.yaml` | Read-only | Source of truth for seeded obligation IDs |
 | `datasets/grs_scenarios_v0.{1,2,3}/final/scenarios.jsonl` | Read-only | The three source datasets |
 
@@ -25,13 +25,13 @@ No new files are created.
 ## Task 1: Reset Notebook and Write Scaffold
 
 **Files:**
-- Replace: `experiment.ipynb`
+- Replace: `pre_sampling_analysis.ipynb`
 
 The existing notebook has two broken cells pointing at a non-existent parquet file. Replace it entirely with a clean scaffold: title markdown cell + imports cell + config cell.
 
 - [ ] **Step 1: Write the fresh notebook JSON**
 
-Write the following to `experiment.ipynb` (valid `.ipynb` v4 format):
+Write the following to `pre_sampling_analysis.ipynb` (valid `.ipynb` v4 format):
 
 ```json
 {
@@ -119,7 +119,7 @@ Write the following to `experiment.ipynb` (valid `.ipynb` v4 format):
 - [ ] **Step 2: Verify the notebook opens without errors**
 
 ```bash
-uv run jupyter nbconvert --to script experiment.ipynb --stdout 2>/dev/null | head -20
+uv run jupyter nbconvert --to script pre_sampling_analysis.ipynb --stdout 2>/dev/null | head -20
 ```
 
 Expected: prints the config and import lines without error.
@@ -127,7 +127,7 @@ Expected: prints the config and import lines without error.
 - [ ] **Step 3: Commit**
 
 ```bash
-git add experiment.ipynb
+git add pre_sampling_analysis.ipynb
 git commit -m "feat(notebook): scaffold GRS dataset explorer with config and imports"
 ```
 
@@ -136,11 +136,11 @@ git commit -m "feat(notebook): scaffold GRS dataset explorer with config and imp
 ## Task 2: Data Loading Cell
 
 **Files:**
-- Modify: `experiment.ipynb` — append 1 code cell after imports
+- Modify: `pre_sampling_analysis.ipynb` — append 1 code cell after imports
 
 - [ ] **Step 1: Append the data loading cell**
 
-Add this cell to `experiment.ipynb` after the imports cell:
+Add this cell to `pre_sampling_analysis.ipynb` after the imports cell:
 
 ```python
 # ── DATA LOADING ─────────────────────────────────────────────
@@ -178,13 +178,13 @@ for source_name in SOURCE_ORDER:
 - [ ] **Step 2: Execute the notebook and verify output**
 
 ```bash
-uv run jupyter nbconvert --to notebook --execute --inplace experiment.ipynb 2>&1 | tail -5
+uv run jupyter nbconvert --to notebook --execute --inplace pre_sampling_analysis.ipynb 2>&1 | tail -5
 ```
 
 Expected: exits 0. Then check the output:
 
 ```bash
-uv run jupyter nbconvert --to script experiment.ipynb --stdout 2>/dev/null | grep -A2 "Loaded"
+uv run jupyter nbconvert --to script pre_sampling_analysis.ipynb --stdout 2>/dev/null | grep -A2 "Loaded"
 ```
 
 Expected output in the executed notebook:
@@ -199,7 +199,7 @@ Loaded 2004 scenarios total
 - [ ] **Step 3: Commit**
 
 ```bash
-git add experiment.ipynb
+git add pre_sampling_analysis.ipynb
 git commit -m "feat(notebook): add data loading cell with derived columns"
 ```
 
@@ -208,7 +208,7 @@ git commit -m "feat(notebook): add data loading cell with derived columns"
 ## Task 3: Section 2 — Dataset Inventory
 
 **Files:**
-- Modify: `experiment.ipynb` — append 1 markdown cell + 1 code cell
+- Modify: `pre_sampling_analysis.ipynb` — append 1 markdown cell + 1 code cell
 
 - [ ] **Step 1: Append the section 2 markdown header cell**
 
@@ -258,7 +258,7 @@ inventory_df.style.set_caption("Dataset Inventory — Pre-Sampling Checklist 2.1
 - [ ] **Step 3: Execute and verify**
 
 ```bash
-uv run jupyter nbconvert --to notebook --execute --inplace experiment.ipynb 2>&1 | tail -3
+uv run jupyter nbconvert --to notebook --execute --inplace pre_sampling_analysis.ipynb 2>&1 | tail -3
 ```
 
 Expected: exits 0, no KeyError. The styled table renders in Jupyter with one row per source plus COMBINED.
@@ -266,7 +266,7 @@ Expected: exits 0, no KeyError. The styled table renders in Jupyter with one row
 - [ ] **Step 4: Commit**
 
 ```bash
-git add experiment.ipynb
+git add pre_sampling_analysis.ipynb
 git commit -m "feat(notebook): add dataset inventory table (section 2)"
 ```
 
@@ -275,7 +275,7 @@ git commit -m "feat(notebook): add dataset inventory table (section 2)"
 ## Task 4: Section 3 — Source Balance
 
 **Files:**
-- Modify: `experiment.ipynb` — append 1 markdown cell + 1 code cell
+- Modify: `pre_sampling_analysis.ipynb` — append 1 markdown cell + 1 code cell
 
 - [ ] **Step 1: Append the section 3 markdown header**
 
@@ -313,7 +313,7 @@ for source_name, count in source_counts.items():
 - [ ] **Step 3: Execute and verify**
 
 ```bash
-uv run jupyter nbconvert --to notebook --execute --inplace experiment.ipynb 2>&1 | tail -3
+uv run jupyter nbconvert --to notebook --execute --inplace pre_sampling_analysis.ipynb 2>&1 | tail -3
 ```
 
 Expected: exits 0. Chart renders, printout shows 3 lines with count + percentage.
@@ -321,7 +321,7 @@ Expected: exits 0. Chart renders, printout shows 3 lines with count + percentage
 - [ ] **Step 4: Commit**
 
 ```bash
-git add experiment.ipynb
+git add pre_sampling_analysis.ipynb
 git commit -m "feat(notebook): add source balance bar chart (section 3)"
 ```
 
@@ -330,7 +330,7 @@ git commit -m "feat(notebook): add source balance bar chart (section 3)"
 ## Task 5: Section 4 — Scenario Type Distribution
 
 **Files:**
-- Modify: `experiment.ipynb` — append 1 markdown cell + 1 code cell
+- Modify: `pre_sampling_analysis.ipynb` — append 1 markdown cell + 1 code cell
 
 - [ ] **Step 1: Append the section 4 markdown header**
 
@@ -386,7 +386,7 @@ display_df.set_index("Source")[["Base", "Base %", "Mutated", "Mutated %"]]
 - [ ] **Step 3: Execute and verify**
 
 ```bash
-uv run jupyter nbconvert --to notebook --execute --inplace experiment.ipynb 2>&1 | tail -3
+uv run jupyter nbconvert --to notebook --execute --inplace pre_sampling_analysis.ipynb 2>&1 | tail -3
 ```
 
 Expected: exits 0. Grouped bar chart renders with 2 bars per source, table shows count + percentage.
@@ -394,7 +394,7 @@ Expected: exits 0. Grouped bar chart renders with 2 bars per source, table shows
 - [ ] **Step 4: Commit**
 
 ```bash
-git add experiment.ipynb
+git add pre_sampling_analysis.ipynb
 git commit -m "feat(notebook): add scenario type distribution chart (section 4)"
 ```
 
@@ -403,7 +403,7 @@ git commit -m "feat(notebook): add scenario type distribution chart (section 4)"
 ## Task 6: Section 5 — Mutation Family Distribution
 
 **Files:**
-- Modify: `experiment.ipynb` — append 1 markdown cell + 1 code cell
+- Modify: `pre_sampling_analysis.ipynb` — append 1 markdown cell + 1 code cell
 
 - [ ] **Step 1: Append the section 5 markdown header**
 
@@ -476,7 +476,7 @@ pd.DataFrame(table_rows).set_index("Source")
 - [ ] **Step 3: Execute and verify**
 
 ```bash
-uv run jupyter nbconvert --to notebook --execute --inplace experiment.ipynb 2>&1 | tail -3
+uv run jupyter nbconvert --to notebook --execute --inplace pre_sampling_analysis.ipynb 2>&1 | tail -3
 ```
 
 Expected: exits 0. Grouped bar chart renders with one group per mutation family. Table shows counts and percentages within mutated scenarios only.
@@ -484,7 +484,7 @@ Expected: exits 0. Grouped bar chart renders with one group per mutation family.
 - [ ] **Step 4: Commit**
 
 ```bash
-git add experiment.ipynb
+git add pre_sampling_analysis.ipynb
 git commit -m "feat(notebook): add mutation family distribution chart (section 5)"
 ```
 
@@ -493,7 +493,7 @@ git commit -m "feat(notebook): add mutation family distribution chart (section 5
 ## Task 7: Section 6 — Obligation Coverage
 
 **Files:**
-- Modify: `experiment.ipynb` — append 1 markdown cell + 1 code cell
+- Modify: `pre_sampling_analysis.ipynb` — append 1 markdown cell + 1 code cell
 
 - [ ] **Step 1: Append the section 6 markdown header**
 
@@ -554,7 +554,7 @@ if missing:
 - [ ] **Step 3: Execute and verify**
 
 ```bash
-uv run jupyter nbconvert --to notebook --execute --inplace experiment.ipynb 2>&1 | tail -3
+uv run jupyter nbconvert --to notebook --execute --inplace pre_sampling_analysis.ipynb 2>&1 | tail -3
 ```
 
 Expected: exits 0. Matrix shows obligation IDs as rows, source names as columns. Coverage check prints `✓ 10/10 seeded obligations covered` and `✓ Each obligation appears in exactly 1 source`.
@@ -562,7 +562,7 @@ Expected: exits 0. Matrix shows obligation IDs as rows, source names as columns.
 - [ ] **Step 4: Commit**
 
 ```bash
-git add experiment.ipynb
+git add pre_sampling_analysis.ipynb
 git commit -m "feat(notebook): add obligation coverage matrix and check (section 6)"
 ```
 
@@ -571,7 +571,7 @@ git commit -m "feat(notebook): add obligation coverage matrix and check (section
 ## Task 8: Section 7 — Governance Triggers Distribution
 
 **Files:**
-- Modify: `experiment.ipynb` — append 1 markdown cell + 1 code cell
+- Modify: `pre_sampling_analysis.ipynb` — append 1 markdown cell + 1 code cell
 
 - [ ] **Step 1: Append the section 7 markdown header**
 
@@ -644,7 +644,7 @@ pd.DataFrame(table_rows).set_index("Source").style.set_caption(
 - [ ] **Step 3: Execute and verify**
 
 ```bash
-uv run jupyter nbconvert --to notebook --execute --inplace experiment.ipynb 2>&1 | tail -3
+uv run jupyter nbconvert --to notebook --execute --inplace pre_sampling_analysis.ipynb 2>&1 | tail -3
 ```
 
 Expected: exits 0. Heatmap renders with triggers as rows, sources as columns, annotated with percentages. Table shows `n (pct%)` format for each cell.
@@ -652,7 +652,7 @@ Expected: exits 0. Heatmap renders with triggers as rows, sources as columns, an
 - [ ] **Step 4: Commit**
 
 ```bash
-git add experiment.ipynb
+git add pre_sampling_analysis.ipynb
 git commit -m "feat(notebook): add governance triggers heatmap and count table (section 7)"
 ```
 
@@ -661,7 +661,7 @@ git commit -m "feat(notebook): add governance triggers heatmap and count table (
 ## Task 9: Section 8 — Pre-Sampling Readiness Summary
 
 **Files:**
-- Modify: `experiment.ipynb` — append 1 markdown cell + 1 code cell
+- Modify: `pre_sampling_analysis.ipynb` — append 1 markdown cell + 1 code cell
 
 - [ ] **Step 1: Append the section 8 markdown header**
 
@@ -768,7 +768,7 @@ else:
 - [ ] **Step 3: Execute and verify**
 
 ```bash
-uv run jupyter nbconvert --to notebook --execute --inplace experiment.ipynb 2>&1 | tail -3
+uv run jupyter nbconvert --to notebook --execute --inplace pre_sampling_analysis.ipynb 2>&1 | tail -3
 ```
 
 Expected: exits 0. Summary prints all 5 check groups, pool totals, and a final verdict line.
@@ -776,7 +776,7 @@ Expected: exits 0. Summary prints all 5 check groups, pool totals, and a final v
 - [ ] **Step 4: Commit**
 
 ```bash
-git add experiment.ipynb
+git add pre_sampling_analysis.ipynb
 git commit -m "feat(notebook): add pre-sampling readiness summary (section 8)"
 ```
 
@@ -785,13 +785,13 @@ git commit -m "feat(notebook): add pre-sampling readiness summary (section 8)"
 ## Task 10: Full Execution Verification and Final Commit
 
 **Files:**
-- Read: `experiment.ipynb` (verify all cells executed cleanly)
+- Read: `pre_sampling_analysis.ipynb` (verify all cells executed cleanly)
 
 - [ ] **Step 1: Clear all outputs and re-execute from scratch**
 
 ```bash
 uv run jupyter nbconvert --to notebook --execute --inplace \
-  --ExecutePreprocessor.timeout=120 experiment.ipynb 2>&1
+  --ExecutePreprocessor.timeout=120 pre_sampling_analysis.ipynb 2>&1
 ```
 
 Expected: exits 0 with no tracebacks. All 8 sections produce output.
@@ -801,7 +801,7 @@ Expected: exits 0 with no tracebacks. All 8 sections produce output.
 ```bash
 uv run python -c "
 import json
-nb = json.load(open('experiment.ipynb'))
+nb = json.load(open('pre_sampling_analysis.ipynb'))
 headers = [c['source'][0] for c in nb['cells'] if c['cell_type'] == 'markdown' and c['source'] and c['source'][0].startswith('## Section')]
 for h in headers:
     print(h)
@@ -823,6 +823,6 @@ Expected output:
 - [ ] **Step 3: Final commit**
 
 ```bash
-git add experiment.ipynb
+git add pre_sampling_analysis.ipynb
 git commit -m "feat(notebook): complete GRS dataset explorer — all 8 sections verified"
 ```
