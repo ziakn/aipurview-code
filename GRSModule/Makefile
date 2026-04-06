@@ -1,4 +1,4 @@
-.PHONY: seeds render perturb all export-parquet publish-dataset generate
+.PHONY: seeds render perturb validate all backfill-base export-parquet publish-dataset generate
 
 seeds:
 	uv run grs-scenarios generate --stage seeds
@@ -11,6 +11,9 @@ perturb:
 
 validate:
 	uv run grs-scenarios generate --stage validate
+
+backfill-base:
+	uv run grs-scenarios generate --stage backfill-base --dataset-version $(VERSION)
 
 infer-mock-client:
 	uv run grs-scenarios generate --stage infer --model-id mock-v0 --limit 3
