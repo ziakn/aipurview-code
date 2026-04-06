@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     mcp_circuit_breaker_threshold: int = 5
     mcp_circuit_breaker_timeout_seconds: int = 30
     mcp_approval_expiry_seconds: int = 900
+    mcp_audit_retention_days: int = 30
 
 
 settings = Settings()

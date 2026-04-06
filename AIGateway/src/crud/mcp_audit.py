@@ -9,8 +9,11 @@ async def get_audit_logs(
     limit: int = 50,
     offset: int = 0,
     filters: Optional[dict] = None,
-) -> list[dict]:
-    """Paginated audit logs with optional filters, joined with agent key name."""
+) -> dict:
+    """Paginated audit logs with optional filters, joined with agent key name.
+
+    Returns ``{"data": [...], "total": int, "limit": int, "offset": int}``.
+    """
     filters = filters or {}
 
     where_clauses = ["al.organization_id = :org_id"]
@@ -38,7 +41,13 @@ async def get_audit_logs(
 
     where_sql = " AND ".join(where_clauses)
 
-    sql = f"""
+    count_sql = f"""
+        SELECT COUNT(*) AS total
+        FROM ai_gateway_mcp_audit_logs al
+        WHERE {where_sql}
+    """
+
+    data_sql = f"""
         SELECT
             al.id,
             al.organization_id,
@@ -62,10 +71,14 @@ async def get_audit_logs(
     """
 
     async with get_db() as db:
-        result = await db.execute(text(sql), params)
+        count_result = await db.execute(text(count_sql), params)
+        total = count_result.scalar() or 0
+
+        result = await db.execute(text(data_sql), params)
         rows = result.mappings().all()
-        return [dict(row) for row in rows]
-    return []
+        data = [dict(row) for row in rows]
+
+    return {"data": data, "total": total, "limit": limit, "offset": offset}
 
 
 async def get_audit_stats(org_id: int, days: int = 7) -> dict:
@@ -168,3 +181,19 @@ async def get_audit_stats_by_agent(org_id: int, days: int = 7) -> list[dict]:
             }
             for row in rows
         ]
+
+
+async def delete_expired_audit_logs(retention_days: int = 30) -> int:
+    """Delete audit logs older than retention_days. Returns count of deleted rows."""
+    retention_days = int(retention_days)
+
+    async with get_db() as db:
+        result = await db.execute(
+            text(f"""
+                DELETE FROM ai_gateway_mcp_audit_logs
+                WHERE created_at < NOW() - INTERVAL '{retention_days} days'
+                RETURNING id
+            """),
+        )
+        await db.commit()
+        return len(result.fetchall())

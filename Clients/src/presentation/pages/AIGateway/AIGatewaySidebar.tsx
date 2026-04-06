@@ -81,6 +81,8 @@ export default function AIGatewaySidebar({
   const mcpGroups: SidebarMenuGroup[] = [
     {
       name: "MCP Gateway",
+      collapsible: true,
+      defaultCollapsed: true,
       items: [
         {
           id: "mcp-agent-keys",

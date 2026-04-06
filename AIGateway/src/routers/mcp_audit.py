@@ -3,6 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Request, status
 
 from crud.mcp_audit import (
+    delete_expired_audit_logs,
     get_audit_logs,
     get_audit_stats,
     get_audit_stats_by_agent,
@@ -44,8 +45,14 @@ async def list_audit_logs(
     if end_date is not None:
         filters["end_date"] = end_date
 
-    logs = await get_audit_logs(org_id, limit=limit, offset=offset, filters=filters)
-    return {"status": "success", "data": logs}
+    result = await get_audit_logs(org_id, limit=limit, offset=offset, filters=filters)
+    return {
+        "status": "success",
+        "data": result["data"],
+        "total": result["total"],
+        "limit": result["limit"],
+        "offset": result["offset"],
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -85,3 +92,17 @@ async def audit_stats_by_agent(request: Request, days: int = 7):
 
     stats = await get_audit_stats_by_agent(org_id, days=days)
     return {"status": "success", "data": stats}
+
+
+# ---------------------------------------------------------------------------
+# POST /mcp/audit/cleanup
+# ---------------------------------------------------------------------------
+
+@router.post("/cleanup", status_code=status.HTTP_200_OK)
+async def cleanup_audit_logs(request: Request):
+    """Delete audit logs older than retention period. Called by scheduled job."""
+    verify_internal_key(request)
+    from config import settings
+
+    deleted = await delete_expired_audit_logs(settings.mcp_audit_retention_days)
+    return {"status": "success", "deleted": deleted}

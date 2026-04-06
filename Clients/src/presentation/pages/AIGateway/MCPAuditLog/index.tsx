@@ -48,6 +48,8 @@ const STATUS_ITEMS = [
   { _id: "rate_limited", name: "Rate limited" },
 ];
 
+const PAGE_SIZE = 20;
+
 export default function MCPAuditLogPage() {
   const cardSx = useCardSx();
 
@@ -55,16 +57,14 @@ export default function MCPAuditLogPage() {
   const [stats, setStats] = useState<AuditStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [days, setDays] = useState("7");
-  const [offset, setOffset] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
   const [filterTool, setFilterTool] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
 
   const loadStats = useCallback(async () => {
     try {
-      const res = await apiServices.get<Record<string, any>>(
-        `/ai-gateway/mcp/audit/stats?days=${days}`
-      );
+      const res = await apiServices.get<Record<string, any>>(`/ai-gateway/mcp/audit/stats?days=${days}`);
       setStats(res?.data?.data || null);
     } catch {
       // silent
@@ -72,30 +72,25 @@ export default function MCPAuditLogPage() {
   }, [days]);
 
   const loadLogs = useCallback(
-    async (reset = false) => {
+    async (pageNum: number) => {
       try {
-        const newOffset = reset ? 0 : offset;
-        let url = `/ai-gateway/mcp/audit/logs?limit=50&offset=${newOffset}`;
+        const newOffset = (pageNum - 1) * PAGE_SIZE;
+        let url = `/ai-gateway/mcp/audit/logs?limit=${PAGE_SIZE}&offset=${newOffset}`;
         if (filterTool) url += `&tool_name=${encodeURIComponent(filterTool)}`;
         if (filterStatus !== "all") url += `&result_status=${filterStatus}`;
 
         const res = await apiServices.get<Record<string, any>>(url);
         const data: AuditLog[] = res?.data?.data || [];
-        if (reset) {
-          setLogs(data);
-          setOffset(data.length);
-        } else {
-          setLogs((prev) => [...prev, ...data]);
-          setOffset((prev) => prev + data.length);
-        }
-        setHasMore(data.length >= 50);
+        const totalCount = res?.data?.total ?? data.length;
+        setLogs(data);
+        setTotal(totalCount);
       } catch {
         // silent
       } finally {
         setLoading(false);
       }
     },
-    [offset, filterTool, filterStatus]
+    [filterTool, filterStatus]
   );
 
   useEffect(() => {
@@ -104,10 +99,15 @@ export default function MCPAuditLogPage() {
 
   useEffect(() => {
     setLoading(true);
-    setOffset(0);
-    loadLogs(true);
+    setPage(1);
+    loadLogs(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterTool, filterStatus]);
+
+  useEffect(() => {
+    setLoading(true);
+    loadLogs(page);
+  }, [page, loadLogs]);
 
   const isFirstTime = !loading && logs.length === 0 && !stats?.total_calls;
   const noFilterResults = !loading && logs.length === 0 && !isFirstTime;
@@ -149,6 +149,8 @@ export default function MCPAuditLogPage() {
             </Stack>
           )}
 
+          {/* Charts: Calls by tool & Latency by tool */}
+
           <Stack direction="row" spacing={2} sx={{ px: 3, pt: 3, pb: 1.5 }} alignItems="flex-end">
             <Box sx={{ width: 240 }}>
               <Field label="Filter by tool" placeholder="e.g. greet" value={filterTool} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilterTool(e.target.value)} />
@@ -186,10 +188,16 @@ export default function MCPAuditLogPage() {
                     </Box>
                   );
                 })}
-                {hasMore && (
-                  <Box sx={{ textAlign: "center", pt: 1 }}>
-                    <CustomizableButton label="Load more" onClick={() => loadLogs(false)} variant="outlined" />
-                  </Box>
+                {total > 0 && (
+                  <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ pt: 2 }}>
+                    <Typography variant="body2" color="text.secondary">
+                      Showing {((page - 1) * PAGE_SIZE) + 1}&ndash;{Math.min(page * PAGE_SIZE, total)} of {total}
+                    </Typography>
+                    <Stack direction="row" spacing={1}>
+                      <CustomizableButton text="Previous" onClick={() => setPage(p => p - 1)} variant="outlined" disabled={page <= 1} />
+                      <CustomizableButton text="Next" onClick={() => setPage(p => p + 1)} variant="outlined" disabled={page * PAGE_SIZE >= total} />
+                    </Stack>
+                  </Stack>
                 )}
               </>
             )}
