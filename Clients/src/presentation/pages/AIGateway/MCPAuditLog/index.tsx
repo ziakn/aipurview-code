@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { Box, Typography, Stack } from "@mui/material";
-import { Activity, AlertTriangle, Clock, Wrench, BarChart3 } from "lucide-react";
+import { Activity, AlertTriangle, Clock, Wrench, BarChart3, Info } from "lucide-react";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
+import { chartTooltipStyle } from "../../../components/Charts/chartEnhancements";
 import Select from "../../../components/Inputs/Select";
 import Field from "../../../components/Inputs/Field";
 import Chip from "../../../components/Chip";
@@ -9,7 +11,9 @@ import { CustomizableButton } from "../../../components/button/customizable-butt
 import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtended";
 import { EmptyState } from "../../../components/EmptyState";
 import EmptyStateTip from "../../../components/EmptyState/EmptyStateTip";
+import { Tooltip as MuiTooltip } from "@mui/material";
 import { apiServices } from "../../../../infrastructure/api/networkServices";
+import palette from "../../../themes/palette";
 import { sectionTitleSx, useCardSx, MCP_STATUS_COLORS, MCP_STATUS_FALLBACK } from "../shared";
 import { displayFormattedDate } from "../../../tools/isoDateToString";
 
@@ -55,6 +59,7 @@ export default function MCPAuditLogPage() {
 
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [stats, setStats] = useState<AuditStats | null>(null);
+  const [toolStats, setToolStats] = useState<{ tool_name: string; count: number; avg_latency_ms: number }[]>([]);
   const [loading, setLoading] = useState(true);
   const [days, setDays] = useState("7");
   const [page, setPage] = useState(1);
@@ -64,8 +69,13 @@ export default function MCPAuditLogPage() {
 
   const loadStats = useCallback(async () => {
     try {
-      const res = await apiServices.get<Record<string, any>>(`/ai-gateway/mcp/audit/stats?days=${days}`);
-      setStats(res?.data?.data || null);
+      const [statsRes, toolRes] = await Promise.all([
+        apiServices.get<Record<string, any>>(`/ai-gateway/mcp/audit/stats?days=${days}`),
+        apiServices.get<Record<string, any>>(`/ai-gateway/mcp/audit/stats/by-tool?days=${days}`),
+      ]);
+      setStats(statsRes?.data?.data || null);
+      const allTools = toolRes?.data?.data || [];
+      setToolStats(allTools.sort((a: any, b: any) => b.count - a.count).slice(0, 10));
     } catch {
       // silent
     }
@@ -149,7 +159,44 @@ export default function MCPAuditLogPage() {
             </Stack>
           )}
 
-          {/* Charts: Calls by tool & Latency by tool */}
+          {toolStats.length > 0 && (
+            <Stack direction={{ xs: "column", md: "row" }} spacing={2} sx={{ px: 3, pt: 2 }}>
+              <Box sx={{ ...cardSx, flex: 1 }}>
+                <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 1 }}>
+                  <Typography sx={sectionTitleSx}>Top 10 tools by calls</Typography>
+                  <MuiTooltip title="Most frequently invoked tools in the selected period, ranked by total call count" arrow placement="top">
+                    <Box sx={{ display: "flex", alignItems: "center", cursor: "help" }}><Info size={14} color={palette.text.disabled} /></Box>
+                  </MuiTooltip>
+                </Stack>
+                <ResponsiveContainer width="100%" height={160}>
+                  <BarChart data={toolStats} barSize={32} layout="horizontal">
+                    <CartesianGrid strokeDasharray="3 3" stroke="#eee" vertical={false} />
+                    <XAxis dataKey="tool_name" tick={{ fontSize: 11, fill: "#888" }} tickLine={false} axisLine={false} />
+                    <YAxis tick={{ fontSize: 11, fill: "#888" }} tickLine={false} axisLine={false} allowDecimals={false} />
+                    <Tooltip contentStyle={chartTooltipStyle} />
+                    <Bar dataKey="count" name="Calls" fill="#5C8A7D" radius={[3, 3, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Box>
+              <Box sx={{ ...cardSx, flex: 1 }}>
+                <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 1 }}>
+                  <Typography sx={sectionTitleSx}>Avg latency — top 10 tools</Typography>
+                  <MuiTooltip title="Average round-trip time per tool call, helping identify slow or bottlenecked tools" arrow placement="top">
+                    <Box sx={{ display: "flex", alignItems: "center", cursor: "help" }}><Info size={14} color={palette.text.disabled} /></Box>
+                  </MuiTooltip>
+                </Stack>
+                <ResponsiveContainer width="100%" height={160}>
+                  <BarChart data={toolStats} barSize={32} layout="horizontal">
+                    <CartesianGrid strokeDasharray="3 3" stroke="#eee" vertical={false} />
+                    <XAxis dataKey="tool_name" tick={{ fontSize: 11, fill: "#888" }} tickLine={false} axisLine={false} />
+                    <YAxis tick={{ fontSize: 11, fill: "#888" }} tickLine={false} axisLine={false} tickFormatter={(v) => `${v}ms`} />
+                    <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number) => [`${Math.round(value)}ms`, "Avg Latency"]} />
+                    <Bar dataKey="avg_latency_ms" name="Avg Latency" fill="#7986CB" radius={[3, 3, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Box>
+            </Stack>
+          )}
 
           <Stack direction="row" spacing={2} sx={{ px: 3, pt: 3, pb: 1.5 }} alignItems="flex-end">
             <Box sx={{ width: 240 }}>
