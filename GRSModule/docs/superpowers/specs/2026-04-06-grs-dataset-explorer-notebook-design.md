@@ -30,7 +30,7 @@ Before committing to the sampling procedure, the user needs to understand the co
 
 Single `.ipynb` file. One DataFrame built at load time; all sections read from it. No re-loading between sections.
 
-**File location:** `GRSModule/experiment.ipynb` (file already exists in the repo; notebook content will be written here)
+**File location:** `GRSModule/pre_sampling_analysis.ipynb`
 
 **Dependencies:** `pandas`, `matplotlib`, `seaborn`, `pyyaml` — all expected to be available in the `uv` environment.
 
