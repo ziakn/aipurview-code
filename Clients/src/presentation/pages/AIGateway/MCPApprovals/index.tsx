@@ -108,12 +108,10 @@ export default function MCPApprovalsPage() {
   const items = tab === "pending" ? pending : history;
 
   return (
-    <Box>
-      <PageHeaderExtended
-        title="MCP Approvals"
-        description="Review and manage tool invocation approval requests."
-      />
-
+    <PageHeaderExtended
+      title="MCP Approvals"
+      description="Review and manage tool invocation approval requests."
+    >
       {/* Tab bar */}
       <Box sx={{ px: 3, pt: 1 }}>
         <TabContext value={tab}>
@@ -189,7 +187,6 @@ export default function MCPApprovalsPage() {
                             label={item.status}
                             backgroundColor={colors.bg}
                             textColor={colors.text}
-                            size="small"
                           />
                           {tab === "pending" && (
                             <Typography
@@ -321,6 +318,6 @@ export default function MCPApprovalsPage() {
           />
         </StandardModal>
       )}
-    </Box>
+    </PageHeaderExtended>
   );
 }

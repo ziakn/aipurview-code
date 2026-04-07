@@ -29,6 +29,7 @@ from reports.validate_report import build_validate_report
 
 from seeds.index import ObligationIndex
 from validate.enrich import enrich_with_obligations
+from validate.backfill import build_base_scenario_records
 
 from infer.runner import run_inference, run_inference_resumable, InferConfig
 from infer.load_models import load_models_config
@@ -572,6 +573,76 @@ def _cmd_generate(args: argparse.Namespace) -> int:
 
         return 0
 
+    if args.stage == "backfill-base":
+        base_in = intermediate_dir / "base_scenarios_deduped.jsonl"
+        scenarios_out = final_dir / "scenarios.jsonl"
+
+        if not base_in.exists():
+            console.print(f"[red]Missing input:[/red] {base_in} (run --stage render first)")
+            return 2
+        if not scenarios_out.exists():
+            console.print(f"[red]Missing input:[/red] {scenarios_out} (run --stage validate first)")
+            return 2
+
+        # Idempotency guard: refuse to run twice on the same dataset
+        existing_manifest: dict = {}
+        if manifest_path.exists():
+            existing_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if "backfill_base" in existing_manifest:
+            console.print("[yellow]backfill-base already applied to this dataset version. Skipping.[/yellow]")
+            return 0
+
+        obligations_version, obligations = load_obligations_yaml(Path(args.obligations))
+        ob_index = ObligationIndex.from_list(obligations)
+
+        existing_scenarios = list(read_jsonl(scenarios_out))
+
+        def _parse_grs_id(sid: str) -> int:
+            parts = sid.split("_")
+            try:
+                return int(parts[1]) if len(parts) >= 2 else 0
+            except (ValueError, IndexError):
+                console.print(f"[yellow]Warning: unrecognised scenario_id format '{sid}', treating as 0 for ID sequencing.[/yellow]")
+                return 0
+
+        max_id = max((_parse_grs_id(s["scenario_id"]) for s in existing_scenarios), default=0)
+
+        base_scenarios = list(read_jsonl(base_in))
+        enriched = build_base_scenario_records(
+            base_scenarios=base_scenarios,
+            ob_index=ob_index,
+            dataset_version=args.dataset_version,
+            start_id=max_id + 1,
+        )
+
+        all_scenarios = existing_scenarios + enriched
+        write_jsonl(scenarios_out, all_scenarios)
+
+        backfill_section = {
+            "run_at": datetime.now(timezone.utc).isoformat(),
+            "base_scenarios_added": len(enriched),
+            "scenarios_total_after": len(all_scenarios),
+            "inputs": {
+                "base_scenarios_deduped_jsonl": str(base_in),
+                "base_scenarios_deduped_jsonl_sha256": sha256_file(base_in),
+                "obligations_yaml": str(Path(args.obligations)),
+                "obligations_yaml_sha256": sha256_file(Path(args.obligations)),
+            },
+            "outputs": {
+                "scenarios_jsonl": str(scenarios_out),
+                "scenarios_jsonl_sha256": sha256_file(scenarios_out),
+            },
+        }
+        existing_manifest["backfill_base"] = backfill_section
+        write_manifest(manifest_path, existing_manifest)
+
+        console.print("[bold green]Backfill complete.[/bold green]")
+        console.print(f"- base_scenarios_added: {len(enriched)}")
+        console.print(f"- scenarios_total_after: {len(all_scenarios)}")
+        console.print(f"- wrote: {scenarios_out}")
+        console.print(f"- updated: {manifest_path}")
+        return 0
+
     if args.stage == "leaderboard":
         scenarios_path = final_dir / "scenarios.jsonl"
         if not scenarios_path.exists():
@@ -609,7 +680,7 @@ def main() -> None:
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     gen = sub.add_parser("generate", help="Generate artifacts for the scenario pipeline")
-    gen.add_argument("--stage", choices=["seeds", "render", "perturb", "validate", "infer", "judge", "leaderboard"], required=True)
+    gen.add_argument("--stage", choices=["seeds", "render", "perturb", "validate", "backfill-base", "infer", "judge", "leaderboard"], required=True)
     gen.add_argument("--seed", default="42")
     gen.add_argument("--per-obligation", default="2")
     gen.add_argument("--mutations", default="configs/mutations.yaml")

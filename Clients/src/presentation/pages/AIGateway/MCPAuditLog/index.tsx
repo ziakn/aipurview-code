@@ -123,22 +123,20 @@ export default function MCPAuditLogPage() {
   const noFilterResults = !loading && logs.length === 0 && !isFirstTime;
 
   return (
-    <Box>
-      <PageHeaderExtended
-        title="MCP Audit Log"
-        description="Review tool invocation history and audit trail."
-        actionButton={
-          <Box sx={{ width: 160 }}>
-            <Select
-              id="audit-period"
-              items={PERIOD_ITEMS}
-              value={days}
-              onChange={(e) => setDays(String(e.target.value))}
-            />
-          </Box>
-        }
-      />
-
+    <PageHeaderExtended
+      title="MCP Audit Log"
+      description="Review tool invocation history and audit trail."
+      actionButton={
+        <Box sx={{ width: 160 }}>
+          <Select
+            id="mcp-audit-period"
+            items={PERIOD_ITEMS}
+            value={days}
+            onChange={(e) => setDays(e.target.value as string)}
+          />
+        </Box>
+      }
+    >
       {isFirstTime ? (
         <Box sx={{ px: 3, pt: 4 }}>
           <EmptyState icon={Activity} message="No audit logs yet" showBorder>
@@ -204,7 +202,7 @@ export default function MCPAuditLogPage() {
               <Field label="Filter by tool" placeholder="e.g. greet" value={filterTool} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilterTool(e.target.value)} />
             </Box>
             <Box sx={{ width: 180 }}>
-              <Select id="audit-status-filter" label="Status" items={STATUS_ITEMS} value={filterStatus} onChange={(e) => setFilterStatus(String(e.target.value))} />
+              <Select id="mcp-audit-status-filter" label="Status" items={STATUS_ITEMS} value={filterStatus} onChange={(e) => setFilterStatus(e.target.value as string)} />
             </Box>
           </Stack>
 
@@ -224,7 +222,7 @@ export default function MCPAuditLogPage() {
                       <Stack direction="row" alignItems="center" justifyContent="space-between">
                         <Stack direction="row" alignItems="center" spacing={2} sx={{ flex: 1, minWidth: 0 }}>
                           <Typography sx={{ fontWeight: 600, fontSize: 14, fontFamily: "monospace", minWidth: 120 }}>{log.tool_name}</Typography>
-                          <Chip label={log.result_status.replace("_", " ")} backgroundColor={colors.bg} textColor={colors.text} size="small" />
+                          <Chip label={log.result_status.replace("_", " ")} backgroundColor={colors.bg} textColor={colors.text} />
                           <Typography variant="body2" color="text.secondary" sx={{ minWidth: 60 }}>{log.latency_ms}ms</Typography>
                           <Typography variant="body2" color="text.secondary" sx={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{log.result_summary || "—"}</Typography>
                         </Stack>
@@ -252,6 +250,6 @@ export default function MCPAuditLogPage() {
           </Stack>
         </>
       )}
-    </Box>
+    </PageHeaderExtended>
   );
 }
