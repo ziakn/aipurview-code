@@ -660,12 +660,7 @@ const TrustCenterResources: React.FC = () => {
           description="Upload a resource document for your AI Trust Center"
           onSubmit={handleAddResource}
           submitButtonText="Add resource"
-          isSubmitting={
-            !formData?.info?.resources_visible ||
-            !newResource.name ||
-            !newResource.description ||
-            !newResource.file
-          }
+          isSubmitting={!formData?.info?.resources_visible}
         >
           <Stack spacing={6}>
             <Field
