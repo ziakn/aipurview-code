@@ -535,6 +535,37 @@ export const createAutomationWorker = () => {
           } catch (err) {
             console.error(`AI Gateway cache cleanup failed: ${err}`);
           }
+        } else if (name === "mcp_audit_cleanup") {
+          const AI_GATEWAY_URL = process.env.AI_GATEWAY_URL || "http://127.0.0.1:8100";
+          try {
+            const auditRes = await fetch(
+              `${AI_GATEWAY_URL}/internal/mcp/audit/cleanup`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "x-internal-key": process.env.AI_GATEWAY_INTERNAL_KEY || "",
+                },
+              }
+            );
+            const auditResult = await auditRes.json() as { deleted?: number };
+            console.log(`MCP audit cleanup: ${auditResult.deleted ?? 0} expired logs purged`);
+
+            const approvalRes = await fetch(
+              `${AI_GATEWAY_URL}/internal/mcp/audit/cleanup-approvals`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "x-internal-key": process.env.AI_GATEWAY_INTERNAL_KEY || "",
+                },
+              }
+            );
+            const approvalResult = await approvalRes.json() as { deleted?: number };
+            console.log(`MCP approval cleanup: ${approvalResult.deleted ?? 0} expired requests purged`);
+          } catch (err) {
+            console.error(`MCP Gateway cleanup failed: ${err}`);
+          }
         } else if (name === "send_pmm_notification") {
           // PMM notification handling - send email using MJML templates
           const { type, data } = job.data;
