@@ -388,8 +388,9 @@ def main() -> int:
     rng2.shuffle(combined)
     logging.info("Final sample size after shuffle: %d", len(combined))
 
-    # Create output directory if needed
+    # Create output and manifest directories if needed
     os.makedirs(os.path.dirname(os.path.abspath(args.output)), exist_ok=True)
+    os.makedirs(os.path.dirname(os.path.abspath(args.manifest)), exist_ok=True)
 
     # Write output
     with open(args.output, "w", encoding="utf-8") as f:
