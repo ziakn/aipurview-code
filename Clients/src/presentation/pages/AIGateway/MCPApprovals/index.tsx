@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Box, Typography, Stack } from "@mui/material";
 import TabContext from "@mui/lab/TabContext";
-import { CheckCircle, XCircle, ShieldCheck, Clock, History } from "lucide-react";
+import { CheckCircle, XCircle, ShieldCheck } from "lucide-react";
 import TabBar from "../../../components/TabBar";
 import Chip from "../../../components/Chip";
 import Field from "../../../components/Inputs/Field";
@@ -108,12 +108,10 @@ export default function MCPApprovalsPage() {
   const items = tab === "pending" ? pending : history;
 
   return (
-    <Box>
-      <PageHeaderExtended
-        title="MCP Approvals"
-        description="Review and manage tool invocation approval requests."
-      />
-
+    <PageHeaderExtended
+      title="MCP Approvals"
+      description="Review and manage tool invocation approval requests."
+    >
       {/* Tab bar */}
       <Box sx={{ px: 3, pt: 1 }}>
         <TabContext value={tab}>
@@ -187,13 +185,8 @@ export default function MCPApprovalsPage() {
                           </Typography>
                           <Chip
                             label={item.status}
-                            sx={{
-                              backgroundColor: colors.bg,
-                              color: colors.text,
-                              fontWeight: 600,
-                              fontSize: 11,
-                              textTransform: "capitalize",
-                            }}
+                            backgroundColor={colors.bg}
+                            textColor={colors.text}
                           />
                           {tab === "pending" && (
                             <Typography
@@ -208,7 +201,7 @@ export default function MCPApprovalsPage() {
                         {tab === "pending" && (
                           <Stack direction="row" spacing={1}>
                             <CustomizableButton
-                              label="Approve"
+                              text="Approve"
                               onClick={() =>
                                 setDecisionTarget({
                                   id: item.id,
@@ -224,7 +217,7 @@ export default function MCPApprovalsPage() {
                               }}
                             />
                             <CustomizableButton
-                              label="Deny"
+                              text="Deny"
                               onClick={() =>
                                 setDecisionTarget({
                                   id: item.id,
@@ -325,6 +318,6 @@ export default function MCPApprovalsPage() {
           />
         </StandardModal>
       )}
-    </Box>
+    </PageHeaderExtended>
   );
 }

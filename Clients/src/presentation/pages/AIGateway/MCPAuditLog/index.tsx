@@ -123,21 +123,20 @@ export default function MCPAuditLogPage() {
   const noFilterResults = !loading && logs.length === 0 && !isFirstTime;
 
   return (
-    <Box>
-      <PageHeaderExtended
-        title="MCP Audit Log"
-        description="Review tool invocation history and audit trail."
-        actionButton={
-          <Box sx={{ width: 160 }}>
-            <Select
-              items={PERIOD_ITEMS}
-              value={days}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDays(e.target.value)}
-            />
-          </Box>
-        }
-      />
-
+    <PageHeaderExtended
+      title="MCP Audit Log"
+      description="Review tool invocation history and audit trail."
+      actionButton={
+        <Box sx={{ width: 160 }}>
+          <Select
+            id="mcp-audit-period"
+            items={PERIOD_ITEMS}
+            value={days}
+            onChange={(e) => setDays(e.target.value as string)}
+          />
+        </Box>
+      }
+    >
       {isFirstTime ? (
         <Box sx={{ px: 3, pt: 4 }}>
           <EmptyState icon={Activity} message="No audit logs yet" showBorder>
@@ -190,7 +189,7 @@ export default function MCPAuditLogPage() {
                     <CartesianGrid strokeDasharray="3 3" stroke="#eee" vertical={false} />
                     <XAxis dataKey="tool_name" tick={{ fontSize: 11, fill: "#888" }} tickLine={false} axisLine={false} />
                     <YAxis tick={{ fontSize: 11, fill: "#888" }} tickLine={false} axisLine={false} tickFormatter={(v) => `${v}ms`} />
-                    <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number) => [`${Math.round(value)}ms`, "Avg Latency"]} />
+                    <Tooltip contentStyle={chartTooltipStyle} formatter={(value) => [`${Math.round(Number(value))}ms`, "Avg Latency"]} />
                     <Bar dataKey="avg_latency_ms" name="Avg Latency" fill="#7986CB" radius={[3, 3, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -203,7 +202,7 @@ export default function MCPAuditLogPage() {
               <Field label="Filter by tool" placeholder="e.g. greet" value={filterTool} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilterTool(e.target.value)} />
             </Box>
             <Box sx={{ width: 180 }}>
-              <Select label="Status" items={STATUS_ITEMS} value={filterStatus} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilterStatus(e.target.value)} />
+              <Select id="mcp-audit-status-filter" label="Status" items={STATUS_ITEMS} value={filterStatus} onChange={(e) => setFilterStatus(e.target.value as string)} />
             </Box>
           </Stack>
 
@@ -223,7 +222,7 @@ export default function MCPAuditLogPage() {
                       <Stack direction="row" alignItems="center" justifyContent="space-between">
                         <Stack direction="row" alignItems="center" spacing={2} sx={{ flex: 1, minWidth: 0 }}>
                           <Typography sx={{ fontWeight: 600, fontSize: 14, fontFamily: "monospace", minWidth: 120 }}>{log.tool_name}</Typography>
-                          <Chip label={log.result_status.replace("_", " ")} sx={{ backgroundColor: colors.bg, color: colors.text, fontWeight: 600, fontSize: 11, textTransform: "capitalize" }} />
+                          <Chip label={log.result_status.replace("_", " ")} backgroundColor={colors.bg} textColor={colors.text} />
                           <Typography variant="body2" color="text.secondary" sx={{ minWidth: 60 }}>{log.latency_ms}ms</Typography>
                           <Typography variant="body2" color="text.secondary" sx={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{log.result_summary || "—"}</Typography>
                         </Stack>
@@ -251,6 +250,6 @@ export default function MCPAuditLogPage() {
           </Stack>
         </>
       )}
-    </Box>
+    </PageHeaderExtended>
   );
 }
