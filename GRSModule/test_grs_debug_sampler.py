@@ -121,5 +121,25 @@ class TestLoadAndOutput(SamplerTestBase):
                 )
 
 
+class TestPhase1(SamplerTestBase):
+
+    def test_all_obligations_represented(self):  # T06
+        _, out, _ = self.run_sampler(out_suffix="_t06")
+        sample = self.load_jsonl(out)
+        obl_ids_in_output = {s["obligation_id"] for s in sample}
+        self.assertEqual(obl_ids_in_output, set(OBLIGATIONS))
+
+    def test_phase1_coverage_map_correct(self):  # T07
+        _, out, manifest = self.run_sampler(out_suffix="_t07")
+        sample = self.load_jsonl(out)
+        data = self.load_manifest(manifest)
+        output_ids = {s["scenario_id"] for s in sample}
+        for obl_id, sid in data["phase1"]["coverage_map"].items():
+            self.assertIn(
+                sid, output_ids,
+                f"Phase 1 coverage_map scenario '{sid}' (obl '{obl_id}') not in output",
+            )
+
+
 if __name__ == "__main__":
     unittest.main()
