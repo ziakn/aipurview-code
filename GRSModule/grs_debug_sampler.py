@@ -327,7 +327,7 @@ def main() -> int:
         },
         "source_hashes": source_hashes,
         "random_seed_1": args.seed,
-        "random_seed_2": args.seed + 1,
+        "random_seed_2": args.seed + 1,  # used by rng2 for final shuffle (Task 5)
         "target_n": args.target_n,
         "phase1": {
             "description": "One scenario drawn per obligation (coverage guarantee)",

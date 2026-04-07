@@ -179,7 +179,8 @@ class TestPhase1Only(unittest.TestCase):
             "--output", out,
             "--manifest", manifest,
         ]
-        subprocess.run(cmd, capture_output=True, text=True)
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
 
         with open(out, encoding="utf-8") as f:
             sample = [json.loads(line) for line in f if line.strip()]
