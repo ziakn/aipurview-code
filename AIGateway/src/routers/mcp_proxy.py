@@ -12,10 +12,13 @@ enforcing ACLs, rate limits, guardrails, and approval requirements.
 import asyncio
 import logging
 import time
+from datetime import datetime, timezone, timedelta
 
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse, StreamingResponse
 
+from config import settings
+from crud.mcp_approvals import create_approval_request, get_approval_status, get_approved_request, get_pending_request
 from crud.mcp_tools import get_all_tools
 from services.mcp_audit_service import log_tool_call
 from services.mcp_guardrail_service import scan_tool_input
@@ -34,8 +37,11 @@ logger = logging.getLogger("uvicorn")
 router = APIRouter()
 
 
-def _jsonrpc_error(id, code: int, message: str) -> dict:
-    return {"jsonrpc": "2.0", "id": id, "error": {"code": code, "message": message}}
+def _jsonrpc_error(id, code: int, message: str, data: dict | None = None) -> dict:
+    error = {"code": code, "message": message}
+    if data:
+        error["data"] = data
+    return {"jsonrpc": "2.0", "id": id, "error": error}
 
 
 def _jsonrpc_result(id, result: dict) -> dict:
@@ -135,7 +141,28 @@ async def mcp_jsonrpc(request: Request):
             await enforce_mcp_rate_limits(agent_key, tool_name)
 
             if tool.get("requires_approval"):
-                return JSONResponse(content=_jsonrpc_error(msg_id, -32001, "Tool requires approval"), status_code=200)
+                # Check if an approved request already exists for this agent+tool
+                approved = await get_approved_request(org_id, agent_key["id"], tool_name)
+                if not approved:
+                    # Reuse an existing pending request if one exists, otherwise create a new one
+                    pending = await get_pending_request(org_id, agent_key["id"], tool_name)
+                    if pending:
+                        approval = pending
+                    else:
+                        expires_at = datetime.now(timezone.utc) + timedelta(seconds=settings.mcp_approval_expiry_seconds)
+                        approval = await create_approval_request(org_id, {
+                            "agent_key_id": agent_key["id"],
+                            "tool_id": tool.get("id"),
+                            "tool_name": tool_name,
+                            "arguments": arguments,
+                            "expires_at": expires_at,
+                        })
+                        await _audit("approval_required", f"Approval request {approval.get('id')} created", False)
+                    return JSONResponse(content=_jsonrpc_error(msg_id, -32001, "Tool requires approval", {
+                        "approval_id": approval.get("id"),
+                        "poll_endpoint": f"/v1/mcp/approvals/{approval.get('id')}/status",
+                        "expires_at": approval["expires_at"].isoformat() if hasattr(approval["expires_at"], "isoformat") else str(approval["expires_at"]),
+                    }), status_code=200)
 
             scan_result = await scan_tool_input(org_id, tool_name, arguments)
             if scan_result and scan_result.blocked:
@@ -180,6 +207,25 @@ async def mcp_jsonrpc(request: Request):
             return JSONResponse(content=_jsonrpc_error(msg_id, -32603, "Internal error"), status_code=200)
 
     return JSONResponse(content=_jsonrpc_error(msg_id, -32601, f"Method not found: {method}"), status_code=200)
+
+
+@router.get("/v1/mcp/approvals/{request_id}/status")
+async def mcp_approval_status(request: Request, request_id: int):
+    """Poll approval status — authenticated via agent key."""
+    agent_key = await _extract_agent_key(request)
+    org_id = agent_key["organization_id"]
+
+    approval = await get_approval_status(org_id, request_id)
+    if not approval:
+        raise HTTPException(status_code=404, detail="Approval request not found")
+
+    return {
+        "approval_id": approval["id"],
+        "status": approval["status"],
+        "decided_at": approval["decided_at"].isoformat() if approval.get("decided_at") else None,
+        "decision_reason": approval.get("decision_reason"),
+        "expires_at": approval["expires_at"].isoformat() if approval.get("expires_at") else None,
+    }
 
 
 @router.get("/v1/mcp")

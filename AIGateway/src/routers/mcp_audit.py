@@ -106,3 +106,18 @@ async def cleanup_audit_logs(request: Request):
 
     deleted = await delete_expired_audit_logs(settings.mcp_audit_retention_days)
     return {"status": "success", "deleted": deleted}
+
+
+# ---------------------------------------------------------------------------
+# POST /mcp/audit/cleanup-approvals
+# ---------------------------------------------------------------------------
+
+@router.post("/cleanup-approvals", status_code=status.HTTP_200_OK)
+async def cleanup_approval_requests(request: Request):
+    """Delete decided/expired approval requests older than retention period."""
+    verify_internal_key(request)
+    from config import settings
+    from crud.mcp_approvals import delete_expired_approval_requests
+
+    deleted = await delete_expired_approval_requests(settings.mcp_audit_retention_days)
+    return {"status": "success", "deleted": deleted}
