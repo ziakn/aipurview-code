@@ -284,10 +284,16 @@ def parse_args():
     parser.add_argument("--target-n", type=int, default=30,
                         help="Target sample size [15, 100], default 30")
     parser.add_argument("--seed", type=int, default=42, help="Primary random seed, default 42")
-    parser.add_argument("--output", default="grs_debug_sample.jsonl",
-                        help="Output JSONL path, default grs_debug_sample.jsonl")
-    parser.add_argument("--manifest", default="grs_debug_manifest.json",
-                        help="Output manifest JSON path, default grs_debug_manifest.json")
+    parser.add_argument(
+        "--output",
+        default="datasets/debug/grs_debug_sample.jsonl",
+        help="Output JSONL path (default: datasets/debug/grs_debug_sample.jsonl)",
+    )
+    parser.add_argument(
+        "--manifest",
+        default="datasets/debug/grs_debug_manifest.json",
+        help="Output manifest JSON path (default: datasets/debug/grs_debug_manifest.json)",
+    )
     args = parser.parse_args()
 
     errors = []
@@ -381,6 +387,9 @@ def main() -> int:
     rng2 = random.Random(args.seed + 1)
     rng2.shuffle(combined)
     logging.info("Final sample size after shuffle: %d", len(combined))
+
+    # Create output directory if needed
+    os.makedirs(os.path.dirname(os.path.abspath(args.output)), exist_ok=True)
 
     # Write output
     with open(args.output, "w", encoding="utf-8") as f:
