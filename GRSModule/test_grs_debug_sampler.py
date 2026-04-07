@@ -199,14 +199,20 @@ class TestPhase1Only(unittest.TestCase):
 class TestOutputIntegrity(SamplerTestBase):
 
     def test_same_seed_produces_identical_output(self):  # T03
-        _, out1, _ = self.run_sampler(seed=99, out_suffix="_t03a")
-        _, out2, _ = self.run_sampler(seed=99, out_suffix="_t03b")
+        r1, out1, _ = self.run_sampler(seed=99, out_suffix="_t03a")
+        self.assertEqual(r1.returncode, 0, r1.stderr)
+        r2, out2, _ = self.run_sampler(seed=99, out_suffix="_t03b")
+        self.assertEqual(r2.returncode, 0, r2.stderr)
         with open(out1, "rb") as f1, open(out2, "rb") as f2:
             self.assertEqual(f1.read(), f2.read(), "Identical seeds produced different output")
 
     def test_different_seed_produces_different_output(self):  # T04
-        _, out1, _ = self.run_sampler(seed=1, out_suffix="_t04a")
-        _, out2, _ = self.run_sampler(seed=2, out_suffix="_t04b")
+        # Verifies rng1/rng2 = Random(seed)/Random(seed+1) produce distinct draws and shuffle.
+        # Relies on fixture having enough scenarios that seeds 1 and 2 produce different output.
+        r1, out1, _ = self.run_sampler(seed=1, out_suffix="_t04a")
+        self.assertEqual(r1.returncode, 0, r1.stderr)
+        r2, out2, _ = self.run_sampler(seed=2, out_suffix="_t04b")
+        self.assertEqual(r2.returncode, 0, r2.stderr)
         with open(out1, "rb") as f1, open(out2, "rb") as f2:
             self.assertNotEqual(f1.read(), f2.read(), "Different seeds produced identical output")
 
