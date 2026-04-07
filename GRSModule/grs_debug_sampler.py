@@ -300,11 +300,15 @@ def main() -> int:
     }
     logging.info("Phase 2 complete: %d drawn, distribution=%s", len(phase2_sample), p2_dist)
 
-    sample = phase1_sample + phase2_sample
+    # ── Merge and shuffle ─────────────────────────────────────────────────────
+    combined = phase1_sample + phase2_sample
+    rng2 = random.Random(args.seed + 1)
+    rng2.shuffle(combined)
+    logging.info("Final sample size after shuffle: %d", len(combined))
 
     # Write output
     with open(args.output, "w", encoding="utf-8") as f:
-        for s in sample:
+        for s in combined:
             f.write(json.dumps(s, ensure_ascii=False) + "\n")
 
     output_hash = sha256_file(args.output)
@@ -312,7 +316,7 @@ def main() -> int:
 
     # Minimal manifest (audit block added in Task 6)
     final_dist = {
-        src: sum(1 for s in sample if s["source"] == src)
+        src: sum(1 for s in combined if s["source"] == src)
         for src in ["gpt", "gemini", "claude"]
     }
     manifest_data = {
@@ -343,7 +347,7 @@ def main() -> int:
             "source_distribution": p2_dist,
         },
         "final_sample": {
-            "total_scenarios": len(sample),
+            "total_scenarios": len(combined),
             "source_distribution": final_dist,
             "sha256": output_hash,
         },

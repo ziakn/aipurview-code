@@ -196,5 +196,35 @@ class TestPhase1Only(unittest.TestCase):
         )
 
 
+class TestOutputIntegrity(SamplerTestBase):
+
+    def test_same_seed_produces_identical_output(self):  # T03
+        _, out1, _ = self.run_sampler(seed=99, out_suffix="_t03a")
+        _, out2, _ = self.run_sampler(seed=99, out_suffix="_t03b")
+        with open(out1, "rb") as f1, open(out2, "rb") as f2:
+            self.assertEqual(f1.read(), f2.read(), "Identical seeds produced different output")
+
+    def test_different_seed_produces_different_output(self):  # T04
+        _, out1, _ = self.run_sampler(seed=1, out_suffix="_t04a")
+        _, out2, _ = self.run_sampler(seed=2, out_suffix="_t04b")
+        with open(out1, "rb") as f1, open(out2, "rb") as f2:
+            self.assertNotEqual(f1.read(), f2.read(), "Different seeds produced identical output")
+
+    def test_no_duplicate_scenario_ids(self):  # T09
+        _, out, _ = self.run_sampler(out_suffix="_t09")
+        sample = self.load_jsonl(out)
+        ids = [s["scenario_id"] for s in sample]
+        self.assertEqual(len(ids), len(set(ids)), "Duplicate scenario_id found in output")
+
+    def test_sample_size_within_target_range(self):  # T11
+        _, out, _ = self.run_sampler(target_n=30, out_suffix="_t11")
+        sample = self.load_jsonl(out)
+        self.assertGreaterEqual(
+            len(sample), len(OBLIGATIONS),
+            f"Sample smaller than n_obligations ({len(OBLIGATIONS)})",
+        )
+        self.assertLessEqual(len(sample), 30, "Sample exceeds target_n")
+
+
 if __name__ == "__main__":
     unittest.main()
