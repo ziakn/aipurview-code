@@ -202,3 +202,32 @@ async def decide_approval(
             return None
         return dict(row)
     return None
+
+
+async def delete_expired_approval_requests(retention_days: int = 30, batch_size: int = 5000) -> int:
+    """Delete decided or expired approval requests older than retention_days in batches."""
+    retention_days = int(retention_days)
+    total_deleted = 0
+
+    async with get_db() as db:
+        while True:
+            result = await db.execute(
+                text(f"""
+                    DELETE FROM ai_gateway_mcp_approval_requests
+                    WHERE id IN (
+                        SELECT id FROM ai_gateway_mcp_approval_requests
+                        WHERE created_at < NOW() - INTERVAL '{retention_days} days'
+                          AND (status != 'pending' OR expires_at < NOW())
+                        LIMIT :batch_size
+                    )
+                    RETURNING id
+                """),
+                {"batch_size": batch_size},
+            )
+            deleted = len(result.fetchall())
+            await db.commit()
+            total_deleted += deleted
+            if deleted < batch_size:
+                break
+
+    return total_deleted
