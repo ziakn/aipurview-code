@@ -217,6 +217,9 @@ def main() -> int:
 
     # ── Phase 1 budget check ───────────────────────────────────────────────────
     n_obligations = len({s["obligation_id"] for s in pool})
+    if n_obligations == 0:
+        logging.error("No valid scenarios loaded from any source — cannot sample. Exiting.")
+        return 1
     if n_obligations / args.target_n > 0.50:
         suggested = n_obligations * 2
         logging.warning(
