@@ -11,6 +11,19 @@ from database.db import get_db
 
 logger = logging.getLogger("uvicorn")
 
+MAX_ARGUMENTS_SIZE = 10_240  # 10 KB
+
+
+def _cap_arguments(arguments: dict | None) -> str:
+    """Serialize arguments to JSON, truncating to MAX_ARGUMENTS_SIZE."""
+    if not arguments:
+        return "{}"
+    serialized = json.dumps(arguments)
+    if len(serialized) <= MAX_ARGUMENTS_SIZE:
+        return serialized
+    original_size = len(serialized)
+    return json.dumps({"_truncated": True, "_original_size": original_size})
+
 
 async def log_tool_call(
     organization_id: int,
@@ -48,7 +61,7 @@ async def log_tool_call(
                     "agent_key_id": agent_key_id,
                     "server_id": server_id,
                     "tool_name": tool_name,
-                    "arguments": json.dumps(arguments) if arguments else "{}",
+                    "arguments": _cap_arguments(arguments),
                     "result_status": result_status,
                     "result_summary": result_summary,
                     "is_error": is_error,
