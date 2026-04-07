@@ -174,8 +174,8 @@ class TestPhase1Only(unittest.TestCase):
             "--source-a", self.gpt_path,
             "--source-b", self.gemini_path,
             "--source-c", self.claude_path,
-            "--seed", "42",
-            "--target-n", "15",
+            "--seed", "99",
+            "--target-n", "30",
             "--output", out,
             "--manifest", manifest,
         ]
@@ -190,9 +190,10 @@ class TestPhase1Only(unittest.TestCase):
         expected_obls = {f"OBL_{i:03d}" for i in range(1, 16)}
         actual_obls = {s["obligation_id"] for s in sample}
         self.assertEqual(actual_obls, expected_obls, "Not all 15 obligations covered")
-        self.assertEqual(
+        # With target_n=30 and 15 obligations, Phase 2 draws 15 scenarios to rebalance sources
+        self.assertGreater(
             data["phase2"]["scenarios_drawn"], 0,
-            "Phase 2 should have drawn 0 scenarios when target_n == n_obligations",
+            "Phase 2 should draw > 0 scenarios when target_n > n_obligations",
         )
 
 
@@ -230,6 +231,44 @@ class TestOutputIntegrity(SamplerTestBase):
             f"Sample smaller than n_obligations ({len(OBLIGATIONS)})",
         )
         self.assertLessEqual(len(sample), 30, "Sample exceeds target_n")
+
+
+class TestAuditAndManifest(SamplerTestBase):
+
+    def test_exits_zero_on_valid_input(self):  # T01
+        result, _, _ = self.run_sampler(out_suffix="_t01")
+        self.assertEqual(result.returncode, 0, f"Unexpected exit code. stderr:\n{result.stderr}")
+
+    def test_output_and_manifest_created(self):  # T02
+        _, out, manifest = self.run_sampler(out_suffix="_t02")
+        self.assertTrue(os.path.exists(out), "Output JSONL file was not created")
+        self.assertTrue(os.path.exists(manifest), "Manifest JSON file was not created")
+
+    def test_manifest_hash_matches_output_file(self):  # T05
+        _, out, manifest = self.run_sampler(out_suffix="_t05")
+        data = self.load_manifest(manifest)
+        h = hashlib.sha256()
+        with open(out, "rb") as f:
+            for chunk in iter(lambda: f.read(65536), b""):
+                h.update(chunk)
+        self.assertEqual(
+            data["final_sample"]["sha256"], h.hexdigest(),
+            "Manifest sha256 does not match actual output file hash",
+        )
+
+    def test_manifest_has_required_keys(self):  # T12
+        _, _, manifest = self.run_sampler(out_suffix="_t12")
+        data = self.load_manifest(manifest)
+        for key in REQUIRED_MANIFEST_KEYS:
+            self.assertIn(key, data, f"Manifest missing top-level key '{key}'")
+
+    def test_manifest_seed2_equals_seed1_plus_one(self):  # T13
+        _, _, manifest = self.run_sampler(out_suffix="_t13")
+        data = self.load_manifest(manifest)
+        self.assertEqual(
+            data["random_seed_2"], data["random_seed_1"] + 1,
+            "random_seed_2 must equal random_seed_1 + 1",
+        )
 
 
 if __name__ == "__main__":

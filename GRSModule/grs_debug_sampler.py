@@ -194,7 +194,83 @@ def phase2_draw(remaining: list, n_phase2: int, rng: random.Random) -> tuple:
 
 
 def run_audit(sample: list, coverage_map: dict, target_n: int) -> dict:
-    raise NotImplementedError
+    """Run all five audit checks. Returns the audit dict for the manifest."""
+    n = len(sample)
+    source_counts: dict = {"gpt": 0, "gemini": 0, "claude": 0}
+    dimension_counts: dict = {d: 0 for d in VALID_DIMENSIONS}
+    seen_ids: list = []
+    unique_ids: set = set()
+
+    for s in sample:
+        src = s.get("source", "")
+        if src in source_counts:
+            source_counts[src] += 1
+        dim = s.get("primary_dimension", "")
+        if dim in dimension_counts:
+            dimension_counts[dim] += 1
+        sid = s.get("scenario_id")
+        seen_ids.append(sid)
+        unique_ids.add(sid)
+
+    # ── source_balance (HARD) ──────────────────────────────────────────────────
+    pcts = {src: (count / n * 100) if n > 0 else 0.0 for src, count in source_counts.items()}
+    source_balance_pass = all(23.0 <= p <= 43.0 for p in pcts.values())
+
+    # ── obligation_coverage (HARD) ─────────────────────────────────────────────
+    output_ids = {s["scenario_id"] for s in sample}
+    missing_obls = [obl for obl, sid in coverage_map.items() if sid not in output_ids]
+    obligation_coverage_pass = len(missing_obls) == 0
+
+    # ── sample_size (HARD) ────────────────────────────────────────────────────
+    sample_size_pass = 15 <= n <= 100
+
+    # ── id_uniqueness (HARD) ──────────────────────────────────────────────────
+    id_uniqueness_pass = len(seen_ids) == len(unique_ids)
+
+    # ── dimension_coverage (SOFT) ─────────────────────────────────────────────
+    missing_dims = [d for d, count in dimension_counts.items() if count == 0]
+    dimension_coverage_pass = len(missing_dims) == 0
+    if not dimension_coverage_pass:
+        logging.warning("SOFT CHECK dimension_coverage FAILED: missing dimensions %s", missing_dims)
+
+    overall_pass = (
+        source_balance_pass
+        and obligation_coverage_pass
+        and sample_size_pass
+        and id_uniqueness_pass
+    )
+
+    return {
+        "source_balance": {
+            "pass": source_balance_pass,
+            "counts": source_counts,
+            "percentages": {src: round(p, 2) for src, p in pcts.items()},
+            "tolerance": "33% ± 10% (debug mode)",
+        },
+        "obligation_coverage": {
+            "pass": obligation_coverage_pass,
+            "total_obligations": len(coverage_map),
+            "covered": len(coverage_map) - len(missing_obls),
+            "missing": missing_obls,
+        },
+        "sample_size": {
+            "pass": sample_size_pass,
+            "actual": n,
+            "target": target_n,
+        },
+        "id_uniqueness": {
+            "pass": id_uniqueness_pass,
+            "total": len(seen_ids),
+            "unique": len(unique_ids),
+        },
+        "dimension_coverage": {
+            "pass": dimension_coverage_pass,
+            "counts": dimension_counts,
+            "missing_dimensions": missing_dims,
+            "note": "Soft check in debug mode — failure is a warning, not a blocker",
+        },
+        "overall_pass": overall_pass,
+    }
 
 
 # ── CLI ────────────────────────────────────────────────────────────────────────
@@ -314,7 +390,26 @@ def main() -> int:
     output_hash = sha256_file(args.output)
     logging.info("Output written to %s (sha256: %s...)", args.output, output_hash[:16])
 
-    # Minimal manifest (audit block added in Task 6)
+    # ── Audit ─────────────────────────────────────────────────────────────────
+    audit_result = run_audit(combined, coverage_map, args.target_n)
+
+    for check_name, check_data in audit_result.items():
+        if check_name == "overall_pass":
+            continue
+        passed = check_data["pass"]
+        is_soft = check_name == "dimension_coverage"
+        if passed:
+            status = "PASS"
+        elif is_soft:
+            status = "WARN"
+        else:
+            status = "FAIL"
+        logging.info("Audit %-22s %s", check_name + ":", status)
+
+    overall_str = "PASS" if audit_result["overall_pass"] else "FAIL"
+    logging.info("Overall audit result: %s", overall_str)
+
+    # Manifest with audit block
     final_dist = {
         src: sum(1 for s in combined if s["source"] == src)
         for src in ["gpt", "gemini", "claude"]
@@ -351,13 +446,13 @@ def main() -> int:
             "source_distribution": final_dist,
             "sha256": output_hash,
         },
-        "audit": {},  # filled in Task 6
+        "audit": audit_result,
     }
     with open(args.manifest, "w", encoding="utf-8") as f:
         json.dump(manifest_data, f, indent=2, ensure_ascii=False)
     logging.info("Manifest written to %s", args.manifest)
 
-    return 0
+    return 0 if audit_result["overall_pass"] else 1
 
 
 if __name__ == "__main__":
