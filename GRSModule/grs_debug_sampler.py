@@ -23,15 +23,91 @@ REQUIRED_FIELDS = frozenset({
 
 # ── Helpers (stubs — filled in later tasks) ────────────────────────────────────
 def sha256_file(path: str) -> str:
-    raise NotImplementedError
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(65536), b""):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 def load_source(path: str, expected_source: str) -> tuple:
-    raise NotImplementedError
+    """Load, validate, and namespace a single source JSONL file.
+
+    Returns (scenarios, dropped_count).
+    scenario_id is prefixed with '{expected_source}:' for global uniqueness.
+    """
+    scenarios = []
+    dropped = 0
+    with open(path, encoding="utf-8") as f:
+        for lineno, raw in enumerate(f, 1):
+            line = raw.strip()
+            if not line:
+                continue
+            try:
+                obj = json.loads(line)
+            except json.JSONDecodeError:
+                logging.warning("Malformed JSON at %s:%d, skipping", path, lineno)
+                dropped += 1
+                continue
+
+            if not REQUIRED_FIELDS.issubset(obj.keys()):
+                missing = REQUIRED_FIELDS - obj.keys()
+                logging.warning("Missing fields %s at %s:%d, dropping", missing, path, lineno)
+                dropped += 1
+                continue
+            if obj["source"] not in VALID_SOURCES:
+                logging.warning("Invalid source '%s' at %s:%d, dropping",
+                                obj["source"], path, lineno)
+                dropped += 1
+                continue
+            if obj["scenario_type"] not in VALID_SCENARIO_TYPES:
+                logging.warning("Invalid scenario_type '%s' at %s:%d, dropping",
+                                obj["scenario_type"], path, lineno)
+                dropped += 1
+                continue
+            if obj["primary_dimension"] not in VALID_DIMENSIONS:
+                logging.warning("Invalid primary_dimension '%s' at %s:%d, dropping",
+                                obj["primary_dimension"], path, lineno)
+                dropped += 1
+                continue
+            if obj["scenario_type"] == "mutated" and obj["mutation_type"] is None:
+                logging.warning("Mutated scenario with null mutation_type at %s:%d, dropping",
+                                path, lineno)
+                dropped += 1
+                continue
+            if obj["scenario_type"] == "base" and obj["mutation_type"] is not None:
+                logging.warning("Base scenario with non-null mutation_type at %s:%d, dropping",
+                                path, lineno)
+                dropped += 1
+                continue
+
+            obj = dict(obj)  # shallow copy before mutating
+            if obj["source"] != expected_source:
+                logging.warning("Source override: '%s' → '%s' at %s:%d",
+                                obj["source"], expected_source, path, lineno)
+                obj["source"] = expected_source
+
+            obj["scenario_id"] = f"{expected_source}:{obj['scenario_id']}"
+            scenarios.append(obj)
+
+    return scenarios, dropped
 
 
 def deduplicate(scenarios: list) -> list:
-    raise NotImplementedError
+    """Remove duplicate scenario_id entries, keeping first occurrence."""
+    seen: dict = {}  # scenario_id → source label
+    result = []
+    for s in scenarios:
+        sid = s["scenario_id"]
+        if sid in seen:
+            logging.warning(
+                "Duplicate scenario_id '%s' (sources: '%s' and '%s'), keeping first",
+                sid, seen[sid], s["source"],
+            )
+        else:
+            seen[sid] = s["source"]
+            result.append(s)
+    return result
 
 
 def phase1_draw(pool: list, rng: random.Random) -> tuple:
@@ -90,8 +166,37 @@ def main() -> int:
         format="%(asctime)s  %(levelname)-8s %(message)s",
         datefmt="%H:%M:%S",
     )
-    parse_args()
-    # Full implementation added in later tasks
+    args = parse_args()
+    logging.info("GRS Debug Sampler starting — seed=%d, target_n=%d", args.seed, args.target_n)
+
+    file_map = [
+        ("gpt", args.source_a),
+        ("gemini", args.source_b),
+        ("claude", args.source_c),
+    ]
+    all_scenarios = []
+    source_hashes = {}
+
+    for source, path in file_map:
+        source_hashes[source] = sha256_file(path)
+        scenarios, dropped = load_source(path, source)
+        logging.info("Loaded %s: %d valid, %d dropped", path, len(scenarios), dropped)
+        logging.info("Namespace prefix applied: source='%s', count=%d", source, len(scenarios))
+        all_scenarios.extend(scenarios)
+
+    logging.info("Source hashes recorded: %s", list(source_hashes.keys()))
+
+    pool = deduplicate(all_scenarios)
+
+    # Phase 1 + Phase 2 stubs — replaced in Tasks 3 and 4
+    sample = pool[: args.target_n]
+
+    # Write output (shuffling added in Task 5)
+    with open(args.output, "w", encoding="utf-8") as f:
+        for s in sample:
+            f.write(json.dumps(s, ensure_ascii=False) + "\n")
+
+    logging.info("Output written to %s (stub, %d scenarios)", args.output, len(sample))
     return 0
 
 

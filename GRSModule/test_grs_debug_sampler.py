@@ -107,5 +107,19 @@ class TestHandlesMissingSourceFile(SamplerTestBase):
         self.assertNotEqual(result.returncode, 0)
 
 
+class TestLoadAndOutput(SamplerTestBase):
+
+    def test_all_required_fields_present(self):  # T10
+        _, out, _ = self.run_sampler(out_suffix="_t10")
+        sample = self.load_jsonl(out)
+        self.assertGreater(len(sample), 0, "Output file is empty")
+        for s in sample:
+            for field in REQUIRED_FIELDS:
+                self.assertIn(
+                    field, s,
+                    f"Field '{field}' missing from scenario {s.get('scenario_id')}",
+                )
+
+
 if __name__ == "__main__":
     unittest.main()
