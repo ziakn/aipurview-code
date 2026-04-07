@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Box, Typography, Stack } from "@mui/material";
 import TabContext from "@mui/lab/TabContext";
-import { CheckCircle, XCircle, ShieldCheck, Clock, History } from "lucide-react";
+import { CheckCircle, XCircle, ShieldCheck } from "lucide-react";
 import TabBar from "../../../components/TabBar";
 import Chip from "../../../components/Chip";
 import Field from "../../../components/Inputs/Field";
@@ -112,7 +112,7 @@ export default function MCPApprovalsPage() {
       <PageHeaderExtended
         title="MCP Approvals"
         description="Review and manage tool invocation approval requests."
-      />
+      >{null}</PageHeaderExtended>
 
       {/* Tab bar */}
       <Box sx={{ px: 3, pt: 1 }}>
@@ -187,13 +187,9 @@ export default function MCPApprovalsPage() {
                           </Typography>
                           <Chip
                             label={item.status}
-                            sx={{
-                              backgroundColor: colors.bg,
-                              color: colors.text,
-                              fontWeight: 600,
-                              fontSize: 11,
-                              textTransform: "capitalize",
-                            }}
+                            backgroundColor={colors.bg}
+                            textColor={colors.text}
+                            size="small"
                           />
                           {tab === "pending" && (
                             <Typography
@@ -208,7 +204,7 @@ export default function MCPApprovalsPage() {
                         {tab === "pending" && (
                           <Stack direction="row" spacing={1}>
                             <CustomizableButton
-                              label="Approve"
+                              text="Approve"
                               onClick={() =>
                                 setDecisionTarget({
                                   id: item.id,
@@ -224,7 +220,7 @@ export default function MCPApprovalsPage() {
                               }}
                             />
                             <CustomizableButton
-                              label="Deny"
+                              text="Deny"
                               onClick={() =>
                                 setDecisionTarget({
                                   id: item.id,
