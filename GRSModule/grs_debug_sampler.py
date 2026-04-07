@@ -26,7 +26,7 @@ def sha256_file(path: str) -> str:
     raise NotImplementedError
 
 
-def load_source(path: str, expected_source: str):
+def load_source(path: str, expected_source: str) -> tuple:
     raise NotImplementedError
 
 
@@ -34,11 +34,11 @@ def deduplicate(scenarios: list) -> list:
     raise NotImplementedError
 
 
-def phase1_draw(pool: list, rng: random.Random):
+def phase1_draw(pool: list, rng: random.Random) -> tuple:
     raise NotImplementedError
 
 
-def phase2_draw(remaining: list, n_phase2: int, rng: random.Random):
+def phase2_draw(remaining: list, n_phase2: int, rng: random.Random) -> tuple:
     raise NotImplementedError
 
 
