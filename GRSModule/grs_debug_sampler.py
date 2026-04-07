@@ -142,7 +142,55 @@ def phase1_draw(pool: list, rng: random.Random) -> tuple:
 
 
 def phase2_draw(remaining: list, n_phase2: int, rng: random.Random) -> tuple:
-    raise NotImplementedError
+    """Source-balanced draw from remaining pool.
+
+    Splits budget equally across ["claude", "gemini", "gpt"] (alphabetical).
+    Remainder extra slots go to the first r sources in that order.
+    Shortfalls from exhausted sources are filled from the overflow of non-exhausted ones.
+
+    Returns (phase2_sample, shortfalls).
+    shortfalls: { source: int } — only present for sources that ran out.
+    """
+    SOURCES_SORTED = ["claude", "gemini", "gpt"]
+
+    by_source: dict = {s: [] for s in SOURCES_SORTED}
+    for s in remaining:
+        src = s["source"]
+        if src in by_source:
+            by_source[src].append(s)
+
+    base = n_phase2 // 3
+    r = n_phase2 % 3
+    allocation = {src: base for src in SOURCES_SORTED}
+    for i in range(r):
+        allocation[SOURCES_SORTED[i]] += 1
+
+    sample: list = []
+    shortfalls: dict = {}
+    overflow_pool: list = []
+
+    for src in SOURCES_SORTED:
+        pool_slice = by_source[src][:]
+        rng.shuffle(pool_slice)
+        alloc = allocation[src]
+        if len(pool_slice) >= alloc:
+            sample.extend(pool_slice[:alloc])
+            overflow_pool.extend(pool_slice[alloc:])
+        else:
+            sample.extend(pool_slice)
+            shortfall = alloc - len(pool_slice)
+            shortfalls[src] = shortfall
+            logging.warning(
+                "Phase 2 shortfall for source '%s': needed %d, had %d",
+                src, alloc, len(pool_slice),
+            )
+
+    total_shortfall = sum(shortfalls.values())
+    if total_shortfall > 0 and overflow_pool:
+        rng.shuffle(overflow_pool)
+        sample.extend(overflow_pool[:total_shortfall])
+
+    return sample, shortfalls
 
 
 def run_audit(sample: list, coverage_map: dict, target_n: int) -> dict:
@@ -237,11 +285,20 @@ def main() -> int:
     }
     logging.info("Phase 1 complete: %d drawn, distribution=%s", len(phase1_sample), p1_dist)
 
-    # ── Phase 2 stub (replaced in Task 4) ─────────────────────────────────────
-    phase2_sample: list = []
-    shortfalls: dict = {}
-    p2_dist = {"gpt": 0, "gemini": 0, "claude": 0}
-    logging.info("Phase 2 complete: 0 drawn (stub), distribution=%s", p2_dist)
+    # ── Phase 2 ───────────────────────────────────────────────────────────────
+    n_phase2 = args.target_n - len(phase1_sample)
+    if n_phase2 <= 0:
+        logging.warning("n_phase2 <= 0, skipping Phase 2")
+        phase2_sample = []
+        shortfalls = {}
+    else:
+        phase2_sample, shortfalls = phase2_draw(remaining_pool, n_phase2, rng1)
+
+    p2_dist = {
+        src: sum(1 for s in phase2_sample if s["source"] == src)
+        for src in ["gpt", "gemini", "claude"]
+    }
+    logging.info("Phase 2 complete: %d drawn, distribution=%s", len(phase2_sample), p2_dist)
 
     sample = phase1_sample + phase2_sample
 

@@ -141,5 +141,59 @@ class TestPhase1(SamplerTestBase):
             )
 
 
+class TestPhase2(SamplerTestBase):
+
+    def test_source_balance_within_tolerance(self):  # T08
+        _, out, _ = self.run_sampler(out_suffix="_t08")
+        sample = self.load_jsonl(out)
+        n = len(sample)
+        self.assertGreater(n, 0)
+        for src in ["gpt", "gemini", "claude"]:
+            count = sum(1 for s in sample if s["source"] == src)
+            pct = count / n * 100
+            self.assertGreaterEqual(pct, 23.0, f"{src} below 23%: {pct:.1f}%")
+            self.assertLessEqual(pct, 43.0, f"{src} above 43%: {pct:.1f}%")
+
+
+class TestPhase1Only(unittest.TestCase):
+    """Uses a 15-obligation fixture so target_n == n_obligations is achievable
+    within the valid [15, 100] range, making Phase 2 budget exactly 0."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tmpdir = tempfile.mkdtemp()
+        cls.gpt_path = make_fixture("gpt", cls.tmpdir, n_obligations=15)
+        cls.gemini_path = make_fixture("gemini", cls.tmpdir, n_obligations=15)
+        cls.claude_path = make_fixture("claude", cls.tmpdir, n_obligations=15)
+
+    def test_phase1_only_when_target_equals_obligations(self):  # T15
+        out = os.path.join(self.tmpdir, "sample_t15.jsonl")
+        manifest = os.path.join(self.tmpdir, "manifest_t15.json")
+        cmd = [
+            sys.executable, SCRIPT,
+            "--source-a", self.gpt_path,
+            "--source-b", self.gemini_path,
+            "--source-c", self.claude_path,
+            "--seed", "42",
+            "--target-n", "15",
+            "--output", out,
+            "--manifest", manifest,
+        ]
+        subprocess.run(cmd, capture_output=True, text=True)
+
+        with open(out, encoding="utf-8") as f:
+            sample = [json.loads(line) for line in f if line.strip()]
+        with open(manifest, encoding="utf-8") as f:
+            data = json.load(f)
+
+        expected_obls = {f"OBL_{i:03d}" for i in range(1, 16)}
+        actual_obls = {s["obligation_id"] for s in sample}
+        self.assertEqual(actual_obls, expected_obls, "Not all 15 obligations covered")
+        self.assertEqual(
+            data["phase2"]["scenarios_drawn"], 0,
+            "Phase 2 should have drawn 0 scenarios when target_n == n_obligations",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
