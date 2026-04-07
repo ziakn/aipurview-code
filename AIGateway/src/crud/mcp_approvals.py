@@ -129,6 +129,30 @@ async def get_approval_history(
     return []
 
 
+async def get_approved_request(org_id: int, agent_key_id: int, tool_name: str) -> Optional[dict]:
+    """Check if an approved, non-expired approval request exists for this agent+tool."""
+    async with get_db() as db:
+        result = await db.execute(
+            text("""
+                SELECT id, status, expires_at
+                FROM ai_gateway_mcp_approval_requests
+                WHERE organization_id = :org_id
+                  AND agent_key_id = :agent_key_id
+                  AND tool_name = :tool_name
+                  AND status = 'approved'
+                  AND expires_at > NOW()
+                ORDER BY decided_at DESC
+                LIMIT 1
+            """),
+            {"org_id": org_id, "agent_key_id": agent_key_id, "tool_name": tool_name},
+        )
+        row = result.mappings().first()
+        if row is None:
+            return None
+        return dict(row)
+    return None
+
+
 async def get_approval_status(org_id: int, request_id: int) -> Optional[dict]:
     async with get_db() as db:
         result = await db.execute(
