@@ -80,6 +80,11 @@ def load_source(path: str, expected_source: str) -> tuple:
                                 path, lineno)
                 dropped += 1
                 continue
+            if obj["mutation_type"] is not None and obj["mutation_type"] not in VALID_MUTATION_TYPES:
+                logging.warning("Invalid mutation_type '%s' at %s:%d, dropping",
+                                obj["mutation_type"], path, lineno)
+                dropped += 1
+                continue
 
             obj = dict(obj)  # shallow copy before mutating
             if obj["source"] != expected_source:
