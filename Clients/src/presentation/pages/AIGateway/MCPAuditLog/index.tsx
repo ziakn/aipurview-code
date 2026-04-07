@@ -137,7 +137,7 @@ export default function MCPAuditLogPage() {
             />
           </Box>
         }
-      >{null}</PageHeaderExtended>
+      />
 
       {isFirstTime ? (
         <Box sx={{ px: 3, pt: 4 }}>

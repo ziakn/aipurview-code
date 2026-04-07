@@ -129,6 +129,29 @@ async def get_approval_history(
     return []
 
 
+async def get_pending_request(org_id: int, agent_key_id: int, tool_name: str) -> Optional[dict]:
+    """Return an existing pending, non-expired approval request for this agent+tool."""
+    async with get_db() as db:
+        result = await db.execute(
+            text("""
+                SELECT id, status, expires_at
+                FROM ai_gateway_mcp_approval_requests
+                WHERE organization_id = :org_id
+                  AND agent_key_id = :agent_key_id
+                  AND tool_name = :tool_name
+                  AND status = 'pending'
+                  AND expires_at > NOW()
+                ORDER BY created_at DESC
+                LIMIT 1
+            """),
+            {"org_id": org_id, "agent_key_id": agent_key_id, "tool_name": tool_name},
+        )
+        row = result.mappings().first()
+        if row is None:
+            return None
+        return dict(row)
+
+
 async def get_approved_request(org_id: int, agent_key_id: int, tool_name: str) -> Optional[dict]:
     """Check if an approved, non-expired approval request exists for this agent+tool."""
     async with get_db() as db:
@@ -150,7 +173,6 @@ async def get_approved_request(org_id: int, agent_key_id: int, tool_name: str) -
         if row is None:
             return None
         return dict(row)
-    return None
 
 
 async def get_approval_status(org_id: int, request_id: int) -> Optional[dict]:
@@ -230,28 +252,11 @@ async def decide_approval(
 
 async def delete_expired_approval_requests(retention_days: int = 30, batch_size: int = 5000) -> int:
     """Delete decided or expired approval requests older than retention_days in batches."""
-    retention_days = int(retention_days)
-    total_deleted = 0
+    from utils.batch_delete import batch_delete_expired
 
-    async with get_db() as db:
-        while True:
-            result = await db.execute(
-                text(f"""
-                    DELETE FROM ai_gateway_mcp_approval_requests
-                    WHERE id IN (
-                        SELECT id FROM ai_gateway_mcp_approval_requests
-                        WHERE created_at < NOW() - INTERVAL '{retention_days} days'
-                          AND (status != 'pending' OR expires_at < NOW())
-                        LIMIT :batch_size
-                    )
-                    RETURNING id
-                """),
-                {"batch_size": batch_size},
-            )
-            deleted = len(result.fetchall())
-            await db.commit()
-            total_deleted += deleted
-            if deleted < batch_size:
-                break
-
-    return total_deleted
+    return await batch_delete_expired(
+        table="ai_gateway_mcp_approval_requests",
+        where_clause="(status != 'pending' OR expires_at < NOW())",
+        retention_days=retention_days,
+        batch_size=batch_size,
+    )

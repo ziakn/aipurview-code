@@ -112,7 +112,7 @@ export default function MCPApprovalsPage() {
       <PageHeaderExtended
         title="MCP Approvals"
         description="Review and manage tool invocation approval requests."
-      >{null}</PageHeaderExtended>
+      />
 
       {/* Tab bar */}
       <Box sx={{ px: 3, pt: 1 }}>

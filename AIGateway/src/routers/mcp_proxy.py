@@ -18,7 +18,7 @@ from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse, StreamingResponse
 
 from config import settings
-from crud.mcp_approvals import create_approval_request, get_approval_status, get_approved_request
+from crud.mcp_approvals import create_approval_request, get_approval_status, get_approved_request, get_pending_request
 from crud.mcp_tools import get_all_tools
 from services.mcp_audit_service import log_tool_call
 from services.mcp_guardrail_service import scan_tool_input
@@ -144,20 +144,24 @@ async def mcp_jsonrpc(request: Request):
                 # Check if an approved request already exists for this agent+tool
                 approved = await get_approved_request(org_id, agent_key["id"], tool_name)
                 if not approved:
-                    # Create a new approval request and return its ID for polling
-                    expires_at = datetime.now(timezone.utc) + timedelta(seconds=settings.mcp_approval_expiry_seconds)
-                    approval = await create_approval_request(org_id, {
-                        "agent_key_id": agent_key["id"],
-                        "tool_id": tool.get("id"),
-                        "tool_name": tool_name,
-                        "arguments": arguments,
-                        "expires_at": expires_at,
-                    })
-                    await _audit("approval_required", f"Approval request {approval.get('id')} created", False)
+                    # Reuse an existing pending request if one exists, otherwise create a new one
+                    pending = await get_pending_request(org_id, agent_key["id"], tool_name)
+                    if pending:
+                        approval = pending
+                    else:
+                        expires_at = datetime.now(timezone.utc) + timedelta(seconds=settings.mcp_approval_expiry_seconds)
+                        approval = await create_approval_request(org_id, {
+                            "agent_key_id": agent_key["id"],
+                            "tool_id": tool.get("id"),
+                            "tool_name": tool_name,
+                            "arguments": arguments,
+                            "expires_at": expires_at,
+                        })
+                        await _audit("approval_required", f"Approval request {approval.get('id')} created", False)
                     return JSONResponse(content=_jsonrpc_error(msg_id, -32001, "Tool requires approval", {
                         "approval_id": approval.get("id"),
                         "poll_endpoint": f"/v1/mcp/approvals/{approval.get('id')}/status",
-                        "expires_at": expires_at.isoformat(),
+                        "expires_at": approval["expires_at"].isoformat() if hasattr(approval["expires_at"], "isoformat") else str(approval["expires_at"]),
                     }), status_code=200)
 
             scan_result = await scan_tool_input(org_id, tool_name, arguments)
