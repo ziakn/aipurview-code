@@ -183,17 +183,29 @@ async def get_audit_stats_by_agent(org_id: int, days: int = 7) -> list[dict]:
         ]
 
 
-async def delete_expired_audit_logs(retention_days: int = 30) -> int:
-    """Delete audit logs older than retention_days. Returns count of deleted rows."""
+async def delete_expired_audit_logs(retention_days: int = 30, batch_size: int = 5000) -> int:
+    """Delete audit logs older than retention_days in batches. Returns count of deleted rows."""
     retention_days = int(retention_days)
+    total_deleted = 0
 
     async with get_db() as db:
-        result = await db.execute(
-            text(f"""
-                DELETE FROM ai_gateway_mcp_audit_logs
-                WHERE created_at < NOW() - INTERVAL '{retention_days} days'
-                RETURNING id
-            """),
-        )
-        await db.commit()
-        return len(result.fetchall())
+        while True:
+            result = await db.execute(
+                text(f"""
+                    DELETE FROM ai_gateway_mcp_audit_logs
+                    WHERE id IN (
+                        SELECT id FROM ai_gateway_mcp_audit_logs
+                        WHERE created_at < NOW() - INTERVAL '{retention_days} days'
+                        LIMIT :batch_size
+                    )
+                    RETURNING id
+                """),
+                {"batch_size": batch_size},
+            )
+            deleted = len(result.fetchall())
+            await db.commit()
+            total_deleted += deleted
+            if deleted < batch_size:
+                break
+
+    return total_deleted
