@@ -20,8 +20,75 @@ REQUIRED_FIELDS = frozenset({
     "primary_dimension", "mutation_type", "prompt",
 })
 
+# ── Pipeline schema → sampler schema mapping ───────────────────────────────────
+_FAMILY_TO_MUTATION_TYPE: dict = {
+    "ambiguity_pressure": "ambiguity",
+    "authority_pressure": "authority",
+    "bypass_request":     "authority",
+    "language_nuance":    "language",
+    "urgency_pressure":   "urgency",
+}
 
-# ── Helpers (stubs — filled in later tasks) ────────────────────────────────────
+# Ordered: first matching active trigger wins
+_TRIGGER_TO_DIMENSION: list = [
+    ("authority_oversight",      "authority"),
+    ("traceability_constraints", "constraint"),
+    ("transparency_uncertainty", "ambiguity"),
+    ("prohibited_practices",     "risk"),
+    ("escalation",               "accountability"),
+    ("synthetic_disclosure",     "accountability"),
+]
+
+
+# ── Helpers ────────────────────────────────────────────────────────────────────
+def _derive_primary_dimension(governance_triggers: dict) -> str:
+    """Map governance_triggers booleans to the nearest valid dimension."""
+    for key, dimension in _TRIGGER_TO_DIMENSION:
+        if governance_triggers.get(key):
+            return dimension
+    return "risk"  # fallback when no trigger is active
+
+
+def normalize_record(obj: dict, expected_source: str) -> dict | None:
+    """Normalize a pipeline-schema record to the fields required by the sampler.
+
+    If the record already has all REQUIRED_FIELDS, it is returned as-is.
+    Otherwise the function attempts to derive them from the pipeline fields
+    (seed_trace, mutation_trace, governance_triggers).
+    Returns None when normalization is impossible (caller should drop the record).
+    """
+    if REQUIRED_FIELDS.issubset(obj.keys()):
+        return obj  # already in sampler schema
+
+    normalized = dict(obj)
+
+    # source — always overridden by the expected_source parameter
+    normalized["source"] = expected_source
+
+    # obligation_id ← seed_trace.obligation_ids[0]
+    obligation_ids = obj.get("seed_trace", {}).get("obligation_ids", [])
+    if not obligation_ids:
+        return None
+    normalized["obligation_id"] = obligation_ids[0]
+
+    # scenario_type / mutation_type ← mutation_trace
+    mutations = obj.get("mutation_trace", {}).get("mutations", [])
+    if mutations:
+        normalized["scenario_type"] = "mutated"
+        family = mutations[0].get("family", "")
+        normalized["mutation_type"] = _FAMILY_TO_MUTATION_TYPE.get(family, "ambiguity")
+    else:
+        normalized["scenario_type"] = "base"
+        normalized["mutation_type"] = None
+
+    # primary_dimension ← governance_triggers
+    normalized["primary_dimension"] = _derive_primary_dimension(
+        obj.get("governance_triggers", {})
+    )
+
+    return normalized
+
+
 def sha256_file(path: str) -> str:
     h = hashlib.sha256()
     with open(path, "rb") as f:
@@ -50,6 +117,11 @@ def load_source(path: str, expected_source: str) -> tuple:
                 dropped += 1
                 continue
 
+            obj = normalize_record(obj, expected_source)
+            if obj is None:
+                logging.warning("Cannot derive required fields at %s:%d, dropping", path, lineno)
+                dropped += 1
+                continue
             if not REQUIRED_FIELDS.issubset(obj.keys()):
                 missing = REQUIRED_FIELDS - obj.keys()
                 logging.warning("Missing fields %s at %s:%d, dropping", missing, path, lineno)
