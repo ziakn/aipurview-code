@@ -109,15 +109,17 @@ describe("devAutoBootstrap", () => {
     );
   });
 
-  it("throws fast when a required env var is missing", async () => {
+  it("skips silently when a required env var is missing", async () => {
     setDevEnv({ DEV_ADMIN_PASSWORD: undefined });
-    mockedSequelize.query.mockResolvedValueOnce([[{ count: 0 }], 1]);
 
-    await expect(devAutoBootstrap()).rejects.toThrow(
-      /DEV_ADMIN_PASSWORD/
-    );
+    await devAutoBootstrap();
+
+    expect(mockedSequelize.query).not.toHaveBeenCalled();
     expect(mockedCreateOrg).not.toHaveBeenCalled();
     expect(mockedCreateUser).not.toHaveBeenCalled();
+    expect(logSpy).toHaveBeenCalledWith(
+      expect.stringContaining("DEV_ADMIN_PASSWORD")
+    );
   });
 
   it("throws fast when DEV_ADMIN_PASSWORD is too weak", async () => {
