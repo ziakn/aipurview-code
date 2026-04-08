@@ -354,6 +354,22 @@ try {
     }
   })();
 
+  (async () => {
+    try {
+      const { devAutoBootstrap } = require("./utils/devAutoBootstrap");
+      await devAutoBootstrap();
+    } catch (error) {
+      console.error("❌ Dev auto-bootstrap failed:", error);
+      // When DEV_AUTO_BOOTSTRAP is explicitly on, fail fast so devs notice
+      if (
+        process.env.NODE_ENV !== "production" &&
+        process.env.DEV_AUTO_BOOTSTRAP === "true"
+      ) {
+        process.exit(1);
+      }
+    }
+  })();
+
   const server = app.listen(port, () => {
     console.log(`Server running on port http://${host}:${port}/`);
   });
