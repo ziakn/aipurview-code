@@ -1,3 +1,7 @@
+import { sequelize } from "../database/db";
+import { createOrganizationQuery } from "./organization.utils";
+import { createNewUserWrapper } from "../controllers/user.ctrl";
+
 const REQUIRED_VARS = [
   "DEV_ORG_NAME",
   "DEV_ADMIN_EMAIL",
@@ -24,6 +28,18 @@ export async function devAutoBootstrap(): Promise<void> {
     return;
   }
 
+  // Idempotency — skip if any organization already exists
+  const [rows] = await sequelize.query(
+    "SELECT COUNT(*)::int AS count FROM organizations"
+  );
+  const count = (rows as Array<{ count: number }>)[0]?.count ?? 0;
+  if (count > 0) {
+    console.log(
+      "[dev-bootstrap] organizations already exist, skipping"
+    );
+    return;
+  }
+
   // Validate required env vars — fail fast with clear error
   const missing = REQUIRED_VARS.filter((k) => !process.env[k]);
   if (missing.length > 0) {
@@ -32,8 +48,11 @@ export async function devAutoBootstrap(): Promise<void> {
     );
   }
 
+  const orgName = process.env.DEV_ORG_NAME!;
   const email = process.env.DEV_ADMIN_EMAIL!;
   const password = process.env.DEV_ADMIN_PASSWORD!;
+  const name = process.env.DEV_ADMIN_NAME!;
+  const surname = process.env.DEV_ADMIN_SURNAME!;
 
   if (!EMAIL_RE.test(email)) {
     throw new Error(
@@ -54,5 +73,31 @@ export async function devAutoBootstrap(): Promise<void> {
     );
   }
 
-  // Idempotency check + organization/admin creation added in a follow-up commit.
+  const transaction = await sequelize.transaction();
+  try {
+    const org = await createOrganizationQuery(
+      { name: orgName, logo: undefined as any },
+      transaction
+    );
+
+    await createNewUserWrapper(
+      {
+        name,
+        surname,
+        email,
+        password,
+        roleId: 1, // Admin
+        organizationId: org.id!,
+      },
+      transaction
+    );
+
+    await transaction.commit();
+    console.log(
+      `[dev-bootstrap] created org "${orgName}" (id=${org.id}) and admin ${email}`
+    );
+  } catch (err) {
+    await transaction.rollback();
+    throw err;
+  }
 }
