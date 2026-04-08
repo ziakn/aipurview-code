@@ -757,11 +757,7 @@ const TrustCenterResources: React.FC = () => {
           description="Update resource details and manage visibility"
           onSubmit={handleSaveEditResource}
           submitButtonText="Save"
-          isSubmitting={
-            !formData?.info?.resources_visible ||
-            !editResource.name ||
-            !editResource.description
-          }
+          isSubmitting={!formData?.info?.resources_visible}
         >
           <Stack spacing={6}>
             <Field
