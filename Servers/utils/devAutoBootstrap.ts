@@ -20,11 +20,13 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
  */
 export async function devAutoBootstrap(): Promise<void> {
   // Hard prod guard — never run in production, regardless of flag
-  if (process.env.NODE_ENV === "production") {
+  const nodeEnv = (process.env.NODE_ENV ?? "").trim().toLowerCase();
+  const flag = (process.env.DEV_AUTO_BOOTSTRAP ?? "").trim().toLowerCase();
+  if (nodeEnv === "production") {
     return;
   }
 
-  if (process.env.DEV_AUTO_BOOTSTRAP !== "true") {
+  if (flag !== "true") {
     return;
   }
 
