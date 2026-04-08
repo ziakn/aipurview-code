@@ -352,9 +352,8 @@ try {
       console.error("Data migration check failed:", error);
       // Server continues to start even if migration check fails
     }
-  })();
 
-  (async () => {
+    // Dev-only auto-bootstrap — runs AFTER migration check completes
     try {
       const { devAutoBootstrap } = require("./utils/devAutoBootstrap");
       await devAutoBootstrap();
