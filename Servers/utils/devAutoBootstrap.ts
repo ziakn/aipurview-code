@@ -31,10 +31,20 @@ export async function devAutoBootstrap(): Promise<void> {
   }
 
   // Idempotency — skip if any organization already exists
-  const [rows] = await sequelize.query(
-    "SELECT COUNT(*)::int AS count FROM organizations"
-  );
-  const count = (rows as Array<{ count: number }>)[0]?.count ?? 0;
+  let count = 0;
+  try {
+    const [rows] = await sequelize.query(
+      "SELECT COUNT(*)::int AS count FROM organizations"
+    );
+    count = (rows as Array<{ count: number }>)[0]?.count ?? 0;
+  } catch (err: any) {
+    if (err?.parent?.code === "42P01" || err?.original?.code === "42P01") {
+      throw new Error(
+        "[dev-bootstrap] organizations table not found — run `npx sequelize db:migrate` first"
+      );
+    }
+    throw err;
+  }
   if (count > 0) {
     console.log(
       "[dev-bootstrap] organizations already exist, skipping"
