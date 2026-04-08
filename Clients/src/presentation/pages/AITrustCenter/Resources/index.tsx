@@ -35,7 +35,7 @@ import { TABLE_COLUMNS, WARNING_MESSAGES } from "./constants";
 import { AITrustCentreOverviewData } from "../../../../application/hooks/useAITrustCentreOverview";
 import { useTheme } from "@mui/material/styles";
 import AITrustCenterTable from "../../../components/Table/AITrustCenterTable";
-import { Resource } from "../../../../domain/interfaces/i.aiTrustCenter";
+import { EditResourceFormValues, NewResourceFormValues, Resource, FormData } from "../../../../domain/interfaces/i.aiTrustCenter";
 import { GroupBy } from "../../../components/Table/GroupBy";
 import { useTableGrouping, useGroupByState } from "../../../../application/hooks/useTableGrouping";
 import { GroupedTableView } from "../../../components/Table/GroupedTableView";
@@ -140,27 +140,6 @@ const ResourceTableRow: React.FC<{
     </>
   );
 };
-
-interface FormData {
-  intro?: Record<string, unknown>;
-  compliance_badges?: Record<string, unknown>;
-  company_description?: Record<string, unknown>;
-  terms_and_contact?: Record<string, unknown>;
-  info?: {
-    resources_visible?: boolean;
-  };
-}
-
-interface NewResourceFormValues {
-  name: string;
-  description: string;
-  file: File | null;
-}
-
-interface EditResourceFormValues {
-  name: string;
-  description: string;
-}
 
 const TrustCenterResources: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
