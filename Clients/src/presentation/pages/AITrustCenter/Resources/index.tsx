@@ -722,7 +722,7 @@ const TrustCenterResources: React.FC = () => {
                 <Typography
                   component="span"
                   color="error"
-                  sx={{ opacity: 0.8, fontSize: 11, mt: 1, display: "block" }}
+                  sx={styles.fileErrorText}
                 >
                   {addErrors.file}
                 </Typography>
