@@ -94,6 +94,34 @@ npx sequelize db:migrate:undo    # Rollback last
 
 ---
 
+## Dev-Only Auto-Bootstrap
+
+On a fresh database, the standard onboarding flow requires logging in as super-admin (seeded by migration from `SUPERADMIN_EMAIL` / `SUPERADMIN_PASSWORD`), creating an organization, and inviting an admin. To skip this for local development, set the following in `Servers/.env`:
+
+```env
+NODE_ENV=development
+DEV_AUTO_BOOTSTRAP=true
+DEV_ORG_NAME=Acme Dev
+DEV_ADMIN_EMAIL=admin@local.dev
+DEV_ADMIN_PASSWORD=Admin123!   # ≥8 chars, upper, lower, digit
+DEV_ADMIN_NAME=Dev
+DEV_ADMIN_SURNAME=Admin
+```
+
+On startup (after migrations, before `app.listen`), `Servers/utils/devAutoBootstrap.ts` will:
+
+1. **Hard-bail in production** — `NODE_ENV === "production"` is an unconditional return, regardless of the flag. The feature is dev-only by construction.
+2. Skip if `DEV_AUTO_BOOTSTRAP !== "true"`.
+3. Skip if any `organizations` row already exists (idempotent — safe to leave on across restarts).
+4. Validate required env vars and password strength; **fail fast** on startup with a clear error if anything is missing or invalid.
+5. In a single transaction, call `createOrganizationQuery` (`utils/organization.utils.ts`) and `createNewUserWrapper` (`controllers/user.ctrl.ts`) with `roleId: 1` (Admin). The user is created active — no email invitation flow.
+
+Log on success: `[dev-bootstrap] created org "<name>" (id=<id>) and admin <email>`.
+
+This is for local developer convenience only — never enable on shared environments.
+
+---
+
 ## Backend Development
 
 ### Layer Flow
