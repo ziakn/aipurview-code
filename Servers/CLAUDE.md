@@ -110,11 +110,12 @@ DEV_ADMIN_SURNAME=Admin
 
 On startup (after migrations, before `app.listen`), `Servers/utils/devAutoBootstrap.ts` will:
 
-1. **Hard-bail in production** — `NODE_ENV === "production"` is an unconditional return, regardless of the flag. The feature is dev-only by construction.
+1. **Hard-bail in production** — `NODE_ENV === "production"` is an unconditional return, regardless of the flag. The feature is dev-only by construction. `NODE_ENV` and the flag are trimmed + lowercased, so `" True "` and `"Production"` are handled.
 2. Skip if `DEV_AUTO_BOOTSTRAP !== "true"`.
-3. Skip if any `organizations` row already exists (idempotent — safe to leave on across restarts).
-4. Validate required env vars and password strength; **fail fast** on startup with a clear error if anything is missing or invalid.
-5. In a single transaction, call `createOrganizationQuery` (`utils/organization.utils.ts`) and `createNewUserWrapper` (`controllers/user.ctrl.ts`) with `roleId: 1` (Admin). The user is created active — no email invitation flow.
+3. **Pre-flight the `DEV_*` vars before touching the DB.** If any of `DEV_ORG_NAME`, `DEV_ADMIN_EMAIL`, `DEV_ADMIN_PASSWORD`, `DEV_ADMIN_NAME`, or `DEV_ADMIN_SURNAME` is missing, commented out, or empty, log a skip message and return — the server then falls back to the default super-admin-only flow. No throw, no `process.exit(1)`.
+4. Skip if any `organizations` row already exists (idempotent — safe to leave on across restarts). If the `organizations` table doesn't exist (`42P01`), surface a friendly "run `npx sequelize db:migrate` first" error instead of a raw SQL error.
+5. Validate email format, reject collisions with `SUPERADMIN_EMAIL`, and check password strength. These fail fast on startup with a clear error since the vars were explicitly set.
+6. In a single transaction, call `createOrganizationQuery` (`utils/organization.utils.ts`) and `createNewUserWrapper` (`controllers/user.ctrl.ts`) with `roleId: 1` (Admin). The user is created active — no email invitation flow.
 
 Log on success: `[dev-bootstrap] created org "<name>" (id=<id>) and admin <email>`.
 
