@@ -30,6 +30,19 @@ export async function devAutoBootstrap(): Promise<void> {
     return;
   }
 
+  // Pre-flight: if any required env var is missing/empty, skip silently and
+  // fall back to the default super-admin-only flow. We do this BEFORE touching
+  // the DB so a partially-configured .env never fails startup.
+  const missing = REQUIRED_VARS.filter(
+    (k) => !(process.env[k] ?? "").trim()
+  );
+  if (missing.length > 0) {
+    console.log(
+      `[dev-bootstrap] skipping — missing env vars: ${missing.join(", ")}`
+    );
+    return;
+  }
+
   // Idempotency — skip if any organization already exists
   let count = 0;
   try {
@@ -50,14 +63,6 @@ export async function devAutoBootstrap(): Promise<void> {
       "[dev-bootstrap] organizations already exist, skipping"
     );
     return;
-  }
-
-  // Validate required env vars — fail fast with clear error
-  const missing = REQUIRED_VARS.filter((k) => !process.env[k]);
-  if (missing.length > 0) {
-    throw new Error(
-      `[dev-bootstrap] missing required env vars: ${missing.join(", ")}`
-    );
   }
 
   const orgName = process.env.DEV_ORG_NAME!;
