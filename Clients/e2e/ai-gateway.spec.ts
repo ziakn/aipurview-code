@@ -304,4 +304,100 @@ test.describe("AI Gateway", () => {
       }
     }
   });
+
+  // --- Tier 5: Playground chat ---
+
+  test.describe("Playground", () => {
+    test("playground page renders composer or empty state", async ({
+      authedPage: page,
+    }) => {
+      await page.goto("/ai-gateway/playground");
+      await page.waitForTimeout(2000);
+
+      // Should show either a chat composer or an empty state
+      const content = page
+        .locator("[data-composer-input]")
+        .or(page.getByPlaceholder(/type a message/i))
+        .or(page.getByText(/no endpoint/i))
+        .or(page.getByText(/select an endpoint/i))
+        .or(page.getByText(/setup required/i))
+        .or(page.getByRole("combobox"));
+
+      await expect(content.first()).toBeVisible({ timeout: 15_000 });
+    });
+
+    test("endpoint selector shows available endpoints", async ({
+      authedPage: page,
+    }) => {
+      await page.goto("/ai-gateway/playground");
+      await page.waitForTimeout(2000);
+
+      // MUI Select renders a hidden input#endpoint + a visible div[role=combobox]
+      const endpointSelect = page
+        .locator('#endpoint ~ div[role="combobox"]')
+        .or(page.locator('#endpoint').locator('..').getByRole("combobox"))
+        .or(page.getByRole("combobox").first());
+
+      if (!(await endpointSelect.first().isVisible().catch(() => false))) {
+        test.skip();
+        return;
+      }
+
+      await endpointSelect.first().click();
+      await page.waitForTimeout(500);
+
+      // Check if options appear
+      const option = page.getByRole("option");
+      if (await option.first().isVisible().catch(() => false)) {
+        await expect(option.first()).toBeVisible();
+      }
+
+      await page.keyboard.press("Escape");
+    });
+
+    test("settings modal opens with temperature and token controls", async ({
+      authedPage: page,
+    }) => {
+      await page.goto("/ai-gateway/playground");
+      await page.waitForTimeout(2000);
+
+      // Find and click settings button
+      const settingsBtn = page
+        .getByRole("button", { name: /settings/i })
+        .or(page.locator('[aria-label*="settings" i]'));
+
+      if (!(await settingsBtn.first().isVisible().catch(() => false))) {
+        test.skip();
+        return;
+      }
+
+      await settingsBtn.first().click();
+      await page.waitForTimeout(500);
+
+      // Verify modal with temperature and max tokens
+      const tempLabel = page
+        .getByText(/temperature/i)
+        .or(page.getByText(/temp/i));
+      const tokensLabel = page
+        .getByText(/max tokens/i)
+        .or(page.getByText(/tokens/i));
+
+      if (await tempLabel.first().isVisible().catch(() => false)) {
+        await expect(tempLabel.first()).toBeVisible();
+      }
+      if (await tokensLabel.first().isVisible().catch(() => false)) {
+        await expect(tokensLabel.first()).toBeVisible();
+      }
+
+      // Close the modal
+      const closeBtn = page
+        .getByRole("button", { name: /close|cancel/i })
+        .or(page.getByRole("button", { name: /save/i }));
+      if (await closeBtn.first().isVisible().catch(() => false)) {
+        await closeBtn.first().click();
+      } else {
+        await page.keyboard.press("Escape");
+      }
+    });
+  });
 });

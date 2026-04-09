@@ -68,6 +68,10 @@ export async function createScanQuery(
       base_commit_sha,
       head_commit_sha,
       baseline_scan_id,
+      trigger_type,
+      pr_number,
+      commit_sha,
+      branch,
       created_at,
       updated_at
     ) VALUES (
@@ -83,6 +87,10 @@ export async function createScanQuery(
       :base_commit_sha,
       :head_commit_sha,
       :baseline_scan_id,
+      :trigger_type,
+      :pr_number,
+      :commit_sha,
+      :branch,
       NOW(),
       NOW()
     )
@@ -103,6 +111,10 @@ export async function createScanQuery(
       base_commit_sha: input.base_commit_sha || null,
       head_commit_sha: input.head_commit_sha || null,
       baseline_scan_id: input.baseline_scan_id || null,
+      trigger_type: input.trigger_type || "manual",
+      pr_number: input.pr_number || null,
+      commit_sha: input.commit_sha || null,
+      branch: input.branch || null,
     },
     transaction,
   });
