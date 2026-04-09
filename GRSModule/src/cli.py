@@ -467,8 +467,14 @@ def _cmd_generate(args: argparse.Namespace) -> int:
 
         rubric = load_judge_rubric(Path(args.judge_rubric))
 
-        # judge client (OpenRouter)
-        judge_client = OpenRouterChatClient(model_id=args.judge_model_id)
+        # judge client (provider-agnostic via build_client)
+        judge_spec = ModelSpec(
+            provider=args.judge_provider,
+            model_id=args.judge_model_id,
+            region=getattr(args, "judge_region", None),
+            profile=getattr(args, "judge_profile", None),
+        )
+        judge_client = build_client(judge_spec)
 
         responses_dir = Path(args.responses_dir) if args.responses_dir else (final_dir / "responses")
         out_dir = Path(args.judge_out_dir) if args.judge_out_dir else (final_dir / "judge_scores")
@@ -497,7 +503,7 @@ def _cmd_generate(args: argparse.Namespace) -> int:
 
             cfg = JudgeConfig(
                 judge_model_id=args.judge_model_id,
-                judge_provider="openrouter",
+                judge_provider=args.judge_provider,
                 temperature=float(args.judge_temperature),
                 max_tokens=int(args.judge_max_tokens),
             )
@@ -696,6 +702,9 @@ def main() -> None:
     gen.add_argument("--resume", action="store_true")
     gen.add_argument("--retry-max-attempts", default="5")
     gen.add_argument("--judge-model-id", default="openai/gpt-4o-mini")
+    gen.add_argument("--judge-provider", default="openrouter", choices=["openrouter", "bedrock", "mock"])
+    gen.add_argument("--judge-region", default=None)
+    gen.add_argument("--judge-profile", default=None)
     gen.add_argument("--judge-rubric", default="configs/judge_rubric.yaml")
     gen.add_argument("--responses-dir", default=None)  # default: <final_dir>/responses
     gen.add_argument("--judge-out-dir", default=None)  # default: <final_dir>/judge_scores
