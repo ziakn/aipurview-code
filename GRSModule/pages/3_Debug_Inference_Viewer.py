@@ -31,6 +31,20 @@ DEBUG_DIR = ROOT / "datasets" / "debug"
 MANIFEST_PATH = DEBUG_DIR / "grs_debug_manifest.json"
 SAMPLE_PATH = DEBUG_DIR / "grs_debug_sample.jsonl"
 RESPONSES_DIR = DEBUG_DIR / "final" / "responses"
+JUDGE_SCORES_DIR = DEBUG_DIR / "final" / "judge_scores"
+
+DIMENSIONS = [
+    "boundary_management",
+    "constraint_adherence",
+    "clarity_and_questions",
+    "escalation_and_controls",
+]
+DIMENSION_LABELS = {
+    "boundary_management": "Boundary Management",
+    "constraint_adherence": "Constraint Adherence",
+    "clarity_and_questions": "Clarity & Questions",
+    "escalation_and_controls": "Escalation & Controls",
+}
 
 # ---------------------------------------------------------------------------
 # Data loading (cached)
@@ -63,6 +77,30 @@ def load_responses() -> dict[str, dict[str, dict]]:
         stem = f.stem
         out[stem] = {r["scenario_id"]: r for r in read_jsonl(f)}
     return out
+
+
+@st.cache_data(show_spinner="Loading judge scores…")
+def load_judge_scores() -> dict[str, dict[str, dict]]:
+    """Returns {model_stem: {scenario_id: judge_record}}."""
+    if not JUDGE_SCORES_DIR.exists():
+        return {}
+    out: dict[str, dict[str, dict]] = {}
+    for f in sorted(JUDGE_SCORES_DIR.glob("*.jsonl")):
+        if f.name.endswith(".failures.jsonl"):
+            continue
+        stem = f.stem
+        out[stem] = {r["scenario_id"]: r for r in read_jsonl(f)}
+    return out
+
+
+def grs_color(score: float | None) -> str:
+    if score is None:
+        return "#888"
+    if score < 1.5:
+        return "#b22222"
+    if score < 2.5:
+        return "#b8860b"
+    return "#2d7a2d"
 
 
 @st.cache_data(show_spinner="Loading failures…")
@@ -174,7 +212,7 @@ def render_overview(manifest: dict, scenarios: list[dict]) -> None:
             )
             .properties(height=200)
         )
-        st.altair_chart(chart, use_container_width=True)
+        st.altair_chart(chart, width="stretch")
 
         p1_src = phase1.get("source_distribution", {})
         p2_src = phase2.get("source_distribution", {})
@@ -184,7 +222,7 @@ def render_overview(manifest: dict, scenarios: list[dict]) -> None:
                 for s in src_dist
             ]
         )
-        st.dataframe(phase_df, hide_index=True, use_container_width=True)
+        st.dataframe(phase_df, hide_index=True, width="stretch")
 
     st.divider()
 
@@ -197,7 +235,7 @@ def render_overview(manifest: dict, scenarios: list[dict]) -> None:
             source, sid = src_sid.split(":") if ":" in src_sid else ("?", src_sid)
             cov_rows.append({"Obligation ID": obl_id, "Source": source.upper(), "Scenario ID": sid})
         cov_df = pd.DataFrame(cov_rows)
-        st.dataframe(cov_df, hide_index=True, use_container_width=True)
+        st.dataframe(cov_df, hide_index=True, width="stretch")
 
     st.divider()
 
@@ -224,7 +262,7 @@ def render_overview(manifest: dict, scenarios: list[dict]) -> None:
                 )
                 .properties(height=200)
             )
-            st.altair_chart(dim_chart, use_container_width=True)
+            st.altair_chart(dim_chart, width="stretch")
 
             dim_audit = audit.get("dimension_coverage", {})
             missing = dim_audit.get("missing_dimensions", [])
@@ -261,7 +299,7 @@ def render_overview(manifest: dict, scenarios: list[dict]) -> None:
                 )
                 .properties(height=max(150, len(domain_counts) * 30))
             )
-            st.altair_chart(dom_chart, use_container_width=True)
+            st.altair_chart(dom_chart, width="stretch")
 
         with col_b:
             st.markdown("**By risk level**")
@@ -286,7 +324,7 @@ def render_overview(manifest: dict, scenarios: list[dict]) -> None:
                 )
                 .properties(height=200)
             )
-            st.altair_chart(risk_chart, use_container_width=True)
+            st.altair_chart(risk_chart, width="stretch")
 
 
 # ---------------------------------------------------------------------------
@@ -397,28 +435,6 @@ def render_model_comparison(scenarios: list[dict], all_responses: dict[str, dict
 
     st.markdown("### Model Responses")
 
-    # Latency comparison bar
-    latencies = {}
-    for stem in model_stems:
-        resp = all_responses.get(stem, {}).get(selected_id, {})
-        lms = resp.get("raw", {}).get("latency_ms")
-        if lms is not None:
-            latencies[stem] = lms
-
-    if latencies:
-        lat_df = pd.DataFrame([{"Model": k, "Latency (ms)": v} for k, v in latencies.items()])
-        lat_chart = (
-            alt.Chart(lat_df)
-            .mark_bar(color="#b8860b")
-            .encode(
-                x=alt.X("Latency (ms):Q"),
-                y=alt.Y("Model:N", sort="-x"),
-                tooltip=["Model", "Latency (ms)"],
-            )
-            .properties(height=max(80, len(latencies) * 40))
-        )
-        st.altair_chart(lat_chart, use_container_width=True)
-
     # Token usage summary
     usage_rows = []
     for stem in model_stems:
@@ -435,7 +451,7 @@ def render_model_comparison(scenarios: list[dict], all_responses: dict[str, dict
             "Stop reason": raw.get("stopReason") or raw.get("finish_reason") or "—",
         })
     if usage_rows:
-        st.dataframe(pd.DataFrame(usage_rows), hide_index=True, use_container_width=True)
+        st.dataframe(pd.DataFrame(usage_rows), hide_index=True, width="stretch")
 
     # Side-by-side text
     cols = st.columns(len(model_stems))
@@ -484,6 +500,148 @@ def render_failures(all_failures: dict[str, list[dict]]) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Tab 4 — Evaluation
+# ---------------------------------------------------------------------------
+
+
+def render_evaluation(
+    scenarios: list[dict],
+    all_responses: dict[str, dict[str, dict]],
+    all_judge_scores: dict[str, dict[str, dict]],
+) -> None:
+    if not scenarios:
+        st.warning("No scenarios found in the debug sample.")
+        return
+
+    if not all_judge_scores:
+        st.info(f"No judge scores found in `{JUDGE_SCORES_DIR.relative_to(ROOT)}`. Run the judge stage first.")
+        return
+
+    model_stems = sorted(all_judge_scores.keys())
+    scenario_ids = [s["scenario_id"] for s in scenarios]
+    sc_by_id = {s["scenario_id"]: s for s in scenarios}
+
+    # ---- Filters + scenario selector ------------------------------------
+    col_filter, col_select = st.columns([1, 2])
+
+    with col_filter:
+        all_sources = sorted({s.get("source", "") for s in scenarios if s.get("source")})
+        all_risks = sorted({s.get("risk_level", "") for s in scenarios if s.get("risk_level")})
+        source_filter = st.multiselect("Filter by source", all_sources, default=all_sources, key="eval_source")
+        risk_filter = st.multiselect("Filter by risk", all_risks, default=all_risks, key="eval_risk")
+
+    filtered_ids = [
+        sid for sid in scenario_ids
+        if sc_by_id[sid].get("source", "") in source_filter
+        and sc_by_id[sid].get("risk_level", "") in risk_filter
+    ]
+
+    with col_select:
+        if not filtered_ids:
+            st.warning("No scenarios match the current filters.")
+            return
+        selected_id = st.selectbox(
+            f"Scenario ({len(filtered_ids)} matching)",
+            filtered_ids,
+            format_func=lambda sid: f"{sid}  [{sc_by_id[sid].get('source','?').upper()} · {sc_by_id[sid].get('risk_level','?')}]",
+            key="eval_scenario",
+        )
+
+    scenario = sc_by_id[selected_id]
+
+    # ---- Scenario header ------------------------------------------------
+    st.divider()
+    c1, c2, c3, c4 = st.columns(4)
+    c1.markdown(f"**ID:** `{selected_id}`")
+    c2.markdown(source_badge(scenario.get("source", "?")), unsafe_allow_html=True)
+    c3.markdown(risk_badge(scenario.get("risk_level", "")), unsafe_allow_html=True)
+    c4.markdown(f"**Domain:** {scenario.get('domain', '—')}")
+
+    with st.expander("Prompt", expanded=False):
+        st.text_area(
+            label="prompt",
+            value=scenario.get("prompt", ""),
+            height=200,
+            disabled=True,
+            label_visibility="collapsed",
+            key=f"eval_prompt_{selected_id}",
+        )
+
+    st.divider()
+
+    # ---- Per-model evaluation cards -------------------------------------
+    st.markdown("### Evaluation Results")
+
+    cols = st.columns(len(model_stems))
+    for col, stem in zip(cols, model_stems):
+        judge = all_judge_scores.get(stem, {}).get(selected_id)
+        resp = all_responses.get(stem, {}).get(selected_id)
+
+        with col:
+            st.markdown(f"**`{stem}`**")
+
+            if judge is None:
+                st.warning("No judge score for this scenario.")
+            else:
+                grs = judge.get("grs_score")
+                color = grs_color(grs)
+                st.markdown(
+                    f'<p style="font-size:2em;font-weight:bold;color:{color}">'
+                    f'GRS {grs:.2f} <span style="font-size:0.5em;color:#888">/ 4.00</span></p>',
+                    unsafe_allow_html=True,
+                )
+                if grs is not None:
+                    st.progress(min(grs / 4.0, 1.0))
+
+                st.caption(f"Judge: `{judge.get('judge_model_id', '—')}`")
+
+                st.markdown("**Dimension Scores**")
+                dim_map = {d["dimension_id"]: d for d in judge.get("dimension_scores", [])}
+                for dim_id in DIMENSIONS:
+                    ds = dim_map.get(dim_id, {})
+                    score = ds.get("score")
+                    label = DIMENSION_LABELS.get(dim_id, dim_id)
+                    rationale = ds.get("rationale", "")
+                    evidence = ds.get("evidence", [])
+
+                    if score is not None:
+                        st.markdown(f"_{label}_ — **{score}/4**")
+                        st.progress(score / 4.0)
+                    else:
+                        st.markdown(f"_{label}_ — N/A")
+
+                    if rationale or evidence:
+                        with st.expander("Rationale"):
+                            if rationale:
+                                st.markdown(rationale)
+                            if evidence:
+                                st.markdown("**Evidence**")
+                                for e in evidence:
+                                    st.markdown(f"- {e}")
+
+                flags = {k: v for k, v in (judge.get("flags") or {}).items() if v}
+                if flags:
+                    with st.expander("Flags"):
+                        st.json(flags)
+
+            st.divider()
+
+            # Response text beneath the scores
+            st.markdown("**Response**")
+            if resp is None:
+                st.warning("No response recorded.")
+            else:
+                st.text_area(
+                    label=stem,
+                    value=resp.get("output_text", ""),
+                    height=300,
+                    disabled=True,
+                    label_visibility="collapsed",
+                    key=f"eval_resp_{selected_id}_{stem}",
+                )
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -499,23 +657,29 @@ def main() -> None:
     scenarios = load_sample()
     all_responses = load_responses()
     all_failures = load_failures()
+    all_judge_scores = load_judge_scores()
 
     model_stems = sorted(all_responses.keys())
     n_with_resp = sum(
         1 for s in scenarios
         if any(s["scenario_id"] in all_responses.get(stem, {}) for stem in model_stems)
     )
+    n_with_scores = sum(
+        1 for s in scenarios
+        if any(s["scenario_id"] in all_judge_scores.get(stem, {}) for stem in all_judge_scores)
+    )
 
     # Top-line header metrics
-    hc1, hc2, hc3 = st.columns(3)
+    hc1, hc2, hc3, hc4 = st.columns(4)
     hc1.metric("Scenarios in sample", len(scenarios))
     hc2.metric("Models with responses", len(model_stems))
     hc3.metric("Scenarios with ≥1 response", n_with_resp)
+    hc4.metric("Scenarios with judge scores", n_with_scores)
 
     st.divider()
 
-    tab_overview, tab_compare, tab_failures = st.tabs(
-        ["Sample Overview", "Model Comparison", "Failures"]
+    tab_overview, tab_compare, tab_eval, tab_failures = st.tabs(
+        ["Sample Overview", "Model Comparison", "Evaluation", "Failures"]
     )
 
     with tab_overview:
@@ -523,6 +687,9 @@ def main() -> None:
 
     with tab_compare:
         render_model_comparison(scenarios, all_responses)
+
+    with tab_eval:
+        render_evaluation(scenarios, all_responses, all_judge_scores)
 
     with tab_failures:
         render_failures(all_failures)
