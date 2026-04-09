@@ -1,4 +1,5 @@
-import { Box, Typography, Stack, Chip, LinearProgress } from "@mui/material";
+import { Box, Typography, Stack, LinearProgress } from "@mui/material";
+import Chip from "../Chip";
 import { AlertTriangle, ArrowDown, CheckCircle2, Lightbulb } from "lucide-react";
 import { status, accent, text as textColors, border as borderPalette, background, brand } from "../../themes/palette";
 
@@ -87,11 +88,11 @@ export default function WeakControlsList({
           fontWeight: 600,
           color: textColors.primary,
           fontFamily: "'Red Hat Display', 'Geist', sans-serif",
-          mb: 1.5,
+          mb: 1,
           flexShrink: 0,
         }}
       >
-        Weakest Controls
+        Weakest controls
       </Typography>
 
       {/* Scrollable list */}
@@ -136,7 +137,7 @@ export default function WeakControlsList({
                 }}
               >
                 {/* Top row: control info + score */}
-                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.25 }}>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
                   <Stack direction="row" alignItems="center" spacing={1.5}>
                     {/* Priority icon */}
                     <Box
@@ -175,14 +176,9 @@ export default function WeakControlsList({
                     <Chip
                       label={priority.label}
                       size="small"
-                      sx={{
-                        height: 22,
-                        fontSize: 10,
-                        fontWeight: 600,
-                        backgroundColor: priority.colors.bg,
-                        color: priority.colors.text,
-                        border: `1px solid ${priority.colors.border}`,
-                      }}
+                      backgroundColor={priority.colors.bg}
+                      textColor={priority.colors.text}
+                      uppercase={false}
                     />
                     <Typography sx={{ fontSize: 18, fontWeight: 700, color: getScoreColor(ctrl.overall_score) }}>
                       {ctrl.overall_score}

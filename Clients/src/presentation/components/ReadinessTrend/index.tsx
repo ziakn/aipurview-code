@@ -59,8 +59,8 @@ export default function ReadinessTrend({ data, isLoading }: ReadinessTrendProps)
   return (
     <Box sx={{ height: FIXED_HEIGHT, display: "flex", flexDirection: "column" }}>
       {/* Fixed header */}
-      <Typography sx={{ fontSize: 15, fontWeight: 600, color: textColors.primary, mb: 1.5, px: 0.5, flexShrink: 0 }}>
-        Readiness Trend
+      <Typography sx={{ fontSize: 15, fontWeight: 600, color: textColors.primary, mb: 1, px: 0.5, flexShrink: 0 }}>
+        Readiness trend
       </Typography>
 
       {/* Scrollable list */}

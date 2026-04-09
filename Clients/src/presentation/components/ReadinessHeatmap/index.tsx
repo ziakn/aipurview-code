@@ -84,15 +84,15 @@ export default function ReadinessHeatmap({
           fontWeight: 600,
           color: textColors.primary,
           fontFamily: "'Red Hat Display', 'Geist', sans-serif",
-          mb: 1.5,
+          mb: 1,
           flexShrink: 0,
         }}
       >
-        {formatFrameworkName(frameworkType)} — Control Readiness
+        {formatFrameworkName(frameworkType)} — Control readiness
       </Typography>
 
       {/* Legend with counts */}
-      <Stack direction="row" spacing={2.5} sx={{ mb: 2, flexShrink: 0 }}>
+      <Stack direction="row" spacing={2.5} sx={{ mb: 1, flexShrink: 0 }}>
         {LEVELS.map((level) => {
           const { label, colors, Icon } = LEVEL_CONFIG[level];
           const count = counts[level];

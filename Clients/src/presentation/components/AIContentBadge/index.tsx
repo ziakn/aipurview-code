@@ -1,5 +1,6 @@
-import { Box, Tooltip, Typography, Chip } from "@mui/material";
-import { text as textColors } from "../../themes/palette";
+import { Box, Tooltip, Typography } from "@mui/material";
+import { text as textColors, accent, brand } from "../../themes/palette";
+import CustomChip from "../Chip";
 import type { BadgeType, ReviewAction } from "../../../domain/interfaces/i.aiContent";
 
 interface AIContentBadgeProps {
@@ -14,28 +15,28 @@ interface AIContentBadgeProps {
 
 const BADGE_CONFIG: Record<BadgeType, { label: string; color: string; bg: string; border: string }> = {
   generated: {
-    label: "AI-Generated",
-    color: "#7C3AED",
-    bg: "#F5F3FF",
-    border: "#DDD6FE",
+    label: "AI-generated",
+    color: accent.primary.text,
+    bg: accent.primary.bg,
+    border: accent.primary.border,
   },
   assisted: {
-    label: "AI-Assisted",
-    color: "#2563EB",
-    bg: "#EFF6FF",
-    border: "#BFDBFE",
+    label: "AI-assisted",
+    color: accent.primary.text,
+    bg: accent.primary.bg,
+    border: accent.primary.border,
   },
   reviewed: {
-    label: "AI-Reviewed",
-    color: "#059669",
-    bg: "#ECFDF5",
-    border: "#A7F3D0",
+    label: "AI-reviewed",
+    color: accent.primary.text,
+    bg: accent.primary.bg,
+    border: accent.primary.border,
   },
   suggested: {
-    label: "AI-Suggested",
-    color: "#D97706",
-    bg: "#FFFBEB",
-    border: "#FDE68A",
+    label: "AI-suggested",
+    color: accent.primary.text,
+    bg: accent.primary.bg,
+    border: accent.primary.border,
   },
 };
 
@@ -111,7 +112,7 @@ export default function AIContentBadge({
                 width: isSmall ? 5 : 7,
                 height: isSmall ? 5 : 7,
                 borderRadius: "50%",
-                backgroundColor: reviewAction === "approved" ? "#059669" : reviewAction === "rejected" ? "#DC2626" : "#D97706",
+                backgroundColor: brand.primary,
               }}
             />
           )}
@@ -135,16 +136,11 @@ export default function AIContentBadge({
             {config.label}
           </Typography>
           {humanReviewed && reviewAction && (
-            <Chip
+            <CustomChip
               label={REVIEW_LABELS[reviewAction]}
               size="small"
-              sx={{
-                height: 18,
-                fontSize: 9,
-                fontWeight: 600,
-                backgroundColor: reviewAction === "approved" ? "#ECFDF5" : reviewAction === "rejected" ? "#FEF2F2" : "#FFFBEB",
-                color: reviewAction === "approved" ? "#059669" : reviewAction === "rejected" ? "#DC2626" : "#D97706",
-              }}
+              variant={reviewAction === "approved" ? "success" : reviewAction === "rejected" ? "error" : "warning"}
+              uppercase={false}
             />
           )}
         </Box>
@@ -159,7 +155,7 @@ export default function AIContentBadge({
           </Typography>
         )}
         {!humanReviewed && (
-          <Typography sx={{ fontSize: 10, color: "#D97706", fontWeight: 500, mt: 0.3 }}>
+          <Typography sx={{ fontSize: 10, color: textColors.muted, fontWeight: 500, mt: 0.3 }}>
             Pending review
           </Typography>
         )}
@@ -170,18 +166,15 @@ export default function AIContentBadge({
   // tooltip variant — just a chip
   return (
     <Tooltip title={tooltipContent} arrow>
-      <Chip
-        label={config.label}
-        size="small"
-        sx={{
-          height: isSmall ? 18 : 22,
-          fontSize: isSmall ? 9 : 11,
-          fontWeight: 600,
-          backgroundColor: config.bg,
-          color: config.color,
-          border: `1px solid ${config.border}`,
-        }}
-      />
+      <Box component="span">
+        <CustomChip
+          label={config.label}
+          size={isSmall ? "small" : "medium"}
+          backgroundColor={config.bg}
+          textColor={config.color}
+          uppercase={false}
+        />
+      </Box>
     </Tooltip>
   );
 }

@@ -5,7 +5,6 @@ import {
   Button,
   TextField,
   Stack,
-  Chip,
 } from "@mui/material";
 import { Bot, Clock, Cpu, Wrench, Target, CheckCircle } from "lucide-react";
 import {
@@ -13,9 +12,9 @@ import {
   border as borderPalette,
   background,
   brand,
-  status,
   accent,
 } from "../../themes/palette";
+import Chip from "../Chip";
 import AIContentBadge from "../AIContentBadge";
 import type { AIContentMetadata, ReviewAction } from "../../../domain/interfaces/i.aiContent";
 
@@ -90,14 +89,8 @@ export default function AIContentReviewPanel({
             <Chip
               label={item.field_name}
               size="small"
-              sx={{
-                height: 22,
-                fontSize: 11,
-                fontWeight: 500,
-                backgroundColor: background.hover,
-                color: textColors.secondary,
-                border: `1px solid ${borderPalette.light}`,
-              }}
+              variant="default"
+              uppercase={false}
             />
           )}
         </Stack>
@@ -126,22 +119,22 @@ export default function AIContentReviewPanel({
       {/* ── Body ── */}
       <Box sx={{ px: 3.5, py: 3 }}>
         {/* Metadata tags */}
-        <Stack direction="row" spacing={2} sx={{ mb: 3, flexWrap: "wrap", rowGap: "12px" }}>
+        <Stack direction="row" spacing={2} sx={{ mb: 1, flexWrap: "wrap", rowGap: "12px" }}>
           {item.model_used && (
             <Stack
               direction="row"
               alignItems="center"
               spacing={1}
               sx={{
-                backgroundColor: accent.blue.bg,
-                border: `1px solid ${accent.blue.border}`,
+                backgroundColor: accent.primary.bg,
+                border: `1px solid ${accent.primary.border}`,
                 borderRadius: "8px",
                 px: 2,
                 py: 0.75,
               }}
             >
-              <Cpu size={14} style={{ color: accent.blue.text }} />
-              <Typography sx={{ fontSize: 12, color: accent.blue.text, fontWeight: 500 }}>
+              <Cpu size={14} style={{ color: accent.primary.text }} />
+              <Typography sx={{ fontSize: 12, color: accent.primary.text, fontWeight: 500 }}>
                 {item.model_used}
               </Typography>
             </Stack>
@@ -152,15 +145,15 @@ export default function AIContentReviewPanel({
               alignItems="center"
               spacing={1}
               sx={{
-                backgroundColor: accent.indigo.bg,
-                border: `1px solid ${accent.indigo.border}`,
+                backgroundColor: accent.primary.bg,
+                border: `1px solid ${accent.primary.border}`,
                 borderRadius: "8px",
                 px: 2,
                 py: 0.75,
               }}
             >
-              <Bot size={14} style={{ color: accent.indigo.text }} />
-              <Typography sx={{ fontSize: 12, color: accent.indigo.text, fontWeight: 500 }}>
+              <Bot size={14} style={{ color: accent.primary.text }} />
+              <Typography sx={{ fontSize: 12, color: accent.primary.text, fontWeight: 500 }}>
                 {item.model_provider}
               </Typography>
             </Stack>
@@ -171,15 +164,15 @@ export default function AIContentReviewPanel({
               alignItems="center"
               spacing={1}
               sx={{
-                backgroundColor: accent.teal.bg,
-                border: `1px solid ${accent.teal.border}`,
+                backgroundColor: accent.primary.bg,
+                border: `1px solid ${accent.primary.border}`,
                 borderRadius: "8px",
                 px: 2,
                 py: 0.75,
               }}
             >
-              <Wrench size={14} style={{ color: accent.teal.text }} />
-              <Typography sx={{ fontSize: 12, color: accent.teal.text, fontWeight: 500 }}>
+              <Wrench size={14} style={{ color: accent.primary.text }} />
+              <Typography sx={{ fontSize: 12, color: accent.primary.text, fontWeight: 500 }}>
                 {item.tool_name}
               </Typography>
             </Stack>
@@ -209,7 +202,7 @@ export default function AIContentReviewPanel({
         {item.prompt_summary && (
           <Box
             sx={{
-              mb: 3,
+              mb: 1,
               px: 2.5,
               py: 2,
               backgroundColor: background.accent,
@@ -232,13 +225,13 @@ export default function AIContentReviewPanel({
             sx={{
               px: 2,
               py: 1.5,
-              backgroundColor: status.success.bg,
+              backgroundColor: accent.primary.bg,
               borderRadius: "8px",
-              border: `1px solid ${status.success.border}`,
+              border: `1px solid ${accent.primary.border}`,
             }}
           >
-            <CheckCircle size={16} style={{ color: status.success.text }} />
-            <Typography sx={{ fontSize: 13, color: status.success.text, fontWeight: 500 }}>
+            <CheckCircle size={16} style={{ color: accent.primary.text }} />
+            <Typography sx={{ fontSize: 13, color: accent.primary.text, fontWeight: 500 }}>
               {item.review_action.charAt(0).toUpperCase() + item.review_action.slice(1)}
               {item.reviewed_at && ` on ${new Date(item.reviewed_at).toLocaleDateString()}`}
             </Typography>
@@ -257,7 +250,7 @@ export default function AIContentReviewPanel({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               sx={{
-                mb: 2.5,
+                mb: 1,
                 "& .MuiInputBase-root": { fontSize: 13 },
                 "& .MuiInputBase-input": { py: 1.5, lineHeight: 1.6 },
                 "& .MuiOutlinedInput-root": {
@@ -314,11 +307,11 @@ export default function AIContentReviewPanel({
                   fontSize: 13,
                   fontWeight: 500,
                   borderRadius: "8px",
-                  borderColor: status.error.border,
-                  color: status.error.text,
+                  borderColor: borderPalette.dark,
+                  color: textColors.secondary,
                   px: 3.5,
                   py: 1,
-                  "&:hover": { backgroundColor: status.error.bg, borderColor: status.error.text },
+                  "&:hover": { backgroundColor: background.hover, borderColor: borderPalette.dark },
                 }}
               >
                 Reject

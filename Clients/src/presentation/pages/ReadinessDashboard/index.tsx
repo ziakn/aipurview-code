@@ -11,8 +11,8 @@ import {
   CardContent,
 } from "@mui/material";
 import { ShieldCheck, RefreshCw } from "lucide-react";
-import { VisibilityToggle, VisibilityFilter } from "../../components/VisibilityToggle";
-import type { VisibilityValue, VisibilityFilterValue } from "../../components/VisibilityToggle";
+import { VisibilityChips } from "../../components/VisibilityToggle";
+import type { VisibilityFilterValue } from "../../components/VisibilityToggle";
 import {
   text as textColors,
   background,
@@ -28,7 +28,6 @@ import {
   useReadinessScores,
   useControlScores,
   useWeakestControls,
-  useRecommendations,
   useReadinessHistory,
   useTriggerCalculateAll,
 } from "../../../application/hooks/useReadiness";
@@ -66,11 +65,11 @@ function getLevelLabel(level: ReadinessLevel | string | undefined) {
     case "ready":
       return "Ready";
     case "needs_work":
-      return "Needs Work";
+      return "Needs work";
     case "at_risk":
-      return "At Risk";
+      return "At risk";
     case "not_started":
-      return "Not Started";
+      return "Not started";
     default:
       return "—";
   }
@@ -95,7 +94,6 @@ function formatFrameworkName(type: string): string {
 
 export default function ReadinessDashboard() {
   const [selectedFramework, setSelectedFramework] = useState("eu_ai_act");
-  const [visibility, setVisibility] = useState<VisibilityValue>("public");
   const [visFilter, setVisFilter] = useState<VisibilityFilterValue>("all");
 
   const filterParam = visFilter === "all" ? undefined : visFilter;
@@ -103,13 +101,11 @@ export default function ReadinessDashboard() {
   const { data: controlScores, isLoading: controlsLoading } =
     useControlScores(selectedFramework, { visibility: filterParam });
   const { data: weakest, isLoading: weakestLoading } = useWeakestControls(10, undefined, filterParam);
-  const { data: recommendations, isLoading: recsLoading } =
-    useRecommendations(10, undefined, filterParam);
   const { data: history, isLoading: historyLoading } = useReadinessHistory(undefined, undefined, filterParam);
   const triggerCalculate = useTriggerCalculateAll();
 
   const handleCalculate = () => {
-    triggerCalculate.mutate({ visibility });
+    triggerCalculate.mutate({ visibility: visFilter === "private" ? "private" : "public" });
   };
 
   return (
@@ -119,7 +115,7 @@ export default function ReadinessDashboard() {
         direction="row"
         justifyContent="space-between"
         alignItems="center"
-        mb="16px"
+        mb="8px"
       >
         <Box>
           <Typography
@@ -130,7 +126,7 @@ export default function ReadinessDashboard() {
               color: textColors.primary,
             }}
           >
-            Audit Readiness
+            Audit readiness
           </Typography>
           <Typography
             sx={{ fontSize: 13, color: textColors.secondary, mt: 0.25 }}
@@ -140,7 +136,7 @@ export default function ReadinessDashboard() {
           </Typography>
         </Box>
         <Stack direction="row" alignItems="center" spacing={1.5}>
-          <VisibilityToggle value={visibility} onChange={setVisibility} />
+          <VisibilityChips value={visFilter} onChange={setVisFilter} />
           <Button
             variant="contained"
             size="small"
@@ -167,14 +163,9 @@ export default function ReadinessDashboard() {
             },
           }}
         >
-          {triggerCalculate.isPending ? "Calculating..." : "Calculate Readiness"}
+          {triggerCalculate.isPending ? "Calculating..." : "Calculate readiness"}
           </Button>
         </Stack>
-      </Stack>
-
-      {/* Visibility filter */}
-      <Stack direction="row" justifyContent="flex-end" sx={{ mb: "12px" }}>
-        <VisibilityFilter value={visFilter} onChange={setVisFilter} />
       </Stack>
 
       {/* Summary stat cards — matching DashboardHeaderCard layout */}
@@ -182,8 +173,8 @@ export default function ReadinessDashboard() {
         sx={{
           display: "flex",
           flexWrap: "wrap",
-          gap: "16px",
-          mb: "16px",
+          gap: "8px",
+          mb: "8px",
           "& > *": { flex: "1 1 0", minWidth: "150px" },
         }}
       >
@@ -254,17 +245,17 @@ export default function ReadinessDashboard() {
                       color: status.success.text,
                     },
                     {
-                      label: "Needs Work",
+                      label: "Needs work",
                       count: fw.needs_work_count ?? 0,
                       color: accent.primary.text,
                     },
                     {
-                      label: "At Risk",
+                      label: "At risk",
                       count: fw.at_risk_count ?? 0,
                       color: status.warning.text,
                     },
                     {
-                      label: "Not Started",
+                      label: "Not started",
                       count: fw.not_started_count ?? 0,
                       color: status.error.text,
                     },
@@ -302,7 +293,7 @@ export default function ReadinessDashboard() {
               <Typography
                 sx={{ fontSize: 13, color: textColors.tertiary }}
               >
-                No readiness scores yet. Click &quot;Calculate Readiness&quot; to
+                No readiness scores yet. Click &quot;Calculate readiness&quot; to
                 start.
               </Typography>
             </CardContent>
@@ -318,7 +309,7 @@ export default function ReadinessDashboard() {
           style: { backgroundColor: brand.primary },
         }}
         sx={{
-          mb: "16px",
+          mb: "8px",
           minHeight: "20px",
           "& .MuiTab-root": {
             textTransform: "none",
@@ -341,8 +332,8 @@ export default function ReadinessDashboard() {
         sx={{
           display: "grid",
           gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-          gap: "16px",
-          mb: "16px",
+          gap: "8px",
+          mb: "8px",
         }}
       >
         <Card elevation={0} sx={cardSx}>
@@ -361,32 +352,15 @@ export default function ReadinessDashboard() {
         </Card>
       </Box>
 
-      {/* Two-column: Weakest + Recommendations */}
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-          gap: "16px",
-        }}
-      >
-        <Card elevation={0} sx={cardSx}>
-          <CardContent sx={{ p: "16px", "&:last-child": { pb: "16px" } }}>
-            <WeakControlsList
-              controls={weakest ?? []}
-              isLoading={weakestLoading}
-            />
-          </CardContent>
-        </Card>
-        <Card elevation={0} sx={cardSx}>
-          <CardContent sx={{ p: "16px", "&:last-child": { pb: "16px" } }}>
-            <WeakControlsList
-              controls={recommendations ?? []}
-              isLoading={recsLoading}
-              maxItems={10}
-            />
-          </CardContent>
-        </Card>
-      </Box>
+      {/* Weakest controls */}
+      <Card elevation={0} sx={cardSx}>
+        <CardContent sx={{ p: "16px", "&:last-child": { pb: "16px" } }}>
+          <WeakControlsList
+            controls={weakest ?? []}
+            isLoading={weakestLoading}
+          />
+        </CardContent>
+      </Card>
     </Box>
   );
 }

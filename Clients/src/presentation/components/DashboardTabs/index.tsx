@@ -126,7 +126,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
                   {IconComponent && <IconComponent size={14} strokeWidth={1.5} />}
                   <span>{tab.label}</span>
                   {tab.removable !== false && activeTab === tab.id && (
-                    <Tooltip title="Remove tab">
+                    <Tooltip title="Hide tab">
                       <Box
                         component="span"
                         onClick={(e: React.MouseEvent) => handleRemoveTab(e, tab.id)}
@@ -153,7 +153,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
       </TabList>
 
       {/* Add tab button */}
-      <Tooltip title="Add or remove dashboard tabs">
+      <Tooltip title="Add or hide dashboard tabs">
         <IconButton
           onClick={handleAddClick}
           size="small"
@@ -199,7 +199,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
               fontFamily: "'Red Hat Display', 'Geist', sans-serif",
             }}
           >
-            Dashboard Tabs
+            Dashboard tabs
           </Typography>
           <Typography sx={{ fontSize: 11, color: text.accent, mt: 0.25 }}>
             Select which tabs to show

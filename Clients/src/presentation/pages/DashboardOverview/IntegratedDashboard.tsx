@@ -73,8 +73,8 @@ const DASHBOARD_SELECTED_TAB_KEY = "dashboard_selected_tab";
 
 const AVAILABLE_DASHBOARD_TABS: DashboardTabConfig[] = [
   { id: "overview", label: "Overview", icon: "LayoutDashboard", description: "Main dashboard with metrics and activity", removable: false },
-  { id: "readiness", label: "Audit Readiness", icon: "ShieldCheck", description: "Per-control readiness scores and audit preparation" },
-  { id: "ai-content", label: "AI Content Review", icon: "Sparkles", description: "Review and approve AI-generated content (EU AI Act Art. 52)" },
+  { id: "readiness", label: "Audit readiness", icon: "ShieldCheck", description: "Per-control readiness scores and audit preparation" },
+  { id: "ai-content", label: "AI content review", icon: "Sparkles", description: "Review and approve AI-generated content (EU AI Act art. 52)" },
 ];
 
 const DEFAULT_TABS = ["overview", "readiness", "ai-content"];
@@ -356,15 +356,17 @@ const IntegratedDashboard: React.FC = () => {
         </Typography>
 
         <Stack direction="row" alignItems="center" gap="16px">
-          <ButtonToggle
-            options={[
-              { label: "Operations view", value: "operations" },
-              { label: "Executive view", value: "executive" },
-            ]}
-            value={dashboardView}
-            onChange={(value) => handleViewChange(value as DashboardView)}
-            height={34}
-          />
+          {dashboardTab === "overview" && (
+            <ButtonToggle
+              options={[
+                { label: "Operations view", value: "operations" },
+                { label: "Executive view", value: "executive" },
+              ]}
+              value={dashboardView}
+              onChange={(value) => handleViewChange(value as DashboardView)}
+              height={34}
+            />
+          )}
           <Box data-joyride-id="add-new-dropdown">
             <MegaDropdownErrorBoundary>
               <AddNewMegaDropdown />
@@ -375,7 +377,7 @@ const IntegratedDashboard: React.FC = () => {
 
       {/* Dashboard Tab Bar */}
       <TabContext value={dashboardTab}>
-        <Box sx={{ mb: 2 }}>
+        <Box sx={{ mb: 1 }}>
           <DashboardTabs
             availableTabs={AVAILABLE_DASHBOARD_TABS}
             activeTabs={activeTabs}

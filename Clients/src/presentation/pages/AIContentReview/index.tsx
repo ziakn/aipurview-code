@@ -5,24 +5,21 @@ import {
   Stack,
   Tab,
   Tabs,
-  Chip,
   Card,
   CardContent,
   CircularProgress,
   LinearProgress,
 } from "@mui/material";
 import { Sparkles, CheckCircle, Clock, BarChart3 } from "lucide-react";
-import { VisibilityFilter } from "../../components/VisibilityToggle";
+import { VisibilityChips } from "../../components/VisibilityToggle";
 import type { VisibilityFilterValue } from "../../components/VisibilityToggle";
 import {
   text as textColors,
   background,
   border as borderPalette,
   brand,
-  status,
-  accent,
 } from "../../themes/palette";
-import AIContentBadge from "../../components/AIContentBadge";
+import Chip from "../../components/Chip";
 import AIContentReviewPanel from "../../components/AIContentReviewPanel";
 import {
   useUnreviewedContent,
@@ -38,10 +35,10 @@ const cardSx = {
 };
 
 const BADGE_COLORS: Record<string, { label: string; color: string }> = {
-  generated: { label: "AI-Generated", color: "#7C3AED" },
-  assisted: { label: "AI-Assisted", color: "#2563EB" },
-  reviewed: { label: "AI-Reviewed", color: "#059669" },
-  suggested: { label: "AI-Suggested", color: "#D97706" },
+  generated: { label: "AI-generated", color: brand.primary },
+  assisted: { label: "AI-assisted", color: brand.primary },
+  reviewed: { label: "AI-reviewed", color: brand.primary },
+  suggested: { label: "AI-suggested", color: brand.primary },
 };
 
 export default function AIContentReview() {
@@ -70,7 +67,7 @@ export default function AIContentReview() {
         direction="row"
         justifyContent="space-between"
         alignItems="center"
-        mb="16px"
+        mb="8px"
       >
         <Box>
           <Typography
@@ -81,23 +78,16 @@ export default function AIContentReview() {
               color: textColors.primary,
             }}
           >
-            AI Content Review
+            AI content review
           </Typography>
           <Typography
             sx={{ fontSize: 13, color: textColors.secondary, mt: 0.25 }}
           >
-            Review and approve AI-generated content for EU AI Act Article 52
+            Review and approve AI-generated content for EU AI Act article 52
             transparency compliance.
           </Typography>
         </Box>
-        {/* Badge legend + filter */}
-        <Stack direction="row" spacing={1.5} alignItems="center">
-          <VisibilityFilter value={visFilter} onChange={setVisFilter} />
-          <AIContentBadge badgeType="generated" variant="tooltip" size="medium" />
-          <AIContentBadge badgeType="assisted" variant="tooltip" size="medium" />
-          <AIContentBadge badgeType="reviewed" variant="tooltip" size="medium" />
-          <AIContentBadge badgeType="suggested" variant="tooltip" size="medium" />
-        </Stack>
+        <VisibilityChips value={visFilter} onChange={setVisFilter} />
       </Stack>
 
       {/* Stat header cards — matching DashboardHeaderCard style */}
@@ -105,8 +95,8 @@ export default function AIContentReview() {
         sx={{
           display: "flex",
           flexWrap: "wrap",
-          gap: "16px",
-          mb: "16px",
+          gap: "8px",
+          mb: "8px",
           "& > *": { flex: "1 1 0", minWidth: "120px" },
         }}
       >
@@ -118,9 +108,9 @@ export default function AIContentReview() {
           <>
             <Stack sx={{ ...cardSx, borderRadius: 2, padding: "8px 14px 14px 14px" }}>
               <Stack direction="row" alignItems="center" spacing={0.75}>
-                <BarChart3 size={13} style={{ color: textColors.accent }} />
+                <BarChart3 size={13} style={{ color: textColors.icon }} />
                 <Typography sx={{ fontSize: 12, color: textColors.secondary, fontWeight: 500 }}>
-                  Total Items
+                  Total items
                 </Typography>
               </Stack>
               <Typography sx={{ fontSize: 28, fontWeight: 700, color: textColors.primary, lineHeight: 1.2 }}>
@@ -130,36 +120,36 @@ export default function AIContentReview() {
 
             <Stack sx={{ ...cardSx, borderRadius: 2, padding: "8px 14px 14px 14px" }}>
               <Stack direction="row" alignItems="center" spacing={0.75}>
-                <CheckCircle size={13} style={{ color: status.success.text }} />
+                <CheckCircle size={13} style={{ color: textColors.icon }} />
                 <Typography sx={{ fontSize: 12, color: textColors.secondary, fontWeight: 500 }}>
                   Reviewed
                 </Typography>
               </Stack>
-              <Typography sx={{ fontSize: 28, fontWeight: 700, color: status.success.text, lineHeight: 1.2 }}>
+              <Typography sx={{ fontSize: 28, fontWeight: 700, color: textColors.primary, lineHeight: 1.2 }}>
                 {reviewRate}%
               </Typography>
             </Stack>
 
             <Stack sx={{ ...cardSx, borderRadius: 2, padding: "8px 14px 14px 14px" }}>
               <Stack direction="row" alignItems="center" spacing={0.75}>
-                <Clock size={13} style={{ color: status.warning.text }} />
+                <Clock size={13} style={{ color: textColors.icon }} />
                 <Typography sx={{ fontSize: 12, color: textColors.secondary, fontWeight: 500 }}>
                   Pending
                 </Typography>
               </Stack>
-              <Typography sx={{ fontSize: 28, fontWeight: 700, color: status.warning.text, lineHeight: 1.2 }}>
+              <Typography sx={{ fontSize: 28, fontWeight: 700, color: textColors.primary, lineHeight: 1.2 }}>
                 {stats?.unreviewed ?? 0}
               </Typography>
             </Stack>
 
             <Stack sx={{ ...cardSx, borderRadius: 2, padding: "8px 14px 14px 14px" }}>
               <Stack direction="row" alignItems="center" spacing={0.75}>
-                <Sparkles size={13} style={{ color: accent.purple.text }} />
+                <Sparkles size={13} style={{ color: textColors.icon }} />
                 <Typography sx={{ fontSize: 12, color: textColors.secondary, fontWeight: 500 }}>
-                  Avg Confidence
+                  Avg confidence
                 </Typography>
               </Stack>
-              <Typography sx={{ fontSize: 28, fontWeight: 700, color: accent.purple.text, lineHeight: 1.2 }}>
+              <Typography sx={{ fontSize: 28, fontWeight: 700, color: textColors.primary, lineHeight: 1.2 }}>
                 {stats?.avg_confidence ?? "—"}
                 {stats?.avg_confidence != null && (
                   <Box component="span" sx={{ fontSize: 14, fontWeight: 500 }}>%</Box>
@@ -172,13 +162,13 @@ export default function AIContentReview() {
 
       {/* Review progress bar + By Type breakdown — in DashboardCard style */}
       {stats && stats.total > 0 && (
-        <Box sx={{ display: "flex", gap: "16px", mb: "16px", flexWrap: "wrap" }}>
+        <Box sx={{ display: "flex", gap: "8px", mb: "8px", flexWrap: "wrap" }}>
           {/* Progress card */}
           <Card elevation={0} sx={{ ...cardSx, flex: "2 1 300px" }}>
             <CardContent sx={{ p: "16px", "&:last-child": { pb: "16px" } }}>
               <Stack direction="row" justifyContent="space-between" mb={0.75}>
                 <Typography sx={{ fontSize: 12, color: textColors.secondary, fontWeight: 500 }}>
-                  Review Progress
+                  Review progress
                 </Typography>
                 <Typography sx={{ fontSize: 12, fontWeight: 600, color: textColors.primary }}>
                   {stats.reviewed}/{stats.total}
@@ -193,12 +183,7 @@ export default function AIContentReview() {
                   backgroundColor: background.hover,
                   "& .MuiLinearProgress-bar": {
                     borderRadius: 3,
-                    backgroundColor:
-                      reviewRate >= 80
-                        ? status.success.text
-                        : reviewRate >= 50
-                          ? status.warning.text
-                          : status.error.text,
+                    backgroundColor: brand.primary,
                   },
                 }}
               />
@@ -209,7 +194,7 @@ export default function AIContentReview() {
           <Card elevation={0} sx={{ ...cardSx, flex: "1 1 200px" }}>
             <CardContent sx={{ p: "16px", "&:last-child": { pb: "16px" } }}>
               <Typography sx={{ fontSize: 12, color: textColors.secondary, fontWeight: 500, mb: 1 }}>
-                By Type
+                By type
               </Typography>
               <Stack spacing={0.5}>
                 {Object.entries(stats.by_badge_type).map(([key, count]: [string, any]) => {
@@ -222,7 +207,7 @@ export default function AIContentReview() {
                       <Typography sx={{ fontSize: 11, color: textColors.secondary, flex: 1 }}>
                         {config.label}
                       </Typography>
-                      <Typography sx={{ fontSize: 11, fontWeight: 600, color: config.color }}>
+                      <Typography sx={{ fontSize: 11, fontWeight: 600, color: textColors.primary }}>
                         {count} ({pct}%)
                       </Typography>
                     </Stack>
@@ -240,7 +225,7 @@ export default function AIContentReview() {
         onChange={(_, v) => setTab(v)}
         TabIndicatorProps={{ style: { backgroundColor: brand.primary } }}
         sx={{
-          mb: "16px",
+          mb: "8px",
           minHeight: "20px",
           "& .MuiTab-root": {
             textTransform: "none",
@@ -256,24 +241,19 @@ export default function AIContentReview() {
         <Tab
           label={
             <Stack direction="row" alignItems="center" spacing={0.75}>
-              <span>Pending Review</span>
+              <span>Pending review</span>
               {total > 0 && (
                 <Chip
-                  label={total}
+                  label={String(total)}
                   size="small"
-                  sx={{
-                    height: 18,
-                    fontSize: 10,
-                    fontWeight: 600,
-                    backgroundColor: status.warning.bg,
-                    color: status.warning.text,
-                  }}
+                  variant="warning"
+                  uppercase={false}
                 />
               )}
             </Stack>
           }
         />
-        <Tab label="All AI Content" />
+        <Tab label="All AI content" />
       </Tabs>
 
       {/* Tab content */}
@@ -284,7 +264,7 @@ export default function AIContentReview() {
               <CircularProgress size={20} />
             </Box>
           ) : items.length > 0 ? (
-            <Stack spacing="16px">
+            <Stack spacing="8px">
               {items.map((item: any) => (
                 <AIContentReviewPanel
                   key={item.id}
@@ -300,9 +280,9 @@ export default function AIContentReview() {
                 <CheckCircle
                   size={32}
                   strokeWidth={1}
-                  style={{ color: status.success.text, marginBottom: 8 }}
+                  style={{ color: textColors.icon, marginBottom: 8 }}
                 />
-                <Typography sx={{ fontSize: 14, fontWeight: 600, color: status.success.text, mb: 0.5 }}>
+                <Typography sx={{ fontSize: 14, fontWeight: 600, color: textColors.primary, mb: 0.5 }}>
                   All caught up!
                 </Typography>
                 <Typography sx={{ fontSize: 13, color: textColors.tertiary }}>

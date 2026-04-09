@@ -1,4 +1,5 @@
-import { Box, Typography, Divider, Chip, LinearProgress, Button, Stack } from "@mui/material";
+import { Box, Typography, Divider, LinearProgress, Button, Stack } from "@mui/material";
+import Chip from "../Chip";
 import { status, accent, text as textColors, border, background } from "../../themes/palette";
 import EvidenceQualityBadge from "../EvidenceQualityBadge";
 
@@ -112,7 +113,7 @@ export default function EvidenceAnalysisPanel({
               "&:hover": { backgroundColor: accent.primary.bg },
             }}
           >
-            {isAnalyzing ? "Analyzing..." : "Run AI Analysis"}
+            {isAnalyzing ? "Analyzing..." : "Run AI analysis"}
           </Button>
         )}
       </Box>
@@ -177,7 +178,7 @@ export default function EvidenceAnalysisPanel({
       {complianceAreas.length > 0 && (
         <Box sx={{ mb: 2 }}>
           <Typography sx={{ fontSize: 12, fontWeight: 600, color: textColors.secondary, mb: 1 }}>
-            Compliance Areas
+            Compliance areas
           </Typography>
           <Stack direction="row" flexWrap="wrap" gap={0.5}>
             {complianceAreas.map((area: string, i: number) => (
@@ -185,12 +186,9 @@ export default function EvidenceAnalysisPanel({
                 key={i}
                 label={area}
                 size="small"
-                sx={{
-                  fontSize: 11,
-                  height: 22,
-                  backgroundColor: accent.blue.bg,
-                  color: accent.blue.text,
-                }}
+                backgroundColor={accent.blue.bg}
+                textColor={accent.blue.text}
+                uppercase={false}
               />
             ))}
           </Stack>
@@ -201,7 +199,7 @@ export default function EvidenceAnalysisPanel({
       {keyFindings.length > 0 && (
         <Box sx={{ mb: 2 }}>
           <Typography sx={{ fontSize: 12, fontWeight: 600, color: textColors.secondary, mb: 1 }}>
-            Key Findings ({keyFindings.length})
+            Key findings ({keyFindings.length})
           </Typography>
           <Box component="ul" sx={{ m: 0, pl: 2 }}>
             {keyFindings.slice(0, 5).map((finding: string, i: number) => (
@@ -243,12 +241,8 @@ export default function EvidenceAnalysisPanel({
                 <Chip
                   label={`${link.match_score}%`}
                   size="small"
-                  sx={{
-                    fontSize: 10,
-                    height: 18,
-                    backgroundColor: link.match_score >= 70 ? status.success.bg : status.warning.bg,
-                    color: link.match_score >= 70 ? status.success.text : status.warning.text,
-                  }}
+                  variant={link.match_score >= 70 ? "success" : "warning"}
+                  uppercase={false}
                 />
               </Box>
               <Typography sx={{ fontSize: 11, color: textColors.accent }}>

@@ -1,5 +1,6 @@
 import { Box, Typography, LinearProgress, Stack } from "@mui/material";
-import { text as textColors, border, background, status, accent } from "../../themes/palette";
+import Chip from "../Chip";
+import { text as textColors, border, background, brand } from "../../themes/palette";
 
 interface AIContentStatsData {
   total: number;
@@ -26,10 +27,10 @@ interface AIContentStatsProps {
 }
 
 const BADGE_COLORS: Record<string, { label: string; color: string }> = {
-  generated: { label: "AI-Generated", color: "#7C3AED" },
-  assisted: { label: "AI-Assisted", color: "#2563EB" },
-  reviewed: { label: "AI-Reviewed", color: "#059669" },
-  suggested: { label: "AI-Suggested", color: "#D97706" },
+  generated: { label: "AI-generated", color: brand.primary },
+  assisted: { label: "AI-assisted", color: brand.primary },
+  reviewed: { label: "AI-reviewed", color: brand.primary },
+  suggested: { label: "AI-suggested", color: brand.primary },
 };
 
 export default function AIContentStats({ data, isLoading }: AIContentStatsProps) {
@@ -68,44 +69,44 @@ export default function AIContentStats({ data, isLoading }: AIContentStatsProps)
         backgroundColor: background.main,
       }}
     >
-      <Typography sx={{ fontSize: 15, fontWeight: 600, color: textColors.primary, mb: 2 }}>
-        AI Content Transparency
+      <Typography sx={{ fontSize: 15, fontWeight: 600, color: textColors.primary, mb: 1 }}>
+        AI content transparency
       </Typography>
 
       {/* Summary stats */}
-      <Box sx={{ display: "flex", gap: 2, mb: 2, flexWrap: "wrap" }}>
+      <Box sx={{ display: "flex", gap: 1, mb: 1, flexWrap: "wrap" }}>
         <Box sx={{ flex: 1, minWidth: 80, textAlign: "center" }}>
           <Typography sx={{ fontSize: 22, fontWeight: 700, color: textColors.primary }}>
             {data.total}
           </Typography>
-          <Typography sx={{ fontSize: 10, color: textColors.secondary }}>Total Items</Typography>
+          <Typography sx={{ fontSize: 10, color: textColors.secondary }}>Total items</Typography>
         </Box>
         <Box sx={{ flex: 1, minWidth: 80, textAlign: "center" }}>
-          <Typography sx={{ fontSize: 22, fontWeight: 700, color: status.success.text }}>
+          <Typography sx={{ fontSize: 22, fontWeight: 700, color: textColors.primary }}>
             {data.review_rate}%
           </Typography>
           <Typography sx={{ fontSize: 10, color: textColors.secondary }}>Reviewed</Typography>
         </Box>
         <Box sx={{ flex: 1, minWidth: 80, textAlign: "center" }}>
-          <Typography sx={{ fontSize: 22, fontWeight: 700, color: status.warning.text }}>
+          <Typography sx={{ fontSize: 22, fontWeight: 700, color: textColors.primary }}>
             {data.unreviewed}
           </Typography>
           <Typography sx={{ fontSize: 10, color: textColors.secondary }}>Pending</Typography>
         </Box>
         {data.avg_confidence !== null && (
           <Box sx={{ flex: 1, minWidth: 80, textAlign: "center" }}>
-            <Typography sx={{ fontSize: 22, fontWeight: 700, color: accent.primary.text }}>
+            <Typography sx={{ fontSize: 22, fontWeight: 700, color: textColors.primary }}>
               {data.avg_confidence}%
             </Typography>
-            <Typography sx={{ fontSize: 10, color: textColors.secondary }}>Avg Confidence</Typography>
+            <Typography sx={{ fontSize: 10, color: textColors.secondary }}>Avg confidence</Typography>
           </Box>
         )}
       </Box>
 
       {/* Review progress bar */}
-      <Box sx={{ mb: 2 }}>
+      <Box sx={{ mb: 1 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
-          <Typography sx={{ fontSize: 11, color: textColors.secondary }}>Review Progress</Typography>
+          <Typography sx={{ fontSize: 11, color: textColors.secondary }}>Review progress</Typography>
           <Typography sx={{ fontSize: 11, fontWeight: 600, color: textColors.primary }}>
             {data.reviewed}/{data.total}
           </Typography>
@@ -119,7 +120,7 @@ export default function AIContentStats({ data, isLoading }: AIContentStatsProps)
             backgroundColor: background.hover,
             "& .MuiLinearProgress-bar": {
               borderRadius: 3,
-              backgroundColor: data.review_rate >= 80 ? status.success.text : data.review_rate >= 50 ? status.warning.text : status.error.text,
+              backgroundColor: brand.primary,
             },
           }}
         />
@@ -127,9 +128,9 @@ export default function AIContentStats({ data, isLoading }: AIContentStatsProps)
 
       {/* Badge type breakdown */}
       <Typography sx={{ fontSize: 12, fontWeight: 600, color: textColors.secondary, mb: 1 }}>
-        By Type
+        By type
       </Typography>
-      <Stack spacing={0.5} sx={{ mb: 2 }}>
+      <Stack spacing={0.5} sx={{ mb: 1 }}>
         {Object.entries(data.by_badge_type).map(([key, count]) => {
           const config = BADGE_COLORS[key];
           if (!config || count === 0) return null;
@@ -140,7 +141,7 @@ export default function AIContentStats({ data, isLoading }: AIContentStatsProps)
               <Typography sx={{ fontSize: 11, color: textColors.secondary, flex: 1 }}>
                 {config.label}
               </Typography>
-              <Typography sx={{ fontSize: 11, fontWeight: 600, color: config.color }}>
+              <Typography sx={{ fontSize: 11, fontWeight: 600, color: textColors.primary }}>
                 {count} ({pct}%)
               </Typography>
             </Box>
@@ -152,28 +153,19 @@ export default function AIContentStats({ data, isLoading }: AIContentStatsProps)
       {(data.by_review_action.approved > 0 || data.by_review_action.modified > 0 || data.by_review_action.rejected > 0) && (
         <>
           <Typography sx={{ fontSize: 12, fontWeight: 600, color: textColors.secondary, mb: 1 }}>
-            Review Outcomes
+            Review outcomes
           </Typography>
-          <Box sx={{ display: "flex", gap: 1 }}>
+          <Stack direction="row" spacing={1}>
             {data.by_review_action.approved > 0 && (
-              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, backgroundColor: "#ECFDF5", borderRadius: "4px", padding: "2px 8px" }}>
-                <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#059669" }}>{data.by_review_action.approved}</Typography>
-                <Typography sx={{ fontSize: 10, color: "#059669" }}>Approved</Typography>
-              </Box>
+              <Chip label={`${data.by_review_action.approved} Approved`} variant="success" size="small" uppercase={false} />
             )}
             {data.by_review_action.modified > 0 && (
-              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, backgroundColor: "#FFFBEB", borderRadius: "4px", padding: "2px 8px" }}>
-                <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#D97706" }}>{data.by_review_action.modified}</Typography>
-                <Typography sx={{ fontSize: 10, color: "#D97706" }}>Modified</Typography>
-              </Box>
+              <Chip label={`${data.by_review_action.modified} Modified`} variant="warning" size="small" uppercase={false} />
             )}
             {data.by_review_action.rejected > 0 && (
-              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, backgroundColor: "#FEF2F2", borderRadius: "4px", padding: "2px 8px" }}>
-                <Typography sx={{ fontSize: 11, fontWeight: 600, color: "#DC2626" }}>{data.by_review_action.rejected}</Typography>
-                <Typography sx={{ fontSize: 10, color: "#DC2626" }}>Rejected</Typography>
-              </Box>
+              <Chip label={`${data.by_review_action.rejected} Rejected`} variant="error" size="small" uppercase={false} />
             )}
-          </Box>
+          </Stack>
         </>
       )}
     </Box>
