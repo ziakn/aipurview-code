@@ -126,13 +126,17 @@ export default function EvalsSidebar({
       count: arenaCount,
       disabled: false, // Always enabled - org-scoped
     },
-    {
-      id: "leaderboard",
-      label: "Leaderboard",
-      value: "leaderboard",
-      icon: <Trophy size={16} strokeWidth={1.5} />,
-      disabled: false,
-    },
+    ...(import.meta.env.DEV
+      ? [
+          {
+            id: "leaderboard",
+            label: "Leaderboard",
+            value: "leaderboard",
+            icon: <Trophy size={16} strokeWidth={1.5} />,
+            disabled: false,
+          },
+        ]
+      : []),
     {
       id: "bias-audits",
       label: "Bias audits",
