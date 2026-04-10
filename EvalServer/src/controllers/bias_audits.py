@@ -115,7 +115,6 @@ async def create_bias_audit_controller(
                 organization_id=organization_id,
                 db=db,
                 audit_id=audit_id,
-                org_id=effective_org_id,
                 project_id=config_data.get("projectId"),
                 preset_id=preset_id,
                 preset_name=preset_name,
