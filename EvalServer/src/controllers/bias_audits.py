@@ -12,7 +12,7 @@ import uuid
 from datetime import datetime
 from typing import Dict, Any, Optional
 from fastapi import HTTPException, BackgroundTasks, UploadFile
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 
 logger = logging.getLogger(__name__)
 
@@ -400,6 +400,38 @@ async def delete_bias_audit_controller(
     except Exception as e:
         logger.error(f"[BiasAudit] Failed to delete audit {audit_id}: {e}")
         raise HTTPException(status_code=500, detail="Failed to delete audit. Please try again.")
+
+
+async def get_bias_audit_report_controller(
+    audit_id: str,
+    organization_id: int,
+) -> Response:
+    """Generate and stream a PDF report for a completed bias audit."""
+    async with get_db() as db:
+        audit = await get_bias_audit(organization_id, db, audit_id)
+
+    if not audit:
+        raise HTTPException(status_code=404, detail=f"Audit {audit_id} not found")
+    if audit["status"] != "completed":
+        raise HTTPException(
+            status_code=409,
+            detail=f"Audit is not completed (status: {audit['status']}). Reports are only available for completed audits.",
+        )
+
+    from engines.bias_audit.report_generator import generate_pdf_report
+    try:
+        pdf_bytes = generate_pdf_report(audit)
+    except Exception as e:
+        logger.error(f"[BiasAudit] Failed to generate report for {audit_id}: {e}")
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail="Failed to generate PDF report.")
+
+    filename = f"bias_audit_{audit_id}.pdf"
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
 
 
 async def get_csv_headers_controller(

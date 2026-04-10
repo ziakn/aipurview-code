@@ -11,6 +11,7 @@ import {
   getBiasAuditResults,
   getBiasAuditStatus,
   deleteBiasAudit,
+  downloadBiasAuditReport,
   type BiasAuditDetailResponse,
   type CategoryTableResult,
   type FairnessMetricsTable,
@@ -303,6 +304,8 @@ export default function BiasAuditDetail({ auditId, onBack }: BiasAuditDetailProp
     }
   }, [status, error, fetchResults]);
 
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+
   const handleDownload = () => {
     if (!audit?.results) return;
     try {
@@ -318,6 +321,26 @@ export default function BiasAuditDetail({ auditId, onBack }: BiasAuditDetailProp
       URL.revokeObjectURL(url);
     } catch (err) {
       console.error("Failed to download results:", err);
+    }
+  };
+
+  const handleDownloadPdf = async () => {
+    if (isDownloadingPdf) return;
+    setIsDownloadingPdf(true);
+    try {
+      const blob = await downloadBiasAuditReport(auditId);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `bias-audit-${auditId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Failed to download PDF report:", err);
+    } finally {
+      setIsDownloadingPdf(false);
     }
   };
 
@@ -359,6 +382,15 @@ export default function BiasAuditDetail({ auditId, onBack }: BiasAuditDetailProp
           )}
         </Stack>
         <Stack direction="row" spacing={1}>
+          {audit?.results && status === "completed" && (
+            <CustomizableButton
+              variant="contained"
+              text={isDownloadingPdf ? "Generating..." : "Download PDF report"}
+              onClick={handleDownloadPdf}
+              isDisabled={isDownloadingPdf}
+              sx={{ height: 34, fontSize: 13 }}
+            />
+          )}
           {audit?.results && (
             <CustomizableButton
               variant="outlined"

@@ -283,6 +283,14 @@ class BiasAuditService {
     return res.data as { message: string; auditId: string };
   }
 
+  async downloadReport(auditId: string): Promise<Blob> {
+    const res = await CustomAxios.get(
+      `/deepeval/bias-audits/${auditId}/report.pdf`,
+      { responseType: "blob" }
+    );
+    return res.data as Blob;
+  }
+
   async parseHeaders(dataset: File): Promise<string[]> {
     const formData = new FormData();
     formData.append("dataset", dataset);

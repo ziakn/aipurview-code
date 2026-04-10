@@ -12,6 +12,7 @@ from controllers.bias_audits import (
     create_bias_audit_controller,
     get_bias_audit_status_controller,
     get_bias_audit_results_controller,
+    get_bias_audit_report_controller,
     list_bias_audits_controller,
     delete_bias_audit_controller,
     get_csv_headers_controller,
@@ -85,6 +86,16 @@ async def get_audit_results(audit_id: str, request: Request):
     """Get full results of a completed bias audit."""
     organization_id = _get_organization_id(request)
     return await get_bias_audit_results_controller(
+        audit_id,
+        organization_id=organization_id,
+    )
+
+
+@router.get("/bias-audits/{audit_id}/report.pdf")
+async def get_audit_report(audit_id: str, request: Request):
+    """Download a formal PDF report for a completed bias audit."""
+    organization_id = _get_organization_id(request)
+    return await get_bias_audit_report_controller(
         audit_id,
         organization_id=organization_id,
     )
