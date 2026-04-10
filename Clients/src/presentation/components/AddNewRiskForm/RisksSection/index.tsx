@@ -163,11 +163,6 @@ const RiskSection: FC<RiskSectionProps> = ({
     if (validateRef) {
       validateRef.current = validateAll;
     }
-    return () => {
-      if (validateRef) {
-        validateRef.current = null;
-      }
-    };
   }, [validateRef, validateAll]);
 
   const handleOnSelectChange = useCallback(
