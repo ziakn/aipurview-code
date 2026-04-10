@@ -13,10 +13,12 @@ from llm.base import ChatResult
 class BedrockChatClient:
     model_id: str
     region: str
+    profile: str | None = None
     _client: Any = field(init=False, repr=False)
 
     def __post_init__(self) -> None:
-        self._client = boto3.client("bedrock-runtime", region_name=self.region)
+        session = boto3.Session(profile_name=self.profile) if self.profile else boto3.Session()
+        self._client = session.client("bedrock-runtime", region_name=self.region)
 
     def chat(
         self,
