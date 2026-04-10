@@ -202,26 +202,42 @@ async def run_bias_audit_task(
             preset_id=config_data.get("presetId", "custom"),
             preset_name=preset["name"] if preset else "Custom",
             mode=preset["mode"] if preset else config_data.get("mode", "quantitative_audit"),
+            metric=config_data.get("metric", "selection_rate"),
             categories=categories,
             intersectional=intersectional,
             metrics=config_data.get("metrics") or (preset.get("metrics") if preset else ["selection_rate", "impact_ratio"]),
             threshold=config_data.get("threshold") if "threshold" in config_data else (preset.get("threshold") if preset else 0.80),
             small_sample_exclusion=config_data.get("smallSampleExclusion") if "smallSampleExclusion" in config_data else (preset.get("small_sample_exclusion") if preset else None),
             outcome_column=config_data.get("outcomeColumn", "selected"),
+            score_column=config_data.get("scoreColumn"),
+            prediction_column=config_data.get("predictionColumn"),
+            ground_truth_column=config_data.get("groundTruthColumn"),
             column_mapping=filtered_column_mapping,
             metadata=config_data.get("metadata", {}),
+            system_name=config_data.get("systemName"),
+            system_version=config_data.get("systemVersion"),
+            system_description=config_data.get("systemDescription"),
+            auditor_name=config_data.get("auditorName"),
+            auditor_role=config_data.get("auditorRole"),
+            auditor_independence=config_data.get("auditorIndependence"),
+            deployment_context=config_data.get("deploymentContext"),
+            data_source=config_data.get("dataSource"),
+            data_date_range_start=config_data.get("dataDateRangeStart"),
+            data_date_range_end=config_data.get("dataDateRangeEnd"),
         )
 
         # Parse CSV
+        logger.info(f"[BiasAudit] metric={audit_config.metric}")
         logger.info(f"[BiasAudit] column_mapping={audit_config.column_mapping}")
         logger.info(f"[BiasAudit] outcome_column={audit_config.outcome_column}")
-        logger.info(f"[BiasAudit] CSV bytes length={len(csv_bytes)}")
-        logger.info(f"[BiasAudit] CSV first 200 bytes: {csv_bytes[:200]}")
 
         records, unknown_count = parse_csv_dataset(
             csv_bytes=csv_bytes,
             column_mapping=audit_config.column_mapping,
             outcome_column=audit_config.outcome_column,
+            score_column=audit_config.score_column,
+            prediction_column=audit_config.prediction_column,
+            ground_truth_column=audit_config.ground_truth_column,
         )
 
         logger.info(f"[BiasAudit] parse_csv_dataset returned {len(records)} records, {unknown_count} unknown")
