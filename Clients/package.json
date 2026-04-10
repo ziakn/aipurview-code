@@ -16,7 +16,8 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
-    "test:e2e:debug": "playwright test --debug"
+    "test:e2e:debug": "playwright test --debug",
+    "analyze": "npx vite-bundle-visualizer"
   },
   "dependencies": {
     "@ai-sdk/react": "^3.0.148",
