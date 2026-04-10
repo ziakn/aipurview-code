@@ -67,7 +67,13 @@ import {
   type GroupResultRow,
   type CategoryTableResult,
   type BiasAuditResultFull,
+  type BiasAuditMetric,
   type CreateBiasAuditConfig,
+  type FairnessMetricsTable,
+  type ConfusionMatrixGroupResult,
+  type ScoreDistributionTable,
+  type ScoreDistributionGroup,
+  type ScoreDistributionBin,
 } from "../../infrastructure/api/biasAuditService";
 
 // Re-export types for presentation layer
@@ -109,7 +115,13 @@ export type {
   GroupResultRow,
   CategoryTableResult,
   BiasAuditResultFull,
+  BiasAuditMetric,
   CreateBiasAuditConfig,
+  FairnessMetricsTable,
+  ConfusionMatrixGroupResult,
+  ScoreDistributionTable,
+  ScoreDistributionGroup,
+  ScoreDistributionBin,
 };
 
 // Re-export utility functions for presentation layer
