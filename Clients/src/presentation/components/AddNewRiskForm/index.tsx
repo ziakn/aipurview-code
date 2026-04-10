@@ -2,6 +2,7 @@ import React, {
   FC,
   useState,
   useCallback,
+  useRef,
   lazy,
   Suspense,
   useContext,
@@ -17,7 +18,6 @@ import { Likelihood, Severity } from "../RiskLevel/constants";
 import { RiskLikelihood, RiskSeverity } from "../RiskLevel/riskValues";
 import {
   RiskFormValues,
-  RiskFormErrors,
   MitigationFormValues,
   MitigationFormErrors,
 } from "./interface";
@@ -158,7 +158,7 @@ const AddNewRiskForm: FC<AddNewRiskFormProps> = ({
   const disableRipple =
     theme.components?.MuiButton?.defaultProps?.disableRipple ?? false;
 
-  const [riskErrors, setRiskErrors] = useState<RiskFormErrors>({});
+  const riskValidateRef = useRef<((values: RiskFormValues) => boolean) | null>(null);
   const [mitigationErrors, setMitigationErrors] =
     useState<MitigationFormErrors>({});
   const [riskValues, setRiskValues] =
@@ -312,72 +312,6 @@ const AddNewRiskForm: FC<AddNewRiskFormProps> = ({
   }, [popupStatus, inputValues, users, usersLoading]);
 
   // Helper functions for validation
-  const validateRiskFields = useCallback(
-    (values: RiskFormValues): RiskFormErrors => {
-      const errors: RiskFormErrors = {};
-
-      const riskName = checkStringValidation(
-        "Risk name",
-        values.riskName,
-        VALIDATION_LIMITS.RISK_NAME.MIN,
-        VALIDATION_LIMITS.RISK_NAME.MAX
-      );
-      if (!riskName.accepted) {
-        errors.riskName = riskName.message;
-      }
-
-      const riskDescription = checkStringValidation(
-        "Risk description",
-        values.riskDescription,
-        VALIDATION_LIMITS.RISK_DESCRIPTION.MIN,
-        VALIDATION_LIMITS.RISK_DESCRIPTION.MAX
-      );
-      if (!riskDescription.accepted) {
-        errors.riskDescription = riskDescription.message;
-      }
-
-      const potentialImpact = checkStringValidation(
-        "Potential impact",
-        values.potentialImpact,
-        VALIDATION_LIMITS.POTENTIAL_IMPACT.MIN,
-        VALIDATION_LIMITS.POTENTIAL_IMPACT.MAX
-      );
-      if (!potentialImpact.accepted) {
-        errors.potentialImpact = potentialImpact.message;
-      }
-
-      if (values.reviewNotes.length > 0) {
-        const reviewNotes = checkStringValidation(
-          "Review notes",
-          values.reviewNotes,
-          VALIDATION_LIMITS.REVIEW_NOTES.MIN,
-          VALIDATION_LIMITS.REVIEW_NOTES.MAX
-        );
-        if (!reviewNotes.accepted) {
-          errors.reviewNotes = reviewNotes.message;
-        }
-      }
-
-      const aiLifecyclePhase = selectValidation(
-        "AI lifecycle phase",
-        values.aiLifecyclePhase
-      );
-      if (!aiLifecyclePhase.accepted) {
-        errors.aiLifecyclePhase = aiLifecyclePhase.message;
-      }
-
-      values.riskCategory.forEach((category) => {
-        const riskCategory = selectValidation("Risk category", category);
-        if (!riskCategory.accepted) {
-          errors.riskCategory = [riskCategory.message];
-        }
-      });
-
-      return errors;
-    },
-    []
-  );
-
   const validateMitigationFields = useCallback(
     (values: MitigationFormValues): MitigationFormErrors => {
       const errors: MitigationFormErrors = {};
@@ -466,28 +400,17 @@ const AddNewRiskForm: FC<AddNewRiskFormProps> = ({
     []
   );
 
-  const validateForm = useCallback((): {
-    isValid: boolean;
-    errors: RiskFormErrors;
-    mitigationErrors: MitigationFormErrors;
-  } => {
-    const newErrors = validateRiskFields(riskValues);
+  const validateForm = useCallback((): { isValid: boolean; riskValid: boolean } => {
+    const riskValid = riskValidateRef.current ? riskValidateRef.current(riskValues) : false;
     const newMitigationErrors = validateMitigationFields(mitigationValues);
-
     setMitigationErrors(newMitigationErrors);
-    setRiskErrors(newErrors);
-
     return {
-      isValid:
-        Object.keys(newErrors).length === 0 &&
-        Object.keys(newMitigationErrors).length === 0,
-      errors: newErrors,
-      mitigationErrors: newMitigationErrors,
+      isValid: riskValid && Object.keys(newMitigationErrors).length === 0,
+      riskValid,
     };
   }, [
     riskValues,
     mitigationValues,
-    validateRiskFields,
     validateMitigationFields,
   ]);
 
@@ -672,7 +595,7 @@ const AddNewRiskForm: FC<AddNewRiskFormProps> = ({
   );
 
   const riskFormSubmitHandler = async () => {
-    const { isValid, errors } = validateForm();
+    const { isValid, riskValid } = validateForm();
     const selectedRiskLikelihood = likelihoodItems.find(
       (r) => r._id === riskValues.likelihood
     );
@@ -829,7 +752,7 @@ const AddNewRiskForm: FC<AddNewRiskFormProps> = ({
         }
       }
     } else {
-      if (Object.keys(errors).length) {
+      if (!riskValid) {
         setValue("risks");
       } else {
         setValue("mitigation");
@@ -919,7 +842,7 @@ const AddNewRiskForm: FC<AddNewRiskFormProps> = ({
             <RiskSection
               riskValues={riskValues}
               setRiskValues={setRiskValues}
-              riskErrors={riskErrors}
+              validateRef={riskValidateRef}
               userRoleName={userRoleName}
               disableInternalScroll={!!onSubmitRef}
               compactMode={compactMode}
