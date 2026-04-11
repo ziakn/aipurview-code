@@ -6,6 +6,7 @@ import { StatCard } from "../../components/Cards/StatCard";
 import { CustomizableButton } from "../../components/button/customizable-button";
 import { getStatusChip, getModeChip } from "./biasAuditHelpers";
 import ConfirmationModal from "../../components/Dialogs/ConfirmationModal";
+import { triggerBrowserDownload } from "../../utils/browserDownload.utils";
 import { palette } from "../../themes/palette";
 import {
   getBiasAuditResults,
@@ -311,14 +312,7 @@ export default function BiasAuditDetail({ auditId, onBack }: BiasAuditDetailProp
     try {
       const json = JSON.stringify(audit.results, null, 2);
       const blob = new Blob([json], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `bias-audit-${auditId}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      triggerBrowserDownload(blob, `bias-audit-${auditId}.json`);
     } catch (err) {
       console.error("Failed to download results:", err);
     }
@@ -329,14 +323,7 @@ export default function BiasAuditDetail({ auditId, onBack }: BiasAuditDetailProp
     setIsDownloadingPdf(true);
     try {
       const blob = await downloadBiasAuditReport(auditId);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `bias-audit-${auditId}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      triggerBrowserDownload(blob, `bias-audit-${auditId}.pdf`);
     } catch (err) {
       console.error("Failed to download PDF report:", err);
     } finally {
@@ -368,7 +355,7 @@ export default function BiasAuditDetail({ auditId, onBack }: BiasAuditDetailProp
           <ArrowLeft size={18} color={theme.palette.text.secondary} strokeWidth={1.5} />
         </Box>
         <Stack spacing={0.5} flex={1}>
-          <Stack direction="row" alignItems="center" spacing={1.5}>
+          <Stack direction="row" alignItems="center" sx={{ gap: "8px" }}>
             <Typography sx={{ fontSize: 15, fontWeight: 600, color: theme.palette.text.primary }}>
               {audit?.presetName || "Bias audit"}
             </Typography>
@@ -381,7 +368,7 @@ export default function BiasAuditDetail({ auditId, onBack }: BiasAuditDetailProp
             </Typography>
           )}
         </Stack>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row" sx={{ gap: "8px" }}>
           {audit?.results && status === "completed" && (
             <CustomizableButton
               variant="contained"

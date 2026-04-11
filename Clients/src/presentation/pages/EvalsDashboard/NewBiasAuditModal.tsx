@@ -343,10 +343,7 @@ const NewBiasAuditModal: React.FC<NewBiasAuditModalProps> = ({
         systemDescription: aedtDescription,
         dataSource: dataSourceDescription,
         metadata: {
-          aedt_name: aedtName,
-          description: aedtDescription,
           distribution_date: distributionDate,
-          data_source_description: dataSourceDescription,
         },
       };
       const result = await runBiasAudit(csvFile, config);

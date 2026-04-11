@@ -159,7 +159,7 @@ def _cover_page(
     config = audit.get("config", {}) or {}
     results = audit.get("results", {}) or {}
 
-    system_name = config.get("systemName") or config.get("metadata", {}).get("aedt_name") or "AI system"
+    system_name = config.get("systemName") or "AI system"
     system_version = config.get("systemVersion") or ""
     preset_name = audit.get("presetName", "Custom")
 
@@ -234,13 +234,12 @@ def _system_description(
     story: list, styles: Dict[str, ParagraphStyle], audit: Dict[str, Any]
 ) -> None:
     config = audit.get("config", {}) or {}
-    meta = config.get("metadata", {}) or {}
 
     story.append(Paragraph("System description", styles["h1"]))
     story.append(_key_value_table([
-        ("Name", config.get("systemName") or meta.get("aedt_name", "")),
+        ("Name", config.get("systemName", "")),
         ("Version", config.get("systemVersion", "")),
-        ("Description", config.get("systemDescription") or meta.get("description", "")),
+        ("Description", config.get("systemDescription", "")),
         ("Deployment context", config.get("deploymentContext", "")),
     ]))
 
@@ -249,7 +248,6 @@ def _data_description(
     story: list, styles: Dict[str, ParagraphStyle], audit: Dict[str, Any]
 ) -> None:
     config = audit.get("config", {}) or {}
-    meta = config.get("metadata", {}) or {}
     results = audit.get("results", {}) or {}
 
     story.append(Paragraph("Data description", styles["h1"]))
@@ -265,7 +263,7 @@ def _data_description(
         date_range = f"up to {end}"
 
     story.append(_key_value_table([
-        ("Source", config.get("dataSource") or meta.get("data_source_description", "")),
+        ("Source", config.get("dataSource", "")),
         ("Date range", date_range),
         ("Total records", _count(results.get("total_applicants"))),
         ("Records with missing data", _count(results.get("unknown_count"))),

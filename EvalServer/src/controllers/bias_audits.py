@@ -5,6 +5,7 @@ Handles bias audit creation, background task execution,
 status polling, and result retrieval.
 """
 
+import asyncio
 import json
 import logging
 import traceback
@@ -419,7 +420,8 @@ async def get_bias_audit_report_controller(
 
     from engines.bias_audit.report_generator import generate_pdf_report
     try:
-        pdf_bytes = generate_pdf_report(audit)
+        # PDF rendering is CPU-bound and holds the GIL; run off the event loop
+        pdf_bytes = await asyncio.to_thread(generate_pdf_report, audit)
     except Exception as e:
         logger.error(f"[BiasAudit] Failed to generate report for {audit_id}: {e}")
         logger.error(traceback.format_exc())
