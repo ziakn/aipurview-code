@@ -485,6 +485,15 @@ def _cmd_generate(args: argparse.Namespace) -> int:
             console.print(f"[red]No response files found in:[/red] {responses_dir}")
             return 2
 
+        if args.judge_model_filter:
+            from infer.paths import sanitize_model_id
+            target_stem = sanitize_model_id(args.judge_model_filter)
+            resp_files = [f for f in resp_files if f.stem == target_stem]
+            if not resp_files:
+                console.print(f"[red]No response file matched --judge-model-filter:[/red] {args.judge_model_filter} (looked for {target_stem}.jsonl)")
+                return 2
+            console.print(f"[yellow]Filtering to model:[/yellow] {args.judge_model_filter} → {target_stem}.jsonl")
+
         outputs = []
         for rf in resp_files:
             responses = list(read_jsonl(rf))
@@ -712,6 +721,7 @@ def main() -> None:
     gen.add_argument("--judge-max-tokens", default="800")
     gen.add_argument("--judge-limit", default=None)  # optional: limit scenarios for smoke tests
     gen.add_argument("--judge-resume", action="store_true")
+    gen.add_argument("--judge-model-filter", default=None, help="Only judge responses from this candidate model (raw model_id, e.g. openai/gpt-4o-mini)")
     gen.add_argument("--judge-retry-max-attempts", default="5")
     gen.add_argument("--judge-scores-dir", default=None)
     gen.add_argument("--leaderboard-out-dir", default=None)
