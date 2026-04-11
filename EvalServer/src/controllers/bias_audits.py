@@ -24,6 +24,7 @@ from crud.bias_audits import (
     create_bias_audit,
     get_bias_audit,
     update_bias_audit_status,
+    update_bias_audit_system_name,
     list_bias_audits,
     delete_bias_audit,
     create_bias_audit_result_rows,
@@ -400,6 +401,40 @@ async def delete_bias_audit_controller(
     except Exception as e:
         logger.error(f"[BiasAudit] Failed to delete audit {audit_id}: {e}")
         raise HTTPException(status_code=500, detail="Failed to delete audit. Please try again.")
+
+
+async def update_bias_audit_name_controller(
+    audit_id: str,
+    organization_id: int,
+    system_name: str,
+) -> JSONResponse:
+    """Update the user-editable system name for an audit."""
+    name = (system_name or "").strip()
+    if not name:
+        raise HTTPException(status_code=400, detail="System name cannot be empty")
+    if len(name) > 255:
+        raise HTTPException(status_code=400, detail="System name must be 255 characters or fewer")
+
+    try:
+        async with get_db() as db:
+            updated = await update_bias_audit_system_name(
+                organization_id=organization_id,
+                db=db,
+                audit_id=audit_id,
+                system_name=name,
+            )
+            await db.commit()
+    except Exception as e:
+        logger.error(f"[BiasAudit] Failed to update system name for {audit_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to update audit name.")
+
+    if not updated:
+        raise HTTPException(status_code=404, detail=f"Audit {audit_id} not found")
+
+    return JSONResponse(
+        status_code=200,
+        content={"auditId": audit_id, "systemName": name},
+    )
 
 
 async def get_bias_audit_report_controller(

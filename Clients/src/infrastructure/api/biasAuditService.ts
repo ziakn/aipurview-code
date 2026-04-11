@@ -283,6 +283,17 @@ class BiasAuditService {
     return res.data as { message: string; auditId: string };
   }
 
+  async updateAuditName(
+    auditId: string,
+    systemName: string
+  ): Promise<{ auditId: string; systemName: string }> {
+    const res = await CustomAxios.patch(
+      `/deepeval/bias-audits/${auditId}`,
+      { systemName }
+    );
+    return res.data as { auditId: string; systemName: string };
+  }
+
   async downloadReport(auditId: string): Promise<Blob> {
     const res = await CustomAxios.get(
       `/deepeval/bias-audits/${auditId}/report.pdf`,

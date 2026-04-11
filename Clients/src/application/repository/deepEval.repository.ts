@@ -346,6 +346,9 @@ export const listBiasAudits = (params?: { org_id?: string; project_id?: string }
 export const deleteBiasAudit = (auditId: string) =>
   biasAuditService.deleteAudit(auditId);
 
+export const updateBiasAuditName = (auditId: string, systemName: string) =>
+  biasAuditService.updateAuditName(auditId, systemName);
+
 export const downloadBiasAuditReport = (auditId: string) =>
   biasAuditService.downloadReport(auditId);
 

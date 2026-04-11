@@ -13,11 +13,13 @@ import {
   getBiasAuditStatus,
   deleteBiasAudit,
   downloadBiasAuditReport,
+  updateBiasAuditName,
   type BiasAuditDetailResponse,
   type CategoryTableResult,
   type FairnessMetricsTable,
   type ScoreDistributionTable,
 } from "../../../application/repository/deepEval.repository";
+import EditableText from "../../components/EditableText";
 
 interface BiasAuditDetailProps {
   auditId: string;
@@ -318,6 +320,17 @@ export default function BiasAuditDetail({ auditId, onBack }: BiasAuditDetailProp
     }
   };
 
+  const handleSaveName = async (next: string) => {
+    try {
+      await updateBiasAuditName(auditId, next);
+      setAudit((prev) =>
+        prev ? { ...prev, config: { ...(prev.config || {}), systemName: next } } : prev
+      );
+    } catch (err) {
+      console.error("Failed to update audit name:", err);
+    }
+  };
+
   const handleDownloadPdf = async () => {
     if (isDownloadingPdf) return;
     setIsDownloadingPdf(true);
@@ -356,15 +369,20 @@ export default function BiasAuditDetail({ auditId, onBack }: BiasAuditDetailProp
         </Box>
         <Stack spacing={0.5} flex={1}>
           <Stack direction="row" alignItems="center" sx={{ gap: "8px" }}>
-            <Typography sx={{ fontSize: 15, fontWeight: 600, color: theme.palette.text.primary }}>
-              {audit?.presetName || "Bias audit"}
-            </Typography>
+            <EditableText
+              value={(audit?.config?.systemName as string | undefined) || audit?.presetName || "Bias audit"}
+              onSave={handleSaveName}
+              placeholder="Untitled audit"
+              editAriaLabel="Edit audit name"
+              textSx={{ fontSize: 15, fontWeight: 600, color: theme.palette.text.primary }}
+              inputMinWidth={360}
+            />
             {audit?.mode && getModeChip(audit.mode)}
             {getStatusChip(status)}
           </Stack>
           {audit?.createdAt && (
             <Typography sx={{ fontSize: 12, color: theme.palette.text.secondary }}>
-              Created {new Date(audit.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+              {audit.presetName} · Created {new Date(audit.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
             </Typography>
           )}
         </Stack>
