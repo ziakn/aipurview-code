@@ -91,7 +91,8 @@ export function bridgeTools(
     };
   }>,
   availableTools: Record<string, (params: Record<string, unknown>, tenant: number) => Promise<unknown>>,
-  tenant: number
+  tenant: number,
+  userId?: number
 ): ToolSet {
   const tools: ToolSet = {};
 
@@ -119,7 +120,11 @@ export function bridgeTools(
       inputSchema: zodSchema as z.ZodObject<Record<string, ZodTypeAny>>,
       execute: async (params: Record<string, unknown>) => {
         try {
-          const result = await fn(params, tenant);
+          // Inject userId for write tools that need it (confirmation flow)
+          const enrichedParams = userId !== undefined
+            ? { ...params, _userId: userId }
+            : params;
+          const result = await fn(enrichedParams, tenant);
           return result;
         } catch (error) {
           logger.error(`[toolBridge] Error executing tool "${name}":`, error);

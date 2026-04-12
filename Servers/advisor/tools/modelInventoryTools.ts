@@ -78,5 +78,161 @@ export const toolsDefinition: any[] = [
                 required: []
             }
         }
+    },
+    {
+        type: "function",
+        function: {
+            name: "agent_register_model",
+            description: "Register a new AI model in the model inventory. Creates a new model entry with the specified provider, model name, version, and other details. Requires user confirmation before executing.",
+            parameters: {
+                type: "object",
+                properties: {
+                    name: {
+                        type: "string",
+                        description: "The model name (e.g., 'GPT-4', 'Claude 3', 'Gemini Pro')."
+                    },
+                    model_type: {
+                        type: "string",
+                        description: "The provider/vendor of the model (e.g., 'OpenAI', 'Anthropic', 'Google')."
+                    },
+                    version: {
+                        type: "string",
+                        description: "The model version (e.g., '1.0', '2024-01', 'turbo')."
+                    },
+                    description: {
+                        type: "string",
+                        description: "Description of the model's capabilities and intended use."
+                    },
+                    project_id: {
+                        type: "number",
+                        description: "Optional project ID to associate the model with."
+                    }
+                },
+                required: ["name"]
+            }
+        }
+    },
+    {
+        type: "function",
+        function: {
+            name: "agent_update_model",
+            description: "Update properties of an existing model in the inventory. Only the provided fields will be updated. Requires user confirmation before executing.",
+            parameters: {
+                type: "object",
+                properties: {
+                    model_id: {
+                        type: "number",
+                        description: "The ID of the model to update."
+                    },
+                    name: {
+                        type: "string",
+                        description: "Updated model name."
+                    },
+                    model_type: {
+                        type: "string",
+                        description: "Updated provider/vendor name."
+                    },
+                    version: {
+                        type: "string",
+                        description: "Updated version string."
+                    },
+                    description: {
+                        type: "string",
+                        description: "Updated description of the model."
+                    },
+                    status: {
+                        type: "string",
+                        enum: ["Approved", "Restricted", "Pending", "Blocked"],
+                        description: "Updated approval status."
+                    },
+                    hosting_provider: {
+                        type: "string",
+                        description: "Updated hosting provider (e.g., 'AWS', 'Google Cloud', 'Azure', 'On-premises')."
+                    },
+                    capabilities: {
+                        type: "string",
+                        description: "Updated capabilities as a comma-separated string."
+                    }
+                },
+                required: ["model_id"]
+            }
+        }
+    },
+    {
+        type: "function",
+        function: {
+            name: "agent_update_model_lifecycle_phase",
+            description: "Update the lifecycle phase/status of a model in the inventory. Use this to transition a model between approval states (e.g., from 'Pending' to 'Approved'). Requires user confirmation before executing.",
+            parameters: {
+                type: "object",
+                properties: {
+                    model_id: {
+                        type: "number",
+                        description: "The ID of the model to update."
+                    },
+                    lifecycle_phase: {
+                        type: "string",
+                        enum: ["Approved", "Restricted", "Pending", "Blocked"],
+                        description: "The new lifecycle phase/status for the model."
+                    }
+                },
+                required: ["model_id", "lifecycle_phase"]
+            }
+        }
+    },
+    {
+        type: "function",
+        function: {
+            name: "agent_retire_model",
+            description: "Retire a model by setting its status to 'Blocked'. This indicates the model should no longer be used but preserves the record. Requires user confirmation before executing.",
+            parameters: {
+                type: "object",
+                properties: {
+                    model_id: {
+                        type: "number",
+                        description: "The ID of the model to retire."
+                    }
+                },
+                required: ["model_id"]
+            }
+        }
+    },
+    {
+        type: "function",
+        function: {
+            name: "agent_delete_model",
+            description: "Permanently delete a model from the inventory. This also removes associated project/framework links and optionally model risks. This action cannot be undone. Requires user confirmation before executing.",
+            parameters: {
+                type: "object",
+                properties: {
+                    model_id: {
+                        type: "number",
+                        description: "The ID of the model to delete."
+                    }
+                },
+                required: ["model_id"]
+            }
+        }
+    },
+    {
+        type: "function",
+        function: {
+            name: "agent_link_model_to_project",
+            description: "Link an existing model to a project. Creates an association between the model and the specified project. Requires user confirmation before executing.",
+            parameters: {
+                type: "object",
+                properties: {
+                    model_id: {
+                        type: "number",
+                        description: "The ID of the model to link."
+                    },
+                    project_id: {
+                        type: "number",
+                        description: "The ID of the project to link the model to."
+                    }
+                },
+                required: ["model_id", "project_id"]
+            }
+        }
     }
 ];

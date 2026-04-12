@@ -29,6 +29,7 @@ interface AiSdkAdvisorParams {
   }>;
   provider: "Anthropic" | "OpenAI" | "OpenRouter" | "Custom";
   headers?: Record<string, string>;
+  userId?: number;
 }
 
 /**
@@ -89,9 +90,10 @@ const generateChartTool = tool({
 function buildTools(
   toolsDefinition: AiSdkAdvisorParams["toolsDefinition"],
   availableTools: AiSdkAdvisorParams["availableTools"],
-  tenant: number
+  tenant: number,
+  userId?: number
 ): ToolSet {
-  const bridged = bridgeTools(toolsDefinition, availableTools, tenant);
+  const bridged = bridgeTools(toolsDefinition, availableTools, tenant, userId);
   return {
     ...bridged,
     generate_chart: generateChartTool,
@@ -110,7 +112,7 @@ export async function* streamAdvisorAiSdk(
   logger.debug(`[AI-SDK] streamAdvisor started for ${params.provider} with model ${params.model}`);
 
   const model = createModel(params);
-  const tools = buildTools(params.toolsDefinition, params.availableTools, params.tenant);
+  const tools = buildTools(params.toolsDefinition, params.availableTools, params.tenant, params.userId);
 
   const result = streamText({
     model,
@@ -168,7 +170,7 @@ export async function runAdvisorAiSdk(params: AiSdkAdvisorParams): Promise<strin
   logger.debug(`[AI-SDK] runAdvisor started for ${params.provider} with model ${params.model}`);
 
   const model = createModel(params);
-  const tools = buildTools(params.toolsDefinition, params.availableTools, params.tenant);
+  const tools = buildTools(params.toolsDefinition, params.availableTools, params.tenant, params.userId);
 
   const result = streamText({
     model,
@@ -197,7 +199,7 @@ export function getStreamTextResult(params: AiSdkAdvisorParams) {
   logger.debug(`[AI-SDK] getStreamTextResult started for ${params.provider} with model ${params.model}`);
 
   const model = createModel(params);
-  const tools = buildTools(params.toolsDefinition, params.availableTools, params.tenant);
+  const tools = buildTools(params.toolsDefinition, params.availableTools, params.tenant, params.userId);
 
   return streamText({
     model,
