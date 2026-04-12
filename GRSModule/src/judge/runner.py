@@ -6,6 +6,9 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Tuple, Optional, Set
 import traceback
 
+from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeRemainingColumn, MofNCompleteColumn
+from rich.console import Console
+
 from llm.base import ChatClient
 from models.judge_score import JudgeScore, DimensionScore
 from judge.prompt_builder import build_judge_messages
@@ -101,66 +104,84 @@ def run_judging_resumable(
     skipped = 0
     i = 0
 
-    for scenario, response in pairs:
-        scenario_id = scenario["scenario_id"]
-        cand_model = response.get("model_id", "unknown")
-        key = (scenario_id, str(cand_model), cfg.judge_model_id)
+    total_to_run = sum(
+        1 for scenario, response in pairs
+        if (scenario["scenario_id"], str(response.get("model_id", "unknown")), cfg.judge_model_id) not in skip_keys
+    )
 
-        if key in skip_keys:
-            skipped += 1
-            continue
+    console = Console()
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(),
+        MofNCompleteColumn(),
+        TimeRemainingColumn(),
+        console=console,
+    ) as progress:
+        task = progress.add_task(f"[cyan]judging with {cfg.judge_model_id}", total=total_to_run)
 
-        i += 1
-        messages = build_judge_messages(scenario=scenario, response=response, rubric=rubric)
+        for scenario, response in pairs:
+            scenario_id = scenario["scenario_id"]
+            cand_model = response.get("model_id", "unknown")
+            key = (scenario_id, str(cand_model), cfg.judge_model_id)
 
-        try:
-            def _call():
-                return client.chat(messages=messages, temperature=cfg.temperature, max_tokens=cfg.max_tokens)
+            if key in skip_keys:
+                skipped += 1
+                continue
 
-            t0 = time.time()
-            res = retry_with_backoff(_call, retry_cfg)
-            latency_ms = int((time.time() - t0) * 1000)
+            i += 1
+            messages = build_judge_messages(scenario=scenario, response=response, rubric=rubric)
 
-            data = json.loads(res.text)
+            try:
+                def _call():
+                    return client.chat(messages=messages, temperature=cfg.temperature, max_tokens=cfg.max_tokens)
 
-            dim_list = []
-            dim_map: Dict[str, int] = {}
-            for d in data.get("dimension_scores", []):
-                ds = DimensionScore.model_validate(d)  # your evidence coercion fix handles schema drift
-                dim_list.append(ds)
-                dim_map[ds.dimension_id] = ds.score
+                t0 = time.time()
+                res = retry_with_backoff(_call, retry_cfg)
+                latency_ms = int((time.time() - t0) * 1000)
 
-            grs = data.get("grs_score")
-            if grs is None:
-                grs = _weighted_mean(dim_map, rubric.aggregation.weights)
+                data = json.loads(res.text)
 
-            js = JudgeScore(
-                judge_score_id=f"judge_{cfg.judge_model_id}_{i:06d}",
-                scenario_id=scenario_id,
-                candidate_model_id=response["model_id"],
-                candidate_provider=response["provider"],
-                judge_model_id=cfg.judge_model_id,
-                judge_provider=cfg.judge_provider,
-                grs_score=float(grs),
-                dimension_scores=dim_list,
-                flags=data.get("flags", {}) or {},
-                raw={"judge_raw": res.raw, "judge_parsed": data},
-                meta={"latency_ms": latency_ms},
-            )
-            out.append(js.model_dump())
+                dim_list = []
+                dim_map: Dict[str, int] = {}
+                for d in data.get("dimension_scores", []):
+                    ds = DimensionScore.model_validate(d)
+                    dim_list.append(ds)
+                    dim_map[ds.dimension_id] = ds.score
 
-        except Exception as e:
-            failures.append(
-                {
-                    "scenario_id": scenario_id,
-                    "candidate_model_id": response.get("model_id"),
-                    "candidate_provider": response.get("provider"),
-                    "judge_model_id": cfg.judge_model_id,
-                    "judge_provider": cfg.judge_provider,
-                    "error_type": type(e).__name__,
-                    "error": str(e),
-                    "traceback": traceback.format_exc(limit=3),
-                }
-            )
+                grs = data.get("grs_score")
+                if grs is None:
+                    grs = _weighted_mean(dim_map, rubric.aggregation.weights)
+
+                js = JudgeScore(
+                    judge_score_id=f"judge_{cfg.judge_model_id}_{i:06d}",
+                    scenario_id=scenario_id,
+                    candidate_model_id=response["model_id"],
+                    candidate_provider=response["provider"],
+                    judge_model_id=cfg.judge_model_id,
+                    judge_provider=cfg.judge_provider,
+                    grs_score=float(grs),
+                    dimension_scores=dim_list,
+                    flags=data.get("flags", {}) or {},
+                    raw={"judge_raw": res.raw, "judge_parsed": data},
+                    meta={"latency_ms": latency_ms},
+                )
+                out.append(js.model_dump())
+
+            except Exception as e:
+                failures.append(
+                    {
+                        "scenario_id": scenario_id,
+                        "candidate_model_id": response.get("model_id"),
+                        "candidate_provider": response.get("provider"),
+                        "judge_model_id": cfg.judge_model_id,
+                        "judge_provider": cfg.judge_provider,
+                        "error_type": type(e).__name__,
+                        "error": str(e),
+                        "traceback": traceback.format_exc(limit=3),
+                    }
+                )
+
+            progress.advance(task)
 
     return out, failures, skipped

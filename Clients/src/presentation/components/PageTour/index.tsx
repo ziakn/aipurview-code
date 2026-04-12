@@ -113,12 +113,12 @@ const PageTour: React.FC<IPageTourProps> = ({
             back: "Back",
             skip: "Skip",
           },
+          options: {
+            primaryColor: `${brand.primaryHover}`,
+            zIndex: 900,
+            beaconSize: 30,
+          },
           styles: {
-            options: {
-              primaryColor: `${brand.primary}`,
-              zIndex: 900,
-              beaconSize: 30,
-            },
             overlay: {
               backgroundColor: "transparent",
             },
