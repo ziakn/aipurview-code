@@ -2,6 +2,48 @@ import { sequelize } from "../database/db";
 import { QueryTypes } from "sequelize";
 
 /**
+ * Fetch all experiments and bias audits linked to ANY model inventory record
+ * for a given organization. Used by the Evaluations tab on the Model Inventory page.
+ */
+export async function getAllLinkedEvaluations(organizationId: number) {
+  const experiments = await sequelize.query(
+    `SELECT e.id, e.name, e.status, e.config, e.results, e.error_message,
+            e.started_at, e.completed_at, e.created_at, e.created_by,
+            e.model_inventory_id,
+            m.provider AS model_provider, m.model AS model_name, m.version AS model_version,
+            'experiment' AS eval_type
+     FROM llm_evals_experiments e
+     LEFT JOIN model_inventories m ON m.id = e.model_inventory_id
+     WHERE e.model_inventory_id IS NOT NULL
+       AND e.organization_id = :organizationId
+     ORDER BY e.created_at DESC`,
+    {
+      replacements: { organizationId },
+      type: QueryTypes.SELECT,
+    }
+  );
+
+  const biasAudits = await sequelize.query(
+    `SELECT b.id, b.preset_name AS name, b.status, b.config, b.results, b.error,
+            b.completed_at, b.created_at, b.created_by,
+            b.model_inventory_id,
+            m.provider AS model_provider, m.model AS model_name, m.version AS model_version,
+            'bias_audit' AS eval_type
+     FROM llm_evals_bias_audits b
+     LEFT JOIN model_inventories m ON m.id = b.model_inventory_id
+     WHERE b.model_inventory_id IS NOT NULL
+       AND b.organization_id = :organizationId
+     ORDER BY b.created_at DESC`,
+    {
+      replacements: { organizationId },
+      type: QueryTypes.SELECT,
+    }
+  );
+
+  return { experiments, biasAudits };
+}
+
+/**
  * Fetch all experiments and bias audits linked to a model inventory record.
  * Reads from llm_evals_* tables (same Postgres, verifywise schema).
  */

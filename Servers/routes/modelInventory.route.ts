@@ -10,10 +10,11 @@ import {
   getModelInventoryById,
   updateModelInventoryById,
 } from "../controllers/modelInventory.ctrl";
-import { getModelEvaluations } from "../controllers/modelEvaluations.ctrl";
+import { getModelEvaluations, getAllModelEvaluations } from "../controllers/modelEvaluations.ctrl";
 
 // GET
 router.get("/", authenticateJWT, getAllModelInventories);
+router.get("/evaluations", authenticateJWT, getAllModelEvaluations);
 router.get("/:id/evaluations", authenticateJWT, getModelEvaluations);
 router.get("/:id", authenticateJWT, getModelInventoryById);
 router.get("/by-projectId/:projectId", authenticateJWT, getModelByProjectId);
