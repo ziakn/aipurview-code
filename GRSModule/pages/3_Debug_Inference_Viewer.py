@@ -428,48 +428,66 @@ def render_model_comparison(scenarios: list[dict], all_responses: dict[str, dict
 
     st.divider()
 
-    # ---- Model responses side-by-side -----------------------------------
+    # ---- Model responses side-by-side (2 panels with dropdowns) --------
     if not model_stems:
         st.info("No inference results found in `datasets/debug/final/responses/`.")
         return
 
     st.markdown("### Model Responses")
 
-    # Token usage summary
-    usage_rows = []
-    for stem in model_stems:
-        resp = all_responses.get(stem, {}).get(selected_id, {})
-        raw = resp.get("raw", {})
-        usage = raw.get("usage", {})
-        # Bedrock uses inputTokens/outputTokens; OpenRouter uses prompt_tokens/completion_tokens
-        in_tok = usage.get("inputTokens") or usage.get("prompt_tokens")
-        out_tok = usage.get("outputTokens") or usage.get("completion_tokens")
-        usage_rows.append({
-            "Model": stem,
-            "Input tokens": in_tok if in_tok is not None else "—",
-            "Output tokens": out_tok if out_tok is not None else "—",
-            "Stop reason": raw.get("stopReason") or raw.get("finish_reason") or "—",
-        })
-    if usage_rows:
-        st.dataframe(pd.DataFrame(usage_rows), hide_index=True, width="stretch")
+    col_left, col_right = st.columns(2)
 
-    # Side-by-side text
-    cols = st.columns(len(model_stems))
-    for col, stem in zip(cols, model_stems):
-        resp = all_responses.get(stem, {}).get(selected_id)
-        with col:
-            st.markdown(f"**`{stem}`**")
-            if resp is None:
-                st.warning("No response for this scenario.")
-            else:
-                output = resp.get("output_text", "")
-                st.text_area(
-                    label=stem,
-                    value=output,
-                    height=400,
-                    disabled=True,
-                    label_visibility="collapsed",
-                )
+    with col_left:
+        model_left = st.selectbox(
+            "Model",
+            model_stems,
+            index=0,
+            key="compare_model_left",
+        )
+        resp_left = all_responses.get(model_left, {}).get(selected_id)
+        if resp_left is None:
+            st.warning("No response for this scenario.")
+        else:
+            raw = resp_left.get("raw", {})
+            usage = raw.get("usage", {})
+            in_tok = usage.get("inputTokens") or usage.get("prompt_tokens") or "—"
+            out_tok = usage.get("outputTokens") or usage.get("completion_tokens") or "—"
+            stop = raw.get("stopReason") or raw.get("finish_reason") or "—"
+            st.caption(f"In: {in_tok} tok · Out: {out_tok} tok · Stop: {stop}")
+            st.text_area(
+                label=model_left,
+                value=resp_left.get("output_text", ""),
+                height=500,
+                disabled=True,
+                label_visibility="collapsed",
+                key=f"compare_text_left_{selected_id}_{model_left}",
+            )
+
+    with col_right:
+        model_right = st.selectbox(
+            "Model",
+            model_stems,
+            index=min(1, len(model_stems) - 1),
+            key="compare_model_right",
+        )
+        resp_right = all_responses.get(model_right, {}).get(selected_id)
+        if resp_right is None:
+            st.warning("No response for this scenario.")
+        else:
+            raw = resp_right.get("raw", {})
+            usage = raw.get("usage", {})
+            in_tok = usage.get("inputTokens") or usage.get("prompt_tokens") or "—"
+            out_tok = usage.get("outputTokens") or usage.get("completion_tokens") or "—"
+            stop = raw.get("stopReason") or raw.get("finish_reason") or "—"
+            st.caption(f"In: {in_tok} tok · Out: {out_tok} tok · Stop: {stop}")
+            st.text_area(
+                label=model_right,
+                value=resp_right.get("output_text", ""),
+                height=500,
+                disabled=True,
+                label_visibility="collapsed",
+                key=f"compare_text_right_{selected_id}_{model_right}",
+            )
 
 
 # ---------------------------------------------------------------------------

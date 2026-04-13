@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import time
 from dataclasses import dataclass
 from typing import Any, Dict, List, Tuple, Optional, Set
@@ -14,6 +15,78 @@ from models.judge_score import JudgeScore, DimensionScore
 from judge.prompt_builder import build_judge_messages
 from judge.rubric import JudgeRubric
 from llm.retry import retry_with_backoff, RetryConfig
+
+
+def _fix_standalone_escaped_quotes(text: str) -> str:
+    """
+    Convert \"...\" used as standalone JSON value delimiters to "...".
+
+    When the judge LLM uses backslash-escaped quotes as string delimiters instead
+    of plain quotes (e.g. in evidence arrays), this converts them to valid JSON strings.
+    Leaves \" inside properly-opened "..." strings untouched — those are valid JSON escapes.
+    """
+    result = []
+    i = 0
+    n = len(text)
+    in_string = False
+
+    while i < n:
+        c = text[i]
+        if in_string:
+            if c == "\\" and i + 1 < n:
+                # Any escape sequence inside a string: pass through unchanged
+                result.append(c)
+                result.append(text[i + 1])
+                i += 2
+            elif c == '"':
+                # Closing quote of a normal string
+                result.append(c)
+                in_string = False
+                i += 1
+            else:
+                result.append(c)
+                i += 1
+        else:
+            if c == '"':
+                # Opening quote of a normal string
+                result.append(c)
+                in_string = True
+                i += 1
+            elif c == "\\" and i + 1 < n and text[i + 1] == '"':
+                # \"...\" used as a value delimiter — convert opening \" to "
+                result.append('"')
+                i += 2
+                # Consume until the matching closing \"
+                while i < n:
+                    c = text[i]
+                    if c == "\\" and i + 1 < n and text[i + 1] == '"':
+                        result.append('"')
+                        i += 2
+                        break
+                    elif c == "\\" and i + 1 < n:
+                        result.append(c)
+                        result.append(text[i + 1])
+                        i += 2
+                    else:
+                        result.append(c)
+                        i += 1
+            else:
+                result.append(c)
+                i += 1
+
+    return "".join(result)
+
+
+def _parse_judge_json(text: str) -> dict:
+    """Parse judge LLM output tolerantly: strip markdown fences, fix common LLM JSON mistakes."""
+    # Strip markdown code fences (```json ... ``` or ``` ... ```)
+    stripped = re.sub(r"^```(?:json)?\s*", "", text.strip(), flags=re.IGNORECASE)
+    stripped = re.sub(r"\s*```$", "", stripped)
+    # Fix \"...\" used as standalone string value delimiters
+    stripped = _fix_standalone_escaped_quotes(stripped)
+    # Remove trailing commas before ] or } (invalid JSON, common LLM mistake)
+    stripped = re.sub(r",(\s*[}\]])", r"\1", stripped)
+    return json.loads(stripped)
 
 
 @dataclass(frozen=True)
@@ -53,7 +126,7 @@ def run_judging(
         latency_ms = int((time.time() - t0) * 1000)
 
         # Parse JSON (strict)
-        data = json.loads(res.text)
+        data = _parse_judge_json(res.text)
 
         dim_list = []
         dim_map: Dict[str, int] = {}
@@ -132,6 +205,7 @@ def run_judging_resumable(
             i += 1
             messages = build_judge_messages(scenario=scenario, response=response, rubric=rubric)
 
+            res = None
             try:
                 def _call():
                     return client.chat(messages=messages, temperature=cfg.temperature, max_tokens=cfg.max_tokens)
@@ -140,7 +214,7 @@ def run_judging_resumable(
                 res = retry_with_backoff(_call, retry_cfg)
                 latency_ms = int((time.time() - t0) * 1000)
 
-                data = json.loads(res.text)
+                data = _parse_judge_json(res.text)
 
                 dim_list = []
                 dim_map: Dict[str, int] = {}
@@ -179,6 +253,7 @@ def run_judging_resumable(
                         "error_type": type(e).__name__,
                         "error": str(e),
                         "traceback": traceback.format_exc(limit=3),
+                        "judge_raw_text": res.text if res is not None else None,
                     }
                 )
 
