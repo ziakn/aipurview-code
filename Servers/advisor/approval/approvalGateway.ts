@@ -20,6 +20,7 @@ import { v4 as uuidv4 } from "uuid";
 import { logStructured } from "../../utils/logger/fileLogger";
 import { createNotificationQuery } from "../../utils/notification.utils";
 import { NotificationType, NotificationEntityType } from "../../domain.layer/interfaces/i.notification";
+import { logStateHistory } from "../../services/aiAuditTrail.service";
 
 const fileName = "approvalGateway.ts";
 
@@ -209,6 +210,7 @@ export async function submitForApproval(
       errorMessage: context.errorMessage,
     });
     logStructured("successful", `auto-rejected ${config.toolName}: ${context.errorMessage}`, functionName, fileName);
+    logStateHistory(config.organizationId, id, context.stateHistory, config.toolName).catch(() => {});
     return {
       outcome: "rejected",
       approvalId: id,
@@ -258,6 +260,7 @@ export async function submitForApproval(
       executedAt: new Date().toISOString(),
     });
     logStructured("successful", `auto-approved and executed ${config.toolName}`, functionName, fileName);
+    logStateHistory(config.organizationId, id, completedHistory, config.toolName).catch(() => {});
     return { outcome: "completed", approvalId: id, executionResult: result };
   }
 
@@ -310,6 +313,7 @@ export async function submitForApproval(
     };
 
     logStructured("successful", `pending approval for ${config.toolName}`, functionName, fileName);
+    logStateHistory(config.organizationId, id, context.stateHistory, config.toolName).catch(() => {});
     return { outcome: "pending", approvalId: id, confirmationResult };
   }
 

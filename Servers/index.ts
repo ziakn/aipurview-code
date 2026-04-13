@@ -93,6 +93,7 @@ import aiContentRoutes from "./routes/aiContent.route";
 import aiConfirmationRoutes from "./routes/aiConfirmation.route";
 import aiApprovalRoutes from "./routes/aiApproval.route";
 import aiApprovalRulesRoutes from "./routes/aiApprovalRules.route";
+import aiAuditRoutes from "./routes/aiAudit.route";
 import { startTimeoutHandler } from "./advisor/approval/timeoutHandler";
 import featureSettingsRoutes from "./routes/featureSettings.route";
 import friaRoutes from "./routes/fria.route";
@@ -274,6 +275,7 @@ try {
   app.use("/api/ai-confirmation", aiConfirmationRoutes);
   app.use("/api/ai-approvals", aiApprovalRoutes);
   app.use("/api/ai-approval-rules", aiApprovalRulesRoutes);
+  app.use("/api/ai-audit", aiAuditRoutes);
   app.use("/api/advisor", advisorRouter);
   app.use("/api/policy-linked", policyLinkedObjects);
 
