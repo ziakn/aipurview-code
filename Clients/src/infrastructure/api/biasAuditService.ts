@@ -63,6 +63,7 @@ export interface BiasAuditSummary {
   updatedAt: string;
   completedAt: string | null;
   createdBy: string | null;
+  modelInventoryId?: number | null;
 }
 
 export interface GroupResultRow {
