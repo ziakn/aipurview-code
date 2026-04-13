@@ -25,6 +25,7 @@ import { PageHeaderExtended } from "../../components/Layout/PageHeaderExtended";
 import PageTour from "../../components/PageTour";
 import RiskManagementSteps from "./RiskManagementSteps";
 import { RiskModel } from "../../../domain/models/Common/risks/risk.model";
+import { onAiActionCompleted } from "../../../application/events/aiActionEvents";
 import AnalyticsDrawer from "../../components/AnalyticsDrawer";
 import { ExportMenu } from "../../components/Table/ExportMenu";
 import { GroupBy } from "../../components/Table/GroupBy";
@@ -460,6 +461,28 @@ const RiskManagement = () => {
     setShowCustomizableSkeleton(true);
     fetchProjectRisks();
   }, [fetchProjectRisks, refreshKey]);
+
+  // Listen for AI action approvals for any risk-lifecycle tool. When an
+  // approval is granted in the RequestorApprovalModal, the executor runs
+  // inside the approve transaction so the affected row already reflects
+  // the change by the time the event fires — bumping refreshKey is
+  // enough to pull it in. This covers create, update, and delete.
+  useEffect(() => {
+    const RISK_TOOL_NAMES = new Set([
+      'agent_create_risk',
+      'agent_update_risk',
+      'agent_delete_risk',
+    ]);
+    return onAiActionCompleted((detail) => {
+      if (
+        detail?.status === 'approved' &&
+        detail?.toolName &&
+        RISK_TOOL_NAMES.has(detail.toolName)
+      ) {
+        setRefreshKey((k) => k + 1);
+      }
+    });
+  }, []);
 
   // Auto-open create risk popup when navigating from "Add new..." dropdown
   useEffect(() => {

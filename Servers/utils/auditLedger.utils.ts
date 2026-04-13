@@ -73,9 +73,32 @@ async function isAuditLedgerEnabled(organizationId: number): Promise<boolean> {
 }
 
 /**
+ * Postgres SQLSTATE for "could not serialize access due to read/write
+ * dependencies among transactions" — emitted by SERIALIZABLE-level
+ * transactions when concurrent appends touch the same rows. Standard
+ * remediation is to retry the transaction.
+ */
+const SERIALIZATION_FAILURE = "40001";
+const MAX_AUDIT_RETRIES = 5;
+const BASE_RETRY_DELAY_MS = 15;
+
+interface SequelizeDbError {
+  parent?: { code?: string };
+  original?: { code?: string };
+}
+
+function isSerializationFailure(error: unknown): boolean {
+  const err = error as SequelizeDbError;
+  return (
+    err?.parent?.code === SERIALIZATION_FAILURE ||
+    err?.original?.code === SERIALIZATION_FAILURE
+  );
+}
+
+/**
  * Append an entry to the audit_ledger using a SERIALIZABLE transaction.
  *
- * Flow:
+ * Flow per attempt:
  * 1. Check if audit ledger is enabled for this organization
  * 2. Get the prev_hash from the last entry (or GENESIS_HASH)
  * 3. INSERT with entry_hash = 'pending' sentinel
@@ -83,6 +106,12 @@ async function isAuditLedgerEnabled(organizationId: number): Promise<boolean> {
  * 5. UPDATE the sentinel to the real hash
  *
  * The append-only triggers allow only this specific sentinel→hash transition.
+ *
+ * Retries on SQLSTATE 40001 ("could not serialize access...") with
+ * exponential backoff. Two concurrent appends for the same org both read
+ * the same last-row hash and try to insert behind it — Postgres aborts
+ * one of them under SERIALIZABLE, and retrying the loser is the standard
+ * fix. Max 5 attempts so a pathological hot org can't spin forever.
  */
 export async function appendToAuditLedger(
   entry: AuditLedgerEntry
@@ -91,6 +120,30 @@ export async function appendToAuditLedger(
 
   // Skip if audit ledger is disabled for this organization
   if (!(await isAuditLedgerEnabled(organizationId))) return;
+
+  let lastError: unknown;
+  for (let attempt = 0; attempt < MAX_AUDIT_RETRIES; attempt++) {
+    try {
+      await appendToAuditLedgerOnce(entry);
+      return;
+    } catch (error) {
+      if (!isSerializationFailure(error)) throw error;
+      lastError = error;
+      // Exponential backoff with jitter so two retriers don't lockstep.
+      const delay =
+        BASE_RETRY_DELAY_MS * 2 ** attempt + Math.random() * BASE_RETRY_DELAY_MS;
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+  throw lastError;
+}
+
+/**
+ * Single attempt at appending. Wrapped in the retry loop above.
+ * Extracted so the loop body stays small and unambiguous.
+ */
+async function appendToAuditLedgerOnce(entry: AuditLedgerEntry): Promise<void> {
+  const organizationId = entry.organizationId;
 
   const txn: Transaction = await sequelize.transaction({
     isolationLevel: Transaction.ISOLATION_LEVELS.SERIALIZABLE,

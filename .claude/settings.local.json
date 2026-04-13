@@ -13,7 +13,14 @@
       "Bash(grep -r \"superadmin\\\\|super.admin\\\\|SuperAdmin\" /Users/harsh/Data/vw/verifywise/Servers/src --include=*.ts -i)",
       "Bash(grep:*)",
       "Bash(git log:*)",
-      "Bash(echo \"EXIT=$?\")"
+      "Bash(echo \"EXIT=$?\")",
+      "Read(//private/tmp/**)",
+      "Bash(unzip -o -q /Users/harsh/Data/vw/verifywise/tool_list_.docx -d tool_list_extract)",
+      "Bash(npx sequelize:*)",
+      "Bash(npx vitest:*)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(echo \"backend_exit=$?\")",
+      "Bash(echo \"frontend_exit=$?\")"
     ]
   }
 }
