@@ -567,7 +567,7 @@ const NewBiasAuditModal: React.FC<NewBiasAuditModalProps> = ({
           label="Link to model inventory (optional)"
           placeholder="None — don't link to inventory"
           value={selectedModelInventoryId !== null ? String(selectedModelInventoryId) : ""}
-          onChange={(e: { target: { value: string } }) =>
+          onChange={(e) =>
             setSelectedModelInventoryId(e.target.value === "" ? null : Number(e.target.value))
           }
           items={[

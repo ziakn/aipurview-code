@@ -1376,8 +1376,11 @@ export default function NewExperimentModal({
               </Typography>
               <FormControl fullWidth size="small">
                 <Select
-                  value={selectedModelInventoryId ?? ""}
-                  onChange={(e) => setSelectedModelInventoryId(e.target.value === "" ? null : Number(e.target.value))}
+                  value={selectedModelInventoryId !== null ? selectedModelInventoryId : ""}
+                  onChange={(e) => {
+                    const val = String(e.target.value);
+                    setSelectedModelInventoryId(val === "" ? null : Number(val));
+                  }}
                   displayEmpty
                   sx={{ height: "34px", fontSize: "13px", borderRadius: "4px" }}
                 >
