@@ -1,4 +1,4 @@
-import apiServices from "../../infrastructure/api/customAxios";
+import { apiServices } from "../../infrastructure/api/networkServices";
 
 export interface ModelEvaluation {
   id: string;
@@ -25,5 +25,5 @@ export interface ModelEvaluationsResponse {
 
 export async function getAllModelEvaluations(): Promise<ModelEvaluationsResponse> {
   const response = await apiServices.get("/modelInventory/evaluations");
-  return response.data;
+  return response.data as ModelEvaluationsResponse;
 }

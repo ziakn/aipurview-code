@@ -335,8 +335,8 @@ export default function BiasAuditsList({ orgId, onViewAudit }: BiasAuditsListPro
                           px: "8px",
                           py: "2px",
                           borderRadius: "4px",
-                          backgroundColor: "#e8f5e9",
-                          color: "#2e7d32",
+                          backgroundColor: palette.status.success.bg,
+                          color: palette.status.success.text,
                           fontSize: "11px",
                           fontWeight: 500,
                         }}
@@ -344,7 +344,7 @@ export default function BiasAuditsList({ orgId, onViewAudit }: BiasAuditsListPro
                         Linked
                       </Box>
                     ) : (
-                      <Typography sx={{ fontSize: "11px", color: "#98a2b3" }}>Unlinked</Typography>
+                      <Typography sx={{ fontSize: "11px", color: palette.text.secondary }}>Unlinked</Typography>
                     )}
                   </TableCell>
                   <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
