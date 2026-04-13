@@ -18,11 +18,14 @@ import {
     PackageOpen,
     File,
     HardDrive,
+    Bot,
+    Shield,
+    AlertTriangle,
 } from "lucide-react";
 import dayjs from "dayjs";
 
 // Supported entity types
-export type EntityTypeKey = 'use_case' | 'file';
+export type EntityTypeKey = 'use_case' | 'file' | 'ai_action' | 'risk' | 'vendor' | 'policy' | 'incident' | 'dataset' | 'model_inventory' | 'training' | 'evidence' | 'task' | 'automation' | 'pmm_config' | 'note';
 
 // Detail field configuration
 export interface DetailFieldConfig {
@@ -80,6 +83,98 @@ export const ENTITY_TYPE_CONFIGS: Record<EntityTypeKey, EntityTypeConfig> = {
             { key: 'fileUploader', label: 'Uploaded by', icon: <User size={14} /> },
             { key: 'fileUploadedTime', label: 'Upload date', icon: <Calendar size={14} />, format: formatDate },
         ],
+    },
+    ai_action: {
+        title: "AI Action Details",
+        deletedMessage: "The AI action associated with this request has been deleted.",
+        noDataMessage: "No additional AI action details available",
+        fields: [
+            { key: 'aiToolName', label: 'Tool', icon: <Bot size={14} /> },
+            { key: 'aiActionType', label: 'Action type', icon: <FileText size={14} /> },
+            { key: 'aiRiskLevel', label: 'Risk level', icon: <Shield size={14} /> },
+            { key: 'aiState', label: 'State', icon: <AlertTriangle size={14} /> },
+        ],
+    },
+    risk: {
+        title: "Risk Details",
+        deletedMessage: "The risk associated with this request has been deleted.",
+        noDataMessage: "No additional risk details available",
+        fields: [
+            { key: 'riskName', label: 'Risk name', icon: <AlertTriangle size={14} /> },
+            { key: 'riskSeverity', label: 'Severity', icon: <Shield size={14} /> },
+        ],
+    },
+    vendor: {
+        title: "Vendor Details",
+        deletedMessage: "The vendor associated with this request has been deleted.",
+        noDataMessage: "No additional vendor details available",
+        fields: [
+            { key: 'vendorName', label: 'Vendor name', icon: <Briefcase size={14} /> },
+        ],
+    },
+    policy: {
+        title: "Policy Details",
+        deletedMessage: "The policy associated with this request has been deleted.",
+        noDataMessage: "No additional policy details available",
+        fields: [
+            { key: 'policyContent', label: 'Content', icon: <FileText size={14} /> },
+        ],
+    },
+    incident: {
+        title: "Incident Details",
+        deletedMessage: "The incident associated with this request has been deleted.",
+        noDataMessage: "No additional incident details available",
+        fields: [
+            { key: 'incidentTitle', label: 'Title', icon: <AlertTriangle size={14} /> },
+        ],
+    },
+    dataset: {
+        title: "Dataset Details",
+        deletedMessage: "The dataset associated with this request has been deleted.",
+        noDataMessage: "No additional dataset details available",
+        fields: [],
+    },
+    model_inventory: {
+        title: "Model Details",
+        deletedMessage: "The model associated with this request has been deleted.",
+        noDataMessage: "No additional model details available",
+        fields: [],
+    },
+    training: {
+        title: "Training Details",
+        deletedMessage: "The training record associated with this request has been deleted.",
+        noDataMessage: "No additional training details available",
+        fields: [],
+    },
+    evidence: {
+        title: "Evidence Details",
+        deletedMessage: "The evidence associated with this request has been deleted.",
+        noDataMessage: "No additional evidence details available",
+        fields: [],
+    },
+    task: {
+        title: "Task Details",
+        deletedMessage: "The task associated with this request has been deleted.",
+        noDataMessage: "No additional task details available",
+        fields: [],
+    },
+    automation: {
+        title: "Automation Details",
+        deletedMessage: "The automation associated with this request has been deleted.",
+        noDataMessage: "No additional automation details available",
+        fields: [],
+    },
+    pmm_config: {
+        title: "PMM Config Details",
+        deletedMessage: "The PMM config associated with this request has been deleted.",
+        noDataMessage: "No additional PMM config details available",
+        fields: [],
+    },
+    note: {
+        title: "Note Details",
+        deletedMessage: "The note associated with this request has been deleted.",
+        noDataMessage: "No additional note details available",
+        fields: [],
     },
 };
 
@@ -141,6 +236,46 @@ export function extractEntityDetails(requestData: any): Record<string, any> {
                 fileReviewStatus: requestData.file_review_status,
                 fileUploadedTime: requestData.file_uploaded_time,
                 fileUploader: fileUploaderName,
+            };
+
+        case 'ai_action':
+            return {
+                ...baseDetails,
+                entityName: requestData.ai_tool_name || requestData.request_name,
+                aiToolName: requestData.ai_tool_name,
+                aiActionType: requestData.ai_action_type,
+                aiRiskLevel: requestData.ai_risk_level,
+                aiState: requestData.ai_state,
+                aiInputParams: requestData.ai_input_params,
+            };
+
+        case 'risk':
+            return {
+                ...baseDetails,
+                entityName: requestData.risk_name || requestData.request_name,
+                riskName: requestData.risk_name,
+                riskSeverity: requestData.risk_severity,
+            };
+
+        case 'vendor':
+            return {
+                ...baseDetails,
+                entityName: requestData.vendor_name || requestData.request_name,
+                vendorName: requestData.vendor_name,
+            };
+
+        case 'policy':
+            return {
+                ...baseDetails,
+                entityName: requestData.request_name,
+                policyContent: requestData.policy_content,
+            };
+
+        case 'incident':
+            return {
+                ...baseDetails,
+                entityName: requestData.incident_title || requestData.request_name,
+                incidentTitle: requestData.incident_title,
             };
 
         case 'use_case':

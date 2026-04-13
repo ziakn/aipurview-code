@@ -73,6 +73,9 @@ export class AiActionApprovalModel extends Model<AiActionApprovalModel> {
   @Column({ type: DataType.JSONB, allowNull: false, defaultValue: [] })
   state_history!: StateHistoryEntry[];
 
+  @Column({ type: DataType.INTEGER, allowNull: true })
+  approval_request_id?: number;
+
   @BelongsTo(() => OrganizationModel, "organization_id")
   organization?: OrganizationModel;
 

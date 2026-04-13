@@ -18,6 +18,8 @@ import { sequelize } from "../../database/db";
 import { QueryTypes } from "sequelize";
 import { v4 as uuidv4 } from "uuid";
 import { logStructured } from "../../utils/logger/fileLogger";
+import { createNotificationQuery } from "../../utils/notification.utils";
+import { NotificationType, NotificationEntityType } from "../../domain.layer/interfaces/i.notification";
 
 const fileName = "approvalGateway.ts";
 
@@ -281,8 +283,21 @@ export async function submitForApproval(
     try {
       await storeConfirmation(redisRequest);
     } catch (redisError) {
-      // Redis failure is non-fatal — DB is the source of truth now
       logStructured("error", `Redis store failed (non-fatal): ${redisError}`, functionName, fileName);
+    }
+
+    // Bridge: Create approval_request for the existing workflow system (non-fatal)
+    try {
+      await bridgeToApprovalWorkflow(id, config);
+    } catch (bridgeError) {
+      logStructured("error", `approval workflow bridge failed (non-fatal): ${bridgeError}`, functionName, fileName);
+    }
+
+    // Send notification to admins (non-fatal)
+    try {
+      await notifyPendingApproval(config);
+    } catch (notifyError) {
+      logStructured("error", `notification failed (non-fatal): ${notifyError}`, functionName, fileName);
     }
 
     const confirmationResult: ConfirmationToolResult = {
@@ -553,4 +568,123 @@ export async function getApprovalStats(
   ) as any[];
 
   return stats || {};
+}
+
+// ── Bridge & Notification Helpers ───────────────────────────────
+
+/**
+ * Bridge an AI action to the existing approval_requests workflow system.
+ * Finds the default ai_action workflow for the org, creates an approval_request,
+ * and links it back to the ai_action_approvals record.
+ */
+async function bridgeToApprovalWorkflow(
+  aiApprovalId: string,
+  config: SubmitForApprovalConfig
+): Promise<void> {
+  // Find the default ai_action workflow for this organization
+  const workflows = await sequelize.query(
+    `SELECT id FROM approval_workflows
+     WHERE organization_id = :organizationId
+       AND entity_type = 'ai_action'
+       AND is_active = true
+     LIMIT 1`,
+    { replacements: { organizationId: config.organizationId }, type: QueryTypes.SELECT }
+  ) as any[];
+
+  if (!workflows[0]) {
+    // No ai_action workflow configured — skip bridging
+    return;
+  }
+
+  const workflowId = workflows[0].id;
+
+  // Create the approval request
+  const requests = await sequelize.query(
+    `INSERT INTO approval_requests
+      (organization_id, request_name, workflow_id, entity_id, entity_type, entity_data, status, requested_by, current_step, created_at, updated_at)
+     VALUES
+      (:organizationId, :requestName, :workflowId, NULL, 'ai_action',
+       :entityData, 'Pending', :requestedBy, 1, NOW(), NOW())
+     RETURNING id`,
+    {
+      replacements: {
+        organizationId: config.organizationId,
+        requestName: `AI Action: ${config.description}`,
+        workflowId,
+        entityData: JSON.stringify({
+          ai_approval_id: aiApprovalId,
+          tool_name: config.toolName,
+          risk_level: config.riskLevel,
+          description: config.description,
+          action_type: config.actionType,
+        }),
+        requestedBy: config.userId,
+      },
+      type: QueryTypes.INSERT,
+    }
+  ) as any;
+
+  const approvalRequestId = requests?.[0]?.[0]?.id || requests?.[0]?.id;
+  if (!approvalRequestId) return;
+
+  // Link back to ai_action_approvals
+  await updateApprovalRecord(aiApprovalId, config.organizationId, {
+    approvalRequestId,
+  });
+
+  // Create the first step from the workflow
+  const steps = await sequelize.query(
+    `SELECT * FROM approval_workflow_steps
+     WHERE workflow_id = :workflowId AND organization_id = :organizationId
+     ORDER BY step_number ASC`,
+    { replacements: { workflowId, organizationId: config.organizationId }, type: QueryTypes.SELECT }
+  ) as any[];
+
+  for (const step of steps) {
+    await sequelize.query(
+      `INSERT INTO approval_request_steps
+        (organization_id, request_id, step_number, step_name, status, date_assigned, created_at)
+       VALUES (:organizationId, :requestId, :stepNumber, :stepName, 'Pending', NOW(), NOW())`,
+      {
+        replacements: {
+          organizationId: config.organizationId,
+          requestId: approvalRequestId,
+          stepNumber: step.step_number,
+          stepName: step.step_name,
+        },
+        type: QueryTypes.INSERT,
+      }
+    );
+  }
+}
+
+/**
+ * Send notification to admins when an AI action enters pending_approval.
+ */
+async function notifyPendingApproval(config: SubmitForApprovalConfig): Promise<void> {
+  // Find admin users for this organization
+  const admins = await sequelize.query(
+    `SELECT u.id FROM users u
+     JOIN roles r ON u.role_id = r.id
+     WHERE u.organization_id = :organizationId
+       AND r.name = 'Admin'`,
+    { replacements: { organizationId: config.organizationId }, type: QueryTypes.SELECT }
+  ) as any[];
+
+  for (const admin of admins) {
+    await createNotificationQuery(
+      {
+        user_id: admin.id,
+        type: NotificationType.APPROVAL_REQUESTED,
+        title: "AI Action Needs Approval",
+        message: `${config.description} (${config.riskLevel} risk)`,
+        entity_type: NotificationEntityType.AI_ACTION,
+        entity_id: 0,
+        entity_name: config.toolName,
+        action_url: "/settings/ai-approval-rules",
+        created_by: config.userId,
+      },
+      config.organizationId
+    );
+  }
 }
