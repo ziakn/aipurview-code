@@ -118,6 +118,19 @@ class BiasAuditReportTemplate(ABC):
 
     # ------------------------------------------------------------------ methodology
 
+    def metric_label(self, metric: str) -> str:
+        """Return a plain-English label for the metric used in this audit.
+
+        Default labels use LL144/EEOC language. Override in frameworks that
+        use different terminology (e.g., Colorado SB 21-169 uses rate-difference
+        framing, not 4/5ths rule).
+        """
+        return {
+            "selection_rate": "Selection rate (4/5ths rule)",
+            "scoring_rate": "Scoring rate (LL144 alternative)",
+            "fairness_metrics": "Fairness metrics (TPR / FPR / equalized odds)",
+        }.get(metric, metric)
+
     @abstractmethod
     def threshold_explanation(self, threshold: float) -> str:
         """Return a plain-language explanation of the impact ratio threshold."""

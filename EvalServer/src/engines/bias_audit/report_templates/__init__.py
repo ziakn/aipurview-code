@@ -14,5 +14,9 @@ def get_template(preset_name: str) -> BiasAuditReportTemplate:
         from .ll144 import LL144Template
         return LL144Template()
 
+    if "sb 21-169" in normalized or "sb21-169" in normalized or "sb21169" in normalized:
+        from .sb169 import SB169Template
+        return SB169Template()
+
     from .generic import GenericTemplate
     return GenericTemplate()

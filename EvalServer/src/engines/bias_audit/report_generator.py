@@ -239,7 +239,10 @@ def _key_value_table(
 
 # ------------------------------------------------------------------ sections
 def _cover_page(
-    story: list, styles: Dict[str, ParagraphStyle], audit: Dict[str, Any]
+    story: list,
+    styles: Dict[str, ParagraphStyle],
+    audit: Dict[str, Any],
+    template: BiasAuditReportTemplate,
 ) -> None:
     config = audit.get("config", {}) or {}
     results = audit.get("results", {}) or {}
@@ -248,13 +251,8 @@ def _cover_page(
     system_version = config.get("systemVersion") or ""
     preset_name = audit.get("presetName", "Custom")
 
-    # Compute plain-English metric label
     metric = results.get("metric") or config.get("metric") or "selection_rate"
-    metric_label = {
-        "selection_rate": "Selection rate (4/5ths rule)",
-        "scoring_rate": "Scoring rate (LL144 alternative)",
-        "fairness_metrics": "Fairness metrics (TPR / FPR / equalized odds)",
-    }.get(metric, metric)
+    metric_label = template.metric_label(metric)
 
     logo_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
@@ -943,7 +941,7 @@ def generate_pdf_report(audit: Dict[str, Any]) -> bytes:
     styles = _styles()
     story: list = []
 
-    _cover_page(story, styles, audit)
+    _cover_page(story, styles, audit, template)
     _overall_assessment(story, styles, audit, template)
     _scope(story, styles, audit, template)
     _compliance_checklist(story, styles, audit, template)
