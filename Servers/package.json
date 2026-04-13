@@ -46,6 +46,7 @@
     "http-proxy-middleware": "^3.0.5",
     "ioredis": "^5.10.1",
     "jsdom": "^29.0.1",
+    "json-rules-engine": "^7.3.1",
     "jsonwebtoken": "^9.0.2",
     "lusca": "^1.7.0",
     "mammoth": "^1.12.0",
@@ -73,6 +74,7 @@
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0",
     "xlsx": "^0.18.5",
+    "xstate": "^5.30.0",
     "yamljs": "^0.3.0",
     "zod": "^4.3.6"
   },

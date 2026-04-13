@@ -1,19 +1,25 @@
+/**
+ * Phase 1 Backward-Compatibility Controller
+ *
+ * Delegates to the Phase 2 approval gateway while keeping the old
+ * /api/ai-confirmation/* endpoints working for the existing frontend.
+ */
+
 import { Request, Response } from "express";
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import logger, { logStructured } from "../utils/logger/fileLogger";
+import { listPendingConfirmations } from "../advisor/confirmation/confirmationStore";
 import {
-  getConfirmation,
-  resolveConfirmation,
-  listPendingConfirmations,
-} from "../advisor/confirmation/confirmationStore";
-import { writeToolExecutors } from "../advisor/confirmation/createWriteTool";
+  approveAction,
+  rejectAction,
+} from "../advisor/approval/approvalGateway";
 import { trackAIContent } from "../middleware/aiContentTracker.middleware";
 
 const fileName = "aiConfirmation.ctrl.ts";
 
 /**
  * POST /api/ai-confirmation/approve/:id
- * Approve a pending write operation and execute it.
+ * Backward-compatible — delegates to the approval gateway.
  */
 export async function approveConfirmation(req: Request, res: Response) {
   const functionName = "approveConfirmation";
@@ -22,60 +28,25 @@ export async function approveConfirmation(req: Request, res: Response) {
   const userId = Number(req.userId);
 
   try {
-    const pending = await getConfirmation(organizationId, id);
-    if (!pending) {
-      return res
-        .status(404)
-        .json(STATUS_CODE[404]("Confirmation not found or expired"));
-    }
-    if (pending.status !== "pending") {
-      return res
-        .status(400)
-        .json(STATUS_CODE[400](`Confirmation already ${pending.status}`));
-    }
+    const result = await approveAction(organizationId, id, userId);
 
-    // Look up the executor for this tool
-    const executor = writeToolExecutors.get(pending.toolName);
-    if (!executor) {
-      // Auto-reject: no executor means the tool can never succeed
-      await resolveConfirmation(
-        organizationId, id, "rejected", userId, undefined,
-        `No executor registered for tool: ${pending.toolName}`
-      );
-      logStructured("error", `no executor for tool: ${pending.toolName}`, functionName, fileName);
-      return res
-        .status(500)
-        .json(STATUS_CODE[500](`No executor registered for tool: ${pending.toolName}`));
+    if (!result.success) {
+      const statusCode = result.error?.includes("not found") ? 404 : 400;
+      return res.status(statusCode).json(STATUS_CODE[statusCode as 404 | 400](result.error!));
     }
-
-    // Execute the actual write operation
-    let result: unknown;
-    try {
-      result = await executor(pending.params, organizationId);
-    } catch (execError) {
-      const errorMsg =
-        execError instanceof Error ? execError.message : "Unknown error";
-      // Mark as rejected — the execution failed, the write did not happen
-      await resolveConfirmation(organizationId, id, "rejected", userId, undefined, errorMsg);
-      logStructured("error", `write execution failed: ${errorMsg}`, functionName, fileName);
-      return res.status(500).json(STATUS_CODE[500](errorMsg));
-    }
-
-    // Mark as approved with result
-    await resolveConfirmation(organizationId, id, "approved", userId, result);
 
     // Track as AI-generated content (fire-and-forget)
     trackAIContent(
       organizationId,
       "confirmation",
-      parseInt(id, 10) || 0,
+      0,
       {
         badgeType: "generated",
         modelUsed: "ai-advisor",
         modelProvider: "verifywise",
-        toolName: pending.toolName,
+        toolName: id,
         confidenceScore: 100,
-        promptSummary: `Approved: ${pending.description}`,
+        promptSummary: `Approved: ${id}`,
       },
       userId
     ).catch(() => {});
@@ -85,7 +56,7 @@ export async function approveConfirmation(req: Request, res: Response) {
       STATUS_CODE[200]({
         confirmation_id: id,
         status: "approved",
-        result,
+        result: result.result,
       })
     );
   } catch (error) {
@@ -97,7 +68,7 @@ export async function approveConfirmation(req: Request, res: Response) {
 
 /**
  * POST /api/ai-confirmation/reject/:id
- * Reject a pending write operation.
+ * Backward-compatible — delegates to the approval gateway.
  */
 export async function rejectConfirmation(req: Request, res: Response) {
   const functionName = "rejectConfirmation";
@@ -106,19 +77,12 @@ export async function rejectConfirmation(req: Request, res: Response) {
   const userId = Number(req.userId);
 
   try {
-    const pending = await getConfirmation(organizationId, id);
-    if (!pending) {
-      return res
-        .status(404)
-        .json(STATUS_CODE[404]("Confirmation not found or expired"));
-    }
-    if (pending.status !== "pending") {
-      return res
-        .status(400)
-        .json(STATUS_CODE[400](`Confirmation already ${pending.status}`));
-    }
+    const result = await rejectAction(organizationId, id, userId);
 
-    await resolveConfirmation(organizationId, id, "rejected", userId);
+    if (!result.success) {
+      const statusCode = result.error?.includes("not found") ? 404 : 400;
+      return res.status(statusCode).json(STATUS_CODE[statusCode as 404 | 400](result.error!));
+    }
 
     logStructured("successful", `confirmation ${id} rejected`, functionName, fileName);
     return res.status(200).json(
@@ -136,7 +100,7 @@ export async function rejectConfirmation(req: Request, res: Response) {
 
 /**
  * GET /api/ai-confirmation/pending
- * List all pending confirmations for the organization.
+ * List all pending confirmations (still from Redis for speed).
  */
 export async function getPendingConfirmations(req: Request, res: Response) {
   const functionName = "getPendingConfirmations";

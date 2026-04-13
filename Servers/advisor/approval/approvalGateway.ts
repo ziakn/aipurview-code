@@ -1,0 +1,556 @@
+/**
+ * Phase 2 — Approval Gateway
+ *
+ * Main orchestrator that receives tool execution requests, runs them through
+ * the XState state machine, persists state to the database, and coordinates
+ * with Redis for fast frontend polling.
+ */
+
+import { createActor } from "xstate";
+import { approvalMachine } from "./stateMachine";
+import { isAutoRejectable, evaluateRules, deriveFacts } from "./rules";
+import type { RuleDecision } from "./ruleEngine";
+import { storeConfirmation, resolveConfirmation } from "../confirmation/confirmationStore";
+import { writeToolExecutors } from "../confirmation/createWriteTool";
+import type { ConfirmationRequest, ConfirmationToolResult } from "../confirmation/types";
+import type { SubmitForApprovalConfig, ApprovalContext, StateHistoryEntry } from "./types";
+import { sequelize } from "../../database/db";
+import { QueryTypes } from "sequelize";
+import { v4 as uuidv4 } from "uuid";
+import { logStructured } from "../../utils/logger/fileLogger";
+
+const fileName = "approvalGateway.ts";
+
+// ── Result types ────────────────────────────────────────────────
+
+export interface ApprovalSubmitResult {
+  /** "pending" if human approval needed, "completed" if auto-approved, "rejected" if auto-rejected */
+  outcome: "pending" | "completed" | "rejected";
+  /** The approval record id */
+  approvalId: string;
+  /** If outcome=pending, the confirmation payload for the LLM */
+  confirmationResult?: ConfirmationToolResult;
+  /** If outcome=completed (auto-approved), the execution result */
+  executionResult?: unknown;
+  /** If outcome=rejected, the error message */
+  errorMessage?: string;
+}
+
+// ── Helpers ─────────────────────────────────────────────────────
+
+function deriveActionType(toolName: string): string {
+  if (toolName.includes("delete") || toolName.includes("remove")) return "delete";
+  if (toolName.includes("archive")) return "archive";
+  if (toolName.includes("create") || toolName.includes("register") || toolName.includes("add")) return "create";
+  return "update";
+}
+
+async function insertApprovalRecord(
+  id: string,
+  config: SubmitForApprovalConfig,
+  state: string,
+  stateHistory: StateHistoryEntry[],
+  extra?: {
+    ruleMatched?: string;
+    result?: unknown;
+    errorMessage?: string;
+    approvedBy?: number;
+    approvedAt?: string;
+    executedAt?: string;
+  }
+): Promise<void> {
+  await sequelize.query(
+    `INSERT INTO ai_action_approvals
+      (id, organization_id, action_type, tool_name, input_params, risk_level, state,
+       rule_matched, requested_by, approved_by, approved_at, executed_at,
+       result, error_message, state_history, created_at, updated_at)
+     VALUES
+      (:id, :organizationId, :actionType, :toolName, :inputParams, :riskLevel, :state,
+       :ruleMatched, :requestedBy, :approvedBy, :approvedAt, :executedAt,
+       :result, :errorMessage, :stateHistory, NOW(), NOW())`,
+    {
+      replacements: {
+        id,
+        organizationId: config.organizationId,
+        actionType: deriveActionType(config.toolName),
+        toolName: config.toolName,
+        inputParams: JSON.stringify(config.inputParams),
+        riskLevel: config.riskLevel,
+        state,
+        ruleMatched: extra?.ruleMatched || null,
+        requestedBy: config.userId,
+        approvedBy: extra?.approvedBy || null,
+        approvedAt: extra?.approvedAt || null,
+        executedAt: extra?.executedAt || null,
+        result: extra?.result ? JSON.stringify(extra.result) : null,
+        errorMessage: extra?.errorMessage || null,
+        stateHistory: JSON.stringify(stateHistory),
+      },
+      type: QueryTypes.INSERT,
+    }
+  );
+}
+
+async function updateApprovalRecord(
+  id: string,
+  organizationId: number,
+  updates: Record<string, unknown>
+): Promise<void> {
+  const setClauses: string[] = ["updated_at = NOW()"];
+  const replacements: Record<string, unknown> = { id, organizationId };
+
+  for (const [key, value] of Object.entries(updates)) {
+    const snakeKey = key.replace(/([A-Z])/g, "_$1").toLowerCase();
+    setClauses.push(`${snakeKey} = :${key}`);
+    if (typeof value === "object" && value !== null) {
+      replacements[key] = JSON.stringify(value);
+    } else {
+      replacements[key] = value;
+    }
+  }
+
+  await sequelize.query(
+    `UPDATE ai_action_approvals SET ${setClauses.join(", ")}
+     WHERE id = :id AND organization_id = :organizationId`,
+    { replacements, type: QueryTypes.UPDATE }
+  );
+}
+
+// ── Core Gateway ────────────────────────────────────────────────
+
+/**
+ * Submit a write tool operation for approval.
+ * Uses the rule engine to evaluate, then routes through XState machine.
+ */
+export async function submitForApproval(
+  config: SubmitForApprovalConfig
+): Promise<ApprovalSubmitResult> {
+  const functionName = "submitForApproval";
+  const id = uuidv4();
+
+  // Pre-check: does this tool have an executor?
+  const noExecutor = isAutoRejectable({
+    riskLevel: config.riskLevel,
+    toolName: config.toolName,
+  } as ApprovalContext);
+
+  // Run the rule engine for a richer evaluation
+  let ruleDecision: RuleDecision = "require-approval";
+  let ruleMatched: string | undefined;
+
+  if (!noExecutor) {
+    try {
+      const facts = deriveFacts({
+        toolName: config.toolName,
+        riskLevel: config.riskLevel,
+        inputParams: config.inputParams,
+      });
+      const ruleResult = await evaluateRules(config.organizationId, facts);
+      ruleDecision = ruleResult.decision;
+      ruleMatched = ruleResult.matchedRule || undefined;
+    } catch {
+      // Rule engine failure → safe default: require approval
+      logStructured("error", "rule engine failed, defaulting to require-approval", functionName, fileName);
+    }
+  }
+
+  // Map rule decision to XState context
+  const effectiveRiskLevel = noExecutor
+    ? config.riskLevel
+    : ruleDecision === "auto-approve"
+      ? "info" as const       // info triggers auto-approve in XState
+      : config.riskLevel;
+
+  // Build context for the machine
+  const contextOverride: ApprovalContext = {
+    id,
+    organizationId: config.organizationId,
+    userId: config.userId,
+    actionType: deriveActionType(config.toolName),
+    toolName: config.toolName,
+    inputParams: config.inputParams,
+    riskLevel: effectiveRiskLevel,
+    description: config.description,
+    stateHistory: [{ state: "idle", timestamp: new Date().toISOString(), actor: "system" }],
+    createdAt: new Date().toISOString(),
+    ...(noExecutor && { ruleMatched: "no_executor" }),
+    ...(!noExecutor && ruleMatched && { ruleMatched }),
+    ...(ruleDecision === "auto-reject" && !noExecutor && { ruleMatched: ruleMatched || "auto_reject_rule" }),
+  };
+
+  // Create XState actor with overridden context
+  const initialSnapshot = approvalMachine.getInitialSnapshot(undefined as any);
+  const actorWithContext = createActor(approvalMachine, {
+    snapshot: {
+      ...initialSnapshot,
+      context: contextOverride,
+    } as any,
+  });
+
+  actorWithContext.start();
+  actorWithContext.send({ type: "SUBMIT" });
+
+  // Wait for the machine to settle (evaluate is transient)
+  const snapshot = actorWithContext.getSnapshot();
+  const currentState = typeof snapshot.value === "string"
+    ? snapshot.value
+    : Object.keys(snapshot.value as Record<string, unknown>)[0];
+  const context = snapshot.context;
+
+  actorWithContext.stop();
+
+  // ── Handle each path ──
+
+  if (currentState === "auto_reject") {
+    await insertApprovalRecord(id, config, "auto_reject", context.stateHistory, {
+      ruleMatched: context.ruleMatched,
+      errorMessage: context.errorMessage,
+    });
+    logStructured("successful", `auto-rejected ${config.toolName}: ${context.errorMessage}`, functionName, fileName);
+    return {
+      outcome: "rejected",
+      approvalId: id,
+      errorMessage: context.errorMessage || "Auto-rejected",
+    };
+  }
+
+  if (currentState === "executing" && context.stateHistory.some(h => h.state === "auto_approve")) {
+    // Auto-approved — execute immediately
+    const executor = writeToolExecutors.get(config.toolName);
+    if (!executor) {
+      // Shouldn't happen (auto-approve implies executor exists), but guard anyway
+      await insertApprovalRecord(id, config, "failed", context.stateHistory, {
+        ruleMatched: "auto_approve:risk_level=" + config.riskLevel,
+        errorMessage: "Executor disappeared after auto-approve",
+      });
+      return { outcome: "rejected", approvalId: id, errorMessage: "Executor not found" };
+    }
+
+    let result: unknown;
+    try {
+      result = await executor(config.inputParams, config.organizationId);
+    } catch (execError) {
+      const errorMsg = execError instanceof Error ? execError.message : "Unknown error";
+      const failedHistory: StateHistoryEntry[] = [
+        ...context.stateHistory,
+        { state: "failed", timestamp: new Date().toISOString(), actor: "system", reason: errorMsg },
+      ];
+      await insertApprovalRecord(id, config, "failed", failedHistory, {
+        ruleMatched: "auto_approve:risk_level=" + config.riskLevel,
+        errorMessage: errorMsg,
+        executedAt: new Date().toISOString(),
+      });
+      logStructured("error", `auto-approve execution failed: ${errorMsg}`, functionName, fileName);
+      return { outcome: "rejected", approvalId: id, errorMessage: errorMsg };
+    }
+
+    const completedHistory: StateHistoryEntry[] = [
+      ...context.stateHistory,
+      { state: "completed", timestamp: new Date().toISOString(), actor: "system", reason: "execution succeeded" },
+    ];
+    await insertApprovalRecord(id, config, "completed", completedHistory, {
+      ruleMatched: "auto_approve:risk_level=" + config.riskLevel,
+      result,
+      approvedBy: config.userId,
+      approvedAt: new Date().toISOString(),
+      executedAt: new Date().toISOString(),
+    });
+    logStructured("successful", `auto-approved and executed ${config.toolName}`, functionName, fileName);
+    return { outcome: "completed", approvalId: id, executionResult: result };
+  }
+
+  if (currentState === "pending_approval") {
+    // Persist to DB
+    await insertApprovalRecord(id, config, "pending_approval", context.stateHistory);
+
+    // Also write to Redis for fast frontend polling (backward compat)
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+    const redisRequest: ConfirmationRequest = {
+      id,
+      organizationId: config.organizationId,
+      userId: config.userId,
+      toolName: config.toolName,
+      warningLevel: config.riskLevel,
+      description: config.description,
+      params: config.inputParams,
+      status: "pending",
+      createdAt: new Date().toISOString(),
+      expiresAt: expiresAt.toISOString(),
+    };
+
+    try {
+      await storeConfirmation(redisRequest);
+    } catch (redisError) {
+      // Redis failure is non-fatal — DB is the source of truth now
+      logStructured("error", `Redis store failed (non-fatal): ${redisError}`, functionName, fileName);
+    }
+
+    const confirmationResult: ConfirmationToolResult = {
+      confirmation_required: true,
+      confirmation_id: id,
+      warning_level: config.riskLevel,
+      description: config.description,
+      tool_name: config.toolName,
+      params_summary: config.inputParams,
+    };
+
+    logStructured("successful", `pending approval for ${config.toolName}`, functionName, fileName);
+    return { outcome: "pending", approvalId: id, confirmationResult };
+  }
+
+  // Fallback — shouldn't reach here
+  logStructured("error", `unexpected state: ${currentState}`, functionName, fileName);
+  return { outcome: "rejected", approvalId: id, errorMessage: `Unexpected state: ${currentState}` };
+}
+
+// ── Approve / Reject Actions ────────────────────────────────────
+
+/**
+ * Approve a pending approval and execute the write operation.
+ */
+export async function approveAction(
+  organizationId: number,
+  id: string,
+  userId: number
+): Promise<{ success: boolean; result?: unknown; error?: string }> {
+  const functionName = "approveAction";
+
+  // Read from DB
+  const records = await sequelize.query(
+    `SELECT * FROM ai_action_approvals
+     WHERE id = :id AND organization_id = :organizationId`,
+    { replacements: { id, organizationId }, type: QueryTypes.SELECT }
+  ) as any[];
+
+  const record = records[0];
+
+  if (!record) {
+    return { success: false, error: "Approval not found" };
+  }
+  if (record.state !== "pending_approval") {
+    return { success: false, error: `Approval already ${record.state}` };
+  }
+
+  const stateHistory: StateHistoryEntry[] = typeof record.state_history === "string"
+    ? JSON.parse(record.state_history)
+    : record.state_history || [];
+
+  // Look up executor
+  const executor = writeToolExecutors.get(record.tool_name);
+  if (!executor) {
+    stateHistory.push({ state: "failed", timestamp: new Date().toISOString(), actor: "system", reason: "no executor" });
+    await updateApprovalRecord(id, organizationId, {
+      state: "failed",
+      stateHistory,
+      errorMessage: `No executor for ${record.tool_name}`,
+    });
+    return { success: false, error: `No executor for ${record.tool_name}` };
+  }
+
+  // Transition: pending_approval → approved → executing
+  stateHistory.push({ state: "approved", timestamp: new Date().toISOString(), actor: `user:${userId}` });
+  stateHistory.push({ state: "executing", timestamp: new Date().toISOString(), actor: "system" });
+  await updateApprovalRecord(id, organizationId, {
+    state: "executing",
+    stateHistory,
+    approvedBy: userId,
+    approvedAt: new Date().toISOString(),
+  });
+
+  // Execute
+  const inputParams = typeof record.input_params === "string"
+    ? JSON.parse(record.input_params)
+    : record.input_params;
+
+  let result: unknown;
+  try {
+    result = await executor(inputParams, organizationId);
+  } catch (execError) {
+    const errorMsg = execError instanceof Error ? execError.message : "Unknown error";
+    stateHistory.push({ state: "failed", timestamp: new Date().toISOString(), actor: "system", reason: errorMsg });
+    await updateApprovalRecord(id, organizationId, {
+      state: "failed",
+      stateHistory,
+      errorMessage: errorMsg,
+      executedAt: new Date().toISOString(),
+    });
+
+    // Also resolve in Redis for backward compat
+    try {
+      await resolveConfirmation(organizationId, id, "rejected", userId, undefined, errorMsg);
+    } catch { /* non-fatal */ }
+
+    logStructured("error", `execution failed after approval: ${errorMsg}`, functionName, fileName);
+    return { success: false, error: errorMsg };
+  }
+
+  // Transition: executing → completed
+  stateHistory.push({ state: "completed", timestamp: new Date().toISOString(), actor: "system", reason: "execution succeeded" });
+  await updateApprovalRecord(id, organizationId, {
+    state: "completed",
+    stateHistory,
+    result,
+    executedAt: new Date().toISOString(),
+  });
+
+  // Also resolve in Redis
+  try {
+    await resolveConfirmation(organizationId, id, "approved", userId, result);
+  } catch { /* non-fatal */ }
+
+  logStructured("successful", `approved and executed ${record.tool_name}`, functionName, fileName);
+  return { success: true, result };
+}
+
+/**
+ * Reject a pending approval.
+ */
+export async function rejectAction(
+  organizationId: number,
+  id: string,
+  userId: number,
+  reason?: string
+): Promise<{ success: boolean; error?: string }> {
+  const functionName = "rejectAction";
+
+  const records = await sequelize.query(
+    `SELECT * FROM ai_action_approvals
+     WHERE id = :id AND organization_id = :organizationId`,
+    { replacements: { id, organizationId }, type: QueryTypes.SELECT }
+  ) as any[];
+
+  const record = records[0];
+  if (!record) {
+    return { success: false, error: "Approval not found" };
+  }
+  if (record.state !== "pending_approval") {
+    return { success: false, error: `Approval already ${record.state}` };
+  }
+
+  const stateHistory: StateHistoryEntry[] = typeof record.state_history === "string"
+    ? JSON.parse(record.state_history)
+    : record.state_history || [];
+
+  stateHistory.push({
+    state: "rejected",
+    timestamp: new Date().toISOString(),
+    actor: `user:${userId}`,
+    reason: reason || "human rejected",
+  });
+
+  await updateApprovalRecord(id, organizationId, {
+    state: "rejected",
+    stateHistory,
+  });
+
+  // Also resolve in Redis
+  try {
+    await resolveConfirmation(organizationId, id, "rejected", userId);
+  } catch { /* non-fatal */ }
+
+  logStructured("successful", `rejected ${record.tool_name}`, functionName, fileName);
+  return { success: true };
+}
+
+// ── Query Functions ─────────────────────────────────────────────
+
+/**
+ * Get a single approval record.
+ */
+export async function getApproval(
+  organizationId: number,
+  id: string
+): Promise<Record<string, unknown> | null> {
+  const records = await sequelize.query(
+    `SELECT * FROM ai_action_approvals
+     WHERE id = :id AND organization_id = :organizationId`,
+    { replacements: { id, organizationId }, type: QueryTypes.SELECT }
+  ) as any[];
+  return records[0] || null;
+}
+
+/**
+ * List approval records with optional filters.
+ */
+export async function listApprovals(
+  organizationId: number,
+  filters?: {
+    state?: string;
+    toolName?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    limit?: number;
+    offset?: number;
+  }
+): Promise<{ rows: Record<string, unknown>[]; total: number }> {
+  const conditions = ["organization_id = :organizationId"];
+  const replacements: Record<string, unknown> = { organizationId };
+
+  if (filters?.state) {
+    conditions.push("state = :state");
+    replacements.state = filters.state;
+  }
+  if (filters?.toolName) {
+    conditions.push("tool_name = :toolName");
+    replacements.toolName = filters.toolName;
+  }
+  if (filters?.dateFrom) {
+    conditions.push("created_at >= :dateFrom");
+    replacements.dateFrom = filters.dateFrom;
+  }
+  if (filters?.dateTo) {
+    conditions.push("created_at <= :dateTo");
+    replacements.dateTo = filters.dateTo;
+  }
+
+  const where = conditions.join(" AND ");
+  const limit = filters?.limit || 50;
+  const offset = filters?.offset || 0;
+
+  const rows = await sequelize.query(
+    `SELECT * FROM ai_action_approvals WHERE ${where}
+     ORDER BY created_at DESC LIMIT :limit OFFSET :offset`,
+    { replacements: { ...replacements, limit, offset }, type: QueryTypes.SELECT }
+  ) as any[];
+
+  const countResult = await sequelize.query(
+    `SELECT COUNT(*) as total FROM ai_action_approvals WHERE ${where}`,
+    { replacements, type: QueryTypes.SELECT }
+  ) as any[];
+
+  return { rows, total: Number(countResult[0]?.total || 0) };
+}
+
+/**
+ * Get approval statistics for an organization.
+ */
+export async function getApprovalStats(
+  organizationId: number
+): Promise<Record<string, unknown>> {
+  const [stats] = await sequelize.query(
+    `SELECT
+       COUNT(*) as total,
+       COUNT(*) FILTER (WHERE state = 'completed' AND rule_matched LIKE 'auto_approve%') as auto_approved,
+       COUNT(*) FILTER (WHERE state = 'completed' AND rule_matched IS NULL OR rule_matched NOT LIKE 'auto_approve%') as human_approved,
+       COUNT(*) FILTER (WHERE state = 'rejected') as rejected,
+       COUNT(*) FILTER (WHERE state IN ('auto_reject', 'failed')) as auto_rejected,
+       COUNT(*) FILTER (WHERE state = 'pending_approval') as pending,
+       ROUND(
+         AVG(EXTRACT(EPOCH FROM (approved_at - created_at)))
+         FILTER (WHERE approved_at IS NOT NULL), 2
+       ) as avg_wait_seconds,
+       ROUND(
+         100.0 * COUNT(*) FILTER (WHERE state = 'completed' AND rule_matched LIKE 'auto_approve%')
+         / NULLIF(COUNT(*), 0), 2
+       ) as auto_approve_pct,
+       ROUND(
+         100.0 * COUNT(*) FILTER (WHERE state = 'rejected')
+         / NULLIF(COUNT(*), 0), 2
+       ) as rejection_rate_pct
+     FROM ai_action_approvals
+     WHERE organization_id = :organizationId`,
+    { replacements: { organizationId }, type: QueryTypes.SELECT }
+  ) as any[];
+
+  return stats || {};
+}

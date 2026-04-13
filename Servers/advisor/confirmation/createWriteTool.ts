@@ -1,20 +1,13 @@
 /**
- * Human Confirmation Flow — Write Tool Wrapper
+ * Human Confirmation Flow — Write Tool Wrapper (Phase 2: XState-backed)
  *
- * Wraps any write function so it creates a pending confirmation instead
- * of executing the write directly. The actual execution happens only
- * when the user approves via the confirmation endpoint.
+ * Wraps any write function so it routes through the approval state machine.
+ * Auto-approve for info-level, human approval for warning/danger.
+ * The actual execution happens via the approval gateway.
  */
 
-import {
-  generateConfirmationId,
-  storeConfirmation,
-} from "./confirmationStore";
-import type {
-  WarningLevel,
-  ConfirmationRequest,
-  ConfirmationToolResult,
-} from "./types";
+import { submitForApproval } from "../approval/approvalGateway";
+import type { WarningLevel, ConfirmationToolResult } from "./types";
 
 export type WriteExecuteFn = (
   params: Record<string, unknown>,
@@ -30,66 +23,68 @@ interface WriteToolConfig {
 
 /**
  * Registry of write tool executors.
- * The approval endpoint uses this to look up and execute the actual function.
+ * The approval gateway uses this to look up and execute the actual function.
  */
 export const writeToolExecutors = new Map<string, WriteExecuteFn>();
 
 /**
- * Creates a tool function that, instead of executing a write operation,
- * stores a pending confirmation in Redis and returns a confirmation payload.
+ * Creates a tool function that routes through the XState approval state machine.
  *
- * The LLM sees the confirmation_required result and tells the user to approve.
- * The frontend renders approve/reject buttons via ConfirmationToolUI.
+ * - info-level: auto-approved and executed immediately, returns actual result
+ * - warning/danger: stored as pending, returns ConfirmationToolResult for UI
+ * - no executor: auto-rejected
  */
 export function createWriteToolFn(
   config: WriteToolConfig
-): (params: Record<string, unknown>, organizationId: number) => Promise<ConfirmationToolResult> {
-  // Register the executor so the approval endpoint can find it
+): (params: Record<string, unknown>, organizationId: number) => Promise<ConfirmationToolResult | unknown> {
+  // Register the executor so the gateway can find it
   writeToolExecutors.set(config.toolName, config.executeFn);
 
   return async (
     params: Record<string, unknown>,
     organizationId: number
-  ): Promise<ConfirmationToolResult> => {
-    const id = generateConfirmationId();
-    const now = new Date();
-    const expiresAt = new Date(now.getTime() + 10 * 60 * 1000); // 10 min
+  ): Promise<ConfirmationToolResult | unknown> => {
+    const userId = (params._userId as number) || 0;
+    const sanitized = sanitizeParams(params);
+    const description = config.descriptionFn(sanitized);
 
-    const description = config.descriptionFn(params);
-
-    const request: ConfirmationRequest = {
-      id,
+    const result = await submitForApproval({
       organizationId,
-      userId: (params._userId as number) || 0,
+      userId,
       toolName: config.toolName,
-      warningLevel: config.warningLevel,
+      actionType: deriveActionType(config.toolName),
+      riskLevel: config.warningLevel,
       description,
-      params: { ...params },
-      status: "pending",
-      createdAt: now.toISOString(),
-      expiresAt: expiresAt.toISOString(),
-    };
+      inputParams: sanitized,
+    });
 
-    // Remove internal params before storing
-    delete request.params._userId;
+    switch (result.outcome) {
+      case "completed":
+        // Auto-approved and executed — return the actual result to the LLM
+        return result.executionResult;
 
-    try {
-      await storeConfirmation(request);
-    } catch (storeError) {
-      throw new Error(
-        `Failed to store confirmation for ${config.toolName}: ${storeError instanceof Error ? storeError.message : "Redis unavailable"}`
-      );
+      case "pending":
+        // Needs human approval — return confirmation payload for the UI
+        return result.confirmationResult!;
+
+      case "rejected":
+        // Auto-rejected — throw so the LLM sees the error
+        throw new Error(result.errorMessage || "Operation auto-rejected");
+
+      default:
+        throw new Error(`Unexpected approval outcome: ${result.outcome}`);
     }
-
-    return {
-      confirmation_required: true,
-      confirmation_id: id,
-      warning_level: config.warningLevel,
-      description,
-      tool_name: config.toolName,
-      params_summary: sanitizeParams(params),
-    };
   };
+}
+
+/**
+ * Derive action type from tool name.
+ */
+function deriveActionType(toolName: string): string {
+  if (toolName.includes("delete") || toolName.includes("remove")) return "delete";
+  if (toolName.includes("archive")) return "archive";
+  if (toolName.includes("create") || toolName.includes("register") || toolName.includes("add")) return "create";
+  return "update";
 }
 
 /**
