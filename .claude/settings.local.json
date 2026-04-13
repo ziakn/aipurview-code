@@ -20,7 +20,16 @@
       "Bash(npx vitest:*)",
       "Bash(echo \"exit=$?\")",
       "Bash(echo \"backend_exit=$?\")",
-      "Bash(echo \"frontend_exit=$?\")"
+      "Bash(echo \"frontend_exit=$?\")",
+      "Bash(gh issue view:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(find:*)",
+      "Bash(wc:*)",
+      "Bash(npx vite build:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(npx vitest run:*)"
     ]
   }
 }
