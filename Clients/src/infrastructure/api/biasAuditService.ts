@@ -214,6 +214,7 @@ export interface CreateBiasAuditConfig {
   dataSource?: string;
   dataDateRangeStart?: string;
   dataDateRangeEnd?: string;
+  modelInventoryId?: number;
 }
 
 // ==================== SERVICE ====================
