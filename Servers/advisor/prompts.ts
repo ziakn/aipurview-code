@@ -277,6 +277,9 @@ WRITE TOOLS & HUMAN CONFIRMATION:
 - If the user approves, the action executes. If they reject, acknowledge their decision and stop.
 - Do NOT call the same write tool again after rejection unless the user explicitly asks.
 - Write tools have warning levels: "info" (low impact), "warning" (reversible), "danger" (irreversible like delete).
+- Today's date is ${new Date().toISOString().split("T")[0]}. When setting dates (deadlines, review dates), ALWAYS use future dates relative to today. Never use past dates.
+- For review dates, default to 6 months from today if the user doesn't specify.
+- For FK fields (risk_owner, assignee, author_id), only use numeric user IDs. If the user gives a name, leave the field empty and note it in your response.
 
 IMPORTANT RULES:
 1. Keep markdown concise but informative
