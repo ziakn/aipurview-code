@@ -381,6 +381,7 @@ export async function approveAction(
       await resolveConfirmation(organizationId, id, "rejected", userId, undefined, errorMsg);
     } catch { /* non-fatal */ }
 
+    logStateHistory(organizationId, id, stateHistory, record.tool_name).catch(() => {});
     logStructured("error", `execution failed after approval: ${errorMsg}`, functionName, fileName);
     return { success: false, error: errorMsg };
   }
@@ -398,6 +399,9 @@ export async function approveAction(
   try {
     await resolveConfirmation(organizationId, id, "approved", userId, result);
   } catch { /* non-fatal */ }
+
+  // Log audit trail for approve + execute + complete
+  logStateHistory(organizationId, id, stateHistory, record.tool_name).catch(() => {});
 
   logStructured("successful", `approved and executed ${record.tool_name}`, functionName, fileName);
   return { success: true, result };
@@ -449,6 +453,7 @@ export async function rejectAction(
     await resolveConfirmation(organizationId, id, "rejected", userId);
   } catch { /* non-fatal */ }
 
+  logStateHistory(organizationId, id, stateHistory, record.tool_name).catch(() => {});
   logStructured("successful", `rejected ${record.tool_name}`, functionName, fileName);
   return { success: true };
 }
