@@ -8,13 +8,20 @@
  */
 module.exports = {
   async up(queryInterface) {
-    // 1. Alter entity_type columns to VARCHAR(50)
-    // The original columns may have been created as VARCHAR or ENUM
+    // 1. Drop old CHECK constraints and alter entity_type columns to VARCHAR(50)
+    await queryInterface.sequelize.query(`
+      ALTER TABLE verifywise.approval_workflows
+        DROP CONSTRAINT IF EXISTS approval_workflows_entity_type_check;
+    `);
     await queryInterface.sequelize.query(`
       ALTER TABLE verifywise.approval_workflows
         ALTER COLUMN entity_type TYPE VARCHAR(50);
     `);
 
+    await queryInterface.sequelize.query(`
+      ALTER TABLE verifywise.approval_requests
+        DROP CONSTRAINT IF EXISTS approval_requests_entity_type_check;
+    `);
     await queryInterface.sequelize.query(`
       ALTER TABLE verifywise.approval_requests
         ALTER COLUMN entity_type TYPE VARCHAR(50);
