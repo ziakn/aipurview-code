@@ -447,7 +447,7 @@ const agentCreateRisk = createWriteToolFn({
         likelihood: params.likelihood || "Possible",
         impact: params.impact || "",
         risk_category: params.category ? [validateRiskCategory(params.category as string)] : [],
-        risk_owner: params.risk_owner || null,
+        risk_owner: (params.risk_owner && Number(params.risk_owner)) ? Number(params.risk_owner) : null,
         mitigation_status: "Not Started",
         risk_level_autocalculated: "Medium risk",
         ai_lifecycle_phase: "Problem definition & planning",
