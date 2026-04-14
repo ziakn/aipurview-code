@@ -223,7 +223,8 @@ export async function submitForApproval(
 
     let result: unknown;
     try {
-      result = await executor(config.inputParams, config.organizationId);
+      const paramsWithUser = { ...config.inputParams, _userId: config.userId };
+      result = await executor(paramsWithUser, config.organizationId);
     } catch (execError) {
       const errorMsg = execError instanceof Error ? execError.message : "Unknown error";
       stateHistory.push({ state: "failed", timestamp: new Date().toISOString(), actor: "system", reason: errorMsg });
@@ -358,10 +359,11 @@ export async function approveAction(
     approvedAt: new Date().toISOString(),
   });
 
-  // Execute
+  // Execute — re-inject _userId so executors that need author_id/created_by can use it
   const inputParams = typeof record.input_params === "string"
     ? JSON.parse(record.input_params)
     : record.input_params;
+  inputParams._userId = userId;
 
   let result: unknown;
   try {
