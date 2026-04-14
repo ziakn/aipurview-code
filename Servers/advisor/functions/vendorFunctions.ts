@@ -428,7 +428,7 @@ const agentCreateVendor = createWriteToolFn({
         review_status: (params.review_status as IVendor["review_status"]) || "Not started",
         data_sensitivity: params.data_sensitivity as IVendor["data_sensitivity"],
         business_criticality: params.criticality_level as IVendor["business_criticality"],
-        assignee: 0,
+        assignee: (params.assignee as number) || undefined as any,
         projects: params.project_id ? [params.project_id as number] : [],
       };
       const result = await createNewVendorQuery(
