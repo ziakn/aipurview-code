@@ -6,8 +6,6 @@
  * with Redis for fast frontend polling.
  */
 
-import { createActor } from "xstate";
-import { approvalMachine } from "./stateMachine";
 import { isAutoRejectable, evaluateRules, deriveFacts } from "./rules";
 import type { RuleDecision } from "./ruleEngine";
 import { storeConfirmation, resolveConfirmation } from "../confirmation/confirmationStore";
@@ -157,74 +155,67 @@ export async function submitForApproval(
     }
   }
 
-  // Map rule decision to XState context
-  const effectiveRiskLevel = noExecutor
-    ? config.riskLevel
-    : ruleDecision === "auto-approve"
-      ? "info" as const       // info triggers auto-approve in XState
-      : config.riskLevel;
+  // Build state history
+  const stateHistory: StateHistoryEntry[] = [
+    { state: "idle", timestamp: new Date().toISOString(), actor: "system" },
+    { state: "evaluate", timestamp: new Date().toISOString(), actor: "system", reason: "evaluating rules" },
+  ];
 
-  // Build context for the machine
-  const contextOverride: ApprovalContext = {
-    id,
-    organizationId: config.organizationId,
-    userId: config.userId,
-    actionType: deriveActionType(config.toolName),
-    toolName: config.toolName,
-    inputParams: config.inputParams,
-    riskLevel: effectiveRiskLevel,
-    description: config.description,
-    stateHistory: [{ state: "idle", timestamp: new Date().toISOString(), actor: "system" }],
-    createdAt: new Date().toISOString(),
-    ...(noExecutor && { ruleMatched: "no_executor" }),
-    ...(!noExecutor && ruleMatched && { ruleMatched }),
-    ...(ruleDecision === "auto-reject" && !noExecutor && { ruleMatched: ruleMatched || "auto_reject_rule" }),
-  };
+  // Determine the effective decision
+  let effectiveDecision: "auto-approve" | "require-approval" | "auto-reject";
+  let effectiveRuleMatched: string | undefined;
 
-  // Create XState actor with overridden context
-  const initialSnapshot = approvalMachine.getInitialSnapshot(undefined as any);
-  const actorWithContext = createActor(approvalMachine, {
-    snapshot: {
-      ...initialSnapshot,
-      context: contextOverride,
-    } as any,
+  if (noExecutor) {
+    effectiveDecision = "auto-reject";
+    effectiveRuleMatched = "no_executor";
+  } else if (ruleDecision === "auto-reject") {
+    effectiveDecision = "auto-reject";
+    effectiveRuleMatched = ruleMatched || "auto_reject_rule";
+  } else if (ruleDecision === "auto-approve") {
+    effectiveDecision = "auto-approve";
+    effectiveRuleMatched = ruleMatched || `auto_approve:risk_level=${config.riskLevel}`;
+  } else {
+    effectiveDecision = "require-approval";
+    effectiveRuleMatched = ruleMatched;
+  }
+
+  stateHistory.push({
+    state: effectiveDecision === "auto-reject" ? "auto_reject"
+      : effectiveDecision === "auto-approve" ? "auto_approve"
+      : "pending_approval",
+    timestamp: new Date().toISOString(),
+    actor: "system",
+    reason: effectiveRuleMatched || effectiveDecision,
   });
-
-  actorWithContext.start();
-  actorWithContext.send({ type: "SUBMIT" });
-
-  // Wait for the machine to settle (evaluate is transient)
-  const snapshot = actorWithContext.getSnapshot();
-  const currentState = typeof snapshot.value === "string"
-    ? snapshot.value
-    : Object.keys(snapshot.value as Record<string, unknown>)[0];
-  const context = snapshot.context;
-
-  actorWithContext.stop();
 
   // ── Handle each path ──
 
-  if (currentState === "auto_reject") {
-    await insertApprovalRecord(id, config, "auto_reject", context.stateHistory, {
-      ruleMatched: context.ruleMatched,
-      errorMessage: context.errorMessage,
+  if (effectiveDecision === "auto-reject") {
+    const errorMessage = noExecutor
+      ? `No executor registered for tool: ${config.toolName}`
+      : `Auto-rejected by rule: ${effectiveRuleMatched}`;
+    await insertApprovalRecord(id, config, "auto_reject", stateHistory, {
+      ruleMatched: effectiveRuleMatched,
+      errorMessage,
     });
-    logStructured("successful", `auto-rejected ${config.toolName}: ${context.errorMessage}`, functionName, fileName);
-    logStateHistory(config.organizationId, id, context.stateHistory, config.toolName).catch(() => {});
+    logStructured("successful", `auto-rejected ${config.toolName}: ${errorMessage}`, functionName, fileName);
+    logStateHistory(config.organizationId, id, stateHistory, config.toolName).catch(() => {});
     return {
       outcome: "rejected",
       approvalId: id,
-      errorMessage: context.errorMessage || "Auto-rejected",
+      errorMessage,
     };
   }
 
-  if (currentState === "executing" && context.stateHistory.some(h => h.state === "auto_approve")) {
+  if (effectiveDecision === "auto-approve") {
     // Auto-approved — execute immediately
+    stateHistory.push({ state: "executing", timestamp: new Date().toISOString(), actor: "system" });
+
     const executor = writeToolExecutors.get(config.toolName);
     if (!executor) {
-      // Shouldn't happen (auto-approve implies executor exists), but guard anyway
-      await insertApprovalRecord(id, config, "failed", context.stateHistory, {
-        ruleMatched: "auto_approve:risk_level=" + config.riskLevel,
+      stateHistory.push({ state: "failed", timestamp: new Date().toISOString(), actor: "system", reason: "no executor" });
+      await insertApprovalRecord(id, config, "failed", stateHistory, {
+        ruleMatched: effectiveRuleMatched,
         errorMessage: "Executor disappeared after auto-approve",
       });
       return { outcome: "rejected", approvalId: id, errorMessage: "Executor not found" };
@@ -235,12 +226,9 @@ export async function submitForApproval(
       result = await executor(config.inputParams, config.organizationId);
     } catch (execError) {
       const errorMsg = execError instanceof Error ? execError.message : "Unknown error";
-      const failedHistory: StateHistoryEntry[] = [
-        ...context.stateHistory,
-        { state: "failed", timestamp: new Date().toISOString(), actor: "system", reason: errorMsg },
-      ];
-      await insertApprovalRecord(id, config, "failed", failedHistory, {
-        ruleMatched: "auto_approve:risk_level=" + config.riskLevel,
+      stateHistory.push({ state: "failed", timestamp: new Date().toISOString(), actor: "system", reason: errorMsg });
+      await insertApprovalRecord(id, config, "failed", stateHistory, {
+        ruleMatched: effectiveRuleMatched,
         errorMessage: errorMsg,
         executedAt: new Date().toISOString(),
       });
@@ -248,25 +236,23 @@ export async function submitForApproval(
       return { outcome: "rejected", approvalId: id, errorMessage: errorMsg };
     }
 
-    const completedHistory: StateHistoryEntry[] = [
-      ...context.stateHistory,
-      { state: "completed", timestamp: new Date().toISOString(), actor: "system", reason: "execution succeeded" },
-    ];
-    await insertApprovalRecord(id, config, "completed", completedHistory, {
-      ruleMatched: "auto_approve:risk_level=" + config.riskLevel,
+    stateHistory.push({ state: "completed", timestamp: new Date().toISOString(), actor: "system", reason: "execution succeeded" });
+    await insertApprovalRecord(id, config, "completed", stateHistory, {
+      ruleMatched: effectiveRuleMatched,
       result,
       approvedBy: config.userId,
       approvedAt: new Date().toISOString(),
       executedAt: new Date().toISOString(),
     });
     logStructured("successful", `auto-approved and executed ${config.toolName}`, functionName, fileName);
-    logStateHistory(config.organizationId, id, completedHistory, config.toolName).catch(() => {});
+    logStateHistory(config.organizationId, id, stateHistory, config.toolName).catch(() => {});
     return { outcome: "completed", approvalId: id, executionResult: result };
   }
 
-  if (currentState === "pending_approval") {
+  // effectiveDecision === "require-approval"
+  {
     // Persist to DB
-    await insertApprovalRecord(id, config, "pending_approval", context.stateHistory);
+    await insertApprovalRecord(id, config, "pending_approval", stateHistory);
 
     // Also write to Redis for fast frontend polling (backward compat)
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
@@ -313,13 +299,9 @@ export async function submitForApproval(
     };
 
     logStructured("successful", `pending approval for ${config.toolName}`, functionName, fileName);
-    logStateHistory(config.organizationId, id, context.stateHistory, config.toolName).catch(() => {});
+    logStateHistory(config.organizationId, id, stateHistory, config.toolName).catch(() => {});
     return { outcome: "pending", approvalId: id, confirmationResult };
   }
-
-  // Fallback — shouldn't reach here
-  logStructured("error", `unexpected state: ${currentState}`, functionName, fileName);
-  return { outcome: "rejected", approvalId: id, errorMessage: `Unexpected state: ${currentState}` };
 }
 
 // ── Approve / Reject Actions ────────────────────────────────────
