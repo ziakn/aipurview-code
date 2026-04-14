@@ -441,8 +441,10 @@ const agentCreateRisk = createWriteToolFn({
         risk_approval: null,
         approval_status: "",
         date_of_assessment: new Date(),
+        deadline: params.deadline || null,
         assessment_mapping: "",
         controls_mapping: "",
+        is_demo: false,
         projects: [params.project_id],
         frameworks: [],
       };
