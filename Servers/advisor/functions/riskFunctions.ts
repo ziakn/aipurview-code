@@ -12,6 +12,27 @@ import { createWriteToolFn } from "../confirmation/createWriteTool";
 import { sequelize } from "../../database/db";
 import logger from "../../utils/logger/fileLogger";
 
+const VALID_RISK_CATEGORIES = [
+  "Strategic risk", "Operational risk", "Compliance risk", "Financial risk",
+  "Cybersecurity risk", "Reputational risk", "Legal risk", "Technological risk",
+  "Third-party/vendor risk", "Environmental risk", "Human resources risk",
+  "Geopolitical risk", "Fraud risk", "Data privacy risk", "Health and safety risk",
+];
+
+function validateRiskCategory(category: string): string {
+  // Exact match
+  if (VALID_RISK_CATEGORIES.includes(category)) return category;
+  // Case-insensitive match
+  const lower = category.toLowerCase();
+  const found = VALID_RISK_CATEGORIES.find((c) => c.toLowerCase() === lower);
+  if (found) return found;
+  // Partial match
+  const partial = VALID_RISK_CATEGORIES.find((c) => c.toLowerCase().includes(lower) || lower.includes(c.toLowerCase()));
+  if (partial) return partial;
+  // Default fallback
+  return "Operational risk";
+}
+
 export interface FetchRisksParams {
   projectId?: number;
   frameworkId?: number;
@@ -425,7 +446,7 @@ const agentCreateRisk = createWriteToolFn({
         severity: params.severity || "Moderate",
         likelihood: params.likelihood || "Possible",
         impact: params.impact || "",
-        risk_category: params.category ? [params.category] : [],
+        risk_category: params.category ? [validateRiskCategory(params.category as string)] : [],
         risk_owner: params.risk_owner || null,
         mitigation_status: "Not Started",
         risk_level_autocalculated: "Medium risk",
