@@ -90,6 +90,7 @@ export const ENTITY_TYPE_CONFIGS: Record<EntityTypeKey, EntityTypeConfig> = {
         noDataMessage: "No additional AI action details available",
         fields: [
             { key: 'aiToolName', label: 'Tool', icon: <Bot size={14} /> },
+            { key: 'aiDescription', label: 'Description', icon: <FileText size={14} /> },
             { key: 'aiActionType', label: 'Action type', icon: <FileText size={14} /> },
             { key: 'aiRiskLevel', label: 'Risk level', icon: <Shield size={14} /> },
             { key: 'aiState', label: 'State', icon: <AlertTriangle size={14} /> },
@@ -238,16 +239,28 @@ export function extractEntityDetails(requestData: any): Record<string, any> {
                 fileUploader: fileUploaderName,
             };
 
-        case 'ai_action':
+        case 'ai_action': {
+            // Parse entity_data (may be string or object)
+            let entityData: any = requestData.entity_data;
+            if (typeof entityData === 'string') {
+                try { entityData = JSON.parse(entityData); } catch { entityData = {}; }
+            }
+            entityData = entityData || {};
+
             return {
                 ...baseDetails,
-                entityName: requestData.ai_tool_name || requestData.request_name,
-                aiToolName: requestData.ai_tool_name,
-                aiActionType: requestData.ai_action_type,
-                aiRiskLevel: requestData.ai_risk_level,
+                entityName:
+                    requestData.ai_tool_name ||
+                    entityData.tool_name ||
+                    requestData.request_name,
+                aiToolName: requestData.ai_tool_name || entityData.tool_name,
+                aiActionType: requestData.ai_action_type || entityData.action_type,
+                aiRiskLevel: requestData.ai_risk_level || entityData.risk_level,
                 aiState: requestData.ai_state,
-                aiInputParams: requestData.ai_input_params,
+                aiInputParams: requestData.ai_input_params || entityData.input_params,
+                aiDescription: entityData.description,
             };
+        }
 
         case 'risk':
             return {

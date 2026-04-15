@@ -11,6 +11,7 @@ import DashboardTabs from "../../components/DashboardTabs";
 import type { DashboardTabConfig } from "../../components/DashboardTabs";
 import ReadinessDashboard from "../ReadinessDashboard";
 import AIContentReview from "../AIContentReview";
+import AIAuditDashboard from "../AIAuditDashboard";
 import {
   ChevronLeft,
   ChevronRight,
@@ -75,9 +76,10 @@ const AVAILABLE_DASHBOARD_TABS: DashboardTabConfig[] = [
   { id: "overview", label: "Overview", icon: "LayoutDashboard", description: "Main dashboard with metrics and activity", removable: false },
   { id: "readiness", label: "Audit readiness", icon: "ShieldCheck", description: "Per-control readiness scores and audit preparation" },
   { id: "ai-content", label: "AI content review", icon: "Sparkles", description: "Review and approve AI-generated content (EU AI Act art. 52)" },
+  { id: "ai-audit", label: "AI audit", icon: "FileText", description: "Complete audit trail for every AI action (EU AI Act art. 12)" },
 ];
 
-const DEFAULT_TABS = ["overview", "readiness", "ai-content"];
+const DEFAULT_TABS = ["overview", "readiness", "ai-content", "ai-audit"];
 
 const IntegratedDashboard: React.FC = () => {
   const navigateSearch = useNavigateSearch();
@@ -394,6 +396,9 @@ const IntegratedDashboard: React.FC = () => {
 
       {/* Tab: AI Content Review */}
       {dashboardTab === "ai-content" && <AIContentReview />}
+
+      {/* Tab: AI Audit */}
+      {dashboardTab === "ai-audit" && <AIAuditDashboard />}
 
       {/* Tab: Overview (original dashboard) */}
       {dashboardTab === "overview" && (

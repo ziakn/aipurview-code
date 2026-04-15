@@ -80,9 +80,6 @@ const MCPAuditLogPage = lazyRoute(() => import("../../presentation/pages/AIGatew
 const MCPApprovalsPage = lazyRoute(() => import("../../presentation/pages/AIGateway/MCPApprovals"));
 const MCPGuardrailsPage = lazyRoute(() => import("../../presentation/pages/AIGateway/MCPGuardrails"));
 
-// ── AI Audit Dashboard ──────────────────────────────────────────────────
-const AIAuditDashboard = lazyRoute(() => import("../../presentation/pages/AIAuditDashboard"));
-
 // ── Remaining routes ──────────────────────────────────────────────────
 const Plugins = lazyRoute(() => import("../../presentation/pages/Plugins"));
 const PluginManagement = lazyRoute(() => import("../../presentation/pages/Plugins/PluginManagement"));
@@ -130,7 +127,7 @@ export const createRoutes = (
 
     <Route path="/settings" element={<Suspense fallback={<LazyFallback />}><Setting /></Suspense>} />
     <Route path="/settings/:tab" element={<Suspense fallback={<LazyFallback />}><Setting /></Suspense>} />
-    <Route path="/ai-audit" element={<Suspense fallback={<LazyFallback />}><AIAuditDashboard /></Suspense>} />
+    <Route path="/ai-audit" element={<Navigate to="/?tab=ai-audit" replace />} />
     <Route path="/plugins" element={<Suspense fallback={<LazyFallback />}><Plugins /></Suspense>} />
     <Route path="/plugins/marketplace" element={<Suspense fallback={<LazyFallback />}><Plugins /></Suspense>} />
     <Route path="/plugins/my-plugins" element={<Suspense fallback={<LazyFallback />}><Plugins /></Suspense>} />

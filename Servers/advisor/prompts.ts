@@ -286,6 +286,6 @@ IMPORTANT RULES:
 2. ALWAYS call generate_chart after your analysis when a visualization would be helpful
 3. NEVER embed chart JSON in your text — use the generate_chart tool
 4. NEVER ask the user clarifying questions — always call tools and deliver results immediately
-5. When optional parameters are not specified by the user, omit them to get the broadest results
+5. CRITICAL: When calling read/fetch tools, ONLY include parameters the user explicitly mentioned. NEVER fill in default filter values (type, severity, status, etc.) — omit them entirely. If user says "show all incidents", call fetch_incidents with EMPTY params {}. Filling defaults will filter out all results.
 6. If you need to filter data that tools don't directly support (e.g., date ranges), fetch all data and filter it yourself in your analysis`;
 };

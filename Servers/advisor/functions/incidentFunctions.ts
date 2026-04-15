@@ -44,19 +44,35 @@ const fetchIncidents = async (
       incidents = incidents.filter((i) => !i.archived);
     }
 
-    if (params.type) {
-      incidents = incidents.filter((i) => i.type === params.type);
+    // Case-insensitive severity mapping (LLM may send "high", "critical", etc.)
+    const severityMap: Record<string, string> = {
+      low: "Minor", minor: "Minor",
+      medium: "Serious", moderate: "Serious", serious: "Serious", high: "Serious",
+      critical: "Very serious", "very serious": "Very serious", major: "Very serious",
+    };
+    const statusMap: Record<string, string> = {
+      open: "Open", investigating: "Investigating",
+      mitigated: "Mitigated", closed: "Closed", resolved: "Mitigated",
+    };
+
+    // Skip empty string filters (LLM sometimes sends "" as default)
+    const hasValue = (v: unknown) => v !== undefined && v !== null && v !== "";
+
+    if (hasValue(params.type)) {
+      incidents = incidents.filter((i) => i.type?.toLowerCase() === (params.type as string).toLowerCase());
     }
-    if (params.severity) {
-      incidents = incidents.filter((i) => i.severity === params.severity);
+    if (hasValue(params.severity)) {
+      const mapped = severityMap[(params.severity as string).toLowerCase()] || params.severity;
+      incidents = incidents.filter((i) => i.severity === mapped);
     }
-    if (params.status) {
-      incidents = incidents.filter((i) => i.status === params.status);
+    if (hasValue(params.status)) {
+      const mapped = statusMap[(params.status as string).toLowerCase()] || params.status;
+      incidents = incidents.filter((i) => i.status === mapped);
     }
-    if (params.approval_status) {
-      incidents = incidents.filter((i) => i.approval_status === params.approval_status);
+    if (hasValue(params.approval_status)) {
+      incidents = incidents.filter((i) => i.approval_status?.toLowerCase() === (params.approval_status as string).toLowerCase());
     }
-    if (params.ai_project) {
+    if (hasValue(params.ai_project)) {
       incidents = incidents.filter(
         (i) =>
           i.ai_project &&
@@ -445,10 +461,11 @@ const agentCreateIncident = createWriteToolFn({
         immediate_mitigations: "",
         planned_corrective_actions: "",
         model_system_version: "",
-        interim_report: "",
+        interim_report: false,
         approval_date: null,
         approval_notes: "",
         archived: false,
+        is_demo: false,
       } as unknown as AIIncidentManagementModel;
 
       const result = await createNewIncidentQuery(incidentData, organizationId, transaction);
