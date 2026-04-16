@@ -30,7 +30,9 @@
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "Bash(npx vitest run:*)",
-      "Bash(xargs -I{} basename {})"
+      "Bash(xargs -I{} basename {})",
+      "Bash(echo \"backend=$?\")",
+      "Bash(echo \"frontend=$?\")"
     ]
   }
 }

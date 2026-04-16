@@ -23,6 +23,8 @@ import { createRiskHandler } from "./createRisk";
 import { updateRiskHandler } from "./updateRisk";
 import { deleteRiskHandler } from "./deleteRisk";
 import { createTaskHandler } from "./createTask";
+import { updateTaskHandler } from "./updateTask";
+import { deleteTaskHandler } from "./deleteTask";
 
 /**
  * Ordered list of handlers. Order doesn't matter for correctness but it
@@ -34,6 +36,8 @@ const handlers: AiActionHandler[] = [
   updateRiskHandler as unknown as AiActionHandler,
   deleteRiskHandler as unknown as AiActionHandler,
   createTaskHandler as unknown as AiActionHandler,
+  updateTaskHandler as unknown as AiActionHandler,
+  deleteTaskHandler as unknown as AiActionHandler,
 ];
 
 /**
