@@ -31,6 +31,7 @@ import { availableAiTrustCentreTools } from "../advisor/functions/aiTrustCentreF
 import { availableAgentDiscoveryTools } from "../advisor/functions/agentDiscoveryFunctions";
 import { availableUserTools } from "../advisor/functions/userFunctions";
 import { availableProjectTools } from "../advisor/functions/projectFunctions";
+import { availableFrameworkLookupTools } from "../advisor/functions/frameworkLookupFunctions";
 import { toolsDefinition as riskToolsDefinition } from "../advisor/tools/riskTools";
 import { toolsDefinition as modelInventoryToolsDefinition } from "../advisor/tools/modelInventoryTools";
 import { toolsDefinition as modelRiskToolsDefinition } from "../advisor/tools/modelRiskTools";
@@ -48,6 +49,7 @@ import { toolsDefinition as aiTrustCentreToolsDefinition } from "../advisor/tool
 import { toolsDefinition as agentDiscoveryToolsDefinition } from "../advisor/tools/agentDiscoveryTools";
 import { toolsDefinition as userToolsDefinition } from "../advisor/tools/userTools";
 import { toolsDefinition as projectToolsDefinition } from "../advisor/tools/projectTools";
+import { toolsDefinition as frameworkLookupToolsDefinition } from "../advisor/tools/frameworkLookupTools";
 import {
   aiActionToolDefinitions,
   aiActionFilers,
@@ -92,6 +94,7 @@ const availableTools = {
   ...availableAgentDiscoveryTools,
   ...availableUserTools,
   ...availableProjectTools,
+  ...availableFrameworkLookupTools,
   ...aiActionFilers,
 };
 
@@ -113,6 +116,7 @@ const toolsDefinition = [
   ...agentDiscoveryToolsDefinition,
   ...userToolsDefinition,
   ...projectToolsDefinition,
+  ...frameworkLookupToolsDefinition,
   ...aiActionToolDefinitions,
 ];
 

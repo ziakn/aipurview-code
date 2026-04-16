@@ -163,9 +163,10 @@ export const getMyApprovalRequestsQuery = async (
     `SELECT * FROM approval_requests
      WHERE organization_id = :organizationId
        AND requested_by = :userId
+       AND status = :status
      ORDER BY created_at DESC`,
     {
-      replacements: { organizationId, userId },
+      replacements: { organizationId, userId, status: ApprovalRequestStatus.PENDING },
       mapToModel: true,
       model: ApprovalRequestModel,
       ...(transaction && { transaction }),

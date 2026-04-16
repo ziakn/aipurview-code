@@ -110,7 +110,7 @@ export async function fileCreateRisk(
       status: "pending_approval",
       approvalRequestId: approvalRequest.id!,
       preview,
-      message: `Created approval request #${approvalRequest.id}. Tell the user to open Pending Approvals and approve or reject "${preview}".`,
+      message: `Created approval request #${approvalRequest.id}. Tell the user to open Pending Approvals to approve or reject "${preview}". Also let them know: once approved, a review task will be auto-created and assigned to the risk owner with a deadline based on the risk severity, and the risk owner (and any linked project owners) will be notified.`,
     };
   } catch (error) {
     await transaction.rollback();
