@@ -762,12 +762,46 @@ export async function streamAdvisorV2(req: Request, res: Response) {
       headers: apiKey.custom_headers || undefined,
     });
 
-    // Use the streamText result's built-in method to pipe the AI SDK protocol.
-    // pipeUIMessageStreamToResponse is fire-and-forget (returns void);
-    // the AI SDK handles stream errors and response completion internally.
+    // Pipe the stream. Critical: supply `onError` to convert errors into
+    // user-visible text. Without it, the AI SDK silently closes the stream
+    // on failures (invalid API key, provider 4xx/5xx, network drops) and
+    // the user sees a blank response. `onError` returns the string that
+    // gets appended to the stream as the assistant's final text.
     result.pipeUIMessageStreamToResponse(res, {
       sendReasoning: true,
       sendSources: true,
+      onError: (error: unknown) => {
+        logger.error("❌ AI SDK stream error:", error);
+        logStructured(
+          "error",
+          "AI SDK stream error",
+          functionName,
+          fileName,
+        );
+
+        // Extract the provider's HTTP status if present — Anthropic/OpenAI
+        // errors from @ai-sdk/* providers expose `statusCode` on the error.
+        const statusCode = (error as { statusCode?: number })?.statusCode;
+        const message =
+          error instanceof Error ? error.message : String(error);
+
+        // Friendly mapping for the common failure modes so the user has
+        // an actionable hint, not just a stack-trace substring.
+        if (statusCode === 401 || /invalid.*api.*key|unauthorized/i.test(message)) {
+          return "I couldn't reach the AI provider — the configured API key was rejected. Ask an Admin to verify the LLM key in Settings.";
+        }
+        if (statusCode === 429 || /rate.*limit/i.test(message)) {
+          return "The AI provider is rate-limiting this request. Please wait a moment and try again.";
+        }
+        if (statusCode === 400 || /bad.*request/i.test(message)) {
+          return `The AI provider rejected the request: ${message}`;
+        }
+        if (statusCode && statusCode >= 500) {
+          return "The AI provider is currently unavailable. Please try again shortly.";
+        }
+
+        return `Something went wrong while generating a response: ${message}`;
+      },
     });
 
     logStructured(

@@ -210,10 +210,26 @@ export const useAdvisorRuntime = (
     }
   }, []);
 
+  // Surface errors that bypass the streaming protocol entirely — network
+  // failures, CORS issues, 5xx before the stream opens, etc. Errors that
+  // happen INSIDE the stream are already converted to user-visible text
+  // by the backend's `onError` in `streamAdvisorV2`. This hook catches
+  // the cases that don't reach that backend handler.
+  const onError = useCallback((error: unknown) => {
+    console.error('[advisor] chat runtime error:', error);
+    const message = error instanceof Error ? error.message : String(error);
+    // eslint-disable-next-line no-alert
+    alert(
+      `The AI advisor encountered an error: ${message}\n\n` +
+      `If this keeps happening, check your LLM key in Settings or try again in a moment.`,
+    );
+  }, []);
+
   const runtime = useChatRuntime({
     transport,
     messages: initialMessages,
     onFinish,
+    onError,
   });
 
   return runtime;
