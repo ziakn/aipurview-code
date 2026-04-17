@@ -124,6 +124,7 @@ function AutoCompleteField<
           ...getAutocompleteStyles(theme, { hasError: !!error }),
           backgroundColor: theme.palette.background.main,
           "& .MuiOutlinedInput-root": {
+            ...getAutocompleteStyles(theme, { hasError: !!error })["& .MuiOutlinedInput-root"],
             borderRadius: theme.shape.borderRadius,
           },
           "& .MuiChip-root": {
