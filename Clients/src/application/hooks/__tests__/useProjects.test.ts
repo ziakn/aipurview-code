@@ -56,7 +56,7 @@ describe("useProjects", () => {
     });
 
     expect(result.current.approvedProjects).toHaveLength(1);
-    expect(result.current.approvedProjects[0].name).toBe("Approved");
+    expect((result.current.approvedProjects[0] as any).name).toBe("Approved");
   });
 
   it("returns empty array when response has no data", async () => {

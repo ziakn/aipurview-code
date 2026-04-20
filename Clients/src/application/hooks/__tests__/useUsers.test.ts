@@ -29,8 +29,9 @@ describe("useUsers", () => {
 
   it("fetches and formats users", async () => {
     mockGetAll.mockResolvedValue({
+      status: 200,
       data: [{ id: 1, name: "John", surname: "Doe", email: "john@test.com", role_id: 1 }],
-    });
+    } as any);
 
     const { result } = renderHook(() => useUsers(), { wrapper: createWrapper() });
 

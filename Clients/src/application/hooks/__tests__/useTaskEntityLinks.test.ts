@@ -28,7 +28,7 @@ describe("useTaskEntityLinks", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches links for a task", async () => {
-    mockGetLinks.mockResolvedValue([{ id: 1, taskId: 5, entityId: 10, entityType: "project" }]);
+    mockGetLinks.mockResolvedValue([{ id: 1, task_id: 5, entity_id: 10, entity_type: "project" }] as any);
 
     const { result } = renderHook(() => useTaskEntityLinks(5), { wrapper: createWrapper() });
 
@@ -46,7 +46,7 @@ describe("useAddTaskEntityLink", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("adds a link", async () => {
-    mockAddLink.mockResolvedValue({ id: 2 });
+    mockAddLink.mockResolvedValue({ id: 2 } as any);
 
     const { result } = renderHook(() => useAddTaskEntityLink(), { wrapper: createWrapper() });
     result.current.mutate({ taskId: 5, entityId: 10, entityType: "project" as any });

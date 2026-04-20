@@ -12,7 +12,7 @@ describe("downloadResource", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockFetch = vi.fn();
-    global.fetch = mockFetch;
+    global.fetch = mockFetch as any;
     // Mock DOM APIs
     global.URL.createObjectURL = vi.fn().mockReturnValue("blob:mock-url");
     global.URL.revokeObjectURL = vi.fn();

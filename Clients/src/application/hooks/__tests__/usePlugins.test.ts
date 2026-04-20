@@ -19,10 +19,10 @@ describe("usePlugins", () => {
     mockGetAll.mockResolvedValue([
       { key: "soc2", name: "SOC 2", tags: ["compliance"] },
       { key: "gdpr", name: "GDPR", tags: [] },
-    ]);
+    ] as any);
     mockGetInstalled.mockResolvedValue([
       { id: 10, pluginKey: "soc2", status: "active", installedAt: "2024-01-01" },
-    ]);
+    ] as any);
 
     const { result } = renderHook(() => usePlugins());
 

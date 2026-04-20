@@ -31,7 +31,7 @@ describe("usePluginInstallation", () => {
   });
 
   it("installs a plugin and refreshes", async () => {
-    mockInstall.mockResolvedValue({ id: 1, pluginKey: "soc2" });
+    mockInstall.mockResolvedValue({ id: 1, pluginKey: "soc2", status: "active" } as any);
 
     const { result } = renderHook(() => usePluginInstallation());
 

@@ -25,7 +25,7 @@ describe("useProjectData", () => {
     const { result } = renderHook(() => useProjectData({ projectId: "1" }));
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
-    expect(result.current.project?.name).toBe("AI Project");
+    expect((result.current.project as any)?.name).toBe("AI Project");
     expect(result.current.projectOwner).toBe("John Doe");
     expect(result.current.projectRisks).toHaveLength(1);
   });

@@ -23,7 +23,7 @@ describe("useAssessmentData", () => {
   });
 
   it("does not fetch when selectedProjectId is empty", async () => {
-    const { result } = renderHook(() => useAssessmentData({ selectedProjectId: "" }));
+    const { result: _result } = renderHook(() => useAssessmentData({ selectedProjectId: "" }));
 
     // Should not call the API
     expect(mockGetById).not.toHaveBeenCalled();

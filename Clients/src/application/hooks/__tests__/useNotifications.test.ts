@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { NotificationType } from "../useNotifications";
 
 // This test validates the exported types and constants from the notifications hook.

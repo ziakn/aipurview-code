@@ -22,7 +22,7 @@ describe("useBenchmarks", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches benchmarks", async () => {
-    mockGetBenchmarks.mockResolvedValue([{ id: 1, industry: "finance" }]);
+    mockGetBenchmarks.mockResolvedValue([{ id: 1, industry: "finance" }] as any);
 
     const { result } = renderHook(() => useBenchmarks("finance"));
 
@@ -53,7 +53,7 @@ describe("useOrgPortfolio", () => {
     const { result } = renderHook(() => useOrgPortfolio());
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
-    expect(result.current.portfolio?.riskScore).toBe(72);
+    expect((result.current.portfolio as any)?.riskScore).toBe(72);
   });
 });
 
@@ -66,7 +66,7 @@ describe("useProjectPortfolio", () => {
     const { result } = renderHook(() => useProjectPortfolio(1));
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
-    expect(result.current.portfolio?.riskScore).toBe(45);
+    expect((result.current.portfolio as any)?.riskScore).toBe(45);
   });
 
   it("returns null when projectId is undefined", async () => {

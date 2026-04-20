@@ -20,7 +20,7 @@ describe("useUserFilesMetaData", () => {
   });
 
   it("fetches files on mount", async () => {
-    mockGetFiles.mockResolvedValue({ files: [{ id: 1, name: "test.pdf" }] });
+    mockGetFiles.mockResolvedValue({ files: [{ id: "1", name: "test.pdf" }] } as any);
 
     const { result } = renderHook(() => useUserFilesMetaData());
 
@@ -42,12 +42,12 @@ describe("useUserFilesMetaData", () => {
   });
 
   it("refetch triggers new data load", async () => {
-    mockGetFiles.mockResolvedValue({ files: [{ id: 1 }] });
+    mockGetFiles.mockResolvedValue({ files: [{ id: "1" }] } as any);
 
     const { result } = renderHook(() => useUserFilesMetaData());
     await waitFor(() => expect(result.current.loading).toBe(false));
 
-    mockGetFiles.mockResolvedValue({ files: [{ id: 1 }, { id: 2 }] });
+    mockGetFiles.mockResolvedValue({ files: [{ id: "1" }, { id: "2" }] } as any);
 
     act(() => {
       result.current.refetch();

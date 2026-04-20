@@ -23,7 +23,7 @@ describe("useProfilePhotoFetch", () => {
   });
 
   it("returns null when no photo content", async () => {
-    mockGetPhoto.mockResolvedValue({ data: { photo: null } });
+    mockGetPhoto.mockResolvedValue({ data: { photo: null } } as any);
 
     const { result } = renderHook(() => useProfilePhotoFetch());
     const url = await result.current.fetchProfilePhotoAsBlobUrl(1);
@@ -43,7 +43,7 @@ describe("useProfilePhotoFetch", () => {
   it("returns null when content has no usable data", async () => {
     mockGetPhoto.mockResolvedValue({
       data: { photo: { content: "invalid", type: "image/png" } },
-    });
+    } as any);
 
     const { result } = renderHook(() => useProfilePhotoFetch());
     const url = await result.current.fetchProfilePhotoAsBlobUrl(1);

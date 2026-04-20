@@ -24,7 +24,7 @@ describe("useEntityIntakeSubmission", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches intake submission for valid entity", async () => {
-    mockGet.mockResolvedValue({ id: 1, entityType: "use_case", answers: [] });
+    mockGet.mockResolvedValue({ id: 1, entityType: "use_case", answers: [] } as any);
 
     const { result } = renderHook(() => useEntityIntakeSubmission("use_case", 5), { wrapper: createWrapper() });
 

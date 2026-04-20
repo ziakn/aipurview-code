@@ -40,7 +40,7 @@ describe("useSlackIntegrations", () => {
   });
 
   it("does not fetch when userId is null", async () => {
-    const { result } = renderHook(() => useSlackIntegrations(null));
+    const { result: _result } = renderHook(() => useSlackIntegrations(null));
 
     // Should stay in loading state since fetch never happens
     expect(mockGetIntegrations).not.toHaveBeenCalled();

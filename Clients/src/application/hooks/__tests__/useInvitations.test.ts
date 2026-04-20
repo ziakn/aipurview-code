@@ -33,7 +33,7 @@ describe("useInvitations", () => {
     const invitations = [
       { id: 1, email: "test@example.com", status: "pending" },
     ];
-    mockGetInvitations.mockResolvedValue({ invitations });
+    mockGetInvitations.mockResolvedValue({ invitations } as any);
 
     const { result } = renderHook(() => useInvitations(), {
       wrapper: createWrapper(),
