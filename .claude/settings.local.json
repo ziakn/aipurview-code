@@ -31,7 +31,11 @@
       "Bash(awk '/^        \\\\],$/ && prev ~ /^        \\\\],$/ { print NR\": stray at line \"NR; } { prev = $0 }' /Users/harsh/Data/vw/verifywise/Servers/structures/ISO-27001/annexes/iso27001.annex.struct.ts)",
       "Bash(awk 'BEGIN{ prev=\"\" } *)",
       "Bash(awk '/^        \\\\],$/ && prev ~ /^        \\\\],$/ { c++ } { prev = $0 } END { print c+0 }' /Users/harsh/Data/vw/verifywise/Servers/structures/ISO-27001/annexes/iso27001.annex.struct.ts)",
-      "Bash(awk *)"
+      "Bash(awk *)",
+      "Bash(cmd.exe /c \"where gh\")",
+      "Bash(curl:*)",
+      "WebFetch(domain:api.github.com)",
+      "Bash(git status:*)"
     ]
   }
 }
