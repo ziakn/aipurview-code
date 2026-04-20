@@ -128,7 +128,7 @@
     "concurrently": "^9.2.1",
     "dotenv-webpack": "^9.0.0",
     "jsdom": "^29.0.2",
-    "typescript": "^5.5.3",
+    "typescript": "^6.0.3",
     "url-loader": "^4.1.1",
     "vitest": "^4.1.4"
   }
