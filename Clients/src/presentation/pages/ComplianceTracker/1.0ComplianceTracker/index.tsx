@@ -190,7 +190,7 @@ const ComplianceTracker = ({
           <StatsCard
             completed={complianceData.allDonesubControls}
             total={complianceData.allsubControls}
-            title="Subcontrols"
+            title="Controls"
             progressbarColor={brand.primary}
           />
         </Stack>

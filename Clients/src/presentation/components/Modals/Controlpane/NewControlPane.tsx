@@ -958,7 +958,7 @@ const NewControlPane = ({
 
         handleAlert({
           variant: "success",
-          body: "Control saved successfully",
+          body: "Requirement saved successfully",
           setAlert,
         });
 
