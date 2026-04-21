@@ -10,7 +10,7 @@ export const reportsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The reports page lets you generate structured evaluation reports from your experiment results. Reports follow the EvalCards standard for AI evaluation documentation.',
+      text: 'Once you\'ve run experiments, you can generate structured reports from the results. Reports follow the EvalCards standard, so they work as formal AI evaluation documentation.',
     },
     {
       type: 'heading',
@@ -43,11 +43,21 @@ export const reportsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'When configuring a report, you can choose which sections to include. Options typically cover evaluation context, metric results, safety assessment, comparative analysis and methodology.',
+      text: 'The configuration modal shows a checklist of sections. Each section can be toggled on or off:',
     },
     {
-      type: 'paragraph',
-      text: 'You can also toggle **Include detailed samples** to add individual test case results, and **Include arena** to add arena comparison data if you\'ve run any.',
+      type: 'bullet-list',
+      items: [
+        { bold: 'Executive summary', text: 'Overall scores, pass/fail verdict, key findings' },
+        { bold: 'Evaluation context', text: 'Project, organization, evaluator and date' },
+        { bold: 'Model under test', text: 'Provider, model ID and generation parameters' },
+        { bold: 'Evaluation setup', text: 'Dataset, judge model, metrics and thresholds' },
+        { bold: 'Metric results', text: 'Per-metric scores grouped by quality and safety' },
+        { bold: 'Safety and compliance', text: 'Bias, toxicity and hallucination analysis' },
+        { bold: 'Sample-level details', text: 'Per-sample scores table (off by default, increases file size)' },
+        { bold: 'Arena comparison', text: 'Head-to-head results if you\'ve run arena battles (off by default)' },
+        { bold: 'Limitations and recommendations', text: 'Auto-generated suggestions based on failing metrics' },
+      ],
     },
     {
       type: 'heading',

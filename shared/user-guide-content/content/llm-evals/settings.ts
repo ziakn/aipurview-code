@@ -10,7 +10,7 @@ export const evalsSettingsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The settings page is where you manage LLM provider API keys for your organization. These keys are shared across all projects and are required to run experiments, arena comparisons and playground chats.',
+      text: 'This is where you manage API keys for the LLM providers your organization uses. Keys are shared across all projects. Without at least one key configured, you can\'t run experiments or arena comparisons.',
     },
     {
       type: 'heading',
@@ -20,19 +20,19 @@ export const evalsSettingsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'You can add API keys for the following providers:',
+      text: 'You can add API keys for these providers:',
     },
     {
       type: 'bullet-list',
       items: [
-        { bold: 'OpenRouter', text: 'Access to multiple model providers through a single key' },
-        { bold: 'OpenAI', text: 'GPT-4, GPT-3.5 and other OpenAI models' },
+        { bold: 'OpenRouter', text: 'Routes to multiple providers through one key' },
+        { bold: 'OpenAI', text: 'GPT-4o, GPT-4 and other OpenAI models' },
         { bold: 'Anthropic', text: 'Claude model family' },
-        { bold: 'Gemini', text: 'Google\'s Gemini models' },
+        { bold: 'Google', text: 'Gemini models' },
         { bold: 'xAI', text: 'Grok models' },
         { bold: 'Mistral', text: 'Mistral AI models' },
-        { bold: 'Hugging Face', text: 'Open-source models hosted on Hugging Face' },
-        { bold: 'Custom', text: 'Any OpenAI-compatible endpoint' },
+        { bold: 'Hugging Face', text: 'Open-source models via Hugging Face Inference API' },
+        { bold: 'Custom', text: 'Any OpenAI-compatible endpoint (bring your own base URL)' },
       ],
     },
     {

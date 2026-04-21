@@ -10,7 +10,7 @@ export const configurationContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The configuration tab is where you set the LLM use case for your evaluation project. The use case determines which scorers and metrics are available when you run experiments.',
+      text: 'This tab sets what type of LLM application your project evaluates. The choice determines which scorers and metrics are available when you run experiments.',
     },
     {
       type: 'heading',
