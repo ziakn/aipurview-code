@@ -85,6 +85,7 @@ import {
   complianceEndpoints,
   dashboardEndpoints,
   datasetEndpoints,
+  demoDataEndpoints,
   emailEndpoints,
   entityGraphEndpoints,
   euAiActEndpoints,
@@ -94,6 +95,7 @@ import {
   friaEndpoints,
   intakeFormEndpoints,
   integrationEndpoints,
+  internalEndpoints,
   invitationEndpoints,
   iso27001Endpoints,
   iso42001Endpoints,
@@ -112,8 +114,10 @@ import {
   quantitativeRiskEndpoints,
   reportingEndpoints,
   riskBenchmarkEndpoints,
+  riskHistoryEndpoints,
   roleEndpoints,
   searchEndpoints,
+  settingEndpoints,
   shadowAiEndpoints,
   shareLinkEndpoints,
   slackWebhookEndpoints,
@@ -206,6 +210,7 @@ const App: React.FC = () => {
     { id: 'vendor-risks', label: 'Vendor risks', icon: <AlertTriangle size={14} />, category: 'risk-management', keywords: ['vendor', 'risk', 'supplier'] },
     { id: 'quantitative-risks', label: 'Quantitative risks', icon: <Gauge size={14} />, category: 'risk-management', keywords: ['quantitative', 'risk', 'benchmark'] },
     { id: 'risk-benchmarks', label: 'Risk benchmarks', icon: <BarChart3 size={14} />, category: 'risk-management', keywords: ['benchmark', 'risk', 'compare'] },
+    { id: 'risk-history', label: 'Risk history', icon: <ScrollText size={14} />, category: 'risk-management', keywords: ['risk', 'history', 'timeline'] },
 
     // AI Governance
     { id: 'model-inventory', label: 'Model inventory', icon: <Brain size={14} />, category: 'ai-governance', keywords: ['model', 'inventory', 'ai', 'llm'] },
@@ -244,6 +249,7 @@ const App: React.FC = () => {
     { id: 'share-links', label: 'Share links', icon: <Link size={14} />, category: 'utilities', keywords: ['share', 'link', 'public'] },
     { id: 'reporting', label: 'Reporting', icon: <BarChart3 size={14} />, category: 'utilities', keywords: ['report', 'analytics', 'export'] },
     { id: 'slack-webhooks', label: 'Slack webhooks', icon: <MessageSquare size={14} />, category: 'utilities', keywords: ['slack', 'webhook', 'notification'] },
+    { id: 'settings', label: 'Settings', icon: <Settings size={14} />, category: 'utilities', keywords: ['settings', 'configuration', 'config'] },
     { id: 'subscription', label: 'Subscription', icon: <CreditCard size={14} />, category: 'utilities', keywords: ['subscription', 'billing', 'plan'] },
 
     // Advanced
@@ -258,6 +264,9 @@ const App: React.FC = () => {
     { id: 'plugins', label: 'Plugins', icon: <Boxes size={14} />, category: 'advanced', keywords: ['plugin', 'marketplace', 'extension'] },
     { id: 'change-history', label: 'Change history', icon: <ScrollText size={14} />, category: 'advanced', keywords: ['change', 'history', 'audit'] },
     { id: 'audit-ledger', label: 'Audit ledger', icon: <FileCheck size={14} />, category: 'advanced', keywords: ['audit', 'ledger', 'verify'] },
+    { id: 'webhooks', label: 'Webhooks', icon: <Zap size={14} />, category: 'advanced', keywords: ['webhook', 'callback', 'event'] },
+    { id: 'demo-data', label: 'Demo data', icon: <Database size={14} />, category: 'advanced', keywords: ['demo', 'seed', 'sample', 'data'] },
+    { id: 'internal', label: 'Internal', icon: <Code2 size={14} />, category: 'advanced', keywords: ['internal', 'debug', 'system'] },
     { id: 'llm-keys', label: 'LLM keys', icon: <KeyRound size={14} />, category: 'advanced', keywords: ['llm', 'key', 'api', 'provider'] },
   ];
 
@@ -627,6 +636,7 @@ const App: React.FC = () => {
               {activeSection === 'vendor-risks' && <EndpointSection title="Vendor risks" description="Endpoints for managing vendor-related risks." endpoints={vendorRiskEndpoints} />}
               {activeSection === 'quantitative-risks' && <EndpointSection title="Quantitative risks" description="Endpoints for quantitative risk assessment and portfolio analysis." endpoints={quantitativeRiskEndpoints} />}
               {activeSection === 'risk-benchmarks' && <EndpointSection title="Risk benchmarks" description="Endpoints for risk benchmark data and comparisons." endpoints={riskBenchmarkEndpoints} />}
+              {activeSection === 'risk-history' && <EndpointSection title="Risk history" description="Endpoints for viewing risk change history and timelines." endpoints={riskHistoryEndpoints} />}
               {activeSection === 'model-inventory' && <EndpointSection title="Model inventory" description="Endpoints for managing AI/ML model inventory." endpoints={modelInventoryEndpoints} />}
               {activeSection === 'model-risks' && <EndpointSection title="Model risks" description="Endpoints for managing AI model risks." endpoints={modelRiskEndpoints} />}
               {activeSection === 'datasets' && <EndpointSection title="Datasets" description="Endpoints for managing datasets associated with AI models." endpoints={datasetEndpoints} />}
@@ -658,6 +668,7 @@ const App: React.FC = () => {
               {activeSection === 'notifications' && <EndpointSection title="Notifications" description="Endpoints for notification management and real-time streaming." endpoints={notificationEndpoints} />}
               {activeSection === 'share-links' && <EndpointSection title="Share links" description="Endpoints for creating and managing shareable links." endpoints={shareLinkEndpoints} />}
               {activeSection === 'reporting' && <EndpointSection title="Reporting" description="Endpoints for generating reports and analytics." endpoints={reportingEndpoints} />}
+              {activeSection === 'settings' && <EndpointSection title="Settings" description="Endpoints for managing application settings and configuration." endpoints={settingEndpoints} />}
               {activeSection === 'slack-webhooks' && <EndpointSection title="Slack webhooks" description="Endpoints for managing Slack webhook integrations." endpoints={slackWebhookEndpoints} />}
               {activeSection === 'subscription' && <EndpointSection title="Subscription" description="Endpoints for managing subscriptions and billing." endpoints={subscriptionEndpoints} />}
               {activeSection === 'evidence-hub' && <EndpointSection title="Evidence hub" description="Endpoints for the evidence management hub and document repository." endpoints={evidenceHubEndpoints} />}
@@ -671,6 +682,9 @@ const App: React.FC = () => {
               {activeSection === 'plugins' && <EndpointSection title="Plugins" description="Endpoints for plugin marketplace and installation management." endpoints={pluginEndpoints} />}
               {activeSection === 'change-history' && <EndpointSection title="Change history" description="Endpoints for tracking entity change history across all domains." endpoints={changeHistoryEndpoints} />}
               {activeSection === 'audit-ledger' && <EndpointSection title="Audit ledger" description="Endpoints for the tamper-proof audit ledger." endpoints={auditEndpoints} />}
+              {activeSection === 'webhooks' && <EndpointSection title="Webhooks" description="Endpoints for managing webhook configurations and deliveries." endpoints={webhookEndpoints} />}
+              {activeSection === 'demo-data' && <EndpointSection title="Demo data" description="Endpoints for managing demo and seed data." endpoints={demoDataEndpoints} />}
+              {activeSection === 'internal' && <EndpointSection title="Internal" description="Internal system endpoints for debugging and diagnostics." endpoints={internalEndpoints} />}
               {activeSection === 'llm-keys' && <EndpointSection title="LLM keys" description="Endpoints for managing LLM provider API keys." endpoints={llmKeyEndpoints} />}
               </>
               )}
