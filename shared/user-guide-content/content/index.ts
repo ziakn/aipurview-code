@@ -56,6 +56,11 @@ import { biasAuditsContent } from './llm-evals/bias-audits';
 import { modelsContent } from './llm-evals/models';
 import { llmArenaContent } from './llm-evals/llm-arena';
 import { ciCdIntegrationContent } from './llm-evals/ci-cd-integration';
+import { playgroundContent as evalsPlaygroundContent } from './llm-evals/playground';
+import { leaderboardContent } from './llm-evals/leaderboard';
+import { reportsContent } from './llm-evals/reports';
+import { configurationContent } from './llm-evals/configuration';
+import { evalsSettingsContent } from './llm-evals/settings';
 import { scanningContent } from './ai-detection/scanning';
 import { riskScoringContent } from './ai-detection/risk-scoring';
 import { repositoriesContent } from './ai-detection/repositories';
@@ -147,6 +152,11 @@ export const articleContentMap: Record<string, ArticleContent> = {
   'llm-evals/models': modelsContent,
   'llm-evals/llm-arena': llmArenaContent,
   'llm-evals/ci-cd-integration': ciCdIntegrationContent,
+  'llm-evals/playground': evalsPlaygroundContent,
+  'llm-evals/leaderboard': leaderboardContent,
+  'llm-evals/reports': reportsContent,
+  'llm-evals/configuration': configurationContent,
+  'llm-evals/settings': evalsSettingsContent,
   // AI Detection
   'ai-detection/scanning': scanningContent,
   'ai-detection/risk-scoring': riskScoringContent,

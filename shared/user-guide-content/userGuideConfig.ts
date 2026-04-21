@@ -182,7 +182,7 @@ export const collections: Collection[] = [
     title: 'LLM Evals',
     description: 'Evaluate and benchmark your LLM applications for quality, safety, and performance.',
     icon: 'FlaskConical',
-    articleCount: 8,
+    articleCount: 13,
     articles: [
       {
         id: 'llm-evals-overview',
@@ -231,6 +231,36 @@ export const collections: Collection[] = [
         title: 'CI/CD integration',
         description: 'Run LLM evaluations automatically in GitHub Actions or any CI pipeline and block merges when quality drops.',
         keywords: ['ci', 'cd', 'github actions', 'pipeline', 'automation', 'quality gate', 'pull request', 'ci/cd', 'continuous'],
+      },
+      {
+        id: 'playground',
+        title: 'Playground',
+        description: 'Chat with any configured model directly to test prompts before running experiments.',
+        keywords: ['playground', 'chat', 'test', 'model', 'prompt', 'interactive'],
+      },
+      {
+        id: 'leaderboard',
+        title: 'Leaderboard',
+        description: 'View model performance rankings based on arena comparison results.',
+        keywords: ['leaderboard', 'ranking', 'performance', 'arena', 'win rate', 'model comparison'],
+      },
+      {
+        id: 'reports',
+        title: 'Evaluation reports',
+        description: 'Generate structured PDF or CSV reports from experiment results following the EvalCards standard.',
+        keywords: ['report', 'evalcards', 'pdf', 'csv', 'generate', 'evaluation', 'documentation'],
+      },
+      {
+        id: 'configuration',
+        title: 'Project configuration',
+        description: 'Set the LLM use case type for your evaluation project.',
+        keywords: ['configuration', 'use case', 'rag', 'chatbot', 'agent', 'project settings'],
+      },
+      {
+        id: 'settings',
+        title: 'LLM Evals settings',
+        description: 'Configure API keys for LLM providers used across all evaluation projects.',
+        keywords: ['settings', 'api key', 'provider', 'openai', 'anthropic', 'gemini', 'organization'],
       },
     ],
   },
