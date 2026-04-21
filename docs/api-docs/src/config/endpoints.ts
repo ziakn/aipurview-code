@@ -1312,40 +1312,34 @@ export const auditEndpoints: Endpoint[] = [
 // Authentication endpoints
 export const authenticationEndpoints: Endpoint[] = [
   {
-    method: 'GET',
-    path: '/tokens',
-    summary: "Get Api Tokens",
-    requiresAuth: true,
+    method: 'POST',
+    path: '/users/login',
+    summary: "Authenticate user",
+    description: "Validates email/password credentials via bcrypt. Returns a JWT access token in the response body and sets a refresh token in an HTTP-only cookie. Rate-limited to 5 requests per minute per IP.",
+    requiresAuth: false,
+    requestBody: {
+      "email": "string (required)",
+      "password": "string (required)",
+    },
     responses: [
-      { status: 200, description: "Success" },
-      { status: 401, description: "Unauthorized" },
+      { status: 202, description: "Authentication successful" },
+      { status: 401, description: "Invalid email or password" },
+      { status: 429, description: "Too many login attempts" },
       { status: 500, description: "Internal server error" },
     ],
     tag: "Authentication",
   },
   {
     method: 'POST',
-    path: '/tokens',
-    summary: "Create Api Token",
-    requiresAuth: true,
+    path: '/users/refresh-token',
+    summary: "Refresh access token",
+    description: "Reads the refresh_token from an HTTP-only cookie and issues a new JWT access token if the refresh token is still valid.",
+    requiresAuth: false,
     responses: [
-      { status: 201, description: "Created successfully" },
-      { status: 401, description: "Unauthorized" },
-      { status: 500, description: "Internal server error" },
-    ],
-    tag: "Authentication",
-  },
-  {
-    method: 'DELETE',
-    path: '/tokens/{id}',
-    summary: "Delete Api Token",
-    requiresAuth: true,
-    parameters: [
-      { name: 'id', in: 'path', type: 'integer', required: true, description: "The id" },
-    ],
-    responses: [
-      { status: 200, description: "Deleted successfully" },
-      { status: 401, description: "Unauthorized" },
+      { status: 200, description: "New access token issued" },
+      { status: 400, description: "Refresh token missing from cookie" },
+      { status: 401, description: "Invalid refresh token" },
+      { status: 406, description: "Refresh token expired" },
       { status: 500, description: "Internal server error" },
     ],
     tag: "Authentication",
@@ -3669,90 +3663,6 @@ export const integrationEndpoints: Endpoint[] = [
     ],
     tag: "Integrations",
   },
-  {
-    method: 'GET',
-    path: '/slackWebhooks',
-    summary: "Get All Slack Webhooks",
-    requiresAuth: true,
-    responses: [
-      { status: 200, description: "Success" },
-      { status: 401, description: "Unauthorized" },
-      { status: 500, description: "Internal server error" },
-    ],
-    tag: "Integrations",
-  },
-  {
-    method: 'POST',
-    path: '/slackWebhooks',
-    summary: "Create New Slack Webhook",
-    requiresAuth: true,
-    responses: [
-      { status: 201, description: "Created successfully" },
-      { status: 401, description: "Unauthorized" },
-      { status: 500, description: "Internal server error" },
-    ],
-    tag: "Integrations",
-  },
-  {
-    method: 'GET',
-    path: '/slackWebhooks/{id}',
-    summary: "Get Slack Webhook By Id",
-    requiresAuth: true,
-    parameters: [
-      { name: 'id', in: 'path', type: 'integer', required: true, description: "The id" },
-    ],
-    responses: [
-      { status: 200, description: "Success" },
-      { status: 401, description: "Unauthorized" },
-      { status: 500, description: "Internal server error" },
-    ],
-    tag: "Integrations",
-  },
-  {
-    method: 'PATCH',
-    path: '/slackWebhooks/{id}',
-    summary: "Update Slack Webhook By Id",
-    requiresAuth: true,
-    parameters: [
-      { name: 'id', in: 'path', type: 'integer', required: true, description: "The id" },
-    ],
-    responses: [
-      { status: 200, description: "Success" },
-      { status: 401, description: "Unauthorized" },
-      { status: 500, description: "Internal server error" },
-    ],
-    tag: "Integrations",
-  },
-  {
-    method: 'DELETE',
-    path: '/slackWebhooks/{id}',
-    summary: "Delete Slack Webhook By Id",
-    requiresAuth: true,
-    parameters: [
-      { name: 'id', in: 'path', type: 'integer', required: true, description: "The id" },
-    ],
-    responses: [
-      { status: 200, description: "Deleted successfully" },
-      { status: 401, description: "Unauthorized" },
-      { status: 500, description: "Internal server error" },
-    ],
-    tag: "Integrations",
-  },
-  {
-    method: 'POST',
-    path: '/slackWebhooks/{id}/send',
-    summary: "Send Slack Message",
-    requiresAuth: true,
-    parameters: [
-      { name: 'id', in: 'path', type: 'integer', required: true, description: "The id" },
-    ],
-    responses: [
-      { status: 201, description: "Created successfully" },
-      { status: 401, description: "Unauthorized" },
-      { status: 500, description: "Internal server error" },
-    ],
-    tag: "Integrations",
-  },
 ];
 
 // Internal endpoints
@@ -5491,9 +5401,6 @@ export const policyEndpoints: Endpoint[] = [
     summary: "Get policy by ID",
     description: "Returns a single policy by its ID, including assigned reviewer IDs.",
     requiresAuth: true,
-    parameters: [
-      { name: 'undefined', in: 'undefined', type: 'string', required: false, description: "The undefined" },
-    ],
     responses: [
       { status: 200, description: "Policy retrieved successfully" },
       { status: 404, description: "No description" },
@@ -5507,9 +5414,6 @@ export const policyEndpoints: Endpoint[] = [
     summary: "Update a policy",
     description: "Updates an existing policy. Only provided fields are updated. The last_updated_by and last_updated_at are set automatically from the JWT token. If assigned_reviewer_ids is provided, the reviewer list is fully replaced.",
     requiresAuth: true,
-    parameters: [
-      { name: 'undefined', in: 'undefined', type: 'string', required: false, description: "The undefined" },
-    ],
     requestBody: {
       "(schema)": "PolicyUpdateRequest",
     },
@@ -5526,9 +5430,6 @@ export const policyEndpoints: Endpoint[] = [
     summary: "Delete a policy by ID",
     description: "Permanently deletes a policy and its associated reviewer mappings (via CASCADE).",
     requiresAuth: true,
-    parameters: [
-      { name: 'undefined', in: 'undefined', type: 'string', required: false, description: "The undefined" },
-    ],
     responses: [
       { status: 202, description: "Policy deleted successfully" },
       { status: 404, description: "No description" },
@@ -5542,9 +5443,6 @@ export const policyEndpoints: Endpoint[] = [
     summary: "Export policy as PDF",
     description: "Generates and downloads the policy as a PDF file.",
     requiresAuth: true,
-    parameters: [
-      { name: 'undefined', in: 'undefined', type: 'string', required: false, description: "The undefined" },
-    ],
     responses: [
       { status: 200, description: "PDF file stream" },
       { status: 400, description: "Invalid policy ID" },
@@ -5559,9 +5457,6 @@ export const policyEndpoints: Endpoint[] = [
     summary: "Export policy as DOCX",
     description: "Generates and downloads the policy as a DOCX file.",
     requiresAuth: true,
-    parameters: [
-      { name: 'undefined', in: 'undefined', type: 'string', required: false, description: "The undefined" },
-    ],
     responses: [
       { status: 200, description: "DOCX file stream" },
       { status: 400, description: "Invalid policy ID" },
@@ -5576,9 +5471,6 @@ export const policyEndpoints: Endpoint[] = [
     summary: "Request review for a policy",
     description: "Sets the policy review status to pending_review and sends in-app notifications to each specified reviewer.",
     requiresAuth: true,
-    parameters: [
-      { name: 'undefined', in: 'undefined', type: 'string', required: false, description: "The undefined" },
-    ],
     requestBody: {
       "reviewer_ids": "array (required)",
       "message": "string (optional)",
@@ -5597,9 +5489,6 @@ export const policyEndpoints: Endpoint[] = [
     summary: "Approve a policy review",
     description: "Sets the policy review status to approved and sends an in-app notification to the policy author.",
     requiresAuth: true,
-    parameters: [
-      { name: 'undefined', in: 'undefined', type: 'string', required: false, description: "The undefined" },
-    ],
     requestBody: {
       "comment": "string (optional)",
     },
@@ -5617,9 +5506,6 @@ export const policyEndpoints: Endpoint[] = [
     summary: "Reject a policy review (request changes)",
     description: "Sets the policy review status to changes_requested and sends an in-app notification to the policy author. A comment is required.",
     requiresAuth: true,
-    parameters: [
-      { name: 'undefined', in: 'undefined', type: 'string', required: false, description: "The undefined" },
-    ],
     requestBody: {
       "comment": "string (required)",
     },
@@ -6121,9 +6007,6 @@ export const projectEndpoints: Endpoint[] = [
     path: '/projects/assessment/progress/{id}',
     summary: "Get assessment progress for a single project",
     requiresAuth: true,
-    parameters: [
-      { name: 'undefined', in: 'undefined', type: 'string', required: false, description: "The undefined" },
-    ],
     responses: [
       { status: 200, description: "Assessment progress returned" },
       { status: 404, description: "Project not found" },
@@ -6136,9 +6019,6 @@ export const projectEndpoints: Endpoint[] = [
     path: '/projects/calculateProjectRisks/{id}',
     summary: "Calculate project risk distribution",
     requiresAuth: true,
-    parameters: [
-      { name: 'undefined', in: 'undefined', type: 'string', required: false, description: "The undefined" },
-    ],
     responses: [
       { status: 200, description: "Risk calculations returned" },
       { status: 204, description: "No risk data available" },
@@ -6151,9 +6031,6 @@ export const projectEndpoints: Endpoint[] = [
     path: '/projects/calculateVendorRisks/{id}',
     summary: "Calculate vendor risk distribution",
     requiresAuth: true,
-    parameters: [
-      { name: 'undefined', in: 'undefined', type: 'string', required: false, description: "The undefined" },
-    ],
     responses: [
       { status: 200, description: "Vendor risk calculations returned" },
       { status: 204, description: "No vendor risk data available" },
@@ -6181,9 +6058,6 @@ export const projectEndpoints: Endpoint[] = [
     path: '/projects/compliance/progress/{id}',
     summary: "Get compliance progress for a single project",
     requiresAuth: true,
-    parameters: [
-      { name: 'undefined', in: 'undefined', type: 'string', required: false, description: "The undefined" },
-    ],
     responses: [
       { status: 200, description: "Compliance progress returned" },
       { status: 404, description: "Project not found" },
@@ -6208,9 +6082,6 @@ export const projectEndpoints: Endpoint[] = [
     path: '/projects/stats/{id}',
     summary: "Get project statistics by ID",
     requiresAuth: true,
-    parameters: [
-      { name: 'undefined', in: 'undefined', type: 'string', required: false, description: "The undefined" },
-    ],
     responses: [
       { status: 202, description: "Project stats retrieved" },
       { status: 500, description: "Internal server error" },
@@ -6223,9 +6094,6 @@ export const projectEndpoints: Endpoint[] = [
     summary: "Get a project by ID",
     description: "Returns a single project with its frameworks, owner name, members, and approval status.",
     requiresAuth: true,
-    parameters: [
-      { name: 'undefined', in: 'undefined', type: 'string', required: false, description: "The undefined" },
-    ],
     responses: [
       { status: 200, description: "Project found" },
       { status: 404, description: "Project not found" },
@@ -6239,9 +6107,6 @@ export const projectEndpoints: Endpoint[] = [
     summary: "Update a project by ID",
     description: "Partially updates a project and its member list. Only provided fields are updated.",
     requiresAuth: true,
-    parameters: [
-      { name: 'undefined', in: 'undefined', type: 'string', required: false, description: "The undefined" },
-    ],
     requestBody: {
       "(schema)": "UpdateProjectRequest",
     },
@@ -6261,9 +6126,6 @@ export const projectEndpoints: Endpoint[] = [
     summary: "Delete a project by ID",
     description: "Deletes a project and all dependent entities (files, risks, members, framework data).",
     requiresAuth: true,
-    parameters: [
-      { name: 'undefined', in: 'undefined', type: 'string', required: false, description: "The undefined" },
-    ],
     responses: [
       { status: 202, description: "Project deleted successfully" },
       { status: 404, description: "Project not found" },
@@ -6276,9 +6138,6 @@ export const projectEndpoints: Endpoint[] = [
     path: '/projects/{id}/status',
     summary: "Update project status",
     requiresAuth: true,
-    parameters: [
-      { name: 'undefined', in: 'undefined', type: 'string', required: false, description: "The undefined" },
-    ],
     requestBody: {
       "status": "ProjectStatus (required)",
     },
@@ -7164,6 +7023,94 @@ export const shareLinkEndpoints: Endpoint[] = [
   },
 ];
 
+// Slack Webhooks endpoints
+export const slackWebhookEndpoints: Endpoint[] = [
+  {
+    method: 'GET',
+    path: '/slackWebhooks',
+    summary: "Get All Slack Webhooks",
+    requiresAuth: true,
+    responses: [
+      { status: 200, description: "Success" },
+      { status: 401, description: "Unauthorized" },
+      { status: 500, description: "Internal server error" },
+    ],
+    tag: "Slack Webhooks",
+  },
+  {
+    method: 'POST',
+    path: '/slackWebhooks',
+    summary: "Create New Slack Webhook",
+    requiresAuth: true,
+    responses: [
+      { status: 201, description: "Created successfully" },
+      { status: 401, description: "Unauthorized" },
+      { status: 500, description: "Internal server error" },
+    ],
+    tag: "Slack Webhooks",
+  },
+  {
+    method: 'GET',
+    path: '/slackWebhooks/{id}',
+    summary: "Get Slack Webhook By Id",
+    requiresAuth: true,
+    parameters: [
+      { name: 'id', in: 'path', type: 'integer', required: true, description: "The id" },
+    ],
+    responses: [
+      { status: 200, description: "Success" },
+      { status: 401, description: "Unauthorized" },
+      { status: 500, description: "Internal server error" },
+    ],
+    tag: "Slack Webhooks",
+  },
+  {
+    method: 'PATCH',
+    path: '/slackWebhooks/{id}',
+    summary: "Update Slack Webhook By Id",
+    requiresAuth: true,
+    parameters: [
+      { name: 'id', in: 'path', type: 'integer', required: true, description: "The id" },
+    ],
+    responses: [
+      { status: 200, description: "Success" },
+      { status: 401, description: "Unauthorized" },
+      { status: 500, description: "Internal server error" },
+    ],
+    tag: "Slack Webhooks",
+  },
+  {
+    method: 'DELETE',
+    path: '/slackWebhooks/{id}',
+    summary: "Delete Slack Webhook By Id",
+    requiresAuth: true,
+    parameters: [
+      { name: 'id', in: 'path', type: 'integer', required: true, description: "The id" },
+    ],
+    responses: [
+      { status: 200, description: "Deleted successfully" },
+      { status: 401, description: "Unauthorized" },
+      { status: 500, description: "Internal server error" },
+    ],
+    tag: "Slack Webhooks",
+  },
+  {
+    method: 'POST',
+    path: '/slackWebhooks/{id}/send',
+    summary: "Send Slack Message",
+    requiresAuth: true,
+    parameters: [
+      { name: 'id', in: 'path', type: 'integer', required: true, description: "The id" },
+    ],
+    responses: [
+      { status: 201, description: "Created successfully" },
+      { status: 401, description: "Unauthorized" },
+      { status: 500, description: "Internal server error" },
+    ],
+    tag: "Slack Webhooks",
+  },
+];
+
 // Subscriptions endpoints
 export const subscriptionEndpoints: Endpoint[] = [
   {
@@ -7566,6 +7513,49 @@ export const taskEndpoints: Endpoint[] = [
   },
 ];
 
+// Tokens endpoints
+export const tokenEndpoints: Endpoint[] = [
+  {
+    method: 'GET',
+    path: '/tokens',
+    summary: "Get Api Tokens",
+    requiresAuth: true,
+    responses: [
+      { status: 200, description: "Success" },
+      { status: 401, description: "Unauthorized" },
+      { status: 500, description: "Internal server error" },
+    ],
+    tag: "Tokens",
+  },
+  {
+    method: 'POST',
+    path: '/tokens',
+    summary: "Create Api Token",
+    requiresAuth: true,
+    responses: [
+      { status: 201, description: "Created successfully" },
+      { status: 401, description: "Unauthorized" },
+      { status: 500, description: "Internal server error" },
+    ],
+    tag: "Tokens",
+  },
+  {
+    method: 'DELETE',
+    path: '/tokens/{id}',
+    summary: "Delete Api Token",
+    requiresAuth: true,
+    parameters: [
+      { name: 'id', in: 'path', type: 'integer', required: true, description: "The id" },
+    ],
+    responses: [
+      { status: 200, description: "Deleted successfully" },
+      { status: 401, description: "Unauthorized" },
+      { status: 500, description: "Internal server error" },
+    ],
+    tag: "Tokens",
+  },
+];
+
 // Training endpoints
 export const trainingEndpoints: Endpoint[] = [
   {
@@ -7639,50 +7629,8 @@ export const trainingEndpoints: Endpoint[] = [
   },
 ];
 
-// Users endpoints
+// Users - CRUD endpoints
 export const userEndpoints: Endpoint[] = [
-  {
-    method: 'POST',
-    path: '/user-preferences',
-    summary: "Create User Preferences",
-    requiresAuth: true,
-    responses: [
-      { status: 201, description: "Created successfully" },
-      { status: 401, description: "Unauthorized" },
-      { status: 500, description: "Internal server error" },
-    ],
-    tag: "Users",
-  },
-  {
-    method: 'GET',
-    path: '/user-preferences/{userId}',
-    summary: "Get Preferences By User",
-    requiresAuth: true,
-    parameters: [
-      { name: 'userId', in: 'path', type: 'integer', required: true, description: "The userId" },
-    ],
-    responses: [
-      { status: 200, description: "Success" },
-      { status: 401, description: "Unauthorized" },
-      { status: 500, description: "Internal server error" },
-    ],
-    tag: "Users",
-  },
-  {
-    method: 'PATCH',
-    path: '/user-preferences/{userId}',
-    summary: "Update User Preferences",
-    requiresAuth: true,
-    parameters: [
-      { name: 'userId', in: 'path', type: 'integer', required: true, description: "The userId" },
-    ],
-    responses: [
-      { status: 200, description: "Success" },
-      { status: 401, description: "Unauthorized" },
-      { status: 500, description: "Internal server error" },
-    ],
-    tag: "Users",
-  },
   {
     method: 'GET',
     path: '/users',
@@ -7730,42 +7678,6 @@ export const userEndpoints: Endpoint[] = [
       { status: 500, description: "Internal server error" },
     ],
     tag: "Users - Password",
-  },
-  {
-    method: 'POST',
-    path: '/users/login',
-    summary: "Authenticate user",
-    description: "Validates email/password credentials via bcrypt. Returns a JWT access token in the response body and sets a refresh token in an HTTP-only cookie. Rate-limited to 5 requests per minute per IP.",
-    requiresAuth: false,
-    requestBody: {
-      "email": "string (required)",
-      "password": "string (required)",
-    },
-    responses: [
-      { status: 202, description: "Authentication successful" },
-      { status: 401, description: "Invalid email or password" },
-      { status: 429, description: "Too many login attempts" },
-      { status: 500, description: "Internal server error" },
-    ],
-    tag: "Users - Authentication",
-  },
-  {
-    method: 'POST',
-    path: '/users/refresh-token',
-    summary: "Refresh access token",
-    description: "Reads the refresh_token from an HTTP-only cookie and issues a new JWT access token if the refresh token is still valid.",
-    requiresAuth: false,
-    parameters: [
-      { name: 'refresh_token', in: 'cookie', type: 'string', required: true, description: "JWT refresh token set during login" },
-    ],
-    responses: [
-      { status: 200, description: "New access token issued" },
-      { status: 400, description: "Refresh token missing from cookie" },
-      { status: 401, description: "Invalid refresh token" },
-      { status: 406, description: "Refresh token expired" },
-      { status: 500, description: "Internal server error" },
-    ],
-    tag: "Users - Authentication",
   },
   {
     method: 'POST',
@@ -7933,6 +7845,52 @@ export const userEndpoints: Endpoint[] = [
       { status: 500, description: "Internal server error" },
     ],
     tag: "Users - Profile Photo",
+  },
+];
+
+// User Preferences endpoints
+export const userPreferenceEndpoints: Endpoint[] = [
+  {
+    method: 'POST',
+    path: '/user-preferences',
+    summary: "Create User Preferences",
+    requiresAuth: true,
+    responses: [
+      { status: 201, description: "Created successfully" },
+      { status: 401, description: "Unauthorized" },
+      { status: 500, description: "Internal server error" },
+    ],
+    tag: "User Preferences",
+  },
+  {
+    method: 'GET',
+    path: '/user-preferences/{userId}',
+    summary: "Get Preferences By User",
+    requiresAuth: true,
+    parameters: [
+      { name: 'userId', in: 'path', type: 'integer', required: true, description: "The userId" },
+    ],
+    responses: [
+      { status: 200, description: "Success" },
+      { status: 401, description: "Unauthorized" },
+      { status: 500, description: "Internal server error" },
+    ],
+    tag: "User Preferences",
+  },
+  {
+    method: 'PATCH',
+    path: '/user-preferences/{userId}',
+    summary: "Update User Preferences",
+    requiresAuth: true,
+    parameters: [
+      { name: 'userId', in: 'path', type: 'integer', required: true, description: "The userId" },
+    ],
+    responses: [
+      { status: 200, description: "Success" },
+      { status: 401, description: "Unauthorized" },
+      { status: 500, description: "Internal server error" },
+    ],
+    tag: "User Preferences",
   },
 ];
 
@@ -8227,12 +8185,15 @@ export const allEndpoints = {
   setting: settingEndpoints,
   shadowAi: shadowAiEndpoints,
   shareLink: shareLinkEndpoints,
+  slackWebhook: slackWebhookEndpoints,
   subscription: subscriptionEndpoints,
   superAdmin: superAdminEndpoints,
   system: systemEndpoints,
   task: taskEndpoints,
+  token: tokenEndpoints,
   training: trainingEndpoints,
   user: userEndpoints,
+  userPreference: userPreferenceEndpoints,
   vendor: vendorEndpoints,
   vendorRisk: vendorRiskEndpoints,
   webhook: webhookEndpoints,

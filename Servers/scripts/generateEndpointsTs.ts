@@ -74,6 +74,7 @@ function tagToVarName(tag: string): string {
     "AI Detection": "aiDetection",
     "AI Trust Centre": "aiTrustCentre",
     "Agent Discovery": "agentDiscovery",
+    Authentication: "authentication",
     "Approval Requests": "approvalRequest",
     "Approval Workflows": "approvalWorkflow",
     Assessments: "assessment",
@@ -210,7 +211,9 @@ function buildParameters(
 }> | undefined {
   const merged = [...(pathParams || []), ...(op.parameters || [])];
   const seen = new Set<string>();
+  const validIn = new Set(["path", "query", "header"]);
   const params = merged.filter((p) => {
+    if (!p.name || !p.in || !validIn.has(p.in)) return false;
     const key = `${p.name}:${p.in}`;
     if (seen.has(key)) return false;
     seen.add(key);
