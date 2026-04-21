@@ -22,8 +22,7 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.71",
     "@ai-sdk/openai": "^3.0.53",
-    "@awaismirza/bypass-cors": "^1.2.0",
-    "@aws-sdk/client-ses": "^3.1032.0",
+"@aws-sdk/client-ses": "^3.1032.0",
     "@azure/communication-email": "^1.1.0",
     "@slack/web-api": "^7.15.1",
     "@smithy/node-http-handler": "^4.3.0",
@@ -109,13 +108,6 @@
     "tsc-watch": "^7.2.0"
   },
   "overrides": {
-    "@awaismirza/bypass-cors": {
-      "@fastify/reply-from": "9.8.0",
-      "pino": "10.1.0"
-    },
-    "@fastify/reply-from": {
-      "undici": "5.29.0"
-    },
     "html-minifier": "npm:html-minifier-terser@^7.2.0"
   }
 }
