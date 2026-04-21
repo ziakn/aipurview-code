@@ -17804,7 +17804,7 @@ paths:
   /slackWebhooks:
     get:
       tags:
-        - Integrations
+        - Slack Webhooks
       summary: Get All Slack Webhooks
       operationId: getAllSlackWebhooks
       security:
@@ -17818,7 +17818,7 @@ paths:
           description: Internal server error
     post:
       tags:
-        - Integrations
+        - Slack Webhooks
       summary: Create New Slack Webhook
       operationId: createNewSlackWebhook
       security:
@@ -17838,7 +17838,7 @@ paths:
   /slackWebhooks/{id}:
     get:
       tags:
-        - Integrations
+        - Slack Webhooks
       summary: Get Slack Webhook By Id
       operationId: getSlackWebhookById
       security:
@@ -17858,7 +17858,7 @@ paths:
           description: Internal server error
     patch:
       tags:
-        - Integrations
+        - Slack Webhooks
       summary: Update Slack Webhook By Id
       operationId: updateSlackWebhookById
       security:
@@ -17883,7 +17883,7 @@ paths:
           description: Internal server error
     delete:
       tags:
-        - Integrations
+        - Slack Webhooks
       summary: Delete Slack Webhook By Id
       operationId: deleteSlackWebhookById
       security:
@@ -17904,7 +17904,7 @@ paths:
   /slackWebhooks/{id}/send:
     post:
       tags:
-        - Integrations
+        - Slack Webhooks
       summary: Send Slack Message
       operationId: sendSlackMessage
       security:
@@ -18456,7 +18456,7 @@ paths:
   /tokens:
     get:
       tags:
-        - Authentication
+        - Tokens
       summary: Get Api Tokens
       operationId: getApiTokens
       security:
@@ -18470,7 +18470,7 @@ paths:
           description: Internal server error
     post:
       tags:
-        - Authentication
+        - Tokens
       summary: Create Api Token
       operationId: createApiToken
       security:
@@ -18490,7 +18490,7 @@ paths:
   /tokens/{id}:
     delete:
       tags:
-        - Authentication
+        - Tokens
       summary: Delete Api Token
       operationId: deleteApiToken
       security:
@@ -18654,7 +18654,7 @@ paths:
   /user-preferences:
     post:
       tags:
-        - Users
+        - User Preferences
       summary: Create User Preferences
       operationId: createUserPreferences
       security:
@@ -18674,7 +18674,7 @@ paths:
   /user-preferences/{userId}:
     get:
       tags:
-        - Users
+        - User Preferences
       summary: Get Preferences By User
       operationId: getPreferencesByUser
       security:
@@ -18694,7 +18694,7 @@ paths:
           description: Internal server error
     patch:
       tags:
-        - Users
+        - User Preferences
       summary: Update User Preferences
       operationId: updateUserPreferences
       security:
@@ -18865,7 +18865,7 @@ paths:
         in the response body and sets a refresh token in an HTTP-only cookie.
         Rate-limited to 5 requests per minute per IP.
       tags:
-        - Users - Authentication
+        - Authentication
       security: []
       requestBody:
         required: true
@@ -18932,7 +18932,7 @@ paths:
         Reads the refresh_token from an HTTP-only cookie and issues a new
         JWT access token if the refresh token is still valid.
       tags:
-        - Users - Authentication
+        - Authentication
       security: []
       parameters:
         - in: cookie
