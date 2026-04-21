@@ -10,7 +10,7 @@ export const postMarketMonitoringContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Post-market Monitoring (PMM) is how you keep track of a high-risk AI system after it goes live. EU AI Act Article 72 requires providers of high-risk AI systems to establish and document a monitoring plan. VerifyWise automates this with recurring monitoring cycles, structured question-based assessments, automatic reminders, and PDF report generation.',
+      text: 'Post-market monitoring (PMM) is how you keep track of a high-risk AI system after it goes live. EU AI Act Article 72 requires providers of high-risk AI systems to establish and document a monitoring plan. VerifyWise automates this with recurring monitoring cycles, structured question-based assessments, automatic reminders and PDF report generation.',
     },
     {
       type: 'heading',
@@ -21,7 +21,7 @@ export const postMarketMonitoringContent: ArticleContent = {
     {
       type: 'ordered-list',
       items: [
-        { text: 'You configure a monitoring schedule for a project (e.g., every 30 days).' },
+        { text: 'You configure a monitoring schedule for a use case (e.g., every 30 days).' },
         { text: 'When a cycle is due, the assigned stakeholder gets an email notification.' },
         { text: 'They open the monitoring form and answer a set of structured questions about the system\'s current state.' },
         { text: 'If any concerns are flagged, an escalation email goes to the designated contact.' },
@@ -36,7 +36,7 @@ export const postMarketMonitoringContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Open a project and go to the **Monitoring** tab. If monitoring hasn\'t been configured yet, you\'ll see the setup form.',
+      text: 'Open a use case and go to the **Monitoring** tab. If monitoring hasn\'t been configured yet, you\'ll see the setup form.',
     },
     {
       type: 'table',
@@ -113,7 +113,7 @@ export const postMarketMonitoringContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Each cycle captures a snapshot of the project\'s current state:',
+      text: 'Each cycle captures a snapshot of the use case\'s current state:',
     },
     {
       type: 'bullet-list',
@@ -121,12 +121,12 @@ export const postMarketMonitoringContent: ArticleContent = {
         { text: 'Risk counts by level (high, medium, low)' },
         { text: 'Number of linked models and vendors' },
         { text: 'Model and vendor risk counts' },
-        { text: 'Use case status at the time of the cycle' },
+        { text: 'Status of the use case at the time of the cycle' },
       ],
     },
     {
       type: 'paragraph',
-      text: 'These snapshots let you track how the project\'s risk profile changes over time across multiple monitoring cycles.',
+      text: 'These snapshots let you track how the risk profile changes over time across multiple monitoring cycles.',
     },
     {
       type: 'heading',
@@ -136,7 +136,7 @@ export const postMarketMonitoringContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'When a cycle is completed, VerifyWise generates a PDF report containing the organization name, use case, cycle number, completion date, the context snapshot, all responses, flagged concerns, and the mapped EU AI Act articles. You can download reports from the Monitoring tab.',
+      text: 'When a cycle is completed, VerifyWise generates a PDF report with the organization name, use case, cycle number, completion date, the context snapshot, all responses, flagged concerns and the mapped EU AI Act articles. You can download reports from the Monitoring tab.',
     },
     {
       type: 'heading',
@@ -191,7 +191,7 @@ export const postMarketMonitoringContent: ArticleContent = {
           collectionId: 'risk-management',
           articleId: 'risk-assessment',
           title: 'Conducting risk assessments',
-          description: 'The risk data that feeds into monitoring snapshots.',
+          description: 'Risk data that feeds into monitoring snapshots.',
         },
         {
           collectionId: 'compliance',
