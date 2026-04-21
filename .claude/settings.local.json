@@ -26,7 +26,17 @@
       "Bash(cmd.exe /c \"where gh\")",
       "Bash(curl:*)",
       "WebFetch(domain:api.github.com)",
-      "Bash(git status:*)"
+      "Bash(git status:*)",
+      "Bash(node -e:*)",
+      "Bash(test:*)",
+      "Bash(npx ts-node:*)",
+      "Bash(npm ls:*)",
+      "Bash(npm install)",
+      "Bash(git stash:*)",
+      "Bash(echo:*)",
+      "Bash(kill:*)",
+      "Bash(wait:*)",
+      "WebSearch"
     ]
   }
 }
