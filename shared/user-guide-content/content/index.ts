@@ -35,6 +35,7 @@ import { shareLinksContent } from './ai-governance/share-links';
 import { policyManagementContent } from './policies/policy-management';
 import { policyVersioningContent } from './policies/policy-versioning';
 import { policyApprovalContent } from './policies/policy-approval';
+import { policyTemplatesContent } from './policies/policy-templates';
 import { trainingTrackingContent } from './training/training-tracking';
 import { dashboardAnalyticsContent } from './reporting/dashboard-analytics';
 import { generatingReportsContent } from './reporting/generating-reports';
@@ -81,6 +82,14 @@ import { aiGatewaySettingsContent } from './ai-gateway/settings';
 import { virtualKeysContent as aiGatewayVirtualKeysContent } from './ai-gateway/virtual-keys';
 import { logsContent as aiGatewayLogsContent } from './ai-gateway/logs';
 import { promptsContent as aiGatewayPromptsContent } from './ai-gateway/prompts';
+import { aiGatewayModelsContent } from './ai-gateway/models';
+import { mcpOverviewContent } from './ai-gateway/mcp-overview';
+import { mcpServersContent } from './ai-gateway/mcp-servers';
+import { mcpToolsContent } from './ai-gateway/mcp-tools';
+import { mcpAgentKeysContent } from './ai-gateway/mcp-agent-keys';
+import { mcpAuditContent } from './ai-gateway/mcp-audit';
+import { mcpApprovalsContent } from './ai-gateway/mcp-approvals';
+import { mcpGuardrailsContent } from './ai-gateway/mcp-guardrails';
 
 // Map of article IDs to their content
 // Format: 'collectionId/articleId': ArticleContent
@@ -126,6 +135,7 @@ export const articleContentMap: Record<string, ArticleContent> = {
   'policies/policy-management': policyManagementContent,
   'policies/policy-versioning': policyVersioningContent,
   'policies/policy-approval': policyApprovalContent,
+  'policies/policy-templates': policyTemplatesContent,
   // Training
   'training/training-tracking': trainingTrackingContent,
   // Reporting
@@ -180,6 +190,15 @@ export const articleContentMap: Record<string, ArticleContent> = {
   'ai-gateway/virtual-keys': aiGatewayVirtualKeysContent,
   'ai-gateway/logs': aiGatewayLogsContent,
   'ai-gateway/prompts': aiGatewayPromptsContent,
+  'ai-gateway/models': aiGatewayModelsContent,
+  // MCP Gateway
+  'ai-gateway/mcp-overview': mcpOverviewContent,
+  'ai-gateway/mcp-servers': mcpServersContent,
+  'ai-gateway/mcp-tools': mcpToolsContent,
+  'ai-gateway/mcp-agent-keys': mcpAgentKeysContent,
+  'ai-gateway/mcp-audit': mcpAuditContent,
+  'ai-gateway/mcp-approvals': mcpApprovalsContent,
+  'ai-gateway/mcp-guardrails': mcpGuardrailsContent,
 };
 
 // Helper to get article content

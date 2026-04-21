@@ -404,7 +404,7 @@ export const collections: Collection[] = [
     title: 'Policies',
     description: 'Create, manage, and enforce AI governance policies across your organization.',
     icon: 'FileText',
-    articleCount: 3,
+    articleCount: 4,
     articles: [
       {
         id: 'policy-management',
@@ -423,6 +423,12 @@ export const collections: Collection[] = [
         title: 'Policy templates',
         description: 'Use pre-built templates to create common governance policies.',
         keywords: ['template', 'pre-built', 'ethics', 'compliance', 'starter'],
+      },
+      {
+        id: 'policy-templates',
+        title: 'Policy templates library',
+        description: 'Browse, filter and create policies from the full template library with categories, tags and the rich text editor.',
+        keywords: ['template', 'library', 'category', 'filter', 'group', 'editor', 'rich text', 'tiptap', 'copy', 'customize'],
       },
     ],
   },
@@ -551,7 +557,7 @@ export const collections: Collection[] = [
     title: 'AI Gateway',
     description: 'Route, monitor, and protect LLM requests through a unified gateway with cost tracking and guardrails.',
     icon: 'Router',
-    articleCount: 9,
+    articleCount: 17,
     articles: [
       {
         id: 'getting-started',
@@ -606,6 +612,54 @@ export const collections: Collection[] = [
         title: 'Prompts',
         description: 'Create versioned prompt templates with variables, test them with streaming responses, and bind them to endpoints.',
         keywords: ['prompt', 'template', 'variable', 'version', 'publish', 'draft', 'system prompt', 'message', 'test', 'editor'],
+      },
+      {
+        id: 'models',
+        title: 'Models',
+        description: 'Browse the full LLM model catalog, compare features side by side, and estimate monthly costs across providers.',
+        keywords: ['model', 'catalog', 'provider', 'cost', 'calculator', 'compare', 'features', 'vision', 'function calling', 'pricing', 'openai', 'anthropic', 'google', 'litellm'],
+      },
+      {
+        id: 'mcp-overview',
+        title: 'MCP Gateway overview',
+        description: 'Understand what the MCP Gateway does, how it works, and why you need it for agent governance.',
+        keywords: ['mcp', 'gateway', 'overview', 'agent', 'tool', 'proxy', 'model context protocol', 'json-rpc'],
+      },
+      {
+        id: 'mcp-servers',
+        title: 'MCP servers',
+        description: 'Register backend MCP servers, configure authentication, and monitor health status.',
+        keywords: ['mcp', 'server', 'register', 'url', 'auth', 'bearer', 'api key', 'health', 'slug', 'discovery'],
+      },
+      {
+        id: 'mcp-tools',
+        title: 'MCP tool catalog',
+        description: 'View discovered tools, assign risk levels, and enable approval requirements.',
+        keywords: ['mcp', 'tool', 'catalog', 'risk', 'level', 'approval', 'low', 'medium', 'high', 'discovery'],
+      },
+      {
+        id: 'mcp-agent-keys',
+        title: 'MCP agent keys',
+        description: 'Create scoped API keys for AI agents with tool ACLs, rate limits, and expiration.',
+        keywords: ['mcp', 'agent', 'key', 'api key', 'sk-mcp', 'acl', 'rate limit', 'revoke', 'allowed tools', 'blocked tools'],
+      },
+      {
+        id: 'mcp-audit',
+        title: 'MCP audit log',
+        description: 'Review tool invocation history with stats, charts, filters and pagination.',
+        keywords: ['mcp', 'audit', 'log', 'history', 'tool call', 'latency', 'error rate', 'compliance', 'record-keeping'],
+      },
+      {
+        id: 'mcp-approvals',
+        title: 'MCP approvals',
+        description: 'Review and decide on pending tool execution requests that need human sign-off.',
+        keywords: ['mcp', 'approval', 'approve', 'deny', 'pending', 'human oversight', 'review', 'decision'],
+      },
+      {
+        id: 'mcp-guardrails',
+        title: 'MCP guardrails',
+        description: 'Configure PII detection, content filtering, and prompt injection rules for MCP tool inputs.',
+        keywords: ['mcp', 'guardrail', 'pii', 'content filter', 'prompt injection', 'block', 'mask', 'scan', 'tool input'],
       },
     ],
   },
