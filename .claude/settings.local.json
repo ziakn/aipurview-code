@@ -41,7 +41,9 @@
       "Bash(node -c database/migrations/20260420105042-iso42001-add-clause-6-3.js)",
       "Bash(PGPASSWORD=test psql *)",
       "Bash(lsof *)",
-      "Bash(node *)"
+      "Bash(node *)",
+      "Bash(npx sequelize *)",
+      "Bash(psql -h localhost -p 5433 -U postgres -d vwtest4 -c ' *)"
     ]
   }
 }
