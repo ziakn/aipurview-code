@@ -149,7 +149,7 @@ const ComplianceTracker = ({
   if (loading) {
     return (
       <Stack className="compliance-tracker" sx={{ gap: "16px" }}>
-        <Typography sx={pageHeadingStyle}>Compliance tracker</Typography>
+        <Typography sx={pageHeadingStyle}>Requirements tracker</Typography>
         <CustomizableSkeleton
           variant="rectangular"
           minWidth={300}
@@ -168,7 +168,7 @@ const ComplianceTracker = ({
   if (!currentProjectId) {
     return (
       <Stack className="compliance-tracker" sx={{ gap: "16px" }}>
-        <Typography sx={pageHeadingStyle}>Compliance tracker</Typography>
+        <Typography sx={pageHeadingStyle}>Requirements tracker</Typography>
         <Typography>Please select a project to view compliance data</Typography>
       </Stack>
     );

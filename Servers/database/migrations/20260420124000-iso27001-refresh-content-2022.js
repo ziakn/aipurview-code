@@ -14,6 +14,12 @@
  * loaded at migration time. Idempotent — re-running is a no-op at the data
  * level if content already matches.
  */
+const toPgArray = (arr) => {
+  if (!arr || !Array.isArray(arr) || arr.length === 0) return '{}';
+  const escaped = arr.map(v => `"${String(v).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`);
+  return `{${escaped.join(',')}}`;
+};
+
 module.exports = {
   async up(queryInterface) {
     const { ISO27001Annex } = require('../../dist/structures/ISO-27001/annexes/iso27001.annex.struct');
@@ -50,8 +56,8 @@ module.exports = {
               replacements: {
                 title: ctrl.title,
                 req: ctrl.requirement_summary || '',
-                kq: ctrl.key_questions || [],
-                ev: ctrl.evidence_examples || [],
+                kq: toPgArray(ctrl.key_questions || []),
+                ev: toPgArray(ctrl.evidence_examples || []),
                 frameworkId,
                 annexId: `A.${annex.index}`,
               },

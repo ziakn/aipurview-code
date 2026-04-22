@@ -1,5 +1,11 @@
 'use strict';
 
+const toPgArray = (arr) => {
+  if (!arr || !Array.isArray(arr) || arr.length === 0) return '{}';
+  const escaped = arr.map(v => `"${String(v).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`);
+  return `{${escaped.join(',')}}`;
+};
+
 /**
  * ISO 27001 — bring VW's struct tables in line with ISO/IEC 27001:2022
  * Annex A and Clause 6.
@@ -317,6 +323,8 @@ module.exports = {
       }
 
       // ----- DELETE phantom A.8.32-A.8.35
+      // Use toPgArray to build a literal text[] value, since passing a JS array
+      // directly through :replacements gets expanded as positional parameters.
       await queryInterface.sequelize.query(
         `DELETE FROM verifywise.annexcontrols_struct_iso27001
          WHERE title = ANY(:phantoms::text[])
@@ -324,7 +332,7 @@ module.exports = {
              SELECT id FROM verifywise.annexcategories_struct_iso27001
              WHERE framework_id = :frameworkId AND annex_id = 'A.8'
            );`,
-        { transaction: t, replacements: { frameworkId, phantoms: PHANTOM_A8_TITLES } }
+        { transaction: t, replacements: { frameworkId, phantoms: toPgArray(PHANTOM_A8_TITLES) } }
       );
 
       // ----- INSERT new annex controls (A.5.37, A.8.32, A.8.33, A.8.34)
@@ -370,8 +378,8 @@ module.exports = {
 
         await queryInterface.sequelize.query(
           `INSERT INTO verifywise.annexcontrols_iso27001
-             (organization_id, projects_frameworks_id, annexcontrol_meta_id, status, is_applicable)
-           SELECT pf.organization_id, pf.id, :structId, 'Not started', true
+             (organization_id, projects_frameworks_id, annexcontrol_meta_id, status)
+           SELECT pf.organization_id, pf.id, :structId, 'Not started'
            FROM verifywise.projects_frameworks pf
            WHERE pf.framework_id = :frameworkId
              AND NOT EXISTS (

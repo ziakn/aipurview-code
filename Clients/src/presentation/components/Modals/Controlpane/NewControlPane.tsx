@@ -1036,7 +1036,7 @@ const NewControlPane = ({
       )}
 
       {isSubmitting && (
-        <CustomizableToast title="Saving control. Please wait..." />
+        <CustomizableToast title="Saving requirement. Please wait..." />
       )}
 
       <Drawer

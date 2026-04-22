@@ -13,7 +13,7 @@
 
 const NEW_SUBCLAUSE = {
   subclause_id: '6.3',
-  order_no: 7,
+  order_no: 6,
   title: 'Planning of changes',
   summary:
     'When the organization determines the need for changes to the AIMS, the changes shall be carried out in a planned manner.',
@@ -28,6 +28,12 @@ const NEW_SUBCLAUSE = {
     'Approval records for AIMS changes',
     'Post-change review records',
   ],
+};
+
+const toPgArray = (arr) => {
+  if (!arr || !Array.isArray(arr) || arr.length === 0) return '{}';
+  const escaped = arr.map(v => `"${String(v).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`);
+  return `{${escaped.join(',')}}`;
 };
 
 module.exports = {
@@ -79,8 +85,8 @@ module.exports = {
               subclause_id: NEW_SUBCLAUSE.subclause_id,
               title: NEW_SUBCLAUSE.title,
               summary: NEW_SUBCLAUSE.summary,
-              questions: NEW_SUBCLAUSE.questions,
-              evidence_examples: NEW_SUBCLAUSE.evidence_examples,
+              questions: toPgArray(NEW_SUBCLAUSE.questions),
+              evidence_examples: toPgArray(NEW_SUBCLAUSE.evidence_examples),
               order_no: NEW_SUBCLAUSE.order_no,
             },
           }

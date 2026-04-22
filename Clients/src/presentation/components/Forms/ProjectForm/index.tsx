@@ -1021,7 +1021,7 @@ const { users } = useUsers();
               onChange={handleCheckboxChange}
               isChecked={values.enable_ai_data_insertion}
               value={values.enable_ai_data_insertion.toString()}
-              label="Enable this option to automatically fill in the Controls and Assessment questions with AI-generated answers, helping you save time. You can review and edit these answers anytime."
+              label="Enable this option to automatically fill in the Requirements and Controls questions with AI-generated answers, helping you save time. You can review and edit these answers anytime."
             />
           </Stack>
         )}

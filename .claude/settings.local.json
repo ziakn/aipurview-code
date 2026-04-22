@@ -35,7 +35,13 @@
       "Bash(cmd.exe /c \"where gh\")",
       "Bash(curl:*)",
       "WebFetch(domain:api.github.com)",
-      "Bash(git status:*)"
+      "Bash(git status:*)",
+      "Bash(node -c database/migrations/20260417150653-reseed-eu-act-struct-with-metadata.js)",
+      "Bash(node -c database/migrations/20260420105041-iso42001-split-clause-6-1.js)",
+      "Bash(node -c database/migrations/20260420105042-iso42001-add-clause-6-3.js)",
+      "Bash(PGPASSWORD=test psql *)",
+      "Bash(lsof *)",
+      "Bash(node *)"
     ]
   }
 }
