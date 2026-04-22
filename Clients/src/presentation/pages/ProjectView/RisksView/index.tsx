@@ -10,8 +10,6 @@ import {
   useMemo,
   useCallback,
   memo,
-  lazy,
-  Suspense,
   useEffect,
 } from "react";
 import BasicTable from "../../../components/Table";
@@ -141,7 +139,7 @@ const RisksView: FC<RisksViewProps> = memo(
       [risksTableCols, risksTableRows]
     );
 
-    const [riskData1, setRiskData] = useState<ProjectRisk[] | VendorRisk[]>([]);
+    const [, setRiskData] = useState<ProjectRisk[] | VendorRisk[]>([]);
 
     const fetchRiskData = useCallback(async () => {
       try {

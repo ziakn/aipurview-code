@@ -54,7 +54,9 @@
       "Bash(kill:*)",
       "Bash(wait:*)",
       "WebSearch",
-      "Bash(git --version)"
+      "Bash(git --version)",
+      "Bash(npm run *)",
+      "Bash(grep \"error TS\" /tmp/buildout.txt)"
     ]
   }
 }
