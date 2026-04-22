@@ -100,7 +100,7 @@
     "typescript-eslint": "^8.58.2",
     "validator": "^13.15.35",
     "vite": "^8.0.8",
-    "xlsx": "^0.18.5"
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.2",
@@ -131,5 +131,13 @@
     "typescript": "^6.0.3",
     "url-loader": "^4.1.1",
     "vitest": "^4.1.4"
+  },
+  "overrides": {
+    "minimatch@3": {
+      "brace-expansion": "1.1.13"
+    },
+    "minimatch@5": {
+      "brace-expansion": "2.0.3"
+    }
   }
 }

@@ -43,7 +43,18 @@
       "Bash(lsof *)",
       "Bash(node *)",
       "Bash(npx sequelize *)",
-      "Bash(psql -h localhost -p 5433 -U postgres -d vwtest4 -c ' *)"
+      "Bash(psql -h localhost -p 5433 -U postgres -d vwtest4 -c ' *)",
+      "Bash(node -e:*)",
+      "Bash(test:*)",
+      "Bash(npx ts-node:*)",
+      "Bash(npm ls:*)",
+      "Bash(npm install)",
+      "Bash(git stash:*)",
+      "Bash(echo:*)",
+      "Bash(kill:*)",
+      "Bash(wait:*)",
+      "WebSearch",
+      "Bash(git --version)"
     ]
   }
 }

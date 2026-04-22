@@ -10,11 +10,11 @@ export const biasAuditsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'A bias audit checks whether an automated decision tool treats demographic groups consistently. You upload records with demographic columns and one of three kinds of outcome data, and VerifyWise calculates per-group rates, cross-group disparities and flags groups that fall below the configured threshold. The tool is not LLM-specific; it works for any system that produces a decision, a score or a classification.',
+      text: 'A bias audit checks whether an automated decision tool treats demographic groups consistently. You upload records with demographic columns and one of three kinds of outcome data. VerifyWise then calculates per-group rates, cross-group disparities and flags groups that fall below the configured threshold. The tool isn\'t LLM-specific; it works for any system that produces a decision, a score or a classification.',
     },
     {
       type: 'paragraph',
-      text: 'NYC Local Law 144 requires annual independent bias audits for any automated employment decision tool. EU AI Act Article 9 and the EEOC guidelines set comparable expectations. VerifyWise ships with 15 compliance frameworks out of the box, each pre-configured with the right categories, thresholds and reporting requirements.',
+      text: 'NYC Local Law 144 requires annual independent bias audits for any automated employment decision tool. EU AI Act Article 9 and the EEOC guidelines set similar expectations. VerifyWise ships with 15 compliance frameworks out of the box, each pre-configured with the right categories, thresholds and reporting requirements.',
     },
     {
       type: 'paragraph',
@@ -28,7 +28,7 @@ export const biasAuditsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Open the LLM Evals module from the sidebar and click **Bias audits**. You\'ll see a list of all audits for your organization, sortable by date, status, framework, or mode. Running audits update automatically every few seconds.',
+      text: 'Open LLM Evals from the flask icon in the sidebar and click **Bias audits**. You\'ll see a list of all audits for your organization, sortable by date, status, framework or mode. Running audits update automatically every few seconds.',
     },
     {
       type: 'heading',
@@ -43,9 +43,9 @@ export const biasAuditsContent: ArticleContent = {
     {
       type: 'bullet-list',
       items: [
-        { bold: 'Selection rate', text: 'The default, and the right choice for any tool that produces a binary decision (hire or reject, approve or deny, flag or pass). Your CSV needs one outcome column. The audit computes each group\'s selection rate and an impact ratio against the highest-rate group. NYC Local Law 144 mandates this metric for binary employment decisions.' },
-        { bold: 'Scoring rate', text: 'Use this when your tool outputs a continuous score rather than a yes/no: a ranker, a risk score, a suitability score. Your CSV needs one numeric score column. VerifyWise computes each group\'s "above-median rate" (the share of records whose score beats the overall median) and then applies the same impact ratio logic. Local Law 144 explicitly allows this as an alternative to selection rate for scoring tools.' },
-        { bold: 'Fairness metrics', text: 'Pick this when you have both the model\'s prediction and the real answer. Your CSV needs a prediction column and a ground-truth column. You get a confusion matrix per group (true positive rate, false positive rate, precision, accuracy) plus the three standard cross-group differences: equal opportunity (TPR gap), equalized odds, predictive parity. This is the most informative mode but it also requires the most data.' },
+        { bold: 'Selection rate', text: 'The default and the right choice for any tool that produces a binary decision (hire or reject, approve or deny, flag or pass). Your CSV needs one outcome column. The audit computes each group\'s selection rate and an impact ratio against the highest-rate group. NYC Local Law 144 mandates this metric for binary employment decisions.' },
+        { bold: 'Scoring rate', text: 'Use this when your tool outputs a continuous score rather than a yes/no, like a ranker, risk score or suitability score. Your CSV needs one numeric score column. VerifyWise computes each group\'s "above-median rate" (the share of records whose score beats the overall median) and then applies the same impact ratio logic. Local Law 144 explicitly allows this as an alternative to selection rate for scoring tools.' },
+        { bold: 'Fairness metrics', text: 'Pick this when you have both the model\'s prediction and the real answer. Your CSV needs a prediction column and a ground-truth column. You get a confusion matrix per group (true positive rate, false positive rate, precision, accuracy) plus three standard cross-group differences: equal opportunity (TPR gap), equalized odds and predictive parity. This is the most informative mode but it also requires the most data.' },
       ],
     },
     {
@@ -76,14 +76,14 @@ export const biasAuditsContent: ArticleContent = {
     {
       type: 'bullet-list',
       items: [
-        { bold: 'Quantitative audit', text: 'Computes selection rates and impact ratios with statistical flagging. Used by NYC LL144, EEOC guidelines, and California FEHA.' },
-        { bold: 'Impact assessment', text: 'Structured assessment with optional quantitative supplement. Used by Colorado SB 205, EU AI Act, and South Korea.' },
-        { bold: 'Compliance checklist', text: 'Checklist-based evaluation with recommended quantitative analysis. Used by Illinois HB 3773, New Jersey, Texas TRAIGA, and others.' },
+        { bold: 'Quantitative audit', text: 'Computes selection rates and impact ratios with statistical flagging. Used by NYC LL144, EEOC guidelines and California FEHA.' },
+        { bold: 'Impact assessment', text: 'Structured assessment with optional quantitative supplement. Used by Colorado SB 205, EU AI Act and South Korea.' },
+        { bold: 'Compliance checklist', text: 'Checklist-based evaluation with recommended quantitative analysis. Used by Illinois HB 3773, New Jersey, Texas TRAIGA and others.' },
       ],
     },
     {
       type: 'paragraph',
-      text: 'Selecting a framework auto-fills everything: protected categories, group labels, threshold values, and intersectional analysis settings. You can override any of these in step 4.',
+      text: 'Selecting a framework auto-fills everything: protected categories, group labels, threshold values and intersectional analysis settings. You can override any of these in step 4.',
     },
     {
       type: 'callout',
@@ -126,7 +126,7 @@ export const biasAuditsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Step 3 starts with a metric dropdown. Pick selection rate, scoring rate or fairness metrics, and the rest of the step adapts to your choice. After uploading the CSV you\'ll see:',
+      text: 'Step 3 starts with a metric dropdown. Pick selection rate, scoring rate or fairness metrics and the rest of the step adapts to your choice. After uploading the CSV you\'ll see:',
     },
     {
       type: 'bullet-list',
@@ -143,7 +143,7 @@ export const biasAuditsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The wizard validates that required categories are mapped, no duplicate mappings exist, and your metric columns aren\'t reused as demographic columns.',
+      text: 'The wizard validates that required categories are mapped, no duplicate mappings exist and your metric columns aren\'t reused as demographic columns.',
     },
     {
       type: 'heading',
@@ -175,7 +175,7 @@ export const biasAuditsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Click into a completed audit to see the results. The detail page shows the audit title, the compliance framework, headline summary cards, a plain-English summary, and the metric-specific results tables underneath.',
+      text: 'Click into a completed audit to see the results. The detail page shows the audit title, the compliance framework, headline summary cards, a plain-English summary and the metric-specific results tables underneath.',
     },
     {
       type: 'heading',
@@ -195,7 +195,7 @@ export const biasAuditsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'At the top you\'ll see cards for total records, the count and rate of positive outcomes, and the number of flagged groups. The positive-outcome label depends on the metric: "Total selected" for selection rate, "Above median" for scoring rate, "Predicted positive" for fairness metrics. If rows were excluded due to missing demographic data, an "Unknown" card also appears.',
+      text: 'At the top you\'ll see cards for total records, the count and rate of positive outcomes and the number of flagged groups. The positive-outcome label depends on the metric: "Total selected" for selection rate, "Above median" for scoring rate, "Predicted positive" for fairness metrics. If rows were excluded due to missing demographic data, an "Unknown" card also appears.',
     },
     {
       type: 'heading',
@@ -205,7 +205,7 @@ export const biasAuditsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Each demographic category gets its own table. For NYC LL144, you\'ll see separate tables for sex, race/ethnicity, and (if enabled) intersectional categories. Each table shows:',
+      text: 'Each demographic category gets its own table. For NYC LL144, you\'ll see separate tables for sex, race/ethnicity and (if enabled) intersectional categories. Each table shows:',
     },
     {
       type: 'bullet-list',
@@ -215,7 +215,7 @@ export const biasAuditsContent: ArticleContent = {
         { bold: 'Selected', text: 'Number selected/hired from this group.' },
         { bold: 'Selection rate', text: 'Percentage of the group that was selected.' },
         { bold: 'Impact ratio', text: 'This group\'s selection rate divided by the highest group\'s selection rate. A value of 1.000 means equal treatment.' },
-        { bold: 'Status', text: 'Pass (above threshold), Flag (below threshold), or N/A (excluded due to small sample size).' },
+        { bold: 'Status', text: 'Pass (above threshold), Flag (below threshold) or N/A (excluded due to small sample size).' },
       ],
     },
     {
@@ -245,7 +245,7 @@ export const biasAuditsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'When you run the audit with the fairness-metrics mode, the results page renders a confusion-matrix table for each demographic category. Each row shows one group with its true positive rate, false positive rate, false negative rate, precision, accuracy, and the raw TP/FP/TN/FN counts.',
+      text: 'When you run the audit with the fairness-metrics mode, the results page renders a confusion-matrix table for each demographic category. Each row shows one group with its true positive rate, false positive rate, false negative rate, precision, accuracy and the raw TP/FP/TN/FN counts.',
     },
     {
       type: 'paragraph',
@@ -276,7 +276,7 @@ export const biasAuditsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Score distributions are diagnostic. Two groups can have identical impact ratios but very different score distributions, and the distribution view surfaces that difference.',
+      text: 'Score distributions are diagnostic. Two groups can have identical impact ratios but very different score distributions and the distribution view surfaces that difference.',
     },
     {
       type: 'heading',
@@ -291,8 +291,8 @@ export const biasAuditsContent: ArticleContent = {
     {
       type: 'bullet-list',
       items: [
-        { bold: 'Download PDF report', text: 'Generate a formal PDF audit report. This is the artifact to hand to a reviewer, auditor, or procurement team. Described in detail below.' },
-        { bold: 'Download JSON', text: 'Export the full raw results as a JSON file for external reporting, record-keeping, or downstream tooling.' },
+        { bold: 'Download PDF report', text: 'Generate a formal PDF audit report. This is the artifact to hand to a reviewer, auditor or procurement team. Described in detail below.' },
+        { bold: 'Download JSON', text: 'Export the full raw results as a JSON file for external reporting, record-keeping or downstream tooling.' },
         { bold: 'Delete', text: 'Permanently remove the audit and all its results. This requires confirmation.' },
       ],
     },
@@ -304,7 +304,7 @@ export const biasAuditsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The PDF is built so a reader who has never opened VerifyWise can still understand what was audited and what the numbers mean. It starts with a cover page, moves through an executive summary, describes the system and the data, walks through the methodology, then presents the results tables with any fairness metrics or score distributions your audit produced. It closes with a limitations section. Nowhere does the PDF offer mitigation advice: that\'s a conversation for qualified counsel, not a tool output.',
+      text: 'The PDF is built so a reader who\'s never opened VerifyWise can still understand what was audited and what the numbers mean. It starts with a cover page, moves through an executive summary, describes the system and data, walks through the methodology and then presents the results tables with any fairness metrics or score distributions your audit produced. It closes with a limitations section. The PDF doesn\'t offer mitigation advice, that\'s a conversation for qualified counsel.',
     },
     {
       type: 'paragraph',
@@ -373,7 +373,7 @@ export const biasAuditsContent: ArticleContent = {
         { bold: 'Outcome values', text: 'The outcome column accepts 1/true/yes/selected/hired/promoted as positive outcomes. Everything else (0/false/no/rejected/declined) is treated as not selected.' },
         { bold: 'Missing data', text: 'Rows with empty values in any mapped demographic column are excluded and counted separately as "unknown".' },
         { bold: 'File size', text: 'Maximum 50 MB. Quoted fields with commas are supported (RFC 4180).' },
-        { bold: 'Encoding', text: 'UTF-8 is preferred. The parser also handles UTF-8 with BOM, Latin-1, and Windows-1252.' },
+        { bold: 'Encoding', text: 'UTF-8 is preferred. The parser also handles UTF-8 with BOM, Latin-1 and Windows-1252.' },
       ],
     },
     {
@@ -384,7 +384,7 @@ export const biasAuditsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Each metric mode uses a slightly different formula, but the shape of the output is the same: a per-group rate, a ratio against the highest-rate group, and a flag when the ratio falls below the threshold.',
+      text: 'Each metric mode uses a slightly different formula, but the shape of the output is the same: a per-group rate, a ratio against the highest-rate group and a flag when the ratio falls below the threshold.',
     },
     {
       type: 'heading',
@@ -457,7 +457,7 @@ export const biasAuditsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Cross-group differences are then reported as the max-minus-min gap across groups: equal opportunity difference is the TPR gap, equalized odds difference takes the larger of the TPR and FPR gaps, and predictive parity difference is the precision gap.',
+      text: 'Cross-group differences are reported as the max-minus-min gap across groups: equal opportunity difference is the TPR gap, equalized odds difference takes the larger of the TPR and FPR gaps and predictive parity difference is the precision gap.',
     },
     {
       type: 'heading',
@@ -477,7 +477,7 @@ export const biasAuditsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Groups that make up less than the small sample exclusion percentage (default 2%) are excluded from the calculation entirely. Small samples produce unreliable ratios, and including them can mask real patterns with noise. Excluded groups appear in the results with a grey "N/A" status so it\'s obvious they were present in the data but set aside.',
+      text: 'Groups that make up less than the small sample exclusion percentage (default 2%) are excluded from the calculation entirely. Small samples produce unreliable ratios and including them can mask real patterns with noise. Excluded groups appear in the results with a grey "N/A" status so it\'s obvious they were present in the data but set aside.',
     },
     {
       type: 'article-links',
