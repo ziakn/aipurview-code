@@ -36,7 +36,8 @@
       "Bash(echo:*)",
       "Bash(kill:*)",
       "Bash(wait:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(git --version)"
     ]
   }
 }
