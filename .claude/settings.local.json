@@ -56,7 +56,8 @@
       "WebSearch",
       "Bash(git --version)",
       "Bash(npm run *)",
-      "Bash(grep \"error TS\" /tmp/buildout.txt)"
+      "Bash(grep \"error TS\" /tmp/buildout.txt)",
+      "Bash(npm install *)"
     ]
   }
 }
