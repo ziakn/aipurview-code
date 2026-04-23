@@ -106,7 +106,7 @@ export const AdvisorConversationProvider: React.FC<{ children: React.ReactNode }
   // fire `addMessage` calls (user + assistant in the same onFinish loop)
   // both await the same promise and receive the same conversation id,
   // instead of the old "sleep 50ms and hope" scheme.
-  const creatingPromisesRef = useRef<Record<string, Promise<number | null>>>({});
+  const creatingPromisesRef = useRef<Record<string, Promise<number | null> | undefined>>({});
 
   // Per-domain PUT serialization chain. When `addMessage` is called twice
   // in the same tick (user + assistant from onFinish), naive fire-and-
