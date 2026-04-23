@@ -837,8 +837,14 @@ const Tasks: React.FC = () => {
           direction="row"
           justifyContent="space-between"
           alignItems="center"
+          sx={{ flexWrap: "wrap", rowGap: "8px" }}
         >
-          <Stack direction="row" gap="8px" alignItems="center">
+          <Stack
+            direction="row"
+            gap="8px"
+            alignItems="center"
+            sx={{ flexWrap: "wrap", rowGap: "8px" }}
+          >
             {/* FilterBy */}
             <Box data-joyride-id="task-filters">
               <FilterBy
@@ -926,6 +932,7 @@ const Tasks: React.FC = () => {
             gap="8px"
             alignItems="center"
             data-joyride-id="add-task-button"
+            sx={{ flexShrink: 0 }}
           >
             <ExportMenu
               data={exportData}
@@ -940,6 +947,8 @@ const Tasks: React.FC = () => {
                 backgroundColor: "brand.primary",
                 border: "1px solid brand.primary",
                 gap: 2,
+                whiteSpace: "nowrap",
+                flexShrink: 0,
               }}
               icon={<AddCircleIcon size={16} />}
               onClick={handleCreateTask}
