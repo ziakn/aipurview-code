@@ -72,11 +72,14 @@ describe("Test project mappers functions", () => {
     it("should collapse legacy 'not_applicable' onto DEPLOYER", () => {
       expect(mapHighRiskRole("not_applicable")).toBe(HighRiskRole.DEPLOYER);
     });
-    it("should receive an invalid number and return PROVIDER (non-zero fallback)", () => {
+    it("should receive an invalid number and return DEPLOYER (anything but 1)", () => {
+      // Implementation: value === 1 ? PROVIDER : DEPLOYER
       const result = mapHighRiskRole(99);
-      expect(result).toBe(HighRiskRole.PROVIDER);
+      expect(result).toBe(HighRiskRole.DEPLOYER);
     });
     it("should receive an invalid string and return PROVIDER (non-matching fallback)", () => {
+      // Implementation: only "deployer" or "not_applicable" map to DEPLOYER;
+      // any other string (including unknown inputs) collapses onto PROVIDER.
       const result = mapHighRiskRole("InvalidString");
       expect(result).toBe(HighRiskRole.PROVIDER);
     });
