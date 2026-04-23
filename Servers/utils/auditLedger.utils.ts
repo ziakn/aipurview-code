@@ -97,6 +97,12 @@ const AUDIT_LEDGER_LOCK_NS = 9001;
  * 5. UPDATE the sentinel to the real hash
  *
  * The append-only triggers allow only this specific sentinel→hash transition.
+ *
+ * Retries on SQLSTATE 40001 ("could not serialize access...") with
+ * exponential backoff. Two concurrent appends for the same org both read
+ * the same last-row hash and try to insert behind it — Postgres aborts
+ * one of them under SERIALIZABLE, and retrying the loser is the standard
+ * fix. Max 5 attempts so a pathological hot org can't spin forever.
  */
 export async function appendToAuditLedger(
   entry: AuditLedgerEntry

@@ -144,7 +144,9 @@ describe("ApiTokenModel", () => {
     name: "My Token",
     token: "tok_123",
     expires_at: futureDate,
-    created_at: "2024-01-01T00:00:00Z",
+    // Midday mid-year so toLocaleDateString (local TZ) always resolves to
+    // 2024 regardless of the test runner's timezone (±14h offset range).
+    created_at: "2024-06-15T12:00:00Z",
     created_by: 1,
   } as ApiTokenModel;
 
