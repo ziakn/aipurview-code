@@ -32,7 +32,7 @@ import {
 } from "../postMarketMonitoringService";
 import CustomAxios from "../customAxios";
 
-const mockAxios = vi.mocked(CustomAxios);
+const mockAxios = vi.mocked(CustomAxios, { deep: true });
 
 describe("postMarketMonitoringService", () => {
   beforeEach(() => {

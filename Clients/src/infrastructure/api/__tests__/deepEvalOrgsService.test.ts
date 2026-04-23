@@ -12,7 +12,7 @@ vi.mock("../customAxios", () => ({
 import { deepEvalOrgsService } from "../deepEvalOrgsService";
 import CustomAxios from "../customAxios";
 
-const mockAxios = vi.mocked(CustomAxios);
+const mockAxios = vi.mocked(CustomAxios, { deep: true });
 
 describe("deepEvalOrgsService", () => {
   beforeEach(() => {

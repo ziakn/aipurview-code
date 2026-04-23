@@ -11,7 +11,7 @@ vi.mock("../customAxios", () => ({
 import { evaluationLlmApiKeysService } from "../evaluationLlmApiKeysService";
 import CustomAxios from "../customAxios";
 
-const mockAxios = vi.mocked(CustomAxios);
+const mockAxios = vi.mocked(CustomAxios, { deep: true });
 
 describe("evaluationLlmApiKeysService", () => {
   beforeEach(() => {

@@ -19,13 +19,13 @@ export const LazyFallback = () => (
  * Wraps React.lazy() with retry logic for chunk load failures.
  * Retries up to 3 times with exponential backoff (1.5s, 3s, 6s).
  */
-export function lazyRoute<T extends ComponentType<unknown>>(
+export function lazyRoute<T extends ComponentType<any>>(
   factory: () => Promise<{ default: T }>
 ) {
   return lazy(() => retryImport(factory));
 }
 
-function retryImport<T extends ComponentType<unknown>>(
+function retryImport<T extends ComponentType<any>>(
   factory: () => Promise<{ default: T }>,
   retries = 3,
   delay = 1500
