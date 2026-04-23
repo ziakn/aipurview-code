@@ -12,8 +12,10 @@ import { Project } from "../../../../domain/types/Project";
 import { Framework } from "../../../../domain/types/Framework";
 import {
   frameworkCardStyle,
+  frameworkCardSelectedStyle,
   frameworkCardTitleStyle,
   frameworkCardDescriptionStyle,
+  frameworkAddedBadgeStyle,
 } from "./styles";
 import {
   assignFrameworkToProject,
@@ -208,39 +210,29 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
           />
         )}
         {isLoading && <CustomizableToast title="Processing..." />}
-        <Stack spacing={6}>
+        <Stack spacing={"12px"}>
             {frameworks.map((fw) => {
               const isAdded = isFrameworkAdded(fw);
               // Total frameworks = system frameworks + custom frameworks (from plugin events)
               const totalFrameworkCount = (project.framework?.length || 0) + customFrameworkCount;
               const onlyOneFramework = totalFrameworkCount === 1 && isAdded;
               return (
-                <Box key={fw.id} sx={frameworkCardStyle}>
+                <Box
+                  key={fw.id}
+                  sx={isAdded ? frameworkCardSelectedStyle : frameworkCardStyle}
+                >
                   <Box
                     display="flex"
                     justifyContent="space-between"
-                    alignItems="flex-start"
-                    mb={1}
+                    alignItems="center"
+                    gap="12px"
                   >
                     <Typography sx={frameworkCardTitleStyle}>
                       {fw.name}
                     </Typography>
                     {isAdded && (
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 0.5,
-                          background: "#E6F4EE",
-                          borderRadius: "12px",
-                          px: 1.5,
-                          py: 0.5,
-                          fontSize: 13,
-                          fontWeight: 600,
-                          color: "brand.primary",
-                        }}
-                      >
-                        <CheckGreenIcon size={16} />
+                      <Box sx={frameworkAddedBadgeStyle}>
+                        <CheckGreenIcon size={13} strokeWidth={2.5} />
                         Added
                       </Box>
                     )}
@@ -248,10 +240,10 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
                   <Typography sx={frameworkCardDescriptionStyle}>
                     {fw.description}
                   </Typography>
-                  <Box display="flex" justifyContent="flex-end" mt={2}>
+                  <Box display="flex" justifyContent="flex-end">
                     {isAdded ? (
                       <Button
-                        variant="contained"
+                        variant="outlined"
                         color="error"
                         size="small"
                         disabled={isLoading || onlyOneFramework}
@@ -259,23 +251,38 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
                           setFrameworkToRemove(fw);
                           setIsRemoveModalOpen(true);
                         }}
-                        sx={{ minWidth: 100, fontWeight: 600 }}
+                        sx={{
+                          minWidth: 90,
+                          height: "34px",
+                          fontWeight: 500,
+                          textTransform: "none",
+                          fontSize: 13,
+                          borderRadius: "4px",
+                        }}
                       >
                         Remove
                       </Button>
                     ) : (
                       <Button
                         variant="contained"
-                        sx={{
-                          minWidth: 100,
-                          fontWeight: 600,
-                          backgroundColor: "brand.primary",
-                          color: "background.main",
-                          "&:hover": { backgroundColor: "#0e5c47" },
-                        }}
                         size="small"
                         disabled={isLoading}
                         onClick={() => handleAddFramework(fw)}
+                        sx={{
+                          minWidth: 90,
+                          height: "34px",
+                          fontWeight: 500,
+                          textTransform: "none",
+                          fontSize: 13,
+                          borderRadius: "4px",
+                          backgroundColor: "brand.primary",
+                          color: "background.main",
+                          boxShadow: "none",
+                          "&:hover": {
+                            backgroundColor: "#0F5A47",
+                            boxShadow: "none",
+                          },
+                        }}
                       >
                         Add
                       </Button>
