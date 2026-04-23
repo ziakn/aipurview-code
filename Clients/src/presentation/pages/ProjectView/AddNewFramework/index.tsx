@@ -4,8 +4,6 @@ import {
   Typography,
   Stack,
   Button,
-  Snackbar,
-  Alert as MuiAlert,
 } from "@mui/material";
 import { Check as CheckGreenIcon } from "lucide-react";
 import StandardModal from "../../../components/Modals/StandardModal";
@@ -23,6 +21,9 @@ import {
   deleteEntityById,
 } from "../../../../application/repository/entity.repository";
 import { logEngine } from "../../../../application/tools/log.engine";
+import { handleAlert } from "../../../../application/tools/alertUtils";
+import Alert from "../../../components/Alert";
+import { AlertProps } from "../../../types/alert.types";
 import CustomizableToast from "../../../components/Toast";
 import ConfirmationModal from "../../../components/Dialogs/ConfirmationModal";
 import { useModalKeyHandling } from "../../../../application/hooks/useModalKeyHandling";
@@ -48,13 +49,7 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
   onFrameworksChanged,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [alert, setAlert] = useState<{
-    variant: "success" | "info" | "warning" | "error";
-    title?: string;
-    body: string;
-    isToast: boolean;
-    visible: boolean;
-  } | null>(null);
+  const [alert, setAlert] = useState<AlertProps | null>(null);
   const [frameworkToRemove, setFrameworkToRemove] = useState<Framework | null>(
     null
   );
@@ -82,6 +77,10 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
     };
   }, [project.id]);
 
+  const showToast = (variant: AlertProps["variant"], body: string) => {
+    handleAlert({ variant, body, setAlert, alertTimeout: 3000 });
+  };
+
   const handleAddFramework = async (fw: Framework) => {
     setIsLoading(true);
     try {
@@ -90,35 +89,19 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
         projectId: String(project.id),
       });
       if (response.status === 200 || response.status === 201) {
-        setAlert({
-          variant: "success",
-          body: "Framework added successfully",
-          isToast: true,
-          visible: true,
-        });
+        showToast("success", "Framework added successfully");
         if (onFrameworksChanged) onFrameworksChanged("add");
       } else {
-        setAlert({
-          variant: "error",
-          body: "Failed to add framework. Please try again.",
-          isToast: true,
-          visible: true,
-        });
+        showToast("error", "Failed to add framework. Please try again.");
       }
     } catch (_error) {
       logEngine({
         type: "error",
         message: "An error occurred while adding the framework.",
       });
-      setAlert({
-        variant: "error",
-        body: "An unexpected error occurred. Please try again.",
-        isToast: true,
-        visible: true,
-      });
+      showToast("error", "An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
-      setTimeout(() => setAlert(null), 3000);
     }
   };
 
@@ -130,38 +113,22 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
         routeUrl: `/frameworks/fromProject?frameworkId=${frameworkToRemove.id}&projectId=${project.id}`,
       });
       if (response.status === 200) {
-        setAlert({
-          variant: "success",
-          body: "Framework removed successfully",
-          isToast: true,
-          visible: true,
-        });
+        showToast("success", "Framework removed successfully");
         if (onFrameworksChanged)
           onFrameworksChanged("remove", parseInt(frameworkToRemove.id));
       } else {
-        setAlert({
-          variant: "error",
-          body: "Failed to remove framework. Please try again.",
-          isToast: true,
-          visible: true,
-        });
+        showToast("error", "Failed to remove framework. Please try again.");
       }
     } catch (_error) {
       logEngine({
         type: "error",
         message: "An error occurred while removing the framework.",
       });
-      setAlert({
-        variant: "error",
-        body: "An unexpected error occurred. Please try again.",
-        isToast: true,
-        visible: true,
-      });
+      showToast("error", "An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
       setIsRemoveModalOpen(false);
       setFrameworkToRemove(null);
-      setTimeout(() => setAlert(null), 3000);
     }
   };
 
@@ -200,22 +167,15 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
       }
     >
       <Stack spacing={6}>
-        <Snackbar
-          open={!!alert?.visible}
-          autoHideDuration={3000}
-          onClose={() => setAlert(null)}
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
-          sx={{ zIndex: 13000 }}
-        >
-          <MuiAlert
-            onClose={() => setAlert(null)}
-            severity={alert?.variant || "success"}
-            variant="filled"
-            sx={{ width: "100%", minWidth: 280, boxShadow: 3 }}
-          >
-            {alert?.body}
-          </MuiAlert>
-        </Snackbar>
+        {alert && (
+          <Alert
+            variant={alert.variant}
+            title={alert.title}
+            body={alert.body}
+            isToast={true}
+            onClick={() => setAlert(null)}
+          />
+        )}
         {isLoading && <CustomizableToast title="Processing..." />}
         <Box
           sx={{
