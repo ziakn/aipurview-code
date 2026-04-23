@@ -4,6 +4,8 @@ import {
   Typography,
   Stack,
   Button,
+  Snackbar,
+  Alert as MuiAlert,
 } from "@mui/material";
 import { Check as CheckGreenIcon } from "lucide-react";
 import StandardModal from "../../../components/Modals/StandardModal";
@@ -12,7 +14,6 @@ import { Project } from "../../../../domain/types/Project";
 import { Framework } from "../../../../domain/types/Framework";
 import {
   frameworkCardStyle,
-  frameworkCardSelectedStyle,
   frameworkCardTitleStyle,
   frameworkCardDescriptionStyle,
   frameworkAddedBadgeStyle,
@@ -22,7 +23,6 @@ import {
   deleteEntityById,
 } from "../../../../application/repository/entity.repository";
 import { logEngine } from "../../../../application/tools/log.engine";
-import Alert from "../../../components/Alert";
 import CustomizableToast from "../../../components/Toast";
 import ConfirmationModal from "../../../components/Dialogs/ConfirmationModal";
 import { useModalKeyHandling } from "../../../../application/hooks/useModalKeyHandling";
@@ -200,39 +200,45 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
       }
     >
       <Stack spacing={6}>
-        {alert && alert.visible && (
-          <Alert
-            variant={alert.variant}
-            title={alert.title}
-            body={alert.body}
-            isToast={true}
-            onClick={() => setAlert(null)}
-          />
-        )}
+        <Snackbar
+          open={!!alert?.visible}
+          autoHideDuration={3000}
+          onClose={() => setAlert(null)}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          sx={{ zIndex: 13000 }}
+        >
+          <MuiAlert
+            onClose={() => setAlert(null)}
+            severity={alert?.variant || "success"}
+            variant="filled"
+            sx={{ width: "100%", minWidth: 280, boxShadow: 3 }}
+          >
+            {alert?.body}
+          </MuiAlert>
+        </Snackbar>
         {isLoading && <CustomizableToast title="Processing..." />}
-        <Stack spacing={"12px"}>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "16px",
+            alignItems: "stretch",
+          }}
+        >
             {frameworks.map((fw) => {
               const isAdded = isFrameworkAdded(fw);
               // Total frameworks = system frameworks + custom frameworks (from plugin events)
               const totalFrameworkCount = (project.framework?.length || 0) + customFrameworkCount;
               const onlyOneFramework = totalFrameworkCount === 1 && isAdded;
               return (
-                <Box
-                  key={fw.id}
-                  sx={isAdded ? frameworkCardSelectedStyle : frameworkCardStyle}
-                >
-                  <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    gap="12px"
-                  >
+                <Box key={fw.id} sx={frameworkCardStyle}>
+                  <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
                     <Typography sx={frameworkCardTitleStyle}>
                       {fw.name}
                     </Typography>
                     {isAdded && (
                       <Box sx={frameworkAddedBadgeStyle}>
-                        <CheckGreenIcon size={13} strokeWidth={2.5} />
+                        <CheckGreenIcon size={16} />
                         Added
                       </Box>
                     )}
@@ -240,11 +246,10 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
                   <Typography sx={frameworkCardDescriptionStyle}>
                     {fw.description}
                   </Typography>
-                  <Box display="flex" justifyContent="flex-end">
+                  <Box display="flex" justifyContent="flex-end" mt={2}>
                     {isAdded ? (
                       <Button
                         variant="outlined"
-                        color="error"
                         size="small"
                         disabled={isLoading || onlyOneFramework}
                         onClick={() => {
@@ -252,12 +257,15 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
                           setIsRemoveModalOpen(true);
                         }}
                         sx={{
-                          minWidth: 90,
-                          height: "34px",
-                          fontWeight: 500,
+                          minWidth: 100,
+                          borderColor: "#F87171",
+                          color: "#DC2626",
+                          fontWeight: 600,
                           textTransform: "none",
-                          fontSize: 13,
-                          borderRadius: "4px",
+                          "&:hover": {
+                            borderColor: "#EF4444",
+                            backgroundColor: "#FEF2F2",
+                          },
                         }}
                       >
                         Remove
@@ -269,19 +277,12 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
                         disabled={isLoading}
                         onClick={() => handleAddFramework(fw)}
                         sx={{
-                          minWidth: 90,
-                          height: "34px",
-                          fontWeight: 500,
+                          minWidth: 100,
+                          fontWeight: 600,
                           textTransform: "none",
-                          fontSize: 13,
-                          borderRadius: "4px",
-                          backgroundColor: "brand.primary",
-                          color: "background.main",
-                          boxShadow: "none",
-                          "&:hover": {
-                            backgroundColor: "#0F5A47",
-                            boxShadow: "none",
-                          },
+                          backgroundColor: "#13715B",
+                          color: "#fff",
+                          "&:hover": { backgroundColor: "#0e5c47" },
                         }}
                       >
                         Add
@@ -291,20 +292,20 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
                 </Box>
               );
             })}
-            {/* Plugin slot for custom frameworks */}
-            <PluginSlot
-              id={PLUGIN_SLOTS.FRAMEWORK_SELECTION}
-              slotProps={{
-                project,
-                isLoading,
-                onFrameworkAdded: () => onFrameworksChanged?.("add"),
-                onFrameworkRemoved: (frameworkId: number) =>
-                  onFrameworksChanged?.("remove", frameworkId),
-                setAlert,
-                setIsLoading,
-              }}
-            />
-        </Stack>
+        </Box>
+        {/* Plugin slot for custom frameworks */}
+        <PluginSlot
+          id={PLUGIN_SLOTS.FRAMEWORK_SELECTION}
+          slotProps={{
+            project,
+            isLoading,
+            onFrameworkAdded: () => onFrameworksChanged?.("add"),
+            onFrameworkRemoved: (frameworkId: number) =>
+              onFrameworksChanged?.("remove", frameworkId),
+            setAlert,
+            setIsLoading,
+          }}
+        />
         {isRemoveModalOpen && frameworkToRemove && (
           <ConfirmationModal
             title="Confirm framework removal"

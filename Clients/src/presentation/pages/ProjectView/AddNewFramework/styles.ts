@@ -41,33 +41,19 @@ export const modalDescriptionStyle: SxProps<Theme> = {
 };
 
 export const frameworkCardStyle: SxProps<Theme> = {
+  background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
   border: '1px solid #d0d5dd',
   borderRadius: '4px',
-  background: `linear-gradient(135deg, ${background.main} 0%, #fafbfc 100%)`,
-  p: '20px',
-  transition: 'border-color 0.2s, box-shadow 0.2s',
-  '&:hover': {
-    borderColor: '#b9c1cc',
-    boxShadow: '0 1px 3px rgba(16, 24, 40, 0.06)',
-  },
-};
-
-export const frameworkCardSelectedStyle: SxProps<Theme> = {
-  border: `1.5px solid ${brand.primary}`,
-  borderRadius: '4px',
-  background: 'linear-gradient(135deg, #f4fbf8 0%, #e9f6ef 100%)',
-  p: '20px',
-  transition: 'border-color 0.2s, box-shadow 0.2s',
-  '&:hover': {
-    boxShadow: '0 1px 3px rgba(19, 113, 91, 0.12)',
-  },
+  p: '24px',
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '150px',
 };
 
 export const frameworkCardTitleStyle: SxProps<Theme> = {
-  fontWeight: 600,
-  color: '#1a202c',
-  fontSize: 15,
-  lineHeight: 1.4,
+  fontSize: 13,
+  fontWeight: 500,
+  color: '#000000',
 };
 
 export const frameworkCardAddedStyle: SxProps<Theme> = {
@@ -79,27 +65,22 @@ export const frameworkCardAddedStyle: SxProps<Theme> = {
 };
 
 export const frameworkCardDescriptionStyle: SxProps<Theme> = {
-  color: '#64748b',
   fontSize: 13,
-  lineHeight: 1.55,
-  textAlign: 'left',
-  mt: '6px',
-  mb: '16px',
+  color: '#666666',
+  mb: 'auto',
 };
 
 export const frameworkAddedBadgeStyle: SxProps<Theme> = {
-  display: 'inline-flex',
+  display: 'flex',
   alignItems: 'center',
-  gap: '4px',
-  background: '#e6f4ee',
-  border: `1px solid ${brand.primary}`,
-  borderRadius: '12px',
-  px: '10px',
-  py: '3px',
-  fontSize: 12,
+  gap: 0.5,
+  backgroundColor: '#E6F4EE',
+  borderRadius: '4px',
+  px: 1.5,
+  py: 0.5,
+  fontSize: 13,
   fontWeight: 600,
-  color: brand.primary,
-  lineHeight: 1.4,
+  color: '#13715B',
 };
 
 export const modalDoneButtonStyle: SxProps<Theme> = {
