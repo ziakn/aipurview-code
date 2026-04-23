@@ -6,7 +6,7 @@ import {
   Settings,
   KeyRound,
   Swords,
-  Trophy,
+  // Trophy,
   Cpu,
   MessageSquare,
   Scale,
@@ -133,13 +133,13 @@ export default function EvalsSidebar({
       count: arenaCount,
       disabled: false, // Always enabled - org-scoped
     },
-    {
-      id: "leaderboard",
-      label: "Leaderboard",
-      value: "leaderboard",
-      icon: <Trophy size={16} strokeWidth={1.5} />,
-      disabled: false,
-    },
+    // {
+    //   id: "leaderboard",
+    //   label: "Leaderboard",
+    //   value: "leaderboard",
+    //   icon: <Trophy size={16} strokeWidth={1.5} />,
+    //   disabled: false,
+    // },
     {
       id: "reports",
       label: "Reports",

@@ -9,7 +9,7 @@ vi.mock("../customAxios", () => ({
 import { wiseSearch, getEntityDisplayName, ENTITY_DISPLAY_NAMES } from "../searchService";
 import CustomAxios from "../customAxios";
 
-const mockAxios = vi.mocked(CustomAxios);
+const mockAxios = vi.mocked(CustomAxios, { deep: true });
 
 describe("searchService", () => {
   beforeEach(() => {
