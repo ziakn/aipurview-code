@@ -9,7 +9,7 @@ import {
   Divider,
   CircularProgress,
 } from '@mui/material';
-import { Bell, CheckCheck, X, ExternalLink } from 'lucide-react';
+import { Bell, CheckCheck, X, ExternalLink, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useNotifications, Notification } from '../../../application/hooks/useNotifications';
 import VWTooltip from '../VWTooltip';
@@ -67,12 +67,14 @@ interface NotificationItemProps {
   notification: Notification;
   onMarkAsRead: (id: number) => void;
   onNavigate: (url: string) => void;
+  onDelete: (id: number) => void;
 }
 
 const NotificationItem: React.FC<NotificationItemProps> = ({
   notification,
   onMarkAsRead,
   onNavigate,
+  onDelete,
 }) => {
   const isRead = notification.is_read;
   const color = getNotificationColor(notification.type);
@@ -83,6 +85,13 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
     }
     if (notification.action_url) {
       onNavigate(notification.action_url);
+    }
+  };
+
+  const handleDelete = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (notification.id) {
+      onDelete(notification.id);
     }
   };
 
@@ -100,8 +109,12 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
         backgroundColor: isRead ? 'transparent' : 'rgba(19, 113, 91, 0.04)',
         borderLeft: isRead ? '3px solid transparent' : `3px solid ${color}`,
         transition: 'all 0.15s ease',
+        position: 'relative',
         '&:hover': {
           backgroundColor: 'rgba(0, 0, 0, 0.02)',
+        },
+        '&:hover .notification-delete-btn': {
+          opacity: 1,
         },
       }}
     >
@@ -151,6 +164,30 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
           style={{ flexShrink: 0, marginTop: 2 }}
         />
       )}
+
+      {/* Delete button (visible on hover) */}
+      <VWTooltip header="Delete" content="Delete this notification" placement="left">
+        <IconButton
+          className="notification-delete-btn"
+          size="small"
+          onClick={handleDelete}
+          aria-label="Delete notification"
+          sx={{
+            opacity: 0,
+            transition: 'opacity 0.15s ease',
+            width: '24px',
+            height: '24px',
+            marginTop: '-2px',
+            color: text.disabled,
+            '&:hover': {
+              backgroundColor: 'rgba(239, 68, 68, 0.08)',
+              color: '#EF4444',
+            },
+          }}
+        >
+          <Trash2 size={14} />
+        </IconButton>
+      </VWTooltip>
     </Box>
   );
 };
@@ -167,11 +204,13 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
   const {
     notifications,
     unreadCount,
+    totalCount,
     isLoading,
     isLoadingMore,
     hasMore,
     markAsRead,
     markAllAsRead,
+    deleteNotification,
     loadMore,
     isConnected,
   } = useNotifications();
@@ -199,6 +238,14 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
       console.error('Failed to mark all notifications as read:', error);
     }
   }, [markAllAsRead]);
+
+  const handleDelete = useCallback(async (notificationId: number) => {
+    try {
+      await deleteNotification(notificationId);
+    } catch (error) {
+      console.error('Failed to delete notification:', error);
+    }
+  }, [deleteNotification]);
 
   const handleNavigate = useCallback((url: string) => {
     handleClose();
@@ -295,16 +342,39 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
           },
         }}
       >
-        {/* Header - minimal with just action buttons */}
+        {/* Header with title and action buttons */}
         <Box
           sx={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'flex-end',
-            px: 1,
-            py: 0.5,
+            justifyContent: 'space-between',
+            px: 2,
+            py: 1,
+            borderBottom: '1px solid #e5e7eb',
           }}
         >
+          <Stack direction="row" alignItems="baseline" spacing={1}>
+            <Typography
+              sx={{
+                fontSize: '14px',
+                fontWeight: 600,
+                color: 'text.primary',
+              }}
+            >
+              Notifications
+            </Typography>
+            {totalCount > 0 && (
+              <Typography
+                sx={{
+                  fontSize: '12px',
+                  color: 'text.disabled',
+                  fontWeight: 500,
+                }}
+              >
+                {totalCount}
+              </Typography>
+            )}
+          </Stack>
           <Stack direction="row" spacing={0.5}>
             {unreadCount > 0 && (
               <VWTooltip header="Mark all as read" content="Mark all notifications as read" placement="bottom">
@@ -410,6 +480,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
                     notification={notification}
                     onMarkAsRead={handleMarkAsRead}
                     onNavigate={handleNavigate}
+                    onDelete={handleDelete}
                   />
                 ))}
               </Stack>
