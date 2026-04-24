@@ -18,6 +18,33 @@ import '../Layout/icon-shake.css';
 import { text } from "../../themes/palette";
 
 /**
+ * Rewrite legacy action_url values that were stored in older notifications
+ * before the server-side route mapping was corrected. Each rule rewrites a
+ * path pattern to the frontend route that actually exists.
+ */
+const LEGACY_URL_REWRITES: Array<{ pattern: RegExp; replacement: string }> = [
+  { pattern: /^\/training\/(\d+)/, replacement: '/training?trainingId=$1' },
+  { pattern: /^\/vendors\/(\d+)/, replacement: '/vendors?vendorId=$1' },
+  { pattern: /^\/policies\/(\d+)$/, replacement: '/policies/$1/edit' },
+  { pattern: /^\/use-cases\/(\d+)/, replacement: '/project-view?projectId=$1' },
+  { pattern: /^\/projects\/(\d+)/, replacement: '/project-view?projectId=$1' },
+  { pattern: /^\/policys\/(\d+)/, replacement: '/policies/$1/edit' },
+  { pattern: /^\/models\/(\d+)/, replacement: '/model-inventory/models/$1' },
+  { pattern: /^\/risks\/(\d+)/, replacement: '/risk-management?riskId=$1' },
+  { pattern: /^\/assessments\/(\d+)/, replacement: '/project-view?projectId=$1' },
+  { pattern: /^\/files\/(\d+)/, replacement: '/file-manager?fileId=$1' },
+  { pattern: /^\/approval-requests(?:\?|$|\/)/, replacement: '/approval-workflows' },
+];
+
+const repairLegacyActionUrl = (url: string): string => {
+  if (!url.startsWith('/')) return url;
+  for (const { pattern, replacement } of LEGACY_URL_REWRITES) {
+    if (pattern.test(url)) return url.replace(pattern, replacement);
+  }
+  return url;
+};
+
+/**
  * Format relative time from ISO string
  */
 const formatRelativeTime = (dateString: string): string => {
@@ -249,12 +276,11 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
 
   const handleNavigate = useCallback((url: string) => {
     handleClose();
-    // Check if it's an internal URL
-    if (url.startsWith('/')) {
-      navigate(url);
+    const repaired = repairLegacyActionUrl(url);
+    if (repaired.startsWith('/')) {
+      navigate(repaired);
     } else {
-      // For external URLs, open in new tab
-      window.open(url, '_blank');
+      window.open(repaired, '_blank');
     }
   }, [navigate, handleClose]);
 

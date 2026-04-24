@@ -165,6 +165,8 @@ export const useNotifications = (options: UseNotificationsOptions = {}): UseNoti
 
   // State for stored notifications
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const notificationsRef = useRef<Notification[]>([]);
+  notificationsRef.current = notifications;
   const [unreadCount, setUnreadCount] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -267,20 +269,16 @@ export const useNotifications = (options: UseNotificationsOptions = {}): UseNoti
     }
   }, []);
 
-  /**
-   * Delete a notification
-   */
   const deleteNotification = useCallback(async (notificationId: number) => {
     try {
       await apiServices.delete(`/notifications/${notificationId}`);
-      setNotifications(prev => {
-        const target = prev.find(n => n.id === notificationId);
-        if (target && !target.is_read) {
-          setUnreadCount(c => Math.max(0, c - 1));
-        }
-        return prev.filter(n => n.id !== notificationId);
-      });
+      const target = notificationsRef.current.find(n => n.id === notificationId);
+      if (!target) return;
+      setNotifications(prev => prev.filter(n => n.id !== notificationId));
       setTotalCount(prev => Math.max(0, prev - 1));
+      if (!target.is_read) {
+        setUnreadCount(prev => Math.max(0, prev - 1));
+      }
     } catch (error) {
       console.error("Failed to delete notification:", error);
       throw error;
