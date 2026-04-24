@@ -578,7 +578,7 @@ export async function rejectRequest(
               entity_type: NotificationEntityType.USE_CASE,
               entity_id: requestId,
               entity_name: notificationInfo.requestName,
-              action_url: `${baseUrl}/approval-requests`,
+              action_url: `${baseUrl}/approval-workflows`,
             },
             true,
             {
@@ -589,7 +589,7 @@ export async function rejectRequest(
                 rejector_name: rejectorName,
                 request_name: notificationInfo.requestName,
                 rejection_reason: comments || "No reason provided",
-                request_url: `${baseUrl}/approval-requests`,
+                request_url: `${baseUrl}/approval-workflows`,
               },
             }
           );
