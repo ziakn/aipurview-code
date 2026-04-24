@@ -230,8 +230,10 @@ const Training: React.FC = () => {
           });
           setAlert({
             variant: "error",
-            body: "Failed to load training details. Please try again.",
+            body: "This training no longer exists or you do not have access to it.",
           });
+          setIsNewTrainingModalOpen(false);
+          setSelectedTrainingId(null);
         }
       }
     };
