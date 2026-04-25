@@ -42,7 +42,7 @@ export async function addTaskEntityLink(
   try {
     const { userId, role } = req;
     if (!userId || !role) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     const { entity_id, entity_type, entity_name } = req.body;
@@ -168,7 +168,7 @@ export async function getTaskEntityLinks(
   try {
     const { userId, role } = req;
     if (!userId || !role) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     // Check if task exists
@@ -236,7 +236,7 @@ export async function removeTaskEntityLink(
   try {
     const { userId, role } = req;
     if (!userId || !role) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     // Check if task exists

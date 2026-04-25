@@ -1111,7 +1111,7 @@ export async function getAllProjectsAssessmentProgress(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     const projects = await getAllProjectsQuery({ userId, role }, req.organizationId!);
@@ -1203,7 +1203,7 @@ export async function getAllProjectsComplianceProgress(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     const projects = await getAllProjectsQuery({ userId, role }, req.organizationId!);

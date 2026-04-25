@@ -75,12 +75,12 @@ export async function githubWebhookController(
 
     if (!repo) {
       // Return 200 to avoid GitHub retrying — repo not registered or CI disabled
-      return res.status(200).json({ message: "Repository not registered or CI not enabled" });
+      return res.status(200).json({ message: req.t!("Repository not registered or CI not enabled") });
     }
 
     // 6. Verify HMAC signature
     if (!repo.webhook_secret) {
-      return res.status(200).json({ message: "Webhook secret not configured" });
+      return res.status(200).json({ message: req.t!("Webhook secret not configured") });
     }
 
     if (!verifyGitHubSignature(rawBody, signature, repo.webhook_secret)) {
@@ -90,7 +90,7 @@ export async function githubWebhookController(
     // 7. Handle ping event (sent when webhook is first configured)
     if (event === "ping") {
       logger.info(`Webhook ping received for ${owner}/${name} (delivery: ${deliveryId})`);
-      return res.status(200).json({ message: "pong" });
+      return res.status(200).json({ message: req.t!("pong") });
     }
 
     // 8. Route to appropriate handler

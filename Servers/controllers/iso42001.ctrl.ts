@@ -730,7 +730,7 @@ export async function getSubClauseRisks(
     });
 
     return res.status(200).json({
-      message: "Risks retrieved successfully",
+      message: req.t!("Risks retrieved successfully"),
       data: risks,
       userId: req.userId!,
       tenantId: req.organizationId!,
@@ -789,7 +789,7 @@ export async function getAnnexCategoryRisks(
     });
 
     return res.status(200).json({
-      message: "Risks retrieved successfully",
+      message: req.t!("Risks retrieved successfully"),
       data: risks,
       userId: req.userId!,
       tenantId: req.organizationId!,
@@ -1322,7 +1322,7 @@ export async function getAllProjectsClausesProgress(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     const projects = await getAllProjectsQuery({ userId, role }, req.organizationId!);
@@ -1413,7 +1413,7 @@ export async function getAllProjectsAnnxesProgress(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     const projects = await getAllProjectsQuery({ userId, role }, req.organizationId!);

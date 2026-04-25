@@ -35,7 +35,7 @@ export const streamNotifications = async (
 
   if (!userId || !organizationId) {
     logStructured("error", "Missing userId or organizationId for SSE connection", "streamNotifications", "notification.ctrl.ts");
-    res.status(401).json({ error: "Unauthorized" });
+    res.status(401).json({ error: req.t!("Unauthorized") });
     return;
   }
 
@@ -97,7 +97,7 @@ export const streamNotifications = async (
     });
   } catch (error) {
     logStructured("error", `Error establishing SSE connection: ${error}`, "streamNotifications", "notification.ctrl.ts");
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: req.t!("Internal server error") });
   }
 };
 

@@ -35,15 +35,15 @@ export async function getFileContentById(
 
   // Validate fileId is a valid number
   if (isNaN(fileId)) {
-    return res.status(400).json({ message: "Invalid file ID" });
+    return res.status(400).json({ message: req.t!("Invalid file ID") });
   }
 
   // Validate authentication - these should be set by authenticateJWT middleware
   if (!req.userId) {
-    return res.status(401).json({ message: "Unauthenticated" });
+    return res.status(401).json({ message: req.t!("Unauthenticated") });
   }
   if (!req.organizationId) {
-    return res.status(400).json({ message: "Missing tenant" });
+    return res.status(400).json({ message: req.t!("Missing tenant") });
   }
 
   const userId = req.userId;
@@ -71,7 +71,7 @@ export async function getFileContentById(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(403).json({ message: "Access denied" });
+      return res.status(403).json({ message: req.t!("Access denied") });
     }
 
     const file = await getFileById(fileId, req.organizationId!);
@@ -216,7 +216,7 @@ export const getUserFilesMetaData = async (req: Request, res: Response) => {
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: req.t!("Internal server error") });
   }
 };
 
@@ -322,15 +322,15 @@ export async function attachFileToEntity(
   // Validate required fields
   if (!file_id || !framework_type || !entity_type || !entity_id) {
     return res.status(400).json({
-      message: "Missing required fields: file_id, framework_type, entity_type, entity_id",
+      message: req.t!("Missing required fields: file_id, framework_type, entity_type, entity_id"),
     });
   }
 
   if (!req.userId) {
-    return res.status(401).json({ message: "Unauthenticated" });
+    return res.status(401).json({ message: req.t!("Unauthenticated") });
   }
   if (!req.organizationId) {
-    return res.status(400).json({ message: "Missing tenant" });
+    return res.status(400).json({ message: req.t!("Missing tenant") });
   }
 
   logProcessing({
@@ -365,10 +365,10 @@ export async function attachFileToEntity(
     });
 
     if (link) {
-      return res.status(201).json({ message: "File attached successfully", link });
+      return res.status(201).json({ message: req.t!("File attached successfully"), link });
     } else {
       // ON CONFLICT DO NOTHING means already exists
-      return res.status(200).json({ message: "File already attached to this entity" });
+      return res.status(200).json({ message: req.t!("File already attached to this entity") });
     }
   } catch (error) {
     await logFailure({
@@ -400,15 +400,15 @@ export async function detachFileFromEntity(
   // Validate required fields
   if (!file_id || !framework_type || !entity_type || !entity_id) {
     return res.status(400).json({
-      message: "Missing required fields: file_id, framework_type, entity_type, entity_id",
+      message: req.t!("Missing required fields: file_id, framework_type, entity_type, entity_id"),
     });
   }
 
   if (!req.userId) {
-    return res.status(401).json({ message: "Unauthenticated" });
+    return res.status(401).json({ message: req.t!("Unauthenticated") });
   }
   if (!req.organizationId) {
-    return res.status(400).json({ message: "Missing tenant" });
+    return res.status(400).json({ message: req.t!("Missing tenant") });
   }
 
   logProcessing({
@@ -438,9 +438,9 @@ export async function detachFileFromEntity(
     });
 
     if (deleted) {
-      return res.status(200).json({ message: "File detached successfully" });
+      return res.status(200).json({ message: req.t!("File detached successfully") });
     } else {
-      return res.status(404).json({ message: "File link not found" });
+      return res.status(404).json({ message: req.t!("File link not found") });
     }
   } catch (error) {
     await logFailure({
@@ -472,20 +472,20 @@ export async function attachFilesToEntity(
   // Validate required fields
   if (!file_ids || !Array.isArray(file_ids) || file_ids.length === 0) {
     return res.status(400).json({
-      message: "Missing or invalid file_ids array",
+      message: req.t!("Missing or invalid file_ids array"),
     });
   }
   if (!framework_type || !entity_type || !entity_id) {
     return res.status(400).json({
-      message: "Missing required fields: framework_type, entity_type, entity_id",
+      message: req.t!("Missing required fields: framework_type, entity_type, entity_id"),
     });
   }
 
   if (!req.userId) {
-    return res.status(401).json({ message: "Unauthenticated" });
+    return res.status(401).json({ message: req.t!("Unauthenticated") });
   }
   if (!req.organizationId) {
-    return res.status(400).json({ message: "Missing tenant" });
+    return res.status(400).json({ message: req.t!("Missing tenant") });
   }
 
   logProcessing({
@@ -538,7 +538,7 @@ export async function attachFilesToEntity(
     });
 
     return res.status(200).json({
-      message: "Bulk attach completed",
+      message: req.t!("Bulk attach completed"),
       results,
     });
   } catch (error) {
@@ -570,15 +570,15 @@ export async function getEntityFiles(
   // Validate required params
   if (!framework_type || !entity_type || !entity_id) {
     return res.status(400).json({
-      message: "Missing required params: framework_type, entity_type, entity_id",
+      message: req.t!("Missing required params: framework_type, entity_type, entity_id"),
     });
   }
 
   if (!req.userId) {
-    return res.status(401).json({ message: "Unauthenticated" });
+    return res.status(401).json({ message: req.t!("Unauthenticated") });
   }
   if (!req.organizationId) {
-    return res.status(400).json({ message: "Missing tenant" });
+    return res.status(400).json({ message: req.t!("Missing tenant") });
   }
 
   logProcessing({

@@ -21,7 +21,7 @@ export const getInvitations = async (
     return res.status(200).json({ invitations });
   } catch (error) {
     console.error("Error fetching invitations:", error);
-    return res.status(500).json({ error: "Failed to fetch invitations" });
+    return res.status(500).json({ error: req.t!("Failed to fetch invitations") });
   }
 };
 
@@ -38,18 +38,18 @@ export const revokeInvitation = async (
     const organizationId = req.organizationId!;
 
     if (isNaN(id)) {
-      return res.status(400).json({ error: "Invalid invitation ID" });
+      return res.status(400).json({ error: req.t!("Invalid invitation ID") });
     }
 
     const deleted = await revokeInvitationQuery(organizationId, id);
     if (!deleted) {
-      return res.status(404).json({ error: "Invitation not found" });
+      return res.status(404).json({ error: req.t!("Invitation not found") });
     }
 
-    return res.status(200).json({ message: "Invitation revoked" });
+    return res.status(200).json({ message: req.t!("Invitation revoked") });
   } catch (error) {
     console.error("Error revoking invitation:", error);
-    return res.status(500).json({ error: "Failed to revoke invitation" });
+    return res.status(500).json({ error: req.t!("Failed to revoke invitation") });
   }
 };
 
@@ -66,12 +66,12 @@ export const resendInvitation = async (
     const organizationId = req.organizationId!;
 
     if (isNaN(id)) {
-      return res.status(400).json({ error: "Invalid invitation ID" });
+      return res.status(400).json({ error: req.t!("Invalid invitation ID") });
     }
 
     const invitation = await getInvitationByIdQuery(organizationId, id);
     if (!invitation) {
-      return res.status(404).json({ error: "Invitation not found" });
+      return res.status(404).json({ error: req.t!("Invitation not found") });
     }
 
     const { link, expiresAt, info } = await sendInviteEmail({
@@ -92,9 +92,9 @@ export const resendInvitation = async (
       });
     }
 
-    return res.status(200).json({ message: "Invitation resent successfully" });
+    return res.status(200).json({ message: req.t!("Invitation resent successfully") });
   } catch (error) {
     console.error("Error resending invitation:", error);
-    return res.status(500).json({ error: "Failed to resend invitation" });
+    return res.status(500).json({ error: req.t!("Failed to resend invitation") });
   }
 };

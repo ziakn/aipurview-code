@@ -350,10 +350,21 @@ const HAND_TRANSLATIONS = {
   },
 };
 
-// Returns { translated: string, source: "hand"|"frontend"|"template"|"english" }.
-function translateOne(en, lang, frontendGlossary) {
+// Returns { translated: string, source: "hand"|"existing"|"frontend"|"template"|"english" }.
+// Resolution order:
+//   1. HAND_TRANSLATIONS (highest priority — explicit overrides)
+//   2. existing — preserves a translation already in de.json/fr.json that
+//      isn't identical to English. Lets human edits and prior LLM passes
+//      survive a regeneration.
+//   3. Frontend glossary (rare overlap with backend keys)
+//   4. Sentence templates
+//   5. Fall back to English
+function translateOne(en, lang, frontendGlossary, existingDict, sourceEn) {
   if (HAND_TRANSLATIONS[en]) {
     return { translated: HAND_TRANSLATIONS[en][lang], source: "hand" };
+  }
+  if (existingDict && existingDict[en] && existingDict[en] !== sourceEn) {
+    return { translated: existingDict[en], source: "existing" };
   }
   if (frontendGlossary[en]) {
     return { translated: frontendGlossary[en], source: "frontend" };
@@ -409,16 +420,24 @@ const en = JSON.parse(fs.readFileSync(EN_PATH, "utf8"));
 const glossaryDe = loadFrontendGlossary("de");
 const glossaryFr = loadFrontendGlossary("fr");
 
+// Load existing translations so prior hand-translations / LLM-generated
+// translations survive a regeneration. Missing files yield empty dicts.
+const safeRead = (p) => {
+  try { return JSON.parse(fs.readFileSync(p, "utf8")); } catch { return {}; }
+};
+const existingDe = safeRead(DE_PATH);
+const existingFr = safeRead(FR_PATH);
+
 const out = { de: {}, fr: {} };
 const stats = {
-  de: { hand: 0, frontend: 0, template: 0, english: 0 },
-  fr: { hand: 0, frontend: 0, template: 0, english: 0 },
+  de: { hand: 0, existing: 0, frontend: 0, template: 0, english: 0 },
+  fr: { hand: 0, existing: 0, frontend: 0, template: 0, english: 0 },
 };
 
 const enKeys = Object.keys(en).sort((a, b) => a.localeCompare(b));
 for (const key of enKeys) {
-  const de = translateOne(key, "de", glossaryDe);
-  const fr = translateOne(key, "fr", glossaryFr);
+  const de = translateOne(key, "de", glossaryDe, existingDe, en[key]);
+  const fr = translateOne(key, "fr", glossaryFr, existingFr, en[key]);
   out.de[key] = de.translated;
   out.fr[key] = fr.translated;
   stats.de[de.source]++;

@@ -1179,7 +1179,7 @@ async function checkUserExists(
       "user.ctrl.ts"
     );
     logger.error("❌ Error in checkUserExists:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: _req.t!("Internal server error") });
   }
 }
 
@@ -1285,7 +1285,7 @@ async function calculateProgress(
       "user.ctrl.ts"
     );
     logger.error("❌ Error in calculateProgress:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: req.t!("Internal server error") });
   }
 }
 
@@ -1318,7 +1318,7 @@ async function ChangePassword(req: Request, res: Response) {
         req.organizationId!
       );
       await transaction.rollback();
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: req.t!("User not found") });
     }
 
     await user.updatePassword(newPassword, currentPassword);
@@ -1339,7 +1339,7 @@ async function ChangePassword(req: Request, res: Response) {
     await logEvent("Update", `Password changed for user ID ${id}`, req.userId!, req.organizationId!);
 
     return res.status(202).json({
-      message: "Password updated successfully",
+      message: req.t!("Password updated successfully"),
       data: updatedUser.toSafeJSON(),
     });
   } catch (error) {
@@ -1422,7 +1422,7 @@ async function updateUserRole(req: Request, res: Response) {
     // Prevent role escalation to SuperAdmin
     if (newRoleId === 5) {
       await transaction.rollback();
-      return res.status(403).json({ message: "Cannot assign SuperAdmin role" });
+      return res.status(403).json({ message: req.t!("Cannot assign SuperAdmin role") });
     }
 
     const targetUser = await getUserByIdQuery(parseInt(id));
@@ -1440,13 +1440,13 @@ async function updateUserRole(req: Request, res: Response) {
         req.organizationId!
       );
       await transaction.rollback();
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: req.t!("User not found") });
     }
 
     // Prevent changing super-admin's role
     if (targetUser.role_id === 5) {
       await transaction.rollback();
-      return res.status(403).json({ message: "Cannot modify SuperAdmin role" });
+      return res.status(403).json({ message: req.t!("Cannot modify SuperAdmin role") });
     }
 
     const currentUser = await getUserByIdQuery(currentUserId);
@@ -1464,7 +1464,7 @@ async function updateUserRole(req: Request, res: Response) {
         req.organizationId!
       );
       await transaction.rollback();
-      return res.status(404).json({ message: "Current user not found" });
+      return res.status(404).json({ message: req.t!("Current user not found") });
     }
 
     // Capture the old role before updating
@@ -1533,7 +1533,7 @@ async function updateUserRole(req: Request, res: Response) {
     }
 
     return res.status(202).json({
-      message: "User role updated successfully",
+      message: req.t!("User role updated successfully"),
       data: updatedUser.toSafeJSON(),
     });
   } catch (error) {

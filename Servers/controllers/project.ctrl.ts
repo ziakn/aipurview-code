@@ -72,7 +72,7 @@ export async function getAllProjects(
   try {
     const { userId, role } = req;
     if (!userId || !role) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     const projects = (await getAllProjectsQuery(
@@ -573,7 +573,7 @@ export async function updateProjectById(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     // Find existing project
@@ -1282,7 +1282,7 @@ export async function allProjectsComplianceProgress(
   try {
     const { userId, role } = req;
     if (!userId || !role) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     const projects = await getAllProjectsQuery({ userId, role }, req.organizationId!);
@@ -1355,7 +1355,7 @@ export async function allProjectsAssessmentProgress(
   try {
     const { userId, role } = req;
     if (!userId || !role) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     const projects = await getAllProjectsQuery({ userId, role }, req.organizationId!);

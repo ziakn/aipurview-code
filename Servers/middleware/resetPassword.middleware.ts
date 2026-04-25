@@ -12,7 +12,7 @@ const resetPassword = async (
   if (!token) {
     return res.status(400).json(
       STATUS_CODE[400]({
-        message: "Token not found",
+        message: req.t!("Token not found"),
       })
     );
   }
@@ -24,7 +24,7 @@ const resetPassword = async (
     if (!decoded)
       return res.status(401).json(
         STATUS_CODE[401]({
-          message: "Unauthorized **",
+          message: req.t!("Unauthorized **"),
         })
       );
 
@@ -32,12 +32,12 @@ const resetPassword = async (
     if (decoded.expire < Date.now())
       return res
         .status(406)
-        .json(STATUS_CODE[406]({ message: "This invitation link is expired. You need to be invited again to gain access to the dashboard" }));
+        .json(STATUS_CODE[406]({ message: req.t!("This invitation link is expired. You need to be invited again to gain access to the dashboard") }));
 
     if (!decoded.email) {
       return res.status(400).json(
         STATUS_CODE[400]({
-          message: "Invalid token payload",
+          message: req.t!("Invalid token payload"),
         })
       );
     }
@@ -45,7 +45,7 @@ const resetPassword = async (
     if (decoded.email !== req.body.email) {
       return res.status(400).json(
         STATUS_CODE[400]({
-          message: "Token email does not match request email",
+          message: req.t!("Token email does not match request email"),
         })
       );
     }

@@ -384,7 +384,7 @@ export async function updateVendorById(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     // Find existing vendor

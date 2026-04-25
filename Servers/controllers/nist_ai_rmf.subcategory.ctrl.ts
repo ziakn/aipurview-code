@@ -237,7 +237,7 @@ export async function getNISTAIRMFSubcategoryRisks(
     });
 
     return res.status(200).json({
-      message: "Risks retrieved successfully",
+      message: req.t!("Risks retrieved successfully"),
       data: risks,
     });
   } catch (error) {

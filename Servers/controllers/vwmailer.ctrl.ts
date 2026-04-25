@@ -81,7 +81,7 @@ export const invite = async (
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(200).json({ message: "Email sent successfully" });
+      return res.status(200).json({ message: req.t!("Email sent successfully") });
     }
   } catch (error) {
     console.error("Error sending email:", error);
@@ -95,7 +95,7 @@ export const invite = async (
       tenantId: req.organizationId!,
     });
     return res.status(500).json({
-      error: "Failed to send email",
+      error: req.t!("Failed to send email"),
       details: (error as Error).message,
     });
   }

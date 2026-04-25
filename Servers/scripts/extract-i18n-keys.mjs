@@ -56,6 +56,7 @@ const SCAN_DIRS = [
   path.join(SERVERS_ROOT, "domain.layer"),
   path.join(SERVERS_ROOT, "services"),
   path.join(SERVERS_ROOT, "routes"),
+  path.join(SERVERS_ROOT, "middleware"),
 ];
 
 // Email-subject regexes (`subject:` etc.) are too generic to run unconditionally

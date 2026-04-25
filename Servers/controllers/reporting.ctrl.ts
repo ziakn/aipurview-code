@@ -130,7 +130,7 @@ export async function getAllGeneratedReports(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     const reports = await getGeneratedReportsQuery(

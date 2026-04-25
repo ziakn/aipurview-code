@@ -36,7 +36,7 @@ export async function search(req: Request, res: Response): Promise<any> {
     const { userId, tenantId, organizationId } = req;
 
     if (!userId || !tenantId || !organizationId) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     const query = (req.query.q as string) || "";

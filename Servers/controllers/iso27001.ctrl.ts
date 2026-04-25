@@ -1228,7 +1228,7 @@ export async function getAllProjectsClausesProgress(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     const projects = await getAllProjectsQuery({ userId, role }, req.organizationId!);
@@ -1319,7 +1319,7 @@ export async function getAllProjectsAnnxesProgress(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     const projects = await getAllProjectsQuery({ userId, role }, req.organizationId!);

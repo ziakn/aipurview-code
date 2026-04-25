@@ -179,7 +179,7 @@ export async function createLinkedObject(req: Request, res: Response) {
     await transaction.commit();
 
     return res.status(201).json({
-      message: "Linked successfully",
+      message: req.t!("Linked successfully"),
     });
   } catch (error: any) {
     if (transaction) await transaction.rollback();

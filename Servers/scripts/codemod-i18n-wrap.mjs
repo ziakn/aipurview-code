@@ -42,7 +42,10 @@ import {
   printDiffSamples,
 } from "./lib/i18nScriptUtils.mjs";
 
-const SCAN_DIRS = [path.join(SERVERS_ROOT, "controllers")];
+const SCAN_DIRS = [
+  path.join(SERVERS_ROOT, "controllers"),
+  path.join(SERVERS_ROOT, "middleware"),
+];
 const { DRY_RUN, SHOW_DIFF } = parseArgs();
 
 // Match STATUS_CODE[\d+](<whitespace>"literal" | 'literal') — first arg only.
@@ -60,6 +63,19 @@ const TARGET_OBJ = new RegExp(
   "gs",
 );
 
+// Direct-res-json forms that bypass STATUS_CODE entirely, e.g.:
+//   res.status(401).json({ message: "Unauthorized" })
+//   res.status(500).json({ error: "Internal server error" })
+// Captures: (prefix)(field:<ws>)("literal"|'literal'). Same lookahead.
+const TARGET_RES_JSON_MSG = new RegExp(
+  String.raw`(res\.status\(\d+\)\.json\(\s*\{\s*message\s*:\s*)(?!req\.t!?\()${STATIC_STR_PATTERN}`,
+  "gs",
+);
+const TARGET_RES_JSON_ERR = new RegExp(
+  String.raw`(res\.status\(\d+\)\.json\(\s*\{\s*error\s*:\s*)(?!req\.t!?\()${STATIC_STR_PATTERN}`,
+  "gs",
+);
+
 const diffs = [];
 let filesChanged = 0;
 let wrapsApplied = 0;
@@ -67,16 +83,15 @@ let wrapsApplied = 0;
 walkTsFiles(SCAN_DIRS, (filePath) => {
   const original = fs.readFileSync(filePath, "utf8");
   let count = 0;
-  let updated = original.replace(TARGET, (_whole, prefix, dq, sq) => {
+  const replacer = (_whole, prefix, dq, sq) => {
     count += 1;
     const literal = dq !== undefined ? `"${dq}"` : `'${sq}'`;
     return `${prefix}req.t!(${literal})`;
-  });
-  updated = updated.replace(TARGET_OBJ, (_whole, prefix, dq, sq) => {
-    count += 1;
-    const literal = dq !== undefined ? `"${dq}"` : `'${sq}'`;
-    return `${prefix}req.t!(${literal})`;
-  });
+  };
+  let updated = original.replace(TARGET, replacer);
+  updated = updated.replace(TARGET_OBJ, replacer);
+  updated = updated.replace(TARGET_RES_JSON_MSG, replacer);
+  updated = updated.replace(TARGET_RES_JSON_ERR, replacer);
   if (count === 0) return;
 
   wrapsApplied += count;
