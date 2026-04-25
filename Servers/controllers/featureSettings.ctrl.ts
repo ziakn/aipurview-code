@@ -7,6 +7,7 @@
 import { Request, Response } from "express";
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
+import { translateError } from "../utils/i18n.utils";
 import {
   getFeatureSettingsQuery,
   updateFeatureSettingsQuery,
@@ -54,7 +55,7 @@ export async function getFeatureSettings(
       error: error as Error,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -78,7 +79,7 @@ export async function updateFeatureSettings(
     if (req.role !== "Admin" && req.role !== "SuperAdmin") {
       return res
         .status(403)
-        .json(STATUS_CODE[403]("Only admins can manage feature settings"));
+        .json(STATUS_CODE[403](req.t!("Only admins can manage feature settings")));
     }
 
     const { lifecycle_enabled, audit_ledger_enabled } = req.body;
@@ -89,7 +90,7 @@ export async function updateFeatureSettings(
     ) {
       return res
         .status(400)
-        .json(STATUS_CODE[400]("lifecycle_enabled must be a boolean"));
+        .json(STATUS_CODE[400](req.t!("lifecycle_enabled must be a boolean")));
     }
 
     if (
@@ -98,13 +99,13 @@ export async function updateFeatureSettings(
     ) {
       return res
         .status(400)
-        .json(STATUS_CODE[400]("audit_ledger_enabled must be a boolean"));
+        .json(STATUS_CODE[400](req.t!("audit_ledger_enabled must be a boolean")));
     }
 
     if (lifecycle_enabled === undefined && audit_ledger_enabled === undefined) {
       return res
         .status(400)
-        .json(STATUS_CODE[400]("No valid fields to update"));
+        .json(STATUS_CODE[400](req.t!("No valid fields to update")));
     }
 
     const updated = await updateFeatureSettingsQuery(organizationId, {
@@ -134,6 +135,6 @@ export async function updateFeatureSettings(
       error: error as Error,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

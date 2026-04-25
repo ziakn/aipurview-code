@@ -29,6 +29,7 @@ import {
 } from "../utils/logger/logHelper";
 import { sanitizeErrorMessage } from "../utils/entityGraphSecurity.utils";
 
+import { translateError } from "../utils/i18n.utils";
 /**
  * Create a new saved view
  *
@@ -93,14 +94,14 @@ export async function createView(req: Request, res: Response): Promise<any> {
     });
 
     if (error instanceof ValidationException) {
-      return res.status(400).json(STATUS_CODE[400]((error as Error).message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
     if (error instanceof BusinessLogicException) {
-      return res.status(400).json(STATUS_CODE[400]((error as Error).message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
     return res.status(500).json(
       STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, "Failed to create view")
+        sanitizeErrorMessage(error as Error, req.t!("Failed to create view"))
       )
     );
   }
@@ -150,7 +151,7 @@ export async function getViews(req: Request, res: Response): Promise<any> {
 
     return res.status(500).json(
       STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, "Failed to retrieve views")
+        sanitizeErrorMessage(error as Error, req.t!("Failed to retrieve views"))
       )
     );
   }
@@ -195,7 +196,7 @@ export async function getViewById(req: Request, res: Response): Promise<any> {
     );
 
     if (!view) {
-      return res.status(404).json(STATUS_CODE[404]("View not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("View not found")));
     }
 
     return res.status(200).json(STATUS_CODE[200](view.toJSON()));
@@ -211,11 +212,11 @@ export async function getViewById(req: Request, res: Response): Promise<any> {
     });
 
     if (error instanceof ValidationException) {
-      return res.status(400).json(STATUS_CODE[400]((error as Error).message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
     return res.status(500).json(
       STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, "Failed to retrieve view")
+        sanitizeErrorMessage(error as Error, req.t!("Failed to retrieve view"))
       )
     );
   }
@@ -290,14 +291,14 @@ export async function updateView(req: Request, res: Response): Promise<any> {
     });
 
     if (error instanceof BusinessLogicException) {
-      return res.status(403).json(STATUS_CODE[403]((error as Error).message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
     if (error instanceof ValidationException) {
-      return res.status(400).json(STATUS_CODE[400]((error as Error).message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
     return res.status(500).json(
       STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, "Failed to update view")
+        sanitizeErrorMessage(error as Error, req.t!("Failed to update view"))
       )
     );
   }
@@ -337,7 +338,7 @@ export async function deleteView(req: Request, res: Response): Promise<any> {
 
     await EntityGraphViewsService.deleteView(viewId, userId, organizationId);
 
-    return res.status(200).json(STATUS_CODE[200]("View deleted successfully"));
+    return res.status(200).json(STATUS_CODE[200](req.t!("View deleted successfully")));
   } catch (error) {
     await logFailure({
       eventType: "Delete",
@@ -350,14 +351,14 @@ export async function deleteView(req: Request, res: Response): Promise<any> {
     });
 
     if (error instanceof BusinessLogicException) {
-      return res.status(403).json(STATUS_CODE[403]((error as Error).message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
     if (error instanceof ValidationException) {
-      return res.status(400).json(STATUS_CODE[400]((error as Error).message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
     return res.status(500).json(
       STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, "Failed to delete view")
+        sanitizeErrorMessage(error as Error, req.t!("Failed to delete view"))
       )
     );
   }

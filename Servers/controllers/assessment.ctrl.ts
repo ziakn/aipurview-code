@@ -16,6 +16,7 @@ import { TopicModel } from "../domain.layer/models/topic/topic.model";
 import { SubtopicModel } from "../domain.layer/models/subtopic/subtopic.model";
 import { sequelize } from "../database/db";
 import { ValidationException } from "../domain.layer/exceptions/custom.exception";
+import { translateError } from "../utils/i18n.utils";
 import {
   logFailure,
   logProcessing,
@@ -60,7 +61,7 @@ export async function getAllAssessments(
       tenantId: req.organizationId!
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -107,7 +108,7 @@ export async function getAssessmentById(
       tenantId: req.organizationId!
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -193,7 +194,7 @@ export async function createAssessment(
       return res.status(400).json(STATUS_CODE[400](error));
     }
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -280,7 +281,7 @@ export async function updateAssessmentById(
       return res.status(400).json(STATUS_CODE[400](error));
     }
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -343,7 +344,7 @@ export async function deleteAssessmentById(
       tenantId: req.organizationId!
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -406,7 +407,7 @@ export async function getAnswers(req: Request, res: Response): Promise<any> {
       tenantId: req.organizationId!
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -457,6 +458,6 @@ export async function getAssessmentByProjectId(
       tenantId: req.organizationId!
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

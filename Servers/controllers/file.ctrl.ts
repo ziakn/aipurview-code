@@ -12,6 +12,7 @@ import { FileType } from "../domain.layer/models/file/file.model";
 import { addFileToAnswerEU } from "../utils/eu.utils";
 import { sequelize } from "../database/db";
 import getUserFilesMetaDataQuery from "../utils/files/getUserFilesMetaData.utils";
+import { translateError } from "../utils/i18n.utils";
 import {
   logProcessing,
   logSuccess,
@@ -113,7 +114,7 @@ export async function getFileContentById(
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -157,7 +158,7 @@ export async function getFileMetaByProjectId(
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -301,7 +302,7 @@ export async function postFileContent(
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -380,7 +381,7 @@ export async function attachFileToEntity(
       tenantId: req.organizationId,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -452,7 +453,7 @@ export async function detachFileFromEntity(
       tenantId: req.organizationId,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -551,7 +552,7 @@ export async function attachFilesToEntity(
       tenantId: req.organizationId,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -618,6 +619,6 @@ export async function getEntityFiles(
       tenantId: req.organizationId,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

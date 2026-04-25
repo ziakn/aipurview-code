@@ -14,7 +14,11 @@
     "watch": "tsc-watch --noClear --onSuccess \"npm-run-all postbuild start\"",
     "reset-db": "ts-node scripts/resetDatabase.ts",
     "generate-dbml": "node scripts/generateDbml.js",
-    "migrate:shared-schema": "ts-node scripts/migrateToSharedSchema.ts"
+    "migrate:shared-schema": "ts-node scripts/migrateToSharedSchema.ts",
+    "i18n:extract": "node scripts/extract-i18n-keys.mjs",
+    "i18n:translate": "node scripts/translate-with-glossary.mjs",
+    "i18n:audit": "node scripts/i18n-audit.mjs",
+    "i18n:audit:strict": "node scripts/i18n-audit.mjs --strict"
   },
   "author": "",
   "license": "ISC",

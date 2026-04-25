@@ -80,6 +80,7 @@ export const resendInvitation = async (
       surname: invitation.surname,
       roleId: invitation.role_id,
       organizationId: organizationId,
+      lang: req.lang,
     });
 
     await updateInvitationExpiryQuery(organizationId, id, expiresAt);

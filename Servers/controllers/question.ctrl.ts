@@ -20,6 +20,7 @@ import {
 import logger, { logStructured } from "../utils/logger/fileLogger";
 import { logEvent } from "../utils/logger/dbLogger";
 
+import { translateError } from "../utils/i18n.utils";
 export async function getAllQuestions(
   req: Request,
   res: Response
@@ -66,7 +67,7 @@ export async function getAllQuestions(
       req.organizationId!
     );
     logger.error("❌ Error in getAllQuestions:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -113,7 +114,7 @@ export async function getQuestionById(
     );
     await logEvent("Error", `Failed to retrieve question by ID: ${questionId}`, req.userId!, req.organizationId!);
     logger.error("❌ Error in getQuestionById:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -204,7 +205,7 @@ export async function createQuestion(
       req.organizationId!
     );
     await transaction.rollback();
-    return res.status(400).json(STATUS_CODE[400]("Failed to create question"));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Failed to create question")));
   } catch (error) {
     await transaction.rollback();
 
@@ -221,7 +222,7 @@ export async function createQuestion(
         req.userId!,
         req.organizationId!
       );
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof BusinessLogicException) {
@@ -237,7 +238,7 @@ export async function createQuestion(
         req.userId!,
         req.organizationId!
       );
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     logStructured(
@@ -253,7 +254,7 @@ export async function createQuestion(
       req.organizationId!
     );
     logger.error("❌ Error in createQuestion:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -293,7 +294,7 @@ export async function updateQuestionById(
         req.organizationId!
       );
       await transaction.rollback();
-      return res.status(404).json(STATUS_CODE[404]("Question not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Question not found")));
     }
 
     // Create a QuestionModel instance from the existing data
@@ -349,7 +350,7 @@ export async function updateQuestionById(
     );
     await logEvent("Error", `Question update failed: ID ${questionId}`, req.userId!, req.organizationId!);
     await transaction.rollback();
-    return res.status(400).json(STATUS_CODE[400]("Failed to update question"));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Failed to update question")));
   } catch (error) {
     await transaction.rollback();
 
@@ -366,7 +367,7 @@ export async function updateQuestionById(
         req.userId!,
         req.organizationId!
       );
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof BusinessLogicException) {
@@ -382,7 +383,7 @@ export async function updateQuestionById(
         req.userId!,
         req.organizationId!
       );
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     logStructured(
@@ -398,7 +399,7 @@ export async function updateQuestionById(
       req.organizationId!
     );
     logger.error("❌ Error in updateQuestionById:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -459,7 +460,7 @@ export async function deleteQuestionById(
       req.organizationId!
     );
     logger.error("❌ Error in deleteQuestionById:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -515,7 +516,7 @@ export async function getQuestionsBySubtopicId(req: Request, res: Response) {
       req.organizationId!
     );
     logger.error("❌ Error in getQuestionsBySubtopicId:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -568,6 +569,6 @@ export async function getQuestionsByTopicId(req: Request, res: Response) {
       req.organizationId!
     );
     logger.error("❌ Error in getQuestionsByTopicId:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

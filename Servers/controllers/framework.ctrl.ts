@@ -17,6 +17,7 @@ import logger, { logStructured } from "../utils/logger/fileLogger";
 import { logEvent } from "../utils/logger/dbLogger";
 import { hasPendingApprovalQuery } from "../utils/approvalRequest.utils";
 
+import { translateError } from "../utils/i18n.utils";
 export async function getAllFrameworks(
   req: Request,
   res: Response
@@ -63,7 +64,7 @@ export async function getAllFrameworks(
       req.organizationId!
     );
     logger.error("❌ Error in getAllFrameworks:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -118,7 +119,7 @@ export async function getFrameworkById(
       req.organizationId!
     );
     logger.error("❌ Error in getFrameworkById:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -155,7 +156,7 @@ export async function addFrameworkToProject(
       await transaction.rollback();
       return res.status(403).json(
         STATUS_CODE[403](
-          "This use case has a pending approval request and cannot be modified until the approval process is complete."
+          req.t!("This use case has a pending approval request and cannot be modified until the approval process is complete.")
         )
       );
     }
@@ -176,7 +177,7 @@ export async function addFrameworkToProject(
         req.organizationId!
       );
       await transaction.rollback();
-      return res.status(404).json(STATUS_CODE[404]("Framework not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Framework not found")));
     }
 
     const result = await addFrameworkToProjectQuery(
@@ -220,7 +221,7 @@ export async function addFrameworkToProject(
       .status(404)
       .json(
         STATUS_CODE[404](
-          "Framework not found or could not be added to the project."
+          req.t!("Framework not found or could not be added to the project.")
         )
       );
   } catch (error) {
@@ -241,15 +242,15 @@ export async function addFrameworkToProject(
     );
 
     if (error instanceof ValidationException) {
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof NotFoundException) {
-      return res.status(404).json(STATUS_CODE[404](error.message));
+      return res.status(404).json(STATUS_CODE[404](translateError(req, error)));
     }
 
     logger.error("❌ Error in addFrameworkToProject:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -292,7 +293,7 @@ export async function deleteFrameworkFromProject(
       await transaction.rollback();
       return res.status(403).json(
         STATUS_CODE[403](
-          "This use case has a pending approval request and cannot be modified until the approval process is complete."
+          req.t!("This use case has a pending approval request and cannot be modified until the approval process is complete.")
         )
       );
     }
@@ -313,7 +314,7 @@ export async function deleteFrameworkFromProject(
         req.organizationId!
       );
       await transaction.rollback();
-      return res.status(404).json(STATUS_CODE[404]("Framework not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Framework not found")));
     }
 
     const result = await deleteFrameworkFromProjectQuery(
@@ -357,7 +358,7 @@ export async function deleteFrameworkFromProject(
       .status(404)
       .json(
         STATUS_CODE[404](
-          "Framework not found or could not be removed from the project."
+          req.t!("Framework not found or could not be removed from the project.")
         )
       );
   } catch (error) {
@@ -378,14 +379,14 @@ export async function deleteFrameworkFromProject(
     );
 
     if (error instanceof ValidationException) {
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof NotFoundException) {
-      return res.status(404).json(STATUS_CODE[404](error.message));
+      return res.status(404).json(STATUS_CODE[404](translateError(req, error)));
     }
 
     logger.error("❌ Error in deleteFrameworkFromProject:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

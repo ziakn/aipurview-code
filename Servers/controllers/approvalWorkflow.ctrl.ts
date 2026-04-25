@@ -21,6 +21,7 @@ import {
 } from "../utils/approvalWorkflow.utils";
 import { EntityType } from "../domain.layer/enums/approval-workflow.enum";
 
+import { translateError } from "../utils/i18n.utils";
 /**
  * Get all approval workflows
  * @route GET /api/approval-workflows
@@ -41,7 +42,7 @@ export async function getAllApprovalWorkflows(
     const { organizationId } = req;
 
     if (!organizationId) {
-      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     const workflows = await getAllApprovalWorkflowsQuery(organizationId);
@@ -61,7 +62,7 @@ export async function getAllApprovalWorkflows(
       "getAllApprovalWorkflows",
       "approvalWorkflow.ctrl.ts"
     );
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -86,12 +87,12 @@ export async function getApprovalWorkflowById(
     const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 
     if (!organizationId) {
-      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     const workflowId = parseInt(id, 10);
     if (isNaN(workflowId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid workflow ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid workflow ID")));
     }
 
     const workflow = await getApprovalWorkflowByIdQuery(
@@ -100,7 +101,7 @@ export async function getApprovalWorkflowById(
     );
 
     if (!workflow) {
-      return res.status(404).json(STATUS_CODE[404]("Workflow not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Workflow not found")));
     }
 
     logStructured(
@@ -118,7 +119,7 @@ export async function getApprovalWorkflowById(
       "getApprovalWorkflowById",
       "approvalWorkflow.ctrl.ts"
     );
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -146,7 +147,7 @@ export async function createApprovalWorkflow(
 
     if (!userId || !organizationId) {
       await transaction.rollback();
-      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     // Validation
@@ -154,19 +155,19 @@ export async function createApprovalWorkflow(
       await transaction.rollback();
       return res
         .status(400)
-        .json(STATUS_CODE[400]("Workflow title is required"));
+        .json(STATUS_CODE[400](req.t!("Workflow title is required")));
     }
 
     if (!entity_type || !Object.values(EntityType).includes(entity_type)) {
       await transaction.rollback();
-      return res.status(400).json(STATUS_CODE[400]("Valid entity type is required"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Valid entity type is required")));
     }
 
     if (!steps || !Array.isArray(steps) || steps.length === 0) {
       await transaction.rollback();
       return res
         .status(400)
-        .json(STATUS_CODE[400]("At least one step is required"));
+        .json(STATUS_CODE[400](req.t!("At least one step is required")));
     }
 
     // Validate steps
@@ -176,21 +177,21 @@ export async function createApprovalWorkflow(
         await transaction.rollback();
         return res
           .status(400)
-          .json(STATUS_CODE[400](`Step ${i + 1} name is required`));
+          .json(STATUS_CODE[400](req.t!("Step {n} name is required", { n: i + 1 })));
       }
       if (!step.approver_ids || step.approver_ids.length === 0) {
         await transaction.rollback();
         return res
           .status(400)
           .json(
-            STATUS_CODE[400](`Step ${i + 1} must have at least one approver`)
+            STATUS_CODE[400](req.t!("Step {n} must have at least one approver", { n: i + 1 }))
           );
       }
       if (step.requires_all_approvers === undefined || step.requires_all_approvers === null) {
         await transaction.rollback();
         return res
           .status(400)
-          .json(STATUS_CODE[400](`Step ${i + 1} must have requires_all_approvers field`));
+          .json(STATUS_CODE[400](req.t!("Step {n} must have requires_all_approvers field", { n: i + 1 })));
       }
     }
 
@@ -226,9 +227,9 @@ export async function createApprovalWorkflow(
     );
 
     if (error instanceof ValidationException) {
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -257,13 +258,13 @@ export async function updateApprovalWorkflow(
 
     if (!organizationId) {
       await transaction.rollback();
-      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     const workflowId = parseInt(id, 10);
     if (isNaN(workflowId)) {
       await transaction.rollback();
-      return res.status(400).json(STATUS_CODE[400]("Invalid workflow ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid workflow ID")));
     }
 
     // Validate steps if provided
@@ -272,7 +273,7 @@ export async function updateApprovalWorkflow(
         await transaction.rollback();
         return res
           .status(400)
-          .json(STATUS_CODE[400]("At least one step is required"));
+          .json(STATUS_CODE[400](req.t!("At least one step is required")));
       }
 
       for (let i = 0; i < steps.length; i++) {
@@ -281,14 +282,14 @@ export async function updateApprovalWorkflow(
           await transaction.rollback();
           return res
             .status(400)
-            .json(STATUS_CODE[400](`Step ${i + 1} name is required`));
+            .json(STATUS_CODE[400](req.t!("Step {n} name is required", { n: i + 1 })));
         }
         if (!step.approver_ids || step.approver_ids.length === 0) {
           await transaction.rollback();
           return res
             .status(400)
             .json(
-              STATUS_CODE[400](`Step ${i + 1} must have at least one approver`)
+              STATUS_CODE[400](req.t!("Step {n} must have at least one approver", { n: i + 1 }))
             );
         }
       }
@@ -304,7 +305,7 @@ export async function updateApprovalWorkflow(
     await transaction.commit();
 
     if (!workflow) {
-      return res.status(404).json(STATUS_CODE[404]("Workflow not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Workflow not found")));
     }
 
     logStructured(
@@ -323,7 +324,7 @@ export async function updateApprovalWorkflow(
       "updateApprovalWorkflow",
       "approvalWorkflow.ctrl.ts"
     );
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -351,13 +352,13 @@ export async function deleteApprovalWorkflow(
 
     if (!organizationId) {
       await transaction.rollback();
-      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     const workflowId = parseInt(id, 10);
     if (isNaN(workflowId)) {
       await transaction.rollback();
-      return res.status(400).json(STATUS_CODE[400]("Invalid workflow ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid workflow ID")));
     }
 
     await deleteApprovalWorkflowQuery(workflowId, organizationId, transaction);
@@ -382,6 +383,6 @@ export async function deleteApprovalWorkflow(
       "deleteApprovalWorkflow",
       "approvalWorkflow.ctrl.ts"
     );
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

@@ -12,6 +12,7 @@ import { STATUS_CODE } from "../utils/statusCode.utils";
 import { wiseSearch, getTotalResultCount, GroupedSearchResults, SEARCH_CONSTANTS } from "../utils/search.utils";
 import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 
+import { translateError } from "../utils/i18n.utils";
 /**
  * Search across all entities
  *
@@ -95,6 +96,6 @@ export async function search(req: Request, res: Response): Promise<any> {
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

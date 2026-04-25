@@ -17,7 +17,7 @@ export async function getDatasetChangeHistoryById(
   const datasetId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
   if (isNaN(datasetId) || datasetId <= 0) {
-    return res.status(400).json(STATUS_CODE[400]("Invalid dataset ID"));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Invalid dataset ID")));
   }
 
   const limit = Math.min(Math.max(parseInt(req.query.limit as string) || 100, 1), 500);
@@ -60,6 +60,6 @@ export async function getDatasetChangeHistoryById(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]("Failed to retrieve change history"));
+    return res.status(500).json(STATUS_CODE[500](req.t!("Failed to retrieve change history")));
   }
 }

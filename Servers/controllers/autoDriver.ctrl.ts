@@ -8,6 +8,7 @@ import logger, { logStructured } from "../utils/logger/fileLogger";
 import { logEvent } from "../utils/logger/dbLogger";
 import { sequelize } from "../database/db";
 
+import { translateError } from "../utils/i18n.utils";
 export async function postAutoDriver(req: Request, res: Response) {
   logStructured(
     "processing",
@@ -34,7 +35,7 @@ export async function postAutoDriver(req: Request, res: Response) {
     );
     await logEvent("Create", "Mock data inserted via auto driver", req.userId!, req.organizationId!);
 
-    return res.status(201).json(STATUS_CODE[201]("Mock data inserted"));
+    return res.status(201).json(STATUS_CODE[201](req.t!("Mock data inserted")));
   } catch (error) {
     logStructured(
       "error",
@@ -49,7 +50,7 @@ export async function postAutoDriver(req: Request, res: Response) {
       req.organizationId!
     );
     logger.error("❌ Error in postAutoDriver:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -73,7 +74,7 @@ export async function deleteAutoDriver(req: Request, res: Response) {
     );
     await logEvent("Delete", "Mock data deleted via auto driver", req.userId!, req.organizationId!);
 
-    return res.status(200).json(STATUS_CODE[200]("Mock data deleted"));
+    return res.status(200).json(STATUS_CODE[200](req.t!("Mock data deleted")));
   } catch (error) {
     logStructured(
       "error",
@@ -88,6 +89,6 @@ export async function deleteAutoDriver(req: Request, res: Response) {
       req.organizationId!
     );
     logger.error("❌ Error in deleteAutoDriver:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

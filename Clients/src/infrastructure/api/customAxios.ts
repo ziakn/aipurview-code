@@ -93,6 +93,15 @@ CustomAxios.interceptors.request.use(
       config.headers['X-Organization-Id'] = String(activeOrgId);
     }
 
+    try {
+      const lang = localStorage.getItem("vw_lang_prototype");
+      if (lang) {
+        config.headers['Accept-Language'] = lang;
+      }
+    } catch {
+      // localStorage unavailable in sandboxed contexts.
+    }
+
     // Enable credentials for auth-related endpoints
     if (config.url?.includes('/users/login') || config.url?.includes('/users/refresh-token')) {
       config.withCredentials = true;

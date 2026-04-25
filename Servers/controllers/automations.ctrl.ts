@@ -11,6 +11,7 @@ import {
 import { sequelize } from "../database/db";
 import { ITenantAutomationAction } from "../domain.layer/interfaces/i.tenantAutomationAction";
 import { STATUS_CODE } from "../utils/statusCode.utils";
+import { translateError } from "../utils/i18n.utils";
 import {
   getAutomationExecutionLogs,
   getAutomationExecutionStats,
@@ -25,7 +26,7 @@ export const getAllAutomationTriggers = async (
     return res.status(200).json(STATUS_CODE[200](result));
   } catch (error) {
     console.error("Error fetching automation triggers:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(_req, error)));
   }
 };
 
@@ -43,7 +44,7 @@ export const getAllAutomationActionsByTriggerId = async (
     return res.status(200).json(STATUS_CODE[200](result));
   } catch (error) {
     console.error(`Error fetching actions for trigger ID ${triggerId}:`, error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 };
 
@@ -53,7 +54,7 @@ export const getAllAutomations = async (req: Request, res: Response) => {
     return res.status(200).json(STATUS_CODE[200](result));
   } catch (error) {
     console.error("Error fetching automations:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 };
 
@@ -74,7 +75,7 @@ export const getAutomationById = async (req: Request, res: Response) => {
     return res.status(200).json(STATUS_CODE[200](automation));
   } catch (error) {
     console.error(`Error fetching automation with ID ${id}:`, error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 };
 
@@ -134,7 +135,7 @@ export const createAutomation = async (req: Request, res: Response) => {
   } catch (error) {
     await transaction.rollback();
     console.error("Error creating automation:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 };
 
@@ -190,7 +191,7 @@ export const updateAutomation = async (req: Request, res: Response) => {
   } catch (error) {
     await transaction.rollback();
     console.error(`Error updating automation with ID ${id}:`, error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 };
 
@@ -223,7 +224,7 @@ export const deleteAutomationById = async (req: Request, res: Response) => {
   } catch (error) {
     await transaction.rollback();
     console.error(`Error deleting automation with ID ${id}:`, error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 };
 
@@ -263,7 +264,7 @@ export const getAutomationHistory = async (req: Request, res: Response) => {
     );
   } catch (error) {
     console.error(`Error fetching automation history for ID ${id}:`, error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 };
 
@@ -281,6 +282,6 @@ export const getAutomationStats = async (req: Request, res: Response) => {
     return res.status(200).json(STATUS_CODE[200](stats));
   } catch (error) {
     console.error(`Error fetching automation stats for ID ${id}:`, error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 };

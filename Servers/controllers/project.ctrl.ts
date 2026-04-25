@@ -56,6 +56,7 @@ import { createApprovalRequestQuery, hasPendingApprovalQuery, getPendingApproval
 import { ApprovalRequestStatus } from "../domain.layer/enums/approval-workflow.enum";
 import { notifyUserAssigned } from "../services/inAppNotification.service";
 
+import { translateError } from "../utils/i18n.utils";
 export async function getAllProjects(
   req: Request,
   res: Response
@@ -144,7 +145,7 @@ export async function getAllProjects(
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -219,7 +220,7 @@ export async function getProjectById(
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -514,7 +515,7 @@ export async function createProject(req: Request, res: Response): Promise<any> {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof BusinessLogicException) {
@@ -527,7 +528,7 @@ export async function createProject(req: Request, res: Response): Promise<any> {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     await logFailure({
@@ -540,7 +541,7 @@ export async function createProject(req: Request, res: Response): Promise<any> {
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -786,7 +787,7 @@ export async function updateProjectById(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof BusinessLogicException) {
@@ -799,7 +800,7 @@ export async function updateProjectById(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     await logFailure({
@@ -812,7 +813,7 @@ export async function updateProjectById(
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -905,7 +906,7 @@ export async function deleteProjectById(
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -962,7 +963,7 @@ export async function getProjectStatsById(
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1013,7 +1014,7 @@ export async function getProjectRisksCalculations(
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1064,7 +1065,7 @@ export async function getVendorRisksCalculations(
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1142,7 +1143,7 @@ export async function getCompliances(req: Request, res: Response) {
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1201,7 +1202,7 @@ export async function projectComplianceProgress(req: Request, res: Response) {
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1260,7 +1261,7 @@ export async function projectAssessmentProgress(req: Request, res: Response) {
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1333,7 +1334,7 @@ export async function allProjectsComplianceProgress(
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1406,7 +1407,7 @@ export async function allProjectsAssessmentProgress(
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1486,7 +1487,7 @@ export async function updateProjectStatus(
     await transaction.rollback();
     return res
       .status(500)
-      .json(STATUS_CODE[500]("Failed to update project status"));
+      .json(STATUS_CODE[500](req.t!("Failed to update project status")));
   } catch (error) {
     await transaction.rollback();
 
@@ -1500,6 +1501,6 @@ export async function updateProjectStatus(
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

@@ -10,6 +10,7 @@ import {
 } from "../utils/evidenceHub.utils";
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import logger, { logStructured } from "../utils/logger/fileLogger";
+import { translateError } from "../utils/i18n.utils";
 import {
   recordEvidenceAddedToModel,
   recordEvidenceRemovedFromModel,
@@ -57,7 +58,7 @@ export async function getAllEvidences(req: Request, res: Response) {
       "evidenceHub.controller.ts"
     );
     logger.error("❌ Error in getAllEvidences:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -111,7 +112,7 @@ export async function getEvidenceById(req: Request, res: Response) {
       "evidenceHub.controller.ts"
     );
     logger.error("❌ Error in getEvidenceById:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -171,7 +172,7 @@ export async function createNewEvidence(req: Request, res: Response) {
       "evidenceHub.controller.ts"
     );
     logger.error("❌ Error in createNewEvidence:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -195,7 +196,7 @@ export async function updateEvidenceById(req: Request, res: Response) {
       req.organizationId!
     )) as EvidenceHubModel;
     if (!existingEvidence) {
-      return res.status(404).json(STATUS_CODE[404]("Evidence not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Evidence not found")));
     }
 
     // Track model mapping changes
@@ -291,7 +292,7 @@ export async function updateEvidenceById(req: Request, res: Response) {
   } catch (error) {
     await transaction.rollback();
     logger.error("❌ Error in updateEvidenceById:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -315,7 +316,7 @@ export async function deleteEvidenceById(req: Request, res: Response) {
       req.organizationId!
     )) as EvidenceHubModel;
     if (!existingEvidence) {
-      return res.status(404).json(STATUS_CODE[404]("Evidence not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Evidence not found")));
     }
 
     // Track evidence removal for all mapped models
@@ -340,10 +341,10 @@ export async function deleteEvidenceById(req: Request, res: Response) {
 
     return res
       .status(200)
-      .json(STATUS_CODE[200]("Evidence deleted successfully"));
+      .json(STATUS_CODE[200](req.t!("Evidence deleted successfully")));
   } catch (error) {
     await transaction.rollback();
     logger.error("❌ Error in deleteEvidenceById:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

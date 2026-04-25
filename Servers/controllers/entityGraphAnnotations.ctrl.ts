@@ -29,6 +29,7 @@ import {
 } from "../utils/logger/logHelper";
 import { sanitizeErrorMessage } from "../utils/entityGraphSecurity.utils";
 
+import { translateError } from "../utils/i18n.utils";
 /**
  * Create or update an annotation
  *
@@ -107,11 +108,11 @@ export async function saveAnnotation(req: Request, res: Response): Promise<any> 
     });
 
     if (error instanceof ValidationException) {
-      return res.status(400).json(STATUS_CODE[400]((error as Error).message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
     return res.status(500).json(
       STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, "Failed to save annotation")
+        sanitizeErrorMessage(error as Error, req.t!("Failed to save annotation"))
       )
     );
   }
@@ -161,7 +162,7 @@ export async function getAnnotations(req: Request, res: Response): Promise<any> 
 
     return res.status(500).json(
       STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, "Failed to retrieve annotations")
+        sanitizeErrorMessage(error as Error, req.t!("Failed to retrieve annotations"))
       )
     );
   }
@@ -223,11 +224,11 @@ export async function getAnnotationByEntity(
     });
 
     if (error instanceof ValidationException) {
-      return res.status(400).json(STATUS_CODE[400]((error as Error).message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
     return res.status(500).json(
       STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, "Failed to retrieve annotation")
+        sanitizeErrorMessage(error as Error, req.t!("Failed to retrieve annotation"))
       )
     );
   }
@@ -271,7 +272,7 @@ export async function deleteAnnotation(req: Request, res: Response): Promise<any
       organizationId
     );
 
-    return res.status(200).json(STATUS_CODE[200]("Annotation deleted successfully"));
+    return res.status(200).json(STATUS_CODE[200](req.t!("Annotation deleted successfully")));
   } catch (error) {
     await logFailure({
       eventType: "Delete",
@@ -284,14 +285,14 @@ export async function deleteAnnotation(req: Request, res: Response): Promise<any
     });
 
     if (error instanceof BusinessLogicException) {
-      return res.status(403).json(STATUS_CODE[403]((error as Error).message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
     if (error instanceof ValidationException) {
-      return res.status(400).json(STATUS_CODE[400]((error as Error).message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
     return res.status(500).json(
       STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, "Failed to delete annotation")
+        sanitizeErrorMessage(error as Error, req.t!("Failed to delete annotation"))
       )
     );
   }
@@ -339,7 +340,7 @@ export async function deleteAnnotationByEntity(
       organizationId
     );
 
-    return res.status(200).json(STATUS_CODE[200]("Annotation deleted successfully"));
+    return res.status(200).json(STATUS_CODE[200](req.t!("Annotation deleted successfully")));
   } catch (error) {
     await logFailure({
       eventType: "Delete",
@@ -352,11 +353,11 @@ export async function deleteAnnotationByEntity(
     });
 
     if (error instanceof ValidationException) {
-      return res.status(400).json(STATUS_CODE[400]((error as Error).message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
     return res.status(500).json(
       STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, "Failed to delete annotation")
+        sanitizeErrorMessage(error as Error, req.t!("Failed to delete annotation"))
       )
     );
   }

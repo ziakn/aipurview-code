@@ -77,14 +77,22 @@ export class UserPreferencesModel
 
     const validDateFormats = Object.values(UserDateFormat);
     if (!validDateFormats.includes(date_format)) {
+      const options = validDateFormats.join(", ");
       throw new ValidationException(
-        `Invalid date format. Must be one of: ${validDateFormats.join(", ")}`,
+        `Invalid date format. Must be one of: ${options}`,
+        undefined,
+        undefined,
+        { i18nKey: "Invalid date format. Must be one of: {options}", i18nVars: { options } },
       );
     }
 
     if (language !== undefined && !VALID_LANGUAGES.includes(language)) {
+      const options = VALID_LANGUAGES.join(", ");
       throw new ValidationException(
-        `Invalid language. Must be one of: ${VALID_LANGUAGES.join(", ")}`,
+        `Invalid language. Must be one of: ${options}`,
+        undefined,
+        undefined,
+        { i18nKey: "Invalid language. Must be one of: {options}", i18nVars: { options } },
       );
     }
 
@@ -125,13 +133,21 @@ export class UserPreferencesModel
       this.date_format !== null &&
       !validDateFormats.includes(this.date_format)
     ) {
+      const options = validDateFormats.join(", ");
       throw new ValidationException(
-        `Invalid date format. Must be one of: ${validDateFormats.join(", ")}`,
+        `Invalid date format. Must be one of: ${options}`,
+        undefined,
+        undefined,
+        { i18nKey: "Invalid date format. Must be one of: {options}", i18nVars: { options } },
       );
     }
     if (this.language !== undefined && !VALID_LANGUAGES.includes(this.language)) {
+      const options = VALID_LANGUAGES.join(", ");
       throw new ValidationException(
-        `Invalid language. Must be one of: ${VALID_LANGUAGES.join(", ")}`,
+        `Invalid language. Must be one of: ${options}`,
+        undefined,
+        undefined,
+        { i18nKey: "Invalid language. Must be one of: {options}", i18nVars: { options } },
       );
     }
   }

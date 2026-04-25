@@ -40,6 +40,7 @@ import {
   IPMMResponseWithQuestion,
 } from "../domain.layer/interfaces/i.postMarketMonitoring";
 import { seedDefaultQuestions } from "../services/postMarketMonitoring/defaultQuestions";
+import { translateError } from "../utils/i18n.utils";
 import {
   buildPMMReportData,
   generateAndUploadPMMReport,
@@ -108,7 +109,7 @@ export async function getConfigByProjectId(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -187,7 +188,7 @@ export async function createConfig(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -241,7 +242,7 @@ export async function updateConfig(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -294,7 +295,7 @@ export async function deleteConfig(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -335,7 +336,7 @@ export async function getQuestions(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -386,7 +387,7 @@ export async function addQuestion(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -443,7 +444,7 @@ export async function updateQuestion(req: Request, res: Response): Promise<any> 
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -490,7 +491,7 @@ export async function deleteQuestion(req: Request, res: Response): Promise<any> 
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -542,7 +543,7 @@ export async function reorderQuestions(req: Request, res: Response): Promise<any
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -601,7 +602,7 @@ export async function getActiveCycle(req: Request, res: Response): Promise<any> 
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -646,7 +647,7 @@ export async function getCycleById(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -693,7 +694,7 @@ export async function getResponses(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -757,7 +758,7 @@ export async function saveResponses(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -886,7 +887,7 @@ export async function submitCycle(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -948,7 +949,7 @@ export async function flagConcern(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1017,7 +1018,7 @@ export async function getReports(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1083,7 +1084,7 @@ export async function downloadReport(req: Request, res: Response): Promise<any> 
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1149,7 +1150,7 @@ export async function reassignStakeholder(req: Request, res: Response): Promise<
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1239,6 +1240,6 @@ export async function startNewCycle(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

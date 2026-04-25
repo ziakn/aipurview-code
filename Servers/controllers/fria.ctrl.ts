@@ -5,6 +5,7 @@ import { FriaStatus } from "../domain.layer/enums/fria-status.enum";
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 import { appendToAuditLedger } from "../utils/auditLedger.utils";
+import { translateError } from "../utils/i18n.utils";
 import {
   getEvidenceFilesForEntity,
   getEvidenceFilesForEntityTypes,
@@ -54,7 +55,7 @@ export async function getFria(req: Request, res: Response): Promise<Response> {
     const projectId = parseInt(req.params.projectId as string);
 
     if (!projectId || isNaN(projectId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid project ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid project ID")));
     }
 
     // Verify project access and resolve owner name
@@ -68,7 +69,7 @@ export async function getFria(req: Request, res: Response): Promise<Response> {
     );
 
     if (!projectResult || projectResult.length === 0) {
-      return res.status(404).json(STATUS_CODE[404]("Project not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Project not found")));
     }
 
     let fria = await getFriaByProjectIdQuery(projectId, organizationId);
@@ -91,7 +92,7 @@ export async function getFria(req: Request, res: Response): Promise<Response> {
 
         if (!newFria) {
           await transaction.rollback();
-          return res.status(500).json(STATUS_CODE[500]("Failed to create FRIA"));
+          return res.status(500).json(STATUS_CODE[500](req.t!("Failed to create FRIA")));
         }
 
         // Initialize all 10 rights rows
@@ -119,7 +120,7 @@ export async function getFria(req: Request, res: Response): Promise<Response> {
     }
 
     if (!fria) {
-      return res.status(500).json(STATUS_CODE[500]("Failed to load FRIA"));
+      return res.status(500).json(STATUS_CODE[500](req.t!("Failed to load FRIA")));
     }
 
     // Fetch related data
@@ -156,7 +157,7 @@ export async function getFria(req: Request, res: Response): Promise<Response> {
       userId,
       organizationId,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -180,12 +181,12 @@ export async function updateFria(req: Request, res: Response): Promise<Response>
     const data = req.body;
 
     if (!projectId || isNaN(projectId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid project ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid project ID")));
     }
 
     const existing = await getFriaByProjectIdQuery(projectId, organizationId);
     if (!existing) {
-      return res.status(404).json(STATUS_CODE[404]("FRIA not found for this project"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("FRIA not found for this project")));
     }
 
     const transaction = await sequelize.transaction();
@@ -248,7 +249,7 @@ export async function updateFria(req: Request, res: Response): Promise<Response>
       userId,
       organizationId,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -272,12 +273,12 @@ export async function updateFriaRights(req: Request, res: Response): Promise<Res
     const { rights } = req.body;
 
     if (!friaId || isNaN(friaId) || !Array.isArray(rights)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid FRIA ID or rights data"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid FRIA ID or rights data")));
     }
 
     const fria = await getFriaByIdQuery(friaId, organizationId);
     if (!fria) {
-      return res.status(404).json(STATUS_CODE[404]("FRIA not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("FRIA not found")));
     }
 
     const transaction = await sequelize.transaction();
@@ -330,7 +331,7 @@ export async function updateFriaRights(req: Request, res: Response): Promise<Res
       userId,
       organizationId,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -353,7 +354,7 @@ export async function getRiskItems(req: Request, res: Response): Promise<Respons
     const friaId = parseInt(req.params.friaId as string);
 
     if (!friaId || isNaN(friaId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid FRIA ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid FRIA ID")));
     }
 
     const items = await getFriaRiskItemsQuery(friaId, organizationId);
@@ -368,7 +369,7 @@ export async function getRiskItems(req: Request, res: Response): Promise<Respons
       userId,
       organizationId,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -392,7 +393,7 @@ export async function addRiskItem(req: Request, res: Response): Promise<Response
     const data = req.body;
 
     if (!friaId || isNaN(friaId) || !data.risk_description) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid FRIA ID or missing risk description"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid FRIA ID or missing risk description")));
     }
 
     const item = await addFriaRiskItemQuery(friaId, data, organizationId);
@@ -431,7 +432,7 @@ export async function addRiskItem(req: Request, res: Response): Promise<Response
       userId,
       organizationId,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -455,12 +456,12 @@ export async function updateRiskItem(req: Request, res: Response): Promise<Respo
     const itemId = parseInt(req.params.itemId as string);
 
     if (!itemId || isNaN(itemId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid item ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid item ID")));
     }
 
     const updated = await updateFriaRiskItemQuery(itemId, req.body, organizationId, undefined, friaId);
     if (!updated) {
-      return res.status(404).json(STATUS_CODE[404]("Risk item not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Risk item not found")));
     }
 
     await recomputeAndPersistScore(friaId, organizationId, userId);
@@ -485,7 +486,7 @@ export async function updateRiskItem(req: Request, res: Response): Promise<Respo
       userId,
       organizationId,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -509,7 +510,7 @@ export async function deleteRiskItem(req: Request, res: Response): Promise<Respo
     const itemId = parseInt(req.params.itemId as string);
 
     if (!itemId || isNaN(itemId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid item ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid item ID")));
     }
 
     await deleteFriaRiskItemQuery(itemId, organizationId, undefined, friaId);
@@ -548,7 +549,7 @@ export async function deleteRiskItem(req: Request, res: Response): Promise<Respo
       userId,
       organizationId,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -571,7 +572,7 @@ export async function getModelLinks(req: Request, res: Response): Promise<Respon
     const friaId = parseInt(req.params.friaId as string);
 
     if (!friaId || isNaN(friaId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid FRIA ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid FRIA ID")));
     }
 
     const links = await getFriaModelLinksQuery(friaId, organizationId);
@@ -586,7 +587,7 @@ export async function getModelLinks(req: Request, res: Response): Promise<Respon
       userId,
       organizationId,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -610,7 +611,7 @@ export async function linkModel(req: Request, res: Response): Promise<Response> 
     const modelId = parseInt(req.params.modelId as string);
 
     if (!friaId || isNaN(friaId) || !modelId || isNaN(modelId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid FRIA or model ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid FRIA or model ID")));
     }
 
     const link = await linkModelToFriaQuery(friaId, modelId, organizationId);
@@ -635,7 +636,7 @@ export async function linkModel(req: Request, res: Response): Promise<Response> 
       userId,
       organizationId,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -659,7 +660,7 @@ export async function unlinkModel(req: Request, res: Response): Promise<Response
     const modelId = parseInt(req.params.modelId as string);
 
     if (!friaId || isNaN(friaId) || !modelId || isNaN(modelId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid FRIA or model ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid FRIA or model ID")));
     }
 
     await unlinkModelFromFriaQuery(friaId, modelId, organizationId);
@@ -684,7 +685,7 @@ export async function unlinkModel(req: Request, res: Response): Promise<Response
       userId,
       organizationId,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -708,12 +709,12 @@ export async function submitFria(req: Request, res: Response): Promise<Response>
     const { reason } = req.body;
 
     if (!friaId || isNaN(friaId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid FRIA ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid FRIA ID")));
     }
 
     const fria = await getFriaByIdQuery(friaId, organizationId);
     if (!fria) {
-      return res.status(404).json(STATUS_CODE[404]("FRIA not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("FRIA not found")));
     }
 
     const transaction = await sequelize.transaction();
@@ -785,7 +786,7 @@ export async function submitFria(req: Request, res: Response): Promise<Response>
       userId,
       organizationId,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -808,7 +809,7 @@ export async function getVersions(req: Request, res: Response): Promise<Response
     const friaId = parseInt(req.params.friaId as string);
 
     if (!friaId || isNaN(friaId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid FRIA ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid FRIA ID")));
     }
 
     const versions = await getFriaSnapshotsQuery(friaId, organizationId);
@@ -823,7 +824,7 @@ export async function getVersions(req: Request, res: Response): Promise<Response
       userId,
       organizationId,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -847,12 +848,12 @@ export async function getVersion(req: Request, res: Response): Promise<Response>
     const version = parseInt(req.params.version as string);
 
     if (!friaId || isNaN(friaId) || !version || isNaN(version)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid FRIA ID or version"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid FRIA ID or version")));
     }
 
     const snapshot = await getFriaSnapshotByVersionQuery(friaId, version, organizationId);
     if (!snapshot) {
-      return res.status(404).json(STATUS_CODE[404]("Version not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Version not found")));
     }
 
     return res.status(200).json(STATUS_CODE[200](snapshot));
@@ -866,7 +867,7 @@ export async function getVersion(req: Request, res: Response): Promise<Response>
       userId,
       organizationId,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -907,12 +908,12 @@ export async function getFriaEvidence(req: Request, res: Response): Promise<Resp
     const section = req.query.section as string | undefined;
 
     if (!friaId || isNaN(friaId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid FRIA ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid FRIA ID")));
     }
 
     const fria = await getFriaByIdQuery(friaId, organizationId);
     if (!fria) {
-      return res.status(404).json(STATUS_CODE[404]("FRIA not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("FRIA not found")));
     }
 
     let evidence: unknown;
@@ -955,7 +956,7 @@ export async function getFriaEvidence(req: Request, res: Response): Promise<Resp
       userId,
       organizationId,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -980,16 +981,16 @@ export async function linkFriaEvidence(req: Request, res: Response): Promise<Res
     const { file_id, entity_type } = req.body;
 
     if (!friaId || isNaN(friaId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid FRIA ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid FRIA ID")));
     }
 
     if (!file_id || !entity_type) {
-      return res.status(400).json(STATUS_CODE[400]("Missing file_id or entity_type"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Missing file_id or entity_type")));
     }
 
     const fria = await getFriaByIdQuery(friaId, organizationId);
     if (!fria) {
-      return res.status(404).json(STATUS_CODE[404]("FRIA not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("FRIA not found")));
     }
 
     await createFileEntityLink(
@@ -1022,7 +1023,7 @@ export async function linkFriaEvidence(req: Request, res: Response): Promise<Res
       userId,
       organizationId,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1046,17 +1047,17 @@ export async function unlinkFriaEvidence(req: Request, res: Response): Promise<R
     const linkId = parseInt(req.params.linkId as string);
 
     if (!friaId || isNaN(friaId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid FRIA ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid FRIA ID")));
     }
 
     if (!linkId || isNaN(linkId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid link ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid link ID")));
     }
 
     const deleted = await deleteFileEntityLinkById(linkId, organizationId);
 
     if (!deleted) {
-      return res.status(404).json(STATUS_CODE[404]("Evidence link not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Evidence link not found")));
     }
 
     await logSuccess({
@@ -1079,6 +1080,6 @@ export async function unlinkFriaEvidence(req: Request, res: Response): Promise<R
       userId,
       organizationId,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

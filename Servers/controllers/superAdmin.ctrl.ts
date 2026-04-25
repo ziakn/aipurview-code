@@ -6,6 +6,7 @@ import { deleteUserByIdQuery } from "../utils/user.utils";
 import { invite } from "./vwmailer.ctrl";
 import { OrganizationModel } from "../domain.layer/models/organization/organization.model";
 
+import { translateError } from "../utils/i18n.utils";
 /**
  * List all organizations
  */
@@ -20,7 +21,7 @@ export async function listOrganizations(_req: Request, res: Response) {
     );
     return res.status(200).json(STATUS_CODE[200](organizations));
   } catch (error) {
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(_req, error)));
   }
 }
 
@@ -43,7 +44,7 @@ export async function createOrg(req: Request, res: Response) {
     return res.status(201).json(STATUS_CODE[201](created));
   } catch (error) {
     await transaction.rollback();
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -79,7 +80,7 @@ export async function deleteOrg(req: Request, res: Response) {
     return res.status(200).json(STATUS_CODE[200]({ deleted: true, usersRemoved: users.length }));
   } catch (error) {
     await transaction.rollback();
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -119,7 +120,7 @@ export async function updateOrg(req: Request, res: Response) {
 
     return res.status(200).json(STATUS_CODE[200](updated));
   } catch (error) {
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -134,7 +135,7 @@ export async function getUserCount(_req: Request, res: Response) {
     );
     return res.status(200).json(STATUS_CODE[200]({ count: parseInt(result.count, 10) }));
   } catch (error) {
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(_req, error)));
   }
 }
 
@@ -156,7 +157,7 @@ export async function listAllUsers(_req: Request, res: Response) {
     );
     return res.status(200).json(STATUS_CODE[200](users));
   } catch (error) {
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(_req, error)));
   }
 }
 
@@ -179,7 +180,7 @@ export async function listOrgUsers(req: Request, res: Response) {
 
     return res.status(200).json(STATUS_CODE[200](users));
   } catch (error) {
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -196,7 +197,7 @@ export async function inviteUserToOrg(req: Request, res: Response) {
 
   // Prevent creating super-admin users via invite
   if (roleId === 5) {
-    return res.status(403).json(STATUS_CODE[403]("Cannot invite users with SuperAdmin role"));
+    return res.status(403).json(STATUS_CODE[403](req.t!("Cannot invite users with SuperAdmin role")));
   }
 
   // Check if a user with this email already exists
@@ -205,7 +206,7 @@ export async function inviteUserToOrg(req: Request, res: Response) {
     { replacements: { email }, type: 'SELECT' as any }
   );
   if (existing.length > 0) {
-    return res.status(409).json(STATUS_CODE[409]("A user with this email already exists"));
+    return res.status(409).json(STATUS_CODE[409](req.t!("A user with this email already exists")));
   }
 
   return invite(req, res, {
@@ -227,7 +228,7 @@ export async function updateUser(req: Request, res: Response) {
 
     // Prevent updating to super-admin role
     if (roleId === 5) {
-      return res.status(403).json(STATUS_CODE[403]("Cannot assign SuperAdmin role"));
+      return res.status(403).json(STATUS_CODE[403](req.t!("Cannot assign SuperAdmin role")));
     }
 
     const rows: any[] = await sequelize.query(
@@ -236,11 +237,11 @@ export async function updateUser(req: Request, res: Response) {
     );
 
     if (rows.length === 0) {
-      return res.status(404).json(STATUS_CODE[404]("User not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("User not found")));
     }
 
     if (rows[0].role_id === 5) {
-      return res.status(403).json(STATUS_CODE[403]("Super-admin user cannot be modified"));
+      return res.status(403).json(STATUS_CODE[403](req.t!("Super-admin user cannot be modified")));
     }
 
     const updates: string[] = [];
@@ -283,7 +284,7 @@ export async function updateUser(req: Request, res: Response) {
 
     return res.status(200).json(STATUS_CODE[200](updated));
   } catch (error) {
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -303,13 +304,13 @@ export async function removeUser(req: Request, res: Response) {
 
     if (!user) {
       await transaction.rollback();
-      return res.status(404).json(STATUS_CODE[404]("User not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("User not found")));
     }
 
     // Prevent deletion of super-admin
     if (user.role_id === 5) {
       await transaction.rollback();
-      return res.status(403).json(STATUS_CODE[403]("Super-admin user cannot be deleted"));
+      return res.status(403).json(STATUS_CODE[403](req.t!("Super-admin user cannot be deleted")));
     }
 
     await deleteUserByIdQuery(userId, user.organization_id, transaction);
@@ -318,6 +319,6 @@ export async function removeUser(req: Request, res: Response) {
     return res.status(200).json(STATUS_CODE[200]({ deleted: true, userId }));
   } catch (error) {
     await transaction.rollback();
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

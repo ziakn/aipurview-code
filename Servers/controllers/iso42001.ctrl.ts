@@ -42,6 +42,7 @@ import {
 } from "../utils/logger/logHelper";
 import logger from "../utils/logger/fileLogger";
 
+import { translateError } from "../utils/i18n.utils";
 // Helper function to get user name
 async function getUserNameById(userId: number): Promise<string> {
   const result = await sequelize.query<{ name: string; surname: string }>(
@@ -173,7 +174,7 @@ export async function getAllClauses(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -220,7 +221,7 @@ export async function getAllClausesStructForProject(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -267,7 +268,7 @@ export async function getAllAnnexesStructForProject(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -304,7 +305,7 @@ export async function getAllAnnexes(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -318,7 +319,7 @@ export async function getSubClausesByClauseId(
   if (!projectFrameworkId || isNaN(projectFrameworkId)) {
     return res
       .status(400)
-      .json(STATUS_CODE[400]("projectFrameworkId query param is required"));
+      .json(STATUS_CODE[400](req.t!("projectFrameworkId query param is required")));
   }
 
   logProcessing({
@@ -356,7 +357,7 @@ export async function getSubClausesByClauseId(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(400).json(STATUS_CODE[400]("No sub clauses found"));
+    return res.status(400).json(STATUS_CODE[400](req.t!("No sub clauses found")));
   } catch (error) {
     await logFailure({
       eventType: "Read",
@@ -367,7 +368,7 @@ export async function getSubClausesByClauseId(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -411,7 +412,7 @@ export async function getAnnexCategoriesByAnnexId(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(400).json(STATUS_CODE[400]("No annex categories found"));
+    return res.status(400).json(STATUS_CODE[400](req.t!("No annex categories found")));
   } catch (error) {
     await logFailure({
       eventType: "Read",
@@ -422,7 +423,7 @@ export async function getAnnexCategoriesByAnnexId(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -470,7 +471,7 @@ export async function getSubClauseById(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(400).json(STATUS_CODE[400]("No sub clause found"));
+    return res.status(400).json(STATUS_CODE[400](req.t!("No sub clause found")));
   } catch (error) {
     await logFailure({
       eventType: "Read",
@@ -481,7 +482,7 @@ export async function getSubClauseById(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -529,7 +530,7 @@ export async function getAnnexCategoryById(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(400).json(STATUS_CODE[400]("No annex category found"));
+    return res.status(400).json(STATUS_CODE[400](req.t!("No annex category found")));
   } catch (error) {
     await logFailure({
       eventType: "Read",
@@ -540,7 +541,7 @@ export async function getAnnexCategoryById(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -586,7 +587,7 @@ export async function getClausesByProjectId(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(400).json(STATUS_CODE[400]("No sub clauses found"));
+    return res.status(400).json(STATUS_CODE[400](req.t!("No sub clauses found")));
   } catch (error) {
     await logFailure({
       eventType: "Read",
@@ -597,7 +598,7 @@ export async function getClausesByProjectId(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -643,7 +644,7 @@ export async function getAnnexesByProjectId(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(400).json(STATUS_CODE[400]("No annex categories found"));
+    return res.status(400).json(STATUS_CODE[400](req.t!("No annex categories found")));
   } catch (error) {
     await logFailure({
       eventType: "Read",
@@ -654,7 +655,7 @@ export async function getAnnexesByProjectId(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -746,7 +747,7 @@ export async function getSubClauseRisks(
     });
 
     logger.error(`❌ Error fetching ISO 42001 subclause risks:`, error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -805,7 +806,7 @@ export async function getAnnexCategoryRisks(
     });
 
     logger.error(`❌ Error fetching ISO 42001 annex category risks:`, error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -931,7 +932,7 @@ export async function saveClauses(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1057,7 +1058,7 @@ export async function saveAnnexes(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1121,7 +1122,7 @@ export async function deleteManagementSystemClauses(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1185,7 +1186,7 @@ export async function deleteReferenceControls(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1235,7 +1236,7 @@ export async function getProjectClausesProgress(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1288,7 +1289,7 @@ export async function getProjectAnnxesProgress(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1379,7 +1380,7 @@ export async function getAllProjectsClausesProgress(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1470,7 +1471,7 @@ export async function getAllProjectsAnnxesProgress(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1532,7 +1533,7 @@ export async function getProjectClausesAssignments(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1594,6 +1595,6 @@ export async function getProjectAnnexesAssignments(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

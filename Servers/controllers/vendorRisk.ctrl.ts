@@ -23,6 +23,7 @@ import {
 import { notifyUserAssigned } from "../services/inAppNotification.service";
 import { QueryTypes } from "sequelize";
 
+import { translateError } from "../utils/i18n.utils";
 // Helper function to get user name
 async function getUserNameById(userId: number): Promise<string> {
   const result = await sequelize.query<{ name: string; surname: string }>(
@@ -70,7 +71,7 @@ export async function getAllVendorRisksAllProjects(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -129,7 +130,7 @@ export async function getAllVendorRisks(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -182,7 +183,7 @@ export async function getAllVendorRisksByVendorId(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -234,7 +235,7 @@ export async function getVendorRiskById(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -359,7 +360,7 @@ export async function createVendorRisk(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -517,7 +518,7 @@ export async function updateVendorRiskById(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -576,7 +577,7 @@ export async function deleteVendorRiskById(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -617,6 +618,6 @@ export async function getVendorRisksByFrameworkId(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

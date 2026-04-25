@@ -25,6 +25,7 @@ import { IServiceContext } from "../domain.layer/interfaces/i.aiDetection";
 import { ScheduleFrequency } from "../domain.layer/interfaces/i.aiDetectionRepository";
 import { generateWebhookSecret } from "../services/webhook.service";
 
+import { translateError } from "../utils/i18n.utils";
 /**
  * Parse GitHub URL to extract owner and repo name
  */
@@ -74,7 +75,7 @@ export async function listRepositories(req: Request, res: Response): Promise<any
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -113,7 +114,7 @@ export async function getRepository(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -222,7 +223,7 @@ export async function createRepository(req: Request, res: Response): Promise<any
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -330,7 +331,7 @@ export async function updateRepository(req: Request, res: Response): Promise<any
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -394,7 +395,7 @@ export async function deleteRepository(req: Request, res: Response): Promise<any
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -477,7 +478,7 @@ export async function triggerRepositoryScan(req: Request, res: Response): Promis
     return res.status(statusCode).json(
       typeof statusFn === "function"
         ? statusFn((error as Error).message)
-        : STATUS_CODE[500]((error as Error).message)
+        : STATUS_CODE[500](translateError(req, error))
     );
   }
 }
@@ -552,7 +553,7 @@ export async function getRepositoryScans(req: Request, res: Response): Promise<a
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -608,6 +609,6 @@ export async function generateWebhookSecretController(req: Request, res: Respons
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

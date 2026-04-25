@@ -26,6 +26,7 @@ import { evaluateRulesForBatch } from "../services/shadowAiAlertNotification.ser
 import { ShadowAiIngestionRequest } from "../domain.layer/interfaces/i.shadowAi";
 import { getSettingsQuery } from "../utils/shadowAiConfig.utils";
 
+import { translateError } from "../utils/i18n.utils";
 const MAX_EVENTS_PER_REQUEST = 10000;
 
 // ─── In-memory sliding window rate limiter ─────────────────────────────
@@ -77,7 +78,7 @@ export async function ingestEvents(req: Request, res: Response) {
   if (!apiKey) {
     return res
       .status(401)
-      .json(STATUS_CODE[401]("Missing X-API-Key header"));
+      .json(STATUS_CODE[401](req.t!("Missing X-API-Key header")));
   }
 
   // Validate API key and resolve organization
@@ -86,13 +87,13 @@ export async function ingestEvents(req: Request, res: Response) {
     organizationId = await validateApiKeyWithCache(apiKey);
   } catch (error) {
     logger.error("❌ API key validation error:", error);
-    return res.status(500).json(STATUS_CODE[500]("Key validation failed"));
+    return res.status(500).json(STATUS_CODE[500](req.t!("Key validation failed")));
   }
 
   if (!organizationId) {
     return res
       .status(401)
-      .json(STATUS_CODE[401]("Invalid or revoked API key"));
+      .json(STATUS_CODE[401](req.t!("Invalid or revoked API key")));
   }
 
   // Validate request body
@@ -100,7 +101,7 @@ export async function ingestEvents(req: Request, res: Response) {
   if (!body.events || !Array.isArray(body.events)) {
     return res
       .status(400)
-      .json(STATUS_CODE[400]("Request body must contain an 'events' array"));
+      .json(STATUS_CODE[400](req.t!("Request body must contain an 'events' array")));
   }
 
   if (body.events.length === 0) {
@@ -112,7 +113,7 @@ export async function ingestEvents(req: Request, res: Response) {
       .status(413)
       .json(
         STATUS_CODE[413](
-          `Maximum ${MAX_EVENTS_PER_REQUEST} events per request`
+          req.t!("Maximum {max} events per request", { max: MAX_EVENTS_PER_REQUEST })
         )
       );
   }
@@ -125,7 +126,7 @@ export async function ingestEvents(req: Request, res: Response) {
         .status(429)
         .json(
           STATUS_CODE[429](
-            `Rate limit exceeded: max ${settings.rate_limit_max_events_per_hour} events/hour`
+            req.t!("Rate limit exceeded: max {max} events/hour", { max: settings.rate_limit_max_events_per_hour })
           )
         );
     }
@@ -143,7 +144,7 @@ export async function ingestEvents(req: Request, res: Response) {
         .status(400)
         .json(
           STATUS_CODE[400](
-            `Event at index ${i} missing required field(s): user_email, destination, timestamp`
+            req.t!("Event at index {i} missing required field(s): user_email, destination, timestamp", { i })
           )
         );
     }
@@ -152,7 +153,7 @@ export async function ingestEvents(req: Request, res: Response) {
         .status(400)
         .json(
           STATUS_CODE[400](
-            `Event at index ${i} has invalid user_email format`
+            req.t!("Event at index {i} has invalid user_email format", { i })
           )
         );
     }
@@ -326,6 +327,6 @@ export async function ingestEvents(req: Request, res: Response) {
     }
 
     logger.error("❌ Error in shadow AI event ingestion:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

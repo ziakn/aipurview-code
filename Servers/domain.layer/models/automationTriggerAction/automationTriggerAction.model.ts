@@ -170,7 +170,12 @@ export class AutomationTriggerActionModel extends Model<AutomationTriggerActionM
       // Verify action exists
       const action = await AutomationActionModel.findByPk(action_id);
       if (!action) {
-        throw new ValidationException(`Action with ID ${action_id} not found`, "action_id", action_id);
+        throw new ValidationException(
+          `Action with ID ${action_id} not found`,
+          "action_id",
+          action_id,
+          { i18nKey: "Action with ID {id} not found", i18nVars: { id: action_id } },
+        );
       }
 
       // Check if association already exists

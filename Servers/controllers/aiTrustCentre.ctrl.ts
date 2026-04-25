@@ -26,6 +26,7 @@ import logger, { logStructured } from "../utils/logger/fileLogger";
 import { logEvent } from "../utils/logger/dbLogger";
 import { getOrganizationByTenantHashQuery } from "../utils/organization.utils";
 
+import { translateError } from "../utils/i18n.utils";
 export async function getCompanyLogo(req: Request, res: Response) {
   const hash = Array.isArray(req.params.hash) ? req.params.hash[0] : req.params.hash;
   logStructured(
@@ -78,7 +79,7 @@ export async function getCompanyLogo(req: Request, res: Response) {
       "aiTrustCentre.ctrl.ts"
     );
     logger.error("❌ Error in getCompanyLogo:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -120,7 +121,7 @@ export async function getAITrustCentrePublicPage(req: Request, res: Response) {
       "aiTrustCentre.ctrl.ts"
     );
     logger.error("❌ Error in getAITrustCentrePublicPage:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -185,7 +186,7 @@ export async function getAITrustCentrePublicResource(
       "aiTrustCentre.ctrl.ts"
     );
     logger.error("❌ Error in getAITrustCentrePublicResource:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -221,7 +222,7 @@ export async function getAITrustCentreOverview(req: Request, res: Response) {
       "aiTrustCentre.ctrl.ts"
     );
     logger.error("❌ Error in getAITrustCentreOverview:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -260,7 +261,7 @@ export const getAITrustCentreResources = async (
       "aiTrustCentre.ctrl.ts"
     );
     logger.error("❌ Error in getAITrustCentreResources:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 };
 
@@ -301,7 +302,7 @@ export const getAITrustCentreSubprocessors = async (
       "aiTrustCentre.ctrl.ts"
     );
     logger.error("❌ Error in getAITrustCentreSubprocessors:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 };
 
@@ -415,7 +416,7 @@ export async function createAITrustResource(
       req.organizationId!
     );
     logger.error("❌ Error in createAITrustResource:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -498,7 +499,7 @@ export async function createAITrustSubprocessor(req: Request, res: Response) {
       req.organizationId!
     );
     logger.error("❌ Error in createAITrustSubprocessor:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -591,7 +592,7 @@ export async function uploadCompanyLogo(req: RequestWithFile, res: Response) {
       req.organizationId!
     );
     logger.error("❌ Error in uploadCompanyLogo:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -659,7 +660,7 @@ export async function updateAITrustOverview(req: Request, res: Response) {
       req.organizationId!
     );
     logger.error("❌ Error in updateAITrustOverview:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -785,7 +786,7 @@ export async function updateAITrustResource(
       req.organizationId!
     );
     logger.error("❌ Error in updateAITrustResource:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -872,7 +873,7 @@ export async function updateAITrustSubprocessor(req: Request, res: Response) {
       req.organizationId!
     );
     logger.error("❌ Error in updateAITrustSubprocessor:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -948,7 +949,7 @@ export async function deleteAITrustResource(req: Request, res: Response) {
       req.organizationId!
     );
     logger.error("❌ Error in deleteAITrustResource:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1026,7 +1027,7 @@ export async function deleteAITrustSubprocessor(req: Request, res: Response) {
       req.organizationId!
     );
     logger.error("❌ Error in deleteAITrustSubprocessor:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1088,6 +1089,6 @@ export async function deleteCompanyLogo(req: Request, res: Response) {
       req.organizationId!
     );
     logger.error("❌ Error in deleteCompanyLogo:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

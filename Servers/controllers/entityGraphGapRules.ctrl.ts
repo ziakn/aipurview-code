@@ -27,6 +27,7 @@ import {
 } from "../utils/logger/logHelper";
 import { sanitizeErrorMessage } from "../utils/entityGraphSecurity.utils";
 
+import { translateError } from "../utils/i18n.utils";
 /**
  * Save gap rules (create or update)
  *
@@ -89,11 +90,11 @@ export async function saveGapRules(req: Request, res: Response): Promise<any> {
     });
 
     if (error instanceof ValidationException) {
-      return res.status(400).json(STATUS_CODE[400]((error as Error).message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
     return res.status(500).json(
       STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, "Failed to save gap rules")
+        sanitizeErrorMessage(error as Error, req.t!("Failed to save gap rules"))
       )
     );
   }
@@ -143,7 +144,7 @@ export async function getGapRules(req: Request, res: Response): Promise<any> {
 
     return res.status(500).json(
       STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, "Failed to retrieve gap rules")
+        sanitizeErrorMessage(error as Error, req.t!("Failed to retrieve gap rules"))
       )
     );
   }
@@ -193,7 +194,7 @@ export async function resetGapRules(req: Request, res: Response): Promise<any> {
 
     return res.status(500).json(
       STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, "Failed to reset gap rules")
+        sanitizeErrorMessage(error as Error, req.t!("Failed to reset gap rules"))
       )
     );
   }
@@ -246,7 +247,7 @@ export async function getDefaultGapRules(
 
     return res.status(500).json(
       STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, "Failed to get default gap rules")
+        sanitizeErrorMessage(error as Error, _req.t!("Failed to get default gap rules"))
       )
     );
   }

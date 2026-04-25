@@ -50,6 +50,7 @@ import { toolsDefinition as agentDiscoveryToolsDefinition } from "../advisor/too
 import { toolsDefinition as userToolsDefinition } from "../advisor/tools/userTools";
 import { toolsDefinition as projectToolsDefinition } from "../advisor/tools/projectTools";
 import { toolsDefinition as frameworkLookupToolsDefinition } from "../advisor/tools/frameworkLookupTools";
+import { translateError } from "../utils/i18n.utils";
 import {
   aiActionToolDefinitions,
   aiActionFilers,
@@ -194,7 +195,7 @@ export async function runAdvisor(req: Request, res: Response) {
       fileName,
     );
     logger.error("❌ Error in getting VerifyWise advisor response:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -270,7 +271,7 @@ export async function listConversations(req: Request, res: Response) {
       fileName,
     );
     logger.error("❌ Error listing conversations:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -347,7 +348,7 @@ export async function getConversationById(req: Request, res: Response) {
       fileName,
     );
     logger.error("❌ Error getting conversation by id:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -407,7 +408,7 @@ export async function createConversation(req: Request, res: Response) {
       fileName,
     );
     logger.error("❌ Error creating conversation:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -494,7 +495,7 @@ export async function updateConversation(req: Request, res: Response) {
       fileName,
     );
     logger.error("❌ Error updating conversation:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -551,7 +552,7 @@ export async function deleteConversation(req: Request, res: Response) {
       fileName,
     );
     logger.error("❌ Error deleting conversation:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -676,7 +677,7 @@ export async function streamAdvisor(req: Request, res: Response) {
 
     // If headers haven't been sent yet, send JSON error
     if (!res.headersSent) {
-      res.status(500).json(STATUS_CODE[500]((error as Error).message));
+      res.status(500).json(STATUS_CODE[500](translateError(req, error)));
       return;
     }
 
@@ -786,7 +787,7 @@ export async function streamAdvisorV2(req: Request, res: Response) {
     logger.error("❌ Error in AI SDK streaming advisor response:", error);
 
     if (!res.headersSent) {
-      res.status(500).json(STATUS_CODE[500]((error as Error).message));
+      res.status(500).json(STATUS_CODE[500](translateError(req, error)));
     }
   }
 }

@@ -12,6 +12,7 @@ import { logSuccess } from "../utils/logger/logHelper";
 import { logEvent } from "../utils/logger/dbLogger";
 import { ValidationException } from "../domain.layer/exceptions/custom.exception";
 
+import { translateError } from "../utils/i18n.utils";
 const fileName = "userPreference.ctrl.ts";
 
 export async function getPreferencesByUser(req: Request, res: Response) {
@@ -52,7 +53,7 @@ export async function getPreferencesByUser(req: Request, res: Response) {
       fileName,
     );
     logger.error("Error in fetching user preferences:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -72,7 +73,7 @@ export async function createUserPreferences(req: Request, res: Response) {
     return res
       .status(400)
       .json(
-        STATUS_CODE[400]("Missing required fields: user_id and date_format"),
+        STATUS_CODE[400](req.t!("Missing required fields: user_id and date_format")),
       );
   }
 
@@ -86,7 +87,7 @@ export async function createUserPreferences(req: Request, res: Response) {
       functionName,
       fileName,
     );
-    return res.status(400).json(STATUS_CODE[400]("Invalid user_id"));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Invalid user_id")));
   }
 
   logStructured(
@@ -113,7 +114,7 @@ export async function createUserPreferences(req: Request, res: Response) {
       );
       return res
         .status(400)
-        .json(STATUS_CODE[400]("User preferences already exist for this user"));
+        .json(STATUS_CODE[400](req.t!("User preferences already exist for this user")));
     }
 
     const userPreference = await UserPreferencesModel.createNewUserPreferences(
@@ -161,7 +162,7 @@ export async function createUserPreferences(req: Request, res: Response) {
     await transaction.rollback();
     return res
       .status(400)
-      .json(STATUS_CODE[400]("Failed to create user preferences"));
+      .json(STATUS_CODE[400](req.t!("Failed to create user preferences")));
   } catch (error) {
     await transaction.rollback();
 
@@ -178,7 +179,7 @@ export async function createUserPreferences(req: Request, res: Response) {
         req.userId!,
         req.organizationId!,
       );
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     logStructured(
@@ -188,7 +189,7 @@ export async function createUserPreferences(req: Request, res: Response) {
       fileName,
     );
     logger.error("Error in creating user preferences:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -220,7 +221,7 @@ export async function updateUserPreferences(req: Request, res: Response) {
       );
       await transaction.rollback();
 
-      return res.status(404).json(STATUS_CODE[404]("Not Found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Not Found")));
     }
 
     const userPreference = new UserPreferencesModel(existingUserPreference);
@@ -270,7 +271,7 @@ export async function updateUserPreferences(req: Request, res: Response) {
     await transaction.rollback();
     return res
       .status(400)
-      .json(STATUS_CODE[400]("Failed to update user preferences"));
+      .json(STATUS_CODE[400](req.t!("Failed to update user preferences")));
   } catch (error) {
     await transaction.rollback();
 
@@ -287,7 +288,7 @@ export async function updateUserPreferences(req: Request, res: Response) {
         req.userId!,
         req.organizationId!,
       );
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     logStructured(
@@ -297,6 +298,6 @@ export async function updateUserPreferences(req: Request, res: Response) {
       fileName,
     );
     logger.error("Error in updating user preferences:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

@@ -39,6 +39,7 @@ import { calculateAndStoreRiskScore } from "../services/aiDetection/riskScoring"
 import { getRiskScoringConfigQuery, upsertRiskScoringConfigQuery } from "../utils/aiDetectionRiskScoring.utils";
 import { DEFAULT_DIMENSION_WEIGHTS } from "../config/riskScoringConfig";
 
+import { translateError } from "../utils/i18n.utils";
 const FILE_NAME = "aiDetection.ctrl.ts";
 
 // ============================================================================
@@ -64,23 +65,23 @@ function buildServiceContext(req: Request): IServiceContext {
 /**
  * Handle service exceptions and send appropriate response
  */
-function handleException(res: Response, error: unknown): Response {
+function handleException(req: Request, res: Response, error: unknown): Response {
   if (error instanceof ValidationException) {
-    return res.status(400).json(STATUS_CODE[400](error.message));
+    return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
   }
   if (error instanceof NotFoundException) {
-    return res.status(404).json(STATUS_CODE[404](error.message));
+    return res.status(404).json(STATUS_CODE[404](translateError(req, error)));
   }
   if (error instanceof BusinessLogicException) {
-    return res.status(422).json(STATUS_CODE[422](error.message));
+    return res.status(422).json(STATUS_CODE[422](translateError(req, error)));
   }
   if (error instanceof ExternalServiceException) {
-    return res.status(502).json(STATUS_CODE[502](error.message));
+    return res.status(502).json(STATUS_CODE[502](translateError(req, error)));
   }
 
   const errorMessage = process.env.NODE_ENV === "production"
-    ? "An internal error occurred"
-    : error instanceof Error ? error.message : "Unknown error";
+    ? translateError(req, new Error("An internal error occurred"))
+    : error instanceof Error ? translateError(req, error) : "Unknown error";
   return res.status(500).json(STATUS_CODE[500](errorMessage));
 }
 
@@ -112,7 +113,7 @@ export async function startScanController(
     if (!repository_url) {
       return res
         .status(400)
-        .json(STATUS_CODE[400]("repository_url is required"));
+        .json(STATUS_CODE[400](req.t!("repository_url is required")));
     }
 
     // Validate incremental scan parameters
@@ -121,12 +122,12 @@ export async function startScanController(
       if (!base_commit_sha || !head_commit_sha) {
         return res
           .status(400)
-          .json(STATUS_CODE[400]("Both base_commit_sha and head_commit_sha are required for incremental scans"));
+          .json(STATUS_CODE[400](req.t!("Both base_commit_sha and head_commit_sha are required for incremental scans")));
       }
       if (!SHA_PATTERN.test(base_commit_sha) || !SHA_PATTERN.test(head_commit_sha)) {
         return res
           .status(400)
-          .json(STATUS_CODE[400]("base_commit_sha and head_commit_sha must be valid hex strings (7-40 characters)"));
+          .json(STATUS_CODE[400](req.t!("base_commit_sha and head_commit_sha must be valid hex strings (7-40 characters)")));
       }
     }
 
@@ -156,7 +157,7 @@ export async function startScanController(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return handleException(res, error);
+    return handleException(req, res, error);
   }
 }
 
@@ -181,7 +182,7 @@ export async function getScanStatusController(
     const scanId = parseInt(Array.isArray(req.params.scanId) ? req.params.scanId[0] : req.params.scanId, 10);
 
     if (isNaN(scanId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid scan ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid scan ID")));
     }
 
     const ctx = buildServiceContext(req);
@@ -189,7 +190,7 @@ export async function getScanStatusController(
 
     return res.status(200).json(STATUS_CODE[200](status));
   } catch (error) {
-    return handleException(res, error);
+    return handleException(req, res, error);
   }
 }
 
@@ -214,7 +215,7 @@ export async function getScanController(
     const scanId = parseInt(Array.isArray(req.params.scanId) ? req.params.scanId[0] : req.params.scanId, 10);
 
     if (isNaN(scanId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid scan ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid scan ID")));
     }
 
     const ctx = buildServiceContext(req);
@@ -222,7 +223,7 @@ export async function getScanController(
 
     return res.status(200).json(STATUS_CODE[200](scanResponse));
   } catch (error) {
-    return handleException(res, error);
+    return handleException(req, res, error);
   }
 }
 
@@ -248,7 +249,7 @@ export async function getScanFindingsController(
     const scanId = parseInt(Array.isArray(req.params.scanId) ? req.params.scanId[0] : req.params.scanId, 10);
 
     if (isNaN(scanId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid scan ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid scan ID")));
     }
 
     const page = parseInt(Array.isArray(req.query.page) ? String(req.query.page[0]) : String(req.query.page || '1'), 10) || 1;
@@ -260,14 +261,14 @@ export async function getScanFindingsController(
     if (confidence && !["high", "medium", "low"].includes(confidence)) {
       return res
         .status(400)
-        .json(STATUS_CODE[400]("confidence must be 'high', 'medium', or 'low'"));
+        .json(STATUS_CODE[400](req.t!("confidence must be 'high', 'medium', or 'low'")));
     }
 
     // Validate finding_type if provided
     if (findingType && !(FINDING_TYPES as readonly string[]).includes(findingType)) {
       return res
         .status(400)
-        .json(STATUS_CODE[400](`finding_type must be one of: ${FINDING_TYPES.join(", ")}`));
+        .json(STATUS_CODE[400](req.t!("finding_type must be one of: {options}", { options: FINDING_TYPES.join(", ") })));
     }
 
     const ctx = buildServiceContext(req);
@@ -275,7 +276,7 @@ export async function getScanFindingsController(
 
     return res.status(200).json(STATUS_CODE[200](findings));
   } catch (error) {
-    return handleException(res, error);
+    return handleException(req, res, error);
   }
 }
 
@@ -309,7 +310,7 @@ export async function getScansController(
         status
       )
     ) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid status filter"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid status filter")));
     }
 
     const ctx = buildServiceContext(req);
@@ -317,7 +318,7 @@ export async function getScansController(
 
     return res.status(200).json(STATUS_CODE[200](scans));
   } catch (error) {
-    return handleException(res, error);
+    return handleException(req, res, error);
   }
 }
 
@@ -341,7 +342,7 @@ export async function getActiveScanController(
     return res.status(200).json(STATUS_CODE[200](activeScan));
   } catch (error) {
     // Error handling delegated to handleException
-    return handleException(res, error);
+    return handleException(req, res, error);
   }
 }
 
@@ -366,7 +367,7 @@ export async function cancelScanController(
     const scanId = parseInt(Array.isArray(req.params.scanId) ? req.params.scanId[0] : req.params.scanId, 10);
 
     if (isNaN(scanId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid scan ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid scan ID")));
     }
 
     const ctx = buildServiceContext(req);
@@ -392,7 +393,7 @@ export async function cancelScanController(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return handleException(res, error);
+    return handleException(req, res, error);
   }
 }
 
@@ -417,7 +418,7 @@ export async function deleteScanController(
     const scanId = parseInt(Array.isArray(req.params.scanId) ? req.params.scanId[0] : req.params.scanId, 10);
 
     if (isNaN(scanId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid scan ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid scan ID")));
     }
 
     const ctx = buildServiceContext(req);
@@ -443,7 +444,7 @@ export async function deleteScanController(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return handleException(res, error);
+    return handleException(req, res, error);
   }
 }
 
@@ -469,7 +470,7 @@ export async function getSecurityFindingsController(
     const scanId = parseInt(Array.isArray(req.params.scanId) ? req.params.scanId[0] : req.params.scanId, 10);
 
     if (isNaN(scanId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid scan ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid scan ID")));
     }
 
     const page = parseInt(Array.isArray(req.query.page) ? String(req.query.page[0]) : String(req.query.page || '1'), 10) || 1;
@@ -480,7 +481,7 @@ export async function getSecurityFindingsController(
     if (severity && !["critical", "high", "medium", "low"].includes(severity)) {
       return res
         .status(400)
-        .json(STATUS_CODE[400]("severity must be 'critical', 'high', 'medium', or 'low'"));
+        .json(STATUS_CODE[400](req.t!("severity must be 'critical', 'high', 'medium', or 'low'")));
     }
 
     const ctx = buildServiceContext(req);
@@ -488,7 +489,7 @@ export async function getSecurityFindingsController(
 
     return res.status(200).json(STATUS_CODE[200](findings));
   } catch (error) {
-    return handleException(res, error);
+    return handleException(req, res, error);
   }
 }
 
@@ -513,7 +514,7 @@ export async function getSecuritySummaryController(
     const scanId = parseInt(Array.isArray(req.params.scanId) ? req.params.scanId[0] : req.params.scanId, 10);
 
     if (isNaN(scanId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid scan ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid scan ID")));
     }
 
     const ctx = buildServiceContext(req);
@@ -521,7 +522,7 @@ export async function getSecuritySummaryController(
 
     return res.status(200).json(STATUS_CODE[200](summary));
   } catch (error) {
-    return handleException(res, error);
+    return handleException(req, res, error);
   }
 }
 
@@ -548,11 +549,11 @@ export async function updateGovernanceStatusController(
     const findingId = parseInt(Array.isArray(req.params.findingId) ? req.params.findingId[0] : req.params.findingId, 10);
 
     if (isNaN(scanId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid scan ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid scan ID")));
     }
 
     if (isNaN(findingId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid finding ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid finding ID")));
     }
 
     const { governance_status } = req.body;
@@ -562,7 +563,7 @@ export async function updateGovernanceStatusController(
       !["reviewed", "approved", "flagged"].includes(governance_status)) {
       return res
         .status(400)
-        .json(STATUS_CODE[400]("governance_status must be 'reviewed', 'approved', 'flagged', or null"));
+        .json(STATUS_CODE[400](req.t!("governance_status must be 'reviewed', 'approved', 'flagged', or null")));
     }
 
     const ctx = buildServiceContext(req);
@@ -593,7 +594,7 @@ export async function updateGovernanceStatusController(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return handleException(res, error);
+    return handleException(req, res, error);
   }
 }
 
@@ -618,7 +619,7 @@ export async function getGovernanceSummaryController(
     const scanId = parseInt(Array.isArray(req.params.scanId) ? req.params.scanId[0] : req.params.scanId, 10);
 
     if (isNaN(scanId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid scan ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid scan ID")));
     }
 
     const ctx = buildServiceContext(req);
@@ -626,7 +627,7 @@ export async function getGovernanceSummaryController(
 
     return res.status(200).json(STATUS_CODE[200](summary));
   } catch (error) {
-    return handleException(res, error);
+    return handleException(req, res, error);
   }
 }
 
@@ -653,7 +654,7 @@ export async function getAIDetectionStatsController(
 
     return res.status(200).json(STATUS_CODE[200](stats));
   } catch (error) {
-    return handleException(res, error);
+    return handleException(req, res, error);
   }
 }
 
@@ -680,7 +681,7 @@ export async function exportAIBOMController(
   try {
     const scanId = parseInt(Array.isArray(req.params.scanId) ? req.params.scanId[0] : req.params.scanId, 10);
     if (isNaN(scanId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid scan ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid scan ID")));
     }
 
     const ctx = buildServiceContext(req);
@@ -711,7 +712,7 @@ export async function exportAIBOMController(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return handleException(res, error);
+    return handleException(req, res, error);
   }
 }
 
@@ -737,7 +738,7 @@ export async function getDependencyGraphController(
   try {
     const scanId = parseInt(Array.isArray(req.params.scanId) ? req.params.scanId[0] : req.params.scanId, 10);
     if (isNaN(scanId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid scan ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid scan ID")));
     }
 
     const ctx = buildServiceContext(req);
@@ -745,7 +746,7 @@ export async function getDependencyGraphController(
 
     return res.status(200).json(STATUS_CODE[200](graph));
   } catch (error) {
-    return handleException(res, error);
+    return handleException(req, res, error);
   }
 }
 
@@ -772,7 +773,7 @@ export async function getComplianceMappingController(
   try {
     const scanId = parseInt(Array.isArray(req.params.scanId) ? req.params.scanId[0] : req.params.scanId, 10);
     if (isNaN(scanId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid scan ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid scan ID")));
     }
 
     const ctx = buildServiceContext(req);
@@ -789,7 +790,7 @@ export async function getComplianceMappingController(
 
     return res.status(200).json(STATUS_CODE[200](compliance));
   } catch (error) {
-    return handleException(res, error);
+    return handleException(req, res, error);
   }
 }
 
@@ -816,7 +817,7 @@ export async function getRiskScoreController(
   try {
     const scanId = parseInt(Array.isArray(req.params.scanId) ? req.params.scanId[0] : req.params.scanId, 10);
     if (isNaN(scanId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid scan ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid scan ID")));
     }
 
     const ctx = buildServiceContext(req);
@@ -840,7 +841,7 @@ export async function getRiskScoreController(
 
     return res.status(200).json(STATUS_CODE[200](riskScore));
   } catch (error) {
-    return handleException(res, error);
+    return handleException(req, res, error);
   }
 }
 
@@ -863,7 +864,7 @@ export async function recalculateRiskScoreController(
   try {
     const scanId = parseInt(Array.isArray(req.params.scanId) ? req.params.scanId[0] : req.params.scanId, 10);
     if (isNaN(scanId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid scan ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid scan ID")));
     }
 
     const ctx = buildServiceContext(req);
@@ -871,14 +872,14 @@ export async function recalculateRiskScoreController(
     // Verify scan exists and is completed
     const scan = await getScan(scanId, ctx);
     if (scan.scan.status !== "completed") {
-      return res.status(422).json(STATUS_CODE[422]("Can only calculate risk score for completed scans"));
+      return res.status(422).json(STATUS_CODE[422](req.t!("Can only calculate risk score for completed scans")));
     }
 
     const repoName = `${scan.scan.repository_owner}/${scan.scan.repository_name}`;
     const result = await calculateAndStoreRiskScore(scanId, repoName, ctx);
 
     if (!result) {
-      return res.status(500).json(STATUS_CODE[500]("Failed to calculate risk score"));
+      return res.status(500).json(STATUS_CODE[500](req.t!("Failed to calculate risk score")));
     }
 
     await logSuccess({
@@ -892,7 +893,7 @@ export async function recalculateRiskScoreController(
 
     return res.status(200).json(STATUS_CODE[200](result));
   } catch (error) {
-    return handleException(res, error);
+    return handleException(req, res, error);
   }
 }
 
@@ -949,7 +950,7 @@ export async function getRiskScoringConfigController(
 
     return res.status(200).json(STATUS_CODE[200](response));
   } catch (error) {
-    return handleException(res, error);
+    return handleException(req, res, error);
   }
 }
 
@@ -982,16 +983,16 @@ export async function updateRiskScoringConfigController(
       const providedKeys = Object.keys(dimension_weights);
       const extraKeys = providedKeys.filter((k) => !requiredKeys.includes(k));
       if (extraKeys.length > 0) {
-        return res.status(400).json(STATUS_CODE[400](`Unknown dimension keys: ${extraKeys.join(", ")}`));
+        return res.status(400).json(STATUS_CODE[400](req.t!("Unknown dimension keys: {keys}", { keys: extraKeys.join(", ") })));
       }
       for (const key of requiredKeys) {
         if (typeof dimension_weights[key] !== "number" || dimension_weights[key] < 0 || dimension_weights[key] > 1) {
-          return res.status(400).json(STATUS_CODE[400](`Invalid weight for ${key}: must be a number between 0 and 1`));
+          return res.status(400).json(STATUS_CODE[400](req.t!("Invalid weight for {key}: must be a number between 0 and 1", { key })));
         }
       }
       const total = requiredKeys.reduce((sum: number, k: string) => sum + dimension_weights[k], 0);
       if (Math.abs(total - 1.0) > 0.01) {
-        return res.status(400).json(STATUS_CODE[400](`Dimension weights must sum to 1.0, got ${total.toFixed(2)}`));
+        return res.status(400).json(STATUS_CODE[400](req.t!("Dimension weights must sum to 1.0, got {total}", { total: total.toFixed(2) })));
       }
     }
 
@@ -1012,11 +1013,11 @@ export async function updateRiskScoringConfigController(
       const providedKeys = Object.keys(vulnerability_types_enabled);
       const invalidKeys = providedKeys.filter((k) => !(VULNERABILITY_FINDING_TYPES as readonly string[]).includes(k));
       if (invalidKeys.length > 0) {
-        return res.status(400).json(STATUS_CODE[400](`Unknown vulnerability types: ${invalidKeys.join(", ")}`));
+        return res.status(400).json(STATUS_CODE[400](req.t!("Unknown vulnerability types: {keys}", { keys: invalidKeys.join(", ") })));
       }
       for (const key of providedKeys) {
         if (typeof vulnerability_types_enabled[key] !== "boolean") {
-          return res.status(400).json(STATUS_CODE[400](`vulnerability_types_enabled.${key} must be a boolean`));
+          return res.status(400).json(STATUS_CODE[400](req.t!("vulnerability_types_enabled.{key} must be a boolean", { key })));
         }
       }
     }
@@ -1041,6 +1042,6 @@ export async function updateRiskScoringConfigController(
 
     return res.status(200).json(STATUS_CODE[200](updated));
   } catch (error) {
-    return handleException(res, error);
+    return handleException(req, res, error);
   }
 }

@@ -16,6 +16,7 @@ import {
 } from "../utils/llmKey.utils";
 import { ILLMKey, LLMProvider } from "../domain.layer/interfaces/i.llmKey";
 
+import { translateError } from "../utils/i18n.utils";
 const fileName = "llmKey.ctrl.ts";
 
 /**
@@ -66,7 +67,7 @@ export const getLLMKeyStatus = async (req: Request, res: Response) => {
       fileName,
     );
     logger.error("Error in getLLMKeyStatus:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 };
 
@@ -104,7 +105,7 @@ export const getLLMKeys = async (req: Request, res: Response) => {
       req.organizationId!
     );
     logger.error("Error in getLLMKeys:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 };
 
@@ -133,7 +134,7 @@ export const getLLMKey = async (req: Request, res: Response) => {
       req.organizationId!
     );
     logger.error("Error in getLLMKey:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 };
 
@@ -145,7 +146,7 @@ export const createLLMKey = async (req: Request, res: Response) => {
 
   if (!name || typeof name !== "string" || !key || typeof key !== "string") {
     await transaction.rollback();
-    return res.status(400).json(STATUS_CODE[400]("Name and key are required"));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Name and key are required")));
   }
 
   // Validate that name is a valid LLM provider
@@ -155,7 +156,7 @@ export const createLLMKey = async (req: Request, res: Response) => {
       .status(400)
       .json(
         STATUS_CODE[400](
-          "Invalid provider name. Must be one of: Anthropic, OpenAI, OpenRouter, Custom",
+          req.t!("Invalid provider name. Must be one of: Anthropic, OpenAI, OpenRouter, Custom"),
         ),
       );
   }
@@ -166,7 +167,7 @@ export const createLLMKey = async (req: Request, res: Response) => {
       await transaction.rollback();
       return res
         .status(400)
-        .json(STATUS_CODE[400]("Endpoint URL is required for Custom provider"));
+        .json(STATUS_CODE[400](req.t!("Endpoint URL is required for Custom provider")));
     }
   }
 
@@ -178,7 +179,7 @@ export const createLLMKey = async (req: Request, res: Response) => {
         .status(400)
         .json(
           STATUS_CODE[400](
-            "custom_headers must be an object with string keys and string values"
+            req.t!("custom_headers must be an object with string keys and string values")
           )
         );
     }
@@ -229,7 +230,7 @@ export const createLLMKey = async (req: Request, res: Response) => {
         req.userId!,
         req.organizationId!
       );
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
     if (error instanceof UniqueConstraintError) {
       logStructured(
@@ -244,7 +245,7 @@ export const createLLMKey = async (req: Request, res: Response) => {
         req.userId!,
         req.organizationId!
       );
-      return res.status(400).json(STATUS_CODE[400](`This API key is already configured. Please use a different API key or edit the existing entry.`));
+      return res.status(400).json(STATUS_CODE[400](req.t!("This API key is already configured. Please use a different API key or edit the existing entry.")));
     }
     logStructured("error", `unexpected error: ${name}`, functionName, fileName);
     await logEvent(
@@ -254,7 +255,7 @@ export const createLLMKey = async (req: Request, res: Response) => {
       req.organizationId!
     );
     logger.error("Error in createLLMKey:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 };
 
@@ -272,7 +273,7 @@ export const updateLLMKey = async (req: Request, res: Response) => {
       .status(400)
       .json(
         STATUS_CODE[400](
-          "Invalid provider name. Must be one of: Anthropic, OpenAI, OpenRouter, Custom",
+          req.t!("Invalid provider name. Must be one of: Anthropic, OpenAI, OpenRouter, Custom"),
         ),
       );
   }
@@ -283,7 +284,7 @@ export const updateLLMKey = async (req: Request, res: Response) => {
       await transaction.rollback();
       return res
         .status(400)
-        .json(STATUS_CODE[400]("Endpoint URL is required for Custom provider"));
+        .json(STATUS_CODE[400](req.t!("Endpoint URL is required for Custom provider")));
     }
   }
 
@@ -295,7 +296,7 @@ export const updateLLMKey = async (req: Request, res: Response) => {
         .status(400)
         .json(
           STATUS_CODE[400](
-            "custom_headers must be an object with string keys and string values"
+            req.t!("custom_headers must be an object with string keys and string values")
           )
         );
     }
@@ -368,7 +369,7 @@ export const updateLLMKey = async (req: Request, res: Response) => {
         req.userId!,
         req.organizationId!
       );
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
     if (error instanceof UniqueConstraintError) {
       logStructured(
@@ -383,7 +384,7 @@ export const updateLLMKey = async (req: Request, res: Response) => {
         req.userId!,
         req.organizationId!
       );
-      return res.status(400).json(STATUS_CODE[400](`This API key is already configured. Please use a different API key.`));
+      return res.status(400).json(STATUS_CODE[400](req.t!("This API key is already configured. Please use a different API key.")));
     }
     logStructured("error", `unexpected error: ${name}`, functionName, fileName);
     await logEvent(
@@ -393,7 +394,7 @@ export const updateLLMKey = async (req: Request, res: Response) => {
       req.organizationId!
     );
     logger.error("Error in updateLLMKey:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 };
 
@@ -442,6 +443,6 @@ export const deleteLLMKey = async (req: Request, res: Response) => {
       req.organizationId!
     );
     logger.error("Error in deleteLLMKey:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 };

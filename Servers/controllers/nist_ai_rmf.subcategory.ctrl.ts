@@ -28,6 +28,7 @@ import { uploadFile } from "../utils/fileUpload.utils";
 import { UploadedFile, RequestWithFile } from "../utils/question.utils";
 import { getUserProjects } from "../utils/user.utils";
 
+import { translateError } from "../utils/i18n.utils";
 // Note: Files are only unlinked from evidence_links, not deleted from file manager
 // This allows the same file to be used as evidence in multiple places
 
@@ -154,7 +155,7 @@ export async function getAllNISTAIRMFSubcategoriesBycategoryIdAndtitle(
       "❌ Error in getAllNISTAIRMFSubcategoriesBycategoryIdAndtitle:",
       error
     );
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -255,7 +256,7 @@ export async function getNISTAIRMFSubcategoryRisks(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -443,7 +444,7 @@ export async function updateNISTAIRMFSubcategoryById(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -479,7 +480,7 @@ export async function updateNISTAIRMFSubcategoryStatus(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(400).json(STATUS_CODE[400]("Status is required"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Status is required")));
     }
 
     const updatedSubcategory = await updateNISTAIRMFSubcategoryStatusByIdQuery(
@@ -534,10 +535,10 @@ export async function updateNISTAIRMFSubcategoryStatus(
       error instanceof Error &&
       error.message.includes("Invalid status value")
     ) {
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -586,7 +587,7 @@ export async function getNISTAIRMFProgress(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -637,7 +638,7 @@ export async function getNISTAIRMFAssignments(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -688,7 +689,7 @@ export async function getNISTAIRMFAssignmentsByFunction(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -739,7 +740,7 @@ export async function getNISTAIRMFProgressByFunction(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -790,7 +791,7 @@ export async function getNISTAIRMFStatusBreakdown(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -839,6 +840,6 @@ export async function getNISTAIRMFOverview(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

@@ -154,7 +154,7 @@ export const getNotifications = async (
   const { userId, tenantId } = req;
 
   if (!userId || !tenantId) {
-    return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+    return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
   }
 
   try {
@@ -169,7 +169,7 @@ export const getNotifications = async (
     return res.status(200).json(STATUS_CODE[200](notifications));
   } catch (error) {
     logStructured("error", `Error fetching notifications: ${error}`, "getNotifications", "notification.ctrl.ts");
-    return res.status(500).json(STATUS_CODE[500]("Failed to fetch notifications"));
+    return res.status(500).json(STATUS_CODE[500](req.t!("Failed to fetch notifications")));
   }
 };
 
@@ -184,7 +184,7 @@ export const getNotificationSummary = async (
   const { userId, tenantId } = req;
 
   if (!userId || !tenantId) {
-    return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+    return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
   }
 
   try {
@@ -192,7 +192,7 @@ export const getNotificationSummary = async (
     return res.status(200).json(STATUS_CODE[200](summary));
   } catch (error) {
     logStructured("error", `Error fetching notification summary: ${error}`, "getNotificationSummary", "notification.ctrl.ts");
-    return res.status(500).json(STATUS_CODE[500]("Failed to fetch notification summary"));
+    return res.status(500).json(STATUS_CODE[500](req.t!("Failed to fetch notification summary")));
   }
 };
 
@@ -207,7 +207,7 @@ export const getUnreadCount = async (
   const { userId, tenantId } = req;
 
   if (!userId || !tenantId) {
-    return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+    return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
   }
 
   try {
@@ -215,7 +215,7 @@ export const getUnreadCount = async (
     return res.status(200).json(STATUS_CODE[200]({ unread_count: count }));
   } catch (error) {
     logStructured("error", `Error fetching unread count: ${error}`, "getUnreadCount", "notification.ctrl.ts");
-    return res.status(500).json(STATUS_CODE[500]("Failed to fetch unread count"));
+    return res.status(500).json(STATUS_CODE[500](req.t!("Failed to fetch unread count")));
   }
 };
 
@@ -232,24 +232,24 @@ export const markAsRead = async (
   const notificationId = parseInt(Array.isArray(idParam) ? idParam[0] : idParam, 10);
 
   if (!userId || !tenantId) {
-    return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+    return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
   }
 
   if (isNaN(notificationId)) {
-    return res.status(400).json(STATUS_CODE[400]("Invalid notification ID"));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Invalid notification ID")));
   }
 
   try {
     const notification = await markNotificationAsReadQuery(notificationId, userId, tenantId);
 
     if (!notification) {
-      return res.status(404).json(STATUS_CODE[404]("Notification not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Notification not found")));
     }
 
     return res.status(200).json(STATUS_CODE[200](notification));
   } catch (error) {
     logStructured("error", `Error marking notification as read: ${error}`, "markAsRead", "notification.ctrl.ts");
-    return res.status(500).json(STATUS_CODE[500]("Failed to mark notification as read"));
+    return res.status(500).json(STATUS_CODE[500](req.t!("Failed to mark notification as read")));
   }
 };
 
@@ -264,7 +264,7 @@ export const markAllAsRead = async (
   const { userId, tenantId } = req;
 
   if (!userId || !tenantId) {
-    return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+    return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
   }
 
   try {
@@ -272,7 +272,7 @@ export const markAllAsRead = async (
     return res.status(200).json(STATUS_CODE[200]({ marked_count: count }));
   } catch (error) {
     logStructured("error", `Error marking all notifications as read: ${error}`, "markAllAsRead", "notification.ctrl.ts");
-    return res.status(500).json(STATUS_CODE[500]("Failed to mark notifications as read"));
+    return res.status(500).json(STATUS_CODE[500](req.t!("Failed to mark notifications as read")));
   }
 };
 
@@ -289,23 +289,23 @@ export const deleteNotification = async (
   const notificationId = parseInt(Array.isArray(idParam) ? idParam[0] : idParam, 10);
 
   if (!userId || !tenantId) {
-    return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+    return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
   }
 
   if (isNaN(notificationId)) {
-    return res.status(400).json(STATUS_CODE[400]("Invalid notification ID"));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Invalid notification ID")));
   }
 
   try {
     const deleted = await deleteNotificationQuery(notificationId, userId, tenantId);
 
     if (!deleted) {
-      return res.status(404).json(STATUS_CODE[404]("Notification not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Notification not found")));
     }
 
     return res.status(200).json(STATUS_CODE[200]({ deleted: true }));
   } catch (error) {
     logStructured("error", `Error deleting notification: ${error}`, "deleteNotification", "notification.ctrl.ts");
-    return res.status(500).json(STATUS_CODE[500]("Failed to delete notification"));
+    return res.status(500).json(STATUS_CODE[500](req.t!("Failed to delete notification")));
   }
 };

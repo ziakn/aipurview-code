@@ -11,6 +11,7 @@ import {
 } from "../utils/taskEntityLink.utils";
 import { getTaskByIdQuery } from "../utils/task.utils";
 import { sequelize } from "../database/db";
+import { translateError } from "../utils/i18n.utils";
 import {
   logProcessing,
   logSuccess,
@@ -50,14 +51,14 @@ export async function addTaskEntityLink(
     if (!entity_type || !isValidEntityType(entity_type)) {
       await transaction.rollback();
       return res.status(400).json(
-        STATUS_CODE[400](`Invalid entity_type: ${entity_type}`)
+        STATUS_CODE[400](req.t!("Invalid entity_type: {type}", { type: entity_type }))
       );
     }
 
     // Validate entity_id
     if (!entity_id || typeof entity_id !== "number") {
       await transaction.rollback();
-      return res.status(400).json(STATUS_CODE[400]("entity_id is required"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("entity_id is required")));
     }
 
     // Check if task exists
@@ -69,7 +70,7 @@ export async function addTaskEntityLink(
 
     if (!task) {
       await transaction.rollback();
-      return res.status(404).json(STATUS_CODE[404]("Task not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Task not found")));
     }
 
     // Check if entity exists
@@ -83,7 +84,7 @@ export async function addTaskEntityLink(
     if (!entityExists) {
       await transaction.rollback();
       return res.status(404).json(
-        STATUS_CODE[404](`${entity_type} with id ${entity_id} not found`)
+        STATUS_CODE[404](req.t!("{type} with id {id} not found", { type: entity_type, id: entity_id }))
       );
     }
 
@@ -99,7 +100,7 @@ export async function addTaskEntityLink(
     if (linkExists) {
       await transaction.rollback();
       return res.status(409).json(
-        STATUS_CODE[409]("This entity is already linked to this task")
+        STATUS_CODE[409](req.t!("This entity is already linked to this task"))
       );
     }
 
@@ -140,7 +141,7 @@ export async function addTaskEntityLink(
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -178,7 +179,7 @@ export async function getTaskEntityLinks(
     );
 
     if (!task) {
-      return res.status(404).json(STATUS_CODE[404]("Task not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Task not found")));
     }
 
     const links = await getTaskEntityLinksQuery(taskId, req.organizationId!);
@@ -204,7 +205,7 @@ export async function getTaskEntityLinks(
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -247,7 +248,7 @@ export async function removeTaskEntityLink(
 
     if (!task) {
       await transaction.rollback();
-      return res.status(404).json(STATUS_CODE[404]("Task not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Task not found")));
     }
 
     const deleted = await deleteTaskEntityLinkQuery(
@@ -259,7 +260,7 @@ export async function removeTaskEntityLink(
 
     if (!deleted) {
       await transaction.rollback();
-      return res.status(404).json(STATUS_CODE[404]("Entity link not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Entity link not found")));
     }
 
     await transaction.commit();
@@ -289,6 +290,6 @@ export async function removeTaskEntityLink(
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

@@ -9,6 +9,7 @@ import {
   deleteModelRiskByIdQuery,
 } from "../utils/modelRisk.utils";
 import { STATUS_CODE } from "../utils/statusCode.utils";
+import { translateError } from "../utils/i18n.utils";
 import {
   logProcessing,
   logSuccess,
@@ -71,7 +72,7 @@ export async function getAllModelRisks(req: Request, res: Response) {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -110,7 +111,7 @@ export async function getModelRiskById(req: Request, res: Response) {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(404).json(STATUS_CODE[404]("Model risk not found."));
+    return res.status(404).json(STATUS_CODE[404](req.t!("Model risk not found.")));
   } catch (error) {
     await logFailure({
       eventType: "Read",
@@ -121,7 +122,7 @@ export async function getModelRiskById(req: Request, res: Response) {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -173,7 +174,7 @@ export async function createNewModelRisk(req: Request, res: Response) {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(400).json(STATUS_CODE[400]((error as Error).message));
+    return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
   }
 }
 
@@ -221,7 +222,7 @@ export async function updateModelRiskById(req: Request, res: Response) {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(404).json(STATUS_CODE[404]("Model risk not found."));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Model risk not found.")));
     }
 
     // Record changes in change history
@@ -264,7 +265,7 @@ export async function updateModelRiskById(req: Request, res: Response) {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(400).json(STATUS_CODE[400]((error as Error).message));
+    return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
   }
 }
 
@@ -298,7 +299,7 @@ export async function deleteModelRiskById(req: Request, res: Response) {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(404).json(STATUS_CODE[404]("Model risk not found."));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Model risk not found.")));
     }
 
     // Record deletion in change history
@@ -318,7 +319,7 @@ export async function deleteModelRiskById(req: Request, res: Response) {
     });
     return res
       .status(200)
-      .json(STATUS_CODE[200]("Model risk deleted successfully."));
+      .json(STATUS_CODE[200](req.t!("Model risk deleted successfully.")));
   } catch (error) {
     await transaction.rollback();
     await logFailure({
@@ -330,6 +331,6 @@ export async function deleteModelRiskById(req: Request, res: Response) {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

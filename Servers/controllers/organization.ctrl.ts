@@ -48,6 +48,7 @@ import logger, { logStructured } from "../utils/logger/fileLogger";
 import { logEvent } from "../utils/logger/dbLogger";
 import { generateUserTokens } from "../utils/auth.utils";
 
+import { translateError } from "../utils/i18n.utils";
 /**
  * Retrieves all organizations from the system
  *
@@ -116,7 +117,7 @@ export async function getAllOrganizations(
       _req.organizationId!
     );
     logger.error("❌ Error in getAllOrganizations:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(_req, error)));
   }
 }
 
@@ -148,7 +149,7 @@ export async function getOrganizationsExists(
     const organizationsExists = await getOrganizationsExistsQuery();
     return res.status(200).json(STATUS_CODE[200](organizationsExists));
   } catch (error) {
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(_req, error)));
   }
 }
 
@@ -222,7 +223,7 @@ export async function getOrganizationById(
       req.organizationId!
     );
     logger.error("❌ Error in getOrganizationById:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -373,7 +374,7 @@ export async function createOrganization(
     await transaction.rollback();
     return res
       .status(400)
-      .json(STATUS_CODE[400]("Unable to create organization"));
+      .json(STATUS_CODE[400](req.t!("Unable to create organization")));
   } catch (error) {
     await transaction.rollback();
 
@@ -391,7 +392,7 @@ export async function createOrganization(
         req.userId!,
         req.organizationId!
       );
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof BusinessLogicException) {
@@ -407,7 +408,7 @@ export async function createOrganization(
         req.userId!,
         req.organizationId!
       );
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     logStructured(
@@ -424,7 +425,7 @@ export async function createOrganization(
       req.organizationId!
     );
     logger.error("❌ Error in createOrganization:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -526,7 +527,7 @@ export async function updateOrganizationById(
       req.organizationId!
     );
     await transaction.rollback();
-    return res.status(404).json(STATUS_CODE[404]("Organization not found"));
+    return res.status(404).json(STATUS_CODE[404](req.t!("Organization not found")));
   } catch (error) {
     await transaction.rollback();
 
@@ -544,7 +545,7 @@ export async function updateOrganizationById(
         req.userId!,
         req.organizationId!
       );
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof BusinessLogicException) {
@@ -560,7 +561,7 @@ export async function updateOrganizationById(
         req.userId!,
         req.organizationId!
       );
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     logStructured(
@@ -577,7 +578,7 @@ export async function updateOrganizationById(
       req.organizationId!
     );
     logger.error("❌ Error in updateOrganizationById:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -646,7 +647,7 @@ export async function deleteOrganizationById(
         req.organizationId!
       );
       await transaction.rollback();
-      return res.status(404).json(STATUS_CODE[404]("Organization not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Organization not found")));
     }
 
     const isDeleted = await deleteOrganizationByIdQuery(
@@ -676,7 +677,7 @@ export async function deleteOrganizationById(
     await transaction.rollback();
     return res
       .status(400)
-      .json(STATUS_CODE[400]("Unable to delete organization"));
+      .json(STATUS_CODE[400](req.t!("Unable to delete organization")));
   } catch (error) {
     await transaction.rollback();
     logStructured(
@@ -693,7 +694,7 @@ export async function deleteOrganizationById(
       req.organizationId!
     );
     logger.error("❌ Error in deleteOrganizationById:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -742,14 +743,14 @@ export async function updateOnboardingStatus(
     // Verify user belongs to this organization
     if (req.organizationId !== organizationId) {
       await transaction.rollback();
-      return res.status(403).json(STATUS_CODE[403]("Access denied"));
+      return res.status(403).json(STATUS_CODE[403](req.t!("Access denied")));
     }
 
     // Find the organization
     const organization = await getOrganizationByIdQuery(organizationId);
     if (!organization) {
       await transaction.rollback();
-      return res.status(404).json(STATUS_CODE[404]("Organization not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Organization not found")));
     }
 
     // Update onboarding status to completed
@@ -780,6 +781,6 @@ export async function updateOnboardingStatus(
       "organization.ctrl.ts"
     );
     logger.error("❌ Error in updateOnboardingStatus:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

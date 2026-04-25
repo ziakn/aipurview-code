@@ -11,6 +11,7 @@ import {
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import { logStructured } from "../utils/logger/fileLogger";
 
+import { translateError } from "../utils/i18n.utils";
 /**
  * Upload one file and create an associated dataset record.
  *
@@ -30,7 +31,7 @@ export async function uploadDatasetFile(req: Request, res: Response) {
   );
 
   if (!req.file) {
-    return res.status(400).json(STATUS_CODE[400]("No file provided"));
+    return res.status(400).json(STATUS_CODE[400](req.t!("No file provided")));
   }
 
   let metadata: Record<string, any>;
@@ -42,7 +43,7 @@ export async function uploadDatasetFile(req: Request, res: Response) {
   } catch {
     return res
       .status(400)
-      .json(STATUS_CODE[400]("Invalid metadata JSON in request body"));
+      .json(STATUS_CODE[400](req.t!("Invalid metadata JSON in request body")));
   }
 
   let transaction: Transaction | null = null;
@@ -145,6 +146,6 @@ export async function uploadDatasetFile(req: Request, res: Response) {
       "datasetBulkUpload.ctrl.ts"
     );
     console.error("Error in uploadDatasetFile:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

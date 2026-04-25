@@ -12,6 +12,7 @@ import {
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import logger, { logStructured } from "../utils/logger/fileLogger";
 import { ValidationError } from "../utils/validations/validation.utils";
+import { translateError } from "../utils/i18n.utils";
 import {
   validateCompleteIncidentCreation,
   validateCompleteIncidentUpdate,
@@ -69,7 +70,7 @@ export async function getAllIncidents(req: Request, res: Response) {
       "incidentManagement.controller.ts"
     );
     logger.error("❌ Error in getAllIncidents:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -132,7 +133,7 @@ export async function getIncidentById(req: Request, res: Response) {
       "incidentManagement.controller.ts"
     );
     logger.error("❌ Error in getIncidentById:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -225,7 +226,7 @@ export async function createNewIncident(req: Request, res: Response) {
       "incidentManagement.controller.ts"
     );
     logger.error("❌ Error in createNewIncident:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -294,7 +295,7 @@ export async function updateIncidentById(req: Request, res: Response) {
         "updateIncidentById",
         "incidentManagement.controller.ts"
       );
-      return res.status(404).json(STATUS_CODE[404]("Incident not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Incident not found")));
     }
 
     // Get the plain object for change tracking before updating
@@ -341,7 +342,7 @@ export async function updateIncidentById(req: Request, res: Response) {
       "incidentManagement.controller.ts"
     );
     logger.error("❌ Error in updateIncidentById:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -379,7 +380,7 @@ export async function deleteIncidentById(req: Request, res: Response) {
         "deleteIncidentById",
         "incidentManagement.controller.ts"
       );
-      return res.status(404).json(STATUS_CODE[404]("Incident not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Incident not found")));
     }
 
     await deleteIncidentByIdQuery(incidentId, req.organizationId!, transaction);
@@ -393,7 +394,7 @@ export async function deleteIncidentById(req: Request, res: Response) {
     );
     return res
       .status(200)
-      .json(STATUS_CODE[200]("Incident deleted successfully"));
+      .json(STATUS_CODE[200](req.t!("Incident deleted successfully")));
   } catch (error) {
     await transaction.rollback();
     logStructured(
@@ -403,7 +404,7 @@ export async function deleteIncidentById(req: Request, res: Response) {
       "incidentManagement.controller.ts"
     );
     logger.error("❌ Error in deleteIncidentById:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -441,7 +442,7 @@ export async function archiveIncidentById(req: Request, res: Response) {
         "archiveIncidentById",
         "incidentManagement.controller.ts"
       );
-      return res.status(404).json(STATUS_CODE[404]("Incident not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Incident not found")));
     }
 
     const archivedIncident = await archiveIncidentByIdQuery(
@@ -469,6 +470,6 @@ export async function archiveIncidentById(req: Request, res: Response) {
       "incidentManagement.controller.ts"
     );
     logger.error("❌ Error in archiveIncidentById:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

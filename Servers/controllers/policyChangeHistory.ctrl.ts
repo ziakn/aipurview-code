@@ -3,6 +3,7 @@ import { getPolicyChangeHistory } from "../utils/policyChangeHistory.utils";
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import logger, { logStructured } from "../utils/logger/fileLogger";
 
+import { translateError } from "../utils/i18n.utils";
 /**
  * Get change history for a specific policy with pagination support
  */
@@ -13,7 +14,7 @@ export async function getPolicyChangeHistoryById(
   const policyId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
   if (isNaN(policyId) || policyId <= 0) {
-    return res.status(400).json(STATUS_CODE[400]("Invalid policy ID"));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Invalid policy ID")));
   }
 
   const limitParam = req.query.limit ? parseInt(req.query.limit as string) : 100;
@@ -55,6 +56,6 @@ export async function getPolicyChangeHistoryById(
       "policyChangeHistory.ctrl.ts"
     );
     logger.error("Error in getPolicyChangeHistoryById:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

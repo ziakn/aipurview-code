@@ -16,6 +16,7 @@ import {
 } from "../utils/logger/logHelper";
 import logger from "../utils/logger/fileLogger";
 
+import { translateError } from "../utils/i18n.utils";
 // Reporting system imports (v2 - HTML/EJS based)
 import {
   generateReport as generateReportV2,
@@ -163,7 +164,7 @@ export async function getAllGeneratedReports(
       userId: req.userId!,
     tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -195,7 +196,7 @@ export async function deleteGeneratedReportById(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(404).json(STATUS_CODE[404]("Report not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Report not found")));
     }
 
     const deletedReport = await deleteReportByIdQuery(
@@ -237,7 +238,7 @@ export async function deleteGeneratedReportById(
       userId: req.userId!,
     tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -289,7 +290,7 @@ export async function generateReportsV2(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(404).json(STATUS_CODE[404]("User not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("User not found")));
     }
 
     const organization = await getOrganizationByIdQuery(user.organization_id!);
@@ -359,7 +360,7 @@ export async function generateReportsV2(
       });
       return res
         .status(500)
-        .json(STATUS_CODE[500]("Error uploading report file"));
+        .json(STATUS_CODE[500](req.t!("Error uploading report file")));
     }
 
     if (uploadedFile) {
@@ -391,7 +392,7 @@ export async function generateReportsV2(
       });
       return res
         .status(500)
-        .json(STATUS_CODE[500]("Error uploading report file"));
+        .json(STATUS_CODE[500](req.t!("Error uploading report file")));
     }
   } catch (error) {
     await logFailure({
@@ -403,6 +404,6 @@ export async function generateReportsV2(
       userId: req.userId!,
     tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

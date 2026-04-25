@@ -8,6 +8,7 @@ import {
 } from "../utils/riskBenchmark.utils";
 import { logStructured } from "../utils/logger/fileLogger";
 
+import { translateError } from "../utils/i18n.utils";
 export async function getAllBenchmarks(
   req: Request,
   res: Response
@@ -32,7 +33,7 @@ export async function getAllBenchmarks(
       "getAllBenchmarks",
       "riskBenchmark.ctrl.ts"
     );
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -52,7 +53,7 @@ export async function getBenchmarkById(
   try {
     const benchmark = await getBenchmarkByIdQuery(id);
     if (!benchmark) {
-      return res.status(404).json(STATUS_CODE[404]("Benchmark not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Benchmark not found")));
     }
     return res.status(200).json(STATUS_CODE[200](benchmark));
   } catch (error) {
@@ -62,7 +63,7 @@ export async function getBenchmarkById(
       "getBenchmarkById",
       "riskBenchmark.ctrl.ts"
     );
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -83,6 +84,6 @@ export async function getBenchmarkFilters(
       "getBenchmarkFilters",
       "riskBenchmark.ctrl.ts"
     );
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(_req, error)));
   }
 }

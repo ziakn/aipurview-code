@@ -8,6 +8,7 @@ import {
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import logger, { logStructured } from "../utils/logger/fileLogger";
 
+import { translateError } from "../utils/i18n.utils";
 /**
  * Get timeseries data for a specific parameter
  * Query params:
@@ -36,7 +37,7 @@ export async function getTimeseries(req: Request, res: Response) {
         "getTimeseries",
         "riskHistory.ctrl.ts"
       );
-      return res.status(400).json(STATUS_CODE[400]("Parameter is required"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Parameter is required")));
     }
 
     // Validate parameter is one of the allowed values
@@ -49,7 +50,7 @@ export async function getTimeseries(req: Request, res: Response) {
         "riskHistory.ctrl.ts"
       );
       return res.status(400).json(
-        STATUS_CODE[400](`Invalid parameter. Must be one of: ${validParameters.join(', ')}`)
+        STATUS_CODE[400](req.t!("Invalid parameter. Must be one of: {options}", { options: validParameters.join(', ') }))
       );
     }
 
@@ -68,7 +69,7 @@ export async function getTimeseries(req: Request, res: Response) {
           "riskHistory.ctrl.ts"
         );
         return res.status(400).json(
-          STATUS_CODE[400](`Invalid timeframe. Must be one of: ${validTimeframes.join(', ')}`)
+          STATUS_CODE[400](req.t!("Invalid timeframe. Must be one of: {options}", { options: validTimeframes.join(', ') }))
         );
       }
 
@@ -92,7 +93,7 @@ export async function getTimeseries(req: Request, res: Response) {
           "riskHistory.ctrl.ts"
         );
         return res.status(400).json(
-          STATUS_CODE[400]("Invalid date format. Use ISO date format.")
+          STATUS_CODE[400](req.t!("Invalid date format. Use ISO date format."))
         );
       }
 
@@ -104,7 +105,7 @@ export async function getTimeseries(req: Request, res: Response) {
           "riskHistory.ctrl.ts"
         );
         return res.status(400).json(
-          STATUS_CODE[400]("Start date must be before end date")
+          STATUS_CODE[400](req.t!("Start date must be before end date"))
         );
       }
 
@@ -142,7 +143,7 @@ export async function getTimeseries(req: Request, res: Response) {
       "riskHistory.ctrl.ts",
     );
     logger.error("❌ Error fetching timeseries data:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -170,7 +171,7 @@ export async function getCurrentCounts(req: Request, res: Response) {
         "getCurrentCounts",
         "riskHistory.ctrl.ts"
       );
-      return res.status(400).json(STATUS_CODE[400]("Parameter is required"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Parameter is required")));
     }
 
     // Validate parameter is one of the allowed values
@@ -183,7 +184,7 @@ export async function getCurrentCounts(req: Request, res: Response) {
         "riskHistory.ctrl.ts"
       );
       return res.status(400).json(
-        STATUS_CODE[400](`Invalid parameter. Must be one of: ${validParameters.join(', ')}`)
+        STATUS_CODE[400](req.t!("Invalid parameter. Must be one of: {options}", { options: validParameters.join(', ') }))
       );
     }
 
@@ -210,7 +211,7 @@ export async function getCurrentCounts(req: Request, res: Response) {
       "riskHistory.ctrl.ts",
     );
     logger.error("❌ Error fetching current counts:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -239,7 +240,7 @@ export async function createSnapshot(req: Request, res: Response) {
         "createSnapshot",
         "riskHistory.ctrl.ts"
       );
-      return res.status(400).json(STATUS_CODE[400]("Parameter is required"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Parameter is required")));
     }
 
     // Validate parameter is one of the allowed values
@@ -252,7 +253,7 @@ export async function createSnapshot(req: Request, res: Response) {
         "riskHistory.ctrl.ts"
       );
       return res.status(400).json(
-        STATUS_CODE[400](`Invalid parameter. Must be one of: ${validParameters.join(', ')}`)
+        STATUS_CODE[400](req.t!("Invalid parameter. Must be one of: {options}", { options: validParameters.join(', ') }))
       );
     }
 
@@ -277,6 +278,6 @@ export async function createSnapshot(req: Request, res: Response) {
       "riskHistory.ctrl.ts",
     );
     logger.error("❌ Error creating snapshot:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

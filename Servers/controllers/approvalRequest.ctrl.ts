@@ -39,6 +39,7 @@ import { notifyRequesterStepCompleted } from "../services/notification.service";
 import { NotificationType, NotificationEntityType } from "../domain.layer/interfaces/i.notification";
 import { EMAIL_TEMPLATES } from "../constants/emailTemplates";
 
+import { translateError } from "../utils/i18n.utils";
 /**
  * Create new approval request
  * @route POST /api/approval-requests
@@ -64,18 +65,18 @@ export async function createApprovalRequest(
 
     if (!userId || !organizationId) {
       await transaction.rollback();
-      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     // Validation
     if (!request_name?.trim()) {
       await transaction.rollback();
-      return res.status(400).json(STATUS_CODE[400]("Request name is required"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Request name is required")));
     }
 
     if (!workflow_id) {
       await transaction.rollback();
-      return res.status(400).json(STATUS_CODE[400]("Workflow ID is required"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Workflow ID is required")));
     }
 
     // Get workflow and steps
@@ -87,7 +88,7 @@ export async function createApprovalRequest(
 
     if (!workflow) {
       await transaction.rollback();
-      return res.status(404).json(STATUS_CODE[404]("Workflow not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Workflow not found")));
     }
 
     const workflowSteps = await getWorkflowStepsQuery(
@@ -100,7 +101,7 @@ export async function createApprovalRequest(
       await transaction.rollback();
       return res
         .status(400)
-        .json(STATUS_CODE[400]("Workflow must have at least one step"));
+        .json(STATUS_CODE[400](req.t!("Workflow must have at least one step")));
     }
 
     // Create request
@@ -180,9 +181,9 @@ export async function createApprovalRequest(
     );
 
     if (error instanceof ValidationException) {
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -206,7 +207,7 @@ export async function getMyApprovalRequests(
     const { userId, organizationId } = req;
 
     if (!userId || !organizationId) {
-      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     const requests = await getMyApprovalRequestsQuery(userId, organizationId);
@@ -226,7 +227,7 @@ export async function getMyApprovalRequests(
       "getMyApprovalRequests",
       "approvalRequest.ctrl.ts"
     );
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -250,7 +251,7 @@ export async function getPendingApprovals(
     const { userId, organizationId } = req;
 
     if (!userId || !organizationId) {
-      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     const requests = await getPendingApprovalsQuery(userId, organizationId);
@@ -270,7 +271,7 @@ export async function getPendingApprovals(
       "getPendingApprovals",
       "approvalRequest.ctrl.ts"
     );
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -295,18 +296,18 @@ export async function getApprovalRequestById(
     const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 
     if (!userId || !organizationId) {
-      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     const requestId = parseInt(id, 10);
     if (isNaN(requestId)) {
-      return res.status(400).json(STATUS_CODE[400]("Invalid request ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid request ID")));
     }
 
     const request = await getApprovalRequestByIdQuery(requestId, organizationId);
 
     if (!request) {
-      return res.status(404).json(STATUS_CODE[404]("Request not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Request not found")));
     }
 
     logStructured(
@@ -324,7 +325,7 @@ export async function getApprovalRequestById(
       "getApprovalRequestById",
       "approvalRequest.ctrl.ts"
     );
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -353,13 +354,13 @@ export async function approveRequest(
 
     if (!userId || !organizationId) {
       await transaction.rollback();
-      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     const requestId = parseInt(id, 10);
     if (isNaN(requestId)) {
       await transaction.rollback();
-      return res.status(400).json(STATUS_CODE[400]("Invalid request ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid request ID")));
     }
 
     // Process the approval
@@ -488,7 +489,7 @@ export async function approveRequest(
       "approveRequest",
       "approvalRequest.ctrl.ts"
     );
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -517,13 +518,13 @@ export async function rejectRequest(
 
     if (!userId || !organizationId) {
       await transaction.rollback();
-      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     const requestId = parseInt(id, 10);
     if (isNaN(requestId)) {
       await transaction.rollback();
-      return res.status(400).json(STATUS_CODE[400]("Invalid request ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid request ID")));
     }
 
     // Process the rejection
@@ -610,7 +611,7 @@ export async function rejectRequest(
       "rejectRequest",
       "approvalRequest.ctrl.ts"
     );
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -638,13 +639,13 @@ export async function withdrawRequest(
 
     if (!userId || !organizationId) {
       await transaction.rollback();
-      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     const requestId = parseInt(id, 10);
     if (isNaN(requestId)) {
       await transaction.rollback();
-      return res.status(400).json(STATUS_CODE[400]("Invalid request ID"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid request ID")));
     }
 
     // Verify user is the requestor
@@ -654,7 +655,7 @@ export async function withdrawRequest(
       return res
         .status(403)
         .json(
-          STATUS_CODE[403]("Only the requestor can withdraw this request")
+          STATUS_CODE[403](req.t!("Only the requestor can withdraw this request"))
         );
     }
 
@@ -680,7 +681,7 @@ export async function withdrawRequest(
       "withdrawRequest",
       "approvalRequest.ctrl.ts"
     );
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -704,7 +705,7 @@ export async function getAllApprovalRequests(
     const { organizationId } = req;
 
     if (!organizationId) {
-      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     const requests = await sequelize.query(
@@ -730,6 +731,6 @@ export async function getAllApprovalRequests(
       "getAllApprovalRequests",
       "approvalRequest.ctrl.ts"
     );
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

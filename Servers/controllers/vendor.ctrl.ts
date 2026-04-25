@@ -28,6 +28,7 @@ import {
 import { notifyUserAssigned } from "../services/inAppNotification.service";
 import { QueryTypes } from "sequelize";
 
+import { translateError } from "../utils/i18n.utils";
 // Helper function to get user name
 async function getUserNameById(userId: number): Promise<string> {
   const result = await sequelize.query<{ name: string; surname: string }>(
@@ -83,7 +84,7 @@ export async function getAllVendors(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -132,7 +133,7 @@ export async function getVendorById(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -184,7 +185,7 @@ export async function getVendorByProjectId(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -326,7 +327,7 @@ export async function createVendor(req: Request, res: Response): Promise<any> {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof BusinessLogicException) {
@@ -339,7 +340,7 @@ export async function createVendor(req: Request, res: Response): Promise<any> {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     await logFailure({
@@ -351,7 +352,7 @@ export async function createVendor(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -537,7 +538,7 @@ export async function updateVendorById(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof BusinessLogicException) {
@@ -550,7 +551,7 @@ export async function updateVendorById(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     await logFailure({
@@ -562,7 +563,7 @@ export async function updateVendorById(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -621,6 +622,6 @@ export async function deleteVendorById(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

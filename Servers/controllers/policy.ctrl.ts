@@ -32,6 +32,7 @@ import {
 } from "../services/inAppNotification.service";
 import { NotificationEntityType } from "../domain.layer/interfaces/i.notification";
 import logger from "../utils/logger/fileLogger";
+import { translateError } from "../utils/i18n.utils";
 import {
   logProcessing,
   logSuccess,
@@ -46,7 +47,7 @@ export class PolicyController {
 
       return res.status(200).json(STATUS_CODE[200](policies));
     } catch (error) {
-      return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+      return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
     }
   }
 
@@ -62,7 +63,7 @@ export class PolicyController {
 
       return res.status(404).json(STATUS_CODE[404](null));
     } catch (error) {
-      return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+      return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
     }
   }
 
@@ -103,7 +104,7 @@ export class PolicyController {
       return res.status(503).json(STATUS_CODE[503]({}));
     } catch (error) {
       await transaction.rollback();
-      return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+      return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
     }
   }
 
@@ -163,7 +164,7 @@ export class PolicyController {
     } catch (error) {
       await transaction.rollback();
       logger.error("Error updating policy:", error);
-      return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+      return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
     }
   }
 
@@ -172,7 +173,7 @@ export class PolicyController {
     try {
       return res.status(200).json(STATUS_CODE[200](POLICY_TAGS));
     } catch (error) {
-      return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+      return res.status(500).json(STATUS_CODE[500](translateError(_req, error)));
     }
   }
 
@@ -197,7 +198,7 @@ export class PolicyController {
       return res.status(404).json(STATUS_CODE[404]({}));
     } catch (error) {
       await transaction.rollback();
-      return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+      return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
     }
   }
 
@@ -206,7 +207,7 @@ export class PolicyController {
     try {
       const policyId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
       if (isNaN(policyId)) {
-        return res.status(400).json(STATUS_CODE[400]("Invalid policy ID"));
+        return res.status(400).json(STATUS_CODE[400](req.t!("Invalid policy ID")));
       }
 
       const policyResult = await getPolicyByIdQuery(req.organizationId!, policyId);
@@ -234,7 +235,7 @@ export class PolicyController {
       return res.send(pdfBuffer);
     } catch (error) {
       logger.error("Error exporting policy as PDF:", error);
-      return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+      return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
     }
   }
 
@@ -243,7 +244,7 @@ export class PolicyController {
     try {
       const policyId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
       if (isNaN(policyId)) {
-        return res.status(400).json(STATUS_CODE[400]("Invalid policy ID"));
+        return res.status(400).json(STATUS_CODE[400](req.t!("Invalid policy ID")));
       }
 
       const policyResult = await getPolicyByIdQuery(req.organizationId!, policyId);
@@ -277,7 +278,7 @@ export class PolicyController {
       return res.send(docxBuffer);
     } catch (error) {
       logger.error("Error exporting policy as DOCX:", error as Error);
-      return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+      return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
     }
   }
 
@@ -296,7 +297,7 @@ export class PolicyController {
 
     try {
       if (!req.file) {
-        return res.status(400).json(STATUS_CODE[400]("No file uploaded"));
+        return res.status(400).json(STATUS_CODE[400](req.t!("No file uploaded")));
       }
 
       // Validate MIME type and file extension
@@ -311,7 +312,7 @@ export class PolicyController {
       ) {
         return res
           .status(400)
-          .json(STATUS_CODE[400]("Only .docx files are supported"));
+          .json(STATUS_CODE[400](req.t!("Only .docx files are supported")));
       }
 
       const { html, warnings } = await convertDocxToHtml(req.file.buffer);
@@ -336,7 +337,7 @@ export class PolicyController {
         userId,
         organizationId,
       });
-      return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+      return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
     }
   }
 
@@ -347,7 +348,7 @@ export class PolicyController {
       const policyId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
       if (isNaN(policyId)) {
         await transaction.rollback();
-        return res.status(400).json(STATUS_CODE[400]("Invalid policy ID"));
+        return res.status(400).json(STATUS_CODE[400](req.t!("Invalid policy ID")));
       }
 
       const userId = req.userId!;
@@ -355,7 +356,7 @@ export class PolicyController {
 
       if (!reviewer_ids || !Array.isArray(reviewer_ids) || reviewer_ids.length === 0) {
         await transaction.rollback();
-        return res.status(400).json(STATUS_CODE[400]("reviewer_ids is required"));
+        return res.status(400).json(STATUS_CODE[400](req.t!("reviewer_ids is required")));
       }
 
       const policyResult = await getPolicyByIdQuery(req.organizationId!, policyId);
@@ -414,7 +415,7 @@ export class PolicyController {
     } catch (error) {
       await transaction.rollback();
       logger.error("Error requesting policy review:", error);
-      return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+      return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
     }
   }
 
@@ -425,7 +426,7 @@ export class PolicyController {
       const policyId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
       if (isNaN(policyId)) {
         await transaction.rollback();
-        return res.status(400).json(STATUS_CODE[400]("Invalid policy ID"));
+        return res.status(400).json(STATUS_CODE[400](req.t!("Invalid policy ID")));
       }
 
       const reviewerId = req.userId!;
@@ -483,7 +484,7 @@ export class PolicyController {
     } catch (error) {
       await transaction.rollback();
       logger.error("Error approving policy review:", error);
-      return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+      return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
     }
   }
 
@@ -494,7 +495,7 @@ export class PolicyController {
       const policyId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
       if (isNaN(policyId)) {
         await transaction.rollback();
-        return res.status(400).json(STATUS_CODE[400]("Invalid policy ID"));
+        return res.status(400).json(STATUS_CODE[400](req.t!("Invalid policy ID")));
       }
 
       const reviewerId = req.userId!;
@@ -502,7 +503,7 @@ export class PolicyController {
 
       if (!comment) {
         await transaction.rollback();
-        return res.status(400).json(STATUS_CODE[400]("comment is required when requesting changes"));
+        return res.status(400).json(STATUS_CODE[400](req.t!("comment is required when requesting changes")));
       }
 
       const policyResult = await getPolicyByIdQuery(req.organizationId!, policyId);
@@ -557,7 +558,7 @@ export class PolicyController {
     } catch (error) {
       await transaction.rollback();
       logger.error("Error rejecting policy review:", error);
-      return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+      return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
     }
   }
 }

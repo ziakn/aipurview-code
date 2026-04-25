@@ -37,6 +37,7 @@ import {
 import logger from "../utils/logger/fileLogger";
 import { hasPendingApprovalQuery } from "../utils/approvalRequest.utils";
 
+import { translateError } from "../utils/i18n.utils";
 // Helper function to get user name
 async function getUserNameById(userId: number): Promise<string> {
   const result = await sequelize.query<{ name: string; surname: string }>(
@@ -186,7 +187,7 @@ export async function getAssessmentsByProjectId(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -233,7 +234,7 @@ export async function getCompliancesByProjectId(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -290,7 +291,7 @@ export async function getTopicById(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -362,7 +363,7 @@ export async function getControlById(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -412,7 +413,7 @@ export async function saveControls(
         });
         return res.status(403).json(
           STATUS_CODE[403](
-            "This use case has a pending approval request. Controls cannot be modified until the approval process is complete."
+            req.t!("This use case has a pending approval request. Controls cannot be modified until the approval process is complete.")
           )
         );
       }
@@ -604,7 +605,7 @@ export async function saveControls(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -662,7 +663,7 @@ export async function updateQuestionById(
         });
         return res.status(403).json(
           STATUS_CODE[403](
-            "This use case has a pending approval request. Assessments cannot be modified until the approval process is complete."
+            req.t!("This use case has a pending approval request. Assessments cannot be modified until the approval process is complete.")
           )
         );
       }
@@ -837,7 +838,7 @@ export async function updateQuestionById(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -901,7 +902,7 @@ export async function deleteAssessmentsByProjectId(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -965,7 +966,7 @@ export async function deleteCompliancesByProjectId(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1021,7 +1022,7 @@ export async function getProjectAssessmentProgress(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1077,7 +1078,7 @@ export async function getProjectComplianceProgress(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1169,7 +1170,7 @@ export async function getAllProjectsAssessmentProgress(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1264,7 +1265,7 @@ export async function getAllProjectsComplianceProgress(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1318,7 +1319,7 @@ export async function getAllControlCategories(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1382,7 +1383,7 @@ export async function getControlsByControlCategoryId(
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -1419,6 +1420,6 @@ export async function getAllTopics(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

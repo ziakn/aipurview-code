@@ -26,6 +26,7 @@ import {
 } from "../domain.layer/exceptions/custom.exception";
 import { notifyTaskAssigned, notifyTaskUpdated, ITaskEntityLinkForEmail } from "../services/inAppNotification.service";
 import { getTaskEntityLinksQuery } from "../utils/taskEntityLink.utils";
+import { translateError } from "../utils/i18n.utils";
 import {
   recordEntityCreation,
   trackEntityChanges,
@@ -179,7 +180,7 @@ export async function createTask(req: Request, res: Response): Promise<any> {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof BusinessLogicException) {
@@ -192,7 +193,7 @@ export async function createTask(req: Request, res: Response): Promise<any> {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     await logFailure({
@@ -205,7 +206,7 @@ export async function createTask(req: Request, res: Response): Promise<any> {
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -320,7 +321,7 @@ export async function getAllTasks(req: Request, res: Response): Promise<any> {
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -388,7 +389,7 @@ export async function getTaskById(req: Request, res: Response): Promise<any> {
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -602,7 +603,7 @@ export async function updateTask(req: Request, res: Response): Promise<any> {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof BusinessLogicException) {
@@ -615,7 +616,7 @@ export async function updateTask(req: Request, res: Response): Promise<any> {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     await logFailure({
@@ -793,7 +794,7 @@ export async function restoreTask(req: Request, res: Response): Promise<any> {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof BusinessLogicException) {
@@ -806,7 +807,7 @@ export async function restoreTask(req: Request, res: Response): Promise<any> {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     if (error instanceof ForbiddenException) {
@@ -819,7 +820,7 @@ export async function restoreTask(req: Request, res: Response): Promise<any> {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     await logFailure({
@@ -913,7 +914,7 @@ export async function hardDeleteTask(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof BusinessLogicException) {
@@ -926,7 +927,7 @@ export async function hardDeleteTask(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     if (error instanceof ForbiddenException) {
@@ -939,7 +940,7 @@ export async function hardDeleteTask(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     await logFailure({

@@ -82,7 +82,7 @@ export async function saveGitHubTokenController(
     const { token, token_name } = req.body;
 
     if (!token) {
-      return res.status(400).json(STATUS_CODE[400]("Token is required"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Token is required")));
     }
 
     // Validate token format
@@ -141,7 +141,7 @@ export async function deleteGitHubTokenController(
     const deleted = await deleteGitHubTokenQuery(req.organizationId!);
 
     if (!deleted) {
-      return res.status(404).json(STATUS_CODE[404]("No GitHub token found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("No GitHub token found")));
     }
 
     await logSuccess({
@@ -191,7 +191,7 @@ export async function testGitHubTokenController(
     const { token } = req.body;
 
     if (!token) {
-      return res.status(400).json(STATUS_CODE[400]("Token is required"));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Token is required")));
     }
 
     // Validate token format first

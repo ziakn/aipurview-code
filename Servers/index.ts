@@ -96,6 +96,7 @@ import virtualKeyProxyRoutes from "./routes/virtualKeyProxy.route";
 import internalRoutes from "./routes/internal.route";
 import superAdminRoutes from "./routes/superAdmin.route";
 // superAdminReadOnly is now enforced inside authenticateJWT middleware
+import { i18nMiddleware } from "./middleware/i18n.middleware";
 import { setupNotificationSubscriber, closeNotificationSubscriber } from "./services/notificationSubscriber.service";
 import { sequelize } from "./database/db";
 import redisClient from "./database/redis";
@@ -171,6 +172,9 @@ try {
   });
   app.use(cookieParser());
   // app.use(csrf());
+
+  // i18n: attach req.lang and req.t. No-op when I18N_BACKEND_ENABLED !== "true".
+  app.use(i18nMiddleware);
 
   // Health endpoint — must be registered before JWT middleware so it is publicly reachable
   app.get("/health", async (_req, res) => {

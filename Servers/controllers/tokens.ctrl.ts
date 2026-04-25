@@ -8,12 +8,13 @@ import { generateApiToken } from "../utils/jwt.utils";
 import { getUserByIdQuery } from "../utils/user.utils";
 import { createApiTokenQuery, deleteApiTokenQuery, getApiTokensQuery } from "../utils/tokens.utils";
 
+import { translateError } from "../utils/i18n.utils";
 export const createApiToken = async (req: Request, res: Response) => {
   const transaction = await sequelize.transaction();
   const { name, expires_in_days } = req.body;
 
   if (!expires_in_days) {
-    return res.status(400).json(STATUS_CODE[400]("expires_in_days is required"));
+    return res.status(400).json(STATUS_CODE[400](req.t!("expires_in_days is required")));
   }
 
   const expiryDays = parseInt(expires_in_days, 10);
@@ -52,12 +53,12 @@ export const createApiToken = async (req: Request, res: Response) => {
     if (error instanceof ValidationException) {
       logStructured('error', `validation failed: ${error.message}`, 'createApiToken', 'tokens.ctrl.ts');
       await logEvent('Error', `Validation error during API token creation: ${error.message}`, req.userId!, req.organizationId!);
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
     logStructured('error', `unexpected error: ${name}`, 'createApiToken', 'tokens.ctrl.ts');
     await logEvent('Error', `Unexpected error during API token creation: ${(error as Error).message}`, req.userId!, req.organizationId!);
     logger.error('❌ Error in createApiToken:', error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -73,7 +74,7 @@ export const getApiTokens = async (req: Request, res: Response) => {
     logStructured('error', `unexpected error fetching API tokens`, 'getApiTokens', 'tokens.ctrl.ts');
     await logEvent('Error', `Unexpected error fetching API tokens: ${(error as Error).message}`, req.userId!, req.organizationId!);
     logger.error('❌ Error in getApiTokens:', error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -95,6 +96,6 @@ export const deleteApiToken = async (req: Request, res: Response) => {
     logStructured('error', `unexpected error: ${id}`, 'deleteApiToken', 'tokens.ctrl.ts');
     await logEvent('Error', `Unexpected error during API token deletion: ${(error as Error).message}`, req.userId!, req.organizationId!);
     logger.error('❌ Error in deleteApiToken:', error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

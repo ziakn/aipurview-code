@@ -6,7 +6,7 @@ async function getEvents(req: Request, res: Response): Promise<any> {
   try {
     const organizationId = req.organizationId;
     if (!organizationId) {
-      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
     const events = await getEventsQuery(organizationId);
     return res.status(200).json(STATUS_CODE[200](events));
@@ -19,7 +19,7 @@ async function getLogs(req: Request, res: Response): Promise<any> {
   try {
     const organizationId = req.organizationId;
     if (!organizationId) {
-      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
     const logs = await getLogsQuery(organizationId);
     return res.status(200).json(STATUS_CODE[200](logs));
