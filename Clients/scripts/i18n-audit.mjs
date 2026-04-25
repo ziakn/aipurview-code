@@ -127,7 +127,44 @@ function extractStrings(content) {
 
 // ─── Heuristic noise filter ─────────────────────────────────────────────────
 
+// Style-guide demo strings that leak out of pages/StyleGuide because they
+// also appear inline in component files. Translating them is pointless.
+const KNOWN_DEMO_STRINGS = new Set([
+  "Center",
+  "Left",
+  "Right",
+  "Narrow",
+  "Small",
+  "None",
+  "Default",
+  "Custom",
+  "Custom scorer only",
+  "Cycle",
+  "Label",
+  "Size",
+  "Placeholder",
+  "Outlined",
+  "Outlined Primary",
+  "Primary",
+  "Primary Small",
+  "Secondary",
+  "Text Primary",
+  "Color theme",
+  "Description for option 1",
+  "Disabled State:",
+  "Normal State:",
+  "First item",
+  "Second item",
+  "Option 1",
+  "Sample text",
+  "Hover me",
+  "Usage example",
+  "With retrieval context",
+  "VerifyWise", // brand name, doesn't translate
+]);
+
 function isNoise(s) {
+  if (KNOWN_DEMO_STRINGS.has(s)) return true;
   if (s.length < 3) return true;
   // CamelCase code identifier (no spaces, mid-string capitals)
   if (!/\s/.test(s) && s.length > 14 && /[a-z][A-Z]/.test(s)) return true;
