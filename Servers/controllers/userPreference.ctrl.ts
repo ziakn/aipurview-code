@@ -119,6 +119,7 @@ export async function createUserPreferences(req: Request, res: Response) {
     const userPreference = await UserPreferencesModel.createNewUserPreferences(
       preferenceData.user_id,
       preferenceData.date_format,
+      preferenceData.language,
     );
 
     const createdData = await createNewUserPreferencesQuery(
@@ -225,6 +226,7 @@ export async function updateUserPreferences(req: Request, res: Response) {
     const userPreference = new UserPreferencesModel(existingUserPreference);
     await userPreference.updateUserPreferences({
       date_format: preferenceData.date_format,
+      language: preferenceData.language,
     });
 
     const updatedData = await updateUserPreferencesByIdQuery(
