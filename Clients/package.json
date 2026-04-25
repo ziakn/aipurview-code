@@ -17,7 +17,9 @@
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
-    "analyze": "npx vite-bundle-visualizer"
+    "analyze": "npx vite-bundle-visualizer",
+    "i18n:audit": "node scripts/i18n-audit.mjs",
+    "i18n:audit:strict": "node scripts/i18n-audit.mjs --strict"
   },
   "dependencies": {
     "@ai-sdk/react": "^3.0.170",

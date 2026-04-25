@@ -8,6 +8,76 @@ let currentLang: Lang = "en";
 let observer: MutationObserver | null = null;
 let dict: Record<string, string> = {};
 
+// ─── i18n gap audit ──────────────────────────────────────────────────────────
+// Enable with `localStorage.setItem("vw_audit", "1")` and reload. While active,
+// every untranslated text node / attribute we encounter is logged to the
+// console (deduplicated, throttled). Use `__vwI18nGaps()` in the console to
+// dump the full list as JSON ready to paste into translations.ts.
+
+const AUDIT_KEY = "vw_audit";
+const auditMisses = new Map<string, Set<string>>(); // lang → set of source strings
+let auditFlushTimer: ReturnType<typeof setTimeout> | null = null;
+
+const isAuditOn = () =>
+  typeof window !== "undefined" && localStorage.getItem(AUDIT_KEY) === "1";
+
+const looksLikeDynamicData = (s: string): boolean => {
+  // Skip strings we'd never want to translate so the log isn't drowned in noise.
+  if (s.length < 3) return true;
+  if (/^\d/.test(s)) return true; // numbers, dates, IDs
+  if (/^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(s)) return true; // email
+  if (/^https?:\/\//i.test(s)) return true; // URLs
+  if (/^[\w-]+\/[\w.-]+$/.test(s)) return true; // paths / repo slugs
+  if (!/[a-zA-Z]/.test(s)) return true; // pure punctuation/symbols
+  if (/^\s*$/.test(s)) return true;
+  return false;
+};
+
+const recordMiss = (text: string) => {
+  if (!isAuditOn()) return;
+  if (currentLang === "en") return;
+  const trimmed = text.trim();
+  if (!trimmed) return;
+  if (looksLikeDynamicData(trimmed)) return;
+  if (dict[trimmed]) return;
+
+  let bucket = auditMisses.get(currentLang);
+  if (!bucket) {
+    bucket = new Set();
+    auditMisses.set(currentLang, bucket);
+  }
+  if (bucket.has(trimmed)) return;
+  bucket.add(trimmed);
+
+  // Throttle console output: log a count line at most every 500ms.
+  if (auditFlushTimer) return;
+  auditFlushTimer = setTimeout(() => {
+    auditFlushTimer = null;
+    const total = Array.from(auditMisses.values()).reduce(
+      (n, s) => n + s.size,
+      0,
+    );
+    console.warn(
+      `[i18n] ${total} missing string(s) so far. Run __vwI18nGaps() for the full list.`,
+    );
+  }, 500);
+};
+
+if (typeof window !== "undefined") {
+  (window as any).__vwI18nGaps = () => {
+    const out: Record<string, string[]> = {};
+    for (const [lang, set] of auditMisses) {
+      out[lang] = Array.from(set).sort();
+    }
+    console.log(JSON.stringify(out, null, 2));
+    return out;
+  };
+  (window as any).__vwI18nClear = () => {
+    auditMisses.clear();
+    console.log("[i18n] gap audit cleared.");
+  };
+}
+
 const SUPPORTED: Lang[] = ["en", "de", "fr"];
 
 const getCurrentLang = (): Lang => {
@@ -25,7 +95,10 @@ const translate = (text: string): string | null => {
   const trimmed = text.trim();
   if (!trimmed) return null;
   const translated = dict[trimmed];
-  if (!translated) return null;
+  if (!translated) {
+    recordMiss(text);
+    return null;
+  }
   if (translated === trimmed) return null;
   return text.replace(trimmed, translated);
 };
