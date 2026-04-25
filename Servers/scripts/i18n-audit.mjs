@@ -28,7 +28,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { SERVERS_ROOT } from "./lib/i18nScriptUtils.mjs";
+import { SERVERS_ROOT, readJson, localePath } from "./lib/i18nScriptUtils.mjs";
 
 const LOCALES_DIR = path.join(SERVERS_ROOT, "locales");
 
@@ -49,17 +49,12 @@ const wantReport = args.has("--report");
 const langArg = [...args].find((a) => a.startsWith("--lang="))?.split("=")[1];
 const targetLangs = langArg ? [langArg] : SUPPORTED_LANGS;
 
-function loadJson(name) {
-  const p = path.join(SERVERS_ROOT, "locales", `${name}.json`);
-  return JSON.parse(fs.readFileSync(p, "utf8"));
-}
-
-const en = loadJson("en");
+const en = readJson(localePath("en"));
 const enKeys = Object.keys(en);
 
 const results = {};
 for (const lang of targetLangs) {
-  const dict = loadJson(lang);
+  const dict = readJson(localePath(lang));
   const missing = enKeys.filter((k) => !(k in dict));
   const untranslated = enKeys.filter((k) => k in dict && dict[k] === en[k]);
   const stale = Object.keys(dict).filter((k) => !(k in en));

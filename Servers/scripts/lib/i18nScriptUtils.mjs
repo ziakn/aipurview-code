@@ -88,3 +88,32 @@ export function printDiffSamples(diffs) {
     console.log(`  + ${d.after}`);
   }
 }
+
+/**
+ * Read a JSON file. If `defaultValue` is provided, returns it on any read or
+ * parse error; otherwise lets the error throw. Used by the i18n scripts to
+ * load locale dictionaries.
+ */
+export function readJson(filePath, defaultValue) {
+  try {
+    return JSON.parse(fs.readFileSync(filePath, "utf8"));
+  } catch (err) {
+    if (arguments.length >= 2) return defaultValue;
+    throw err;
+  }
+}
+
+/**
+ * Write an object as pretty-printed JSON with a trailing newline (matches the
+ * format the audit and other scripts already produce on disk).
+ */
+export function writeJson(filePath, obj) {
+  fs.writeFileSync(filePath, JSON.stringify(obj, null, 2) + "\n");
+}
+
+/**
+ * Convenience: locale dictionary path within Servers/locales/.
+ */
+export function localePath(lang) {
+  return path.join(SERVERS_ROOT, "locales", `${lang}.json`);
+}

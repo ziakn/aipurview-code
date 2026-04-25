@@ -28,7 +28,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { SERVERS_ROOT } from "./lib/i18nScriptUtils.mjs";
+import { SERVERS_ROOT, readJson, writeJson } from "./lib/i18nScriptUtils.mjs";
 
 const EN_PATH = path.join(SERVERS_ROOT, "locales", "en.json");
 const DE_PATH = path.join(SERVERS_ROOT, "locales", "de.json");
@@ -416,17 +416,14 @@ function loadFrontendGlossary(lang) {
 
 // ─── Main ────────────────────────────────────────────────────────────────────
 
-const en = JSON.parse(fs.readFileSync(EN_PATH, "utf8"));
+const en = readJson(EN_PATH);
 const glossaryDe = loadFrontendGlossary("de");
 const glossaryFr = loadFrontendGlossary("fr");
 
 // Load existing translations so prior hand-translations / LLM-generated
 // translations survive a regeneration. Missing files yield empty dicts.
-const safeRead = (p) => {
-  try { return JSON.parse(fs.readFileSync(p, "utf8")); } catch { return {}; }
-};
-const existingDe = safeRead(DE_PATH);
-const existingFr = safeRead(FR_PATH);
+const existingDe = readJson(DE_PATH, {});
+const existingFr = readJson(FR_PATH, {});
 
 const out = { de: {}, fr: {} };
 const stats = {
@@ -461,7 +458,7 @@ if (DRY_RUN) {
     console.log();
   }
 } else {
-  fs.writeFileSync(DE_PATH, JSON.stringify(out.de, null, 2) + "\n");
-  fs.writeFileSync(FR_PATH, JSON.stringify(out.fr, null, 2) + "\n");
+  writeJson(DE_PATH, out.de);
+  writeJson(FR_PATH, out.fr);
   console.log(`\nWrote ${enKeys.length} keys each to de.json + fr.json`);
 }

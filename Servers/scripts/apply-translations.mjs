@@ -1,12 +1,18 @@
 #!/usr/bin/env node
 /**
- * Apply hand-curated DE/FR translations to de.json + fr.json.
+ * Apply hand-curated translations to the locale dictionaries.
  *
- * Reads `/tmp/translation-batch.json` of shape:
+ * Reads `/tmp/translation-batch.json` (overridable as the first arg) of shape:
  *   { "<en key>": { "de": "...", "fr": "..." }, ... }
  *
- * Merges into the existing dictionaries (overwrites English fallbacks where
- * the English value === the key). Preserves all other entries untouched.
+ * For each entry, merges the per-language value into the matching dictionary
+ * if (a) the key exists in en.json, and (b) the new value differs from both
+ * the English source and the existing entry. Other dictionary entries are
+ * untouched, so prior translations survive.
+ *
+ * Languages are auto-discovered from `Servers/locales/*.json` (excluding
+ * en.json). Adding a 4th language only needs the new dictionary file plus
+ * matching keys in the batch.
  *
  * Usage:
  *   node scripts/apply-translations.mjs                     # default path
@@ -14,21 +20,25 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { SERVERS_ROOT } from "./lib/i18nScriptUtils.mjs";
+import {
+  SERVERS_ROOT,
+  readJson,
+  writeJson,
+  localePath,
+} from "./lib/i18nScriptUtils.mjs";
 
 const inputPath = process.argv[2] || "/tmp/translation-batch.json";
-const batch = JSON.parse(fs.readFileSync(inputPath, "utf8"));
+const batch = readJson(inputPath);
 
-const dePath = path.join(SERVERS_ROOT, "locales", "de.json");
-const frPath = path.join(SERVERS_ROOT, "locales", "fr.json");
-const enPath = path.join(SERVERS_ROOT, "locales", "en.json");
+const en = readJson(localePath("en"));
+const LANGS = fs
+  .readdirSync(path.join(SERVERS_ROOT, "locales"))
+  .filter((f) => f.endsWith(".json") && f !== "en.json")
+  .map((f) => f.replace(/\.json$/, ""))
+  .sort();
 
-const en = JSON.parse(fs.readFileSync(enPath, "utf8"));
-const de = JSON.parse(fs.readFileSync(dePath, "utf8"));
-const fr = JSON.parse(fs.readFileSync(frPath, "utf8"));
-
-let deUpdated = 0;
-let frUpdated = 0;
+const dicts = Object.fromEntries(LANGS.map((l) => [l, readJson(localePath(l))]));
+const updated = Object.fromEntries(LANGS.map((l) => [l, 0]));
 let skippedMissing = 0;
 let skippedAlreadyTranslated = 0;
 
@@ -37,30 +47,22 @@ for (const [key, trans] of Object.entries(batch)) {
     skippedMissing++;
     continue;
   }
-  if (typeof trans.de === "string" && trans.de !== en[key]) {
-    if (de[key] !== trans.de) {
-      de[key] = trans.de;
-      deUpdated++;
-    } else {
+  for (const lang of LANGS) {
+    const value = trans[lang];
+    if (typeof value !== "string" || value === en[key]) continue;
+    if (dicts[lang][key] === value) {
       skippedAlreadyTranslated++;
+      continue;
     }
-  }
-  if (typeof trans.fr === "string" && trans.fr !== en[key]) {
-    if (fr[key] !== trans.fr) {
-      fr[key] = trans.fr;
-      frUpdated++;
-    } else {
-      skippedAlreadyTranslated++;
-    }
+    dicts[lang][key] = value;
+    updated[lang]++;
   }
 }
 
-fs.writeFileSync(dePath, JSON.stringify(de, null, 2) + "\n");
-fs.writeFileSync(frPath, JSON.stringify(fr, null, 2) + "\n");
+for (const lang of LANGS) writeJson(localePath(lang), dicts[lang]);
 
 console.log(`=== apply-translations from ${path.relative(SERVERS_ROOT, inputPath)} ===`);
 console.log(`Batch entries: ${Object.keys(batch).length}`);
-console.log(`DE updated: ${deUpdated}`);
-console.log(`FR updated: ${frUpdated}`);
+for (const lang of LANGS) console.log(`${lang.toUpperCase()} updated: ${updated[lang]}`);
 console.log(`Skipped (missing in en.json): ${skippedMissing}`);
 console.log(`Skipped (no change): ${skippedAlreadyTranslated}`);

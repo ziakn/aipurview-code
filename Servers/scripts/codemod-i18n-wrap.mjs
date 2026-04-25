@@ -66,13 +66,9 @@ const TARGET_OBJ = new RegExp(
 // Direct-res-json forms that bypass STATUS_CODE entirely, e.g.:
 //   res.status(401).json({ message: "Unauthorized" })
 //   res.status(500).json({ error: "Internal server error" })
-// Captures: (prefix)(field:<ws>)("literal"|'literal'). Same lookahead.
-const TARGET_RES_JSON_MSG = new RegExp(
-  String.raw`(res\.status\(\d+\)\.json\(\s*\{\s*message\s*:\s*)(?!req\.t!?\()${STATIC_STR_PATTERN}`,
-  "gs",
-);
-const TARGET_RES_JSON_ERR = new RegExp(
-  String.raw`(res\.status\(\d+\)\.json\(\s*\{\s*error\s*:\s*)(?!req\.t!?\()${STATIC_STR_PATTERN}`,
+// Captures: (prefix)("literal"|'literal'). Same lookahead.
+const TARGET_RES_JSON = new RegExp(
+  String.raw`(res\.status\(\d+\)\.json\(\s*\{\s*(?:message|error)\s*:\s*)(?!req\.t!?\()${STATIC_STR_PATTERN}`,
   "gs",
 );
 
@@ -90,8 +86,7 @@ walkTsFiles(SCAN_DIRS, (filePath) => {
   };
   let updated = original.replace(TARGET, replacer);
   updated = updated.replace(TARGET_OBJ, replacer);
-  updated = updated.replace(TARGET_RES_JSON_MSG, replacer);
-  updated = updated.replace(TARGET_RES_JSON_ERR, replacer);
+  updated = updated.replace(TARGET_RES_JSON, replacer);
   if (count === 0) return;
 
   wrapsApplied += count;
