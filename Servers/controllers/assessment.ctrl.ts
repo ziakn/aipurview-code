@@ -132,7 +132,7 @@ export async function createAssessment(
     if (!assessmentData.project_id) {
       return res.status(400).json(
         STATUS_CODE[400]({
-          message: "project_id is required",
+          message: req.t!("project_id is required"),
           field: "project_id",
         })
       );
@@ -155,7 +155,7 @@ export async function createAssessment(
 
       return res.status(201).json(
         STATUS_CODE[201]({
-          message: "Assessment created successfully",
+          message: req.t!("Assessment created successfully"),
           assessment: createdAssessment.toSafeJSON(),
         })
       );
@@ -174,7 +174,7 @@ export async function createAssessment(
 
     return res.status(503).json(
       STATUS_CODE[503]({
-        message: "Failed to create assessment",
+        message: req.t!("Failed to create assessment"),
       })
     );
   } catch (error) {
@@ -218,7 +218,7 @@ export async function updateAssessmentById(
     if (!assessmentData.project_id) {
       return res.status(400).json(
         STATUS_CODE[400]({
-          message: "project_id is required",
+          message: req.t!("project_id is required"),
           field: "project_id",
         })
       );
@@ -241,7 +241,7 @@ export async function updateAssessmentById(
 
       return res.status(202).json(
         STATUS_CODE[202]({
-          message: "Assessment updated successfully",
+          message: req.t!("Assessment updated successfully"),
           assessment: updatedAssessments[0].toSafeJSON(),
         })
       );
@@ -260,7 +260,7 @@ export async function updateAssessmentById(
 
     return res.status(404).json(
       STATUS_CODE[404]({
-        message: "Assessment not found or no changes made",
+        message: req.t!("Assessment not found or no changes made"),
         assessmentId: assessmentId,
       })
     );

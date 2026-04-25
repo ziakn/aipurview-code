@@ -542,7 +542,7 @@ export async function deleteIntakeForm(req: Request, res: Response) {
       tenantId: req.organizationId!,
     });
 
-    return res.status(200).json(STATUS_CODE[200]({ message: "Form deleted successfully" }));
+    return res.status(200).json(STATUS_CODE[200]({ message: req.t!("Form deleted successfully") }));
   } catch (error) {
     await transaction.rollback();
     await logFailure({
@@ -915,7 +915,7 @@ export async function overrideSubmissionRisk(req: Request, res: Response) {
       tenantId: req.organizationId!,
     });
 
-    return res.status(200).json(STATUS_CODE[200]({ message: "Risk override applied", override }));
+    return res.status(200).json(STATUS_CODE[200]({ message: req.t!("Risk override applied"), override }));
   } catch (error) {
     logger.error("Error in overrideSubmissionRisk:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
@@ -1428,7 +1428,7 @@ export async function submitPublicFormByPublicId(req: Request, res: Response) {
       const validationErrors = validateFormData(formData, fullFormForValidation.schema);
       if (validationErrors.length > 0) {
         return res.status(400).json(STATUS_CODE[400]({
-          message: "Form validation failed",
+          message: req.t!("Form validation failed"),
           errors: validationErrors,
         }));
       }
@@ -1718,7 +1718,7 @@ export async function submitPublicForm(req: Request, res: Response) {
       const validationErrors = validateFormData(formData, fullFormForValidation.schema);
       if (validationErrors.length > 0) {
         return res.status(400).json(STATUS_CODE[400]({
-          message: "Form validation failed",
+          message: req.t!("Form validation failed"),
           errors: validationErrors,
         }));
       }

@@ -600,7 +600,7 @@ export async function updateProjectById(
 
     // if (!updatedProject.project_title || !updatedProject.owner) {
     //   return res.status(400).json(
-    //     STATUS_CODE[400]({ message: "project_title and owner are required" })
+    //     STATUS_CODE[400]({ message: req.t!("project_title and owner are required") })
     //   );
     // }
 

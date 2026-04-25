@@ -491,7 +491,7 @@ export async function updateRiskById(
       if (fairErrors.length > 0) {
         await transaction.rollback();
         return res.status(400).json(STATUS_CODE[400]({
-          message: "Quantitative risk validation failed",
+          message: req.t!("Quantitative risk validation failed"),
           errors: fairErrors,
         }));
       }

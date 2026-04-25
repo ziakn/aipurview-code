@@ -34,7 +34,7 @@ export async function createOrg(req: Request, res: Response) {
     const { name, logo } = req.body;
     if (!name) {
       await transaction.rollback();
-      return res.status(400).json(STATUS_CODE[400]({ message: "Organization name is required" }));
+      return res.status(400).json(STATUS_CODE[400]({ message: req.t!("Organization name is required") }));
     }
 
     const org = await OrganizationModel.createNewOrganization(name, logo || null);
@@ -57,7 +57,7 @@ export async function deleteOrg(req: Request, res: Response) {
     const orgId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
     if (isNaN(orgId)) {
       await transaction.rollback();
-      return res.status(400).json(STATUS_CODE[400]({ message: "Invalid organization ID" }));
+      return res.status(400).json(STATUS_CODE[400]({ message: req.t!("Invalid organization ID") }));
     }
 
     // Delete all users in the org first (to clear FK references)
@@ -105,7 +105,7 @@ export async function updateOrg(req: Request, res: Response) {
     }
 
     if (updates.length === 0) {
-      return res.status(400).json(STATUS_CODE[400]({ message: "No fields to update" }));
+      return res.status(400).json(STATUS_CODE[400]({ message: req.t!("No fields to update") }));
     }
 
     await sequelize.query(
@@ -192,7 +192,7 @@ export async function inviteUserToOrg(req: Request, res: Response) {
   const { email, name, surname, roleId } = req.body;
 
   if (!email || !name || !roleId) {
-    return res.status(400).json(STATUS_CODE[400]({ message: "email, name, and roleId are required" }));
+    return res.status(400).json(STATUS_CODE[400]({ message: req.t!("email, name, and roleId are required") }));
   }
 
   // Prevent creating super-admin users via invite
@@ -265,7 +265,7 @@ export async function updateUser(req: Request, res: Response) {
     }
 
     if (updates.length === 0) {
-      return res.status(400).json(STATUS_CODE[400]({ message: "No fields to update" }));
+      return res.status(400).json(STATUS_CODE[400]({ message: req.t!("No fields to update") }));
     }
 
     const [updated] = await sequelize.query(

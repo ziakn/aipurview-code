@@ -41,7 +41,7 @@ export async function getCompanyLogo(req: Request, res: Response) {
     // Look up organization by tenant hash
     const org = await getOrganizationByTenantHashQuery(hash);
     if (!org || !org.id) {
-      return res.status(404).json(STATUS_CODE[404]({ message: "Organization not found" }));
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Organization not found") }));
     }
     const logo = await getCompanyLogoQuery(org.id);
 
@@ -54,7 +54,7 @@ export async function getCompanyLogo(req: Request, res: Response) {
       );
       return res.status(404).json(
         STATUS_CODE[404]({
-          message: "Company logo not found",
+          message: req.t!("Company logo not found"),
         })
       );
     }
@@ -67,7 +67,7 @@ export async function getCompanyLogo(req: Request, res: Response) {
     );
     return res.status(200).json(
       STATUS_CODE[200]({
-        message: "Company logo retrieved successfully",
+        message: req.t!("Company logo retrieved successfully"),
         logo,
       })
     );
@@ -97,7 +97,7 @@ export async function getAITrustCentrePublicPage(req: Request, res: Response) {
     // Look up organization by tenant hash
     const org = await getOrganizationByTenantHashQuery(hash);
     if (!org || !org.id) {
-      return res.status(404).json(STATUS_CODE[404]({ message: "Organization not found" }));
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Organization not found") }));
     }
     const result = await getAITrustCentrePublicPageQuery(org.id);
 
@@ -109,7 +109,7 @@ export async function getAITrustCentrePublicPage(req: Request, res: Response) {
     );
     return res.status(200).json(
       STATUS_CODE[200]({
-        message: "AI Trust Centre public page retrieved successfully",
+        message: req.t!("AI Trust Centre public page retrieved successfully"),
         trustCentre: result,
       })
     );
@@ -146,7 +146,7 @@ export async function getAITrustCentrePublicResource(
     // Look up organization by tenant hash
     const org = await getOrganizationByTenantHashQuery(hash);
     if (!org || !org.id) {
-      return res.status(404).json(STATUS_CODE[404]({ message: "Organization not found" }));
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Organization not found") }));
     }
     const resource = await getAITrustCentrePublicResourceByIdQuery(
       org.id,
@@ -161,7 +161,7 @@ export async function getAITrustCentrePublicResource(
       );
       return res.status(404).json(
         STATUS_CODE[404]({
-          message: "Resource not found",
+          message: req.t!("Resource not found"),
         })
       );
     }
@@ -210,7 +210,7 @@ export async function getAITrustCentreOverview(req: Request, res: Response) {
     );
     return res.status(200).json(
       STATUS_CODE[200]({
-        message: "AI Trust Centre overview retrieved successfully",
+        message: req.t!("AI Trust Centre overview retrieved successfully"),
         overview,
       })
     );
@@ -249,7 +249,7 @@ export const getAITrustCentreResources = async (
     );
     return res.status(200).json(
       STATUS_CODE[200]({
-        message: "AI Trust Centre resources retrieved successfully",
+        message: req.t!("AI Trust Centre resources retrieved successfully"),
         resources,
       })
     );
@@ -290,7 +290,7 @@ export const getAITrustCentreSubprocessors = async (
     );
     return res.status(200).json(
       STATUS_CODE[200]({
-        message: "AI Trust Centre subprocessors retrieved successfully",
+        message: req.t!("AI Trust Centre subprocessors retrieved successfully"),
         subprocessors,
       })
     );
@@ -345,7 +345,7 @@ export async function createAITrustResource(
       );
       return res.status(400).json(
         STATUS_CODE[400]({
-          message: "File upload failed",
+          message: req.t!("File upload failed"),
         })
       );
     }
@@ -377,7 +377,7 @@ export async function createAITrustResource(
       );
       return res.status(201).json(
         STATUS_CODE[201]({
-          message: "AI Trust Centre resource created successfully",
+          message: req.t!("AI Trust Centre resource created successfully"),
           resource,
         })
       );
@@ -397,7 +397,7 @@ export async function createAITrustResource(
       );
       return res.status(503).json(
         STATUS_CODE[503]({
-          message: "Failed to create AI Trust Centre resource",
+          message: req.t!("Failed to create AI Trust Centre resource"),
         })
       );
     }
@@ -460,7 +460,7 @@ export async function createAITrustSubprocessor(req: Request, res: Response) {
       );
       return res.status(201).json(
         STATUS_CODE[201]({
-          message: "AI Trust Centre subprocessor created successfully",
+          message: req.t!("AI Trust Centre subprocessor created successfully"),
           subprocessor,
         })
       );
@@ -480,7 +480,7 @@ export async function createAITrustSubprocessor(req: Request, res: Response) {
       );
       return res.status(503).json(
         STATUS_CODE[503]({
-          message: "Failed to create AI Trust Centre subprocessor",
+          message: req.t!("Failed to create AI Trust Centre subprocessor"),
         })
       );
     }
@@ -536,7 +536,7 @@ export async function uploadCompanyLogo(req: RequestWithFile, res: Response) {
       );
       return res.status(400).json(
         STATUS_CODE[400]({
-          message: "File upload failed",
+          message: req.t!("File upload failed"),
         })
       );
     }
@@ -558,7 +558,7 @@ export async function uploadCompanyLogo(req: RequestWithFile, res: Response) {
       await logEvent("Create", "Company logo uploaded successfully", req.userId!, req.organizationId!);
       return res.status(200).json(
         STATUS_CODE[200]({
-          message: "Company logo uploaded successfully",
+          message: req.t!("Company logo uploaded successfully"),
           ...upload,
         })
       );
@@ -573,7 +573,7 @@ export async function uploadCompanyLogo(req: RequestWithFile, res: Response) {
       await logEvent("Error", "Failed to upload company logo", req.userId!, req.organizationId!);
       return res.status(503).json(
         STATUS_CODE[503]({
-          message: "Failed to upload company logo",
+          message: req.t!("Failed to upload company logo"),
         })
       );
     }
@@ -626,7 +626,7 @@ export async function updateAITrustOverview(req: Request, res: Response) {
       await logEvent("Update", "AI Trust Centre overview updated successfully", req.userId!, req.organizationId!);
       return res.status(200).json(
         STATUS_CODE[200]({
-          message: "AI Trust Centre overview updated successfully",
+          message: req.t!("AI Trust Centre overview updated successfully"),
           overview,
         })
       );
@@ -641,7 +641,7 @@ export async function updateAITrustOverview(req: Request, res: Response) {
       await logEvent("Error", "Failed to update AI Trust Centre overview", req.userId!, req.organizationId!);
       return res.status(503).json(
         STATUS_CODE[503]({
-          message: "Failed to update AI Trust Centre overview",
+          message: req.t!("Failed to update AI Trust Centre overview"),
         })
       );
     }
@@ -700,7 +700,7 @@ export async function updateAITrustResource(
       );
       return res.status(400).json(
         STATUS_CODE[400]({
-          message: "No file provided for update",
+          message: req.t!("No file provided for update"),
         })
       );
     }
@@ -747,7 +747,7 @@ export async function updateAITrustResource(
       );
       return res.status(200).json(
         STATUS_CODE[200]({
-          message: "AI Trust Centre resource updated successfully",
+          message: req.t!("AI Trust Centre resource updated successfully"),
           resource,
         })
       );
@@ -767,7 +767,7 @@ export async function updateAITrustResource(
       );
       return res.status(503).json(
         STATUS_CODE[503]({
-          message: "Failed to update AI Trust Centre resource",
+          message: req.t!("Failed to update AI Trust Centre resource"),
         })
       );
     }
@@ -834,7 +834,7 @@ export async function updateAITrustSubprocessor(req: Request, res: Response) {
       );
       return res.status(200).json(
         STATUS_CODE[200]({
-          message: "AI Trust Centre subprocessor updated successfully",
+          message: req.t!("AI Trust Centre subprocessor updated successfully"),
           subprocessor,
         })
       );
@@ -854,7 +854,7 @@ export async function updateAITrustSubprocessor(req: Request, res: Response) {
       );
       return res.status(503).json(
         STATUS_CODE[503]({
-          message: "Failed to update AI Trust Centre subprocessor",
+          message: req.t!("Failed to update AI Trust Centre subprocessor"),
         })
       );
     }
@@ -911,7 +911,7 @@ export async function deleteAITrustResource(req: Request, res: Response) {
       );
       return res.status(200).json(
         STATUS_CODE[200]({
-          message: "AI Trust Centre resource deleted successfully",
+          message: req.t!("AI Trust Centre resource deleted successfully"),
         })
       );
     } else {
@@ -930,7 +930,7 @@ export async function deleteAITrustResource(req: Request, res: Response) {
       );
       return res.status(503).json(
         STATUS_CODE[503]({
-          message: "Failed to delete AI Trust Centre resource",
+          message: req.t!("Failed to delete AI Trust Centre resource"),
         })
       );
     }
@@ -989,7 +989,7 @@ export async function deleteAITrustSubprocessor(req: Request, res: Response) {
       );
       return res.status(200).json(
         STATUS_CODE[200]({
-          message: "AI Trust Centre subprocessor deleted successfully",
+          message: req.t!("AI Trust Centre subprocessor deleted successfully"),
         })
       );
     } else {
@@ -1008,7 +1008,7 @@ export async function deleteAITrustSubprocessor(req: Request, res: Response) {
       );
       return res.status(503).json(
         STATUS_CODE[503]({
-          message: "Failed to delete AI Trust Centre subprocessor",
+          message: req.t!("Failed to delete AI Trust Centre subprocessor"),
         })
       );
     }
@@ -1056,7 +1056,7 @@ export async function deleteCompanyLogo(req: Request, res: Response) {
       await logEvent("Delete", "Company logo deleted successfully", req.userId!, req.organizationId!);
       return res.status(200).json(
         STATUS_CODE[200]({
-          message: "Company logo deleted successfully",
+          message: req.t!("Company logo deleted successfully"),
         })
       );
     } else {
@@ -1070,7 +1070,7 @@ export async function deleteCompanyLogo(req: Request, res: Response) {
       await logEvent("Error", "Failed to delete company logo", req.userId!, req.organizationId!);
       return res.status(503).json(
         STATUS_CODE[503]({
-          message: "Failed to delete company logo",
+          message: req.t!("Failed to delete company logo"),
         })
       );
     }

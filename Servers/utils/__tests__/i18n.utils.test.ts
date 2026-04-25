@@ -3,7 +3,7 @@ import { describe, it, expect, jest, afterEach } from "@jest/globals";
 // The i18n module reads process.env.I18N_BACKEND_ENABLED at import time.
 // We use jest.isolateModules to re-import per flag state.
 
-function loadModule(flag: "true" | "false" | undefined) {
+function loadModule(flag: string | undefined) {
   if (flag === undefined) delete process.env.I18N_BACKEND_ENABLED;
   else process.env.I18N_BACKEND_ENABLED = flag;
   let mod!: typeof import("../i18n.utils");

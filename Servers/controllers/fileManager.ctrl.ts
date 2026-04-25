@@ -978,7 +978,7 @@ export const removeFile = async (req: Request, res: Response): Promise<any> => {
 
     return res.status(200).json(
       STATUS_CODE[200]({
-        message: "File deleted successfully",
+        message: req.t!("File deleted successfully"),
         fileId,
       })
     );

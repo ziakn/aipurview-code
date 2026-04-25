@@ -422,7 +422,7 @@ export const deleteLLMKey = async (req: Request, res: Response) => {
       await logEvent("Error", `LLM Key not found for deletion: ${id}`, req.userId!, req.organizationId!);
       return res
         .status(404)
-        .json(STATUS_CODE[404]({ message: "LLM Key not found" }));
+        .json(STATUS_CODE[404]({ message: req.t!("LLM Key not found") }));
     }
     logStructured(
       "successful",
@@ -433,7 +433,7 @@ export const deleteLLMKey = async (req: Request, res: Response) => {
     logger.debug(`Deleted LLM Key: ${id}`);
     return res
       .status(200)
-      .json(STATUS_CODE[200]({ message: "LLM Key deleted successfully" }));
+      .json(STATUS_CODE[200]({ message: req.t!("LLM Key deleted successfully") }));
   } catch (error) {
     logStructured("error", `unexpected error: ${id}`, functionName, fileName);
     await logEvent(

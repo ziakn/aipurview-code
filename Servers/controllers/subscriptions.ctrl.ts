@@ -41,7 +41,7 @@ export async function getSubscriptionController(_req: Request, res: Response) {
     );
     return res
       .status(404)
-      .json(STATUS_CODE[404]({ message: "No subscriptions found" }));
+      .json(STATUS_CODE[404]({ message: _req.t!("No subscriptions found") }));
   } catch (error) {
     logStructured(
       "error",
@@ -52,7 +52,7 @@ export async function getSubscriptionController(_req: Request, res: Response) {
     logger.error("❌ Error fetching subscriptions:", error);
     return res
       .status(500)
-      .json(STATUS_CODE[500]({ message: "Internal server error" }));
+      .json(STATUS_CODE[500]({ message: _req.t!("Internal server error") }));
   }
 }
 
@@ -115,7 +115,7 @@ export async function createSubscriptionController(
     await transaction.rollback();
     return res
       .status(400)
-      .json(STATUS_CODE[400]({ message: "Failed to create subscription" }));
+      .json(STATUS_CODE[400]({ message: req.t!("Failed to create subscription") }));
   } catch (error) {
     logStructured(
       "error",
@@ -199,7 +199,7 @@ export async function updateSubscriptionController(
     await transaction.rollback();
     return res
       .status(404)
-      .json(STATUS_CODE[404]({ message: "Subscription not found" }));
+      .json(STATUS_CODE[404]({ message: req.t!("Subscription not found") }));
   } catch (error) {
     logStructured(
       "error",

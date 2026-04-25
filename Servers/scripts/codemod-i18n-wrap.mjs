@@ -52,6 +52,14 @@ const TARGET = new RegExp(
   "gs",
 );
 
+// Object-form: STATUS_CODE[xxx]({ message: "literal", ... }) — wrap the
+// literal in req.t!. Captures: (prefix)(message:<ws>)("literal"|'literal').
+// Idempotent via the `req.t!` lookahead.
+const TARGET_OBJ = new RegExp(
+  String.raw`(STATUS_CODE\[\d+\]\(\s*\{\s*message\s*:\s*)(?!req\.t!?\()${STATIC_STR_PATTERN}`,
+  "gs",
+);
+
 const diffs = [];
 let filesChanged = 0;
 let wrapsApplied = 0;
@@ -59,7 +67,12 @@ let wrapsApplied = 0;
 walkTsFiles(SCAN_DIRS, (filePath) => {
   const original = fs.readFileSync(filePath, "utf8");
   let count = 0;
-  const updated = original.replace(TARGET, (_whole, prefix, dq, sq) => {
+  let updated = original.replace(TARGET, (_whole, prefix, dq, sq) => {
+    count += 1;
+    const literal = dq !== undefined ? `"${dq}"` : `'${sq}'`;
+    return `${prefix}req.t!(${literal})`;
+  });
+  updated = updated.replace(TARGET_OBJ, (_whole, prefix, dq, sq) => {
     count += 1;
     const literal = dq !== undefined ? `"${dq}"` : `'${sq}'`;
     return `${prefix}req.t!(${literal})`;

@@ -275,7 +275,7 @@ export async function removeTaskEntityLink(
     });
 
     return res.status(200).json(
-      STATUS_CODE[200]({ message: "Entity link removed successfully" })
+      STATUS_CODE[200]({ message: req.t!("Entity link removed successfully") })
     );
   } catch (error) {
     await transaction.rollback();

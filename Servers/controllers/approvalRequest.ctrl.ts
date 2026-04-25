@@ -480,7 +480,7 @@ export async function approveRequest(
 
     return res
       .status(200)
-      .json(STATUS_CODE[200]({ message: "Request approved successfully" }));
+      .json(STATUS_CODE[200]({ message: req.t!("Request approved successfully") }));
   } catch (error) {
     await transaction.rollback();
     logStructured(
@@ -602,7 +602,7 @@ export async function rejectRequest(
 
     return res
       .status(200)
-      .json(STATUS_CODE[200]({ message: "Request rejected successfully" }));
+      .json(STATUS_CODE[200]({ message: req.t!("Request rejected successfully") }));
   } catch (error) {
     await transaction.rollback();
     logStructured(
@@ -672,7 +672,7 @@ export async function withdrawRequest(
 
     return res
       .status(200)
-      .json(STATUS_CODE[200]({ message: "Request withdrawn successfully" }));
+      .json(STATUS_CODE[200]({ message: req.t!("Request withdrawn successfully") }));
   } catch (error) {
     await transaction.rollback();
     logStructured(

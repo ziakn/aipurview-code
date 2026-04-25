@@ -87,11 +87,11 @@ export const deleteApiToken = async (req: Request, res: Response) => {
     if (!success) {
       logStructured('error', `API token not found: ${id}`, 'deleteApiToken', 'tokens.ctrl.ts');
       await logEvent('Error', `API token not found for deletion: ${id}`, req.userId!, req.organizationId!);
-      return res.status(404).json(STATUS_CODE[404]({ message: "API token not found" }));
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("API token not found") }));
     }
     logStructured('successful', `deleted API token: ${id}`, 'deleteApiToken', 'tokens.ctrl.ts');
     logger.debug(`✅ Deleted API token: ${id}`);
-    return res.status(200).json(STATUS_CODE[200]({ message: "API token deleted successfully" }));
+    return res.status(200).json(STATUS_CODE[200]({ message: req.t!("API token deleted successfully") }));
   } catch (error) {
     logStructured('error', `unexpected error: ${id}`, 'deleteApiToken', 'tokens.ctrl.ts');
     await logEvent('Error', `Unexpected error during API token deletion: ${(error as Error).message}`, req.userId!, req.organizationId!);

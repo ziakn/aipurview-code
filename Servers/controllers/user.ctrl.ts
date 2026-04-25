@@ -718,7 +718,7 @@ async function refreshAccessToken(req: Request, res: Response): Promise<any> {
       );
       return res
         .status(406)
-        .json(STATUS_CODE[406]({ message: "Token expired" }));
+        .json(STATUS_CODE[406]({ message: req.t!("Token expired") }));
     }
 
     const newAccessToken = generateToken({
@@ -1626,7 +1626,7 @@ async function uploadUserProfilePhoto(req: any, res: Response) {
       );
       return res.status(400).json(
         STATUS_CODE[400]({
-          message: "No file provided",
+          message: req.t!("No file provided"),
         })
       );
     }
@@ -1652,7 +1652,7 @@ async function uploadUserProfilePhoto(req: any, res: Response) {
       );
       return res.status(400).json(
         STATUS_CODE[400]({
-          message: "File upload failed",
+          message: req.t!("File upload failed"),
         })
       );
     }
@@ -1676,7 +1676,7 @@ async function uploadUserProfilePhoto(req: any, res: Response) {
       await logEvent("Create", `Profile photo uploaded for user ID ${userId}`, req.userId!, req.organizationId!);
       return res.status(200).json(
         STATUS_CODE[200]({
-          message: "Profile photo uploaded successfully",
+          message: req.t!("Profile photo uploaded successfully"),
           ...upload,
         })
       );
@@ -1696,7 +1696,7 @@ async function uploadUserProfilePhoto(req: any, res: Response) {
       );
       return res.status(500).json(
         STATUS_CODE[500]({
-          message: "Failed to upload profile photo",
+          message: req.t!("Failed to upload profile photo"),
         })
       );
     }
@@ -1754,7 +1754,7 @@ async function getUserProfilePhoto(req: Request, res: Response) {
       );
       return res.status(200).json(
         STATUS_CODE[200]({
-          message: "No profile photo",
+          message: req.t!("No profile photo"),
           photo: null,
         })
       );
@@ -1768,7 +1768,7 @@ async function getUserProfilePhoto(req: Request, res: Response) {
     );
     return res.status(200).json(
       STATUS_CODE[200]({
-        message: "Profile photo retrieved successfully",
+        message: req.t!("Profile photo retrieved successfully"),
         photo,
       })
     );
@@ -1828,7 +1828,7 @@ async function deleteUserProfilePhoto(req: Request, res: Response) {
       await logEvent("Delete", `Profile photo deleted for user ID ${userId}`, req.userId!, req.organizationId!);
       return res.status(200).json(
         STATUS_CODE[200]({
-          message: "Profile photo deleted successfully",
+          message: req.t!("Profile photo deleted successfully"),
         })
       );
     } else {
@@ -1847,7 +1847,7 @@ async function deleteUserProfilePhoto(req: Request, res: Response) {
       );
       return res.status(500).json(
         STATUS_CODE[500]({
-          message: "Failed to delete profile photo",
+          message: req.t!("Failed to delete profile photo"),
         })
       );
     }

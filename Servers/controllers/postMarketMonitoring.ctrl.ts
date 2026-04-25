@@ -72,7 +72,7 @@ export async function getConfigByProjectId(
   });
 
   if (isNaN(projectId)) {
-    return res.status(400).json(STATUS_CODE[400]({ message: "Invalid project ID" }));
+    return res.status(400).json(STATUS_CODE[400]({ message: req.t!("Invalid project ID") }));
   }
 
   try {
@@ -87,7 +87,7 @@ export async function getConfigByProjectId(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(404).json(STATUS_CODE[404]({ message: "Config not found" }));
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Config not found") }));
     }
 
     await logSuccess({
@@ -130,7 +130,7 @@ export async function createConfig(req: Request, res: Response): Promise<any> {
 
     if (!configData.project_id) {
       await transaction.rollback();
-      return res.status(400).json(STATUS_CODE[400]({ message: "Project ID is required" }));
+      return res.status(400).json(STATUS_CODE[400]({ message: req.t!("Project ID is required") }));
     }
 
     // Check if config already exists
@@ -141,7 +141,7 @@ export async function createConfig(req: Request, res: Response): Promise<any> {
     if (existingConfig) {
       await transaction.rollback();
       return res.status(409).json(STATUS_CODE[409]({
-        message: "Configuration already exists for this project",
+        message: req.t!("Configuration already exists for this project"),
       }));
     }
 
@@ -204,7 +204,7 @@ export async function updateConfig(req: Request, res: Response): Promise<any> {
   });
 
   if (isNaN(configId)) {
-    return res.status(400).json(STATUS_CODE[400]({ message: "Invalid config ID" }));
+    return res.status(400).json(STATUS_CODE[400]({ message: req.t!("Invalid config ID") }));
   }
 
   try {
@@ -220,7 +220,7 @@ export async function updateConfig(req: Request, res: Response): Promise<any> {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(404).json(STATUS_CODE[404]({ message: "Config not found" }));
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Config not found") }));
     }
 
     await logSuccess({
@@ -258,7 +258,7 @@ export async function deleteConfig(req: Request, res: Response): Promise<any> {
   });
 
   if (isNaN(configId)) {
-    return res.status(400).json(STATUS_CODE[400]({ message: "Invalid config ID" }));
+    return res.status(400).json(STATUS_CODE[400]({ message: req.t!("Invalid config ID") }));
   }
 
   try {
@@ -273,7 +273,7 @@ export async function deleteConfig(req: Request, res: Response): Promise<any> {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(404).json(STATUS_CODE[404]({ message: "Config not found" }));
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Config not found") }));
     }
 
     await logSuccess({
@@ -284,7 +284,7 @@ export async function deleteConfig(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(200).json(STATUS_CODE[200]({ message: "Config deleted" }));
+    return res.status(200).json(STATUS_CODE[200]({ message: req.t!("Config deleted") }));
   } catch (error) {
     await logFailure({
       eventType: "Delete",
@@ -354,7 +354,7 @@ export async function addQuestion(req: Request, res: Response): Promise<any> {
 
     if (!questionData.question_text || !questionData.question_type) {
       return res.status(400).json(STATUS_CODE[400]({
-        message: "Question text and type are required",
+        message: req.t!("Question text and type are required"),
       }));
     }
 
@@ -362,7 +362,7 @@ export async function addQuestion(req: Request, res: Response): Promise<any> {
     const validTypes = ["yes_no", "multi_select", "multi_line_text"];
     if (!validTypes.includes(questionData.question_type)) {
       return res.status(400).json(STATUS_CODE[400]({
-        message: "Invalid question type",
+        message: req.t!("Invalid question type"),
       }));
     }
 
@@ -403,7 +403,7 @@ export async function updateQuestion(req: Request, res: Response): Promise<any> 
   });
 
   if (isNaN(questionId)) {
-    return res.status(400).json(STATUS_CODE[400]({ message: "Invalid question ID" }));
+    return res.status(400).json(STATUS_CODE[400]({ message: req.t!("Invalid question ID") }));
   }
 
   try {
@@ -414,7 +414,7 @@ export async function updateQuestion(req: Request, res: Response): Promise<any> 
       const validTypes = ["yes_no", "multi_select", "multi_line_text"];
       if (!validTypes.includes(updateData.question_type)) {
         return res.status(400).json(STATUS_CODE[400]({
-          message: "Invalid question type",
+          message: req.t!("Invalid question type"),
         }));
       }
     }
@@ -422,7 +422,7 @@ export async function updateQuestion(req: Request, res: Response): Promise<any> 
     const question = await updatePMMQuestionQuery(questionId, updateData, req.organizationId!);
 
     if (!question) {
-      return res.status(404).json(STATUS_CODE[404]({ message: "Question not found" }));
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Question not found") }));
     }
 
     await logSuccess({
@@ -460,7 +460,7 @@ export async function deleteQuestion(req: Request, res: Response): Promise<any> 
   });
 
   if (isNaN(questionId)) {
-    return res.status(400).json(STATUS_CODE[400]({ message: "Invalid question ID" }));
+    return res.status(400).json(STATUS_CODE[400]({ message: req.t!("Invalid question ID") }));
   }
 
   try {
@@ -468,7 +468,7 @@ export async function deleteQuestion(req: Request, res: Response): Promise<any> 
 
     if (!deleted) {
       return res.status(404).json(STATUS_CODE[404]({
-        message: "Question not found or is a system default",
+        message: req.t!("Question not found or is a system default"),
       }));
     }
 
@@ -480,7 +480,7 @@ export async function deleteQuestion(req: Request, res: Response): Promise<any> 
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(200).json(STATUS_CODE[200]({ message: "Question deleted" }));
+    return res.status(200).json(STATUS_CODE[200]({ message: req.t!("Question deleted") }));
   } catch (error) {
     await logFailure({
       eventType: "Delete",
@@ -509,7 +509,7 @@ export async function reorderQuestions(req: Request, res: Response): Promise<any
 
     if (!Array.isArray(orders) || orders.length === 0) {
       return res.status(400).json(STATUS_CODE[400]({
-        message: "Orders array is required",
+        message: req.t!("Orders array is required"),
       }));
     }
 
@@ -517,7 +517,7 @@ export async function reorderQuestions(req: Request, res: Response): Promise<any
     for (const order of orders) {
       if (typeof order.id !== "number" || typeof order.display_order !== "number") {
         return res.status(400).json(STATUS_CODE[400]({
-          message: "Each order item must have numeric id and display_order",
+          message: req.t!("Each order item must have numeric id and display_order"),
         }));
       }
     }
@@ -532,7 +532,7 @@ export async function reorderQuestions(req: Request, res: Response): Promise<any
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(200).json(STATUS_CODE[200]({ message: "Questions reordered" }));
+    return res.status(200).json(STATUS_CODE[200]({ message: req.t!("Questions reordered") }));
   } catch (error) {
     await logFailure({
       eventType: "Update",
@@ -563,7 +563,7 @@ export async function getActiveCycle(req: Request, res: Response): Promise<any> 
   });
 
   if (isNaN(projectId)) {
-    return res.status(400).json(STATUS_CODE[400]({ message: "Invalid project ID" }));
+    return res.status(400).json(STATUS_CODE[400]({ message: req.t!("Invalid project ID") }));
   }
 
   try {
@@ -579,7 +579,7 @@ export async function getActiveCycle(req: Request, res: Response): Promise<any> 
         tenantId: req.organizationId!,
       });
       return res.status(404).json(STATUS_CODE[404]({
-        message: "No active monitoring cycle",
+        message: req.t!("No active monitoring cycle"),
       }));
     }
 
@@ -618,14 +618,14 @@ export async function getCycleById(req: Request, res: Response): Promise<any> {
   });
 
   if (isNaN(cycleId)) {
-    return res.status(400).json(STATUS_CODE[400]({ message: "Invalid cycle ID" }));
+    return res.status(400).json(STATUS_CODE[400]({ message: req.t!("Invalid cycle ID") }));
   }
 
   try {
     const cycle = await getCycleByIdQuery(cycleId, req.organizationId!);
 
     if (!cycle) {
-      return res.status(404).json(STATUS_CODE[404]({ message: "Cycle not found" }));
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Cycle not found") }));
     }
 
     await logSuccess({
@@ -663,14 +663,14 @@ export async function getResponses(req: Request, res: Response): Promise<any> {
   });
 
   if (isNaN(cycleId)) {
-    return res.status(400).json(STATUS_CODE[400]({ message: "Invalid cycle ID" }));
+    return res.status(400).json(STATUS_CODE[400]({ message: req.t!("Invalid cycle ID") }));
   }
 
   try {
     // Verify cycle exists
     const cycle = await getCycleByIdQuery(cycleId, req.organizationId!);
     if (!cycle) {
-      return res.status(404).json(STATUS_CODE[404]({ message: "Cycle not found" }));
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Cycle not found") }));
     }
 
     const responses = await getPMMResponsesQuery(cycleId, req.organizationId!);
@@ -710,7 +710,7 @@ export async function saveResponses(req: Request, res: Response): Promise<any> {
   });
 
   if (isNaN(cycleId)) {
-    return res.status(400).json(STATUS_CODE[400]({ message: "Invalid cycle ID" }));
+    return res.status(400).json(STATUS_CODE[400]({ message: req.t!("Invalid cycle ID") }));
   }
 
   try {
@@ -718,18 +718,18 @@ export async function saveResponses(req: Request, res: Response): Promise<any> {
 
     if (!Array.isArray(responses) || responses.length === 0) {
       return res.status(400).json(STATUS_CODE[400]({
-        message: "Responses array is required",
+        message: req.t!("Responses array is required"),
       }));
     }
 
     // Check cycle exists and is not completed
     const cycle = await getCycleByIdQuery(cycleId, req.organizationId!);
     if (!cycle) {
-      return res.status(404).json(STATUS_CODE[404]({ message: "Cycle not found" }));
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Cycle not found") }));
     }
     if (cycle.status === "completed") {
       return res.status(409).json(STATUS_CODE[409]({
-        message: "Cycle is already completed",
+        message: req.t!("Cycle is already completed"),
       }));
     }
 
@@ -774,7 +774,7 @@ export async function submitCycle(req: Request, res: Response): Promise<any> {
   });
 
   if (isNaN(cycleId)) {
-    return res.status(400).json(STATUS_CODE[400]({ message: "Invalid cycle ID" }));
+    return res.status(400).json(STATUS_CODE[400]({ message: req.t!("Invalid cycle ID") }));
   }
 
   const transaction = await sequelize.transaction();
@@ -787,12 +787,12 @@ export async function submitCycle(req: Request, res: Response): Promise<any> {
     const cycle = await getCycleByIdQuery(cycleId, req.organizationId!);
     if (!cycle) {
       await transaction.rollback();
-      return res.status(404).json(STATUS_CODE[404]({ message: "Cycle not found" }));
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Cycle not found") }));
     }
     if (cycle.status === "completed") {
       await transaction.rollback();
       return res.status(409).json(STATUS_CODE[409]({
-        message: "Cycle is already completed",
+        message: req.t!("Cycle is already completed"),
       }));
     }
 
@@ -872,7 +872,7 @@ export async function submitCycle(req: Request, res: Response): Promise<any> {
     });
 
     return res.status(200).json(STATUS_CODE[200]({
-      message: "Cycle submitted successfully",
+      message: req.t!("Cycle submitted successfully"),
       report_generated: uploadResult.success,
       report_filename: uploadResult.filename,
     }));
@@ -903,7 +903,7 @@ export async function flagConcern(req: Request, res: Response): Promise<any> {
   });
 
   if (isNaN(cycleId)) {
-    return res.status(400).json(STATUS_CODE[400]({ message: "Invalid cycle ID" }));
+    return res.status(400).json(STATUS_CODE[400]({ message: req.t!("Invalid cycle ID") }));
   }
 
   try {
@@ -911,14 +911,14 @@ export async function flagConcern(req: Request, res: Response): Promise<any> {
 
     if (!question_id) {
       return res.status(400).json(STATUS_CODE[400]({
-        message: "Question ID is required",
+        message: req.t!("Question ID is required"),
       }));
     }
 
     // Check cycle exists
     const cycle = await getCycleByIdQuery(cycleId, req.organizationId!);
     if (!cycle) {
-      return res.status(404).json(STATUS_CODE[404]({ message: "Cycle not found" }));
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Cycle not found") }));
     }
 
     // Save flagged response
@@ -937,7 +937,7 @@ export async function flagConcern(req: Request, res: Response): Promise<any> {
       tenantId: req.organizationId!,
     });
     return res.status(200).json(STATUS_CODE[200]({
-      message: "Concern flagged successfully",
+      message: req.t!("Concern flagged successfully"),
     }));
   } catch (error) {
     await logFailure({
@@ -1034,7 +1034,7 @@ export async function downloadReport(req: Request, res: Response): Promise<any> 
   });
 
   if (isNaN(reportId)) {
-    return res.status(400).json(STATUS_CODE[400]({ message: "Invalid report ID" }));
+    return res.status(400).json(STATUS_CODE[400]({ message: req.t!("Invalid report ID") }));
   }
 
   try {
@@ -1054,13 +1054,13 @@ export async function downloadReport(req: Request, res: Response): Promise<any> 
     }>, number];
 
     if (reportResult[0].length === 0) {
-      return res.status(404).json(STATUS_CODE[404]({ message: "Report not found" }));
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Report not found") }));
     }
 
     const report = reportResult[0][0];
 
     if (!report.file_id) {
-      return res.status(404).json(STATUS_CODE[404]({ message: "Report file not found" }));
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Report file not found") }));
     }
 
     await logSuccess({
@@ -1104,7 +1104,7 @@ export async function reassignStakeholder(req: Request, res: Response): Promise<
   });
 
   if (isNaN(cycleId)) {
-    return res.status(400).json(STATUS_CODE[400]({ message: "Invalid cycle ID" }));
+    return res.status(400).json(STATUS_CODE[400]({ message: req.t!("Invalid cycle ID") }));
   }
 
   try {
@@ -1112,14 +1112,14 @@ export async function reassignStakeholder(req: Request, res: Response): Promise<
 
     if (!stakeholder_id || typeof stakeholder_id !== "number") {
       return res.status(400).json(STATUS_CODE[400]({
-        message: "Valid stakeholder ID is required",
+        message: req.t!("Valid stakeholder ID is required"),
       }));
     }
 
     // Check cycle exists
     const cycle = await getCycleByIdQuery(cycleId, req.organizationId!);
     if (!cycle) {
-      return res.status(404).json(STATUS_CODE[404]({ message: "Cycle not found" }));
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Cycle not found") }));
     }
 
     await sequelize.query(
@@ -1138,7 +1138,7 @@ export async function reassignStakeholder(req: Request, res: Response): Promise<
       tenantId: req.organizationId!,
     });
     return res.status(200).json(STATUS_CODE[200]({
-      message: "Stakeholder reassigned successfully",
+      message: req.t!("Stakeholder reassigned successfully"),
     }));
   } catch (error) {
     await logFailure({
@@ -1166,7 +1166,7 @@ export async function startNewCycle(req: Request, res: Response): Promise<any> {
   });
 
   if (isNaN(projectId)) {
-    return res.status(400).json(STATUS_CODE[400]({ message: "Invalid project ID" }));
+    return res.status(400).json(STATUS_CODE[400]({ message: req.t!("Invalid project ID") }));
   }
 
   const transaction = await sequelize.transaction();
@@ -1176,7 +1176,7 @@ export async function startNewCycle(req: Request, res: Response): Promise<any> {
     const config = await getPMMConfigByProjectIdQuery(projectId, req.organizationId!);
     if (!config) {
       await transaction.rollback();
-      return res.status(404).json(STATUS_CODE[404]({ message: "Config not found" }));
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Config not found") }));
     }
 
     // Check for existing active cycle
@@ -1184,7 +1184,7 @@ export async function startNewCycle(req: Request, res: Response): Promise<any> {
     if (activeCycle) {
       await transaction.rollback();
       return res.status(409).json(STATUS_CODE[409]({
-        message: "An active cycle already exists",
+        message: req.t!("An active cycle already exists"),
       }));
     }
 

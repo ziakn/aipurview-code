@@ -499,7 +499,7 @@ export async function getQuestionsBySubtopicId(req: Request, res: Response) {
     );
     return res.status(404).json(
       STATUS_CODE[404]({
-        message: "No questions found for the given subtopic ID",
+        message: req.t!("No questions found for the given subtopic ID"),
       })
     );
   } catch (error) {
@@ -552,7 +552,7 @@ export async function getQuestionsByTopicId(req: Request, res: Response) {
     );
     return res.status(404).json(
       STATUS_CODE[404]({
-        message: "No questions found for the given topic id",
+        message: req.t!("No questions found for the given topic id"),
       })
     );
   } catch (error) {

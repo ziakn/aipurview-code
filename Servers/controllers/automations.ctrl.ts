@@ -70,7 +70,7 @@ export const getAutomationById = async (req: Request, res: Response) => {
     if (!automation) {
       return res
         .status(404)
-        .json(STATUS_CODE[404]({ message: "Automation not found" }));
+        .json(STATUS_CODE[404]({ message: req.t!("Automation not found") }));
     }
     return res.status(200).json(STATUS_CODE[200](automation));
   } catch (error) {
@@ -98,7 +98,7 @@ export const createAutomation = async (req: Request, res: Response) => {
         .status(400)
         .json(
           STATUS_CODE[400]({
-            message: "Missing required fields: triggerId, name, actions",
+            message: req.t!("Missing required fields: triggerId, name, actions"),
           })
         );
     }
@@ -144,7 +144,7 @@ export const updateAutomation = async (req: Request, res: Response) => {
   if (isNaN(id)) {
     return res
       .status(400)
-      .json(STATUS_CODE[400]({ message: "Invalid automation ID" }));
+      .json(STATUS_CODE[400]({ message: req.t!("Invalid automation ID") }));
   }
 
   const transaction = await sequelize.transaction();
@@ -201,7 +201,7 @@ export const deleteAutomationById = async (req: Request, res: Response) => {
   if (isNaN(id)) {
     return res
       .status(400)
-      .json(STATUS_CODE[400]({ message: "Invalid automation ID" }));
+      .json(STATUS_CODE[400]({ message: req.t!("Invalid automation ID") }));
   }
 
   const transaction = await sequelize.transaction();
@@ -215,12 +215,12 @@ export const deleteAutomationById = async (req: Request, res: Response) => {
       await transaction.rollback();
       return res
         .status(404)
-        .json(STATUS_CODE[404]({ message: "Automation not found" }));
+        .json(STATUS_CODE[404]({ message: req.t!("Automation not found") }));
     }
     await transaction.commit();
     return res
       .status(200)
-      .json(STATUS_CODE[200]({ message: "Automation deleted successfully" }));
+      .json(STATUS_CODE[200]({ message: req.t!("Automation deleted successfully") }));
   } catch (error) {
     await transaction.rollback();
     console.error(`Error deleting automation with ID ${id}:`, error);
@@ -234,7 +234,7 @@ export const getAutomationHistory = async (req: Request, res: Response) => {
   if (isNaN(id)) {
     return res
       .status(400)
-      .json(STATUS_CODE[400]({ message: "Invalid automation ID" }));
+      .json(STATUS_CODE[400]({ message: req.t!("Invalid automation ID") }));
   }
 
   try {
@@ -274,7 +274,7 @@ export const getAutomationStats = async (req: Request, res: Response) => {
   if (isNaN(id)) {
     return res
       .status(400)
-      .json(STATUS_CODE[400]({ message: "Invalid automation ID" }));
+      .json(STATUS_CODE[400]({ message: req.t!("Invalid automation ID") }));
   }
 
   try {

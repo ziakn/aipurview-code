@@ -686,7 +686,7 @@ export async function deleteTask(req: Request, res: Response): Promise<any> {
 
       return res
         .status(200)
-        .json(STATUS_CODE[200]({ message: "Task deleted successfully" }));
+        .json(STATUS_CODE[200]({ message: req.t!("Task deleted successfully") }));
     }
 
     await logSuccess({
@@ -888,7 +888,7 @@ export async function hardDeleteTask(
 
       return res
         .status(200)
-        .json(STATUS_CODE[200]({ message: "Task permanently deleted" }));
+        .json(STATUS_CODE[200]({ message: req.t!("Task permanently deleted") }));
     }
 
     await logSuccess({

@@ -374,7 +374,7 @@ export async function deleteApprovalWorkflow(
 
     return res
       .status(200)
-      .json(STATUS_CODE[200]({ message: "Workflow deleted successfully" }));
+      .json(STATUS_CODE[200]({ message: req.t!("Workflow deleted successfully") }));
   } catch (error) {
     await transaction.rollback();
     logStructured(

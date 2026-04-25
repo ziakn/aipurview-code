@@ -8,7 +8,12 @@ export type Translator = (key: string, vars?: Record<string, string | number>) =
 
 const SUPPORTED_SET: ReadonlySet<string> = new Set(SUPPORTED_LANGS);
 const LOCALES_DIR = path.resolve(__dirname, "..", "locales");
-const ENABLED = process.env.I18N_BACKEND_ENABLED === "true";
+
+// Accept any of the truthy spellings ops teams typically write in env files
+// (k8s manifests, .env files, CI variables): "true", "1", "yes", any case.
+const ENABLED = ["true", "1", "yes"].includes(
+  (process.env.I18N_BACKEND_ENABLED ?? "").trim().toLowerCase(),
+);
 
 const loadDict = (lang: SupportedLang): Record<string, string> => {
   try {
@@ -25,6 +30,23 @@ const dicts: Record<SupportedLang, Record<string, string>> = {
   de: loadDict("de"),
   fr: loadDict("fr"),
 };
+
+// Observability: if the flag is on but a non-English dict is empty, every DE/FR
+// request will silently serve English. Surface this loudly at boot so it gets
+// caught before users do.
+if (ENABLED) {
+  for (const lang of SUPPORTED_LANGS) {
+    if (lang === "en") continue;
+    const size = Object.keys(dicts[lang]).length;
+    if (size === 0) {
+      console.warn(
+        `[i18n] WARNING: locales/${lang}.json is empty or unreadable. ` +
+          `All ${lang} requests will fall back to English. ` +
+          `Check the deploy step that copies locales/ to dist/locales/.`,
+      );
+    }
+  }
+}
 
 const interpolate = (s: string, vars?: Record<string, string | number>): string => {
   if (!vars) return s;

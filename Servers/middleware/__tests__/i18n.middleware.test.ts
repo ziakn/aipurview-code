@@ -4,7 +4,7 @@ import type { Request, Response, NextFunction } from "express";
 // The i18n module reads process.env.I18N_BACKEND_ENABLED at import time. We use
 // jest.isolateModules to re-import per test with the desired flag state.
 
-function loadModule(flag: "true" | "false" | undefined) {
+function loadModule(flag: string | undefined) {
   // Set the env var BEFORE the require runs.
   if (flag === undefined) delete process.env.I18N_BACKEND_ENABLED;
   else process.env.I18N_BACKEND_ENABLED = flag;
@@ -146,6 +146,28 @@ describe("i18nMiddleware", () => {
       // distinguish requests by locale even if responses stay English.
       expect(req.lang).toBe("de");
     });
+  });
+
+  describe("flag accepts common truthy spellings", () => {
+    it.each(["true", "TRUE", "True", "1", "yes", "  true  "])(
+      "treats %p as enabled",
+      (value) => {
+        const { i18nMiddleware } = loadModule(value);
+        const req = createReq("de") as Request;
+        i18nMiddleware(req, {} as Response, jest.fn() as NextFunction);
+        expect(req.t!("Vendor not found")).toBe("Anbieter nicht gefunden");
+      },
+    );
+
+    it.each(["false", "FALSE", "0", "no", "", "off"])(
+      "treats %p as disabled",
+      (value) => {
+        const { i18nMiddleware } = loadModule(value);
+        const req = createReq("de") as Request;
+        i18nMiddleware(req, {} as Response, jest.fn() as NextFunction);
+        expect(req.t!("Vendor not found")).toBe("Vendor not found");
+      },
+    );
   });
 
   describe("flag unset (default off)", () => {

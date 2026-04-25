@@ -202,7 +202,7 @@ export const getShareLinkByToken = async (req: Request, res: Response) => {
   try {
     // Validate token format to prevent injection and enumeration
     if (!isValidShareToken(token)) {
-      return res.status(400).json(STATUS_CODE[400]({ message: "Invalid share link format" }));
+      return res.status(400).json(STATUS_CODE[400]({ message: req.t!("Invalid share link format") }));
     }
 
     // Search for the share link in the shared table
@@ -221,7 +221,7 @@ export const getShareLinkByToken = async (req: Request, res: Response) => {
 
     if (!shareLink) {
       logStructured('error', `share link not found`, 'getShareLinkByToken', 'shareLink.ctrl.ts');
-      return res.status(404).json(STATUS_CODE[404]({ message: "Share link not found" }));
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Share link not found") }));
     }
 
     // Validate the share link
@@ -229,7 +229,7 @@ export const getShareLinkByToken = async (req: Request, res: Response) => {
 
     if (!is_valid) {
       logStructured('error', `share link is disabled or expired`, 'getShareLinkByToken', 'shareLink.ctrl.ts');
-      return res.status(403).json(STATUS_CODE[403]({ message: "Share link is disabled or expired" }));
+      return res.status(403).json(STATUS_CODE[403]({ message: req.t!("Share link is disabled or expired") }));
     }
 
     logStructured('successful', `fetched share link ${shareLink.id}`, 'getShareLinkByToken', 'shareLink.ctrl.ts');
@@ -296,7 +296,7 @@ export const updateShareLink = async (req: Request, res: Response) => {
     if (result.length === 0) {
       await transaction.rollback();
       logStructured('error', `share link not found: ${id}`, 'updateShareLink', 'shareLink.ctrl.ts');
-      return res.status(404).json(STATUS_CODE[404]({ message: "Share link not found" }));
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Share link not found") }));
     }
 
     const shareLink = result[0];
@@ -312,7 +312,7 @@ export const updateShareLink = async (req: Request, res: Response) => {
     if (shareLink.created_by !== req.userId) {
       await transaction.rollback();
       logStructured('error', `unauthorized access to share link ${id}`, 'updateShareLink', 'shareLink.ctrl.ts');
-      return res.status(403).json(STATUS_CODE[403]({ message: "Unauthorized" }));
+      return res.status(403).json(STATUS_CODE[403]({ message: req.t!("Unauthorized") }));
     }
 
     // Build update query dynamically based on provided fields
@@ -337,7 +337,7 @@ export const updateShareLink = async (req: Request, res: Response) => {
 
     if (updates.length === 0) {
       await transaction.rollback();
-      return res.status(400).json(STATUS_CODE[400]({ message: "No fields to update" }));
+      return res.status(400).json(STATUS_CODE[400]({ message: req.t!("No fields to update") }));
     }
 
     updates.push(`updated_at = NOW()`);
@@ -430,7 +430,7 @@ export const deleteShareLink = async (req: Request, res: Response) => {
     if (result.length === 0) {
       await transaction.rollback();
       logStructured('error', `share link not found: ${id}`, 'deleteShareLink', 'shareLink.ctrl.ts');
-      return res.status(404).json(STATUS_CODE[404]({ message: "Share link not found" }));
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Share link not found") }));
     }
 
     const shareLink = result[0];
@@ -439,7 +439,7 @@ export const deleteShareLink = async (req: Request, res: Response) => {
     if (shareLink.created_by !== req.userId) {
       await transaction.rollback();
       logStructured('error', `unauthorized access to share link ${id}`, 'deleteShareLink', 'shareLink.ctrl.ts');
-      return res.status(403).json(STATUS_CODE[403]({ message: "Unauthorized" }));
+      return res.status(403).json(STATUS_CODE[403]({ message: req.t!("Unauthorized") }));
     }
 
     // Delete the share link
@@ -458,7 +458,7 @@ export const deleteShareLink = async (req: Request, res: Response) => {
     logger.debug(`✅ Deleted share link: ${id}`);
 
     await transaction.commit();
-    return res.status(200).json(STATUS_CODE[200]({ message: "Share link deleted successfully" }));
+    return res.status(200).json(STATUS_CODE[200]({ message: req.t!("Share link deleted successfully") }));
   } catch (error) {
     await transaction.rollback();
     logStructured('error', `unexpected error deleting share link ${id}`, 'deleteShareLink', 'shareLink.ctrl.ts');
@@ -497,7 +497,7 @@ export const getSharedDataByToken = async (req: Request, res: Response) => {
 
     if (!shareLink) {
       logStructured('error', `share link not found`, 'getSharedDataByToken', 'shareLink.ctrl.ts');
-      return res.status(404).json(STATUS_CODE[404]({ message: "Share link not found" }));
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Share link not found") }));
     }
 
     // Get the organization_id from the share link for filtering resource data
@@ -513,7 +513,7 @@ export const getSharedDataByToken = async (req: Request, res: Response) => {
 
     if (!is_valid) {
       logStructured('error', `share link is disabled or expired`, 'getSharedDataByToken', 'shareLink.ctrl.ts');
-      return res.status(403).json(STATUS_CODE[403]({ message: "Share link is disabled or expired" }));
+      return res.status(403).json(STATUS_CODE[403]({ message: req.t!("Share link is disabled or expired") }));
     }
 
     // Fetch the actual resource data based on resource_type
@@ -594,7 +594,7 @@ export const getSharedDataByToken = async (req: Request, res: Response) => {
 
       if (resourceResult.length === 0) {
         logStructured('error', `resource not found: ${resourceType} ${resourceId}`, 'getSharedDataByToken', 'shareLink.ctrl.ts');
-        return res.status(404).json(STATUS_CODE[404]({ message: "Resource not found" }));
+        return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Resource not found") }));
       }
 
       resourceData = resourceResult[0]; // Return single record
