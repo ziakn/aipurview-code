@@ -121,6 +121,8 @@ interface UseNotificationsReturn {
   markAsRead: (notificationId: number) => Promise<void>;
   /** Mark all notifications as read */
   markAllAsRead: () => Promise<void>;
+  /** Delete a notification */
+  deleteNotification: (notificationId: number) => Promise<void>;
   /** Refresh notifications from server */
   refresh: () => Promise<void>;
   /** Load more notifications */
@@ -163,6 +165,8 @@ export const useNotifications = (options: UseNotificationsOptions = {}): UseNoti
 
   // State for stored notifications
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const notificationsRef = useRef<Notification[]>([]);
+  notificationsRef.current = notifications;
   const [unreadCount, setUnreadCount] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -261,6 +265,22 @@ export const useNotifications = (options: UseNotificationsOptions = {}): UseNoti
       setUnreadCount(0);
     } catch (error) {
       console.error("Failed to mark all notifications as read:", error);
+      throw error;
+    }
+  }, []);
+
+  const deleteNotification = useCallback(async (notificationId: number) => {
+    try {
+      await apiServices.delete(`/notifications/${notificationId}`);
+      const target = notificationsRef.current.find(n => n.id === notificationId);
+      if (!target) return;
+      setNotifications(prev => prev.filter(n => n.id !== notificationId));
+      setTotalCount(prev => Math.max(0, prev - 1));
+      if (!target.is_read) {
+        setUnreadCount(prev => Math.max(0, prev - 1));
+      }
+    } catch (error) {
+      console.error("Failed to delete notification:", error);
       throw error;
     }
   }, []);
@@ -543,6 +563,7 @@ export const useNotifications = (options: UseNotificationsOptions = {}): UseNoti
     hasMore,
     markAsRead,
     markAllAsRead,
+    deleteNotification,
     refresh,
     loadMore,
   };

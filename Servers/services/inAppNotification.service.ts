@@ -17,6 +17,46 @@ import { notificationService } from "./notificationService";
 import { EMAIL_TEMPLATES } from "../constants/emailTemplates";
 
 /**
+ * Build a frontend-compatible URL for a given entity type and id.
+ * The frontend routes don't all follow a single `/:entityType/:id` pattern,
+ * so each entity type is mapped to the actual route that exists.
+ */
+const buildEntityUrl = (
+  entityType: NotificationEntityType,
+  entityId: number
+): string => {
+  switch (entityType) {
+    case NotificationEntityType.TASK:
+      return `/tasks?taskId=${entityId}`;
+    case NotificationEntityType.TRAINING:
+      return `/training?trainingId=${entityId}`;
+    case NotificationEntityType.VENDOR:
+      return `/vendors?vendorId=${entityId}`;
+    case NotificationEntityType.POLICY:
+      return `/policies/${entityId}/edit`;
+    case NotificationEntityType.USE_CASE:
+    case NotificationEntityType.PROJECT:
+      return `/project-view?projectId=${entityId}`;
+    case NotificationEntityType.MODEL:
+      return `/model-inventory/models/${entityId}`;
+    case NotificationEntityType.RISK:
+      return `/risk-management?riskId=${entityId}`;
+    case NotificationEntityType.ASSESSMENT:
+      return `/project-view?projectId=${entityId}`;
+    case NotificationEntityType.FILE:
+      return `/file-manager?fileId=${entityId}`;
+    case NotificationEntityType.SHADOW_AI_TOOL:
+      return `/shadow-ai/tools/${entityId}`;
+    case NotificationEntityType.AI_GATEWAY:
+      return `/ai-gateway/settings`;
+    case NotificationEntityType.COMMENT:
+    case NotificationEntityType.USER:
+    default:
+      return `/overview`;
+  }
+};
+
+/**
  * Send a notification to a user via both in-app storage and real-time SSE
  * Optionally also sends an email notification
  */
@@ -532,7 +572,7 @@ export const notifyReviewRequested = async (
       entity_type: entity.type,
       entity_id: entity.id,
       entity_name: entity.name,
-      action_url: `/${entity.type}s/${entity.id}`,
+      action_url: buildEntityUrl(entity.type, entity.id),
     },
     true,
     {
@@ -545,7 +585,7 @@ export const notifyReviewRequested = async (
         entity_name: entity.name,
         project_name: entity.projectName,
         review_message: message || "Please review this item.",
-        review_url: `${baseUrl}/${entity.type}s/${entity.id}`,
+        review_url: `${baseUrl}${buildEntityUrl(entity.type, entity.id)}`,
       },
     }
   );
@@ -580,7 +620,7 @@ export const notifyReviewApproved = async (
       entity_type: entity.type,
       entity_id: entity.id,
       entity_name: entity.name,
-      action_url: `/${entity.type}s/${entity.id}`,
+      action_url: buildEntityUrl(entity.type, entity.id),
     },
     true,
     {
@@ -593,7 +633,7 @@ export const notifyReviewApproved = async (
         entity_name: entity.name,
         project_name: entity.projectName,
         review_comment: comment || "Looks good!",
-        entity_url: `${baseUrl}/${entity.type}s/${entity.id}`,
+        entity_url: `${baseUrl}${buildEntityUrl(entity.type, entity.id)}`,
       },
     }
   );
@@ -628,7 +668,7 @@ export const notifyReviewRejected = async (
       entity_type: entity.type,
       entity_id: entity.id,
       entity_name: entity.name,
-      action_url: `/${entity.type}s/${entity.id}`,
+      action_url: buildEntityUrl(entity.type, entity.id),
     },
     true,
     {
@@ -641,7 +681,7 @@ export const notifyReviewRejected = async (
         entity_name: entity.name,
         project_name: entity.projectName,
         review_comment: comment || "Please make the requested changes.",
-        entity_url: `${baseUrl}/${entity.type}s/${entity.id}`,
+        entity_url: `${baseUrl}${buildEntityUrl(entity.type, entity.id)}`,
       },
     }
   );
@@ -675,7 +715,7 @@ export const notifyApprovalRequested = async (
       entity_type: NotificationEntityType.USE_CASE,
       entity_id: useCase.id,
       entity_name: useCase.name,
-      action_url: `/use-cases/${useCase.id}`,
+      action_url: buildEntityUrl(NotificationEntityType.USE_CASE, useCase.id),
       metadata: { stepNumber: useCase.stepNumber },
     },
     true,
@@ -689,7 +729,7 @@ export const notifyApprovalRequested = async (
         workflow_name: useCase.workflowName,
         step_number: String(useCase.stepNumber),
         total_steps: String(useCase.totalSteps),
-        approval_url: `${baseUrl}/use-cases/${useCase.id}`,
+        approval_url: `${baseUrl}${buildEntityUrl(NotificationEntityType.USE_CASE, useCase.id)}`,
       },
     }
   );
@@ -720,7 +760,7 @@ export const notifyApprovalComplete = async (
       entity_type: NotificationEntityType.USE_CASE,
       entity_id: useCase.id,
       entity_name: useCase.name,
-      action_url: `/use-cases/${useCase.id}`,
+      action_url: buildEntityUrl(NotificationEntityType.USE_CASE, useCase.id),
     },
     true,
     {
@@ -730,7 +770,7 @@ export const notifyApprovalComplete = async (
         requester_name: requester ? `${requester.name}` : "User",
         use_case_name: useCase.name,
         total_steps: String(useCase.totalSteps),
-        use_case_url: `${baseUrl}/use-cases/${useCase.id}`,
+        use_case_url: `${baseUrl}${buildEntityUrl(NotificationEntityType.USE_CASE, useCase.id)}`,
       },
     }
   );
@@ -764,7 +804,7 @@ export const notifyVendorReviewDue = async (
       entity_type: NotificationEntityType.VENDOR,
       entity_id: vendor.id,
       entity_name: vendor.name,
-      action_url: `/vendors/${vendor.id}`,
+      action_url: buildEntityUrl(NotificationEntityType.VENDOR, vendor.id),
     },
     true,
     {
@@ -777,7 +817,7 @@ export const notifyVendorReviewDue = async (
         risk_level: vendor.riskLevel,
         last_review_date: vendor.lastReviewDate || "Never",
         project_count: String(vendor.projectCount),
-        vendor_url: `${baseUrl}/vendors/${vendor.id}`,
+        vendor_url: `${baseUrl}${buildEntityUrl(NotificationEntityType.VENDOR, vendor.id)}`,
       },
     }
   );
@@ -809,7 +849,7 @@ export const notifyPolicyDueSoon = async (
       entity_type: NotificationEntityType.POLICY,
       entity_id: policy.id,
       entity_name: policy.name,
-      action_url: `/policies/${policy.id}`,
+      action_url: buildEntityUrl(NotificationEntityType.POLICY, policy.id),
     },
     true,
     {
@@ -820,7 +860,7 @@ export const notifyPolicyDueSoon = async (
         policy_name: policy.name,
         project_name: policy.projectName,
         due_date: policy.dueDate,
-        policy_url: `${baseUrl}/policies/${policy.id}`,
+        policy_url: `${baseUrl}${buildEntityUrl(NotificationEntityType.POLICY, policy.id)}`,
       },
     }
   );
@@ -854,7 +894,7 @@ export const notifyTrainingAssigned = async (
       entity_type: NotificationEntityType.TRAINING,
       entity_id: training.id,
       entity_name: training.name,
-      action_url: `/training/${training.id}`,
+      action_url: buildEntityUrl(NotificationEntityType.TRAINING, training.id),
     },
     true,
     {
@@ -867,7 +907,7 @@ export const notifyTrainingAssigned = async (
         training_description: training.description || "No description provided",
         training_duration: training.duration || "Not specified",
         training_due_date: training.dueDate || "No due date",
-        training_url: `${baseUrl}/training/${training.id}`,
+        training_url: `${baseUrl}${buildEntityUrl(NotificationEntityType.TRAINING, training.id)}`,
       },
     }
   );
