@@ -20,8 +20,10 @@ import { DatasetStatus, DatasetType, DataClassification } from "../../../domain/
 import { IModelInventory } from "../../../domain/interfaces/i.modelInventory";
 import { GroupBy } from "../../components/Table/GroupBy";
 import { FilterBy, FilterColumn } from "../../components/Table/FilterBy";
+import { ColumnSelector } from "../../components/Table/ColumnSelector";
 import { useFilterBy } from "../../../application/hooks/useFilterBy";
 import { useTableGrouping, useGroupByState } from "../../../application/hooks/useTableGrouping";
+import { useColumnVisibility, ColumnConfig } from "../../../application/hooks/useColumnVisibility";
 import { GroupedTableView } from "../../components/Table/GroupedTableView";
 import { PageHeaderExtended } from "../../components/Layout/PageHeaderExtended";
 import DatasetSummary from "../ModelInventory/DatasetSummary";
@@ -35,6 +37,31 @@ const DATASET_GROUP_BY_OPTIONS = [
   { id: "type", label: "Type" },
   { id: "classification", label: "Classification" },
   { id: "owner", label: "Owner" },
+];
+
+type DatasetColumnKey =
+  | "name"
+  | "version"
+  | "type"
+  | "source"
+  | "classification"
+  | "contains_pii"
+  | "status"
+  | "owner"
+  | "updated_at"
+  | "actions";
+
+const DATASET_TABLE_COLUMNS: ColumnConfig<DatasetColumnKey>[] = [
+  { key: "name", label: "Name", defaultVisible: true, alwaysVisible: true },
+  { key: "version", label: "Version", defaultVisible: true },
+  { key: "type", label: "Type", defaultVisible: true },
+  { key: "source", label: "Source", defaultVisible: true },
+  { key: "classification", label: "Classification", defaultVisible: true },
+  { key: "contains_pii", label: "PII", defaultVisible: true },
+  { key: "status", label: "Status", defaultVisible: true },
+  { key: "owner", label: "Owner", defaultVisible: true },
+  { key: "updated_at", label: "Updated", defaultVisible: true },
+  { key: "actions", label: "Actions", defaultVisible: true, alwaysVisible: true },
 ];
 
 const DATASET_FILTER_COLUMNS: FilterColumn[] = [
@@ -112,6 +139,17 @@ const Datasets: React.FC = () => {
 
   // GroupBy state
   const { groupBy, groupSortOrder, handleGroupChange } = useGroupByState();;
+
+  // Column visibility
+  const {
+    visibleColumns: datasetVisibleColumns,
+    allColumns: allDatasetColumns,
+    toggleColumn: toggleDatasetColumn,
+    resetToDefaults: resetDatasetColumns,
+  } = useColumnVisibility({
+    tableId: "datasets-table",
+    columns: DATASET_TABLE_COLUMNS,
+  });
 
   // FilterBy - Field value getter
   const getDatasetFieldValue = useCallback(
@@ -428,6 +466,12 @@ const Datasets: React.FC = () => {
               options={DATASET_GROUP_BY_OPTIONS}
               onGroupChange={handleGroupChange}
             />
+            <ColumnSelector
+              columns={allDatasetColumns}
+              visibleColumns={datasetVisibleColumns}
+              onToggleColumn={toggleDatasetColumn}
+              onResetToDefaults={resetDatasetColumns}
+            />
             <SearchBox
               placeholder="Search datasets..."
               value={searchTerm}
@@ -469,6 +513,7 @@ const Datasets: React.FC = () => {
             deletingId={deletingDatasetId}
             flashRowId={flashDatasetRowId}
             hidePagination={options?.hidePagination}
+            visibleColumns={datasetVisibleColumns}
           />
         )}
       />
@@ -494,29 +539,29 @@ const Datasets: React.FC = () => {
         initialData={
           selectedDataset
             ? {
-                name: selectedDataset.name || "",
-                description: selectedDataset.description || "",
-                version: selectedDataset.version || "",
-                owner: selectedDataset.owner || "",
-                type: selectedDataset.type,
-                function: selectedDataset.function || "",
-                source: selectedDataset.source || "",
-                license: selectedDataset.license || "",
-                format: selectedDataset.format || "",
-                classification: selectedDataset.classification,
-                contains_pii: selectedDataset.contains_pii || false,
-                pii_types: selectedDataset.pii_types || "",
-                status: selectedDataset.status,
-                status_date: selectedDataset.status_date
-                  ? new Date(selectedDataset.status_date as string).toISOString().split("T")[0]
-                  : new Date().toISOString().split("T")[0],
-                known_biases: selectedDataset.known_biases || "",
-                bias_mitigation: selectedDataset.bias_mitigation || "",
-                collection_method: selectedDataset.collection_method || "",
-                preprocessing_steps: selectedDataset.preprocessing_steps || "",
-                models: selectedDataset.models || [],
-                projects: selectedDataset.projects || [],
-              }
+              name: selectedDataset.name || "",
+              description: selectedDataset.description || "",
+              version: selectedDataset.version || "",
+              owner: selectedDataset.owner || "",
+              type: selectedDataset.type,
+              function: selectedDataset.function || "",
+              source: selectedDataset.source || "",
+              license: selectedDataset.license || "",
+              format: selectedDataset.format || "",
+              classification: selectedDataset.classification,
+              contains_pii: selectedDataset.contains_pii || false,
+              pii_types: selectedDataset.pii_types || "",
+              status: selectedDataset.status,
+              status_date: selectedDataset.status_date
+                ? new Date(selectedDataset.status_date as string).toISOString().split("T")[0]
+                : new Date().toISOString().split("T")[0],
+              known_biases: selectedDataset.known_biases || "",
+              bias_mitigation: selectedDataset.bias_mitigation || "",
+              collection_method: selectedDataset.collection_method || "",
+              preprocessing_steps: selectedDataset.preprocessing_steps || "",
+              models: selectedDataset.models || [],
+              projects: selectedDataset.projects || [],
+            }
             : undefined
         }
         isEdit={!!selectedDataset}

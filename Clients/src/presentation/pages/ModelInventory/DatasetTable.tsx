@@ -116,6 +116,7 @@ const DatasetTable: React.FC<DatasetTableProps> = ({
   deletingId,
   hidePagination = false,
   flashRowId,
+  visibleColumns,
 }) => {
   const theme = useTheme();
   const { userRoleName } = useAuth();
@@ -227,6 +228,19 @@ const DatasetTable: React.FC<DatasetTableProps> = ({
     [userRoleName]
   );
 
+  const isVisible = useCallback(
+    (key: string) => {
+      if (!visibleColumns) return true;
+      return visibleColumns.has(key);
+    },
+    [visibleColumns]
+  );
+
+  const visibleTableColumns = useMemo(
+    () => TABLE_COLUMNS.filter((col) => isVisible(col.id)),
+    [isVisible]
+  );
+
   const handleRowClick = useCallback(
     (e: React.MouseEvent, datasetId: string) => {
       if (
@@ -285,7 +299,7 @@ const DatasetTable: React.FC<DatasetTableProps> = ({
           }}
         >
           <TableRow sx={singleTheme.tableStyles.primary.header.row}>
-            {TABLE_COLUMNS.map((column) => (
+            {visibleTableColumns.map((column) => (
               <TableCell
                 key={column.id}
                 onClick={column.sortable ? () => handleSort(column.id) : undefined}
@@ -332,35 +346,54 @@ const DatasetTable: React.FC<DatasetTableProps> = ({
                     : {}),
                 }}
               >
-                <TableCell>
-                  <TooltipCell value={dataset.name} />
-                </TableCell>
-                <TableCell>
-                  <TooltipCell value={dataset.version} />
-                </TableCell>
-                <TableCell>
-                  <Chip label={dataset.type} />
-                </TableCell>
-                <TableCell>
-                  <TooltipCell value={dataset.source} />
-                </TableCell>
-                <TableCell>
-                  <ClassificationBadge classification={dataset.classification} />
-                </TableCell>
-                <TableCell>
-                  <PIIBadge containsPii={dataset.contains_pii} />
-                </TableCell>
-                <TableCell>
-                  <StatusBadge status={dataset.status} />
-                </TableCell>
-                <TableCell>
-                  <TooltipCell value={dataset.owner} />
-                </TableCell>
-                <TableCell>
-                  {dataset.updated_at
-                    ? displayFormattedDate(dataset.updated_at)
-                    : "-"}
-                </TableCell>
+                {isVisible("name") && (
+                  <TableCell>
+                    <TooltipCell value={dataset.name} />
+                  </TableCell>
+                )}
+                {isVisible("version") && (
+                  <TableCell>
+                    <TooltipCell value={dataset.version} />
+                  </TableCell>
+                )}
+                {isVisible("type") && (
+                  <TableCell>
+                    <Chip label={dataset.type} />
+                  </TableCell>
+                )}
+                {isVisible("source") && (
+                  <TableCell>
+                    <TooltipCell value={dataset.source} />
+                  </TableCell>
+                )}
+                {isVisible("classification") && (
+                  <TableCell>
+                    <ClassificationBadge classification={dataset.classification} />
+                  </TableCell>
+                )}
+                {isVisible("contains_pii") && (
+                  <TableCell>
+                    <PIIBadge containsPii={dataset.contains_pii} />
+                  </TableCell>
+                )}
+                {isVisible("status") && (
+                  <TableCell>
+                    <StatusBadge status={dataset.status} />
+                  </TableCell>
+                )}
+                {isVisible("owner") && (
+                  <TableCell>
+                    <TooltipCell value={dataset.owner} />
+                  </TableCell>
+                )}
+                {isVisible("updated_at") && (
+                  <TableCell>
+                    {dataset.updated_at
+                      ? displayFormattedDate(dataset.updated_at)
+                      : "-"}
+                  </TableCell>
+                )}
+                {isVisible("actions") && (
                 <TableCell
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -378,6 +411,7 @@ const DatasetTable: React.FC<DatasetTableProps> = ({
                     )}
                   </Stack>
                 </TableCell>
+                )}
               </TableRow>
             );
           })}

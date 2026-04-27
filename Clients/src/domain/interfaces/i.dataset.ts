@@ -59,6 +59,7 @@ export interface DatasetTableProps {
   deletingId?: string | null;
   hidePagination?: boolean;
   flashRowId?: number | string | null;
+  visibleColumns?: Set<string>;
 }
 
 export interface NewDatasetFormValues {
