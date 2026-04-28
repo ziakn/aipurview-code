@@ -20,7 +20,7 @@ describe("ProviderIcons", () => {
   });
 
   it("maps each PROVIDER_ICONS value to a component (function)", () => {
-    for (const [key, Icon] of Object.entries(PROVIDER_ICONS)) {
+    for (const [, Icon] of Object.entries(PROVIDER_ICONS)) {
       expect(typeof Icon).toBe("function");
     }
   });
@@ -33,7 +33,7 @@ describe("ProviderIcons", () => {
   });
 
   it("resolves VENDOR_ICON_MAP values to valid PROVIDER_ICONS keys", () => {
-    for (const [vendor, iconKey] of Object.entries(VENDOR_ICON_MAP)) {
+    for (const [, iconKey] of Object.entries(VENDOR_ICON_MAP)) {
       expect(PROVIDER_ICONS).toHaveProperty(
         iconKey,
         expect.any(Function)

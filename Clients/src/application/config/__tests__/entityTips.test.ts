@@ -59,8 +59,8 @@ describe("ENTITY_TIPS", () => {
   });
 
   it("should have header and content strings for every tip", () => {
-    for (const [entityName, tips] of Object.entries(ENTITY_TIPS)) {
-      tips.forEach((tip: Tip, index: number) => {
+    for (const [, tips] of Object.entries(ENTITY_TIPS)) {
+      tips.forEach((tip: Tip) => {
         expect(typeof tip.header).toBe("string");
         expect(tip.header.length).toBeGreaterThan(0);
         expect(typeof tip.content).toBe("string");
