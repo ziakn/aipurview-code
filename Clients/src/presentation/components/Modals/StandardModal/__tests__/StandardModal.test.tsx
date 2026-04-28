@@ -13,7 +13,7 @@ import StandardModal from "../index";
 describe("StandardModal", () => {
   it("renders title and children when open", () => {
     renderWithProviders(
-      <StandardModal isOpen={true} onClose={vi.fn()} title="Test Modal">
+      <StandardModal isOpen={true} onClose={vi.fn()} title="Test Modal" description="Test description">
         <div>Modal content</div>
       </StandardModal>
     );
@@ -23,7 +23,7 @@ describe("StandardModal", () => {
 
   it("does not render when closed", () => {
     renderWithProviders(
-      <StandardModal isOpen={false} onClose={vi.fn()} title="Test Modal">
+      <StandardModal isOpen={false} onClose={vi.fn()} title="Test Modal" description="Test description">
         <div>Modal content</div>
       </StandardModal>
     );

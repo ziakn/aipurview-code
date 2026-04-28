@@ -37,7 +37,7 @@ describe("Test Model Evaluations Repository", () => {
     };
 
     it("should make a GET request to /modelInventory/evaluations", async () => {
-      const mockResponse = { data: mockData };
+      const mockResponse = { data: mockData, status: 200, statusText: "OK" };
       vi.mocked(apiServices.get).mockResolvedValue(mockResponse);
 
       await getAllModelEvaluations();
@@ -49,7 +49,7 @@ describe("Test Model Evaluations Repository", () => {
     });
 
     it("should return the response data on successful fetch", async () => {
-      const mockResponse = { data: mockData };
+      const mockResponse = { data: mockData, status: 200, statusText: "OK" };
       vi.mocked(apiServices.get).mockResolvedValue(mockResponse);
 
       const result = await getAllModelEvaluations();
@@ -61,7 +61,7 @@ describe("Test Model Evaluations Repository", () => {
 
     it("should return empty arrays when no evaluations exist", async () => {
       const emptyData = { experiments: [], biasAudits: [] };
-      const mockResponse = { data: emptyData };
+      const mockResponse = { data: emptyData, status: 200, statusText: "OK" };
       vi.mocked(apiServices.get).mockResolvedValue(mockResponse);
 
       const result = await getAllModelEvaluations();

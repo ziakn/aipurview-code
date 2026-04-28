@@ -60,7 +60,7 @@ import { ProjectForm } from "../index";
 describe("ProjectForm", () => {
   it("renders without crashing", () => {
     renderWithProviders(
-      <ProjectForm onClose={vi.fn()} onSuccess={vi.fn()} />
+      <ProjectForm onClose={vi.fn()} />
     );
     expect(document.body).toBeTruthy();
   });

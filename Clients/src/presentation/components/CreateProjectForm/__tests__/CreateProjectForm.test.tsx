@@ -30,7 +30,7 @@ import { CreateProjectForm } from "../index";
 
 describe("CreateProjectForm", () => {
   it("renders the form without crashing", () => {
-    renderWithProviders(<CreateProjectForm onClose={vi.fn()} onSuccess={vi.fn()} />);
+    renderWithProviders(<CreateProjectForm closePopup={vi.fn()} onNewProject={vi.fn()} />);
     expect(document.body).toBeTruthy();
   });
 });

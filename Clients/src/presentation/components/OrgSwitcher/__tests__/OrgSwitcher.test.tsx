@@ -18,7 +18,7 @@ vi.mock("../../../../application/repository/superAdmin.repository", () => ({
   }),
 }));
 
-import { screen, waitFor } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { renderWithProviders } from "../../../../test/renderWithProviders";
 import OrgSwitcher from "../index";
 import { useAuth } from "../../../../application/hooks/useAuth";

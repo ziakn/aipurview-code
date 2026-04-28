@@ -8,7 +8,6 @@ vi.mock("../../../../application/repository/file.repository", () => ({
   getFilesWithMetadata: vi.fn().mockResolvedValue({ data: [] }),
 }));
 
-import { screen } from "@testing-library/react";
 import { renderWithProviders } from "../../../../test/renderWithProviders";
 import { FilePickerModal } from "../index";
 

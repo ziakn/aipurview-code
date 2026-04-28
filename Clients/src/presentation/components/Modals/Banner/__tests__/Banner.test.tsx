@@ -1,5 +1,4 @@
 import { vi } from "vitest";
-import { screen } from "@testing-library/react";
 import { renderWithProviders } from "../../../../../test/renderWithProviders";
 import Banner from "../index";
 

@@ -17,7 +17,7 @@ describe("OnboardingWizard", () => {
         onClose={vi.fn()}
         title="Welcome"
         steps={[
-          { title: "Step 1", content: <div>Content 1</div> },
+          { label: "Step 1", content: <div>Content 1</div> },
         ]}
       />
     );

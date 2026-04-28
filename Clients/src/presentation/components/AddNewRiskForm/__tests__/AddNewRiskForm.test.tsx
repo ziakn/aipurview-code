@@ -74,26 +74,24 @@ vi.mock("./RisksSection", () => ({
 
 vi.mock("../../types/riskForm.types", () => ({}));
 
-import { screen } from "@testing-library/react";
 import { renderWithProviders } from "../../../../test/renderWithProviders";
 import AddNewRiskForm from "../index";
 
 describe("AddNewRiskForm", () => {
   const defaultProps = {
-    projectId: 1,
-    onClose: vi.fn(),
+    closePopup: vi.fn(),
+    popupStatus: "new" as const,
     onSuccess: vi.fn(),
   };
 
   it("renders the form component without crashing", () => {
     renderWithProviders(<AddNewRiskForm {...defaultProps} />);
-    // The component should render - check for common form elements
     expect(document.body).toBeTruthy();
   });
 
-  it("renders with existingRisk prop for editing", () => {
+  it("renders in edit mode", () => {
     renderWithProviders(
-      <AddNewRiskForm {...defaultProps} existingRisk={{ id: 1, risk_name: "Test Risk" } as any} />
+      <AddNewRiskForm {...defaultProps} popupStatus="edit" />
     );
     expect(document.body).toBeTruthy();
   });

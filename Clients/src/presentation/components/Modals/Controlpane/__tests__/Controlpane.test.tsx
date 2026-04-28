@@ -19,6 +19,7 @@ describe("Controlpane (CustomModal)", () => {
         title="Test Control"
         content="Test content"
         subControlTlts={[]}
+        onConfirm={vi.fn()}
       />
     );
     expect(document.body).toBeTruthy();

@@ -9,7 +9,6 @@ vi.mock("../../../pages/EntityGraph", () => ({
   default: () => <div data-testid="entity-graph" />,
 }));
 
-import { screen } from "@testing-library/react";
 import { renderWithProviders } from "../../../../test/renderWithProviders";
 
 // Import after mocks

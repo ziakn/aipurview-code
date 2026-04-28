@@ -39,6 +39,7 @@ describe("NewModelInventory", () => {
         isOpen={true}
         setIsOpen={vi.fn()}
         evidenceData={[]}
+        modelInventoryData={[]}
       />
     );
     expect(document.body).toBeTruthy();

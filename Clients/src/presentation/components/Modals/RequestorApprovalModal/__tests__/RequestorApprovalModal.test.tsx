@@ -20,7 +20,7 @@ import RequestorApprovalModal from "../index";
 describe("RequestorApprovalModal", () => {
   it("renders without crashing when open", () => {
     renderWithProviders(
-      <RequestorApprovalModal isOpen={true} setIsOpen={vi.fn()} />
+      <RequestorApprovalModal isOpen={true} onClose={vi.fn()} />
     );
     expect(document.body).toBeTruthy();
   });

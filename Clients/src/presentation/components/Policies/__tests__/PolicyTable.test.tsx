@@ -53,13 +53,15 @@ describe("PolicyTable", () => {
       {
         id: 1,
         title: "Data Protection Policy",
+        content_html: "",
         status: "Draft",
         next_review_date: "2026-06-01",
         author_id: 1,
         last_updated_at: "2026-04-01T10:00:00Z",
         last_updated_by: 2,
+        created_at: "2026-01-01T00:00:00Z",
       },
-    ];
+    ] as any;
     renderWithProviders(
       <PolicyTable {...defaultProps} data={data} />
     );
@@ -71,13 +73,15 @@ describe("PolicyTable", () => {
       {
         id: 1,
         title: "This Is A Very Long Policy Title That Should Be Truncated",
+        content_html: "",
         status: "Approved",
         next_review_date: null,
         author_id: 1,
         last_updated_at: null,
         last_updated_by: null,
+        created_at: "2026-01-01T00:00:00Z",
       },
-    ];
+    ] as any;
     renderWithProviders(
       <PolicyTable {...defaultProps} data={data} />
     );
@@ -91,13 +95,15 @@ describe("PolicyTable", () => {
       {
         id: 1,
         title: "Test Policy",
+        content_html: "",
         status: "Draft",
         next_review_date: null,
         author_id: 1,
         last_updated_at: null,
         last_updated_by: null,
+        created_at: "2026-01-01T00:00:00Z",
       },
-    ];
+    ] as any;
     renderWithProviders(
       <PolicyTable {...defaultProps} data={data} />
     );

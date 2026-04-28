@@ -32,7 +32,6 @@ vi.mock("react-router", () => ({
   useNavigate: () => vi.fn(),
 }));
 
-import { screen } from "@testing-library/react";
 import { renderWithProviders } from "../../../../test/renderWithProviders";
 import AdvisorChat from "../index";
 

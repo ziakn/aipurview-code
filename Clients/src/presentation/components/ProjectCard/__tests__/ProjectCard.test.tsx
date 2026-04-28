@@ -23,7 +23,7 @@ vi.mock("../../../../application/tools/getProjectData", () => ({
 }));
 
 vi.mock("../../../tools/isoDateToString", () => ({
-  displayFormattedDate: (date: string) => "Jan 1, 2025",
+  displayFormattedDate: (_date: string) => "Jan 1, 2025",
 }));
 
 vi.mock("../../../assets/imgs/eu-ai-act.jpg", () => ({ default: "eu-ai-act.jpg" }));
@@ -58,8 +58,8 @@ describe("ProjectCard", () => {
     id: 1,
     project_title: "AI Governance Project",
     owner: "1",
-    assessments: [],
-    controls: [],
+    assessments: { percentageComplete: 0, allDoneAssessments: 0, allTotalAssessments: 0 },
+    controls: { percentageComplete: 0, allDoneSubControls: 0, allTotalSubControls: 0 },
     last_updated: "2025-01-01T00:00:00Z",
   };
 
