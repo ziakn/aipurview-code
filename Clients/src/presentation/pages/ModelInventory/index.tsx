@@ -150,6 +150,7 @@ type EvidenceHubColumn =
   | "uploaded_by"
   | "uploaded_on"
   | "expiry_date"
+  | "quality"
   | "actions";
 
 const EVIDENCE_HUB_COLUMNS: ColumnConfig<EvidenceHubColumn>[] = [
@@ -159,6 +160,7 @@ const EVIDENCE_HUB_COLUMNS: ColumnConfig<EvidenceHubColumn>[] = [
   { key: "uploaded_by", label: "Uploaded by", defaultVisible: true },
   { key: "uploaded_on", label: "Uploaded on", defaultVisible: true },
   { key: "expiry_date", label: "Expiry", defaultVisible: true },
+  { key: "quality", label: "AI Quality", defaultVisible: true },
   { key: "actions", label: "Actions", defaultVisible: true, alwaysVisible: true },
 ];
 

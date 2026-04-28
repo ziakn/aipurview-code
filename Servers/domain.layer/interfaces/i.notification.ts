@@ -78,6 +78,7 @@ export enum NotificationEntityType {
   USER = "user",
   SHADOW_AI_TOOL = "shadow_ai_tool",
   AI_GATEWAY = "ai_gateway",
+  AI_ACTION = "ai_action",
 }
 
 /**

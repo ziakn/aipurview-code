@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm';
 
 import { Bot, Copy, Check } from 'lucide-react';
 import { ChartRenderer } from './ChartRenderer';
+import ConfirmationToolUI from './ConfirmationToolUI';
 import VWAvatar from '../Avatar/VWAvatar';
 import { VerifyWiseContext } from '../../../application/contexts/VerifyWise.context';
 import { useProfilePhotoFetch } from '../../../application/hooks/useProfilePhotoFetch';
@@ -151,7 +152,12 @@ const GenerateChartToolUI: FC<{ result?: unknown }> = ({ result }) => {
  * Fallback tool UI for non-chart tools (e.g. fetch_risks, get_risk_analytics).
  * These run server-side and their results are consumed by the LLM, not shown to the user.
  */
-const DefaultToolFallback: FC = () => null;
+const DefaultToolFallback: FC<{ result?: unknown }> = ({ result }) => {
+  if (result && typeof result === 'object' && (result as any).confirmation_required === true) {
+    return <ConfirmationToolUI result={result} />;
+  }
+  return null;
+};
 
 const MessageTimestamp: FC = () => {
   const theme = useTheme();

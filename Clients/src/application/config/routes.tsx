@@ -47,6 +47,8 @@ const ModelInventory = lazyRoute(() => import("../../presentation/pages/ModelInv
 const ModelLifecycleDetail = lazyRoute(() => import("../../presentation/pages/ModelInventory/ModelLifecycleDetail"));
 const Datasets = lazyRoute(() => import("../../presentation/pages/Datasets"));
 const AITrustCenter = lazyRoute(() => import("../../presentation/pages/AITrustCenter"));
+const ReadinessDashboard = lazyRoute(() => import("../../presentation/pages/ReadinessDashboard"));
+const AIContentReview = lazyRoute(() => import("../../presentation/pages/AIContentReview"));
 
 // ── AI Detection & Shadow AI routes ───────────────────────────────────
 const ScanPage = lazyRoute(() => import("../../presentation/pages/AIDetection/ScanPage"));
@@ -125,6 +127,7 @@ export const createRoutes = (
 
     <Route path="/settings" element={<Suspense fallback={<LazyFallback />}><Setting /></Suspense>} />
     <Route path="/settings/:tab" element={<Suspense fallback={<LazyFallback />}><Setting /></Suspense>} />
+    <Route path="/ai-audit" element={<Navigate to="/?tab=ai-audit" replace />} />
     <Route path="/plugins" element={<Suspense fallback={<LazyFallback />}><Plugins /></Suspense>} />
     <Route path="/plugins/marketplace" element={<Suspense fallback={<LazyFallback />}><Plugins /></Suspense>} />
     <Route path="/plugins/my-plugins" element={<Suspense fallback={<LazyFallback />}><Plugins /></Suspense>} />
@@ -162,6 +165,8 @@ export const createRoutes = (
     {/* Dynamic route for plugin tabs (e.g., mlflow, other future plugins) */}
     <Route path="/model-inventory/:pluginTab" element={<Suspense fallback={<LazyFallback />}><ModelInventory /></Suspense>} />
     <Route path="/risk-management" element={<Suspense fallback={<LazyFallback />}><RiskManagement /></Suspense>} />
+    <Route path="/readiness" element={<Suspense fallback={<LazyFallback />}><ReadinessDashboard /></Suspense>} />
+    <Route path="/ai-content-review" element={<Suspense fallback={<LazyFallback />}><AIContentReview /></Suspense>} />
     <Route path="/tasks" element={<Suspense fallback={<LazyFallback />}><Tasks /></Suspense>} />
     <Route path="/automations" element={<Suspense fallback={<LazyFallback />}><AutomationsPage /></Suspense>} />
     <Route path="/ai-incident-managements" element={<Suspense fallback={<LazyFallback />}><IncidentManagement /></Suspense>} />

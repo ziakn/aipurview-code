@@ -4,7 +4,10 @@ import {
   getAllModelInventoriesQuery,
   getModelByProjectIdQuery,
   getModelByFrameworkIdQuery,
+  deleteModelInventoryByIdQuery,
 } from "../../utils/modelInventory.utils";
+import { createWriteToolFn } from "../confirmation/createWriteTool";
+import { sequelize } from "../../database/db";
 import logger from "../../utils/logger/fileLogger";
 
 export interface FetchModelInventoriesParams {
@@ -387,10 +390,205 @@ const getModelInventoryExecutiveSummary = async (
   }
 };
 
+// --- Write Tools (Human Confirmation Flow) ---
+
+const agentRegisterModel = createWriteToolFn({
+  toolName: "agent_register_model",
+  warningLevel: "warning",
+  descriptionFn: (params) =>
+    `Register model "${params.name}"${params.model_type ? ` from ${params.model_type}` : ""}${params.version ? ` (v${params.version})` : ""}`,
+  executeFn: async (params, organizationId) => {
+    const now = new Date();
+    const result = (await sequelize.query(
+      `INSERT INTO model_inventories (organization_id, provider_model, provider, model, version, capabilities, security_assessment, status, status_date, biases, limitations, hosting_provider, security_assessment_data, is_demo, created_at, updated_at)
+       VALUES (:organization_id, :provider_model, :provider, :model, :version, :capabilities, false, 'Pending', :status_date, :biases, :limitations, '', '[]', false, :created_at, :updated_at) RETURNING *`,
+      {
+        replacements: {
+          organization_id: organizationId,
+          provider_model: params.model_type ? `${params.model_type} / ${params.name}` : String(params.name),
+          provider: params.model_type || "",
+          model: params.name,
+          version: params.version || "",
+          capabilities: params.description || "",
+          biases: "",
+          limitations: "",
+          status_date: now,
+          created_at: now,
+          updated_at: now,
+        },
+      },
+    )) as [any[], number];
+    const created = result[0][0];
+
+    // Link to project if provided
+    if (params.project_id) {
+      await sequelize.query(
+        `INSERT INTO model_inventories_projects_frameworks (organization_id, model_inventory_id, project_id)
+         VALUES (:organization_id, :model_inventory_id, :project_id)`,
+        {
+          replacements: {
+            organization_id: organizationId,
+            model_inventory_id: created.id,
+            project_id: params.project_id,
+          },
+        },
+      );
+    }
+
+    return { id: created.id, model: created.model, message: "Model registered successfully" };
+  },
+});
+
+const agentUpdateModel = createWriteToolFn({
+  toolName: "agent_update_model",
+  warningLevel: "warning",
+  descriptionFn: (params) => {
+    const fields = Object.keys(params).filter((k) => k !== "model_id");
+    return `Update model #${params.model_id} — fields: ${fields.join(", ")}`;
+  },
+  executeFn: async (params, organizationId) => {
+    const modelId = params.model_id as number;
+    const setClauses: string[] = [];
+    const replacements: Record<string, unknown> = {
+      organization_id: organizationId,
+      model_id: modelId,
+    };
+
+    if (params.name !== undefined) {
+      setClauses.push("model = :model");
+      replacements.model = params.name;
+    }
+    if (params.model_type !== undefined) {
+      setClauses.push("provider = :provider");
+      replacements.provider = params.model_type;
+    }
+    if (params.version !== undefined) {
+      setClauses.push("version = :version");
+      replacements.version = params.version;
+    }
+    if (params.description !== undefined) {
+      setClauses.push("capabilities = :capabilities");
+      replacements.capabilities = params.description;
+    }
+    if (params.status !== undefined) {
+      setClauses.push("status = :status, status_date = NOW()");
+      replacements.status = params.status;
+    }
+    if (params.hosting_provider !== undefined) {
+      setClauses.push("hosting_provider = :hosting_provider");
+      replacements.hosting_provider = params.hosting_provider;
+    }
+    if (params.capabilities !== undefined) {
+      setClauses.push("capabilities = :capabilities");
+      replacements.capabilities = params.capabilities;
+    }
+
+    if (setClauses.length === 0) {
+      return { id: modelId, message: "No fields to update" };
+    }
+
+    setClauses.push("updated_at = NOW()");
+    // Update provider_model if provider or model changed
+    if (params.name !== undefined || params.model_type !== undefined) {
+      setClauses.push("provider_model = COALESCE(:pm_provider, provider) || ' / ' || COALESCE(:pm_model, model)");
+      replacements.pm_provider = params.model_type !== undefined ? params.model_type : null;
+      replacements.pm_model = params.name !== undefined ? params.name : null;
+    }
+
+    await sequelize.query(
+      `UPDATE model_inventories SET ${setClauses.join(", ")} WHERE id = :model_id AND organization_id = :organization_id`,
+      { replacements },
+    );
+    return { id: modelId, updated: true, message: "Model updated successfully" };
+  },
+});
+
+const agentUpdateModelLifecyclePhase = createWriteToolFn({
+  toolName: "agent_update_model_lifecycle_phase",
+  warningLevel: "warning",
+  descriptionFn: (params) =>
+    `Update model #${params.model_id} lifecycle phase to "${params.lifecycle_phase}"`,
+  executeFn: async (params, organizationId) => {
+    const modelId = params.model_id as number;
+    const phase = params.lifecycle_phase as string;
+    await sequelize.query(
+      `UPDATE model_inventories SET status = :status, status_date = NOW(), updated_at = NOW() WHERE id = :model_id AND organization_id = :organization_id`,
+      {
+        replacements: { status: phase, model_id: modelId, organization_id: organizationId },
+      },
+    );
+    return { id: modelId, status: phase, message: "Model lifecycle phase updated successfully" };
+  },
+});
+
+const agentRetireModel = createWriteToolFn({
+  toolName: "agent_retire_model",
+  warningLevel: "warning",
+  descriptionFn: (params) => `Retire model #${params.model_id} (set status to Blocked)`,
+  executeFn: async (params, organizationId) => {
+    const modelId = params.model_id as number;
+    await sequelize.query(
+      `UPDATE model_inventories SET status = 'Blocked', status_date = NOW(), updated_at = NOW() WHERE id = :model_id AND organization_id = :organization_id`,
+      {
+        replacements: { model_id: modelId, organization_id: organizationId },
+      },
+    );
+    return { id: modelId, status: "Blocked", message: "Model retired successfully" };
+  },
+});
+
+const agentDeleteModel = createWriteToolFn({
+  toolName: "agent_delete_model",
+  warningLevel: "danger",
+  descriptionFn: (params) => `Permanently delete model #${params.model_id}`,
+  executeFn: async (params, organizationId) => {
+    const modelId = params.model_id as number;
+    const transaction = await sequelize.transaction();
+    try {
+      await deleteModelInventoryByIdQuery(modelId, true, organizationId, transaction);
+      await transaction.commit();
+      return { id: modelId, deleted: true, message: "Model deleted successfully" };
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
+  },
+});
+
+const agentLinkModelToProject = createWriteToolFn({
+  toolName: "agent_link_model_to_project",
+  warningLevel: "warning",
+  descriptionFn: (params) =>
+    `Link model #${params.model_id} to project #${params.project_id}`,
+  executeFn: async (params, organizationId) => {
+    const modelId = params.model_id as number;
+    const projectId = params.project_id as number;
+    await sequelize.query(
+      `INSERT INTO model_inventories_projects_frameworks (organization_id, model_inventory_id, project_id)
+       VALUES (:organization_id, :model_inventory_id, :project_id)
+       ON CONFLICT DO NOTHING`,
+      {
+        replacements: {
+          organization_id: organizationId,
+          model_inventory_id: modelId,
+          project_id: projectId,
+        },
+      },
+    );
+    return { model_id: modelId, project_id: projectId, message: "Model linked to project successfully" };
+  },
+});
+
 const availableModelInventoryTools: any = {
   fetch_model_inventories: fetchModelInventories,
   get_model_inventory_analytics: getModelInventoryAnalytics,
   get_model_inventory_executive_summary: getModelInventoryExecutiveSummary,
+  agent_register_model: agentRegisterModel,
+  agent_update_model: agentUpdateModel,
+  agent_update_model_lifecycle_phase: agentUpdateModelLifecyclePhase,
+  agent_retire_model: agentRetireModel,
+  agent_delete_model: agentDeleteModel,
+  agent_link_model_to_project: agentLinkModelToProject,
 };
 
 export { availableModelInventoryTools };

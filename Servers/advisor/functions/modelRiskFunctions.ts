@@ -382,10 +382,134 @@ const getModelRiskExecutiveSummary = async (
   }
 };
 
+// --- Write Tools (Human Confirmation Flow) ---
+
+import { createWriteToolFn } from "../confirmation/createWriteTool";
+import {
+  createNewModelRiskQuery,
+  updateModelRiskByIdQuery,
+  deleteModelRiskByIdQuery,
+} from "../../utils/modelRisk.utils";
+
+const agentCreateModelRisk = createWriteToolFn({
+  toolName: "agent_create_model_risk",
+  warningLevel: "warning",
+  descriptionFn: (params) =>
+    `Create model risk "${params.risk_name}" for model #${params.model_id}`,
+  executeFn: async (params, organizationId) => {
+    const result = await createNewModelRiskQuery(
+      {
+        model_id: params.model_id as number,
+        risk_name: params.risk_name as string,
+        description: (params.description as string) || "",
+        risk_category: params.risk_category as any,
+        risk_level: params.risk_level as any,
+        status: (params.status as any) || "Open",
+        owner: (params.owner as string) || "",
+        target_date: (params.target_date as string) || new Date().toISOString(),
+        mitigation_plan: (params.mitigation_plan as string) || "",
+        impact: (params.impact as string) || "",
+        likelihood: (params.likelihood as string) || "",
+      },
+      organizationId,
+    );
+    return result;
+  },
+});
+
+const agentUpdateModelRisk = createWriteToolFn({
+  toolName: "agent_update_model_risk",
+  warningLevel: "warning",
+  descriptionFn: (params) =>
+    `Update model risk #${params.model_risk_id}${params.risk_name ? ` ("${params.risk_name}")` : ""}`,
+  executeFn: async (params, organizationId) => {
+    const id = params.model_risk_id as number;
+    const updateData: Record<string, unknown> = {};
+
+    const updatableFields = [
+      "risk_name",
+      "description",
+      "risk_category",
+      "risk_level",
+      "status",
+      "owner",
+      "target_date",
+      "mitigation_plan",
+      "impact",
+      "likelihood",
+      "key_metrics",
+      "current_values",
+      "threshold",
+    ];
+
+    for (const field of updatableFields) {
+      if (params[field] !== undefined) {
+        updateData[field] = params[field];
+      }
+    }
+
+    const result = await updateModelRiskByIdQuery(
+      id,
+      updateData as any,
+      organizationId,
+    );
+    if (!result) {
+      throw new Error(
+        `Model risk #${id} not found or does not belong to this organization`,
+      );
+    }
+    return result;
+  },
+});
+
+const agentChangeModelRiskStatus = createWriteToolFn({
+  toolName: "agent_change_model_risk_status",
+  warningLevel: "warning",
+  descriptionFn: (params) =>
+    `Change status of model risk #${params.model_risk_id} to "${params.status}"`,
+  executeFn: async (params, organizationId) => {
+    const id = params.model_risk_id as number;
+    const status = params.status as string;
+
+    const result = await updateModelRiskByIdQuery(
+      id,
+      { status } as any,
+      organizationId,
+    );
+    if (!result) {
+      throw new Error(
+        `Model risk #${id} not found or does not belong to this organization`,
+      );
+    }
+    return result;
+  },
+});
+
+const agentDeleteModelRisk = createWriteToolFn({
+  toolName: "agent_delete_model_risk",
+  warningLevel: "danger",
+  descriptionFn: (params) =>
+    `Delete model risk #${params.model_risk_id}`,
+  executeFn: async (params, organizationId) => {
+    const id = params.model_risk_id as number;
+    const deleted = await deleteModelRiskByIdQuery(id, organizationId);
+    if (!deleted) {
+      throw new Error(
+        `Model risk #${id} not found or already deleted`,
+      );
+    }
+    return { success: true, deleted_id: id };
+  },
+});
+
 const availableModelRiskTools: any = {
   fetch_model_risks: fetchModelRisks,
   get_model_risk_analytics: getModelRiskAnalytics,
   get_model_risk_executive_summary: getModelRiskExecutiveSummary,
+  agent_create_model_risk: agentCreateModelRisk,
+  agent_update_model_risk: agentUpdateModelRisk,
+  agent_change_model_risk_status: agentChangeModelRiskStatus,
+  agent_delete_model_risk: agentDeleteModelRisk,
 };
 
 export { availableModelRiskTools };

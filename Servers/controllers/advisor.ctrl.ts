@@ -29,6 +29,30 @@ import { availableEvidenceTools } from "../advisor/functions/evidenceFunctions";
 import { availableReportingTools } from "../advisor/functions/reportingFunctions";
 import { availableAiTrustCentreTools } from "../advisor/functions/aiTrustCentreFunctions";
 import { availableAgentDiscoveryTools } from "../advisor/functions/agentDiscoveryFunctions";
+import { availableEvidenceAiTools } from "../advisor/functions/evidenceAiFunctions";
+import { availableReadinessTools } from "../advisor/functions/readinessFunctions";
+import { availableChangeHistoryTools } from "../advisor/functions/changeHistoryFunctions";
+import { availableNotesTools } from "../advisor/functions/notesFunctions";
+import { availableNotificationTools } from "../advisor/functions/notificationFunctions";
+import { availableApprovalWorkflowTools } from "../advisor/functions/approvalWorkflowFunctions";
+import { availableAutomationTools } from "../advisor/functions/automationFunctions";
+import { availablePmmTools } from "../advisor/functions/pmmFunctions";
+import { availableFileManagementTools } from "../advisor/functions/fileManagementFunctions";
+import { availableVirtualFolderTools } from "../advisor/functions/virtualFolderFunctions";
+import { availableShadowAiTools } from "../advisor/functions/shadowAiFunctions";
+import { availableAiDetectionTools } from "../advisor/functions/aiDetectionFunctions";
+import { availableEntityGraphTools } from "../advisor/functions/entityGraphFunctions";
+import { availableEuAiActTools } from "../advisor/functions/euAiActFunctions";
+import { availableIso42001Tools } from "../advisor/functions/iso42001Functions";
+import { availableIso27001Tools } from "../advisor/functions/iso27001Functions";
+import { availableNistAiRmfTools } from "../advisor/functions/nistAiRmfFunctions";
+import { availableComplianceTools } from "../advisor/functions/complianceFunctions";
+import { availableSearchTools } from "../advisor/functions/searchFunctions";
+import { availableShareLinkTools } from "../advisor/functions/shareLinkFunctions";
+import { availableCeMarkingTools } from "../advisor/functions/ceMarkingFunctions";
+import { availablePolicyLinkedObjectTools } from "../advisor/functions/policyLinkedObjectFunctions";
+import { availableAuditLedgerTools } from "../advisor/functions/auditLedgerFunctions";
+import { availableAdminTools } from "../advisor/functions/adminFunctions";
 import { availableUserTools } from "../advisor/functions/userFunctions";
 import { availableProjectTools } from "../advisor/functions/projectFunctions";
 import { availableFrameworkLookupTools } from "../advisor/functions/frameworkLookupFunctions";
@@ -47,6 +71,30 @@ import { toolsDefinition as evidenceToolsDefinition } from "../advisor/tools/evi
 import { toolsDefinition as reportingToolsDefinition } from "../advisor/tools/reportingTools";
 import { toolsDefinition as aiTrustCentreToolsDefinition } from "../advisor/tools/aiTrustCentreTools";
 import { toolsDefinition as agentDiscoveryToolsDefinition } from "../advisor/tools/agentDiscoveryTools";
+import { toolsDefinition as evidenceAiToolsDefinition } from "../advisor/tools/evidenceAiTools";
+import { toolsDefinition as readinessToolsDefinition } from "../advisor/tools/readinessTools";
+import { toolsDefinition as changeHistoryToolsDefinition } from "../advisor/tools/changeHistoryTools";
+import { toolsDefinition as notesToolsDefinition } from "../advisor/tools/notesTools";
+import { toolsDefinition as notificationToolsDefinition } from "../advisor/tools/notificationTools";
+import { toolsDefinition as approvalWorkflowToolsDefinition } from "../advisor/tools/approvalWorkflowTools";
+import { toolsDefinition as automationToolsDefinition } from "../advisor/tools/automationTools";
+import { toolsDefinition as pmmToolsDefinition } from "../advisor/tools/pmmTools";
+import { toolsDefinition as fileManagementToolsDefinition } from "../advisor/tools/fileManagementTools";
+import { toolsDefinition as virtualFolderToolsDefinition } from "../advisor/tools/virtualFolderTools";
+import { toolsDefinition as shadowAiToolsDefinition } from "../advisor/tools/shadowAiTools";
+import { toolsDefinition as aiDetectionToolsDefinition } from "../advisor/tools/aiDetectionTools";
+import { toolsDefinition as entityGraphToolsDefinition } from "../advisor/tools/entityGraphTools";
+import { toolsDefinition as euAiActToolsDefinition } from "../advisor/tools/euAiActTools";
+import { toolsDefinition as iso42001ToolsDefinition } from "../advisor/tools/iso42001Tools";
+import { toolsDefinition as iso27001ToolsDefinition } from "../advisor/tools/iso27001Tools";
+import { toolsDefinition as nistAiRmfToolsDefinition } from "../advisor/tools/nistAiRmfTools";
+import { toolsDefinition as complianceToolsDefinition } from "../advisor/tools/complianceTools";
+import { toolsDefinition as searchToolsDefinition } from "../advisor/tools/searchTools";
+import { toolsDefinition as shareLinkToolsDefinition } from "../advisor/tools/shareLinkTools";
+import { toolsDefinition as ceMarkingToolsDefinition } from "../advisor/tools/ceMarkingTools";
+import { toolsDefinition as policyLinkedObjectToolsDefinition } from "../advisor/tools/policyLinkedObjectTools";
+import { toolsDefinition as auditLedgerToolsDefinition } from "../advisor/tools/auditLedgerTools";
+import { toolsDefinition as adminToolsDefinition } from "../advisor/tools/adminTools";
 import { toolsDefinition as userToolsDefinition } from "../advisor/tools/userTools";
 import { toolsDefinition as projectToolsDefinition } from "../advisor/tools/projectTools";
 import { toolsDefinition as frameworkLookupToolsDefinition } from "../advisor/tools/frameworkLookupTools";
@@ -92,6 +140,30 @@ const availableTools = {
   ...availableReportingTools,
   ...availableAiTrustCentreTools,
   ...availableAgentDiscoveryTools,
+  ...availableEvidenceAiTools,
+  ...availableReadinessTools,
+  ...availableChangeHistoryTools,
+  ...availableNotesTools,
+  ...availableNotificationTools,
+  ...availableApprovalWorkflowTools,
+  ...availableAutomationTools,
+  ...availablePmmTools,
+  ...availableFileManagementTools,
+  ...availableVirtualFolderTools,
+  ...availableShadowAiTools,
+  ...availableAiDetectionTools,
+  ...availableEntityGraphTools,
+  ...availableEuAiActTools,
+  ...availableIso42001Tools,
+  ...availableIso27001Tools,
+  ...availableNistAiRmfTools,
+  ...availableComplianceTools,
+  ...availableSearchTools,
+  ...availableShareLinkTools,
+  ...availableCeMarkingTools,
+  ...availablePolicyLinkedObjectTools,
+  ...availableAuditLedgerTools,
+  ...availableAdminTools,
   ...availableUserTools,
   ...availableProjectTools,
   ...availableFrameworkLookupTools,
@@ -114,6 +186,30 @@ const toolsDefinition = [
   ...reportingToolsDefinition,
   ...aiTrustCentreToolsDefinition,
   ...agentDiscoveryToolsDefinition,
+  ...evidenceAiToolsDefinition,
+  ...readinessToolsDefinition,
+  ...changeHistoryToolsDefinition,
+  ...notesToolsDefinition,
+  ...notificationToolsDefinition,
+  ...approvalWorkflowToolsDefinition,
+  ...automationToolsDefinition,
+  ...pmmToolsDefinition,
+  ...fileManagementToolsDefinition,
+  ...virtualFolderToolsDefinition,
+  ...shadowAiToolsDefinition,
+  ...aiDetectionToolsDefinition,
+  ...entityGraphToolsDefinition,
+  ...euAiActToolsDefinition,
+  ...iso42001ToolsDefinition,
+  ...iso27001ToolsDefinition,
+  ...nistAiRmfToolsDefinition,
+  ...complianceToolsDefinition,
+  ...searchToolsDefinition,
+  ...shareLinkToolsDefinition,
+  ...ceMarkingToolsDefinition,
+  ...policyLinkedObjectToolsDefinition,
+  ...auditLedgerToolsDefinition,
+  ...adminToolsDefinition,
   ...userToolsDefinition,
   ...projectToolsDefinition,
   ...frameworkLookupToolsDefinition,

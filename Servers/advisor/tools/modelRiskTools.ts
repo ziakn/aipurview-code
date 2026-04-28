@@ -72,5 +72,164 @@ export const toolsDefinition: any[] = [
                 required: []
             }
         }
+    },
+    {
+        type: "function",
+        function: {
+            name: "agent_create_model_risk",
+            description: "Create a new model risk for a specific AI model. Requires user confirmation before executing. Returns the created model risk object.",
+            parameters: {
+                type: "object",
+                properties: {
+                    model_id: {
+                        type: "number",
+                        description: "The model ID to associate the risk with."
+                    },
+                    risk_name: {
+                        type: "string",
+                        description: "A concise, descriptive name for the model risk."
+                    },
+                    description: {
+                        type: "string",
+                        description: "Detailed description of the risk, including potential causes and consequences."
+                    },
+                    risk_category: {
+                        type: "string",
+                        enum: ["Performance", "Bias & Fairness", "Security", "Data Quality", "Compliance"],
+                        description: "The category of the model risk."
+                    },
+                    risk_level: {
+                        type: "string",
+                        enum: ["Low", "Medium", "High", "Critical"],
+                        description: "The severity level of the model risk."
+                    },
+                    status: {
+                        type: "string",
+                        enum: ["Open", "In Progress", "Resolved", "Accepted"],
+                        description: "Initial status for the model risk. Defaults to 'Open'."
+                    },
+                    owner: {
+                        type: "string",
+                        description: "Name of the person responsible for managing this risk."
+                    },
+                    target_date: {
+                        type: "string",
+                        description: "Target date for risk review or mitigation (ISO 8601 format)."
+                    },
+                    mitigation_plan: {
+                        type: "string",
+                        description: "Plan for mitigating the risk."
+                    },
+                    impact: {
+                        type: "string",
+                        description: "Description of the potential impact if the risk materializes."
+                    },
+                    likelihood: {
+                        type: "string",
+                        description: "Likelihood of the risk occurring."
+                    }
+                },
+                required: ["model_id", "risk_name"]
+            }
+        }
+    },
+    {
+        type: "function",
+        function: {
+            name: "agent_update_model_risk",
+            description: "Update an existing model risk's properties. Requires user confirmation before executing. Only the provided fields will be updated.",
+            parameters: {
+                type: "object",
+                properties: {
+                    model_risk_id: {
+                        type: "number",
+                        description: "The ID of the model risk to update."
+                    },
+                    risk_name: {
+                        type: "string",
+                        description: "Updated name for the model risk."
+                    },
+                    description: {
+                        type: "string",
+                        description: "Updated description of the risk."
+                    },
+                    risk_category: {
+                        type: "string",
+                        enum: ["Performance", "Bias & Fairness", "Security", "Data Quality", "Compliance"],
+                        description: "Updated risk category."
+                    },
+                    risk_level: {
+                        type: "string",
+                        enum: ["Low", "Medium", "High", "Critical"],
+                        description: "Updated severity level."
+                    },
+                    status: {
+                        type: "string",
+                        enum: ["Open", "In Progress", "Resolved", "Accepted"],
+                        description: "Updated status."
+                    },
+                    owner: {
+                        type: "string",
+                        description: "Updated risk owner name."
+                    },
+                    target_date: {
+                        type: "string",
+                        description: "Updated target date (ISO 8601 format)."
+                    },
+                    mitigation_plan: {
+                        type: "string",
+                        description: "Updated mitigation plan."
+                    },
+                    impact: {
+                        type: "string",
+                        description: "Updated impact description."
+                    },
+                    likelihood: {
+                        type: "string",
+                        description: "Updated likelihood."
+                    }
+                },
+                required: ["model_risk_id"]
+            }
+        }
+    },
+    {
+        type: "function",
+        function: {
+            name: "agent_change_model_risk_status",
+            description: "Change the status of a model risk. Use this to move a risk through its lifecycle (e.g., from 'Open' to 'In Progress' to 'Resolved'). Requires user confirmation before executing.",
+            parameters: {
+                type: "object",
+                properties: {
+                    model_risk_id: {
+                        type: "number",
+                        description: "The ID of the model risk to update."
+                    },
+                    status: {
+                        type: "string",
+                        enum: ["Open", "In Progress", "Resolved", "Accepted"],
+                        description: "The new status to set."
+                    }
+                },
+                required: ["model_risk_id", "status"]
+            }
+        }
+    },
+    {
+        type: "function",
+        function: {
+            name: "agent_delete_model_risk",
+            description: "Soft-delete a model risk. This marks the risk as deleted but does not permanently remove it. Requires user confirmation before executing.",
+            parameters: {
+                type: "object",
+                properties: {
+                    model_risk_id: {
+                        type: "number",
+                        description: "The ID of the model risk to delete."
+                    }
+                },
+                required: ["model_risk_id"]
+            }
+        }
     }
 ];

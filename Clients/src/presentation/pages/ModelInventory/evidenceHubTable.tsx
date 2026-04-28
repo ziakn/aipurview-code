@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import TablePaginationActions from "../../components/TablePagination";
 import CustomIconButton from "../../components/IconButton";
-import { ChevronsUpDown, ChevronUp, ChevronDown, FileCheck, FolderOpen, Shield, Clock } from "lucide-react";
+import { ChevronsUpDown, ChevronUp, ChevronDown, FileCheck, FolderOpen, Shield, Clock, Sparkles } from "lucide-react";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { displayFormattedDate } from "../../tools/isoDateToString";
@@ -26,6 +26,8 @@ import { getAllEntities } from "../../../application/repository/entity.repositor
 import { EmptyState } from "../../components/EmptyState";
 import EmptyStateTip from "../../components/EmptyState/EmptyStateTip";
 import { FileIcon } from "../../components/FileIcon";
+import EvidenceQualityBadge from "../../components/EvidenceQualityBadge";
+import { useQualityScores, useTriggerAnalysis } from "../../../application/hooks/useEvidenceAi";
 import {
   loadingContainerStyle,
   paginationMenuProps,
@@ -61,6 +63,7 @@ const TABLE_COLUMNS = [
   { id: "uploaded_by", label: "UPLOADED BY", sortable: true },
   { id: "uploaded_on", label: "UPLOADED ON", sortable: true },
   { id: "expiry_date", label: "EXPIRY", sortable: true },
+  { id: "quality", label: "QUALITY", sortable: true },
   { id: "actions", label: "", sortable: false },
 ];
 
@@ -169,6 +172,8 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
   const theme = useTheme();
   const [users, setUsers] = useState<User[]>([]);
   const [page, setPage] = useState(0);
+  const { data: qualityScoresData } = useQualityScores();
+  const triggerAnalysis = useTriggerAnalysis();
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   // Filter columns based on visibleColumns prop
@@ -241,6 +246,19 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
 
     return map;
   }, [modelInventoryData]);
+
+  // Build a map of file_id → quality score from AI analysis data
+  const qualityMap = useMemo(() => {
+    const map = new Map<number, number>();
+    if (qualityScoresData && Array.isArray(qualityScoresData)) {
+      qualityScoresData.forEach((item: any) => {
+        if (item.file_id && item.overall_quality_score != null) {
+          map.set(item.file_id, item.overall_quality_score);
+        }
+      });
+    }
+    return map;
+  }, [qualityScoresData]);
 
   const handleChangePage = useCallback((_: unknown, newPage: number) => {
     setPage(newPage);
@@ -442,8 +460,51 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
                       : "-"}
                   </TableCell>
                 )}
+                {isColVisible("quality") && (
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    {(() => {
+                      const fileId = evidence.evidence_files?.[0]?.id;
+                      const score = fileId ? qualityMap.get(Number(fileId)) : undefined;
+                      return score != null ? (
+                        <EvidenceQualityBadge score={score} />
+                      ) : (
+                        <Typography sx={{ fontSize: 11, color: palette.text.disabled }}>-</Typography>
+                      );
+                    })()}
+                  </TableCell>
+                )}
                 <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
                   <Stack direction="row" spacing={1}>
+                    {evidence.evidence_files?.[0]?.id && (
+                      <Tooltip title={qualityMap.has(Number(evidence.evidence_files[0].id)) ? "Re-analyze with AI" : "Analyze with AI"}>
+                        <Box
+                          component="button"
+                          onClick={(e: React.MouseEvent) => {
+                            e.stopPropagation();
+                            const fileId = Number(evidence.evidence_files[0].id);
+                            if (fileId) triggerAnalysis.mutate(fileId);
+                          }}
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: 28,
+                            height: 28,
+                            borderRadius: "6px",
+                            border: "1px solid",
+                            borderColor: triggerAnalysis.isPending ? "#ccc" : "#7C3AED",
+                            backgroundColor: triggerAnalysis.isPending ? "#f5f5f5" : "#F5F3FF",
+                            color: triggerAnalysis.isPending ? "#999" : "#7C3AED",
+                            cursor: triggerAnalysis.isPending ? "wait" : "pointer",
+                            padding: 0,
+                            "&:hover": { backgroundColor: triggerAnalysis.isPending ? "#f5f5f5" : "#EDE9FE" },
+                          }}
+                          disabled={triggerAnalysis.isPending}
+                        >
+                          <Sparkles size={14} />
+                        </Box>
+                      </Tooltip>
+                    )}
                     <CustomIconButton
                       id={evidence.id || 0}
                       onDelete={() => onDelete?.(evidence.id || 0)}
@@ -495,6 +556,8 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
       onDelete,
       isColVisible,
       visibleTableColumns,
+      qualityMap,
+      triggerAnalysis,
     ]
   );
 
