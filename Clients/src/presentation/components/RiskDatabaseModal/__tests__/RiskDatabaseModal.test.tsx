@@ -9,10 +9,10 @@ vi.mock("../../EmptyState", () => ({
   EmptyState: () => <div data-testid="empty-state" />,
 }));
 vi.mock("../../Search", () => ({
-  SearchBox: (props: any) => <input data-testid="search-box" />,
+  SearchBox: (_props: any) => <input data-testid="search-box" />,
 }));
 
-import { screen } from "@testing-library/react";
+import { screen as _screen } from "@testing-library/react";
 import { renderWithProviders } from "../../../../test/renderWithProviders";
 import RiskDatabaseModal from "../index";
 

@@ -59,6 +59,8 @@ describe("VWQuestion", () => {
           subtopicId: 1,
           assessmentId: 1,
         } as any}
+        setRefreshKey={vi.fn()}
+        currentProjectId={1}
       />
     );
     expect(document.body).toBeTruthy();

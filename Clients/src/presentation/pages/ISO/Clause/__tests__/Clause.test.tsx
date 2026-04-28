@@ -24,12 +24,15 @@ describe("ISO42001Clauses Page", () => {
     id: 1,
     project_title: "Test Project",
     owner: 1,
-    start_date: "2024-01-01",
-    ai_risk_classification: "high",
-    type_of_high_risk_role: "provider",
+    members: [],
+    start_date: new Date("2024-01-01"),
+    ai_risk_classification: "high risk" as const,
+    type_of_high_risk_role: "provider" as const,
     goal: "Test goal",
-    last_updated: "2024-01-01",
-    last_updated_by: "Test User",
+    last_updated: new Date("2024-01-01"),
+    last_updated_by: 1,
+    framework: [],
+    monitored_regulations_and_standards: [],
   };
 
   it("renders without crashing", () => {

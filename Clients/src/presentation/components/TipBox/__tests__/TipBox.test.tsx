@@ -29,6 +29,7 @@ describe("TipBox", () => {
     vi.mocked(useTipManager).mockReturnValue({
       currentTip: { header: "Pro Tip", content: "This is a helpful tip." },
       dismissTip: vi.fn(),
+      hasTips: true,
       currentTipNumber: 1,
       totalTips: 3,
     });
@@ -52,6 +53,7 @@ describe("TipBox", () => {
     vi.mocked(useTipManager).mockReturnValueOnce({
       currentTip: null,
       dismissTip: vi.fn(),
+      hasTips: false,
       currentTipNumber: 0,
       totalTips: 0,
     });

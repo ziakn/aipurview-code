@@ -35,7 +35,7 @@ import GenerateReport from "../index";
 describe("GenerateReport", () => {
   it("renders without crashing", () => {
     renderWithProviders(
-      <GenerateReport open={true} onClose={vi.fn()} />
+      <GenerateReport onClose={vi.fn()} reportType="project" />
     );
     expect(document.body).toBeTruthy();
   });

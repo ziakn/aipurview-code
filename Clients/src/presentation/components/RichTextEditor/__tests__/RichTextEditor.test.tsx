@@ -29,7 +29,7 @@ import RichTextEditor from "../index";
 describe("RichTextEditor", () => {
   it("renders editor content area", () => {
     renderWithProviders(
-      <RichTextEditor content="" onContentChange={vi.fn()} />
+      <RichTextEditor initialContent="" onContentChange={vi.fn()} />
     );
     expect(screen.getByTestId("editor-content")).toBeInTheDocument();
   });
