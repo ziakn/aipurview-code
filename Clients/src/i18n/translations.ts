@@ -89,6 +89,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Generate reports": "Berichte erstellen",
     "Generate report menu": "Menü zur Berichterstellung",
     "Add": "Hinzufügen",
+    "Add new": "Neu hinzufügen",
     "Add agent": "Agent hinzufügen",
     "Add new risk": "Neues Risiko hinzufügen",
     "Add new risks": "Neue Risiken hinzufügen",
@@ -238,6 +239,11 @@ export const translations: Record<string, Record<string, string>> = {
     "Awaiting review": "Warten auf Prüfung",
     "Awaiting Review": "Warten auf Prüfung",
     "Overdue": "Überfällig",
+
+    // Task radar (dashboard card)
+    "Task radar": "Aufgabenradar",
+    "Due soon": "Bald fällig",
+    "Upcoming": "Anstehend",
 
     // Risk severity
     "High": "Hoch",
@@ -485,6 +491,17 @@ export const translations: Record<string, Record<string, string>> = {
     "Framework risks": "Rahmenwerksrisiken",
     "Framework visibility and configuration": "Sichtbarkeit und Konfiguration des Rahmenwerks",
     "Introduction": "Einführung",
+
+    // AI-or-Not screening modal
+    "Screening questions": "Filterfragen",
+    "Result": "Ergebnis",
+    "Is your system an AI system?": "Ist Ihr System ein KI-System?",
+    "This short screening (7 questions) helps determine whether your system qualifies as an AI system under the EU AI Act, NIST AI RMF, and ISO/IEC 42001.": "Dieses kurze Screening (7 Fragen) hilft zu bestimmen, ob Ihr System gemäß EU-KI-Verordnung, NIST AI RMF und ISO/IEC 42001 als KI-System gilt.",
+    "If classified as AI, it should enter your AI inventory and follow your AI governance lifecycle.": "Wenn als KI eingestuft, sollte es in Ihr KI-Inventar aufgenommen werden und Ihrem KI-Governance-Lebenszyklus folgen.",
+
+    // Stepper counter ("Step X of Y") — split into separate text nodes
+    "Step": "Schritt",
+    "of": "von",
 
     // Filters / search
     "Search": "Suchen",
@@ -796,6 +813,8 @@ export const translations: Record<string, Record<string, string>> = {
     "LLM Keys": "LLM-Schlüssel",
     "Audit ledger": "Prüfjournal",
     "Organization Settings": "Organisationseinstellungen",
+    "Manage your profile, security, team members, and application preferences.": "Verwalten Sie Ihr Profil, die Sicherheit, Teammitglieder und Anwendungseinstellungen.",
+    "View organization settings for the selected organization.": "Organisationseinstellungen für die ausgewählte Organisation anzeigen.",
     "Date format": "Datumsformat",
     "Language": "Sprache",
     "Select an option": "Option auswählen",
@@ -1095,6 +1114,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Edit file metadata": "Dateimetadaten bearbeiten",
     "Edit folder": "Ordner bearbeiten",
     "Edit project": "Projekt bearbeiten",
+    "Add/remove frameworks": "Rahmenwerke hinzufügen/entfernen",
     "Edit question": "Frage bearbeiten",
     "Edit syslog source": "Syslog-Quelle bearbeiten",
     "Edit tool settings": "Tool-Einstellungen bearbeiten",
@@ -3282,6 +3302,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Generate report": "Générer un rapport",
     "Generate reports": "Générer des rapports",
     "Add": "Ajouter",
+    "Add new": "Ajouter",
     "Add agent": "Ajouter un agent",
     "Add new risk": "Ajouter un nouveau risque",
     "Add new risks": "Ajouter de nouveaux risques",
@@ -3412,6 +3433,12 @@ export const translations: Record<string, Record<string, string>> = {
     "Awaiting approval": "En attente d'approbation",
     "Awaiting review": "En attente de relecture",
     "Overdue": "En retard",
+
+    // Task radar (dashboard card)
+    "Task radar": "Radar des tâches",
+    "Due soon": "Bientôt dû",
+    "Upcoming": "À venir",
+
     "Unknown": "Inconnu",
     "Failed": "Échoué",
     "Cancelled": "Annulé",
@@ -3519,6 +3546,17 @@ export const translations: Record<string, Record<string, string>> = {
     "Your organization": "Votre organisation",
     "Framework dashboard": "Tableau de bord du référentiel",
     "Introduction": "Introduction",
+
+    // AI-or-Not screening modal
+    "Screening questions": "Questions de filtrage",
+    "Result": "Résultat",
+    "Is your system an AI system?": "Votre système est-il un système d'IA ?",
+    "This short screening (7 questions) helps determine whether your system qualifies as an AI system under the EU AI Act, NIST AI RMF, and ISO/IEC 42001.": "Ce filtrage rapide (7 questions) permet de déterminer si votre système est qualifié de système d'IA selon le RIA, le NIST AI RMF et l'ISO/IEC 42001.",
+    "If classified as AI, it should enter your AI inventory and follow your AI governance lifecycle.": "S'il est classé comme IA, il doit être ajouté à votre inventaire IA et suivre votre cycle de vie de gouvernance IA.",
+
+    // Stepper counter ("Step X of Y") — split into separate text nodes
+    "Step": "Étape",
+    "of": "sur",
 
     // Frameworks
     "EU AI Act": "Règlement IA de l'UE",
@@ -4091,6 +4129,8 @@ export const translations: Record<string, Record<string, string>> = {
     "LLM Keys": "Clés LLM",
     "Audit ledger": "Journal d'audit",
     "Organization Settings": "Paramètres de l'organisation",
+    "Manage your profile, security, team members, and application preferences.": "Gérez votre profil, la sécurité, les membres de l'équipe et les préférences de l'application.",
+    "View organization settings for the selected organization.": "Consulter les paramètres de l'organisation sélectionnée.",
     "Date format": "Format de date",
     "Language": "Langue",
     "Select an option": "Sélectionner une option",
@@ -4379,6 +4419,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Edit file metadata": "Modifier les métadonnées du fichier",
     "Edit folder": "Modifier le dossier",
     "Edit project": "Modifier le projet",
+    "Add/remove frameworks": "Ajouter / supprimer des référentiels",
     "Edit question": "Modifier la question",
     "Edit syslog source": "Modifier la source syslog",
     "Edit tool settings": "Modifier les paramètres de l'outil",

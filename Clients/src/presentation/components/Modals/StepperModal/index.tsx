@@ -167,7 +167,7 @@ const StepperModal: React.FC<StepperModalProps> = ({
                   lineHeight: "20px",
                 }}
               >
-                Step {activeStep + 1} of {steps.length}
+                <span>Step</span> {activeStep + 1} <span>of</span> {steps.length}
               </Typography>
             </Stack>
 
