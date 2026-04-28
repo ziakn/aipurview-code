@@ -85,8 +85,11 @@ function jsonSchemaToZod(schema: Record<string, unknown>): ZodTypeAny {
  * into AI SDK `tool()` format.
  *
  * @param toolsDefinition - Array of OpenAI-format tool definitions
- * @param availableTools - Record mapping tool name → async function(params, tenant)
- * @param tenant - Tenant hash injected via closure into each tool execution
+ * @param availableTools - Record mapping tool name → async function(params, tenant, userId?)
+ * @param tenant - Organization ID injected via closure into each tool execution
+ * @param userId - Optional user ID passed as a third argument to tool functions. Required by
+ *                 AI *write* tools that need to attribute actions to a requester (e.g. creating
+ *                 an approval request). Read-only tools may ignore this argument.
  * @returns ToolSet for AI SDK streamText()
  */
 export function bridgeTools(
@@ -98,7 +101,7 @@ export function bridgeTools(
       parameters: Record<string, unknown>;
     };
   }>,
-  availableTools: Record<string, (params: Record<string, unknown>, tenant: number) => Promise<unknown>>,
+  availableTools: Record<string, (params: Record<string, unknown>, tenant: number, userId?: number) => Promise<unknown>>,
   tenant: number,
   userId?: number
 ): ToolSet {
@@ -145,7 +148,7 @@ export function bridgeTools(
             ? { ...cleaned, _userId: userId }
             : cleaned;
           logger.info(`[toolBridge] Calling "${name}" with params: ${JSON.stringify(cleaned)}`);
-          const result = await fn(enrichedParams, tenant);
+          const result = await fn(enrichedParams, tenant, userId);
           const resultSize = Array.isArray(result) ? result.length : typeof result;
           logger.info(`[toolBridge] Tool "${name}" returned: ${resultSize} ${Array.isArray(result) ? "items" : ""}`);
           return result;

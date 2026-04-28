@@ -21,6 +21,7 @@ import {
     Bot,
     Shield,
     AlertTriangle,
+    Wrench,
 } from "lucide-react";
 import dayjs from "dayjs";
 
@@ -86,14 +87,17 @@ export const ENTITY_TYPE_CONFIGS: Record<EntityTypeKey, EntityTypeConfig> = {
     },
     ai_action: {
         title: "AI Action Details",
-        deletedMessage: "The AI action associated with this request has been deleted.",
-        noDataMessage: "No additional AI action details available",
+        deletedMessage: "The AI action payload for this request is missing.",
+        noDataMessage: "No AI action details available",
         fields: [
-            { key: 'aiToolName', label: 'Tool', icon: <Bot size={14} /> },
+            { key: 'aiToolName', label: 'Tool', icon: <Wrench size={14} /> },
+            { key: 'aiPreview', label: 'Proposed action', icon: <Bot size={14} /> },
             { key: 'aiDescription', label: 'Description', icon: <FileText size={14} /> },
             { key: 'aiActionType', label: 'Action type', icon: <FileText size={14} /> },
             { key: 'aiRiskLevel', label: 'Risk level', icon: <Shield size={14} /> },
             { key: 'aiState', label: 'State', icon: <AlertTriangle size={14} /> },
+            { key: 'aiInputParamsJson', label: 'Parameters', icon: <FileText size={14} /> },
+            { key: 'aiRequestedVia', label: 'Requested via', icon: <FileText size={14} /> },
         ],
     },
     risk: {
@@ -240,25 +244,33 @@ export function extractEntityDetails(requestData: any): Record<string, any> {
             };
 
         case 'ai_action': {
-            // Parse entity_data (may be string or object)
-            let entityData: any = requestData.entity_data;
-            if (typeof entityData === 'string') {
-                try { entityData = JSON.parse(entityData); } catch { entityData = {}; }
-            }
-            entityData = entityData || {};
-
+            // AI action payloads live in entity_data (JSONB). Postgres returns
+            // JSONB as a parsed object, but guard for string. Falls back to
+            // dedicated columns (ai_tool_name etc.) when populated.
+            const raw = requestData.entity_data;
+            const payload = typeof raw === 'string'
+                ? (() => { try { return JSON.parse(raw); } catch { return {}; } })()
+                : (raw || {});
+            const toolName = (requestData.ai_tool_name as string | undefined) || (payload.tool_name as string | undefined);
             return {
                 ...baseDetails,
+                // Use preview/tool name as primary identifier for deletion check
                 entityName:
-                    requestData.ai_tool_name ||
-                    entityData.tool_name ||
-                    requestData.request_name,
-                aiToolName: requestData.ai_tool_name || entityData.tool_name,
-                aiActionType: requestData.ai_action_type || entityData.action_type,
-                aiRiskLevel: requestData.ai_risk_level || entityData.risk_level,
+                    payload.preview ||
+                    toolName ||
+                    requestData.request_name ||
+                    'AI action',
+                aiToolName: toolName,
+                aiPreview: payload.preview,
+                aiActionType: requestData.ai_action_type || payload.action_type,
+                aiRiskLevel: requestData.ai_risk_level || payload.risk_level,
                 aiState: requestData.ai_state,
-                aiInputParams: requestData.ai_input_params || entityData.input_params,
-                aiDescription: entityData.description,
+                aiDescription: payload.description,
+                aiRequestedVia: payload.requested_via,
+                aiInputParamsJson: (requestData.ai_input_params || payload.input_params)
+                    ? JSON.stringify(requestData.ai_input_params || payload.input_params, null, 2)
+                    : undefined,
+                aiResult: payload.result,
             };
         }
 

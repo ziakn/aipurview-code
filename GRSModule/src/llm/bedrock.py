@@ -43,7 +43,16 @@ class BedrockChatClient:
         )
         latency_ms = int((time.time() - t0) * 1000)
 
-        text = response["output"]["message"]["content"][0]["text"]
+        content_blocks = response["output"]["message"]["content"]
+        text_block = next((b for b in content_blocks if "text" in b), None)
+        if text_block is not None:
+            text = text_block["text"]
+        else:
+            reasoning_block = next((b for b in content_blocks if "reasoningContent" in b), None)
+            if reasoning_block is not None:
+                text = reasoning_block["reasoningContent"]["reasoningText"]["text"]
+            else:
+                raise ValueError(f"No text or reasoningContent block in Bedrock response: {content_blocks}")
 
         return ChatResult(
             text=text,

@@ -126,8 +126,9 @@ paths:
     get:
       tags:
         - AI Advisor
-      summary: Get Conversation
-      operationId: getConversation
+      summary: List conversations for a domain
+      description: Returns all conversations the current user has in the given advisor domain, most recent first. Lightweight summaries only — no message bodies.
+      operationId: listConversations
       security:
         - bearerAuth: []
       parameters:
@@ -146,8 +147,9 @@ paths:
     post:
       tags:
         - AI Advisor
-      summary: Save Conversation
-      operationId: saveConversation
+      summary: Create a new empty conversation
+      description: Creates a fresh empty conversation in the given domain. Title is derived automatically when the first user message is saved.
+      operationId: createConversation
       security:
         - bearerAuth: []
       parameters:
@@ -156,16 +158,105 @@ paths:
           required: true
           schema:
             type: string
+      responses:
+        "201":
+          description: Conversation created
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal server error
+  /advisor/conversations/{domain}/{id}:
+    get:
+      tags:
+        - AI Advisor
+      summary: Get a single conversation
+      description: Returns the full conversation including its messages array.
+      operationId: getConversationById
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Success
+        "401":
+          description: Unauthorized
+        "404":
+          description: Conversation not found
+        "500":
+          description: Internal server error
+    put:
+      tags:
+        - AI Advisor
+      summary: Update conversation messages
+      description: Replaces the messages array of an existing conversation. Bumps last_message_at and auto-derives the title on first save.
+      operationId: updateConversation
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       requestBody:
         content:
           application/json:
             schema:
               type: object
+              properties:
+                messages:
+                  type: array
+                  items:
+                    type: object
       responses:
-        "201":
-          description: Created successfully
+        "200":
+          description: Updated successfully
         "401":
           description: Unauthorized
+        "404":
+          description: Conversation not found
+        "500":
+          description: Internal server error
+    delete:
+      tags:
+        - AI Advisor
+      summary: Delete a conversation
+      operationId: deleteConversation
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: domain
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: Unauthorized
+        "404":
+          description: Conversation not found
         "500":
           description: Internal server error
   /advisor/stream:

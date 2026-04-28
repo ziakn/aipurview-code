@@ -33,6 +33,12 @@ function validateRiskCategory(category: string): string {
   return "Operational risk";
 }
 
+// NOTE: agent_create_risk / agent_update_risk / agent_delete_risk also exist
+// in `advisor/aiActions/createRisk/` registry (upstream refactor). The
+// in-file versions below are kept for backward-compat with the legacy
+// confirmation flow. The registry-based versions take precedence when both
+// are wired up.
+
 export interface FetchRisksParams {
   projectId?: number;
   frameworkId?: number;

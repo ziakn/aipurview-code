@@ -1,13 +1,17 @@
 import { Request, Response } from "express";
 import type { UIMessage } from "ai";
+import { convertToModelMessages } from "ai";
 import { streamAdvisorAiSdk, runAdvisorAiSdk, getStreamTextResult } from "../advisor/aiSdkAgent";
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import logger, { logStructured } from "../utils/logger/fileLogger";
 import { getLLMKeysWithKeyQuery, getLLMProviderUrl } from "../utils/llmKey.utils";
 import { LLMProvider } from "../domain.layer/interfaces/i.llmKey";
 import {
-  getConversationQuery,
-  upsertConversationQuery,
+  listConversationsQuery,
+  getConversationByIdQuery,
+  createConversationQuery,
+  updateConversationMessagesQuery,
+  deleteConversationQuery,
 } from "../utils/advisorConversation.utils";
 import { IAdvisorMessage } from "../domain.layer/interfaces/i.advisorConversation";
 import { availableRiskTools } from "../advisor/functions/riskFunctions";
@@ -49,6 +53,9 @@ import { availableCeMarkingTools } from "../advisor/functions/ceMarkingFunctions
 import { availablePolicyLinkedObjectTools } from "../advisor/functions/policyLinkedObjectFunctions";
 import { availableAuditLedgerTools } from "../advisor/functions/auditLedgerFunctions";
 import { availableAdminTools } from "../advisor/functions/adminFunctions";
+import { availableUserTools } from "../advisor/functions/userFunctions";
+import { availableProjectTools } from "../advisor/functions/projectFunctions";
+import { availableFrameworkLookupTools } from "../advisor/functions/frameworkLookupFunctions";
 import { toolsDefinition as riskToolsDefinition } from "../advisor/tools/riskTools";
 import { toolsDefinition as modelInventoryToolsDefinition } from "../advisor/tools/modelInventoryTools";
 import { toolsDefinition as modelRiskToolsDefinition } from "../advisor/tools/modelRiskTools";
@@ -88,6 +95,13 @@ import { toolsDefinition as ceMarkingToolsDefinition } from "../advisor/tools/ce
 import { toolsDefinition as policyLinkedObjectToolsDefinition } from "../advisor/tools/policyLinkedObjectTools";
 import { toolsDefinition as auditLedgerToolsDefinition } from "../advisor/tools/auditLedgerTools";
 import { toolsDefinition as adminToolsDefinition } from "../advisor/tools/adminTools";
+import { toolsDefinition as userToolsDefinition } from "../advisor/tools/userTools";
+import { toolsDefinition as projectToolsDefinition } from "../advisor/tools/projectTools";
+import { toolsDefinition as frameworkLookupToolsDefinition } from "../advisor/tools/frameworkLookupTools";
+import {
+  aiActionToolDefinitions,
+  aiActionFilers,
+} from "../advisor/aiActions";
 
 const fileName = "advisor.ctrl.ts";
 
@@ -106,6 +120,10 @@ function selectLLMKey(clients: any[], llmKeyId?: number): any {
   return clients[0];
 }
 
+// Read-only tools are composed per-domain in `advisor/functions/*.ts`.
+// AI write tools (agent_create_*, agent_update_*, etc.) are composed via
+// the AI Actions registry — adding one only requires creating a new
+// `advisor/aiActions/<action>/` module and registering it there.
 const availableTools = {
   ...availableRiskTools,
   ...availableModelInventoryTools,
@@ -146,6 +164,10 @@ const availableTools = {
   ...availablePolicyLinkedObjectTools,
   ...availableAuditLedgerTools,
   ...availableAdminTools,
+  ...availableUserTools,
+  ...availableProjectTools,
+  ...availableFrameworkLookupTools,
+  ...aiActionFilers,
 };
 
 const toolsDefinition = [
@@ -188,6 +210,10 @@ const toolsDefinition = [
   ...policyLinkedObjectToolsDefinition,
   ...auditLedgerToolsDefinition,
   ...adminToolsDefinition,
+  ...userToolsDefinition,
+  ...projectToolsDefinition,
+  ...frameworkLookupToolsDefinition,
+  ...aiActionToolDefinitions,
 ];
 
 export async function runAdvisor(req: Request, res: Response) {
@@ -237,11 +263,11 @@ export async function runAdvisor(req: Request, res: Response) {
       model: apiKey.model,
       userPrompt: prompt,
       tenant: organizationId,
+      userId,
       availableTools,
       toolsDefinition,
       provider: apiKey.name as "Anthropic" | "OpenAI" | "OpenRouter" | "Custom",
       headers: apiKey.custom_headers || undefined,
-      userId: userId,
     };
 
     const response = await runAdvisorAiSdk(agentParams);
@@ -269,15 +295,42 @@ export async function runAdvisor(req: Request, res: Response) {
 }
 
 /**
- * Get conversation history for a specific domain
+ * Normalize the `:domain` path param (which may arrive as `string` or
+ * `string[]` depending on how Express was started) into a plain string.
+ * Returns null if absent — callers should 400.
  */
-export async function getConversation(req: Request, res: Response) {
-  const functionName = "getConversation";
+function getDomainParam(req: Request): string | null {
+  const raw = req.params.domain;
+  const value = Array.isArray(raw) ? raw[0] : raw;
+  return value && typeof value === "string" ? value : null;
+}
+
+/**
+ * Parse the `:id` path param into a positive integer. Returns null on any
+ * parse failure so the caller can emit a clean 400.
+ */
+function getIdParam(req: Request): number | null {
+  const raw = req.params.id;
+  const value = Array.isArray(raw) ? raw[0] : raw;
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed <= 0 || !Number.isInteger(parsed)) {
+    return null;
+  }
+  return parsed;
+}
+
+/**
+ * List all conversations the requesting user has in a given advisor
+ * domain, most recent first. Returns summaries (no full messages) so the
+ * response stays small even for long histories.
+ */
+export async function listConversations(req: Request, res: Response) {
+  const functionName = "listConversations";
 
   try {
     const organizationId = req.organizationId!;
     const userId = req.userId ? Number(req.userId) : undefined;
-    const domain = Array.isArray(req.params.domain) ? req.params.domain[0] : req.params.domain;
+    const domain = getDomainParam(req);
 
     if (!userId) {
       return res.status(400).json({ error: "User context is required" });
@@ -287,51 +340,186 @@ export async function getConversation(req: Request, res: Response) {
       return res.status(400).json({ error: "Domain is required" });
     }
 
-    logger.debug(`Getting conversation for organization: ${organizationId}, user: ${userId}, domain: ${domain}`);
+    logger.debug(
+      `Listing conversations for organization: ${organizationId}, user: ${userId}, domain: ${domain}`,
+    );
 
-    const conversation = await getConversationQuery(organizationId, userId, domain);
+    const conversations = await listConversationsQuery(
+      organizationId,
+      userId,
+      domain,
+    );
+
+    logStructured(
+      "successful",
+      `Listed ${conversations.length} conversations for domain: ${domain}`,
+      functionName,
+      fileName,
+    );
+
+    return res.status(200).json({ domain, conversations });
+  } catch (error) {
+    logStructured(
+      "error",
+      "Failed to list conversations",
+      functionName,
+      fileName,
+    );
+    logger.error("❌ Error listing conversations:", error);
+    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+  }
+}
+
+/**
+ * Fetch a single conversation (including its full messages array) by id.
+ * Scoped to the requesting org + user — returns 404 if the row doesn't
+ * exist under that scope, even if it exists in another tenant.
+ */
+export async function getConversationById(req: Request, res: Response) {
+  const functionName = "getConversationById";
+
+  try {
+    const organizationId = req.organizationId!;
+    const userId = req.userId ? Number(req.userId) : undefined;
+    const domain = getDomainParam(req);
+    const id = getIdParam(req);
+
+    if (!userId) {
+      return res.status(400).json({ error: "User context is required" });
+    }
+
+    if (!domain) {
+      return res.status(400).json({ error: "Domain is required" });
+    }
+
+    if (id === null) {
+      return res.status(400).json({ error: "Valid conversation id is required" });
+    }
+
+    logger.debug(
+      `Getting conversation id=${id} for organization: ${organizationId}, user: ${userId}, domain: ${domain}`,
+    );
+
+    const conversation = await getConversationByIdQuery(
+      organizationId,
+      userId,
+      id,
+    );
 
     if (!conversation) {
-      // Return empty messages array if no conversation exists
-      return res.status(200).json({
-        domain,
-        messages: [],
-      });
+      return res.status(404).json({ error: "Conversation not found" });
+    }
+
+    // The row is fetched by id + user + org, but we still verify the domain
+    // matches what the client asked for. This catches frontend bugs early
+    // (wrong domain in the URL) and keeps responses predictable.
+    if (conversation.domain !== domain) {
+      return res.status(404).json({ error: "Conversation not found" });
     }
 
     logStructured(
       "successful",
-      `Retrieved conversation for domain: ${domain}`,
+      `Retrieved conversation id=${id} for domain: ${domain}`,
       functionName,
       fileName,
     );
 
     return res.status(200).json({
       domain: conversation.domain,
-      messages: conversation.messages,
+      conversation: {
+        id: conversation.id,
+        title: conversation.title,
+        messages: conversation.messages,
+        last_message_at: conversation.last_message_at,
+        created_at: conversation.created_at,
+        updated_at: conversation.updated_at,
+      },
     });
   } catch (error) {
     logStructured(
       "error",
-      "Failed to get conversation",
+      "Failed to get conversation by id",
       functionName,
       fileName,
     );
-    logger.error("❌ Error getting conversation:", error);
+    logger.error("❌ Error getting conversation by id:", error);
     return res.status(500).json(STATUS_CODE[500]((error as Error).message));
   }
 }
 
 /**
- * Save/update conversation messages for a specific domain
+ * Create a new empty conversation in the given domain. Title is null until
+ * the first user message lands via the update endpoint.
  */
-export async function saveConversation(req: Request, res: Response) {
-  const functionName = "saveConversation";
+export async function createConversation(req: Request, res: Response) {
+  const functionName = "createConversation";
 
   try {
     const organizationId = req.organizationId!;
     const userId = req.userId ? Number(req.userId) : undefined;
-    const domain = Array.isArray(req.params.domain) ? req.params.domain[0] : req.params.domain;
+    const domain = getDomainParam(req);
+
+    if (!userId) {
+      return res.status(400).json({ error: "User context is required" });
+    }
+
+    if (!domain) {
+      return res.status(400).json({ error: "Domain is required" });
+    }
+
+    logger.debug(
+      `Creating conversation for organization: ${organizationId}, user: ${userId}, domain: ${domain}`,
+    );
+
+    const conversation = await createConversationQuery(
+      organizationId,
+      userId,
+      domain,
+    );
+
+    logStructured(
+      "successful",
+      `Created conversation id=${conversation.id} for domain: ${domain}`,
+      functionName,
+      fileName,
+    );
+
+    return res.status(201).json({
+      domain: conversation.domain,
+      conversation: {
+        id: conversation.id,
+        title: conversation.title,
+        messages: conversation.messages,
+        last_message_at: conversation.last_message_at,
+        created_at: conversation.created_at,
+        updated_at: conversation.updated_at,
+      },
+    });
+  } catch (error) {
+    logStructured(
+      "error",
+      "Failed to create conversation",
+      functionName,
+      fileName,
+    );
+    logger.error("❌ Error creating conversation:", error);
+    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+  }
+}
+
+/**
+ * Replace the messages of an existing conversation. Called by the
+ * frontend after every turn (both user submission and assistant finish).
+ * Bumps last_message_at and auto-derives the title on first save.
+ */
+export async function updateConversation(req: Request, res: Response) {
+  const functionName = "updateConversation";
+
+  try {
+    const organizationId = req.organizationId!;
+    const userId = req.userId ? Number(req.userId) : undefined;
+    const domain = getDomainParam(req);
+    const id = getIdParam(req);
     const messages: IAdvisorMessage[] = req.body.messages;
 
     if (!userId) {
@@ -342,33 +530,123 @@ export async function saveConversation(req: Request, res: Response) {
       return res.status(400).json({ error: "Domain is required" });
     }
 
-    if (!messages || !Array.isArray(messages)) {
+    if (id === null) {
+      return res.status(400).json({ error: "Valid conversation id is required" });
+    }
+
+    if (!Array.isArray(messages)) {
       return res.status(400).json({ error: "Messages array is required" });
     }
 
-    logger.debug(`Saving conversation for organization: ${organizationId}, user: ${userId}, domain: ${domain}, messages: ${messages.length}`);
+    logger.debug(
+      `Updating conversation id=${id} for organization: ${organizationId}, user: ${userId}, domain: ${domain}, messages: ${messages.length}`,
+    );
 
-    const conversation = await upsertConversationQuery(organizationId, userId, domain, messages);
+    // Double-check domain ownership before writing. The UPDATE is scoped to
+    // (org, user, id) which is safe, but a client could attempt to overwrite
+    // a conversation from a different domain. Reject that explicitly.
+    const existing = await getConversationByIdQuery(organizationId, userId, id);
+    if (!existing) {
+      return res.status(404).json({ error: "Conversation not found" });
+    }
+    if (existing.domain !== domain) {
+      return res.status(404).json({ error: "Conversation not found" });
+    }
+
+    const conversation = await updateConversationMessagesQuery(
+      organizationId,
+      userId,
+      id,
+      messages,
+    );
+
+    if (!conversation) {
+      return res.status(404).json({ error: "Conversation not found" });
+    }
 
     logStructured(
       "successful",
-      `Saved conversation for domain: ${domain} with ${messages.length} messages`,
+      `Updated conversation id=${id} for domain: ${domain} with ${messages.length} messages`,
       functionName,
       fileName,
     );
 
     return res.status(200).json({
       domain: conversation.domain,
-      messages: conversation.messages,
+      conversation: {
+        id: conversation.id,
+        title: conversation.title,
+        messages: conversation.messages,
+        last_message_at: conversation.last_message_at,
+        created_at: conversation.created_at,
+        updated_at: conversation.updated_at,
+      },
     });
   } catch (error) {
     logStructured(
       "error",
-      "Failed to save conversation",
+      "Failed to update conversation",
       functionName,
       fileName,
     );
-    logger.error("❌ Error saving conversation:", error);
+    logger.error("❌ Error updating conversation:", error);
+    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+  }
+}
+
+/**
+ * Delete a conversation by id. Scoped to the caller's org + user.
+ */
+export async function deleteConversation(req: Request, res: Response) {
+  const functionName = "deleteConversation";
+
+  try {
+    const organizationId = req.organizationId!;
+    const userId = req.userId ? Number(req.userId) : undefined;
+    const domain = getDomainParam(req);
+    const id = getIdParam(req);
+
+    if (!userId) {
+      return res.status(400).json({ error: "User context is required" });
+    }
+
+    if (!domain) {
+      return res.status(400).json({ error: "Domain is required" });
+    }
+
+    if (id === null) {
+      return res.status(400).json({ error: "Valid conversation id is required" });
+    }
+
+    // Confirm the row exists in this domain before deleting so we never
+    // delete a conversation from a different domain via a crafted URL.
+    const existing = await getConversationByIdQuery(organizationId, userId, id);
+    if (!existing || existing.domain !== domain) {
+      return res.status(404).json({ error: "Conversation not found" });
+    }
+
+    const deleted = await deleteConversationQuery(organizationId, userId, id);
+
+    if (!deleted) {
+      return res.status(404).json({ error: "Conversation not found" });
+    }
+
+    logStructured(
+      "successful",
+      `Deleted conversation id=${id} for domain: ${domain}`,
+      functionName,
+      fileName,
+    );
+
+    return res.status(204).send();
+  } catch (error) {
+    logStructured(
+      "error",
+      "Failed to delete conversation",
+      functionName,
+      fileName,
+    );
+    logger.error("❌ Error deleting conversation:", error);
     return res.status(500).json(STATUS_CODE[500]((error as Error).message));
   }
 }
@@ -441,11 +719,11 @@ export async function streamAdvisor(req: Request, res: Response) {
       model: apiKey.model,
       userPrompt: prompt,
       tenant: organizationId,
+      userId,
       availableTools,
       toolsDefinition,
       provider: apiKey.name as "Anthropic" | "OpenAI" | "OpenRouter" | "Custom",
       headers: apiKey.custom_headers || undefined,
-      userId: userId,
     };
 
     // Send an immediate status event so the client knows the connection is open
@@ -524,16 +802,23 @@ export async function streamAdvisorV2(req: Request, res: Response) {
     const messages: UIMessage[] = req.body.messages || [];
     const llmKeyId = req.body.llmKeyId as number | undefined;
     const organizationId = req.organizationId!;
+    const userId = req.userId ? Number(req.userId) : undefined;
 
-    // Extract the last user message as the prompt
-    const lastUserMessage = [...messages].reverse().find((m) => m.role === "user");
-    const prompt = lastUserMessage?.parts
-      ?.filter((p: any) => p.type === "text")
-      .map((p: any) => p.text)
-      .join("\n") || undefined;
+    // Guard: must end on a user turn so the model has something to respond to.
+    const lastMessage = messages[messages.length - 1];
+    if (!lastMessage || lastMessage.role !== "user") {
+      res.status(400).json({ error: "Last message must be from the user" });
+      return;
+    }
 
-    if (!prompt) {
-      res.status(400).json({ error: "No user message found" });
+    // Convert the UI message protocol into the plain ModelMessage shape the
+    // AI SDK's streamText expects. Handles text parts, tool parts, and
+    // attachments uniformly — we just pass everything through so the LLM
+    // sees the complete conversation history.
+    const modelMessages = await convertToModelMessages(messages);
+
+    if (modelMessages.length === 0) {
+      res.status(400).json({ error: "No renderable messages found" });
       return;
     }
 
@@ -560,21 +845,59 @@ export async function streamAdvisorV2(req: Request, res: Response) {
       apiKey: apiKey.key || "",
       baseURL: url,
       model: apiKey.model,
-      userPrompt: prompt,
+      // `messages` carries the full multi-turn history; `userPrompt` is kept
+      // as an empty string because it's ignored when `messages` is set but
+      // the type still requires it.
+      userPrompt: "",
+      messages: modelMessages,
       tenant: organizationId,
+      userId,
       availableTools,
       toolsDefinition,
       provider: apiKey.name as "Anthropic" | "OpenAI" | "OpenRouter" | "Custom",
       headers: apiKey.custom_headers || undefined,
-      userId: req.userId ? Number(req.userId) : undefined,
     });
 
-    // Use the streamText result's built-in method to pipe the AI SDK protocol.
-    // pipeUIMessageStreamToResponse is fire-and-forget (returns void);
-    // the AI SDK handles stream errors and response completion internally.
+    // Pipe the stream. Critical: supply `onError` to convert errors into
+    // user-visible text. Without it, the AI SDK silently closes the stream
+    // on failures (invalid API key, provider 4xx/5xx, network drops) and
+    // the user sees a blank response. `onError` returns the string that
+    // gets appended to the stream as the assistant's final text.
     result.pipeUIMessageStreamToResponse(res, {
       sendReasoning: true,
       sendSources: true,
+      onError: (error: unknown) => {
+        logger.error("❌ AI SDK stream error:", error);
+        logStructured(
+          "error",
+          "AI SDK stream error",
+          functionName,
+          fileName,
+        );
+
+        // Extract the provider's HTTP status if present — Anthropic/OpenAI
+        // errors from @ai-sdk/* providers expose `statusCode` on the error.
+        const statusCode = (error as { statusCode?: number })?.statusCode;
+        const message =
+          error instanceof Error ? error.message : String(error);
+
+        // Friendly mapping for the common failure modes so the user has
+        // an actionable hint, not just a stack-trace substring.
+        if (statusCode === 401 || /invalid.*api.*key|unauthorized/i.test(message)) {
+          return "I couldn't reach the AI provider — the configured API key was rejected. Ask an Admin to verify the LLM key in Settings.";
+        }
+        if (statusCode === 429 || /rate.*limit/i.test(message)) {
+          return "The AI provider is rate-limiting this request. Please wait a moment and try again.";
+        }
+        if (statusCode === 400 || /bad.*request/i.test(message)) {
+          return `The AI provider rejected the request: ${message}`;
+        }
+        if (statusCode && statusCode >= 500) {
+          return "The AI provider is currently unavailable. Please try again shortly.";
+        }
+
+        return `Something went wrong while generating a response: ${message}`;
+      },
     });
 
     logStructured(

@@ -42,6 +42,7 @@ import { TaskPriority, TaskStatus } from "../../../domain/enums/task.enum";
 import PageTour from "../../components/PageTour";
 import TasksSteps from "./TasksSteps";
 import { TaskModel } from "../../../domain/models/Common/task/task.model";
+import { onAiActionCompleted } from "../../../application/events/aiActionEvents";
 import { GroupBy } from "../../components/Table/GroupBy";
 import {
   useTableGrouping,
@@ -91,6 +92,7 @@ const TASKS_TABLE_COLUMNS: ColumnConfig<TaskColumnKey>[] = [
 const Tasks: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [tasks, setTasks] = useState<TaskModel[]>([]);
+  const [refreshKey, setRefreshKey] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
@@ -186,7 +188,26 @@ const Tasks: React.FC = () => {
       }
     };
     fetchTasks();
-  }, [includeArchived]);
+  }, [includeArchived, refreshKey]);
+
+  // Listen for AI action approvals for any task-lifecycle tool. Covers
+  // create, update, and delete — all trigger a table refresh.
+  useEffect(() => {
+    const TASK_TOOL_NAMES = new Set([
+      'agent_create_task',
+      'agent_update_task',
+      'agent_delete_task',
+    ]);
+    return onAiActionCompleted((detail) => {
+      if (
+        detail?.status === 'approved' &&
+        detail?.toolName &&
+        TASK_TOOL_NAMES.has(detail.toolName)
+      ) {
+        setRefreshKey((k) => k + 1);
+      }
+    });
+  }, []);
 
   // Handle taskId URL param to open edit modal from Wise Search
   useEffect(() => {

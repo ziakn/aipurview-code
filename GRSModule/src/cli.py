@@ -485,6 +485,15 @@ def _cmd_generate(args: argparse.Namespace) -> int:
             console.print(f"[red]No response files found in:[/red] {responses_dir}")
             return 2
 
+        if args.judge_model_filter:
+            from infer.paths import sanitize_model_id
+            target_stem = sanitize_model_id(args.judge_model_filter)
+            resp_files = [f for f in resp_files if f.stem == target_stem]
+            if not resp_files:
+                console.print(f"[red]No response file matched --judge-model-filter:[/red] {args.judge_model_filter} (looked for {target_stem}.jsonl)")
+                return 2
+            console.print(f"[yellow]Filtering to model:[/yellow] {args.judge_model_filter} → {target_stem}.jsonl")
+
         outputs = []
         for rf in resp_files:
             responses = list(read_jsonl(rf))
@@ -519,10 +528,9 @@ def _cmd_generate(args: argparse.Namespace) -> int:
 
             if args.judge_resume:
                 append_jsonl(out_path, scores)
-                append_jsonl(fail_path, failures)
             else:
                 write_jsonl(out_path, scores)
-                write_jsonl(fail_path, failures)
+            write_jsonl(fail_path, failures)
 
             outputs.append({
                 "candidate_response_file": rf.name,
@@ -548,6 +556,14 @@ def _cmd_generate(args: argparse.Namespace) -> int:
             stats = compute_judge_stats(sp, fp)
             stats["candidate_response_file"] = o["candidate_response_file"]
             per_candidate.append(stats)
+
+        # Merge with existing report: preserve entries for other candidate models.
+        if judge_report_path.exists():
+            existing = json.loads(judge_report_path.read_text(encoding="utf-8"))
+            existing_by_file = {e["candidate_response_file"]: e for e in existing.get("per_candidate", [])}
+            for entry in per_candidate:
+                existing_by_file[entry["candidate_response_file"]] = entry
+            per_candidate = list(existing_by_file.values())
 
         report = build_judge_report(
             judge_model_id=args.judge_model_id,
@@ -709,9 +725,10 @@ def main() -> None:
     gen.add_argument("--responses-dir", default=None)  # default: <final_dir>/responses
     gen.add_argument("--judge-out-dir", default=None)  # default: <final_dir>/judge_scores
     gen.add_argument("--judge-temperature", default="0.0")
-    gen.add_argument("--judge-max-tokens", default="800")
+    gen.add_argument("--judge-max-tokens", default="2048")
     gen.add_argument("--judge-limit", default=None)  # optional: limit scenarios for smoke tests
     gen.add_argument("--judge-resume", action="store_true")
+    gen.add_argument("--judge-model-filter", default=None, help="Only judge responses from this candidate model (raw model_id, e.g. openai/gpt-4o-mini)")
     gen.add_argument("--judge-retry-max-attempts", default="5")
     gen.add_argument("--judge-scores-dir", default=None)
     gen.add_argument("--leaderboard-out-dir", default=None)

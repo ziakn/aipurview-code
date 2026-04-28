@@ -14,6 +14,13 @@
       "Bash(grep:*)",
       "Bash(git log:*)",
       "Bash(echo \"EXIT=$?\")",
+      "Read(//private/tmp/**)",
+      "Bash(unzip -o -q /Users/harsh/Data/vw/verifywise/tool_list_.docx -d tool_list_extract)",
+      "Bash(npx sequelize:*)",
+      "Bash(npx vitest:*)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(echo \"backend_exit=$?\")",
+      "Bash(echo \"frontend_exit=$?\")",
       "Bash(gh issue view:*)",
       "WebFetch(domain:github.com)",
       "Bash(find:*)",
@@ -21,7 +28,11 @@
       "Bash(npx vite build:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(npx vitest run:*)",
+      "Bash(xargs -I{} basename {})",
+      "Bash(echo \"backend=$?\")",
+      "Bash(echo \"frontend=$?\")"
     ]
   }
 }

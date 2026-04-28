@@ -71,6 +71,7 @@ import { EvidenceHubModel } from "../../../domain/models/Common/evidenceHub/evid
 import NewEvidenceHub from "../../components/Modals/EvidenceHub";
 import { createEvidenceHub } from "../../../application/repository/evidenceHub.repository";
 import EvidenceHubTable from "./evidenceHubTable";
+import ModelEvaluationsTab from "./ModelEvaluationsTab";
 import ShareButton from "../../components/ShareViewDropdown/ShareButton";
 import ShareViewDropdown, {
   ShareViewSettings,
@@ -702,6 +703,7 @@ const ModelInventory: React.FC = () => {
   const getTabFromPath = useCallback((pathname: string, tabs: typeof pluginTabs) => {
     if (pathname.includes("model-risks")) return "model-risks";
     if (pathname.includes("evidence-hub")) return "evidence-hub";
+    if (pathname.includes("evaluations")) return "evaluations";
     // Check for plugin tabs dynamically
     for (const tab of tabs) {
       if (pathname.includes(tab.value)) return tab.value;
@@ -719,7 +721,7 @@ const ModelInventory: React.FC = () => {
 
     // If trying to access a plugin tab but plugin is not installed, redirect to models
     const isPluginTab = pluginTabs.some((t) => t.value === newTab);
-    const isBuiltInTab = ["models", "model-risks", "evidence-hub"].includes(newTab);
+    const isBuiltInTab = ["models", "model-risks", "evidence-hub", "evaluations"].includes(newTab);
 
     if (!isBuiltInTab && !isPluginTab) {
       setActiveTab("models");
@@ -2135,6 +2137,13 @@ const ModelInventory: React.FC = () => {
                   isLoading: isModelRisksLoading,
                   tooltip: "Risks identified for models in your inventory",
                 },
+                {
+                  label: "Evaluations",
+                  value: "evaluations",
+                  icon: "Database" as const,
+                  tooltip:
+                    "LLM evaluations and bias audits linked to models in your inventory",
+                },
                 // Dynamically add plugin tabs
                 ...pluginTabs.map((tab) => ({
                   label: tab.label,
@@ -2455,6 +2464,12 @@ const ModelInventory: React.FC = () => {
               )}
             />
           </>
+        )}
+
+        {activeTab === "evaluations" && (
+          <Box sx={{ mt: "16px" }}>
+            <ModelEvaluationsTab />
+          </Box>
         )}
 
       {/* Analytics Drawer */}
