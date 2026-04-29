@@ -27,8 +27,8 @@ export const toolsDefinition: any[] = [
                         description: "Filter by risk status. 'Open' not yet addressed, 'In Progress' being mitigated, 'Resolved' successfully addressed, 'Accepted' risk accepted as-is."
                     },
                     owner: {
-                        type: "string",
-                        description: "Filter by risk owner name. Supports partial matching."
+                        type: "number",
+                        description: "Filter by owner user ID (integer FK to users.id). Use list_users first to resolve a name to a user_id."
                     },
                     limit: {
                         type: "number",
@@ -77,13 +77,13 @@ export const toolsDefinition: any[] = [
         type: "function",
         function: {
             name: "agent_create_model_risk",
-            description: "Create a new model risk for a specific AI model. Requires user confirmation before executing. Returns the created model risk object.",
+            description: "Create a new MODEL-specific risk attached to an AI model (or unattached for later linking). Use this when the user is asking about a risk concerning an AI model — e.g., performance issues, bias, security vulnerabilities, data quality problems, or compliance issues with a specific model. Prefer this over agent_create_risk whenever the conversation context is the Model Inventory or the user mentions a model name, model risk categories (Performance / Bias & Fairness / Security / Data Quality / Compliance), or model risk levels (Low/Medium/High/Critical). Requires user confirmation before executing. Returns the created model risk object.",
             parameters: {
                 type: "object",
                 properties: {
                     model_id: {
                         type: "number",
-                        description: "The model ID to associate the risk with."
+                        description: "Optional. The model ID to associate the risk with. Omit to create an unattached risk that can be linked to a model later via agent_attach_model_risk_to_model."
                     },
                     risk_name: {
                         type: "string",
@@ -109,12 +109,12 @@ export const toolsDefinition: any[] = [
                         description: "Initial status for the model risk. Defaults to 'Open'."
                     },
                     owner: {
-                        type: "string",
-                        description: "Name of the person responsible for managing this risk."
+                        type: "number",
+                        description: "Owner user ID (integer FK to users.id). Resolve names to user IDs via list_users before passing this. Do NOT pass a name string."
                     },
                     target_date: {
                         type: "string",
-                        description: "Target date for risk review or mitigation (ISO 8601 format)."
+                        description: "Target date for risk review or mitigation (ISO 8601 format, e.g., 2026-04-15)."
                     },
                     mitigation_plan: {
                         type: "string",
@@ -129,7 +129,7 @@ export const toolsDefinition: any[] = [
                         description: "Likelihood of the risk occurring."
                     }
                 },
-                required: ["model_id", "risk_name"]
+                required: ["risk_name"]
             }
         }
     },
@@ -169,12 +169,12 @@ export const toolsDefinition: any[] = [
                         description: "Updated status."
                     },
                     owner: {
-                        type: "string",
-                        description: "Updated risk owner name."
+                        type: "number",
+                        description: "Updated owner user ID (integer FK to users.id). Resolve names via list_users first. Do NOT pass a name string."
                     },
                     target_date: {
                         type: "string",
-                        description: "Updated target date (ISO 8601 format)."
+                        description: "Updated target date (ISO 8601 format, e.g., 2026-04-15)."
                     },
                     mitigation_plan: {
                         type: "string",
@@ -229,6 +229,88 @@ export const toolsDefinition: any[] = [
                     }
                 },
                 required: ["model_risk_id"]
+            }
+        }
+    },
+    {
+        type: "function",
+        function: {
+            name: "agent_restore_model_risk",
+            description: "Restore a previously soft-deleted model risk. Sets is_deleted = false so the risk appears in active queries again. Requires user confirmation before executing.",
+            parameters: {
+                type: "object",
+                properties: {
+                    model_risk_id: {
+                        type: "number",
+                        description: "The ID of the soft-deleted model risk to restore."
+                    }
+                },
+                required: ["model_risk_id"]
+            }
+        }
+    },
+    {
+        type: "function",
+        function: {
+            name: "agent_attach_model_risk_to_model",
+            description: "Attach (or relink) a model risk to an AI model. Sets model_risks.model_id to the given model. Use this for unattached risks (model_id IS NULL) or to move a risk to a different model. Requires user confirmation before executing.",
+            parameters: {
+                type: "object",
+                properties: {
+                    model_risk_id: {
+                        type: "number",
+                        description: "The ID of the model risk."
+                    },
+                    model_id: {
+                        type: "number",
+                        description: "The model inventory ID to attach the risk to."
+                    }
+                },
+                required: ["model_risk_id", "model_id"]
+            }
+        }
+    },
+    {
+        type: "function",
+        function: {
+            name: "agent_detach_model_risk_from_model",
+            description: "Detach a model risk from its current model by setting model_id to NULL. The risk remains active but unattached and can be linked to a different model later. Requires user confirmation before executing.",
+            parameters: {
+                type: "object",
+                properties: {
+                    model_risk_id: {
+                        type: "number",
+                        description: "The ID of the model risk to detach."
+                    }
+                },
+                required: ["model_risk_id"]
+            }
+        }
+    },
+    {
+        type: "function",
+        function: {
+            name: "list_unattached_model_risks",
+            description: "List active model risks that are not attached to any model (model_id IS NULL). Use this to find orphaned risks that need to be linked to a model.",
+            parameters: {
+                type: "object",
+                properties: {
+                    risk_level: {
+                        type: "string",
+                        enum: ["Low", "Medium", "High", "Critical"],
+                        description: "Optional filter by severity level."
+                    },
+                    status: {
+                        type: "string",
+                        enum: ["Open", "In Progress", "Resolved", "Accepted"],
+                        description: "Optional filter by status."
+                    },
+                    limit: {
+                        type: "number",
+                        description: "Optional max number of risks to return."
+                    }
+                },
+                required: []
             }
         }
     }

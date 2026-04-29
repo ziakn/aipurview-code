@@ -73,6 +73,20 @@ const createMarkdownStyles = (theme: Theme) => {
   };
 };
 
+/**
+ * Plain-text renderer for user messages. The user is providing input,
+ * not authoring markdown — rendering their `- foo` lines through
+ * react-markdown turns them into a <ul> with default browser list
+ * spacing (huge vertical gaps between items). The user bubble already
+ * has `whiteSpace: 'pre-wrap'` set, so a plain text node preserves
+ * their newlines and dashes verbatim.
+ */
+const UserMessageText: FC = () => {
+  const data = useMessagePartText();
+  if (!data.text) return null;
+  return <>{data.text}</>;
+};
+
 const MessageText: FC = () => {
   const theme = useTheme();
   const data = useMessagePartText();
@@ -433,7 +447,7 @@ const CustomMessageComponent: FC = () => {
               whiteSpace: 'pre-wrap',
             }}
           >
-            <MessagePrimitive.Content components={{ Text: MessageText }} />
+            <MessagePrimitive.Content components={{ Text: UserMessageText }} />
           </Box>
           <VWAvatar
             user={userAvatar}

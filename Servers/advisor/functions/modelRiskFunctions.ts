@@ -10,7 +10,9 @@ export interface FetchModelRisksParams {
   risk_category?: "Performance" | "Bias & Fairness" | "Security" | "Data Quality" | "Compliance";
   risk_level?: "Low" | "Medium" | "High" | "Critical";
   status?: "Open" | "In Progress" | "Resolved" | "Accepted";
-  owner?: string;
+  // owner is the user ID FK (model_risks.owner is INTEGER REFERENCES users.id),
+  // not a name. Resolve names via list_users first.
+  owner?: number;
   limit?: number;
 }
 
@@ -37,12 +39,12 @@ const fetchModelRisks = async (
     if (params.status) {
       risks = risks.filter((r) => r.status === params.status);
     }
-    if (params.owner) {
-      risks = risks.filter(
-        (r) =>
-          r.owner &&
-          r.owner.toLowerCase().includes(params.owner!.toLowerCase()),
-      );
+    if (params.owner !== undefined && params.owner !== null) {
+      // The TS interface IModelRisk types `owner` as string but the DB
+      // column is `INTEGER REFERENCES users(id)` — a pre-existing type lie.
+      // At runtime Sequelize returns the raw number; cast to compare.
+      const ownerId = params.owner;
+      risks = risks.filter((r) => (r.owner as unknown as number) === ownerId);
     }
 
     // Limit results
@@ -384,6 +386,7 @@ const getModelRiskExecutiveSummary = async (
 
 // --- Write Tools (Human Confirmation Flow) ---
 
+import { z } from "zod";
 import { createWriteToolFn } from "../confirmation/createWriteTool";
 import {
   createNewModelRiskQuery,
@@ -391,25 +394,137 @@ import {
   deleteModelRiskByIdQuery,
 } from "../../utils/modelRisk.utils";
 
+// Mirrors the Postgres enums (enum_model_risks_*) and the TS enums
+// (ModelRiskCategory / ModelRiskLevel / ModelRiskStatus). Strict so the
+// LLM gets a clear error when it hallucinates a value the DB would reject
+// later anyway.
+const ModelRiskCategorySchema = z.enum([
+  "Performance",
+  "Bias & Fairness",
+  "Security",
+  "Data Quality",
+  "Compliance",
+]);
+const ModelRiskLevelSchema = z.enum(["Low", "Medium", "High", "Critical"]);
+const ModelRiskStatusSchema = z.enum([
+  "Open",
+  "In Progress",
+  "Resolved",
+  "Accepted",
+]);
+const isoDateString = z
+  .string()
+  .min(1)
+  .refine((s) => !Number.isNaN(Date.parse(s)), {
+    message: "must be a valid ISO date string (e.g. 2026-04-15)",
+  });
+
+const AgentCreateModelRiskSchema = z
+  .object({
+    model_id: z.number().int().positive().optional(),
+    risk_name: z.string().min(3).max(255),
+    description: z.string().max(2048).optional(),
+    risk_category: ModelRiskCategorySchema.optional(),
+    risk_level: ModelRiskLevelSchema.optional(),
+    status: ModelRiskStatusSchema.optional(),
+    owner: z.number().int().positive().optional(),
+    target_date: isoDateString.optional(),
+    mitigation_plan: z.string().max(2048).optional(),
+    impact: z.string().max(2048).optional(),
+    likelihood: z.string().max(255).optional(),
+  })
+  .strict();
+
+const AgentUpdateModelRiskSchema = z
+  .object({
+    model_risk_id: z.number().int().positive(),
+    risk_name: z.string().min(3).max(255).optional(),
+    description: z.string().max(2048).optional(),
+    risk_category: ModelRiskCategorySchema.optional(),
+    risk_level: ModelRiskLevelSchema.optional(),
+    status: ModelRiskStatusSchema.optional(),
+    owner: z.number().int().positive().nullable().optional(),
+    target_date: isoDateString.optional(),
+    mitigation_plan: z.string().max(2048).optional(),
+    impact: z.string().max(2048).optional(),
+    likelihood: z.string().max(255).optional(),
+  })
+  .strict();
+
+function throwOnValidationFailure(
+  toolName: string,
+  issues: ReadonlyArray<{ path: ReadonlyArray<PropertyKey>; message: string }>,
+): void {
+  const errorList = issues
+    .map((i) => {
+      const pathStr = i.path
+        .filter((p): p is string | number => typeof p !== "symbol")
+        .join(".");
+      return `- ${pathStr || "(root)"}: ${i.message}`;
+    })
+    .join("\n");
+  throw new Error(
+    `${toolName} validation failed. You MUST tell the user verbatim that the following fields had invalid values and ask them for corrected values for each one before retrying. DO NOT call this tool again until every error below is addressed:\n${errorList}`,
+  );
+}
+
 const agentCreateModelRisk = createWriteToolFn({
   toolName: "agent_create_model_risk",
   warningLevel: "warning",
   descriptionFn: (params) =>
-    `Create model risk "${params.risk_name}" for model #${params.model_id}`,
+    params.model_id !== undefined
+      ? `Create model risk "${params.risk_name}" for model #${params.model_id}`
+      : `Create unattached model risk "${params.risk_name}"`,
   executeFn: async (params, organizationId) => {
+    // The approval gateway re-injects `_userId` (and may inject
+    // `_organizationId`) before calling the executor — see
+    // `approvalGateway.ts:226,366`. Strip those internal fields before
+    // running strict Zod validation, otherwise `.strict()` rejects them
+    // as unknown keys.
+    const { _userId: _u, _organizationId: _o, ...userParams } =
+      params as Record<string, unknown>;
+    void _u;
+    void _o;
+    const parsed = AgentCreateModelRiskSchema.safeParse(userParams);
+    if (!parsed.success) {
+      throwOnValidationFailure("agent_create_model_risk", parsed.error.issues);
+    }
+    const data = parsed.data!;
+
+    // Defense-in-depth: if model_id is provided, verify the model exists
+    // and belongs to this org. Catches cases where the LLM passed the id
+    // of a row that's still pending approval (no row inserted yet) or a
+    // bogus id from another org. The system prompt enforces parent-first
+    // ordering; this is the belt to that suspenders.
+    if (data.model_id !== undefined) {
+      const [modelRows] = (await sequelize.query(
+        `SELECT id FROM model_inventories
+           WHERE id = :model_id AND organization_id = :organization_id`,
+        {
+          replacements: { model_id: data.model_id, organization_id: organizationId },
+        },
+      )) as [Array<{ id: number }>, unknown];
+      if (!modelRows || modelRows.length === 0) {
+        throw new Error(
+          `agent_create_model_risk cannot link to model #${data.model_id}: that model does not exist (yet) in this organization. If you just filed an approval to create it, the model row is not inserted until the approval is granted. Tell the user the model must be approved first, then call this tool again with the resolved model_id (look it up via fetch_model_inventories after approval).`,
+        );
+      }
+    }
+
     const result = await createNewModelRiskQuery(
       {
-        model_id: params.model_id as number,
-        risk_name: params.risk_name as string,
-        description: (params.description as string) || "",
-        risk_category: params.risk_category as any,
-        risk_level: params.risk_level as any,
-        status: (params.status as any) || "Open",
-        owner: (params.owner as string) || "",
-        target_date: (params.target_date as string) || new Date().toISOString(),
-        mitigation_plan: (params.mitigation_plan as string) || "",
-        impact: (params.impact as string) || "",
-        likelihood: (params.likelihood as string) || "",
+        model_id: data.model_id,
+        risk_name: data.risk_name,
+        description: data.description || "",
+        risk_category: data.risk_category as any,
+        risk_level: data.risk_level as any,
+        status: (data.status as any) || "Open",
+        // owner is INTEGER FK to users.id — pass null when omitted, not "".
+        owner: (data.owner ?? null) as any,
+        target_date: data.target_date || new Date().toISOString(),
+        mitigation_plan: data.mitigation_plan || "",
+        impact: data.impact || "",
+        likelihood: data.likelihood || "",
       },
       organizationId,
     );
@@ -423,7 +538,16 @@ const agentUpdateModelRisk = createWriteToolFn({
   descriptionFn: (params) =>
     `Update model risk #${params.model_risk_id}${params.risk_name ? ` ("${params.risk_name}")` : ""}`,
   executeFn: async (params, organizationId) => {
-    const id = params.model_risk_id as number;
+    const { _userId: _u, _organizationId: _o, ...userParams } =
+      params as Record<string, unknown>;
+    void _u;
+    void _o;
+    const parsed = AgentUpdateModelRiskSchema.safeParse(userParams);
+    if (!parsed.success) {
+      throwOnValidationFailure("agent_update_model_risk", parsed.error.issues);
+    }
+    const data = parsed.data!;
+    const id = data.model_risk_id;
     const updateData: Record<string, unknown> = {};
 
     const updatableFields = [
@@ -437,14 +561,11 @@ const agentUpdateModelRisk = createWriteToolFn({
       "mitigation_plan",
       "impact",
       "likelihood",
-      "key_metrics",
-      "current_values",
-      "threshold",
     ];
 
     for (const field of updatableFields) {
-      if (params[field] !== undefined) {
-        updateData[field] = params[field];
+      if ((data as any)[field] !== undefined) {
+        updateData[field] = (data as any)[field];
       }
     }
 
@@ -502,6 +623,139 @@ const agentDeleteModelRisk = createWriteToolFn({
   },
 });
 
+// --- Cross-entity additions ---
+
+import { sequelize } from "../../database/db";
+
+const agentRestoreModelRisk = createWriteToolFn({
+  toolName: "agent_restore_model_risk",
+  warningLevel: "warning",
+  descriptionFn: (params) => `Restore soft-deleted model risk #${params.model_risk_id}`,
+  executeFn: async (params, organizationId) => {
+    const id = params.model_risk_id as number;
+    const [rows, rowCount] = (await sequelize.query(
+      `UPDATE model_risks
+         SET is_deleted = false, deleted_at = NULL, updated_at = NOW()
+       WHERE id = :id
+         AND organization_id = :organization_id
+         AND is_deleted = true
+       RETURNING id`,
+      {
+        replacements: { id, organization_id: organizationId },
+      },
+    )) as [Array<{ id: number }>, number];
+    const affected = rowCount || (Array.isArray(rows) ? rows.length : 0);
+    if (!affected) {
+      throw new Error(
+        `Model risk #${id} not found, not deleted, or does not belong to this organization`,
+      );
+    }
+    return { id, restored: true, message: "Model risk restored successfully" };
+  },
+});
+
+const agentAttachModelRiskToModel = createWriteToolFn({
+  toolName: "agent_attach_model_risk_to_model",
+  warningLevel: "warning",
+  descriptionFn: (params) =>
+    `Attach model risk #${params.model_risk_id} to model #${params.model_id}`,
+  executeFn: async (params, organizationId) => {
+    const id = params.model_risk_id as number;
+    const modelId = params.model_id as number;
+
+    const [modelRows] = (await sequelize.query(
+      `SELECT id FROM model_inventories WHERE id = :model_id AND organization_id = :organization_id`,
+      { replacements: { model_id: modelId, organization_id: organizationId } },
+    )) as [Array<{ id: number }>, unknown];
+    if (!modelRows || modelRows.length === 0) {
+      throw new Error(
+        `Model #${modelId} not found or does not belong to this organization`,
+      );
+    }
+
+    const result = await updateModelRiskByIdQuery(
+      id,
+      { model_id: modelId } as any,
+      organizationId,
+    );
+    if (!result) {
+      throw new Error(
+        `Model risk #${id} not found or does not belong to this organization`,
+      );
+    }
+    return {
+      id,
+      model_id: modelId,
+      message: "Model risk attached to model successfully",
+    };
+  },
+});
+
+const agentDetachModelRiskFromModel = createWriteToolFn({
+  toolName: "agent_detach_model_risk_from_model",
+  warningLevel: "warning",
+  descriptionFn: (params) =>
+    `Detach model risk #${params.model_risk_id} from its model (set model_id = NULL)`,
+  executeFn: async (params, organizationId) => {
+    const id = params.model_risk_id as number;
+    const result = await updateModelRiskByIdQuery(
+      id,
+      { model_id: null } as any,
+      organizationId,
+    );
+    if (!result) {
+      throw new Error(
+        `Model risk #${id} not found or does not belong to this organization`,
+      );
+    }
+    return {
+      id,
+      message: "Model risk detached from model (model_id set to NULL)",
+    };
+  },
+});
+
+const listUnattachedModelRisks = async (
+  params: {
+    risk_level?: "Low" | "Medium" | "High" | "Critical";
+    status?: "Open" | "In Progress" | "Resolved" | "Accepted";
+    limit?: number;
+  },
+  organizationId: number,
+): Promise<Partial<ModelRiskModel>[]> => {
+  try {
+    let risks = await getAllModelRisksQuery(organizationId, "active");
+    risks = risks.filter((r) => r.model_id === null || r.model_id === undefined);
+
+    if (params.risk_level) {
+      risks = risks.filter((r) => r.risk_level === params.risk_level);
+    }
+    if (params.status) {
+      risks = risks.filter((r) => r.status === params.status);
+    }
+    if (params.limit && params.limit > 0) {
+      risks = risks.slice(0, params.limit);
+    }
+
+    return risks.map((r) => ({
+      id: r.id,
+      risk_name: r.risk_name,
+      risk_category: r.risk_category,
+      risk_level: r.risk_level,
+      status: r.status,
+      owner: r.owner,
+      target_date: r.target_date,
+      model_id: r.model_id,
+      created_at: r.created_at,
+    }));
+  } catch (error) {
+    logger.error("Error listing unattached model risks:", error);
+    throw new Error(
+      `Failed to list unattached model risks: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
+  }
+};
+
 const availableModelRiskTools: any = {
   fetch_model_risks: fetchModelRisks,
   get_model_risk_analytics: getModelRiskAnalytics,
@@ -510,6 +764,10 @@ const availableModelRiskTools: any = {
   agent_update_model_risk: agentUpdateModelRisk,
   agent_change_model_risk_status: agentChangeModelRiskStatus,
   agent_delete_model_risk: agentDeleteModelRisk,
+  agent_restore_model_risk: agentRestoreModelRisk,
+  agent_attach_model_risk_to_model: agentAttachModelRiskToModel,
+  agent_detach_model_risk_from_model: agentDetachModelRiskFromModel,
+  list_unattached_model_risks: listUnattachedModelRisks,
 };
 
 export { availableModelRiskTools };

@@ -32,14 +32,12 @@ export async function fileDeleteTask(
 
   const parsed = AgentDeleteTaskSchema.safeParse(params);
   if (!parsed.success) {
-    return {
-      status: "validation_failed",
-      errors: parsed.error.issues.map((i) => ({
-        path: i.path.join("."),
-        message: i.message,
-      })),
-      message: "The proposed task deletion failed validation.",
-    };
+    const errorList = parsed.error.issues
+      .map((i) => `- ${i.path.join(".") || "(root)"}: ${i.message}`)
+      .join("\n");
+    throw new Error(
+      `agent_delete_task validation failed. You MUST tell the user verbatim that the following fields had invalid values and ask them for corrected values for each one before retrying. DO NOT call this tool again until every error below is addressed:\n${errorList}`,
+    );
   }
 
   const currentTask = await getTaskByIdQuery(

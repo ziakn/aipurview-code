@@ -38,15 +38,12 @@ export async function fileDeleteRisk(
 
   const parsed = AgentDeleteRiskSchema.safeParse(params);
   if (!parsed.success) {
-    return {
-      status: "validation_failed",
-      errors: parsed.error.issues.map((i) => ({
-        path: i.path.join("."),
-        message: i.message,
-      })),
-      message:
-        "The proposed risk deletion failed validation. Re-check the tool's parameter schema and try again.",
-    };
+    const errorList = parsed.error.issues
+      .map((i) => `- ${i.path.join(".") || "(root)"}: ${i.message}`)
+      .join("\n");
+    throw new Error(
+      `agent_delete_risk validation failed. You MUST tell the user verbatim that the following fields had invalid values and ask them for corrected values for each one before retrying. DO NOT call this tool again until every error below is addressed:\n${errorList}`,
+    );
   }
 
   const currentRisk = await getRiskByIdQuery(

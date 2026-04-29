@@ -32,7 +32,14 @@
       "Bash(npx vitest run:*)",
       "Bash(xargs -I{} basename {})",
       "Bash(echo \"backend=$?\")",
-      "Bash(echo \"frontend=$?\")"
+      "Bash(echo \"frontend=$?\")",
+      "Bash(PGPASSWORD=test psql *)",
+      "Bash(git --no-pager diff --stat Servers/package-lock.json)",
+      "Bash(git --no-pager diff --staged --stat Servers/package-lock.json)",
+      "Bash(git --no-pager diff --staged Servers/package-lock.json)",
+      "Bash(node *)",
+      "Bash(git --no-pager diff --stat)",
+      "Bash(git --no-pager diff --staged --stat)"
     ]
   }
 }
