@@ -5,6 +5,7 @@ import {
   approveConfirmation,
   rejectConfirmation,
 } from "../../../application/repository/aiConfirmation.repository";
+import { dispatchAiActionCompleted } from "../../../application/events/aiActionEvents";
 import { status as statusColors, brand } from "../../themes/palette";
 
 interface ConfirmationResult {
@@ -64,6 +65,12 @@ const ConfirmationToolUI: FC<{ result?: unknown }> = ({ result }) => {
     try {
       await approveConfirmation(data.confirmation_id);
       setResolution("approved");
+      // Same event the dedicated Pending Approvals modal uses, so any
+      // background page (Model Inventory, Risk Management, Tasks, ...)
+      // that listens via `onAiActionCompleted` refetches when the user
+      // approves an inline chat-card too. We pass the tool_name so
+      // listeners can scope by the action type.
+      dispatchAiActionCompleted({ toolName: data.tool_name, status: "approved" });
     } catch (err: any) {
       setErrorMsg(err?.response?.data?.message || err?.message || "Failed to approve");
       setResolution("error");
@@ -76,6 +83,7 @@ const ConfirmationToolUI: FC<{ result?: unknown }> = ({ result }) => {
     try {
       await rejectConfirmation(data.confirmation_id);
       setResolution("rejected");
+      dispatchAiActionCompleted({ toolName: data.tool_name, status: "rejected" });
     } catch (err: any) {
       setErrorMsg(err?.response?.data?.message || err?.message || "Failed to reject");
       setResolution("error");

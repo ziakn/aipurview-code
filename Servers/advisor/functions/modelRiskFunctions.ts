@@ -388,6 +388,7 @@ const getModelRiskExecutiveSummary = async (
 
 import { z } from "zod";
 import { createWriteToolFn } from "../confirmation/createWriteTool";
+import { TransientApprovalError } from "../approval/approvalGateway";
 import {
   createNewModelRiskQuery,
   updateModelRiskByIdQuery,
@@ -419,15 +420,39 @@ const isoDateString = z
     message: "must be a valid ISO date string (e.g. 2026-04-15)",
   });
 
-const AgentCreateModelRiskSchema = z
+const AgentSuggestModelRiskSchema = z
   .object({
+    /**
+     * Existing model id. Use this when the model already exists in the
+     * inventory (post-approval) and the user explicitly asked for risks
+     * on it.
+     */
     model_id: z.number().int().positive().optional(),
+    /**
+     * Pending model_inventories approval request id. Use this when the
+     * model is being proposed in the SAME conversation turn (auto-suggest
+     * flow): the LLM passes the approvalRequestId returned by
+     * agent_register_model so the executor can resolve the eventual
+     * model_id once the user approves the model. If the user clicks
+     * Approve on this risk before the model is approved, the executor
+     * throws a clear "approve the model first" error.
+     */
+    pending_model_approval_id: z.number().int().positive().optional(),
     risk_name: z.string().min(3).max(255),
     description: z.string().max(2048).optional(),
     risk_category: ModelRiskCategorySchema.optional(),
     risk_level: ModelRiskLevelSchema.optional(),
     status: ModelRiskStatusSchema.optional(),
-    owner: z.number().int().positive().optional(),
+    /**
+     * Owner user_id. The LLM tends to fill omitted optional integer
+     * fields with 0 (sentinel for "missing"); we coerce 0 → undefined
+     * here so the strict positive() check below doesn't reject the
+     * whole call. Real user ids start at 1, so 0 is unambiguous.
+     */
+    owner: z.preprocess(
+      (v) => (v === 0 || v === null ? undefined : v),
+      z.number().int().positive().optional(),
+    ),
     target_date: isoDateString.optional(),
     mitigation_plan: z.string().max(2048).optional(),
     impact: z.string().max(2048).optional(),
@@ -468,13 +493,21 @@ function throwOnValidationFailure(
   );
 }
 
-const agentCreateModelRisk = createWriteToolFn({
-  toolName: "agent_create_model_risk",
+/**
+ * Inner createWriteToolFn handler. We wrap it below with a file-time
+ * validation pass — createWriteToolFn itself only validates inside its
+ * executeFn (i.e. at user-approve time), which is too late: the LLM has
+ * already filed an approval card with bad data, and the user only sees
+ * the validation error after clicking Approve. By validating first, the
+ * LLM gets immediate feedback and can retry with corrected values.
+ */
+const _agentSuggestModelRiskInner = createWriteToolFn({
+  toolName: "agent_suggest_model_risk",
   warningLevel: "warning",
   descriptionFn: (params) =>
     params.model_id !== undefined
-      ? `Create model risk "${params.risk_name}" for model #${params.model_id}`
-      : `Create unattached model risk "${params.risk_name}"`,
+      ? `Suggest model risk "${params.risk_name}" for model #${params.model_id}`
+      : `Suggest unattached model risk "${params.risk_name}"`,
   executeFn: async (params, organizationId) => {
     // The approval gateway re-injects `_userId` (and may inject
     // `_organizationId`) before calling the executor — see
@@ -485,35 +518,82 @@ const agentCreateModelRisk = createWriteToolFn({
       params as Record<string, unknown>;
     void _u;
     void _o;
-    const parsed = AgentCreateModelRiskSchema.safeParse(userParams);
+    const parsed = AgentSuggestModelRiskSchema.safeParse(userParams);
     if (!parsed.success) {
-      throwOnValidationFailure("agent_create_model_risk", parsed.error.issues);
+      throwOnValidationFailure("agent_suggest_model_risk", parsed.error.issues);
     }
     const data = parsed.data!;
 
-    // Defense-in-depth: if model_id is provided, verify the model exists
-    // and belongs to this org. Catches cases where the LLM passed the id
-    // of a row that's still pending approval (no row inserted yet) or a
-    // bogus id from another org. The system prompt enforces parent-first
-    // ordering; this is the belt to that suspenders.
-    if (data.model_id !== undefined) {
+    // Resolve the model id. Two paths:
+    //   1. Direct model_id (post-approval / user-asked path).
+    //   2. pending_model_approval_id — the LLM passed the approval-request
+    //      id from a same-turn agent_register_model call. We look up the
+    //      approval row; if it's not yet Approved we throw a clear error
+    //      so the user knows to approve the model first. Once approved,
+    //      `entity_id` on the row holds the new model row's id.
+    let resolvedModelId: number | undefined = data.model_id;
+
+    if (data.pending_model_approval_id !== undefined) {
+      const [approvalRows] = (await sequelize.query(
+        `SELECT status, entity_id FROM approval_requests
+           WHERE id = :request_id AND organization_id = :organization_id`,
+        {
+          replacements: {
+            request_id: data.pending_model_approval_id,
+            organization_id: organizationId,
+          },
+        },
+      )) as [
+        Array<{ status: string; entity_id: number | null }>,
+        unknown,
+      ];
+
+      if (!approvalRows || approvalRows.length === 0) {
+        throw new Error(
+          `Cannot create this suggested risk: model approval request #${data.pending_model_approval_id} was not found. The model proposal may have been deleted.`,
+        );
+      }
+
+      const approval = approvalRows[0];
+      if (approval.status !== "Approved") {
+        // Transient: the parent model approval hasn't landed yet. Don't
+        // mark this risk approval as `failed` — the gateway recognises
+        // TransientApprovalError and keeps the card in pending_approval
+        // state so the user can retry once they approve the model.
+        throw new TransientApprovalError(
+          `Approve the model first. The associated model registration (approval request #${data.pending_model_approval_id}) is still ${approval.status}. Open Pending Approvals, approve the model, then click Approve on this risk again.`,
+        );
+      }
+
+      if (approval.entity_id == null) {
+        throw new Error(
+          `Model approval #${data.pending_model_approval_id} is approved but has no recorded entity_id — cannot link this risk. Ask an admin to investigate.`,
+        );
+      }
+
+      resolvedModelId = approval.entity_id;
+    }
+
+    // Defense-in-depth: if a model_id is set (either supplied directly or
+    // resolved from the pending approval), verify the model exists.
+    if (resolvedModelId !== undefined) {
       const [modelRows] = (await sequelize.query(
         `SELECT id FROM model_inventories
            WHERE id = :model_id AND organization_id = :organization_id`,
         {
-          replacements: { model_id: data.model_id, organization_id: organizationId },
+          replacements: { model_id: resolvedModelId, organization_id: organizationId },
         },
       )) as [Array<{ id: number }>, unknown];
       if (!modelRows || modelRows.length === 0) {
         throw new Error(
-          `agent_create_model_risk cannot link to model #${data.model_id}: that model does not exist (yet) in this organization. If you just filed an approval to create it, the model row is not inserted until the approval is granted. Tell the user the model must be approved first, then call this tool again with the resolved model_id (look it up via fetch_model_inventories after approval).`,
+          `agent_suggest_model_risk cannot link to model #${resolvedModelId}: that model does not exist in this organization (it may have been deleted after the approval).`,
         );
       }
     }
 
     const result = await createNewModelRiskQuery(
       {
-        model_id: data.model_id,
+        model_id: resolvedModelId,
         risk_name: data.risk_name,
         description: data.description || "",
         risk_category: data.risk_category as any,
@@ -531,6 +611,28 @@ const agentCreateModelRisk = createWriteToolFn({
     return result;
   },
 });
+
+/**
+ * File-time wrapper around _agentSuggestModelRiskInner. Validates the
+ * LLM's params via the same strict schema BEFORE the approval row is
+ * written. If validation fails, throws with the LLM-instructive error
+ * format so the model surfaces the invalid fields to the user and asks
+ * for corrections instead of filing a broken approval that only errors
+ * out when the user clicks Approve.
+ */
+const agentSuggestModelRisk = async (
+  params: Record<string, unknown>,
+  organizationId: number,
+): Promise<unknown> => {
+  const { _userId: _u, _organizationId: _o, ...userParams } = params;
+  void _u;
+  void _o;
+  const parsed = AgentSuggestModelRiskSchema.safeParse(userParams);
+  if (!parsed.success) {
+    throwOnValidationFailure("agent_suggest_model_risk", parsed.error.issues);
+  }
+  return _agentSuggestModelRiskInner(params, organizationId);
+};
 
 const agentUpdateModelRisk = createWriteToolFn({
   toolName: "agent_update_model_risk",
@@ -760,7 +862,7 @@ const availableModelRiskTools: any = {
   fetch_model_risks: fetchModelRisks,
   get_model_risk_analytics: getModelRiskAnalytics,
   get_model_risk_executive_summary: getModelRiskExecutiveSummary,
-  agent_create_model_risk: agentCreateModelRisk,
+  agent_suggest_model_risk: agentSuggestModelRisk,
   agent_update_model_risk: agentUpdateModelRisk,
   agent_change_model_risk_status: agentChangeModelRiskStatus,
   agent_delete_model_risk: agentDeleteModelRisk,

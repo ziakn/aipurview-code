@@ -45,7 +45,13 @@ export async function fileUpdateRisk(
 
   // 1. Strict schema validation — rejects unknown keys, enum drift, and
   //    the "risk_id only" no-op case.
-  const parsed = AgentUpdateRiskSchema.safeParse(params);
+  // Strip the bridge-injected `_userId` (and `_organizationId`) before
+  // strict-parsing — see toolBridge.ts which always appends `_userId`.
+  const { _userId: _u, _organizationId: _o, ...userParams } =
+    params as Record<string, unknown>;
+  void _u;
+  void _o;
+  const parsed = AgentUpdateRiskSchema.safeParse(userParams);
   if (!parsed.success) {
     const errorList = parsed.error.issues
       .map((i) => `- ${i.path.join(".") || "(root)"}: ${i.message}`)

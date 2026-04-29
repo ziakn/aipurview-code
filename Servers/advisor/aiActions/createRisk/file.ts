@@ -48,7 +48,13 @@ export async function fileCreateRisk(
   }
 
   // 1. Strict schema validation — rejects unknown keys and enum drift.
-  const parsed = AgentCreateRiskSchema.safeParse(params);
+  // Strip the bridge-injected `_userId` (and `_organizationId`) before
+  // strict-parsing — see toolBridge.ts which always appends `_userId`.
+  const { _userId: _u, _organizationId: _o, ...userParams } =
+    params as Record<string, unknown>;
+  void _u;
+  void _o;
+  const parsed = AgentCreateRiskSchema.safeParse(userParams);
   if (!parsed.success) {
     const errors = parsed.error.issues.map((i) => ({
       path: i.path.join("."),

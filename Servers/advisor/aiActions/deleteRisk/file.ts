@@ -36,7 +36,13 @@ export async function fileDeleteRisk(
     };
   }
 
-  const parsed = AgentDeleteRiskSchema.safeParse(params);
+  // Strip the bridge-injected `_userId` (and `_organizationId`) before
+  // strict-parsing — see toolBridge.ts which always appends `_userId`.
+  const { _userId: _u, _organizationId: _o, ...userParams } =
+    params as Record<string, unknown>;
+  void _u;
+  void _o;
+  const parsed = AgentDeleteRiskSchema.safeParse(userParams);
   if (!parsed.success) {
     const errorList = parsed.error.issues
       .map((i) => `- ${i.path.join(".") || "(root)"}: ${i.message}`)

@@ -4,6 +4,7 @@ import {
   getAllModelInventoriesQuery,
   getModelByProjectIdQuery,
   getModelByFrameworkIdQuery,
+  getModelInventoryByIdQuery,
   deleteModelInventoryByIdQuery,
 } from "../../utils/modelInventory.utils";
 import { createWriteToolFn } from "../confirmation/createWriteTool";
@@ -391,76 +392,6 @@ const getModelInventoryExecutiveSummary = async (
 };
 
 // --- Write Tools (Human Confirmation Flow) ---
-
-const agentRegisterModel = createWriteToolFn({
-  toolName: "agent_register_model",
-  warningLevel: "warning",
-  descriptionFn: (params) =>
-    `Register model "${params.name}"${params.model_type ? ` from ${params.model_type}` : ""}${params.version ? ` (v${params.version})` : ""}`,
-  executeFn: async (params, organizationId) => {
-    // Defense-in-depth FK check: if project_id is provided, the project
-    // must already exist in this org. The system prompt enforces parent-
-    // first ordering; this catches cases where the LLM passed an id whose
-    // row hasn't been inserted yet (still pending approval) or doesn't
-    // belong to this tenant.
-    if (params.project_id !== undefined && params.project_id !== null) {
-      const [projectRows] = (await sequelize.query(
-        `SELECT id FROM projects
-           WHERE id = :project_id AND organization_id = :organization_id`,
-        {
-          replacements: {
-            project_id: params.project_id,
-            organization_id: organizationId,
-          },
-        },
-      )) as [Array<{ id: number }>, unknown];
-      if (!projectRows || projectRows.length === 0) {
-        throw new Error(
-          `agent_register_model cannot link to project #${params.project_id}: that project does not exist (yet) in this organization. If the project is still pending approval, the row is not inserted until the approval is granted. Resolve via list_projects after approval, or omit project_id to register an unlinked model.`,
-        );
-      }
-    }
-
-    const now = new Date();
-    const result = (await sequelize.query(
-      `INSERT INTO model_inventories (organization_id, provider_model, provider, model, version, capabilities, security_assessment, status, status_date, biases, limitations, hosting_provider, security_assessment_data, is_demo, created_at, updated_at)
-       VALUES (:organization_id, :provider_model, :provider, :model, :version, :capabilities, false, 'Pending', :status_date, :biases, :limitations, '', '[]', false, :created_at, :updated_at) RETURNING *`,
-      {
-        replacements: {
-          organization_id: organizationId,
-          provider_model: params.model_type ? `${params.model_type} / ${params.name}` : String(params.name),
-          provider: params.model_type || "",
-          model: params.name,
-          version: params.version || "",
-          capabilities: params.description || "",
-          biases: "",
-          limitations: "",
-          status_date: now,
-          created_at: now,
-          updated_at: now,
-        },
-      },
-    )) as [any[], number];
-    const created = result[0][0];
-
-    // Link to project if provided
-    if (params.project_id) {
-      await sequelize.query(
-        `INSERT INTO model_inventories_projects_frameworks (organization_id, model_inventory_id, project_id)
-         VALUES (:organization_id, :model_inventory_id, :project_id)`,
-        {
-          replacements: {
-            organization_id: organizationId,
-            model_inventory_id: created.id,
-            project_id: params.project_id,
-          },
-        },
-      );
-    }
-
-    return { id: created.id, model: created.model, message: "Model registered successfully" };
-  },
-});
 
 const agentUpdateModel = createWriteToolFn({
   toolName: "agent_update_model",
@@ -1070,11 +1001,73 @@ const agentUnlinkModelFromDataset = createWriteToolFn({
   },
 });
 
+const SUGGEST_RISKS_GUIDANCE = `Use the model metadata above to file 3-5 SEPARATE agent_suggest_model_risk approval requests, one per risk. (Use agent_suggest_model_risk — NOT agent_create_model_risk — for the suggested-risks flow; the suggest tool produces inline chat-card approvals while agent_create_model_risk routes to the dedicated Pending Approvals page and is only for user-explicit risk creation.) Each MUST include the model_id from the metadata and a description that names the specific provider/country/capability — not generic, model-agnostic risks.
+
+Reason across these dimensions, picking the 3-5 that are most material for THIS model:
+
+1. Provider country / jurisdiction (infer from provider name) — data sovereignty, cross-border transfer (GDPR Ch. V adequacy), state-access exposure, geopolitical/sanctions/export-control risk. Examples: China-headquartered providers (DeepSeek, Qwen, Baidu) carry export-control + state-access + censorship-shaped-output exposure; US providers (OpenAI, Anthropic, Google) carry CLOUD-Act exposure for non-US data; EU providers (Mistral) carry the lowest cross-border friction for EU customers.
+
+2. Provider company posture — vendor lock-in, training-data opacity, terms-of-service privacy stance (does the vendor train on customer prompts), model-deprecation cadence, IP-leakage risk on prompts.
+
+3. Hosting model — SaaS API (network egress, vendor downtime, data-in-transit exposure), self-hosted open-weight (maintenance burden, supply-chain risk on weights, version-pinning), on-prem (compliance ownership, hardening burden).
+
+4. Capabilities & modality — text/code/multimodal/agentic. Drives jailbreak/misuse risk, hallucination, harmful-content generation, and (for agentic) automated-action blast radius.
+
+5. Compliance frameworks the org is subject to (EU AI Act, ISO 42001, ISO 27001, NIST AI RMF) — surface obligations triggered by this model class (e.g. EU AI Act Art. 50 transparency for generative models, GPAI obligations for foundation models above thresholds).
+
+For each risk:
+- risk_name: short and specific (e.g. "Export-control exposure on DeepSeek-V3 (China-hosted weights)" — NOT "Compliance risk")
+- description: 1-2 sentences naming the SPECIFIC provider / country / capability that produces the risk
+- risk_category: one of Performance, Bias & Fairness, Security, Data Quality, Compliance — pick the closest fit
+- severity: your judgment based on impact + likelihood
+
+After filing all the approvals, send ONE summary message to the user: "I've filed N risk-approval requests for [model name]:" followed by a one-line bullet per risk with the reasoning. End with: "Approve any that apply in Pending Approvals."
+
+If the user says skip / don't suggest, abandon the flow and acknowledge.`;
+
+const suggestRisksForModel = async (
+  params: { model_id: number },
+  organizationId: number,
+): Promise<Record<string, unknown>> => {
+  if (!params?.model_id || typeof params.model_id !== "number") {
+    throw new Error(
+      "suggest_risks_for_model requires a numeric model_id. Resolve via fetch_model_inventories first.",
+    );
+  }
+
+  const model = await getModelInventoryByIdQuery(params.model_id, organizationId);
+  if (!model) {
+    throw new Error(
+      `Model #${params.model_id} not found in this organization. Tell the user the model id is wrong or the model has been deleted.`,
+    );
+  }
+
+  const dv = (model as any).dataValues ?? model;
+  return {
+    model: {
+      id: dv.id,
+      provider: dv.provider,
+      model: dv.model,
+      version: dv.version,
+      capabilities: dv.capabilities,
+      hosting_provider: dv.hosting_provider,
+      status: dv.status,
+      reference_link: dv.reference_link,
+      biases: dv.biases,
+      limitations: dv.limitations,
+      security_assessment: dv.security_assessment,
+      projects: dv.projects ?? [],
+      frameworks: dv.frameworks ?? [],
+      created_at: dv.created_at,
+    },
+    guidance: SUGGEST_RISKS_GUIDANCE,
+  };
+};
+
 const availableModelInventoryTools: any = {
   fetch_model_inventories: fetchModelInventories,
   get_model_inventory_analytics: getModelInventoryAnalytics,
   get_model_inventory_executive_summary: getModelInventoryExecutiveSummary,
-  agent_register_model: agentRegisterModel,
   agent_update_model: agentUpdateModel,
   agent_update_model_lifecycle_phase: agentUpdateModelLifecyclePhase,
   agent_retire_model: agentRetireModel,
@@ -1093,6 +1086,7 @@ const availableModelInventoryTools: any = {
   list_datasets_for_model: listDatasetsForModel,
   agent_link_model_to_dataset: agentLinkModelToDataset,
   agent_unlink_model_from_dataset: agentUnlinkModelFromDataset,
+  suggest_risks_for_model: suggestRisksForModel,
 };
 
 export { availableModelInventoryTools };

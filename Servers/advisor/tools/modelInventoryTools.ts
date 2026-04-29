@@ -82,39 +82,6 @@ export const toolsDefinition: any[] = [
     {
         type: "function",
         function: {
-            name: "agent_register_model",
-            description: "Register a new AI model in the model inventory. Creates a new model entry with the specified provider, model name, version, and other details. Requires user confirmation before executing.",
-            parameters: {
-                type: "object",
-                properties: {
-                    name: {
-                        type: "string",
-                        description: "The model name (e.g., 'GPT-4', 'Claude 3', 'Gemini Pro')."
-                    },
-                    model_type: {
-                        type: "string",
-                        description: "The provider/vendor of the model (e.g., 'OpenAI', 'Anthropic', 'Google')."
-                    },
-                    version: {
-                        type: "string",
-                        description: "The model version (e.g., '1.0', '2024-01', 'turbo')."
-                    },
-                    description: {
-                        type: "string",
-                        description: "Description of the model's capabilities and intended use."
-                    },
-                    project_id: {
-                        type: "number",
-                        description: "Optional project ID to associate the model with."
-                    }
-                },
-                required: ["name"]
-            }
-        }
-    },
-    {
-        type: "function",
-        function: {
             name: "agent_update_model",
             description: "Update properties of an existing model in the inventory. Only the provided fields will be updated. Requires user confirmation before executing.",
             parameters: {
@@ -484,6 +451,23 @@ export const toolsDefinition: any[] = [
                     }
                 },
                 required: ["model_id", "dataset_id"]
+            }
+        }
+    },
+    {
+        type: "function",
+        function: {
+            name: "suggest_risks_for_model",
+            description: "Returns the model's metadata plus a guidance block on how to draft 3–5 governance risks tailored to this specific model. Call this AFTER a model has been approved and exists in the inventory (or any time the user asks for risk suggestions for an existing model). Then use the guidance to file individual agent_suggest_model_risk approval requests (NOT agent_create_model_risk — the suggest tool produces inline chat-card approvals), each with the resolved model_id. Do not propose generic, model-agnostic risks.",
+            parameters: {
+                type: "object",
+                properties: {
+                    model_id: {
+                        type: "number",
+                        description: "The model ID to generate risk suggestions for. Resolve via fetch_model_inventories if you don't already have it."
+                    }
+                },
+                required: ["model_id"]
             }
         }
     },
