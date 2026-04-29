@@ -1,4 +1,4 @@
-.PHONY: seeds render perturb validate all backfill-base export-parquet publish-dataset generate
+.PHONY: seeds render perturb validate all backfill-base export-parquet publish-dataset generate judge-patch
 
 seeds:
 	uv run grs-scenarios generate --stage seeds
@@ -33,6 +33,13 @@ judge:
 
 judge-resume:
 	uv run grs-scenarios generate --stage judge --judge-resume
+
+judge-patch:
+	uv run grs-scenarios generate --stage judge-patch \
+		--dataset-version debug \
+		--patch-dimension accountability_transparency \
+		--judge-model-id openai/gpt-4o-mini \
+		--judge-provider openrouter
 
 run-scenario-viewer:
 	uv run streamlit run viewer.py
