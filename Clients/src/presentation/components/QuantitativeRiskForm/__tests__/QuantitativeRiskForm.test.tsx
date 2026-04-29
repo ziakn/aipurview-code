@@ -3,7 +3,6 @@ import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "../../../../test/renderWithProviders";
 import QuantitativeRiskForm, {
   quantitativeInitialState,
-  QuantitativeRiskFormValues,
 } from "..";
 import { vi } from "vitest";
 

@@ -1,3 +1,4 @@
+import React from "react";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "../../../../test/renderWithProviders";
@@ -16,7 +17,7 @@ function GoodChild() {
   return <div>Widget loaded successfully</div>;
 }
 
-function BadChild() {
+function BadChild(): React.ReactElement {
   throw new Error("Widget crashed!");
 }
 

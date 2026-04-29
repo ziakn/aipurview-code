@@ -1,4 +1,3 @@
-import { screen } from "@testing-library/react";
 import { renderWithProviders } from "../../../../test/renderWithProviders";
 import CustomizableSkeleton from "../index";
 
