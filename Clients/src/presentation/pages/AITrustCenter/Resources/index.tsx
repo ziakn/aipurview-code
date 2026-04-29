@@ -38,7 +38,10 @@ import { GroupBy } from "../../../components/Table/GroupBy";
 import { useTableGrouping, useGroupByState } from "../../../../application/hooks/useTableGrouping";
 import { GroupedTableView } from "../../../components/Table/GroupedTableView";
 import { ColumnSelector } from "../../../components/Table/ColumnSelector";
-import { useColumnVisibility, ColumnConfig } from "../../../../application/hooks/useColumnVisibility";
+import {
+  useColumnVisibility,
+  ColumnConfig,
+} from "../../../../application/hooks/useColumnVisibility";
 import singleTheme from "../../../themes/v1SingleTheme";
 import { text, background, border as borderPalette } from "../../../themes/palette";
 import { useFormValidation } from "../../../../application/hooks/useFormValidation";
@@ -565,7 +568,7 @@ const TrustCenterResources: React.FC = () => {
 
   const visibleTableColumns = useMemo(
     () => TABLE_COLUMNS.filter((col) => visibleColumns.has(col.id as ResourceColumn)),
-    [visibleColumns]
+    [visibleColumns],
   );
 
   // Show loading state

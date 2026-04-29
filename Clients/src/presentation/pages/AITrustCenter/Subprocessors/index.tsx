@@ -30,7 +30,10 @@ import { GroupBy } from "../../../components/Table/GroupBy";
 import { useTableGrouping, useGroupByState } from "../../../../application/hooks/useTableGrouping";
 import { GroupedTableView } from "../../../components/Table/GroupedTableView";
 import { ColumnSelector } from "../../../components/Table/ColumnSelector";
-import { useColumnVisibility, ColumnConfig } from "../../../../application/hooks/useColumnVisibility";
+import {
+  useColumnVisibility,
+  ColumnConfig,
+} from "../../../../application/hooks/useColumnVisibility";
 import { background } from "../../../themes/palette";
 
 interface FormData {
@@ -492,7 +495,7 @@ const AITrustCenterSubprocessors: React.FC = () => {
 
   const visibleTableColumns = useMemo(
     () => TABLE_COLUMNS.filter((col) => visibleColumns.has(col.id as SubprocessorColumn)),
-    [visibleColumns]
+    [visibleColumns],
   );
 
   // Show loading state
