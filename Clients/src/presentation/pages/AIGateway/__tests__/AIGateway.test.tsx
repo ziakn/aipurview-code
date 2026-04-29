@@ -11,7 +11,9 @@ vi.mock("../../../../infrastructure/api/networkServices", () => ({
 
 // Mock chart components from recharts
 vi.mock("recharts", () => ({
-  ResponsiveContainer: ({ children }: any) => <div data-testid="responsive-container">{children}</div>,
+  ResponsiveContainer: ({ children }: any) => (
+    <div data-testid="responsive-container">{children}</div>
+  ),
   BarChart: ({ children }: any) => <div>{children}</div>,
   Bar: () => <div />,
   XAxis: () => <div />,

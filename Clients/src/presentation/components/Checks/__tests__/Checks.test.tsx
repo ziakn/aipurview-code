@@ -15,9 +15,7 @@ describe("Check", () => {
   });
 
   it("renders with success variant", () => {
-    const { container } = renderWithProviders(
-      <Check text="Success check" variant="success" />
-    );
+    const { container } = renderWithProviders(<Check text="Success check" variant="success" />);
     expect(screen.getByText("Success check")).toBeInTheDocument();
     expect(container.querySelector("svg")).toBeInTheDocument();
   });
@@ -33,9 +31,7 @@ describe("Check", () => {
   });
 
   it("renders outlined icon when isOutlined is true", () => {
-    const { container } = renderWithProviders(
-      <Check text="Outlined check" isOutlined />
-    );
+    const { container } = renderWithProviders(<Check text="Outlined check" isOutlined />);
     expect(screen.getByText("Outlined check")).toBeInTheDocument();
     expect(container.querySelector("svg")).toBeInTheDocument();
   });

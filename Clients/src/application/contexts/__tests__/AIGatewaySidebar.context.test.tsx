@@ -13,11 +13,7 @@ vi.mock("../../../infrastructure/api/networkServices", () => ({
       if (url.includes("endpoints")) {
         return Promise.resolve({
           data: {
-            endpoints: [
-              { is_active: true },
-              { is_active: false },
-              { is_active: true },
-            ],
+            endpoints: [{ is_active: true }, { is_active: false }, { is_active: true }],
           },
         });
       }

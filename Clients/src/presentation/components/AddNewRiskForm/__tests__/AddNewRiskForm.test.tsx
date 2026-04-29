@@ -90,9 +90,7 @@ describe("AddNewRiskForm", () => {
   });
 
   it("renders in edit mode", () => {
-    renderWithProviders(
-      <AddNewRiskForm {...defaultProps} popupStatus="edit" />
-    );
+    renderWithProviders(<AddNewRiskForm {...defaultProps} popupStatus="edit" />);
     expect(document.body).toBeTruthy();
   });
 });

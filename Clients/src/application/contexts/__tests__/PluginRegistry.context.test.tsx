@@ -2,10 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  PluginRegistryProvider,
-  usePluginRegistry,
-} from "../PluginRegistry.context";
+import { PluginRegistryProvider, usePluginRegistry } from "../PluginRegistry.context";
 
 vi.mock("../../repository/plugin.repository", () => ({
   getInstalledPlugins: vi.fn().mockResolvedValue([
@@ -27,7 +24,7 @@ function createWrapper() {
     React.createElement(
       QueryClientProvider,
       { client: queryClient },
-      React.createElement(PluginRegistryProvider, null, children)
+      React.createElement(PluginRegistryProvider, null, children),
     );
 }
 

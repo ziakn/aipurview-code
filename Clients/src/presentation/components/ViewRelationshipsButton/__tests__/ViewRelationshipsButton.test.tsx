@@ -24,13 +24,9 @@ vi.mock("../../EntityGraphModal", () => ({
 
 // Mock VWTooltip
 vi.mock("../../VWTooltip", () => ({
-  default: ({
-    children,
-    content,
-  }: {
-    children: React.ReactNode;
-    content: string;
-  }) => <div title={content}>{children}</div>,
+  default: ({ children, content }: { children: React.ReactNode; content: string }) => (
+    <div title={content}>{children}</div>
+  ),
 }));
 
 describe("ViewRelationshipsButton", () => {
@@ -67,9 +63,7 @@ describe("ViewRelationshipsButton", () => {
   });
 
   it("renders with custom tooltip text", () => {
-    renderWithProviders(
-      <ViewRelationshipsButton {...defaultProps} tooltipText="Show graph" />
-    );
+    renderWithProviders(<ViewRelationshipsButton {...defaultProps} tooltipText="Show graph" />);
     expect(screen.getByTitle("Show graph")).toBeInTheDocument();
   });
 

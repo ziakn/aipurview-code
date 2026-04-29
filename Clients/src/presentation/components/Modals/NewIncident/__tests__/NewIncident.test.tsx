@@ -16,7 +16,11 @@ vi.mock("../../../../../application/hooks/useProjects", () => ({
   useProjects: () => ({ data: [] }),
 }));
 vi.mock("../../../../../application/hooks/useFormValidation", () => ({
-  useFormValidation: () => ({ errors: {}, validate: vi.fn().mockReturnValue(true), clearError: vi.fn() }),
+  useFormValidation: () => ({
+    errors: {},
+    validate: vi.fn().mockReturnValue(true),
+    clearError: vi.fn(),
+  }),
 }));
 vi.mock("../../../../../application/hooks/useModalKeyHandling", () => ({
   useModalKeyHandling: vi.fn(),
@@ -33,9 +37,7 @@ import SideDrawerIncident from "../index";
 
 describe("NewIncident (SideDrawerIncident)", () => {
   it("renders without crashing when open", () => {
-    renderWithProviders(
-      <SideDrawerIncident isOpen={true} setIsOpen={vi.fn()} />
-    );
+    renderWithProviders(<SideDrawerIncident isOpen={true} setIsOpen={vi.fn()} />);
     expect(document.body).toBeTruthy();
   });
 });

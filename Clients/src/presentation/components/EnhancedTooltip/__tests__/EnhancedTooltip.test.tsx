@@ -7,7 +7,7 @@ describe("EnhancedTooltip Component", () => {
     renderWithProviders(
       <EnhancedTooltip title="Help" content="Some help text">
         <span>Info icon</span>
-      </EnhancedTooltip>
+      </EnhancedTooltip>,
     );
 
     expect(screen.getByText("Info icon")).toBeInTheDocument();
@@ -17,7 +17,7 @@ describe("EnhancedTooltip Component", () => {
     renderWithProviders(
       <EnhancedTooltip title="Title" content="Content">
         <span>Trigger</span>
-      </EnhancedTooltip>
+      </EnhancedTooltip>,
     );
 
     expect(screen.getByRole("button")).toBeInTheDocument();
@@ -27,7 +27,7 @@ describe("EnhancedTooltip Component", () => {
     renderWithProviders(
       <EnhancedTooltip title="Title" content="Content">
         <span>Accessible trigger</span>
-      </EnhancedTooltip>
+      </EnhancedTooltip>,
     );
 
     const trigger = screen.getByRole("button");
@@ -38,7 +38,7 @@ describe("EnhancedTooltip Component", () => {
     renderWithProviders(
       <EnhancedTooltip title="Keyboard" content="Accessible">
         <span>Focusable</span>
-      </EnhancedTooltip>
+      </EnhancedTooltip>,
     );
 
     const trigger = screen.getByRole("button");
@@ -49,7 +49,7 @@ describe("EnhancedTooltip Component", () => {
     renderWithProviders(
       <EnhancedTooltip title="Hidden Title" content="Hidden Content">
         <span>Hover me</span>
-      </EnhancedTooltip>
+      </EnhancedTooltip>,
     );
 
     expect(screen.queryByText("Hidden Title")).not.toBeInTheDocument();

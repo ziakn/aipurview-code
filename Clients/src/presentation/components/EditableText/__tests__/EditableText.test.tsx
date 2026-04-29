@@ -18,16 +18,12 @@ describe("EditableText", () => {
   });
 
   it("renders placeholder when value is empty", () => {
-    renderWithProviders(
-      <EditableText {...defaultProps} value="" placeholder="Enter text" />
-    );
+    renderWithProviders(<EditableText {...defaultProps} value="" placeholder="Enter text" />);
     expect(screen.getByText("Enter text")).toBeInTheDocument();
   });
 
   it("shows edit button with correct aria-label", () => {
-    renderWithProviders(
-      <EditableText {...defaultProps} editAriaLabel="Edit title" />
-    );
+    renderWithProviders(<EditableText {...defaultProps} editAriaLabel="Edit title" />);
     expect(screen.getByLabelText("Edit title")).toBeInTheDocument();
   });
 
@@ -47,9 +43,7 @@ describe("EditableText", () => {
 
   it("saves on Enter key press", async () => {
     const onSave = vi.fn();
-    renderWithProviders(
-      <EditableText value="Old" onSave={onSave} />
-    );
+    renderWithProviders(<EditableText value="Old" onSave={onSave} />);
     fireEvent.click(screen.getByLabelText("Edit"));
     const input = screen.getByRole("textbox");
     fireEvent.change(input, { target: { value: "New Value" } });

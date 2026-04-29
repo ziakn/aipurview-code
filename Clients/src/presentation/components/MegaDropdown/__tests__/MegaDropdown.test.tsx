@@ -8,7 +8,7 @@ describe("MegaDropdownErrorBoundary", () => {
     renderWithProviders(
       <MegaDropdownErrorBoundary>
         <div data-testid="child">Child content</div>
-      </MegaDropdownErrorBoundary>
+      </MegaDropdownErrorBoundary>,
     );
     expect(screen.getByTestId("child")).toBeInTheDocument();
     expect(screen.getByText("Child content")).toBeInTheDocument();
@@ -25,7 +25,7 @@ describe("MegaDropdownErrorBoundary", () => {
     renderWithProviders(
       <MegaDropdownErrorBoundary>
         <ThrowError />
-      </MegaDropdownErrorBoundary>
+      </MegaDropdownErrorBoundary>,
     );
 
     // Should not render the child

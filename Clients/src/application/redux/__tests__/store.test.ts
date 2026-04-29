@@ -94,10 +94,7 @@ describe("checkVersionAndClearIfNeeded", () => {
 
   it("should set the version in localStorage on first run", async () => {
     await import("../store");
-    expect(localStorageMock.setItem).toHaveBeenCalledWith(
-      "root_version",
-      "1.0.0-test"
-    );
+    expect(localStorageMock.setItem).toHaveBeenCalledWith("root_version", "1.0.0-test");
   });
 
   it("should clear persist: keys when version changes", async () => {
@@ -117,10 +114,7 @@ describe("checkVersionAndClearIfNeeded", () => {
     await import("../store");
 
     expect(localStorageMock.removeItem).toHaveBeenCalledWith("persist:root");
-    expect(localStorageMock.setItem).toHaveBeenCalledWith(
-      "root_version",
-      "1.0.0-test"
-    );
+    expect(localStorageMock.setItem).toHaveBeenCalledWith("root_version", "1.0.0-test");
 
     vi.restoreAllMocks();
   });
@@ -131,8 +125,8 @@ describe("checkVersionAndClearIfNeeded", () => {
     await import("../store");
 
     // removeItem should not have been called for persist: keys
-    const removeItemCalls = localStorageMock.removeItem.mock.calls.filter(
-      (call: string[]) => call[0]?.startsWith("persist:")
+    const removeItemCalls = localStorageMock.removeItem.mock.calls.filter((call: string[]) =>
+      call[0]?.startsWith("persist:"),
     );
     expect(removeItemCalls).toHaveLength(0);
   });

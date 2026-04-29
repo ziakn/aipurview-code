@@ -68,9 +68,7 @@ describe("fria.repository", () => {
     });
 
     it("should handle string projectId", async () => {
-      vi.mocked(CustomAxios.put).mockResolvedValue(
-        mockResponse({ id: 1 }),
-      );
+      vi.mocked(CustomAxios.put).mockResolvedValue(mockResponse({ id: 1 }));
 
       await friaRepository.updateFria("7", {} as any);
 
@@ -80,9 +78,7 @@ describe("fria.repository", () => {
     it("should throw on error", async () => {
       vi.mocked(CustomAxios.put).mockRejectedValue(new Error("Not found"));
 
-      await expect(friaRepository.updateFria(999, {} as any)).rejects.toThrow(
-        "Not found",
-      );
+      await expect(friaRepository.updateFria(999, {} as any)).rejects.toThrow("Not found");
     });
   });
 
@@ -114,13 +110,9 @@ describe("fria.repository", () => {
     });
 
     it("should throw on error", async () => {
-      vi.mocked(CustomAxios.put).mockRejectedValue(
-        new Error("Validation failed"),
-      );
+      vi.mocked(CustomAxios.put).mockRejectedValue(new Error("Validation failed"));
 
-      await expect(friaRepository.updateRights(1, [])).rejects.toThrow(
-        "Validation failed",
-      );
+      await expect(friaRepository.updateRights(1, [])).rejects.toThrow("Validation failed");
     });
   });
 
@@ -134,21 +126,14 @@ describe("fria.repository", () => {
 
       const result = await friaRepository.addRiskItem(1, itemData as any);
 
-      expect(CustomAxios.post).toHaveBeenCalledWith(
-        "/fria/1/risk-items",
-        itemData,
-      );
+      expect(CustomAxios.post).toHaveBeenCalledWith("/fria/1/risk-items", itemData);
       expect(result).toEqual(mockData);
     });
 
     it("should throw on validation error", async () => {
-      vi.mocked(CustomAxios.post).mockRejectedValue(
-        new Error("Validation failed"),
-      );
+      vi.mocked(CustomAxios.post).mockRejectedValue(new Error("Validation failed"));
 
-      await expect(friaRepository.addRiskItem(1, {} as any)).rejects.toThrow(
-        "Validation failed",
-      );
+      await expect(friaRepository.addRiskItem(1, {} as any)).rejects.toThrow("Validation failed");
     });
   });
 
@@ -160,27 +145,18 @@ describe("fria.repository", () => {
       const mockData = { id: 5, severity: "low" };
       vi.mocked(CustomAxios.patch).mockResolvedValue(mockResponse(mockData));
 
-      const result = await friaRepository.updateRiskItem(
-        1,
-        5,
-        updateData as any,
-      );
+      const result = await friaRepository.updateRiskItem(1, 5, updateData as any);
 
-      expect(CustomAxios.patch).toHaveBeenCalledWith(
-        "/fria/1/risk-items/5",
-        updateData,
-      );
+      expect(CustomAxios.patch).toHaveBeenCalledWith("/fria/1/risk-items/5", updateData);
       expect(result).toEqual(mockData);
     });
 
     it("should throw on not found", async () => {
-      vi.mocked(CustomAxios.patch).mockRejectedValue(
-        new Error("Risk item not found"),
-      );
+      vi.mocked(CustomAxios.patch).mockRejectedValue(new Error("Risk item not found"));
 
-      await expect(
-        friaRepository.updateRiskItem(1, 999, {} as any),
-      ).rejects.toThrow("Risk item not found");
+      await expect(friaRepository.updateRiskItem(1, 999, {} as any)).rejects.toThrow(
+        "Risk item not found",
+      );
     });
   });
 
@@ -198,13 +174,9 @@ describe("fria.repository", () => {
     });
 
     it("should throw on not found", async () => {
-      vi.mocked(CustomAxios.delete).mockRejectedValue(
-        new Error("Risk item not found"),
-      );
+      vi.mocked(CustomAxios.delete).mockRejectedValue(new Error("Risk item not found"));
 
-      await expect(friaRepository.deleteRiskItem(1, 999)).rejects.toThrow(
-        "Risk item not found",
-      );
+      await expect(friaRepository.deleteRiskItem(1, 999)).rejects.toThrow("Risk item not found");
     });
   });
 
@@ -233,13 +205,9 @@ describe("fria.repository", () => {
     });
 
     it("should throw on error", async () => {
-      vi.mocked(CustomAxios.get).mockRejectedValue(
-        new Error("Network error"),
-      );
+      vi.mocked(CustomAxios.get).mockRejectedValue(new Error("Network error"));
 
-      await expect(friaRepository.getModelLinks(1)).rejects.toThrow(
-        "Network error",
-      );
+      await expect(friaRepository.getModelLinks(1)).rejects.toThrow("Network error");
     });
   });
 
@@ -257,13 +225,9 @@ describe("fria.repository", () => {
     });
 
     it("should throw on duplicate link", async () => {
-      vi.mocked(CustomAxios.post).mockRejectedValue(
-        new Error("Model already linked"),
-      );
+      vi.mocked(CustomAxios.post).mockRejectedValue(new Error("Model already linked"));
 
-      await expect(friaRepository.linkModel(1, 10)).rejects.toThrow(
-        "Model already linked",
-      );
+      await expect(friaRepository.linkModel(1, 10)).rejects.toThrow("Model already linked");
     });
   });
 
@@ -281,13 +245,9 @@ describe("fria.repository", () => {
     });
 
     it("should throw on not found", async () => {
-      vi.mocked(CustomAxios.delete).mockRejectedValue(
-        new Error("Link not found"),
-      );
+      vi.mocked(CustomAxios.delete).mockRejectedValue(new Error("Link not found"));
 
-      await expect(friaRepository.unlinkModel(1, 999)).rejects.toThrow(
-        "Link not found",
-      );
+      await expect(friaRepository.unlinkModel(1, 999)).rejects.toThrow("Link not found");
     });
   });
 
@@ -319,13 +279,9 @@ describe("fria.repository", () => {
     });
 
     it("should throw on error", async () => {
-      vi.mocked(CustomAxios.post).mockRejectedValue(
-        new Error("Assessment incomplete"),
-      );
+      vi.mocked(CustomAxios.post).mockRejectedValue(new Error("Assessment incomplete"));
 
-      await expect(friaRepository.submitFria(1)).rejects.toThrow(
-        "Assessment incomplete",
-      );
+      await expect(friaRepository.submitFria(1)).rejects.toThrow("Assessment incomplete");
     });
   });
 
@@ -356,9 +312,7 @@ describe("fria.repository", () => {
     it("should throw on error", async () => {
       vi.mocked(CustomAxios.get).mockRejectedValue(new Error("Not found"));
 
-      await expect(friaRepository.getVersions(999)).rejects.toThrow(
-        "Not found",
-      );
+      await expect(friaRepository.getVersions(999)).rejects.toThrow("Not found");
     });
   });
 
@@ -381,9 +335,7 @@ describe("fria.repository", () => {
 
       const result = await friaRepository.getEvidence(1, "rights");
 
-      expect(CustomAxios.get).toHaveBeenCalledWith(
-        "/fria/1/evidence?section=rights",
-      );
+      expect(CustomAxios.get).toHaveBeenCalledWith("/fria/1/evidence?section=rights");
       expect(result).toEqual(mockData);
     });
 
@@ -398,9 +350,7 @@ describe("fria.repository", () => {
     it("should throw on error", async () => {
       vi.mocked(CustomAxios.get).mockRejectedValue(new Error("Network error"));
 
-      await expect(friaRepository.getEvidence(1)).rejects.toThrow(
-        "Network error",
-      );
+      await expect(friaRepository.getEvidence(1)).rejects.toThrow("Network error");
     });
   });
 
@@ -421,9 +371,7 @@ describe("fria.repository", () => {
     });
 
     it("should handle different entity types", async () => {
-      vi.mocked(CustomAxios.post).mockResolvedValue(
-        mockResponse({ id: 2 }),
-      );
+      vi.mocked(CustomAxios.post).mockResolvedValue(mockResponse({ id: 2 }));
 
       await friaRepository.linkEvidence(1, 10, "right");
 
@@ -434,13 +382,11 @@ describe("fria.repository", () => {
     });
 
     it("should throw on error", async () => {
-      vi.mocked(CustomAxios.post).mockRejectedValue(
-        new Error("File not found"),
-      );
+      vi.mocked(CustomAxios.post).mockRejectedValue(new Error("File not found"));
 
-      await expect(
-        friaRepository.linkEvidence(1, 999, "risk_item"),
-      ).rejects.toThrow("File not found");
+      await expect(friaRepository.linkEvidence(1, 999, "risk_item")).rejects.toThrow(
+        "File not found",
+      );
     });
   });
 
@@ -458,9 +404,7 @@ describe("fria.repository", () => {
     });
 
     it("should throw on not found", async () => {
-      vi.mocked(CustomAxios.delete).mockRejectedValue(
-        new Error("Evidence link not found"),
-      );
+      vi.mocked(CustomAxios.delete).mockRejectedValue(new Error("Evidence link not found"));
 
       await expect(friaRepository.unlinkEvidence(1, 999)).rejects.toThrow(
         "Evidence link not found",

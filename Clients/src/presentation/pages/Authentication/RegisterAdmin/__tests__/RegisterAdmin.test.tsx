@@ -34,10 +34,9 @@ describe("RegisterAdmin Page", () => {
   });
 
   it("renders without crashing", () => {
-    const { container } = renderWithProviders(
-      <RegisterAdmin multiTenant={false} />,
-      { route: "/register" }
-    );
+    const { container } = renderWithProviders(<RegisterAdmin multiTenant={false} />, {
+      route: "/register",
+    });
 
     expect(container).toBeTruthy();
   });

@@ -12,12 +12,7 @@ const steps: ProgressStep[] = [
 describe("StepProgressDialog", () => {
   it("renders the dialog title and first step when open", () => {
     renderWithProviders(
-      <StepProgressDialog
-        open={true}
-        title="Import Progress"
-        steps={steps}
-        currentStep={0}
-      />
+      <StepProgressDialog open={true} title="Import Progress" steps={steps} currentStep={0} />,
     );
 
     expect(screen.getByText("Import Progress")).toBeInTheDocument();
@@ -26,12 +21,7 @@ describe("StepProgressDialog", () => {
 
   it("displays step counter and progress percentage", () => {
     renderWithProviders(
-      <StepProgressDialog
-        open={true}
-        title="Import Progress"
-        steps={steps}
-        currentStep={0}
-      />
+      <StepProgressDialog open={true} title="Import Progress" steps={steps} currentStep={0} />,
     );
 
     expect(screen.getByText("Step 1 of 4")).toBeInTheDocument();
@@ -40,12 +30,7 @@ describe("StepProgressDialog", () => {
 
   it("renders the correct step when currentStep is provided", () => {
     renderWithProviders(
-      <StepProgressDialog
-        open={true}
-        title="Import Progress"
-        steps={steps}
-        currentStep={2}
-      />
+      <StepProgressDialog open={true} title="Import Progress" steps={steps} currentStep={2} />,
     );
 
     expect(screen.getByText("Generating report")).toBeInTheDocument();
@@ -55,12 +40,7 @@ describe("StepProgressDialog", () => {
 
   it("renders the progress bar", () => {
     renderWithProviders(
-      <StepProgressDialog
-        open={true}
-        title="Import Progress"
-        steps={steps}
-        currentStep={1}
-      />
+      <StepProgressDialog open={true} title="Import Progress" steps={steps} currentStep={1} />,
     );
 
     expect(screen.getByRole("progressbar")).toBeInTheDocument();
@@ -68,12 +48,7 @@ describe("StepProgressDialog", () => {
 
   it("does not render dialog content when open is false", () => {
     renderWithProviders(
-      <StepProgressDialog
-        open={false}
-        title="Import Progress"
-        steps={steps}
-        currentStep={0}
-      />
+      <StepProgressDialog open={false} title="Import Progress" steps={steps} currentStep={0} />,
     );
 
     expect(screen.queryByText("Import Progress")).not.toBeInTheDocument();

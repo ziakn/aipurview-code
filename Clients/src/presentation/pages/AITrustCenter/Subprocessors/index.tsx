@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, Suspense, useCallback, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
-import {
-  Box,
-  Typography,
-  TableCell,
-  Stack,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Typography, TableCell, Stack, CircularProgress } from "@mui/material";
 import Toggle from "../../../components/Inputs/Toggle";
 import IconButtonComponent from "../../../components/IconButton";
 import { useStyles } from "./styles";
@@ -60,7 +54,6 @@ const SubprocessorTableRow: React.FC<{
     onEdit(subprocessor.id);
   };
 
-
   return (
     <>
       <TableCell
@@ -68,7 +61,10 @@ const SubprocessorTableRow: React.FC<{
         sx={{
           cursor: "pointer",
           textTransform: "none !important",
-          backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("company name") ? "#e8e8e8" : "#fafafa",
+          backgroundColor:
+            sortConfig?.key && sortConfig.key.toLowerCase().includes("company name")
+              ? "#e8e8e8"
+              : "#fafafa",
           maxWidth: "200px",
           width: "200px",
         }}
@@ -80,21 +76,14 @@ const SubprocessorTableRow: React.FC<{
         sx={{
           cursor: "pointer",
           textTransform: "none !important",
-          backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("url") ? `${background.surface}` : "inherit",
-        }}
-      >
-        <Typography sx={styles.tableDataCell}>{subprocessor.url.replace(/^https?:\/\//, "")}</Typography>
-      </TableCell>
-      <TableCell
-        onClick={handleRowClick}
-        sx={{
-          cursor: "pointer",
-          textTransform: "none !important",
-          backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("purpose") ? `${background.surface}` : "inherit",
+          backgroundColor:
+            sortConfig?.key && sortConfig.key.toLowerCase().includes("url")
+              ? `${background.surface}`
+              : "inherit",
         }}
       >
         <Typography sx={styles.tableDataCell}>
-          {subprocessor.purpose}
+          {subprocessor.url.replace(/^https?:\/\//, "")}
         </Typography>
       </TableCell>
       <TableCell
@@ -102,16 +91,33 @@ const SubprocessorTableRow: React.FC<{
         sx={{
           cursor: "pointer",
           textTransform: "none !important",
-          backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("location") ? `${background.surface}` : "inherit",
+          backgroundColor:
+            sortConfig?.key && sortConfig.key.toLowerCase().includes("purpose")
+              ? `${background.surface}`
+              : "inherit",
         }}
       >
-        <Typography sx={styles.tableDataCell}>
-          {subprocessor.location}
-        </Typography>
+        <Typography sx={styles.tableDataCell}>{subprocessor.purpose}</Typography>
+      </TableCell>
+      <TableCell
+        onClick={handleRowClick}
+        sx={{
+          cursor: "pointer",
+          textTransform: "none !important",
+          backgroundColor:
+            sortConfig?.key && sortConfig.key.toLowerCase().includes("location")
+              ? `${background.surface}`
+              : "inherit",
+        }}
+      >
+        <Typography sx={styles.tableDataCell}>{subprocessor.location}</Typography>
       </TableCell>
       <TableCell
         sx={{
-          backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("action") ? `${background.surface}` : "inherit",
+          backgroundColor:
+            sortConfig?.key && sortConfig.key.toLowerCase().includes("action")
+              ? `${background.surface}`
+              : "inherit",
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -160,12 +166,9 @@ const AITrustCenterSubprocessors: React.FC = () => {
     isLoading: subprocessorsLoading,
     error: subprocessorsError,
   } = useAITrustCentreSubprocessorsQuery();
-  const createSubprocessorMutation =
-    useCreateAITrustCentreSubprocessorMutation();
-  const updateSubprocessorMutation =
-    useUpdateAITrustCentreSubprocessorMutation();
-  const deleteSubprocessorMutation =
-    useDeleteAITrustCentreSubprocessorMutation();
+  const createSubprocessorMutation = useCreateAITrustCentreSubprocessorMutation();
+  const updateSubprocessorMutation = useUpdateAITrustCentreSubprocessorMutation();
+  const deleteSubprocessorMutation = useDeleteAITrustCentreSubprocessorMutation();
   const theme = useTheme();
   const styles = useStyles(theme);
 
@@ -196,15 +199,9 @@ const AITrustCenterSubprocessors: React.FC = () => {
     title?: string;
     body: string;
   } | null>(null);
-  const [addSubprocessorError, setAddSubprocessorError] = useState<
-    string | null
-  >(null);
-  const [deleteSubprocessorError, setDeleteSubprocessorError] = useState<
-    string | null
-  >(null);
-  const [editSubprocessorError, setEditSubprocessorError] = useState<
-    string | null
-  >(null);
+  const [addSubprocessorError, setAddSubprocessorError] = useState<string | null>(null);
+  const [deleteSubprocessorError, setDeleteSubprocessorError] = useState<string | null>(null);
+  const [editSubprocessorError, setEditSubprocessorError] = useState<string | null>(null);
 
   // Update local form data when query data changes
   React.useEffect(() => {
@@ -216,7 +213,12 @@ const AITrustCenterSubprocessors: React.FC = () => {
   // Handle subprocessorId URL param to open edit modal from Wise Search
   useEffect(() => {
     const subprocessorId = searchParams.get("subprocessorId");
-    if (subprocessorId && !hasProcessedUrlParam.current && subprocessors && subprocessors.length > 0) {
+    if (
+      subprocessorId &&
+      !hasProcessedUrlParam.current &&
+      subprocessors &&
+      subprocessors.length > 0
+    ) {
       hasProcessedUrlParam.current = true;
       // Use existing handleEdit function which opens the modal
       handleEdit(parseInt(subprocessorId, 10));
@@ -225,11 +227,7 @@ const AITrustCenterSubprocessors: React.FC = () => {
   }, [searchParams, subprocessors, setSearchParams]);
 
   // Handle field change and auto-save
-  const handleFieldChange = (
-    section: string,
-    field: string,
-    value: boolean | string
-  ) => {
+  const handleFieldChange = (section: string, field: string, value: boolean | string) => {
     setFormData((prev: FormData | null) => {
       if (!prev) return prev;
       const updatedData = {
@@ -325,25 +323,25 @@ const AITrustCenterSubprocessors: React.FC = () => {
       return;
     }
 
-     // Client-side validation
-      if (newSubprocessor.purpose.length < 10) {
-        setEditSubprocessorError("Subprocessor purpose must be at least 10 characters long");
-        return;
-      }
+    // Client-side validation
+    if (newSubprocessor.purpose.length < 10) {
+      setEditSubprocessorError("Subprocessor purpose must be at least 10 characters long");
+      return;
+    }
 
-      // Validate URL (accept without http/https)
-      const urlPattern = /^((https?:\/\/)?[\w-]+(\.[\w-]+)+(\/[^\s?#]*)?(\?.*)?(#.*)?)$/i;
-      if (!urlPattern.test(newSubprocessor.url)) {
-        setEditSubprocessorError("Subprocessor URL must be a valid URL");
-        return;
-      }
+    // Validate URL (accept without http/https)
+    const urlPattern = /^((https?:\/\/)?[\w-]+(\.[\w-]+)+(\/[^\s?#]*)?(\?.*)?(#.*)?)$/i;
+    if (!urlPattern.test(newSubprocessor.url)) {
+      setEditSubprocessorError("Subprocessor URL must be a valid URL");
+      return;
+    }
 
     try {
-       // Prepend http:// if missing
-        let formattedUrl = newSubprocessor.url;
-        if (!/^https?:\/\//i.test(formattedUrl)) {
-          formattedUrl = "http://" + formattedUrl;
-        }
+      // Prepend http:// if missing
+      let formattedUrl = newSubprocessor.url;
+      if (!/^https?:\/\//i.test(formattedUrl)) {
+        formattedUrl = "http://" + formattedUrl;
+      }
       await createSubprocessorMutation.mutateAsync({
         name: newSubprocessor.name,
         purpose: newSubprocessor.purpose,
@@ -376,27 +374,25 @@ const AITrustCenterSubprocessors: React.FC = () => {
       return;
     }
 
-     // Client-side validation
-      if (form.purpose.length < 10) {
-        setEditSubprocessorError("Subprocessor purpose must be at least 10 characters long");
-        return;
-      }
+    // Client-side validation
+    if (form.purpose.length < 10) {
+      setEditSubprocessorError("Subprocessor purpose must be at least 10 characters long");
+      return;
+    }
 
-       // Validate URL (accept without http/https)
-      const urlPattern = /^((https?:\/\/)?[\w-]+(\.[\w-]+)+(\/[\w-]*)*(\?.*)?(#.*)?)$/i;
-      if (!urlPattern.test(form.url)) {
-        setEditSubprocessorError("Subprocessor URL must be a valid URL");
-        return;
-      }
-
+    // Validate URL (accept without http/https)
+    const urlPattern = /^((https?:\/\/)?[\w-]+(\.[\w-]+)+(\/[\w-]*)*(\?.*)?(#.*)?)$/i;
+    if (!urlPattern.test(form.url)) {
+      setEditSubprocessorError("Subprocessor URL must be a valid URL");
+      return;
+    }
 
     try {
-
-       // Prepend http:// if missing
-    let formattedUrl = form.url;
-    if (!/^https?:\/\//i.test(formattedUrl)) {
-      formattedUrl = "http://" + formattedUrl;
-    }
+      // Prepend http:// if missing
+      let formattedUrl = form.url;
+      if (!/^https?:\/\//i.test(formattedUrl)) {
+        formattedUrl = "http://" + formattedUrl;
+      }
 
       await updateSubprocessorMutation.mutateAsync({
         subprocessorId: editId,
@@ -415,9 +411,7 @@ const AITrustCenterSubprocessors: React.FC = () => {
       setForm({ name: "", purpose: "", url: "", location: "" });
       setEditSubprocessorError(null);
     } catch (error: any) {
-      setEditSubprocessorError(
-        error.message || "Failed to update subprocessor"
-      );
+      setEditSubprocessorError(error.message || "Failed to update subprocessor");
     }
   };
 
@@ -439,23 +433,24 @@ const AITrustCenterSubprocessors: React.FC = () => {
         setAlert,
       });
     } catch (error: any) {
-      setDeleteSubprocessorError(
-        error.message || "Failed to delete subprocessor"
-      );
+      setDeleteSubprocessorError(error.message || "Failed to delete subprocessor");
     }
   };
 
   // Define how to get the group key for each subprocessor
-  const getSubprocessorGroupKey = useCallback((subprocessor: Subprocessor, field: string): string => {
-    switch (field) {
-      case 'location':
-        return subprocessor.location || 'Unknown';
-      case 'purpose':
-        return subprocessor.purpose || 'Unknown';
-      default:
-        return 'Other';
-    }
-  }, []);
+  const getSubprocessorGroupKey = useCallback(
+    (subprocessor: Subprocessor, field: string): string => {
+      switch (field) {
+        case "location":
+          return subprocessor.location || "Unknown";
+        case "purpose":
+          return subprocessor.purpose || "Unknown";
+        default:
+          return "Other";
+      }
+    },
+    [],
+  );
 
   // Apply grouping to subprocessors
   const groupedSubprocessors = useTableGrouping({
@@ -468,12 +463,7 @@ const AITrustCenterSubprocessors: React.FC = () => {
   // Show loading state
   if (overviewLoading || subprocessorsLoading) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="400px"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
         <CircularProgress />
       </Box>
     );
@@ -482,16 +472,9 @@ const AITrustCenterSubprocessors: React.FC = () => {
   // Show error state
   if (overviewError || subprocessorsError) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="400px"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
         <Typography color="error">
-          {overviewError?.message ||
-            subprocessorsError?.message ||
-            "An error occurred"}
+          {overviewError?.message || subprocessorsError?.message || "An error occurred"}
         </Typography>
       </Box>
     );
@@ -500,12 +483,7 @@ const AITrustCenterSubprocessors: React.FC = () => {
   // Ensure subprocessors is available before rendering
   if (!subprocessors) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="400px"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
         <Typography>No subprocessors data available</Typography>
       </Box>
     );
@@ -514,11 +492,10 @@ const AITrustCenterSubprocessors: React.FC = () => {
   return (
     <Box>
       <Typography sx={styles.description}>
-        The subprocessor section is an important part of your AI Trust Center.
-        It provides transparency about third-party vendors that process or store
-        data on behalf of your organization. Subprocessors are integral to
-        various operations, from AI model hosting and data storage to compliance
-        monitoring and analytics.
+        The subprocessor section is an important part of your AI Trust Center. It provides
+        transparency about third-party vendors that process or store data on behalf of your
+        organization. Subprocessors are integral to various operations, from AI model hosting and
+        data storage to compliance monitoring and analytics.
       </Typography>
       <Box sx={styles.container}>
         <Box sx={styles.subprocessorsHeader}>
@@ -526,8 +503,8 @@ const AITrustCenterSubprocessors: React.FC = () => {
             <Box sx={{ display: "flex", gap: "8px", alignItems: "center" }}>
               <GroupBy
                 options={[
-                  { id: 'location', label: 'Location' },
-                  { id: 'purpose', label: 'Purpose' },
+                  { id: "location", label: "Location" },
+                  { id: "purpose", label: "Purpose" },
                 ]}
                 onGroupChange={handleGroupChange}
               />
@@ -537,7 +514,11 @@ const AITrustCenterSubprocessors: React.FC = () => {
                 <Typography
                   sx={{ ...styles.toggleLabel, cursor: "pointer" }}
                   onClick={() =>
-                    handleFieldChange("info", "subprocessor_visible", !formData?.info?.subprocessor_visible)
+                    handleFieldChange(
+                      "info",
+                      "subprocessor_visible",
+                      !formData?.info?.subprocessor_visible,
+                    )
                   }
                 >
                   Visible?
@@ -658,9 +639,7 @@ const AITrustCenterSubprocessors: React.FC = () => {
             <ModalField
               label="Purpose"
               value={newSubprocessor.purpose}
-              onChange={(value) =>
-                handleNewSubprocessorChange("purpose", value)
-              }
+              onChange={(value) => handleNewSubprocessorChange("purpose", value)}
               enabled={!!formData?.info?.subprocessor_visible}
             />
             <ModalField
@@ -672,9 +651,7 @@ const AITrustCenterSubprocessors: React.FC = () => {
             <ModalField
               label="Location"
               value={newSubprocessor.location}
-              onChange={(value) =>
-                handleNewSubprocessorChange("location", value)
-              }
+              onChange={(value) => handleNewSubprocessorChange("location", value)}
               enabled={!!formData?.info?.subprocessor_visible}
             />
           </Stack>

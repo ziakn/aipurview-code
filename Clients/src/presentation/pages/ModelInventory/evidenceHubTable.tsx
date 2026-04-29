@@ -17,7 +17,15 @@ import {
 } from "@mui/material";
 import TablePaginationActions from "../../components/TablePagination";
 import CustomIconButton from "../../components/IconButton";
-import { ChevronsUpDown, ChevronUp, ChevronDown, FileCheck, FolderOpen, Shield, Clock } from "lucide-react";
+import {
+  ChevronsUpDown,
+  ChevronUp,
+  ChevronDown,
+  FileCheck,
+  FolderOpen,
+  Shield,
+  Clock,
+} from "lucide-react";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { displayFormattedDate } from "../../tools/isoDateToString";
@@ -50,9 +58,7 @@ type SortConfig = {
   direction: SortDirection;
 };
 
-const SelectorVertical = (props: any) => (
-  <ChevronsUpDown size={16} {...props} />
-);
+const SelectorVertical = (props: any) => <ChevronsUpDown size={16} {...props} />;
 
 const TABLE_COLUMNS = [
   { id: "evidence_name", label: "EVIDENCE NAME", sortable: true },
@@ -87,8 +93,7 @@ const SortableTableHead: React.FC<{
   return (
     <TableHead
       sx={{
-        backgroundColor:
-          singleTheme.tableStyles.primary.header.backgroundColors,
+        backgroundColor: singleTheme.tableStyles.primary.header.backgroundColors,
       }}
     >
       <TableRow sx={singleTheme.tableStyles.primary.header.row}>
@@ -123,8 +128,7 @@ const SortableTableHead: React.FC<{
                 variant="body2"
                 sx={{
                   fontWeight: 500,
-                  color:
-                    sortConfig.key === column.id ? "primary.main" : "inherit",
+                  color: sortConfig.key === column.id ? "primary.main" : "inherit",
                 }}
               >
                 {column.label}
@@ -134,16 +138,15 @@ const SortableTableHead: React.FC<{
                   sx={{
                     display: "flex",
                     alignItems: "center",
-                    color:
-                      sortConfig.key === column.id ? "primary.main" : palette.text.disabled,
+                    color: sortConfig.key === column.id ? "primary.main" : palette.text.disabled,
                   }}
                 >
-                  {sortConfig.key === column.id &&
-                    sortConfig.direction === "asc" && <ChevronUp size={16} />}
-                  {sortConfig.key === column.id &&
-                    sortConfig.direction === "desc" && (
-                      <ChevronDown size={16} />
-                    )}
+                  {sortConfig.key === column.id && sortConfig.direction === "asc" && (
+                    <ChevronUp size={16} />
+                  )}
+                  {sortConfig.key === column.id && sortConfig.direction === "desc" && (
+                    <ChevronDown size={16} />
+                  )}
                   {sortConfig.key !== column.id && <ChevronsUpDown size={16} />}
                 </Box>
               )}
@@ -183,7 +186,7 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
       if (!visibleColumns || visibleColumns.size === 0) return true;
       return visibleColumns.has(columnId);
     },
-    [visibleColumns]
+    [visibleColumns],
   );
 
   // Initialize sorting state from localStorage or default to no sorting
@@ -235,7 +238,7 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
       .forEach((m) => {
         map.set(
           m.id!, // safe because we filtered above
-          `${m.provider} - ${m.model}`
+          `${m.provider} - ${m.model}`,
         );
       });
 
@@ -246,13 +249,10 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
     setPage(newPage);
   }, []);
 
-  const handleChangeRowsPerPage = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setRowsPerPage(parseInt(event.target.value, 10));
-      setPage(0);
-    },
-    []
-  );
+  const handleChangeRowsPerPage = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  }, []);
 
   // Sorting handler
   const handleSort = useCallback((columnId: string) => {
@@ -296,15 +296,11 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
         case "uploaded_by":
           aValue =
             a.evidence_files && a.evidence_files.length > 0
-              ? userMap
-                  .get(a.evidence_files[0].uploaded_by.toString())
-                  ?.toLowerCase() || ""
+              ? userMap.get(a.evidence_files[0].uploaded_by.toString())?.toLowerCase() || ""
               : "";
           bValue =
             b.evidence_files && b.evidence_files.length > 0
-              ? userMap
-                  .get(b.evidence_files[0].uploaded_by.toString())
-                  ?.toLowerCase() || ""
+              ? userMap.get(b.evidence_files[0].uploaded_by.toString())?.toLowerCase() || ""
               : "";
           break;
 
@@ -343,10 +339,7 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
 
   const getRange = useMemo(() => {
     const start = page * rowsPerPage + 1;
-    const end = Math.min(
-      page * rowsPerPage + rowsPerPage,
-      sortedData?.length ?? 0
-    );
+    const end = Math.min(page * rowsPerPage + rowsPerPage, sortedData?.length ?? 0);
     return `${start} - ${end}`;
   }, [page, rowsPerPage, sortedData?.length]);
 
@@ -357,9 +350,7 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
           sortedData
             .slice(
               hidePagination ? 0 : page * rowsPerPage,
-              hidePagination
-                ? Math.min(sortedData.length, 100)
-                : page * rowsPerPage + rowsPerPage
+              hidePagination ? Math.min(sortedData.length, 100) : page * rowsPerPage + rowsPerPage,
             )
             .map((evidence) => (
               <TableRow
@@ -367,8 +358,7 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
                 sx={{
                   ...singleTheme.tableStyles.primary.body.row,
                   ...tableRowHoverStyle,
-                  ...(deletingId === evidence.id &&
-                    tableRowDeletingStyle),
+                  ...(deletingId === evidence.id && tableRowDeletingStyle),
                 }}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -386,8 +376,7 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
                     >
                       <FileIcon
                         fileName={
-                          evidence.evidence_files &&
-                          evidence.evidence_files.length > 0
+                          evidence.evidence_files && evidence.evidence_files.length > 0
                             ? evidence.evidence_files[0].filename
                             : ""
                         }
@@ -418,11 +407,8 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
                   <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
                     <TooltipCell
                       value={
-                        evidence.evidence_files &&
-                        evidence.evidence_files.length > 0
-                          ? userMap.get(
-                              evidence.evidence_files[0].uploaded_by.toString()
-                            ) || "-"
+                        evidence.evidence_files && evidence.evidence_files.length > 0
+                          ? userMap.get(evidence.evidence_files[0].uploaded_by.toString()) || "-"
                           : "-"
                       }
                     />
@@ -437,9 +423,7 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
                 )}
                 {isColVisible("expiry_date") && (
                   <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                    {evidence.expiry_date
-                      ? displayFormattedDate(evidence.expiry_date)
-                      : "-"}
+                    {evidence.expiry_date ? displayFormattedDate(evidence.expiry_date) : "-"}
                   </TableCell>
                 )}
                 <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
@@ -462,7 +446,10 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
         ) : (
           <TableRow>
             <TableCell colSpan={visibleTableColumns.length} align="center">
-              <EmptyState message="No evidence yet. Upload documents that prove compliance with each requirement." icon={FileCheck}>
+              <EmptyState
+                message="No evidence yet. Upload documents that prove compliance with each requirement."
+                icon={FileCheck}
+              >
                 <EmptyStateTip
                   icon={FolderOpen}
                   title="Organize by control category"
@@ -495,16 +482,12 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
       onDelete,
       isColVisible,
       visibleTableColumns,
-    ]
+    ],
   );
 
   if (isLoading) {
     return (
-      <Stack
-        alignItems="center"
-        justifyContent="center"
-        sx={loadingContainerStyle(theme)}
-      >
+      <Stack alignItems="center" justifyContent="center" sx={loadingContainerStyle(theme)}>
         <Typography>Loading...</Typography>
       </Stack>
     );
@@ -533,15 +516,10 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={[5, 10, 15, 25]}
                 onRowsPerPageChange={handleChangeRowsPerPage}
-                ActionsComponent={(props) => (
-                  <TablePaginationActions {...props} />
-                )}
+                ActionsComponent={(props) => <TablePaginationActions {...props} />}
                 labelRowsPerPage="Rows per page"
                 labelDisplayedRows={({ page, count }) =>
-                  `Page ${page + 1} of ${Math.max(
-                    0,
-                    Math.ceil(count / rowsPerPage)
-                  )}`
+                  `Page ${page + 1} of ${Math.max(0, Math.ceil(count / rowsPerPage))}`
                 }
                 slotProps={{
                   select: {

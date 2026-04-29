@@ -31,7 +31,8 @@ describe("SectionSidebar", () => {
   it("highlights the active section with selected-path class", () => {
     renderWithProviders(<SectionSidebar {...defaultProps} activeSection="settings" />);
 
-    const settingsButton = screen.getByText("Settings").closest("div[role='button']") ||
+    const settingsButton =
+      screen.getByText("Settings").closest("div[role='button']") ||
       screen.getByText("Settings").closest(".MuiListItemButton-root");
     expect(settingsButton).toHaveClass("selected-path");
   });
@@ -46,7 +47,8 @@ describe("SectionSidebar", () => {
   it("applies non-active class to inactive sections", () => {
     renderWithProviders(<SectionSidebar {...defaultProps} activeSection="overview" />);
 
-    const settingsButton = screen.getByText("Settings").closest("div[role='button']") ||
+    const settingsButton =
+      screen.getByText("Settings").closest("div[role='button']") ||
       screen.getByText("Settings").closest(".MuiListItemButton-root");
     expect(settingsButton).toHaveClass("unselected");
   });

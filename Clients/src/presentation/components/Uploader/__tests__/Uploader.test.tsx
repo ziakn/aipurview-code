@@ -9,13 +9,9 @@ vi.mock("../../../../application/hooks/useIsAdmin", () => ({
 
 // Mock customizable-button
 vi.mock("../../button/customizable-button", () => ({
-  CustomizableButton: ({
-    text,
-    onClick,
-  }: {
-    text: string;
-    onClick?: () => void;
-  }) => <button onClick={onClick}>{text}</button>,
+  CustomizableButton: ({ text, onClick }: { text: string; onClick?: () => void }) => (
+    <button onClick={onClick}>{text}</button>
+  ),
 }));
 
 describe("Uploader", () => {
@@ -32,9 +28,7 @@ describe("Uploader", () => {
 
   it("shows max file size in the description", () => {
     renderWithProviders(<Uploader />);
-    expect(
-      screen.getByText(/Max 10 MB per file/)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Max 10 MB per file/)).toBeInTheDocument();
   });
 
   it("shows supported formats", () => {

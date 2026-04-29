@@ -2,7 +2,9 @@ import { vi } from "vitest";
 
 vi.mock("@tiptap/react", () => ({
   useEditor: vi.fn().mockReturnValue(null),
-  EditorContent: ({ editor }: any) => <div data-testid="editor-content">{editor ? "loaded" : "empty"}</div>,
+  EditorContent: ({ editor }: any) => (
+    <div data-testid="editor-content">{editor ? "loaded" : "empty"}</div>
+  ),
 }));
 vi.mock("@tiptap/react/menus", () => ({
   BubbleMenu: () => null,
@@ -28,9 +30,7 @@ import RichTextEditor from "../index";
 
 describe("RichTextEditor", () => {
   it("renders editor content area", () => {
-    renderWithProviders(
-      <RichTextEditor initialContent="" onContentChange={vi.fn()} />
-    );
+    renderWithProviders(<RichTextEditor initialContent="" onContentChange={vi.fn()} />);
     expect(screen.getByTestId("editor-content")).toBeInTheDocument();
   });
 });

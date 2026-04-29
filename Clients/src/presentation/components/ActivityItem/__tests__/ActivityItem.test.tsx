@@ -29,7 +29,7 @@ describe("ActivityItem", () => {
     expect(
       screen.getByRole("listitem", {
         name: "Risk: Risk assessment updated at 2 hours ago",
-      })
+      }),
     ).toBeInTheDocument();
   });
 

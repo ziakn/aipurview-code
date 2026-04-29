@@ -22,22 +22,16 @@ describe("ConfirmationModal", () => {
     renderWithProviders(<ConfirmationModal {...baseProps} isOpen />);
 
     expect(screen.getByText("Confirm Action")).toBeInTheDocument();
-    expect(
-      screen.getByText("Are you sure you want to proceed?")
-    ).toBeInTheDocument();
+    expect(screen.getByText("Are you sure you want to proceed?")).toBeInTheDocument();
     expect(screen.getByText("Cancel")).toBeInTheDocument();
     expect(screen.getByText("Confirm")).toBeInTheDocument();
   });
 
   it("does not render modal content when isOpen is false", () => {
-    renderWithProviders(
-      <ConfirmationModal {...baseProps} isOpen={false} />
-    );
+    renderWithProviders(<ConfirmationModal {...baseProps} isOpen={false} />);
 
     expect(screen.queryByText("Confirm Action")).not.toBeInTheDocument();
-    expect(
-      screen.queryByText("Are you sure you want to proceed?")
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Are you sure you want to proceed?")).not.toBeInTheDocument();
   });
 
   it("renders by default when isOpen is not provided (defaults to true)", () => {
@@ -77,20 +71,12 @@ describe("ConfirmationModal", () => {
 
     const dialog = screen.getByRole("dialog");
     expect(dialog).toHaveAttribute("aria-modal", "true");
-    expect(dialog).toHaveAttribute(
-      "aria-labelledby",
-      "confirmation-modal-title"
-    );
-    expect(dialog).toHaveAttribute(
-      "aria-describedby",
-      "confirmation-modal-body"
-    );
+    expect(dialog).toHaveAttribute("aria-labelledby", "confirmation-modal-title");
+    expect(dialog).toHaveAttribute("aria-describedby", "confirmation-modal-body");
   });
 
   it("shows 'Processing...' text when isLoading is true", () => {
-    renderWithProviders(
-      <ConfirmationModal {...baseProps} isOpen isLoading />
-    );
+    renderWithProviders(<ConfirmationModal {...baseProps} isOpen isLoading />);
 
     expect(screen.getByText("Processing...")).toBeInTheDocument();
     expect(screen.queryByText("Confirm")).not.toBeInTheDocument();

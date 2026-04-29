@@ -51,9 +51,7 @@ describe("Reporting", () => {
   it("displays the page description", () => {
     renderWithProviders(<Reporting />);
     expect(
-      screen.getByText(
-        /We'll create one using the info from your Compliance/
-      )
+      screen.getByText(/We'll create one using the info from your Compliance/),
     ).toBeInTheDocument();
   });
 

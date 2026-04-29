@@ -37,12 +37,8 @@ describe("ISO42001Clauses Page", () => {
 
   it("renders without crashing", () => {
     const { container } = renderWithProviders(
-      <ISO42001Clauses
-        project={mockProject}
-        framework_id={1}
-        projectFrameworkId={1}
-      />,
-      { route: "/iso" }
+      <ISO42001Clauses project={mockProject} framework_id={1} projectFrameworkId={1} />,
+      { route: "/iso" },
     );
 
     expect(container).toBeTruthy();

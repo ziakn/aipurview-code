@@ -29,9 +29,7 @@ describe("ReadOnlyBanner", () => {
 
   it("renders the read-only message when super admin is viewing org", () => {
     renderWithProviders(<ReadOnlyBanner />);
-    expect(
-      screen.getByText(/Super Admin view \(read-only\)/)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Super Admin view \(read-only\)/)).toBeInTheDocument();
   });
 
   it("renders Manage organizations button", () => {

@@ -49,19 +49,21 @@ describe("VWQuestion", () => {
   it("renders without crashing", () => {
     renderWithProviders(
       <VWQuestion
-        question={{
-          id: 1,
-          question: "What is the purpose of the AI system?",
-          hint: "Describe the intended use.",
-          answer: "",
-          priorityLevel: "high",
-          evidenceFiles: [],
-          subtopicId: 1,
-          assessmentId: 1,
-        } as any}
+        question={
+          {
+            id: 1,
+            question: "What is the purpose of the AI system?",
+            hint: "Describe the intended use.",
+            answer: "",
+            priorityLevel: "high",
+            evidenceFiles: [],
+            subtopicId: 1,
+            assessmentId: 1,
+          } as any
+        }
         setRefreshKey={vi.fn()}
         currentProjectId={1}
-      />
+      />,
     );
     expect(document.body).toBeTruthy();
   });

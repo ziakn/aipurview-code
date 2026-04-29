@@ -41,7 +41,7 @@ describe("PageTour", () => {
 
   it("renders without crashing when run is false", () => {
     const { container } = renderWithProviders(
-      <PageTour steps={steps} run={false} tourKey="test-tour" />
+      <PageTour steps={steps} run={false} tourKey="test-tour" />,
     );
 
     // Component should render without throwing
@@ -50,7 +50,7 @@ describe("PageTour", () => {
 
   it("renders without crashing when run is true", () => {
     const { container } = renderWithProviders(
-      <PageTour steps={steps} run={true} tourKey="test-tour-2" />
+      <PageTour steps={steps} run={true} tourKey="test-tour-2" />,
     );
 
     expect(container).toBeTruthy();
@@ -60,7 +60,7 @@ describe("PageTour", () => {
     localStorage.setItem("test-tour-seen", "true");
 
     const { container } = renderWithProviders(
-      <PageTour steps={steps} run={true} tourKey="test-tour-seen" />
+      <PageTour steps={steps} run={true} tourKey="test-tour-seen" />,
     );
 
     expect(container).toBeTruthy();

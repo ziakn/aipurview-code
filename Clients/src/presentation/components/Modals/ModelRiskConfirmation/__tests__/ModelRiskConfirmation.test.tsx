@@ -15,7 +15,7 @@ describe("ModelRiskConfirmation", () => {
         setIsOpen={vi.fn()}
         onConfirm={vi.fn()}
         onCancel={vi.fn()}
-      />
+      />,
     );
     expect(document.body).toBeTruthy();
   });

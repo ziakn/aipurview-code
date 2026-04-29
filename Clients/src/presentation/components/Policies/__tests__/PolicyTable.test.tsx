@@ -25,22 +25,13 @@ describe("PolicyTable", () => {
   };
 
   it("renders loading state", () => {
-    renderWithProviders(
-      <PolicyTable {...defaultProps} isLoading={true} />
-    );
+    renderWithProviders(<PolicyTable {...defaultProps} isLoading={true} />);
     expect(screen.getByText("Loading policies...")).toBeInTheDocument();
   });
 
   it("renders error state", () => {
-    renderWithProviders(
-      <PolicyTable
-        {...defaultProps}
-        error={new Error("Network error")}
-      />
-    );
-    expect(
-      screen.getByText("Error loading policies: Network error")
-    ).toBeInTheDocument();
+    renderWithProviders(<PolicyTable {...defaultProps} error={new Error("Network error")} />);
+    expect(screen.getByText("Error loading policies: Network error")).toBeInTheDocument();
   });
 
   it("renders empty state when data is empty", () => {
@@ -62,9 +53,7 @@ describe("PolicyTable", () => {
         created_at: "2026-01-01T00:00:00Z",
       },
     ] as any;
-    renderWithProviders(
-      <PolicyTable {...defaultProps} data={data} />
-    );
+    renderWithProviders(<PolicyTable {...defaultProps} data={data} />);
     expect(screen.getByText("Data Protection Policy")).toBeInTheDocument();
   });
 
@@ -82,12 +71,8 @@ describe("PolicyTable", () => {
         created_at: "2026-01-01T00:00:00Z",
       },
     ] as any;
-    renderWithProviders(
-      <PolicyTable {...defaultProps} data={data} />
-    );
-    expect(
-      screen.getByText("This Is A Very Long Policy Tit...")
-    ).toBeInTheDocument();
+    renderWithProviders(<PolicyTable {...defaultProps} data={data} />);
+    expect(screen.getByText("This Is A Very Long Policy Tit...")).toBeInTheDocument();
   });
 
   it("renders the status chip for a policy", () => {
@@ -104,9 +89,7 @@ describe("PolicyTable", () => {
         created_at: "2026-01-01T00:00:00Z",
       },
     ] as any;
-    renderWithProviders(
-      <PolicyTable {...defaultProps} data={data} />
-    );
+    renderWithProviders(<PolicyTable {...defaultProps} data={data} />);
     expect(screen.getByText("Draft")).toBeInTheDocument();
   });
 });

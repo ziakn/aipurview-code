@@ -26,21 +26,13 @@ describe("CustomSelect", () => {
       { value: "done", label: "Done" },
     ];
 
-    renderWithProviders(
-      <CustomSelect
-        {...defaultProps}
-        currentValue="open"
-        options={options}
-      />
-    );
+    renderWithProviders(<CustomSelect {...defaultProps} currentValue="open" options={options} />);
 
     expect(screen.getByText("Open")).toBeInTheDocument();
   });
 
   it("renders as disabled when disabled prop is true", () => {
-    renderWithProviders(
-      <CustomSelect {...defaultProps} disabled={true} />
-    );
+    renderWithProviders(<CustomSelect {...defaultProps} disabled={true} />);
 
     // MUI Select renders a hidden input with the value
     const selectInput = screen.getByRole("combobox");

@@ -74,7 +74,9 @@ vi.mock("../NIST-AI-RMF/Manage", () => ({ default: () => <div data-testid="nist-
 vi.mock("../Dashboard", () => ({ default: () => <div data-testid="framework-dashboard" /> }));
 vi.mock("../Settings", () => ({ default: () => <div data-testid="framework-settings" /> }));
 vi.mock("../FrameworkRisks", () => ({ default: () => <div data-testid="framework-risks" /> }));
-vi.mock("../FrameworkLinkedModels", () => ({ default: () => <div data-testid="framework-linked-models" /> }));
+vi.mock("../FrameworkLinkedModels", () => ({
+  default: () => <div data-testid="framework-linked-models" />,
+}));
 vi.mock("../FrameworkSteps", () => ({ default: [] }));
 
 vi.mock("../../../components/Forms/ProjectForm", () => ({

@@ -9,20 +9,14 @@ describe("InfoBox Component", () => {
   });
 
   it("renders the message text", () => {
-    renderWithProviders(
-      <InfoBox message="This is an info message" storageKey="test-info" />
-    );
+    renderWithProviders(<InfoBox message="This is an info message" storageKey="test-info" />);
 
     expect(screen.getByText("This is an info message")).toBeInTheDocument();
   });
 
   it("renders the header when provided", () => {
     renderWithProviders(
-      <InfoBox
-        message="Body message"
-        storageKey="test-header"
-        header="Tip Header"
-      />
+      <InfoBox message="Body message" storageKey="test-header" header="Tip Header" />,
     );
 
     expect(screen.getByText("Tip Header")).toBeInTheDocument();
@@ -30,9 +24,7 @@ describe("InfoBox Component", () => {
   });
 
   it("does not render header when not provided", () => {
-    renderWithProviders(
-      <InfoBox message="No header here" storageKey="test-no-header" />
-    );
+    renderWithProviders(<InfoBox message="No header here" storageKey="test-no-header" />);
 
     expect(screen.getByText("No header here")).toBeInTheDocument();
     // Only one text element (the message) should be present
@@ -46,11 +38,7 @@ describe("InfoBox Component", () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
 
     renderWithProviders(
-      <InfoBox
-        message="Dismissable"
-        storageKey="test-dismiss"
-        onDismiss={handleDismiss}
-      />
+      <InfoBox message="Dismissable" storageKey="test-dismiss" onDismiss={handleDismiss} />,
     );
 
     await user.click(screen.getByRole("button", { name: /dismiss/i }));
@@ -73,7 +61,7 @@ describe("InfoBox Component", () => {
         storageKey="test-immediate"
         onDismiss={handleDismiss}
         disableAnimation
-      />
+      />,
     );
 
     await user.click(screen.getByRole("button", { name: /dismiss/i }));
@@ -84,9 +72,7 @@ describe("InfoBox Component", () => {
   it("does not render when localStorage has dismissal stored", () => {
     localStorage.setItem("infoBox_test-stored", "true");
 
-    renderWithProviders(
-      <InfoBox message="Should not appear" storageKey="test-stored" />
-    );
+    renderWithProviders(<InfoBox message="Should not appear" storageKey="test-stored" />);
 
     expect(screen.queryByText("Should not appear")).not.toBeInTheDocument();
   });
@@ -95,11 +81,7 @@ describe("InfoBox Component", () => {
     localStorage.setItem("infoBox_test-external", "true");
 
     renderWithProviders(
-      <InfoBox
-        message="Still visible"
-        storageKey="test-external"
-        disableInternalStorage
-      />
+      <InfoBox message="Still visible" storageKey="test-external" disableInternalStorage />,
     );
 
     expect(screen.getByText("Still visible")).toBeInTheDocument();
@@ -107,11 +89,7 @@ describe("InfoBox Component", () => {
 
   it("renders with warning variant", () => {
     renderWithProviders(
-      <InfoBox
-        message="Warning message"
-        storageKey="test-warning"
-        variant="warning"
-      />
+      <InfoBox message="Warning message" storageKey="test-warning" variant="warning" />,
     );
 
     expect(screen.getByText("Warning message")).toBeInTheDocument();
