@@ -106,3 +106,14 @@ The Phase 1 reports for the 6 sampled articles are reused — no need to re-audi
 2. **Add the verification subagent (item 6 above)?** Adds modest cost, catches false-positives. Yes/no?
 
 3. **Phase 2 collection order:** the order proposed above is "smallest first." Alternative: highest-risk-first (start with compliance and ai-detection where drift is most consequential). Preference?
+
+## Phase 1 outcome (2026-04-29)
+
+**User decision: Proceed to Phase 2 with all 5 prompt tweaks (option A).**
+
+Open question answers:
+1. Re-audit `ai-gateway/guardrails` as part of the Phase 2 ai-gateway batch.
+2. Add the verification subagent — yes.
+3. Smallest-first collection order — yes.
+
+**Next action:** Write Phase 2 plan covering: tweaked subagent prompt, verification subagent, smallest-first collection order, re-audit of `ai-gateway/guardrails`.
