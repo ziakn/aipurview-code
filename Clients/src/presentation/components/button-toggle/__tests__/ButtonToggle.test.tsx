@@ -11,9 +11,7 @@ const defaultOptions = [
 
 describe("ButtonToggle", () => {
   it("renders all option labels", () => {
-    renderWithProviders(
-      <ButtonToggle options={defaultOptions} value="all" onChange={vi.fn()} />
-    );
+    renderWithProviders(<ButtonToggle options={defaultOptions} value="all" onChange={vi.fn()} />);
 
     expect(screen.getByText("All")).toBeInTheDocument();
     expect(screen.getByText("Active")).toBeInTheDocument();
@@ -21,9 +19,7 @@ describe("ButtonToggle", () => {
   });
 
   it("renders tabs with correct ARIA roles", () => {
-    renderWithProviders(
-      <ButtonToggle options={defaultOptions} value="all" onChange={vi.fn()} />
-    );
+    renderWithProviders(<ButtonToggle options={defaultOptions} value="all" onChange={vi.fn()} />);
 
     const tablist = screen.getByRole("tablist");
     expect(tablist).toBeInTheDocument();
@@ -34,11 +30,7 @@ describe("ButtonToggle", () => {
 
   it("marks the active option as aria-selected", () => {
     renderWithProviders(
-      <ButtonToggle
-        options={defaultOptions}
-        value="active"
-        onChange={vi.fn()}
-      />
+      <ButtonToggle options={defaultOptions} value="active" onChange={vi.fn()} />,
     );
 
     const tabs = screen.getAllByRole("tab");
@@ -52,11 +44,7 @@ describe("ButtonToggle", () => {
     const user = userEvent.setup();
 
     renderWithProviders(
-      <ButtonToggle
-        options={defaultOptions}
-        value="all"
-        onChange={handleChange}
-      />
+      <ButtonToggle options={defaultOptions} value="all" onChange={handleChange} />,
     );
 
     await user.click(screen.getByText("Active"));
@@ -68,11 +56,7 @@ describe("ButtonToggle", () => {
     const user = userEvent.setup();
 
     renderWithProviders(
-      <ButtonToggle
-        options={defaultOptions}
-        value="all"
-        onChange={handleChange}
-      />
+      <ButtonToggle options={defaultOptions} value="all" onChange={handleChange} />,
     );
 
     const archivedTab = screen.getByText("Archived");
@@ -89,11 +73,7 @@ describe("ButtonToggle", () => {
     ];
 
     renderWithProviders(
-      <ButtonToggle
-        options={optionsWithCounts}
-        value="all"
-        onChange={vi.fn()}
-      />
+      <ButtonToggle options={optionsWithCounts} value="all" onChange={vi.fn()} />,
     );
 
     expect(screen.getByText("10")).toBeInTheDocument();

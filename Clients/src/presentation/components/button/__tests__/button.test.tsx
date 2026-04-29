@@ -27,7 +27,7 @@ describe("Button", () => {
     renderWithProviders(
       <Button disabled onClick={handleClick}>
         No click
-      </Button>
+      </Button>,
     );
 
     const button = screen.getByRole("button", { name: "No click" });

@@ -43,9 +43,7 @@ describe("Test Model Evaluations Repository", () => {
       await getAllModelEvaluations();
 
       expect(apiServices.get).toHaveBeenCalledTimes(1);
-      expect(apiServices.get).toHaveBeenCalledWith(
-        "/modelInventory/evaluations",
-      );
+      expect(apiServices.get).toHaveBeenCalledWith("/modelInventory/evaluations");
     });
 
     it("should return the response data on successful fetch", async () => {

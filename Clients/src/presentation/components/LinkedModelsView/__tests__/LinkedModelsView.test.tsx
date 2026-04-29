@@ -8,21 +8,15 @@ vi.mock("../../Skeletons", () => ({
 }));
 
 vi.mock("../../EmptyState", () => ({
-  EmptyState: ({ message }: { message?: string }) => (
-    <div data-testid="empty-state">{message}</div>
-  ),
+  EmptyState: ({ message }: { message?: string }) => <div data-testid="empty-state">{message}</div>,
 }));
 
 vi.mock("../../Link", () => ({
-  VWLink: ({ children }: { children: React.ReactNode }) => (
-    <a data-testid="vw-link">{children}</a>
-  ),
+  VWLink: ({ children }: { children: React.ReactNode }) => <a data-testid="vw-link">{children}</a>,
 }));
 
 vi.mock("../../InfoBox", () => ({
-  default: ({ message }: { message: string }) => (
-    <div data-testid="info-box">{message}</div>
-  ),
+  default: ({ message }: { message: string }) => <div data-testid="info-box">{message}</div>,
 }));
 
 describe("LinkedModelsView", () => {
@@ -40,10 +34,7 @@ describe("LinkedModelsView", () => {
     const fetchModels = vi.fn().mockResolvedValue([]);
 
     renderWithProviders(
-      <LinkedModelsView
-        fetchModels={fetchModels}
-        emptyMessage="No models available"
-      />
+      <LinkedModelsView fetchModels={fetchModels} emptyMessage="No models available" />,
     );
 
     await waitFor(() => {
@@ -88,7 +79,7 @@ describe("LinkedModelsView", () => {
       <LinkedModelsView
         fetchModels={fetchModels}
         headerContent={<div data-testid="header-content">Header</div>}
-      />
+      />,
     );
 
     await waitFor(() => {

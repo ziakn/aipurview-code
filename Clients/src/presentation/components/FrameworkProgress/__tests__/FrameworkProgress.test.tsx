@@ -22,7 +22,7 @@ describe("FrameworkProgress", () => {
 
   it("shows completed/total counts", () => {
     renderWithProviders(
-      <FrameworkProgress {...defaultProps} completed={8} total={10} progress={80} />
+      <FrameworkProgress {...defaultProps} completed={8} total={10} progress={80} />,
     );
     expect(screen.getByText("8/10 (80%)")).toBeInTheDocument();
   });
@@ -36,7 +36,7 @@ describe("FrameworkProgress", () => {
 
   it("rounds progress percentage", () => {
     renderWithProviders(
-      <FrameworkProgress name="ISO 42001" progress={33.7} completed={5} total={15} />
+      <FrameworkProgress name="ISO 42001" progress={33.7} completed={5} total={15} />,
     );
     expect(screen.getByText("5/15 (34%)")).toBeInTheDocument();
   });

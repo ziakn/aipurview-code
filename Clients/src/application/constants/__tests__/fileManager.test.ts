@@ -85,11 +85,7 @@ describe("fileManager constants", () => {
   });
 
   describe("validateFile", () => {
-    function createMockFile(
-      name: string,
-      size: number,
-      type: string
-    ): File {
+    function createMockFile(name: string, size: number, type: string): File {
       const file = new File(["x".repeat(Math.min(size, 1))], name, { type });
       Object.defineProperty(file, "size", { value: size });
       return file;
@@ -117,11 +113,7 @@ describe("fileManager constants", () => {
     });
 
     it("should return invalid when file exceeds max size", () => {
-      const file = createMockFile(
-        "large.pdf",
-        MAX_FILE_SIZE_BYTES + 1,
-        "application/pdf"
-      );
+      const file = createMockFile("large.pdf", MAX_FILE_SIZE_BYTES + 1, "application/pdf");
       const result = validateFile(file);
       expect(result.valid).toBe(false);
       expect(result.error).toContain("File too large");
@@ -163,11 +155,7 @@ describe("fileManager constants", () => {
     });
 
     it("should accept file at exactly max size", () => {
-      const file = createMockFile(
-        "exact.pdf",
-        MAX_FILE_SIZE_BYTES,
-        "application/pdf"
-      );
+      const file = createMockFile("exact.pdf", MAX_FILE_SIZE_BYTES, "application/pdf");
       const result = validateFile(file);
       expect(result.valid).toBe(true);
     });

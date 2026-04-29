@@ -8,7 +8,11 @@ vi.mock("../../../../../application/hooks/useFrameworks", () => ({
   default: () => ({ frameworks: [] }),
 }));
 vi.mock("../../../../../application/hooks/useFormValidation", () => ({
-  useFormValidation: () => ({ errors: {}, validate: vi.fn().mockReturnValue(true), clearError: vi.fn() }),
+  useFormValidation: () => ({
+    errors: {},
+    validate: vi.fn().mockReturnValue(true),
+    clearError: vi.fn(),
+  }),
 }));
 vi.mock("../../../../../application/validations/stringValidation", () => ({
   checkStringValidation: vi.fn().mockReturnValue(""),
@@ -59,9 +63,7 @@ import { ProjectForm } from "../index";
 
 describe("ProjectForm", () => {
   it("renders without crashing", () => {
-    renderWithProviders(
-      <ProjectForm onClose={vi.fn()} />
-    );
+    renderWithProviders(<ProjectForm onClose={vi.fn()} />);
     expect(document.body).toBeTruthy();
   });
 });

@@ -6,13 +6,7 @@ describe("ProviderIcons", () => {
   });
 
   it("contains expected provider keys", () => {
-    const expectedKeys = [
-      "OpenAI",
-      "Anthropic",
-      "Google",
-      "Microsoft",
-      "Meta",
-    ];
+    const expectedKeys = ["OpenAI", "Anthropic", "Google", "Microsoft", "Meta"];
 
     for (const key of expectedKeys) {
       expect(PROVIDER_ICONS).toHaveProperty(key);
@@ -34,10 +28,7 @@ describe("ProviderIcons", () => {
 
   it("resolves VENDOR_ICON_MAP values to valid PROVIDER_ICONS keys", () => {
     for (const [, iconKey] of Object.entries(VENDOR_ICON_MAP)) {
-      expect(PROVIDER_ICONS).toHaveProperty(
-        iconKey,
-        expect.any(Function)
-      );
+      expect(PROVIDER_ICONS).toHaveProperty(iconKey, expect.any(Function));
     }
   });
 });

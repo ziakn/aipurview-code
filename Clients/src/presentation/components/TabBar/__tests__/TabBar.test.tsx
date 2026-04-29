@@ -9,14 +9,11 @@ const tabs = [
   { label: "Settings", value: "settings" },
 ];
 
-function renderTabBar(
-  activeTab = "overview",
-  onChange = vi.fn()
-) {
+function renderTabBar(activeTab = "overview", onChange = vi.fn()) {
   return renderWithProviders(
     <TabContext value={activeTab}>
       <TabBar tabs={tabs} activeTab={activeTab} onChange={onChange} />
-    </TabContext>
+    </TabContext>,
   );
 }
 
@@ -52,7 +49,7 @@ describe("TabBar", () => {
     renderWithProviders(
       <TabContext value="overview">
         <TabBar tabs={tabsWithDisabled} activeTab="overview" onChange={onChange} />
-      </TabContext>
+      </TabContext>,
     );
     const lockedTab = screen.getByRole("tab", { name: /locked/i });
     fireEvent.click(lockedTab);

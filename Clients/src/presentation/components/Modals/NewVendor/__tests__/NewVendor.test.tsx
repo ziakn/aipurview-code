@@ -2,7 +2,12 @@ import { vi } from "vitest";
 
 vi.mock("../../StandardModal", () => ({
   default: ({ isOpen, children, title }: any) =>
-    isOpen ? <div data-testid="standard-modal"><h2>{title}</h2>{children}</div> : null,
+    isOpen ? (
+      <div data-testid="standard-modal">
+        <h2>{title}</h2>
+        {children}
+      </div>
+    ) : null,
 }));
 vi.mock("../../../Inputs/Field", () => ({
   default: (props: any) => <input data-testid={`field-${props.id || "field"}`} />,
@@ -20,7 +25,11 @@ vi.mock("../../../../../application/hooks/useEntityChangeHistory", () => ({
   useEntityChangeHistory: () => ({ history: [], loading: false }),
 }));
 vi.mock("../../../../../application/hooks/useFormValidation", () => ({
-  useFormValidation: () => ({ errors: {}, validate: vi.fn().mockReturnValue(true), clearError: vi.fn() }),
+  useFormValidation: () => ({
+    errors: {},
+    validate: vi.fn().mockReturnValue(true),
+    clearError: vi.fn(),
+  }),
 }));
 vi.mock("../../../../../application/hooks/useAuth", () => ({
   useAuth: () => ({ userId: 1, roleName: "Admin" }),
@@ -44,9 +53,7 @@ import AddNewVendor from "../index";
 
 describe("NewVendor (AddNewVendor)", () => {
   it("renders without crashing when open", () => {
-    renderWithProviders(
-      <AddNewVendor isOpen={true} setIsOpen={vi.fn()} onSuccess={vi.fn()} />
-    );
+    renderWithProviders(<AddNewVendor isOpen={true} setIsOpen={vi.fn()} onSuccess={vi.fn()} />);
     expect(document.body).toBeTruthy();
   });
 });

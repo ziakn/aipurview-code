@@ -1,9 +1,7 @@
 import { vi } from "vitest";
 
 vi.mock("../../../button/customizable-button", () => ({
-  CustomizableButton: ({ children, onClick }: any) => (
-    <button onClick={onClick}>{children}</button>
-  ),
+  CustomizableButton: ({ children, onClick }: any) => <button onClick={onClick}>{children}</button>,
 }));
 
 import { screen } from "@testing-library/react";
@@ -21,7 +19,7 @@ describe("StepperModal", () => {
         activeStep={0}
       >
         <div>Step content</div>
-      </StepperModal>
+      </StepperModal>,
     );
     expect(screen.getByText("Wizard")).toBeInTheDocument();
   });

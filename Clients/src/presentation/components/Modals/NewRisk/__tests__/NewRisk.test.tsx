@@ -12,9 +12,7 @@ import AddNewRisk from "../index";
 
 describe("NewRisk (AddNewRisk)", () => {
   it("renders without crashing when open", () => {
-    renderWithProviders(
-      <AddNewRisk isOpen={true} setIsOpen={vi.fn()} vendors={[]} />
-    );
+    renderWithProviders(<AddNewRisk isOpen={true} setIsOpen={vi.fn()} vendors={[]} />);
     expect(document.body).toBeTruthy();
   });
 });

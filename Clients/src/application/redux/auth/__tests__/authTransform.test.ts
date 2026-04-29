@@ -2,8 +2,7 @@ import { createTransform } from "redux-persist";
 import authTransform from "../authTransform";
 
 vi.mock("redux-persist", async () => {
-  const actual =
-    await vi.importActual<typeof import("redux-persist")>("redux-persist");
+  const actual = await vi.importActual<typeof import("redux-persist")>("redux-persist");
   return {
     ...actual,
     createTransform: vi.fn(actual.createTransform),
@@ -16,8 +15,7 @@ describe("authTransform", () => {
   });
 
   it("should strip profileImage from inbound state", () => {
-    const inboundFn = (createTransform as ReturnType<typeof vi.fn>).mock
-      .calls[0][0];
+    const inboundFn = (createTransform as ReturnType<typeof vi.fn>).mock.calls[0][0];
 
     const state = {
       authToken: "token-123",
@@ -32,8 +30,7 @@ describe("authTransform", () => {
   });
 
   it("should preserve all other properties", () => {
-    const inboundFn = (createTransform as ReturnType<typeof vi.fn>).mock
-      .calls[0][0];
+    const inboundFn = (createTransform as ReturnType<typeof vi.fn>).mock.calls[0][0];
 
     const state = {
       authToken: "tok",
@@ -56,8 +53,7 @@ describe("authTransform", () => {
   });
 
   it("should work when profileImage is not present", () => {
-    const inboundFn = (createTransform as ReturnType<typeof vi.fn>).mock
-      .calls[0][0];
+    const inboundFn = (createTransform as ReturnType<typeof vi.fn>).mock.calls[0][0];
 
     const state = {
       authToken: "token",

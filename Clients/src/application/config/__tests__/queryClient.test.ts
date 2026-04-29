@@ -1,9 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
-import {
-  queryClient,
-  invalidateQueries,
-  resetQueryCache,
-} from "../queryClient";
+import { queryClient, invalidateQueries, resetQueryCache } from "../queryClient";
 
 describe("queryClient", () => {
   it("should be an instance of QueryClient", () => {

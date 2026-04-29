@@ -6,26 +6,20 @@ import type { FramePlayerState } from "../player/useFramePlayer";
 
 describe("TitleScene", () => {
   it("renders without crashing", () => {
-    renderWithProviders(
-      <TitleScene frame={0} title="Welcome" subtitle="To VerifyWise" />
-    );
+    renderWithProviders(<TitleScene frame={0} title="Welcome" subtitle="To VerifyWise" />);
     expect(screen.getByText("Welcome")).toBeInTheDocument();
     expect(screen.getByText("To VerifyWise")).toBeInTheDocument();
   });
 
   it("renders with a later frame value", () => {
-    renderWithProviders(
-      <TitleScene frame={60} title="Test Title" subtitle="Test Subtitle" />
-    );
+    renderWithProviders(<TitleScene frame={60} title="Test Title" subtitle="Test Subtitle" />);
     expect(screen.getByText("Test Title")).toBeInTheDocument();
     expect(screen.getByText("Test Subtitle")).toBeInTheDocument();
   });
 });
 
 describe("PlayerControls", () => {
-  const createMockPlayer = (
-    overrides: Partial<FramePlayerState> = {}
-  ): FramePlayerState => ({
+  const createMockPlayer = (overrides: Partial<FramePlayerState> = {}): FramePlayerState => ({
     frame: 0,
     playing: false,
     finished: false,
@@ -57,9 +51,7 @@ describe("PlayerControls", () => {
 
   it("renders progress bar reflecting the player progress", () => {
     const player = createMockPlayer({ progress: 0.5 });
-    const { container } = renderWithProviders(
-      <PlayerControls player={player} />
-    );
+    const { container } = renderWithProviders(<PlayerControls player={player} />);
     // The component renders; progress is used for width styling
     expect(container.firstChild).toBeTruthy();
   });

@@ -37,26 +37,20 @@ vi.mock("../../TabBar", () => ({
 
 describe("RiskVisualizationTabs", () => {
   it("renders the tab bar with Heat map and Categories tabs", () => {
-    renderWithProviders(
-      <RiskVisualizationTabs risks={[]} />
-    );
+    renderWithProviders(<RiskVisualizationTabs risks={[]} />);
 
     expect(screen.getByText("Heat map")).toBeInTheDocument();
     expect(screen.getByText("Categories")).toBeInTheDocument();
   });
 
   it("renders the heat map panel by default", () => {
-    renderWithProviders(
-      <RiskVisualizationTabs risks={[]} />
-    );
+    renderWithProviders(<RiskVisualizationTabs risks={[]} />);
 
     expect(screen.getByTestId("risk-heat-map")).toBeInTheDocument();
   });
 
   it("switches to categories panel when Categories tab is clicked", () => {
-    renderWithProviders(
-      <RiskVisualizationTabs risks={[]} />
-    );
+    renderWithProviders(<RiskVisualizationTabs risks={[]} />);
 
     // Click the Categories tab
     fireEvent.click(screen.getByText("Categories"));

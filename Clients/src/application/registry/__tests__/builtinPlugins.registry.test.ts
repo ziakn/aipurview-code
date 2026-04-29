@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  getBuiltinPluginComponents,
-  isBuiltinPlugin,
-} from "../builtinPlugins.registry";
+import { getBuiltinPluginComponents, isBuiltinPlugin } from "../builtinPlugins.registry";
 
 describe("builtinPlugins.registry", () => {
   describe("isBuiltinPlugin", () => {

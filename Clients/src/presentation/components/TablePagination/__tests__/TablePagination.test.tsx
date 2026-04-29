@@ -47,17 +47,13 @@ describe("TablePaginationActions", () => {
   });
 
   it("disables first and previous buttons on the first page", () => {
-    renderWithProviders(
-      <TablePaginationActions {...defaultProps} page={0} />
-    );
+    renderWithProviders(<TablePaginationActions {...defaultProps} page={0} />);
     expect(screen.getByLabelText("first page")).toBeDisabled();
     expect(screen.getByLabelText("previous page")).toBeDisabled();
   });
 
   it("disables next and last buttons on the last page", () => {
-    renderWithProviders(
-      <TablePaginationActions {...defaultProps} page={4} />
-    );
+    renderWithProviders(<TablePaginationActions {...defaultProps} page={4} />);
     expect(screen.getByLabelText("next page")).toBeDisabled();
     expect(screen.getByLabelText("last page")).toBeDisabled();
   });

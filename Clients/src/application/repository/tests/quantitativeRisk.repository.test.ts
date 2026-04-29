@@ -44,9 +44,7 @@ describe("quantitativeRisk.repository", () => {
 
       const result = await getAllBenchmarks("healthcare");
 
-      expect(CustomAxios.get).toHaveBeenCalledWith(
-        "/risk-benchmarks?industry=healthcare",
-      );
+      expect(CustomAxios.get).toHaveBeenCalledWith("/risk-benchmarks?industry=healthcare");
       expect(result).toEqual(mockData);
     });
 
@@ -58,9 +56,7 @@ describe("quantitativeRisk.repository", () => {
 
       const result = await getAllBenchmarks(undefined, "high");
 
-      expect(CustomAxios.get).toHaveBeenCalledWith(
-        "/risk-benchmarks?ai_risk_type=high",
-      );
+      expect(CustomAxios.get).toHaveBeenCalledWith("/risk-benchmarks?ai_risk_type=high");
       expect(result).toEqual(mockData);
     });
 
@@ -123,13 +119,9 @@ describe("quantitativeRisk.repository", () => {
     });
 
     it("should propagate errors", async () => {
-      vi.mocked(CustomAxios.get).mockRejectedValue(
-        new Error("Benchmark not found"),
-      );
+      vi.mocked(CustomAxios.get).mockRejectedValue(new Error("Benchmark not found"));
 
-      await expect(getBenchmarkById(999)).rejects.toThrow(
-        "Benchmark not found",
-      );
+      await expect(getBenchmarkById(999)).rejects.toThrow("Benchmark not found");
     });
   });
 
@@ -152,9 +144,7 @@ describe("quantitativeRisk.repository", () => {
     });
 
     it("should propagate errors", async () => {
-      vi.mocked(CustomAxios.get).mockRejectedValue(
-        new Error("Server error"),
-      );
+      vi.mocked(CustomAxios.get).mockRejectedValue(new Error("Server error"));
 
       await expect(getBenchmarkFilters()).rejects.toThrow("Server error");
     });
@@ -171,9 +161,7 @@ describe("quantitativeRisk.repository", () => {
 
       const result = await applyBenchmarkToRisk(10, 20);
 
-      expect(CustomAxios.post).toHaveBeenCalledWith(
-        "/quantitative-risks/10/apply-benchmark/20",
-      );
+      expect(CustomAxios.post).toHaveBeenCalledWith("/quantitative-risks/10/apply-benchmark/20");
       expect(result).toEqual(mockData);
     });
 
@@ -185,20 +173,14 @@ describe("quantitativeRisk.repository", () => {
 
       const result = await applyBenchmarkToRisk(99, 88);
 
-      expect(CustomAxios.post).toHaveBeenCalledWith(
-        "/quantitative-risks/99/apply-benchmark/88",
-      );
+      expect(CustomAxios.post).toHaveBeenCalledWith("/quantitative-risks/99/apply-benchmark/88");
       expect(result).toEqual(mockData);
     });
 
     it("should propagate errors", async () => {
-      vi.mocked(CustomAxios.post).mockRejectedValue(
-        new Error("Risk not found"),
-      );
+      vi.mocked(CustomAxios.post).mockRejectedValue(new Error("Risk not found"));
 
-      await expect(applyBenchmarkToRisk(999, 1)).rejects.toThrow(
-        "Risk not found",
-      );
+      await expect(applyBenchmarkToRisk(999, 1)).rejects.toThrow("Risk not found");
     });
   });
 
@@ -213,16 +195,12 @@ describe("quantitativeRisk.repository", () => {
 
       const result = await getOrgPortfolio();
 
-      expect(CustomAxios.get).toHaveBeenCalledWith(
-        "/quantitative-risks/portfolio/org",
-      );
+      expect(CustomAxios.get).toHaveBeenCalledWith("/quantitative-risks/portfolio/org");
       expect(result).toEqual(mockData);
     });
 
     it("should propagate errors", async () => {
-      vi.mocked(CustomAxios.get).mockRejectedValue(
-        new Error("Unauthorized"),
-      );
+      vi.mocked(CustomAxios.get).mockRejectedValue(new Error("Unauthorized"));
 
       await expect(getOrgPortfolio()).rejects.toThrow("Unauthorized");
     });
@@ -239,9 +217,7 @@ describe("quantitativeRisk.repository", () => {
 
       const result = await getProjectPortfolio(7);
 
-      expect(CustomAxios.get).toHaveBeenCalledWith(
-        "/quantitative-risks/portfolio/project/7",
-      );
+      expect(CustomAxios.get).toHaveBeenCalledWith("/quantitative-risks/portfolio/project/7");
       expect(result).toEqual(mockData);
     });
 
@@ -253,20 +229,14 @@ describe("quantitativeRisk.repository", () => {
 
       const result = await getProjectPortfolio(42);
 
-      expect(CustomAxios.get).toHaveBeenCalledWith(
-        "/quantitative-risks/portfolio/project/42",
-      );
+      expect(CustomAxios.get).toHaveBeenCalledWith("/quantitative-risks/portfolio/project/42");
       expect(result).toEqual(mockData);
     });
 
     it("should propagate errors", async () => {
-      vi.mocked(CustomAxios.get).mockRejectedValue(
-        new Error("Project not found"),
-      );
+      vi.mocked(CustomAxios.get).mockRejectedValue(new Error("Project not found"));
 
-      await expect(getProjectPortfolio(999)).rejects.toThrow(
-        "Project not found",
-      );
+      await expect(getProjectPortfolio(999)).rejects.toThrow("Project not found");
     });
   });
 
@@ -281,9 +251,7 @@ describe("quantitativeRisk.repository", () => {
 
       const result = await getPortfolioTrend();
 
-      expect(CustomAxios.get).toHaveBeenCalledWith(
-        "/quantitative-risks/portfolio/trend",
-      );
+      expect(CustomAxios.get).toHaveBeenCalledWith("/quantitative-risks/portfolio/trend");
       expect(result).toEqual(mockData);
     });
 
@@ -295,9 +263,7 @@ describe("quantitativeRisk.repository", () => {
 
       const result = await getPortfolioTrend(30);
 
-      expect(CustomAxios.get).toHaveBeenCalledWith(
-        "/quantitative-risks/portfolio/trend?days=30",
-      );
+      expect(CustomAxios.get).toHaveBeenCalledWith("/quantitative-risks/portfolio/trend?days=30");
       expect(result).toEqual(mockData);
     });
 
@@ -340,9 +306,7 @@ describe("quantitativeRisk.repository", () => {
     });
 
     it("should propagate errors", async () => {
-      vi.mocked(CustomAxios.get).mockRejectedValue(
-        new Error("Server error"),
-      );
+      vi.mocked(CustomAxios.get).mockRejectedValue(new Error("Server error"));
 
       await expect(getPortfolioTrend(30)).rejects.toThrow("Server error");
     });
@@ -359,9 +323,7 @@ describe("quantitativeRisk.repository", () => {
 
       const result = await getRiskAssessmentMode();
 
-      expect(CustomAxios.get).toHaveBeenCalledWith(
-        "/quantitative-risks/assessment-mode",
-      );
+      expect(CustomAxios.get).toHaveBeenCalledWith("/quantitative-risks/assessment-mode");
       expect(result).toEqual(mockData);
     });
 
@@ -377,9 +339,7 @@ describe("quantitativeRisk.repository", () => {
     });
 
     it("should propagate errors", async () => {
-      vi.mocked(CustomAxios.get).mockRejectedValue(
-        new Error("Unauthorized"),
-      );
+      vi.mocked(CustomAxios.get).mockRejectedValue(new Error("Unauthorized"));
 
       await expect(getRiskAssessmentMode()).rejects.toThrow("Unauthorized");
     });
@@ -396,10 +356,9 @@ describe("quantitativeRisk.repository", () => {
 
       const result = await updateRiskAssessmentMode("quantitative");
 
-      expect(CustomAxios.put).toHaveBeenCalledWith(
-        "/quantitative-risks/assessment-mode",
-        { mode: "quantitative" },
-      );
+      expect(CustomAxios.put).toHaveBeenCalledWith("/quantitative-risks/assessment-mode", {
+        mode: "quantitative",
+      });
       expect(result).toEqual(mockData);
     });
 
@@ -411,21 +370,16 @@ describe("quantitativeRisk.repository", () => {
 
       const result = await updateRiskAssessmentMode("qualitative");
 
-      expect(CustomAxios.put).toHaveBeenCalledWith(
-        "/quantitative-risks/assessment-mode",
-        { mode: "qualitative" },
-      );
+      expect(CustomAxios.put).toHaveBeenCalledWith("/quantitative-risks/assessment-mode", {
+        mode: "qualitative",
+      });
       expect(result).toEqual(mockData);
     });
 
     it("should propagate errors", async () => {
-      vi.mocked(CustomAxios.put).mockRejectedValue(
-        new Error("Forbidden"),
-      );
+      vi.mocked(CustomAxios.put).mockRejectedValue(new Error("Forbidden"));
 
-      await expect(updateRiskAssessmentMode("quantitative")).rejects.toThrow(
-        "Forbidden",
-      );
+      await expect(updateRiskAssessmentMode("quantitative")).rejects.toThrow("Forbidden");
     });
   });
 });

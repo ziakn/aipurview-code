@@ -3,8 +3,7 @@ import { renderWithProviders } from "../../../../test/renderWithProviders";
 
 // Mock the AIDetectionOnboarding modal
 vi.mock("../../../components/Modals/AIDetectionOnboarding", () => ({
-  default: ({ isOpen }: any) =>
-    isOpen ? <div data-testid="ai-detection-onboarding" /> : null,
+  default: ({ isOpen }: any) => (isOpen ? <div data-testid="ai-detection-onboarding" /> : null),
 }));
 
 // Mock the CustomizableButton
@@ -21,17 +20,13 @@ import WizardShowcase from "../index";
 describe("WizardShowcase", () => {
   it("renders without crashing", () => {
     renderWithProviders(<WizardShowcase />);
-    expect(
-      screen.getByText("AI Detection onboarding wizard")
-    ).toBeInTheDocument();
+    expect(screen.getByText("AI Detection onboarding wizard")).toBeInTheDocument();
   });
 
   it("displays the description text", () => {
     renderWithProviders(<WizardShowcase />);
     expect(
-      screen.getByText(
-        "Preview the onboarding modal for the AI Detection module."
-      )
+      screen.getByText("Preview the onboarding modal for the AI Detection module."),
     ).toBeInTheDocument();
   });
 

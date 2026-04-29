@@ -54,16 +54,12 @@ describe("LinkedRisksPopup", () => {
 
   it("shows the modal title", () => {
     renderWithProviders(<LinkedRisksPopup {...defaultProps} />);
-    expect(
-      screen.getByText("Link a risk from risk database")
-    ).toBeInTheDocument();
+    expect(screen.getByText("Link a risk from risk database")).toBeInTheDocument();
   });
 
   it("shows the search description", () => {
     renderWithProviders(<LinkedRisksPopup {...defaultProps} />);
-    expect(
-      screen.getByText("Search from the risk database:")
-    ).toBeInTheDocument();
+    expect(screen.getByText("Search from the risk database:")).toBeInTheDocument();
   });
 
   it("renders the linked risks table", async () => {

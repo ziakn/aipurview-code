@@ -7,7 +7,7 @@ describe("VWTooltip Component", () => {
     renderWithProviders(
       <VWTooltip content="Tooltip text">
         <button>Hover me</button>
-      </VWTooltip>
+      </VWTooltip>,
     );
 
     expect(screen.getByRole("button", { name: /hover me/i })).toBeInTheDocument();
@@ -17,7 +17,7 @@ describe("VWTooltip Component", () => {
     renderWithProviders(
       <VWTooltip content="Body content" header="Header text">
         <span>Trigger</span>
-      </VWTooltip>
+      </VWTooltip>,
     );
 
     expect(screen.getByText("Trigger")).toBeInTheDocument();
@@ -27,7 +27,7 @@ describe("VWTooltip Component", () => {
     renderWithProviders(
       <VWTooltip content="Content" placement="bottom" maxWidth={300}>
         <div>Target element</div>
-      </VWTooltip>
+      </VWTooltip>,
     );
 
     expect(screen.getByText("Target element")).toBeInTheDocument();
@@ -37,7 +37,7 @@ describe("VWTooltip Component", () => {
     renderWithProviders(
       <VWTooltip content="No arrow" arrow={false}>
         <span>No arrow trigger</span>
-      </VWTooltip>
+      </VWTooltip>,
     );
 
     expect(screen.getByText("No arrow trigger")).toBeInTheDocument();

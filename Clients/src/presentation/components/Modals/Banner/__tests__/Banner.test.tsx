@@ -4,9 +4,7 @@ import Banner from "../index";
 
 describe("Banner", () => {
   it("renders without crashing", () => {
-    renderWithProviders(
-      <Banner onClose={vi.fn()} bannerText="Test banner" bannerWidth="100%" />
-    );
+    renderWithProviders(<Banner onClose={vi.fn()} bannerText="Test banner" bannerWidth="100%" />);
     expect(document.body).toBeTruthy();
   });
 });

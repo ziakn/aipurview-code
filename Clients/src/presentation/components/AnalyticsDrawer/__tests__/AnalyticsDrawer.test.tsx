@@ -11,7 +11,9 @@ vi.mock("../../Charts/RiskHistoryChart", () => ({
 vi.mock("../../button-toggle", () => ({
   ButtonToggle: ({ options }: any) => (
     <div data-testid="button-toggle">
-      {options?.map((o: any) => <span key={o.value}>{o.label}</span>)}
+      {options?.map((o: any) => (
+        <span key={o.value}>{o.label}</span>
+      ))}
     </div>
   ),
 }));

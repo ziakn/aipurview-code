@@ -30,9 +30,7 @@ describe("PluginSlot", () => {
   });
 
   it("renders nothing when slot has no components", () => {
-    const { container } = renderWithProviders(
-      <PluginSlot id={"empty-slot" as any} />
-    );
+    const { container } = renderWithProviders(<PluginSlot id={"empty-slot" as any} />);
     expect(container.firstChild).toBeNull();
   });
 
@@ -75,9 +73,7 @@ describe("PluginSlot", () => {
       ]),
     } as any);
 
-    renderWithProviders(
-      <PluginSlot id={"test-slot" as any} renderType={"inline" as any} />
-    );
+    renderWithProviders(<PluginSlot id={"test-slot" as any} renderType={"inline" as any} />);
     // Inline renders in main pass; modal renders in separate pass
     // Both use data-testid="plugin-component" but only inline filtered in main pass
     // The modal section also renders separately, so 2 total (1 inline + 1 modal)
@@ -105,9 +101,7 @@ describe("PluginSlot", () => {
       ]),
     } as any);
 
-    renderWithProviders(
-      <PluginSlot id={"test-slot" as any} pluginKey="soc2" />
-    );
+    renderWithProviders(<PluginSlot id={"test-slot" as any} pluginKey="soc2" />);
     const components = screen.getAllByTestId("plugin-component");
     expect(components).toHaveLength(1);
   });

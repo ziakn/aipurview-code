@@ -21,7 +21,7 @@ describe("TabFilterBar", () => {
 
   it("renders search bar when showSearchBar is true", () => {
     renderWithProviders(
-      <TabFilterBar showSearchBar={true} searchTerm="" setSearchTerm={vi.fn()} />
+      <TabFilterBar showSearchBar={true} searchTerm="" setSearchTerm={vi.fn()} />,
     );
     expect(screen.getByTestId("search-box")).toBeInTheDocument();
   });

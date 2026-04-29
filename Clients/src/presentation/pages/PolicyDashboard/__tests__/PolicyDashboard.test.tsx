@@ -69,9 +69,7 @@ describe("PolicyDashboard", () => {
 
   it("renders page description", () => {
     renderWithProviders(<PolicyDashboard />, { route: "/policies" });
-    expect(
-      screen.getByText(/Create and manage AI governance policies/)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Create and manage AI governance policies/)).toBeInTheDocument();
   });
 
   it("renders tab bar with policies and templates tabs", () => {

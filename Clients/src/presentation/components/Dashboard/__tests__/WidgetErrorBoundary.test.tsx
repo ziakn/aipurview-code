@@ -26,7 +26,7 @@ describe("WidgetErrorBoundary Component", () => {
     renderWithProviders(
       <WidgetErrorBoundary widgetId="test-widget">
         <GoodChild />
-      </WidgetErrorBoundary>
+      </WidgetErrorBoundary>,
     );
 
     expect(screen.getByText("Widget loaded successfully")).toBeInTheDocument();
@@ -36,13 +36,11 @@ describe("WidgetErrorBoundary Component", () => {
     renderWithProviders(
       <WidgetErrorBoundary widgetId="broken-widget" widgetTitle="Dashboard">
         <BadChild />
-      </WidgetErrorBoundary>
+      </WidgetErrorBoundary>,
     );
 
     expect(screen.getByText("Dashboard Error")).toBeInTheDocument();
-    expect(
-      screen.getByText("This widget failed to load properly.")
-    ).toBeInTheDocument();
+    expect(screen.getByText("This widget failed to load properly.")).toBeInTheDocument();
     expect(screen.getByText("Retry")).toBeInTheDocument();
   });
 
@@ -50,7 +48,7 @@ describe("WidgetErrorBoundary Component", () => {
     renderWithProviders(
       <WidgetErrorBoundary widgetId="broken-widget">
         <BadChild />
-      </WidgetErrorBoundary>
+      </WidgetErrorBoundary>,
     );
 
     expect(screen.getByText("Widget Error")).toBeInTheDocument();
@@ -70,7 +68,7 @@ describe("WidgetErrorBoundary Component", () => {
     renderWithProviders(
       <WidgetErrorBoundary widgetId="retry-widget">
         <ConditionalChild />
-      </WidgetErrorBoundary>
+      </WidgetErrorBoundary>,
     );
 
     // Error state should be shown

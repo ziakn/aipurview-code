@@ -43,7 +43,7 @@ describe("VWBarChart", () => {
         data={barData}
         series={[{ dataKey: "sales", color: "#13715B" }]}
         categoryKey="category"
-      />
+      />,
     );
 
     expect(container).toBeTruthy();
@@ -56,7 +56,7 @@ describe("VWBarChart", () => {
         series={[{ dataKey: "sales" }]}
         categoryKey="category"
         layout="vertical"
-      />
+      />,
     );
 
     expect(container).toBeTruthy();
@@ -76,7 +76,7 @@ describe("VWBarChart", () => {
           { dataKey: "profit", color: "#2196F3" },
         ]}
         categoryKey="category"
-      />
+      />,
     );
 
     expect(container).toBeTruthy();
@@ -91,7 +91,7 @@ describe("VWDonutChart", () => {
         dataKey="value"
         nameKey="name"
         colors={["#13715B", "#E53E3E", "#F6AD55"]}
-      />
+      />,
     );
 
     expect(container).toBeTruthy();
@@ -106,7 +106,7 @@ describe("VWDonutChart", () => {
         centerValue="100"
         centerLabel="Total"
         innerRadius={50}
-      />
+      />,
     );
 
     expect(container).toBeTruthy();
@@ -119,7 +119,7 @@ describe("VWDonutChart", () => {
         dataKey="value"
         colors={["#13715B", "#E53E3E", "#F6AD55"]}
         innerRadius={0}
-      />
+      />,
     );
 
     expect(container).toBeTruthy();
@@ -136,7 +136,7 @@ describe("VWLineChart", () => {
           { dataKey: "incidents", color: "#E53E3E" },
         ]}
         categoryKey="month"
-      />
+      />,
     );
 
     expect(container).toBeTruthy();
@@ -149,7 +149,7 @@ describe("VWLineChart", () => {
         series={[{ dataKey: "risk", color: "#13715B", name: "Risk Score" }]}
         categoryKey="month"
         showLegend
-      />
+      />,
     );
 
     expect(container).toBeTruthy();
@@ -163,7 +163,7 @@ describe("VWAreaChart", () => {
         data={areaData}
         series={[{ dataKey: "value", color: "#13715B" }]}
         categoryKey="date"
-      />
+      />,
     );
 
     expect(container).toBeTruthy();
@@ -183,7 +183,7 @@ describe("VWAreaChart", () => {
           { dataKey: "val2", color: "#2196F3" },
         ]}
         categoryKey="date"
-      />
+      />,
     );
 
     expect(container).toBeTruthy();

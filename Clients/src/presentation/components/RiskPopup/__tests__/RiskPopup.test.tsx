@@ -4,9 +4,7 @@ import { AuditRiskPopup } from "../AuditRiskPopup";
 
 // Mock AuditRiskTable
 vi.mock("../../Table/AuditRiskTable/AuditRiskTable", () => ({
-  AuditRiskTable: () => (
-    <div data-testid="audit-risk-table">AuditRiskTable</div>
-  ),
+  AuditRiskTable: () => <div data-testid="audit-risk-table">AuditRiskTable</div>,
 }));
 
 describe("AuditRiskPopup", () => {
@@ -21,17 +19,13 @@ describe("AuditRiskPopup", () => {
 
   it("renders when open", () => {
     renderWithProviders(<AuditRiskPopup {...defaultProps} />);
-    expect(
-      screen.getByText("Marked as done but linked risk detected")
-    ).toBeInTheDocument();
+    expect(screen.getByText("Marked as done but linked risk detected")).toBeInTheDocument();
   });
 
   it("renders the description text", () => {
     renderWithProviders(<AuditRiskPopup {...defaultProps} />);
     expect(
-      screen.getByText(
-        /This section has been been marked as done, but there's still a risk/
-      )
+      screen.getByText(/This section has been been marked as done, but there's still a risk/),
     ).toBeInTheDocument();
   });
 
@@ -49,9 +43,7 @@ describe("AuditRiskPopup", () => {
   it("renders the instruction text", () => {
     renderWithProviders(<AuditRiskPopup {...defaultProps} />);
     expect(
-      screen.getByText(
-        /Marking it as done doesn't automatically resolve this risk/
-      )
+      screen.getByText(/Marking it as done doesn't automatically resolve this risk/),
     ).toBeInTheDocument();
   });
 });

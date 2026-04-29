@@ -49,7 +49,16 @@ vi.mock("../../../../application/hooks/useTableGrouping", () => ({
 
 vi.mock("../../../../application/hooks/useColumnVisibility", () => ({
   useColumnVisibility: () => ({
-    visibleColumns: new Set(["incident_id", "ai_project", "type", "severity", "status", "occurred_date", "approved_by", "actions"]),
+    visibleColumns: new Set([
+      "incident_id",
+      "ai_project",
+      "type",
+      "severity",
+      "status",
+      "occurred_date",
+      "approved_by",
+      "actions",
+    ]),
     allColumns: [],
     toggleColumn: vi.fn(),
     resetToDefaults: vi.fn(),
@@ -123,7 +132,7 @@ describe("IncidentManagement", () => {
   it("renders page description", () => {
     renderWithProviders(<IncidentManagement />, { route: "/incidents" });
     expect(
-      screen.getByText(/End-to-end management of the AI incident lifecycle/)
+      screen.getByText(/End-to-end management of the AI incident lifecycle/),
     ).toBeInTheDocument();
   });
 

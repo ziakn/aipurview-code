@@ -10,8 +10,22 @@ import {
 const mockListConversations = vi.fn().mockResolvedValue({
   data: {
     conversations: [
-      { id: 1, title: "Chat 1", last_message_at: "2025-01-01", message_count: 2, created_at: "2025-01-01", updated_at: "2025-01-01" },
-      { id: 2, title: "Chat 2", last_message_at: "2024-12-01", message_count: 1, created_at: "2024-12-01", updated_at: "2024-12-01" },
+      {
+        id: 1,
+        title: "Chat 1",
+        last_message_at: "2025-01-01",
+        message_count: 2,
+        created_at: "2025-01-01",
+        updated_at: "2025-01-01",
+      },
+      {
+        id: 2,
+        title: "Chat 2",
+        last_message_at: "2024-12-01",
+        message_count: 1,
+        created_at: "2024-12-01",
+        updated_at: "2024-12-01",
+      },
     ],
   },
 });

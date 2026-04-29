@@ -24,9 +24,7 @@ vi.mock("../../../../application/hooks/useAssessmentSubtopics", () => ({
       {
         id: 1,
         title: "Subtopic 1",
-        questions: [
-          { question_id: 1, question: "Question 1", status: "done" },
-        ],
+        questions: [{ question_id: 1, question: "Question 1", status: "done" }],
       },
     ],
     loading: false,
@@ -84,9 +82,7 @@ describe("AssessmentTracker", () => {
   });
 
   it("renders without crashing", () => {
-    const { container } = renderWithProviders(
-      <AssessmentTracker project={mockProject as any} />
-    );
+    const { container } = renderWithProviders(<AssessmentTracker project={mockProject as any} />);
     expect(container).toBeTruthy();
   });
 });

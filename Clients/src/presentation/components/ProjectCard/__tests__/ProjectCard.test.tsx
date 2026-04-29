@@ -29,9 +29,7 @@ vi.mock("../../../tools/isoDateToString", () => ({
 vi.mock("../../../assets/imgs/eu-ai-act.jpg", () => ({ default: "eu-ai-act.jpg" }));
 
 vi.mock("../ProgressBar", () => ({
-  default: ({ progress }: { progress: string }) => (
-    <div data-testid="progress-bar">{progress}</div>
-  ),
+  default: ({ progress }: { progress: string }) => <div data-testid="progress-bar">{progress}</div>,
 }));
 
 vi.mock("../styles", () => ({

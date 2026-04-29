@@ -6,9 +6,7 @@ describe("CustomizableToast Component", () => {
   it("renders with default message", () => {
     renderWithProviders(<CustomizableToast />);
 
-    expect(
-      screen.getByText("Request is in the process. Please wait...")
-    ).toBeInTheDocument();
+    expect(screen.getByText("Request is in the process. Please wait...")).toBeInTheDocument();
   });
 
   it("renders with a custom title", () => {
@@ -20,9 +18,7 @@ describe("CustomizableToast Component", () => {
   it("does not render the default message when a custom title is provided", () => {
     renderWithProviders(<CustomizableToast title="Custom message" />);
 
-    expect(
-      screen.queryByText("Request is in the process. Please wait...")
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Request is in the process. Please wait...")).not.toBeInTheDocument();
     expect(screen.getByText("Custom message")).toBeInTheDocument();
   });
 });

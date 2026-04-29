@@ -2,7 +2,12 @@ import { vi } from "vitest";
 
 vi.mock("../../Modals/StandardModal", () => ({
   default: ({ isOpen, children, title }: any) =>
-    isOpen ? <div data-testid="standard-modal"><h2>{title}</h2>{children}</div> : null,
+    isOpen ? (
+      <div data-testid="standard-modal">
+        <h2>{title}</h2>
+        {children}
+      </div>
+    ) : null,
 }));
 vi.mock("../../Chip", () => ({
   default: ({ label }: any) => <span data-testid="chip">{label}</span>,

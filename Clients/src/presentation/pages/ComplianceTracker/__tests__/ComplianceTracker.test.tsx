@@ -60,9 +60,7 @@ describe("ComplianceTracker", () => {
   });
 
   it("renders without crashing", () => {
-    const { container } = renderWithProviders(
-      <ComplianceTracker project={mockProject as any} />
-    );
+    const { container } = renderWithProviders(<ComplianceTracker project={mockProject as any} />);
     expect(container).toBeTruthy();
   });
 });

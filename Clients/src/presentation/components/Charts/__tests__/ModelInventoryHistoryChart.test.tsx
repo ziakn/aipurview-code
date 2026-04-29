@@ -26,9 +26,7 @@ describe("ModelInventoryHistoryChart", () => {
   });
 
   it("renders with custom props", () => {
-    renderWithProviders(
-      <ModelInventoryHistoryChart parameter="risk_level" height={300} />
-    );
+    renderWithProviders(<ModelInventoryHistoryChart parameter="risk_level" height={300} />);
     expect(document.body).toBeTruthy();
   });
 });

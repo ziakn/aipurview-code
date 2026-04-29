@@ -9,9 +9,7 @@ import DeleteAccountConfirmation from "../index";
 
 describe("DeleteAccountConfirmation", () => {
   it("renders without crashing when open", () => {
-    renderWithProviders(
-      <DeleteAccountConfirmation open={true} onClose={vi.fn()} />
-    );
+    renderWithProviders(<DeleteAccountConfirmation open={true} onClose={vi.fn()} />);
     expect(document.body).toBeTruthy();
   });
 });
