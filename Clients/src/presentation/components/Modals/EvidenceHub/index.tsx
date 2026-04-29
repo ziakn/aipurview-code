@@ -122,9 +122,7 @@ const NewEvidenceHub: FC<NewEvidenceHubProps> = ({
   isEdit = false,
   preselectedModelId,
 }) => {
-  const [values, setValues] = useState<EvidenceHubModel>(
-    initialData || initialState
-  );
+  const [values, setValues] = useState<EvidenceHubModel>(initialData || initialState);
   const [errors, setErrors] = useState<NewEvidenceHubFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -174,12 +172,11 @@ const NewEvidenceHub: FC<NewEvidenceHubProps> = ({
   };
 
   const handleTextChange = useCallback(
-    (field: keyof EvidenceHubModel) =>
-      (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValues((prev) => ({ ...prev, [field]: event.target.value }));
-        setErrors((prev) => ({ ...prev, [field]: "" }));
-      },
-    []
+    (field: keyof EvidenceHubModel) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setValues((prev) => ({ ...prev, [field]: event.target.value }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
+    },
+    [],
   );
 
   const handleSelectChange = useCallback(
@@ -187,7 +184,7 @@ const NewEvidenceHub: FC<NewEvidenceHubProps> = ({
       setValues((prev) => ({ ...prev, [field]: event.target.value }));
       setErrors((prev) => ({ ...prev, [field]: "" }));
     },
-    []
+    [],
   );
 
   const handleDateChange = useCallback((newDate: Dayjs | null) => {
@@ -385,9 +382,7 @@ const NewEvidenceHub: FC<NewEvidenceHubProps> = ({
         <Stack direction="row" spacing={2}>
           <CustomizableButton
             variant="contained"
-            text={
-              values.evidence_files?.length ? "Add more files" : "Upload files"
-            }
+            text={values.evidence_files?.length ? "Add more files" : "Upload files"}
             icon={<UploadIcon size={16} />}
             onClick={() => setIsUploadModalOpen(true)}
           />
@@ -424,8 +419,7 @@ const NewEvidenceHub: FC<NewEvidenceHubProps> = ({
                     <strong>File:</strong> {file.filename}
                   </Typography>
                   <Typography variant="body2">
-                    <strong>Size:</strong>{" "}
-                    {(Number(file.size) / 1024 / 1024).toFixed(2)} MB
+                    <strong>Size:</strong> {(Number(file.size) / 1024 / 1024).toFixed(2)} MB
                   </Typography>
                 </Box>
                 <Tooltip title="Remove file" arrow>

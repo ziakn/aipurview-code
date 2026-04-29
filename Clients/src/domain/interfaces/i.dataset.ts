@@ -1,8 +1,4 @@
-import {
-  DatasetStatus,
-  DatasetType,
-  DataClassification,
-} from "../enums/dataset.enum";
+import { DatasetStatus, DatasetType, DataClassification } from "../enums/dataset.enum";
 import { IModelInventory } from "./i.modelInventory";
 
 export interface IDataset {
