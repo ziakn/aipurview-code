@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { ProjectCard } from "../Cards/ProjectCard";
 import ProjectTableView from "./ProjectTableView";
 import NoProject from "../NoProject/NoProject";
@@ -322,7 +322,7 @@ const ProjectList = ({ projects, newProjectButton, onProjectDeleted }: IProjectL
           mb: "16px",
         }}
       >
-        <Box sx={{ display: "flex", gap: "16px", alignItems: "center", flex: 1 }}>
+        <Stack direction="row" spacing={2} alignItems="center" sx={{ flex: 1 }}>
           {projects && projects.length > 0 && (
             <>
               <FilterBy columns={projectFilterColumns} onFilterChange={handleProjectFilterChange} />
@@ -356,7 +356,7 @@ const ProjectList = ({ projects, newProjectButton, onProjectDeleted }: IProjectL
               />
             </>
           )}
-        </Box>
+        </Stack>
 
         <Box
           sx={{
