@@ -2,7 +2,12 @@ import { vi } from "vitest";
 
 vi.mock("../../StandardModal", () => ({
   default: ({ isOpen, children, title }: any) =>
-    isOpen ? <div data-testid="standard-modal"><h2>{title}</h2>{children}</div> : null,
+    isOpen ? (
+      <div data-testid="standard-modal">
+        <h2>{title}</h2>
+        {children}
+      </div>
+    ) : null,
 }));
 vi.mock("../../../Inputs/Field", () => ({
   default: (props: any) => <input data-testid={`field-${props.id || "field"}`} />,
@@ -29,7 +34,12 @@ vi.mock("../../../../../application/hooks/useUsers", () => ({
   default: () => ({ users: [] }),
 }));
 vi.mock("../../../../../application/hooks/useFormValidation", () => ({
-  useFormValidation: () => ({ errors: {}, validate: vi.fn().mockReturnValue(true), clearError: vi.fn(), resetErrors: vi.fn() }),
+  useFormValidation: () => ({
+    errors: {},
+    validate: vi.fn().mockReturnValue(true),
+    clearError: vi.fn(),
+    resetErrors: vi.fn(),
+  }),
 }));
 vi.mock("../../../../../application/hooks/useModalKeyHandling", () => ({
   useModalKeyHandling: vi.fn(),
@@ -40,9 +50,7 @@ import CreateTask from "../index";
 
 describe("CreateTask", () => {
   it("renders without crashing when open", () => {
-    renderWithProviders(
-      <CreateTask isOpen={true} setIsOpen={vi.fn()} />
-    );
+    renderWithProviders(<CreateTask isOpen={true} setIsOpen={vi.fn()} />);
     expect(document.body).toBeTruthy();
   });
 });

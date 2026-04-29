@@ -19,27 +19,19 @@ describe("StatusDropdown", () => {
   });
 
   it("defaults to 'Not started' when currentStatus is empty", () => {
-    renderWithProviders(
-      <StatusDropdown currentStatus="" onStatusChange={vi.fn()} />
-    );
+    renderWithProviders(<StatusDropdown currentStatus="" onStatusChange={vi.fn()} />);
     expect(screen.getByText("Not started")).toBeInTheDocument();
   });
 
   it("is disabled when disabled prop is true", () => {
-    renderWithProviders(
-      <StatusDropdown {...defaultProps} disabled={true} />
-    );
+    renderWithProviders(<StatusDropdown {...defaultProps} disabled={true} />);
     const select = screen.getByRole("combobox");
     expect(select).toHaveAttribute("aria-disabled", "true");
   });
 
   it("is disabled when user role is not in allowedRoles", () => {
     renderWithProviders(
-      <StatusDropdown
-        {...defaultProps}
-        allowedRoles={["Admin"]}
-        userRole="Viewer"
-      />
+      <StatusDropdown {...defaultProps} allowedRoles={["Admin"]} userRole="Viewer" />,
     );
     const select = screen.getByRole("combobox");
     expect(select).toHaveAttribute("aria-disabled", "true");
@@ -47,11 +39,7 @@ describe("StatusDropdown", () => {
 
   it("is enabled when user role is in allowedRoles", () => {
     renderWithProviders(
-      <StatusDropdown
-        {...defaultProps}
-        allowedRoles={["Admin"]}
-        userRole="Admin"
-      />
+      <StatusDropdown {...defaultProps} allowedRoles={["Admin"]} userRole="Admin" />,
     );
     const select = screen.getByRole("combobox");
     expect(select).not.toHaveAttribute("aria-disabled", "true");

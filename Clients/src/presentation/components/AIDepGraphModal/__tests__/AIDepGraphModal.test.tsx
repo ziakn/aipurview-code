@@ -30,7 +30,7 @@ describe("AIDepGraphModal", () => {
 
   it("renders with repository URL", () => {
     renderWithProviders(
-      <AIDepGraphModal {...defaultProps} repositoryUrl="https://github.com/org/repo" />
+      <AIDepGraphModal {...defaultProps} repositoryUrl="https://github.com/org/repo" />,
     );
     expect(screen.getByText("org/repo")).toBeInTheDocument();
   });

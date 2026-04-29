@@ -1,7 +1,9 @@
 import { vi } from "vitest";
 
 vi.mock("@assistant-ui/react", () => ({
-  AssistantRuntimeProvider: ({ children }: any) => <div data-testid="assistant-runtime">{children}</div>,
+  AssistantRuntimeProvider: ({ children }: any) => (
+    <div data-testid="assistant-runtime">{children}</div>
+  ),
 }));
 
 vi.mock("../useAdvisorRuntime", () => ({

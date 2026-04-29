@@ -11,12 +11,14 @@ describe("FileUploadModal", () => {
   it("renders without crashing", () => {
     renderWithProviders(
       <FileUploadModal
-        uploadProps={{
-          onUpload: vi.fn(),
-          allowedTypes: [],
-          maxSize: 10000000,
-        } as any}
-      />
+        uploadProps={
+          {
+            onUpload: vi.fn(),
+            allowedTypes: [],
+            maxSize: 10000000,
+          } as any
+        }
+      />,
     );
     expect(document.body).toBeTruthy();
   });

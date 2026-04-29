@@ -7,7 +7,7 @@ describe("DashboardCard Component", () => {
     renderWithProviders(
       <DashboardCard title="Risk Overview">
         <p>Card content here</p>
-      </DashboardCard>
+      </DashboardCard>,
     );
 
     expect(screen.getByText("Risk Overview")).toBeInTheDocument();
@@ -18,7 +18,7 @@ describe("DashboardCard Component", () => {
     renderWithProviders(
       <DashboardCard title="Stats" action={<button>View All</button>}>
         <p>Content</p>
-      </DashboardCard>
+      </DashboardCard>,
     );
 
     expect(screen.getByText("View All")).toBeInTheDocument();
@@ -28,7 +28,7 @@ describe("DashboardCard Component", () => {
     renderWithProviders(
       <DashboardCard title="Simple Card">
         <p>Just content</p>
-      </DashboardCard>
+      </DashboardCard>,
     );
 
     expect(screen.getByText("Simple Card")).toBeInTheDocument();
@@ -39,7 +39,7 @@ describe("DashboardCard Component", () => {
     renderWithProviders(
       <DashboardCard title="Clickable Card" navigateTo="/dashboard/details">
         <p>Navigate content</p>
-      </DashboardCard>
+      </DashboardCard>,
     );
 
     expect(screen.getByText("Clickable Card")).toBeInTheDocument();
@@ -52,7 +52,7 @@ describe("DashboardCard Component", () => {
           <span>First</span>
           <span>Second</span>
         </div>
-      </DashboardCard>
+      </DashboardCard>,
     );
 
     expect(screen.getByText("First")).toBeInTheDocument();

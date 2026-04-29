@@ -1,11 +1,7 @@
 import { screen } from "@testing-library/react";
 import { renderWithProviders } from "../../../../test/renderWithProviders";
 import PluginCard from "../index";
-import {
-  Plugin,
-  PluginCategory,
-  PluginInstallationStatus,
-} from "../../../../domain/types/plugins";
+import { Plugin, PluginCategory, PluginInstallationStatus } from "../../../../domain/types/plugins";
 
 // Mock the theme imports used by PluginCard
 vi.mock("../../../themes/components", async (importOriginal) => {
@@ -40,9 +36,7 @@ describe("PluginCard", () => {
 
   it("renders the plugin description", () => {
     renderWithProviders(<PluginCard plugin={basePlugin} />);
-    expect(
-      screen.getByText("A test plugin for unit testing")
-    ).toBeInTheDocument();
+    expect(screen.getByText("A test plugin for unit testing")).toBeInTheDocument();
   });
 
   it("renders a status chip when installationStatus is set", () => {

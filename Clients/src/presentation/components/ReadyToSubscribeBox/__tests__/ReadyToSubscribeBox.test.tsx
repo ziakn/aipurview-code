@@ -15,12 +15,8 @@ describe("ReadyToSubscribeBox Component", () => {
     renderWithProviders(<ReadyToSubscribeBox />);
 
     expect(screen.getByText("Ready to subscribe?")).toBeInTheDocument();
-    expect(
-      screen.getByText(/Unlock the full potential of VerifyWise/)
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /view plans/i })
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Unlock the full potential of VerifyWise/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /view plans/i })).toBeInTheDocument();
   });
 
   it("opens pricing page in new tab when button is clicked", async () => {
@@ -31,10 +27,7 @@ describe("ReadyToSubscribeBox Component", () => {
 
     await user.click(screen.getByRole("button", { name: /view plans/i }));
 
-    expect(windowOpen).toHaveBeenCalledWith(
-      "https://verifywise.ai/pricing/",
-      "_blank"
-    );
+    expect(windowOpen).toHaveBeenCalledWith("https://verifywise.ai/pricing/", "_blank");
 
     windowOpen.mockRestore();
   });

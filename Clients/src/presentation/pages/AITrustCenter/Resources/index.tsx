@@ -1,14 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, Suspense, useCallback, useEffect, useRef, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import {
-  Box,
-  Typography,
-  TableCell,
-  CircularProgress,
-  Stack,
-  Tooltip,
-} from "@mui/material";
+import { Box, Typography, TableCell, CircularProgress, Stack, Tooltip } from "@mui/material";
 import Alert from "../../../components/Alert";
 import { Eye as VisibilityIcon, EyeOff as VisibilityOffIcon } from "lucide-react";
 import { CirclePlus as AddCircleOutlineIcon } from "lucide-react";
@@ -35,7 +28,12 @@ import { TABLE_COLUMNS, WARNING_MESSAGES } from "./constants";
 import { AITrustCentreOverviewData } from "../../../../application/hooks/useAITrustCentreOverview";
 import { useTheme } from "@mui/material/styles";
 import AITrustCenterTable from "../../../components/Table/AITrustCenterTable";
-import { EditResourceFormValues, NewResourceFormValues, Resource, FormData } from "../../../../domain/interfaces/i.aiTrustCenter";
+import {
+  EditResourceFormValues,
+  NewResourceFormValues,
+  Resource,
+  FormData,
+} from "../../../../domain/interfaces/i.aiTrustCenter";
 import { GroupBy } from "../../../components/Table/GroupBy";
 import { useTableGrouping, useGroupByState } from "../../../../application/hooks/useTableGrouping";
 import { GroupedTableView } from "../../../components/Table/GroupedTableView";
@@ -55,14 +53,7 @@ const ResourceTableRow: React.FC<{
     key: string;
     direction: "asc" | "desc" | null;
   };
-}> = ({
-  resource,
-  onDelete,
-  onEdit,
-  onMakeVisible,
-  onDownload,
-  sortConfig,
-}) => {
+}> = ({ resource, onDelete, onEdit, onMakeVisible, onDownload, sortConfig }) => {
   const theme = useTheme();
   const styles = useStyles(theme);
 
@@ -80,7 +71,10 @@ const ResourceTableRow: React.FC<{
           cursor: resource.visible ? "pointer" : "default",
           textTransform: "none !important",
           opacity: resource.visible ? 1 : 0.5,
-          backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("resource name") ? singleTheme.tableColors.sortedColumnFirst : "transparent",
+          backgroundColor:
+            sortConfig?.key && sortConfig.key.toLowerCase().includes("resource name")
+              ? singleTheme.tableColors.sortedColumnFirst
+              : "transparent",
         }}
       >
         <Typography sx={styles.resourceName}>{resource.name}</Typography>
@@ -91,7 +85,12 @@ const ResourceTableRow: React.FC<{
           cursor: resource.visible ? "pointer" : "default",
           textTransform: "none !important",
           opacity: resource.visible ? 1 : 0.5,
-          backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("type") && sortConfig.key.toLowerCase().includes("purpose") ? singleTheme.tableColors.sortedColumn : "transparent",
+          backgroundColor:
+            sortConfig?.key &&
+            sortConfig.key.toLowerCase().includes("type") &&
+            sortConfig.key.toLowerCase().includes("purpose")
+              ? singleTheme.tableColors.sortedColumn
+              : "transparent",
         }}
       >
         <Typography sx={styles.resourceType}>{resource.description}</Typography>
@@ -102,7 +101,10 @@ const ResourceTableRow: React.FC<{
           cursor: resource.visible ? "pointer" : "default",
           textTransform: "none !important",
           opacity: resource.visible ? 1 : 0.5,
-          backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("visibility") ? singleTheme.tableColors.sortedColumn : "transparent",
+          backgroundColor:
+            sortConfig?.key && sortConfig.key.toLowerCase().includes("visibility")
+              ? singleTheme.tableColors.sortedColumn
+              : "transparent",
         }}
       >
         {resource.visible ? (
@@ -121,7 +123,10 @@ const ResourceTableRow: React.FC<{
       </TableCell>
       <TableCell
         sx={{
-          backgroundColor: sortConfig?.key && sortConfig.key.toLowerCase().includes("action") ? singleTheme.tableColors.sortedColumn : "transparent",
+          backgroundColor:
+            sortConfig?.key && sortConfig.key.toLowerCase().includes("action")
+              ? singleTheme.tableColors.sortedColumn
+              : "transparent",
         }}
       >
         <IconButtonComponent
@@ -162,17 +167,20 @@ const TrustCenterResources: React.FC = () => {
   const styles = useStyles(theme);
 
   // Add resource form validation
-  const addResourceValidators = useMemo(() => ({
-    name: (v: unknown) => {
-      const r = checkStringValidation("Resource name", v as string, 1, 256);
-      return r.accepted ? "" : r.message;
-    },
-    description: (v: unknown) => {
-      const r = checkStringValidation("Type or purpose of resource", v as string, 10, 512);
-      return r.accepted ? "" : r.message;
-    },
-    file: (v: unknown) => (!v ? "A file is required." : ""),
-  }), []);
+  const addResourceValidators = useMemo(
+    () => ({
+      name: (v: unknown) => {
+        const r = checkStringValidation("Resource name", v as string, 1, 256);
+        return r.accepted ? "" : r.message;
+      },
+      description: (v: unknown) => {
+        const r = checkStringValidation("Type or purpose of resource", v as string, 10, 512);
+        return r.accepted ? "" : r.message;
+      },
+      file: (v: unknown) => (!v ? "A file is required." : ""),
+    }),
+    [],
+  );
 
   const {
     errors: addErrors,
@@ -182,16 +190,19 @@ const TrustCenterResources: React.FC = () => {
   } = useFormValidation<NewResourceFormValues>(addResourceValidators);
 
   // Edit resource form validation
-  const editResourceValidators = useMemo(() => ({
-    name: (v: unknown) => {
-      const r = checkStringValidation("Resource name", v as string, 1, 256);
-      return r.accepted ? "" : r.message;
-    },
-    description: (v: unknown) => {
-      const r = checkStringValidation("Type or purpose of resource", v as string, 10, 512);
-      return r.accepted ? "" : r.message;
-    },
-  }), []);
+  const editResourceValidators = useMemo(
+    () => ({
+      name: (v: unknown) => {
+        const r = checkStringValidation("Resource name", v as string, 1, 256);
+        return r.accepted ? "" : r.message;
+      },
+      description: (v: unknown) => {
+        const r = checkStringValidation("Type or purpose of resource", v as string, 10, 512);
+        return r.accepted ? "" : r.message;
+      },
+    }),
+    [],
+  );
 
   const {
     errors: editErrors,
@@ -242,12 +253,8 @@ const TrustCenterResources: React.FC = () => {
     body: string;
   } | null>(null);
   const [addResourceError, setAddResourceError] = useState<string | null>(null);
-  const [deleteResourceError, setDeleteResourceError] = useState<string | null>(
-    null
-  );
-  const [editResourceError, setEditResourceError] = useState<string | null>(
-    null
-  );
+  const [deleteResourceError, setDeleteResourceError] = useState<string | null>(null);
+  const [editResourceError, setEditResourceError] = useState<string | null>(null);
 
   // Update local form data when query data changes
   React.useEffect(() => {
@@ -268,11 +275,7 @@ const TrustCenterResources: React.FC = () => {
   }, [searchParams, resources, setSearchParams]);
 
   // Handle field change and auto-save
-  const handleFieldChange = (
-    section: string,
-    field: string,
-    value: boolean | string
-  ) => {
+  const handleFieldChange = (section: string, field: string, value: boolean | string) => {
     setFormData((prev: FormData | null) => {
       if (!prev) return prev;
       const updatedData = {
@@ -466,9 +469,7 @@ const TrustCenterResources: React.FC = () => {
           oldFileId: undefined,
         });
       } catch (error: any) {
-        setEditResourceError(
-          error.message || "Failed to update resource visibility"
-        );
+        setEditResourceError(error.message || "Failed to update resource visibility");
       }
     }
   };
@@ -518,12 +519,12 @@ const TrustCenterResources: React.FC = () => {
   // Define how to get the group key for each resource
   const getResourceGroupKey = useCallback((resource: Resource, field: string): string => {
     switch (field) {
-      case 'description':
-        return resource.description || 'Unknown';
-      case 'visible':
-        return resource.visible ? 'Visible' : 'Hidden';
+      case "description":
+        return resource.description || "Unknown";
+      case "visible":
+        return resource.visible ? "Visible" : "Hidden";
       default:
-        return 'Other';
+        return "Other";
     }
   }, []);
 
@@ -538,12 +539,7 @@ const TrustCenterResources: React.FC = () => {
   // Show loading state
   if (overviewLoading || resourcesLoading) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="400px"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
         <CircularProgress />
       </Box>
     );
@@ -551,15 +547,9 @@ const TrustCenterResources: React.FC = () => {
 
   // Show error state
   if (overviewError || resourcesError) {
-    const errorMessage =
-      overviewError?.message || resourcesError?.message || "An error occurred";
+    const errorMessage = overviewError?.message || resourcesError?.message || "An error occurred";
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="400px"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
         <Typography color="error">{errorMessage}</Typography>
       </Box>
     );
@@ -568,12 +558,7 @@ const TrustCenterResources: React.FC = () => {
   // Ensure resources is available before rendering
   if (!resources) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="400px"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
         <Typography>No resources data available</Typography>
       </Box>
     );
@@ -582,11 +567,10 @@ const TrustCenterResources: React.FC = () => {
   return (
     <Box>
       <Typography sx={styles.description}>
-        Provide easy access to documentation and policies relevant to your AI
-        governance, data security, compliance, and ethical practices. This
-        section should act as a centralized repository where your customers,
-        partners, and stakeholders can download, review, and understand key
-        policy documents.
+        Provide easy access to documentation and policies relevant to your AI governance, data
+        security, compliance, and ethical practices. This section should act as a centralized
+        repository where your customers, partners, and stakeholders can download, review, and
+        understand key policy documents.
       </Typography>
 
       <Box sx={styles.container}>
@@ -594,8 +578,8 @@ const TrustCenterResources: React.FC = () => {
           <Box sx={{ display: "flex", gap: "8px", alignItems: "center" }}>
             <GroupBy
               options={[
-                { id: 'description', label: 'Type' },
-                { id: 'visible', label: 'Visibility' },
+                { id: "description", label: "Type" },
+                { id: "visible", label: "Visibility" },
               ]}
               onGroupChange={handleGroupChange}
             />
@@ -612,9 +596,7 @@ const TrustCenterResources: React.FC = () => {
               </Typography>
               <Toggle
                 checked={formData?.info?.resources_visible ?? false}
-                onChange={(_, checked) =>
-                  handleFieldChange("info", "resources_visible", checked)
-                }
+                onChange={(_, checked) => handleFieldChange("info", "resources_visible", checked)}
               />
             </Box>
             <CustomizableButton
@@ -714,16 +696,10 @@ const TrustCenterResources: React.FC = () => {
                 }}
               />
               {newResource.file && (
-                <Typography sx={styles.fileName}>
-                  {newResource.file.name}
-                </Typography>
+                <Typography sx={styles.fileName}>{newResource.file.name}</Typography>
               )}
               {addErrors.file && (
-                <Typography
-                  component="span"
-                  color="error"
-                  sx={styles.fileErrorText}
-                >
+                <Typography component="span" color="error" sx={styles.fileErrorText}>
                   {addErrors.file}
                 </Typography>
               )}
@@ -795,9 +771,7 @@ const TrustCenterResources: React.FC = () => {
               <Typography sx={styles.modalLabel}>Visibility</Typography>
               <Toggle
                 checked={editResource.visible}
-                onChange={(_, checked) =>
-                  setEditResource((r) => ({ ...r, visible: checked }))
-                }
+                onChange={(_, checked) => setEditResource((r) => ({ ...r, visible: checked }))}
               />
             </Box>
             <Box>
@@ -823,9 +797,7 @@ const TrustCenterResources: React.FC = () => {
               )}
               {/* Show new file name when selected */}
               {editResource.file && (
-                <Typography sx={styles.fileName}>
-                  New file: {editResource.file.name}
-                </Typography>
+                <Typography sx={styles.fileName}>New file: {editResource.file.name}</Typography>
               )}
             </Box>
           </Stack>

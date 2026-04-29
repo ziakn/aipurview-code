@@ -22,9 +22,7 @@ describe("ShareViewDropdown", () => {
     const anchor = document.createElement("button");
     document.body.appendChild(anchor);
 
-    renderWithProviders(
-      <ShareViewDropdown {...defaultProps} anchorEl={anchor} />
-    );
+    renderWithProviders(<ShareViewDropdown {...defaultProps} anchorEl={anchor} />);
 
     expect(screen.getByRole("dialog", { name: "Share view settings" })).toBeInTheDocument();
     expect(screen.getByText("Share view")).toBeInTheDocument();
@@ -36,9 +34,7 @@ describe("ShareViewDropdown", () => {
     const anchor = document.createElement("button");
     document.body.appendChild(anchor);
 
-    renderWithProviders(
-      <ShareViewDropdown {...defaultProps} anchorEl={anchor} />
-    );
+    renderWithProviders(<ShareViewDropdown {...defaultProps} anchorEl={anchor} />);
 
     expect(screen.getByRole("switch")).toBeInTheDocument();
 
@@ -55,7 +51,7 @@ describe("ShareViewDropdown", () => {
         anchorEl={anchor}
         enabled={true}
         shareableLink="https://example.com/share/abc123"
-      />
+      />,
     );
 
     expect(screen.getByText("Shareable link")).toBeInTheDocument();
@@ -67,12 +63,10 @@ describe("ShareViewDropdown", () => {
     const anchor = document.createElement("button");
     document.body.appendChild(anchor);
 
-    renderWithProviders(
-      <ShareViewDropdown {...defaultProps} anchorEl={anchor} />
-    );
+    renderWithProviders(<ShareViewDropdown {...defaultProps} anchorEl={anchor} />);
 
     expect(
-      screen.getByText(/Send a view only link to anyone or embed this report/)
+      screen.getByText(/Send a view only link to anyone or embed this report/),
     ).toBeInTheDocument();
 
     document.body.removeChild(anchor);

@@ -35,27 +35,20 @@ describe("SelectableCard", () => {
 
   it("does not call onClick when disabled", () => {
     const onClick = vi.fn();
-    renderWithProviders(
-      <SelectableCard {...defaultProps} onClick={onClick} disabled />
-    );
+    renderWithProviders(<SelectableCard {...defaultProps} onClick={onClick} disabled />);
     fireEvent.click(screen.getByText("Card Title"));
     expect(onClick).not.toHaveBeenCalled();
   });
 
   it("renders chip when provided", () => {
     renderWithProviders(
-      <SelectableCard
-        {...defaultProps}
-        chip={<span data-testid="chip">Beta</span>}
-      />
+      <SelectableCard {...defaultProps} chip={<span data-testid="chip">Beta</span>} />,
     );
     expect(screen.getByTestId("chip")).toBeInTheDocument();
   });
 
   it("shows selected state visually (checkmark present when selected)", () => {
-    const { container } = renderWithProviders(
-      <SelectableCard {...defaultProps} isSelected />
-    );
+    const { container } = renderWithProviders(<SelectableCard {...defaultProps} isSelected />);
     // The Check icon from lucide-react renders an SVG
     const svg = container.querySelector("svg");
     expect(svg).toBeInTheDocument();
@@ -63,7 +56,7 @@ describe("SelectableCard", () => {
 
   it("does not show checkmark when not selected", () => {
     const { container } = renderWithProviders(
-      <SelectableCard {...defaultProps} isSelected={false} />
+      <SelectableCard {...defaultProps} isSelected={false} />,
     );
     // Only SVG should be absent (the icon prop is a span, not an SVG)
     const svgs = container.querySelectorAll("svg");

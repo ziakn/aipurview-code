@@ -52,9 +52,7 @@ describe("Breadcrumbs", () => {
     const items = [{ label: "Home", path: "/" }];
     renderWithProviders(<Breadcrumbs items={items} />);
 
-    expect(
-      screen.getByLabelText("Page navigation breadcrumbs")
-    ).toBeInTheDocument();
+    expect(screen.getByLabelText("Page navigation breadcrumbs")).toBeInTheDocument();
   });
 
   it("truncates long labels when truncateLabels is true", () => {
@@ -65,9 +63,7 @@ describe("Breadcrumbs", () => {
       },
     ];
 
-    renderWithProviders(
-      <Breadcrumbs items={items} truncateLabels maxLabelLength={10} />
-    );
+    renderWithProviders(<Breadcrumbs items={items} truncateLabels maxLabelLength={10} />);
 
     expect(screen.getByText("This is a ...")).toBeInTheDocument();
   });
@@ -76,18 +72,13 @@ describe("Breadcrumbs", () => {
     const longLabel = "This is a very long breadcrumb label";
     const items = [{ label: longLabel, path: "/long" }];
 
-    renderWithProviders(
-      <Breadcrumbs items={items} truncateLabels={false} />
-    );
+    renderWithProviders(<Breadcrumbs items={items} truncateLabels={false} />);
 
     expect(screen.getByText(longLabel)).toBeInTheDocument();
   });
 
   it("marks the last item as the current page", () => {
-    const items = [
-      { label: "Home", path: "/" },
-      { label: "Current Page" },
-    ];
+    const items = [{ label: "Home", path: "/" }, { label: "Current Page" }];
 
     renderWithProviders(<Breadcrumbs items={items} />);
 

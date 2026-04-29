@@ -9,26 +9,17 @@ describe("PageHeader", () => {
   });
 
   it("renders the description when provided", () => {
-    renderWithProviders(
-      <PageHeader title="Title" description="This is a description" />
-    );
+    renderWithProviders(<PageHeader title="Title" description="This is a description" />);
     expect(screen.getByText("This is a description")).toBeInTheDocument();
   });
 
   it("does not render a description when not provided", () => {
     renderWithProviders(<PageHeader title="Title" />);
-    expect(
-      screen.queryByText("This is a description")
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("This is a description")).not.toBeInTheDocument();
   });
 
   it("renders rightContent when provided", () => {
-    renderWithProviders(
-      <PageHeader
-        title="Title"
-        rightContent={<button>Action</button>}
-      />
-    );
+    renderWithProviders(<PageHeader title="Title" rightContent={<button>Action</button>} />);
     expect(screen.getByText("Action")).toBeInTheDocument();
   });
 

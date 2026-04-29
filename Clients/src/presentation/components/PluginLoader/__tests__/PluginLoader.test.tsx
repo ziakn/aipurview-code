@@ -2,9 +2,7 @@ import { vi } from "vitest";
 
 vi.mock("../../../../application/contexts/PluginRegistry.context", () => ({
   usePluginRegistry: vi.fn().mockReturnValue({
-    installedPlugins: [
-      { pluginKey: "soc2", status: "installed" },
-    ],
+    installedPlugins: [{ pluginKey: "soc2", status: "installed" }],
     loadPluginUI: vi.fn(),
     isLoading: false,
   }),
@@ -14,9 +12,7 @@ vi.mock("../../../../infrastructure/api/networkServices", () => ({
   apiServices: {
     get: vi.fn().mockResolvedValue({
       data: {
-        data: [
-          { key: "soc2", ui: { bundleUrl: "/api/plugins/soc2/bundle.js", slots: [] } },
-        ],
+        data: [{ key: "soc2", ui: { bundleUrl: "/api/plugins/soc2/bundle.js", slots: [] } }],
       },
     }),
   },

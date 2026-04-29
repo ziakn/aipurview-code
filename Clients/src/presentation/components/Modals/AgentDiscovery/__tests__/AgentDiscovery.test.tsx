@@ -70,21 +70,21 @@ const mockAgent = {
 describe("LinkModelModal", () => {
   it("renders without crashing when open", () => {
     renderWithProviders(
-      <LinkModelModal isOpen={true} setIsOpen={vi.fn()} agentId={1} onSuccess={vi.fn()} />
+      <LinkModelModal isOpen={true} setIsOpen={vi.fn()} agentId={1} onSuccess={vi.fn()} />,
     );
     expect(screen.getByText("Link to model")).toBeInTheDocument();
   });
 
   it("renders select for model", () => {
     renderWithProviders(
-      <LinkModelModal isOpen={true} setIsOpen={vi.fn()} agentId={1} onSuccess={vi.fn()} />
+      <LinkModelModal isOpen={true} setIsOpen={vi.fn()} agentId={1} onSuccess={vi.fn()} />,
     );
     expect(screen.getByTestId("select-model-select")).toBeInTheDocument();
   });
 
   it("renders cancel and link buttons", () => {
     renderWithProviders(
-      <LinkModelModal isOpen={true} setIsOpen={vi.fn()} agentId={1} onSuccess={vi.fn()} />
+      <LinkModelModal isOpen={true} setIsOpen={vi.fn()} agentId={1} onSuccess={vi.fn()} />,
     );
     expect(screen.getByText("Cancel")).toBeInTheDocument();
     expect(screen.getByText("Link model")).toBeInTheDocument();
@@ -93,16 +93,12 @@ describe("LinkModelModal", () => {
 
 describe("ManualAgentModal", () => {
   it("renders without crashing when open (add mode)", () => {
-    renderWithProviders(
-      <ManualAgentModal isOpen={true} setIsOpen={vi.fn()} onSuccess={vi.fn()} />
-    );
+    renderWithProviders(<ManualAgentModal isOpen={true} setIsOpen={vi.fn()} onSuccess={vi.fn()} />);
     expect(screen.getByText("Add agent manually")).toBeInTheDocument();
   });
 
   it("renders form fields", () => {
-    renderWithProviders(
-      <ManualAgentModal isOpen={true} setIsOpen={vi.fn()} onSuccess={vi.fn()} />
-    );
+    renderWithProviders(<ManualAgentModal isOpen={true} setIsOpen={vi.fn()} onSuccess={vi.fn()} />);
     expect(screen.getByTestId("field-display_name")).toBeInTheDocument();
     expect(screen.getByTestId("select-primitive_type")).toBeInTheDocument();
     expect(screen.getByTestId("select-owner_id")).toBeInTheDocument();
@@ -111,7 +107,7 @@ describe("ManualAgentModal", () => {
 
   it("renders in edit mode when agent prop is provided", () => {
     renderWithProviders(
-      <ManualAgentModal isOpen={true} setIsOpen={vi.fn()} onSuccess={vi.fn()} agent={mockAgent} />
+      <ManualAgentModal isOpen={true} setIsOpen={vi.fn()} onSuccess={vi.fn()} agent={mockAgent} />,
     );
     expect(screen.getByText("Edit agent")).toBeInTheDocument();
   });
@@ -120,21 +116,21 @@ describe("ManualAgentModal", () => {
 describe("ReviewAgentModal", () => {
   it("renders without crashing when open with agent", () => {
     renderWithProviders(
-      <ReviewAgentModal isOpen={true} setIsOpen={vi.fn()} agent={mockAgent} onSuccess={vi.fn()} />
+      <ReviewAgentModal isOpen={true} setIsOpen={vi.fn()} agent={mockAgent} onSuccess={vi.fn()} />,
     );
     expect(screen.getByText("Agent details")).toBeInTheDocument();
   });
 
   it("renders agent details", () => {
     renderWithProviders(
-      <ReviewAgentModal isOpen={true} setIsOpen={vi.fn()} agent={mockAgent} onSuccess={vi.fn()} />
+      <ReviewAgentModal isOpen={true} setIsOpen={vi.fn()} agent={mockAgent} onSuccess={vi.fn()} />,
     );
     expect(screen.getByText("Test Agent")).toBeInTheDocument();
   });
 
   it("renders confirm and reject buttons for pending agent", () => {
     renderWithProviders(
-      <ReviewAgentModal isOpen={true} setIsOpen={vi.fn()} agent={mockAgent} onSuccess={vi.fn()} />
+      <ReviewAgentModal isOpen={true} setIsOpen={vi.fn()} agent={mockAgent} onSuccess={vi.fn()} />,
     );
     expect(screen.getByText("Confirm")).toBeInTheDocument();
     expect(screen.getByText("Reject")).toBeInTheDocument();
@@ -142,7 +138,7 @@ describe("ReviewAgentModal", () => {
 
   it("returns null when agent is null", () => {
     const { container } = renderWithProviders(
-      <ReviewAgentModal isOpen={true} setIsOpen={vi.fn()} agent={null} onSuccess={vi.fn()} />
+      <ReviewAgentModal isOpen={true} setIsOpen={vi.fn()} agent={null} onSuccess={vi.fn()} />,
     );
     expect(container.querySelector('[class*="MuiDrawer"]')).toBeNull();
   });

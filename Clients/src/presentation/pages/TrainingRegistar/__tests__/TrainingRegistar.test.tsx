@@ -44,7 +44,15 @@ vi.mock("../../../../application/hooks/useTableGrouping", () => ({
 
 vi.mock("../../../../application/hooks/useColumnVisibility", () => ({
   useColumnVisibility: () => ({
-    visibleColumns: new Set(["training_name", "duration", "provider", "department", "status", "numberOfPeople", "actions"]),
+    visibleColumns: new Set([
+      "training_name",
+      "duration",
+      "provider",
+      "department",
+      "status",
+      "numberOfPeople",
+      "actions",
+    ]),
     allColumns: [],
     toggleColumn: vi.fn(),
     resetToDefaults: vi.fn(),
@@ -114,7 +122,7 @@ describe("TrainingRegistar", () => {
   it("renders page description", () => {
     renderWithProviders(<Training />, { route: "/training" });
     expect(
-      screen.getByText(/This registry lists all AI-related training programs/)
+      screen.getByText(/This registry lists all AI-related training programs/),
     ).toBeInTheDocument();
   });
 

@@ -23,7 +23,7 @@ describe("EntityGraphModal", () => {
         focusEntityType={"model" as any}
         focusEntityId={1}
         focusEntityLabel="Test Model"
-      />
+      />,
     );
     // Modal should be in the DOM
     expect(document.body).toBeTruthy();

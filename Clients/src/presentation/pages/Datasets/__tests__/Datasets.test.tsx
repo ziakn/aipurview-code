@@ -96,9 +96,7 @@ describe("Datasets", () => {
 
   it("renders page description", () => {
     renderWithProviders(<Datasets />, { route: "/datasets" });
-    expect(
-      screen.getByText(/Manage training and evaluation datasets/)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Manage training and evaluation datasets/)).toBeInTheDocument();
   });
 
   it("renders Add new dataset button", () => {

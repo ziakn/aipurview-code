@@ -47,29 +47,21 @@ import AddNewRiskIBMModal from "../index";
 
 describe("AddNewRiskIBMModal", () => {
   it("renders RiskDatabaseModal with IBM-specific props", () => {
-    renderWithProviders(
-      <AddNewRiskIBMModal isOpen={true} setIsOpen={vi.fn()} />
-    );
+    renderWithProviders(<AddNewRiskIBMModal isOpen={true} setIsOpen={vi.fn()} />);
     expect(screen.getByTestId("risk-database-modal")).toBeInTheDocument();
     expect(screen.getByTestId("modal-title")).toHaveTextContent(
-      "Add a new risk from IBM risk database"
+      "Add a new risk from IBM risk database",
     );
-    expect(screen.getByTestId("database-name")).toHaveTextContent(
-      "IBM AI Risk Database"
-    );
+    expect(screen.getByTestId("database-name")).toHaveTextContent("IBM AI Risk Database");
   });
 
   it("passes isOpen prop to modal", () => {
-    renderWithProviders(
-      <AddNewRiskIBMModal isOpen={false} setIsOpen={vi.fn()} />
-    );
+    renderWithProviders(<AddNewRiskIBMModal isOpen={false} setIsOpen={vi.fn()} />);
     expect(screen.getByTestId("modal-open")).toHaveTextContent("false");
   });
 
   it("renders without onRiskSelected callback", () => {
-    renderWithProviders(
-      <AddNewRiskIBMModal isOpen={true} setIsOpen={vi.fn()} />
-    );
+    renderWithProviders(<AddNewRiskIBMModal isOpen={true} setIsOpen={vi.fn()} />);
     expect(screen.getByTestId("risk-database-modal")).toBeInTheDocument();
   });
 });

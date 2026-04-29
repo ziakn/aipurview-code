@@ -12,9 +12,7 @@ import InsertLinkModal from "../InsertLinkModal";
 
 describe("InsertLinkModal", () => {
   it("renders without crashing when open", () => {
-    renderWithProviders(
-      <InsertLinkModal open={true} onClose={vi.fn()} onInsert={vi.fn()} />
-    );
+    renderWithProviders(<InsertLinkModal open={true} onClose={vi.fn()} onInsert={vi.fn()} />);
     expect(document.body).toBeTruthy();
   });
 });

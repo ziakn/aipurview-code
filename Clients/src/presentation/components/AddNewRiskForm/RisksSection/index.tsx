@@ -8,13 +8,7 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react";
-import {
-  Stack,
-  Typography,
-  useTheme,
-  SelectChangeEvent,
-  Box,
-} from "@mui/material";
+import { Stack, Typography, useTheme, SelectChangeEvent, Box } from "@mui/material";
 import { ChevronDown as GreyDownArrowIcon } from "lucide-react";
 import Field from "../../Inputs/Field";
 import Select from "../../Inputs/Select";
@@ -42,7 +36,7 @@ const LAYOUT = {
   VERTICAL_GAP: 16,
   COMPACT_CONTENT_WIDTH: 970, // Account for scrollbar (~17px)
   get TOTAL_CONTENT_WIDTH() {
-    return (this.FIELD_WIDTH * 3) + (this.HORIZONTAL_GAP * 2); // 985px
+    return this.FIELD_WIDTH * 3 + this.HORIZONTAL_GAP * 2; // 985px
   },
 } as const;
 
@@ -94,12 +88,13 @@ const RiskSection: FC<RiskSectionProps> = ({
   compactMode = false,
 }) => {
   const theme = useTheme();
-  const isEditingDisabled =
-    !allowedRoles.projectRisks.edit.includes(userRoleName);
+  const isEditingDisabled = !allowedRoles.projectRisks.edit.includes(userRoleName);
 
   // Dynamic layout based on compactMode - squeeze into 990px when sidebar is open
   const fieldWidth = compactMode ? `${LAYOUT.COMPACT_FIELD_WIDTH}px` : FORM_CONSTANTS.FIELD_WIDTH;
-  const contentWidth = compactMode ? `${LAYOUT.COMPACT_CONTENT_WIDTH}px` : `${LAYOUT.TOTAL_CONTENT_WIDTH}px`;
+  const contentWidth = compactMode
+    ? `${LAYOUT.COMPACT_CONTENT_WIDTH}px`
+    : `${LAYOUT.TOTAL_CONTENT_WIDTH}px`;
 
   const formRowStyles = {
     display: "flex",
@@ -115,7 +110,9 @@ const RiskSection: FC<RiskSectionProps> = ({
   const [alert, setAlert] = useState<alertState | null>(null);
   const { users, loading: usersLoading } = useUsers();
   const { approvedProjects, isLoading: projectsLoading } = useProjects();
-  const { allFrameworks: frameworks, loading: frameworksLoading } = useFrameworks({ listOfFrameworks: [] });
+  const { allFrameworks: frameworks, loading: frameworksLoading } = useFrameworks({
+    listOfFrameworks: [],
+  });
 
   const validators = useMemo(
     () => ({
@@ -151,11 +148,10 @@ const RiskSection: FC<RiskSectionProps> = ({
         return "";
       },
     }),
-    []
+    [],
   );
 
-  const { errors, validateAll, clearFieldError } =
-    useFormValidation<RiskFormValues>(validators);
+  const { errors, validateAll, clearFieldError } = useFormValidation<RiskFormValues>(validators);
 
   useEffect(() => {
     if (validateRef) {
@@ -164,15 +160,14 @@ const RiskSection: FC<RiskSectionProps> = ({
   }, [validateRef, validateAll]);
 
   const handleOnSelectChange = useCallback(
-    (prop: keyof RiskFormValues) =>
-      (event: SelectChangeEvent<string | number>) => {
-        setRiskValues((prevValues) => ({
-          ...prevValues,
-          [prop]: event.target.value,
-        }));
-        clearFieldError(prop);
-      },
-    [setRiskValues, clearFieldError]
+    (prop: keyof RiskFormValues) => (event: SelectChangeEvent<string | number>) => {
+      setRiskValues((prevValues) => ({
+        ...prevValues,
+        [prop]: event.target.value,
+      }));
+      clearFieldError(prop);
+    },
+    [setRiskValues, clearFieldError],
   );
 
   const handleOnMultiselectChange = useCallback(
@@ -180,7 +175,7 @@ const RiskSection: FC<RiskSectionProps> = ({
       (
         _event: React.SyntheticEvent,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        newValue: any[]
+        newValue: any[],
       ) => {
         setRiskValues((prevValues) => ({
           ...prevValues,
@@ -188,28 +183,29 @@ const RiskSection: FC<RiskSectionProps> = ({
         }));
         clearFieldError(prop);
       },
-    [setRiskValues, clearFieldError]
+    [setRiskValues, clearFieldError],
   );
 
   const handleOnTextFieldChange = useCallback(
-    (prop: keyof RiskFormValues) =>
-      (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRiskValues((prevValues) => ({
-          ...prevValues,
-          [prop]: event.target.value,
-        }));
-        clearFieldError(prop);
-      },
-    [setRiskValues, clearFieldError]
+    (prop: keyof RiskFormValues) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setRiskValues((prevValues) => ({
+        ...prevValues,
+        [prop]: event.target.value,
+      }));
+      clearFieldError(prop);
+    },
+    [setRiskValues, clearFieldError],
   );
 
   return (
     <Stack
       sx={{
-        ...(disableInternalScroll ? {} : {
-          minHeight: FORM_CONSTANTS.MIN_HEIGHT,
-          maxHeight: FORM_CONSTANTS.MAX_HEIGHT,
-        }),
+        ...(disableInternalScroll
+          ? {}
+          : {
+              minHeight: FORM_CONSTANTS.MIN_HEIGHT,
+              maxHeight: FORM_CONSTANTS.MAX_HEIGHT,
+            }),
         gap: 3,
       }}
     >
@@ -226,11 +222,13 @@ const RiskSection: FC<RiskSectionProps> = ({
         className={disableInternalScroll ? "AddNewRiskForm" : `AddNewRiskForm ${styles.popupBody}`}
         sx={{
           width: "100%",
-          ...(disableInternalScroll ? {} : {
-            maxHeight: FORM_CONSTANTS.CONTENT_MAX_HEIGHT,
-            overflowY: "auto",
-            overflowX: "hidden",
-          }),
+          ...(disableInternalScroll
+            ? {}
+            : {
+                maxHeight: FORM_CONSTANTS.CONTENT_MAX_HEIGHT,
+                overflowY: "auto",
+                overflowX: "hidden",
+              }),
         }}
       >
         {/* Risk Scope & Frameworks Section - Moved to top */}
@@ -266,22 +264,20 @@ const RiskSection: FC<RiskSectionProps> = ({
                     ? []
                     : approvedProjects
                         .filter((project) => !project.is_organizational)
-                        .filter((project) =>
-                          riskValues.applicableProjects.includes(project.id)
-                        )
+                        .filter((project) => riskValues.applicableProjects.includes(project.id))
                 }
-                options={
-                  approvedProjects?.filter((project) => !project.is_organizational) || []
-                }
+                options={approvedProjects?.filter((project) => !project.is_organizational) || []}
                 getOptionLabel={(project) => project.project_title}
                 renderOption={(props, option) => {
                   const { key, ...optionProps } = props;
                   return (
                     <Box key={key} component="li" {...optionProps}>
-                      <Typography sx={{
-                        fontSize: FORM_STYLES.fontSize,
-                        color: theme.palette.text.primary
-                      }}>
+                      <Typography
+                        sx={{
+                          fontSize: FORM_STYLES.fontSize,
+                          color: theme.palette.text.primary,
+                        }}
+                      >
                         {option.project_title}
                       </Typography>
                     </Box>
@@ -291,9 +287,13 @@ const RiskSection: FC<RiskSectionProps> = ({
                 placeholder={
                   projectsLoading || !approvedProjects?.length
                     ? "Loading use cases..."
-                    : approvedProjects?.filter((project) => !project.is_organizational && riskValues.applicableProjects.includes(project.id)).length > 0
-                    ? ""
-                    : "Select applicable use cases"
+                    : approvedProjects?.filter(
+                          (project) =>
+                            !project.is_organizational &&
+                            riskValues.applicableProjects.includes(project.id),
+                        ).length > 0
+                      ? ""
+                      : "Select applicable use cases"
                 }
                 onChange={handleOnMultiselectChange("applicableProjects")}
                 sx={{
@@ -345,7 +345,7 @@ const RiskSection: FC<RiskSectionProps> = ({
                     : frameworks
                         .filter((framework) => framework.is_organizational)
                         .filter((framework) =>
-                          riskValues.applicableFrameworks.includes(Number(framework.id))
+                          riskValues.applicableFrameworks.includes(Number(framework.id)),
                         )
                 }
                 options={frameworks?.filter((framework) => framework.is_organizational) || []}
@@ -354,10 +354,12 @@ const RiskSection: FC<RiskSectionProps> = ({
                   const { key, ...optionProps } = props;
                   return (
                     <Box key={key} component="li" {...optionProps}>
-                      <Typography sx={{
-                        fontSize: FORM_STYLES.fontSize,
-                        color: theme.palette.text.primary
-                      }}>
+                      <Typography
+                        sx={{
+                          fontSize: FORM_STYLES.fontSize,
+                          color: theme.palette.text.primary,
+                        }}
+                      >
                         {option.name}
                       </Typography>
                     </Box>
@@ -367,9 +369,13 @@ const RiskSection: FC<RiskSectionProps> = ({
                 placeholder={
                   frameworksLoading || !frameworks?.length
                     ? "Loading frameworks..."
-                    : frameworks?.filter((framework) => framework.is_organizational && riskValues.applicableFrameworks.includes(Number(framework.id))).length > 0
-                    ? ""
-                    : "Select applicable frameworks"
+                    : frameworks?.filter(
+                          (framework) =>
+                            framework.is_organizational &&
+                            riskValues.applicableFrameworks.includes(Number(framework.id)),
+                        ).length > 0
+                      ? ""
+                      : "Select applicable frameworks"
                 }
                 onChange={handleOnMultiselectChange("applicableFrameworks")}
                 sx={{
@@ -434,8 +440,8 @@ const RiskSection: FC<RiskSectionProps> = ({
                   usersLoading || !users?.length
                     ? ""
                     : riskValues.actionOwner === 0
-                    ? ""
-                    : riskValues.actionOwner
+                      ? ""
+                      : riskValues.actionOwner
                 }
                 onChange={handleOnSelectChange("actionOwner")}
                 items={
@@ -455,11 +461,7 @@ const RiskSection: FC<RiskSectionProps> = ({
                 id="ai-lifecycle-phase-input"
                 label="AI lifecycle phase"
                 placeholder="Select phase"
-                value={
-                  riskValues.aiLifecyclePhase === 0
-                    ? ""
-                    : riskValues.aiLifecyclePhase
-                }
+                value={riskValues.aiLifecyclePhase === 0 ? "" : riskValues.aiLifecyclePhase}
                 onChange={handleOnSelectChange("aiLifecyclePhase")}
                 items={aiLifecyclePhase}
                 isRequired
@@ -471,7 +473,7 @@ const RiskSection: FC<RiskSectionProps> = ({
               />
             </Stack>
 
-            {/* Row 2 */ }
+            {/* Row 2 */}
             <Stack sx={formRowStyles}>
               <Field
                 id="risk-description-input"
@@ -494,7 +496,7 @@ const RiskSection: FC<RiskSectionProps> = ({
                 id="risk-categories-input"
                 size="small"
                 value={riskCategoryItems.filter((category) =>
-                  riskValues.riskCategory.includes(category._id)
+                  riskValues.riskCategory.includes(category._id),
                 )}
                 options={riskCategoryItems}
                 getOptionLabel={(category) => `${category.name}`}
@@ -502,9 +504,7 @@ const RiskSection: FC<RiskSectionProps> = ({
                   const { key, ...optionProps } = props;
                   return (
                     <Box key={key} component="li" {...optionProps}>
-                      <Typography sx={{ fontSize: FORM_STYLES.fontSize }}>
-                        {option.name}
-                      </Typography>
+                      <Typography sx={{ fontSize: FORM_STYLES.fontSize }}>{option.name}</Typography>
                     </Box>
                   );
                 }}
@@ -516,10 +516,7 @@ const RiskSection: FC<RiskSectionProps> = ({
                   "& .MuiChip-root": {
                     borderRadius: "4px",
                     "& .MuiChip-deleteIcon": {
-                      display:
-                        riskValues.riskCategory.length === 1
-                          ? "none"
-                          : "flex",
+                      display: riskValues.riskCategory.length === 1 ? "none" : "flex",
                     },
                   },
                 }}
@@ -569,14 +566,25 @@ const RiskSection: FC<RiskSectionProps> = ({
           </Stack>
         </Stack>
 
-        <Stack sx={{ gap: `${LAYOUT.HORIZONTAL_GAP}px`, mt: `${LAYOUT.VERTICAL_GAP}px`, width: contentWidth }}>
+        <Stack
+          sx={{
+            gap: `${LAYOUT.HORIZONTAL_GAP}px`,
+            mt: `${LAYOUT.VERTICAL_GAP}px`,
+            width: contentWidth,
+          }}
+        >
           <Typography sx={{ fontSize: 16, fontWeight: 600, color: theme.palette.text.primary }}>
             Calculate inherent risk level
           </Typography>
-          <Typography sx={{ fontSize: theme.typography.fontSize, color: theme.palette.text.tertiary, lineHeight: 1.5 }}>
-            The Risk Level is calculated by multiplying the Likelihood and
-            Severity scores. By assigning these scores, the risk level will be
-            determined based on your inputs.
+          <Typography
+            sx={{
+              fontSize: theme.typography.fontSize,
+              color: theme.palette.text.tertiary,
+              lineHeight: 1.5,
+            }}
+          >
+            The Risk Level is calculated by multiplying the Likelihood and Severity scores. By
+            assigning these scores, the risk level will be determined based on your inputs.
           </Typography>
         </Stack>
         <Stack sx={{ mt: `${LAYOUT.VERTICAL_GAP}px`, width: contentWidth }}>

@@ -27,9 +27,7 @@ describe("LogLine", () => {
   });
 
   it("applies warn styling for lines containing 'warn'", () => {
-    renderWithProviders(
-      <LogLine line="Warning: deprecated API" index={0} />
-    );
+    renderWithProviders(<LogLine line="Warning: deprecated API" index={0} />);
     const logText = screen.getByText("Warning: deprecated API");
     expect(logText).toBeInTheDocument();
     expect(logText).toHaveStyle({ fontWeight: 500 });
@@ -43,9 +41,7 @@ describe("LogLine", () => {
   });
 
   it("applies success styling for lines containing 'success'", () => {
-    renderWithProviders(
-      <LogLine line="Operation successful" index={0} />
-    );
+    renderWithProviders(<LogLine line="Operation successful" index={0} />);
     const logText = screen.getByText("Operation successful");
     expect(logText).toBeInTheDocument();
     expect(logText).toHaveStyle({ fontWeight: 400, color: "#388e3c" });

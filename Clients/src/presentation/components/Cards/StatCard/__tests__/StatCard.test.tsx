@@ -25,9 +25,7 @@ describe("StatCard Component", () => {
   });
 
   it("renders subtitle when provided", () => {
-    renderWithProviders(
-      <StatCard {...defaultProps} subtitle="Last 30 days" />
-    );
+    renderWithProviders(<StatCard {...defaultProps} subtitle="Last 30 days" />);
 
     expect(screen.getByText("Last 30 days")).toBeInTheDocument();
   });
@@ -39,9 +37,7 @@ describe("StatCard Component", () => {
   });
 
   it("renders tooltip icon when tooltip prop is provided", () => {
-    renderWithProviders(
-      <StatCard {...defaultProps} tooltip="Help text here" />
-    );
+    renderWithProviders(<StatCard {...defaultProps} tooltip="Help text here" />);
 
     // The Info icon should be present for the tooltip
     expect(screen.getByText("Total Items")).toBeInTheDocument();
@@ -51,9 +47,7 @@ describe("StatCard Component", () => {
     const handleClick = vi.fn();
     const user = userEvent.setup();
 
-    renderWithProviders(
-      <StatCard {...defaultProps} onClick={handleClick} />
-    );
+    renderWithProviders(<StatCard {...defaultProps} onClick={handleClick} />);
 
     await user.click(screen.getByText("Total Items"));
     expect(handleClick).toHaveBeenCalledTimes(1);

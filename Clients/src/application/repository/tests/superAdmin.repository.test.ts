@@ -68,9 +68,7 @@ describe("superAdmin.repository", () => {
 
       const result = await getOrganizations();
 
-      expect(apiServices.get).toHaveBeenCalledWith(
-        "/super-admin/organizations",
-      );
+      expect(apiServices.get).toHaveBeenCalledWith("/super-admin/organizations");
       expect(result).toEqual(mockResponse);
     });
 
@@ -118,10 +116,7 @@ describe("superAdmin.repository", () => {
 
       const result = await createOrganization(payload);
 
-      expect(apiServices.post).toHaveBeenCalledWith(
-        "/super-admin/organizations",
-        payload,
-      );
+      expect(apiServices.post).toHaveBeenCalledWith("/super-admin/organizations", payload);
       expect(result).toEqual(mockResponse);
     });
 
@@ -134,10 +129,7 @@ describe("superAdmin.repository", () => {
 
       const result = await createOrganization(payload);
 
-      expect(apiServices.post).toHaveBeenCalledWith(
-        "/super-admin/organizations",
-        payload,
-      );
+      expect(apiServices.post).toHaveBeenCalledWith("/super-admin/organizations", payload);
       expect(result).toEqual(mockResponse);
     });
 
@@ -145,9 +137,9 @@ describe("superAdmin.repository", () => {
       const mockError = new Error("Failed to create organization");
       vi.mocked(apiServices.post).mockRejectedValue(mockError);
 
-      await expect(
-        createOrganization({ name: "Fail Org" }),
-      ).rejects.toThrow("Failed to create organization");
+      await expect(createOrganization({ name: "Fail Org" })).rejects.toThrow(
+        "Failed to create organization",
+      );
     });
 
     it("should propagate 400 validation errors", async () => {
@@ -156,9 +148,7 @@ describe("superAdmin.repository", () => {
       };
       vi.mocked(apiServices.post).mockRejectedValue(mockError);
 
-      await expect(
-        createOrganization({ name: "" }),
-      ).rejects.toEqual(mockError);
+      await expect(createOrganization({ name: "" })).rejects.toEqual(mockError);
     });
   });
 
@@ -176,9 +166,7 @@ describe("superAdmin.repository", () => {
 
       const result = await deleteOrganization(1);
 
-      expect(apiServices.delete).toHaveBeenCalledWith(
-        "/super-admin/organizations/1",
-      );
+      expect(apiServices.delete).toHaveBeenCalledWith("/super-admin/organizations/1");
       expect(result).toEqual(mockResponse);
     });
 
@@ -188,9 +176,7 @@ describe("superAdmin.repository", () => {
 
       await deleteOrganization(42);
 
-      expect(apiServices.delete).toHaveBeenCalledWith(
-        "/super-admin/organizations/42",
-      );
+      expect(apiServices.delete).toHaveBeenCalledWith("/super-admin/organizations/42");
     });
 
     it("should propagate network errors", async () => {
@@ -228,10 +214,7 @@ describe("superAdmin.repository", () => {
 
       const result = await updateOrganization(1, payload);
 
-      expect(apiServices.patch).toHaveBeenCalledWith(
-        "/super-admin/organizations/1",
-        payload,
-      );
+      expect(apiServices.patch).toHaveBeenCalledWith("/super-admin/organizations/1", payload);
       expect(result).toEqual(mockResponse);
     });
 
@@ -242,19 +225,14 @@ describe("superAdmin.repository", () => {
 
       await updateOrganization(5, payload);
 
-      expect(apiServices.patch).toHaveBeenCalledWith(
-        "/super-admin/organizations/5",
-        payload,
-      );
+      expect(apiServices.patch).toHaveBeenCalledWith("/super-admin/organizations/5", payload);
     });
 
     it("should propagate network errors", async () => {
       const mockError = new Error("Update failed");
       vi.mocked(apiServices.patch).mockRejectedValue(mockError);
 
-      await expect(
-        updateOrganization(1, { name: "Fail" }),
-      ).rejects.toThrow("Update failed");
+      await expect(updateOrganization(1, { name: "Fail" })).rejects.toThrow("Update failed");
     });
 
     it("should propagate 403 forbidden errors", async () => {
@@ -263,9 +241,7 @@ describe("superAdmin.repository", () => {
       };
       vi.mocked(apiServices.patch).mockRejectedValue(mockError);
 
-      await expect(
-        updateOrganization(1, { name: "Fail" }),
-      ).rejects.toEqual(mockError);
+      await expect(updateOrganization(1, { name: "Fail" })).rejects.toEqual(mockError);
     });
   });
 
@@ -283,9 +259,7 @@ describe("superAdmin.repository", () => {
 
       const result = await getUserCount();
 
-      expect(apiServices.get).toHaveBeenCalledWith(
-        "/super-admin/users/count",
-      );
+      expect(apiServices.get).toHaveBeenCalledWith("/super-admin/users/count");
       expect(result).toEqual(mockResponse);
     });
 
@@ -370,9 +344,7 @@ describe("superAdmin.repository", () => {
 
       const result = await getOrgUsers(1);
 
-      expect(apiServices.get).toHaveBeenCalledWith(
-        "/super-admin/organizations/1/users",
-      );
+      expect(apiServices.get).toHaveBeenCalledWith("/super-admin/organizations/1/users");
       expect(result).toEqual(mockResponse);
     });
 
@@ -382,9 +354,7 @@ describe("superAdmin.repository", () => {
 
       await getOrgUsers(99);
 
-      expect(apiServices.get).toHaveBeenCalledWith(
-        "/super-admin/organizations/99/users",
-      );
+      expect(apiServices.get).toHaveBeenCalledWith("/super-admin/organizations/99/users");
     });
 
     it("should propagate network errors", async () => {
@@ -425,10 +395,7 @@ describe("superAdmin.repository", () => {
 
       const result = await inviteUserToOrg(1, payload);
 
-      expect(apiServices.post).toHaveBeenCalledWith(
-        "/super-admin/organizations/1/invite",
-        payload,
-      );
+      expect(apiServices.post).toHaveBeenCalledWith("/super-admin/organizations/1/invite", payload);
       expect(result).toEqual(mockResponse);
     });
 
@@ -443,10 +410,7 @@ describe("superAdmin.repository", () => {
 
       const result = await inviteUserToOrg(5, payload);
 
-      expect(apiServices.post).toHaveBeenCalledWith(
-        "/super-admin/organizations/5/invite",
-        payload,
-      );
+      expect(apiServices.post).toHaveBeenCalledWith("/super-admin/organizations/5/invite", payload);
       expect(result).toEqual(mockResponse);
     });
 
@@ -469,9 +433,9 @@ describe("superAdmin.repository", () => {
       };
       vi.mocked(apiServices.post).mockRejectedValue(mockError);
 
-      await expect(
-        inviteUserToOrg(1, { email: "", name: "", roleId: 0 }),
-      ).rejects.toEqual(mockError);
+      await expect(inviteUserToOrg(1, { email: "", name: "", roleId: 0 })).rejects.toEqual(
+        mockError,
+      );
     });
 
     it("should propagate 409 conflict errors", async () => {
@@ -505,10 +469,7 @@ describe("superAdmin.repository", () => {
 
       const result = await updateUser(1, payload);
 
-      expect(apiServices.patch).toHaveBeenCalledWith(
-        "/super-admin/users/1",
-        payload,
-      );
+      expect(apiServices.patch).toHaveBeenCalledWith("/super-admin/users/1", payload);
       expect(result).toEqual(mockResponse);
     });
 
@@ -519,10 +480,7 @@ describe("superAdmin.repository", () => {
 
       await updateUser(77, payload);
 
-      expect(apiServices.patch).toHaveBeenCalledWith(
-        "/super-admin/users/77",
-        payload,
-      );
+      expect(apiServices.patch).toHaveBeenCalledWith("/super-admin/users/77", payload);
     });
 
     it("should patch with only roleId field", async () => {
@@ -532,19 +490,14 @@ describe("superAdmin.repository", () => {
 
       await updateUser(1, payload);
 
-      expect(apiServices.patch).toHaveBeenCalledWith(
-        "/super-admin/users/1",
-        payload,
-      );
+      expect(apiServices.patch).toHaveBeenCalledWith("/super-admin/users/1", payload);
     });
 
     it("should propagate network errors", async () => {
       const mockError = new Error("Update user failed");
       vi.mocked(apiServices.patch).mockRejectedValue(mockError);
 
-      await expect(
-        updateUser(1, { name: "Fail" }),
-      ).rejects.toThrow("Update user failed");
+      await expect(updateUser(1, { name: "Fail" })).rejects.toThrow("Update user failed");
     });
 
     it("should propagate 404 errors", async () => {
@@ -553,9 +506,7 @@ describe("superAdmin.repository", () => {
       };
       vi.mocked(apiServices.patch).mockRejectedValue(mockError);
 
-      await expect(
-        updateUser(999, { name: "Ghost" }),
-      ).rejects.toEqual(mockError);
+      await expect(updateUser(999, { name: "Ghost" })).rejects.toEqual(mockError);
     });
 
     it("should propagate 403 forbidden errors", async () => {
@@ -564,9 +515,7 @@ describe("superAdmin.repository", () => {
       };
       vi.mocked(apiServices.patch).mockRejectedValue(mockError);
 
-      await expect(
-        updateUser(1, { name: "Blocked" }),
-      ).rejects.toEqual(mockError);
+      await expect(updateUser(1, { name: "Blocked" })).rejects.toEqual(mockError);
     });
   });
 
@@ -584,9 +533,7 @@ describe("superAdmin.repository", () => {
 
       const result = await removeUser(1);
 
-      expect(apiServices.delete).toHaveBeenCalledWith(
-        "/super-admin/users/1",
-      );
+      expect(apiServices.delete).toHaveBeenCalledWith("/super-admin/users/1");
       expect(result).toEqual(mockResponse);
     });
 
@@ -596,9 +543,7 @@ describe("superAdmin.repository", () => {
 
       await removeUser(55);
 
-      expect(apiServices.delete).toHaveBeenCalledWith(
-        "/super-admin/users/55",
-      );
+      expect(apiServices.delete).toHaveBeenCalledWith("/super-admin/users/55");
     });
 
     it("should propagate network errors", async () => {

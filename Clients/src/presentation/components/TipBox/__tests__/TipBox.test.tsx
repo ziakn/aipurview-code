@@ -39,9 +39,7 @@ describe("TipBox", () => {
     renderWithProviders(<TipBox entityName="risks" />);
     expect(screen.getByTestId("info-box")).toBeInTheDocument();
     expect(screen.getByTestId("info-header")).toHaveTextContent("Pro Tip");
-    expect(screen.getByTestId("info-message")).toHaveTextContent(
-      "This is a helpful tip."
-    );
+    expect(screen.getByTestId("info-message")).toHaveTextContent("This is a helpful tip.");
   });
 
   it("displays tip counter", () => {

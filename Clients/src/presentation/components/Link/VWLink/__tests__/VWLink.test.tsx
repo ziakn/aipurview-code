@@ -14,7 +14,7 @@ describe("VWLink Component", () => {
     renderWithProviders(
       <VWLink url="https://example.com" testId="vw-link">
         Example
-      </VWLink>
+      </VWLink>,
     );
 
     const link = screen.getByTestId("vw-link");
@@ -25,7 +25,7 @@ describe("VWLink Component", () => {
     renderWithProviders(
       <VWLink url="https://example.com" openInNewTab testId="vw-link">
         External
-      </VWLink>
+      </VWLink>,
     );
 
     const link = screen.getByTestId("vw-link");
@@ -37,7 +37,7 @@ describe("VWLink Component", () => {
     renderWithProviders(
       <VWLink url="https://example.com" testId="vw-link">
         Internal
-      </VWLink>
+      </VWLink>,
     );
 
     const link = screen.getByTestId("vw-link");
@@ -51,7 +51,7 @@ describe("VWLink Component", () => {
     renderWithProviders(
       <VWLink onClick={handleClick} testId="vw-link">
         Open Modal
-      </VWLink>
+      </VWLink>,
     );
 
     await user.click(screen.getByTestId("vw-link"));
@@ -62,7 +62,7 @@ describe("VWLink Component", () => {
     renderWithProviders(
       <VWLink url="/page" ariaLabel="Go to page" testId="vw-link">
         Page
-      </VWLink>
+      </VWLink>,
     );
 
     const link = screen.getByTestId("vw-link");

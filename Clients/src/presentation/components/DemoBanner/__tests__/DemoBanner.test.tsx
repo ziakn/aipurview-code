@@ -19,9 +19,7 @@ describe("DemoBanner Component - visible", () => {
     renderWithProviders(<DemoAppBanner />);
 
     expect(screen.getByRole("alert")).toBeInTheDocument();
-    expect(
-      screen.getByText(/you're viewing a public demo/i)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/you're viewing a public demo/i)).toBeInTheDocument();
   });
 });
 

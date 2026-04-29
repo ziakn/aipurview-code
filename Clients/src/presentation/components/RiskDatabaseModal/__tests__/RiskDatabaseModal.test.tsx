@@ -2,7 +2,12 @@ import { vi } from "vitest";
 
 vi.mock("../../Modals/StandardModal", () => {
   const StandardModal = ({ open, children, title }: any) =>
-    open ? <div data-testid="standard-modal"><h2>{title}</h2>{children}</div> : null;
+    open ? (
+      <div data-testid="standard-modal">
+        <h2>{title}</h2>
+        {children}
+      </div>
+    ) : null;
   return { default: StandardModal };
 });
 vi.mock("../../EmptyState", () => ({

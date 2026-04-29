@@ -31,13 +31,7 @@ describe("Risks", () => {
 
   it("renders with zero values", () => {
     renderWithProviders(
-      <Risks
-        veryHighRisks={0}
-        highRisks={0}
-        mediumRisks={0}
-        lowRisks={0}
-        veryLowRisks={0}
-      />
+      <Risks veryHighRisks={0} highRisks={0} mediumRisks={0} lowRisks={0} veryLowRisks={0} />,
     );
     const zeros = screen.getAllByText("0");
     expect(zeros).toHaveLength(5);

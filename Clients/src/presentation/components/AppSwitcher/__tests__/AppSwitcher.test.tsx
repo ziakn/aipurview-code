@@ -30,9 +30,7 @@ describe("AppSwitcher", () => {
   });
 
   it("renders super admin button when isSuperAdmin is true", () => {
-    renderWithProviders(
-      <AppSwitcher {...defaultProps} isSuperAdmin={true} />
-    );
+    renderWithProviders(<AppSwitcher {...defaultProps} isSuperAdmin={true} />);
 
     expect(screen.getByLabelText("Super Admin")).toBeInTheDocument();
   });
@@ -45,18 +43,14 @@ describe("AppSwitcher", () => {
   });
 
   it("marks the active module button with the active class", () => {
-    renderWithProviders(
-      <AppSwitcher {...defaultProps} activeModule="evals" />
-    );
+    renderWithProviders(<AppSwitcher {...defaultProps} activeModule="evals" />);
 
     const evalsButton = screen.getByLabelText("LLM Evals");
     expect(evalsButton).toHaveClass("active");
   });
 
   it("calls onModuleChange with super-admin when super admin button is clicked", () => {
-    renderWithProviders(
-      <AppSwitcher {...defaultProps} isSuperAdmin={true} />
-    );
+    renderWithProviders(<AppSwitcher {...defaultProps} isSuperAdmin={true} />);
 
     fireEvent.click(screen.getByLabelText("Super Admin"));
     expect(defaultProps.onModuleChange).toHaveBeenCalledWith("super-admin");

@@ -5,9 +5,7 @@ import { EmptyState } from "../index";
 describe("EmptyState", () => {
   it("renders the default message", () => {
     renderWithProviders(<EmptyState />);
-    expect(
-      screen.getByText("There is currently no data in this table.")
-    ).toBeInTheDocument();
+    expect(screen.getByText("There is currently no data in this table.")).toBeInTheDocument();
   });
 
   it("renders a custom message", () => {
@@ -24,7 +22,7 @@ describe("EmptyState", () => {
     renderWithProviders(
       <EmptyState>
         <span data-testid="child-content">Add a new item</span>
-      </EmptyState>
+      </EmptyState>,
     );
     expect(screen.getByTestId("child-content")).toBeInTheDocument();
     expect(screen.getByText("Add a new item")).toBeInTheDocument();
@@ -32,9 +30,6 @@ describe("EmptyState", () => {
 
   it("uses the imageAlt prop for aria-label", () => {
     renderWithProviders(<EmptyState imageAlt="No results" />);
-    expect(screen.getByRole("status")).toHaveAttribute(
-      "aria-label",
-      "No results"
-    );
+    expect(screen.getByRole("status")).toHaveAttribute("aria-label", "No results");
   });
 });

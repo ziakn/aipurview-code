@@ -26,7 +26,7 @@ describe("ChunkErrorBoundary", () => {
     renderWithProviders(
       <ChunkErrorBoundary>
         <div>Hello World</div>
-      </ChunkErrorBoundary>
+      </ChunkErrorBoundary>,
     );
     expect(screen.getByText("Hello World")).toBeInTheDocument();
   });
@@ -35,13 +35,11 @@ describe("ChunkErrorBoundary", () => {
     renderWithProviders(
       <ChunkErrorBoundary>
         <ProblemChild shouldThrow />
-      </ChunkErrorBoundary>
+      </ChunkErrorBoundary>,
     );
 
     expect(screen.getByText("A new version is available")).toBeInTheDocument();
-    expect(
-      screen.getByText(/The application has been updated/)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/The application has been updated/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Reload now/i })).toBeInTheDocument();
   });
 
@@ -49,7 +47,7 @@ describe("ChunkErrorBoundary", () => {
     renderWithProviders(
       <ChunkErrorBoundary>
         <ProblemChild shouldThrow />
-      </ChunkErrorBoundary>
+      </ChunkErrorBoundary>,
     );
 
     expect(screen.queryByText("Child content")).not.toBeInTheDocument();

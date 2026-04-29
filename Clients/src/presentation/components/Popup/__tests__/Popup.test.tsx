@@ -26,9 +26,7 @@ describe("Popup", () => {
 
   it("renders popup subtitle when provided", () => {
     const anchor = document.createElement("button");
-    renderWithProviders(
-      <Popup {...baseProps} anchor={anchor} popupSubtitle="Some subtitle" />
-    );
+    renderWithProviders(<Popup {...baseProps} anchor={anchor} popupSubtitle="Some subtitle" />);
     expect(screen.getByText("Some subtitle")).toBeInTheDocument();
   });
 

@@ -35,13 +35,12 @@ import { FilePickerModal } from "../../FilePickerModal";
 import { text, status } from "../../../themes/palette";
 
 const NotesTab = lazy(() => import("../../Notes/NotesTab"));
-const LinkedRisksPopup = lazy(() => import("../../LinkedRisks").then(m => ({ default: m.LinkedRisksPopup })));
+const LinkedRisksPopup = lazy(() =>
+  import("../../LinkedRisks").then((m) => ({ default: m.LinkedRisksPopup })),
+);
 const AddNewRiskForm = lazy(() => import("../../AddNewRiskForm"));
 
-import {
-  AlertBox,
-  styles,
-} from "../../../pages/ComplianceTracker/1.0ComplianceTracker/styles";
+import { AlertBox, styles } from "../../../pages/ComplianceTracker/1.0ComplianceTracker/styles";
 import { handleAlert } from "../../../../application/tools/alertUtils";
 import { AlertProps } from "../../../types/alert.types";
 import allowedRoles from "../../../../application/constants/permissions";
@@ -146,18 +145,16 @@ const NewControlPane = ({
   // PERMISSIONS
   // ========================================================================
 
-  const isEditingDisabled =
-    !allowedRoles.frameworks.edit.includes(userRoleName);
-  const isAuditingDisabled =
-    !allowedRoles.frameworks.audit.includes(userRoleName);
+  const isEditingDisabled = !allowedRoles.frameworks.edit.includes(userRoleName);
+  const isAuditingDisabled = !allowedRoles.frameworks.audit.includes(userRoleName);
 
   // ========================================================================
   // STATE - FORM DATA (Per-subcontrol map)
   // ========================================================================
 
-  const [subcontrolFormData, setSubcontrolFormData] = useState<
-    Record<number, SubcontrolFormData>
-  >({});
+  const [subcontrolFormData, setSubcontrolFormData] = useState<Record<number, SubcontrolFormData>>(
+    {},
+  );
 
   const [controlData, setControlData] = useState<Control>(data);
 
@@ -179,8 +176,7 @@ const NewControlPane = ({
       fileName: file.fileName || file.filename || file.file_name || "",
       size: file.size || 0,
       type: file.type || "",
-      uploadDate:
-        file.uploadDate || file.uploaded_time || new Date().toISOString(),
+      uploadDate: file.uploadDate || file.uploaded_time || new Date().toISOString(),
       uploader: file.uploader || file.uploaded_by?.toString() || "Unknown",
       data: file.data,
       source: file.source,
@@ -199,9 +195,7 @@ const NewControlPane = ({
           } else if (typeof sc.evidence_files === "string") {
             try {
               const parsed = JSON.parse(sc.evidence_files);
-              evidenceFiles = normalizeFiles(
-                Array.isArray(parsed) ? parsed : [parsed]
-              );
+              evidenceFiles = normalizeFiles(Array.isArray(parsed) ? parsed : [parsed]);
             } catch {
               evidenceFiles = [];
             }
@@ -216,9 +210,7 @@ const NewControlPane = ({
           } else if (typeof sc.feedback_files === "string") {
             try {
               const parsed = JSON.parse(sc.feedback_files);
-              feedbackFiles = normalizeFiles(
-                Array.isArray(parsed) ? parsed : [parsed]
-              );
+              feedbackFiles = normalizeFiles(Array.isArray(parsed) ? parsed : [parsed]);
             } catch {
               feedbackFiles = [];
             }
@@ -266,10 +258,7 @@ const NewControlPane = ({
   // ========================================================================
 
   // Fetch linked risks for a subcontrol
-  const fetchLinkedRisksForSubcontrol = async (
-    subcontrolId: number,
-    riskIds: number[]
-  ) => {
+  const fetchLinkedRisksForSubcontrol = async (subcontrolId: number, riskIds: number[]) => {
     if (riskIds.length === 0) {
       return;
     }
@@ -280,7 +269,7 @@ const NewControlPane = ({
           routeUrl: `/projectRisks/${riskId}`,
         })
           .then((response: any) => response.data)
-          .catch(() => null)
+          .catch(() => null),
       );
 
       const riskResults = await Promise.all(riskPromises);
@@ -311,20 +300,14 @@ const NewControlPane = ({
     Object.keys(formData).forEach((subcontrolIdStr) => {
       const subcontrolId = parseInt(subcontrolIdStr);
       const subcontrolData = formData[subcontrolId];
-      if (
-        subcontrolData &&
-        subcontrolData.risks &&
-        subcontrolData.risks.length > 0
-      ) {
+      if (subcontrolData && subcontrolData.risks && subcontrolData.risks.length > 0) {
         fetchLinkedRisksForSubcontrol(subcontrolId, subcontrolData.risks);
       }
     });
 
     // Filter project members
     if (users && users.length > 0) {
-      setProjectMembers(
-        users.filter((user) => user.id && user.name && user.surname)
-      );
+      setProjectMembers(users.filter((user) => user.id && user.name && user.surname));
     }
 
     // Handle URL parameters
@@ -332,9 +315,7 @@ const NewControlPane = ({
     const isEvidence = searchParams.get("isEvidence");
 
     if (subControlId && data.subControls && data.subControls.length > 0) {
-      const subControl = data.subControls.find(
-        (sc) => sc.id === Number(subControlId)
-      );
+      const subControl = data.subControls.find((sc) => sc.id === Number(subControlId));
       if (subControl) {
         const sorted = (data.subControls || [])
           .slice()
@@ -357,10 +338,7 @@ const NewControlPane = ({
   // HANDLERS - TAB NAVIGATION
   // ========================================================================
 
-  const handleSubcontrolTabChange = (
-    _: React.SyntheticEvent,
-    newIndex: number
-  ) => {
+  const handleSubcontrolTabChange = (_: React.SyntheticEvent, newIndex: number) => {
     setSelectedSubcontrolIndex(newIndex);
   };
 
@@ -369,7 +347,7 @@ const NewControlPane = ({
     if (subcontrolTabsContainerRef.current) {
       const container = subcontrolTabsContainerRef.current;
       const activeTabElement = container.querySelector(
-        `[role="tab"][aria-selected="true"]`
+        `[role="tab"][aria-selected="true"]`,
       ) as HTMLElement;
 
       if (activeTabElement) {
@@ -380,8 +358,7 @@ const NewControlPane = ({
         const containerWidth = container.clientWidth;
 
         // Calculate scroll position to center the tab
-        const targetScrollLeft =
-          tabLeft - containerWidth / 2 + tabRect.width / 2;
+        const targetScrollLeft = tabLeft - containerWidth / 2 + tabRect.width / 2;
 
         // Smooth scroll to center the active tab
         container.scrollTo({
@@ -392,10 +369,7 @@ const NewControlPane = ({
     }
   }, [selectedSubcontrolIndex]);
 
-  const handleSectionTabChange = (
-    _: React.SyntheticEvent,
-    newValue: string
-  ) => {
+  const handleSectionTabChange = (_: React.SyntheticEvent, newValue: string) => {
     setActiveTab(newValue);
   };
 
@@ -406,7 +380,7 @@ const NewControlPane = ({
   const updateSubcontrolField = (
     subcontrolId: number,
     field: keyof SubcontrolFormData,
-    value: any
+    value: any,
   ) => {
     setSubcontrolFormData((prev) => ({
       ...prev,
@@ -421,9 +395,7 @@ const NewControlPane = ({
   // HANDLERS - FILE OPERATIONS
   // ========================================================================
 
-  const handleEvidenceFileInputChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleEvidenceFileInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files) return;
 
@@ -451,10 +423,7 @@ const NewControlPane = ({
       ...prev,
       [subcontrolId]: {
         ...prev[subcontrolId],
-        uploadEvidenceFiles: [
-          ...prev[subcontrolId].uploadEvidenceFiles,
-          ...newFiles,
-        ],
+        uploadEvidenceFiles: [...prev[subcontrolId].uploadEvidenceFiles, ...newFiles],
       },
     }));
 
@@ -492,12 +461,9 @@ const NewControlPane = ({
       [subcontrolId]: {
         ...prev[subcontrolId],
         evidence_files: prev[subcontrolId].evidence_files.filter(
-          (f: FileData) => f.id.toString() !== fileId
+          (f: FileData) => f.id.toString() !== fileId,
         ),
-        deletedEvidenceFileIds: [
-          ...prev[subcontrolId].deletedEvidenceFileIds,
-          fileIdNumber,
-        ],
+        deletedEvidenceFileIds: [...prev[subcontrolId].deletedEvidenceFileIds, fileIdNumber],
       },
     }));
 
@@ -508,9 +474,7 @@ const NewControlPane = ({
     });
   };
 
-  const handleFeedbackFileInputChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleFeedbackFileInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files) return;
 
@@ -538,10 +502,7 @@ const NewControlPane = ({
       ...prev,
       [subcontrolId]: {
         ...prev[subcontrolId],
-        uploadFeedbackFiles: [
-          ...prev[subcontrolId].uploadFeedbackFiles,
-          ...newFiles,
-        ],
+        uploadFeedbackFiles: [...prev[subcontrolId].uploadFeedbackFiles, ...newFiles],
       },
     }));
 
@@ -579,12 +540,9 @@ const NewControlPane = ({
       [subcontrolId]: {
         ...prev[subcontrolId],
         feedback_files: prev[subcontrolId].feedback_files.filter(
-          (f: FileData) => f.id.toString() !== fileId
+          (f: FileData) => f.id.toString() !== fileId,
         ),
-        deletedFeedbackFileIds: [
-          ...prev[subcontrolId].deletedFeedbackFileIds,
-          fileIdNumber,
-        ],
+        deletedFeedbackFileIds: [...prev[subcontrolId].deletedFeedbackFileIds, fileIdNumber],
       },
     }));
 
@@ -708,9 +666,7 @@ const NewControlPane = ({
       ...prev,
       [subcontrolId]: {
         ...prev[subcontrolId],
-        selectedRisks: prev[subcontrolId].selectedRisks.filter(
-          (id: number) => id !== riskId
-        ),
+        selectedRisks: prev[subcontrolId].selectedRisks.filter((id: number) => id !== riskId),
         deletedRisks: prev[subcontrolId].risks.includes(riskId)
           ? [...prev[subcontrolId].deletedRisks, riskId]
           : prev[subcontrolId].deletedRisks,
@@ -776,15 +732,8 @@ const NewControlPane = ({
     // Refresh linked risks after update
     if (currentSubcontrol?.id) {
       const subcontrolData = subcontrolFormData[currentSubcontrol.id];
-      if (
-        subcontrolData &&
-        subcontrolData.risks &&
-        subcontrolData.risks.length > 0
-      ) {
-        fetchLinkedRisksForSubcontrol(
-          currentSubcontrol.id,
-          subcontrolData.risks
-        );
+      if (subcontrolData && subcontrolData.risks && subcontrolData.risks.length > 0) {
+        fetchLinkedRisksForSubcontrol(currentSubcontrol.id, subcontrolData.risks);
       }
     }
   };
@@ -813,17 +762,11 @@ const NewControlPane = ({
           description: sc.description,
           order_no: sc.order_no,
           status: formDataForSC.status || "",
-          approver: formDataForSC.approver
-            ? Number(formDataForSC.approver)
-            : null,
+          approver: formDataForSC.approver ? Number(formDataForSC.approver) : null,
           risk_review: formDataForSC.risk_review || null,
           owner: formDataForSC.owner ? Number(formDataForSC.owner) : null,
-          reviewer: formDataForSC.reviewer
-            ? Number(formDataForSC.reviewer)
-            : null,
-          due_date: formDataForSC.due_date
-            ? formDataForSC.due_date.format("YYYY-MM-DD")
-            : null,
+          reviewer: formDataForSC.reviewer ? Number(formDataForSC.reviewer) : null,
+          due_date: formDataForSC.due_date ? formDataForSC.due_date.format("YYYY-MM-DD") : null,
           implementation_details: formDataForSC.implementation_details || "",
           evidence_description: formDataForSC.evidence_description || "",
           feedback_description: formDataForSC.feedback_description || "",
@@ -866,12 +809,10 @@ const NewControlPane = ({
       });
 
       // Add deleted files
-      const allDeletedFileIds = Object.values(subcontrolFormData).flatMap(
-        (data) => [
-          ...data.deletedEvidenceFileIds,
-          ...data.deletedFeedbackFileIds,
-        ]
-      );
+      const allDeletedFileIds = Object.values(subcontrolFormData).flatMap((data) => [
+        ...data.deletedEvidenceFileIds,
+        ...data.deletedFeedbackFileIds,
+      ]);
 
       // Collect attached file IDs (files from File Manager to link)
       const attachedEvidenceFiles: Record<number, number[]> = {};
@@ -881,25 +822,21 @@ const NewControlPane = ({
         if (!sc.id) return;
         const formDataForSC = subcontrolFormData[sc.id];
         if (formDataForSC?.pendingAttachEvidenceFiles.length > 0) {
-          attachedEvidenceFiles[sc.id] = formDataForSC.pendingAttachEvidenceFiles.map(
-            (f) => parseInt(f.id)
+          attachedEvidenceFiles[sc.id] = formDataForSC.pendingAttachEvidenceFiles.map((f) =>
+            parseInt(f.id),
           );
         }
         if (formDataForSC?.pendingAttachFeedbackFiles.length > 0) {
-          attachedFeedbackFiles[sc.id] = formDataForSC.pendingAttachFeedbackFiles.map(
-            (f) => parseInt(f.id)
+          attachedFeedbackFiles[sc.id] = formDataForSC.pendingAttachFeedbackFiles.map((f) =>
+            parseInt(f.id),
           );
         }
       });
 
       // Debug logging
       console.log("Files to upload:", {
-        evidence: Object.values(subcontrolFormData).map(
-          (d) => d.uploadEvidenceFiles.length
-        ),
-        feedback: Object.values(subcontrolFormData).map(
-          (d) => d.uploadFeedbackFiles.length
-        ),
+        evidence: Object.values(subcontrolFormData).map((d) => d.uploadEvidenceFiles.length),
+        feedback: Object.values(subcontrolFormData).map((d) => d.uploadFeedbackFiles.length),
       });
       console.log("Files to attach:", {
         evidence: attachedEvidenceFiles,
@@ -935,9 +872,7 @@ const NewControlPane = ({
         // Extract the actual response data from the STATUS_CODE wrapper
         // Response structure: { message: "OK", data: { response: { control, subControls } } }
         const responseData =
-          response.data?.data?.response ||
-          response.data?.response ||
-          response.data;
+          response.data?.data?.response || response.data?.response || response.data;
 
         // Update controlData with the response if available
         if (responseData?.subControls) {
@@ -983,9 +918,7 @@ const NewControlPane = ({
   // ========================================================================
 
   const currentSubcontrol = controlData.subControls?.[selectedSubcontrolIndex];
-  const currentFormData = currentSubcontrol?.id
-    ? subcontrolFormData[currentSubcontrol.id]
-    : null;
+  const currentFormData = currentSubcontrol?.id ? subcontrolFormData[currentSubcontrol.id] : null;
 
   const innerTabs = [
     {
@@ -1035,9 +968,7 @@ const NewControlPane = ({
         </AlertBox>
       )}
 
-      {isSubmitting && (
-        <CustomizableToast title="Saving requirement. Please wait..." />
-      )}
+      {isSubmitting && <CustomizableToast title="Saving requirement. Please wait..." />}
 
       <Drawer
         anchor="right"
@@ -1217,7 +1148,7 @@ const NewControlPane = ({
                           updateSubcontrolField(
                             currentSubcontrol.id!,
                             "implementation_details",
-                            content
+                            content,
                           )
                         }
                         placeholder="Describe how this requirement is implemented..."
@@ -1236,7 +1167,7 @@ const NewControlPane = ({
                           updateSubcontrolField(
                             currentSubcontrol.id!,
                             "status",
-                            String(e.target.value)
+                            String(e.target.value),
                           )
                         }
                         items={[
@@ -1257,7 +1188,7 @@ const NewControlPane = ({
                           updateSubcontrolField(
                             currentSubcontrol.id!,
                             "owner",
-                            String(e.target.value)
+                            String(e.target.value),
                           )
                         }
                         items={(projectMembers || []).map((user) => ({
@@ -1278,7 +1209,7 @@ const NewControlPane = ({
                           updateSubcontrolField(
                             currentSubcontrol.id!,
                             "reviewer",
-                            String(e.target.value)
+                            String(e.target.value),
                           )
                         }
                         items={(projectMembers || []).map((user) => ({
@@ -1299,7 +1230,7 @@ const NewControlPane = ({
                           updateSubcontrolField(
                             currentSubcontrol.id!,
                             "approver",
-                            String(e.target.value)
+                            String(e.target.value),
                           )
                         }
                         items={(projectMembers || []).map((user) => ({
@@ -1320,7 +1251,7 @@ const NewControlPane = ({
                           updateSubcontrolField(
                             currentSubcontrol.id!,
                             "risk_review",
-                            String(e.target.value)
+                            String(e.target.value),
                           )
                         }
                         items={[
@@ -1340,11 +1271,7 @@ const NewControlPane = ({
                         label="Due date:"
                         date={currentFormData.due_date}
                         handleDateChange={(date) =>
-                          updateSubcontrolField(
-                            currentSubcontrol.id!,
-                            "due_date",
-                            date
-                          )
+                          updateSubcontrolField(currentSubcontrol.id!, "due_date", date)
                         }
                         sx={inputStyles}
                         disabled={isEditingDisabled}
@@ -1364,7 +1291,7 @@ const NewControlPane = ({
                           updateSubcontrolField(
                             currentSubcontrol.id!,
                             "evidence_description",
-                            content
+                            content,
                           )
                         }
                         isEditable={!isEditingDisabled}
@@ -1385,7 +1312,7 @@ const NewControlPane = ({
                           updateSubcontrolField(
                             currentSubcontrol.id!,
                             "feedback_description",
-                            content
+                            content,
                           )
                         }
                         isEditable={!isAuditingDisabled}
@@ -1421,8 +1348,7 @@ const NewControlPane = ({
                           mb: 2,
                         }}
                       >
-                        Upload evidence files to document compliance with this
-                        subcontrol.
+                        Upload evidence files to document compliance with this subcontrol.
                       </Typography>
 
                       {/* Upload and Attach Buttons */}
@@ -1486,27 +1412,22 @@ const NewControlPane = ({
                         <Stack direction="row" spacing={2} sx={{ mt: 1.5 }}>
                           {currentFormData.evidence_files.length > 0 && (
                             <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
-                              {currentFormData.evidence_files.length} files
-                              attached
+                              {currentFormData.evidence_files.length} files attached
                             </Typography>
                           )}
                           {currentFormData.uploadEvidenceFiles.length > 0 && (
                             <Typography sx={{ fontSize: 11, color: "brand.primary" }}>
-                              +{currentFormData.uploadEvidenceFiles.length}{" "}
-                              pending upload
+                              +{currentFormData.uploadEvidenceFiles.length} pending upload
                             </Typography>
                           )}
                           {currentFormData.pendingAttachEvidenceFiles.length > 0 && (
                             <Typography sx={{ fontSize: 11, color: "#0369A1" }}>
-                              +{currentFormData.pendingAttachEvidenceFiles.length}{" "}
-                              pending attach
+                              +{currentFormData.pendingAttachEvidenceFiles.length} pending attach
                             </Typography>
                           )}
-                          {currentFormData.deletedEvidenceFileIds.length >
-                            0 && (
+                          {currentFormData.deletedEvidenceFileIds.length > 0 && (
                             <Typography sx={{ fontSize: 11, color: "status.error.text" }}>
-                              -{currentFormData.deletedEvidenceFileIds.length}{" "}
-                              pending delete
+                              -{currentFormData.deletedEvidenceFileIds.length} pending delete
                             </Typography>
                           )}
                         </Stack>
@@ -1579,10 +1500,7 @@ const NewControlPane = ({
                                   <IconButton
                                     size="small"
                                     onClick={() =>
-                                      handleDownloadFile(
-                                        file.id.toString(),
-                                        file.fileName
-                                      )
+                                      handleDownloadFile(file.id.toString(), file.fileName)
                                     }
                                     disabled={isEditingDisabled}
                                   >
@@ -1592,11 +1510,7 @@ const NewControlPane = ({
                                 <Tooltip title="Delete">
                                   <IconButton
                                     size="small"
-                                    onClick={() =>
-                                      handleDeleteEvidenceFile(
-                                        file.id.toString()
-                                      )
-                                    }
+                                    onClick={() => handleDeleteEvidenceFile(file.id.toString())}
                                     disabled={isEditingDisabled}
                                   >
                                     <DeleteIcon size={16} />
@@ -1670,9 +1584,7 @@ const NewControlPane = ({
                                           ...prev[currentSubcontrol.id!],
                                           uploadEvidenceFiles: prev[
                                             currentSubcontrol.id!
-                                          ].uploadEvidenceFiles.filter(
-                                            (f) => f.id !== file.id
-                                          ),
+                                          ].uploadEvidenceFiles.filter((f) => f.id !== file.id),
                                         },
                                       }));
                                     }}
@@ -1751,7 +1663,7 @@ const NewControlPane = ({
                                           pendingAttachEvidenceFiles: prev[
                                             currentSubcontrol.id!
                                           ].pendingAttachEvidenceFiles.filter(
-                                            (f) => f.id !== file.id
+                                            (f) => f.id !== file.id,
                                           ),
                                         },
                                       }));
@@ -1812,8 +1724,7 @@ const NewControlPane = ({
                           mb: 2,
                         }}
                       >
-                        Upload files related to auditor feedback for this
-                        subcontrol.
+                        Upload files related to auditor feedback for this subcontrol.
                       </Typography>
 
                       {/* Upload and Attach Buttons */}
@@ -1878,27 +1789,22 @@ const NewControlPane = ({
                         <Stack direction="row" spacing={2} sx={{ mt: 1.5 }}>
                           {currentFormData.feedback_files.length > 0 && (
                             <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
-                              {currentFormData.feedback_files.length} files
-                              attached
+                              {currentFormData.feedback_files.length} files attached
                             </Typography>
                           )}
                           {currentFormData.uploadFeedbackFiles.length > 0 && (
                             <Typography sx={{ fontSize: 11, color: "brand.primary" }}>
-                              +{currentFormData.uploadFeedbackFiles.length}{" "}
-                              pending upload
+                              +{currentFormData.uploadFeedbackFiles.length} pending upload
                             </Typography>
                           )}
                           {currentFormData.pendingAttachFeedbackFiles.length > 0 && (
                             <Typography sx={{ fontSize: 11, color: "#0369A1" }}>
-                              +{currentFormData.pendingAttachFeedbackFiles.length}{" "}
-                              pending attach
+                              +{currentFormData.pendingAttachFeedbackFiles.length} pending attach
                             </Typography>
                           )}
-                          {currentFormData.deletedFeedbackFileIds.length >
-                            0 && (
+                          {currentFormData.deletedFeedbackFileIds.length > 0 && (
                             <Typography sx={{ fontSize: 11, color: "status.error.text" }}>
-                              -{currentFormData.deletedFeedbackFileIds.length}{" "}
-                              pending delete
+                              -{currentFormData.deletedFeedbackFileIds.length} pending delete
                             </Typography>
                           )}
                         </Stack>
@@ -1971,10 +1877,7 @@ const NewControlPane = ({
                                   <IconButton
                                     size="small"
                                     onClick={() =>
-                                      handleDownloadFile(
-                                        file.id.toString(),
-                                        file.fileName
-                                      )
+                                      handleDownloadFile(file.id.toString(), file.fileName)
                                     }
                                     disabled={isAuditingDisabled}
                                   >
@@ -1984,11 +1887,7 @@ const NewControlPane = ({
                                 <Tooltip title="Delete">
                                   <IconButton
                                     size="small"
-                                    onClick={() =>
-                                      handleDeleteFeedbackFile(
-                                        file.id.toString()
-                                      )
-                                    }
+                                    onClick={() => handleDeleteFeedbackFile(file.id.toString())}
                                     disabled={isAuditingDisabled}
                                   >
                                     <DeleteIcon size={16} />
@@ -2062,9 +1961,7 @@ const NewControlPane = ({
                                           ...prev[currentSubcontrol.id!],
                                           uploadFeedbackFiles: prev[
                                             currentSubcontrol.id!
-                                          ].uploadFeedbackFiles.filter(
-                                            (f) => f.id !== file.id
-                                          ),
+                                          ].uploadFeedbackFiles.filter((f) => f.id !== file.id),
                                         },
                                       }));
                                     }}
@@ -2143,7 +2040,7 @@ const NewControlPane = ({
                                           pendingAttachFeedbackFiles: prev[
                                             currentSubcontrol.id!
                                           ].pendingAttachFeedbackFiles.filter(
-                                            (f) => f.id !== file.id
+                                            (f) => f.id !== file.id,
                                           ),
                                         },
                                       }));
@@ -2192,8 +2089,8 @@ const NewControlPane = ({
                     </Typography>
 
                     <Typography variant="body2" color={status.default.text}>
-                      Link risks from your risk database to track which risks
-                      are being addressed by this subcontrol.
+                      Link risks from your risk database to track which risks are being addressed by
+                      this subcontrol.
                     </Typography>
 
                     <Stack direction="row" spacing={2} alignItems="center">
@@ -2223,8 +2120,7 @@ const NewControlPane = ({
                         <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
                           {`${
                             currentFormData.linkedRiskObjects.filter(
-                              (r) =>
-                                !currentFormData.deletedRisks.includes(r.id)
+                              (r) => !currentFormData.deletedRisks.includes(r.id),
                             ).length || 0
                           } risks linked`}
                         </Typography>
@@ -2243,13 +2139,11 @@ const NewControlPane = ({
 
                     {/* Linked Risks List */}
                     {currentFormData.linkedRiskObjects.filter(
-                      (r) => !currentFormData.deletedRisks.includes(r.id)
+                      (r) => !currentFormData.deletedRisks.includes(r.id),
                     ).length > 0 && (
                       <Stack spacing={1}>
                         {currentFormData.linkedRiskObjects
-                          .filter(
-                            (r) => !currentFormData.deletedRisks.includes(r.id)
-                          )
+                          .filter((r) => !currentFormData.deletedRisks.includes(r.id))
                           .map((risk) => (
                             <Box
                               key={risk.id}
@@ -2280,9 +2174,7 @@ const NewControlPane = ({
                                   {risk.name || risk.risk_name}
                                 </Typography>
                                 {(risk.level || risk.risk_level) && (
-                                  <Typography
-                                    sx={{ fontSize: 11, color: "status.default.text" }}
-                                  >
+                                  <Typography sx={{ fontSize: 11, color: "status.default.text" }}>
                                     Risk level: {risk.level || risk.risk_level}
                                   </Typography>
                                 )}
@@ -2297,8 +2189,7 @@ const NewControlPane = ({
                                       color: "text.tertiary",
                                       "&:hover": {
                                         color: "brand.primary",
-                                        backgroundColor:
-                                          "rgba(19, 113, 91, 0.08)",
+                                        backgroundColor: "rgba(19, 113, 91, 0.08)",
                                       },
                                     }}
                                   >
@@ -2315,8 +2206,7 @@ const NewControlPane = ({
                                       color: "text.tertiary",
                                       "&:hover": {
                                         color: "status.error.text",
-                                        backgroundColor:
-                                          "rgba(211, 47, 47, 0.08)",
+                                        backgroundColor: "rgba(211, 47, 47, 0.08)",
                                       },
                                     }}
                                   >
@@ -2331,7 +2221,7 @@ const NewControlPane = ({
 
                     {/* Empty State */}
                     {currentFormData.linkedRiskObjects.filter(
-                      (r) => !currentFormData.deletedRisks.includes(r.id)
+                      (r) => !currentFormData.deletedRisks.includes(r.id),
                     ).length === 0 &&
                       currentFormData.selectedRisks.length === 0 && (
                         <Box
@@ -2348,8 +2238,7 @@ const NewControlPane = ({
                             No risks linked yet
                           </Typography>
                           <Typography variant="caption" color={text.disabled}>
-                            Click "Add/remove risks" to link risks from your
-                            risk database
+                            Click "Add/remove risks" to link risks from your risk database
                           </Typography>
                         </Box>
                       )}
@@ -2363,13 +2252,9 @@ const NewControlPane = ({
                       onClose={() => setShowLinkedRisksPopup(false)}
                       currentRisks={currentFormData.risks
                         .concat(currentFormData.selectedRisks)
-                        .filter(
-                          (risk: number) =>
-                            !currentFormData.deletedRisks.includes(risk)
-                        )}
+                        .filter((risk: number) => !currentFormData.deletedRisks.includes(risk))}
                       setSelectecRisks={(selectedRisks: number[]) => {
-                        const currentSubcontrol =
-                          controlData.subControls![selectedSubcontrolIndex];
+                        const currentSubcontrol = controlData.subControls![selectedSubcontrolIndex];
                         if (!currentSubcontrol.id) return;
                         const subcontrolId = currentSubcontrol.id;
                         setSubcontrolFormData((prev) => ({
@@ -2381,8 +2266,7 @@ const NewControlPane = ({
                         }));
                       }}
                       _setDeletedRisks={(deletedRisks: number[]) => {
-                        const currentSubcontrol =
-                          controlData.subControls![selectedSubcontrolIndex];
+                        const currentSubcontrol = controlData.subControls![selectedSubcontrolIndex];
                         if (!currentSubcontrol.id) return;
                         const subcontrolId = currentSubcontrol.id;
                         setSubcontrolFormData((prev) => ({
@@ -2439,9 +2323,7 @@ const NewControlPane = ({
         isOpen={isRiskDetailModalOpen && !!riskFormData}
         onClose={handleRiskDetailModalClose}
         title={`Risk: ${
-          selectedRiskForView?.name ||
-          selectedRiskForView?.risk_name ||
-          "Risk Details"
+          selectedRiskForView?.name || selectedRiskForView?.risk_name || "Risk Details"
         }`}
         description="View and edit risk details"
         onSubmit={() => onRiskSubmitRef.current?.()}
@@ -2473,8 +2355,8 @@ const NewControlPane = ({
         onClose={() => setShowEvidenceFilePicker(false)}
         onSelect={handleAttachExistingEvidenceFiles}
         excludeFileIds={[
-          ...currentFormData?.evidence_files.map((f) => f.id) || [],
-          ...currentFormData?.pendingAttachEvidenceFiles.map((f) => f.id) || [],
+          ...(currentFormData?.evidence_files.map((f) => f.id) || []),
+          ...(currentFormData?.pendingAttachEvidenceFiles.map((f) => f.id) || []),
         ]}
         multiSelect={true}
         title="Attach Existing Files as Evidence"
@@ -2486,8 +2368,8 @@ const NewControlPane = ({
         onClose={() => setShowFeedbackFilePicker(false)}
         onSelect={handleAttachExistingFeedbackFiles}
         excludeFileIds={[
-          ...currentFormData?.feedback_files.map((f) => f.id) || [],
-          ...currentFormData?.pendingAttachFeedbackFiles.map((f) => f.id) || [],
+          ...(currentFormData?.feedback_files.map((f) => f.id) || []),
+          ...(currentFormData?.pendingAttachFeedbackFiles.map((f) => f.id) || []),
         ]}
         multiSelect={true}
         title="Attach Existing Files as Feedback"

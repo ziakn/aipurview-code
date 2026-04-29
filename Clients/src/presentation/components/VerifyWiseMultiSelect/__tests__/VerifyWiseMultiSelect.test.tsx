@@ -1,8 +1,6 @@
 import { screen, fireEvent } from "@testing-library/react";
 import { renderWithProviders } from "../../../../test/renderWithProviders";
-import VerifyWiseMultiSelect, {
-  VerifyWiseMultiSelectOption,
-} from "../index";
+import VerifyWiseMultiSelect, { VerifyWiseMultiSelectOption } from "../index";
 
 const options: VerifyWiseMultiSelectOption[] = [
   { value: "a", label: "Option A" },
@@ -18,7 +16,7 @@ describe("VerifyWiseMultiSelect", () => {
         selectedValues={[]}
         onChange={vi.fn()}
         placeholder="Pick items"
-      />
+      />,
     );
 
     expect(screen.getByText("Pick items")).toBeInTheDocument();
@@ -26,11 +24,7 @@ describe("VerifyWiseMultiSelect", () => {
 
   it("renders with default placeholder when none is provided", () => {
     renderWithProviders(
-      <VerifyWiseMultiSelect
-        options={options}
-        selectedValues={[]}
-        onChange={vi.fn()}
-      />
+      <VerifyWiseMultiSelect options={options} selectedValues={[]} onChange={vi.fn()} />,
     );
 
     expect(screen.getByText("Select options")).toBeInTheDocument();
@@ -38,11 +32,7 @@ describe("VerifyWiseMultiSelect", () => {
 
   it("opens dropdown and shows options when clicked", () => {
     renderWithProviders(
-      <VerifyWiseMultiSelect
-        options={options}
-        selectedValues={[]}
-        onChange={vi.fn()}
-      />
+      <VerifyWiseMultiSelect options={options} selectedValues={[]} onChange={vi.fn()} />,
     );
 
     // Click the trigger button
@@ -58,11 +48,7 @@ describe("VerifyWiseMultiSelect", () => {
     const handleChange = vi.fn();
 
     renderWithProviders(
-      <VerifyWiseMultiSelect
-        options={options}
-        selectedValues={[]}
-        onChange={handleChange}
-      />
+      <VerifyWiseMultiSelect options={options} selectedValues={[]} onChange={handleChange} />,
     );
 
     // Open dropdown
@@ -82,7 +68,7 @@ describe("VerifyWiseMultiSelect", () => {
         options={options}
         selectedValues={["a", "b"]}
         onChange={handleChange}
-      />
+      />,
     );
 
     // Open dropdown

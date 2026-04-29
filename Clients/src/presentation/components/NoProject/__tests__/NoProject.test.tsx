@@ -9,11 +9,7 @@ describe("NoProject", () => {
   });
 
   it("renders with a different message", () => {
-    renderWithProviders(
-      <NoProject message="Create your first project to get started" />
-    );
-    expect(
-      screen.getByText("Create your first project to get started")
-    ).toBeInTheDocument();
+    renderWithProviders(<NoProject message="Create your first project to get started" />);
+    expect(screen.getByText("Create your first project to get started")).toBeInTheDocument();
   });
 });

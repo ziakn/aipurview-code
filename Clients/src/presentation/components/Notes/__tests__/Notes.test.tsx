@@ -20,9 +20,7 @@ vi.mock("../../../../application/hooks/useAuth", () => ({
 
 describe("NotesTab", () => {
   it("renders the notes section with empty state", async () => {
-    renderWithProviders(
-      <NotesTab attachedTo="TEST_ENTITY" attachedToId="42" />
-    );
+    renderWithProviders(<NotesTab attachedTo="TEST_ENTITY" attachedToId="42" />);
 
     // The empty state message should appear after loading
     expect(await screen.findByText("No notes yet")).toBeInTheDocument();
