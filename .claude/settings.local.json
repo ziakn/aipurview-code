@@ -76,7 +76,11 @@
       "Bash(git -C /c/Workspace/verifywise log --all --grep=\"3395\" --oneline)",
       "Bash(git -C /c/Workspace/verifywise log --oneline --all)",
       "Bash(npm --prefix Servers run build)",
-      "Bash(npx prettier:*)"
+      "Bash(npx prettier:*)",
+      "Bash(git checkout:*)",
+      "Bash(git reset:*)",
+      "Bash(git -C .. add Servers/utils/virtualFolder.utils.ts Servers/version.json)",
+      "Bash(git -C:*)"
     ]
   }
 }
