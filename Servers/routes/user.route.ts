@@ -43,7 +43,6 @@ import {
   getUserById,
   loginUser,
   updateUserById,
-  updateUserRole,
   calculateProgress,
   ChangePassword,
   refreshAccessToken,
@@ -52,7 +51,6 @@ import {
   deleteUserProfilePhoto,
   resetPassword,
 } from "../controllers/user.ctrl";
-import authorize from "../middleware/accessControl.middleware";
 import resetPasswordMiddleware from "../middleware/resetPassword.middleware";
 import authenticateJWT from "../middleware/auth.middleware";
 import registerJWT from "../middleware/register.middleware";
@@ -130,7 +128,8 @@ router.post("/register", authLimiter, registerJWT, createNewUser);
 const loginLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
   max: 5, // limit each IP to 5 login requests per windowMs
-  message: "Too many login attempts from this IP, please try again after a minute",
+  message:
+    "Too many login attempts from this IP, please try again after a minute",
 });
 router.post("/login", loginLimiter, loginUser);
 
@@ -163,20 +162,6 @@ router.post("/reset-password", authLimiter, resetPasswordMiddleware, resetPasswo
  * @param {express.Response} res - Express response object
  */
 router.patch("/chng-pass/:id", authLimiter, authenticateJWT, selfOnly, ChangePassword);
-
-/**
- * PATCH /users/:id/role
- *
- * Updates a user's role. Restricted to Admin users only.
- *
- * @name patch/:id/role
- * @function
- * @memberof module:routes/user.route
- * @inner
- * @param {express.Request} req - Express request object
- * @param {express.Response} res - Express response object
- */
-router.patch("/:id/role", authenticateJWT, authorize(["Admin"]), updateUserRole);
 
 /**
  * PATCH /users/:id
@@ -225,7 +210,12 @@ router.get("/:id/calculate-progress", authenticateJWT, calculateProgress);
 /**
  * Profile Photo Routes
  */
-router.post("/:id/profile-photo", authenticateJWT, upload.single("photo"), uploadUserProfilePhoto);
+router.post(
+  "/:id/profile-photo",
+  authenticateJWT,
+  upload.single("photo"),
+  uploadUserProfilePhoto
+);
 router.get("/:id/profile-photo", authenticateJWT, getUserProfilePhoto);
 router.delete("/:id/profile-photo", authenticateJWT, deleteUserProfilePhoto);
 
