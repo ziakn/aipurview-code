@@ -200,7 +200,7 @@ export const riskMitigationContent: ArticleContent = {
     {
       type: 'ordered-list',
       items: [
-        { text: 'Risk owner completes the mitigation plan' },
+        { text: 'Action owner completes the mitigation plan' },
         { text: 'Risk is assigned to an approver for review' },
         { text: 'Approver reviews the mitigation approach and evidence' },
         { text: 'Approval status is updated to reflect the decision' },
