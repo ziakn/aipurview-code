@@ -71,7 +71,7 @@ export const policyTemplatesContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Templates are organized into five categories. You can use the filter button to narrow the list by category or search by title.',
+      text: 'Templates are organized into six categories. You can use the filter button to narrow the list by category or search by title.',
     },
     {
       type: 'icon-cards',
