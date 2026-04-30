@@ -160,26 +160,22 @@ export async function createRepository(req: Request, res: Response): Promise<any
       req.organizationId!,
     );
     if (existing) {
-      return res
-        .status(409)
-        .json(
-          STATUS_CODE[409]({
-            message: `Repository ${parsed.owner}/${parsed.name} is already registered`,
-          }),
-        );
+      return res.status(409).json(
+        STATUS_CODE[409]({
+          message: `Repository ${parsed.owner}/${parsed.name} is already registered`,
+        }),
+      );
     }
 
     // Validate schedule fields
     if (schedule_enabled) {
       if (!schedule_frequency || !["daily", "weekly", "monthly"].includes(schedule_frequency)) {
-        return res
-          .status(400)
-          .json(
-            STATUS_CODE[400]({
-              message:
-                "schedule_frequency must be daily, weekly, or monthly when schedule is enabled",
-            }),
-          );
+        return res.status(400).json(
+          STATUS_CODE[400]({
+            message:
+              "schedule_frequency must be daily, weekly, or monthly when schedule is enabled",
+          }),
+        );
       }
       if (
         schedule_frequency === "weekly" &&
@@ -197,13 +193,11 @@ export async function createRepository(req: Request, res: Response): Promise<any
           schedule_day_of_month < 1 ||
           schedule_day_of_month > 31)
       ) {
-        return res
-          .status(400)
-          .json(
-            STATUS_CODE[400]({
-              message: "schedule_day_of_month must be 1-31 for monthly schedule",
-            }),
-          );
+        return res.status(400).json(
+          STATUS_CODE[400]({
+            message: "schedule_day_of_month must be 1-31 for monthly schedule",
+          }),
+        );
       }
       const hour = schedule_hour ?? 2;
       const minute = schedule_minute ?? 0;
@@ -308,14 +302,12 @@ export async function updateRepository(req: Request, res: Response): Promise<any
 
     if (willBeEnabled) {
       if (!freq || !["daily", "weekly", "monthly"].includes(freq)) {
-        return res
-          .status(400)
-          .json(
-            STATUS_CODE[400]({
-              message:
-                "schedule_frequency must be daily, weekly, or monthly when schedule is enabled",
-            }),
-          );
+        return res.status(400).json(
+          STATUS_CODE[400]({
+            message:
+              "schedule_frequency must be daily, weekly, or monthly when schedule is enabled",
+          }),
+        );
       }
     }
 

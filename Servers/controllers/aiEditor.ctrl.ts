@@ -57,11 +57,9 @@ export async function editorAICommand(req: Request, res: Response): Promise<void
     const clients = await getLLMKeysWithKeyQuery(organizationId);
 
     if (clients.length === 0) {
-      res
-        .status(400)
-        .json({
-          error: "No LLM keys configured. Ask your admin to add one in Settings > LLM keys.",
-        });
+      res.status(400).json({
+        error: "No LLM keys configured. Ask your admin to add one in Settings > LLM keys.",
+      });
       return;
     }
 
