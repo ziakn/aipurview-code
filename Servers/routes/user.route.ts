@@ -43,6 +43,7 @@ import {
   getUserById,
   loginUser,
   updateUserById,
+  updateUserRole,
   calculateProgress,
   ChangePassword,
   refreshAccessToken,
@@ -51,6 +52,7 @@ import {
   deleteUserProfilePhoto,
   resetPassword,
 } from "../controllers/user.ctrl";
+import authorize from "../middleware/accessControl.middleware";
 import resetPasswordMiddleware from "../middleware/resetPassword.middleware";
 import authenticateJWT from "../middleware/auth.middleware";
 import registerJWT from "../middleware/register.middleware";
@@ -162,6 +164,20 @@ router.post("/reset-password", authLimiter, resetPasswordMiddleware, resetPasswo
  * @param {express.Response} res - Express response object
  */
 router.patch("/chng-pass/:id", authLimiter, authenticateJWT, selfOnly, ChangePassword);
+
+/**
+ * PATCH /users/:id/role
+ *
+ * Updates a user's role. Restricted to Admin users only.
+ *
+ * @name patch/:id/role
+ * @function
+ * @memberof module:routes/user.route
+ * @inner
+ * @param {express.Request} req - Express request object
+ * @param {express.Response} res - Express response object
+ */
+router.patch("/:id/role", authenticateJWT, authorize(["Admin"]), updateUserRole);
 
 /**
  * PATCH /users/:id
