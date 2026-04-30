@@ -25,6 +25,18 @@ export interface FileResponse {
     /** Multiple model IDs can be mapped (empty array or null allowed) */
     mapped_model_ids?: number[] | null;
 
+    /** Categorization tags */
+    tags?: string[];
+
+    /** Related frameworks (e.g. "ISO 42001", "SOC 2", "NIST AI RMF") */
+    framework_ids?: string[];
+
+    /** Assigned reviewer / owner user ID */
+    reviewer_id?: number | null;
+
+    /** Retention or review cycle policy */
+    retention_policy?: string | null;
+
     created_at?: Date;
     updated_at?: Date;
   }
