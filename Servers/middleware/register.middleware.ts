@@ -34,14 +34,12 @@ const registerJWT = async (
 
     // Check token expiration
     if (decoded.expire < Date.now())
-      return res
-        .status(406)
-        .json(
-          STATUS_CODE[406]({
-            message:
-              "This invitation link is expired. You need to be invited again to gain access to the dashboard",
-          }),
-        );
+      return res.status(406).json(
+        STATUS_CODE[406]({
+          message:
+            "This invitation link is expired. You need to be invited again to gain access to the dashboard",
+        }),
+      );
 
     console.log("🔍 Registration validation:", {
       tokenRoleId: decoded.roleId,
