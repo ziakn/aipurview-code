@@ -111,6 +111,19 @@ const CreateNewApprovalWorkflow: FC<ICreateApprovalWorkflowProps> = ({
     setStepErrors([]);
   };
 
+  const clearStepFieldError = (
+    stepIndex: number,
+    field: "step_name" | "approver" | "conditions",
+  ) => {
+    setStepErrors((prev) => {
+      const updated = [...prev];
+      if (updated[stepIndex]) {
+        updated[stepIndex] = { ...updated[stepIndex], [field]: undefined };
+      }
+      return updated;
+    });
+  };
+
   const validateSteps = (): boolean => {
     const newStepErrors = workflowSteps.map((step) => ({
       step_name: !step.step_name?.trim() ? "Step name is required." : undefined,
@@ -240,6 +253,7 @@ const CreateNewApprovalWorkflow: FC<ICreateApprovalWorkflowProps> = ({
                       const newSteps = [...workflowSteps];
                       newSteps[stepIndex].step_name = e.target.value;
                       setWorkflowSteps(newSteps);
+                      clearStepFieldError(stepIndex, "step_name");
                     }}
                   />
                   <Stack direction="row" spacing={6}>
@@ -256,6 +270,7 @@ const CreateNewApprovalWorkflow: FC<ICreateApprovalWorkflowProps> = ({
                         const newSteps = [...workflowSteps];
                         newSteps[stepIndex].approver_ids = newValue.map((u) => u._id);
                         setWorkflowSteps(newSteps);
+                        if (newValue.length > 0) clearStepFieldError(stepIndex, "approver");
                       }}
                       getOptionLabel={(user) =>
                         `${user.name}${user.surname ? ` ${user.surname}` : ""}`
@@ -299,6 +314,7 @@ const CreateNewApprovalWorkflow: FC<ICreateApprovalWorkflowProps> = ({
                           const newSteps = [...workflowSteps];
                           newSteps[stepIndex].requires_all_approvers = Number(e.target.value) === 1;
                           setWorkflowSteps(newSteps);
+                          clearStepFieldError(stepIndex, "conditions");
                         }}
                         placeholder="Select conditions"
                       />
