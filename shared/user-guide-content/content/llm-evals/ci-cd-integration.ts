@@ -158,6 +158,12 @@ jobs:
       ],
     },
     {
+      type: 'callout',
+      variant: 'info',
+      title: 'RAG metrics are off by default',
+      text: '`faithfulness` and `contextual_relevancy` are only meaningful when the model has retrieved context to evaluate against. Enable them in your experiment config only for RAG use cases; for non-RAG evaluations leave them disabled to avoid noisy or incorrect scores.',
+    },
+    {
       type: 'heading',
       id: 'other-ci',
       level: 2,
@@ -212,7 +218,7 @@ results = client.experiments.run_and_wait(
     model_name="gpt-4o-mini",
     model_provider="openai",
     dataset_id="2",
-    metrics=["correctness", "faithfulness", "hallucination"],
+    metrics=["answer_relevancy", "hallucination"],
     threshold=0.7,
 )
 
