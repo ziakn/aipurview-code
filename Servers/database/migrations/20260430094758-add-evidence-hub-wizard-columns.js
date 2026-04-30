@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Adds new columns to the evidence_hub table for the post-upload wizard:
