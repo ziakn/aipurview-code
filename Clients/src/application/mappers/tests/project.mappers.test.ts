@@ -54,36 +54,34 @@ describe("Test project mappers functions", () => {
       expect(result).toBe(HighRiskRole.DEPLOYER);
       result = mapHighRiskRole(1);
       expect(result).toBe(HighRiskRole.PROVIDER);
-      result = mapHighRiskRole(2);
-      expect(result).toBe(HighRiskRole.DISTRIBUTOR);
-      result = mapHighRiskRole(3);
-      expect(result).toBe(HighRiskRole.IMPORTER);
-      result = mapHighRiskRole(4);
-      expect(result).toBe(HighRiskRole.PRODUCT_MANUFACTURER);
-      result = mapHighRiskRole(5);
-      expect(result).toBe(HighRiskRole.AUTHORIZED_REPRESENTATIVE);
     });
     it("should receive a valid string and return the mapped value", () => {
       let result = mapHighRiskRole("Deployer");
       expect(result).toBe(HighRiskRole.DEPLOYER);
       result = mapHighRiskRole("Provider");
       expect(result).toBe(HighRiskRole.PROVIDER);
-      result = mapHighRiskRole("Distributor");
-      expect(result).toBe(HighRiskRole.DISTRIBUTOR);
-      result = mapHighRiskRole("Importer");
-      expect(result).toBe(HighRiskRole.IMPORTER);
-      result = mapHighRiskRole("Product Manufacturer");
-      expect(result).toBe(HighRiskRole.PRODUCT_MANUFACTURER);
-      result = mapHighRiskRole("Authorized Representative");
-      expect(result).toBe(HighRiskRole.AUTHORIZED_REPRESENTATIVE);
     });
-    it("should receive an invalid number and return the default value", () => {
+    it("should collapse legacy provider-tier strings onto PROVIDER", () => {
+      // Pre-reduction values (Distributor/Importer/Product manufacturer/
+      // Authorized representative) now map to Provider.
+      expect(mapHighRiskRole("Distributor")).toBe(HighRiskRole.PROVIDER);
+      expect(mapHighRiskRole("Importer")).toBe(HighRiskRole.PROVIDER);
+      expect(mapHighRiskRole("Product Manufacturer")).toBe(HighRiskRole.PROVIDER);
+      expect(mapHighRiskRole("Authorized Representative")).toBe(HighRiskRole.PROVIDER);
+    });
+    it("should collapse legacy 'not_applicable' onto DEPLOYER", () => {
+      expect(mapHighRiskRole("not_applicable")).toBe(HighRiskRole.DEPLOYER);
+    });
+    it("should receive an invalid number and return DEPLOYER (anything but 1)", () => {
+      // Implementation: value === 1 ? PROVIDER : DEPLOYER
       const result = mapHighRiskRole(99);
       expect(result).toBe(HighRiskRole.DEPLOYER);
     });
-    it("should receive an invalid string and return the default value", () => {
+    it("should receive an invalid string and return PROVIDER (non-matching fallback)", () => {
+      // Implementation: only "deployer" or "not_applicable" map to DEPLOYER;
+      // any other string (including unknown inputs) collapses onto PROVIDER.
       const result = mapHighRiskRole("InvalidString");
-      expect(result).toBe(HighRiskRole.DEPLOYER);
+      expect(result).toBe(HighRiskRole.PROVIDER);
     });
   });
   describe("mapProjectResponseDTOToProject", () => {
@@ -98,9 +96,7 @@ describe("Test project mappers functions", () => {
       expect(project.start_date.toISOString()).toBe(
         new Date(dto.start_date as string).toISOString(),
       );
-      expect(project.ai_risk_classification).toBe(
-        AiRiskClassification.LIMITED_RISK,
-      );
+      expect(project.ai_risk_classification).toBe(AiRiskClassification.LIMITED_RISK);
       expect(project.type_of_high_risk_role).toBe(HighRiskRole.PROVIDER);
       expect(project.goal).toBe(dto.goal);
       expect(project.last_updated.toISOString()).toBe(
@@ -137,21 +133,14 @@ describe("Test project mappers functions", () => {
       expect(project.framework).toEqual([]);
     });
     it("should return an empty array when monitored_regulations_and_standards is undefined", () => {
-      const dto = new ProjectDtoToProjectBuilder()
-        .withNoMonitoredRegulations()
-        .build();
+      const dto = new ProjectDtoToProjectBuilder().withNoMonitoredRegulations().build();
       const project = mapProjectResponseDTOToProject(dto as ProjectResponseDTO);
       expect(project.monitored_regulations_and_standards).toEqual([]);
     });
     it("should convert monitored_regulations_and_standards numbers to strings", () => {
-      const dto = new ProjectDtoToProjectBuilder()
-        .withNumberMonitoredRegulations()
-        .build();
+      const dto = new ProjectDtoToProjectBuilder().withNumberMonitoredRegulations().build();
       const project = mapProjectResponseDTOToProject(dto as ProjectResponseDTO);
-      expect(project.monitored_regulations_and_standards).toEqual([
-        "101",
-        "202",
-      ]);
+      expect(project.monitored_regulations_and_standards).toEqual(["101", "202"]);
     });
   });
   describe("mapProjectResponseDTOToModel", () => {
@@ -164,19 +153,13 @@ describe("Test project mappers functions", () => {
       expect(projectModel.project_title).toBe(dto.project_title);
       expect(projectModel.owner).toBe(dto.owner);
       expect(projectModel.start_date).toStrictEqual(new Date(dto.start_date));
-      expect(projectModel.ai_risk_classification).toBe(
-        AiRiskClassification.LIMITED_RISK,
-      );
+      expect(projectModel.ai_risk_classification).toBe(AiRiskClassification.LIMITED_RISK);
       expect(projectModel.type_of_high_risk_role).toBe(HighRiskRole.PROVIDER);
       expect(projectModel.goal).toBe(dto.goal);
-      expect(projectModel.last_updated).toStrictEqual(
-        new Date(dto.last_updated),
-      );
+      expect(projectModel.last_updated).toStrictEqual(new Date(dto.last_updated));
       expect(projectModel.last_updated_by).toBe(dto.last_updated_by);
       expect(projectModel.is_demo).toBe(dto.is_demo);
-      expect(projectModel.created_at).toStrictEqual(
-        new Date(dto.created_at as string),
-      );
+      expect(projectModel.created_at).toStrictEqual(new Date(dto.created_at as string));
       expect(projectModel.is_organizational).toBe(dto.is_organizational);
     });
     it("should handle missing created_at by setting it to undefined", () => {
@@ -185,21 +168,15 @@ describe("Test project mappers functions", () => {
       expect(projectModel.created_at).toBeUndefined();
     });
     it("should set is_organizational to false if undefined in DTO", () => {
-      const dto = new ProjectDtoToModelBuilder()
-        .withoutIsOrganizational()
-        .build();
+      const dto = new ProjectDtoToModelBuilder().withoutIsOrganizational().build();
       const projectModel = mapProjectResponseDTOToModel(dto);
       expect(projectModel.is_organizational).toBe(false);
     });
   });
   describe("mapProjectResponseDTOsToProjects", () => {
     it("should receive an array of ProjectResponseDTOs and return the mapped Projects array", () => {
-      const dto1 = new ProjectDtoToProjectBuilder(
-        1,
-      ).build() as ProjectResponseDTO;
-      const dto2 = new ProjectDtoToProjectBuilder(
-        2,
-      ).build() as ProjectResponseDTO;
+      const dto1 = new ProjectDtoToProjectBuilder(1).build() as ProjectResponseDTO;
+      const dto2 = new ProjectDtoToProjectBuilder(2).build() as ProjectResponseDTO;
       const projects = mapProjectResponseDTOsToProjects([dto1, dto2]);
       expect(projects.length).toBe(2);
       expect(projects[0].id).toBe(dto1.id);

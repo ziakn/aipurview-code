@@ -10,11 +10,11 @@ export const managingDatasetsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Your evaluation is only as good as your dataset. A well-crafted dataset exposes how your model handles the scenarios that actually matter to your users—the common questions, the edge cases, the tricky phrasings, and the potential failure modes.',
+      text: 'Your evaluation is only as good as your dataset. A well-crafted dataset exposes how your model handles the scenarios that actually matter to your users, from common questions to edge cases and tricky phrasings.',
     },
     {
       type: 'paragraph',
-      text: 'LLM Evals gives you two paths: start with built-in datasets to get quick results, or invest time in custom datasets that precisely match your use case. Most teams do both—using built-in datasets for general benchmarking while building custom ones for application-specific testing.',
+      text: 'LLM Evals gives you two paths: start with built-in datasets to get quick results, or invest time in custom datasets that precisely match your use case. Most teams do both, using built-in datasets for general benchmarking while building custom ones for application-specific testing.',
     },
     {
       type: 'heading',
@@ -39,9 +39,9 @@ export const managingDatasetsContent: ArticleContent = {
     {
       type: 'bullet-list',
       items: [
-        { bold: 'Basic Chatbot', text: 'General-purpose prompts covering conversation, coding, math, knowledge, creative writing, and reasoning. Single-turn format, great for getting started.' },
-        { bold: 'Coding Helper', text: 'Programming assistance scenarios testing code generation, debugging, and technical explanations.' },
-        { bold: 'Customer Support', text: 'Customer service interactions for support chatbot evaluation. Tests helpfulness, accuracy, and appropriate responses to common support queries.' },
+        { bold: 'Basic Chatbot', text: 'General-purpose prompts covering conversation, coding, math, knowledge, creative writing and reasoning. Single-turn format, great for getting started.' },
+        { bold: 'Coding Helper', text: 'Programming assistance scenarios testing code generation, debugging and technical explanations.' },
+        { bold: 'Customer Support', text: 'Customer service interactions for support chatbot evaluation. Tests helpfulness, accuracy and appropriate responses to common support queries.' },
       ],
     },
     {
@@ -60,6 +60,9 @@ export const managingDatasetsContent: ArticleContent = {
         { bold: 'Product Documentation', text: 'Tests accuracy of information retrieval and contextual response generation with product docs.' },
         { bold: 'Research Papers', text: 'Academic and technical content retrieval, testing comprehension of complex material.' },
         { bold: 'Wikipedia', text: 'General knowledge retrieval from encyclopedia-style content.' },
+        { bold: 'Document QA', text: 'Multi-turn question-answering against a document corpus.' },
+        { bold: 'Knowledge Base', text: 'Retrieval-augmented Q&A over an internal knowledge base.' },
+        { bold: 'Research Assistant', text: 'Multi-turn assistant interactions over technical research material.' },
       ],
     },
     {
@@ -70,14 +73,7 @@ export const managingDatasetsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'For AI assistants that take actions:',
-    },
-    {
-      type: 'bullet-list',
-      items: [
-        { bold: 'Tool use', text: 'Prompts requiring function calls, API interactions, or external tool usage.' },
-        { bold: 'Multi-step reasoning', text: 'Tasks that require planning and executing multiple steps to complete.' },
-      ],
+      text: 'For agentic AI assistants. Agent datasets are conversation-based multi-turn evaluations that exercise planning, tool selection and follow-through over several turns; they are not isolated single-call examples.',
     },
     {
       type: 'callout',
@@ -103,8 +99,8 @@ export const managingDatasetsContent: ArticleContent = {
       items: [
         { bold: 'Real user queries', text: 'Sample from your actual traffic or support tickets. These represent how people really phrase questions, not how you imagine they might.' },
         { bold: 'Known failure cases', text: 'Prompts where you\'ve observed problems. Turn bugs into regression tests.' },
-        { bold: 'Edge cases', text: 'Unusual inputs, ambiguous questions, or requests at the boundaries of your model\'s capabilities.' },
-        { bold: 'Adversarial examples', text: 'Attempts to confuse, mislead, or manipulate your model. What happens when someone asks something inappropriate?' },
+        { bold: 'Edge cases', text: 'Unusual inputs, ambiguous questions or requests at the boundaries of your model\'s capabilities.' },
+        { bold: 'Adversarial examples', text: 'Attempts to confuse, mislead or manipulate your model. What happens when someone asks something inappropriate?' },
       ],
     },
     {
@@ -168,7 +164,7 @@ export const managingDatasetsContent: ArticleContent = {
     {
       type: 'callout',
       variant: 'info',
-      text: 'The expected_output doesn\'t need to be an exact match. The judge LLM evaluates semantic similarity—whether the model\'s response conveys the same meaning and covers the same points.',
+      text: 'The expected_output doesn\'t need to be an exact match. The judge LLM evaluates semantic similarity, checking whether the model\'s response conveys the same meaning and covers the same points.',
     },
     {
       type: 'heading',
@@ -208,7 +204,7 @@ export const managingDatasetsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Notice the empty assistant content fields—during evaluation, the model generates these responses based on the conversation context up to that point. This tests real conversational ability rather than just comparing against pre-written answers.',
+      text: 'Notice the empty assistant content fields. During evaluation, the model generates these responses based on the conversation context up to that point. This tests real conversational ability rather than just comparing against pre-written answers.',
     },
     {
       type: 'heading',
@@ -244,7 +240,7 @@ export const managingDatasetsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The Datasets tab shows all available datasets—both built-in and custom. Each card displays the dataset name, type (built-in or custom), and the number of prompts it contains.',
+      text: 'The Datasets tab shows all available datasets, both built-in and custom. Each card displays the dataset name, type (built-in or custom) and the number of prompts it contains.',
     },
     {
       type: 'paragraph',
@@ -271,7 +267,7 @@ export const managingDatasetsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'When you\'re done, click **Save copy** to create a new custom dataset with your changes. The original dataset remains unchanged—this is non-destructive editing.',
+      text: 'When you\'re done, click **Save copy** to create a new custom dataset with your changes. The original dataset stays unchanged, so this is non-destructive editing.',
     },
     {
       type: 'heading',
@@ -307,10 +303,10 @@ export const managingDatasetsContent: ArticleContent = {
       items: [
         { bold: 'Start with real data', text: 'Sample actual user queries from logs, support tickets, or user research. Synthetic prompts often miss the quirks of how real people phrase things.' },
         { bold: 'Include failures', text: 'When you find a bug or user complaint, turn it into a test case. Your dataset should grow from production experience.' },
-        { bold: 'Cover the distribution', text: 'Don\'t just test happy paths. Include common variations, typos, ambiguous requests, and edge cases. If 10% of your users ask questions in a particular way, 10% of your test cases should too.' },
+        { bold: 'Cover the distribution', text: 'Don\'t just test happy paths. Include common variations, typos, ambiguous requests and edge cases. If 10% of your users ask questions in a particular way, 10% of your test cases should too.' },
         { bold: 'Write specific expected outputs', text: 'Vague expectations lead to vague evaluations. If there\'s a specific procedure or piece of information the model should include, spell it out.' },
         { bold: 'Use meaningful categories', text: 'Categories help you identify patterns. If your model struggles with "refund" questions but handles "shipping" well, you want to know that.' },
-        { bold: 'Update regularly', text: 'Your product changes, your users change, and your model\'s failure modes evolve. Review and refresh your datasets periodically.' },
+        { bold: 'Update regularly', text: 'Your product changes, your users change and your model\'s failure modes evolve. Review and refresh your datasets periodically.' },
       ],
     },
     {
@@ -326,9 +322,9 @@ export const managingDatasetsContent: ArticleContent = {
     {
       type: 'bullet-list',
       items: [
-        { bold: 'Use clear names', text: 'Include the purpose, version, or date in the name. "Customer Support v2 - Dec 2024" is better than "test_data_final".' },
+        { bold: 'Use clear names', text: 'Include the purpose, version or date in the name. "Customer Support v2 - Dec 2024" is better than "test_data_final".' },
         { bold: 'Delete obsolete versions', text: 'Click the action menu and select "Remove" to delete datasets you no longer need. This keeps your list manageable.' },
-        { bold: 'Document your datasets', text: 'Keep notes (even externally) about what each dataset covers, when it was last updated, and any known limitations.' },
+        { bold: 'Document your datasets', text: 'Keep notes (even externally) about what each dataset covers, when it was last updated and any known limitations.' },
       ],
     },
     {

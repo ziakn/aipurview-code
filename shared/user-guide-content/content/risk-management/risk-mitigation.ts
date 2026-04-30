@@ -10,11 +10,11 @@ export const riskMitigationContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Risk mitigation is the process of taking action to reduce identified risks to acceptable levels. While risk assessment tells you what risks exist and how serious they are, risk mitigation is about deciding what to do about them and tracking your progress toward reducing exposure.',
+      text: 'Risk mitigation is about taking action to bring identified risks down to acceptable levels. Risk assessment tells you what\'s out there and how serious it is. Mitigation is where you decide what to do about it and track your progress.',
     },
     {
       type: 'paragraph',
-      text: 'Effective mitigation transforms risk management from a documentation exercise into active risk reduction. Without mitigation planning, risks remain theoretical concerns. With it, you have a clear path from identifying a problem to solving it.',
+      text: 'Without mitigation planning, risks stay as theoretical concerns in a spreadsheet. With it, you\'ve got a clear path from spotting a problem to actually solving it.',
     },
     {
       type: 'heading',
@@ -31,13 +31,13 @@ export const riskMitigationContent: ArticleContent = {
       items: [
         { bold: 'Avoid', text: 'Eliminate the risk entirely by not proceeding with the risky activity' },
         { bold: 'Reduce', text: 'Implement controls that lower the likelihood or impact of the risk' },
-        { bold: 'Transfer', text: 'Shift the risk to another party through insurance, contracts, or partnerships' },
-        { bold: 'Accept', text: 'Acknowledge the risk and proceed without additional controls when the risk is low or mitigation is not cost-effective' },
+        { bold: 'Transfer', text: 'Shift the risk to another party through insurance, contracts or partnerships' },
+        { bold: 'Accept', text: 'Acknowledge the risk and move forward without extra controls when the risk is low or mitigation isn\'t cost-effective' },
       ],
     },
     {
       type: 'paragraph',
-      text: 'Most AI risks are addressed through reduction — implementing technical controls, process changes, or monitoring that makes the risk less likely or less severe.',
+      text: 'Most AI risks are handled through reduction, meaning you implement technical controls, process changes or monitoring that makes the risk less likely or less severe.',
     },
     {
       type: 'callout',
@@ -83,6 +83,11 @@ export const riskMitigationContent: ArticleContent = {
           description: 'Mitigation has been postponed to a later date.',
         },
         {
+          icon: 'XCircle',
+          title: 'Canceled',
+          description: 'Mitigation has been cancelled and will not be pursued.',
+        },
+        {
           icon: 'AlertTriangle',
           title: 'Requires review',
           description: 'Mitigation needs additional review or reassessment.',
@@ -105,7 +110,7 @@ export const riskMitigationContent: ArticleContent = {
         { bold: 'Mitigation plan', text: 'Describe the specific actions to reduce the risk' },
         { bold: 'Implementation strategy', text: 'Outline how the mitigation will be executed' },
         { bold: 'Deadline', text: 'Set a target date for completing the mitigation' },
-        { bold: 'Risk owner', text: 'Assign responsibility for implementing the mitigation' },
+        { bold: 'Approver', text: 'Assign responsibility for approving the mitigation' },
       ],
     },
     {
@@ -116,14 +121,13 @@ export const riskMitigationContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise tracks multiple risk level measurements to show mitigation effectiveness:',
+      text: 'VerifyWise tracks multiple risk level measurements so you can see how well your mitigations are working:',
     },
     {
       type: 'bullet-list',
       items: [
-        { bold: 'Auto-calculated risk level', text: 'The initial risk level based on likelihood and severity' },
-        { bold: 'Current risk level', text: 'The present risk level after any controls are in place' },
-        { bold: 'Final risk level', text: 'The expected residual risk after all mitigations are complete' },
+        { bold: 'Current risk level', text: 'The present risk level captured on the mitigation form (manually selected from Low / Medium / High / Critical)' },
+        { bold: 'Residual risk', text: 'Calculated automatically from residual likelihood × residual severity once mitigations are in place' },
       ],
     },
     {
@@ -162,7 +166,7 @@ export const riskMitigationContent: ArticleContent = {
       type: 'callout',
       variant: 'tip',
       title: 'Best practice',
-      text: 'Always reassess likelihood and severity after implementing mitigation controls. This provides an accurate picture of your residual risk exposure.',
+      text: 'Always reassess likelihood and severity after implementing mitigation controls. This gives you an accurate picture of your residual risk.',
     },
     {
       type: 'heading',
@@ -190,12 +194,12 @@ export const riskMitigationContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'For significant risks, VerifyWise supports an approval process:',
+      text: 'For bigger risks, VerifyWise has an approval process:',
     },
     {
       type: 'ordered-list',
       items: [
-        { text: 'Risk owner completes the mitigation plan' },
+        { text: 'Action owner completes the mitigation plan' },
         { text: 'Risk is assigned to an approver for review' },
         { text: 'Approver reviews the mitigation approach and evidence' },
         { text: 'Approval status is updated to reflect the decision' },
@@ -229,7 +233,7 @@ export const riskMitigationContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Link mitigation activities to governance controls in your compliance frameworks. This creates traceability between:',
+      text: 'Link mitigation activities to governance controls in your compliance frameworks. This gives you traceability between:',
     },
     {
       type: 'bullet-list',

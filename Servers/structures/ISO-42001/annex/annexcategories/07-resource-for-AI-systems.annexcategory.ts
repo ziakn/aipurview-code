@@ -1,9 +1,7 @@
 import { AnnexCategoryISO } from "../../../../domain.layer/frameworks/ISO-42001/annexCategoryISO.model";
 import { AnnexCategoryStructISO } from "../../../../domain.layer/frameworks/ISO-42001/annexCategoryStructISO.model";
 
-export const ResourcesForAISystems: Partial<
-  AnnexCategoryStructISO & AnnexCategoryISO
->[] = [
+export const ResourcesForAISystems: Partial<AnnexCategoryStructISO & AnnexCategoryISO>[] = [
   {
     sub_id: 1.1,
     order_no: 1,
@@ -47,11 +45,9 @@ export const ResourcesForAISystems: Partial<
     description: "Managing system resources for AI.",
     guidance:
       "System resources required for AI systems, including tools and infrastructure, should be managed throughout their lifecycle.",
-    is_applicable: false,
-    justification_for_exclusion:
-      "Legacy systems used do not support detailed resource lifecycle management.",
+    is_applicable: true,
     implementation_description: "",
-    auditor_feedback: "Consider upgrading systems for better resource control.",
+    auditor_feedback: "",
   },
   {
     sub_id: 5.1,

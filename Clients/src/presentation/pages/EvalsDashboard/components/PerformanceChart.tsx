@@ -1,20 +1,34 @@
 import { useState, useEffect, useCallback } from "react";
-import { Box, Typography, Select, MenuItem, FormControl } from "@mui/material";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { experimentsService, evaluationLogsService, type Experiment, type EvaluationLog } from "../../../../infrastructure/api/evaluationLogsService";
+import { Box, Typography } from "@mui/material";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import {
+  getAllExperiments,
+  type Experiment,
+} from "../../../../application/repository/deepEval.repository";
+import { vwTooltipStyle, ChartOutlineWrapper } from "../../../components/Charts/VWCharts";
 
-interface PerformanceChartProps {
-  projectId: string;
-}
+export type TimeRange = "7d" | "30d" | "100d" | "all";
 
-type TimeRange = "7d" | "30d" | "100d" | "all";
-
-const TIME_RANGE_OPTIONS: { value: TimeRange; label: string }[] = [
+export const TIME_RANGE_OPTIONS: { value: TimeRange; label: string }[] = [
   { value: "7d", label: "Last 7 days" },
   { value: "30d", label: "Last 30 days" },
   { value: "100d", label: "Last 100 days" },
   { value: "all", label: "All time" },
 ];
+
+interface PerformanceChartProps {
+  projectId: string;
+  timeRange: TimeRange;
+}
 
 // 15 distinct colors for the chart - no repetition
 const CHART_COLORS = [
@@ -73,29 +87,8 @@ const formatMetricLabel = (key: string): string => {
     .replace(/([A-Z])/g, " $1")
     .trim()
     .split(" ")
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
-};
-
-const displayNameToKey: Record<string, string> = {
-  "Answer Relevancy": "answerRelevancy",
-  "Faithfulness": "faithfulness",
-  "Contextual Relevancy": "contextualRelevancy",
-  "Contextual Recall": "contextualRecall",
-  "Contextual Precision": "contextualPrecision",
-  "Bias": "bias",
-  "Toxicity": "toxicity",
-  "Hallucination": "hallucination",
-  "Knowledge Retention": "knowledgeRetention",
-  "Conversation Completeness": "conversationCompleteness",
-  "Conversation Relevancy": "conversationRelevancy",
-  "Role Adherence": "roleAdherence",
-  "Task Completion": "taskCompletion",
-  "Tool Correctness": "toolCorrectness",
-  "Answer Correctness": "answerCorrectness",
-  "Coherence": "coherence",
-  "Tonality": "tonality",
-  "Safety": "safety",
 };
 
 type ChartPoint = {
@@ -107,11 +100,10 @@ type ChartPoint = {
   [key: string]: number | string | string[] | null;
 };
 
-export default function PerformanceChart({ projectId }: PerformanceChartProps) {
+export default function PerformanceChart({ projectId, timeRange }: PerformanceChartProps) {
   const [data, setData] = useState<ChartPoint[]>([]);
   const [activeMetrics, setActiveMetrics] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [timeRange, setTimeRange] = useState<TimeRange>("all");
 
   // Get cutoff date based on time range
   const getCutoffDate = useCallback((range: TimeRange): Date | null => {
@@ -125,11 +117,13 @@ export default function PerformanceChart({ projectId }: PerformanceChartProps) {
   const loadPerformanceData = useCallback(async () => {
     try {
       setLoading(true);
-      const expsResp = await experimentsService.getAllExperiments({ project_id: projectId });
+      const expsResp = await getAllExperiments({ project_id: projectId });
       const experiments: Experiment[] = expsResp.experiments || [];
 
+      // Get cutoff date for filtering
       const cutoffDate = getCutoffDate(timeRange);
 
+      // Filter completed experiments by date range and sort by date
       const completedExps = experiments
         .filter((exp) => {
           if (exp.status !== "completed") return false;
@@ -146,59 +140,45 @@ export default function PerformanceChart({ projectId }: PerformanceChartProps) {
         return;
       }
 
+      // Use pre-computed avg_scores from experiment results (no need to fetch logs)
       const chartData: ChartPoint[] = [];
       const metricsFound = new Set<string>();
 
-      for (let i = 0; i < completedExps.length; i++) {
-        const exp = completedExps[i];
-        try {
-          const logsResp = await evaluationLogsService.getLogs({
-            experiment_id: exp.id,
-            limit: 1000,
-          });
-          const logs: EvaluationLog[] = logsResp.logs || [];
+      completedExps.forEach((exp, i) => {
+        // Use pre-computed avg_scores from experiment results
+        const avgScores = exp.results?.avg_scores || {};
 
-          const metricsSum: Record<string, { sum: number; count: number }> = {};
-          logs.forEach((log) => {
-            if (log.metadata?.metric_scores) {
-              Object.entries(log.metadata.metric_scores).forEach(([rawKey, value]) => {
-                const key = displayNameToKey[rawKey] || rawKey;
-                const score = typeof value === "number" ? value : (value as { score?: number })?.score;
-                if (typeof score === "number") {
-                  if (!metricsSum[key]) metricsSum[key] = { sum: 0, count: 0 };
-                  metricsSum[key].sum += score;
-                  metricsSum[key].count += 1;
-                  metricsFound.add(key);
-                }
-              });
-            }
-          });
+        // Track which metrics this experiment has
+        const calculatedMetrics: string[] = [];
+        Object.keys(avgScores).forEach((key) => {
+          metricsFound.add(key);
+          calculatedMetrics.push(key);
+        });
 
-          const calculatedMetrics: string[] = [];
-          const dateStr = new Date(exp.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-          const timeStr = new Date(exp.created_at).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
-          const point: ChartPoint = {
-            name: `Run ${i + 1}`,
-            date: `${dateStr}`,
-            uniqueId: `${dateStr} ${timeStr}`,
-            index: i,
-            _calculatedMetrics: calculatedMetrics,
-          };
+        // Build chart point
+        const dateStr = new Date(exp.created_at).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+        const timeStr = new Date(exp.created_at).toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        });
+        const point: ChartPoint = {
+          name: `Run ${i + 1}`,
+          date: `${dateStr}`,
+          uniqueId: `${dateStr} ${timeStr}`,
+          index: i,
+          _calculatedMetrics: calculatedMetrics,
+          ...avgScores, // Spread all avg_scores directly
+        };
 
-          Object.keys(metricsSum).forEach((metricKey) => {
-            if (metricsSum[metricKey].count > 0) {
-              point[metricKey] = metricsSum[metricKey].sum / metricsSum[metricKey].count;
-              calculatedMetrics.push(metricKey);
-            }
-          });
-
-          chartData.push(point);
-        } catch (err) {
-          console.error(`Failed to load logs for experiment ${exp.id}:`, err);
-        }
-      }
+        chartData.push(point);
+      });
 
       setData(chartData);
+      // Show all metrics that have data (including custom scorers)
       setActiveMetrics(Array.from(metricsFound));
     } catch (err: unknown) {
       console.error("Failed to load performance data:", err);
@@ -227,16 +207,15 @@ export default function PerformanceChart({ projectId }: PerformanceChartProps) {
     return (
       <Box textAlign="center" py={4}>
         <Typography variant="body2" color="text.secondary">
-          No completed experiments yet. Run experiments to see performance trends.
+          No completed experiments in this time range.
         </Typography>
       </Box>
     );
   }
 
   // Get the metrics to display - only those that have data
-  const metricsToDisplay = activeMetrics.length > 0 
-    ? activeMetrics 
-    : Object.keys(metricDefinitions);
+  const metricsToDisplay =
+    activeMetrics.length > 0 ? activeMetrics : Object.keys(metricDefinitions);
 
   // Calculate dynamic height based on number of legend items
   // Estimate ~10 items per line, each line ~20px
@@ -266,7 +245,7 @@ export default function PerformanceChart({ projectId }: PerformanceChartProps) {
     color?: string;
     payload?: ChartPoint;
   }
-  
+
   interface CustomTooltipProps {
     active?: boolean;
     payload?: TooltipEntry[];
@@ -283,14 +262,15 @@ export default function PerformanceChart({ projectId }: PerformanceChartProps) {
     // Only show metrics that actually exist as a key in this data point
     // (not name, date, uniqueId, or _calculatedMetrics)
     const excludeKeys = ["name", "date", "uniqueId", "_calculatedMetrics"];
-    
+
     const validEntries = payload.filter((entry: TooltipEntry) => {
       const metricKey = entry.dataKey as string;
       // Check if this metric key actually exists in the data point with a real value
-      const hasValue = metricKey in dataPoint && 
-                       !excludeKeys.includes(metricKey) &&
-                       dataPoint[metricKey] !== null && 
-                       dataPoint[metricKey] !== undefined;
+      const hasValue =
+        metricKey in dataPoint &&
+        !excludeKeys.includes(metricKey) &&
+        dataPoint[metricKey] !== null &&
+        dataPoint[metricKey] !== undefined;
       return hasValue;
     });
 
@@ -299,11 +279,7 @@ export default function PerformanceChart({ projectId }: PerformanceChartProps) {
     return (
       <Box
         sx={{
-          backgroundColor: "#fff",
-          border: "1px solid #E5E7EB",
-          borderRadius: "8px",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          padding: "12px",
+          ...vwTooltipStyle,
           minWidth: "180px",
         }}
       >
@@ -349,77 +325,42 @@ export default function PerformanceChart({ projectId }: PerformanceChartProps) {
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
-      {/* Time range selector */}
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-        <FormControl size="small">
-          <Select
-            value={timeRange}
-            onChange={(e) => setTimeRange(e.target.value as TimeRange)}
-            sx={{
-              fontSize: "12px",
-              height: "28px",
-              "& .MuiSelect-select": {
-                py: 0.5,
-                px: 1.5,
-              },
-              "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#E5E7EB",
-              },
-              "&:hover .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#D1D5DB",
-              },
-              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#13715B",
-              },
-            }}
-          >
-            {TIME_RANGE_OPTIONS.map((opt) => (
-              <MenuItem key={opt.value} value={opt.value} sx={{ fontSize: "12px" }}>
-                {opt.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Box>
-
-      {/* Chart */}
-    <Box sx={{
-      width: "100%",
-      minHeight: 220,
-      height: dynamicHeight,
-      "& *": { outline: "none !important" },
-      "& *:focus": { outline: "none !important" },
-    }}>
-        <ResponsiveContainer key={`rc-${projectId}-${data.length}-${activeMetrics.join(",")}-${timeRange}`} width="100%" height="100%">
-        <LineChart data={data} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
+    <ChartOutlineWrapper>
+      <ResponsiveContainer
+        key={`rc-${projectId}-${data.length}-${activeMetrics.join(",")}-${timeRange}`}
+        width="100%"
+        height={Math.max(dynamicHeight, 220)}
+        minWidth={0}
+        debounce={1}
+      >
+        <LineChart data={data} margin={{ top: 5, right: 20, left: 10, bottom: 20 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-          <XAxis 
+          <XAxis
             dataKey="index"
             type="number"
-            domain={data.length > 4 
-              ? [0, data.length - 1]  // No padding for 5+ experiments
-              : [-0.5, Math.max(data.length - 0.5, 1.5)]  // Padding for ≤4 experiments
+            domain={
+              data.length > 4 ? [0, data.length - 1] : [-0.5, Math.max(data.length - 0.5, 1.5)]
             }
             ticks={data.map((_, i) => i)}
             tickFormatter={formatXAxisTick}
-            tick={{ fontSize: 10, fill: "#6B7280" }}
+            tick={{ fontSize: 10, fill: "#6B7280", dy: 10 }}
             axisLine={{ stroke: "#E5E7EB" }}
             interval={0}
-            angle={-20}
+            angle={-25}
             textAnchor="end"
-            height={40}
+            height={65}
+            tickMargin={10}
             allowDataOverflow={false}
           />
-          <YAxis 
-            domain={[0, 1]} 
+          <YAxis
+            domain={[0, 1]}
             tick={{ fontSize: 10, fill: "#6B7280" }}
             axisLine={{ stroke: "#E5E7EB" }}
             tickFormatter={(value) => `${(value * 100).toFixed(0)}%`}
             width={40}
           />
           <Tooltip content={<CustomTooltip />} />
-          <Legend 
+          <Legend
             wrapperStyle={{ paddingTop: 12, fontSize: 11 }}
             formatter={(value: string) => {
               const metricDef = metricDefinitions[value as keyof typeof metricDefinitions];
@@ -446,8 +387,6 @@ export default function PerformanceChart({ projectId }: PerformanceChartProps) {
           })}
         </LineChart>
       </ResponsiveContainer>
-      </Box>
-    </Box>
+    </ChartOutlineWrapper>
   );
 }
-

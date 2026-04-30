@@ -1,5 +1,5 @@
 import { streamText, tool, stepCountIs } from "ai";
-import type { ToolSet } from "ai";
+import type { ModelMessage, ToolSet } from "ai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createOpenAI } from "@ai-sdk/openai";
 import { z } from "zod";
@@ -16,9 +16,25 @@ interface AiSdkAdvisorParams {
   apiKey: string;
   baseURL: string;
   model: string;
+  /**
+   * Single-turn prompt. Used by the legacy `/advisor` and `/advisor/stream`
+   * endpoints, which do not pass conversation history. Ignored when
+   * `messages` is provided.
+   */
   userPrompt: string;
+  /**
+   * Full multi-turn history. Used by `/advisor/chat` (streamAdvisorV2) so the
+   * LLM sees prior user + assistant turns. When set, this takes precedence
+   * over `userPrompt`.
+   */
+  messages?: ModelMessage[];
   tenant: number;
-  availableTools: Record<string, (params: Record<string, unknown>, tenant: number) => Promise<unknown>>;
+  /** Requesting user id — required by write tools so actions can be attributed. */
+  userId?: number;
+  availableTools: Record<
+    string,
+    (params: Record<string, unknown>, tenant: number, userId?: number) => Promise<unknown>
+  >;
   toolsDefinition: Array<{
     type: string;
     function: {
@@ -34,7 +50,9 @@ interface AiSdkAdvisorParams {
 /**
  * Create the appropriate AI SDK model instance based on provider.
  */
-function createModel(params: Pick<AiSdkAdvisorParams, "provider" | "apiKey" | "baseURL" | "model" | "headers">) {
+function createModel(
+  params: Pick<AiSdkAdvisorParams, "provider" | "apiKey" | "baseURL" | "model" | "headers">,
+) {
   if (params.provider === "Anthropic") {
     const anthropic = createAnthropic({
       apiKey: params.apiKey,
@@ -59,29 +77,60 @@ function createModel(params: Pick<AiSdkAdvisorParams, "provider" | "apiKey" | "b
  * The execute function is a pass-through: the chart spec IS the result.
  */
 const chartInputSchema = z.object({
-  type: z.enum(["pie", "bar", "line", "table", "donut"]).describe("Chart type: pie for distributions, bar for comparisons, line for trends, table for listings/metrics, donut for proportions"),
+  type: z
+    .enum(["pie", "bar", "line", "table", "donut"])
+    .describe(
+      "Chart type: pie for distributions, bar for comparisons, line for trends, table for listings/metrics, donut for proportions",
+    ),
   title: z.string().describe("Chart title"),
-  data: z.array(z.object({
-    label: z.string(),
-    value: z.number(),
-    color: z.string().optional(),
-  })).optional().describe("Data points for pie, bar, donut, or simple table charts"),
+  data: z
+    .array(
+      z.object({
+        label: z.string(),
+        value: z.number(),
+        color: z.string().optional(),
+      }),
+    )
+    .optional()
+    .describe("Data points for pie, bar, donut, or simple table charts"),
   columns: z.array(z.string()).optional().describe("Column headers for multi-column table"),
-  rows: z.array(z.array(z.union([z.string(), z.number()]))).optional().describe("Row data for multi-column table"),
-  series: z.array(z.object({
-    label: z.string(),
-    data: z.array(z.number()),
-  })).optional().describe("Data series for line charts"),
+  rows: z
+    .array(z.array(z.union([z.string(), z.number()])))
+    .optional()
+    .describe("Row data for multi-column table"),
+  series: z
+    .array(
+      z.object({
+        label: z.string(),
+        data: z.array(z.number()),
+      }),
+    )
+    .optional()
+    .describe("Data series for line charts"),
   xAxisLabels: z.array(z.string()).optional().describe("X-axis labels for line charts"),
 });
 
 type ChartInput = z.infer<typeof chartInputSchema>;
 
 const generateChartTool = tool({
-  description: "Generate a chart visualization after data analysis. Call this tool to create a visual chart from your analysis results. Pick the best chart type for the data.",
+  description:
+    "Generate a chart visualization after data analysis. Call this tool to create a visual chart from your analysis results. Pick the best chart type for the data.",
   inputSchema: chartInputSchema,
   execute: async (input: ChartInput) => input, // pass-through — chart spec IS the result
 });
+
+/**
+ * Pick the `messages` array for streamText. Prefers full multi-turn history
+ * when the caller supplies it; otherwise falls back to a single-turn
+ * `[{role: "user", content: userPrompt}]` for backward compatibility with
+ * the legacy `/advisor` and `/advisor/stream` endpoints.
+ */
+function selectMessages(params: AiSdkAdvisorParams): ModelMessage[] {
+  if (params.messages && params.messages.length > 0) {
+    return params.messages;
+  }
+  return [{ role: "user", content: params.userPrompt }];
+}
 
 /**
  * Build the complete tools record: bridged legacy tools + native generate_chart.
@@ -89,9 +138,10 @@ const generateChartTool = tool({
 function buildTools(
   toolsDefinition: AiSdkAdvisorParams["toolsDefinition"],
   availableTools: AiSdkAdvisorParams["availableTools"],
-  tenant: number
+  tenant: number,
+  userId?: number,
 ): ToolSet {
-  const bridged = bridgeTools(toolsDefinition, availableTools, tenant);
+  const bridged = bridgeTools(toolsDefinition, availableTools, tenant, userId);
   return {
     ...bridged,
     generate_chart: generateChartTool,
@@ -104,18 +154,23 @@ function buildTools(
  * with the manual SSE controller path.
  */
 export async function* streamAdvisorAiSdk(
-  params: AiSdkAdvisorParams
+  params: AiSdkAdvisorParams,
 ): AsyncGenerator<StreamChunk, void> {
   const agentStartTime = Date.now();
   logger.debug(`[AI-SDK] streamAdvisor started for ${params.provider} with model ${params.model}`);
 
   const model = createModel(params);
-  const tools = buildTools(params.toolsDefinition, params.availableTools, params.tenant);
+  const tools = buildTools(
+    params.toolsDefinition,
+    params.availableTools,
+    params.tenant,
+    params.userId,
+  );
 
   const result = streamText({
     model,
     system: getAdvisorPrompt(),
-    messages: [{ role: "user", content: params.userPrompt }],
+    messages: selectMessages(params),
     tools,
     stopWhen: stepCountIs(5),
     maxOutputTokens: 4096,
@@ -155,7 +210,7 @@ export async function* streamAdvisorAiSdk(
 
   const agentEndTime = Date.now();
   logger.debug(
-    `[AI-SDK] streamAdvisor completed in ${agentEndTime - agentStartTime}ms (${((agentEndTime - agentStartTime) / 1000).toFixed(2)}s), ${chunkCount} text chunks`
+    `[AI-SDK] streamAdvisor completed in ${agentEndTime - agentStartTime}ms (${((agentEndTime - agentStartTime) / 1000).toFixed(2)}s), ${chunkCount} text chunks`,
   );
 }
 
@@ -168,12 +223,17 @@ export async function runAdvisorAiSdk(params: AiSdkAdvisorParams): Promise<strin
   logger.debug(`[AI-SDK] runAdvisor started for ${params.provider} with model ${params.model}`);
 
   const model = createModel(params);
-  const tools = buildTools(params.toolsDefinition, params.availableTools, params.tenant);
+  const tools = buildTools(
+    params.toolsDefinition,
+    params.availableTools,
+    params.tenant,
+    params.userId,
+  );
 
   const result = streamText({
     model,
     system: getAdvisorPrompt(),
-    messages: [{ role: "user", content: params.userPrompt }],
+    messages: selectMessages(params),
     tools,
     stopWhen: stepCountIs(5),
     maxOutputTokens: 4096,
@@ -183,7 +243,7 @@ export async function runAdvisorAiSdk(params: AiSdkAdvisorParams): Promise<strin
 
   const agentEndTime = Date.now();
   logger.debug(
-    `[AI-SDK] runAdvisor completed in ${agentEndTime - agentStartTime}ms (${((agentEndTime - agentStartTime) / 1000).toFixed(2)}s)`
+    `[AI-SDK] runAdvisor completed in ${agentEndTime - agentStartTime}ms (${((agentEndTime - agentStartTime) / 1000).toFixed(2)}s)`,
   );
 
   return text;
@@ -194,15 +254,22 @@ export async function runAdvisorAiSdk(params: AiSdkAdvisorParams): Promise<strin
  * Used by the controller when serving the native AI SDK streaming protocol.
  */
 export function getStreamTextResult(params: AiSdkAdvisorParams) {
-  logger.debug(`[AI-SDK] getStreamTextResult started for ${params.provider} with model ${params.model}`);
+  logger.debug(
+    `[AI-SDK] getStreamTextResult started for ${params.provider} with model ${params.model}`,
+  );
 
   const model = createModel(params);
-  const tools = buildTools(params.toolsDefinition, params.availableTools, params.tenant);
+  const tools = buildTools(
+    params.toolsDefinition,
+    params.availableTools,
+    params.tenant,
+    params.userId,
+  );
 
   return streamText({
     model,
     system: getAdvisorPrompt(),
-    messages: [{ role: "user", content: params.userPrompt }],
+    messages: selectMessages(params),
     tools,
     stopWhen: stepCountIs(5),
     maxOutputTokens: 4096,

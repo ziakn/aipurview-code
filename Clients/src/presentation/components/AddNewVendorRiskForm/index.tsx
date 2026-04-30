@@ -4,9 +4,11 @@ import { useSearchParams } from "react-router-dom";
 
 // MUI imports
 import {
+  Autocomplete,
   Button,
   SelectChangeEvent,
   Stack,
+  TextField,
   useTheme,
   Typography,
   CircularProgress,
@@ -24,9 +26,13 @@ import Select from "../Inputs/Select";
 // Internal imports - application layer
 import selectValidation from "../../../application/validations/selectValidation";
 import { checkStringValidation } from "../../../application/validations/stringValidation";
-import { createVendorRisk, updateVendorRisk } from "../../../application/repository/vendorRisk.repository";
+import {
+  createVendorRisk,
+  updateVendorRisk,
+} from "../../../application/repository/vendorRisk.repository";
 import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.context";
 import useUsers from "../../../application/hooks/useUsers";
+import useFrameworks from "../../../application/hooks/useFrameworks";
 import { handleAlert } from "../../../application/tools/alertUtils";
 
 // Internal imports - types
@@ -34,6 +40,7 @@ import { AlertProps } from "../../types/alert.types";
 import { RiskSectionProps } from "../../../domain/interfaces/i.riskForm";
 import { FormValues } from "../../../domain/interfaces/i.form";
 import { FormErrors } from "../../types/form.props";
+import { Framework } from "../../../domain/types/Framework";
 
 // Types
 interface Vendor {
@@ -53,6 +60,7 @@ interface VendorRiskFormData {
   owner: number;
   risk_level: string;
   review_date: string;
+  frameworks?: number[];
 }
 
 interface ApiResponse {
@@ -111,37 +119,7 @@ const formatErrorMessage = (operation: string, error: unknown): string => {
   return `${errorMessage} occurred while ${operation}.`;
 };
 
-/**
- * AddNewVendorRiskForm component provides a form interface for creating and editing vendor risks.
- * 
- * Features:
- * - Form validation with real-time feedback
- * - Support for both create and edit modes
- * - Responsive design with accessible controls
- * - Loading states and error handling
- * 
- * @component
- * @param {RiskSectionProps} props - Component props
- * @param {() => void} props.closePopup - Callback to close the form modal
- * @param {() => void} props.onSuccess - Callback executed after successful form submission
- * @param {string} props.popupStatus - Form mode: "new" for creation, "edit" for modification
- * 
- * @returns {JSX.Element} The rendered form component
- * 
- * @example
- * ```tsx
- * <AddNewVendorRiskForm 
- *   closePopup={handleClose}
- *   onSuccess={handleSuccess}
- *   popupStatus="new"
- * />
- * ```
- */
-const AddNewVendorRiskForm: FC<RiskSectionProps> = ({
-  closePopup,
-  onSuccess,
-  popupStatus,
-}) => {
+const AddNewVendorRiskForm: FC<RiskSectionProps> = ({ closePopup, onSuccess, popupStatus }) => {
   const theme = useTheme();
   const { inputValues, dashboardValues } = useContext(VerifyWiseContext);
 
@@ -149,20 +127,26 @@ const AddNewVendorRiskForm: FC<RiskSectionProps> = ({
   const projectId = searchParams.get("projectId");
 
   const [values, setValues] = useState<FormValues>(INITIAL_FORM_STATE);
+  const [selectedFrameworks, setSelectedFrameworks] = useState<number[]>([]);
   const [errors, setErrors] = useState<FormErrors>({});
   const [alert, setAlert] = useState<AlertProps | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { users } = useUsers();
+  const { allFrameworks: frameworks, loading: frameworksLoading } = useFrameworks({
+    listOfFrameworks: [],
+  });
 
   // Memoized options for better performance
   const vendorOptions = useMemo(
     () => createVendorOptions(dashboardValues.vendors as Vendor[]),
-    [dashboardValues.vendors]
+    [dashboardValues.vendors],
   );
 
-  const userOptions = useMemo(
-    () => createUserOptions(users as User[]),
-    [users]
+  const userOptions = useMemo(() => createUserOptions(users as User[]), [users]);
+
+  const organizationalFrameworks = useMemo(
+    () => (frameworks || []).filter((fw: Framework) => fw.is_organizational),
+    [frameworks],
   );
 
   // Memoized event handlers for performance
@@ -182,32 +166,38 @@ const AddNewVendorRiskForm: FC<RiskSectionProps> = ({
   const handleOnSelectChange = useCallback(
     (prop: keyof FormValues) => (event: SelectChangeEvent<string | number>) => {
       const value = event.target.value;
-      setValues((prevValues) => ({ 
-        ...prevValues, 
-        [prop]: value 
+      setValues((prevValues) => ({
+        ...prevValues,
+        [prop]: value,
       }));
-      setErrors((prevErrors: FormErrors) => ({ 
-        ...prevErrors, 
-        [prop]: "" 
+      setErrors((prevErrors: FormErrors) => ({
+        ...prevErrors,
+        [prop]: "",
       }));
     },
-    []
+    [],
   );
 
   const handleOnTextFieldChange = useCallback(
-    (prop: keyof FormValues) =>
-    (event: React.ChangeEvent<HTMLInputElement>) => {
+    (prop: keyof FormValues) => (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value;
-      setValues((prevValues) => ({ 
-        ...prevValues, 
-        [prop]: value 
+      setValues((prevValues) => ({
+        ...prevValues,
+        [prop]: value,
       }));
-      setErrors((prevErrors: FormErrors) => ({ 
-        ...prevErrors, 
-        [prop]: "" 
+      setErrors((prevErrors: FormErrors) => ({
+        ...prevErrors,
+        [prop]: "",
       }));
     },
-    []
+    [],
+  );
+
+  const handleFrameworkChange = useCallback(
+    (_event: React.SyntheticEvent, newValue: Framework[]) => {
+      setSelectedFrameworks(newValue.map((fw) => Number(fw.id)));
+    },
+    [],
   );
 
   const validateForm = useCallback((): boolean => {
@@ -215,10 +205,10 @@ const AddNewVendorRiskForm: FC<RiskSectionProps> = ({
 
     // Risk name validation
     const riskName = checkStringValidation(
-      "Risk name", 
-      values.riskName, 
-      VALIDATION_LIMITS.RISK_NAME.MIN, 
-      VALIDATION_LIMITS.RISK_NAME.MAX
+      "Risk name",
+      values.riskName,
+      VALIDATION_LIMITS.RISK_NAME.MIN,
+      VALIDATION_LIMITS.RISK_NAME.MAX,
     );
     if (!riskName.accepted) {
       newErrors.riskName = riskName.message;
@@ -229,7 +219,7 @@ const AddNewVendorRiskForm: FC<RiskSectionProps> = ({
       "Risk description",
       values.riskDescription,
       VALIDATION_LIMITS.DESCRIPTION.MIN,
-      VALIDATION_LIMITS.DESCRIPTION.MAX
+      VALIDATION_LIMITS.DESCRIPTION.MAX,
     );
     if (!riskDescription.accepted) {
       newErrors.riskDescription = riskDescription.message;
@@ -239,7 +229,7 @@ const AddNewVendorRiskForm: FC<RiskSectionProps> = ({
     const reviewDate = checkStringValidation(
       "Review date",
       values.reviewDate,
-      VALIDATION_LIMITS.REVIEW_DATE.MIN
+      VALIDATION_LIMITS.REVIEW_DATE.MIN,
     );
     if (!reviewDate.accepted) {
       newErrors.reviewDate = reviewDate.message;
@@ -261,72 +251,87 @@ const AddNewVendorRiskForm: FC<RiskSectionProps> = ({
     return Object.keys(newErrors).length === 0;
   }, [values]);
 
-  const handleSubmit = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
+  const handleSubmit = useCallback(
+    async (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
 
-    setIsSubmitting(true);
-
-    try {
-      const formData: VendorRiskFormData = {
-        project_id: projectId,
-        vendor_name: values.vendorName,
-        risk_name: values.riskName,
-        owner: values.actionOwner,
-        risk_level: "High Risk", // TODO: Make this dynamic
-        review_date: values.reviewDate,
-      };
-
-      let response: ApiResponse;
-      
-      if (popupStatus === "edit") {
-        // Update existing risk
-        response = await updateVendorRisk({
-          id: Number(inputValues.id),
-          body: formData,
-        });
-        
-        if (response.status === HTTP_STATUS.UPDATED) {
-          onSuccess?.();
-          closePopup();
-          setValues(INITIAL_FORM_STATE); // Reset form
-        } else {
-          handleAlert({
-            variant: "error",
-            body: "Failed to update the vendor risk. Please try again.",
-            setAlert,
-          });
-        }
-      } else {
-        // Create new risk
-        response = await createVendorRisk({ body: formData });
-        
-        if (response.status === HTTP_STATUS.CREATED) {
-          onSuccess?.();
-          closePopup();
-          setValues(INITIAL_FORM_STATE); // Reset form
-        } else {
-          handleAlert({
-            variant: "error",
-            body: "Failed to create the vendor risk. Please try again.",
-            setAlert,
-          });
-        }
+      if (!validateForm()) {
+        return;
       }
-    } catch (error) {
-      const operation = popupStatus === "edit" ? "updating" : "creating";
-      handleAlert({
-        variant: "error",
-        body: formatErrorMessage(`${operation} the vendor risk`, error),
-        setAlert,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [validateForm, popupStatus, projectId, values, inputValues.id, onSuccess, closePopup]);
+
+      setIsSubmitting(true);
+
+      try {
+        const formData: VendorRiskFormData = {
+          project_id: projectId,
+          vendor_name: values.vendorName,
+          risk_name: values.riskName,
+          owner: values.actionOwner,
+          risk_level: "High Risk", // TODO: Make this dynamic
+          review_date: values.reviewDate,
+          frameworks: selectedFrameworks,
+        };
+
+        let response: ApiResponse;
+
+        if (popupStatus === "edit") {
+          // Update existing risk
+          response = await updateVendorRisk({
+            id: Number(inputValues.id),
+            body: formData,
+          });
+
+          if (response.status === HTTP_STATUS.UPDATED) {
+            onSuccess?.();
+            closePopup();
+            setValues(INITIAL_FORM_STATE);
+            setSelectedFrameworks([]);
+          } else {
+            handleAlert({
+              variant: "error",
+              body: "Failed to update the vendor risk. Please try again.",
+              setAlert,
+            });
+          }
+        } else {
+          // Create new risk
+          response = await createVendorRisk({ body: formData });
+
+          if (response.status === HTTP_STATUS.CREATED) {
+            onSuccess?.();
+            closePopup();
+            setValues(INITIAL_FORM_STATE);
+            setSelectedFrameworks([]);
+          } else {
+            handleAlert({
+              variant: "error",
+              body: "Failed to create the vendor risk. Please try again.",
+              setAlert,
+            });
+          }
+        }
+      } catch (error) {
+        const operation = popupStatus === "edit" ? "updating" : "creating";
+        handleAlert({
+          variant: "error",
+          body: formatErrorMessage(`${operation} the vendor risk`, error),
+          setAlert,
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [
+      validateForm,
+      popupStatus,
+      projectId,
+      values,
+      selectedFrameworks,
+      inputValues.id,
+      onSuccess,
+      closePopup,
+    ],
+  );
 
   // Memoized styles for performance
   const fieldStyle = useMemo(
@@ -336,7 +341,7 @@ const AddNewVendorRiskForm: FC<RiskSectionProps> = ({
         padding: "0 14px",
       },
     }),
-    [theme.palette.background.main]
+    [theme.palette.background.main],
   );
 
   const gridStyle = useMemo(
@@ -347,7 +352,7 @@ const AddNewVendorRiskForm: FC<RiskSectionProps> = ({
       rowGap: FORM_CONFIG.GRID_ROW_GAP,
       mt: FORM_CONFIG.MARGIN_TOP,
     }),
-    []
+    [],
   );
 
   const submitButtonStyle = useMemo(
@@ -361,7 +366,7 @@ const AddNewVendorRiskForm: FC<RiskSectionProps> = ({
       mr: 0,
       mt: FORM_CONFIG.SUBMIT_MARGIN_TOP,
       minWidth: 100,
-      "&:hover": { 
+      "&:hover": {
         boxShadow: "none",
         backgroundColor: theme.palette.primary.dark,
       },
@@ -369,7 +374,7 @@ const AddNewVendorRiskForm: FC<RiskSectionProps> = ({
         backgroundColor: theme.palette.action.disabledBackground,
       },
     }),
-    [theme]
+    [theme],
   );
 
   // Initialize form values for edit mode
@@ -378,17 +383,29 @@ const AddNewVendorRiskForm: FC<RiskSectionProps> = ({
       const currentRiskData: FormValues = {
         ...INITIAL_FORM_STATE,
         riskName: inputValues.risk_name || "",
-        reviewDate: inputValues.review_date && (typeof inputValues.review_date === 'string' || inputValues.review_date instanceof Date)
-          ? dayjs(inputValues.review_date).toISOString()
-          : "",
+        reviewDate:
+          inputValues.review_date &&
+          (typeof inputValues.review_date === "string" || inputValues.review_date instanceof Date)
+            ? dayjs(inputValues.review_date).toISOString()
+            : "",
         vendorName: parseInt(String(inputValues.vendor_name)) || 0,
         actionOwner: parseInt(String(inputValues.owner)) || 0,
         riskDescription: inputValues.risk_description || "",
       };
       setValues(currentRiskData);
+
+      // Pre-populate frameworks in edit mode
+      if (Array.isArray(inputValues.frameworks)) {
+        setSelectedFrameworks(inputValues.frameworks.map(Number));
+      } else if (Array.isArray(inputValues.framework_ids)) {
+        setSelectedFrameworks(inputValues.framework_ids.map(Number));
+      } else {
+        setSelectedFrameworks([]);
+      }
     } else if (popupStatus === "new") {
       // Reset form for new entries
       setValues(INITIAL_FORM_STATE);
+      setSelectedFrameworks([]);
       setErrors({});
     }
   }, [popupStatus, inputValues]);
@@ -414,11 +431,13 @@ const AddNewVendorRiskForm: FC<RiskSectionProps> = ({
   return (
     <Stack role="main" aria-label="Vendor risk form">
       {alert && (
-        <Suspense fallback={
-          <Box display="flex" justifyContent="center" p={2}>
-            <CircularProgress size={20} />
-          </Box>
-        }>
+        <Suspense
+          fallback={
+            <Box display="flex" justifyContent="center" p={2}>
+              <CircularProgress size={20} />
+            </Box>
+          }
+        >
           <Alert
             variant={alert.variant}
             title={alert.title}
@@ -428,11 +447,11 @@ const AddNewVendorRiskForm: FC<RiskSectionProps> = ({
           />
         </Suspense>
       )}
-      <Stack 
-        component="form" 
+      <Stack
+        component="form"
         onSubmit={handleSubmit}
         noValidate
-        aria-label={`${popupStatus === 'new' ? 'Create' : 'Edit'} vendor risk`}
+        aria-label={`${popupStatus === "new" ? "Create" : "Edit"} vendor risk`}
       >
         <Stack sx={gridStyle}>
           <Select
@@ -486,7 +505,7 @@ const AddNewVendorRiskForm: FC<RiskSectionProps> = ({
             sx={{
               width: { xs: "100%", md: FORM_CONFIG.DATE_PICKER_WIDTH },
               "& input": {
-                width: { xs: "100%", md: FORM_CONFIG.DATE_INPUT_WIDTH }
+                width: { xs: "100%", md: FORM_CONFIG.DATE_INPUT_WIDTH },
               },
             }}
             isRequired
@@ -494,6 +513,73 @@ const AddNewVendorRiskForm: FC<RiskSectionProps> = ({
             aria-label="Select review date"
           />
         </Stack>
+
+        {/* Framework multi-select */}
+        <Stack sx={{ mt: 2 }}>
+          <Typography sx={{ fontSize: theme.typography.fontSize, fontWeight: 500, mb: 1 }}>
+            Applicable frameworks
+          </Typography>
+          <Autocomplete
+            multiple
+            id="applicable-frameworks-input"
+            size="small"
+            value={
+              frameworksLoading || !organizationalFrameworks.length
+                ? []
+                : organizationalFrameworks.filter((fw) =>
+                    selectedFrameworks.includes(Number(fw.id)),
+                  )
+            }
+            options={organizationalFrameworks}
+            getOptionLabel={(fw) => fw.name}
+            renderOption={(props, option) => {
+              const { key, ...optionProps } = props;
+              return (
+                <Box key={key} component="li" {...optionProps}>
+                  <Typography
+                    sx={{
+                      fontSize: theme.typography.fontSize,
+                      color: theme.palette.text.primary,
+                    }}
+                  >
+                    {option.name}
+                  </Typography>
+                </Box>
+              );
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                placeholder={
+                  frameworksLoading
+                    ? "Loading frameworks..."
+                    : selectedFrameworks.length > 0
+                      ? ""
+                      : "Select applicable frameworks"
+                }
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    paddingTop: "4px !important",
+                    paddingBottom: "4px !important",
+                  },
+                  "& ::placeholder": {
+                    fontSize: theme.typography.fontSize,
+                  },
+                }}
+              />
+            )}
+            onChange={handleFrameworkChange}
+            sx={{
+              width: "100%",
+              backgroundColor: theme.palette.background.main,
+              "& .MuiChip-root": {
+                borderRadius: "4px",
+              },
+            }}
+            disabled={frameworksLoading}
+          />
+        </Stack>
+
         <Stack sx={{ marginTop: FORM_CONFIG.DESCRIPTION_MARGIN_TOP }}>
           <Field
             id="risk-description-input"
@@ -509,12 +595,10 @@ const AddNewVendorRiskForm: FC<RiskSectionProps> = ({
         <Button
           type="submit"
           variant="contained"
-          disableRipple={
-            theme.components?.MuiButton?.defaultProps?.disableRipple
-          }
+          disableRipple={theme.components?.MuiButton?.defaultProps?.disableRipple}
           disabled={isSubmitting}
           sx={submitButtonStyle}
-          aria-label={`${popupStatus === 'new' ? 'Save' : 'Update'} vendor risk`}
+          aria-label={`${popupStatus === "new" ? "Save" : "Update"} vendor risk`}
         >
           {isSubmitting ? (
             <Stack direction="row" alignItems="center" spacing={1}>
@@ -524,9 +608,7 @@ const AddNewVendorRiskForm: FC<RiskSectionProps> = ({
               </Typography>
             </Stack>
           ) : (
-            <Typography variant="body2">
-              {popupStatus === "new" ? "Save" : "Update"}
-            </Typography>
+            <Typography variant="body2">{popupStatus === "new" ? "Save" : "Update"}</Typography>
           )}
         </Button>
       </Stack>

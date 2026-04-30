@@ -26,6 +26,7 @@ const RisksView = ({
   title,
   headerContent,
   refreshTrigger,
+  readOnly = false,
 }: IRisksViewProps) => {
   const { users, loading: usersLoading } = useUsers();
   const [refreshKey, setRefreshKey] = useState(0);
@@ -49,23 +50,43 @@ const RisksView = ({
   // Compute risk summary from fetched data
   const risksSummary = useMemo(() => {
     const veryHighRisks = projectRisks.filter((risk) => {
-      const riskLevel = (risk.current_risk_level || risk.risk_level_autocalculated || "").toLowerCase();
+      const riskLevel = (
+        risk.current_risk_level ||
+        risk.risk_level_autocalculated ||
+        ""
+      ).toLowerCase();
       return riskLevel.includes("very high");
     }).length;
     const highRisks = projectRisks.filter((risk) => {
-      const riskLevel = (risk.current_risk_level || risk.risk_level_autocalculated || "").toLowerCase();
+      const riskLevel = (
+        risk.current_risk_level ||
+        risk.risk_level_autocalculated ||
+        ""
+      ).toLowerCase();
       return riskLevel.includes("high") && !riskLevel.includes("very high");
     }).length;
     const mediumRisks = projectRisks.filter((risk) => {
-      const riskLevel = (risk.current_risk_level || risk.risk_level_autocalculated || "").toLowerCase();
+      const riskLevel = (
+        risk.current_risk_level ||
+        risk.risk_level_autocalculated ||
+        ""
+      ).toLowerCase();
       return riskLevel.includes("medium");
     }).length;
     const lowRisks = projectRisks.filter((risk) => {
-      const riskLevel = (risk.current_risk_level || risk.risk_level_autocalculated || "").toLowerCase();
+      const riskLevel = (
+        risk.current_risk_level ||
+        risk.risk_level_autocalculated ||
+        ""
+      ).toLowerCase();
       return riskLevel.includes("low") && !riskLevel.includes("very low");
     }).length;
     const veryLowRisks = projectRisks.filter((risk) => {
-      const riskLevel = (risk.current_risk_level || risk.risk_level_autocalculated || "").toLowerCase();
+      const riskLevel = (
+        risk.current_risk_level ||
+        risk.risk_level_autocalculated ||
+        ""
+      ).toLowerCase();
       return riskLevel.includes("very low") || riskLevel.includes("no risk");
     }).length;
 
@@ -95,7 +116,7 @@ const RisksView = ({
         setShowCustomizableSkeleton(false);
       }
     },
-    [fetchRisks]
+    [fetchRisks],
   );
 
   useEffect(() => {
@@ -143,7 +164,7 @@ const RisksView = ({
         const rowsPerPage = 5;
         const rowCount = projectRisks.slice(
           currentPage * rowsPerPage,
-          currentPage * rowsPerPage + rowsPerPage
+          currentPage * rowsPerPage + rowsPerPage,
         );
 
         if (currentPage !== 0 && rowCount.length === 1) {
@@ -213,14 +234,31 @@ const RisksView = ({
         {isLoading.loading && <CustomizableToast title={isLoading.message} />}
         <Stack className="risks-row" sx={rowStyle}>
           <StatusTileCards
-            items={[
-              { key: "Total", label: "Total", count: risksSummary.total, color: "#4B5563" },
-              { key: "Very high", label: "Very high", count: risksSummary.veryHighRisks, color: "#C63622" },
-              { key: "High", label: "High", count: risksSummary.highRisks, color: "#D68B61" },
-              { key: "Medium", label: "Medium", count: risksSummary.mediumRisks, color: "#D6B971" },
-              { key: "Low", label: "Low", count: risksSummary.lowRisks, color: "#52AB43" },
-              { key: "Very low", label: "Very low", count: risksSummary.veryLowRisks, color: "#B8D39C" },
-            ] satisfies StatusTileItem[]}
+            items={
+              [
+                { key: "Total", label: "Total", count: risksSummary.total, color: "#4B5563" },
+                {
+                  key: "Very high",
+                  label: "Very high",
+                  count: risksSummary.veryHighRisks,
+                  color: "#C63622",
+                },
+                { key: "High", label: "High", count: risksSummary.highRisks, color: "#D68B61" },
+                {
+                  key: "Medium",
+                  label: "Medium",
+                  count: risksSummary.mediumRisks,
+                  color: "#D6B971",
+                },
+                { key: "Low", label: "Low", count: risksSummary.lowRisks, color: "#52AB43" },
+                {
+                  key: "Very low",
+                  label: "Very low",
+                  count: risksSummary.veryLowRisks,
+                  color: "#B8D39C",
+                },
+              ] satisfies StatusTileItem[]
+            }
             entityName="risk"
             size="small"
           />
@@ -250,6 +288,33 @@ const RisksView = ({
             {title}
           </Typography>
 
+          {readOnly && (
+            <Box
+              sx={{
+                p: 1.5,
+                borderRadius: 1,
+                backgroundColor: "action.hover",
+              }}
+            >
+              <Typography variant="body2" color="text.secondary">
+                This is a read-only view. To add or edit risks, go to the{" "}
+                <Typography
+                  component="a"
+                  href="/risk-management"
+                  variant="body2"
+                  sx={{
+                    color: "primary.main",
+                    textDecoration: "none",
+                    "&:hover": { textDecoration: "underline" },
+                  }}
+                >
+                  Risk Management
+                </Typography>{" "}
+                page.
+              </Typography>
+            </Box>
+          )}
+
           {showCustomizableSkeleton ? (
             <CustomizableSkeleton variant="rectangular" width="100%" height={200} />
           ) : (
@@ -257,16 +322,16 @@ const RisksView = ({
               rows={projectRisks}
               setPage={setCurrentPagingation}
               page={currentPage}
-              setSelectedRow={(row: RiskModel) => setSelectedRow([row])}
-              setAnchor={setAnchor}
-              onDeleteRisk={handleDelete}
+              setSelectedRow={readOnly ? () => {} : (row: RiskModel) => setSelectedRow([row])}
+              setAnchor={readOnly ? ((() => {}) as any) : setAnchor}
+              onDeleteRisk={readOnly ? () => {} : handleDelete}
               flashRow={null}
             />
           )}
         </Stack>
 
-        {/* Edit Risk Popup */}
-        {selectedRow.length > 0 && anchor && (
+        {/* Edit Risk Popup - hidden in read-only mode */}
+        {!readOnly && selectedRow.length > 0 && anchor && (
           <Popup
             popupId="edit-risk-popup"
             popupContent={

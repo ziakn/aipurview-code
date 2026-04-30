@@ -1,48 +1,27 @@
-# VerifyWise LLM Evaluation — Reusable Workflow
+# VerifyWise LLM Evaluation — Reusable GitHub Actions Workflow
 #
-# Runs an LLM evaluation on your VerifyWise instance, waits for results,
-# and optionally posts a summary on the PR and/or gates CI on thresholds.
+# Triggers an LLM evaluation on a VerifyWise instance, polls for results,
+# and optionally posts a summary as a PR comment and/or fails CI if
+# thresholds are not met.
 #
-# The evaluation uses two LLMs:
-#   1. The MODEL being evaluated (generates responses to prompts)
-#   2. The JUDGE that scores those responses against metrics
-#
-# You can use different providers for each. For example, evaluate a
-# self-hosted Llama model using GPT-4o as the judge. If the model and
-# judge share the same provider, you only need LLM_API_KEY — the judge
-# will default to using the same key.
-#
-# ─── Quick start ────────────────────────────────────────────────────────
+# Usage (in your repo's workflow):
 #
 #   jobs:
 #     eval:
-#       uses: verifywise-ai/verifywise/.github/workflows/verifywise-eval.yml@main
+#       uses: verifywise/verifywise/.github/workflows/verifywise-eval.yml@main
 #       with:
-#         api_url: https://app.verifywise.ai
-#         project_id: proj_abc123
-#         dataset_id: "42"
-#         metrics: answer_relevancy,bias,toxicity
-#         model_name: gpt-4o-mini
+#         api_url: https://your-verifywise-instance.com
+#         project_id: <uuid>
+#         dataset_id: <uuid>
+#         metrics: "answerRelevancy,faithfulness,hallucination"
+#         model_name: gpt-4o
 #         model_provider: openai
+#         judge_model: gpt-4o
+#         judge_provider: openai
+#         threshold: "0.7"
 #       secrets:
-#         LLM_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 #         VW_API_TOKEN: ${{ secrets.VW_API_TOKEN }}
-#
-# ─── Available metrics ──────────────────────────────────────────────────
-#
-#   Universal:  answer_relevancy, correctness, completeness,
-#               hallucination*, toxicity*, bias*,
-#               instruction_following
-#
-#   RAG:        faithfulness, contextual_relevancy,
-#               context_precision, context_recall
-#
-#   Agent:      tool_correctness, argument_correctness,
-#               task_completion, step_efficiency,
-#               plan_quality, plan_adherence
-#
-#   (* = inverted metric — lower is better)
-# ────────────────────────────────────────────────────────────────────────
+#         LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
 
 name: VerifyWise LLM Evaluation
 
@@ -50,11 +29,11 @@ on:
   workflow_call:
     inputs:
       api_url:
-        description: "VerifyWise instance URL (e.g. https://app.verifywise.ai)"
+        description: "Base URL of the VerifyWise instance (e.g. https://app.verifywise.ai)"
         required: true
         type: string
       project_id:
-        description: "Project ID"
+        description: "VerifyWise project ID"
         required: true
         type: string
       dataset_id:
@@ -62,19 +41,19 @@ on:
         required: true
         type: string
       metrics:
-        description: "Comma-separated metric names"
+        description: "Comma-separated metric names (e.g. answerRelevancy,faithfulness,hallucination)"
         required: true
         type: string
       model_name:
-        description: "Model to evaluate (e.g. gpt-4o-mini)"
+        description: "Model to evaluate (e.g. gpt-4o, claude-3.5-sonnet)"
         required: true
         type: string
       model_provider:
-        description: "Provider: openai, anthropic, google, mistral, xai, self-hosted"
+        description: "Model provider (openai, anthropic, google, mistral, xai, self-hosted)"
         required: true
         type: string
       judge_model:
-        description: "Judge LLM for scoring"
+        description: "Judge LLM model name"
         required: false
         type: string
         default: "gpt-4o"
@@ -84,12 +63,12 @@ on:
         type: string
         default: "openai"
       threshold:
-        description: "Pass/fail threshold (0.0–1.0)"
+        description: "Global pass threshold (0-1). Metrics below this fail CI."
         required: false
         type: string
         default: "0.7"
       timeout_minutes:
-        description: "Max wait time in minutes"
+        description: "Max minutes to wait for evaluation to complete"
         required: false
         type: string
         default: "30"
@@ -99,57 +78,149 @@ on:
         type: string
         default: "15"
       experiment_name:
-        description: "Custom experiment name"
+        description: "Custom experiment name (defaults to commit-based name)"
         required: false
         type: string
         default: ""
       fail_on_threshold:
-        description: "Fail CI when thresholds are not met"
+        description: "Whether to fail the CI check when thresholds are not met"
         required: false
         type: boolean
         default: true
       post_pr_comment:
-        description: "Post results as a PR comment"
+        description: "Whether to post a summary comment on the PR"
         required: false
         type: boolean
         default: true
     secrets:
       VW_API_TOKEN:
-        description: "VerifyWise API token"
+        description: "VerifyWise JWT token or API key for authentication"
         required: true
       LLM_API_KEY:
-        description: "API key for the model being evaluated"
+        description: "API key for the LLM provider being evaluated"
         required: true
-      JUDGE_API_KEY:
-        description: "API key for the judge LLM (defaults to LLM_API_KEY if not set)"
-        required: false
 
 jobs:
   evaluate:
-    name: "VerifyWise LLM Evaluation (${{ inputs.model_name }})"
+    name: Run LLM Evaluation
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
       contents: read
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Download CI eval runner
+        run: |
+          curl -sL "${{ inputs.api_url }}/api/deepeval/ci/runner" -o ci_eval_runner.py 2>/dev/null || true
+          if [ ! -f ci_eval_runner.py ]; then
+            curl -sL "https://raw.githubusercontent.com/verifywise/verifywise/main/EvalServer/scripts/ci_eval_runner.py" -o ci_eval_runner.py
+          fi
+
       - name: Run evaluation
         id: eval
-        uses: verifywise-ai/verifywise-eval-action@v1
+        env:
+          VW_API_URL: ${{ inputs.api_url }}
+          VW_API_TOKEN: ${{ secrets.VW_API_TOKEN }}
+          VW_PROJECT_ID: ${{ inputs.project_id }}
+          VW_DATASET_ID: ${{ inputs.dataset_id }}
+          VW_METRICS: ${{ inputs.metrics }}
+          VW_MODEL_NAME: ${{ inputs.model_name }}
+          VW_MODEL_PROVIDER: ${{ inputs.model_provider }}
+          VW_JUDGE_MODEL: ${{ inputs.judge_model }}
+          VW_JUDGE_PROVIDER: ${{ inputs.judge_provider }}
+          VW_THRESHOLD: ${{ inputs.threshold }}
+          VW_TIMEOUT_MINUTES: ${{ inputs.timeout_minutes }}
+          VW_POLL_INTERVAL: ${{ inputs.poll_interval_seconds }}
+          VW_EXPERIMENT_NAME: ${{ inputs.experiment_name }}
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+        run: |
+          python ci_eval_runner.py \
+            --api-url "$VW_API_URL" \
+            --token "$VW_API_TOKEN" \
+            --project-id "$VW_PROJECT_ID" \
+            --dataset-id "$VW_DATASET_ID" \
+            --metrics "$VW_METRICS" \
+            --model-name "$VW_MODEL_NAME" \
+            --model-provider "$VW_MODEL_PROVIDER" \
+            --judge-model "$VW_JUDGE_MODEL" \
+            --judge-provider "$VW_JUDGE_PROVIDER" \
+            --threshold "$VW_THRESHOLD" \
+            --timeout "$VW_TIMEOUT_MINUTES" \
+            --poll-interval "$VW_POLL_INTERVAL" \
+            --output results.json \
+            --markdown-output summary.md \
+            ${VW_EXPERIMENT_NAME:+--name "$VW_EXPERIMENT_NAME"}
+
+      - name: Post PR comment
+        if: inputs.post_pr_comment && github.event_name == 'pull_request'
+        uses: actions/github-script@v9
         with:
-          api_url: ${{ inputs.api_url }}
-          project_id: ${{ inputs.project_id }}
-          dataset_id: ${{ inputs.dataset_id }}
-          metrics: ${{ inputs.metrics }}
-          model_name: ${{ inputs.model_name }}
-          model_provider: ${{ inputs.model_provider }}
-          judge_model: ${{ inputs.judge_model }}
-          judge_provider: ${{ inputs.judge_provider }}
-          threshold: ${{ inputs.threshold }}
-          timeout_minutes: ${{ inputs.timeout_minutes }}
-          poll_interval_seconds: ${{ inputs.poll_interval_seconds }}
-          experiment_name: ${{ inputs.experiment_name }}
-          fail_on_threshold: ${{ inputs.fail_on_threshold }}
-          post_pr_comment: ${{ inputs.post_pr_comment }}
-          vw_api_token: ${{ secrets.VW_API_TOKEN }}
-          llm_api_key: ${{ secrets.LLM_API_KEY }}
-          judge_api_key: ${{ secrets.JUDGE_API_KEY }}
+          script: |
+            const fs = require('fs');
+            const summaryPath = 'summary.md';
+            if (!fs.existsSync(summaryPath)) {
+              console.log('No summary.md found, skipping PR comment');
+              return;
+            }
+            const body = fs.readFileSync(summaryPath, 'utf8');
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const marker = '<!-- verifywise-eval-results -->';
+            const existing = comments.find(c => c.body.includes(marker));
+            const fullBody = `${marker}\n${body}`;
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body: fullBody,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: fullBody,
+              });
+            }
+
+      - name: Check thresholds
+        if: inputs.fail_on_threshold
+        run: |
+          if [ -f results.json ]; then
+            python -c "
+          import json, sys
+          with open('results.json') as f:
+              data = json.load(f)
+          if data.get('passed') == False:
+              failed = [m for m in data.get('metrics', []) if not m.get('passed')]
+              print('::error::LLM evaluation failed. Metrics below threshold:')
+              for m in failed:
+                  print(f'  - {m[\"name\"]}: {m[\"score\"]*100:.1f}% (threshold: {m[\"threshold\"]*100:.0f}%)')
+              sys.exit(1)
+          print('All metrics passed!')
+          "
+          fi
+
+      - name: Upload results artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: verifywise-eval-results
+          path: |
+            results.json
+            summary.md
+          retention-days: 30

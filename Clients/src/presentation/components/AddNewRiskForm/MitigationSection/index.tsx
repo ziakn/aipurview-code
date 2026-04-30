@@ -1,29 +1,23 @@
-import {
+import React, {
   FC,
   useState,
   useCallback,
   useMemo,
+  useEffect,
   lazy,
   Suspense,
   Dispatch,
   SetStateAction,
 } from "react";
-import {
-  Divider,
-  SelectChangeEvent,
-  Stack,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Divider, SelectChangeEvent, Stack, Typography, useTheme } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
-import { MitigationFormValues, MitigationFormErrors } from "../interface";
+import { MitigationFormValues } from "../interface";
+import { useFormValidation } from "../../../../application/hooks/useFormValidation";
+import { checkStringValidation } from "../../../../application/validations/stringValidation";
+import selectValidation from "../../../../application/validations/selectValidation";
 import styles from "../styles.module.css";
 import useUsers from "../../../../application/hooks/useUsers";
-import {
-  mitigationStatusItems,
-  riskLevelItems,
-  approvalStatusItems,
-} from "../projectRiskValue";
+import { mitigationStatusItems, riskLevelItems, approvalStatusItems } from "../projectRiskValue";
 import { alertState } from "../../../../domain/interfaces/i.alert";
 import allowedRoles from "../../../../application/constants/permissions";
 
@@ -35,13 +29,13 @@ const LAYOUT = {
   VERTICAL_GAP: 16,
   COMPACT_CONTENT_WIDTH: 970, // Account for scrollbar (~17px)
   get TOTAL_CONTENT_WIDTH() {
-    return (this.FIELD_WIDTH * 3) + (this.HORIZONTAL_GAP * 2); // 985px
+    return this.FIELD_WIDTH * 3 + this.HORIZONTAL_GAP * 2; // 985px
   },
   get TWO_COLUMN_WIDTH() {
-    return (this.FIELD_WIDTH * 2) + this.HORIZONTAL_GAP; // 654px
+    return this.FIELD_WIDTH * 2 + this.HORIZONTAL_GAP; // 654px
   },
   get COMPACT_TWO_COLUMN_WIDTH() {
-    return (this.COMPACT_FIELD_WIDTH * 2) + this.HORIZONTAL_GAP; // 644px
+    return this.COMPACT_FIELD_WIDTH * 2 + this.HORIZONTAL_GAP; // 644px
   },
 } as const;
 
@@ -60,7 +54,7 @@ const Alert = lazy(() => import("../../Alert"));
 interface MitigationSectionProps {
   mitigationValues: MitigationFormValues;
   setMitigationValues: Dispatch<SetStateAction<MitigationFormValues>>;
-  mitigationErrors?: MitigationFormErrors;
+  validateRef?: React.MutableRefObject<((values: MitigationFormValues) => boolean) | null>;
   userRoleName: string;
   disableInternalScroll?: boolean;
   compactMode?: boolean;
@@ -82,14 +76,13 @@ interface MitigationSectionProps {
 const MitigationSection: FC<MitigationSectionProps> = ({
   mitigationValues,
   setMitigationValues,
-  mitigationErrors = {},
+  validateRef,
   userRoleName,
   disableInternalScroll = false,
   compactMode = false,
 }) => {
   const theme = useTheme();
-  const isEditingDisabled =
-    !allowedRoles.projectRisks.edit.includes(userRoleName);
+  const isEditingDisabled = !allowedRoles.projectRisks.edit.includes(userRoleName);
 
   const [alert, setAlert] = useState<alertState | null>(null);
 
@@ -97,8 +90,12 @@ const MitigationSection: FC<MitigationSectionProps> = ({
 
   // Dynamic layout based on compactMode - squeeze into 990px when sidebar is open
   const fieldWidth = compactMode ? `${LAYOUT.COMPACT_FIELD_WIDTH}px` : `${FORM_FIELD_WIDTH}px`;
-  const contentWidth = compactMode ? `${LAYOUT.COMPACT_CONTENT_WIDTH}px` : `${LAYOUT.TOTAL_CONTENT_WIDTH}px`;
-  const twoColumnWidth = compactMode ? `${LAYOUT.COMPACT_TWO_COLUMN_WIDTH}px` : `${LAYOUT.TWO_COLUMN_WIDTH}px`;
+  const contentWidth = compactMode
+    ? `${LAYOUT.COMPACT_CONTENT_WIDTH}px`
+    : `${LAYOUT.TOTAL_CONTENT_WIDTH}px`;
+  const twoColumnWidth = compactMode
+    ? `${LAYOUT.COMPACT_TWO_COLUMN_WIDTH}px`
+    : `${LAYOUT.TWO_COLUMN_WIDTH}px`;
 
   const formRowStyles = {
     display: "flex",
@@ -109,6 +106,61 @@ const MitigationSection: FC<MitigationSectionProps> = ({
     width: contentWidth,
   };
 
+  const validators = useMemo(
+    () => ({
+      mitigationStatus: (v: unknown) => {
+        const r = selectValidation("Mitigation status", v as number);
+        return r.accepted ? "" : r.message;
+      },
+      currentRiskLevel: (v: unknown) => {
+        const r = selectValidation("Current risk level", v as number);
+        return r.accepted ? "" : r.message;
+      },
+      deadline: (v: unknown) => {
+        const r = checkStringValidation("Deadline", v as string, 1);
+        return r.accepted ? "" : r.message;
+      },
+      mitigationPlan: (v: unknown) => {
+        const r = checkStringValidation("Mitigation plan", v as string, 1, 1024);
+        return r.accepted ? "" : r.message;
+      },
+      implementationStrategy: (v: unknown) => {
+        const r = checkStringValidation("Implementation strategy", v as string, 1, 1024);
+        return r.accepted ? "" : r.message;
+      },
+      approver: (v: unknown) => {
+        const r = selectValidation("Approver", v as number);
+        return r.accepted ? "" : r.message;
+      },
+      approvalStatus: (v: unknown) => {
+        const r = selectValidation("Approval status", v as number);
+        return r.accepted ? "" : r.message;
+      },
+      dateOfAssessment: (v: unknown) => {
+        const r = checkStringValidation("Date of assessment", v as string, 1);
+        return r.accepted ? "" : r.message;
+      },
+      recommendations: (v: unknown) => {
+        const s = v as string;
+        if (!s || s.length === 0) return "";
+        const r = checkStringValidation("Recommendation", s, 1, 1024);
+        return r.accepted ? "" : r.message;
+      },
+    }),
+    [],
+  );
+
+  const { errors, validateAll, clearFieldError } =
+    useFormValidation<MitigationFormValues>(validators);
+
+  useEffect(() => {
+    if (validateRef) {
+      validateRef.current = validateAll;
+    }
+    // No cleanup: TabPanel unmounts inactive tabs, so clearing the ref here
+    // would break parent validation when the user is on a different tab.
+  }, [validateRef, validateAll]);
+
   // Memoized values
   const userOptions = useMemo(
     () =>
@@ -116,7 +168,7 @@ const MitigationSection: FC<MitigationSectionProps> = ({
         _id: user.id,
         name: `${user.name} ${user.surname}`,
       })) || [],
-    [users]
+    [users],
   );
 
   const formFieldStyles = useMemo(
@@ -124,52 +176,55 @@ const MitigationSection: FC<MitigationSectionProps> = ({
       width: fieldWidth,
       backgroundColor: theme.palette.background.main,
     }),
-    [theme.palette.background.main, fieldWidth]
+    [theme.palette.background.main, fieldWidth],
   );
 
   const handleOnSelectChange = useCallback(
-    (prop: keyof MitigationFormValues) =>
-      (event: SelectChangeEvent<string | number>) => {
-        setMitigationValues((prevValues) => ({
-          ...prevValues,
-          [prop]: event.target.value,
-        }));
-      },
-    [setMitigationValues]
+    (prop: keyof MitigationFormValues) => (event: SelectChangeEvent<string | number>) => {
+      setMitigationValues((prevValues) => ({
+        ...prevValues,
+        [prop]: event.target.value,
+      }));
+      clearFieldError(prop);
+    },
+    [setMitigationValues, clearFieldError],
   );
 
   const handleDateChange = useCallback(
     (
       field: keyof Pick<MitigationFormValues, "deadline" | "dateOfAssessment">,
-      newDate: Dayjs | null
+      newDate: Dayjs | null,
     ) => {
       if (newDate?.isValid()) {
         setMitigationValues((prevValues) => ({
           ...prevValues,
           [field]: newDate.toISOString(),
         }));
+        clearFieldError(field);
       } else {
         console.warn(`Invalid date provided for field: ${field}`);
       }
     },
-    [setMitigationValues]
+    [setMitigationValues, clearFieldError],
   );
 
   const handleOnTextFieldChange = useCallback(
-    (prop: keyof MitigationFormValues) =>
-      (event: React.ChangeEvent<HTMLInputElement>) => {
-        setMitigationValues((prevValues) => ({
-          ...prevValues,
-          [prop]: event.target.value,
-        }));
-      },
-    [setMitigationValues]
+    (prop: keyof MitigationFormValues) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setMitigationValues((prevValues) => ({
+        ...prevValues,
+        [prop]: event.target.value,
+      }));
+      clearFieldError(prop);
+    },
+    [setMitigationValues, clearFieldError],
   );
 
   return (
-    <Stack sx={{
-      ...(disableInternalScroll ? {} : { minHeight: MIN_HEIGHT, maxHeight: MAX_HEIGHT })
-    }}>
+    <Stack
+      sx={{
+        ...(disableInternalScroll ? {} : { minHeight: MIN_HEIGHT, maxHeight: MAX_HEIGHT }),
+      }}
+    >
       {alert && (
         <Suspense fallback={<div>Loading...</div>}>
           <Alert
@@ -186,11 +241,13 @@ const MitigationSection: FC<MitigationSectionProps> = ({
           className={disableInternalScroll ? undefined : styles.popupBody}
           sx={{
             width: "100%",
-            ...(disableInternalScroll ? {} : {
-              maxHeight: "fit-content",
-              overflowY: "auto",
-              overflowX: "hidden",
-            }),
+            ...(disableInternalScroll
+              ? {}
+              : {
+                  maxHeight: "fit-content",
+                  overflowY: "auto",
+                  overflowX: "hidden",
+                }),
           }}
         >
           <Stack sx={{ width: contentWidth }}>
@@ -203,15 +260,13 @@ const MitigationSection: FC<MitigationSectionProps> = ({
                   label="Mitigation status"
                   placeholder="Select status"
                   value={
-                    mitigationValues.mitigationStatus === 0
-                      ? ""
-                      : mitigationValues.mitigationStatus
+                    mitigationValues.mitigationStatus === 0 ? "" : mitigationValues.mitigationStatus
                   }
                   onChange={handleOnSelectChange("mitigationStatus")}
                   items={mitigationStatusItems}
                   sx={formFieldStyles}
                   isRequired
-                  error={mitigationErrors?.mitigationStatus}
+                  error={errors.mitigationStatus}
                   disabled={isEditingDisabled}
                 />
                 {/* Current Risk Level */}
@@ -220,29 +275,25 @@ const MitigationSection: FC<MitigationSectionProps> = ({
                   label="Current risk level"
                   placeholder="Select risk level"
                   value={
-                    mitigationValues.currentRiskLevel === 0
-                      ? ""
-                      : mitigationValues.currentRiskLevel
+                    mitigationValues.currentRiskLevel === 0 ? "" : mitigationValues.currentRiskLevel
                   }
                   onChange={handleOnSelectChange("currentRiskLevel")}
                   items={riskLevelItems}
                   sx={formFieldStyles}
                   isRequired
-                  error={mitigationErrors?.currentRiskLevel}
+                  error={errors.currentRiskLevel}
                   disabled={isEditingDisabled}
                 />
                 {/* Deadline */}
                 <DatePicker
                   label="Deadline"
                   date={
-                    mitigationValues.deadline
-                      ? dayjs(mitigationValues.deadline)
-                      : dayjs(new Date())
+                    mitigationValues.deadline ? dayjs(mitigationValues.deadline) : dayjs(new Date())
                   }
                   handleDateChange={(e) => handleDateChange("deadline", e)}
                   sx={{ width: fieldWidth }}
                   isRequired
-                  error={mitigationErrors?.deadline}
+                  error={errors.deadline}
                   disabled={isEditingDisabled}
                 />
               </Stack>
@@ -258,7 +309,7 @@ const MitigationSection: FC<MitigationSectionProps> = ({
                   onChange={handleOnTextFieldChange("mitigationPlan")}
                   sx={{ width: fieldWidth }}
                   isRequired
-                  error={mitigationErrors?.mitigationPlan}
+                  error={errors.mitigationPlan}
                   disabled={isEditingDisabled}
                   placeholder="Write mitigation plan"
                 />
@@ -272,7 +323,7 @@ const MitigationSection: FC<MitigationSectionProps> = ({
                   onChange={handleOnTextFieldChange("implementationStrategy")}
                   sx={{ width: twoColumnWidth }}
                   isRequired
-                  error={mitigationErrors?.implementationStrategy}
+                  error={errors.implementationStrategy}
                   disabled={isEditingDisabled}
                   placeholder="Write implementation strategy"
                 />
@@ -280,14 +331,19 @@ const MitigationSection: FC<MitigationSectionProps> = ({
             </Stack>
           </Stack>
           <Divider sx={{ mt: `${LAYOUT.VERTICAL_GAP}px` }} />
-          <Stack sx={{ gap: `${LAYOUT.HORIZONTAL_GAP}px`, mt: `${LAYOUT.VERTICAL_GAP}px`, width: contentWidth }}>
+          <Stack
+            sx={{
+              gap: `${LAYOUT.HORIZONTAL_GAP}px`,
+              mt: `${LAYOUT.VERTICAL_GAP}px`,
+              width: contentWidth,
+            }}
+          >
             <Typography sx={{ fontSize: 16, fontWeight: 600 }}>
               Calculate residual risk level
             </Typography>
             <Typography sx={{ fontSize: theme.typography.fontSize }}>
-              The Risk Level is calculated by multiplying the Likelihood and
-              Severity scores. By assigning these scores, the risk level will be
-              determined based on your inputs.
+              The Risk Level is calculated by multiplying the Likelihood and Severity scores. By
+              assigning these scores, the risk level will be determined based on your inputs.
             </Typography>
           </Stack>
           <Stack sx={{ mt: `${LAYOUT.VERTICAL_GAP}px`, width: contentWidth }}>
@@ -311,30 +367,26 @@ const MitigationSection: FC<MitigationSectionProps> = ({
                 usersLoading || !users?.length
                   ? ""
                   : mitigationValues.approver === 0
-                  ? ""
-                  : mitigationValues.approver
+                    ? ""
+                    : mitigationValues.approver
               }
               onChange={handleOnSelectChange("approver")}
               items={userOptions}
               sx={formFieldStyles}
               isRequired
-              error={mitigationErrors?.approver}
+              error={errors.approver}
               disabled={isEditingDisabled || usersLoading}
             />
             <Select
               id="approval-status-input"
               label="Approval status"
               placeholder="Select status"
-              value={
-                mitigationValues.approvalStatus === 0
-                  ? ""
-                  : mitigationValues.approvalStatus
-              }
+              value={mitigationValues.approvalStatus === 0 ? "" : mitigationValues.approvalStatus}
               onChange={handleOnSelectChange("approvalStatus")}
               items={approvalStatusItems}
               sx={formFieldStyles}
               isRequired
-              error={mitigationErrors?.approvalStatus}
+              error={errors.approvalStatus}
               disabled={isEditingDisabled}
             />
             <DatePicker
@@ -347,7 +399,7 @@ const MitigationSection: FC<MitigationSectionProps> = ({
               handleDateChange={(e) => handleDateChange("dateOfAssessment", e)}
               sx={{ width: fieldWidth }}
               isRequired
-              error={mitigationErrors?.dateOfAssessment}
+              error={errors.dateOfAssessment}
               disabled={isEditingDisabled}
             />
           </Stack>

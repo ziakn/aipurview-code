@@ -1,19 +1,10 @@
-import {
-  Column,
-  DataType,
-  ForeignKey,
-  Model,
-  Table,
-} from "sequelize-typescript";
+import { Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
 // import { SubcontrolEU } from "./subcontrolEU.model";
 import { ControlCategoryStructEUModel } from "./controlCategoryStructEU.model";
 import { UserModel } from "../../models/user/user.model";
 import { SubcontrolEU } from "./subControlEU.model";
 import { ProjectFrameworksModel } from "../../models/projectFrameworks/projectFrameworks.model";
-import {
-  StatusCompliance,
-  STATUSES_COMPLIANCE,
-} from "../../../types/status.type";
+import { StatusCompliance, STATUSES_COMPLIANCE } from "../../../types/status.type";
 
 /*
 
@@ -62,11 +53,7 @@ export class ControlEUModel extends Model<ControlEU> {
   approver?: number;
 
   @Column({
-    type: DataType.ENUM(
-      "Acceptable risk",
-      "Residual risk",
-      "Unacceptable risk"
-    ),
+    type: DataType.ENUM("Acceptable risk", "Residual risk", "Unacceptable risk"),
   })
   risk_review?: "Acceptable risk" | "Residual risk" | "Unacceptable risk";
 

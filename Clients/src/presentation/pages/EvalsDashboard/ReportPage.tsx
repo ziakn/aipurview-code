@@ -1,33 +1,32 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   Box,
   Stack,
   Typography,
   CircularProgress,
   Chip,
+  IconButton,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  IconButton,
+  Tooltip,
   useTheme,
 } from "@mui/material";
-import { FileText, Download, AlertTriangle, Trash2, RotateCcw } from "lucide-react";
-import singleTheme from "../../themes/v1SingleTheme";
+import { FileText, Download, AlertTriangle, Eye, X, ExternalLink, Trash2 } from "lucide-react";
 import { CustomizableButton } from "../../components/button/customizable-button";
 import Alert from "../../components/Alert";
+import { EmptyState } from "../../components/EmptyState";
+import EmptyStateTip from "../../components/EmptyState/EmptyStateTip";
 import ReportConfigModal from "./ReportConfigModal";
-import { generatePDFReport, generateCSVReport } from "./utils/reportGenerator";
-import type { ReportConfig, ReportExperimentData, ReportArenaData } from "./types";
-import {
-  getAllExperiments,
-  getExperiment,
-  getLogs,
-  listArenaComparisons,
-  getArenaComparisonResults,
-} from "../../../application/repository/deepEval.repository";
+import ConfirmationModal from "../../components/Dialogs/ConfirmationModal";
+import type { ReportConfig } from "./types";
+import CustomAxios from "../../../infrastructure/api/customAxios";
+import { getAllExperiments } from "../../../application/repository/deepEval.repository";
+import { palette } from "../../themes/palette";
+import singleTheme from "../../themes/v1SingleTheme";
 
 interface ReportPageProps {
   projectId: string;
@@ -36,16 +35,17 @@ interface ReportPageProps {
   orgName?: string;
 }
 
-interface ReportHistoryEntry {
+interface StoredReport {
   id: string;
   title: string;
   format: string;
+  fileSize: number;
+  experiments: number;
   experimentIds: string[];
-  experimentCount: number;
-  generatedAt: string;
+  projectId?: string;
+  createdBy?: string;
+  createdAt: string;
 }
-
-const REPORT_HISTORY_KEY = "evals_report_history";
 
 export default function ReportPage({
   projectId,
@@ -55,30 +55,29 @@ export default function ReportPage({
 }: ReportPageProps) {
   const theme = useTheme();
   const [configModalOpen, setConfigModalOpen] = useState(false);
-  const [regeneratingId, setRegeneratingId] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [loadingReportId, setLoadingReportId] = useState<string | null>(null);
   const [experiments, setExperiments] = useState<
-    Array<{ id: string; name: string; model: string; status: string }>
+    Array<{ id: string; name: string; model: string; status: string; config?: any }>
   >([]);
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState<{
     variant: "success" | "error" | "warning";
     body: string;
   } | null>(null);
-  const [reportHistory, setReportHistory] = useState<ReportHistoryEntry[]>(() => {
-    try {
-      const stored = localStorage.getItem(REPORT_HISTORY_KEY);
-      if (!stored) return [];
-      const parsed = JSON.parse(stored) as any[];
-      return parsed.map(e => ({
-        ...e,
-        experimentIds: e.experimentIds || [],
-        experimentCount: e.experimentCount ?? e.experiments ?? 0,
-      }));
-    } catch {
-      return [];
-    }
-  });
+  const [reports, setReports] = useState<StoredReport[]>([]);
+
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+
+  const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
+  const [pdfTitle, setPdfTitle] = useState("");
+  const pdfContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    return () => {
+      if (pdfBlobUrl) URL.revokeObjectURL(pdfBlobUrl);
+    };
+  }, [pdfBlobUrl]);
 
   const loadExperiments = useCallback(async () => {
     try {
@@ -89,6 +88,7 @@ export default function ReportPage({
         name: exp.name || exp.config?.name || exp.id,
         model: exp.config?.model?.model_name || exp.config?.model?.name || "Unknown",
         status: exp.status || "unknown",
+        config: exp.config || {},
       }));
       setExperiments(expList);
     } catch (err) {
@@ -98,174 +98,88 @@ export default function ReportPage({
     }
   }, [projectId]);
 
+  const loadReports = useCallback(async () => {
+    try {
+      const res = await CustomAxios.get(
+        `/deepeval/reports?project_id=${encodeURIComponent(projectId)}`,
+      );
+      setReports(res.data || []);
+    } catch (err) {
+      console.error("Failed to load reports:", err);
+    }
+  }, [projectId]);
+
   useEffect(() => {
     loadExperiments();
-  }, [loadExperiments]);
+    loadReports();
+  }, [loadExperiments, loadReports]);
+
+  const fetchReportFile = async (reportId: string): Promise<Blob> => {
+    const response = await CustomAxios.get(`/deepeval/reports/${reportId}/file`, {
+      responseType: "blob",
+      timeout: 30000,
+    });
+    return response.data;
+  };
+
+  const showPdf = (blob: Blob, title: string) => {
+    if (pdfBlobUrl) URL.revokeObjectURL(pdfBlobUrl);
+    const url = URL.createObjectURL(blob);
+    setPdfBlobUrl(url);
+    setPdfTitle(title);
+    setTimeout(() => {
+      pdfContainerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
+  };
+
+  const downloadBlob = (blob: Blob, filename: string) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const handleGenerate = async (config: ReportConfig) => {
+    setConfigModalOpen(false);
     setIsGenerating(true);
     try {
-      const experimentDataList: ReportExperimentData[] = [];
+      const response = await CustomAxios.post(
+        "/deepeval/reports/generate",
+        {
+          title: config.title,
+          format: config.format,
+          experimentIds: config.experimentIds,
+          sections: config.sections,
+          includeDetailedSamples: config.includeDetailedSamples,
+          includeArena: config.includeArena,
+          projectId,
+          orgName: orgName || orgId,
+        },
+        { timeout: 180000 },
+      );
 
-      for (const expId of config.experimentIds) {
-        const expResponse = await getExperiment(expId);
-        const exp = expResponse.experiment || expResponse;
-        const expConfig = exp.config || {};
+      const saved = response.data;
+      await loadReports();
 
-        const logsResponse = await getLogs({ experiment_id: expId, limit: 1000 });
-        const logs: any[] = logsResponse.logs || [];
-
-        // Build metric summaries from logs (same approach as ExperimentDetailContent)
-        const metricsAgg: Record<string, { sum: number; count: number; min: number; max: number; passed: number }> = {};
-        const thresholds = expConfig.metric_thresholds || expConfig.metricThresholds || {};
-
-        for (const log of logs) {
-          const scores = log.metadata?.metric_scores;
-          if (!scores) continue;
-          for (const [rawKey, value] of Object.entries(scores) as [string, any][]) {
-            const key = rawKey.replace(/^G-Eval\s*\((.+)\)$/i, "$1");
-            const score = typeof value === "number" ? value : value?.score;
-            if (typeof score !== "number") continue;
-
-            if (!metricsAgg[key]) {
-              metricsAgg[key] = { sum: 0, count: 0, min: 1, max: 0, passed: 0 };
-            }
-            metricsAgg[key].sum += score;
-            metricsAgg[key].count += 1;
-            metricsAgg[key].min = Math.min(metricsAgg[key].min, score);
-            metricsAgg[key].max = Math.max(metricsAgg[key].max, score);
-
-            const threshold = thresholds[rawKey] ?? thresholds[key] ?? 0.5;
-            const isInverted = ["bias", "toxicity", "hallucination"].some(m => key.toLowerCase().includes(m));
-            if (isInverted ? score <= threshold : score >= threshold) {
-              metricsAgg[key].passed += 1;
-            }
-          }
-        }
-
-        const metricSummaries: Record<string, any> = {};
-        for (const [key, agg] of Object.entries(metricsAgg)) {
-          metricSummaries[key] = {
-            averageScore: agg.count > 0 ? agg.sum / agg.count : 0,
-            passRate: agg.count > 0 ? agg.passed / agg.count : 0,
-            minScore: agg.min,
-            maxScore: agg.max,
-            totalEvaluated: agg.count,
-          };
-        }
-
-        const metricThresholds: Record<string, number> = {};
-        for (const [key, val] of Object.entries(thresholds)) {
-          const cleanKey = key.replace(/^G-Eval\s*\((.+)\)$/i, "$1");
-          metricThresholds[cleanKey] = Number(val) || 0.5;
-        }
-
-        // Build sample-level details from logs
-        const detailedResults = config.includeDetailedSamples
-          ? logs.map((log: any, i: number) => {
-              const scores = log.metadata?.metric_scores || {};
-              const metricScores: Record<string, any> = {};
-              for (const [rawKey, value] of Object.entries(scores) as [string, any][]) {
-                const key = rawKey.replace(/^G-Eval\s*\((.+)\)$/i, "$1");
-                const score = typeof value === "number" ? value : value?.score ?? 0;
-                const threshold = thresholds[rawKey] ?? thresholds[key] ?? 0.5;
-                const isInverted = ["bias", "toxicity", "hallucination"].some(m => key.toLowerCase().includes(m));
-                metricScores[key] = {
-                  score,
-                  passed: isInverted ? score <= threshold : score >= threshold,
-                  threshold,
-                  reason: typeof value === "object" ? value?.reason : undefined,
-                };
-              }
-              return {
-                sampleId: log.id || String(i + 1),
-                protectedAttributes: { category: "", difficulty: "" },
-                input: log.input_text || "",
-                actualOutput: log.output_text || "",
-                expectedOutput: "",
-                responseLength: (log.output_text || "").length,
-                wordCount: (log.output_text || "").split(/\s+/).filter(Boolean).length,
-                metricScores,
-                timestamp: log.timestamp || "",
-              };
-            })
-          : undefined;
-
-        const datasetConfig = expConfig.dataset || {};
-        const datasetLabel = datasetConfig.name || (datasetConfig.useBuiltin ? `Built-in (${datasetConfig.categories?.join(", ") || "all"})` : "Custom");
-
-        experimentDataList.push({
-          id: exp.id || exp._id || expId,
-          name: exp.name || expConfig.name || expId,
-          status: exp.status || "completed",
-          model: expConfig.model?.name || expConfig.model?.model_name || "Unknown",
-          dataset: datasetLabel,
-          judge: expConfig.judgeLlm?.model || "",
-          scorer: expConfig.scorerName || "",
-          useCase: expConfig.useCase || expConfig.use_case || "",
-          totalSamples: logs.length,
-          createdAt: exp.created_at || "",
-          completedAt: exp.completed_at || "",
-          duration: exp.results?.duration,
-          metricSummaries,
-          metricThresholds,
-          detailedResults,
-        });
-      }
-
-      let arenaData: ReportArenaData[] = [];
-      if (config.includeArena) {
-        try {
-          const arenaList = await listArenaComparisons(orgId ? { org_id: orgId } : undefined);
-          const comparisons = arenaList.comparisons || [];
-          for (const comp of comparisons.slice(0, 5) as any[]) {
-            try {
-              const result = await getArenaComparisonResults(comp.id) as any;
-              arenaData.push({
-                id: comp.id,
-                name: comp.name || comp.id,
-                winner: result.winner || result.summary?.winner || "N/A",
-                contestants: (result.contestants || []).map((c: any) => ({
-                  model: c.model || c.name || "Unknown",
-                  wins: c.wins || 0,
-                  losses: c.losses || 0,
-                  ties: c.ties || 0,
-                  avgScore: c.avgScore || c.avg_score || 0,
-                })),
-                criteria: result.criteria || result.metrics || [],
-                rounds: result.rounds || result.total_rounds || 0,
-                createdAt: comp.createdAt || "",
-              });
-            } catch {
-              // skip individual arena failures
-            }
-          }
-        } catch {
-          // arena data is optional
-        }
-      }
+      const blob = await fetchReportFile(saved.id);
+      const reportTitle = saved.title || config.title || `${projectName} - Evaluation Report`;
 
       if (config.format === "pdf") {
-        await generatePDFReport(config, experimentDataList, arenaData, projectName, orgName || orgId);
+        showPdf(blob, reportTitle);
       } else {
-        generateCSVReport(experimentDataList, projectName);
+        downloadBlob(
+          blob,
+          `${reportTitle.replace(/[^a-z0-9]/gi, "_").toLowerCase()}_eval_report.csv`,
+        );
       }
 
-      const entry: ReportHistoryEntry = {
-        id: crypto.randomUUID(),
-        title: config.title,
-        format: config.format.toUpperCase(),
-        experimentIds: config.experimentIds,
-        experimentCount: config.experimentIds.length,
-        generatedAt: new Date().toISOString(),
-      };
-      const updatedHistory = [entry, ...reportHistory].slice(0, 20);
-      setReportHistory(updatedHistory);
-      localStorage.setItem(REPORT_HISTORY_KEY, JSON.stringify(updatedHistory));
-
-      setAlert({ variant: "success", body: `Report generated successfully (${config.format.toUpperCase()})` });
+      setAlert({
+        variant: "success",
+        body: `Report generated successfully (${config.format.toUpperCase()})`,
+      });
       setTimeout(() => setAlert(null), 4000);
-      setConfigModalOpen(false);
     } catch (err) {
       console.error("Report generation failed:", err);
       setAlert({
@@ -278,36 +192,107 @@ export default function ReportPage({
     }
   };
 
-  const completedCount = experiments.filter(e => e.status === "completed").length;
-
-  const handleDeleteReport = (entryId: string) => {
-    const updated = reportHistory.filter(e => e.id !== entryId);
-    setReportHistory(updated);
-    localStorage.setItem(REPORT_HISTORY_KEY, JSON.stringify(updated));
-  };
-
-  const handleRegenerate = async (entry: ReportHistoryEntry) => {
-    if (!entry.experimentIds || entry.experimentIds.length === 0) {
-      setAlert({ variant: "warning", body: "This report entry has no experiment data to re-download. Generate a new report instead." });
-      setTimeout(() => setAlert(null), 5000);
-      return;
-    }
-    setRegeneratingId(entry.id);
+  const handleViewReport = async (report: StoredReport) => {
+    setLoadingReportId(report.id);
     try {
-      const format = entry.format.toLowerCase() as "pdf" | "csv";
-      const defaultSections = (await import("./types")).DEFAULT_REPORT_SECTIONS;
-      await handleGenerate({
-        title: entry.title,
-        format,
-        experimentIds: entry.experimentIds,
-        sections: defaultSections.map(s => ({ ...s })),
-        includeDetailedSamples: false,
-        includeArena: false,
+      const blob = await fetchReportFile(report.id);
+      showPdf(blob, report.title);
+    } catch (err) {
+      console.error("Failed to load report:", err);
+      setAlert({
+        variant: "error",
+        body: `Failed to load report: ${err instanceof Error ? err.message : "Unknown error"}`,
       });
+      setTimeout(() => setAlert(null), 6000);
     } finally {
-      setRegeneratingId(null);
+      setLoadingReportId(null);
     }
   };
+
+  const handleDownloadReport = async (report: StoredReport) => {
+    setLoadingReportId(report.id);
+    try {
+      const blob = await fetchReportFile(report.id);
+      const ext = report.format.toLowerCase() === "csv" ? "csv" : "pdf";
+      downloadBlob(
+        blob,
+        `${report.title.replace(/[^a-z0-9]/gi, "_").toLowerCase()}_eval_report.${ext}`,
+      );
+    } catch (err) {
+      console.error("Failed to download report:", err);
+      setAlert({
+        variant: "error",
+        body: `Failed to download report: ${err instanceof Error ? err.message : "Unknown error"}`,
+      });
+      setTimeout(() => setAlert(null), 6000);
+    } finally {
+      setLoadingReportId(null);
+    }
+  };
+
+  const handleDeleteReport = async (reportId: string) => {
+    setShowDeleteConfirm(reportId);
+  };
+
+  const confirmDeleteReport = async () => {
+    if (!showDeleteConfirm) return;
+    const reportId = showDeleteConfirm;
+    setShowDeleteConfirm(null);
+    try {
+      await CustomAxios.delete(`/deepeval/reports/${reportId}`);
+      setReports((prev) => prev.filter((r) => r.id !== reportId));
+      if (pdfBlobUrl) {
+        closePdfViewer();
+      }
+    } catch (err) {
+      console.error("Failed to delete report:", err);
+      setAlert({
+        variant: "error",
+        body: "Failed to delete report",
+      });
+      setTimeout(() => setAlert(null), 6000);
+    }
+  };
+
+  const handleDownloadCurrent = () => {
+    if (!pdfBlobUrl) return;
+    const a = document.createElement("a");
+    a.href = pdfBlobUrl;
+    a.download = `${pdfTitle.replace(/[^a-z0-9]/gi, "_").toLowerCase()}_eval_report.pdf`;
+    a.click();
+  };
+
+  const handleOpenInNewTab = () => {
+    if (pdfBlobUrl) window.open(pdfBlobUrl, "_blank");
+  };
+
+  const closePdfViewer = () => {
+    if (pdfBlobUrl) URL.revokeObjectURL(pdfBlobUrl);
+    setPdfBlobUrl(null);
+    setPdfTitle("");
+  };
+
+  const formatDate = (iso: string) => {
+    try {
+      return new Date(iso).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch {
+      return iso;
+    }
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
+
+  const completedCount = experiments.filter((e) => e.status === "completed").length;
 
   if (loading) {
     return (
@@ -320,26 +305,39 @@ export default function ReportPage({
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3, width: "100%" }}>
       {alert && (
-        <Alert
-          variant={alert.variant}
-          body={alert.body}
-          isToast
-          onClick={() => setAlert(null)}
-        />
+        <Alert variant={alert.variant} body={alert.body} isToast onClick={() => setAlert(null)} />
       )}
 
       {/* Header */}
       <Stack spacing={1}>
-        <Typography variant="h6" sx={{ fontSize: 15, fontWeight: 600, color: "#111827" }}>
+        <Typography
+          variant="h6"
+          sx={{ fontSize: 15, fontWeight: 600, color: palette.text.primary }}
+        >
           Evaluation Reports
         </Typography>
-        <Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.6, fontSize: 14 }}>
-          Generate comprehensive evaluation reports from your experiment results.
-          Reports follow the EvalCards and Eval Factsheets standards for structured AI evaluation documentation.
+        <Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.8, fontSize: 13 }}>
+          Generate evaluation reports from your experiment results. Reports follow the{" "}
+          <Typography
+            component="a"
+            href="https://arxiv.org/abs/2206.11249"
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{
+              fontSize: 13,
+              color: palette.brand.primary,
+              fontWeight: 600,
+              textDecoration: "none",
+              "&:hover": { textDecoration: "underline" },
+            }}
+          >
+            EvalCards
+          </Typography>{" "}
+          standard for structured AI evaluation documentation.
         </Typography>
       </Stack>
 
-      {/* Action Card */}
+      {/* Action Card / Progress */}
       <Box
         sx={{
           background: "#fff",
@@ -348,218 +346,279 @@ export default function ReportPage({
           p: "24px",
         }}
       >
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Stack direction="row" alignItems="center" gap={2}>
-            <Box
+        {isGenerating ? (
+          <Stack spacing={2} alignItems="center" sx={{ py: 3 }}>
+            <CircularProgress size={32} sx={{ color: palette.brand.primary }} />
+            <Typography sx={{ fontSize: 14, fontWeight: 600, color: palette.text.primary }}>
+              Generating report...
+            </Typography>
+            <Typography
               sx={{
-                width: 42,
-                height: 42,
-                borderRadius: "8px",
-                background: "linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                fontSize: 12,
+                color: palette.text.secondary,
+                textAlign: "center",
+                maxWidth: 400,
               }}
             >
-              <FileText size={20} strokeWidth={1.5} color="#13715B" />
-            </Box>
-            <Box>
-              <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#111827" }}>
-                Generate new report
-              </Typography>
-              <Typography sx={{ fontSize: 12, color: "#6B7280" }}>
-                {completedCount} completed experiment{completedCount !== 1 ? "s" : ""} available
-              </Typography>
-            </Box>
-          </Stack>
-          <CustomizableButton
-            variant="contained"
-            color="primary"
-            onClick={() => setConfigModalOpen(true)}
-            isDisabled={completedCount === 0}
-            icon={<Download size={14} />}
-            text="Generate Report"
-            sx={{
-              px: 3.5,
-              py: 1.2,
-            }}
-          />
-        </Stack>
-
-        {completedCount === 0 && (
-          <Box
-            sx={{
-              mt: 2,
-              p: 2,
-              borderRadius: "6px",
-              backgroundColor: "#FFFBEB",
-              border: "1px solid #FDE68A",
-              display: "flex",
-              alignItems: "center",
-              gap: 1.5,
-            }}
-          >
-            <AlertTriangle size={16} color="#D97706" />
-            <Typography sx={{ fontSize: 12, color: "#92400E" }}>
-              No completed experiments yet. Run at least one experiment to generate a report.
+              Analyzing evaluation results and generating AI-powered summaries. This may take up to
+              a minute.
             </Typography>
-          </Box>
+          </Stack>
+        ) : (
+          <>
+            <Stack direction="row" alignItems="center" justifyContent="space-between">
+              <Stack direction="row" alignItems="center" gap={2}>
+                <Box
+                  sx={{
+                    width: 42,
+                    height: 42,
+                    borderRadius: "8px",
+                    background: "linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <FileText size={20} strokeWidth={1.5} color={palette.brand.primary} />
+                </Box>
+                <Box>
+                  <Typography sx={{ fontSize: 14, fontWeight: 600, color: palette.text.primary }}>
+                    Generate new report
+                  </Typography>
+                  <Typography sx={{ fontSize: 12, color: palette.text.secondary }}>
+                    {completedCount} completed experiment{completedCount !== 1 ? "s" : ""} available
+                  </Typography>
+                </Box>
+              </Stack>
+              <CustomizableButton
+                variant="contained"
+                onClick={() => setConfigModalOpen(true)}
+                disabled={completedCount === 0}
+                icon={<Download size={14} />}
+                text="Generate report"
+                sx={{
+                  height: "34px",
+                  fontSize: 13,
+                }}
+              />
+            </Stack>
+
+            {completedCount === 0 && (
+              <Box
+                sx={{
+                  mt: 2,
+                  p: 2,
+                  borderRadius: "6px",
+                  backgroundColor: palette.status.warning.bg,
+                  border: "1px solid #FDE68A",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1.5,
+                }}
+              >
+                <AlertTriangle size={16} color={palette.status.warning.text} />
+                <Typography sx={{ fontSize: 12, color: palette.status.warning.text }}>
+                  No completed experiments yet. Run at least one experiment to generate a report.
+                </Typography>
+              </Box>
+            )}
+          </>
         )}
       </Box>
 
-      {/* Report History Table */}
-      {reportHistory.length > 0 && (
-        <Box>
-          <Typography sx={{ fontSize: 14, fontWeight: 600, color: "#111827", mb: 1.5 }}>
-            Report history
-          </Typography>
-          <TableContainer sx={{ overflowX: "auto" }}>
-            <Table sx={singleTheme.tableStyles.primary.frame}>
-              <TableHead sx={{ backgroundColor: singleTheme.tableStyles.primary.header.backgroundColors }}>
-                <TableRow sx={singleTheme.tableStyles.primary.header.row}>
-                  <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "40%" }}>
-                    <Typography variant="body2" sx={{ fontWeight: 500, fontSize: 13 }}>Title</Typography>
-                  </TableCell>
-                  <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "12%" }}>
-                    <Typography variant="body2" sx={{ fontWeight: 500, fontSize: 13 }}>Format</Typography>
-                  </TableCell>
-                  <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "15%" }}>
-                    <Typography variant="body2" sx={{ fontWeight: 500, fontSize: 13 }}>Experiments</Typography>
-                  </TableCell>
-                  <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "20%" }}>
-                    <Typography variant="body2" sx={{ fontWeight: 500, fontSize: 13 }}>Generated</Typography>
-                  </TableCell>
-                  <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "13%", minWidth: 90 }}>
-                    <Typography variant="body2" sx={{ fontWeight: 500, fontSize: 13 }}>Actions</Typography>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {reportHistory.map(entry => (
-                  <TableRow key={entry.id} sx={singleTheme.tableStyles.primary.body.row}>
-                    <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                      <Typography sx={{ fontSize: 13, color: theme.palette.text.primary, fontWeight: 500 }}>
-                        {entry.title}
-                      </Typography>
-                    </TableCell>
-                    <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                      <Chip
-                        label={entry.format}
-                        size="small"
-                        sx={{
-                          fontSize: 11,
-                          height: 22,
-                          fontWeight: 500,
-                          backgroundColor: entry.format === "PDF" ? "#ECFDF5" : "#F0FDF4",
-                          color: "#13715B",
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                      <Typography sx={{ fontSize: 13, color: theme.palette.text.secondary }}>
-                        {entry.experimentCount} experiment{entry.experimentCount !== 1 ? "s" : ""}
-                      </Typography>
-                    </TableCell>
-                    <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                      <Typography sx={{ fontSize: 13, color: theme.palette.text.secondary }}>
-                        {new Date(entry.generatedAt).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </Typography>
-                    </TableCell>
-                    <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                      <Stack direction="row" spacing={0.5}>
-                        <IconButton
-                          size="small"
-                          onClick={() => handleRegenerate(entry)}
-                          disabled={regeneratingId === entry.id}
-                          title="Re-download report"
-                          sx={{ padding: 0.5 }}
-                        >
-                          {regeneratingId === entry.id ? (
-                            <CircularProgress size={14} />
-                          ) : (
-                            <RotateCcw size={16} strokeWidth={1.5} color={theme.palette.text.secondary} />
-                          )}
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          onClick={() => handleDeleteReport(entry.id)}
-                          title="Delete from history"
-                          sx={{ padding: 0.5 }}
-                        >
-                          <Trash2 size={16} strokeWidth={1.5} color={theme.palette.text.secondary} />
-                        </IconButton>
-                      </Stack>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+      {/* PDF Viewer */}
+      {pdfBlobUrl && (
+        <Box
+          ref={pdfContainerRef}
+          sx={{
+            background: "#fff",
+            border: "1px solid #d0d5dd",
+            borderRadius: "4px",
+            overflow: "hidden",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              px: 2.5,
+              py: 1.5,
+              borderBottom: "1px solid #E5E7EB",
+              backgroundColor: palette.background.accent,
+            }}
+          >
+            <Stack direction="row" alignItems="center" gap={1.5}>
+              <Eye size={16} color={palette.brand.primary} />
+              <Typography sx={{ fontSize: 13, fontWeight: 600, color: palette.text.primary }}>
+                {pdfTitle}
+              </Typography>
+            </Stack>
+            <Stack direction="row" alignItems="center" gap={0.5}>
+              <IconButton size="small" onClick={handleDownloadCurrent} title="Download PDF">
+                <Download size={16} color={palette.text.secondary} />
+              </IconButton>
+              <IconButton size="small" onClick={handleOpenInNewTab} title="Open in new tab">
+                <ExternalLink size={16} color={palette.text.secondary} />
+              </IconButton>
+              <IconButton size="small" onClick={closePdfViewer} title="Close viewer">
+                <X size={16} color={palette.text.secondary} />
+              </IconButton>
+            </Stack>
+          </Box>
+          <Box sx={{ width: "100%", height: "80vh", backgroundColor: "#525659" }}>
+            <iframe
+              src={pdfBlobUrl}
+              title="Report Preview"
+              style={{ width: "100%", height: "100%", border: "none" }}
+            />
+          </Box>
         </Box>
       )}
 
-      {/* Standards Info */}
-      <Box
-        sx={{
-          background: "#F9FAFB",
-          border: "1px solid #E5E7EB",
-          borderRadius: "4px",
-          p: "20px",
-        }}
-      >
-        <Typography sx={{ fontSize: 13, fontWeight: 600, color: "#374054", mb: 1 }}>
-          Report standards
-        </Typography>
-        <Typography sx={{ fontSize: 12, color: "#6B7280", lineHeight: 1.7 }}>
-          Generated reports are structured following industry standards for AI evaluation documentation:
-        </Typography>
-        <Stack spacing={1.5} sx={{ mt: 1.5 }}>
-          {[
-            {
-              title: "EvalCards",
-              url: "https://arxiv.org/abs/2406.13606",
-              desc: "A framework by researchers at Google DeepMind for documenting LLM evaluations in a structured, reproducible format. EvalCards capture evaluation context, methodology, metrics, and known limitations — making it easy to compare and audit results across teams.",
-            },
-            {
-              title: "Eval Factsheets",
-              url: "https://arxiv.org/abs/2311.09069",
-              desc: "Proposed by IBM Research, Eval Factsheets provide standardized fields for recording what was evaluated, how it was scored, and where the evaluation falls short. They promote transparency and help stakeholders quickly understand what an evaluation does and doesn't cover.",
-            },
-            {
-              title: "COMPL-AI",
-              url: "https://arxiv.org/abs/2410.07959",
-              desc: "A technical framework that maps EU AI Act requirements to measurable benchmarks. COMPL-AI focuses on safety-relevant metrics like bias, toxicity, and fairness — helping organizations demonstrate regulatory compliance through structured evaluation evidence.",
-            },
-          ].map(({ title, url, desc }) => (
-            <Box key={title}>
-              <Typography
-                component="a"
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{
-                  fontSize: 12,
-                  fontWeight: 600,
-                  color: "#13715B",
-                  textDecoration: "none",
-                  "&:hover": { textDecoration: "underline" },
-                }}
-              >
-                {title} ↗
-              </Typography>
-              <Typography sx={{ fontSize: 11, color: "#6B7280", lineHeight: 1.6, mt: 0.25 }}>
-                {desc}
-              </Typography>
-            </Box>
-          ))}
-        </Stack>
-      </Box>
+      {/* Empty State — no reports yet */}
+      {reports.length === 0 && !isGenerating && (
+        <EmptyState message="No reports generated yet" icon={FileText} showBorder>
+          <EmptyStateTip
+            icon={FileText}
+            title="About EvalCards"
+            description="Reports are structured following the EvalCards standard — a structured documentation framework for AI evaluation results. Each report includes evaluation context, metric results, safety assessment, comparative analysis, and methodology."
+          />
+          <EmptyStateTip
+            icon={Download}
+            title="Generate your first report"
+            description={`You have ${completedCount} completed experiment${completedCount !== 1 ? "s" : ""}. Click "Generate report" above to create a PDF or CSV report with AI-powered summaries.`}
+          />
+        </EmptyState>
+      )}
+
+      {/* Report History Table */}
+      {reports.length > 0 && (
+        <TableContainer sx={{ overflowX: "auto" }}>
+          <Table sx={singleTheme.tableStyles.primary.frame}>
+            <TableHead
+              sx={{ backgroundColor: singleTheme.tableStyles.primary.header.backgroundColors }}
+            >
+              <TableRow sx={singleTheme.tableStyles.primary.header.row}>
+                <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "30%" }}>
+                  <Typography sx={{ fontWeight: 500, fontSize: 13 }}>Report</Typography>
+                </TableCell>
+                <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "10%" }}>
+                  <Typography sx={{ fontWeight: 500, fontSize: 13 }}>Format</Typography>
+                </TableCell>
+                <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "12%" }}>
+                  <Typography sx={{ fontWeight: 500, fontSize: 13 }}>Experiments</Typography>
+                </TableCell>
+                <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "10%" }}>
+                  <Typography sx={{ fontWeight: 500, fontSize: 13 }}>Size</Typography>
+                </TableCell>
+                <TableCell sx={{ ...singleTheme.tableStyles.primary.header.cell, width: "23%" }}>
+                  <Typography sx={{ fontWeight: 500, fontSize: 13 }}>Generated</Typography>
+                </TableCell>
+                <TableCell
+                  sx={{
+                    ...singleTheme.tableStyles.primary.header.cell,
+                    width: "15%",
+                    minWidth: 120,
+                  }}
+                >
+                  <Typography sx={{ fontWeight: 500, fontSize: 13 }}>Actions</Typography>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {reports.map((report) => (
+                <TableRow
+                  key={report.id}
+                  onClick={() =>
+                    report.format.toLowerCase() === "pdf"
+                      ? handleViewReport(report)
+                      : handleDownloadReport(report)
+                  }
+                  sx={{
+                    ...singleTheme.tableStyles.primary.body.row,
+                    cursor: "pointer",
+                    "&:hover": { backgroundColor: palette.background.accent },
+                  }}
+                >
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    <Stack direction="row" alignItems="center" gap={1}>
+                      <FileText size={14} strokeWidth={1.5} color={palette.brand.primary} />
+                      <Typography
+                        sx={{ fontSize: 13, color: theme.palette.text.primary, fontWeight: 500 }}
+                      >
+                        {report.title}
+                      </Typography>
+                    </Stack>
+                  </TableCell>
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    <Chip
+                      label={report.format.toUpperCase()}
+                      size="small"
+                      sx={{
+                        fontSize: 11,
+                        height: 22,
+                        fontWeight: 500,
+                        backgroundColor: palette.status.success.bg,
+                        color: palette.brand.primary,
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    <Typography sx={{ fontSize: 13, color: theme.palette.text.secondary }}>
+                      {report.experiments} exp{report.experiments !== 1 ? "s" : ""}
+                    </Typography>
+                  </TableCell>
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    <Typography sx={{ fontSize: 13, color: theme.palette.text.secondary }}>
+                      {formatFileSize(report.fileSize)}
+                    </Typography>
+                  </TableCell>
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    <Typography sx={{ fontSize: 13, color: theme.palette.text.secondary }}>
+                      {formatDate(report.createdAt)}
+                    </Typography>
+                  </TableCell>
+                  <TableCell
+                    sx={singleTheme.tableStyles.primary.body.cell}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Stack direction="row" spacing="4px">
+                      <Tooltip title="Download">
+                        <IconButton
+                          size="small"
+                          onClick={() => handleDownloadReport(report)}
+                          disabled={loadingReportId === report.id}
+                          sx={{ padding: "4px" }}
+                        >
+                          <Download
+                            size={16}
+                            strokeWidth={1.5}
+                            color={theme.palette.text.secondary}
+                          />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete">
+                        <IconButton
+                          size="small"
+                          onClick={() => handleDeleteReport(report.id)}
+                          sx={{ padding: "4px" }}
+                        >
+                          <Trash2
+                            size={16}
+                            strokeWidth={1.5}
+                            color={theme.palette.text.secondary}
+                          />
+                        </IconButton>
+                      </Tooltip>
+                    </Stack>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
 
       {/* Config Modal */}
       <ReportConfigModal
@@ -570,6 +629,28 @@ export default function ReportPage({
         projectName={projectName}
         isGenerating={isGenerating}
       />
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <ConfirmationModal
+          isOpen={!!showDeleteConfirm}
+          title="Delete report"
+          body={
+            <Typography sx={{ fontSize: 13, color: "text.secondary" }}>
+              Are you sure you want to delete &quot;
+              {reports.find((r) => r.id === showDeleteConfirm)?.title || "this report"}&quot;? This
+              action cannot be undone.
+            </Typography>
+          }
+          proceedText="Delete"
+          cancelText="Cancel"
+          onProceed={confirmDeleteReport}
+          onCancel={() => setShowDeleteConfirm(null)}
+          proceedButtonVariant="contained"
+          proceedButtonColor="error"
+          TitleFontSize={13}
+        />
+      )}
     </Box>
   );
 }

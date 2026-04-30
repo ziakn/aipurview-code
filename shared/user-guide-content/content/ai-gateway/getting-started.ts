@@ -10,7 +10,7 @@ export const gettingStartedContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The AI Gateway sits between your applications and LLM providers like OpenAI, Anthropic, and Google. Every request passes through it, so you get cost tracking, guardrails, and audit logs without changing your application code.',
+      text: 'The AI Gateway sits between your applications and LLM providers like OpenAI, Anthropic, and Google. Every request passes through it, so you get cost tracking, guardrails and audit logs without changing your application code.',
     },
     {
       type: 'paragraph',
@@ -126,7 +126,7 @@ export const gettingStartedContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Virtual keys let developers use the gateway without a VerifyWise account. Create one in **AI Gateway > Virtual keys**, copy the key, and use it like this:',
+      text: 'Virtual keys let developers use the gateway without a VerifyWise account. Create one in **AI Gateway > Virtual keys**, copy the key and use it like this:',
     },
     {
       type: 'code',
@@ -192,8 +192,8 @@ print(response.choices[0].message.content)`,
       type: 'ordered-list',
       items: [
         { text: 'Go to **AI Gateway > Guardrails**.' },
-        { text: 'Click **Add rule**.' },
-        { text: 'Choose a type: PII detection (catches emails, phone numbers, credit cards, etc.) or content filter (keywords or regex patterns).' },
+        { text: 'Click **Add PII rule** (catches emails, phone numbers, credit cards, etc.) or **Add filter rule** (keywords or regex patterns).' },
+        { text: 'Configure the rule in the modal that opens.' },
         { text: 'Set the action: block the request entirely, or mask the detected content before forwarding.' },
         { text: 'Use the **Test** button to try your rule against sample text before enabling it.' },
       ],
@@ -207,8 +207,8 @@ print(response.choices[0].message.content)`,
     {
       type: 'bullet-list',
       items: [
-        { bold: 'Monitor usage', text: 'Check the Analytics page for cost trends, token usage, and top users' },
-        { bold: 'Review logs', text: 'The Logs page shows every request with filters for status, source, and search' },
+        { bold: 'Monitor usage', text: 'Check the Analytics page for cost trends, token usage and top users' },
+        { bold: 'Review logs', text: 'The Logs page shows every request with filters for status, source and search' },
         { bold: 'Create more endpoints', text: 'Set up separate endpoints for different models or environments (staging vs production)' },
         { bold: 'Distribute virtual keys', text: 'Give each team or service its own key with a budget cap' },
       ],
@@ -221,13 +221,13 @@ print(response.choices[0].message.content)`,
           collectionId: 'ai-gateway',
           articleId: 'endpoints',
           title: 'Endpoints',
-          description: 'Configure provider, model, and rate limits for each endpoint.',
+          description: 'Configure Provider, model and rate limit configuration for each endpoint.',
         },
         {
           collectionId: 'ai-gateway',
           articleId: 'settings',
           title: 'Settings',
-          description: 'Manage API keys, budgets, and guardrail configuration.',
+          description: 'Manage API keys, budgets and guardrail configuration.',
         },
         {
           collectionId: 'ai-gateway',

@@ -9,9 +9,12 @@ import {
   getVendorRisksByProjectIdQuery,
   getVendorRisksByVendorIdQuery,
   updateVendorRiskByIdQuery,
+  createVendorRiskFrameworkAssociations,
+  deleteVendorRiskFrameworkAssociations,
+  getVendorRisksByFrameworkIdQuery,
 } from "../utils/vendorRisk.utils";
 import { VendorRiskModel } from "../domain.layer/models/vendorRisk/vendorRisk.model";
-import { logProcessing, logSuccess, logFailure } from '../utils/logger/logHelper';
+import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 import {
   recordVendorRiskCreation,
   trackVendorRiskChanges,
@@ -24,7 +27,7 @@ import { QueryTypes } from "sequelize";
 async function getUserNameById(userId: number): Promise<string> {
   const result = await sequelize.query<{ name: string; surname: string }>(
     `SELECT name, surname FROM users WHERE id = :userId`,
-    { replacements: { userId }, type: QueryTypes.SELECT }
+    { replacements: { userId }, type: QueryTypes.SELECT },
   );
   if (result[0]) {
     return `${result[0].name} ${result[0].surname}`.trim();
@@ -32,16 +35,13 @@ async function getUserNameById(userId: number): Promise<string> {
   return "Someone";
 }
 
-export async function getAllVendorRisksAllProjects(
-  req: Request,
-  res: Response
-): Promise<any> {
-  const filter = (req.query.filter as 'active' | 'deleted' | 'all') || 'active';
+export async function getAllVendorRisksAllProjects(req: Request, res: Response): Promise<any> {
+  const filter = (req.query.filter as "active" | "deleted" | "all") || "active";
 
   logProcessing({
     description: `starting getAllVendorRisksAllProjects with filter: ${filter}`,
-    functionName: 'getAllVendorRisksAllProjects',
-    fileName: 'vendorRisk.ctrl.ts',
+    functionName: "getAllVendorRisksAllProjects",
+    fileName: "vendorRisk.ctrl.ts",
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
@@ -49,20 +49,20 @@ export async function getAllVendorRisksAllProjects(
   try {
     const risks = await getAllVendorRisksAllProjectsQuery(req.organizationId!, filter);
     await logSuccess({
-      eventType: 'Read',
-      description: 'Retrieved all vendor risks across all projects',
-      functionName: 'getAllVendorRisksAllProjects',
-      fileName: 'vendorRisk.ctrl.ts',
+      eventType: "Read",
+      description: "Retrieved all vendor risks across all projects",
+      functionName: "getAllVendorRisksAllProjects",
+      fileName: "vendorRisk.ctrl.ts",
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
     return res.status(200).json(STATUS_CODE[200](risks));
   } catch (error) {
     await logFailure({
-      eventType: 'Read',
-      description: 'Failed to retrieve vendor risks',
-      functionName: 'getAllVendorRisksAllProjects',
-      fileName: 'vendorRisk.ctrl.ts',
+      eventType: "Read",
+      description: "Failed to retrieve vendor risks",
+      functionName: "getAllVendorRisksAllProjects",
+      fileName: "vendorRisk.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
       tenantId: req.organizationId!,
@@ -71,13 +71,10 @@ export async function getAllVendorRisksAllProjects(
   }
 }
 
-export async function getAllVendorRisks(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getAllVendorRisks(req: Request, res: Response): Promise<any> {
   const projectIdParam = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   const projectId = parseInt(projectIdParam);
-  const filter = (req.query.filter as 'active' | 'deleted' | 'all') || 'active';
+  const filter = (req.query.filter as "active" | "deleted" | "all") || "active";
 
   // Return empty array for non-numeric project IDs (e.g., plugin-sourced IDs like "plugin-prefix-2")
   if (isNaN(projectId)) {
@@ -86,21 +83,25 @@ export async function getAllVendorRisks(
 
   logProcessing({
     description: `starting getAllVendorRisks for project ID ${projectId} with filter: ${filter}`,
-    functionName: 'getAllVendorRisks',
-    fileName: 'vendorRisk.ctrl.ts',
+    functionName: "getAllVendorRisks",
+    fileName: "vendorRisk.ctrl.ts",
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
 
   try {
-    const vendorRisks = await getVendorRisksByProjectIdQuery(projectId, req.organizationId!, filter);
+    const vendorRisks = await getVendorRisksByProjectIdQuery(
+      projectId,
+      req.organizationId!,
+      filter,
+    );
 
     if (vendorRisks) {
       await logSuccess({
-        eventType: 'Read',
+        eventType: "Read",
         description: `Retrieved vendor risks for project ID ${projectId} with filter: ${filter}`,
-        functionName: 'getAllVendorRisks',
-        fileName: 'vendorRisk.ctrl.ts',
+        functionName: "getAllVendorRisks",
+        fileName: "vendorRisk.ctrl.ts",
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
@@ -108,20 +109,20 @@ export async function getAllVendorRisks(
     }
 
     await logSuccess({
-      eventType: 'Read',
+      eventType: "Read",
       description: `No vendor risks found for project ID ${projectId} with filter: ${filter}`,
-      functionName: 'getAllVendorRisks',
-      fileName: 'vendorRisk.ctrl.ts',
+      functionName: "getAllVendorRisks",
+      fileName: "vendorRisk.ctrl.ts",
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
     return res.status(204).json(STATUS_CODE[204](vendorRisks));
   } catch (error) {
     await logFailure({
-      eventType: 'Read',
-      description: 'Failed to retrieve vendor risks by project',
-      functionName: 'getAllVendorRisks',
-      fileName: 'vendorRisk.ctrl.ts',
+      eventType: "Read",
+      description: "Failed to retrieve vendor risks by project",
+      functionName: "getAllVendorRisks",
+      fileName: "vendorRisk.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
       tenantId: req.organizationId!,
@@ -130,17 +131,14 @@ export async function getAllVendorRisks(
   }
 }
 
-export async function getAllVendorRisksByVendorId(
-  req: Request,
-  res: Response
-) {
+export async function getAllVendorRisksByVendorId(req: Request, res: Response) {
   const vendorId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
-  const filter = (req.query.filter as 'active' | 'deleted' | 'all') || 'active';
+  const filter = (req.query.filter as "active" | "deleted" | "all") || "active";
 
   logProcessing({
     description: `starting getAllVendorRisksByVendorId for vendor ID ${vendorId} with filter: ${filter}`,
-    functionName: 'getAllVendorRisksByVendorId',
-    fileName: 'vendorRisk.ctrl.ts',
+    functionName: "getAllVendorRisksByVendorId",
+    fileName: "vendorRisk.ctrl.ts",
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
@@ -150,10 +148,10 @@ export async function getAllVendorRisksByVendorId(
 
     if (vendorRisks) {
       await logSuccess({
-        eventType: 'Read',
+        eventType: "Read",
         description: `Retrieved vendor risks for vendor ID ${vendorId} with filter: ${filter}`,
-        functionName: 'getAllVendorRisksByVendorId',
-        fileName: 'vendorRisk.ctrl.ts',
+        functionName: "getAllVendorRisksByVendorId",
+        fileName: "vendorRisk.ctrl.ts",
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
@@ -161,20 +159,20 @@ export async function getAllVendorRisksByVendorId(
     }
 
     await logSuccess({
-      eventType: 'Read',
+      eventType: "Read",
       description: `No vendor risks found for vendor ID ${vendorId} with filter: ${filter}`,
-      functionName: 'getAllVendorRisksByVendorId',
-      fileName: 'vendorRisk.ctrl.ts',
+      functionName: "getAllVendorRisksByVendorId",
+      fileName: "vendorRisk.ctrl.ts",
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
     return res.status(204).json(STATUS_CODE[204](vendorRisks));
   } catch (error) {
     await logFailure({
-      eventType: 'Read',
-      description: 'Failed to retrieve vendor risks by vendor ID',
-      functionName: 'getAllVendorRisksByVendorId',
-      fileName: 'vendorRisk.ctrl.ts',
+      eventType: "Read",
+      description: "Failed to retrieve vendor risks by vendor ID",
+      functionName: "getAllVendorRisksByVendorId",
+      fileName: "vendorRisk.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
       tenantId: req.organizationId!,
@@ -183,16 +181,13 @@ export async function getAllVendorRisksByVendorId(
   }
 }
 
-export async function getVendorRiskById(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getVendorRiskById(req: Request, res: Response): Promise<any> {
   const vendorRiskId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
   logProcessing({
     description: `starting getVendorRiskById for ID ${vendorRiskId}`,
-    functionName: 'getVendorRiskById',
-    fileName: 'vendorRisk.ctrl.ts',
+    functionName: "getVendorRiskById",
+    fileName: "vendorRisk.ctrl.ts",
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
@@ -202,10 +197,10 @@ export async function getVendorRiskById(
 
     if (vendorRisk) {
       await logSuccess({
-        eventType: 'Read',
+        eventType: "Read",
         description: `Retrieved vendor risk ID ${vendorRiskId}`,
-        functionName: 'getVendorRiskById',
-        fileName: 'vendorRisk.ctrl.ts',
+        functionName: "getVendorRiskById",
+        fileName: "vendorRisk.ctrl.ts",
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
@@ -213,20 +208,20 @@ export async function getVendorRiskById(
     }
 
     await logSuccess({
-      eventType: 'Read',
+      eventType: "Read",
       description: `Vendor risk not found: ID ${vendorRiskId}`,
-      functionName: 'getVendorRiskById',
-      fileName: 'vendorRisk.ctrl.ts',
+      functionName: "getVendorRiskById",
+      fileName: "vendorRisk.ctrl.ts",
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
     return res.status(404).json(STATUS_CODE[404](vendorRisk));
   } catch (error) {
     await logFailure({
-      eventType: 'Read',
-      description: 'Failed to retrieve vendor risk by ID',
-      functionName: 'getVendorRiskById',
-      fileName: 'vendorRisk.ctrl.ts',
+      eventType: "Read",
+      description: "Failed to retrieve vendor risk by ID",
+      functionName: "getVendorRiskById",
+      fileName: "vendorRisk.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
       tenantId: req.organizationId!,
@@ -235,31 +230,46 @@ export async function getVendorRiskById(
   }
 }
 
-export async function createVendorRisk(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function createVendorRisk(req: Request, res: Response): Promise<any> {
   const transaction = await sequelize.transaction();
 
   logProcessing({
-    description: 'starting createVendorRisk',
-    functionName: 'createVendorRisk',
-    fileName: 'vendorRisk.ctrl.ts',
+    description: "starting createVendorRisk",
+    functionName: "createVendorRisk",
+    fileName: "vendorRisk.ctrl.ts",
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
 
   try {
     const newVendorRisk: VendorRiskModel = req.body;
+    const frameworks: number[] | undefined = req.body.frameworks;
     const vendorRiskModel = await VendorRiskModel.createNewVendorRisk(newVendorRisk);
 
     const createdVendorRisk = await createNewVendorRiskQuery(
       vendorRiskModel,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     if (createdVendorRisk) {
+      // Create framework associations if provided
+      if (frameworks && frameworks.length > 0 && createdVendorRisk.id) {
+        try {
+          await createVendorRiskFrameworkAssociations(
+            frameworks,
+            createdVendorRisk.id,
+            req.organizationId!,
+            transaction,
+          );
+        } catch (fwError) {
+          console.warn(
+            "Could not create framework associations (table may not exist yet):",
+            (fwError as Error).message,
+          );
+        }
+      }
+
       // Record creation in change history
       const userId = req.userId;
       if (userId && createdVendorRisk.id) {
@@ -268,7 +278,7 @@ export async function createVendorRisk(
           userId,
           req.organizationId!,
           createdVendorRisk,
-          transaction
+          transaction,
         );
       }
 
@@ -285,7 +295,13 @@ export async function createVendorRisk(
         if (createdVendorRisk.vendor_id) {
           const vendorResult = await sequelize.query<{ vendor_name: string }>(
             `SELECT vendor_name FROM vendors WHERE organization_id = :organizationId AND id = :vendorId`,
-            { replacements: { organizationId: req.organizationId!, vendorId: createdVendorRisk.vendor_id }, type: QueryTypes.SELECT }
+            {
+              replacements: {
+                organizationId: req.organizationId!,
+                vendorId: createdVendorRisk.vendor_id,
+              },
+              type: QueryTypes.SELECT,
+            },
           );
           vendorName = vendorResult[0]?.vendor_name;
         }
@@ -296,7 +312,8 @@ export async function createVendorRisk(
           {
             entityType: "Vendor Risk",
             entityId: createdVendorRisk.id,
-            entityName: createdVendorRisk.risk_description || `Vendor Risk #${createdVendorRisk.id}`,
+            entityName:
+              createdVendorRisk.risk_description || `Vendor Risk #${createdVendorRisk.id}`,
             roleType: "Action Owner",
             entityUrl: `${baseUrl}/vendors?vendorRiskId=${createdVendorRisk.id}`,
           },
@@ -306,15 +323,15 @@ export async function createVendorRisk(
             parentType: vendorName ? "Vendor" : undefined,
             parentName: vendorName,
             description: createdVendorRisk.impact_description || undefined,
-          }
+          },
         ).catch((err) => console.error("Failed to send action owner notification:", err));
       }
 
       await logSuccess({
-        eventType: 'Create',
-        description: 'Created new vendor risk',
-        functionName: 'createVendorRisk',
-        fileName: 'vendorRisk.ctrl.ts',
+        eventType: "Create",
+        description: "Created new vendor risk",
+        functionName: "createVendorRisk",
+        fileName: "vendorRisk.ctrl.ts",
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
@@ -322,10 +339,10 @@ export async function createVendorRisk(
     }
 
     await logSuccess({
-      eventType: 'Create',
-      description: 'Vendor risk creation returned null',
-      functionName: 'createVendorRisk',
-      fileName: 'vendorRisk.ctrl.ts',
+      eventType: "Create",
+      description: "Vendor risk creation returned null",
+      functionName: "createVendorRisk",
+      fileName: "vendorRisk.ctrl.ts",
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
@@ -333,10 +350,10 @@ export async function createVendorRisk(
   } catch (error) {
     await transaction.rollback();
     await logFailure({
-      eventType: 'Create',
-      description: 'Failed to create vendor risk',
-      functionName: 'createVendorRisk',
-      fileName: 'vendorRisk.ctrl.ts',
+      eventType: "Create",
+      description: "Failed to create vendor risk",
+      functionName: "createVendorRisk",
+      fileName: "vendorRisk.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
       tenantId: req.organizationId!,
@@ -345,18 +362,16 @@ export async function createVendorRisk(
   }
 }
 
-export async function updateVendorRiskById(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function updateVendorRiskById(req: Request, res: Response): Promise<any> {
   const transaction = await sequelize.transaction();
   const vendorRiskId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
   const updatedVendorRisk = req.body;
+  const frameworks: number[] | undefined = req.body.frameworks;
 
   logProcessing({
     description: `starting updateVendorRiskById for ID ${vendorRiskId}`,
-    functionName: 'updateVendorRiskById',
-    fileName: 'vendorRisk.ctrl.ts',
+    functionName: "updateVendorRiskById",
+    fileName: "vendorRisk.ctrl.ts",
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
@@ -368,10 +383,10 @@ export async function updateVendorRiskById(
     if (!existingVendorRisk) {
       await transaction.rollback();
       await logSuccess({
-        eventType: 'Update',
+        eventType: "Update",
         description: `Vendor risk not found for update: ID ${vendorRiskId}`,
-        functionName: 'updateVendorRiskById',
-        fileName: 'vendorRisk.ctrl.ts',
+        functionName: "updateVendorRiskById",
+        fileName: "vendorRisk.ctrl.ts",
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
@@ -388,10 +403,34 @@ export async function updateVendorRiskById(
       vendorRiskId,
       vendorRiskModel,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     if (vendorRisk) {
+      // Replace framework associations if provided
+      if (frameworks !== undefined) {
+        try {
+          await deleteVendorRiskFrameworkAssociations(
+            vendorRiskId,
+            req.organizationId!,
+            transaction,
+          );
+          if (frameworks.length > 0) {
+            await createVendorRiskFrameworkAssociations(
+              frameworks,
+              vendorRiskId,
+              req.organizationId!,
+              transaction,
+            );
+          }
+        } catch (fwError) {
+          console.warn(
+            "Could not update framework associations (table may not exist yet):",
+            (fwError as Error).message,
+          );
+        }
+      }
+
       // Track and record changes
       const userId = req.userId;
       if (userId) {
@@ -402,7 +441,7 @@ export async function updateVendorRiskById(
             userId,
             req.organizationId!,
             changes,
-            transaction
+            transaction,
           );
         }
       }
@@ -421,7 +460,10 @@ export async function updateVendorRiskById(
         if (vendorRisk.vendor_id) {
           const vendorResult = await sequelize.query<{ vendor_name: string }>(
             `SELECT vendor_name FROM vendors WHERE organization_id = :organizationId AND id = :vendorId`,
-            { replacements: { organizationId: req.organizationId!, vendorId: vendorRisk.vendor_id }, type: QueryTypes.SELECT }
+            {
+              replacements: { organizationId: req.organizationId!, vendorId: vendorRisk.vendor_id },
+              type: QueryTypes.SELECT,
+            },
           );
           vendorName = vendorResult[0]?.vendor_name;
         }
@@ -442,15 +484,15 @@ export async function updateVendorRiskById(
             parentType: vendorName ? "Vendor" : undefined,
             parentName: vendorName,
             description: vendorRisk.impact_description || undefined,
-          }
+          },
         ).catch((err) => console.error("Failed to send action owner notification:", err));
       }
 
       await logSuccess({
-        eventType: 'Update',
+        eventType: "Update",
         description: `Updated vendor risk ID ${vendorRiskId}`,
-        functionName: 'updateVendorRiskById',
-        fileName: 'vendorRisk.ctrl.ts',
+        functionName: "updateVendorRiskById",
+        fileName: "vendorRisk.ctrl.ts",
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
@@ -458,10 +500,10 @@ export async function updateVendorRiskById(
     }
 
     await logSuccess({
-      eventType: 'Update',
+      eventType: "Update",
       description: `Vendor risk not found for update: ID ${vendorRiskId}`,
-      functionName: 'updateVendorRiskById',
-      fileName: 'vendorRisk.ctrl.ts',
+      functionName: "updateVendorRiskById",
+      fileName: "vendorRisk.ctrl.ts",
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
@@ -469,10 +511,10 @@ export async function updateVendorRiskById(
   } catch (error) {
     await transaction.rollback();
     await logFailure({
-      eventType: 'Update',
-      description: 'Failed to update vendor risk',
-      functionName: 'updateVendorRiskById',
-      fileName: 'vendorRisk.ctrl.ts',
+      eventType: "Update",
+      description: "Failed to update vendor risk",
+      functionName: "updateVendorRiskById",
+      fileName: "vendorRisk.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
       tenantId: req.organizationId!,
@@ -481,17 +523,14 @@ export async function updateVendorRiskById(
   }
 }
 
-export async function deleteVendorRiskById(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function deleteVendorRiskById(req: Request, res: Response): Promise<any> {
   const transaction = await sequelize.transaction();
   const vendorRiskId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
   logProcessing({
     description: `starting deleteVendorRiskById for ID ${vendorRiskId}`,
-    functionName: 'deleteVendorRiskById',
-    fileName: 'vendorRisk.ctrl.ts',
+    functionName: "deleteVendorRiskById",
+    fileName: "vendorRisk.ctrl.ts",
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
@@ -500,16 +539,16 @@ export async function deleteVendorRiskById(
     const deletedVendorRisk = await deleteVendorRiskByIdQuery(
       vendorRiskId,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     if (deletedVendorRisk) {
       await transaction.commit();
       await logSuccess({
-        eventType: 'Delete',
+        eventType: "Delete",
         description: `Deleted vendor risk ID ${vendorRiskId}`,
-        functionName: 'deleteVendorRiskById',
-        fileName: 'vendorRisk.ctrl.ts',
+        functionName: "deleteVendorRiskById",
+        fileName: "vendorRisk.ctrl.ts",
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
@@ -517,10 +556,10 @@ export async function deleteVendorRiskById(
     }
 
     await logSuccess({
-      eventType: 'Delete',
+      eventType: "Delete",
       description: `Deleted vendor risk ID ${vendorRiskId}`,
-      functionName: 'deleteVendorRiskById',
-      fileName: 'vendorRisk.ctrl.ts',
+      functionName: "deleteVendorRiskById",
+      fileName: "vendorRisk.ctrl.ts",
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
@@ -528,10 +567,52 @@ export async function deleteVendorRiskById(
   } catch (error) {
     await transaction.rollback();
     await logFailure({
-      eventType: 'Delete',
-      description: 'Failed to delete vendor risk',
-      functionName: 'deleteVendorRiskById',
-      fileName: 'vendorRisk.ctrl.ts',
+      eventType: "Delete",
+      description: "Failed to delete vendor risk",
+      functionName: "deleteVendorRiskById",
+      fileName: "vendorRisk.ctrl.ts",
+      error: error as Error,
+      userId: req.userId!,
+      tenantId: req.organizationId!,
+    });
+    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+  }
+}
+
+export async function getVendorRisksByFrameworkId(req: Request, res: Response): Promise<any> {
+  const frameworkId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+  const filter = (req.query.filter as "active" | "deleted" | "all") || "active";
+
+  logProcessing({
+    description: `starting getVendorRisksByFrameworkId for framework ID ${frameworkId} with filter: ${filter}`,
+    functionName: "getVendorRisksByFrameworkId",
+    fileName: "vendorRisk.ctrl.ts",
+    userId: req.userId!,
+    tenantId: req.organizationId!,
+  });
+
+  try {
+    const vendorRisks = await getVendorRisksByFrameworkIdQuery(
+      frameworkId,
+      req.organizationId!,
+      filter,
+    );
+
+    await logSuccess({
+      eventType: "Read",
+      description: `Retrieved vendor risks for framework ID ${frameworkId}`,
+      functionName: "getVendorRisksByFrameworkId",
+      fileName: "vendorRisk.ctrl.ts",
+      userId: req.userId!,
+      tenantId: req.organizationId!,
+    });
+    return res.status(200).json(STATUS_CODE[200](vendorRisks));
+  } catch (error) {
+    await logFailure({
+      eventType: "Read",
+      description: "Failed to retrieve vendor risks by framework ID",
+      functionName: "getVendorRisksByFrameworkId",
+      fileName: "vendorRisk.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
       tenantId: req.organizationId!,

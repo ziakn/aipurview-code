@@ -1,54 +1,130 @@
-import { FC, useContext, useEffect, useState, useRef, useCallback, memo } from 'react';
-import { Stack, Box, useTheme, Avatar, Typography, Theme } from '@mui/material';
-import { MessagePrimitive, useMessagePartText, useAssistantState } from '@assistant-ui/react';
-import Markdown from 'react-markdown';
+import { FC, useContext, useEffect, useState, useRef, useCallback, memo } from "react";
+import { Stack, Box, useTheme, Avatar, Typography, Theme } from "@mui/material";
+import { MessagePrimitive, useMessagePartText, useAssistantState } from "@assistant-ui/react";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
-import { Bot, Copy, Check } from 'lucide-react';
-import { ChartRenderer } from './ChartRenderer';
-import VWAvatar from '../Avatar/VWAvatar';
-import { VerifyWiseContext } from '../../../application/contexts/VerifyWise.context';
-import { useProfilePhotoFetch } from '../../../application/hooks/useProfilePhotoFetch';
-import { User } from '../../../domain/types/User';
+import { Bot, Copy, Check } from "lucide-react";
+import { ChartRenderer } from "./ChartRenderer";
+import VWAvatar from "../Avatar/VWAvatar";
+import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.context";
+import { useProfilePhotoFetch } from "../../../application/hooks/useProfilePhotoFetch";
+import { User } from "../../../domain/types/User";
 
 const formatTimestamp = (date: Date): string => {
   return date.toLocaleString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
     hour12: true,
   });
 };
 
-// Create markdown heading styles with theme
-const createMarkdownHeadingStyles = (theme: Theme) => ({
-  h1: { marginTop: 0, fontSize: theme.typography.body1.fontSize, fontWeight: 600 },
-  h2: { marginTop: 0, fontSize: theme.typography.body1.fontSize, fontWeight: 700 },
-  h3: { marginTop: 0, fontSize: theme.typography.body2.fontSize, fontWeight: 600 },
-});
+// Create markdown styles with theme. Tables follow the VerifyWise list
+// conventions (thin borders, subtle header fill, 13/12px type) so an
+// inline GFM table from the LLM reads like a native VW table rather
+// than raw browser defaults.
+const createMarkdownStyles = (theme: Theme) => {
+  const borderColor = theme.palette.border?.light ?? theme.palette.divider ?? "#e5e5e5";
+  const headerBg = theme.palette.background.alt ?? "rgba(0, 0, 0, 0.03)";
+
+  return {
+    h1: {
+      marginTop: 0,
+      fontSize: theme.typography.body1.fontSize,
+      fontWeight: 600,
+    } as React.CSSProperties,
+    h2: {
+      marginTop: 0,
+      fontSize: theme.typography.body1.fontSize,
+      fontWeight: 700,
+    } as React.CSSProperties,
+    h3: {
+      marginTop: 0,
+      fontSize: theme.typography.body2.fontSize,
+      fontWeight: 600,
+    } as React.CSSProperties,
+    tableWrapper: {
+      overflowX: "auto" as const,
+      margin: "8px 0",
+      borderRadius: "4px",
+      border: `1px solid ${borderColor}`,
+    } as React.CSSProperties,
+    table: {
+      borderCollapse: "collapse" as const,
+      width: "100%",
+      minWidth: "max-content" as const,
+      fontSize: "12px",
+    } as React.CSSProperties,
+    thead: {
+      backgroundColor: headerBg,
+    } as React.CSSProperties,
+    th: {
+      textAlign: "left" as const,
+      padding: "8px 12px",
+      fontSize: "11px",
+      fontWeight: 600,
+      letterSpacing: "0.02em",
+      textTransform: "uppercase" as const,
+      color: theme.palette.text.secondary,
+      borderBottom: `1px solid ${borderColor}`,
+      whiteSpace: "nowrap" as const,
+    } as React.CSSProperties,
+    td: {
+      padding: "8px 12px",
+      fontSize: "13px",
+      color: theme.palette.text.primary,
+      borderBottom: `1px solid ${borderColor}`,
+      verticalAlign: "top" as const,
+      whiteSpace: "nowrap" as const,
+    } as React.CSSProperties,
+  };
+};
 
 const MessageText: FC = () => {
   const theme = useTheme();
   const data = useMessagePartText();
-  const headingStyles = createMarkdownHeadingStyles(theme);
+  const styles = createMarkdownStyles(theme);
 
   if (!data.text) {
     return null;
   }
 
   return (
-    <Markdown components={{
-      p: 'div',
-      h1: ({ node: _node, ...rest }) => <h1 style={headingStyles.h1} {...rest} />,
-      h2: ({ node: _node, ...rest }) => <h2 style={headingStyles.h2} {...rest} />,
-      h3: ({ node: _node, ...rest }) => <h3 style={headingStyles.h3} {...rest} />,
-    }}>{data.text}</Markdown>
+    <Markdown
+      // GFM unlocks tables, task lists, strikethrough, and autolinks —
+      // most relevant here is tables, because the advisor's system
+      // prompt tells the LLM to emit markdown tables for item
+      // listings. Without GFM, react-markdown renders them as literal
+      // "| col | col |" text and the output looks broken.
+      remarkPlugins={[remarkGfm]}
+      components={{
+        p: "div",
+        h1: ({ node: _node, ...rest }) => <h1 style={styles.h1} {...rest} />,
+        h2: ({ node: _node, ...rest }) => <h2 style={styles.h2} {...rest} />,
+        h3: ({ node: _node, ...rest }) => <h3 style={styles.h3} {...rest} />,
+        // GFM table elements — scope the styles here rather than in a
+        // global stylesheet so the advisor chat owns its own table
+        // conventions independent of any other markdown surface.
+        table: ({ node: _node, ...rest }) => (
+          <div style={styles.tableWrapper}>
+            <table style={styles.table} {...rest} />
+          </div>
+        ),
+        thead: ({ node: _node, ...rest }) => <thead style={styles.thead} {...rest} />,
+        th: ({ node: _node, ...rest }) => <th style={styles.th} {...rest} />,
+        td: ({ node: _node, ...rest }) => <td style={styles.td} {...rest} />,
+      }}
+    >
+      {data.text}
+    </Markdown>
   );
 };
 
 interface LocalChartData {
-  type: 'bar' | 'pie' | 'table' | 'donut' | 'line';
+  type: "bar" | "pie" | "table" | "donut" | "line";
   data?: { label: string; value: number; color?: string }[];
   title: string;
   columns?: string[];
@@ -58,12 +134,12 @@ interface LocalChartData {
 }
 
 const isValidChartData = (data: unknown): data is LocalChartData => {
-  if (!data || typeof data !== 'object') return false;
+  if (!data || typeof data !== "object") return false;
   const obj = data as Record<string, unknown>;
   return (
-    typeof obj.type === 'string' &&
-    ['bar', 'pie', 'table', 'donut', 'line'].includes(obj.type) &&
-    typeof obj.title === 'string' &&
+    typeof obj.type === "string" &&
+    ["bar", "pie", "table", "donut", "line"].includes(obj.type) &&
+    typeof obj.title === "string" &&
     (Array.isArray(obj.data) || Array.isArray(obj.columns) || Array.isArray(obj.series))
   );
 };
@@ -93,12 +169,12 @@ const MessageTimestamp: FC = () => {
   const message = useAssistantState(({ message }) => message);
 
   // Skip welcome message (id: 'welcome') which is generated client-side
-  if (!message?.createdAt || message.id === 'welcome') {
+  if (!message?.createdAt || message.id === "welcome") {
     return null;
   }
 
   // Don't show "Answered" while the message is still being generated
-  if (message.status?.type === 'running') {
+  if (message.status?.type === "running") {
     return null;
   }
 
@@ -123,7 +199,7 @@ const CopyButton: FC<{ bubbleRef: React.RefObject<HTMLDivElement | null> }> = ({
   const message = useAssistantState(({ message }) => message);
 
   // Don't show while message is still generating or for welcome message
-  if (message.status?.type === 'running' || message.id === 'welcome') {
+  if (message.status?.type === "running" || message.id === "welcome") {
     return null;
   }
 
@@ -136,8 +212,8 @@ const CopyButton: FC<{ bubbleRef: React.RefObject<HTMLDivElement | null> }> = ({
       const text = el.innerText;
       await navigator.clipboard.write([
         new ClipboardItem({
-          'text/html': new Blob([html], { type: 'text/html' }),
-          'text/plain': new Blob([text], { type: 'text/plain' }),
+          "text/html": new Blob([html], { type: "text/html" }),
+          "text/plain": new Blob([text], { type: "text/plain" }),
         }),
       ]);
       setCopied(true);
@@ -155,22 +231,20 @@ const CopyButton: FC<{ bubbleRef: React.RefObject<HTMLDivElement | null> }> = ({
     <Box
       onClick={handleCopy}
       sx={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '4px',
-        cursor: 'pointer',
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "4px",
+        cursor: "pointer",
         color: copied
-          ? (theme.palette.success?.main ?? '#4CAF50')
+          ? (theme.palette.success?.main ?? "#4CAF50")
           : (theme.palette.text.tertiary ?? theme.palette.text.disabled),
         ml: 0.5,
-        '&:hover': {
-          color: copied
-            ? (theme.palette.success?.main ?? '#4CAF50')
-            : theme.palette.text.primary,
+        "&:hover": {
+          color: copied ? (theme.palette.success?.main ?? "#4CAF50") : theme.palette.text.primary,
         },
       }}
       aria-label="Copy response"
-      title={copied ? 'Copied!' : 'Copy'}
+      title={copied ? "Copied!" : "Copy"}
     >
       {copied ? <Check size={12} strokeWidth={1.5} /> : <Copy size={12} strokeWidth={1.5} />}
       <Typography
@@ -180,39 +254,39 @@ const CopyButton: FC<{ bubbleRef: React.RefObject<HTMLDivElement | null> }> = ({
           lineHeight: 1,
         }}
       >
-        {copied ? 'Copied' : 'Copy'}
+        {copied ? "Copied" : "Copy"}
       </Typography>
     </Box>
   );
 };
 
 const THINKING_MESSAGES = [
-  'Thinking wisely',
-  'Verifying assumptions',
-  'Consulting the knowledge base',
-  'Reasoning through options',
-  'Checking the fine print',
-  'Connecting the dots',
-  'Reading between the lines',
-  'Crunching the context',
-  'Doing the due diligence',
-  'Sifting through the details',
-  'Asking the right questions',
-  'Double-checking everything',
-  'Looking at the big picture',
-  'Weighing the evidence',
-  'Putting it all together',
-  'Going through the checklist',
-  'Making sense of it all',
-  'Almost there',
-  'One more thing to check',
-  'Brewing an answer',
+  "Thinking wisely",
+  "Verifying assumptions",
+  "Consulting the knowledge base",
+  "Reasoning through options",
+  "Checking the fine print",
+  "Connecting the dots",
+  "Reading between the lines",
+  "Crunching the context",
+  "Doing the due diligence",
+  "Sifting through the details",
+  "Asking the right questions",
+  "Double-checking everything",
+  "Looking at the big picture",
+  "Weighing the evidence",
+  "Putting it all together",
+  "Going through the checklist",
+  "Making sense of it all",
+  "Almost there",
+  "One more thing to check",
+  "Brewing an answer",
 ];
 
 const ThinkingIndicator: FC = () => {
   const theme = useTheme();
   const [messageIndex, setMessageIndex] = useState(() =>
-    Math.floor(Math.random() * THINKING_MESSAGES.length)
+    Math.floor(Math.random() * THINKING_MESSAGES.length),
   );
   const intervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
 
@@ -236,14 +310,14 @@ const ThinkingIndicator: FC = () => {
       direction="row"
       gap={1.5}
       sx={{
-        alignSelf: 'flex-start',
-        maxWidth: '75%',
+        alignSelf: "flex-start",
+        maxWidth: "75%",
       }}
     >
       <Box
         sx={{
           backgroundColor: theme.palette.background.fill ?? theme.palette.grey[100],
-          padding: '12px 16px',
+          padding: "12px 16px",
           borderRadius: 3,
           borderTopLeftRadius: 1,
         }}
@@ -256,13 +330,13 @@ const ThinkingIndicator: FC = () => {
                 sx={{
                   width: 8,
                   height: 8,
-                  borderRadius: '50%',
+                  borderRadius: "50%",
                   backgroundColor: theme.palette.text.accent ?? theme.palette.text.secondary,
-                  animation: 'pulse 1.4s infinite',
+                  animation: "pulse 1.4s infinite",
                   animationDelay: `${delay}s`,
-                  '@keyframes pulse': {
-                    '0%, 60%, 100%': { opacity: 0.3 },
-                    '30%': { opacity: 1 },
+                  "@keyframes pulse": {
+                    "0%, 60%, 100%": { opacity: 0.3 },
+                    "30%": { opacity: 1 },
                   },
                 }}
               />
@@ -273,9 +347,9 @@ const ThinkingIndicator: FC = () => {
             sx={{
               color: theme.palette.text.tertiary ?? theme.palette.text.disabled,
               fontSize: 11,
-              fontStyle: 'italic',
+              fontStyle: "italic",
               ml: 0.5,
-              transition: 'opacity 200ms ease',
+              transition: "opacity 200ms ease",
             }}
           >
             {THINKING_MESSAGES[messageIndex]}
@@ -340,26 +414,26 @@ const CustomMessageComponent: FC = () => {
           direction="row"
           gap={1.5}
           sx={{
-            alignSelf: 'flex-end',
+            alignSelf: "flex-end",
             maxWidth: {
-              xs: '100%',
+              xs: "100%",
             },
-            justifyContent: 'flex-end',
-            paddingLeft: '8px',
-            paddingRight: '8px',
+            justifyContent: "flex-end",
+            paddingLeft: "8px",
+            paddingRight: "8px",
           }}
         >
           <Box
             sx={{
               backgroundColor: theme.palette.primary.main,
               color: theme.palette.primary.contrastText,
-              padding: '10px 14px',
+              padding: "10px 14px",
               borderRadius: 3,
               borderTopRightRadius: 1,
               fontSize: theme.typography.body2.fontSize,
               lineHeight: 1.7,
-              wordBreak: 'break-word',
-              whiteSpace: 'pre-wrap',
+              wordBreak: "break-word",
+              whiteSpace: "pre-wrap",
             }}
           >
             <MessagePrimitive.Content components={{ Text: MessageText }} />
@@ -378,10 +452,10 @@ const CustomMessageComponent: FC = () => {
           direction="row"
           gap={1.5}
           sx={{
-            alignSelf: 'flex-start',
-            width: '100%',
-            paddingLeft: '8px',
-            paddingRight: '16px',
+            alignSelf: "flex-start",
+            width: "100%",
+            paddingLeft: "8px",
+            paddingRight: "16px",
           }}
         >
           <Avatar
@@ -407,15 +481,16 @@ const CustomMessageComponent: FC = () => {
                   backgroundColor: theme.palette.background.fill ?? theme.palette.grey[100],
                   border: `1px solid ${theme.palette.border?.light ?? theme.palette.divider}`,
                   color: theme.palette.text.primary,
-                  padding: '10px 14px',
+                  padding: "10px 14px",
                   borderRadius: 3,
                   borderTopLeftRadius: 1,
                   fontSize: theme.typography.body2.fontSize,
                   lineHeight: 1.7,
-                  wordBreak: 'break-word',
+                  wordBreak: "break-word",
                 }}
               >
-                <MessagePrimitive.Content components={{
+                <MessagePrimitive.Content
+                  components={{
                     Text: MessageText,
                     tools: {
                       by_name: {
@@ -423,7 +498,8 @@ const CustomMessageComponent: FC = () => {
                       },
                       Fallback: DefaultToolFallback,
                     },
-                  }} />
+                  }}
+                />
               </Box>
               <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <MessageTimestamp />

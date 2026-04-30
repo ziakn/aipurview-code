@@ -6,7 +6,7 @@ import {
   Settings,
   KeyRound,
   Swords,
-  Trophy,
+  // Trophy,
   Cpu,
   MessageSquare,
   Scale,
@@ -112,6 +112,13 @@ export default function EvalsSidebar({
       disabled: false, // Always enabled - org-scoped
     },
     {
+      id: "bias-audits",
+      label: "Bias audits",
+      value: "bias-audits",
+      icon: <Scale size={16} strokeWidth={1.5} />,
+      disabled: false,
+    },
+    {
       id: "playground",
       label: "Playground",
       value: "playground",
@@ -126,24 +133,13 @@ export default function EvalsSidebar({
       count: arenaCount,
       disabled: false, // Always enabled - org-scoped
     },
-    ...(import.meta.env.DEV
-      ? [
-          {
-            id: "leaderboard",
-            label: "Leaderboard",
-            value: "leaderboard",
-            icon: <Trophy size={16} strokeWidth={1.5} />,
-            disabled: false,
-          },
-        ]
-      : []),
-    {
-      id: "bias-audits",
-      label: "Bias audits",
-      value: "bias-audits",
-      icon: <Scale size={16} strokeWidth={1.5} />,
-      disabled: false,
-    },
+    // {
+    //   id: "leaderboard",
+    //   label: "Leaderboard",
+    //   value: "leaderboard",
+    //   icon: <Trophy size={16} strokeWidth={1.5} />,
+    //   disabled: false,
+    // },
     {
       id: "reports",
       label: "Reports",
@@ -202,14 +198,13 @@ export default function EvalsSidebar({
 
   // Build project selector config - always show if we have a change handler
   // This allows users to select a project or create one even when on the projects list page
-  const projectSelectorConfig: ProjectSelectorConfig | undefined =
-    onProjectChange
-      ? {
+  const projectSelectorConfig: ProjectSelectorConfig | undefined = onProjectChange
+    ? {
         currentProject: currentProject || null,
         allProjects,
         onProjectChange,
       }
-      : undefined;
+    : undefined;
 
   return (
     <SidebarShell

@@ -6,19 +6,16 @@ import TabBar from "../../components/TabBar";
 import PageTour from "../../components/PageTour";
 import { PageHeaderExtended } from "../../components/Layout/PageHeaderExtended";
 import { PolicyManagerModel } from "../../../domain/models/Common/policy/policyManager.model";
-import {
-  getAllPolicies,
-  getAllTags,
-} from "../../../application/repository/policy.repository";
+import { getAllPolicies, getAllTags } from "../../../application/repository/policy.repository";
 import PolicyManager from "./PolicyManager";
 import PolicyTemplates from "./PolicyTemplates";
 import PolicySteps from "./PolicySteps";
-import policyTemplates from "../../../application/data/PolicyTemplates.json";
 
 const PolicyDashboard: React.FC = () => {
   const [policies, setPolicies] = useState<PolicyManagerModel[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [isInitialLoadComplete, setIsInitialLoadComplete] = useState(false);
+  const [templateCount, setTemplateCount] = useState(0);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -35,6 +32,10 @@ const PolicyDashboard: React.FC = () => {
 
   useEffect(() => {
     fetchAll();
+    fetch("/data/PolicyTemplates.json")
+      .then((res) => res.json())
+      .then((data: unknown[]) => setTemplateCount(data.length))
+      .catch(() => {});
   }, []);
 
   const handleTabChange = (_: React.SyntheticEvent, tabValue: string) => {
@@ -67,7 +68,7 @@ const PolicyDashboard: React.FC = () => {
                 label: "Policy templates",
                 value: "templates",
                 icon: "ShieldHalf",
-                count: policyTemplates.length,
+                count: templateCount,
                 tooltip: "Pre-built templates to create new policies from",
               },
             ]}
@@ -80,15 +81,9 @@ const PolicyDashboard: React.FC = () => {
         {activeTab === "policies" && (
           <PolicyManager policies={policies} tags={tags} fetchAll={fetchAll} />
         )}
-        {activeTab === "templates" && (
-          <PolicyTemplates tags={tags} fetchAll={fetchAll} />
-        )}
+        {activeTab === "templates" && <PolicyTemplates tags={tags} fetchAll={fetchAll} />}
 
-        <PageTour
-          steps={PolicySteps}
-          run={isInitialLoadComplete}
-          tourKey="policy-tour"
-        />
+        <PageTour steps={PolicySteps} run={isInitialLoadComplete} tourKey="policy-tour" />
       </TabContext>
     </PageHeaderExtended>
   );

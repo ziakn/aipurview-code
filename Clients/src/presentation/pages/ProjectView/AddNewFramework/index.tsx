@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Typography,
-  Stack,
-  Button,
-} from "@mui/material";
+import { Box, Typography, Stack, Button } from "@mui/material";
 import { Check as CheckGreenIcon } from "lucide-react";
 import StandardModal from "../../../components/Modals/StandardModal";
 import { CustomizableButton } from "../../../components/button/customizable-button";
@@ -14,13 +9,16 @@ import {
   frameworkCardStyle,
   frameworkCardTitleStyle,
   frameworkCardDescriptionStyle,
+  frameworkAddedBadgeStyle,
 } from "./styles";
 import {
   assignFrameworkToProject,
   deleteEntityById,
 } from "../../../../application/repository/entity.repository";
 import { logEngine } from "../../../../application/tools/log.engine";
+import { handleAlert } from "../../../../application/tools/alertUtils";
 import Alert from "../../../components/Alert";
+import { AlertProps } from "../../../types/alert.types";
 import CustomizableToast from "../../../components/Toast";
 import ConfirmationModal from "../../../components/Dialogs/ConfirmationModal";
 import { useModalKeyHandling } from "../../../../application/hooks/useModalKeyHandling";
@@ -32,10 +30,7 @@ interface AddFrameworkModalProps {
   onClose: () => void;
   frameworks: Framework[];
   project: Project;
-  onFrameworksChanged?: (
-    action: "add" | "remove",
-    frameworkId?: number
-  ) => void;
+  onFrameworksChanged?: (action: "add" | "remove", frameworkId?: number) => void;
 }
 
 const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
@@ -46,16 +41,8 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
   onFrameworksChanged,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [alert, setAlert] = useState<{
-    variant: "success" | "info" | "warning" | "error";
-    title?: string;
-    body: string;
-    isToast: boolean;
-    visible: boolean;
-  } | null>(null);
-  const [frameworkToRemove, setFrameworkToRemove] = useState<Framework | null>(
-    null
-  );
+  const [alert, setAlert] = useState<AlertProps | null>(null);
+  const [frameworkToRemove, setFrameworkToRemove] = useState<Framework | null>(null);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
   const [customFrameworkCount, setCustomFrameworkCount] = useState(0);
 
@@ -69,16 +56,20 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
 
     window.addEventListener(
       "customFrameworkCountChanged" as any,
-      handleCustomFrameworkCount as EventListener
+      handleCustomFrameworkCount as EventListener,
     );
 
     return () => {
       window.removeEventListener(
         "customFrameworkCountChanged" as any,
-        handleCustomFrameworkCount as EventListener
+        handleCustomFrameworkCount as EventListener,
       );
     };
   }, [project.id]);
+
+  const showToast = (variant: AlertProps["variant"], body: string) => {
+    handleAlert({ variant, body, setAlert, alertTimeout: 3000 });
+  };
 
   const handleAddFramework = async (fw: Framework) => {
     setIsLoading(true);
@@ -88,35 +79,19 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
         projectId: String(project.id),
       });
       if (response.status === 200 || response.status === 201) {
-        setAlert({
-          variant: "success",
-          body: "Framework added successfully",
-          isToast: true,
-          visible: true,
-        });
+        showToast("success", "Framework added successfully");
         if (onFrameworksChanged) onFrameworksChanged("add");
       } else {
-        setAlert({
-          variant: "error",
-          body: "Failed to add framework. Please try again.",
-          isToast: true,
-          visible: true,
-        });
+        showToast("error", "Failed to add framework. Please try again.");
       }
     } catch (_error) {
       logEngine({
         type: "error",
         message: "An error occurred while adding the framework.",
       });
-      setAlert({
-        variant: "error",
-        body: "An unexpected error occurred. Please try again.",
-        isToast: true,
-        visible: true,
-      });
+      showToast("error", "An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
-      setTimeout(() => setAlert(null), 3000);
     }
   };
 
@@ -128,38 +103,21 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
         routeUrl: `/frameworks/fromProject?frameworkId=${frameworkToRemove.id}&projectId=${project.id}`,
       });
       if (response.status === 200) {
-        setAlert({
-          variant: "success",
-          body: "Framework removed successfully",
-          isToast: true,
-          visible: true,
-        });
-        if (onFrameworksChanged)
-          onFrameworksChanged("remove", parseInt(frameworkToRemove.id));
+        showToast("success", "Framework removed successfully");
+        if (onFrameworksChanged) onFrameworksChanged("remove", parseInt(frameworkToRemove.id));
       } else {
-        setAlert({
-          variant: "error",
-          body: "Failed to remove framework. Please try again.",
-          isToast: true,
-          visible: true,
-        });
+        showToast("error", "Failed to remove framework. Please try again.");
       }
     } catch (_error) {
       logEngine({
         type: "error",
         message: "An error occurred while removing the framework.",
       });
-      setAlert({
-        variant: "error",
-        body: "An unexpected error occurred. Please try again.",
-        isToast: true,
-        visible: true,
-      });
+      showToast("error", "An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
       setIsRemoveModalOpen(false);
       setFrameworkToRemove(null);
-      setTimeout(() => setAlert(null), 3000);
     }
   };
 
@@ -198,7 +156,7 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
       }
     >
       <Stack spacing={6}>
-        {alert && alert.visible && (
+        {alert && (
           <Alert
             variant={alert.variant}
             title={alert.title}
@@ -208,103 +166,97 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
           />
         )}
         {isLoading && <CustomizableToast title="Processing..." />}
-        <Stack spacing={6}>
-            {frameworks.map((fw) => {
-              const isAdded = isFrameworkAdded(fw);
-              // Total frameworks = system frameworks + custom frameworks (from plugin events)
-              const totalFrameworkCount = (project.framework?.length || 0) + customFrameworkCount;
-              const onlyOneFramework = totalFrameworkCount === 1 && isAdded;
-              return (
-                <Box key={fw.id} sx={frameworkCardStyle}>
-                  <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="flex-start"
-                    mb={1}
-                  >
-                    <Typography sx={frameworkCardTitleStyle}>
-                      {fw.name}
-                    </Typography>
-                    {isAdded && (
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 0.5,
-                          background: "#E6F4EE",
-                          borderRadius: "12px",
-                          px: 1.5,
-                          py: 0.5,
-                          fontSize: 13,
-                          fontWeight: 600,
-                          color: "brand.primary",
-                        }}
-                      >
-                        <CheckGreenIcon size={16} />
-                        Added
-                      </Box>
-                    )}
-                  </Box>
-                  <Typography sx={frameworkCardDescriptionStyle}>
-                    {fw.description}
-                  </Typography>
-                  <Box display="flex" justifyContent="flex-end" mt={2}>
-                    {isAdded ? (
-                      <Button
-                        variant="contained"
-                        color="error"
-                        size="small"
-                        disabled={isLoading || onlyOneFramework}
-                        onClick={() => {
-                          setFrameworkToRemove(fw);
-                          setIsRemoveModalOpen(true);
-                        }}
-                        sx={{ minWidth: 100, fontWeight: 600 }}
-                      >
-                        Remove
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="contained"
-                        sx={{
-                          minWidth: 100,
-                          fontWeight: 600,
-                          backgroundColor: "brand.primary",
-                          color: "background.main",
-                          "&:hover": { backgroundColor: "#0e5c47" },
-                        }}
-                        size="small"
-                        disabled={isLoading}
-                        onClick={() => handleAddFramework(fw)}
-                      >
-                        Add
-                      </Button>
-                    )}
-                  </Box>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "16px",
+            alignItems: "stretch",
+          }}
+        >
+          {frameworks.map((fw) => {
+            const isAdded = isFrameworkAdded(fw);
+            // Total frameworks = system frameworks + custom frameworks (from plugin events)
+            const totalFrameworkCount = (project.framework?.length || 0) + customFrameworkCount;
+            const onlyOneFramework = totalFrameworkCount === 1 && isAdded;
+            return (
+              <Box key={fw.id} sx={frameworkCardStyle}>
+                <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
+                  <Typography sx={frameworkCardTitleStyle}>{fw.name}</Typography>
+                  {isAdded && (
+                    <Box sx={frameworkAddedBadgeStyle}>
+                      <CheckGreenIcon size={16} />
+                      Added
+                    </Box>
+                  )}
                 </Box>
-              );
-            })}
-            {/* Plugin slot for custom frameworks */}
-            <PluginSlot
-              id={PLUGIN_SLOTS.FRAMEWORK_SELECTION}
-              slotProps={{
-                project,
-                isLoading,
-                onFrameworkAdded: () => onFrameworksChanged?.("add"),
-                onFrameworkRemoved: (frameworkId: number) =>
-                  onFrameworksChanged?.("remove", frameworkId),
-                setAlert,
-                setIsLoading,
-              }}
-            />
-        </Stack>
+                <Typography sx={frameworkCardDescriptionStyle}>{fw.description}</Typography>
+                <Box display="flex" justifyContent="flex-end" mt={2}>
+                  {isAdded ? (
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      disabled={isLoading || onlyOneFramework}
+                      onClick={() => {
+                        setFrameworkToRemove(fw);
+                        setIsRemoveModalOpen(true);
+                      }}
+                      sx={{
+                        minWidth: 100,
+                        borderColor: "#F87171",
+                        color: "#DC2626",
+                        fontWeight: 600,
+                        textTransform: "none",
+                        "&:hover": {
+                          borderColor: "#EF4444",
+                          backgroundColor: "#FEF2F2",
+                        },
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      size="small"
+                      disabled={isLoading}
+                      onClick={() => handleAddFramework(fw)}
+                      sx={{
+                        minWidth: 100,
+                        fontWeight: 600,
+                        textTransform: "none",
+                        backgroundColor: "#13715B",
+                        color: "#fff",
+                        "&:hover": { backgroundColor: "#0e5c47" },
+                      }}
+                    >
+                      Add
+                    </Button>
+                  )}
+                </Box>
+              </Box>
+            );
+          })}
+        </Box>
+        {/* Plugin slot for custom frameworks */}
+        <PluginSlot
+          id={PLUGIN_SLOTS.FRAMEWORK_SELECTION}
+          slotProps={{
+            project,
+            isLoading,
+            onFrameworkAdded: () => onFrameworksChanged?.("add"),
+            onFrameworkRemoved: (frameworkId: number) =>
+              onFrameworksChanged?.("remove", frameworkId),
+            setAlert,
+            setIsLoading,
+          }}
+        />
         {isRemoveModalOpen && frameworkToRemove && (
           <ConfirmationModal
             title="Confirm framework removal"
             body={
               <Typography fontSize={13}>
-                Are you sure you want to remove {frameworkToRemove.name} from
-                the project?
+                Are you sure you want to remove {frameworkToRemove.name} from the project?
               </Typography>
             }
             cancelText="Cancel"

@@ -73,9 +73,7 @@ const ISO42001Clause = ({
   const [alert, setAlert] = useState<AlertProps | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [flashingRowId, setFlashingRowId] = useState<number | null>(null);
-  const [subClausesMap, setSubClausesMap] = useState<{ [key: number]: any[] }>(
-    {},
-  );
+  const [subClausesMap, setSubClausesMap] = useState<{ [key: number]: any[] }>({});
   const [loadingSubClauses, setLoadingSubClauses] = useState<{
     [key: number]: boolean;
   }>({});
@@ -89,47 +87,46 @@ const ISO42001Clause = ({
   const [lastProcessedLink, setLastProcessedLink] = useState<string | null>(null);
 
   // Shared function to filter subclauses based on all active filters
-  const filterSubClauses = useCallback((subClauses: any[]) => {
-    let filtered = subClauses;
+  const filterSubClauses = useCallback(
+    (subClauses: any[]) => {
+      let filtered = subClauses;
 
-    // Filter by status
-    if (statusFilter && statusFilter !== "") {
-      filtered = filtered.filter(
-        (sc) => sc.status?.toLowerCase() === statusFilter.toLowerCase(),
-      );
-    }
+      // Filter by status
+      if (statusFilter && statusFilter !== "") {
+        filtered = filtered.filter((sc) => sc.status?.toLowerCase() === statusFilter.toLowerCase());
+      }
 
-    // Filter by owner
-    if (ownerFilter && ownerFilter !== "") {
-      filtered = filtered.filter(
-        (sc) => sc.owner?.toString() === ownerFilter,
-      );
-    }
+      // Filter by owner
+      if (ownerFilter && ownerFilter !== "") {
+        filtered = filtered.filter((sc) => sc.owner?.toString() === ownerFilter);
+      }
 
-    // Filter by reviewer
-    if (reviewerFilter && reviewerFilter !== "") {
-      filtered = filtered.filter(
-        (sc) => sc.reviewer?.toString() === reviewerFilter,
-      );
-    }
+      // Filter by reviewer
+      if (reviewerFilter && reviewerFilter !== "") {
+        filtered = filtered.filter((sc) => sc.reviewer?.toString() === reviewerFilter);
+      }
 
-    // Filter by due date
-    if (dueDateFilter && dueDateFilter !== "") {
-      filtered = filtered.filter((sc) => {
-        if (sc.due_date) {
-          const dueDate = new Date(sc.due_date);
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          const daysUntilDue = Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-          const filterDays = parseInt(dueDateFilter);
-          return daysUntilDue >= 0 && daysUntilDue <= filterDays;
-        }
-        return false;
-      });
-    }
+      // Filter by due date
+      if (dueDateFilter && dueDateFilter !== "") {
+        filtered = filtered.filter((sc) => {
+          if (sc.due_date) {
+            const dueDate = new Date(sc.due_date);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const daysUntilDue = Math.ceil(
+              (dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+            );
+            const filterDays = parseInt(dueDateFilter);
+            return daysUntilDue >= 0 && daysUntilDue <= filterDays;
+          }
+          return false;
+        });
+      }
 
-    return filtered;
-  }, [statusFilter, ownerFilter, reviewerFilter, dueDateFilter]);
+      return filtered;
+    },
+    [statusFilter, ownerFilter, reviewerFilter, dueDateFilter],
+  );
 
   // Check if any filter is active
   const hasActiveFilters = useMemo(() => {
@@ -181,14 +178,12 @@ const ISO42001Clause = ({
       setLoadingSubClauses((prev) => ({ ...prev, [clauseId]: true }));
       try {
         const response = await GetSubClausesById({
-          routeUrl: `/iso-42001/subClauses/byClauseId/${clauseId}`,
+          routeUrl: `/iso-42001/subClauses/byClauseId/${clauseId}?projectFrameworkId=${projectFrameworkId}`,
         });
         const detailedSubClauses = response.data;
 
         const mergedSubClauses = detailedSubClauses.map((detailed: any) => {
-          const match = clauseSubClausesWithStatus.find(
-            (s) => s.id === detailed.id,
-          );
+          const match = clauseSubClausesWithStatus.find((s) => s.id === detailed.id);
           return {
             ...detailed,
             status: match?.status ?? "Not started",
@@ -219,15 +214,12 @@ const ISO42001Clause = ({
       setExpanded(isExpanded ? panel : false);
     };
 
-  const handleSubClauseClick = useCallback(
-    (clause: any, subClause: any, index: number) => {
-      setSelectedClause(clause);
-      setSelectedSubClause(subClause);
-      setSelectedIndex(index);
-      setDrawerOpen(true);
-    },
-    [],
-  );
+  const handleSubClauseClick = useCallback((clause: any, subClause: any, index: number) => {
+    setSelectedClause(clause);
+    setSelectedSubClause(subClause);
+    setSelectedIndex(index);
+    setDrawerOpen(true);
+  }, []);
 
   const handleDrawerClose = () => {
     setDrawerOpen(false);
@@ -248,9 +240,7 @@ const ISO42001Clause = ({
   ) => {
     handleAlert({
       variant: success ? "success" : "error",
-      body:
-        message ||
-        (success ? "Changes saved successfully" : "Failed to save changes"),
+      body: message || (success ? "Changes saved successfully" : "Failed to save changes"),
       setAlert,
     });
 
@@ -262,10 +252,7 @@ const ISO42001Clause = ({
     }
   };
 
-  const handleStatusChange = async (
-    subClause: any,
-    newStatus: string,
-  ): Promise<boolean> => {
+  const handleStatusChange = async (subClause: any, newStatus: string): Promise<boolean> => {
     try {
       const success = await updateISO42001ClauseStatus({
         id: subClause.id,
@@ -312,7 +299,7 @@ const ISO42001Clause = ({
       return clauses;
     }
     return clauses.filter((clause: any) =>
-      clause.title?.toLowerCase().includes(searchTerm.toLowerCase())
+      clause.title?.toLowerCase().includes(searchTerm.toLowerCase()),
     );
   }, [clauses, searchTerm]);
 
@@ -330,36 +317,118 @@ const ISO42001Clause = ({
             <CircularProgress size={24} />
           </Stack>
         ) : filteredSubClauses.length > 0 ? (
-          filteredSubClauses.map((subClause: any, index: number) => (
-            <Stack
-              key={subClause.id}
-              onClick={() => {
-                handleSubClauseClick(clause, subClause, index);
-              }}
-              sx={styles.subClauseRow(
-                filteredSubClauses.length - 1 === index,
-                flashingRowId === subClause.id,
-              )}
-            >
-              <Typography fontSize={13}>
-                {clause.clause_no + "." + (index + 1)}{" "}
-                {subClause.title ?? "Untitled"}
-              </Typography>
-              <StatusDropdown
-                currentStatus={subClause.status ?? "Not started"}
-                onStatusChange={(newStatus) =>
-                  handleStatusChange(subClause, newStatus)
+          // Enrich the list with synthetic parent-header rows for any group
+          // of 3-level subclauses (e.g. 6.1.1-6.1.4 gets a "6.1" header above
+          // it). Parent titles are taken from the well-known ISO standard
+          // names — headers are display-only, not fillable.
+          (() => {
+            const PARENT_TITLES: Record<string, string> = {
+              "6.1": "Actions to address risks and opportunities",
+            };
+            const enriched: any[] = [];
+            let currentPrefix: string | null = null;
+            for (const sc of filteredSubClauses) {
+              const id = sc.subclause_id;
+              const isThreeLevel = typeof id === "string" && (id.match(/\./g) || []).length >= 2;
+              if (isThreeLevel) {
+                const prefix = id.split(".").slice(0, 2).join(".");
+                if (prefix !== currentPrefix) {
+                  enriched.push({
+                    __isParent: true,
+                    subclause_id: prefix,
+                    title: PARENT_TITLES[prefix] ?? prefix,
+                  });
+                  currentPrefix = prefix;
                 }
-                size="small"
-                allowedRoles={allowedRoles.frameworks.edit}
-                userRole={userRoleName}
-              />
-            </Stack>
-          ))
+              } else {
+                currentPrefix = null;
+              }
+              enriched.push(sc);
+            }
+            return enriched;
+          })().map((subClause: any, index: number, arr: any[]) => {
+            // A subclause is "nested" (third-level, e.g. 6.1.1) when its
+            // canonical subclause_id contains two dots. Visually indent these
+            // relative to flat items like 6.2, and add a left border so the
+            // nested group reads as a grouped sub-section.
+            const isNested =
+              !subClause.__isParent &&
+              typeof subClause.subclause_id === "string" &&
+              (subClause.subclause_id.match(/\./g) || []).length >= 2;
+            const isLast = arr.length - 1 === index;
+
+            // Synthetic parent header — not fillable, no status dropdown,
+            // different styling so users see it as a section header.
+            if (subClause.__isParent) {
+              return (
+                <Stack
+                  key={`parent-${subClause.subclause_id}`}
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    padding: "10px 16px",
+                    backgroundColor: "#fafbfc",
+                    borderBottom: "1px solid #eaecf0",
+                  }}
+                >
+                  <Typography
+                    fontSize={11}
+                    fontWeight={600}
+                    sx={{
+                      color: "#57606a",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.04em",
+                    }}
+                  >
+                    {subClause.subclause_id} · {subClause.title}
+                  </Typography>
+                </Stack>
+              );
+            }
+
+            return (
+              <Stack
+                key={subClause.id}
+                onClick={() => {
+                  handleSubClauseClick(clause, subClause, index);
+                }}
+                sx={{
+                  ...styles.subClauseRow(isLast, flashingRowId === subClause.id),
+                  // Subtle indent + hairline tree-tick to mark nested children.
+                  ...(isNested
+                    ? {
+                        padding: "16px 16px 16px 40px",
+                        position: "relative",
+                        "&::before": {
+                          content: '""',
+                          position: "absolute",
+                          left: "20px",
+                          top: "50%",
+                          width: "12px",
+                          height: "1px",
+                          backgroundColor: "#c9d1d9",
+                        },
+                      }
+                    : {}),
+                }}
+              >
+                <Typography fontSize={13}>
+                  {subClause.subclause_id ?? `${clause.clause_no}.${index + 1}`}{" "}
+                  {subClause.title ?? "Untitled"}
+                </Typography>
+                <StatusDropdown
+                  currentStatus={subClause.status ?? "Not started"}
+                  onStatusChange={(newStatus) => handleStatusChange(subClause, newStatus)}
+                  size="small"
+                  allowedRoles={allowedRoles.frameworks.edit}
+                  userRole={userRoleName}
+                />
+              </Stack>
+            );
+          })
         ) : (
-          <Stack sx={styles.noSubClausesContainer}>
-            No matching subclauses
-          </Stack>
+          <Stack sx={styles.noSubClausesContainer}>No matching subclauses</Stack>
         )}
       </AccordionDetails>
     );
@@ -405,12 +474,8 @@ const ISO42001Clause = ({
 
   return (
     <Stack className="iso-42001-clauses">
-      {alert && (
-        <Alert {...alert} isToast={true} onClick={() => setAlert(null)} />
-      )}
-      <Typography sx={{ ...styles.title, mt: 4 }}>
-        {"Management System Clauses"}
-      </Typography>
+      {alert && <Alert {...alert} isToast={true} onClick={() => setAlert(null)} />}
+      <Typography sx={{ ...styles.title, mt: 4 }}>{"Management System Clauses"}</Typography>
       <TabFilterBar
         statusFilter={statusFilter}
         onStatusChange={onStatusChange}
@@ -434,9 +499,10 @@ const ISO42001Clause = ({
       {filteredClauses &&
         filteredClauses.map((clause: any) => {
           const count = filteredSubClausesCountMemo[clause.id ?? 0];
-          const chipColor = count !== undefined && count > 0
-            ? { bg: "#E6F4EA", color: "status.success.text" }
-            : { bg: "#FFF8E1", color: "#795548" };
+          const chipColor =
+            count !== undefined && count > 0
+              ? { bg: "#E6F4EA", color: "status.success.text" }
+              : { bg: "#FFF8E1", color: "#795548" };
           return (
             <Stack key={clause.id} sx={styles.container}>
               <Accordion
@@ -446,22 +512,26 @@ const ISO42001Clause = ({
                 onChange={handleAccordionChange(clause.id ?? 0)}
               >
                 <AccordionSummary sx={styles.accordionSummary}>
-                  <RightArrowBlack size={16}
+                  <RightArrowBlack
+                    size={16}
                     style={styles.expandIcon(expanded === clause.id) as React.CSSProperties}
                   />
                   <Typography sx={{ paddingLeft: "2.5px", fontSize: 13 }}>
                     {clause.arrangement} {clause.title}
                   </Typography>
                   {hasActiveFilters && count !== undefined && (
-                    <Box component="span" sx={{
-                      backgroundColor: chipColor.bg,
-                      color: chipColor.color,
-                      padding: "4px 8px",
-                      borderRadius: "2px",
-                      fontSize: 13,
-                      fontWeight: 500,
-                      ml: 4,
-                    }}>
+                    <Box
+                      component="span"
+                      sx={{
+                        backgroundColor: chipColor.bg,
+                        color: chipColor.color,
+                        padding: "4px 8px",
+                        borderRadius: "2px",
+                        fontSize: 13,
+                        fontWeight: 500,
+                        ml: 4,
+                      }}
+                    >
                       {count} filtered
                     </Box>
                   )}

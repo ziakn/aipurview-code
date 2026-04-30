@@ -4,7 +4,6 @@ import { Box, Stack, TableRow, TableCell } from "@mui/material";
 import { FileText, Copy, Filter, BookOpen } from "lucide-react";
 import EmptyStateTip from "../../components/EmptyState/EmptyStateTip";
 import { EmptyState } from "../../components/EmptyState";
-import policyTemplates from "../../../application/data/PolicyTemplates.json";
 import { PolicyTemplatesProps } from "../../types/interfaces/i.policy";
 import { SearchBox } from "../../components/Search";
 import { PolicyTemplateCategory } from "../../../domain/enums/policy.enum";
@@ -30,22 +29,40 @@ const tableHeaders = [
 type PolicyTemplateColumnKey = "title" | "id" | "tags" | "description" | "actions";
 
 const POLICY_TEMPLATE_TABLE_COLUMNS: ColumnConfig<PolicyTemplateColumnKey>[] = [
-  
   { key: "id", label: "ID", defaultVisible: true },
   { key: "title", label: "Title", defaultVisible: true, alwaysVisible: true },
   { key: "tags", label: "Tags", defaultVisible: true },
   { key: "description", label: "Description", defaultVisible: true },
-  { key: "actions", label: "Actions", defaultVisible: true, alwaysVisible: true } as ColumnConfig<"actions">, // Add actions column config
+  {
+    key: "actions",
+    label: "Actions",
+    defaultVisible: true,
+    alwaysVisible: true,
+  } as ColumnConfig<"actions">, // Add actions column config
 ];
 
-const PolicyTemplates: React.FC<PolicyTemplatesProps> = ({
-  tags: _tags,
-  fetchAll: _fetchAll,
-}) => {
+const PolicyTemplates: React.FC<PolicyTemplatesProps> = ({ tags: _tags, fetchAll: _fetchAll }) => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const hasProcessedUrlParam = useRef(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [policyTemplates, setPolicyTemplates] = useState<
+    {
+      id: number;
+      title: string;
+      description: string;
+      tags: string[];
+      category: string;
+      content: string;
+    }[]
+  >([]);
+
+  useEffect(() => {
+    fetch("/data/PolicyTemplates.json")
+      .then((res) => res.json())
+      .then(setPolicyTemplates)
+      .catch(() => {});
+  }, []);
 
   // GroupBy state
   const { groupBy, groupSortOrder, handleGroupChange } = useGroupByState();
@@ -67,43 +84,49 @@ const PolicyTemplates: React.FC<PolicyTemplatesProps> = ({
   };
 
   // Define the type for policy template items
-  type PolicyTemplateItem = typeof policyTemplates[number];
+  type PolicyTemplateItem = (typeof policyTemplates)[number];
 
   // FilterBy - Filter columns configuration
-  const policyTemplateFilterColumns: FilterColumn[] = useMemo(() => [
-    {
-      id: 'title',
-      label: 'Title',
-      type: 'text' as const,
-    },
-    {
-      id: 'category',
-      label: 'Category',
-      type: 'select' as const,
-      options: [...Object.values(PolicyTemplateCategory)].map((value) => ({
-        value: value,
-        label: value,
-      })),
-    },
-  ], []);
+  const policyTemplateFilterColumns: FilterColumn[] = useMemo(
+    () => [
+      {
+        id: "title",
+        label: "Title",
+        type: "text" as const,
+      },
+      {
+        id: "category",
+        label: "Category",
+        type: "select" as const,
+        options: [...Object.values(PolicyTemplateCategory)].map((value) => ({
+          value: value,
+          label: value,
+        })),
+      },
+    ],
+    [],
+  );
 
   // FilterBy - Field value getter
   const getPolicyTemplateFieldValue = useCallback(
     (item: PolicyTemplateItem, fieldId: string): string | number | Date | null | undefined => {
       switch (fieldId) {
-        case 'title':
+        case "title":
           return item.title;
-        case 'category':
+        case "category":
           return item.category;
         default:
           return null;
       }
     },
-    []
+    [],
   );
 
   // FilterBy - Initialize hook
-  const { filterData: filterPolicyTemplateData, handleFilterChange: handlePolicyTemplateFilterChange } = useFilterBy<PolicyTemplateItem>(getPolicyTemplateFieldValue);
+  const {
+    filterData: filterPolicyTemplateData,
+    handleFilterChange: handlePolicyTemplateFilterChange,
+  } = useFilterBy<PolicyTemplateItem>(getPolicyTemplateFieldValue);
 
   // Filter + search using FilterBy
   const filteredPolicyTemplates = useMemo(() => {
@@ -112,21 +135,19 @@ const PolicyTemplates: React.FC<PolicyTemplatesProps> = ({
     // Apply search filter
     if (searchTerm.trim()) {
       const query = searchTerm.toLowerCase();
-      result = result.filter((p) =>
-        p.title.toLowerCase().includes(query)
-      );
+      result = result.filter((p) => p.title.toLowerCase().includes(query));
     }
 
     return result;
-  }, [filterPolicyTemplateData, searchTerm]);
+  }, [filterPolicyTemplateData, policyTemplates, searchTerm]);
 
   // Define how to get the group key for each policy template
   const getTemplateGroupKey = useCallback((template: PolicyTemplateItem, field: string): string => {
     switch (field) {
-      case 'category':
-        return template.category || 'Unknown';
+      case "category":
+        return template.category || "Unknown";
       default:
-        return 'Other';
+        return "Other";
     }
   }, []);
 
@@ -140,17 +161,22 @@ const PolicyTemplates: React.FC<PolicyTemplatesProps> = ({
 
   const cellStyle = singleTheme.tableStyles.primary.body.cell;
 
-  const { visibleColumns, allColumns, toggleColumn, resetToDefaults } =
-    useColumnVisibility({ tableId: "policy-templates-table", columns: POLICY_TEMPLATE_TABLE_COLUMNS });
+  const { visibleColumns, allColumns, toggleColumn, resetToDefaults } = useColumnVisibility({
+    tableId: "policy-templates-table",
+    columns: POLICY_TEMPLATE_TABLE_COLUMNS,
+  });
 
   const isVisible = useCallback(
-    (key: string) => !visibleColumns || visibleColumns.size === 0 || visibleColumns.has(key as PolicyTemplateColumnKey),
-    [visibleColumns]
+    (key: string) =>
+      !visibleColumns ||
+      visibleColumns.size === 0 ||
+      visibleColumns.has(key as PolicyTemplateColumnKey),
+    [visibleColumns],
   );
 
   const visibleTableHeaders = useMemo(
     () => tableHeaders.filter((col) => col.id === "title" || isVisible(col.id)),
-    [isVisible]
+    [isVisible],
   );
 
   return (
@@ -166,9 +192,7 @@ const PolicyTemplates: React.FC<PolicyTemplatesProps> = ({
 
         {/* Group By */}
         <GroupBy
-          options={[
-            { id: 'category', label: 'Category' },
-          ]}
+          options={[{ id: "category", label: "Category" }]}
           onGroupChange={handleGroupChange}
         />
 
@@ -217,10 +241,10 @@ const PolicyTemplates: React.FC<PolicyTemplatesProps> = ({
           ungroupedData={filteredPolicyTemplates}
           renderTable={(data, options) => (
             <CustomizablePolicyTable
-              data={{ rows: data.map(p => ({ ...p, id: p.id })), cols: visibleTableHeaders }}
+              data={{ rows: data.map((p) => ({ ...p, id: p.id })), cols: visibleTableHeaders }}
               paginated
-              setSelectedRow={() => { }}
-              setAnchorEl={() => { }}
+              setSelectedRow={() => {}}
+              setAnchorEl={() => {}}
               onRowClick={(id: string) => handleSelectPolicyTemplate(Number(id))}
               hidePagination={options?.hidePagination}
               renderRow={(policy, sortConfig) => (
@@ -236,7 +260,9 @@ const PolicyTemplates: React.FC<PolicyTemplatesProps> = ({
                       sx={{
                         ...cellStyle,
                         fontWeight: 500,
-                        backgroundColor: sortConfig?.key?.toLowerCase().includes("id") ? "background.surface" : "inherit",
+                        backgroundColor: sortConfig?.key?.toLowerCase().includes("id")
+                          ? "background.surface"
+                          : "inherit",
                       }}
                     >
                       {policy.id}
@@ -248,7 +274,9 @@ const PolicyTemplates: React.FC<PolicyTemplatesProps> = ({
                       maxWidth: 200,
                       overflow: "hidden",
                       textOverflow: "ellipsis",
-                      backgroundColor: sortConfig?.key?.toLowerCase().includes("title") ? "background.surface" : "inherit",
+                      backgroundColor: sortConfig?.key?.toLowerCase().includes("title")
+                        ? "background.surface"
+                        : "inherit",
                     }}
                   >
                     {policy.title}
@@ -257,7 +285,9 @@ const PolicyTemplates: React.FC<PolicyTemplatesProps> = ({
                     <TableCell
                       sx={{
                         ...cellStyle,
-                        backgroundColor: sortConfig?.key?.toLowerCase().includes("tags") ? "background.surface" : "inherit",
+                        backgroundColor: sortConfig?.key?.toLowerCase().includes("tags")
+                          ? "background.surface"
+                          : "inherit",
                       }}
                     >
                       <Stack direction="row" gap={1} flexWrap="wrap">
@@ -274,7 +304,9 @@ const PolicyTemplates: React.FC<PolicyTemplatesProps> = ({
                         maxWidth: 250,
                         overflow: "hidden",
                         textOverflow: "ellipsis",
-                        backgroundColor: sortConfig?.key?.toLowerCase().includes("description") ? "background.surface" : "inherit",
+                        backgroundColor: sortConfig?.key?.toLowerCase().includes("description")
+                          ? "background.surface"
+                          : "inherit",
                       }}
                     >
                       {policy.description}
@@ -286,7 +318,6 @@ const PolicyTemplates: React.FC<PolicyTemplatesProps> = ({
           )}
         />
       )}
-
     </Stack>
   );
 };

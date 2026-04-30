@@ -13,7 +13,10 @@ import useMultipleOnScreen from "../../../../application/hooks/useMultipleOnScre
 import { VerifyWiseContext } from "../../../../application/contexts/VerifyWise.context";
 import { ComplianceData } from "../../../../domain/interfaces/i.compliance";
 import { Project } from "../../../../domain/types/Project";
-import { getComplianceProgress, getControlsByControlCategoryId } from "../../../../application/repository/control_eu_act.repository";
+import {
+  getComplianceProgress,
+  getControlsByControlCategoryId,
+} from "../../../../application/repository/control_eu_act.repository";
 import { brand } from "../../../themes/palette";
 
 const ComplianceTracker = ({
@@ -21,7 +24,7 @@ const ComplianceTracker = ({
   statusFilter,
   ownerFilter,
   approverFilter,
-  dueDateFilter
+  dueDateFilter,
 }: {
   project: Project;
   statusFilter?: string;
@@ -33,16 +36,13 @@ const ComplianceTracker = ({
   const controlId = searchParams.get("controlId");
 
   const currentProjectId = project?.id;
-  const currentProjectFramework = project.framework?.filter(
-    (p) => p.framework_id === 1
-  )[0]?.project_framework_id;
+  const currentProjectFramework = project.framework?.filter((p) => p.framework_id === 1)[0]
+    ?.project_framework_id;
   const [complianceData, setComplianceData] = useState<ComplianceData>();
-  const [controlCategories, setControlCategories] =
-    useState<ControlCategoryModel[]>();
+  const [controlCategories, setControlCategories] = useState<ControlCategoryModel[]>();
   const [error, setError] = useState<unknown>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const { componentsVisible, changeComponentVisibility } =
-    useContext(VerifyWiseContext);
+  const { componentsVisible, changeComponentVisibility } = useContext(VerifyWiseContext);
   const [runComplianceTour, setRunComplianceTour] = useState(false);
   const [initialControlCategoryId, setInitialControlCategoryId] = useState<number | null>(null);
 
@@ -124,14 +124,11 @@ const ComplianceTracker = ({
 
     try {
       const response = await getEntityById({
-        routeUrl: `/eu-ai-act/controlCategories`,
+        routeUrl: `/eu-ai-act/controlCategories?projectFrameworkId=${currentProjectFramework}`,
       });
       setControlCategories(response);
     } catch (err) {
-      console.error(
-        "ComplianceTracker: Error fetching control categories:",
-        err
-      );
+      console.error("ComplianceTracker: Error fetching control categories:", err);
       setError(err);
     }
   };
@@ -144,12 +141,21 @@ const ComplianceTracker = ({
       // No EU AI Act framework - just stop loading
       setLoading(false);
     }
-  }, [currentProjectId, currentProjectFramework]);
+    // Also re-fetch when the project's role or risk classification changes,
+    // because the server filters categories by those fields. Without this
+    // dependency, editing the use-case settings wouldn't refresh the
+    // visible list until the user navigates away and back.
+  }, [
+    currentProjectId,
+    currentProjectFramework,
+    project?.type_of_high_risk_role,
+    project?.ai_risk_classification,
+  ]);
 
   if (loading) {
     return (
       <Stack className="compliance-tracker" sx={{ gap: "16px" }}>
-        <Typography sx={pageHeadingStyle}>Compliance tracker</Typography>
+        <Typography sx={pageHeadingStyle}>Requirements tracker</Typography>
         <CustomizableSkeleton
           variant="rectangular"
           minWidth={300}
@@ -168,7 +174,7 @@ const ComplianceTracker = ({
   if (!currentProjectId) {
     return (
       <Stack className="compliance-tracker" sx={{ gap: "16px" }}>
-        <Typography sx={pageHeadingStyle}>Compliance tracker</Typography>
+        <Typography sx={pageHeadingStyle}>Requirements tracker</Typography>
         <Typography>Please select a project to view compliance data</Typography>
       </Stack>
     );
@@ -190,7 +196,7 @@ const ComplianceTracker = ({
           <StatsCard
             completed={complianceData.allDonesubControls}
             total={complianceData.allsubControls}
-            title="Subcontrols"
+            title="Controls"
             progressbarColor={brand.primary}
           />
         </Stack>
@@ -201,11 +207,7 @@ const ComplianceTracker = ({
           .sort((a, b) => (a.order_no ?? 0) - (b.order_no ?? 0))
           .map((controlCategory: ControlCategoryModel, index) =>
             index === 0 ? (
-              <div
-                ref={refs[2]}
-                data-joyride-id="control-groups"
-                key={controlCategory.id}
-              >
+              <div ref={refs[2]} data-joyride-id="control-groups" key={controlCategory.id}>
                 <ControlCategoryTile
                   controlCategory={controlCategory}
                   onComplianceUpdate={fetchComplianceData}
@@ -231,7 +233,7 @@ const ComplianceTracker = ({
                 dueDateFilter={dueDateFilter}
                 initialControlCategoryId={initialControlCategoryId}
               />
-            )
+            ),
           )}
     </Stack>
   );

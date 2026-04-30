@@ -3,7 +3,7 @@ import { Box, Stack, Popover, Typography, IconButton } from "@mui/material";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { StatusTileCards, StatusTileItem } from "../../components/Cards/StatusTileCards";
 import { CustomizableButton } from "../../components/button/customizable-button";
-import { BarChart3, ChevronDown } from "lucide-react"
+import { BarChart3, ChevronDown } from "lucide-react";
 import ibmLogo from "../../assets/ibm_logo.svg";
 import mitLogo from "../../assets/mit_logo.svg";
 import VWProjectRisksTable from "../../components/Table/VWProjectRisksTable";
@@ -25,6 +25,7 @@ import { PageHeaderExtended } from "../../components/Layout/PageHeaderExtended";
 import PageTour from "../../components/PageTour";
 import RiskManagementSteps from "./RiskManagementSteps";
 import { RiskModel } from "../../../domain/models/Common/risks/risk.model";
+import { onAiActionCompleted } from "../../../application/events/aiActionEvents";
 import AnalyticsDrawer from "../../components/AnalyticsDrawer";
 import { ExportMenu } from "../../components/Table/ExportMenu";
 import { GroupBy } from "../../components/Table/GroupBy";
@@ -37,7 +38,6 @@ import { useColumnVisibility, ColumnConfig } from "../../../application/hooks/us
 import { useEntityChangeHistory } from "../../../application/hooks/useEntityChangeHistory";
 import { PluginSlot } from "../../components/PluginSlot";
 import { PLUGIN_SLOTS } from "../../../domain/constants/pluginSlots";
-import { usePluginRegistry } from "../../../application/contexts/PluginRegistry.context";
 import { apiServices } from "../../../infrastructure/api/networkServices";
 import {
   riskMainStackStyle,
@@ -47,18 +47,12 @@ import {
   riskPopoverStyle,
   riskPopoverContentStyle,
   riskMenuItemStyle,
+  riskMenuItemTextWrapStyle,
+  riskMenuItemTitleRowStyle,
   riskMenuItemTitleStyle,
   riskMenuItemSubtitleStyle,
-  riskDividerContainerStyle,
-  riskDividerLineStyle,
-  riskDividerTextStyle,
-  riskCardsGridStyle,
-  aiRiskCardBaseStyle,
-  aiRiskCardIbmStyle,
-  aiRiskCardRecommendedBadgeStyle,
-  aiRiskCardLogoStyle,
-  aiRiskCardTitleStyle,
-  aiRiskCardCaptionStyle,
+  riskMenuItemLogoStyle,
+  riskMenuItemRecommendedBadgeStyle,
 } from "./style";
 import { text } from "../../themes/palette";
 
@@ -74,7 +68,6 @@ const initialLoadingState: LoadingStatus = {
   loading: false,
   message: "",
 };
-
 
 const RiskManagement = () => {
   const location = useLocation();
@@ -93,10 +86,8 @@ const RiskManagement = () => {
   } | null>(null);
   const [, setShowAlert] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
-  const [isLoading, setIsLoading] =
-    useState<LoadingStatus>(initialLoadingState);
-  const [showCustomizableSkeleton, setShowCustomizableSkeleton] =
-    useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<LoadingStatus>(initialLoadingState);
+  const [showCustomizableSkeleton, setShowCustomizableSkeleton] = useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<number | null>(null);
   const [isAIModalOpen, setIsAIModalOpen] = useState(false);
   const [isIBMModalOpen, setIsIBMModalOpen] = useState(false);
@@ -132,33 +123,37 @@ const RiskManagement = () => {
   const onSubmitRef = useRef<(() => void) | null>(null);
   const onAiRiskSubmitRef = useRef<(() => void) | null>(null);
 
-  // Check if risk-import plugin is installed via plugin registry
-  const { getComponentsForSlot } = usePluginRegistry();
-  const hasRiskImportPlugin = getComponentsForSlot(PLUGIN_SLOTS.RISKS_ACTIONS).length > 0;
-
   // GroupBy state
   const { groupBy, groupSortOrder, handleGroupChange } = useGroupByState();
 
   // Column visibility management
-  type RiskColumn = 'risk_name' | 'risk_owner' | 'severity' | 'mitigation_status' | 'risk_level_autocalculated' | 'deadline' | 'controls_mapping' | 'actions';
+  type RiskColumn =
+    | "risk_name"
+    | "risk_owner"
+    | "severity"
+    | "mitigation_status"
+    | "risk_level_autocalculated"
+    | "deadline"
+    | "controls_mapping"
+    | "actions";
 
   const RISK_COLUMNS: ColumnConfig<RiskColumn>[] = useMemo(
     () => [
-      { key: 'risk_name', label: 'Risk name', defaultVisible: true, alwaysVisible: true },
-      { key: 'risk_owner', label: 'Owner', defaultVisible: true },
-      { key: 'severity', label: 'Severity', defaultVisible: true },
-      { key: 'mitigation_status', label: 'Mitigation status', defaultVisible: true },
-      { key: 'risk_level_autocalculated', label: 'Risk level', defaultVisible: true },
-      { key: 'deadline', label: 'Target date', defaultVisible: true },
-      { key: 'controls_mapping', label: 'Controls', defaultVisible: true },
-      { key: 'actions', label: 'Actions', defaultVisible: true, alwaysVisible: true },
+      { key: "risk_name", label: "Risk name", defaultVisible: true, alwaysVisible: true },
+      { key: "risk_owner", label: "Owner", defaultVisible: true },
+      { key: "severity", label: "Severity", defaultVisible: true },
+      { key: "mitigation_status", label: "Mitigation status", defaultVisible: true },
+      { key: "risk_level_autocalculated", label: "Risk level", defaultVisible: true },
+      { key: "deadline", label: "Target date", defaultVisible: true },
+      { key: "controls_mapping", label: "Controls", defaultVisible: true },
+      { key: "actions", label: "Actions", defaultVisible: true, alwaysVisible: true },
     ],
-    []
+    [],
   );
 
   const { visibleColumns, allColumns, toggleColumn, resetToDefaults } =
     useColumnVisibility<RiskColumn>({
-      tableId: 'risk-management-table',
+      tableId: "risk-management-table",
       columns: RISK_COLUMNS,
     });
 
@@ -168,7 +163,7 @@ const RiskManagement = () => {
   // Prefetch history data when modal opens in edit mode
   useEntityChangeHistory(
     "risk",
-    isRiskModalOpen && selectedRow.length > 0 && selectedRow[0]?.id ? selectedRow[0].id : 0
+    isRiskModalOpen && selectedRow.length > 0 && selectedRow[0]?.id ? selectedRow[0].id : 0,
   );
 
   // FilterBy configuration
@@ -189,114 +184,115 @@ const RiskManagement = () => {
       });
   }, [projectRisks, users]);
 
-  const filterColumns: FilterColumn[] = useMemo(() => [
-    {
-      id: 'risk_name',
-      label: 'Risk name',
-      type: 'text' as const,
-    },
-    {
-      id: 'risk_description',
-      label: 'Description',
-      type: 'text' as const,
-    },
-    {
-      id: 'severity',
-      label: 'Severity',
-      type: 'select' as const,
-      options: [
-        { value: 'Very High', label: 'Very High' },
-        { value: 'High', label: 'High' },
-        { value: 'Medium', label: 'Medium' },
-        { value: 'Low', label: 'Low' },
-        { value: 'Very Low', label: 'Very Low' },
-      ],
-    },
-    {
-      id: 'risk_level',
-      label: 'Risk level',
-      type: 'select' as const,
-      options: [
-        { value: 'Very High', label: 'Very High' },
-        { value: 'High', label: 'High' },
-        { value: 'Medium', label: 'Medium' },
-        { value: 'Low', label: 'Low' },
-        { value: 'Very Low', label: 'Very Low' },
-      ],
-    },
-    {
-      id: 'mitigation_status',
-      label: 'Mitigation status',
-      type: 'select' as const,
-      options: [
-        { value: 'Completed', label: 'Completed' },
-        { value: 'In Progress', label: 'In Progress' },
-        { value: 'Not Started', label: 'Not Started' },
-      ],
-    },
-    {
-      id: 'risk_owner',
-      label: 'Risk owner',
-      type: 'select' as const,
-      options: getUniqueOwners(),
-    },
-    {
-      id: 'impact',
-      label: 'Impact',
-      type: 'text' as const,
-    },
-    {
-      id: 'deadline',
-      label: 'Target date',
-      type: 'date' as const,
-    },
-    {
-      id: 'date_of_assessment',
-      label: 'Assessment date',
-      type: 'date' as const,
-    },
-  ], [getUniqueOwners]);
+  const filterColumns: FilterColumn[] = useMemo(
+    () => [
+      {
+        id: "risk_name",
+        label: "Risk name",
+        type: "text" as const,
+      },
+      {
+        id: "risk_description",
+        label: "Description",
+        type: "text" as const,
+      },
+      {
+        id: "severity",
+        label: "Severity",
+        type: "select" as const,
+        options: [
+          { value: "Very High", label: "Very High" },
+          { value: "High", label: "High" },
+          { value: "Medium", label: "Medium" },
+          { value: "Low", label: "Low" },
+          { value: "Very Low", label: "Very Low" },
+        ],
+      },
+      {
+        id: "risk_level",
+        label: "Risk level",
+        type: "select" as const,
+        options: [
+          { value: "Very High", label: "Very High" },
+          { value: "High", label: "High" },
+          { value: "Medium", label: "Medium" },
+          { value: "Low", label: "Low" },
+          { value: "Very Low", label: "Very Low" },
+        ],
+      },
+      {
+        id: "mitigation_status",
+        label: "Mitigation status",
+        type: "select" as const,
+        options: [
+          { value: "Completed", label: "Completed" },
+          { value: "In Progress", label: "In Progress" },
+          { value: "Not Started", label: "Not Started" },
+        ],
+      },
+      {
+        id: "risk_owner",
+        label: "Risk owner",
+        type: "select" as const,
+        options: getUniqueOwners(),
+      },
+      {
+        id: "impact",
+        label: "Impact",
+        type: "text" as const,
+      },
+      {
+        id: "deadline",
+        label: "Target date",
+        type: "date" as const,
+      },
+      {
+        id: "date_of_assessment",
+        label: "Assessment date",
+        type: "date" as const,
+      },
+    ],
+    [getUniqueOwners],
+  );
 
   // Get field value for filtering
-  const getRiskFieldValue = useCallback((risk: RiskModel, fieldId: string): string | number | Date | null | undefined => {
-    switch (fieldId) {
-      case 'risk_name':
-        return risk.risk_name;
-      case 'risk_description':
-        return risk.risk_description;
-      case 'severity':
-        return risk.severity;
-      case 'risk_level':
-        return risk.current_risk_level || risk.risk_level_autocalculated;
-      case 'mitigation_status':
-        return risk.mitigation_status;
-      case 'risk_owner':
-        return risk.risk_owner?.toString();
-      case 'impact':
-        return risk.impact;
-      case 'deadline':
-        return risk.deadline;
-      case 'date_of_assessment':
-        return risk.date_of_assessment;
-      default:
-        return null;
-    }
-  }, []);
+  const getRiskFieldValue = useCallback(
+    (risk: RiskModel, fieldId: string): string | number | Date | null | undefined => {
+      switch (fieldId) {
+        case "risk_name":
+          return risk.risk_name;
+        case "risk_description":
+          return risk.risk_description;
+        case "severity":
+          return risk.severity;
+        case "risk_level":
+          return risk.current_risk_level || risk.risk_level_autocalculated;
+        case "mitigation_status":
+          return risk.mitigation_status;
+        case "risk_owner":
+          return risk.risk_owner?.toString();
+        case "impact":
+          return risk.impact;
+        case "deadline":
+          return risk.deadline;
+        case "date_of_assessment":
+          return risk.date_of_assessment;
+        default:
+          return null;
+      }
+    },
+    [],
+  );
 
-  const { filterData, handleFilterChange: handleFilterByChangeBase } = useFilterBy<RiskModel>(getRiskFieldValue);
+  const { filterData, handleFilterChange: handleFilterByChangeBase } =
+    useFilterBy<RiskModel>(getRiskFieldValue);
 
   // Wrapper to sync selected risk level card with filter conditions
   const handleFilterByChange = useCallback(
     (conditions: FilterCondition[], logic: "and" | "or") => {
       // Sync selected risk level card with filter conditions
-      const riskLevelCondition = conditions.find(
-        (c) => c.columnId === "risk_level"
-      );
-      if (
-        riskLevelCondition &&
-        riskLevelCondition.operator === "is" &&
-        riskLevelCondition.value
-      ) {
+      const riskLevelCondition = conditions.find((c) => c.columnId === "risk_level");
+      if (riskLevelCondition && riskLevelCondition.operator === "is" && riskLevelCondition.value) {
         setSelectedRiskLevel(riskLevelCondition.value);
       } else {
         setSelectedRiskLevel(null);
@@ -305,28 +301,28 @@ const RiskManagement = () => {
       // Pass to base handler for client-side filtering
       handleFilterByChangeBase(conditions, logic);
     },
-    [handleFilterByChangeBase]
+    [handleFilterByChangeBase],
   );
 
   // Handle risk card click to filter risks by risk level
   const handleRiskCardClick = useCallback((riskLevel: string) => {
-    if (!riskLevel || riskLevel === 'Total') {
+    if (!riskLevel || riskLevel === "Total") {
       setSelectedRiskLevel(null);
       setAlert(null);
       setShowAlert(false);
     } else {
       setSelectedRiskLevel(riskLevel);
       setAlert({
-        variant: 'info',
+        variant: "info",
         title: `Filtering by ${riskLevel} risk level`,
-        body: 'Click the card again or click Total to see all risks.',
+        body: "Click the card again or click Total to see all risks.",
       });
     }
   }, []);
 
   // Auto-dismiss info alert after 3 seconds with fade animation
   useEffect(() => {
-    if (alert && alert.variant === 'info') {
+    if (alert && alert.variant === "info") {
       setShowAlert(true);
       const timer = setTimeout(() => {
         setShowAlert(false);
@@ -346,7 +342,11 @@ const RiskManagement = () => {
     if (selectedRiskLevel) {
       const levelLower = selectedRiskLevel.toLowerCase();
       filtered = filtered.filter((risk) => {
-        const riskLevel = (risk.current_risk_level || risk.risk_level_autocalculated || "").toLowerCase();
+        const riskLevel = (
+          risk.current_risk_level ||
+          risk.risk_level_autocalculated ||
+          ""
+        ).toLowerCase();
         switch (levelLower) {
           case "very high":
             return riskLevel.includes("very high");
@@ -369,32 +369,53 @@ const RiskManagement = () => {
       return filtered;
     }
 
-    return filtered.filter((risk) =>
-      risk.risk_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      risk.risk_description?.toLowerCase().includes(searchTerm.toLowerCase())
+    return filtered.filter(
+      (risk) =>
+        risk.risk_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        risk.risk_description?.toLowerCase().includes(searchTerm.toLowerCase()),
     );
   }, [filterData, projectRisks, selectedRiskLevel, searchTerm]);
 
   // Compute risk summary from fetched data
   const risksSummary = useMemo(() => {
-    const veryHighRisks = projectRisks.filter(risk => {
-      const riskLevel = (risk.current_risk_level || risk.risk_level_autocalculated || "").toLowerCase();
+    const veryHighRisks = projectRisks.filter((risk) => {
+      const riskLevel = (
+        risk.current_risk_level ||
+        risk.risk_level_autocalculated ||
+        ""
+      ).toLowerCase();
       return riskLevel.includes("very high");
     }).length;
-    const highRisks = projectRisks.filter(risk => {
-      const riskLevel = (risk.current_risk_level || risk.risk_level_autocalculated || "").toLowerCase();
+    const highRisks = projectRisks.filter((risk) => {
+      const riskLevel = (
+        risk.current_risk_level ||
+        risk.risk_level_autocalculated ||
+        ""
+      ).toLowerCase();
       return riskLevel.includes("high") && !riskLevel.includes("very high");
     }).length;
-    const mediumRisks = projectRisks.filter(risk => {
-      const riskLevel = (risk.current_risk_level || risk.risk_level_autocalculated || "").toLowerCase();
+    const mediumRisks = projectRisks.filter((risk) => {
+      const riskLevel = (
+        risk.current_risk_level ||
+        risk.risk_level_autocalculated ||
+        ""
+      ).toLowerCase();
       return riskLevel.includes("medium");
     }).length;
-    const lowRisks = projectRisks.filter(risk => {
-      const riskLevel = (risk.current_risk_level || risk.risk_level_autocalculated || "").toLowerCase();
+    const lowRisks = projectRisks.filter((risk) => {
+      const riskLevel = (
+        risk.current_risk_level ||
+        risk.risk_level_autocalculated ||
+        ""
+      ).toLowerCase();
       return riskLevel.includes("low") && !riskLevel.includes("very low");
     }).length;
-    const veryLowRisks = projectRisks.filter(risk => {
-      const riskLevel = (risk.current_risk_level || risk.risk_level_autocalculated || "").toLowerCase();
+    const veryLowRisks = projectRisks.filter((risk) => {
+      const riskLevel = (
+        risk.current_risk_level ||
+        risk.risk_level_autocalculated ||
+        ""
+      ).toLowerCase();
       return riskLevel.includes("very low") || riskLevel.includes("no risk");
     }).length;
 
@@ -411,14 +432,14 @@ const RiskManagement = () => {
   // Define export columns for risk management table
   const exportColumns = useMemo(() => {
     return [
-      { id: 'risk_name', label: 'Risk Name' },
-      { id: 'risk_owner', label: 'Owner' },
-      { id: 'severity', label: 'Severity' },
-      { id: 'likelihood', label: 'Likelihood' },
-      { id: 'mitigation_status', label: 'Mitigation Status' },
-      { id: 'risk_level', label: 'Risk Level' },
-      { id: 'deadline', label: 'Target Date' },
-      { id: 'controls_mapping', label: 'Linked Controls' },
+      { id: "risk_name", label: "Risk Name" },
+      { id: "risk_owner", label: "Owner" },
+      { id: "severity", label: "Severity" },
+      { id: "likelihood", label: "Likelihood" },
+      { id: "mitigation_status", label: "Mitigation Status" },
+      { id: "risk_level", label: "Risk Level" },
+      { id: "deadline", label: "Target Date" },
+      { id: "controls_mapping", label: "Linked Controls" },
     ];
   }, []);
 
@@ -427,32 +448,29 @@ const RiskManagement = () => {
     const dataToExport = filteredRisks.length > 0 ? filteredRisks : projectRisks;
     return dataToExport.map((risk: RiskModel) => {
       const ownerUser = users.find((user) => user.id === risk.risk_owner);
-      const ownerName = ownerUser ? `${ownerUser.name} ${ownerUser.surname}` : '-';
+      const ownerName = ownerUser ? `${ownerUser.name} ${ownerUser.surname}` : "-";
 
       return {
-        risk_name: risk.risk_name || '-',
+        risk_name: risk.risk_name || "-",
         risk_owner: ownerName,
-        severity: risk.severity || '-',
-        likelihood: risk.likelihood || '-',
-        mitigation_status: risk.mitigation_status || '-',
-        risk_level: risk.current_risk_level || risk.risk_level_autocalculated || '-',
-        deadline: risk.deadline || '-',
-        controls_mapping: risk.controls_mapping || '-',
+        severity: risk.severity || "-",
+        likelihood: risk.likelihood || "-",
+        mitigation_status: risk.mitigation_status || "-",
+        risk_level: risk.current_risk_level || risk.risk_level_autocalculated || "-",
+        deadline: risk.deadline || "-",
+        controls_mapping: risk.controls_mapping || "-",
       };
     });
   }, [filteredRisks, projectRisks, users]);
 
-  const fetchProjectRisks = useCallback(async (filter: 'active' | 'deleted' | 'all' = 'active') => {
+  const fetchProjectRisks = useCallback(async (filter: "active" | "deleted" | "all" = "active") => {
     try {
       const response = await getAllProjectRisks({ filter });
       setShowCustomizableSkeleton(false);
       setProjectRisks(response.data);
     } catch (error) {
       console.error("Error fetching project risks:", error);
-      handleToast(
-        "error",
-        "Unexpected error occurs while fetching project risks."
-      );
+      handleToast("error", "Unexpected error occurs while fetching project risks.");
     }
   }, []);
 
@@ -460,6 +478,28 @@ const RiskManagement = () => {
     setShowCustomizableSkeleton(true);
     fetchProjectRisks();
   }, [fetchProjectRisks, refreshKey]);
+
+  // Listen for AI action approvals for any risk-lifecycle tool. When an
+  // approval is granted in the RequestorApprovalModal, the executor runs
+  // inside the approve transaction so the affected row already reflects
+  // the change by the time the event fires — bumping refreshKey is
+  // enough to pull it in. This covers create, update, and delete.
+  useEffect(() => {
+    const RISK_TOOL_NAMES = new Set([
+      "agent_create_risk",
+      "agent_update_risk",
+      "agent_delete_risk",
+    ]);
+    return onAiActionCompleted((detail) => {
+      if (
+        detail?.status === "approved" &&
+        detail?.toolName &&
+        RISK_TOOL_NAMES.has(detail.toolName)
+      ) {
+        setRefreshKey((k) => k + 1);
+      }
+    });
+  }, []);
 
   // Auto-open create risk popup when navigating from "Add new..." dropdown
   useEffect(() => {
@@ -603,7 +643,7 @@ const RiskManagement = () => {
   const handleUpdate = () => {
     // Set flash immediately to ensure visibility
     setCurrentRow(selectedRow[0].id!); // set current row to trigger flash-feedback
-    
+
     setTimeout(() => {
       setIsLoading(initialLoadingState);
       handleToast("success", "Risk updated successfully");
@@ -629,23 +669,21 @@ const RiskManagement = () => {
         routeUrl: `/projectRisks/${riskId}`,
       });
       if (response.status === 200) {
-
-          // Delete the risk from all linked policies
-      try {
-        await deleteEntityById({
-          routeUrl: `/policy-linked/risk/${riskId}/unlink-all`, 
-        });
-      } catch (linkedError) {
-        console.error("Error deleting risk from linked policies", linkedError);
-        handleToast("warning", "Risk deleted but failed to remove from some linked policies.");
-      }
-
+        // Delete the risk from all linked policies
+        try {
+          await deleteEntityById({
+            routeUrl: `/policy-linked/risk/${riskId}/unlink-all`,
+          });
+        } catch (linkedError) {
+          console.error("Error deleting risk from linked policies", linkedError);
+          handleToast("warning", "Risk deleted but failed to remove from some linked policies.");
+        }
 
         // Set current pagination number after deleting the risk
         const rowsPerPage = 5;
         const rowCount = projectRisks.slice(
           currentPage * rowsPerPage,
-          currentPage * rowsPerPage + rowsPerPage
+          currentPage * rowsPerPage + rowsPerPage,
         );
 
         if (currentPage !== 0 && rowCount.length === 1) {
@@ -679,24 +717,27 @@ const RiskManagement = () => {
   };
 
   // Define how to get the group key for each risk
-  const getRiskGroupKey = useCallback((risk: RiskModel, field: string): string => {
-    switch (field) {
-      case 'risk_level':
-        return risk.current_risk_level || risk.risk_level_autocalculated || 'Unknown';
-      case 'mitigation_status':
-        return risk.mitigation_status || 'Unknown';
-      case 'owner':
-        if (risk.risk_owner) {
-          const user = users.find((u) => u.id === risk.risk_owner);
-          return user ? `${user.name} ${user.surname}`.trim() : 'Unknown';
-        }
-        return 'Unassigned';
-      case 'severity':
-        return risk.severity || 'Unknown';
-      default:
-        return 'Other';
-    }
-  }, [users]);
+  const getRiskGroupKey = useCallback(
+    (risk: RiskModel, field: string): string => {
+      switch (field) {
+        case "risk_level":
+          return risk.current_risk_level || risk.risk_level_autocalculated || "Unknown";
+        case "mitigation_status":
+          return risk.mitigation_status || "Unknown";
+        case "owner":
+          if (risk.risk_owner) {
+            const user = users.find((u) => u.id === risk.risk_owner);
+            return user ? `${user.name} ${user.surname}`.trim() : "Unknown";
+          }
+          return "Unassigned";
+        case "severity":
+          return risk.severity || "Unknown";
+        default:
+          return "Other";
+      }
+    },
+    [users],
+  );
 
   // Apply grouping to filtered risks
   const groupedRisks = useTableGrouping({
@@ -710,19 +751,30 @@ const RiskManagement = () => {
     <PageHeaderExtended
       title="Risk Management"
       description="Manage and monitor risks across all your projects"
-
       helpArticlePath="risk-management/risk-assessment"
       tipBoxEntity="risk-management"
       summaryCards={
         <StatusTileCards
-          items={[
-            { key: "Total", label: "Total", count: risksSummary.total, color: "#4B5563" },
-            { key: "Very high", label: "Very high", count: risksSummary.veryHighRisks, color: "#C63622" },
-            { key: "High", label: "High", count: risksSummary.highRisks, color: "#D68B61" },
-            { key: "Medium", label: "Medium", count: risksSummary.mediumRisks, color: "#D6B971" },
-            { key: "Low", label: "Low", count: risksSummary.lowRisks, color: "#52AB43" },
-            { key: "Very low", label: "Very low", count: risksSummary.veryLowRisks, color: "#B8D39C" },
-          ] satisfies StatusTileItem[]}
+          items={
+            [
+              { key: "Total", label: "Total", count: risksSummary.total, color: "#4B5563" },
+              {
+                key: "Very high",
+                label: "Very high",
+                count: risksSummary.veryHighRisks,
+                color: "#C63622",
+              },
+              { key: "High", label: "High", count: risksSummary.highRisks, color: "#D68B61" },
+              { key: "Medium", label: "Medium", count: risksSummary.mediumRisks, color: "#D6B971" },
+              { key: "Low", label: "Low", count: risksSummary.lowRisks, color: "#52AB43" },
+              {
+                key: "Very low",
+                label: "Very low",
+                count: risksSummary.veryLowRisks,
+                color: "#B8D39C",
+              },
+            ] satisfies StatusTileItem[]
+          }
           onCardClick={(key) => {
             if (key === "Total" || key === selectedRiskLevel) {
               handleRiskCardClick("");
@@ -749,29 +801,18 @@ const RiskManagement = () => {
       }
       loadingToast={isLoading.loading && <CustomizableToast title={isLoading.message} />}
     >
-
-      <Stack
-        className="risk-management-row"
-        sx={riskMainStackStyle}
-      >
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="flex-end"
-        >
+      <Stack className="risk-management-row" sx={riskMainStackStyle}>
+        <Stack direction="row" justifyContent="space-between" alignItems="flex-end">
           <Box sx={riskFilterRowStyle}>
             <div data-joyride-id="risk-filters">
-              <FilterBy
-                columns={filterColumns}
-                onFilterChange={handleFilterByChange}
-              />
+              <FilterBy columns={filterColumns} onFilterChange={handleFilterByChange} />
             </div>
             <GroupBy
               options={[
-                { id: 'risk_level', label: 'Risk level' },
-                { id: 'mitigation_status', label: 'Mitigation status' },
-                { id: 'owner', label: 'Owner' },
-                { id: 'severity', label: 'Severity' },
+                { id: "risk_level", label: "Risk level" },
+                { id: "mitigation_status", label: "Mitigation status" },
+                { id: "owner", label: "Owner" },
+                { id: "severity", label: "Severity" },
               ]}
               onGroupChange={handleGroupChange}
             />
@@ -785,7 +826,7 @@ const RiskManagement = () => {
               placeholder="Search risks..."
               value={searchTerm}
               onChange={setSearchTerm}
-              inputProps={{ "aria-label": "Search risks"}}
+              inputProps={{ "aria-label": "Search risks" }}
               fullWidth={false}
             />
           </Box>
@@ -812,9 +853,7 @@ const RiskManagement = () => {
                 sx={addNewRiskButtonStyle}
                 onClick={handleInsertFromMenuOpen as (event: unknown) => void}
                 icon={<ChevronDown size={16} />}
-                isDisabled={
-                  !allowedRoles.projectRisks.create.includes(userRoleName)
-                }
+                isDisabled={!allowedRoles.projectRisks.create.includes(userRoleName)}
               />
               <Popover
                 id="insert-risk-mega-dropdown"
@@ -831,12 +870,8 @@ const RiskManagement = () => {
                 }}
                 sx={riskPopoverStyle}
               >
-                <Box
-                  role="menu"
-                  aria-label="Add new risk menu"
-                  sx={riskPopoverContentStyle}
-                >
-                  {/* Add new risk option */}
+                <Box role="menu" aria-label="Add new risk menu" sx={riskPopoverContentStyle}>
+                  {/* Manual entry */}
                   <Box
                     role="menuitem"
                     tabIndex={0}
@@ -854,35 +889,17 @@ const RiskManagement = () => {
                     }}
                     sx={riskMenuItemStyle}
                   >
-                    <Box>
-                      <Typography
-                        sx={riskMenuItemTitleStyle}
-                      >
-                        Add new risk
-                      </Typography>
-                      <Typography
-                        sx={riskMenuItemSubtitleStyle}
-                      >
+                    <Box sx={riskMenuItemTextWrapStyle}>
+                      <Box sx={riskMenuItemTitleRowStyle}>
+                        <Typography sx={riskMenuItemTitleStyle}>Add new risk</Typography>
+                      </Box>
+                      <Typography sx={riskMenuItemSubtitleStyle}>
                         Create a custom risk manually
                       </Typography>
                     </Box>
                   </Box>
 
-                  {/* Divider with text */}
-                  <Box
-                    sx={riskDividerContainerStyle}
-                  >
-                    <Box sx={riskDividerLineStyle} />
-                    <Typography sx={riskDividerTextStyle}>
-                      Or import from
-                    </Typography>
-                    <Box sx={riskDividerLineStyle} />
-                  </Box>
-
-                  {/* AI Risk databases grid */}
-                  <Box
-                    sx={riskCardsGridStyle(hasRiskImportPlugin)}
-                  >
+                  {/* IBM AI Risk database */}
                   <Box
                     role="menuitem"
                     tabIndex={0}
@@ -894,27 +911,24 @@ const RiskManagement = () => {
                         handleIBMModalOpen();
                       }
                     }}
-                    sx={aiRiskCardIbmStyle}
+                    sx={riskMenuItemStyle}
                   >
-                    <Box
-                      sx={aiRiskCardRecommendedBadgeStyle}
-                    >
-                      Recommended
+                    <Box sx={riskMenuItemTextWrapStyle}>
+                      <Box sx={riskMenuItemTitleRowStyle}>
+                        <Typography sx={riskMenuItemTitleStyle}>
+                          Import from IBM AI Risk database
+                        </Typography>
+                        <Box sx={riskMenuItemRecommendedBadgeStyle}>Recommended</Box>
+                      </Box>
+                      <Typography sx={riskMenuItemSubtitleStyle}>
+                        113 risks covering agentic AI, data privacy, inference attacks, and
+                        operational failures
+                      </Typography>
                     </Box>
-                    <img src={ibmLogo} alt="IBM Logo" style={aiRiskCardLogoStyle} />
-                    <Typography
-                      variant="body2"
-                      sx={aiRiskCardTitleStyle}
-                    >
-                      IBM AI Risk database
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      sx={aiRiskCardCaptionStyle}
-                    >
-                      113 risks covering agentic AI, data privacy, inference attacks, and operational failures
-                    </Typography>
+                    <img src={ibmLogo} alt="" style={riskMenuItemLogoStyle} />
                   </Box>
+
+                  {/* MIT AI Risk database */}
                   <Box
                     role="menuitem"
                     tabIndex={0}
@@ -926,21 +940,20 @@ const RiskManagement = () => {
                         handleMITModalOpen();
                       }
                     }}
-                    sx={aiRiskCardBaseStyle}
+                    sx={riskMenuItemStyle}
                   >
-                    <img src={mitLogo} alt="MIT Logo" style={aiRiskCardLogoStyle} />
-                    <Typography
-                      variant="body2"
-                      sx={aiRiskCardTitleStyle}
-                    >
-                      MIT AI Risk database
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      sx={aiRiskCardCaptionStyle}
-                    >
-                      Academic research-based risks covering AI safety, fairness, and societal impact
-                    </Typography>
+                    <Box sx={riskMenuItemTextWrapStyle}>
+                      <Box sx={riskMenuItemTitleRowStyle}>
+                        <Typography sx={riskMenuItemTitleStyle}>
+                          Import from MIT AI Risk Repository
+                        </Typography>
+                      </Box>
+                      <Typography sx={riskMenuItemSubtitleStyle}>
+                        Academic research-based risks covering AI safety, fairness, and societal
+                        impact
+                      </Typography>
+                    </Box>
+                    <img src={mitLogo} alt="" style={riskMenuItemLogoStyle} />
                   </Box>
 
                   {/* Plugin Slot for Risk Import menu items */}
@@ -957,7 +970,6 @@ const RiskManagement = () => {
                       },
                     }}
                   />
-                  </Box>
                 </Box>
               </Popover>
 
@@ -1007,9 +1019,10 @@ const RiskManagement = () => {
           isOpen={isRiskModalOpen}
           onClose={handleRiskModalClose}
           title={selectedRow.length > 0 ? "Edit project risk" : "Add a new risk"}
-          description={selectedRow.length > 0
-            ? "Modify the risk details and mitigation strategies."
-            : "Create a detailed breakdown of risks and their mitigation strategies to assist in documenting your risk management activities effectively."
+          description={
+            selectedRow.length > 0
+              ? "Modify the risk details and mitigation strategies."
+              : "Create a detailed breakdown of risks and their mitigation strategies to assist in documenting your risk management activities effectively."
           }
           onSubmit={handleRiskModalSubmit}
           submitButtonText={selectedRow.length > 0 ? "Update" : "Save"}

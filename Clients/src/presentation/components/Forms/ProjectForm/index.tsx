@@ -9,14 +9,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { X as ClearIcon } from "lucide-react";
-import {
-  Suspense,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-  useEffect,
-} from "react";
+import { Suspense, useCallback, useContext, useMemo, useState, useEffect } from "react";
 import { CustomizableButton } from "../../../components/button/customizable-button";
 import { PlusCircle as AddCircleOutlineIcon } from "lucide-react";
 import Field from "../../../components/Inputs/Field";
@@ -68,9 +61,7 @@ const PROJECT_STATUS_ITEMS = [
 // Helper function to convert status string to _id
 const getStatusIdFromName = (statusName: string | undefined): number => {
   if (!statusName) return 1;
-  const statusItem = PROJECT_STATUS_ITEMS.find(
-    (item) => item.name === statusName
-  );
+  const statusItem = PROJECT_STATUS_ITEMS.find((item) => item.name === statusName);
   return statusItem?._id || 1;
 };
 
@@ -97,8 +88,7 @@ export const ProjectForm = ({
         status: getStatusIdFromName(projectToEdit.status),
         type_of_high_risk_role: projectToEdit.type_of_high_risk_role || 0,
         goal: projectToEdit.goal || "",
-        enable_ai_data_insertion:
-          projectToEdit.enable_ai_data_insertion || false,
+        enable_ai_data_insertion: projectToEdit.enable_ai_data_insertion || false,
         monitored_regulations_and_standards:
           projectToEdit.monitored_regulations_and_standards || [],
         framework_type: projectToEdit.is_organizational
@@ -115,10 +105,12 @@ export const ProjectForm = ({
       framework_type: defaultFrameworkType || null,
     };
   });
-const { users } = useUsers();
+  const { users } = useUsers();
   const { allFrameworks } = useFrameworks({ listOfFrameworks: [] });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [approvalWorkflows, setApprovalWorkflows] = useState<Array<{ _id: number; name: string }>>([]); 
+  const [approvalWorkflows, setApprovalWorkflows] = useState<Array<{ _id: number; name: string }>>(
+    [],
+  );
   const validators = useMemo(
     () => ({
       project_title: (v: unknown, vals: FormValues) => {
@@ -161,10 +153,9 @@ const { users } = useUsers();
         return list.length === 0 ? "At least one framework is required." : "";
       },
     }),
-    [projectToEdit]
+    [projectToEdit],
   );
-  const { errors, validateAll, clearFieldError } =
-    useFormValidation<FormValues>(validators);
+  const { errors, validateAll, clearFieldError } = useFormValidation<FormValues>(validators);
 
   // Check if the project has a pending approval request
   // Note: We show an info banner but allow editing basic fields
@@ -206,14 +197,12 @@ const { users } = useUsers();
         const response = await getAllApprovalWorkflows();
         const workflows = response?.data || [];
         // Filter to only show workflows for use_case entity type
-        const filteredWorkflows = workflows.filter(
-          (w: any) => w.entity_type === 'use_case'
-        );
+        const filteredWorkflows = workflows.filter((w: any) => w.entity_type === "use_case");
         setApprovalWorkflows(
           filteredWorkflows.map((w: any) => ({
             _id: w.id,
             name: w.workflow_title,
-          }))
+          })),
         );
       } catch (error) {
         console.error("Failed to fetch approval workflows:", error);
@@ -244,7 +233,7 @@ const { users } = useUsers();
             // fw.name.toLowerCase().includes("iso 42001") ||
             // fw.name.toLowerCase().includes("iso 27001") ||
             // fw.name.toLowerCase().includes("nist ai rmf")
-            fw.is_organizational === true
+            fw.is_organizational === true,
         )
         .map((fw) => ({
           _id: Number(fw.id),
@@ -255,7 +244,7 @@ const { users } = useUsers();
     return [];
   }, [allFrameworks, values.framework_type]);
   const authState = useSelector(
-    (state: { auth: { authToken: string; userExists: boolean } }) => state.auth
+    (state: { auth: { authToken: string; userExists: boolean } }) => state.auth,
   );
 
   const riskClassificationItems = useMemo(
@@ -265,19 +254,15 @@ const { users } = useUsers();
       { _id: 3, name: AiRiskClassification.LIMITED_RISK },
       { _id: 4, name: AiRiskClassification.MINIMAL_RISK },
     ],
-    []
+    [],
   );
 
   const highRiskRoleItems = useMemo(
     () => [
       { _id: 1, name: HighRiskRole.DEPLOYER },
       { _id: 2, name: HighRiskRole.PROVIDER },
-      { _id: 3, name: HighRiskRole.DISTRIBUTOR },
-      { _id: 4, name: HighRiskRole.IMPORTER },
-      { _id: 5, name: HighRiskRole.PRODUCT_MANUFACTURER },
-      { _id: 6, name: HighRiskRole.AUTHORIZED_REPRESENTATIVE },
     ],
-    []
+    [],
   );
 
   const geographyItems = useMemo(
@@ -289,18 +274,17 @@ const { users } = useUsers();
       { _id: 5, name: "Asia" },
       { _id: 6, name: "Africa" },
     ],
-    []
+    [],
   );
 
   const projectStatusItems = useMemo(() => PROJECT_STATUS_ITEMS, []);
 
   const handleOnTextFieldChange = useCallback(
-    (prop: keyof FormValues) =>
-      (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValues((prev) => ({ ...prev, [prop]: event.target.value }));
-        clearFieldError(prop);
-      },
-    [clearFieldError]
+    (prop: keyof FormValues) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setValues((prev) => ({ ...prev, [prop]: event.target.value }));
+      clearFieldError(prop);
+    },
+    [clearFieldError],
   );
 
   const handleOnSelectChange = useCallback(
@@ -309,26 +293,25 @@ const { users } = useUsers();
         const updated = { ...prev, [prop]: event.target.value };
         if (prop === "owner") {
           updated.members = prev.members.filter(
-            (member) => Number(member._id) !== Number(event.target.value)
+            (member) => Number(member._id) !== Number(event.target.value),
           );
         }
         return updated;
       });
       clearFieldError(prop);
     },
-    [clearFieldError]
+    [clearFieldError],
   );
 
   const handleOnMultiSelect = useCallback(
-    (prop: keyof FormValues) =>
-      (_event: React.SyntheticEvent, newValue: any[]) => {
-        setValues((prevValues) => ({
-          ...prevValues,
-          [prop]: newValue,
-        }));
-        if (prop !== "members") clearFieldError(prop);
-      },
-    [clearFieldError]
+    (prop: keyof FormValues) => (_event: React.SyntheticEvent, newValue: any[]) => {
+      setValues((prevValues) => ({
+        ...prevValues,
+        [prop]: newValue,
+      }));
+      if (prop !== "members") clearFieldError(prop);
+    },
+    [clearFieldError],
   );
 
   const handleDateChange = useCallback((newDate: Dayjs | null) => {
@@ -344,7 +327,7 @@ const { users } = useUsers();
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setValues({ ...values, enable_ai_data_insertion: event.target.checked });
     },
-    [values]
+    [values],
   );
 
   const handleSubmit = useCallback(async () => {
@@ -366,10 +349,10 @@ const { users } = useUsers();
         // Add AI-specific fields only for project-based frameworks
         if (values.framework_type === FrameworkTypeEnum.ProjectBased) {
           body.type_of_high_risk_role = highRiskRoleItems.find(
-            (item) => item._id === values.type_of_high_risk_role
+            (item) => item._id === values.type_of_high_risk_role,
           )?.name;
           body.ai_risk_classification = riskClassificationItems.find(
-            (item) => item._id === values.ai_risk_classification
+            (item) => item._id === values.ai_risk_classification,
           )?.name;
         } else {
           // For organization-wide frameworks, set default values
@@ -380,9 +363,7 @@ const { users } = useUsers();
 
         // Set frameworks for both types, but skip when editing
         if (!projectToEdit) {
-          body.framework = values.monitored_regulations_and_standards.map(
-            (fw) => fw._id
-          );
+          body.framework = values.monitored_regulations_and_standards.map((fw) => fw._id);
         }
 
         let res;
@@ -404,10 +385,8 @@ const { users } = useUsers();
             // Update the project in the projects list
             setProjects((prevProjects: Project[]) =>
               prevProjects.map((project) =>
-                project.id === projectToEdit.id
-                  ? (res.data.data as Project)
-                  : project
-              )
+                project.id === projectToEdit.id ? (res.data.data as Project) : project,
+              ),
             );
           } else {
             // Add new project to the projects list
@@ -482,8 +461,12 @@ const { users } = useUsers();
           <CustomizableToast
             title={
               projectToEdit
-                ? (values.framework_type === FrameworkTypeEnum.OrganizationWide ? "Updating framework. Please wait..." : "Updating use case. Please wait...")
-                : (values.framework_type === FrameworkTypeEnum.OrganizationWide ? "Creating framework. Please wait..." : "Creating use case. Please wait...")
+                ? values.framework_type === FrameworkTypeEnum.OrganizationWide
+                  ? "Updating framework. Please wait..."
+                  : "Updating use case. Please wait..."
+                : values.framework_type === FrameworkTypeEnum.OrganizationWide
+                  ? "Creating framework. Please wait..."
+                  : "Creating use case. Please wait..."
             }
           />
         </Stack>
@@ -503,16 +486,21 @@ const { users } = useUsers();
               sx={{ fontSize: 16, color: theme.palette.text.secondary, fontWeight: "bold" }}
             >
               {projectToEdit
-                ? (values.framework_type === FrameworkTypeEnum.OrganizationWide ? "Edit framework" : "Edit use case")
-                : (values.framework_type === FrameworkTypeEnum.OrganizationWide ? "Create new framework" : "Create new use case")
-              }
+                ? values.framework_type === FrameworkTypeEnum.OrganizationWide
+                  ? "Edit framework"
+                  : "Edit use case"
+                : values.framework_type === FrameworkTypeEnum.OrganizationWide
+                  ? "Create new framework"
+                  : "Create new use case"}
             </Typography>
             <Typography sx={{ fontSize: 13, color: theme.palette.text.secondary }}>
               {projectToEdit
-                ? (values.framework_type === FrameworkTypeEnum.OrganizationWide ? "Update your framework details below" : "Update your use case details below")
+                ? values.framework_type === FrameworkTypeEnum.OrganizationWide
+                  ? "Update your framework details below"
+                  : "Update your use case details below"
                 : values.framework_type === FrameworkTypeEnum.ProjectBased
-                ? "Create a new use case from scratch by filling in the following."
-                : "Set up ISO 27001 or 42001 (Organization ISMS)"}
+                  ? "Create a new use case from scratch by filling in the following."
+                  : "Set up ISO 27001 or 42001 (Organization ISMS)"}
             </Typography>
           </Stack>
           <ClearIcon
@@ -526,19 +514,22 @@ const { users } = useUsers();
       {hasPendingApproval && (
         <Alert severity="info" sx={{ width: "100%" }}>
           <Typography sx={{ fontSize: 13, fontWeight: 500 }}>
-            This use case has a pending approval request. You can view the Overview and edit Settings, but other tabs (Frameworks/Regulations, Use case risks, Linked models, etc.) are disabled until the approval is complete.
+            This use case has a pending approval request. You can view the Overview and edit
+            Settings, but other tabs (Frameworks/Regulations, Use case risks, Linked models, etc.)
+            are disabled until the approval is complete.
           </Typography>
         </Alert>
       )}
 
-      <Stack
-        className="vwproject-form-body"
-        sx={{ display: "flex", flexDirection: "row", gap: 6 }}
-      >
+      <Stack className="vwproject-form-body" sx={{ display: "flex", flexDirection: "row", gap: 6 }}>
         <Stack className="vwproject-form-body-start" sx={{ gap: 6, flex: 1 }}>
           <Field
             id="project-title-input"
-            label={values.framework_type === FrameworkTypeEnum.OrganizationWide ? "Framework title" : "Use case title"}
+            label={
+              values.framework_type === FrameworkTypeEnum.OrganizationWide
+                ? "Framework title"
+                : "Use case title"
+            }
             width="100%"
             value={values.project_title}
             onChange={handleOnTextFieldChange("project_title")}
@@ -568,7 +559,11 @@ const { users } = useUsers();
           />
           <Select
             id="project-status-input"
-            label={values.framework_type === FrameworkTypeEnum.OrganizationWide ? "Framework status" : "Use case status"}
+            label={
+              values.framework_type === FrameworkTypeEnum.OrganizationWide
+                ? "Framework status"
+                : "Use case status"
+            }
             placeholder="Select status"
             value={values.status || ""}
             onChange={handleOnSelectChange("status")}
@@ -638,7 +633,7 @@ const { users } = useUsers();
                 fontSize={"13px"}
                 sx={{
                   margin: 0,
-                  height: '22px',
+                  height: "22px",
                   display: "flex",
                   alignItems: "center",
                 }}
@@ -660,9 +655,8 @@ const { users } = useUsers();
                     ?.filter(
                       (user) =>
                         !values.members.some(
-                          (selectedUser) =>
-                            String(selectedUser._id) === String(user.id)
-                        ) && values.owner !== user.id
+                          (selectedUser) => String(selectedUser._id) === String(user.id),
+                        ) && values.owner !== user.id,
                     )
                     .map((user) => ({
                       _id: user.id,
@@ -672,18 +666,14 @@ const { users } = useUsers();
                     })) || []
                 }
                 noOptionsText={
-                  values.members.length === users.length
-                    ? "All members selected"
-                    : "No options"
+                  values.members.length === users.length ? "All members selected" : "No options"
                 }
                 onChange={handleOnMultiSelect("members")}
                 getOptionLabel={(user) => `${user.name} ${user.surname}`}
                 renderOption={(props, option) => {
                   const { key, ...optionProps } = props;
                   const userEmail =
-                    option.email.length > 30
-                      ? `${option.email.slice(0, 30)}...`
-                      : option.email;
+                    option.email.length > 30 ? `${option.email.slice(0, 30)}...` : option.email;
                   return (
                     <Box key={key} component="li" {...optionProps}>
                       <Typography sx={{ fontSize: "13px" }}>
@@ -718,9 +708,13 @@ const { users } = useUsers();
                   ...getAutocompleteStyles(theme, { hasError: !!errors.members }),
                   ...teamMembersSxStyle,
                   "& .MuiOutlinedInput-root": {
-                    ...getAutocompleteStyles(theme, { hasError: !!errors.members })["& .MuiOutlinedInput-root"],
+                    ...getAutocompleteStyles(theme, { hasError: !!errors.members })[
+                      "& .MuiOutlinedInput-root"
+                    ],
                     "& fieldset": {
-                      ...getAutocompleteStyles(theme, { hasError: !!errors.members })["& .MuiOutlinedInput-root"]["& fieldset"],
+                      ...getAutocompleteStyles(theme, { hasError: !!errors.members })[
+                        "& .MuiOutlinedInput-root"
+                      ]["& fieldset"],
                       borderRadius: "3px",
                     },
                   },
@@ -732,9 +726,7 @@ const { users } = useUsers();
               <Box sx={{ flex: 1 }}>
                 <DatePicker
                   label="Start date"
-                  date={
-                    values.start_date ? dayjs(values.start_date) : dayjs(new Date())
-                  }
+                  date={values.start_date ? dayjs(values.start_date) : dayjs(new Date())}
                   handleDateChange={handleDateChange}
                   sx={{
                     width: "100%",
@@ -748,11 +740,7 @@ const { users } = useUsers();
                   id="geography-type-input"
                   label="Geography"
                   placeholder="Select an option"
-                  value={
-                    values.geography === 0
-                      ? ""
-                      : values.geography
-                  }
+                  value={values.geography === 0 ? "" : values.geography}
                   onChange={handleOnSelectChange("geography")}
                   items={geographyItems}
                   sx={{
@@ -764,97 +752,85 @@ const { users } = useUsers();
                 />
               </Box>
             </Stack>
-            {!projectToEdit &&
-              values.framework_type !== FrameworkTypeEnum.OrganizationWide && (
-                <Stack>
-                  <Typography
-                    sx={{
-                      fontSize: theme.typography.fontSize,
-                      fontWeight: 500,
-                      mb: 2,
-                    }}
-                  >
-                    Applicable regulations *
-                  </Typography>
-                  <Autocomplete
-                    multiple
-                    id="monitored-regulations-and-standards-input"
-                    size="small"
-                    value={values.monitored_regulations_and_standards}
-                    options={filteredFrameworks}
-                    onChange={handleOnMultiSelect(
-                      "monitored_regulations_and_standards"
-                    )}
-                    getOptionLabel={(item) => item.name}
-                    noOptionsText={
-                      values.monitored_regulations_and_standards.length ===
-                      filteredFrameworks.length
-                        ? "All regulations selected"
-                        : "No options"
-                    }
-                    renderOption={(props, option) => {
-                      const { key, ...optionProps } = props;
-                      const isComingSoon = option.name.includes("coming soon");
-                      return (
-                        <Box
-                          key={key}
-                          component="li"
-                          {...optionProps}
+            {!projectToEdit && values.framework_type !== FrameworkTypeEnum.OrganizationWide && (
+              <Stack>
+                <Typography
+                  sx={{
+                    fontSize: theme.typography.fontSize,
+                    fontWeight: 500,
+                    mb: 2,
+                  }}
+                >
+                  Applicable regulations *
+                </Typography>
+                <Autocomplete
+                  multiple
+                  id="monitored-regulations-and-standards-input"
+                  size="small"
+                  value={values.monitored_regulations_and_standards}
+                  options={filteredFrameworks}
+                  onChange={handleOnMultiSelect("monitored_regulations_and_standards")}
+                  getOptionLabel={(item) => item.name}
+                  noOptionsText={
+                    values.monitored_regulations_and_standards.length === filteredFrameworks.length
+                      ? "All regulations selected"
+                      : "No options"
+                  }
+                  renderOption={(props, option) => {
+                    const { key, ...optionProps } = props;
+                    const isComingSoon = option.name.includes("coming soon");
+                    return (
+                      <Box
+                        key={key}
+                        component="li"
+                        {...optionProps}
+                        sx={{
+                          opacity: isComingSoon ? 0.5 : 1,
+                          cursor: isComingSoon ? "not-allowed" : "pointer",
+                          "&:hover": {
+                            backgroundColor: isComingSoon ? "transparent" : undefined,
+                          },
+                        }}
+                      >
+                        <Typography
                           sx={{
-                            opacity: isComingSoon ? 0.5 : 1,
-                            cursor: isComingSoon ? "not-allowed" : "pointer",
-                            "&:hover": {
-                              backgroundColor: isComingSoon
-                                ? "transparent"
-                                : undefined,
-                            },
+                            fontSize: "13px",
+                            color: isComingSoon ? "text.secondary" : "text.primary",
                           }}
                         >
-                          <Typography
-                            sx={{
-                              fontSize: "13px",
-                              color: isComingSoon
-                                ? "text.secondary"
-                                : "text.primary",
-                            }}
-                          >
-                            {option.name}
-                          </Typography>
-                        </Box>
-                      );
-                    }}
-                    isOptionEqualToValue={(option, value) =>
-                      option._id === value._id
-                    }
-                    getOptionDisabled={(option) =>
-                      option.name.includes("coming soon")
-                    }
-                    filterSelectedOptions
-                    popupIcon={<GreyDownArrowIcon size={16} />}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        error={!!errors.monitored_regulations_and_standards}
-                        placeholder="Select regulations and standards"
-                        sx={teamMembersRenderInputStyle}
-                      />
-                    )}
-                    sx={{
-                      backgroundColor: theme.palette.background.main,
-                      ...teamMembersSxStyle,
-                    }}
-                    slotProps={teamMembersSlotProps}
-                  />
-                  {!!errors.monitored_regulations_and_standards && (
-                    <Typography
-                      variant="caption"
-                      sx={{ mt: 4, color: theme.palette.status.error.text, fontWeight: 300 }}
-                    >
-                      {errors.monitored_regulations_and_standards}
-                    </Typography>
+                          {option.name}
+                        </Typography>
+                      </Box>
+                    );
+                  }}
+                  isOptionEqualToValue={(option, value) => option._id === value._id}
+                  getOptionDisabled={(option) => option.name.includes("coming soon")}
+                  filterSelectedOptions
+                  popupIcon={<GreyDownArrowIcon size={16} />}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      error={!!errors.monitored_regulations_and_standards}
+                      placeholder="Select regulations and standards"
+                      sx={teamMembersRenderInputStyle}
+                    />
                   )}
-                </Stack>
-              )}
+                  sx={{
+                    backgroundColor: theme.palette.background.main,
+                    ...teamMembersSxStyle,
+                  }}
+                  slotProps={teamMembersSlotProps}
+                />
+                {!!errors.monitored_regulations_and_standards && (
+                  <Typography
+                    variant="caption"
+                    sx={{ mt: 4, color: theme.palette.status.error.text, fontWeight: 300 }}
+                  >
+                    {errors.monitored_regulations_and_standards}
+                  </Typography>
+                )}
+              </Stack>
+            )}
           </Suspense>
           {/* Goal field - only for project-based frameworks */}
           {values.framework_type === FrameworkTypeEnum.ProjectBased && (
@@ -897,13 +873,10 @@ const { users } = useUsers();
                 size="small"
                 value={values.monitored_regulations_and_standards}
                 options={filteredFrameworks}
-                onChange={handleOnMultiSelect(
-                  "monitored_regulations_and_standards"
-                )}
+                onChange={handleOnMultiSelect("monitored_regulations_and_standards")}
                 getOptionLabel={(item) => item.name}
                 noOptionsText={
-                  values.monitored_regulations_and_standards.length ===
-                  filteredFrameworks.length
+                  values.monitored_regulations_and_standards.length === filteredFrameworks.length
                     ? "All regulations selected"
                     : "No options"
                 }
@@ -919,18 +892,14 @@ const { users } = useUsers();
                         opacity: isComingSoon ? 0.5 : 1,
                         cursor: isComingSoon ? "not-allowed" : "pointer",
                         "&:hover": {
-                          backgroundColor: isComingSoon
-                            ? "transparent"
-                            : undefined,
+                          backgroundColor: isComingSoon ? "transparent" : undefined,
                         },
                       }}
                     >
                       <Typography
                         sx={{
                           fontSize: "13px",
-                          color: isComingSoon
-                            ? "text.secondary"
-                            : "text.primary",
+                          color: isComingSoon ? "text.secondary" : "text.primary",
                         }}
                       >
                         {option.name}
@@ -938,12 +907,8 @@ const { users } = useUsers();
                     </Box>
                   );
                 }}
-                isOptionEqualToValue={(option, value) =>
-                  option._id === value._id
-                }
-                getOptionDisabled={(option) =>
-                  option.name.includes("coming soon")
-                }
+                isOptionEqualToValue={(option, value) => option._id === value._id}
+                getOptionDisabled={(option) => option.name.includes("coming soon")}
                 filterSelectedOptions
                 popupIcon={<GreyDownArrowIcon size={16} />}
                 renderInput={(params) => (
@@ -986,10 +951,9 @@ const { users } = useUsers();
           />
         </Stack>
       )}
-      {!projectToEdit &&
-        values.framework_type === FrameworkTypeEnum.ProjectBased && (
-          <Stack>
-            <Stack sx={{ display: "flex", flexDirection: "row", gap: 6, mb: 4 }}>
+      {!projectToEdit && values.framework_type === FrameworkTypeEnum.ProjectBased && (
+        <Stack>
+          <Stack sx={{ display: "flex", flexDirection: "row", gap: 6, mb: 4 }}>
             <Field
               id="target-industry-input"
               label="Target industry"
@@ -1014,17 +978,17 @@ const { users } = useUsers();
               }}
               error={errors.description}
             />
-            </Stack>
-            <Checkbox
-              size="small"
-              id="auto-fill"
-              onChange={handleCheckboxChange}
-              isChecked={values.enable_ai_data_insertion}
-              value={values.enable_ai_data_insertion.toString()}
-              label="Enable this option to automatically fill in the Controls and Assessment questions with AI-generated answers, helping you save time. You can review and edit these answers anytime."
-            />
           </Stack>
-        )}
+          <Checkbox
+            size="small"
+            id="auto-fill"
+            onChange={handleCheckboxChange}
+            isChecked={values.enable_ai_data_insertion}
+            value={values.enable_ai_data_insertion.toString()}
+            label="Enable this option to automatically fill in the Requirements and Controls questions with AI-generated answers, helping you save time. You can review and edit these answers anytime."
+          />
+        </Stack>
+      )}
       {!useStandardModal && (
         <Stack
           sx={{
@@ -1035,9 +999,14 @@ const { users } = useUsers();
           }}
         >
           <CustomizableButton
-            text={projectToEdit
-              ? (values.framework_type === FrameworkTypeEnum.OrganizationWide ? "Update framework" : "Update use case")
-              : (values.framework_type === FrameworkTypeEnum.OrganizationWide ? "Create framework" : "Create use case")
+            text={
+              projectToEdit
+                ? values.framework_type === FrameworkTypeEnum.OrganizationWide
+                  ? "Update framework"
+                  : "Update use case"
+                : values.framework_type === FrameworkTypeEnum.OrganizationWide
+                  ? "Create framework"
+                  : "Create use case"
             }
             sx={createProjectButtonStyle}
             icon={<AddCircleOutlineIcon size={20} />}
@@ -1050,4 +1019,3 @@ const { users } = useUsers();
 
   return renderForm();
 };
-

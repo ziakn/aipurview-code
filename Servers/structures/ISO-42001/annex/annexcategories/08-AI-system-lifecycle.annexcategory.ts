@@ -1,20 +1,20 @@
 import { AnnexCategoryISO } from "../../../../domain.layer/frameworks/ISO-42001/annexCategoryISO.model";
 import { AnnexCategoryStructISO } from "../../../../domain.layer/frameworks/ISO-42001/annexCategoryStructISO.model";
 
-export const AISystemLifecycle: Partial<
-  AnnexCategoryStructISO & AnnexCategoryISO
->[] = [
+export const AISystemLifecycle: Partial<AnnexCategoryStructISO & AnnexCategoryISO>[] = [
   {
     sub_id: 1.1,
     order_no: 1,
-    title: "AI system lifecycle management",
-    description: "Establishing and managing a defined AI lifecycle process.",
+    title: "AI system lifecycle — overall approach",
+    description:
+      "Organizational overview of how the AI system lifecycle is governed end to end. Not a distinct ISO 42001 Annex A.5 control (the standard starts at A.5.2); retained as an umbrella item to record overall lifecycle posture.",
     guidance:
-      "A defined lifecycle process should be established and managed for AI systems, covering stages from conception through retirement, incorporating AI-specific considerations.",
+      "Describe, at a high level, how the organization structures the AI lifecycle end to end (requirements, design, data, build, V&V, deployment, operation, maintenance, retirement). The detailed ISO A.5.2–A.5.10 sub-controls are covered by the items that follow.",
     is_applicable: true,
     implementation_description:
-      "Lifecycle stages are documented and controlled from conception to retirement.",
-    auditor_feedback: "Lifecycle management aligns with best practices.",
+      "Summarize the organization's approach to lifecycle management — ownership, stage gates, documentation standards — rather than re-describing each stage (those are in the items below).",
+    auditor_feedback:
+      "This item is an organizational overview; the detailed stage-by-stage posture is covered by the following sub-controls.",
   },
   {
     sub_id: 2.1,
@@ -69,8 +69,7 @@ export const AISystemLifecycle: Partial<
     order_no: 6,
     title: "AI system verification and validation",
     description: "Verifying and validating AI systems.",
-    guidance:
-      "AI systems should be verified and validated against requirements before deployment.",
+    guidance: "AI systems should be verified and validated against requirements before deployment.",
     is_applicable: true,
     implementation_description:
       "Verification and validation activities are formalized before deployment.",
@@ -108,8 +107,7 @@ export const AISystemLifecycle: Partial<
     guidance:
       "AI systems should be maintained throughout their operational life and retired securely when no longer needed.",
     is_applicable: true,
-    implementation_description:
-      "Maintenance schedules and secure retirement plans are in place.",
+    implementation_description: "Maintenance schedules and secure retirement plans are in place.",
     auditor_feedback: "Maintenance and retirement controls are satisfactory.",
   },
 ];

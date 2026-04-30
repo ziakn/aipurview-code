@@ -14,7 +14,7 @@ import {
   SearchResult,
   getEntityDisplayName,
 } from "../repository/search.repository";
-import PolicyTemplates from "../data/PolicyTemplates.json";
+// PolicyTemplates.json loaded dynamically from /data/PolicyTemplates.json
 
 /**
  * Recent search entry
@@ -64,16 +64,27 @@ const DEBOUNCE_MS = 300;
 const MIN_QUERY_LENGTH = 3;
 
 /**
- * Search policy templates locally (from JSON file)
+ * Search policy templates by fetching from public data
  */
-function searchPolicyTemplates(query: string): SearchResult[] {
+let _policyTemplatesCache: { id: number; title: string; description: string }[] | null = null;
+
+async function searchPolicyTemplates(query: string): Promise<SearchResult[]> {
+  if (!_policyTemplatesCache) {
+    try {
+      const res = await fetch("/data/PolicyTemplates.json");
+      _policyTemplatesCache = await res.json();
+    } catch {
+      return [];
+    }
+  }
+
   const lowerQuery = query.toLowerCase();
 
-  return (PolicyTemplates as { id: number; title: string; description: string }[])
+  return (_policyTemplatesCache ?? [])
     .filter(
       (template) =>
         template.title.toLowerCase().includes(lowerQuery) ||
-        template.description.toLowerCase().includes(lowerQuery)
+        template.description.toLowerCase().includes(lowerQuery),
     )
     .slice(0, 20)
     .map((template) => {
@@ -100,7 +111,9 @@ function loadRecentSearches(): RecentSearch[] {
       const parsed = JSON.parse(stored);
       // Filter out old searches (older than 7 days)
       const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-      return parsed.filter((s: RecentSearch) => s.timestamp > weekAgo).slice(0, MAX_RECENT_SEARCHES);
+      return parsed
+        .filter((s: RecentSearch) => s.timestamp > weekAgo)
+        .slice(0, MAX_RECENT_SEARCHES);
     }
   } catch (e) {
     console.error("Failed to load recent searches:", e);
@@ -113,7 +126,10 @@ function loadRecentSearches(): RecentSearch[] {
  */
 function saveRecentSearches(searches: RecentSearch[]): void {
   try {
-    localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(searches.slice(0, MAX_RECENT_SEARCHES)));
+    localStorage.setItem(
+      RECENT_SEARCHES_KEY,
+      JSON.stringify(searches.slice(0, MAX_RECENT_SEARCHES)),
+    );
   } catch (e) {
     console.error("Failed to save recent searches:", e);
   }
@@ -183,7 +199,7 @@ export function useWiseSearch(): UseWiseSearchReturn {
       // When reviewStatus filter is active, skip local policy templates (they don't have review status)
       const [apiResponse, policyTemplateResults] = await Promise.all([
         performWiseSearch(searchParams),
-        statusFilter ? Promise.resolve([]) : Promise.resolve(searchPolicyTemplates(searchQuery)),
+        statusFilter ? Promise.resolve([]) : searchPolicyTemplates(searchQuery),
       ]);
 
       // Check if this request was aborted
@@ -209,7 +225,9 @@ export function useWiseSearch(): UseWiseSearchReturn {
       // Ignore abort/cancel errors (axios uses CanceledError, native fetch uses AbortError)
       if (
         err instanceof Error &&
-        (err.name === "AbortError" || err.name === "CanceledError" || (err as { code?: string }).code === "ERR_CANCELED")
+        (err.name === "AbortError" ||
+          err.name === "CanceledError" ||
+          (err as { code?: string }).code === "ERR_CANCELED")
       ) {
         return;
       }
@@ -253,7 +271,7 @@ export function useWiseSearch(): UseWiseSearchReturn {
       // Add new search at the beginning
       const updated = [{ query: searchQuery, timestamp: Date.now() }, ...filtered].slice(
         0,
-        MAX_RECENT_SEARCHES
+        MAX_RECENT_SEARCHES,
       );
       // Save to localStorage
       saveRecentSearches(updated);

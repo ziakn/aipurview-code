@@ -53,6 +53,7 @@ export interface Experiment {
   updated_at: string;
   tenant: string;
   created_by?: number;
+  model_inventory_id?: number;
 }
 
 export interface MetricAggregates {
@@ -176,7 +177,9 @@ export const modelValidationService = {
 
 export const experimentsService = {
   // Validate model before creating experiment
-  async validateModelForExperiment(config: Record<string, any>): Promise<ModelValidationResult | null> {
+  async validateModelForExperiment(
+    config: Record<string, any>,
+  ): Promise<ModelValidationResult | null> {
     const modelName = config?.model?.name;
     const provider = config?.model?.provider;
 
@@ -194,6 +197,7 @@ export const experimentsService = {
     description?: string;
     config: Record<string, any>;
     baseline_experiment_id?: string;
+    model_inventory_id?: number;
   }) {
     const response = await CustomAxios.post("/deepeval/experiments", data);
     return response.data;
@@ -211,10 +215,7 @@ export const experimentsService = {
   },
 
   // Get all experiments (no pagination)
-  async getAllExperiments(params: {
-    project_id?: string;
-    status?: string;
-  }) {
+  async getAllExperiments(params: { project_id?: string; status?: string }) {
     const response = await CustomAxios.get("/deepeval/experiments/all", { params, timeout: 60000 });
     return response.data;
   },
@@ -231,7 +232,7 @@ export const experimentsService = {
     data: {
       name?: string;
       description?: string;
-    }
+    },
   ) {
     const response = await CustomAxios.patch(`/deepeval/experiments/${experimentId}`, data);
     return response.data;
@@ -244,7 +245,7 @@ export const experimentsService = {
       status: string;
       results?: Record<string, any>;
       error_message?: string;
-    }
+    },
   ) {
     const response = await CustomAxios.put(`/deepeval/experiments/${experimentId}/status`, data);
     return response.data;
@@ -266,7 +267,7 @@ export const monitoringService = {
     params?: {
       start_date?: string;
       end_date?: string;
-    }
+    },
   ): Promise<{ data: MonitorDashboard }> {
     const response = await CustomAxios.get(`/deepeval/projects/${projectId}/monitor/dashboard`, {
       params,
