@@ -1,13 +1,11 @@
 /**
- * Evaluation LLM API Keys Service
- *
- * Manages LLM provider API keys for evaluations.
- * Keys are encrypted and stored in the database per organization.
+ * LLM Evals provider keys — read from AI Gateway storage (GET /ai-gateway/keys).
+ * Add/delete keys only in AI Gateway → Settings → API keys.
  */
 
 import CustomAxios from "./customAxios";
 
-export type LLMProvider = 'openai' | 'anthropic' | 'google' | 'xai' | 'mistral' | 'huggingface' | 'openrouter';
+export type LLMProvider = "openai" | "anthropic" | "google" | "xai" | "mistral" | "huggingface" | "openrouter";
 
 export interface LLMApiKey {
   provider: LLMProvider;
@@ -21,102 +19,117 @@ export interface AddKeyRequest {
   apiKey: string;
 }
 
-export interface GetKeysResponse {
-  success: boolean;
-  data: LLMApiKey[];
-}
-
-export interface AddKeyResponse {
-  success: boolean;
-  message: string;
-  data: LLMApiKey;
-}
-
-export interface DeleteKeyResponse {
-  success: boolean;
-  message: string;
-}
-
 export interface VerifyKeyRequest {
   provider: string;
   apiKey: string;
 }
 
-export interface VerifyKeyResponse {
-  success: boolean;
-  valid: boolean;
-  message: string;
+const EVAL_PROVIDERS: ReadonlySet<string> = new Set([
+  "openai",
+  "anthropic",
+  "google",
+  "xai",
+  "mistral",
+  "huggingface",
+  "openrouter",
+]);
+
+interface GatewayKeyRow {
+  id: number;
+  provider: string;
+  key_name: string;
+  masked_key: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+function gatewayProviderToEval(provider: string): LLMProvider | null {
+  const p = provider.toLowerCase();
+  if (p === "gemini") return "google";
+  if (EVAL_PROVIDERS.has(p)) return p as LLMProvider;
+  return null;
+}
+
+/** Map eval provider to AI Gateway verify/CRUD provider id */
+function evalProviderToGatewayVerify(provider: string): string {
+  const p = provider.toLowerCase();
+  if (p === "google") return "gemini";
+  return p;
+}
+
+function dedupeLatestPerProvider(keys: LLMApiKey[]): LLMApiKey[] {
+  const sorted = [...keys].sort((a, b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""));
+  const seen = new Set<LLMProvider>();
+  const out: LLMApiKey[] = [];
+  for (const k of sorted) {
+    if (seen.has(k.provider)) continue;
+    seen.add(k.provider);
+    out.push(k);
+  }
+  return out;
 }
 
 class EvaluationLlmApiKeysService {
-  private baseUrl = "/evaluation-llm-keys";
+  private static readonly MANAGE_KEYS_MESSAGE =
+    "Provider API keys for LLM Evals are managed in AI Gateway → Settings → API keys.";
 
   /**
-   * Get all API keys for the authenticated user's organization
-   * Returns masked keys for security
+   * Masked keys from AI Gateway for providers that LLM Evals supports.
    */
   async getAllKeys(): Promise<LLMApiKey[]> {
-    try {
-      const response = await CustomAxios.get<GetKeysResponse>(this.baseUrl);
-      return response.data.data;
-    } catch (error: any) {
-      console.error("Failed to fetch LLM API keys:", error);
-      throw error;
+    const response = await CustomAxios.get<{ data: GatewayKeyRow[] }>("/ai-gateway/keys");
+    const rows = response.data?.data ?? [];
+    const mapped: LLMApiKey[] = [];
+    for (const r of rows) {
+      if (!r.is_active) continue;
+      const evalProv = gatewayProviderToEval(r.provider);
+      if (!evalProv) continue;
+      mapped.push({
+        provider: evalProv,
+        maskedKey: r.masked_key || "***",
+        createdAt: r.created_at,
+        updatedAt: r.updated_at,
+      });
     }
+    return dedupeLatestPerProvider(mapped);
   }
 
-  /**
-   * Add a new LLM API key
-   * The key will be encrypted before storage
-   */
-  async addKey(request: AddKeyRequest): Promise<LLMApiKey> {
-    try {
-      const response = await CustomAxios.post<AddKeyResponse>(this.baseUrl, request);
-      return response.data.data;
-    } catch (error: any) {
-      console.error("Failed to add LLM API key:", error);
-      throw error;
-    }
+  async addKey(_request: AddKeyRequest): Promise<LLMApiKey> {
+    throw new Error(EvaluationLlmApiKeysService.MANAGE_KEYS_MESSAGE);
   }
 
-  /**
-   * Delete an LLM API key
-   */
-  async deleteKey(provider: LLMProvider): Promise<void> {
-    try {
-      await CustomAxios.delete<DeleteKeyResponse>(`${this.baseUrl}/${provider}`);
-    } catch (error: any) {
-      console.error("Failed to delete LLM API key:", error);
-      throw error;
-    }
+  async deleteKey(_provider: LLMProvider): Promise<void> {
+    throw new Error(EvaluationLlmApiKeysService.MANAGE_KEYS_MESSAGE);
   }
 
-  /**
-   * Check if a key exists for a provider
-   */
   async hasKey(provider: LLMProvider): Promise<boolean> {
     try {
       const keys = await this.getAllKeys();
-      return keys.some(k => k.provider === provider);
-    } catch (_error) {
+      return keys.some((k) => k.provider === provider);
+    } catch {
       return false;
     }
   }
 
   /**
-   * Verify an API key by making a test call to the provider
-   * This goes through the backend to avoid CORS issues
+   * Verify via AI Gateway (same provider checks as gateway Settings).
    */
   async verifyKey(request: VerifyKeyRequest): Promise<{ valid: boolean; error?: string }> {
     try {
-      const response = await CustomAxios.post<VerifyKeyResponse>(`${this.baseUrl}/verify`, request);
+      const gwProvider = evalProviderToGatewayVerify(request.provider);
+      const response = await CustomAxios.post<{ data: { valid: boolean; message?: string } }>(
+        "/ai-gateway/keys/verify",
+        { provider: gwProvider, api_key: request.apiKey },
+      );
+      const d = response.data?.data;
+      const valid = d?.valid ?? false;
       return {
-        valid: response.data.valid,
-        error: response.data.valid ? undefined : response.data.message,
+        valid,
+        error: valid ? undefined : d?.message || "Verification failed",
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to verify LLM API key:", error);
-      // If backend verification fails, assume valid to not block user
       return { valid: true };
     }
   }

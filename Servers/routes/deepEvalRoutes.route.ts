@@ -2,7 +2,7 @@ import { createProxyMiddleware, fixRequestBody } from "http-proxy-middleware";
 import authenticateJWT from "../middleware/auth.middleware";
 import express, { NextFunction, Request, Response, Router } from "express";
 import { LLMProvider, VALID_PROVIDERS } from "../domain.layer/models/evaluationLlmApiKey/evaluationLlmApiKey.model";
-import { getDecryptedKeyForProviderQuery } from "../utils/evaluationLlmApiKey.utils";
+import { getDecryptedAiGatewayKeyForProviderQuery } from "../utils/aiGatewayEvalKey.utils";
 
 // JSON body parser for routes that need to inspect/modify the body before proxying
 const jsonParser = express.json({ limit: "50mb" });
@@ -28,7 +28,10 @@ async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
 
   try {
     const body = req.body || {};
-    const tenantId = req.tenantId;
+    const orgId = req.organizationId;
+    if (orgId == null) {
+      return next();
+    }
 
     // Handle Arena comparisons - inject API keys for contestants and judge
     if (isArena) {
@@ -45,7 +48,7 @@ async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
         const provider = contestant.hyperparameters?.provider?.toLowerCase();
         if (provider && VALID_PROVIDERS.includes(provider as LLMProvider) && !apiKeys[provider]) {
           try {
-            const apiKey = await getDecryptedKeyForProviderQuery(tenantId!, provider as LLMProvider);
+            const apiKey = await getDecryptedAiGatewayKeyForProviderQuery(orgId, provider as LLMProvider);
             if (apiKey) {
               apiKeys[provider] = apiKey;
             }
@@ -65,7 +68,7 @@ async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
 
       if (!apiKeys[judgeProvider]) {
         try {
-          const apiKey = await getDecryptedKeyForProviderQuery(tenantId!, judgeProvider as LLMProvider);
+          const apiKey = await getDecryptedAiGatewayKeyForProviderQuery(orgId, judgeProvider as LLMProvider);
           if (apiKey) {
             apiKeys[judgeProvider] = apiKey;
           }
@@ -86,7 +89,7 @@ async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
       const judgeProvider = (body.judgeProvider || "").toLowerCase();
       if (judgeProvider && VALID_PROVIDERS.includes(judgeProvider as LLMProvider)) {
         try {
-          const apiKey = await getDecryptedKeyForProviderQuery(tenantId!, judgeProvider as LLMProvider);
+          const apiKey = await getDecryptedAiGatewayKeyForProviderQuery(orgId, judgeProvider as LLMProvider);
           if (apiKey) {
             req.body.apiKey = apiKey;
           }
@@ -107,8 +110,8 @@ async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
         const normalizedProvider = provider.toLowerCase();
         if (VALID_PROVIDERS.includes(normalizedProvider as LLMProvider)) {
           try {
-            const apiKey = await getDecryptedKeyForProviderQuery(
-              tenantId!,
+            const apiKey = await getDecryptedAiGatewayKeyForProviderQuery(
+              orgId,
               normalizedProvider as LLMProvider,
             );
             if (apiKey) {
@@ -132,8 +135,8 @@ async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
       const hasJudgeApiKey = body.config.judgeLlm.apiKey && body.config.judgeLlm.apiKey !== "***" && body.config.judgeLlm.apiKey !== "";
 
       if (judgeProvider && !hasJudgeApiKey && VALID_PROVIDERS.includes(judgeProvider as LLMProvider)) {
-        const apiKey = await getDecryptedKeyForProviderQuery(
-          tenantId!,
+        const apiKey = await getDecryptedAiGatewayKeyForProviderQuery(
+          orgId,
           judgeProvider as LLMProvider,
         );
 
@@ -150,8 +153,8 @@ async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
       const hasModelApiKey = body.config.model.apiKey && body.config.model.apiKey !== "***" && body.config.model.apiKey !== "";
 
       if (modelProvider && !hasModelApiKey && VALID_PROVIDERS.includes(modelProvider as LLMProvider)) {
-        const apiKey = await getDecryptedKeyForProviderQuery(
-          tenantId!,
+        const apiKey = await getDecryptedAiGatewayKeyForProviderQuery(
+          orgId,
           modelProvider as LLMProvider,
         );
 
@@ -179,8 +182,8 @@ async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
         // Only fetch if we don't already have this provider's key
         if (!req.body.config.scorerApiKeys[judgeProvider]) {
           try {
-            const apiKey = await getDecryptedKeyForProviderQuery(
-              tenantId!,
+            const apiKey = await getDecryptedAiGatewayKeyForProviderQuery(
+              orgId,
               judgeProvider as LLMProvider,
             );
             if (apiKey) {

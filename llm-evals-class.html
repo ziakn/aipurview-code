@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LLM Evaluations — A Practical Class</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css" />
+  <style>
+    :root {
+      --accent: #7c6af7;
+      --accent2: #38bdf8;
+      --accent3: #34d399;
+      --warn: #f59e0b;
+      --danger: #f87171;
+    }
+
+    .reveal {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    .reveal h1, .reveal h2, .reveal h3 {
+      text-transform: none;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .reveal h2 {
+      color: var(--accent2);
+      font-size: 1.6em;
+      margin-bottom: 0.6em;
+    }
+
+    .reveal h3 {
+      color: var(--accent);
+      font-size: 1.15em;
+    }
+
+    /* ── Title slide ── */
+    .title-slide h1 {
+      font-size: 2.2em;
+      background: linear-gradient(135deg, #7c6af7, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.2em;
+    }
+    .title-slide .subtitle {
+      color: #94a3b8;
+      font-size: 1.1em;
+    }
+    .title-badge {
+      display: inline-block;
+      background: rgba(124,106,247,0.2);
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+      padding: 0.25em 1em;
+      font-size: 0.75em;
+      color: var(--accent);
+      margin-top: 0.8em;
+    }
+
+    /* ── Cards ── */
+    .cards {
+      display: flex;
+      gap: 1em;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 0.8em;
+    }
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 1em 1.2em;
+      flex: 1;
+      min-width: 160px;
+      max-width: 240px;
+      text-align: left;
+    }
+    .card .icon { font-size: 1.6em; display: block; margin-bottom: 0.3em; }
+    .card strong { color: var(--accent2); display: block; margin-bottom: 0.3em; font-size: 0.9em; }
+    .card p { font-size: 0.72em; color: #cbd5e1; margin: 0; line-height: 1.5; }
+
+    /* ── Accent cards (colored) ── */
+    .card.green  { border-color: var(--accent3); }
+    .card.green strong { color: var(--accent3); }
+    .card.purple { border-color: var(--accent); }
+    .card.purple strong { color: var(--accent); }
+    .card.yellow { border-color: var(--warn); }
+    .card.yellow strong { color: var(--warn); }
+    .card.red    { border-color: var(--danger); }
+    .card.red strong { color: var(--danger); }
+
+    /* ── Two-column layout ── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2em;
+      text-align: left;
+    }
+    .col-box {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 1em 1.2em;
+    }
+    .col-box h3 { margin-top: 0; font-size: 0.95em; }
+    .col-box ul { margin: 0; padding-left: 1.2em; font-size: 0.72em; color: #cbd5e1; line-height: 1.8; }
+
+    /* ── Pill tags ── */
+    .pills { display: flex; flex-wrap: wrap; gap: 0.5em; justify-content: center; margin-top: 0.8em; }
+    .pill {
+      background: rgba(124,106,247,0.15);
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+      padding: 0.3em 0.9em;
+      font-size: 0.68em;
+      color: #e2e8f0;
+    }
+    .pill.blue { background: rgba(56,189,248,0.15); border-color: var(--accent2); }
+    .pill.green { background: rgba(52,211,153,0.15); border-color: var(--accent3); }
+    .pill.yellow { background: rgba(245,158,11,0.15); border-color: var(--warn); }
+
+    /* ── Table ── */
+    .eval-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.7em;
+      margin-top: 0.8em;
+    }
+    .eval-table th {
+      background: rgba(124,106,247,0.3);
+      color: #e2e8f0;
+      padding: 0.5em 0.8em;
+      text-align: left;
+    }
+    .eval-table td {
+      padding: 0.45em 0.8em;
+      color: #cbd5e1;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .eval-table tr:hover td { background: rgba(255,255,255,0.04); }
+
+    /* ── Pipeline diagram ── */
+    .pipeline {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-top: 1.2em;
+      flex-wrap: wrap;
+    }
+    .pipe-step {
+      background: rgba(124,106,247,0.2);
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      padding: 0.6em 1em;
+      font-size: 0.65em;
+      color: #e2e8f0;
+      text-align: center;
+      min-width: 90px;
+    }
+    .pipe-arrow {
+      font-size: 1.2em;
+      color: #64748b;
+      margin: 0 0.3em;
+    }
+
+    /* ── Judge diagram ── */
+    .judge-flow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5em;
+      margin-top: 0.8em;
+      font-size: 0.72em;
+    }
+    .jf-box {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      padding: 0.5em 1.4em;
+      color: #e2e8f0;
+    }
+    .jf-box.highlight { border-color: var(--accent2); background: rgba(56,189,248,0.12); }
+    .jf-arrow { color: #64748b; font-size: 1.2em; }
+
+    /* ── Danger/tip boxes ── */
+    .tip-box {
+      background: rgba(52,211,153,0.1);
+      border-left: 4px solid var(--accent3);
+      border-radius: 0 8px 8px 0;
+      padding: 0.6em 1em;
+      font-size: 0.72em;
+      color: #cbd5e1;
+      text-align: left;
+      margin: 0.6em 0;
+    }
+    .warn-box {
+      background: rgba(245,158,11,0.1);
+      border-left: 4px solid var(--warn);
+      border-radius: 0 8px 8px 0;
+      padding: 0.6em 1em;
+      font-size: 0.72em;
+      color: #cbd5e1;
+      text-align: left;
+      margin: 0.6em 0;
+    }
+    .danger-box {
+      background: rgba(248,113,113,0.1);
+      border-left: 4px solid var(--danger);
+      border-radius: 0 8px 8px 0;
+      padding: 0.6em 1em;
+      font-size: 0.72em;
+      color: #cbd5e1;
+      text-align: left;
+      margin: 0.6em 0;
+    }
+
+    /* ── Footer note ── */
+    .slide-note {
+      position: absolute;
+      bottom: -2.5em;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.55em;
+      color: #475569;
+      white-space: nowrap;
+    }
+
+    /* ── Numbered steps ── */
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      padding: 0;
+      margin: 0.6em 0 0;
+      text-align: left;
+    }
+    .steps li {
+      counter-increment: step;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.8em;
+      margin-bottom: 0.6em;
+      font-size: 0.74em;
+      color: #cbd5e1;
+    }
+    .steps li::before {
+      content: counter(step);
+      background: var(--accent);
+      color: #fff;
+      border-radius: 50%;
+      min-width: 1.6em;
+      height: 1.6em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85em;
+      flex-shrink: 0;
+    }
+
+    /* ── Tool logos row ── */
+    .tools-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1em;
+      justify-content: center;
+      margin-top: 1em;
+    }
+    .tool-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 0.9em 1.3em;
+      min-width: 130px;
+      text-align: center;
+    }
+    .tool-card .tname { color: var(--accent2); font-size: 0.8em; font-weight: 700; }
+    .tool-card .tdesc { color: #94a3b8; font-size: 0.62em; margin-top: 0.3em; }
+
+    /* summary highlight */
+    .big-quote {
+      font-size: 1.05em;
+      font-style: italic;
+      color: #94a3b8;
+      border-left: 3px solid var(--accent);
+      padding-left: 0.8em;
+      text-align: left;
+      margin: 0.8em auto;
+      max-width: 680px;
+    }
+
+    .reveal .slide-number { color: #475569; }
+
+    /* ── Fullscreen button ── */
+    #fs-btn {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      z-index: 9999;
+      background: rgba(30,30,40,0.75);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 8px;
+      color: #94a3b8;
+      font-size: 18px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      transition: background 0.2s, color 0.2s;
+      line-height: 1;
+    }
+    #fs-btn:hover { background: rgba(124,106,247,0.4); color: #fff; }
+
+    /* ── Compact overrides to prevent overflow ── */
+    .reveal h2 {
+      font-size: 1.4em !important;
+      margin-bottom: 0.4em !important;
+    }
+    .card { padding: 0.75em 1em; }
+    .card p, .col-box ul { font-size: 0.68em; }
+    .col-box { padding: 0.75em 1em; }
+    .eval-table { font-size: 0.66em; }
+    .eval-table td, .eval-table th { padding: 0.38em 0.7em; }
+    .tip-box, .warn-box, .danger-box { padding: 0.5em 0.9em; font-size: 0.68em; margin: 0.4em 0; }
+    .steps li { font-size: 0.7em; margin-bottom: 0.45em; }
+    .pipe-step { padding: 0.5em 0.8em; font-size: 0.62em; min-width: 80px; }
+    .tool-card { padding: 0.7em 1em; min-width: 110px; }
+    .tool-card .tname { font-size: 0.75em; }
+    .tool-card .tdesc { font-size: 0.58em; }
+  </style>
+</head>
+<body>
+<button id="fs-btn" title="Toggle fullscreen (F)">⛶</button>
+<div class="reveal">
+  <div class="slides">
+
+    <!-- ═══════════════════════════════════════════════════
+         SLIDE 1 — Title
+    ═══════════════════════════════════════════════════ -->
+    <section class="title-slide" data-background-gradient="radial-gradient(ellipse at 30% 40%, rgba(124,106,247,0.18) 0%, transparent 60%), radial-gradient(ellipse at 70% 70%, rgba(56,189,248,0.12) 0%, transparent 60%)">
+      <h1>LLM Evaluations</h1>
+      <p class="subtitle">How to measure whether your language model actually works</p>
+      <div class="title-badge">10-Slide Crash Course</div>
+      <br/>
+      <div style="margin-top:1.4em; display:flex; justify-content:center; gap:2em; font-size:0.7em; color:#64748b;">
+        <span>📋 10 Slides</span>
+        <span>⏱ ~60 minutes</span>
+        <span>🎯 Practitioner-focused</span>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════
+         SLIDE 2 — Why Evals Matter
+    ═══════════════════════════════════════════════════ -->
+    <section>
+      <h2>Why Do Evals Matter?</h2>
+      <p style="font-size:0.75em; color:#94a3b8; margin-bottom:0.8em;">
+        LLMs are probabilistic — they can look right while being wrong. Without evals, you're flying blind.
+      </p>
+      <div class="cards">
+        <div class="card purple">
+          <span class="icon">🔍</span>
+          <strong>Catch Regressions</strong>
+          <p>A prompt change that fixes one thing can silently break ten others. Evals are your safety net.</p>
+        </div>
+        <div class="card green">
+          <span class="icon">📊</span>
+          <strong>Justify Model Choices</strong>
+          <p>GPT-4o vs Gemini vs Claude — evals give you objective data to pick the right model for your task.</p>
+        </div>
+        <div class="card yellow">
+          <span class="icon">⚖️</span>
+          <strong>Regulatory Compliance</strong>
+          <p>EU AI Act, ISO 42001, and NIST AI RMF all require documented evidence of model performance.</p>
+        </div>
+        <div class="card red">
+          <span class="icon">🛡️</span>
+          <strong>Safety &amp; Alignment</strong>
+          <p>Evals surface harmful outputs, hallucinations, and bias before users encounter them in production.</p>
+        </div>
+      </div>
+      <div class="tip-box" style="margin-top:1em;">
+        💡 <strong>Rule of thumb:</strong> If you can't measure it, you can't improve it — and you can't defend it.
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════
+         SLIDE 3 — Taxonomy of Evals
+    ═══════════════════════════════════════════════════ -->
+    <section>
+      <h2>A Taxonomy of LLM Evals</h2>
+      <div class="two-col">
+        <div class="col-box">
+          <h3>🤖 Automated vs. 👤 Human</h3>
+          <ul>
+            <li><strong>Automated</strong> — fast, cheap, scalable; string match, embedding similarity, LLM-as-judge</li>
+            <li><strong>Human</strong> — gold standard; slow and expensive; best for subjective quality</li>
+            <li>In practice: automate 90%, human-review 10% of edge cases</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h3>📌 Functional vs. 🎨 Quality</h3>
+          <ul>
+            <li><strong>Functional</strong> — does it do the task? (tool calling, JSON validity, SQL execution)</li>
+            <li><strong>Quality</strong> — how well? (fluency, helpfulness, tone, citation accuracy)</li>
+            <li>Functional evals are binary; quality evals use a rubric or score</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h3>📦 Unit vs. 🔗 End-to-End</h3>
+          <ul>
+            <li><strong>Unit</strong> — isolate a single prompt / component / retrieval step</li>
+            <li><strong>E2E</strong> — the full pipeline from user query to final response</li>
+            <li>Both are needed — E2E catches integration bugs that unit evals miss</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h3>🏆 Benchmark vs. 🧪 Slice</h3>
+          <ul>
+            <li><strong>Benchmark</strong> — standard datasets for comparing models at a high level</li>
+            <li><strong>Slice</strong> — subsets of your production data targeting specific behaviors</li>
+            <li>Benchmark scores don't always predict production performance!</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════
+         SLIDE 4 — Key Evaluation Dimensions
+    ═══════════════════════════════════════════════════ -->
+    <section>
+      <h2>Key Evaluation Dimensions</h2>
+      <table class="eval-table">
+        <thead>
+          <tr><th>Dimension</th><th>What You Measure</th><th>Example Metric</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>✅ <strong>Accuracy / Correctness</strong></td><td>Is the answer factually right?</td><td>Exact match, F1, BERTScore</td></tr>
+          <tr><td>🌀 <strong>Hallucination</strong></td><td>Does the model fabricate facts?</td><td>FActScore, citation hit rate</td></tr>
+          <tr><td>🧭 <strong>Instruction Following</strong></td><td>Does it comply with the prompt?</td><td>IFEval pass rate</td></tr>
+          <tr><td>🛡️ <strong>Safety / Harm</strong></td><td>Does it produce unsafe content?</td><td>Refusal rate, toxicity classifiers</td></tr>
+          <tr><td>⚡ <strong>Latency / Cost</strong></td><td>Is it fast and affordable enough?</td><td>p50/p95 ms, $/1k tokens</td></tr>
+          <tr><td>🧩 <strong>Robustness</strong></td><td>Does performance hold under paraphrase?</td><td>Consistency rate across rephrased prompts</td></tr>
+          <tr><td>🌍 <strong>Fairness / Bias</strong></td><td>Is it consistent across demographic groups?</td><td>Disparity ratio across slices</td></tr>
+          <tr><td>🔧 <strong>Tool / Function Use</strong></td><td>Does it call APIs correctly?</td><td>Tool call accuracy, arg validity</td></tr>
+        </tbody>
+      </table>
+      <div class="warn-box" style="margin-top:0.8em;">
+        ⚠️ Don't try to track everything at once. Start with the 2–3 dimensions most critical to your use case.
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════
+         SLIDE 5 — Evaluation Methods
+    ═══════════════════════════════════════════════════ -->
+    <section>
+      <h2>Evaluation Methods</h2>
+      <div class="cards">
+        <div class="card purple">
+          <span class="icon">🔡</span>
+          <strong>Reference-Based</strong>
+          <p>Compare output against a known-correct answer. Exact match, ROUGE, BLEU, BERTScore. Best for Q&amp;A, summarisation, translation.</p>
+        </div>
+        <div class="card blue" style="border-color:var(--accent2)">
+          <span class="icon">🧑‍⚖️</span>
+          <strong>LLM-as-Judge</strong>
+          <p>Use a stronger or same-tier LLM to score outputs on a rubric. Scalable; needs careful prompt design to avoid bias.</p>
+        </div>
+        <div class="card green">
+          <span class="icon">🖱️</span>
+          <strong>Human Preference</strong>
+          <p>Side-by-side comparison (A/B) or Likert scale scoring. Gold standard. Powers RLHF and Chatbot Arena leaderboards.</p>
+        </div>
+        <div class="card yellow">
+          <span class="icon">⚙️</span>
+          <strong>Code / Execution</strong>
+          <p>Run the generated code or SQL. Verify it compiles, passes tests, or produces correct query results. HumanEval, LiveCodeBench.</p>
+        </div>
+      </div>
+      <div class="big-quote" style="margin-top:1em;">
+        "The right method depends on whether you have ground-truth labels, a budget for human time, and how much you trust a judge model."
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════
+         SLIDE 6 — Standard Benchmarks
+    ═══════════════════════════════════════════════════ -->
+    <section>
+      <h2>Standard Benchmarks You Should Know</h2>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.8em; margin-top:0.6em;">
+        <div class="col-box">
+          <h3>🧠 Knowledge &amp; Reasoning</h3>
+          <ul>
+            <li><strong>MMLU</strong> — 57 academic subjects, MCQ</li>
+            <li><strong>BIG-Bench Hard</strong> — hard reasoning tasks</li>
+            <li><strong>ARC Challenge</strong> — grade-school science</li>
+            <li><strong>GPQA</strong> — PhD-level questions</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h3>💻 Coding</h3>
+          <ul>
+            <li><strong>HumanEval</strong> — Python function completion</li>
+            <li><strong>MBPP</strong> — mostly basic Python problems</li>
+            <li><strong>SWE-bench</strong> — real GitHub issues</li>
+            <li><strong>LiveCodeBench</strong> — contamination-resistant</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h3>🛡️ Safety &amp; Alignment</h3>
+          <ul>
+            <li><strong>TruthfulQA</strong> — detects hallucination</li>
+            <li><strong>ToxiGen</strong> — hate speech detection</li>
+            <li><strong>HarmBench</strong> — red-teaming attacks</li>
+            <li><strong>IFEval</strong> — instruction following</li>
+          </ul>
+        </div>
+      </div>
+      <div class="danger-box" style="margin-top:0.8em;">
+        🚨 <strong>Benchmark contamination:</strong> Models may have seen benchmark data during training. High benchmark scores ≠ strong real-world performance. Always validate on held-out production data.
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════
+         SLIDE 7 — LLM-as-Judge Deep Dive
+    ═══════════════════════════════════════════════════ -->
+    <section>
+      <h2>LLM-as-Judge — Deep Dive</h2>
+      <p style="font-size:0.72em; color:#94a3b8;">The most practical and scalable approach for production evals.</p>
+
+      <div class="judge-flow">
+        <div class="jf-box">📥 User Prompt + Model Response (+ Reference Answer if available)</div>
+        <div class="jf-arrow">↓</div>
+        <div class="jf-box highlight">🧑‍⚖️ Judge LLM evaluates against a structured rubric (1–5 scale or pass/fail)</div>
+        <div class="jf-arrow">↓</div>
+        <div style="display:flex; gap:2em;">
+          <div class="jf-box">📝 Score + Reasoning</div>
+          <div class="jf-box">📊 Aggregate Metrics</div>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:0.9em; font-size:0.9em;">
+        <div class="tip-box">
+          ✅ <strong>Best practices:</strong> Use chain-of-thought in judge prompt; ask for reasoning before score; use rubrics not vague instructions; calibrate with human labels.
+        </div>
+        <div class="warn-box">
+          ⚠️ <strong>Known biases:</strong> Position bias (favours first answer), verbosity bias (longer = better), self-enhancement bias (model favours own style). Mitigate with pairwise swap &amp; multi-judge.
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════
+         SLIDE 8 — Building an Eval Pipeline
+    ═══════════════════════════════════════════════════ -->
+    <section>
+      <h2>Building an Eval Pipeline</h2>
+      <div class="pipeline">
+        <div class="pipe-step">1️⃣<br/><strong>Define Tasks</strong><br/>What should the model do?</div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">2️⃣<br/><strong>Collect Dataset</strong><br/>Seed + prod logs + synthetics</div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">3️⃣<br/><strong>Choose Metrics</strong><br/>Pick 2–3 per task</div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">4️⃣<br/><strong>Run Evaluator</strong><br/>Automated + sample human</div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">5️⃣<br/><strong>Track &amp; Alert</strong><br/>CI gate + dashboard</div>
+      </div>
+
+      <ol class="steps" style="margin-top:1.2em; max-width:680px; margin-inline:auto;">
+        <li><strong>Version your prompts</strong> — treat prompts like code. Every change should be a commit that re-runs your eval suite.</li>
+        <li><strong>Separate the eval dataset from training/fine-tuning data</strong> — contamination silently inflates your scores.</li>
+        <li><strong>Gate deployments in CI</strong> — block merges if core eval metrics drop below a threshold.</li>
+        <li><strong>Log production outputs</strong> — sample and re-evaluate live traffic to detect distribution shift.</li>
+      </ol>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════
+         SLIDE 9 — Common Pitfalls
+    ═══════════════════════════════════════════════════ -->
+    <section>
+      <h2>Common Pitfalls &amp; How to Avoid Them</h2>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.9em; margin-top:0.6em; text-align:left;">
+
+        <div class="danger-box">
+          🚨 <strong>Overfitting to benchmarks</strong><br/>
+          <span style="font-size:0.9em; color:#94a3b8;">Teams optimise prompts against the benchmark itself, not the real task. Fix: keep a secret hold-out set and never tune against it.</span>
+        </div>
+
+        <div class="danger-box">
+          🚨 <strong>Treating all errors equally</strong><br/>
+          <span style="font-size:0.9em; color:#94a3b8;">A wrong drug dosage and a wrong movie rec are both errors — weigh by business impact. Use severity tiers.</span>
+        </div>
+
+        <div class="warn-box">
+          ⚠️ <strong>Tiny eval datasets</strong><br/>
+          <span style="font-size:0.9em; color:#94a3b8;">100 examples can't reliably detect a 2% regression. Aim for ≥500 per task slice; use bootstrapping to estimate confidence intervals.</span>
+        </div>
+
+        <div class="warn-box">
+          ⚠️ <strong>Ignoring latency &amp; cost</strong><br/>
+          <span style="font-size:0.9em; color:#94a3b8;">A 10% accuracy gain that triples cost and latency might not ship. Always report the accuracy-cost-latency frontier, not just accuracy.</span>
+        </div>
+
+        <div class="tip-box">
+          💡 <strong>Single-metric thinking</strong><br/>
+          <span style="font-size:0.9em; color:#94a3b8;">Optimising for BLEU alone produces fluent but vacuous text. Always use complementary metrics that pull in different directions.</span>
+        </div>
+
+        <div class="tip-box">
+          💡 <strong>Skipping failure analysis</strong><br/>
+          <span style="font-size:0.9em; color:#94a3b8;">A score of 87% tells you nothing. Read 50 failed cases — patterns there drive your next improvement cycle.</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════
+         SLIDE 10 — Tools, Frameworks & Takeaways
+    ═══════════════════════════════════════════════════ -->
+    <section data-background-gradient="radial-gradient(ellipse at 30% 40%, rgba(124,106,247,0.15) 0%, transparent 60%)">
+      <h2>Tools, Frameworks &amp; Key Takeaways</h2>
+
+      <div class="tools-row">
+        <div class="tool-card">
+          <div class="tname">OpenAI Evals</div>
+          <div class="tdesc">Open framework; model-graded, string match, embeddings</div>
+        </div>
+        <div class="tool-card">
+          <div class="tname">LangSmith</div>
+          <div class="tdesc">LangChain's hosted eval + tracing platform</div>
+        </div>
+        <div class="tool-card">
+          <div class="tname">Promptfoo</div>
+          <div class="tdesc">CLI-first red-teaming &amp; prompt evals</div>
+        </div>
+        <div class="tool-card">
+          <div class="tname">Ragas</div>
+          <div class="tdesc">RAG-specific evals (faithfulness, context recall)</div>
+        </div>
+        <div class="tool-card">
+          <div class="tname">Braintrust</div>
+          <div class="tdesc">Hosted eval CI with dataset versioning</div>
+        </div>
+        <div class="tool-card">
+          <div class="tname">EleutherAI lm-eval</div>
+          <div class="tdesc">Gold-standard academic benchmark harness</div>
+        </div>
+      </div>
+
+      <div style="margin-top:1.1em; display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.7em; font-size:0.68em; text-align:left;">
+        <div class="tip-box">🎯 <strong>Start small.</strong> One task, 200 examples, two metrics. Ship it. Then expand.</div>
+        <div class="tip-box">🔄 <strong>Evals are living tests.</strong> Refresh your dataset every time the use case or model changes.</div>
+        <div class="tip-box">🤝 <strong>Align with humans.</strong> Calibrate your automated evals against real human judgements regularly.</div>
+      </div>
+
+      <div class="pills" style="margin-top:0.9em;">
+        <span class="pill">Define → Measure → Improve</span>
+        <span class="pill blue">Automate first, human-review edge cases</span>
+        <span class="pill green">Gate deployments with eval CI</span>
+        <span class="pill yellow">Failure analysis &gt; score chasing</span>
+      </div>
+    </section>
+
+  </div><!-- .slides -->
+</div><!-- .reveal -->
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script>
+  // Fullscreen toggle
+  const fsBtn = document.getElementById('fs-btn');
+  function updateFsIcon() {
+    fsBtn.textContent = document.fullscreenElement ? '✕' : '⛶';
+    fsBtn.title = document.fullscreenElement ? 'Exit fullscreen (F)' : 'Toggle fullscreen (F)';
+  }
+  fsBtn.addEventListener('click', () => {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  });
+  document.addEventListener('fullscreenchange', updateFsIcon);
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    progress: true,
+    transition: 'slide',
+    transitionSpeed: 'fast',
+    backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+    width: 1100,
+    height: 700,
+    margin: 0.04,
+    minScale: 0.1,
+    maxScale: 2.0,
+    autoScale: true,
+    center: true,
+    disableLayout: false,
+  });
+</script>
+</body>
+</html>
