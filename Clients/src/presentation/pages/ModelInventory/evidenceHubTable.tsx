@@ -14,6 +14,7 @@ import {
   TableFooter,
   Tooltip,
   Box,
+  Chip,
 } from "@mui/material";
 import TablePaginationActions from "../../components/TablePagination";
 import CustomIconButton from "../../components/IconButton";
@@ -64,6 +65,10 @@ const TABLE_COLUMNS = [
   { id: "evidence_name", label: "EVIDENCE NAME", sortable: true },
   { id: "evidence_type", label: "TYPE", sortable: true },
   { id: "mapped_models", label: "MAPPED MODELS", sortable: false },
+  { id: "tags", label: "TAGS", sortable: false },
+  { id: "frameworks", label: "FRAMEWORKS", sortable: false },
+  { id: "reviewer", label: "REVIEWER", sortable: true },
+  { id: "retention_policy", label: "RETENTION", sortable: true },
   { id: "uploaded_by", label: "UPLOADED BY", sortable: true },
   { id: "uploaded_on", label: "UPLOADED ON", sortable: true },
   { id: "expiry_date", label: "EXPIRY", sortable: true },
@@ -293,6 +298,20 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
           bValue = b.evidence_type?.toLowerCase() || "";
           break;
 
+        case "reviewer":
+          aValue = a.reviewer_id
+            ? userMap.get(a.reviewer_id.toString())?.toLowerCase() || ""
+            : "";
+          bValue = b.reviewer_id
+            ? userMap.get(b.reviewer_id.toString())?.toLowerCase() || ""
+            : "";
+          break;
+
+        case "retention_policy":
+          aValue = a.retention_policy?.toLowerCase() || "";
+          bValue = b.retention_policy?.toLowerCase() || "";
+          break;
+
         case "uploaded_by":
           aValue =
             a.evidence_files && a.evidence_files.length > 0
@@ -401,6 +420,56 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
                           : "-"
                       }
                     />
+                  </TableCell>
+                )}
+                {isColVisible("tags") && (
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    {evidence.tags && evidence.tags.length > 0 ? (
+                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: "2px" }}>
+                        {evidence.tags.slice(0, 2).map((tag) => (
+                          <Chip
+                            key={tag}
+                            label={tag}
+                            size="small"
+                            sx={{ height: 20, fontSize: 11 }}
+                          />
+                        ))}
+                        {evidence.tags.length > 2 && (
+                          <Tooltip title={evidence.tags.slice(2).join(", ")}>
+                            <Chip
+                              label={`+${evidence.tags.length - 2}`}
+                              size="small"
+                              sx={{ height: 20, fontSize: 11 }}
+                            />
+                          </Tooltip>
+                        )}
+                      </Box>
+                    ) : (
+                      "-"
+                    )}
+                  </TableCell>
+                )}
+                {isColVisible("frameworks") && (
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    {evidence.framework_ids && evidence.framework_ids.length > 0 ? (
+                      <TooltipCell value={evidence.framework_ids.join(", ")} />
+                    ) : (
+                      "-"
+                    )}
+                  </TableCell>
+                )}
+                {isColVisible("reviewer") && (
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    {evidence.reviewer_id
+                      ? userMap.get(evidence.reviewer_id.toString()) || "-"
+                      : "-"}
+                  </TableCell>
+                )}
+                {isColVisible("retention_policy") && (
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    {evidence.retention_policy
+                      ? evidence.retention_policy.replace(/_/g, " ")
+                      : "-"}
                   </TableCell>
                 )}
                 {isColVisible("uploaded_by") && (
