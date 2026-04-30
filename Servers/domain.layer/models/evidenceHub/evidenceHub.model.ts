@@ -59,32 +59,6 @@ export class EvidenceHubModel extends Model<EvidenceHubModel> {
   })
   mapped_model_ids?: number[] | null;
 
-  @Column({
-    type: DataType.JSONB,
-    allowNull: true,
-    defaultValue: [],
-  })
-  tags?: string[];
-
-  @Column({
-    type: DataType.ARRAY(DataType.STRING),
-    allowNull: true,
-    defaultValue: [],
-  })
-  framework_ids?: string[];
-
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: true,
-  })
-  reviewer_id?: number | null;
-
-  @Column({
-    type: DataType.STRING(100),
-    allowNull: true,
-  })
-  retention_policy?: string | null;
-
   /** timestamps */
   @Column({
     type: DataType.DATE,
@@ -107,10 +81,6 @@ export class EvidenceHubModel extends Model<EvidenceHubModel> {
       evidence_files: this.evidence_files,
       expiry_date: this.expiry_date?.toISOString() || null,
       mapped_model_ids: this.mapped_model_ids,
-      tags: this.tags || [],
-      framework_ids: this.framework_ids || [],
-      reviewer_id: this.reviewer_id ?? null,
-      retention_policy: this.retention_policy ?? null,
       created_at: (this.createdAt ?? this.created_at)?.toISOString(),
       updated_at: (this.updatedAt ?? this.updated_at)?.toISOString(),
     };
@@ -129,10 +99,6 @@ export class EvidenceHubModel extends Model<EvidenceHubModel> {
       evidence_files: this.evidence_files,
       expiry_date: this.expiry_date?.toISOString() || null,
       mapped_model_ids: this.mapped_model_ids,
-      tags: this.tags || [],
-      framework_ids: this.framework_ids || [],
-      reviewer_id: this.reviewer_id ?? null,
-      retention_policy: this.retention_policy ?? null,
       created_at: (this.createdAt ?? this.created_at)?.toISOString(),
       updated_at: (this.updatedAt ?? this.updated_at)?.toISOString(),
     };
@@ -140,7 +106,7 @@ export class EvidenceHubModel extends Model<EvidenceHubModel> {
 
   static updateEvidence(
     existingEvidence: EvidenceHubModel,
-    data: Partial<IEvidenceHub>,
+    data: Partial<IEvidenceHub>
   ): EvidenceHubModel {
     Object.assign(existingEvidence, {
       evidence_name: data.evidence_name ?? existingEvidence.evidence_name,
@@ -148,11 +114,8 @@ export class EvidenceHubModel extends Model<EvidenceHubModel> {
       description: data.description ?? existingEvidence.description,
       evidence_files: data.evidence_files ?? existingEvidence.evidence_files,
       expiry_date: data.expiry_date ?? existingEvidence.expiry_date,
-      mapped_model_ids: data.mapped_model_ids ?? existingEvidence.mapped_model_ids,
-      tags: data.tags ?? existingEvidence.tags,
-      framework_ids: data.framework_ids ?? existingEvidence.framework_ids,
-      reviewer_id: data.reviewer_id ?? existingEvidence.reviewer_id,
-      retention_policy: data.retention_policy ?? existingEvidence.retention_policy,
+      mapped_model_ids:
+        data.mapped_model_ids ?? existingEvidence.mapped_model_ids,
       updated_at: new Date(),
     });
 
