@@ -140,7 +140,7 @@ export class EvidenceHubModel extends Model<EvidenceHubModel> {
 
   static updateEvidence(
     existingEvidence: EvidenceHubModel,
-    data: Partial<IEvidenceHub>
+    data: Partial<IEvidenceHub>,
   ): EvidenceHubModel {
     Object.assign(existingEvidence, {
       evidence_name: data.evidence_name ?? existingEvidence.evidence_name,
@@ -148,13 +148,11 @@ export class EvidenceHubModel extends Model<EvidenceHubModel> {
       description: data.description ?? existingEvidence.description,
       evidence_files: data.evidence_files ?? existingEvidence.evidence_files,
       expiry_date: data.expiry_date ?? existingEvidence.expiry_date,
-      mapped_model_ids:
-        data.mapped_model_ids ?? existingEvidence.mapped_model_ids,
+      mapped_model_ids: data.mapped_model_ids ?? existingEvidence.mapped_model_ids,
       tags: data.tags ?? existingEvidence.tags,
       framework_ids: data.framework_ids ?? existingEvidence.framework_ids,
       reviewer_id: data.reviewer_id ?? existingEvidence.reviewer_id,
-      retention_policy:
-        data.retention_policy ?? existingEvidence.retention_policy,
+      retention_policy: data.retention_policy ?? existingEvidence.retention_policy,
       updated_at: new Date(),
     });
 
