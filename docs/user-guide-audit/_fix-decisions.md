@@ -6,6 +6,14 @@ Capture user decisions made at review gates so they're not lost before the fix p
 
 - **FIX**: Remove "Controls hub" references from both `getting-started/dashboard.ts` (block 16, sidebar bullet) and `getting-started/quick-start.ts` (block 10, "Assurance → Controls hub"). Verified absent across `Clients/src/` and `Servers/` on 2026-04-29; feature does not exist in the app.
 
+## ai-gateway/mcp-guardrails — SKIPPED (needs investigation)
+
+- Article claims JSON-RPC error code `-32003` for guardrail blocks. Auditor couldn't find a matching constant in code. Either the code is right and the doc number is wrong, or the auditor missed it. Needs a quick AI Gateway code review before fixing.
+
+## ai-gateway/settings — SKIPPED (auth contract clarity)
+
+- Audit Finding 2: doc says "Requests without a valid key receive a 401 response", but the OpenAPI route definition has `requiresAuth: false` with only 201/500 responses. The doc claim is likely correct in practice (auth middleware runs upstream of the route), but the API contract doesn't reflect it. Either fix the OpenAPI definition or rephrase the doc — needs product decision.
+
 ## policies — needs decision (structural)
 
 - The collection has two articles that both cover templates:
