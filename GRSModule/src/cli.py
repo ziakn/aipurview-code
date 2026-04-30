@@ -727,7 +727,15 @@ def _cmd_generate(args: argparse.Namespace) -> int:
 
         scores_dir = Path(args.judge_out_dir) if args.judge_out_dir else (final_dir / "judge_scores")
         responses_dir = Path(args.responses_dir) if args.responses_dir else (final_dir / "responses")
-        score_files = list_judge_score_files(scores_dir)
+
+        if args.patch_score_file:
+            score_file_path = Path(args.patch_score_file)
+            if not score_file_path.exists():
+                console.print(f"[red]Score file not found:[/red] {score_file_path}")
+                return 2
+            score_files = [score_file_path]
+        else:
+            score_files = list_judge_score_files(scores_dir)
 
         if not score_files:
             console.print(f"[red]No judge score files found in:[/red] {scores_dir}")
@@ -807,6 +815,7 @@ def main() -> None:
     gen.add_argument("--judge-model-filter", default=None, help="Only judge responses from this candidate model (raw model_id, e.g. openai/gpt-4o-mini)")
     gen.add_argument("--judge-retry-max-attempts", default="5")
     gen.add_argument("--patch-dimension", default="accountability_transparency", help="Dimension ID to retroactively score")
+    gen.add_argument("--patch-score-file", default=None, help="Path to a single judge score JSONL file to patch (omit to patch all files in the scores dir)")
     gen.add_argument("--judge-scores-dir", default=None)
     gen.add_argument("--leaderboard-out-dir", default=None)
     gen.add_argument("--models-config", default=None)
