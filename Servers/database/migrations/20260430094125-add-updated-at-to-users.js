@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Adds the missing `updated_at` column to the users table.
