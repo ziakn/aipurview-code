@@ -75,6 +75,10 @@ export const createNewEvidenceQuery = async (
                 description,
                 expiry_date,
                 mapped_model_ids,
+                tags,
+                framework_ids,
+                reviewer_id,
+                retention_policy,
                 created_at,
                 updated_at
             ) VALUES (
@@ -84,6 +88,10 @@ export const createNewEvidenceQuery = async (
                 :description,
                 :expiry_date,
                 :mapped_model_ids,
+                :tags,
+                :framework_ids,
+                :reviewer_id,
+                :retention_policy,
                 :created_at,
                 :updated_at
             ) RETURNING *`,
@@ -97,6 +105,12 @@ export const createNewEvidenceQuery = async (
                     mapped_model_ids: evidence.mapped_model_ids
                         ? `{${evidence.mapped_model_ids.join(",")}}`
                         : null,
+                    tags: JSON.stringify(evidence.tags || []),
+                    framework_ids: evidence.framework_ids
+                        ? `{${evidence.framework_ids.map((f: string) => `"${f}"`).join(",")}}`
+                        : "{}",
+                    reviewer_id: evidence.reviewer_id ?? null,
+                    retention_policy: evidence.retention_policy ?? null,
                     created_at,
                     updated_at: created_at,
                 },
@@ -162,6 +176,10 @@ export const updateEvidenceByIdQuery = async (
                 description = :description,
                 expiry_date = :expiry_date,
                 mapped_model_ids = :mapped_model_ids,
+                tags = :tags,
+                framework_ids = :framework_ids,
+                reviewer_id = :reviewer_id,
+                retention_policy = :retention_policy,
                 updated_at = :updated_at
              WHERE organization_id = :organizationId AND id = :id`,
             {
@@ -175,6 +193,12 @@ export const updateEvidenceByIdQuery = async (
                     mapped_model_ids: evidence.mapped_model_ids
                         ? `{${evidence.mapped_model_ids.join(",")}}`
                         : null,
+                    tags: JSON.stringify(evidence.tags || []),
+                    framework_ids: evidence.framework_ids
+                        ? `{${evidence.framework_ids.map((f: string) => `"${f}"`).join(",")}}`
+                        : "{}",
+                    reviewer_id: evidence.reviewer_id ?? null,
+                    retention_policy: evidence.retention_policy ?? null,
                     updated_at,
                 },
                 transaction,
