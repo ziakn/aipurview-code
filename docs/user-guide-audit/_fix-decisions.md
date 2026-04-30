@@ -6,6 +6,10 @@ Capture user decisions made at review gates so they're not lost before the fix p
 
 - **FIX**: Remove "Controls hub" references from both `getting-started/dashboard.ts` (block 16, sidebar bullet) and `getting-started/quick-start.ts` (block 10, "Assurance → Controls hub"). Verified absent across `Clients/src/` and `Servers/` on 2026-04-29; feature does not exist in the app.
 
+## ai-governance/model-lifecycle — SKIPPED (needs investigation)
+
+- Audit Finding 1: doc lists 7 governance workflow statuses; code's Status.ts enum has 7 different status values for control assessments (Draft, Awaiting review, Awaiting approval, Implemented, etc.). These appear to serve different purposes — needs verification of which enum the project UI actually uses.
+
 ## ai-gateway/mcp-guardrails — SKIPPED (needs investigation)
 
 - Article claims JSON-RPC error code `-32003` for guardrail blocks. Auditor couldn't find a matching constant in code. Either the code is right and the doc number is wrong, or the auditor missed it. Needs a quick AI Gateway code review before fixing.

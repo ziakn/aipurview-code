@@ -49,7 +49,7 @@ export const aiTrustCenterContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The AI trust center can include the following sections:',
+      text: 'The AI trust center is configured from a single Overview form, with per-field visibility toggles for each of these content areas:',
     },
     {
       type: 'bullet-list',
