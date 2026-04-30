@@ -85,7 +85,7 @@ export const pluginsContent: ArticleContent = {
         { key: 'roles', label: 'Required role', width: '50%' },
       ],
       rows: [
-        { action: 'Browse marketplace', roles: 'Any authenticated user' },
+        { action: 'Open the Plugins page (browse marketplace)', roles: 'Admin' },
         { action: 'Install or uninstall plugins', roles: 'Admin' },
         { action: 'Manage plugin settings', roles: 'Admin' },
       ],
