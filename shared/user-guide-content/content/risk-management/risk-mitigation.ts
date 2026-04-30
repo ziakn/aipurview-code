@@ -83,6 +83,11 @@ export const riskMitigationContent: ArticleContent = {
           description: 'Mitigation has been postponed to a later date.',
         },
         {
+          icon: 'XCircle',
+          title: 'Canceled',
+          description: 'Mitigation has been cancelled and will not be pursued.',
+        },
+        {
           icon: 'AlertTriangle',
           title: 'Requires review',
           description: 'Mitigation needs additional review or reassessment.',
@@ -105,7 +110,7 @@ export const riskMitigationContent: ArticleContent = {
         { bold: 'Mitigation plan', text: 'Describe the specific actions to reduce the risk' },
         { bold: 'Implementation strategy', text: 'Outline how the mitigation will be executed' },
         { bold: 'Deadline', text: 'Set a target date for completing the mitigation' },
-        { bold: 'Risk owner', text: 'Assign responsibility for implementing the mitigation' },
+        { bold: 'Approver', text: 'Assign responsibility for approving the mitigation' },
       ],
     },
     {
