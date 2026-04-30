@@ -6,6 +6,14 @@ Capture user decisions made at review gates so they're not lost before the fix p
 
 - **FIX**: Remove "Controls hub" references from both `getting-started/dashboard.ts` (block 16, sidebar bullet) and `getting-started/quick-start.ts` (block 10, "Assurance → Controls hub"). Verified absent across `Clients/src/` and `Servers/` on 2026-04-29; feature does not exist in the app.
 
+## training/training-tracking — SKIPPED (no fix needed)
+
+- Audit Finding 2: enum value is `InProgress = "In Progress"` (capital P), but the UI label and the article both use "In progress" (lowercase p). The user-facing text matches; the inconsistency is at the enum level, not the documentation. No doc change needed.
+
+## shadow-ai/rules — SKIPPED (verification-only)
+
+- Audit Finding 2: cross-doc reference verification — the Settings article exists and matches. No doc change needed.
+
 ## compliance/ce-marking — SKIPPED (needs product input)
 
 - Audit Findings 1+2: doc lists Title Case status values for declaration ("Draft, Ready for signature, Signed, Archived") and registration ("Not registered, Pending, Registered, Rejected"), but backend only has `"draft"` and `"not_registered"` as defaults — no formal enum exists. The other values may be UI display labels, may be aspirational, or may simply not exist yet. Needs product confirmation of the intended status set before fixing the doc.
