@@ -96,8 +96,14 @@ const evidenceTypes = [
   { _id: EvidenceType.RISK_ASSESSMENT_REPORT, name: "Risk Assessment Report" },
   { _id: EvidenceType.BIAS_AND_FAIRNESS_REPORT, name: "Bias and Fairness Report" },
   { _id: EvidenceType.SECURITY_ASSESSMENT_REPORT, name: "Security Assessment Report" },
-  { _id: EvidenceType.DATA_PROTECTION_IMPACT_ASSESSMENT, name: "Data Protection Impact Assessment" },
-  { _id: EvidenceType.ROBUSTNESS_AND_STRESS_TEST_REPORT, name: "Robustness and Stress Test Report" },
+  {
+    _id: EvidenceType.DATA_PROTECTION_IMPACT_ASSESSMENT,
+    name: "Data Protection Impact Assessment",
+  },
+  {
+    _id: EvidenceType.ROBUSTNESS_AND_STRESS_TEST_REPORT,
+    name: "Robustness and Stress Test Report",
+  },
   { _id: EvidenceType.EVALUATION_METRICS_SUMMARY, name: "Evaluation Metrics Summary" },
   { _id: EvidenceType.HUMAN_OVERSIGHT_PLAN, name: "Human Oversight Plan" },
   { _id: EvidenceType.POST_MARKET_MONITORING_PLAN, name: "Post-Market Monitoring Plan" },
@@ -296,11 +302,7 @@ const NewEvidenceHub: FC<NewEvidenceHubProps> = ({
       return values.evidence_files?.length > 0;
     }
     if (activeStep === 1) {
-      return !!(
-        values.evidence_name?.trim() &&
-        values.evidence_type &&
-        values.description?.trim()
-      );
+      return !!(values.evidence_name?.trim() && values.evidence_type && values.description?.trim());
     }
     return true;
   };
