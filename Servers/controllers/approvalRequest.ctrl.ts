@@ -28,6 +28,7 @@ import {
   processApprovalQuery,
   withdrawApprovalRequestQuery,
 } from "../utils/approvalRequest.utils";
+import { TransientApprovalError } from "../advisor/approval/approvalGateway";
 import { getApprovalWorkflowByIdQuery, getWorkflowStepsQuery } from "../utils/approvalWorkflow.utils";
 import { ApprovalResult } from "../domain.layer/enums/approval-workflow.enum";
 import {
@@ -460,6 +461,14 @@ export async function approveRequest(
               { replacements: { organizationId, requestId }, type: QueryTypes.SELECT }
             );
 
+            // Look up entity_type so the notification title/message
+            // matches the artifact ("AI action fully approved" instead
+            // of always "Use case fully approved").
+            const [entityRow] = await sequelize.query<{ entity_type: string | null }>(
+              `SELECT entity_type FROM approval_requests WHERE organization_id = :organizationId AND id = :requestId`,
+              { replacements: { organizationId, requestId }, type: QueryTypes.SELECT }
+            );
+
             await notifyApprovalComplete(
               organizationId,
               notificationInfo.requesterId!,
@@ -468,7 +477,8 @@ export async function approveRequest(
                 name: notificationInfo.requestName,
                 totalSteps: parseInt(totalSteps?.count || "1", 10),
               },
-              baseUrl
+              baseUrl,
+              entityRow?.entity_type ?? undefined,
             );
           }
         } catch (notifyError) {
@@ -482,6 +492,15 @@ export async function approveRequest(
       .json(STATUS_CODE[200]({ message: "Request approved successfully" }));
   } catch (error) {
     await transaction.rollback();
+    if (error instanceof TransientApprovalError) {
+      logStructured(
+        "processing",
+        `transient approval failure — keeping request pending: ${error.message}`,
+        "approveRequest",
+        "approvalRequest.ctrl.ts"
+      );
+      return res.status(409).json(STATUS_CODE[409](error.message));
+    }
     logStructured(
       "error",
       "failed to approve request",

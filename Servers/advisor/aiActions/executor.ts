@@ -153,15 +153,22 @@ export async function executeAiAction(
   organizationId: number,
   transaction: Transaction,
 ): Promise<void> {
+  logger.info(
+    `[aiActionExecutor] START — approval_request_id=${requestId} org=${organizationId}`,
+  );
+
   const data = await loadEntityData(requestId, organizationId, transaction);
   if (!data) {
+    logger.error(
+      `[aiActionExecutor] entity_data MISSING for request ${requestId}`,
+    );
     throw new Error(
       `[aiActionExecutor] approval_requests.entity_data is missing for request ${requestId}`,
     );
   }
 
-  logger.debug(
-    `[aiActionExecutor] executing ${data.tool_name} for request ${requestId}`,
+  logger.info(
+    `[aiActionExecutor] tool_name=${data.tool_name} requestId=${requestId} input_params=${JSON.stringify(data.input_params)}`,
   );
 
   // 1. Dispatch on tool_name via the registry. An unknown tool means
@@ -169,10 +176,16 @@ export async function executeAiAction(
   //    (b) the stored payload was tampered with. Either way, fail loud.
   const handler = getAiActionHandler(data.tool_name);
   if (!handler) {
+    logger.error(
+      `[aiActionExecutor] NO HANDLER registered for tool=${data.tool_name} (registry keys: see registry.ts)`,
+    );
     throw new Error(
       `[aiActionExecutor] unknown AI action tool: ${data.tool_name}`,
     );
   }
+  logger.info(
+    `[aiActionExecutor] handler resolved for tool_name=${data.tool_name}`,
+  );
 
   // 2. Re-validate the stored input at execute time. The LLM's input was
   //    validated when the approval was filed, but the schema may have
@@ -221,6 +234,9 @@ export async function executeAiAction(
   //    success or throw on failure; a throw rolls back the surrounding
   //    transaction, which is exactly what we want since the approval
   //    shouldn't land if the write didn't.
+  logger.info(
+    `[aiActionExecutor] calling handler.execute for tool=${data.tool_name} requesterId=${requesterId}`,
+  );
   const executeResult = await handler.execute({
     requesterId,
     organizationId,
@@ -228,6 +244,9 @@ export async function executeAiAction(
     inputParams: parsed.data,
     approvalRequestId: requestId,
   });
+  logger.info(
+    `[aiActionExecutor] handler.execute SUCCEEDED tool=${data.tool_name} entityId=${executeResult.entityId}`,
+  );
 
   // 5. Record the execution outcome on the approval row so the UI can
   //    surface it and so a later audit trail has a single place to look.

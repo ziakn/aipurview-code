@@ -29,7 +29,7 @@ export function registerRiskAgent() {
       "agent_create_risk", "agent_update_risk", "agent_delete_risk",
       "agent_assign_risk_owner", "agent_change_risk_status",
       "agent_bulk_update_risk_status", "agent_link_risk_to_project",
-      "agent_create_model_risk", "agent_update_model_risk",
+      "agent_create_model_risk", "agent_suggest_model_risk", "agent_update_model_risk",
       "agent_delete_model_risk", "agent_change_model_risk_status",
     ],
     systemPromptSuffix: `You are a risk management expert. You understand risk scoring methodologies,

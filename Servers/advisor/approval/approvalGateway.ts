@@ -22,6 +22,24 @@ import { logStateHistory } from "../../services/aiAuditTrail.service";
 
 const fileName = "approvalGateway.ts";
 
+/**
+ * Marker error: the executor cannot run RIGHT NOW because some external
+ * precondition isn't met yet (e.g. the suggested-risk's parent model
+ * approval is still pending). This is a RETRYABLE failure — the gateway
+ * keeps the approval in `pending_approval` state instead of marking it
+ * `failed`, so the user can try Approve again once the precondition
+ * holds.
+ *
+ * Distinct from a permanent failure (bad data, schema drift, runtime
+ * exception in the executor) which should land in `failed` state.
+ */
+export class TransientApprovalError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "TransientApprovalError";
+  }
+}
+
 // ── Result types ────────────────────────────────────────────────
 
 export interface ApprovalSubmitResult {
@@ -370,6 +388,36 @@ export async function approveAction(
     result = await executor(inputParams, organizationId);
   } catch (execError) {
     const errorMsg = execError instanceof Error ? execError.message : "Unknown error";
+
+    // TransientApprovalError → keep the approval retryable. Don't mark
+    // it `failed`; revert state back to `pending_approval` so the user
+    // can click Approve again once the precondition holds. This is the
+    // suggested-risk-before-model-approval flow: the user clicks Approve
+    // on a risk while the parent model is still pending; we surface the
+    // error but leave the card in its pending state for retry.
+    if (execError instanceof TransientApprovalError) {
+      stateHistory.push({
+        state: "pending_approval",
+        timestamp: new Date().toISOString(),
+        actor: "system",
+        reason: `transient: ${errorMsg}`,
+      });
+      await updateApprovalRecord(id, organizationId, {
+        state: "pending_approval",
+        stateHistory,
+        errorMessage: errorMsg,
+        // Intentionally NOT setting executedAt — execution didn't run.
+      });
+      logStateHistory(organizationId, id, stateHistory, record.tool_name).catch(() => {});
+      logStructured(
+        "processing",
+        `transient failure on ${record.tool_name}; kept as pending_approval for retry: ${errorMsg}`,
+        functionName,
+        fileName,
+      );
+      return { success: false, error: errorMsg };
+    }
+
     stateHistory.push({ state: "failed", timestamp: new Date().toISOString(), actor: "system", reason: errorMsg });
     await updateApprovalRecord(id, organizationId, {
       state: "failed",
