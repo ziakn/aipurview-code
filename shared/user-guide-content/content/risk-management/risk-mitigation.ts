@@ -126,9 +126,8 @@ export const riskMitigationContent: ArticleContent = {
     {
       type: 'bullet-list',
       items: [
-        { bold: 'Auto-calculated risk level', text: 'The initial risk level based on likelihood and severity' },
-        { bold: 'Current risk level', text: 'The present risk level after any controls are in place' },
-        { bold: 'Final risk level', text: 'The expected residual risk after all mitigations are complete' },
+        { bold: 'Current risk level', text: 'The present risk level captured on the mitigation form (manually selected from Low / Medium / High / Critical)' },
+        { bold: 'Residual risk', text: 'Calculated automatically from residual likelihood × residual severity once mitigations are in place' },
       ],
     },
     {
