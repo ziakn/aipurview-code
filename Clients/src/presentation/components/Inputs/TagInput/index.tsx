@@ -100,9 +100,7 @@ function TagInput({
           }}
         >
           {label}
-          {isRequired && (
-            <span style={{ color: theme.palette.status.error.text }}> *</span>
-          )}
+          {isRequired && <span style={{ color: theme.palette.status.error.text }}> *</span>}
         </Typography>
       )}
 
