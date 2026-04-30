@@ -299,12 +299,8 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
           break;
 
         case "reviewer":
-          aValue = a.reviewer_id
-            ? userMap.get(a.reviewer_id.toString())?.toLowerCase() || ""
-            : "";
-          bValue = b.reviewer_id
-            ? userMap.get(b.reviewer_id.toString())?.toLowerCase() || ""
-            : "";
+          aValue = a.reviewer_id ? userMap.get(a.reviewer_id.toString())?.toLowerCase() || "" : "";
+          bValue = b.reviewer_id ? userMap.get(b.reviewer_id.toString())?.toLowerCase() || "" : "";
           break;
 
         case "retention_policy":
@@ -467,9 +463,7 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
                 )}
                 {isColVisible("retention_policy") && (
                   <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                    {evidence.retention_policy
-                      ? evidence.retention_policy.replace(/_/g, " ")
-                      : "-"}
+                    {evidence.retention_policy ? evidence.retention_policy.replace(/_/g, " ") : "-"}
                   </TableCell>
                 )}
                 {isColVisible("uploaded_by") && (
