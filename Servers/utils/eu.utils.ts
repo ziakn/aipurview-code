@@ -882,7 +882,7 @@ export const createNewControlsQuery = async (
           organizationId,
           control_meta_id: controlStruct.id!,
           implementation_details: enable_ai_data_insertion
-            ? demoControls[controlCtr].implementation_details
+            ? demoControls[controlCtr]?.implementation_details ?? null
             : null,
           status: enable_ai_data_insertion ? "Waiting" : null,
           projects_frameworks_id: projectFrameworkId[0][0].id,
@@ -941,17 +941,15 @@ export const createNewSubControlsQuery = async (
           control_id: controlId,
           subcontrol_meta_id: subControl.id,
           implementation_details: enable_ai_data_insertion
-            ? demoSubControls[ctr].implementation_details
+            ? demoSubControls[ctr]?.implementation_details ?? null
             : null,
           evidence_description:
-            enable_ai_data_insertion &&
-            demoSubControls[ctr].evidence_description
-              ? demoSubControls[ctr].evidence_description
+            enable_ai_data_insertion
+              ? demoSubControls[ctr]?.evidence_description ?? null
               : null,
           feedback_description:
-            enable_ai_data_insertion &&
-            demoSubControls[ctr].feedback_description
-              ? demoSubControls[ctr].feedback_description
+            enable_ai_data_insertion
+              ? demoSubControls[ctr]?.feedback_description ?? null
               : null,
           status: is_mock_data
             ? STATUSES_COMPLIANCE[
