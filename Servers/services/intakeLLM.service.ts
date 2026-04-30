@@ -51,7 +51,7 @@ export async function generateSuggestedQuestions(
   entityType: string,
   context: string,
   llmKeyId: number,
-  organizationId: number
+  organizationId: number,
 ): Promise<SuggestedQuestion[] | null> {
   try {
     const model = await getModelFromKey(llmKeyId, organizationId);
@@ -97,7 +97,7 @@ export async function generateFieldGuidance(
   fieldLabel: string,
   entityType: string,
   llmKeyId: number,
-  organizationId: number
+  organizationId: number,
 ): Promise<string | null> {
   try {
     const model = await getModelFromKey(llmKeyId, organizationId);

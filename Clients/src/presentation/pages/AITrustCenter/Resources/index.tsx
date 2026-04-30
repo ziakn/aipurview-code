@@ -37,10 +37,24 @@ import {
 import { GroupBy } from "../../../components/Table/GroupBy";
 import { useTableGrouping, useGroupByState } from "../../../../application/hooks/useTableGrouping";
 import { GroupedTableView } from "../../../components/Table/GroupedTableView";
+import { ColumnSelector } from "../../../components/Table/ColumnSelector";
+import {
+  useColumnVisibility,
+  ColumnConfig,
+} from "../../../../application/hooks/useColumnVisibility";
 import singleTheme from "../../../themes/v1SingleTheme";
 import { text, background, border as borderPalette } from "../../../themes/palette";
 import { useFormValidation } from "../../../../application/hooks/useFormValidation";
 import { checkStringValidation } from "../../../../application/validations/stringValidation";
+
+type ResourceColumn = "name" | "type" | "visible" | "action";
+
+const RESOURCE_COLUMNS: ColumnConfig<ResourceColumn>[] = [
+  { key: "name", label: "Resource name", defaultVisible: true, alwaysVisible: true },
+  { key: "type", label: "Type or purpose", defaultVisible: true },
+  { key: "visible", label: "Visibility", defaultVisible: true },
+  { key: "action", label: "Action", defaultVisible: true, alwaysVisible: true },
+];
 
 // Helper component for Resource Table Row
 const ResourceTableRow: React.FC<{
@@ -53,7 +67,8 @@ const ResourceTableRow: React.FC<{
     key: string;
     direction: "asc" | "desc" | null;
   };
-}> = ({ resource, onDelete, onEdit, onMakeVisible, onDownload, sortConfig }) => {
+  visibleColumnIds?: Set<ResourceColumn>;
+}> = ({ resource, onDelete, onEdit, onMakeVisible, onDownload, sortConfig, visibleColumnIds }) => {
   const theme = useTheme();
   const styles = useStyles(theme);
 
@@ -65,83 +80,91 @@ const ResourceTableRow: React.FC<{
 
   return (
     <>
-      <TableCell
-        onClick={handleRowClick}
-        sx={{
-          cursor: resource.visible ? "pointer" : "default",
-          textTransform: "none !important",
-          opacity: resource.visible ? 1 : 0.5,
-          backgroundColor:
-            sortConfig?.key && sortConfig.key.toLowerCase().includes("resource name")
-              ? singleTheme.tableColors.sortedColumnFirst
-              : "transparent",
-        }}
-      >
-        <Typography sx={styles.resourceName}>{resource.name}</Typography>
-      </TableCell>
-      <TableCell
-        onClick={handleRowClick}
-        sx={{
-          cursor: resource.visible ? "pointer" : "default",
-          textTransform: "none !important",
-          opacity: resource.visible ? 1 : 0.5,
-          backgroundColor:
-            sortConfig?.key &&
-            sortConfig.key.toLowerCase().includes("type") &&
-            sortConfig.key.toLowerCase().includes("purpose")
-              ? singleTheme.tableColors.sortedColumn
-              : "transparent",
-        }}
-      >
-        <Typography sx={styles.resourceType}>{resource.description}</Typography>
-      </TableCell>
-      <TableCell
-        onClick={() => onMakeVisible(resource.id)}
-        sx={{
-          cursor: resource.visible ? "pointer" : "default",
-          textTransform: "none !important",
-          opacity: resource.visible ? 1 : 0.5,
-          backgroundColor:
-            sortConfig?.key && sortConfig.key.toLowerCase().includes("visibility")
-              ? singleTheme.tableColors.sortedColumn
-              : "transparent",
-        }}
-      >
-        {resource.visible ? (
-          <Tooltip title="Click to make this resource invisible">
-            <Box component="span" sx={{ display: "inline-flex" }}>
-              <VisibilityIcon size={20} />
-            </Box>
-          </Tooltip>
-        ) : (
-          <Tooltip title="Click to make this resource visible">
-            <Box component="span" sx={{ display: "inline-flex" }}>
-              <VisibilityOffIcon size={20} />
-            </Box>
-          </Tooltip>
-        )}
-      </TableCell>
-      <TableCell
-        sx={{
-          backgroundColor:
-            sortConfig?.key && sortConfig.key.toLowerCase().includes("action")
-              ? singleTheme.tableColors.sortedColumn
-              : "transparent",
-        }}
-      >
-        <IconButtonComponent
-          id={resource.id}
-          onDelete={() => onDelete(resource.id)}
-          onEdit={() => onEdit(resource.id)}
-          onMouseEvent={() => {}}
-          onMakeVisible={() => onMakeVisible(resource.id)}
-          onDownload={() => onDownload(resource.id)}
-          isVisible={resource.visible}
-          warningTitle={WARNING_MESSAGES.deleteTitle}
-          warningMessage={WARNING_MESSAGES.deleteMessage}
-          type="Resource"
-        />
-      </TableCell>
+      {(!visibleColumnIds || visibleColumnIds.has("name")) && (
+        <TableCell
+          onClick={handleRowClick}
+          sx={{
+            cursor: resource.visible ? "pointer" : "default",
+            textTransform: "none !important",
+            opacity: resource.visible ? 1 : 0.5,
+            backgroundColor:
+              sortConfig?.key && sortConfig.key.toLowerCase().includes("resource name")
+                ? singleTheme.tableColors.sortedColumnFirst
+                : "transparent",
+          }}
+        >
+          <Typography sx={styles.resourceName}>{resource.name}</Typography>
+        </TableCell>
+      )}
+      {(!visibleColumnIds || visibleColumnIds.has("type")) && (
+        <TableCell
+          onClick={handleRowClick}
+          sx={{
+            cursor: resource.visible ? "pointer" : "default",
+            textTransform: "none !important",
+            opacity: resource.visible ? 1 : 0.5,
+            backgroundColor:
+              sortConfig?.key &&
+              sortConfig.key.toLowerCase().includes("type") &&
+              sortConfig.key.toLowerCase().includes("purpose")
+                ? singleTheme.tableColors.sortedColumn
+                : "transparent",
+          }}
+        >
+          <Typography sx={styles.resourceType}>{resource.description}</Typography>
+        </TableCell>
+      )}
+      {(!visibleColumnIds || visibleColumnIds.has("visible")) && (
+        <TableCell
+          onClick={() => onMakeVisible(resource.id)}
+          sx={{
+            cursor: resource.visible ? "pointer" : "default",
+            textTransform: "none !important",
+            opacity: resource.visible ? 1 : 0.5,
+            backgroundColor:
+              sortConfig?.key && sortConfig.key.toLowerCase().includes("visibility")
+                ? singleTheme.tableColors.sortedColumn
+                : "transparent",
+          }}
+        >
+          {resource.visible ? (
+            <Tooltip title="Click to make this resource invisible">
+              <Box component="span" sx={{ display: "inline-flex" }}>
+                <VisibilityIcon size={20} />
+              </Box>
+            </Tooltip>
+          ) : (
+            <Tooltip title="Click to make this resource visible">
+              <Box component="span" sx={{ display: "inline-flex" }}>
+                <VisibilityOffIcon size={20} />
+              </Box>
+            </Tooltip>
+          )}
+        </TableCell>
+      )}
+      {(!visibleColumnIds || visibleColumnIds.has("action")) && (
+        <TableCell
+          sx={{
+            backgroundColor:
+              sortConfig?.key && sortConfig.key.toLowerCase().includes("action")
+                ? singleTheme.tableColors.sortedColumn
+                : "transparent",
+          }}
+        >
+          <IconButtonComponent
+            id={resource.id}
+            onDelete={() => onDelete(resource.id)}
+            onEdit={() => onEdit(resource.id)}
+            onMouseEvent={() => {}}
+            onMakeVisible={() => onMakeVisible(resource.id)}
+            onDownload={() => onDownload(resource.id)}
+            isVisible={resource.visible}
+            warningTitle={WARNING_MESSAGES.deleteTitle}
+            warningMessage={WARNING_MESSAGES.deleteMessage}
+            type="Resource"
+          />
+        </TableCell>
+      )}
     </>
   );
 };
@@ -213,6 +236,13 @@ const TrustCenterResources: React.FC = () => {
 
   // GroupBy state
   const { groupBy, groupSortOrder, handleGroupChange } = useGroupByState();
+
+  // Column visibility
+  const { visibleColumns, allColumns, toggleColumn, resetToDefaults } =
+    useColumnVisibility<ResourceColumn>({
+      tableId: "resources-table",
+      columns: RESOURCE_COLUMNS,
+    });
 
   // State management
   const [formData, setFormData] = useState<FormData | null>(null);
@@ -536,6 +566,11 @@ const TrustCenterResources: React.FC = () => {
     getGroupKey: getResourceGroupKey,
   });
 
+  const visibleTableColumns = useMemo(
+    () => TABLE_COLUMNS.filter((col) => visibleColumns.has(col.id as ResourceColumn)),
+    [visibleColumns],
+  );
+
   // Show loading state
   if (overviewLoading || resourcesLoading) {
     return (
@@ -583,6 +618,12 @@ const TrustCenterResources: React.FC = () => {
               ]}
               onGroupChange={handleGroupChange}
             />
+            <ColumnSelector
+              columns={allColumns}
+              visibleColumns={visibleColumns}
+              onToggleColumn={toggleColumn}
+              onResetToDefaults={resetToDefaults}
+            />
           </Box>
           <Box sx={{ display: "flex", gap: "8px", alignItems: "center" }}>
             <Box sx={styles.toggleRow}>
@@ -617,7 +658,7 @@ const TrustCenterResources: React.FC = () => {
             renderTable={(data, options) => (
               <AITrustCenterTable
                 data={data}
-                columns={TABLE_COLUMNS}
+                columns={visibleTableColumns}
                 isLoading={resourcesLoading}
                 paginated={true}
                 disabled={!formData?.info?.resources_visible}
@@ -631,6 +672,7 @@ const TrustCenterResources: React.FC = () => {
                     onMakeVisible={handleMakeVisible}
                     onDownload={handleDownload}
                     sortConfig={sortConfig}
+                    visibleColumnIds={visibleColumns}
                   />
                 )}
                 tableId="resources-table"

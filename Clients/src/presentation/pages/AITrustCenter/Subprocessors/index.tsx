@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, Suspense, useCallback, useEffect, useRef } from "react";
+import React, { useState, Suspense, useCallback, useEffect, useRef, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Box, Typography, TableCell, Stack, CircularProgress } from "@mui/material";
 import Toggle from "../../../components/Inputs/Toggle";
@@ -29,6 +29,11 @@ import { TABLE_COLUMNS, WARNING_MESSAGES } from "./constants";
 import { GroupBy } from "../../../components/Table/GroupBy";
 import { useTableGrouping, useGroupByState } from "../../../../application/hooks/useTableGrouping";
 import { GroupedTableView } from "../../../components/Table/GroupedTableView";
+import { ColumnSelector } from "../../../components/Table/ColumnSelector";
+import {
+  useColumnVisibility,
+  ColumnConfig,
+} from "../../../../application/hooks/useColumnVisibility";
 import { background } from "../../../themes/palette";
 
 interface FormData {
@@ -36,6 +41,16 @@ interface FormData {
     subprocessor_visible?: boolean;
   };
 }
+
+type SubprocessorColumn = "company" | "url" | "purpose" | "location" | "action";
+
+const SUBPROCESSOR_COLUMNS: ColumnConfig<SubprocessorColumn>[] = [
+  { key: "company", label: "Company name", defaultVisible: true, alwaysVisible: true },
+  { key: "url", label: "URL", defaultVisible: true },
+  { key: "purpose", label: "Purpose", defaultVisible: true },
+  { key: "location", label: "Location", defaultVisible: true },
+  { key: "action", label: "Action", defaultVisible: true, alwaysVisible: true },
+];
 
 // Helper component for Subprocessor Table Row
 const SubprocessorTableRow: React.FC<{
@@ -46,7 +61,8 @@ const SubprocessorTableRow: React.FC<{
     key: string;
     direction: "asc" | "desc" | null;
   };
-}> = ({ subprocessor, onDelete, onEdit, sortConfig }) => {
+  visibleColumnIds?: Set<SubprocessorColumn>;
+}> = ({ subprocessor, onDelete, onEdit, sortConfig, visibleColumnIds }) => {
   const theme = useTheme();
   const styles = useStyles(theme);
 
@@ -56,82 +72,92 @@ const SubprocessorTableRow: React.FC<{
 
   return (
     <>
-      <TableCell
-        onClick={handleRowClick}
-        sx={{
-          cursor: "pointer",
-          textTransform: "none !important",
-          backgroundColor:
-            sortConfig?.key && sortConfig.key.toLowerCase().includes("company name")
-              ? "#e8e8e8"
-              : "#fafafa",
-          maxWidth: "200px",
-          width: "200px",
-        }}
-      >
-        <Typography sx={styles.tableDataCell}>{subprocessor.name}</Typography>
-      </TableCell>
-      <TableCell
-        onClick={handleRowClick}
-        sx={{
-          cursor: "pointer",
-          textTransform: "none !important",
-          backgroundColor:
-            sortConfig?.key && sortConfig.key.toLowerCase().includes("url")
-              ? `${background.surface}`
-              : "inherit",
-        }}
-      >
-        <Typography sx={styles.tableDataCell}>
-          {subprocessor.url.replace(/^https?:\/\//, "")}
-        </Typography>
-      </TableCell>
-      <TableCell
-        onClick={handleRowClick}
-        sx={{
-          cursor: "pointer",
-          textTransform: "none !important",
-          backgroundColor:
-            sortConfig?.key && sortConfig.key.toLowerCase().includes("purpose")
-              ? `${background.surface}`
-              : "inherit",
-        }}
-      >
-        <Typography sx={styles.tableDataCell}>{subprocessor.purpose}</Typography>
-      </TableCell>
-      <TableCell
-        onClick={handleRowClick}
-        sx={{
-          cursor: "pointer",
-          textTransform: "none !important",
-          backgroundColor:
-            sortConfig?.key && sortConfig.key.toLowerCase().includes("location")
-              ? `${background.surface}`
-              : "inherit",
-        }}
-      >
-        <Typography sx={styles.tableDataCell}>{subprocessor.location}</Typography>
-      </TableCell>
-      <TableCell
-        sx={{
-          backgroundColor:
-            sortConfig?.key && sortConfig.key.toLowerCase().includes("action")
-              ? `${background.surface}`
-              : "inherit",
-        }}
-      >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <IconButtonComponent
-            id={subprocessor.id}
-            onDelete={() => onDelete(subprocessor.id)}
-            onEdit={() => onEdit(subprocessor.id)}
-            onMouseEvent={() => {}}
-            type=""
-            warningTitle={WARNING_MESSAGES.deleteTitle}
-            warningMessage={WARNING_MESSAGES.deleteMessage}
-          />
-        </Box>
-      </TableCell>
+      {(!visibleColumnIds || visibleColumnIds.has("company")) && (
+        <TableCell
+          onClick={handleRowClick}
+          sx={{
+            cursor: "pointer",
+            textTransform: "none !important",
+            backgroundColor:
+              sortConfig?.key && sortConfig.key.toLowerCase().includes("company name")
+                ? "#e8e8e8"
+                : "#fafafa",
+            maxWidth: "200px",
+            width: "200px",
+          }}
+        >
+          <Typography sx={styles.tableDataCell}>{subprocessor.name}</Typography>
+        </TableCell>
+      )}
+      {(!visibleColumnIds || visibleColumnIds.has("url")) && (
+        <TableCell
+          onClick={handleRowClick}
+          sx={{
+            cursor: "pointer",
+            textTransform: "none !important",
+            backgroundColor:
+              sortConfig?.key && sortConfig.key.toLowerCase().includes("url")
+                ? `${background.surface}`
+                : "inherit",
+          }}
+        >
+          <Typography sx={styles.tableDataCell}>
+            {subprocessor.url.replace(/^https?:\/\//, "")}
+          </Typography>
+        </TableCell>
+      )}
+      {(!visibleColumnIds || visibleColumnIds.has("purpose")) && (
+        <TableCell
+          onClick={handleRowClick}
+          sx={{
+            cursor: "pointer",
+            textTransform: "none !important",
+            backgroundColor:
+              sortConfig?.key && sortConfig.key.toLowerCase().includes("purpose")
+                ? `${background.surface}`
+                : "inherit",
+          }}
+        >
+          <Typography sx={styles.tableDataCell}>{subprocessor.purpose}</Typography>
+        </TableCell>
+      )}
+      {(!visibleColumnIds || visibleColumnIds.has("location")) && (
+        <TableCell
+          onClick={handleRowClick}
+          sx={{
+            cursor: "pointer",
+            textTransform: "none !important",
+            backgroundColor:
+              sortConfig?.key && sortConfig.key.toLowerCase().includes("location")
+                ? `${background.surface}`
+                : "inherit",
+          }}
+        >
+          <Typography sx={styles.tableDataCell}>{subprocessor.location}</Typography>
+        </TableCell>
+      )}
+      {(!visibleColumnIds || visibleColumnIds.has("action")) && (
+        <TableCell
+          sx={{
+            backgroundColor:
+              sortConfig?.key && sortConfig.key.toLowerCase().includes("action")
+                ? `${background.surface}`
+                : "inherit",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <IconButtonComponent
+              id={subprocessor.id}
+              onDelete={() => onDelete(subprocessor.id)}
+              onEdit={() => onEdit(subprocessor.id)}
+              onMouseEvent={() => {}}
+              type=""
+              warningTitle={WARNING_MESSAGES.deleteTitle}
+              warningMessage={WARNING_MESSAGES.deleteMessage}
+            />
+          </Box>
+        </TableCell>
+      )}
     </>
   );
 };
@@ -174,6 +200,13 @@ const AITrustCenterSubprocessors: React.FC = () => {
 
   // GroupBy state
   const { groupBy, groupSortOrder, handleGroupChange } = useGroupByState();
+
+  // Column visibility
+  const { visibleColumns, allColumns, toggleColumn, resetToDefaults } =
+    useColumnVisibility<SubprocessorColumn>({
+      tableId: "subprocessors-table",
+      columns: SUBPROCESSOR_COLUMNS,
+    });
 
   // State management
   const [formData, setFormData] = useState<FormData | null>(null);
@@ -460,6 +493,11 @@ const AITrustCenterSubprocessors: React.FC = () => {
     getGroupKey: getSubprocessorGroupKey,
   });
 
+  const visibleTableColumns = useMemo(
+    () => TABLE_COLUMNS.filter((col) => visibleColumns.has(col.id as SubprocessorColumn)),
+    [visibleColumns],
+  );
+
   // Show loading state
   if (overviewLoading || subprocessorsLoading) {
     return (
@@ -508,6 +546,12 @@ const AITrustCenterSubprocessors: React.FC = () => {
                 ]}
                 onGroupChange={handleGroupChange}
               />
+              <ColumnSelector
+                columns={allColumns}
+                visibleColumns={visibleColumns}
+                onToggleColumn={toggleColumn}
+                onResetToDefaults={resetToDefaults}
+              />
             </Box>
             <Box sx={{ display: "flex", gap: "8px", alignItems: "center" }}>
               <Box sx={styles.toggleRow}>
@@ -548,7 +592,7 @@ const AITrustCenterSubprocessors: React.FC = () => {
             renderTable={(data, options) => (
               <AITrustCenterTable
                 data={data}
-                columns={TABLE_COLUMNS}
+                columns={visibleTableColumns}
                 isLoading={subprocessorsLoading}
                 paginated={true}
                 disabled={!formData?.info?.subprocessor_visible}
@@ -560,6 +604,7 @@ const AITrustCenterSubprocessors: React.FC = () => {
                     onDelete={handleDelete}
                     onEdit={handleEdit}
                     sortConfig={sortConfig}
+                    visibleColumnIds={visibleColumns}
                   />
                 )}
                 tableId="subprocessors-table"

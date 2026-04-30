@@ -4,10 +4,7 @@ import { ControlEU } from "../domain.layer/frameworks/EU-AI-Act/controlEU.model"
 import { notifyUserAssigned, AssignmentRoleType } from "../services/inAppNotification.service";
 import { FileType } from "../domain.layer/models/file/file.model";
 import { uploadFile } from "../utils/fileUpload.utils";
-import {
-  getAllProjectsQuery,
-  updateProjectUpdatedByIdQuery,
-} from "../utils/project.utils";
+import { getAllProjectsQuery, updateProjectUpdatedByIdQuery } from "../utils/project.utils";
 import { RequestWithFile, UploadedFile } from "../utils/question.utils";
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import {
@@ -29,11 +26,7 @@ import {
 import { AnswerEU } from "../domain.layer/frameworks/EU-AI-Act/answerEU.model";
 import { sequelize } from "../database/db";
 import { IProjectAttributes } from "../domain.layer/interfaces/i.project";
-import {
-  logProcessing,
-  logSuccess,
-  logFailure,
-} from "../utils/logger/logHelper";
+import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 import logger from "../utils/logger/fileLogger";
 import { hasPendingApprovalQuery } from "../utils/approvalRequest.utils";
 
@@ -41,7 +34,7 @@ import { hasPendingApprovalQuery } from "../utils/approvalRequest.utils";
 async function getUserNameById(userId: number): Promise<string> {
   const result = await sequelize.query<{ name: string; surname: string }>(
     `SELECT name, surname FROM users WHERE id = :userId`,
-    { replacements: { userId }, type: QueryTypes.SELECT }
+    { replacements: { userId }, type: QueryTypes.SELECT },
   );
   if (result[0]) {
     return `${result[0].name} ${result[0].surname}`.trim();
@@ -59,7 +52,7 @@ async function notifyEuAiActAssignment(
   newUserId: number,
   oldUserId: number | null | undefined,
   projectId?: number,
-  controlId?: number
+  controlId?: number,
 ): Promise<void> {
   // Only notify if assigned to a new user
   if (newUserId && newUserId !== oldUserId) {
@@ -73,13 +66,18 @@ async function notifyEuAiActAssignment(
     let resolvedControlId = controlId;
 
     // Query for subcontrol description and order info from struct table
-    const subcontrolResult = await sequelize.query<{ description: string; control_id: number; subcontrol_order_no: number; control_order_no: number }>(
+    const subcontrolResult = await sequelize.query<{
+      description: string;
+      control_id: number;
+      subcontrol_order_no: number;
+      control_order_no: number;
+    }>(
       `SELECT scs.description, sc.control_id, scs.order_no as subcontrol_order_no, cs.order_no as control_order_no
        FROM subcontrols_eu sc
        JOIN subcontrols_struct_eu scs ON sc.subcontrol_meta_id = scs.id
        JOIN controls_struct_eu cs ON scs.control_id = cs.id
        WHERE sc.organization_id = :organizationId AND sc.id = :entityId`,
-      { replacements: { organizationId: req.organizationId!, entityId }, type: QueryTypes.SELECT }
+      { replacements: { organizationId: req.organizationId!, entityId }, type: QueryTypes.SELECT },
     );
     description = subcontrolResult[0]?.description;
     // Build subcontrol identifier like "1.1 Subcontrol title" (control.order_no.subcontrol.order_no)
@@ -95,7 +93,10 @@ async function notifyEuAiActAssignment(
       // Get project name
       const projectResult = await sequelize.query<{ project_title: string }>(
         `SELECT project_title FROM projects WHERE organization_id = :organizationId AND id = :projectId`,
-        { replacements: { organizationId: req.organizationId!, projectId }, type: QueryTypes.SELECT }
+        {
+          replacements: { organizationId: req.organizationId!, projectId },
+          type: QueryTypes.SELECT,
+        },
       );
       projectName = projectResult[0]?.project_title;
 
@@ -106,7 +107,10 @@ async function notifyEuAiActAssignment(
            FROM controls_eu c
            JOIN controls_struct_eu cs ON c.control_meta_id = cs.id
            WHERE c.organization_id = :organizationId AND c.id = :controlId`,
-          { replacements: { organizationId: req.organizationId!, controlId: resolvedControlId }, type: QueryTypes.SELECT }
+          {
+            replacements: { organizationId: req.organizationId!, controlId: resolvedControlId },
+            type: QueryTypes.SELECT,
+          },
         );
         controlName = controlResult[0]?.title;
       }
@@ -138,16 +142,15 @@ async function notifyEuAiActAssignment(
         parentType: controlName ? "Control" : undefined,
         parentName: controlName,
         description,
-      }
+      },
     ).catch((err) => console.error(`Failed to send ${roleType} notification:`, err));
   }
 }
 
-export async function getAssessmentsByProjectId(
-  req: Request,
-  res: Response
-): Promise<any> {
-  const projectFrameworkId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+export async function getAssessmentsByProjectId(req: Request, res: Response): Promise<any> {
+  const projectFrameworkId = parseInt(
+    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+  );
   logProcessing({
     description: `starting getAssessmentsByProjectId for project framework ID ${projectFrameworkId}`,
     functionName: "getAssessmentsByProjectId",
@@ -155,14 +158,12 @@ export async function getAssessmentsByProjectId(
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
-  logger.debug(
-    `🔍 Fetching assessments for project framework ID ${projectFrameworkId}`
-  );
+  logger.debug(`🔍 Fetching assessments for project framework ID ${projectFrameworkId}`);
 
   try {
     const assessments = await getAssessmentsEUByProjectIdQuery(
       projectFrameworkId,
-      req.organizationId!
+      req.organizationId!,
     );
 
     await logSuccess({
@@ -190,11 +191,10 @@ export async function getAssessmentsByProjectId(
   }
 }
 
-export async function getCompliancesByProjectId(
-  req: Request,
-  res: Response
-): Promise<any> {
-  const projectFrameworkId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+export async function getCompliancesByProjectId(req: Request, res: Response): Promise<any> {
+  const projectFrameworkId = parseInt(
+    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+  );
   logProcessing({
     description: `starting getCompliancesByProjectId for project framework ID ${projectFrameworkId}`,
     functionName: "getCompliancesByProjectId",
@@ -202,14 +202,12 @@ export async function getCompliancesByProjectId(
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
-  logger.debug(
-    `🔍 Fetching compliances for project framework ID ${projectFrameworkId}`
-  );
+  logger.debug(`🔍 Fetching compliances for project framework ID ${projectFrameworkId}`);
 
   try {
     const complainces = await getComplianceEUByProjectIdQuery(
       projectFrameworkId,
-      req.organizationId!
+      req.organizationId!,
     );
 
     await logSuccess({
@@ -248,15 +246,13 @@ export async function getTopicById(req: Request, res: Response): Promise<any> {
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
-  logger.debug(
-    `🔍 Looking up topic ID ${topicId} for project framework ID ${projectFrameworkId}`
-  );
+  logger.debug(`🔍 Looking up topic ID ${topicId} for project framework ID ${projectFrameworkId}`);
 
   try {
     const topic = await getTopicByIdForProjectQuery(
       topicId,
       projectFrameworkId,
-      req.organizationId!
+      req.organizationId!,
     );
 
     if (topic) {
@@ -294,18 +290,11 @@ export async function getTopicById(req: Request, res: Response): Promise<any> {
   }
 }
 
-export async function getControlById(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getControlById(req: Request, res: Response): Promise<any> {
   const controlId = parseInt(req.query.controlId as string);
   const projectFrameworkId = parseInt(req.query.projectFrameworkId as string);
-  const owner = req.query.owner
-    ? parseInt(req.query.owner as string)
-    : undefined;
-  const approver = req.query.approver
-    ? parseInt(req.query.approver as string)
-    : undefined;
+  const owner = req.query.owner ? parseInt(req.query.owner as string) : undefined;
+  const approver = req.query.approver ? parseInt(req.query.approver as string) : undefined;
   const dueDateFilter = req.query.dueDateFilter
     ? parseInt(req.query.dueDateFilter as string)
     : undefined;
@@ -318,7 +307,7 @@ export async function getControlById(
     tenantId: req.organizationId!,
   });
   logger.debug(
-    `🔍 Looking up control ID ${controlId} for project framework ID ${projectFrameworkId}`
+    `🔍 Looking up control ID ${controlId} for project framework ID ${projectFrameworkId}`,
   );
 
   try {
@@ -328,7 +317,7 @@ export async function getControlById(
       owner,
       approver,
       dueDateFilter,
-      req.organizationId!
+      req.organizationId!,
     );
 
     if (topic) {
@@ -366,10 +355,7 @@ export async function getControlById(
   }
 }
 
-export async function saveControls(
-  req: RequestWithFile,
-  res: Response
-): Promise<any> {
+export async function saveControls(req: RequestWithFile, res: Response): Promise<any> {
   const transaction = await sequelize.transaction();
   const controlId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
@@ -396,7 +382,7 @@ export async function saveControls(
         Control.project_id,
         "use_case",
         req.organizationId!,
-        transaction
+        transaction,
       );
 
       if (hasPendingApproval) {
@@ -410,11 +396,13 @@ export async function saveControls(
           userId: req.userId!,
           tenantId: req.organizationId!,
         });
-        return res.status(403).json(
-          STATUS_CODE[403](
-            "This use case has a pending approval request. Controls cannot be modified until the approval process is complete."
-          )
-        );
+        return res
+          .status(403)
+          .json(
+            STATUS_CODE[403](
+              "This use case has a pending approval request. Controls cannot be modified until the approval process is complete.",
+            ),
+          );
       }
     }
 
@@ -452,16 +440,26 @@ export async function saveControls(
             replacements: { organizationId: req.organizationId!, id: parseInt(subcontrol.id) },
             transaction,
             type: QueryTypes.SELECT,
-          }
-        )) as { owner: number | null; reviewer: number | null; approver: number | null; title: string }[];
+          },
+        )) as {
+          owner: number | null;
+          reviewer: number | null;
+          approver: number | null;
+          title: string;
+        }[];
 
-        const currentSubcontrol = currentSubcontrolResult[0] || { owner: null, reviewer: null, approver: null, title: '' };
+        const currentSubcontrol = currentSubcontrolResult[0] || {
+          owner: null,
+          reviewer: null,
+          approver: null,
+          title: "",
+        };
 
         const evidenceFiles = ((req.files as UploadedFile[]) || []).filter(
-          (f) => f.fieldname === `evidence_files_${parseInt(subcontrol.id)}`
+          (f) => f.fieldname === `evidence_files_${parseInt(subcontrol.id)}`,
         );
         const feedbackFiles = ((req.files as UploadedFile[]) || []).filter(
-          (f) => f.fieldname === `feedback_files_${parseInt(subcontrol.id)}`
+          (f) => f.fieldname === `feedback_files_${parseInt(subcontrol.id)}`,
         );
 
         let evidenceUploadedFiles: FileType[] = [];
@@ -472,7 +470,7 @@ export async function saveControls(
             Control.project_id,
             "Compliance tracker group",
             req.organizationId!,
-            transaction
+            transaction,
           );
           evidenceUploadedFiles.push({
             id: evidenceUploadedFile.id!.toString(),
@@ -493,7 +491,7 @@ export async function saveControls(
             Control.project_id,
             "Compliance tracker group",
             req.organizationId!,
-            transaction
+            transaction,
           );
           feedbackUploadedFiles.push({
             id: feedbackUploadedFile.id!.toString(),
@@ -509,11 +507,7 @@ export async function saveControls(
         const subcontrolToSave: any = await updateSubcontrolEUByIdQuery(
           subcontrol.id!,
           {
-            status: subcontrol.status as
-              | "Waiting"
-              | "In progress"
-              | "Done"
-              | undefined,
+            status: subcontrol.status as "Waiting" | "In progress" | "Done" | undefined,
             approver: subcontrol.approver,
             risk_review: subcontrol.risk_review as
               | "Acceptable risk"
@@ -533,7 +527,7 @@ export async function saveControls(
           feedbackUploadedFiles,
           filesToUnlink,
           req.organizationId!,
-          transaction
+          transaction,
         );
         if (subcontrolToSave) {
           subControlResp.push(subcontrolToSave);
@@ -545,13 +539,31 @@ export async function saveControls(
           const newApprover = subcontrol.approver ? parseInt(String(subcontrol.approver)) : null;
 
           if (newOwner && newOwner !== currentSubcontrol.owner) {
-            assignmentChanges.push({ subcontrolId: parseInt(subcontrol.id), entityName, roleType: "Owner", newUserId: newOwner, oldUserId: currentSubcontrol.owner });
+            assignmentChanges.push({
+              subcontrolId: parseInt(subcontrol.id),
+              entityName,
+              roleType: "Owner",
+              newUserId: newOwner,
+              oldUserId: currentSubcontrol.owner,
+            });
           }
           if (newReviewer && newReviewer !== currentSubcontrol.reviewer) {
-            assignmentChanges.push({ subcontrolId: parseInt(subcontrol.id), entityName, roleType: "Reviewer", newUserId: newReviewer, oldUserId: currentSubcontrol.reviewer });
+            assignmentChanges.push({
+              subcontrolId: parseInt(subcontrol.id),
+              entityName,
+              roleType: "Reviewer",
+              newUserId: newReviewer,
+              oldUserId: currentSubcontrol.reviewer,
+            });
           }
           if (newApprover && newApprover !== currentSubcontrol.approver) {
-            assignmentChanges.push({ subcontrolId: parseInt(subcontrol.id), entityName, roleType: "Approver", newUserId: newApprover, oldUserId: currentSubcontrol.approver });
+            assignmentChanges.push({
+              subcontrolId: parseInt(subcontrol.id),
+              entityName,
+              roleType: "Approver",
+              newUserId: newApprover,
+              oldUserId: currentSubcontrol.approver,
+            });
           }
         }
       }
@@ -560,12 +572,7 @@ export async function saveControls(
       ...{ control, subControls: subControlResp },
     };
     // Update the project's last updated date
-    await updateProjectUpdatedByIdQuery(
-      controlId,
-      "controls",
-      req.organizationId!,
-      transaction
-    );
+    await updateProjectUpdatedByIdQuery(controlId, "controls", req.organizationId!, transaction);
     await transaction.commit();
 
     // Send assignment notifications after transaction commits
@@ -579,7 +586,7 @@ export async function saveControls(
         change.newUserId,
         change.oldUserId,
         Control.project_id,
-        controlId
+        controlId,
       );
     }
 
@@ -608,10 +615,7 @@ export async function saveControls(
   }
 }
 
-export async function updateQuestionById(
-  req: RequestWithFile,
-  res: Response
-): Promise<any> {
+export async function updateQuestionById(req: RequestWithFile, res: Response): Promise<any> {
   const transaction = await sequelize.transaction();
   const questionId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
@@ -637,16 +641,14 @@ export async function updateQuestionById(
 
     // Get project ID and check for pending approval
     const projectId =
-      typeof body.project_id === "string"
-        ? parseInt(body.project_id)
-        : (body.project_id as number);
+      typeof body.project_id === "string" ? parseInt(body.project_id) : (body.project_id as number);
 
     if (projectId) {
       const hasPendingApproval = await hasPendingApprovalQuery(
         projectId,
         "use_case",
         req.organizationId!,
-        transaction
+        transaction,
       );
 
       if (hasPendingApproval) {
@@ -660,11 +662,13 @@ export async function updateQuestionById(
           userId: req.userId!,
           tenantId: req.organizationId!,
         });
-        return res.status(403).json(
-          STATUS_CODE[403](
-            "This use case has a pending approval request. Assessments cannot be modified until the approval process is complete."
-          )
-        );
+        return res
+          .status(403)
+          .json(
+            STATUS_CODE[403](
+              "This use case has a pending approval request. Assessments cannot be modified until the approval process is complete.",
+            ),
+          );
       }
     }
 
@@ -689,32 +693,24 @@ export async function updateQuestionById(
     // Debug: Log what we received
     logger.debug(`📦 Received files: ${filesArray.length}`);
     filesArray.forEach((f, idx) => {
-      logger.debug(
-        `  File ${idx}: fieldname="${f.fieldname}", originalname="${f.originalname}"`
-      );
+      logger.debug(`  File ${idx}: fieldname="${f.fieldname}", originalname="${f.originalname}"`);
     });
 
     const evidenceFiles = filesArray.filter((f) => f.fieldname === "files");
 
-    logger.debug(
-      `📋 Filtered evidence files (fieldname="files"): ${evidenceFiles.length}`
-    );
+    logger.debug(`📋 Filtered evidence files (fieldname="files"): ${evidenceFiles.length}`);
 
     let uploadedFiles: FileType[] = [];
     const userId =
-      typeof body.user_id === "string"
-        ? parseInt(body.user_id)
-        : (body.user_id as number);
+      typeof body.user_id === "string" ? parseInt(body.user_id) : (body.user_id as number);
     // projectId already declared above for pending approval check
 
     logger.debug(
-      `👤 userId: ${userId}, projectId: ${projectId}, evidenceFiles.length: ${evidenceFiles.length}`
+      `👤 userId: ${userId}, projectId: ${projectId}, evidenceFiles.length: ${evidenceFiles.length}`,
     );
 
     if (userId && projectId && evidenceFiles.length > 0) {
-      logger.debug(
-        `📤 Uploading ${evidenceFiles.length} file(s) for question ID ${questionId}`
-      );
+      logger.debug(`📤 Uploading ${evidenceFiles.length} file(s) for question ID ${questionId}`);
       for (let f of evidenceFiles) {
         const uploadedFile = await uploadFile(
           f,
@@ -722,7 +718,7 @@ export async function updateQuestionById(
           projectId,
           "Assessment tracker group",
           req.organizationId!,
-          transaction
+          transaction,
         );
 
         if (!uploadedFile || !uploadedFile.id) {
@@ -747,13 +743,13 @@ export async function updateQuestionById(
         });
 
         logger.debug(
-          `✅ File uploaded successfully: ${uploadedFile.filename} (ID: ${uploadedFile.id})`
+          `✅ File uploaded successfully: ${uploadedFile.filename} (ID: ${uploadedFile.id})`,
         );
       }
       logger.debug(`📦 Total uploaded files: ${uploadedFiles.length}`);
     } else {
       logger.debug(
-        `⚠️ Skipping file upload - userId: ${userId}, projectId: ${projectId}, evidenceFiles.length: ${evidenceFiles.length}`
+        `⚠️ Skipping file upload - userId: ${userId}, projectId: ${projectId}, evidenceFiles.length: ${evidenceFiles.length}`,
       );
     }
 
@@ -778,11 +774,11 @@ export async function updateQuestionById(
     if (uploadedFiles.length > 0 || filesToUnlink.length > 0) {
       updateBody.evidence_files = uploadedFiles; // Will be empty array if no uploads, but delete will still be processed
       logger.debug(
-        `📋 Setting evidence_files in updateBody: ${uploadedFiles.length} files, ${filesToUnlink.length} deletions`
+        `📋 Setting evidence_files in updateBody: ${uploadedFiles.length} files, ${filesToUnlink.length} deletions`,
       );
     } else {
       logger.debug(
-        `⚠️ No file operations - uploadedFiles: ${uploadedFiles.length}, filesToUnlink: ${filesToUnlink.length}`
+        `⚠️ No file operations - uploadedFiles: ${uploadedFiles.length}, filesToUnlink: ${filesToUnlink.length}`,
       );
     }
 
@@ -790,7 +786,7 @@ export async function updateQuestionById(
       questionId,
       updateBody,
       req.organizationId!,
-      transaction
+      transaction,
     )) as AnswerEU;
 
     if (!question) {
@@ -808,12 +804,7 @@ export async function updateQuestionById(
     }
 
     // Update the project's last updated date
-    await updateProjectUpdatedByIdQuery(
-      questionId,
-      "answers",
-      req.organizationId!,
-      transaction
-    );
+    await updateProjectUpdatedByIdQuery(questionId, "answers", req.organizationId!, transaction);
     await transaction.commit();
 
     await logSuccess({
@@ -841,12 +832,11 @@ export async function updateQuestionById(
   }
 }
 
-export async function deleteAssessmentsByProjectId(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function deleteAssessmentsByProjectId(req: Request, res: Response): Promise<any> {
   const transaction = await sequelize.transaction();
-  const projectFrameworkId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+  const projectFrameworkId = parseInt(
+    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+  );
 
   logProcessing({
     description: `starting deleteAssessmentsByProjectId for project framework ID ${projectFrameworkId}`,
@@ -855,15 +845,13 @@ export async function deleteAssessmentsByProjectId(
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
-  logger.debug(
-    `🗑️ Deleting assessments for project framework ID ${projectFrameworkId}`
-  );
+  logger.debug(`🗑️ Deleting assessments for project framework ID ${projectFrameworkId}`);
 
   try {
     const result = await deleteAssessmentEUByProjectIdQuery(
       projectFrameworkId,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     if (result) {
@@ -905,12 +893,11 @@ export async function deleteAssessmentsByProjectId(
   }
 }
 
-export async function deleteCompliancesByProjectId(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function deleteCompliancesByProjectId(req: Request, res: Response): Promise<any> {
   const transaction = await sequelize.transaction();
-  const projectFrameworkId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+  const projectFrameworkId = parseInt(
+    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+  );
 
   logProcessing({
     description: `starting deleteCompliancesByProjectId for project framework ID ${projectFrameworkId}`,
@@ -919,15 +906,13 @@ export async function deleteCompliancesByProjectId(
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
-  logger.debug(
-    `🗑️ Deleting compliances for project framework ID ${projectFrameworkId}`
-  );
+  logger.debug(`🗑️ Deleting compliances for project framework ID ${projectFrameworkId}`);
 
   try {
     const result = await deleteComplianeEUByProjectIdQuery(
       projectFrameworkId,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     if (result) {
@@ -969,11 +954,10 @@ export async function deleteCompliancesByProjectId(
   }
 }
 
-export async function getProjectAssessmentProgress(
-  req: Request,
-  res: Response
-) {
-  const projectFrameworkId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+export async function getProjectAssessmentProgress(req: Request, res: Response) {
+  const projectFrameworkId = parseInt(
+    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+  );
 
   logProcessing({
     description: `starting getProjectAssessmentProgress for project framework ID ${projectFrameworkId}`,
@@ -982,9 +966,7 @@ export async function getProjectAssessmentProgress(
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
-  logger.debug(
-    `📊 Calculating assessment progress for project framework ID ${projectFrameworkId}`
-  );
+  logger.debug(`📊 Calculating assessment progress for project framework ID ${projectFrameworkId}`);
 
   try {
     // const project = await getProjectByIdQuery(projectId);
@@ -993,8 +975,10 @@ export async function getProjectAssessmentProgress(
     // } else {
     //   return res.status(404).json(STATUS_CODE[404](project));
     // }
-    const { totalAssessments, answeredAssessments } =
-      await countAnswersEUByProjectId(projectFrameworkId, req.organizationId!);
+    const { totalAssessments, answeredAssessments } = await countAnswersEUByProjectId(
+      projectFrameworkId,
+      req.organizationId!,
+    );
 
     await logSuccess({
       eventType: "Read",
@@ -1009,7 +993,7 @@ export async function getProjectAssessmentProgress(
       STATUS_CODE[200]({
         totalQuestions: parseInt(totalAssessments),
         answeredQuestions: parseInt(answeredAssessments),
-      })
+      }),
     );
   } catch (error) {
     await logFailure({
@@ -1025,11 +1009,10 @@ export async function getProjectAssessmentProgress(
   }
 }
 
-export async function getProjectComplianceProgress(
-  req: Request,
-  res: Response
-) {
-  const projectFrameworkId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+export async function getProjectComplianceProgress(req: Request, res: Response) {
+  const projectFrameworkId = parseInt(
+    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+  );
 
   logProcessing({
     description: `starting getProjectComplianceProgress for project framework ID ${projectFrameworkId}`,
@@ -1038,9 +1021,7 @@ export async function getProjectComplianceProgress(
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
-  logger.debug(
-    `📊 Calculating compliance progress for project framework ID ${projectFrameworkId}`
-  );
+  logger.debug(`📊 Calculating compliance progress for project framework ID ${projectFrameworkId}`);
 
   try {
     // const project = await getProjectByIdQuery(projectId);
@@ -1049,8 +1030,10 @@ export async function getProjectComplianceProgress(
     // } else {
     //   return res.status(404).json(STATUS_CODE[404](project));
     // }
-    const { totalSubcontrols, doneSubcontrols } =
-      await countSubControlsEUByProjectId(projectFrameworkId, req.organizationId!);
+    const { totalSubcontrols, doneSubcontrols } = await countSubControlsEUByProjectId(
+      projectFrameworkId,
+      req.organizationId!,
+    );
 
     await logSuccess({
       eventType: "Read",
@@ -1065,7 +1048,7 @@ export async function getProjectComplianceProgress(
       STATUS_CODE[200]({
         allsubControls: parseInt(totalSubcontrols),
         allDonesubControls: parseInt(doneSubcontrols),
-      })
+      }),
     );
   } catch (error) {
     await logFailure({
@@ -1081,10 +1064,7 @@ export async function getProjectComplianceProgress(
   }
 }
 
-export async function getAllProjectsAssessmentProgress(
-  req: Request,
-  res: Response
-) {
+export async function getAllProjectsAssessmentProgress(req: Request, res: Response) {
   let totalNumberOfQuestions = 0;
   let totalNumberOfAnsweredQuestions = 0;
 
@@ -1102,8 +1082,7 @@ export async function getAllProjectsAssessmentProgress(
     if (!userId || !role) {
       await logFailure({
         eventType: "Read",
-        description:
-          "Unauthorized access attempt for getAllProjectsAssessmentProgress",
+        description: "Unauthorized access attempt for getAllProjectsAssessmentProgress",
         functionName: "getAllProjectsAssessmentProgress",
         fileName: "eu.ctrl.ts",
         error: new Error("Unauthorized"),
@@ -1126,11 +1105,13 @@ export async function getAllProjectsAssessmentProgress(
           if (!projectFrameworkId) {
             return;
           }
-          const { totalAssessments, answeredAssessments } =
-            await countAnswersEUByProjectId(projectFrameworkId, req.organizationId!);
+          const { totalAssessments, answeredAssessments } = await countAnswersEUByProjectId(
+            projectFrameworkId,
+            req.organizationId!,
+          );
           totalNumberOfQuestions += parseInt(totalAssessments);
           totalNumberOfAnsweredQuestions += parseInt(answeredAssessments);
-        })
+        }),
       );
 
       await logSuccess({
@@ -1146,7 +1127,7 @@ export async function getAllProjectsAssessmentProgress(
         STATUS_CODE[200]({
           totalQuestions: totalNumberOfQuestions,
           answeredQuestions: totalNumberOfAnsweredQuestions,
-        })
+        }),
       );
     } else {
       await logSuccess({
@@ -1173,10 +1154,7 @@ export async function getAllProjectsAssessmentProgress(
   }
 }
 
-export async function getAllProjectsComplianceProgress(
-  req: Request,
-  res: Response
-) {
+export async function getAllProjectsComplianceProgress(req: Request, res: Response) {
   let totalNumberOfSubcontrols = 0;
   let totalNumberOfDoneSubcontrols = 0;
 
@@ -1194,8 +1172,7 @@ export async function getAllProjectsComplianceProgress(
     if (!userId || !role) {
       await logFailure({
         eventType: "Read",
-        description:
-          "Unauthorized access attempt for getAllProjectsComplianceProgress",
+        description: "Unauthorized access attempt for getAllProjectsComplianceProgress",
         functionName: "getAllProjectsComplianceProgress",
         fileName: "eu.ctrl.ts",
         error: new Error("Unauthorized"),
@@ -1218,14 +1195,13 @@ export async function getAllProjectsComplianceProgress(
           if (!projectFrameworkId) {
             return;
           }
-          const { totalSubcontrols, doneSubcontrols } =
-            await countSubControlsEUByProjectId(
-              projectFrameworkId,
-              req.organizationId!
-            );
+          const { totalSubcontrols, doneSubcontrols } = await countSubControlsEUByProjectId(
+            projectFrameworkId,
+            req.organizationId!,
+          );
           totalNumberOfSubcontrols += parseInt(totalSubcontrols);
           totalNumberOfDoneSubcontrols += parseInt(doneSubcontrols);
-        })
+        }),
       );
 
       await logSuccess({
@@ -1241,7 +1217,7 @@ export async function getAllProjectsComplianceProgress(
         STATUS_CODE[200]({
           allsubControls: totalNumberOfSubcontrols,
           allDonesubControls: totalNumberOfDoneSubcontrols,
-        })
+        }),
       );
     } else {
       await logSuccess({
@@ -1268,15 +1244,12 @@ export async function getAllProjectsComplianceProgress(
   }
 }
 
-export async function getAllControlCategories(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getAllControlCategories(req: Request, res: Response): Promise<any> {
   const projectFrameworkIdRaw = req.query.projectFrameworkId as string | undefined;
   const projectFrameworkId = projectFrameworkIdRaw ? parseInt(projectFrameworkIdRaw) : undefined;
 
   logProcessing({
-    description: `starting getAllControlCategories${projectFrameworkId ? ` (filtered by projectFrameworkId=${projectFrameworkId})` : ''}`,
+    description: `starting getAllControlCategories${projectFrameworkId ? ` (filtered by projectFrameworkId=${projectFrameworkId})` : ""}`,
     functionName: "getAllControlCategories",
     fileName: "eu.ctrl.ts",
     userId: req.userId!,
@@ -1290,11 +1263,11 @@ export async function getAllControlCategories(
     if (projectFrameworkId && !isNaN(projectFrameworkId)) {
       const visibleIds = await getVisibleEuCategoryIdsForProject(
         projectFrameworkId,
-        req.organizationId!
+        req.organizationId!,
       );
       const allowed = new Set(visibleIds);
       controlCategories = (controlCategories as any[]).filter((cc: any) =>
-        allowed.has(cc.id)
+        allowed.has(cc.id),
       ) as typeof controlCategories;
     }
 
@@ -1322,16 +1295,13 @@ export async function getAllControlCategories(
   }
 }
 
-export async function getControlsByControlCategoryId(
-  req: Request,
-  res: Response
-): Promise<any> {
-  const controlCategoryId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+export async function getControlsByControlCategoryId(req: Request, res: Response): Promise<any> {
+  const controlCategoryId = parseInt(
+    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+  );
   const projectFrameworkId = parseInt(req.query.projectFrameworkId as string);
   const owner =
-    req.query.owner && req.query.owner !== ""
-      ? parseInt(req.query.owner as string)
-      : undefined;
+    req.query.owner && req.query.owner !== "" ? parseInt(req.query.owner as string) : undefined;
   const approver =
     req.query.approver && req.query.approver !== ""
       ? parseInt(req.query.approver as string)
@@ -1349,7 +1319,7 @@ export async function getControlsByControlCategoryId(
     tenantId: req.organizationId!,
   });
   logger.debug(
-    `🔍 Fetching controls for control category ID ${controlCategoryId} and project framework ID ${projectFrameworkId}`
+    `🔍 Fetching controls for control category ID ${controlCategoryId} and project framework ID ${projectFrameworkId}`,
   );
 
   try {
@@ -1359,7 +1329,7 @@ export async function getControlsByControlCategoryId(
       owner,
       approver,
       dueDateFilter,
-      req.organizationId!
+      req.organizationId!,
     );
 
     await logSuccess({
