@@ -173,6 +173,29 @@ export const deriveControlStatus = (
   return "In progress";
 };
 
+export const findUsersNotInOrganization = async (
+  userIds: number[],
+  organizationId: number,
+  transaction: Transaction | null = null,
+): Promise<number[]> => {
+  const unique = Array.from(new Set(userIds.filter((id) => Number.isInteger(id) && id > 0)));
+  if (unique.length === 0) return [];
+
+  const rows = (await sequelize.query(
+    `SELECT id FROM users
+     WHERE organization_id = :organizationId
+       AND id IN (:userIds);`,
+    {
+      replacements: { organizationId, userIds: unique },
+      type: QueryTypes.SELECT,
+      ...(transaction ? { transaction } : {}),
+    },
+  )) as { id: number }[];
+
+  const found = new Set(rows.map((r) => r.id));
+  return unique.filter((id) => !found.has(id));
+};
+
 const getSubControlsCalculations = async (
   controlId: number,
   organizationId: number,
