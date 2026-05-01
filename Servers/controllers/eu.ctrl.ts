@@ -393,10 +393,17 @@ export async function saveControls(req: RequestWithFile, res: Response): Promise
       const n = Number(v);
       return Number.isInteger(n) && n > 0 ? n : null;
     };
+    const blankToNull = <T>(v: T): T | null => (v === "" || v === undefined ? null : v);
 
     const newOwner = toUserIdOrNull(Control.owner);
     const newReviewer = toUserIdOrNull(Control.reviewer);
     const newApprover = toUserIdOrNull(Control.approver);
+    const newDueDate = blankToNull(Control.due_date);
+    const newRiskReview = blankToNull(Control.risk_review) as
+      | "Acceptable risk"
+      | "Residual risk"
+      | "Unacceptable risk"
+      | null;
 
     const filesToUnlink = JSON.parse(Control.delete || "[]") as number[];
 
@@ -456,7 +463,11 @@ export async function saveControls(req: RequestWithFile, res: Response): Promise
         const subcontrolToSave: any = await updateSubcontrolEUByIdQuery(
           subcontrol.id!,
           {
-            status: subcontrol.status as "Waiting" | "In progress" | "Done" | undefined,
+            status: (subcontrol.status || undefined) as
+              | "Waiting"
+              | "In progress"
+              | "Done"
+              | undefined,
             implementation_details: subcontrol.implementation_details,
             evidence_description: subcontrol.evidence_description,
             feedback_description: subcontrol.feedback_description,
@@ -475,20 +486,25 @@ export async function saveControls(req: RequestWithFile, res: Response): Promise
       }
     }
 
-    const derivedStatus = deriveControlStatus(subControlResp.map((s) => s.status));
+    const subStatusRows = (await sequelize.query(
+      `SELECT status FROM subcontrols_eu
+       WHERE organization_id = :organizationId AND control_id = :controlId;`,
+      {
+        replacements: { organizationId: req.organizationId!, controlId },
+        transaction,
+        type: QueryTypes.SELECT,
+      },
+    )) as { status: "Waiting" | "In progress" | "Done" | null }[];
+    const derivedStatus = deriveControlStatus(subStatusRows.map((r) => r.status));
 
     const updatedControl = await updateControlEUByIdQuery(
       controlId,
       {
-        owner: newOwner ?? undefined,
-        reviewer: newReviewer ?? undefined,
-        approver: newApprover ?? undefined,
-        due_date: Control.due_date,
-        risk_review: Control.risk_review as
-          | "Acceptable risk"
-          | "Residual risk"
-          | "Unacceptable risk"
-          | undefined,
+        owner: newOwner,
+        reviewer: newReviewer,
+        approver: newApprover,
+        due_date: newDueDate,
+        risk_review: newRiskReview,
         status: derivedStatus,
       },
       req.organizationId!,

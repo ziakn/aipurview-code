@@ -10,6 +10,11 @@
  *
  * Implementation_details stays on the subcontrol — it's per-task evidence,
  * not a workflow assignment.
+ *
+ * Snapshot tables (subcontrols_eu__pre_rollup_snapshot,
+ * controls_eu__pre_rollup_snapshot) are intentionally left in place after
+ * `up` so we can restore old values if anything goes wrong post-deploy.
+ * They are dropped only by `down`. Storage cost is negligible.
  */
 module.exports = {
   async up(queryInterface) {
