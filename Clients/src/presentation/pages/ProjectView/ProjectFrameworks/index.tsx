@@ -32,7 +32,7 @@ const FRAMEWORK_IDS = {
 
 const TRACKER_TABS = [
   { label: "Requirements", value: "compliance" },
-  { label: "Controls", value: "assessment" },
+  { label: "Assessments", value: "assessment" },
 ] as const;
 
 type TrackerTab = (typeof TRACKER_TABS)[number]["value"];
