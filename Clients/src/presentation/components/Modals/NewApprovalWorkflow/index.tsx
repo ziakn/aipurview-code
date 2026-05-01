@@ -199,9 +199,9 @@ const CreateNewApprovalWorkflow: FC<ICreateApprovalWorkflowProps> = ({
             placeholder="Enter workflow title"
             value={workflowTitle}
             onChange={(e) => {
-            setWorkflowTitle(e.target.value);
-            clearFieldError("workflow_title");
-          }}
+              setWorkflowTitle(e.target.value);
+              clearFieldError("workflow_title");
+            }}
           />
           <SelectComponent
             items={entities}
