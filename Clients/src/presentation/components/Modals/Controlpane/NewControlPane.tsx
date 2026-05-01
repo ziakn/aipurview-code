@@ -19,8 +19,8 @@ import {
   Eye as ViewIcon,
 } from "lucide-react";
 import * as LucideIcons from "lucide-react";
-import { useState, useEffect, Suspense, lazy, useRef } from "react";
-import dayjs, { Dayjs } from "dayjs";
+import { useState, useEffect, useMemo, Suspense, lazy, useRef } from "react";
+import dayjs from "dayjs";
 import Select from "../../Inputs/Select";
 import DatePicker from "../../Inputs/Datepicker";
 import { Control } from "../../../../domain/types/Control";
@@ -68,12 +68,7 @@ interface SubcontrolFormData {
   control_id?: number;
   // Details tab fields
   status: string;
-  owner: string;
-  reviewer: string;
-  approver: string;
-  due_date: Dayjs | null;
   implementation_details: string;
-  risk_review: string;
   // Evidence tab fields
   evidence_description: string;
   evidence_files: FileData[];
@@ -158,6 +153,20 @@ const NewControlPane = ({
 
   const [controlData, setControlData] = useState<Control>(data);
 
+  const updateControlField = <K extends keyof Control>(field: K, value: Control[K]) => {
+    setControlData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const memberOptions = useMemo(
+    () =>
+      (projectMembers || []).map((user) => ({
+        _id: user.id!.toString(),
+        name: user.name || "",
+        surname: user.surname || "",
+      })),
+    [projectMembers],
+  );
+
   // ========================================================================
   // UTILITY FUNCTIONS
   // ========================================================================
@@ -227,12 +236,7 @@ const NewControlPane = ({
           order_no: sc.order_no,
           control_id: sc.control_id,
           status: sc.status || "",
-          owner: sc.owner?.toString() || "",
-          reviewer: sc.reviewer?.toString() || "",
-          approver: sc.approver?.toString() || "",
-          due_date: sc.due_date ? dayjs(sc.due_date) : null,
           implementation_details: sanitizeField(sc.implementation_details),
-          risk_review: sc.risk_review || "",
           evidence_description: sanitizeField(sc.evidence_description),
           evidence_files: evidenceFiles,
           uploadEvidenceFiles: [],
@@ -752,6 +756,14 @@ const NewControlPane = ({
       formData.append("title", controlData.title || "");
       formData.append("description", controlData.description || "");
       formData.append("order_no", controlData.order_no?.toString() || "");
+      formData.append("owner", controlData.owner?.toString() || "");
+      formData.append("reviewer", controlData.reviewer?.toString() || "");
+      formData.append("approver", controlData.approver?.toString() || "");
+      formData.append("risk_review", controlData.risk_review || "");
+      formData.append(
+        "due_date",
+        controlData.due_date ? dayjs(controlData.due_date).format("YYYY-MM-DD") : "",
+      );
 
       // Add subcontrols as a JSON string
       const subControlsForJson = controlData.subControls?.map((sc) => {
@@ -762,11 +774,6 @@ const NewControlPane = ({
           description: sc.description,
           order_no: sc.order_no,
           status: formDataForSC.status || "",
-          approver: formDataForSC.approver ? Number(formDataForSC.approver) : null,
-          risk_review: formDataForSC.risk_review || null,
-          owner: formDataForSC.owner ? Number(formDataForSC.owner) : null,
-          reviewer: formDataForSC.reviewer ? Number(formDataForSC.reviewer) : null,
-          due_date: formDataForSC.due_date ? formDataForSC.due_date.format("YYYY-MM-DD") : null,
           implementation_details: formDataForSC.implementation_details || "",
           evidence_description: formDataForSC.evidence_description || "",
           feedback_description: formDataForSC.feedback_description || "",
@@ -1042,6 +1049,89 @@ const NewControlPane = ({
           </Button>
         </Box>
 
+        <Box
+          sx={{
+            padding: "16px 20px",
+            borderBottom: "1px solid #eaecf0",
+          }}
+        >
+          <Stack direction="row" gap="16px" flexWrap="wrap">
+            <Select
+              id="control-owner"
+              label="Owner:"
+              value={controlData.owner?.toString() || ""}
+              onChange={(e: SelectChangeEvent<string | number>) =>
+                updateControlField(
+                  "owner",
+                  e.target.value === "" ? undefined : Number(e.target.value),
+                )
+              }
+              items={memberOptions}
+              sx={inputStyles}
+              placeholder="Select owner"
+              disabled={isEditingDisabled}
+            />
+            <Select
+              id="control-reviewer"
+              label="Reviewer:"
+              value={controlData.reviewer?.toString() || ""}
+              onChange={(e: SelectChangeEvent<string | number>) =>
+                updateControlField(
+                  "reviewer",
+                  e.target.value === "" ? undefined : Number(e.target.value),
+                )
+              }
+              items={memberOptions}
+              sx={inputStyles}
+              placeholder="Select reviewer"
+              disabled={isEditingDisabled}
+            />
+            <Select
+              id="control-approver"
+              label="Approver:"
+              value={controlData.approver?.toString() || ""}
+              onChange={(e: SelectChangeEvent<string | number>) =>
+                updateControlField(
+                  "approver",
+                  e.target.value === "" ? undefined : Number(e.target.value),
+                )
+              }
+              items={memberOptions}
+              sx={inputStyles}
+              placeholder="Select approver"
+              disabled={isEditingDisabled}
+            />
+            <Select
+              id="control-risk-review"
+              label="Risk review:"
+              value={controlData.risk_review || ""}
+              onChange={(e: SelectChangeEvent<string | number>) =>
+                updateControlField(
+                  "risk_review",
+                  (e.target.value || undefined) as Control["risk_review"],
+                )
+              }
+              items={[
+                { _id: "Acceptable risk", name: "Acceptable risk" },
+                { _id: "Residual risk", name: "Residual risk" },
+                { _id: "Unacceptable risk", name: "Unacceptable risk" },
+              ]}
+              sx={inputStyles}
+              placeholder="Select risk review"
+              disabled={isEditingDisabled}
+            />
+            <DatePicker
+              label="Due date:"
+              date={controlData.due_date ? dayjs(controlData.due_date) : null}
+              handleDateChange={(date) =>
+                updateControlField("due_date", date ? date.toDate() : undefined)
+              }
+              sx={inputStyles}
+              disabled={isEditingDisabled}
+            />
+          </Stack>
+        </Box>
+
         {/* OUTER TABS - SUBCONTROLS */}
         {controlData.subControls && controlData.subControls.length > 0 && (
           <TabContext value={selectedSubcontrolIndex.toString()}>
@@ -1157,7 +1247,6 @@ const NewControlPane = ({
                       />
                     </Stack>
 
-                    {/* Status & Assignments */}
                     <Stack gap="24px">
                       <Select
                         id={`status-${currentSubcontrol.id}`}
@@ -1177,103 +1266,6 @@ const NewControlPane = ({
                         ]}
                         sx={inputStyles}
                         placeholder="Select status"
-                        disabled={isEditingDisabled}
-                      />
-
-                      <Select
-                        id={`owner-${currentSubcontrol.id}`}
-                        label="Owner:"
-                        value={currentFormData.owner}
-                        onChange={(e: SelectChangeEvent<string | number>) =>
-                          updateSubcontrolField(
-                            currentSubcontrol.id!,
-                            "owner",
-                            String(e.target.value),
-                          )
-                        }
-                        items={(projectMembers || []).map((user) => ({
-                          _id: user.id!.toString(),
-                          name: user.name || "",
-                          surname: user.surname || "",
-                        }))}
-                        sx={inputStyles}
-                        placeholder="Select owner"
-                        disabled={isEditingDisabled}
-                      />
-
-                      <Select
-                        id={`reviewer-${currentSubcontrol.id}`}
-                        label="Reviewer:"
-                        value={currentFormData.reviewer}
-                        onChange={(e: SelectChangeEvent<string | number>) =>
-                          updateSubcontrolField(
-                            currentSubcontrol.id!,
-                            "reviewer",
-                            String(e.target.value),
-                          )
-                        }
-                        items={(projectMembers || []).map((user) => ({
-                          _id: user.id!.toString(),
-                          name: user.name || "",
-                          surname: user.surname || "",
-                        }))}
-                        sx={inputStyles}
-                        placeholder="Select reviewer"
-                        disabled={isEditingDisabled}
-                      />
-
-                      <Select
-                        id={`approver-${currentSubcontrol.id}`}
-                        label="Approver:"
-                        value={currentFormData.approver}
-                        onChange={(e: SelectChangeEvent<string | number>) =>
-                          updateSubcontrolField(
-                            currentSubcontrol.id!,
-                            "approver",
-                            String(e.target.value),
-                          )
-                        }
-                        items={(projectMembers || []).map((user) => ({
-                          _id: user.id!.toString(),
-                          name: user.name || "",
-                          surname: user.surname || "",
-                        }))}
-                        sx={inputStyles}
-                        placeholder="Select approver"
-                        disabled={isEditingDisabled}
-                      />
-
-                      <Select
-                        id={`risk-review-${currentSubcontrol.id}`}
-                        label="Risk review:"
-                        value={currentFormData.risk_review}
-                        onChange={(e: SelectChangeEvent<string | number>) =>
-                          updateSubcontrolField(
-                            currentSubcontrol.id!,
-                            "risk_review",
-                            String(e.target.value),
-                          )
-                        }
-                        items={[
-                          { _id: "Acceptable risk", name: "Acceptable risk" },
-                          { _id: "Residual risk", name: "Residual risk" },
-                          {
-                            _id: "Unacceptable risk",
-                            name: "Unacceptable risk",
-                          },
-                        ]}
-                        sx={inputStyles}
-                        placeholder="Select risk review"
-                        disabled={isEditingDisabled}
-                      />
-
-                      <DatePicker
-                        label="Due date:"
-                        date={currentFormData.due_date}
-                        handleDateChange={(date) =>
-                          updateSubcontrolField(currentSubcontrol.id!, "due_date", date)
-                        }
-                        sx={inputStyles}
                         disabled={isEditingDisabled}
                       />
                     </Stack>
