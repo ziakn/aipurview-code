@@ -12,6 +12,7 @@ import {
   countSubControlsEUByProjectId,
   deleteAssessmentEUByProjectIdQuery,
   deleteComplianeEUByProjectIdQuery,
+  deriveControlStatus,
   getAllControlCategoriesQuery,
   getAllTopicsQuery,
   getAssessmentsEUByProjectIdQuery,
@@ -20,6 +21,7 @@ import {
   getControlStructByControlCategoryIdForAProjectQuery,
   getTopicByIdForProjectQuery,
   getVisibleEuCategoryIdsForProject,
+  updateControlEUByIdQuery,
   updateQuestionEUByIdQuery,
   updateSubcontrolEUByIdQuery,
 } from "../utils/eu.utils";
@@ -42,109 +44,74 @@ async function getUserNameById(userId: number): Promise<string> {
   return "Someone";
 }
 
-// Helper function to notify assignment changes for EU AI Act entities
-async function notifyEuAiActAssignment(
+async function notifyEuAiActControlAssignment(
   req: Request | RequestWithFile,
-  entityType: "EU AI Act Subcontrol",
-  entityId: number,
-  entityName: string,
+  controlId: number,
   roleType: AssignmentRoleType,
   newUserId: number,
   oldUserId: number | null | undefined,
   projectId?: number,
-  controlId?: number,
 ): Promise<void> {
-  // Only notify if assigned to a new user
-  if (newUserId && newUserId !== oldUserId) {
-    const assignerName = await getUserNameById(req.userId!);
-    const baseUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+  if (!newUserId || newUserId === oldUserId) return;
 
-    let urlPath: string;
-    let controlName: string | undefined;
-    let projectName: string | undefined;
-    let description: string | undefined;
-    let resolvedControlId = controlId;
+  const assignerName = await getUserNameById(req.userId!);
+  const baseUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 
-    // Query for subcontrol description and order info from struct table
-    const subcontrolResult = await sequelize.query<{
-      description: string;
-      control_id: number;
-      subcontrol_order_no: number;
-      control_order_no: number;
-    }>(
-      `SELECT scs.description, sc.control_id, scs.order_no as subcontrol_order_no, cs.order_no as control_order_no
-       FROM subcontrols_eu sc
-       JOIN subcontrols_struct_eu scs ON sc.subcontrol_meta_id = scs.id
-       JOIN controls_struct_eu cs ON scs.control_id = cs.id
-       WHERE sc.organization_id = :organizationId AND sc.id = :entityId`,
-      { replacements: { organizationId: req.organizationId!, entityId }, type: QueryTypes.SELECT },
+  const controlResult = await sequelize.query<{
+    title: string;
+    description: string;
+    order_no: number;
+  }>(
+    `SELECT cs.title, cs.description, cs.order_no
+     FROM controls_eu c
+     JOIN controls_struct_eu cs ON c.control_meta_id = cs.id
+     WHERE c.organization_id = :organizationId AND c.id = :controlId`,
+    {
+      replacements: { organizationId: req.organizationId!, controlId },
+      type: QueryTypes.SELECT,
+    },
+  );
+
+  const controlMeta = controlResult[0];
+  const entityName = controlMeta
+    ? `${controlMeta.order_no} ${controlMeta.title}`
+    : `Control #${controlId}`;
+  const description = controlMeta?.description;
+
+  let projectName: string | undefined;
+  if (projectId) {
+    const projectResult = await sequelize.query<{ project_title: string }>(
+      `SELECT project_title FROM projects WHERE organization_id = :organizationId AND id = :projectId`,
+      {
+        replacements: { organizationId: req.organizationId!, projectId },
+        type: QueryTypes.SELECT,
+      },
     );
-    description = subcontrolResult[0]?.description;
-    // Build subcontrol identifier like "1.1 Subcontrol title" (control.order_no.subcontrol.order_no)
-    if (subcontrolResult[0]) {
-      entityName = `${subcontrolResult[0].control_order_no}.${subcontrolResult[0].subcontrol_order_no} ${entityName}`;
-    }
-    if (!controlId && subcontrolResult[0]?.control_id) {
-      resolvedControlId = subcontrolResult[0].control_id;
-    }
-
-    // Query for additional context: control name and project name
-    if (projectId) {
-      // Get project name
-      const projectResult = await sequelize.query<{ project_title: string }>(
-        `SELECT project_title FROM projects WHERE organization_id = :organizationId AND id = :projectId`,
-        {
-          replacements: { organizationId: req.organizationId!, projectId },
-          type: QueryTypes.SELECT,
-        },
-      );
-      projectName = projectResult[0]?.project_title;
-
-      // Get control name from struct table
-      if (resolvedControlId) {
-        const controlResult = await sequelize.query<{ title: string }>(
-          `SELECT cs.title
-           FROM controls_eu c
-           JOIN controls_struct_eu cs ON c.control_meta_id = cs.id
-           WHERE c.organization_id = :organizationId AND c.id = :controlId`,
-          {
-            replacements: { organizationId: req.organizationId!, controlId: resolvedControlId },
-            type: QueryTypes.SELECT,
-          },
-        );
-        controlName = controlResult[0]?.title;
-      }
-    }
-
-    if (projectId && resolvedControlId) {
-      urlPath = `/project-view?projectId=${projectId}&tab=frameworks&framework=eu-ai-act&subtab=compliance&controlId=${resolvedControlId}&subControlId=${entityId}`;
-    } else if (projectId) {
-      urlPath = `/project-view?projectId=${projectId}&tab=frameworks&framework=eu-ai-act&subtab=compliance`;
-    } else {
-      urlPath = `/project-view`;
-    }
-
-    notifyUserAssigned(
-      req.organizationId!,
-      newUserId,
-      {
-        entityType,
-        entityId,
-        entityName,
-        roleType,
-        entityUrl: `${baseUrl}${urlPath}`,
-      },
-      assignerName,
-      baseUrl,
-      {
-        frameworkName: "EU AI Act",
-        projectName,
-        parentType: controlName ? "Control" : undefined,
-        parentName: controlName,
-        description,
-      },
-    ).catch((err) => console.error(`Failed to send ${roleType} notification:`, err));
+    projectName = projectResult[0]?.project_title;
   }
+
+  const urlPath = projectId
+    ? `/project-view?projectId=${projectId}&tab=frameworks&framework=eu-ai-act&subtab=compliance&controlId=${controlId}`
+    : `/project-view`;
+
+  notifyUserAssigned(
+    req.organizationId!,
+    newUserId,
+    {
+      entityType: "eu_control",
+      entityId: controlId,
+      entityName,
+      roleType,
+      entityUrl: `${baseUrl}${urlPath}`,
+    },
+    assignerName,
+    baseUrl,
+    {
+      frameworkName: "EU AI Act",
+      projectName,
+      description,
+    },
+  ).catch((err) => console.error(`Failed to send ${roleType} notification:`, err));
 }
 
 export async function getAssessmentsByProjectId(req: Request, res: Response): Promise<any> {
@@ -406,55 +373,37 @@ export async function saveControls(req: RequestWithFile, res: Response): Promise
       }
     }
 
-    // Control-level status fields are no longer managed here - they exist only at subcontrol level
-    // The control record in database doesn't need to be updated - all editable fields are at subcontrol level
-    // We return a simple control object for the response
-    const control: any = {
-      id: controlId,
+    const currentControlResult = (await sequelize.query(
+      `SELECT owner, reviewer, approver FROM controls_eu
+       WHERE organization_id = :organizationId AND id = :id;`,
+      {
+        replacements: { organizationId: req.organizationId!, id: controlId },
+        transaction,
+        type: QueryTypes.SELECT,
+      },
+    )) as { owner: number | null; reviewer: number | null; approver: number | null }[];
+    const currentControl = currentControlResult[0] || {
+      owner: null,
+      reviewer: null,
+      approver: null,
     };
 
-    // Files to unlink (not delete) - the actual file stays in file manager
-    // This allows the same file to be used as evidence in multiple places
+    const toUserIdOrNull = (v: unknown): number | null => {
+      if (v === undefined || v === null || v === "") return null;
+      const n = Number(v);
+      return Number.isInteger(n) && n > 0 ? n : null;
+    };
+
+    const newOwner = toUserIdOrNull(Control.owner);
+    const newReviewer = toUserIdOrNull(Control.reviewer);
+    const newApprover = toUserIdOrNull(Control.approver);
+
     const filesToUnlink = JSON.parse(Control.delete || "[]") as number[];
 
-    // now we need to iterate over subcontrols inside the control, and create a subcontrol for each subcontrol
-    const subControlResp = [];
-    // Track assignment changes for notifications (sent after transaction commits)
-    const assignmentChanges: Array<{
-      subcontrolId: number;
-      entityName: string;
-      roleType: AssignmentRoleType;
-      newUserId: number;
-      oldUserId: number | null;
-    }> = [];
+    const subControlResp: any[] = [];
 
     if (Control.subControls) {
       for (const subcontrol of JSON.parse(Control.subControls)) {
-        // Get current subcontrol data for assignment change detection
-        const currentSubcontrolResult = (await sequelize.query(
-          `SELECT sc.owner, sc.reviewer, sc.approver, scs.title
-           FROM subcontrols_eu sc
-           JOIN subcontrols_struct_eu scs ON sc.subcontrol_meta_id = scs.id
-           WHERE sc.organization_id = :organizationId AND sc.id = :id;`,
-          {
-            replacements: { organizationId: req.organizationId!, id: parseInt(subcontrol.id) },
-            transaction,
-            type: QueryTypes.SELECT,
-          },
-        )) as {
-          owner: number | null;
-          reviewer: number | null;
-          approver: number | null;
-          title: string;
-        }[];
-
-        const currentSubcontrol = currentSubcontrolResult[0] || {
-          owner: null,
-          reviewer: null,
-          approver: null,
-          title: "",
-        };
-
         const evidenceFiles = ((req.files as UploadedFile[]) || []).filter(
           (f) => f.fieldname === `evidence_files_${parseInt(subcontrol.id)}`,
         );
@@ -508,15 +457,6 @@ export async function saveControls(req: RequestWithFile, res: Response): Promise
           subcontrol.id!,
           {
             status: subcontrol.status as "Waiting" | "In progress" | "Done" | undefined,
-            approver: subcontrol.approver,
-            risk_review: subcontrol.risk_review as
-              | "Acceptable risk"
-              | "Residual risk"
-              | "Unacceptable risk"
-              | undefined,
-            owner: subcontrol.owner,
-            reviewer: subcontrol.reviewer,
-            due_date: subcontrol.due_date,
             implementation_details: subcontrol.implementation_details,
             evidence_description: subcontrol.evidence_description,
             feedback_description: subcontrol.feedback_description,
@@ -531,63 +471,57 @@ export async function saveControls(req: RequestWithFile, res: Response): Promise
         );
         if (subcontrolToSave) {
           subControlResp.push(subcontrolToSave);
-
-          // Track assignment changes for notification
-          const entityName = currentSubcontrol.title || `Subcontrol #${subcontrol.id}`;
-          const newOwner = subcontrol.owner ? parseInt(String(subcontrol.owner)) : null;
-          const newReviewer = subcontrol.reviewer ? parseInt(String(subcontrol.reviewer)) : null;
-          const newApprover = subcontrol.approver ? parseInt(String(subcontrol.approver)) : null;
-
-          if (newOwner && newOwner !== currentSubcontrol.owner) {
-            assignmentChanges.push({
-              subcontrolId: parseInt(subcontrol.id),
-              entityName,
-              roleType: "Owner",
-              newUserId: newOwner,
-              oldUserId: currentSubcontrol.owner,
-            });
-          }
-          if (newReviewer && newReviewer !== currentSubcontrol.reviewer) {
-            assignmentChanges.push({
-              subcontrolId: parseInt(subcontrol.id),
-              entityName,
-              roleType: "Reviewer",
-              newUserId: newReviewer,
-              oldUserId: currentSubcontrol.reviewer,
-            });
-          }
-          if (newApprover && newApprover !== currentSubcontrol.approver) {
-            assignmentChanges.push({
-              subcontrolId: parseInt(subcontrol.id),
-              entityName,
-              roleType: "Approver",
-              newUserId: newApprover,
-              oldUserId: currentSubcontrol.approver,
-            });
-          }
         }
       }
     }
+
+    const derivedStatus = deriveControlStatus(subControlResp.map((s) => s.status));
+
+    const updatedControl = await updateControlEUByIdQuery(
+      controlId,
+      {
+        owner: newOwner ?? undefined,
+        reviewer: newReviewer ?? undefined,
+        approver: newApprover ?? undefined,
+        due_date: Control.due_date,
+        risk_review: Control.risk_review as
+          | "Acceptable risk"
+          | "Residual risk"
+          | "Unacceptable risk"
+          | undefined,
+        status: derivedStatus,
+      },
+      req.organizationId!,
+      transaction,
+    );
+
     const response = {
-      ...{ control, subControls: subControlResp },
+      control: updatedControl,
+      subControls: subControlResp,
     };
-    // Update the project's last updated date
     await updateProjectUpdatedByIdQuery(controlId, "controls", req.organizationId!, transaction);
     await transaction.commit();
 
-    // Send assignment notifications after transaction commits
-    for (const change of assignmentChanges) {
-      notifyEuAiActAssignment(
-        req,
-        "EU AI Act Subcontrol",
-        change.subcontrolId,
-        change.entityName,
-        change.roleType,
-        change.newUserId,
-        change.oldUserId,
-        Control.project_id,
-        controlId,
-      );
+    const roleChanges: Array<{
+      roleType: AssignmentRoleType;
+      newUserId: number | null;
+      oldUserId: number | null;
+    }> = [
+      { roleType: "Owner", newUserId: newOwner, oldUserId: currentControl.owner },
+      { roleType: "Reviewer", newUserId: newReviewer, oldUserId: currentControl.reviewer },
+      { roleType: "Approver", newUserId: newApprover, oldUserId: currentControl.approver },
+    ];
+    for (const change of roleChanges) {
+      if (change.newUserId) {
+        notifyEuAiActControlAssignment(
+          req,
+          controlId,
+          change.roleType,
+          change.newUserId,
+          change.oldUserId,
+          Control.project_id,
+        );
+      }
     }
 
     await logSuccess({
