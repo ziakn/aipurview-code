@@ -172,7 +172,7 @@ const VWProjectOverview = ({ project }: { project?: Project }) => {
     assessmentProgress?.totalQuestions ?? 0,
   ];
 
-  const titleEuAct = ["Requirements", "Controls"];
+  const titleEuAct = ["Requirements", "Assessments"];
 
   const completedIso42001Numbers = [
     clausesProgress?.doneSubclauses ?? 0,
