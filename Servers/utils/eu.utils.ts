@@ -87,11 +87,30 @@ export const countSubControlsEUByProjectId = async (
   totalSubcontrols: string;
   doneSubcontrols: string;
 }> => {
+  const visibleCategoryIds = await getVisibleEuCategoryIdsForProject(
+    projectFrameworkId,
+    organizationId,
+  );
+  if (visibleCategoryIds.length === 0) {
+    return { totalSubcontrols: "0", doneSubcontrols: "0" };
+  }
+
   const result = await sequelize.query(
-    `SELECT COUNT(*) AS "totalSubcontrols", COUNT(CASE WHEN sc.status = 'Done' THEN 1 END) AS "doneSubcontrols" FROM
-      controls_eu c JOIN subcontrols_eu sc ON c.organization_id = sc.organization_id AND c.id = sc.control_id WHERE c.organization_id = :organizationId AND c.projects_frameworks_id = :projects_frameworks_id;`,
+    `SELECT COUNT(*) AS "totalSubcontrols",
+            COUNT(CASE WHEN sc.status = 'Done' THEN 1 END) AS "doneSubcontrols"
+     FROM controls_eu c
+     JOIN subcontrols_eu sc
+       ON c.organization_id = sc.organization_id AND c.id = sc.control_id
+     JOIN controls_struct_eu cs ON c.control_meta_id = cs.id
+     WHERE c.organization_id = :organizationId
+       AND c.projects_frameworks_id = :projects_frameworks_id
+       AND cs.control_category_id IN (:visibleCategoryIds);`,
     {
-      replacements: { organizationId, projects_frameworks_id: projectFrameworkId },
+      replacements: {
+        organizationId,
+        projects_frameworks_id: projectFrameworkId,
+        visibleCategoryIds,
+      },
       type: QueryTypes.SELECT,
     },
   );
