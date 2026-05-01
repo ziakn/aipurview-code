@@ -25,7 +25,7 @@ import RichTextEditor from "../../RichTextEditor";
 import { inputStyles } from "../ClauseDrawerDialog";
 import DatePicker from "../../Inputs/Datepicker";
 import Select from "../../Inputs/Select";
-import { useState, useEffect, lazy, Suspense, useRef } from "react";
+import { useState, useEffect, useMemo, lazy, Suspense, useRef } from "react";
 import TabBar from "../../TabBar";
 import StandardModal from "../../Modals/StandardModal";
 import {
@@ -131,6 +131,18 @@ const VWISO27001AnnexDrawerDialog = ({
   const [fetchedAnnex, setFetchedAnnex] = useState<AnnexControlData>();
   const [isLoading, setIsLoading] = useState(false);
   const [projectMembers, setProjectMembers] = useState<User[]>([]);
+  const memberOptions = useMemo(
+    () => [
+      { _id: "", name: "(none)" },
+      ...projectMembers.map((user) => ({
+        _id: user.id.toString(),
+        name: user.name,
+        email: user.email,
+        surname: user.surname,
+      })),
+    ],
+    [projectMembers],
+  );
   const [activeTab, setActiveTab] = useState("details");
   const [isLinkedRisksModalOpen, setIsLinkedRisksModalOpen] = useState<boolean>(false);
   const [isRiskDetailModalOpen, setIsRiskDetailModalOpen] = useState(false);
@@ -533,16 +545,9 @@ const VWISO27001AnnexDrawerDialog = ({
       formDataToSend.append("implementation_description", formData.implementation_description);
       formDataToSend.append("status", formData.status);
 
-      // Only append user fields if they have valid values
-      if (formData.owner && formData.owner.trim() !== "") {
-        formDataToSend.append("owner", formData.owner);
-      }
-      if (formData.reviewer && formData.reviewer.trim() !== "") {
-        formDataToSend.append("reviewer", formData.reviewer);
-      }
-      if (formData.approver && formData.approver.trim() !== "") {
-        formDataToSend.append("approver", formData.approver);
-      }
+      formDataToSend.append("owner", formData.owner || "");
+      formDataToSend.append("reviewer", formData.reviewer || "");
+      formDataToSend.append("approver", formData.approver || "");
 
       formDataToSend.append("auditor_feedback", formData.auditor_feedback);
       if (date) formDataToSend.append("due_date", date.toString());
@@ -839,12 +844,7 @@ const VWISO27001AnnexDrawerDialog = ({
                 label="Owner:"
                 value={formData.owner || ""}
                 onChange={handleSelectChange("owner")}
-                items={projectMembers.map((user) => ({
-                  _id: user.id.toString(),
-                  name: user.name,
-                  email: user.email,
-                  surname: user.surname,
-                }))}
+                items={memberOptions}
                 disabled={isEditingDisabled}
                 sx={inputStyles}
                 placeholder={"Select owner"}
@@ -856,12 +856,7 @@ const VWISO27001AnnexDrawerDialog = ({
                 label="Reviewer:"
                 value={formData.reviewer || ""}
                 onChange={handleSelectChange("reviewer")}
-                items={projectMembers.map((user) => ({
-                  _id: user.id.toString(),
-                  name: user.name,
-                  email: user.email,
-                  surname: user.surname,
-                }))}
+                items={memberOptions}
                 disabled={isEditingDisabled}
                 sx={inputStyles}
                 placeholder={"Select reviewer"}
@@ -873,12 +868,7 @@ const VWISO27001AnnexDrawerDialog = ({
                 label="Approver:"
                 value={formData.approver || ""}
                 onChange={handleSelectChange("approver")}
-                items={projectMembers.map((user) => ({
-                  _id: user.id.toString(),
-                  name: user.name,
-                  email: user.email,
-                  surname: user.surname,
-                }))}
+                items={memberOptions}
                 disabled={isEditingDisabled}
                 sx={inputStyles}
                 placeholder={"Select approver"}

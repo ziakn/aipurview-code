@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, useRef, lazy } from "react";
+import React, { useState, useEffect, useMemo, Suspense, useRef, lazy } from "react";
 import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import { Box, IconButton, Tooltip } from "@mui/material";
@@ -71,6 +71,18 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState<AlertProps | null>(null);
   const [projectMembers, setProjectMembers] = useState<User[]>([]);
+  const memberOptions = useMemo(
+    () => [
+      { _id: "" as string | number, name: "(none)" },
+      ...projectMembers.map((user) => ({
+        _id: user.id as string | number,
+        name: `${user.name}`,
+        email: user.email,
+        surname: user.surname,
+      })),
+    ],
+    [projectMembers],
+  );
   const [activeTab, setActiveTab] = useState("details");
 
   // Risk linking state
@@ -358,9 +370,9 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
       formDataToSend.append("auditor_feedback", formData.auditor_feedback);
       formDataToSend.append("tags", JSON.stringify(formData.tags));
 
-      if (formData.owner) formDataToSend.append("owner", formData.owner);
-      if (formData.reviewer) formDataToSend.append("reviewer", formData.reviewer);
-      if (formData.approver) formDataToSend.append("approver", formData.approver);
+      formDataToSend.append("owner", formData.owner || "");
+      formDataToSend.append("reviewer", formData.reviewer || "");
+      formDataToSend.append("approver", formData.approver || "");
       if (date) formDataToSend.append("due_date", date.toISOString());
 
       // Add file handling fields (ISO pattern)
@@ -640,12 +652,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                       label="Owner:"
                       value={formData.owner ? parseInt(formData.owner) : ""}
                       onChange={handleSelectChange("owner")}
-                      items={projectMembers.map((user) => ({
-                        _id: user.id,
-                        name: `${user.name}`,
-                        email: user.email,
-                        surname: user.surname,
-                      }))}
+                      items={memberOptions}
                       sx={inputStyles}
                       placeholder={"Select owner"}
                       disabled={isEditingDisabled}
@@ -656,12 +663,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                       label="Reviewer:"
                       value={formData.reviewer ? parseInt(formData.reviewer) : ""}
                       onChange={handleSelectChange("reviewer")}
-                      items={projectMembers.map((user) => ({
-                        _id: user.id,
-                        name: `${user.name}`,
-                        email: user.email,
-                        surname: user.surname,
-                      }))}
+                      items={memberOptions}
                       sx={inputStyles}
                       placeholder={"Select reviewer"}
                       disabled={isEditingDisabled}
@@ -672,12 +674,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                       label="Approver:"
                       value={formData.approver ? parseInt(formData.approver) : ""}
                       onChange={handleSelectChange("approver")}
-                      items={projectMembers.map((user) => ({
-                        _id: user.id,
-                        name: `${user.name}`,
-                        email: user.email,
-                        surname: user.surname,
-                      }))}
+                      items={memberOptions}
                       sx={inputStyles}
                       placeholder={"Select approver"}
                       disabled={isEditingDisabled}
