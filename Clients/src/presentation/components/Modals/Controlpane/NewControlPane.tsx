@@ -158,12 +158,14 @@ const NewControlPane = ({
   };
 
   const memberOptions = useMemo(
-    () =>
-      (projectMembers || []).map((user) => ({
+    () => [
+      { _id: "", name: "(none)" },
+      ...(projectMembers || []).map((user) => ({
         _id: user.id!.toString(),
         name: user.name || "",
         surname: user.surname || "",
       })),
+    ],
     [projectMembers],
   );
 
@@ -1112,6 +1114,7 @@ const NewControlPane = ({
                 )
               }
               items={[
+                { _id: "", name: "(none)" },
                 { _id: "Acceptable risk", name: "Acceptable risk" },
                 { _id: "Residual risk", name: "Residual risk" },
                 { _id: "Unacceptable risk", name: "Unacceptable risk" },
