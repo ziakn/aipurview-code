@@ -13,6 +13,7 @@ import {
   deleteAssessmentEUByProjectIdQuery,
   deleteComplianeEUByProjectIdQuery,
   deriveControlStatus,
+  findUsersNotInOrganization,
   getAllControlCategoriesQuery,
   getAllTopicsQuery,
   getAssessmentsEUByProjectIdQuery,
@@ -404,6 +405,36 @@ export async function saveControls(req: RequestWithFile, res: Response): Promise
       | "Residual risk"
       | "Unacceptable risk"
       | null;
+
+    const candidateAssigneeIds = [newOwner, newReviewer, newApprover].filter(
+      (id): id is number => id !== null,
+    );
+    if (candidateAssigneeIds.length > 0) {
+      const invalidIds = await findUsersNotInOrganization(
+        candidateAssigneeIds,
+        req.organizationId!,
+        transaction,
+      );
+      if (invalidIds.length > 0) {
+        await transaction.rollback();
+        await logFailure({
+          eventType: "Update",
+          description: `Rejected control save: assignee user IDs not in organization — ${invalidIds.join(", ")}`,
+          functionName: "saveControls",
+          fileName: "eu.ctrl.ts",
+          error: new Error("Invalid assignee"),
+          userId: req.userId!,
+          tenantId: req.organizationId!,
+        });
+        return res
+          .status(400)
+          .json(
+            STATUS_CODE[400](
+              `User${invalidIds.length === 1 ? "" : "s"} ${invalidIds.join(", ")} ${invalidIds.length === 1 ? "is" : "are"} not part of this organization and cannot be assigned.`,
+            ),
+          );
+      }
+    }
 
     const filesToUnlink = JSON.parse(Control.delete || "[]") as number[];
 
