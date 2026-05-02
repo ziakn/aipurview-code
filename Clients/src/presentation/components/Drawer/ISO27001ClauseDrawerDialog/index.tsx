@@ -27,7 +27,7 @@ import { FileData } from "../../../../domain/types/File";
 import Select from "../../Inputs/Select";
 import DatePicker from "../../Inputs/Datepicker";
 import { Dayjs } from "dayjs";
-import { useState, useEffect, Suspense, lazy, useRef } from "react";
+import { useState, useEffect, useMemo, Suspense, lazy, useRef } from "react";
 import { CustomizableButton } from "../../button/customizable-button";
 import TabBar from "../../TabBar";
 import { text } from "../../../themes/palette";
@@ -128,6 +128,18 @@ const VWISO27001ClauseDrawerDialog = ({
   const [alert, setAlert] = useState<AlertProps | null>(null);
   const [activeTab, setActiveTab] = useState("details");
   const [projectMembers, setProjectMembers] = useState<User[]>([]);
+  const memberOptions = useMemo(
+    () => [
+      { _id: "", name: "(none)" },
+      ...projectMembers.map((user) => ({
+        _id: user.id.toString(),
+        name: user.name,
+        email: user.email,
+        surname: user.surname,
+      })),
+    ],
+    [projectMembers],
+  );
   const theme = useTheme();
 
   // ========================================================================
@@ -943,12 +955,7 @@ const VWISO27001ClauseDrawerDialog = ({
                   label="Owner:"
                   value={formData.owner || ""}
                   onChange={handleSelectChange("owner")}
-                  items={projectMembers.map((user) => ({
-                    _id: user.id.toString(),
-                    name: user.name,
-                    email: user.email,
-                    surname: user.surname,
-                  }))}
+                  items={memberOptions}
                   sx={inputStyles}
                   placeholder={"Select owner"}
                   disabled={isEditingDisabled}
@@ -960,12 +967,7 @@ const VWISO27001ClauseDrawerDialog = ({
                   label="Reviewer:"
                   value={formData.reviewer || ""}
                   onChange={handleSelectChange("reviewer")}
-                  items={projectMembers.map((user) => ({
-                    _id: user.id.toString(),
-                    name: user.name,
-                    email: user.email,
-                    surname: user.surname,
-                  }))}
+                  items={memberOptions}
                   sx={inputStyles}
                   placeholder={"Select reviewer"}
                   disabled={isEditingDisabled}
@@ -977,12 +979,7 @@ const VWISO27001ClauseDrawerDialog = ({
                   label="Approver:"
                   value={formData.approver || ""}
                   onChange={handleSelectChange("approver")}
-                  items={projectMembers.map((user) => ({
-                    _id: user.id.toString(),
-                    name: user.name,
-                    email: user.email,
-                    surname: user.surname,
-                  }))}
+                  items={memberOptions}
                   sx={inputStyles}
                   placeholder={"Select approver"}
                   disabled={isEditingDisabled}

@@ -827,19 +827,19 @@ export const updateSubClauseQuery = async (
     "auditor_feedback",
   ]
     .reduce((acc: string[], field) => {
-      if (subClause[field as keyof IISO27001SubClause] != undefined) {
-        let value = subClause[field as keyof IISO27001SubClause];
+      if (subClause[field as keyof IISO27001SubClause] !== undefined) {
+        let value = subClause[field as keyof IISO27001SubClause] as any;
 
-        // Handle empty strings for integer fields
         if (["owner", "reviewer", "approver"].includes(field)) {
-          if (value === "" || value === null || value === undefined) {
-            return acc; // Skip this field if it's empty
+          if (value === "" || value === null) {
+            value = null;
+          } else {
+            const numValue = parseInt(value as string);
+            if (isNaN(numValue)) return acc;
+            value = numValue;
           }
-          const numValue = parseInt(value as string);
-          if (isNaN(numValue)) {
-            return acc; // Skip this field if it's not a valid number
-          }
-          value = numValue;
+        } else if (value === "") {
+          return acc;
         }
 
         updateSubClause[field as keyof IISO27001SubClause] = value;
@@ -982,19 +982,19 @@ export const updateAnnexControlQuery = async (
     "auditor_feedback",
   ]
     .reduce((acc: string[], field) => {
-      if (annexControl[field as keyof IISO27001AnnexControl] != undefined) {
-        let value = annexControl[field as keyof IISO27001AnnexControl];
+      if (annexControl[field as keyof IISO27001AnnexControl] !== undefined) {
+        let value = annexControl[field as keyof IISO27001AnnexControl] as any;
 
-        // Handle empty strings for integer fields
         if (["owner", "reviewer", "approver"].includes(field)) {
-          if (value === "" || value === null || value === undefined) {
-            return acc; // Skip this field if it's empty
+          if (value === "" || value === null) {
+            value = null;
+          } else {
+            const numValue = parseInt(value as string);
+            if (isNaN(numValue)) return acc;
+            value = numValue;
           }
-          const numValue = parseInt(value as string);
-          if (isNaN(numValue)) {
-            return acc; // Skip this field if it's not a valid number
-          }
-          value = numValue;
+        } else if (value === "") {
+          return acc;
         }
 
         updateAnnexControl[field as keyof IISO27001AnnexControl] = value;

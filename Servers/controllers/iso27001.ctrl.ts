@@ -74,7 +74,7 @@ async function notifyIso27001Assignment(
         subclause_order_no: number;
         requirement_summary: string;
       }>(
-        `SELECT scs.clause_id, c.arrangement as clause_arrangement, c.title as clause_title, scs.order_no as subclause_order_no, scs.requirement_summary
+        `SELECT scs.clause_id, c.order_no as clause_arrangement, c.title as clause_title, scs.order_no as subclause_order_no, scs.requirement_summary
          FROM subclauses_iso27001 sc
          JOIN subclauses_struct_iso27001 scs ON sc.subclause_meta_id = scs.id
          JOIN clauses_struct_iso27001 c ON scs.clause_id = c.id

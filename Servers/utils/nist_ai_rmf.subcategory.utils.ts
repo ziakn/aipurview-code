@@ -169,30 +169,24 @@ export const updateNISTAIRMFSubcategoryByIdQuery = async (
     "auditor_feedback",
   ]
     .filter((f) => {
-      // Handle other fields
-      if (
-        subcategory[f as keyof NISTAIMRFSubcategoryModel] !== undefined &&
-        subcategory[f as keyof NISTAIMRFSubcategoryModel] !== null &&
-        subcategory[f as keyof NISTAIMRFSubcategoryModel] !== ""
-      ) {
-        let value = subcategory[f as keyof NISTAIMRFSubcategoryModel];
+      const incoming = subcategory[f as keyof NISTAIMRFSubcategoryModel];
+      if (incoming === undefined) return false;
 
-        // Handle empty strings for integer fields (owner, reviewer, approver)
-        if (["owner", "reviewer", "approver"].includes(f)) {
-          if (value === "" || value === null || value === undefined) {
-            return false; // Skip this field if it's empty
-          }
+      let value: any = incoming;
+      if (["owner", "reviewer", "approver"].includes(f)) {
+        if (value === "" || value === null) {
+          value = null;
+        } else {
           const numValue = parseInt(value as string);
-          if (isNaN(numValue)) {
-            return false; // Skip this field if it's not a valid number
-          }
+          if (isNaN(numValue)) return false;
           value = numValue;
         }
-
-        updateFields[f as keyof NISTAIMRFSubcategoryModel] = value;
-        return true;
+      } else if (value === "") {
+        return false;
       }
-      return false;
+
+      updateFields[f as keyof NISTAIMRFSubcategoryModel] = value;
+      return true;
     })
     .map((f) => `${f} = :${f}`)
     .join(", ");
