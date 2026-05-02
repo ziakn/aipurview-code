@@ -11,7 +11,7 @@
  * - Notes: Collaboration notes (lazy-loaded)
  */
 
-import React, { useState, useEffect, Suspense, lazy, useRef } from "react";
+import React, { useState, useEffect, useMemo, Suspense, lazy, useRef } from "react";
 import {
   Box,
   Button,
@@ -116,6 +116,18 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
   const [alert, setAlert] = useState<AlertProps | null>(null);
   const [activeTab, setActiveTab] = useState("details");
   const [projectMembers, setProjectMembers] = useState<User[]>([]);
+  const memberOptions = useMemo(
+    () => [
+      { _id: "" as string | number, name: "(none)" },
+      ...projectMembers.map((user) => ({
+        _id: user.id as string | number,
+        name: `${user.name}`,
+        email: user.email,
+        surname: user.surname,
+      })),
+    ],
+    [projectMembers],
+  );
 
   // ========================================================================
   // STATE - FORM DATA
@@ -542,9 +554,9 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
       // Add form fields
       formDataToSend.append("status", formData.status);
       formDataToSend.append("implementation_description", formData.implementation_description);
-      if (formData.owner) formDataToSend.append("owner", formData.owner);
-      if (formData.reviewer) formDataToSend.append("reviewer", formData.reviewer);
-      if (formData.approver) formDataToSend.append("approver", formData.approver);
+      formDataToSend.append("owner", formData.owner || "");
+      formDataToSend.append("reviewer", formData.reviewer || "");
+      formDataToSend.append("approver", formData.approver || "");
       formDataToSend.append("auditor_feedback", formData.auditor_feedback);
 
       if (date) {
@@ -858,12 +870,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                   label="Owner:"
                   value={formData.owner ? parseInt(formData.owner) : ""}
                   onChange={handleSelectChange("owner")}
-                  items={projectMembers.map((user) => ({
-                    _id: user.id,
-                    name: `${user.name}`,
-                    email: user.email,
-                    surname: user.surname,
-                  }))}
+                  items={memberOptions}
                   sx={inputStyles}
                   placeholder="Select owner"
                   disabled={isEditingDisabled}
@@ -874,12 +881,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                   label="Reviewer:"
                   value={formData.reviewer ? parseInt(formData.reviewer) : ""}
                   onChange={handleSelectChange("reviewer")}
-                  items={projectMembers.map((user) => ({
-                    _id: user.id,
-                    name: `${user.name}`,
-                    email: user.email,
-                    surname: user.surname,
-                  }))}
+                  items={memberOptions}
                   sx={inputStyles}
                   placeholder="Select reviewer"
                   disabled={isEditingDisabled}
@@ -890,12 +892,7 @@ const ISO42001ClauseDrawerDialog: React.FC<ISO42001ClauseDrawerProps> = ({
                   label="Approver:"
                   value={formData.approver ? parseInt(formData.approver) : ""}
                   onChange={handleSelectChange("approver")}
-                  items={projectMembers.map((user) => ({
-                    _id: user.id,
-                    name: `${user.name}`,
-                    email: user.email,
-                    surname: user.surname,
-                  }))}
+                  items={memberOptions}
                   sx={inputStyles}
                   placeholder="Select approver"
                   disabled={isEditingDisabled}

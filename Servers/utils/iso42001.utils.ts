@@ -820,23 +820,18 @@ export const updateSubClauseQuery = async (
     "auditor_feedback",
   ]
     .reduce((acc: string[], field) => {
-      if (subClause[field as keyof SubClauseISO] != undefined) {
-        let value = subClause[field as keyof SubClauseISO];
+      if (subClause[field as keyof SubClauseISO] !== undefined) {
+        let value = subClause[field as keyof SubClauseISO] as any;
 
-        // Handle empty strings for integer fields - skip if empty
         if (["owner", "reviewer", "approver"].includes(field)) {
-          if (value === "" || value === null || value === undefined) {
-            return acc; // Skip this field if it's empty
+          if (value === "" || value === null) {
+            value = null;
+          } else {
+            const numValue = parseInt(value as string);
+            if (isNaN(numValue)) return acc;
+            value = numValue;
           }
-          const numValue = parseInt(value as string);
-          if (isNaN(numValue)) {
-            return acc; // Skip this field if it's not a valid number
-          }
-          value = numValue;
-        }
-
-        // Skip empty strings for other fields too
-        if (value === "") {
+        } else if (value === "") {
           return acc;
         }
 
@@ -983,23 +978,18 @@ export const updateAnnexCategoryQuery = async (
     "auditor_feedback",
   ]
     .reduce((acc: string[], field) => {
-      if (annexCategory[field as keyof AnnexCategoryISO] != undefined) {
-        let value = annexCategory[field as keyof AnnexCategoryISO];
+      if (annexCategory[field as keyof AnnexCategoryISO] !== undefined) {
+        let value = annexCategory[field as keyof AnnexCategoryISO] as any;
 
-        // Handle empty strings for integer fields - skip if empty
         if (["owner", "reviewer", "approver"].includes(field)) {
-          if (value === "" || value === null || value === undefined) {
-            return acc; // Skip this field if it's empty
+          if (value === "" || value === null) {
+            value = null;
+          } else {
+            const numValue = parseInt(value as string);
+            if (isNaN(numValue)) return acc;
+            value = numValue;
           }
-          const numValue = parseInt(value as string);
-          if (isNaN(numValue)) {
-            return acc; // Skip this field if it's not a valid number
-          }
-          value = numValue;
-        }
-
-        // Skip empty strings for other fields too
-        if (value === "") {
+        } else if (value === "") {
           return acc;
         }
 
