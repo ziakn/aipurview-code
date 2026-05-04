@@ -2,19 +2,40 @@ import { DatasetStatus } from "../enums/dataset-status.enum";
 import { DatasetType } from "../enums/dataset-type.enum";
 
 jest.mock("sequelize-typescript", () => ({
-  Column: jest.fn(), DataType: {
-    INTEGER: "INTEGER", STRING: jest.fn(() => "STRING"), TEXT: "TEXT",
-    DATE: "DATE", BOOLEAN: "BOOLEAN", ENUM: jest.fn(), JSONB: "JSONB", NOW: "NOW",
+  Column: jest.fn(),
+  DataType: {
+    INTEGER: "INTEGER",
+    STRING: jest.fn(() => "STRING"),
+    TEXT: "TEXT",
+    DATE: "DATE",
+    BOOLEAN: "BOOLEAN",
+    ENUM: jest.fn(),
+    JSONB: "JSONB",
+    NOW: "NOW",
   },
-  ForeignKey: jest.fn(), BelongsTo: jest.fn(), Table: jest.fn(),
-  Model: class MockModel { constructor(data?: any) { if (data) Object.assign(this, data); } },
+  ForeignKey: jest.fn(),
+  BelongsTo: jest.fn(),
+  Table: jest.fn(),
+  Model: class MockModel {
+    constructor(data?: any) {
+      if (data) Object.assign(this, data);
+    }
+  },
 }));
 
 class TestDatasetModel {
-  id?: number; name!: string; description?: string; status!: string;
-  type!: string; version?: string; organization_id!: number;
-  created_at?: Date; updated_at?: Date;
-  constructor(data?: any) { if (data) Object.assign(this, data); }
+  id?: number;
+  name!: string;
+  description?: string;
+  status!: string;
+  type!: string;
+  version?: string;
+  organization_id!: number;
+  created_at?: Date;
+  updated_at?: Date;
+  constructor(data?: any) {
+    if (data) Object.assign(this, data);
+  }
 }
 
 class TestDatasetChangeHistoryModel {
@@ -143,8 +164,11 @@ class TestDatasetProjectModel {
 describe("DatasetModel", () => {
   it("should instantiate with required fields", () => {
     const d = new TestDatasetModel({
-      id: 1, name: "Training Data v1", status: DatasetStatus.ACTIVE,
-      type: DatasetType.TRAINING, organization_id: 1,
+      id: 1,
+      name: "Training Data v1",
+      status: DatasetStatus.ACTIVE,
+      type: DatasetType.TRAINING,
+      organization_id: 1,
     });
     expect(d.name).toBe("Training Data v1");
     expect(d.status).toBe(DatasetStatus.ACTIVE);
@@ -169,7 +193,10 @@ describe("DatasetModel", () => {
 describe("DatasetChangeHistoryModel", () => {
   it("should track changes", () => {
     const h = new TestDatasetChangeHistoryModel({
-      id: 1, dataset_id: 10, change_type: "status_changed", changed_by: 42,
+      id: 1,
+      dataset_id: 10,
+      change_type: "status_changed",
+      changed_by: 42,
     });
     expect(h.dataset_id).toBe(10);
     expect(h.change_type).toBe("status_changed");
@@ -224,7 +251,9 @@ describe("DatasetChangeHistoryModel", () => {
 
     it("should return field-specific update description", () => {
       const h = new TestDatasetChangeHistoryModel({
-        dataset_id: 1, action: "updated", field_name: "status",
+        dataset_id: 1,
+        action: "updated",
+        field_name: "status",
       });
       expect(h.getChangeDescription()).toBe('Field "status" was changed');
     });
@@ -239,9 +268,14 @@ describe("DatasetChangeHistoryModel", () => {
     it("should return JSON with all fields", () => {
       const now = new Date("2026-03-15T10:00:00.000Z");
       const h = new TestDatasetChangeHistoryModel({
-        id: 1, dataset_id: 10, action: "updated",
-        field_name: "name", old_value: "old", new_value: "new",
-        changed_by_user_id: 5, changed_at: now,
+        id: 1,
+        dataset_id: 10,
+        action: "updated",
+        field_name: "name",
+        old_value: "old",
+        new_value: "new",
+        changed_by_user_id: 5,
+        changed_at: now,
       });
       const json = h.toJSON();
       expect(json.id).toBe(1);
@@ -267,7 +301,9 @@ describe("DatasetChangeHistoryModel", () => {
 describe("DatasetModelInventoryModel", () => {
   it("should link dataset to model inventory", () => {
     const m = new TestDatasetModelInventoryModel({
-      dataset_id: 1, model_inventory_id: 2, relationship_type: "trained_on",
+      dataset_id: 1,
+      model_inventory_id: 2,
+      relationship_type: "trained_on",
     });
     expect(m.dataset_id).toBe(1);
     expect(m.model_inventory_id).toBe(2);
@@ -276,28 +312,36 @@ describe("DatasetModelInventoryModel", () => {
   describe("getRelationshipTypeDisplay", () => {
     it("should return 'Trained On' for trained_on", () => {
       const m = new TestDatasetModelInventoryModel({
-        dataset_id: 1, model_inventory_id: 2, relationship_type: "trained_on",
+        dataset_id: 1,
+        model_inventory_id: 2,
+        relationship_type: "trained_on",
       });
       expect(m.getRelationshipTypeDisplay()).toBe("Trained On");
     });
 
     it("should return 'Validated On' for validated_on", () => {
       const m = new TestDatasetModelInventoryModel({
-        dataset_id: 1, model_inventory_id: 2, relationship_type: "validated_on",
+        dataset_id: 1,
+        model_inventory_id: 2,
+        relationship_type: "validated_on",
       });
       expect(m.getRelationshipTypeDisplay()).toBe("Validated On");
     });
 
     it("should return 'Tested On' for tested_on", () => {
       const m = new TestDatasetModelInventoryModel({
-        dataset_id: 1, model_inventory_id: 2, relationship_type: "tested_on",
+        dataset_id: 1,
+        model_inventory_id: 2,
+        relationship_type: "tested_on",
       });
       expect(m.getRelationshipTypeDisplay()).toBe("Tested On");
     });
 
     it("should return raw value for unknown types", () => {
       const m = new TestDatasetModelInventoryModel({
-        dataset_id: 1, model_inventory_id: 2, relationship_type: "custom_type",
+        dataset_id: 1,
+        model_inventory_id: 2,
+        relationship_type: "custom_type",
       });
       expect(m.getRelationshipTypeDisplay()).toBe("custom_type");
     });
@@ -306,7 +350,9 @@ describe("DatasetModelInventoryModel", () => {
   describe("relationship type checks", () => {
     it("should identify training relation", () => {
       const m = new TestDatasetModelInventoryModel({
-        dataset_id: 1, model_inventory_id: 2, relationship_type: "trained_on",
+        dataset_id: 1,
+        model_inventory_id: 2,
+        relationship_type: "trained_on",
       });
       expect(m.isTrainingRelation()).toBe(true);
       expect(m.isValidationRelation()).toBe(false);
@@ -315,7 +361,9 @@ describe("DatasetModelInventoryModel", () => {
 
     it("should identify validation relation", () => {
       const m = new TestDatasetModelInventoryModel({
-        dataset_id: 1, model_inventory_id: 2, relationship_type: "validated_on",
+        dataset_id: 1,
+        model_inventory_id: 2,
+        relationship_type: "validated_on",
       });
       expect(m.isTrainingRelation()).toBe(false);
       expect(m.isValidationRelation()).toBe(true);
@@ -324,7 +372,9 @@ describe("DatasetModelInventoryModel", () => {
 
     it("should identify testing relation", () => {
       const m = new TestDatasetModelInventoryModel({
-        dataset_id: 1, model_inventory_id: 2, relationship_type: "tested_on",
+        dataset_id: 1,
+        model_inventory_id: 2,
+        relationship_type: "tested_on",
       });
       expect(m.isTrainingRelation()).toBe(false);
       expect(m.isValidationRelation()).toBe(false);
@@ -336,8 +386,11 @@ describe("DatasetModelInventoryModel", () => {
     it("should return JSON representation", () => {
       const now = new Date("2026-05-01T08:00:00.000Z");
       const m = new TestDatasetModelInventoryModel({
-        id: 5, dataset_id: 1, model_inventory_id: 2,
-        relationship_type: "trained_on", created_at: now,
+        id: 5,
+        dataset_id: 1,
+        model_inventory_id: 2,
+        relationship_type: "trained_on",
+        created_at: now,
       });
       const json = m.toJSON();
       expect(json.id).toBe(5);
@@ -360,7 +413,10 @@ describe("DatasetProjectModel", () => {
     it("should return JSON representation", () => {
       const now = new Date("2026-04-20T14:00:00.000Z");
       const m = new TestDatasetProjectModel({
-        id: 10, dataset_id: 1, project_id: 3, created_at: now,
+        id: 10,
+        dataset_id: 1,
+        project_id: 3,
+        created_at: now,
       });
       const json = m.toJSON();
       expect(json.id).toBe(10);
@@ -379,7 +435,10 @@ describe("DatasetProjectModel", () => {
       const newer = new Date("2026-05-01T00:00:00.000Z");
       const older = new Date("2025-01-01T00:00:00.000Z");
       const m = new TestDatasetProjectModel({
-        dataset_id: 1, project_id: 3, createdAt: newer, created_at: older,
+        dataset_id: 1,
+        project_id: 3,
+        createdAt: newer,
+        created_at: older,
       });
       const json = m.toJSON();
       expect(json.created_at).toBe("2026-05-01T00:00:00.000Z");

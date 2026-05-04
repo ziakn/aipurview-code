@@ -1,6 +1,4 @@
-import {
-  ValidationException,
-} from "../exceptions/custom.exception";
+import { ValidationException } from "../exceptions/custom.exception";
 
 jest.mock("sequelize-typescript", () => ({
   Column: jest.fn(),
