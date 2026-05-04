@@ -150,7 +150,13 @@ describe("Domain Enums", () => {
 
   describe("ModelInventoryStatus", () => {
     it("should have expected values", () => {
-      verifyEnum(ModelInventoryStatus, ["APPROVED", "RESTRICTED", "PENDING", "BLOCKED", "REJECTED"]);
+      verifyEnum(ModelInventoryStatus, [
+        "APPROVED",
+        "RESTRICTED",
+        "PENDING",
+        "BLOCKED",
+        "REJECTED",
+      ]);
     });
   });
 
@@ -229,7 +235,13 @@ describe("Domain Enums", () => {
 
   describe("ModelRiskCategory", () => {
     it("should have expected values", () => {
-      verifyEnum(ModelRiskCategory, ["PERFORMANCE", "BIAS", "SECURITY", "DATA_QUALITY", "COMPLIANCE"]);
+      verifyEnum(ModelRiskCategory, [
+        "PERFORMANCE",
+        "BIAS",
+        "SECURITY",
+        "DATA_QUALITY",
+        "COMPLIANCE",
+      ]);
     });
   });
 
