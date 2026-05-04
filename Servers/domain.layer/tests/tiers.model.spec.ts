@@ -1,20 +1,41 @@
 jest.mock("sequelize-typescript", () => ({
-  Column: jest.fn(), DataType: {
-    INTEGER: "INTEGER", STRING: jest.fn(() => "STRING"),
-    DATE: "DATE", JSONB: "JSONB", NOW: "NOW",
+  Column: jest.fn(),
+  DataType: {
+    INTEGER: "INTEGER",
+    STRING: jest.fn(() => "STRING"),
+    DATE: "DATE",
+    JSONB: "JSONB",
+    NOW: "NOW",
   },
-  ForeignKey: jest.fn(), Table: jest.fn(),
-  Model: class MockModel { constructor(data?: any) { if (data) Object.assign(this, data); } },
+  ForeignKey: jest.fn(),
+  Table: jest.fn(),
+  Model: class MockModel {
+    constructor(data?: any) {
+      if (data) Object.assign(this, data);
+    }
+  },
 }));
 
 class TestTiersModel {
-  id?: number; name!: string; price!: number; features!: object;
-  created_at!: Date; updated_at!: Date;
-  constructor(data?: any) { if (data) Object.assign(this, data); }
+  id?: number;
+  name!: string;
+  price!: number;
+  features!: object;
+  created_at!: Date;
+  updated_at!: Date;
+  constructor(data?: any) {
+    if (data) Object.assign(this, data);
+  }
 
-  static async createNewTier(tier: { name: string; price: number; features: object }): Promise<TestTiersModel> {
+  static async createNewTier(tier: {
+    name: string;
+    price: number;
+    features: object;
+  }): Promise<TestTiersModel> {
     const m = new TestTiersModel();
-    m.name = tier.name; m.price = tier.price; m.features = tier.features;
+    m.name = tier.name;
+    m.price = tier.price;
+    m.features = tier.features;
     return m;
   }
 
@@ -29,7 +50,9 @@ describe("TiersModel", () => {
   describe("createNewTier", () => {
     it("should create tier with all fields", async () => {
       const t = await TestTiersModel.createNewTier({
-        name: "Pro", price: 99, features: { max_projects: 50, ai_detection: true },
+        name: "Pro",
+        price: 99,
+        features: { max_projects: 50, ai_detection: true },
       });
       expect(t.name).toBe("Pro");
       expect(t.price).toBe(99);
