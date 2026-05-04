@@ -20,6 +20,7 @@ interface AutoCompleteFieldProps<
   label?: string;
   placeholder?: string;
   error?: string;
+  helperText?: string;
   isRequired?: boolean;
   isOptional?: boolean;
   optionalLabel?: string;
@@ -35,6 +36,7 @@ function AutoCompleteField<
   label,
   placeholder,
   error,
+  helperText,
   isRequired,
   isOptional,
   optionalLabel,
@@ -104,6 +106,8 @@ function AutoCompleteField<
             {...params}
             size="small"
             placeholder={placeholder}
+            error={!!error || !!helperText}
+            helperText={helperText}
             sx={{
               "& .MuiOutlinedInput-root": {
                 minHeight: "34px",

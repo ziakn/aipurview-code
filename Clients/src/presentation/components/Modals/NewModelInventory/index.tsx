@@ -5,8 +5,6 @@ import {
   Stack,
   Box,
   FormControlLabel,
-  Autocomplete,
-  TextField,
   Typography,
   IconButton,
   Tooltip,
@@ -29,7 +27,7 @@ import { useModalKeyHandling } from "../../../../application/hooks/useModalKeyHa
 import modelInventoryOptions from "../../../utils/model-inventory.json";
 import { useProjects } from "../../../../application/hooks/useProjects";
 import { Project } from "../../../../domain/types/Project";
-import { getAutocompleteStyles } from "../../../utils/inputStyles";
+import AutoCompleteField from "../../Inputs/Autocomplete";
 import FileManagerUploadModal from "../FileManagerUpload";
 import { CustomizableButton } from "../../button/customizable-button";
 import { FileResponse, IModelInventory } from "../../../../domain/interfaces/i.modelInventory";
@@ -501,42 +499,6 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
     [theme.palette.background.main],
   );
 
-  // Styles for Autocomplete (following ProjectForm approach)
-  const capabilitiesRenderInputStyle = {
-    "& .MuiOutlinedInput-root": {
-      paddingTop: "3.8px !important",
-      paddingBottom: "3.8px !important",
-    },
-    "& ::placeholder": {
-      fontSize: 13,
-    },
-  };
-
-  const capabilitiesSlotProps = {
-    paper: {
-      sx: {
-        "& .MuiAutocomplete-listbox": {
-          "& .MuiAutocomplete-option": {
-            fontSize: 13,
-            fontWeight: 400,
-            color: "#1c2130",
-            paddingLeft: "9px",
-            paddingRight: "9px",
-          },
-          "& .MuiAutocomplete-option.Mui-focused": {
-            background: "background.accent",
-          },
-        },
-        "& .MuiAutocomplete-noOptions": {
-          fontSize: 13,
-          fontWeight: 400,
-          paddingLeft: "9px",
-          paddingRight: "9px",
-        },
-      },
-    },
-  };
-
   const modelDetailsSection = (
     <Stack spacing={3}>
       {/* First Row: Provider, Model, Version */}
@@ -555,124 +517,55 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
           />
         </Suspense>
         <Suspense fallback={<div>Loading...</div>}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              width: 220,
-            }}
+          <AutoCompleteField<
+            { _id: string; name: string; surname: string; email: string },
+            false,
+            false,
+            true
           >
-            <Typography
-              variant="body2"
-              sx={{
-                mb: 2,
-                fontWeight: 450,
-                color: theme.palette.text.primary,
-              }}
-            >
-              Model{" "}
-              <Typography component="span" color="black">
-                *
-              </Typography>
-            </Typography>
-            <Autocomplete
-              id="model-input"
-              size="small"
-              freeSolo
-              value={values.model}
-              options={modelInventoryList || []}
-              getOptionLabel={(option) => (typeof option === "string" ? option : option.name)}
-              onChange={(_event, newValue) => {
-                // Handle both option object and free text
-                if (typeof newValue === "string") {
-                  setValues({
-                    ...values,
-                    model: newValue,
-                  });
-                } else if (newValue && typeof newValue === "object") {
-                  setValues({
-                    ...values,
-                    model: newValue.name,
-                  });
-                } else {
-                  setValues({ ...values, model: "" });
-                }
-              }}
-              onInputChange={(_event, newInputValue, reason) => {
-                if (reason === "input") {
-                  setValues({
-                    ...values,
-                    model: newInputValue,
-                  });
-                }
-              }}
-              renderOption={(props, option) => {
-                const { key, ...otherProps } = props;
-                return (
-                  <Box component="li" key={key} {...otherProps}>
-                    <Typography
-                      sx={{
-                        fontSize: 13,
-                        color: theme.palette.text.primary,
-                      }}
-                    >
-                      {option.name}
-                    </Typography>
-                  </Box>
-                );
-              }}
-              popupIcon={<i data-lucide="chevron-downa"></i>}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  placeholder="Select or enter model"
-                  error={Boolean(errors.model)}
-                  helperText={errors.model}
-                  variant="outlined"
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      height: 34,
-                      minHeight: 34,
-                      borderRadius: 2,
-                    },
-                    "& .MuiInputBase-input": {
-                      padding: "0 8px",
-                      fontSize: 13,
-                    },
-                  }}
-                />
-              )}
-              // noOptionsText="No matching models"
-              filterOptions={(options, state) => {
-                const filtered = options.filter((option) =>
-                  option.name.toLowerCase().includes(state.inputValue.toLowerCase()),
-                );
-
-                if (filtered.length === 0) {
-                  return [];
-                }
-
-                return filtered;
-              }}
-              slotProps={{
-                paper: {
-                  sx: {
-                    "& .MuiAutocomplete-listbox": {
-                      "& .MuiAutocomplete-option": {
-                        fontSize: 13,
-                        color: theme.palette.text.primary,
-                        padding: "8px 12px",
-                      },
-                      "& .MuiAutocomplete-option.Mui-focused": {
-                        backgroundColor: theme.palette.background.accent,
-                      },
-                    },
-                  },
-                },
-              }}
-              disabled={isLoadingUsers}
-            />
-          </Box>
+            id="model-input"
+            label="Model"
+            isRequired
+            freeSolo
+            value={values.model}
+            options={modelInventoryList || []}
+            getOptionLabel={(option) => (typeof option === "string" ? option : option.name)}
+            onChange={(_event, newValue) => {
+              if (typeof newValue === "string") {
+                setValues({ ...values, model: newValue });
+              } else if (newValue && typeof newValue === "object") {
+                setValues({ ...values, model: newValue.name });
+              } else {
+                setValues({ ...values, model: "" });
+              }
+            }}
+            onInputChange={(_event, newInputValue, reason) => {
+              if (reason === "input") {
+                setValues({ ...values, model: newInputValue });
+              }
+            }}
+            renderOption={(props, option) => {
+              const { key, ...otherProps } = props;
+              return (
+                <Box component="li" key={key} {...otherProps}>
+                  <Typography sx={{ fontSize: 13, color: theme.palette.text.primary }}>
+                    {option.name}
+                  </Typography>
+                </Box>
+              );
+            }}
+            popupIcon={<ChevronDown size={16} />}
+            filterOptions={(options, state) => {
+              const filtered = options.filter((option) =>
+                option.name.toLowerCase().includes(state.inputValue.toLowerCase()),
+              );
+              return filtered.length === 0 ? [] : filtered;
+            }}
+            placeholder="Select or enter model"
+            helperText={errors.model}
+            disabled={isLoadingUsers}
+            sx={{ width: 220 }}
+          />
         </Suspense>
         <Suspense fallback={<div>Loading...</div>}>
           <Field
@@ -729,222 +622,99 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
       </Stack>
 
       {/* Capabilities Section */}
-      <Stack>
-        <Typography
-          sx={{
-            fontSize: "13px",
-            fontWeight: 500,
-            height: "22px",
-            mb: theme.spacing(2),
-            color: theme.palette.text.secondary,
-          }}
-        >
-          Capabilities
-        </Typography>
-        <Autocomplete
-          multiple
-          id="capabilities-input"
-          size="small"
-          value={values.capabilities}
-          options={capabilityOptions}
-          onChange={handleCapabilityChange}
-          getOptionLabel={(option) => option}
-          noOptionsText={
-            values.capabilities.length === capabilityOptions.length
-              ? "All capabilities selected"
-              : "No options"
-          }
-          renderOption={(props, option) => {
-            const { key, ...otherProps } = props;
-            return (
-              <Box component="li" key={key} {...otherProps}>
-                <Typography sx={{ fontSize: 13, fontWeight: 400 }}>{option}</Typography>
-              </Box>
-            );
-          }}
-          filterSelectedOptions
-          popupIcon={<ChevronDown />}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              error={!!errors.capabilities}
-              placeholder="Select capabilities"
-              sx={capabilitiesRenderInputStyle}
-            />
-          )}
-          sx={{
-            ...getAutocompleteStyles(theme, {
-              hasError: !!errors.capabilities,
-            }),
-            backgroundColor: theme.palette.background.main,
-            "& .MuiChip-root": {
-              borderRadius: "4px",
-            },
-          }}
-          slotProps={capabilitiesSlotProps}
-        />
-        {errors.capabilities && (
-          <Typography
-            variant="caption"
-            sx={{
-              mt: 1,
-              color: "#f04438",
-              fontWeight: 300,
-              fontSize: 11,
-            }}
-          >
-            {errors.capabilities}
-          </Typography>
-        )}
-      </Stack>
+      <AutoCompleteField
+        label="Capabilities"
+        multiple
+        id="capabilities-input"
+        value={values.capabilities}
+        options={capabilityOptions}
+        onChange={handleCapabilityChange}
+        getOptionLabel={(option) => option}
+        noOptionsText={
+          values.capabilities.length === capabilityOptions.length
+            ? "All capabilities selected"
+            : "No options"
+        }
+        renderOption={(props, option) => {
+          const { key, ...otherProps } = props;
+          return (
+            <Box component="li" key={key} {...otherProps}>
+              <Typography sx={{ fontSize: 13, fontWeight: 400 }}>{option}</Typography>
+            </Box>
+          );
+        }}
+        filterSelectedOptions
+        popupIcon={<ChevronDown />}
+        placeholder="Select capabilities"
+        error={errors.capabilities}
+        sx={{ "& .MuiChip-root": { borderRadius: "4px" } }}
+      />
 
       {/* Used in Projects Section */}
-      <Stack>
-        <Typography
-          sx={{
-            fontSize: "13px",
-            fontWeight: 500,
-            height: "22px",
-            mb: theme.spacing(2),
-            color: theme.palette.text.secondary,
-          }}
-        >
-          Used in use cases
-        </Typography>
-        <Autocomplete
-          multiple
-          id="projects-input"
-          size="small"
-          value={
-            (values.projects || [])
-              .map((id) => projectList.find((p) => p.id === id)?.project_title)
-              .filter(Boolean) as string[]
-          }
-          options={projectsList}
-          onChange={handleSelectUsedInProjectChange}
-          getOptionLabel={(option) => option}
-          noOptionsText={
-            (values.projects || []).length === projectsList.length
-              ? "All projects selected"
-              : "No options"
-          }
-          renderOption={(props, option) => {
-            const { key, ...otherProps } = props;
-            return (
-              <Box component="li" key={key} {...otherProps}>
-                <Typography sx={{ fontSize: 13, fontWeight: 400 }}>{option}</Typography>
-              </Box>
-            );
-          }}
-          filterSelectedOptions
-          popupIcon={<ChevronDown size={16} />}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              error={!!errors.projects}
-              placeholder="Select projects"
-              sx={capabilitiesRenderInputStyle}
-            />
-          )}
-          sx={{
-            ...getAutocompleteStyles(theme, {
-              hasError: !!errors.projects,
-            }),
-            backgroundColor: theme.palette.background.main,
-            "& .MuiChip-root": {
-              borderRadius: "4px",
-            },
-          }}
-          slotProps={capabilitiesSlotProps}
-        />
-        {errors.projects && (
-          <Typography
-            variant="caption"
-            sx={{
-              mt: 1,
-              color: "#f04438",
-              fontWeight: 300,
-              fontSize: 11,
-            }}
-          >
-            {errors.projects}
-          </Typography>
-        )}
-      </Stack>
+      <AutoCompleteField
+        label="Used in use cases"
+        multiple
+        id="projects-input"
+        value={
+          (values.projects || [])
+            .map((id) => projectList.find((p) => p.id === id)?.project_title)
+            .filter(Boolean) as string[]
+        }
+        options={projectsList}
+        onChange={handleSelectUsedInProjectChange}
+        getOptionLabel={(option) => option}
+        noOptionsText={
+          (values.projects || []).length === projectsList.length
+            ? "All projects selected"
+            : "No options"
+        }
+        renderOption={(props, option) => {
+          const { key, ...otherProps } = props;
+          return (
+            <Box component="li" key={key} {...otherProps}>
+              <Typography sx={{ fontSize: 13, fontWeight: 400 }}>{option}</Typography>
+            </Box>
+          );
+        }}
+        filterSelectedOptions
+        popupIcon={<ChevronDown size={16} />}
+        placeholder="Select projects"
+        error={errors.projects}
+        sx={{ "& .MuiChip-root": { borderRadius: "4px" } }}
+      />
 
       {/* Used in Frameworks Section */}
-      <Stack>
-        <Typography
-          sx={{
-            fontSize: "13px",
-            fontWeight: 500,
-            height: "22px",
-            mb: theme.spacing(2),
-            color: theme.palette.text.secondary,
-          }}
-        >
-          Used in frameworks
-        </Typography>
-        <Autocomplete
-          multiple
-          id="frameworks-input"
-          size="small"
-          value={
-            (values.frameworks || [])
-              .map((id) => frameworkIdToNameMap.get(id))
-              .filter(Boolean) as string[]
-          }
-          options={frameworksList}
-          onChange={handleSelectUsedInFrameworksChange}
-          getOptionLabel={(option) => option}
-          noOptionsText={
-            (values.frameworks || []).length === frameworksList.length
-              ? "All frameworks selected"
-              : "No options"
-          }
-          renderOption={(props, option) => {
-            const { key, ...otherProps } = props;
-            return (
-              <Box component="li" key={key} {...otherProps}>
-                <Typography sx={{ fontSize: 13, fontWeight: 400 }}>{option}</Typography>
-              </Box>
-            );
-          }}
-          filterSelectedOptions
-          popupIcon={<ChevronDown size={16} />}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              error={!!errors.frameworks}
-              placeholder="Select frameworks"
-              sx={capabilitiesRenderInputStyle}
-            />
-          )}
-          sx={{
-            ...getAutocompleteStyles(theme, {
-              hasError: !!errors.frameworks,
-            }),
-            backgroundColor: theme.palette.background.main,
-            "& .MuiChip-root": {
-              borderRadius: "4px",
-            },
-          }}
-          slotProps={capabilitiesSlotProps}
-        />
-        {errors.frameworks && (
-          <Typography
-            variant="caption"
-            sx={{
-              mt: 1,
-              color: "#f04438",
-              fontWeight: 300,
-              fontSize: 11,
-            }}
-          >
-            {errors.frameworks}
-          </Typography>
-        )}
-      </Stack>
+      <AutoCompleteField
+        label="Used in frameworks"
+        multiple
+        id="frameworks-input"
+        value={
+          (values.frameworks || [])
+            .map((id) => frameworkIdToNameMap.get(id))
+            .filter(Boolean) as string[]
+        }
+        options={frameworksList}
+        onChange={handleSelectUsedInFrameworksChange}
+        getOptionLabel={(option) => option}
+        noOptionsText={
+          (values.frameworks || []).length === frameworksList.length
+            ? "All frameworks selected"
+            : "No options"
+        }
+        renderOption={(props, option) => {
+          const { key, ...otherProps } = props;
+          return (
+            <Box component="li" key={key} {...otherProps}>
+              <Typography sx={{ fontSize: 13, fontWeight: 400 }}>{option}</Typography>
+            </Box>
+          );
+        }}
+        filterSelectedOptions
+        popupIcon={<ChevronDown size={16} />}
+        placeholder="Select frameworks"
+        error={errors.frameworks}
+        sx={{ "& .MuiChip-root": { borderRadius: "4px" } }}
+      />
 
       <Stack direction={"row"} spacing={6}>
         <Suspense fallback={<div>Loading...</div>}>
