@@ -1,24 +1,47 @@
 import { ValidationException } from "../exceptions/custom.exception";
 
 jest.mock("sequelize-typescript", () => ({
-  Column: jest.fn(), DataType: {
-    INTEGER: "INTEGER", TEXT: "TEXT", DATE: "DATE", BOOLEAN: "BOOLEAN", JSONB: "JSONB", NOW: "NOW",
+  Column: jest.fn(),
+  DataType: {
+    INTEGER: "INTEGER",
+    TEXT: "TEXT",
+    DATE: "DATE",
+    BOOLEAN: "BOOLEAN",
+    JSONB: "JSONB",
+    NOW: "NOW",
   },
-  ForeignKey: jest.fn(), BelongsTo: jest.fn(), Table: jest.fn(),
+  ForeignKey: jest.fn(),
+  BelongsTo: jest.fn(),
+  Table: jest.fn(),
   Model: class MockModel {
-    constructor(data?: any) { if (data) Object.assign(this, data); }
-    async save() { return this; }
+    constructor(data?: any) {
+      if (data) Object.assign(this, data);
+    }
+    async save() {
+      return this;
+    }
   },
 }));
 
 class TestAutomationModel {
-  id?: number; name!: string; trigger_id!: number; params?: object;
-  is_active?: boolean; created_by?: number; created_at?: Date; updated_at?: Date;
+  id?: number;
+  name!: string;
+  trigger_id!: number;
+  params?: object;
+  is_active?: boolean;
+  created_by?: number;
+  created_at?: Date;
+  updated_at?: Date;
 
-  constructor(data?: any) { if (data) Object.assign(this, data); }
+  constructor(data?: any) {
+    if (data) Object.assign(this, data);
+  }
 
   static async createNewAutomation(
-    name: string, trigger_id: number, created_by?: number, is_active = true,
+    name: string,
+    trigger_id: number,
+    created_by?: number,
+    is_active = true,
   ): Promise<TestAutomationModel> {
     if (!name || name.trim().length === 0) {
       throw new ValidationException("Automation name is required", "name", name);
@@ -27,8 +50,10 @@ class TestAutomationModel {
       throw new ValidationException("Trigger ID is required", "trigger_id", trigger_id);
     }
     const a = new TestAutomationModel();
-    a.name = name.trim(); a.trigger_id = trigger_id;
-    a.created_by = created_by; a.is_active = is_active;
+    a.name = name.trim();
+    a.trigger_id = trigger_id;
+    a.created_by = created_by;
+    a.is_active = is_active;
     return a;
   }
 
@@ -39,10 +64,14 @@ class TestAutomationModel {
       }
       this.name = updateData.name.trim();
     }
-    if (updateData.is_active !== undefined) { this.is_active = updateData.is_active; }
+    if (updateData.is_active !== undefined) {
+      this.is_active = updateData.is_active;
+    }
   }
 
-  isActive(): boolean { return this.is_active === true; }
+  isActive(): boolean {
+    return this.is_active === true;
+  }
 
   getSummary() {
     return { id: this.id, name: this.name, is_active: this.is_active };
@@ -64,11 +93,15 @@ describe("AutomationModel", () => {
     });
 
     it("should throw for empty name", async () => {
-      await expect(TestAutomationModel.createNewAutomation("", 1)).rejects.toThrow(ValidationException);
+      await expect(TestAutomationModel.createNewAutomation("", 1)).rejects.toThrow(
+        ValidationException,
+      );
     });
 
     it("should throw for missing trigger_id", async () => {
-      await expect(TestAutomationModel.createNewAutomation("Test", 0)).rejects.toThrow(ValidationException);
+      await expect(TestAutomationModel.createNewAutomation("Test", 0)).rejects.toThrow(
+        ValidationException,
+      );
     });
 
     it("should default is_active to true", async () => {
