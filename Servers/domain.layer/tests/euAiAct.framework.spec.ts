@@ -1,27 +1,138 @@
 jest.mock("sequelize-typescript", () => ({
-  Column: jest.fn(), DataType: {
-    INTEGER: "INTEGER", STRING: jest.fn(() => "STRING"), TEXT: "TEXT",
-    DATE: "DATE", BOOLEAN: "BOOLEAN", FLOAT: "FLOAT", JSONB: "JSONB",
-    NOW: "NOW", ENUM: jest.fn(), ARRAY: jest.fn(),
+  Column: jest.fn(),
+  DataType: {
+    INTEGER: "INTEGER",
+    STRING: jest.fn(() => "STRING"),
+    TEXT: "TEXT",
+    DATE: "DATE",
+    BOOLEAN: "BOOLEAN",
+    FLOAT: "FLOAT",
+    JSONB: "JSONB",
+    NOW: "NOW",
+    ENUM: jest.fn(),
+    ARRAY: jest.fn(),
   },
-  ForeignKey: jest.fn(), BelongsTo: jest.fn(), HasMany: jest.fn(), Table: jest.fn(),
-  Model: class MockModel { constructor(data?: any) { if (data) Object.assign(this, data); } },
+  ForeignKey: jest.fn(),
+  BelongsTo: jest.fn(),
+  HasMany: jest.fn(),
+  Table: jest.fn(),
+  Model: class MockModel {
+    constructor(data?: any) {
+      if (data) Object.assign(this, data);
+    }
+  },
 }));
 
 // Test models for all 14 EU AI Act framework files
-class TestTopicStructEU { id?: number; title!: string; order_no?: number; constructor(d?: any) { if (d) Object.assign(this, d); } }
-class TestSubTopicStructEU { id?: number; title!: string; topic_id!: number; order_no?: number; constructor(d?: any) { if (d) Object.assign(this, d); } }
-class TestQuestionStructEU { id?: number; question!: string; subtopic_id!: number; hint?: string; constructor(d?: any) { if (d) Object.assign(this, d); } }
-class TestControlCategoryStructEU { id?: number; title!: string; order_no?: number; constructor(d?: any) { if (d) Object.assign(this, d); } }
-class TestControlStructEU { id?: number; title!: string; category_id!: number; order_no?: number; constructor(d?: any) { if (d) Object.assign(this, d); } }
-class TestSubControlStructEU { id?: number; title!: string; control_id!: number; constructor(d?: any) { if (d) Object.assign(this, d); } }
-class TestAssessmentEU { id?: number; project_id!: number; question_id!: number; constructor(d?: any) { if (d) Object.assign(this, d); } }
-class TestAnswerEU { id?: number; assessment_id!: number; answer!: string; constructor(d?: any) { if (d) Object.assign(this, d); } }
-class TestAnswerEURisks { id?: number; answer_id!: number; risk_description?: string; constructor(d?: any) { if (d) Object.assign(this, d); } }
-class TestControlEU { id?: number; project_id!: number; control_struct_id!: number; status?: string; constructor(d?: any) { if (d) Object.assign(this, d); } }
-class TestControlsEURisks { id?: number; control_id!: number; risk_description?: string; constructor(d?: any) { if (d) Object.assign(this, d); } }
-class TestSubControlEU { id?: number; control_id!: number; sub_control_struct_id!: number; status?: string; constructor(d?: any) { if (d) Object.assign(this, d); } }
-class TestSubControlEURisks { id?: number; sub_control_id!: number; risk_description?: string; constructor(d?: any) { if (d) Object.assign(this, d); } }
+class TestTopicStructEU {
+  id?: number;
+  title!: string;
+  order_no?: number;
+  constructor(d?: any) {
+    if (d) Object.assign(this, d);
+  }
+}
+class TestSubTopicStructEU {
+  id?: number;
+  title!: string;
+  topic_id!: number;
+  order_no?: number;
+  constructor(d?: any) {
+    if (d) Object.assign(this, d);
+  }
+}
+class TestQuestionStructEU {
+  id?: number;
+  question!: string;
+  subtopic_id!: number;
+  hint?: string;
+  constructor(d?: any) {
+    if (d) Object.assign(this, d);
+  }
+}
+class TestControlCategoryStructEU {
+  id?: number;
+  title!: string;
+  order_no?: number;
+  constructor(d?: any) {
+    if (d) Object.assign(this, d);
+  }
+}
+class TestControlStructEU {
+  id?: number;
+  title!: string;
+  category_id!: number;
+  order_no?: number;
+  constructor(d?: any) {
+    if (d) Object.assign(this, d);
+  }
+}
+class TestSubControlStructEU {
+  id?: number;
+  title!: string;
+  control_id!: number;
+  constructor(d?: any) {
+    if (d) Object.assign(this, d);
+  }
+}
+class TestAssessmentEU {
+  id?: number;
+  project_id!: number;
+  question_id!: number;
+  constructor(d?: any) {
+    if (d) Object.assign(this, d);
+  }
+}
+class TestAnswerEU {
+  id?: number;
+  assessment_id!: number;
+  answer!: string;
+  constructor(d?: any) {
+    if (d) Object.assign(this, d);
+  }
+}
+class TestAnswerEURisks {
+  id?: number;
+  answer_id!: number;
+  risk_description?: string;
+  constructor(d?: any) {
+    if (d) Object.assign(this, d);
+  }
+}
+class TestControlEU {
+  id?: number;
+  project_id!: number;
+  control_struct_id!: number;
+  status?: string;
+  constructor(d?: any) {
+    if (d) Object.assign(this, d);
+  }
+}
+class TestControlsEURisks {
+  id?: number;
+  control_id!: number;
+  risk_description?: string;
+  constructor(d?: any) {
+    if (d) Object.assign(this, d);
+  }
+}
+class TestSubControlEU {
+  id?: number;
+  control_id!: number;
+  sub_control_struct_id!: number;
+  status?: string;
+  constructor(d?: any) {
+    if (d) Object.assign(this, d);
+  }
+}
+class TestSubControlEURisks {
+  id?: number;
+  sub_control_id!: number;
+  risk_description?: string;
+  constructor(d?: any) {
+    if (d) Object.assign(this, d);
+  }
+}
 
 describe("EU AI Act Framework Models", () => {
   describe("TopicStructEU", () => {
@@ -33,14 +144,24 @@ describe("EU AI Act Framework Models", () => {
 
   describe("SubTopicStructEU", () => {
     it("should link to topic", () => {
-      const m = new TestSubTopicStructEU({ id: 1, title: "Risk Assessment", topic_id: 1, order_no: 1 });
+      const m = new TestSubTopicStructEU({
+        id: 1,
+        title: "Risk Assessment",
+        topic_id: 1,
+        order_no: 1,
+      });
       expect(m.topic_id).toBe(1);
     });
   });
 
   describe("QuestionStructEU", () => {
     it("should store question with hint", () => {
-      const m = new TestQuestionStructEU({ id: 1, question: "How is risk assessed?", subtopic_id: 1, hint: "Consider all scenarios" });
+      const m = new TestQuestionStructEU({
+        id: 1,
+        question: "How is risk assessed?",
+        subtopic_id: 1,
+        hint: "Consider all scenarios",
+      });
       expect(m.question).toBe("How is risk assessed?");
       expect(m.hint).toBe("Consider all scenarios");
     });
@@ -84,14 +205,23 @@ describe("EU AI Act Framework Models", () => {
 
   describe("AnswerEURisks", () => {
     it("should link risk to answer", () => {
-      const m = new TestAnswerEURisks({ id: 1, answer_id: 1, risk_description: "Insufficient testing" });
+      const m = new TestAnswerEURisks({
+        id: 1,
+        answer_id: 1,
+        risk_description: "Insufficient testing",
+      });
       expect(m.answer_id).toBe(1);
     });
   });
 
   describe("ControlEU", () => {
     it("should track control status per project", () => {
-      const m = new TestControlEU({ id: 1, project_id: 10, control_struct_id: 5, status: "implemented" });
+      const m = new TestControlEU({
+        id: 1,
+        project_id: 10,
+        control_struct_id: 5,
+        status: "implemented",
+      });
       expect(m.status).toBe("implemented");
     });
   });
@@ -105,7 +235,12 @@ describe("EU AI Act Framework Models", () => {
 
   describe("SubControlEU", () => {
     it("should track sub-control status", () => {
-      const m = new TestSubControlEU({ id: 1, control_id: 1, sub_control_struct_id: 1, status: "partial" });
+      const m = new TestSubControlEU({
+        id: 1,
+        control_id: 1,
+        sub_control_struct_id: 1,
+        status: "partial",
+      });
       expect(m.status).toBe("partial");
     });
   });
