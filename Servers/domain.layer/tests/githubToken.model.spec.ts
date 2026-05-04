@@ -1,10 +1,18 @@
 jest.mock("sequelize-typescript", () => ({
   Column: jest.fn(),
-  DataType: { INTEGER: "INTEGER", STRING: jest.fn(() => "STRING"), TEXT: "TEXT", DATE: "DATE", NOW: "NOW" },
+  DataType: {
+    INTEGER: "INTEGER",
+    STRING: jest.fn(() => "STRING"),
+    TEXT: "TEXT",
+    DATE: "DATE",
+    NOW: "NOW",
+  },
   ForeignKey: jest.fn(),
   Table: jest.fn(),
   Model: class MockModel {
-    constructor(data?: any) { if (data) Object.assign(this, data); }
+    constructor(data?: any) {
+      if (data) Object.assign(this, data);
+    }
   },
 }));
 
