@@ -78,13 +78,31 @@ describe("passwordValidation", () => {
       expect(result.hasSpecialChar).toBe(false);
     });
 
-    it.each(["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", ",", ".", "?", '"', ":", "{", "}", "|", "<", ">"])(
-      "should detect special character %s",
-      (char) => {
-        const result = passwordValidation(`Test123${char}`);
-        expect(result.hasSpecialChar).toBe(true);
-      },
-    );
+    it.each([
+      "!",
+      "@",
+      "#",
+      "$",
+      "%",
+      "^",
+      "&",
+      "*",
+      "(",
+      ")",
+      ",",
+      ".",
+      "?",
+      '"',
+      ":",
+      "{",
+      "}",
+      "|",
+      "<",
+      ">",
+    ])("should detect special character %s", (char) => {
+      const result = passwordValidation(`Test123${char}`);
+      expect(result.hasSpecialChar).toBe(true);
+    });
   });
 
   describe("max length", () => {
