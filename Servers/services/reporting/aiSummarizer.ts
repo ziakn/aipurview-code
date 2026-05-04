@@ -50,12 +50,16 @@ async function getModelFromKey(llmKeyId: number | undefined, organizationId: num
     return anthropic((llmKey as any).model || "claude-sonnet-4-20250514");
   }
 
+  const customBaseURL = (llmKey as any).url || undefined;
   const openai = createOpenAI({
     apiKey: (llmKey as any).key,
-    baseURL: (llmKey as any).url || undefined,
+    baseURL: customBaseURL,
     headers: (llmKey as any).custom_headers || undefined,
   });
-  return openai((llmKey as any).model || "gpt-4o-mini");
+  const modelId = (llmKey as any).model || "gpt-4o-mini";
+  // Only native OpenAI implements the Responses API. Any custom baseURL
+  // (OpenRouter, vLLM, Together, etc.) must use Chat Completions.
+  return customBaseURL ? openai.chat(modelId) : openai(modelId);
 }
 
 // ============================================================================
