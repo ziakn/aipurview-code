@@ -81,7 +81,10 @@ describe("enumValidation", () => {
   });
 
   it("should work with enum types", () => {
-    enum Status { Active = "active", Inactive = "inactive" }
+    enum Status {
+      Active = "active",
+      Inactive = "inactive",
+    }
     expect(enumValidation(Status.Active, [Status.Active, Status.Inactive])).toBe(true);
   });
 
