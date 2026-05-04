@@ -11,7 +11,9 @@ jest.mock("sequelize-typescript", () => ({
   ForeignKey: jest.fn(),
   Table: jest.fn(),
   Model: class MockModel {
-    constructor(data?: any) { if (data) Object.assign(this, data); }
+    constructor(data?: any) {
+      if (data) Object.assign(this, data);
+    }
   },
 }));
 
