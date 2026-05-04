@@ -1,4 +1,8 @@
-import { ApprovalStepStatus, ApprovalRequestStatus, EntityType } from "../enums/approval-workflow.enum";
+import {
+  ApprovalStepStatus,
+  ApprovalRequestStatus,
+  EntityType,
+} from "../enums/approval-workflow.enum";
 
 jest.mock("sequelize-typescript", () => ({
   Column: jest.fn(),
@@ -17,8 +21,12 @@ jest.mock("sequelize-typescript", () => ({
   HasMany: jest.fn(),
   Table: jest.fn(),
   Model: class MockModel {
-    constructor(data?: any) { if (data) Object.assign(this, data); }
-    get(_opts?: any) { return this; }
+    constructor(data?: any) {
+      if (data) Object.assign(this, data);
+    }
+    get(_opts?: any) {
+      return this;
+    }
   },
 }));
 
@@ -34,7 +42,9 @@ class TestApprovalWorkflowModel {
   created_at?: Date;
   updated_at?: Date;
 
-  constructor(data?: any) { if (data) Object.assign(this, data); }
+  constructor(data?: any) {
+    if (data) Object.assign(this, data);
+  }
 }
 
 class TestApprovalWorkflowStepModel {
@@ -46,7 +56,9 @@ class TestApprovalWorkflowStepModel {
   requires_all_approvers?: boolean;
   created_at?: Date;
 
-  constructor(data?: any) { if (data) Object.assign(this, data); }
+  constructor(data?: any) {
+    if (data) Object.assign(this, data);
+  }
 }
 
 class TestApprovalStepApproversModel {
@@ -55,7 +67,9 @@ class TestApprovalStepApproversModel {
   approver_id!: number;
   created_at?: Date;
 
-  constructor(data?: any) { if (data) Object.assign(this, data); }
+  constructor(data?: any) {
+    if (data) Object.assign(this, data);
+  }
 }
 
 class TestApprovalRequestModel {
@@ -113,7 +127,9 @@ class TestApprovalRequestStepApprovalModel {
   approved_at?: Date;
   created_at?: Date;
 
-  constructor(data?: any) { if (data) Object.assign(this, data); }
+  constructor(data?: any) {
+    if (data) Object.assign(this, data);
+  }
 }
 
 describe("ApprovalWorkflowModel", () => {
