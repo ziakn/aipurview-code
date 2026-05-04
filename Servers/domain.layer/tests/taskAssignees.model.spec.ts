@@ -1,12 +1,24 @@
 jest.mock("sequelize-typescript", () => ({
-  Column: jest.fn(), DataType: { INTEGER: "INTEGER", DATE: "DATE", NOW: "NOW" },
-  ForeignKey: jest.fn(), BelongsTo: jest.fn(), Table: jest.fn(),
-  Model: class MockModel { constructor(data?: any) { if (data) Object.assign(this, data); } },
+  Column: jest.fn(),
+  DataType: { INTEGER: "INTEGER", DATE: "DATE", NOW: "NOW" },
+  ForeignKey: jest.fn(),
+  BelongsTo: jest.fn(),
+  Table: jest.fn(),
+  Model: class MockModel {
+    constructor(data?: any) {
+      if (data) Object.assign(this, data);
+    }
+  },
 }));
 
 class TestTaskAssigneesModel {
-  id?: number; task_id!: number; user_id!: number; assigned_at?: Date;
-  constructor(data?: any) { if (data) Object.assign(this, data); }
+  id?: number;
+  task_id!: number;
+  user_id!: number;
+  assigned_at?: Date;
+  constructor(data?: any) {
+    if (data) Object.assign(this, data);
+  }
 }
 
 describe("TaskAssigneesModel", () => {
