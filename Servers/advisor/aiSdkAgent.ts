@@ -62,13 +62,19 @@ function createModel(
     return anthropic(params.model);
   }
 
-  // OpenAI, OpenRouter, and Custom all use the OpenAI-compatible interface
+  // OpenAI, OpenRouter, and Custom all use the OpenAI-compatible interface.
+  // Only native OpenAI implements the Responses API — OpenRouter and most
+  // OpenAI-compatible servers only implement Chat Completions, so force
+  // .chat() for them. Calling openai(model) defaults to Responses in v3.
   const openai = createOpenAI({
     apiKey: params.apiKey,
     baseURL: params.baseURL,
     headers: params.headers,
   });
-  return openai(params.model);
+  if (params.provider === "OpenAI") {
+    return openai(params.model);
+  }
+  return openai.chat(params.model);
 }
 
 /**

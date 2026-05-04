@@ -393,11 +393,15 @@ For each dimension, provide a refined score adjustment (-15 to +15). Respond ONL
       });
       model = anthropic((llmKey as any).model || "claude-sonnet-4-20250514");
     } else {
+      const customBaseURL = (llmKey as any).url || undefined;
       const openai = createOpenAI({
         apiKey: (llmKey as any).key,
-        baseURL: (llmKey as any).url || undefined,
+        baseURL: customBaseURL,
       });
-      model = openai((llmKey as any).model || "gpt-4o-mini");
+      const modelId = (llmKey as any).model || "gpt-4o-mini";
+      // Only native OpenAI implements the Responses API. Any custom baseURL
+      // (OpenRouter, vLLM, Together, etc.) must use Chat Completions.
+      model = customBaseURL ? openai.chat(modelId) : openai(modelId);
     }
 
     const result = await generateText({
