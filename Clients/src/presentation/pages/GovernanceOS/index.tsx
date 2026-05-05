@@ -15,7 +15,7 @@ import { useMappings, useScenarios } from "../../../application/hooks/useGoverna
 const GovernanceOS = () => {
   const navigate = useNavigate();
   const { tab } = useParams<{ tab?: string }>();
-  const [activeTab, setActiveTab] = useState(tab || "overview");
+  const [activeTab, setActiveTab] = useState(tab || "mapper");
 
   const { data: mappings } = useMappings();
   const { data: scenarios } = useScenarios();
@@ -93,10 +93,6 @@ const GovernanceOS = () => {
           onChange={handleTabChange}
           dataJoyrideId="governance-os-tabs"
         />
-
-        <TabPanel value="overview" sx={{ px: 0, py: 2 }}>
-          <FrameworkMapper />
-        </TabPanel>
 
         <TabPanel value="mapper" sx={{ px: 0, py: 2 }}>
           <FrameworkMapper />
