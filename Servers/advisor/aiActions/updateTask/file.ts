@@ -31,7 +31,13 @@ export async function fileUpdateTask(
     };
   }
 
-  const parsed = AgentUpdateTaskSchema.safeParse(params);
+  // Strip the bridge-injected `_userId` (and `_organizationId`) before
+  // strict-parsing — see toolBridge.ts which always appends `_userId`.
+  const { _userId: _u, _organizationId: _o, ...userParams } =
+    params as Record<string, unknown>;
+  void _u;
+  void _o;
+  const parsed = AgentUpdateTaskSchema.safeParse(userParams);
   if (!parsed.success) {
     return {
       status: "validation_failed",

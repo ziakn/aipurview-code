@@ -153,7 +153,7 @@ export const toolsDefinition: any[] = [
         type: "function",
         function: {
             name: "agent_create_risk",
-            description: "Create a new risk in the risk register for a specific project. Requires user confirmation before executing. Returns the created risk object.",
+            description: "Create a new PROJECT-level risk in the project risk register, scoped to a specific project (use case). Use this for organizational/operational risks tied to an AI initiative or project. DO NOT use this for risks specifically about an AI model's performance, bias, security, or data quality — for those, use agent_create_model_risk instead. Requires user confirmation before executing. Returns the created risk object.",
             parameters: {
                 type: "object",
                 properties: {

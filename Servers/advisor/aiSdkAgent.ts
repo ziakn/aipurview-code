@@ -178,7 +178,7 @@ export async function* streamAdvisorAiSdk(
     system: getAdvisorPrompt(),
     messages: selectMessages(params),
     tools,
-    stopWhen: stepCountIs(5),
+    stopWhen: stepCountIs(12),
     maxOutputTokens: 4096,
     onStepFinish: ({ toolCalls, text }) => {
       if (toolCalls && toolCalls.length > 0) {
@@ -241,7 +241,7 @@ export async function runAdvisorAiSdk(params: AiSdkAdvisorParams): Promise<strin
     system: getAdvisorPrompt(),
     messages: selectMessages(params),
     tools,
-    stopWhen: stepCountIs(5),
+    stopWhen: stepCountIs(12),
     maxOutputTokens: 4096,
   });
 
@@ -277,7 +277,7 @@ export function getStreamTextResult(params: AiSdkAdvisorParams) {
     system: getAdvisorPrompt(),
     messages: selectMessages(params),
     tools,
-    stopWhen: stepCountIs(5),
+    stopWhen: stepCountIs(12),
     maxOutputTokens: 4096,
     onStepFinish: ({ toolCalls }) => {
       if (toolCalls && toolCalls.length > 0) {
