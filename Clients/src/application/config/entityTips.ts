@@ -288,6 +288,28 @@ export const ENTITY_TIPS: EntityTips = {
         "Not everyone needs access to all governance data. Use roles to grant appropriate access levels: viewers for stakeholders, editors for governance team members, and admins for system owners. Role-based access protects sensitive information.",
     },
   ],
+  "governance-os": [
+    {
+      header: "Cross-framework mappings reveal shared compliance effort.",
+      content:
+        "Many controls in different frameworks (EU AI Act, ISO 42001, NIST AI RMF) overlap. The Framework Mapper shows these overlaps so you can satisfy multiple requirements with a single implementation, saving time and reducing duplication.",
+    },
+    {
+      header: "Scenario recommendations match frameworks to your context.",
+      content:
+        "The Scenario Builder uses your industry, region, risk level, and use case type to recommend which frameworks to prioritize. Select a scenario to set your organization's governance strategy and guide compliance planning.",
+    },
+    {
+      header: "Coverage analysis identifies gaps and synergies per project.",
+      content:
+        "Unified Insights shows how well each project covers its assigned frameworks. Gaps highlight controls that still need implementation, while synergies show controls that satisfy multiple frameworks at once.",
+    },
+    {
+      header: "Governance domains group controls by topic area.",
+      content:
+        "Controls are tagged with domains like data governance, risk management, or transparency. Filter by domain to focus on a specific governance area across all frameworks simultaneously.",
+    },
+  ],
   "shadow-ai-insights": [
     {
       header: "Shadow AI insights reveal hidden AI usage across your organization.",
