@@ -1,16 +1,13 @@
 import { useContext, useState } from "react";
 import {
-  Box,
   Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   CircularProgress,
   Button,
   Stack,
 } from "@mui/material";
+import { SelectChangeEvent } from "@mui/material/Select";
 import { BarChart3 } from "lucide-react";
+import Select from "../../components/Inputs/Select";
 import CoverageChart from "../../components/GovernanceOS/CoverageChart";
 import { DashboardHeaderCard } from "../../components/Cards/DashboardHeaderCard";
 import { EmptyState } from "../../components/EmptyState";
@@ -19,8 +16,8 @@ import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.cont
 
 const UnifiedInsights = () => {
   const { projects } = useContext(VerifyWiseContext);
-  const [selectedProjectId, setSelectedProjectId] = useState<number>(0);
-  const { data: coverage, isLoading } = useCoverage(selectedProjectId);
+  const [selectedProjectId, setSelectedProjectId] = useState<number | "">(""  );
+  const { data: coverage, isLoading } = useCoverage(typeof selectedProjectId === "number" ? selectedProjectId : 0);
   const refreshMutation = useRefreshCoverage();
 
   const totalMapped = (coverage || []).reduce((sum, c) => sum + c.mapped_controls, 0);
@@ -30,42 +27,45 @@ const UnifiedInsights = () => {
       ? Math.round(coverage.reduce((sum, c) => sum + c.coverage_percentage, 0) / coverage.length)
       : 0;
 
+  const projectItems = (projects || []).map((p: any) => ({
+    _id: p.id,
+    name: p.project_title,
+  }));
+
   return (
-    <Box>
-      <Typography variant="body2" sx={{ color: "#475467", mb: 2 }}>
+    <Stack spacing={3}>
+      <Typography variant="body2" sx={{ color: "#475467" }}>
         View cross-framework coverage analysis per project. Identify gaps and synergies across your active frameworks.
       </Typography>
 
-      <Stack direction="row" spacing={2} sx={{ mb: 3 }} alignItems="center">
-        <FormControl size="small" sx={{ minWidth: 250 }}>
-          <InputLabel>Select Project</InputLabel>
-          <Select
-            value={selectedProjectId}
-            label="Select Project"
-            onChange={(e) => setSelectedProjectId(Number(e.target.value))}
-          >
-            <MenuItem value={0} disabled>Choose a project</MenuItem>
-            {(projects || []).map((p: any) => (
-              <MenuItem key={p.id} value={p.id}>
-                {p.project_title}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+      <Stack direction="row" spacing={2} alignItems="flex-end">
+        <Select
+          id="project-select"
+          label="Select Project"
+          placeholder="Choose a project"
+          value={selectedProjectId}
+          items={projectItems}
+          onChange={(e: SelectChangeEvent<string | number>) => {
+            const val = e.target.value;
+            setSelectedProjectId(val === "" ? "" : Number(val));
+          }}
+          sx={{ minWidth: 280 }}
+        />
 
-        {selectedProjectId > 0 && (
+        {typeof selectedProjectId === "number" && selectedProjectId > 0 && (
           <Button
             size="small"
             variant="outlined"
             onClick={() => refreshMutation.mutate(selectedProjectId)}
             disabled={refreshMutation.isPending}
+            sx={{ height: 34 }}
           >
             {refreshMutation.isPending ? "Refreshing..." : "Refresh Coverage"}
           </Button>
         )}
       </Stack>
 
-      {selectedProjectId === 0 ? (
+      {selectedProjectId === "" ? (
         <EmptyState
           message="Select a project to view its cross-framework coverage analysis."
           icon={BarChart3}
@@ -76,9 +76,9 @@ const UnifiedInsights = () => {
           <CircularProgress size={32} />
         </Stack>
       ) : (
-        <>
+        <Stack spacing={3}>
           {/* Summary cards */}
-          <Stack direction="row" spacing={2} sx={{ mb: 3, width: "100%" }}>
+          <Stack direction="row" spacing={2} sx={{ width: "100%" }}>
             <DashboardHeaderCard
               title="Average Coverage"
               count={`${avgCoverage}%`}
@@ -103,9 +103,9 @@ const UnifiedInsights = () => {
 
           {/* Coverage breakdown */}
           <CoverageChart coverage={coverage || []} />
-        </>
+        </Stack>
       )}
-    </Box>
+    </Stack>
   );
 };
 
