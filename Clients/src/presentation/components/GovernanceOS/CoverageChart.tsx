@@ -12,7 +12,7 @@ const CoverageChart = ({ coverage }: ICoverageChartProps) => {
   }
 
   return (
-    <Stack spacing={1.5}>
+    <Stack spacing={2}>
       {coverage.map((fw) => (
         <Box
           key={fw.framework_id}
