@@ -49,6 +49,7 @@ export const toolsDefinition: any[] = [
         required: [],
       },
     },
+},
     {
         type: "function",
         function: {

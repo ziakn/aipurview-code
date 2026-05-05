@@ -12,7 +12,7 @@ export interface FetchModelRisksParams {
   status?: "Open" | "In Progress" | "Resolved" | "Accepted";
   // owner is the user ID FK (model_risks.owner is INTEGER REFERENCES users.id),
   // not a name. Resolve names via list_users first.
-  owner?: number;
+  owner?: string;
   limit?: number;
 }
 
