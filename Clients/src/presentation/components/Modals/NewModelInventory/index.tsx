@@ -532,16 +532,18 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
             getOptionLabel={(option) => (typeof option === "string" ? option : option.name)}
             onChange={(_event, newValue) => {
               if (typeof newValue === "string") {
-                setValues({ ...values, model: newValue });
+                setValues((prev) => ({ ...prev, model: newValue }));
               } else if (newValue && typeof newValue === "object") {
-                setValues({ ...values, model: newValue.name });
+                setValues((prev) => ({ ...prev, model: newValue.name }));
               } else {
-                setValues({ ...values, model: "" });
+                setValues((prev) => ({ ...prev, model: "" }));
               }
+              clearFieldError("model");
             }}
             onInputChange={(_event, newInputValue, reason) => {
               if (reason === "input") {
-                setValues({ ...values, model: newInputValue });
+                setValues((prev) => ({ ...prev, model: newInputValue }));
+                clearFieldError("model");
               }
             }}
             renderOption={(props, option) => {
@@ -562,7 +564,7 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
               return filtered.length === 0 ? [] : filtered;
             }}
             placeholder="Select or enter model"
-            helperText={errors.model}
+            error={errors.model}
             disabled={isLoadingUsers}
             sx={{ width: 220 }}
           />
