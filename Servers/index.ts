@@ -78,6 +78,7 @@ import aiDetectionRepositoryRoutes from "./routes/aiDetectionRepository.route";
 import githubIntegrationRoutes from "./routes/githubIntegration.route";
 import notificationRoutes from "./routes/notification.route";
 import postMarketMonitoringRoutes from "./routes/postMarketMonitoring.route";
+import governanceOsRoutes from "./routes/governanceOs.route";
 import complianceRoutes from "./routes/compliance.route";
 import virtualFolderRoutes, { filesFolderRouter } from "./routes/virtualFolder.route";
 import shadowAiRoutes from "./routes/shadowAi.route";
@@ -313,6 +314,7 @@ try {
   app.use("/api/audit-ledger", auditLedgerRoutes);
   app.use("/api/feature-settings", featureSettingsRoutes);
   app.use("/api/fria", friaRoutes);
+  app.use("/api/governance-os", governanceOsRoutes);
   app.use("/api/risk-benchmarks", riskBenchmarkRoutes);
   app.use("/api/quantitative-risks", quantitativeRiskRoutes);
   app.use("/api/ai-gateway", aiGatewayRoutes());
