@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Stack, Typography, CircularProgress } from "@mui/material";
+import { Stack, Typography, CircularProgress } from "@mui/material";
 import { GitCompareArrows } from "lucide-react";
 import FrameworkSelector from "../../components/GovernanceOS/FrameworkSelector";
 import MappingCard from "../../components/GovernanceOS/MappingCard";
@@ -32,8 +32,8 @@ const FrameworkMapper = () => {
   });
 
   return (
-    <Box>
-      <Typography variant="body2" sx={{ color: "#475467", mb: 2 }}>
+    <Stack spacing={3}>
+      <Typography variant="body2" sx={{ color: "#475467" }}>
         Explore cross-framework control mappings. Select source and target frameworks to see how controls align.
       </Typography>
 
@@ -45,15 +45,13 @@ const FrameworkMapper = () => {
       />
 
       {domainTileItems.length > 0 && (
-        <Box sx={{ mb: 2 }}>
-          <StatusTileCards
-            items={domainTileItems}
-            size="small"
-            entityName="mapping"
-            selectedKey={selectedDomain}
-            onCardClick={(key) => setSelectedDomain(selectedDomain === key ? null : key)}
-          />
-        </Box>
+        <StatusTileCards
+          items={domainTileItems}
+          size="small"
+          entityName="mapping"
+          selectedKey={selectedDomain}
+          onCardClick={(key) => setSelectedDomain(selectedDomain === key ? null : key)}
+        />
       )}
 
       {isLoading ? (
@@ -67,7 +65,7 @@ const FrameworkMapper = () => {
           showBorder
         />
       ) : (
-        <Stack spacing={1}>
+        <Stack spacing={2}>
           <Typography variant="caption" sx={{ color: "#8594AC" }}>
             {filteredMappings.length} mapping(s) found
           </Typography>
@@ -76,7 +74,7 @@ const FrameworkMapper = () => {
           ))}
         </Stack>
       )}
-    </Box>
+    </Stack>
   );
 };
 
