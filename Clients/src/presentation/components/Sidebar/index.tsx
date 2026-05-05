@@ -17,6 +17,7 @@ import {
   Bot,
   Database,
   Rocket,
+  GitCompareArrows,
 } from "lucide-react";
 import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.context";
 import useMultipleOnScreen from "../../../application/hooks/useMultipleOnScreen";
@@ -107,6 +108,12 @@ const Sidebar: React.FC<SidebarProps> = ({
       label: "Frameworks",
       icon: <Layers size={16} strokeWidth={1.5} />,
       path: "/framework",
+    },
+    {
+      id: "governance-os",
+      label: "Governance OS",
+      icon: <GitCompareArrows size={16} strokeWidth={1.5} />,
+      path: "/governance-os",
     },
   ];
 
