@@ -1,12 +1,13 @@
-import { FormControl, InputLabel, Select, MenuItem, Stack } from "@mui/material";
+import { Stack, SelectChangeEvent } from "@mui/material";
 import { ArrowRight } from "lucide-react";
+import Select from "../Inputs/Select";
 import { text } from "../../themes/palette";
 
 const FRAMEWORKS = [
-  { id: 1, name: "EU AI Act" },
-  { id: 2, name: "ISO 42001" },
-  { id: 3, name: "ISO 27001" },
-  { id: 4, name: "NIST AI RMF" },
+  { _id: 1, name: "EU AI Act" },
+  { _id: 2, name: "ISO 42001" },
+  { _id: 3, name: "ISO 27001" },
+  { _id: 4, name: "NIST AI RMF" },
 ];
 
 interface FrameworkSelectorProps {
@@ -23,38 +24,26 @@ const FrameworkSelector = ({
   onTargetChange,
 }: FrameworkSelectorProps) => {
   return (
-    <Stack direction="row" spacing={2} sx={{ mb: 3 }} alignItems="center">
-      <FormControl size="small" sx={{ minWidth: 200 }}>
-        <InputLabel>Source Framework</InputLabel>
-        <Select
-          value={sourceId}
-          label="Source Framework"
-          onChange={(e) => onSourceChange(Number(e.target.value))}
-        >
-          {FRAMEWORKS.map((fw) => (
-            <MenuItem key={fw.id} value={fw.id} disabled={fw.id === targetId}>
-              {fw.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+    <Stack direction="row" spacing={3} sx={{ mb: 3 }} alignItems="flex-end">
+      <Select
+        id="source-framework"
+        label="Source Framework"
+        value={sourceId}
+        items={FRAMEWORKS.filter((fw) => fw._id !== targetId)}
+        onChange={(e: SelectChangeEvent<string | number>) => onSourceChange(Number(e.target.value))}
+        sx={{ minWidth: 200 }}
+      />
 
-      <ArrowRight size={16} color={text.muted} />
+      <ArrowRight size={16} color={text.muted} style={{ marginBottom: 10 }} />
 
-      <FormControl size="small" sx={{ minWidth: 200 }}>
-        <InputLabel>Target Framework</InputLabel>
-        <Select
-          value={targetId}
-          label="Target Framework"
-          onChange={(e) => onTargetChange(Number(e.target.value))}
-        >
-          {FRAMEWORKS.map((fw) => (
-            <MenuItem key={fw.id} value={fw.id} disabled={fw.id === sourceId}>
-              {fw.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <Select
+        id="target-framework"
+        label="Target Framework"
+        value={targetId}
+        items={FRAMEWORKS.filter((fw) => fw._id !== sourceId)}
+        onChange={(e: SelectChangeEvent<string | number>) => onTargetChange(Number(e.target.value))}
+        sx={{ minWidth: 200 }}
+      />
     </Stack>
   );
 };
