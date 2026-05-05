@@ -101,6 +101,7 @@ export interface IScenarioCardProps {
   scenario: IGovernanceScenario;
   score?: number;
   matchedRules?: string[];
+  isSelected?: boolean;
   onSelect?: (scenario: IGovernanceScenario) => void;
 }
 
