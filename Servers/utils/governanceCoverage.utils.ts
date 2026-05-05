@@ -28,7 +28,7 @@ export const computeProjectCoverage = async (
   const [projectFrameworks] = await sequelize.query(
     `SELECT DISTINCT f.id as framework_id, f.name as framework_name
      FROM frameworks f
-     JOIN project_frameworks pf ON pf.framework_id = f.id
+     JOIN projects_frameworks pf ON pf.framework_id = f.id
      WHERE pf.project_id = :projectId`,
     { replacements: { projectId } },
   );
@@ -41,6 +41,8 @@ export const computeProjectCoverage = async (
   const results: FrameworkCoverage[] = [];
 
   for (const fw of projectFrameworks as any[]) {
+    const otherIds = frameworkIds.filter((id: number) => id !== fw.framework_id);
+
     // Count total controls for this framework (using source side of mappings as proxy)
     const [controlCountResult] = await sequelize.query(
       `SELECT COUNT(DISTINCT source_control_identifier) as total
@@ -62,61 +64,68 @@ export const computeProjectCoverage = async (
     // Total unique controls that appear in any mapping
     const totalControls = Math.max(totalFromSource, totalFromTarget, 1);
 
-    // Mapped controls: those that map to other frameworks in the project
-    const [mappedResult] = await sequelize.query(
-      `SELECT COUNT(DISTINCT source_control_identifier) as mapped
-       FROM governance_control_mappings
-       WHERE source_framework_id = :frameworkId
-         AND target_framework_id = ANY(:otherIds)`,
-      {
-        replacements: {
-          frameworkId: fw.framework_id,
-          otherIds: frameworkIds.filter((id: number) => id !== fw.framework_id),
+    // If no other frameworks in the project, mapped = 0
+    let mappedControls = 0;
+    let unmappedControls: string[] = [];
+    let multiFrameworkControls: string[] = [];
+
+    if (otherIds.length > 0) {
+      // Mapped controls: those that map to other frameworks in the project
+      const [mappedResult] = await sequelize.query(
+        `SELECT COUNT(DISTINCT source_control_identifier) as mapped
+         FROM governance_control_mappings
+         WHERE source_framework_id = :frameworkId
+           AND target_framework_id IN (:otherIds)`,
+        {
+          replacements: {
+            frameworkId: fw.framework_id,
+            otherIds,
+          },
         },
-      },
-    );
-    const mappedControls = parseInt((mappedResult as any[])[0]?.mapped || "0", 10);
+      );
+      mappedControls = parseInt((mappedResult as any[])[0]?.mapped || "0", 10);
+
+      // Gap: controls that exist but have no mapping to other active frameworks
+      const [gapResult] = await sequelize.query(
+        `SELECT DISTINCT source_control_identifier
+         FROM governance_control_mappings
+         WHERE source_framework_id = :frameworkId
+           AND source_control_identifier NOT IN (
+             SELECT source_control_identifier FROM governance_control_mappings
+             WHERE source_framework_id = :frameworkId
+               AND target_framework_id IN (:otherIds)
+           )`,
+        {
+          replacements: {
+            frameworkId: fw.framework_id,
+            otherIds,
+          },
+        },
+      );
+      unmappedControls = (gapResult as any[]).map((r) => r.source_control_identifier);
+
+      // Synergy: controls mapped to 2+ other frameworks
+      const [synergyResult] = await sequelize.query(
+        `SELECT source_control_identifier, COUNT(DISTINCT target_framework_id) as fw_count
+         FROM governance_control_mappings
+         WHERE source_framework_id = :frameworkId
+           AND target_framework_id IN (:otherIds)
+         GROUP BY source_control_identifier
+         HAVING COUNT(DISTINCT target_framework_id) >= 2`,
+        {
+          replacements: {
+            frameworkId: fw.framework_id,
+            otherIds,
+          },
+        },
+      );
+      multiFrameworkControls = (synergyResult as any[]).map(
+        (r) => r.source_control_identifier,
+      );
+    }
 
     const coveragePercentage =
       totalControls > 0 ? Math.round((mappedControls / totalControls) * 10000) / 100 : 0;
-
-    // Gap: controls that exist but have no mapping to other active frameworks
-    const [gapResult] = await sequelize.query(
-      `SELECT DISTINCT source_control_identifier
-       FROM governance_control_mappings
-       WHERE source_framework_id = :frameworkId
-         AND source_control_identifier NOT IN (
-           SELECT source_control_identifier FROM governance_control_mappings
-           WHERE source_framework_id = :frameworkId
-             AND target_framework_id = ANY(:otherIds)
-         )`,
-      {
-        replacements: {
-          frameworkId: fw.framework_id,
-          otherIds: frameworkIds.filter((id: number) => id !== fw.framework_id),
-        },
-      },
-    );
-    const unmappedControls = (gapResult as any[]).map((r) => r.source_control_identifier);
-
-    // Synergy: controls mapped to 3+ other frameworks
-    const [synergyResult] = await sequelize.query(
-      `SELECT source_control_identifier, COUNT(DISTINCT target_framework_id) as fw_count
-       FROM governance_control_mappings
-       WHERE source_framework_id = :frameworkId
-         AND target_framework_id = ANY(:otherIds)
-       GROUP BY source_control_identifier
-       HAVING COUNT(DISTINCT target_framework_id) >= 2`,
-      {
-        replacements: {
-          frameworkId: fw.framework_id,
-          otherIds: frameworkIds.filter((id: number) => id !== fw.framework_id),
-        },
-      },
-    );
-    const multiFrameworkControls = (synergyResult as any[]).map(
-      (r) => r.source_control_identifier,
-    );
 
     const coverage: FrameworkCoverage = {
       framework_id: fw.framework_id,
