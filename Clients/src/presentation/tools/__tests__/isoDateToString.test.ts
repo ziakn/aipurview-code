@@ -3,7 +3,7 @@ import { formatDate, displayFormattedDate, formatDateTime } from "../isoDateToSt
 
 describe("formatDate", () => {
   it("formats an ISO date to 'day month year'", () => {
-    expect(formatDate("2024-11-01T00:00:00Z")).toBe("1 November 2024");
+    expect(formatDate("2024-11-01")).toBe("1 November 2024");
   });
 
   it("formats another date correctly", () => {
@@ -25,21 +25,20 @@ describe("displayFormattedDate", () => {
   });
 
   it("uses DD-MM-YYYY as default format", () => {
-    const result = displayFormattedDate("2024-11-01T00:00:00Z");
+    const result = displayFormattedDate("2024-11-01");
     expect(result).toBe("01-11-2024");
   });
 
   it("respects localStorage preference for MM-DD-YYYY", () => {
-    localStorage.setItem(
-      "verifywise_preferences",
-      JSON.stringify({ date_format: "MM-DD-YYYY" })
-    );
-    const result = displayFormattedDate("2024-11-01T00:00:00Z");
+    localStorage.setItem("verifywise_preferences", JSON.stringify({ date_format: "MM-DD-YYYY" }));
+    const result = displayFormattedDate("2024-11-01");
     expect(result).toBe("11-01-2024");
   });
 
   it("handles Date objects", () => {
-    const date = new Date("2024-11-01T00:00:00Z");
+    // Construct a LOCAL-midnight date so round-trip via toISOString → dayjs
+    // (which formats in local) renders the same calendar day in every TZ.
+    const date = new Date(2024, 10, 1); // Nov 1 local
     const result = displayFormattedDate(date);
     expect(result).toBe("01-11-2024");
   });
@@ -52,7 +51,7 @@ describe("displayFormattedDate", () => {
   it("handles corrupt localStorage JSON gracefully", () => {
     localStorage.setItem("verifywise_preferences", "not-json{{{");
     // Should fall back to default format without throwing
-    const result = displayFormattedDate("2024-11-01T00:00:00Z");
+    const result = displayFormattedDate("2024-11-01");
     expect(result).toBe("01-11-2024");
   });
 });

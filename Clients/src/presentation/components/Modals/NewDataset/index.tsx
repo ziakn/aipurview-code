@@ -1,21 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, {
-  FC,
-  useState,
-  useMemo,
-  useCallback,
-  useEffect,
-  Suspense,
-} from "react";
-import {
-  useTheme,
-  Stack,
-  Box,
-  FormControlLabel,
-  Autocomplete,
-  TextField,
-  Typography,
-} from "@mui/material";
+import React, { FC, useState, useMemo, useCallback, useEffect, Suspense } from "react";
+import { useTheme, Stack, Box, FormControlLabel, Typography } from "@mui/material";
 import { TabContext } from "@mui/lab";
 import Toggle from "../../Inputs/Toggle";
 import { lazy } from "react";
@@ -31,17 +16,14 @@ import {
   DatasetType,
   DataClassification,
 } from "../../../../domain/enums/dataset.enum";
-import {
-  NewDatasetFormValues,
-  NewDatasetProps,
-} from "../../../../domain/interfaces/i.dataset";
+import { NewDatasetFormValues, NewDatasetProps } from "../../../../domain/interfaces/i.dataset";
 import dayjs, { Dayjs } from "dayjs";
 import { useModalKeyHandling } from "../../../../application/hooks/useModalKeyHandling";
 import { useFormValidation } from "../../../../application/hooks/useFormValidation";
 import { checkStringValidation } from "../../../../application/validations/stringValidation";
 import { useProjects } from "../../../../application/hooks/useProjects";
 import { Project } from "../../../../domain/types/Project";
-import { getAutocompleteStyles } from "../../../utils/inputStyles";
+import AutoCompleteField from "../../Inputs/Autocomplete";
 
 const initialState: NewDatasetFormValues = {
   name: "",
@@ -100,9 +82,7 @@ const NewDataset: FC<NewDatasetProps> = ({
 }) => {
   const theme = useTheme();
   const [activeTab, setActiveTab] = useState("details");
-  const [values, setValues] = useState<NewDatasetFormValues>(
-    initialData || initialState
-  );
+  const [values, setValues] = useState<NewDatasetFormValues>(initialData || initialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validators = useMemo(
@@ -139,7 +119,7 @@ const NewDataset: FC<NewDatasetProps> = ({
         return r.accepted ? "" : r.message;
       },
     }),
-    []
+    [],
   );
 
   const { errors, validateAll, clearFieldError, resetErrors } =
@@ -150,12 +130,8 @@ const NewDataset: FC<NewDatasetProps> = ({
       if (initialData) {
         const normalizedData = {
           ...initialData,
-          models: Array.isArray(initialData.models)
-            ? [...initialData.models]
-            : [],
-          projects: Array.isArray(initialData.projects)
-            ? [...initialData.projects]
-            : [],
+          models: Array.isArray(initialData.models) ? [...initialData.models] : [],
+          projects: Array.isArray(initialData.projects) ? [...initialData.projects] : [],
         };
         setValues(normalizedData);
       } else {
@@ -194,13 +170,12 @@ const NewDataset: FC<NewDatasetProps> = ({
   const isButtonDisabled = isSubmitting;
 
   const handleOnTextFieldChange = useCallback(
-    (prop: keyof NewDatasetFormValues) =>
-      (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value;
-        setValues((prev) => ({ ...prev, [prop]: value }));
-        clearFieldError(prop);
-      },
-    [clearFieldError]
+    (prop: keyof NewDatasetFormValues) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      setValues((prev) => ({ ...prev, [prop]: value }));
+      clearFieldError(prop);
+    },
+    [clearFieldError],
   );
 
   const handleOnSelectChange = useCallback(
@@ -209,7 +184,7 @@ const NewDataset: FC<NewDatasetProps> = ({
       setValues((prev) => ({ ...prev, [prop]: value }));
       clearFieldError(prop);
     },
-    [clearFieldError]
+    [clearFieldError],
   );
 
   const handleSelectModelsChange = useCallback(
@@ -217,7 +192,7 @@ const NewDataset: FC<NewDatasetProps> = ({
       const modelIds = newValue.map((m) => m.id).filter((id): id is number => id !== undefined);
       setValues((prev) => ({ ...prev, models: modelIds }));
     },
-    []
+    [],
   );
 
   const handleSelectProjectsChange = useCallback(
@@ -227,29 +202,29 @@ const NewDataset: FC<NewDatasetProps> = ({
         .filter((id): id is number => id !== undefined);
       setValues((prev) => ({ ...prev, projects: projectIds }));
     },
-    [projectList]
+    [projectList],
   );
 
-  const handleDateChange = useCallback((newDate: Dayjs | null) => {
-    if (newDate?.isValid()) {
-      setValues((prev) => ({
-        ...prev,
-        status_date: newDate ? newDate.format("YYYY-MM-DD") : "",
-      }));
-      clearFieldError("status_date");
-    }
-  }, [clearFieldError]);
-
-  const handleContainsPiiChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setValues((prev) => ({
-        ...prev,
-        contains_pii: event.target.checked,
-        pii_types: event.target.checked ? prev.pii_types : "",
-      }));
+  const handleDateChange = useCallback(
+    (newDate: Dayjs | null) => {
+      if (newDate?.isValid()) {
+        setValues((prev) => ({
+          ...prev,
+          status_date: newDate ? newDate.format("YYYY-MM-DD") : "",
+        }));
+        clearFieldError("status_date");
+      }
     },
-    []
+    [clearFieldError],
   );
+
+  const handleContainsPiiChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setValues((prev) => ({
+      ...prev,
+      contains_pii: event.target.checked,
+      pii_types: event.target.checked ? prev.pii_types : "",
+    }));
+  }, []);
 
   const handleClose = () => {
     setActiveTab("details");
@@ -286,45 +261,7 @@ const NewDataset: FC<NewDatasetProps> = ({
         padding: "0 14px",
       },
     }),
-    [theme.palette.background.main]
-  );
-
-  const autocompleteRenderInputStyle = {
-    "& .MuiOutlinedInput-root": {
-      paddingTop: "3.8px !important",
-      paddingBottom: "3.8px !important",
-    },
-    "& ::placeholder": {
-      fontSize: 13,
-    },
-  };
-
-  const autocompleteSlotProps = useMemo(
-    () => ({
-      paper: {
-        sx: {
-          "& .MuiAutocomplete-listbox": {
-            "& .MuiAutocomplete-option": {
-              fontSize: 13,
-              fontWeight: 400,
-              color: theme.palette.text.primary,
-              paddingLeft: "9px",
-              paddingRight: "9px",
-            },
-            "& .MuiAutocomplete-option.Mui-focused": {
-              background: theme.palette.background.fill,
-            },
-          },
-          "& .MuiAutocomplete-noOptions": {
-            fontSize: 13,
-            fontWeight: 400,
-            paddingLeft: "9px",
-            paddingRight: "9px",
-          },
-        },
-      },
-    }),
-    [theme.palette.text.primary, theme.palette.background.fill]
+    [theme.palette.background.main],
   );
 
   const formContent = (
@@ -431,9 +368,7 @@ const NewDataset: FC<NewDatasetProps> = ({
         <Suspense fallback={<div>Loading...</div>}>
           <DatePicker
             label="Status date"
-            date={
-              values.status_date ? dayjs(values.status_date) : dayjs(new Date())
-            }
+            date={values.status_date ? dayjs(values.status_date) : dayjs(new Date())}
             handleDateChange={handleDateChange}
             sx={{
               width: "33%",
@@ -502,12 +437,7 @@ const NewDataset: FC<NewDatasetProps> = ({
       {/* PII Section */}
       <Stack>
         <FormControlLabel
-          control={
-            <Toggle
-              checked={values.contains_pii}
-              onChange={handleContainsPiiChange}
-            />
-          }
+          control={<Toggle checked={values.contains_pii} onChange={handleContainsPiiChange} />}
           label={
             <Typography
               sx={{
@@ -593,121 +523,61 @@ const NewDataset: FC<NewDatasetProps> = ({
       </Stack>
 
       {/* Used in Models */}
-      <Stack>
-        <Typography
-          sx={{
-            fontSize: "13px",
-            fontWeight: 500,
-            height: "22px",
-            mb: theme.spacing(2),
-            color: theme.palette.text.secondary,
-          }}
-        >
-          Used in models
-        </Typography>
-        <Autocomplete
-          multiple
-          id="models-input"
-          size="small"
-          value={modelsList.filter((m) => values.models.includes(m.id as number))}
-          options={modelsList}
-          onChange={handleSelectModelsChange}
-          getOptionLabel={(option) => option.name}
-          isOptionEqualToValue={(option, value) => option.id === value.id}
-          noOptionsText={
-            values.models.length === modelsList.length
-              ? "All models selected"
-              : "No options"
-          }
-          renderOption={(props, option) => {
-            const { key, ...otherProps } = props;
-            return (
-              <Box component="li" key={key} {...otherProps}>
-                <Typography sx={{ fontSize: 13, fontWeight: 400 }}>
-                  {option.name}
-                </Typography>
-              </Box>
-            );
-          }}
-          filterSelectedOptions
-          popupIcon={<ChevronDown size={16} />}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              placeholder="Select models"
-              sx={autocompleteRenderInputStyle}
-            />
-          )}
-          sx={{
-            ...getAutocompleteStyles(theme, { hasError: false }),
-            backgroundColor: theme.palette.background.main,
-            "& .MuiChip-root": {
-              borderRadius: "4px",
-            },
-          }}
-          slotProps={autocompleteSlotProps}
-        />
-      </Stack>
+      <AutoCompleteField
+        multiple
+        id="models-input"
+        label="Used in models"
+        placeholder="Select models"
+        value={modelsList.filter((m) => values.models.includes(m.id as number))}
+        options={modelsList}
+        onChange={handleSelectModelsChange}
+        getOptionLabel={(option) => option.name}
+        isOptionEqualToValue={(option, value) => option.id === value.id}
+        noOptionsText={
+          values.models.length === modelsList.length ? "All models selected" : "No options"
+        }
+        renderOption={(props, option) => {
+          const { key, ...otherProps } = props;
+          return (
+            <Box component="li" key={key} {...otherProps}>
+              <Typography sx={{ fontSize: 13, fontWeight: 400 }}>{option.name}</Typography>
+            </Box>
+          );
+        }}
+        filterSelectedOptions
+        popupIcon={<ChevronDown size={16} />}
+      />
 
       {/* Used in Projects */}
-      <Stack>
-        <Typography
-          sx={{
-            fontSize: "13px",
-            fontWeight: 500,
-            height: "22px",
-            mb: theme.spacing(2),
-            color: theme.palette.text.secondary,
-          }}
-        >
-          Used in use cases
-        </Typography>
-        <Autocomplete
-          multiple
-          id="projects-input"
-          size="small"
-          value={
-            (values.projects || [])
-              .map((id) => projectList.find((p) => p.id === id)?.project_title)
-              .filter(Boolean) as string[]
-          }
-          options={projectsList}
-          onChange={handleSelectProjectsChange}
-          getOptionLabel={(option) => option}
-          noOptionsText={
-            (values.projects || []).length === projectsList.length
-              ? "All projects selected"
-              : "No options"
-          }
-          renderOption={(props, option) => {
-            const { key, ...otherProps } = props;
-            return (
-              <Box component="li" key={key} {...otherProps}>
-                <Typography sx={{ fontSize: 13, fontWeight: 400 }}>
-                  {option}
-                </Typography>
-              </Box>
-            );
-          }}
-          filterSelectedOptions
-          popupIcon={<ChevronDown size={16} />}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              placeholder="Select projects"
-              sx={autocompleteRenderInputStyle}
-            />
-          )}
-          sx={{
-            ...getAutocompleteStyles(theme, { hasError: false }),
-            backgroundColor: theme.palette.background.main,
-            "& .MuiChip-root": {
-              borderRadius: "4px",
-            },
-          }}
-          slotProps={autocompleteSlotProps}
-        />
-      </Stack>
+      <AutoCompleteField
+        multiple
+        id="projects-input"
+        label="Used in use cases"
+        placeholder="Select projects"
+        value={
+          (values.projects || [])
+            .map((id) => projectList.find((p) => p.id === id)?.project_title)
+            .filter(Boolean) as string[]
+        }
+        options={projectsList}
+        onChange={handleSelectProjectsChange}
+        getOptionLabel={(option) => option}
+        noOptionsText={
+          (values.projects || []).length === projectsList.length
+            ? "All projects selected"
+            : "No options"
+        }
+        renderOption={(props, option) => {
+          const { key, ...otherProps } = props;
+          return (
+            <Box component="li" key={key} {...otherProps}>
+              <Typography sx={{ fontSize: 13, fontWeight: 400 }}>{option}</Typography>
+            </Box>
+          );
+        }}
+        filterSelectedOptions
+        popupIcon={<ChevronDown size={16} />}
+      />
     </Stack>
   );
 
@@ -740,12 +610,7 @@ const NewDataset: FC<NewDatasetProps> = ({
           </Box>
           {activeTab === "details" && formContent}
           {activeTab === "activity" && (
-            <HistorySidebar
-              inline
-              isOpen={true}
-              entityType="dataset"
-              entityId={entityId}
-            />
+            <HistorySidebar inline isOpen={true} entityType="dataset" entityId={entityId} />
           )}
         </TabContext>
       ) : (

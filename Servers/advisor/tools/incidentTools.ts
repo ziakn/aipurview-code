@@ -36,23 +36,24 @@ export const toolsDefinition: any[] = [
             }
         }
     },
-    {
-        type: "function",
-        function: {
-            name: "get_incident_analytics",
-            description: "Get comprehensive analytics and distributions for AI incident data. Use this tool to understand incident patterns, identify trends, and generate insights about incident distribution across different dimensions. Returns aggregated statistics including type distribution, severity breakdown, status distribution, approval status, and incidents by AI project.",
-            parameters: {
-                type: "object",
-                properties: {
-                    includeArchived: {
-                        type: "boolean",
-                        description: "Whether to include archived incidents in analytics. Default is false."
-                    }
-                },
-                required: []
-            }
-        }
+  {
+    type: "function",
+    function: {
+      name: "get_incident_analytics",
+      description:
+        "Get comprehensive analytics and distributions for AI incident data. Use this tool to understand incident patterns, identify trends, and generate insights about incident distribution across different dimensions. Returns aggregated statistics including type distribution, severity breakdown, status distribution, approval status, and incidents by AI project.",
+      parameters: {
+        type: "object",
+        properties: {
+          includeArchived: {
+            type: "boolean",
+            description: "Whether to include archived incidents in analytics. Default is false.",
+          },
+        },
+        required: [],
+      },
     },
+},
     {
         type: "function",
         function: {

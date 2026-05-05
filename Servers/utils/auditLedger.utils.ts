@@ -73,33 +73,24 @@ async function isAuditLedgerEnabled(organizationId: number): Promise<boolean> {
 }
 
 /**
- * Postgres SQLSTATE for "could not serialize access due to read/write
- * dependencies among transactions" — emitted by SERIALIZABLE-level
- * transactions when concurrent appends touch the same rows. Standard
- * remediation is to retry the transaction.
+ * Namespace key for `pg_advisory_xact_lock(AUDIT_LEDGER_LOCK_NS, organization_id)`.
+ * Any fixed int works; using a project-unique value avoids collisions with
+ * other code that might take advisory locks.
  */
-const SERIALIZATION_FAILURE = "40001";
-const MAX_AUDIT_RETRIES = 5;
-const BASE_RETRY_DELAY_MS = 15;
-
-interface SequelizeDbError {
-  parent?: { code?: string };
-  original?: { code?: string };
-}
-
-function isSerializationFailure(error: unknown): boolean {
-  const err = error as SequelizeDbError;
-  return (
-    err?.parent?.code === SERIALIZATION_FAILURE ||
-    err?.original?.code === SERIALIZATION_FAILURE
-  );
-}
+const AUDIT_LEDGER_LOCK_NS = 9001;
 
 /**
- * Append an entry to the audit_ledger using a SERIALIZABLE transaction.
+ * Append an entry to the audit_ledger.
  *
- * Flow per attempt:
- * 1. Check if audit ledger is enabled for this organization
+ * Concurrency: appends within a single organization are linearized by a
+ * per-org `pg_advisory_xact_lock`. This guarantees the read of the last
+ * entry's hash and the follow-up INSERT are never interleaved with another
+ * append for the same org, so the hash chain stays consistent without
+ * relying on SERIALIZABLE isolation (which would thrash with 40001s under
+ * concurrent writes).
+ *
+ * Flow:
+ * 1. Acquire per-org advisory lock (released at transaction end)
  * 2. Get the prev_hash from the last entry (or GENESIS_HASH)
  * 3. INSERT with entry_hash = 'pending' sentinel
  * 4. Compute the real hash using the assigned id
@@ -113,49 +104,28 @@ function isSerializationFailure(error: unknown): boolean {
  * one of them under SERIALIZABLE, and retrying the loser is the standard
  * fix. Max 5 attempts so a pathological hot org can't spin forever.
  */
-export async function appendToAuditLedger(
-  entry: AuditLedgerEntry
-): Promise<void> {
+export async function appendToAuditLedger(entry: AuditLedgerEntry): Promise<void> {
   const organizationId = entry.organizationId;
 
   // Skip if audit ledger is disabled for this organization
   if (!(await isAuditLedgerEnabled(organizationId))) return;
 
-  let lastError: unknown;
-  for (let attempt = 0; attempt < MAX_AUDIT_RETRIES; attempt++) {
-    try {
-      await appendToAuditLedgerOnce(entry);
-      return;
-    } catch (error) {
-      if (!isSerializationFailure(error)) throw error;
-      lastError = error;
-      // Exponential backoff with jitter so two retriers don't lockstep.
-      const delay =
-        BASE_RETRY_DELAY_MS * 2 ** attempt + Math.random() * BASE_RETRY_DELAY_MS;
-      await new Promise((resolve) => setTimeout(resolve, delay));
-    }
-  }
-  throw lastError;
-}
-
-/**
- * Single attempt at appending. Wrapped in the retry loop above.
- * Extracted so the loop body stays small and unambiguous.
- */
-async function appendToAuditLedgerOnce(entry: AuditLedgerEntry): Promise<void> {
-  const organizationId = entry.organizationId;
-
-  const txn: Transaction = await sequelize.transaction({
-    isolationLevel: Transaction.ISOLATION_LEVELS.SERIALIZABLE,
-  });
+  const txn: Transaction = await sequelize.transaction();
 
   try {
+    // Step 0: Serialize appends per-org. Released when the txn ends.
+    await sequelize.query(`SELECT pg_advisory_xact_lock(:ns, :organizationId)`, {
+      replacements: { ns: AUDIT_LEDGER_LOCK_NS, organizationId },
+      type: QueryTypes.SELECT,
+      transaction: txn,
+    });
+
     // Step 1: Get the previous hash
     const lastRows: any[] = await sequelize.query(
       `SELECT entry_hash FROM audit_ledger
        WHERE organization_id = :organizationId
        ORDER BY id DESC LIMIT 1`,
-      { replacements: { organizationId }, type: QueryTypes.SELECT, transaction: txn }
+      { replacements: { organizationId }, type: QueryTypes.SELECT, transaction: txn },
     );
     const prevHash = lastRows.length > 0 ? lastRows[0].entry_hash.trim() : GENESIS_HASH;
 
@@ -186,7 +156,7 @@ async function appendToAuditLedgerOnce(entry: AuditLedgerEntry): Promise<void> {
         },
         type: QueryTypes.INSERT,
         transaction: txn,
-      }
+      },
     );
 
     // QueryTypes.INSERT returns [rows[], rowCount] — access first row from the array
@@ -194,9 +164,10 @@ async function appendToAuditLedgerOnce(entry: AuditLedgerEntry): Promise<void> {
     const inserted = rows[0];
     const newId: number = inserted.id;
     // Canonicalize to ISO string — Sequelize returns Date objects for TIMESTAMPTZ
-    const occurredAt: string = inserted.occurred_at instanceof Date
-      ? inserted.occurred_at.toISOString()
-      : String(inserted.occurred_at);
+    const occurredAt: string =
+      inserted.occurred_at instanceof Date
+        ? inserted.occurred_at.toISOString()
+        : String(inserted.occurred_at);
 
     // Step 3: Compute the real hash
     const realHash = computeEntryHash({
@@ -216,17 +187,24 @@ async function appendToAuditLedgerOnce(entry: AuditLedgerEntry): Promise<void> {
     });
 
     // Step 4: UPDATE sentinel → real hash (trigger allows this one transition)
-    await sequelize.query(
-      `UPDATE audit_ledger SET entry_hash = :realHash WHERE id = :id`,
-      {
-        replacements: { realHash, id: newId },
-        transaction: txn,
-      }
-    );
+    await sequelize.query(`UPDATE audit_ledger SET entry_hash = :realHash WHERE id = :id`, {
+      replacements: { realHash, id: newId },
+      transaction: txn,
+    });
 
     await txn.commit();
   } catch (error) {
-    await txn.rollback();
+    // If the failure happened during commit itself, the transaction is
+    // already marked finished and Sequelize will throw "cannot be rolled
+    // back because it has been finished" — masking the real cause. Only
+    // roll back if the transaction is still open.
+    if (!(txn as unknown as { finished?: string }).finished) {
+      try {
+        await txn.rollback();
+      } catch {
+        // swallow — we're already surfacing the original error
+      }
+    }
     throw error;
   }
 }
@@ -250,7 +228,7 @@ interface VerifyChainResult {
  */
 export async function verifyChain(
   organizationId: number,
-  options?: VerifyChainOptions
+  options?: VerifyChainOptions,
 ): Promise<VerifyChainResult> {
   const batchSize = options?.batchSize || 1000;
   const maxEntries = options?.maxEntries || 100000;
@@ -270,7 +248,7 @@ export async function verifyChain(
       {
         replacements: { organizationId, batchSize, offset },
         type: QueryTypes.SELECT,
-      }
+      },
     );
 
     if (rows.length === 0) break;
@@ -294,9 +272,8 @@ export async function verifyChain(
       }
 
       // Recompute hash from row data — canonicalize occurred_at to ISO string
-      const occurredAt = row.occurred_at instanceof Date
-        ? row.occurred_at.toISOString()
-        : String(row.occurred_at);
+      const occurredAt =
+        row.occurred_at instanceof Date ? row.occurred_at.toISOString() : String(row.occurred_at);
       const expectedHash = computeEntryHash({
         id: row.id,
         entry_type: row.entry_type,

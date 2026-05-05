@@ -137,14 +137,29 @@ function parseRouteFile(filePath: string): {
     let handlerName = "unknown";
 
     // Known middleware patterns to skip
+    // Use word-boundary-aware matching for patterns that could be substrings of handler names
     const middlewarePatterns = [
-      "authenticateJWT", "authorize", "superAdminOnly",
-      "multer", "upload", "express", "json", "raw", "proxy",
-      "validateId", "validateVisibility", "validate", "limiter",
-      "checkCache", "cacheResponse", "jsonParser",
+      "authenticateJWT",
+      "authorize",
+      "superAdminOnly",
+      "multer",
+      "upload.",
+      "express",
+      "jsonParser",
+      "rawParser",
+      "proxy",
+      "validateId",
+      "validateVisibility",
+      "validate",
+      "limiter",
+      "checkCache",
+      "cacheResponse",
     ];
 
-    for (const arg of args) {
+    // The last non-middleware argument is typically the handler.
+    // Process in reverse to find the handler first, then collect middlewares.
+    for (let i = args.length - 1; i >= 0; i--) {
+      const arg = args[i];
       const isMiddleware = middlewarePatterns.some((mw) => arg.includes(mw));
 
       if (isMiddleware) {
@@ -152,11 +167,16 @@ function parseRouteFile(filePath: string): {
         if (arg.includes("authorize")) middlewares.push(arg);
         if (arg.includes("superAdminOnly")) middlewares.push("superAdminOnly");
         if (arg.includes("upload")) middlewares.push("fileUpload");
-      } else if (/^[a-zA-Z_]\w*$/.test(arg)) {
-        // Simple identifier — this is the handler
-        handlerName = arg;
+      } else if (handlerName === "unknown") {
+        // Try to identify the handler
+        if (/^[a-zA-Z_]\w*$/.test(arg)) {
+          // Simple identifier — this is the handler
+          handlerName = arg;
+        } else if (arg.includes("=>") || arg.includes("function")) {
+          // Inline/anonymous handler — try to derive name from route path
+          handlerName = "anonymous";
+        }
       }
-      // Skip anything with parens/brackets that isn't a known middleware
     }
 
     endpoints.push({ method, routePath, handlerName, middlewares });
@@ -189,7 +209,7 @@ function buildEndpoints(): Endpoint[] {
     // Find which file this variable imports from
     let routeFilePath: string | null = null;
     const importLines = indexContent.match(
-      new RegExp("(?:import|const).*" + mapping.variableName + '.*from.*"\\./routes/([^"]+)"')
+      new RegExp("(?:import|const).*" + mapping.variableName + '.*from.*"\\./routes/([^"]+)"'),
     );
 
     if (importLines) {
@@ -215,7 +235,9 @@ function buildEndpoints(): Endpoint[] {
     }
 
     if (!routeFilePath || !fs.existsSync(routeFilePath)) {
-      console.warn("  Could not find route file for: " + mapping.basePath + " (" + mapping.variableName + ")");
+      console.warn(
+        "  Could not find route file for: " + mapping.basePath + " (" + mapping.variableName + ")",
+      );
       continue;
     }
 
@@ -343,7 +365,13 @@ function deriveTag(basePath: string): string {
     return "Change History";
   }
 
-  return tagMap[basePath] || basePath.replace("/api/", "").replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  return (
+    tagMap[basePath] ||
+    basePath
+      .replace("/api/", "")
+      .replace(/-/g, " ")
+      .replace(/\b\w/g, (c) => c.toUpperCase())
+  );
 }
 
 // Step 4: Generate OpenAPI YAML
@@ -383,9 +411,7 @@ function generateYaml(endpoints: Endpoint[]): string {
   // Group by path (strip trailing slashes)
   const pathMap = new Map<string, Endpoint[]>();
   for (const ep of endpoints) {
-    let openApiPath = ep.path
-      .replace(/\/:(\w+)/g, "/{$1}")
-      .replace(/^\/api/, "");
+    let openApiPath = ep.path.replace(/\/:(\w+)/g, "/{$1}").replace(/^\/api/, "");
 
     // Strip trailing slash (but keep "/" itself)
     if (openApiPath.length > 1 && openApiPath.endsWith("/")) {
@@ -500,11 +526,16 @@ function main() {
   const tags = [...new Set(endpoints.map((e) => e.tag))];
   console.log("Tags: " + tags.length);
   console.log(
-    "Methods: GET=" + endpoints.filter((e) => e.method === "get").length +
-    ", POST=" + endpoints.filter((e) => e.method === "post").length +
-    ", PUT=" + endpoints.filter((e) => e.method === "put").length +
-    ", PATCH=" + endpoints.filter((e) => e.method === "patch").length +
-    ", DELETE=" + endpoints.filter((e) => e.method === "delete").length
+    "Methods: GET=" +
+      endpoints.filter((e) => e.method === "get").length +
+      ", POST=" +
+      endpoints.filter((e) => e.method === "post").length +
+      ", PUT=" +
+      endpoints.filter((e) => e.method === "put").length +
+      ", PATCH=" +
+      endpoints.filter((e) => e.method === "patch").length +
+      ", DELETE=" +
+      endpoints.filter((e) => e.method === "delete").length,
   );
 
   const unresolved = endpoints.filter((e) => e.handlerName === "unknown");

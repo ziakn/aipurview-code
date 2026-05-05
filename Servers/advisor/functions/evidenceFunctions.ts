@@ -17,7 +17,7 @@ export interface FetchEvidenceParams {
 
 const fetchEvidence = async (
   params: FetchEvidenceParams,
-  organizationId: number
+  organizationId: number,
 ): Promise<any[]> => {
   try {
     let evidences = await getAllEvidencesQuery(organizationId);
@@ -28,9 +28,7 @@ const fetchEvidence = async (
       evidences = evidences.filter(
         (e: any) =>
           e.evidence_type &&
-          e.evidence_type
-            .toLowerCase()
-            .includes(params.evidence_type!.toLowerCase())
+          e.evidence_type.toLowerCase().includes(params.evidence_type!.toLowerCase()),
       );
     }
     if (params.expired_only) {
@@ -40,9 +38,7 @@ const fetchEvidence = async (
       });
     }
     if (params.expiring_soon) {
-      const thirtyDaysFromNow = new Date(
-        now.getTime() + 30 * 24 * 60 * 60 * 1000
-      );
+      const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
       evidences = evidences.filter((e: any) => {
         if (!e.expiry_date) return false;
         const expiry = new Date(e.expiry_date);
@@ -68,22 +64,20 @@ const fetchEvidence = async (
   } catch (error) {
     logger.error("Error fetching evidence:", error);
     throw new Error(
-      `Failed to fetch evidence: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to fetch evidence: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 };
 
 const getEvidenceAnalytics = async (
   _params: Record<string, unknown>,
-  organizationId: number
+  organizationId: number,
 ): Promise<any> => {
   try {
     const evidences = await getAllEvidencesQuery(organizationId);
     const total = evidences.length;
     const now = new Date();
-    const thirtyDaysFromNow = new Date(
-      now.getTime() + 30 * 24 * 60 * 60 * 1000
-    );
+    const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
     // Type distribution
     const typeDistribution: Record<string, number> = {};
@@ -130,22 +124,20 @@ const getEvidenceAnalytics = async (
   } catch (error) {
     logger.error("Error getting evidence analytics:", error);
     throw new Error(
-      `Failed to get evidence analytics: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to get evidence analytics: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 };
 
 const getEvidenceExecutiveSummary = async (
   _params: Record<string, unknown>,
-  organizationId: number
+  organizationId: number,
 ): Promise<any> => {
   try {
     const evidences = await getAllEvidencesQuery(organizationId);
     const total = evidences.length;
     const now = new Date();
-    const thirtyDaysFromNow = new Date(
-      now.getTime() + 30 * 24 * 60 * 60 * 1000
-    );
+    const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
     const expiredItems = evidences.filter((e: any) => {
       if (!e.expiry_date) return false;
@@ -185,7 +177,7 @@ const getEvidenceExecutiveSummary = async (
   } catch (error) {
     logger.error("Error getting evidence executive summary:", error);
     throw new Error(
-      `Failed to get evidence executive summary: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to get evidence executive summary: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 };

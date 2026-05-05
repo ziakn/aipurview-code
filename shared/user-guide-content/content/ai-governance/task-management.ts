@@ -10,11 +10,11 @@ export const taskManagementContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Task management in VerifyWise helps you coordinate AI governance activities and compliance tasks across your teams. From implementation milestones to audit preparation, the task system ensures accountability and visibility into your governance program.',
+      text: 'Task management in VerifyWise helps you coordinate AI governance activities and compliance tasks across your teams. Whether it\'s implementation milestones or audit prep, the task system keeps things visible and accountable.',
     },
     {
       type: 'paragraph',
-      text: 'Effective task management prevents compliance gaps by ensuring nothing falls through the cracks. Each task can be assigned, prioritized, and tracked through completion, with clear ownership and deadlines.',
+      text: 'It prevents compliance gaps by making sure nothing falls through the cracks. Each task can be assigned, prioritized and tracked through completion with clear ownership and deadlines.',
     },
     {
       type: 'heading',
@@ -24,7 +24,7 @@ export const taskManagementContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Navigate to **Tasks** from the main sidebar. The task management page displays summary cards showing task counts by status, followed by a searchable and filterable table of all tasks.',
+      text: 'Go to **Tasks** from the main sidebar. The page shows summary cards with task counts by status, followed by a searchable and filterable table of all tasks.',
     },
     {
       type: 'heading',
@@ -38,6 +38,8 @@ export const taskManagementContent: ArticleContent = {
         { bold: 'Open', text: 'Task has been created but work has not begun' },
         { bold: 'In progress', text: 'Task is actively being worked on' },
         { bold: 'Completed', text: 'Task has been finished successfully' },
+        { bold: 'Overdue', text: 'Task is past its due date and not yet completed' },
+        { bold: 'Deleted', text: 'Task has been removed (soft-deleted) and is hidden from default views' },
       ],
     },
     {
@@ -53,11 +55,11 @@ export const taskManagementContent: ArticleContent = {
     {
       type: 'ordered-list',
       items: [
-        { bold: 'Title', text: '— A clear, descriptive name for the task' },
-        { bold: 'Description', text: '— Detailed information about what needs to be done' },
-        { bold: 'Assignee', text: '— The team member responsible for completing the task' },
-        { bold: 'Priority', text: '— Low, medium, or high priority level' },
-        { bold: 'Due date', text: '— When the task should be completed' },
+        { bold: 'Title', text: ',A clear, descriptive name for the task' },
+        { bold: 'Description', text: ',Detailed information about what needs to be done' },
+        { bold: 'Assignee', text: ',The team member responsible for completing the task' },
+        { bold: 'Priority', text: ',Low, medium, or high priority level' },
+        { bold: 'Due date', text: ',When the task should be completed' },
       ],
     },
     {
@@ -78,11 +80,11 @@ export const taskManagementContent: ArticleContent = {
     {
       type: 'bullet-list',
       items: [
-        { bold: 'Filter tasks', text: 'Use the filter options to view tasks by status, assignee, priority, or due date' },
+        { bold: 'Filter tasks', text: 'Use the filter options to view tasks by status, assignee, priority or due date' },
         { bold: 'Search tasks', text: 'Use the search box to find tasks by title or description' },
         { bold: 'Update status', text: 'Change task status as work progresses' },
         { bold: 'Edit details', text: 'Modify task information, reassign, or update deadlines' },
-        { bold: 'Archive tasks', text: 'Archive tasks to declutter your list — use "Include archived" to view them later, or restore and delete as needed' },
+        { bold: 'Archive tasks', text: 'Archive tasks to declutter your list, use "Include archived" to view them later, or restore and delete as needed' },
       ],
     },
     {
@@ -94,7 +96,7 @@ export const taskManagementContent: ArticleContent = {
     {
       type: 'bullet-list',
       items: [
-        { bold: 'Clear ownership', text: 'Always assign a single person responsible for each task' },
+        { bold: 'Clear ownership', text: 'Tasks support multiple assignees (up to 20). When you have several, designate one as the primary owner so accountability is clear' },
         { bold: 'Realistic deadlines', text: 'Set achievable due dates to maintain team morale and trust' },
         { bold: 'Regular reviews', text: 'Review task progress regularly to identify blockers early' },
         { bold: 'Link to projects', text: 'Connect tasks to relevant projects for better traceability' },

@@ -10,7 +10,7 @@ export const modelsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The Models page is your central registry for the AI models used across your evaluation experiments. It shows which models have been tested, their providers, and how they\'ve been accessed (via API, locally through Ollama, or through HuggingFace).',
+      text: 'The Models page is your central registry for the AI models used across your evaluation experiments. It shows which models have been tested, their providers and how they\'ve been accessed (via API, locally through Ollama or through HuggingFace).',
     },
     {
       type: 'heading',
@@ -20,7 +20,7 @@ export const modelsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Each model entry shows the model name, provider, and access method. Models are automatically added to this list when they are used in experiments. You don\'t need to manually register models before running evaluations.',
+      text: 'Each model entry shows the model name, provider and access method. Models are automatically added to this list when they\'re used in experiments. You don\'t need to manually register models before running evaluations.',
     },
     {
       type: 'heading',
@@ -35,14 +35,13 @@ export const modelsContent: ArticleContent = {
     {
       type: 'bullet-list',
       items: [
-        { bold: 'OpenAI', text: 'GPT-4, GPT-4 Turbo, GPT-3.5 Turbo, and newer models.' },
-        { bold: 'Anthropic', text: 'Claude 3 Opus, Sonnet, and Haiku.' },
+        { bold: 'OpenAI', text: 'GPT-4, GPT-4 Turbo, GPT-3.5 Turbo and newer models.' },
+        { bold: 'Anthropic', text: 'Claude 3 and 3.5 family models (Opus, Sonnet, Haiku).' },
         { bold: 'Google Gemini', text: 'Gemini Pro and Ultra.' },
         { bold: 'xAI', text: 'Grok models.' },
         { bold: 'Mistral', text: 'Mistral Large and Medium.' },
-        { bold: 'HuggingFace', text: 'Open-source models. No API key required for some models.' },
-        { bold: 'Ollama', text: 'Locally-hosted models running on your own hardware.' },
-        { bold: 'Local / Custom API', text: 'Any endpoint with an OpenAI-compatible API.' },
+        { bold: 'OpenRouter', text: 'Aggregated access to 600+ models from many providers via a single API.' },
+        { bold: 'Ollama (self-hosted)', text: 'Locally-hosted models running on your own hardware.' },
       ],
     },
     {
@@ -53,7 +52,7 @@ export const modelsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'API keys for cloud providers are configured in the **Settings** tab of your evals project. Keys are stored securely and shared across all experiments in the project. You can add, update, or remove keys at any time.',
+      text: 'API keys for cloud providers are configured in the **Settings** tab of your evals project. Keys are stored securely and shared across all experiments in the project. You can add, update or remove keys at any time.',
     },
     {
       type: 'callout',

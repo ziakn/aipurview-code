@@ -18,7 +18,14 @@ import { sequelize } from "../../database/db";
 import logger from "../../utils/logger/fileLogger";
 
 export interface FetchIncidentsParams {
-  type?: "Malfunction" | "Unexpected behavior" | "Model drift" | "Misuse" | "Data corruption" | "Security breach" | "Performance degradation";
+  type?:
+    | "Malfunction"
+    | "Unexpected behavior"
+    | "Model drift"
+    | "Misuse"
+    | "Data corruption"
+    | "Security breach"
+    | "Performance degradation";
   severity?: "Minor" | "Serious" | "Very serious";
   status?: "Open" | "Investigating" | "Mitigated" | "Closed";
   approval_status?: "Approved" | "Rejected" | "Pending" | "Not required";
@@ -34,7 +41,7 @@ const fetchIncidents = async (
   let incidents: AIIncidentManagementModel[] = [];
 
   try {
-    incidents = await getAllIncidentsQuery(organizationId) as AIIncidentManagementModel[];
+    incidents = (await getAllIncidentsQuery(organizationId)) as AIIncidentManagementModel[];
 
     // Apply filters
     if (params.archived !== undefined) {
@@ -75,8 +82,7 @@ const fetchIncidents = async (
     if (hasValue(params.ai_project)) {
       incidents = incidents.filter(
         (i) =>
-          i.ai_project &&
-          i.ai_project.toLowerCase().includes(params.ai_project!.toLowerCase()),
+          i.ai_project && i.ai_project.toLowerCase().includes(params.ai_project!.toLowerCase()),
       );
     }
 
@@ -141,7 +147,7 @@ const getIncidentAnalytics = async (
   organizationId: number,
 ): Promise<IncidentAnalytics> => {
   try {
-    let incidents = await getAllIncidentsQuery(organizationId) as AIIncidentManagementModel[];
+    let incidents = (await getAllIncidentsQuery(organizationId)) as AIIncidentManagementModel[];
 
     const archivedIncidents = incidents.filter((i) => i.archived).length;
     const activeIncidents = incidents.filter((i) => !i.archived).length;
@@ -186,8 +192,7 @@ const getIncidentAnalytics = async (
 
     incidents.forEach((incident) => {
       if (incident.status) {
-        statusDistribution[incident.status] =
-          (statusDistribution[incident.status] || 0) + 1;
+        statusDistribution[incident.status] = (statusDistribution[incident.status] || 0) + 1;
       }
     });
 
@@ -305,7 +310,7 @@ const getIncidentExecutiveSummary = async (
   organizationId: number,
 ): Promise<IncidentExecutiveSummary> => {
   try {
-    let incidents = await getAllIncidentsQuery(organizationId) as AIIncidentManagementModel[];
+    let incidents = (await getAllIncidentsQuery(organizationId)) as AIIncidentManagementModel[];
 
     const activeIncidents = incidents.filter((i) => !i.archived).length;
 
@@ -331,12 +336,8 @@ const getIncidentExecutiveSummary = async (
     ).length;
 
     // Count by severity
-    const minorIncidents = incidents.filter(
-      (i) => i.severity === Severity.MINOR,
-    ).length;
-    const seriousIncidents = incidents.filter(
-      (i) => i.severity === Severity.SERIOUS,
-    ).length;
+    const minorIncidents = incidents.filter((i) => i.severity === Severity.MINOR).length;
+    const seriousIncidents = incidents.filter((i) => i.severity === Severity.SERIOUS).length;
     const verySeriousIncidents = incidents.filter(
       (i) => i.severity === Severity.VERY_SERIOUS,
     ).length;

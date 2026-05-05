@@ -14,7 +14,7 @@ export const ciCdIntegrationContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'This works with GitHub Actions out of the box. For other CI systems (GitLab, Jenkins, CircleCI), a standalone Python script and CLI are also available.',
+      text: 'This works with GitHub Actions out of the box. For other CI systems (GitLab, Jenkins, CircleCI), a standalone Python script and CLI are available too.',
     },
     {
       type: 'heading',
@@ -27,9 +27,9 @@ export const ciCdIntegrationContent: ArticleContent = {
       items: [
         { text: 'Creates an evaluation experiment on your VerifyWise instance.' },
         { text: 'Runs your model against the dataset you specify.' },
-        { text: 'An LLM judge scores each response on the metrics you chose (correctness, hallucination, faithfulness, etc.).' },
+        { text: 'An LLM judge scores each response on the metrics you chose (answer_relevancy, bias, toxicity, faithfulness, hallucination, contextual_relevancy).' },
         { text: 'If any metric falls below the threshold, the CI step fails and the PR is blocked.' },
-        { text: 'Results are posted as a PR comment, uploaded as build artifacts, and stored in your VerifyWise dashboard.' },
+        { text: 'Results are posted as a PR comment, uploaded as build artifacts and stored in your VerifyWise dashboard.' },
       ],
     },
     {
@@ -67,7 +67,7 @@ jobs:
           api_url: https://your-verifywise-instance.com
           project_id: proj_abc
           dataset_id: '2'
-          metrics: correctness,faithfulness,hallucination
+          metrics: answer_relevancy,faithfulness,hallucination
           model_name: gpt-4o-mini
           model_provider: openai
           threshold: '0.7'
@@ -101,7 +101,7 @@ jobs:
       type: 'callout',
       variant: 'info',
       title: 'Model vs judge',
-      text: 'The evaluation uses two LLMs: the model generates responses, and the judge scores them. If both use the same provider (e.g. both OpenAI), a single LLM_API_KEY is enough. If they use different providers, set JUDGE_API_KEY separately.',
+      text: 'The evaluation uses two LLMs: the model generates responses and the judge scores them. If both use the same provider (e.g. both OpenAI), a single LLM_API_KEY is enough. If they use different providers, set JUDGE_API_KEY separately.',
     },
     {
       type: 'heading',
@@ -149,17 +149,19 @@ jobs:
         { key: 'description', label: 'What it measures', width: '60%' },
       ],
       rows: [
-        { metric: 'correctness', category: 'Universal', description: 'Are the answers factually right?' },
         { metric: 'answer_relevancy', category: 'Universal', description: 'Is the response relevant to what was asked?' },
-        { metric: 'completeness', category: 'Universal', description: 'Does the answer cover all parts of the question?' },
         { metric: 'hallucination', category: 'Universal', description: 'How much of the response is fabricated? (lower is better)' },
         { metric: 'toxicity', category: 'Universal', description: 'Does the response contain harmful content? (lower is better)' },
         { metric: 'bias', category: 'Universal', description: 'Does the response exhibit unfair bias? (lower is better)' },
         { metric: 'faithfulness', category: 'RAG', description: 'Is the response grounded in the provided context?' },
         { metric: 'contextual_relevancy', category: 'RAG', description: 'Is the retrieved context relevant?' },
-        { metric: 'tool_correctness', category: 'Agent', description: 'Are the right tools selected?' },
-        { metric: 'task_completion', category: 'Agent', description: 'Is the overall task completed?' },
       ],
+    },
+    {
+      type: 'callout',
+      variant: 'info',
+      title: 'RAG metrics are off by default',
+      text: '`faithfulness` and `contextual_relevancy` are only meaningful when the model has retrieved context to evaluate against. Enable them in your experiment config only for RAG use cases; for non-RAG evaluations leave them disabled to avoid noisy or incorrect scores.',
     },
     {
       type: 'heading',
@@ -169,7 +171,7 @@ jobs:
     },
     {
       type: 'paragraph',
-      text: 'For GitLab CI, Jenkins, CircleCI, or any other system, use the standalone Python script. It only needs the requests library:',
+      text: 'For GitLab CI, Jenkins, CircleCI or any other system, use the standalone Python script. It only needs the requests library:',
     },
     {
       type: 'code',
@@ -179,14 +181,14 @@ jobs:
 python ci_eval_runner.py \\
   --api-url "$VW_API_URL" --token "$VW_API_TOKEN" \\
   --project-id "$VW_PROJECT_ID" --dataset-id "$VW_DATASET_ID" \\
-  --metrics "correctness,faithfulness" \\
+  --metrics "answer_relevancy,faithfulness" \\
   --model-name "gpt-4o-mini" --model-provider "openai" \\
   --threshold 0.7 \\
   --output results.json --markdown-output summary.md`,
     },
     {
       type: 'paragraph',
-      text: 'The script exits with code 0 if all metrics pass, 1 if any metric fails, and 2 on errors. Download ci_eval_runner.py from the verifywise-eval-action repository.',
+      text: 'The script exits with code 0 if all metrics pass, 1 if any metric fails and 2 on errors. Download ci_eval_runner.py from the verifywise-eval-action repository.',
     },
     {
       type: 'heading',
@@ -216,7 +218,7 @@ results = client.experiments.run_and_wait(
     model_name="gpt-4o-mini",
     model_provider="openai",
     dataset_id="2",
-    metrics=["correctness", "faithfulness", "hallucination"],
+    metrics=["answer_relevancy", "hallucination"],
     threshold=0.7,
 )
 
@@ -244,7 +246,7 @@ assert results.passed, f"Failed: {[m.name for m in results.metrics if not m.pass
     },
     {
       type: 'paragraph',
-      text: 'CI-triggered experiments appear in the same Experiments list as manually run ones. You can see the scores, compare against previous runs, and drill into individual prompt-level results from the VerifyWise dashboard.',
+      text: 'CI-triggered experiments appear in the same Experiments list as manually run ones. You can see the scores, compare against previous runs and drill into individual prompt-level results from the VerifyWise dashboard.',
     },
     {
       type: 'article-links',

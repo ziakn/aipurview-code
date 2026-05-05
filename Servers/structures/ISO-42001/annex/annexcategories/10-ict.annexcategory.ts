@@ -12,8 +12,7 @@ export const ICT: Partial<AnnexCategoryStructISO & AnnexCategoryISO>[] = [
     is_applicable: true,
     implementation_description:
       "Information security policies based on ISO/IEC 27001 protect AI systems throughout lifecycle.",
-    auditor_feedback:
-      "Security controls are comprehensive and well documented.",
+    auditor_feedback: "Security controls are comprehensive and well documented.",
   },
   {
     sub_id: 2.1,
@@ -37,8 +36,7 @@ export const ICT: Partial<AnnexCategoryStructISO & AnnexCategoryISO>[] = [
     is_applicable: true,
     implementation_description:
       "Data security policies ensure protection according to classification and organizational standards.",
-    auditor_feedback:
-      "Data security measures are consistent with best practices.",
+    auditor_feedback: "Data security measures are consistent with best practices.",
   },
   {
     sub_id: 4.1,
@@ -47,11 +45,8 @@ export const ICT: Partial<AnnexCategoryStructISO & AnnexCategoryISO>[] = [
     description: "Ensuring AI systems are resilient to failures and attacks.",
     guidance:
       "AI systems should be designed and operated to be resilient against failures, errors, and attacks.",
-    is_applicable: false,
-    justification_for_exclusion:
-      "Current AI deployments are limited and do not yet require advanced resilience measures.",
+    is_applicable: true,
     implementation_description: "",
-    auditor_feedback:
-      "Recommend planning for resilience as AI footprint expands.",
+    auditor_feedback: "",
   },
 ];

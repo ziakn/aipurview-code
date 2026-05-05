@@ -10,7 +10,7 @@ export const aiDetectionSettingsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The Settings page has 2 tabs: **GitHub integration** for repository access tokens, and **Risk scoring** for LLM-enhanced analysis, dimension weights, and vulnerability detection types.',
+      text: 'The Settings page has 2 tabs: **GitHub integration** for repository access tokens, and **Risk scoring** for LLM-enhanced analysis, dimension weights and vulnerability detection types.',
     },
     {
       type: 'heading',
@@ -81,7 +81,7 @@ export const aiDetectionSettingsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Toggle **LLM-enhanced analysis** on to enable AI-powered scoring. The risk scoring engine will send anonymized finding summaries to your configured LLM, which produces a written analysis, recommendations, and suggested risks.',
+      text: 'Toggle **LLM-enhanced analysis** on to enable AI-powered scoring. The risk scoring engine will send anonymized finding summaries to your configured LLM, which produces a written analysis, recommendations and suggested risks.',
     },
     {
       type: 'paragraph',
@@ -90,7 +90,7 @@ export const aiDetectionSettingsContent: ArticleContent = {
     {
       type: 'callout',
       variant: 'info',
-      text: 'Without LLM enhancement, risk scores use rule-based analysis only. The score is still accurate but won\'t include written summaries, recommendations, or suggested risks.',
+      text: 'Without LLM enhancement, risk scores use rule-based analysis only. The score is still accurate but won\'t include written summaries, recommendations or suggested risks.',
     },
     {
       type: 'heading',
@@ -130,11 +130,11 @@ export const aiDetectionSettingsContent: ArticleContent = {
       type: 'bullet-list',
       items: [
         { bold: 'Prompt injection (LLM01)', text: 'Detect untrusted input concatenated into LLM prompts' },
-        { bold: 'Insecure output handling (LLM02)', text: 'Detect LLM output passed to dangerous sinks' },
+        { bold: 'Jailbreak risk (LLM02)', text: 'Detect LLM output passed to dangerous sinks' },
         { bold: 'Training data poisoning (LLM03)', text: 'Detect insecure model deserialization and untrusted sources' },
         { bold: 'Model denial of service (LLM04)', text: 'Detect missing token limits and timeouts' },
         { bold: 'Supply chain (LLM05)', text: 'Detect unpinned versions and untrusted model URLs' },
-        { bold: 'Sensitive info disclosure (LLM06)', text: 'Detect PII and credentials passed to LLM context' },
+        { bold: 'PII exposure (LLM06)', text: 'Detect PII and credentials passed to LLM context' },
         { bold: 'Insecure plugin design (LLM07)', text: 'Detect tools without input validation or schemas' },
         { bold: 'Excessive agency (LLM08)', text: 'Detect agents with overly broad access and no human oversight' },
         { bold: 'Overreliance (LLM09)', text: 'Detect missing human review and confidence thresholds' },

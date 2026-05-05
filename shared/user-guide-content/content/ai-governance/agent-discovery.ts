@@ -10,7 +10,7 @@ export const agentDiscoveryContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Agent Discovery helps you find and track service accounts, technical users, and system identities across your connected source systems. These "agents" are non-human identities that interact with your AI systems, and knowing what they are and what they can access is a basic governance requirement.',
+      text: 'Agent discovery helps you find and track service accounts, technical users and system identities across your connected source systems. These "agents" are non-human identities that interact with your AI systems. Knowing what they are and what they can access is a basic governance requirement.',
     },
     {
       type: 'heading',
@@ -50,7 +50,7 @@ export const agentDiscoveryContent: ArticleContent = {
     {
       type: 'ordered-list',
       items: [
-        { text: 'Click **Refresh** to trigger a sync with your connected source systems.' },
+        { text: 'Click **Sync now** to trigger a sync with your connected source systems.' },
         { text: 'The system queries each source and imports any new agents it finds.' },
         { text: 'New agents appear with a status of "Unreviewed" so you can review them before they are confirmed.' },
       ],
@@ -65,7 +65,7 @@ export const agentDiscoveryContent: ArticleContent = {
       type: 'ordered-list',
       items: [
         { text: 'Click **Add agent**.' },
-        { text: 'Enter the agent\'s name, type, and permissions.' },
+        { text: 'Enter the agent\'s name, type, owner and notes.' },
         { text: 'Manually added agents are marked as such so you can distinguish them from auto-discovered ones.' },
       ],
     },
@@ -93,7 +93,7 @@ export const agentDiscoveryContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Click any agent row to open its details, where you can see the full permission set, source system, and last activity timestamp. From there you can update the review status.',
+      text: 'Click any agent row to open its details, where you can see the full permission set, source system and last activity timestamp. From there you can update the review status.',
     },
     {
       type: 'heading',
@@ -103,7 +103,7 @@ export const agentDiscoveryContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The table supports filtering by name, source system, agent type, review status, and staleness. Stale agents are those that haven\'t been active recently, which may indicate they should be decommissioned.',
+      text: 'The table supports filtering by name, source system, agent type, review status and staleness. Stale agents are those that haven\'t been active recently, which may indicate they should be decommissioned.',
     },
     {
       type: 'heading',

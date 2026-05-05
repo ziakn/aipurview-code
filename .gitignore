@@ -125,3 +125,4 @@ nul
 *.tgz
 *.tar.gz
 *.zip
+docs/api-docs/dist
