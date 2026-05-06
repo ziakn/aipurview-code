@@ -629,12 +629,16 @@ export async function updateGovernanceStatusController(
     if (
       governance_status !== null &&
       governance_status !== undefined &&
-      !["reviewed", "approved", "flagged"].includes(governance_status)
+      !["reviewed", "approved", "flagged", "suppressed", "accepted_risk"].includes(
+        governance_status,
+      )
     ) {
       return res
         .status(400)
         .json(
-          STATUS_CODE[400]("governance_status must be 'reviewed', 'approved', 'flagged', or null"),
+          STATUS_CODE[400](
+            "governance_status must be 'reviewed', 'approved', 'flagged', 'suppressed', 'accepted_risk', or null",
+          ),
         );
     }
 

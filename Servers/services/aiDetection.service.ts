@@ -2754,10 +2754,10 @@ export async function updateFindingGovernanceStatus(
   // Validate governance status if provided
   if (
     governanceStatus !== null &&
-    !["reviewed", "approved", "flagged"].includes(governanceStatus)
+    !["reviewed", "approved", "flagged", "suppressed", "accepted_risk"].includes(governanceStatus)
   ) {
     throw new ValidationException(
-      "governance_status must be 'reviewed', 'approved', 'flagged', or null",
+      "governance_status must be 'reviewed', 'approved', 'flagged', 'suppressed', 'accepted_risk', or null",
     );
   }
 
