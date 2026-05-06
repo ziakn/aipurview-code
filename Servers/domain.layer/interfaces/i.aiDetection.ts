@@ -158,7 +158,12 @@ export type VulnerabilityFindingType = (typeof VULNERABILITY_FINDING_TYPES)[numb
 /**
  * Valid governance status values for findings
  */
-export type GovernanceStatus = "reviewed" | "approved" | "flagged";
+export type GovernanceStatus =
+  | "reviewed"
+  | "approved"
+  | "flagged"
+  | "suppressed"
+  | "accepted_risk";
 
 /**
  * Valid confidence levels
@@ -209,6 +214,9 @@ export interface IFinding {
   governance_status?: GovernanceStatus | null;
   governance_updated_at?: Date;
   governance_updated_by?: number;
+  // Suppression flags
+  suppressed?: boolean;
+  suppression_rule_id?: number | null;
   // License information
   license_id?: string | null;
   license_name?: string | null;
