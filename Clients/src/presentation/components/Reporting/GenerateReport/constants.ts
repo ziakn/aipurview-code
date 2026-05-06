@@ -196,7 +196,7 @@ export function selectionToBackendFormat(
 export const EUAI_REPORT_TYPES = [
   "Use case risks report",
   "Requirements tracker report",
-  "Controls tracker report",
+  "Assessments tracker report",
   "Vendors and risks report",
   "Training registry report",
   "Policy manager report",

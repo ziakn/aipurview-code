@@ -87,11 +87,30 @@ export const countSubControlsEUByProjectId = async (
   totalSubcontrols: string;
   doneSubcontrols: string;
 }> => {
+  const visibleCategoryIds = await getVisibleEuCategoryIdsForProject(
+    projectFrameworkId,
+    organizationId,
+  );
+  if (visibleCategoryIds.length === 0) {
+    return { totalSubcontrols: "0", doneSubcontrols: "0" };
+  }
+
   const result = await sequelize.query(
-    `SELECT COUNT(*) AS "totalSubcontrols", COUNT(CASE WHEN sc.status = 'Done' THEN 1 END) AS "doneSubcontrols" FROM
-      controls_eu c JOIN subcontrols_eu sc ON c.organization_id = sc.organization_id AND c.id = sc.control_id WHERE c.organization_id = :organizationId AND c.projects_frameworks_id = :projects_frameworks_id;`,
+    `SELECT COUNT(*) AS "totalSubcontrols",
+            COUNT(CASE WHEN sc.status = 'Done' THEN 1 END) AS "doneSubcontrols"
+     FROM controls_eu c
+     JOIN subcontrols_eu sc
+       ON c.organization_id = sc.organization_id AND c.id = sc.control_id
+     JOIN controls_struct_eu cs ON c.control_meta_id = cs.id
+     WHERE c.organization_id = :organizationId
+       AND c.projects_frameworks_id = :projects_frameworks_id
+       AND cs.control_category_id IN (:visibleCategoryIds);`,
     {
-      replacements: { organizationId, projects_frameworks_id: projectFrameworkId },
+      replacements: {
+        organizationId,
+        projects_frameworks_id: projectFrameworkId,
+        visibleCategoryIds,
+      },
       type: QueryTypes.SELECT,
     },
   );
@@ -143,6 +162,40 @@ export const getTopicByIdForProjectQuery = async (
   return topic;
 };
 
+type ComplianceStatus = "Waiting" | "In progress" | "Done";
+
+export const deriveControlStatus = (
+  subcontrolStatuses: (ComplianceStatus | null | undefined)[],
+): ComplianceStatus => {
+  if (subcontrolStatuses.length === 0) return "Waiting";
+  if (subcontrolStatuses.every((s) => s === "Done")) return "Done";
+  if (subcontrolStatuses.every((s) => s === "Waiting" || s == null)) return "Waiting";
+  return "In progress";
+};
+
+export const findUsersNotInOrganization = async (
+  userIds: number[],
+  organizationId: number,
+  transaction: Transaction | null = null,
+): Promise<number[]> => {
+  const unique = Array.from(new Set(userIds.filter((id) => Number.isInteger(id) && id > 0)));
+  if (unique.length === 0) return [];
+
+  const rows = (await sequelize.query(
+    `SELECT id FROM users
+     WHERE organization_id = :organizationId
+       AND id IN (:userIds);`,
+    {
+      replacements: { organizationId, userIds: unique },
+      type: QueryTypes.SELECT,
+      ...(transaction ? { transaction } : {}),
+    },
+  )) as { id: number }[];
+
+  const found = new Set(rows.map((r) => r.id));
+  return unique.filter((id) => !found.has(id));
+};
+
 const getSubControlsCalculations = async (
   controlId: number,
   organizationId: number,
@@ -154,22 +207,19 @@ const getSubControlsCalculations = async (
   const conditions: string[] = ["c.organization_id = :organizationId", "c.id = :control_id"];
   const replacements: any = { organizationId, control_id: controlId };
 
-  // Add owner filter if provided
   if (owner !== undefined) {
-    conditions.push("sc.owner = :owner");
+    conditions.push("c.owner = :owner");
     replacements.owner = owner;
   }
 
-  // Add approver filter if provided
   if (approver !== undefined) {
-    conditions.push("sc.approver = :approver");
+    conditions.push("c.approver = :approver");
     replacements.approver = approver;
   }
 
-  // Add due date filter if provided (filters for due dates within the specified number of days)
   if (dueDateFilter !== undefined) {
     conditions.push(
-      `sc.due_date IS NOT NULL AND sc.due_date >= CURRENT_DATE AND sc.due_date <= CURRENT_DATE + :dueDateFilter * INTERVAL '1 day'`,
+      `c.due_date IS NOT NULL AND c.due_date >= CURRENT_DATE AND c.due_date <= CURRENT_DATE + :dueDateFilter * INTERVAL '1 day'`,
     );
     replacements.dueDateFilter = dueDateFilter;
   }
@@ -453,29 +503,26 @@ export const getSubControlsByIdQuery = async (
   organizationId: number,
   transaction: Transaction | null = null,
 ) => {
-  // Build WHERE conditions dynamically
   const conditions: string[] = [
     "sc.organization_id = :organizationId",
     "sc.control_id = :control_id",
   ];
   const replacements: any = { organizationId, control_id: subControlId };
 
-  // Add owner filter if provided
-  if (owner !== undefined) {
-    conditions.push("sc.owner = :owner");
-    replacements.owner = owner;
+  const filterFields: { key: "owner" | "approver"; value: number | undefined }[] = [
+    { key: "owner", value: owner },
+    { key: "approver", value: approver },
+  ];
+  for (const { key, value } of filterFields) {
+    if (value !== undefined) {
+      conditions.push(`c.${key} = :${key}`);
+      replacements[key] = value;
+    }
   }
 
-  // Add approver filter if provided
-  if (approver !== undefined) {
-    conditions.push("sc.approver = :approver");
-    replacements.approver = approver;
-  }
-
-  // Add due date filter if provided (filters for due dates within the specified number of days)
   if (dueDateFilter !== undefined) {
     conditions.push(
-      `sc.due_date IS NOT NULL AND sc.due_date >= CURRENT_DATE AND sc.due_date <= CURRENT_DATE + :dueDateFilter * INTERVAL '1 day'`,
+      `c.due_date IS NOT NULL AND c.due_date >= CURRENT_DATE AND c.due_date <= CURRENT_DATE + :dueDateFilter * INTERVAL '1 day'`,
     );
     replacements.dueDateFilter = dueDateFilter;
   }
@@ -500,7 +547,10 @@ export const getSubControlsByIdQuery = async (
       sc.evidence_description AS evidence_description,
       sc.feedback_description AS feedback_description,
       sc.created_at AS created_at
-    FROM subcontrols_eu sc JOIN subcontrols_struct_eu scs ON sc.subcontrol_meta_id = scs.id WHERE ${whereClause}
+    FROM subcontrols_eu sc
+      JOIN subcontrols_struct_eu scs ON sc.subcontrol_meta_id = scs.id
+      JOIN controls_eu c ON c.id = sc.control_id AND c.organization_id = sc.organization_id
+    WHERE ${whereClause}
     ORDER BY created_at DESC, id ASC;`,
     {
       replacements,
@@ -928,17 +978,9 @@ export const updateControlEUByIdQuery = async (
   transaction: Transaction,
 ): Promise<ControlEU> => {
   const updateControl: Partial<Record<keyof ControlEU, any>> & { organizationId?: number } = {};
-  const setClause = [
-    "status",
-    "approver",
-    "risk_review",
-    "owner",
-    "reviewer",
-    "due_date",
-    "implementation_details",
-  ]
+  const setClause = ["status", "approver", "risk_review", "owner", "reviewer", "due_date"]
     .filter((f) => {
-      if (control[f as keyof ControlEU] !== undefined && control[f as keyof ControlEU]) {
+      if (control[f as keyof ControlEU] !== undefined) {
         updateControl[f as keyof ControlEU] = control[f as keyof ControlEU];
         return true;
       }
@@ -993,28 +1035,18 @@ export const updateSubcontrolEUByIdQuery = async (
     {};
   const setClause = [
     "status",
-    "approver",
-    "risk_review",
-    "owner",
-    "reviewer",
-    "due_date",
     "implementation_details",
     "evidence_description",
     "feedback_description",
   ]
     .filter((f) => {
-      if (
-        subcontrol[f as keyof SubcontrolEU] !== undefined &&
-        subcontrol[f as keyof SubcontrolEU]
-      ) {
+      if (subcontrol[f as keyof SubcontrolEU] !== undefined) {
         updateSubControl[f as keyof SubcontrolEU] = subcontrol[f as keyof SubcontrolEU];
         return true;
       }
       return false;
     })
-    .map((f) => {
-      return `${f} = :${f}`;
-    })
+    .map((f) => `${f} = :${f}`)
     .join(", ");
 
   let subcontrolResult: any;

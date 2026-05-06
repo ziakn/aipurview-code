@@ -1,27 +1,18 @@
-import {
-  Alert,
-  Autocomplete,
-  Box,
-  SelectChangeEvent,
-  Stack,
-  TextField,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Alert, Box, SelectChangeEvent, Stack, Typography, useTheme } from "@mui/material";
 import { X as ClearIcon } from "lucide-react";
 import { Suspense, useCallback, useContext, useMemo, useState, useEffect } from "react";
 import { CustomizableButton } from "../../../components/button/customizable-button";
 import { PlusCircle as AddCircleOutlineIcon } from "lucide-react";
 import Field from "../../../components/Inputs/Field";
+import AutoCompleteField from "../../../components/Inputs/Autocomplete";
 import {
   createProjectButtonStyle,
-  teamMembersRenderInputStyle,
   teamMembersSlotProps,
   teamMembersSxStyle,
   textfieldStyle,
 } from "./style";
 import Select from "../../../components/Inputs/Select";
-import { getAutocompleteStyles } from "../../../utils/inputStyles";
+
 import useUsers from "../../../../application/hooks/useUsers";
 import useFrameworks from "../../../../application/hooks/useFrameworks";
 import DatePicker from "../../../components/Inputs/Datepicker";
@@ -624,104 +615,71 @@ export const ProjectForm = ({
         </Stack>
         <Stack className="vwproject-form-body-end" sx={{ gap: 6, flex: 1 }}>
           <Suspense fallback={<div>Loading...</div>}>
-            <Stack gap={theme.spacing(2)}>
-              <Typography
-                component="p"
-                variant="body1"
-                color={theme.palette.text.secondary}
-                fontWeight={500}
-                fontSize={"13px"}
-                sx={{
-                  margin: 0,
-                  height: "22px",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                Team members
-              </Typography>
-              <Autocomplete
-                multiple
-                id="users-input"
-                size="small"
-                value={values.members.map((user) => ({
-                  _id: Number(user._id),
-                  name: user.name,
-                  surname: user.surname,
-                  email: user.email,
-                }))}
-                options={
-                  users
-                    ?.filter(
-                      (user) =>
-                        !values.members.some(
-                          (selectedUser) => String(selectedUser._id) === String(user.id),
-                        ) && values.owner !== user.id,
-                    )
-                    .map((user) => ({
-                      _id: user.id,
-                      name: user.name,
-                      surname: user.surname,
-                      email: user.email,
-                    })) || []
-                }
-                noOptionsText={
-                  values.members.length === users.length ? "All members selected" : "No options"
-                }
-                onChange={handleOnMultiSelect("members")}
-                getOptionLabel={(user) => `${user.name} ${user.surname}`}
-                renderOption={(props, option) => {
-                  const { key, ...optionProps } = props;
-                  const userEmail =
-                    option.email.length > 30 ? `${option.email.slice(0, 30)}...` : option.email;
-                  return (
-                    <Box key={key} component="li" {...optionProps}>
-                      <Typography sx={{ fontSize: "13px" }}>
-                        {option.name} {option.surname}
-                      </Typography>
-                      <Typography
-                        sx={{
-                          fontSize: "11px",
-                          color: theme.palette.text.accent,
-                          position: "absolute",
-                          right: "9px",
-                        }}
-                      >
-                        {userEmail}
-                      </Typography>
-                    </Box>
-                  );
-                }}
-                filterSelectedOptions
-                popupIcon={<GreyDownArrowIcon size={16} />}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    placeholder="Select users"
-                    error={!!errors.members}
-                    sx={teamMembersRenderInputStyle}
-                  />
-                )}
-                sx={{
-                  backgroundColor: theme.palette.background.main,
-                  cursor: "pointer",
-                  ...getAutocompleteStyles(theme, { hasError: !!errors.members }),
-                  ...teamMembersSxStyle,
-                  "& .MuiOutlinedInput-root": {
-                    ...getAutocompleteStyles(theme, { hasError: !!errors.members })[
-                      "& .MuiOutlinedInput-root"
-                    ],
-                    "& fieldset": {
-                      ...getAutocompleteStyles(theme, { hasError: !!errors.members })[
-                        "& .MuiOutlinedInput-root"
-                      ]["& fieldset"],
-                      borderRadius: "3px",
-                    },
-                  },
-                }}
-                slotProps={teamMembersSlotProps}
-              />
-            </Stack>
+            <AutoCompleteField
+              label="Team members"
+              multiple
+              id="users-input"
+              value={values.members.map((user) => ({
+                _id: Number(user._id),
+                name: user.name,
+                surname: user.surname,
+                email: user.email,
+              }))}
+              options={
+                users
+                  ?.filter(
+                    (user) =>
+                      !values.members.some(
+                        (selectedUser) => String(selectedUser._id) === String(user.id),
+                      ) && values.owner !== user.id,
+                  )
+                  .map((user) => ({
+                    _id: user.id,
+                    name: user.name,
+                    surname: user.surname,
+                    email: user.email,
+                  })) || []
+              }
+              noOptionsText={
+                values.members.length === users.length ? "All members selected" : "No options"
+              }
+              onChange={handleOnMultiSelect("members")}
+              getOptionLabel={(user) => `${user.name} ${user.surname}`}
+              renderOption={(props, option) => {
+                const { key, ...optionProps } = props;
+                const userEmail =
+                  option.email.length > 30 ? `${option.email.slice(0, 30)}...` : option.email;
+                return (
+                  <Box key={key} component="li" {...optionProps}>
+                    <Typography sx={{ fontSize: "13px" }}>
+                      {option.name} {option.surname}
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: "11px",
+                        color: theme.palette.text.accent,
+                        position: "absolute",
+                        right: "9px",
+                      }}
+                    >
+                      {userEmail}
+                    </Typography>
+                  </Box>
+                );
+              }}
+              filterSelectedOptions
+              popupIcon={<GreyDownArrowIcon size={16} />}
+              placeholder="Select users"
+              error={errors.members}
+              sx={{
+                cursor: "pointer",
+                ...teamMembersSxStyle,
+                "& .MuiOutlinedInput-root fieldset": {
+                  borderRadius: "3px",
+                },
+              }}
+              slotProps={teamMembersSlotProps}
+            />
             <Stack sx={{ display: "flex", flexDirection: "row", gap: 6, width: "100%" }}>
               <Box sx={{ flex: 1 }}>
                 <DatePicker
@@ -753,124 +711,11 @@ export const ProjectForm = ({
               </Box>
             </Stack>
             {!projectToEdit && values.framework_type !== FrameworkTypeEnum.OrganizationWide && (
-              <Stack>
-                <Typography
-                  sx={{
-                    fontSize: theme.typography.fontSize,
-                    fontWeight: 500,
-                    mb: 2,
-                  }}
-                >
-                  Applicable regulations *
-                </Typography>
-                <Autocomplete
-                  multiple
-                  id="monitored-regulations-and-standards-input"
-                  size="small"
-                  value={values.monitored_regulations_and_standards}
-                  options={filteredFrameworks}
-                  onChange={handleOnMultiSelect("monitored_regulations_and_standards")}
-                  getOptionLabel={(item) => item.name}
-                  noOptionsText={
-                    values.monitored_regulations_and_standards.length === filteredFrameworks.length
-                      ? "All regulations selected"
-                      : "No options"
-                  }
-                  renderOption={(props, option) => {
-                    const { key, ...optionProps } = props;
-                    const isComingSoon = option.name.includes("coming soon");
-                    return (
-                      <Box
-                        key={key}
-                        component="li"
-                        {...optionProps}
-                        sx={{
-                          opacity: isComingSoon ? 0.5 : 1,
-                          cursor: isComingSoon ? "not-allowed" : "pointer",
-                          "&:hover": {
-                            backgroundColor: isComingSoon ? "transparent" : undefined,
-                          },
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            fontSize: "13px",
-                            color: isComingSoon ? "text.secondary" : "text.primary",
-                          }}
-                        >
-                          {option.name}
-                        </Typography>
-                      </Box>
-                    );
-                  }}
-                  isOptionEqualToValue={(option, value) => option._id === value._id}
-                  getOptionDisabled={(option) => option.name.includes("coming soon")}
-                  filterSelectedOptions
-                  popupIcon={<GreyDownArrowIcon size={16} />}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      error={!!errors.monitored_regulations_and_standards}
-                      placeholder="Select regulations and standards"
-                      sx={teamMembersRenderInputStyle}
-                    />
-                  )}
-                  sx={{
-                    backgroundColor: theme.palette.background.main,
-                    ...teamMembersSxStyle,
-                  }}
-                  slotProps={teamMembersSlotProps}
-                />
-                {!!errors.monitored_regulations_and_standards && (
-                  <Typography
-                    variant="caption"
-                    sx={{ mt: 4, color: theme.palette.status.error.text, fontWeight: 300 }}
-                  >
-                    {errors.monitored_regulations_and_standards}
-                  </Typography>
-                )}
-              </Stack>
-            )}
-          </Suspense>
-          {/* Goal field - only for project-based frameworks */}
-          {values.framework_type === FrameworkTypeEnum.ProjectBased && (
-            <Field
-              id="goal-input"
-              label="Goal"
-              type="description"
-              value={values.goal}
-              onChange={handleOnTextFieldChange("goal")}
-              sx={{
-                backgroundColor: theme.palette.background.main,
-                marginTop: "1px",
-                ...(projectToEdit && { width: "350px" }), // Fix width when editing
-              }}
-              rows={8}
-              isRequired
-              error={errors.goal}
-            />
-          )}
-        </Stack>
-      </Stack>
-
-      {/* Goal field - full width only for organization-wide frameworks */}
-      {values.framework_type === FrameworkTypeEnum.OrganizationWide && (
-        <Stack>
-          {!projectToEdit && (
-            <Stack sx={{ mb: 2 }}>
-              <Typography
-                sx={{
-                  fontSize: theme.typography.fontSize,
-                  fontWeight: 500,
-                  mb: 2,
-                }}
-              >
-                Applicable regulations *
-              </Typography>
-              <Autocomplete
+              <AutoCompleteField
+                label="Applicable regulations"
+                isRequired
                 multiple
                 id="monitored-regulations-and-standards-input"
-                size="small"
                 value={values.monitored_regulations_and_standards}
                 options={filteredFrameworks}
                 onChange={handleOnMultiSelect("monitored_regulations_and_standards")}
@@ -911,30 +756,88 @@ export const ProjectForm = ({
                 getOptionDisabled={(option) => option.name.includes("coming soon")}
                 filterSelectedOptions
                 popupIcon={<GreyDownArrowIcon size={16} />}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    error={!!errors.monitored_regulations_and_standards}
-                    placeholder="Select regulations and standards"
-                    sx={teamMembersRenderInputStyle}
-                  />
-                )}
-                sx={{
-                  backgroundColor: theme.palette.background.main,
-                  ...teamMembersSxStyle,
-                  width: "100%",
-                }}
+                placeholder="Select regulations and standards"
+                error={errors.monitored_regulations_and_standards}
+                sx={{ ...teamMembersSxStyle }}
                 slotProps={teamMembersSlotProps}
               />
-              {!!errors.monitored_regulations_and_standards && (
-                <Typography
-                  variant="caption"
-                  sx={{ mt: 4, color: theme.palette.status.error.text, fontWeight: 300 }}
-                >
-                  {errors.monitored_regulations_and_standards}
-                </Typography>
-              )}
-            </Stack>
+            )}
+          </Suspense>
+          {/* Goal field - only for project-based frameworks */}
+          {values.framework_type === FrameworkTypeEnum.ProjectBased && (
+            <Field
+              id="goal-input"
+              label="Goal"
+              type="description"
+              value={values.goal}
+              onChange={handleOnTextFieldChange("goal")}
+              sx={{
+                backgroundColor: theme.palette.background.main,
+                marginTop: "1px",
+                ...(projectToEdit && { width: "350px" }), // Fix width when editing
+              }}
+              rows={8}
+              isRequired
+              error={errors.goal}
+            />
+          )}
+        </Stack>
+      </Stack>
+
+      {/* Goal field - full width only for organization-wide frameworks */}
+      {values.framework_type === FrameworkTypeEnum.OrganizationWide && (
+        <Stack>
+          {!projectToEdit && (
+            <AutoCompleteField
+              label="Applicable regulations"
+              isRequired
+              multiple
+              id="monitored-regulations-and-standards-input"
+              value={values.monitored_regulations_and_standards}
+              options={filteredFrameworks}
+              onChange={handleOnMultiSelect("monitored_regulations_and_standards")}
+              getOptionLabel={(item) => item.name}
+              noOptionsText={
+                values.monitored_regulations_and_standards.length === filteredFrameworks.length
+                  ? "All regulations selected"
+                  : "No options"
+              }
+              renderOption={(props, option) => {
+                const { key, ...optionProps } = props;
+                const isComingSoon = option.name.includes("coming soon");
+                return (
+                  <Box
+                    key={key}
+                    component="li"
+                    {...optionProps}
+                    sx={{
+                      opacity: isComingSoon ? 0.5 : 1,
+                      cursor: isComingSoon ? "not-allowed" : "pointer",
+                      "&:hover": {
+                        backgroundColor: isComingSoon ? "transparent" : undefined,
+                      },
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: "13px",
+                        color: isComingSoon ? "text.secondary" : "text.primary",
+                      }}
+                    >
+                      {option.name}
+                    </Typography>
+                  </Box>
+                );
+              }}
+              isOptionEqualToValue={(option, value) => option._id === value._id}
+              getOptionDisabled={(option) => option.name.includes("coming soon")}
+              filterSelectedOptions
+              popupIcon={<GreyDownArrowIcon size={16} />}
+              placeholder="Select regulations and standards"
+              error={errors.monitored_regulations_and_standards}
+              sx={{ ...teamMembersSxStyle, width: "100%" }}
+              slotProps={teamMembersSlotProps}
+            />
           )}
           <Field
             id="goal-input"

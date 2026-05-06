@@ -30,7 +30,7 @@ import DatePicker from "../../Inputs/Datepicker";
 import Select from "../../Inputs/Select";
 import TabBar from "../../TabBar";
 import StandardModal from "../../Modals/StandardModal";
-import { useState, useEffect, lazy, Suspense, useRef } from "react";
+import { useState, useEffect, useMemo, lazy, Suspense, useRef } from "react";
 import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import { CustomizableButton } from "../../button/customizable-button";
@@ -108,6 +108,18 @@ const VWISO42001AnnexDrawerDialog = ({
   const [fetchedAnnex, setFetchedAnnex] = useState<AnnexCategoryISO>();
   const [isLoading, setIsLoading] = useState(false);
   const [projectMembers, setProjectMembers] = useState<User[]>([]);
+  const memberOptions = useMemo(
+    () => [
+      { _id: "" as string | number, name: "(none)" },
+      ...projectMembers.map((user) => ({
+        _id: user.id as string | number,
+        name: `${user.name}`,
+        email: user.email,
+        surname: user.surname,
+      })),
+    ],
+    [projectMembers],
+  );
   const [isLinkedRisksModalOpen, setIsLinkedRisksModalOpen] = useState<boolean>(false);
   const [evidenceFiles, setEvidenceFiles] = useState<FileData[]>([]);
   const theme = useTheme();
@@ -793,12 +805,7 @@ const VWISO42001AnnexDrawerDialog = ({
                   label="Owner:"
                   value={formData.owner ? parseInt(formData.owner) : ""}
                   onChange={handleSelectChange("owner")}
-                  items={projectMembers.map((user) => ({
-                    _id: user.id,
-                    name: `${user.name}`,
-                    email: user.email,
-                    surname: user.surname,
-                  }))}
+                  items={memberOptions}
                   disabled={!formData.is_applicable || isEditingDisabled}
                   sx={inputStyles}
                   placeholder={"Select owner"}
@@ -809,12 +816,7 @@ const VWISO42001AnnexDrawerDialog = ({
                   label="Reviewer:"
                   value={formData.reviewer ? parseInt(formData.reviewer) : ""}
                   onChange={handleSelectChange("reviewer")}
-                  items={projectMembers.map((user) => ({
-                    _id: user.id,
-                    name: `${user.name}`,
-                    email: user.email,
-                    surname: user.surname,
-                  }))}
+                  items={memberOptions}
                   disabled={!formData.is_applicable || isEditingDisabled}
                   sx={inputStyles}
                   placeholder={"Select reviewer"}
@@ -825,12 +827,7 @@ const VWISO42001AnnexDrawerDialog = ({
                   label="Approver:"
                   value={formData.approver ? parseInt(formData.approver) : ""}
                   onChange={handleSelectChange("approver")}
-                  items={projectMembers.map((user) => ({
-                    _id: user.id,
-                    name: `${user.name}`,
-                    email: user.email,
-                    surname: user.surname,
-                  }))}
+                  items={memberOptions}
                   disabled={!formData.is_applicable || isEditingDisabled}
                   sx={inputStyles}
                   placeholder={"Select approver"}

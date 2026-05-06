@@ -80,7 +80,10 @@
       "Bash(git checkout:*)",
       "Bash(git reset:*)",
       "Bash(git -C .. add Servers/utils/virtualFolder.utils.ts Servers/version.json)",
-      "Bash(git -C:*)"
+      "Bash(git -C:*)",
+      "Bash(head:*)",
+      "Bash(npx jest:*)",
+      "Bash(pkill -f \"vite preview\")"
     ]
   }
 }

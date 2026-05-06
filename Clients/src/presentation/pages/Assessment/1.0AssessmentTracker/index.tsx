@@ -245,14 +245,14 @@ const AssessmentTracker = ({
             <StatsCard
               total={assessmentProgress.totalQuestions}
               completed={assessmentProgress.answeredQuestions}
-              title="Controls"
+              title="Assessments"
               progressbarColor={brand.primary}
             />
           ) : (
             <Typography>Unable to fetch statistical values from the server</Typography>
           )}
         </Stack>
-        <Typography sx={{ ...pageHeadingStyle, mt: 4 }}>Controls status overview</Typography>
+        <Typography sx={{ ...pageHeadingStyle, mt: 4 }}>Assessments status overview</Typography>
         <Divider sx={{ marginY: 2 }} />
         <Box
           sx={{
@@ -265,7 +265,7 @@ const AssessmentTracker = ({
         >
           <Stack sx={topicsListStyle}>
             <Typography sx={subHeadingStyle} data-joyride-id="assessment-topics" ref={refs[1]}>
-              High risk conformity controls
+              Conformity assessment topics
             </Typography>
             <List>
               {loadingAssessmentTopics ? (
