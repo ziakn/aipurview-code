@@ -22,8 +22,6 @@ export interface ModelPreferences {
     provider: string;
     model: string;
     endpointUrl?: string;
-    temperature: number;
-    maxTokens: number;
   };
   // Timestamp of when this was saved
   savedAt?: string;
@@ -88,14 +86,10 @@ export function useModelPreferences(projectId: string, orgId?: string | null) {
                 provider: latestJudge.config?.provider || "openai",
                 model: latestJudge.config?.model || "gpt-4o",
                 endpointUrl: latestJudge.config?.endpointUrl || undefined,
-                temperature: latestJudge.config?.temperature ?? 0.7,
-                maxTokens: latestJudge.config?.maxTokens ?? 2048,
               }
             : {
                 provider: "openai",
                 model: "gpt-4o",
-                temperature: 0.7,
-                maxTokens: 2048,
               },
           savedAt: latestModel?.updatedAt || latestJudge?.updatedAt || undefined,
         };
@@ -187,8 +181,6 @@ export function useModelPreferences(projectId: string, orgId?: string | null) {
                 provider: prefs.judgeLlm.provider,
                 model: prefs.judgeLlm.model,
                 ...(prefs.judgeLlm.endpointUrl ? { endpointUrl: prefs.judgeLlm.endpointUrl } : {}),
-                temperature: prefs.judgeLlm.temperature,
-                maxTokens: prefs.judgeLlm.maxTokens,
               },
               enabled: true,
             });

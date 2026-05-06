@@ -483,8 +483,6 @@ export default function NewExperimentModal({
             | "",
           model: savedPreferences.judgeLlm.model || prev.judgeLlm.model,
           endpointUrl: savedPreferences.judgeLlm.endpointUrl || prev.judgeLlm.endpointUrl,
-          temperature: savedPreferences.judgeLlm.temperature ?? prev.judgeLlm.temperature,
-          maxTokens: savedPreferences.judgeLlm.maxTokens ?? prev.judgeLlm.maxTokens,
         },
       }));
     }
@@ -783,10 +781,8 @@ export default function NewExperimentModal({
               ? {
                   provider: config.judgeLlm.provider,
                   model: config.judgeLlm.model,
-                  apiKey: config.judgeLlm.apiKey || undefined, // Send actual key to runner, backend won't store it
+                  apiKey: config.judgeLlm.apiKey || undefined,
                   endpointUrl: config.judgeLlm.endpointUrl || undefined,
-                  temperature: config.judgeLlm.temperature,
-                  maxTokens: config.judgeLlm.maxTokens,
                 }
               : undefined,
           // Include evaluation mode for the runner
@@ -843,8 +839,6 @@ export default function NewExperimentModal({
           provider: config.judgeLlm.provider,
           model: config.judgeLlm.model,
           endpointUrl: config.judgeLlm.endpointUrl || undefined,
-          temperature: config.judgeLlm.temperature,
-          maxTokens: config.judgeLlm.maxTokens,
         },
       }).then((success) => {
         if (success) {
@@ -2956,36 +2950,6 @@ export default function NewExperimentModal({
                           />
                         ))}
 
-                      <Stack direction="row" spacing={3}>
-                        <Field
-                          label="Temperature"
-                          type="number"
-                          value={String(config.judgeLlm.temperature)}
-                          onChange={(e) =>
-                            setConfig((prev) => ({
-                              ...prev,
-                              judgeLlm: {
-                                ...prev.judgeLlm,
-                                temperature: parseFloat(e.target.value) || 0,
-                              },
-                            }))
-                          }
-                        />
-                        <Field
-                          label="Max tokens"
-                          type="number"
-                          value={String(config.judgeLlm.maxTokens)}
-                          onChange={(e) =>
-                            setConfig((prev) => ({
-                              ...prev,
-                              judgeLlm: {
-                                ...prev.judgeLlm,
-                                maxTokens: parseInt(e.target.value) || 0,
-                              },
-                            }))
-                          }
-                        />
-                      </Stack>
                     </Stack>
                   </Box>
                 )}
