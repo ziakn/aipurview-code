@@ -186,7 +186,7 @@ export default function ProjectScorers({ projectId, orgId }: ProjectScorersProps
           },
         ],
         useChainOfThought: scorerConfig.useChainOfThought ?? true,
-        choiceScores: scorerConfig.choiceScores || [{ label: "", score: 0 }],
+        choiceScores: scorerConfig.choiceScores || [{ label: "PASS", score: 1 }, { label: "FAIL", score: 0 }],
         passThreshold: scorer.defaultThreshold ?? 0.5,
         endpointUrl: endpointUrl || "",
         apiKey: apiKey || "",

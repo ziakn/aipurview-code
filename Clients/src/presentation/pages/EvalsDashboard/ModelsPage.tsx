@@ -125,6 +125,10 @@ export default function ModelsPage({ orgId }: ModelsPageProps) {
   const [configuredApiKeys, setConfiguredApiKeys] = useState<LLMApiKey[]>([]);
   const [loadingApiKeys, setLoadingApiKeys] = useState(true);
 
+  // Gateway models state
+  const [gatewayModels, setGatewayModels] = useState<{ id: string; name: string }[]>([]);
+  const [loadingGatewayModels, setLoadingGatewayModels] = useState(false);
+
   // Load configured API keys when modal opens
   useEffect(() => {
     if (!addModalOpen) return;
@@ -140,6 +144,32 @@ export default function ModelsPage({ orgId }: ModelsPageProps) {
       }
     })();
   }, [addModalOpen]);
+
+  // Fetch live gateway models whenever the selected provider changes
+  useEffect(() => {
+    const provider = newModel.accessMethod;
+    if (!provider || provider === "custom" || provider === "ollama" || provider === "openrouter") {
+      setGatewayModels([]);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      setLoadingGatewayModels(true);
+      try {
+        const models = await evalModelsService.getGatewayModelsForProvider(provider);
+        if (!cancelled) {
+          setGatewayModels(models.map((m) => ({ id: m.id, name: m.name })));
+        }
+      } catch {
+        if (!cancelled) setGatewayModels([]);
+      } finally {
+        if (!cancelled) setLoadingGatewayModels(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [newModel.accessMethod]);
 
   // Check if a provider has a configured API key
   const hasApiKey = useCallback(
@@ -314,7 +344,7 @@ export default function ModelsPage({ orgId }: ModelsPageProps) {
     }
   };
 
-  // Get available models for selected provider
+  // Get available models for selected provider — prefer live gateway models, fall back to static
   const availableModels = useMemo(() => {
     if (
       !newModel.accessMethod ||
@@ -323,8 +353,9 @@ export default function ModelsPage({ orgId }: ModelsPageProps) {
     ) {
       return [];
     }
+    if (gatewayModels.length > 0) return gatewayModels;
     return PROVIDERS[newModel.accessMethod]?.models || [];
-  }, [newModel.accessMethod]);
+  }, [newModel.accessMethod, gatewayModels]);
 
   return (
     <Stack sx={{ width: "100%" }}>
@@ -642,8 +673,16 @@ export default function ModelsPage({ orgId }: ModelsPageProps) {
                       </Box>
                     )}
                   </Box>
+                ) : loadingGatewayModels ? (
+                  /* Loading models from gateway */
+                  <Stack direction="row" alignItems="center" gap={1.5} sx={{ py: 1 }}>
+                    <CircularProgress size={16} />
+                    <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
+                      Loading models...
+                    </Typography>
+                  </Stack>
                 ) : availableModels.length > 0 ? (
-                  /* Standard providers - Dropdown */
+                  /* Standard providers - Dropdown populated from AI Gateway */
                   <FormControl fullWidth size="small">
                     <Select
                       value={newModel.modelName}

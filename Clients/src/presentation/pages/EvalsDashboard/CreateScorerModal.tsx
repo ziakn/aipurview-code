@@ -16,21 +16,23 @@ import {
   Paper,
   ClickAwayListener,
   InputAdornment,
+  Tooltip,
 } from "@mui/material";
 import {
   Plus,
   Trash2,
-  Settings,
   Search,
   Check,
   ChevronRight,
   ChevronDown,
   Key,
+  HelpCircle,
 } from "lucide-react";
 import StandardModal from "../../components/Modals/StandardModal";
 import Field from "../../components/Inputs/Field";
 import { CustomizableButton } from "../../components/button/customizable-button";
-import { PROVIDERS, getModelsForProvider } from "../../utils/providers";
+import { PROVIDERS, getModelsForProvider, type ModelInfo } from "../../utils/providers";
+import { evalModelsService } from "../../../infrastructure/api/evalModelsService";
 import {
   getAllLlmApiKeys,
   type LLMApiKey,
@@ -98,6 +100,20 @@ interface CreateScorerModalProps {
   initialConfig?: Partial<ScorerConfig>;
   isEditing?: boolean;
   projectId: string;
+}
+
+// Section heading with an optional info tooltip
+function SectionHeading({ label, tooltip }: { label: string; tooltip: string }) {
+  return (
+    <Stack direction="row" alignItems="center" gap={0.75} mb={1.5}>
+      <Typography sx={{ fontSize: 13, fontWeight: 600, color: palette.text.secondary }}>
+        {label}
+      </Typography>
+      <Tooltip title={tooltip} placement="right" arrow>
+        <HelpCircle size={13} color={palette.text.disabled} style={{ cursor: "help" }} />
+      </Tooltip>
+    </Stack>
+  );
 }
 
 // Simple score text input (0 to 1)
@@ -171,6 +187,7 @@ interface ModelSelectorProps {
   apiKey?: string;
   onEndpointUrlChange?: (url: string) => void;
   onApiKeyChange?: (key: string) => void;
+  gatewayModels?: Record<string, ModelInfo[]>;
 }
 
 function ModelSelector({
@@ -184,6 +201,7 @@ function ModelSelector({
   apiKey,
   onEndpointUrlChange,
   onApiKeyChange,
+  gatewayModels = {},
 }: ModelSelectorProps) {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -191,7 +209,9 @@ function ModelSelector({
   const anchorRef = useRef<HTMLDivElement>(null);
 
   const providerList = Object.values(PROVIDERS);
-  const models = getModelsForProvider(provider);
+  // Prefer live LiteLLM catalog; fall back to static list
+  const liveModels = gatewayModels[provider];
+  const models = liveModels && liveModels.length > 0 ? liveModels : getModelsForProvider(provider);
   const selectedModel = models.find((m) => m.id === model);
 
   // OpenRouter allows custom model names
@@ -898,7 +918,7 @@ export default function CreateScorerModal({
       },
     ],
     useChainOfThought: initialConfig?.useChainOfThought ?? true,
-    choiceScores: initialConfig?.choiceScores || [{ label: "", score: 0 }],
+    choiceScores: initialConfig?.choiceScores || [{ label: "PASS", score: 1 }, { label: "FAIL", score: 0 }],
     passThreshold: initialConfig?.passThreshold ?? 0.5,
     endpointUrl: initialConfig?.endpointUrl || "",
     apiKey: initialConfig?.apiKey || "",
@@ -908,16 +928,11 @@ export default function CreateScorerModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [configuredProviders, setConfiguredProviders] = useState<LLMApiKey[]>([]);
   const [loadingProviders, setLoadingProviders] = useState(true);
-
-  // Model params popover state
-  const [paramsPopoverOpen, setParamsPopoverOpen] = useState(false);
-  const paramsButtonRef = useRef<HTMLButtonElement>(null);
+  const [gatewayModels, setGatewayModels] = useState<Record<string, ModelInfo[]>>({});
+  const gatewayModelsLoaded = useRef<Set<string>>(new Set());
 
   // Update config when initialConfig changes (for editing)
   useEffect(() => {
-    // Always reset popover state when modal opens or scorer changes
-    setParamsPopoverOpen(false);
-
     if (initialConfig) {
       setConfig({
         name: initialConfig.name || "",
@@ -943,7 +958,7 @@ export default function CreateScorerModal({
           },
         ],
         useChainOfThought: initialConfig.useChainOfThought ?? true,
-        choiceScores: initialConfig.choiceScores || [{ label: "", score: 0 }],
+        choiceScores: initialConfig.choiceScores || [{ label: "PASS", score: 1 }, { label: "FAIL", score: 0 }],
         passThreshold: initialConfig.passThreshold ?? 0.5,
         endpointUrl: initialConfig.endpointUrl || "",
         apiKey: initialConfig.apiKey || "",
@@ -975,7 +990,7 @@ export default function CreateScorerModal({
           },
         ],
         useChainOfThought: true,
-        choiceScores: [{ label: "", score: 0 }],
+        choiceScores: [{ label: "PASS", score: 1 }, { label: "FAIL", score: 0 }],
         passThreshold: 0.5,
         endpointUrl: "",
         apiKey: "",
@@ -1014,6 +1029,18 @@ export default function CreateScorerModal({
     }
   }, [isOpen, initialConfig]);
 
+  // Fetch LiteLLM gateway models for the current provider
+  const CLOUD_PROVIDERS = new Set(["openai", "anthropic", "google", "mistral", "xai", "openrouter"]);
+  useEffect(() => {
+    const provider = config.provider;
+    if (!provider || !CLOUD_PROVIDERS.has(provider) || gatewayModelsLoaded.current.has(provider)) return;
+    gatewayModelsLoaded.current.add(provider);
+    evalModelsService.getGatewayModelsForProvider(provider).then((models) => {
+      if (models.length > 0) setGatewayModels((prev) => ({ ...prev, [provider]: models }));
+    }).catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [config.provider]);
+
   // Auto-generate slug from name
   const handleNameChange = useCallback((name: string) => {
     const slug = name
@@ -1025,14 +1052,23 @@ export default function CreateScorerModal({
 
   // Handle provider change - reset model when provider changes
   const handleProviderChange = useCallback((providerId: string) => {
-    const models = getModelsForProvider(providerId);
+    const live = gatewayModels[providerId];
+    const models = live && live.length > 0 ? live : getModelsForProvider(providerId);
     setConfig((prev) => ({
       ...prev,
       provider: providerId,
       model: models.length > 0 ? models[0].id : "",
       ...(providerId !== "self-hosted" ? { endpointUrl: "", apiKey: "" } : {}),
     }));
-  }, []);
+    // Lazy-fetch gateway models for this provider if not yet loaded
+    if (CLOUD_PROVIDERS.has(providerId) && !gatewayModelsLoaded.current.has(providerId)) {
+      gatewayModelsLoaded.current.add(providerId);
+      evalModelsService.getGatewayModelsForProvider(providerId).then((m) => {
+        if (m.length > 0) setGatewayModels((prev) => ({ ...prev, [providerId]: m }));
+      }).catch(() => {});
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gatewayModels]);
 
   // Handle model change
   const handleModelChange = useCallback((modelId: string) => {
@@ -1130,436 +1166,211 @@ export default function CreateScorerModal({
       title={initialConfig?.name ? "Edit scorer" : "Create scorer"}
       description={
         initialConfig?.name
-          ? "Update your scorer configuration"
-          : "Create a new scorer to evaluate model outputs"
+          ? "Update your scorer configuration."
+          : "A scorer is a custom LLM judge that evaluates model outputs against your criteria. Define the prompt, grading choices, and pass threshold — the judge runs automatically on each experiment."
       }
       onSubmit={handleSubmit}
       submitButtonText={initialConfig?.name ? "Save changes" : "Save as custom scorer"}
       isSubmitting={isSubmitting || !isValid}
-      maxWidth="md"
+      maxWidth="780px"
     >
-      <Box sx={{ minHeight: "500px" }}>
-        <Stack spacing={3}>
-          {/* Name and Slug */}
-          <Stack direction="row" spacing={2}>
-            <Box sx={{ flex: 1 }}>
-              <Field
-                label="Name"
-                placeholder="Enter name"
-                value={config.name}
-                onChange={(e) => handleNameChange(e.target.value)}
-                isRequired
-              />
-            </Box>
-            <Box sx={{ flex: 1 }}>
-              <Field
-                label="Slug"
-                placeholder="Enter slug"
-                value={config.slug}
-                onChange={(e) => setConfig((prev) => ({ ...prev, slug: e.target.value }))}
-                isRequired
-              />
-            </Box>
-          </Stack>
+      <Stack spacing={0}>
 
-          {/* Model Section */}
-          <Box>
-            {loadingProviders ? (
-              <Box sx={{ display: "flex", alignItems: "center", height: 40 }}>
-                <CircularProgress size={20} />
-                <Typography sx={{ ml: 1, fontSize: "13px", color: palette.text.tertiary }}>
-                  Loading providers...
-                </Typography>
-              </Box>
-            ) : (
-              <>
-                {/* Model Selector with Params Button */}
-                <Stack direction="row" spacing={2} alignItems="flex-end">
-                  <Box sx={{ flex: 1 }}>
-                    <ModelSelector
-                      provider={config.provider}
-                      model={config.model}
-                      onProviderChange={handleProviderChange}
-                      onModelChange={handleModelChange}
-                      configuredProviders={configuredProviders}
-                      onNavigateToSettings={() => {
-                        onClose();
-                        navigate(`/evals/${projectId}#settings`);
-                      }}
-                      endpointUrl={config.endpointUrl}
-                      apiKey={config.apiKey}
-                      onEndpointUrlChange={handleEndpointUrlChange}
-                      onApiKeyChange={handleApiKeyChange}
-                    />
-                  </Box>
-                  <Box
-                    component="button"
-                    type="button"
-                    ref={paramsButtonRef}
-                    onClick={() => setParamsPopoverOpen(!paramsPopoverOpen)}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 0.75,
-                      px: 1.5,
-                      height: 38,
-                      border: `1px solid ${palette.border.dark}`,
-                      borderRadius: "8px",
-                      cursor: "pointer",
-                      backgroundColor: paramsPopoverOpen
-                        ? palette.background.hover
-                        : palette.background.main,
-                      transition: "all 0.15s ease",
-                      "&:hover": {
-                        borderColor: palette.text.disabled,
-                        backgroundColor: palette.background.accent,
-                      },
-                    }}
-                  >
-                    <Settings size={14} color={palette.text.tertiary} />
-                    <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
-                      Params
-                    </Typography>
-                  </Box>
-                </Stack>
-
-                {/* Params Popover */}
-                <Popper
-                  open={paramsPopoverOpen}
-                  anchorEl={paramsButtonRef.current}
-                  placement="bottom-end"
-                  style={{ zIndex: 1400 }}
-                >
-                  <ClickAwayListener onClickAway={() => setParamsPopoverOpen(false)}>
-                    <Paper
-                      sx={{
-                        mt: 0.5,
-                        p: 2,
-                        width: 280,
-                        boxShadow: "0 4px 16px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08)",
-                        borderRadius: "4px",
-                        border: `1px solid ${palette.border.dark}`,
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          fontSize: "13px",
-                          fontWeight: 600,
-                          color: palette.text.secondary,
-                          mb: 2,
-                        }}
-                      >
-                        Model parameters
-                      </Typography>
-                      <Stack spacing={2.5}>
-                        {/* Top P */}
-                        <Box>
-                          <Stack
-                            direction="row"
-                            justifyContent="space-between"
-                            alignItems="center"
-                            sx={{ mb: 0.75 }}
-                          >
-                            <Typography sx={{ fontSize: "12px", color: palette.text.tertiary }}>
-                              Top P
-                            </Typography>
-                            <Typography
-                              sx={{
-                                fontSize: "12px",
-                                fontWeight: 500,
-                                color: palette.text.secondary,
-                              }}
-                            >
-                              {config.modelParams.topP.toFixed(2)}
-                            </Typography>
-                          </Stack>
-                          <Slider
-                            size="small"
-                            value={config.modelParams.topP}
-                            onChange={(_, value) =>
-                              setConfig((prev) => ({
-                                ...prev,
-                                modelParams: { ...prev.modelParams, topP: value as number },
-                              }))
-                            }
-                            min={0}
-                            max={1}
-                            step={0.05}
-                            sx={{
-                              color: palette.brand.primary,
-                              height: 4,
-                              "& .MuiSlider-thumb": {
-                                width: 14,
-                                height: 14,
-                                backgroundColor: palette.background.main,
-                                border: `2px solid ${palette.brand.primary}`,
-                              },
-                              "& .MuiSlider-track": { border: "none" },
-                            }}
-                          />
-                        </Box>
-                      </Stack>
-                    </Paper>
-                  </ClickAwayListener>
-                </Popper>
-              </>
-            )}
+        {/* ── Name & Slug ── */}
+        <Stack direction="row" spacing={2} mb={3}>
+          <Box sx={{ flex: 1 }}>
+            <Stack direction="row" alignItems="center" gap={0.75} mb={0.75}>
+              <Typography sx={{ fontSize: 13, fontWeight: 500, color: palette.text.secondary }}>
+                Name <span style={{ color: palette.status.error.text }}>*</span>
+              </Typography>
+              <Tooltip title="A human-readable name for this scorer, shown in dropdowns and reports." placement="right" arrow>
+                <HelpCircle size={13} color={palette.text.disabled} style={{ cursor: "help" }} />
+              </Tooltip>
+            </Stack>
+            <Field
+              label=""
+              placeholder="e.g. Relevance judge"
+              value={config.name}
+              onChange={(e) => handleNameChange(e.target.value)}
+            />
           </Box>
+          <Box sx={{ flex: 1 }}>
+            <Stack direction="row" alignItems="center" gap={0.75} mb={0.75}>
+              <Typography sx={{ fontSize: 13, fontWeight: 500, color: palette.text.secondary }}>
+                Slug <span style={{ color: palette.status.error.text }}>*</span>
+              </Typography>
+              <Tooltip title="A URL-safe identifier used internally. Auto-generated from the name." placement="right" arrow>
+                <HelpCircle size={13} color={palette.text.disabled} style={{ cursor: "help" }} />
+              </Tooltip>
+            </Stack>
+            <Field
+              label=""
+              placeholder="e.g. relevance_judge"
+              value={config.slug}
+              onChange={(e) => setConfig((prev) => ({ ...prev, slug: e.target.value }))}
+            />
+          </Box>
+        </Stack>
 
-          {/* Prompt Messages */}
-          <Typography
-            sx={{
-              fontSize: "13px",
-              fontWeight: 500,
-              color: theme.palette.text.secondary,
-              mb: 1,
-              mt: 2,
-            }}
-          >
-            Prompt
+        <Divider sx={{ mb: 3 }} />
+
+        {/* ── Judge model ── */}
+        <Box mb={3}>
+          <SectionHeading
+            label="Judge model"
+            tooltip="The LLM that will act as the evaluator. It reads your prompt and returns one of the choice scores you define below."
+          />
+          {loadingProviders ? (
+            <Stack direction="row" alignItems="center" gap={1} sx={{ py: 1 }}>
+              <CircularProgress size={16} />
+              <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>
+                Loading providers...
+              </Typography>
+            </Stack>
+          ) : (
+            <ModelSelector
+              provider={config.provider}
+              model={config.model}
+              onProviderChange={handleProviderChange}
+              onModelChange={handleModelChange}
+              configuredProviders={configuredProviders}
+              onNavigateToSettings={() => {
+                onClose();
+                navigate(`/evals/${projectId}#settings`);
+              }}
+              endpointUrl={config.endpointUrl}
+              apiKey={config.apiKey}
+              onEndpointUrlChange={handleEndpointUrlChange}
+              onApiKeyChange={handleApiKeyChange}
+              gatewayModels={gatewayModels}
+            />
+          )}
+        </Box>
+
+        <Divider sx={{ mb: 3 }} />
+
+        {/* ── Prompt ── */}
+        <Box mb={3}>
+          <SectionHeading
+            label="Prompt"
+            tooltip="The messages sent to the judge LLM. Use {{input}}, {{output}}, and {{expected}} to inject test-case values. The judge should return one of your choice labels."
+          />
+          <Typography sx={{ fontSize: 12, color: palette.text.tertiary, mb: 1.5 }}>
+            Variables: <code style={{ background: palette.background.accent, padding: "1px 5px", borderRadius: 3 }}>{"{{input}}"}</code>{" "}
+            <code style={{ background: palette.background.accent, padding: "1px 5px", borderRadius: 3 }}>{"{{output}}"}</code>{" "}
+            <code style={{ background: palette.background.accent, padding: "1px 5px", borderRadius: 3 }}>{"{{expected}}"}</code>
           </Typography>
-          <Typography
-            sx={{
-              fontSize: "12px",
-              color: theme.palette.text.tertiary,
-              mb: 1,
-            }}
-          >
-            Available variables: {"{{input}}"}, {"{{output}}"}, {"{{expected}}"}
-          </Typography>
-          <Stack spacing={2}>
+          <Stack spacing={1.5}>
             {config.messages.map((msg, index) => (
-              <Box
-                key={index}
-                sx={{
-                  border: `1px solid ${palette.border.dark}`,
-                  borderRadius: "8px",
-                  overflow: "hidden",
-                }}
-              >
+              <Box key={index} sx={{ border: `1px solid ${palette.border.dark}`, borderRadius: "6px", overflow: "hidden" }}>
                 <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  sx={{
-                    px: 1.5,
-                    py: 0.75,
-                    backgroundColor: palette.background.accent,
-                    borderBottom: `1px solid ${palette.border.dark}`,
-                  }}
+                  direction="row" alignItems="center" justifyContent="space-between"
+                  sx={{ px: 1.5, py: 0.75, backgroundColor: palette.background.accent, borderBottom: `1px solid ${palette.border.dark}` }}
                 >
                   <MuiSelect
-                    size="small"
-                    value={msg.role}
+                    size="small" value={msg.role}
                     onChange={(e) => handleUpdateMessage(index, "role", e.target.value)}
-                    variant="standard"
-                    disableUnderline
-                    sx={{
-                      fontSize: "12px",
-                      fontWeight: 500,
-                      minWidth: 80,
-                      "& .MuiSelect-select": { py: 0 },
-                    }}
+                    variant="standard" disableUnderline
+                    sx={{ fontSize: 12, fontWeight: 500, minWidth: 80, "& .MuiSelect-select": { py: 0 } }}
                   >
                     <MenuItem value="system">System</MenuItem>
                     <MenuItem value="user">User</MenuItem>
                     <MenuItem value="assistant">Assistant</MenuItem>
                   </MuiSelect>
                   {config.messages.length > 1 && (
-                    <IconButton
-                      size="small"
-                      onClick={() => handleRemoveMessage(index)}
-                      sx={{ p: 0.5 }}
-                    >
+                    <IconButton size="small" onClick={() => handleRemoveMessage(index)} sx={{ p: 0.5 }}>
                       <Trash2 size={14} color={palette.text.disabled} />
                     </IconButton>
                   )}
                 </Stack>
                 <TextField
-                  multiline
-                  minRows={2}
-                  maxRows={6}
-                  fullWidth
-                  placeholder={
-                    msg.role === "system"
-                      ? "You are a helpful assistant that evaluates..."
-                      : "Use {{input}}, {{output}}, {{expected}} to reference test case data"
-                  }
+                  multiline minRows={2} maxRows={6} fullWidth
+                  placeholder={msg.role === "system" ? "You are a helpful assistant that evaluates..." : "Use {{input}}, {{output}}, {{expected}} to reference test case data"}
                   value={msg.content}
                   onChange={(e) => handleUpdateMessage(index, "content", e.target.value)}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      border: "none",
-                      "& fieldset": { border: "none" },
-                    },
-                    "& .MuiInputBase-input": {
-                      fontSize: "13px",
-                      p: 1.5,
-                    },
-                  }}
+                  sx={{ "& .MuiOutlinedInput-root": { border: "none", "& fieldset": { border: "none" } }, "& .MuiInputBase-input": { fontSize: 13, p: 1.5 } }}
                 />
               </Box>
             ))}
-
             <CustomizableButton
-              variant="text"
-              text="Add message"
-              icon={<Plus size={14} />}
-              onClick={handleAddMessage}
-              sx={{
-                alignSelf: "flex-start",
-                color: palette.brand.primary,
-                fontSize: "13px",
-                fontWeight: 600,
-                textTransform: "none",
-                "&:hover": { backgroundColor: palette.brand.primaryLight },
-              }}
+              variant="text" text="Add message" icon={<Plus size={14} />} onClick={handleAddMessage}
+              sx={{ alignSelf: "flex-start", color: palette.brand.primary, fontSize: 13, fontWeight: 600, textTransform: "none", "&:hover": { backgroundColor: palette.brand.primaryLight } }}
             />
           </Stack>
+        </Box>
 
-          <Divider />
+        <Divider sx={{ mb: 3 }} />
 
-          {/* Choice Scores */}
-          <Box>
-            <Typography
-              sx={{
-                fontSize: "13px",
-                fontWeight: 600,
-                color: theme.palette.text.primary,
-                mb: 0.5,
-              }}
-            >
-              Choice scores
-            </Typography>
-            <Typography sx={{ fontSize: "12px", color: palette.text.tertiary, mb: 2 }}>
-              Choice scores are required when using LLM judge scorers. The model will be forced to
-              choose one of the choices using a tool schema. All choices and scores must be unique.
-            </Typography>
-
-            <Stack spacing={1.5}>
-              {/* Header */}
-              <Stack direction="row" spacing={2}>
-                <Typography sx={{ flex: 1, fontSize: "12px", color: palette.text.tertiary }}>
-                  Choice
-                </Typography>
-                <Typography
-                  sx={{
-                    width: 100,
-                    fontSize: "12px",
-                    color: palette.text.tertiary,
-                    textAlign: "center",
-                  }}
-                >
-                  Score (0 to 1)
-                </Typography>
-                <Box sx={{ width: 32 }} />
+        {/* ── Choice scores ── */}
+        <Box mb={3}>
+          <SectionHeading
+            label="Choice scores"
+            tooltip="The verdicts the judge can return, each mapped to a numeric score (0–1). The LLM is forced to pick exactly one choice via a tool schema — all labels and scores must be unique."
+          />
+          <Stack spacing={1.5}>
+            <Stack direction="row" spacing={2}>
+              <Typography sx={{ flex: 1, fontSize: 12, color: palette.text.tertiary }}>Choice label</Typography>
+              <Typography sx={{ width: 100, fontSize: 12, color: palette.text.tertiary, textAlign: "center" }}>Score (0–1)</Typography>
+              <Box sx={{ width: 32 }} />
+            </Stack>
+            {config.choiceScores.map((cs, index) => (
+              <Stack key={index} direction="row" spacing={2} alignItems="center">
+                <TextField
+                  size="small" placeholder="e.g. PASS" value={cs.label}
+                  onChange={(e) => handleUpdateChoiceScore(index, "label", e.target.value)}
+                  sx={{ flex: 1, "& .MuiInputBase-input": { fontSize: 13 } }}
+                />
+                <ScoreInput value={cs.score} onChange={(v) => handleUpdateChoiceScore(index, "score", v)} />
+                <IconButton size="small" onClick={() => handleRemoveChoiceScore(index)} disabled={config.choiceScores.length === 1} sx={{ p: 0.5 }}>
+                  <Trash2 size={16} color={config.choiceScores.length === 1 ? palette.border.dark : palette.text.disabled} />
+                </IconButton>
               </Stack>
+            ))}
+            <CustomizableButton
+              variant="text" text="Add choice" icon={<Plus size={14} />} onClick={handleAddChoiceScore}
+              sx={{ alignSelf: "flex-start", color: palette.brand.primary, fontSize: 12, fontWeight: 600, textTransform: "none", "&:hover": { backgroundColor: palette.brand.primaryLight } }}
+            />
+          </Stack>
+        </Box>
 
-              {/* Choice rows */}
-              {config.choiceScores.map((cs, index) => (
-                <Stack key={index} direction="row" spacing={2} alignItems="center">
-                  <TextField
-                    size="small"
-                    placeholder="Enter choice label"
-                    value={cs.label}
-                    onChange={(e) => handleUpdateChoiceScore(index, "label", e.target.value)}
-                    sx={{
-                      flex: 1,
-                      "& .MuiInputBase-input": { fontSize: "13px" },
-                    }}
-                  />
-                  <ScoreInput
-                    value={cs.score}
-                    onChange={(newScore) => handleUpdateChoiceScore(index, "score", newScore)}
-                  />
-                  <IconButton
-                    size="small"
-                    onClick={() => handleRemoveChoiceScore(index)}
-                    disabled={config.choiceScores.length === 1}
-                    sx={{ p: 0.5 }}
-                  >
-                    <Trash2
-                      size={16}
-                      color={
-                        config.choiceScores.length === 1
-                          ? palette.border.dark
-                          : palette.text.disabled
-                      }
-                    />
-                  </IconButton>
-                </Stack>
-              ))}
+        <Divider sx={{ mb: 3 }} />
 
-              <CustomizableButton
-                variant="text"
-                text="Add choice score"
-                icon={<Plus size={14} />}
-                onClick={handleAddChoiceScore}
-                sx={{
-                  alignSelf: "flex-start",
-                  color: palette.brand.primary,
-                  fontSize: "12px",
-                  fontWeight: 600,
-                  textTransform: "none",
-                  "&:hover": { backgroundColor: palette.brand.primaryLight },
-                }}
-              />
-            </Stack>
-          </Box>
-
-          <Divider />
-
-          {/* Pass Threshold */}
-          <Box>
-            <Typography
-              sx={{
-                fontSize: "13px",
-                fontWeight: 600,
-                color: theme.palette.text.primary,
-                mb: 0.5,
-              }}
-            >
-              Pass threshold
+        {/* ── Pass threshold & Top P ── */}
+        <Box>
+          <SectionHeading
+            label="Pass threshold"
+            tooltip="Samples with a score at or above this value will be marked as passing. Adjust based on how strict you want the evaluation to be."
+          />
+          <Stack direction="row" alignItems="center" spacing={2} mb={2.5}>
+            <Slider
+              value={config.passThreshold}
+              onChange={(_, v) => setConfig((prev) => ({ ...prev, passThreshold: v as number }))}
+              min={0} max={1} step={0.05} valueLabelDisplay="auto"
+              sx={{ flex: 1, color: palette.brand.primary, "& .MuiSlider-thumb": { backgroundColor: palette.background.main, border: `2px solid ${palette.brand.primary}` } }}
+            />
+            <Typography sx={{ fontSize: 13, fontWeight: 600, minWidth: 36, textAlign: "right", color: palette.text.secondary }}>
+              {config.passThreshold.toFixed(2)}
             </Typography>
-            <Typography sx={{ fontSize: "12px", color: palette.text.tertiary, mb: 2 }}>
-              Optionally set a score threshold for passing (0 to 1)
+          </Stack>
+
+          <SectionHeading
+            label="Top P"
+            tooltip="Controls the diversity of the judge's responses by sampling from the top-P probability mass. 1.0 = no restriction; lower values make output more focused."
+          />
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <Slider
+              size="small"
+              value={config.modelParams.topP}
+              onChange={(_, v) => setConfig((prev) => ({ ...prev, modelParams: { ...prev.modelParams, topP: v as number } }))}
+              min={0} max={1} step={0.05}
+              sx={{ flex: 1, color: palette.brand.primary, height: 4, "& .MuiSlider-thumb": { width: 14, height: 14, backgroundColor: palette.background.main, border: `2px solid ${palette.brand.primary}` }, "& .MuiSlider-track": { border: "none" } }}
+            />
+            <Typography sx={{ fontSize: 13, fontWeight: 600, minWidth: 36, textAlign: "right", color: palette.text.secondary }}>
+              {config.modelParams.topP.toFixed(2)}
             </Typography>
-            <Stack direction="row" alignItems="center" spacing={2}>
-              <Slider
-                value={config.passThreshold}
-                onChange={(_, value) =>
-                  setConfig((prev) => ({
-                    ...prev,
-                    passThreshold: value as number,
-                  }))
-                }
-                min={0}
-                max={1}
-                step={0.05}
-                valueLabelDisplay="auto"
-                sx={{
-                  flex: 1,
-                  color: palette.brand.primary,
-                  "& .MuiSlider-thumb": {
-                    backgroundColor: palette.background.main,
-                    border: `2px solid ${palette.brand.primary}`,
-                  },
-                }}
-              />
-              <Typography
-                sx={{
-                  fontSize: "13px",
-                  fontWeight: 500,
-                  minWidth: 40,
-                  textAlign: "right",
-                }}
-              >
-                {config.passThreshold.toFixed(2)}
-              </Typography>
-            </Stack>
-          </Box>
-        </Stack>
-      </Box>
+          </Stack>
+        </Box>
+      </Stack>
     </StandardModal>
   );
 }
