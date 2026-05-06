@@ -78,6 +78,7 @@ import {
 import VWTooltip from "../../components/VWTooltip";
 import { RiskScoreCard } from "./components/RiskScoreCard";
 import SuppressFindingDialog from "./components/SuppressFindingDialog";
+import Toggle from "../../components/Inputs/Toggle";
 import {
   ScanResponse,
   Finding,
@@ -582,6 +583,7 @@ function FindingRow({
         borderRadius: "4px",
         mb: "8px",
         backgroundColor: palette.background.main,
+        opacity: finding.suppressed ? 0.6 : 1,
       }}
     >
       {/* Header */}
@@ -616,6 +618,30 @@ function FindingRow({
         </Box>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          {/* Suppressed Badge */}
+          {finding.suppressed && (
+            <Tooltip title="Matched a suppression rule" arrow placement="top">
+              <Box
+                sx={{
+                  px: "8px",
+                  py: "2px",
+                  borderRadius: "4px",
+                  backgroundColor: palette.background.accent,
+                  border: `1px solid ${palette.border.light}`,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                }}
+              >
+                <EyeOff size={12} color={palette.text.tertiary} />
+                <Typography
+                  sx={{ fontSize: "12px", fontWeight: 500, color: palette.text.tertiary }}
+                >
+                  Suppressed
+                </Typography>
+              </Box>
+            </Tooltip>
+          )}
           {/* Risk Level Badge */}
           {finding.risk_level && (
             <Tooltip title={RISK_LEVEL_CONFIG[finding.risk_level].tooltip} arrow placement="top">
@@ -1222,6 +1248,7 @@ function VulnerabilityFindingRow({
         borderRadius: "4px",
         mb: "8px",
         backgroundColor: palette.background.main,
+        opacity: finding.suppressed ? 0.6 : 1,
       }}
     >
       {/* Header */}
@@ -1255,6 +1282,30 @@ function VulnerabilityFindingRow({
         </Box>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          {/* Suppressed Badge */}
+          {finding.suppressed && (
+            <Tooltip title="Matched a suppression rule" arrow placement="top">
+              <Box
+                sx={{
+                  px: "8px",
+                  py: "2px",
+                  borderRadius: "4px",
+                  backgroundColor: palette.background.accent,
+                  border: `1px solid ${palette.border.light}`,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                }}
+              >
+                <EyeOff size={12} color={palette.text.tertiary} />
+                <Typography
+                  sx={{ fontSize: "12px", fontWeight: 500, color: palette.text.tertiary }}
+                >
+                  Suppressed
+                </Typography>
+              </Box>
+            </Tooltip>
+          )}
           {/* Risk Level Badge */}
           {finding.risk_level && (
             <Tooltip
@@ -1593,6 +1644,7 @@ export default function ScanDetailsPage() {
   }, [initialTab]);
   const [confidenceFilter, setConfidenceFilter] = useState<ConfidenceLevel | null>(null);
   const [severityFilter, setSeverityFilter] = useState<SecuritySeverity | null>(null);
+  const [showSuppressed, setShowSuppressed] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [showDepGraph, setShowDepGraph] = useState(false);
   const [complianceData, setComplianceData] = useState<ComplianceMappingResponse | null>(null);
@@ -2471,6 +2523,27 @@ export default function ScanDetailsPage() {
           onChange={handleTabChange}
         />
 
+        {/* Show suppressed toggle (applies to all tabs) */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            gap: 1,
+            mt: "8px",
+          }}
+        >
+          <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
+            Show suppressed findings
+          </Typography>
+          <Toggle
+            size="small"
+            checked={showSuppressed}
+            onChange={(_, checked) => setShowSuppressed(checked)}
+            inputProps={{ "aria-label": "Show suppressed findings" }}
+          />
+        </Box>
+
         {/* Libraries Tab */}
         {activeTab === "libraries" && (
           <Box sx={{ mt: "8px" }}>
@@ -2544,7 +2617,9 @@ export default function ScanDetailsPage() {
                 </Box>
               ) : (
                 <Box>
-                  {libraryState.findings.map((finding) => (
+                  {libraryState.findings
+                    .filter((f) => showSuppressed || !f.suppressed)
+                    .map((finding) => (
                     <FindingRow
                       key={finding.id}
                       finding={finding}
@@ -2632,7 +2707,9 @@ export default function ScanDetailsPage() {
 
             {/* Findings List */}
             <Box sx={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-              {apiCallState.findings.map((finding) => (
+              {apiCallState.findings
+                .filter((f) => showSuppressed || !f.suppressed)
+                .map((finding) => (
                 <FindingRow
                   key={finding.id}
                   finding={finding}
@@ -2732,7 +2809,9 @@ export default function ScanDetailsPage() {
 
             {/* Findings List */}
             <Box sx={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-              {modelState.findings.map((finding) => (
+              {modelState.findings
+                .filter((f) => showSuppressed || !f.suppressed)
+                .map((finding) => (
                 <FindingRow
                   key={finding.id}
                   finding={finding}
@@ -2831,7 +2910,9 @@ export default function ScanDetailsPage() {
 
             {/* Findings List */}
             <Box sx={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-              {ragState.findings.map((finding) => (
+              {ragState.findings
+                .filter((f) => showSuppressed || !f.suppressed)
+                .map((finding) => (
                 <FindingRow
                   key={finding.id}
                   finding={finding}
@@ -2968,7 +3049,9 @@ export default function ScanDetailsPage() {
 
             {/* Findings List */}
             <Box sx={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-              {agentState.findings.map((finding) => (
+              {agentState.findings
+                .filter((f) => showSuppressed || !f.suppressed)
+                .map((finding) => (
                 <FindingRow
                   key={finding.id}
                   finding={finding}
@@ -3082,7 +3165,9 @@ export default function ScanDetailsPage() {
 
             {/* Findings List */}
             <Box sx={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-              {secretState.findings.map((finding) => (
+              {secretState.findings
+                .filter((f) => showSuppressed || !f.suppressed)
+                .map((finding) => (
                 <FindingRow
                   key={finding.id}
                   finding={finding}
@@ -4085,7 +4170,9 @@ export default function ScanDetailsPage() {
               </Box>
             ) : (
               <Box>
-                {vulnerabilityFindings.map((finding) => (
+                {vulnerabilityFindings
+                  .filter((f) => showSuppressed || !f.suppressed)
+                  .map((finding) => (
                   <VulnerabilityFindingRow
                     key={finding.id}
                     finding={finding}
