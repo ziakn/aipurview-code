@@ -573,3 +573,43 @@ export interface IGitHubTokenTestResponse {
   };
   error?: string;
 }
+
+/**
+ * Match type for an AI detection suppression rule.
+ * - exact: literal equality on the chosen field
+ * - pattern: JS regex tested against the chosen field
+ */
+export type SuppressionMatchType = "exact" | "pattern";
+
+/**
+ * Finding fields a suppression rule can target.
+ */
+export type SuppressionField = "name" | "finding_type" | "category" | "provider";
+
+/**
+ * Org-scoped suppression rule. Matching findings are flagged with
+ * `suppressed=true` and `suppression_rule_id` at scan completion (forward-only).
+ */
+export interface ISuppression {
+  id?: number;
+  organization_id: number;
+  match_type: SuppressionMatchType;
+  field: SuppressionField;
+  value: string;
+  reason?: string | null;
+  expires_at?: Date | null;
+  created_by?: number | null;
+  created_at?: Date;
+  updated_at?: Date;
+}
+
+/**
+ * Input for creating a new suppression rule.
+ */
+export interface ICreateSuppressionInput {
+  match_type: SuppressionMatchType;
+  field: SuppressionField;
+  value: string;
+  reason?: string | null;
+  expires_at?: Date | string | null;
+}
