@@ -257,6 +257,9 @@ export interface ICreateFindingInput {
   vulnerability_details?: Record<string, unknown> | null;
   // Incremental scan fields
   finding_status?: FindingStatus;
+  // Suppression flags (set by the matcher at scan completion)
+  suppressed?: boolean;
+  suppression_rule_id?: number | null;
 }
 
 // ============================================================================

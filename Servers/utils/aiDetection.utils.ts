@@ -518,6 +518,8 @@ export async function createFindingsBatchQuery(
       :license_risk_${index},
       :license_source_${index},
       :finding_status_${index},
+      :suppressed_${index},
+      :suppression_rule_id_${index},
       NOW()
     )`;
   });
@@ -540,6 +542,8 @@ export async function createFindingsBatchQuery(
     replacements[`license_risk_${index}`] = input.license_risk || null;
     replacements[`license_source_${index}`] = input.license_source || null;
     replacements[`finding_status_${index}`] = input.finding_status || "active";
+    replacements[`suppressed_${index}`] = input.suppressed === true;
+    replacements[`suppression_rule_id_${index}`] = input.suppression_rule_id ?? null;
   });
 
   const query = `
@@ -561,6 +565,8 @@ export async function createFindingsBatchQuery(
       license_risk,
       license_source,
       finding_status,
+      suppressed,
+      suppression_rule_id,
       created_at
     ) VALUES ${values.join(", ")}
     ON CONFLICT (scan_id, name, provider) DO UPDATE SET
@@ -573,7 +579,9 @@ export async function createFindingsBatchQuery(
       finding_status = CASE
         WHEN EXCLUDED.finding_status = 'active' THEN 'active'
         ELSE ai_detection_findings.finding_status
-      END
+      END,
+      suppressed = EXCLUDED.suppressed,
+      suppression_rule_id = EXCLUDED.suppression_rule_id
     RETURNING id, name, provider;
   `;
 
