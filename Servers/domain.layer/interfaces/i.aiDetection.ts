@@ -377,6 +377,9 @@ export interface IFindingResponse {
   vulnerability_details?: Record<string, unknown> | null;
   // Incremental scan fields
   finding_status?: FindingStatus;
+  // Suppression flags
+  suppressed?: boolean;
+  suppression_rule_id?: number | null;
 }
 
 /**

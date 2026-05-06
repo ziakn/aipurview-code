@@ -233,6 +233,16 @@ const GOVERNANCE_STATUS_CONFIG: Record<
   },
 };
 
+/**
+ * A finding is treated as "suppressed" by the UI when EITHER:
+ *   - a scan-time rule matched (boolean `suppressed`), or
+ *   - a user manually set governance_status to "suppressed".
+ * Both signals are also excluded from the risk score by the backend.
+ * `accepted_risk` is acknowledged but not hidden — it still renders normally.
+ */
+const isFindingSuppressed = (f: Finding): boolean =>
+  f.suppressed === true || f.governance_status === "suppressed";
+
 const COMPLIANCE_CATEGORY_CONFIG: Record<
   ComplianceCategory,
   { label: string; color: string; bgColor: string; description: string }
@@ -583,7 +593,7 @@ function FindingRow({
         borderRadius: "4px",
         mb: "8px",
         backgroundColor: palette.background.main,
-        opacity: finding.suppressed ? 0.6 : 1,
+        opacity: isFindingSuppressed(finding) ? 0.6 : 1,
       }}
     >
       {/* Header */}
@@ -619,8 +629,16 @@ function FindingRow({
 
         <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
           {/* Suppressed Badge */}
-          {finding.suppressed && (
-            <Tooltip title="Matched a suppression rule" arrow placement="top">
+          {isFindingSuppressed(finding) && (
+            <Tooltip
+              title={
+                finding.suppressed
+                  ? "Matched a suppression rule"
+                  : "Manually marked as suppressed"
+              }
+              arrow
+              placement="top"
+            >
               <Box
                 sx={{
                   px: "8px",
@@ -852,7 +870,7 @@ function FindingRow({
             }}
           >
             <EyeOff size={14} color={palette.text.tertiary} />
-            <Typography sx={{ fontSize: "13px" }}>Suppress finding…</Typography>
+            <Typography sx={{ fontSize: "13px" }}>Create suppression rule…</Typography>
           </Box>
         </Box>
       </Popover>
@@ -1248,7 +1266,7 @@ function VulnerabilityFindingRow({
         borderRadius: "4px",
         mb: "8px",
         backgroundColor: palette.background.main,
-        opacity: finding.suppressed ? 0.6 : 1,
+        opacity: isFindingSuppressed(finding) ? 0.6 : 1,
       }}
     >
       {/* Header */}
@@ -1283,8 +1301,16 @@ function VulnerabilityFindingRow({
 
         <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
           {/* Suppressed Badge */}
-          {finding.suppressed && (
-            <Tooltip title="Matched a suppression rule" arrow placement="top">
+          {isFindingSuppressed(finding) && (
+            <Tooltip
+              title={
+                finding.suppressed
+                  ? "Matched a suppression rule"
+                  : "Manually marked as suppressed"
+              }
+              arrow
+              placement="top"
+            >
               <Box
                 sx={{
                   px: "8px",
@@ -1528,7 +1554,7 @@ function VulnerabilityFindingRow({
             }}
           >
             <EyeOff size={14} color={palette.text.tertiary} />
-            <Typography sx={{ fontSize: "13px" }}>Suppress finding…</Typography>
+            <Typography sx={{ fontSize: "13px" }}>Create suppression rule…</Typography>
           </Box>
         </Box>
       </Popover>
@@ -2618,7 +2644,7 @@ export default function ScanDetailsPage() {
               ) : (
                 <Box>
                   {libraryState.findings
-                    .filter((f) => showSuppressed || !f.suppressed)
+                    .filter((f) => showSuppressed || !isFindingSuppressed(f))
                     .map((finding) => (
                     <FindingRow
                       key={finding.id}
@@ -2708,7 +2734,7 @@ export default function ScanDetailsPage() {
             {/* Findings List */}
             <Box sx={{ display: "flex", flexDirection: "column", gap: "4px" }}>
               {apiCallState.findings
-                .filter((f) => showSuppressed || !f.suppressed)
+                .filter((f) => showSuppressed || !isFindingSuppressed(f))
                 .map((finding) => (
                 <FindingRow
                   key={finding.id}
@@ -2810,7 +2836,7 @@ export default function ScanDetailsPage() {
             {/* Findings List */}
             <Box sx={{ display: "flex", flexDirection: "column", gap: "4px" }}>
               {modelState.findings
-                .filter((f) => showSuppressed || !f.suppressed)
+                .filter((f) => showSuppressed || !isFindingSuppressed(f))
                 .map((finding) => (
                 <FindingRow
                   key={finding.id}
@@ -2911,7 +2937,7 @@ export default function ScanDetailsPage() {
             {/* Findings List */}
             <Box sx={{ display: "flex", flexDirection: "column", gap: "4px" }}>
               {ragState.findings
-                .filter((f) => showSuppressed || !f.suppressed)
+                .filter((f) => showSuppressed || !isFindingSuppressed(f))
                 .map((finding) => (
                 <FindingRow
                   key={finding.id}
@@ -3050,7 +3076,7 @@ export default function ScanDetailsPage() {
             {/* Findings List */}
             <Box sx={{ display: "flex", flexDirection: "column", gap: "4px" }}>
               {agentState.findings
-                .filter((f) => showSuppressed || !f.suppressed)
+                .filter((f) => showSuppressed || !isFindingSuppressed(f))
                 .map((finding) => (
                 <FindingRow
                   key={finding.id}
@@ -3166,7 +3192,7 @@ export default function ScanDetailsPage() {
             {/* Findings List */}
             <Box sx={{ display: "flex", flexDirection: "column", gap: "4px" }}>
               {secretState.findings
-                .filter((f) => showSuppressed || !f.suppressed)
+                .filter((f) => showSuppressed || !isFindingSuppressed(f))
                 .map((finding) => (
                 <FindingRow
                   key={finding.id}
@@ -4171,7 +4197,7 @@ export default function ScanDetailsPage() {
             ) : (
               <Box>
                 {vulnerabilityFindings
-                  .filter((f) => showSuppressed || !f.suppressed)
+                  .filter((f) => showSuppressed || !isFindingSuppressed(f))
                   .map((finding) => (
                   <VulnerabilityFindingRow
                     key={finding.id}

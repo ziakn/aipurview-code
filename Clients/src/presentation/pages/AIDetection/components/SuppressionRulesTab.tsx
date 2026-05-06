@@ -10,17 +10,18 @@ import { useEffect, useState } from "react";
 import {
   Box,
   CircularProgress,
+  IconButton,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { Trash2 } from "lucide-react";
 import dayjs from "dayjs";
-import { CustomizableButton } from "../../../components/button/customizable-button";
 import StandardModal from "../../../components/Modals/StandardModal";
 import { palette } from "../../../themes/palette";
 import {
@@ -162,16 +163,16 @@ function SuppressionRulesTab({ onMessage }: SuppressionRulesTabProps) {
                   {dayjs(rule.created_at).format("MMM D, YYYY")}
                 </TableCell>
                 <TableCell align="right">
-                  <CustomizableButton
-                    variant="text"
-                    onClick={() => setPendingDelete(rule)}
-                    sx={{
-                      minWidth: 0,
-                      p: 1,
-                      color: palette.status.error.text,
-                    }}
-                    icon={<Trash2 size={14} />}
-                  />
+                  <Tooltip title="Delete rule" arrow placement="top">
+                    <IconButton
+                      size="small"
+                      aria-label="Delete suppression rule"
+                      onClick={() => setPendingDelete(rule)}
+                      sx={{ color: palette.status.error.text }}
+                    >
+                      <Trash2 size={14} />
+                    </IconButton>
+                  </Tooltip>
                 </TableCell>
               </TableRow>
             ))}

@@ -2341,6 +2341,9 @@ export async function getScanFindings(
       license_source: f.license_source,
       // Incremental scan fields
       finding_status: f.finding_status,
+      // Suppression flags
+      suppressed: f.suppressed === true,
+      suppression_rule_id: f.suppression_rule_id ?? null,
     })),
     pagination: {
       total,
