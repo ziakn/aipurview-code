@@ -77,6 +77,7 @@ import {
 } from "../../../application/repository/aiDetection.repository";
 import VWTooltip from "../../components/VWTooltip";
 import { RiskScoreCard } from "./components/RiskScoreCard";
+import SuppressFindingDialog from "./components/SuppressFindingDialog";
 import {
   ScanResponse,
   Finding,
@@ -532,6 +533,7 @@ function FindingRow({
     finding.governance_status || null,
   );
   const [isUpdating, setIsUpdating] = useState(false);
+  const [suppressDialogOpen, setSuppressDialogOpen] = useState(false);
 
   const getFileUrl = (filePath: string, lineNumber: number | null): string | null => {
     if (!repositoryOwner || !repositoryName) return null;
@@ -807,8 +809,35 @@ function FindingRow({
               </Box>
             </>
           )}
+          <Box sx={{ borderTop: `1px solid ${palette.border.light}`, my: 0.5 }} />
+          <Box
+            onClick={() => {
+              handleGovernanceClose();
+              setSuppressDialogOpen(true);
+            }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              p: "6px 8px",
+              borderRadius: "4px",
+              cursor: "pointer",
+              "&:hover": { backgroundColor: palette.background.hover },
+            }}
+          >
+            <EyeOff size={14} color={palette.text.tertiary} />
+            <Typography sx={{ fontSize: "13px" }}>Suppress finding…</Typography>
+          </Box>
         </Box>
       </Popover>
+
+      <SuppressFindingDialog
+        isOpen={suppressDialogOpen}
+        finding={finding}
+        onClose={() => setSuppressDialogOpen(false)}
+        onSuccess={(msg) => onStatusMessage?.("success", msg)}
+        onError={(msg) => onStatusMessage?.("error", msg)}
+      />
 
       {/* Expanded Content */}
       <Collapse in={expanded}>
@@ -1141,6 +1170,7 @@ function VulnerabilityFindingRow({
     finding.governance_status || null,
   );
   const [isUpdating, setIsUpdating] = useState(false);
+  const [suppressDialogOpen, setSuppressDialogOpen] = useState(false);
   const vulnMeta = VULN_TYPE_LABELS[finding.finding_type] || {
     label: finding.finding_type,
     owaspId: "",
@@ -1430,8 +1460,35 @@ function VulnerabilityFindingRow({
               </Box>
             </>
           )}
+          <Box sx={{ borderTop: `1px solid ${palette.border.light}`, my: 0.5 }} />
+          <Box
+            onClick={() => {
+              handleGovernanceClose();
+              setSuppressDialogOpen(true);
+            }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              p: "6px 8px",
+              borderRadius: "4px",
+              cursor: "pointer",
+              "&:hover": { backgroundColor: palette.background.hover },
+            }}
+          >
+            <EyeOff size={14} color={palette.text.tertiary} />
+            <Typography sx={{ fontSize: "13px" }}>Suppress finding…</Typography>
+          </Box>
         </Box>
       </Popover>
+
+      <SuppressFindingDialog
+        isOpen={suppressDialogOpen}
+        finding={finding}
+        onClose={() => setSuppressDialogOpen(false)}
+        onSuccess={(msg) => onStatusMessage?.("success", msg)}
+        onError={(msg) => onStatusMessage?.("error", msg)}
+      />
 
       {/* Expanded Content */}
       <Collapse in={expanded}>
