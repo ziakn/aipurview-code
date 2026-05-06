@@ -25,6 +25,7 @@ import {
   AlertCircle,
   AlertTriangle,
   Eye,
+  EyeOff,
   Unplug,
   Timer,
   Link2,
@@ -222,6 +223,12 @@ const GOVERNANCE_STATUS_CONFIG: Record<
   reviewed: { label: "Reviewed", color: palette.status.info.text, icon: Eye },
   approved: { label: "Approved", color: palette.status.success.text, icon: ThumbsUp },
   flagged: { label: "Flagged", color: palette.status.error.text, icon: Flag },
+  suppressed: { label: "Suppressed", color: palette.text.tertiary, icon: EyeOff },
+  accepted_risk: {
+    label: "Accepted risk",
+    color: palette.status.warning.text,
+    icon: ShieldCheck,
+  },
 };
 
 const COMPLIANCE_CATEGORY_CONFIG: Record<
