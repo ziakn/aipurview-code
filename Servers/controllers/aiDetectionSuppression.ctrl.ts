@@ -61,10 +61,7 @@ function handleException(res: Response, error: unknown): Response {
  * POST /ai-detection/suppressions
  * Body: { match_type, field, value, reason?, expires_at? }
  */
-export async function createSuppressionController(
-  req: Request,
-  res: Response,
-): Promise<Response> {
+export async function createSuppressionController(req: Request, res: Response): Promise<Response> {
   logProcessing({
     description: "Creating AI detection suppression rule",
     functionName: "createSuppressionController",
@@ -105,10 +102,7 @@ export async function createSuppressionController(
  * GET /ai-detection/suppressions
  * Query: ?include_expired=true
  */
-export async function listSuppressionsController(
-  req: Request,
-  res: Response,
-): Promise<Response> {
+export async function listSuppressionsController(req: Request, res: Response): Promise<Response> {
   try {
     const ctx = buildServiceContext(req);
     const includeExpired = req.query.include_expired === "true";
@@ -122,10 +116,7 @@ export async function listSuppressionsController(
 /**
  * DELETE /ai-detection/suppressions/:id
  */
-export async function deleteSuppressionController(
-  req: Request,
-  res: Response,
-): Promise<Response> {
+export async function deleteSuppressionController(req: Request, res: Response): Promise<Response> {
   logProcessing({
     description: "Deleting AI detection suppression rule",
     functionName: "deleteSuppressionController",
@@ -135,10 +126,7 @@ export async function deleteSuppressionController(
   });
 
   try {
-    const id = parseInt(
-      Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
-      10,
-    );
+    const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
 
     if (isNaN(id)) {
       return res.status(400).json(STATUS_CODE[400]("Invalid suppression rule ID"));

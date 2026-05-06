@@ -632,9 +632,7 @@ function FindingRow({
           {isFindingSuppressed(finding) && (
             <Tooltip
               title={
-                finding.suppressed
-                  ? "Matched a suppression rule"
-                  : "Manually marked as suppressed"
+                finding.suppressed ? "Matched a suppression rule" : "Manually marked as suppressed"
               }
               arrow
               placement="top"
@@ -1304,9 +1302,7 @@ function VulnerabilityFindingRow({
           {isFindingSuppressed(finding) && (
             <Tooltip
               title={
-                finding.suppressed
-                  ? "Matched a suppression rule"
-                  : "Manually marked as suppressed"
+                finding.suppressed ? "Matched a suppression rule" : "Manually marked as suppressed"
               }
               arrow
               placement="top"
@@ -2646,15 +2642,15 @@ export default function ScanDetailsPage() {
                   {libraryState.findings
                     .filter((f) => showSuppressed || !isFindingSuppressed(f))
                     .map((finding) => (
-                    <FindingRow
-                      key={finding.id}
-                      finding={finding}
-                      repositoryOwner={scan.scan.repository_owner}
-                      repositoryName={scan.scan.repository_name}
-                      scanId={scanId}
-                      onStatusMessage={showAlert}
-                    />
-                  ))}
+                      <FindingRow
+                        key={finding.id}
+                        finding={finding}
+                        repositoryOwner={scan.scan.repository_owner}
+                        repositoryName={scan.scan.repository_name}
+                        scanId={scanId}
+                        onStatusMessage={showAlert}
+                      />
+                    ))}
 
                   {/* Pagination */}
                   {libraryState.totalPages > 1 && (
@@ -2736,14 +2732,14 @@ export default function ScanDetailsPage() {
               {apiCallState.findings
                 .filter((f) => showSuppressed || !isFindingSuppressed(f))
                 .map((finding) => (
-                <FindingRow
-                  key={finding.id}
-                  finding={finding}
-                  repositoryOwner={scan.scan.repository_owner}
-                  repositoryName={scan.scan.repository_name}
-                  scanId={scanId}
-                />
-              ))}
+                  <FindingRow
+                    key={finding.id}
+                    finding={finding}
+                    repositoryOwner={scan.scan.repository_owner}
+                    repositoryName={scan.scan.repository_name}
+                    scanId={scanId}
+                  />
+                ))}
             </Box>
 
             {/* Empty State */}
@@ -2838,14 +2834,14 @@ export default function ScanDetailsPage() {
               {modelState.findings
                 .filter((f) => showSuppressed || !isFindingSuppressed(f))
                 .map((finding) => (
-                <FindingRow
-                  key={finding.id}
-                  finding={finding}
-                  repositoryOwner={scan.scan.repository_owner}
-                  repositoryName={scan.scan.repository_name}
-                  scanId={scanId}
-                />
-              ))}
+                  <FindingRow
+                    key={finding.id}
+                    finding={finding}
+                    repositoryOwner={scan.scan.repository_owner}
+                    repositoryName={scan.scan.repository_name}
+                    scanId={scanId}
+                  />
+                ))}
             </Box>
 
             {/* Empty State */}
@@ -2939,14 +2935,14 @@ export default function ScanDetailsPage() {
               {ragState.findings
                 .filter((f) => showSuppressed || !isFindingSuppressed(f))
                 .map((finding) => (
-                <FindingRow
-                  key={finding.id}
-                  finding={finding}
-                  repositoryOwner={scan.scan.repository_owner}
-                  repositoryName={scan.scan.repository_name}
-                  scanId={scanId}
-                />
-              ))}
+                  <FindingRow
+                    key={finding.id}
+                    finding={finding}
+                    repositoryOwner={scan.scan.repository_owner}
+                    repositoryName={scan.scan.repository_name}
+                    scanId={scanId}
+                  />
+                ))}
             </Box>
 
             {/* Empty State */}
@@ -3078,14 +3074,14 @@ export default function ScanDetailsPage() {
               {agentState.findings
                 .filter((f) => showSuppressed || !isFindingSuppressed(f))
                 .map((finding) => (
-                <FindingRow
-                  key={finding.id}
-                  finding={finding}
-                  repositoryOwner={scan.scan.repository_owner}
-                  repositoryName={scan.scan.repository_name}
-                  scanId={scanId}
-                />
-              ))}
+                  <FindingRow
+                    key={finding.id}
+                    finding={finding}
+                    repositoryOwner={scan.scan.repository_owner}
+                    repositoryName={scan.scan.repository_name}
+                    scanId={scanId}
+                  />
+                ))}
             </Box>
 
             {/* Empty State */}
@@ -3194,14 +3190,14 @@ export default function ScanDetailsPage() {
               {secretState.findings
                 .filter((f) => showSuppressed || !isFindingSuppressed(f))
                 .map((finding) => (
-                <FindingRow
-                  key={finding.id}
-                  finding={finding}
-                  repositoryOwner={scan.scan.repository_owner}
-                  repositoryName={scan.scan.repository_name}
-                  scanId={scanId}
-                />
-              ))}
+                  <FindingRow
+                    key={finding.id}
+                    finding={finding}
+                    repositoryOwner={scan.scan.repository_owner}
+                    repositoryName={scan.scan.repository_name}
+                    scanId={scanId}
+                  />
+                ))}
             </Box>
 
             {/* Empty State - only show when no secrets found */}
@@ -4199,15 +4195,15 @@ export default function ScanDetailsPage() {
                 {vulnerabilityFindings
                   .filter((f) => showSuppressed || !isFindingSuppressed(f))
                   .map((finding) => (
-                  <VulnerabilityFindingRow
-                    key={finding.id}
-                    finding={finding}
-                    repositoryOwner={scan.scan.repository_owner}
-                    repositoryName={scan.scan.repository_name}
-                    scanId={scanId}
-                    onStatusMessage={showAlert}
-                  />
-                ))}
+                    <VulnerabilityFindingRow
+                      key={finding.id}
+                      finding={finding}
+                      repositoryOwner={scan.scan.repository_owner}
+                      repositoryName={scan.scan.repository_name}
+                      scanId={scanId}
+                      onStatusMessage={showAlert}
+                    />
+                  ))}
               </Box>
             )}
           </Box>

@@ -708,9 +708,7 @@ export default function SettingsPage() {
           )}
         </TabPanel>
         <TabPanel value="suppressions" sx={{ p: 0, pt: "8px" }}>
-          <SuppressionRulesTab
-            onMessage={(variant, body) => setAlert({ variant, body })}
-          />
+          <SuppressionRulesTab onMessage={(variant, body) => setAlert({ variant, body })} />
         </TabPanel>
       </TabContext>
     </PageHeaderExtended>

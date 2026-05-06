@@ -22,12 +22,7 @@ export type LicenseRiskLevel = "high" | "medium" | "low" | "unknown";
 
 export type LicenseSource = "package" | "huggingface" | "pypi" | "npm" | "manual";
 
-export type GovernanceStatus =
-  | "reviewed"
-  | "approved"
-  | "flagged"
-  | "suppressed"
-  | "accepted_risk";
+export type GovernanceStatus = "reviewed" | "approved" | "flagged" | "suppressed" | "accepted_risk";
 
 export type ScanMode = "full" | "incremental";
 

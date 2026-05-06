@@ -15,10 +15,7 @@ import {
   SuppressionField,
 } from "../../domain.layer/interfaces/i.aiDetection";
 
-function getFieldValue(
-  finding: ICreateFindingInput,
-  field: SuppressionField,
-): string | undefined {
+function getFieldValue(finding: ICreateFindingInput, field: SuppressionField): string | undefined {
   switch (field) {
     case "name":
       return finding.name;

@@ -274,12 +274,7 @@ router.patch(
  * @access  Private - Admin, Editor
  * @body    { match_type, field, value, reason?, expires_at? }
  */
-router.post(
-  "/suppressions",
-  authenticateJWT,
-  authorize(WRITE_ROLES),
-  createSuppressionController,
-);
+router.post("/suppressions", authenticateJWT, authorize(WRITE_ROLES), createSuppressionController);
 
 /**
  * @route   GET /ai-detection/suppressions
@@ -287,12 +282,7 @@ router.post(
  * @access  Private - All roles
  * @query   include_expired
  */
-router.get(
-  "/suppressions",
-  authenticateJWT,
-  authorize(ALL_ROLES),
-  listSuppressionsController,
-);
+router.get("/suppressions", authenticateJWT, authorize(ALL_ROLES), listSuppressionsController);
 
 /**
  * @route   DELETE /ai-detection/suppressions/:id

@@ -9,10 +9,7 @@
 
 import { sequelize } from "../database/db";
 import { QueryTypes } from "sequelize";
-import {
-  ISuppression,
-  ICreateSuppressionInput,
-} from "../domain.layer/interfaces/i.aiDetection";
+import { ISuppression, ICreateSuppressionInput } from "../domain.layer/interfaces/i.aiDetection";
 
 function validateOrganizationId(organizationId: number): void {
   if (!organizationId || !Number.isInteger(organizationId) || organizationId <= 0) {
@@ -102,9 +99,7 @@ export async function listSuppressionsQuery(
  * Get currently-active suppression rules for an organization.
  * Used by the matching engine at scan completion.
  */
-export async function getActiveSuppressionsQuery(
-  organizationId: number,
-): Promise<ISuppression[]> {
+export async function getActiveSuppressionsQuery(organizationId: number): Promise<ISuppression[]> {
   validateOrganizationId(organizationId);
   const query = `
     SELECT *
@@ -124,10 +119,7 @@ export async function getActiveSuppressionsQuery(
 /**
  * Delete a suppression rule. Returns true if a row was deleted.
  */
-export async function deleteSuppressionQuery(
-  id: number,
-  organizationId: number,
-): Promise<boolean> {
+export async function deleteSuppressionQuery(id: number, organizationId: number): Promise<boolean> {
   validateOrganizationId(organizationId);
   const [rows] = await sequelize.query(
     `DELETE FROM ai_detection_suppressions WHERE id = :id AND organization_id = :organizationId RETURNING id`,

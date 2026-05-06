@@ -39,10 +39,7 @@ function validateInput(input: ICreateSuppressionInput): void {
   }
 
   if (!VALID_FIELDS.includes(input.field)) {
-    throw new ValidationException(
-      `field must be one of: ${VALID_FIELDS.join(", ")}`,
-      "field",
-    );
+    throw new ValidationException(`field must be one of: ${VALID_FIELDS.join(", ")}`, "field");
   }
 
   if (typeof input.value !== "string" || input.value.trim().length === 0) {
@@ -87,10 +84,7 @@ export async function listSuppressions(
   return listSuppressionsQuery(ctx.organizationId, options);
 }
 
-export async function deleteSuppression(
-  id: number,
-  ctx: IServiceContext,
-): Promise<void> {
+export async function deleteSuppression(id: number, ctx: IServiceContext): Promise<void> {
   const deleted = await deleteSuppressionQuery(id, ctx.organizationId);
   if (!deleted) {
     throw new NotFoundException(`Suppression rule ${id} not found`);

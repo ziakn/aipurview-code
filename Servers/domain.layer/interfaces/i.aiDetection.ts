@@ -158,12 +158,7 @@ export type VulnerabilityFindingType = (typeof VULNERABILITY_FINDING_TYPES)[numb
 /**
  * Valid governance status values for findings
  */
-export type GovernanceStatus =
-  | "reviewed"
-  | "approved"
-  | "flagged"
-  | "suppressed"
-  | "accepted_risk";
+export type GovernanceStatus = "reviewed" | "approved" | "flagged" | "suppressed" | "accepted_risk";
 
 /**
  * Valid confidence levels
