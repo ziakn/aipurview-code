@@ -19,7 +19,7 @@ import {
   Finding,
 } from "../../../../domain/ai-detection/types";
 
-type SuppressionScope = "this_finding" | "by_name" | "by_type";
+type SuppressionScope = "by_name" | "by_type";
 
 interface SuppressFindingDialogProps {
   isOpen: boolean;
@@ -48,8 +48,6 @@ function buildPayload(
     };
   }
 
-  // "this_finding" and "by_name" both produce a name-based exact match.
-  // The label distinction is a UX hint — rules are name/type-based by design.
   return {
     match_type: "exact",
     field: "name",
@@ -66,14 +64,14 @@ function SuppressFindingDialog({
   onSuccess,
   onError,
 }: SuppressFindingDialogProps) {
-  const [scope, setScope] = useState<SuppressionScope>("this_finding");
+  const [scope, setScope] = useState<SuppressionScope>("by_name");
   const [reason, setReason] = useState("");
   const [expiresAt, setExpiresAt] = useState<Dayjs | null>(null);
   const [reasonError, setReasonError] = useState<string | undefined>();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const resetState = () => {
-    setScope("this_finding");
+    setScope("by_name");
     setReason("");
     setExpiresAt(null);
     setReasonError(undefined);
@@ -142,22 +140,13 @@ function SuppressFindingDialog({
           </Typography>
           <Stack spacing={4}>
             <Radio
-              id="scope-this-finding"
-              size="small"
-              value="this_finding"
-              checked={scope === "this_finding"}
-              onChange={() => setScope("this_finding")}
-              title="This finding only"
-              desc={`Suppress findings named "${finding.name}".`}
-            />
-            <Radio
               id="scope-by-name"
               size="small"
               value="by_name"
               checked={scope === "by_name"}
               onChange={() => setScope("by_name")}
               title="All findings with this name"
-              desc={`Suppress every finding named "${finding.name}", regardless of provider or scan.`}
+              desc={`Suppress every finding named "${finding.name}", on any future scan.`}
             />
             <Radio
               id="scope-by-type"

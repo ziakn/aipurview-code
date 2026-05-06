@@ -1201,6 +1201,8 @@ export async function getGovernanceSummaryQuery(
   reviewed: number;
   approved: number;
   flagged: number;
+  suppressed: number;
+  accepted_risk: number;
   unreviewed: number;
 }> {
   validateOrganizationId(organizationId);
@@ -1210,6 +1212,8 @@ export async function getGovernanceSummaryQuery(
       COUNT(*) FILTER (WHERE governance_status = 'reviewed') as reviewed,
       COUNT(*) FILTER (WHERE governance_status = 'approved') as approved,
       COUNT(*) FILTER (WHERE governance_status = 'flagged') as flagged,
+      COUNT(*) FILTER (WHERE governance_status = 'suppressed') as suppressed,
+      COUNT(*) FILTER (WHERE governance_status = 'accepted_risk') as accepted_risk,
       COUNT(*) FILTER (WHERE governance_status IS NULL) as unreviewed
     FROM ai_detection_findings
     WHERE scan_id = :scanId AND organization_id = :organizationId;
@@ -1225,6 +1229,8 @@ export async function getGovernanceSummaryQuery(
     reviewed: string;
     approved: string;
     flagged: string;
+    suppressed: string;
+    accepted_risk: string;
     unreviewed: string;
   };
 
@@ -1233,6 +1239,8 @@ export async function getGovernanceSummaryQuery(
     reviewed: parseInt(row.reviewed, 10),
     approved: parseInt(row.approved, 10),
     flagged: parseInt(row.flagged, 10),
+    suppressed: parseInt(row.suppressed, 10),
+    accepted_risk: parseInt(row.accepted_risk, 10),
     unreviewed: parseInt(row.unreviewed, 10),
   };
 }

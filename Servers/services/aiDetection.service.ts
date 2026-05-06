@@ -2797,6 +2797,8 @@ export async function getGovernanceSummary(
   reviewed: number;
   approved: number;
   flagged: number;
+  suppressed: number;
+  accepted_risk: number;
   unreviewed: number;
 }> {
   // Verify scan exists

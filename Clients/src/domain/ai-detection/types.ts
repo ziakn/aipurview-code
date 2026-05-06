@@ -383,6 +383,8 @@ export interface GovernanceSummary {
   reviewed: number;
   approved: number;
   flagged: number;
+  suppressed: number;
+  accepted_risk: number;
   unreviewed: number;
 }
 
