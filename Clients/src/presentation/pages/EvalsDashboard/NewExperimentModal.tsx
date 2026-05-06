@@ -181,6 +181,11 @@ export default function NewExperimentModal({
   const [useCustomModelName, setUseCustomModelName] = useState(false);
   const [useCustomJudgeModelName, setUseCustomJudgeModelName] = useState(false);
 
+  // Live LiteLLM model catalog fetched from AI Gateway, keyed by frontend provider ID.
+  // Populated lazily when the user picks a provider; falls back to static JSON if gateway is down.
+  const [gatewayModels, setGatewayModels] = useState<Record<string, ModelInfo[]>>({});
+  const gatewayModelsLoaded = useRef<Set<string>>(new Set());
+
   // Model preferences hook for auto-loading saved settings
   const {
     preferences: savedPreferences,
@@ -1054,16 +1059,24 @@ export default function NewExperimentModal({
     });
   };
 
-  // Get models for selected provider (saved models + static provider list)
+  // Get models for selected provider.
+  // Priority: saved DB models → live LiteLLM catalog from AI Gateway → static JSON fallback.
   const getProviderModels = (providerId: string): ModelInfo[] => {
-    // Convert saved models to ModelInfo format
     const saved = getSavedModelsForProvider(providerId).map((m) => ({
       id: m.name,
       name: m.name,
       description: m.endpointUrl ? `Saved · ${m.endpointUrl}` : "Saved model",
     }));
 
-    // For cloud providers, merge saved models with static list (deduplicate by id)
+    // Use live gateway catalog if already loaded for this provider
+    const live = gatewayModels[providerId];
+    if (live && live.length > 0) {
+      const liveIds = new Set(live.map((m) => m.id));
+      const uniqueSaved = saved.filter((s) => !liveIds.has(s.id));
+      return [...uniqueSaved, ...live];
+    }
+
+    // Fall back to bundled static JSON while gateway loads (or if gateway is down)
     if (PROVIDERS[providerId]) {
       const staticModels = PROVIDERS[providerId].models;
       const staticIds = new Set(staticModels.map((sm) => sm.id));
@@ -1071,7 +1084,6 @@ export default function NewExperimentModal({
       return [...uniqueSaved, ...staticModels];
     }
 
-    // For local providers, return only saved models
     return saved;
   };
 
@@ -1085,6 +1097,45 @@ export default function NewExperimentModal({
         });
       }, 100);
     }
+  }, [config.judgeLlm.provider]);
+
+  // Load live model catalog from AI Gateway when a cloud provider is selected.
+  // Runs for both the model-under-test and the judge provider.
+  useEffect(() => {
+    const loadForProvider = async (provider: string) => {
+      if (!provider || gatewayModelsLoaded.current.has(provider)) return;
+      // Only cloud providers — local/custom providers don't have a LiteLLM catalog entry
+      const cloudProviders = new Set(["openai", "anthropic", "google", "mistral", "xai", "openrouter"]);
+      if (!cloudProviders.has(provider)) return;
+      gatewayModelsLoaded.current.add(provider); // mark before fetch to prevent concurrent calls
+      try {
+        const models = await evalModelsService.getGatewayModelsForProvider(provider);
+        if (models.length > 0) {
+          setGatewayModels((prev) => ({ ...prev, [provider]: models }));
+        }
+      } catch {
+        // Gateway unreachable — static fallback will be used
+      }
+    };
+    loadForProvider(config.model.accessMethod as string);
+  }, [config.model.accessMethod]);
+
+  useEffect(() => {
+    const loadForProvider = async (provider: string) => {
+      if (!provider || gatewayModelsLoaded.current.has(provider)) return;
+      const cloudProviders = new Set(["openai", "anthropic", "google", "mistral", "xai", "openrouter"]);
+      if (!cloudProviders.has(provider)) return;
+      gatewayModelsLoaded.current.add(provider);
+      try {
+        const models = await evalModelsService.getGatewayModelsForProvider(provider);
+        if (models.length > 0) {
+          setGatewayModels((prev) => ({ ...prev, [provider]: models }));
+        }
+      } catch {
+        // Gateway unreachable — static fallback will be used
+      }
+    };
+    loadForProvider(config.judgeLlm.provider as string);
   }, [config.judgeLlm.provider]);
 
   // Auto-load default dataset when reaching step 2 (Dataset)
