@@ -52,6 +52,13 @@ const preprocessLatex = (text: string): string => {
   return processed;
 };
 
+// Bias and Toxicity are stored as score=1 meaning "no bias / non-toxic" (pass), but users
+// read the number as a level where 0 = none = best. Invert the display percentage for them.
+const getDisplayScore = (score: number, metricName: string): number => {
+  const n = metricName.toLowerCase();
+  return n.includes("bias") || n.includes("toxicity") ? 1 - score : score;
+};
+
 // Convert camelCase or concatenated metric names to proper display format
 // e.g., "turnRelevancy" → "Turn Relevancy", "Knowledgeretention" → "Knowledge Retention"
 const formatMetricName = (name: string): string => {
@@ -997,8 +1004,10 @@ export default function ExperimentDetailContent({
             },
           };
 
-          // Get score color based on value thresholds
-          // For inverse metrics (bias, toxicity), lower is better
+          // Get score color based on value thresholds.
+          // Hallucination is the only truly inverse metric (0 = no hallucination = best).
+          // Bias and Toxicity use the same 0→1 scale as quality metrics: the EvalServer
+          // stores score=1 when the output is unbiased/non-toxic and score=0 when it fails.
           const getScoreColor = (score: number | undefined, metricKey?: string) => {
             if (score === undefined)
               return {
@@ -1007,10 +1016,9 @@ export default function ExperimentDetailContent({
                 icon: palette.status.default.text,
               };
 
-            // Check if this is an inverse metric (lower is better)
+            // Only Hallucination is inverse (lower score = better result)
             const isInverse =
-              metricKey &&
-              (metricKey.toLowerCase() === "bias" || metricKey.toLowerCase() === "toxicity");
+              metricKey && metricKey.toLowerCase() === "hallucination";
 
             if (isInverse) {
               // For inverse metrics: low = good (green), high = bad (red)
@@ -1322,7 +1330,9 @@ export default function ExperimentDetailContent({
                         fontFamily: "'JetBrains Mono', 'Fira Code', 'Courier New', monospace",
                       }}
                     >
-                      {avgValue === undefined ? "N/A" : `${(avgValue * 100).toFixed(1)}%`}
+                      {avgValue === undefined
+                        ? "N/A"
+                        : `${(getDisplayScore(avgValue, metric.label) * 100).toFixed(1)}%`}
                     </Typography>
                     {scores.length >= 2 && <Sparkline scores={scores} color={colors.icon} />}
                   </Box>
@@ -1594,12 +1604,33 @@ export default function ExperimentDetailContent({
                           </td>
                           {metricColumns.map((metric) => {
                             const score = getMetricScore(log, metric);
-                            const isInverseMetric =
-                              metric.toLowerCase() === "bias" ||
-                              metric.toLowerCase() === "toxicity" ||
-                              metric.toLowerCase() === "hallucination";
+                            // Prefer the backend-computed passed flag; fall back to score >= 0.5
+                            const rawMetricData = (() => {
+                              const ms = log.metadata?.metric_scores as
+                                | Record<string, number | { score?: number; passed?: boolean }>
+                                | undefined;
+                              if (!ms) return undefined;
+                              return (
+                                ms[metric] ??
+                                ms[`G-Eval (${metric})`] ??
+                                ms[
+                                  Object.keys(ms).find(
+                                    (k) =>
+                                      k.toLowerCase() === metric.toLowerCase() ||
+                                      k
+                                        .replace(/^G-Eval\s*\((.+)\)$/i, "$1")
+                                        .toLowerCase() === metric.toLowerCase(),
+                                  ) ?? ""
+                                ]
+                              );
+                            })();
                             const passed =
-                              score !== null && (isInverseMetric ? score < 0.5 : score >= 0.5);
+                              score !== null &&
+                              (typeof rawMetricData === "object" &&
+                              rawMetricData !== null &&
+                              "passed" in rawMetricData
+                                ? (rawMetricData as { passed?: boolean }).passed === true
+                                : score >= 0.5);
                             return (
                               <td
                                 key={metric}
@@ -1620,7 +1651,9 @@ export default function ExperimentDetailContent({
                                     score !== null ? palette.text.secondary : palette.text.disabled,
                                 }}
                               >
-                                {score !== null ? `${(score * 100).toFixed(0)}%` : "-"}
+                                {score !== null
+                                  ? `${(getDisplayScore(score, metric) * 100).toFixed(0)}%`
+                                  : "-"}
                               </td>
                             );
                           })}
@@ -1670,12 +1703,15 @@ export default function ExperimentDetailContent({
                 // Calculate overall pass/fail for this sample
                 const metricScores = selectedLog.metadata?.metric_scores || {};
                 const scoreEntries = Object.entries(metricScores);
-                const passedCount = scoreEntries.filter(([name, data]) => {
+                const passedCount = scoreEntries.filter(([_name, data]) => {
+                  // Use the backend-computed `passed` field when present; it already
+                  // handles per-metric thresholds and inverse semantics correctly.
+                  if (typeof data === "object" && data !== null && "passed" in (data as object)) {
+                    return (data as { passed?: boolean }).passed === true;
+                  }
                   const score =
                     typeof data === "number" ? data : (data as { score?: number })?.score;
-                  const isInverse =
-                    name.toLowerCase().includes("bias") || name.toLowerCase().includes("toxicity");
-                  return typeof score === "number" && (isInverse ? score < 0.5 : score >= 0.5);
+                  return typeof score === "number" && score >= 0.5;
                 }).length;
 
                 return (
@@ -1955,13 +1991,18 @@ export default function ExperimentDetailContent({
                                   typeof metricData === "number"
                                     ? metricData
                                     : (metricData as { score?: number })?.score;
-                                const isInverse =
-                                  metricName.toLowerCase().includes("bias") ||
-                                  metricName.toLowerCase().includes("toxicity") ||
-                                  metricName.toLowerCase().includes("hallucination");
+                                // Use the backend-computed passed flag when present.
+                                // It already handles per-metric thresholds and semantics.
+                                const backendPassed =
+                                  typeof metricData === "object" &&
+                                  metricData !== null &&
+                                  "passed" in (metricData as object)
+                                    ? (metricData as { passed?: boolean }).passed
+                                    : undefined;
                                 const passed =
-                                  typeof score === "number" &&
-                                  (isInverse ? score < 0.5 : score >= 0.5);
+                                  backendPassed !== undefined
+                                    ? backendPassed
+                                    : typeof score === "number" && score >= 0.5;
                                 const rawReason =
                                   typeof metricData === "object" && metricData !== null
                                     ? (metricData as { reason?: string }).reason
@@ -2007,7 +2048,7 @@ export default function ExperimentDetailContent({
                                         }}
                                       >
                                         {typeof score === "number"
-                                          ? `${(score * 100).toFixed(0)}%`
+                                          ? `${(getDisplayScore(score, metricName) * 100).toFixed(0)}%`
                                           : "N/A"}
                                       </Typography>
                                     </Stack>
@@ -2025,7 +2066,7 @@ export default function ExperimentDetailContent({
                                       <Box
                                         sx={{
                                           height: "100%",
-                                          width: `${(typeof score === "number" ? score : 0) * 100}%`,
+                                          width: `${(typeof score === "number" ? getDisplayScore(score, metricName) : 0) * 100}%`,
                                           backgroundColor: passed
                                             ? palette.status.success.text
                                             : palette.status.error.text,

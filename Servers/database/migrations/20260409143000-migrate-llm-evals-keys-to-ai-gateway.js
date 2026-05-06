@@ -8,6 +8,42 @@
 
 module.exports = {
   async up(queryInterface) {
+    // Guard: skip if either table doesn't exist yet.
+    // ai_gateway_api_keys is created by the AIGateway Alembic migration
+    // (AIGateway/src/database/migrations/versions/a0001_create_ai_gateway_tables.py).
+    // If the AIGateway hasn't been initialised, this migration is a no-op and
+    // the data copy can be triggered manually once AIGateway is running.
+    const [[{ exists: gatewayTableExists }]] = await queryInterface.sequelize.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM information_schema.tables
+        WHERE table_schema = 'verifywise'
+          AND table_name   = 'ai_gateway_api_keys'
+      ) AS exists;
+    `);
+
+    if (!gatewayTableExists) {
+      console.log(
+        '[migrate-llm-evals-keys-to-ai-gateway] ai_gateway_api_keys does not exist yet ' +
+        '(AIGateway not initialised) — skipping data copy.',
+      );
+      return;
+    }
+
+    const [[{ exists: evalsTableExists }]] = await queryInterface.sequelize.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM information_schema.tables
+        WHERE table_schema = 'verifywise'
+          AND table_name   = 'llm_evals_api_keys'
+      ) AS exists;
+    `);
+
+    if (!evalsTableExists) {
+      console.log(
+        '[migrate-llm-evals-keys-to-ai-gateway] llm_evals_api_keys does not exist — nothing to migrate.',
+      );
+      return;
+    }
+
     await queryInterface.sequelize.query(`
       INSERT INTO verifywise.ai_gateway_api_keys (
         organization_id,
@@ -44,6 +80,15 @@ module.exports = {
   },
 
   async down(queryInterface) {
+    const [[{ exists }]] = await queryInterface.sequelize.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM information_schema.tables
+        WHERE table_schema = 'verifywise'
+          AND table_name   = 'ai_gateway_api_keys'
+      ) AS exists;
+    `);
+    if (!exists) return;
+
     await queryInterface.sequelize.query(`
       DELETE FROM verifywise.ai_gateway_api_keys
       WHERE key_name = 'Migrated from LLM Evals';

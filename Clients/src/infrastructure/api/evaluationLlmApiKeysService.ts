@@ -15,7 +15,9 @@ export type LLMProvider =
   | "openrouter";
 
 export interface LLMApiKey {
+  id?: number;
   provider: LLMProvider;
+  keyName?: string;
   maskedKey: string;
   createdAt: string;
   updatedAt: string;
@@ -93,7 +95,9 @@ class EvaluationLlmApiKeysService {
       const evalProv = gatewayProviderToEval(r.provider);
       if (!evalProv) continue;
       mapped.push({
+        id: r.id,
         provider: evalProv,
+        keyName: r.key_name,
         maskedKey: r.masked_key || "***",
         createdAt: r.created_at,
         updatedAt: r.updated_at,
@@ -102,12 +106,36 @@ class EvaluationLlmApiKeysService {
     return dedupeLatestPerProvider(mapped);
   }
 
-  async addKey(_request: AddKeyRequest): Promise<LLMApiKey> {
-    throw new Error(EvaluationLlmApiKeysService.MANAGE_KEYS_MESSAGE);
+  async addKey(request: AddKeyRequest): Promise<LLMApiKey> {
+    const gwProvider = evalProviderToGatewayVerify(request.provider);
+    const providerLabel =
+      gwProvider.charAt(0).toUpperCase() + gwProvider.slice(1);
+    const response = await CustomAxios.post<{ data: GatewayKeyRow }>(
+      "/ai-gateway/keys",
+      {
+        provider: gwProvider,
+        key_name: `${providerLabel} Evals Key`,
+        api_key: request.apiKey,
+      },
+    );
+    const r = response.data?.data;
+    return {
+      id: r?.id,
+      provider: request.provider,
+      keyName: r?.key_name,
+      maskedKey: r?.masked_key || "***",
+      createdAt: r?.created_at ?? new Date().toISOString(),
+      updatedAt: r?.updated_at ?? new Date().toISOString(),
+    };
   }
 
-  async deleteKey(_provider: LLMProvider): Promise<void> {
-    throw new Error(EvaluationLlmApiKeysService.MANAGE_KEYS_MESSAGE);
+  async deleteKey(_provider: LLMProvider, id?: number): Promise<void> {
+    if (!id) {
+      throw new Error(
+        "Cannot delete key: key ID not found. Refresh the page and try again.",
+      );
+    }
+    await CustomAxios.delete(`/ai-gateway/keys/${id}`);
   }
 
   async hasKey(provider: LLMProvider): Promise<boolean> {

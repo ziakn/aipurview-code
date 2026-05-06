@@ -135,13 +135,16 @@ async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
       const hasJudgeApiKey = body.config.judgeLlm.apiKey && body.config.judgeLlm.apiKey !== "***" && body.config.judgeLlm.apiKey !== "";
 
       if (judgeProvider && !hasJudgeApiKey && VALID_PROVIDERS.includes(judgeProvider as LLMProvider)) {
-        const apiKey = await getDecryptedAiGatewayKeyForProviderQuery(
-          orgId,
-          judgeProvider as LLMProvider,
-        );
-
-        if (apiKey) {
-          req.body.config.judgeLlm.apiKey = apiKey;
+        try {
+          const apiKey = await getDecryptedAiGatewayKeyForProviderQuery(
+            orgId,
+            judgeProvider as LLMProvider,
+          );
+          if (apiKey) {
+            req.body.config.judgeLlm.apiKey = apiKey;
+          }
+        } catch {
+          // Key not available — EvalServer will surface the missing-key error
         }
       }
     }
@@ -153,17 +156,20 @@ async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
       const hasModelApiKey = body.config.model.apiKey && body.config.model.apiKey !== "***" && body.config.model.apiKey !== "";
 
       if (modelProvider && !hasModelApiKey && VALID_PROVIDERS.includes(modelProvider as LLMProvider)) {
-        const apiKey = await getDecryptedAiGatewayKeyForProviderQuery(
-          orgId,
-          modelProvider as LLMProvider,
-        );
-
-        if (apiKey) {
-          req.body.config.model.apiKey = apiKey;
-          // Also set provider explicitly if only accessMethod was set
-          if (!body.config.model.provider) {
-            req.body.config.model.provider = modelProvider;
+        try {
+          const apiKey = await getDecryptedAiGatewayKeyForProviderQuery(
+            orgId,
+            modelProvider as LLMProvider,
+          );
+          if (apiKey) {
+            req.body.config.model.apiKey = apiKey;
+            // Also set provider explicitly if only accessMethod was set
+            if (!body.config.model.provider) {
+              req.body.config.model.provider = modelProvider;
+            }
           }
+        } catch {
+          // Key not available — EvalServer will surface the missing-key error
         }
       }
     }
@@ -181,16 +187,23 @@ async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
 
         // Only fetch if we don't already have this provider's key
         if (!req.body.config.scorerApiKeys[judgeProvider]) {
-          try {
-            const apiKey = await getDecryptedAiGatewayKeyForProviderQuery(
-              orgId,
-              judgeProvider as LLMProvider,
-            );
-            if (apiKey) {
-              req.body.config.scorerApiKeys[judgeProvider] = apiKey;
+          // Reuse the key already resolved for the judge LLM (user-provided or injected
+          // in step 2) before making a DB round-trip.
+          const resolvedJudgeKey = req.body.config.judgeLlm?.apiKey;
+          if (resolvedJudgeKey && resolvedJudgeKey !== "***" && resolvedJudgeKey !== "") {
+            req.body.config.scorerApiKeys[judgeProvider] = resolvedJudgeKey;
+          } else {
+            try {
+              const apiKey = await getDecryptedAiGatewayKeyForProviderQuery(
+                orgId,
+                judgeProvider as LLMProvider,
+              );
+              if (apiKey) {
+                req.body.config.scorerApiKeys[judgeProvider] = apiKey;
+              }
+            } catch {
+              // Skip if key not found
             }
-          } catch {
-            // Skip if key not found
           }
         }
       }

@@ -375,6 +375,7 @@ async def migrate_table(
 
     # Process each row
     migrated_count = 0
+    skipped_count = 0
     for row in rows:
         row_dict = dict(row)
         old_id = row_dict.get("id")
@@ -397,8 +398,11 @@ async def migrate_table(
                 else:
                     insert_data[col] = value
             elif col in USER_REFERENCE_COLUMNS:
-                # Keep user references as-is (they point to verifywise.users)
-                insert_data[col] = value
+                # Keep user references as-is (they point to verifywise.users).
+                # Cast to str if the old schema stored the value as an integer
+                # (e.g. created_by was INTEGER in old tenant schemas but is
+                # VARCHAR(255) in the shared verifywise schema).
+                insert_data[col] = str(value) if isinstance(value, int) else value
             else:
                 insert_data[col] = value
 
@@ -454,12 +458,22 @@ async def migrate_table(
             migrated_count += 1
 
         except Exception as e:
-            # Handle unique constraint violations (might be duplicate from previous partial migration)
-            if "duplicate key" in str(e).lower() or "unique constraint" in str(e).lower():
-                # Already exists, add to mapping
+            err_str = str(e).lower()
+            err_type = type(e).__name__
+            # Handle unique constraint violations (duplicate from previous partial migration)
+            if "duplicate key" in err_str or "unique constraint" in err_str:
                 if old_id is not None:
                     id_mapping.set(table_name, old_id, old_id)
                 migrated_count += 1
+            elif (
+                "foreign key" in err_str
+                or "foreignkeyviolation" in err_type.lower()
+                or "fk" in err_type.lower()
+            ):
+                # Orphaned row — its FK target was never in the old schema.
+                # Skip it so the rest of the table can migrate successfully.
+                print(f"    ⚠️  {table_name}: skipping orphaned row {old_id} (FK violation: {e!s:.120})")
+                skipped_count += 1
             else:
                 raise
 
@@ -467,6 +481,8 @@ async def migrate_table(
 
     if migrated_count > 0:
         print(f"    ✓ {table_name}: {migrated_count} rows")
+    if skipped_count > 0:
+        print(f"    ⚠️  {table_name}: {skipped_count} orphaned rows skipped")
 
     return result
 
