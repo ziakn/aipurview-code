@@ -106,7 +106,7 @@ const DatasetsTableBody: React.FC<DatasetsTableBodyProps> = ({
             onClick={() => onRowClick?.(dataset)}
             sx={{
               ...singleTheme.tableStyles.primary.body.row,
-              cursor: onRowClick ? "pointer" : "default",
+              "cursor": onRowClick ? "pointer" : "default",
               "&:hover": {
                 backgroundColor: `${background.accent}`,
               },
@@ -285,8 +285,8 @@ const DatasetsTableBody: React.FC<DatasetsTableBodyProps> = ({
                 size="small"
                 onClick={(e) => handleMenuOpen(e, dataset)}
                 sx={{
-                  color: `${text.icon}`,
-                  padding: "6px",
+                  "color": `${text.icon}`,
+                  "padding": "6px",
                   "&:hover": {
                     backgroundColor: `${background.hover}`,
                   },

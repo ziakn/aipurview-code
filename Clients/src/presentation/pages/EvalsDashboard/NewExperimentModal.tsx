@@ -1219,14 +1219,14 @@ export default function NewExperimentModal({
                             setUseCustomModelName(false);
                           }}
                           sx={{
-                            cursor: "pointer",
-                            border: "1px solid",
-                            borderColor: isSelected ? palette.brand.primary : palette.border.dark,
-                            backgroundColor: palette.background.main,
-                            boxShadow: "none",
-                            transition: "all 0.2s ease",
-                            position: "relative",
-                            height: "100%",
+                            "cursor": "pointer",
+                            "border": "1px solid",
+                            "borderColor": isSelected ? palette.brand.primary : palette.border.dark,
+                            "backgroundColor": palette.background.main,
+                            "boxShadow": "none",
+                            "transition": "all 0.2s ease",
+                            "position": "relative",
+                            "height": "100%",
                             "&:hover": {
                               borderColor: palette.brand.primary,
                               boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
@@ -1235,14 +1235,14 @@ export default function NewExperimentModal({
                         >
                           <CardContent
                             sx={{
-                              textAlign: "center",
-                              py: 3,
-                              px: 2,
-                              height: "100%",
-                              display: "flex",
-                              flexDirection: "column",
-                              alignItems: "center",
-                              justifyContent: "center",
+                              "textAlign": "center",
+                              "py": 3,
+                              "px": 2,
+                              "height": "100%",
+                              "display": "flex",
+                              "flexDirection": "column",
+                              "alignItems": "center",
+                              "justifyContent": "center",
                               "&:last-child": { pb: 3 },
                             }}
                           >
@@ -1268,12 +1268,12 @@ export default function NewExperimentModal({
                             {/* Provider Logo */}
                             <Box
                               sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                width: 40,
-                                height: 40,
-                                mb: 1.5,
+                                "display": "flex",
+                                "alignItems": "center",
+                                "justifyContent": "center",
+                                "width": 40,
+                                "height": 40,
+                                "mb": 1.5,
                                 "& svg": {
                                   width: 32,
                                   height: 32,
@@ -1367,16 +1367,16 @@ export default function NewExperimentModal({
                               }))
                             }
                             sx={{
-                              cursor: "pointer",
-                              backgroundColor:
+                              "cursor": "pointer",
+                              "backgroundColor":
                                 config.model.name === m.id
                                   ? palette.brand.primaryLight
                                   : "transparent",
-                              borderColor:
+                              "borderColor":
                                 config.model.name === m.id
                                   ? palette.brand.primary
                                   : palette.border.dark,
-                              color:
+                              "color":
                                 config.model.name === m.id
                                   ? palette.brand.primary
                                   : palette.text.secondary,
@@ -1415,7 +1415,7 @@ export default function NewExperimentModal({
                           }
                           displayEmpty
                           sx={{
-                            fontSize: "13px",
+                            "fontSize": "13px",
                             "& .MuiOutlinedInput-notchedOutline": {
                               borderColor: palette.border.dark,
                             },
@@ -1499,7 +1499,7 @@ export default function NewExperimentModal({
                                 }}
                                 displayEmpty
                                 sx={{
-                                  fontSize: "13px",
+                                  "fontSize": "13px",
                                   "& .MuiOutlinedInput-notchedOutline": {
                                     borderColor: palette.border.dark,
                                   },
@@ -1571,12 +1571,12 @@ export default function NewExperimentModal({
                                 }));
                               }}
                               sx={{
-                                textTransform: "none",
-                                fontSize: "11px",
-                                color: palette.text.tertiary,
-                                p: 0,
-                                mb: 0.5,
-                                minWidth: "auto",
+                                "textTransform": "none",
+                                "fontSize": "11px",
+                                "color": palette.text.tertiary,
+                                "p": 0,
+                                "mb": 0.5,
+                                "minWidth": "auto",
                                 "&:hover": { color: palette.brand.primary },
                               }}
                             >
@@ -1741,16 +1741,16 @@ export default function NewExperimentModal({
               <Box
                 component="label"
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  p: "8px",
-                  border: "1px dashed",
-                  borderColor: uploadingDataset ? palette.brand.primary : palette.border.dark,
-                  borderRadius: "4px",
-                  backgroundColor: palette.background.accent,
-                  cursor: uploadingDataset ? "wait" : "pointer",
-                  transition: "all 0.15s ease",
+                  "display": "flex",
+                  "alignItems": "center",
+                  "gap": "8px",
+                  "p": "8px",
+                  "border": "1px dashed",
+                  "borderColor": uploadingDataset ? palette.brand.primary : palette.border.dark,
+                  "borderRadius": "4px",
+                  "backgroundColor": palette.background.accent,
+                  "cursor": uploadingDataset ? "wait" : "pointer",
+                  "transition": "all 0.15s ease",
                   "&:hover": {
                     borderColor: palette.brand.primary,
                     backgroundColor: palette.status.success.bg,
@@ -1924,11 +1924,11 @@ export default function NewExperimentModal({
                     startIcon={<ExternalLink size={12} />}
                     onClick={() => window.open(`/evals/${projectId}#datasets`, "_blank")}
                     sx={{
-                      textTransform: "none",
-                      fontSize: "11px",
-                      color: palette.text.tertiary,
-                      p: 0.5,
-                      minWidth: "auto",
+                      "textTransform": "none",
+                      "fontSize": "11px",
+                      "color": palette.text.tertiary,
+                      "p": 0.5,
+                      "minWidth": "auto",
                       "&:hover": { color: palette.brand.primary },
                     }}
                   >
@@ -2294,11 +2294,11 @@ export default function NewExperimentModal({
                             }
                           }}
                           sx={{
-                            textTransform: "none",
-                            fontSize: "11px",
-                            color: palette.text.tertiary,
-                            p: 0.5,
-                            minWidth: "auto",
+                            "textTransform": "none",
+                            "fontSize": "11px",
+                            "color": palette.text.tertiary,
+                            "p": 0.5,
+                            "minWidth": "auto",
                             "&:hover": { color: palette.brand.primary },
                           }}
                         >
@@ -2312,11 +2312,11 @@ export default function NewExperimentModal({
                           startIcon={<ExternalLink size={12} />}
                           onClick={() => window.open(`/evals/${projectId}#scorers`, "_blank")}
                           sx={{
-                            textTransform: "none",
-                            fontSize: "11px",
-                            color: palette.text.tertiary,
-                            p: 0.5,
-                            minWidth: "auto",
+                            "textTransform": "none",
+                            "fontSize": "11px",
+                            "color": palette.text.tertiary,
+                            "p": 0.5,
+                            "minWidth": "auto",
                             "&:hover": { color: palette.brand.primary },
                           }}
                         >
@@ -2416,10 +2416,10 @@ export default function NewExperimentModal({
                       startIcon={<Plus size={14} />}
                       onClick={() => window.open(`/evals/${projectId}#scorers`, "_blank")}
                       sx={{
-                        textTransform: "none",
-                        fontSize: "12px",
-                        color: palette.brand.primary,
-                        borderColor: palette.brand.primary,
+                        "textTransform": "none",
+                        "fontSize": "12px",
+                        "color": palette.brand.primary,
+                        "borderColor": palette.brand.primary,
                         "&:hover": {
                           borderColor: palette.brand.primaryHover,
                           backgroundColor: palette.status.success.bg,
@@ -2490,14 +2490,16 @@ export default function NewExperimentModal({
                               setUseCustomJudgeModelName(false);
                             }}
                             sx={{
-                              cursor: "pointer",
-                              border: "1px solid",
-                              borderColor: isSelected ? palette.brand.primary : palette.border.dark,
-                              backgroundColor: palette.background.main,
-                              boxShadow: "none",
-                              transition: "all 0.2s ease",
-                              position: "relative",
-                              height: "100%",
+                              "cursor": "pointer",
+                              "border": "1px solid",
+                              "borderColor": isSelected
+                                ? palette.brand.primary
+                                : palette.border.dark,
+                              "backgroundColor": palette.background.main,
+                              "boxShadow": "none",
+                              "transition": "all 0.2s ease",
+                              "position": "relative",
+                              "height": "100%",
                               "&:hover": {
                                 borderColor: palette.brand.primary,
                                 boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
@@ -2506,14 +2508,14 @@ export default function NewExperimentModal({
                           >
                             <CardContent
                               sx={{
-                                textAlign: "center",
-                                py: 3,
-                                px: 2,
-                                height: "100%",
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                justifyContent: "center",
+                                "textAlign": "center",
+                                "py": 3,
+                                "px": 2,
+                                "height": "100%",
+                                "display": "flex",
+                                "flexDirection": "column",
+                                "alignItems": "center",
+                                "justifyContent": "center",
                                 "&:last-child": { pb: 3 },
                               }}
                             >
@@ -2543,12 +2545,12 @@ export default function NewExperimentModal({
                               {/* Provider Logo */}
                               <Box
                                 sx={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  width: 40,
-                                  height: 40,
-                                  mb: 1.5,
+                                  "display": "flex",
+                                  "alignItems": "center",
+                                  "justifyContent": "center",
+                                  "width": 40,
+                                  "height": 40,
+                                  "mb": 1.5,
                                   "& svg": {
                                     width: 32,
                                     height: 32,
@@ -2643,16 +2645,16 @@ export default function NewExperimentModal({
                                   }))
                                 }
                                 sx={{
-                                  cursor: "pointer",
-                                  backgroundColor:
+                                  "cursor": "pointer",
+                                  "backgroundColor":
                                     config.judgeLlm.model === m.id
                                       ? palette.brand.primaryLight
                                       : "transparent",
-                                  borderColor:
+                                  "borderColor":
                                     config.judgeLlm.model === m.id
                                       ? palette.brand.primary
                                       : palette.border.dark,
-                                  color:
+                                  "color":
                                     config.judgeLlm.model === m.id
                                       ? palette.brand.primary
                                       : palette.text.secondary,
@@ -2691,7 +2693,7 @@ export default function NewExperimentModal({
                               }
                               displayEmpty
                               sx={{
-                                fontSize: "13px",
+                                "fontSize": "13px",
                                 "& .MuiOutlinedInput-notchedOutline": {
                                   borderColor: palette.border.dark,
                                 },
@@ -2794,7 +2796,7 @@ export default function NewExperimentModal({
                                       }}
                                       displayEmpty
                                       sx={{
-                                        fontSize: "13px",
+                                        "fontSize": "13px",
                                         "& .MuiOutlinedInput-notchedOutline": {
                                           borderColor: palette.border.dark,
                                         },
@@ -2866,12 +2868,12 @@ export default function NewExperimentModal({
                                         }));
                                       }}
                                       sx={{
-                                        textTransform: "none",
-                                        fontSize: "11px",
-                                        color: palette.text.tertiary,
-                                        p: 0,
-                                        mb: 0.5,
-                                        minWidth: "auto",
+                                        "textTransform": "none",
+                                        "fontSize": "11px",
+                                        "color": palette.text.tertiary,
+                                        "p": 0,
+                                        "mb": 0.5,
+                                        "minWidth": "auto",
                                         "&:hover": { color: palette.brand.primary },
                                       }}
                                     >
@@ -3046,9 +3048,9 @@ export default function NewExperimentModal({
                 disableGutters
                 elevation={0}
                 sx={{
-                  border: `1px solid ${palette.accent.blue.bg}`,
-                  borderRadius: "4px !important",
-                  backgroundColor: palette.accent.blue.bg,
+                  "border": `1px solid ${palette.accent.blue.bg}`,
+                  "borderRadius": "4px !important",
+                  "backgroundColor": palette.accent.blue.bg,
                   "&:before": { display: "none" },
                   "&.Mui-expanded": { margin: 0 },
                 }}
@@ -3056,8 +3058,8 @@ export default function NewExperimentModal({
                 <AccordionSummary
                   expandIcon={<ChevronDown size={18} color={palette.accent.blue.text} />}
                   sx={{
-                    minHeight: 48,
-                    px: "8px",
+                    "minHeight": 48,
+                    "px": "8px",
                     "&.Mui-expanded": { minHeight: 48 },
                     "& .MuiAccordionSummary-content": { my: "8px" },
                   }}
@@ -3206,8 +3208,8 @@ export default function NewExperimentModal({
                 disableGutters
                 elevation={0}
                 sx={{
-                  border: `1px solid ${palette.border.dark}`,
-                  borderRadius: "4px !important",
+                  "border": `1px solid ${palette.border.dark}`,
+                  "borderRadius": "4px !important",
                   "&:before": { display: "none" },
                   "&.Mui-expanded": { margin: 0 },
                 }}
@@ -3215,8 +3217,8 @@ export default function NewExperimentModal({
                 <AccordionSummary
                   expandIcon={<ChevronDown size={18} color={palette.text.tertiary} />}
                   sx={{
-                    minHeight: 48,
-                    px: "8px",
+                    "minHeight": 48,
+                    "px": "8px",
                     "&.Mui-expanded": { minHeight: 48 },
                     "& .MuiAccordionSummary-content": { my: "8px" },
                   }}

@@ -421,7 +421,7 @@ export default function OrgSettings() {
                     onClick={() => handleRemoveKeyClick(key.provider, key.id)}
                     disabled={saving}
                     sx={{
-                      color: theme.palette.error.main,
+                      "color": theme.palette.error.main,
                       "&:hover": {
                         backgroundColor: theme.palette.error.light + "20",
                       },
@@ -496,14 +496,14 @@ export default function OrgSettings() {
                 isDisabled={!selectedProvider || !newApiKey.trim() || !!apiKeyError}
                 startIcon={<Plus size={16} />}
                 sx={{
-                  backgroundColor: palette.brand.primary,
-                  border: `1px solid ${palette.brand.primary}`,
+                  "backgroundColor": palette.brand.primary,
+                  "border": `1px solid ${palette.brand.primary}`,
                   "&:hover": { backgroundColor: palette.brand.primaryHover },
                   "&:disabled": {
                     backgroundColor: theme.palette.action.disabledBackground,
                     color: theme.palette.action.disabled,
                   },
-                  textTransform: "none",
+                  "textTransform": "none",
                 }}
               />
             </Box>

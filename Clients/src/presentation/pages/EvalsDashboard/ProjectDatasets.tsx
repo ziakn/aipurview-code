@@ -945,8 +945,8 @@ export function ProjectDatasets({ projectId, orgId }: ProjectDatasetsProps) {
               startIcon={copiedJson ? <Check size={16} /> : <Copy size={16} />}
               text={copiedJson ? "Copied!" : "Copy JSON"}
               sx={{
-                color: copiedJson ? palette.status.success.text : palette.text.secondary,
-                borderColor: copiedJson ? palette.status.success.text : palette.border.dark,
+                "color": copiedJson ? palette.status.success.text : palette.text.secondary,
+                "borderColor": copiedJson ? palette.status.success.text : palette.border.dark,
                 "&:hover": {
                   borderColor: palette.text.disabled,
                   backgroundColor: palette.background.accent,
@@ -975,8 +975,8 @@ export function ProjectDatasets({ projectId, orgId }: ProjectDatasetsProps) {
               startIcon={<Download size={16} />}
               text="Download"
               sx={{
-                color: palette.text.secondary,
-                borderColor: palette.border.dark,
+                "color": palette.text.secondary,
+                "borderColor": palette.border.dark,
                 "&:hover": {
                   borderColor: palette.text.disabled,
                   backgroundColor: palette.background.accent,
@@ -1082,8 +1082,8 @@ export function ProjectDatasets({ projectId, orgId }: ProjectDatasetsProps) {
                       onClick={handleAddPrompt}
                       text="Add your first prompt"
                       sx={{
-                        color: palette.brand.primary,
-                        borderColor: palette.brand.primary,
+                        "color": palette.brand.primary,
+                        "borderColor": palette.brand.primary,
                         "&:hover": {
                           borderColor: palette.brand.primaryHover,
                           backgroundColor: palette.brand.primaryLight,
@@ -1113,7 +1113,7 @@ export function ProjectDatasets({ projectId, orgId }: ProjectDatasetsProps) {
                       }}
                       sx={{
                         ...singleTheme.tableStyles.primary.body.row,
-                        cursor: "pointer",
+                        "cursor": "pointer",
                         "&:hover": { backgroundColor: palette.background.hover },
                       }}
                     >
@@ -1226,7 +1226,7 @@ export function ProjectDatasets({ projectId, orgId }: ProjectDatasetsProps) {
                             handleDeletePrompt(idx);
                           }}
                           sx={{
-                            color: palette.status.error.text,
+                            "color": palette.status.error.text,
                             "&:hover": { backgroundColor: palette.status.error.bg },
                           }}
                         >
@@ -1250,11 +1250,11 @@ export function ProjectDatasets({ projectId, orgId }: ProjectDatasetsProps) {
             fullWidth
             text="Add prompt"
             sx={{
-              mt: 2,
-              color: palette.brand.primary,
-              borderColor: palette.border.dark,
-              borderStyle: "dashed",
-              py: 1.5,
+              "mt": 2,
+              "color": palette.brand.primary,
+              "borderColor": palette.border.dark,
+              "borderStyle": "dashed",
+              "py": 1.5,
               "&:hover": {
                 borderColor: palette.brand.primary,
                 backgroundColor: palette.brand.primaryLight,
@@ -1456,8 +1456,8 @@ export function ProjectDatasets({ projectId, orgId }: ProjectDatasetsProps) {
                                       setEditablePrompts(next);
                                     }}
                                     sx={{
-                                      p: 0.5,
-                                      color: palette.status.error.text,
+                                      "p": 0.5,
+                                      "color": palette.status.error.text,
                                       "&:hover": { backgroundColor: palette.status.error.bg },
                                     }}
                                   >
@@ -1519,12 +1519,12 @@ export function ProjectDatasets({ projectId, orgId }: ProjectDatasetsProps) {
                           setEditablePrompts(next);
                         }}
                         sx={{
-                          mt: 3,
-                          mb: 2,
-                          color: palette.brand.primary,
-                          borderColor: palette.border.dark,
-                          borderStyle: "dashed",
-                          py: 2,
+                          "mt": 3,
+                          "mb": 2,
+                          "color": palette.brand.primary,
+                          "borderColor": palette.border.dark,
+                          "borderStyle": "dashed",
+                          "py": 2,
                           "&:hover": {
                             borderColor: palette.brand.primary,
                             backgroundColor: palette.status.success.bg,
@@ -1704,13 +1704,13 @@ export function ProjectDatasets({ projectId, orgId }: ProjectDatasetsProps) {
                     }}
                     text="Delete"
                     sx={{
-                      color: palette.status.error.text,
-                      borderColor: palette.status.error.text,
+                      "color": palette.status.error.text,
+                      "borderColor": palette.status.error.text,
                       "&:hover": {
                         borderColor: palette.status.error.text,
                         backgroundColor: palette.status.error.bg,
                       },
-                      minHeight: "40px",
+                      "minHeight": "40px",
                     }}
                   />
                   <CustomizableButton
@@ -2042,10 +2042,10 @@ export function ProjectDatasets({ projectId, orgId }: ProjectDatasetsProps) {
               text="Cancel"
               onClick={() => setUploadModalOpen(false)}
               sx={{
-                minWidth: "80px",
-                height: "34px",
-                border: `1px solid ${palette.border.dark}`,
-                color: palette.text.secondary,
+                "minWidth": "80px",
+                "height": "34px",
+                "border": `1px solid ${palette.border.dark}`,
+                "color": palette.text.secondary,
                 "&:hover": {
                   backgroundColor: palette.background.accent,
                   border: `1px solid ${palette.border.dark}`,
@@ -2058,9 +2058,9 @@ export function ProjectDatasets({ projectId, orgId }: ProjectDatasetsProps) {
               onClick={handleFileSelect}
               startIcon={<Upload size={16} />}
               sx={{
-                minWidth: "120px",
-                height: "34px",
-                backgroundColor: palette.brand.primary,
+                "minWidth": "120px",
+                "height": "34px",
+                "backgroundColor": palette.brand.primary,
                 "&:hover": {
                   backgroundColor: palette.brand.primaryHover,
                 },
@@ -2246,8 +2246,8 @@ export function ProjectDatasets({ projectId, orgId }: ProjectDatasetsProps) {
                 onClick={() => handleDownloadExample(exampleDatasetType)}
                 text="Download example"
                 sx={{
-                  fontSize: "12px",
-                  color: palette.brand.primary,
+                  "fontSize": "12px",
+                  "color": palette.brand.primary,
                   "&:hover": {
                     backgroundColor: "rgba(19, 113, 91, 0.08)",
                   },
@@ -2822,9 +2822,9 @@ export function ProjectDatasets({ projectId, orgId }: ProjectDatasetsProps) {
                                 }}
                                 sx={{
                                   ...singleTheme.tableStyles.primary.body.row,
-                                  cursor: "pointer",
+                                  "cursor": "pointer",
                                   "&:hover": { backgroundColor: palette.background.accent },
-                                  verticalAlign: "top",
+                                  "verticalAlign": "top",
                                 }}
                               >
                                 <TableCell
@@ -3084,11 +3084,11 @@ export function ProjectDatasets({ projectId, orgId }: ProjectDatasetsProps) {
                             }}
                             sx={{
                               ...singleTheme.tableStyles.primary.body.row,
-                              cursor: isLongPrompt ? "pointer" : "default",
+                              "cursor": isLongPrompt ? "pointer" : "default",
                               "&:hover": isLongPrompt
                                 ? { backgroundColor: palette.background.accent }
                                 : {},
-                              verticalAlign: "top",
+                              "verticalAlign": "top",
                             }}
                           >
                             <TableCell

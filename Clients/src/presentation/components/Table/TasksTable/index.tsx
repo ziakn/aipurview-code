@@ -42,11 +42,11 @@ const STATUS_DISPLAY_MAP: Record<string, string> = {
 
 // Reverse mapping for API calls
 const DISPLAY_TO_STATUS_MAP: Record<string, string> = {
-  Open: "Open",
+  "Open": "Open",
   "In progress": "In Progress",
-  Completed: "Completed",
-  Overdue: "Overdue",
-  Archived: "Deleted", // Map "Archived" display back to "Deleted" status
+  "Completed": "Completed",
+  "Overdue": "Overdue",
+  "Archived": "Deleted", // Map "Archived" display back to "Deleted" status
 };
 
 const titleOfTableColumns: StandardColumn[] = [
@@ -165,16 +165,16 @@ const TasksTable: React.FC<ITasksTableProps> = ({
                   key={task.id}
                   sx={{
                     ...singleTheme.tableStyles.primary.body.row,
-                    cursor: isArchived ? "default" : "pointer",
-                    backgroundColor: isArchived ? "rgba(0, 0, 0, 0.02)" : "transparent",
-                    opacity: isArchived ? 0.7 : 1,
+                    "cursor": isArchived ? "default" : "pointer",
+                    "backgroundColor": isArchived ? "rgba(0, 0, 0, 0.02)" : "transparent",
+                    "opacity": isArchived ? 0.7 : 1,
                     "&:hover": {
                       backgroundColor: isArchived
                         ? "rgba(0, 0, 0, 0.04)"
                         : singleTheme.tableColors.rowHover,
                     },
                     ...(flashRowId === task.id && {
-                      backgroundColor: singleTheme.flashColors.background,
+                      "backgroundColor": singleTheme.flashColors.background,
                       "& td": {
                         backgroundColor: "transparent !important",
                       },
