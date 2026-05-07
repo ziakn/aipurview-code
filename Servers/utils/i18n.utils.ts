@@ -9,12 +9,6 @@ export type Translator = (key: string, vars?: Record<string, string | number>) =
 const SUPPORTED_SET: ReadonlySet<string> = new Set(SUPPORTED_LANGS);
 const LOCALES_DIR = path.resolve(__dirname, "..", "locales");
 
-// Accept any of the truthy spellings ops teams typically write in env files
-// (k8s manifests, .env files, CI variables): "true", "1", "yes", any case.
-const ENABLED = ["true", "1", "yes"].includes(
-  (process.env.I18N_BACKEND_ENABLED ?? "").trim().toLowerCase(),
-);
-
 const loadDict = (lang: SupportedLang): Record<string, string> => {
   try {
     const raw = fs.readFileSync(path.join(LOCALES_DIR, `${lang}.json`), "utf8");
@@ -31,20 +25,16 @@ const dicts: Record<SupportedLang, Record<string, string>> = {
   fr: loadDict("fr"),
 };
 
-// Observability: if the flag is on but a non-English dict is empty, every DE/FR
-// request will silently serve English. Surface this loudly at boot so it gets
-// caught before users do.
-if (ENABLED) {
-  for (const lang of SUPPORTED_LANGS) {
-    if (lang === "en") continue;
-    const size = Object.keys(dicts[lang]).length;
-    if (size === 0) {
-      console.warn(
-        `[i18n] WARNING: locales/${lang}.json is empty or unreadable. ` +
-          `All ${lang} requests will fall back to English. ` +
-          `Check the deploy step that copies locales/ to dist/locales/.`,
-      );
-    }
+// Observability: if a non-English dict is empty, every DE/FR request silently
+// serves English. Surface this loudly at boot so it gets caught before users do.
+for (const lang of SUPPORTED_LANGS) {
+  if (lang === "en") continue;
+  if (Object.keys(dicts[lang]).length === 0) {
+    console.warn(
+      `[i18n] WARNING: locales/${lang}.json is empty or unreadable. ` +
+        `All ${lang} requests will fall back to English. ` +
+        `Check the deploy step that copies locales/ to dist/locales/.`,
+    );
   }
 }
 
@@ -52,8 +42,6 @@ const interpolate = (s: string, vars?: Record<string, string | number>): string 
   if (!vars) return s;
   return s.replace(/\{(\w+)\}/g, (_, k) => (k in vars ? String(vars[k]) : `{${k}}`));
 };
-
-const identityTranslator: Translator = (key, vars) => interpolate(key, vars);
 
 const buildTranslator = (lang: SupportedLang): Translator => {
   const dict = dicts[lang];
@@ -66,18 +54,15 @@ const translators: Record<SupportedLang, Translator> = {
   fr: buildTranslator("fr"),
 };
 
-export const isI18nEnabled = (): boolean => ENABLED;
-
 export const isSupportedLang = (lang: unknown): lang is SupportedLang =>
   typeof lang === "string" && SUPPORTED_SET.has(lang);
 
-export const getTranslator = (lang: SupportedLang): Translator =>
-  ENABLED ? translators[lang] : identityTranslator;
+export const getTranslator = (lang: SupportedLang): Translator => translators[lang];
 
 /**
  * Translate a key for callers without a `req` (e.g. BullMQ jobs, email helpers
- * called outside an HTTP request). Returns the original key if the feature
- * flag is off, the language is unsupported, or the key is missing.
+ * called outside an HTTP request). Falls back to English when the language is
+ * unsupported or the key is missing from the dictionary.
  *
  * Convention: in route handlers and controllers where `req` is in scope, use
  * `req.t!(key, vars)`. In services/utils that receive only a `lang` string
@@ -88,7 +73,6 @@ export const translate = (
   key: string,
   vars?: Record<string, string | number>
 ): string => {
-  if (!ENABLED) return interpolate(key, vars);
   const resolved: SupportedLang = isSupportedLang(lang) ? lang : "en";
   return translators[resolved](key, vars);
 };
@@ -101,13 +85,13 @@ export const translate = (
  *     STATUS_CODE[500](translateError(req, error))
  *
  * Defensive against missing `req.t` (would only happen if i18nMiddleware did
- * not run on this request — same fallback path as the disabled flag).
+ * not run on this request — falls back to the English translator).
  */
 export const translateError = (
   req: { t?: Translator },
   error: unknown,
 ): string => {
-  const t = req.t ?? identityTranslator;
+  const t = req.t ?? translators.en;
   if (error && typeof error === "object") {
     const e = error as { i18nKey?: unknown; i18nVars?: unknown; message?: unknown };
     if (typeof e.i18nKey === "string") {

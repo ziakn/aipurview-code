@@ -66,7 +66,9 @@
       "Bash(npm run *)",
       "Bash(grep \"error TS\" /tmp/buildout.txt)",
       "Bash(npm install *)",
-      "Bash(git -C /Users/harsh/Data/vw/verifywise remote -v)"
+      "Bash(git -C /Users/harsh/Data/vw/verifywise remote -v)",
+      "Bash(node scripts/i18n-audit.mjs --json)",
+      "Read(//tmp/**)"
     ]
   }
 }

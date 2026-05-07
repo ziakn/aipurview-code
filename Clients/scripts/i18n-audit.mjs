@@ -83,8 +83,17 @@ function walk(dir, files = []) {
 function extractStrings(content) {
   const found = new Set();
 
-  // 1. JSX text nodes between tags: >Text Here<
-  const jsxRe = />([A-Z][A-Za-z0-9 ,.?!:;'"\-/&()]{2,200})</g;
+  // 1. JSX text nodes between tags: >Text Here< (inline or multi-line).
+  //    The \s* on each side handles Prettier-formatted JSX where the text
+  //    sits on its own line, e.g.:
+  //        <Typography sx={...}>
+  //          System Frameworks
+  //        </Typography>
+  //    Without \s*, the regex would require the capital letter to sit
+  //    immediately after `>`, missing every multi-line text node.
+  //    The negative lookbehind on `=` excludes TypeScript generics that look
+  //    like JSX: `=> Promise<void>` would otherwise match `> Promise <`.
+  const jsxRe = /(?<!=)>\s*([A-Z][A-Za-z0-9 ,.?!:;'"\-/&()]{2,200}?)\s*</g;
   for (const m of content.matchAll(jsxRe)) {
     found.add(m[1].trim());
   }
@@ -166,8 +175,10 @@ const KNOWN_DEMO_STRINGS = new Set([
 function isNoise(s) {
   if (KNOWN_DEMO_STRINGS.has(s)) return true;
   if (s.length < 3) return true;
-  // CamelCase code identifier (no spaces, mid-string capitals)
-  if (!/\s/.test(s) && s.length > 14 && /[a-z][A-Z]/.test(s)) return true;
+  // CamelCase code identifier (no spaces, internal lowercase→uppercase
+  // transition). Catches type names (SxProps, ColumnConfig), generic types
+  // (Promise), and component imports that leak through the regex.
+  if (!/\s/.test(s) && /[a-z][A-Z]/.test(s)) return true;
   // ALL-CAPS short tokens (often header constants)
   if (/^[A-Z0-9_]+$/.test(s) && s.length <= 15) return true;
   // Pure numbers / dates / IDs

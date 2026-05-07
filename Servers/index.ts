@@ -173,7 +173,7 @@ try {
   app.use(cookieParser());
   // app.use(csrf());
 
-  // i18n: attach req.lang and req.t. No-op when I18N_BACKEND_ENABLED !== "true".
+  // i18n: attach req.lang (from Accept-Language) and req.t (translator).
   app.use(i18nMiddleware);
 
   // Health endpoint — must be registered before JWT middleware so it is publicly reachable
