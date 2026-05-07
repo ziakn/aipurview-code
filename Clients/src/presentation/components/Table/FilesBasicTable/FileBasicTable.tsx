@@ -117,12 +117,11 @@ const SortableTableHead: React.FC<{
       <TableRow sx={singleTheme.tableStyles.primary.header.row}>
         {selection && (
           <TableCell
-            padding="checkbox"
             sx={{
               width: 48,
               minWidth: 48,
               maxWidth: 48,
-              padding: "14px 8px",
+              padding: "16px 8px",
               borderBottom: "1px solid #d0d5dd",
             }}
           >
