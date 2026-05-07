@@ -19,10 +19,7 @@ def grs_root(tmp_path: Path) -> Path:
 
 @pytest.fixture
 def client(grs_root: Path):
-    # Set GRS_ROOT BEFORE importing app
-    from ui.backend import routers as routers_module
-    routers_module.set_grs_root(grs_root)
-
-    # Now import app (which won't override GRS_ROOT)
+    import ui.backend.app as app_module
+    app_module.GRS_ROOT = grs_root
     from ui.backend.app import app
     return TestClient(app)
