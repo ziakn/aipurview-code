@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { IPolicy, POLICY_TAGS } from "../domain.layer/interfaces/i.policy";
+import { IPolicy, POLICY_TAGS, PolicyTag, PolicyTagsSet } from "../domain.layer/interfaces/i.policy";
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import {
   createPolicyQuery,
@@ -8,7 +8,19 @@ import {
   getPolicyByIdQuery,
   updatePolicyByIdQuery,
   updatePolicyReviewStatusQuery,
+  bulkArchivePoliciesQuery,
+  bulkSetPoliciesReviewerQuery,
+  bulkSetPoliciesTagsQuery,
 } from "../utils/policyManager.utils";
+import {
+  parseBulkIds,
+  assertOrgOwnsIds,
+  withBulkTransaction,
+} from "../utils/bulkAction.utils";
+import {
+  ForbiddenException,
+  ValidationException,
+} from "../domain.layer/exceptions/custom.exception";
 import { sequelize } from "../database/db";
 import { QueryTypes } from "sequelize";
 import {
@@ -525,6 +537,127 @@ export class PolicyController {
     } catch (error) {
       await transaction.rollback();
       logger.error("Error rejecting policy review:", error);
+      return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    }
+  }
+
+  /**
+   * PATCH /api/policies/bulk
+   *
+   * Body: { ids: number[], action: 'archive' | 'set_reviewer' | 'set_tags',
+   *         reviewerId?: number, tags?: string[] }
+   *
+   * Tenant-scoped bulk update. Authorized for Admin and Editor roles.
+   */
+  static async bulkUpdatePolicies(req: Request, res: Response): Promise<any> {
+    logProcessing({
+      description: "starting bulkUpdatePolicies",
+      functionName: "bulkUpdatePolicies",
+      fileName: "policy.ctrl.ts",
+      userId: req.userId!,
+      organizationId: req.organizationId!,
+    });
+
+    try {
+      const ids = parseBulkIds(req.body?.ids);
+      const action = req.body?.action as
+        | "archive"
+        | "set_reviewer"
+        | "set_tags"
+        | undefined;
+
+      if (action !== "archive" && action !== "set_reviewer" && action !== "set_tags") {
+        throw new ValidationException(
+          "action must be one of: archive, set_reviewer, set_tags",
+          "action",
+          req.body?.action,
+        );
+      }
+
+      let reviewerId: number | undefined;
+      if (action === "set_reviewer") {
+        const raw = req.body?.reviewerId;
+        const parsed = typeof raw === "number" ? raw : Number(raw);
+        if (!Number.isInteger(parsed) || parsed <= 0) {
+          throw new ValidationException(
+            "reviewerId must be a positive integer",
+            "reviewerId",
+            raw,
+          );
+        }
+        reviewerId = parsed;
+      }
+
+      let tags: PolicyTag[] | undefined;
+      if (action === "set_tags") {
+        const raw = req.body?.tags;
+        if (!Array.isArray(raw)) {
+          throw new ValidationException("tags must be an array", "tags", raw);
+        }
+        for (const t of raw) {
+          if (typeof t !== "string" || !PolicyTagsSet.has(t as PolicyTag)) {
+            throw new ValidationException(
+              `Invalid policy tag: ${String(t)}`,
+              "tags",
+              t,
+            );
+          }
+        }
+        tags = raw as PolicyTag[];
+      }
+
+      await withBulkTransaction(
+        {
+          audit: {
+            action,
+            ids,
+            fileName: "policy.ctrl.ts",
+            functionName: "bulkUpdatePolicies",
+            userId: req.userId!,
+            organizationId: req.organizationId!,
+          },
+        },
+        async (transaction) => {
+          await assertOrgOwnsIds({
+            table: "policy_manager",
+            ids,
+            organizationId: req.organizationId!,
+            transaction,
+          });
+
+          if (action === "archive") {
+            await bulkArchivePoliciesQuery(
+              req.organizationId!,
+              ids,
+              req.userId!,
+              transaction,
+            );
+          } else if (action === "set_reviewer") {
+            await bulkSetPoliciesReviewerQuery(
+              req.organizationId!,
+              ids,
+              reviewerId!,
+              transaction,
+            );
+          } else {
+            await bulkSetPoliciesTagsQuery(
+              req.organizationId!,
+              ids,
+              tags!,
+              transaction,
+            );
+          }
+        },
+      );
+
+      return res.status(200).json(STATUS_CODE[200]({ updated: ids.length, action }));
+    } catch (error) {
+      if (error instanceof ValidationException) {
+        return res.status(400).json(STATUS_CODE[400](error.message));
+      }
+      if (error instanceof ForbiddenException) {
+        return res.status(403).json(STATUS_CODE[403](error.message));
+      }
       return res.status(500).json(STATUS_CODE[500]((error as Error).message));
     }
   }

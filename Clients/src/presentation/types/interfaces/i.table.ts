@@ -201,6 +201,13 @@ export interface ITableProps {
   ) => React.ReactNode;
   hidePagination?: boolean;
   flashRowId?: number | string | null;
+  /** When provided, renders a leading checkbox column in the header. */
+  selection?: {
+    allSelected: boolean;
+    someSelected: boolean;
+    onToggleAll: () => void;
+    ariaLabel?: string;
+  };
 }
 
 export interface IReportTableProps {

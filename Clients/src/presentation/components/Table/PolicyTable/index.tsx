@@ -17,6 +17,7 @@ import TablePaginationActions from "../../TablePagination";
 import { VerifyWiseContext } from "../../../../application/contexts/VerifyWise.context";
 import singleTheme from "../../../themes/v1SingleTheme";
 import { ChevronsUpDown, ChevronUp, ChevronDown } from "lucide-react";
+import Checkbox from "../../Inputs/Checkbox";
 
 import {
   getPaginationRowCount,
@@ -46,6 +47,7 @@ const CustomizablePolicyTable = ({
   renderRow,
   hidePagination = false,
   flashRowId,
+  selection,
 }: ITableProps) => {
   const theme = useTheme();
   const [page, setPage] = useState(0);
@@ -178,6 +180,26 @@ const CustomizablePolicyTable = ({
       }}
     >
       <TableRow sx={singleTheme.tableStyles.primary.header.row}>
+        {selection && (
+          <TableCell
+            padding="checkbox"
+            sx={{
+              ...singleTheme.tableStyles.primary.header.cell,
+              width: "48px",
+              minWidth: "48px",
+              textAlign: "center",
+            }}
+          >
+            <Checkbox
+              id="policy-table-select-all"
+              value="select-all"
+              isChecked={selection.allSelected}
+              isIndeterminate={selection.someSelected && !selection.allSelected}
+              onChange={selection.onToggleAll}
+              ariaLabel={selection.ariaLabel ?? "Select all policies on this page"}
+            />
+          </TableCell>
+        )}
         {data.cols.map((col) => {
           const isLastColumn = col.id === "actions";
           const sortable = !["actions", "tags"].includes(col.id);
