@@ -144,9 +144,9 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
             text="Done"
             onClick={onClose}
             sx={{
-              minWidth: "80px",
-              height: "34px",
-              backgroundColor: "brand.primary",
+              "minWidth": "80px",
+              "height": "34px",
+              "backgroundColor": "brand.primary",
               "&:hover": {
                 backgroundColor: "brand.primaryHover",
               },
@@ -202,11 +202,11 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
                         setIsRemoveModalOpen(true);
                       }}
                       sx={{
-                        minWidth: 100,
-                        borderColor: "#F87171",
-                        color: "#DC2626",
-                        fontWeight: 600,
-                        textTransform: "none",
+                        "minWidth": 100,
+                        "borderColor": "#F87171",
+                        "color": "#DC2626",
+                        "fontWeight": 600,
+                        "textTransform": "none",
                         "&:hover": {
                           borderColor: "#EF4444",
                           backgroundColor: "#FEF2F2",
@@ -222,11 +222,11 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
                       disabled={isLoading}
                       onClick={() => handleAddFramework(fw)}
                       sx={{
-                        minWidth: 100,
-                        fontWeight: 600,
-                        textTransform: "none",
-                        backgroundColor: "#13715B",
-                        color: "#fff",
+                        "minWidth": 100,
+                        "fontWeight": 600,
+                        "textTransform": "none",
+                        "backgroundColor": "#13715B",
+                        "color": "#fff",
                         "&:hover": { backgroundColor: "#0e5c47" },
                       }}
                     >

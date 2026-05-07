@@ -443,14 +443,14 @@ export default function ModelsPage({ orgId }: ModelsPageProps) {
                           }))
                         }
                         sx={{
-                          cursor: "pointer",
-                          border: "1px solid",
-                          borderColor: isSelected ? palette.brand.primary : palette.border.dark,
-                          backgroundColor: palette.background.main,
-                          boxShadow: "none",
-                          transition: "all 0.2s ease",
-                          position: "relative",
-                          height: "100%",
+                          "cursor": "pointer",
+                          "border": "1px solid",
+                          "borderColor": isSelected ? palette.brand.primary : palette.border.dark,
+                          "backgroundColor": palette.background.main,
+                          "boxShadow": "none",
+                          "transition": "all 0.2s ease",
+                          "position": "relative",
+                          "height": "100%",
                           "&:hover": {
                             borderColor: palette.brand.primary,
                             boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
@@ -459,14 +459,14 @@ export default function ModelsPage({ orgId }: ModelsPageProps) {
                       >
                         <CardContent
                           sx={{
-                            textAlign: "center",
-                            py: 3,
-                            px: 2,
-                            height: "100%",
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            justifyContent: "center",
+                            "textAlign": "center",
+                            "py": 3,
+                            "px": 2,
+                            "height": "100%",
+                            "display": "flex",
+                            "flexDirection": "column",
+                            "alignItems": "center",
+                            "justifyContent": "center",
                             "&:last-child": { pb: 3 },
                           }}
                         >
@@ -491,12 +491,12 @@ export default function ModelsPage({ orgId }: ModelsPageProps) {
 
                           <Box
                             sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              width: 40,
-                              height: 40,
-                              mb: 1.5,
+                              "display": "flex",
+                              "alignItems": "center",
+                              "justifyContent": "center",
+                              "width": 40,
+                              "height": 40,
+                              "mb": 1.5,
                               "& svg": {
                                 width: 32,
                                 height: 32,
@@ -574,16 +574,16 @@ export default function ModelsPage({ orgId }: ModelsPageProps) {
                           variant={newModel.modelName === m.id ? "filled" : "outlined"}
                           onClick={() => setNewModel((prev) => ({ ...prev, modelName: m.id }))}
                           sx={{
-                            cursor: "pointer",
-                            backgroundColor:
+                            "cursor": "pointer",
+                            "backgroundColor":
                               newModel.modelName === m.id
                                 ? palette.brand.primaryLight
                                 : "transparent",
-                            borderColor:
+                            "borderColor":
                               newModel.modelName === m.id
                                 ? palette.brand.primary
                                 : palette.border.dark,
-                            color:
+                            "color":
                               newModel.modelName === m.id
                                 ? palette.brand.primary
                                 : palette.text.secondary,

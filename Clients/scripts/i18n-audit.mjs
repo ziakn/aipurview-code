@@ -35,11 +35,18 @@ function loadDict(lang) {
     throw new Error(`Could not find ${lang}: { ... } block in translations.ts`);
   }
   const keys = new Set();
-  // Run a regex globally over the block body to collect "key": "value" pairs.
-  const pairRe = /"((?:[^"\\]|\\.)+)":\s*"((?:[^"\\]|\\.)*)"/g;
+  // Collect keys in any of the three forms Prettier may produce:
+  //   "Foo bar":   "..."      (default — has special chars)
+  //   Dashboard:   "..."      (bare identifier — Prettier strips quotes)
+  //   'Click "X"': "..."      (single quotes — when content contains ")
+  // Without handling all three, hundreds of dictionary entries silently
+  // disappear from the audit's view whenever a formatter changes the file.
+  const pairRe =
+    /(?:"((?:[^"\\]|\\.)+)"|'((?:[^'\\]|\\.)+)'|([A-Za-z_$][\w$]*))\s*:\s*(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)')/g;
   for (const m of block[1].matchAll(pairRe)) {
-    // Unescape: \" → ", \\ → \
-    const key = m[1].replace(/\\(["\\])/g, "$1");
+    // Unescape: \" → ", \' → ', \\ → \
+    const raw = m[1] ?? m[2] ?? m[3];
+    const key = raw.replace(/\\(["'\\])/g, "$1");
     keys.add(key);
   }
   return keys;

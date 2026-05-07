@@ -94,7 +94,7 @@ const ModelsTableBody: React.FC<ModelsTableBodyProps> = ({
             onClick={() => onRowClick?.(model)}
             sx={{
               ...singleTheme.tableStyles.primary.body.row,
-              cursor: onRowClick ? "pointer" : "default",
+              "cursor": onRowClick ? "pointer" : "default",
               "&:hover": {
                 backgroundColor: `${background.accent}`,
               },
@@ -164,8 +164,8 @@ const ModelsTableBody: React.FC<ModelsTableBodyProps> = ({
                 size="small"
                 onClick={(e) => handleMenuOpen(e, model)}
                 sx={{
-                  color: `${text.icon}`,
-                  padding: "6px",
+                  "color": `${text.icon}`,
+                  "padding": "6px",
                   "&:hover": {
                     backgroundColor: `${background.hover}`,
                   },
@@ -205,13 +205,13 @@ const ModelsTableBody: React.FC<ModelsTableBodyProps> = ({
               onClick={handleDeleteClick}
               startIcon={<Trash2 size={14} />}
               sx={{
-                height: "34px",
-                fontSize: "13px",
-                fontWeight: 500,
-                color: "#DC2626",
-                borderColor: `${borderPalette.dark}`,
-                backgroundColor: "transparent",
-                justifyContent: "flex-start",
+                "height": "34px",
+                "fontSize": "13px",
+                "fontWeight": 500,
+                "color": "#DC2626",
+                "borderColor": `${borderPalette.dark}`,
+                "backgroundColor": "transparent",
+                "justifyContent": "flex-start",
                 "&:hover": {
                   backgroundColor: "#FEF2F2",
                   borderColor: "#DC2626",

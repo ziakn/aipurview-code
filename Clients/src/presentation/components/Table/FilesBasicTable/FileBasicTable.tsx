@@ -110,8 +110,8 @@ const SortableTableHead: React.FC<{
                 ...col.sx,
                 ...(!isLastColumn && sortable
                   ? {
-                      cursor: "pointer",
-                      userSelect: "none",
+                      "cursor": "pointer",
+                      "userSelect": "none",
                       "&:hover": {
                         backgroundColor: "rgba(0, 0, 0, 0.04)",
                       },
@@ -387,7 +387,7 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                   key={`${row.id}-${row.fileName}`}
                   sx={{
                     ...singleTheme.tableStyles.primary.body.row,
-                    height: "36px",
+                    "height": "36px",
                     "&:hover": { backgroundColor: "background.surface" },
                   }}
                 >
@@ -478,13 +478,13 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                           {isLinked ? (
                             <Box
                               sx={{
-                                display: "flex",
-                                alignItems: "flex-end",
-                                gap: "4px",
-                                textDecoration: "underline",
+                                "display": "flex",
+                                "alignItems": "flex-end",
+                                "gap": "4px",
+                                "textDecoration": "underline",
                                 "& svg": { visibility: "hidden" },
                                 "&:hover": {
-                                  cursor: "pointer",
+                                  "cursor": "pointer",
                                   "& svg": { visibility: "visible" },
                                 },
                               }}

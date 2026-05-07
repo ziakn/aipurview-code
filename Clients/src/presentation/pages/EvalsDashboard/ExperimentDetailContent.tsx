@@ -85,9 +85,9 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
   return (
     <Box
       sx={{
-        fontSize: 14,
-        color: palette.text.secondary,
-        lineHeight: 1.7,
+        "fontSize": 14,
+        "color": palette.text.secondary,
+        "lineHeight": 1.7,
         "& p": { mb: 1, mt: 0 },
         "& h1": { fontSize: 16, fontWeight: 700, color: palette.text.primary, mt: 2, mb: 1 },
         "& h2": { fontSize: 15, fontWeight: 700, color: palette.text.primary, mt: 2, mb: 1 },
@@ -105,11 +105,11 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
           color: "#0f766e",
         },
         "& pre": {
-          backgroundColor: "#1e293b",
-          borderRadius: "6px",
-          p: 2,
-          my: 1.5,
-          overflow: "auto",
+          "backgroundColor": "#1e293b",
+          "borderRadius": "6px",
+          "p": 2,
+          "my": 1.5,
+          "overflow": "auto",
           "& code": {
             backgroundColor: "transparent",
             color: "#e2e8f0",
@@ -432,12 +432,12 @@ export default function ExperimentDetailContent({
           component="span"
           onClick={onBack}
           sx={{
-            fontSize: "13px",
-            color: palette.brand.primary,
-            cursor: "pointer",
-            textDecoration: "underline",
-            textDecorationStyle: "dashed",
-            textUnderlineOffset: "3px",
+            "fontSize": "13px",
+            "color": palette.brand.primary,
+            "cursor": "pointer",
+            "textDecoration": "underline",
+            "textDecorationStyle": "dashed",
+            "textUnderlineOffset": "3px",
             "&:hover": {
               color: palette.brand.primaryHover,
             },
@@ -451,9 +451,9 @@ export default function ExperimentDetailContent({
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
         <Box
           sx={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 0.5,
+            "display": "inline-flex",
+            "alignItems": "center",
+            "gap": 0.5,
             "&:hover .edit-icon": {
               opacity: 1,
             },
@@ -473,7 +473,7 @@ export default function ExperimentDetailContent({
                 autoFocus
                 disabled={saving}
                 sx={{
-                  minWidth: "400px",
+                  "minWidth": "400px",
                   "& .MuiOutlinedInput-root": {
                     fontSize: "18px",
                     fontWeight: 700,
@@ -507,9 +507,9 @@ export default function ExperimentDetailContent({
                 onClick={handleStartEditName}
                 className="edit-icon"
                 sx={{
-                  opacity: 0,
-                  transition: "opacity 0.2s",
-                  color: palette.text.disabled,
+                  "opacity": 0,
+                  "transition": "opacity 0.2s",
+                  "color": palette.text.disabled,
                   "&:hover": {
                     color: palette.brand.primary,
                     backgroundColor: "rgba(19, 113, 91, 0.1)",
@@ -545,8 +545,8 @@ export default function ExperimentDetailContent({
             }}
             startIcon={<Download size={14} />}
             sx={{
-              borderColor: palette.border.dark,
-              color: palette.text.secondary,
+              "borderColor": palette.border.dark,
+              "color": palette.text.secondary,
               "&:hover": {
                 borderColor: palette.brand.primary,
                 color: palette.brand.primary,
@@ -569,8 +569,8 @@ export default function ExperimentDetailContent({
             }}
             startIcon={<Copy size={14} />}
             sx={{
-              borderColor: palette.border.dark,
-              color: palette.text.secondary,
+              "borderColor": palette.border.dark,
+              "color": palette.text.secondary,
               "&:hover": {
                 borderColor: palette.brand.primary,
                 color: palette.brand.primary,
@@ -589,8 +589,8 @@ export default function ExperimentDetailContent({
             isDisabled={rerunLoading || experiment.status === "running"}
             startIcon={<RotateCcw size={14} />}
             sx={{
-              backgroundColor: palette.brand.primary,
-              border: `1px solid ${palette.brand.primary}`,
+              "backgroundColor": palette.brand.primary,
+              "border": `1px solid ${palette.brand.primary}`,
               "&:hover": {
                 backgroundColor: palette.brand.primaryHover,
                 border: `1px solid ${palette.brand.primaryHover}`,
@@ -648,9 +648,9 @@ export default function ExperimentDetailContent({
               </Typography>
               <Box
                 sx={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 0.5,
+                  "display": "inline-flex",
+                  "alignItems": "center",
+                  "gap": 0.5,
                   "&:hover .edit-icon": { opacity: 1 },
                 }}
               >
@@ -668,7 +668,7 @@ export default function ExperimentDetailContent({
                       autoFocus
                       disabled={saving}
                       placeholder="Add a description..."
-                      sx={{ minWidth: "250px", "& .MuiOutlinedInput-root": { fontSize: "13px" } }}
+                      sx={{ "minWidth": "250px", "& .MuiOutlinedInput-root": { fontSize: "13px" } }}
                     />
                     <IconButton
                       size="small"
@@ -709,10 +709,10 @@ export default function ExperimentDetailContent({
                       onClick={handleStartEditDescription}
                       className="edit-icon"
                       sx={{
-                        opacity: 0,
-                        transition: "opacity 0.2s",
-                        color: palette.text.disabled,
-                        padding: "2px",
+                        "opacity": 0,
+                        "transition": "opacity 0.2s",
+                        "color": palette.text.disabled,
+                        "padding": "2px",
                         "&:hover": { color: palette.brand.primary },
                       }}
                     >
@@ -841,18 +841,18 @@ export default function ExperimentDetailContent({
           const displayNameToKey: Record<string, string> = {
             // Single-turn metrics
             "Answer Relevancy": "answerRelevancy",
-            Faithfulness: "faithfulness",
+            "Faithfulness": "faithfulness",
             "Contextual Relevancy": "contextualRelevancy",
             "Contextual Recall": "contextualRecall",
             "Contextual Precision": "contextualPrecision",
-            Bias: "bias",
-            Toxicity: "toxicity",
-            Hallucination: "hallucination",
+            "Bias": "bias",
+            "Toxicity": "toxicity",
+            "Hallucination": "hallucination",
             "Tool Correctness": "toolCorrectness",
             "Answer Correctness": "answerCorrectness",
-            Coherence: "coherence",
-            Tonality: "tonality",
-            Safety: "safety",
+            "Coherence": "coherence",
+            "Tonality": "tonality",
+            "Safety": "safety",
             // Conversational metrics (multi-turn)
             "Turn Relevancy": "turnRelevancy",
             "Knowledge Retention": "knowledgeRetention",
@@ -1210,14 +1210,14 @@ export default function ExperimentDetailContent({
                 key={metric.key}
                 elevation={0}
                 sx={{
-                  position: "relative",
-                  overflow: "hidden",
-                  background: `linear-gradient(135deg, ${palette.background.main} 0%, ${palette.background.accent} 100%)`,
-                  border: `1px solid ${palette.border.dark}`,
-                  borderRadius: "4px",
-                  transition: "all 0.2s ease",
+                  "position": "relative",
+                  "overflow": "hidden",
+                  "background": `linear-gradient(135deg, ${palette.background.main} 0%, ${palette.background.accent} 100%)`,
+                  "border": `1px solid ${palette.border.dark}`,
+                  "borderRadius": "4px",
+                  "transition": "all 0.2s ease",
                   "&:hover": {
-                    background: `linear-gradient(135deg, ${palette.background.accent} 0%, ${palette.background.hover} 100%)`,
+                    "background": `linear-gradient(135deg, ${palette.background.accent} 0%, ${palette.background.hover} 100%)`,
                     "& .background-icon": {
                       opacity: 0.04,
                       transform: "translateY(-10px)",
@@ -1244,9 +1244,9 @@ export default function ExperimentDetailContent({
 
                 <CardContent
                   sx={{
-                    p: "16px",
-                    position: "relative",
-                    zIndex: 1,
+                    "p": "16px",
+                    "position": "relative",
+                    "zIndex": 1,
                     "&:last-child": { pb: "16px" },
                   }}
                 >
@@ -1699,10 +1699,10 @@ export default function ExperimentDetailContent({
                           isDisabled={isFirstSample}
                           icon={<ChevronLeft size={16} />}
                           sx={{
-                            minWidth: "100px",
-                            height: "34px",
-                            border: `1px solid ${palette.border.dark}`,
-                            color: isFirstSample ? palette.text.disabled : palette.text.secondary,
+                            "minWidth": "100px",
+                            "height": "34px",
+                            "border": `1px solid ${palette.border.dark}`,
+                            "color": isFirstSample ? palette.text.disabled : palette.text.secondary,
                             "&:hover:not(.Mui-disabled)": {
                               backgroundColor: palette.background.accent,
                               border: `1px solid ${palette.border.dark}`,
@@ -1716,15 +1716,15 @@ export default function ExperimentDetailContent({
                           isDisabled={isLastSample}
                           icon={<ChevronRight size={16} />}
                           sx={{
-                            minWidth: "100px",
-                            height: "34px",
-                            border: `1px solid ${palette.border.dark}`,
-                            color: isLastSample ? palette.text.disabled : palette.text.secondary,
+                            "minWidth": "100px",
+                            "height": "34px",
+                            "border": `1px solid ${palette.border.dark}`,
+                            "color": isLastSample ? palette.text.disabled : palette.text.secondary,
                             "&:hover:not(.Mui-disabled)": {
                               backgroundColor: palette.background.accent,
                               border: `1px solid ${palette.border.dark}`,
                             },
-                            flexDirection: "row-reverse",
+                            "flexDirection": "row-reverse",
                             "& .MuiButton-startIcon": {
                               marginLeft: "8px",
                               marginRight: "-4px",

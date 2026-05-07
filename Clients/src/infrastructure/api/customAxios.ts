@@ -52,7 +52,7 @@ const CustomAxios = axios.create({
   timeout: 120000,
   headers: {
     "Content-Type": "application/json",
-    Accept: "application/json",
+    "Accept": "application/json",
   },
   // Don't send credentials by default
   withCredentials: false,

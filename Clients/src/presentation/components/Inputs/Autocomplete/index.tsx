@@ -122,7 +122,7 @@ function AutoCompleteField<
         )}
         sx={{
           ...getAutocompleteStyles(theme, { hasError: !!error }),
-          backgroundColor: theme.palette.background.main,
+          "backgroundColor": theme.palette.background.main,
           "& .MuiOutlinedInput-root": {
             ...getAutocompleteStyles(theme, { hasError: !!error })["& .MuiOutlinedInput-root"],
             borderRadius: theme.shape.borderRadius,
@@ -140,9 +140,9 @@ function AutoCompleteField<
             sx: {
               "& ul": { p: 0 },
               "& li": {
-                fontSize: 13,
-                borderRadius: theme.shape.borderRadius,
-                transition: "color 0.2s ease, background-color 0.2s ease",
+                "fontSize": 13,
+                "borderRadius": theme.shape.borderRadius,
+                "transition": "color 0.2s ease, background-color 0.2s ease",
                 "&:hover": {
                   color: theme.palette.primary.main,
                   backgroundColor: theme.palette.background.accent,
