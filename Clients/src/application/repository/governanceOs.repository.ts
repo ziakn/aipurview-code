@@ -125,6 +125,12 @@ export async function getUnifiedView({
   return response.data;
 }
 
+// Eligibility
+export async function getEligibility({ signal }: { signal?: AbortSignal } = {}): Promise<any> {
+  const response = await apiServices.get(`${BASE}/eligibility`, { signal });
+  return response.data;
+}
+
 // Preferences
 export async function getPreferences({ signal }: { signal?: AbortSignal } = {}): Promise<any> {
   const response = await apiServices.get(`${BASE}/preferences`, { signal });

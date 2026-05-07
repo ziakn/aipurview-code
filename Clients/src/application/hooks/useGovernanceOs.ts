@@ -11,6 +11,7 @@ import {
   getCoverage,
   refreshCoverage,
   getUnifiedView,
+  getEligibility,
   getPreferences,
   updatePreferences,
 } from "../repository/governanceOs.repository";
@@ -37,6 +38,7 @@ export const governanceOsQueryKeys = {
   unifiedView: (projectId: number) =>
     [...governanceOsQueryKeys.all, "unified-view", projectId] as const,
   preferences: () => [...governanceOsQueryKeys.all, "preferences"] as const,
+  eligibility: () => [...governanceOsQueryKeys.all, "eligibility"] as const,
 };
 
 export const useMappings = (filters?: {
@@ -158,6 +160,17 @@ export const useUnifiedView = (projectId: number) => {
     },
     enabled: projectId > 0,
     staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useGovernanceOsEligibility = () => {
+  return useQuery<{ eligible: boolean; frameworkCount: number }>({
+    queryKey: governanceOsQueryKeys.eligibility(),
+    queryFn: async () => {
+      const response = await getEligibility();
+      return response?.data || { eligible: false, frameworkCount: 0 };
+    },
+    staleTime: 2 * 60 * 1000,
   });
 };
 
