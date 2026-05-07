@@ -273,8 +273,8 @@ export const upsertOrgPreferencesQuery = async (
         active_mapping_filters: data.active_mapping_filters
           ? JSON.stringify(data.active_mapping_filters)
           : null,
-        is_enabled: data.is_enabled ?? null,
-        dont_ask_governance_os: data.dont_ask_governance_os ?? null,
+        is_enabled: data.is_enabled ?? false,
+        dont_ask_governance_os: data.dont_ask_governance_os ?? false,
       },
     },
   );
