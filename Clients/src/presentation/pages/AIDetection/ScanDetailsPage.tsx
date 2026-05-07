@@ -358,62 +358,62 @@ const PROVIDER_ICON_COMPONENTS: Record<
 > = {
   // Cloud AI Providers
   "AI21 Labs": PROVIDER_ICONS.Ai21,
-  Anthropic: PROVIDER_ICONS.Anthropic,
-  Anyscale: PROVIDER_ICONS.Anyscale,
-  AssemblyAI: PROVIDER_ICONS.AssemblyAI,
-  AWS: PROVIDER_ICONS.Aws,
-  Baseten: PROVIDER_ICONS.Baseten,
-  Cerebras: PROVIDER_ICONS.Cerebras,
-  Cohere: PROVIDER_ICONS.Cohere,
-  DeepSeek: PROVIDER_ICONS.DeepSeek,
-  ElevenLabs: PROVIDER_ICONS.ElevenLabs,
+  "Anthropic": PROVIDER_ICONS.Anthropic,
+  "Anyscale": PROVIDER_ICONS.Anyscale,
+  "AssemblyAI": PROVIDER_ICONS.AssemblyAI,
+  "AWS": PROVIDER_ICONS.Aws,
+  "Baseten": PROVIDER_ICONS.Baseten,
+  "Cerebras": PROVIDER_ICONS.Cerebras,
+  "Cohere": PROVIDER_ICONS.Cohere,
+  "DeepSeek": PROVIDER_ICONS.DeepSeek,
+  "ElevenLabs": PROVIDER_ICONS.ElevenLabs,
   "Fireworks AI": PROVIDER_ICONS.Fireworks,
-  Google: PROVIDER_ICONS.Google,
-  Groq: PROVIDER_ICONS.Groq,
-  HuggingFace: PROVIDER_ICONS.HuggingFace,
+  "Google": PROVIDER_ICONS.Google,
+  "Groq": PROVIDER_ICONS.Groq,
+  "HuggingFace": PROVIDER_ICONS.HuggingFace,
   "Jina AI": PROVIDER_ICONS.Jina,
-  LangFuse: PROVIDER_ICONS.Langfuse,
-  LangSmith: PROVIDER_ICONS.LangSmith,
+  "LangFuse": PROVIDER_ICONS.Langfuse,
+  "LangSmith": PROVIDER_ICONS.LangSmith,
   "Lepton AI": PROVIDER_ICONS.LeptonAI,
-  Meta: PROVIDER_ICONS.Meta,
-  Microsoft: PROVIDER_ICONS.Microsoft,
-  Mistral: PROVIDER_ICONS.Mistral,
-  Nvidia: PROVIDER_ICONS.Nvidia,
-  Ollama: PROVIDER_ICONS.Ollama,
-  OpenAI: PROVIDER_ICONS.OpenAI,
-  OpenRouter: PROVIDER_ICONS.OpenRouter,
-  Perplexity: PROVIDER_ICONS.Perplexity,
-  Replicate: PROVIDER_ICONS.Replicate,
-  SambaNova: PROVIDER_ICONS.SambaNova,
+  "Meta": PROVIDER_ICONS.Meta,
+  "Microsoft": PROVIDER_ICONS.Microsoft,
+  "Mistral": PROVIDER_ICONS.Mistral,
+  "Nvidia": PROVIDER_ICONS.Nvidia,
+  "Ollama": PROVIDER_ICONS.Ollama,
+  "OpenAI": PROVIDER_ICONS.OpenAI,
+  "OpenRouter": PROVIDER_ICONS.OpenRouter,
+  "Perplexity": PROVIDER_ICONS.Perplexity,
+  "Replicate": PROVIDER_ICONS.Replicate,
+  "SambaNova": PROVIDER_ICONS.SambaNova,
   "Stability AI": PROVIDER_ICONS.Stability,
   "Together AI": PROVIDER_ICONS.Together,
-  Vercel: PROVIDER_ICONS.Vercel,
+  "Vercel": PROVIDER_ICONS.Vercel,
   "Voyage AI": PROVIDER_ICONS.Voyage,
   // AI/ML Frameworks
-  CrewAI: PROVIDER_ICONS.CrewAI,
-  LangChain: PROVIDER_ICONS.LangChain,
-  LlamaIndex: PROVIDER_ICONS.LlamaIndex,
-  Phidata: PROVIDER_ICONS.Phidata,
+  "CrewAI": PROVIDER_ICONS.CrewAI,
+  "LangChain": PROVIDER_ICONS.LangChain,
+  "LlamaIndex": PROVIDER_ICONS.LlamaIndex,
+  "Phidata": PROVIDER_ICONS.Phidata,
   "Pydantic AI": PROVIDER_ICONS.PydanticAI,
   // Local ML
-  vLLM: PROVIDER_ICONS.Vllm,
+  "vLLM": PROVIDER_ICONS.Vllm,
 };
 
 // SVG/PNG logo mappings for providers without lobehub icons
 const PROVIDER_SVG_LOGOS: Record<string, string> = {
   // Local ML libraries
   "scikit-learn": scikitLearnLogo,
-  NumPy: numpyLogo,
-  Pandas: pandasLogo,
-  Matplotlib: matplotlibLogo,
-  MXNet: mxnetLogo,
-  SciPy: scipyLogo,
-  Dask: daskLogo,
+  "NumPy": numpyLogo,
+  "Pandas": pandasLogo,
+  "Matplotlib": matplotlibLogo,
+  "MXNet": mxnetLogo,
+  "SciPy": scipyLogo,
+  "Dask": daskLogo,
   // Vector databases
-  Chroma: chromaLogo,
-  Pinecone: pineconeLogo,
-  Qdrant: qdrantLogo,
-  Weaviate: weaviateLogo,
+  "Chroma": chromaLogo,
+  "Pinecone": pineconeLogo,
+  "Qdrant": qdrantLogo,
+  "Weaviate": weaviateLogo,
 };
 
 function getProviderIcon(provider?: string, size: number = 16): React.ReactNode {
@@ -459,18 +459,18 @@ function FilePathItem({ path, lineNumber, matchedText, fileUrl }: FilePathItemPr
   const filePathRow = (
     <Box
       sx={{
-        display: "flex",
-        alignItems: "center",
-        gap: 1,
-        py: 0.5,
-        px: 1,
-        fontFamily: "monospace",
-        fontSize: 13,
-        cursor: fileUrl ? "pointer" : "default",
+        "display": "flex",
+        "alignItems": "center",
+        "gap": 1,
+        "py": 0.5,
+        "px": 1,
+        "fontFamily": "monospace",
+        "fontSize": 13,
+        "cursor": fileUrl ? "pointer" : "default",
         "&:hover": {
           backgroundColor: palette.background.hover,
         },
-        borderRadius: "4px",
+        "borderRadius": "4px",
       }}
     >
       {fileUrl ? (
@@ -599,10 +599,10 @@ function FindingRow({
       {/* Header */}
       <Box
         sx={{
-          display: "flex",
-          alignItems: "center",
-          p: "8px",
-          cursor: "pointer",
+          "display": "flex",
+          "alignItems": "center",
+          "p": "8px",
+          "cursor": "pointer",
           "&:hover": {
             backgroundColor: palette.background.accent,
           },
@@ -774,9 +774,9 @@ function FindingRow({
               onClick={handleGovernanceClick}
               disabled={isUpdating}
               sx={{
-                border: `1px solid ${palette.border.light}`,
-                borderRadius: "4px",
-                p: "4px",
+                "border": `1px solid ${palette.border.light}`,
+                "borderRadius": "4px",
+                "p": "4px",
                 "&:hover": { backgroundColor: palette.background.hover },
               }}
             >
@@ -815,13 +815,14 @@ function FindingRow({
               key={status}
               onClick={() => handleStatusChange(status)}
               sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 1,
-                p: "6px 8px",
-                borderRadius: "4px",
-                cursor: "pointer",
-                backgroundColor: localStatus === status ? palette.background.hover : "transparent",
+                "display": "flex",
+                "alignItems": "center",
+                "gap": 1,
+                "p": "6px 8px",
+                "borderRadius": "4px",
+                "cursor": "pointer",
+                "backgroundColor":
+                  localStatus === status ? palette.background.hover : "transparent",
                 "&:hover": { backgroundColor: palette.background.hover },
               }}
             >
@@ -835,12 +836,12 @@ function FindingRow({
               <Box
                 onClick={() => handleStatusChange(null)}
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                  p: "6px 8px",
-                  borderRadius: "4px",
-                  cursor: "pointer",
+                  "display": "flex",
+                  "alignItems": "center",
+                  "gap": 1,
+                  "p": "6px 8px",
+                  "borderRadius": "4px",
+                  "cursor": "pointer",
                   "&:hover": { backgroundColor: palette.background.hover },
                 }}
               >
@@ -858,12 +859,12 @@ function FindingRow({
               setSuppressDialogOpen(true);
             }}
             sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-              p: "6px 8px",
-              borderRadius: "4px",
-              cursor: "pointer",
+              "display": "flex",
+              "alignItems": "center",
+              "gap": 1,
+              "p": "6px 8px",
+              "borderRadius": "4px",
+              "cursor": "pointer",
               "&:hover": { backgroundColor: palette.background.hover },
             }}
           >
@@ -955,10 +956,10 @@ function SecurityFindingRow({ finding, repositoryOwner, repositoryName }: Securi
       {/* Header */}
       <Box
         sx={{
-          display: "flex",
-          alignItems: "center",
-          p: "8px",
-          cursor: "pointer",
+          "display": "flex",
+          "alignItems": "center",
+          "p": "8px",
+          "cursor": "pointer",
           "&:hover": {
             backgroundColor: palette.background.accent,
           },
@@ -1270,10 +1271,10 @@ function VulnerabilityFindingRow({
       {/* Header */}
       <Box
         sx={{
-          display: "flex",
-          alignItems: "center",
-          p: "8px",
-          cursor: "pointer",
+          "display": "flex",
+          "alignItems": "center",
+          "p": "8px",
+          "cursor": "pointer",
           "&:hover": {
             backgroundColor: palette.background.accent,
           },
@@ -1456,9 +1457,9 @@ function VulnerabilityFindingRow({
               onClick={handleGovernanceClick}
               disabled={isUpdating}
               sx={{
-                border: `1px solid ${palette.border.light}`,
-                borderRadius: "4px",
-                p: "4px",
+                "border": `1px solid ${palette.border.light}`,
+                "borderRadius": "4px",
+                "p": "4px",
                 "&:hover": { backgroundColor: palette.background.hover },
               }}
             >
@@ -1497,13 +1498,14 @@ function VulnerabilityFindingRow({
               key={status}
               onClick={() => handleStatusChange(status)}
               sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 1,
-                p: "6px 8px",
-                borderRadius: "4px",
-                cursor: "pointer",
-                backgroundColor: localStatus === status ? palette.background.hover : "transparent",
+                "display": "flex",
+                "alignItems": "center",
+                "gap": 1,
+                "p": "6px 8px",
+                "borderRadius": "4px",
+                "cursor": "pointer",
+                "backgroundColor":
+                  localStatus === status ? palette.background.hover : "transparent",
                 "&:hover": { backgroundColor: palette.background.hover },
               }}
             >
@@ -1517,12 +1519,12 @@ function VulnerabilityFindingRow({
               <Box
                 onClick={() => handleStatusChange(null)}
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                  p: "6px 8px",
-                  borderRadius: "4px",
-                  cursor: "pointer",
+                  "display": "flex",
+                  "alignItems": "center",
+                  "gap": 1,
+                  "p": "6px 8px",
+                  "borderRadius": "4px",
+                  "cursor": "pointer",
                   "&:hover": { backgroundColor: palette.background.hover },
                 }}
               >
@@ -1540,12 +1542,12 @@ function VulnerabilityFindingRow({
               setSuppressDialogOpen(true);
             }}
             sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-              p: "6px 8px",
-              borderRadius: "4px",
-              cursor: "pointer",
+              "display": "flex",
+              "alignItems": "center",
+              "gap": 1,
+              "p": "6px 8px",
+              "borderRadius": "4px",
+              "cursor": "pointer",
               "&:hover": { backgroundColor: palette.background.hover },
             }}
           >
@@ -2230,10 +2232,10 @@ export default function ScanDetailsPage() {
           >
             <Box
               sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                cursor: "pointer",
+                "display": "flex",
+                "alignItems": "center",
+                "gap": "8px",
+                "cursor": "pointer",
                 "&:hover": { opacity: 0.8 },
               }}
               onClick={() => setShowSuggestedRisks(!showSuggestedRisks)}
@@ -2263,16 +2265,16 @@ export default function ScanDetailsPage() {
                     <Box
                       key={index}
                       sx={{
-                        border: `1px solid ${palette.border.light}`,
-                        borderRadius: "4px",
-                        p: "8px",
-                        backgroundColor: palette.background.main,
+                        "border": `1px solid ${palette.border.light}`,
+                        "borderRadius": "4px",
+                        "p": "8px",
+                        "backgroundColor": palette.background.main,
                         "&:hover": { borderColor: palette.border.dark },
-                        transition:
+                        "transition":
                           "opacity 300ms ease, max-height 300ms ease, padding 300ms ease, margin 300ms ease",
-                        opacity: isRemoving ? 0 : 1,
-                        maxHeight: isRemoving ? 0 : 300,
-                        overflow: "hidden",
+                        "opacity": isRemoving ? 0 : 1,
+                        "maxHeight": isRemoving ? 0 : 300,
+                        "overflow": "hidden",
                         ...(isRemoving && { p: 0, border: "none", mb: 0 }),
                       }}
                     >
@@ -2398,12 +2400,12 @@ export default function ScanDetailsPage() {
                 <Box
                   onClick={() => handleIgnoreSuggestion("already_added")}
                   sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    p: "6px 8px",
-                    borderRadius: "4px",
-                    cursor: "pointer",
+                    "display": "flex",
+                    "alignItems": "center",
+                    "gap": "8px",
+                    "p": "6px 8px",
+                    "borderRadius": "4px",
+                    "cursor": "pointer",
                     "&:hover": { backgroundColor: palette.background.hover },
                   }}
                 >
@@ -2414,12 +2416,12 @@ export default function ScanDetailsPage() {
                 <Box
                   onClick={() => handleIgnoreSuggestion("not_real_risk")}
                   sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    p: "6px 8px",
-                    borderRadius: "4px",
-                    cursor: "pointer",
+                    "display": "flex",
+                    "alignItems": "center",
+                    "gap": "8px",
+                    "p": "6px 8px",
+                    "borderRadius": "4px",
+                    "cursor": "pointer",
                     "&:hover": { backgroundColor: palette.background.hover },
                   }}
                 >
@@ -3712,10 +3714,10 @@ export default function ScanDetailsPage() {
                             {/* Checklist item header */}
                             <Box
                               sx={{
-                                display: "flex",
-                                alignItems: "flex-start",
-                                p: "12px",
-                                cursor: "pointer",
+                                "display": "flex",
+                                "alignItems": "flex-start",
+                                "p": "12px",
+                                "cursor": "pointer",
                                 "&:hover": { backgroundColor: palette.background.accent },
                               }}
                               onClick={() => {

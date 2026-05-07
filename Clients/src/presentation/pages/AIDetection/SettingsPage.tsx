@@ -330,13 +330,13 @@ export default function SettingsPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 sx={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 0.5,
-                  fontSize: 13,
-                  color: palette.brand.primary,
-                  textDecoration: "none",
-                  mt: 0.5,
+                  "display": "inline-flex",
+                  "alignItems": "center",
+                  "gap": 0.5,
+                  "fontSize": 13,
+                  "color": palette.brand.primary,
+                  "textDecoration": "none",
+                  "mt": 0.5,
                   "&:hover": { textDecoration: "underline" },
                 }}
               >
@@ -656,8 +656,8 @@ export default function SettingsPage() {
                         step={1}
                         size="small"
                         sx={{
-                          color: palette.brand.primary,
-                          height: 4,
+                          "color": palette.brand.primary,
+                          "height": 4,
                           "& .MuiSlider-thumb": {
                             width: 14,
                             height: 14,

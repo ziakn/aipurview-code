@@ -231,14 +231,14 @@ const CopyButton: FC<{ bubbleRef: React.RefObject<HTMLDivElement | null> }> = ({
     <Box
       onClick={handleCopy}
       sx={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: "4px",
-        cursor: "pointer",
-        color: copied
+        "display": "inline-flex",
+        "alignItems": "center",
+        "gap": "4px",
+        "cursor": "pointer",
+        "color": copied
           ? (theme.palette.success?.main ?? "#4CAF50")
           : (theme.palette.text.tertiary ?? theme.palette.text.disabled),
-        ml: 0.5,
+        "ml": 0.5,
         "&:hover": {
           color: copied ? (theme.palette.success?.main ?? "#4CAF50") : theme.palette.text.primary,
         },
@@ -328,12 +328,12 @@ const ThinkingIndicator: FC = () => {
               <Box
                 key={index}
                 sx={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: "50%",
-                  backgroundColor: theme.palette.text.accent ?? theme.palette.text.secondary,
-                  animation: "pulse 1.4s infinite",
-                  animationDelay: `${delay}s`,
+                  "width": 8,
+                  "height": 8,
+                  "borderRadius": "50%",
+                  "backgroundColor": theme.palette.text.accent ?? theme.palette.text.secondary,
+                  "animation": "pulse 1.4s infinite",
+                  "animationDelay": `${delay}s`,
                   "@keyframes pulse": {
                     "0%, 60%, 100%": { opacity: 0.3 },
                     "30%": { opacity: 1 },

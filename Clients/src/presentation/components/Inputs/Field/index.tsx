@@ -150,12 +150,12 @@ const Field = forwardRef(
             min: min,
             max: max,
             sx: {
-              color: theme.palette.text.secondary,
+              "color": theme.palette.text.secondary,
               "&:-webkit-autofill": {
                 WebkitBoxShadow: `0 0 0 100px ${theme.palette.background.fill} inset`,
                 WebkitTextFillColor: theme.palette.text.secondary,
               },
-              overflowY: "auto",
+              "overflowY": "auto",
             },
           }}
           sx={sx}
@@ -194,8 +194,8 @@ const Field = forwardRef(
                     onClick={() => setVisible((show) => !show)}
                     tabIndex={-1}
                     sx={{
-                      color: theme.palette.border.dark,
-                      padding: theme.spacing(1),
+                      "color": theme.palette.border.dark,
+                      "padding": theme.spacing(1),
                       "&:focus": {
                         outline: "none",
                       },

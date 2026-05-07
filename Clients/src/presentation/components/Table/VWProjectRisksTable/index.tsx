@@ -68,8 +68,8 @@ const SortableTableHead: React.FC<{
               ...singleTheme.tableStyles.primary.header.cell,
               ...(column.sortable
                 ? {
-                    cursor: "pointer",
-                    userSelect: "none",
+                    "cursor": "pointer",
+                    "userSelect": "none",
                     "&:hover": {
                       backgroundColor: "rgba(0, 0, 0, 0.04)",
                     },
@@ -398,8 +398,8 @@ const VWProjectRisksTable = ({
                         `Page ${page + 1} of ${Math.max(0, Math.ceil(count / rowsPerPage))}`
                       }
                       sx={{
-                        mt: theme.spacing(6),
-                        color: theme.palette.text.secondary,
+                        "mt": theme.spacing(6),
+                        "color": theme.palette.text.secondary,
                         "& .MuiSelect-select": {
                           width: theme.spacing(10),
                           borderRadius: theme.shape.borderRadius,
@@ -432,10 +432,10 @@ const VWProjectRisksTable = ({
                           inputProps: { id: "pagination-dropdown" },
                           IconComponent: SelectorVertical,
                           sx: {
-                            ml: theme.spacing(4),
-                            mr: theme.spacing(12),
-                            minWidth: theme.spacing(20),
-                            textAlign: "left",
+                            "ml": theme.spacing(4),
+                            "mr": theme.spacing(12),
+                            "minWidth": theme.spacing(20),
+                            "textAlign": "left",
                             "&.Mui-focused > div": {
                               backgroundColor: theme.palette.background.main,
                             },

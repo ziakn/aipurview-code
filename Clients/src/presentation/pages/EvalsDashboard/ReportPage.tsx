@@ -324,10 +324,10 @@ export default function ReportPage({
             target="_blank"
             rel="noopener noreferrer"
             sx={{
-              fontSize: 13,
-              color: palette.brand.primary,
-              fontWeight: 600,
-              textDecoration: "none",
+              "fontSize": 13,
+              "color": palette.brand.primary,
+              "fontWeight": 600,
+              "textDecoration": "none",
               "&:hover": { textDecoration: "underline" },
             }}
           >
@@ -537,7 +537,7 @@ export default function ReportPage({
                   }
                   sx={{
                     ...singleTheme.tableStyles.primary.body.row,
-                    cursor: "pointer",
+                    "cursor": "pointer",
                     "&:hover": { backgroundColor: palette.background.accent },
                   }}
                 >

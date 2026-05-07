@@ -26,6 +26,7 @@ import {
   ITaskEntityLinkForEmail,
 } from "../services/inAppNotification.service";
 import { getTaskEntityLinksQuery } from "../utils/taskEntityLink.utils";
+import { translateError } from "../utils/i18n.utils";
 import {
   recordEntityCreation,
   trackEntityChanges,
@@ -46,7 +47,7 @@ export async function createTask(req: Request, res: Response): Promise<any> {
   try {
     const { userId } = req;
     if (!userId) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     const {
@@ -174,7 +175,7 @@ export async function createTask(req: Request, res: Response): Promise<any> {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof BusinessLogicException) {
@@ -187,7 +188,7 @@ export async function createTask(req: Request, res: Response): Promise<any> {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     await logFailure({
@@ -200,7 +201,7 @@ export async function createTask(req: Request, res: Response): Promise<any> {
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -216,7 +217,7 @@ export async function getAllTasks(req: Request, res: Response): Promise<any> {
   try {
     const { userId, role } = req;
     if (!userId || !role) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     // Extract query parameters for filters, sorting, and pagination
@@ -305,7 +306,7 @@ export async function getAllTasks(req: Request, res: Response): Promise<any> {
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -323,7 +324,7 @@ export async function getTaskById(req: Request, res: Response): Promise<any> {
   try {
     const { userId, role } = req;
     if (!userId || !role) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     const task = await getTaskByIdQuery(taskId, { userId, role }, req.organizationId!);
@@ -369,7 +370,7 @@ export async function getTaskById(req: Request, res: Response): Promise<any> {
       tenantId: req.organizationId!,
     });
 
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -405,7 +406,7 @@ export async function updateTask(req: Request, res: Response): Promise<any> {
   try {
     const { userId, role } = req;
     if (!userId || !role) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     const updateData: Partial<ITask> = {};
@@ -582,7 +583,7 @@ export async function updateTask(req: Request, res: Response): Promise<any> {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof BusinessLogicException) {
@@ -595,7 +596,7 @@ export async function updateTask(req: Request, res: Response): Promise<any> {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     await logFailure({
@@ -633,7 +634,7 @@ export async function deleteTask(req: Request, res: Response): Promise<any> {
   try {
     const { userId, role } = req;
     if (!userId || !role) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     const deleted = await deleteTaskByIdQuery({
@@ -661,7 +662,9 @@ export async function deleteTask(req: Request, res: Response): Promise<any> {
         tenantId: req.organizationId!,
       });
 
-      return res.status(200).json(STATUS_CODE[200]({ message: "Task deleted successfully" }));
+      return res
+        .status(200)
+        .json(STATUS_CODE[200]({ message: req.t!("Task deleted successfully") }));
     }
 
     await logSuccess({
@@ -712,7 +715,7 @@ export async function restoreTask(req: Request, res: Response): Promise<any> {
   try {
     const { userId, role } = req;
     if (!userId || !role) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     const restoredTask = await restoreTaskByIdQuery({
@@ -767,7 +770,7 @@ export async function restoreTask(req: Request, res: Response): Promise<any> {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof BusinessLogicException) {
@@ -780,7 +783,7 @@ export async function restoreTask(req: Request, res: Response): Promise<any> {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     if (error instanceof ForbiddenException) {
@@ -793,7 +796,7 @@ export async function restoreTask(req: Request, res: Response): Promise<any> {
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     await logFailure({
@@ -831,7 +834,7 @@ export async function hardDeleteTask(req: Request, res: Response): Promise<any> 
   try {
     const { userId, role } = req;
     if (!userId || !role) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
     const deleted = await hardDeleteTaskByIdQuery({
@@ -854,7 +857,9 @@ export async function hardDeleteTask(req: Request, res: Response): Promise<any> 
         tenantId: req.organizationId!,
       });
 
-      return res.status(200).json(STATUS_CODE[200]({ message: "Task permanently deleted" }));
+      return res
+        .status(200)
+        .json(STATUS_CODE[200]({ message: req.t!("Task permanently deleted") }));
     }
 
     await logSuccess({
@@ -880,7 +885,7 @@ export async function hardDeleteTask(req: Request, res: Response): Promise<any> 
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof BusinessLogicException) {
@@ -893,7 +898,7 @@ export async function hardDeleteTask(req: Request, res: Response): Promise<any> 
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     if (error instanceof ForbiddenException) {
@@ -906,7 +911,7 @@ export async function hardDeleteTask(req: Request, res: Response): Promise<any> 
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     await logFailure({

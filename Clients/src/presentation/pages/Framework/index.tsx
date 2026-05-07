@@ -60,13 +60,13 @@ import { brand } from "../../themes/palette";
 
 // Tab styles following ProjectFrameworks pattern
 const tabStyle = {
-  textTransform: "none",
-  fontWeight: 400,
-  alignItems: "center",
-  justifyContent: "flex-end",
-  padding: "16px 0 7px",
-  minHeight: "20px",
-  minWidth: "auto",
+  "textTransform": "none",
+  "fontWeight": 400,
+  "alignItems": "center",
+  "justifyContent": "flex-end",
+  "padding": "16px 0 7px",
+  "minHeight": "20px",
+  "minWidth": "auto",
   "&.Mui-selected": {
     color: `${brand.primary}`,
   },
@@ -77,7 +77,7 @@ const tabPanelStyle = {
 };
 
 const tabListStyle = {
-  minHeight: "20px",
+  "minHeight": "20px",
   "& .MuiTabs-flexContainer": {
     columnGap: "34px",
   },
@@ -834,9 +834,9 @@ const Framework = () => {
                     !allowedRoles.projects.delete.includes(userRoleName)
                   }
                   sx={{
-                    backgroundColor: "brand.primary",
-                    border: "1px solid brand.primary",
-                    gap: 2,
+                    "backgroundColor": "brand.primary",
+                    "border": "1px solid brand.primary",
+                    "gap": 2,
                     "&:hover": {
                       backgroundColor: "#0e5c47",
                     },
@@ -855,7 +855,7 @@ const Framework = () => {
                     horizontal: "right",
                   }}
                   sx={{
-                    mt: 1,
+                    "mt": 1,
                     "& .MuiPopover-paper": {
                       borderRadius: "4px",
                       boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
