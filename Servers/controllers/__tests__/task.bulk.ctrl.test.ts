@@ -37,15 +37,8 @@ jest.mock("../../utils/statusCode.utils", () => ({
 }));
 
 import { bulkUpdateTasks } from "../task.ctrl";
-import {
-  bulkMarkTasksCompleteQuery,
-  bulkSetTasksCategoriesQuery,
-} from "../../utils/task.utils";
-import {
-  parseBulkIds,
-  assertOrgOwnsIds,
-  withBulkTransaction,
-} from "../../utils/bulkAction.utils";
+import { bulkMarkTasksCompleteQuery, bulkSetTasksCategoriesQuery } from "../../utils/task.utils";
+import { parseBulkIds, assertOrgOwnsIds, withBulkTransaction } from "../../utils/bulkAction.utils";
 import {
   ForbiddenException,
   ValidationException,

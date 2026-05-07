@@ -74,11 +74,7 @@ import {
   bulkSetProjectRisksCategoryQuery,
   bulkArchiveProjectRisksQuery,
 } from "../../utils/risk.utils";
-import {
-  parseBulkIds,
-  assertOrgOwnsIds,
-  withBulkTransaction,
-} from "../../utils/bulkAction.utils";
+import { parseBulkIds, assertOrgOwnsIds, withBulkTransaction } from "../../utils/bulkAction.utils";
 import {
   ForbiddenException,
   ValidationException,

@@ -26,11 +26,7 @@ interface BulkActionsToolbarProps {
   actions: BulkAction[];
 }
 
-const BulkActionsToolbar: React.FC<BulkActionsToolbarProps> = ({
-  count,
-  onClear,
-  actions,
-}) => {
+const BulkActionsToolbar: React.FC<BulkActionsToolbarProps> = ({ count, onClear, actions }) => {
   const theme = useTheme();
   const [pendingAction, setPendingAction] = useState<BulkAction | null>(null);
   const [isRunning, setIsRunning] = useState(false);

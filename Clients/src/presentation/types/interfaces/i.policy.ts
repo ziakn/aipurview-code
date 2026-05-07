@@ -32,10 +32,7 @@ export interface PolicyTableProps {
   /** Whether the current user can run bulk actions (Admin/Editor). Defaults to false. */
   canRunBulkActions?: boolean;
   /** Called after a successful bulk action so the parent can refetch and surface a notification. */
-  onBulkActionSuccess?: (
-    action: "archive" | "set_reviewer" | "set_tags",
-    count: number,
-  ) => void;
+  onBulkActionSuccess?: (action: "archive" | "set_reviewer" | "set_tags", count: number) => void;
 }
 
 /**

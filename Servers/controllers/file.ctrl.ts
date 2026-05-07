@@ -12,10 +12,7 @@ import { FileType } from "../domain.layer/models/file/file.model";
 import { addFileToAnswerEU } from "../utils/eu.utils";
 import { sequelize } from "../database/db";
 import getUserFilesMetaDataQuery from "../utils/files/getUserFilesMetaData.utils";
-import {
-  bulkUpdateFileTagsQuery,
-  type BulkTagMode,
-} from "../utils/files/bulkFiles.utils";
+import { bulkUpdateFileTagsQuery, type BulkTagMode } from "../utils/files/bulkFiles.utils";
 import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 import {
   createFileEntityLink,
@@ -25,11 +22,7 @@ import {
   EntityType,
   LinkType,
 } from "../repositories/file.repository";
-import {
-  parseBulkIds,
-  assertOrgOwnsIds,
-  withBulkTransaction,
-} from "../utils/bulkAction.utils";
+import { parseBulkIds, assertOrgOwnsIds, withBulkTransaction } from "../utils/bulkAction.utils";
 import {
   ForbiddenException,
   ValidationException,
@@ -622,11 +615,7 @@ function validateBulkFileTags(input: unknown): string[] {
     );
   }
   for (const value of input) {
-    if (
-      typeof value !== "string" ||
-      value.length < 1 ||
-      value.length > MAX_BULK_FILE_TAG_LENGTH
-    ) {
+    if (typeof value !== "string" || value.length < 1 || value.length > MAX_BULK_FILE_TAG_LENGTH) {
       throw new ValidationException(
         `Each tag must be a string between 1 and ${MAX_BULK_FILE_TAG_LENGTH} characters`,
         "tags",

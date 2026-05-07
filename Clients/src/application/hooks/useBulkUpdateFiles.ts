@@ -1,8 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import {
-  bulkUpdateFileTags,
-  type BulkUpdateFileTagsPayload,
-} from "../repository/file.repository";
+import { bulkUpdateFileTags, type BulkUpdateFileTagsPayload } from "../repository/file.repository";
 import { assignFilesToFolder } from "../repository/virtualFolder.repository";
 
 export type BulkFileAction =

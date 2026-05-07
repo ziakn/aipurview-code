@@ -33,10 +33,7 @@ interface ParseBulkIdsOptions {
  *         or if it exceeds the configured maximum length.
  * @returns A deduped array of positive integers preserving first-seen order.
  */
-export function parseBulkIds(
-  input: unknown,
-  options: ParseBulkIdsOptions = {},
-): number[] {
+export function parseBulkIds(input: unknown, options: ParseBulkIdsOptions = {}): number[] {
   const { max = 200, field = "ids" } = options;
 
   if (!Array.isArray(input)) {
@@ -58,11 +55,7 @@ export function parseBulkIds(
   for (const value of input) {
     const num = typeof value === "number" ? value : Number(value);
     if (!Number.isInteger(num) || num <= 0) {
-      throw new ValidationException(
-        "ids must be positive integers",
-        field,
-        value,
-      );
+      throw new ValidationException("ids must be positive integers", field, value);
     }
     if (seen.has(num)) continue;
     seen.add(num);

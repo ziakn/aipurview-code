@@ -78,8 +78,7 @@ const PolicyManager: React.FC<PolicyManagerProps> = ({
   const [policies, setPolicies] = useState<PolicyManagerModel[]>([]);
   const [flashRowId, setFlashRowId] = useState<number | null>(null);
   const { userRoleName } = useAuth();
-  const canRunBulkActions =
-    !!userRoleName && ["Admin", "Editor"].includes(userRoleName);
+  const canRunBulkActions = !!userRoleName && ["Admin", "Editor"].includes(userRoleName);
 
   const [showLinkedObjectModal, setLinkedObjectsModalOpen] = useState(false);
   const [policyId, setSelectedPolicyId] = useState<number | null>(null);

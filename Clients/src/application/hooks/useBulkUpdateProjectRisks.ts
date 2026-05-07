@@ -9,12 +9,9 @@ interface UseBulkUpdateProjectRisksOptions {
   onError?: (error: unknown, payload: BulkUpdateProjectRisksPayload) => void;
 }
 
-export function useBulkUpdateProjectRisks(
-  options: UseBulkUpdateProjectRisksOptions = {},
-) {
+export function useBulkUpdateProjectRisks(options: UseBulkUpdateProjectRisksOptions = {}) {
   return useMutation({
-    mutationFn: (payload: BulkUpdateProjectRisksPayload) =>
-      bulkUpdateProjectRisks(payload),
+    mutationFn: (payload: BulkUpdateProjectRisksPayload) => bulkUpdateProjectRisks(payload),
     onSuccess: (_data, payload) => options.onSuccess?.(payload),
     onError: (error, payload) => options.onError?.(error, payload),
   });

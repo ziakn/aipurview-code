@@ -74,10 +74,7 @@ export interface IVWProjectRisksTable {
   /** Whether the current user can run bulk actions (Admin/Editor). Defaults to false. */
   canRunBulkActions?: boolean;
   /** Called after a successful bulk action so the parent can refetch and surface a notification. */
-  onBulkActionSuccess?: (
-    action: "set_owner" | "set_category" | "archive",
-    count: number,
-  ) => void;
+  onBulkActionSuccess?: (action: "set_owner" | "set_category" | "archive", count: number) => void;
 }
 
 /**

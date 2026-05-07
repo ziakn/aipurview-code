@@ -11,11 +11,7 @@ import {
   bulkMarkTasksCompleteQuery,
   bulkSetTasksCategoriesQuery,
 } from "../utils/task.utils";
-import {
-  parseBulkIds,
-  assertOrgOwnsIds,
-  withBulkTransaction,
-} from "../utils/bulkAction.utils";
+import { parseBulkIds, assertOrgOwnsIds, withBulkTransaction } from "../utils/bulkAction.utils";
 import { sequelize } from "../database/db";
 import { QueryTypes } from "sequelize";
 import { ITask } from "../domain.layer/interfaces/i.task";
@@ -953,11 +949,7 @@ function validateBulkCategories(input: unknown): string[] {
     );
   }
   for (const value of input) {
-    if (
-      typeof value !== "string" ||
-      value.length < 1 ||
-      value.length > MAX_TASK_CATEGORY_LENGTH
-    ) {
+    if (typeof value !== "string" || value.length < 1 || value.length > MAX_TASK_CATEGORY_LENGTH) {
       throw new ValidationException(
         `Each category must be a string between 1 and ${MAX_TASK_CATEGORY_LENGTH} characters`,
         "categories",
@@ -1023,12 +1015,7 @@ export async function bulkUpdateTasks(req: Request, res: Response): Promise<any>
         if (action === "mark_complete") {
           await bulkMarkTasksCompleteQuery(req.organizationId!, ids, transaction);
         } else {
-          await bulkSetTasksCategoriesQuery(
-            req.organizationId!,
-            ids,
-            categories!,
-            transaction,
-          );
+          await bulkSetTasksCategoriesQuery(req.organizationId!, ids, categories!, transaction);
         }
       },
     );

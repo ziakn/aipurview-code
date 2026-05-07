@@ -14,9 +14,7 @@ const getId = (r: Row) => r.id;
 
 describe("useBulkSelection", () => {
   it("starts empty", () => {
-    const { result } = renderHook(() =>
-      useBulkSelection<Row>({ rows: sampleRows, getId }),
-    );
+    const { result } = renderHook(() => useBulkSelection<Row>({ rows: sampleRows, getId }));
 
     expect(result.current.selectedIds).toEqual([]);
     expect(result.current.count).toBe(0);
@@ -25,9 +23,7 @@ describe("useBulkSelection", () => {
   });
 
   it("toggle adds and removes a single id", () => {
-    const { result } = renderHook(() =>
-      useBulkSelection<Row>({ rows: sampleRows, getId }),
-    );
+    const { result } = renderHook(() => useBulkSelection<Row>({ rows: sampleRows, getId }));
 
     act(() => result.current.toggle(2));
     expect(result.current.isSelected(2)).toBe(true);
@@ -41,9 +37,7 @@ describe("useBulkSelection", () => {
   });
 
   it("allSelected becomes true when every visible id is selected", () => {
-    const { result } = renderHook(() =>
-      useBulkSelection<Row>({ rows: sampleRows, getId }),
-    );
+    const { result } = renderHook(() => useBulkSelection<Row>({ rows: sampleRows, getId }));
 
     act(() => {
       result.current.toggle(1);
@@ -56,9 +50,7 @@ describe("useBulkSelection", () => {
   });
 
   it("toggleAll selects all visible when none are selected", () => {
-    const { result } = renderHook(() =>
-      useBulkSelection<Row>({ rows: sampleRows, getId }),
-    );
+    const { result } = renderHook(() => useBulkSelection<Row>({ rows: sampleRows, getId }));
 
     act(() => result.current.toggleAll());
 
@@ -67,9 +59,7 @@ describe("useBulkSelection", () => {
   });
 
   it("toggleAll deselects all visible when all are selected", () => {
-    const { result } = renderHook(() =>
-      useBulkSelection<Row>({ rows: sampleRows, getId }),
-    );
+    const { result } = renderHook(() => useBulkSelection<Row>({ rows: sampleRows, getId }));
 
     act(() => result.current.toggleAll());
     act(() => result.current.toggleAll());
@@ -79,9 +69,7 @@ describe("useBulkSelection", () => {
   });
 
   it("toggleAll selects remaining visible when some are already selected", () => {
-    const { result } = renderHook(() =>
-      useBulkSelection<Row>({ rows: sampleRows, getId }),
-    );
+    const { result } = renderHook(() => useBulkSelection<Row>({ rows: sampleRows, getId }));
 
     act(() => result.current.toggle(2));
     act(() => result.current.toggleAll());
@@ -91,9 +79,7 @@ describe("useBulkSelection", () => {
   });
 
   it("clear removes everything", () => {
-    const { result } = renderHook(() =>
-      useBulkSelection<Row>({ rows: sampleRows, getId }),
-    );
+    const { result } = renderHook(() => useBulkSelection<Row>({ rows: sampleRows, getId }));
 
     act(() => result.current.toggleAll());
     act(() => result.current.clear());

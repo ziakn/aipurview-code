@@ -1,5 +1,10 @@
 import { Request, Response } from "express";
-import { IPolicy, POLICY_TAGS, PolicyTag, PolicyTagsSet } from "../domain.layer/interfaces/i.policy";
+import {
+  IPolicy,
+  POLICY_TAGS,
+  PolicyTag,
+  PolicyTagsSet,
+} from "../domain.layer/interfaces/i.policy";
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import {
   createPolicyQuery,
@@ -12,11 +17,7 @@ import {
   bulkSetPoliciesReviewerQuery,
   bulkSetPoliciesTagsQuery,
 } from "../utils/policyManager.utils";
-import {
-  parseBulkIds,
-  assertOrgOwnsIds,
-  withBulkTransaction,
-} from "../utils/bulkAction.utils";
+import { parseBulkIds, assertOrgOwnsIds, withBulkTransaction } from "../utils/bulkAction.utils";
 import {
   ForbiddenException,
   ValidationException,
@@ -560,11 +561,7 @@ export class PolicyController {
 
     try {
       const ids = parseBulkIds(req.body?.ids);
-      const action = req.body?.action as
-        | "archive"
-        | "set_reviewer"
-        | "set_tags"
-        | undefined;
+      const action = req.body?.action as "archive" | "set_reviewer" | "set_tags" | undefined;
 
       if (action !== "archive" && action !== "set_reviewer" && action !== "set_tags") {
         throw new ValidationException(
@@ -579,11 +576,7 @@ export class PolicyController {
         const raw = req.body?.reviewerId;
         const parsed = typeof raw === "number" ? raw : Number(raw);
         if (!Number.isInteger(parsed) || parsed <= 0) {
-          throw new ValidationException(
-            "reviewerId must be a positive integer",
-            "reviewerId",
-            raw,
-          );
+          throw new ValidationException("reviewerId must be a positive integer", "reviewerId", raw);
         }
         reviewerId = parsed;
       }
@@ -596,11 +589,7 @@ export class PolicyController {
         }
         for (const t of raw) {
           if (typeof t !== "string" || !PolicyTagsSet.has(t as PolicyTag)) {
-            throw new ValidationException(
-              `Invalid policy tag: ${String(t)}`,
-              "tags",
-              t,
-            );
+            throw new ValidationException(`Invalid policy tag: ${String(t)}`, "tags", t);
           }
         }
         tags = raw as PolicyTag[];
@@ -626,26 +615,11 @@ export class PolicyController {
           });
 
           if (action === "archive") {
-            await bulkArchivePoliciesQuery(
-              req.organizationId!,
-              ids,
-              req.userId!,
-              transaction,
-            );
+            await bulkArchivePoliciesQuery(req.organizationId!, ids, req.userId!, transaction);
           } else if (action === "set_reviewer") {
-            await bulkSetPoliciesReviewerQuery(
-              req.organizationId!,
-              ids,
-              reviewerId!,
-              transaction,
-            );
+            await bulkSetPoliciesReviewerQuery(req.organizationId!, ids, reviewerId!, transaction);
           } else {
-            await bulkSetPoliciesTagsQuery(
-              req.organizationId!,
-              ids,
-              tags!,
-              transaction,
-            );
+            await bulkSetPoliciesTagsQuery(req.organizationId!, ids, tags!, transaction);
           }
         },
       );

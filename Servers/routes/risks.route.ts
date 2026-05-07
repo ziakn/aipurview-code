@@ -22,12 +22,7 @@ router.get("/by-frameworkid/:id", authenticateJWT, getRisksByFramework);
 router.get("/:id", authenticateJWT, getRiskById);
 
 // PATCH bulk update (Admin/Editor). Must come before generic /:id routes.
-router.patch(
-  "/bulk",
-  authenticateJWT,
-  authorize(["Admin", "Editor"]),
-  bulkUpdateProjectRisks,
-);
+router.patch("/bulk", authenticateJWT, authorize(["Admin", "Editor"]), bulkUpdateProjectRisks);
 
 // POST, PUT, DELETE requests
 router.post("/", authenticateJWT, createRisk);

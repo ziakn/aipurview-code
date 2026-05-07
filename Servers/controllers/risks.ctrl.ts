@@ -20,11 +20,7 @@ import {
   BusinessLogicException,
   ForbiddenException,
 } from "../domain.layer/exceptions/custom.exception";
-import {
-  parseBulkIds,
-  assertOrgOwnsIds,
-  withBulkTransaction,
-} from "../utils/bulkAction.utils";
+import { parseBulkIds, assertOrgOwnsIds, withBulkTransaction } from "../utils/bulkAction.utils";
 import { logProcessing } from "../utils/logger/logHelper";
 import logger, { logStructured } from "../utils/logger/fileLogger";
 import { logEvent } from "../utils/logger/dbLogger";
@@ -766,11 +762,7 @@ export async function bulkUpdateProjectRisks(req: Request, res: Response): Promi
       const raw = req.body?.ownerId;
       const parsed = typeof raw === "number" ? raw : Number(raw);
       if (!Number.isInteger(parsed) || parsed <= 0) {
-        throw new ValidationException(
-          "ownerId must be a positive integer",
-          "ownerId",
-          raw,
-        );
+        throw new ValidationException("ownerId must be a positive integer", "ownerId", raw);
       }
       ownerId = parsed;
     }
@@ -783,11 +775,7 @@ export async function bulkUpdateProjectRisks(req: Request, res: Response): Promi
       }
       for (const c of raw) {
         if (typeof c !== "string" || !PROJECT_RISK_CATEGORIES_SET.has(c)) {
-          throw new ValidationException(
-            `Invalid risk category: ${String(c)}`,
-            "categories",
-            c,
-          );
+          throw new ValidationException(`Invalid risk category: ${String(c)}`, "categories", c);
         }
       }
       categories = raw as string[];
@@ -814,12 +802,7 @@ export async function bulkUpdateProjectRisks(req: Request, res: Response): Promi
         });
 
         if (action === "set_owner") {
-          await bulkSetProjectRisksOwnerQuery(
-            req.organizationId!,
-            ids,
-            ownerId!,
-            transaction,
-          );
+          await bulkSetProjectRisksOwnerQuery(req.organizationId!, ids, ownerId!, transaction);
         } else if (action === "set_category") {
           await bulkSetProjectRisksCategoryQuery(
             req.organizationId!,
@@ -828,11 +811,7 @@ export async function bulkUpdateProjectRisks(req: Request, res: Response): Promi
             transaction,
           );
         } else {
-          await bulkArchiveProjectRisksQuery(
-            req.organizationId!,
-            ids,
-            transaction,
-          );
+          await bulkArchiveProjectRisksQuery(req.organizationId!, ids, transaction);
         }
       },
     );

@@ -259,11 +259,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
   return (
     <>
       {canRunBulkActions && (
-        <BulkActionsToolbar
-          count={selectionCount}
-          onClear={clearSelection}
-          actions={bulkActions}
-        />
+        <BulkActionsToolbar count={selectionCount} onClear={clearSelection} actions={bulkActions} />
       )}
       <CustomizablePolicyTable
         data={{ rows, cols: visibleTableHeaders }}
@@ -460,9 +456,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
       {canRunBulkActions && reviewerDialogOpen && (
         <ConfirmationModal
           isOpen
-          title={`Assign reviewer to ${selectionCount} polic${
-            selectionCount === 1 ? "y" : "ies"
-          }`}
+          title={`Assign reviewer to ${selectionCount} polic${selectionCount === 1 ? "y" : "ies"}`}
           body={
             <Stack gap={2}>
               <Typography variant="body2" sx={{ color: "text.secondary", fontSize: 12 }}>
@@ -480,12 +474,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
                   Choose a reviewer…
                 </MenuItem>
                 {users.map((u) => (
-                  <MenuItem
-                    key={u.id}
-                    value={String(u.id)}
-                    dense
-                    sx={{ py: 0.5, fontSize: 13 }}
-                  >
+                  <MenuItem key={u.id} value={String(u.id)} dense sx={{ py: 0.5, fontSize: 13 }}>
                     {u.name} {u.surname}
                   </MenuItem>
                 ))}
@@ -511,9 +500,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
       {canRunBulkActions && tagsDialogOpen && (
         <ConfirmationModal
           isOpen
-          title={`Set tags on ${selectionCount} polic${
-            selectionCount === 1 ? "y" : "ies"
-          }`}
+          title={`Set tags on ${selectionCount} polic${selectionCount === 1 ? "y" : "ies"}`}
           body={
             <Stack gap={2}>
               <Typography variant="body2" sx={{ color: "text.secondary", fontSize: 12 }}>
@@ -546,10 +533,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
                       size="small"
                       sx={{ p: 0.25, mr: 1, "& svg": { fontSize: 16 } }}
                     />
-                    <ListItemText
-                      primary={t}
-                      primaryTypographyProps={{ fontSize: 13 }}
-                    />
+                    <ListItemText primary={t} primaryTypographyProps={{ fontSize: 13 }} />
                   </MenuItem>
                 ))}
               </Select>

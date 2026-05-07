@@ -1,8 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import {
-  bulkUpdateTasks,
-  type BulkUpdateTasksPayload,
-} from "../repository/task.repository";
+import { bulkUpdateTasks, type BulkUpdateTasksPayload } from "../repository/task.repository";
 
 interface UseBulkUpdateTasksOptions {
   onSuccess?: (payload: BulkUpdateTasksPayload) => void;

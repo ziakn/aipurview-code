@@ -16,9 +16,7 @@ interface UseBulkSelectionReturn {
   count: number;
 }
 
-export function useBulkSelection<T>(
-  options: UseBulkSelectionOptions<T>,
-): UseBulkSelectionReturn {
+export function useBulkSelection<T>(options: UseBulkSelectionOptions<T>): UseBulkSelectionReturn {
   const { rows, getId } = options;
   const [selected, setSelected] = useState<Set<number>>(() => new Set());
 
@@ -57,8 +55,7 @@ export function useBulkSelection<T>(
   const toggleAll = useCallback(() => {
     setSelected((prev) => {
       const next = new Set(prev);
-      const everyVisibleSelected =
-        visibleIds.length > 0 && visibleIds.every((id) => next.has(id));
+      const everyVisibleSelected = visibleIds.length > 0 && visibleIds.every((id) => next.has(id));
       if (everyVisibleSelected) {
         for (const id of visibleIds) next.delete(id);
       } else {

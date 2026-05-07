@@ -44,9 +44,7 @@ describe("StandardTableHead", () => {
 
   it("renders the select-all checkbox when selection prop is provided", () => {
     renderHead({ allSelected: false, someSelected: false, onToggleAll: vi.fn() });
-    expect(
-      screen.getByRole("checkbox", { name: /select all rows/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: /select all rows/i })).toBeInTheDocument();
   });
 
   it("reflects allSelected state on the checkbox", () => {
@@ -71,8 +69,6 @@ describe("StandardTableHead", () => {
       ariaLabel: "Pick rows to act on",
     });
 
-    expect(
-      screen.getByRole("checkbox", { name: /pick rows to act on/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: /pick rows to act on/i })).toBeInTheDocument();
   });
 });

@@ -23,9 +23,7 @@ describe("BulkActionsToolbar", () => {
       { id: "tag", label: "Set categories", onClick: vi.fn() },
     ];
 
-    renderWithProviders(
-      <BulkActionsToolbar count={3} onClear={vi.fn()} actions={actions} />,
-    );
+    renderWithProviders(<BulkActionsToolbar count={3} onClear={vi.fn()} actions={actions} />);
 
     expect(screen.getByText("3 selected")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /mark complete/i })).toBeInTheDocument();
@@ -34,9 +32,7 @@ describe("BulkActionsToolbar", () => {
 
   it("calls onClear when the Clear button is clicked", async () => {
     const onClear = vi.fn();
-    renderWithProviders(
-      <BulkActionsToolbar count={2} onClear={onClear} actions={[]} />,
-    );
+    renderWithProviders(<BulkActionsToolbar count={2} onClear={onClear} actions={[]} />);
 
     await userEvent.click(screen.getByRole("button", { name: /clear selection/i }));
 
@@ -45,13 +41,9 @@ describe("BulkActionsToolbar", () => {
 
   it("invokes onClick directly for actions without a confirm step", async () => {
     const onClick = vi.fn();
-    const actions: BulkAction[] = [
-      { id: "complete", label: "Mark complete", onClick },
-    ];
+    const actions: BulkAction[] = [{ id: "complete", label: "Mark complete", onClick }];
 
-    renderWithProviders(
-      <BulkActionsToolbar count={4} onClear={vi.fn()} actions={actions} />,
-    );
+    renderWithProviders(<BulkActionsToolbar count={4} onClear={vi.fn()} actions={actions} />);
 
     await userEvent.click(screen.getByRole("button", { name: /mark complete/i }));
 
@@ -74,9 +66,7 @@ describe("BulkActionsToolbar", () => {
       },
     ];
 
-    renderWithProviders(
-      <BulkActionsToolbar count={2} onClear={vi.fn()} actions={actions} />,
-    );
+    renderWithProviders(<BulkActionsToolbar count={2} onClear={vi.fn()} actions={actions} />);
 
     await userEvent.click(screen.getByRole("button", { name: /^archive$/i }));
 
@@ -110,9 +100,7 @@ describe("BulkActionsToolbar", () => {
       },
     ];
 
-    renderWithProviders(
-      <BulkActionsToolbar count={1} onClear={vi.fn()} actions={actions} />,
-    );
+    renderWithProviders(<BulkActionsToolbar count={1} onClear={vi.fn()} actions={actions} />);
 
     await userEvent.click(screen.getByRole("button", { name: /^archive$/i }));
     expect(screen.getByText("Archive 1 item?")).toBeInTheDocument();
@@ -120,9 +108,7 @@ describe("BulkActionsToolbar", () => {
     await userEvent.click(screen.getByRole("button", { name: /cancel/i }));
 
     expect(onClick).not.toHaveBeenCalled();
-    await waitFor(() =>
-      expect(screen.queryByText("Archive 1 item?")).not.toBeInTheDocument(),
-    );
+    await waitFor(() => expect(screen.queryByText("Archive 1 item?")).not.toBeInTheDocument());
   });
 
   it("does not invoke onClick when the action is disabled", async () => {
@@ -131,9 +117,7 @@ describe("BulkActionsToolbar", () => {
       { id: "complete", label: "Mark complete", onClick, disabled: true },
     ];
 
-    renderWithProviders(
-      <BulkActionsToolbar count={1} onClear={vi.fn()} actions={actions} />,
-    );
+    renderWithProviders(<BulkActionsToolbar count={1} onClear={vi.fn()} actions={actions} />);
 
     const button = screen.getByRole("button", { name: /mark complete/i });
     expect(button).toBeDisabled();

@@ -96,9 +96,7 @@ export interface BulkUpdateProjectRisksPayload {
   categories?: string[];
 }
 
-export async function bulkUpdateProjectRisks(
-  payload: BulkUpdateProjectRisksPayload,
-): Promise<any> {
+export async function bulkUpdateProjectRisks(payload: BulkUpdateProjectRisksPayload): Promise<any> {
   try {
     const response = await apiServices.patch("/projectRisks/bulk", payload);
     return response.data;

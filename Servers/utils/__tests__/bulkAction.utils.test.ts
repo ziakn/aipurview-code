@@ -17,11 +17,7 @@ jest.mock("../logger/logHelper", () => ({
 
 import { sequelize } from "../../database/db";
 import { logSuccess, logFailure } from "../logger/logHelper";
-import {
-  parseBulkIds,
-  assertOrgOwnsIds,
-  withBulkTransaction,
-} from "../bulkAction.utils";
+import { parseBulkIds, assertOrgOwnsIds, withBulkTransaction } from "../bulkAction.utils";
 import {
   ForbiddenException,
   ValidationException,
@@ -173,10 +169,7 @@ describe("withBulkTransaction", () => {
   it("respects an audit eventType override", async () => {
     const handler = jest.fn(async () => undefined);
 
-    await withBulkTransaction(
-      { audit: { ...audit, eventType: "Delete" } },
-      handler as any,
-    );
+    await withBulkTransaction({ audit: { ...audit, eventType: "Delete" } }, handler as any);
 
     const successArgs = mockLogSuccess.mock.calls[0][0] as any;
     expect(successArgs.eventType).toBe("Delete");

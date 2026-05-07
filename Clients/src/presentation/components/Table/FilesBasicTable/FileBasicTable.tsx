@@ -19,23 +19,15 @@ import {
 } from "@mui/material";
 import TablePaginationActions from "../../TablePagination";
 import singleTheme from "../../../themes/v1SingleTheme";
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import {
-  ChevronsUpDown,
-  ChevronUp,
-  ChevronDown,
-  FolderInput,
-  Tag as TagIcon,
-} from "lucide-react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { ChevronsUpDown, ChevronUp, ChevronDown, FolderInput, Tag as TagIcon } from "lucide-react";
 import IconButton from "../../IconButton";
 import { FileIcon } from "../../FileIcon";
 import Chip from "../../Chip";
 import Checkbox from "../../Inputs/Checkbox";
 import ChipInput from "../../Inputs/ChipInput";
 import ConfirmationModal from "../../Dialogs/ConfirmationModal";
-import BulkActionsToolbar, {
-  type BulkAction,
-} from "../BulkActionsToolbar";
+import BulkActionsToolbar, { type BulkAction } from "../BulkActionsToolbar";
 import { handleDownload } from "../../../../application/tools/fileDownload";
 import { deleteFileFromManager } from "../../../../application/repository/file.repository";
 import { FileModel } from "../../../../domain/models/Common/file/file.model";
@@ -445,28 +437,26 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
 
   // Snapshot the tag union when the dialog opens so it doesn't shift as the
   // mutation in flight refreshes bodyData under us.
-  const dialogTagsSnapshot = useRef<string[]>([]);
+  const [dialogTagsSnapshot, setDialogTagsSnapshot] = useState<string[]>([]);
 
   const handleOpenTagsDialog = useCallback(() => {
     if (selectedIds.length === 0) return;
-    dialogTagsSnapshot.current = selectedFilesTags;
+    setDialogTagsSnapshot(selectedFilesTags);
     setTagMode("add");
     setPendingTags([]);
     setTagsDialogOpen(true);
   }, [selectedIds.length, selectedFilesTags]);
 
-  // Reset pendingTags whenever the user switches modes inside the dialog so
-  // each mode gets a sensible starting state.
-  useEffect(() => {
-    if (!tagsDialogOpen) return;
-    if (tagMode === "set") {
-      setPendingTags(dialogTagsSnapshot.current);
-    } else {
-      // Add and Remove modes both start empty: the user types/picks the
-      // *delta* they want to apply, not the existing state.
-      setPendingTags([]);
-    }
-  }, [tagMode, tagsDialogOpen]);
+  // Switch modes and reset pendingTags atomically. "set" starts from the
+  // current tag union; "add" and "remove" start empty — the user is
+  // entering a *delta* in those modes, not the existing state.
+  const handleTagModeChange = useCallback(
+    (next: "set" | "add" | "remove") => {
+      setTagMode(next);
+      setPendingTags(next === "set" ? dialogTagsSnapshot : []);
+    },
+    [dialogTagsSnapshot],
+  );
 
   const handleConfirmTags = useCallback(() => {
     if (selectedIds.length === 0) return;
@@ -566,11 +556,7 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
   return (
     <>
       {canRunBulkActions && (
-        <BulkActionsToolbar
-          count={selectionCount}
-          onClear={clearSelection}
-          actions={bulkActions}
-        />
+        <BulkActionsToolbar count={selectionCount} onClear={clearSelection} actions={bulkActions} />
       )}
       <TableContainer id={table}>
         <Table sx={singleTheme.tableStyles.primary.frame}>
@@ -896,12 +882,7 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                     Choose a folder…
                   </MenuItem>
                   {folders.map((f) => (
-                    <MenuItem
-                      key={f.id}
-                      value={String(f.id)}
-                      dense
-                      sx={{ py: 0.5, fontSize: 13 }}
-                    >
+                    <MenuItem key={f.id} value={String(f.id)} dense sx={{ py: 0.5, fontSize: 13 }}>
                       {f.name}
                     </MenuItem>
                   ))}
@@ -938,9 +919,7 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                 <Select
                   size="small"
                   value={tagMode}
-                  onChange={(e) =>
-                    setTagMode(e.target.value as "set" | "add" | "remove")
-                  }
+                  onChange={(e) => handleTagModeChange(e.target.value as "set" | "add" | "remove")}
                   sx={{ width: 160, fontSize: 13 }}
                   MenuProps={{ PaperProps: { sx: { maxHeight: 280 } } }}
                 >
@@ -957,7 +936,7 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
               </Stack>
 
               {tagMode === "remove" ? (
-                dialogTagsSnapshot.current.length === 0 ? (
+                dialogTagsSnapshot.length === 0 ? (
                   <Typography variant="body2" sx={{ color: "text.disabled", fontSize: 12 }}>
                     No tags on the selected file{selectionCount === 1 ? "" : "s"} to remove.
                   </Typography>
@@ -982,17 +961,14 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                     sx={{ width: 320, fontSize: 13 }}
                     MenuProps={{ PaperProps: { sx: { maxHeight: 280 } } }}
                   >
-                    {dialogTagsSnapshot.current.map((t) => (
+                    {dialogTagsSnapshot.map((t) => (
                       <MenuItem key={t} value={t} dense sx={{ py: 0.25 }}>
                         <MuiCheckbox
                           checked={pendingTags.includes(t)}
                           size="small"
                           sx={{ p: 0.25, mr: 1, "& svg": { fontSize: 16 } }}
                         />
-                        <ListItemText
-                          primary={t}
-                          primaryTypographyProps={{ fontSize: 13 }}
-                        />
+                        <ListItemText primary={t} primaryTypographyProps={{ fontSize: 13 }} />
                       </MenuItem>
                     ))}
                   </Select>
@@ -1007,9 +983,9 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                 />
               )}
 
-              {tagMode === "add" && dialogTagsSnapshot.current.length > 0 && (
+              {tagMode === "add" && dialogTagsSnapshot.length > 0 && (
                 <Typography variant="body2" sx={{ color: "text.secondary", fontSize: 12 }}>
-                  Already set: {dialogTagsSnapshot.current.join(", ")}
+                  Already set: {dialogTagsSnapshot.join(", ")}
                 </Typography>
               )}
               {tagMode === "set" && pendingTags.length === 0 && (

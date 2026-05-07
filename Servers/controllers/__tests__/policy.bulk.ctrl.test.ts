@@ -74,11 +74,7 @@ import {
   bulkSetPoliciesReviewerQuery,
   bulkSetPoliciesTagsQuery,
 } from "../../utils/policyManager.utils";
-import {
-  parseBulkIds,
-  assertOrgOwnsIds,
-  withBulkTransaction,
-} from "../../utils/bulkAction.utils";
+import { parseBulkIds, assertOrgOwnsIds, withBulkTransaction } from "../../utils/bulkAction.utils";
 import {
   ForbiddenException,
   ValidationException,
@@ -178,12 +174,7 @@ describe("bulkUpdatePolicies", () => {
 
     await PolicyController.bulkUpdatePolicies(req as Request, res as Response);
 
-    expect(mockSetTags).toHaveBeenCalledWith(
-      4,
-      [1],
-      ["AI ethics", "Privacy"],
-      expect.anything(),
-    );
+    expect(mockSetTags).toHaveBeenCalledWith(4, [1], ["AI ethics", "Privacy"], expect.anything());
     expect(res.status).toHaveBeenCalledWith(200);
   });
 

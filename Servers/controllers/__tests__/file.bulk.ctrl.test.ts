@@ -55,11 +55,7 @@ jest.mock("../../database/db", () => ({
 
 import { bulkUpdateFileTags } from "../file.ctrl";
 import { bulkUpdateFileTagsQuery } from "../../utils/files/bulkFiles.utils";
-import {
-  parseBulkIds,
-  assertOrgOwnsIds,
-  withBulkTransaction,
-} from "../../utils/bulkAction.utils";
+import { parseBulkIds, assertOrgOwnsIds, withBulkTransaction } from "../../utils/bulkAction.utils";
 import {
   ForbiddenException,
   ValidationException,
