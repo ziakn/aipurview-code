@@ -10,7 +10,12 @@ import { DashboardHeaderCard } from "../../components/Cards/DashboardHeaderCard"
 import FrameworkMapper from "./FrameworkMapper";
 import ScenarioBuilder from "./ScenarioBuilder";
 import UnifiedInsights from "./UnifiedInsights";
-import { useMappings, useScenarios } from "../../../application/hooks/useGovernanceOs";
+import {
+  useMappings,
+  useScenarios,
+  useGovernancePreferences,
+} from "../../../application/hooks/useGovernanceOs";
+import GovernanceOSEnableCTA from "./GovernanceOSEnableCTA";
 
 const GovernanceOS = () => {
   const navigate = useNavigate();
@@ -19,6 +24,8 @@ const GovernanceOS = () => {
 
   const { data: mappings } = useMappings();
   const { data: scenarios } = useScenarios();
+  const { data: preferences } = useGovernancePreferences();
+  const isEnabled = preferences?.is_enabled ?? false;
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: string) => {
     setActiveTab(newValue);
@@ -65,47 +72,51 @@ const GovernanceOS = () => {
       description="Cross-framework intelligence layer with control mappings, governance scenarios, and unified coverage analysis."
       helpArticlePath="governance-os"
       tipBoxEntity="governance-os"
-      summaryCards={summaryCards}
+      summaryCards={isEnabled ? summaryCards : undefined}
     >
-      <TabContext value={activeTab}>
-        <TabBar
-          tabs={[
-            {
-              label: "Framework Mapper",
-              value: "mapper",
-              icon: "GitCompareArrows",
-              tooltip: "Explore cross-framework control mappings",
-            },
-            {
-              label: "Scenario Builder",
-              value: "scenarios",
-              icon: "Compass",
-              tooltip: "Get framework recommendations based on your context",
-            },
-            {
-              label: "Unified Insights",
-              value: "insights",
-              icon: "BarChart3",
-              tooltip: "Per-project coverage and gap analysis",
-            },
-          ]}
-          activeTab={activeTab}
-          onChange={handleTabChange}
-          dataJoyrideId="governance-os-tabs"
-        />
+      {isEnabled ? (
+        <TabContext value={activeTab}>
+          <TabBar
+            tabs={[
+              {
+                label: "Framework Mapper",
+                value: "mapper",
+                icon: "GitCompareArrows",
+                tooltip: "Explore cross-framework control mappings",
+              },
+              {
+                label: "Scenario Builder",
+                value: "scenarios",
+                icon: "Compass",
+                tooltip: "Get framework recommendations based on your context",
+              },
+              {
+                label: "Unified Insights",
+                value: "insights",
+                icon: "BarChart3",
+                tooltip: "Per-project coverage and gap analysis",
+              },
+            ]}
+            activeTab={activeTab}
+            onChange={handleTabChange}
+            dataJoyrideId="governance-os-tabs"
+          />
 
-        <TabPanel value="mapper" sx={{ px: 0, py: 2 }}>
-          <FrameworkMapper />
-        </TabPanel>
+          <TabPanel value="mapper" sx={{ px: 0, py: 2 }}>
+            <FrameworkMapper />
+          </TabPanel>
 
-        <TabPanel value="scenarios" sx={{ px: 0, py: 2 }}>
-          <ScenarioBuilder />
-        </TabPanel>
+          <TabPanel value="scenarios" sx={{ px: 0, py: 2 }}>
+            <ScenarioBuilder />
+          </TabPanel>
 
-        <TabPanel value="insights" sx={{ px: 0, py: 2 }}>
-          <UnifiedInsights />
-        </TabPanel>
-      </TabContext>
+          <TabPanel value="insights" sx={{ px: 0, py: 2 }}>
+            <UnifiedInsights />
+          </TabPanel>
+        </TabContext>
+      ) : (
+        <GovernanceOSEnableCTA />
+      )}
     </PageHeaderExtended>
   );
 };
