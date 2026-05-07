@@ -28,6 +28,7 @@ import { PageHeaderExtended } from "../../components/Layout/PageHeaderExtended";
 import Field from "../../components/Inputs/Field";
 import { CustomizableButton } from "../../components/button/customizable-button";
 import Alert from "../../components/Alert";
+import SuppressionRulesTab from "./components/SuppressionRulesTab";
 import {
   getGitHubTokenStatus,
   saveGitHubToken,
@@ -302,6 +303,12 @@ export default function SettingsPage() {
               value: "risk-scoring",
               icon: "Shield",
               tooltip: "Configure AI Governance Risk Score settings",
+            },
+            {
+              label: "Suppression rules",
+              value: "suppressions",
+              icon: "EyeOff",
+              tooltip: "Manage rules that suppress matching findings on future scans",
             },
           ]}
           activeTab={activeTab}
@@ -699,6 +706,9 @@ export default function SettingsPage() {
               </Box>
             </Box>
           )}
+        </TabPanel>
+        <TabPanel value="suppressions" sx={{ p: 0, pt: "8px" }}>
+          <SuppressionRulesTab onMessage={(variant, body) => setAlert({ variant, body })} />
         </TabPanel>
       </TabContext>
     </PageHeaderExtended>
