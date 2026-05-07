@@ -39,7 +39,9 @@ import {
 } from "./presentation/components/UserGuide";
 import { AdvisorConversationProvider } from "./application/contexts/AdvisorConversation.context";
 import { PluginRegistryProvider } from "./application/contexts/PluginRegistry.context";
+import { SmartPromptProvider } from "./application/contexts/SmartPrompt.context";
 import PluginLoader from "./presentation/components/PluginLoader";
+import SmartPrompt from "./presentation/components/SmartPrompt";
 // SSE notifications disabled for now - can be re-enabled later if needed
 // import { useNotifications } from "./application/hooks/useNotifications";
 
@@ -262,6 +264,7 @@ function App() {
             <PluginRegistryProvider>
               <PluginLoader />
               <UserGuideSidebarProvider>
+                <SmartPromptProvider>
                 <ConditionalThemeWrapper>
                   {alert && (
                     <Alert
@@ -272,6 +275,7 @@ function App() {
                       onClick={() => setAlert(null)}
                     />
                   )}
+                  <SmartPrompt />
                   <CommandPaletteErrorBoundary>
                     <CommandPalette
                       open={commandPalette.isOpen}
@@ -290,6 +294,7 @@ function App() {
                     <UserGuideSidebarContainer />
                   </AdvisorConversationProvider>
                 </ConditionalThemeWrapper>
+                </SmartPromptProvider>
               </UserGuideSidebarProvider>
             </PluginRegistryProvider>
           </VerifyWiseContext.Provider>
