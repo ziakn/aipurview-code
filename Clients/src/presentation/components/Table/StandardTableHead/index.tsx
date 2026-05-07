@@ -3,16 +3,22 @@ import { TableCell, TableHead, TableRow, Box, Typography } from "@mui/material";
 import { ChevronsUpDown, ChevronUp, ChevronDown } from "lucide-react";
 import singleTheme from "../../../themes/v1SingleTheme";
 import { text } from "../../../themes/palette";
-import type { SortConfig, StandardColumn } from "../../../../domain/types/standardTable";
+import Checkbox from "../../Inputs/Checkbox";
+import type {
+  SelectionColumnConfig,
+  SortConfig,
+  StandardColumn,
+} from "../../../../domain/types/standardTable";
 
 interface StandardTableHeadProps {
   columns: StandardColumn[];
   sortConfig: SortConfig;
   onSort: (columnId: string) => void;
+  selection?: SelectionColumnConfig;
 }
 
 const StandardTableHead: React.FC<StandardTableHeadProps> = memo(
-  ({ columns, sortConfig, onSort }) => {
+  ({ columns, sortConfig, onSort, selection }) => {
     return (
       <TableHead
         sx={{
@@ -20,6 +26,26 @@ const StandardTableHead: React.FC<StandardTableHeadProps> = memo(
         }}
       >
         <TableRow sx={singleTheme.tableStyles.primary.header.row}>
+          {selection && (
+            <TableCell
+              padding="checkbox"
+              sx={{
+                ...singleTheme.tableStyles.primary.header.cell,
+                width: "48px",
+                minWidth: "48px",
+                textAlign: "center",
+              }}
+            >
+              <Checkbox
+                id="standard-table-select-all"
+                value="select-all"
+                isChecked={selection.allSelected}
+                isIndeterminate={selection.someSelected && !selection.allSelected}
+                onChange={selection.onToggleAll}
+                ariaLabel={selection.ariaLabel ?? "Select all rows"}
+              />
+            </TableCell>
+          )}
           {columns.map((column, index) => {
             const isFirstColumn = index === 0;
             const isActionColumn = column.id === "actions";
