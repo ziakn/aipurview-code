@@ -43,6 +43,20 @@ export class GovernanceOrgPreferencesModel
   active_mapping_filters?: Record<string, unknown>;
 
   @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  is_enabled?: boolean;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  dont_ask_governance_os?: boolean;
+
+  @Column({
     type: DataType.DATE,
     allowNull: false,
     defaultValue: DataType.NOW,
