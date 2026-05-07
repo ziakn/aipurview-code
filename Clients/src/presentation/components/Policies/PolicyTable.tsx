@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback, useState } from "react";
 import CustomizablePolicyTable from "../Table/PolicyTable";
 import {
+  Box,
   Stack,
   Select,
   MenuItem,
@@ -324,21 +325,30 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
               <TableCell
                 padding="checkbox"
                 sx={{
-                  ...cellStyle,
-                  padding: "0 8px",
-                  width: "48px",
-                  minWidth: "48px",
-                  maxWidth: "48px",
+                  width: 48,
+                  minWidth: 48,
+                  maxWidth: 48,
+                  padding: "14px 8px",
                 }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <Checkbox
-                  id={`policy-row-checkbox-${policy.id}`}
-                  value={String(policy.id)}
-                  isChecked={isSelected(Number(policy.id))}
-                  onChange={() => toggleSelection(Number(policy.id))}
-                  ariaLabel={`Select policy ${policy.title}`}
-                />
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Checkbox
+                    id={`policy-row-checkbox-${policy.id}`}
+                    value={String(policy.id)}
+                    isChecked={isSelected(Number(policy.id))}
+                    onChange={() => toggleSelection(Number(policy.id))}
+                    ariaLabel={`Select policy ${policy.title}`}
+                    sx={{ p: 0, "& svg": { display: "block" } }}
+                  />
+                </Box>
               </TableCell>
             )}
             <TableCell

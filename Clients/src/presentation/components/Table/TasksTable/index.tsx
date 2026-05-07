@@ -280,22 +280,31 @@ const TasksTable: React.FC<ITasksTableProps> = ({
                 <TableCell
                   padding="checkbox"
                   sx={{
-                    ...singleTheme.tableStyles.primary.body.cell,
-                    padding: "0 8px",
-                    width: "48px",
-                    minWidth: "48px",
-                    maxWidth: "48px",
+                    width: 48,
+                    minWidth: 48,
+                    maxWidth: 48,
+                    padding: "14px 8px",
                   }}
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <Checkbox
-                    id={`task-row-checkbox-${task.id}`}
-                    value={String(task.id)}
-                    isChecked={isSelected(task.id as number)}
-                    onChange={() => toggleSelection(task.id as number)}
-                    isDisabled={isArchived}
-                    ariaLabel={`Select task ${task.title}`}
-                  />
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <Checkbox
+                      id={`task-row-checkbox-${task.id}`}
+                      value={String(task.id)}
+                      isChecked={isSelected(task.id as number)}
+                      onChange={() => toggleSelection(task.id as number)}
+                      isDisabled={isArchived}
+                      ariaLabel={`Select task ${task.title}`}
+                      sx={{ p: 0, "& svg": { display: "block" } }}
+                    />
+                  </Box>
                 </TableCell>
               )}
               {/* Task Name */}

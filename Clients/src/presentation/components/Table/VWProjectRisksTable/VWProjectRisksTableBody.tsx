@@ -1,4 +1,13 @@
-import { TableBody, TableCell, TableRow, Dialog, useTheme, Typography, Stack } from "@mui/material";
+import {
+  Box,
+  TableBody,
+  TableCell,
+  TableRow,
+  Dialog,
+  useTheme,
+  Typography,
+  Stack,
+} from "@mui/material";
 import { VWLink } from "../../Link";
 import singleTheme from "../../../themes/v1SingleTheme";
 import Checkbox from "../../Inputs/Checkbox";
@@ -157,22 +166,31 @@ const VWProjectRisksTableBody = ({
                   <TableCell
                     padding="checkbox"
                     sx={{
-                      ...getCellStyle(row),
-                      padding: "0 8px",
-                      width: "48px",
-                      minWidth: "48px",
-                      maxWidth: "48px",
+                      width: 48,
+                      minWidth: 48,
+                      maxWidth: 48,
+                      padding: "14px 8px",
                     }}
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <Checkbox
-                      id={`project-risk-row-checkbox-${row.id}`}
-                      value={String(row.id)}
-                      isChecked={selection.isSelected(Number(row.id))}
-                      onChange={() => selection.onToggle(Number(row.id))}
-                      isDisabled={row.is_deleted}
-                      ariaLabel={`Select project risk ${row.risk_name}`}
-                    />
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                      }}
+                    >
+                      <Checkbox
+                        id={`project-risk-row-checkbox-${row.id}`}
+                        value={String(row.id)}
+                        isChecked={selection.isSelected(Number(row.id))}
+                        onChange={() => selection.onToggle(Number(row.id))}
+                        isDisabled={row.is_deleted}
+                        ariaLabel={`Select project risk ${row.risk_name}`}
+                        sx={{ p: 0, "& svg": { display: "block" } }}
+                      />
+                    </Box>
                   </TableCell>
                 )}
                 <TableCell

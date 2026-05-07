@@ -119,22 +119,31 @@ const SortableTableHead: React.FC<{
           <TableCell
             padding="checkbox"
             sx={{
-              ...singleTheme.tableStyles.primary.header.cell,
-              padding: "0 8px",
-              width: "48px",
-              minWidth: "48px",
-              maxWidth: "48px",
-              textAlign: "center",
+              width: 48,
+              minWidth: 48,
+              maxWidth: 48,
+              padding: "14px 8px",
+              borderBottom: "1px solid #d0d5dd",
             }}
           >
-            <Checkbox
-              id="file-table-select-all"
-              value="select-all"
-              isChecked={selection.allSelected}
-              isIndeterminate={selection.someSelected && !selection.allSelected}
-              onChange={selection.onToggleAll}
-              ariaLabel="Select all files on this page"
-            />
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+              }}
+            >
+              <Checkbox
+                id="file-table-select-all"
+                value="select-all"
+                isChecked={selection.allSelected}
+                isIndeterminate={selection.someSelected && !selection.allSelected}
+                onChange={selection.onToggleAll}
+                ariaLabel="Select all files on this page"
+                sx={{ p: 0, "& svg": { display: "block" } }}
+              />
+            </Box>
           </TableCell>
         )}
         {columns.map((col, index) => {
@@ -608,21 +617,31 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                     <TableCell
                       padding="checkbox"
                       sx={{
-                        ...singleTheme.tableStyles.primary.body.cell,
-                        padding: "0 8px",
-                        width: "48px",
-                        minWidth: "48px",
-                        maxWidth: "48px",
+                        width: 48,
+                        minWidth: 48,
+                        maxWidth: 48,
+                        padding: "14px 8px",
                       }}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <Checkbox
-                        id={`file-row-checkbox-${row.id}`}
-                        value={String(row.id)}
-                        isChecked={isSelected(Number(row.id))}
-                        onChange={() => toggleSelection(Number(row.id))}
-                        ariaLabel={`Select file ${row.fileName}`}
-                      />
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          lineHeight: 0,
+                          width: "100%",
+                        }}
+                      >
+                        <Checkbox
+                          id={`file-row-checkbox-${row.id}`}
+                          value={String(row.id)}
+                          isChecked={isSelected(Number(row.id))}
+                          onChange={() => toggleSelection(Number(row.id))}
+                          ariaLabel={`Select file ${row.fileName}`}
+                          sx={{ p: 0, "& svg": { display: "block" } }}
+                        />
+                      </Box>
                     </TableCell>
                   )}
                   {/* File column */}
