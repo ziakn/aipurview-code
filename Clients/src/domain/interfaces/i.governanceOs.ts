@@ -49,6 +49,8 @@ export interface IGovernanceOrgPreferences {
   selected_scenario_id?: number | null;
   custom_framework_priority?: Record<string, unknown>;
   active_mapping_filters?: Record<string, unknown>;
+  is_enabled?: boolean;
+  dont_ask_governance_os?: boolean;
 }
 
 export interface IGovernanceCoverage {
