@@ -281,8 +281,10 @@ const TasksTable: React.FC<ITasksTableProps> = ({
                   padding="checkbox"
                   sx={{
                     ...singleTheme.tableStyles.primary.body.cell,
+                    padding: "0 8px",
                     width: "48px",
                     minWidth: "48px",
+                    maxWidth: "48px",
                   }}
                   onClick={(e) => e.stopPropagation()}
                 >

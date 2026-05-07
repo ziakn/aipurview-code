@@ -120,8 +120,10 @@ const SortableTableHead: React.FC<{
             padding="checkbox"
             sx={{
               ...singleTheme.tableStyles.primary.header.cell,
+              padding: "0 8px",
               width: "48px",
               minWidth: "48px",
+              maxWidth: "48px",
               textAlign: "center",
             }}
           >
@@ -607,8 +609,10 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                       padding="checkbox"
                       sx={{
                         ...singleTheme.tableStyles.primary.body.cell,
+                        padding: "0 8px",
                         width: "48px",
                         minWidth: "48px",
+                        maxWidth: "48px",
                       }}
                       onClick={(e) => e.stopPropagation()}
                     >

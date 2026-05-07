@@ -107,13 +107,13 @@ const BulkActionsToolbar: React.FC<BulkActionsToolbarProps> = ({
           alignItems="center"
           sx={{
             pointerEvents: "auto",
-            gap: theme.spacing(2),
-            px: theme.spacing(4),
+            gap: theme.spacing(3),
+            pl: theme.spacing(6),
+            pr: theme.spacing(4),
             py: theme.spacing(2),
             backgroundColor: theme.palette.background.main,
             border: `1px solid ${theme.palette.border.light}`,
             borderRadius: 999,
-            boxShadow: "0 8px 24px rgba(16, 24, 40, 0.12)",
             maxWidth: "calc(100vw - 32px)",
             flexWrap: "wrap",
             rowGap: theme.spacing(1),

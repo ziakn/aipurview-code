@@ -158,8 +158,10 @@ const VWProjectRisksTableBody = ({
                     padding="checkbox"
                     sx={{
                       ...getCellStyle(row),
+                      padding: "0 8px",
                       width: "48px",
                       minWidth: "48px",
+                      maxWidth: "48px",
                     }}
                     onClick={(e) => e.stopPropagation()}
                   >

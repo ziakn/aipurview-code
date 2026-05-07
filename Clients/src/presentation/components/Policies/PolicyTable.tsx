@@ -323,7 +323,13 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
             {canRunBulkActions && (
               <TableCell
                 padding="checkbox"
-                sx={{ ...cellStyle, width: "48px", minWidth: "48px" }}
+                sx={{
+                  ...cellStyle,
+                  padding: "0 8px",
+                  width: "48px",
+                  minWidth: "48px",
+                  maxWidth: "48px",
+                }}
                 onClick={(e) => e.stopPropagation()}
               >
                 <Checkbox
