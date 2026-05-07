@@ -33,15 +33,8 @@ export async function getAllSlackWebhooks(req: Request, res: Response): Promise<
   const userId = req.query.userId as string;
   const channel = req.query.channel as string;
   if (!userId) {
-    logStructured(
-      "error",
-      "userId query parameter is required",
-      functionName,
-      fileName,
-    );
-    return res
-      .status(400)
-      .json(STATUS_CODE[400](req.t!("userId query parameter is required")));
+    logStructured("error", "userId query parameter is required", functionName, fileName);
+    return res.status(400).json(STATUS_CODE[400](req.t!("userId query parameter is required")));
   }
   try {
     let slackWebhooks: ISlackWebhook[] = [];
@@ -86,22 +79,12 @@ export async function getSlackWebhookById(req: Request, res: Response): Promise<
     return res.status(404).json(STATUS_CODE[404](slackWebhook));
   } catch (error) {
     if (error instanceof ValidationException) {
-      logStructured(
-        "error",
-        `validation error: ${error.message}`,
-        functionName,
-        fileName,
-      );
+      logStructured("error", `validation error: ${error.message}`, functionName, fileName);
       return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof NotFoundException) {
-      logStructured(
-        "error",
-        `slackWebhook not found: ID ${requestId}`,
-        functionName,
-        fileName,
-      );
+      logStructured("error", `slackWebhook not found: ID ${requestId}`, functionName, fileName);
       return res.status(404).json(STATUS_CODE[404](translateError(req, error)));
     }
 
@@ -201,9 +184,7 @@ export async function createNewSlackWebhook(req: Request, res: Response): Promis
       req.organizationId!,
     );
     await transaction.rollback();
-    return res
-      .status(400)
-      .json(STATUS_CODE[400](req.t!("Failed to create slackWebhook")));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Failed to create slackWebhook")));
   } catch (error) {
     await transaction.rollback();
 
@@ -316,9 +297,7 @@ export async function updateSlackWebhookById(req: Request, res: Response): Promi
       req.organizationId!,
     );
     await transaction.rollback();
-    return res
-      .status(400)
-      .json(STATUS_CODE[400](req.t!("Failed to update slackWebhook")));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Failed to update slackWebhook")));
   } catch (error) {
     await transaction.rollback();
 
@@ -400,22 +379,12 @@ export async function sendSlackMessage(req: Request, res: Response): Promise<any
     }
   } catch (error: any) {
     if (error instanceof ValidationException) {
-      logStructured(
-        "error",
-        `validation error: ${error.message}`,
-        functionName,
-        fileName,
-      );
+      logStructured("error", `validation error: ${error.message}`, functionName, fileName);
       return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof NotFoundException) {
-      logStructured(
-        "error",
-        `SlackWebhook not found: ID ${requestId}`,
-        functionName,
-        fileName,
-      );
+      logStructured("error", `SlackWebhook not found: ID ${requestId}`, functionName, fileName);
       return res.status(404).json(STATUS_CODE[404](translateError(req, error)));
     }
 

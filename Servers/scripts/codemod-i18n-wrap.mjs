@@ -42,10 +42,7 @@ import {
   printDiffSamples,
 } from "./lib/i18nScriptUtils.mjs";
 
-const SCAN_DIRS = [
-  path.join(SERVERS_ROOT, "controllers"),
-  path.join(SERVERS_ROOT, "middleware"),
-];
+const SCAN_DIRS = [path.join(SERVERS_ROOT, "controllers"), path.join(SERVERS_ROOT, "middleware")];
 const { DRY_RUN, SHOW_DIFF } = parseArgs();
 
 // Match STATUS_CODE[\d+](<whitespace>"literal" | 'literal') — first arg only.

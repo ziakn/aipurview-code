@@ -8,10 +8,7 @@ import { STATUS_CODE } from "../utils/statusCode.utils";
 import { logEvent } from "../utils/logger/dbLogger";
 
 import { translateError } from "../utils/i18n.utils";
-export async function getAllNISTAIRMFfunctions(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getAllNISTAIRMFfunctions(req: Request, res: Response): Promise<any> {
   logStructured(
     "processing",
     "starting to get all NIST AI RMF functions",

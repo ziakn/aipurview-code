@@ -17,11 +17,7 @@ import { SubtopicModel } from "../domain.layer/models/subtopic/subtopic.model";
 import { sequelize } from "../database/db";
 import { ValidationException } from "../domain.layer/exceptions/custom.exception";
 import { translateError } from "../utils/i18n.utils";
-import {
-  logFailure,
-  logProcessing,
-  logSuccess,
-} from "../utils/logger/logHelper";
+import { logFailure, logProcessing, logSuccess } from "../utils/logger/logHelper";
 
 export async function getAllAssessments(req: Request, res: Response): Promise<any> {
   logProcessing({
@@ -160,7 +156,7 @@ export async function createAssessment(req: Request, res: Response): Promise<any
     return res.status(503).json(
       STATUS_CODE[503]({
         message: req.t!("Failed to create assessment"),
-      })
+      }),
     );
   } catch (error) {
     await transaction.rollback();

@@ -116,8 +116,18 @@ export const createShareLink = async (req: Request, res: Response) => {
   } catch (error) {
     await transaction.rollback();
     if (error instanceof ValidationException) {
-      logStructured('error', `validation failed: ${error.message}`, 'createShareLink', 'shareLink.ctrl.ts');
-      await logEvent('Error', `Validation error during share link creation: ${error.message}`, req.userId!, req.organizationId!);
+      logStructured(
+        "error",
+        `validation failed: ${error.message}`,
+        "createShareLink",
+        "shareLink.ctrl.ts",
+      );
+      await logEvent(
+        "Error",
+        `Validation error during share link creation: ${error.message}`,
+        req.userId!,
+        req.organizationId!,
+      );
       return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
     logStructured(
@@ -215,9 +225,19 @@ export const getShareLinksForResource = async (req: Request, res: Response) => {
 
     return res.status(200).json(STATUS_CODE[200](response));
   } catch (error) {
-    logStructured('error', `unexpected error fetching share links`, 'getShareLinksForResource', 'shareLink.ctrl.ts');
-    await logEvent('Error', `Unexpected error fetching share links: ${(error as Error).message}`, req.userId!, req.organizationId!);
-    logger.error('❌ Error in getShareLinksForResource:', error);
+    logStructured(
+      "error",
+      `unexpected error fetching share links`,
+      "getShareLinksForResource",
+      "shareLink.ctrl.ts",
+    );
+    await logEvent(
+      "Error",
+      `Unexpected error fetching share links: ${(error as Error).message}`,
+      req.userId!,
+      req.organizationId!,
+    );
+    logger.error("❌ Error in getShareLinksForResource:", error);
     const safeMessage = sanitizeErrorMessage(error as Error, req.t!("Failed to fetch share links"));
     return res.status(500).json(STATUS_CODE[500](safeMessage));
   }
@@ -242,7 +262,9 @@ export const getShareLinkByToken = async (req: Request, res: Response) => {
   try {
     // Validate token format to prevent injection and enumeration
     if (!isValidShareToken(token)) {
-      return res.status(400).json(STATUS_CODE[400]({ message: req.t!("Invalid share link format") }));
+      return res
+        .status(400)
+        .json(STATUS_CODE[400]({ message: req.t!("Invalid share link format") }));
     }
 
     // Search for the share link in the shared table
@@ -260,7 +282,7 @@ export const getShareLinkByToken = async (req: Request, res: Response) => {
     const shareLink = result.length > 0 ? result[0] : null;
 
     if (!shareLink) {
-      logStructured('error', `share link not found`, 'getShareLinkByToken', 'shareLink.ctrl.ts');
+      logStructured("error", `share link not found`, "getShareLinkByToken", "shareLink.ctrl.ts");
       return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Share link not found") }));
     }
 
@@ -270,8 +292,15 @@ export const getShareLinkByToken = async (req: Request, res: Response) => {
       (!shareLink.expires_at || new Date() <= new Date(shareLink.expires_at));
 
     if (!is_valid) {
-      logStructured('error', `share link is disabled or expired`, 'getShareLinkByToken', 'shareLink.ctrl.ts');
-      return res.status(403).json(STATUS_CODE[403]({ message: req.t!("Share link is disabled or expired") }));
+      logStructured(
+        "error",
+        `share link is disabled or expired`,
+        "getShareLinkByToken",
+        "shareLink.ctrl.ts",
+      );
+      return res
+        .status(403)
+        .json(STATUS_CODE[403]({ message: req.t!("Share link is disabled or expired") }));
     }
 
     logStructured(
@@ -299,9 +328,19 @@ export const getShareLinkByToken = async (req: Request, res: Response) => {
 
     return res.status(200).json(STATUS_CODE[200](response));
   } catch (error) {
-    logStructured('error', `unexpected error fetching share link`, 'getShareLinkByToken', 'shareLink.ctrl.ts');
-    await logEvent('Error', `Unexpected error fetching share link: ${(error as Error).message}`, req.userId!, req.organizationId!);
-    logger.error('❌ Error in getShareLinkByToken:', error);
+    logStructured(
+      "error",
+      `unexpected error fetching share link`,
+      "getShareLinkByToken",
+      "shareLink.ctrl.ts",
+    );
+    await logEvent(
+      "Error",
+      `Unexpected error fetching share link: ${(error as Error).message}`,
+      req.userId!,
+      req.organizationId!,
+    );
+    logger.error("❌ Error in getShareLinkByToken:", error);
     const safeMessage = sanitizeErrorMessage(error as Error, req.t!("An error occurred"));
     return res.status(500).json(STATUS_CODE[500](safeMessage));
   }
@@ -348,7 +387,7 @@ export const updateShareLink = async (req: Request, res: Response) => {
 
     if (result.length === 0) {
       await transaction.rollback();
-      logStructured('error', `share link not found: ${id}`, 'updateShareLink', 'shareLink.ctrl.ts');
+      logStructured("error", `share link not found: ${id}`, "updateShareLink", "shareLink.ctrl.ts");
       return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Share link not found") }));
     }
 
@@ -364,7 +403,12 @@ export const updateShareLink = async (req: Request, res: Response) => {
     // Check if user owns this share link
     if (shareLink.created_by !== req.userId) {
       await transaction.rollback();
-      logStructured('error', `unauthorized access to share link ${id}`, 'updateShareLink', 'shareLink.ctrl.ts');
+      logStructured(
+        "error",
+        `unauthorized access to share link ${id}`,
+        "updateShareLink",
+        "shareLink.ctrl.ts",
+      );
       return res.status(403).json(STATUS_CODE[403]({ message: req.t!("Unauthorized") }));
     }
 
@@ -453,9 +497,19 @@ export const updateShareLink = async (req: Request, res: Response) => {
     return res.status(200).json(STATUS_CODE[200](response));
   } catch (error) {
     await transaction.rollback();
-    logStructured('error', `unexpected error updating share link ${id}`, 'updateShareLink', 'shareLink.ctrl.ts');
-    await logEvent('Error', `Unexpected error updating share link: ${(error as Error).message}`, req.userId!, req.organizationId!);
-    logger.error('❌ Error in updateShareLink:', error);
+    logStructured(
+      "error",
+      `unexpected error updating share link ${id}`,
+      "updateShareLink",
+      "shareLink.ctrl.ts",
+    );
+    await logEvent(
+      "Error",
+      `Unexpected error updating share link: ${(error as Error).message}`,
+      req.userId!,
+      req.organizationId!,
+    );
+    logger.error("❌ Error in updateShareLink:", error);
     const safeMessage = sanitizeErrorMessage(error as Error, req.t!("An error occurred"));
     return res.status(500).json(STATUS_CODE[500](safeMessage));
   }
@@ -489,7 +543,7 @@ export const deleteShareLink = async (req: Request, res: Response) => {
 
     if (result.length === 0) {
       await transaction.rollback();
-      logStructured('error', `share link not found: ${id}`, 'deleteShareLink', 'shareLink.ctrl.ts');
+      logStructured("error", `share link not found: ${id}`, "deleteShareLink", "shareLink.ctrl.ts");
       return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Share link not found") }));
     }
 
@@ -498,7 +552,12 @@ export const deleteShareLink = async (req: Request, res: Response) => {
     // Check if user owns this share link
     if (shareLink.created_by !== req.userId) {
       await transaction.rollback();
-      logStructured('error', `unauthorized access to share link ${id}`, 'deleteShareLink', 'shareLink.ctrl.ts');
+      logStructured(
+        "error",
+        `unauthorized access to share link ${id}`,
+        "deleteShareLink",
+        "shareLink.ctrl.ts",
+      );
       return res.status(403).json(STATUS_CODE[403]({ message: req.t!("Unauthorized") }));
     }
 
@@ -518,12 +577,24 @@ export const deleteShareLink = async (req: Request, res: Response) => {
     logger.debug(`✅ Deleted share link: ${id}`);
 
     await transaction.commit();
-    return res.status(200).json(STATUS_CODE[200]({ message: req.t!("Share link deleted successfully") }));
+    return res
+      .status(200)
+      .json(STATUS_CODE[200]({ message: req.t!("Share link deleted successfully") }));
   } catch (error) {
     await transaction.rollback();
-    logStructured('error', `unexpected error deleting share link ${id}`, 'deleteShareLink', 'shareLink.ctrl.ts');
-    await logEvent('Error', `Unexpected error deleting share link: ${(error as Error).message}`, req.userId!, req.organizationId!);
-    logger.error('❌ Error in deleteShareLink:', error);
+    logStructured(
+      "error",
+      `unexpected error deleting share link ${id}`,
+      "deleteShareLink",
+      "shareLink.ctrl.ts",
+    );
+    await logEvent(
+      "Error",
+      `Unexpected error deleting share link: ${(error as Error).message}`,
+      req.userId!,
+      req.organizationId!,
+    );
+    logger.error("❌ Error in deleteShareLink:", error);
     const safeMessage = sanitizeErrorMessage(error as Error, req.t!("An error occurred"));
     return res.status(500).json(STATUS_CODE[500](safeMessage));
   }
@@ -561,7 +632,7 @@ export const getSharedDataByToken = async (req: Request, res: Response) => {
     const shareLink = shareLinkResult.length > 0 ? shareLinkResult[0] : null;
 
     if (!shareLink) {
-      logStructured('error', `share link not found`, 'getSharedDataByToken', 'shareLink.ctrl.ts');
+      logStructured("error", `share link not found`, "getSharedDataByToken", "shareLink.ctrl.ts");
       return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Share link not found") }));
     }
 
@@ -589,8 +660,15 @@ export const getSharedDataByToken = async (req: Request, res: Response) => {
     );
 
     if (!is_valid) {
-      logStructured('error', `share link is disabled or expired`, 'getSharedDataByToken', 'shareLink.ctrl.ts');
-      return res.status(403).json(STATUS_CODE[403]({ message: req.t!("Share link is disabled or expired") }));
+      logStructured(
+        "error",
+        `share link is disabled or expired`,
+        "getSharedDataByToken",
+        "shareLink.ctrl.ts",
+      );
+      return res
+        .status(403)
+        .json(STATUS_CODE[403]({ message: req.t!("Share link is disabled or expired") }));
     }
 
     // Fetch the actual resource data based on resource_type
@@ -682,7 +760,12 @@ export const getSharedDataByToken = async (req: Request, res: Response) => {
       })) as any[];
 
       if (resourceResult.length === 0) {
-        logStructured('error', `resource not found: ${resourceType} ${resourceId}`, 'getSharedDataByToken', 'shareLink.ctrl.ts');
+        logStructured(
+          "error",
+          `resource not found: ${resourceType} ${resourceId}`,
+          "getSharedDataByToken",
+          "shareLink.ctrl.ts",
+        );
         return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Resource not found") }));
       }
 
@@ -898,9 +981,19 @@ export const getSharedDataByToken = async (req: Request, res: Response) => {
 
     return res.status(200).json(STATUS_CODE[200](response));
   } catch (error) {
-    logStructured('error', `unexpected error fetching shared data`, 'getSharedDataByToken', 'shareLink.ctrl.ts');
-    await logEvent('Error', `Unexpected error fetching shared data: ${(error as Error).message}`, req.userId!, req.organizationId!);
-    logger.error('❌ Error in getSharedDataByToken:', error);
+    logStructured(
+      "error",
+      `unexpected error fetching shared data`,
+      "getSharedDataByToken",
+      "shareLink.ctrl.ts",
+    );
+    await logEvent(
+      "Error",
+      `Unexpected error fetching shared data: ${(error as Error).message}`,
+      req.userId!,
+      req.organizationId!,
+    );
+    logger.error("❌ Error in getSharedDataByToken:", error);
     const safeMessage = sanitizeErrorMessage(error as Error, req.t!("An error occurred"));
     return res.status(500).json(STATUS_CODE[500](safeMessage));
   }

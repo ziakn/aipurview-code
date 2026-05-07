@@ -18,16 +18,8 @@ import { logEvent } from "../utils/logger/dbLogger";
 import { hasPendingApprovalQuery } from "../utils/approvalRequest.utils";
 
 import { translateError } from "../utils/i18n.utils";
-export async function getAllFrameworks(
-  req: Request,
-  res: Response
-): Promise<any> {
-  logStructured(
-    "processing",
-    "starting getAllFrameworks",
-    "getAllFrameworks",
-    "framework.ctrl.ts"
-  );
+export async function getAllFrameworks(req: Request, res: Response): Promise<any> {
+  logStructured("processing", "starting getAllFrameworks", "getAllFrameworks", "framework.ctrl.ts");
   logger.debug("🔍 Fetching all frameworks");
 
   try {
@@ -140,11 +132,15 @@ export async function addFrameworkToProject(req: Request, res: Response): Promis
         "framework.ctrl.ts",
       );
       await transaction.rollback();
-      return res.status(403).json(
-        STATUS_CODE[403](
-          req.t!("This use case has a pending approval request and cannot be modified until the approval process is complete.")
-        )
-      );
+      return res
+        .status(403)
+        .json(
+          STATUS_CODE[403](
+            req.t!(
+              "This use case has a pending approval request and cannot be modified until the approval process is complete.",
+            ),
+          ),
+        );
     }
 
     // Validate framework exists
@@ -205,11 +201,7 @@ export async function addFrameworkToProject(req: Request, res: Response): Promis
     );
     return res
       .status(404)
-      .json(
-        STATUS_CODE[404](
-          req.t!("Framework not found or could not be added to the project.")
-        )
-      );
+      .json(STATUS_CODE[404](req.t!("Framework not found or could not be added to the project.")));
   } catch (error) {
     await transaction.rollback();
     logStructured(
@@ -270,11 +262,15 @@ export async function deleteFrameworkFromProject(req: Request, res: Response): P
         "framework.ctrl.ts",
       );
       await transaction.rollback();
-      return res.status(403).json(
-        STATUS_CODE[403](
-          req.t!("This use case has a pending approval request and cannot be modified until the approval process is complete.")
-        )
-      );
+      return res
+        .status(403)
+        .json(
+          STATUS_CODE[403](
+            req.t!(
+              "This use case has a pending approval request and cannot be modified until the approval process is complete.",
+            ),
+          ),
+        );
     }
 
     // Validate framework exists
@@ -336,9 +332,7 @@ export async function deleteFrameworkFromProject(req: Request, res: Response): P
     return res
       .status(404)
       .json(
-        STATUS_CODE[404](
-          req.t!("Framework not found or could not be removed from the project.")
-        )
+        STATUS_CODE[404](req.t!("Framework not found or could not be removed from the project.")),
       );
   } catch (error) {
     await transaction.rollback();

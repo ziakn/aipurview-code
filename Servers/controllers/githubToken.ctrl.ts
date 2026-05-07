@@ -147,7 +147,9 @@ export async function deleteGitHubTokenController(req: Request, res: Response): 
       tenantId: req.organizationId!,
     });
 
-    return res.status(200).json(STATUS_CODE[200]({ message: req.t!("GitHub token deleted successfully") }));
+    return res
+      .status(200)
+      .json(STATUS_CODE[200]({ message: req.t!("GitHub token deleted successfully") }));
   } catch (error) {
     await logError({
       error: error as Error,

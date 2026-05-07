@@ -34,7 +34,9 @@ export async function createOrg(req: Request, res: Response) {
     const { name, logo } = req.body;
     if (!name) {
       await transaction.rollback();
-      return res.status(400).json(STATUS_CODE[400]({ message: req.t!("Organization name is required") }));
+      return res
+        .status(400)
+        .json(STATUS_CODE[400]({ message: req.t!("Organization name is required") }));
     }
 
     const org = await OrganizationModel.createNewOrganization(name, logo || null);
@@ -192,12 +194,16 @@ export async function inviteUserToOrg(req: Request, res: Response) {
   const { email, name, surname, roleId } = req.body;
 
   if (!email || !name || !roleId) {
-    return res.status(400).json(STATUS_CODE[400]({ message: req.t!("email, name, and roleId are required") }));
+    return res
+      .status(400)
+      .json(STATUS_CODE[400]({ message: req.t!("email, name, and roleId are required") }));
   }
 
   // Prevent creating super-admin users via invite
   if (roleId === 5) {
-    return res.status(403).json(STATUS_CODE[403](req.t!("Cannot invite users with SuperAdmin role")));
+    return res
+      .status(403)
+      .json(STATUS_CODE[403](req.t!("Cannot invite users with SuperAdmin role")));
   }
 
   // Check if a user with this email already exists

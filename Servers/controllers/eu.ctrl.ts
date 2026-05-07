@@ -365,11 +365,15 @@ export async function saveControls(req: RequestWithFile, res: Response): Promise
           userId: req.userId!,
           tenantId: req.organizationId!,
         });
-        return res.status(403).json(
-          STATUS_CODE[403](
-            req.t!("This use case has a pending approval request. Controls cannot be modified until the approval process is complete.")
-          )
-        );
+        return res
+          .status(403)
+          .json(
+            STATUS_CODE[403](
+              req.t!(
+                "This use case has a pending approval request. Controls cannot be modified until the approval process is complete.",
+              ),
+            ),
+          );
       }
     }
 
@@ -642,11 +646,15 @@ export async function updateQuestionById(req: RequestWithFile, res: Response): P
           userId: req.userId!,
           tenantId: req.organizationId!,
         });
-        return res.status(403).json(
-          STATUS_CODE[403](
-            req.t!("This use case has a pending approval request. Assessments cannot be modified until the approval process is complete.")
-          )
-        );
+        return res
+          .status(403)
+          .json(
+            STATUS_CODE[403](
+              req.t!(
+                "This use case has a pending approval request. Assessments cannot be modified until the approval process is complete.",
+              ),
+            ),
+          );
       }
     }
 

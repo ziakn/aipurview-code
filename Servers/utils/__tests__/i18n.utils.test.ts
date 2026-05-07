@@ -1,10 +1,5 @@
 import { describe, it, expect } from "@jest/globals";
-import {
-  isSupportedLang,
-  getTranslator,
-  translate,
-  translateError,
-} from "../i18n.utils";
+import { isSupportedLang, getTranslator, translate, translateError } from "../i18n.utils";
 
 describe("i18n.utils", () => {
   describe("isSupportedLang", () => {
@@ -40,9 +35,7 @@ describe("i18n.utils", () => {
 
     it("interpolates vars when called", () => {
       const t = getTranslator("de");
-      expect(t("Step {n} name is required", { n: 7 })).toBe(
-        "Schritt 7: Name ist erforderlich",
-      );
+      expect(t("Step {n} name is required", { n: 7 })).toBe("Schritt 7: Name ist erforderlich");
     });
   });
 

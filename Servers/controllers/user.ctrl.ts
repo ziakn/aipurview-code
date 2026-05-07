@@ -150,12 +150,7 @@ async function getUserById(req: Request, res: Response) {
     // Super-admin can access their own record (no org) or any user when viewing an org
     const isSelfLookup = id === req.userId;
     if (!req.isSuperAdmin && !isSelfLookup && user.organization_id !== req.organizationId) {
-      logStructured(
-        "error",
-        `access denied to user ID ${id}`,
-        "getUserById",
-        "user.ctrl.ts"
-      );
+      logStructured("error", `access denied to user ID ${id}`, "getUserById", "user.ctrl.ts");
       return res
         .status(403)
         .json(STATUS_CODE[403](req.t!("Forbidden: Access to this user is denied")));
@@ -287,9 +282,7 @@ async function createNewUser(req: Request, res: Response) {
         req.organizationId!,
       );
       await transaction.rollback();
-      return res
-        .status(409)
-        .json(STATUS_CODE[409](req.t!("User with this email already exists")));
+      return res.status(409).json(STATUS_CODE[409](req.t!("User with this email already exists")));
     }
 
     // Create user model with automatic password hashing
@@ -521,24 +514,12 @@ async function loginUser(req: Request, res: Response): Promise<any> {
           }),
         );
       } else {
-        logStructured(
-          "error",
-          `invalid credentials for ${email}`,
-          "loginUser",
-          "user.ctrl.ts"
-        );
-        return res
-          .status(401)
-          .json(STATUS_CODE[401](req.t!("Invalid email or password")));
+        logStructured("error", `invalid credentials for ${email}`, "loginUser", "user.ctrl.ts");
+        return res.status(401).json(STATUS_CODE[401](req.t!("Invalid email or password")));
       }
     }
 
-    logStructured(
-      "error",
-      `invalid credentials for ${email}`,
-      "loginUser",
-      "user.ctrl.ts"
-    );
+    logStructured("error", `invalid credentials for ${email}`, "loginUser", "user.ctrl.ts");
     return res.status(401).json(STATUS_CODE[401](req.t!("Invalid email or password")));
   } catch (error) {
     logStructured("error", `unexpected error during login: ${email}`, "loginUser", "user.ctrl.ts");
@@ -586,39 +567,20 @@ async function refreshAccessToken(req: Request, res: Response): Promise<any> {
     const refreshToken = req.cookies.refresh_token;
 
     if (!refreshToken) {
-      logStructured(
-        "error",
-        "missing refresh token",
-        "refreshAccessToken",
-        "user.ctrl.ts"
-      );
-      return res
-        .status(400)
-        .json(STATUS_CODE[400](req.t!("Refresh token is required")));
+      logStructured("error", "missing refresh token", "refreshAccessToken", "user.ctrl.ts");
+      return res.status(400).json(STATUS_CODE[400](req.t!("Refresh token is required")));
     }
 
     const decoded = getRefreshTokenPayload(refreshToken);
 
     if (!decoded) {
-      logStructured(
-        "error",
-        "invalid refresh token",
-        "refreshAccessToken",
-        "user.ctrl.ts"
-      );
+      logStructured("error", "invalid refresh token", "refreshAccessToken", "user.ctrl.ts");
       return res.status(401).json(STATUS_CODE[401](req.t!("Invalid refresh token")));
     }
 
     if (decoded.expire < Date.now()) {
-      logStructured(
-        "error",
-        "refresh token expired",
-        "refreshAccessToken",
-        "user.ctrl.ts"
-      );
-      return res
-        .status(406)
-        .json(STATUS_CODE[406]({ message: req.t!("Token expired") }));
+      logStructured("error", "refresh token expired", "refreshAccessToken", "user.ctrl.ts");
+      return res.status(406).json(STATUS_CODE[406]({ message: req.t!("Token expired") }));
     }
 
     const newAccessToken = generateToken({
@@ -930,9 +892,7 @@ async function deleteUserById(req: Request, res: Response) {
     // Prevent deletion of super-admin user
     if (user && user.role_id === 5) {
       await transaction.rollback();
-      return res
-        .status(403)
-        .json(STATUS_CODE[403](req.t!("Super-admin user cannot be deleted")));
+      return res.status(403).json(STATUS_CODE[403](req.t!("Super-admin user cannot be deleted")));
     }
 
     if (user.organization_id !== req.organizationId) {
@@ -960,7 +920,13 @@ async function deleteUserById(req: Request, res: Response) {
         await transaction.rollback();
         return res
           .status(403)
-          .json(STATUS_CODE[403](req.t!("Demo users cannot be deleted. Remove demo data from Management > Delete demo data")));
+          .json(
+            STATUS_CODE[403](
+              req.t!(
+                "Demo users cannot be deleted. Remove demo data from Management > Delete demo data",
+              ),
+            ),
+          );
       }
 
       const deletedUser = await deleteUserByIdQuery(id, req.organizationId!, transaction);
@@ -1444,7 +1410,7 @@ async function uploadUserProfilePhoto(req: any, res: Response) {
       return res.status(400).json(
         STATUS_CODE[400]({
           message: req.t!("No file provided"),
-        })
+        }),
       );
     }
 
@@ -1470,7 +1436,7 @@ async function uploadUserProfilePhoto(req: any, res: Response) {
       return res.status(400).json(
         STATUS_CODE[400]({
           message: req.t!("File upload failed"),
-        })
+        }),
       );
     }
 
@@ -1519,7 +1485,7 @@ async function uploadUserProfilePhoto(req: any, res: Response) {
       return res.status(500).json(
         STATUS_CODE[500]({
           message: req.t!("Failed to upload profile photo"),
-        })
+        }),
       );
     }
   } catch (error) {
@@ -1652,7 +1618,7 @@ async function deleteUserProfilePhoto(req: Request, res: Response) {
       return res.status(200).json(
         STATUS_CODE[200]({
           message: req.t!("Profile photo deleted successfully"),
-        })
+        }),
       );
     } else {
       await transaction.rollback();
@@ -1671,7 +1637,7 @@ async function deleteUserProfilePhoto(req: Request, res: Response) {
       return res.status(500).json(
         STATUS_CODE[500]({
           message: req.t!("Failed to delete profile photo"),
-        })
+        }),
       );
     }
   } catch (error) {

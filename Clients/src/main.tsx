@@ -15,9 +15,9 @@ import { persistor, store } from "./application/redux/store.ts";
 import { PersistGate } from "redux-persist/integration/react";
 // import { StyledEngineProvider } from "@mui/material";
 import { BrowserRouter as Router } from "react-router-dom";
-import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from './application/config/queryClient';
-import { initDomTranslator } from './i18n/domTranslator';
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./application/config/queryClient";
+import { initDomTranslator } from "./i18n/domTranslator";
 
 // Expose React and related libraries as globals for plugin UI bundles
 (window as any).React = React;

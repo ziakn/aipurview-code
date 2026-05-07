@@ -52,10 +52,14 @@ export async function getTimeseries(req: Request, res: Response) {
           "error",
           "invalid timeframe",
           "getTimeseries",
-          "modelInventoryHistory.ctrl.ts"
+          "modelInventoryHistory.ctrl.ts",
         );
         return res.status(400).json(
-          STATUS_CODE[400](req.t!("Invalid timeframe. Must be one of: {options}", { options: validTimeframes.join(', ') }))
+          STATUS_CODE[400](
+            req.t!("Invalid timeframe. Must be one of: {options}", {
+              options: validTimeframes.join(", "),
+            }),
+          ),
         );
         return res
           .status(400)
@@ -81,11 +85,11 @@ export async function getTimeseries(req: Request, res: Response) {
           "error",
           "invalid date format",
           "getTimeseries",
-          "modelInventoryHistory.ctrl.ts"
+          "modelInventoryHistory.ctrl.ts",
         );
-        return res.status(400).json(
-          STATUS_CODE[400](req.t!("Invalid date format. Use ISO date format."))
-        );
+        return res
+          .status(400)
+          .json(STATUS_CODE[400](req.t!("Invalid date format. Use ISO date format.")));
         return res.status(400).json(STATUS_CODE[400]("Invalid date format. Use ISO date format."));
       }
 
@@ -94,11 +98,9 @@ export async function getTimeseries(req: Request, res: Response) {
           "error",
           "start date must be before end date",
           "getTimeseries",
-          "modelInventoryHistory.ctrl.ts"
+          "modelInventoryHistory.ctrl.ts",
         );
-        return res.status(400).json(
-          STATUS_CODE[400](req.t!("Start date must be before end date"))
-        );
+        return res.status(400).json(STATUS_CODE[400](req.t!("Start date must be before end date")));
       }
 
       timeseriesData = await getTimeseriesWithInterpolation(

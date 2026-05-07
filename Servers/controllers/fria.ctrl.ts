@@ -398,7 +398,9 @@ export async function addRiskItem(req: Request, res: Response): Promise<Response
     const data = req.body;
 
     if (!friaId || isNaN(friaId) || !data.risk_description) {
-      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid FRIA ID or missing risk description")));
+      return res
+        .status(400)
+        .json(STATUS_CODE[400](req.t!("Invalid FRIA ID or missing risk description")));
     }
 
     const item = await addFriaRiskItemQuery(friaId, data, organizationId);

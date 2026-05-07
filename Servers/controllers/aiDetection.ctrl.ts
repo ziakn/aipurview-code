@@ -87,9 +87,12 @@ function handleException(req: Request, res: Response, error: unknown): Response 
     return res.status(502).json(STATUS_CODE[502](translateError(req, error)));
   }
 
-  const errorMessage = process.env.NODE_ENV === "production"
-    ? translateError(req, new Error("An internal error occurred"))
-    : error instanceof Error ? translateError(req, error) : "Unknown error";
+  const errorMessage =
+    process.env.NODE_ENV === "production"
+      ? translateError(req, new Error("An internal error occurred"))
+      : error instanceof Error
+        ? translateError(req, error)
+        : "Unknown error";
   return res.status(500).json(STATUS_CODE[500](errorMessage));
 }
 
@@ -116,9 +119,7 @@ export async function startScanController(req: Request, res: Response): Promise<
     const { repository_url, scan_mode, base_commit_sha, head_commit_sha } = req.body;
 
     if (!repository_url) {
-      return res
-        .status(400)
-        .json(STATUS_CODE[400](req.t!("repository_url is required")));
+      return res.status(400).json(STATUS_CODE[400](req.t!("repository_url is required")));
     }
 
     // Validate incremental scan parameters
@@ -127,12 +128,22 @@ export async function startScanController(req: Request, res: Response): Promise<
       if (!base_commit_sha || !head_commit_sha) {
         return res
           .status(400)
-          .json(STATUS_CODE[400](req.t!("Both base_commit_sha and head_commit_sha are required for incremental scans")));
+          .json(
+            STATUS_CODE[400](
+              req.t!("Both base_commit_sha and head_commit_sha are required for incremental scans"),
+            ),
+          );
       }
       if (!SHA_PATTERN.test(base_commit_sha) || !SHA_PATTERN.test(head_commit_sha)) {
         return res
           .status(400)
-          .json(STATUS_CODE[400](req.t!("base_commit_sha and head_commit_sha must be valid hex strings (7-40 characters)")));
+          .json(
+            STATUS_CODE[400](
+              req.t!(
+                "base_commit_sha and head_commit_sha must be valid hex strings (7-40 characters)",
+              ),
+            ),
+          );
       }
     }
 
@@ -294,7 +305,11 @@ export async function getScanFindingsController(req: Request, res: Response): Pr
     if (findingType && !(FINDING_TYPES as readonly string[]).includes(findingType)) {
       return res
         .status(400)
-        .json(STATUS_CODE[400](req.t!("finding_type must be one of: {options}", { options: FINDING_TYPES.join(", ") })));
+        .json(
+          STATUS_CODE[400](
+            req.t!("finding_type must be one of: {options}", { options: FINDING_TYPES.join(", ") }),
+          ),
+        );
     }
 
     const ctx = buildServiceContext(req);
@@ -627,7 +642,11 @@ export async function updateGovernanceStatusController(
     ) {
       return res
         .status(400)
-        .json(STATUS_CODE[400](req.t!("governance_status must be 'reviewed', 'approved', 'flagged', or null")));
+        .json(
+          STATUS_CODE[400](
+            req.t!("governance_status must be 'reviewed', 'approved', 'flagged', or null"),
+          ),
+        );
     }
 
     const ctx = buildServiceContext(req);
@@ -945,7 +964,9 @@ export async function recalculateRiskScoreController(
     // Verify scan exists and is completed
     const scan = await getScan(scanId, ctx);
     if (scan.scan.status !== "completed") {
-      return res.status(422).json(STATUS_CODE[422](req.t!("Can only calculate risk score for completed scans")));
+      return res
+        .status(422)
+        .json(STATUS_CODE[422](req.t!("Can only calculate risk score for completed scans")));
     }
 
     const repoName = `${scan.scan.repository_owner}/${scan.scan.repository_name}`;
@@ -1065,16 +1086,38 @@ export async function updateRiskScoringConfigController(
       const providedKeys = Object.keys(dimension_weights);
       const extraKeys = providedKeys.filter((k) => !requiredKeys.includes(k));
       if (extraKeys.length > 0) {
-        return res.status(400).json(STATUS_CODE[400](req.t!("Unknown dimension keys: {keys}", { keys: extraKeys.join(", ") })));
+        return res
+          .status(400)
+          .json(
+            STATUS_CODE[400](
+              req.t!("Unknown dimension keys: {keys}", { keys: extraKeys.join(", ") }),
+            ),
+          );
       }
       for (const key of requiredKeys) {
-        if (typeof dimension_weights[key] !== "number" || dimension_weights[key] < 0 || dimension_weights[key] > 1) {
-          return res.status(400).json(STATUS_CODE[400](req.t!("Invalid weight for {key}: must be a number between 0 and 1", { key })));
+        if (
+          typeof dimension_weights[key] !== "number" ||
+          dimension_weights[key] < 0 ||
+          dimension_weights[key] > 1
+        ) {
+          return res
+            .status(400)
+            .json(
+              STATUS_CODE[400](
+                req.t!("Invalid weight for {key}: must be a number between 0 and 1", { key }),
+              ),
+            );
         }
       }
       const total = requiredKeys.reduce((sum: number, k: string) => sum + dimension_weights[k], 0);
       if (Math.abs(total - 1.0) > 0.01) {
-        return res.status(400).json(STATUS_CODE[400](req.t!("Dimension weights must sum to 1.0, got {total}", { total: total.toFixed(2) })));
+        return res
+          .status(400)
+          .json(
+            STATUS_CODE[400](
+              req.t!("Dimension weights must sum to 1.0, got {total}", { total: total.toFixed(2) }),
+            ),
+          );
       }
     }
 
@@ -1097,11 +1140,23 @@ export async function updateRiskScoringConfigController(
         (k) => !(VULNERABILITY_FINDING_TYPES as readonly string[]).includes(k),
       );
       if (invalidKeys.length > 0) {
-        return res.status(400).json(STATUS_CODE[400](req.t!("Unknown vulnerability types: {keys}", { keys: invalidKeys.join(", ") })));
+        return res
+          .status(400)
+          .json(
+            STATUS_CODE[400](
+              req.t!("Unknown vulnerability types: {keys}", { keys: invalidKeys.join(", ") }),
+            ),
+          );
       }
       for (const key of providedKeys) {
         if (typeof vulnerability_types_enabled[key] !== "boolean") {
-          return res.status(400).json(STATUS_CODE[400](req.t!("vulnerability_types_enabled.{key} must be a boolean", { key })));
+          return res
+            .status(400)
+            .json(
+              STATUS_CODE[400](
+                req.t!("vulnerability_types_enabled.{key} must be a boolean", { key }),
+              ),
+            );
         }
       }
     }

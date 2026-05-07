@@ -79,11 +79,11 @@ export async function saveGapRules(req: Request, res: Response): Promise<any> {
     if (error instanceof ValidationException) {
       return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
-    return res.status(500).json(
-      STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, req.t!("Failed to save gap rules"))
-      )
-    );
+    return res
+      .status(500)
+      .json(
+        STATUS_CODE[500](sanitizeErrorMessage(error as Error, req.t!("Failed to save gap rules"))),
+      );
   }
 }
 
@@ -126,11 +126,13 @@ export async function getGapRules(req: Request, res: Response): Promise<any> {
       organizationId: req.organizationId!,
     });
 
-    return res.status(500).json(
-      STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, req.t!("Failed to retrieve gap rules"))
-      )
-    );
+    return res
+      .status(500)
+      .json(
+        STATUS_CODE[500](
+          sanitizeErrorMessage(error as Error, req.t!("Failed to retrieve gap rules")),
+        ),
+      );
   }
 }
 
@@ -173,11 +175,11 @@ export async function resetGapRules(req: Request, res: Response): Promise<any> {
       organizationId: req.organizationId!,
     });
 
-    return res.status(500).json(
-      STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, req.t!("Failed to reset gap rules"))
-      )
-    );
+    return res
+      .status(500)
+      .json(
+        STATUS_CODE[500](sanitizeErrorMessage(error as Error, req.t!("Failed to reset gap rules"))),
+      );
   }
 }
 
@@ -223,10 +225,12 @@ export async function getDefaultGapRules(_req: Request, res: Response): Promise<
       organizationId: _req.organizationId!,
     });
 
-    return res.status(500).json(
-      STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, _req.t!("Failed to get default gap rules"))
-      )
-    );
+    return res
+      .status(500)
+      .json(
+        STATUS_CODE[500](
+          sanitizeErrorMessage(error as Error, _req.t!("Failed to get default gap rules")),
+        ),
+      );
   }
 }

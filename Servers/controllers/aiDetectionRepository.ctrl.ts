@@ -146,12 +146,16 @@ export async function createRepository(req: Request, res: Response): Promise<any
     } = req.body;
 
     if (!repository_url) {
-      return res.status(400).json(STATUS_CODE[400]({ message: req.t!("repository_url is required") }));
+      return res
+        .status(400)
+        .json(STATUS_CODE[400]({ message: req.t!("repository_url is required") }));
     }
 
     const parsed = parseGitHubUrl(repository_url);
     if (!parsed) {
-      return res.status(400).json(STATUS_CODE[400]({ message: req.t!("Invalid GitHub repository URL") }));
+      return res
+        .status(400)
+        .json(STATUS_CODE[400]({ message: req.t!("Invalid GitHub repository URL") }));
     }
 
     // Check for duplicates
@@ -172,12 +176,21 @@ export async function createRepository(req: Request, res: Response): Promise<any
     if (schedule_enabled) {
       if (!schedule_frequency || !["daily", "weekly", "monthly"].includes(schedule_frequency)) {
         return res.status(400).json(
-          STATUS_CODE[400]({ message: req.t!("schedule_frequency must be daily, weekly, or monthly when schedule is enabled") })
+          STATUS_CODE[400]({
+            message: req.t!(
+              "schedule_frequency must be daily, weekly, or monthly when schedule is enabled",
+            ),
+          }),
         );
       }
-      if (schedule_frequency === "weekly" && (schedule_day_of_week === undefined || schedule_day_of_week < 0 || schedule_day_of_week > 6)) {
+      if (
+        schedule_frequency === "weekly" &&
+        (schedule_day_of_week === undefined || schedule_day_of_week < 0 || schedule_day_of_week > 6)
+      ) {
         return res.status(400).json(
-          STATUS_CODE[400]({ message: req.t!("schedule_day_of_week must be 0-6 for weekly schedule") })
+          STATUS_CODE[400]({
+            message: req.t!("schedule_day_of_week must be 0-6 for weekly schedule"),
+          }),
         );
       }
       if (
@@ -187,20 +200,22 @@ export async function createRepository(req: Request, res: Response): Promise<any
           schedule_day_of_month > 31)
       ) {
         return res.status(400).json(
-          STATUS_CODE[400]({ message: req.t!("schedule_day_of_month must be 1-31 for monthly schedule") })
+          STATUS_CODE[400]({
+            message: req.t!("schedule_day_of_month must be 1-31 for monthly schedule"),
+          }),
         );
       }
       const hour = schedule_hour ?? 2;
       const minute = schedule_minute ?? 0;
       if (hour < 0 || hour > 23) {
-        return res.status(400).json(
-          STATUS_CODE[400]({ message: req.t!("schedule_hour must be 0-23") })
-        );
+        return res
+          .status(400)
+          .json(STATUS_CODE[400]({ message: req.t!("schedule_hour must be 0-23") }));
       }
       if (minute < 0 || minute > 59) {
-        return res.status(400).json(
-          STATUS_CODE[400]({ message: req.t!("schedule_minute must be 0-59") })
-        );
+        return res
+          .status(400)
+          .json(STATUS_CODE[400]({ message: req.t!("schedule_minute must be 0-59") }));
       }
     }
 
@@ -298,7 +313,11 @@ export async function updateRepository(req: Request, res: Response): Promise<any
     if (willBeEnabled) {
       if (!freq || !["daily", "weekly", "monthly"].includes(freq)) {
         return res.status(400).json(
-          STATUS_CODE[400]({ message: req.t!("schedule_frequency must be daily, weekly, or monthly when schedule is enabled") })
+          STATUS_CODE[400]({
+            message: req.t!(
+              "schedule_frequency must be daily, weekly, or monthly when schedule is enabled",
+            ),
+          }),
         );
       }
     }
@@ -419,7 +438,9 @@ export async function deleteRepository(req: Request, res: Response): Promise<any
       tenantId: req.organizationId!,
     });
 
-    return res.status(200).json(STATUS_CODE[200]({ message: req.t!("Repository deleted successfully") }));
+    return res
+      .status(200)
+      .json(STATUS_CODE[200]({ message: req.t!("Repository deleted successfully") }));
   } catch (error) {
     await logFailure({
       eventType: "Delete",
@@ -510,11 +531,13 @@ export async function triggerRepositoryScan(req: Request, res: Response): Promis
         ? (error as Error & { statusCode: number }).statusCode
         : 500;
     const statusFn = STATUS_CODE[statusCode as keyof typeof STATUS_CODE];
-    return res.status(statusCode).json(
-      typeof statusFn === "function"
-        ? statusFn((error as Error).message)
-        : STATUS_CODE[500](translateError(req, error))
-    );
+    return res
+      .status(statusCode)
+      .json(
+        typeof statusFn === "function"
+          ? statusFn((error as Error).message)
+          : STATUS_CODE[500](translateError(req, error)),
+      );
   }
 }
 

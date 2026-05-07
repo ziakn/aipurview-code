@@ -86,9 +86,7 @@ export async function searchPlugins(req: Request, res: Response): Promise<any> {
   );
 
   if (!query) {
-    return res
-      .status(400)
-      .json(STATUS_CODE[400](req.t!("Query parameter 'q' is required")));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Query parameter 'q' is required")));
   }
 
   try {
@@ -135,9 +133,7 @@ export async function installPlugin(req: Request, res: Response): Promise<any> {
   );
 
   if (!userId || !organizationId) {
-    return res
-      .status(401)
-      .json(STATUS_CODE[401](req.t!("User not authenticated")));
+    return res.status(401).json(STATUS_CODE[401](req.t!("User not authenticated")));
   }
 
   try {
@@ -179,9 +175,7 @@ export async function uninstallPlugin(req: Request, res: Response): Promise<any>
   );
 
   if (!userId || !organizationId) {
-    return res
-      .status(401)
-      .json(STATUS_CODE[401](req.t!("User not authenticated")));
+    return res.status(401).json(STATUS_CODE[401](req.t!("User not authenticated")));
   }
 
   try {
@@ -221,9 +215,7 @@ export async function getInstalledPlugins(req: Request, res: Response): Promise<
   );
 
   if (!organizationId) {
-    return res
-      .status(401)
-      .json(STATUS_CODE[401](req.t!("User not authenticated")));
+    return res.status(401).json(STATUS_CODE[401](req.t!("User not authenticated")));
   }
 
   try {
@@ -282,15 +274,11 @@ export async function updatePluginConfiguration(req: Request, res: Response): Pr
   );
 
   if (!configuration || typeof configuration !== "object") {
-    return res
-      .status(400)
-      .json(STATUS_CODE[400](req.t!("Configuration object is required")));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Configuration object is required")));
   }
 
   if (!userId || !organizationId) {
-    return res
-      .status(401)
-      .json(STATUS_CODE[401](req.t!("User not authenticated")));
+    return res.status(401).json(STATUS_CODE[401](req.t!("User not authenticated")));
   }
 
   try {
@@ -343,15 +331,11 @@ export async function testPluginConnection(req: Request, res: Response): Promise
   );
 
   if (!configuration || typeof configuration !== "object") {
-    return res
-      .status(400)
-      .json(STATUS_CODE[400](req.t!("Configuration object is required")));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Configuration object is required")));
   }
 
   if (!userId || !organizationId) {
-    return res
-      .status(401)
-      .json(STATUS_CODE[401](req.t!("User not authenticated")));
+    return res.status(401).json(STATUS_CODE[401](req.t!("User not authenticated")));
   }
 
   try {
@@ -396,9 +380,7 @@ export async function forwardToPlugin(req: Request, res: Response): Promise<any>
   const functionName = "forwardToPlugin";
 
   if (!pluginKey) {
-    return res
-      .status(400)
-      .json(STATUS_CODE[400](req.t!("Plugin key is required")));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Plugin key is required")));
   }
 
   if (!PLUGIN_KEY_PATTERN.test(pluginKey)) {
@@ -423,9 +405,7 @@ export async function forwardToPlugin(req: Request, res: Response): Promise<any>
   );
 
   if (!organizationId || !userId) {
-    return res
-      .status(401)
-      .json(STATUS_CODE[401](req.t!("User not authenticated")));
+    return res.status(401).json(STATUS_CODE[401](req.t!("User not authenticated")));
   }
 
   try {
@@ -489,18 +469,34 @@ export async function forwardToPlugin(req: Request, res: Response): Promise<any>
   } catch (error) {
     // Handle specific error types
     if (error instanceof NotFoundException) {
-      logStructured("error", `route not found in plugin ${sanitizeForLog(pluginKey)}`, functionName, fileName);
+      logStructured(
+        "error",
+        `route not found in plugin ${sanitizeForLog(pluginKey)}`,
+        functionName,
+        fileName,
+      );
       return res.status(404).json(STATUS_CODE[404](translateError(req, error)));
     }
 
     if (error instanceof ValidationException) {
-      logStructured("error", `validation error in plugin ${sanitizeForLog(pluginKey)}`, functionName, fileName);
+      logStructured(
+        "error",
+        `validation error in plugin ${sanitizeForLog(pluginKey)}`,
+        functionName,
+        fileName,
+      );
       return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof Error) {
       if (error.message.includes("not installed")) {
-        return res.status(400).json(STATUS_CODE[400](req.t!("Plugin '{name}' is not installed", { name: sanitizeForLog(pluginKey) })));
+        return res
+          .status(400)
+          .json(
+            STATUS_CODE[400](
+              req.t!("Plugin '{name}' is not installed", { name: sanitizeForLog(pluginKey) }),
+            ),
+          );
       }
       if (error.message.includes("not found")) {
         return res.status(404).json(STATUS_CODE[404](translateError(req, error)));

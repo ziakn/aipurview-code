@@ -38,9 +38,7 @@ export async function uploadDatasetFile(req: Request, res: Response) {
         ? JSON.parse(req.body.metadata)
         : req.body.metadata || {};
   } catch {
-    return res
-      .status(400)
-      .json(STATUS_CODE[400](req.t!("Invalid metadata JSON in request body")));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Invalid metadata JSON in request body")));
   }
 
   let transaction: Transaction | null = null;

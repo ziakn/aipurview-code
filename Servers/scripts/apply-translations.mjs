@@ -20,12 +20,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import {
-  SERVERS_ROOT,
-  readJson,
-  writeJson,
-  localePath,
-} from "./lib/i18nScriptUtils.mjs";
+import { SERVERS_ROOT, readJson, writeJson, localePath } from "./lib/i18nScriptUtils.mjs";
 
 const inputPath = process.argv[2] || "/tmp/translation-batch.json";
 const batch = readJson(inputPath);

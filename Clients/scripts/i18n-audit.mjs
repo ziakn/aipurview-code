@@ -29,10 +29,7 @@ const targetLangs = langArg ? [langArg] : SUPPORTED_LANGS;
 
 function loadDict(lang) {
   const content = readFileSync(TRANSLATIONS_PATH, "utf8");
-  const blockRe = new RegExp(
-    `^\\s*${lang}:\\s*\\{([\\s\\S]*?)\\n\\s*\\},`,
-    "m",
-  );
+  const blockRe = new RegExp(`^\\s*${lang}:\\s*\\{([\\s\\S]*?)\\n\\s*\\},`, "m");
   const block = content.match(blockRe);
   if (!block) {
     throw new Error(`Could not find ${lang}: { ... } block in translations.ts`);
@@ -129,10 +126,7 @@ function extractStrings(content) {
   ];
   for (const prop of props) {
     // JSX attribute: prop="..."
-    const attrRe = new RegExp(
-      `${prop}=["']([A-Z][A-Za-z0-9 ,.?!:;\\-/&()]{2,200})["']`,
-      "g",
-    );
+    const attrRe = new RegExp(`${prop}=["']([A-Z][A-Za-z0-9 ,.?!:;\\-/&()]{2,200})["']`, "g");
     for (const m of content.matchAll(attrRe)) {
       found.add(m[1].trim());
     }
@@ -242,7 +236,9 @@ if (wantJson) {
     const missing = result[lang];
     const have = allStrings.size - missing.length;
     const pct = allStrings.size === 0 ? 100 : Math.round((have * 100) / allStrings.size);
-    console.log(`  ${lang.toUpperCase()}: ${dict.size} keys in dictionary | ${have}/${allStrings.size} extracted strings covered (${pct}%) | ${missing.length} gaps`);
+    console.log(
+      `  ${lang.toUpperCase()}: ${dict.size} keys in dictionary | ${have}/${allStrings.size} extracted strings covered (${pct}%) | ${missing.length} gaps`,
+    );
   }
   console.log();
 

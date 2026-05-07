@@ -136,9 +136,11 @@ export async function createConfig(req: Request, res: Response): Promise<any> {
     );
     if (existingConfig) {
       await transaction.rollback();
-      return res.status(409).json(STATUS_CODE[409]({
-        message: req.t!("Configuration already exists for this project"),
-      }));
+      return res.status(409).json(
+        STATUS_CODE[409]({
+          message: req.t!("Configuration already exists for this project"),
+        }),
+      );
     }
 
     // Create config
@@ -353,17 +355,21 @@ export async function addQuestion(req: Request, res: Response): Promise<any> {
     const questionData = req.body as IPMMQuestionCreate;
 
     if (!questionData.question_text || !questionData.question_type) {
-      return res.status(400).json(STATUS_CODE[400]({
-        message: req.t!("Question text and type are required"),
-      }));
+      return res.status(400).json(
+        STATUS_CODE[400]({
+          message: req.t!("Question text and type are required"),
+        }),
+      );
     }
 
     // Validate question type
     const validTypes = ["yes_no", "multi_select", "multi_line_text"];
     if (!validTypes.includes(questionData.question_type)) {
-      return res.status(400).json(STATUS_CODE[400]({
-        message: req.t!("Invalid question type"),
-      }));
+      return res.status(400).json(
+        STATUS_CODE[400]({
+          message: req.t!("Invalid question type"),
+        }),
+      );
     }
 
     const question = await addPMMQuestionQuery(questionData, req.organizationId!);
@@ -416,9 +422,11 @@ export async function updateQuestion(req: Request, res: Response): Promise<any> 
     if (updateData.question_type) {
       const validTypes = ["yes_no", "multi_select", "multi_line_text"];
       if (!validTypes.includes(updateData.question_type)) {
-        return res.status(400).json(STATUS_CODE[400]({
-          message: req.t!("Invalid question type"),
-        }));
+        return res.status(400).json(
+          STATUS_CODE[400]({
+            message: req.t!("Invalid question type"),
+          }),
+        );
       }
     }
 
@@ -473,9 +481,11 @@ export async function deleteQuestion(req: Request, res: Response): Promise<any> 
     const deleted = await deletePMMQuestionQuery(questionId, req.organizationId!);
 
     if (!deleted) {
-      return res.status(404).json(STATUS_CODE[404]({
-        message: req.t!("Question not found or is a system default"),
-      }));
+      return res.status(404).json(
+        STATUS_CODE[404]({
+          message: req.t!("Question not found or is a system default"),
+        }),
+      );
     }
 
     await logSuccess({
@@ -514,17 +524,21 @@ export async function reorderQuestions(req: Request, res: Response): Promise<any
     const { orders } = req.body as { orders: Array<{ id: number; display_order: number }> };
 
     if (!Array.isArray(orders) || orders.length === 0) {
-      return res.status(400).json(STATUS_CODE[400]({
-        message: req.t!("Orders array is required"),
-      }));
+      return res.status(400).json(
+        STATUS_CODE[400]({
+          message: req.t!("Orders array is required"),
+        }),
+      );
     }
 
     // Validate order items
     for (const order of orders) {
       if (typeof order.id !== "number" || typeof order.display_order !== "number") {
-        return res.status(400).json(STATUS_CODE[400]({
-          message: req.t!("Each order item must have numeric id and display_order"),
-        }));
+        return res.status(400).json(
+          STATUS_CODE[400]({
+            message: req.t!("Each order item must have numeric id and display_order"),
+          }),
+        );
       }
     }
 
@@ -587,9 +601,11 @@ export async function getActiveCycle(req: Request, res: Response): Promise<any> 
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(404).json(STATUS_CODE[404]({
-        message: req.t!("No active monitoring cycle"),
-      }));
+      return res.status(404).json(
+        STATUS_CODE[404]({
+          message: req.t!("No active monitoring cycle"),
+        }),
+      );
     }
 
     await logSuccess({
@@ -735,9 +751,11 @@ export async function saveResponses(req: Request, res: Response): Promise<any> {
     const { responses } = req.body as IPMMCycleSubmitRequest;
 
     if (!Array.isArray(responses) || responses.length === 0) {
-      return res.status(400).json(STATUS_CODE[400]({
-        message: req.t!("Responses array is required"),
-      }));
+      return res.status(400).json(
+        STATUS_CODE[400]({
+          message: req.t!("Responses array is required"),
+        }),
+      );
     }
 
     // Check cycle exists and is not completed
@@ -746,9 +764,11 @@ export async function saveResponses(req: Request, res: Response): Promise<any> {
       return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Cycle not found") }));
     }
     if (cycle.status === "completed") {
-      return res.status(409).json(STATUS_CODE[409]({
-        message: req.t!("Cycle is already completed"),
-      }));
+      return res.status(409).json(
+        STATUS_CODE[409]({
+          message: req.t!("Cycle is already completed"),
+        }),
+      );
     }
 
     const savedResponses = await savePMMResponsesQuery(cycleId, responses, req.organizationId!);
@@ -808,9 +828,11 @@ export async function submitCycle(req: Request, res: Response): Promise<any> {
     }
     if (cycle.status === "completed") {
       await transaction.rollback();
-      return res.status(409).json(STATUS_CODE[409]({
-        message: req.t!("Cycle is already completed"),
-      }));
+      return res.status(409).json(
+        STATUS_CODE[409]({
+          message: req.t!("Cycle is already completed"),
+        }),
+      );
     }
 
     // Save responses if provided
@@ -887,11 +909,13 @@ export async function submitCycle(req: Request, res: Response): Promise<any> {
       tenantId: req.organizationId!,
     });
 
-    return res.status(200).json(STATUS_CODE[200]({
-      message: req.t!("Cycle submitted successfully"),
-      report_generated: uploadResult.success,
-      report_filename: uploadResult.filename,
-    }));
+    return res.status(200).json(
+      STATUS_CODE[200]({
+        message: req.t!("Cycle submitted successfully"),
+        report_generated: uploadResult.success,
+        report_filename: uploadResult.filename,
+      }),
+    );
   } catch (error) {
     await transaction.rollback();
     await logFailure({
@@ -929,9 +953,11 @@ export async function flagConcern(req: Request, res: Response): Promise<any> {
     const { question_id, response_value } = req.body;
 
     if (!question_id) {
-      return res.status(400).json(STATUS_CODE[400]({
-        message: req.t!("Question ID is required"),
-      }));
+      return res.status(400).json(
+        STATUS_CODE[400]({
+          message: req.t!("Question ID is required"),
+        }),
+      );
     }
 
     // Check cycle exists
@@ -955,9 +981,11 @@ export async function flagConcern(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(200).json(STATUS_CODE[200]({
-      message: req.t!("Concern flagged successfully"),
-    }));
+    return res.status(200).json(
+      STATUS_CODE[200]({
+        message: req.t!("Concern flagged successfully"),
+      }),
+    );
   } catch (error) {
     await logFailure({
       eventType: "Update",
@@ -1175,9 +1203,11 @@ export async function reassignStakeholder(req: Request, res: Response): Promise<
     const { stakeholder_id } = req.body;
 
     if (!stakeholder_id || typeof stakeholder_id !== "number") {
-      return res.status(400).json(STATUS_CODE[400]({
-        message: req.t!("Valid stakeholder ID is required"),
-      }));
+      return res.status(400).json(
+        STATUS_CODE[400]({
+          message: req.t!("Valid stakeholder ID is required"),
+        }),
+      );
     }
 
     // Check cycle exists
@@ -1207,9 +1237,11 @@ export async function reassignStakeholder(req: Request, res: Response): Promise<
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(200).json(STATUS_CODE[200]({
-      message: req.t!("Stakeholder reassigned successfully"),
-    }));
+    return res.status(200).json(
+      STATUS_CODE[200]({
+        message: req.t!("Stakeholder reassigned successfully"),
+      }),
+    );
   } catch (error) {
     await logFailure({
       eventType: "Update",
@@ -1256,9 +1288,11 @@ export async function startNewCycle(req: Request, res: Response): Promise<any> {
     const activeCycle = await getActiveCycleByProjectIdQuery(projectId, req.organizationId!);
     if (activeCycle) {
       await transaction.rollback();
-      return res.status(409).json(STATUS_CODE[409]({
-        message: req.t!("An active cycle already exists"),
-      }));
+      return res.status(409).json(
+        STATUS_CODE[409]({
+          message: req.t!("An active cycle already exists"),
+        }),
+      );
     }
 
     // Calculate due date

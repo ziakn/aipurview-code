@@ -99,7 +99,7 @@ CustomAxios.interceptors.request.use(
     try {
       const lang = localStorage.getItem("vw_lang_prototype");
       if (lang) {
-        config.headers['Accept-Language'] = lang;
+        config.headers["Accept-Language"] = lang;
       }
     } catch {
       // localStorage unavailable in sandboxed contexts.

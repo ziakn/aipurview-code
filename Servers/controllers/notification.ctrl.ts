@@ -31,7 +31,12 @@ export const streamNotifications = async (req: Request, res: Response): Promise<
   const { userId, organizationId, tenantId } = req;
 
   if (!userId || !organizationId) {
-    logStructured("error", "Missing userId or organizationId for SSE connection", "streamNotifications", "notification.ctrl.ts");
+    logStructured(
+      "error",
+      "Missing userId or organizationId for SSE connection",
+      "streamNotifications",
+      "notification.ctrl.ts",
+    );
     res.status(401).json({ error: req.t!("Unauthorized") });
     return;
   }
@@ -103,7 +108,12 @@ export const streamNotifications = async (req: Request, res: Response): Promise<
       );
     });
   } catch (error) {
-    logStructured("error", `Error establishing SSE connection: ${error}`, "streamNotifications", "notification.ctrl.ts");
+    logStructured(
+      "error",
+      `Error establishing SSE connection: ${error}`,
+      "streamNotifications",
+      "notification.ctrl.ts",
+    );
     res.status(500).json({ error: req.t!("Internal server error") });
   }
 };
@@ -178,7 +188,12 @@ export const getNotifications = async (req: Request, res: Response): Promise<Res
     const notifications = await getNotificationsQuery(userId, tenantId, filters);
     return res.status(200).json(STATUS_CODE[200](notifications));
   } catch (error) {
-    logStructured("error", `Error fetching notifications: ${error}`, "getNotifications", "notification.ctrl.ts");
+    logStructured(
+      "error",
+      `Error fetching notifications: ${error}`,
+      "getNotifications",
+      "notification.ctrl.ts",
+    );
     return res.status(500).json(STATUS_CODE[500](req.t!("Failed to fetch notifications")));
   }
 };
@@ -198,7 +213,12 @@ export const getNotificationSummary = async (req: Request, res: Response): Promi
     const summary = await getNotificationSummaryQuery(userId, tenantId);
     return res.status(200).json(STATUS_CODE[200](summary));
   } catch (error) {
-    logStructured("error", `Error fetching notification summary: ${error}`, "getNotificationSummary", "notification.ctrl.ts");
+    logStructured(
+      "error",
+      `Error fetching notification summary: ${error}`,
+      "getNotificationSummary",
+      "notification.ctrl.ts",
+    );
     return res.status(500).json(STATUS_CODE[500](req.t!("Failed to fetch notification summary")));
   }
 };
@@ -218,7 +238,12 @@ export const getUnreadCount = async (req: Request, res: Response): Promise<Respo
     const count = await getUnreadCountQuery(userId, tenantId);
     return res.status(200).json(STATUS_CODE[200]({ unread_count: count }));
   } catch (error) {
-    logStructured("error", `Error fetching unread count: ${error}`, "getUnreadCount", "notification.ctrl.ts");
+    logStructured(
+      "error",
+      `Error fetching unread count: ${error}`,
+      "getUnreadCount",
+      "notification.ctrl.ts",
+    );
     return res.status(500).json(STATUS_CODE[500](req.t!("Failed to fetch unread count")));
   }
 };
@@ -249,7 +274,12 @@ export const markAsRead = async (req: Request, res: Response): Promise<Response>
 
     return res.status(200).json(STATUS_CODE[200](notification));
   } catch (error) {
-    logStructured("error", `Error marking notification as read: ${error}`, "markAsRead", "notification.ctrl.ts");
+    logStructured(
+      "error",
+      `Error marking notification as read: ${error}`,
+      "markAsRead",
+      "notification.ctrl.ts",
+    );
     return res.status(500).json(STATUS_CODE[500](req.t!("Failed to mark notification as read")));
   }
 };
@@ -269,7 +299,12 @@ export const markAllAsRead = async (req: Request, res: Response): Promise<Respon
     const count = await markAllNotificationsAsReadQuery(userId, tenantId);
     return res.status(200).json(STATUS_CODE[200]({ marked_count: count }));
   } catch (error) {
-    logStructured("error", `Error marking all notifications as read: ${error}`, "markAllAsRead", "notification.ctrl.ts");
+    logStructured(
+      "error",
+      `Error marking all notifications as read: ${error}`,
+      "markAllAsRead",
+      "notification.ctrl.ts",
+    );
     return res.status(500).json(STATUS_CODE[500](req.t!("Failed to mark notifications as read")));
   }
 };
@@ -300,7 +335,12 @@ export const deleteNotification = async (req: Request, res: Response): Promise<R
 
     return res.status(200).json(STATUS_CODE[200]({ deleted: true }));
   } catch (error) {
-    logStructured("error", `Error deleting notification: ${error}`, "deleteNotification", "notification.ctrl.ts");
+    logStructured(
+      "error",
+      `Error deleting notification: ${error}`,
+      "deleteNotification",
+      "notification.ctrl.ts",
+    );
     return res.status(500).json(STATUS_CODE[500](req.t!("Failed to delete notification")));
   }
 };

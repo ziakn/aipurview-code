@@ -10,11 +10,7 @@ import {
 } from "../utils/modelRisk.utils";
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import { translateError } from "../utils/i18n.utils";
-import {
-  logProcessing,
-  logSuccess,
-  logFailure,
-} from "../utils/logger/logHelper";
+import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 import {
   recordEntityCreation,
   trackEntityChanges,
@@ -317,9 +313,7 @@ export async function deleteModelRiskById(req: Request, res: Response) {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res
-      .status(200)
-      .json(STATUS_CODE[200](req.t!("Model risk deleted successfully.")));
+    return res.status(200).json(STATUS_CODE[200](req.t!("Model risk deleted successfully.")));
   } catch (error) {
     await transaction.rollback();
     await logFailure({

@@ -94,17 +94,12 @@ export async function sendSubmissionReceivedEmail(
     const resubmitLink = buildResubmitLink(resubmissionToken, publicId, tenantSlug, formSlug);
 
     const subject = translate(lang, "Submission received: {formName}", { formName });
-    await sendEmail(
-      submitterEmail,
-      subject,
-      EMAIL_TEMPLATES.INTAKE_SUBMISSION_RECEIVED,
-      {
-        submitterName: submitterName || submitterEmail.split("@")[0],
-        formName,
-        submissionId: String(submissionId),
-        resubmitLink,
-      },
-    );
+    await sendEmail(submitterEmail, subject, EMAIL_TEMPLATES.INTAKE_SUBMISSION_RECEIVED, {
+      submitterName: submitterName || submitterEmail.split("@")[0],
+      formName,
+      submissionId: String(submissionId),
+      resubmitLink,
+    });
 
     logger.info(
       `Submission received email sent to ${submitterEmail} for submission #${submissionId}`,
@@ -149,20 +144,15 @@ export async function sendNewSubmissionAdminNotification(
     const subject = translate(lang, "New submission pending review: {formName}", { formName });
     for (const recipient of recipients) {
       try {
-        await sendEmail(
-          recipient.email,
-          subject,
-          EMAIL_TEMPLATES.INTAKE_NEW_SUBMISSION_ADMIN,
-          {
-            adminName: recipient.name || recipient.email.split("@")[0],
-            formName,
-            submitterName: submitterName || submitterEmail.split("@")[0],
-            submitterEmail,
-            submissionId: String(submissionId),
-            entityType: entityTypeDisplay,
-            reviewLink,
-          },
-        );
+        await sendEmail(recipient.email, subject, EMAIL_TEMPLATES.INTAKE_NEW_SUBMISSION_ADMIN, {
+          adminName: recipient.name || recipient.email.split("@")[0],
+          formName,
+          submitterName: submitterName || submitterEmail.split("@")[0],
+          submitterEmail,
+          submissionId: String(submissionId),
+          entityType: entityTypeDisplay,
+          reviewLink,
+        });
       } catch (error) {
         logger.error(`Failed to send admin notification to ${recipient.email}:`, error);
       }
@@ -189,17 +179,12 @@ export async function sendSubmissionApprovedEmail(
     const entityTypeDisplay = getEntityTypeDisplayName(entityType);
 
     const subject = translate(lang, "Submission approved: {formName}", { formName });
-    await sendEmail(
-      submitterEmail,
-      subject,
-      EMAIL_TEMPLATES.INTAKE_SUBMISSION_APPROVED,
-      {
-        submitterName: submitterName || submitterEmail.split("@")[0],
-        formName,
-        submissionId: String(submissionId),
-        entityType: entityTypeDisplay,
-      },
-    );
+    await sendEmail(submitterEmail, subject, EMAIL_TEMPLATES.INTAKE_SUBMISSION_APPROVED, {
+      submitterName: submitterName || submitterEmail.split("@")[0],
+      formName,
+      submissionId: String(submissionId),
+      entityType: entityTypeDisplay,
+    });
 
     logger.info(
       `Submission approved email sent to ${submitterEmail} for submission #${submissionId}`,
@@ -228,18 +213,13 @@ export async function sendSubmissionRejectedEmail(
     const resubmitLink = buildResubmitLink(resubmissionToken, publicId, tenantSlug, formSlug);
 
     const subject = translate(lang, "Submission requires changes: {formName}", { formName });
-    await sendEmail(
-      submitterEmail,
-      subject,
-      EMAIL_TEMPLATES.INTAKE_SUBMISSION_REJECTED,
-      {
-        submitterName: submitterName || submitterEmail.split("@")[0],
-        formName,
-        submissionId: String(submissionId),
-        rejectionReason,
-        resubmitLink,
-      },
-    );
+    await sendEmail(submitterEmail, subject, EMAIL_TEMPLATES.INTAKE_SUBMISSION_REJECTED, {
+      submitterName: submitterName || submitterEmail.split("@")[0],
+      formName,
+      submissionId: String(submissionId),
+      rejectionReason,
+      resubmitLink,
+    });
 
     logger.info(
       `Submission rejected email sent to ${submitterEmail} for submission #${submissionId}`,

@@ -1,5 +1,5 @@
-import 'express';
-import type { SupportedLang, Translator } from '../utils/i18n.utils';
+import "express";
+import type { SupportedLang, Translator } from "../utils/i18n.utils";
 
 declare module "express" {
   interface Request {

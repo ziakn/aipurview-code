@@ -153,7 +153,9 @@ export const createFolder = async (req: Request, res: Response): Promise<Respons
     // Validate folder name length
     if (name.trim().length > 255) {
       await transaction.rollback();
-      return res.status(400).json(STATUS_CODE[400](req.t!("Folder name cannot exceed 255 characters")));
+      return res
+        .status(400)
+        .json(STATUS_CODE[400](req.t!("Folder name cannot exceed 255 characters")));
     }
 
     // Check for duplicate name in same parent
@@ -162,7 +164,9 @@ export const createFolder = async (req: Request, res: Response): Promise<Respons
       await transaction.rollback();
       return res
         .status(409)
-        .json(STATUS_CODE[409](req.t!("A folder with this name already exists in the same location")));
+        .json(
+          STATUS_CODE[409](req.t!("A folder with this name already exists in the same location")),
+        );
     }
 
     // Verify parent folder exists if specified
@@ -227,7 +231,9 @@ export const updateFolder = async (req: Request, res: Response): Promise<Respons
     // Validate folder name length if provided
     if (name && name.trim().length > 255) {
       await transaction.rollback();
-      return res.status(400).json(STATUS_CODE[400](req.t!("Folder name cannot exceed 255 characters")));
+      return res
+        .status(400)
+        .json(STATUS_CODE[400](req.t!("Folder name cannot exceed 255 characters")));
     }
 
     // Check for duplicate name if name is being changed
@@ -243,7 +249,9 @@ export const updateFolder = async (req: Request, res: Response): Promise<Respons
         await transaction.rollback();
         return res
           .status(409)
-          .json(STATUS_CODE[409](req.t!("A folder with this name already exists in the same location")));
+          .json(
+            STATUS_CODE[409](req.t!("A folder with this name already exists in the same location")),
+          );
       }
     }
 

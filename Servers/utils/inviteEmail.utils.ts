@@ -30,9 +30,7 @@ interface InviteEmailResult {
  * Generates a token, builds the invite link, and sends the invite email.
  * Shared by initial invite (vwmailer) and resend (invitation controller).
  */
-export const sendInviteEmail = async (
-  params: InviteEmailParams
-): Promise<InviteEmailResult> => {
+export const sendInviteEmail = async (params: InviteEmailParams): Promise<InviteEmailResult> => {
   const { email, name, surname, roleId, organizationId, lang } = params;
 
   const token = generateInviteToken({

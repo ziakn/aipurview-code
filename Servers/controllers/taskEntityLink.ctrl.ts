@@ -12,11 +12,7 @@ import {
 import { getTaskByIdQuery } from "../utils/task.utils";
 import { sequelize } from "../database/db";
 import { translateError } from "../utils/i18n.utils";
-import {
-  logProcessing,
-  logSuccess,
-  logFailure,
-} from "../utils/logger/logHelper";
+import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 
 /**
  * Add an entity link to a task
@@ -45,9 +41,9 @@ export async function addTaskEntityLink(req: Request, res: Response): Promise<an
     // Validate entity_type
     if (!entity_type || !isValidEntityType(entity_type)) {
       await transaction.rollback();
-      return res.status(400).json(
-        STATUS_CODE[400](req.t!("Invalid entity_type: {type}", { type: entity_type }))
-      );
+      return res
+        .status(400)
+        .json(STATUS_CODE[400](req.t!("Invalid entity_type: {type}", { type: entity_type })));
     }
 
     // Validate entity_id
@@ -74,9 +70,13 @@ export async function addTaskEntityLink(req: Request, res: Response): Promise<an
 
     if (!entityExists) {
       await transaction.rollback();
-      return res.status(404).json(
-        STATUS_CODE[404](req.t!("{type} with id {id} not found", { type: entity_type, id: entity_id }))
-      );
+      return res
+        .status(404)
+        .json(
+          STATUS_CODE[404](
+            req.t!("{type} with id {id} not found", { type: entity_type, id: entity_id }),
+          ),
+        );
     }
 
     // Check if link already exists
@@ -90,9 +90,9 @@ export async function addTaskEntityLink(req: Request, res: Response): Promise<an
 
     if (linkExists) {
       await transaction.rollback();
-      return res.status(409).json(
-        STATUS_CODE[409](req.t!("This entity is already linked to this task"))
-      );
+      return res
+        .status(409)
+        .json(STATUS_CODE[409](req.t!("This entity is already linked to this task")));
     }
 
     // Create the link
@@ -247,9 +247,9 @@ export async function removeTaskEntityLink(req: Request, res: Response): Promise
       tenantId: req.organizationId!,
     });
 
-    return res.status(200).json(
-      STATUS_CODE[200]({ message: req.t!("Entity link removed successfully") })
-    );
+    return res
+      .status(200)
+      .json(STATUS_CODE[200]({ message: req.t!("Entity link removed successfully") }));
   } catch (error) {
     await transaction.rollback();
 

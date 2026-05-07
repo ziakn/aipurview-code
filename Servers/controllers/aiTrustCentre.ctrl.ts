@@ -55,7 +55,7 @@ export async function getCompanyLogo(req: Request, res: Response) {
       return res.status(404).json(
         STATUS_CODE[404]({
           message: req.t!("Company logo not found"),
-        })
+        }),
       );
     }
 
@@ -154,7 +154,7 @@ export async function getAITrustCentrePublicResource(req: Request, res: Response
       return res.status(404).json(
         STATUS_CODE[404]({
           message: req.t!("Resource not found"),
-        })
+        }),
       );
     }
 
@@ -324,7 +324,7 @@ export async function createAITrustResource(req: RequestWithFile, res: Response)
       return res.status(400).json(
         STATUS_CODE[400]({
           message: req.t!("File upload failed"),
-        })
+        }),
       );
     }
 
@@ -376,7 +376,7 @@ export async function createAITrustResource(req: RequestWithFile, res: Response)
       return res.status(503).json(
         STATUS_CODE[503]({
           message: req.t!("Failed to create AI Trust Centre resource"),
-        })
+        }),
       );
     }
   } catch (error) {
@@ -459,7 +459,7 @@ export async function createAITrustSubprocessor(req: Request, res: Response) {
       return res.status(503).json(
         STATUS_CODE[503]({
           message: req.t!("Failed to create AI Trust Centre subprocessor"),
-        })
+        }),
       );
     }
   } catch (error) {
@@ -515,7 +515,7 @@ export async function uploadCompanyLogo(req: RequestWithFile, res: Response) {
       return res.status(400).json(
         STATUS_CODE[400]({
           message: req.t!("File upload failed"),
-        })
+        }),
       );
     }
 
@@ -553,7 +553,7 @@ export async function uploadCompanyLogo(req: RequestWithFile, res: Response) {
       return res.status(503).json(
         STATUS_CODE[503]({
           message: req.t!("Failed to upload company logo"),
-        })
+        }),
       );
     }
   } catch (error) {
@@ -627,7 +627,7 @@ export async function updateAITrustOverview(req: Request, res: Response) {
       return res.status(503).json(
         STATUS_CODE[503]({
           message: req.t!("Failed to update AI Trust Centre overview"),
-        })
+        }),
       );
     }
   } catch (error) {
@@ -680,7 +680,7 @@ export async function updateAITrustResource(req: RequestWithFile, res: Response)
       return res.status(400).json(
         STATUS_CODE[400]({
           message: req.t!("No file provided for update"),
-        })
+        }),
       );
     }
 
@@ -747,7 +747,7 @@ export async function updateAITrustResource(req: RequestWithFile, res: Response)
       return res.status(503).json(
         STATUS_CODE[503]({
           message: req.t!("Failed to update AI Trust Centre resource"),
-        })
+        }),
       );
     }
   } catch (error) {
@@ -832,7 +832,7 @@ export async function updateAITrustSubprocessor(req: Request, res: Response) {
       return res.status(503).json(
         STATUS_CODE[503]({
           message: req.t!("Failed to update AI Trust Centre subprocessor"),
-        })
+        }),
       );
     }
   } catch (error) {
@@ -886,7 +886,7 @@ export async function deleteAITrustResource(req: Request, res: Response) {
       return res.status(200).json(
         STATUS_CODE[200]({
           message: req.t!("AI Trust Centre resource deleted successfully"),
-        })
+        }),
       );
     } else {
       await transaction.rollback();
@@ -905,7 +905,7 @@ export async function deleteAITrustResource(req: Request, res: Response) {
       return res.status(503).json(
         STATUS_CODE[503]({
           message: req.t!("Failed to delete AI Trust Centre resource"),
-        })
+        }),
       );
     }
   } catch (error) {
@@ -962,7 +962,7 @@ export async function deleteAITrustSubprocessor(req: Request, res: Response) {
       return res.status(200).json(
         STATUS_CODE[200]({
           message: req.t!("AI Trust Centre subprocessor deleted successfully"),
-        })
+        }),
       );
     } else {
       await transaction.rollback();
@@ -981,7 +981,7 @@ export async function deleteAITrustSubprocessor(req: Request, res: Response) {
       return res.status(503).json(
         STATUS_CODE[503]({
           message: req.t!("Failed to delete AI Trust Centre subprocessor"),
-        })
+        }),
       );
     }
   } catch (error) {
@@ -1034,7 +1034,7 @@ export async function deleteCompanyLogo(req: Request, res: Response) {
       return res.status(200).json(
         STATUS_CODE[200]({
           message: req.t!("Company logo deleted successfully"),
-        })
+        }),
       );
     } else {
       await transaction.rollback();
@@ -1048,7 +1048,7 @@ export async function deleteCompanyLogo(req: Request, res: Response) {
       return res.status(503).json(
         STATUS_CODE[503]({
           message: req.t!("Failed to delete company logo"),
-        })
+        }),
       );
     }
   } catch (error) {

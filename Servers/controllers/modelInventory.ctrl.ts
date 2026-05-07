@@ -409,9 +409,7 @@ export async function updateModelInventoryById(req: Request, res: Response) {
         "updateModelInventoryById",
         "modelInventory.ctrl.ts",
       );
-      return res
-        .status(404)
-        .json(STATUS_CODE[404](req.t!("Model inventory not found")));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Model inventory not found")));
     }
 
     // Track changes before updating
@@ -569,9 +567,7 @@ export async function deleteModelInventoryById(req: Request, res: Response) {
         "deleteModelInventoryById",
         "modelInventory.ctrl.ts",
       );
-      return res
-        .status(404)
-        .json(STATUS_CODE[404](req.t!("Model inventory not found")));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Model inventory not found")));
     }
 
     // Use the existing database query approach for deleting
@@ -599,9 +595,7 @@ export async function deleteModelInventoryById(req: Request, res: Response) {
       "deleteModelInventoryById",
       "modelInventory.ctrl.ts",
     );
-    return res
-      .status(200)
-      .json(STATUS_CODE[200](req.t!("Model inventory deleted successfully")));
+    return res.status(200).json(STATUS_CODE[200](req.t!("Model inventory deleted successfully")));
   } catch (error) {
     // Rollback transaction if it exists
     if (transaction) {

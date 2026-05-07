@@ -319,9 +319,7 @@ export async function deleteEvidenceById(req: Request, res: Response) {
     await deleteEvidenceByIdQuery(evidenceId, req.organizationId!, transaction);
     await transaction.commit();
 
-    return res
-      .status(200)
-      .json(STATUS_CODE[200](req.t!("Evidence deleted successfully")));
+    return res.status(200).json(STATUS_CODE[200](req.t!("Evidence deleted successfully")));
   } catch (error) {
     await transaction.rollback();
     logger.error("❌ Error in deleteEvidenceById:", error);

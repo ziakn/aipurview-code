@@ -351,12 +351,7 @@ export async function updateDatasetById(req: Request, res: Response) {
     )) as unknown as DatasetModel;
 
     if (!currentDataset) {
-      logStructured(
-        "successful",
-        "no dataset found",
-        "updateDatasetById",
-        "dataset.ctrl.ts"
-      );
+      logStructured("successful", "no dataset found", "updateDatasetById", "dataset.ctrl.ts");
       return res.status(404).json(STATUS_CODE[404](req.t!("Dataset not found")));
     }
 
@@ -502,12 +497,7 @@ export async function deleteDatasetById(req: Request, res: Response) {
     )) as unknown as DatasetModel;
 
     if (!existingDataset) {
-      logStructured(
-        "successful",
-        "no dataset found",
-        "deleteDatasetById",
-        "dataset.ctrl.ts"
-      );
+      logStructured("successful", "no dataset found", "deleteDatasetById", "dataset.ctrl.ts");
       return res.status(404).json(STATUS_CODE[404](req.t!("Dataset not found")));
     }
 
@@ -521,15 +511,8 @@ export async function deleteDatasetById(req: Request, res: Response) {
 
     await transaction.commit();
 
-    logStructured(
-      "successful",
-      "dataset deleted",
-      "deleteDatasetById",
-      "dataset.ctrl.ts"
-    );
-    return res
-      .status(200)
-      .json(STATUS_CODE[200](req.t!("Dataset deleted successfully")));
+    logStructured("successful", "dataset deleted", "deleteDatasetById", "dataset.ctrl.ts");
+    return res.status(200).json(STATUS_CODE[200](req.t!("Dataset deleted successfully")));
   } catch (error) {
     if (transaction) {
       try {

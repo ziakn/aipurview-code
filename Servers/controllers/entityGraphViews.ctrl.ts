@@ -92,11 +92,11 @@ export async function createView(req: Request, res: Response): Promise<any> {
     if (error instanceof BusinessLogicException) {
       return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
-    return res.status(500).json(
-      STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, req.t!("Failed to create view"))
-      )
-    );
+    return res
+      .status(500)
+      .json(
+        STATUS_CODE[500](sanitizeErrorMessage(error as Error, req.t!("Failed to create view"))),
+      );
   }
 }
 
@@ -139,11 +139,11 @@ export async function getViews(req: Request, res: Response): Promise<any> {
       organizationId: req.organizationId!,
     });
 
-    return res.status(500).json(
-      STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, req.t!("Failed to retrieve views"))
-      )
-    );
+    return res
+      .status(500)
+      .json(
+        STATUS_CODE[500](sanitizeErrorMessage(error as Error, req.t!("Failed to retrieve views"))),
+      );
   }
 }
 
@@ -196,11 +196,11 @@ export async function getViewById(req: Request, res: Response): Promise<any> {
     if (error instanceof ValidationException) {
       return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
-    return res.status(500).json(
-      STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, req.t!("Failed to retrieve view"))
-      )
-    );
+    return res
+      .status(500)
+      .json(
+        STATUS_CODE[500](sanitizeErrorMessage(error as Error, req.t!("Failed to retrieve view"))),
+      );
   }
 }
 
@@ -270,11 +270,11 @@ export async function updateView(req: Request, res: Response): Promise<any> {
     if (error instanceof ValidationException) {
       return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
-    return res.status(500).json(
-      STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, req.t!("Failed to update view"))
-      )
-    );
+    return res
+      .status(500)
+      .json(
+        STATUS_CODE[500](sanitizeErrorMessage(error as Error, req.t!("Failed to update view"))),
+      );
   }
 }
 
@@ -326,10 +326,10 @@ export async function deleteView(req: Request, res: Response): Promise<any> {
     if (error instanceof ValidationException) {
       return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
-    return res.status(500).json(
-      STATUS_CODE[500](
-        sanitizeErrorMessage(error as Error, req.t!("Failed to delete view"))
-      )
-    );
+    return res
+      .status(500)
+      .json(
+        STATUS_CODE[500](sanitizeErrorMessage(error as Error, req.t!("Failed to delete view"))),
+      );
   }
 }

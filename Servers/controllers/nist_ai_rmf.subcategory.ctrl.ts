@@ -538,10 +538,7 @@ export async function updateNISTAIRMFSubcategoryStatus(req: Request, res: Respon
     });
 
     // Handle validation errors differently
-    if (
-      error instanceof Error &&
-      error.message.includes("Invalid status value")
-    ) {
+    if (error instanceof Error && error.message.includes("Invalid status value")) {
       return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 

@@ -9,10 +9,7 @@ import {
 import { logStructured } from "../utils/logger/fileLogger";
 
 import { translateError } from "../utils/i18n.utils";
-export async function getAllBenchmarks(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getAllBenchmarks(req: Request, res: Response): Promise<any> {
   const industry = req.query.industry as string | undefined;
   const aiRiskType = req.query.ai_risk_type as string | undefined;
 

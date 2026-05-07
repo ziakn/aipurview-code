@@ -1,9 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import {
-  getTranslator,
-  isSupportedLang,
-  type SupportedLang,
-} from "../utils/i18n.utils";
+import { getTranslator, isSupportedLang, type SupportedLang } from "../utils/i18n.utils";
 
 const parseHeaderLang = (headerValue: string | string[] | undefined): SupportedLang => {
   if (typeof headerValue !== "string") return "en";

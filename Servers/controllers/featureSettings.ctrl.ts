@@ -78,28 +78,18 @@ export async function updateFeatureSettings(req: Request, res: Response): Promis
 
     const { lifecycle_enabled, audit_ledger_enabled } = req.body;
 
-    if (
-      lifecycle_enabled !== undefined &&
-      typeof lifecycle_enabled !== "boolean"
-    ) {
-      return res
-        .status(400)
-        .json(STATUS_CODE[400](req.t!("lifecycle_enabled must be a boolean")));
+    if (lifecycle_enabled !== undefined && typeof lifecycle_enabled !== "boolean") {
+      return res.status(400).json(STATUS_CODE[400](req.t!("lifecycle_enabled must be a boolean")));
     }
 
-    if (
-      audit_ledger_enabled !== undefined &&
-      typeof audit_ledger_enabled !== "boolean"
-    ) {
+    if (audit_ledger_enabled !== undefined && typeof audit_ledger_enabled !== "boolean") {
       return res
         .status(400)
         .json(STATUS_CODE[400](req.t!("audit_ledger_enabled must be a boolean")));
     }
 
     if (lifecycle_enabled === undefined && audit_ledger_enabled === undefined) {
-      return res
-        .status(400)
-        .json(STATUS_CODE[400](req.t!("No valid fields to update")));
+      return res.status(400).json(STATUS_CODE[400](req.t!("No valid fields to update")));
     }
 
     const updated = await updateFeatureSettingsQuery(organizationId, {

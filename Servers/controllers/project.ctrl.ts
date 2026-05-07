@@ -58,10 +58,7 @@ import { ApprovalRequestStatus } from "../domain.layer/enums/approval-workflow.e
 import { notifyUserAssigned } from "../services/inAppNotification.service";
 
 import { translateError } from "../utils/i18n.utils";
-export async function getAllProjects(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getAllProjects(req: Request, res: Response): Promise<any> {
   logProcessing({
     description: "starting getAllProjects",
     functionName: "getAllProjects",
@@ -1441,9 +1438,7 @@ export async function updateProjectStatus(req: Request, res: Response): Promise<
     }
 
     await transaction.rollback();
-    return res
-      .status(500)
-      .json(STATUS_CODE[500](req.t!("Failed to update project status")));
+    return res.status(500).json(STATUS_CODE[500](req.t!("Failed to update project status")));
   } catch (error) {
     await transaction.rollback();
 

@@ -383,9 +383,7 @@ export async function deleteIncidentById(req: Request, res: Response) {
       "deleteIncidentById",
       "incidentManagement.controller.ts",
     );
-    return res
-      .status(200)
-      .json(STATUS_CODE[200](req.t!("Incident deleted successfully")));
+    return res.status(200).json(STATUS_CODE[200](req.t!("Incident deleted successfully")));
   } catch (error) {
     await transaction.rollback();
     logStructured(

@@ -18,8 +18,7 @@ const AUDIT_KEY = "vw_audit";
 const auditMisses = new Map<string, Set<string>>(); // lang → set of source strings
 let auditFlushTimer: ReturnType<typeof setTimeout> | null = null;
 
-const isAuditOn = () =>
-  typeof window !== "undefined" && localStorage.getItem(AUDIT_KEY) === "1";
+const isAuditOn = () => typeof window !== "undefined" && localStorage.getItem(AUDIT_KEY) === "1";
 
 const looksLikeDynamicData = (s: string): boolean => {
   // Skip strings we'd never want to translate so the log isn't drowned in noise.
@@ -53,13 +52,8 @@ const recordMiss = (text: string) => {
   if (auditFlushTimer) return;
   auditFlushTimer = setTimeout(() => {
     auditFlushTimer = null;
-    const total = Array.from(auditMisses.values()).reduce(
-      (n, s) => n + s.size,
-      0,
-    );
-    console.warn(
-      `[i18n] ${total} missing string(s) so far. Run __vwI18nGaps() for the full list.`,
-    );
+    const total = Array.from(auditMisses.values()).reduce((n, s) => n + s.size, 0);
+    console.warn(`[i18n] ${total} missing string(s) so far. Run __vwI18nGaps() for the full list.`);
   }, 500);
 };
 

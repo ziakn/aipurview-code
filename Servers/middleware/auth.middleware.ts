@@ -107,7 +107,7 @@ const authenticateJWT = async (
     return res.status(400).json(
       STATUS_CODE[400]({
         message: req.t!("Token not found"),
-      })
+      }),
     );
   }
 
@@ -119,14 +119,12 @@ const authenticateJWT = async (
       return res.status(401).json(
         STATUS_CODE[401]({
           message: req.t!("Unauthorized **"),
-        })
+        }),
       );
 
     // Check token expiration
     if (decoded.expire < Date.now())
-      return res
-        .status(406)
-        .json(STATUS_CODE[406]({ message: req.t!("Token expired") }));
+      return res.status(406).json(STATUS_CODE[406]({ message: req.t!("Token expired") }));
 
     // Validate payload structure
     if (
@@ -136,13 +134,13 @@ const authenticateJWT = async (
       !decoded.roleName ||
       typeof decoded.roleName !== "string"
     ) {
-      return res.status(400).json({ message: req.t!('Invalid token') });
+      return res.status(400).json({ message: req.t!("Invalid token") });
     }
 
     // Validate role hasn't changed since token was issued
     const user = await getUserByIdQuery(decoded.id);
     if (decoded.roleName !== roleMap.get(user.role_id)) {
-      return res.status(403).json({ message: req.t!('Not allowed to access') });
+      return res.status(403).json({ message: req.t!("Not allowed to access") });
     }
 
     const isSuperAdmin = decoded.roleName === "SuperAdmin";
@@ -169,7 +167,9 @@ const authenticateJWT = async (
       // Normal user: verify org membership
       const belongs = await doesUserBelongsToOrganizationQuery(decoded.id, decoded.organizationId);
       if (!belongs.belongs) {
-        return res.status(403).json({ message: req.t!('User does not belong to this organization') });
+        return res
+          .status(403)
+          .json({ message: req.t!("User does not belong to this organization") });
       }
 
       // Attach user context to request for downstream handlers
@@ -191,9 +191,13 @@ const authenticateJWT = async (
       const isSuperAdminRoute =
         req.path.startsWith("/api/super-admin") || req.baseUrl?.startsWith("/api/super-admin");
       if (!readOnlyMethods.includes(req.method.toUpperCase()) && !isSuperAdminRoute) {
-        return res.status(403).json(
-          STATUS_CODE[403](req.t!("Super-admin has read-only access when viewing an organization"))
-        );
+        return res
+          .status(403)
+          .json(
+            STATUS_CODE[403](
+              req.t!("Super-admin has read-only access when viewing an organization"),
+            ),
+          );
       }
     }
 

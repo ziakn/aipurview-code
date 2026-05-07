@@ -39,11 +39,7 @@ import { sequelize } from "../database/db";
 import { RoleModel } from "../domain.layer/models/role/role.model";
 import { ValidationException } from "../domain.layer/exceptions/custom.exception";
 import { translateError } from "../utils/i18n.utils";
-import {
-  logProcessing,
-  logSuccess,
-  logFailure,
-} from "../utils/logger/logHelper";
+import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 
 /**
  * Retrieves all roles from the system

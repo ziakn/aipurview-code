@@ -37,10 +37,7 @@ const PATTERN_AS_ERROR = new RegExp(
   String.raw`(STATUS_CODE\[\d+\]\()\(([a-zA-Z_]\w*)\s+as\s+Error\)\.message\)`,
   "g",
 );
-const PATTERN_BARE = new RegExp(
-  String.raw`(STATUS_CODE\[\d+\]\()(err|error)\.message\)`,
-  "g",
-);
+const PATTERN_BARE = new RegExp(String.raw`(STATUS_CODE\[\d+\]\()(err|error)\.message\)`, "g");
 
 const IMPORT_STATEMENT = `import { translateError } from "../utils/i18n.utils";`;
 

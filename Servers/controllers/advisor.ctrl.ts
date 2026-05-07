@@ -51,10 +51,7 @@ import { toolsDefinition as userToolsDefinition } from "../advisor/tools/userToo
 import { toolsDefinition as projectToolsDefinition } from "../advisor/tools/projectTools";
 import { toolsDefinition as frameworkLookupToolsDefinition } from "../advisor/tools/frameworkLookupTools";
 import { translateError } from "../utils/i18n.utils";
-import {
-  aiActionToolDefinitions,
-  aiActionFilers,
-} from "../advisor/aiActions";
+import { aiActionToolDefinitions, aiActionFilers } from "../advisor/aiActions";
 
 const fileName = "advisor.ctrl.ts";
 

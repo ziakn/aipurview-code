@@ -287,7 +287,9 @@ export const uploadFile = async (req: Request, res: Response): Promise<any> => {
       }
 
       if (workflow.entity_type !== "file") {
-        return res.status(400).json(STATUS_CODE[400](req.t!("Selected workflow is not configured for files")));
+        return res
+          .status(400)
+          .json(STATUS_CODE[400](req.t!("Selected workflow is not configured for files")));
       }
     }
 
@@ -572,9 +574,7 @@ export const searchFiles = async (req: Request, res: Response): Promise<any> => 
   const queryText = typeof qParam === "string" ? qParam.trim() : "";
 
   if (!queryText) {
-    return res
-      .status(400)
-      .json(STATUS_CODE[400](req.t!("Query parameter 'q' is required")));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Query parameter 'q' is required")));
   }
 
   const pageParam = req.query.page;
@@ -753,7 +753,13 @@ export const downloadFile = async (req: Request, res: Response): Promise<any> =>
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res.status(404).json(STATUS_CODE[404](req.t!("File content not available. This file may need to be re-uploaded.")));
+      return res
+        .status(404)
+        .json(
+          STATUS_CODE[404](
+            req.t!("File content not available. This file may need to be re-uploaded."),
+          ),
+        );
     }
 
     // Set headers for file download (unified files table uses 'type' for mimetype)
@@ -1164,7 +1170,9 @@ export const updateMetadata = async (req: Request, res: Response): Promise<any> 
 
     // Validate version format if provided (semver-like: X.Y or X.Y.Z)
     if (version && !/^[0-9]+\.[0-9]+(\.[0-9]+)?$/.test(version)) {
-      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid version format. Use X.Y or X.Y.Z")));
+      return res
+        .status(400)
+        .json(STATUS_CODE[400](req.t!("Invalid version format. Use X.Y or X.Y.Z")));
     }
 
     // Validate tags using helper function if provided
@@ -1180,7 +1188,9 @@ export const updateMetadata = async (req: Request, res: Response): Promise<any> 
     // Validate expiry_date format and value if provided
     if (expiry_date && expiry_date !== null) {
       if (!/^\d{4}-\d{2}-\d{2}$/.test(expiry_date)) {
-        return res.status(400).json(STATUS_CODE[400](req.t!("Invalid date format. Use YYYY-MM-DD")));
+        return res
+          .status(400)
+          .json(STATUS_CODE[400](req.t!("Invalid date format. Use YYYY-MM-DD")));
       }
       // Validate it's a real date
       const parsedDate = new Date(expiry_date);
@@ -1191,11 +1201,13 @@ export const updateMetadata = async (req: Request, res: Response): Promise<any> 
 
     // Validate description length if provided
     if (description !== undefined && description !== null) {
-      if (typeof description !== 'string') {
+      if (typeof description !== "string") {
         return res.status(400).json(STATUS_CODE[400](req.t!("Description must be a string")));
       }
       if (description.length > 2000) {
-        return res.status(400).json(STATUS_CODE[400](req.t!("Description must not exceed 2000 characters")));
+        return res
+          .status(400)
+          .json(STATUS_CODE[400](req.t!("Description must not exceed 2000 characters")));
       }
     }
 
@@ -1477,7 +1489,13 @@ export const previewFile = async (req: Request, res: Response): Promise<any> => 
     if (!preview.canPreview) {
       // Check if file has no content vs too large
       if (preview.content.length === 0) {
-        return res.status(404).json(STATUS_CODE[404](req.t!("File content not available. This file may need to be re-uploaded.")));
+        return res
+          .status(404)
+          .json(
+            STATUS_CODE[404](
+              req.t!("File content not available. This file may need to be re-uploaded."),
+            ),
+          );
       }
       return res.status(413).json(STATUS_CODE[400](req.t!("File too large for preview")));
     }

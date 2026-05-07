@@ -17,7 +17,7 @@ const registerJWT = async (
     return res.status(400).json(
       STATUS_CODE[400]({
         message: req.t!("Token not found"),
-      })
+      }),
     );
   }
 
@@ -29,14 +29,18 @@ const registerJWT = async (
       return res.status(401).json(
         STATUS_CODE[401]({
           message: req.t!("Unauthorized **"),
-        })
+        }),
       );
 
     // Check token expiration
     if (decoded.expire < Date.now())
-      return res
-        .status(406)
-        .json(STATUS_CODE[406]({ message: req.t!("This invitation link is expired. You need to be invited again to gain access to the dashboard") }));
+      return res.status(406).json(
+        STATUS_CODE[406]({
+          message: req.t!(
+            "This invitation link is expired. You need to be invited again to gain access to the dashboard",
+          ),
+        }),
+      );
 
     console.log("🔍 Registration validation:", {
       tokenRoleId: decoded.roleId,
@@ -55,7 +59,7 @@ const registerJWT = async (
       !roleMap.has(Number(roleId))
     ) {
       console.error("❌ Registration validation failed");
-      return res.status(403).json({ message: req.t!('Role or Organization mismatch') });
+      return res.status(403).json({ message: req.t!("Role or Organization mismatch") });
     }
 
     // Check if invitation is still pending (not revoked)
@@ -67,7 +71,9 @@ const registerJWT = async (
     if (!hasPendingInvitation) {
       console.error("❌ Registration rejected: invitation was revoked or doesn't exist");
       return res.status(403).json({
-        message: req.t!('This invitation has been revoked. Please contact your administrator for a new invitation.')
+        message: req.t!(
+          "This invitation has been revoked. Please contact your administrator for a new invitation.",
+        ),
       });
     }
 

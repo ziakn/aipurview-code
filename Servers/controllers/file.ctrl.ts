@@ -13,11 +13,7 @@ import { addFileToAnswerEU } from "../utils/eu.utils";
 import { sequelize } from "../database/db";
 import getUserFilesMetaDataQuery from "../utils/files/getUserFilesMetaData.utils";
 import { translateError } from "../utils/i18n.utils";
-import {
-  logProcessing,
-  logSuccess,
-  logFailure,
-} from "../utils/logger/logHelper";
+import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 import {
   createFileEntityLink,
   deleteFileEntityLink,

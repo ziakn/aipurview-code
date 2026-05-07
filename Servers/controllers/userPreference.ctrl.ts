@@ -67,21 +67,11 @@ export async function createUserPreferences(req: Request, res: Response) {
     logStructured("error", "Missing required fields in request body", functionName, fileName);
     return res
       .status(400)
-      .json(
-        STATUS_CODE[400](req.t!("Missing required fields: user_id and date_format")),
-      );
+      .json(STATUS_CODE[400](req.t!("Missing required fields: user_id and date_format")));
   }
 
-  if (
-    typeof preferenceData.user_id !== "number" ||
-    preferenceData.user_id <= 0
-  ) {
-    logStructured(
-      "error",
-      `Invalid user_id: ${preferenceData.user_id}`,
-      functionName,
-      fileName,
-    );
+  if (typeof preferenceData.user_id !== "number" || preferenceData.user_id <= 0) {
+    logStructured("error", `Invalid user_id: ${preferenceData.user_id}`, functionName, fileName);
     return res.status(400).json(STATUS_CODE[400](req.t!("Invalid user_id")));
   }
 
@@ -133,9 +123,7 @@ export async function createUserPreferences(req: Request, res: Response) {
     logStructured("error", "failed to create user preferences", functionName, fileName);
     await logEvent("Error", "User preferences creation failed", req.userId!, req.organizationId!);
     await transaction.rollback();
-    return res
-      .status(400)
-      .json(STATUS_CODE[400](req.t!("Failed to create user preferences")));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Failed to create user preferences")));
   } catch (error) {
     await transaction.rollback();
 
@@ -213,9 +201,7 @@ export async function updateUserPreferences(req: Request, res: Response) {
     logStructured("error", "failed to update user preferences", functionName, fileName);
     await logEvent("Error", "user preferences update failed", req.userId!, req.organizationId!);
     await transaction.rollback();
-    return res
-      .status(400)
-      .json(STATUS_CODE[400](req.t!("Failed to update user preferences")));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Failed to update user preferences")));
   } catch (error) {
     await transaction.rollback();
 

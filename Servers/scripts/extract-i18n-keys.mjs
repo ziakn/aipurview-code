@@ -78,35 +78,17 @@ const SANITIZE_FALLBACK = new RegExp(
 );
 // Direct req.t() / req.t!() / _req.t!() calls — covers post-codemod controllers
 // and any hand-written calls that introduce new keys.
-const REQ_T_CALL = new RegExp(
-  String.raw`\b_?req\.t!?\(\s*${STATIC_STR}`,
-  "gs",
-);
+const REQ_T_CALL = new RegExp(String.raw`\b_?req\.t!?\(\s*${STATIC_STR}`, "gs");
 // i18nKey: "..." in CustomException options object — Phase 3.6 dynamic throws
-const I18N_KEY_OPTION = new RegExp(
-  String.raw`i18nKey\s*:\s*${STATIC_STR}`,
-  "gs",
-);
+const I18N_KEY_OPTION = new RegExp(String.raw`i18nKey\s*:\s*${STATIC_STR}`, "gs");
 // translate(lang, "...") for callers without req — covers email helpers, BullMQ
-const TRANSLATE_CALL = new RegExp(
-  String.raw`\btranslate\(\s*[^,]+?,\s*${STATIC_STR}`,
-  "gs",
-);
+const TRANSLATE_CALL = new RegExp(String.raw`\btranslate\(\s*[^,]+?,\s*${STATIC_STR}`, "gs");
 // Email-subject patterns — only run against EMAIL_SUBJECT_FILES.
 const SUBJECT_STATIC = new RegExp(String.raw`subject:\s*${STATIC_STR}`, "gs");
 const SUBJECT_TPL = new RegExp(String.raw`subject:\s*${TPL_STR}`, "gs");
-const SENDEMAIL_STATIC = new RegExp(
-  String.raw`sendEmail\(\s*[^,]+?,\s*${STATIC_STR}`,
-  "gs",
-);
-const SENDEMAIL_TPL = new RegExp(
-  String.raw`sendEmail\(\s*[^,]+?,\s*${TPL_STR}`,
-  "gs",
-);
-const GETSUBJECT_TPL = new RegExp(
-  String.raw`getSubject:\s*\([^)]*\)\s*=>\s*${TPL_STR}`,
-  "gs",
-);
+const SENDEMAIL_STATIC = new RegExp(String.raw`sendEmail\(\s*[^,]+?,\s*${STATIC_STR}`, "gs");
+const SENDEMAIL_TPL = new RegExp(String.raw`sendEmail\(\s*[^,]+?,\s*${TPL_STR}`, "gs");
+const GETSUBJECT_TPL = new RegExp(String.raw`getSubject:\s*\([^)]*\)\s*=>\s*${TPL_STR}`, "gs");
 
 const SKIP_LINE_PATTERNS = [
   /logger\.(error|warn|info|debug|trace)/,

@@ -184,9 +184,7 @@ export async function updateRiskAssessmentMode(req: Request, res: Response): Pro
   if (mode !== "qualitative" && mode !== "quantitative") {
     return res
       .status(400)
-      .json(
-        STATUS_CODE[400](req.t!("Mode must be 'qualitative' or 'quantitative'"))
-      );
+      .json(STATUS_CODE[400](req.t!("Mode must be 'qualitative' or 'quantitative'")));
   }
 
   logStructured(

@@ -323,9 +323,7 @@ export async function createRisk(req: Request, res: Response): Promise<any> {
     );
     await logEvent("Error", "Project risk creation failed", req.userId!, req.organizationId!);
     await transaction.rollback();
-    return res
-      .status(400)
-      .json(STATUS_CODE[400](req.t!("Unable to create project risk")));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Unable to create project risk")));
   } catch (error) {
     await transaction.rollback();
 
@@ -470,10 +468,12 @@ export async function updateRiskById(req: Request, res: Response): Promise<any> 
       );
       if (fairErrors.length > 0) {
         await transaction.rollback();
-        return res.status(400).json(STATUS_CODE[400]({
-          message: req.t!("Quantitative risk validation failed"),
-          errors: fairErrors,
-        }));
+        return res.status(400).json(
+          STATUS_CODE[400]({
+            message: req.t!("Quantitative risk validation failed"),
+            errors: fairErrors,
+          }),
+        );
       }
       const derived = computeDerivedFields(mergedFairFields);
       Object.assign(updateDataTyped, derived);

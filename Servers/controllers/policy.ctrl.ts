@@ -30,11 +30,7 @@ import {
 import { NotificationEntityType } from "../domain.layer/interfaces/i.notification";
 import logger from "../utils/logger/fileLogger";
 import { translateError } from "../utils/i18n.utils";
-import {
-  logProcessing,
-  logSuccess,
-  logFailure,
-} from "../utils/logger/logHelper";
+import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 
 export class PolicyController {
   // Get all policies
@@ -282,9 +278,7 @@ export class PolicyController {
         !DOCX_ALLOWED_MIMES.includes(req.file.mimetype as (typeof DOCX_ALLOWED_MIMES)[number]) ||
         !hasDocxExtension
       ) {
-        return res
-          .status(400)
-          .json(STATUS_CODE[400](req.t!("Only .docx files are supported")));
+        return res.status(400).json(STATUS_CODE[400](req.t!("Only .docx files are supported")));
       }
 
       const { html, warnings } = await convertDocxToHtml(req.file.buffer);
@@ -475,7 +469,9 @@ export class PolicyController {
 
       if (!comment) {
         await transaction.rollback();
-        return res.status(400).json(STATUS_CODE[400](req.t!("comment is required when requesting changes")));
+        return res
+          .status(400)
+          .json(STATUS_CODE[400](req.t!("comment is required when requesting changes")));
       }
 
       const policyResult = await getPolicyByIdQuery(req.organizationId!, policyId);

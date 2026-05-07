@@ -72,7 +72,9 @@ export async function githubWebhookController(req: Request, res: Response): Prom
 
     if (!repo) {
       // Return 200 to avoid GitHub retrying — repo not registered or CI disabled
-      return res.status(200).json({ message: req.t!("Repository not registered or CI not enabled") });
+      return res
+        .status(200)
+        .json({ message: req.t!("Repository not registered or CI not enabled") });
     }
 
     // 6. Verify HMAC signature

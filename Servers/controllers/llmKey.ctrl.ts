@@ -142,8 +142,8 @@ export const createLLMKey = async (req: Request, res: Response) => {
         .status(400)
         .json(
           STATUS_CODE[400](
-            req.t!("custom_headers must be an object with string keys and string values")
-          )
+            req.t!("custom_headers must be an object with string keys and string values"),
+          ),
         );
     }
   }
@@ -187,7 +187,15 @@ export const createLLMKey = async (req: Request, res: Response) => {
         req.userId!,
         req.organizationId!,
       );
-      return res.status(400).json(STATUS_CODE[400](req.t!("This API key is already configured. Please use a different API key or edit the existing entry.")));
+      return res
+        .status(400)
+        .json(
+          STATUS_CODE[400](
+            req.t!(
+              "This API key is already configured. Please use a different API key or edit the existing entry.",
+            ),
+          ),
+        );
     }
     logStructured("error", `unexpected error: ${name}`, functionName, fileName);
     await logEvent(
@@ -238,8 +246,8 @@ export const updateLLMKey = async (req: Request, res: Response) => {
         .status(400)
         .json(
           STATUS_CODE[400](
-            req.t!("custom_headers must be an object with string keys and string values")
-          )
+            req.t!("custom_headers must be an object with string keys and string values"),
+          ),
         );
     }
   }
@@ -296,7 +304,13 @@ export const updateLLMKey = async (req: Request, res: Response) => {
         req.userId!,
         req.organizationId!,
       );
-      return res.status(400).json(STATUS_CODE[400](req.t!("This API key is already configured. Please use a different API key.")));
+      return res
+        .status(400)
+        .json(
+          STATUS_CODE[400](
+            req.t!("This API key is already configured. Please use a different API key."),
+          ),
+        );
     }
     logStructured("error", `unexpected error: ${name}`, functionName, fileName);
     await logEvent(
@@ -327,10 +341,13 @@ export const deleteLLMKey = async (req: Request, res: Response) => {
         req.userId!,
         req.organizationId!,
       );
-      await logEvent("Error", `LLM Key not found for deletion: ${id}`, req.userId!, req.organizationId!);
-      return res
-        .status(404)
-        .json(STATUS_CODE[404]({ message: req.t!("LLM Key not found") }));
+      await logEvent(
+        "Error",
+        `LLM Key not found for deletion: ${id}`,
+        req.userId!,
+        req.organizationId!,
+      );
+      return res.status(404).json(STATUS_CODE[404]({ message: req.t!("LLM Key not found") }));
     }
     logStructured("successful", `deleted LLM Key: ${id}`, functionName, fileName);
     logger.debug(`Deleted LLM Key: ${id}`);

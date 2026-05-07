@@ -87,10 +87,10 @@ function validateApiKeyFormat(provider: LLMProvider, apiKey: string): string | n
  */
 function validateProvider(provider: string): void {
   if (!VALID_PROVIDERS.includes(provider as LLMProvider)) {
-    const options = VALID_PROVIDERS.join(', ');
+    const options = VALID_PROVIDERS.join(", ");
     throw new ValidationException(
       `Invalid provider. Must be one of: ${options}`,
-      'provider',
+      "provider",
       provider,
       { i18nKey: "Invalid provider. Must be one of: {options}", i18nVars: { options } },
     );

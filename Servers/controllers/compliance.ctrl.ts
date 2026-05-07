@@ -86,7 +86,15 @@ export async function getComplianceScoreByOrganization(req: Request, res: Respon
 
     // Authorization check: ensure user can access this organization's data
     if (req.organizationId && req.organizationId !== organizationId) {
-      return res.status(403).json(STATUS_CODE[403](req.t!("Access denied: User does not have permission to access this organization's compliance data")));
+      return res
+        .status(403)
+        .json(
+          STATUS_CODE[403](
+            req.t!(
+              "Access denied: User does not have permission to access this organization's compliance data",
+            ),
+          ),
+        );
     }
 
     const complianceScore = await calculateComplianceScore(organizationId);
@@ -144,7 +152,15 @@ export async function getComplianceDetails(req: Request, res: Response) {
 
     // Authorization check: ensure user can access this organization's data
     if (req.organizationId && req.organizationId !== organizationId) {
-      return res.status(403).json(STATUS_CODE[403](req.t!("Access denied: User does not have permission to access this organization's compliance details")));
+      return res
+        .status(403)
+        .json(
+          STATUS_CODE[403](
+            req.t!(
+              "Access denied: User does not have permission to access this organization's compliance details",
+            ),
+          ),
+        );
     }
 
     const complianceScore = await calculateComplianceScore(organizationId);

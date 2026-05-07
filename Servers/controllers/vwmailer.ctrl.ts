@@ -45,7 +45,7 @@ export const invite = async (
         surname || "",
         roleId,
         req.userId!,
-        expiresAt
+        expiresAt,
       );
     } catch (invErr) {
       console.error("Failed to persist invitation record:", invErr);

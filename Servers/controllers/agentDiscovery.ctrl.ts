@@ -140,7 +140,9 @@ export async function createAgentPrimitive(req: Request, res: Response) {
     const { display_name, primitive_type, owner_id, permissions, permission_categories, metadata } =
       req.body;
     if (!display_name || !primitive_type) {
-      return res.status(400).json(STATUS_CODE[400](req.t!("display_name and primitive_type are required")));
+      return res
+        .status(400)
+        .json(STATUS_CODE[400](req.t!("display_name and primitive_type are required")));
     }
 
     const primitive = await createAgentPrimitiveQuery(
@@ -184,12 +186,19 @@ export async function updateAgentPrimitive(req: Request, res: Response) {
       return res.status(404).json(STATUS_CODE[404](req.t!("Agent primitive not found")));
     }
     if (!existing.is_manual) {
-      return res.status(403).json(STATUS_CODE[403](req.t!("Only manually-added agents can be edited")));
+      return res
+        .status(403)
+        .json(STATUS_CODE[403](req.t!("Only manually-added agents can be edited")));
     }
 
     const { display_name, primitive_type, owner_id, metadata } = req.body;
 
-    if (display_name === undefined && primitive_type === undefined && owner_id === undefined && metadata === undefined) {
+    if (
+      display_name === undefined &&
+      primitive_type === undefined &&
+      owner_id === undefined &&
+      metadata === undefined
+    ) {
       return res.status(400).json(STATUS_CODE[400](req.t!("No fields to update")));
     }
 
@@ -267,7 +276,13 @@ export async function reviewAgentPrimitive(req: Request, res: Response) {
 
     const { review_status } = req.body;
     if (!review_status || !["confirmed", "rejected", "unreviewed"].includes(review_status)) {
-      return res.status(400).json(STATUS_CODE[400](req.t!("review_status must be 'confirmed', 'rejected', or 'unreviewed'")));
+      return res
+        .status(400)
+        .json(
+          STATUS_CODE[400](
+            req.t!("review_status must be 'confirmed', 'rejected', or 'unreviewed'"),
+          ),
+        );
     }
 
     const existing = await getAgentPrimitiveByIdQuery(id, req.organizationId!);

@@ -71,7 +71,7 @@ export const getTranslator = (lang: SupportedLang): Translator => translators[la
 export const translate = (
   lang: string | undefined,
   key: string,
-  vars?: Record<string, string | number>
+  vars?: Record<string, string | number>,
 ): string => {
   const resolved: SupportedLang = isSupportedLang(lang) ? lang : "en";
   return translators[resolved](key, vars);
@@ -87,17 +87,15 @@ export const translate = (
  * Defensive against missing `req.t` (would only happen if i18nMiddleware did
  * not run on this request — falls back to the English translator).
  */
-export const translateError = (
-  req: { t?: Translator },
-  error: unknown,
-): string => {
+export const translateError = (req: { t?: Translator }, error: unknown): string => {
   const t = req.t ?? translators.en;
   if (error && typeof error === "object") {
     const e = error as { i18nKey?: unknown; i18nVars?: unknown; message?: unknown };
     if (typeof e.i18nKey === "string") {
-      const vars = e.i18nVars && typeof e.i18nVars === "object"
-        ? (e.i18nVars as Record<string, string | number>)
-        : undefined;
+      const vars =
+        e.i18nVars && typeof e.i18nVars === "object"
+          ? (e.i18nVars as Record<string, string | number>)
+          : undefined;
       return t(e.i18nKey, vars);
     }
     if (typeof e.message === "string") return t(e.message);

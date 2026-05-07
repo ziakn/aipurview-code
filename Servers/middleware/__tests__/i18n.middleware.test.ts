@@ -75,9 +75,7 @@ describe("i18nMiddleware", () => {
   it("interpolates {placeholder} vars", () => {
     const req = createReq("de") as Request;
     i18nMiddleware(req, {} as Response, jest.fn() as NextFunction);
-    expect(req.t!("Step {n} name is required", { n: 3 })).toBe(
-      "Schritt 3: Name ist erforderlich",
-    );
+    expect(req.t!("Step {n} name is required", { n: 3 })).toBe("Schritt 3: Name ist erforderlich");
   });
 
   it("leaves {placeholder} literal when no matching var is provided", () => {

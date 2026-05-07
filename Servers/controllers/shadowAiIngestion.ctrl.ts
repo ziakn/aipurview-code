@@ -73,9 +73,7 @@ export async function ingestEvents(req: Request, res: Response) {
   const apiKey = req.headers["x-api-key"] as string;
 
   if (!apiKey) {
-    return res
-      .status(401)
-      .json(STATUS_CODE[401](req.t!("Missing X-API-Key header")));
+    return res.status(401).json(STATUS_CODE[401](req.t!("Missing X-API-Key header")));
   }
 
   // Validate API key and resolve organization
@@ -88,9 +86,7 @@ export async function ingestEvents(req: Request, res: Response) {
   }
 
   if (!organizationId) {
-    return res
-      .status(401)
-      .json(STATUS_CODE[401](req.t!("Invalid or revoked API key")));
+    return res.status(401).json(STATUS_CODE[401](req.t!("Invalid or revoked API key")));
   }
 
   // Validate request body
@@ -110,8 +106,8 @@ export async function ingestEvents(req: Request, res: Response) {
       .status(413)
       .json(
         STATUS_CODE[413](
-          req.t!("Maximum {max} events per request", { max: MAX_EVENTS_PER_REQUEST })
-        )
+          req.t!("Maximum {max} events per request", { max: MAX_EVENTS_PER_REQUEST }),
+        ),
       );
   }
 
@@ -125,13 +121,13 @@ export async function ingestEvents(req: Request, res: Response) {
         body.events.length,
       )
     ) {
-      return res
-        .status(429)
-        .json(
-          STATUS_CODE[429](
-            req.t!("Rate limit exceeded: max {max} events/hour", { max: settings.rate_limit_max_events_per_hour })
-          )
-        );
+      return res.status(429).json(
+        STATUS_CODE[429](
+          req.t!("Rate limit exceeded: max {max} events/hour", {
+            max: settings.rate_limit_max_events_per_hour,
+          }),
+        ),
+      );
     }
   } catch (error) {
     // If settings table doesn't exist yet, skip rate limiting
@@ -147,18 +143,17 @@ export async function ingestEvents(req: Request, res: Response) {
         .status(400)
         .json(
           STATUS_CODE[400](
-            req.t!("Event at index {i} missing required field(s): user_email, destination, timestamp", { i })
-          )
+            req.t!(
+              "Event at index {i} missing required field(s): user_email, destination, timestamp",
+              { i },
+            ),
+          ),
         );
     }
     if (!EMAIL_REGEX.test(evt.user_email)) {
       return res
         .status(400)
-        .json(
-          STATUS_CODE[400](
-            req.t!("Event at index {i} has invalid user_email format", { i })
-          )
-        );
+        .json(STATUS_CODE[400](req.t!("Event at index {i} has invalid user_email format", { i })));
     }
   }
 

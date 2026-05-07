@@ -39,9 +39,7 @@ export const createNewUserPreferencesQuery = async (
       replacements: {
         user_id: data.user_id,
         language: data.language ?? "en",
-        preferences: JSON.stringify(
-          data.date_format ? { date_format: data.date_format } : {}
-        ),
+        preferences: JSON.stringify(data.date_format ? { date_format: data.date_format } : {}),
       },
       mapToModel: true,
       model: UserPreferencesModel,
@@ -67,22 +65,19 @@ export const updateUserPreferencesByIdQuery = async (
   }
   if (data.date_format !== undefined) {
     setParts.push(
-      "preferences = COALESCE(preferences, '{}'::jsonb) || jsonb_build_object('date_format', :date_format::text)"
+      "preferences = COALESCE(preferences, '{}'::jsonb) || jsonb_build_object('date_format', :date_format::text)",
     );
     replacements.date_format = data.date_format;
   }
 
   if (setParts.length === 0) {
     // Nothing to update — fetch and return the existing row.
-    const existing = await sequelize.query(
-      `SELECT * FROM user_preferences WHERE user_id = :id`,
-      {
-        replacements,
-        mapToModel: true,
-        model: UserPreferencesModel,
-        transaction,
-      }
-    );
+    const existing = await sequelize.query(`SELECT * FROM user_preferences WHERE user_id = :id`, {
+      replacements,
+      mapToModel: true,
+      model: UserPreferencesModel,
+      transaction,
+    });
     return existing[0] ?? null;
   }
 

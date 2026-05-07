@@ -328,9 +328,7 @@ export async function generateReportsV2(req: Request, res: Response): Promise<an
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res
-        .status(500)
-        .json(STATUS_CODE[500](req.t!("Error uploading report file")));
+      return res.status(500).json(STATUS_CODE[500](req.t!("Error uploading report file")));
     }
 
     if (uploadedFile) {
@@ -357,9 +355,7 @@ export async function generateReportsV2(req: Request, res: Response): Promise<an
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res
-        .status(500)
-        .json(STATUS_CODE[500](req.t!("Error uploading report file")));
+      return res.status(500).json(STATUS_CODE[500](req.t!("Error uploading report file")));
     }
   } catch (error) {
     await logFailure({

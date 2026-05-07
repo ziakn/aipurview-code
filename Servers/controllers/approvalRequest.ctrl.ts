@@ -93,9 +93,7 @@ export async function createApprovalRequest(req: Request, res: Response): Promis
 
     if (!workflowSteps || workflowSteps.length === 0) {
       await transaction.rollback();
-      return res
-        .status(400)
-        .json(STATUS_CODE[400](req.t!("Workflow must have at least one step")));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Workflow must have at least one step")));
     }
 
     // Create request
@@ -592,12 +590,7 @@ export async function rejectRequest(req: Request, res: Response): Promise<any> {
       .json(STATUS_CODE[200]({ message: req.t!("Request rejected successfully") }));
   } catch (error) {
     await transaction.rollback();
-    logStructured(
-      "error",
-      "failed to reject request",
-      "rejectRequest",
-      "approvalRequest.ctrl.ts"
-    );
+    logStructured("error", "failed to reject request", "rejectRequest", "approvalRequest.ctrl.ts");
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -633,9 +626,7 @@ export async function withdrawRequest(req: Request, res: Response): Promise<any>
       await transaction.rollback();
       return res
         .status(403)
-        .json(
-          STATUS_CODE[403](req.t!("Only the requestor can withdraw this request"))
-        );
+        .json(STATUS_CODE[403](req.t!("Only the requestor can withdraw this request")));
     }
 
     await withdrawApprovalRequestQuery(requestId, organizationId, transaction);

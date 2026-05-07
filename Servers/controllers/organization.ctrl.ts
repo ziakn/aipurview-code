@@ -354,9 +354,7 @@ export async function createOrganization(req: Request, res: Response): Promise<a
     );
     await logEvent("Error", "Organization creation failed", req.userId!, req.organizationId!);
     await transaction.rollback();
-    return res
-      .status(400)
-      .json(STATUS_CODE[400](req.t!("Unable to create organization")));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Unable to create organization")));
   } catch (error) {
     await transaction.rollback();
 
@@ -657,9 +655,7 @@ export async function deleteOrganizationById(req: Request, res: Response): Promi
     );
     await logEvent("Error", "Unable to delete organization", req.userId!, req.organizationId!);
     await transaction.rollback();
-    return res
-      .status(400)
-      .json(STATUS_CODE[400](req.t!("Unable to delete organization")));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Unable to delete organization")));
   } catch (error) {
     await transaction.rollback();
     logStructured(

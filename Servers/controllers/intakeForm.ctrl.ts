@@ -552,7 +552,9 @@ export async function deleteIntakeForm(req: Request, res: Response) {
 
     if (existingForm.status === IntakeFormStatus.ACTIVE) {
       await transaction.rollback();
-      return res.status(400).json(STATUS_CODE[400](req.t!("Active forms cannot be deleted. Archive the form first.")));
+      return res
+        .status(400)
+        .json(STATUS_CODE[400](req.t!("Active forms cannot be deleted. Archive the form first.")));
     }
 
     await deleteIntakeFormQuery(formId, req.organizationId!, transaction);
@@ -854,7 +856,9 @@ export async function getSubmissionByEntity(req: Request, res: Response) {
     const result = await getSubmissionByEntityQuery(entityType, entityId, req.organizationId!);
 
     if (!result) {
-      return res.status(404).json(STATUS_CODE[404](req.t!("No intake submission found for this entity")));
+      return res
+        .status(404)
+        .json(STATUS_CODE[404](req.t!("No intake submission found for this entity")));
     }
 
     const { submission, formName, formSchema } = result;
@@ -940,7 +944,9 @@ export async function overrideSubmissionRisk(req: Request, res: Response) {
       tenantId: req.organizationId!,
     });
 
-    return res.status(200).json(STATUS_CODE[200]({ message: req.t!("Risk override applied"), override }));
+    return res
+      .status(200)
+      .json(STATUS_CODE[200]({ message: req.t!("Risk override applied"), override }));
   } catch (error) {
     logger.error("Error in overrideSubmissionRisk:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
@@ -981,15 +987,23 @@ export async function approveSubmission(req: Request, res: Response) {
 
     if (submission.status !== IntakeSubmissionStatus.PENDING) {
       await transaction.rollback();
-      return res.status(400).json(STATUS_CODE[400](req.t!("Only pending submissions can be approved")));
+      return res
+        .status(400)
+        .json(STATUS_CODE[400](req.t!("Only pending submissions can be approved")));
     }
 
     const form = await getIntakeFormByIdQuery(submission.formId, req.organizationId!);
     if (!form) {
       await transaction.rollback();
-      return res.status(404).json(STATUS_CODE[404](
-        req.t!("The form associated with this submission no longer exists. Cannot create entity.")
-      ));
+      return res
+        .status(404)
+        .json(
+          STATUS_CODE[404](
+            req.t!(
+              "The form associated with this submission no longer exists. Cannot create entity.",
+            ),
+          ),
+        );
     }
     const formName = form.name;
 
@@ -1157,7 +1171,9 @@ export async function rejectSubmission(req: Request, res: Response) {
 
     if (submission.status !== IntakeSubmissionStatus.PENDING) {
       await transaction.rollback();
-      return res.status(400).json(STATUS_CODE[400](req.t!("Only pending submissions can be rejected")));
+      return res
+        .status(400)
+        .json(STATUS_CODE[400](req.t!("Only pending submissions can be rejected")));
     }
 
     // Fetch form and tenant info before commit so email data is available atomically
@@ -1273,7 +1289,9 @@ export async function getFieldGuidance(req: Request, res: Response) {
     const { fieldLabel, entityType, llmKeyId } = req.body;
 
     if (!fieldLabel || !llmKeyId) {
-      return res.status(400).json(STATUS_CODE[400](req.t!("Field label and LLM key ID are required")));
+      return res
+        .status(400)
+        .json(STATUS_CODE[400](req.t!("Field label and LLM key ID are required")));
     }
 
     const guidanceText = await generateFieldGuidance(
@@ -1425,7 +1443,11 @@ export async function getPublicFormByPublicId(req: Request, res: Response) {
     );
   } catch (error) {
     logger.error(`Error in getPublicFormByPublicId: ${publicId}`, error);
-    return res.status(500).json(STATUS_CODE[500](req.t!("An error occurred while loading the form. Please try again.")));
+    return res
+      .status(500)
+      .json(
+        STATUS_CODE[500](req.t!("An error occurred while loading the form. Please try again.")),
+      );
   }
 }
 
@@ -1446,7 +1468,9 @@ export async function submitPublicFormByPublicId(req: Request, res: Response) {
     const withinLimit = await checkRateLimitQuery(clientIp, tenantInfo.orgId);
 
     if (!withinLimit) {
-      return res.status(429).json(STATUS_CODE[429](req.t!("Too many submissions. Please try again later.")));
+      return res
+        .status(429)
+        .json(STATUS_CODE[429](req.t!("Too many submissions. Please try again later.")));
     }
 
     const form = await getFormByPublicIdQuery(publicId, tenantInfo.orgId);
@@ -1486,10 +1510,12 @@ export async function submitPublicFormByPublicId(req: Request, res: Response) {
     if (fullFormForValidation?.schema) {
       const validationErrors = validateFormData(formData, fullFormForValidation.schema);
       if (validationErrors.length > 0) {
-        return res.status(400).json(STATUS_CODE[400]({
-          message: req.t!("Form validation failed"),
-          errors: validationErrors,
-        }));
+        return res.status(400).json(
+          STATUS_CODE[400]({
+            message: req.t!("Form validation failed"),
+            errors: validationErrors,
+          }),
+        );
       }
     }
 
@@ -1505,7 +1531,9 @@ export async function submitPublicFormByPublicId(req: Request, res: Response) {
 
     const tokenAge = Date.now() - captchaPayload.timestamp;
     if (tokenAge > 5 * 60 * 1000) {
-      return res.status(400).json(STATUS_CODE[400](req.t!("CAPTCHA expired. Please refresh and try again.")));
+      return res
+        .status(400)
+        .json(STATUS_CODE[400](req.t!("CAPTCHA expired. Please refresh and try again.")));
     }
 
     if (Number(captchaPayload.answer) !== Number(captchaAnswer)) {
@@ -1529,10 +1557,16 @@ export async function submitPublicFormByPublicId(req: Request, res: Response) {
         const tokenAge = Date.now() - (decoded.timestamp || 0);
         const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
         if (tokenAge > SEVEN_DAYS_MS) {
-          return res.status(400).json(STATUS_CODE[400](req.t!("Resubmission link has expired. Please request a new one.")));
+          return res
+            .status(400)
+            .json(
+              STATUS_CODE[400](req.t!("Resubmission link has expired. Please request a new one.")),
+            );
         }
         if (decoded.email !== resolvedEmail) {
-          return res.status(400).json(STATUS_CODE[400](req.t!("Email does not match the original submission.")));
+          return res
+            .status(400)
+            .json(STATUS_CODE[400](req.t!("Email does not match the original submission.")));
         }
         originalSubmissionId = decoded.submissionId;
       }
@@ -1631,7 +1665,11 @@ export async function submitPublicFormByPublicId(req: Request, res: Response) {
     }
   } catch (error) {
     logger.error(`Error in submitPublicFormByPublicId: ${publicId}`, error);
-    return res.status(500).json(STATUS_CODE[500](req.t!("An error occurred while submitting the form. Please try again.")));
+    return res
+      .status(500)
+      .json(
+        STATUS_CODE[500](req.t!("An error occurred while submitting the form. Please try again.")),
+      );
   }
 }
 
@@ -1725,7 +1763,11 @@ export async function getPublicForm(req: Request, res: Response) {
     );
   } catch (error) {
     logger.error(`Error in getPublicForm: ${tenantSlug}/${formSlug}`, error);
-    return res.status(500).json(STATUS_CODE[500](req.t!("An error occurred while loading the form. Please try again.")));
+    return res
+      .status(500)
+      .json(
+        STATUS_CODE[500](req.t!("An error occurred while loading the form. Please try again.")),
+      );
   }
 }
 
@@ -1748,7 +1790,9 @@ export async function submitPublicForm(req: Request, res: Response) {
     const withinLimit = await checkRateLimitQuery(clientIp, tenantInfo.id);
 
     if (!withinLimit) {
-      return res.status(429).json(STATUS_CODE[429](req.t!("Too many submissions. Please try again later.")));
+      return res
+        .status(429)
+        .json(STATUS_CODE[429](req.t!("Too many submissions. Please try again later.")));
     }
 
     const form = await getActivePublicFormQuery(formSlug, tenantInfo.id);
@@ -1789,10 +1833,12 @@ export async function submitPublicForm(req: Request, res: Response) {
     if (fullFormForValidation?.schema) {
       const validationErrors = validateFormData(formData, fullFormForValidation.schema);
       if (validationErrors.length > 0) {
-        return res.status(400).json(STATUS_CODE[400]({
-          message: req.t!("Form validation failed"),
-          errors: validationErrors,
-        }));
+        return res.status(400).json(
+          STATUS_CODE[400]({
+            message: req.t!("Form validation failed"),
+            errors: validationErrors,
+          }),
+        );
       }
     }
 
@@ -1807,7 +1853,9 @@ export async function submitPublicForm(req: Request, res: Response) {
 
     const tokenAge = Date.now() - captchaPayload.timestamp;
     if (tokenAge > 5 * 60 * 1000) {
-      return res.status(400).json(STATUS_CODE[400](req.t!("CAPTCHA expired. Please refresh and try again.")));
+      return res
+        .status(400)
+        .json(STATUS_CODE[400](req.t!("CAPTCHA expired. Please refresh and try again.")));
     }
 
     if (Number(captchaPayload.answer) !== Number(captchaAnswer)) {
@@ -1831,10 +1879,16 @@ export async function submitPublicForm(req: Request, res: Response) {
         const tokenAge = Date.now() - (decoded.timestamp || 0);
         const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
         if (tokenAge > SEVEN_DAYS_MS) {
-          return res.status(400).json(STATUS_CODE[400](req.t!("Resubmission link has expired. Please request a new one.")));
+          return res
+            .status(400)
+            .json(
+              STATUS_CODE[400](req.t!("Resubmission link has expired. Please request a new one.")),
+            );
         }
         if (decoded.email !== resolvedEmail) {
-          return res.status(400).json(STATUS_CODE[400](req.t!("Email does not match the original submission.")));
+          return res
+            .status(400)
+            .json(STATUS_CODE[400](req.t!("Email does not match the original submission.")));
         }
         originalSubmissionId = decoded.submissionId;
       }
@@ -1945,7 +1999,11 @@ export async function submitPublicForm(req: Request, res: Response) {
     }
   } catch (error) {
     logger.error(`Error in submitPublicForm: ${tenantSlug}/${formSlug}`, error);
-    return res.status(500).json(STATUS_CODE[500](req.t!("An error occurred while submitting the form. Please try again.")));
+    return res
+      .status(500)
+      .json(
+        STATUS_CODE[500](req.t!("An error occurred while submitting the form. Please try again.")),
+      );
   }
 }
 

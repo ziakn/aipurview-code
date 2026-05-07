@@ -97,7 +97,15 @@ export async function getInsightsSummary(req: Request, res: Response) {
     });
     return res.status(200).json(STATUS_CODE[200](summary));
   } catch (error) {
-    await logFailure({ eventType: "Read", description: "failed to fetch insights summary", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Read",
+      description: "failed to fetch insights summary",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -130,7 +138,15 @@ export async function getToolsByEvents(req: Request, res: Response) {
     });
     return res.status(200).json(STATUS_CODE[200](data));
   } catch (error) {
-    await logFailure({ eventType: "Read", description: "failed to fetch tools by events", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Read",
+      description: "failed to fetch tools by events",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -163,7 +179,15 @@ export async function getToolsByUsers(req: Request, res: Response) {
     });
     return res.status(200).json(STATUS_CODE[200](data));
   } catch (error) {
-    await logFailure({ eventType: "Read", description: "failed to fetch tools by users", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Read",
+      description: "failed to fetch tools by users",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -195,7 +219,15 @@ export async function getUsersByDepartment(req: Request, res: Response) {
     });
     return res.status(200).json(STATUS_CODE[200](data));
   } catch (error) {
-    await logFailure({ eventType: "Read", description: "failed to fetch users by department", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Read",
+      description: "failed to fetch users by department",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -232,7 +264,15 @@ export async function getTrend(req: Request, res: Response) {
     });
     return res.status(200).json(STATUS_CODE[200](data));
   } catch (error) {
-    await logFailure({ eventType: "Read", description: "failed to fetch trend data", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Read",
+      description: "failed to fetch trend data",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -270,7 +310,15 @@ export async function getUsers(req: Request, res: Response) {
     });
     return res.status(200).json(STATUS_CODE[200](data));
   } catch (error) {
-    await logFailure({ eventType: "Read", description: "failed to fetch user activity", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Read",
+      description: "failed to fetch user activity",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -324,7 +372,15 @@ export async function getUserDetail(req: Request, res: Response) {
     });
     return res.status(200).json(STATUS_CODE[200](result));
   } catch (error) {
-    await logFailure({ eventType: "Read", description: "failed to fetch user detail", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Read",
+      description: "failed to fetch user detail",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -355,7 +411,15 @@ export async function getDepartmentActivity(req: Request, res: Response) {
     });
     return res.status(200).json(STATUS_CODE[200](data));
   } catch (error) {
-    await logFailure({ eventType: "Read", description: "failed to fetch department activity", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Read",
+      description: "failed to fetch department activity",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -393,7 +457,15 @@ export async function getTools(req: Request, res: Response) {
     });
     return res.status(200).json(STATUS_CODE[200](data));
   } catch (error) {
-    await logFailure({ eventType: "Read", description: "failed to fetch shadow AI tools", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Read",
+      description: "failed to fetch shadow AI tools",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -444,7 +516,15 @@ export async function getToolById(req: Request, res: Response) {
       }),
     );
   } catch (error) {
-    await logFailure({ eventType: "Read", description: "failed to fetch tool", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Read",
+      description: "failed to fetch tool",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -501,7 +581,15 @@ export async function updateToolStatus(req: Request, res: Response) {
     });
     return res.status(200).json(STATUS_CODE[200](updated));
   } catch (error) {
-    await logFailure({ eventType: "Update", description: "failed to update tool status", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Update",
+      description: "failed to update tool status",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -538,12 +626,22 @@ export async function startGovernance(req: Request, res: Response) {
     const { model_inventory, governance_owner_id } = req.body;
 
     if (!model_inventory?.provider || !model_inventory?.model || !governance_owner_id) {
-      return res.status(400).json(STATUS_CODE[400](req.t!("Missing required fields: model_inventory.provider, model_inventory.model, governance_owner_id")));
+      return res
+        .status(400)
+        .json(
+          STATUS_CODE[400](
+            req.t!(
+              "Missing required fields: model_inventory.provider, model_inventory.model, governance_owner_id",
+            ),
+          ),
+        );
     }
 
     const ownerId = parseInt(governance_owner_id, 10);
     if (isNaN(ownerId) || ownerId <= 0) {
-      return res.status(400).json(STATUS_CODE[400](req.t!("governance_owner_id must be a positive integer")));
+      return res
+        .status(400)
+        .json(STATUS_CODE[400](req.t!("governance_owner_id must be a positive integer")));
     }
 
     let transaction: Transaction | null = null;
@@ -693,7 +791,15 @@ export async function startGovernance(req: Request, res: Response) {
       throw innerError;
     }
   } catch (error) {
-    await logFailure({ eventType: "Create", description: "failed to start governance", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Create",
+      description: "failed to start governance",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -726,7 +832,15 @@ export async function getRules(req: Request, res: Response) {
     });
     return res.status(200).json(STATUS_CODE[200](rules));
   } catch (error) {
-    await logFailure({ eventType: "Read", description: "failed to fetch rules", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Read",
+      description: "failed to fetch rules",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -762,7 +876,9 @@ export async function createRule(req: Request, res: Response) {
     } = req.body;
 
     if (!name || !trigger_type || !actions || !Array.isArray(actions)) {
-      return res.status(400).json(STATUS_CODE[400](req.t!("Missing required fields: name, trigger_type, actions")));
+      return res
+        .status(400)
+        .json(STATUS_CODE[400](req.t!("Missing required fields: name, trigger_type, actions")));
     }
 
     const rule = await createRuleQuery(tenantId, {
@@ -787,7 +903,15 @@ export async function createRule(req: Request, res: Response) {
     });
     return res.status(201).json(STATUS_CODE[201](rule));
   } catch (error) {
-    await logFailure({ eventType: "Create", description: "failed to create rule", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Create",
+      description: "failed to create rule",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -831,7 +955,15 @@ export async function updateRule(req: Request, res: Response) {
     });
     return res.status(200).json(STATUS_CODE[200](updated));
   } catch (error) {
-    await logFailure({ eventType: "Update", description: "failed to update rule", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Update",
+      description: "failed to update rule",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -865,10 +997,25 @@ export async function deleteRule(req: Request, res: Response) {
       return res.status(404).json(STATUS_CODE[404](req.t!("Rule not found")));
     }
 
-    await logSuccess({ eventType: "Delete", description: `rule deleted: ${ruleId}`, functionName: fn, fileName: FILE_NAME, userId, organizationId });
+    await logSuccess({
+      eventType: "Delete",
+      description: `rule deleted: ${ruleId}`,
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+    });
     return res.status(200).json(STATUS_CODE[200](req.t!("Rule deleted successfully")));
   } catch (error) {
-    await logFailure({ eventType: "Delete", description: "failed to delete rule", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Delete",
+      description: "failed to delete rule",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -903,7 +1050,15 @@ export async function getAlertHistory(req: Request, res: Response) {
     });
     return res.status(200).json(STATUS_CODE[200](data));
   } catch (error) {
-    await logFailure({ eventType: "Read", description: "failed to fetch alert history", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Read",
+      description: "failed to fetch alert history",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -926,7 +1081,9 @@ export async function getSyslogConfigs(req: Request, res: Response) {
 
   try {
     if (req.role !== "Admin" && req.role !== "SuperAdmin") {
-      return res.status(403).json(STATUS_CODE[403](req.t!("Only admins can manage syslog configuration")));
+      return res
+        .status(403)
+        .json(STATUS_CODE[403](req.t!("Only admins can manage syslog configuration")));
     }
 
     const configs = await getSyslogConfigsQuery(tenantId);
@@ -940,7 +1097,15 @@ export async function getSyslogConfigs(req: Request, res: Response) {
     });
     return res.status(200).json(STATUS_CODE[200](configs));
   } catch (error) {
-    await logFailure({ eventType: "Read", description: "failed to fetch syslog configs", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Read",
+      description: "failed to fetch syslog configs",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -961,17 +1126,27 @@ export async function createSyslogConfig(req: Request, res: Response) {
 
   try {
     if (req.role !== "Admin" && req.role !== "SuperAdmin") {
-      return res.status(403).json(STATUS_CODE[403](req.t!("Only admins can manage syslog configuration")));
+      return res
+        .status(403)
+        .json(STATUS_CODE[403](req.t!("Only admins can manage syslog configuration")));
     }
 
     const { source_identifier, parser_type, is_active } = req.body;
     if (!source_identifier || !parser_type) {
-      return res.status(400).json(STATUS_CODE[400](req.t!("Missing required fields: source_identifier, parser_type")));
+      return res
+        .status(400)
+        .json(STATUS_CODE[400](req.t!("Missing required fields: source_identifier, parser_type")));
     }
 
     const validParsers = ["zscaler", "netskope", "squid", "generic_kv"];
     if (!validParsers.includes(parser_type)) {
-      return res.status(400).json(STATUS_CODE[400](req.t!("Invalid parser_type. Must be one of: {options}", { options: validParsers.join(", ") })));
+      return res.status(400).json(
+        STATUS_CODE[400](
+          req.t!("Invalid parser_type. Must be one of: {options}", {
+            options: validParsers.join(", "),
+          }),
+        ),
+      );
     }
 
     const config = await createSyslogConfigQuery(tenantId, {
@@ -990,7 +1165,15 @@ export async function createSyslogConfig(req: Request, res: Response) {
     });
     return res.status(201).json(STATUS_CODE[201](config));
   } catch (error) {
-    await logFailure({ eventType: "Create", description: "failed to create syslog config", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Create",
+      description: "failed to create syslog config",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -1012,7 +1195,9 @@ export async function updateSyslogConfig(req: Request, res: Response) {
 
   try {
     if (req.role !== "Admin" && req.role !== "SuperAdmin") {
-      return res.status(403).json(STATUS_CODE[403](req.t!("Only admins can manage syslog configuration")));
+      return res
+        .status(403)
+        .json(STATUS_CODE[403](req.t!("Only admins can manage syslog configuration")));
     }
 
     if (isNaN(configId)) {
@@ -1024,7 +1209,13 @@ export async function updateSyslogConfig(req: Request, res: Response) {
     if (parser_type) {
       const validParsers = ["zscaler", "netskope", "squid", "generic_kv"];
       if (!validParsers.includes(parser_type)) {
-        return res.status(400).json(STATUS_CODE[400](req.t!("Invalid parser_type. Must be one of: {options}", { options: validParsers.join(", ") })));
+        return res.status(400).json(
+          STATUS_CODE[400](
+            req.t!("Invalid parser_type. Must be one of: {options}", {
+              options: validParsers.join(", "),
+            }),
+          ),
+        );
       }
     }
 
@@ -1048,7 +1239,15 @@ export async function updateSyslogConfig(req: Request, res: Response) {
     });
     return res.status(200).json(STATUS_CODE[200](updated));
   } catch (error) {
-    await logFailure({ eventType: "Update", description: "failed to update syslog config", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Update",
+      description: "failed to update syslog config",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -1070,7 +1269,9 @@ export async function deleteSyslogConfig(req: Request, res: Response) {
 
   try {
     if (req.role !== "Admin" && req.role !== "SuperAdmin") {
-      return res.status(403).json(STATUS_CODE[403](req.t!("Only admins can manage syslog configuration")));
+      return res
+        .status(403)
+        .json(STATUS_CODE[403](req.t!("Only admins can manage syslog configuration")));
     }
 
     if (isNaN(configId)) {
@@ -1082,10 +1283,25 @@ export async function deleteSyslogConfig(req: Request, res: Response) {
       return res.status(404).json(STATUS_CODE[404](req.t!("Syslog config not found")));
     }
 
-    await logSuccess({ eventType: "Delete", description: `syslog config deleted: ${configId}`, functionName: fn, fileName: FILE_NAME, userId, organizationId });
+    await logSuccess({
+      eventType: "Delete",
+      description: `syslog config deleted: ${configId}`,
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+    });
     return res.status(200).json(STATUS_CODE[200](req.t!("Syslog config deleted successfully")));
   } catch (error) {
-    await logFailure({ eventType: "Delete", description: "failed to delete syslog config", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Delete",
+      description: "failed to delete syslog config",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -1118,7 +1334,15 @@ export async function getSettings(req: Request, res: Response) {
     });
     return res.status(200).json(STATUS_CODE[200](settings));
   } catch (error) {
-    await logFailure({ eventType: "Read", description: "failed to fetch settings", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Read",
+      description: "failed to fetch settings",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
@@ -1167,7 +1391,15 @@ export async function updateSettings(req: Request, res: Response) {
     });
     return res.status(200).json(STATUS_CODE[200](updated));
   } catch (error) {
-    await logFailure({ eventType: "Update", description: "failed to update settings", functionName: fn, fileName: FILE_NAME, userId, organizationId, error: error as Error });
+    await logFailure({
+      eventType: "Update",
+      description: "failed to update settings",
+      functionName: fn,
+      fileName: FILE_NAME,
+      userId,
+      organizationId,
+      error: error as Error,
+    });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

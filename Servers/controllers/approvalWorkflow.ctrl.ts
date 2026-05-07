@@ -141,9 +141,7 @@ export async function createApprovalWorkflow(req: Request, res: Response): Promi
     // Validation
     if (!workflow_title?.trim()) {
       await transaction.rollback();
-      return res
-        .status(400)
-        .json(STATUS_CODE[400](req.t!("Workflow title is required")));
+      return res.status(400).json(STATUS_CODE[400](req.t!("Workflow title is required")));
     }
 
     if (!entity_type || !Object.values(EntityType).includes(entity_type)) {
@@ -153,9 +151,7 @@ export async function createApprovalWorkflow(req: Request, res: Response): Promi
 
     if (!steps || !Array.isArray(steps) || steps.length === 0) {
       await transaction.rollback();
-      return res
-        .status(400)
-        .json(STATUS_CODE[400](req.t!("At least one step is required")));
+      return res.status(400).json(STATUS_CODE[400](req.t!("At least one step is required")));
     }
 
     // Validate steps
@@ -171,15 +167,17 @@ export async function createApprovalWorkflow(req: Request, res: Response): Promi
         await transaction.rollback();
         return res
           .status(400)
-          .json(
-            STATUS_CODE[400](req.t!("Step {n} must have at least one approver", { n: i + 1 }))
-          );
+          .json(STATUS_CODE[400](req.t!("Step {n} must have at least one approver", { n: i + 1 })));
       }
       if (step.requires_all_approvers === undefined || step.requires_all_approvers === null) {
         await transaction.rollback();
         return res
           .status(400)
-          .json(STATUS_CODE[400](req.t!("Step {n} must have requires_all_approvers field", { n: i + 1 })));
+          .json(
+            STATUS_CODE[400](
+              req.t!("Step {n} must have requires_all_approvers field", { n: i + 1 }),
+            ),
+          );
       }
     }
 
@@ -256,9 +254,7 @@ export async function updateApprovalWorkflow(req: Request, res: Response): Promi
     if (steps && Array.isArray(steps)) {
       if (steps.length === 0) {
         await transaction.rollback();
-        return res
-          .status(400)
-          .json(STATUS_CODE[400](req.t!("At least one step is required")));
+        return res.status(400).json(STATUS_CODE[400](req.t!("At least one step is required")));
       }
 
       for (let i = 0; i < steps.length; i++) {
@@ -274,7 +270,7 @@ export async function updateApprovalWorkflow(req: Request, res: Response): Promi
           return res
             .status(400)
             .json(
-              STATUS_CODE[400](req.t!("Step {n} must have at least one approver", { n: i + 1 }))
+              STATUS_CODE[400](req.t!("Step {n} must have at least one approver", { n: i + 1 })),
             );
         }
       }
