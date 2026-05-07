@@ -34,7 +34,8 @@ const FrameworkMapper = () => {
   return (
     <Stack spacing={3}>
       <Typography variant="body2" sx={{ color: "#475467" }}>
-        Explore cross-framework control mappings. Select source and target frameworks to see how controls align.
+        Explore cross-framework control mappings. Select source and target frameworks to see how
+        controls align.
       </Typography>
 
       <FrameworkSelector

@@ -3,7 +3,10 @@ import { Stack, Typography, Button, Tooltip, Paper } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { GitCompareArrows, X as CloseIcon } from "lucide-react";
 import { useAuth } from "../../../application/hooks/useAuth";
-import { useGovernancePreferences, useUpdatePreferences } from "../../../application/hooks/useGovernanceOs";
+import {
+  useGovernancePreferences,
+  useUpdatePreferences,
+} from "../../../application/hooks/useGovernanceOs";
 import { palette } from "../../themes/palette";
 
 interface GovernanceOsBannerProps {
@@ -11,10 +14,7 @@ interface GovernanceOsBannerProps {
   onDismiss?: () => void;
 }
 
-const GovernanceOsBanner: React.FC<GovernanceOsBannerProps> = ({
-  frameworkCount,
-  onDismiss,
-}) => {
+const GovernanceOsBanner: React.FC<GovernanceOsBannerProps> = ({ frameworkCount, onDismiss }) => {
   const theme = useTheme();
   const { userRoleName } = useAuth();
   const { data: preferences } = useGovernancePreferences();
@@ -54,11 +54,7 @@ const GovernanceOsBanner: React.FC<GovernanceOsBannerProps> = ({
           alignItems="center"
           sx={{ flex: 1, minWidth: 0 }}
         >
-          <GitCompareArrows
-            size={20}
-            color={palette.brand.primary}
-            style={{ flexShrink: 0 }}
-          />
+          <GitCompareArrows size={20} color={palette.brand.primary} style={{ flexShrink: 0 }} />
           <Typography
             sx={{
               fontSize: 13,
@@ -67,23 +63,13 @@ const GovernanceOsBanner: React.FC<GovernanceOsBannerProps> = ({
               lineHeight: 1.5,
             }}
           >
-            You have {frameworkCount} frameworks assigned. Enable Governance OS to
-            explore cross-framework mappings and unified coverage analysis.
+            You have {frameworkCount} frameworks assigned. Enable Governance OS to explore
+            cross-framework mappings and unified coverage analysis.
           </Typography>
         </Stack>
 
-        <Stack
-          direction="row"
-          gap={theme.spacing(4)}
-          alignItems="center"
-          sx={{ flexShrink: 0 }}
-        >
-          <Tooltip
-            title={
-              !isAdmin ? "Contact your admin to enable Governance OS" : ""
-            }
-            arrow
-          >
+        <Stack direction="row" gap={theme.spacing(4)} alignItems="center" sx={{ flexShrink: 0 }}>
+          <Tooltip title={!isAdmin ? "Contact your admin to enable Governance OS" : ""} arrow>
             <span>
               <Button
                 variant="contained"
@@ -106,9 +92,7 @@ const GovernanceOsBanner: React.FC<GovernanceOsBannerProps> = ({
                   },
                 }}
               >
-                {updatePreferences.isPending
-                  ? "Enabling..."
-                  : "Enable Governance OS"}
+                {updatePreferences.isPending ? "Enabling..." : "Enable Governance OS"}
               </Button>
             </span>
           </Tooltip>

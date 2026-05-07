@@ -1,6 +1,8 @@
 /* SmartPrompt animations */
 .smart-prompt {
-  transition: transform 200ms ease-out, opacity 200ms ease-out;
+  transition:
+    transform 200ms ease-out,
+    opacity 200ms ease-out;
 }
 
 @media (max-width: 600px) {

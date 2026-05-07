@@ -1,11 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-} from "react";
+import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from "react";
 
 export interface SmartPromptConfig {
   id: string;
@@ -37,13 +30,9 @@ const SmartPromptContext = createContext<SmartPromptContextValue | null>(null);
 
 const DONT_ASK_AGAIN_PREFIX = "vw_smart_prompt_dont_ask_";
 
-export const SmartPromptProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const SmartPromptProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [queue, setQueue] = useState<SmartPromptConfig[]>([]);
-  const [activePrompt, setActivePrompt] = useState<SmartPromptConfig | null>(
-    null
-  );
+  const [activePrompt, setActivePrompt] = useState<SmartPromptConfig | null>(null);
   const idCounter = useRef(0);
 
   const hasDontAskAgain = useCallback((key: string) => {
@@ -68,10 +57,7 @@ export const SmartPromptProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const showPrompt = useCallback(
     (config: Omit<SmartPromptConfig, "id">) => {
-      if (
-        config.dontAskAgainKey &&
-        hasDontAskAgain(config.dontAskAgainKey)
-      ) {
+      if (config.dontAskAgainKey && hasDontAskAgain(config.dontAskAgainKey)) {
         return;
       }
 
@@ -88,7 +74,7 @@ export const SmartPromptProvider: React.FC<{ children: React.ReactNode }> = ({
         return [...prev, newPrompt];
       });
     },
-    [hasDontAskAgain]
+    [hasDontAskAgain],
   );
 
   const dismissPrompt = useCallback((id: string) => {
@@ -113,19 +99,13 @@ export const SmartPromptProvider: React.FC<{ children: React.ReactNode }> = ({
     setDontAskAgain,
   };
 
-  return (
-    <SmartPromptContext.Provider value={value}>
-      {children}
-    </SmartPromptContext.Provider>
-  );
+  return <SmartPromptContext.Provider value={value}>{children}</SmartPromptContext.Provider>;
 };
 
 export const useSmartPromptContext = () => {
   const ctx = useContext(SmartPromptContext);
   if (!ctx) {
-    throw new Error(
-      "useSmartPromptContext must be used within SmartPromptProvider"
-    );
+    throw new Error("useSmartPromptContext must be used within SmartPromptProvider");
   }
   return ctx;
 };

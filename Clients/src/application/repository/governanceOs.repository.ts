@@ -87,11 +87,7 @@ export async function deleteScenario({ id }: { id: number }): Promise<any> {
 }
 
 // Recommendations
-export async function getRecommendations({
-  body,
-}: {
-  body: IRecommendationRequest;
-}): Promise<any> {
+export async function getRecommendations({ body }: { body: IRecommendationRequest }): Promise<any> {
   const response = await apiServices.post(`${BASE}/recommend`, body);
   return response.data;
 }

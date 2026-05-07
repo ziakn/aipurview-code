@@ -13,8 +13,16 @@ import { Compass } from "lucide-react";
 import Select from "../../components/Inputs/Select";
 import ScenarioCard from "../../components/GovernanceOS/ScenarioCard";
 import { EmptyState } from "../../components/EmptyState";
-import { useScenarios, useRecommendations, useGovernancePreferences, useUpdatePreferences } from "../../../application/hooks/useGovernanceOs";
-import { IRecommendationRequest, IGovernanceScenario } from "../../../domain/interfaces/i.governanceOs";
+import {
+  useScenarios,
+  useRecommendations,
+  useGovernancePreferences,
+  useUpdatePreferences,
+} from "../../../application/hooks/useGovernanceOs";
+import {
+  IRecommendationRequest,
+  IGovernanceScenario,
+} from "../../../domain/interfaces/i.governanceOs";
 import { border as borderPalette, background } from "../../themes/palette";
 
 const INDUSTRIES = [
@@ -72,12 +80,14 @@ const ScenarioBuilder = () => {
     updatePreferencesMutation.mutate({ selected_scenario_id: scenario.id });
   };
 
-  const canRecommend = formData.industry || formData.region || formData.riskLevel || formData.useCaseType;
+  const canRecommend =
+    formData.industry || formData.region || formData.riskLevel || formData.useCaseType;
 
   return (
     <Stack spacing={3}>
       <Typography variant="body2" sx={{ color: "#475467" }}>
-        Get framework recommendations based on your organization context, or browse pre-built governance scenarios.
+        Get framework recommendations based on your organization context, or browse pre-built
+        governance scenarios.
       </Typography>
 
       {/* Recommendation form */}
@@ -99,7 +109,9 @@ const ScenarioBuilder = () => {
             placeholder="Any"
             value={formData.industry || ""}
             items={INDUSTRIES}
-            onChange={(e: SelectChangeEvent<string | number>) => setFormData({ ...formData, industry: e.target.value as string })}
+            onChange={(e: SelectChangeEvent<string | number>) =>
+              setFormData({ ...formData, industry: e.target.value as string })
+            }
             sx={{ minWidth: 170 }}
           />
 
@@ -109,7 +121,9 @@ const ScenarioBuilder = () => {
             placeholder="Any"
             value={formData.region || ""}
             items={REGIONS}
-            onChange={(e: SelectChangeEvent<string | number>) => setFormData({ ...formData, region: e.target.value as string })}
+            onChange={(e: SelectChangeEvent<string | number>) =>
+              setFormData({ ...formData, region: e.target.value as string })
+            }
             sx={{ minWidth: 170 }}
           />
 
@@ -119,7 +133,9 @@ const ScenarioBuilder = () => {
             placeholder="Any"
             value={formData.riskLevel || ""}
             items={RISK_LEVELS}
-            onChange={(e: SelectChangeEvent<string | number>) => setFormData({ ...formData, riskLevel: e.target.value as string })}
+            onChange={(e: SelectChangeEvent<string | number>) =>
+              setFormData({ ...formData, riskLevel: e.target.value as string })
+            }
             sx={{ minWidth: 170 }}
           />
 
@@ -129,7 +145,9 @@ const ScenarioBuilder = () => {
             placeholder="Any"
             value={formData.useCaseType || ""}
             items={USE_CASE_TYPES}
-            onChange={(e: SelectChangeEvent<string | number>) => setFormData({ ...formData, useCaseType: e.target.value as string })}
+            onChange={(e: SelectChangeEvent<string | number>) =>
+              setFormData({ ...formData, useCaseType: e.target.value as string })
+            }
             sx={{ minWidth: 170 }}
           />
 
@@ -184,11 +202,7 @@ const ScenarioBuilder = () => {
             <CircularProgress size={32} />
           </Stack>
         ) : !scenarios || scenarios.length === 0 ? (
-          <EmptyState
-            message="No governance scenarios available."
-            icon={Compass}
-            showBorder
-          />
+          <EmptyState message="No governance scenarios available." icon={Compass} showBorder />
         ) : (
           <Stack spacing={2}>
             {scenarios.map((scenario) => (

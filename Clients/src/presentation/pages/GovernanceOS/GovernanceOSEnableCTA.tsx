@@ -1,12 +1,6 @@
 import React from "react";
 import { Box, Stack, Typography, Button, Paper, Tooltip } from "@mui/material";
-import {
-  GitCompareArrows,
-  Layers,
-  Compass,
-  BarChart3,
-  Lightbulb,
-} from "lucide-react";
+import { GitCompareArrows, Layers, Compass, BarChart3, Lightbulb } from "lucide-react";
 import { useAuth } from "../../../application/hooks/useAuth";
 import { useUpdatePreferences } from "../../../application/hooks/useGovernanceOs";
 import { palette } from "../../themes/palette";
@@ -16,9 +10,7 @@ interface GovernanceOSEnableCTAProps {
   onEnabled?: () => void;
 }
 
-const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({
-  onEnabled,
-}) => {
+const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({ onEnabled }) => {
   const { userRoleName } = useAuth();
   const { open: openUserGuide } = useUserGuideSidebarContext();
   const updatePreferences = useUpdatePreferences();
@@ -31,7 +23,7 @@ const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({
         onSuccess: () => {
           onEnabled?.();
         },
-      }
+      },
     );
   };
 
@@ -93,9 +85,9 @@ const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({
               fontSize: 14,
             }}
           >
-            Cross-framework intelligence layer that connects your compliance
-            frameworks into a unified governance view. Reduce duplicate work,
-            prioritize intelligently, and measure progress holistically.
+            Cross-framework intelligence layer that connects your compliance frameworks into a
+            unified governance view. Reduce duplicate work, prioritize intelligently, and measure
+            progress holistically.
           </Typography>
         </Stack>
 
@@ -143,14 +135,7 @@ const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({
 
         {/* CTA */}
         <Stack spacing={2} alignItems="center">
-          <Tooltip
-            title={
-              !isAdmin
-                ? "Contact your admin to enable Governance OS"
-                : ""
-            }
-            arrow
-          >
+          <Tooltip title={!isAdmin ? "Contact your admin to enable Governance OS" : ""} arrow>
             <span>
               <Button
                 variant="contained"
@@ -173,9 +158,7 @@ const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({
                   },
                 }}
               >
-                {updatePreferences.isPending
-                  ? "Enabling..."
-                  : "Enable Governance OS"}
+                {updatePreferences.isPending ? "Enabling..." : "Enable Governance OS"}
               </Button>
             </span>
           </Tooltip>

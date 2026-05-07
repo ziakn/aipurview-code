@@ -26,8 +26,10 @@ const MappingCard = ({ mapping, frameworkNames }: IMappingCardProps) => {
   const names = frameworkNames || FRAMEWORK_NAMES;
   const [detailOpen, setDetailOpen] = useState(false);
 
-  const sourceName = names[mapping.source_framework_id] || `Framework ${mapping.source_framework_id}`;
-  const targetName = names[mapping.target_framework_id] || `Framework ${mapping.target_framework_id}`;
+  const sourceName =
+    names[mapping.source_framework_id] || `Framework ${mapping.source_framework_id}`;
+  const targetName =
+    names[mapping.target_framework_id] || `Framework ${mapping.target_framework_id}`;
 
   return (
     <>
@@ -48,9 +50,7 @@ const MappingCard = ({ mapping, frameworkNames }: IMappingCardProps) => {
       >
         <Stack direction="row" alignItems="center" spacing={2} flexWrap="wrap" useFlexGap>
           <Box sx={{ minWidth: 140 }}>
-            <Typography sx={{ fontSize: 11, color: text.muted }}>
-              {sourceName}
-            </Typography>
+            <Typography sx={{ fontSize: 11, color: text.muted }}>{sourceName}</Typography>
             <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary }}>
               {mapping.source_control_identifier}
             </Typography>
@@ -59,9 +59,7 @@ const MappingCard = ({ mapping, frameworkNames }: IMappingCardProps) => {
           <ArrowRight size={14} color={text.muted} />
 
           <Box sx={{ minWidth: 140 }}>
-            <Typography sx={{ fontSize: 11, color: text.muted }}>
-              {targetName}
-            </Typography>
+            <Typography sx={{ fontSize: 11, color: text.muted }}>{targetName}</Typography>
             <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary }}>
               {mapping.target_control_identifier}
             </Typography>
@@ -114,18 +112,46 @@ const MappingCard = ({ mapping, frameworkNames }: IMappingCardProps) => {
               Mapping relationship
             </Typography>
             <Stack direction="row" spacing={3} alignItems="flex-start">
-              <Box sx={{ flex: 1, p: 2, borderRadius: 2, border: `1px solid ${borderPalette.light}`, background: background.accent }}>
-                <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>Source control</Typography>
-                <Typography sx={{ fontSize: 14, fontWeight: 600, color: text.primary }}>{mapping.source_control_identifier}</Typography>
-                <Typography sx={{ fontSize: 12, color: text.accent, mt: 0.5 }}>{sourceName}</Typography>
+              <Box
+                sx={{
+                  flex: 1,
+                  p: 2,
+                  borderRadius: 2,
+                  border: `1px solid ${borderPalette.light}`,
+                  background: background.accent,
+                }}
+              >
+                <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+                  Source control
+                </Typography>
+                <Typography sx={{ fontSize: 14, fontWeight: 600, color: text.primary }}>
+                  {mapping.source_control_identifier}
+                </Typography>
+                <Typography sx={{ fontSize: 12, color: text.accent, mt: 0.5 }}>
+                  {sourceName}
+                </Typography>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", pt: 2 }}>
                 <ArrowRight size={18} color={text.muted} />
               </Box>
-              <Box sx={{ flex: 1, p: 2, borderRadius: 2, border: `1px solid ${borderPalette.light}`, background: background.accent }}>
-                <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>Target control</Typography>
-                <Typography sx={{ fontSize: 14, fontWeight: 600, color: text.primary }}>{mapping.target_control_identifier}</Typography>
-                <Typography sx={{ fontSize: 12, color: text.accent, mt: 0.5 }}>{targetName}</Typography>
+              <Box
+                sx={{
+                  flex: 1,
+                  p: 2,
+                  borderRadius: 2,
+                  border: `1px solid ${borderPalette.light}`,
+                  background: background.accent,
+                }}
+              >
+                <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+                  Target control
+                </Typography>
+                <Typography sx={{ fontSize: 14, fontWeight: 600, color: text.primary }}>
+                  {mapping.target_control_identifier}
+                </Typography>
+                <Typography sx={{ fontSize: 12, color: text.accent, mt: 0.5 }}>
+                  {targetName}
+                </Typography>
               </Box>
             </Stack>
           </Stack>
@@ -167,7 +193,9 @@ const MappingCard = ({ mapping, frameworkNames }: IMappingCardProps) => {
               <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
                 {mapping.domain_tag && (
                   <Box>
-                    <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>Governance domain</Typography>
+                    <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+                      Governance domain
+                    </Typography>
                     <Chip
                       label={mapping.domain_tag.replace(/_/g, " ")}
                       size="small"
@@ -183,7 +211,9 @@ const MappingCard = ({ mapping, frameworkNames }: IMappingCardProps) => {
                 )}
                 {mapping.confidence_score !== undefined && (
                   <Box>
-                    <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>Confidence score</Typography>
+                    <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+                      Confidence score
+                    </Typography>
                     <Typography sx={{ fontSize: 13, fontWeight: 500, color: text.primary }}>
                       {Math.round(mapping.confidence_score * 100)}%
                     </Typography>

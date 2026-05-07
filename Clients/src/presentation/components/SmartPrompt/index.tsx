@@ -20,8 +20,7 @@ import "./index.css";
 const AUTO_DISMISS_MS = 10000;
 
 const SmartPrompt: React.FC = () => {
-  const { activePrompt, dismissPrompt, setDontAskAgain } =
-    useSmartPromptContext();
+  const { activePrompt, dismissPrompt, setDontAskAgain } = useSmartPromptContext();
   const { userRoleName } = useAuth();
   const [checkedDontAsk, setCheckedDontAsk] = useState(false);
   const [progress, setProgress] = useState(100);
@@ -52,7 +51,7 @@ const SmartPrompt: React.FC = () => {
         setProgress(100);
       }, 200);
     },
-    [clearTimers, dismissPrompt, activePrompt, checkedDontAsk, setDontAskAgain]
+    [clearTimers, dismissPrompt, activePrompt, checkedDontAsk, setDontAskAgain],
   );
 
   useEffect(() => {

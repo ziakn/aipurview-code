@@ -2,7 +2,10 @@ import { Chip } from "@mui/material";
 import { MappingStrength } from "../../../domain/interfaces/i.governanceOs";
 import { status } from "../../themes/palette";
 
-const strengthConfig: Record<MappingStrength, { bg: string; text: string; border: string; label: string }> = {
+const strengthConfig: Record<
+  MappingStrength,
+  { bg: string; text: string; border: string; label: string }
+> = {
   direct: { ...status.success, label: "Direct" },
   partial: { ...status.warning, label: "Partial" },
   related: { ...status.info, label: "Related" },

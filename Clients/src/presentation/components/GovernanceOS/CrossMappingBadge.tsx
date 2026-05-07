@@ -13,7 +13,9 @@ const CrossMappingBadge = ({ mappingCount, controlIdentifier }: CrossMappingBadg
   if (mappingCount === 0) return null;
 
   return (
-    <Tooltip title={`${mappingCount} cross-framework mapping(s)${controlIdentifier ? ` for ${controlIdentifier}` : ""}`}>
+    <Tooltip
+      title={`${mappingCount} cross-framework mapping(s)${controlIdentifier ? ` for ${controlIdentifier}` : ""}`}
+    >
       <Chip
         icon={<Link2 size={14} />}
         label={mappingCount}

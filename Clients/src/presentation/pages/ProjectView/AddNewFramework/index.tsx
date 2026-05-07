@@ -25,7 +25,10 @@ import { useModalKeyHandling } from "../../../../application/hooks/useModalKeyHa
 import { PluginSlot } from "../../../components/PluginSlot";
 import { PLUGIN_SLOTS } from "../../../../domain/constants/pluginSlots";
 import { useSmartPrompt } from "../../../../application/hooks/useSmartPrompt";
-import { useGovernancePreferences, useUpdatePreferences } from "../../../../application/hooks/useGovernanceOs";
+import {
+  useGovernancePreferences,
+  useUpdatePreferences,
+} from "../../../../application/hooks/useGovernanceOs";
 import { useAuth } from "../../../../application/hooks/useAuth";
 
 interface AddFrameworkModalProps {

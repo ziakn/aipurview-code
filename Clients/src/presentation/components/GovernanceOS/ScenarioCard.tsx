@@ -13,7 +13,13 @@ const FRAMEWORK_NAMES: Record<number, string> = {
   4: "NIST AI RMF",
 };
 
-const ScenarioCard = ({ scenario, score, matchedRules, isSelected, onSelect }: IScenarioCardProps) => {
+const ScenarioCard = ({
+  scenario,
+  score,
+  matchedRules,
+  isSelected,
+  onSelect,
+}: IScenarioCardProps) => {
   const [detailOpen, setDetailOpen] = useState(false);
 
   const priorityOrder = scenario.priority_order as {
@@ -22,9 +28,13 @@ const ScenarioCard = ({ scenario, score, matchedRules, isSelected, onSelect }: I
     supplementary?: number[];
   } | null;
 
-  const primaryName = priorityOrder?.primary ? FRAMEWORK_NAMES[priorityOrder.primary] || `Framework ${priorityOrder.primary}` : null;
-  const secondaryNames = priorityOrder?.secondary?.map((id) => FRAMEWORK_NAMES[id] || `Framework ${id}`) || [];
-  const supplementaryNames = priorityOrder?.supplementary?.map((id) => FRAMEWORK_NAMES[id] || `Framework ${id}`) || [];
+  const primaryName = priorityOrder?.primary
+    ? FRAMEWORK_NAMES[priorityOrder.primary] || `Framework ${priorityOrder.primary}`
+    : null;
+  const secondaryNames =
+    priorityOrder?.secondary?.map((id) => FRAMEWORK_NAMES[id] || `Framework ${id}`) || [];
+  const supplementaryNames =
+    priorityOrder?.supplementary?.map((id) => FRAMEWORK_NAMES[id] || `Framework ${id}`) || [];
 
   return (
     <>
@@ -72,7 +82,11 @@ const ScenarioCard = ({ scenario, score, matchedRules, isSelected, onSelect }: I
               <VWTooltip
                 header="Set as active governance strategy"
                 content={
-                  <p>Selecting this scenario sets it as your organization&apos;s active governance strategy. It defines which frameworks to prioritize (primary, secondary, supplementary) and guides compliance planning across all projects.</p>
+                  <p>
+                    Selecting this scenario sets it as your organization&apos;s active governance
+                    strategy. It defines which frameworks to prioritize (primary, secondary,
+                    supplementary) and guides compliance planning across all projects.
+                  </p>
                 }
                 placement="left"
               >
@@ -232,7 +246,8 @@ const ScenarioCard = ({ scenario, score, matchedRules, isSelected, onSelect }: I
               What is this scenario?
             </Typography>
             <Typography sx={{ fontSize: 13, color: text.accent, lineHeight: 1.6 }}>
-              {scenario.description || "A pre-built governance strategy that defines which compliance frameworks your organization should prioritize and in what order."}
+              {scenario.description ||
+                "A pre-built governance strategy that defines which compliance frameworks your organization should prioritize and in what order."}
             </Typography>
           </Stack>
 
@@ -242,11 +257,19 @@ const ScenarioCard = ({ scenario, score, matchedRules, isSelected, onSelect }: I
               What happens when you select this scenario?
             </Typography>
             <Typography sx={{ fontSize: 13, color: text.accent, lineHeight: 1.6 }}>
-              Selecting this scenario sets it as your organization&apos;s active governance strategy. This means:
+              Selecting this scenario sets it as your organization&apos;s active governance
+              strategy. This means:
             </Typography>
-            <Stack component="ul" sx={{ pl: 2, m: 0, "& li": { fontSize: 13, color: text.accent, lineHeight: 1.8 } }}>
-              <li>Your compliance dashboard will prioritize tasks from the primary framework first</li>
-              <li>Coverage analysis will measure your progress against the prioritized frameworks</li>
+            <Stack
+              component="ul"
+              sx={{ pl: 2, m: 0, "& li": { fontSize: 13, color: text.accent, lineHeight: 1.8 } }}
+            >
+              <li>
+                Your compliance dashboard will prioritize tasks from the primary framework first
+              </li>
+              <li>
+                Coverage analysis will measure your progress against the prioritized frameworks
+              </li>
               <li>New projects will inherit this framework priority order as a recommendation</li>
               <li>You can change your active scenario at any time without losing progress</li>
             </Stack>
@@ -258,14 +281,37 @@ const ScenarioCard = ({ scenario, score, matchedRules, isSelected, onSelect }: I
               Next steps after selecting this scenario
             </Typography>
             <Typography sx={{ fontSize: 13, color: text.accent, lineHeight: 1.6 }}>
-              Once you select this scenario, follow these steps to put your governance strategy into action:
+              Once you select this scenario, follow these steps to put your governance strategy into
+              action:
             </Typography>
-            <Stack component="ol" sx={{ pl: 2, m: 0, "& li": { fontSize: 13, color: text.accent, lineHeight: 2 } }}>
-              <li><strong>Go to Framework page</strong> &mdash; Assign the prioritized frameworks to your projects. Navigate to the Framework page from the sidebar and add the primary framework first.</li>
-              <li><strong>Review controls</strong> &mdash; Open each assigned framework within your project to see the controls you need to implement. Start with the primary framework&apos;s controls.</li>
-              <li><strong>Check Unified Insights tab</strong> &mdash; Switch to the Unified Insights tab here in Governance OS to monitor your per-project coverage and identify gaps as you work through controls.</li>
-              <li><strong>Use Framework Mapper</strong> &mdash; When implementing controls, check the Framework Mapper tab to find overlapping controls across frameworks. This lets you satisfy multiple requirements with a single implementation.</li>
-              <li><strong>Track progress on Dashboard</strong> &mdash; Your main dashboard will reflect compliance progress based on the active scenario&apos;s priority order.</li>
+            <Stack
+              component="ol"
+              sx={{ pl: 2, m: 0, "& li": { fontSize: 13, color: text.accent, lineHeight: 2 } }}
+            >
+              <li>
+                <strong>Go to Framework page</strong> &mdash; Assign the prioritized frameworks to
+                your projects. Navigate to the Framework page from the sidebar and add the primary
+                framework first.
+              </li>
+              <li>
+                <strong>Review controls</strong> &mdash; Open each assigned framework within your
+                project to see the controls you need to implement. Start with the primary
+                framework&apos;s controls.
+              </li>
+              <li>
+                <strong>Check Unified Insights tab</strong> &mdash; Switch to the Unified Insights
+                tab here in Governance OS to monitor your per-project coverage and identify gaps as
+                you work through controls.
+              </li>
+              <li>
+                <strong>Use Framework Mapper</strong> &mdash; When implementing controls, check the
+                Framework Mapper tab to find overlapping controls across frameworks. This lets you
+                satisfy multiple requirements with a single implementation.
+              </li>
+              <li>
+                <strong>Track progress on Dashboard</strong> &mdash; Your main dashboard will
+                reflect compliance progress based on the active scenario&apos;s priority order.
+              </li>
             </Stack>
           </Stack>
 
@@ -277,31 +323,67 @@ const ScenarioCard = ({ scenario, score, matchedRules, isSelected, onSelect }: I
               </Typography>
 
               {primaryName && (
-                <Box sx={{ p: 2, borderRadius: 2, border: `1px solid ${accent.primary.border}`, background: accent.primary.bg }}>
-                  <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>Primary framework (highest priority)</Typography>
-                  <Typography sx={{ fontSize: 14, fontWeight: 600, color: accent.primary.text }}>{primaryName}</Typography>
+                <Box
+                  sx={{
+                    p: 2,
+                    borderRadius: 2,
+                    border: `1px solid ${accent.primary.border}`,
+                    background: accent.primary.bg,
+                  }}
+                >
+                  <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+                    Primary framework (highest priority)
+                  </Typography>
+                  <Typography sx={{ fontSize: 14, fontWeight: 600, color: accent.primary.text }}>
+                    {primaryName}
+                  </Typography>
                   <Typography sx={{ fontSize: 12, color: text.accent, mt: 0.5 }}>
-                    This is your main compliance target. Tasks and controls from this framework will be prioritized above all others.
+                    This is your main compliance target. Tasks and controls from this framework will
+                    be prioritized above all others.
                   </Typography>
                 </Box>
               )}
 
               {secondaryNames.length > 0 && (
-                <Box sx={{ p: 2, borderRadius: 2, border: `1px solid ${accent.indigo.border}`, background: accent.indigo.bg }}>
-                  <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>Secondary framework(s)</Typography>
-                  <Typography sx={{ fontSize: 14, fontWeight: 600, color: accent.indigo.text }}>{secondaryNames.join(", ")}</Typography>
+                <Box
+                  sx={{
+                    p: 2,
+                    borderRadius: 2,
+                    border: `1px solid ${accent.indigo.border}`,
+                    background: accent.indigo.bg,
+                  }}
+                >
+                  <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+                    Secondary framework(s)
+                  </Typography>
+                  <Typography sx={{ fontSize: 14, fontWeight: 600, color: accent.indigo.text }}>
+                    {secondaryNames.join(", ")}
+                  </Typography>
                   <Typography sx={{ fontSize: 12, color: text.accent, mt: 0.5 }}>
-                    Supporting frameworks that complement your primary target. Work on these after primary controls are in place.
+                    Supporting frameworks that complement your primary target. Work on these after
+                    primary controls are in place.
                   </Typography>
                 </Box>
               )}
 
               {supplementaryNames.length > 0 && (
-                <Box sx={{ p: 2, borderRadius: 2, border: `1px solid ${borderPalette.light}`, background: background.hover }}>
-                  <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>Supplementary framework(s)</Typography>
-                  <Typography sx={{ fontSize: 14, fontWeight: 600, color: text.tertiary }}>{supplementaryNames.join(", ")}</Typography>
+                <Box
+                  sx={{
+                    p: 2,
+                    borderRadius: 2,
+                    border: `1px solid ${borderPalette.light}`,
+                    background: background.hover,
+                  }}
+                >
+                  <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+                    Supplementary framework(s)
+                  </Typography>
+                  <Typography sx={{ fontSize: 14, fontWeight: 600, color: text.tertiary }}>
+                    {supplementaryNames.join(", ")}
+                  </Typography>
                   <Typography sx={{ fontSize: 12, color: text.accent, mt: 0.5 }}>
-                    Nice-to-have frameworks that provide additional governance coverage. Address these once primary and secondary are well-established.
+                    Nice-to-have frameworks that provide additional governance coverage. Address
+                    these once primary and secondary are well-established.
                   </Typography>
                 </Box>
               )}
@@ -317,15 +399,26 @@ const ScenarioCard = ({ scenario, score, matchedRules, isSelected, onSelect }: I
               <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
                 {scenario.industry && (
                   <Box>
-                    <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>Industry</Typography>
-                    <Typography sx={{ fontSize: 13, fontWeight: 500, color: text.primary, textTransform: "capitalize" }}>
+                    <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+                      Industry
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: 13,
+                        fontWeight: 500,
+                        color: text.primary,
+                        textTransform: "capitalize",
+                      }}
+                    >
                       {scenario.industry.replace(/_/g, " ")}
                     </Typography>
                   </Box>
                 )}
                 {scenario.region && (
                   <Box>
-                    <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>Region</Typography>
+                    <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+                      Region
+                    </Typography>
                     <Typography sx={{ fontSize: 13, fontWeight: 500, color: text.primary }}>
                       {scenario.region.toUpperCase()}
                     </Typography>
@@ -333,8 +426,17 @@ const ScenarioCard = ({ scenario, score, matchedRules, isSelected, onSelect }: I
                 )}
                 {scenario.use_case_type && (
                   <Box>
-                    <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>Use case type</Typography>
-                    <Typography sx={{ fontSize: 13, fontWeight: 500, color: text.primary, textTransform: "capitalize" }}>
+                    <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+                      Use case type
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: 13,
+                        fontWeight: 500,
+                        color: text.primary,
+                        textTransform: "capitalize",
+                      }}
+                    >
                       {scenario.use_case_type.replace(/_/g, " ")}
                     </Typography>
                   </Box>
@@ -353,8 +455,8 @@ const ScenarioCard = ({ scenario, score, matchedRules, isSelected, onSelect }: I
                 This scenario scored <strong>{score}%</strong> against your criteria.
                 {matchedRules && matchedRules.length > 0 && (
                   <> It matched the following rules: {matchedRules.join(", ")}.</>
-                )}
-                {" "}A higher score means the scenario better fits your organization&apos;s context.
+                )}{" "}
+                A higher score means the scenario better fits your organization&apos;s context.
               </Typography>
             </Stack>
           )}

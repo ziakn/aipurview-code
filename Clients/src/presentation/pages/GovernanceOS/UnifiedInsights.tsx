@@ -1,10 +1,5 @@
 import { useContext, useState } from "react";
-import {
-  Typography,
-  CircularProgress,
-  Button,
-  Stack,
-} from "@mui/material";
+import { Typography, CircularProgress, Button, Stack } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { BarChart3 } from "lucide-react";
 import Select from "../../components/Inputs/Select";
@@ -16,8 +11,10 @@ import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.cont
 
 const UnifiedInsights = () => {
   const { projects } = useContext(VerifyWiseContext);
-  const [selectedProjectId, setSelectedProjectId] = useState<number | "">(""  );
-  const { data: coverage, isLoading } = useCoverage(typeof selectedProjectId === "number" ? selectedProjectId : 0);
+  const [selectedProjectId, setSelectedProjectId] = useState<number | "">("");
+  const { data: coverage, isLoading } = useCoverage(
+    typeof selectedProjectId === "number" ? selectedProjectId : 0,
+  );
   const refreshMutation = useRefreshCoverage();
 
   const totalMapped = (coverage || []).reduce((sum, c) => sum + c.mapped_controls, 0);
@@ -35,7 +32,8 @@ const UnifiedInsights = () => {
   return (
     <Stack spacing={3}>
       <Typography variant="body2" sx={{ color: "#475467" }}>
-        View cross-framework coverage analysis per project. Identify gaps and synergies across your active frameworks.
+        View cross-framework coverage analysis per project. Identify gaps and synergies across your
+        active frameworks.
       </Typography>
 
       <Stack direction="row" spacing={2} alignItems="flex-end">
@@ -84,16 +82,8 @@ const UnifiedInsights = () => {
               count={`${avgCoverage}%`}
               disableNavigation
             />
-            <DashboardHeaderCard
-              title="Mapped Controls"
-              count={totalMapped}
-              disableNavigation
-            />
-            <DashboardHeaderCard
-              title="Total Controls"
-              count={totalControls}
-              disableNavigation
-            />
+            <DashboardHeaderCard title="Mapped Controls" count={totalMapped} disableNavigation />
+            <DashboardHeaderCard title="Total Controls" count={totalControls} disableNavigation />
             <DashboardHeaderCard
               title="Active Frameworks"
               count={coverage?.length || 0}
