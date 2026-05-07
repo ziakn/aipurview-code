@@ -252,13 +252,15 @@ export const upsertOrgPreferencesQuery = async (
 ): Promise<GovernanceOrgPreferencesModel> => {
   const [results] = await sequelize.query(
     `INSERT INTO governance_org_preferences
-      (organization_id, selected_scenario_id, custom_framework_priority, active_mapping_filters)
+      (organization_id, selected_scenario_id, custom_framework_priority, active_mapping_filters, is_enabled, dont_ask_governance_os)
      VALUES
-      (:organizationId, :selected_scenario_id, :custom_framework_priority, :active_mapping_filters)
+      (:organizationId, :selected_scenario_id, :custom_framework_priority, :active_mapping_filters, :is_enabled, :dont_ask_governance_os)
      ON CONFLICT (organization_id) DO UPDATE SET
       selected_scenario_id = COALESCE(EXCLUDED.selected_scenario_id, governance_org_preferences.selected_scenario_id),
       custom_framework_priority = COALESCE(EXCLUDED.custom_framework_priority, governance_org_preferences.custom_framework_priority),
       active_mapping_filters = COALESCE(EXCLUDED.active_mapping_filters, governance_org_preferences.active_mapping_filters),
+      is_enabled = COALESCE(EXCLUDED.is_enabled, governance_org_preferences.is_enabled),
+      dont_ask_governance_os = COALESCE(EXCLUDED.dont_ask_governance_os, governance_org_preferences.dont_ask_governance_os),
       updated_at = NOW()
      RETURNING *`,
     {
@@ -271,6 +273,8 @@ export const upsertOrgPreferencesQuery = async (
         active_mapping_filters: data.active_mapping_filters
           ? JSON.stringify(data.active_mapping_filters)
           : null,
+        is_enabled: data.is_enabled ?? null,
+        dont_ask_governance_os: data.dont_ask_governance_os ?? null,
       },
     },
   );
