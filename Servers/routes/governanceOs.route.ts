@@ -39,7 +39,12 @@ router.post("/recommend", authenticateJWT, getRecommendations);
 
 // Coverage & Unified View
 router.get("/coverage/:projectId", authenticateJWT, getCoverage);
-router.post("/coverage/:projectId/refresh", authenticateJWT, authorize(["Admin", "Editor"]), refreshCoverage);
+router.post(
+  "/coverage/:projectId/refresh",
+  authenticateJWT,
+  authorize(["Admin", "Editor"]),
+  refreshCoverage,
+);
 router.get("/unified-view/:projectId", authenticateJWT, getUnifiedView);
 
 // Eligibility

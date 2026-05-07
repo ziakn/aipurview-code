@@ -53,7 +53,12 @@ export async function getMappingsBetween(req: Request, res: Response): Promise<a
   try {
     const { sourceId, targetId } = req.params;
     const mappings = await getMappingsBetweenFrameworksQuery(Number(sourceId), Number(targetId));
-    logStructured("successful", `fetched ${mappings.length} cross-framework mappings`, FN, FILE_NAME);
+    logStructured(
+      "successful",
+      `fetched ${mappings.length} cross-framework mappings`,
+      FN,
+      FILE_NAME,
+    );
     return res.status(200).json(STATUS_CODE[200](mappings));
   } catch (error) {
     logStructured("error", "failed to fetch cross-framework mappings", FN, FILE_NAME);
@@ -306,7 +311,12 @@ export async function getEligibility(req: Request, res: Response): Promise<any> 
     const frameworkCount = parseInt((result as any[])[0]?.framework_count || "0", 10);
     const eligible = frameworkCount >= 2;
 
-    logStructured("successful", `eligibility: ${eligible}, frameworks: ${frameworkCount}`, FN, FILE_NAME);
+    logStructured(
+      "successful",
+      `eligibility: ${eligible}, frameworks: ${frameworkCount}`,
+      FN,
+      FILE_NAME,
+    );
     return res.status(200).json(STATUS_CODE[200]({ eligible, frameworkCount }));
   } catch (error) {
     logStructured("error", "failed to check eligibility", FN, FILE_NAME);

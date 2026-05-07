@@ -119,9 +119,7 @@ export const computeProjectCoverage = async (
           },
         },
       );
-      multiFrameworkControls = (synergyResult as any[]).map(
-        (r) => r.source_control_identifier,
-      );
+      multiFrameworkControls = (synergyResult as any[]).map((r) => r.source_control_identifier);
     }
 
     const coveragePercentage =

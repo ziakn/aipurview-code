@@ -23,9 +23,10 @@ const VALID_INDUSTRIES = [
 const VALID_REGIONS = ["eu", "us", "global", "apac", "uk", "mena"];
 const VALID_USE_CASE_TYPES = ["high_risk_ai", "general_purpose_ai", "limited_risk"];
 
-export function validateMappingInput(
-  data: Partial<IGovernanceControlMappingAttributes>,
-): { valid: boolean; errors: string[] } {
+export function validateMappingInput(data: Partial<IGovernanceControlMappingAttributes>): {
+  valid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
 
   if (!data.source_framework_id) {
@@ -62,9 +63,10 @@ export function validateMappingInput(
   return { valid: errors.length === 0, errors };
 }
 
-export function validateScenarioInput(
-  data: Partial<IGovernanceScenarioAttributes>,
-): { valid: boolean; errors: string[] } {
+export function validateScenarioInput(data: Partial<IGovernanceScenarioAttributes>): {
+  valid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
 
   if (!stringValidation(data.name, 1, 255)) {
@@ -83,9 +85,10 @@ export function validateScenarioInput(
   return { valid: errors.length === 0, errors };
 }
 
-export function validateRecommendationInput(
-  data: IRecommendationRequest,
-): { valid: boolean; errors: string[] } {
+export function validateRecommendationInput(data: IRecommendationRequest): {
+  valid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
 
   if (!data.industry && !data.region && !data.riskLevel && !data.useCaseType) {

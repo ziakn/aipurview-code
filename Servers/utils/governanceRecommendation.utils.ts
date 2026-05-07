@@ -32,10 +32,10 @@ export const computeRecommendations = async (
   );
 
   // Load all rules
-  const rules = await sequelize.query(
-    `SELECT * FROM governance_scenario_rules`,
-    { mapToModel: true, model: GovernanceScenarioRuleModel },
-  );
+  const rules = await sequelize.query(`SELECT * FROM governance_scenario_rules`, {
+    mapToModel: true,
+    model: GovernanceScenarioRuleModel,
+  });
 
   // Group rules by scenario
   const rulesByScenario = new Map<number, GovernanceScenarioRuleModel[]>();
@@ -127,7 +127,10 @@ function evaluateRule(inputValue: string, operator: string, ruleValue: string): 
     case "contains":
       return normalizedInput.includes(normalizedRule);
     case "in":
-      return normalizedRule.split(",").map((v) => v.trim()).includes(normalizedInput);
+      return normalizedRule
+        .split(",")
+        .map((v) => v.trim())
+        .includes(normalizedInput);
     default:
       return false;
   }

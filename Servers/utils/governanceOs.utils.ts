@@ -94,24 +94,22 @@ export const getAllScenariosQuery = async (
     replacements.organizationId = organizationId;
   }
 
-  return sequelize.query(`SELECT * FROM governance_scenarios ${where} ORDER BY is_builtin DESC, name`, {
-    replacements,
-    mapToModel: true,
-    model: GovernanceScenarioModel,
-  });
-};
-
-export const getScenarioByIdQuery = async (
-  id: number,
-): Promise<GovernanceScenarioModel | null> => {
-  const results = await sequelize.query(
-    `SELECT * FROM governance_scenarios WHERE id = :id`,
+  return sequelize.query(
+    `SELECT * FROM governance_scenarios ${where} ORDER BY is_builtin DESC, name`,
     {
-      replacements: { id },
+      replacements,
       mapToModel: true,
       model: GovernanceScenarioModel,
     },
   );
+};
+
+export const getScenarioByIdQuery = async (id: number): Promise<GovernanceScenarioModel | null> => {
+  const results = await sequelize.query(`SELECT * FROM governance_scenarios WHERE id = :id`, {
+    replacements: { id },
+    mapToModel: true,
+    model: GovernanceScenarioModel,
+  });
   return results[0] || null;
 };
 
@@ -217,10 +215,7 @@ export const updateScenarioQuery = async (
   return ((results as any[])[0] as GovernanceScenarioModel) || null;
 };
 
-export const deleteScenarioQuery = async (
-  id: number,
-  organizationId: number,
-): Promise<boolean> => {
+export const deleteScenarioQuery = async (id: number, organizationId: number): Promise<boolean> => {
   const [, metadata] = await sequelize.query(
     `DELETE FROM governance_scenarios WHERE id = :id AND organization_id = :organizationId AND is_builtin = FALSE`,
     { replacements: { id, organizationId } },

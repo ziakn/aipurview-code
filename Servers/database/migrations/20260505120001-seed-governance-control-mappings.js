@@ -185,9 +185,16 @@ module.exports = {
   async down(queryInterface) {
     const transaction = await queryInterface.sequelize.transaction();
     try {
-      await queryInterface.sequelize.query(`DELETE FROM verifywise.governance_scenario_rules;`, { transaction });
-      await queryInterface.sequelize.query(`DELETE FROM verifywise.governance_scenarios WHERE is_builtin = TRUE;`, { transaction });
-      await queryInterface.sequelize.query(`DELETE FROM verifywise.governance_control_mappings;`, { transaction });
+      await queryInterface.sequelize.query(`DELETE FROM verifywise.governance_scenario_rules;`, {
+        transaction,
+      });
+      await queryInterface.sequelize.query(
+        `DELETE FROM verifywise.governance_scenarios WHERE is_builtin = TRUE;`,
+        { transaction },
+      );
+      await queryInterface.sequelize.query(`DELETE FROM verifywise.governance_control_mappings;`, {
+        transaction,
+      });
       await transaction.commit();
     } catch (error) {
       await transaction.rollback();
