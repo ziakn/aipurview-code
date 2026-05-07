@@ -245,6 +245,10 @@ export interface ITasksTableProps {
   priorityOptions: Array<string | CustomSelectOptionWithIcon>;
   /** Optional set of visible column keys, controls which columns are shown */
   visibleColumns?: Set<string>;
+  /** Whether the current user can run bulk actions (Admin or Editor). Defaults to false. */
+  canRunBulkActions?: boolean;
+  /** Called after a successful bulk action so the parent can refetch and surface a notification. */
+  onBulkActionSuccess?: (action: "mark_complete" | "set_categories", count: number) => void;
 }
 
 export interface ITableWithPlaceholderProps {

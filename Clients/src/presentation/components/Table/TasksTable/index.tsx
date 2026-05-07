@@ -9,15 +9,21 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import singleTheme from "../../../themes/v1SingleTheme";
 import { EmptyState } from "../../EmptyState";
 import EmptyStateTip from "../../EmptyState/EmptyStateTip";
-import { ListTodo, UserPlus, Tag, Link2 } from "lucide-react";
+import { ListTodo, UserPlus, Tag, Link2, CheckCheck } from "lucide-react";
 import { CustomSelect } from "../../CustomSelect";
 import IconButtonComponent from "../../IconButton";
 import Chip from "../../Chip";
 import { DaysChip } from "../../Chip/DaysChip";
+import Checkbox from "../../Inputs/Checkbox";
+import ChipInput from "../../Inputs/ChipInput";
+import ConfirmationModal from "../../Dialogs/ConfirmationModal";
+import BulkActionsToolbar, {
+  type BulkAction,
+} from "../BulkActionsToolbar";
 
 import { TaskPriority, TaskStatus } from "../../../../domain/enums/task.enum";
 import { ITasksTableProps } from "../../../types/interfaces/i.table";
@@ -27,6 +33,8 @@ import { DISPLAY_TO_PRIORITY_MAP, PRIORITY_DISPLAY_MAP } from "../../../constant
 import { displayFormattedDate } from "../../../tools/isoDateToString";
 import { taskTableStyles } from "./styles";
 import { useStandardTable } from "../../../../application/hooks/useStandardTable";
+import { useBulkSelection } from "../../../../application/hooks/useBulkSelection";
+import { useBulkUpdateTasks } from "../../../../application/hooks/useBulkUpdateTasks";
 import StandardTableHead from "../StandardTableHead";
 import StandardTablePagination from "../StandardTablePagination";
 import type { StandardColumn } from "../../../../domain/types/standardTable";
@@ -106,6 +114,8 @@ const TasksTable: React.FC<ITasksTableProps> = ({
   onPriorityChange,
   priorityOptions,
   visibleColumns,
+  canRunBulkActions = false,
+  onBulkActionSuccess,
 }) => {
   const theme = useTheme();
 
@@ -147,18 +157,93 @@ const TasksTable: React.FC<ITasksTableProps> = ({
     [isVisible],
   );
 
+  // Slice that's actually rendered — used for both the body and bulk-selection scope.
+  const pageRows = useMemo(() => {
+    if (!sortedRows) return [] as TaskModel[];
+    return sortedRows.slice(
+      hidePagination ? 0 : validPage * rowsPerPage,
+      hidePagination
+        ? Math.min(sortedRows.length, 100)
+        : validPage * rowsPerPage + rowsPerPage,
+    );
+  }, [sortedRows, hidePagination, validPage, rowsPerPage]);
+
+  // Bulk-action selection scope: only non-archived rows on the current page.
+  const selectableRows = useMemo(
+    () => pageRows.filter((task) => task.status !== TaskStatus.DELETED),
+    [pageRows],
+  );
+
+  const getRowId = useCallback((task: TaskModel) => task.id as number, []);
+  const {
+    selectedIds,
+    isSelected,
+    toggle: toggleSelection,
+    toggleAll,
+    clear: clearSelection,
+    allSelected,
+    someSelected,
+    count: selectionCount,
+  } = useBulkSelection<TaskModel>({ rows: selectableRows, getId: getRowId });
+
+  const [categoriesDialogOpen, setCategoriesDialogOpen] = useState(false);
+  const [pendingCategories, setPendingCategories] = useState<string[]>([]);
+
+  const bulkMutation = useBulkUpdateTasks({
+    onSuccess: (payload) => {
+      clearSelection();
+      onBulkActionSuccess?.(payload.action, payload.ids.length);
+    },
+  });
+
+  const handleMarkComplete = useCallback(() => {
+    if (selectedIds.length === 0) return;
+    bulkMutation.mutate({ ids: selectedIds, action: "mark_complete" });
+  }, [bulkMutation, selectedIds]);
+
+  const handleOpenCategoriesDialog = useCallback(() => {
+    if (selectedIds.length === 0) return;
+    setPendingCategories([]);
+    setCategoriesDialogOpen(true);
+  }, [selectedIds.length]);
+
+  const handleConfirmCategories = useCallback(() => {
+    bulkMutation.mutate(
+      {
+        ids: selectedIds,
+        action: "set_categories",
+        categories: pendingCategories,
+      },
+      {
+        onSuccess: () => setCategoriesDialogOpen(false),
+      },
+    );
+  }, [bulkMutation, selectedIds, pendingCategories]);
+
+  const bulkActions = useMemo<BulkAction[]>(
+    () => [
+      {
+        id: "mark_complete",
+        label: "Mark complete",
+        icon: <CheckCheck size={16} />,
+        onClick: handleMarkComplete,
+        disabled: bulkMutation.isPending,
+      },
+      {
+        id: "set_categories",
+        label: "Set categories",
+        icon: <Tag size={16} />,
+        onClick: handleOpenCategoriesDialog,
+        disabled: bulkMutation.isPending,
+      },
+    ],
+    [handleMarkComplete, handleOpenCategoriesDialog, bulkMutation.isPending],
+  );
+
   const tableBody = useMemo(
     () => (
       <TableBody>
-        {sortedRows &&
-          sortedRows
-            .slice(
-              hidePagination ? 0 : validPage * rowsPerPage,
-              hidePagination
-                ? Math.min(sortedRows.length, 100)
-                : validPage * rowsPerPage + rowsPerPage,
-            )
-            .map((task: TaskModel) => {
+        {pageRows.map((task: TaskModel) => {
               const isArchived = task.status === TaskStatus.DELETED;
               return (
                 <TableRow
@@ -185,6 +270,26 @@ const TasksTable: React.FC<ITasksTableProps> = ({
                   }}
                   onClick={() => !isArchived && onRowClick?.(task)}
                 >
+                  {canRunBulkActions && (
+                    <TableCell
+                      padding="checkbox"
+                      sx={{
+                        ...singleTheme.tableStyles.primary.body.cell,
+                        width: "48px",
+                        minWidth: "48px",
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Checkbox
+                        id={`task-row-checkbox-${task.id}`}
+                        value={String(task.id)}
+                        isChecked={isSelected(task.id as number)}
+                        onChange={() => toggleSelection(task.id as number)}
+                        isDisabled={isArchived}
+                        ariaLabel={`Select task ${task.title}`}
+                      />
+                    </TableCell>
+                  )}
                   {/* Task Name */}
                   <TableCell
                     sx={{
@@ -403,9 +508,7 @@ const TasksTable: React.FC<ITasksTableProps> = ({
       </TableBody>
     ),
     [
-      sortedRows,
-      validPage,
-      rowsPerPage,
+      pageRows,
       cellStyle,
       statusOptions,
       isUpdateDisabled,
@@ -414,7 +517,6 @@ const TasksTable: React.FC<ITasksTableProps> = ({
       users,
       onArchive,
       onEdit,
-      hidePagination,
       onRestore,
       onHardDelete,
       sortConfig,
@@ -423,6 +525,9 @@ const TasksTable: React.FC<ITasksTableProps> = ({
       onPriorityChange,
       theme,
       isVisible,
+      canRunBulkActions,
+      isSelected,
+      toggleSelection,
     ],
   );
 
@@ -451,28 +556,79 @@ const TasksTable: React.FC<ITasksTableProps> = ({
           />
         </EmptyState>
       ) : (
-        <TableContainer>
-          <Table sx={singleTheme.tableStyles.primary.frame}>
-            <StandardTableHead
-              columns={visibleTableColumns}
-              sortConfig={sortConfig}
-              onSort={handleSort}
+        <Stack sx={{ width: "100%" }}>
+          {canRunBulkActions && (
+            <BulkActionsToolbar
+              count={selectionCount}
+              onClear={clearSelection}
+              actions={bulkActions}
             />
-            {tableBody}
-            {!hidePagination && (
-              <StandardTablePagination
-                totalCount={totalCount}
-                page={validPage}
-                rowsPerPage={rowsPerPage}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                getRange={getRange}
-                entityLabel="task"
-                colSpan={visibleTableColumns.length}
+          )}
+          <TableContainer>
+            <Table sx={singleTheme.tableStyles.primary.frame}>
+              <StandardTableHead
+                columns={visibleTableColumns}
+                sortConfig={sortConfig}
+                onSort={handleSort}
+                selection={
+                  canRunBulkActions
+                    ? {
+                        allSelected:
+                          allSelected && selectableRows.length > 0,
+                        someSelected,
+                        onToggleAll: toggleAll,
+                        ariaLabel: "Select all tasks on this page",
+                      }
+                    : undefined
+                }
               />
-            )}
-          </Table>
-        </TableContainer>
+              {tableBody}
+              {!hidePagination && (
+                <StandardTablePagination
+                  totalCount={totalCount}
+                  page={validPage}
+                  rowsPerPage={rowsPerPage}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  getRange={getRange}
+                  entityLabel="task"
+                  colSpan={visibleTableColumns.length + (canRunBulkActions ? 1 : 0)}
+                />
+              )}
+            </Table>
+          </TableContainer>
+        </Stack>
+      )}
+
+      {canRunBulkActions && categoriesDialogOpen && (
+        <ConfirmationModal
+          isOpen
+          title={`Set categories for ${selectionCount} task${selectionCount === 1 ? "" : "s"}`}
+          body={
+            <Stack gap={2}>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                These categories will replace the existing categories on every selected task.
+                Leave empty to clear them.
+              </Typography>
+              <ChipInput
+                id="bulk-task-categories-input"
+                label="Categories"
+                value={pendingCategories}
+                onChange={setPendingCategories}
+                placeholder="Type a category and press Enter"
+              />
+            </Stack>
+          }
+          cancelText="Cancel"
+          proceedText="Apply"
+          proceedButtonVariant="contained"
+          onCancel={() => {
+            if (bulkMutation.isPending) return;
+            setCategoriesDialogOpen(false);
+          }}
+          onProceed={handleConfirmCategories}
+          isLoading={bulkMutation.isPending}
+        />
       )}
     </>
   );
