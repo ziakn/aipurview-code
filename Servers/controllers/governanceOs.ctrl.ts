@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import { logStructured } from "../utils/logger/fileLogger";
+import { sequelize } from "../database/db";
 import {
   getAllMappingsQuery,
   getMappingsBetweenFrameworksQuery,
@@ -278,6 +279,37 @@ export async function getUnifiedView(req: Request, res: Response): Promise<any> 
     return res.status(200).json(STATUS_CODE[200](unifiedView));
   } catch (error) {
     logStructured("error", "failed to fetch unified view", FN, FILE_NAME);
+    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+  }
+}
+
+// ============================================
+// ELIGIBILITY
+// ============================================
+
+export async function getEligibility(req: Request, res: Response): Promise<any> {
+  const FN = "getEligibility";
+  logStructured("processing", "checking governance os eligibility", FN, FILE_NAME);
+  try {
+    const { organizationId } = req;
+    if (!organizationId) {
+      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+    }
+
+    // Count distinct frameworks assigned to projects in this org
+    const [result] = await sequelize.query(
+      `SELECT COUNT(DISTINCT pf.framework_id) as framework_count
+       FROM projects_frameworks pf
+       JOIN projects p ON pf.project_id = p.id`,
+    );
+
+    const frameworkCount = parseInt((result as any[])[0]?.framework_count || "0", 10);
+    const eligible = frameworkCount >= 2;
+
+    logStructured("successful", `eligibility: ${eligible}, frameworks: ${frameworkCount}`, FN, FILE_NAME);
+    return res.status(200).json(STATUS_CODE[200]({ eligible, frameworkCount }));
+  } catch (error) {
+    logStructured("error", "failed to check eligibility", FN, FILE_NAME);
     return res.status(500).json(STATUS_CODE[500]((error as Error).message));
   }
 }

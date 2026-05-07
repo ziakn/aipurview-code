@@ -14,6 +14,7 @@ import {
   getCoverage,
   refreshCoverage,
   getUnifiedView,
+  getEligibility,
   getPreferences,
   updatePreferences,
 } from "../controllers/governanceOs.ctrl";
@@ -40,6 +41,9 @@ router.post("/recommend", authenticateJWT, getRecommendations);
 router.get("/coverage/:projectId", authenticateJWT, getCoverage);
 router.post("/coverage/:projectId/refresh", authenticateJWT, authorize(["Admin", "Editor"]), refreshCoverage);
 router.get("/unified-view/:projectId", authenticateJWT, getUnifiedView);
+
+// Eligibility
+router.get("/eligibility", authenticateJWT, getEligibility);
 
 // Preferences
 router.get("/preferences", authenticateJWT, getPreferences);
