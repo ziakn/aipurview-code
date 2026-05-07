@@ -1,6 +1,7 @@
 import { TableBody, TableCell, TableRow, Dialog, useTheme, Typography, Stack } from "@mui/material";
 import { VWLink } from "../../Link";
 import singleTheme from "../../../themes/v1SingleTheme";
+import Checkbox from "../../Inputs/Checkbox";
 import { Suspense, useContext, useEffect, useState } from "react";
 import { ProjectRisk } from "../../../../domain/types/ProjectRisk";
 import { VerifyWiseContext } from "../../../../application/contexts/VerifyWise.context";
@@ -58,6 +59,7 @@ const VWProjectRisksTableBody = ({
   flashRow,
   sortConfig,
   visibleColumns,
+  selection,
 }: IVWProjectRisksTableRow) => {
   const isColVisible = (colId: string) => !visibleColumns || visibleColumns.has(colId);
   const theme = useTheme();
@@ -151,6 +153,26 @@ const VWProjectRisksTableBody = ({
                 }}
                 onClick={(e) => handleEditRisk(row, e)}
               >
+                {selection && (
+                  <TableCell
+                    padding="checkbox"
+                    sx={{
+                      ...getCellStyle(row),
+                      width: "48px",
+                      minWidth: "48px",
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Checkbox
+                      id={`project-risk-row-checkbox-${row.id}`}
+                      value={String(row.id)}
+                      isChecked={selection.isSelected(Number(row.id))}
+                      onChange={() => selection.onToggle(Number(row.id))}
+                      isDisabled={row.is_deleted}
+                      ariaLabel={`Select project risk ${row.risk_name}`}
+                    />
+                  </TableCell>
+                )}
                 <TableCell
                   sx={{
                     ...getCellStyle(row),

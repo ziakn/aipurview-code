@@ -1009,6 +1009,10 @@ const RiskManagement = () => {
                 flashRow={currentRow}
                 hidePagination={options?.hidePagination}
                 visibleColumns={visibleColumns}
+                canRunBulkActions={
+                  !!userRoleName && ["Admin", "Editor"].includes(userRoleName)
+                }
+                onBulkActionSuccess={() => setRefreshKey((k) => k + 1)}
               />
             )}
           />

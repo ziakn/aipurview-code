@@ -71,6 +71,13 @@ export interface IVWProjectRisksTable {
   flashRow: number | null;
   hidePagination?: boolean;
   visibleColumns?: Set<string>;
+  /** Whether the current user can run bulk actions (Admin/Editor). Defaults to false. */
+  canRunBulkActions?: boolean;
+  /** Called after a successful bulk action so the parent can refetch and surface a notification. */
+  onBulkActionSuccess?: (
+    action: "set_owner" | "set_category" | "archive",
+    count: number,
+  ) => void;
 }
 
 /**
@@ -90,6 +97,11 @@ export interface IVWProjectRisksTableRow {
     direction: "asc" | "desc" | null;
   };
   visibleColumns?: Set<string>;
+  /** When provided, renders a leading checkbox cell on each row. */
+  selection?: {
+    isSelected: (id: number) => boolean;
+    onToggle: (id: number) => void;
+  };
 }
 
 /**

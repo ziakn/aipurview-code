@@ -1,5 +1,8 @@
 import {
   Box,
+  Stack,
+  Select,
+  MenuItem,
   Table,
   TableBody,
   TableCell,
@@ -14,12 +17,46 @@ import {
 import singleTheme from "../../../themes/v1SingleTheme";
 import { useCallback, useMemo, useState, useEffect } from "react";
 import TablePaginationActions from "../../TablePagination";
-import { ChevronsUpDown, ChevronUp, ChevronDown, ShieldAlert } from "lucide-react";
+import {
+  ChevronsUpDown,
+  ChevronUp,
+  ChevronDown,
+  ShieldAlert,
+  UserCheck,
+  Tag as TagIcon,
+  Archive,
+} from "lucide-react";
 import VWProjectRisksTableBody from "./VWProjectRisksTableBody";
 import { EmptyState } from "../../EmptyState";
 import { IVWProjectRisksTable } from "../../../types/interfaces/i.risk";
 import { RiskModel } from "../../../../domain/models/Common/risks/risk.model";
 import { text } from "../../../themes/palette";
+import Checkbox from "../../Inputs/Checkbox";
+import ConfirmationModal from "../../Dialogs/ConfirmationModal";
+import BulkActionsToolbar, {
+  type BulkAction,
+} from "../BulkActionsToolbar";
+import { useBulkSelection } from "../../../../application/hooks/useBulkSelection";
+import { useBulkUpdateProjectRisks } from "../../../../application/hooks/useBulkUpdateProjectRisks";
+import useUsers from "../../../../application/hooks/useUsers";
+
+const PROJECT_RISK_CATEGORIES = [
+  "Strategic risk",
+  "Operational risk",
+  "Compliance risk",
+  "Financial risk",
+  "Cybersecurity risk",
+  "Reputational risk",
+  "Legal risk",
+  "Technological risk",
+  "Third-party/vendor risk",
+  "Environmental risk",
+  "Human resources risk",
+  "Geopolitical risk",
+  "Fraud risk",
+  "Data privacy risk",
+  "Health and safety risk",
+] as const;
 
 const SelectorVertical = (props: React.SVGAttributes<SVGSVGElement>) => (
   <ChevronsUpDown size={16} {...props} />
@@ -51,7 +88,12 @@ const SortableTableHead: React.FC<{
   columns: typeof columns;
   sortConfig: SortConfig;
   onSort: (columnId: string) => void;
-}> = ({ columns, sortConfig, onSort }) => {
+  selection?: {
+    allSelected: boolean;
+    someSelected: boolean;
+    onToggleAll: () => void;
+  };
+}> = ({ columns, sortConfig, onSort, selection }) => {
   const theme = useTheme();
 
   return (
@@ -61,6 +103,26 @@ const SortableTableHead: React.FC<{
       }}
     >
       <TableRow sx={singleTheme.tableStyles.primary.header.row}>
+        {selection && (
+          <TableCell
+            padding="checkbox"
+            sx={{
+              ...singleTheme.tableStyles.primary.header.cell,
+              width: "48px",
+              minWidth: "48px",
+              textAlign: "center",
+            }}
+          >
+            <Checkbox
+              id="project-risks-select-all"
+              value="select-all"
+              isChecked={selection.allSelected}
+              isIndeterminate={selection.someSelected && !selection.allSelected}
+              onChange={selection.onToggleAll}
+              ariaLabel="Select all project risks"
+            />
+          </TableCell>
+        )}
         {columns.map((column) => (
           <TableCell
             key={column.id}
@@ -130,6 +192,8 @@ const VWProjectRisksTable = ({
   flashRow,
   hidePagination = false,
   visibleColumns,
+  canRunBulkActions = false,
+  onBulkActionSuccess,
 }: IVWProjectRisksTable) => {
   const filteredColumns = useMemo(
     () => (visibleColumns ? columns.filter((col) => visibleColumns.has(col.id)) : columns),
@@ -328,14 +392,134 @@ const VWProjectRisksTable = ({
     [setPage],
   );
 
+  // ----- Bulk actions -----
+  // Selection scope: all non-archived rows currently visible (full filtered list).
+  const selectableRows = useMemo(
+    () => sortedRows.filter((r) => !r.is_deleted),
+    [sortedRows],
+  );
+  const getRowId = useCallback((r: RiskModel) => Number(r.id), []);
+  const {
+    selectedIds,
+    isSelected,
+    toggle: toggleSelection,
+    toggleAll,
+    clear: clearSelection,
+    allSelected,
+    someSelected,
+    count: selectionCount,
+  } = useBulkSelection<RiskModel>({ rows: selectableRows, getId: getRowId });
+
+  const { users } = useUsers();
+  const [ownerDialogOpen, setOwnerDialogOpen] = useState(false);
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
+  const [pendingOwnerId, setPendingOwnerId] = useState<string>("");
+  const [pendingCategories, setPendingCategories] = useState<string[]>([]);
+
+  const bulkMutation = useBulkUpdateProjectRisks({
+    onSuccess: (payload) => {
+      clearSelection();
+      setOwnerDialogOpen(false);
+      setCategoryDialogOpen(false);
+      setPendingOwnerId("");
+      setPendingCategories([]);
+      onBulkActionSuccess?.(payload.action, payload.ids.length);
+    },
+  });
+
+  const handleConfirmOwner = useCallback(() => {
+    if (!pendingOwnerId || selectedIds.length === 0) return;
+    bulkMutation.mutate({
+      ids: selectedIds,
+      action: "set_owner",
+      ownerId: Number(pendingOwnerId),
+    });
+  }, [bulkMutation, pendingOwnerId, selectedIds]);
+
+  const handleConfirmCategory = useCallback(() => {
+    if (selectedIds.length === 0) return;
+    bulkMutation.mutate({
+      ids: selectedIds,
+      action: "set_category",
+      categories: pendingCategories,
+    });
+  }, [bulkMutation, pendingCategories, selectedIds]);
+
+  const handleConfirmArchive = useCallback(() => {
+    if (selectedIds.length === 0) return;
+    bulkMutation.mutate({ ids: selectedIds, action: "archive" });
+  }, [bulkMutation, selectedIds]);
+
+  const bulkActions = useMemo<BulkAction[]>(
+    () => [
+      {
+        id: "set_owner",
+        label: "Set owner",
+        icon: <UserCheck size={16} />,
+        onClick: () => {
+          setPendingOwnerId("");
+          setOwnerDialogOpen(true);
+        },
+        disabled: bulkMutation.isPending,
+      },
+      {
+        id: "set_category",
+        label: "Set category",
+        icon: <TagIcon size={16} />,
+        onClick: () => {
+          setPendingCategories([]);
+          setCategoryDialogOpen(true);
+        },
+        disabled: bulkMutation.isPending,
+      },
+      {
+        id: "archive",
+        label: "Archive",
+        icon: <Archive size={16} />,
+        onClick: handleConfirmArchive,
+        disabled: bulkMutation.isPending,
+        confirm: {
+          title: `Archive ${selectionCount} project risk${
+            selectionCount === 1 ? "" : "s"
+          }?`,
+          body: "Archived risks are soft-deleted: they're hidden from the active risk register but remain available for audit history.",
+          confirmLabel: "Archive",
+          danger: true,
+        },
+      },
+    ],
+    [bulkMutation.isPending, handleConfirmArchive, selectionCount],
+  );
+
   return (
+    <Stack sx={{ width: "100%" }}>
+      {canRunBulkActions && (
+        <BulkActionsToolbar
+          count={selectionCount}
+          onClear={clearSelection}
+          actions={bulkActions}
+        />
+      )}
     <TableContainer>
       <Table
         sx={{
           ...singleTheme.tableStyles.primary.frame,
         }}
       >
-        <SortableTableHead columns={filteredColumns} sortConfig={sortConfig} onSort={handleSort} />
+        <SortableTableHead
+          columns={filteredColumns}
+          sortConfig={sortConfig}
+          onSort={handleSort}
+          selection={
+            canRunBulkActions
+              ? {
+                  allSelected: allSelected && selectableRows.length > 0,
+                  someSelected,
+                  onToggleAll: toggleAll,
+                }
+              : undefined
+          }
+        />
         {sortedRows.length !== 0 ? (
           <VWProjectRisksTableBody
             rows={sortedRows}
@@ -347,11 +531,19 @@ const VWProjectRisksTable = ({
             flashRow={flashRow}
             sortConfig={sortConfig}
             visibleColumns={visibleColumns}
+            selection={
+              canRunBulkActions
+                ? { isSelected, onToggle: toggleSelection }
+                : undefined
+            }
           />
         ) : (
           <TableBody>
             <TableRow>
-              <TableCell colSpan={filteredColumns.length} sx={{ border: "none", p: 0 }}>
+              <TableCell
+                colSpan={filteredColumns.length + (canRunBulkActions ? 1 : 0)}
+                sx={{ border: "none", p: 0 }}
+              >
                 <EmptyState
                   icon={ShieldAlert}
                   message="There is currently no data in this table."
@@ -363,7 +555,10 @@ const VWProjectRisksTable = ({
         {!hidePagination && (
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={filteredColumns.length} sx={{ border: "none", p: 0 }}>
+              <TableCell
+                colSpan={filteredColumns.length + (canRunBulkActions ? 1 : 0)}
+                sx={{ border: "none", p: 0 }}
+              >
                 <Box
                   sx={{
                     display: "flex",
@@ -451,6 +646,101 @@ const VWProjectRisksTable = ({
         )}
       </Table>
     </TableContainer>
+
+    {canRunBulkActions && ownerDialogOpen && (
+      <ConfirmationModal
+        isOpen
+        title={`Set owner on ${selectionCount} project risk${
+          selectionCount === 1 ? "" : "s"
+        }`}
+        body={
+          <Stack gap={2}>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
+              The selected user becomes the risk owner for every selected risk.
+            </Typography>
+            <Select
+              size="small"
+              value={pendingOwnerId}
+              onChange={(e) => setPendingOwnerId(String(e.target.value))}
+              displayEmpty
+              sx={{ minWidth: 280 }}
+            >
+              <MenuItem value="">Choose an owner…</MenuItem>
+              {users.map((u: { id: number; name: string; surname: string }) => (
+                <MenuItem key={u.id} value={String(u.id)}>
+                  {u.name} {u.surname}
+                </MenuItem>
+              ))}
+            </Select>
+          </Stack>
+        }
+        cancelText="Cancel"
+        proceedText="Assign"
+        proceedButtonVariant="contained"
+        confirmBtnSx={{
+          opacity: pendingOwnerId ? 1 : 0.5,
+          pointerEvents: pendingOwnerId ? "auto" : "none",
+        }}
+        onCancel={() => {
+          if (bulkMutation.isPending) return;
+          setOwnerDialogOpen(false);
+        }}
+        onProceed={handleConfirmOwner}
+        isLoading={bulkMutation.isPending}
+      />
+    )}
+
+    {canRunBulkActions && categoryDialogOpen && (
+      <ConfirmationModal
+        isOpen
+        title={`Set categories on ${selectionCount} project risk${
+          selectionCount === 1 ? "" : "s"
+        }`}
+        body={
+          <Stack gap={2}>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
+              The selected categories will replace any existing categories. Leave empty
+              to clear them.
+            </Typography>
+            <Select
+              size="small"
+              multiple
+              value={pendingCategories}
+              onChange={(e) =>
+                setPendingCategories(
+                  typeof e.target.value === "string"
+                    ? e.target.value.split(",")
+                    : (e.target.value as string[]),
+                )
+              }
+              renderValue={(values) =>
+                (values as string[]).length === 0
+                  ? "Choose categories…"
+                  : (values as string[]).join(", ")
+              }
+              displayEmpty
+              sx={{ minWidth: 320 }}
+            >
+              {PROJECT_RISK_CATEGORIES.map((c) => (
+                <MenuItem key={c} value={c}>
+                  {c}
+                </MenuItem>
+              ))}
+            </Select>
+          </Stack>
+        }
+        cancelText="Cancel"
+        proceedText="Apply"
+        proceedButtonVariant="contained"
+        onCancel={() => {
+          if (bulkMutation.isPending) return;
+          setCategoryDialogOpen(false);
+        }}
+        onProceed={handleConfirmCategory}
+        isLoading={bulkMutation.isPending}
+      />
+    )}
+    </Stack>
   );
 };
 
