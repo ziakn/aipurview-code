@@ -127,4 +127,14 @@ describe("useBulkSelection", () => {
     expect(result.current.someSelected).toBe(false);
     expect(result.current.count).toBe(3);
   });
+
+  it("setAll adds every supplied id, unions with existing selection, dedupes", () => {
+    const { result } = renderHook(() => useBulkSelection<Row>({ rows: sampleRows, getId }));
+
+    act(() => result.current.toggle(2));
+    act(() => result.current.setAll([1, 2, 3, 99]));
+
+    expect(result.current.selectedIds.sort((a, b) => a - b)).toEqual([1, 2, 3, 99]);
+    expect(result.current.count).toBe(4);
+  });
 });

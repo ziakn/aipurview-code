@@ -78,6 +78,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
     isSelected,
     toggle: toggleSelection,
     toggleAll,
+    setAll: setAllSelected,
     clear: clearSelection,
     allSelected,
     someSelected,
@@ -259,7 +260,15 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
   return (
     <>
       {canRunBulkActions && (
-        <BulkActionsToolbar count={selectionCount} onClear={clearSelection} actions={bulkActions} />
+        <BulkActionsToolbar
+          count={selectionCount}
+          onClear={clearSelection}
+          actions={bulkActions}
+          selectAll={{
+            totalCount: data.length,
+            onSelectAll: () => setAllSelected(data.map((p) => Number(p.id))),
+          }}
+        />
       )}
       <CustomizablePolicyTable
         data={{ rows, cols: visibleTableHeaders }}

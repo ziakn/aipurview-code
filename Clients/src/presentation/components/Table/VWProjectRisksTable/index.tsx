@@ -401,11 +401,17 @@ const VWProjectRisksTable = ({
     isSelected,
     toggle: toggleSelection,
     toggleAll,
+    setAll: setAllSelected,
     clear: clearSelection,
     allSelected,
     someSelected,
     count: selectionCount,
   } = useBulkSelection<RiskModel>({ rows: selectableRows, getId: getRowId });
+
+  const allSelectableRiskIds = useMemo(
+    () => selectableRows.map((r) => Number(r.id)),
+    [selectableRows],
+  );
 
   const { users } = useUsers();
   const [ownerDialogOpen, setOwnerDialogOpen] = useState(false);
@@ -489,7 +495,15 @@ const VWProjectRisksTable = ({
   return (
     <Stack sx={{ width: "100%" }}>
       {canRunBulkActions && (
-        <BulkActionsToolbar count={selectionCount} onClear={clearSelection} actions={bulkActions} />
+        <BulkActionsToolbar
+          count={selectionCount}
+          onClear={clearSelection}
+          actions={bulkActions}
+          selectAll={{
+            totalCount: allSelectableRiskIds.length,
+            onSelectAll: () => setAllSelected(allSelectableRiskIds),
+          }}
+        />
       )}
       <TableContainer>
         <Table
@@ -561,6 +575,7 @@ const VWProjectRisksTable = ({
                         fontSize: 12,
                         opacity: 0.7,
                         color: theme.palette.text.tertiary,
+                        whiteSpace: "nowrap",
                       }}
                     >
                       Showing {getRange} of {sortedRows?.length} project risk(s)

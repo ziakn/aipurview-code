@@ -358,11 +358,18 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
     isSelected,
     toggle: toggleSelection,
     toggleAll,
+    setAll: setAllSelected,
     clear: clearSelection,
     allSelected,
     someSelected,
     count: selectionCount,
   } = useBulkSelection<FileModel>({ rows: paginatedRows, getId: getRowId });
+
+  // Full filtered/sorted set across all pages (for the toolbar's "Select all N").
+  const allSelectableFileIds = useMemo(
+    () => sortedBodyData.map((f) => Number(f.id)),
+    [sortedBodyData],
+  );
 
   const [folderDialogOpen, setFolderDialogOpen] = useState(false);
   const [tagsDialogOpen, setTagsDialogOpen] = useState(false);
@@ -556,7 +563,15 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
   return (
     <>
       {canRunBulkActions && (
-        <BulkActionsToolbar count={selectionCount} onClear={clearSelection} actions={bulkActions} />
+        <BulkActionsToolbar
+          count={selectionCount}
+          onClear={clearSelection}
+          actions={bulkActions}
+          selectAll={{
+            totalCount: allSelectableFileIds.length,
+            onSelectAll: () => setAllSelected(allSelectableFileIds),
+          }}
+        />
       )}
       <TableContainer id={table}>
         <Table sx={singleTheme.tableStyles.primary.frame}>
@@ -818,9 +833,11 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                     paddingX: theme.spacing(2),
                     fontSize: 12,
                     opacity: 0.7,
+                    whiteSpace: "nowrap",
+                    width: 1,
                   }}
                 >
-                  Showing {page * rowsPerPage + 1} -
+                  Showing {page * rowsPerPage + 1} -{" "}
                   {Math.min(page * rowsPerPage + rowsPerPage, sortedBodyData.length)} of{" "}
                   {sortedBodyData.length} items
                 </TableCell>

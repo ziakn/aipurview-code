@@ -338,6 +338,8 @@ const CustomizablePolicyTable = ({
                       paddingX: theme.spacing(2),
                       fontSize: 12,
                       opacity: 0.7,
+                      whiteSpace: "nowrap",
+                      width: 1,
                     }}
                   >
                     Showing {page * rowsPerPage + 1} -{" "}

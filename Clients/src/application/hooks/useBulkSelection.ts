@@ -10,6 +10,13 @@ interface UseBulkSelectionReturn {
   isSelected: (id: number) => boolean;
   toggle: (id: number) => void;
   toggleAll: () => void;
+  /**
+   * Add every id in the supplied list to the selection (union with existing).
+   * Useful for "Select all across pages" toolbar actions where the caller
+   * supplies the full filtered set, separate from the per-page rows passed
+   * to the hook for `toggleAll` semantics.
+   */
+  setAll: (ids: number[]) => void;
   clear: () => void;
   allSelected: boolean;
   someSelected: boolean;
@@ -65,6 +72,14 @@ export function useBulkSelection<T>(options: UseBulkSelectionOptions<T>): UseBul
     });
   }, [visibleIds]);
 
+  const setAll = useCallback((ids: number[]) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      for (const id of ids) next.add(id);
+      return next;
+    });
+  }, []);
+
   const clear = useCallback(() => setSelected(new Set()), []);
 
   return {
@@ -72,6 +87,7 @@ export function useBulkSelection<T>(options: UseBulkSelectionOptions<T>): UseBul
     isSelected,
     toggle,
     toggleAll,
+    setAll,
     clear,
     allSelected,
     someSelected,

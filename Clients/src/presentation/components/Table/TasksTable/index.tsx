@@ -176,11 +176,21 @@ const TasksTable: React.FC<ITasksTableProps> = ({
     isSelected,
     toggle: toggleSelection,
     toggleAll,
+    setAll: setAllSelected,
     clear: clearSelection,
     allSelected,
     someSelected,
     count: selectionCount,
   } = useBulkSelection<TaskModel>({ rows: selectableRows, getId: getRowId });
+
+  // Full filtered/sorted set across all pages (for the toolbar's "Select all N").
+  const allSelectableIds = useMemo(
+    () =>
+      (sortedRows ?? [])
+        .filter((task) => task.status !== TaskStatus.DELETED)
+        .map((task) => task.id as number),
+    [sortedRows],
+  );
 
   const [categoriesDialogOpen, setCategoriesDialogOpen] = useState(false);
   const [pendingCategories, setPendingCategories] = useState<string[]>([]);
@@ -558,6 +568,10 @@ const TasksTable: React.FC<ITasksTableProps> = ({
               count={selectionCount}
               onClear={clearSelection}
               actions={bulkActions}
+              selectAll={{
+                totalCount: allSelectableIds.length,
+                onSelectAll: () => setAllSelected(allSelectableIds),
+              }}
             />
           )}
           <TableContainer>
