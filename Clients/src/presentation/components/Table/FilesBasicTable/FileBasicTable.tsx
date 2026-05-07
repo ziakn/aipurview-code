@@ -14,6 +14,8 @@ import {
   Typography,
   Select,
   MenuItem,
+  ListItemText,
+  Checkbox as MuiCheckbox,
 } from "@mui/material";
 import TablePaginationActions from "../../TablePagination";
 import singleTheme from "../../../themes/v1SingleTheme";
@@ -870,16 +872,15 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
           title={`Move ${selectionCount} file${selectionCount === 1 ? "" : "s"} to a folder`}
           body={
             <Stack gap={2}>
-              <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                Selected files will be added to the chosen folder. Existing folder
-                assignments are preserved.
+              <Typography variant="body2" sx={{ color: "text.secondary", fontSize: 12 }}>
+                Adds to the chosen folder; existing assignments are preserved.
               </Typography>
               {foldersLoading ? (
-                <Typography variant="body2" sx={{ color: "text.disabled" }}>
+                <Typography variant="body2" sx={{ color: "text.disabled", fontSize: 12 }}>
                   Loading folders...
                 </Typography>
               ) : folders.length === 0 ? (
-                <Typography variant="body2" sx={{ color: "text.disabled" }}>
+                <Typography variant="body2" sx={{ color: "text.disabled", fontSize: 12 }}>
                   No folders yet — create one from the file manager first.
                 </Typography>
               ) : (
@@ -888,11 +889,19 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                   value={selectedFolderId}
                   onChange={(e) => setSelectedFolderId(String(e.target.value))}
                   displayEmpty
-                  sx={{ minWidth: 280 }}
+                  sx={{ width: 280, fontSize: 13 }}
+                  MenuProps={{ PaperProps: { sx: { maxHeight: 280 } } }}
                 >
-                  <MenuItem value="">Choose a folder…</MenuItem>
+                  <MenuItem value="" dense sx={{ py: 0.5, fontSize: 13 }}>
+                    Choose a folder…
+                  </MenuItem>
                   {folders.map((f) => (
-                    <MenuItem key={f.id} value={String(f.id)}>
+                    <MenuItem
+                      key={f.id}
+                      value={String(f.id)}
+                      dense
+                      sx={{ py: 0.5, fontSize: 13 }}
+                    >
                       {f.name}
                     </MenuItem>
                   ))}
@@ -923,7 +932,7 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
           body={
             <Stack gap={2}>
               <Stack direction="row" alignItems="center" gap={2}>
-                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                <Typography variant="body2" sx={{ color: "text.secondary", fontSize: 12 }}>
                   Mode
                 </Typography>
                 <Select
@@ -932,18 +941,25 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                   onChange={(e) =>
                     setTagMode(e.target.value as "set" | "add" | "remove")
                   }
-                  sx={{ minWidth: 160 }}
+                  sx={{ width: 160, fontSize: 13 }}
+                  MenuProps={{ PaperProps: { sx: { maxHeight: 280 } } }}
                 >
-                  <MenuItem value="add">Add tags</MenuItem>
-                  <MenuItem value="remove">Remove tags</MenuItem>
-                  <MenuItem value="set">Replace tags</MenuItem>
+                  <MenuItem value="add" dense sx={{ py: 0.5, fontSize: 13 }}>
+                    Add tags
+                  </MenuItem>
+                  <MenuItem value="remove" dense sx={{ py: 0.5, fontSize: 13 }}>
+                    Remove tags
+                  </MenuItem>
+                  <MenuItem value="set" dense sx={{ py: 0.5, fontSize: 13 }}>
+                    Replace tags
+                  </MenuItem>
                 </Select>
               </Stack>
 
               {tagMode === "remove" ? (
                 dialogTagsSnapshot.current.length === 0 ? (
-                  <Typography variant="body2" sx={{ color: "text.disabled" }}>
-                    The selected file{selectionCount === 1 ? "" : "s"} have no tags to remove.
+                  <Typography variant="body2" sx={{ color: "text.disabled", fontSize: 12 }}>
+                    No tags on the selected file{selectionCount === 1 ? "" : "s"} to remove.
                   </Typography>
                 ) : (
                   <Select
@@ -963,11 +979,20 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                         : (values as string[]).join(", ")
                     }
                     displayEmpty
-                    sx={{ minWidth: 320 }}
+                    sx={{ width: 320, fontSize: 13 }}
+                    MenuProps={{ PaperProps: { sx: { maxHeight: 280 } } }}
                   >
                     {dialogTagsSnapshot.current.map((t) => (
-                      <MenuItem key={t} value={t}>
-                        {t}
+                      <MenuItem key={t} value={t} dense sx={{ py: 0.25 }}>
+                        <MuiCheckbox
+                          checked={pendingTags.includes(t)}
+                          size="small"
+                          sx={{ p: 0.25, mr: 1, "& svg": { fontSize: 16 } }}
+                        />
+                        <ListItemText
+                          primary={t}
+                          primaryTypographyProps={{ fontSize: 13 }}
+                        />
                       </MenuItem>
                     ))}
                   </Select>
@@ -984,13 +1009,12 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
 
               {tagMode === "add" && dialogTagsSnapshot.current.length > 0 && (
                 <Typography variant="body2" sx={{ color: "text.secondary", fontSize: 12 }}>
-                  Already on selected file{selectionCount === 1 ? "" : "s"}:{" "}
-                  {dialogTagsSnapshot.current.join(", ")}
+                  Already set: {dialogTagsSnapshot.current.join(", ")}
                 </Typography>
               )}
               {tagMode === "set" && pendingTags.length === 0 && (
-                <Typography variant="body2" sx={{ color: "warning.main" }}>
-                  Replace mode with no tags will clear all tags from the selected files.
+                <Typography variant="body2" sx={{ color: "warning.main", fontSize: 12 }}>
+                  Empty Replace will clear all tags.
                 </Typography>
               )}
             </Stack>

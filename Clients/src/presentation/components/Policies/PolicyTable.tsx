@@ -4,6 +4,8 @@ import {
   Stack,
   Select,
   MenuItem,
+  ListItemText,
+  Checkbox as MuiCheckbox,
   TableRow,
   TableCell,
   Typography,
@@ -463,20 +465,27 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
           }`}
           body={
             <Stack gap={2}>
-              <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                The selected reviewer becomes the sole assigned reviewer for every selected
-                policy. Existing reviewer assignments are replaced.
+              <Typography variant="body2" sx={{ color: "text.secondary", fontSize: 12 }}>
+                Replaces existing reviewer assignments.
               </Typography>
               <Select
                 size="small"
                 value={pendingReviewerId}
                 onChange={(e) => setPendingReviewerId(String(e.target.value))}
                 displayEmpty
-                sx={{ minWidth: 280 }}
+                sx={{ width: 280, fontSize: 13 }}
+                MenuProps={{ PaperProps: { sx: { maxHeight: 280 } } }}
               >
-                <MenuItem value="">Choose a reviewer…</MenuItem>
+                <MenuItem value="" dense sx={{ py: 0.5, fontSize: 13 }}>
+                  Choose a reviewer…
+                </MenuItem>
                 {users.map((u) => (
-                  <MenuItem key={u.id} value={String(u.id)}>
+                  <MenuItem
+                    key={u.id}
+                    value={String(u.id)}
+                    dense
+                    sx={{ py: 0.5, fontSize: 13 }}
+                  >
                     {u.name} {u.surname}
                   </MenuItem>
                 ))}
@@ -507,8 +516,8 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
           }`}
           body={
             <Stack gap={2}>
-              <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                The selected tags will replace any existing tags. Leave empty to clear them.
+              <Typography variant="body2" sx={{ color: "text.secondary", fontSize: 12 }}>
+                Replaces existing tags. Leave empty to clear.
               </Typography>
               <Select
                 size="small"
@@ -527,11 +536,20 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
                     : (values as string[]).join(", ")
                 }
                 displayEmpty
-                sx={{ minWidth: 320 }}
+                sx={{ width: 320, fontSize: 13 }}
+                MenuProps={{ PaperProps: { sx: { maxHeight: 280 } } }}
               >
                 {POLICY_TAGS.map((t) => (
-                  <MenuItem key={t} value={t}>
-                    {t}
+                  <MenuItem key={t} value={t} dense sx={{ py: 0.25 }}>
+                    <MuiCheckbox
+                      checked={pendingTags.includes(t)}
+                      size="small"
+                      sx={{ p: 0.25, mr: 1, "& svg": { fontSize: 16 } }}
+                    />
+                    <ListItemText
+                      primary={t}
+                      primaryTypographyProps={{ fontSize: 13 }}
+                    />
                   </MenuItem>
                 ))}
               </Select>

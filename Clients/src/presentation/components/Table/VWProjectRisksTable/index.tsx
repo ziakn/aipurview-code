@@ -3,6 +3,8 @@ import {
   Stack,
   Select,
   MenuItem,
+  ListItemText,
+  Checkbox as MuiCheckbox,
   Table,
   TableBody,
   TableCell,
@@ -655,19 +657,24 @@ const VWProjectRisksTable = ({
         }`}
         body={
           <Stack gap={2}>
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              The selected user becomes the risk owner for every selected risk.
-            </Typography>
             <Select
               size="small"
               value={pendingOwnerId}
               onChange={(e) => setPendingOwnerId(String(e.target.value))}
               displayEmpty
-              sx={{ minWidth: 280 }}
+              sx={{ width: 280, fontSize: 13 }}
+              MenuProps={{ PaperProps: { sx: { maxHeight: 280 } } }}
             >
-              <MenuItem value="">Choose an owner…</MenuItem>
+              <MenuItem value="" dense sx={{ py: 0.5, fontSize: 13 }}>
+                Choose an owner…
+              </MenuItem>
               {users.map((u: { id: number; name: string; surname: string }) => (
-                <MenuItem key={u.id} value={String(u.id)}>
+                <MenuItem
+                  key={u.id}
+                  value={String(u.id)}
+                  dense
+                  sx={{ py: 0.5, fontSize: 13 }}
+                >
                   {u.name} {u.surname}
                 </MenuItem>
               ))}
@@ -698,9 +705,8 @@ const VWProjectRisksTable = ({
         }`}
         body={
           <Stack gap={2}>
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              The selected categories will replace any existing categories. Leave empty
-              to clear them.
+            <Typography variant="body2" sx={{ color: "text.secondary", fontSize: 12 }}>
+              Replaces existing categories. Leave empty to clear.
             </Typography>
             <Select
               size="small"
@@ -719,11 +725,20 @@ const VWProjectRisksTable = ({
                   : (values as string[]).join(", ")
               }
               displayEmpty
-              sx={{ minWidth: 320 }}
+              sx={{ width: 320, fontSize: 13 }}
+              MenuProps={{ PaperProps: { sx: { maxHeight: 280 } } }}
             >
               {PROJECT_RISK_CATEGORIES.map((c) => (
-                <MenuItem key={c} value={c}>
-                  {c}
+                <MenuItem key={c} value={c} dense sx={{ py: 0.25 }}>
+                  <MuiCheckbox
+                    checked={pendingCategories.includes(c)}
+                    size="small"
+                    sx={{ p: 0.25, mr: 1, "& svg": { fontSize: 16 } }}
+                  />
+                  <ListItemText
+                    primary={c}
+                    primaryTypographyProps={{ fontSize: 13 }}
+                  />
                 </MenuItem>
               ))}
             </Select>
