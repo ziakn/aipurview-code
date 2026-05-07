@@ -14,20 +14,20 @@ const router = express.Router();
 
 // Rate limiter: max 5 requests per minute per IP for password reset
 const resetPasswordLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000,    // 1 minute
-  max: 5,                     // limit each IP to 5 requests per windowMs
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 5, // limit each IP to 5 requests per windowMs
   message: {
-    error: "Too many password reset requests from this IP, please try again later."
-  }
+    error: "Too many password reset requests from this IP, please try again later.",
+  },
 });
 
 // Rate limiter: max 5 requests per minute per IP for invite route
 const inviteLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000,    // 1 minute
-  max: 5,                     // limit each IP to 5 requests per windowMs
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 5, // limit each IP to 5 requests per windowMs
   message: {
-    error: "Too many invite requests from this IP, please try again later."
-  }
+    error: "Too many invite requests from this IP, please try again later.",
+  },
 });
 
 router.post("/invite", authenticateJWT, inviteLimiter, async (req, res) => {
@@ -52,21 +52,16 @@ router.post("/reset-password", resetPasswordLimiter, async (req: Request, res: R
     // Only send email if user exists
     if (userData) {
       // Read the MJML template file
-      const templatePath = path.resolve(
-        __dirname,
-        "../templates/password-reset-email.mjml"
-      );
+      const templatePath = path.resolve(__dirname, "../templates/password-reset-email.mjml");
       const template = fs.readFileSync(templatePath, "utf8");
 
       const token = generateInviteToken({
         name: name,
-        email: to
-      }) as string
+        email: to,
+      }) as string;
 
       // Data to be replaced in the template
-      const url = `${frontEndUrl}/set-new-password?${new URLSearchParams(
-        { token }
-      ).toString()}`
+      const url = `${frontEndUrl}/set-new-password?${new URLSearchParams({ token }).toString()}`;
 
       const data = { name: name, email, url };
 
@@ -103,7 +98,9 @@ router.post("/reset-password", resetPasswordLimiter, async (req: Request, res: R
     }
 
     // Always return the same response regardless of whether user exists
-    return res.status(200).json({ message: "If an account exists with this email, we'll send a password reset link" });
+    return res
+      .status(200)
+      .json({ message: "If an account exists with this email, we'll send a password reset link" });
   } catch (error) {
     console.error("Error processing password reset:", error);
 
@@ -117,7 +114,9 @@ router.post("/reset-password", resetPasswordLimiter, async (req: Request, res: R
       tenantId: req.tenantId!,
     });
 
-    return res.status(500).json({ error: "Failed to process request", details: (error as Error).message });
+    return res
+      .status(500)
+      .json({ error: "Failed to process request", details: (error as Error).message });
   }
 });
 

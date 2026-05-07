@@ -45,16 +45,12 @@ import {
   sendSubmissionRejectedEmail,
 } from "../services/intakeFormEmail.service";
 import { calculateSubmissionRisk } from "../services/intakeRiskScoring.service";
-import {
-  generateSuggestedQuestions,
-  generateFieldGuidance,
-} from "../services/intakeLLM.service";
+import { generateSuggestedQuestions, generateFieldGuidance } from "../services/intakeLLM.service";
 import { getCompanyLogoQuery } from "../utils/aiTrustCentre.utils";
 
 import { translateError } from "../utils/i18n.utils";
 /** Safely extract a single string from req.params (which may be string | string[]). */
-const paramStr = (val: string | string[]): string =>
-  Array.isArray(val) ? val[0] : val;
+const paramStr = (val: string | string[]): string => (Array.isArray(val) ? val[0] : val);
 
 /** Secret key for signing CAPTCHA and resubmission tokens. */
 const TOKEN_SECRET = process.env.JWT_SECRET || process.env.ENCRYPTION_KEY;
@@ -73,7 +69,7 @@ function mapToAiRiskClassification(value: string): AiRiskClassification | string
     "minimal risk": AiRiskClassification.MINIMAL_RISK,
     "limited risk": AiRiskClassification.LIMITED_RISK,
     "high risk": AiRiskClassification.HIGH_RISK,
-    "prohibited": AiRiskClassification.PROHIBITED,
+    prohibited: AiRiskClassification.PROHIBITED,
   };
   return map[value?.toLowerCase()?.trim()] || value || "";
 }
@@ -115,10 +111,7 @@ function parseId(param: string | string[]): number {
  * Validate submitted form data against the form schema.
  * Returns an array of error messages (empty if valid).
  */
-function validateFormData(
-  formData: Record<string, unknown>,
-  schema: IIntakeFormSchema
-): string[] {
+function validateFormData(formData: Record<string, unknown>, schema: IIntakeFormSchema): string[] {
   const errors: string[] = [];
 
   for (const field of schema.fields) {
@@ -175,11 +168,21 @@ function validateFormData(
         if (typeof value !== "string") {
           errors.push(`"${field.label}" must be text`);
         } else if (field.validation) {
-          if (field.validation.minLength !== undefined && value.length < field.validation.minLength) {
-            errors.push(`"${field.label}" must be at least ${field.validation.minLength} characters`);
+          if (
+            field.validation.minLength !== undefined &&
+            value.length < field.validation.minLength
+          ) {
+            errors.push(
+              `"${field.label}" must be at least ${field.validation.minLength} characters`,
+            );
           }
-          if (field.validation.maxLength !== undefined && value.length > field.validation.maxLength) {
-            errors.push(`"${field.label}" must be at most ${field.validation.maxLength} characters`);
+          if (
+            field.validation.maxLength !== undefined &&
+            value.length > field.validation.maxLength
+          ) {
+            errors.push(
+              `"${field.label}" must be at most ${field.validation.maxLength} characters`,
+            );
           }
         }
         break;
@@ -238,7 +241,7 @@ function validateFormData(
  */
 function buildEntityDataFromSubmission(
   submissionData: Record<string, unknown>,
-  formSchema: IIntakeFormSchema
+  formSchema: IIntakeFormSchema,
 ): Record<string, unknown> {
   const result: Record<string, unknown> = {};
   for (const field of formSchema.fields) {
@@ -337,9 +340,20 @@ export async function createIntakeForm(req: Request, res: Response) {
 
   try {
     const {
-      name, description, slug, entityType, schema, submitButtonText,
-      status, ttlExpiresAt, recipients, riskTierSystem, riskAssessmentConfig,
-      llmKeyId, suggestedQuestionsEnabled, designSettings,
+      name,
+      description,
+      slug,
+      entityType,
+      schema,
+      submitButtonText,
+      status,
+      ttlExpiresAt,
+      recipients,
+      riskTierSystem,
+      riskAssessmentConfig,
+      llmKeyId,
+      suggestedQuestionsEnabled,
+      designSettings,
     } = req.body;
 
     if (!name || !entityType) {
@@ -376,7 +390,7 @@ export async function createIntakeForm(req: Request, res: Response) {
         createdBy: req.userId!,
       },
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     await transaction.commit();
@@ -434,9 +448,20 @@ export async function updateIntakeForm(req: Request, res: Response) {
     }
 
     const {
-      name, description, slug, entityType, schema, submitButtonText,
-      status, ttlExpiresAt, recipients, riskTierSystem, riskAssessmentConfig,
-      llmKeyId, suggestedQuestionsEnabled, designSettings,
+      name,
+      description,
+      slug,
+      entityType,
+      schema,
+      submitButtonText,
+      status,
+      ttlExpiresAt,
+      recipients,
+      riskTierSystem,
+      riskAssessmentConfig,
+      llmKeyId,
+      suggestedQuestionsEnabled,
+      designSettings,
     } = req.body;
 
     if (status && !Object.values(IntakeFormStatus).includes(status)) {
@@ -468,7 +493,7 @@ export async function updateIntakeForm(req: Request, res: Response) {
         designSettings,
       },
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     await transaction.commit();
@@ -773,23 +798,25 @@ export async function getSubmissionPreview(req: Request, res: Response) {
     // Build entity preview from submission data using field mappings
     const entityData = buildEntityDataFromSubmission(
       submission.data as Record<string, unknown>,
-      form.schema
+      form.schema,
     );
 
-    return res.status(200).json(STATUS_CODE[200]({
-      submission,
-      form: {
-        id: form.id,
-        name: form.name,
-        entityType: form.entityType,
-        schema: form.schema,
-        riskTierSystem: form.riskTierSystem,
-      },
-      riskAssessment: submission.riskAssessment,
-      riskTier: submission.riskTier,
-      riskOverride: submission.riskOverride,
-      entityPreview: entityData,
-    }));
+    return res.status(200).json(
+      STATUS_CODE[200]({
+        submission,
+        form: {
+          id: form.id,
+          name: form.name,
+          entityType: form.entityType,
+          schema: form.schema,
+          riskTierSystem: form.riskTierSystem,
+        },
+        riskAssessment: submission.riskAssessment,
+        riskTier: submission.riskTier,
+        riskOverride: submission.riskOverride,
+        entityPreview: entityData,
+      }),
+    );
   } catch (error) {
     logger.error("Error in getSubmissionPreview:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
@@ -824,11 +851,7 @@ export async function getSubmissionByEntity(req: Request, res: Response) {
   });
 
   try {
-    const result = await getSubmissionByEntityQuery(
-      entityType,
-      entityId,
-      req.organizationId!
-    );
+    const result = await getSubmissionByEntityQuery(entityType, entityId, req.organizationId!);
 
     if (!result) {
       return res.status(404).json(STATUS_CODE[404](req.t!("No intake submission found for this entity")));
@@ -851,16 +874,18 @@ export async function getSubmissionByEntity(req: Request, res: Response) {
         isMapped: Boolean(field.entityFieldMapping),
       }));
 
-    return res.status(200).json(STATUS_CODE[200]({
-      submissionId: submission.id,
-      formName,
-      submitterName: submission.submitterName,
-      submitterEmail: submission.submitterEmail,
-      submittedAt: submission.createdAt,
-      reviewedAt: submission.reviewedAt,
-      riskTier: submission.riskTier,
-      fields,
-    }));
+    return res.status(200).json(
+      STATUS_CODE[200]({
+        submissionId: submission.id,
+        formName,
+        submitterName: submission.submitterName,
+        submitterEmail: submission.submitterEmail,
+        submittedAt: submission.createdAt,
+        reviewedAt: submission.reviewedAt,
+        riskTier: submission.riskTier,
+        fields,
+      }),
+    );
   } catch (error) {
     await logFailure({
       eventType: "Read",
@@ -942,7 +967,12 @@ export async function approveSubmission(req: Request, res: Response) {
   const transaction = await sequelize.transaction();
 
   try {
-    const submission = await getSubmissionByIdQuery(submissionId, req.organizationId!, transaction, true);
+    const submission = await getSubmissionByIdQuery(
+      submissionId,
+      req.organizationId!,
+      transaction,
+      true,
+    );
 
     if (!submission) {
       await transaction.rollback();
@@ -965,7 +995,8 @@ export async function approveSubmission(req: Request, res: Response) {
 
     // Use confirmed entity data from admin if provided, otherwise build from mapping
     const { confirmedEntityData, riskOverride } = req.body;
-    const entityData = confirmedEntityData ||
+    const entityData =
+      confirmedEntityData ||
       buildEntityDataFromSubmission(submission.data as Record<string, unknown>, form.schema);
 
     // Apply risk override if provided
@@ -978,7 +1009,7 @@ export async function approveSubmission(req: Request, res: Response) {
           overriddenAt: new Date().toISOString(),
         },
         req.organizationId!,
-        transaction
+        transaction,
       );
     }
 
@@ -991,12 +1022,14 @@ export async function approveSubmission(req: Request, res: Response) {
         model: (entityData.name as string) || (entityData.model as string) || "",
         version: (entityData.modelVersion as string) || (entityData.version as string) || "",
         approver: entityData.approver ? Number(entityData.approver) : undefined,
-        capabilities: (entityData.capabilities as string) || (entityData.intendedUse as string) || "",
+        capabilities:
+          (entityData.capabilities as string) || (entityData.intendedUse as string) || "",
         security_assessment: (entityData.security_assessment as boolean) || false,
         reference_link: (entityData.reference_link as string) || "",
         biases: (entityData.biases as string) || "",
         limitations: (entityData.limitations as string) || "",
-        hosting_provider: (entityData.hosting_provider as string) || (entityData.modelType as string) || "",
+        hosting_provider:
+          (entityData.hosting_provider as string) || (entityData.modelType as string) || "",
         status: ModelInventoryStatus.PENDING,
       });
 
@@ -1005,7 +1038,7 @@ export async function approveSubmission(req: Request, res: Response) {
         req.organizationId!,
         [],
         [],
-        transaction
+        transaction,
       );
       entityId = createdModel.id!;
     } else if (submission.entityType === IntakeEntityType.USE_CASE) {
@@ -1013,10 +1046,14 @@ export async function approveSubmission(req: Request, res: Response) {
         {
           project_title: (entityData.project_title as string) || "",
           description: (entityData.description as string) || "",
-          start_date: entityData.start_date ? new Date(entityData.start_date as string) : new Date(),
+          start_date: entityData.start_date
+            ? new Date(entityData.start_date as string)
+            : new Date(),
           goal: (entityData.goal as string) || (entityData.description as string) || "",
           owner: req.userId!,
-          ai_risk_classification: mapToAiRiskClassification(entityData.ai_risk_classification as string) as any,
+          ai_risk_classification: mapToAiRiskClassification(
+            entityData.ai_risk_classification as string,
+          ) as any,
           type_of_high_risk_role: (entityData.type_of_high_risk_role as string as any) || undefined,
           geography: entityData.geography ? Number(entityData.geography) : 1,
           status: ProjectStatus.UNDER_REVIEW,
@@ -1025,7 +1062,7 @@ export async function approveSubmission(req: Request, res: Response) {
         [],
         req.organizationId!,
         req.userId!,
-        transaction
+        transaction,
       );
       entityId = createdProject.id!;
     } else {
@@ -1038,7 +1075,7 @@ export async function approveSubmission(req: Request, res: Response) {
       entityId,
       req.userId!,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     await transaction.commit();
@@ -1106,7 +1143,12 @@ export async function rejectSubmission(req: Request, res: Response) {
       return res.status(400).json(STATUS_CODE[400](req.t!("Rejection reason is required")));
     }
 
-    const submission = await getSubmissionByIdQuery(submissionId, req.organizationId!, transaction, true);
+    const submission = await getSubmissionByIdQuery(
+      submissionId,
+      req.organizationId!,
+      transaction,
+      true,
+    );
 
     if (!submission) {
       await transaction.rollback();
@@ -1130,7 +1172,7 @@ export async function rejectSubmission(req: Request, res: Response) {
       rejectionReason,
       req.userId!,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     await transaction.commit();
@@ -1159,7 +1201,9 @@ export async function rejectSubmission(req: Request, res: Response) {
           req.lang,
         ).catch((err) => logger.error("Failed to send rejection email:", err));
       } else {
-        logger.warn(`Could not send rejection email for submission #${submissionId}: missing routing info`);
+        logger.warn(
+          `Could not send rejection email for submission #${submissionId}: missing routing info`,
+        );
       }
     }
 
@@ -1207,7 +1251,7 @@ export async function getLLMSuggestedQuestions(req: Request, res: Response) {
       entityType || "use_case",
       context || "",
       llmKeyId,
-      req.organizationId!
+      req.organizationId!,
     );
 
     if (!questions) {
@@ -1236,7 +1280,7 @@ export async function getFieldGuidance(req: Request, res: Response) {
       fieldLabel,
       entityType || "use_case",
       llmKeyId,
-      req.organizationId!
+      req.organizationId!,
     );
 
     if (!guidanceText) {
@@ -1270,20 +1314,22 @@ export async function previewForm(req: Request, res: Response) {
       return res.status(404).json(STATUS_CODE[404](req.t!("Form not found")));
     }
 
-    return res.status(200).json(STATUS_CODE[200]({
-      form: {
-        id: form.id,
-        name: form.name,
-        description: form.description,
-        slug: form.slug,
-        entityType: form.entityType,
-        schema: form.schema,
-        submitButtonText: form.submitButtonText,
-        publicId: form.publicId,
-        designSettings: form.designSettings ?? null,
-      },
-      isPreview: true,
-    }));
+    return res.status(200).json(
+      STATUS_CODE[200]({
+        form: {
+          id: form.id,
+          name: form.name,
+          description: form.description,
+          slug: form.slug,
+          entityType: form.entityType,
+          schema: form.schema,
+          submitButtonText: form.submitButtonText,
+          publicId: form.publicId,
+          designSettings: form.designSettings ?? null,
+        },
+        isPreview: true,
+      }),
+    );
   } catch (error) {
     logger.error("Error in previewForm:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
@@ -1341,7 +1387,10 @@ export async function getPublicFormByPublicId(req: Request, res: Response) {
         const tokenAge = Date.now() - (decoded.timestamp || 0);
         const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
         if (tokenAge <= SEVEN_DAYS_MS) {
-          const previousSubmission = await getSubmissionByIdQuery(decoded.submissionId, tenantInfo.orgId);
+          const previousSubmission = await getSubmissionByIdQuery(
+            decoded.submissionId,
+            tenantInfo.orgId,
+          );
           if (
             previousSubmission &&
             previousSubmission.status !== IntakeSubmissionStatus.APPROVED &&
@@ -1355,23 +1404,25 @@ export async function getPublicFormByPublicId(req: Request, res: Response) {
       }
     }
 
-    return res.status(200).json(STATUS_CODE[200]({
-      form: {
-        id: form.id,
-        name: form.name,
-        description: form.description,
-        slug: form.slug,
-        entityType: form.entityType,
-        schema: form.schema,
-        submitButtonText: form.submitButtonText,
-        publicId: form.publicId,
-        designSettings: form.designSettings ?? null,
-      },
-      organizationLogo,
-      previousData,
-      previousSubmitterName,
-      previousSubmitterEmail,
-    }));
+    return res.status(200).json(
+      STATUS_CODE[200]({
+        form: {
+          id: form.id,
+          name: form.name,
+          description: form.description,
+          slug: form.slug,
+          entityType: form.entityType,
+          schema: form.schema,
+          submitButtonText: form.submitButtonText,
+          publicId: form.publicId,
+          designSettings: form.designSettings ?? null,
+        },
+        organizationLogo,
+        previousData,
+        previousSubmitterName,
+        previousSubmitterEmail,
+      }),
+    );
   } catch (error) {
     logger.error(`Error in getPublicFormByPublicId: ${publicId}`, error);
     return res.status(500).json(STATUS_CODE[500](req.t!("An error occurred while loading the form. Please try again.")));
@@ -1390,7 +1441,8 @@ export async function submitPublicFormByPublicId(req: Request, res: Response) {
       return res.status(404).json(STATUS_CODE[404](req.t!("Form not found")));
     }
 
-    const clientIp = req.ip || req.headers["x-forwarded-for"]?.toString().split(",")[0] || "unknown";
+    const clientIp =
+      req.ip || req.headers["x-forwarded-for"]?.toString().split(",")[0] || "unknown";
     const withinLimit = await checkRateLimitQuery(clientIp, tenantInfo.orgId);
 
     if (!withinLimit) {
@@ -1402,7 +1454,14 @@ export async function submitPublicFormByPublicId(req: Request, res: Response) {
       return res.status(404).json(STATUS_CODE[404](req.t!("Form not found or not available")));
     }
 
-    const { submitterEmail, submitterName, formData, captchaToken, captchaAnswer, resubmissionToken } = req.body;
+    const {
+      submitterEmail,
+      submitterName,
+      formData,
+      captchaToken,
+      captchaAnswer,
+      resubmissionToken,
+    } = req.body;
 
     // Validate contact info (always required)
     const fullFormForValidation = await getIntakeFormByIdQuery(form.id, tenantInfo.orgId);
@@ -1493,7 +1552,7 @@ export async function submitPublicFormByPublicId(req: Request, res: Response) {
           ipAddress: clientIp,
         },
         tenantInfo.orgId,
-        transaction
+        transaction,
       );
 
       await transaction.commit();
@@ -1551,21 +1610,21 @@ export async function submitPublicFormByPublicId(req: Request, res: Response) {
           fullForm.schema,
           fullForm.riskTierSystem || "eu_ai_act",
           fullForm.llmKeyId,
-          tenantInfo.orgId
+          tenantInfo.orgId,
         )
-          .then((result) =>
-            updateSubmissionRiskQuery(submission.id, result, tenantInfo.orgId)
-          )
+          .then((result) => updateSubmissionRiskQuery(submission.id, result, tenantInfo.orgId))
           .catch((err) => logger.error("Risk scoring failed:", err));
       }
 
-      return res.status(201).json(STATUS_CODE[201]({
-        message: resolvedEmail
-          ? "Form submitted successfully. You will receive an email when your submission is reviewed."
-          : "Form submitted successfully.",
-        submissionId: submission.id,
-        resubmissionToken: newResubmissionToken,
-      }));
+      return res.status(201).json(
+        STATUS_CODE[201]({
+          message: resolvedEmail
+            ? "Form submitted successfully. You will receive an email when your submission is reviewed."
+            : "Form submitted successfully.",
+          submissionId: submission.id,
+          resubmissionToken: newResubmissionToken,
+        }),
+      );
     } catch (error) {
       await transaction.rollback();
       throw error;
@@ -1628,7 +1687,10 @@ export async function getPublicForm(req: Request, res: Response) {
         const tokenAge = Date.now() - (decoded.timestamp || 0);
         const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
         if (tokenAge <= SEVEN_DAYS_MS) {
-          const previousSubmission = await getSubmissionByIdQuery(decoded.submissionId, tenantInfo.id);
+          const previousSubmission = await getSubmissionByIdQuery(
+            decoded.submissionId,
+            tenantInfo.id,
+          );
           if (
             previousSubmission &&
             previousSubmission.status !== IntakeSubmissionStatus.APPROVED &&
@@ -1642,23 +1704,25 @@ export async function getPublicForm(req: Request, res: Response) {
       }
     }
 
-    return res.status(200).json(STATUS_CODE[200]({
-      form: {
-        id: form.id,
-        name: form.name,
-        description: form.description,
-        slug: form.slug,
-        entityType: form.entityType,
-        schema: form.schema,
-        submitButtonText: form.submitButtonText,
-        publicId: form.publicId,
-        designSettings: form.designSettings ?? null,
-      },
-      organizationLogo,
-      previousData,
-      previousSubmitterName,
-      previousSubmitterEmail,
-    }));
+    return res.status(200).json(
+      STATUS_CODE[200]({
+        form: {
+          id: form.id,
+          name: form.name,
+          description: form.description,
+          slug: form.slug,
+          entityType: form.entityType,
+          schema: form.schema,
+          submitButtonText: form.submitButtonText,
+          publicId: form.publicId,
+          designSettings: form.designSettings ?? null,
+        },
+        organizationLogo,
+        previousData,
+        previousSubmitterName,
+        previousSubmitterEmail,
+      }),
+    );
   } catch (error) {
     logger.error(`Error in getPublicForm: ${tenantSlug}/${formSlug}`, error);
     return res.status(500).json(STATUS_CODE[500](req.t!("An error occurred while loading the form. Please try again.")));
@@ -1679,7 +1743,8 @@ export async function submitPublicForm(req: Request, res: Response) {
       return res.status(404).json(STATUS_CODE[404](req.t!("Organization not found")));
     }
 
-    const clientIp = req.ip || req.headers["x-forwarded-for"]?.toString().split(",")[0] || "unknown";
+    const clientIp =
+      req.ip || req.headers["x-forwarded-for"]?.toString().split(",")[0] || "unknown";
     const withinLimit = await checkRateLimitQuery(clientIp, tenantInfo.id);
 
     if (!withinLimit) {
@@ -1692,7 +1757,14 @@ export async function submitPublicForm(req: Request, res: Response) {
       return res.status(404).json(STATUS_CODE[404](req.t!("Form not found or not available")));
     }
 
-    const { submitterEmail, submitterName, formData, captchaToken, captchaAnswer, resubmissionToken } = req.body;
+    const {
+      submitterEmail,
+      submitterName,
+      formData,
+      captchaToken,
+      captchaAnswer,
+      resubmissionToken,
+    } = req.body;
 
     // Validate contact info (always required)
     const fullFormForValidation = await getIntakeFormByIdQuery(form.id, tenantInfo.id);
@@ -1782,7 +1854,7 @@ export async function submitPublicForm(req: Request, res: Response) {
           ipAddress: clientIp,
         },
         tenantInfo.id,
-        transaction
+        transaction,
       );
 
       await transaction.commit();
@@ -1852,21 +1924,21 @@ export async function submitPublicForm(req: Request, res: Response) {
           fullForm.schema,
           fullForm.riskTierSystem || "eu_ai_act",
           fullForm.llmKeyId,
-          tenantInfo.id
+          tenantInfo.id,
         )
-          .then((result) =>
-            updateSubmissionRiskQuery(submission.id, result, tenantInfo.id)
-          )
+          .then((result) => updateSubmissionRiskQuery(submission.id, result, tenantInfo.id))
           .catch((err) => logger.error("Risk scoring failed:", err));
       }
 
-      return res.status(201).json(STATUS_CODE[201]({
-        message: resolvedEmail
-          ? "Form submitted successfully. You will receive an email when your submission is reviewed."
-          : "Form submitted successfully.",
-        submissionId: submission.id,
-        resubmissionToken: newResubmissionToken,
-      }));
+      return res.status(201).json(
+        STATUS_CODE[201]({
+          message: resolvedEmail
+            ? "Form submitted successfully. You will receive an email when your submission is reviewed."
+            : "Form submitted successfully.",
+          submissionId: submission.id,
+          resubmissionToken: newResubmissionToken,
+        }),
+      );
     } catch (error) {
       await transaction.rollback();
       throw error;

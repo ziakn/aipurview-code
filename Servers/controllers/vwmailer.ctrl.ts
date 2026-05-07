@@ -1,9 +1,5 @@
 import { Request, Response } from "express";
-import {
-  logProcessing,
-  logSuccess,
-  logFailure,
-} from "../utils/logger/logHelper";
+import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 import logger from "../utils/logger/fileLogger";
 import { createInvitationQuery } from "../utils/invitation.utils";
 import { sendInviteEmail } from "../utils/inviteEmail.utils";
@@ -17,7 +13,7 @@ export const invite = async (
     surname?: string;
     roleId: number;
     organizationId: number;
-  }
+  },
 ) => {
   const { to, name, surname, roleId, organizationId } = body;
 
@@ -28,9 +24,7 @@ export const invite = async (
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
-  logger.debug(
-    `📧 Sending invitation email to ${to} for user ${name} ${surname || ""}`
-  );
+  logger.debug(`📧 Sending invitation email to ${to} for user ${name} ${surname || ""}`);
 
   try {
     const { link, expiresAt, info } = await sendInviteEmail({

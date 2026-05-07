@@ -26,12 +26,9 @@ const LANGUAGE_OPTIONS: { _id: Lang; name: string }[] = [
 const Preferences: React.FC = () => {
   const theme = useTheme();
   const { userId } = useAuth();
-  const { userPreferences, isDefault, loading, refreshUserPreferences } =
-    useUserPreferences();
+  const { userPreferences, isDefault, loading, refreshUserPreferences } = useUserPreferences();
   const [isSaveDisabled, setIsSaveDisabled] = useState(true);
-  const [dateFormat, setDateFormat] = useState<UserDateFormat>(
-    UserDateFormat.DD_MM_YYYY_DASH,
-  );
+  const [dateFormat, setDateFormat] = useState<UserDateFormat>(UserDateFormat.DD_MM_YYYY_DASH);
 
   const [language, setLang] = useState<Lang>("en");
 
@@ -125,9 +122,7 @@ const Preferences: React.FC = () => {
       setAlert({
         variant: "error",
         title: "Error",
-        body:
-          error.message ||
-          "Failed to update User preferences. Please try again.",
+        body: error.message || "Failed to update User preferences. Please try again.",
         isToast: true,
         visible: true,
       });
@@ -163,8 +158,7 @@ const Preferences: React.FC = () => {
           onClick={() => setAlert((prev) => ({ ...prev, visible: false }))}
         />
       )}
-      {showToast && <CustomizableToast />}{" "}
-      {/* Show CustomizableToast when showToast is true */}
+      {showToast && <CustomizableToast />} {/* Show CustomizableToast when showToast is true */}
       {!loading && (
         <Box sx={{ width: "100%", maxWidth: 600 }}>
           <Stack sx={{ marginTop: theme.spacing(20) }}>

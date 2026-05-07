@@ -63,7 +63,7 @@ export async function listRepositories(req: Request, res: Response): Promise<any
           limit,
           total_pages: Math.ceil(result.total / limit),
         },
-      })
+      }),
     );
   } catch (error) {
     await logFailure({
@@ -132,9 +132,18 @@ export async function createRepository(req: Request, res: Response): Promise<any
   });
 
   try {
-    const { repository_url, display_name, default_branch, github_token_id,
-      schedule_enabled, schedule_frequency, schedule_day_of_week,
-      schedule_day_of_month, schedule_hour, schedule_minute } = req.body;
+    const {
+      repository_url,
+      display_name,
+      default_branch,
+      github_token_id,
+      schedule_enabled,
+      schedule_frequency,
+      schedule_day_of_week,
+      schedule_day_of_month,
+      schedule_hour,
+      schedule_minute,
+    } = req.body;
 
     if (!repository_url) {
       return res.status(400).json(STATUS_CODE[400]({ message: req.t!("repository_url is required") }));
@@ -146,10 +155,16 @@ export async function createRepository(req: Request, res: Response): Promise<any
     }
 
     // Check for duplicates
-    const existing = await getRepositoryByOwnerNameQuery(parsed.owner, parsed.name, req.organizationId!);
+    const existing = await getRepositoryByOwnerNameQuery(
+      parsed.owner,
+      parsed.name,
+      req.organizationId!,
+    );
     if (existing) {
       return res.status(409).json(
-        STATUS_CODE[409]({ message: `Repository ${parsed.owner}/${parsed.name} is already registered` })
+        STATUS_CODE[409]({
+          message: `Repository ${parsed.owner}/${parsed.name} is already registered`,
+        }),
       );
     }
 
@@ -165,7 +180,12 @@ export async function createRepository(req: Request, res: Response): Promise<any
           STATUS_CODE[400]({ message: req.t!("schedule_day_of_week must be 0-6 for weekly schedule") })
         );
       }
-      if (schedule_frequency === "monthly" && (schedule_day_of_month === undefined || schedule_day_of_month < 1 || schedule_day_of_month > 31)) {
+      if (
+        schedule_frequency === "monthly" &&
+        (schedule_day_of_month === undefined ||
+          schedule_day_of_month < 1 ||
+          schedule_day_of_month > 31)
+      ) {
         return res.status(400).json(
           STATUS_CODE[400]({ message: req.t!("schedule_day_of_month must be 1-31 for monthly schedule") })
         );
@@ -200,7 +220,7 @@ export async function createRepository(req: Request, res: Response): Promise<any
         schedule_minute: schedule_minute ?? 0,
         created_by: req.userId!,
       },
-      req.organizationId!
+      req.organizationId!,
     );
 
     await logSuccess({
@@ -251,14 +271,29 @@ export async function updateRepository(req: Request, res: Response): Promise<any
       return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Repository not found") }));
     }
 
-    const { display_name, default_branch, github_token_id,
-      schedule_enabled, schedule_frequency, schedule_day_of_week,
-      schedule_day_of_month, schedule_hour, schedule_minute, is_enabled,
-      ci_enabled, ci_min_score, ci_max_critical, ci_post_comments, ci_status_checks } = req.body;
+    const {
+      display_name,
+      default_branch,
+      github_token_id,
+      schedule_enabled,
+      schedule_frequency,
+      schedule_day_of_week,
+      schedule_day_of_month,
+      schedule_hour,
+      schedule_minute,
+      is_enabled,
+      ci_enabled,
+      ci_min_score,
+      ci_max_critical,
+      ci_post_comments,
+      ci_status_checks,
+    } = req.body;
 
     // Validate schedule fields if enabling
-    const willBeEnabled = schedule_enabled !== undefined ? schedule_enabled : existing.schedule_enabled;
-    const freq = schedule_frequency !== undefined ? schedule_frequency : existing.schedule_frequency;
+    const willBeEnabled =
+      schedule_enabled !== undefined ? schedule_enabled : existing.schedule_enabled;
+    const freq =
+      schedule_frequency !== undefined ? schedule_frequency : existing.schedule_frequency;
 
     if (willBeEnabled) {
       if (!freq || !["daily", "weekly", "monthly"].includes(freq)) {
@@ -287,7 +322,7 @@ export async function updateRepository(req: Request, res: Response): Promise<any
         ci_status_checks,
         is_enabled,
       },
-      req.organizationId!
+      req.organizationId!,
     );
 
     if (!updated) {
@@ -302,7 +337,7 @@ export async function updateRepository(req: Request, res: Response): Promise<any
         updated.schedule_day_of_week ?? null,
         updated.schedule_day_of_month ?? null,
         updated.schedule_hour,
-        updated.schedule_minute
+        updated.schedule_minute,
       );
       await updateRepositoryNextScanAtQuery(id, nextScanAt, req.organizationId!);
       updated.next_scan_at = nextScanAt;
@@ -363,13 +398,13 @@ export async function deleteRepository(req: Request, res: Response): Promise<any
     const activeScan = await getActiveScanForRepoQuery(
       existing.repository_owner,
       existing.repository_name,
-      req.organizationId!
+      req.organizationId!,
     );
     if (activeScan) {
       return res.status(409).json(
         STATUS_CODE[409]({
           message: `Cannot delete repository while a scan is in progress for ${existing.repository_owner}/${existing.repository_name}`,
-        })
+        }),
       );
     }
 
@@ -427,13 +462,13 @@ export async function triggerRepositoryScan(req: Request, res: Response): Promis
     const activeScan = await getActiveScanForRepoQuery(
       repository.repository_owner,
       repository.repository_name,
-      req.organizationId!
+      req.organizationId!,
     );
     if (activeScan) {
       return res.status(409).json(
         STATUS_CODE[409]({
           message: `A scan is already in progress for ${repository.repository_owner}/${repository.repository_name}`,
-        })
+        }),
       );
     }
 
@@ -510,13 +545,7 @@ export async function getRepositoryScans(req: Request, res: Response): Promise<a
     const page = Math.max(parseInt(req.query.page as string) || 1, 1);
     const limit = Math.min(100, Math.max(parseInt(req.query.limit as string) || 20, 1));
 
-    const result = await getScansListQuery(
-      req.organizationId!,
-      page,
-      limit,
-      undefined,
-      id
-    );
+    const result = await getScansListQuery(req.organizationId!, page, limit, undefined, id);
 
     return res.status(200).json(
       STATUS_CODE[200]({
@@ -541,7 +570,7 @@ export async function getRepositoryScans(req: Request, res: Response): Promise<a
           limit,
           total_pages: Math.ceil(result.total / limit),
         },
-      })
+      }),
     );
   } catch (error) {
     await logFailure({
@@ -583,11 +612,7 @@ export async function generateWebhookSecretController(req: Request, res: Respons
 
     const secret = generateWebhookSecret();
 
-    await updateRepositoryQuery(
-      id,
-      { webhook_secret: secret } as any,
-      req.organizationId!
-    );
+    await updateRepositoryQuery(id, { webhook_secret: secret } as any, req.organizationId!);
 
     await logSuccess({
       eventType: "Update",

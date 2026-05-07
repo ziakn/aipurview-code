@@ -25,6 +25,7 @@ import {
   AlertCircle,
   AlertTriangle,
   Eye,
+  EyeOff,
   Unplug,
   Timer,
   Link2,
@@ -76,6 +77,8 @@ import {
 } from "../../../application/repository/aiDetection.repository";
 import VWTooltip from "../../components/VWTooltip";
 import { RiskScoreCard } from "./components/RiskScoreCard";
+import SuppressFindingDialog from "./components/SuppressFindingDialog";
+import Toggle from "../../components/Inputs/Toggle";
 import {
   ScanResponse,
   Finding,
@@ -116,7 +119,6 @@ type TabValue =
   | "compliance"
   | "vulnerabilities";
 
-
 // ============================================================================
 // Configuration
 // ============================================================================
@@ -147,40 +149,51 @@ const CONFIDENCE_TOOLTIPS: Record<ConfidenceLevel, string> = {
   low: "The scanner found patterns that might indicate AI/ML usage but could be false positives",
 };
 
-const RISK_LEVEL_CONFIG: Record<RiskLevel, { label: string; color: string; bgColor: string; tooltip: string }> = {
+const RISK_LEVEL_CONFIG: Record<
+  RiskLevel,
+  { label: string; color: string; bgColor: string; tooltip: string }
+> = {
   high: {
     label: "High risk",
     color: palette.status.error.text,
     bgColor: palette.status.error.bg,
-    tooltip: "Data sent to external cloud APIs. Risk of data leakage, vendor lock-in, and compliance violations.",
+    tooltip:
+      "Data sent to external cloud APIs. Risk of data leakage, vendor lock-in, and compliance violations.",
   },
   medium: {
     label: "Medium risk",
     color: palette.status.warning.text,
     bgColor: palette.status.warning.bg,
-    tooltip: "Framework that can connect to cloud APIs depending on configuration. Review usage to assess actual risk.",
+    tooltip:
+      "Framework that can connect to cloud APIs depending on configuration. Review usage to assess actual risk.",
   },
   low: {
     label: "Low risk",
     color: palette.status.success.text,
     bgColor: palette.status.success.bg,
-    tooltip: "Local processing only. Data stays on your infrastructure with minimal external exposure.",
+    tooltip:
+      "Local processing only. Data stays on your infrastructure with minimal external exposure.",
   },
 };
 
 // License risk configuration for inline badge display
-const LICENSE_RISK_CONFIG: Record<string, { label: string; color: string; bgColor: string; tooltip: string }> = {
+const LICENSE_RISK_CONFIG: Record<
+  string,
+  { label: string; color: string; bgColor: string; tooltip: string }
+> = {
   high: {
     label: "Restrictive",
     color: palette.risk.high.text,
     bgColor: palette.risk.high.bg,
-    tooltip: "Restrictive license (GPL, AGPL, CC-NC). May require code disclosure or prohibit commercial use.",
+    tooltip:
+      "Restrictive license (GPL, AGPL, CC-NC). May require code disclosure or prohibit commercial use.",
   },
   medium: {
     label: "Moderate",
     color: palette.risk.medium.text,
     bgColor: palette.risk.medium.bg,
-    tooltip: "Moderate restrictions (LGPL, MPL, CC-BY-SA). Some obligations but generally allows commercial use.",
+    tooltip:
+      "Moderate restrictions (LGPL, MPL, CC-BY-SA). Some obligations but generally allows commercial use.",
   },
   low: {
     label: "Permissive",
@@ -197,52 +210,141 @@ const LICENSE_RISK_CONFIG: Record<string, { label: string; color: string; bgColo
 };
 
 const SEVERITY_TOOLTIPS: Record<SecuritySeverity, string> = {
-  critical: "Critical severity: Immediate action required. This finding indicates a severe security vulnerability that could lead to remote code execution or complete system compromise.",
+  critical:
+    "Critical severity: Immediate action required. This finding indicates a severe security vulnerability that could lead to remote code execution or complete system compromise.",
   high: "High severity: Urgent attention needed. This finding indicates a significant security risk that should be addressed promptly.",
-  medium: "Medium severity: Should be addressed. This finding indicates a moderate security concern that requires attention.",
+  medium:
+    "Medium severity: Should be addressed. This finding indicates a moderate security concern that requires attention.",
   low: "Low severity: Consider addressing. This finding indicates a minor security concern or informational issue.",
 };
 
-const GOVERNANCE_STATUS_CONFIG: Record<GovernanceStatus, { label: string; color: string; icon: React.ElementType }> = {
+const GOVERNANCE_STATUS_CONFIG: Record<
+  GovernanceStatus,
+  { label: string; color: string; icon: React.ElementType }
+> = {
   reviewed: { label: "Reviewed", color: palette.status.info.text, icon: Eye },
   approved: { label: "Approved", color: palette.status.success.text, icon: ThumbsUp },
   flagged: { label: "Flagged", color: palette.status.error.text, icon: Flag },
+  suppressed: { label: "Suppressed", color: palette.text.tertiary, icon: EyeOff },
+  accepted_risk: {
+    label: "Accepted risk",
+    color: palette.status.warning.text,
+    icon: ShieldCheck,
+  },
 };
 
-const COMPLIANCE_CATEGORY_CONFIG: Record<ComplianceCategory, { label: string; color: string; bgColor: string; description: string }> = {
-  transparency: { label: "Transparency", color: palette.accent.blue.text, bgColor: palette.accent.blue.bg, description: "Requirements for making AI systems understandable to users and deployers" },
-  documentation: { label: "Documentation", color: palette.accent.indigo.text, bgColor: palette.accent.indigo.bg, description: "Requirements for maintaining technical records of AI components" },
-  risk_management: { label: "Risk management", color: palette.status.error.text, bgColor: palette.status.error.bg, description: "Requirements for identifying and mitigating AI-related risks" },
-  data_governance: { label: "Data governance", color: palette.accent.teal.text, bgColor: palette.accent.teal.bg, description: "Requirements for managing data used by AI systems" },
-  human_oversight: { label: "Human oversight", color: palette.accent.amber.text, bgColor: palette.accent.amber.bg, description: "Requirements for human control over AI decisions" },
-  security: { label: "Security", color: palette.accent.pink.text, bgColor: palette.accent.pink.bg, description: "Requirements for protecting AI systems from attacks" },
-  monitoring: { label: "Monitoring", color: palette.accent.purple.text, bgColor: palette.accent.purple.bg, description: "Requirements for ongoing observation of AI performance" },
-  accountability: { label: "Accountability", color: palette.accent.teal.text, bgColor: palette.accent.teal.bg, description: "Requirements for quality management and responsibility" },
+/**
+ * A finding is treated as "suppressed" by the UI when EITHER:
+ *   - a scan-time rule matched (boolean `suppressed`), or
+ *   - a user manually set governance_status to "suppressed".
+ * Both signals are also excluded from the risk score by the backend.
+ * `accepted_risk` is acknowledged but not hidden — it still renders normally.
+ */
+const isFindingSuppressed = (f: Finding): boolean =>
+  f.suppressed === true || f.governance_status === "suppressed";
+
+const COMPLIANCE_CATEGORY_CONFIG: Record<
+  ComplianceCategory,
+  { label: string; color: string; bgColor: string; description: string }
+> = {
+  transparency: {
+    label: "Transparency",
+    color: palette.accent.blue.text,
+    bgColor: palette.accent.blue.bg,
+    description: "Requirements for making AI systems understandable to users and deployers",
+  },
+  documentation: {
+    label: "Documentation",
+    color: palette.accent.indigo.text,
+    bgColor: palette.accent.indigo.bg,
+    description: "Requirements for maintaining technical records of AI components",
+  },
+  risk_management: {
+    label: "Risk management",
+    color: palette.status.error.text,
+    bgColor: palette.status.error.bg,
+    description: "Requirements for identifying and mitigating AI-related risks",
+  },
+  data_governance: {
+    label: "Data governance",
+    color: palette.accent.teal.text,
+    bgColor: palette.accent.teal.bg,
+    description: "Requirements for managing data used by AI systems",
+  },
+  human_oversight: {
+    label: "Human oversight",
+    color: palette.accent.amber.text,
+    bgColor: palette.accent.amber.bg,
+    description: "Requirements for human control over AI decisions",
+  },
+  security: {
+    label: "Security",
+    color: palette.accent.pink.text,
+    bgColor: palette.accent.pink.bg,
+    description: "Requirements for protecting AI systems from attacks",
+  },
+  monitoring: {
+    label: "Monitoring",
+    color: palette.accent.purple.text,
+    bgColor: palette.accent.purple.bg,
+    description: "Requirements for ongoing observation of AI performance",
+  },
+  accountability: {
+    label: "Accountability",
+    color: palette.accent.teal.text,
+    bgColor: palette.accent.teal.bg,
+    description: "Requirements for quality management and responsibility",
+  },
 };
 
-const PRIORITY_CONFIG: Record<string, { label: string; color: string; bgColor: string; description: string }> = {
-  high: { label: "High", color: palette.risk.high.text, bgColor: palette.risk.high.bg, description: "Address immediately - critical for compliance" },
-  medium: { label: "Medium", color: palette.risk.medium.text, bgColor: palette.risk.medium.bg, description: "Address soon - important for compliance" },
-  low: { label: "Low", color: palette.risk.low.text, bgColor: palette.risk.low.bg, description: "Address when possible - recommended for compliance" },
+const PRIORITY_CONFIG: Record<
+  string,
+  { label: string; color: string; bgColor: string; description: string }
+> = {
+  high: {
+    label: "High",
+    color: palette.risk.high.text,
+    bgColor: palette.risk.high.bg,
+    description: "Address immediately - critical for compliance",
+  },
+  medium: {
+    label: "Medium",
+    color: palette.risk.medium.text,
+    bgColor: palette.risk.medium.bg,
+    description: "Address soon - important for compliance",
+  },
+  low: {
+    label: "Low",
+    color: palette.risk.low.text,
+    bgColor: palette.risk.low.bg,
+    description: "Address when possible - recommended for compliance",
+  },
 };
 
 // EU AI Act article descriptions for tooltips
 const ARTICLE_DESCRIPTIONS: Record<string, string> = {
-  "Article 9": "Risk Management System - Requires identifying and mitigating risks throughout the AI lifecycle",
+  "Article 9":
+    "Risk Management System - Requires identifying and mitigating risks throughout the AI lifecycle",
   "Article 9(2)": "Risk Management - Specifically covers third-party and dependency risks",
   "Article 10": "Data Governance - Requires quality datasets and proper data management",
   "Article 10(3)": "Data Governance - Covers data processing and preparation requirements",
-  "Article 11": "Technical Documentation - Requires comprehensive documentation before market placement",
+  "Article 11":
+    "Technical Documentation - Requires comprehensive documentation before market placement",
   "Article 11(1)": "Technical Documentation - Covers minimum content standards",
-  "Article 13": "Transparency - AI systems must be transparent enough for users to interpret outputs",
+  "Article 13":
+    "Transparency - AI systems must be transparent enough for users to interpret outputs",
   "Article 13(3)": "Transparency - Requires clear information about AI model capabilities",
   "Article 14": "Human Oversight - AI systems must allow effective human supervision",
   "Article 14(4)": "Human Oversight - Covers autonomy controls and intervention capabilities",
-  "Article 15": "Security - AI systems must achieve appropriate accuracy, robustness, and cybersecurity",
-  "Article 15(5)": "Security - Covers AI-specific vulnerabilities like data poisoning and adversarial attacks",
+  "Article 15":
+    "Security - AI systems must achieve appropriate accuracy, robustness, and cybersecurity",
+  "Article 15(5)":
+    "Security - Covers AI-specific vulnerabilities like data poisoning and adversarial attacks",
   "Article 17": "Quality Management - Requires documented quality management systems",
-  "Article 50": "Transparency Obligations - Users must know when interacting with AI; synthetic content must be marked",
-  "Article 72": "Post-Market Monitoring - Requires ongoing monitoring of AI systems after deployment",
+  "Article 50":
+    "Transparency Obligations - Users must know when interacting with AI; synthetic content must be marked",
+  "Article 72":
+    "Post-Market Monitoring - Requires ongoing monitoring of AI systems after deployment",
 };
 
 // ============================================================================
@@ -250,65 +352,68 @@ const ARTICLE_DESCRIPTIONS: Record<string, string> = {
 // ============================================================================
 
 // Icon components from local SVG files (SVGR)
-const PROVIDER_ICON_COMPONENTS: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
+const PROVIDER_ICON_COMPONENTS: Record<
+  string,
+  React.ComponentType<React.SVGProps<SVGSVGElement>>
+> = {
   // Cloud AI Providers
   "AI21 Labs": PROVIDER_ICONS.Ai21,
-  "Anthropic": PROVIDER_ICONS.Anthropic,
-  "Anyscale": PROVIDER_ICONS.Anyscale,
-  "AssemblyAI": PROVIDER_ICONS.AssemblyAI,
-  "AWS": PROVIDER_ICONS.Aws,
-  "Baseten": PROVIDER_ICONS.Baseten,
-  "Cerebras": PROVIDER_ICONS.Cerebras,
-  "Cohere": PROVIDER_ICONS.Cohere,
-  "DeepSeek": PROVIDER_ICONS.DeepSeek,
-  "ElevenLabs": PROVIDER_ICONS.ElevenLabs,
+  Anthropic: PROVIDER_ICONS.Anthropic,
+  Anyscale: PROVIDER_ICONS.Anyscale,
+  AssemblyAI: PROVIDER_ICONS.AssemblyAI,
+  AWS: PROVIDER_ICONS.Aws,
+  Baseten: PROVIDER_ICONS.Baseten,
+  Cerebras: PROVIDER_ICONS.Cerebras,
+  Cohere: PROVIDER_ICONS.Cohere,
+  DeepSeek: PROVIDER_ICONS.DeepSeek,
+  ElevenLabs: PROVIDER_ICONS.ElevenLabs,
   "Fireworks AI": PROVIDER_ICONS.Fireworks,
-  "Google": PROVIDER_ICONS.Google,
-  "Groq": PROVIDER_ICONS.Groq,
-  "HuggingFace": PROVIDER_ICONS.HuggingFace,
+  Google: PROVIDER_ICONS.Google,
+  Groq: PROVIDER_ICONS.Groq,
+  HuggingFace: PROVIDER_ICONS.HuggingFace,
   "Jina AI": PROVIDER_ICONS.Jina,
-  "LangFuse": PROVIDER_ICONS.Langfuse,
-  "LangSmith": PROVIDER_ICONS.LangSmith,
+  LangFuse: PROVIDER_ICONS.Langfuse,
+  LangSmith: PROVIDER_ICONS.LangSmith,
   "Lepton AI": PROVIDER_ICONS.LeptonAI,
-  "Meta": PROVIDER_ICONS.Meta,
-  "Microsoft": PROVIDER_ICONS.Microsoft,
-  "Mistral": PROVIDER_ICONS.Mistral,
-  "Nvidia": PROVIDER_ICONS.Nvidia,
-  "Ollama": PROVIDER_ICONS.Ollama,
-  "OpenAI": PROVIDER_ICONS.OpenAI,
-  "OpenRouter": PROVIDER_ICONS.OpenRouter,
-  "Perplexity": PROVIDER_ICONS.Perplexity,
-  "Replicate": PROVIDER_ICONS.Replicate,
-  "SambaNova": PROVIDER_ICONS.SambaNova,
+  Meta: PROVIDER_ICONS.Meta,
+  Microsoft: PROVIDER_ICONS.Microsoft,
+  Mistral: PROVIDER_ICONS.Mistral,
+  Nvidia: PROVIDER_ICONS.Nvidia,
+  Ollama: PROVIDER_ICONS.Ollama,
+  OpenAI: PROVIDER_ICONS.OpenAI,
+  OpenRouter: PROVIDER_ICONS.OpenRouter,
+  Perplexity: PROVIDER_ICONS.Perplexity,
+  Replicate: PROVIDER_ICONS.Replicate,
+  SambaNova: PROVIDER_ICONS.SambaNova,
   "Stability AI": PROVIDER_ICONS.Stability,
   "Together AI": PROVIDER_ICONS.Together,
-  "Vercel": PROVIDER_ICONS.Vercel,
+  Vercel: PROVIDER_ICONS.Vercel,
   "Voyage AI": PROVIDER_ICONS.Voyage,
   // AI/ML Frameworks
-  "CrewAI": PROVIDER_ICONS.CrewAI,
-  "LangChain": PROVIDER_ICONS.LangChain,
-  "LlamaIndex": PROVIDER_ICONS.LlamaIndex,
-  "Phidata": PROVIDER_ICONS.Phidata,
+  CrewAI: PROVIDER_ICONS.CrewAI,
+  LangChain: PROVIDER_ICONS.LangChain,
+  LlamaIndex: PROVIDER_ICONS.LlamaIndex,
+  Phidata: PROVIDER_ICONS.Phidata,
   "Pydantic AI": PROVIDER_ICONS.PydanticAI,
   // Local ML
-  "vLLM": PROVIDER_ICONS.Vllm,
+  vLLM: PROVIDER_ICONS.Vllm,
 };
 
 // SVG/PNG logo mappings for providers without lobehub icons
 const PROVIDER_SVG_LOGOS: Record<string, string> = {
   // Local ML libraries
   "scikit-learn": scikitLearnLogo,
-  "NumPy": numpyLogo,
-  "Pandas": pandasLogo,
-  "Matplotlib": matplotlibLogo,
-  "MXNet": mxnetLogo,
-  "SciPy": scipyLogo,
-  "Dask": daskLogo,
+  NumPy: numpyLogo,
+  Pandas: pandasLogo,
+  Matplotlib: matplotlibLogo,
+  MXNet: mxnetLogo,
+  SciPy: scipyLogo,
+  Dask: daskLogo,
   // Vector databases
-  "Chroma": chromaLogo,
-  "Pinecone": pineconeLogo,
-  "Qdrant": qdrantLogo,
-  "Weaviate": weaviateLogo,
+  Chroma: chromaLogo,
+  Pinecone: pineconeLogo,
+  Qdrant: qdrantLogo,
+  Weaviate: weaviateLogo,
 };
 
 function getProviderIcon(provider?: string, size: number = 16): React.ReactNode {
@@ -321,7 +426,15 @@ function getProviderIcon(provider?: string, size: number = 16): React.ReactNode 
   // Check for SVG/PNG logo
   const svgLogo = PROVIDER_SVG_LOGOS[provider];
   if (svgLogo) {
-    return <img src={svgLogo} alt={provider} width={size} height={size} style={{ objectFit: "contain" }} />;
+    return (
+      <img
+        src={svgLogo}
+        alt={provider}
+        width={size}
+        height={size}
+        style={{ objectFit: "contain" }}
+      />
+    );
   }
 
   return <Package size={size} color={palette.text.tertiary} strokeWidth={1.5} />;
@@ -377,18 +490,16 @@ function FilePathItem({ path, lineNumber, matchedText, fileUrl }: FilePathItemPr
         >
           {path}
           {lineNumber && (
-            <span style={{ color: palette.text.tertiary, marginLeft: "4px" }}>
-              :{lineNumber}
-            </span>
+            <span style={{ color: palette.text.tertiary, marginLeft: "4px" }}>:{lineNumber}</span>
           )}
         </a>
       ) : (
-        <span style={{ fontFamily: "monospace", color: palette.text.primary, wordBreak: "break-all" }}>
+        <span
+          style={{ fontFamily: "monospace", color: palette.text.primary, wordBreak: "break-all" }}
+        >
           {path}
           {lineNumber && (
-            <span style={{ color: palette.text.tertiary, marginLeft: "4px" }}>
-              :{lineNumber}
-            </span>
+            <span style={{ color: palette.text.tertiary, marginLeft: "4px" }}>:{lineNumber}</span>
           )}
         </span>
       )}
@@ -397,10 +508,7 @@ function FilePathItem({ path, lineNumber, matchedText, fileUrl }: FilePathItemPr
 
   if (hasContent && codePreviewContent) {
     return (
-      <VWTooltip
-        content={codePreviewContent}
-        placement="bottom-start"
-      >
+      <VWTooltip content={codePreviewContent} placement="bottom-start">
         {filePathRow}
       </VWTooltip>
     );
@@ -422,11 +530,21 @@ interface FindingRowProps {
   onStatusMessage?: (variant: "success" | "error", body: string) => void;
 }
 
-function FindingRow({ finding, repositoryOwner, repositoryName, scanId, onGovernanceChange, onStatusMessage }: FindingRowProps) {
+function FindingRow({
+  finding,
+  repositoryOwner,
+  repositoryName,
+  scanId,
+  onGovernanceChange,
+  onStatusMessage,
+}: FindingRowProps) {
   const [expanded, setExpanded] = useState(false);
   const [governanceAnchor, setGovernanceAnchor] = useState<HTMLElement | null>(null);
-  const [localStatus, setLocalStatus] = useState<GovernanceStatus | null>(finding.governance_status || null);
+  const [localStatus, setLocalStatus] = useState<GovernanceStatus | null>(
+    finding.governance_status || null,
+  );
   const [isUpdating, setIsUpdating] = useState(false);
+  const [suppressDialogOpen, setSuppressDialogOpen] = useState(false);
 
   const getFileUrl = (filePath: string, lineNumber: number | null): string | null => {
     if (!repositoryOwner || !repositoryName) return null;
@@ -464,7 +582,9 @@ function FindingRow({ finding, repositoryOwner, repositoryName, scanId, onGovern
   };
 
   const StatusIcon = localStatus ? GOVERNANCE_STATUS_CONFIG[localStatus].icon : MoreHorizontal;
-  const statusColor = localStatus ? GOVERNANCE_STATUS_CONFIG[localStatus].color : palette.text.tertiary;
+  const statusColor = localStatus
+    ? GOVERNANCE_STATUS_CONFIG[localStatus].color
+    : palette.text.tertiary;
 
   return (
     <Box
@@ -473,6 +593,7 @@ function FindingRow({ finding, repositoryOwner, repositoryName, scanId, onGovern
         borderRadius: "4px",
         mb: "8px",
         backgroundColor: palette.background.main,
+        opacity: isFindingSuppressed(finding) ? 0.6 : 1,
       }}
     >
       {/* Header */}
@@ -497,9 +618,7 @@ function FindingRow({ finding, repositoryOwner, repositoryName, scanId, onGovern
             {getProviderIcon(finding.provider, 32)}
           </Box>
           <Box>
-            <Typography sx={{ fontSize: "13px", fontWeight: 500 }}>
-              {finding.name}
-            </Typography>
+            <Typography sx={{ fontSize: "13px", fontWeight: 500 }}>{finding.name}</Typography>
             {finding.description && (
               <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, mt: 0.5 }}>
                 {finding.description}
@@ -509,6 +628,36 @@ function FindingRow({ finding, repositoryOwner, repositoryName, scanId, onGovern
         </Box>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          {/* Suppressed Badge */}
+          {isFindingSuppressed(finding) && (
+            <Tooltip
+              title={
+                finding.suppressed ? "Matched a suppression rule" : "Manually marked as suppressed"
+              }
+              arrow
+              placement="top"
+            >
+              <Box
+                sx={{
+                  px: "8px",
+                  py: "2px",
+                  borderRadius: "4px",
+                  backgroundColor: palette.background.accent,
+                  border: `1px solid ${palette.border.light}`,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                }}
+              >
+                <EyeOff size={12} color={palette.text.tertiary} />
+                <Typography
+                  sx={{ fontSize: "12px", fontWeight: 500, color: palette.text.tertiary }}
+                >
+                  Suppressed
+                </Typography>
+              </Box>
+            </Tooltip>
+          )}
           {/* Risk Level Badge */}
           {finding.risk_level && (
             <Tooltip title={RISK_LEVEL_CONFIG[finding.risk_level].tooltip} arrow placement="top">
@@ -538,9 +687,12 @@ function FindingRow({ finding, repositoryOwner, repositoryName, scanId, onGovern
             <Tooltip
               title={
                 <Box>
-                  <Typography sx={{ fontWeight: 600, fontSize: 12 }}>{finding.license_name || finding.license_id}</Typography>
+                  <Typography sx={{ fontWeight: 600, fontSize: 12 }}>
+                    {finding.license_name || finding.license_id}
+                  </Typography>
                   <Typography sx={{ fontSize: 11, mt: 0.5 }}>
-                    {LICENSE_RISK_CONFIG[finding.license_risk]?.tooltip || "License information available"}
+                    {LICENSE_RISK_CONFIG[finding.license_risk]?.tooltip ||
+                      "License information available"}
                   </Typography>
                 </Box>
               }
@@ -552,19 +704,24 @@ function FindingRow({ finding, repositoryOwner, repositoryName, scanId, onGovern
                   px: "8px",
                   py: "2px",
                   borderRadius: "4px",
-                  backgroundColor: LICENSE_RISK_CONFIG[finding.license_risk]?.bgColor || palette.status.default.bg,
+                  backgroundColor:
+                    LICENSE_RISK_CONFIG[finding.license_risk]?.bgColor || palette.status.default.bg,
                   border: `1px solid ${LICENSE_RISK_CONFIG[finding.license_risk]?.color || palette.text.tertiary}20`,
                   display: "flex",
                   alignItems: "center",
                   gap: "4px",
                 }}
               >
-                <Scale size={12} color={LICENSE_RISK_CONFIG[finding.license_risk]?.color || palette.text.tertiary} />
+                <Scale
+                  size={12}
+                  color={LICENSE_RISK_CONFIG[finding.license_risk]?.color || palette.text.tertiary}
+                />
                 <Typography
                   sx={{
                     fontSize: "12px",
                     fontWeight: 500,
-                    color: LICENSE_RISK_CONFIG[finding.license_risk]?.color || palette.text.tertiary,
+                    color:
+                      LICENSE_RISK_CONFIG[finding.license_risk]?.color || palette.text.tertiary,
                   }}
                 >
                   {finding.license_id}
@@ -590,14 +747,28 @@ function FindingRow({ finding, repositoryOwner, repositoryName, scanId, onGovern
               variant={finding.finding_status === "fixed" ? "success" : "info"}
             />
           )}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, minWidth: 85, justifyContent: "flex-end" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 0.5,
+              minWidth: 85,
+              justifyContent: "flex-end",
+            }}
+          >
             <FileCode size={14} color={palette.text.tertiary} />
             <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
               {finding.file_count} {finding.file_count === 1 ? "file" : "files"}
             </Typography>
           </Box>
           {/* Governance Status Button */}
-          <Tooltip title={localStatus ? `Status: ${GOVERNANCE_STATUS_CONFIG[localStatus].label}` : "Set status"} arrow placement="top">
+          <Tooltip
+            title={
+              localStatus ? `Status: ${GOVERNANCE_STATUS_CONFIG[localStatus].label}` : "Set status"
+            }
+            arrow
+            placement="top"
+          >
             <IconButton
               size="small"
               onClick={handleGovernanceClick}
@@ -634,27 +805,30 @@ function FindingRow({ finding, repositoryOwner, repositoryName, scanId, onGovern
         }}
       >
         <Box sx={{ p: 1, minWidth: 140 }}>
-          {(Object.entries(GOVERNANCE_STATUS_CONFIG) as [GovernanceStatus, typeof GOVERNANCE_STATUS_CONFIG[GovernanceStatus]][]).map(
-            ([status, config]) => (
-              <Box
-                key={status}
-                onClick={() => handleStatusChange(status)}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                  p: "6px 8px",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  backgroundColor: localStatus === status ? palette.background.hover : "transparent",
-                  "&:hover": { backgroundColor: palette.background.hover },
-                }}
-              >
-                <config.icon size={14} color={config.color} />
-                <Typography sx={{ fontSize: "13px" }}>{config.label}</Typography>
-              </Box>
-            )
-          )}
+          {(
+            Object.entries(GOVERNANCE_STATUS_CONFIG) as [
+              GovernanceStatus,
+              (typeof GOVERNANCE_STATUS_CONFIG)[GovernanceStatus],
+            ][]
+          ).map(([status, config]) => (
+            <Box
+              key={status}
+              onClick={() => handleStatusChange(status)}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                p: "6px 8px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                backgroundColor: localStatus === status ? palette.background.hover : "transparent",
+                "&:hover": { backgroundColor: palette.background.hover },
+              }}
+            >
+              <config.icon size={14} color={config.color} />
+              <Typography sx={{ fontSize: "13px" }}>{config.label}</Typography>
+            </Box>
+          ))}
           {localStatus && (
             <>
               <Box sx={{ borderTop: `1px solid ${palette.border.light}`, my: 0.5 }} />
@@ -671,19 +845,46 @@ function FindingRow({ finding, repositoryOwner, repositoryName, scanId, onGovern
                 }}
               >
                 <MoreHorizontal size={14} color={palette.text.tertiary} />
-                <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>Clear status</Typography>
+                <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
+                  Clear status
+                </Typography>
               </Box>
             </>
           )}
+          <Box sx={{ borderTop: `1px solid ${palette.border.light}`, my: 0.5 }} />
+          <Box
+            onClick={() => {
+              handleGovernanceClose();
+              setSuppressDialogOpen(true);
+            }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              p: "6px 8px",
+              borderRadius: "4px",
+              cursor: "pointer",
+              "&:hover": { backgroundColor: palette.background.hover },
+            }}
+          >
+            <EyeOff size={14} color={palette.text.tertiary} />
+            <Typography sx={{ fontSize: "13px" }}>Create suppression rule…</Typography>
+          </Box>
         </Box>
       </Popover>
+
+      <SuppressFindingDialog
+        isOpen={suppressDialogOpen}
+        finding={finding}
+        onClose={() => setSuppressDialogOpen(false)}
+        onSuccess={(msg) => onStatusMessage?.("success", msg)}
+        onError={(msg) => onStatusMessage?.("error", msg)}
+      />
 
       {/* Expanded Content */}
       <Collapse in={expanded}>
         <Box sx={{ p: "8px", borderTop: `1px solid ${palette.border.light}` }}>
-          <Typography sx={{ fontSize: "13px", fontWeight: 500, mb: 1 }}>
-            Found in:
-          </Typography>
+          <Typography sx={{ fontSize: "13px", fontWeight: 500, mb: 1 }}>Found in:</Typography>
           <Box
             sx={{
               maxHeight: 200,
@@ -704,7 +905,13 @@ function FindingRow({ finding, repositoryOwner, repositoryName, scanId, onGovern
             ))}
             {finding.file_paths.length > 20 && (
               <Typography
-                sx={{ fontSize: "13px", color: palette.text.tertiary, fontStyle: "italic", mt: 1, px: 1 }}
+                sx={{
+                  fontSize: "13px",
+                  color: palette.text.tertiary,
+                  fontStyle: "italic",
+                  mt: 1,
+                  px: 1,
+                }}
               >
                 And {finding.file_paths.length - 20} more files...
               </Typography>
@@ -764,9 +971,7 @@ function SecurityFindingRow({ finding, repositoryOwner, repositoryName }: Securi
 
         <Box sx={{ flex: 1 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <Typography sx={{ fontSize: "13px", fontWeight: 500 }}>
-              {finding.name}
-            </Typography>
+            <Typography sx={{ fontSize: "13px", fontWeight: 500 }}>{finding.name}</Typography>
             <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
               in {finding.module_name}
             </Typography>
@@ -793,7 +998,15 @@ function SecurityFindingRow({ finding, repositoryOwner, repositoryName }: Securi
               </span>
             </Tooltip>
           </Box>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, minWidth: 85, justifyContent: "flex-end" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 0.5,
+              minWidth: 85,
+              justifyContent: "flex-end",
+            }}
+          >
             <FileCode size={14} color={palette.text.tertiary} />
             <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
               {finding.file_count} {finding.file_count === 1 ? "file" : "files"}
@@ -822,9 +1035,7 @@ function SecurityFindingRow({ finding, repositoryOwner, repositoryName }: Securi
             }}
           >
             <Box>
-              <Typography
-                sx={{ fontSize: "13px", fontWeight: 500, color: palette.text.secondary }}
-              >
+              <Typography sx={{ fontSize: "13px", fontWeight: 500, color: palette.text.secondary }}>
                 CWE
               </Typography>
               <VWLink
@@ -835,9 +1046,7 @@ function SecurityFindingRow({ finding, repositoryOwner, repositoryName }: Securi
               </VWLink>
             </Box>
             <Box>
-              <Typography
-                sx={{ fontSize: "13px", fontWeight: 500, color: palette.text.secondary }}
-              >
+              <Typography sx={{ fontSize: "13px", fontWeight: 500, color: palette.text.secondary }}>
                 OWASP ML
               </Typography>
               <VWLink
@@ -848,9 +1057,7 @@ function SecurityFindingRow({ finding, repositoryOwner, repositoryName }: Securi
               </VWLink>
             </Box>
             <Box>
-              <Typography
-                sx={{ fontSize: "13px", fontWeight: 500, color: palette.text.secondary }}
-              >
+              <Typography sx={{ fontSize: "13px", fontWeight: 500, color: palette.text.secondary }}>
                 Threat type
               </Typography>
               <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
@@ -858,9 +1065,7 @@ function SecurityFindingRow({ finding, repositoryOwner, repositoryName }: Securi
               </Typography>
             </Box>
             <Box>
-              <Typography
-                sx={{ fontSize: "13px", fontWeight: 500, color: palette.text.secondary }}
-              >
+              <Typography sx={{ fontSize: "13px", fontWeight: 500, color: palette.text.secondary }}>
                 Operator
               </Typography>
               <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
@@ -869,9 +1074,7 @@ function SecurityFindingRow({ finding, repositoryOwner, repositoryName }: Securi
             </Box>
           </Box>
 
-          <Typography sx={{ fontSize: "13px", fontWeight: 500, mb: 1 }}>
-            Found in:
-          </Typography>
+          <Typography sx={{ fontSize: "13px", fontWeight: 500, mb: 1 }}>Found in:</Typography>
           <Box
             sx={{
               maxHeight: 200,
@@ -892,7 +1095,13 @@ function SecurityFindingRow({ finding, repositoryOwner, repositoryName }: Securi
             ))}
             {finding.file_paths.length > 20 && (
               <Typography
-                sx={{ fontSize: "13px", color: palette.text.tertiary, fontStyle: "italic", mt: 1, px: 1 }}
+                sx={{
+                  fontSize: "13px",
+                  color: palette.text.tertiary,
+                  fontStyle: "italic",
+                  mt: 1,
+                  px: 1,
+                }}
               >
                 And {finding.file_paths.length - 20} more files...
               </Typography>
@@ -948,9 +1157,10 @@ function mapSuggestionToRiskForm(s: SuggestedRisk): RiskFormValues {
     likelihood: s.likelihood,
     riskSeverity: s.severity,
     riskLevel: 0,
-    reviewNotes: s.finding_refs.length > 0
-      ? `Suggested by AI scan analysis. Related findings: ${s.finding_refs.join(", ")}`
-      : "Suggested by AI scan analysis.",
+    reviewNotes:
+      s.finding_refs.length > 0
+        ? `Suggested by AI scan analysis. Related findings: ${s.finding_refs.join(", ")}`
+        : "Suggested by AI scan analysis.",
     applicableProjects: [],
     applicableFrameworks: [],
   };
@@ -988,12 +1198,25 @@ interface VulnerabilityFindingRowProps {
   onStatusMessage?: (variant: "success" | "error", body: string) => void;
 }
 
-function VulnerabilityFindingRow({ finding, repositoryOwner, repositoryName, scanId, onGovernanceChange, onStatusMessage }: VulnerabilityFindingRowProps) {
+function VulnerabilityFindingRow({
+  finding,
+  repositoryOwner,
+  repositoryName,
+  scanId,
+  onGovernanceChange,
+  onStatusMessage,
+}: VulnerabilityFindingRowProps) {
   const [expanded, setExpanded] = useState(false);
   const [governanceAnchor, setGovernanceAnchor] = useState<HTMLElement | null>(null);
-  const [localStatus, setLocalStatus] = useState<GovernanceStatus | null>(finding.governance_status || null);
+  const [localStatus, setLocalStatus] = useState<GovernanceStatus | null>(
+    finding.governance_status || null,
+  );
   const [isUpdating, setIsUpdating] = useState(false);
-  const vulnMeta = VULN_TYPE_LABELS[finding.finding_type] || { label: finding.finding_type, owaspId: "" };
+  const [suppressDialogOpen, setSuppressDialogOpen] = useState(false);
+  const vulnMeta = VULN_TYPE_LABELS[finding.finding_type] || {
+    label: finding.finding_type,
+    owaspId: "",
+  };
 
   const getFileUrl = (filePath: string, lineNumber: number | null): string | null => {
     if (!repositoryOwner || !repositoryName) return null;
@@ -1030,7 +1253,9 @@ function VulnerabilityFindingRow({ finding, repositoryOwner, repositoryName, sca
   };
 
   const StatusIcon = localStatus ? GOVERNANCE_STATUS_CONFIG[localStatus].icon : MoreHorizontal;
-  const statusColor = localStatus ? GOVERNANCE_STATUS_CONFIG[localStatus].color : palette.text.tertiary;
+  const statusColor = localStatus
+    ? GOVERNANCE_STATUS_CONFIG[localStatus].color
+    : palette.text.tertiary;
 
   return (
     <Box
@@ -1039,6 +1264,7 @@ function VulnerabilityFindingRow({ finding, repositoryOwner, repositoryName, sca
         borderRadius: "4px",
         mb: "8px",
         backgroundColor: palette.background.main,
+        opacity: isFindingSuppressed(finding) ? 0.6 : 1,
       }}
     >
       {/* Header */}
@@ -1072,9 +1298,43 @@ function VulnerabilityFindingRow({ finding, repositoryOwner, repositoryName, sca
         </Box>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          {/* Suppressed Badge */}
+          {isFindingSuppressed(finding) && (
+            <Tooltip
+              title={
+                finding.suppressed ? "Matched a suppression rule" : "Manually marked as suppressed"
+              }
+              arrow
+              placement="top"
+            >
+              <Box
+                sx={{
+                  px: "8px",
+                  py: "2px",
+                  borderRadius: "4px",
+                  backgroundColor: palette.background.accent,
+                  border: `1px solid ${palette.border.light}`,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                }}
+              >
+                <EyeOff size={12} color={palette.text.tertiary} />
+                <Typography
+                  sx={{ fontSize: "12px", fontWeight: 500, color: palette.text.tertiary }}
+                >
+                  Suppressed
+                </Typography>
+              </Box>
+            </Tooltip>
+          )}
           {/* Risk Level Badge */}
           {finding.risk_level && (
-            <Tooltip title={RISK_LEVEL_CONFIG[finding.risk_level]?.tooltip || ""} arrow placement="top">
+            <Tooltip
+              title={RISK_LEVEL_CONFIG[finding.risk_level]?.tooltip || ""}
+              arrow
+              placement="top"
+            >
               <Box
                 sx={{
                   px: "8px",
@@ -1122,21 +1382,27 @@ function VulnerabilityFindingRow({ finding, repositoryOwner, repositoryName, sca
             </Box>
           )}
           {/* Cross-reference badge */}
-          {!!(finding.vulnerability_details?.related_finding_types &&
-           (finding.vulnerability_details.related_finding_types as string[]).length > 0) && (
+          {!!(
+            finding.vulnerability_details?.related_finding_types &&
+            (finding.vulnerability_details.related_finding_types as string[]).length > 0
+          ) && (
             <Tooltip
-              title={`Also detected in: ${(finding.vulnerability_details.related_finding_types as string[]).map((t: string) => {
-                const labels: Record<string, string> = {
-                  library: "Libraries",
-                  agent: "Agents",
-                  model_ref: "Models",
-                  api_call: "API calls",
-                  secret: "Secrets",
-                  rag_component: "RAG",
-                  dependency: "Dependencies",
-                };
-                return labels[t] || t;
-              }).join(", ")} tab`}
+              title={`Also detected in: ${(
+                finding.vulnerability_details.related_finding_types as string[]
+              )
+                .map((t: string) => {
+                  const labels: Record<string, string> = {
+                    library: "Libraries",
+                    agent: "Agents",
+                    model_ref: "Models",
+                    api_call: "API calls",
+                    secret: "Secrets",
+                    rag_component: "RAG",
+                    dependency: "Dependencies",
+                  };
+                  return labels[t] || t;
+                })
+                .join(", ")} tab`}
               arrow
               placement="top"
             >
@@ -1160,20 +1426,31 @@ function VulnerabilityFindingRow({ finding, repositoryOwner, repositoryName, sca
             </Tooltip>
           )}
           <Box sx={{ minWidth: 120, display: "flex", justifyContent: "center" }}>
-            <Chip
-              label={vulnMeta.label}
-              variant="default"
-              size="small"
-            />
+            <Chip label={vulnMeta.label} variant="default" size="small" />
           </Box>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, minWidth: 85, justifyContent: "flex-end" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 0.5,
+              minWidth: 85,
+              justifyContent: "flex-end",
+            }}
+          >
             <FileCode size={14} color={palette.text.tertiary} />
             <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
-              {finding.file_count || finding.file_paths?.length || 0} {(finding.file_count || finding.file_paths?.length || 0) === 1 ? "file" : "files"}
+              {finding.file_count || finding.file_paths?.length || 0}{" "}
+              {(finding.file_count || finding.file_paths?.length || 0) === 1 ? "file" : "files"}
             </Typography>
           </Box>
           {/* Governance Status Button */}
-          <Tooltip title={localStatus ? `Status: ${GOVERNANCE_STATUS_CONFIG[localStatus].label}` : "Set status"} arrow placement="top">
+          <Tooltip
+            title={
+              localStatus ? `Status: ${GOVERNANCE_STATUS_CONFIG[localStatus].label}` : "Set status"
+            }
+            arrow
+            placement="top"
+          >
             <IconButton
               size="small"
               onClick={handleGovernanceClick}
@@ -1210,27 +1487,30 @@ function VulnerabilityFindingRow({ finding, repositoryOwner, repositoryName, sca
         }}
       >
         <Box sx={{ p: 1, minWidth: 140 }}>
-          {(Object.entries(GOVERNANCE_STATUS_CONFIG) as [GovernanceStatus, typeof GOVERNANCE_STATUS_CONFIG[GovernanceStatus]][]).map(
-            ([status, config]) => (
-              <Box
-                key={status}
-                onClick={() => handleStatusChange(status)}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                  p: "6px 8px",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  backgroundColor: localStatus === status ? palette.background.hover : "transparent",
-                  "&:hover": { backgroundColor: palette.background.hover },
-                }}
-              >
-                <config.icon size={14} color={config.color} />
-                <Typography sx={{ fontSize: "13px" }}>{config.label}</Typography>
-              </Box>
-            )
-          )}
+          {(
+            Object.entries(GOVERNANCE_STATUS_CONFIG) as [
+              GovernanceStatus,
+              (typeof GOVERNANCE_STATUS_CONFIG)[GovernanceStatus],
+            ][]
+          ).map(([status, config]) => (
+            <Box
+              key={status}
+              onClick={() => handleStatusChange(status)}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                p: "6px 8px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                backgroundColor: localStatus === status ? palette.background.hover : "transparent",
+                "&:hover": { backgroundColor: palette.background.hover },
+              }}
+            >
+              <config.icon size={14} color={config.color} />
+              <Typography sx={{ fontSize: "13px" }}>{config.label}</Typography>
+            </Box>
+          ))}
           {localStatus && (
             <>
               <Box sx={{ borderTop: `1px solid ${palette.border.light}`, my: 0.5 }} />
@@ -1247,12 +1527,41 @@ function VulnerabilityFindingRow({ finding, repositoryOwner, repositoryName, sca
                 }}
               >
                 <MoreHorizontal size={14} color={palette.text.tertiary} />
-                <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>Clear status</Typography>
+                <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
+                  Clear status
+                </Typography>
               </Box>
             </>
           )}
+          <Box sx={{ borderTop: `1px solid ${palette.border.light}`, my: 0.5 }} />
+          <Box
+            onClick={() => {
+              handleGovernanceClose();
+              setSuppressDialogOpen(true);
+            }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              p: "6px 8px",
+              borderRadius: "4px",
+              cursor: "pointer",
+              "&:hover": { backgroundColor: palette.background.hover },
+            }}
+          >
+            <EyeOff size={14} color={palette.text.tertiary} />
+            <Typography sx={{ fontSize: "13px" }}>Create suppression rule…</Typography>
+          </Box>
         </Box>
       </Popover>
+
+      <SuppressFindingDialog
+        isOpen={suppressDialogOpen}
+        finding={finding}
+        onClose={() => setSuppressDialogOpen(false)}
+        onSuccess={(msg) => onStatusMessage?.("success", msg)}
+        onError={(msg) => onStatusMessage?.("error", msg)}
+      />
 
       {/* Expanded Content */}
       <Collapse in={expanded}>
@@ -1270,9 +1579,7 @@ function VulnerabilityFindingRow({ finding, repositoryOwner, repositoryName, sca
           )}
 
           {/* File paths */}
-          <Typography sx={{ fontSize: "13px", fontWeight: 500, mb: 1 }}>
-            Found in:
-          </Typography>
+          <Typography sx={{ fontSize: "13px", fontWeight: 500, mb: 1 }}>Found in:</Typography>
           <Box
             sx={{
               maxHeight: 200,
@@ -1293,7 +1600,13 @@ function VulnerabilityFindingRow({ finding, repositoryOwner, repositoryName, sca
             ))}
             {(finding.file_paths?.length || 0) > 20 && (
               <Typography
-                sx={{ fontSize: "13px", color: palette.text.tertiary, fontStyle: "italic", mt: 1, px: 1 }}
+                sx={{
+                  fontSize: "13px",
+                  color: palette.text.tertiary,
+                  fontStyle: "italic",
+                  mt: 1,
+                  px: 1,
+                }}
               >
                 And {(finding.file_paths?.length || 0) - 20} more files...
               </Typography>
@@ -1336,9 +1649,7 @@ export default function ScanDetailsPage() {
   const agentState = usePaginatedFindings();
   const securityState = usePaginatedFindings<SecurityFinding>();
 
-  const [securitySummary, setSecuritySummary] = useState<SecuritySummary | null>(
-    null
-  );
+  const [securitySummary, setSecuritySummary] = useState<SecuritySummary | null>(null);
   const [vulnerabilityFindings, setVulnerabilityFindings] = useState<Finding[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(initialTab);
@@ -1353,11 +1664,9 @@ export default function ScanDetailsPage() {
   useEffect(() => {
     setActiveTab(initialTab);
   }, [initialTab]);
-  const [confidenceFilter, setConfidenceFilter] =
-    useState<ConfidenceLevel | null>(null);
-  const [severityFilter, setSeverityFilter] = useState<SecuritySeverity | null>(
-    null
-  );
+  const [confidenceFilter, setConfidenceFilter] = useState<ConfidenceLevel | null>(null);
+  const [severityFilter, setSeverityFilter] = useState<SecuritySeverity | null>(null);
+  const [showSuppressed, setShowSuppressed] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [showDepGraph, setShowDepGraph] = useState(false);
   const [complianceData, setComplianceData] = useState<ComplianceMappingResponse | null>(null);
@@ -1368,12 +1677,16 @@ export default function ScanDetailsPage() {
   // Suggested risk modal state
   const [isSuggestedRiskModalOpen, setIsSuggestedRiskModalOpen] = useState(false);
   const [selectedSuggestedRisk, setSelectedSuggestedRisk] = useState<RiskFormValues | null>(null);
-  const [selectedSuggestedMitigation, setSelectedSuggestedMitigation] = useState<Partial<MitigationFormValues> | null>(null);
+  const [selectedSuggestedMitigation, setSelectedSuggestedMitigation] =
+    useState<Partial<MitigationFormValues> | null>(null);
   const suggestedRiskSubmitRef = useRef<(() => void) | null>(null);
   const { users, loading: usersLoading } = useUsers();
   const [dismissedSuggestions, setDismissedSuggestions] = useState<Set<number>>(new Set());
   const [removingSuggestions, setRemovingSuggestions] = useState<Set<number>>(new Set());
-  const [ignoreMenuAnchor, setIgnoreMenuAnchor] = useState<{ el: HTMLElement; index: number } | null>(null);
+  const [ignoreMenuAnchor, setIgnoreMenuAnchor] = useState<{
+    el: HTMLElement;
+    index: number;
+  } | null>(null);
   const [showSuggestedRisks, setShowSuggestedRisks] = useState(false);
   const addedSuggestionIndexRef = useRef<number | null>(null);
 
@@ -1466,7 +1779,11 @@ export default function ScanDetailsPage() {
           Promise.all([
             getScanFindings(scanId, { page: 1, limit: 50, finding_type: "prompt_injection" }),
             getScanFindings(scanId, { page: 1, limit: 50, finding_type: "jailbreak_risk" }),
-            getScanFindings(scanId, { page: 1, limit: 50, finding_type: "training_data_poisoning" }),
+            getScanFindings(scanId, {
+              page: 1,
+              limit: 50,
+              finding_type: "training_data_poisoning",
+            }),
             getScanFindings(scanId, { page: 1, limit: 50, finding_type: "model_dos" }),
             getScanFindings(scanId, { page: 1, limit: 50, finding_type: "supply_chain" }),
             getScanFindings(scanId, { page: 1, limit: 50, finding_type: "pii_exposure" }),
@@ -1493,9 +1810,7 @@ export default function ScanDetailsPage() {
         securityState.setTotalPages(securityFindingsResponse.pagination.total_pages);
         setSecuritySummary(summaryResponse);
         // Combine all vulnerability findings
-        setVulnerabilityFindings(
-          vulnFindingsResponses.flatMap((r) => r.findings)
-        );
+        setVulnerabilityFindings(vulnFindingsResponses.flatMap((r) => r.findings));
       } catch {
         // Error loading scan - component will show empty state
       } finally {
@@ -1768,7 +2083,9 @@ export default function ScanDetailsPage() {
       </Box>
 
       {/* Header */}
-      <Box sx={{ mb: 4, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+      <Box
+        sx={{ mb: 4, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}
+      >
         <Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1 }}>
             {scan.scan.status === "failed" ? (
@@ -1779,9 +2096,7 @@ export default function ScanDetailsPage() {
             <Typography sx={{ fontSize: "15px", fontWeight: 600 }}>
               {scan.scan.repository_owner}/{scan.scan.repository_name}
             </Typography>
-            {scan.scan.status === "failed" && (
-              <Chip label="Failed" size="small" />
-            )}
+            {scan.scan.status === "failed" && <Chip label="Failed" size="small" />}
             {scan.scan.scan_mode === "incremental" && (
               <Chip label="Incremental" size="small" variant="info" />
             )}
@@ -1869,9 +2184,15 @@ export default function ScanDetailsPage() {
             gap: 2,
           }}
         >
-          <AlertCircle size={20} color={palette.status.error.text} style={{ flexShrink: 0, marginTop: 2 }} />
+          <AlertCircle
+            size={20}
+            color={palette.status.error.text}
+            style={{ flexShrink: 0, marginTop: 2 }}
+          />
           <Box>
-            <Typography sx={{ fontSize: "14px", fontWeight: 600, color: palette.status.error.text, mb: 0.5 }}>
+            <Typography
+              sx={{ fontSize: "14px", fontWeight: 600, color: palette.status.error.text, mb: 0.5 }}
+            >
               Scan failed
             </Typography>
             <Typography sx={{ fontSize: "13px", color: palette.status.error.text }}>
@@ -1896,181 +2217,220 @@ export default function ScanDetailsPage() {
       {scan.scan.status === "completed" &&
         scan.scan.risk_score_details?.llm_suggested_risks &&
         scan.scan.risk_score_details.llm_suggested_risks.length > 0 &&
-        scan.scan.risk_score_details.llm_suggested_risks.some((_, i) => !dismissedSuggestions.has(i)) && (
-        <Box
-          sx={{
-            background: "linear-gradient(135deg, #FEFFFE 0%, #F8F9FA 100%)",
-            border: `1px solid ${palette.border.light}`,
-            borderRadius: "8px",
-            p: "14px 16px",
-          }}
-        >
+        scan.scan.risk_score_details.llm_suggested_risks.some(
+          (_, i) => !dismissedSuggestions.has(i),
+        ) && (
           <Box
-            sx={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", "&:hover": { opacity: 0.8 } }}
-            onClick={() => setShowSuggestedRisks(!showSuggestedRisks)}
+            sx={{
+              background: "linear-gradient(135deg, #FEFFFE 0%, #F8F9FA 100%)",
+              border: `1px solid ${palette.border.light}`,
+              borderRadius: "8px",
+              p: "14px 16px",
+            }}
           >
-            {showSuggestedRisks ? (
-              <ChevronDown size={14} strokeWidth={1.5} color={palette.text.accent} />
-            ) : (
-              <ChevronRight size={14} strokeWidth={1.5} color={palette.text.accent} />
-            )}
-            <Sparkles size={12} color={palette.accent.purple.text} strokeWidth={1.5} />
-            <Typography sx={{ fontSize: 13, color: palette.text.secondary, fontWeight: 500 }}>Suggested risks</Typography>
-          </Box>
-          <Collapse in={showSuggestedRisks}>
-            <Box sx={{ mt: "12px", display: "flex", flexDirection: "column", gap: "8px" }}>
-              {scan.scan.risk_score_details.llm_suggested_risks.map((suggestion, index) => {
-                if (dismissedSuggestions.has(index)) return null;
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                cursor: "pointer",
+                "&:hover": { opacity: 0.8 },
+              }}
+              onClick={() => setShowSuggestedRisks(!showSuggestedRisks)}
+            >
+              {showSuggestedRisks ? (
+                <ChevronDown size={14} strokeWidth={1.5} color={palette.text.accent} />
+              ) : (
+                <ChevronRight size={14} strokeWidth={1.5} color={palette.text.accent} />
+              )}
+              <Sparkles size={12} color={palette.accent.purple.text} strokeWidth={1.5} />
+              <Typography sx={{ fontSize: 13, color: palette.text.secondary, fontWeight: 500 }}>
+                Suggested risks
+              </Typography>
+            </Box>
+            <Collapse in={showSuggestedRisks}>
+              <Box sx={{ mt: "12px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                {scan.scan.risk_score_details.llm_suggested_risks.map((suggestion, index) => {
+                  if (dismissedSuggestions.has(index)) return null;
 
-                const isRemoving = removingSuggestions.has(index);
-                const riskLevel = getRiskLevelLabel(suggestion.likelihood, suggestion.severity);
-                const dimColors = DIMENSION_CHIP_COLORS[suggestion.dimension] || DIMENSION_CHIP_COLORS.security;
-                const dimLabel = DIMENSION_LABELS[suggestion.dimension] || suggestion.dimension;
+                  const isRemoving = removingSuggestions.has(index);
+                  const riskLevel = getRiskLevelLabel(suggestion.likelihood, suggestion.severity);
+                  const dimColors =
+                    DIMENSION_CHIP_COLORS[suggestion.dimension] || DIMENSION_CHIP_COLORS.security;
+                  const dimLabel = DIMENSION_LABELS[suggestion.dimension] || suggestion.dimension;
 
-                return (
-                  <Box
-                    key={index}
-                    sx={{
-                      border: `1px solid ${palette.border.light}`,
-                      borderRadius: "4px",
-                      p: "8px",
-                      backgroundColor: palette.background.main,
-                      "&:hover": { borderColor: palette.border.dark },
-                      transition: "opacity 300ms ease, max-height 300ms ease, padding 300ms ease, margin 300ms ease",
-                      opacity: isRemoving ? 0 : 1,
-                      maxHeight: isRemoving ? 0 : 300,
-                      overflow: "hidden",
-                      ...(isRemoving && { p: 0, border: "none", mb: 0 }),
-                    }}
-                  >
-                    <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "8px" }}>
-                      <Box sx={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: "8px" }}>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-                          <Typography sx={{ fontSize: "14px", fontWeight: 600, color: palette.text.primary }}>
-                            {suggestion.risk_name}
-                          </Typography>
-                          <Chip
-                            label={dimLabel}
-                            backgroundColor={dimColors.bg}
-                            textColor={dimColors.text}
-                            uppercase={false}
-                            size="small"
-                          />
-                          <Chip
-                            label={riskLevel.text}
-                            size="small"
-                          />
-                        </Box>
-                        <Typography
+                  return (
+                    <Box
+                      key={index}
+                      sx={{
+                        border: `1px solid ${palette.border.light}`,
+                        borderRadius: "4px",
+                        p: "8px",
+                        backgroundColor: palette.background.main,
+                        "&:hover": { borderColor: palette.border.dark },
+                        transition:
+                          "opacity 300ms ease, max-height 300ms ease, padding 300ms ease, margin 300ms ease",
+                        opacity: isRemoving ? 0 : 1,
+                        maxHeight: isRemoving ? 0 : 300,
+                        overflow: "hidden",
+                        ...(isRemoving && { p: 0, border: "none", mb: 0 }),
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "flex-start",
+                          justifyContent: "space-between",
+                          gap: "8px",
+                        }}
+                      >
+                        <Box
                           sx={{
-                            fontSize: "13px",
-                            color: palette.text.secondary,
-                            display: "-webkit-box",
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: "vertical",
-                            overflow: "hidden",
+                            flex: 1,
+                            minWidth: 0,
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "8px",
                           }}
                         >
-                          {suggestion.risk_description}
-                        </Typography>
-                        <Box sx={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                          {suggestion.risk_category.map((cat) => (
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "8px",
+                              flexWrap: "wrap",
+                            }}
+                          >
+                            <Typography
+                              sx={{
+                                fontSize: "14px",
+                                fontWeight: 600,
+                                color: palette.text.primary,
+                              }}
+                            >
+                              {suggestion.risk_name}
+                            </Typography>
                             <Chip
-                              key={cat}
-                              label={cat}
-                              variant="default"
+                              label={dimLabel}
+                              backgroundColor={dimColors.bg}
+                              textColor={dimColors.text}
                               uppercase={false}
                               size="small"
                             />
-                          ))}
+                            <Chip label={riskLevel.text} size="small" />
+                          </Box>
+                          <Typography
+                            sx={{
+                              fontSize: "13px",
+                              color: palette.text.secondary,
+                              display: "-webkit-box",
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: "vertical",
+                              overflow: "hidden",
+                            }}
+                          >
+                            {suggestion.risk_description}
+                          </Typography>
+                          <Box sx={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                            {suggestion.risk_category.map((cat) => (
+                              <Chip
+                                key={cat}
+                                label={cat}
+                                variant="default"
+                                uppercase={false}
+                                size="small"
+                              />
+                            ))}
+                          </Box>
+                        </Box>
+                        <Box sx={{ display: "flex", gap: "8px", flexShrink: 0 }}>
+                          <CustomizableButton
+                            text="Ignore"
+                            variant="text"
+                            onClick={(e: React.MouseEvent<HTMLElement>) =>
+                              setIgnoreMenuAnchor({ el: e.currentTarget, index })
+                            }
+                            sx={{
+                              whiteSpace: "nowrap",
+                              height: "34px",
+                              fontSize: "13px",
+                              color: palette.text.tertiary,
+                            }}
+                          />
+                          <CustomizableButton
+                            text="Add to risk register"
+                            variant="outlined"
+                            startIcon={<Plus size={14} strokeWidth={1.5} />}
+                            onClick={() => handleAddSuggestedRisk(suggestion, index)}
+                            sx={{
+                              whiteSpace: "nowrap",
+                              height: "34px",
+                              fontSize: "13px",
+                            }}
+                          />
                         </Box>
                       </Box>
-                      <Box sx={{ display: "flex", gap: "8px", flexShrink: 0 }}>
-                        <CustomizableButton
-                          text="Ignore"
-                          variant="text"
-                          onClick={(e: React.MouseEvent<HTMLElement>) => setIgnoreMenuAnchor({ el: e.currentTarget, index })}
-                          sx={{
-                            whiteSpace: "nowrap",
-                            height: "34px",
-                            fontSize: "13px",
-                            color: palette.text.tertiary,
-                          }}
-                        />
-                        <CustomizableButton
-                          text="Add to risk register"
-                          variant="outlined"
-                          startIcon={<Plus size={14} strokeWidth={1.5} />}
-                          onClick={() => handleAddSuggestedRisk(suggestion, index)}
-                          sx={{
-                            whiteSpace: "nowrap",
-                            height: "34px",
-                            fontSize: "13px",
-                          }}
-                        />
-                      </Box>
                     </Box>
-                  </Box>
-                );
-              })}
-            </Box>
-          </Collapse>
+                  );
+                })}
+              </Box>
+            </Collapse>
 
-          {/* Ignore reason popover */}
-          <Popover
-            open={Boolean(ignoreMenuAnchor)}
-            anchorEl={ignoreMenuAnchor?.el}
-            onClose={() => setIgnoreMenuAnchor(null)}
-            anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-            transformOrigin={{ vertical: "top", horizontal: "left" }}
-            slotProps={{
-              paper: {
-                sx: {
-                  mt: 0.5,
-                  borderRadius: "4px",
-                  boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
-                  border: `1px solid ${palette.border.light}`,
+            {/* Ignore reason popover */}
+            <Popover
+              open={Boolean(ignoreMenuAnchor)}
+              anchorEl={ignoreMenuAnchor?.el}
+              onClose={() => setIgnoreMenuAnchor(null)}
+              anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+              transformOrigin={{ vertical: "top", horizontal: "left" }}
+              slotProps={{
+                paper: {
+                  sx: {
+                    mt: 0.5,
+                    borderRadius: "4px",
+                    boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+                    border: `1px solid ${palette.border.light}`,
+                  },
                 },
-              },
-            }}
-          >
-            <Box sx={{ p: 1, minWidth: 200 }}>
-              <Box
-                onClick={() => handleIgnoreSuggestion("already_added")}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  p: "6px 8px",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  "&:hover": { backgroundColor: palette.background.hover },
-                }}
-              >
-                <Typography sx={{ fontSize: "13px", color: palette.text.primary }}>
-                  This has already been added before
-                </Typography>
+              }}
+            >
+              <Box sx={{ p: 1, minWidth: 200 }}>
+                <Box
+                  onClick={() => handleIgnoreSuggestion("already_added")}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    p: "6px 8px",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    "&:hover": { backgroundColor: palette.background.hover },
+                  }}
+                >
+                  <Typography sx={{ fontSize: "13px", color: palette.text.primary }}>
+                    This has already been added before
+                  </Typography>
+                </Box>
+                <Box
+                  onClick={() => handleIgnoreSuggestion("not_real_risk")}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    p: "6px 8px",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    "&:hover": { backgroundColor: palette.background.hover },
+                  }}
+                >
+                  <Typography sx={{ fontSize: "13px", color: palette.text.primary }}>
+                    This is not a real risk
+                  </Typography>
+                </Box>
               </Box>
-              <Box
-                onClick={() => handleIgnoreSuggestion("not_real_risk")}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  p: "6px 8px",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  "&:hover": { backgroundColor: palette.background.hover },
-                }}
-              >
-                <Typography sx={{ fontSize: "13px", color: palette.text.primary }}>
-                  This is not a real risk
-                </Typography>
-              </Box>
-            </Box>
-          </Popover>
-        </Box>
-      )}
+            </Popover>
+          </Box>
+        )}
 
       {/* Suggested Risk Modal */}
       <StandardModal
@@ -2088,20 +2448,24 @@ export default function ScanDetailsPage() {
           onSuccess={handleSuggestedRiskSuccess}
           onError={handleSuggestedRiskError}
           initialRiskValues={selectedSuggestedRisk || undefined}
-          initialMitigationValues={selectedSuggestedMitigation ? {
-            mitigationStatus: 1,
-            mitigationPlan: selectedSuggestedMitigation.mitigationPlan || "",
-            currentRiskLevel: 0,
-            implementationStrategy: "",
-            deadline: "",
-            doc: "",
-            likelihood: selectedSuggestedRisk?.likelihood || 0,
-            riskSeverity: selectedSuggestedRisk?.riskSeverity || 0,
-            approver: 0,
-            approvalStatus: 0,
-            dateOfAssessment: "",
-            recommendations: "",
-          } : undefined}
+          initialMitigationValues={
+            selectedSuggestedMitigation
+              ? {
+                  mitigationStatus: 1,
+                  mitigationPlan: selectedSuggestedMitigation.mitigationPlan || "",
+                  currentRiskLevel: 0,
+                  implementationStrategy: "",
+                  deadline: "",
+                  doc: "",
+                  likelihood: selectedSuggestedRisk?.likelihood || 0,
+                  riskSeverity: selectedSuggestedRisk?.riskSeverity || 0,
+                  approver: 0,
+                  approvalStatus: 0,
+                  dateOfAssessment: "",
+                  recommendations: "",
+                }
+              : undefined
+          }
           users={users}
           usersLoading={usersLoading}
           onSubmitRef={suggestedRiskSubmitRef}
@@ -2159,7 +2523,8 @@ export default function ScanDetailsPage() {
               value: "vulnerabilities",
               icon: "ShieldAlert",
               count: vulnerabilityFindings.length,
-              tooltip: "LLM-specific vulnerabilities (prompt injection, PII exposure, excessive agency, jailbreak risk)",
+              tooltip:
+                "LLM-specific vulnerabilities (prompt injection, PII exposure, excessive agency, jailbreak risk)",
             },
             {
               label: "Security",
@@ -2180,11 +2545,33 @@ export default function ScanDetailsPage() {
           onChange={handleTabChange}
         />
 
+        {/* Show suppressed toggle (applies to all tabs) */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            gap: 1,
+            mt: "8px",
+          }}
+        >
+          <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
+            Show suppressed findings
+          </Typography>
+          <Toggle
+            size="small"
+            checked={showSuppressed}
+            onChange={(_, checked) => setShowSuppressed(checked)}
+            inputProps={{ "aria-label": "Show suppressed findings" }}
+          />
+        </Box>
+
         {/* Libraries Tab */}
         {activeTab === "libraries" && (
           <Box sx={{ mt: "8px" }}>
             <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, mb: 2 }}>
-              AI and machine learning libraries detected in the repository. Click on a finding to see file locations.
+              AI and machine learning libraries detected in the repository. Click on a finding to
+              see file locations.
             </Typography>
             {/* Summary Cards */}
             <Box
@@ -2252,16 +2639,18 @@ export default function ScanDetailsPage() {
                 </Box>
               ) : (
                 <Box>
-                  {libraryState.findings.map((finding) => (
-                    <FindingRow
-                      key={finding.id}
-                      finding={finding}
-                      repositoryOwner={scan.scan.repository_owner}
-                      repositoryName={scan.scan.repository_name}
-                      scanId={scanId}
-                      onStatusMessage={showAlert}
-                    />
-                  ))}
+                  {libraryState.findings
+                    .filter((f) => showSuppressed || !isFindingSuppressed(f))
+                    .map((finding) => (
+                      <FindingRow
+                        key={finding.id}
+                        finding={finding}
+                        repositoryOwner={scan.scan.repository_owner}
+                        repositoryName={scan.scan.repository_name}
+                        scanId={scanId}
+                        onStatusMessage={showAlert}
+                      />
+                    ))}
 
                   {/* Pagination */}
                   {libraryState.totalPages > 1 && (
@@ -2281,7 +2670,12 @@ export default function ScanDetailsPage() {
                         sx={{ height: 34 }}
                       />
                       <Typography
-                        sx={{ fontSize: "13px", lineHeight: "34px", px: 2, color: palette.text.tertiary }}
+                        sx={{
+                          fontSize: "13px",
+                          lineHeight: "34px",
+                          px: 2,
+                          color: palette.text.tertiary,
+                        }}
                       >
                         Page {libraryState.page} of {libraryState.totalPages}
                       </Typography>
@@ -2299,7 +2693,6 @@ export default function ScanDetailsPage() {
                 </Box>
               )}
             </Box>
-
           </Box>
         )}
 
@@ -2307,7 +2700,8 @@ export default function ScanDetailsPage() {
         {activeTab === "api-calls" && (
           <Box sx={{ mt: "8px" }}>
             <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, mb: 2 }}>
-              API calls to AI/ML services detected in the codebase. These represent active usage of AI models and services.
+              API calls to AI/ML services detected in the codebase. These represent active usage of
+              AI models and services.
             </Typography>
 
             {/* Summary */}
@@ -2323,25 +2717,29 @@ export default function ScanDetailsPage() {
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Info size={16} color={palette.text.tertiary} />
                 <Typography sx={{ fontSize: "13px", fontWeight: 500 }}>
-                  {scan.summary.by_finding_type?.api_call || 0} API call{(scan.summary.by_finding_type?.api_call || 0) !== 1 ? "s" : ""} detected
+                  {scan.summary.by_finding_type?.api_call || 0} API call
+                  {(scan.summary.by_finding_type?.api_call || 0) !== 1 ? "s" : ""} detected
                 </Typography>
               </Box>
               <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, mt: 1 }}>
-                All API call findings are marked as high confidence. These indicate direct integration with AI services.
+                All API call findings are marked as high confidence. These indicate direct
+                integration with AI services.
               </Typography>
             </Box>
 
             {/* Findings List */}
             <Box sx={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-              {apiCallState.findings.map((finding) => (
-                <FindingRow
-                  key={finding.id}
-                  finding={finding}
-                  repositoryOwner={scan.scan.repository_owner}
-                  repositoryName={scan.scan.repository_name}
-                  scanId={scanId}
-                />
-              ))}
+              {apiCallState.findings
+                .filter((f) => showSuppressed || !isFindingSuppressed(f))
+                .map((finding) => (
+                  <FindingRow
+                    key={finding.id}
+                    finding={finding}
+                    repositoryOwner={scan.scan.repository_owner}
+                    repositoryName={scan.scan.repository_name}
+                    scanId={scanId}
+                  />
+                ))}
             </Box>
 
             {/* Empty State */}
@@ -2381,12 +2779,16 @@ export default function ScanDetailsPage() {
                   variant="outlined"
                   sx={{ height: 34 }}
                 />
-                <Typography sx={{ lineHeight: "34px", color: palette.text.tertiary, fontSize: "13px" }}>
+                <Typography
+                  sx={{ lineHeight: "34px", color: palette.text.tertiary, fontSize: "13px" }}
+                >
                   Page {apiCallState.page} of {apiCallState.totalPages}
                 </Typography>
                 <CustomizableButton
                   text="Next"
-                  onClick={() => apiCallState.setPage((p) => Math.min(apiCallState.totalPages, p + 1))}
+                  onClick={() =>
+                    apiCallState.setPage((p) => Math.min(apiCallState.totalPages, p + 1))
+                  }
                   isDisabled={apiCallState.page === apiCallState.totalPages}
                   variant="outlined"
                   sx={{ height: 34 }}
@@ -2400,7 +2802,8 @@ export default function ScanDetailsPage() {
         {activeTab === "models" && (
           <Box sx={{ mt: "8px" }}>
             <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, mb: 2 }}>
-              Pre-trained AI/ML model references detected in the codebase. These include Hugging Face models, Ollama models, and other model identifiers.
+              Pre-trained AI/ML model references detected in the codebase. These include Hugging
+              Face models, Ollama models, and other model identifiers.
             </Typography>
 
             {/* Summary */}
@@ -2416,25 +2819,29 @@ export default function ScanDetailsPage() {
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Package size={16} color={palette.text.tertiary} />
                 <Typography sx={{ fontSize: "13px", fontWeight: 500 }}>
-                  {scan.summary.by_finding_type?.model_ref || 0} model reference{(scan.summary.by_finding_type?.model_ref || 0) !== 1 ? "s" : ""} detected
+                  {scan.summary.by_finding_type?.model_ref || 0} model reference
+                  {(scan.summary.by_finding_type?.model_ref || 0) !== 1 ? "s" : ""} detected
                 </Typography>
               </Box>
               <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, mt: 1 }}>
-                Model references indicate usage of pre-trained models from Hugging Face Hub, Ollama, and other sources.
+                Model references indicate usage of pre-trained models from Hugging Face Hub, Ollama,
+                and other sources.
               </Typography>
             </Box>
 
             {/* Findings List */}
             <Box sx={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-              {modelState.findings.map((finding) => (
-                <FindingRow
-                  key={finding.id}
-                  finding={finding}
-                  repositoryOwner={scan.scan.repository_owner}
-                  repositoryName={scan.scan.repository_name}
-                  scanId={scanId}
-                />
-              ))}
+              {modelState.findings
+                .filter((f) => showSuppressed || !isFindingSuppressed(f))
+                .map((finding) => (
+                  <FindingRow
+                    key={finding.id}
+                    finding={finding}
+                    repositoryOwner={scan.scan.repository_owner}
+                    repositoryName={scan.scan.repository_name}
+                    scanId={scanId}
+                  />
+                ))}
             </Box>
 
             {/* Empty State */}
@@ -2452,7 +2859,8 @@ export default function ScanDetailsPage() {
                   No model references detected in this repository
                 </Typography>
                 <Typography sx={{ fontSize: "13px", color: palette.text.accent, mt: 1 }}>
-                  References to Hugging Face models, Ollama models, and other pre-trained models will appear here
+                  References to Hugging Face models, Ollama models, and other pre-trained models
+                  will appear here
                 </Typography>
               </Box>
             )}
@@ -2474,7 +2882,9 @@ export default function ScanDetailsPage() {
                   variant="outlined"
                   sx={{ height: 34 }}
                 />
-                <Typography sx={{ lineHeight: "34px", color: palette.text.tertiary, fontSize: "13px" }}>
+                <Typography
+                  sx={{ lineHeight: "34px", color: palette.text.tertiary, fontSize: "13px" }}
+                >
                   Page {modelState.page} of {modelState.totalPages}
                 </Typography>
                 <CustomizableButton
@@ -2493,7 +2903,8 @@ export default function ScanDetailsPage() {
         {activeTab === "rag" && (
           <Box sx={{ mt: "8px" }}>
             <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, mb: 2 }}>
-              RAG (Retrieval-Augmented Generation) pipeline components detected in the codebase. These include vector databases, document loaders, and embedding models.
+              RAG (Retrieval-Augmented Generation) pipeline components detected in the codebase.
+              These include vector databases, document loaders, and embedding models.
             </Typography>
 
             {/* Summary */}
@@ -2509,25 +2920,29 @@ export default function ScanDetailsPage() {
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Info size={16} color={palette.text.tertiary} />
                 <Typography sx={{ fontSize: "13px", fontWeight: 500 }}>
-                  {scan.summary.by_finding_type?.rag_component || 0} RAG component{(scan.summary.by_finding_type?.rag_component || 0) !== 1 ? "s" : ""} detected
+                  {scan.summary.by_finding_type?.rag_component || 0} RAG component
+                  {(scan.summary.by_finding_type?.rag_component || 0) !== 1 ? "s" : ""} detected
                 </Typography>
               </Box>
               <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, mt: 1 }}>
-                RAG components indicate usage of vector databases, document loaders, and embedding systems for retrieval-augmented generation.
+                RAG components indicate usage of vector databases, document loaders, and embedding
+                systems for retrieval-augmented generation.
               </Typography>
             </Box>
 
             {/* Findings List */}
             <Box sx={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-              {ragState.findings.map((finding) => (
-                <FindingRow
-                  key={finding.id}
-                  finding={finding}
-                  repositoryOwner={scan.scan.repository_owner}
-                  repositoryName={scan.scan.repository_name}
-                  scanId={scanId}
-                />
-              ))}
+              {ragState.findings
+                .filter((f) => showSuppressed || !isFindingSuppressed(f))
+                .map((finding) => (
+                  <FindingRow
+                    key={finding.id}
+                    finding={finding}
+                    repositoryOwner={scan.scan.repository_owner}
+                    repositoryName={scan.scan.repository_name}
+                    scanId={scanId}
+                  />
+                ))}
             </Box>
 
             {/* Empty State */}
@@ -2545,7 +2960,8 @@ export default function ScanDetailsPage() {
                   No RAG components detected in this repository
                 </Typography>
                 <Typography sx={{ fontSize: "13px", color: palette.text.accent, mt: 1 }}>
-                  Vector databases (Pinecone, Chroma, Qdrant), document loaders, and embedding models will appear here
+                  Vector databases (Pinecone, Chroma, Qdrant), document loaders, and embedding
+                  models will appear here
                 </Typography>
               </Box>
             )}
@@ -2567,7 +2983,9 @@ export default function ScanDetailsPage() {
                   variant="outlined"
                   sx={{ height: 34 }}
                 />
-                <Typography sx={{ lineHeight: "34px", color: palette.text.tertiary, fontSize: "13px" }}>
+                <Typography
+                  sx={{ lineHeight: "34px", color: palette.text.tertiary, fontSize: "13px" }}
+                >
                   Page {ragState.page} of {ragState.totalPages}
                 </Typography>
                 <CustomizableButton
@@ -2586,7 +3004,8 @@ export default function ScanDetailsPage() {
         {activeTab === "agents" && (
           <Box sx={{ mt: "8px" }}>
             <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, mb: 2 }}>
-              AI agent frameworks and autonomous systems detected in the codebase. These include LangChain agents, CrewAI, AutoGen, and MCP servers.
+              AI agent frameworks and autonomous systems detected in the codebase. These include
+              LangChain agents, CrewAI, AutoGen, and MCP servers.
             </Typography>
 
             {/* Warning Box - agents carry high risk */}
@@ -2603,13 +3022,25 @@ export default function ScanDetailsPage() {
                   gap: 2,
                 }}
               >
-                <AlertCircle size={20} color={palette.status.warning.text} style={{ flexShrink: 0, marginTop: 2 }} />
+                <AlertCircle
+                  size={20}
+                  color={palette.status.warning.text}
+                  style={{ flexShrink: 0, marginTop: 2 }}
+                />
                 <Box>
-                  <Typography sx={{ fontSize: "14px", fontWeight: 600, color: palette.status.warning.text, mb: 0.5 }}>
+                  <Typography
+                    sx={{
+                      fontSize: "14px",
+                      fontWeight: 600,
+                      color: palette.status.warning.text,
+                      mb: 0.5,
+                    }}
+                  >
                     Autonomous AI systems detected
                   </Typography>
                   <Typography sx={{ fontSize: "13px", color: palette.status.warning.text }}>
-                    AI agents can take autonomous actions and interact with external systems. Review these carefully for governance and security implications.
+                    AI agents can take autonomous actions and interact with external systems. Review
+                    these carefully for governance and security implications.
                   </Typography>
                 </Box>
               </Box>
@@ -2628,25 +3059,29 @@ export default function ScanDetailsPage() {
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Info size={16} color={palette.text.tertiary} />
                 <Typography sx={{ fontSize: "13px", fontWeight: 500 }}>
-                  {scan.summary.by_finding_type?.agent || 0} agent framework{(scan.summary.by_finding_type?.agent || 0) !== 1 ? "s" : ""} detected
+                  {scan.summary.by_finding_type?.agent || 0} agent framework
+                  {(scan.summary.by_finding_type?.agent || 0) !== 1 ? "s" : ""} detected
                 </Typography>
               </Box>
               <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, mt: 1 }}>
-                Agent findings are marked as high risk due to their autonomous nature and ability to interact with external systems.
+                Agent findings are marked as high risk due to their autonomous nature and ability to
+                interact with external systems.
               </Typography>
             </Box>
 
             {/* Findings List */}
             <Box sx={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-              {agentState.findings.map((finding) => (
-                <FindingRow
-                  key={finding.id}
-                  finding={finding}
-                  repositoryOwner={scan.scan.repository_owner}
-                  repositoryName={scan.scan.repository_name}
-                  scanId={scanId}
-                />
-              ))}
+              {agentState.findings
+                .filter((f) => showSuppressed || !isFindingSuppressed(f))
+                .map((finding) => (
+                  <FindingRow
+                    key={finding.id}
+                    finding={finding}
+                    repositoryOwner={scan.scan.repository_owner}
+                    repositoryName={scan.scan.repository_name}
+                    scanId={scanId}
+                  />
+                ))}
             </Box>
 
             {/* Empty State */}
@@ -2664,7 +3099,8 @@ export default function ScanDetailsPage() {
                   No AI agents detected in this repository
                 </Typography>
                 <Typography sx={{ fontSize: "13px", color: palette.text.accent, mt: 1 }}>
-                  LangChain agents, CrewAI, AutoGen, MCP servers, and other autonomous AI systems will appear here
+                  LangChain agents, CrewAI, AutoGen, MCP servers, and other autonomous AI systems
+                  will appear here
                 </Typography>
               </Box>
             )}
@@ -2686,7 +3122,9 @@ export default function ScanDetailsPage() {
                   variant="outlined"
                   sx={{ height: 34 }}
                 />
-                <Typography sx={{ lineHeight: "34px", color: palette.text.tertiary, fontSize: "13px" }}>
+                <Typography
+                  sx={{ lineHeight: "34px", color: palette.text.tertiary, fontSize: "13px" }}
+                >
                   Page {agentState.page} of {agentState.totalPages}
                 </Typography>
                 <CustomizableButton
@@ -2705,7 +3143,8 @@ export default function ScanDetailsPage() {
         {activeTab === "secrets" && (
           <Box sx={{ mt: "8px" }}>
             <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, mb: 2 }}>
-              Hardcoded API keys and secrets detected in the codebase. These should be moved to environment variables or a secrets manager.
+              Hardcoded API keys and secrets detected in the codebase. These should be moved to
+              environment variables or a secrets manager.
             </Typography>
 
             {/* Warning Box - only show when secrets are found */}
@@ -2722,14 +3161,25 @@ export default function ScanDetailsPage() {
                   gap: 2,
                 }}
               >
-                <AlertCircle size={20} color={palette.status.error.text} style={{ flexShrink: 0, marginTop: 2 }} />
+                <AlertCircle
+                  size={20}
+                  color={palette.status.error.text}
+                  style={{ flexShrink: 0, marginTop: 2 }}
+                />
                 <Box>
-                  <Typography sx={{ fontSize: "14px", fontWeight: 600, color: palette.status.error.text, mb: 0.5 }}>
+                  <Typography
+                    sx={{
+                      fontSize: "14px",
+                      fontWeight: 600,
+                      color: palette.status.error.text,
+                      mb: 0.5,
+                    }}
+                  >
                     Security risk detected
                   </Typography>
                   <Typography sx={{ fontSize: "13px", color: palette.status.error.text }}>
-                    Hardcoded secrets in source code can be exposed if the repository is made public or accessed by unauthorized users.
-                    Rotate any exposed credentials immediately.
+                    Hardcoded secrets in source code can be exposed if the repository is made public
+                    or accessed by unauthorized users. Rotate any exposed credentials immediately.
                   </Typography>
                 </Box>
               </Box>
@@ -2737,15 +3187,17 @@ export default function ScanDetailsPage() {
 
             {/* Findings List */}
             <Box sx={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-              {secretState.findings.map((finding) => (
-                <FindingRow
-                  key={finding.id}
-                  finding={finding}
-                  repositoryOwner={scan.scan.repository_owner}
-                  repositoryName={scan.scan.repository_name}
-                  scanId={scanId}
-                />
-              ))}
+              {secretState.findings
+                .filter((f) => showSuppressed || !isFindingSuppressed(f))
+                .map((finding) => (
+                  <FindingRow
+                    key={finding.id}
+                    finding={finding}
+                    repositoryOwner={scan.scan.repository_owner}
+                    repositoryName={scan.scan.repository_name}
+                    scanId={scanId}
+                  />
+                ))}
             </Box>
 
             {/* Empty State - only show when no secrets found */}
@@ -2763,7 +3215,14 @@ export default function ScanDetailsPage() {
                 <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
                   <ShieldCheck size={48} color={palette.status.success.text} />
                 </Box>
-                <Typography sx={{ fontSize: "14px", fontWeight: 500, color: palette.status.success.text, mb: 1 }}>
+                <Typography
+                  sx={{
+                    fontSize: "14px",
+                    fontWeight: 500,
+                    color: palette.status.success.text,
+                    mb: 1,
+                  }}
+                >
                   No hardcoded secrets detected
                 </Typography>
                 <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
@@ -2789,12 +3248,16 @@ export default function ScanDetailsPage() {
                   variant="outlined"
                   sx={{ height: 34 }}
                 />
-                <Typography sx={{ lineHeight: "34px", color: palette.text.tertiary, fontSize: "13px" }}>
+                <Typography
+                  sx={{ lineHeight: "34px", color: palette.text.tertiary, fontSize: "13px" }}
+                >
                   Page {secretState.page} of {secretState.totalPages}
                 </Typography>
                 <CustomizableButton
                   text="Next"
-                  onClick={() => secretState.setPage((p) => Math.min(secretState.totalPages, p + 1))}
+                  onClick={() =>
+                    secretState.setPage((p) => Math.min(secretState.totalPages, p + 1))
+                  }
                   isDisabled={secretState.page === secretState.totalPages}
                   variant="outlined"
                   sx={{ height: 34 }}
@@ -2808,143 +3271,140 @@ export default function ScanDetailsPage() {
         {activeTab === "security" && (
           <Box sx={{ mt: "8px" }}>
             <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, mb: 2 }}>
-              Security vulnerabilities found in model files. Serialized models can contain malicious code that executes when loaded.
+              Security vulnerabilities found in model files. Serialized models can contain malicious
+              code that executes when loaded.
             </Typography>
             {/* Security Summary Cards - only show when there are findings */}
             {(securitySummary?.total || 0) > 0 && (
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: "repeat(5, 1fr)",
-                gap: "8px",
-                mb: "8px",
-              }}
-            >
               <Box
                 sx={{
-                  backgroundColor: palette.background.main,
-                  border: `1px solid ${palette.border.dark}`,
-                  borderRadius: "4px",
-                  p: 2,
-                  textAlign: "center",
+                  display: "grid",
+                  gridTemplateColumns: "repeat(5, 1fr)",
+                  gap: "8px",
+                  mb: "8px",
                 }}
               >
-                <Typography sx={{ fontSize: "20px", fontWeight: 600 }}>
-                  {securitySummary?.total || 0}
-                </Typography>
-                <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
-                  Total findings
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  backgroundColor: palette.status.error.bg,
-                  border: `1px solid ${palette.status.error.border}`,
-                  borderRadius: "4px",
-                  p: 2,
-                  textAlign: "center",
-                  cursor: "pointer",
-                }}
-                onClick={() =>
-                  setSeverityFilter((f) => (f === "critical" ? null : "critical"))
-                }
-              >
-                <Typography
+                <Box
                   sx={{
-                    fontSize: "20px",
-                    fontWeight: 600,
-                    color:
-                      severityFilter === "critical" ? palette.status.error.text : palette.text.primary,
+                    backgroundColor: palette.background.main,
+                    border: `1px solid ${palette.border.dark}`,
+                    borderRadius: "4px",
+                    p: 2,
+                    textAlign: "center",
                   }}
                 >
-                  {securitySummary?.by_severity.critical || 0}
-                </Typography>
-                <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
-                  Critical
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  backgroundColor: palette.risk.high.bg,
-                  border: `1px solid ${palette.risk.high.border}`,
-                  borderRadius: "4px",
-                  p: 2,
-                  textAlign: "center",
-                  cursor: "pointer",
-                }}
-                onClick={() =>
-                  setSeverityFilter((f) => (f === "high" ? null : "high"))
-                }
-              >
-                <Typography
+                  <Typography sx={{ fontSize: "20px", fontWeight: 600 }}>
+                    {securitySummary?.total || 0}
+                  </Typography>
+                  <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
+                    Total findings
+                  </Typography>
+                </Box>
+                <Box
                   sx={{
-                    fontSize: "20px",
-                    fontWeight: 600,
-                    color:
-                      severityFilter === "high" ? palette.risk.high.text : palette.text.primary,
+                    backgroundColor: palette.status.error.bg,
+                    border: `1px solid ${palette.status.error.border}`,
+                    borderRadius: "4px",
+                    p: 2,
+                    textAlign: "center",
+                    cursor: "pointer",
                   }}
+                  onClick={() => setSeverityFilter((f) => (f === "critical" ? null : "critical"))}
                 >
-                  {securitySummary?.by_severity.high || 0}
-                </Typography>
-                <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
-                  High
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  backgroundColor: palette.status.warning.bg,
-                  border: `1px solid ${palette.status.warning.border}`,
-                  borderRadius: "4px",
-                  p: 2,
-                  textAlign: "center",
-                  cursor: "pointer",
-                }}
-                onClick={() =>
-                  setSeverityFilter((f) => (f === "medium" ? null : "medium"))
-                }
-              >
-                <Typography
+                  <Typography
+                    sx={{
+                      fontSize: "20px",
+                      fontWeight: 600,
+                      color:
+                        severityFilter === "critical"
+                          ? palette.status.error.text
+                          : palette.text.primary,
+                    }}
+                  >
+                    {securitySummary?.by_severity.critical || 0}
+                  </Typography>
+                  <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
+                    Critical
+                  </Typography>
+                </Box>
+                <Box
                   sx={{
-                    fontSize: "20px",
-                    fontWeight: 600,
-                    color:
-                      severityFilter === "medium" ? palette.status.warning.text : palette.text.primary,
+                    backgroundColor: palette.risk.high.bg,
+                    border: `1px solid ${palette.risk.high.border}`,
+                    borderRadius: "4px",
+                    p: 2,
+                    textAlign: "center",
+                    cursor: "pointer",
                   }}
+                  onClick={() => setSeverityFilter((f) => (f === "high" ? null : "high"))}
                 >
-                  {securitySummary?.by_severity.medium || 0}
-                </Typography>
-                <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
-                  Medium
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  backgroundColor: palette.status.info.bg,
-                  border: `1px solid ${palette.status.info.border}`,
-                  borderRadius: "4px",
-                  p: 2,
-                  textAlign: "center",
-                  cursor: "pointer",
-                }}
-                onClick={() =>
-                  setSeverityFilter((f) => (f === "low" ? null : "low"))
-                }
-              >
-                <Typography
+                  <Typography
+                    sx={{
+                      fontSize: "20px",
+                      fontWeight: 600,
+                      color:
+                        severityFilter === "high" ? palette.risk.high.text : palette.text.primary,
+                    }}
+                  >
+                    {securitySummary?.by_severity.high || 0}
+                  </Typography>
+                  <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
+                    High
+                  </Typography>
+                </Box>
+                <Box
                   sx={{
-                    fontSize: "20px",
-                    fontWeight: 600,
-                    color:
-                      severityFilter === "low" ? palette.status.info.text : palette.text.primary,
+                    backgroundColor: palette.status.warning.bg,
+                    border: `1px solid ${palette.status.warning.border}`,
+                    borderRadius: "4px",
+                    p: 2,
+                    textAlign: "center",
+                    cursor: "pointer",
                   }}
+                  onClick={() => setSeverityFilter((f) => (f === "medium" ? null : "medium"))}
                 >
-                  {securitySummary?.by_severity.low || 0}
-                </Typography>
-                <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
-                  Low
-                </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: "20px",
+                      fontWeight: 600,
+                      color:
+                        severityFilter === "medium"
+                          ? palette.status.warning.text
+                          : palette.text.primary,
+                    }}
+                  >
+                    {securitySummary?.by_severity.medium || 0}
+                  </Typography>
+                  <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
+                    Medium
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    backgroundColor: palette.status.info.bg,
+                    border: `1px solid ${palette.status.info.border}`,
+                    borderRadius: "4px",
+                    p: 2,
+                    textAlign: "center",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => setSeverityFilter((f) => (f === "low" ? null : "low"))}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: "20px",
+                      fontWeight: 600,
+                      color:
+                        severityFilter === "low" ? palette.status.info.text : palette.text.primary,
+                    }}
+                  >
+                    {securitySummary?.by_severity.low || 0}
+                  </Typography>
+                  <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
+                    Low
+                  </Typography>
+                </Box>
               </Box>
-            </Box>
             )}
 
             {/* Security Findings List */}
@@ -2973,7 +3433,12 @@ export default function ScanDetailsPage() {
                     <ShieldCheck size={48} color={palette.status.success.text} />
                   </Box>
                   <Typography
-                    sx={{ fontSize: "13px", fontWeight: 500, color: palette.status.success.text, mb: 1 }}
+                    sx={{
+                      fontSize: "13px",
+                      fontWeight: 500,
+                      color: palette.status.success.text,
+                      mb: 1,
+                    }}
                   >
                     {severityFilter
                       ? `No ${severityFilter} severity findings`
@@ -2991,8 +3456,8 @@ export default function ScanDetailsPage() {
                     >
                       <Info size={14} color={palette.text.tertiary} />
                       <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
-                        Note: This scan checks for known malicious patterns only.
-                        A clean result does not guarantee the model is safe.
+                        Note: This scan checks for known malicious patterns only. A clean result
+                        does not guarantee the model is safe.
                       </Typography>
                     </Box>
                   )}
@@ -3020,24 +3485,25 @@ export default function ScanDetailsPage() {
                     >
                       <CustomizableButton
                         text="Previous"
-                        onClick={() =>
-                          securityState.setPage((p) => Math.max(1, p - 1))
-                        }
+                        onClick={() => securityState.setPage((p) => Math.max(1, p - 1))}
                         isDisabled={securityState.page === 1}
                         variant="outlined"
                         sx={{ height: 34 }}
                       />
                       <Typography
-                        sx={{ fontSize: "13px", lineHeight: "34px", px: 2, color: palette.text.tertiary }}
+                        sx={{
+                          fontSize: "13px",
+                          lineHeight: "34px",
+                          px: 2,
+                          color: palette.text.tertiary,
+                        }}
                       >
                         Page {securityState.page} of {securityState.totalPages}
                       </Typography>
                       <CustomizableButton
                         text="Next"
                         onClick={() =>
-                          securityState.setPage((p) =>
-                            Math.min(securityState.totalPages, p + 1)
-                          )
+                          securityState.setPage((p) => Math.min(securityState.totalPages, p + 1))
                         }
                         isDisabled={securityState.page === securityState.totalPages}
                         variant="outlined"
@@ -3054,8 +3520,7 @@ export default function ScanDetailsPage() {
               <Box sx={{ mt: 4 }}>
                 <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
                   {securitySummary.model_files_scanned} model{" "}
-                  {securitySummary.model_files_scanned === 1 ? "file" : "files"}{" "}
-                  scanned
+                  {securitySummary.model_files_scanned === 1 ? "file" : "files"} scanned
                 </Typography>
               </Box>
             )}
@@ -3066,7 +3531,8 @@ export default function ScanDetailsPage() {
         {activeTab === "compliance" && (
           <Box sx={{ mt: "8px" }}>
             <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, mb: 2 }}>
-              EU AI Act compliance mapping based on detected AI components. Review these requirements to ensure your AI system meets regulatory obligations.
+              EU AI Act compliance mapping based on detected AI components. Review these
+              requirements to ensure your AI system meets regulatory obligations.
             </Typography>
 
             {complianceLoading ? (
@@ -3117,7 +3583,9 @@ export default function ScanDetailsPage() {
                       textAlign: "center",
                     }}
                   >
-                    <Typography sx={{ fontSize: "20px", fontWeight: 600, color: palette.status.error.text }}>
+                    <Typography
+                      sx={{ fontSize: "20px", fontWeight: 600, color: palette.status.error.text }}
+                    >
                       {complianceData.summary.byPriority.high}
                     </Typography>
                     <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
@@ -3133,7 +3601,9 @@ export default function ScanDetailsPage() {
                       textAlign: "center",
                     }}
                   >
-                    <Typography sx={{ fontSize: "20px", fontWeight: 600, color: palette.status.warning.text }}>
+                    <Typography
+                      sx={{ fontSize: "20px", fontWeight: 600, color: palette.status.warning.text }}
+                    >
                       {complianceData.summary.byPriority.medium}
                     </Typography>
                     <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
@@ -3154,7 +3624,9 @@ export default function ScanDetailsPage() {
                         cursor: "help",
                       }}
                     >
-                      <Typography sx={{ fontSize: "20px", fontWeight: 600, color: palette.text.secondary }}>
+                      <Typography
+                        sx={{ fontSize: "20px", fontWeight: 600, color: palette.text.secondary }}
+                      >
                         {Math.round(complianceData.summary.coveragePercentage)}%
                       </Typography>
                       <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
@@ -3206,11 +3678,19 @@ export default function ScanDetailsPage() {
                       <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
                         <CheckCircle2 size={48} color={palette.status.success.text} />
                       </Box>
-                      <Typography sx={{ fontSize: "13px", fontWeight: 500, color: palette.status.success.text, mb: 1 }}>
+                      <Typography
+                        sx={{
+                          fontSize: "13px",
+                          fontWeight: 500,
+                          color: palette.status.success.text,
+                          mb: 1,
+                        }}
+                      >
                         No specific compliance actions needed
                       </Typography>
                       <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
-                        Based on the scan results, no additional compliance requirements were identified.
+                        Based on the scan results, no additional compliance requirements were
+                        identified.
                       </Typography>
                     </Box>
                   ) : (
@@ -3249,17 +3729,31 @@ export default function ScanDetailsPage() {
                               }}
                             >
                               <IconButton size="small" sx={{ mr: 1, mt: "-4px" }}>
-                                {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                                {isExpanded ? (
+                                  <ChevronDown size={16} />
+                                ) : (
+                                  <ChevronRight size={16} />
+                                )}
                               </IconButton>
 
                               <Box sx={{ flex: 1 }}>
                                 <Typography sx={{ fontSize: "14px", fontWeight: 500, mb: "4px" }}>
                                   {item.text}
                                 </Typography>
-                                <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 1,
+                                    flexWrap: "wrap",
+                                  }}
+                                >
                                   {/* Article reference with tooltip */}
                                   <Tooltip
-                                    title={ARTICLE_DESCRIPTIONS[item.articleRef] || `EU AI Act ${item.articleRef}`}
+                                    title={
+                                      ARTICLE_DESCRIPTIONS[item.articleRef] ||
+                                      `EU AI Act ${item.articleRef}`
+                                    }
                                     arrow
                                     placement="top"
                                   >
@@ -3276,14 +3770,20 @@ export default function ScanDetailsPage() {
                                       }}
                                     >
                                       <FileText size={12} color={palette.text.tertiary} />
-                                      <Typography sx={{ fontSize: "12px", color: palette.text.tertiary }}>
+                                      <Typography
+                                        sx={{ fontSize: "12px", color: palette.text.tertiary }}
+                                      >
                                         {item.articleRef}
                                       </Typography>
                                     </Box>
                                   </Tooltip>
                                   {/* Category badge with tooltip */}
                                   {categoryConfig && (
-                                    <Tooltip title={categoryConfig.description} arrow placement="top">
+                                    <Tooltip
+                                      title={categoryConfig.description}
+                                      arrow
+                                      placement="top"
+                                    >
                                       <Box
                                         sx={{
                                           px: "6px",
@@ -3293,7 +3793,9 @@ export default function ScanDetailsPage() {
                                           cursor: "help",
                                         }}
                                       >
-                                        <Typography sx={{ fontSize: "12px", color: categoryConfig.color }}>
+                                        <Typography
+                                          sx={{ fontSize: "12px", color: categoryConfig.color }}
+                                        >
                                           {categoryConfig.label}
                                         </Typography>
                                       </Box>
@@ -3315,7 +3817,13 @@ export default function ScanDetailsPage() {
                                       cursor: "help",
                                     }}
                                   >
-                                    <Typography sx={{ fontSize: "12px", fontWeight: 500, color: priorityConfig.color }}>
+                                    <Typography
+                                      sx={{
+                                        fontSize: "12px",
+                                        fontWeight: 500,
+                                        color: priorityConfig.color,
+                                      }}
+                                    >
                                       {priorityConfig.label}
                                     </Typography>
                                   </Box>
@@ -3325,7 +3833,14 @@ export default function ScanDetailsPage() {
 
                             {/* Expanded content - actionable guidance */}
                             <Collapse in={isExpanded}>
-                              <Box sx={{ px: "12px", pb: "12px", borderTop: `1px solid ${palette.border.light}`, pt: "12px" }}>
+                              <Box
+                                sx={{
+                                  px: "12px",
+                                  pb: "12px",
+                                  borderTop: `1px solid ${palette.border.light}`,
+                                  pt: "12px",
+                                }}
+                              >
                                 {(() => {
                                   // Group findings by type to show relevant documentation needs per type
                                   const findingsByType = item.relatedFindings.reduce(
@@ -3334,18 +3849,26 @@ export default function ScanDetailsPage() {
                                       acc[f.type].push(f);
                                       return acc;
                                     },
-                                    {} as Record<string, typeof item.relatedFindings>
+                                    {} as Record<string, typeof item.relatedFindings>,
                                   );
 
                                   // Get unique documentation needs and risks per finding type
                                   const getInfoForType = (type: string) => {
                                     const findings = findingsByType[type] || [];
                                     const mappings = findings
-                                      .map((f) => complianceData.mappings.find((m) => m.findingId === f.id))
+                                      .map((f) =>
+                                        complianceData.mappings.find((m) => m.findingId === f.id),
+                                      )
                                       .filter(Boolean);
                                     return {
-                                      documentationNeeds: [...new Set(mappings.flatMap((m) => m?.documentationNeeds || []))],
-                                      riskFactors: [...new Set(mappings.flatMap((m) => m?.riskFactors || []))],
+                                      documentationNeeds: [
+                                        ...new Set(
+                                          mappings.flatMap((m) => m?.documentationNeeds || []),
+                                        ),
+                                      ],
+                                      riskFactors: [
+                                        ...new Set(mappings.flatMap((m) => m?.riskFactors || [])),
+                                      ],
                                     };
                                   };
 
@@ -3360,21 +3883,49 @@ export default function ScanDetailsPage() {
                                   };
 
                                   return (
-                                    <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                                    <Box
+                                      sx={{ display: "flex", flexDirection: "column", gap: "16px" }}
+                                    >
                                       {/* Show findings grouped by type with their specific documentation needs */}
                                       {Object.entries(findingsByType).map(([type, findings]) => {
-                                        const { documentationNeeds, riskFactors } = getInfoForType(type);
+                                        const { documentationNeeds, riskFactors } =
+                                          getInfoForType(type);
                                         const typeLabel = FINDING_TYPE_LABELS[type] || type;
 
                                         return (
-                                          <Box key={type} sx={{ backgroundColor: palette.background.accent, borderRadius: "6px", p: "12px" }}>
+                                          <Box
+                                            key={type}
+                                            sx={{
+                                              backgroundColor: palette.background.accent,
+                                              borderRadius: "6px",
+                                              p: "12px",
+                                            }}
+                                          >
                                             {/* Type header with count */}
-                                            <Typography sx={{ fontSize: "13px", fontWeight: 600, color: palette.text.secondary, mb: "8px" }}>
+                                            <Typography
+                                              sx={{
+                                                fontSize: "13px",
+                                                fontWeight: 600,
+                                                color: palette.text.secondary,
+                                                mb: "8px",
+                                              }}
+                                            >
                                               {typeLabel} ({findings.length})
                                             </Typography>
 
                                             {/* Component chips */}
-                                            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: documentationNeeds.length > 0 || riskFactors.length > 0 ? "12px" : 0 }}>
+                                            <Box
+                                              sx={{
+                                                display: "flex",
+                                                flexWrap: "wrap",
+                                                gap: 1,
+                                                mb:
+                                                  documentationNeeds.length > 0 ||
+                                                  riskFactors.length > 0
+                                                    ? "12px"
+                                                    : 0,
+                                              }}
+                                            >
                                               {findings.slice(0, 10).map((finding) => (
                                                 <Box
                                                   key={finding.id}
@@ -3390,13 +3941,24 @@ export default function ScanDetailsPage() {
                                                   }}
                                                 >
                                                   {getProviderIcon(finding.name, 14)}
-                                                  <Typography sx={{ fontSize: "13px", color: palette.text.secondary }}>
+                                                  <Typography
+                                                    sx={{
+                                                      fontSize: "13px",
+                                                      color: palette.text.secondary,
+                                                    }}
+                                                  >
                                                     {finding.name}
                                                   </Typography>
                                                 </Box>
                                               ))}
                                               {findings.length > 10 && (
-                                                <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, alignSelf: "center" }}>
+                                                <Typography
+                                                  sx={{
+                                                    fontSize: "13px",
+                                                    color: palette.text.tertiary,
+                                                    alignSelf: "center",
+                                                  }}
+                                                >
                                                   +{findings.length - 10} more
                                                 </Typography>
                                               )}
@@ -3405,12 +3967,26 @@ export default function ScanDetailsPage() {
                                             {/* Documentation needs for this type */}
                                             {documentationNeeds.length > 0 && (
                                               <Box sx={{ mt: "8px" }}>
-                                                <Typography sx={{ fontSize: "13px", fontWeight: 500, color: palette.text.tertiary, mb: "4px" }}>
+                                                <Typography
+                                                  sx={{
+                                                    fontSize: "13px",
+                                                    fontWeight: 500,
+                                                    color: palette.text.tertiary,
+                                                    mb: "4px",
+                                                  }}
+                                                >
                                                   For each {typeLabel.toLowerCase()}, document:
                                                 </Typography>
                                                 <Box component="ul" sx={{ m: 0, pl: "16px" }}>
                                                   {documentationNeeds.map((need, idx) => (
-                                                    <Typography component="li" key={idx} sx={{ fontSize: "13px", color: palette.text.tertiary }}>
+                                                    <Typography
+                                                      component="li"
+                                                      key={idx}
+                                                      sx={{
+                                                        fontSize: "13px",
+                                                        color: palette.text.tertiary,
+                                                      }}
+                                                    >
                                                       {need}
                                                     </Typography>
                                                   ))}
@@ -3421,12 +3997,26 @@ export default function ScanDetailsPage() {
                                             {/* Risk factors for this type */}
                                             {riskFactors.length > 0 && (
                                               <Box sx={{ mt: "8px" }}>
-                                                <Typography sx={{ fontSize: "13px", fontWeight: 500, color: palette.status.warning.text, mb: "4px" }}>
+                                                <Typography
+                                                  sx={{
+                                                    fontSize: "13px",
+                                                    fontWeight: 500,
+                                                    color: palette.status.warning.text,
+                                                    mb: "4px",
+                                                  }}
+                                                >
                                                   Risks to consider:
                                                 </Typography>
                                                 <Box component="ul" sx={{ m: 0, pl: "16px" }}>
                                                   {riskFactors.map((risk, idx) => (
-                                                    <Typography component="li" key={idx} sx={{ fontSize: "13px", color: palette.text.tertiary }}>
+                                                    <Typography
+                                                      component="li"
+                                                      key={idx}
+                                                      sx={{
+                                                        fontSize: "13px",
+                                                        color: palette.text.tertiary,
+                                                      }}
+                                                    >
                                                       {risk}
                                                     </Typography>
                                                   ))}
@@ -3439,8 +4029,11 @@ export default function ScanDetailsPage() {
 
                                       {/* Fallback if no findings */}
                                       {item.relatedFindings.length === 0 && (
-                                        <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
-                                          This requirement applies to AI components detected in the scan. Review your implementation to ensure compliance.
+                                        <Typography
+                                          sx={{ fontSize: "13px", color: palette.text.tertiary }}
+                                        >
+                                          This requirement applies to AI components detected in the
+                                          scan. Review your implementation to ensure compliance.
                                         </Typography>
                                       )}
                                     </Box>
@@ -3459,7 +4052,8 @@ export default function ScanDetailsPage() {
                 <Box sx={{ mt: 3, display: "flex", alignItems: "center", gap: 1 }}>
                   <Info size={14} color={palette.text.tertiary} />
                   <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
-                    Compliance mapping generated {formatDistanceToNow(new Date(complianceData.generatedAt), { addSuffix: true })}
+                    Compliance mapping generated{" "}
+                    {formatDistanceToNow(new Date(complianceData.generatedAt), { addSuffix: true })}
                   </Typography>
                 </Box>
               </>
@@ -3470,8 +4064,8 @@ export default function ScanDetailsPage() {
         {activeTab === "vulnerabilities" && (
           <Box sx={{ mt: "8px" }}>
             <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, mb: 2 }}>
-              LLM-specific vulnerability findings detected through code analysis.
-              These identify insecure patterns in how AI/LLM components are used.
+              LLM-specific vulnerability findings detected through code analysis. These identify
+              insecure patterns in how AI/LLM components are used.
             </Typography>
 
             {/* Vulnerability Summary Cards */}
@@ -3489,18 +4083,60 @@ export default function ScanDetailsPage() {
                 Icon={ShieldAlert}
                 tooltip="Total LLM vulnerability findings across all OWASP Top 10 for LLM types"
               />
-              {([
-                { type: "prompt_injection", icon: AlertCircle, tooltip: "LLM01 — Untrusted input injected into system prompts" },
-                { type: "jailbreak_risk", icon: Unplug, tooltip: "LLM02 — LLM output flowing to dangerous sinks" },
-                { type: "training_data_poisoning", icon: ShieldOff, tooltip: "LLM03 — Unsafe model loading or untrusted training data" },
-                { type: "model_dos", icon: Timer, tooltip: "LLM04 — Missing token limits or input validation" },
-                { type: "supply_chain", icon: Link2, tooltip: "LLM05 — Risky AI package versions or untrusted model sources" },
-                { type: "pii_exposure", icon: Eye, tooltip: "LLM06 — PII passed to or from LLM calls without redaction" },
-                { type: "insecure_plugin", icon: Plug, tooltip: "LLM07 — Plugins accepting raw input without validation" },
-                { type: "excessive_agency", icon: Cpu, tooltip: "LLM08 — Agents with overly broad tool access" },
-                { type: "overreliance", icon: Brain, tooltip: "LLM09 — LLM output used for decisions without validation" },
-                { type: "model_theft", icon: Lock, tooltip: "LLM10 — Model weights exposed without access controls" },
-              ] as const).map(({ type, icon, tooltip }) => {
+              {(
+                [
+                  {
+                    type: "prompt_injection",
+                    icon: AlertCircle,
+                    tooltip: "LLM01 — Untrusted input injected into system prompts",
+                  },
+                  {
+                    type: "jailbreak_risk",
+                    icon: Unplug,
+                    tooltip: "LLM02 — LLM output flowing to dangerous sinks",
+                  },
+                  {
+                    type: "training_data_poisoning",
+                    icon: ShieldOff,
+                    tooltip: "LLM03 — Unsafe model loading or untrusted training data",
+                  },
+                  {
+                    type: "model_dos",
+                    icon: Timer,
+                    tooltip: "LLM04 — Missing token limits or input validation",
+                  },
+                  {
+                    type: "supply_chain",
+                    icon: Link2,
+                    tooltip: "LLM05 — Risky AI package versions or untrusted model sources",
+                  },
+                  {
+                    type: "pii_exposure",
+                    icon: Eye,
+                    tooltip: "LLM06 — PII passed to or from LLM calls without redaction",
+                  },
+                  {
+                    type: "insecure_plugin",
+                    icon: Plug,
+                    tooltip: "LLM07 — Plugins accepting raw input without validation",
+                  },
+                  {
+                    type: "excessive_agency",
+                    icon: Cpu,
+                    tooltip: "LLM08 — Agents with overly broad tool access",
+                  },
+                  {
+                    type: "overreliance",
+                    icon: Brain,
+                    tooltip: "LLM09 — LLM output used for decisions without validation",
+                  },
+                  {
+                    type: "model_theft",
+                    icon: Lock,
+                    tooltip: "LLM10 — Model weights exposed without access controls",
+                  },
+                ] as const
+              ).map(({ type, icon, tooltip }) => {
                 const count = vulnerabilityFindings.filter((f) => f.finding_type === type).length;
                 return (
                   <StatCard
@@ -3530,11 +4166,24 @@ export default function ScanDetailsPage() {
                   <ShieldCheck size={48} color={palette.status.success.text} />
                 </Box>
                 <Typography
-                  sx={{ fontSize: "13px", fontWeight: 500, color: palette.status.success.text, mb: 1 }}
+                  sx={{
+                    fontSize: "13px",
+                    fontWeight: 500,
+                    color: palette.status.success.text,
+                    mb: 1,
+                  }}
                 >
                   No LLM vulnerabilities detected
                 </Typography>
-                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0.5, mt: 1 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 0.5,
+                    mt: 1,
+                  }}
+                >
                   <Info size={14} color={palette.text.tertiary} />
                   <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>
                     Enable vulnerability scanning in settings for deep LLM analysis.
@@ -3543,21 +4192,22 @@ export default function ScanDetailsPage() {
               </Box>
             ) : (
               <Box>
-                {vulnerabilityFindings.map((finding) => (
-                  <VulnerabilityFindingRow
-                    key={finding.id}
-                    finding={finding}
-                    repositoryOwner={scan.scan.repository_owner}
-                    repositoryName={scan.scan.repository_name}
-                    scanId={scanId}
-                    onStatusMessage={showAlert}
-                  />
-                ))}
+                {vulnerabilityFindings
+                  .filter((f) => showSuppressed || !isFindingSuppressed(f))
+                  .map((finding) => (
+                    <VulnerabilityFindingRow
+                      key={finding.id}
+                      finding={finding}
+                      repositoryOwner={scan.scan.repository_owner}
+                      repositoryName={scan.scan.repository_name}
+                      scanId={scanId}
+                      onStatusMessage={showAlert}
+                    />
+                  ))}
               </Box>
             )}
           </Box>
         )}
-
       </TabContext>
 
       {/* AI Dependency Graph Modal */}

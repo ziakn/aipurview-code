@@ -24,7 +24,12 @@ export const createShareLink = async (req: Request, res: Response) => {
   const { resource_type, resource_id, settings, expires_at }: IShareLinkCreate = req.body;
   const organizationId = req.organizationId!;
 
-  logStructured('processing', `starting share link creation`, 'createShareLink', 'shareLink.ctrl.ts');
+  logStructured(
+    "processing",
+    `starting share link creation`,
+    "createShareLink",
+    "shareLink.ctrl.ts",
+  );
   logger.debug(`🛠️ Creating share link for organization ${organizationId}`);
 
   try {
@@ -40,7 +45,7 @@ export const createShareLink = async (req: Request, res: Response) => {
 
     // Validate resource_id is a non-negative integer
     // Note: resource_id can be 0 to share entire table/list view
-    if (typeof resource_id !== 'number' || resource_id < 0 || !Number.isInteger(resource_id)) {
+    if (typeof resource_id !== "number" || resource_id < 0 || !Number.isInteger(resource_id)) {
       throw new ValidationException("Invalid resource ID");
     }
 
@@ -64,7 +69,7 @@ export const createShareLink = async (req: Request, res: Response) => {
       RETURNING *;
     `;
 
-    const result = await sequelize.query(createQuery, {
+    const result = (await sequelize.query(createQuery, {
       bind: [
         organizationId,
         share_token,
@@ -77,16 +82,21 @@ export const createShareLink = async (req: Request, res: Response) => {
       ],
       transaction,
       type: QueryTypes.INSERT,
-    }) as any;
+    })) as any;
 
     const shareLink = result[0][0];
 
-    logStructured('successful', `created share link ${shareLink.id}`, 'createShareLink', 'shareLink.ctrl.ts');
+    logStructured(
+      "successful",
+      `created share link ${shareLink.id}`,
+      "createShareLink",
+      "shareLink.ctrl.ts",
+    );
     logger.debug(`✅ Created share link: ${shareLink.id}`);
 
     await transaction.commit();
 
-    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const baseUrl = process.env.FRONTEND_URL || "http://localhost:5173";
     const shareable_url = `${baseUrl}/shared/${resource_type}s/${share_token}`;
 
     const response = {
@@ -110,9 +120,19 @@ export const createShareLink = async (req: Request, res: Response) => {
       await logEvent('Error', `Validation error during share link creation: ${error.message}`, req.userId!, req.organizationId!);
       return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
-    logStructured('error', `unexpected error creating share link`, 'createShareLink', 'shareLink.ctrl.ts');
-    await logEvent('Error', `Unexpected error during share link creation: ${(error as Error).message}`, req.userId!, req.organizationId!);
-    logger.error('❌ Error in createShareLink:', error);
+    logStructured(
+      "error",
+      `unexpected error creating share link`,
+      "createShareLink",
+      "shareLink.ctrl.ts",
+    );
+    await logEvent(
+      "Error",
+      `Unexpected error during share link creation: ${(error as Error).message}`,
+      req.userId!,
+      req.organizationId!,
+    );
+    logger.error("❌ Error in createShareLink:", error);
 
     // Sanitize error message before sending to client
     const safeMessage = sanitizeErrorMessage(error as Error, req.t!("Failed to create share link"));
@@ -125,11 +145,20 @@ export const createShareLink = async (req: Request, res: Response) => {
  * GET /api/shares/:resourceType/:resourceId
  */
 export const getShareLinksForResource = async (req: Request, res: Response) => {
-  const resourceType = Array.isArray(req.params.resourceType) ? req.params.resourceType[0] : req.params.resourceType;
-  const resourceId = Array.isArray(req.params.resourceId) ? req.params.resourceId[0] : req.params.resourceId;
+  const resourceType = Array.isArray(req.params.resourceType)
+    ? req.params.resourceType[0]
+    : req.params.resourceType;
+  const resourceId = Array.isArray(req.params.resourceId)
+    ? req.params.resourceId[0]
+    : req.params.resourceId;
   const organizationId = req.organizationId!;
 
-  logStructured('processing', `fetching share links`, 'getShareLinksForResource', 'shareLink.ctrl.ts');
+  logStructured(
+    "processing",
+    `fetching share links`,
+    "getShareLinksForResource",
+    "shareLink.ctrl.ts",
+  );
   logger.debug(`🛠️ Fetching share links for organization ${organizationId}`);
 
   try {
@@ -150,18 +179,24 @@ export const getShareLinksForResource = async (req: Request, res: Response) => {
       ORDER BY created_at DESC;
     `;
 
-    const shareLinks = await sequelize.query(query, {
+    const shareLinks = (await sequelize.query(query, {
       bind: [organizationId, resourceType, parseInt(resourceId)],
       type: QueryTypes.SELECT,
-    }) as any[];
+    })) as any[];
 
-    logStructured('successful', `fetched ${shareLinks.length} share links`, 'getShareLinksForResource', 'shareLink.ctrl.ts');
+    logStructured(
+      "successful",
+      `fetched ${shareLinks.length} share links`,
+      "getShareLinksForResource",
+      "shareLink.ctrl.ts",
+    );
     logger.debug(`✅ Fetched ${shareLinks.length} share links`);
 
-    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-    const response = shareLinks.map(link => {
+    const baseUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const response = shareLinks.map((link) => {
       const shareable_url = `${baseUrl}/shared/${link.resource_type}s/${link.share_token}`;
-      const is_valid = link.is_enabled && (!link.expires_at || new Date() <= new Date(link.expires_at));
+      const is_valid =
+        link.is_enabled && (!link.expires_at || new Date() <= new Date(link.expires_at));
 
       return {
         id: link.id,
@@ -196,7 +231,12 @@ export const getShareLinksForResource = async (req: Request, res: Response) => {
 export const getShareLinkByToken = async (req: Request, res: Response) => {
   const token = Array.isArray(req.params.token) ? req.params.token[0] : req.params.token;
 
-  logStructured('processing', `fetching share link by token`, 'getShareLinkByToken', 'shareLink.ctrl.ts');
+  logStructured(
+    "processing",
+    `fetching share link by token`,
+    "getShareLinkByToken",
+    "shareLink.ctrl.ts",
+  );
   logger.debug(`🛠️ Fetching share link by token`);
 
   try {
@@ -212,10 +252,10 @@ export const getShareLinkByToken = async (req: Request, res: Response) => {
       LIMIT 1;
     `;
 
-    const result = await sequelize.query(query, {
+    const result = (await sequelize.query(query, {
       bind: [token],
       type: QueryTypes.SELECT,
-    }) as any[];
+    })) as any[];
 
     const shareLink = result.length > 0 ? result[0] : null;
 
@@ -225,15 +265,24 @@ export const getShareLinkByToken = async (req: Request, res: Response) => {
     }
 
     // Validate the share link
-    const is_valid = shareLink.is_enabled && (!shareLink.expires_at || new Date() <= new Date(shareLink.expires_at));
+    const is_valid =
+      shareLink.is_enabled &&
+      (!shareLink.expires_at || new Date() <= new Date(shareLink.expires_at));
 
     if (!is_valid) {
       logStructured('error', `share link is disabled or expired`, 'getShareLinkByToken', 'shareLink.ctrl.ts');
       return res.status(403).json(STATUS_CODE[403]({ message: req.t!("Share link is disabled or expired") }));
     }
 
-    logStructured('successful', `fetched share link ${shareLink.id}`, 'getShareLinkByToken', 'shareLink.ctrl.ts');
-    logger.debug(`✅ Fetched share link: ${shareLink.id} for organization ${shareLink.organization_id}`);
+    logStructured(
+      "successful",
+      `fetched share link ${shareLink.id}`,
+      "getShareLinkByToken",
+      "shareLink.ctrl.ts",
+    );
+    logger.debug(
+      `✅ Fetched share link: ${shareLink.id} for organization ${shareLink.organization_id}`,
+    );
 
     const response = {
       id: shareLink.id,
@@ -268,16 +317,20 @@ export const updateShareLink = async (req: Request, res: Response) => {
   const { settings, is_enabled, expires_at }: IShareLinkUpdate = req.body;
   const organizationId = req.organizationId!;
 
-  logStructured('processing', `updating share link ${id} with body: ${JSON.stringify(req.body)}`, 'updateShareLink', 'shareLink.ctrl.ts');
+  logStructured(
+    "processing",
+    `updating share link ${id} with body: ${JSON.stringify(req.body)}`,
+    "updateShareLink",
+    "shareLink.ctrl.ts",
+  );
   logger.debug(`🛠️ Updating share link: ${id} for organization ${organizationId}`);
   logProcessing({
     description: `UPDATE DEBUG | ID=${id}, is_enabled=${is_enabled} (type=${typeof is_enabled}), settings=${JSON.stringify(settings)}`,
-    functionName: 'updateShareLink',
-    fileName: 'shareLink.ctrl.ts',
+    functionName: "updateShareLink",
+    fileName: "shareLink.ctrl.ts",
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
-
 
   try {
     // First, fetch the share link to verify ownership
@@ -287,11 +340,11 @@ export const updateShareLink = async (req: Request, res: Response) => {
       LIMIT 1;
     `;
 
-    const result = await sequelize.query(selectQuery, {
+    const result = (await sequelize.query(selectQuery, {
       bind: [parseInt(id), organizationId],
       transaction,
       type: QueryTypes.SELECT,
-    }) as any[];
+    })) as any[];
 
     if (result.length === 0) {
       await transaction.rollback();
@@ -302,8 +355,8 @@ export const updateShareLink = async (req: Request, res: Response) => {
     const shareLink = result[0];
     logProcessing({
       description: `[UPDATE DEBUG] Current state before update - ID: ${shareLink.id}, is_enabled: ${shareLink.is_enabled}`,
-      functionName: 'updateShareLink',
-      fileName: 'shareLink.ctrl.ts',
+      functionName: "updateShareLink",
+      fileName: "shareLink.ctrl.ts",
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
@@ -325,7 +378,7 @@ export const updateShareLink = async (req: Request, res: Response) => {
       binds.push(JSON.stringify(settings));
     }
 
-    if (typeof is_enabled === 'boolean') {
+    if (typeof is_enabled === "boolean") {
       updates.push(`is_enabled = $${bindIndex++}`);
       binds.push(is_enabled);
     }
@@ -346,35 +399,42 @@ export const updateShareLink = async (req: Request, res: Response) => {
 
     const updateQuery = `
       UPDATE share_links
-      SET ${updates.join(', ')}
+      SET ${updates.join(", ")}
       WHERE id = $${bindIndex} AND organization_id = $${bindIndex + 1}
       RETURNING *;
     `;
 
-    const updateResult = await sequelize.query(updateQuery, {
+    const updateResult = (await sequelize.query(updateQuery, {
       bind: binds,
       transaction,
       type: QueryTypes.UPDATE,
-    }) as any;
+    })) as any;
 
     const updatedLink = updateResult[0][0];
 
     logSuccess({
-      eventType: 'Update',
+      eventType: "Update",
       description: `[UPDATE DEBUG] After update - ID: ${updatedLink.id}, is_enabled: ${updatedLink.is_enabled} (type: ${typeof updatedLink.is_enabled})`,
-      functionName: 'updateShareLink',
-      fileName: 'shareLink.ctrl.ts',
+      functionName: "updateShareLink",
+      fileName: "shareLink.ctrl.ts",
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    logStructured('successful', `updated share link ${id} - new is_enabled: ${updatedLink.is_enabled}`, 'updateShareLink', 'shareLink.ctrl.ts');
+    logStructured(
+      "successful",
+      `updated share link ${id} - new is_enabled: ${updatedLink.is_enabled}`,
+      "updateShareLink",
+      "shareLink.ctrl.ts",
+    );
     logger.debug(`✅ Updated share link: ${id}`);
 
     await transaction.commit();
 
-    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const baseUrl = process.env.FRONTEND_URL || "http://localhost:5173";
     const shareable_url = `${baseUrl}/shared/${updatedLink.resource_type}s/${updatedLink.share_token}`;
-    const is_valid = updatedLink.is_enabled && (!updatedLink.expires_at || new Date() <= new Date(updatedLink.expires_at));
+    const is_valid =
+      updatedLink.is_enabled &&
+      (!updatedLink.expires_at || new Date() <= new Date(updatedLink.expires_at));
 
     const response = {
       id: updatedLink.id,
@@ -410,7 +470,7 @@ export const deleteShareLink = async (req: Request, res: Response) => {
   const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   const organizationId = req.organizationId!;
 
-  logStructured('processing', `deleting share link ${id}`, 'deleteShareLink', 'shareLink.ctrl.ts');
+  logStructured("processing", `deleting share link ${id}`, "deleteShareLink", "shareLink.ctrl.ts");
   logger.debug(`🛠️ Deleting share link: ${id} for organization ${organizationId}`);
 
   try {
@@ -421,11 +481,11 @@ export const deleteShareLink = async (req: Request, res: Response) => {
       LIMIT 1;
     `;
 
-    const result = await sequelize.query(selectQuery, {
+    const result = (await sequelize.query(selectQuery, {
       bind: [parseInt(id), organizationId],
       transaction,
       type: QueryTypes.SELECT,
-    }) as any[];
+    })) as any[];
 
     if (result.length === 0) {
       await transaction.rollback();
@@ -454,7 +514,7 @@ export const deleteShareLink = async (req: Request, res: Response) => {
       type: QueryTypes.DELETE,
     });
 
-    logStructured('successful', `deleted share link ${id}`, 'deleteShareLink', 'shareLink.ctrl.ts');
+    logStructured("successful", `deleted share link ${id}`, "deleteShareLink", "shareLink.ctrl.ts");
     logger.debug(`✅ Deleted share link: ${id}`);
 
     await transaction.commit();
@@ -477,7 +537,12 @@ export const deleteShareLink = async (req: Request, res: Response) => {
 export const getSharedDataByToken = async (req: Request, res: Response) => {
   const token = Array.isArray(req.params.token) ? req.params.token[0] : req.params.token;
 
-  logStructured('processing', `fetching shared data by token`, 'getSharedDataByToken', 'shareLink.ctrl.ts');
+  logStructured(
+    "processing",
+    `fetching shared data by token`,
+    "getSharedDataByToken",
+    "shareLink.ctrl.ts",
+  );
   logger.debug(`🛠️ Fetching shared data by token`);
 
   try {
@@ -488,10 +553,10 @@ export const getSharedDataByToken = async (req: Request, res: Response) => {
       LIMIT 1;
     `;
 
-    const shareLinkResult = await sequelize.query(shareLinkQuery, {
+    const shareLinkResult = (await sequelize.query(shareLinkQuery, {
       bind: [token],
       type: QueryTypes.SELECT,
-    }) as any[];
+    })) as any[];
 
     const shareLink = shareLinkResult.length > 0 ? shareLinkResult[0] : null;
 
@@ -504,12 +569,24 @@ export const getSharedDataByToken = async (req: Request, res: Response) => {
     const shareLinkOrgId = shareLink.organization_id;
 
     // Log share link details for debugging
-    logStructured('processing', `validating share link: id=${shareLink.id}, is_enabled=${shareLink.is_enabled} (type: ${typeof shareLink.is_enabled}), expires_at=${shareLink.expires_at}`, 'getSharedDataByToken', 'shareLink.ctrl.ts');
+    logStructured(
+      "processing",
+      `validating share link: id=${shareLink.id}, is_enabled=${shareLink.is_enabled} (type: ${typeof shareLink.is_enabled}), expires_at=${shareLink.expires_at}`,
+      "getSharedDataByToken",
+      "shareLink.ctrl.ts",
+    );
 
     // Validate the share link
-    const is_valid = shareLink.is_enabled && (!shareLink.expires_at || new Date() <= new Date(shareLink.expires_at));
+    const is_valid =
+      shareLink.is_enabled &&
+      (!shareLink.expires_at || new Date() <= new Date(shareLink.expires_at));
 
-    logStructured('processing', `validation result: is_valid=${is_valid}, is_enabled=${shareLink.is_enabled}, expires_check=${!shareLink.expires_at || new Date() <= new Date(shareLink.expires_at)}`, 'getSharedDataByToken', 'shareLink.ctrl.ts');
+    logStructured(
+      "processing",
+      `validation result: is_valid=${is_valid}, is_enabled=${shareLink.is_enabled}, expires_check=${!shareLink.expires_at || new Date() <= new Date(shareLink.expires_at)}`,
+      "getSharedDataByToken",
+      "shareLink.ctrl.ts",
+    );
 
     if (!is_valid) {
       logStructured('error', `share link is disabled or expired`, 'getSharedDataByToken', 'shareLink.ctrl.ts');
@@ -523,18 +600,25 @@ export const getSharedDataByToken = async (req: Request, res: Response) => {
 
     // Map resource types to table names
     const tableNameMap: { [key: string]: string } = {
-      'model': 'model_inventories',
-      'vendor': 'vendors',
-      'project': 'projects',
-      'policy': 'policies',
-      'risk': 'projectrisks',
+      model: "model_inventories",
+      vendor: "vendors",
+      project: "projects",
+      policy: "policies",
+      risk: "projectrisks",
     };
 
     const tableName = tableNameMap[resourceType];
 
     if (!tableName) {
-      logStructured('error', `unsupported resource type: ${resourceType}`, 'getSharedDataByToken', 'shareLink.ctrl.ts');
-      return res.status(400).json(STATUS_CODE[400]({ message: `Unsupported resource type: ${resourceType}` }));
+      logStructured(
+        "error",
+        `unsupported resource type: ${resourceType}`,
+        "getSharedDataByToken",
+        "shareLink.ctrl.ts",
+      );
+      return res
+        .status(400)
+        .json(STATUS_CODE[400]({ message: `Unsupported resource type: ${resourceType}` }));
     }
 
     // Fetch the resource data
@@ -545,7 +629,7 @@ export const getSharedDataByToken = async (req: Request, res: Response) => {
     // Otherwise, fetch specific record
     if (resourceId === 0) {
       // For model_inventories, join with users table to get approver name
-      if (resourceType === 'model') {
+      if (resourceType === "model") {
         resourceQuery = `
           SELECT
             mi.*,
@@ -568,14 +652,19 @@ export const getSharedDataByToken = async (req: Request, res: Response) => {
         `;
       }
 
-      resourceResult = await sequelize.query(resourceQuery, {
+      resourceResult = (await sequelize.query(resourceQuery, {
         bind: [shareLinkOrgId],
         type: QueryTypes.SELECT,
-      }) as any[];
+      })) as any[];
 
       // For table views, allow empty arrays (don't return 404)
       if (resourceResult.length === 0) {
-        logStructured('successful', `no resources found for ${resourceType} table view, returning empty array`, 'getSharedDataByToken', 'shareLink.ctrl.ts');
+        logStructured(
+          "successful",
+          `no resources found for ${resourceType} table view, returning empty array`,
+          "getSharedDataByToken",
+          "shareLink.ctrl.ts",
+        );
       }
 
       resourceData = resourceResult; // Return array of records for table view (can be empty)
@@ -587,10 +676,10 @@ export const getSharedDataByToken = async (req: Request, res: Response) => {
         LIMIT 1;
       `;
 
-      resourceResult = await sequelize.query(resourceQuery, {
+      resourceResult = (await sequelize.query(resourceQuery, {
         bind: [resourceId, shareLinkOrgId],
         type: QueryTypes.SELECT,
-      }) as any[];
+      })) as any[];
 
       if (resourceResult.length === 0) {
         logStructured('error', `resource not found: ${resourceType} ${resourceId}`, 'getSharedDataByToken', 'shareLink.ctrl.ts');
@@ -605,25 +694,26 @@ export const getSharedDataByToken = async (req: Request, res: Response) => {
 
     logProcessing({
       description: `[SHARE VIEW DEBUG] Settings from DB: ${JSON.stringify(settings)}`,
-      functionName: 'getSharedDataByToken',
-      fileName: 'shareLink.ctrl.ts',
+      functionName: "getSharedDataByToken",
+      fileName: "shareLink.ctrl.ts",
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
 
     logProcessing({
       description: `[SHARE VIEW DEBUG] shareAllFields value: ${settings.shareAllFields} (type: ${typeof settings.shareAllFields})`,
-      functionName: 'getSharedDataByToken',
-      fileName: 'shareLink.ctrl.ts',
+      functionName: "getSharedDataByToken",
+      fileName: "shareLink.ctrl.ts",
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
 
     logProcessing({
-      description: `[SHARE VIEW DEBUG] Resource data sample (first record): ${JSON.stringify(Array.isArray(resourceData) && resourceData[0] ? Object.keys(resourceData[0]) : "no data")
-        }`,
-      functionName: 'getSharedDataByToken',
-      fileName: 'shareLink.ctrl.ts',
+      description: `[SHARE VIEW DEBUG] Resource data sample (first record): ${JSON.stringify(
+        Array.isArray(resourceData) && resourceData[0] ? Object.keys(resourceData[0]) : "no data",
+      )}`,
+      functionName: "getSharedDataByToken",
+      fileName: "shareLink.ctrl.ts",
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
@@ -635,33 +725,36 @@ export const getSharedDataByToken = async (req: Request, res: Response) => {
       // Show all fields
       logProcessing({
         description: `[SHARE VIEW DEBUG] Showing ALL fields (shareAllFields is true)`,
-        functionName: 'getSharedDataByToken',
-        fileName: 'shareLink.ctrl.ts',
+        functionName: "getSharedDataByToken",
+        fileName: "shareLink.ctrl.ts",
         userId: req.userId!,
         tenantId: req.organizationId!,
-      })
+      });
       filteredData = resourceData;
     } else {
       // Show only essential fields based on resource type
       logProcessing({
         description: `[SHARE VIEW DEBUG] Filtering to essential fields (shareAllFields is ${settings.shareAllFields})`,
-        functionName: 'getSharedDataByToken',
-        fileName: 'shareLink.ctrl.ts',
+        functionName: "getSharedDataByToken",
+        fileName: "shareLink.ctrl.ts",
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
       const getEssentialFields = (record: any, resourceType: string) => {
         // Resource-specific essential fields
         switch (resourceType) {
-          case 'model':
+          case "model":
             // Consolidate provider/model columns into a single display name
             // Use provider_model if available, otherwise construct from provider + model
             let modelName = record.provider_model;
             if (!modelName) {
               // Check if model already contains provider prefix (e.g., "OpenAI - gpt-3.5-turbo")
-              const modelValue = record.model || '';
-              const providerValue = record.provider || '';
-              if (modelValue.includes(' - ') && modelValue.toLowerCase().includes(providerValue.toLowerCase())) {
+              const modelValue = record.model || "";
+              const providerValue = record.provider || "";
+              if (
+                modelValue.includes(" - ") &&
+                modelValue.toLowerCase().includes(providerValue.toLowerCase())
+              ) {
                 // Model already contains provider prefix, use as-is
                 modelName = modelValue;
               } else if (providerValue && modelValue) {
@@ -669,7 +762,7 @@ export const getSharedDataByToken = async (req: Request, res: Response) => {
                 modelName = `${providerValue} - ${modelValue}`;
               } else {
                 // Fallback to whatever is available
-                modelName = modelValue || providerValue || 'Unknown';
+                modelName = modelValue || providerValue || "Unknown";
               }
             }
             return {
@@ -680,10 +773,10 @@ export const getSharedDataByToken = async (req: Request, res: Response) => {
               created_at: record.created_at,
               updated_at: record.updated_at,
             };
-          case 'vendor':
-          case 'project':
-          case 'policy':
-          case 'risk':
+          case "vendor":
+          case "project":
+          case "policy":
+          case "risk":
           default:
             // Generic fallback for other resource types
             return {
@@ -698,7 +791,7 @@ export const getSharedDataByToken = async (req: Request, res: Response) => {
 
       if (Array.isArray(resourceData)) {
         // For table view (array of records), filter each record
-        filteredData = resourceData.map(record => getEssentialFields(record, resourceType));
+        filteredData = resourceData.map((record) => getEssentialFields(record, resourceType));
       } else {
         // For single record, filter fields
         filteredData = getEssentialFields(resourceData, resourceType);
@@ -706,41 +799,48 @@ export const getSharedDataByToken = async (req: Request, res: Response) => {
     }
 
     logProcessing({
-      description: `[SHARE VIEW DEBUG] Filtered data sample (first record): ${JSON.stringify(Array.isArray(filteredData) && filteredData[0] ? Object.keys(filteredData[0]) : "no data")
-        }`,
-      functionName: 'getSharedDataByToken',
-      fileName: 'shareLink.ctrl.ts',
+      description: `[SHARE VIEW DEBUG] Filtered data sample (first record): ${JSON.stringify(
+        Array.isArray(filteredData) && filteredData[0] ? Object.keys(filteredData[0]) : "no data",
+      )}`,
+      functionName: "getSharedDataByToken",
+      fileName: "shareLink.ctrl.ts",
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
 
     logProcessing({
-      description: `[SHARE VIEW DEBUG] Column count - Original: ${Array.isArray(resourceData) && resourceData[0] ? Object.keys(resourceData[0]).length : 0
-        }, Filtered: ${Array.isArray(filteredData) && filteredData[0] ? Object.keys(filteredData[0]).length : 0
-        }`,
-      functionName: 'getSharedDataByToken',
-      fileName: 'shareLink.ctrl.ts',
+      description: `[SHARE VIEW DEBUG] Column count - Original: ${
+        Array.isArray(resourceData) && resourceData[0] ? Object.keys(resourceData[0]).length : 0
+      }, Filtered: ${
+        Array.isArray(filteredData) && filteredData[0] ? Object.keys(filteredData[0]).length : 0
+      }`,
+      functionName: "getSharedDataByToken",
+      fileName: "shareLink.ctrl.ts",
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
 
     // Post-process: For models, consolidate provider_model and replace approver ID
-    if (resourceType === 'model' && filteredData) {
+    if (resourceType === "model" && filteredData) {
       const processRecord = (record: any) => {
         let result = { ...record };
 
         // Consolidate provider_model: if empty, construct from provider + model
         if (!result.provider_model && (result.provider || result.model)) {
-          const modelValue = result.model || '';
-          const providerValue = result.provider || '';
+          const modelValue = result.model || "";
+          const providerValue = result.provider || "";
 
           // Check if model already contains provider prefix (e.g., "OpenAI - gpt-3.5-turbo")
-          if (modelValue.includes(' - ') && providerValue && modelValue.toLowerCase().includes(providerValue.toLowerCase())) {
+          if (
+            modelValue.includes(" - ") &&
+            providerValue &&
+            modelValue.toLowerCase().includes(providerValue.toLowerCase())
+          ) {
             result.provider_model = modelValue;
           } else if (providerValue && modelValue) {
             result.provider_model = `${providerValue} ${modelValue}`;
           } else {
-            result.provider_model = modelValue || providerValue || '';
+            result.provider_model = modelValue || providerValue || "";
           }
         }
 
@@ -767,17 +867,21 @@ export const getSharedDataByToken = async (req: Request, res: Response) => {
 
       logProcessing({
         description: `[SHARE VIEW DEBUG] After approver name replacement, sample: ${JSON.stringify(
-          Array.isArray(filteredData) && filteredData[0] ? filteredData[0] : filteredData
-        )
-          }`,
-        functionName: 'getSharedDataByToken',
-        fileName: 'shareLink.ctrl.ts',
+          Array.isArray(filteredData) && filteredData[0] ? filteredData[0] : filteredData,
+        )}`,
+        functionName: "getSharedDataByToken",
+        fileName: "shareLink.ctrl.ts",
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
     }
 
-    logStructured('successful', `fetched shared data for ${resourceType} ${resourceId}`, 'getSharedDataByToken', 'shareLink.ctrl.ts');
+    logStructured(
+      "successful",
+      `fetched shared data for ${resourceType} ${resourceId}`,
+      "getSharedDataByToken",
+      "shareLink.ctrl.ts",
+    );
     logger.debug(`✅ Fetched shared data for organization ${shareLinkOrgId}`);
 
     const response = {

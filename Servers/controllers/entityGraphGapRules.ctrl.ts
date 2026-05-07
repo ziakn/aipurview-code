@@ -18,13 +18,8 @@
 import { Request, Response } from "express";
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import { EntityGraphGapRulesService } from "../services/entityGraphGapRulesService";
-import {
-  ValidationException,
-} from "../domain.layer/exceptions/custom.exception";
-import {
-  logFailure,
-  logProcessing,
-} from "../utils/logger/logHelper";
+import { ValidationException } from "../domain.layer/exceptions/custom.exception";
+import { logFailure, logProcessing } from "../utils/logger/logHelper";
 import { sanitizeErrorMessage } from "../utils/entityGraphSecurity.utils";
 
 import { translateError } from "../utils/i18n.utils";
@@ -59,24 +54,16 @@ export async function saveGapRules(req: Request, res: Response): Promise<any> {
 
     // Validate required fields
     if (!rules || !Array.isArray(rules)) {
-      throw new ValidationException(
-        "Rules array is required",
-        "rules",
-        rules
-      );
+      throw new ValidationException("Rules array is required", "rules", rules);
     }
 
-    const savedRules = await EntityGraphGapRulesService.saveGapRules(
-      rules,
-      userId,
-      organizationId
-    );
+    const savedRules = await EntityGraphGapRulesService.saveGapRules(rules, userId, organizationId);
 
     return res.status(201).json(
       STATUS_CODE[201]({
         ...savedRules.toJSON(),
         isDefault: false,
-      })
+      }),
     );
   } catch (error) {
     await logFailure({
@@ -125,10 +112,7 @@ export async function getGapRules(req: Request, res: Response): Promise<any> {
     const userId = req.userId!;
     const organizationId = req.organizationId!;
 
-    const result = await EntityGraphGapRulesService.getGapRules(
-      userId,
-      organizationId
-    );
+    const result = await EntityGraphGapRulesService.getGapRules(userId, organizationId);
 
     return res.status(200).json(STATUS_CODE[200](result));
   } catch (error) {
@@ -175,10 +159,7 @@ export async function resetGapRules(req: Request, res: Response): Promise<any> {
     const userId = req.userId!;
     const organizationId = req.organizationId!;
 
-    const result = await EntityGraphGapRulesService.resetToDefaults(
-      userId,
-      organizationId
-    );
+    const result = await EntityGraphGapRulesService.resetToDefaults(userId, organizationId);
 
     return res.status(200).json(STATUS_CODE[200](result));
   } catch (error) {
@@ -213,10 +194,7 @@ export async function resetGapRules(req: Request, res: Response): Promise<any> {
  * @param {Response} res - Express response object
  * @returns {Promise<any>} JSON response with default rules
  */
-export async function getDefaultGapRules(
-  _req: Request,
-  res: Response
-): Promise<any> {
+export async function getDefaultGapRules(_req: Request, res: Response): Promise<any> {
   logProcessing({
     description: "Starting getDefaultGapRules",
     functionName: "getDefaultGapRules",
@@ -232,7 +210,7 @@ export async function getDefaultGapRules(
       STATUS_CODE[200]({
         rules: defaults,
         isDefault: true,
-      })
+      }),
     );
   } catch (error) {
     await logFailure({

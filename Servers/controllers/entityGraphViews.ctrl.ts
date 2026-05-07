@@ -23,10 +23,7 @@ import {
   ValidationException,
   BusinessLogicException,
 } from "../domain.layer/exceptions/custom.exception";
-import {
-  logFailure,
-  logProcessing,
-} from "../utils/logger/logHelper";
+import { logFailure, logProcessing } from "../utils/logger/logHelper";
 import { sanitizeErrorMessage } from "../utils/entityGraphSecurity.utils";
 
 import { translateError } from "../utils/i18n.utils";
@@ -67,18 +64,14 @@ export async function createView(req: Request, res: Response): Promise<any> {
     }
 
     if (!config || typeof config !== "object") {
-      throw new ValidationException(
-        "Valid config object is required",
-        "config",
-        config
-      );
+      throw new ValidationException("Valid config object is required", "config", config);
     }
 
     const savedView = await EntityGraphViewsService.createView(
       name,
       config,
       userId,
-      organizationId
+      organizationId,
     );
 
     return res.status(201).json(STATUS_CODE[201](savedView.toJSON()));
@@ -131,10 +124,7 @@ export async function getViews(req: Request, res: Response): Promise<any> {
   try {
     const userId = req.userId!;
 
-    const views = await EntityGraphViewsService.getViews(
-      userId,
-      organizationId
-    );
+    const views = await EntityGraphViewsService.getViews(userId, organizationId);
 
     const responseData = views.map((view) => view.toJSON());
     return res.status(200).json(STATUS_CODE[200](responseData));
@@ -182,18 +172,10 @@ export async function getViewById(req: Request, res: Response): Promise<any> {
 
   try {
     if (isNaN(viewId) || viewId < 1) {
-      throw new ValidationException(
-        "Valid view ID is required",
-        "id",
-        req.params.id
-      );
+      throw new ValidationException("Valid view ID is required", "id", req.params.id);
     }
 
-    const view = await EntityGraphViewsService.getViewById(
-      viewId,
-      userId,
-      organizationId
-    );
+    const view = await EntityGraphViewsService.getViewById(viewId, userId, organizationId);
 
     if (!view) {
       return res.status(404).json(STATUS_CODE[404](req.t!("View not found")));
@@ -254,20 +236,12 @@ export async function updateView(req: Request, res: Response): Promise<any> {
 
   try {
     if (isNaN(viewId) || viewId < 1) {
-      throw new ValidationException(
-        "Valid view ID is required",
-        "id",
-        req.params.id
-      );
+      throw new ValidationException("Valid view ID is required", "id", req.params.id);
     }
 
     // At least one field should be provided
     if (name === undefined && config === undefined) {
-      throw new ValidationException(
-        "At least name or config must be provided",
-        "body",
-        req.body
-      );
+      throw new ValidationException("At least name or config must be provided", "body", req.body);
     }
 
     const updatedView = await EntityGraphViewsService.updateView(
@@ -275,7 +249,7 @@ export async function updateView(req: Request, res: Response): Promise<any> {
       name,
       config,
       userId,
-      organizationId
+      organizationId,
     );
 
     return res.status(200).json(STATUS_CODE[200](updatedView.toJSON()));
@@ -329,11 +303,7 @@ export async function deleteView(req: Request, res: Response): Promise<any> {
 
   try {
     if (isNaN(viewId) || viewId < 1) {
-      throw new ValidationException(
-        "Valid view ID is required",
-        "id",
-        req.params.id
-      );
+      throw new ValidationException("Valid view ID is required", "id", req.params.id);
     }
 
     await EntityGraphViewsService.deleteView(viewId, userId, organizationId);

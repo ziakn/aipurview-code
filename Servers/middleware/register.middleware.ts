@@ -7,7 +7,7 @@ import { checkPendingInvitationQuery } from "../utils/invitation.utils";
 const registerJWT = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void | Response> => {
   // Extract Bearer token from Authorization header
   const token = req.headers.authorization?.split(" ")[1];
@@ -45,17 +45,24 @@ const registerJWT = async (
       requestOrgId: organizationId,
       roleIdMatch: Number(decoded.roleId) === Number(roleId),
       orgIdMatch: Number(decoded.organizationId) === Number(organizationId),
-      roleInMap: roleMap.has(Number(roleId))
+      roleInMap: roleMap.has(Number(roleId)),
     });
 
     // Convert both to numbers for comparison to handle string/number mismatches
-    if (Number(decoded.roleId) !== Number(roleId) || Number(decoded.organizationId) !== Number(organizationId) || !roleMap.has(Number(roleId))) {
+    if (
+      Number(decoded.roleId) !== Number(roleId) ||
+      Number(decoded.organizationId) !== Number(organizationId) ||
+      !roleMap.has(Number(roleId))
+    ) {
       console.error("❌ Registration validation failed");
       return res.status(403).json({ message: req.t!('Role or Organization mismatch') });
     }
 
     // Check if invitation is still pending (not revoked)
-    const hasPendingInvitation = await checkPendingInvitationQuery(Number(decoded.organizationId), decoded.email);
+    const hasPendingInvitation = await checkPendingInvitationQuery(
+      Number(decoded.organizationId),
+      decoded.email,
+    );
 
     if (!hasPendingInvitation) {
       console.error("❌ Registration rejected: invitation was revoked or doesn't exist");
@@ -69,6 +76,6 @@ const registerJWT = async (
   } catch (error) {
     return res.status(500).json(STATUS_CODE[500]((error as Error).message));
   }
-}
+};
 
 export default registerJWT;

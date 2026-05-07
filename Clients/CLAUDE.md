@@ -1,6 +1,6 @@
 # Clients — Frontend Development Guide
 
-> **Last Updated:** 2026-03-24
+> **Last Updated:** 2026-05-05
 
 ---
 
@@ -27,12 +27,12 @@ infrastructure/   → API clients, external services
 
 ## Key Files
 
-| Purpose | Path |
-|---------|------|
-| Frontend entry | `src/main.tsx` |
-| Route definitions | `src/application/config/routes.tsx` |
-| Axios config | `src/infrastructure/api/customAxios.ts` |
-| Redux store | `src/application/redux/store.ts` |
+| Purpose           | Path                                    |
+| ----------------- | --------------------------------------- |
+| Frontend entry    | `src/main.tsx`                          |
+| Route definitions | `src/application/config/routes.tsx`     |
+| Axios config      | `src/infrastructure/api/customAxios.ts` |
+| Redux store       | `src/application/redux/store.ts`        |
 
 ---
 
@@ -62,13 +62,15 @@ npm run test                     # Vitest
 
 Read the relevant file BEFORE implementing changes in that area:
 
-| When working on... | Read this file |
-|---------------------|---------------|
-| Component/page/hook patterns | `docs/technical/guides/frontend-patterns.md` |
-| Adding a new feature (full guide) | `docs/technical/guides/adding-new-feature.md` |
-| MUI theming & design tokens | `docs/technical/guides/design-tokens.md` |
-| Frontend styling | `docs/technical/frontend/styling.md` |
-| Frontend components | `docs/technical/frontend/components.md` |
-| Redux, Axios, frontend architecture | `docs/technical/frontend/overview.md` |
+| When working on...                  | Read this file                                |
+| ----------------------------------- | --------------------------------------------- |
+| Component/page/hook patterns        | `docs/technical/guides/frontend-patterns.md`  |
+| Adding a new feature (full guide)   | `docs/technical/guides/adding-new-feature.md` |
+| MUI theming & design tokens         | `docs/technical/guides/design-tokens.md`      |
+| Frontend styling                    | `docs/technical/frontend/styling.md`          |
+| Frontend components                 | `docs/technical/frontend/components.md`       |
+| Redux, Axios, frontend architecture | `docs/technical/frontend/overview.md`         |
+| TypeScript standards & naming       | `CodeRules/02-typescript/`                    |
+| React component & hook conventions  | `CodeRules/03-react/`                         |
 
 > All `docs/` paths are relative to the repository root.

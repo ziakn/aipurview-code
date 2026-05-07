@@ -15,10 +15,7 @@ import {
 
 const FILE_NAME = "featureSettings.ctrl.ts";
 
-export async function getFeatureSettings(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getFeatureSettings(req: Request, res: Response): Promise<any> {
   const fn = "getFeatureSettings";
   const userId = req.userId!;
   const organizationId = req.organizationId!;
@@ -59,10 +56,7 @@ export async function getFeatureSettings(
   }
 }
 
-export async function updateFeatureSettings(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function updateFeatureSettings(req: Request, res: Response): Promise<any> {
   const fn = "updateFeatureSettings";
   const userId = req.userId!;
   const organizationId = req.organizationId!;

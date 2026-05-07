@@ -9,13 +9,18 @@ const defaultUserPreferences: Omit<UserPreferencesModel, "id" | "user_id"> = {
   language: "en",
 };
 
-const USER_PREFERENCES_QUERY_KEY = ['userPreferences'] as const;
+const USER_PREFERENCES_QUERY_KEY = ["userPreferences"] as const;
 
 const useUserPreferences = () => {
   const { userId } = useAuth();
   const queryClient = useQueryClient();
 
-  const { data, isLoading: loading, error, isError } = useQuery({
+  const {
+    data,
+    isLoading: loading,
+    error,
+    isError,
+  } = useQuery({
     queryKey: [...USER_PREFERENCES_QUERY_KEY, userId],
     queryFn: async () => {
       const response = await getUserPreferencesByUserId(userId!);

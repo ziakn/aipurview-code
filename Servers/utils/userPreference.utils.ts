@@ -3,7 +3,7 @@ import { sequelize } from "../database/db";
 import { UserPreferencesModel } from "../domain.layer/models/userPreferences/userPreferences.model";
 
 export const getPreferencesByUserQuery = async (
-  userId: number
+  userId: number,
 ): Promise<UserPreferencesModel | null> => {
   try {
     // date_format lives inside the JSONB `preferences` column; surface it as a
@@ -14,7 +14,7 @@ export const getPreferencesByUserQuery = async (
         replacements: { id: userId },
         mapToModel: true,
         model: UserPreferencesModel,
-      }
+      },
     );
 
     if (!preference) {
@@ -28,7 +28,7 @@ export const getPreferencesByUserQuery = async (
 
 export const createNewUserPreferencesQuery = async (
   data: Omit<UserPreferencesModel, "id">,
-  transaction: Transaction
+  transaction: Transaction,
 ): Promise<UserPreferencesModel> => {
   // NOTE: date_format is stored inside the JSONB `preferences` column on this
   // table, not as a top-level column. We persist `language` as a real column
@@ -46,7 +46,7 @@ export const createNewUserPreferencesQuery = async (
       mapToModel: true,
       model: UserPreferencesModel,
       transaction,
-    }
+    },
   );
   return result[0];
 };
@@ -54,7 +54,7 @@ export const createNewUserPreferencesQuery = async (
 export const updateUserPreferencesByIdQuery = async (
   id: number,
   data: Partial<UserPreferencesModel>,
-  transaction: Transaction
+  transaction: Transaction,
 ): Promise<UserPreferencesModel | null> => {
   // language is a top-level column; date_format lives inside the JSONB
   // `preferences` column. Build the SET clause accordingly.

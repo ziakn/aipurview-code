@@ -22,13 +22,8 @@ import {
  * Add an entity link to a task
  * POST /tasks/:id/entities
  */
-export async function addTaskEntityLink(
-  req: Request,
-  res: Response
-): Promise<any> {
-  const taskId = parseInt(
-    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id
-  );
+export async function addTaskEntityLink(req: Request, res: Response): Promise<any> {
+  const taskId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
   logProcessing({
     description: `starting addTaskEntityLink for task ID ${taskId}`,
@@ -62,11 +57,7 @@ export async function addTaskEntityLink(
     }
 
     // Check if task exists
-    const task = await getTaskByIdQuery(
-      taskId,
-      { userId, role },
-      req.organizationId!
-    );
+    const task = await getTaskByIdQuery(taskId, { userId, role }, req.organizationId!);
 
     if (!task) {
       await transaction.rollback();
@@ -78,7 +69,7 @@ export async function addTaskEntityLink(
       entity_id,
       entity_type as EntityType,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     if (!entityExists) {
@@ -94,7 +85,7 @@ export async function addTaskEntityLink(
       entity_id,
       entity_type as EntityType,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     if (linkExists) {
@@ -113,7 +104,7 @@ export async function addTaskEntityLink(
         entity_name: entity_name || undefined,
       },
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     await transaction.commit();
@@ -149,13 +140,8 @@ export async function addTaskEntityLink(
  * Get all entity links for a task
  * GET /tasks/:id/entities
  */
-export async function getTaskEntityLinks(
-  req: Request,
-  res: Response
-): Promise<any> {
-  const taskId = parseInt(
-    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id
-  );
+export async function getTaskEntityLinks(req: Request, res: Response): Promise<any> {
+  const taskId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
   logProcessing({
     description: `starting getTaskEntityLinks for task ID ${taskId}`,
@@ -172,11 +158,7 @@ export async function getTaskEntityLinks(
     }
 
     // Check if task exists
-    const task = await getTaskByIdQuery(
-      taskId,
-      { userId, role },
-      req.organizationId!
-    );
+    const task = await getTaskByIdQuery(taskId, { userId, role }, req.organizationId!);
 
     if (!task) {
       return res.status(404).json(STATUS_CODE[404](req.t!("Task not found")));
@@ -213,15 +195,10 @@ export async function getTaskEntityLinks(
  * Remove an entity link from a task
  * DELETE /tasks/:id/entities/:linkId
  */
-export async function removeTaskEntityLink(
-  req: Request,
-  res: Response
-): Promise<any> {
-  const taskId = parseInt(
-    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id
-  );
+export async function removeTaskEntityLink(req: Request, res: Response): Promise<any> {
+  const taskId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
   const linkId = parseInt(
-    Array.isArray(req.params.linkId) ? req.params.linkId[0] : req.params.linkId
+    Array.isArray(req.params.linkId) ? req.params.linkId[0] : req.params.linkId,
   );
 
   logProcessing({
@@ -240,11 +217,7 @@ export async function removeTaskEntityLink(
     }
 
     // Check if task exists
-    const task = await getTaskByIdQuery(
-      taskId,
-      { userId, role },
-      req.organizationId!
-    );
+    const task = await getTaskByIdQuery(taskId, { userId, role }, req.organizationId!);
 
     if (!task) {
       await transaction.rollback();
@@ -255,7 +228,7 @@ export async function removeTaskEntityLink(
       linkId,
       taskId,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     if (!deleted) {

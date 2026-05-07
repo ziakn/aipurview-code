@@ -15,9 +15,7 @@ export class UserPreferencesModel {
     this.language = data.language;
   }
 
-  static createNewUserPreferences(
-    data: UserPreferencesModel,
-  ): UserPreferencesModel {
+  static createNewUserPreferences(data: UserPreferencesModel): UserPreferencesModel {
     return new UserPreferencesModel(data);
   }
 }

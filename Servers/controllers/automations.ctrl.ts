@@ -17,10 +17,7 @@ import {
   getAutomationExecutionStats,
 } from "../utils/automationExecutionLog.utils";
 
-export const getAllAutomationTriggers = async (
-  _req: Request,
-  res: Response
-) => {
+export const getAllAutomationTriggers = async (_req: Request, res: Response) => {
   try {
     const result = await getAllAutomationTriggersQuery();
     return res.status(200).json(STATUS_CODE[200](result));
@@ -30,11 +27,11 @@ export const getAllAutomationTriggers = async (
   }
 };
 
-export const getAllAutomationActionsByTriggerId = async (
-  req: Request,
-  res: Response
-) => {
-  const triggerId = parseInt(Array.isArray(req.params.triggerId) ? req.params.triggerId[0] : req.params.triggerId, 10);
+export const getAllAutomationActionsByTriggerId = async (req: Request, res: Response) => {
+  const triggerId = parseInt(
+    Array.isArray(req.params.triggerId) ? req.params.triggerId[0] : req.params.triggerId,
+    10,
+  );
   if (isNaN(triggerId)) {
     return res.status(400).json({ message: req.t!("Invalid trigger ID") });
   }
@@ -87,12 +84,7 @@ export const createAutomation = async (req: Request, res: Response) => {
     const actions = req.body.actions as Partial<ITenantAutomationAction>[];
     const params = JSON.parse(req.body.params || "{}") as Record<string, any>;
 
-    if (
-      !triggerId ||
-      !name ||
-      !Array.isArray(actions) ||
-      actions.length === 0
-    ) {
+    if (!triggerId || !name || !Array.isArray(actions) || actions.length === 0) {
       await transaction.rollback();
       return res
         .status(400)
@@ -127,7 +119,7 @@ export const createAutomation = async (req: Request, res: Response) => {
       actions,
       req.userId!,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     await transaction.commit();
@@ -183,7 +175,7 @@ export const updateAutomation = async (req: Request, res: Response) => {
       },
       actions,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     await transaction.commit();
@@ -206,11 +198,7 @@ export const deleteAutomationById = async (req: Request, res: Response) => {
 
   const transaction = await sequelize.transaction();
   try {
-    const deleted = await deleteAutomationByIdQuery(
-      id,
-      req.organizationId!,
-      transaction
-    );
+    const deleted = await deleteAutomationByIdQuery(id, req.organizationId!, transaction);
     if (!deleted) {
       await transaction.rollback();
       return res
@@ -238,14 +226,26 @@ export const getAutomationHistory = async (req: Request, res: Response) => {
   }
 
   try {
-    const limit = parseInt(Array.isArray(req.query.limit) ? String(req.query.limit[0]) : String(req.query.limit || '50'), 10) || 50;
-    const offset = parseInt(Array.isArray(req.query.offset) ? String(req.query.offset[0]) : String(req.query.offset || '0'), 10) || 0;
+    const limit =
+      parseInt(
+        Array.isArray(req.query.limit)
+          ? String(req.query.limit[0])
+          : String(req.query.limit || "50"),
+        10,
+      ) || 50;
+    const offset =
+      parseInt(
+        Array.isArray(req.query.offset)
+          ? String(req.query.offset[0])
+          : String(req.query.offset || "0"),
+        10,
+      ) || 0;
 
     const { logs, total } = await getAutomationExecutionLogs(
       id,
       limit,
       offset,
-      req.organizationId!
+      req.organizationId!,
     );
 
     // Map action_results to actions for frontend compatibility
@@ -260,7 +260,7 @@ export const getAutomationHistory = async (req: Request, res: Response) => {
         total,
         limit,
         offset,
-      })
+      }),
     );
   } catch (error) {
     console.error(`Error fetching automation history for ID ${id}:`, error);

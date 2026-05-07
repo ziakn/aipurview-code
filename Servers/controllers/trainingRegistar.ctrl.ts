@@ -11,11 +11,7 @@ import {
 
 import { TrainingRegistarModel } from "../domain.layer/models/trainingRegistar/trainingRegistar.model";
 import { sequelize } from "../database/db";
-import {
-  logProcessing,
-  logSuccess,
-  logFailure,
-} from "../utils/logger/logHelper";
+import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 import logger from "../utils/logger/fileLogger";
 import { notifyTrainingAssigned } from "../services/inAppNotification.service";
 import { getAllUsersQuery } from "../utils/user.utils";
@@ -28,10 +24,7 @@ import {
 } from "../utils/changeHistory.base.utils";
 
 // get ALL training registry api
-export async function getAllTrainingRegistar(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getAllTrainingRegistar(req: Request, res: Response): Promise<any> {
   logProcessing({
     description: "starting getAllTrainingRegistar",
     functionName: "getAllTrainingRegistar",
@@ -79,11 +72,10 @@ export async function getAllTrainingRegistar(
 }
 
 // get BY ID training registry api
-export async function getTrainingRegistarById(
-  req: Request,
-  res: Response
-): Promise<any> {
-  const trainingRegistarId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+export async function getTrainingRegistarById(req: Request, res: Response): Promise<any> {
+  const trainingRegistarId = parseInt(
+    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+  );
 
   logProcessing({
     description: `starting getTrainingRegistarById for training registrar ID ${trainingRegistarId}`,
@@ -97,7 +89,7 @@ export async function getTrainingRegistarById(
   try {
     const trainingRegistar = await getTrainingRegistarByIdQuery(
       trainingRegistarId,
-      req.organizationId!
+      req.organizationId!,
     );
 
     if (trainingRegistar) {
@@ -136,10 +128,7 @@ export async function getTrainingRegistarById(
 }
 
 // create new training registar
-export async function createNewTrainingRegistar(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function createNewTrainingRegistar(req: Request, res: Response): Promise<any> {
   const transaction = await sequelize.transaction();
 
   logProcessing({
@@ -157,7 +146,7 @@ export async function createNewTrainingRegistar(
     const createdNewTrainingRegistar = await createNewTrainingRegistarQuery(
       newTrainingRegistar,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     if (createdNewTrainingRegistar) {
@@ -168,7 +157,8 @@ export async function createNewTrainingRegistar(
         // Normalize numberOfPeople to people (DB column name) for change tracking
         const normalizedData: Record<string, unknown> = {
           ...newTrainingRegistar,
-          people: (newTrainingRegistar as any).numberOfPeople ?? (newTrainingRegistar as any).people,
+          people:
+            (newTrainingRegistar as any).numberOfPeople ?? (newTrainingRegistar as any).people,
         };
         delete (normalizedData as any).numberOfPeople;
         await recordEntityCreation(
@@ -177,7 +167,7 @@ export async function createNewTrainingRegistar(
           req.userId,
           req.organizationId!,
           normalizedData,
-          transaction
+          transaction,
         );
       }
 
@@ -197,9 +187,7 @@ export async function createNewTrainingRegistar(
         const users = await getAllUsersQuery(req.organizationId!);
         const admins = users.filter((user) => user.role_id === 1);
         const creatorUser = users.find((user) => user.id === req.userId);
-        const creatorName = creatorUser
-          ? `${creatorUser.name} ${creatorUser.surname}`
-          : "System";
+        const creatorName = creatorUser ? `${creatorUser.name} ${creatorUser.surname}` : "System";
 
         const trainingData = createdNewTrainingRegistar?.dataValues || createdNewTrainingRegistar;
         const trainingId = trainingData?.id || 0;
@@ -252,11 +240,10 @@ export async function createNewTrainingRegistar(
 }
 
 //update a particular training registar by id
-export async function updateTrainingRegistarById(
-  req: Request,
-  res: Response
-): Promise<any> {
-  const trainingRegistarId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+export async function updateTrainingRegistarById(req: Request, res: Response): Promise<any> {
+  const trainingRegistarId = parseInt(
+    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+  );
 
   const transaction = await sequelize.transaction();
 
@@ -280,14 +267,14 @@ export async function updateTrainingRegistarById(
     // Get existing data for change tracking
     const existingTraining = await getTrainingRegistarByIdQuery(
       trainingRegistarId,
-      req.organizationId!
+      req.organizationId!,
     );
 
     const trainingRegistar = await updateTrainingRegistarByIdQuery(
       trainingRegistarId,
       updatedTrainingRegistar,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     if (trainingRegistar) {
@@ -296,7 +283,7 @@ export async function updateTrainingRegistarById(
         const changes = await trackEntityChanges(
           "training",
           existingTraining,
-          updatedTrainingRegistar
+          updatedTrainingRegistar,
         );
         if (changes.length > 0) {
           await recordMultipleFieldChanges(
@@ -305,7 +292,7 @@ export async function updateTrainingRegistarById(
             req.userId,
             req.organizationId!,
             changes,
-            transaction
+            transaction,
           );
         }
       }
@@ -348,11 +335,10 @@ export async function updateTrainingRegistarById(
   }
 }
 
-export async function deleteTrainingRegistarById(
-  req: Request,
-  res: Response
-): Promise<any> {
-  const trainingRegistarId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+export async function deleteTrainingRegistarById(req: Request, res: Response): Promise<any> {
+  const trainingRegistarId = parseInt(
+    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+  );
   const transaction = await sequelize.transaction();
 
   logProcessing({
@@ -368,13 +354,19 @@ export async function deleteTrainingRegistarById(
     const deleteTrainingRegistar = await deleteTrainingRegistarByIdQuery(
       trainingRegistarId,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     if (deleteTrainingRegistar) {
       // Record deletion in change history
       if (req.userId) {
-        await recordEntityDeletion("training", trainingRegistarId, req.userId, req.organizationId!, transaction);
+        await recordEntityDeletion(
+          "training",
+          trainingRegistarId,
+          req.userId,
+          req.organizationId!,
+          transaction,
+        );
       }
 
       await transaction.commit();

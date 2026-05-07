@@ -9,22 +9,15 @@ import {
 import { sequelize } from "../database/db";
 import { getOrganizationByIdQuery } from "../utils/organization.utils";
 import { getUserByIdQuery } from "../utils/user.utils";
-import {
-  logProcessing,
-  logSuccess,
-  logFailure,
-} from "../utils/logger/logHelper";
+import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 import logger from "../utils/logger/fileLogger";
 
 import { translateError } from "../utils/i18n.utils";
 // Reporting system imports (v2 - HTML/EJS based)
-import {
-  generateReport as generateReportV2,
-  ReportFormat,
-} from "../services/reporting";
+import { generateReport as generateReportV2, ReportFormat } from "../services/reporting";
 
 export function mapReportTypeToFileSource(
-  reportType: string | string[]
+  reportType: string | string[],
 ):
   | "Project risks report"
   | "Compliance tracker report"
@@ -98,17 +91,11 @@ export function mapReportTypeToFileSource(
  * Legacy endpoint wrapper - redirects to v2 system
  * Kept for backward compatibility with old API calls
  */
-export async function generateReports(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function generateReports(req: Request, res: Response): Promise<any> {
   return generateReportsV2(req, res);
 }
 
-export async function getAllGeneratedReports(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getAllGeneratedReports(req: Request, res: Response): Promise<any> {
   logProcessing({
     description: "starting getAllGeneratedReports",
     functionName: "getAllGeneratedReports",
@@ -133,10 +120,7 @@ export async function getAllGeneratedReports(
       return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
-    const reports = await getGeneratedReportsQuery(
-      { userId, role },
-      req.organizationId!
-    );
+    const reports = await getGeneratedReportsQuery({ userId, role }, req.organizationId!);
 
     await logSuccess({
       eventType: "Read",
@@ -147,7 +131,7 @@ export async function getAllGeneratedReports(
       functionName: "getAllGeneratedReports",
       fileName: "reporting.ctrl.ts",
       userId: req.userId!,
-    tenantId: req.organizationId!,
+      tenantId: req.organizationId!,
     });
 
     // Return 200 with empty array if no reports, not 404
@@ -162,16 +146,13 @@ export async function getAllGeneratedReports(
       fileName: "reporting.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-    tenantId: req.organizationId!,
+      tenantId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
-export async function deleteGeneratedReportById(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function deleteGeneratedReportById(req: Request, res: Response): Promise<any> {
   const reportId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
   const transaction = await sequelize.transaction();
 
@@ -199,11 +180,7 @@ export async function deleteGeneratedReportById(
       return res.status(404).json(STATUS_CODE[404](req.t!("Report not found")));
     }
 
-    const deletedReport = await deleteReportByIdQuery(
-      reportId,
-      req.organizationId!,
-      transaction
-    );
+    const deletedReport = await deleteReportByIdQuery(reportId, req.organizationId!, transaction);
     if (deletedReport) {
       await transaction.commit();
       await logSuccess({
@@ -224,7 +201,7 @@ export async function deleteGeneratedReportById(
       functionName: "deleteGeneratedReportById",
       fileName: "reporting.ctrl.ts",
       userId: req.userId!,
-    tenantId: req.organizationId!,
+      tenantId: req.organizationId!,
     });
     return res.status(204).json(STATUS_CODE[204](deletedReport));
   } catch (error) {
@@ -236,7 +213,7 @@ export async function deleteGeneratedReportById(
       fileName: "reporting.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-    tenantId: req.organizationId!,
+      tenantId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -246,10 +223,7 @@ export async function deleteGeneratedReportById(
  * Generate reports using the new HTML/EJS-based system
  * Supports both PDF and DOCX formats with rich formatting
  */
-export async function generateReportsV2(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function generateReportsV2(req: Request, res: Response): Promise<any> {
   const {
     projectId: projectIdRaw,
     reportType,
@@ -274,9 +248,7 @@ export async function generateReportsV2(
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
-  logger.debug(
-    `📄 Generating ${reportType} report (${reportFormat}) for project ID ${projectId}`
-  );
+  logger.debug(`📄 Generating ${reportType} report (${reportFormat}) for project ID ${projectId}`);
 
   try {
     const user = await getUserByIdQuery(userId!);
@@ -312,7 +284,7 @@ export async function generateReportsV2(
         llmKeyId: llmKeyId ? parseInt(llmKeyId) : undefined,
       },
       userId!,
-      req.organizationId!
+      req.organizationId!,
     );
 
     if (!result.success) {
@@ -325,9 +297,7 @@ export async function generateReportsV2(
         userId: req.userId!,
         tenantId: req.organizationId!,
       });
-      return res
-        .status(500)
-        .json(STATUS_CODE[500](result.error || "Failed to generate report"));
+      return res.status(500).json(STATUS_CODE[500](result.error || "Failed to generate report"));
     }
 
     // Upload file to storage
@@ -345,7 +315,7 @@ export async function generateReportsV2(
         userId!,
         projectId,
         mapReportTypeToFileSource(reportType),
-        req.organizationId!
+        req.organizationId!,
       );
     } catch (error) {
       console.error("File upload error:", error);
@@ -373,10 +343,7 @@ export async function generateReportsV2(
         tenantId: req.organizationId!,
       });
 
-      res.setHeader(
-        "Content-Disposition",
-        `attachment; filename="${uploadedFile.filename}"`
-      );
+      res.setHeader("Content-Disposition", `attachment; filename="${uploadedFile.filename}"`);
       res.setHeader("Content-Type", result.mimeType);
       res.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
       return res.status(200).send(uploadedFile.content);
@@ -402,7 +369,7 @@ export async function generateReportsV2(
       fileName: "reporting.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-    tenantId: req.organizationId!,
+      tenantId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }

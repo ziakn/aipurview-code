@@ -1,19 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, {
-  FC,
-  useState,
-  useMemo,
-  useCallback,
-  useEffect,
-  Suspense,
-} from "react";
+import React, { FC, useState, useMemo, useCallback, useEffect, Suspense } from "react";
 import {
   useTheme,
   Stack,
   Box,
   FormControlLabel,
-  Autocomplete,
-  TextField,
   Typography,
   IconButton,
   Tooltip,
@@ -23,10 +14,7 @@ import { lazy } from "react";
 const Field = lazy(() => import("../../Inputs/Field"));
 const DatePicker = lazy(() => import("../../Inputs/Datepicker"));
 import SelectComponent from "../../Inputs/Select";
-import {
-  ChevronDown,
-  DownloadIcon,
-} from "lucide-react";
+import { ChevronDown, DownloadIcon } from "lucide-react";
 import StandardModal from "../StandardModal";
 import { ModelInventoryStatus } from "../../../../domain/enums/modelInventory.enum";
 import { HistorySidebar } from "../../Common/HistorySidebar";
@@ -39,13 +27,10 @@ import { useModalKeyHandling } from "../../../../application/hooks/useModalKeyHa
 import modelInventoryOptions from "../../../utils/model-inventory.json";
 import { useProjects } from "../../../../application/hooks/useProjects";
 import { Project } from "../../../../domain/types/Project";
-import { getAutocompleteStyles } from "../../../utils/inputStyles";
+import AutoCompleteField from "../../Inputs/Autocomplete";
 import FileManagerUploadModal from "../FileManagerUpload";
 import { CustomizableButton } from "../../button/customizable-button";
-import {
-  FileResponse,
-  IModelInventory,
-} from "../../../../domain/interfaces/i.modelInventory";
+import { FileResponse, IModelInventory } from "../../../../domain/interfaces/i.modelInventory";
 import { Trash2 as DeleteIconGrey } from "lucide-react";
 
 import TabBar from "../../TabBar";
@@ -94,8 +79,6 @@ interface NewModelInventoryFormValues {
   frameworks: number[];
   security_assessment_data: FileResponse[];
 }
-
-
 
 const initialState: NewModelInventoryFormValues = {
   provider_model: "", // Keep for backward compatibility
@@ -162,9 +145,7 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
 }) => {
   const theme = useTheme();
   const queryClient = useQueryClient();
-  const [values, setValues] = useState<NewModelInventoryFormValues>(
-    initialData || initialState
-  );
+  const [values, setValues] = useState<NewModelInventoryFormValues>(initialData || initialState);
   const [users, setUsers] = useState<User[]>([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -194,17 +175,14 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
         const r = checkStringValidation("Status date", v as string, 1);
         return r.accepted ? "" : r.message;
       },
-      security_assessment_data: (
-        v: unknown,
-        vals: NewModelInventoryFormValues
-      ) => {
+      security_assessment_data: (v: unknown, vals: NewModelInventoryFormValues) => {
         if (vals.security_assessment && (!v || (v as FileResponse[]).length === 0)) {
           return "At least one file must be uploaded when security assessment is complete.";
         }
         return "";
       },
     }),
-    []
+    [],
   );
 
   const { errors, validateAll, clearFieldError, resetErrors } =
@@ -213,7 +191,7 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
   // Prefetch history data when modal opens in edit mode
   // This ensures data is ready before user opens the sidebar
   useModelInventoryChangeHistory(
-    isOpen && isEdit ? (selectedModelInventoryId as number) : undefined
+    isOpen && isEdit ? (selectedModelInventoryId as number) : undefined,
   );
 
   useEffect(() => {
@@ -223,12 +201,8 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
         // Normalize the data
         const normalizedData = {
           ...initialData,
-          projects: Array.isArray(initialData.projects)
-            ? [...initialData.projects]
-            : [],
-          frameworks: Array.isArray(initialData.frameworks)
-            ? [...initialData.frameworks]
-            : [],
+          projects: Array.isArray(initialData.projects) ? [...initialData.projects] : [],
+          frameworks: Array.isArray(initialData.frameworks) ? [...initialData.frameworks] : [],
           capabilities: Array.isArray(initialData.capabilities)
             ? [...initialData.capabilities]
             : [],
@@ -259,7 +233,7 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
     if (!selectedModelInventoryId) return [];
 
     const filtered = (evidenceData ?? []).filter((item) =>
-      item.mapped_model_ids?.includes(Number(selectedModelInventoryId))
+      item.mapped_model_ids?.includes(Number(selectedModelInventoryId)),
     );
 
     return filtered;
@@ -330,14 +304,12 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
   }, [users]);
 
   const modelInventoryList = useMemo(() => {
-    return modelInventoryOptions.map(
-      (u: { model: string; provider: string }) => ({
-        _id: u.model,
-        name: `${u.provider} - ${u.model}`,
-        surname: u.model,
-        email: u.model,
-      })
-    );
+    return modelInventoryOptions.map((u: { model: string; provider: string }) => ({
+      _id: u.model,
+      name: `${u.provider} - ${u.model}`,
+      surname: u.model,
+      email: u.model,
+    }));
   }, []);
 
   // Button should be enabled for new items or always enabled during edit
@@ -345,13 +317,12 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
   const isButtonDisabled = isSubmitting;
 
   const handleOnTextFieldChange = useCallback(
-    (prop: keyof NewModelInventoryFormValues) =>
-      (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value;
-        setValues((prev) => ({ ...prev, [prop]: value }));
-        clearFieldError(prop);
-      },
-    [clearFieldError]
+    (prop: keyof NewModelInventoryFormValues) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      setValues((prev) => ({ ...prev, [prop]: value }));
+      clearFieldError(prop);
+    },
+    [clearFieldError],
   );
 
   const handleOnSelectChange = useCallback(
@@ -360,7 +331,7 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
       setValues((prev) => ({ ...prev, [prop]: value }));
       clearFieldError(prop);
     },
-    [clearFieldError]
+    [clearFieldError],
   );
 
   const handleCapabilityChange = useCallback(
@@ -368,7 +339,7 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
       setValues((prev) => ({ ...prev, capabilities: newValue }));
       clearFieldError("capabilities");
     },
-    [clearFieldError]
+    [clearFieldError],
   );
 
   const handleSelectUsedInProjectChange = useCallback(
@@ -380,7 +351,7 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
       setValues((prev) => ({ ...prev, projects: projectIds }));
       clearFieldError("projects");
     },
-    [projectList, clearFieldError]
+    [projectList, clearFieldError],
   );
 
   const handleSelectUsedInFrameworksChange = useCallback(
@@ -400,18 +371,21 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
       setValues((prev) => ({ ...prev, frameworks: frameworkIds }));
       clearFieldError("frameworks");
     },
-    [frameworkIdToNameMap, clearFieldError]
+    [frameworkIdToNameMap, clearFieldError],
   );
 
-  const handleDateChange = useCallback((newDate: Dayjs | null) => {
-    if (newDate?.isValid()) {
-      setValues((prev) => ({
-        ...prev,
-        status_date: newDate ? newDate.format("YYYY-MM-DD") : "",
-      }));
-      clearFieldError("status_date");
-    }
-  }, [clearFieldError]);
+  const handleDateChange = useCallback(
+    (newDate: Dayjs | null) => {
+      if (newDate?.isValid()) {
+        setValues((prev) => ({
+          ...prev,
+          status_date: newDate ? newDate.format("YYYY-MM-DD") : "",
+        }));
+        clearFieldError("status_date");
+      }
+    },
+    [clearFieldError],
+  );
 
   const handleSecurityAssessmentChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -420,7 +394,7 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
         security_assessment: event.target.checked,
       }));
     },
-    []
+    [],
   );
 
   const handleUploadSuccess = (data: FileResponse[]) => {
@@ -491,9 +465,7 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
       Type: item.evidence_type || "",
       "Mapped Models": item.mapped_model_ids?.join(", ") || "",
       DESCRIPTION: item.description,
-      EXPIRY_DATE: item.expiry_date
-        ? dayjs.utc(item.expiry_date).format("YYYY-MM-DD")
-        : "-",
+      EXPIRY_DATE: item.expiry_date ? dayjs.utc(item.expiry_date).format("YYYY-MM-DD") : "-",
     }));
 
     // Extract CSV header from object keys
@@ -501,7 +473,7 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
     const csvRows = rows.map((row) =>
       Object.values(row)
         .map((val) => `"${String(val).replace(/"/g, '""')}"`) // escape quotes
-        .join(",")
+        .join(","),
     );
 
     const csvContent = [header, ...csvRows].join("\r\n");
@@ -524,44 +496,8 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
         padding: "0 14px",
       },
     }),
-    [theme.palette.background.main]
+    [theme.palette.background.main],
   );
-
-  // Styles for Autocomplete (following ProjectForm approach)
-  const capabilitiesRenderInputStyle = {
-    "& .MuiOutlinedInput-root": {
-      paddingTop: "3.8px !important",
-      paddingBottom: "3.8px !important",
-    },
-    "& ::placeholder": {
-      fontSize: 13,
-    },
-  };
-
-  const capabilitiesSlotProps = {
-    paper: {
-      sx: {
-        "& .MuiAutocomplete-listbox": {
-          "& .MuiAutocomplete-option": {
-            fontSize: 13,
-            fontWeight: 400,
-            color: "#1c2130",
-            paddingLeft: "9px",
-            paddingRight: "9px",
-          },
-          "& .MuiAutocomplete-option.Mui-focused": {
-            background: "background.accent",
-          },
-        },
-        "& .MuiAutocomplete-noOptions": {
-          fontSize: 13,
-          fontWeight: 400,
-          paddingLeft: "9px",
-          paddingRight: "9px",
-        },
-      },
-    },
-  };
 
   const modelDetailsSection = (
     <Stack spacing={3}>
@@ -581,128 +517,57 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
           />
         </Suspense>
         <Suspense fallback={<div>Loading...</div>}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              width: 220,
-            }}
+          <AutoCompleteField<
+            { _id: string; name: string; surname: string; email: string },
+            false,
+            false,
+            true
           >
-            <Typography
-              variant="body2"
-              sx={{
-                mb: 2,
-                fontWeight: 450,
-                color: theme.palette.text.primary,
-              }}
-            >
-              Model{" "}
-              <Typography component="span" color="black">
-                *
-              </Typography>
-            </Typography>
-            <Autocomplete
-              id="model-input"
-              size="small"
-              freeSolo
-              value={values.model}
-              options={modelInventoryList || []}
-              getOptionLabel={(option) =>
-                typeof option === "string" ? option : option.name
+            id="model-input"
+            label="Model"
+            isRequired
+            freeSolo
+            value={values.model}
+            options={modelInventoryList || []}
+            getOptionLabel={(option) => (typeof option === "string" ? option : option.name)}
+            onChange={(_event, newValue) => {
+              if (typeof newValue === "string") {
+                setValues((prev) => ({ ...prev, model: newValue }));
+              } else if (newValue && typeof newValue === "object") {
+                setValues((prev) => ({ ...prev, model: newValue.name }));
+              } else {
+                setValues((prev) => ({ ...prev, model: "" }));
               }
-              onChange={(_event, newValue) => {
-                // Handle both option object and free text
-                if (typeof newValue === "string") {
-                  setValues({
-                    ...values,
-                    model: newValue,
-                  });
-                } else if (newValue && typeof newValue === "object") {
-                  setValues({
-                    ...values,
-                    model: newValue.name,
-                  });
-                } else {
-                  setValues({ ...values, model: "" });
-                }
-              }}
-              onInputChange={(_event, newInputValue, reason) => {
-                if (reason === "input") {
-                  setValues({
-                    ...values,
-                    model: newInputValue,
-                  });
-                }
-              }}
-              renderOption={(props, option) => {
-                const { key, ...otherProps } = props;
-                return (
-                  <Box component="li" key={key} {...otherProps}>
-                    <Typography
-                      sx={{
-                        fontSize: 13,
-                        color: theme.palette.text.primary,
-                      }}
-                    >
-                      {option.name}
-                    </Typography>
-                  </Box>
-                );
-              }}
-              popupIcon={<i data-lucide="chevron-downa"></i>}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  placeholder="Select or enter model"
-                  error={Boolean(errors.model)}
-                  helperText={errors.model}
-                  variant="outlined"
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      height: 34,
-                      minHeight: 34,
-                      borderRadius: 2,
-                    },
-                    "& .MuiInputBase-input": {
-                      padding: "0 8px",
-                      fontSize: 13,
-                    },
-                  }}
-                />
-              )}
-              // noOptionsText="No matching models"
-              filterOptions={(options, state) => {
-                const filtered = options.filter((option) =>
-                  option.name
-                    .toLowerCase()
-                    .includes(state.inputValue.toLowerCase())
-                );
-
-                if (filtered.length === 0) {
-                  return [];
-                }
-
-                return filtered;
-              }}
-              slotProps={{
-                paper: {
-                  sx: {
-                    "& .MuiAutocomplete-listbox": {
-                      "& .MuiAutocomplete-option": {
-                        fontSize: 13,
-                        color: theme.palette.text.primary,
-                        padding: "8px 12px",
-                      },
-                      "& .MuiAutocomplete-option.Mui-focused": {
-                        backgroundColor: theme.palette.background.accent,
-                      },
-                    },
-                  },
-                },
-              }}
-              disabled={isLoadingUsers}
-            />
-          </Box>
+              clearFieldError("model");
+            }}
+            onInputChange={(_event, newInputValue, reason) => {
+              if (reason === "input") {
+                setValues((prev) => ({ ...prev, model: newInputValue }));
+                clearFieldError("model");
+              }
+            }}
+            renderOption={(props, option) => {
+              const { key, ...otherProps } = props;
+              return (
+                <Box component="li" key={key} {...otherProps}>
+                  <Typography sx={{ fontSize: 13, color: theme.palette.text.primary }}>
+                    {option.name}
+                  </Typography>
+                </Box>
+              );
+            }}
+            popupIcon={<ChevronDown size={16} />}
+            filterOptions={(options, state) => {
+              const filtered = options.filter((option) =>
+                option.name.toLowerCase().includes(state.inputValue.toLowerCase()),
+              );
+              return filtered.length === 0 ? [] : filtered;
+            }}
+            placeholder="Select or enter model"
+            error={errors.model}
+            disabled={isLoadingUsers}
+            sx={{ width: 220 }}
+          />
         </Suspense>
         <Suspense fallback={<div>Loading...</div>}>
           <Field
@@ -746,9 +611,7 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
         <Suspense fallback={<div>Loading...</div>}>
           <DatePicker
             label="Status date"
-            date={
-              values.status_date ? dayjs(values.status_date) : dayjs(new Date())
-            }
+            date={values.status_date ? dayjs(values.status_date) : dayjs(new Date())}
             handleDateChange={handleDateChange}
             sx={{
               width: 220,
@@ -761,228 +624,99 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
       </Stack>
 
       {/* Capabilities Section */}
-      <Stack>
-        <Typography
-          sx={{
-            fontSize: "13px",
-            fontWeight: 500,
-            height: "22px",
-            mb: theme.spacing(2),
-            color: theme.palette.text.secondary,
-          }}
-        >
-          Capabilities
-        </Typography>
-        <Autocomplete
-          multiple
-          id="capabilities-input"
-          size="small"
-          value={values.capabilities}
-          options={capabilityOptions}
-          onChange={handleCapabilityChange}
-          getOptionLabel={(option) => option}
-          noOptionsText={
-            values.capabilities.length === capabilityOptions.length
-              ? "All capabilities selected"
-              : "No options"
-          }
-          renderOption={(props, option) => {
-            const { key, ...otherProps } = props;
-            return (
-              <Box component="li" key={key} {...otherProps}>
-                <Typography sx={{ fontSize: 13, fontWeight: 400 }}>
-                  {option}
-                </Typography>
-              </Box>
-            );
-          }}
-          filterSelectedOptions
-          popupIcon={<ChevronDown />}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              error={!!errors.capabilities}
-              placeholder="Select capabilities"
-              sx={capabilitiesRenderInputStyle}
-            />
-          )}
-          sx={{
-            ...getAutocompleteStyles(theme, {
-              hasError: !!errors.capabilities,
-            }),
-            backgroundColor: theme.palette.background.main,
-            "& .MuiChip-root": {
-              borderRadius: "4px",
-            },
-          }}
-          slotProps={capabilitiesSlotProps}
-        />
-        {errors.capabilities && (
-          <Typography
-            variant="caption"
-            sx={{
-              mt: 1,
-              color: "#f04438",
-              fontWeight: 300,
-              fontSize: 11,
-            }}
-          >
-            {errors.capabilities}
-          </Typography>
-        )}
-      </Stack>
+      <AutoCompleteField
+        label="Capabilities"
+        multiple
+        id="capabilities-input"
+        value={values.capabilities}
+        options={capabilityOptions}
+        onChange={handleCapabilityChange}
+        getOptionLabel={(option) => option}
+        noOptionsText={
+          values.capabilities.length === capabilityOptions.length
+            ? "All capabilities selected"
+            : "No options"
+        }
+        renderOption={(props, option) => {
+          const { key, ...otherProps } = props;
+          return (
+            <Box component="li" key={key} {...otherProps}>
+              <Typography sx={{ fontSize: 13, fontWeight: 400 }}>{option}</Typography>
+            </Box>
+          );
+        }}
+        filterSelectedOptions
+        popupIcon={<ChevronDown />}
+        placeholder="Select capabilities"
+        error={errors.capabilities}
+        sx={{ "& .MuiChip-root": { borderRadius: "4px" } }}
+      />
 
       {/* Used in Projects Section */}
-      <Stack>
-        <Typography
-          sx={{
-            fontSize: "13px",
-            fontWeight: 500,
-            height: "22px",
-            mb: theme.spacing(2),
-            color: theme.palette.text.secondary,
-          }}
-        >
-          Used in use cases
-        </Typography>
-        <Autocomplete
-          multiple
-          id="projects-input"
-          size="small"
-          value={
-            (values.projects || [])
-              .map((id) => projectList.find((p) => p.id === id)?.project_title)
-              .filter(Boolean) as string[]
-          }
-          options={projectsList}
-          onChange={handleSelectUsedInProjectChange}
-          getOptionLabel={(option) => option}
-          noOptionsText={
-            (values.projects || []).length === projectsList.length
-              ? "All projects selected"
-              : "No options"
-          }
-          renderOption={(props, option) => {
-            const { key, ...otherProps } = props;
-            return (
-              <Box component="li" key={key} {...otherProps}>
-                <Typography sx={{ fontSize: 13, fontWeight: 400 }}>
-                  {option}
-                </Typography>
-              </Box>
-            );
-          }}
-          filterSelectedOptions
-          popupIcon={<ChevronDown size={16} />}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              error={!!errors.projects}
-              placeholder="Select projects"
-              sx={capabilitiesRenderInputStyle}
-            />
-          )}
-          sx={{
-            ...getAutocompleteStyles(theme, {
-              hasError: !!errors.projects,
-            }),
-            backgroundColor: theme.palette.background.main,
-            "& .MuiChip-root": {
-              borderRadius: "4px",
-            },
-          }}
-          slotProps={capabilitiesSlotProps}
-        />
-        {errors.projects && (
-          <Typography
-            variant="caption"
-            sx={{
-              mt: 1,
-              color: "#f04438",
-              fontWeight: 300,
-              fontSize: 11,
-            }}
-          >
-            {errors.projects}
-          </Typography>
-        )}
-      </Stack>
+      <AutoCompleteField
+        label="Used in use cases"
+        multiple
+        id="projects-input"
+        value={
+          (values.projects || [])
+            .map((id) => projectList.find((p) => p.id === id)?.project_title)
+            .filter(Boolean) as string[]
+        }
+        options={projectsList}
+        onChange={handleSelectUsedInProjectChange}
+        getOptionLabel={(option) => option}
+        noOptionsText={
+          (values.projects || []).length === projectsList.length
+            ? "All projects selected"
+            : "No options"
+        }
+        renderOption={(props, option) => {
+          const { key, ...otherProps } = props;
+          return (
+            <Box component="li" key={key} {...otherProps}>
+              <Typography sx={{ fontSize: 13, fontWeight: 400 }}>{option}</Typography>
+            </Box>
+          );
+        }}
+        filterSelectedOptions
+        popupIcon={<ChevronDown size={16} />}
+        placeholder="Select projects"
+        error={errors.projects}
+        sx={{ "& .MuiChip-root": { borderRadius: "4px" } }}
+      />
 
       {/* Used in Frameworks Section */}
-      <Stack>
-        <Typography
-          sx={{
-            fontSize: "13px",
-            fontWeight: 500,
-            height: "22px",
-            mb: theme.spacing(2),
-            color: theme.palette.text.secondary,
-          }}
-        >
-          Used in frameworks
-        </Typography>
-        <Autocomplete
-          multiple
-          id="frameworks-input"
-          size="small"
-          value={
-            (values.frameworks || [])
-              .map((id) => frameworkIdToNameMap.get(id))
-              .filter(Boolean) as string[]
-          }
-          options={frameworksList}
-          onChange={handleSelectUsedInFrameworksChange}
-          getOptionLabel={(option) => option}
-          noOptionsText={
-            (values.frameworks || []).length === frameworksList.length
-              ? "All frameworks selected"
-              : "No options"
-          }
-          renderOption={(props, option) => {
-            const { key, ...otherProps } = props;
-            return (
-              <Box component="li" key={key} {...otherProps}>
-                <Typography sx={{ fontSize: 13, fontWeight: 400 }}>
-                  {option}
-                </Typography>
-              </Box>
-            );
-          }}
-          filterSelectedOptions
-          popupIcon={<ChevronDown size={16} />}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              error={!!errors.frameworks}
-              placeholder="Select frameworks"
-              sx={capabilitiesRenderInputStyle}
-            />
-          )}
-          sx={{
-            ...getAutocompleteStyles(theme, {
-              hasError: !!errors.frameworks,
-            }),
-            backgroundColor: theme.palette.background.main,
-            "& .MuiChip-root": {
-              borderRadius: "4px",
-            },
-          }}
-          slotProps={capabilitiesSlotProps}
-        />
-        {errors.frameworks && (
-          <Typography
-            variant="caption"
-            sx={{
-              mt: 1,
-              color: "#f04438",
-              fontWeight: 300,
-              fontSize: 11,
-            }}
-          >
-            {errors.frameworks}
-          </Typography>
-        )}
-      </Stack>
+      <AutoCompleteField
+        label="Used in frameworks"
+        multiple
+        id="frameworks-input"
+        value={
+          (values.frameworks || [])
+            .map((id) => frameworkIdToNameMap.get(id))
+            .filter(Boolean) as string[]
+        }
+        options={frameworksList}
+        onChange={handleSelectUsedInFrameworksChange}
+        getOptionLabel={(option) => option}
+        noOptionsText={
+          (values.frameworks || []).length === frameworksList.length
+            ? "All frameworks selected"
+            : "No options"
+        }
+        renderOption={(props, option) => {
+          const { key, ...otherProps } = props;
+          return (
+            <Box component="li" key={key} {...otherProps}>
+              <Typography sx={{ fontSize: 13, fontWeight: 400 }}>{option}</Typography>
+            </Box>
+          );
+        }}
+        filterSelectedOptions
+        popupIcon={<ChevronDown size={16} />}
+        placeholder="Select frameworks"
+        error={errors.frameworks}
+        sx={{ "& .MuiChip-root": { borderRadius: "4px" } }}
+      />
 
       <Stack direction={"row"} spacing={6}>
         <Suspense fallback={<div>Loading...</div>}>
@@ -1067,8 +801,7 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
                   showIcon={false}
                   sx={{ marginLeft: "8px" }}
                 >
-                  {values.security_assessment_data &&
-                  values.security_assessment_data.length > 0
+                  {values.security_assessment_data && values.security_assessment_data.length > 0
                     ? "Add more files"
                     : "Upload assessment"}
                 </VWLink>
@@ -1103,65 +836,60 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
       {/* ✅ Upload Section (appears only when toggle is ON) */}
       {values.security_assessment && (
         <Stack spacing={4}>
-          {values.security_assessment_data &&
-            values.security_assessment_data.length > 0 && (
-              <Stack spacing={2}>
-                {values.security_assessment_data.map((file, index) => (
-                  <Box
-                    key={index}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    p={1.5}
-                    border={`1px solid ${theme.palette.grey[300]}`}
-                    borderRadius={1}
-                  >
-                    {/* Left side: file info */}
-                    <Box>
-                      <Typography variant="body2">
-                        <strong>File:</strong> {file.filename}
-                      </Typography>
-                      <Typography variant="body2">
-                        <strong>Size:</strong>{" "}
-                        {(file.size / 1024 / 1024).toFixed(2)} MB
-                      </Typography>
-                      <Typography variant="body2">
-                        <strong>Uploaded:</strong>{" "}
-                        {dayjs
-                          .utc(file.upload_date)
-                          .format("YYYY-MM-DD HH:mm:ss")}
-                      </Typography>
-                    </Box>
-
-                    {/* Right side: delete icon with tooltip */}
-                    <Tooltip title="Remove file" arrow>
-                      <IconButton
-                        onClick={() => {
-                          setValues((prevValues) => ({
-                            ...prevValues,
-                            security_assessment_data:
-                              prevValues.security_assessment_data.filter(
-                                (f) => f.id !== file.id
-                              ),
-                          }));
-                        }}
-                        edge="end"
-                        size="small"
-                        sx={{
-                          padding: "4px",
-                          bgcolor: theme.palette.grey[100],
-                          "&:hover": {
-                            bgcolor: theme.palette.grey[200],
-                          },
-                        }}
-                      >
-                        <DeleteIconGrey size={18} />
-                      </IconButton>
-                    </Tooltip>
+          {values.security_assessment_data && values.security_assessment_data.length > 0 && (
+            <Stack spacing={2}>
+              {values.security_assessment_data.map((file, index) => (
+                <Box
+                  key={index}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  p={1.5}
+                  border={`1px solid ${theme.palette.grey[300]}`}
+                  borderRadius={1}
+                >
+                  {/* Left side: file info */}
+                  <Box>
+                    <Typography variant="body2">
+                      <strong>File:</strong> {file.filename}
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Size:</strong> {(file.size / 1024 / 1024).toFixed(2)} MB
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Uploaded:</strong>{" "}
+                      {dayjs.utc(file.upload_date).format("YYYY-MM-DD HH:mm:ss")}
+                    </Typography>
                   </Box>
-                ))}
-              </Stack>
-            )}
+
+                  {/* Right side: delete icon with tooltip */}
+                  <Tooltip title="Remove file" arrow>
+                    <IconButton
+                      onClick={() => {
+                        setValues((prevValues) => ({
+                          ...prevValues,
+                          security_assessment_data: prevValues.security_assessment_data.filter(
+                            (f) => f.id !== file.id,
+                          ),
+                        }));
+                      }}
+                      edge="end"
+                      size="small"
+                      sx={{
+                        padding: "4px",
+                        bgcolor: theme.palette.grey[100],
+                        "&:hover": {
+                          bgcolor: theme.palette.grey[200],
+                        },
+                      }}
+                    >
+                      <DeleteIconGrey size={18} />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+              ))}
+            </Stack>
+          )}
         </Stack>
       )}
 
@@ -1190,9 +918,7 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
             sx={addNewModelButtonStyle}
             text="Add new evidence"
             icon={<AddCircleOutlineIcon size={16} />}
-            onClick={() =>
-              handleAddEvidence?.(Number(selectedModelInventoryId))
-            }
+            onClick={() => handleAddEvidence?.(Number(selectedModelInventoryId))}
           />
 
           <CustomizableButton

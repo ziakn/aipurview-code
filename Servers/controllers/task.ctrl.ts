@@ -14,17 +14,17 @@ import { QueryTypes } from "sequelize";
 import { ITask } from "../domain.layer/interfaces/i.task";
 import { TaskPriority } from "../domain.layer/enums/task-priority.enum";
 import { TaskStatus } from "../domain.layer/enums/task-status.enum";
-import {
-  logProcessing,
-  logSuccess,
-  logFailure,
-} from "../utils/logger/logHelper";
+import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 import {
   ValidationException,
   BusinessLogicException,
   ForbiddenException,
 } from "../domain.layer/exceptions/custom.exception";
-import { notifyTaskAssigned, notifyTaskUpdated, ITaskEntityLinkForEmail } from "../services/inAppNotification.service";
+import {
+  notifyTaskAssigned,
+  notifyTaskUpdated,
+  ITaskEntityLinkForEmail,
+} from "../services/inAppNotification.service";
 import { getTaskEntityLinksQuery } from "../utils/taskEntityLink.utils";
 import { translateError } from "../utils/i18n.utils";
 import {
@@ -73,12 +73,7 @@ export async function createTask(req: Request, res: Response): Promise<any> {
       categories: categories || [],
     };
 
-    const task = await createNewTaskQuery(
-      taskData,
-      req.organizationId!,
-      transaction,
-      assignees
-    );
+    const task = await createNewTaskQuery(taskData, req.organizationId!, transaction, assignees);
 
     // Record creation in change history
     if (task.id && userId) {
@@ -88,7 +83,7 @@ export async function createTask(req: Request, res: Response): Promise<any> {
         userId,
         req.organizationId!,
         taskData,
-        transaction
+        transaction,
       );
     }
 
@@ -117,7 +112,7 @@ export async function createTask(req: Request, res: Response): Promise<any> {
           // Get creator name
           const creatorResult = await sequelize.query<{ name: string; surname: string }>(
             `SELECT name, surname FROM users WHERE id = :userId`,
-            { replacements: { userId }, type: QueryTypes.SELECT }
+            { replacements: { userId }, type: QueryTypes.SELECT },
           );
           const creator = creatorResult[0];
           const creatorName = creator ? `${creator.name} ${creator.surname}`.trim() : "Someone";
@@ -149,7 +144,7 @@ export async function createTask(req: Request, res: Response): Promise<any> {
                 entity_links: entityLinksForEmail,
               },
               creatorName,
-              baseUrl
+              baseUrl,
             );
           }
         } catch (notifyError) {
@@ -244,19 +239,14 @@ export async function getAllTasks(req: Request, res: Response): Promise<any> {
     // Parse filters
     const filters: any = {};
     if (status) filters.status = Array.isArray(status) ? status : [status];
-    if (priority)
-      filters.priority = Array.isArray(priority) ? priority : [priority];
+    if (priority) filters.priority = Array.isArray(priority) ? priority : [priority];
     if (due_date_start) filters.due_date_start = due_date_start as string;
     if (due_date_end) filters.due_date_end = due_date_end as string;
-    if (category)
-      filters.category = Array.isArray(category) ? category : [category];
+    if (category) filters.category = Array.isArray(category) ? category : [category];
     if (assignee)
-      filters.assignee = Array.isArray(assignee)
-        ? assignee.map(Number)
-        : [Number(assignee)];
+      filters.assignee = Array.isArray(assignee) ? assignee.map(Number) : [Number(assignee)];
     if (search) filters.search = search as string;
-    if (include_archived)
-      filters.include_archived = include_archived === "true";
+    if (include_archived) filters.include_archived = include_archived === "true";
     filters.organization_id = Number(req.organizationId);
 
     // Parse sorting
@@ -270,12 +260,7 @@ export async function getAllTasks(req: Request, res: Response): Promise<any> {
     const pageSize = parseInt(page_size as string, 10);
     const limit = Math.min(pageSize, 100); // Cap at 100 items per page
 
-    const tasks = await getTasksQuery(
-      { userId, role },
-      req.organizationId!,
-      filters,
-      sort
-    );
+    const tasks = await getTasksQuery({ userId, role }, req.organizationId!, filters, sort);
 
     // Calculate pagination metadata
     const totalTasks = tasks.length; // This is just the current page, we'd need a count query for real total
@@ -308,7 +293,7 @@ export async function getAllTasks(req: Request, res: Response): Promise<any> {
       STATUS_CODE[200]({
         tasks: tasksWithAssignees,
         pagination,
-      })
+      }),
     );
   } catch (error) {
     await logFailure({
@@ -342,11 +327,7 @@ export async function getTaskById(req: Request, res: Response): Promise<any> {
       return res.status(401).json({ message: req.t!("Unauthorized") });
     }
 
-    const task = await getTaskByIdQuery(
-      taskId,
-      { userId, role },
-      req.organizationId!
-    );
+    const task = await getTaskByIdQuery(taskId, { userId, role }, req.organizationId!);
 
     if (task) {
       // Add assignees and entity_links to response (manually from dataValues)
@@ -403,7 +384,7 @@ export async function updateTask(req: Request, res: Response): Promise<any> {
     const existingTask = await getTaskByIdQuery(
       taskId,
       { userId: req.userId!, role: req.role! },
-      req.organizationId!
+      req.organizationId!,
     );
     if (existingTask) {
       existingAssignees = (existingTask.dataValues as any)["assignees"] || [];
@@ -443,8 +424,7 @@ export async function updateTask(req: Request, res: Response): Promise<any> {
     // Only include fields that are being updated
     if (title !== undefined) updateData.title = title;
     if (description !== undefined) updateData.description = description;
-    if (due_date !== undefined)
-      updateData.due_date = due_date ? new Date(due_date) : undefined;
+    if (due_date !== undefined) updateData.due_date = due_date ? new Date(due_date) : undefined;
     if (priority !== undefined) updateData.priority = priority;
     if (status !== undefined) updateData.status = status;
     if (categories !== undefined) updateData.categories = categories;
@@ -458,7 +438,7 @@ export async function updateTask(req: Request, res: Response): Promise<any> {
         transaction,
       },
       req.organizationId!,
-      assignees // Pass assignees to the function
+      assignees, // Pass assignees to the function
     );
 
     // Record changes in change history
@@ -471,7 +451,7 @@ export async function updateTask(req: Request, res: Response): Promise<any> {
           userId,
           req.organizationId!,
           changes,
-          transaction
+          transaction,
         );
       }
     }
@@ -500,7 +480,7 @@ export async function updateTask(req: Request, res: Response): Promise<any> {
         // Get updater name
         const updaterResult = await sequelize.query<{ name: string; surname: string }>(
           `SELECT name, surname FROM users WHERE id = :userId`,
-          { replacements: { userId }, type: QueryTypes.SELECT }
+          { replacements: { userId }, type: QueryTypes.SELECT },
         );
         const updater = updaterResult[0];
         const updaterName = updater ? `${updater.name} ${updater.surname}`.trim() : "Someone";
@@ -521,7 +501,7 @@ export async function updateTask(req: Request, res: Response): Promise<any> {
         } else {
           // Fall back to fetching from DB (for backwards compatibility)
           const dbEntityLinks = await getTaskEntityLinksQuery(updatedTask.id!, req.organizationId!);
-          entityLinksForEmail = dbEntityLinks.map(link => ({
+          entityLinksForEmail = dbEntityLinks.map((link) => ({
             entity_id: link.entity_id,
             entity_type: link.entity_type,
             entity_name: link.entity_name || `${link.entity_type} #${link.entity_id}`,
@@ -534,10 +514,10 @@ export async function updateTask(req: Request, res: Response): Promise<any> {
         const existingAssigneesNumeric = existingAssignees.map((id: any) => Number(id));
 
         const newlyAssigned = newAssigneesNumeric.filter(
-          (id: number) => !existingAssigneesNumeric.includes(id)
+          (id: number) => !existingAssigneesNumeric.includes(id),
         );
-        const existingAssigneesStillAssigned = newAssigneesNumeric.filter(
-          (id: number) => existingAssigneesNumeric.includes(id)
+        const existingAssigneesStillAssigned = newAssigneesNumeric.filter((id: number) =>
+          existingAssigneesNumeric.includes(id),
         );
 
         // Notify newly assigned users with TASK_ASSIGNED email
@@ -554,7 +534,7 @@ export async function updateTask(req: Request, res: Response): Promise<any> {
               entity_links: entityLinksForEmail,
             },
             updaterName,
-            baseUrl
+            baseUrl,
           );
         }
 
@@ -573,7 +553,7 @@ export async function updateTask(req: Request, res: Response): Promise<any> {
               entity_links: entityLinksForEmail,
             },
             updaterName,
-            baseUrl
+            baseUrl,
           );
         }
       } catch (notifyError) {
@@ -635,9 +615,7 @@ export async function updateTask(req: Request, res: Response): Promise<any> {
         ? 403
         : 500;
 
-    return res
-      .status(statusCode)
-      .json(STATUS_CODE[statusCode]((error as Error).message));
+    return res.status(statusCode).json(STATUS_CODE[statusCode]((error as Error).message));
   }
 }
 
@@ -718,9 +696,7 @@ export async function deleteTask(req: Request, res: Response): Promise<any> {
         ? 403
         : 500;
 
-    return res
-      .status(statusCode)
-      .json(STATUS_CODE[statusCode]((error as Error).message));
+    return res.status(statusCode).json(STATUS_CODE[statusCode]((error as Error).message));
   }
 }
 
@@ -839,16 +815,11 @@ export async function restoreTask(req: Request, res: Response): Promise<any> {
         ? 403
         : 500;
 
-    return res
-      .status(statusCode)
-      .json(STATUS_CODE[statusCode]((error as Error).message));
+    return res.status(statusCode).json(STATUS_CODE[statusCode]((error as Error).message));
   }
 }
 
-export async function hardDeleteTask(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function hardDeleteTask(req: Request, res: Response): Promise<any> {
   const taskId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
   logProcessing({
@@ -959,8 +930,6 @@ export async function hardDeleteTask(
         ? 403
         : 500;
 
-    return res
-      .status(statusCode)
-      .json(STATUS_CODE[statusCode]((error as Error).message));
+    return res.status(statusCode).json(STATUS_CODE[statusCode]((error as Error).message));
   }
 }

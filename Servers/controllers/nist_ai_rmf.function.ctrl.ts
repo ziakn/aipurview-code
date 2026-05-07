@@ -16,7 +16,7 @@ export async function getAllNISTAIRMFfunctions(
     "processing",
     "starting to get all NIST AI RMF functions",
     "getAllNISTAIRMFfunctions",
-    "nist_ai_rmf.function.ctrl.ts"
+    "nist_ai_rmf.function.ctrl.ts",
   );
   logger.debug("🔍 Fetching all NIST AI RMF functions");
 
@@ -27,7 +27,7 @@ export async function getAllNISTAIRMFfunctions(
         "successful",
         `retrieved ${functions.length} NIST AI RMF functions`,
         "getAllNISTAIRMFfunctions",
-        "nist_ai_rmf.function.ctrl.ts"
+        "nist_ai_rmf.function.ctrl.ts",
       );
       return res.status(200).json(STATUS_CODE[200](functions));
     }
@@ -38,13 +38,13 @@ export async function getAllNISTAIRMFfunctions(
       "error",
       "failed to retrieve NIST AI RMF functions",
       "getAllNISTAIRMFfunctions",
-      "nist_ai_rmf.function.ctrl.ts"
+      "nist_ai_rmf.function.ctrl.ts",
     );
     await logEvent(
       "Error",
       `Failed to retrieve NIST AI RMF functions: ${(error as Error).message}`,
       req.userId!,
-      req.organizationId!
+      req.organizationId!,
     );
     logger.error("❌ Error in getAllNISTAIRMFfunctions:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
@@ -58,7 +58,7 @@ export async function getNISTAIRMFfunctionById(req: Request, res: Response) {
     "processing",
     `starting to get NIST AI RMF function: ${functionParam}`,
     "getNISTAIRMFfunctionById",
-    "nist_ai_rmf.function.ctrl.ts"
+    "nist_ai_rmf.function.ctrl.ts",
   );
   logger.debug(`🔍 Fetching NIST AI RMF function: ${functionParam}`);
   try {
@@ -66,14 +66,14 @@ export async function getNISTAIRMFfunctionById(req: Request, res: Response) {
     const functionName = functionParam.toUpperCase();
     const nistAiRmfFunction = await getNISTAIRMFfunctionByIdQuery(
       functionName,
-      req.organizationId!
+      req.organizationId!,
     );
     if (nistAiRmfFunction) {
       logStructured(
         "successful",
         `retrieved NIST AI RMF function: ${functionParam}`,
         "getNISTAIRMFfunctionById",
-        "nist_ai_rmf.function.ctrl.ts"
+        "nist_ai_rmf.function.ctrl.ts",
       );
       return res.status(200).json(STATUS_CODE[200](nistAiRmfFunction));
     }
@@ -81,7 +81,7 @@ export async function getNISTAIRMFfunctionById(req: Request, res: Response) {
       "error",
       `no NIST AI RMF function found: ${functionParam}`,
       "getNISTAIRMFfunctionById",
-      "nist_ai_rmf.function.ctrl.ts"
+      "nist_ai_rmf.function.ctrl.ts",
     );
     return res.status(404).json(STATUS_CODE[404](nistAiRmfFunction));
   } catch (error) {
@@ -89,13 +89,13 @@ export async function getNISTAIRMFfunctionById(req: Request, res: Response) {
       "error",
       `failed to retrieve NIST AI RMF function: ${functionParam}`,
       "getNISTAIRMFfunctionById",
-      "nist_ai_rmf.function.ctrl.ts"
+      "nist_ai_rmf.function.ctrl.ts",
     );
     await logEvent(
       "Error",
       `Failed to retrieve NIST AI RMF function: ${functionParam}`,
       req.userId!,
-      req.organizationId!
+      req.organizationId!,
     );
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }

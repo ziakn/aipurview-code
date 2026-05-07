@@ -151,7 +151,7 @@ try {
       },
       credentials: true,
       allowedHeaders: ["Authorization", "Content-Type", "X-Requested-With", "X-Organization-Id"],
-    })
+    }),
   );
   app.use(helmet()); // Use helmet for security headers
   app.use((req, res, next) => {
@@ -161,14 +161,18 @@ try {
     }
     // For deepeval experiment creation and arena comparisons, we need to parse body to inject API keys
     // For other deepeval routes, let proxy handle raw body
-    if (req.url.includes("/api/deepeval/") && !req.url.includes("/experiments") && !req.url.includes("/arena/compare")) {
+    if (
+      req.url.includes("/api/deepeval/") &&
+      !req.url.includes("/experiments") &&
+      !req.url.includes("/arena/compare")
+    ) {
       return next();
     }
     // Webhook routes use express.raw() for HMAC signature verification
     if (req.url.startsWith("/api/webhooks/")) {
       return next();
     }
-    express.json({ limit: '10mb' })(req, res, next);
+    express.json({ limit: "10mb" })(req, res, next);
   });
   app.use(cookieParser());
   // app.use(csrf());
@@ -192,7 +196,10 @@ try {
     // Redis check
     try {
       const pong = await redisClient.ping();
-      checks.redis = pong === "PONG" ? { status: "ok" } : { status: "error", error: `Unexpected PING response: ${pong}` };
+      checks.redis =
+        pong === "PONG"
+          ? { status: "ok" }
+          : { status: "error", error: `Unexpected PING response: ${pong}` };
     } catch (err: any) {
       checks.redis = { status: "error", error: err.message };
     }
@@ -203,7 +210,9 @@ try {
       const timeout = setTimeout(() => controller.abort(), 5000);
       try {
         const gwRes = await fetch(`${AI_GATEWAY_URL}/health`, { signal: controller.signal });
-        checks.ai_gateway = gwRes.ok ? { status: "ok" } : { status: "error", error: `HTTP ${gwRes.status}` };
+        checks.ai_gateway = gwRes.ok
+          ? { status: "ok" }
+          : { status: "error", error: `HTTP ${gwRes.status}` };
       } finally {
         clearTimeout(timeout);
       }
@@ -240,10 +249,7 @@ try {
   app.use("/api/modelInventory", modelInventoryRoutes);
   app.use("/api/modelInventoryHistory", modelInventoryHistoryRoutes);
   app.use("/api/dataset-bulk-upload", datasetBulkUploadRoutes);
-  app.use(
-    "/api/model-inventory-change-history",
-    modelInventoryChangeHistoryRoutes
-  );
+  app.use("/api/model-inventory-change-history", modelInventoryChangeHistoryRoutes);
   app.use("/api/datasets", datasetRoutes);
   app.use("/api/riskHistory", riskHistoryRoutes);
   app.use("/api/modelRisks", modelRiskRoutes);
@@ -333,7 +339,10 @@ try {
   // Check and run tenant-to-shared-schema data migration
   (async () => {
     try {
-      const { checkAndRunMigration, printValidationReport } = require("./scripts/migrateToSharedSchema");
+      const {
+        checkAndRunMigration,
+        printValidationReport,
+      } = require("./scripts/migrateToSharedSchema");
       console.log("🔄 Checking for pending data migrations...");
       const result = await checkAndRunMigration();
 
@@ -364,10 +373,7 @@ try {
     } catch (error) {
       console.error("❌ Dev auto-bootstrap failed:", error);
       // When DEV_AUTO_BOOTSTRAP is explicitly on, fail fast so devs notice
-      if (
-        process.env.NODE_ENV !== "production" &&
-        process.env.DEV_AUTO_BOOTSTRAP === "true"
-      ) {
+      if (process.env.NODE_ENV !== "production" && process.env.DEV_AUTO_BOOTSTRAP === "true") {
         process.exit(1);
       }
     }

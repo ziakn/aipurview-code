@@ -34,7 +34,14 @@ createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
     <PersistGate
       loading={
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
           Loading...
         </div>
       }
@@ -46,5 +53,5 @@ createRoot(document.getElementById("root")!).render(
         </Router>
       </QueryClientProvider>
     </PersistGate>
-  </Provider>
+  </Provider>,
 );

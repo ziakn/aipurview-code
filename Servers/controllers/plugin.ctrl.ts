@@ -2,7 +2,10 @@ import { Request, Response } from "express";
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import logger, { logStructured } from "../utils/logger/fileLogger";
 import { PluginService, PluginRouteContext } from "../services/plugin/pluginService";
-import { ValidationException, NotFoundException } from "../domain.layer/exceptions/custom.exception";
+import {
+  ValidationException,
+  NotFoundException,
+} from "../domain.layer/exceptions/custom.exception";
 import { sanitizeForLog, PLUGIN_KEY_PATTERN } from "../utils/validations/validation.utils";
 
 import { translateError } from "../utils/i18n.utils";
@@ -11,29 +14,16 @@ const fileName = "plugin.ctrl.ts";
 /**
  * Get all available plugins from marketplace
  */
-export async function getAllPlugins(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getAllPlugins(req: Request, res: Response): Promise<any> {
   const functionName = "getAllPlugins";
-  logStructured(
-    "processing",
-    "starting getAllPlugins",
-    functionName,
-    fileName
-  );
+  logStructured("processing", "starting getAllPlugins", functionName, fileName);
 
   const category = req.query.category as string;
 
   try {
     const plugins = await PluginService.getAllPlugins(category);
 
-    logStructured(
-      "successful",
-      `${plugins.length} plugins found`,
-      functionName,
-      fileName
-    );
+    logStructured("successful", `${plugins.length} plugins found`, functionName, fileName);
 
     return res.status(200).json(STATUS_CODE[200](plugins));
   } catch (error) {
@@ -46,10 +36,7 @@ export async function getAllPlugins(
 /**
  * Get plugin by key
  */
-export async function getPluginByKey(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getPluginByKey(req: Request, res: Response): Promise<any> {
   const pluginKey = Array.isArray(req.params.key) ? req.params.key[0] : req.params.key;
   const functionName = "getPluginByKey";
 
@@ -61,7 +48,7 @@ export async function getPluginByKey(
     "processing",
     `fetching plugin by key: ${sanitizeForLog(pluginKey)}`,
     functionName,
-    fileName
+    fileName,
   );
 
   try {
@@ -71,7 +58,12 @@ export async function getPluginByKey(
       return res.status(404).json(STATUS_CODE[404](req.t!("Plugin not found")));
     }
 
-    logStructured("successful", `plugin ${sanitizeForLog(pluginKey)} found`, functionName, fileName);
+    logStructured(
+      "successful",
+      `plugin ${sanitizeForLog(pluginKey)} found`,
+      functionName,
+      fileName,
+    );
     return res.status(200).json(STATUS_CODE[200](plugin));
   } catch (error) {
     logStructured("error", "failed to retrieve plugin", functionName, fileName);
@@ -83,17 +75,14 @@ export async function getPluginByKey(
 /**
  * Search plugins
  */
-export async function searchPlugins(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function searchPlugins(req: Request, res: Response): Promise<any> {
   const query = req.query.q as string;
   const functionName = "searchPlugins";
   logStructured(
     "processing",
     `searching plugins with query: ${sanitizeForLog(query || "")}`,
     functionName,
-    fileName
+    fileName,
   );
 
   if (!query) {
@@ -109,7 +98,7 @@ export async function searchPlugins(
       "successful",
       `${plugins.length} plugins found for query: ${sanitizeForLog(query)}`,
       functionName,
-      fileName
+      fileName,
     );
 
     return res.status(200).json(STATUS_CODE[200](plugins));
@@ -123,10 +112,7 @@ export async function searchPlugins(
 /**
  * Install a plugin
  */
-export async function installPlugin(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function installPlugin(req: Request, res: Response): Promise<any> {
   const { pluginKey } = req.body;
   const userId = (req as any).userId;
   const organizationId = (req as any).organizationId;
@@ -145,7 +131,7 @@ export async function installPlugin(
     "processing",
     `installing plugin ${sanitizeForLog(pluginKey)} for user ${userId}`,
     functionName,
-    fileName
+    fileName,
   );
 
   if (!userId || !organizationId) {
@@ -155,17 +141,13 @@ export async function installPlugin(
   }
 
   try {
-    const installation = await PluginService.installPlugin(
-      pluginKey,
-      userId,
-      organizationId
-    );
+    const installation = await PluginService.installPlugin(pluginKey, userId, organizationId);
 
     logStructured(
       "successful",
       `plugin ${sanitizeForLog(pluginKey)} installed`,
       functionName,
-      fileName
+      fileName,
     );
 
     return res.status(201).json(STATUS_CODE[201](installation));
@@ -183,10 +165,7 @@ export async function installPlugin(
 /**
  * Uninstall a plugin
  */
-export async function uninstallPlugin(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function uninstallPlugin(req: Request, res: Response): Promise<any> {
   const installationId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
   const userId = (req as any).userId;
   const organizationId = (req as any).organizationId;
@@ -196,7 +175,7 @@ export async function uninstallPlugin(
     "processing",
     `uninstalling plugin installation ${installationId}`,
     functionName,
-    fileName
+    fileName,
   );
 
   if (!userId || !organizationId) {
@@ -212,7 +191,7 @@ export async function uninstallPlugin(
       "successful",
       `plugin installation ${installationId} uninstalled`,
       functionName,
-      fileName
+      fileName,
     );
 
     return res.status(200).json(STATUS_CODE[200](req.t!("Plugin uninstalled successfully")));
@@ -230,10 +209,7 @@ export async function uninstallPlugin(
 /**
  * Get installed plugins for organization
  */
-export async function getInstalledPlugins(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getInstalledPlugins(req: Request, res: Response): Promise<any> {
   const organizationId = (req as any).organizationId;
 
   const functionName = "getInstalledPlugins";
@@ -241,7 +217,7 @@ export async function getInstalledPlugins(
     "processing",
     `fetching installed plugins for organization ${organizationId}`,
     functionName,
-    fileName
+    fileName,
   );
 
   if (!organizationId) {
@@ -251,25 +227,18 @@ export async function getInstalledPlugins(
   }
 
   try {
-    const installations = await PluginService.getInstalledPlugins(
-      organizationId
-    );
+    const installations = await PluginService.getInstalledPlugins(organizationId);
 
     logStructured(
       "successful",
       `${installations.length} installed plugins found`,
       functionName,
-      fileName
+      fileName,
     );
 
     return res.status(200).json(STATUS_CODE[200](installations));
   } catch (error) {
-    logStructured(
-      "error",
-      "failed to retrieve installed plugins",
-      functionName,
-      fileName
-    );
+    logStructured("error", "failed to retrieve installed plugins", functionName, fileName);
     logger.error("❌ Error in getInstalledPlugins:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -278,22 +247,14 @@ export async function getInstalledPlugins(
 /**
  * Get plugin categories
  */
-export async function getCategories(
-  _req: Request,
-  res: Response
-): Promise<any> {
+export async function getCategories(_req: Request, res: Response): Promise<any> {
   const functionName = "getCategories";
   logStructured("processing", "fetching plugin categories", functionName, fileName);
 
   try {
     const categories = await PluginService.getCategories();
 
-    logStructured(
-      "successful",
-      `${categories.length} categories found`,
-      functionName,
-      fileName
-    );
+    logStructured("successful", `${categories.length} categories found`, functionName, fileName);
 
     return res.status(200).json(STATUS_CODE[200](categories));
   } catch (error) {
@@ -306,10 +267,7 @@ export async function getCategories(
 /**
  * Update plugin configuration
  */
-export async function updatePluginConfiguration(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function updatePluginConfiguration(req: Request, res: Response): Promise<any> {
   const installationId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
   const { configuration } = req.body;
   const userId = (req as any).userId;
@@ -320,7 +278,7 @@ export async function updatePluginConfiguration(
     "processing",
     `updating configuration for plugin installation ${installationId}`,
     functionName,
-    fileName
+    fileName,
   );
 
   if (!configuration || typeof configuration !== "object") {
@@ -340,14 +298,14 @@ export async function updatePluginConfiguration(
       installationId,
       userId,
       organizationId,
-      configuration
+      configuration,
     );
 
     logStructured(
       "successful",
       `plugin installation ${installationId} configuration updated`,
       functionName,
-      fileName
+      fileName,
     );
 
     return res.status(200).json(STATUS_CODE[200](updated));
@@ -356,12 +314,7 @@ export async function updatePluginConfiguration(
       return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
-    logStructured(
-      "error",
-      "failed to update plugin configuration",
-      functionName,
-      fileName
-    );
+    logStructured("error", "failed to update plugin configuration", functionName, fileName);
     logger.error("❌ Error in updatePluginConfiguration:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -370,10 +323,7 @@ export async function updatePluginConfiguration(
 /**
  * Test plugin connection
  */
-export async function testPluginConnection(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function testPluginConnection(req: Request, res: Response): Promise<any> {
   const pluginKey = Array.isArray(req.params.key) ? req.params.key[0] : req.params.key;
   const { configuration } = req.body;
   const userId = (req as any).userId;
@@ -389,7 +339,7 @@ export async function testPluginConnection(
     "processing",
     `testing connection for plugin ${sanitizeForLog(pluginKey)}`,
     functionName,
-    fileName
+    fileName,
   );
 
   if (!configuration || typeof configuration !== "object") {
@@ -405,17 +355,16 @@ export async function testPluginConnection(
   }
 
   try {
-    const result = await PluginService.testConnection(
-      pluginKey,
-      configuration,
-      { userId, organizationId }
-    );
+    const result = await PluginService.testConnection(pluginKey, configuration, {
+      userId,
+      organizationId,
+    });
 
     logStructured(
       result.success ? "successful" : "error",
-      `plugin ${sanitizeForLog(pluginKey)} connection test ${result.success ? 'succeeded' : 'failed'}`,
+      `plugin ${sanitizeForLog(pluginKey)} connection test ${result.success ? "succeeded" : "failed"}`,
       functionName,
-      fileName
+      fileName,
     );
 
     return res.status(200).json(STATUS_CODE[200](result));
@@ -439,10 +388,7 @@ export async function testPluginConnection(
  *   GET /api/plugins/slack/oauth/workspaces -> plugin's "GET /oauth/workspaces" handler
  *   DELETE /api/plugins/slack/oauth/workspaces/123 -> plugin's "DELETE /oauth/workspaces/:id" handler
  */
-export async function forwardToPlugin(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function forwardToPlugin(req: Request, res: Response): Promise<any> {
   const pluginKey = Array.isArray(req.params.key) ? req.params.key[0] : req.params.key;
   const userId = (req as any).userId;
   const organizationId = (req as any).organizationId;
@@ -463,7 +409,7 @@ export async function forwardToPlugin(
   // When using router.use("/:key", ...), the remaining path is in req.path
   // req.path will be something like "/mlflow/models" when the full URL is "/api/plugins/mlflow/models"
   // We need to remove the "/:key" part to get just the plugin path
-  const fullPath = req.path || req.url.split('?')[0];
+  const fullPath = req.path || req.url.split("?")[0];
   const keyPath = `/${pluginKey}`;
   const pluginPath = fullPath.startsWith(keyPath)
     ? fullPath.substring(keyPath.length) || "/"
@@ -473,7 +419,7 @@ export async function forwardToPlugin(
     "processing",
     `forwarding ${req.method} ${sanitizeForLog(pluginPath)} to plugin ${sanitizeForLog(pluginKey)}`,
     functionName,
-    fileName
+    fileName,
   );
 
   if (!organizationId || !userId) {
@@ -489,11 +435,11 @@ export async function forwardToPlugin(
       userId,
       method: req.method,
       path: pluginPath,
-      params: {},  // Will be populated by route matching
+      params: {}, // Will be populated by route matching
       query: req.query as Record<string, any>,
       body: req.body,
-      sequelize: null,  // Will be set by PluginService
-      configuration: {},  // Will be set by PluginService
+      sequelize: null, // Will be set by PluginService
+      configuration: {}, // Will be set by PluginService
     };
 
     // Forward to the plugin
@@ -518,17 +464,14 @@ export async function forwardToPlugin(
       }
 
       if (response.filename) {
-        res.setHeader(
-          "Content-Disposition",
-          `attachment; filename="${response.filename}"`
-        );
+        res.setHeader("Content-Disposition", `attachment; filename="${response.filename}"`);
       }
 
       logStructured(
         "successful",
         `${sanitizeForLog(pluginKey)} returned file: ${sanitizeForLog(response.filename || "unnamed")}`,
         functionName,
-        fileName
+        fileName,
       );
 
       return res.status(statusCode).send(response.buffer);
@@ -539,7 +482,7 @@ export async function forwardToPlugin(
       "successful",
       `${sanitizeForLog(pluginKey)} responded with status ${statusCode}`,
       functionName,
-      fileName
+      fileName,
     );
 
     return res.status(statusCode).json((STATUS_CODE as any)[statusCode](response.data));
@@ -568,7 +511,7 @@ export async function forwardToPlugin(
       "error",
       `failed to forward to plugin ${sanitizeForLog(pluginKey)}: ${(error as Error).message}`,
       functionName,
-      fileName
+      fileName,
     );
     logger.error(`❌ Error in forwardToPlugin (${sanitizeForLog(pluginKey)}):`, error);
 

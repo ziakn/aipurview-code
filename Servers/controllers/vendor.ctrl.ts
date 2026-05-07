@@ -10,11 +10,7 @@ import {
   updateVendorByIdQuery,
 } from "../utils/vendor.utils";
 import { sequelize } from "../database/db";
-import {
-  logFailure,
-  logProcessing,
-  logSuccess,
-} from "../utils/logger/logHelper";
+import { logFailure, logProcessing, logSuccess } from "../utils/logger/logHelper";
 import { VendorModel } from "../domain.layer/models/vendor/vendor.model";
 import {
   ValidationException,
@@ -33,7 +29,7 @@ import { translateError } from "../utils/i18n.utils";
 async function getUserNameById(userId: number): Promise<string> {
   const result = await sequelize.query<{ name: string; surname: string }>(
     `SELECT name, surname FROM users WHERE id = :userId`,
-    { replacements: { userId }, type: QueryTypes.SELECT }
+    { replacements: { userId }, type: QueryTypes.SELECT },
   );
   if (result[0]) {
     return `${result[0].name} ${result[0].surname}`.trim();
@@ -137,10 +133,7 @@ export async function getVendorById(req: Request, res: Response): Promise<any> {
   }
 }
 
-export async function getVendorByProjectId(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getVendorByProjectId(req: Request, res: Response): Promise<any> {
   const projectId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
   logProcessing({
@@ -220,7 +213,7 @@ export async function createVendor(req: Request, res: Response): Promise<any> {
       vendorData.business_criticality,
       vendorData.past_issues,
       vendorData.regulatory_exposure,
-      vendorData.risk_score
+      vendorData.risk_score,
     );
 
     // Validate vendor data before saving
@@ -229,11 +222,7 @@ export async function createVendor(req: Request, res: Response): Promise<any> {
     // Check if vendor can be modified (demo restrictions)
     vendorModel.canBeModified();
 
-    const createdVendor = await createNewVendorQuery(
-      vendorModel,
-      req.organizationId!,
-      transaction
-    );
+    const createdVendor = await createNewVendorQuery(vendorModel, req.organizationId!, transaction);
 
     if (createdVendor) {
       // Record creation in change history
@@ -243,7 +232,7 @@ export async function createVendor(req: Request, res: Response): Promise<any> {
           req.userId,
           req.organizationId!,
           vendorData,
-          transaction
+          transaction,
         );
       }
 
@@ -280,7 +269,7 @@ export async function createVendor(req: Request, res: Response): Promise<any> {
           },
           assignerName,
           baseUrl,
-          vendorContext
+          vendorContext,
         ).catch((err) => console.error("Failed to send assignee notification:", err));
       }
 
@@ -298,7 +287,7 @@ export async function createVendor(req: Request, res: Response): Promise<any> {
           },
           assignerName,
           baseUrl,
-          vendorContext
+          vendorContext,
         ).catch((err) => console.error("Failed to send reviewer notification:", err));
       }
 
@@ -356,10 +345,7 @@ export async function createVendor(req: Request, res: Response): Promise<any> {
   }
 }
 
-export async function updateVendorById(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function updateVendorById(req: Request, res: Response): Promise<any> {
   const transaction = await sequelize.transaction();
   const vendorId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
   const updateData = req.body;
@@ -439,7 +425,7 @@ export async function updateVendorById(
         role,
         transaction,
       },
-      req.organizationId!
+      req.organizationId!,
     );
 
     if (vendor) {
@@ -450,7 +436,7 @@ export async function updateVendorById(
           userId,
           req.organizationId!,
           changes,
-          transaction
+          transaction,
         );
       }
 
@@ -489,7 +475,7 @@ export async function updateVendorById(
           },
           assignerName,
           baseUrl,
-          vendorContext
+          vendorContext,
         ).catch((err) => console.error("Failed to send assignee notification:", err));
       }
 
@@ -509,7 +495,7 @@ export async function updateVendorById(
           },
           assignerName,
           baseUrl,
-          vendorContext
+          vendorContext,
         ).catch((err) => console.error("Failed to send reviewer notification:", err));
       }
 
@@ -567,10 +553,7 @@ export async function updateVendorById(
   }
 }
 
-export async function deleteVendorById(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function deleteVendorById(req: Request, res: Response): Promise<any> {
   const transaction = await sequelize.transaction();
   const vendorId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
@@ -583,11 +566,7 @@ export async function deleteVendorById(
   });
 
   try {
-    const deletedVendor = await deleteVendorByIdQuery(
-      vendorId,
-      req.organizationId!,
-      transaction
-    );
+    const deletedVendor = await deleteVendorByIdQuery(vendorId, req.organizationId!, transaction);
 
     if (deletedVendor) {
       await transaction.commit();

@@ -38,23 +38,19 @@ import {
 import { sequelize } from "../database/db";
 import { ApprovalWorkflowStepModel } from "../domain.layer/models/approvalWorkflow/approvalWorkflowStep.model";
 import { ApprovalRequestStatus } from "../domain.layer/enums/approval-workflow.enum";
-import { createApprovalRequestQuery, rejectApprovalRequestOnEntityDelete } from "../utils/approvalRequest.utils";
+import {
+  createApprovalRequestQuery,
+  rejectApprovalRequestOnEntityDelete,
+} from "../utils/approvalRequest.utils";
 import { notifyStepApprovers, notifyRequesterRejected } from "../services/notification.service";
 import {
   validateFileUpload,
   formatFileSize,
 } from "../utils/validations/fileManagerValidation.utils";
-import {
-  logProcessing,
-  logSuccess,
-  logFailure,
-} from "../utils/logger/logHelper";
+import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 import { getUserProjects } from "../utils/user.utils";
 import { getProjectByIdQuery } from "../utils/project.utils";
-import {
-  trackEntityChanges,
-  recordMultipleFieldChanges,
-} from "../utils/changeHistory.base.utils";
+import { trackEntityChanges, recordMultipleFieldChanges } from "../utils/changeHistory.base.utils";
 import { extractText, normalizeText } from "../services/fileIngestion/textExtractor";
 
 /**
@@ -65,7 +61,7 @@ import { extractText, normalizeText } from "../services/fileIngestion/textExtrac
  */
 const validateAndParseAuth = (
   req: Request,
-  res: Response
+  res: Response,
 ): { userId: number; orgId: number } | null => {
   const userId = Number(req.userId);
   const orgId = Number(req.organizationId);
@@ -92,17 +88,11 @@ const validateAndParseAuth = (
  * @param {string[]} allowedRoles - Roles allowed to perform this action
  * @returns {boolean} True if user has permission
  */
-const hasPermission = (
-  req: Request,
-  action: string,
-  allowedRoles: string[]
-): boolean => {
+const hasPermission = (req: Request, action: string, allowedRoles: string[]): boolean => {
   const userRole = (req as any).role;
 
   if (!userRole) {
-    console.warn(
-      `Permission check failed for action '${action}': No role found in request`
-    );
+    console.warn(`Permission check failed for action '${action}': No role found in request`);
     return false;
   }
 
@@ -110,7 +100,7 @@ const hasPermission = (
 
   if (!hasAccess) {
     console.warn(
-      `Permission denied: User with role '${userRole}' attempted '${action}' action. Allowed roles: [${allowedRoles.join(", ")}]`
+      `Permission denied: User with role '${userRole}' attempted '${action}' action. Allowed roles: [${allowedRoles.join(", ")}]`,
     );
   }
 
@@ -134,24 +124,35 @@ const PAGINATION_LIMITS = {
  */
 const validatePagination = (
   page: number | undefined,
-  pageSize: number | undefined
-): { page: number | undefined; pageSize: number | undefined; offset: number | undefined } | { error: string } => {
+  pageSize: number | undefined,
+):
+  | { page: number | undefined; pageSize: number | undefined; offset: number | undefined }
+  | { error: string } => {
   // Validate page if provided
   if (page !== undefined) {
     if (!Number.isSafeInteger(page) || page < 1 || page > PAGINATION_LIMITS.maxPage) {
-      return { error: `Page must be a positive integer between 1 and ${PAGINATION_LIMITS.maxPage}` };
+      return {
+        error: `Page must be a positive integer between 1 and ${PAGINATION_LIMITS.maxPage}`,
+      };
     }
   }
 
   // Validate pageSize if provided
   if (pageSize !== undefined) {
-    if (!Number.isSafeInteger(pageSize) || pageSize < 1 || pageSize > PAGINATION_LIMITS.maxPageSize) {
-      return { error: `Page size must be a positive integer between 1 and ${PAGINATION_LIMITS.maxPageSize}` };
+    if (
+      !Number.isSafeInteger(pageSize) ||
+      pageSize < 1 ||
+      pageSize > PAGINATION_LIMITS.maxPageSize
+    ) {
+      return {
+        error: `Page size must be a positive integer between 1 and ${PAGINATION_LIMITS.maxPageSize}`,
+      };
     }
   }
 
   const validPage = page && page > 0 ? page : undefined;
-  const validPageSize = pageSize && pageSize > 0 ? Math.min(pageSize, PAGINATION_LIMITS.maxPageSize) : undefined;
+  const validPageSize =
+    pageSize && pageSize > 0 ? Math.min(pageSize, PAGINATION_LIMITS.maxPageSize) : undefined;
   const offset =
     validPage !== undefined && validPageSize !== undefined
       ? (validPage - 1) * validPageSize
@@ -165,9 +166,7 @@ const validatePagination = (
  * @param tags - Tags array to validate
  * @returns Validated tags array or error
  */
-const validateTags = (
-  tags: unknown
-): { tags: string[] } | { error: string } => {
+const validateTags = (tags: unknown): { tags: string[] } | { error: string } => {
   if (!Array.isArray(tags)) {
     return { error: "Tags must be an array" };
   }
@@ -180,7 +179,7 @@ const validateTags = (
   // Validate each tag
   const validatedTags: string[] = [];
   for (const tag of tags) {
-    if (typeof tag !== 'string') {
+    if (typeof tag !== "string") {
       return { error: "Each tag must be a string" };
     }
     const trimmedTag = tag.trim();
@@ -275,13 +274,13 @@ export const uploadFile = async (req: Request, res: Response): Promise<any> => {
 
     // If approval workflow is specified, validate it exists and is for files
     if (approvalWorkflowId) {
-      const [workflow] = await sequelize.query(
+      const [workflow] = (await sequelize.query(
         `SELECT id, workflow_title, entity_type FROM approval_workflows WHERE organization_id = :orgId AND id = :workflowId`,
         {
           replacements: { orgId, workflowId: approvalWorkflowId },
           type: "SELECT" as any,
-        }
-      ) as any[];
+        },
+      )) as any[];
 
       if (!workflow) {
         return res.status(400).json(STATUS_CODE[400](req.t!("Invalid approval workflow ID")));
@@ -313,7 +312,7 @@ export const uploadFile = async (req: Request, res: Response): Promise<any> => {
         userId,
         req.organizationId!,
         orgId,
-        uploadOptions
+        uploadOptions,
       );
 
       // If approval workflow is specified, create an approval request
@@ -336,7 +335,7 @@ export const uploadFile = async (req: Request, res: Response): Promise<any> => {
             replacements: { orgId, workflowId: approvalWorkflowId },
             type: "SELECT" as const,
             transaction,
-          }
+          },
         );
         const workflowSteps = workflowStepsResult as unknown as ApprovalWorkflowStepModel[];
 
@@ -358,7 +357,7 @@ export const uploadFile = async (req: Request, res: Response): Promise<any> => {
             },
             workflowSteps,
             req.organizationId!,
-            transaction
+            transaction,
           );
 
           approvalRequestId = (approvalRequest as any).id;
@@ -369,7 +368,7 @@ export const uploadFile = async (req: Request, res: Response): Promise<any> => {
             {
               replacements: { approvalRequestId, orgId, fileId: uploadedFile.id },
               transaction,
-            }
+            },
           );
         }
       }
@@ -401,15 +400,12 @@ export const uploadFile = async (req: Request, res: Response): Promise<any> => {
               fileId: uploadedFile.id,
             },
             type: "UPDATE" as const,
-          }
+          },
         );
       }
     } catch (extractionError) {
       // Do not fail the request if extraction or indexing fails
-      console.error(
-        "Failed to extract or index file content for search:",
-        extractionError
-      );
+      console.error("Failed to extract or index file content for search:", extractionError);
     }
 
     // Send notifications to first step approvers
@@ -419,7 +415,7 @@ export const uploadFile = async (req: Request, res: Response): Promise<any> => {
           orgId,
           approvalRequestId,
           1,
-          `File Approval: ${uploadedFile.filename}`
+          `File Approval: ${uploadedFile.filename}`,
         );
       } catch (notifyError) {
         console.error("Failed to send approval notifications:", notifyError);
@@ -449,7 +445,7 @@ export const uploadFile = async (req: Request, res: Response): Promise<any> => {
         review_status: approvalWorkflowId ? "pending_review" : "draft",
         approval_workflow_id: approvalWorkflowId,
         approval_request_id: approvalRequestId,
-      })
+      }),
     );
   } catch (error) {
     await logFailure({
@@ -486,12 +482,16 @@ export const listFiles = async (req: Request, res: Response): Promise<any> => {
   const { orgId } = auth;
 
   // Parse pagination parameters
-  const page = req.query.page ? Number(Array.isArray(req.query.page) ? req.query.page[0] : req.query.page) : undefined;
-  const pageSize = req.query.pageSize ? Number(Array.isArray(req.query.pageSize) ? req.query.pageSize[0] : req.query.pageSize) : undefined;
+  const page = req.query.page
+    ? Number(Array.isArray(req.query.page) ? req.query.page[0] : req.query.page)
+    : undefined;
+  const pageSize = req.query.pageSize
+    ? Number(Array.isArray(req.query.pageSize) ? req.query.pageSize[0] : req.query.pageSize)
+    : undefined;
 
   // Validate pagination
   const paginationResult = validatePagination(page, pageSize);
-  if ('error' in paginationResult) {
+  if ("error" in paginationResult) {
     return res.status(400).json(STATUS_CODE[400](paginationResult.error));
   }
   const { page: validPage, pageSize: validPageSize, offset } = paginationResult;
@@ -540,7 +540,7 @@ export const listFiles = async (req: Request, res: Response): Promise<any> => {
           pageSize: validPageSize,
           totalPages: validPageSize ? Math.ceil(total / validPageSize) : 1,
         },
-      })
+      }),
     );
   } catch (error) {
     await logFailure({
@@ -602,11 +602,7 @@ export const searchFiles = async (req: Request, res: Response): Promise<any> => 
       offset,
     };
 
-    const { files } = await searchFilesByContent(
-      orgId,
-      queryText,
-      options
-    );
+    const { files } = await searchFilesByContent(orgId, queryText, options);
 
     return res.status(200).json(
       STATUS_CODE[200]({
@@ -614,7 +610,7 @@ export const searchFiles = async (req: Request, res: Response): Promise<any> => 
         page: validPage,
         pageSize: validPageSize,
         query: queryText,
-      })
+      }),
     );
   } catch (error) {
     await logFailure({
@@ -642,10 +638,7 @@ export const searchFiles = async (req: Request, res: Response): Promise<any> => 
  * @param {Response} res - Express response
  * @returns {Promise<Response>} File content with appropriate headers
  */
-export const downloadFile = async (
-  req: Request,
-  res: Response
-): Promise<any> => {
+export const downloadFile = async (req: Request, res: Response): Promise<any> => {
   // Validate file ID is numeric-only string before parsing
   if (!/^\d+$/.test(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id)) {
     return res.status(400).json(STATUS_CODE[400](req.t!("Invalid file ID")));
@@ -766,13 +759,8 @@ export const downloadFile = async (
     // Set headers for file download (unified files table uses 'type' for mimetype)
     res.setHeader("Content-Type", file.type || "application/octet-stream");
     res.setHeader("X-Content-Type-Options", "nosniff");
-    const safeFilename = file.filename
-      .replace(/["\r\n]/g, '')
-      .replace(/[^\x20-\x7E]/g, '_');
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename="${safeFilename}"`
-    );
+    const safeFilename = file.filename.replace(/["\r\n]/g, "").replace(/[^\x20-\x7E]/g, "_");
+    res.setHeader("Content-Disposition", `attachment; filename="${safeFilename}"`);
 
     // Set Content-Length
     const contentLength = file.content ? file.content.length : 0;
@@ -929,7 +917,7 @@ export const removeFile = async (req: Request, res: Response): Promise<any> => {
         const notificationInfo = await rejectApprovalRequestOnEntityDelete(
           file.approval_request_id,
           req.organizationId!,
-          rejectionReason
+          rejectionReason,
         );
 
         // Notify the requester that their request was rejected
@@ -942,7 +930,7 @@ export const removeFile = async (req: Request, res: Response): Promise<any> => {
             {
               rejector_name: "System",
               rejection_reason: rejectionReason,
-            }
+            },
           );
         }
       } catch (approvalError) {
@@ -980,7 +968,7 @@ export const removeFile = async (req: Request, res: Response): Promise<any> => {
       STATUS_CODE[200]({
         message: req.t!("File deleted successfully"),
         fileId,
-      })
+      }),
     );
   } catch (error) {
     await logFailure({
@@ -1005,10 +993,7 @@ export const removeFile = async (req: Request, res: Response): Promise<any> => {
  * @param {Response} res - Express response
  * @returns {Promise<Response>} File metadata including tags, status, version, etc.
  */
-export const getFileMetadata = async (
-  req: Request,
-  res: Response
-): Promise<any> => {
+export const getFileMetadata = async (req: Request, res: Response): Promise<any> => {
   // Validate file ID is numeric-only string before parsing
   if (!/^\d+$/.test(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id)) {
     return res.status(400).json(STATUS_CODE[400](req.t!("Invalid file ID")));
@@ -1097,10 +1082,7 @@ export const getFileMetadata = async (
  * @param {Response} res - Express response
  * @returns {Promise<Response>} Updated file metadata
  */
-export const updateMetadata = async (
-  req: Request,
-  res: Response
-): Promise<any> => {
+export const updateMetadata = async (req: Request, res: Response): Promise<any> => {
   // Validate file ID is numeric-only string before parsing
   if (!/^\d+$/.test(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id)) {
     return res.status(400).json(STATUS_CODE[400](req.t!("Invalid file ID")));
@@ -1168,7 +1150,14 @@ export const updateMetadata = async (
     const { tags, review_status, version, expiry_date, description } = req.body;
 
     // Validate review_status if provided
-    const validStatuses: ReviewStatus[] = ['draft', 'pending_review', 'approved', 'rejected', 'expired', 'superseded'];
+    const validStatuses: ReviewStatus[] = [
+      "draft",
+      "pending_review",
+      "approved",
+      "rejected",
+      "expired",
+      "superseded",
+    ];
     if (review_status && !validStatuses.includes(review_status)) {
       return res.status(400).json(STATUS_CODE[400](req.t!("Invalid review status")));
     }
@@ -1182,7 +1171,7 @@ export const updateMetadata = async (
     let validatedTags: string[] | undefined;
     if (tags !== undefined) {
       const tagsResult = validateTags(tags);
-      if ('error' in tagsResult) {
+      if ("error" in tagsResult) {
         return res.status(400).json(STATUS_CODE[400](tagsResult.error));
       }
       validatedTags = tagsResult.tags;
@@ -1232,19 +1221,9 @@ export const updateMetadata = async (
     // Record changes in file change history
     try {
       if (beforeState) {
-        const changes = await trackEntityChanges(
-          "file",
-          beforeState,
-          updatedFile
-        );
+        const changes = await trackEntityChanges("file", beforeState, updatedFile);
         if (changes.length > 0) {
-          await recordMultipleFieldChanges(
-            "file",
-            fileId,
-            userId,
-            req.organizationId!,
-            changes
-          );
+          await recordMultipleFieldChanges("file", fileId, userId, req.organizationId!, changes);
         }
       }
     } catch (historyError) {
@@ -1289,21 +1268,22 @@ export const updateMetadata = async (
  * @param {Response} res - Express response
  * @returns {Promise<Response>} List of files with full metadata
  */
-export const listFilesWithMetadata = async (
-  req: Request,
-  res: Response
-): Promise<any> => {
+export const listFilesWithMetadata = async (req: Request, res: Response): Promise<any> => {
   const auth = validateAndParseAuth(req, res);
   if (!auth) return;
 
   const { orgId } = auth;
 
-  const page = req.query.page ? Number(Array.isArray(req.query.page) ? req.query.page[0] : req.query.page) : undefined;
-  const pageSize = req.query.pageSize ? Number(Array.isArray(req.query.pageSize) ? req.query.pageSize[0] : req.query.pageSize) : undefined;
+  const page = req.query.page
+    ? Number(Array.isArray(req.query.page) ? req.query.page[0] : req.query.page)
+    : undefined;
+  const pageSize = req.query.pageSize
+    ? Number(Array.isArray(req.query.pageSize) ? req.query.pageSize[0] : req.query.pageSize)
+    : undefined;
 
   // Validate pagination
   const paginationResult = validatePagination(page, pageSize);
-  if ('error' in paginationResult) {
+  if ("error" in paginationResult) {
     return res.status(400).json(STATUS_CODE[400](paginationResult.error));
   }
   const { page: validPage, pageSize: validPageSize, offset } = paginationResult;
@@ -1340,7 +1320,7 @@ export const listFilesWithMetadata = async (
           pageSize: validPageSize,
           totalPages: validPageSize ? Math.ceil(total / validPageSize) : 1,
         },
-      })
+      }),
     );
   } catch (error) {
     await logFailure({
@@ -1369,17 +1349,18 @@ export const listFilesWithMetadata = async (
  * @param {Response} res - Express response
  * @returns {Promise<Response>} Categorized file IDs
  */
-export const getHighlighted = async (
-  req: Request,
-  res: Response
-): Promise<any> => {
+export const getHighlighted = async (req: Request, res: Response): Promise<any> => {
   const auth = validateAndParseAuth(req, res);
   if (!auth) return;
 
   const { orgId } = auth;
 
   const daysUntilExpiry = req.query.daysUntilExpiry
-    ? Number(Array.isArray(req.query.daysUntilExpiry) ? req.query.daysUntilExpiry[0] : req.query.daysUntilExpiry)
+    ? Number(
+        Array.isArray(req.query.daysUntilExpiry)
+          ? req.query.daysUntilExpiry[0]
+          : req.query.daysUntilExpiry,
+      )
     : 30;
   const recentDays = req.query.recentDays
     ? Number(Array.isArray(req.query.recentDays) ? req.query.recentDays[0] : req.query.recentDays)
@@ -1429,10 +1410,7 @@ export const getHighlighted = async (
  * @param {Response} res - Express response
  * @returns {Promise<Response>} File content for preview or error if too large
  */
-export const previewFile = async (
-  req: Request,
-  res: Response
-): Promise<any> => {
+export const previewFile = async (req: Request, res: Response): Promise<any> => {
   // Validate file ID is numeric-only string before parsing
   if (!/^\d+$/.test(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id)) {
     return res.status(400).json(STATUS_CODE[400](req.t!("Invalid file ID")));
@@ -1513,39 +1491,39 @@ export const previewFile = async (
 
     // Allowlist of safe MIME types for preview to prevent XSS
     const SAFE_PREVIEW_MIMETYPES = new Set([
-      'application/pdf',
-      'image/jpeg',
-      'image/png',
-      'image/gif',
-      'image/webp',
-      'image/svg+xml', // Note: SVG can contain scripts but browser should respect nosniff
-      'text/plain',
-      'text/csv',
-      'text/html', // Will be treated as plain text due to CSP
-      'application/json',
-      'application/xml',
-      'text/xml',
+      "application/pdf",
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "image/svg+xml", // Note: SVG can contain scripts but browser should respect nosniff
+      "text/plain",
+      "text/csv",
+      "text/html", // Will be treated as plain text due to CSP
+      "application/json",
+      "application/xml",
+      "text/xml",
     ]);
 
     // Sanitize MIME type - only allow known safe types, default to octet-stream
-    const requestedMimetype = preview.mimetype?.toLowerCase()?.trim() || '';
+    const requestedMimetype = preview.mimetype?.toLowerCase()?.trim() || "";
     const safeMimetype = SAFE_PREVIEW_MIMETYPES.has(requestedMimetype)
       ? requestedMimetype
-      : 'application/octet-stream';
+      : "application/octet-stream";
 
     // Sanitize filename to prevent header injection
     const safeFilename = preview.filename
-      .replace(/["\r\n]/g, '') // Remove quotes and newlines
-      .replace(/[^\x20-\x7E]/g, '_'); // Replace non-ASCII with underscore
+      .replace(/["\r\n]/g, "") // Remove quotes and newlines
+      .replace(/[^\x20-\x7E]/g, "_"); // Replace non-ASCII with underscore
 
     // Set headers for inline display with XSS protection
     res.setHeader("Content-Type", safeMimetype);
     res.setHeader("X-Content-Type-Options", "nosniff");
-    res.setHeader("Content-Security-Policy", "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'");
     res.setHeader(
-      "Content-Disposition",
-      `inline; filename="${safeFilename}"`
+      "Content-Security-Policy",
+      "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'",
     );
+    res.setHeader("Content-Disposition", `inline; filename="${safeFilename}"`);
     res.setHeader("Content-Length", preview.content.length);
 
     res.send(preview.content);
@@ -1581,10 +1559,7 @@ export const previewFile = async (
  * @param {Response} res - Express response
  * @returns {Promise<Response>} List of file versions in the same group
  */
-export const getFileVersionHistory = async (
-  req: Request,
-  res: Response
-): Promise<any> => {
+export const getFileVersionHistory = async (req: Request, res: Response): Promise<any> => {
   // Validate file ID is numeric-only string before parsing
   if (!/^\d+$/.test(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id)) {
     return res.status(400).json(STATUS_CODE[400](req.t!("Invalid file ID")));

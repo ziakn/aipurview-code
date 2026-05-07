@@ -41,47 +41,34 @@ export async function getAllQuestions(
         "successful",
         `retrieved ${questions.length} questions`,
         "getAllQuestions",
-        "question.ctrl.ts"
+        "question.ctrl.ts",
       );
       return res.status(200).json(STATUS_CODE[200](questions));
     }
 
-    logStructured(
-      "successful",
-      "no questions found",
-      "getAllQuestions",
-      "question.ctrl.ts"
-    );
+    logStructured("successful", "no questions found", "getAllQuestions", "question.ctrl.ts");
     return res.status(204).json(STATUS_CODE[204](questions));
   } catch (error) {
-    logStructured(
-      "error",
-      "failed to retrieve questions",
-      "getAllQuestions",
-      "question.ctrl.ts"
-    );
+    logStructured("error", "failed to retrieve questions", "getAllQuestions", "question.ctrl.ts");
     await logEvent(
       "Error",
       `Failed to retrieve questions: ${(error as Error).message}`,
       req.userId!,
-      req.organizationId!
+      req.organizationId!,
     );
     logger.error("❌ Error in getAllQuestions:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
-export async function getQuestionById(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getQuestionById(req: Request, res: Response): Promise<any> {
   const questionId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
   logStructured(
     "processing",
     `fetching question by ID: ${questionId}`,
     "getQuestionById",
-    "question.ctrl.ts"
+    "question.ctrl.ts",
   );
   logger.debug(`🔍 Looking up question with ID: ${questionId}`);
 
@@ -93,7 +80,7 @@ export async function getQuestionById(
         "successful",
         `question found: ID ${questionId}`,
         "getQuestionById",
-        "question.ctrl.ts"
+        "question.ctrl.ts",
       );
       return res.status(200).json(STATUS_CODE[200](question));
     }
@@ -102,7 +89,7 @@ export async function getQuestionById(
       "successful",
       `no question found: ID ${questionId}`,
       "getQuestionById",
-      "question.ctrl.ts"
+      "question.ctrl.ts",
     );
     return res.status(404).json(STATUS_CODE[404](question));
   } catch (error) {
@@ -110,18 +97,20 @@ export async function getQuestionById(
       "error",
       `failed to fetch question: ID ${questionId}`,
       "getQuestionById",
-      "question.ctrl.ts"
+      "question.ctrl.ts",
     );
-    await logEvent("Error", `Failed to retrieve question by ID: ${questionId}`, req.userId!, req.organizationId!);
+    await logEvent(
+      "Error",
+      `Failed to retrieve question by ID: ${questionId}`,
+      req.userId!,
+      req.organizationId!,
+    );
     logger.error("❌ Error in getQuestionById:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
-export async function createQuestion(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function createQuestion(req: Request, res: Response): Promise<any> {
   const transaction = await sequelize.transaction();
   const {
     question,
@@ -142,7 +131,7 @@ export async function createQuestion(
     "processing",
     `starting question creation for subtopic ID: ${subtopic_id}`,
     "createQuestion",
-    "question.ctrl.ts"
+    "question.ctrl.ts",
   );
   logger.debug(`🛠️ Creating question for subtopic ID: ${subtopic_id}`);
 
@@ -160,7 +149,7 @@ export async function createQuestion(
       order_no,
       dropdown_options,
       evidence_files,
-      is_demo
+      is_demo,
     );
 
     // Validate the question data before saving
@@ -172,7 +161,7 @@ export async function createQuestion(
     const createdQuestion = await createNewQuestionQuery(
       questionModel,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     if (createdQuestion) {
@@ -181,13 +170,13 @@ export async function createQuestion(
         "successful",
         `question created: ID ${createdQuestion.id}`,
         "createQuestion",
-        "question.ctrl.ts"
+        "question.ctrl.ts",
       );
       await logEvent(
         "Create",
         `Question created: ID ${createdQuestion.id}, subtopic ID: ${subtopic_id}`,
         req.userId!,
-        req.organizationId!
+        req.organizationId!,
       );
       return res.status(201).json(STATUS_CODE[201](createdQuestion));
     }
@@ -196,13 +185,13 @@ export async function createQuestion(
       "error",
       `failed to create question for subtopic ID: ${subtopic_id}`,
       "createQuestion",
-      "question.ctrl.ts"
+      "question.ctrl.ts",
     );
     await logEvent(
       "Error",
       `Question creation failed for subtopic ID: ${subtopic_id}`,
       req.userId!,
-      req.organizationId!
+      req.organizationId!,
     );
     await transaction.rollback();
     return res.status(400).json(STATUS_CODE[400](req.t!("Failed to create question")));
@@ -214,13 +203,13 @@ export async function createQuestion(
         "error",
         `validation failed: ${error.message}`,
         "createQuestion",
-        "question.ctrl.ts"
+        "question.ctrl.ts",
       );
       await logEvent(
         "Error",
         `Validation error during question creation: ${error.message}`,
         req.userId!,
-        req.organizationId!
+        req.organizationId!,
       );
       return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
@@ -230,13 +219,13 @@ export async function createQuestion(
         "error",
         `business logic error: ${error.message}`,
         "createQuestion",
-        "question.ctrl.ts"
+        "question.ctrl.ts",
       );
       await logEvent(
         "Error",
         `Business logic error during question creation: ${error.message}`,
         req.userId!,
-        req.organizationId!
+        req.organizationId!,
       );
       return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
@@ -245,23 +234,20 @@ export async function createQuestion(
       "error",
       `unexpected error for subtopic ID: ${subtopic_id}`,
       "createQuestion",
-      "question.ctrl.ts"
+      "question.ctrl.ts",
     );
     await logEvent(
       "Error",
       `Unexpected error during question creation for subtopic ID ${subtopic_id}: ${(error as Error).message}`,
       req.userId!,
-      req.organizationId!
+      req.organizationId!,
     );
     logger.error("❌ Error in createQuestion:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
-export async function updateQuestionById(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function updateQuestionById(req: Request, res: Response): Promise<any> {
   const transaction = await sequelize.transaction();
   const questionId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
@@ -269,29 +255,26 @@ export async function updateQuestionById(
     "processing",
     `updating question ID: ${questionId}`,
     "updateQuestionById",
-    "question.ctrl.ts"
+    "question.ctrl.ts",
   );
   logger.debug(`✏️ Update requested for question ID ${questionId}`);
 
   try {
     // First, get the existing question to validate it can be modified
-    const existingQuestion = await getQuestionByIdQuery(
-      questionId,
-      req.organizationId!
-    );
+    const existingQuestion = await getQuestionByIdQuery(questionId, req.organizationId!);
 
     if (!existingQuestion) {
       logStructured(
         "error",
         `question not found: ID ${questionId}`,
         "updateQuestionById",
-        "question.ctrl.ts"
+        "question.ctrl.ts",
       );
       await logEvent(
         "Error",
         `Update failed — question not found: ID ${questionId}`,
         req.userId!,
-        req.organizationId!
+        req.organizationId!,
       );
       await transaction.rollback();
       return res.status(404).json(STATUS_CODE[404](req.t!("Question not found")));
@@ -315,29 +298,24 @@ export async function updateQuestionById(
       questionId,
       questionModel,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     if (updatedQuestion) {
       // Update the project's last updated date
-      await updateProjectUpdatedByIdQuery(
-        questionId,
-        "answers",
-        req.organizationId!,
-        transaction
-      );
+      await updateProjectUpdatedByIdQuery(questionId, "answers", req.organizationId!, transaction);
       await transaction.commit();
       logStructured(
         "successful",
         `question updated: ID ${questionId}`,
         "updateQuestionById",
-        "question.ctrl.ts"
+        "question.ctrl.ts",
       );
       await logEvent(
         "Update",
         `Question updated: ID ${questionId}, subtopic ID: ${updatedQuestion.subtopic_id}`,
         req.userId!,
-        req.organizationId!
+        req.organizationId!,
       );
       return res.status(200).json(STATUS_CODE[200](updatedQuestion));
     }
@@ -346,9 +324,14 @@ export async function updateQuestionById(
       "error",
       `failed to update question: ID ${questionId}`,
       "updateQuestionById",
-      "question.ctrl.ts"
+      "question.ctrl.ts",
     );
-    await logEvent("Error", `Question update failed: ID ${questionId}`, req.userId!, req.organizationId!);
+    await logEvent(
+      "Error",
+      `Question update failed: ID ${questionId}`,
+      req.userId!,
+      req.organizationId!,
+    );
     await transaction.rollback();
     return res.status(400).json(STATUS_CODE[400](req.t!("Failed to update question")));
   } catch (error) {
@@ -359,13 +342,13 @@ export async function updateQuestionById(
         "error",
         `validation error: ${error.message}`,
         "updateQuestionById",
-        "question.ctrl.ts"
+        "question.ctrl.ts",
       );
       await logEvent(
         "Error",
         `Validation error during question update: ${error.message}`,
         req.userId!,
-        req.organizationId!
+        req.organizationId!,
       );
       return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
@@ -375,13 +358,13 @@ export async function updateQuestionById(
         "error",
         `business logic error: ${error.message}`,
         "updateQuestionById",
-        "question.ctrl.ts"
+        "question.ctrl.ts",
       );
       await logEvent(
         "Error",
         `Business logic error during question update: ${error.message}`,
         req.userId!,
-        req.organizationId!
+        req.organizationId!,
       );
       return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
@@ -390,23 +373,20 @@ export async function updateQuestionById(
       "error",
       `unexpected error for question ID ${questionId}`,
       "updateQuestionById",
-      "question.ctrl.ts"
+      "question.ctrl.ts",
     );
     await logEvent(
       "Error",
       `Unexpected error during question update for ID ${questionId}: ${(error as Error).message}`,
       req.userId!,
-      req.organizationId!
+      req.organizationId!,
     );
     logger.error("❌ Error in updateQuestionById:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
-export async function deleteQuestionById(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function deleteQuestionById(req: Request, res: Response): Promise<any> {
   const transaction = await sequelize.transaction();
   const questionId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
@@ -414,7 +394,7 @@ export async function deleteQuestionById(
     "processing",
     `deleting question ID: ${questionId}`,
     "deleteQuestionById",
-    "question.ctrl.ts"
+    "question.ctrl.ts",
   );
   logger.debug(`🗑️ Delete requested for question ID ${questionId}`);
 
@@ -422,7 +402,7 @@ export async function deleteQuestionById(
     const deletedQuestion = await deleteQuestionByIdQuery(
       questionId,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     if (deletedQuestion) {
@@ -431,9 +411,14 @@ export async function deleteQuestionById(
         "successful",
         `question deleted: ID ${questionId}`,
         "deleteQuestionById",
-        "question.ctrl.ts"
+        "question.ctrl.ts",
       );
-      await logEvent("Delete", `Question deleted: ID ${questionId}`, req.userId!, req.organizationId!);
+      await logEvent(
+        "Delete",
+        `Question deleted: ID ${questionId}`,
+        req.userId!,
+        req.organizationId!,
+      );
       return res.status(202).json(STATUS_CODE[202](deletedQuestion));
     }
 
@@ -441,7 +426,7 @@ export async function deleteQuestionById(
       "successful",
       `no question found to delete: ID ${questionId}`,
       "deleteQuestionById",
-      "question.ctrl.ts"
+      "question.ctrl.ts",
     );
     await transaction.rollback();
     return res.status(404).json(STATUS_CODE[404]({}));
@@ -451,13 +436,13 @@ export async function deleteQuestionById(
       "error",
       `failed to delete question: ID ${questionId}`,
       "deleteQuestionById",
-      "question.ctrl.ts"
+      "question.ctrl.ts",
     );
     await logEvent(
       "Error",
       `Failed to delete question ID ${questionId}: ${(error as Error).message}`,
       req.userId!,
-      req.organizationId!
+      req.organizationId!,
     );
     logger.error("❌ Error in deleteQuestionById:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
@@ -471,22 +456,19 @@ export async function getQuestionsBySubtopicId(req: Request, res: Response) {
     "processing",
     `fetching questions by subtopic ID: ${subtopicId}`,
     "getQuestionsBySubtopicId",
-    "question.ctrl.ts"
+    "question.ctrl.ts",
   );
   logger.debug(`🔍 Looking up questions for subtopic ID: ${subtopicId}`);
 
   try {
-    const questions = await getQuestionBySubTopicIdQuery(
-      subtopicId,
-      req.organizationId!
-    );
+    const questions = await getQuestionBySubTopicIdQuery(subtopicId, req.organizationId!);
 
     if (questions && questions.length !== 0) {
       logStructured(
         "successful",
         `retrieved ${questions.length} questions for subtopic ID: ${subtopicId}`,
         "getQuestionsBySubtopicId",
-        "question.ctrl.ts"
+        "question.ctrl.ts",
       );
       return res.status(200).json(STATUS_CODE[200](questions));
     }
@@ -495,7 +477,7 @@ export async function getQuestionsBySubtopicId(req: Request, res: Response) {
       "successful",
       `no questions found for subtopic ID: ${subtopicId}`,
       "getQuestionsBySubtopicId",
-      "question.ctrl.ts"
+      "question.ctrl.ts",
     );
     return res.status(404).json(
       STATUS_CODE[404]({
@@ -507,13 +489,13 @@ export async function getQuestionsBySubtopicId(req: Request, res: Response) {
       "error",
       `failed to fetch questions for subtopic ID: ${subtopicId}`,
       "getQuestionsBySubtopicId",
-      "question.ctrl.ts"
+      "question.ctrl.ts",
     );
     await logEvent(
       "Error",
       `Failed to retrieve questions for subtopic ID ${subtopicId}: ${(error as Error).message}`,
       req.userId!,
-      req.organizationId!
+      req.organizationId!,
     );
     logger.error("❌ Error in getQuestionsBySubtopicId:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
@@ -527,7 +509,7 @@ export async function getQuestionsByTopicId(req: Request, res: Response) {
     "processing",
     `fetching questions by topic ID: ${topicId}`,
     "getQuestionsByTopicId",
-    "question.ctrl.ts"
+    "question.ctrl.ts",
   );
   logger.debug(`🔍 Looking up questions for topic ID: ${topicId}`);
 
@@ -539,7 +521,7 @@ export async function getQuestionsByTopicId(req: Request, res: Response) {
         "successful",
         `retrieved ${questions.length} questions for topic ID: ${topicId}`,
         "getQuestionsByTopicId",
-        "question.ctrl.ts"
+        "question.ctrl.ts",
       );
       return res.status(200).json(STATUS_CODE[200](questions));
     }
@@ -548,7 +530,7 @@ export async function getQuestionsByTopicId(req: Request, res: Response) {
       "successful",
       `no questions found for topic ID: ${topicId}`,
       "getQuestionsByTopicId",
-      "question.ctrl.ts"
+      "question.ctrl.ts",
     );
     return res.status(404).json(
       STATUS_CODE[404]({
@@ -560,13 +542,13 @@ export async function getQuestionsByTopicId(req: Request, res: Response) {
       "error",
       `failed to fetch questions for topic ID: ${topicId}`,
       "getQuestionsByTopicId",
-      "question.ctrl.ts"
+      "question.ctrl.ts",
     );
     await logEvent(
       "Error",
       `Failed to retrieve questions for topic ID ${topicId}: ${(error as Error).message}`,
       req.userId!,
-      req.organizationId!
+      req.organizationId!,
     );
     logger.error("❌ Error in getQuestionsByTopicId:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));

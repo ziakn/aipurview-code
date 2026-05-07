@@ -26,16 +26,9 @@ import {
   updateSubClauseQuery,
 } from "../utils/iso27001.utils";
 import { FileType } from "../domain.layer/models/file/file.model";
-import {
-  getAllProjectsQuery,
-  updateProjectUpdatedByIdQuery,
-} from "../utils/project.utils";
+import { getAllProjectsQuery, updateProjectUpdatedByIdQuery } from "../utils/project.utils";
 import { IProjectAttributes } from "../domain.layer/interfaces/i.project";
-import {
-  logProcessing,
-  logSuccess,
-  logFailure,
-} from "../utils/logger/logHelper";
+import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 import logger from "../utils/logger/fileLogger";
 import { IISO27001SubClause } from "../domain.layer/interfaces/i.ISO27001SubClause";
 import { IISO27001AnnexControl } from "../domain.layer/interfaces/i.iso27001AnnexControl";
@@ -45,7 +38,7 @@ import { translateError } from "../utils/i18n.utils";
 async function getUserNameById(userId: number): Promise<string> {
   const result = await sequelize.query<{ name: string; surname: string }>(
     `SELECT name, surname FROM users WHERE id = :userId`,
-    { replacements: { userId }, type: QueryTypes.SELECT }
+    { replacements: { userId }, type: QueryTypes.SELECT },
   );
   if (result[0]) {
     return `${result[0].name} ${result[0].surname}`.trim();
@@ -61,7 +54,7 @@ async function notifyIso27001Assignment(
   entityName: string,
   roleType: AssignmentRoleType,
   newUserId: number,
-  oldUserId: number | null | undefined
+  oldUserId: number | null | undefined,
 ): Promise<void> {
   // Only notify if assigned to a new user
   if (newUserId && newUserId !== oldUserId) {
@@ -75,17 +68,28 @@ async function notifyIso27001Assignment(
 
     if (entityType === "ISO 27001 Subclause") {
       // Query for parent clause info, subclause order_no for full identifier (e.g., "4.1 Understanding the organization"), and subclause description
-      const result = await sequelize.query<{ clause_id: number; clause_arrangement: number; clause_title: string; subclause_order_no: number; requirement_summary: string }>(
-        `SELECT scs.clause_id, c.arrangement as clause_arrangement, c.title as clause_title, scs.order_no as subclause_order_no, scs.requirement_summary
+      const result = await sequelize.query<{
+        clause_id: number;
+        clause_arrangement: number;
+        clause_title: string;
+        subclause_order_no: number;
+        requirement_summary: string;
+      }>(
+        `SELECT scs.clause_id, c.order_no as clause_arrangement, c.title as clause_title, scs.order_no as subclause_order_no, scs.requirement_summary
          FROM subclauses_iso27001 sc
          JOIN subclauses_struct_iso27001 scs ON sc.subclause_meta_id = scs.id
          JOIN clauses_struct_iso27001 c ON scs.clause_id = c.id
          WHERE sc.organization_id = :organizationId AND sc.id = :entityId`,
-        { replacements: { organizationId: req.organizationId!, entityId }, type: QueryTypes.SELECT }
+        {
+          replacements: { organizationId: req.organizationId!, entityId },
+          type: QueryTypes.SELECT,
+        },
       );
       const clauseId = result[0]?.clause_id;
       parentType = "Clause";
-      parentName = result[0] ? `${result[0].clause_arrangement}. ${result[0].clause_title}` : undefined;
+      parentName = result[0]
+        ? `${result[0].clause_arrangement}. ${result[0].clause_title}`
+        : undefined;
       // Build full subclause identifier like "4.1 Understanding the organization and its context"
       if (result[0]) {
         entityName = `${result[0].clause_arrangement}.${result[0].subclause_order_no} ${entityName}`;
@@ -96,17 +100,29 @@ async function notifyIso27001Assignment(
         : `/framework?framework=iso-27001&subClause27001Id=${entityId}`;
     } else {
       // Query for parent annex info, control order_no for full identifier (e.g., "A.5.1 Policies for information security"), and control description
-      const result = await sequelize.query<{ annex_id: number; annex_arrangement: string; annex_order_no: number; annex_title: string; control_order_no: number; requirement_summary: string }>(
+      const result = await sequelize.query<{
+        annex_id: number;
+        annex_arrangement: string;
+        annex_order_no: number;
+        annex_title: string;
+        control_order_no: number;
+        requirement_summary: string;
+      }>(
         `SELECT acs.annex_id, a.arrangement as annex_arrangement, a.order_no as annex_order_no, a.title as annex_title, acs.order_no as control_order_no, acs.requirement_summary
          FROM annexcontrols_iso27001 ac
          JOIN annexcontrols_struct_iso27001 acs ON ac.annexcontrol_meta_id = acs.id
          JOIN annex_struct_iso27001 a ON acs.annex_id = a.id
          WHERE ac.organization_id = :organizationId AND ac.id = :entityId`,
-        { replacements: { organizationId: req.organizationId!, entityId }, type: QueryTypes.SELECT }
+        {
+          replacements: { organizationId: req.organizationId!, entityId },
+          type: QueryTypes.SELECT,
+        },
       );
       const annexId = result[0]?.annex_id;
       parentType = "Annex";
-      parentName = result[0] ? `${result[0].annex_arrangement}.${result[0].annex_order_no} ${result[0].annex_title}` : undefined;
+      parentName = result[0]
+        ? `${result[0].annex_arrangement}.${result[0].annex_order_no} ${result[0].annex_title}`
+        : undefined;
       // Build full control identifier like "A.5.1 Policies for information security"
       if (result[0]) {
         entityName = `${result[0].annex_arrangement}.${result[0].annex_order_no}.${result[0].control_order_no} ${entityName}`;
@@ -134,7 +150,7 @@ async function notifyIso27001Assignment(
         parentType,
         parentName,
         description,
-      }
+      },
     ).catch((err) => console.error(`Failed to send ${roleType} notification:`, err));
   }
 }
@@ -176,11 +192,10 @@ export async function getAllClauses(req: Request, res: Response): Promise<any> {
   }
 }
 
-export async function getAllClausesStructForProject(
-  req: Request,
-  res: Response
-): Promise<any> {
-  const projectFrameworkId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+export async function getAllClausesStructForProject(req: Request, res: Response): Promise<any> {
+  const projectFrameworkId = parseInt(
+    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+  );
 
   logProcessing({
     description: `starting getAllClausesStructForProject for project framework ID ${projectFrameworkId}`,
@@ -189,15 +204,10 @@ export async function getAllClausesStructForProject(
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
-  logger.debug(
-    `🔍 Fetching clauses structure for project framework ID ${projectFrameworkId}`
-  );
+  logger.debug(`🔍 Fetching clauses structure for project framework ID ${projectFrameworkId}`);
 
   try {
-    const clauses = await getAllClausesWithSubClauseQuery(
-      projectFrameworkId,
-      req.organizationId!
-    );
+    const clauses = await getAllClausesWithSubClauseQuery(projectFrameworkId, req.organizationId!);
 
     await logSuccess({
       eventType: "Read",
@@ -223,11 +233,10 @@ export async function getAllClausesStructForProject(
   }
 }
 
-export async function getAllAnnexesStructForProject(
-  req: Request,
-  res: Response
-): Promise<any> {
-  const projectFrameworkId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+export async function getAllAnnexesStructForProject(req: Request, res: Response): Promise<any> {
+  const projectFrameworkId = parseInt(
+    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+  );
 
   logProcessing({
     description: `starting getAllAnnexesStructForProject for project framework ID ${projectFrameworkId}`,
@@ -236,15 +245,10 @@ export async function getAllAnnexesStructForProject(
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
-  logger.debug(
-    `🔍 Fetching annexes structure for project framework ID ${projectFrameworkId}`
-  );
+  logger.debug(`🔍 Fetching annexes structure for project framework ID ${projectFrameworkId}`);
 
   try {
-    const annexes = await getAllAnnexesWithControlsQuery(
-      projectFrameworkId,
-      req.organizationId!
-    );
+    const annexes = await getAllAnnexesWithControlsQuery(projectFrameworkId, req.organizationId!);
 
     await logSuccess({
       eventType: "Read",
@@ -307,10 +311,7 @@ export async function getAllAnnexes(req: Request, res: Response): Promise<any> {
   }
 }
 
-export async function getSubClausesByClauseId(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getSubClausesByClauseId(req: Request, res: Response): Promise<any> {
   const clauseId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
   const projectFrameworkId = parseInt(req.query.projectFrameworkId as string);
 
@@ -333,7 +334,7 @@ export async function getSubClausesByClauseId(
     const subClauses = await getSubClausesByClauseIdQuery(
       clauseId,
       req.organizationId!,
-      projectFrameworkId
+      projectFrameworkId,
     );
     if (subClauses) {
       await logSuccess({
@@ -370,10 +371,7 @@ export async function getSubClausesByClauseId(
   }
 }
 
-export async function getAnnexControlsByAnnexId(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getAnnexControlsByAnnexId(req: Request, res: Response): Promise<any> {
   const annexId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
   logProcessing({
@@ -386,10 +384,7 @@ export async function getAnnexControlsByAnnexId(
   logger.debug(`🔍 Fetching annex controls for annex ID ${annexId}`);
 
   try {
-    const annexControls = await getAnnexControlsByAnnexIdQuery(
-      annexId,
-      req.organizationId!
-    );
+    const annexControls = await getAnnexControlsByAnnexIdQuery(annexId, req.organizationId!);
     if (annexControls) {
       await logSuccess({
         eventType: "Read",
@@ -425,10 +420,7 @@ export async function getAnnexControlsByAnnexId(
   }
 }
 
-export async function getSubClauseById(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getSubClauseById(req: Request, res: Response): Promise<any> {
   const subClauseId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
   const projectFrameworkId = parseInt(req.query.projectFrameworkId as string);
 
@@ -440,14 +432,14 @@ export async function getSubClauseById(
     tenantId: req.organizationId!,
   });
   logger.debug(
-    `🔍 Looking up sub-clause ID ${subClauseId} for project framework ID ${projectFrameworkId}`
+    `🔍 Looking up sub-clause ID ${subClauseId} for project framework ID ${projectFrameworkId}`,
   );
 
   try {
     const subClause = await getSubClauseByIdForProjectQuery(
       subClauseId,
       projectFrameworkId,
-      req.organizationId!
+      req.organizationId!,
     );
     if (subClause) {
       await logSuccess({
@@ -484,10 +476,7 @@ export async function getSubClauseById(
   }
 }
 
-export async function getAnnexControlById(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getAnnexControlById(req: Request, res: Response): Promise<any> {
   const annexControlId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
   const projectFrameworkId = parseInt(req.query.projectFrameworkId as string);
 
@@ -499,14 +488,14 @@ export async function getAnnexControlById(
     tenantId: req.organizationId!,
   });
   logger.debug(
-    `🔍 Looking up annex control ID ${annexControlId} for project framework ID ${projectFrameworkId}`
+    `🔍 Looking up annex control ID ${annexControlId} for project framework ID ${projectFrameworkId}`,
   );
 
   try {
     const annexControl = await getAnnexControlByIdForProjectQuery(
       annexControlId,
       projectFrameworkId,
-      req.organizationId!
+      req.organizationId!,
     );
     if (annexControl) {
       await logSuccess({
@@ -543,11 +532,10 @@ export async function getAnnexControlById(
   }
 }
 
-export async function getClausesByProjectId(
-  req: Request,
-  res: Response
-): Promise<any> {
-  const projectFrameworkId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+export async function getClausesByProjectId(req: Request, res: Response): Promise<any> {
+  const projectFrameworkId = parseInt(
+    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+  );
 
   logProcessing({
     description: `starting getClausesByProjectId for project framework ID ${projectFrameworkId}`,
@@ -556,15 +544,10 @@ export async function getClausesByProjectId(
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
-  logger.debug(
-    `🔍 Fetching clauses for project framework ID ${projectFrameworkId}`
-  );
+  logger.debug(`🔍 Fetching clauses for project framework ID ${projectFrameworkId}`);
 
   try {
-    const subClauses = await getClausesByProjectIdQuery(
-      projectFrameworkId,
-      req.organizationId!
-    );
+    const subClauses = await getClausesByProjectIdQuery(projectFrameworkId, req.organizationId!);
     if (subClauses) {
       await logSuccess({
         eventType: "Read",
@@ -601,11 +584,10 @@ export async function getClausesByProjectId(
   }
 }
 
-export async function getAnnexesByProjectId(
-  req: Request,
-  res: Response
-): Promise<any> {
-  const projectFrameworkId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+export async function getAnnexesByProjectId(req: Request, res: Response): Promise<any> {
+  const projectFrameworkId = parseInt(
+    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+  );
 
   logProcessing({
     description: `starting getAnnexesByProjectId for project framework ID ${projectFrameworkId}`,
@@ -614,15 +596,10 @@ export async function getAnnexesByProjectId(
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
-  logger.debug(
-    `🔍 Fetching annexes for project framework ID ${projectFrameworkId}`
-  );
+  logger.debug(`🔍 Fetching annexes for project framework ID ${projectFrameworkId}`);
 
   try {
-    const annexControls = await getAnnexesByProjectIdQuery(
-      projectFrameworkId,
-      req.organizationId!
-    );
+    const annexControls = await getAnnexesByProjectIdQuery(projectFrameworkId, req.organizationId!);
     if (annexControls) {
       await logSuccess({
         eventType: "Read",
@@ -669,7 +646,7 @@ async function uploadFiles(
   projectFrameworkId: number,
   source: "Main clauses group" | "Annex controls group",
   organizationId: number,
-  transaction: any
+  transaction: any,
 ): Promise<FileType[]> {
   let uploadedFiles: FileType[] = [];
   await Promise.all(
@@ -680,7 +657,7 @@ async function uploadFiles(
         projectFrameworkId,
         source,
         organizationId,
-        transaction
+        transaction,
       );
 
       uploadedFiles.push({
@@ -692,15 +669,12 @@ async function uploadFiles(
         type: uploadedFile.type,
         source: uploadedFile.source,
       });
-    })
+    }),
   );
   return uploadedFiles;
 }
 
-export async function saveClauses(
-  req: RequestWithFile,
-  res: Response
-): Promise<any> {
+export async function saveClauses(req: RequestWithFile, res: Response): Promise<any> {
   const transaction = await sequelize.transaction();
   const subClauseId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
@@ -735,10 +709,20 @@ export async function saveClauses(
         replacements: { organizationId: req.organizationId!, id: subClauseId },
         transaction,
         type: QueryTypes.SELECT,
-      }
-    )) as { owner: number | null; reviewer: number | null; approver: number | null; title: string }[];
+      },
+    )) as {
+      owner: number | null;
+      reviewer: number | null;
+      approver: number | null;
+      title: string;
+    }[];
 
-    const currentData = currentSubClauseResult[0] || { owner: null, reviewer: null, approver: null, title: '' };
+    const currentData = currentSubClauseResult[0] || {
+      owner: null,
+      reviewer: null,
+      approver: null,
+      title: "",
+    };
 
     // // Get project_id from subclause
     // const projectIdResult = (await sequelize.query(
@@ -763,7 +747,7 @@ export async function saveClauses(
         parseInt(subClause.project_id),
         "Main clauses group",
         req.organizationId!,
-        transaction
+        transaction,
       );
     }
 
@@ -773,7 +757,7 @@ export async function saveClauses(
       uploadedFiles,
       filesToUnlink,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     // Update the project's last updated date
@@ -781,7 +765,7 @@ export async function saveClauses(
       subClauseId,
       "subclauses_iso27001",
       req.organizationId!,
-      transaction
+      transaction,
     );
     await transaction.commit();
 
@@ -792,13 +776,37 @@ export async function saveClauses(
     const newApprover = subClause.approver ? parseInt(String(subClause.approver)) : null;
 
     if (newOwner) {
-      notifyIso27001Assignment(req, "ISO 27001 Subclause", subClauseId, entityName, "Owner", newOwner, currentData.owner);
+      notifyIso27001Assignment(
+        req,
+        "ISO 27001 Subclause",
+        subClauseId,
+        entityName,
+        "Owner",
+        newOwner,
+        currentData.owner,
+      );
     }
     if (newReviewer) {
-      notifyIso27001Assignment(req, "ISO 27001 Subclause", subClauseId, entityName, "Reviewer", newReviewer, currentData.reviewer);
+      notifyIso27001Assignment(
+        req,
+        "ISO 27001 Subclause",
+        subClauseId,
+        entityName,
+        "Reviewer",
+        newReviewer,
+        currentData.reviewer,
+      );
     }
     if (newApprover) {
-      notifyIso27001Assignment(req, "ISO 27001 Subclause", subClauseId, entityName, "Approver", newApprover, currentData.approver);
+      notifyIso27001Assignment(
+        req,
+        "ISO 27001 Subclause",
+        subClauseId,
+        entityName,
+        "Approver",
+        newApprover,
+        currentData.approver,
+      );
     }
 
     await logSuccess({
@@ -826,10 +834,7 @@ export async function saveClauses(
   }
 }
 
-export async function saveAnnexes(
-  req: RequestWithFile,
-  res: Response
-): Promise<any> {
+export async function saveAnnexes(req: RequestWithFile, res: Response): Promise<any> {
   const transaction = await sequelize.transaction();
   const annexControlId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
@@ -851,13 +856,10 @@ export async function saveAnnexes(
       risksMitigated: string;
     };
 
-    logger.debug(
-      `Processing annex control data: ${JSON.stringify(annexControl)}`
-    );
+    logger.debug(`Processing annex control data: ${JSON.stringify(annexControl)}`);
     logger.debug(`Files to unlink: ${annexControl.delete}`);
     logger.debug(
-      `Files in request: ${Array.isArray(req.files) ? req.files.length : req.files ? 1 : 0
-      }`
+      `Files in request: ${Array.isArray(req.files) ? req.files.length : req.files ? 1 : 0}`,
     );
 
     // Files to unlink (not delete) - the actual file stays in file manager
@@ -873,10 +875,20 @@ export async function saveAnnexes(
         replacements: { organizationId: req.organizationId!, id: annexControlId },
         transaction,
         type: QueryTypes.SELECT,
-      }
-    )) as { owner: number | null; reviewer: number | null; approver: number | null; control_title: string }[];
+      },
+    )) as {
+      owner: number | null;
+      reviewer: number | null;
+      approver: number | null;
+      control_title: string;
+    }[];
 
-    const currentAnnexData = currentAnnexResult[0] || { owner: null, reviewer: null, approver: null, control_title: '' };
+    const currentAnnexData = currentAnnexResult[0] || {
+      owner: null,
+      reviewer: null,
+      approver: null,
+      control_title: "",
+    };
 
     // // Get project_id from annex control
     // const projectIdResult = (await sequelize.query(
@@ -901,7 +913,7 @@ export async function saveAnnexes(
         parseInt(annexControl.project_id),
         "Annex controls group",
         req.organizationId!,
-        transaction
+        transaction,
       );
     }
 
@@ -912,7 +924,7 @@ export async function saveAnnexes(
       uploadedFiles,
       filesToUnlink,
       req.organizationId!,
-      transaction
+      transaction,
     );
     logger.debug(`updateAnnexControlQuery completed successfully`);
 
@@ -922,7 +934,7 @@ export async function saveAnnexes(
         annexControlId,
         "annexcontrols_iso27001",
         req.organizationId!,
-        transaction
+        transaction,
       );
     } catch (error) {
       logger.error(`Error updating project last updated date: ${error}`);
@@ -937,13 +949,37 @@ export async function saveAnnexes(
     const newAnnexApprover = annexControl.approver ? parseInt(String(annexControl.approver)) : null;
 
     if (newAnnexOwner) {
-      notifyIso27001Assignment(req, "ISO 27001 Annex Control", annexControlId, annexEntityName, "Owner", newAnnexOwner, currentAnnexData.owner);
+      notifyIso27001Assignment(
+        req,
+        "ISO 27001 Annex Control",
+        annexControlId,
+        annexEntityName,
+        "Owner",
+        newAnnexOwner,
+        currentAnnexData.owner,
+      );
     }
     if (newAnnexReviewer) {
-      notifyIso27001Assignment(req, "ISO 27001 Annex Control", annexControlId, annexEntityName, "Reviewer", newAnnexReviewer, currentAnnexData.reviewer);
+      notifyIso27001Assignment(
+        req,
+        "ISO 27001 Annex Control",
+        annexControlId,
+        annexEntityName,
+        "Reviewer",
+        newAnnexReviewer,
+        currentAnnexData.reviewer,
+      );
     }
     if (newAnnexApprover) {
-      notifyIso27001Assignment(req, "ISO 27001 Annex Control", annexControlId, annexEntityName, "Approver", newAnnexApprover, currentAnnexData.approver);
+      notifyIso27001Assignment(
+        req,
+        "ISO 27001 Annex Control",
+        annexControlId,
+        annexEntityName,
+        "Approver",
+        newAnnexApprover,
+        currentAnnexData.approver,
+      );
     }
 
     await logSuccess({
@@ -971,12 +1007,11 @@ export async function saveAnnexes(
   }
 }
 
-export async function deleteManagementSystemClauses(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function deleteManagementSystemClauses(req: Request, res: Response): Promise<any> {
   const transaction = await sequelize.transaction();
-  const projectFrameworkId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+  const projectFrameworkId = parseInt(
+    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+  );
 
   logProcessing({
     description: `starting deleteManagementSystemClauses for project framework ID ${projectFrameworkId}`,
@@ -986,14 +1021,14 @@ export async function deleteManagementSystemClauses(
     tenantId: req.organizationId!,
   });
   logger.debug(
-    `🗑️ Deleting management system clauses for project framework ID ${projectFrameworkId}`
+    `🗑️ Deleting management system clauses for project framework ID ${projectFrameworkId}`,
   );
 
   try {
     const result = await deleteSubClausesISO27001ByProjectIdQuery(
       projectFrameworkId,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     if (result) {
@@ -1035,12 +1070,11 @@ export async function deleteManagementSystemClauses(
   }
 }
 
-export async function deleteReferenceControls(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function deleteReferenceControls(req: Request, res: Response): Promise<any> {
   const transaction = await sequelize.transaction();
-  const projectFrameworkId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+  const projectFrameworkId = parseInt(
+    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+  );
 
   logProcessing({
     description: `starting deleteReferenceControls for project framework ID ${projectFrameworkId}`,
@@ -1049,15 +1083,13 @@ export async function deleteReferenceControls(
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
-  logger.debug(
-    `🗑️ Deleting reference controls for project framework ID ${projectFrameworkId}`
-  );
+  logger.debug(`🗑️ Deleting reference controls for project framework ID ${projectFrameworkId}`);
 
   try {
     const result = await deleteAnnexControlsISO27001ByProjectIdQuery(
       projectFrameworkId,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     if (result) {
@@ -1099,11 +1131,10 @@ export async function deleteReferenceControls(
   }
 }
 
-export async function getProjectClausesProgress(
-  req: Request,
-  res: Response
-): Promise<any> {
-  const projectFrameworkId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+export async function getProjectClausesProgress(req: Request, res: Response): Promise<any> {
+  const projectFrameworkId = parseInt(
+    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+  );
 
   logProcessing({
     description: `starting getProjectClausesProgress for project framework ID ${projectFrameworkId}`,
@@ -1112,13 +1143,13 @@ export async function getProjectClausesProgress(
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
-  logger.debug(
-    `📊 Calculating clauses progress for project framework ID ${projectFrameworkId}`
-  );
+  logger.debug(`📊 Calculating clauses progress for project framework ID ${projectFrameworkId}`);
 
   try {
-    const { totalSubclauses, doneSubclauses } =
-      await countSubClausesISOByProjectId(projectFrameworkId, req.organizationId!);
+    const { totalSubclauses, doneSubclauses } = await countSubClausesISOByProjectId(
+      projectFrameworkId,
+      req.organizationId!,
+    );
 
     await logSuccess({
       eventType: "Read",
@@ -1133,7 +1164,7 @@ export async function getProjectClausesProgress(
       STATUS_CODE[200]({
         totalSubclauses: parseInt(totalSubclauses),
         doneSubclauses: parseInt(doneSubclauses),
-      })
+      }),
     );
   } catch (error) {
     await logFailure({
@@ -1149,11 +1180,10 @@ export async function getProjectClausesProgress(
   }
 }
 
-export async function getProjectAnnxesProgress(
-  req: Request,
-  res: Response
-): Promise<any> {
-  const projectFrameworkId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+export async function getProjectAnnxesProgress(req: Request, res: Response): Promise<any> {
+  const projectFrameworkId = parseInt(
+    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+  );
 
   logProcessing({
     description: `starting getProjectAnnxesProgress for project framework ID ${projectFrameworkId}`,
@@ -1162,13 +1192,13 @@ export async function getProjectAnnxesProgress(
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
-  logger.debug(
-    `📊 Calculating annexes progress for project framework ID ${projectFrameworkId}`
-  );
+  logger.debug(`📊 Calculating annexes progress for project framework ID ${projectFrameworkId}`);
 
   try {
-    const { totalAnnexControls, doneAnnexControls } =
-      await countAnnexControlsISOByProjectId(projectFrameworkId, req.organizationId!);
+    const { totalAnnexControls, doneAnnexControls } = await countAnnexControlsISOByProjectId(
+      projectFrameworkId,
+      req.organizationId!,
+    );
 
     await logSuccess({
       eventType: "Read",
@@ -1183,7 +1213,7 @@ export async function getProjectAnnxesProgress(
       STATUS_CODE[200]({
         totalAnnexControls: parseInt(totalAnnexControls),
         doneAnnexControls: parseInt(doneAnnexControls),
-      })
+      }),
     );
   } catch (error) {
     await logFailure({
@@ -1199,10 +1229,7 @@ export async function getProjectAnnxesProgress(
   }
 }
 
-export async function getAllProjectsClausesProgress(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getAllProjectsClausesProgress(req: Request, res: Response): Promise<any> {
   let allSubclauses = 0;
   let allDoneSubclauses = 0;
 
@@ -1220,8 +1247,7 @@ export async function getAllProjectsClausesProgress(
     if (!userId || !role) {
       await logFailure({
         eventType: "Read",
-        description:
-          "Unauthorized access attempt for getAllProjectsClausesProgress",
+        description: "Unauthorized access attempt for getAllProjectsClausesProgress",
         functionName: "getAllProjectsClausesProgress",
         fileName: "iso27001.ctrl.ts",
         error: new Error("Unauthorized"),
@@ -1243,14 +1269,13 @@ export async function getAllProjectsClausesProgress(
           if (!projectFrameworkId) {
             return;
           }
-          const { totalSubclauses, doneSubclauses } =
-            await countSubClausesISOByProjectId(
-              projectFrameworkId,
-              req.organizationId!
-            );
+          const { totalSubclauses, doneSubclauses } = await countSubClausesISOByProjectId(
+            projectFrameworkId,
+            req.organizationId!,
+          );
           allSubclauses += parseInt(totalSubclauses);
           allDoneSubclauses += parseInt(doneSubclauses);
-        })
+        }),
       );
 
       await logSuccess({
@@ -1262,9 +1287,7 @@ export async function getAllProjectsClausesProgress(
         tenantId: req.organizationId!,
       });
 
-      return res
-        .status(200)
-        .json(STATUS_CODE[200]({ allSubclauses, allDoneSubclauses }));
+      return res.status(200).json(STATUS_CODE[200]({ allSubclauses, allDoneSubclauses }));
     } else {
       await logSuccess({
         eventType: "Read",
@@ -1290,10 +1313,7 @@ export async function getAllProjectsClausesProgress(
   }
 }
 
-export async function getAllProjectsAnnxesProgress(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getAllProjectsAnnxesProgress(req: Request, res: Response): Promise<any> {
   let allAnnexControls = 0;
   let allDoneAnnexControls = 0;
 
@@ -1311,8 +1331,7 @@ export async function getAllProjectsAnnxesProgress(
     if (!userId || !role) {
       await logFailure({
         eventType: "Read",
-        description:
-          "Unauthorized access attempt for getAllProjectsAnnxesProgress",
+        description: "Unauthorized access attempt for getAllProjectsAnnxesProgress",
         functionName: "getAllProjectsAnnxesProgress",
         fileName: "iso27001.ctrl.ts",
         error: new Error("Unauthorized"),
@@ -1334,14 +1353,13 @@ export async function getAllProjectsAnnxesProgress(
           if (!projectFrameworkId) {
             return;
           }
-          const { totalAnnexControls, doneAnnexControls } =
-            await countAnnexControlsISOByProjectId(
-              projectFrameworkId,
-              req.organizationId!
-            );
+          const { totalAnnexControls, doneAnnexControls } = await countAnnexControlsISOByProjectId(
+            projectFrameworkId,
+            req.organizationId!,
+          );
           allAnnexControls += parseInt(totalAnnexControls);
           allDoneAnnexControls += parseInt(doneAnnexControls);
-        })
+        }),
       );
 
       await logSuccess({
@@ -1353,9 +1371,7 @@ export async function getAllProjectsAnnxesProgress(
         tenantId: req.organizationId!,
       });
 
-      return res
-        .status(200)
-        .json(STATUS_CODE[200]({ allAnnexControls, allDoneAnnexControls }));
+      return res.status(200).json(STATUS_CODE[200]({ allAnnexControls, allDoneAnnexControls }));
     } else {
       await logSuccess({
         eventType: "Read",
@@ -1390,11 +1406,10 @@ export async function getAllProjectsAnnxesProgress(
  * @param res - Express response object
  * @returns JSON response with totalSubclauses and assignedSubclauses counts
  */
-export async function getProjectClausesAssignments(
-  req: Request,
-  res: Response
-): Promise<any> {
-  const projectFrameworkId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+export async function getProjectClausesAssignments(req: Request, res: Response): Promise<any> {
+  const projectFrameworkId = parseInt(
+    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+  );
 
   logProcessing({
     description: `starting getProjectClausesAssignments for project framework ID ${projectFrameworkId}`,
@@ -1403,16 +1418,13 @@ export async function getProjectClausesAssignments(
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
-  logger.debug(
-    `📊 Calculating clauses assignments for project framework ID ${projectFrameworkId}`
-  );
+  logger.debug(`📊 Calculating clauses assignments for project framework ID ${projectFrameworkId}`);
 
   try {
-    const { totalSubclauses, assignedSubclauses } =
-      await countSubClauseAssignmentsISOByProjectId(
-        projectFrameworkId,
-        req.organizationId!
-      );
+    const { totalSubclauses, assignedSubclauses } = await countSubClauseAssignmentsISOByProjectId(
+      projectFrameworkId,
+      req.organizationId!,
+    );
 
     await logSuccess({
       eventType: "Read",
@@ -1427,7 +1439,7 @@ export async function getProjectClausesAssignments(
       STATUS_CODE[200]({
         totalSubclauses: parseInt(totalSubclauses),
         assignedSubclauses: parseInt(assignedSubclauses),
-      })
+      }),
     );
   } catch (error) {
     await logFailure({
@@ -1452,11 +1464,10 @@ export async function getProjectClausesAssignments(
  * @param res - Express response object
  * @returns JSON response with totalAnnexControls and assignedAnnexControls counts
  */
-export async function getProjectAnnexesAssignments(
-  req: Request,
-  res: Response
-): Promise<any> {
-  const projectFrameworkId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+export async function getProjectAnnexesAssignments(req: Request, res: Response): Promise<any> {
+  const projectFrameworkId = parseInt(
+    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+  );
 
   logProcessing({
     description: `starting getProjectAnnexesAssignments for project framework ID ${projectFrameworkId}`,
@@ -1465,16 +1476,11 @@ export async function getProjectAnnexesAssignments(
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
-  logger.debug(
-    `📊 Calculating annexes assignments for project framework ID ${projectFrameworkId}`
-  );
+  logger.debug(`📊 Calculating annexes assignments for project framework ID ${projectFrameworkId}`);
 
   try {
     const { totalAnnexControls, assignedAnnexControls } =
-      await countAnnexControlAssignmentsISOByProjectId(
-        projectFrameworkId,
-        req.organizationId!
-      );
+      await countAnnexControlAssignmentsISOByProjectId(projectFrameworkId, req.organizationId!);
 
     await logSuccess({
       eventType: "Read",
@@ -1489,7 +1495,7 @@ export async function getProjectAnnexesAssignments(
       STATUS_CODE[200]({
         totalAnnexControls: parseInt(totalAnnexControls),
         assignedAnnexControls: parseInt(assignedAnnexControls),
-      })
+      }),
     );
   } catch (error) {
     await logFailure({

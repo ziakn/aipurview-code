@@ -27,10 +27,7 @@ const connections = new Map<string, ConnectionData>();
  * SSE endpoint - establishes persistent connection for real-time notifications
  * GET /api/notifications/stream
  */
-export const streamNotifications = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const streamNotifications = async (req: Request, res: Response): Promise<void> => {
   const { userId, organizationId, tenantId } = req;
 
   if (!userId || !organizationId) {
@@ -75,7 +72,12 @@ export const streamNotifications = async (
     // Start cleanup interval on first connection
     startCleanupInterval();
 
-    logStructured("successful", `SSE connection established: ${connectionKey}`, "streamNotifications", "notification.ctrl.ts");
+    logStructured(
+      "successful",
+      `SSE connection established: ${connectionKey}`,
+      "streamNotifications",
+      "notification.ctrl.ts",
+    );
 
     // Send initial connection success message
     res.write(`data: ${JSON.stringify({ type: "connected" })}\n\n`);
@@ -93,7 +95,12 @@ export const streamNotifications = async (
     req.on("close", () => {
       clearInterval(heartbeatInterval);
       connections.delete(connectionKey);
-      logStructured("successful", `SSE connection closed: ${connectionKey}`, "streamNotifications", "notification.ctrl.ts");
+      logStructured(
+        "successful",
+        `SSE connection closed: ${connectionKey}`,
+        "streamNotifications",
+        "notification.ctrl.ts",
+      );
     });
   } catch (error) {
     logStructured("error", `Error establishing SSE connection: ${error}`, "streamNotifications", "notification.ctrl.ts");
@@ -131,7 +138,12 @@ const startCleanupInterval = (): void => {
 
     for (const [key, data] of connections.entries()) {
       if (now - data.connectedAt.getTime() > staleThreshold) {
-        logStructured("processing", `Cleaning up stale connection: ${key}`, "startCleanupInterval", "notification.ctrl.ts");
+        logStructured(
+          "processing",
+          `Cleaning up stale connection: ${key}`,
+          "startCleanupInterval",
+          "notification.ctrl.ts",
+        );
         try {
           data.response.end();
         } catch {
@@ -147,10 +159,7 @@ const startCleanupInterval = (): void => {
  * Get notifications for the current user
  * GET /api/notifications
  */
-export const getNotifications = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const getNotifications = async (req: Request, res: Response): Promise<Response> => {
   const { userId, tenantId } = req;
 
   if (!userId || !tenantId) {
@@ -159,7 +168,8 @@ export const getNotifications = async (
 
   try {
     const filters: INotificationFilters = {
-      is_read: req.query.is_read === "true" ? true : req.query.is_read === "false" ? false : undefined,
+      is_read:
+        req.query.is_read === "true" ? true : req.query.is_read === "false" ? false : undefined,
       type: req.query.type as NotificationType | undefined,
       limit: req.query.limit ? parseInt(req.query.limit as string, 10) : 50,
       offset: req.query.offset ? parseInt(req.query.offset as string, 10) : 0,
@@ -177,10 +187,7 @@ export const getNotifications = async (
  * Get notification summary (for bell icon)
  * GET /api/notifications/summary
  */
-export const getNotificationSummary = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const getNotificationSummary = async (req: Request, res: Response): Promise<Response> => {
   const { userId, tenantId } = req;
 
   if (!userId || !tenantId) {
@@ -200,10 +207,7 @@ export const getNotificationSummary = async (
  * Get unread count
  * GET /api/notifications/unread-count
  */
-export const getUnreadCount = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const getUnreadCount = async (req: Request, res: Response): Promise<Response> => {
   const { userId, tenantId } = req;
 
   if (!userId || !tenantId) {
@@ -223,10 +227,7 @@ export const getUnreadCount = async (
  * Mark a notification as read
  * PATCH /api/notifications/:id/read
  */
-export const markAsRead = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const markAsRead = async (req: Request, res: Response): Promise<Response> => {
   const { userId, tenantId } = req;
   const idParam = req.params.id;
   const notificationId = parseInt(Array.isArray(idParam) ? idParam[0] : idParam, 10);
@@ -257,10 +258,7 @@ export const markAsRead = async (
  * Mark all notifications as read
  * PATCH /api/notifications/read-all
  */
-export const markAllAsRead = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const markAllAsRead = async (req: Request, res: Response): Promise<Response> => {
   const { userId, tenantId } = req;
 
   if (!userId || !tenantId) {
@@ -280,10 +278,7 @@ export const markAllAsRead = async (
  * Delete a notification
  * DELETE /api/notifications/:id
  */
-export const deleteNotification = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const deleteNotification = async (req: Request, res: Response): Promise<Response> => {
   const { userId, tenantId } = req;
   const idParam = req.params.id;
   const notificationId = parseInt(Array.isArray(idParam) ? idParam[0] : idParam, 10);

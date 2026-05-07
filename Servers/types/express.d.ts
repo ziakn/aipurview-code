@@ -1,7 +1,7 @@
 import 'express';
 import type { SupportedLang, Translator } from '../utils/i18n.utils';
 
-declare module 'express' {
+declare module "express" {
   interface Request {
     userId?: number;
     role?: string;

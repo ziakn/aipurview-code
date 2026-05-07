@@ -4,10 +4,7 @@ import { sequelize } from "../database/db";
 import { DatasetModel } from "../domain.layer/models/dataset/dataset.model";
 import { createNewDatasetQuery } from "../utils/dataset.utils";
 import { recordDatasetCreation } from "../utils/datasetChangeHistory.utils";
-import {
-  uploadOrganizationFile,
-  createFileEntityLink,
-} from "../repositories/file.repository";
+import { uploadOrganizationFile, createFileEntityLink } from "../repositories/file.repository";
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import { logStructured } from "../utils/logger/fileLogger";
 
@@ -27,7 +24,7 @@ export async function uploadDatasetFile(req: Request, res: Response) {
     "processing",
     "starting dataset bulk upload",
     "uploadDatasetFile",
-    "datasetBulkUpload.ctrl.ts"
+    "datasetBulkUpload.ctrl.ts",
   );
 
   if (!req.file) {
@@ -78,7 +75,7 @@ export async function uploadDatasetFile(req: Request, res: Response) {
       req.organizationId!,
       metadata.models || [],
       metadata.projects || [],
-      transaction
+      transaction,
     );
 
     // 2. Store file blob
@@ -90,7 +87,7 @@ export async function uploadDatasetFile(req: Request, res: Response) {
       {
         source: "dataset_bulk_upload",
         transaction,
-      }
+      },
     );
 
     // 3. Link file → dataset
@@ -104,16 +101,11 @@ export async function uploadDatasetFile(req: Request, res: Response) {
         created_by: req.userId,
       },
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     // 4. Record change history
-    await recordDatasetCreation(
-      savedDataset.id!,
-      req.userId,
-      req.organizationId!,
-      transaction
-    );
+    await recordDatasetCreation(savedDataset.id!, req.userId, req.organizationId!, transaction);
 
     await transaction.commit();
 
@@ -121,14 +113,14 @@ export async function uploadDatasetFile(req: Request, res: Response) {
       "successful",
       `dataset bulk upload complete: dataset=${savedDataset.id}`,
       "uploadDatasetFile",
-      "datasetBulkUpload.ctrl.ts"
+      "datasetBulkUpload.ctrl.ts",
     );
 
     return res.status(201).json(
       STATUS_CODE[201]({
         datasetId: savedDataset.id,
         fileId: fileRecord.id,
-      })
+      }),
     );
   } catch (error) {
     if (transaction) {
@@ -143,7 +135,7 @@ export async function uploadDatasetFile(req: Request, res: Response) {
       "error",
       "dataset bulk upload failed",
       "uploadDatasetFile",
-      "datasetBulkUpload.ctrl.ts"
+      "datasetBulkUpload.ctrl.ts",
     );
     console.error("Error in uploadDatasetFile:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));

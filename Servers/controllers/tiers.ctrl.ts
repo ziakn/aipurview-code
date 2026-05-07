@@ -4,13 +4,13 @@ import { STATUS_CODE } from "../utils/statusCode.utils";
 import logger, { logStructured } from "../utils/logger/fileLogger";
 
 async function getTiersFeatures(req: Request, res: Response) {
-    const tierId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+  const tierId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
-    logStructured("processing", "Fetching tiers features", "getTiersFeatures", "tiers.ctrl.ts");
-    logger.debug('🔍 Fetching tiers features');
+  logStructured("processing", "Fetching tiers features", "getTiersFeatures", "tiers.ctrl.ts");
+  logger.debug("🔍 Fetching tiers features");
 
-    try {
-        const tiersFeatures = await getTiersFeaturesQuery(tierId);
+  try {
+    const tiersFeatures = await getTiersFeaturesQuery(tierId);
 
         if (tiersFeatures) {
             logStructured("successful", "Tiers features fetched successfully", "getTiersFeatures", "tiers.ctrl.ts");
@@ -24,7 +24,6 @@ async function getTiersFeatures(req: Request, res: Response) {
         logger.error('❌ Error fetching tiers features:', error);
         return res.status(500).json(STATUS_CODE[500]({ message: req.t!('Internal server error') }));
     }
-}
-
+  }
 
 export { getTiersFeatures };

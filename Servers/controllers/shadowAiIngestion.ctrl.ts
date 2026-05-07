@@ -12,10 +12,7 @@ import { Transaction } from "sequelize";
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import logger from "../utils/logger/fileLogger";
 import { validateApiKeyWithCache } from "../utils/shadowAiApiKey.utils";
-import {
-  normalizeEvent,
-  insertEventsQuery,
-} from "../utils/shadowAiIngestion.utils";
+import { normalizeEvent, insertEventsQuery } from "../utils/shadowAiIngestion.utils";
 import {
   matchDomain,
   ensureTenantTool,
@@ -121,7 +118,13 @@ export async function ingestEvents(req: Request, res: Response) {
   // Check rate limit from organization settings
   try {
     const settings = await getSettingsQuery(organizationId);
-    if (!checkRateLimit(String(organizationId), settings.rate_limit_max_events_per_hour, body.events.length)) {
+    if (
+      !checkRateLimit(
+        String(organizationId),
+        settings.rate_limit_max_events_per_hour,
+        body.events.length,
+      )
+    ) {
       return res
         .status(429)
         .json(
@@ -191,7 +194,7 @@ export async function ingestEvents(req: Request, res: Response) {
             : Promise.resolve(null),
         ]);
         return { registryMatch, model };
-      })
+      }),
     );
 
     // Step 2: Process results sequentially (ensureTenantTool does DB writes)
@@ -222,7 +225,7 @@ export async function ingestEvents(req: Request, res: Response) {
         const { id: toolId, isNew } = await ensureTenantTool(
           organizationId,
           registryMatch,
-          transaction
+          transaction,
         );
         detectedToolId = toolId;
 
@@ -231,10 +234,7 @@ export async function ingestEvents(req: Request, res: Response) {
           newToolNames.set(toolId, registryMatch.name);
         }
 
-        toolEventCounts.set(
-          toolId,
-          (toolEventCounts.get(toolId) || 0) + 1
-        );
+        toolEventCounts.set(toolId, (toolEventCounts.get(toolId) || 0) + 1);
         if (!toolUserSets.has(toolId)) {
           toolUserSets.set(toolId, new Set());
         }
@@ -274,11 +274,7 @@ export async function ingestEvents(req: Request, res: Response) {
     }
 
     // Batch insert all events
-    const insertedCount = await insertEventsQuery(
-      organizationId,
-      processedEvents,
-      transaction
-    );
+    const insertedCount = await insertEventsQuery(organizationId, processedEvents, transaction);
 
     // Update tool counters
     for (const [toolId, count] of toolEventCounts.entries()) {
@@ -287,14 +283,14 @@ export async function ingestEvents(req: Request, res: Response) {
         toolId,
         count,
         toolUserSets.get(toolId) || new Set(),
-        transaction
+        transaction,
       );
     }
 
     await transaction.commit();
 
     logger.debug(
-      `✅ Ingested ${insertedCount} shadow AI events for organization ${organizationId}`
+      `✅ Ingested ${insertedCount} shadow AI events for organization ${organizationId}`,
     );
 
     // Evaluate alert rules asynchronously (don't block the response)
@@ -315,7 +311,7 @@ export async function ingestEvents(req: Request, res: Response) {
       STATUS_CODE[200]({
         ingested: insertedCount,
         tools_matched: toolEventCounts.size,
-      })
+      }),
     );
   } catch (error) {
     if (transaction) {

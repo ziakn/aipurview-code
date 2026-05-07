@@ -11,12 +11,28 @@ import { STATUS_CODE } from "../utils/statusCode.utils";
 import { translateError } from "../utils/i18n.utils";
 export async function getProjectRiskChangeHistoryByRiskId(
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<any> {
   try {
-    const projectRiskId = parseInt(Array.isArray(req.params.projectRiskId) ? req.params.projectRiskId[0] : req.params.projectRiskId);
-    const limit = parseInt(Array.isArray(req.query.limit) ? String(req.query.limit[0]) : String(req.query.limit || '100'), 10) || 100;
-    const offset = parseInt(Array.isArray(req.query.offset) ? String(req.query.offset[0]) : String(req.query.offset || '0'), 10) || 0;
+    const projectRiskId = parseInt(
+      Array.isArray(req.params.projectRiskId)
+        ? req.params.projectRiskId[0]
+        : req.params.projectRiskId,
+    );
+    const limit =
+      parseInt(
+        Array.isArray(req.query.limit)
+          ? String(req.query.limit[0])
+          : String(req.query.limit || "100"),
+        10,
+      ) || 100;
+    const offset =
+      parseInt(
+        Array.isArray(req.query.offset)
+          ? String(req.query.offset[0])
+          : String(req.query.offset || "0"),
+        10,
+      ) || 0;
 
     if (isNaN(projectRiskId)) {
       return res.status(400).json(STATUS_CODE[400](req.t!("Invalid project risk ID")));
@@ -26,7 +42,7 @@ export async function getProjectRiskChangeHistoryByRiskId(
       projectRiskId,
       req.organizationId!,
       limit,
-      offset
+      offset,
     );
 
     return res.status(200).json(STATUS_CODE[200](history));

@@ -29,10 +29,7 @@ const testTemplate = `
 </mjml>
 `;
 
-async function testProvider(
-  providerType: "resend" | "smtp",
-  testEmail: string
-) {
+async function testProvider(providerType: "resend" | "smtp", testEmail: string) {
   console.log(`\n🧪 Testing ${providerType.toUpperCase()} provider...`);
 
   try {
@@ -58,7 +55,7 @@ async function testProvider(
       test_time: new Date().toISOString(),
     };
 
-    const html = compileMjmlToHtml(testTemplate, templateData);
+    const html = await compileMjmlToHtml(testTemplate, templateData);
 
     const emailOptions: EmailOptions = {
       to: testEmail,

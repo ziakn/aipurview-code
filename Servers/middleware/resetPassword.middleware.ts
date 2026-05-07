@@ -5,7 +5,7 @@ import { STATUS_CODE } from "../utils/statusCode.utils";
 const resetPassword = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void | Response> => {
   const token = req.headers.authorization?.split(" ")[1];
 
@@ -55,6 +55,6 @@ const resetPassword = async (
   } catch (error) {
     return res.status(500).json(STATUS_CODE[500]((error as Error).message));
   }
-}
+};
 
 export default resetPassword;

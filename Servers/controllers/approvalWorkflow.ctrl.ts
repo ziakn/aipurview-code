@@ -27,15 +27,12 @@ import { translateError } from "../utils/i18n.utils";
  * @route GET /api/approval-workflows
  * @access Admin only
  */
-export async function getAllApprovalWorkflows(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getAllApprovalWorkflows(req: Request, res: Response): Promise<any> {
   logStructured(
     "processing",
     "fetching all approval workflows",
     "getAllApprovalWorkflows",
-    "approvalWorkflow.ctrl.ts"
+    "approvalWorkflow.ctrl.ts",
   );
 
   try {
@@ -51,7 +48,7 @@ export async function getAllApprovalWorkflows(
       "successful",
       `fetched ${workflows.length} workflows`,
       "getAllApprovalWorkflows",
-      "approvalWorkflow.ctrl.ts"
+      "approvalWorkflow.ctrl.ts",
     );
 
     return res.status(200).json(STATUS_CODE[200](workflows));
@@ -60,7 +57,7 @@ export async function getAllApprovalWorkflows(
       "error",
       "failed to fetch workflows",
       "getAllApprovalWorkflows",
-      "approvalWorkflow.ctrl.ts"
+      "approvalWorkflow.ctrl.ts",
     );
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -71,15 +68,12 @@ export async function getAllApprovalWorkflows(
  * @route GET /api/approval-workflows/:id
  * @access Admin only
  */
-export async function getApprovalWorkflowById(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getApprovalWorkflowById(req: Request, res: Response): Promise<any> {
   logStructured(
     "processing",
     "fetching approval workflow by ID",
     "getApprovalWorkflowById",
-    "approvalWorkflow.ctrl.ts"
+    "approvalWorkflow.ctrl.ts",
   );
 
   try {
@@ -95,10 +89,7 @@ export async function getApprovalWorkflowById(
       return res.status(400).json(STATUS_CODE[400](req.t!("Invalid workflow ID")));
     }
 
-    const workflow = await getApprovalWorkflowByIdQuery(
-      workflowId,
-      organizationId
-    );
+    const workflow = await getApprovalWorkflowByIdQuery(workflowId, organizationId);
 
     if (!workflow) {
       return res.status(404).json(STATUS_CODE[404](req.t!("Workflow not found")));
@@ -108,7 +99,7 @@ export async function getApprovalWorkflowById(
       "successful",
       `fetched workflow ${workflowId}`,
       "getApprovalWorkflowById",
-      "approvalWorkflow.ctrl.ts"
+      "approvalWorkflow.ctrl.ts",
     );
 
     return res.status(200).json(STATUS_CODE[200](workflow.toJSON()));
@@ -117,7 +108,7 @@ export async function getApprovalWorkflowById(
       "error",
       "failed to fetch workflow",
       "getApprovalWorkflowById",
-      "approvalWorkflow.ctrl.ts"
+      "approvalWorkflow.ctrl.ts",
     );
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -128,17 +119,14 @@ export async function getApprovalWorkflowById(
  * @route POST /api/approval-workflows
  * @access Admin only
  */
-export async function createApprovalWorkflow(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function createApprovalWorkflow(req: Request, res: Response): Promise<any> {
   const transaction = await sequelize.transaction();
 
   logStructured(
     "processing",
     "creating approval workflow",
     "createApprovalWorkflow",
-    "approvalWorkflow.ctrl.ts"
+    "approvalWorkflow.ctrl.ts",
   );
 
   try {
@@ -204,7 +192,7 @@ export async function createApprovalWorkflow(
         steps,
       },
       organizationId,
-      transaction
+      transaction,
     );
 
     await transaction.commit();
@@ -213,7 +201,7 @@ export async function createApprovalWorkflow(
       "successful",
       `created workflow ${workflow.id}`,
       "createApprovalWorkflow",
-      "approvalWorkflow.ctrl.ts"
+      "approvalWorkflow.ctrl.ts",
     );
 
     return res.status(201).json(STATUS_CODE[201](workflow.toJSON()));
@@ -223,7 +211,7 @@ export async function createApprovalWorkflow(
       "error",
       "failed to create workflow",
       "createApprovalWorkflow",
-      "approvalWorkflow.ctrl.ts"
+      "approvalWorkflow.ctrl.ts",
     );
 
     if (error instanceof ValidationException) {
@@ -238,17 +226,14 @@ export async function createApprovalWorkflow(
  * @route PUT /api/approval-workflows/:id
  * @access Admin only
  */
-export async function updateApprovalWorkflow(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function updateApprovalWorkflow(req: Request, res: Response): Promise<any> {
   const transaction = await sequelize.transaction();
 
   logStructured(
     "processing",
     "updating approval workflow",
     "updateApprovalWorkflow",
-    "approvalWorkflow.ctrl.ts"
+    "approvalWorkflow.ctrl.ts",
   );
 
   try {
@@ -299,7 +284,7 @@ export async function updateApprovalWorkflow(
       workflowId,
       { workflow_title, description, steps },
       organizationId,
-      transaction
+      transaction,
     );
 
     await transaction.commit();
@@ -312,7 +297,7 @@ export async function updateApprovalWorkflow(
       "successful",
       `updated workflow ${workflowId}`,
       "updateApprovalWorkflow",
-      "approvalWorkflow.ctrl.ts"
+      "approvalWorkflow.ctrl.ts",
     );
 
     return res.status(200).json(STATUS_CODE[200](workflow.toJSON()));
@@ -322,7 +307,7 @@ export async function updateApprovalWorkflow(
       "error",
       "failed to update workflow",
       "updateApprovalWorkflow",
-      "approvalWorkflow.ctrl.ts"
+      "approvalWorkflow.ctrl.ts",
     );
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -333,17 +318,14 @@ export async function updateApprovalWorkflow(
  * @route DELETE /api/approval-workflows/:id
  * @access Admin only
  */
-export async function deleteApprovalWorkflow(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function deleteApprovalWorkflow(req: Request, res: Response): Promise<any> {
   const transaction = await sequelize.transaction();
 
   logStructured(
     "processing",
     "deleting approval workflow",
     "deleteApprovalWorkflow",
-    "approvalWorkflow.ctrl.ts"
+    "approvalWorkflow.ctrl.ts",
   );
 
   try {
@@ -369,7 +351,7 @@ export async function deleteApprovalWorkflow(
       "successful",
       `deleted workflow ${workflowId}`,
       "deleteApprovalWorkflow",
-      "approvalWorkflow.ctrl.ts"
+      "approvalWorkflow.ctrl.ts",
     );
 
     return res
@@ -381,7 +363,7 @@ export async function deleteApprovalWorkflow(
       "error",
       "failed to delete workflow",
       "deleteApprovalWorkflow",
-      "approvalWorkflow.ctrl.ts"
+      "approvalWorkflow.ctrl.ts",
     );
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }

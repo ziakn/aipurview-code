@@ -41,7 +41,7 @@ export async function getAuditLedger(req: Request, res: Response): Promise<any> 
 
     const countResult: any[] = await sequelize.query(
       `SELECT COUNT(*) as count FROM audit_ledger al ${whereClause}`,
-      { replacements, type: QueryTypes.SELECT }
+      { replacements, type: QueryTypes.SELECT },
     );
     const total = parseInt(countResult[0]?.count || "0", 10);
 
@@ -55,7 +55,7 @@ export async function getAuditLedger(req: Request, res: Response): Promise<any> 
       {
         replacements,
         type: QueryTypes.SELECT,
-      }
+      },
     );
 
     await logSuccess({
@@ -74,7 +74,7 @@ export async function getAuditLedger(req: Request, res: Response): Promise<any> 
         limit,
         offset,
         hasMore: offset + entries.length < total,
-      })
+      }),
     );
   } catch (error) {
     await logFailure({

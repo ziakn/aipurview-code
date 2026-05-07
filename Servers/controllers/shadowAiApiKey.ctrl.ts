@@ -53,7 +53,7 @@ export async function createApiKey(req: Request, res: Response) {
       keyHash,
       keyPrefix,
       label || null,
-      userId
+      userId,
     );
 
     await logSuccess({
@@ -70,7 +70,7 @@ export async function createApiKey(req: Request, res: Response) {
       STATUS_CODE[201]({
         ...apiKeyRecord,
         key, // Full key shown only once
-      })
+      }),
     );
   } catch (error) {
     await logFailure({
@@ -144,9 +144,7 @@ export async function revokeApiKey(req: Request, res: Response) {
   const functionName = "revokeApiKey";
   const userId = req.userId!;
   const organizationId = req.organizationId!;
-  const keyId = parseInt(
-    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id
-  );
+  const keyId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
   logProcessing({
     description: `revoking Shadow AI API key: ${keyId}`,
@@ -212,9 +210,7 @@ export async function deleteApiKey(req: Request, res: Response) {
   const functionName = "deleteApiKey";
   const userId = req.userId!;
   const organizationId = req.organizationId!;
-  const keyId = parseInt(
-    Array.isArray(req.params.id) ? req.params.id[0] : req.params.id
-  );
+  const keyId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
   logProcessing({
     description: `permanently deleting Shadow AI API key: ${keyId}`,

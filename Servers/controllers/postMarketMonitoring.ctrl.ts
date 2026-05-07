@@ -45,11 +45,7 @@ import {
   buildPMMReportData,
   generateAndUploadPMMReport,
 } from "../services/postMarketMonitoring/pmmPdfGenerator";
-import {
-  logFailure,
-  logProcessing,
-  logSuccess,
-} from "../utils/logger/logHelper";
+import { logFailure, logProcessing, logSuccess } from "../utils/logger/logHelper";
 
 const FILE_NAME = "postMarketMonitoring.ctrl.ts";
 
@@ -57,11 +53,11 @@ const FILE_NAME = "postMarketMonitoring.ctrl.ts";
 // Configuration Endpoints
 // ============================================================================
 
-export async function getConfigByProjectId(
-  req: Request,
-  res: Response
-): Promise<any> {
-  const projectId = parseInt(Array.isArray(req.params.projectId) ? req.params.projectId[0] : req.params.projectId, 10);
+export async function getConfigByProjectId(req: Request, res: Response): Promise<any> {
+  const projectId = parseInt(
+    Array.isArray(req.params.projectId) ? req.params.projectId[0] : req.params.projectId,
+    10,
+  );
 
   logProcessing({
     description: `Getting PMM config for project ${projectId}`,
@@ -136,7 +132,7 @@ export async function createConfig(req: Request, res: Response): Promise<any> {
     // Check if config already exists
     const existingConfig = await getPMMConfigByProjectIdQuery(
       configData.project_id,
-      req.organizationId!
+      req.organizationId!,
     );
     if (existingConfig) {
       await transaction.rollback();
@@ -146,18 +142,11 @@ export async function createConfig(req: Request, res: Response): Promise<any> {
     }
 
     // Create config
-    const config = await createPMMConfigQuery(
-      configData,
-      userId,
-      req.organizationId!,
-      transaction
-    );
+    const config = await createPMMConfigQuery(configData, userId, req.organizationId!, transaction);
 
     // Seed default questions
-    await seedDefaultQuestions(
-      config.id!,
-      req.organizationId!,
-      (question, organizationId) => addPMMQuestionQuery(question, organizationId, transaction)
+    await seedDefaultQuestions(config.id!, req.organizationId!, (question, organizationId) =>
+      addPMMQuestionQuery(question, organizationId, transaction),
     );
 
     await transaction.commit();
@@ -165,7 +154,7 @@ export async function createConfig(req: Request, res: Response): Promise<any> {
     // Fetch complete config with questions count
     const completeConfig = await getPMMConfigByProjectIdQuery(
       configData.project_id,
-      req.organizationId!
+      req.organizationId!,
     );
 
     await logSuccess({
@@ -193,7 +182,10 @@ export async function createConfig(req: Request, res: Response): Promise<any> {
 }
 
 export async function updateConfig(req: Request, res: Response): Promise<any> {
-  const configId = parseInt(Array.isArray(req.params.configId) ? req.params.configId[0] : req.params.configId, 10);
+  const configId = parseInt(
+    Array.isArray(req.params.configId) ? req.params.configId[0] : req.params.configId,
+    10,
+  );
 
   logProcessing({
     description: `Updating PMM config ${configId}`,
@@ -247,7 +239,10 @@ export async function updateConfig(req: Request, res: Response): Promise<any> {
 }
 
 export async function deleteConfig(req: Request, res: Response): Promise<any> {
-  const configId = parseInt(Array.isArray(req.params.configId) ? req.params.configId[0] : req.params.configId, 10);
+  const configId = parseInt(
+    Array.isArray(req.params.configId) ? req.params.configId[0] : req.params.configId,
+    10,
+  );
 
   logProcessing({
     description: `Deleting PMM config ${configId}`,
@@ -304,7 +299,12 @@ export async function deleteConfig(req: Request, res: Response): Promise<any> {
 // ============================================================================
 
 export async function getQuestions(req: Request, res: Response): Promise<any> {
-  const configId = req.params.configId ? parseInt(Array.isArray(req.params.configId) ? req.params.configId[0] : req.params.configId, 10) : null;
+  const configId = req.params.configId
+    ? parseInt(
+        Array.isArray(req.params.configId) ? req.params.configId[0] : req.params.configId,
+        10,
+      )
+    : null;
 
   logProcessing({
     description: `Getting PMM questions for config ${configId}`,
@@ -392,7 +392,10 @@ export async function addQuestion(req: Request, res: Response): Promise<any> {
 }
 
 export async function updateQuestion(req: Request, res: Response): Promise<any> {
-  const questionId = parseInt(Array.isArray(req.params.questionId) ? req.params.questionId[0] : req.params.questionId, 10);
+  const questionId = parseInt(
+    Array.isArray(req.params.questionId) ? req.params.questionId[0] : req.params.questionId,
+    10,
+  );
 
   logProcessing({
     description: `Updating PMM question ${questionId}`,
@@ -449,7 +452,10 @@ export async function updateQuestion(req: Request, res: Response): Promise<any> 
 }
 
 export async function deleteQuestion(req: Request, res: Response): Promise<any> {
-  const questionId = parseInt(Array.isArray(req.params.questionId) ? req.params.questionId[0] : req.params.questionId, 10);
+  const questionId = parseInt(
+    Array.isArray(req.params.questionId) ? req.params.questionId[0] : req.params.questionId,
+    10,
+  );
 
   logProcessing({
     description: `Deleting PMM question ${questionId}`,
@@ -552,7 +558,10 @@ export async function reorderQuestions(req: Request, res: Response): Promise<any
 // ============================================================================
 
 export async function getActiveCycle(req: Request, res: Response): Promise<any> {
-  const projectId = parseInt(Array.isArray(req.params.projectId) ? req.params.projectId[0] : req.params.projectId, 10);
+  const projectId = parseInt(
+    Array.isArray(req.params.projectId) ? req.params.projectId[0] : req.params.projectId,
+    10,
+  );
 
   logProcessing({
     description: `Getting active PMM cycle for project ${projectId}`,
@@ -607,7 +616,10 @@ export async function getActiveCycle(req: Request, res: Response): Promise<any> 
 }
 
 export async function getCycleById(req: Request, res: Response): Promise<any> {
-  const cycleId = parseInt(Array.isArray(req.params.cycleId) ? req.params.cycleId[0] : req.params.cycleId, 10);
+  const cycleId = parseInt(
+    Array.isArray(req.params.cycleId) ? req.params.cycleId[0] : req.params.cycleId,
+    10,
+  );
 
   logProcessing({
     description: `Getting PMM cycle ${cycleId}`,
@@ -652,7 +664,10 @@ export async function getCycleById(req: Request, res: Response): Promise<any> {
 }
 
 export async function getResponses(req: Request, res: Response): Promise<any> {
-  const cycleId = parseInt(Array.isArray(req.params.cycleId) ? req.params.cycleId[0] : req.params.cycleId, 10);
+  const cycleId = parseInt(
+    Array.isArray(req.params.cycleId) ? req.params.cycleId[0] : req.params.cycleId,
+    10,
+  );
 
   logProcessing({
     description: `Getting PMM responses for cycle ${cycleId}`,
@@ -699,7 +714,10 @@ export async function getResponses(req: Request, res: Response): Promise<any> {
 }
 
 export async function saveResponses(req: Request, res: Response): Promise<any> {
-  const cycleId = parseInt(Array.isArray(req.params.cycleId) ? req.params.cycleId[0] : req.params.cycleId, 10);
+  const cycleId = parseInt(
+    Array.isArray(req.params.cycleId) ? req.params.cycleId[0] : req.params.cycleId,
+    10,
+  );
 
   logProcessing({
     description: `Saving PMM responses for cycle ${cycleId}`,
@@ -733,11 +751,7 @@ export async function saveResponses(req: Request, res: Response): Promise<any> {
       }));
     }
 
-    const savedResponses = await savePMMResponsesQuery(
-      cycleId,
-      responses,
-      req.organizationId!
-    );
+    const savedResponses = await savePMMResponsesQuery(cycleId, responses, req.organizationId!);
 
     await logSuccess({
       eventType: "Update",
@@ -763,7 +777,10 @@ export async function saveResponses(req: Request, res: Response): Promise<any> {
 }
 
 export async function submitCycle(req: Request, res: Response): Promise<any> {
-  const cycleId = parseInt(Array.isArray(req.params.cycleId) ? req.params.cycleId[0] : req.params.cycleId, 10);
+  const cycleId = parseInt(
+    Array.isArray(req.params.cycleId) ? req.params.cycleId[0] : req.params.cycleId,
+    10,
+  );
 
   logProcessing({
     description: `Submitting PMM cycle ${cycleId}`,
@@ -805,28 +822,27 @@ export async function submitCycle(req: Request, res: Response): Promise<any> {
     await completeCycleQuery(cycleId, userId, req.organizationId!, transaction);
 
     // Get context snapshot
-    const contextSnapshot = await getContextSnapshotQuery(
-      cycle.project_id!,
-      req.organizationId!
-    );
+    const contextSnapshot = await getContextSnapshotQuery(cycle.project_id!, req.organizationId!);
 
     // Get all responses for report (includes question details from JOIN)
-    const allResponses = await getPMMResponsesQuery(cycleId, req.organizationId!) as IPMMResponseWithQuestion[];
+    const allResponses = (await getPMMResponsesQuery(
+      cycleId,
+      req.organizationId!,
+    )) as IPMMResponseWithQuestion[];
 
     // Get user info for report
-    const userResult = await sequelize.query(
+    const userResult = (await sequelize.query(
       `SELECT name, surname FROM users WHERE id = :userId`,
-      { replacements: { userId } }
-    ) as [Array<{ name: string; surname: string }>, number];
+      { replacements: { userId } },
+    )) as [Array<{ name: string; surname: string }>, number];
     const userName = userResult[0][0]
       ? `${userResult[0][0].name} ${userResult[0][0].surname}`
       : "Unknown";
 
     // Get organization info
-    const orgResult = await sequelize.query(
-      `SELECT name FROM organizations WHERE id = :orgId`,
-      { replacements: { orgId: req.organizationId } }
-    ) as [Array<{ name: string }>, number];
+    const orgResult = (await sequelize.query(`SELECT name FROM organizations WHERE id = :orgId`, {
+      replacements: { orgId: req.organizationId },
+    })) as [Array<{ name: string }>, number];
     const orgName = orgResult[0][0]?.name || "Organization";
 
     // Build report data
@@ -839,7 +855,7 @@ export async function submitCycle(req: Request, res: Response): Promise<any> {
       new Date(),
       userName,
       contextSnapshot,
-      allResponses
+      allResponses,
     );
 
     // Generate and upload PDF report
@@ -847,7 +863,7 @@ export async function submitCycle(req: Request, res: Response): Promise<any> {
       reportData,
       userId,
       cycle.project_id!,
-      req.organizationId!
+      req.organizationId!,
     );
 
     // Create report record
@@ -857,7 +873,7 @@ export async function submitCycle(req: Request, res: Response): Promise<any> {
       uploadResult.success ? uploadResult.fileId! : null,
       userId,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     await transaction.commit();
@@ -892,7 +908,10 @@ export async function submitCycle(req: Request, res: Response): Promise<any> {
 }
 
 export async function flagConcern(req: Request, res: Response): Promise<any> {
-  const cycleId = parseInt(Array.isArray(req.params.cycleId) ? req.params.cycleId[0] : req.params.cycleId, 10);
+  const cycleId = parseInt(
+    Array.isArray(req.params.cycleId) ? req.params.cycleId[0] : req.params.cycleId,
+    10,
+  );
 
   logProcessing({
     description: `Flagging concern for PMM cycle ${cycleId}`,
@@ -925,7 +944,7 @@ export async function flagConcern(req: Request, res: Response): Promise<any> {
     await savePMMResponsesQuery(
       cycleId,
       [{ question_id, response_value, is_flagged: true }],
-      req.organizationId!
+      req.organizationId!,
     );
 
     await logSuccess({
@@ -968,13 +987,47 @@ export async function getReports(req: Request, res: Response): Promise<any> {
 
   try {
     const filters: IPMMReportsFilterRequest = {
-      project_id: req.query.project_id ? parseInt(Array.isArray(req.query.project_id) ? String(req.query.project_id[0]) : String(req.query.project_id), 10) : undefined,
-      start_date: Array.isArray(req.query.start_date) ? String(req.query.start_date[0]) : (req.query.start_date ? String(req.query.start_date) : undefined),
-      end_date: Array.isArray(req.query.end_date) ? String(req.query.end_date[0]) : (req.query.end_date ? String(req.query.end_date) : undefined),
-      completed_by: req.query.completed_by ? parseInt(Array.isArray(req.query.completed_by) ? String(req.query.completed_by[0]) : String(req.query.completed_by), 10) : undefined,
-      flagged_only: Array.isArray(req.query.flagged_only) ? String(req.query.flagged_only[0]) === "true" : String(req.query.flagged_only) === "true",
-      page: req.query.page ? parseInt(Array.isArray(req.query.page) ? String(req.query.page[0]) : String(req.query.page), 10) : 1,
-      limit: req.query.limit ? parseInt(Array.isArray(req.query.limit) ? String(req.query.limit[0]) : String(req.query.limit), 10) : 10,
+      project_id: req.query.project_id
+        ? parseInt(
+            Array.isArray(req.query.project_id)
+              ? String(req.query.project_id[0])
+              : String(req.query.project_id),
+            10,
+          )
+        : undefined,
+      start_date: Array.isArray(req.query.start_date)
+        ? String(req.query.start_date[0])
+        : req.query.start_date
+          ? String(req.query.start_date)
+          : undefined,
+      end_date: Array.isArray(req.query.end_date)
+        ? String(req.query.end_date[0])
+        : req.query.end_date
+          ? String(req.query.end_date)
+          : undefined,
+      completed_by: req.query.completed_by
+        ? parseInt(
+            Array.isArray(req.query.completed_by)
+              ? String(req.query.completed_by[0])
+              : String(req.query.completed_by),
+            10,
+          )
+        : undefined,
+      flagged_only: Array.isArray(req.query.flagged_only)
+        ? String(req.query.flagged_only[0]) === "true"
+        : String(req.query.flagged_only) === "true",
+      page: req.query.page
+        ? parseInt(
+            Array.isArray(req.query.page) ? String(req.query.page[0]) : String(req.query.page),
+            10,
+          )
+        : 1,
+      limit: req.query.limit
+        ? parseInt(
+            Array.isArray(req.query.limit) ? String(req.query.limit[0]) : String(req.query.limit),
+            10,
+          )
+        : 10,
     };
 
     // Validate pagination
@@ -991,7 +1044,7 @@ export async function getReports(req: Request, res: Response): Promise<any> {
         page: filters.page,
         limit: filters.limit,
       },
-      req.organizationId!
+      req.organizationId!,
     );
 
     await logSuccess({
@@ -1002,12 +1055,14 @@ export async function getReports(req: Request, res: Response): Promise<any> {
       userId: req.userId!,
       tenantId: req.organizationId!,
     });
-    return res.status(200).json(STATUS_CODE[200]({
-      reports: result.reports,
-      total: result.total,
-      page: filters.page,
-      limit: filters.limit,
-    }));
+    return res.status(200).json(
+      STATUS_CODE[200]({
+        reports: result.reports,
+        total: result.total,
+        page: filters.page,
+        limit: filters.limit,
+      }),
+    );
   } catch (error) {
     await logFailure({
       eventType: "Read",
@@ -1023,7 +1078,10 @@ export async function getReports(req: Request, res: Response): Promise<any> {
 }
 
 export async function downloadReport(req: Request, res: Response): Promise<any> {
-  const reportId = parseInt(Array.isArray(req.params.reportId) ? req.params.reportId[0] : req.params.reportId, 10);
+  const reportId = parseInt(
+    Array.isArray(req.params.reportId) ? req.params.reportId[0] : req.params.reportId,
+    10,
+  );
 
   logProcessing({
     description: `Downloading PMM report ${reportId}`,
@@ -1039,19 +1097,22 @@ export async function downloadReport(req: Request, res: Response): Promise<any> 
 
   try {
     // Get report with file info using parameterized query
-    const reportResult = await sequelize.query(
+    const reportResult = (await sequelize.query(
       `SELECT r.*, f.filename, f.file_path, f.type as mime_type
        FROM post_market_monitoring_reports r
        LEFT JOIN files f ON r.file_id = f.id AND f.organization_id = :organizationId
        WHERE r.organization_id = :organizationId AND r.id = :reportId`,
-      { replacements: { reportId, organizationId: req.organizationId } }
-    ) as [Array<{
-      id: number;
-      file_id: number | null;
-      filename: string;
-      file_path: string;
-      mime_type: string;
-    }>, number];
+      { replacements: { reportId, organizationId: req.organizationId } },
+    )) as [
+      Array<{
+        id: number;
+        file_id: number | null;
+        filename: string;
+        file_path: string;
+        mime_type: string;
+      }>,
+      number,
+    ];
 
     if (reportResult[0].length === 0) {
       return res.status(404).json(STATUS_CODE[404]({ message: req.t!("Report not found") }));
@@ -1093,7 +1154,10 @@ export async function downloadReport(req: Request, res: Response): Promise<any> 
 // ============================================================================
 
 export async function reassignStakeholder(req: Request, res: Response): Promise<any> {
-  const cycleId = parseInt(Array.isArray(req.params.cycleId) ? req.params.cycleId[0] : req.params.cycleId, 10);
+  const cycleId = parseInt(
+    Array.isArray(req.params.cycleId) ? req.params.cycleId[0] : req.params.cycleId,
+    10,
+  );
 
   logProcessing({
     description: `Reassigning stakeholder for PMM cycle ${cycleId}`,
@@ -1126,7 +1190,13 @@ export async function reassignStakeholder(req: Request, res: Response): Promise<
       `UPDATE post_market_monitoring_cycles
        SET assigned_stakeholder_id = :stakeholderId
        WHERE organization_id = :organizationId AND id = :cycleId`,
-      { replacements: { cycleId, stakeholderId: stakeholder_id, organizationId: req.organizationId } }
+      {
+        replacements: {
+          cycleId,
+          stakeholderId: stakeholder_id,
+          organizationId: req.organizationId,
+        },
+      },
     );
 
     await logSuccess({
@@ -1155,7 +1225,10 @@ export async function reassignStakeholder(req: Request, res: Response): Promise<
 }
 
 export async function startNewCycle(req: Request, res: Response): Promise<any> {
-  const projectId = parseInt(Array.isArray(req.params.projectId) ? req.params.projectId[0] : req.params.projectId, 10);
+  const projectId = parseInt(
+    Array.isArray(req.params.projectId) ? req.params.projectId[0] : req.params.projectId,
+    10,
+  );
 
   logProcessing({
     description: `Starting new PMM cycle for project ${projectId}`,
@@ -1215,7 +1288,7 @@ export async function startNewCycle(req: Request, res: Response): Promise<any> {
       dueDate,
       stakeholder?.id || null,
       req.organizationId!,
-      transaction
+      transaction,
     );
 
     await transaction.commit();

@@ -7,10 +7,7 @@ import { translateError } from "../utils/i18n.utils";
 /**
  * Get change history for a specific file with pagination support
  */
-export async function getFileChangeHistoryById(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getFileChangeHistoryById(req: Request, res: Response): Promise<any> {
   const fileId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
   // Validate file ID
@@ -25,26 +22,20 @@ export async function getFileChangeHistoryById(
     "processing",
     `fetching change history for file id: ${fileId} (limit: ${limit}, offset: ${offset})`,
     "getFileChangeHistoryById",
-    "fileChangeHistory.ctrl.ts"
+    "fileChangeHistory.ctrl.ts",
   );
   logger.debug(
-    `Fetching change history for file with id: ${fileId} (limit: ${limit}, offset: ${offset})`
+    `Fetching change history for file with id: ${fileId} (limit: ${limit}, offset: ${offset})`,
   );
 
   try {
-    const result = await getEntityChangeHistory(
-      "file",
-      fileId,
-      req.organizationId!,
-      limit,
-      offset
-    );
+    const result = await getEntityChangeHistory("file", fileId, req.organizationId!, limit, offset);
 
     logStructured(
       "successful",
       `change history retrieved for file id: ${fileId} (${result.data.length} entries, hasMore: ${result.hasMore})`,
       "getFileChangeHistoryById",
-      "fileChangeHistory.ctrl.ts"
+      "fileChangeHistory.ctrl.ts",
     );
 
     return res.status(200).json(STATUS_CODE[200](result));
@@ -53,7 +44,7 @@ export async function getFileChangeHistoryById(
       "error",
       "failed to retrieve change history",
       "getFileChangeHistoryById",
-      "fileChangeHistory.ctrl.ts"
+      "fileChangeHistory.ctrl.ts",
     );
     logger.error("Error in getFileChangeHistoryById:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));

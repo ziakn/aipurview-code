@@ -19,12 +19,7 @@ import { translateError } from "../utils/i18n.utils";
  * - intervalHours: number (optional) - Interval in hours for data points (default: 24)
  */
 export async function getTimeseries(req: Request, res: Response) {
-  logStructured(
-    "processing",
-    "starting getTimeseries",
-    "getTimeseries",
-    "riskHistory.ctrl.ts"
-  );
+  logStructured("processing", "starting getTimeseries", "getTimeseries", "riskHistory.ctrl.ts");
   logger.debug("🔍 Fetching timeseries data for risks");
 
   try {
@@ -41,7 +36,7 @@ export async function getTimeseries(req: Request, res: Response) {
     }
 
     // Validate parameter is one of the allowed values
-    const validParameters = ['severity', 'likelihood', 'mitigation_status', 'risk_level'];
+    const validParameters = ["severity", "likelihood", "mitigation_status", "risk_level"];
     if (!validParameters.includes(parameter)) {
       logStructured(
         "error",
@@ -59,7 +54,7 @@ export async function getTimeseries(req: Request, res: Response) {
     // Check if using timeframe or custom date range
     if (req.query.timeframe) {
       const timeframe = req.query.timeframe as string;
-      const validTimeframes = ['7days', '15days', '1month', '3months', '6months', '1year'];
+      const validTimeframes = ["7days", "15days", "1month", "3months", "6months", "1year"];
 
       if (!validTimeframes.includes(timeframe)) {
         logStructured(
@@ -75,8 +70,8 @@ export async function getTimeseries(req: Request, res: Response) {
 
       timeseriesData = await getTimeseriesForTimeframe(
         parameter,
-        timeframe as '7days' | '15days' | '1month' | '3months' | '6months' | '1year',
-        req.organizationId!
+        timeframe as "7days" | "15days" | "1month" | "3months" | "6months" | "1year",
+        req.organizationId!,
       );
     } else if (req.query.startDate && req.query.endDate) {
       const startDate = new Date(req.query.startDate as string);
@@ -114,18 +109,18 @@ export async function getTimeseries(req: Request, res: Response) {
         startDate,
         endDate,
         req.organizationId!,
-        intervalHours
+        intervalHours,
       );
     } else {
       // Default to 7 days
-      timeseriesData = await getTimeseriesForTimeframe(parameter, '7days', req.organizationId!);
+      timeseriesData = await getTimeseriesForTimeframe(parameter, "7days", req.organizationId!);
     }
 
     logStructured(
       "successful",
       `timeseries data fetched for parameter ${parameter}`,
       "getTimeseries",
-      "riskHistory.ctrl.ts"
+      "riskHistory.ctrl.ts",
     );
 
     return res.status(200).json(
@@ -133,7 +128,7 @@ export async function getTimeseries(req: Request, res: Response) {
         parameter,
         data: timeseriesData,
         count: timeseriesData.length,
-      })
+      }),
     );
   } catch (error) {
     logStructured(
@@ -157,7 +152,7 @@ export async function getCurrentCounts(req: Request, res: Response) {
     "processing",
     "starting getCurrentCounts",
     "getCurrentCounts",
-    "riskHistory.ctrl.ts"
+    "riskHistory.ctrl.ts",
   );
   logger.debug("🔍 Fetching current parameter counts");
 
@@ -175,7 +170,7 @@ export async function getCurrentCounts(req: Request, res: Response) {
     }
 
     // Validate parameter is one of the allowed values
-    const validParameters = ['severity', 'likelihood', 'mitigation_status', 'risk_level'];
+    const validParameters = ["severity", "likelihood", "mitigation_status", "risk_level"];
     if (!validParameters.includes(parameter)) {
       logStructured(
         "error",
@@ -194,14 +189,14 @@ export async function getCurrentCounts(req: Request, res: Response) {
       "successful",
       `current counts fetched for parameter ${parameter}`,
       "getCurrentCounts",
-      "riskHistory.ctrl.ts"
+      "riskHistory.ctrl.ts",
     );
 
     return res.status(200).json(
       STATUS_CODE[200]({
         parameter,
         counts,
-      })
+      }),
     );
   } catch (error) {
     logStructured(
@@ -222,12 +217,7 @@ export async function getCurrentCounts(req: Request, res: Response) {
  * Note: The snapshot counts will be automatically stored in snapshot_data as JSONB
  */
 export async function createSnapshot(req: Request, res: Response) {
-  logStructured(
-    "processing",
-    "starting createSnapshot",
-    "createSnapshot",
-    "riskHistory.ctrl.ts"
-  );
+  logStructured("processing", "starting createSnapshot", "createSnapshot", "riskHistory.ctrl.ts");
   logger.debug("📸 Creating manual history snapshot");
 
   try {
@@ -244,7 +234,7 @@ export async function createSnapshot(req: Request, res: Response) {
     }
 
     // Validate parameter is one of the allowed values
-    const validParameters = ['severity', 'likelihood', 'mitigation_status', 'risk_level'];
+    const validParameters = ["severity", "likelihood", "mitigation_status", "risk_level"];
     if (!validParameters.includes(parameter)) {
       logStructured(
         "error",
@@ -264,19 +254,12 @@ export async function createSnapshot(req: Request, res: Response) {
       "successful",
       `snapshot created for parameter ${parameter}`,
       "createSnapshot",
-      "riskHistory.ctrl.ts"
-    );
-
-    return res.status(201).json(
-      STATUS_CODE[201](snapshot.toJSON())
-    );
-  } catch (error) {
-    logStructured(
-      "error",
-      "error creating snapshot",
-      "createSnapshot",
       "riskHistory.ctrl.ts",
     );
+
+    return res.status(201).json(STATUS_CODE[201](snapshot.toJSON()));
+  } catch (error) {
+    logStructured("error", "error creating snapshot", "createSnapshot", "riskHistory.ctrl.ts");
     logger.error("❌ Error creating snapshot:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }

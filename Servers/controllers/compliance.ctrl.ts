@@ -31,9 +31,7 @@ export async function getComplianceScore(req: Request, res: Response) {
       return res.status(400).json(STATUS_CODE[400](req.t!("Organization ID is required")));
     }
 
-    const complianceScore = await calculateComplianceScore(
-      req.organizationId!
-    );
+    const complianceScore = await calculateComplianceScore(req.organizationId!);
 
     await logSuccess({
       eventType: "Read",
@@ -76,7 +74,11 @@ export async function getComplianceScoreByOrganization(req: Request, res: Respon
   });
 
   try {
-    const organizationId = parseInt(Array.isArray(req.params.organizationId) ? req.params.organizationId[0] : req.params.organizationId);
+    const organizationId = parseInt(
+      Array.isArray(req.params.organizationId)
+        ? req.params.organizationId[0]
+        : req.params.organizationId,
+    );
 
     if (isNaN(organizationId)) {
       return res.status(400).json(STATUS_CODE[400](req.t!("Invalid organization ID")));
@@ -87,9 +89,7 @@ export async function getComplianceScoreByOrganization(req: Request, res: Respon
       return res.status(403).json(STATUS_CODE[403](req.t!("Access denied: User does not have permission to access this organization's compliance data")));
     }
 
-    const complianceScore = await calculateComplianceScore(
-      organizationId
-    );
+    const complianceScore = await calculateComplianceScore(organizationId);
 
     await logSuccess({
       eventType: "Read",
@@ -132,7 +132,11 @@ export async function getComplianceDetails(req: Request, res: Response) {
   });
 
   try {
-    const organizationId = parseInt(Array.isArray(req.params.organizationId) ? req.params.organizationId[0] : req.params.organizationId);
+    const organizationId = parseInt(
+      Array.isArray(req.params.organizationId)
+        ? req.params.organizationId[0]
+        : req.params.organizationId,
+    );
 
     if (isNaN(organizationId)) {
       return res.status(400).json(STATUS_CODE[400](req.t!("Invalid organization ID")));
@@ -143,41 +147,39 @@ export async function getComplianceDetails(req: Request, res: Response) {
       return res.status(403).json(STATUS_CODE[403](req.t!("Access denied: User does not have permission to access this organization's compliance details")));
     }
 
-    const complianceScore = await calculateComplianceScore(
-      organizationId
-    );
+    const complianceScore = await calculateComplianceScore(organizationId);
 
     // Enhanced response for drill-down with additional insights
     const detailedResponse = {
       ...complianceScore,
       insights: {
-        strongestModule: Object.entries(complianceScore.modules)
-          .reduce((max, [key, module]) =>
+        strongestModule: Object.entries(complianceScore.modules).reduce(
+          (max, [key, module]) =>
             module.score > max.score ? { name: key, score: module.score } : max,
-            { name: '', score: 0 }
-          ),
-        weakestModule: Object.entries(complianceScore.modules)
-          .reduce((min, [key, module]) =>
+          { name: "", score: 0 },
+        ),
+        weakestModule: Object.entries(complianceScore.modules).reduce(
+          (min, [key, module]) =>
             module.score < min.score ? { name: key, score: module.score } : min,
-            { name: '', score: 100 }
-          ),
+          { name: "", score: 100 },
+        ),
         improvementPriority: Object.entries(complianceScore.modules)
-          .sort(([,a], [,b]) => a.score - b.score)
+          .sort(([, a], [, b]) => a.score - b.score)
           .map(([name, module]) => ({
             module: name,
             score: module.score,
             weight: module.weight,
-            impact: (100 - module.score) * module.weight
+            impact: (100 - module.score) * module.weight,
           })),
-        overallTrend: 'stable', // TODO: Calculate from historical data
+        overallTrend: "stable", // TODO: Calculate from historical data
         dataQuality: {
           riskManagement: complianceScore.modules.riskManagement.qualityScore,
           vendorManagement: complianceScore.modules.vendorManagement.qualityScore,
           projectGovernance: complianceScore.modules.projectGovernance.qualityScore,
           modelLifecycle: complianceScore.modules.modelLifecycle.qualityScore,
-          policyDocumentation: complianceScore.modules.policyDocumentation.qualityScore
-        }
-      }
+          policyDocumentation: complianceScore.modules.policyDocumentation.qualityScore,
+        },
+      },
     };
 
     await logSuccess({

@@ -16,7 +16,7 @@ export async function getSubscriptionController(_req: Request, res: Response) {
     "processing",
     "Fetching subscriptions",
     "getSubscriptionController",
-    "subscriptions.ctrl.ts"
+    "subscriptions.ctrl.ts",
   );
   logger.debug("🔍 Fetching subscriptions");
 
@@ -28,7 +28,7 @@ export async function getSubscriptionController(_req: Request, res: Response) {
         "successful",
         "Subscriptions fetched successfully",
         "getSubscriptionController",
-        "subscriptions.ctrl.ts"
+        "subscriptions.ctrl.ts",
       );
       return res.status(200).json(STATUS_CODE[200](subscriptions));
     }
@@ -37,7 +37,7 @@ export async function getSubscriptionController(_req: Request, res: Response) {
       "error",
       "No subscriptions found",
       "getSubscriptionController",
-      "subscriptions.ctrl.ts"
+      "subscriptions.ctrl.ts",
     );
     return res
       .status(404)
@@ -47,7 +47,7 @@ export async function getSubscriptionController(_req: Request, res: Response) {
       "error",
       "Error fetching subscriptions",
       "getSubscriptionController",
-      "subscriptions.ctrl.ts"
+      "subscriptions.ctrl.ts",
     );
     logger.error("❌ Error fetching subscriptions:", error);
     return res
@@ -56,25 +56,15 @@ export async function getSubscriptionController(_req: Request, res: Response) {
   }
 }
 
-export async function createSubscriptionController(
-  req: Request,
-  res: Response
-) {
+export async function createSubscriptionController(req: Request, res: Response) {
   const transaction = await sequelize.transaction();
-  const {
-    organization_id,
-    tier_id,
-    stripe_sub_id,
-    status,
-    start_date,
-    end_date,
-  } = req.body;
+  const { organization_id, tier_id, stripe_sub_id, status, start_date, end_date } = req.body;
 
   logStructured(
     "processing",
     "Creating subscription",
     "createSubscriptionController",
-    "subscriptions.ctrl.ts"
+    "subscriptions.ctrl.ts",
   );
   logger.debug("🔍 Creating subscription");
 
@@ -90,17 +80,14 @@ export async function createSubscriptionController(
       updated_at: new Date(),
     });
 
-    const subscription = await createSubscription(
-      subscriptionModel,
-      transaction
-    );
+    const subscription = await createSubscription(subscriptionModel, transaction);
     if (subscription) {
       await transaction.commit();
       logStructured(
         "successful",
         "Subscription created successfully",
         "createSubscriptionController",
-        "subscriptions.ctrl.ts"
+        "subscriptions.ctrl.ts",
       );
       return res.status(201).json(STATUS_CODE[201](subscription));
     }
@@ -109,7 +96,7 @@ export async function createSubscriptionController(
       "error",
       "Failed to create subscription",
       "createSubscriptionController",
-      "subscriptions.ctrl.ts"
+      "subscriptions.ctrl.ts",
     );
     await logEvent("Error", `Failed to create subscription`, req.userId!, req.organizationId!);
     await transaction.rollback();
@@ -121,20 +108,15 @@ export async function createSubscriptionController(
       "error",
       "Error creating subscription",
       "createSubscriptionController",
-      "subscriptions.ctrl.ts"
+      "subscriptions.ctrl.ts",
     );
     logger.error("❌ Error creating subscription:", error);
     await transaction.rollback();
-    return res
-      .status(500)
-      .json(STATUS_CODE[500]({ message: (error as Error).message }));
+    return res.status(500).json(STATUS_CODE[500]({ message: (error as Error).message }));
   }
 }
 
-export async function updateSubscriptionController(
-  req: Request,
-  res: Response
-) {
+export async function updateSubscriptionController(req: Request, res: Response) {
   const subscriptionId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
   // Get existing subscription for business rule validation
   try {
@@ -150,7 +132,7 @@ export async function updateSubscriptionController(
     "processing",
     "Updating subscription",
     "updateSubscriptionController",
-    "subscriptions.ctrl.ts"
+    "subscriptions.ctrl.ts",
   );
   logger.debug("✏️ Updating subscription");
 
@@ -175,7 +157,7 @@ export async function updateSubscriptionController(
           end_date: subscription.end_date,
           updated_at: new Date(),
         },
-        transaction
+        transaction,
       )) as SubscriptionModel;
 
       await transaction.commit();
@@ -183,9 +165,14 @@ export async function updateSubscriptionController(
         "successful",
         "Subscription updated successfully",
         "updateSubscriptionController",
-        "subscriptions.ctrl.ts"
+        "subscriptions.ctrl.ts",
       );
-      await logEvent("Update", `Subscription updated successfully`, req.userId!, req.organizationId!);
+      await logEvent(
+        "Update",
+        `Subscription updated successfully`,
+        req.userId!,
+        req.organizationId!,
+      );
       return res.status(200).json(STATUS_CODE[200](updatedSubscription));
     }
 
@@ -193,7 +180,7 @@ export async function updateSubscriptionController(
       "error",
       "Subscription not found",
       "updateSubscriptionController",
-      "subscriptions.ctrl.ts"
+      "subscriptions.ctrl.ts",
     );
     await logEvent("Error", `Subscription not found`, req.userId!, req.organizationId!);
     await transaction.rollback();
@@ -205,12 +192,10 @@ export async function updateSubscriptionController(
       "error",
       "Error updating subscription",
       "updateSubscriptionController",
-      "subscriptions.ctrl.ts"
+      "subscriptions.ctrl.ts",
     );
     logger.error("❌ Error updating subscription:", error);
     await transaction.rollback();
-    return res
-      .status(500)
-      .json(STATUS_CODE[500]({ message: (error as Error).message }));
+    return res.status(500).json(STATUS_CODE[500]({ message: (error as Error).message }));
   }
 }

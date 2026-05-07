@@ -123,19 +123,16 @@ const toolsDefinition = [
 
 export async function runAdvisor(req: Request, res: Response) {
   const functionName = "runAdvisor";
-  logStructured(
-    "processing",
-    "Getting VerifyWise advisor response",
-    functionName,
-    fileName,
-  );
+  logStructured("processing", "Getting VerifyWise advisor response", functionName, fileName);
   logger.debug(" Getting VerifyWise advisor response");
 
   try {
     const prompt = req.body.prompt;
     const organizationId = req.organizationId!;
     const userId = req.userId ? Number(req.userId) : undefined;
-    const llmKeyId = req.query.llmKeyId ? Number(Array.isArray(req.query.llmKeyId) ? req.query.llmKeyId[0] : req.query.llmKeyId) : undefined;
+    const llmKeyId = req.query.llmKeyId
+      ? Number(Array.isArray(req.query.llmKeyId) ? req.query.llmKeyId[0] : req.query.llmKeyId)
+      : undefined;
 
     // Validate required parameters
     if (!prompt) {
@@ -154,9 +151,7 @@ export async function runAdvisor(req: Request, res: Response) {
 
     if (clients.length === 0) {
       logger.debug(`No LLM keys found for organization: ${organizationId}`);
-      return res
-        .status(400)
-        .json({ error: "No LLM keys configured for this organization." });
+      return res.status(400).json({ error: "No LLM keys configured for this organization." });
     }
 
     const apiKey = selectLLMKey(clients, llmKeyId);
@@ -188,12 +183,7 @@ export async function runAdvisor(req: Request, res: Response) {
     // not embedded in the text. The non-streaming endpoint only returns markdown.
     return res.status(200).json({ prompt, response: { markdown: response, chartData: null } });
   } catch (error) {
-    logStructured(
-      "error",
-      "failed to get VerifyWise advisor response",
-      functionName,
-      fileName,
-    );
+    logStructured("error", "failed to get VerifyWise advisor response", functionName, fileName);
     logger.error("❌ Error in getting VerifyWise advisor response:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -249,11 +239,7 @@ export async function listConversations(req: Request, res: Response) {
       `Listing conversations for organization: ${organizationId}, user: ${userId}, domain: ${domain}`,
     );
 
-    const conversations = await listConversationsQuery(
-      organizationId,
-      userId,
-      domain,
-    );
+    const conversations = await listConversationsQuery(organizationId, userId, domain);
 
     logStructured(
       "successful",
@@ -264,12 +250,7 @@ export async function listConversations(req: Request, res: Response) {
 
     return res.status(200).json({ domain, conversations });
   } catch (error) {
-    logStructured(
-      "error",
-      "Failed to list conversations",
-      functionName,
-      fileName,
-    );
+    logStructured("error", "Failed to list conversations", functionName, fileName);
     logger.error("❌ Error listing conversations:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -305,11 +286,7 @@ export async function getConversationById(req: Request, res: Response) {
       `Getting conversation id=${id} for organization: ${organizationId}, user: ${userId}, domain: ${domain}`,
     );
 
-    const conversation = await getConversationByIdQuery(
-      organizationId,
-      userId,
-      id,
-    );
+    const conversation = await getConversationByIdQuery(organizationId, userId, id);
 
     if (!conversation) {
       return res.status(404).json({ error: req.t!("Conversation not found") });
@@ -341,12 +318,7 @@ export async function getConversationById(req: Request, res: Response) {
       },
     });
   } catch (error) {
-    logStructured(
-      "error",
-      "Failed to get conversation by id",
-      functionName,
-      fileName,
-    );
+    logStructured("error", "Failed to get conversation by id", functionName, fileName);
     logger.error("❌ Error getting conversation by id:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -376,11 +348,7 @@ export async function createConversation(req: Request, res: Response) {
       `Creating conversation for organization: ${organizationId}, user: ${userId}, domain: ${domain}`,
     );
 
-    const conversation = await createConversationQuery(
-      organizationId,
-      userId,
-      domain,
-    );
+    const conversation = await createConversationQuery(organizationId, userId, domain);
 
     logStructured(
       "successful",
@@ -401,12 +369,7 @@ export async function createConversation(req: Request, res: Response) {
       },
     });
   } catch (error) {
-    logStructured(
-      "error",
-      "Failed to create conversation",
-      functionName,
-      fileName,
-    );
+    logStructured("error", "Failed to create conversation", functionName, fileName);
     logger.error("❌ Error creating conversation:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -488,12 +451,7 @@ export async function updateConversation(req: Request, res: Response) {
       },
     });
   } catch (error) {
-    logStructured(
-      "error",
-      "Failed to update conversation",
-      functionName,
-      fileName,
-    );
+    logStructured("error", "Failed to update conversation", functionName, fileName);
     logger.error("❌ Error updating conversation:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -545,12 +503,7 @@ export async function deleteConversation(req: Request, res: Response) {
 
     return res.status(204).send();
   } catch (error) {
-    logStructured(
-      "error",
-      "Failed to delete conversation",
-      functionName,
-      fileName,
-    );
+    logStructured("error", "Failed to delete conversation", functionName, fileName);
     logger.error("❌ Error deleting conversation:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -562,12 +515,7 @@ export async function deleteConversation(req: Request, res: Response) {
  */
 export async function streamAdvisor(req: Request, res: Response) {
   const functionName = "streamAdvisor";
-  logStructured(
-    "processing",
-    "Starting streaming advisor response",
-    functionName,
-    fileName,
-  );
+  logStructured("processing", "Starting streaming advisor response", functionName, fileName);
 
   try {
     const prompt = req.body.prompt;
@@ -647,32 +595,26 @@ export async function streamAdvisor(req: Request, res: Response) {
         chunkCount++;
         if (chunkCount === 1) {
           firstChunkTime = Date.now();
-          logger.debug(`[TIMER] First text chunk written to client at +${firstChunkTime - streamStartTime}ms`);
+          logger.debug(
+            `[TIMER] First text chunk written to client at +${firstChunkTime - streamStartTime}ms`,
+          );
         }
       }
       sendSSE(chunk);
     }
 
     const lastChunkTime = Date.now();
-    logger.debug(`[TIMER] Streamed ${chunkCount} text chunks to client. First-to-last spread: ${firstChunkTime ? lastChunkTime - firstChunkTime : 0}ms`);
+    logger.debug(
+      `[TIMER] Streamed ${chunkCount} text chunks to client. First-to-last spread: ${firstChunkTime ? lastChunkTime - firstChunkTime : 0}ms`,
+    );
 
     // Send the final done event with the complete text for chart parsing
     sendSSE({ type: "done", content: fullText });
     res.end();
 
-    logStructured(
-      "successful",
-      "Streaming advisor response completed",
-      functionName,
-      fileName,
-    );
+    logStructured("successful", "Streaming advisor response completed", functionName, fileName);
   } catch (error) {
-    logStructured(
-      "error",
-      "Failed to stream advisor response",
-      functionName,
-      fileName,
-    );
+    logStructured("error", "Failed to stream advisor response", functionName, fileName);
     logger.error("❌ Error in streaming advisor response:", error);
 
     // If headers haven't been sent yet, send JSON error
@@ -696,12 +638,7 @@ export async function streamAdvisor(req: Request, res: Response) {
  */
 export async function streamAdvisorV2(req: Request, res: Response) {
   const functionName = "streamAdvisorV2";
-  logStructured(
-    "processing",
-    "Starting AI SDK streaming advisor response",
-    functionName,
-    fileName,
-  );
+  logStructured("processing", "Starting AI SDK streaming advisor response", functionName, fileName);
 
   try {
     const messages: UIMessage[] = req.body.messages || [];
@@ -778,12 +715,7 @@ export async function streamAdvisorV2(req: Request, res: Response) {
       fileName,
     );
   } catch (error) {
-    logStructured(
-      "error",
-      "Failed to stream AI SDK advisor response",
-      functionName,
-      fileName,
-    );
+    logStructured("error", "Failed to stream AI SDK advisor response", functionName, fileName);
     logger.error("❌ Error in AI SDK streaming advisor response:", error);
 
     if (!res.headersSent) {

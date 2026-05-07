@@ -47,10 +47,7 @@ export const sendInviteEmail = async (
     token,
   }).toString()}`;
 
-  const templatePath = path.resolve(
-    __dirname,
-    "../templates/account-creation-email.mjml"
-  );
+  const templatePath = path.resolve(__dirname, "../templates/account-creation-email.mjml");
   const template = await fs.readFile(templatePath, "utf8");
 
   const subject = translate(lang, "Create your account");

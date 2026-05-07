@@ -15,11 +15,12 @@ interface AutoCompleteFieldProps<
   T,
   Multiple extends boolean | undefined = undefined,
   DisableClearable extends boolean | undefined = undefined,
-  FreeSolo extends boolean | undefined = undefined
+  FreeSolo extends boolean | undefined = undefined,
 > extends Omit<AutocompleteProps<T, Multiple, DisableClearable, FreeSolo>, "renderInput" | "sx"> {
   label?: string;
   placeholder?: string;
   error?: string;
+  helperText?: string;
   isRequired?: boolean;
   isOptional?: boolean;
   optionalLabel?: string;
@@ -30,11 +31,12 @@ function AutoCompleteField<
   T,
   Multiple extends boolean | undefined = undefined,
   DisableClearable extends boolean | undefined = undefined,
-  FreeSolo extends boolean | undefined = undefined
+  FreeSolo extends boolean | undefined = undefined,
 >({
   label,
   placeholder,
   error,
+  helperText,
   isRequired,
   isOptional,
   optionalLabel,
@@ -62,8 +64,8 @@ function AutoCompleteField<
     const s = sx as Record<string, unknown>;
     return Object.fromEntries(
       Object.entries(s).filter(
-        ([key]) => !["width", "flexGrow", "minWidth", "maxWidth"].includes(key)
-      )
+        ([key]) => !["width", "flexGrow", "minWidth", "maxWidth"].includes(key),
+      ),
     );
   })();
 
@@ -80,11 +82,7 @@ function AutoCompleteField<
         >
           {label}
           {isRequired && (
-            <Typography
-              component="span"
-              ml={theme.spacing(1)}
-              color={theme.palette.error.text}
-            >
+            <Typography component="span" ml={theme.spacing(1)} color={theme.palette.error.text}>
               *
             </Typography>
           )}
@@ -108,6 +106,8 @@ function AutoCompleteField<
             {...params}
             size="small"
             placeholder={placeholder}
+            error={!!error || !!helperText}
+            helperText={helperText}
             sx={{
               "& .MuiOutlinedInput-root": {
                 minHeight: "34px",

@@ -7,10 +7,7 @@ import { translateError } from "../utils/i18n.utils";
 /**
  * Get change history for a specific vendor risk with pagination support
  */
-export async function getVendorRiskChangeHistoryById(
-  req: Request,
-  res: Response
-): Promise<any> {
+export async function getVendorRiskChangeHistoryById(req: Request, res: Response): Promise<any> {
   const vendorRiskId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
   if (isNaN(vendorRiskId) || vendorRiskId <= 0) {
@@ -26,10 +23,10 @@ export async function getVendorRiskChangeHistoryById(
     "processing",
     `fetching change history for vendor risk id: ${vendorRiskId} (limit: ${limit}, offset: ${offset})`,
     "getVendorRiskChangeHistoryById",
-    "vendorRiskChangeHistory.ctrl.ts"
+    "vendorRiskChangeHistory.ctrl.ts",
   );
   logger.debug(
-    `Fetching change history for vendor risk with id: ${vendorRiskId} (limit: ${limit}, offset: ${offset})`
+    `Fetching change history for vendor risk with id: ${vendorRiskId} (limit: ${limit}, offset: ${offset})`,
   );
 
   try {
@@ -37,14 +34,14 @@ export async function getVendorRiskChangeHistoryById(
       vendorRiskId,
       req.organizationId!,
       limit,
-      offset
+      offset,
     );
 
     logStructured(
       "successful",
       `change history retrieved for vendor risk id: ${vendorRiskId} (${result.data.length} entries, hasMore: ${result.hasMore})`,
       "getVendorRiskChangeHistoryById",
-      "vendorRiskChangeHistory.ctrl.ts"
+      "vendorRiskChangeHistory.ctrl.ts",
     );
 
     return res.status(200).json(STATUS_CODE[200](result));
@@ -53,7 +50,7 @@ export async function getVendorRiskChangeHistoryById(
       "error",
       "failed to retrieve change history",
       "getVendorRiskChangeHistoryById",
-      "vendorRiskChangeHistory.ctrl.ts"
+      "vendorRiskChangeHistory.ctrl.ts",
     );
     logger.error("Error in getVendorRiskChangeHistoryById:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));

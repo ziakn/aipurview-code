@@ -9,7 +9,12 @@
 
 import { Request, Response } from "express";
 import { STATUS_CODE } from "../utils/statusCode.utils";
-import { wiseSearch, getTotalResultCount, GroupedSearchResults, SEARCH_CONSTANTS } from "../utils/search.utils";
+import {
+  wiseSearch,
+  getTotalResultCount,
+  GroupedSearchResults,
+  SEARCH_CONSTANTS,
+} from "../utils/search.utils";
 import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 
 import { translateError } from "../utils/i18n.utils";
@@ -53,7 +58,7 @@ export async function search(req: Request, res: Response): Promise<any> {
           totalCount: 0,
           query,
           message: `Query must be at least ${SEARCH_CONSTANTS.MIN_QUERY_LENGTH} characters`,
-        })
+        }),
       );
     }
 
@@ -83,7 +88,7 @@ export async function search(req: Request, res: Response): Promise<any> {
         results,
         totalCount,
         query,
-      })
+      }),
     );
   } catch (error) {
     await logFailure({
