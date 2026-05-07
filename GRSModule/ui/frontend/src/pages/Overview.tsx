@@ -5,6 +5,8 @@ import { useDatasets } from "../api/useDatasets";
 import { useConfig } from "../api/useConfig";
 import { useSummary } from "../api/useResults";
 import PipelineStatusFlow from "../components/PipelineStatusFlow";
+import StageParamForm from "../components/StageParamForm";
+import { STAGE_PARAMS } from "../constants/stageParams";
 
 const ALL_STAGES = ["seeds", "render", "perturb", "validate", "infer", "judge"];
 
@@ -27,6 +29,14 @@ export default function Overview() {
   const [selectedStages, setSelectedStages] = useState<string[]>(ALL_STAGES);
   const [params, setParams] = useState(defaultParams());
   const [startError, setStartError] = useState<string | null>(null);
+  const [expandedStages, setExpandedStages] = useState<Set<string>>(new Set());
+
+  const toggleExpanded = (stage: string) =>
+    setExpandedStages((prev) => {
+      const next = new Set(prev);
+      next.has(stage) ? next.delete(stage) : next.add(stage);
+      return next;
+    });
 
   // Populate defaults from run_config.yaml
   const { data: runConfigYaml } = useConfig("run_config");
@@ -118,6 +128,43 @@ export default function Overview() {
           ))}
         </div>
       </div>
+
+      {selectedStages.some((s) => (STAGE_PARAMS[s] ?? []).length > 0) && (
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 8 }}>Parameters</div>
+          {selectedStages
+            .filter((s) => (STAGE_PARAMS[s] ?? []).length > 0)
+            .map((stage) => {
+              const isOpen = expandedStages.has(stage);
+              return (
+                <div key={stage} style={{ border: "1px solid #e0e0e0", borderRadius: 6, marginBottom: 6 }}>
+                  <button
+                    onClick={() => toggleExpanded(stage)}
+                    style={{
+                      width: "100%", textAlign: "left", padding: "8px 12px",
+                      background: isOpen ? "#f0f4ff" : "#fafafa",
+                      border: "none", cursor: "pointer", borderRadius: 6,
+                      fontSize: 13, fontWeight: 500, display: "flex",
+                      justifyContent: "space-between", alignItems: "center",
+                    }}
+                  >
+                    <span style={{ textTransform: "capitalize" }}>{stage}</span>
+                    <span style={{ color: "#888", fontSize: 11 }}>{isOpen ? "▾" : "▸"}</span>
+                  </button>
+                  {isOpen && (
+                    <div style={{ padding: "12px 16px", borderTop: "1px solid #e0e0e0" }}>
+                      <StageParamForm
+                        params={STAGE_PARAMS[stage] ?? []}
+                        values={params}
+                        onChange={(key, val) => setParams((p) => ({ ...p, [key]: val }))}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+        </div>
+      )}
 
       <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
         <button
