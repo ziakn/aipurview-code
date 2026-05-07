@@ -99,6 +99,11 @@ function extractStrings(content) {
   }
 
   // 2. Common UI props: label="...", title="...", placeholder="..." etc.
+  //    Matches both JSX attribute form (prop="...") and object-property form
+  //    (prop: "..."). The latter catches state-setter calls like
+  //    `setAlert({ title: "Success", body: "Saved." })` which the JSX-only
+  //    regex misses — those values still flow into rendered DOM text via the
+  //    component, and the DOM walker needs them in the dictionary.
   const props = [
     "label",
     "title",
@@ -120,13 +125,25 @@ function extractStrings(content) {
     "alt",
     "name",
     "submitButtonText",
+    "body",
   ];
   for (const prop of props) {
-    const re = new RegExp(
+    // JSX attribute: prop="..."
+    const attrRe = new RegExp(
       `${prop}=["']([A-Z][A-Za-z0-9 ,.?!:;\\-/&()]{2,200})["']`,
       "g",
     );
-    for (const m of content.matchAll(re)) {
+    for (const m of content.matchAll(attrRe)) {
+      found.add(m[1].trim());
+    }
+    // Object property: prop: "..."  (with optional whitespace around `:`).
+    // Anchored to a word-boundary so we don't pick up substrings of other
+    // identifiers (e.g. `subtitle:` shouldn't match `subtle:`).
+    const objRe = new RegExp(
+      `\\b${prop}\\s*:\\s*["']([A-Z][A-Za-z0-9 ,.?!:;\\-/&()]{2,200})["']`,
+      "g",
+    );
+    for (const m of content.matchAll(objRe)) {
       found.add(m[1].trim());
     }
   }
