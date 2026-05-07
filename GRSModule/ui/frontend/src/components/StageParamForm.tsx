@@ -1,4 +1,4 @@
-import { ParamDef } from "../constants/stageParams";
+import type { ParamDef } from "../constants/stageParams";
 
 interface Props {
   params: ParamDef[];
