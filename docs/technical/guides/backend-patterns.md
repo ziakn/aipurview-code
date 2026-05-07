@@ -822,6 +822,8 @@ export const bulkUpdateTasks = async (req: Request, res: Response) => {
 
 Conventions: cap at 200 ids per request, always pass the `transaction` through to utils, never construct table names from user input (the helper validates them via `safeSQLIdentifier`).
 
+The matching frontend helpers (`useBulkSelection`, `StandardTableHead` selection prop, `BulkActionsToolbar`) are documented in [Frontend Components → Bulk Actions](../frontend/components.md#bulk-actions).
+
 ## Related Documentation
 
 - [Code Style](./code-style.md) - Naming and TypeScript conventions
