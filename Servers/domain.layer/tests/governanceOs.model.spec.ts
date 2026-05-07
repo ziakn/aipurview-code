@@ -83,6 +83,8 @@ class TestGovernanceOrgPreferencesModel {
   selected_scenario_id?: number | null;
   custom_framework_priority?: Record<string, unknown>;
   active_mapping_filters?: Record<string, unknown>;
+  is_enabled?: boolean;
+  dont_ask_governance_os?: boolean;
 
   constructor(data?: any) {
     if (data) Object.assign(this, data);
@@ -211,6 +213,27 @@ describe("GovernanceOrgPreferencesModel", () => {
     expect(prefs.organization_id).toBe(3);
     expect(prefs.selected_scenario_id).toBe(1);
     expect(prefs.custom_framework_priority).toEqual({ primary: 2 });
+  });
+
+  it("should support enablement flags", () => {
+    const prefs = new TestGovernanceOrgPreferencesModel({
+      id: 2,
+      organization_id: 5,
+      is_enabled: true,
+      dont_ask_governance_os: true,
+    });
+
+    expect(prefs.is_enabled).toBe(true);
+    expect(prefs.dont_ask_governance_os).toBe(true);
+  });
+
+  it("should default enablement flags to undefined when not provided", () => {
+    const prefs = new TestGovernanceOrgPreferencesModel({
+      organization_id: 7,
+    });
+
+    expect(prefs.is_enabled).toBeUndefined();
+    expect(prefs.dont_ask_governance_os).toBeUndefined();
   });
 });
 
