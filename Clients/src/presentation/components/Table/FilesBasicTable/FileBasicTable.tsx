@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import TablePaginationActions from "../../TablePagination";
 import singleTheme from "../../../themes/v1SingleTheme";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import {
   ChevronsUpDown,
   ChevronUp,
@@ -427,12 +427,44 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
     });
   }, [bulkMutation, selectedFolderId, selectedIds]);
 
+  const selectedFilesTags = useMemo(() => {
+    if (selectedIds.length === 0) return [] as string[];
+    const set = new Set<string>();
+    for (const f of bodyData) {
+      if (selectedIds.includes(Number(f.id))) {
+        const tags = (f as any).tags as string[] | undefined;
+        tags?.forEach((t) => {
+          if (typeof t === "string" && t.length > 0) set.add(t);
+        });
+      }
+    }
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [bodyData, selectedIds]);
+
+  // Snapshot the tag union when the dialog opens so it doesn't shift as the
+  // mutation in flight refreshes bodyData under us.
+  const dialogTagsSnapshot = useRef<string[]>([]);
+
   const handleOpenTagsDialog = useCallback(() => {
     if (selectedIds.length === 0) return;
-    setPendingTags([]);
+    dialogTagsSnapshot.current = selectedFilesTags;
     setTagMode("add");
+    setPendingTags([]);
     setTagsDialogOpen(true);
-  }, [selectedIds.length]);
+  }, [selectedIds.length, selectedFilesTags]);
+
+  // Reset pendingTags whenever the user switches modes inside the dialog so
+  // each mode gets a sensible starting state.
+  useEffect(() => {
+    if (!tagsDialogOpen) return;
+    if (tagMode === "set") {
+      setPendingTags(dialogTagsSnapshot.current);
+    } else {
+      // Add and Remove modes both start empty: the user types/picks the
+      // *delta* they want to apply, not the existing state.
+      setPendingTags([]);
+    }
+  }, [tagMode, tagsDialogOpen]);
 
   const handleConfirmTags = useCallback(() => {
     if (selectedIds.length === 0) return;
@@ -907,13 +939,55 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                   <MenuItem value="set">Replace tags</MenuItem>
                 </Select>
               </Stack>
-              <ChipInput
-                id="bulk-file-tags-input"
-                label="Tags"
-                value={pendingTags}
-                onChange={setPendingTags}
-                placeholder="Type a tag and press Enter"
-              />
+
+              {tagMode === "remove" ? (
+                dialogTagsSnapshot.current.length === 0 ? (
+                  <Typography variant="body2" sx={{ color: "text.disabled" }}>
+                    The selected file{selectionCount === 1 ? "" : "s"} have no tags to remove.
+                  </Typography>
+                ) : (
+                  <Select
+                    multiple
+                    size="small"
+                    value={pendingTags}
+                    onChange={(e) =>
+                      setPendingTags(
+                        typeof e.target.value === "string"
+                          ? e.target.value.split(",")
+                          : (e.target.value as string[]),
+                      )
+                    }
+                    renderValue={(values) =>
+                      (values as string[]).length === 0
+                        ? "Pick tags to remove…"
+                        : (values as string[]).join(", ")
+                    }
+                    displayEmpty
+                    sx={{ minWidth: 320 }}
+                  >
+                    {dialogTagsSnapshot.current.map((t) => (
+                      <MenuItem key={t} value={t}>
+                        {t}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                )
+              ) : (
+                <ChipInput
+                  id="bulk-file-tags-input"
+                  label="Tags"
+                  value={pendingTags}
+                  onChange={setPendingTags}
+                  placeholder="Type a tag and press Enter"
+                />
+              )}
+
+              {tagMode === "add" && dialogTagsSnapshot.current.length > 0 && (
+                <Typography variant="body2" sx={{ color: "text.secondary", fontSize: 12 }}>
+                  Already on selected file{selectionCount === 1 ? "" : "s"}:{" "}
+                  {dialogTagsSnapshot.current.join(", ")}
+                </Typography>
+              )}
               {tagMode === "set" && pendingTags.length === 0 && (
                 <Typography variant="body2" sx={{ color: "warning.main" }}>
                   Replace mode with no tags will clear all tags from the selected files.
