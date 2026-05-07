@@ -12,6 +12,10 @@ import { FileType } from "../domain.layer/models/file/file.model";
 import { addFileToAnswerEU } from "../utils/eu.utils";
 import { sequelize } from "../database/db";
 import getUserFilesMetaDataQuery from "../utils/files/getUserFilesMetaData.utils";
+import {
+  bulkUpdateFileTagsQuery,
+  type BulkTagMode,
+} from "../utils/files/bulkFiles.utils";
 import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 import {
   createFileEntityLink,
@@ -21,6 +25,15 @@ import {
   EntityType,
   LinkType,
 } from "../repositories/file.repository";
+import {
+  parseBulkIds,
+  assertOrgOwnsIds,
+  withBulkTransaction,
+} from "../utils/bulkAction.utils";
+import {
+  ForbiddenException,
+  ValidationException,
+} from "../domain.layer/exceptions/custom.exception";
 
 export async function getFileContentById(req: Request, res: Response): Promise<any> {
   const fileId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
@@ -589,6 +602,116 @@ export async function getEntityFiles(req: Request, res: Response): Promise<any> 
       tenantId: req.organizationId,
     });
 
+    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+  }
+}
+
+const MAX_BULK_FILE_TAGS = 50;
+const MAX_BULK_FILE_TAG_LENGTH = 50;
+const VALID_TAG_MODES: BulkTagMode[] = ["set", "add", "remove"];
+
+function validateBulkFileTags(input: unknown): string[] {
+  if (!Array.isArray(input)) {
+    throw new ValidationException("tags must be an array", "tags", input);
+  }
+  if (input.length > MAX_BULK_FILE_TAGS) {
+    throw new ValidationException(
+      `Maximum ${MAX_BULK_FILE_TAGS} tags allowed per request`,
+      "tags",
+      input.length,
+    );
+  }
+  for (const value of input) {
+    if (
+      typeof value !== "string" ||
+      value.length < 1 ||
+      value.length > MAX_BULK_FILE_TAG_LENGTH
+    ) {
+      throw new ValidationException(
+        `Each tag must be a string between 1 and ${MAX_BULK_FILE_TAG_LENGTH} characters`,
+        "tags",
+        value,
+      );
+    }
+  }
+  return input as string[];
+}
+
+/**
+ * PATCH /api/files/bulk-tags
+ *
+ * Body: { ids: number[], tags: string[], mode: 'set' | 'add' | 'remove' }
+ *
+ * Tenant-scoped bulk update of file tags. Authorized for Admin and Editor roles.
+ */
+export async function bulkUpdateFileTags(req: Request, res: Response): Promise<any> {
+  logProcessing({
+    description: "starting bulkUpdateFileTags",
+    functionName: "bulkUpdateFileTags",
+    fileName: "file.ctrl.ts",
+    userId: req.userId!,
+    organizationId: req.organizationId!,
+  });
+
+  try {
+    const ids = parseBulkIds(req.body?.ids);
+    const mode = req.body?.mode as BulkTagMode;
+
+    if (!VALID_TAG_MODES.includes(mode)) {
+      throw new ValidationException(
+        `mode must be one of: ${VALID_TAG_MODES.join(", ")}`,
+        "mode",
+        req.body?.mode,
+      );
+    }
+
+    const tags = validateBulkFileTags(req.body?.tags);
+
+    if (tags.length === 0 && (mode === "add" || mode === "remove")) {
+      throw new ValidationException(
+        "tags must not be empty when mode is 'add' or 'remove'",
+        "tags",
+        tags,
+      );
+    }
+
+    await withBulkTransaction(
+      {
+        audit: {
+          action: `tags_${mode}`,
+          ids,
+          fileName: "file.ctrl.ts",
+          functionName: "bulkUpdateFileTags",
+          userId: req.userId!,
+          organizationId: req.organizationId!,
+        },
+      },
+      async (transaction) => {
+        await assertOrgOwnsIds({
+          table: "files",
+          ids,
+          organizationId: req.organizationId!,
+          transaction,
+        });
+
+        await bulkUpdateFileTagsQuery({
+          organizationId: req.organizationId!,
+          ids,
+          tags,
+          mode,
+          transaction,
+        });
+      },
+    );
+
+    return res.status(200).json(STATUS_CODE[200]({ updated: ids.length, mode }));
+  } catch (error) {
+    if (error instanceof ValidationException) {
+      return res.status(400).json(STATUS_CODE[400](error.message));
+    }
+    if (error instanceof ForbiddenException) {
+      return res.status(403).json(STATUS_CODE[403](error.message));
+    }
     return res.status(500).json(STATUS_CODE[500]((error as Error).message));
   }
 }

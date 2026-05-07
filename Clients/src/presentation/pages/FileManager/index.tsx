@@ -1008,6 +1008,10 @@ const FileManager: React.FC = (): JSX.Element => {
                       onEditMetadata={canManageFolders ? handleOpenMetadataEditor : undefined}
                       onViewHistory={handleOpenVersionHistory}
                       visibleColumnKeys={visibleColumnKeys}
+                      canRunBulkActions={canManageFolders}
+                      onBulkActionSuccess={() => {
+                        refetch();
+                      }}
                     />
                   )}
                 />

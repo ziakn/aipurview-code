@@ -110,6 +110,10 @@ export interface IColumn {
   sx?: object;
 }
 
+export type FileBulkActionResult =
+  | { type: "move_to_folder"; folderId: number; count: number }
+  | { type: "update_tags"; mode: "set" | "add" | "remove"; count: number };
+
 export interface IFileBasicTableProps {
   data: {
     rows: any[];
@@ -126,6 +130,10 @@ export interface IFileBasicTableProps {
   onViewHistory?: (fileId: number | string) => void;
   /** Column keys that are visible (for conditional cell rendering) */
   visibleColumnKeys?: FileColumn[];
+  /** Whether the current user can run bulk actions (Admin/Editor). Defaults to false. */
+  canRunBulkActions?: boolean;
+  /** Called after a successful bulk action so the parent can refetch and surface a notification. */
+  onBulkActionSuccess?: (result: FileBulkActionResult) => void;
 }
 
 export interface IFileTableProps {
@@ -139,6 +147,8 @@ export interface IFileTableProps {
   onViewHistory?: (fileId: number | string) => void;
   /** Column keys that are visible (for conditional cell rendering) */
   visibleColumnKeys?: FileColumn[];
+  canRunBulkActions?: boolean;
+  onBulkActionSuccess?: (result: FileBulkActionResult) => void;
 }
 
 export interface IProjectRiskTableBodyProps {

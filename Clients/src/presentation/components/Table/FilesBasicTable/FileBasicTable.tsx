@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Box,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -11,14 +12,28 @@ import {
   TableRow,
   useTheme,
   Typography,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import TablePaginationActions from "../../TablePagination";
 import singleTheme from "../../../themes/v1SingleTheme";
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { ChevronsUpDown, ChevronUp, ChevronDown } from "lucide-react";
+import {
+  ChevronsUpDown,
+  ChevronUp,
+  ChevronDown,
+  FolderInput,
+  Tag as TagIcon,
+} from "lucide-react";
 import IconButton from "../../IconButton";
 import { FileIcon } from "../../FileIcon";
 import Chip from "../../Chip";
+import Checkbox from "../../Inputs/Checkbox";
+import ChipInput from "../../Inputs/ChipInput";
+import ConfirmationModal from "../../Dialogs/ConfirmationModal";
+import BulkActionsToolbar, {
+  type BulkAction,
+} from "../BulkActionsToolbar";
 import { handleDownload } from "../../../../application/tools/fileDownload";
 import { deleteFileFromManager } from "../../../../application/repository/file.repository";
 import { FileModel } from "../../../../domain/models/Common/file/file.model";
@@ -29,6 +44,10 @@ import {
 import { IFileBasicTableProps } from "../../../types/interfaces/i.table";
 import { deleteEntityById } from "../../../../application/repository/entity.repository";
 import ProjectRiskLinkedPolicies from "../../ProjectRiskMitigation/ProjectRiskLinkedPolicies";
+import { useBulkSelection } from "../../../../application/hooks/useBulkSelection";
+import { useBulkUpdateFiles } from "../../../../application/hooks/useBulkUpdateFiles";
+import { getAllFolders } from "../../../../application/repository/virtualFolder.repository";
+import type { IFolderWithCount } from "../../../../domain/interfaces/i.virtualFolder";
 
 const DEFAULT_ROWS_PER_PAGE = 10;
 const FILES_BASIC_SORTING_KEY = "verifywise_files_basic_sorting";
@@ -87,7 +106,12 @@ const SortableTableHead: React.FC<{
   columns: any[];
   sortConfig: SortConfig;
   onSort: (columnId: string) => void;
-}> = ({ columns, sortConfig, onSort }) => {
+  selection?: {
+    allSelected: boolean;
+    someSelected: boolean;
+    onToggleAll: () => void;
+  };
+}> = ({ columns, sortConfig, onSort, selection }) => {
   const theme = useTheme();
 
   return (
@@ -97,6 +121,26 @@ const SortableTableHead: React.FC<{
       }}
     >
       <TableRow sx={singleTheme.tableStyles.primary.header.row}>
+        {selection && (
+          <TableCell
+            padding="checkbox"
+            sx={{
+              ...singleTheme.tableStyles.primary.header.cell,
+              width: "48px",
+              minWidth: "48px",
+              textAlign: "center",
+            }}
+          >
+            <Checkbox
+              id="file-table-select-all"
+              value="select-all"
+              isChecked={selection.allSelected}
+              isIndeterminate={selection.someSelected && !selection.allSelected}
+              onChange={selection.onToggleAll}
+              ariaLabel="Select all files on this page"
+            />
+          </TableCell>
+        )}
         {columns.map((col, index) => {
           const isLastColumn = index === columns.length - 1;
           const columnName = col.name.toString().toLowerCase();
@@ -187,6 +231,8 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
   onEditMetadata,
   onViewHistory,
   visibleColumnKeys = ALL_COLUMN_KEYS as unknown as string[],
+  canRunBulkActions = false,
+  onBulkActionSuccess,
 }) => {
   const theme = useTheme();
   const [page, setPage] = useState(0);
@@ -311,6 +357,116 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
     ? sortedBodyData
     : sortedBodyData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
+  // ----- Bulk actions -----
+  const getRowId = useCallback((file: FileModel) => Number(file.id), []);
+  const {
+    selectedIds,
+    isSelected,
+    toggle: toggleSelection,
+    toggleAll,
+    clear: clearSelection,
+    allSelected,
+    someSelected,
+    count: selectionCount,
+  } = useBulkSelection<FileModel>({ rows: paginatedRows, getId: getRowId });
+
+  const [folderDialogOpen, setFolderDialogOpen] = useState(false);
+  const [tagsDialogOpen, setTagsDialogOpen] = useState(false);
+  const [selectedFolderId, setSelectedFolderId] = useState<string>("");
+  const [pendingTags, setPendingTags] = useState<string[]>([]);
+  const [tagMode, setTagMode] = useState<"set" | "add" | "remove">("add");
+  const [folders, setFolders] = useState<IFolderWithCount[]>([]);
+  const [foldersLoading, setFoldersLoading] = useState(false);
+
+  const bulkMutation = useBulkUpdateFiles({
+    onSuccess: (action) => {
+      clearSelection();
+      if (action.type === "move_to_folder") {
+        setFolderDialogOpen(false);
+        setSelectedFolderId("");
+        onBulkActionSuccess?.({
+          type: "move_to_folder",
+          folderId: action.folderId,
+          count: action.ids.length,
+        });
+      } else {
+        setTagsDialogOpen(false);
+        setPendingTags([]);
+        onBulkActionSuccess?.({
+          type: "update_tags",
+          mode: action.payload.mode,
+          count: action.payload.ids.length,
+        });
+      }
+    },
+  });
+
+  const handleOpenFolderDialog = useCallback(async () => {
+    if (selectedIds.length === 0) return;
+    setSelectedFolderId("");
+    setFolderDialogOpen(true);
+    if (folders.length === 0 && !foldersLoading) {
+      try {
+        setFoldersLoading(true);
+        const list = await getAllFolders();
+        setFolders(list);
+      } catch (err) {
+        console.error("Failed to load folders", err);
+      } finally {
+        setFoldersLoading(false);
+      }
+    }
+  }, [selectedIds.length, folders.length, foldersLoading]);
+
+  const handleConfirmMoveToFolder = useCallback(() => {
+    if (!selectedFolderId || selectedIds.length === 0) return;
+    bulkMutation.mutate({
+      type: "move_to_folder",
+      folderId: Number(selectedFolderId),
+      ids: selectedIds,
+    });
+  }, [bulkMutation, selectedFolderId, selectedIds]);
+
+  const handleOpenTagsDialog = useCallback(() => {
+    if (selectedIds.length === 0) return;
+    setPendingTags([]);
+    setTagMode("add");
+    setTagsDialogOpen(true);
+  }, [selectedIds.length]);
+
+  const handleConfirmTags = useCallback(() => {
+    if (selectedIds.length === 0) return;
+    if (tagMode !== "set" && pendingTags.length === 0) return;
+    bulkMutation.mutate({
+      type: "update_tags",
+      payload: {
+        ids: selectedIds,
+        tags: pendingTags,
+        mode: tagMode,
+      },
+    });
+  }, [bulkMutation, pendingTags, selectedIds, tagMode]);
+
+  const bulkActions = useMemo<BulkAction[]>(
+    () => [
+      {
+        id: "move_to_folder",
+        label: "Move to folder",
+        icon: <FolderInput size={16} />,
+        onClick: handleOpenFolderDialog,
+        disabled: bulkMutation.isPending,
+      },
+      {
+        id: "edit_tags",
+        label: "Edit tags",
+        icon: <TagIcon size={16} />,
+        onClick: handleOpenTagsDialog,
+        disabled: bulkMutation.isPending,
+      },
+    ],
+    [handleOpenFolderDialog, handleOpenTagsDialog, bulkMutation.isPending],
+  );
+
   const handleRowClick = (item: FileModel, event: React.MouseEvent) => {
     event.stopPropagation();
     switch (item.source) {
@@ -375,9 +531,29 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
 
   return (
     <>
+      {canRunBulkActions && (
+        <BulkActionsToolbar
+          count={selectionCount}
+          onClear={clearSelection}
+          actions={bulkActions}
+        />
+      )}
       <TableContainer id={table}>
         <Table sx={singleTheme.tableStyles.primary.frame}>
-          <SortableTableHead columns={data.cols} sortConfig={sortConfig} onSort={handleSort} />
+          <SortableTableHead
+            columns={data.cols}
+            sortConfig={sortConfig}
+            onSort={handleSort}
+            selection={
+              canRunBulkActions
+                ? {
+                    allSelected: allSelected && paginatedRows.length > 0,
+                    someSelected,
+                    onToggleAll: toggleAll,
+                  }
+                : undefined
+            }
+          />
           <TableBody>
             {paginatedRows.map((row) => {
               // Track column index for sort highlighting (only visible columns)
@@ -391,6 +567,25 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                     "&:hover": { backgroundColor: "background.surface" },
                   }}
                 >
+                  {canRunBulkActions && (
+                    <TableCell
+                      padding="checkbox"
+                      sx={{
+                        ...singleTheme.tableStyles.primary.body.cell,
+                        width: "48px",
+                        minWidth: "48px",
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Checkbox
+                        id={`file-row-checkbox-${row.id}`}
+                        value={String(row.id)}
+                        isChecked={isSelected(Number(row.id))}
+                        onChange={() => toggleSelection(Number(row.id))}
+                        ariaLabel={`Select file ${row.fileName}`}
+                      />
+                    </TableCell>
+                  )}
                   {/* File column */}
                   {visibleColumnKeys.includes("file") && (
                     <TableCell
@@ -634,6 +829,107 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
           onClose={() => {
             setShowLinkedPoliciesToEvidence(false);
           }}
+        />
+      )}
+
+      {canRunBulkActions && folderDialogOpen && (
+        <ConfirmationModal
+          isOpen
+          title={`Move ${selectionCount} file${selectionCount === 1 ? "" : "s"} to a folder`}
+          body={
+            <Stack gap={2}>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                Selected files will be added to the chosen folder. Existing folder
+                assignments are preserved.
+              </Typography>
+              {foldersLoading ? (
+                <Typography variant="body2" sx={{ color: "text.disabled" }}>
+                  Loading folders...
+                </Typography>
+              ) : folders.length === 0 ? (
+                <Typography variant="body2" sx={{ color: "text.disabled" }}>
+                  No folders yet — create one from the file manager first.
+                </Typography>
+              ) : (
+                <Select
+                  size="small"
+                  value={selectedFolderId}
+                  onChange={(e) => setSelectedFolderId(String(e.target.value))}
+                  displayEmpty
+                  sx={{ minWidth: 280 }}
+                >
+                  <MenuItem value="">Choose a folder…</MenuItem>
+                  {folders.map((f) => (
+                    <MenuItem key={f.id} value={String(f.id)}>
+                      {f.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              )}
+            </Stack>
+          }
+          cancelText="Cancel"
+          proceedText="Move"
+          proceedButtonVariant="contained"
+          confirmBtnSx={{
+            opacity: selectedFolderId ? 1 : 0.5,
+            pointerEvents: selectedFolderId ? "auto" : "none",
+          }}
+          onCancel={() => {
+            if (bulkMutation.isPending) return;
+            setFolderDialogOpen(false);
+          }}
+          onProceed={handleConfirmMoveToFolder}
+          isLoading={bulkMutation.isPending}
+        />
+      )}
+
+      {canRunBulkActions && tagsDialogOpen && (
+        <ConfirmationModal
+          isOpen
+          title={`Edit tags on ${selectionCount} file${selectionCount === 1 ? "" : "s"}`}
+          body={
+            <Stack gap={2}>
+              <Stack direction="row" alignItems="center" gap={2}>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  Mode
+                </Typography>
+                <Select
+                  size="small"
+                  value={tagMode}
+                  onChange={(e) =>
+                    setTagMode(e.target.value as "set" | "add" | "remove")
+                  }
+                  sx={{ minWidth: 160 }}
+                >
+                  <MenuItem value="add">Add tags</MenuItem>
+                  <MenuItem value="remove">Remove tags</MenuItem>
+                  <MenuItem value="set">Replace tags</MenuItem>
+                </Select>
+              </Stack>
+              <ChipInput
+                id="bulk-file-tags-input"
+                label="Tags"
+                value={pendingTags}
+                onChange={setPendingTags}
+                placeholder="Type a tag and press Enter"
+              />
+              {tagMode === "set" && pendingTags.length === 0 && (
+                <Typography variant="body2" sx={{ color: "warning.main" }}>
+                  Replace mode with no tags will clear all tags from the selected files.
+                </Typography>
+              )}
+            </Stack>
+          }
+          cancelText="Cancel"
+          proceedText="Apply"
+          proceedButtonVariant="contained"
+          onCancel={() => {
+            if (bulkMutation.isPending) return;
+            setTagsDialogOpen(false);
+          }}
+          onProceed={handleConfirmTags}
+          isLoading={bulkMutation.isPending}
         />
       )}
     </>
