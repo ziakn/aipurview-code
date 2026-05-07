@@ -1,13 +1,6 @@
 import React from "react";
-import {
-  Box,
-  Typography,
-  Stack,
-  CircularProgress,
-  useTheme,
-  Collapse,
-  Avatar,
-} from "@mui/material";
+import { Box, Typography, Stack, CircularProgress, useTheme, Collapse } from "@mui/material";
+import VWAvatar from "../Avatar/VWAvatar";
 import { Clock } from "lucide-react";
 import {
   useModelInventoryChangeHistory,
@@ -194,19 +187,15 @@ const HistorySidebar: React.FC<HistorySidebarProps> = ({ isOpen, modelInventoryI
       >
         {/* Header */}
         <Stack direction="row" gap="8px" alignItems="center" marginBottom="8px">
-          <Avatar
-            src={avatarUrls[firstEntry.changed_by_user_id] || undefined}
-            alt={userName}
-            sx={{
-              width: 28,
-              height: 28,
-              backgroundColor: theme.palette.primary.main,
-              fontSize: 11,
-              fontWeight: 600,
+          <VWAvatar
+            user={{
+              firstname: firstEntry.user_name || userName,
+              lastname: firstEntry.user_surname || "",
+              pathToImage: avatarUrls[firstEntry.changed_by_user_id] || undefined,
             }}
-          >
-            {userName.charAt(0).toUpperCase()}
-          </Avatar>
+            size="small"
+            showBorder={false}
+          />
           <Box sx={{ flex: 1 }}>
             <Typography
               sx={{
