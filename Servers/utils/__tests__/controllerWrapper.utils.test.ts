@@ -10,8 +10,12 @@ jest.mock("../logger/logHelper", () => ({
 
 jest.mock("../../domain.layer/exceptions/custom.exception", () => ({
   isCustomException: jest.fn().mockReturnValue(false),
-  ValidationException: class extends Error { statusCode = 400; },
-  NotFoundException: class extends Error { statusCode = 404; },
+  ValidationException: class extends Error {
+    statusCode = 400;
+  },
+  NotFoundException: class extends Error {
+    statusCode = 404;
+  },
 }));
 
 import { controllerWrapper, ControllerResult } from "../controllerWrapper.utils";
@@ -37,7 +41,9 @@ describe("controllerWrapper.utils", () => {
 
   describe("controllerWrapper", () => {
     it("should return 200 with data and log processing and success when handler succeeds", async () => {
-      const handler = jest.fn<(req: Request, res: Response) => Promise<ControllerResult<{ id: number }>>>().mockResolvedValue({ status: 200, data: { id: 1 } });
+      const handler = jest
+        .fn<(req: Request, res: Response) => Promise<ControllerResult<{ id: number }>>>()
+        .mockResolvedValue({ status: 200, data: { id: 1 } });
       const wrapper = controllerWrapper(handler, {
         functionName: "getItem",
         fileName: "item.ctrl.ts",
@@ -68,8 +74,12 @@ describe("controllerWrapper.utils", () => {
     });
 
     it("should call dynamic successDescription function with result data when provided", async () => {
-      const successDescription = jest.fn<(result: any) => string>().mockReturnValue("Dynamic success message");
-      const handler = jest.fn<(req: Request, res: Response) => Promise<ControllerResult<{ count: number }>>>().mockResolvedValue({ status: 200, data: { count: 5 } });
+      const successDescription = jest
+        .fn<(result: any) => string>()
+        .mockReturnValue("Dynamic success message");
+      const handler = jest
+        .fn<(req: Request, res: Response) => Promise<ControllerResult<{ count: number }>>>()
+        .mockResolvedValue({ status: 200, data: { count: 5 } });
       const wrapper = controllerWrapper(handler, {
         functionName: "listItems",
         fileName: "item.ctrl.ts",
@@ -81,14 +91,16 @@ describe("controllerWrapper.utils", () => {
 
       expect(successDescription).toHaveBeenCalledWith({ count: 5 });
       expect(mockLogSuccess).toHaveBeenCalledWith(
-        expect.objectContaining({ description: "Dynamic success message" })
+        expect.objectContaining({ description: "Dynamic success message" }),
       );
     });
 
     it("should return custom exception status code and message when handler throws a custom exception", async () => {
       mockIsCustomException.mockReturnValue(true);
       const error = Object.assign(new Error("Not found"), { statusCode: 404 });
-      const handler = jest.fn<(req: Request, res: Response) => Promise<ControllerResult<any>>>().mockRejectedValue(error);
+      const handler = jest
+        .fn<(req: Request, res: Response) => Promise<ControllerResult<any>>>()
+        .mockRejectedValue(error);
       const wrapper = controllerWrapper(handler, {
         functionName: "getItem",
         fileName: "item.ctrl.ts",
@@ -105,7 +117,7 @@ describe("controllerWrapper.utils", () => {
           error,
           userId: 1,
           tenantId: "abc123",
-        })
+        }),
       );
       expect(mockRes.status).toHaveBeenCalledWith(404);
       expect(mockRes.json).toHaveBeenCalledWith({ message: "Not Found", data: "Not found" });
@@ -113,7 +125,9 @@ describe("controllerWrapper.utils", () => {
 
     it("should return 500 with error message when handler throws a generic error", async () => {
       const error = new Error("Something went wrong");
-      const handler = jest.fn<(req: Request, res: Response) => Promise<ControllerResult<any>>>().mockRejectedValue(error);
+      const handler = jest
+        .fn<(req: Request, res: Response) => Promise<ControllerResult<any>>>()
+        .mockRejectedValue(error);
       const wrapper = controllerWrapper(handler, {
         functionName: "getItem",
         fileName: "item.ctrl.ts",
@@ -126,14 +140,19 @@ describe("controllerWrapper.utils", () => {
         expect.objectContaining({
           description: "getItem failed",
           error,
-        })
+        }),
       );
       expect(mockRes.status).toHaveBeenCalledWith(500);
-      expect(mockRes.json).toHaveBeenCalledWith({ message: "Internal Server Error", error: "Something went wrong" });
+      expect(mockRes.json).toHaveBeenCalledWith({
+        message: "Internal Server Error",
+        error: "Something went wrong",
+      });
     });
 
     it("should return 204 with undefined data when handler returns no content", async () => {
-      const handler = jest.fn<(req: Request, res: Response) => Promise<ControllerResult<undefined>>>().mockResolvedValue({ status: 204 });
+      const handler = jest
+        .fn<(req: Request, res: Response) => Promise<ControllerResult<undefined>>>()
+        .mockResolvedValue({ status: 204 });
       const wrapper = controllerWrapper(handler, {
         functionName: "deleteItem",
         fileName: "item.ctrl.ts",
@@ -148,7 +167,9 @@ describe("controllerWrapper.utils", () => {
     });
 
     it("should use default descriptions when options descriptions are not provided", async () => {
-      const handler = jest.fn<(req: Request, res: Response) => Promise<ControllerResult<object>>>().mockResolvedValue({ status: 200, data: {} });
+      const handler = jest
+        .fn<(req: Request, res: Response) => Promise<ControllerResult<object>>>()
+        .mockResolvedValue({ status: 200, data: {} });
       const wrapper = controllerWrapper(handler, {
         functionName: "updateItem",
         fileName: "item.ctrl.ts",
@@ -158,10 +179,10 @@ describe("controllerWrapper.utils", () => {
       await wrapper(mockReq, mockRes);
 
       expect(mockLogProcessing).toHaveBeenCalledWith(
-        expect.objectContaining({ description: "starting updateItem" })
+        expect.objectContaining({ description: "starting updateItem" }),
       );
       expect(mockLogSuccess).toHaveBeenCalledWith(
-        expect.objectContaining({ description: "updateItem completed successfully" })
+        expect.objectContaining({ description: "updateItem completed successfully" }),
       );
     });
   });
