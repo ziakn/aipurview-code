@@ -12,11 +12,9 @@ import {
   TableRow,
   useTheme,
   Typography,
-  Select,
-  MenuItem,
-  ListItemText,
-  Checkbox as MuiCheckbox,
 } from "@mui/material";
+import VWSelect from "../../Inputs/Select";
+import CustomizableMultiSelect from "../../Inputs/Select/Multi";
 import TablePaginationActions from "../../TablePagination";
 import singleTheme from "../../../themes/v1SingleTheme";
 import { useState, useEffect, useCallback, useMemo } from "react";
@@ -909,23 +907,14 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                   No folders yet — create one from the file manager first.
                 </Typography>
               ) : (
-                <Select
-                  size="small"
+                <VWSelect
+                  id="bulk-move-folder"
+                  placeholder="Choose a folder…"
                   value={selectedFolderId}
                   onChange={(e) => setSelectedFolderId(String(e.target.value))}
-                  displayEmpty
-                  sx={{ width: 280, fontSize: 13 }}
-                  MenuProps={{ PaperProps: { sx: { maxHeight: 280 } } }}
-                >
-                  <MenuItem value="" dense sx={{ py: 0.5, fontSize: 13 }}>
-                    Choose a folder…
-                  </MenuItem>
-                  {folders.map((f) => (
-                    <MenuItem key={f.id} value={String(f.id)} dense sx={{ py: 0.5, fontSize: 13 }}>
-                      {f.name}
-                    </MenuItem>
-                  ))}
-                </Select>
+                  items={folders.map((f) => ({ _id: String(f.id), name: f.name }))}
+                  sx={{ width: 280 }}
+                />
               )}
             </Stack>
           }
@@ -955,23 +944,17 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                 <Typography variant="body2" sx={{ color: "text.secondary", fontSize: 12 }}>
                   Mode
                 </Typography>
-                <Select
-                  size="small"
+                <VWSelect
+                  id="bulk-tag-mode"
                   value={tagMode}
                   onChange={(e) => handleTagModeChange(e.target.value as "set" | "add" | "remove")}
-                  sx={{ width: 160, fontSize: 13 }}
-                  MenuProps={{ PaperProps: { sx: { maxHeight: 280 } } }}
-                >
-                  <MenuItem value="add" dense sx={{ py: 0.5, fontSize: 13 }}>
-                    Add tags
-                  </MenuItem>
-                  <MenuItem value="remove" dense sx={{ py: 0.5, fontSize: 13 }}>
-                    Remove tags
-                  </MenuItem>
-                  <MenuItem value="set" dense sx={{ py: 0.5, fontSize: 13 }}>
-                    Replace tags
-                  </MenuItem>
-                </Select>
+                  items={[
+                    { _id: "add", name: "Add tags" },
+                    { _id: "remove", name: "Remove tags" },
+                    { _id: "set", name: "Replace tags" },
+                  ]}
+                  sx={{ width: 160 }}
+                />
               </Stack>
 
               {tagMode === "remove" ? (
@@ -980,37 +963,22 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                     No tags on the selected file{selectionCount === 1 ? "" : "s"} to remove.
                   </Typography>
                 ) : (
-                  <Select
-                    multiple
-                    size="small"
+                  <CustomizableMultiSelect
+                    label=""
+                    placeholder="Pick tags to remove…"
+                    isHidden
                     value={pendingTags}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      const v = e.target.value;
                       setPendingTags(
-                        typeof e.target.value === "string"
-                          ? e.target.value.split(",")
-                          : (e.target.value as string[]),
-                      )
-                    }
-                    renderValue={(values) =>
-                      (values as string[]).length === 0
-                        ? "Pick tags to remove…"
-                        : (values as string[]).join(", ")
-                    }
-                    displayEmpty
-                    sx={{ width: 320, fontSize: 13 }}
-                    MenuProps={{ PaperProps: { sx: { maxHeight: 280 } } }}
-                  >
-                    {dialogTagsSnapshot.map((t) => (
-                      <MenuItem key={t} value={t} dense sx={{ py: 0.25 }}>
-                        <MuiCheckbox
-                          checked={pendingTags.includes(t)}
-                          size="small"
-                          sx={{ "p": 0.25, "mr": 1, "& svg": { fontSize: 16 } }}
-                        />
-                        <ListItemText primary={t} primaryTypographyProps={{ fontSize: 13 }} />
-                      </MenuItem>
-                    ))}
-                  </Select>
+                        typeof v === "string"
+                          ? v.split(",")
+                          : ((v as (string | number)[]).map(String)),
+                      );
+                    }}
+                    items={dialogTagsSnapshot.map((t: string) => ({ _id: t, name: t }))}
+                    width={320}
+                  />
                 )
               ) : (
                 <ChipInput

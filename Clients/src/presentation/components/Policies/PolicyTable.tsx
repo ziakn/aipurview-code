@@ -3,14 +3,12 @@ import CustomizablePolicyTable from "../Table/PolicyTable";
 import {
   Box,
   Stack,
-  Select,
-  MenuItem,
-  ListItemText,
-  Checkbox as MuiCheckbox,
   TableRow,
   TableCell,
   Typography,
 } from "@mui/material";
+import VWSelect from "../Inputs/Select";
+import CustomizableMultiSelect from "../Inputs/Select/Multi";
 import { Archive, UserCheck, Tag as TagIcon } from "lucide-react";
 import singleTheme from "../../themes/v1SingleTheme";
 import CustomIconButton from "../../components/IconButton";
@@ -487,23 +485,18 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
               <Typography variant="body2" sx={{ color: "text.secondary", fontSize: 12 }}>
                 Replaces existing reviewer assignments.
               </Typography>
-              <Select
-                size="small"
+              <VWSelect
+                id="bulk-policy-reviewer"
+                placeholder="Choose a reviewer…"
                 value={pendingReviewerId}
                 onChange={(e) => setPendingReviewerId(String(e.target.value))}
-                displayEmpty
-                sx={{ width: 280, fontSize: 13 }}
-                MenuProps={{ PaperProps: { sx: { maxHeight: 280 } } }}
-              >
-                <MenuItem value="" dense sx={{ py: 0.5, fontSize: 13 }}>
-                  Choose a reviewer…
-                </MenuItem>
-                {users.map((u) => (
-                  <MenuItem key={u.id} value={String(u.id)} dense sx={{ py: 0.5, fontSize: 13 }}>
-                    {u.name} {u.surname}
-                  </MenuItem>
-                ))}
-              </Select>
+                items={users.map((u) => ({
+                  _id: String(u.id),
+                  name: u.name,
+                  surname: u.surname,
+                }))}
+                sx={{ width: 280 }}
+              />
             </Stack>
           }
           cancelText="Cancel"
@@ -531,37 +524,20 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
               <Typography variant="body2" sx={{ color: "text.secondary", fontSize: 12 }}>
                 Replaces existing tags. Leave empty to clear.
               </Typography>
-              <Select
-                size="small"
-                multiple
+              <CustomizableMultiSelect
+                label=""
+                placeholder="Choose tags…"
+                isHidden
                 value={pendingTags}
-                onChange={(e) =>
+                onChange={(e) => {
+                  const v = e.target.value;
                   setPendingTags(
-                    typeof e.target.value === "string"
-                      ? e.target.value.split(",")
-                      : (e.target.value as string[]),
-                  )
-                }
-                renderValue={(values) =>
-                  (values as string[]).length === 0
-                    ? "Choose tags…"
-                    : (values as string[]).join(", ")
-                }
-                displayEmpty
-                sx={{ width: 320, fontSize: 13 }}
-                MenuProps={{ PaperProps: { sx: { maxHeight: 280 } } }}
-              >
-                {POLICY_TAGS.map((t) => (
-                  <MenuItem key={t} value={t} dense sx={{ py: 0.25 }}>
-                    <MuiCheckbox
-                      checked={pendingTags.includes(t)}
-                      size="small"
-                      sx={{ "p": 0.25, "mr": 1, "& svg": { fontSize: 16 } }}
-                    />
-                    <ListItemText primary={t} primaryTypographyProps={{ fontSize: 13 }} />
-                  </MenuItem>
-                ))}
-              </Select>
+                    typeof v === "string" ? v.split(",") : ((v as (string | number)[]).map(String)),
+                  );
+                }}
+                items={POLICY_TAGS.map((t: string) => ({ _id: t, name: t }))}
+                width={320}
+              />
             </Stack>
           }
           cancelText="Cancel"
