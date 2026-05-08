@@ -14,11 +14,12 @@ export async function getAuditLog(req: Request, res: Response) {
   const organizationId = req.organizationId!;
 
   try {
-    const { state, tool, user, dateFrom, dateTo, limit, offset } = req.query;
+    const { state, tool, user, actorType, dateFrom, dateTo, limit, offset } = req.query;
     const result = await getAuditLogPaginated(organizationId, {
       state: state as string | undefined,
       toolName: tool as string | undefined,
       userId: user ? Number(user) : undefined,
+      actorType: actorType as string | undefined,
       dateFrom: dateFrom as string | undefined,
       dateTo: dateTo as string | undefined,
       limit: limit ? Number(limit) : undefined,

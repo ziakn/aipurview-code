@@ -15,10 +15,14 @@ import {
   Tooltip,
   Box,
   Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  IconButton as MuiIconButton,
 } from "@mui/material";
 import TablePaginationActions from "../../components/TablePagination";
 import CustomIconButton from "../../components/IconButton";
-import { ChevronsUpDown, ChevronUp, ChevronDown, FileCheck, FolderOpen, Shield, Clock, Sparkles } from "lucide-react";
+import { ChevronsUpDown, ChevronUp, ChevronDown, FileCheck, FolderOpen, Shield, Clock, Sparkles, X } from "lucide-react";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { displayFormattedDate } from "../../tools/isoDateToString";
@@ -28,7 +32,9 @@ import { EmptyState } from "../../components/EmptyState";
 import EmptyStateTip from "../../components/EmptyState/EmptyStateTip";
 import { FileIcon } from "../../components/FileIcon";
 import EvidenceQualityBadge from "../../components/EvidenceQualityBadge";
+import EvidenceAnalysisPanel from "../../components/EvidenceAnalysisPanel";
 import { useQualityScores, useTriggerAnalysis } from "../../../application/hooks/useEvidenceAi";
+import { text as textColors, border as borderPalette } from "../../themes/palette";
 import {
   loadingContainerStyle,
   paginationMenuProps,
@@ -175,6 +181,7 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
   const { data: qualityScoresData } = useQualityScores();
   const triggerAnalysis = useTriggerAnalysis();
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selectedAnalysis, setSelectedAnalysis] = useState<any | null>(null);
 
   // Filter columns based on visibleColumns prop
   const visibleTableColumns = useMemo(() => {
@@ -254,6 +261,19 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
       qualityScoresData.forEach((item: any) => {
         if (item.file_id && item.overall_quality_score != null) {
           map.set(item.file_id, item.overall_quality_score);
+        }
+      });
+    }
+    return map;
+  }, [qualityScoresData]);
+
+  // Full analysis map: file_id → AI analysis object (used by detail dialog)
+  const qualityAnalysisMap = useMemo(() => {
+    const map = new Map<number, any>();
+    if (qualityScoresData && Array.isArray(qualityScoresData)) {
+      qualityScoresData.forEach((item: any) => {
+        if (item.file_id) {
+          map.set(item.file_id, item);
         }
       });
     }
@@ -504,8 +524,19 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
                     {(() => {
                       const fileId = evidence.evidence_files?.[0]?.id;
                       const score = fileId ? qualityMap.get(Number(fileId)) : undefined;
+                      const analysis = fileId ? qualityAnalysisMap.get(Number(fileId)) : undefined;
                       return score != null ? (
-                        <EvidenceQualityBadge score={score} />
+                        <EvidenceQualityBadge
+                          score={score}
+                          onClick={
+                            analysis
+                              ? (e) => {
+                                  e.stopPropagation();
+                                  setSelectedAnalysis(analysis);
+                                }
+                              : undefined
+                          }
+                        />
                       ) : (
                         <Typography sx={{ fontSize: 11, color: palette.text.disabled }}>-</Typography>
                       );
@@ -599,7 +630,9 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
       isColVisible,
       visibleTableColumns,
       qualityMap,
+      qualityAnalysisMap,
       triggerAnalysis,
+      hidePagination,
     ]
   );
 
@@ -611,51 +644,122 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
     );
   }
 
-  return (
-    <TableContainer sx={{ overflowX: "auto" }}>
-      <Table sx={singleTheme.tableStyles.primary.frame}>
-        <SortableTableHead
-          columns={visibleTableColumns}
-          sortConfig={sortConfig}
-          onSort={handleSort}
-          theme={theme}
-        />
-        {tableBody}
-        {paginated && !hidePagination && data && data.length > 0 && (
-          <TableFooter>
-            <TableRow sx={tableFooterRowStyle(theme)}>
-              <TableCell sx={showingTextCellStyle(theme)}>
-                Showing {getRange} of {sortedData?.length} model(s)
-              </TableCell>
-              <TablePagination
-                count={sortedData?.length ?? 0}
-                page={page}
-                onPageChange={handleChangePage}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={[5, 10, 15, 25]}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                ActionsComponent={(props) => <TablePaginationActions {...props} />}
-                labelRowsPerPage="Rows per page"
-                labelDisplayedRows={({ page, count }) =>
-                  `Page ${page + 1} of ${Math.max(0, Math.ceil(count / rowsPerPage))}`
-                }
-                slotProps={{
-                  select: {
-                    MenuProps: paginationMenuProps(theme),
-                    inputProps: {
-                      id: "pagination-dropdown",
+    <>
+      <TableContainer sx={{ overflowX: "auto" }}>
+        <Table sx={singleTheme.tableStyles.primary.frame}>
+          <SortableTableHead
+            columns={visibleTableColumns}
+            sortConfig={sortConfig}
+            onSort={handleSort}
+            theme={theme}
+          />
+          {tableBody}
+          {paginated && !hidePagination && data && data.length > 0 && (
+            <TableFooter>
+              <TableRow sx={tableFooterRowStyle(theme)}>
+                <TableCell sx={showingTextCellStyle(theme)}>
+                  Showing {getRange} of {sortedData?.length} model(s)
+                </TableCell>
+                <TablePagination
+                  count={sortedData?.length ?? 0}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  rowsPerPage={rowsPerPage}
+                  rowsPerPageOptions={[5, 10, 15, 25]}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  ActionsComponent={(props) => (
+                    <TablePaginationActions {...props} />
+                  )}
+                  labelRowsPerPage="Rows per page"
+                  labelDisplayedRows={({ page, count }) =>
+                    `Page ${page + 1} of ${Math.max(
+                      0,
+                      Math.ceil(count / rowsPerPage)
+                    )}`
+                  }
+                  slotProps={{
+                    select: {
+                      MenuProps: paginationMenuProps(theme),
+                      inputProps: {
+                        id: "pagination-dropdown",
+                      },
                     },
-                    IconComponent: SelectorVertical,
-                    sx: paginationSelectStyle(theme),
-                  },
-                }}
-                sx={paginationStyle(theme)}
-              />
-            </TableRow>
-          </TableFooter>
-        )}
-      </Table>
-    </TableContainer>
+                  }}
+                  sx={paginationStyle(theme)}
+                />
+              </TableRow>
+            </TableFooter>
+          )}
+        </Table>
+      </TableContainer>
+
+      {/* Quality Score Detail Dialog — AIAuditDashboard pattern */}
+      <Dialog
+        open={selectedAnalysis !== null}
+        onClose={() => setSelectedAnalysis(null)}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: "4px",
+            border: `1px solid ${borderPalette.dark}`,
+            backgroundColor: "transparent",
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            fontSize: 16,
+            fontWeight: 600,
+            color: textColors.primary,
+            fontFamily: "'Red Hat Display', 'Geist', sans-serif",
+            borderBottom: `1px solid ${borderPalette.light}`,
+            backgroundColor: "#FFFFFF",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            py: 1.75,
+            px: 3,
+          }}
+        >
+          <Box>
+            <Typography
+              sx={{
+                fontSize: 16,
+                fontWeight: 600,
+                color: textColors.primary,
+                fontFamily: "'Red Hat Display', 'Geist', sans-serif",
+                lineHeight: 1.3,
+              }}
+            >
+              Evidence Quality Details
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: 12,
+                color: textColors.secondary,
+                mt: 0.25,
+                fontWeight: 400,
+              }}
+            >
+              AI-derived score breakdown across 5 dimensions
+            </Typography>
+          </Box>
+          <MuiIconButton
+            onClick={() => setSelectedAnalysis(null)}
+            size="small"
+            sx={{ color: textColors.secondary }}
+          >
+            <X size={18} />
+          </MuiIconButton>
+        </DialogTitle>
+        <DialogContent sx={{ p: 0 }}>
+          {selectedAnalysis && (
+            <EvidenceAnalysisPanel analysis={selectedAnalysis} />
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

@@ -302,3 +302,89 @@ export async function clearAgentMemory(
     { replacements: { organizationId, agentName }, type: QueryTypes.DELETE }
   );
 }
+
+/**
+ * GDPR right-to-erasure — purge all message-history rows tied to a specific
+ * user. Working memory and semantic memory rows aren't keyed by user_id, so
+ * they're untouched here; the admin-only `clearAgentMemory` covers them at
+ * agent scope.
+ *
+ * Returns the number of rows removed for audit logging.
+ */
+export async function clearUserMemory(
+  organizationId: number,
+  userId: number,
+  agentName?: string
+): Promise<number> {
+  const sql = agentName
+    ? `DELETE FROM agent_message_history
+         WHERE organization_id = :organizationId
+           AND user_id = :userId
+           AND agent_name = :agentName`
+    : `DELETE FROM agent_message_history
+         WHERE organization_id = :organizationId
+           AND user_id = :userId`;
+  const [, meta] = (await sequelize.query(sql, {
+    replacements: { organizationId, userId, agentName: agentName ?? null },
+    type: QueryTypes.DELETE,
+  })) as any;
+  return meta?.rowCount ?? 0;
+}
+
+/**
+ * Summarise the user's current memory footprint — used by the GDPR
+ * inspection endpoint so users can see what's stored before deleting.
+ */
+export async function getUserMemorySummary(
+  organizationId: number,
+  userId: number
+): Promise<{
+  total_messages: number;
+  by_agent: Array<{ agent_name: string; message_count: number; oldest: string | null; newest: string | null }>;
+  by_session: Array<{ session_id: string; message_count: number; last_at: string }>;
+}> {
+  const totalRows = (await sequelize.query(
+    `SELECT COUNT(*)::int AS c FROM agent_message_history
+       WHERE organization_id = :organizationId AND user_id = :userId`,
+    { replacements: { organizationId, userId }, type: QueryTypes.SELECT }
+  )) as Array<{ c: number }>;
+
+  const byAgent = (await sequelize.query(
+    `SELECT agent_name,
+            COUNT(*)::int AS message_count,
+            MIN(created_at) AS oldest,
+            MAX(created_at) AS newest
+       FROM agent_message_history
+       WHERE organization_id = :organizationId AND user_id = :userId
+       GROUP BY agent_name
+       ORDER BY message_count DESC`,
+    { replacements: { organizationId, userId }, type: QueryTypes.SELECT }
+  )) as Array<{
+    agent_name: string;
+    message_count: number;
+    oldest: string | null;
+    newest: string | null;
+  }>;
+
+  const bySession = (await sequelize.query(
+    `SELECT session_id,
+            COUNT(*)::int AS message_count,
+            MAX(created_at) AS last_at
+       FROM agent_message_history
+       WHERE organization_id = :organizationId AND user_id = :userId
+       GROUP BY session_id
+       ORDER BY last_at DESC
+       LIMIT 50`,
+    { replacements: { organizationId, userId }, type: QueryTypes.SELECT }
+  )) as Array<{
+    session_id: string;
+    message_count: number;
+    last_at: string;
+  }>;
+
+  return {
+    total_messages: totalRows[0]?.c ?? 0,
+    by_agent: byAgent,
+    by_session: bySession,
+  };
+}

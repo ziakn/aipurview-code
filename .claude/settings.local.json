@@ -93,7 +93,9 @@
       "Bash(node *)",
       "Bash(git --no-pager diff --stat)",
       "Bash(git --no-pager diff --staged --stat)",
-      "Bash(xargs basename *)"
+      "Bash(xargs basename *)",
+      "Bash(pg_isready)",
+      "Bash(redis-cli ping *)"
     ]
   }
 }

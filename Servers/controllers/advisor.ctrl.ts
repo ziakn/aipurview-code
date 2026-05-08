@@ -13,6 +13,13 @@ import {
   updateConversationMessagesQuery,
   deleteConversationQuery,
 } from "../utils/advisorConversation.utils";
+import {
+  clearAgentMemory,
+  clearSession as clearAgentSession,
+  clearUserMemory,
+  getUserMemorySummary,
+  getAgentMessages,
+} from "../advisor/memory/memoryService";
 import { IAdvisorMessage } from "../domain.layer/interfaces/i.advisorConversation";
 import { availableRiskTools } from "../advisor/functions/riskFunctions";
 import { availableModelInventoryTools } from "../advisor/functions/modelInventoryFunctions";
@@ -249,6 +256,14 @@ export async function runAdvisor(req: Request, res: Response) {
     const apiKey = selectLLMKey(clients, llmKeyId);
     const url = apiKey.url || getLLMProviderUrl(apiKey.name as LLMProvider);
 
+    // sessionId for agent memory: same plumbing as the streaming endpoints.
+    const memorySessionId =
+      (typeof req.body?.sessionId === "string" && req.body.sessionId.trim().length > 0
+        ? req.body.sessionId
+        : userId
+          ? `user-${userId}-${new Date().toISOString().slice(0, 10)}`
+          : undefined);
+
     const agentParams = {
       apiKey: apiKey.key || "",
       baseURL: url,
@@ -260,6 +275,8 @@ export async function runAdvisor(req: Request, res: Response) {
       toolsDefinition,
       provider: apiKey.name as "Anthropic" | "OpenAI" | "OpenRouter" | "Custom",
       headers: apiKey.custom_headers || undefined,
+      sessionId: memorySessionId,
+      agentName: "advisor" as const,
     };
 
     const response = await runAdvisorAiSdk(agentParams);
@@ -658,6 +675,17 @@ export async function streamAdvisor(req: Request, res: Response) {
       }
     };
 
+    // sessionId for agent memory: prefer explicit body field, fall back to a
+    // synthetic per-user / per-day grouping so memory still accumulates for
+    // legacy callers. Memory writes are skipped entirely when userId or
+    // sessionId are missing — see memoryEnabled() in aiSdkAgent.ts.
+    const memorySessionId =
+      (typeof req.body?.sessionId === "string" && req.body.sessionId.trim().length > 0
+        ? req.body.sessionId
+        : userId
+          ? `user-${userId}-${new Date().toISOString().slice(0, 10)}`
+          : undefined);
+
     const agentParams = {
       apiKey: apiKey.key || "",
       baseURL: url,
@@ -669,6 +697,8 @@ export async function streamAdvisor(req: Request, res: Response) {
       toolsDefinition,
       provider: apiKey.name as "Anthropic" | "OpenAI" | "OpenRouter" | "Custom",
       headers: apiKey.custom_headers || undefined,
+      sessionId: memorySessionId,
+      agentName: "advisor" as const,
     };
 
     // Send an immediate status event so the client knows the connection is open
@@ -775,7 +805,22 @@ export async function streamAdvisorV2(req: Request, res: Response) {
     const apiKey = selectLLMKey(clients, llmKeyId);
     const url = apiKey.url || getLLMProviderUrl(apiKey.name as LLMProvider);
 
-    const result = getStreamTextResult({
+    // sessionId for agent memory: chat endpoint may carry an explicit
+    // `conversationId` from the client (which the frontend uses to group
+    // chat persistence). Use that when present; otherwise synthesize a
+    // per-user / per-day grouping for legacy callers.
+    const memorySessionId =
+      (typeof (req.body as any)?.conversationId === "string" &&
+      (req.body as any).conversationId.trim().length > 0
+        ? (req.body as any).conversationId
+        : typeof (req.body as any)?.sessionId === "string" &&
+            (req.body as any).sessionId.trim().length > 0
+          ? (req.body as any).sessionId
+          : userId
+            ? `user-${userId}-${new Date().toISOString().slice(0, 10)}`
+            : undefined);
+
+    const result = await getStreamTextResult({
       apiKey: apiKey.key || "",
       baseURL: url,
       model: apiKey.model,
@@ -790,6 +835,8 @@ export async function streamAdvisorV2(req: Request, res: Response) {
       toolsDefinition,
       provider: apiKey.name as "Anthropic" | "OpenAI" | "OpenRouter" | "Custom",
       headers: apiKey.custom_headers || undefined,
+      sessionId: memorySessionId,
+      agentName: "advisor" as const,
     });
 
     // Pipe the stream. Critical: supply `onError` to convert errors into
@@ -847,5 +894,193 @@ export async function streamAdvisorV2(req: Request, res: Response) {
     if (!res.headersSent) {
       res.status(500).json(STATUS_CODE[500]((error as Error).message));
     }
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Agent memory — inspection + GDPR right-to-erasure                  */
+/* ------------------------------------------------------------------ */
+
+/**
+ * GET /api/advisor/memory
+ *
+ * Returns a privacy-friendly summary of what the agent memory subsystem has
+ * stored for the calling user. No raw message content — just counts, agent
+ * names, oldest/newest timestamps, and recent session ids. The full content
+ * is available to admins via the Admin API on memoryService.
+ */
+export async function getMemorySummary(req: Request, res: Response) {
+  const functionName = "getMemorySummary";
+  try {
+    const organizationId = req.organizationId!;
+    const userId = req.userId ? Number(req.userId) : null;
+    if (!organizationId || !userId) {
+      return res.status(400).json(STATUS_CODE[400]("Auth context required"));
+    }
+    const summary = await getUserMemorySummary(organizationId, userId);
+    logStructured(
+      "successful",
+      `memory summary served (${summary.total_messages} messages)`,
+      functionName,
+      fileName,
+    );
+    return res.status(200).json(STATUS_CODE[200](summary));
+  } catch (error) {
+    logStructured("error", "memory summary failed", functionName, fileName);
+    logger.error("Error in getMemorySummary:", error);
+    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+  }
+}
+
+/**
+ * DELETE /api/advisor/memory
+ *
+ * GDPR right-to-erasure. Clears agent_message_history rows for the calling
+ * user. Optional query params:
+ *   - agentName: limit purge to one agent (e.g., "advisor")
+ *   - sessionId: limit purge to one session
+ *
+ * Returns the number of rows removed for audit.
+ */
+export async function deleteMyMemory(req: Request, res: Response) {
+  const functionName = "deleteMyMemory";
+  try {
+    const organizationId = req.organizationId!;
+    const userId = req.userId ? Number(req.userId) : null;
+    if (!organizationId || !userId) {
+      return res.status(400).json(STATUS_CODE[400]("Auth context required"));
+    }
+
+    const rawAgent = req.query.agentName;
+    const agentName =
+      typeof rawAgent === "string" && rawAgent.trim().length > 0
+        ? rawAgent.trim()
+        : undefined;
+    const rawSession = req.query.sessionId;
+    const sessionId =
+      typeof rawSession === "string" && rawSession.trim().length > 0
+        ? rawSession.trim()
+        : undefined;
+
+    let removed = 0;
+    if (sessionId) {
+      // Per-session clear is finer-grained: drop just one conversation.
+      await clearAgentSession(
+        organizationId,
+        agentName ?? "advisor",
+        sessionId,
+      );
+      // clearSession doesn't return a count in the existing helper, so we
+      // surface a sentinel value. The caller can re-fetch the summary.
+      removed = -1;
+    } else {
+      removed = await clearUserMemory(organizationId, userId, agentName);
+    }
+
+    logStructured(
+      "successful",
+      `memory purged (rows=${removed}, agent=${agentName ?? "*"}, session=${sessionId ?? "*"}) for user ${userId}`,
+      functionName,
+      fileName,
+    );
+    return res.status(200).json(
+      STATUS_CODE[200]({
+        removed_rows: removed,
+        agent_name: agentName ?? null,
+        session_id: sessionId ?? null,
+      }),
+    );
+  } catch (error) {
+    logStructured("error", "memory delete failed", functionName, fileName);
+    logger.error("Error in deleteMyMemory:", error);
+    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+  }
+}
+
+/**
+ * DELETE /api/advisor/memory/admin/agent/:agentName
+ *
+ * Admin-only — clear ALL memory rows (message history, working memory,
+ * semantic memory) for a specific agent across the whole organization.
+ * RBAC is enforced by `requireRole(["Admin"])` at the route level.
+ */
+export async function adminClearAgentMemory(req: Request, res: Response) {
+  const functionName = "adminClearAgentMemory";
+  try {
+    const organizationId = req.organizationId!;
+    const rawAgentName = req.params.agentName;
+    const agentName =
+      typeof rawAgentName === "string"
+        ? rawAgentName
+        : Array.isArray(rawAgentName)
+          ? rawAgentName[0]
+          : "";
+    if (!organizationId) {
+      return res.status(400).json(STATUS_CODE[400]("Auth context required"));
+    }
+    if (req.role !== "Admin" && !req.isSuperAdmin) {
+      return res
+        .status(403)
+        .json(STATUS_CODE[403]("Admin role required to clear agent memory"));
+    }
+    if (!agentName || agentName.trim().length === 0) {
+      return res.status(400).json(STATUS_CODE[400]("agentName is required"));
+    }
+    await clearAgentMemory(organizationId, agentName);
+    logStructured(
+      "successful",
+      `admin cleared memory for agent ${agentName}`,
+      functionName,
+      fileName,
+    );
+    return res.status(200).json(
+      STATUS_CODE[200]({ cleared: true, agent_name: agentName }),
+    );
+  } catch (error) {
+    logStructured("error", "admin clear failed", functionName, fileName);
+    logger.error("Error in adminClearAgentMemory:", error);
+    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+  }
+}
+
+/**
+ * GET /api/advisor/memory/admin/agent/:agentName
+ *
+ * Admin-only — fetch the most recent N messages for an agent across the
+ * organization. Used by the Settings UI to show what's stored. RBAC is
+ * enforced by `requireRole(["Admin"])` at the route level.
+ */
+export async function adminListAgentMessages(req: Request, res: Response) {
+  const functionName = "adminListAgentMessages";
+  try {
+    const organizationId = req.organizationId!;
+    const rawAgentName = req.params.agentName;
+    const agentName =
+      typeof rawAgentName === "string"
+        ? rawAgentName
+        : Array.isArray(rawAgentName)
+          ? rawAgentName[0]
+          : "";
+    const limit =
+      typeof req.query.limit === "string"
+        ? Math.min(500, Math.max(1, parseInt(req.query.limit, 10) || 50))
+        : 50;
+    if (!organizationId) {
+      return res.status(400).json(STATUS_CODE[400]("Auth context required"));
+    }
+    if (req.role !== "Admin" && !req.isSuperAdmin) {
+      return res
+        .status(403)
+        .json(STATUS_CODE[403]("Admin role required"));
+    }
+    if (!agentName || agentName.trim().length === 0) {
+      return res.status(400).json(STATUS_CODE[400]("agentName is required"));
+    }
+    const rows = await getAgentMessages(organizationId, agentName, limit);
+    return res.status(200).json(STATUS_CODE[200](rows));
+  } catch (error) {
+    logStructured("error", "admin list failed", functionName, fileName);
+    logger.error("Error in adminListAgentMessages:", error);
+    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
   }
 }

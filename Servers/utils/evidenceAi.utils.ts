@@ -3,6 +3,10 @@ import { buildVisibilityFilterForEvidence } from "./visibility.utils";
 
 /**
  * Insert or update an AI analysis result for a file.
+ *
+ * `audit_metadata` is optional — analyzer-v2 produces it (per-dimension
+ * rationales, document signals, evidence quotes). Heuristic-v1 leaves
+ * it null. The frontend treats null as "no rationale available".
  */
 export const upsertAnalysisQuery = async (
   fileId: number,
@@ -17,8 +21,12 @@ export const upsertAnalysisQuery = async (
     analysis_model: string;
     analyzed_by: number | null;
     visibility?: string;
+    audit_metadata?: any | null;
   }
 ) => {
+  const auditMetadataJson =
+    data.audit_metadata != null ? JSON.stringify(data.audit_metadata) : null;
+
   // Check if analysis already exists
   const [existing] = await sequelize.query(
     `SELECT id FROM evidence_ai_analysis
@@ -41,7 +49,8 @@ export const upsertAnalysisQuery = async (
          analysis_version = analysis_version + 1,
          analyzed_at = NOW(),
          analyzed_by = :analyzed_by,
-         visibility = :visibility
+         visibility = :visibility,
+         audit_metadata = :audit_metadata::jsonb
        WHERE id = :id AND organization_id = :organizationId
        RETURNING *`,
       {
@@ -57,6 +66,7 @@ export const upsertAnalysisQuery = async (
           analysis_model: data.analysis_model,
           analyzed_by: data.analyzed_by,
           visibility: data.visibility || "public",
+          audit_metadata: auditMetadataJson,
         },
       }
     );
@@ -67,11 +77,13 @@ export const upsertAnalysisQuery = async (
     `INSERT INTO evidence_ai_analysis (
        file_id, summary, key_findings, compliance_areas,
        quality_score, overall_quality_score, suggested_control_links,
-       analysis_model, analyzed_by, visibility, organization_id
+       analysis_model, analyzed_by, visibility, organization_id,
+       audit_metadata
      ) VALUES (
        :fileId, :summary, :key_findings, :compliance_areas,
        :quality_score, :overall_quality_score, :suggested_control_links,
-       :analysis_model, :analyzed_by, :visibility, :organizationId
+       :analysis_model, :analyzed_by, :visibility, :organizationId,
+       :audit_metadata::jsonb
      ) RETURNING *`,
     {
       replacements: {
@@ -86,6 +98,7 @@ export const upsertAnalysisQuery = async (
         analysis_model: data.analysis_model,
         analyzed_by: data.analyzed_by,
         visibility: data.visibility || "public",
+        audit_metadata: auditMetadataJson,
       },
     }
   );

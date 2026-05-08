@@ -1,7 +1,10 @@
 /**
- * Phase 3 — Mastra Agent Network Configuration
+ * Phase 3 — Agent Network Configuration
  *
- * Registers all specialized agents and configures the communication network.
+ * Thin facade over `network/agentRegistry`. The original implementation
+ * was scaffolded around the @mastra/core network primitive but never
+ * adopted at runtime, so the package was removed; this file kept its
+ * shape so existing call sites still compile.
  */
 
 import { getAllAgents, getRegistryStatus } from "./agentRegistry";

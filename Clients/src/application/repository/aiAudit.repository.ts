@@ -4,6 +4,7 @@ export interface AuditLogFilters {
   state?: string;
   tool?: string;
   user?: number;
+  actorType?: string;
   dateFrom?: string;
   dateTo?: string;
   limit?: number;
@@ -15,6 +16,7 @@ export async function getAuditLog(filters?: AuditLogFilters) {
   if (filters?.state) params.set("state", filters.state);
   if (filters?.tool) params.set("tool", filters.tool);
   if (filters?.user) params.set("user", String(filters.user));
+  if (filters?.actorType) params.set("actorType", filters.actorType);
   if (filters?.dateFrom) params.set("dateFrom", filters.dateFrom);
   if (filters?.dateTo) params.set("dateTo", filters.dateTo);
   if (filters?.limit) params.set("limit", String(filters.limit));

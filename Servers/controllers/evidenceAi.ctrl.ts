@@ -12,186 +12,359 @@ import {
 } from "../utils/evidenceAi.utils";
 import { parseDocument, isSupportedMimeType } from "../advisor/parsers";
 import { trackAIContent } from "../middleware/aiContentTracker.middleware";
+import {
+  analyzeEvidence,
+  type AnalyzerResult,
+} from "../advisor/evidenceAnalyzer/analyzer.service";
+import { getLLMKeysWithKeyQuery, getLLMProviderUrl } from "../utils/llmKey.utils";
+import type { LLMProvider } from "../domain.layer/interfaces/i.llmKey";
 
 const fileName = "evidenceAi.ctrl.ts";
 
 /**
+ * Heuristic fallback — used only when no LLM key is configured for the org
+ * or the LLM call fails. Same scoring algorithm as v1 but tagged so the
+ * UI can show "fallback" provenance.
+ */
+function buildHeuristicResult(documentText: string): {
+  summary: string;
+  keyFindings: string[];
+  complianceAreas: string[];
+  qualityScore: {
+    relevance: number;
+    completeness: number;
+    recency: number;
+    reliability: number;
+    specificity: number;
+  };
+  overall: number;
+  suggestions: Array<{
+    control_id: number;
+    control_title: string;
+    framework_type: string;
+    match_score: number;
+    matched_areas: string[];
+  }>;
+} {
+  const complianceKeywords = [
+    "risk",
+    "audit",
+    "compliance",
+    "control",
+    "policy",
+    "regulation",
+    "GDPR",
+    "ISO",
+    "NIST",
+    "EU AI Act",
+    "security",
+    "privacy",
+    "assessment",
+    "monitoring",
+    "incident",
+    "training",
+    "transparency",
+    "accountability",
+    "fairness",
+    "robustness",
+    "data protection",
+  ];
+  const foundAreas = complianceKeywords.filter((kw) =>
+    documentText.toLowerCase().includes(kw.toLowerCase()),
+  );
+  const sentences = documentText
+    .split(/[.!?]+/)
+    .filter((s) => s.trim().length > 20);
+  const findingPatterns =
+    /\b(must|shall|should|require|recommend|ensure|implement|maintain|document|verify)\b/i;
+  const keyFindings = sentences
+    .filter((s) => findingPatterns.test(s))
+    .slice(0, 10)
+    .map((s) => s.trim());
+  const summary =
+    documentText.length > 500
+      ? documentText.substring(0, 500).trim() + "..."
+      : documentText.trim();
+
+  const relevance = Math.min(100, foundAreas.length * 15 + 10);
+  const completeness = Math.min(
+    100,
+    keyFindings.length * 10 + (summary.length > 200 ? 20 : 0),
+  );
+  const recency = 70;
+  const reliability = Math.min(
+    100,
+    (keyFindings.length > 3 ? 40 : 20) +
+      (foundAreas.length > 2 ? 30 : 10) +
+      20,
+  );
+  const specificity = Math.min(
+    100,
+    keyFindings.filter((f) => f.length > 50).length * 15 + 10,
+  );
+  const overall = Math.round(
+    relevance * 0.25 +
+      completeness * 0.25 +
+      recency * 0.2 +
+      reliability * 0.15 +
+      specificity * 0.15,
+  );
+  return {
+    summary,
+    keyFindings,
+    complianceAreas: foundAreas,
+    qualityScore: {
+      relevance,
+      completeness,
+      recency,
+      reliability,
+      specificity,
+    },
+    overall,
+    suggestions: [],
+  };
+}
+
+/**
+ * Map mime type → parse fidelity hint for reliability scoring.
+ */
+function inferParseFidelity(
+  fileType: string,
+): "high" | "medium" | "low" | undefined {
+  const t = fileType.toLowerCase();
+  if (
+    t.includes("officedocument.wordprocessing") ||
+    t.includes("text/plain") ||
+    t.includes("text/markdown") ||
+    t.includes("text/html")
+  ) {
+    return "high";
+  }
+  if (t.includes("pdf")) return "medium";
+  if (t.includes("image")) return "low";
+  return undefined;
+}
+
+/**
  * POST /api/evidence-ai/analyze/:fileId
- * Trigger AI analysis for a file.
+ * Trigger AI analysis for a file. Uses the v2 evidence-analyzer
+ * (LLM-rubric + deterministic recency/reliability) when an LLM key is
+ * configured. Falls back to heuristic-v1 if no key or the LLM call fails.
  */
 export async function analyzeFile(req: Request, res: Response) {
   const functionName = "analyzeFile";
   const fileId = parseInt(
-    Array.isArray(req.params.fileId) ? req.params.fileId[0] : req.params.fileId
+    Array.isArray(req.params.fileId) ? req.params.fileId[0] : req.params.fileId,
   );
 
   if (isNaN(fileId)) {
     return res.status(400).json(STATUS_CODE[400]("Invalid file ID"));
   }
 
-  logStructured("processing", `analyzing file ${fileId}`, functionName, fileName);
+  logStructured(
+    "processing",
+    `analyzing file ${fileId}`,
+    functionName,
+    fileName,
+  );
 
   try {
     const organizationId = req.organizationId!;
     const userId = req.userId ? Number(req.userId) : null;
 
-    // Get the file record to find the actual file content
+    // ---- File metadata + content ---------------------------------
     const [fileRows] = await sequelize.query(
       `SELECT id, filename, type FROM files
        WHERE id = :fileId AND organization_id = :organizationId`,
-      { replacements: { fileId, organizationId } }
+      { replacements: { fileId, organizationId } },
     );
-
     const file = (fileRows as any[])[0];
     if (!file) {
       return res.status(404).json(STATUS_CODE[404]("File not found"));
     }
 
-    // Get file content from the database (files table stores content as BYTEA)
     const [contentRows] = await sequelize.query(
-      `SELECT content FROM files WHERE id = :fileId AND organization_id = :organizationId`,
-      { replacements: { fileId, organizationId } }
+      `SELECT content, octet_length(content) AS size_bytes,
+              uploaded_time AS upload_date
+       FROM files WHERE id = :fileId AND organization_id = :organizationId`,
+      { replacements: { fileId, organizationId } },
     );
-
     const contentRow = (contentRows as any[])[0];
-    let documentText = "";
 
+    // Optional expiry from evidence row, if linked.
+    let expiryDate: string | null = null;
+    try {
+      const [eviRows] = await sequelize.query(
+        `SELECT e.expiry_date
+         FROM evidence e
+         JOIN evidence_files ef ON ef.evidence_id = e.id
+         WHERE ef.file_id = :fileId AND e.organization_id = :organizationId
+         LIMIT 1`,
+        { replacements: { fileId, organizationId } },
+      );
+      if ((eviRows as any[]).length > 0) {
+        expiryDate = (eviRows as any[])[0].expiry_date ?? null;
+      }
+    } catch {
+      // evidence_files table may not exist in all installs — non-critical
+    }
+
+    let documentText = "";
     if (contentRow?.content) {
       const buffer = Buffer.isBuffer(contentRow.content)
         ? contentRow.content
         : Buffer.from(contentRow.content);
-
       if (isSupportedMimeType(file.type)) {
         const parsed = await parseDocument(buffer, file.type);
         documentText = parsed.text;
       } else {
-        // For text-based files, convert buffer to string
         documentText = buffer.toString("utf-8");
       }
     }
-
     if (!documentText || documentText.trim().length === 0) {
       return res
         .status(422)
         .json(STATUS_CODE[422]("File has no extractable text content"));
     }
 
-    // Extract compliance areas via keyword matching
-    const complianceKeywords = [
-      "risk", "audit", "compliance", "control", "policy", "regulation",
-      "GDPR", "ISO", "NIST", "EU AI Act", "security", "privacy",
-      "assessment", "monitoring", "incident", "training", "transparency",
-      "accountability", "fairness", "robustness", "data protection",
-    ];
-    const foundAreas = complianceKeywords.filter((kw) =>
-      documentText.toLowerCase().includes(kw.toLowerCase())
-    );
+    // ---- Pick LLM key for the org --------------------------------
+    let analyzerResult: AnalyzerResult | null = null;
+    let usedFallback = false;
+    let fallbackReason = "";
 
-    // Extract key findings (sentences with compliance verbs)
-    const sentences = documentText
-      .split(/[.!?]+/)
-      .filter((s) => s.trim().length > 20);
-    const findingPatterns =
-      /\b(must|shall|should|require|recommend|ensure|implement|maintain|document|verify)\b/i;
-    const keyFindings = sentences
-      .filter((s) => findingPatterns.test(s))
-      .slice(0, 10)
-      .map((s) => s.trim());
+    try {
+      const clients = await getLLMKeysWithKeyQuery(organizationId);
+      if (clients.length === 0) {
+        usedFallback = true;
+        fallbackReason = "no LLM key configured";
+      } else {
+        const apiKey = clients[0];
+        const baseURL =
+          apiKey.url || getLLMProviderUrl(apiKey.name as LLMProvider);
+        analyzerResult = await analyzeEvidence({
+          documentText,
+          filename: file.filename,
+          fileType: file.type,
+          fileSizeBytes: contentRow?.size_bytes ?? null,
+          uploadDate: contentRow?.upload_date ?? null,
+          expiryDate,
+          parseFidelity: inferParseFidelity(file.type),
+          llmKey: {
+            apiKey: apiKey.key || "",
+            baseURL,
+            model: apiKey.model,
+            provider: apiKey.name as
+              | "Anthropic"
+              | "OpenAI"
+              | "OpenRouter"
+              | "Custom",
+            headers: apiKey.custom_headers || undefined,
+          },
+        });
+      }
+    } catch (llmErr) {
+      logger.warn(
+        "[evidenceAnalyzer] LLM analysis failed, falling back to heuristic-v1",
+        llmErr,
+      );
+      usedFallback = true;
+      fallbackReason = (llmErr as Error).message || "LLM error";
+    }
 
-    // Create summary
-    const summary =
-      documentText.length > 500
-        ? documentText.substring(0, 500).trim() + "..."
-        : documentText.trim();
+    // ---- Heuristic fallback path ---------------------------------
+    let summary: string;
+    let keyFindings: any;
+    let complianceAreas: any;
+    let qualityScore: any;
+    let overall: number;
+    let suggestions: any[];
+    let modelLabel: string;
+    let auditMetadata: any | null = null;
 
-    // Score quality
-    const relevance = Math.min(100, foundAreas.length * 15 + 10);
-    const completeness = Math.min(
-      100,
-      keyFindings.length * 10 + (summary.length > 200 ? 20 : 0)
-    );
-    const recency = 70;
-    const reliability = Math.min(
-      100,
-      (keyFindings.length > 3 ? 40 : 20) + (foundAreas.length > 2 ? 30 : 10) + 20
-    );
-    const specificity = Math.min(
-      100,
-      keyFindings.filter((f) => f.length > 50).length * 15 + 10
-    );
-    const overall = Math.round(
-      relevance * 0.25 +
-        completeness * 0.25 +
-        recency * 0.2 +
-        reliability * 0.15 +
-        specificity * 0.15
-    );
+    if (analyzerResult && !usedFallback) {
+      summary = analyzerResult.summary;
+      // Frontend expects key_findings as string[]. Quote-grounded findings
+      // are kept in the audit metadata (analyzerResult.audit.findings_with_quotes).
+      keyFindings = analyzerResult.key_findings;
+      complianceAreas = analyzerResult.compliance_areas;
+      qualityScore = analyzerResult.quality_score;
+      overall = analyzerResult.overall_quality_score;
+      suggestions = analyzerResult.suggested_control_links;
+      modelLabel = analyzerResult.analysis_model;
+      auditMetadata = analyzerResult.audit;
+    } else {
+      const h = buildHeuristicResult(documentText);
+      summary = h.summary;
+      keyFindings = h.keyFindings;
+      complianceAreas = h.complianceAreas;
+      qualityScore = h.qualityScore;
+      overall = h.overall;
+      suggestions = h.suggestions;
+      modelLabel = `heuristic-v1${
+        fallbackReason ? ` (fallback: ${fallbackReason})` : ""
+      }`;
+      // Heuristic path leaves audit_metadata null — no rationales available.
+    }
 
-    const qualityScore = { relevance, completeness, recency, reliability, specificity };
-
-    // Match against controls for suggestions
-    const [euControls] = await sequelize.query(
-      `SELECT id, title as control_title, description as control_description
-       FROM controls_struct_eu
-       WHERE title IS NOT NULL
-       LIMIT 50`
-    );
-
-    const suggestions = (euControls as any[])
-      .map((ctrl: any) => {
-        const ctrlText = `${ctrl.control_title || ""} ${ctrl.control_description || ""}`.toLowerCase();
-        const matched = foundAreas.filter((a) => ctrlText.includes(a.toLowerCase()));
-        return {
-          control_id: ctrl.id,
-          control_title: ctrl.control_title,
-          framework_type: "eu_ai_act",
-          match_score: matched.length > 0 ? Math.min(100, matched.length * 30 + 20) : 0,
-          matched_areas: matched,
-        };
-      })
-      .filter((s: any) => s.match_score > 0)
-      .sort((a: any, b: any) => b.match_score - a.match_score)
-      .slice(0, 10);
-
-    // Persist
+    // ---- Persist -------------------------------------------------
     const visibility = req.body.visibility || "public";
     const analysis = await upsertAnalysisQuery(fileId, organizationId, {
       summary,
       key_findings: keyFindings,
-      compliance_areas: foundAreas,
+      compliance_areas: complianceAreas,
       quality_score: qualityScore,
       overall_quality_score: overall,
       suggested_control_links: suggestions,
-      analysis_model: "heuristic-v1",
+      analysis_model: modelLabel,
       analyzed_by: userId,
       visibility,
+      audit_metadata: auditMetadata,
     });
 
-    // Auto-apply suggested control links so readiness scores update immediately
+    // ---- Auto-apply control links --------------------------------
     if (suggestions.length > 0) {
       try {
         await applySuggestionsQuery(
           fileId,
           organizationId,
-          suggestions.map((s: any) => ({ control_id: s.control_id, framework_type: s.framework_type })),
-          userId ?? undefined
+          suggestions.map((s: any) => ({
+            control_id: s.control_id,
+            framework_type: s.framework_type,
+          })),
+          userId ?? undefined,
         );
       } catch (linkErr) {
-        logger.warn("Auto-apply suggestions failed (non-critical):", linkErr);
+        logger.warn(
+          "Auto-apply suggestions failed (non-critical):",
+          linkErr,
+        );
       }
     }
 
-    // Track AI content metadata for transparency badge
-    trackAIContent(organizationId, "evidence", fileId, {
-      badgeType: "generated",
-      modelUsed: "heuristic-v1",
-      modelProvider: "verifywise",
-      toolName: "evidence-analysis",
-      confidenceScore: overall,
-      promptSummary: `Analyzed file ${file.filename}: ${foundAreas.length} compliance areas, ${keyFindings.length} findings`,
-    }, userId).catch(() => {});
+    // ---- AI content tracking -------------------------------------
+    trackAIContent(
+      organizationId,
+      "evidence",
+      fileId,
+      {
+        badgeType: "generated",
+        modelUsed: modelLabel,
+        modelProvider: usedFallback ? "verifywise" : "llm",
+        toolName: "evidence-analysis",
+        confidenceScore: overall,
+        promptSummary: `Analyzed file ${file.filename}: ${complianceAreas.length} compliance areas, ${
+          Array.isArray(keyFindings) ? keyFindings.length : 0
+        } findings`,
+      },
+      userId,
+    ).catch(() => {});
 
-    logStructured("successful", `file ${fileId} analyzed`, functionName, fileName);
+    logStructured(
+      "successful",
+      `file ${fileId} analyzed (${modelLabel})`,
+      functionName,
+      fileName,
+    );
     return res.status(200).json(STATUS_CODE[200](analysis));
   } catch (error) {
     logStructured("error", "failed to analyze file", functionName, fileName);

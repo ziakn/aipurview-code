@@ -113,6 +113,7 @@ export async function getAuditLogPaginated(
     state?: string;
     toolName?: string;
     userId?: number;
+    actorType?: string;
     dateFrom?: string;
     dateTo?: string;
     limit?: number;
@@ -133,6 +134,10 @@ export async function getAuditLogPaginated(
   if (filters?.userId) {
     conditions.push("al.actor_id = :userId");
     replacements.userId = filters.userId;
+  }
+  if (filters?.actorType) {
+    conditions.push("al.actor_type = :actorType");
+    replacements.actorType = filters.actorType;
   }
   if (filters?.dateFrom) {
     conditions.push("al.created_at >= :dateFrom");

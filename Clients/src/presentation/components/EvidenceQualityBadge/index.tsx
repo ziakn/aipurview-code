@@ -5,6 +5,7 @@ interface EvidenceQualityBadgeProps {
   score: number;
   size?: "small" | "medium";
   showLabel?: boolean;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
 function getScoreColor(score: number) {
@@ -25,14 +26,28 @@ export default function EvidenceQualityBadge({
   score,
   size = "small",
   showLabel = true,
+  onClick,
 }: EvidenceQualityBadgeProps) {
   const colors = getScoreColor(score);
   const label = getScoreLabel(score);
   const isSmall = size === "small";
+  const isClickable = typeof onClick === "function";
 
   return (
-    <Tooltip title={`Evidence Quality: ${score}/100 (${label})`} arrow>
+    <Tooltip
+      title={
+        isClickable
+          ? `Click for details — ${score}/100 (${label})`
+          : `Evidence Quality: ${score}/100 (${label})`
+      }
+      arrow
+    >
       <Box
+        onClick={(e) => {
+          if (!isClickable) return;
+          e.stopPropagation();
+          onClick!(e);
+        }}
         sx={{
           display: "inline-flex",
           alignItems: "center",
@@ -42,7 +57,15 @@ export default function EvidenceQualityBadge({
           border: `1px solid ${colors.border}`,
           borderRadius: isSmall ? "4px" : "6px",
           padding: isSmall ? "2px 6px" : "4px 10px",
-          cursor: "default",
+          cursor: isClickable ? "pointer" : "default",
+          transition: "all 120ms ease",
+          ...(isClickable && {
+            "&:hover": {
+              filter: "brightness(0.97)",
+              boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
+              transform: "translateY(-1px)",
+            },
+          }),
         }}
       >
         <Typography

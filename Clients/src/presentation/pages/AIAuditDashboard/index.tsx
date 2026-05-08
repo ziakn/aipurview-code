@@ -120,8 +120,16 @@ function formatStateLabel(state: string | undefined): string {
   return state.replace(/_/g, " ");
 }
 
+const ACTOR_TYPE_OPTIONS = [
+  { value: "all", label: "All actors" },
+  { value: "user", label: "User" },
+  { value: "system", label: "System" },
+  { value: "rule_engine", label: "Rule engine" },
+];
+
 export default function AIAuditDashboard() {
   const [period, setPeriod] = useState("30d");
+  const [actorType, setActorType] = useState<string>("all");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [detailOpen, setDetailOpen] = useState(false);
@@ -140,6 +148,7 @@ export default function AIAuditDashboard() {
     useAuditAnalytics(dateFrom);
   const { data: logData, isLoading: logLoading } = useAuditLog({
     dateFrom,
+    actorType: actorType === "all" ? undefined : actorType,
     limit: rowsPerPage,
     offset: page * rowsPerPage,
   });
@@ -514,6 +523,47 @@ export default function AIAuditDashboard() {
           }
         />
       </Tabs>
+
+      {/* Actor type filter chips */}
+      <Stack
+        direction="row"
+        alignItems="center"
+        spacing={1}
+        sx={{ mb: "8px" }}
+      >
+        <Typography
+          sx={{
+            fontSize: 12,
+            color: textColors.secondary,
+            fontWeight: 500,
+          }}
+        >
+          Filter by actor:
+        </Typography>
+        {ACTOR_TYPE_OPTIONS.map((opt) => {
+          const isSelected = actorType === opt.value;
+          return (
+            <Box
+              key={opt.value}
+              onClick={() => {
+                setActorType(opt.value);
+                setPage(0);
+              }}
+              sx={{ cursor: "pointer" }}
+            >
+              <Chip
+                label={opt.label}
+                size="small"
+                uppercase={false}
+                backgroundColor={
+                  isSelected ? brand.primaryLight : background.hover
+                }
+                textColor={isSelected ? brand.primary : undefined}
+              />
+            </Box>
+          );
+        })}
+      </Stack>
 
       {/* Audit log table */}
       <Card elevation={0} sx={cardSx}>
