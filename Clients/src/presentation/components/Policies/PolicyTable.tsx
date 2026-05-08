@@ -346,7 +346,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
                     isChecked={isSelected(Number(policy.id))}
                     onChange={() => toggleSelection(Number(policy.id))}
                     ariaLabel={`Select policy ${policy.title}`}
-                    sx={{ p: 0, "& svg": { display: "block" } }}
+                    sx={{ "p": 0, "& svg": { display: "block" } }}
                   />
                 </Box>
               </TableCell>
@@ -556,7 +556,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
                     <MuiCheckbox
                       checked={pendingTags.includes(t)}
                       size="small"
-                      sx={{ p: 0.25, mr: 1, "& svg": { fontSize: 16 } }}
+                      sx={{ "p": 0.25, "mr": 1, "& svg": { fontSize: 16 } }}
                     />
                     <ListItemText primary={t} primaryTypographyProps={{ fontSize: 13 }} />
                   </MenuItem>

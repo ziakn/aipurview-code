@@ -140,7 +140,7 @@ const SortableTableHead: React.FC<{
                 isIndeterminate={selection.someSelected && !selection.allSelected}
                 onChange={selection.onToggleAll}
                 ariaLabel="Select all files on this page"
-                sx={{ p: 0, "& svg": { display: "block" } }}
+                sx={{ "p": 0, "& svg": { display: "block" } }}
               />
             </Box>
           </TableCell>
@@ -638,7 +638,7 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                           isChecked={isSelected(Number(row.id))}
                           onChange={() => toggleSelection(Number(row.id))}
                           ariaLabel={`Select file ${row.fileName}`}
-                          sx={{ p: 0, "& svg": { display: "block" } }}
+                          sx={{ "p": 0, "& svg": { display: "block" } }}
                         />
                       </Box>
                     </TableCell>
@@ -1005,7 +1005,7 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                         <MuiCheckbox
                           checked={pendingTags.includes(t)}
                           size="small"
-                          sx={{ p: 0.25, mr: 1, "& svg": { fontSize: 16 } }}
+                          sx={{ "p": 0.25, "mr": 1, "& svg": { fontSize: 16 } }}
                         />
                         <ListItemText primary={t} primaryTypographyProps={{ fontSize: 13 }} />
                       </MenuItem>

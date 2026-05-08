@@ -256,16 +256,16 @@ const TasksTable: React.FC<ITasksTableProps> = ({
               key={task.id}
               sx={{
                 ...singleTheme.tableStyles.primary.body.row,
-                cursor: isArchived ? "default" : "pointer",
-                backgroundColor: isArchived ? "rgba(0, 0, 0, 0.02)" : "transparent",
-                opacity: isArchived ? 0.7 : 1,
+                "cursor": isArchived ? "default" : "pointer",
+                "backgroundColor": isArchived ? "rgba(0, 0, 0, 0.02)" : "transparent",
+                "opacity": isArchived ? 0.7 : 1,
                 "&:hover": {
                   backgroundColor: isArchived
                     ? "rgba(0, 0, 0, 0.04)"
                     : singleTheme.tableColors.rowHover,
                 },
                 ...(flashRowId === task.id && {
-                  backgroundColor: singleTheme.flashColors.background,
+                  "backgroundColor": singleTheme.flashColors.background,
                   "& td": {
                     backgroundColor: "transparent !important",
                   },
@@ -302,7 +302,7 @@ const TasksTable: React.FC<ITasksTableProps> = ({
                       onChange={() => toggleSelection(task.id as number)}
                       isDisabled={isArchived}
                       ariaLabel={`Select task ${task.title}`}
-                      sx={{ p: 0, "& svg": { display: "block" } }}
+                      sx={{ "p": 0, "& svg": { display: "block" } }}
                     />
                   </Box>
                 </TableCell>

@@ -51,7 +51,7 @@ const StandardTableHead: React.FC<StandardTableHeadProps> = memo(
                   isIndeterminate={selection.someSelected && !selection.allSelected}
                   onChange={selection.onToggleAll}
                   ariaLabel={selection.ariaLabel ?? "Select all rows"}
-                  sx={{ p: 0, "& svg": { display: "block" } }}
+                  sx={{ "p": 0, "& svg": { display: "block" } }}
                 />
               </Box>
             </TableCell>

@@ -128,7 +128,7 @@ const SortableTableHead: React.FC<{
                 isIndeterminate={selection.someSelected && !selection.allSelected}
                 onChange={selection.onToggleAll}
                 ariaLabel="Select all project risks"
-                sx={{ p: 0, "& svg": { display: "block" } }}
+                sx={{ "p": 0, "& svg": { display: "block" } }}
               />
             </Box>
           </TableCell>
@@ -605,8 +605,8 @@ const VWProjectRisksTable = ({
                           `Page ${page + 1} of ${Math.max(0, Math.ceil(count / rowsPerPage))}`
                         }
                         sx={{
-                          mt: theme.spacing(6),
-                          color: theme.palette.text.secondary,
+                          "mt": theme.spacing(6),
+                          "color": theme.palette.text.secondary,
                           "& .MuiSelect-select": {
                             width: theme.spacing(10),
                             borderRadius: theme.shape.borderRadius,
@@ -639,10 +639,10 @@ const VWProjectRisksTable = ({
                             inputProps: { id: "pagination-dropdown" },
                             IconComponent: SelectorVertical,
                             sx: {
-                              ml: theme.spacing(4),
-                              mr: theme.spacing(12),
-                              minWidth: theme.spacing(20),
-                              textAlign: "left",
+                              "ml": theme.spacing(4),
+                              "mr": theme.spacing(12),
+                              "minWidth": theme.spacing(20),
+                              "textAlign": "left",
                               "&.Mui-focused > div": {
                                 backgroundColor: theme.palette.background.main,
                               },
@@ -736,7 +736,7 @@ const VWProjectRisksTable = ({
                     <MuiCheckbox
                       checked={pendingCategories.includes(c)}
                       size="small"
-                      sx={{ p: 0.25, mr: 1, "& svg": { fontSize: 16 } }}
+                      sx={{ "p": 0.25, "mr": 1, "& svg": { fontSize: 16 } }}
                     />
                     <ListItemText primary={c} primaryTypographyProps={{ fontSize: 13 }} />
                   </MenuItem>

@@ -188,7 +188,7 @@ const VWProjectRisksTableBody = ({
                         onChange={() => selection.onToggle(Number(row.id))}
                         isDisabled={row.is_deleted}
                         ariaLabel={`Select project risk ${row.risk_name}`}
-                        sx={{ p: 0, "& svg": { display: "block" } }}
+                        sx={{ "p": 0, "& svg": { display: "block" } }}
                       />
                     </Box>
                   </TableCell>
