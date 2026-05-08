@@ -7544,6 +7544,32 @@ export const translations: Record<string, Record<string, string>> = {
       "Ihr Name, Ihre E-Mail-Adresse und persönlichen Angaben",
     "Your new task has been added.": "Ihre neue Aufgabe wurde hinzugefügt.",
     "Your report is being generated.": "Ihr Bericht wird generiert.",
+    // Bulk actions
+    "Add tags": "Tags hinzufügen",
+    "Adds to the chosen folder; existing assignments are preserved.":
+      "Wird dem ausgewählten Ordner hinzugefügt; bestehende Zuordnungen bleiben erhalten.",
+    "Archived policies will be moved out of the active list. You can still find them via the Archived status filter.":
+      'Archivierte Richtlinien werden aus der aktiven Liste entfernt. Sie sind weiterhin über den Statusfilter "Archiviert" abrufbar.',
+    "Archived risks are soft-deleted: they are hidden from the active risk register but remain available for audit history.":
+      "Archivierte Risiken werden weich gelöscht: Sie werden aus dem aktiven Risikoregister ausgeblendet, bleiben aber für die Audit-Historie verfügbar.",
+    "Assign reviewer": "Prüfer zuweisen",
+    "Bulk actions": "Massenaktionen",
+    "Clear selection": "Auswahl aufheben",
+    "Edit tags": "Tags bearbeiten",
+    "Empty Replace will clear all tags.": "Bei einem leeren Ersetzen werden alle Tags entfernt.",
+    "Mark complete": "Als erledigt markieren",
+    "Remove tags": "Tags entfernen",
+    "Replace tags": "Tags ersetzen",
+    "Replaces existing categories. Leave empty to clear.":
+      "Ersetzt vorhandene Kategorien. Leer lassen, um sie zu entfernen.",
+    "Replaces existing reviewer assignments.": "Ersetzt bestehende Prüferzuweisungen.",
+    "Replaces existing tags. Leave empty to clear.":
+      "Ersetzt vorhandene Tags. Leer lassen, um sie zu entfernen.",
+    "Set categories": "Kategorien festlegen",
+    "Set category": "Kategorie festlegen",
+    "Set owner": "Eigentümer festlegen",
+    "Set tags": "Tags festlegen",
+    "Type a category and press Enter": "Kategorie eingeben und Eingabetaste drücken",
   },
 
   fr: {
@@ -15014,5 +15040,32 @@ export const translations: Record<string, Record<string, string>> = {
     "Your name, email and personal details": "Vos nom, e-mail et coordonnées personnelles",
     "Your new task has been added.": "Votre nouvelle tâche a été ajoutée.",
     "Your report is being generated.": "Votre rapport est en cours de génération.",
+    // Bulk actions
+    "Add tags": "Ajouter des balises",
+    "Adds to the chosen folder; existing assignments are preserved.":
+      "Ajoute au dossier sélectionné ; les affectations existantes sont conservées.",
+    "Archived policies will be moved out of the active list. You can still find them via the Archived status filter.":
+      "Les politiques archivées seront retirées de la liste active. Vous pourrez toujours les retrouver via le filtre de statut Archivé.",
+    "Archived risks are soft-deleted: they are hidden from the active risk register but remain available for audit history.":
+      "Les risques archivés sont supprimés en douceur : ils sont masqués du registre des risques actifs mais restent disponibles dans l'historique d'audit.",
+    "Assign reviewer": "Attribuer un relecteur",
+    "Bulk actions": "Actions groupées",
+    "Clear selection": "Effacer la sélection",
+    "Edit tags": "Modifier les balises",
+    "Empty Replace will clear all tags.": "Un remplacement vide effacera toutes les balises.",
+    "Mark complete": "Marquer comme terminé",
+    "Remove tags": "Supprimer des balises",
+    "Replace tags": "Remplacer les balises",
+    "Replaces existing categories. Leave empty to clear.":
+      "Remplace les catégories existantes. Laisser vide pour effacer.",
+    "Replaces existing reviewer assignments.":
+      "Remplace les affectations de relecteurs existantes.",
+    "Replaces existing tags. Leave empty to clear.":
+      "Remplace les balises existantes. Laisser vide pour effacer.",
+    "Set categories": "Définir les catégories",
+    "Set category": "Définir la catégorie",
+    "Set owner": "Définir le propriétaire",
+    "Set tags": "Définir les balises",
+    "Type a category and press Enter": "Saisissez une catégorie et appuyez sur Entrée",
   },
 };

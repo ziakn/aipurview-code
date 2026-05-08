@@ -1,11 +1,28 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useState } from "react";
 import CustomizablePolicyTable from "../Table/PolicyTable";
-import { TableRow, TableCell } from "@mui/material";
+import {
+  Box,
+  Stack,
+  Select,
+  MenuItem,
+  ListItemText,
+  Checkbox as MuiCheckbox,
+  TableRow,
+  TableCell,
+  Typography,
+} from "@mui/material";
+import { Archive, UserCheck, Tag as TagIcon } from "lucide-react";
 import singleTheme from "../../themes/v1SingleTheme";
 import CustomIconButton from "../../components/IconButton";
 import useUsers from "../../../application/hooks/useUsers";
 import { PolicyTableProps } from "../../types/interfaces/i.policy";
 import Chip from "../Chip";
+import Checkbox from "../Inputs/Checkbox";
+import ConfirmationModal from "../Dialogs/ConfirmationModal";
+import BulkActionsToolbar, { type BulkAction } from "../Table/BulkActionsToolbar";
+import { useBulkSelection } from "../../../application/hooks/useBulkSelection";
+import { useBulkUpdatePolicies } from "../../../application/hooks/useBulkUpdatePolicies";
+import { POLICY_TAGS } from "../../../domain/models/Common/policy/policyManager.model";
 import { store } from "../../../application/redux/store";
 
 const tableHeaders = [
@@ -31,6 +48,8 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
   hidePagination = false,
   flashRowId,
   visibleColumns,
+  canRunBulkActions = false,
+  onBulkActionSuccess,
 }) => {
   const cellStyle = singleTheme.tableStyles.primary.body.cell;
 
@@ -45,13 +64,105 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
     [isVisible],
   );
 
+  const { users } = useUsers();
+
   // Helper function to get user name by ID
   const getUserNameById = (id: string | null | undefined | number) => {
     const user = users.find((u) => u.id === id);
     return user ? user.name + " " + user.surname : "-";
   };
 
-  const { users } = useUsers();
+  // ----- Bulk actions -----
+  const getRowId = useCallback((p: any) => Number(p.id), []);
+  const {
+    selectedIds,
+    isSelected,
+    toggle: toggleSelection,
+    toggleAll,
+    setAll: setAllSelected,
+    clear: clearSelection,
+    allSelected,
+    someSelected,
+    count: selectionCount,
+  } = useBulkSelection<any>({ rows: data, getId: getRowId });
+
+  const [reviewerDialogOpen, setReviewerDialogOpen] = useState(false);
+  const [tagsDialogOpen, setTagsDialogOpen] = useState(false);
+  const [pendingReviewerId, setPendingReviewerId] = useState<string>("");
+  const [pendingTags, setPendingTags] = useState<string[]>([]);
+
+  const bulkMutation = useBulkUpdatePolicies({
+    onSuccess: (payload) => {
+      clearSelection();
+      setReviewerDialogOpen(false);
+      setTagsDialogOpen(false);
+      setPendingReviewerId("");
+      setPendingTags([]);
+      onBulkActionSuccess?.(payload.action, payload.ids.length);
+    },
+  });
+
+  const handleConfirmArchive = useCallback(() => {
+    if (selectedIds.length === 0) return;
+    bulkMutation.mutate({ ids: selectedIds, action: "archive" });
+  }, [bulkMutation, selectedIds]);
+
+  const handleConfirmReviewer = useCallback(() => {
+    if (!pendingReviewerId || selectedIds.length === 0) return;
+    bulkMutation.mutate({
+      ids: selectedIds,
+      action: "set_reviewer",
+      reviewerId: Number(pendingReviewerId),
+    });
+  }, [bulkMutation, pendingReviewerId, selectedIds]);
+
+  const handleConfirmTags = useCallback(() => {
+    if (selectedIds.length === 0) return;
+    bulkMutation.mutate({
+      ids: selectedIds,
+      action: "set_tags",
+      tags: pendingTags,
+    });
+  }, [bulkMutation, pendingTags, selectedIds]);
+
+  const bulkActions = useMemo<BulkAction[]>(
+    () => [
+      {
+        id: "archive",
+        label: "Archive",
+        icon: <Archive size={16} />,
+        onClick: handleConfirmArchive,
+        disabled: bulkMutation.isPending,
+        confirm: {
+          title: `Archive ${selectionCount} polic${selectionCount === 1 ? "y" : "ies"}?`,
+          body: "Archived policies will be moved out of the active list. You can still find them via the Archived status filter.",
+          confirmLabel: "Archive",
+          danger: true,
+        },
+      },
+      {
+        id: "set_reviewer",
+        label: "Assign reviewer",
+        icon: <UserCheck size={16} />,
+        onClick: () => {
+          setPendingReviewerId("");
+          setReviewerDialogOpen(true);
+        },
+        disabled: bulkMutation.isPending,
+      },
+      {
+        id: "set_tags",
+        label: "Set tags",
+        icon: <TagIcon size={16} />,
+        onClick: () => {
+          setPendingTags([]);
+          setTagsDialogOpen(true);
+        },
+        disabled: bulkMutation.isPending,
+      },
+    ],
+    [handleConfirmArchive, bulkMutation.isPending, selectionCount],
+  );
 
   // Download handlers for policy export
   const handleDownloadPDF = async (policyId: number, title: string) => {
@@ -149,6 +260,17 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
 
   return (
     <>
+      {canRunBulkActions && (
+        <BulkActionsToolbar
+          count={selectionCount}
+          onClear={clearSelection}
+          actions={bulkActions}
+          selectAll={{
+            totalCount: data.length,
+            onSelectAll: () => setAllSelected(data.map((p) => Number(p.id))),
+          }}
+        />
+      )}
       <CustomizablePolicyTable
         data={{ rows, cols: visibleTableHeaders }}
         paginated
@@ -157,6 +279,15 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
         onRowClick={(id: string) => onOpen(Number(id))}
         hidePagination={hidePagination}
         flashRowId={flashRowId}
+        selection={
+          canRunBulkActions
+            ? {
+                allSelected: allSelected && rows.length > 0,
+                someSelected,
+                onToggleAll: toggleAll,
+              }
+            : undefined
+        }
         renderRow={(policy, sortConfig) => (
           <TableRow
             key={policy.id}
@@ -190,6 +321,36 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
               onOpen(policy.id);
             }}
           >
+            {canRunBulkActions && (
+              <TableCell
+                padding="checkbox"
+                sx={{
+                  width: 48,
+                  minWidth: 48,
+                  maxWidth: 48,
+                  padding: "14px 8px",
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Checkbox
+                    id={`policy-row-checkbox-${policy.id}`}
+                    value={String(policy.id)}
+                    isChecked={isSelected(Number(policy.id))}
+                    onChange={() => toggleSelection(Number(policy.id))}
+                    ariaLabel={`Select policy ${policy.title}`}
+                    sx={{ "p": 0, "& svg": { display: "block" } }}
+                  />
+                </Box>
+              </TableCell>
+            )}
             <TableCell
               sx={{
                 ...cellStyle,
@@ -316,6 +477,104 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
           </TableRow>
         )}
       />
+
+      {canRunBulkActions && reviewerDialogOpen && (
+        <ConfirmationModal
+          isOpen
+          title={`Assign reviewer to ${selectionCount} polic${selectionCount === 1 ? "y" : "ies"}`}
+          body={
+            <Stack gap={2}>
+              <Typography variant="body2" sx={{ color: "text.secondary", fontSize: 12 }}>
+                Replaces existing reviewer assignments.
+              </Typography>
+              <Select
+                size="small"
+                value={pendingReviewerId}
+                onChange={(e) => setPendingReviewerId(String(e.target.value))}
+                displayEmpty
+                sx={{ width: 280, fontSize: 13 }}
+                MenuProps={{ PaperProps: { sx: { maxHeight: 280 } } }}
+              >
+                <MenuItem value="" dense sx={{ py: 0.5, fontSize: 13 }}>
+                  Choose a reviewer…
+                </MenuItem>
+                {users.map((u) => (
+                  <MenuItem key={u.id} value={String(u.id)} dense sx={{ py: 0.5, fontSize: 13 }}>
+                    {u.name} {u.surname}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Stack>
+          }
+          cancelText="Cancel"
+          proceedText="Assign"
+          proceedButtonVariant="contained"
+          confirmBtnSx={{
+            opacity: pendingReviewerId ? 1 : 0.5,
+            pointerEvents: pendingReviewerId ? "auto" : "none",
+          }}
+          onCancel={() => {
+            if (bulkMutation.isPending) return;
+            setReviewerDialogOpen(false);
+          }}
+          onProceed={handleConfirmReviewer}
+          isLoading={bulkMutation.isPending}
+        />
+      )}
+
+      {canRunBulkActions && tagsDialogOpen && (
+        <ConfirmationModal
+          isOpen
+          title={`Set tags on ${selectionCount} polic${selectionCount === 1 ? "y" : "ies"}`}
+          body={
+            <Stack gap={2}>
+              <Typography variant="body2" sx={{ color: "text.secondary", fontSize: 12 }}>
+                Replaces existing tags. Leave empty to clear.
+              </Typography>
+              <Select
+                size="small"
+                multiple
+                value={pendingTags}
+                onChange={(e) =>
+                  setPendingTags(
+                    typeof e.target.value === "string"
+                      ? e.target.value.split(",")
+                      : (e.target.value as string[]),
+                  )
+                }
+                renderValue={(values) =>
+                  (values as string[]).length === 0
+                    ? "Choose tags…"
+                    : (values as string[]).join(", ")
+                }
+                displayEmpty
+                sx={{ width: 320, fontSize: 13 }}
+                MenuProps={{ PaperProps: { sx: { maxHeight: 280 } } }}
+              >
+                {POLICY_TAGS.map((t) => (
+                  <MenuItem key={t} value={t} dense sx={{ py: 0.25 }}>
+                    <MuiCheckbox
+                      checked={pendingTags.includes(t)}
+                      size="small"
+                      sx={{ "p": 0.25, "mr": 1, "& svg": { fontSize: 16 } }}
+                    />
+                    <ListItemText primary={t} primaryTypographyProps={{ fontSize: 13 }} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </Stack>
+          }
+          cancelText="Cancel"
+          proceedText="Apply"
+          proceedButtonVariant="contained"
+          onCancel={() => {
+            if (bulkMutation.isPending) return;
+            setTagsDialogOpen(false);
+          }}
+          onProceed={handleConfirmTags}
+          isLoading={bulkMutation.isPending}
+        />
+      )}
     </>
   );
 };

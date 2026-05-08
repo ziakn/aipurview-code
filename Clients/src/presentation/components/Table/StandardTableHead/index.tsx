@@ -3,16 +3,22 @@ import { TableCell, TableHead, TableRow, Box, Typography } from "@mui/material";
 import { ChevronsUpDown, ChevronUp, ChevronDown } from "lucide-react";
 import singleTheme from "../../../themes/v1SingleTheme";
 import { text } from "../../../themes/palette";
-import type { SortConfig, StandardColumn } from "../../../../domain/types/standardTable";
+import Checkbox from "../../Inputs/Checkbox";
+import type {
+  SelectionColumnConfig,
+  SortConfig,
+  StandardColumn,
+} from "../../../../domain/types/standardTable";
 
 interface StandardTableHeadProps {
   columns: StandardColumn[];
   sortConfig: SortConfig;
   onSort: (columnId: string) => void;
+  selection?: SelectionColumnConfig;
 }
 
 const StandardTableHead: React.FC<StandardTableHeadProps> = memo(
-  ({ columns, sortConfig, onSort }) => {
+  ({ columns, sortConfig, onSort, selection }) => {
     return (
       <TableHead
         sx={{
@@ -20,6 +26,36 @@ const StandardTableHead: React.FC<StandardTableHeadProps> = memo(
         }}
       >
         <TableRow sx={singleTheme.tableStyles.primary.header.row}>
+          {selection && (
+            <TableCell
+              sx={{
+                width: 48,
+                minWidth: 48,
+                maxWidth: 48,
+                padding: "16px 8px",
+                borderBottom: "1px solid #d0d5dd",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                }}
+              >
+                <Checkbox
+                  id="standard-table-select-all"
+                  value="select-all"
+                  isChecked={selection.allSelected}
+                  isIndeterminate={selection.someSelected && !selection.allSelected}
+                  onChange={selection.onToggleAll}
+                  ariaLabel={selection.ariaLabel ?? "Select all rows"}
+                  sx={{ "p": 0, "& svg": { display: "block" } }}
+                />
+              </Box>
+            </TableCell>
+          )}
           {columns.map((column, index) => {
             const isFirstColumn = index === 0;
             const isActionColumn = column.id === "actions";

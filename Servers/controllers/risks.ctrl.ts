@@ -8,13 +8,20 @@ import {
   getRisksByFrameworkQuery,
   getRisksByProjectQuery,
   updateRiskByIdQuery,
+  bulkSetProjectRisksOwnerQuery,
+  bulkSetProjectRisksCategoryQuery,
+  bulkArchiveProjectRisksQuery,
+  PROJECT_RISK_CATEGORIES_SET,
 } from "../utils/risk.utils";
 import { RiskModel } from "../domain.layer/models/risks/risk.model";
 import { sequelize } from "../database/db";
 import {
   ValidationException,
   BusinessLogicException,
+  ForbiddenException,
 } from "../domain.layer/exceptions/custom.exception";
+import { parseBulkIds, assertOrgOwnsIds, withBulkTransaction } from "../utils/bulkAction.utils";
+import { logProcessing } from "../utils/logger/logHelper";
 import logger, { logStructured } from "../utils/logger/fileLogger";
 import { logEvent } from "../utils/logger/dbLogger";
 import {
@@ -717,5 +724,107 @@ export async function deleteRiskById(req: Request, res: Response): Promise<any> 
     );
     logger.error("❌ Error in deleteProjectRiskById:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
+  }
+}
+
+type BulkProjectRiskAction = "set_owner" | "set_category" | "archive";
+
+/**
+ * PATCH /api/project-risks/bulk
+ *
+ * Body: { ids: number[], action: 'set_owner' | 'set_category' | 'archive',
+ *         ownerId?: number, categories?: string[] }
+ *
+ * Tenant-scoped bulk update of project risks. Authorized for Admin and Editor roles.
+ */
+export async function bulkUpdateProjectRisks(req: Request, res: Response): Promise<any> {
+  logProcessing({
+    description: "starting bulkUpdateProjectRisks",
+    functionName: "bulkUpdateProjectRisks",
+    fileName: "risks.ctrl.ts",
+    userId: req.userId!,
+    organizationId: req.organizationId!,
+  });
+
+  try {
+    const ids = parseBulkIds(req.body?.ids);
+    const action = req.body?.action as BulkProjectRiskAction;
+
+    if (action !== "set_owner" && action !== "set_category" && action !== "archive") {
+      throw new ValidationException(
+        "action must be one of: set_owner, set_category, archive",
+        "action",
+        req.body?.action,
+      );
+    }
+
+    let ownerId: number | undefined;
+    if (action === "set_owner") {
+      const raw = req.body?.ownerId;
+      const parsed = typeof raw === "number" ? raw : Number(raw);
+      if (!Number.isInteger(parsed) || parsed <= 0) {
+        throw new ValidationException("ownerId must be a positive integer", "ownerId", raw);
+      }
+      ownerId = parsed;
+    }
+
+    let categories: string[] | undefined;
+    if (action === "set_category") {
+      const raw = req.body?.categories;
+      if (!Array.isArray(raw)) {
+        throw new ValidationException("categories must be an array", "categories", raw);
+      }
+      for (const c of raw) {
+        if (typeof c !== "string" || !PROJECT_RISK_CATEGORIES_SET.has(c)) {
+          throw new ValidationException(`Invalid risk category: ${String(c)}`, "categories", c);
+        }
+      }
+      categories = raw as string[];
+    }
+
+    await withBulkTransaction(
+      {
+        audit: {
+          action,
+          ids,
+          fileName: "risks.ctrl.ts",
+          functionName: "bulkUpdateProjectRisks",
+          userId: req.userId!,
+          organizationId: req.organizationId!,
+          eventType: action === "archive" ? "Delete" : "Update",
+        },
+      },
+      async (transaction) => {
+        await assertOrgOwnsIds({
+          table: "risks",
+          ids,
+          organizationId: req.organizationId!,
+          transaction,
+        });
+
+        if (action === "set_owner") {
+          await bulkSetProjectRisksOwnerQuery(req.organizationId!, ids, ownerId!, transaction);
+        } else if (action === "set_category") {
+          await bulkSetProjectRisksCategoryQuery(
+            req.organizationId!,
+            ids,
+            categories!,
+            transaction,
+          );
+        } else {
+          await bulkArchiveProjectRisksQuery(req.organizationId!, ids, transaction);
+        }
+      },
+    );
+
+    return res.status(200).json(STATUS_CODE[200]({ updated: ids.length, action }));
+  } catch (error) {
+    if (error instanceof ValidationException) {
+      return res.status(400).json(STATUS_CODE[400](error.message));
+    }
+    if (error instanceof ForbiddenException) {
+      return res.status(403).json(STATUS_CODE[403](error.message));
+    }
+    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
   }
 }

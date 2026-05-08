@@ -1,5 +1,10 @@
 import {
   Box,
+  Stack,
+  Select,
+  MenuItem,
+  ListItemText,
+  Checkbox as MuiCheckbox,
   Table,
   TableBody,
   TableCell,
@@ -14,12 +19,44 @@ import {
 import singleTheme from "../../../themes/v1SingleTheme";
 import { useCallback, useMemo, useState, useEffect } from "react";
 import TablePaginationActions from "../../TablePagination";
-import { ChevronsUpDown, ChevronUp, ChevronDown, ShieldAlert } from "lucide-react";
+import {
+  ChevronsUpDown,
+  ChevronUp,
+  ChevronDown,
+  ShieldAlert,
+  UserCheck,
+  Tag as TagIcon,
+  Archive,
+} from "lucide-react";
 import VWProjectRisksTableBody from "./VWProjectRisksTableBody";
 import { EmptyState } from "../../EmptyState";
 import { IVWProjectRisksTable } from "../../../types/interfaces/i.risk";
 import { RiskModel } from "../../../../domain/models/Common/risks/risk.model";
 import { text } from "../../../themes/palette";
+import Checkbox from "../../Inputs/Checkbox";
+import ConfirmationModal from "../../Dialogs/ConfirmationModal";
+import BulkActionsToolbar, { type BulkAction } from "../BulkActionsToolbar";
+import { useBulkSelection } from "../../../../application/hooks/useBulkSelection";
+import { useBulkUpdateProjectRisks } from "../../../../application/hooks/useBulkUpdateProjectRisks";
+import useUsers from "../../../../application/hooks/useUsers";
+
+const PROJECT_RISK_CATEGORIES = [
+  "Strategic risk",
+  "Operational risk",
+  "Compliance risk",
+  "Financial risk",
+  "Cybersecurity risk",
+  "Reputational risk",
+  "Legal risk",
+  "Technological risk",
+  "Third-party/vendor risk",
+  "Environmental risk",
+  "Human resources risk",
+  "Geopolitical risk",
+  "Fraud risk",
+  "Data privacy risk",
+  "Health and safety risk",
+] as const;
 
 const SelectorVertical = (props: React.SVGAttributes<SVGSVGElement>) => (
   <ChevronsUpDown size={16} {...props} />
@@ -51,7 +88,12 @@ const SortableTableHead: React.FC<{
   columns: typeof columns;
   sortConfig: SortConfig;
   onSort: (columnId: string) => void;
-}> = ({ columns, sortConfig, onSort }) => {
+  selection?: {
+    allSelected: boolean;
+    someSelected: boolean;
+    onToggleAll: () => void;
+  };
+}> = ({ columns, sortConfig, onSort, selection }) => {
   const theme = useTheme();
 
   return (
@@ -61,6 +103,36 @@ const SortableTableHead: React.FC<{
       }}
     >
       <TableRow sx={singleTheme.tableStyles.primary.header.row}>
+        {selection && (
+          <TableCell
+            sx={{
+              width: 48,
+              minWidth: 48,
+              maxWidth: 48,
+              padding: "16px 8px",
+              borderBottom: "1px solid #d0d5dd",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+              }}
+            >
+              <Checkbox
+                id="project-risks-select-all"
+                value="select-all"
+                isChecked={selection.allSelected}
+                isIndeterminate={selection.someSelected && !selection.allSelected}
+                onChange={selection.onToggleAll}
+                ariaLabel="Select all project risks"
+                sx={{ "p": 0, "& svg": { display: "block" } }}
+              />
+            </Box>
+          </TableCell>
+        )}
         {columns.map((column) => (
           <TableCell
             key={column.id}
@@ -130,6 +202,8 @@ const VWProjectRisksTable = ({
   flashRow,
   hidePagination = false,
   visibleColumns,
+  canRunBulkActions = false,
+  onBulkActionSuccess,
 }: IVWProjectRisksTable) => {
   const filteredColumns = useMemo(
     () => (visibleColumns ? columns.filter((col) => visibleColumns.has(col.id)) : columns),
@@ -328,129 +402,360 @@ const VWProjectRisksTable = ({
     [setPage],
   );
 
+  // ----- Bulk actions -----
+  // Selection scope: all non-archived rows currently visible (full filtered list).
+  const selectableRows = useMemo(() => sortedRows.filter((r) => !r.is_deleted), [sortedRows]);
+  const getRowId = useCallback((r: RiskModel) => Number(r.id), []);
+  const {
+    selectedIds,
+    isSelected,
+    toggle: toggleSelection,
+    toggleAll,
+    setAll: setAllSelected,
+    clear: clearSelection,
+    allSelected,
+    someSelected,
+    count: selectionCount,
+  } = useBulkSelection<RiskModel>({ rows: selectableRows, getId: getRowId });
+
+  const allSelectableRiskIds = useMemo(
+    () => selectableRows.map((r) => Number(r.id)),
+    [selectableRows],
+  );
+
+  const { users } = useUsers();
+  const [ownerDialogOpen, setOwnerDialogOpen] = useState(false);
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
+  const [pendingOwnerId, setPendingOwnerId] = useState<string>("");
+  const [pendingCategories, setPendingCategories] = useState<string[]>([]);
+
+  const bulkMutation = useBulkUpdateProjectRisks({
+    onSuccess: (payload) => {
+      clearSelection();
+      setOwnerDialogOpen(false);
+      setCategoryDialogOpen(false);
+      setPendingOwnerId("");
+      setPendingCategories([]);
+      onBulkActionSuccess?.(payload.action, payload.ids.length);
+    },
+  });
+
+  const handleConfirmOwner = useCallback(() => {
+    if (!pendingOwnerId || selectedIds.length === 0) return;
+    bulkMutation.mutate({
+      ids: selectedIds,
+      action: "set_owner",
+      ownerId: Number(pendingOwnerId),
+    });
+  }, [bulkMutation, pendingOwnerId, selectedIds]);
+
+  const handleConfirmCategory = useCallback(() => {
+    if (selectedIds.length === 0) return;
+    bulkMutation.mutate({
+      ids: selectedIds,
+      action: "set_category",
+      categories: pendingCategories,
+    });
+  }, [bulkMutation, pendingCategories, selectedIds]);
+
+  const handleConfirmArchive = useCallback(() => {
+    if (selectedIds.length === 0) return;
+    bulkMutation.mutate({ ids: selectedIds, action: "archive" });
+  }, [bulkMutation, selectedIds]);
+
+  const bulkActions = useMemo<BulkAction[]>(
+    () => [
+      {
+        id: "set_owner",
+        label: "Set owner",
+        icon: <UserCheck size={16} />,
+        onClick: () => {
+          setPendingOwnerId("");
+          setOwnerDialogOpen(true);
+        },
+        disabled: bulkMutation.isPending,
+      },
+      {
+        id: "set_category",
+        label: "Set category",
+        icon: <TagIcon size={16} />,
+        onClick: () => {
+          setPendingCategories([]);
+          setCategoryDialogOpen(true);
+        },
+        disabled: bulkMutation.isPending,
+      },
+      {
+        id: "archive",
+        label: "Archive",
+        icon: <Archive size={16} />,
+        onClick: handleConfirmArchive,
+        disabled: bulkMutation.isPending,
+        confirm: {
+          title: `Archive ${selectionCount} project risk${selectionCount === 1 ? "" : "s"}?`,
+          body: "Archived risks are soft-deleted: they are hidden from the active risk register but remain available for audit history.",
+          confirmLabel: "Archive",
+          danger: true,
+        },
+      },
+    ],
+    [bulkMutation.isPending, handleConfirmArchive, selectionCount],
+  );
+
   return (
-    <TableContainer>
-      <Table
-        sx={{
-          ...singleTheme.tableStyles.primary.frame,
-        }}
-      >
-        <SortableTableHead columns={filteredColumns} sortConfig={sortConfig} onSort={handleSort} />
-        {sortedRows.length !== 0 ? (
-          <VWProjectRisksTableBody
-            rows={sortedRows}
-            page={hidePagination ? 0 : page}
-            rowsPerPage={hidePagination ? sortedRows.length : rowsPerPage}
-            setSelectedRow={setSelectedRow}
-            setAnchor={setAnchor}
-            onDeleteRisk={onDeleteRisk}
-            flashRow={flashRow}
+    <Stack sx={{ width: "100%" }}>
+      {canRunBulkActions && (
+        <BulkActionsToolbar
+          count={selectionCount}
+          onClear={clearSelection}
+          actions={bulkActions}
+          selectAll={{
+            totalCount: allSelectableRiskIds.length,
+            onSelectAll: () => setAllSelected(allSelectableRiskIds),
+          }}
+        />
+      )}
+      <TableContainer>
+        <Table
+          sx={{
+            ...singleTheme.tableStyles.primary.frame,
+          }}
+        >
+          <SortableTableHead
+            columns={filteredColumns}
             sortConfig={sortConfig}
-            visibleColumns={visibleColumns}
+            onSort={handleSort}
+            selection={
+              canRunBulkActions
+                ? {
+                    allSelected: allSelected && selectableRows.length > 0,
+                    someSelected,
+                    onToggleAll: toggleAll,
+                  }
+                : undefined
+            }
           />
-        ) : (
-          <TableBody>
-            <TableRow>
-              <TableCell colSpan={filteredColumns.length} sx={{ border: "none", p: 0 }}>
-                <EmptyState
-                  icon={ShieldAlert}
-                  message="There is currently no data in this table."
-                />
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        )}
-        {!hidePagination && (
-          <TableFooter>
-            <TableRow>
-              <TableCell colSpan={filteredColumns.length} sx={{ border: "none", p: 0 }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    paddingX: theme.spacing(4),
-                  }}
+          {sortedRows.length !== 0 ? (
+            <VWProjectRisksTableBody
+              rows={sortedRows}
+              page={hidePagination ? 0 : page}
+              rowsPerPage={hidePagination ? sortedRows.length : rowsPerPage}
+              setSelectedRow={setSelectedRow}
+              setAnchor={setAnchor}
+              onDeleteRisk={onDeleteRisk}
+              flashRow={flashRow}
+              sortConfig={sortConfig}
+              visibleColumns={visibleColumns}
+              selection={canRunBulkActions ? { isSelected, onToggle: toggleSelection } : undefined}
+            />
+          ) : (
+            <TableBody>
+              <TableRow>
+                <TableCell
+                  colSpan={filteredColumns.length + (canRunBulkActions ? 1 : 0)}
+                  sx={{ border: "none", p: 0 }}
                 >
-                  <Typography
+                  <EmptyState
+                    icon={ShieldAlert}
+                    message="There is currently no data in this table."
+                  />
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          )}
+          {!hidePagination && (
+            <TableFooter>
+              <TableRow>
+                <TableCell
+                  colSpan={filteredColumns.length + (canRunBulkActions ? 1 : 0)}
+                  sx={{ border: "none", p: 0 }}
+                >
+                  <Box
                     sx={{
-                      paddingX: theme.spacing(2),
-                      fontSize: 12,
-                      opacity: 0.7,
-                      color: theme.palette.text.tertiary,
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      paddingX: theme.spacing(4),
                     }}
                   >
-                    Showing {getRange} of {sortedRows?.length} project risk(s)
-                  </Typography>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <TablePagination
-                      component="div"
-                      count={sortedRows?.length}
-                      page={validPage}
-                      onPageChange={handleChangePage}
-                      rowsPerPage={rowsPerPage}
-                      rowsPerPageOptions={[5, 10, 15, 20, 25]}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                      ActionsComponent={(props) => <TablePaginationActions {...props} />}
-                      labelRowsPerPage="Project risks per page"
-                      labelDisplayedRows={({ page, count }) =>
-                        `Page ${page + 1} of ${Math.max(0, Math.ceil(count / rowsPerPage))}`
-                      }
+                    <Typography
                       sx={{
-                        "mt": theme.spacing(6),
-                        "color": theme.palette.text.secondary,
-                        "& .MuiSelect-select": {
-                          width: theme.spacing(10),
-                          borderRadius: theme.shape.borderRadius,
-                          border: `1px solid ${theme.palette.border.light}`,
-                          padding: theme.spacing(4),
-                        },
-                        "& .MuiTablePagination-selectIcon": {
-                          width: "24px",
-                          height: "fit-content",
-                        },
+                        paddingX: theme.spacing(2),
+                        fontSize: 12,
+                        opacity: 0.7,
+                        color: theme.palette.text.tertiary,
+                        whiteSpace: "nowrap",
                       }}
-                      slotProps={{
-                        select: {
-                          MenuProps: {
-                            keepMounted: true,
-                            PaperProps: {
-                              className: "pagination-dropdown",
-                              sx: {
-                                mt: 0,
-                                mb: theme.spacing(2),
+                    >
+                      Showing {getRange} of {sortedRows?.length} project risk(s)
+                    </Typography>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <TablePagination
+                        component="div"
+                        count={sortedRows?.length}
+                        page={validPage}
+                        onPageChange={handleChangePage}
+                        rowsPerPage={rowsPerPage}
+                        rowsPerPageOptions={[5, 10, 15, 20, 25]}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                        ActionsComponent={(props) => <TablePaginationActions {...props} />}
+                        labelRowsPerPage="Project risks per page"
+                        labelDisplayedRows={({ page, count }) =>
+                          `Page ${page + 1} of ${Math.max(0, Math.ceil(count / rowsPerPage))}`
+                        }
+                        sx={{
+                          "mt": theme.spacing(6),
+                          "color": theme.palette.text.secondary,
+                          "& .MuiSelect-select": {
+                            width: theme.spacing(10),
+                            borderRadius: theme.shape.borderRadius,
+                            border: `1px solid ${theme.palette.border.light}`,
+                            padding: theme.spacing(4),
+                          },
+                          "& .MuiTablePagination-selectIcon": {
+                            width: "24px",
+                            height: "fit-content",
+                          },
+                        }}
+                        slotProps={{
+                          select: {
+                            MenuProps: {
+                              keepMounted: true,
+                              PaperProps: {
+                                className: "pagination-dropdown",
+                                sx: {
+                                  mt: 0,
+                                  mb: theme.spacing(2),
+                                },
+                              },
+                              transformOrigin: {
+                                vertical: "bottom",
+                                horizontal: "left",
+                              },
+                              anchorOrigin: { vertical: "top", horizontal: "left" },
+                              sx: { mt: theme.spacing(-2) },
+                            },
+                            inputProps: { id: "pagination-dropdown" },
+                            IconComponent: SelectorVertical,
+                            sx: {
+                              "ml": theme.spacing(4),
+                              "mr": theme.spacing(12),
+                              "minWidth": theme.spacing(20),
+                              "textAlign": "left",
+                              "&.Mui-focused > div": {
+                                backgroundColor: theme.palette.background.main,
                               },
                             },
-                            transformOrigin: {
-                              vertical: "bottom",
-                              horizontal: "left",
-                            },
-                            anchorOrigin: { vertical: "top", horizontal: "left" },
-                            sx: { mt: theme.spacing(-2) },
                           },
-                          inputProps: { id: "pagination-dropdown" },
-                          IconComponent: SelectorVertical,
-                          sx: {
-                            "ml": theme.spacing(4),
-                            "mr": theme.spacing(12),
-                            "minWidth": theme.spacing(20),
-                            "textAlign": "left",
-                            "&.Mui-focused > div": {
-                              backgroundColor: theme.palette.background.main,
-                            },
-                          },
-                        },
-                      }}
-                    />
+                        }}
+                      />
+                    </Box>
                   </Box>
-                </Box>
-              </TableCell>
-            </TableRow>
-          </TableFooter>
-        )}
-      </Table>
-    </TableContainer>
+                </TableCell>
+              </TableRow>
+            </TableFooter>
+          )}
+        </Table>
+      </TableContainer>
+
+      {canRunBulkActions && ownerDialogOpen && (
+        <ConfirmationModal
+          isOpen
+          title={`Set owner on ${selectionCount} project risk${selectionCount === 1 ? "" : "s"}`}
+          body={
+            <Stack gap={2}>
+              <Select
+                size="small"
+                value={pendingOwnerId}
+                onChange={(e) => setPendingOwnerId(String(e.target.value))}
+                displayEmpty
+                sx={{ width: 280, fontSize: 13 }}
+                MenuProps={{ PaperProps: { sx: { maxHeight: 280 } } }}
+              >
+                <MenuItem value="" dense sx={{ py: 0.5, fontSize: 13 }}>
+                  Choose an owner…
+                </MenuItem>
+                {users.map((u: { id: number; name: string; surname: string }) => (
+                  <MenuItem key={u.id} value={String(u.id)} dense sx={{ py: 0.5, fontSize: 13 }}>
+                    {u.name} {u.surname}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Stack>
+          }
+          cancelText="Cancel"
+          proceedText="Assign"
+          proceedButtonVariant="contained"
+          confirmBtnSx={{
+            opacity: pendingOwnerId ? 1 : 0.5,
+            pointerEvents: pendingOwnerId ? "auto" : "none",
+          }}
+          onCancel={() => {
+            if (bulkMutation.isPending) return;
+            setOwnerDialogOpen(false);
+          }}
+          onProceed={handleConfirmOwner}
+          isLoading={bulkMutation.isPending}
+        />
+      )}
+
+      {canRunBulkActions && categoryDialogOpen && (
+        <ConfirmationModal
+          isOpen
+          title={`Set categories on ${selectionCount} project risk${
+            selectionCount === 1 ? "" : "s"
+          }`}
+          body={
+            <Stack gap={2}>
+              <Typography variant="body2" sx={{ color: "text.secondary", fontSize: 12 }}>
+                Replaces existing categories. Leave empty to clear.
+              </Typography>
+              <Select
+                size="small"
+                multiple
+                value={pendingCategories}
+                onChange={(e) =>
+                  setPendingCategories(
+                    typeof e.target.value === "string"
+                      ? e.target.value.split(",")
+                      : (e.target.value as string[]),
+                  )
+                }
+                renderValue={(values) =>
+                  (values as string[]).length === 0
+                    ? "Choose categories…"
+                    : (values as string[]).join(", ")
+                }
+                displayEmpty
+                sx={{ width: 320, fontSize: 13 }}
+                MenuProps={{ PaperProps: { sx: { maxHeight: 280 } } }}
+              >
+                {PROJECT_RISK_CATEGORIES.map((c) => (
+                  <MenuItem key={c} value={c} dense sx={{ py: 0.25 }}>
+                    <MuiCheckbox
+                      checked={pendingCategories.includes(c)}
+                      size="small"
+                      sx={{ "p": 0.25, "mr": 1, "& svg": { fontSize: 16 } }}
+                    />
+                    <ListItemText primary={c} primaryTypographyProps={{ fontSize: 13 }} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </Stack>
+          }
+          cancelText="Cancel"
+          proceedText="Apply"
+          proceedButtonVariant="contained"
+          onCancel={() => {
+            if (bulkMutation.isPending) return;
+            setCategoryDialogOpen(false);
+          }}
+          onProceed={handleConfirmCategory}
+          isLoading={bulkMutation.isPending}
+        />
+      )}
+    </Stack>
   );
 };
 
