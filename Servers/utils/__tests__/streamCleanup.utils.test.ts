@@ -21,7 +21,8 @@ describe("streamCleanup.utils", () => {
     jest.clearAllMocks();
 
     mockStream = Object.assign(new Readable({ read() {} }), new EventEmitter());
-    mockReq = Object.assign(new EventEmitter(), { destroy: jest.fn() }) as unknown as Request & EventEmitter;
+    mockReq = Object.assign(new EventEmitter(), { destroy: jest.fn() }) as unknown as Request &
+      EventEmitter;
     mockRes = Object.assign(new EventEmitter(), {
       setHeader: jest.fn(),
       status: jest.fn().mockReturnThis(),
