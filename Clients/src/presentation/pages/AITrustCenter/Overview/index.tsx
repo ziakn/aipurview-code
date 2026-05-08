@@ -389,7 +389,7 @@ const AITrustCenterOverview: React.FC = () => {
           gap={12}
           mt={3}
           sx={{
-            maxWidth: "100%",
+            "maxWidth": "100%",
             "& > *": {
               flex: "0 0 auto",
               minWidth: "fit-content",

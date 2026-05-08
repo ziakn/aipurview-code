@@ -67,11 +67,29 @@ function FilledCheckSquare({ size = 24 }: { size?: number }) {
   );
 }
 
+function IndeterminateSquare({ size = 24 }: { size?: number }) {
+  const theme = useTheme();
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect x="3" y="3" width="18" height="18" rx="2" fill={theme.palette.primary.main} />
+      <path d="M8 12h8" stroke="white" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function Checkbox({
   id,
   label,
+  ariaLabel,
   size = "medium",
   isChecked,
+  isIndeterminate,
   value,
   onChange,
   onClick,
@@ -89,18 +107,20 @@ function Checkbox({
     <MuiCheckbox
       disableRipple
       checked={isChecked}
+      indeterminate={isIndeterminate}
       checkedIcon={<FilledCheckSquare size={16} />}
+      indeterminateIcon={<IndeterminateSquare size={16} />}
       icon={<SoftSquare size={16} />}
       value={value}
       onChange={onChange}
       onClick={onClick}
       disabled={isDisabled}
       inputProps={{
-        "aria-label": label || "controlled checkbox",
-        id: id,
+        "aria-label": ariaLabel || label || "controlled checkbox",
+        "id": id,
       }}
       sx={{
-        borderRadius: theme.shape.borderRadius,
+        "borderRadius": theme.shape.borderRadius,
         "&:hover": { backgroundColor: "transparent" },
         "& svg": { width: sizes[size], height: sizes[size] },
         "& .MuiTouchRipple-root": {
@@ -125,9 +145,9 @@ function Checkbox({
       label={label}
       disabled={isDisabled}
       sx={{
-        borderRadius: theme.shape.borderRadius,
-        p: theme.spacing(2.5),
-        m: theme.spacing(-2.5),
+        "borderRadius": theme.shape.borderRadius,
+        "p": theme.spacing(2.5),
+        "m": theme.spacing(-2.5),
         "& .MuiButtonBase-root": {
           width: theme.spacing(10),
           p: 0,

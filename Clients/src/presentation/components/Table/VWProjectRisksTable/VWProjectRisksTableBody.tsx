@@ -1,6 +1,16 @@
-import { TableBody, TableCell, TableRow, Dialog, useTheme, Typography, Stack } from "@mui/material";
+import {
+  Box,
+  TableBody,
+  TableCell,
+  TableRow,
+  Dialog,
+  useTheme,
+  Typography,
+  Stack,
+} from "@mui/material";
 import { VWLink } from "../../Link";
 import singleTheme from "../../../themes/v1SingleTheme";
+import Checkbox from "../../Inputs/Checkbox";
 import { Suspense, useContext, useEffect, useState } from "react";
 import { ProjectRisk } from "../../../../domain/types/ProjectRisk";
 import { VerifyWiseContext } from "../../../../application/contexts/VerifyWise.context";
@@ -58,6 +68,7 @@ const VWProjectRisksTableBody = ({
   flashRow,
   sortConfig,
   visibleColumns,
+  selection,
 }: IVWProjectRisksTableRow) => {
   const isColVisible = (colId: string) => !visibleColumns || visibleColumns.has(colId);
   const theme = useTheme();
@@ -151,6 +162,37 @@ const VWProjectRisksTableBody = ({
                 }}
                 onClick={(e) => handleEditRisk(row, e)}
               >
+                {selection && (
+                  <TableCell
+                    padding="checkbox"
+                    sx={{
+                      width: 48,
+                      minWidth: 48,
+                      maxWidth: 48,
+                      padding: "14px 8px",
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                      }}
+                    >
+                      <Checkbox
+                        id={`project-risk-row-checkbox-${row.id}`}
+                        value={String(row.id)}
+                        isChecked={selection.isSelected(Number(row.id))}
+                        onChange={() => selection.onToggle(Number(row.id))}
+                        isDisabled={row.is_deleted}
+                        ariaLabel={`Select project risk ${row.risk_name}`}
+                        sx={{ "p": 0, "& svg": { display: "block" } }}
+                      />
+                    </Box>
+                  </TableCell>
+                )}
                 <TableCell
                   sx={{
                     ...getCellStyle(row),

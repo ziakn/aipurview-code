@@ -17,6 +17,7 @@ import TablePaginationActions from "../../TablePagination";
 import { VerifyWiseContext } from "../../../../application/contexts/VerifyWise.context";
 import singleTheme from "../../../themes/v1SingleTheme";
 import { ChevronsUpDown, ChevronUp, ChevronDown } from "lucide-react";
+import Checkbox from "../../Inputs/Checkbox";
 
 import {
   getPaginationRowCount,
@@ -46,6 +47,7 @@ const CustomizablePolicyTable = ({
   renderRow,
   hidePagination = false,
   flashRowId,
+  selection,
 }: ITableProps) => {
   const theme = useTheme();
   const [page, setPage] = useState(0);
@@ -178,6 +180,36 @@ const CustomizablePolicyTable = ({
       }}
     >
       <TableRow sx={singleTheme.tableStyles.primary.header.row}>
+        {selection && (
+          <TableCell
+            sx={{
+              width: 48,
+              minWidth: 48,
+              maxWidth: 48,
+              padding: "16px 8px",
+              borderBottom: "1px solid #d0d5dd",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+              }}
+            >
+              <Checkbox
+                id="policy-table-select-all"
+                value="select-all"
+                isChecked={selection.allSelected}
+                isIndeterminate={selection.someSelected && !selection.allSelected}
+                onChange={selection.onToggleAll}
+                ariaLabel={selection.ariaLabel ?? "Select all policies on this page"}
+                sx={{ "p": 0, "& svg": { display: "block" } }}
+              />
+            </Box>
+          </TableCell>
+        )}
         {data.cols.map((col) => {
           const isLastColumn = col.id === "actions";
           const sortable = !["actions", "tags"].includes(col.id);
@@ -189,8 +221,8 @@ const CustomizablePolicyTable = ({
                 ...singleTheme.tableStyles.primary.header.cell,
                 ...(!isLastColumn && sortable
                   ? {
-                      cursor: "pointer",
-                      userSelect: "none",
+                      "cursor": "pointer",
+                      "userSelect": "none",
                       "&:hover": {
                         backgroundColor: "rgba(0, 0, 0, 0.04)",
                       },
@@ -256,7 +288,7 @@ const CustomizablePolicyTable = ({
             onClick={(event) => onRowClickHandler(event, row)}
             sx={{
               ...(flashRowId === row.id && {
-                backgroundColor: singleTheme.flashColors.background,
+                "backgroundColor": singleTheme.flashColors.background,
                 "& td": {
                   backgroundColor: "transparent !important",
                 },
@@ -316,6 +348,8 @@ const CustomizablePolicyTable = ({
                       paddingX: theme.spacing(2),
                       fontSize: 12,
                       opacity: 0.7,
+                      whiteSpace: "nowrap",
+                      width: 1,
                     }}
                   >
                     Showing {page * rowsPerPage + 1} -{" "}
@@ -355,10 +389,10 @@ const CustomizablePolicyTable = ({
                         inputProps: { id: "pagination-dropdown" },
                         IconComponent: SelectorVertical,
                         sx: {
-                          ml: theme.spacing(4),
-                          mr: theme.spacing(12),
-                          minWidth: theme.spacing(20),
-                          textAlign: "left",
+                          "ml": theme.spacing(4),
+                          "mr": theme.spacing(12),
+                          "minWidth": theme.spacing(20),
+                          "textAlign": "left",
                           "&.Mui-focused > div": {
                             backgroundColor: theme.palette.background.main,
                           },
@@ -366,8 +400,8 @@ const CustomizablePolicyTable = ({
                       },
                     }}
                     sx={{
-                      mt: theme.spacing(6),
-                      color: theme.palette.text.secondary,
+                      "mt": theme.spacing(6),
+                      "color": theme.palette.text.secondary,
                       "& .MuiSelect-icon": {
                         width: "24px",
                         height: "fit-content",

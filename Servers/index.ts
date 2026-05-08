@@ -97,6 +97,7 @@ import virtualKeyProxyRoutes from "./routes/virtualKeyProxy.route";
 import internalRoutes from "./routes/internal.route";
 import superAdminRoutes from "./routes/superAdmin.route";
 // superAdminReadOnly is now enforced inside authenticateJWT middleware
+import { i18nMiddleware } from "./middleware/i18n.middleware";
 import {
   setupNotificationSubscriber,
   closeNotificationSubscriber,
@@ -179,6 +180,9 @@ try {
   });
   app.use(cookieParser());
   // app.use(csrf());
+
+  // i18n: attach req.lang (from Accept-Language) and req.t (translator).
+  app.use(i18nMiddleware);
 
   // Health endpoint — must be registered before JWT middleware so it is publicly reachable
   app.get("/health", async (_req, res) => {

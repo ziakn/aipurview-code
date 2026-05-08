@@ -460,12 +460,12 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
 
     // Map data to rows
     const rows = data.map((item) => ({
-      ID: item.id,
-      Title: item.evidence_name || "",
-      Type: item.evidence_type || "",
+      "ID": item.id,
+      "Title": item.evidence_name || "",
+      "Type": item.evidence_type || "",
       "Mapped Models": item.mapped_model_ids?.join(", ") || "",
-      DESCRIPTION: item.description,
-      EXPIRY_DATE: item.expiry_date ? dayjs.utc(item.expiry_date).format("YYYY-MM-DD") : "-",
+      "DESCRIPTION": item.description,
+      "EXPIRY_DATE": item.expiry_date ? dayjs.utc(item.expiry_date).format("YYYY-MM-DD") : "-",
     }));
 
     // Extract CSV header from object keys
@@ -491,7 +491,7 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
 
   const fieldStyle = useMemo(
     () => ({
-      backgroundColor: theme.palette.background.main,
+      "backgroundColor": theme.palette.background.main,
       "& input": {
         padding: "0 14px",
       },
@@ -809,8 +809,8 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
             </Box>
           }
           sx={{
-            marginLeft: 0,
-            marginRight: 0,
+            "marginLeft": 0,
+            "marginRight": 0,
             "& .MuiFormControlLabel-label": {
               fontSize: 13,
               fontWeight: 400,
@@ -876,8 +876,8 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
                       edge="end"
                       size="small"
                       sx={{
-                        padding: "4px",
-                        bgcolor: theme.palette.grey[100],
+                        "padding": "4px",
+                        "bgcolor": theme.palette.grey[100],
                         "&:hover": {
                           bgcolor: theme.palette.grey[200],
                         },
