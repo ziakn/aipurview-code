@@ -251,7 +251,12 @@ describe("entityGraphSecurity.utils", () => {
 
     it("should filter visibleRelationships similarly", () => {
       const config = {
-        visibleRelationships: ["rel1", 123, "a".repeat(51), ...Array.from({ length: 25 }, (_, i) => `rel${i}`)],
+        visibleRelationships: [
+          "rel1",
+          123,
+          "a".repeat(51),
+          ...Array.from({ length: 25 }, (_, i) => `rel${i}`),
+        ],
       };
       const result = sanitizeViewConfig(config);
       expect(result.valid).toBe(true);
@@ -308,8 +313,18 @@ describe("entityGraphSecurity.utils", () => {
   describe("validateGapRules", () => {
     it("should accept a valid array of gap rules", () => {
       const rules = [
-        { entityType: "model", requirement: "Must have owner", severity: "critical", enabled: true },
-        { entityType: "risk", requirement: "Must be assessed", severity: "warning", enabled: false },
+        {
+          entityType: "model",
+          requirement: "Must have owner",
+          severity: "critical",
+          enabled: true,
+        },
+        {
+          entityType: "risk",
+          requirement: "Must be assessed",
+          severity: "warning",
+          enabled: false,
+        },
       ];
       expect(validateGapRules(rules)).toEqual({ valid: true });
     });
@@ -326,11 +341,16 @@ describe("entityGraphSecurity.utils", () => {
         severity: "info",
         enabled: true,
       }));
-      expect(validateGapRules(rules)).toEqual({ valid: false, error: "Maximum of 50 gap rules allowed" });
+      expect(validateGapRules(rules)).toEqual({
+        valid: false,
+        error: "Maximum of 50 gap rules allowed",
+      });
     });
 
     it("should reject rules with invalid entityType", () => {
-      const rules = [{ entityType: "user", requirement: "Must exist", severity: "critical", enabled: true }];
+      const rules = [
+        { entityType: "user", requirement: "Must exist", severity: "critical", enabled: true },
+      ];
       expect(validateGapRules(rules)).toEqual({
         valid: false,
         error: "Rule 1: entityType must be one of: model, risk, control, vendor, useCase",
@@ -356,7 +376,9 @@ describe("entityGraphSecurity.utils", () => {
     });
 
     it("should reject rules with invalid severity", () => {
-      const rules = [{ entityType: "model", requirement: "Must have owner", severity: "high", enabled: true }];
+      const rules = [
+        { entityType: "model", requirement: "Must have owner", severity: "high", enabled: true },
+      ];
       expect(validateGapRules(rules)).toEqual({
         valid: false,
         error: "Rule 1: severity must be one of: critical, warning, info",
@@ -365,7 +387,12 @@ describe("entityGraphSecurity.utils", () => {
 
     it("should reject rules with non-boolean enabled", () => {
       const rules = [
-        { entityType: "model", requirement: "Must have owner", severity: "critical", enabled: "yes" },
+        {
+          entityType: "model",
+          requirement: "Must have owner",
+          severity: "critical",
+          enabled: "yes",
+        },
       ];
       expect(validateGapRules(rules)).toEqual({
         valid: false,
@@ -394,36 +421,69 @@ describe("entityGraphSecurity.utils", () => {
     });
 
     it("should return fallback for messages containing system errors", () => {
-      expect(sanitizeErrorMessage(new Error("ECONNREFUSED connection failed"), "An error occurred")).toBe("An error occurred");
-      expect(sanitizeErrorMessage(new Error("ENOENT file not found"), "An error occurred")).toBe("An error occurred");
+      expect(
+        sanitizeErrorMessage(new Error("ECONNREFUSED connection failed"), "An error occurred"),
+      ).toBe("An error occurred");
+      expect(sanitizeErrorMessage(new Error("ENOENT file not found"), "An error occurred")).toBe(
+        "An error occurred",
+      );
     });
 
     it("should return fallback for messages containing SQL keywords", () => {
-      expect(sanitizeErrorMessage(new Error("SELECT * FROM users"), "An error occurred")).toBe("An error occurred");
-      expect(sanitizeErrorMessage(new Error("INSERT INTO users"), "An error occurred")).toBe("An error occurred");
-      expect(sanitizeErrorMessage(new Error("UPDATE users SET"), "An error occurred")).toBe("An error occurred");
-      expect(sanitizeErrorMessage(new Error("DELETE FROM users"), "An error occurred")).toBe("An error occurred");
+      expect(sanitizeErrorMessage(new Error("SELECT * FROM users"), "An error occurred")).toBe(
+        "An error occurred",
+      );
+      expect(sanitizeErrorMessage(new Error("INSERT INTO users"), "An error occurred")).toBe(
+        "An error occurred",
+      );
+      expect(sanitizeErrorMessage(new Error("UPDATE users SET"), "An error occurred")).toBe(
+        "An error occurred",
+      );
+      expect(sanitizeErrorMessage(new Error("DELETE FROM users"), "An error occurred")).toBe(
+        "An error occurred",
+      );
     });
 
     it("should return fallback for messages containing file paths", () => {
-      expect(sanitizeErrorMessage(new Error("Error at /home/user/app.ts:10:5"), "An error occurred")).toBe("An error occurred");
-      expect(sanitizeErrorMessage(new Error("Error at /path/to/file.js:20"), "An error occurred")).toBe("An error occurred");
+      expect(
+        sanitizeErrorMessage(new Error("Error at /home/user/app.ts:10:5"), "An error occurred"),
+      ).toBe("An error occurred");
+      expect(
+        sanitizeErrorMessage(new Error("Error at /path/to/file.js:20"), "An error occurred"),
+      ).toBe("An error occurred");
     });
 
     it("should return fallback for messages containing node_modules", () => {
-      expect(sanitizeErrorMessage(new Error("Error in node_modules/package"), "An error occurred")).toBe("An error occurred");
+      expect(
+        sanitizeErrorMessage(new Error("Error in node_modules/package"), "An error occurred"),
+      ).toBe("An error occurred");
     });
 
     it("should return fallback for database constraint errors", () => {
-      expect(sanitizeErrorMessage(new Error("UNIQUE constraint failed"), "An error occurred")).toBe("An error occurred");
-      expect(sanitizeErrorMessage(new Error("foreign key constraint failed"), "An error occurred")).toBe("An error occurred");
-      expect(sanitizeErrorMessage(new Error("duplicate key value violates unique constraint"), "An error occurred")).toBe("An error occurred");
+      expect(sanitizeErrorMessage(new Error("UNIQUE constraint failed"), "An error occurred")).toBe(
+        "An error occurred",
+      );
+      expect(
+        sanitizeErrorMessage(new Error("foreign key constraint failed"), "An error occurred"),
+      ).toBe("An error occurred");
+      expect(
+        sanitizeErrorMessage(
+          new Error("duplicate key value violates unique constraint"),
+          "An error occurred",
+        ),
+      ).toBe("An error occurred");
     });
 
     it("should return fallback for SQL syntax errors", () => {
-      expect(sanitizeErrorMessage(new Error("syntax error at or near 'SELECT'"), "An error occurred")).toBe("An error occurred");
-      expect(sanitizeErrorMessage(new Error("relation users does not exist"), "An error occurred")).toBe("An error occurred");
-      expect(sanitizeErrorMessage(new Error("column id does not exist"), "An error occurred")).toBe("An error occurred");
+      expect(
+        sanitizeErrorMessage(new Error("syntax error at or near 'SELECT'"), "An error occurred"),
+      ).toBe("An error occurred");
+      expect(
+        sanitizeErrorMessage(new Error("relation users does not exist"), "An error occurred"),
+      ).toBe("An error occurred");
+      expect(sanitizeErrorMessage(new Error("column id does not exist"), "An error occurred")).toBe(
+        "An error occurred",
+      );
     });
 
     it("should return fallback for messages exceeding 200 characters", () => {
