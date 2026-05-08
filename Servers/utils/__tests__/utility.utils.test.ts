@@ -1,10 +1,5 @@
 import { describe, it, expect } from "@jest/globals";
-import {
-  validateRiskArray,
-  toStringParam,
-  getStringParam,
-  toStringQuery,
-} from "../utility.utils";
+import { validateRiskArray, toStringParam, getStringParam, toStringQuery } from "../utility.utils";
 
 describe("utility.utils", () => {
   describe("validateRiskArray", () => {
