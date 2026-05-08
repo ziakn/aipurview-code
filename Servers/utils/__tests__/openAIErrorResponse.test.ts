@@ -5,7 +5,9 @@ import { Response } from "express";
 describe("openAIErrorResponse", () => {
   const createMockResponse = () => {
     const jsonFn = jest.fn();
-    const statusFn = jest.fn<(code: number) => { json: typeof jsonFn }>().mockReturnValue({ json: jsonFn });
+    const statusFn = jest
+      .fn<(code: number) => { json: typeof jsonFn }>()
+      .mockReturnValue({ json: jsonFn });
     return {
       res: { status: statusFn, json: jsonFn } as unknown as Response,
       statusFn,
@@ -56,7 +58,11 @@ describe("openAIErrorResponse", () => {
     openAIError(res, 429, "Rate limit exceeded", "rate_limit_error", "rate_limit_exceeded");
     expect(statusFn).toHaveBeenCalledWith(429);
     expect(jsonFn).toHaveBeenCalledWith({
-      error: { message: "Rate limit exceeded", type: "rate_limit_error", code: "rate_limit_exceeded" },
+      error: {
+        message: "Rate limit exceeded",
+        type: "rate_limit_error",
+        code: "rate_limit_exceeded",
+      },
     });
   });
 
