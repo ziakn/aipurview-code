@@ -973,7 +973,7 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                       setPendingTags(
                         typeof v === "string"
                           ? v.split(",")
-                          : ((v as (string | number)[]).map(String)),
+                          : (v as (string | number)[]).map(String),
                       );
                     }}
                     items={dialogTagsSnapshot.map((t: string) => ({ _id: t, name: t }))}

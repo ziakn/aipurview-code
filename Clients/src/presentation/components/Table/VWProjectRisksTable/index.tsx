@@ -712,7 +712,7 @@ const VWProjectRisksTable = ({
                 onChange={(e) => {
                   const v = e.target.value;
                   setPendingCategories(
-                    typeof v === "string" ? v.split(",") : ((v as (string | number)[]).map(String)),
+                    typeof v === "string" ? v.split(",") : (v as (string | number)[]).map(String),
                   );
                 }}
                 items={PROJECT_RISK_CATEGORIES.map((c) => ({ _id: c, name: c }))}

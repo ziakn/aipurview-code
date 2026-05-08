@@ -1,12 +1,6 @@
 import React, { useMemo, useCallback, useState } from "react";
 import CustomizablePolicyTable from "../Table/PolicyTable";
-import {
-  Box,
-  Stack,
-  TableRow,
-  TableCell,
-  Typography,
-} from "@mui/material";
+import { Box, Stack, TableRow, TableCell, Typography } from "@mui/material";
 import VWSelect from "../Inputs/Select";
 import CustomizableMultiSelect from "../Inputs/Select/Multi";
 import { Archive, UserCheck, Tag as TagIcon } from "lucide-react";
@@ -532,7 +526,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
                 onChange={(e) => {
                   const v = e.target.value;
                   setPendingTags(
-                    typeof v === "string" ? v.split(",") : ((v as (string | number)[]).map(String)),
+                    typeof v === "string" ? v.split(",") : (v as (string | number)[]).map(String),
                   );
                 }}
                 items={POLICY_TAGS.map((t: string) => ({ _id: t, name: t }))}
