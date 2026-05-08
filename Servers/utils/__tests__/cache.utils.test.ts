@@ -171,7 +171,9 @@ describe("cache.utils", () => {
 
     it("should throw and not cache when computeFn errors", async () => {
       mockRedisGet.mockResolvedValue(null);
-      const computeFn = jest.fn<() => Promise<any>>().mockRejectedValue(new Error("Compute failed"));
+      const computeFn = jest
+        .fn<() => Promise<any>>()
+        .mockRejectedValue(new Error("Compute failed"));
 
       await expect(cacheAside("my-key", computeFn)).rejects.toThrow("Compute failed");
       expect(mockRedisSetex).not.toHaveBeenCalled();
