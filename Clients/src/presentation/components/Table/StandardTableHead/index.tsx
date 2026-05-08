@@ -68,8 +68,8 @@ const StandardTableHead: React.FC<StandardTableHeadProps> = memo(
                   textAlign: column.align ?? (isFirstColumn ? "left" : "center"),
                   ...(column.sortable
                     ? {
-                        cursor: "pointer",
-                        userSelect: "none",
+                        "cursor": "pointer",
+                        "userSelect": "none",
                         "&:hover": {
                           backgroundColor: "rgba(0, 0, 0, 0.04)",
                         },

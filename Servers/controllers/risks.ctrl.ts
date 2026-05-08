@@ -35,6 +35,7 @@ import { computeDerivedFields, recordPortfolioSnapshot } from "../utils/quantita
 import { validateQuantitativeRiskFields } from "../utils/validations/quantitativeRiskValidation.utils";
 import { createRiskService } from "../services/risk.service";
 
+import { translateError } from "../utils/i18n.utils";
 // Helper function to get user name
 async function getUserNameById(userId: number): Promise<string> {
   const result = await sequelize.query<{ name: string; surname: string }>(
@@ -86,7 +87,7 @@ export async function getAllRisks(req: Request, res: Response): Promise<any> {
     );
     await logEvent("Error", `Failed to retrieve project risks`, req.userId!, req.organizationId!);
     logger.error("❌ Error in getAllProjectRisks:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -140,7 +141,7 @@ export async function getRisksByProject(req: Request, res: Response): Promise<an
       req.organizationId!,
     );
     logger.error("❌ Error in getRisksByProject:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -189,7 +190,7 @@ export async function getRisksByFramework(req: Request, res: Response): Promise<
       req.organizationId!,
     );
     logger.error("❌ Error in getRisksByFramework:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -237,7 +238,7 @@ export async function getRiskById(req: Request, res: Response): Promise<any> {
       req.organizationId!,
     );
     logger.error("❌ Error in getProjectRiskById:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -329,7 +330,7 @@ export async function createRisk(req: Request, res: Response): Promise<any> {
     );
     await logEvent("Error", "Project risk creation failed", req.userId!, req.organizationId!);
     await transaction.rollback();
-    return res.status(400).json(STATUS_CODE[400]("Unable to create project risk"));
+    return res.status(400).json(STATUS_CODE[400](req.t!("Unable to create project risk")));
   } catch (error) {
     await transaction.rollback();
 
@@ -347,7 +348,7 @@ export async function createRisk(req: Request, res: Response): Promise<any> {
         req.userId!,
         req.organizationId!,
       );
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof BusinessLogicException) {
@@ -363,7 +364,7 @@ export async function createRisk(req: Request, res: Response): Promise<any> {
         req.userId!,
         req.organizationId!,
       );
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     logStructured(
@@ -379,7 +380,7 @@ export async function createRisk(req: Request, res: Response): Promise<any> {
       req.organizationId!,
     );
     logger.error("❌ Error in createProjectRisk:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -422,7 +423,7 @@ export async function updateRiskById(req: Request, res: Response): Promise<any> 
         req.organizationId!,
       );
       await transaction.rollback();
-      return res.status(404).json(STATUS_CODE[404]("Project risk not found"));
+      return res.status(404).json(STATUS_CODE[404](req.t!("Project risk not found")));
     }
 
     // Validate and auto-compute FAIR quantitative fields if present
@@ -476,7 +477,7 @@ export async function updateRiskById(req: Request, res: Response): Promise<any> 
         await transaction.rollback();
         return res.status(400).json(
           STATUS_CODE[400]({
-            message: "Quantitative risk validation failed",
+            message: req.t!("Quantitative risk validation failed"),
             errors: fairErrors,
           }),
         );
@@ -590,7 +591,7 @@ export async function updateRiskById(req: Request, res: Response): Promise<any> 
       req.organizationId!,
     );
     await transaction.rollback();
-    return res.status(404).json(STATUS_CODE[404]("Project risk not found"));
+    return res.status(404).json(STATUS_CODE[404](req.t!("Project risk not found")));
   } catch (error) {
     await transaction.rollback();
 
@@ -608,7 +609,7 @@ export async function updateRiskById(req: Request, res: Response): Promise<any> 
         req.userId!,
         req.organizationId!,
       );
-      return res.status(400).json(STATUS_CODE[400](error.message));
+      return res.status(400).json(STATUS_CODE[400](translateError(req, error)));
     }
 
     if (error instanceof BusinessLogicException) {
@@ -624,7 +625,7 @@ export async function updateRiskById(req: Request, res: Response): Promise<any> 
         req.userId!,
         req.organizationId!,
       );
-      return res.status(403).json(STATUS_CODE[403](error.message));
+      return res.status(403).json(STATUS_CODE[403](translateError(req, error)));
     }
 
     logStructured(
@@ -642,7 +643,7 @@ export async function updateRiskById(req: Request, res: Response): Promise<any> 
       req.organizationId!,
     );
     logger.error("❌ Error in updateProjectRiskById:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -704,7 +705,7 @@ export async function deleteRiskById(req: Request, res: Response): Promise<any> 
       req.organizationId!,
     );
     await transaction.rollback();
-    return res.status(404).json(STATUS_CODE[404]("Project risk not found"));
+    return res.status(404).json(STATUS_CODE[404](req.t!("Project risk not found")));
   } catch (error) {
     await transaction.rollback();
     logStructured(
@@ -722,7 +723,7 @@ export async function deleteRiskById(req: Request, res: Response): Promise<any> 
       req.organizationId!,
     );
     logger.error("❌ Error in deleteProjectRiskById:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 

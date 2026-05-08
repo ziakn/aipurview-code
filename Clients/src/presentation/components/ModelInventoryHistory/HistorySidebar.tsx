@@ -186,7 +186,7 @@ const HistorySidebar: React.FC<HistorySidebarProps> = ({ isOpen, modelInventoryI
       <Box
         key={`${firstEntry.changed_at}_${firstEntry.id}`}
         sx={{
-          marginBottom: "32px",
+          "marginBottom": "32px",
           "&:last-child": {
             marginBottom: 0,
           },
@@ -243,8 +243,8 @@ const HistorySidebar: React.FC<HistorySidebarProps> = ({ isOpen, modelInventoryI
             <Box
               key={entry.id}
               sx={{
-                marginBottom: "8px",
-                paddingLeft: "36px",
+                "marginBottom": "8px",
+                "paddingLeft": "36px",
                 "&:last-child": {
                   marginBottom: 0,
                 },
@@ -448,9 +448,9 @@ const HistorySidebar: React.FC<HistorySidebarProps> = ({ isOpen, modelInventoryI
           >
             <Box
               sx={{
-                height: "100%",
-                overflow: "auto",
-                padding: "16px",
+                "height": "100%",
+                "overflow": "auto",
+                "padding": "16px",
                 // Custom scrollbar styling - invisible by default, visible on hover
                 "&::-webkit-scrollbar": {
                   width: "8px",
@@ -469,8 +469,8 @@ const HistorySidebar: React.FC<HistorySidebarProps> = ({ isOpen, modelInventoryI
                   background: "text.muted",
                 },
                 // Firefox scrollbar styling
-                scrollbarWidth: "thin",
-                scrollbarColor: "transparent transparent",
+                "scrollbarWidth": "thin",
+                "scrollbarColor": "transparent transparent",
                 "&:hover": {
                   scrollbarColor: "#C1C7CD transparent",
                 },

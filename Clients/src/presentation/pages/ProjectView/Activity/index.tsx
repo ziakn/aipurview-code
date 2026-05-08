@@ -175,11 +175,11 @@ const Activity: React.FC<ActivityProps> = ({ entityType, entityId }) => {
               setExpandedValues(newSet);
             }}
             sx={{
-              fontSize: 12,
-              color: theme.palette.primary.main,
-              fontWeight: 500,
-              cursor: "pointer",
-              marginTop: "4px",
+              "fontSize": 12,
+              "color": theme.palette.primary.main,
+              "fontWeight": 500,
+              "cursor": "pointer",
+              "marginTop": "4px",
               "&:hover": {
                 textDecoration: "underline",
               },
@@ -210,11 +210,11 @@ const Activity: React.FC<ActivityProps> = ({ entityType, entityId }) => {
       <Box
         key={`${firstEntry.changed_at}_${firstEntry.id}`}
         sx={{
-          marginBottom: "32px",
-          padding: "16px",
-          backgroundColor: theme.palette.background.main,
-          borderRadius: "8px",
-          border: `1px solid #d0d5dd`,
+          "marginBottom": "32px",
+          "padding": "16px",
+          "backgroundColor": theme.palette.background.main,
+          "borderRadius": "8px",
+          "border": `1px solid #d0d5dd`,
           "&:last-child": {
             marginBottom: 0,
           },
@@ -268,8 +268,8 @@ const Activity: React.FC<ActivityProps> = ({ entityType, entityId }) => {
             <Box
               key={entry.id}
               sx={{
-                marginBottom: "12px",
-                paddingLeft: "48px",
+                "marginBottom": "12px",
+                "paddingLeft": "48px",
                 "&:last-child": {
                   marginBottom: 0,
                 },
@@ -485,10 +485,12 @@ const Activity: React.FC<ActivityProps> = ({ entityType, entityId }) => {
           <Typography
             onClick={() => !isFetchingNextPage && fetchNextPage()}
             sx={{
-              fontSize: 14,
-              fontWeight: 500,
-              color: isFetchingNextPage ? theme.palette.text.disabled : theme.palette.primary.main,
-              cursor: isFetchingNextPage ? "default" : "pointer",
+              "fontSize": 14,
+              "fontWeight": 500,
+              "color": isFetchingNextPage
+                ? theme.palette.text.disabled
+                : theme.palette.primary.main,
+              "cursor": isFetchingNextPage ? "default" : "pointer",
               "&:hover": {
                 textDecoration: isFetchingNextPage ? "none" : "underline",
               },

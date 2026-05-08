@@ -296,7 +296,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
             sx={{
               ...singleTheme.tableStyles.primary.body.row,
               ...(flashRowId === policy.id && {
-                backgroundColor: singleTheme.flashColors.background,
+                "backgroundColor": singleTheme.flashColors.background,
                 "& td": {
                   backgroundColor: "transparent !important",
                 },

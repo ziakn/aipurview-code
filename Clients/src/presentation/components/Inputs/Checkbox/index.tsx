@@ -117,10 +117,10 @@ function Checkbox({
       disabled={isDisabled}
       inputProps={{
         "aria-label": ariaLabel || label || "controlled checkbox",
-        id: id,
+        "id": id,
       }}
       sx={{
-        borderRadius: theme.shape.borderRadius,
+        "borderRadius": theme.shape.borderRadius,
         "&:hover": { backgroundColor: "transparent" },
         "& svg": { width: sizes[size], height: sizes[size] },
         "& .MuiTouchRipple-root": {
@@ -145,9 +145,9 @@ function Checkbox({
       label={label}
       disabled={isDisabled}
       sx={{
-        borderRadius: theme.shape.borderRadius,
-        p: theme.spacing(2.5),
-        m: theme.spacing(-2.5),
+        "borderRadius": theme.shape.borderRadius,
+        "p": theme.spacing(2.5),
+        "m": theme.spacing(-2.5),
         "& .MuiButtonBase-root": {
           width: theme.spacing(10),
           p: 0,

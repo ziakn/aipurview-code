@@ -140,8 +140,8 @@ const SortableTableHead: React.FC<{
               ...singleTheme.tableStyles.primary.header.cell,
               ...(column.sortable
                 ? {
-                    cursor: "pointer",
-                    userSelect: "none",
+                    "cursor": "pointer",
+                    "userSelect": "none",
                     "&:hover": {
                       backgroundColor: "rgba(0, 0, 0, 0.04)",
                     },

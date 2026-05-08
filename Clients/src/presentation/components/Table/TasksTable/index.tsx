@@ -48,11 +48,11 @@ const STATUS_DISPLAY_MAP: Record<string, string> = {
 
 // Reverse mapping for API calls
 const DISPLAY_TO_STATUS_MAP: Record<string, string> = {
-  Open: "Open",
+  "Open": "Open",
   "In progress": "In Progress",
-  Completed: "Completed",
-  Overdue: "Overdue",
-  Archived: "Deleted", // Map "Archived" display back to "Deleted" status
+  "Completed": "Completed",
+  "Overdue": "Overdue",
+  "Archived": "Deleted", // Map "Archived" display back to "Deleted" status
 };
 
 const titleOfTableColumns: StandardColumn[] = [
