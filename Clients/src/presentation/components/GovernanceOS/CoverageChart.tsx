@@ -17,11 +17,11 @@ const CoverageChart = ({ coverage }: ICoverageChartProps) => {
         <Box
           key={fw.framework_id}
           sx={{
-            border: `1px solid ${borderPalette.light}`,
-            borderRadius: 2,
-            p: 2,
-            background: background.main,
-            transition: "all 0.2s ease",
+            "border": `1px solid ${borderPalette.light}`,
+            "borderRadius": 2,
+            "p": 2,
+            "background": background.main,
+            "transition": "all 0.2s ease",
             "&:hover": {
               borderColor: borderPalette.dark,
               background: background.accent,
@@ -41,10 +41,10 @@ const CoverageChart = ({ coverage }: ICoverageChartProps) => {
             variant="determinate"
             value={fw.coverage_percentage}
             sx={{
-              height: 6,
-              borderRadius: 3,
-              mb: 1,
-              backgroundColor: background.hover,
+              "height": 6,
+              "borderRadius": 3,
+              "mb": 1,
+              "backgroundColor": background.hover,
               "& .MuiLinearProgress-bar": {
                 backgroundColor: brand.primary,
                 borderRadius: 3,

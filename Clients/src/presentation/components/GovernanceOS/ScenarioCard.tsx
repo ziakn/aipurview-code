@@ -40,11 +40,11 @@ const ScenarioCard = ({
     <>
       <Box
         sx={{
-          border: `1px solid ${isSelected ? brand.primary : borderPalette.light}`,
-          borderRadius: 2,
-          p: 2.5,
-          background: isSelected ? background.accent : background.main,
-          transition: "all 0.2s ease",
+          "border": `1px solid ${isSelected ? brand.primary : borderPalette.light}`,
+          "borderRadius": 2,
+          "p": 2.5,
+          "background": isSelected ? background.accent : background.main,
+          "transition": "all 0.2s ease",
           "&:hover": {
             borderColor: isSelected ? brand.primary : borderPalette.dark,
             background: background.accent,
@@ -73,7 +73,7 @@ const ScenarioCard = ({
                   e.stopPropagation();
                   setDetailOpen(true);
                 }}
-                sx={{ color: text.muted, "&:hover": { color: text.primary } }}
+                sx={{ "color": text.muted, "&:hover": { color: text.primary } }}
               >
                 <Info size={16} />
               </IconButton>
@@ -98,10 +98,10 @@ const ScenarioCard = ({
                     disabled={isSelected}
                     startIcon={isSelected ? <Check size={14} /> : undefined}
                     sx={{
-                      fontSize: 12,
-                      textTransform: "none",
-                      borderColor: isSelected ? brand.primary : borderPalette.dark,
-                      color: isSelected ? brand.primary : text.secondary,
+                      "fontSize": 12,
+                      "textTransform": "none",
+                      "borderColor": isSelected ? brand.primary : borderPalette.dark,
+                      "color": isSelected ? brand.primary : text.secondary,
                       "&:hover": {
                         borderColor: brand.primary,
                         color: brand.primary,
@@ -262,7 +262,11 @@ const ScenarioCard = ({
             </Typography>
             <Stack
               component="ul"
-              sx={{ pl: 2, m: 0, "& li": { fontSize: 13, color: text.accent, lineHeight: 1.8 } }}
+              sx={{
+                "pl": 2,
+                "m": 0,
+                "& li": { fontSize: 13, color: text.accent, lineHeight: 1.8 },
+              }}
             >
               <li>
                 Your compliance dashboard will prioritize tasks from the primary framework first
@@ -286,7 +290,7 @@ const ScenarioCard = ({
             </Typography>
             <Stack
               component="ol"
-              sx={{ pl: 2, m: 0, "& li": { fontSize: 13, color: text.accent, lineHeight: 2 } }}
+              sx={{ "pl": 2, "m": 0, "& li": { fontSize: 13, color: text.accent, lineHeight: 2 } }}
             >
               <li>
                 <strong>Go to Framework page</strong> &mdash; Assign the prioritized frameworks to
