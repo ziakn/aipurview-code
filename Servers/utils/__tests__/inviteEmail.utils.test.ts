@@ -20,7 +20,9 @@ import { generateInviteToken, ONE_WEEK_MS } from "../jwt.utils";
 import { sendEmail } from "../../services/emailService";
 import { sendInviteEmail } from "../inviteEmail.utils";
 
-const mockGenerateInviteToken = generateInviteToken as jest.MockedFunction<typeof generateInviteToken>;
+const mockGenerateInviteToken = generateInviteToken as jest.MockedFunction<
+  typeof generateInviteToken
+>;
 const mockSendEmail = sendEmail as jest.MockedFunction<typeof sendEmail>;
 const mockReadFile = fs.readFile as jest.MockedFunction<typeof fs.readFile>;
 
@@ -80,7 +82,9 @@ describe("inviteEmail.utils", () => {
 
       const expectedExpires = before + ONE_WEEK_MS;
       expect(result.expiresAt.getTime()).toBeGreaterThanOrEqual(expectedExpires - 1000);
-      expect(result.expiresAt.getTime()).toBeLessThanOrEqual(expectedExpires + (after - before) + 1000);
+      expect(result.expiresAt.getTime()).toBeLessThanOrEqual(
+        expectedExpires + (after - before) + 1000,
+      );
     });
 
     it("should handle sendEmail failure gracefully", async () => {
