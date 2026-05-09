@@ -644,6 +644,7 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
     );
   }
 
+  return (
     <>
       <TableContainer sx={{ overflowX: "auto" }}>
         <Table sx={singleTheme.tableStyles.primary.frame}>
