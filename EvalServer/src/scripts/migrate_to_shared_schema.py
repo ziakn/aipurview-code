@@ -427,33 +427,38 @@ async def migrate_table(
         placeholder_list = ", ".join(f":{c}" for c in target_columns)
 
         try:
-            if is_serial_id_table:
-                # For SERIAL ID tables, get the new ID from RETURNING
-                insert_result = await session.execute(
-                    text(f"""
-                        INSERT INTO verifywise."{table_name}" ({column_list})
-                        VALUES ({placeholder_list})
-                        RETURNING id
-                    """),
-                    values_dict
-                )
-                new_row = insert_result.fetchone()
-                new_id = new_row[0] if new_row else None
-                if new_id is not None and old_id is not None:
-                    id_mapping.set(table_name, old_id, new_id)
-            else:
-                # For VARCHAR ID tables, just insert
-                await session.execute(
-                    text(f"""
-                        INSERT INTO verifywise."{table_name}" ({column_list})
-                        VALUES ({placeholder_list})
-                        ON CONFLICT DO NOTHING
-                    """),
-                    values_dict
-                )
-                # Map old ID to itself for VARCHAR IDs
-                if old_id is not None:
-                    id_mapping.set(table_name, old_id, old_id)
+            # Use a SAVEPOINT per row so that a failed insert (FK/unique violation)
+            # only rolls back the savepoint, not the entire outer transaction.
+            # Without this, asyncpg leaves the transaction in an aborted state and
+            # every subsequent statement fails with InFailedSQLTransactionError.
+            async with session.begin_nested():
+                if is_serial_id_table:
+                    # For SERIAL ID tables, get the new ID from RETURNING
+                    insert_result = await session.execute(
+                        text(f"""
+                            INSERT INTO verifywise."{table_name}" ({column_list})
+                            VALUES ({placeholder_list})
+                            RETURNING id
+                        """),
+                        values_dict
+                    )
+                    new_row = insert_result.fetchone()
+                    new_id = new_row[0] if new_row else None
+                    if new_id is not None and old_id is not None:
+                        id_mapping.set(table_name, old_id, new_id)
+                else:
+                    # For VARCHAR ID tables, just insert
+                    await session.execute(
+                        text(f"""
+                            INSERT INTO verifywise."{table_name}" ({column_list})
+                            VALUES ({placeholder_list})
+                            ON CONFLICT DO NOTHING
+                        """),
+                        values_dict
+                    )
+                    # Map old ID to itself for VARCHAR IDs
+                    if old_id is not None:
+                        id_mapping.set(table_name, old_id, old_id)
 
             migrated_count += 1
 
