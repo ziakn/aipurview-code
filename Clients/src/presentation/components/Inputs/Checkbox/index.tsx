@@ -29,6 +29,7 @@ function SoftSquare({ size = 24 }: { size?: number }) {
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      style={{ width: size, height: size, display: "block", flexShrink: 0 }}
     >
       <rect
         x="3.5"
@@ -54,6 +55,7 @@ function FilledCheckSquare({ size = 24 }: { size?: number }) {
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      style={{ width: size, height: size, display: "block", flexShrink: 0 }}
     >
       <rect x="3" y="3" width="18" height="18" rx="2" fill={theme.palette.primary.main} />
       <path
@@ -76,6 +78,7 @@ function IndeterminateSquare({ size = 24 }: { size?: number }) {
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      style={{ width: size, height: size, display: "block", flexShrink: 0 }}
     >
       <rect x="3" y="3" width="18" height="18" rx="2" fill={theme.palette.primary.main} />
       <path d="M8 12h8" stroke="white" strokeWidth="2" strokeLinecap="round" />
@@ -96,21 +99,22 @@ function Checkbox({
   isDisabled,
   sx: customSx,
 }: CheckboxProps) {
-  const sizes: { [key in "small" | "medium" | "large"]: string } = {
-    small: "20px",
-    medium: "24px",
-    large: "28px",
+  const sizes: Record<"small" | "medium" | "large", number> = {
+    small: 16,
+    medium: 20,
+    large: 24,
   };
   const theme = useTheme();
+  const iconSize = sizes[size];
 
   const checkboxElement = (
     <MuiCheckbox
       disableRipple
       checked={isChecked}
       indeterminate={isIndeterminate}
-      checkedIcon={<FilledCheckSquare size={16} />}
-      indeterminateIcon={<IndeterminateSquare size={16} />}
-      icon={<SoftSquare size={16} />}
+      checkedIcon={<FilledCheckSquare size={iconSize} />}
+      indeterminateIcon={<IndeterminateSquare size={iconSize} />}
+      icon={<SoftSquare size={iconSize} />}
       value={value}
       onChange={onChange}
       onClick={onClick}
@@ -122,10 +126,7 @@ function Checkbox({
       sx={{
         "borderRadius": theme.shape.borderRadius,
         "&:hover": { backgroundColor: "transparent" },
-        "& svg": { width: sizes[size], height: sizes[size] },
-        "& .MuiTouchRipple-root": {
-          display: "none",
-        },
+        "& .MuiTouchRipple-root": { display: "none" },
         ...customSx,
       }}
       size={size}

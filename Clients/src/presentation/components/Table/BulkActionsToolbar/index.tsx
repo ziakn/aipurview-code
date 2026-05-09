@@ -169,7 +169,7 @@ const BulkActionsToolbar: React.FC<BulkActionsToolbarProps> = ({
             sx={{
               display: "flex",
               flexDirection: "row",
-              gap: theme.spacing(1.5),
+              gap: theme.spacing(1),
               m: 0,
               p: 0,
               listStyle: "none",

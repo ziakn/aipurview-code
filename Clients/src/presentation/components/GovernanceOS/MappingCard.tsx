@@ -36,12 +36,12 @@ const MappingCard = ({ mapping, frameworkNames }: IMappingCardProps) => {
       <Box
         onClick={() => setDetailOpen(true)}
         sx={{
-          border: `1px solid ${borderPalette.light}`,
-          borderRadius: 2,
-          p: 2,
-          background: background.main,
-          cursor: "pointer",
-          transition: "all 0.2s ease",
+          "border": `1px solid ${borderPalette.light}`,
+          "borderRadius": 2,
+          "p": 2,
+          "background": background.main,
+          "cursor": "pointer",
+          "transition": "all 0.2s ease",
           "&:hover": {
             borderColor: borderPalette.dark,
             background: background.accent,

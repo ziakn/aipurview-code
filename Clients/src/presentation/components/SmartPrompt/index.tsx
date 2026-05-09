@@ -116,8 +116,8 @@ const SmartPrompt: React.FC = () => {
           variant="determinate"
           value={progress}
           sx={{
-            height: 3,
-            backgroundColor: palette.border.light,
+            "height": 3,
+            "backgroundColor": palette.border.light,
             "& .MuiLinearProgress-bar": {
               backgroundColor: palette.brand.primary,
             },
@@ -142,10 +142,10 @@ const SmartPrompt: React.FC = () => {
               size="small"
               onClick={() => handleDismiss(activePrompt.id)}
               sx={{
-                color: palette.text.muted,
-                p: 0.5,
-                mt: -0.5,
-                mr: -0.5,
+                "color": palette.text.muted,
+                "p": 0.5,
+                "mt": -0.5,
+                "mr": -0.5,
                 "&:hover": { color: palette.text.primary },
               }}
               aria-label="Dismiss prompt"
@@ -175,12 +175,12 @@ const SmartPrompt: React.FC = () => {
                 onClick={handlePrimaryClick}
                 disabled={!isAdmin && activePrompt.type === "governance-os-enable"}
                 sx={{
-                  textTransform: "none",
-                  fontWeight: 500,
-                  fontSize: 13,
-                  borderRadius: 2,
-                  boxShadow: "none",
-                  backgroundColor: palette.brand.primary,
+                  "textTransform": "none",
+                  "fontWeight": 500,
+                  "fontSize": 13,
+                  "borderRadius": 2,
+                  "boxShadow": "none",
+                  "backgroundColor": palette.brand.primary,
                   "&:hover": {
                     backgroundColor: palette.brand.primaryHover,
                     boxShadow: "none",
@@ -201,12 +201,12 @@ const SmartPrompt: React.FC = () => {
                 size="small"
                 onClick={handleSecondaryClick}
                 sx={{
-                  textTransform: "none",
-                  fontWeight: 500,
-                  fontSize: 13,
-                  borderRadius: 2,
-                  borderColor: palette.border.dark,
-                  color: palette.text.secondary,
+                  "textTransform": "none",
+                  "fontWeight": 500,
+                  "fontSize": 13,
+                  "borderRadius": 2,
+                  "borderColor": palette.border.dark,
+                  "color": palette.text.secondary,
                   "&:hover": {
                     borderColor: palette.text.tertiary,
                     backgroundColor: palette.background.hover,
@@ -227,16 +227,16 @@ const SmartPrompt: React.FC = () => {
                   checked={checkedDontAsk}
                   onChange={(e) => setCheckedDontAsk(e.target.checked)}
                   sx={{
-                    color: palette.text.muted,
+                    "color": palette.text.muted,
                     "&.Mui-checked": { color: palette.brand.primary },
-                    p: 0.5,
+                    "p": 0.5,
                   }}
                 />
               }
               label="Don't ask me again"
               sx={{
-                mt: 1.5,
-                ml: -0.5,
+                "mt": 1.5,
+                "ml": -0.5,
                 "& .MuiFormControlLabel-label": {
                   fontSize: 12,
                   color: palette.text.muted,
