@@ -336,7 +336,10 @@ class ModelRunner:
 
         def _call_openai():
             response = self.openai_client.chat.completions.create(**params)
-            return response.choices[0].message.content.strip()
+            content = response.choices[0].message.content if response.choices else None
+            if content is None:
+                raise ValueError("OpenAI returned an empty response (None content).")
+            return content.strip()
 
         return self._retry_with_backoff(_call_openai)
 
@@ -531,7 +534,10 @@ class ModelRunner:
 
         def _call_openrouter():
             response = self.openrouter_client.chat.completions.create(**params)
-            return response.choices[0].message.content.strip()
+            content = response.choices[0].message.content if response.choices else None
+            if content is None:
+                raise ValueError("OpenRouter returned an empty response (None content). The model may have refused or timed out.")
+            return content.strip()
 
         return self._retry_with_backoff(_call_openrouter)
     

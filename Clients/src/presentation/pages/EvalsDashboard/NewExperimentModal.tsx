@@ -177,6 +177,8 @@ export default function NewExperimentModal({
 
   // Saved models from the Models page (database)
   const [savedModels, setSavedModels] = useState<SavedModel[]>([]);
+  // Selected saved model ID — when set, bypasses provider/model config UI entirely
+  const [selectedSavedModelId, setSelectedSavedModelId] = useState<string | null>(null);
   // Track when user picks "Other (type custom)" in a saved-models dropdown
   const [useCustomModelName, setUseCustomModelName] = useState(false);
   const [useCustomJudgeModelName, setUseCustomJudgeModelName] = useState(false);
@@ -459,33 +461,34 @@ export default function NewExperimentModal({
     })();
   }, [isOpen, orgId]);
 
-  // Apply saved model/judge preferences when they finish loading
+  // Reset model selection and apply saved judge preferences on each open
   useEffect(() => {
     if (!isOpen || preferencesApplied || preferencesLoading) return;
 
-    if (savedPreferences) {
-      console.log("Loading saved model preferences:", savedPreferences);
-      // Normalize "custom"/"self-hosted" → "custom_api" so Models-page saves auto-select the merged card
-      const am = savedPreferences.model.accessMethod;
-      const normalizedAccessMethod = am === "custom" || am === "self-hosted" ? "custom_api" : am;
-      setConfig((prev) => ({
-        ...prev,
-        model: {
-          ...prev.model,
-          name: savedPreferences.model.name || prev.model.name,
-          accessMethod: (normalizedAccessMethod || prev.model.accessMethod) as ProviderType | "",
-          endpointUrl: savedPreferences.model.endpointUrl || prev.model.endpointUrl,
-        },
-        judgeLlm: {
-          ...prev.judgeLlm,
-          provider: (savedPreferences.judgeLlm.provider || prev.judgeLlm.provider) as
-            | ProviderType
-            | "",
-          model: savedPreferences.judgeLlm.model || prev.judgeLlm.model,
-          endpointUrl: savedPreferences.judgeLlm.endpointUrl || prev.judgeLlm.endpointUrl,
-        },
-      }));
-    }
+    setSelectedSavedModelId(null);
+    setConfig((prev) => ({
+      ...prev,
+      // Always clear model so user chooses explicitly via "Saved Models" or provider grid
+      model: {
+        name: "",
+        accessMethod: "" as ProviderType | "",
+        endpointUrl: "",
+        apiKey: "",
+        modelPath: "",
+      },
+      judgeLlm: {
+        ...prev.judgeLlm,
+        ...(savedPreferences
+          ? {
+              provider: (savedPreferences.judgeLlm.provider || prev.judgeLlm.provider) as
+                | ProviderType
+                | "",
+              model: savedPreferences.judgeLlm.model || prev.judgeLlm.model,
+              endpointUrl: savedPreferences.judgeLlm.endpointUrl || prev.judgeLlm.endpointUrl,
+            }
+          : {}),
+      },
+    }));
     setPreferencesApplied(true);
   }, [isOpen, preferencesApplied, preferencesLoading, savedPreferences]);
 
@@ -599,9 +602,14 @@ export default function NewExperimentModal({
         return;
       }
 
-      // Validate model API key availability before creating experiment
-      const modelName = config.model.name;
-      const modelProvider = config.model.accessMethod;
+      // Resolve model name/provider for validation (saved model takes precedence)
+      const savedModelForValidation = selectedSavedModelId
+        ? savedModels.find((m) => m.id === selectedSavedModelId) ?? null
+        : null;
+      const modelName = savedModelForValidation?.name || config.model.name;
+      const modelProvider = savedModelForValidation
+        ? savedModelForValidation.provider.toLowerCase()
+        : config.model.accessMethod;
 
       // Skip validation if user already acknowledged the warning, or if they provided a key inline
       if (
@@ -682,6 +690,26 @@ export default function NewExperimentModal({
       await Promise.allSettled(saveApiKeyPromises);
 
       // Prepare experiment configuration
+      // Resolve model: prefer saved model record over manual config
+      const savedModelRecord = selectedSavedModelId
+        ? savedModels.find((m) => m.id === selectedSavedModelId) ?? null
+        : null;
+      const resolvedModel = savedModelRecord
+        ? {
+            name: savedModelRecord.name,
+            accessMethod: savedModelRecord.provider.toLowerCase(),
+            endpointUrl: savedModelRecord.endpointUrl || "",
+            apiKey: config.model.apiKey || undefined,
+            modelPath: "",
+          }
+        : {
+            name: config.model.name,
+            accessMethod: config.model.accessMethod,
+            endpointUrl: config.model.endpointUrl,
+            apiKey: config.model.apiKey || undefined,
+            modelPath: config.model.modelPath,
+          };
+
       // Create experiment name with model name + date/time
       const now = new Date();
       const dateStr = now.toLocaleDateString("en-US", {
@@ -695,7 +723,7 @@ export default function NewExperimentModal({
         hour12: true,
       });
       const dateTimeStr = `${dateStr}, ${timeStr}`;
-      const experimentModelName = modelName || "Unknown Model";
+      const experimentModelName = resolvedModel.name || modelName || "Unknown Model";
 
       const experimentConfig = {
         project_id: projectId,
@@ -705,11 +733,11 @@ export default function NewExperimentModal({
         config: {
           project_id: projectId, // Include in config for runner
           model: {
-            name: config.model.name,
-            accessMethod: config.model.accessMethod,
-            endpointUrl: config.model.endpointUrl,
-            apiKey: config.model.apiKey || undefined, // Send actual key to runner, backend won't store it
-            modelPath: config.model.modelPath,
+            name: resolvedModel.name,
+            accessMethod: resolvedModel.accessMethod,
+            endpointUrl: resolvedModel.endpointUrl,
+            apiKey: resolvedModel.apiKey,
+            modelPath: resolvedModel.modelPath,
           },
           // Include scorer info if using custom scorer mode or both
           ...(judgeMode === "scorer" || judgeMode === "both"
@@ -831,9 +859,9 @@ export default function NewExperimentModal({
       // Save model and judge preferences for next experiment (fire and forget)
       savePreferences({
         model: {
-          name: config.model.name,
-          accessMethod: config.model.accessMethod,
-          endpointUrl: config.model.endpointUrl,
+          name: resolvedModel.name,
+          accessMethod: resolvedModel.accessMethod,
+          endpointUrl: resolvedModel.endpointUrl,
         },
         judgeLlm: {
           provider: config.judgeLlm.provider,
@@ -1208,6 +1236,7 @@ export default function NewExperimentModal({
                       <Grid size={{ xs: 4, sm: 3 }} key={provider.id}>
                         <Card
                           onClick={() => {
+                            setSelectedSavedModelId(null); // deselect saved model when picking a provider
                             setConfig((prev) => ({
                               ...prev,
                               model: {
@@ -1303,6 +1332,94 @@ export default function NewExperimentModal({
               </Box>
             )}
 
+            {/* Saved Models — toggle selection; bypasses provider/model UI when active */}
+            {savedModels.length > 0 && (
+              <Box>
+                <Typography
+                  sx={{
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    color: palette.text.disabled,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em",
+                    mb: 1.5,
+                  }}
+                >
+                  Saved Models
+                </Typography>
+                <Stack spacing={1}>
+                  {savedModels.map((m) => {
+                    const providerKey = m.provider.toLowerCase();
+                    const providerEntry = availableModelProviders.find((p) => p.id === providerKey);
+                    const ProviderLogo = providerEntry?.Logo ?? null;
+                    const isSelected = selectedSavedModelId === m.id;
+                    return (
+                      <Box
+                        key={m.id}
+                        onClick={() => {
+                          // Just toggle the saved model ID — don't touch config at all
+                          setSelectedSavedModelId(isSelected ? null : m.id);
+                        }}
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          px: 2,
+                          py: 1.25,
+                          borderRadius: "8px",
+                          border: `1.5px solid ${isSelected ? palette.brand.primary : palette.border.light}`,
+                          backgroundColor: isSelected ? palette.brand.primaryLight : "transparent",
+                          cursor: "pointer",
+                          transition: "all 0.15s ease",
+                          "&:hover": {
+                            borderColor: palette.brand.primary,
+                            backgroundColor: palette.brand.primaryLight,
+                          },
+                        }}
+                      >
+                        <Stack direction="row" alignItems="center" spacing={1.5}>
+                          {ProviderLogo && (
+                            <Box sx={{ width: 20, height: 20, flexShrink: 0, display: "flex", alignItems: "center" }}>
+                              <ProviderLogo style={{ width: 20, height: 20 }} />
+                            </Box>
+                          )}
+                          <Typography
+                            sx={{
+                              fontSize: "13px",
+                              fontWeight: 500,
+                              color: isSelected ? palette.brand.primary : palette.text.primary,
+                            }}
+                          >
+                            {m.name}
+                          </Typography>
+                        </Stack>
+                        <Box
+                          sx={{
+                            width: 18,
+                            height: 18,
+                            borderRadius: "50%",
+                            border: `1.5px solid ${isSelected ? palette.brand.primary : palette.border.dark}`,
+                            backgroundColor: isSelected ? palette.brand.primary : "transparent",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            flexShrink: 0,
+                            transition: "all 0.15s ease",
+                          }}
+                        >
+                          {isSelected && (
+                            <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                              <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          )}
+                        </Box>
+                      </Box>
+                    );
+                  })}
+                </Stack>
+              </Box>
+            )}
+
             {/* Conditional Fields Based on Provider */}
             {config.model.accessMethod && (
               <Box ref={formFieldsRef}>
@@ -1322,8 +1439,8 @@ export default function NewExperimentModal({
                         Model
                       </Typography>
                       <Typography sx={{ fontSize: "11px", color: palette.text.tertiary, mb: 1.5 }}>
-                        OpenRouter supports any model. Enter the model ID or select from popular
-                        options.
+                        OpenRouter supports any model. Enter the model ID or select from saved or
+                        popular options.
                       </Typography>
                       <Field
                         label=""
@@ -2600,8 +2717,8 @@ export default function NewExperimentModal({
                           <Typography
                             sx={{ fontSize: "11px", color: palette.text.tertiary, mb: 1.5 }}
                           >
-                            OpenRouter supports any model. Enter the model ID or select from popular
-                            options.
+                            OpenRouter supports any model. Enter the model ID or select from saved
+                            or popular options.
                           </Typography>
                           <Field
                             label=""
@@ -3621,6 +3738,9 @@ export default function NewExperimentModal({
 
   const canProceed = (() => {
     if (activeStep === 0) {
+      // A saved model selection is always sufficient to proceed
+      if (selectedSavedModelId) return true;
+
       // Step 1: Model validation
       const hasName = !!config.model.name;
       const hasAccessMethod = !!config.model.accessMethod;

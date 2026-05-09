@@ -104,6 +104,7 @@ import { ProjectDatasets } from "./ProjectDatasets";
 import ProjectScorers from "./ProjectScorers";
 import ModelsPage from "./ModelsPage";
 import ExperimentDetailContent from "./ExperimentDetailContent";
+import PlaygroundPage from "./PlaygroundPage";
 import ArenaPage from "./ArenaPage";
 import BiasAuditsList from "./BiasAuditsList";
 import BiasAuditDetail from "./BiasAuditDetail";
@@ -486,7 +487,7 @@ export default function EvalsDashboard() {
     setDeleteKeyModalOpen(false);
 
     try {
-      await deleteLlmApiKey(keyToDelete.provider);
+      await deleteLlmApiKey(keyToDelete.provider, keyToDelete.id);
 
       // Wait for animation then refresh
       setTimeout(async () => {
@@ -1922,6 +1923,10 @@ export default function EvalsDashboard() {
             {tab === "models" && <ModelsPage orgId={orgId || currentProject?.orgId || ""} />}
 
             {tab === "arena" && <ArenaPage orgId={orgId || currentProject?.orgId || ""} />}
+
+            {tab === "playground" && (
+              <PlaygroundPage orgId={orgId || currentProject?.orgId || ""} />
+            )}
 
             {tab === "bias-audits" &&
               (selectedBiasAuditId ? (
