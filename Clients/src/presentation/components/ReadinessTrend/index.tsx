@@ -59,23 +59,32 @@ export default function ReadinessTrend({ data, isLoading }: ReadinessTrendProps)
   return (
     <Box sx={{ height: FIXED_HEIGHT, display: "flex", flexDirection: "column" }}>
       {/* Fixed header */}
-      <Typography sx={{ fontSize: 15, fontWeight: 600, color: textColors.primary, mb: 1, px: 0.5, flexShrink: 0 }}>
+      <Typography
+        sx={{
+          fontSize: 15,
+          fontWeight: 600,
+          color: textColors.primary,
+          mb: 1,
+          px: 0.5,
+          flexShrink: 0,
+        }}
+      >
         Readiness trend
       </Typography>
 
       {/* Scrollable list */}
       <Box
         sx={{
-          flex: 1,
-          overflowY: "auto",
-          overflowX: "hidden",
-          pr: 0.5,
+          "flex": 1,
+          "overflowY": "auto",
+          "overflowX": "hidden",
+          "pr": 0.5,
           // Subtle scrollbar
           "&::-webkit-scrollbar": { width: 4 },
           "&::-webkit-scrollbar-track": { backgroundColor: "transparent" },
           "&::-webkit-scrollbar-thumb": {
-            backgroundColor: background.hover,
-            borderRadius: 2,
+            "backgroundColor": background.hover,
+            "borderRadius": 2,
             "&:hover": { backgroundColor: textColors.muted },
           },
         }}
@@ -97,19 +106,17 @@ export default function ReadinessTrend({ data, isLoading }: ReadinessTrendProps)
                 <Typography sx={{ fontSize: 12, color: textColors.secondary, fontWeight: 500 }}>
                   {formatFrameworkName(item.framework_type)}
                 </Typography>
-                <Typography sx={{ fontSize: 11, color: textColors.muted }}>
-                  {date}
-                </Typography>
+                <Typography sx={{ fontSize: 11, color: textColors.muted }}>{date}</Typography>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <LinearProgress
                   variant="determinate"
                   value={score}
                   sx={{
-                    flex: 1,
-                    height: 8,
-                    borderRadius: 4,
-                    backgroundColor: background.hover,
+                    "flex": 1,
+                    "height": 8,
+                    "borderRadius": 4,
+                    "backgroundColor": background.hover,
                     "& .MuiLinearProgress-bar": {
                       borderRadius: 4,
                       backgroundColor: getScoreColor(score),

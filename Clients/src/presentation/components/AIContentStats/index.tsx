@@ -98,7 +98,9 @@ export default function AIContentStats({ data, isLoading }: AIContentStatsProps)
             <Typography sx={{ fontSize: 22, fontWeight: 700, color: textColors.primary }}>
               {data.avg_confidence}%
             </Typography>
-            <Typography sx={{ fontSize: 10, color: textColors.secondary }}>Avg confidence</Typography>
+            <Typography sx={{ fontSize: 10, color: textColors.secondary }}>
+              Avg confidence
+            </Typography>
           </Box>
         )}
       </Box>
@@ -106,7 +108,9 @@ export default function AIContentStats({ data, isLoading }: AIContentStatsProps)
       {/* Review progress bar */}
       <Box sx={{ mb: 1 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
-          <Typography sx={{ fontSize: 11, color: textColors.secondary }}>Review progress</Typography>
+          <Typography sx={{ fontSize: 11, color: textColors.secondary }}>
+            Review progress
+          </Typography>
           <Typography sx={{ fontSize: 11, fontWeight: 600, color: textColors.primary }}>
             {data.reviewed}/{data.total}
           </Typography>
@@ -115,9 +119,9 @@ export default function AIContentStats({ data, isLoading }: AIContentStatsProps)
           variant="determinate"
           value={data.review_rate}
           sx={{
-            height: 6,
-            borderRadius: 3,
-            backgroundColor: background.hover,
+            "height": 6,
+            "borderRadius": 3,
+            "backgroundColor": background.hover,
             "& .MuiLinearProgress-bar": {
               borderRadius: 3,
               backgroundColor: brand.primary,
@@ -137,7 +141,15 @@ export default function AIContentStats({ data, isLoading }: AIContentStatsProps)
           const pct = data.total > 0 ? Math.round((count / data.total) * 100) : 0;
           return (
             <Box key={key} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Box sx={{ width: 8, height: 8, borderRadius: "2px", backgroundColor: config.color, flexShrink: 0 }} />
+              <Box
+                sx={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: "2px",
+                  backgroundColor: config.color,
+                  flexShrink: 0,
+                }}
+              />
               <Typography sx={{ fontSize: 11, color: textColors.secondary, flex: 1 }}>
                 {config.label}
               </Typography>
@@ -150,20 +162,37 @@ export default function AIContentStats({ data, isLoading }: AIContentStatsProps)
       </Stack>
 
       {/* Review actions breakdown */}
-      {(data.by_review_action.approved > 0 || data.by_review_action.modified > 0 || data.by_review_action.rejected > 0) && (
+      {(data.by_review_action.approved > 0 ||
+        data.by_review_action.modified > 0 ||
+        data.by_review_action.rejected > 0) && (
         <>
           <Typography sx={{ fontSize: 12, fontWeight: 600, color: textColors.secondary, mb: 1 }}>
             Review outcomes
           </Typography>
           <Stack direction="row" spacing={1}>
             {data.by_review_action.approved > 0 && (
-              <Chip label={`${data.by_review_action.approved} Approved`} variant="success" size="small" uppercase={false} />
+              <Chip
+                label={`${data.by_review_action.approved} Approved`}
+                variant="success"
+                size="small"
+                uppercase={false}
+              />
             )}
             {data.by_review_action.modified > 0 && (
-              <Chip label={`${data.by_review_action.modified} Modified`} variant="warning" size="small" uppercase={false} />
+              <Chip
+                label={`${data.by_review_action.modified} Modified`}
+                variant="warning"
+                size="small"
+                uppercase={false}
+              />
             )}
             {data.by_review_action.rejected > 0 && (
-              <Chip label={`${data.by_review_action.rejected} Rejected`} variant="error" size="small" uppercase={false} />
+              <Chip
+                label={`${data.by_review_action.rejected} Rejected`}
+                variant="error"
+                size="small"
+                uppercase={false}
+              />
             )}
           </Stack>
         </>

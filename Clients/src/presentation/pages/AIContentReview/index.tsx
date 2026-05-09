@@ -46,8 +46,7 @@ export default function AIContentReview() {
   const [visFilter, setVisFilter] = useState<VisibilityFilterValue>("all");
   const filterParam = visFilter === "all" ? undefined : visFilter;
   const { data: statsData, isLoading: statsLoading } = useAIContentStats();
-  const { data: unreviewedData, isLoading: unreviewedLoading } =
-    useUnreviewedContent(50);
+  const { data: unreviewedData, isLoading: unreviewedLoading } = useUnreviewedContent(50);
   const reviewMutation = useReviewContent();
 
   const handleReview = (id: number, action: ReviewAction, notes?: string) => {
@@ -63,12 +62,7 @@ export default function AIContentReview() {
   return (
     <Box>
       {/* Header — matches app design */}
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        mb="8px"
-      >
+      <Stack direction="row" justifyContent="space-between" alignItems="center" mb="8px">
         <Box>
           <Typography
             sx={{
@@ -80,11 +74,9 @@ export default function AIContentReview() {
           >
             AI content review
           </Typography>
-          <Typography
-            sx={{ fontSize: 13, color: textColors.secondary, mt: 0.25 }}
-          >
-            Review and approve AI-generated content for EU AI Act article 52
-            transparency compliance.
+          <Typography sx={{ fontSize: 13, color: textColors.secondary, mt: 0.25 }}>
+            Review and approve AI-generated content for EU AI Act article 52 transparency
+            compliance.
           </Typography>
         </Box>
         <VisibilityChips value={visFilter} onChange={setVisFilter} />
@@ -93,10 +85,10 @@ export default function AIContentReview() {
       {/* Stat header cards — matching DashboardHeaderCard style */}
       <Box
         sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "8px",
-          mb: "8px",
+          "display": "flex",
+          "flexWrap": "wrap",
+          "gap": "8px",
+          "mb": "8px",
           "& > *": { flex: "1 1 0", minWidth: "120px" },
         }}
       >
@@ -113,7 +105,9 @@ export default function AIContentReview() {
                   Total items
                 </Typography>
               </Stack>
-              <Typography sx={{ fontSize: 28, fontWeight: 700, color: textColors.primary, lineHeight: 1.2 }}>
+              <Typography
+                sx={{ fontSize: 28, fontWeight: 700, color: textColors.primary, lineHeight: 1.2 }}
+              >
                 {stats?.total ?? 0}
               </Typography>
             </Stack>
@@ -125,7 +119,9 @@ export default function AIContentReview() {
                   Reviewed
                 </Typography>
               </Stack>
-              <Typography sx={{ fontSize: 28, fontWeight: 700, color: textColors.primary, lineHeight: 1.2 }}>
+              <Typography
+                sx={{ fontSize: 28, fontWeight: 700, color: textColors.primary, lineHeight: 1.2 }}
+              >
                 {reviewRate}%
               </Typography>
             </Stack>
@@ -137,7 +133,9 @@ export default function AIContentReview() {
                   Pending
                 </Typography>
               </Stack>
-              <Typography sx={{ fontSize: 28, fontWeight: 700, color: textColors.primary, lineHeight: 1.2 }}>
+              <Typography
+                sx={{ fontSize: 28, fontWeight: 700, color: textColors.primary, lineHeight: 1.2 }}
+              >
                 {stats?.unreviewed ?? 0}
               </Typography>
             </Stack>
@@ -149,10 +147,14 @@ export default function AIContentReview() {
                   Avg confidence
                 </Typography>
               </Stack>
-              <Typography sx={{ fontSize: 28, fontWeight: 700, color: textColors.primary, lineHeight: 1.2 }}>
+              <Typography
+                sx={{ fontSize: 28, fontWeight: 700, color: textColors.primary, lineHeight: 1.2 }}
+              >
                 {stats?.avg_confidence ?? "—"}
                 {stats?.avg_confidence != null && (
-                  <Box component="span" sx={{ fontSize: 14, fontWeight: 500 }}>%</Box>
+                  <Box component="span" sx={{ fontSize: 14, fontWeight: 500 }}>
+                    %
+                  </Box>
                 )}
               </Typography>
             </Stack>
@@ -165,7 +167,7 @@ export default function AIContentReview() {
         <Box sx={{ display: "flex", gap: "8px", mb: "8px", flexWrap: "wrap" }}>
           {/* Progress card */}
           <Card elevation={0} sx={{ ...cardSx, flex: "2 1 300px" }}>
-            <CardContent sx={{ p: "16px", "&:last-child": { pb: "16px" } }}>
+            <CardContent sx={{ "p": "16px", "&:last-child": { pb: "16px" } }}>
               <Stack direction="row" justifyContent="space-between" mb={0.75}>
                 <Typography sx={{ fontSize: 12, color: textColors.secondary, fontWeight: 500 }}>
                   Review progress
@@ -178,9 +180,9 @@ export default function AIContentReview() {
                 variant="determinate"
                 value={reviewRate}
                 sx={{
-                  height: 6,
-                  borderRadius: 3,
-                  backgroundColor: background.hover,
+                  "height": 6,
+                  "borderRadius": 3,
+                  "backgroundColor": background.hover,
                   "& .MuiLinearProgress-bar": {
                     borderRadius: 3,
                     backgroundColor: brand.primary,
@@ -192,8 +194,10 @@ export default function AIContentReview() {
 
           {/* By type card */}
           <Card elevation={0} sx={{ ...cardSx, flex: "1 1 200px" }}>
-            <CardContent sx={{ p: "16px", "&:last-child": { pb: "16px" } }}>
-              <Typography sx={{ fontSize: 12, color: textColors.secondary, fontWeight: 500, mb: 1 }}>
+            <CardContent sx={{ "p": "16px", "&:last-child": { pb: "16px" } }}>
+              <Typography
+                sx={{ fontSize: 12, color: textColors.secondary, fontWeight: 500, mb: 1 }}
+              >
                 By type
               </Typography>
               <Stack spacing={0.5}>
@@ -203,7 +207,15 @@ export default function AIContentReview() {
                   const pct = stats.total > 0 ? Math.round((count / stats.total) * 100) : 0;
                   return (
                     <Stack key={key} direction="row" alignItems="center" spacing={1}>
-                      <Box sx={{ width: 8, height: 8, borderRadius: "2px", backgroundColor: config.color, flexShrink: 0 }} />
+                      <Box
+                        sx={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: "2px",
+                          backgroundColor: config.color,
+                          flexShrink: 0,
+                        }}
+                      />
                       <Typography sx={{ fontSize: 11, color: textColors.secondary, flex: 1 }}>
                         {config.label}
                       </Typography>
@@ -225,8 +237,8 @@ export default function AIContentReview() {
         onChange={(_, v) => setTab(v)}
         TabIndicatorProps={{ style: { backgroundColor: brand.primary } }}
         sx={{
-          mb: "8px",
-          minHeight: "20px",
+          "mb": "8px",
+          "minHeight": "20px",
           "& .MuiTab-root": {
             textTransform: "none",
             fontWeight: 400,
@@ -243,12 +255,7 @@ export default function AIContentReview() {
             <Stack direction="row" alignItems="center" spacing={0.75}>
               <span>Pending review</span>
               {total > 0 && (
-                <Chip
-                  label={String(total)}
-                  size="small"
-                  variant="warning"
-                  uppercase={false}
-                />
+                <Chip label={String(total)} size="small" variant="warning" uppercase={false} />
               )}
             </Stack>
           }
@@ -276,13 +283,15 @@ export default function AIContentReview() {
             </Stack>
           ) : (
             <Card elevation={0} sx={cardSx}>
-              <CardContent sx={{ textAlign: "center", py: 4, "&:last-child": { pb: 4 } }}>
+              <CardContent sx={{ "textAlign": "center", "py": 4, "&:last-child": { pb: 4 } }}>
                 <CheckCircle
                   size={32}
                   strokeWidth={1}
                   style={{ color: textColors.icon, marginBottom: 8 }}
                 />
-                <Typography sx={{ fontSize: 14, fontWeight: 600, color: textColors.primary, mb: 0.5 }}>
+                <Typography
+                  sx={{ fontSize: 14, fontWeight: 600, color: textColors.primary, mb: 0.5 }}
+                >
                   All caught up!
                 </Typography>
                 <Typography sx={{ fontSize: 13, color: textColors.tertiary }}>
@@ -296,10 +305,10 @@ export default function AIContentReview() {
 
       {tab === 1 && (
         <Card elevation={0} sx={cardSx}>
-          <CardContent sx={{ textAlign: "center", py: 4, "&:last-child": { pb: 4 } }}>
+          <CardContent sx={{ "textAlign": "center", "py": 4, "&:last-child": { pb: 4 } }}>
             <Typography sx={{ fontSize: 13, color: textColors.tertiary }}>
-              Full AI content history will be available in a future release. Use
-              the stats above for current overview.
+              Full AI content history will be available in a future release. Use the stats above for
+              current overview.
             </Typography>
           </CardContent>
         </Card>

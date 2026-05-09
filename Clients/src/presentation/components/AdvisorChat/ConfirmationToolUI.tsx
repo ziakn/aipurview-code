@@ -47,11 +47,7 @@ const ConfirmationToolUI: FC<{ result?: unknown }> = ({ result }) => {
   const [resolution, setResolution] = useState<Resolution>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  if (
-    !result ||
-    typeof result !== "object" ||
-    !(result as any).confirmation_required
-  ) {
+  if (!result || typeof result !== "object" || !(result as any).confirmation_required) {
     return null;
   }
 
@@ -107,7 +103,13 @@ const ConfirmationToolUI: FC<{ result?: unknown }> = ({ result }) => {
       <Stack direction="row" alignItems="center" spacing={1} mb={1}>
         <Icon size={16} style={{ color: config.text }} />
         <Typography
-          sx={{ fontSize: 12, fontWeight: 600, color: config.text, textTransform: "uppercase", letterSpacing: 0.5 }}
+          sx={{
+            fontSize: 12,
+            fontWeight: 600,
+            color: config.text,
+            textTransform: "uppercase",
+            letterSpacing: 0.5,
+          }}
         >
           {config.label}
         </Typography>
@@ -155,12 +157,12 @@ const ConfirmationToolUI: FC<{ result?: unknown }> = ({ result }) => {
               )
             }
             sx={{
-              textTransform: "none",
-              fontSize: 12,
-              fontWeight: 500,
-              backgroundColor: brand.primary,
-              borderRadius: "4px",
-              boxShadow: "none",
+              "textTransform": "none",
+              "fontSize": 12,
+              "fontWeight": 500,
+              "backgroundColor": brand.primary,
+              "borderRadius": "4px",
+              "boxShadow": "none",
               "&:hover": { backgroundColor: brand.primaryHover, boxShadow: "none" },
             }}
           >
@@ -179,12 +181,12 @@ const ConfirmationToolUI: FC<{ result?: unknown }> = ({ result }) => {
               )
             }
             sx={{
-              textTransform: "none",
-              fontSize: 12,
-              fontWeight: 500,
-              borderColor: "#D0D5DD",
-              color: "#475467",
-              borderRadius: "4px",
+              "textTransform": "none",
+              "fontSize": 12,
+              "fontWeight": 500,
+              "borderColor": "#D0D5DD",
+              "color": "#475467",
+              "borderRadius": "4px",
               "&:hover": { backgroundColor: "#F9FAFB" },
             }}
           >
@@ -205,9 +207,7 @@ const ConfirmationToolUI: FC<{ result?: unknown }> = ({ result }) => {
       {resolution === "rejected" && (
         <Stack direction="row" alignItems="center" spacing={0.5} mt={1}>
           <X size={14} style={{ color: "#475467" }} />
-          <Typography sx={{ fontSize: 12, fontWeight: 500, color: "#475467" }}>
-            Rejected
-          </Typography>
+          <Typography sx={{ fontSize: 12, fontWeight: 500, color: "#475467" }}>Rejected</Typography>
         </Stack>
       )}
       {resolution === "error" && errorMsg && (

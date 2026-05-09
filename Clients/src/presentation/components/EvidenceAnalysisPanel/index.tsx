@@ -98,9 +98,7 @@ interface EvidenceAnalysisPanelProps {
   analysis: AnalysisData | null;
   isLoading?: boolean;
   onTriggerAnalysis?: () => void;
-  onApplySuggestions?: (
-    suggestions: Array<{ control_id: number; framework_type: string }>
-  ) => void;
+  onApplySuggestions?: (suggestions: Array<{ control_id: number; framework_type: string }>) => void;
   isAnalyzing?: boolean;
 }
 
@@ -185,11 +183,7 @@ function DimensionCard({
       }}
       spacing={0.75}
     >
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-      >
+      <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Stack direction="row" alignItems="center" spacing={0.75}>
           <Box sx={{ color: textColors.icon, display: "flex" }}>
             <Icon size={14} />
@@ -205,10 +199,7 @@ function DimensionCard({
           </Typography>
         </Stack>
         {hasRationale && (
-          <Tooltip
-            title={expanded ? "Hide rationale" : "Why this score?"}
-            arrow
-          >
+          <Tooltip title={expanded ? "Hide rationale" : "Why this score?"} arrow>
             <IconButton
               size="small"
               onClick={(e) => {
@@ -216,16 +207,12 @@ function DimensionCard({
                 setExpanded((v) => !v);
               }}
               sx={{
-                p: 0.25,
-                color: textColors.accent,
+                "p": 0.25,
+                "color": textColors.accent,
                 "&:hover": { color: accent.primary.text },
               }}
             >
-              {expanded ? (
-                <ChevronUp size={14} />
-              ) : (
-                <ChevronDown size={14} />
-              )}
+              {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             </IconButton>
           </Tooltip>
         )}
@@ -255,9 +242,9 @@ function DimensionCard({
         variant="determinate"
         value={score}
         sx={{
-          height: 5,
-          borderRadius: 3,
-          backgroundColor: background.hover,
+          "height": 5,
+          "borderRadius": 3,
+          "backgroundColor": background.hover,
           "& .MuiLinearProgress-bar": {
             borderRadius: 3,
             backgroundColor: colors.text,
@@ -361,10 +348,10 @@ export default function EvidenceAnalysisPanel({
               onClick={onTriggerAnalysis}
               disabled={isAnalyzing}
               sx={{
-                textTransform: "none",
-                fontSize: 13,
-                borderColor: accent.primary.border,
-                color: accent.primary.text,
+                "textTransform": "none",
+                "fontSize": 13,
+                "borderColor": accent.primary.border,
+                "color": accent.primary.text,
                 "&:hover": { backgroundColor: accent.primary.bg },
               }}
             >
@@ -447,9 +434,7 @@ export default function EvidenceAnalysisPanel({
               >
                 Analyzer abstained
               </Typography>
-              <Typography
-                sx={{ fontSize: 12, color: textColors.tertiary, lineHeight: 1.5 }}
-              >
+              <Typography sx={{ fontSize: 12, color: textColors.tertiary, lineHeight: 1.5 }}>
                 {abstainReason}
               </Typography>
             </Box>
@@ -476,9 +461,7 @@ export default function EvidenceAnalysisPanel({
               flexShrink: 0,
             }}
           >
-            <Typography
-              sx={{ fontSize: 32, fontWeight: 700, lineHeight: 1 }}
-            >
+            <Typography sx={{ fontSize: 32, fontWeight: 700, lineHeight: 1 }}>
               {analysis.overall_quality_score}
             </Typography>
             <Typography
@@ -496,12 +479,7 @@ export default function EvidenceAnalysisPanel({
 
           {/* Right text */}
           <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Stack
-              direction="row"
-              spacing={1}
-              alignItems="center"
-              sx={{ mb: 0.5 }}
-            >
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
               <Typography
                 sx={{
                   fontSize: 13,
@@ -513,10 +491,7 @@ export default function EvidenceAnalysisPanel({
               >
                 Overall Quality Score
               </Typography>
-              <EvidenceQualityBadge
-                score={analysis.overall_quality_score}
-                size="small"
-              />
+              <EvidenceQualityBadge score={analysis.overall_quality_score} size="small" />
             </Stack>
             <Typography
               sx={{
@@ -576,9 +551,7 @@ export default function EvidenceAnalysisPanel({
               description={dim.description}
               score={qualityScore?.[dim.key as keyof QualityScore] ?? 0}
               Icon={dim.icon}
-              rationale={
-                rationales?.[dim.key as keyof typeof rationales] ?? null
-              }
+              rationale={rationales?.[dim.key as keyof typeof rationales] ?? null}
             />
           ))}
         </Box>
@@ -678,9 +651,7 @@ export default function EvidenceAnalysisPanel({
                             lineHeight: 1.5,
                           }}
                         >
-                          {finding.length > 160
-                            ? finding.substring(0, 160) + "..."
-                            : finding}
+                          {finding.length > 160 ? finding.substring(0, 160) + "..." : finding}
                         </Typography>
                         {fwq?.evidence_quote && (
                           <Stack
@@ -760,15 +731,15 @@ export default function EvidenceAnalysisPanel({
                     suggestedLinks.map((s) => ({
                       control_id: s.control_id,
                       framework_type: s.framework_type,
-                    }))
+                    })),
                   )
                 }
                 sx={{
-                  textTransform: "none",
-                  fontSize: 11,
-                  py: 0.25,
-                  borderColor: accent.primary.border,
-                  color: accent.primary.text,
+                  "textTransform": "none",
+                  "fontSize": 11,
+                  "py": 0.25,
+                  "borderColor": accent.primary.border,
+                  "color": accent.primary.text,
                   "&:hover": { backgroundColor: accent.primary.bg },
                 }}
               >
@@ -829,12 +800,7 @@ export default function EvidenceAnalysisPanel({
       {/* Document signals — only when analyzer-v2 produced them */}
       {docSignals && (
         <Card elevation={0} sx={{ ...cardSx, p: 2, mb: 2 }}>
-          <Stack
-            direction="row"
-            alignItems="center"
-            spacing={0.75}
-            sx={{ mb: 1.5 }}
-          >
+          <Stack direction="row" alignItems="center" spacing={0.75} sx={{ mb: 1.5 }}>
             <Info size={14} color={textColors.icon} />
             <Typography
               sx={{
@@ -860,11 +826,7 @@ export default function EvidenceAnalysisPanel({
               value={`${docSignals.authority_signal ?? 0}/100`}
               positive={(docSignals.authority_signal ?? 0) >= 60}
             />
-            <SignalChip
-              label="Type"
-              value={docSignals.document_type ?? "—"}
-              neutral
-            />
+            <SignalChip label="Type" value={docSignals.document_type ?? "—"} neutral />
             <SignalChip
               label="Named owner"
               value={docSignals.has_named_owner ? "Yes" : "No"}
@@ -916,9 +878,7 @@ export default function EvidenceAnalysisPanel({
         <Typography sx={{ fontSize: 10, color: textColors.accent }}>
           Analyzed by {analysis.analysis_model} (v{analysis.analysis_version}) ·{" "}
           {new Date(analysis.analyzed_at).toLocaleString()}
-          {auditMetadata?.analyzer_version
-            ? ` · ${auditMetadata.analyzer_version}`
-            : ""}
+          {auditMetadata?.analyzer_version ? ` · ${auditMetadata.analyzer_version}` : ""}
         </Typography>
       </Box>
     </Box>
@@ -996,9 +956,7 @@ function SignalChip({
       >
         {label}
       </Typography>
-      <Typography sx={{ fontSize: 12, fontWeight: 600, lineHeight: 1.3 }}>
-        {value}
-      </Typography>
+      <Typography sx={{ fontSize: 12, fontWeight: 600, lineHeight: 1.3 }}>{value}</Typography>
     </Box>
   );
 }

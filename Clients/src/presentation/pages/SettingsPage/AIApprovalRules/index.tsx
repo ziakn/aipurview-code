@@ -20,14 +20,7 @@ import {
   InputLabel,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import {
-  Shield,
-  Trash2,
-  Plus,
-  Edit2,
-  FlaskConical,
-  Info,
-} from "lucide-react";
+import { Shield, Trash2, Plus, Edit2, FlaskConical, Info } from "lucide-react";
 import {
   listApprovalRules,
   createApprovalRule,
@@ -133,7 +126,9 @@ export default function AIApprovalRules() {
   };
 
   const formatConditions = (conditions: Record<string, unknown>): string => {
-    const arr = (conditions.all || conditions.any) as Array<{ fact: string; operator: string; value: unknown }> | undefined;
+    const arr = (conditions.all || conditions.any) as
+      | Array<{ fact: string; operator: string; value: unknown }>
+      | undefined;
     if (!arr || !Array.isArray(arr)) return "No conditions";
     return arr
       .map((c) => `${c.fact} ${c.operator} ${JSON.stringify(c.value)}`)
@@ -161,11 +156,11 @@ export default function AIApprovalRules() {
           <IconButton
             onClick={openCreateDialog}
             sx={{
-              bgcolor: theme.palette.primary.main,
-              color: "#fff",
+              "bgcolor": theme.palette.primary.main,
+              "color": "#fff",
               "&:hover": { bgcolor: theme.palette.primary.dark },
-              borderRadius: 2,
-              px: 2,
+              "borderRadius": 2,
+              "px": 2,
             }}
           >
             <Plus size={16} />
@@ -177,10 +172,9 @@ export default function AIApprovalRules() {
       </Stack>
 
       <Alert severity="info" icon={<Info size={18} />}>
-        Rules determine whether AI write operations are auto-approved, require human
-        approval, or are auto-rejected. Higher priority rules are evaluated first.
-        Default rules cannot be edited but can be overridden by creating a custom rule
-        with the same name.
+        Rules determine whether AI write operations are auto-approved, require human approval, or
+        are auto-rejected. Higher priority rules are evaluated first. Default rules cannot be edited
+        but can be overridden by creating a custom rule with the same name.
       </Alert>
 
       {error && (
@@ -218,7 +212,12 @@ export default function AIApprovalRules() {
                       {rule.name}
                     </Typography>
                     {rule.is_default && (
-                      <Chip label="Default" size="small" variant="outlined" sx={{ height: 20, fontSize: 11 }} />
+                      <Chip
+                        label="Default"
+                        size="small"
+                        variant="outlined"
+                        sx={{ height: 20, fontSize: 11 }}
+                      />
                     )}
                     <Typography variant="caption" color="text.secondary">
                       Priority: {rule.priority}
@@ -227,7 +226,11 @@ export default function AIApprovalRules() {
                   <Typography variant="caption" color="text.secondary">
                     {rule.description}
                   </Typography>
-                  <Typography variant="caption" color="text.secondary" sx={{ fontFamily: "monospace", fontSize: 11 }}>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ fontFamily: "monospace", fontSize: 11 }}
+                  >
                     {formatConditions(rule.conditions)}
                   </Typography>
                 </Stack>
@@ -268,16 +271,14 @@ export default function AIApprovalRules() {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>
-          {editingRule?.id ? "Edit Rule" : "Create Rule"}
-        </DialogTitle>
+        <DialogTitle>{editingRule?.id ? "Edit Rule" : "Create Rule"}</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ pt: 1 }}>
             <TextField
               label="Name"
               value={editingRule?.name || ""}
               onChange={(e) =>
-                setEditingRule((prev) => prev ? { ...prev, name: e.target.value } : prev)
+                setEditingRule((prev) => (prev ? { ...prev, name: e.target.value } : prev))
               }
               fullWidth
               required
@@ -286,7 +287,7 @@ export default function AIApprovalRules() {
               label="Description"
               value={editingRule?.description || ""}
               onChange={(e) =>
-                setEditingRule((prev) => prev ? { ...prev, description: e.target.value } : prev)
+                setEditingRule((prev) => (prev ? { ...prev, description: e.target.value } : prev))
               }
               fullWidth
               multiline
@@ -298,7 +299,9 @@ export default function AIApprovalRules() {
                 value={editingRule?.event_type || "require-approval"}
                 onChange={(e) =>
                   setEditingRule((prev) =>
-                    prev ? { ...prev, event_type: e.target.value as ApprovalRule["event_type"] } : prev
+                    prev
+                      ? { ...prev, event_type: e.target.value as ApprovalRule["event_type"] }
+                      : prev,
                   )
                 }
                 label="Decision"
@@ -314,7 +317,7 @@ export default function AIApprovalRules() {
               value={editingRule?.priority || 100}
               onChange={(e) =>
                 setEditingRule((prev) =>
-                  prev ? { ...prev, priority: Number(e.target.value) } : prev
+                  prev ? { ...prev, priority: Number(e.target.value) } : prev,
                 )
               }
               fullWidth
@@ -326,7 +329,7 @@ export default function AIApprovalRules() {
               onChange={(e) => {
                 try {
                   const parsed = JSON.parse(e.target.value);
-                  setEditingRule((prev) => prev ? { ...prev, conditions: parsed } : prev);
+                  setEditingRule((prev) => (prev ? { ...prev, conditions: parsed } : prev));
                 } catch {
                   // Allow invalid JSON while typing
                 }
@@ -347,14 +350,18 @@ export default function AIApprovalRules() {
             onClick={handleSave}
             disabled={saving || !editingRule?.name}
             sx={{
-              bgcolor: theme.palette.primary.main,
-              color: "#fff",
+              "bgcolor": theme.palette.primary.main,
+              "color": "#fff",
               "&:hover": { bgcolor: theme.palette.primary.dark },
-              borderRadius: 2,
-              px: 2,
+              "borderRadius": 2,
+              "px": 2,
             }}
           >
-            {saving ? <CircularProgress size={16} /> : <Typography variant="body2">Save</Typography>}
+            {saving ? (
+              <CircularProgress size={16} />
+            ) : (
+              <Typography variant="body2">Save</Typography>
+            )}
           </IconButton>
         </DialogActions>
       </Dialog>

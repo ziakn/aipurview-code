@@ -36,15 +36,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import {
-  FileText,
-  Download,
-  Eye,
-  Shield,
-  Activity,
-  Clock,
-  XCircle,
-} from "lucide-react";
+import { FileText, Download, Eye, Shield, Activity, Clock, XCircle } from "lucide-react";
 import {
   text as textColors,
   background,
@@ -144,8 +136,7 @@ export default function AIAuditDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [period]);
 
-  const { data: analytics, isLoading: analyticsLoading } =
-    useAuditAnalytics(dateFrom);
+  const { data: analytics, isLoading: analyticsLoading } = useAuditAnalytics(dateFrom);
   const { data: logData, isLoading: logLoading } = useAuditLog({
     dateFrom,
     actorType: actorType === "all" ? undefined : actorType,
@@ -205,12 +196,7 @@ export default function AIAuditDashboard() {
   return (
     <Box>
       {/* Header — matches Readiness / AI content review style */}
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        mb="8px"
-      >
+      <Stack direction="row" justifyContent="space-between" alignItems="center" mb="8px">
         <Box>
           <Typography
             sx={{
@@ -222,11 +208,8 @@ export default function AIAuditDashboard() {
           >
             AI audit
           </Typography>
-          <Typography
-            sx={{ fontSize: 13, color: textColors.secondary, mt: 0.25 }}
-          >
-            Complete audit trail for every AI action. EU AI Act Article 12
-            compliance.
+          <Typography sx={{ fontSize: 13, color: textColors.secondary, mt: 0.25 }}>
+            Complete audit trail for every AI action. EU AI Act Article 12 compliance.
           </Typography>
         </Box>
 
@@ -245,9 +228,7 @@ export default function AIAuditDashboard() {
                     label={opt.label}
                     size="small"
                     uppercase={false}
-                    backgroundColor={
-                      isSelected ? brand.primaryLight : background.hover
-                    }
+                    backgroundColor={isSelected ? brand.primaryLight : background.hover}
                     textColor={isSelected ? brand.primary : undefined}
                   />
                 </Box>
@@ -261,13 +242,13 @@ export default function AIAuditDashboard() {
             onClick={handleExport}
             startIcon={<Download size={14} />}
             sx={{
-              textTransform: "none",
-              minWidth: 120,
-              backgroundColor: brand.primary,
-              borderRadius: "4px",
-              fontSize: 13,
-              fontWeight: 500,
-              boxShadow: "none",
+              "textTransform": "none",
+              "minWidth": 120,
+              "backgroundColor": brand.primary,
+              "borderRadius": "4px",
+              "fontSize": 13,
+              "fontWeight": 500,
+              "boxShadow": "none",
               "&:hover": {
                 backgroundColor: brand.primaryHover,
                 boxShadow: "none",
@@ -282,10 +263,10 @@ export default function AIAuditDashboard() {
       {/* Stat cards — matches AI Content Review DashboardHeaderCard pattern */}
       <Box
         sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "8px",
-          mb: "8px",
+          "display": "flex",
+          "flexWrap": "wrap",
+          "gap": "8px",
+          "mb": "8px",
           "& > *": { flex: "1 1 0", minWidth: "120px" },
         }}
       >
@@ -304,9 +285,7 @@ export default function AIAuditDashboard() {
               }}
             >
               <Stack direction="row" alignItems="center" spacing={0.75}>
-                <Box sx={{ color: textColors.icon, display: "flex" }}>
-                  {card.icon}
-                </Box>
+                <Box sx={{ color: textColors.icon, display: "flex" }}>{card.icon}</Box>
                 <Typography
                   sx={{
                     fontSize: 12,
@@ -342,7 +321,7 @@ export default function AIAuditDashboard() {
         }}
       >
         <Card elevation={0} sx={cardSx}>
-          <CardContent sx={{ p: "16px", "&:last-child": { pb: "16px" } }}>
+          <CardContent sx={{ "p": "16px", "&:last-child": { pb: "16px" } }}>
             <Typography
               sx={{
                 fontSize: 13,
@@ -355,9 +334,7 @@ export default function AIAuditDashboard() {
             </Typography>
             {byState.length === 0 ? (
               <Box sx={{ py: 4, textAlign: "center" }}>
-                <Typography sx={{ fontSize: 12, color: textColors.accent }}>
-                  No data
-                </Typography>
+                <Typography sx={{ fontSize: 12, color: textColors.accent }}>No data</Typography>
               </Box>
             ) : (
               <ResponsiveContainer width="100%" height={200}>
@@ -390,7 +367,7 @@ export default function AIAuditDashboard() {
         </Card>
 
         <Card elevation={0} sx={cardSx}>
-          <CardContent sx={{ p: "16px", "&:last-child": { pb: "16px" } }}>
+          <CardContent sx={{ "p": "16px", "&:last-child": { pb: "16px" } }}>
             <Typography
               sx={{
                 fontSize: 13,
@@ -403,21 +380,13 @@ export default function AIAuditDashboard() {
             </Typography>
             {byCategory.length === 0 ? (
               <Box sx={{ py: 4, textAlign: "center" }}>
-                <Typography sx={{ fontSize: 12, color: textColors.accent }}>
-                  No data
-                </Typography>
+                <Typography sx={{ fontSize: 12, color: textColors.accent }}>No data</Typography>
               </Box>
             ) : (
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={byCategory}>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke={borderPalette.light}
-                  />
-                  <XAxis
-                    dataKey="category"
-                    tick={{ fontSize: 11, fill: textColors.secondary }}
-                  />
+                  <CartesianGrid strokeDasharray="3 3" stroke={borderPalette.light} />
+                  <XAxis dataKey="category" tick={{ fontSize: 11, fill: textColors.secondary }} />
                   <YAxis tick={{ fontSize: 11, fill: textColors.secondary }} />
                   <Tooltip
                     contentStyle={{
@@ -426,11 +395,7 @@ export default function AIAuditDashboard() {
                       border: `1px solid ${borderPalette.dark}`,
                     }}
                   />
-                  <Bar
-                    dataKey="count"
-                    fill={brand.primary}
-                    radius={[4, 4, 0, 0]}
-                  />
+                  <Bar dataKey="count" fill={brand.primary} radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             )}
@@ -438,7 +403,7 @@ export default function AIAuditDashboard() {
         </Card>
 
         <Card elevation={0} sx={cardSx}>
-          <CardContent sx={{ p: "16px", "&:last-child": { pb: "16px" } }}>
+          <CardContent sx={{ "p": "16px", "&:last-child": { pb: "16px" } }}>
             <Typography
               sx={{
                 fontSize: 13,
@@ -451,21 +416,13 @@ export default function AIAuditDashboard() {
             </Typography>
             {dailyVolume.length === 0 ? (
               <Box sx={{ py: 4, textAlign: "center" }}>
-                <Typography sx={{ fontSize: 12, color: textColors.accent }}>
-                  No data
-                </Typography>
+                <Typography sx={{ fontSize: 12, color: textColors.accent }}>No data</Typography>
               </Box>
             ) : (
               <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={dailyVolume}>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke={borderPalette.light}
-                  />
-                  <XAxis
-                    dataKey="date"
-                    tick={{ fontSize: 11, fill: textColors.secondary }}
-                  />
+                  <CartesianGrid strokeDasharray="3 3" stroke={borderPalette.light} />
+                  <XAxis dataKey="date" tick={{ fontSize: 11, fill: textColors.secondary }} />
                   <YAxis tick={{ fontSize: 11, fill: textColors.secondary }} />
                   <Tooltip
                     contentStyle={{
@@ -493,8 +450,8 @@ export default function AIAuditDashboard() {
         value={0}
         TabIndicatorProps={{ style: { backgroundColor: brand.primary } }}
         sx={{
-          mb: "8px",
-          minHeight: "20px",
+          "mb": "8px",
+          "minHeight": "20px",
           "& .MuiTab-root": {
             textTransform: "none",
             fontWeight: 400,
@@ -525,12 +482,7 @@ export default function AIAuditDashboard() {
       </Tabs>
 
       {/* Actor type filter chips */}
-      <Stack
-        direction="row"
-        alignItems="center"
-        spacing={1}
-        sx={{ mb: "8px" }}
-      >
+      <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: "8px" }}>
         <Typography
           sx={{
             fontSize: 12,
@@ -555,9 +507,7 @@ export default function AIAuditDashboard() {
                 label={opt.label}
                 size="small"
                 uppercase={false}
-                backgroundColor={
-                  isSelected ? brand.primaryLight : background.hover
-                }
+                backgroundColor={isSelected ? brand.primaryLight : background.hover}
                 textColor={isSelected ? brand.primary : undefined}
               />
             </Box>
@@ -571,43 +521,33 @@ export default function AIAuditDashboard() {
           <Table size="small">
             <TableHead>
               <TableRow sx={{ backgroundColor: background.accent }}>
-                {["Timestamp", "Tool", "State", "Actor", "Risk", "Action"].map(
-                  (h) => (
-                    <TableCell
-                      key={h}
-                      sx={{
-                        fontSize: 12,
-                        fontWeight: 600,
-                        color: textColors.secondary,
-                        textTransform: "uppercase",
-                        letterSpacing: 0.3,
-                        borderBottom: `1px solid ${borderPalette.dark}`,
-                      }}
-                    >
-                      {h}
-                    </TableCell>
-                  )
-                )}
+                {["Timestamp", "Tool", "State", "Actor", "Risk", "Action"].map((h) => (
+                  <TableCell
+                    key={h}
+                    sx={{
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: textColors.secondary,
+                      textTransform: "uppercase",
+                      letterSpacing: 0.3,
+                      borderBottom: `1px solid ${borderPalette.dark}`,
+                    }}
+                  >
+                    {h}
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
               {logLoading ? (
                 <TableRow>
-                  <TableCell
-                    colSpan={6}
-                    align="center"
-                    sx={{ py: 4, border: "none" }}
-                  >
+                  <TableCell colSpan={6} align="center" sx={{ py: 4, border: "none" }}>
                     <CircularProgress size={20} />
                   </TableCell>
                 </TableRow>
               ) : (logData?.rows || []).length === 0 ? (
                 <TableRow>
-                  <TableCell
-                    colSpan={6}
-                    align="center"
-                    sx={{ py: 4, border: "none" }}
-                  >
+                  <TableCell colSpan={6} align="center" sx={{ py: 4, border: "none" }}>
                     <Typography sx={{ fontSize: 12, color: textColors.accent }}>
                       No audit entries found
                     </Typography>
@@ -641,9 +581,7 @@ export default function AIAuditDashboard() {
                     >
                       {row.tool_name || "—"}
                     </TableCell>
-                    <TableCell
-                      sx={{ borderBottom: `1px solid ${borderPalette.light}` }}
-                    >
+                    <TableCell sx={{ borderBottom: `1px solid ${borderPalette.light}` }}>
                       <Chip
                         label={formatStateLabel(row.to_state)}
                         size="small"
@@ -672,16 +610,12 @@ export default function AIAuditDashboard() {
                     >
                       {row.risk_level || "—"}
                     </TableCell>
-                    <TableCell
-                      sx={{ borderBottom: `1px solid ${borderPalette.light}` }}
-                    >
+                    <TableCell sx={{ borderBottom: `1px solid ${borderPalette.light}` }}>
                       <IconButton
                         size="small"
-                        onClick={() =>
-                          handleViewDetail(row.action_approval_id)
-                        }
+                        onClick={() => handleViewDetail(row.action_approval_id)}
                         sx={{
-                          color: textColors.icon,
+                          "color": textColors.icon,
                           "&:hover": {
                             color: brand.primary,
                             backgroundColor: brand.primaryLight,
@@ -751,12 +685,7 @@ export default function AIAuditDashboard() {
           ) : (
             <Stack spacing={1.5} sx={{ py: 1 }}>
               {detailTrail.map((entry: any, i: number) => (
-                <Stack
-                  key={i}
-                  direction="row"
-                  spacing={1.5}
-                  alignItems="flex-start"
-                >
+                <Stack key={i} direction="row" spacing={1.5} alignItems="flex-start">
                   <Box
                     sx={{
                       width: 8,
@@ -777,18 +706,13 @@ export default function AIAuditDashboard() {
                         textColor={getStateColor(entry.to_state)}
                       />
                       {entry.from_state && (
-                        <Typography
-                          sx={{ fontSize: 11, color: textColors.accent }}
-                        >
+                        <Typography sx={{ fontSize: 11, color: textColors.accent }}>
                           from {formatStateLabel(entry.from_state)}
                         </Typography>
                       )}
                     </Stack>
-                    <Typography
-                      sx={{ fontSize: 11, color: textColors.secondary }}
-                    >
-                      {new Date(entry.created_at).toLocaleString()} —{" "}
-                      {entry.actor_type}
+                    <Typography sx={{ fontSize: 11, color: textColors.secondary }}>
+                      {new Date(entry.created_at).toLocaleString()} — {entry.actor_type}
                       {entry.rule_name && ` (rule: ${entry.rule_name})`}
                     </Typography>
                   </Stack>

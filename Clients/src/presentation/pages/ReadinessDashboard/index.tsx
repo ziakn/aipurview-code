@@ -98,10 +98,19 @@ export default function ReadinessDashboard() {
 
   const filterParam = visFilter === "all" ? undefined : visFilter;
   const { data: scores, isLoading: scoresLoading } = useReadinessScores(undefined, filterParam);
-  const { data: controlScores, isLoading: controlsLoading } =
-    useControlScores(selectedFramework, { visibility: filterParam });
-  const { data: weakest, isLoading: weakestLoading } = useWeakestControls(10, undefined, filterParam);
-  const { data: history, isLoading: historyLoading } = useReadinessHistory(undefined, undefined, filterParam);
+  const { data: controlScores, isLoading: controlsLoading } = useControlScores(selectedFramework, {
+    visibility: filterParam,
+  });
+  const { data: weakest, isLoading: weakestLoading } = useWeakestControls(
+    10,
+    undefined,
+    filterParam,
+  );
+  const { data: history, isLoading: historyLoading } = useReadinessHistory(
+    undefined,
+    undefined,
+    filterParam,
+  );
   const triggerCalculate = useTriggerCalculateAll();
 
   const handleCalculate = () => {
@@ -111,12 +120,7 @@ export default function ReadinessDashboard() {
   return (
     <Box>
       {/* Header — matches dashboard style */}
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        mb="8px"
-      >
+      <Stack direction="row" justifyContent="space-between" alignItems="center" mb="8px">
         <Box>
           <Typography
             sx={{
@@ -128,11 +132,8 @@ export default function ReadinessDashboard() {
           >
             Audit readiness
           </Typography>
-          <Typography
-            sx={{ fontSize: 13, color: textColors.secondary, mt: 0.25 }}
-          >
-            Per-control readiness scores, framework aggregations, and
-            improvement recommendations.
+          <Typography sx={{ fontSize: 13, color: textColors.secondary, mt: 0.25 }}>
+            Per-control readiness scores, framework aggregations, and improvement recommendations.
           </Typography>
         </Box>
         <Stack direction="row" alignItems="center" spacing={1.5}>
@@ -141,29 +142,29 @@ export default function ReadinessDashboard() {
             variant="contained"
             size="small"
             onClick={handleCalculate}
-          disabled={triggerCalculate.isPending}
-          startIcon={
-            triggerCalculate.isPending ? (
-              <CircularProgress size={14} color="inherit" />
-            ) : (
-              <RefreshCw size={14} />
-            )
-          }
-          sx={{
-            textTransform: "none",
-            minWidth: 160,
-            backgroundColor: brand.primary,
-            borderRadius: "4px",
-            fontSize: 13,
-            fontWeight: 500,
-            boxShadow: "none",
-            "&:hover": {
-              backgroundColor: brand.primaryHover,
-              boxShadow: "none",
-            },
-          }}
-        >
-          {triggerCalculate.isPending ? "Calculating..." : "Calculate readiness"}
+            disabled={triggerCalculate.isPending}
+            startIcon={
+              triggerCalculate.isPending ? (
+                <CircularProgress size={14} color="inherit" />
+              ) : (
+                <RefreshCw size={14} />
+              )
+            }
+            sx={{
+              "textTransform": "none",
+              "minWidth": 160,
+              "backgroundColor": brand.primary,
+              "borderRadius": "4px",
+              "fontSize": 13,
+              "fontWeight": 500,
+              "boxShadow": "none",
+              "&:hover": {
+                backgroundColor: brand.primaryHover,
+                boxShadow: "none",
+              },
+            }}
+          >
+            {triggerCalculate.isPending ? "Calculating..." : "Calculate readiness"}
           </Button>
         </Stack>
       </Stack>
@@ -171,10 +172,10 @@ export default function ReadinessDashboard() {
       {/* Summary stat cards — matching DashboardHeaderCard layout */}
       <Box
         sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "8px",
-          mb: "8px",
+          "display": "flex",
+          "flexWrap": "wrap",
+          "gap": "8px",
+          "mb": "8px",
           "& > *": { flex: "1 1 0", minWidth: "150px" },
         }}
       >
@@ -191,9 +192,9 @@ export default function ReadinessDashboard() {
                 key={`${fw.framework_type}-${fw.project_id ?? "org"}`}
                 sx={{
                   ...cardSx,
-                  borderRadius: 2,
-                  padding: "12px 18px 16px 18px",
-                  transition: "all 0.2s ease",
+                  "borderRadius": 2,
+                  "padding": "12px 18px 16px 18px",
+                  "transition": "all 0.2s ease",
                   "&:hover": {
                     borderColor: getLevelColor(level),
                     background: `linear-gradient(135deg, ${background.accent} 0%, ${background.gradientStop} 100%)`,
@@ -233,11 +234,7 @@ export default function ReadinessDashboard() {
                   </Typography>
                 </Stack>
                 {/* Mini counts row */}
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  sx={{ mt: 1, flexWrap: "wrap" }}
-                >
+                <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: "wrap" }}>
                   {[
                     {
                       label: "Ready",
@@ -260,10 +257,7 @@ export default function ReadinessDashboard() {
                       color: status.error.text,
                     },
                   ].map((item) => (
-                    <Typography
-                      key={item.label}
-                      sx={{ fontSize: 11, color: textColors.accent }}
-                    >
+                    <Typography key={item.label} sx={{ fontSize: 11, color: textColors.accent }}>
                       <Box
                         component="span"
                         sx={{
@@ -282,19 +276,14 @@ export default function ReadinessDashboard() {
           })
         ) : (
           <Card elevation={0} sx={{ ...cardSx, width: "100%" }}>
-            <CardContent
-              sx={{ textAlign: "center", py: 3, "&:last-child": { pb: 3 } }}
-            >
+            <CardContent sx={{ "textAlign": "center", "py": 3, "&:last-child": { pb: 3 } }}>
               <ShieldCheck
                 size={32}
                 strokeWidth={1}
                 style={{ color: textColors.accent, marginBottom: 8 }}
               />
-              <Typography
-                sx={{ fontSize: 13, color: textColors.tertiary }}
-              >
-                No readiness scores yet. Click &quot;Calculate readiness&quot; to
-                start.
+              <Typography sx={{ fontSize: 13, color: textColors.tertiary }}>
+                No readiness scores yet. Click &quot;Calculate readiness&quot; to start.
               </Typography>
             </CardContent>
           </Card>
@@ -309,8 +298,8 @@ export default function ReadinessDashboard() {
           style: { backgroundColor: brand.primary },
         }}
         sx={{
-          mb: "8px",
-          minHeight: "20px",
+          "mb": "8px",
+          "minHeight": "20px",
           "& .MuiTab-root": {
             textTransform: "none",
             fontWeight: 400,
@@ -337,7 +326,7 @@ export default function ReadinessDashboard() {
         }}
       >
         <Card elevation={0} sx={cardSx}>
-          <CardContent sx={{ p: "16px", "&:last-child": { pb: "16px" } }}>
+          <CardContent sx={{ "p": "16px", "&:last-child": { pb: "16px" } }}>
             <ReadinessHeatmap
               controls={controlScores ?? []}
               frameworkType={selectedFramework}
@@ -346,7 +335,7 @@ export default function ReadinessDashboard() {
           </CardContent>
         </Card>
         <Card elevation={0} sx={cardSx}>
-          <CardContent sx={{ p: "16px", "&:last-child": { pb: "16px" } }}>
+          <CardContent sx={{ "p": "16px", "&:last-child": { pb: "16px" } }}>
             <ReadinessTrend data={history ?? []} isLoading={historyLoading} />
           </CardContent>
         </Card>
@@ -354,11 +343,8 @@ export default function ReadinessDashboard() {
 
       {/* Weakest controls */}
       <Card elevation={0} sx={cardSx}>
-        <CardContent sx={{ p: "16px", "&:last-child": { pb: "16px" } }}>
-          <WeakControlsList
-            controls={weakest ?? []}
-            isLoading={weakestLoading}
-          />
+        <CardContent sx={{ "p": "16px", "&:last-child": { pb: "16px" } }}>
+          <WeakControlsList controls={weakest ?? []} isLoading={weakestLoading} />
         </CardContent>
       </Card>
     </Box>

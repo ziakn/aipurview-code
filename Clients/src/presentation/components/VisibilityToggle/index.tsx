@@ -25,7 +25,7 @@ export function VisibilityChips({ value, onChange }: VisibilityChipsProps) {
 
   const handleChange = (
     _event: React.MouseEvent<HTMLElement>,
-    newValue: VisibilityFilterValue | null
+    newValue: VisibilityFilterValue | null,
   ) => {
     if (newValue !== null) {
       onChange(newValue);
@@ -39,18 +39,18 @@ export function VisibilityChips({ value, onChange }: VisibilityChipsProps) {
       onChange={handleChange}
       size="small"
       sx={{
-        height: "34px",
+        "height": "34px",
         "& .MuiToggleButton-root": {
-          border: `1px solid ${theme.palette.border.dark}`,
-          color: theme.palette.text.tertiary,
-          padding: "6px 12px",
-          height: "34px",
-          textTransform: "none",
-          fontSize: 13,
-          fontWeight: 500,
+          "border": `1px solid ${theme.palette.border.dark}`,
+          "color": theme.palette.text.tertiary,
+          "padding": "6px 12px",
+          "height": "34px",
+          "textTransform": "none",
+          "fontSize": 13,
+          "fontWeight": 500,
           "&.Mui-selected": {
-            backgroundColor: "brand.primary",
-            color: theme.palette.background.main,
+            "backgroundColor": "brand.primary",
+            "color": theme.palette.background.main,
             "&:hover": {
               backgroundColor: "brand.primary",
             },

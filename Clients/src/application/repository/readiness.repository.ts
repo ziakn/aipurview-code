@@ -19,7 +19,11 @@ export async function triggerCalculateAll(projectId?: number, visibility?: strin
   return response.data;
 }
 
-export async function triggerCalculateFramework(frameworkType: string, projectId?: number, visibility?: string) {
+export async function triggerCalculateFramework(
+  frameworkType: string,
+  projectId?: number,
+  visibility?: string,
+) {
   const response = await apiServices.post(`${BASE_URL}/calculate/${frameworkType}`, {
     project_id: projectId,
     visibility,
@@ -33,13 +37,21 @@ export async function getReadinessScores(projectId?: number, visibility?: string
   return response.data;
 }
 
-export async function getReadinessScoresByFramework(frameworkType: string, projectId?: number, visibility?: string) {
+export async function getReadinessScoresByFramework(
+  frameworkType: string,
+  projectId?: number,
+  visibility?: string,
+) {
   const query = buildQuery({ project_id: projectId, visibility });
   const response = await apiServices.get(`${BASE_URL}/scores/${frameworkType}${query}`);
   return response.data;
 }
 
-export async function getControlScores(frameworkType: string, projectId?: number, visibility?: string) {
+export async function getControlScores(
+  frameworkType: string,
+  projectId?: number,
+  visibility?: string,
+) {
   const query = buildQuery({ project_id: projectId, visibility });
   const response = await apiServices.get(`${BASE_URL}/controls/${frameworkType}${query}`);
   return response.data;
@@ -57,7 +69,11 @@ export async function getRecommendations(limit?: number, projectId?: number, vis
   return response.data;
 }
 
-export async function getReadinessHistory(frameworkType?: string, projectId?: number, visibility?: string) {
+export async function getReadinessHistory(
+  frameworkType?: string,
+  projectId?: number,
+  visibility?: string,
+) {
   const query = buildQuery({ framework_type: frameworkType, project_id: projectId, visibility });
   const response = await apiServices.get(`${BASE_URL}/history${query}`);
   return response.data;

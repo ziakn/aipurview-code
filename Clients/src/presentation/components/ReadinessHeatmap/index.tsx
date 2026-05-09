@@ -10,11 +10,14 @@ interface ReadinessHeatmapProps {
   isLoading?: boolean;
 }
 
-const LEVEL_CONFIG: Record<ReadinessLevel, {
-  label: string;
-  colors: { bg: string; text: string; border: string };
-  Icon: typeof ShieldCheck;
-}> = {
+const LEVEL_CONFIG: Record<
+  ReadinessLevel,
+  {
+    label: string;
+    colors: { bg: string; text: string; border: string };
+    Icon: typeof ShieldCheck;
+  }
+> = {
   ready: { label: "Ready", colors: status.success, Icon: ShieldCheck },
   needs_work: { label: "Needs Work", colors: accent.primary, Icon: ShieldAlert },
   at_risk: { label: "At Risk", colors: status.warning, Icon: ShieldX },
@@ -41,14 +44,28 @@ export default function ReadinessHeatmap({
   isLoading,
 }: ReadinessHeatmapProps) {
   const counts = useMemo(() => {
-    const c: Record<ReadinessLevel, number> = { ready: 0, needs_work: 0, at_risk: 0, not_started: 0 };
-    controls.forEach((ctrl) => { c[ctrl.readiness_level]++; });
+    const c: Record<ReadinessLevel, number> = {
+      ready: 0,
+      needs_work: 0,
+      at_risk: 0,
+      not_started: 0,
+    };
+    controls.forEach((ctrl) => {
+      c[ctrl.readiness_level]++;
+    });
     return c;
   }, [controls]);
 
   if (isLoading) {
     return (
-      <Box sx={{ height: FIXED_HEIGHT, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <Box
+        sx={{
+          height: FIXED_HEIGHT,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <Typography sx={{ fontSize: 13, color: textColors.muted }}>Loading heatmap...</Typography>
       </Box>
     );
@@ -112,10 +129,14 @@ export default function ReadinessHeatmap({
               >
                 <Icon size={11} style={{ color: colors.text }} />
               </Box>
-              <Typography sx={{ fontSize: 11, color: textColors.secondary }}>
-                {label}
-              </Typography>
-              <Typography sx={{ fontSize: 11, fontWeight: 700, color: count > 0 ? colors.text : textColors.muted }}>
+              <Typography sx={{ fontSize: 11, color: textColors.secondary }}>{label}</Typography>
+              <Typography
+                sx={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: count > 0 ? colors.text : textColors.muted,
+                }}
+              >
                 {count}
               </Typography>
             </Stack>
@@ -126,15 +147,15 @@ export default function ReadinessHeatmap({
       {/* Scrollable heatmap grid */}
       <Box
         sx={{
-          flex: 1,
-          overflowY: "auto",
-          overflowX: "hidden",
-          pr: 0.5,
+          "flex": 1,
+          "overflowY": "auto",
+          "overflowX": "hidden",
+          "pr": 0.5,
           "&::-webkit-scrollbar": { width: 4 },
           "&::-webkit-scrollbar-track": { backgroundColor: "transparent" },
           "&::-webkit-scrollbar-thumb": {
-            backgroundColor: background.hover,
-            borderRadius: 2,
+            "backgroundColor": background.hover,
+            "borderRadius": 2,
             "&:hover": { backgroundColor: textColors.muted },
           },
         }}
@@ -160,16 +181,16 @@ export default function ReadinessHeatmap({
               >
                 <Box
                   sx={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: "6px",
-                    backgroundColor: colors.bg,
-                    border: `1.5px solid ${colors.border}`,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: "default",
-                    transition: "all 0.2s ease",
+                    "width": 36,
+                    "height": 36,
+                    "borderRadius": "6px",
+                    "backgroundColor": colors.bg,
+                    "border": `1.5px solid ${colors.border}`,
+                    "display": "flex",
+                    "alignItems": "center",
+                    "justifyContent": "center",
+                    "cursor": "default",
+                    "transition": "all 0.2s ease",
                     "&:hover": {
                       transform: "scale(1.12)",
                       boxShadow: `0 2px 8px ${colors.border}`,

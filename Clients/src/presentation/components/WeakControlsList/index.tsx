@@ -1,7 +1,14 @@
 import { Box, Typography, Stack, LinearProgress } from "@mui/material";
 import Chip from "../Chip";
 import { AlertTriangle, ArrowDown, CheckCircle2, Lightbulb } from "lucide-react";
-import { status, accent, text as textColors, border as borderPalette, background, brand } from "../../themes/palette";
+import {
+  status,
+  accent,
+  text as textColors,
+  border as borderPalette,
+  background,
+  brand,
+} from "../../themes/palette";
 
 interface WeakControl {
   control_id: number;
@@ -50,7 +57,14 @@ export default function WeakControlsList({
 }: WeakControlsListProps) {
   if (isLoading) {
     return (
-      <Box sx={{ height: FIXED_HEIGHT, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <Box
+        sx={{
+          height: FIXED_HEIGHT,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <Typography sx={{ fontSize: 13, color: textColors.muted }}>Loading...</Typography>
       </Box>
     );
@@ -71,7 +85,11 @@ export default function WeakControlsList({
           borderRadius: 2,
         }}
       >
-        <CheckCircle2 size={28} strokeWidth={1.5} style={{ color: status.success.text, marginBottom: 8 }} />
+        <CheckCircle2
+          size={28}
+          strokeWidth={1.5}
+          style={{ color: status.success.text, marginBottom: 8 }}
+        />
         <Typography sx={{ fontSize: 13, color: textColors.tertiary }}>
           No weak controls found. Your compliance posture looks strong!
         </Typography>
@@ -98,15 +116,15 @@ export default function WeakControlsList({
       {/* Scrollable list */}
       <Box
         sx={{
-          flex: 1,
-          overflowY: "auto",
-          overflowX: "hidden",
-          pr: 0.5,
+          "flex": 1,
+          "overflowY": "auto",
+          "overflowX": "hidden",
+          "pr": 0.5,
           "&::-webkit-scrollbar": { width: 4 },
           "&::-webkit-scrollbar-track": { backgroundColor: "transparent" },
           "&::-webkit-scrollbar-thumb": {
-            backgroundColor: background.hover,
-            borderRadius: 2,
+            "backgroundColor": background.hover,
+            "borderRadius": 2,
             "&:hover": { backgroundColor: textColors.muted },
           },
         }}
@@ -125,11 +143,11 @@ export default function WeakControlsList({
               <Box
                 key={`${ctrl.control_id}-${i}`}
                 sx={{
-                  p: 2,
-                  borderRadius: "8px",
-                  border: `1px solid ${borderPalette.light}`,
-                  backgroundColor: background.main,
-                  transition: "all 0.2s ease",
+                  "p": 2,
+                  "borderRadius": "8px",
+                  "border": `1px solid ${borderPalette.light}`,
+                  "backgroundColor": background.main,
+                  "transition": "all 0.2s ease",
                   "&:hover": {
                     borderColor: priority.colors.border,
                     backgroundColor: priority.colors.bg,
@@ -137,7 +155,12 @@ export default function WeakControlsList({
                 }}
               >
                 {/* Top row: control info + score */}
-                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  sx={{ mb: 1 }}
+                >
                   <Stack direction="row" alignItems="center" spacing={1.5}>
                     {/* Priority icon */}
                     <Box
@@ -180,7 +203,13 @@ export default function WeakControlsList({
                       textColor={priority.colors.text}
                       uppercase={false}
                     />
-                    <Typography sx={{ fontSize: 18, fontWeight: 700, color: getScoreColor(ctrl.overall_score) }}>
+                    <Typography
+                      sx={{
+                        fontSize: 18,
+                        fontWeight: 700,
+                        color: getScoreColor(ctrl.overall_score),
+                      }}
+                    >
                       {ctrl.overall_score}
                     </Typography>
                   </Stack>
@@ -191,10 +220,10 @@ export default function WeakControlsList({
                   variant="determinate"
                   value={ctrl.overall_score}
                   sx={{
-                    height: 4,
-                    borderRadius: 2,
-                    mb: recs.length > 0 ? 1.25 : 0,
-                    backgroundColor: background.hover,
+                    "height": 4,
+                    "borderRadius": 2,
+                    "mb": recs.length > 0 ? 1.25 : 0,
+                    "backgroundColor": background.hover,
                     "& .MuiLinearProgress-bar": {
                       borderRadius: 2,
                       backgroundColor: getScoreColor(ctrl.overall_score),

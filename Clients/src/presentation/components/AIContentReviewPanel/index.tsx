@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  TextField,
-  Stack,
-} from "@mui/material";
+import { Box, Typography, Button, TextField, Stack } from "@mui/material";
 import { Bot, Clock, Cpu, Wrench, Target, CheckCircle } from "lucide-react";
 import {
   text as textColors,
@@ -25,9 +19,7 @@ interface AIContentReviewPanelProps {
 }
 
 function formatEntityType(type: string): string {
-  return type
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 export default function AIContentReviewPanel({
@@ -86,12 +78,7 @@ export default function AIContentReviewPanel({
             </Box>
           </Typography>
           {item.field_name && (
-            <Chip
-              label={item.field_name}
-              size="small"
-              variant="default"
-              uppercase={false}
-            />
+            <Chip label={item.field_name} size="small" variant="default" uppercase={false} />
           )}
         </Stack>
 
@@ -99,9 +86,7 @@ export default function AIContentReviewPanel({
           {createdDate && (
             <Stack direction="row" alignItems="center" spacing={0.5}>
               <Clock size={13} style={{ color: textColors.muted }} />
-              <Typography sx={{ fontSize: 12, color: textColors.muted }}>
-                {createdDate}
-              </Typography>
+              <Typography sx={{ fontSize: 12, color: textColors.muted }}>{createdDate}</Typography>
             </Stack>
           )}
           <AIContentBadge
@@ -210,7 +195,14 @@ export default function AIContentReviewPanel({
               borderLeft: `4px solid ${brand.primary}`,
             }}
           >
-            <Typography sx={{ fontSize: 13, color: textColors.tertiary, lineHeight: 1.7, letterSpacing: "0.01em" }}>
+            <Typography
+              sx={{
+                fontSize: 13,
+                color: textColors.tertiary,
+                lineHeight: 1.7,
+                letterSpacing: "0.01em",
+              }}
+            >
               {item.prompt_summary}
             </Typography>
           </Box>
@@ -250,11 +242,11 @@ export default function AIContentReviewPanel({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               sx={{
-                mb: 1,
+                "mb": 1,
                 "& .MuiInputBase-root": { fontSize: 13 },
                 "& .MuiInputBase-input": { py: 1.5, lineHeight: 1.6 },
                 "& .MuiOutlinedInput-root": {
-                  borderRadius: "8px",
+                  "borderRadius": "8px",
                   "& fieldset": { borderColor: borderPalette.light },
                   "&:hover fieldset": { borderColor: borderPalette.dark },
                   "&.Mui-focused fieldset": { borderColor: brand.primary },
@@ -267,14 +259,14 @@ export default function AIContentReviewPanel({
                 disabled={isReviewing}
                 onClick={() => onReview(item.id, "approved", notes || undefined)}
                 sx={{
-                  textTransform: "none",
-                  fontSize: 13,
-                  fontWeight: 600,
-                  borderRadius: "8px",
-                  backgroundColor: brand.primary,
-                  boxShadow: "none",
-                  px: 3.5,
-                  py: 1,
+                  "textTransform": "none",
+                  "fontSize": 13,
+                  "fontWeight": 600,
+                  "borderRadius": "8px",
+                  "backgroundColor": brand.primary,
+                  "boxShadow": "none",
+                  "px": 3.5,
+                  "py": 1,
                   "&:hover": { backgroundColor: brand.primaryHover, boxShadow: "none" },
                 }}
               >
@@ -285,14 +277,14 @@ export default function AIContentReviewPanel({
                 disabled={isReviewing}
                 onClick={() => onReview(item.id, "modified", notes || undefined)}
                 sx={{
-                  textTransform: "none",
-                  fontSize: 13,
-                  fontWeight: 500,
-                  borderRadius: "8px",
-                  borderColor: borderPalette.dark,
-                  color: textColors.secondary,
-                  px: 3.5,
-                  py: 1,
+                  "textTransform": "none",
+                  "fontSize": 13,
+                  "fontWeight": 500,
+                  "borderRadius": "8px",
+                  "borderColor": borderPalette.dark,
+                  "color": textColors.secondary,
+                  "px": 3.5,
+                  "py": 1,
                   "&:hover": { backgroundColor: background.hover, borderColor: borderPalette.dark },
                 }}
               >
@@ -303,14 +295,14 @@ export default function AIContentReviewPanel({
                 disabled={isReviewing}
                 onClick={() => onReview(item.id, "rejected", notes || undefined)}
                 sx={{
-                  textTransform: "none",
-                  fontSize: 13,
-                  fontWeight: 500,
-                  borderRadius: "8px",
-                  borderColor: borderPalette.dark,
-                  color: textColors.secondary,
-                  px: 3.5,
-                  py: 1,
+                  "textTransform": "none",
+                  "fontSize": 13,
+                  "fontWeight": 500,
+                  "borderRadius": "8px",
+                  "borderColor": borderPalette.dark,
+                  "color": textColors.secondary,
+                  "px": 3.5,
+                  "py": 1,
                   "&:hover": { backgroundColor: background.hover, borderColor: borderPalette.dark },
                 }}
               >

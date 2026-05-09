@@ -23,21 +23,31 @@ interface ReadinessScoreCardProps {
 
 function getLevelColor(level: ReadinessLevel | undefined) {
   switch (level) {
-    case "ready": return status.success;
-    case "needs_work": return accent.primary;
-    case "at_risk": return status.warning;
-    case "not_started": return status.error;
-    default: return { bg: background.hover, text: textColors.tertiary, border: border.light };
+    case "ready":
+      return status.success;
+    case "needs_work":
+      return accent.primary;
+    case "at_risk":
+      return status.warning;
+    case "not_started":
+      return status.error;
+    default:
+      return { bg: background.hover, text: textColors.tertiary, border: border.light };
   }
 }
 
 function getLevelLabel(level: ReadinessLevel | undefined) {
   switch (level) {
-    case "ready": return "Ready";
-    case "needs_work": return "Needs Work";
-    case "at_risk": return "At Risk";
-    case "not_started": return "Not Started";
-    default: return "Unknown";
+    case "ready":
+      return "Ready";
+    case "needs_work":
+      return "Needs Work";
+    case "at_risk":
+      return "At Risk";
+    case "not_started":
+      return "Not Started";
+    default:
+      return "Unknown";
   }
 }
 
@@ -127,10 +137,10 @@ export default function ReadinessScoreCard({
               cursor: "default",
             }}
           >
-            <Typography sx={{ fontSize: 16, fontWeight: 700, lineHeight: 1.2 }}>
-              {score}
-            </Typography>
-            <Typography sx={{ fontSize: 11, fontWeight: 500, lineHeight: 1.2, textTransform: "uppercase" }}>
+            <Typography sx={{ fontSize: 16, fontWeight: 700, lineHeight: 1.2 }}>{score}</Typography>
+            <Typography
+              sx={{ fontSize: 11, fontWeight: 500, lineHeight: 1.2, textTransform: "uppercase" }}
+            >
               {label}
             </Typography>
           </Box>
@@ -142,10 +152,10 @@ export default function ReadinessScoreCard({
         variant="determinate"
         value={score}
         sx={{
-          height: 8,
-          borderRadius: 4,
-          mb: 2,
-          backgroundColor: background.hover,
+          "height": 8,
+          "borderRadius": 4,
+          "mb": 2,
+          "backgroundColor": background.hover,
           "& .MuiLinearProgress-bar": {
             borderRadius: 4,
             backgroundColor: colors.text,
@@ -176,9 +186,7 @@ export default function ReadinessScoreCard({
               <Typography sx={{ fontSize: 11, fontWeight: 600, color: item.color.text }}>
                 {item.count ?? 0}
               </Typography>
-              <Typography sx={{ fontSize: 10, color: item.color.text }}>
-                {item.label}
-              </Typography>
+              <Typography sx={{ fontSize: 10, color: item.color.text }}>{item.label}</Typography>
             </Box>
           ))}
         </Box>
@@ -201,15 +209,19 @@ export default function ReadinessScoreCard({
                 variant="determinate"
                 value={value}
                 sx={{
-                  height: 4,
-                  borderRadius: 2,
-                  backgroundColor: background.hover,
+                  "height": 4,
+                  "borderRadius": 2,
+                  "backgroundColor": background.hover,
                   "& .MuiLinearProgress-bar": {
                     borderRadius: 2,
-                    backgroundColor: value >= 80 ? status.success.text
-                      : value >= 60 ? accent.primary.text
-                      : value >= 40 ? status.warning.text
-                      : status.error.text,
+                    backgroundColor:
+                      value >= 80
+                        ? status.success.text
+                        : value >= 60
+                          ? accent.primary.text
+                          : value >= 40
+                            ? status.warning.text
+                            : status.error.text,
                   },
                 }}
               />

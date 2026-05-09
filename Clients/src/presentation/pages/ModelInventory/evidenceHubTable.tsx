@@ -22,7 +22,17 @@ import {
 } from "@mui/material";
 import TablePaginationActions from "../../components/TablePagination";
 import CustomIconButton from "../../components/IconButton";
-import { ChevronsUpDown, ChevronUp, ChevronDown, FileCheck, FolderOpen, Shield, Clock, Sparkles, X } from "lucide-react";
+import {
+  ChevronsUpDown,
+  ChevronUp,
+  ChevronDown,
+  FileCheck,
+  FolderOpen,
+  Shield,
+  Clock,
+  Sparkles,
+  X,
+} from "lucide-react";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { displayFormattedDate } from "../../tools/isoDateToString";
@@ -538,7 +548,9 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
                           }
                         />
                       ) : (
-                        <Typography sx={{ fontSize: 11, color: palette.text.disabled }}>-</Typography>
+                        <Typography sx={{ fontSize: 11, color: palette.text.disabled }}>
+                          -
+                        </Typography>
                       );
                     })()}
                   </TableCell>
@@ -546,7 +558,13 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
                 <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
                   <Stack direction="row" spacing={1}>
                     {evidence.evidence_files?.[0]?.id && (
-                      <Tooltip title={qualityMap.has(Number(evidence.evidence_files[0].id)) ? "Re-analyze with AI" : "Analyze with AI"}>
+                      <Tooltip
+                        title={
+                          qualityMap.has(Number(evidence.evidence_files[0].id))
+                            ? "Re-analyze with AI"
+                            : "Analyze with AI"
+                        }
+                      >
                         <Box
                           component="button"
                           onClick={(e: React.MouseEvent) => {
@@ -555,19 +573,21 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
                             if (fileId) triggerAnalysis.mutate(fileId);
                           }}
                           sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: 28,
-                            height: 28,
-                            borderRadius: "6px",
-                            border: "1px solid",
-                            borderColor: triggerAnalysis.isPending ? "#ccc" : "#7C3AED",
-                            backgroundColor: triggerAnalysis.isPending ? "#f5f5f5" : "#F5F3FF",
-                            color: triggerAnalysis.isPending ? "#999" : "#7C3AED",
-                            cursor: triggerAnalysis.isPending ? "wait" : "pointer",
-                            padding: 0,
-                            "&:hover": { backgroundColor: triggerAnalysis.isPending ? "#f5f5f5" : "#EDE9FE" },
+                            "display": "flex",
+                            "alignItems": "center",
+                            "justifyContent": "center",
+                            "width": 28,
+                            "height": 28,
+                            "borderRadius": "6px",
+                            "border": "1px solid",
+                            "borderColor": triggerAnalysis.isPending ? "#ccc" : "#7C3AED",
+                            "backgroundColor": triggerAnalysis.isPending ? "#f5f5f5" : "#F5F3FF",
+                            "color": triggerAnalysis.isPending ? "#999" : "#7C3AED",
+                            "cursor": triggerAnalysis.isPending ? "wait" : "pointer",
+                            "padding": 0,
+                            "&:hover": {
+                              backgroundColor: triggerAnalysis.isPending ? "#f5f5f5" : "#EDE9FE",
+                            },
                           }}
                           disabled={triggerAnalysis.isPending}
                         >
@@ -633,7 +653,7 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
       qualityAnalysisMap,
       triggerAnalysis,
       hidePagination,
-    ]
+    ],
   );
 
   if (isLoading) {
@@ -668,15 +688,10 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
                   rowsPerPage={rowsPerPage}
                   rowsPerPageOptions={[5, 10, 15, 25]}
                   onRowsPerPageChange={handleChangeRowsPerPage}
-                  ActionsComponent={(props) => (
-                    <TablePaginationActions {...props} />
-                  )}
+                  ActionsComponent={(props) => <TablePaginationActions {...props} />}
                   labelRowsPerPage="Rows per page"
                   labelDisplayedRows={({ page, count }) =>
-                    `Page ${page + 1} of ${Math.max(
-                      0,
-                      Math.ceil(count / rowsPerPage)
-                    )}`
+                    `Page ${page + 1} of ${Math.max(0, Math.ceil(count / rowsPerPage))}`
                   }
                   slotProps={{
                     select: {
@@ -755,9 +770,7 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
           </MuiIconButton>
         </DialogTitle>
         <DialogContent sx={{ p: 0 }}>
-          {selectedAnalysis && (
-            <EvidenceAnalysisPanel analysis={selectedAnalysis} />
-          )}
+          {selectedAnalysis && <EvidenceAnalysisPanel analysis={selectedAnalysis} />}
         </DialogContent>
       </Dialog>
     </>

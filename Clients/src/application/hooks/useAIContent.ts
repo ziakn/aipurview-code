@@ -1,8 +1,4 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getBadges,
   reviewContent,
@@ -23,7 +19,7 @@ export const aiContentQueryKeys = {
 export const useAIContentBadges = (
   entityType: string,
   entityId: number,
-  options?: { enabled?: boolean }
+  options?: { enabled?: boolean },
 ) => {
   return useQuery({
     queryKey: aiContentQueryKeys.badges(entityType, entityId),
@@ -65,15 +61,7 @@ export const useReviewContent = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      id,
-      action,
-      notes,
-    }: {
-      id: number;
-      action: string;
-      notes?: string;
-    }) => {
+    mutationFn: async ({ id, action, notes }: { id: number; action: string; notes?: string }) => {
       const res = await reviewContent(id, action, notes);
       return res?.data;
     },

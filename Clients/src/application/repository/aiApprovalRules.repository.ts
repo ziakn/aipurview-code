@@ -18,16 +18,14 @@ export async function listApprovalRules(): Promise<ApprovalRule[]> {
   return response.data?.data || response.data || [];
 }
 
-export async function createApprovalRule(
-  rule: Partial<ApprovalRule>
-): Promise<ApprovalRule> {
+export async function createApprovalRule(rule: Partial<ApprovalRule>): Promise<ApprovalRule> {
   const response = await apiServices.post("/ai-approval-rules", rule);
   return response.data?.data || response.data;
 }
 
 export async function updateApprovalRule(
   id: number,
-  rule: Partial<ApprovalRule>
+  rule: Partial<ApprovalRule>,
 ): Promise<ApprovalRule> {
   const response = await apiServices.put(`/ai-approval-rules/${id}`, rule);
   return response.data?.data || response.data;
@@ -39,7 +37,7 @@ export async function deleteApprovalRule(id: number): Promise<void> {
 
 export async function testApprovalRule(
   rule: Partial<ApprovalRule>,
-  facts: Record<string, unknown>
+  facts: Record<string, unknown>,
 ): Promise<{ matched: boolean; decision?: string; evaluatedFacts: Record<string, unknown> }> {
   const response = await apiServices.post("/ai-approval-rules/test", { rule, facts });
   return response.data?.data || response.data;

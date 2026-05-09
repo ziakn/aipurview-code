@@ -1,8 +1,4 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   triggerCalculateAll,
   triggerCalculateFramework,
@@ -16,7 +12,8 @@ import {
 
 export const readinessQueryKeys = {
   all: ["readiness"] as const,
-  scores: (projectId?: number, visibility?: string) => [...readinessQueryKeys.all, "scores", projectId, visibility] as const,
+  scores: (projectId?: number, visibility?: string) =>
+    [...readinessQueryKeys.all, "scores", projectId, visibility] as const,
   scoresByFramework: (fw: string, projectId?: number, visibility?: string) =>
     [...readinessQueryKeys.all, "scores", fw, projectId, visibility] as const,
   controls: (fw: string, projectId?: number, visibility?: string) =>
@@ -44,12 +41,20 @@ export const useReadinessScores = (projectId?: number, visibility?: string) => {
 /** Fetch readiness scores for a specific framework */
 export const useReadinessScoresByFramework = (
   frameworkType: string,
-  options?: { enabled?: boolean; projectId?: number; visibility?: string }
+  options?: { enabled?: boolean; projectId?: number; visibility?: string },
 ) => {
   return useQuery({
-    queryKey: readinessQueryKeys.scoresByFramework(frameworkType, options?.projectId, options?.visibility),
+    queryKey: readinessQueryKeys.scoresByFramework(
+      frameworkType,
+      options?.projectId,
+      options?.visibility,
+    ),
     queryFn: async () => {
-      const res = await getReadinessScoresByFramework(frameworkType, options?.projectId, options?.visibility);
+      const res = await getReadinessScoresByFramework(
+        frameworkType,
+        options?.projectId,
+        options?.visibility,
+      );
       return res?.data ?? null;
     },
     enabled: (options?.enabled ?? true) && !!frameworkType,
@@ -60,7 +65,7 @@ export const useReadinessScoresByFramework = (
 /** Fetch per-control readiness scores */
 export const useControlScores = (
   frameworkType: string,
-  options?: { enabled?: boolean; projectId?: number; visibility?: string }
+  options?: { enabled?: boolean; projectId?: number; visibility?: string },
 ) => {
   return useQuery({
     queryKey: readinessQueryKeys.controls(frameworkType, options?.projectId, options?.visibility),
@@ -98,7 +103,11 @@ export const useRecommendations = (limit?: number, projectId?: number, visibilit
 };
 
 /** Fetch readiness history for trend chart */
-export const useReadinessHistory = (frameworkType?: string, projectId?: number, visibility?: string) => {
+export const useReadinessHistory = (
+  frameworkType?: string,
+  projectId?: number,
+  visibility?: string,
+) => {
   return useQuery({
     queryKey: readinessQueryKeys.history(frameworkType, projectId, visibility),
     queryFn: async () => {
@@ -129,7 +138,15 @@ export const useTriggerCalculateFramework = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ frameworkType, projectId, visibility }: { frameworkType: string; projectId?: number; visibility?: string }) => {
+    mutationFn: async ({
+      frameworkType,
+      projectId,
+      visibility,
+    }: {
+      frameworkType: string;
+      projectId?: number;
+      visibility?: string;
+    }) => {
       const res = await triggerCalculateFramework(frameworkType, projectId, visibility);
       return res?.data;
     },

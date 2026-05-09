@@ -36,7 +36,7 @@ export async function getSuggestions(fileId: number) {
 
 export async function applySuggestions(
   fileId: number,
-  suggestions: Array<{ control_id: number; framework_type: string }>
+  suggestions: Array<{ control_id: number; framework_type: string }>,
 ) {
   const response = await apiServices.post(`${BASE_URL}/suggestions/${fileId}/apply`, {
     suggestions,

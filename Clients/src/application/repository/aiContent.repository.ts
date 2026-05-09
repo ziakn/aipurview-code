@@ -7,11 +7,7 @@ export async function getBadges(entityType: string, entityId: number) {
   return response.data;
 }
 
-export async function reviewContent(
-  id: number,
-  reviewAction: string,
-  notes?: string
-) {
+export async function reviewContent(id: number, reviewAction: string, notes?: string) {
   const response = await apiServices.patch(`${BASE_URL}/${id}/review`, {
     review_action: reviewAction,
     review_notes: notes,

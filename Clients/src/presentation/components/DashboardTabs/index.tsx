@@ -49,7 +49,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
 
   const visibleTabs = useMemo(
     () => availableTabs.filter((t) => activeTabs.includes(t.id)),
-    [availableTabs, activeTabs]
+    [availableTabs, activeTabs],
   );
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
@@ -101,8 +101,8 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
         onChange={handleTabChange}
         TabIndicatorProps={{ style: { backgroundColor: INDICATOR_COLOR } }}
         sx={{
-          minHeight: "20px",
-          flex: 1,
+          "minHeight": "20px",
+          "flex": 1,
           "& .MuiTabs-flexContainer": { columnGap: "24px" },
         }}
       >
@@ -114,11 +114,11 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
               value={tab.id}
               disableRipple
               sx={{
-                textTransform: "none",
-                fontWeight: 400,
-                padding: "16px 0 7px",
-                minHeight: "20px",
-                minWidth: "auto",
+                "textTransform": "none",
+                "fontWeight": 400,
+                "padding": "16px 0 7px",
+                "minHeight": "20px",
+                "minWidth": "auto",
                 "&.Mui-selected": { color: INDICATOR_COLOR },
               }}
               label={
@@ -131,13 +131,13 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
                         component="span"
                         onClick={(e: React.MouseEvent) => handleRemoveTab(e, tab.id)}
                         sx={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          ml: 0.5,
-                          borderRadius: "50%",
-                          padding: "1px",
-                          cursor: "pointer",
-                          opacity: 0.5,
+                          "display": "inline-flex",
+                          "alignItems": "center",
+                          "ml": 0.5,
+                          "borderRadius": "50%",
+                          "padding": "1px",
+                          "cursor": "pointer",
+                          "opacity": 0.5,
                           "&:hover": { opacity: 1, backgroundColor: "rgba(0,0,0,0.08)" },
                         }}
                       >
@@ -158,12 +158,12 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
           onClick={handleAddClick}
           size="small"
           sx={{
-            mb: "4px",
-            width: 28,
-            height: 28,
-            border: `1px dashed ${border.light}`,
-            borderRadius: "6px",
-            color: text.secondary,
+            "mb": "4px",
+            "width": 28,
+            "height": 28,
+            "border": `1px dashed ${border.light}`,
+            "borderRadius": "6px",
+            "color": text.secondary,
             "&:hover": { backgroundColor: background.hover, color: brand.primary },
           }}
         >
@@ -217,8 +217,8 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
               onClick={() => !isFixed && handleToggleTab(tab.id)}
               disabled={isFixed}
               sx={{
-                py: 1,
-                px: 2,
+                "py": 1,
+                "px": 2,
                 "&:hover": { backgroundColor: background.hover },
                 "&.Mui-disabled": { opacity: 0.7 },
               }}
@@ -228,9 +228,9 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
                 disabled={isFixed}
                 size="small"
                 sx={{
-                  p: 0,
-                  mr: 1.5,
-                  color: border.dark,
+                  "p": 0,
+                  "mr": 1.5,
+                  "color": border.dark,
                   "&.Mui-checked": { color: brand.primary },
                   "&.Mui-disabled.Mui-checked": { color: brand.primary, opacity: 0.7 },
                 }}

@@ -49,9 +49,9 @@ function CoverageBar({
         variant="determinate"
         value={pct}
         sx={{
-          height: 6,
-          borderRadius: 3,
-          backgroundColor: background.hover,
+          "height": 6,
+          "borderRadius": 3,
+          "backgroundColor": background.hover,
           "& .MuiLinearProgress-bar": {
             borderRadius: 3,
             backgroundColor: color.text,
@@ -162,16 +162,11 @@ export default function EvidenceGapChart({ data, isLoading }: EvidenceGapChartPr
                   sx={{
                     fontSize: 11,
                     fontWeight: 600,
-                    color:
-                      gap.gap_type === "no_evidence"
-                        ? status.error.text
-                        : status.warning.text,
+                    color: gap.gap_type === "no_evidence" ? status.error.text : status.warning.text,
                     flexShrink: 0,
                   }}
                 >
-                  {gap.gap_type === "no_evidence"
-                    ? "No evidence"
-                    : `Quality: ${gap.avg_quality}`}
+                  {gap.gap_type === "no_evidence" ? "No evidence" : `Quality: ${gap.avg_quality}`}
                 </Typography>
               </Box>
             ))}

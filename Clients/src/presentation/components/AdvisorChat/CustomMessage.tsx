@@ -178,7 +178,7 @@ const GenerateChartToolUI: FC<{ result?: unknown }> = ({ result }) => {
  * These run server-side and their results are consumed by the LLM, not shown to the user.
  */
 const DefaultToolFallback: FC<{ result?: unknown }> = ({ result }) => {
-  if (result && typeof result === 'object' && (result as any).confirmation_required === true) {
+  if (result && typeof result === "object" && (result as any).confirmation_required === true) {
     return <ConfirmationToolUI result={result} />;
   }
   return null;
@@ -213,14 +213,14 @@ const useAssistantTurnHasVisibleOutput = (): boolean => {
       | undefined;
     if (!content || content.length === 0) return false;
     for (const part of content) {
-      if (part.type === 'text' || part.type === 'reasoning') {
+      if (part.type === "text" || part.type === "reasoning") {
         const text = part.text as string | undefined;
-        if (typeof text === 'string' && text.length > 0) return true;
+        if (typeof text === "string" && text.length > 0) return true;
         continue;
       }
-      if (part.type === 'tool-call') {
+      if (part.type === "tool-call") {
         if (part.result === undefined) continue;
-        if (part.toolName === 'generate_chart') return true;
+        if (part.toolName === "generate_chart") return true;
         const result = part.result as Record<string, unknown> | undefined;
         if (result && result.confirmation_required === true) return true;
         // Other tool results (read tools, errors, etc.) render nothing in
@@ -446,7 +446,7 @@ const AssistantBody: FC<{
   // node_modules/@assistant-ui/core/dist/types/message.d.ts → MessageStatus.
   const isWorking = useAssistantState(({ message }) => {
     const t = message.status?.type;
-    return t === 'running' || t === 'requires-action';
+    return t === "running" || t === "requires-action";
   });
 
   if (!hasVisibleOutput && isWorking) {
@@ -461,12 +461,12 @@ const AssistantBody: FC<{
           backgroundColor: theme.palette.background.fill ?? theme.palette.grey[100],
           border: `1px solid ${theme.palette.border?.light ?? theme.palette.divider}`,
           color: theme.palette.text.primary,
-          padding: '10px 14px',
+          padding: "10px 14px",
           borderRadius: 3,
           borderTopLeftRadius: 1,
           fontSize: theme.typography.body2.fontSize,
           lineHeight: 1.7,
-          wordBreak: 'break-word',
+          wordBreak: "break-word",
         }}
       >
         <MessagePrimitive.Content

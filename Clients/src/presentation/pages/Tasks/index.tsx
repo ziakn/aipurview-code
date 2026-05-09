@@ -183,13 +183,13 @@ const Tasks: React.FC = () => {
   // create, update, and delete — all trigger a table refresh.
   useEffect(() => {
     const TASK_TOOL_NAMES = new Set([
-      'agent_create_task',
-      'agent_update_task',
-      'agent_delete_task',
+      "agent_create_task",
+      "agent_update_task",
+      "agent_delete_task",
     ]);
     return onAiActionCompleted((detail) => {
       if (
-        detail?.status === 'approved' &&
+        detail?.status === "approved" &&
         detail?.toolName &&
         TASK_TOOL_NAMES.has(detail.toolName)
       ) {

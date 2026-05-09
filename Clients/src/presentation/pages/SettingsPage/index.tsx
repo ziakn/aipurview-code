@@ -197,7 +197,8 @@ export default function ProfilePage() {
                     label: "AI Approval Rules",
                     value: "ai-approval-rules",
                     icon: "Shield" as TabItem["icon"],
-                    tooltip: "Configure auto-approve, require-approval, and auto-reject rules for AI operations",
+                    tooltip:
+                      "Configure auto-approve, require-approval, and auto-reject rules for AI operations",
                   },
                 ]
               : []),

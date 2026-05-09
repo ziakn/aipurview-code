@@ -13,7 +13,10 @@ interface AIContentBadgeProps {
   size?: "small" | "medium";
 }
 
-const BADGE_CONFIG: Record<BadgeType, { label: string; color: string; bg: string; border: string }> = {
+const BADGE_CONFIG: Record<
+  BadgeType,
+  { label: string; color: string; bg: string; border: string }
+> = {
   generated: {
     label: "AI-generated",
     color: accent.primary.text,
@@ -74,8 +77,8 @@ export default function AIContentBadge({
     humanReviewed && reviewAction
       ? `Review: ${REVIEW_LABELS[reviewAction]}`
       : humanReviewed === false
-      ? "Not yet reviewed"
-      : null,
+        ? "Not yet reviewed"
+        : null,
   ]
     .filter(Boolean)
     .join(" · ");
@@ -131,7 +134,9 @@ export default function AIContentBadge({
           border: `1px solid ${config.border}`,
         }}
       >
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 0.5 }}>
+        <Box
+          sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 0.5 }}
+        >
           <Typography sx={{ fontSize: 12, fontWeight: 600, color: config.color }}>
             {config.label}
           </Typography>
@@ -139,7 +144,13 @@ export default function AIContentBadge({
             <CustomChip
               label={REVIEW_LABELS[reviewAction]}
               size="small"
-              variant={reviewAction === "approved" ? "success" : reviewAction === "rejected" ? "error" : "warning"}
+              variant={
+                reviewAction === "approved"
+                  ? "success"
+                  : reviewAction === "rejected"
+                    ? "error"
+                    : "warning"
+              }
               uppercase={false}
             />
           )}
