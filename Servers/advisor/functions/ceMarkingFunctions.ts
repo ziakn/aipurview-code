@@ -11,14 +11,14 @@ const getCeMarkingStatus = async (
 ): Promise<any> => {
   try {
     // Get CE marking record
-    const ceMarking = await sequelize.query(
+    const ceMarking = (await sequelize.query(
       `SELECT * FROM ce_markings
        WHERE project_id = :project_id AND organization_id = :organization_id`,
       {
         replacements: { project_id: params.project_id, organization_id: organizationId },
         type: QueryTypes.SELECT,
       },
-    ) as any[];
+    )) as any[];
 
     if (!ceMarking || ceMarking.length === 0) {
       return {
@@ -31,7 +31,7 @@ const getCeMarkingStatus = async (
     const record = ceMarking[0];
 
     // Get conformity steps
-    const steps = await sequelize.query(
+    const steps = (await sequelize.query(
       `SELECT step_number, step_name, is_completed, completed_at, completed_by
        FROM ce_marking_conformity_steps
        WHERE ce_marking_id = :ce_marking_id
@@ -40,7 +40,7 @@ const getCeMarkingStatus = async (
         replacements: { ce_marking_id: record.id },
         type: QueryTypes.SELECT,
       },
-    ) as any[];
+    )) as any[];
 
     const completedSteps = steps.filter((s: any) => s.is_completed).length;
 

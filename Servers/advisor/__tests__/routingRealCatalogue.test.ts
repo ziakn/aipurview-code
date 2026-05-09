@@ -75,9 +75,7 @@ describe("routing / real catalogue smoke", () => {
       });
       const reduction =
         r.metrics.fullCount > 0
-          ? Math.round(
-              ((r.metrics.fullCount - r.metrics.activeCount) / r.metrics.fullCount) * 100,
-            )
+          ? Math.round(((r.metrics.fullCount - r.metrics.activeCount) / r.metrics.fullCount) * 100)
           : 0;
       // eslint-disable-next-line no-console
       console.log(

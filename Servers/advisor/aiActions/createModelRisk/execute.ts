@@ -9,10 +9,7 @@
 import { sequelize } from "../../../database/db";
 import { createNewModelRiskQuery } from "../../../utils/modelRisk.utils";
 import { TransientApprovalError } from "../../approval/approvalGateway";
-import type {
-  AiActionExecuteContext,
-  AiActionExecuteResult,
-} from "../types";
+import type { AiActionExecuteContext, AiActionExecuteResult } from "../types";
 import type { AgentCreateModelRiskInput } from "./schema";
 
 export async function executeCreateModelRisk(
@@ -39,10 +36,7 @@ export async function executeCreateModelRisk(
         },
         transaction: ctx.transaction,
       },
-    )) as [
-      Array<{ status: string; entity_id: number | null }>,
-      unknown,
-    ];
+    )) as [Array<{ status: string; entity_id: number | null }>, unknown];
 
     if (!approvalRows || approvalRows.length === 0) {
       throw new Error(

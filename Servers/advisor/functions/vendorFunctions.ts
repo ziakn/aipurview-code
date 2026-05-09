@@ -1,7 +1,17 @@
 import { IVendor } from "../../domain.layer/interfaces/i.vendor";
 import { IVendorRisk } from "../../domain.layer/interfaces/i.vendorRisk";
-import { getAllVendorsQuery, createNewVendorQuery, updateVendorByIdQuery, deleteVendorByIdQuery } from "../../utils/vendor.utils";
-import { getAllVendorRisksAllProjectsQuery, createNewVendorRiskQuery, updateVendorRiskByIdQuery, deleteVendorRiskByIdQuery } from "../../utils/vendorRisk.utils";
+import {
+  getAllVendorsQuery,
+  createNewVendorQuery,
+  updateVendorByIdQuery,
+  deleteVendorByIdQuery,
+} from "../../utils/vendor.utils";
+import {
+  getAllVendorRisksAllProjectsQuery,
+  createNewVendorRiskQuery,
+  updateVendorRiskByIdQuery,
+  deleteVendorRiskByIdQuery,
+} from "../../utils/vendorRisk.utils";
 import { createWriteToolFn } from "../confirmation/createWriteTool";
 import { sequelize } from "../../database/db";
 import logger from "../../utils/logger/fileLogger";
@@ -431,14 +441,10 @@ const agentCreateVendor = createWriteToolFn({
         review_status: (params.review_status as IVendor["review_status"]) || "Not started",
         data_sensitivity: params.data_sensitivity as IVendor["data_sensitivity"],
         business_criticality: params.criticality_level as IVendor["business_criticality"],
-        assignee: (params.assignee as number) || null as any,
+        assignee: (params.assignee as number) || (null as any),
         projects: params.project_id ? [params.project_id as number] : [],
       };
-      const result = await createNewVendorQuery(
-        vendorData as IVendor,
-        organizationId,
-        transaction
-      );
+      const result = await createNewVendorQuery(vendorData as IVendor, organizationId, transaction);
       await transaction.commit();
       return { id: result.id, vendor_name: result.vendor_name };
     } catch (error) {
@@ -451,18 +457,25 @@ const agentCreateVendor = createWriteToolFn({
 const agentUpdateVendor = createWriteToolFn({
   toolName: "agent_update_vendor",
   warningLevel: "warning",
-  descriptionFn: (params) => `Update vendor #${params.vendor_id}${params.vendor_name ? ` name to "${params.vendor_name}"` : ""}`,
+  descriptionFn: (params) =>
+    `Update vendor #${params.vendor_id}${params.vendor_name ? ` name to "${params.vendor_name}"` : ""}`,
   executeFn: async (params, organizationId) => {
     const transaction = await sequelize.transaction();
     try {
       const vendorData: Partial<IVendor> = {};
       if (params.vendor_name !== undefined) vendorData.vendor_name = params.vendor_name as string;
-      if (params.description !== undefined) vendorData.vendor_provides = params.description as string;
+      if (params.description !== undefined)
+        vendorData.vendor_provides = params.description as string;
       if (params.website !== undefined) vendorData.website = params.website as string;
-      if (params.contact_person !== undefined) vendorData.vendor_contact_person = params.contact_person as string;
-      if (params.review_status !== undefined) vendorData.review_status = params.review_status as IVendor["review_status"];
-      if (params.data_sensitivity !== undefined) vendorData.data_sensitivity = params.data_sensitivity as IVendor["data_sensitivity"];
-      if (params.criticality_level !== undefined) vendorData.business_criticality = params.criticality_level as IVendor["business_criticality"];
+      if (params.contact_person !== undefined)
+        vendorData.vendor_contact_person = params.contact_person as string;
+      if (params.review_status !== undefined)
+        vendorData.review_status = params.review_status as IVendor["review_status"];
+      if (params.data_sensitivity !== undefined)
+        vendorData.data_sensitivity = params.data_sensitivity as IVendor["data_sensitivity"];
+      if (params.criticality_level !== undefined)
+        vendorData.business_criticality =
+          params.criticality_level as IVendor["business_criticality"];
       if (params.risk_score !== undefined) vendorData.risk_score = params.risk_score as number;
 
       const result = await updateVendorByIdQuery(
@@ -473,7 +486,7 @@ const agentUpdateVendor = createWriteToolFn({
           role: "Admin",
           transaction,
         },
-        organizationId
+        organizationId,
       );
       await transaction.commit();
       return { id: result.id, vendor_name: result.vendor_name };
@@ -487,14 +500,15 @@ const agentUpdateVendor = createWriteToolFn({
 const agentDeleteVendor = createWriteToolFn({
   toolName: "agent_delete_vendor",
   warningLevel: "danger",
-  descriptionFn: (params) => `Permanently delete vendor #${params.vendor_id} and all associated risks`,
+  descriptionFn: (params) =>
+    `Permanently delete vendor #${params.vendor_id} and all associated risks`,
   executeFn: async (params, organizationId) => {
     const transaction = await sequelize.transaction();
     try {
       const deleted = await deleteVendorByIdQuery(
         params.vendor_id as number,
         organizationId,
-        transaction
+        transaction,
       );
       await transaction.commit();
       return { deleted, vendor_id: params.vendor_id };
@@ -514,7 +528,9 @@ const agentCreateVendorRisk = createWriteToolFn({
     try {
       const riskData: Partial<IVendorRisk> = {
         vendor_id: params.vendor_id as number,
-        risk_description: (params.risk_name as string) + (params.risk_description ? `: ${params.risk_description}` : ""),
+        risk_description:
+          (params.risk_name as string) +
+          (params.risk_description ? `: ${params.risk_description}` : ""),
         impact_description: (params.risk_description as string) || "",
         risk_severity: (params.severity as IVendorRisk["risk_severity"]) || "Moderate",
         likelihood: (params.likelihood as IVendorRisk["likelihood"]) || "Possible",
@@ -525,7 +541,7 @@ const agentCreateVendorRisk = createWriteToolFn({
       const result = await createNewVendorRiskQuery(
         riskData as IVendorRisk,
         organizationId,
-        transaction
+        transaction,
       );
       await transaction.commit();
       return { id: result.id, vendor_id: result.vendor_id };
@@ -544,10 +560,14 @@ const agentUpdateVendorRisk = createWriteToolFn({
     const transaction = await sequelize.transaction();
     try {
       const riskData: Partial<IVendorRisk> = {};
-      if (params.risk_description !== undefined) riskData.risk_description = params.risk_description as string;
-      if (params.impact_description !== undefined) riskData.impact_description = params.impact_description as string;
-      if (params.severity !== undefined) riskData.risk_severity = params.severity as IVendorRisk["risk_severity"];
-      if (params.likelihood !== undefined) riskData.likelihood = params.likelihood as IVendorRisk["likelihood"];
+      if (params.risk_description !== undefined)
+        riskData.risk_description = params.risk_description as string;
+      if (params.impact_description !== undefined)
+        riskData.impact_description = params.impact_description as string;
+      if (params.severity !== undefined)
+        riskData.risk_severity = params.severity as IVendorRisk["risk_severity"];
+      if (params.likelihood !== undefined)
+        riskData.likelihood = params.likelihood as IVendorRisk["likelihood"];
       if (params.action_plan !== undefined) riskData.action_plan = params.action_plan as string;
       if (params.action_owner !== undefined) riskData.action_owner = params.action_owner as number;
       if (params.risk_level !== undefined) riskData.risk_level = params.risk_level as string;
@@ -556,7 +576,7 @@ const agentUpdateVendorRisk = createWriteToolFn({
         params.vendor_risk_id as number,
         riskData as Partial<IVendorRisk>,
         organizationId,
-        transaction
+        transaction,
       );
       await transaction.commit();
       return { id: result?.id, vendor_id: result?.vendor_id };
@@ -577,7 +597,7 @@ const agentDeleteVendorRisk = createWriteToolFn({
       const deleted = await deleteVendorRiskByIdQuery(
         params.vendor_risk_id as number,
         organizationId,
-        transaction
+        transaction,
       );
       await transaction.commit();
       return { deleted, vendor_risk_id: params.vendor_risk_id };
@@ -591,7 +611,8 @@ const agentDeleteVendorRisk = createWriteToolFn({
 const agentFlagVendorForReview = createWriteToolFn({
   toolName: "agent_flag_vendor_for_review",
   warningLevel: "warning",
-  descriptionFn: (params) => `Flag vendor #${params.vendor_id} for review${params.reason ? `: ${params.reason}` : ""}`,
+  descriptionFn: (params) =>
+    `Flag vendor #${params.vendor_id} for review${params.reason ? `: ${params.reason}` : ""}`,
   executeFn: async (params, organizationId) => {
     const transaction = await sequelize.transaction();
     try {
@@ -607,10 +628,14 @@ const agentFlagVendorForReview = createWriteToolFn({
           role: "Admin",
           transaction,
         },
-        organizationId
+        organizationId,
       );
       await transaction.commit();
-      return { id: result.id, vendor_name: result.vendor_name, review_status: result.review_status };
+      return {
+        id: result.id,
+        vendor_name: result.vendor_name,
+        review_status: result.review_status,
+      };
     } catch (error) {
       await transaction.rollback();
       throw error;

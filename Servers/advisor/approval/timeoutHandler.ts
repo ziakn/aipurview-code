@@ -24,21 +24,22 @@ async function expirePendingApprovals(): Promise<number> {
 
   try {
     // Find all pending approvals older than TTL
-    const expired = await sequelize.query(
+    const expired = (await sequelize.query(
       `SELECT id, organization_id, state_history, tool_name
        FROM ai_action_approvals
        WHERE state = 'pending_approval'
          AND created_at < NOW() - INTERVAL '${DEFAULT_TTL_MINUTES} minutes'
        LIMIT 100`,
-      { type: QueryTypes.SELECT }
-    ) as any[];
+      { type: QueryTypes.SELECT },
+    )) as any[];
 
     if (expired.length === 0) return 0;
 
     for (const record of expired) {
-      const stateHistory: StateHistoryEntry[] = typeof record.state_history === "string"
-        ? JSON.parse(record.state_history)
-        : record.state_history || [];
+      const stateHistory: StateHistoryEntry[] =
+        typeof record.state_history === "string"
+          ? JSON.parse(record.state_history)
+          : record.state_history || [];
 
       stateHistory.push({
         state: "rejected",
@@ -62,7 +63,7 @@ async function expirePendingApprovals(): Promise<number> {
             errorMessage: `Auto-rejected: exceeded ${DEFAULT_TTL_MINUTES}m approval timeout`,
           },
           type: QueryTypes.UPDATE,
-        }
+        },
       );
     }
 
@@ -70,7 +71,7 @@ async function expirePendingApprovals(): Promise<number> {
       "successful",
       `expired ${expired.length} pending approval(s)`,
       functionName,
-      fileName
+      fileName,
     );
     return expired.length;
   } catch (error) {
@@ -89,7 +90,7 @@ export function startTimeoutHandler(): void {
     "successful",
     `timeout handler started (check every ${CHECK_INTERVAL_MS / 1000}s, TTL ${DEFAULT_TTL_MINUTES}m)`,
     "startTimeoutHandler",
-    fileName
+    fileName,
   );
 
   intervalId = setInterval(expirePendingApprovals, CHECK_INTERVAL_MS);

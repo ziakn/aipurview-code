@@ -33,7 +33,7 @@ async function calculateControlReadiness(
   organizationId: number,
   projectId: number | null,
   createdBy: number | null = null,
-  visibility: string = "public"
+  visibility: string = "public",
 ) {
   // 1) Evidence metrics
   const [evidenceRows] = await sequelize.query(
@@ -47,13 +47,12 @@ async function calculateControlReadiness(
      WHERE fel.entity_id = :controlId
        AND fel.framework_type = :frameworkType
        AND fel.organization_id = :organizationId`,
-    { replacements: { controlId, frameworkType, organizationId } }
+    { replacements: { controlId, frameworkType, organizationId } },
   );
   const ev = (evidenceRows as any[])[0] || {};
   const evidenceCount = parseInt(ev.evidence_count, 10) || 0;
   const avgQuality = parseFloat(ev.avg_quality) || 0;
-  const daysSinceLatest =
-    ev.days_since_latest !== null ? parseInt(ev.days_since_latest, 10) : null;
+  const daysSinceLatest = ev.days_since_latest !== null ? parseInt(ev.days_since_latest, 10) : null;
 
   // 2) Task completion — scope via file_entity_links: tasks sharing files with this control
   const [taskRows] = await sequelize.query(
@@ -74,7 +73,7 @@ async function calculateControlReadiness(
                AND fel_c.organization_id = :organizationId
            )
        )`,
-    { replacements: { controlId, frameworkType, organizationId } }
+    { replacements: { controlId, frameworkType, organizationId } },
   );
   const tk = (taskRows as any[])[0] || {};
   const totalTasks = parseInt(tk.total, 10) || 0;
@@ -100,7 +99,7 @@ async function calculateControlReadiness(
                AND fel_c.organization_id = :organizationId
            )
        )`,
-    { replacements: { controlId, frameworkType, organizationId } }
+    { replacements: { controlId, frameworkType, organizationId } },
   );
   const rk = (riskRows as any[])[0] || {};
   const totalRisks = parseInt(rk.total, 10) || 0;
@@ -118,10 +117,14 @@ async function calculateControlReadiness(
 
   // 5) Generate recommendations
   const recommendations: string[] = [];
-  if (result.evidence_count_score < 30) recommendations.push("Upload evidence documents for this control");
-  if (result.evidence_quality_score < 50) recommendations.push("Improve quality of linked evidence");
-  if (result.evidence_recency_score < 40) recommendations.push("Update outdated evidence with recent documents");
-  if (result.task_completion_score < 50) recommendations.push("Complete pending tasks for this control");
+  if (result.evidence_count_score < 30)
+    recommendations.push("Upload evidence documents for this control");
+  if (result.evidence_quality_score < 50)
+    recommendations.push("Improve quality of linked evidence");
+  if (result.evidence_recency_score < 40)
+    recommendations.push("Update outdated evidence with recent documents");
+  if (result.task_completion_score < 50)
+    recommendations.push("Complete pending tasks for this control");
   if (result.risk_mitigation_score < 50) recommendations.push("Address unmitigated risks");
 
   // 6) Persist
@@ -152,11 +155,20 @@ export async function calculateAll(req: Request, res: Response) {
 
     for (const fw of frameworkTypes) {
       const controls = await getFrameworkControlsQuery(fw);
-      const controlScores: Array<{ control_id: number; overall_score: number; readiness_level: any }> = [];
+      const controlScores: Array<{
+        control_id: number;
+        overall_score: number;
+        readiness_level: any;
+      }> = [];
 
       for (const ctrl of controls) {
         const score = await calculateControlReadiness(
-          ctrl.control_id, fw, organizationId, projectId, userId, visibility
+          ctrl.control_id,
+          fw,
+          organizationId,
+          projectId,
+          userId,
+          visibility,
         );
         controlScores.push({
           control_id: ctrl.control_id,
@@ -189,13 +201,19 @@ export async function calculateAll(req: Request, res: Response) {
 
       // Track AI content metadata for each framework score
       if (fwScore?.id) {
-        trackAIContent(organizationId, "readiness_score", fwScore.id, {
-          badgeType: "generated",
-          modelUsed: "readiness-calculator-v1",
-          modelProvider: "verifywise",
-          toolName: "readiness-calculation",
-          promptSummary: `Readiness calculated for ${fw}: ${agg.avg_score}/100 (${agg.total_controls} controls)`,
-        }, userId).catch(() => {});
+        trackAIContent(
+          organizationId,
+          "readiness_score",
+          fwScore.id,
+          {
+            badgeType: "generated",
+            modelUsed: "readiness-calculator-v1",
+            modelProvider: "verifywise",
+            toolName: "readiness-calculation",
+            promptSummary: `Readiness calculated for ${fw}: ${agg.avg_score}/100 (${agg.total_controls} controls)`,
+          },
+          userId,
+        ).catch(() => {});
       }
     }
 
@@ -229,11 +247,20 @@ export async function calculateForFramework(req: Request, res: Response) {
       return res.status(404).json(STATUS_CODE[404]("No controls found for framework"));
     }
 
-    const controlScores: Array<{ control_id: number; overall_score: number; readiness_level: any }> = [];
+    const controlScores: Array<{
+      control_id: number;
+      overall_score: number;
+      readiness_level: any;
+    }> = [];
 
     for (const ctrl of controls) {
       const score = await calculateControlReadiness(
-        ctrl.control_id, frameworkType, organizationId, projectId, userId, visibility
+        ctrl.control_id,
+        frameworkType,
+        organizationId,
+        projectId,
+        userId,
+        visibility,
       );
       controlScores.push({
         control_id: ctrl.control_id,
@@ -265,19 +292,35 @@ export async function calculateForFramework(req: Request, res: Response) {
 
     // Track AI content metadata
     if (fwScore?.id) {
-      trackAIContent(organizationId, "readiness_score", fwScore.id, {
-        badgeType: "generated",
-        modelUsed: "readiness-calculator-v1",
-        modelProvider: "verifywise",
-        toolName: "readiness-calculation",
-        promptSummary: `Readiness calculated for ${frameworkType}: ${agg.avg_score}/100 (${agg.total_controls} controls)`,
-      }, userId).catch(() => {});
+      trackAIContent(
+        organizationId,
+        "readiness_score",
+        fwScore.id,
+        {
+          badgeType: "generated",
+          modelUsed: "readiness-calculator-v1",
+          modelProvider: "verifywise",
+          toolName: "readiness-calculation",
+          promptSummary: `Readiness calculated for ${frameworkType}: ${agg.avg_score}/100 (${agg.total_controls} controls)`,
+        },
+        userId,
+      ).catch(() => {});
     }
 
-    logStructured("successful", `readiness calculated for ${frameworkType}`, functionName, fileName);
+    logStructured(
+      "successful",
+      `readiness calculated for ${frameworkType}`,
+      functionName,
+      fileName,
+    );
     return res.status(200).json(STATUS_CODE[200](fwScore));
   } catch (error) {
-    logStructured("error", `failed to calculate readiness for ${frameworkType}`, functionName, fileName);
+    logStructured(
+      "error",
+      `failed to calculate readiness for ${frameworkType}`,
+      functionName,
+      fileName,
+    );
     logger.error("Error in calculateForFramework:", error);
     return res.status(500).json(STATUS_CODE[500]((error as Error).message));
   }
@@ -293,7 +336,12 @@ export async function getScores(req: Request, res: Response) {
   try {
     const projectId = req.query.project_id ? Number(req.query.project_id) : undefined;
     const visFilter = req.query.visibility ? String(req.query.visibility) : undefined;
-    const scores = await getFrameworkScoresQuery(req.organizationId!, projectId, req.userId ? Number(req.userId) : null, visFilter);
+    const scores = await getFrameworkScoresQuery(
+      req.organizationId!,
+      projectId,
+      req.userId ? Number(req.userId) : null,
+      visFilter,
+    );
     logStructured("successful", "framework scores fetched", functionName, fileName);
     return res.status(200).json(STATUS_CODE[200](scores));
   } catch (error) {
@@ -314,7 +362,13 @@ export async function getScoresByFramework(req: Request, res: Response) {
   try {
     const projectId = req.query.project_id ? Number(req.query.project_id) : undefined;
     const visFilter = req.query.visibility ? String(req.query.visibility) : undefined;
-    const score = await getFrameworkScoreByTypeQuery(frameworkType, req.organizationId!, projectId, req.userId ? Number(req.userId) : null, visFilter);
+    const score = await getFrameworkScoreByTypeQuery(
+      frameworkType,
+      req.organizationId!,
+      projectId,
+      req.userId ? Number(req.userId) : null,
+      visFilter,
+    );
     if (!score) {
       return res.status(204).json(STATUS_CODE[204](null));
     }
@@ -339,11 +393,27 @@ export async function getControlScores(req: Request, res: Response) {
   try {
     const projectId = req.query.project_id ? Number(req.query.project_id) : undefined;
     const visFilter = req.query.visibility ? String(req.query.visibility) : undefined;
-    const scores = await getControlScoresQuery(frameworkType, req.organizationId!, projectId, req.userId ? Number(req.userId) : null, visFilter);
-    logStructured("successful", `control scores fetched for ${frameworkType}`, functionName, fileName);
+    const scores = await getControlScoresQuery(
+      frameworkType,
+      req.organizationId!,
+      projectId,
+      req.userId ? Number(req.userId) : null,
+      visFilter,
+    );
+    logStructured(
+      "successful",
+      `control scores fetched for ${frameworkType}`,
+      functionName,
+      fileName,
+    );
     return res.status(200).json(STATUS_CODE[200](scores));
   } catch (error) {
-    logStructured("error", `failed to get control scores for ${frameworkType}`, functionName, fileName);
+    logStructured(
+      "error",
+      `failed to get control scores for ${frameworkType}`,
+      functionName,
+      fileName,
+    );
     logger.error("Error in getControlScores:", error);
     return res.status(500).json(STATUS_CODE[500]((error as Error).message));
   }
@@ -360,7 +430,13 @@ export async function getWeakest(req: Request, res: Response) {
     const limit = req.query.limit ? Number(req.query.limit) : 10;
     const projectId = req.query.project_id ? Number(req.query.project_id) : undefined;
     const visFilter = req.query.visibility ? String(req.query.visibility) : undefined;
-    const weakest = await getWeakestControlsQuery(req.organizationId!, limit, projectId, req.userId ? Number(req.userId) : null, visFilter);
+    const weakest = await getWeakestControlsQuery(
+      req.organizationId!,
+      limit,
+      projectId,
+      req.userId ? Number(req.userId) : null,
+      visFilter,
+    );
 
     logStructured("successful", "weakest controls fetched", functionName, fileName);
     return res.status(200).json(STATUS_CODE[200](weakest));
@@ -382,7 +458,13 @@ export async function getRecommendations(req: Request, res: Response) {
     const limit = req.query.limit ? Number(req.query.limit) : 10;
     const projectId = req.query.project_id ? Number(req.query.project_id) : undefined;
     const visFilter = req.query.visibility ? String(req.query.visibility) : undefined;
-    const weakest = await getWeakestControlsQuery(req.organizationId!, limit, projectId, req.userId ? Number(req.userId) : null, visFilter);
+    const weakest = await getWeakestControlsQuery(
+      req.organizationId!,
+      limit,
+      projectId,
+      req.userId ? Number(req.userId) : null,
+      visFilter,
+    );
 
     const recommendations = weakest.map((ctrl: any) => {
       const recs: string[] = [];
@@ -394,7 +476,9 @@ export async function getRecommendations(req: Request, res: Response) {
       if (recs.length === 0) recs.push("Maintain current posture");
 
       const parsedRecs = ctrl.recommendations
-        ? (typeof ctrl.recommendations === "string" ? JSON.parse(ctrl.recommendations) : ctrl.recommendations)
+        ? typeof ctrl.recommendations === "string"
+          ? JSON.parse(ctrl.recommendations)
+          : ctrl.recommendations
         : recs;
 
       return {
@@ -402,7 +486,8 @@ export async function getRecommendations(req: Request, res: Response) {
         framework_type: ctrl.framework_type,
         overall_score: ctrl.overall_score,
         readiness_level: ctrl.readiness_level,
-        priority: ctrl.overall_score < 30 ? "critical" : ctrl.overall_score < 60 ? "high" : "medium",
+        priority:
+          ctrl.overall_score < 30 ? "critical" : ctrl.overall_score < 60 ? "high" : "medium",
         recommendations: parsedRecs,
       };
     });
@@ -424,13 +509,17 @@ export async function getHistory(req: Request, res: Response) {
   const functionName = "getHistory";
 
   try {
-    const frameworkType = req.query.framework_type
-      ? String(req.query.framework_type)
-      : undefined;
+    const frameworkType = req.query.framework_type ? String(req.query.framework_type) : undefined;
     const projectId = req.query.project_id ? Number(req.query.project_id) : undefined;
     const visFilter = req.query.visibility ? String(req.query.visibility) : undefined;
 
-    const history = await getReadinessHistoryQuery(req.organizationId!, frameworkType, projectId, req.userId ? Number(req.userId) : null, visFilter);
+    const history = await getReadinessHistoryQuery(
+      req.organizationId!,
+      frameworkType,
+      projectId,
+      req.userId ? Number(req.userId) : null,
+      visFilter,
+    );
 
     logStructured("successful", "readiness history fetched", functionName, fileName);
     return res.status(200).json(STATUS_CODE[200](history));

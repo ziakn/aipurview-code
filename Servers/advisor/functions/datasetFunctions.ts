@@ -214,7 +214,7 @@ const agentRegisterDataset = createWriteToolFn({
             updated_at: now,
           },
           transaction,
-        }
+        },
       );
       const created = (result as any)[0]?.[0] || (result as any)[0];
 
@@ -230,7 +230,7 @@ const agentRegisterDataset = createWriteToolFn({
               model_inventory_id: params.model_id,
             },
             transaction,
-          }
+          },
         );
       }
 
@@ -280,7 +280,7 @@ const agentUpdateDataset = createWriteToolFn({
 
     const result = await sequelize.query(
       `UPDATE datasets SET ${setClauses.join(", ")} WHERE organization_id = :organizationId AND id = :id RETURNING *`,
-      { replacements }
+      { replacements },
     );
     const updated = (result as any)[0]?.[0] || (result as any)[0];
     return { success: true, dataset: updated };
@@ -290,8 +290,7 @@ const agentUpdateDataset = createWriteToolFn({
 const agentLinkDatasetToModel = createWriteToolFn({
   toolName: "agent_link_dataset_to_model",
   warningLevel: "warning",
-  descriptionFn: (params) =>
-    `Link dataset #${params.dataset_id} to model #${params.model_id}`,
+  descriptionFn: (params) => `Link dataset #${params.dataset_id} to model #${params.model_id}`,
   executeFn: async (params, organizationId) => {
     // Check if link already exists
     const existing = await sequelize.query(
@@ -303,7 +302,7 @@ const agentLinkDatasetToModel = createWriteToolFn({
           model_id: params.model_id,
         },
         type: QueryTypes.SELECT,
-      }
+      },
     );
 
     if ((existing as any[]).length > 0) {
@@ -319,9 +318,12 @@ const agentLinkDatasetToModel = createWriteToolFn({
           dataset_id: params.dataset_id,
           model_inventory_id: params.model_id,
         },
-      }
+      },
     );
-    return { success: true, message: `Dataset #${params.dataset_id} linked to model #${params.model_id}` };
+    return {
+      success: true,
+      message: `Dataset #${params.dataset_id} linked to model #${params.model_id}`,
+    };
   },
 });
 
@@ -336,16 +338,16 @@ const agentDeleteDataset = createWriteToolFn({
       // Delete associations first
       await sequelize.query(
         `DELETE FROM dataset_model_inventories WHERE organization_id = :organizationId AND dataset_id = :id`,
-        { replacements: { organizationId, id: params.dataset_id }, transaction }
+        { replacements: { organizationId, id: params.dataset_id }, transaction },
       );
       await sequelize.query(
         `DELETE FROM dataset_projects WHERE organization_id = :organizationId AND dataset_id = :id`,
-        { replacements: { organizationId, id: params.dataset_id }, transaction }
+        { replacements: { organizationId, id: params.dataset_id }, transaction },
       );
 
       const result = await sequelize.query(
         `DELETE FROM datasets WHERE organization_id = :organizationId AND id = :id RETURNING id, name`,
-        { replacements: { organizationId, id: params.dataset_id }, transaction }
+        { replacements: { organizationId, id: params.dataset_id }, transaction },
       );
       await transaction.commit();
       const deleted = (result as any)[0]?.[0] || (result as any)[0];

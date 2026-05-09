@@ -21,16 +21,14 @@ export function generateConfirmationId(): string {
   return uuidv4();
 }
 
-export async function storeConfirmation(
-  request: ConfirmationRequest
-): Promise<void> {
+export async function storeConfirmation(request: ConfirmationRequest): Promise<void> {
   const key = buildKey(request.organizationId, request.id);
   await setInCache(key, request, CONFIRMATION_TTL);
 }
 
 export async function getConfirmation(
   organizationId: number,
-  id: string
+  id: string,
 ): Promise<ConfirmationRequest | null> {
   const key = buildKey(organizationId, id);
   return getFromCache<ConfirmationRequest>(key);
@@ -42,7 +40,7 @@ export async function resolveConfirmation(
   status: "approved" | "rejected",
   userId: number,
   result?: unknown,
-  error?: string
+  error?: string,
 ): Promise<ConfirmationRequest | null> {
   const key = buildKey(organizationId, id);
 
@@ -95,7 +93,7 @@ export async function resolveConfirmation(
 }
 
 export async function listPendingConfirmations(
-  organizationId: number
+  organizationId: number,
 ): Promise<ConfirmationRequest[]> {
   const pattern = `${KEY_PREFIX}:org_${organizationId}:*`;
   const keys = await redisClient.keys(pattern);
@@ -110,15 +108,10 @@ export async function listPendingConfirmations(
     }
   }
 
-  return results.sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
+  return results.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 }
 
-export async function deleteConfirmation(
-  organizationId: number,
-  id: string
-): Promise<void> {
+export async function deleteConfirmation(organizationId: number, id: string): Promise<void> {
   const key = buildKey(organizationId, id);
   await deleteFromCache(key);
 }

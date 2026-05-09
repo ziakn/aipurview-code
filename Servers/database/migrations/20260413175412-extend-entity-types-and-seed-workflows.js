@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Phase 2 — Extend Approval Workflows to All Entity Types
@@ -154,5 +154,5 @@ module.exports = {
       DELETE FROM verifywise.approval_workflows
       WHERE entity_type IN ('risk', 'policy', 'vendor', 'model_inventory', 'incident', 'dataset', 'evidence', 'ai_action');
     `);
-  }
+  },
 };

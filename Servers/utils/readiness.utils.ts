@@ -22,7 +22,7 @@ export async function upsertControlScoreQuery(
     overall_score: number;
     readiness_level: string;
     recommendations?: string[] | null;
-  }
+  },
 ): Promise<any> {
   try {
     const [rows] = await sequelize.query(
@@ -67,7 +67,7 @@ export async function upsertControlScoreQuery(
           recommendations: data.recommendations ? JSON.stringify(data.recommendations) : null,
           organizationId,
         },
-      }
+      },
     );
     return (rows as any[])[0];
   } catch (error) {
@@ -93,7 +93,7 @@ export async function upsertFrameworkScoreQuery(
     at_risk_count: number;
     not_started_count: number;
     weakest_controls?: any[] | null;
-  }
+  },
 ): Promise<any> {
   try {
     const [rows] = await sequelize.query(
@@ -133,7 +133,7 @@ export async function upsertFrameworkScoreQuery(
           weakestControls: data.weakest_controls ? JSON.stringify(data.weakest_controls) : null,
           organizationId,
         },
-      }
+      },
     );
     return (rows as any[])[0];
   } catch (error) {
@@ -149,12 +149,11 @@ export async function getFrameworkScoresQuery(
   organizationId: number,
   projectId?: number | null,
   userId?: number | null,
-  visibility?: string
+  visibility?: string,
 ): Promise<any[]> {
   try {
-    const projectFilter = projectId != null
-      ? "AND project_id = :projectId"
-      : "AND project_id IS NULL";
+    const projectFilter =
+      projectId != null ? "AND project_id = :projectId" : "AND project_id IS NULL";
     const vis = buildVisibilityFilter(userId ?? null, visibility);
     const [rows] = await sequelize.query(
       `SELECT * FROM framework_readiness_scores
@@ -162,7 +161,13 @@ export async function getFrameworkScoresQuery(
          ${projectFilter}
          ${vis.clause}
        ORDER BY avg_score ASC`,
-      { replacements: { organizationId, ...(projectId != null ? { projectId } : {}), ...vis.replacements } }
+      {
+        replacements: {
+          organizationId,
+          ...(projectId != null ? { projectId } : {}),
+          ...vis.replacements,
+        },
+      },
     );
     return rows as any[];
   } catch (error) {
@@ -179,12 +184,11 @@ export async function getFrameworkScoreByTypeQuery(
   organizationId: number,
   projectId?: number | null,
   userId?: number | null,
-  visibility?: string
+  visibility?: string,
 ): Promise<any | null> {
   try {
-    const projectFilter = projectId != null
-      ? "AND project_id = :projectId"
-      : "AND project_id IS NULL";
+    const projectFilter =
+      projectId != null ? "AND project_id = :projectId" : "AND project_id IS NULL";
     const vis = buildVisibilityFilter(userId ?? null, visibility);
     const [rows] = await sequelize.query(
       `SELECT * FROM framework_readiness_scores
@@ -193,7 +197,14 @@ export async function getFrameworkScoreByTypeQuery(
          ${projectFilter}
          ${vis.clause}
        LIMIT 1`,
-      { replacements: { frameworkType, organizationId, ...(projectId != null ? { projectId } : {}), ...vis.replacements } }
+      {
+        replacements: {
+          frameworkType,
+          organizationId,
+          ...(projectId != null ? { projectId } : {}),
+          ...vis.replacements,
+        },
+      },
     );
     return (rows as any[])[0] || null;
   } catch (error) {
@@ -210,12 +221,11 @@ export async function getControlScoresQuery(
   organizationId: number,
   projectId?: number | null,
   userId?: number | null,
-  visibility?: string
+  visibility?: string,
 ): Promise<any[]> {
   try {
-    const projectFilter = projectId != null
-      ? "AND project_id = :projectId"
-      : "AND project_id IS NULL";
+    const projectFilter =
+      projectId != null ? "AND project_id = :projectId" : "AND project_id IS NULL";
     const vis = buildVisibilityFilter(userId ?? null, visibility);
     const [rows] = await sequelize.query(
       `SELECT * FROM control_readiness_scores
@@ -224,7 +234,14 @@ export async function getControlScoresQuery(
          ${projectFilter}
          ${vis.clause}
        ORDER BY overall_score ASC`,
-      { replacements: { frameworkType, organizationId, ...(projectId != null ? { projectId } : {}), ...vis.replacements } }
+      {
+        replacements: {
+          frameworkType,
+          organizationId,
+          ...(projectId != null ? { projectId } : {}),
+          ...vis.replacements,
+        },
+      },
     );
     return rows as any[];
   } catch (error) {
@@ -241,12 +258,11 @@ export async function getWeakestControlsQuery(
   limit: number = 10,
   projectId?: number | null,
   userId?: number | null,
-  visibility?: string
+  visibility?: string,
 ): Promise<any[]> {
   try {
-    const projectFilter = projectId != null
-      ? "AND project_id = :projectId"
-      : "AND project_id IS NULL";
+    const projectFilter =
+      projectId != null ? "AND project_id = :projectId" : "AND project_id IS NULL";
     const vis = buildVisibilityFilter(userId ?? null, visibility);
     const [rows] = await sequelize.query(
       `SELECT control_id, framework_type, overall_score, readiness_level,
@@ -259,7 +275,14 @@ export async function getWeakestControlsQuery(
          ${vis.clause}
        ORDER BY overall_score ASC
        LIMIT :limit`,
-      { replacements: { organizationId, limit, ...(projectId != null ? { projectId } : {}), ...vis.replacements } }
+      {
+        replacements: {
+          organizationId,
+          limit,
+          ...(projectId != null ? { projectId } : {}),
+          ...vis.replacements,
+        },
+      },
     );
     return rows as any[];
   } catch (error) {
@@ -285,7 +308,7 @@ export async function insertReadinessHistoryQuery(
     needs_work_count: number;
     at_risk_count: number;
     not_started_count: number;
-  }
+  },
 ): Promise<void> {
   try {
     await sequelize.query(
@@ -311,7 +334,7 @@ export async function insertReadinessHistoryQuery(
           notStartedCount: data.not_started_count,
           organizationId,
         },
-      }
+      },
     );
   } catch (error) {
     logger.error("Error inserting readiness history:", error);
@@ -327,15 +350,12 @@ export async function getReadinessHistoryQuery(
   frameworkType?: string,
   projectId?: number | null,
   userId?: number | null,
-  visibility?: string
+  visibility?: string,
 ): Promise<any[]> {
   try {
-    const frameworkFilter = frameworkType
-      ? "AND framework_type = :frameworkType"
-      : "";
-    const projectFilter = projectId != null
-      ? "AND project_id = :projectId"
-      : "AND project_id IS NULL";
+    const frameworkFilter = frameworkType ? "AND framework_type = :frameworkType" : "";
+    const projectFilter =
+      projectId != null ? "AND project_id = :projectId" : "AND project_id IS NULL";
     const vis = buildVisibilityFilter(userId ?? null, visibility);
     const [rows] = await sequelize.query(
       `SELECT framework_type, avg_score, calculated_at,
@@ -354,7 +374,7 @@ export async function getReadinessHistoryQuery(
           ...(projectId != null ? { projectId } : {}),
           ...vis.replacements,
         },
-      }
+      },
     );
     return rows as any[];
   } catch (error) {
@@ -366,9 +386,7 @@ export async function getReadinessHistoryQuery(
 /**
  * Get all controls from a framework struct table for calculation.
  */
-export async function getFrameworkControlsQuery(
-  frameworkType: string
-): Promise<any[]> {
+export async function getFrameworkControlsQuery(frameworkType: string): Promise<any[]> {
   try {
     let query: string;
     if (frameworkType === "eu_ai_act") {

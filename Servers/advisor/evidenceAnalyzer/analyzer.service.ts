@@ -25,17 +25,10 @@ import { createOpenAI } from "@ai-sdk/openai";
 import logger from "../../utils/logger/fileLogger";
 import { generateObjectWithSelfCorrection } from "../llmSelfCorrect";
 import { llmAnalysisSchema, type LLMAnalysisOutput } from "./schema";
-import {
-  buildAnalyzerSystemPrompt,
-  buildAnalyzerUserPrompt,
-  ANALYZER_VERSION,
-} from "./prompts";
+import { buildAnalyzerSystemPrompt, buildAnalyzerUserPrompt, ANALYZER_VERSION } from "./prompts";
 import { computeRecency, type RecencyResult } from "./recency";
 import { computeReliability, type ReliabilityResult } from "./reliability";
-import {
-  matchControlsSemantic,
-  type MatchedControl,
-} from "./controlMatcher";
+import { matchControlsSemantic, type MatchedControl } from "./controlMatcher";
 
 export interface AnalyzerInput {
   documentText: string;
@@ -375,9 +368,7 @@ function buildAbstainResult(
 /* Public entry                                                       */
 /* ------------------------------------------------------------------ */
 
-export async function analyzeEvidence(
-  input: AnalyzerInput,
-): Promise<AnalyzerResult> {
+export async function analyzeEvidence(input: AnalyzerInput): Promise<AnalyzerResult> {
   const { text, truncated, charCount } = normalizeDocument(input.documentText);
   const modelLabel = `${ANALYZER_VERSION}/${input.llmKey.provider}/${input.llmKey.model}`;
 
@@ -496,10 +487,7 @@ export async function analyzeEvidence(
       embeddingKey,
     });
   } catch (err) {
-    logger.warn(
-      "[evidenceAnalyzer] control matcher failed; continuing without suggestions",
-      err,
-    );
+    logger.warn("[evidenceAnalyzer] control matcher failed; continuing without suggestions", err);
   }
 
   // ---- Apply anti-inflation guardrails ----------------------------
@@ -508,10 +496,7 @@ export async function analyzeEvidence(
     completeness: llmOutput.semantic_scores.completeness.score,
     specificity: llmOutput.semantic_scores.specificity.score,
   };
-  const { scores: cappedScores, cappedNotes } = applyAntiInflationCaps(
-    rawScores,
-    text,
-  );
+  const { scores: cappedScores, cappedNotes } = applyAntiInflationCaps(rawScores, text);
   const { relevance, completeness, specificity } = cappedScores;
 
   // Append cap notes onto the corresponding rationale so reviewers can see
@@ -523,10 +508,8 @@ export async function analyzeEvidence(
   };
   for (const note of cappedNotes) {
     if (note.startsWith("relevance")) capByDim.relevance.push(note);
-    else if (note.startsWith("completeness"))
-      capByDim.completeness.push(note);
-    else if (note.startsWith("specificity"))
-      capByDim.specificity.push(note);
+    else if (note.startsWith("completeness")) capByDim.completeness.push(note);
+    else if (note.startsWith("specificity")) capByDim.specificity.push(note);
   }
 
   const overall = combineOverall(
@@ -562,19 +545,13 @@ export async function analyzeEvidence(
       rationales: {
         relevance:
           llmOutput.semantic_scores.relevance.rationale +
-          (capByDim.relevance.length > 0
-            ? ` · ${capByDim.relevance.join("; ")}`
-            : ""),
+          (capByDim.relevance.length > 0 ? ` · ${capByDim.relevance.join("; ")}` : ""),
         completeness:
           llmOutput.semantic_scores.completeness.rationale +
-          (capByDim.completeness.length > 0
-            ? ` · ${capByDim.completeness.join("; ")}`
-            : ""),
+          (capByDim.completeness.length > 0 ? ` · ${capByDim.completeness.join("; ")}` : ""),
         specificity:
           llmOutput.semantic_scores.specificity.rationale +
-          (capByDim.specificity.length > 0
-            ? ` · ${capByDim.specificity.join("; ")}`
-            : ""),
+          (capByDim.specificity.length > 0 ? ` · ${capByDim.specificity.join("; ")}` : ""),
         recency: recency.rationale,
         reliability: reliability.rationale,
       },

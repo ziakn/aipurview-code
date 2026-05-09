@@ -26,7 +26,7 @@ export function initializeNetwork(): void {
     "successful",
     `agent network initialized: ${status.totalAgents} agents, ${status.healthyAgents} healthy`,
     "initializeNetwork",
-    fileName
+    fileName,
   );
 
   networkInitialized = true;

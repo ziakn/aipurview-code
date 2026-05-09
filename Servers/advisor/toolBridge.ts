@@ -142,18 +142,19 @@ export function bridgeTools(
             // Strip `archived: false` — implicit default, skip entirely
             if (key === "archived" && value === false) continue;
             // Strip `projectId: 0`, `id: 0` — invalid IDs, likely auto-fill
-            if ((key === "projectId" || key === "project_id" || key.endsWith("_id")) && value === 0) continue;
+            if ((key === "projectId" || key === "project_id" || key.endsWith("_id")) && value === 0)
+              continue;
             cleaned[key] = value;
           }
 
           // Inject userId for write tools that need it (confirmation flow)
-          const enrichedParams = userId !== undefined
-            ? { ...cleaned, _userId: userId }
-            : cleaned;
+          const enrichedParams = userId !== undefined ? { ...cleaned, _userId: userId } : cleaned;
           logger.info(`[toolBridge] Calling "${name}" with params: ${JSON.stringify(cleaned)}`);
           const result = await fn(enrichedParams, tenant, userId);
           const resultSize = Array.isArray(result) ? result.length : typeof result;
-          logger.info(`[toolBridge] Tool "${name}" returned: ${resultSize} ${Array.isArray(result) ? "items" : ""}`);
+          logger.info(
+            `[toolBridge] Tool "${name}" returned: ${resultSize} ${Array.isArray(result) ? "items" : ""}`,
+          );
           return result;
         } catch (error) {
           logger.error(`[toolBridge] Error executing tool "${name}":`, error);

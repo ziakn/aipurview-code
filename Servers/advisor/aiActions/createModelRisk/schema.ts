@@ -25,12 +25,7 @@ export const ModelRiskCategory = z.enum([
 
 export const ModelRiskLevel = z.enum(["Low", "Medium", "High", "Critical"]);
 
-export const ModelRiskStatus = z.enum([
-  "Open",
-  "In Progress",
-  "Resolved",
-  "Accepted",
-]);
+export const ModelRiskStatus = z.enum(["Open", "In Progress", "Resolved", "Accepted"]);
 
 const isoDateString = z
   .string()
@@ -74,6 +69,4 @@ export const AgentCreateModelRiskSchema = z
   })
   .strict();
 
-export type AgentCreateModelRiskInput = z.infer<
-  typeof AgentCreateModelRiskSchema
->;
+export type AgentCreateModelRiskInput = z.infer<typeof AgentCreateModelRiskSchema>;

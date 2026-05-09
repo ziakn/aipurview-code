@@ -44,7 +44,7 @@ export async function logTransition(log: TransitionLog): Promise<void> {
           metadata: JSON.stringify(log.metadata || {}),
         },
         type: QueryTypes.INSERT,
-      }
+      },
     );
   } catch (error) {
     // Non-fatal — don't break the approval flow for audit failures
@@ -59,16 +59,16 @@ export async function logStateHistory(
   organizationId: number,
   actionApprovalId: string,
   stateHistory: Array<{ state: string; timestamp: string; actor?: string; reason?: string }>,
-  toolName?: string
+  toolName?: string,
 ): Promise<void> {
   for (let i = 0; i < stateHistory.length; i++) {
     const entry = stateHistory[i];
     const fromState = i > 0 ? stateHistory[i - 1].state : null;
     const actorType = entry.actor?.startsWith("user:")
-      ? "user" as const
+      ? ("user" as const)
       : entry.actor === "rule_engine"
-        ? "rule_engine" as const
-        : "system" as const;
+        ? ("rule_engine" as const)
+        : ("system" as const);
     const actorId = entry.actor?.startsWith("user:")
       ? parseInt(entry.actor.split(":")[1], 10)
       : undefined;
@@ -94,14 +94,14 @@ export async function logStateHistory(
  */
 export async function getActionAuditLog(
   organizationId: number,
-  actionApprovalId: string
+  actionApprovalId: string,
 ): Promise<Record<string, unknown>[]> {
-  return await sequelize.query(
+  return (await sequelize.query(
     `SELECT * FROM ai_action_audit_log
      WHERE organization_id = :organizationId AND action_approval_id = :actionApprovalId
      ORDER BY created_at ASC`,
-    { replacements: { organizationId, actionApprovalId }, type: QueryTypes.SELECT }
-  ) as any[];
+    { replacements: { organizationId, actionApprovalId }, type: QueryTypes.SELECT },
+  )) as any[];
 }
 
 /**
@@ -118,7 +118,7 @@ export async function getAuditLogPaginated(
     dateTo?: string;
     limit?: number;
     offset?: number;
-  }
+  },
 ): Promise<{ rows: Record<string, unknown>[]; total: number }> {
   const conditions = ["al.organization_id = :organizationId"];
   const replacements: Record<string, unknown> = { organizationId };
@@ -152,7 +152,7 @@ export async function getAuditLogPaginated(
   const limit = filters?.limit || 50;
   const offset = filters?.offset || 0;
 
-  const rows = await sequelize.query(
+  const rows = (await sequelize.query(
     `SELECT al.*, aa.tool_name, aa.risk_level, aa.action_type, aa.state as action_state,
             u.name as actor_name, u.surname as actor_surname
      FROM ai_action_audit_log al
@@ -161,16 +161,16 @@ export async function getAuditLogPaginated(
      WHERE ${where}
      ORDER BY al.created_at DESC
      LIMIT :limit OFFSET :offset`,
-    { replacements: { ...replacements, limit, offset }, type: QueryTypes.SELECT }
-  ) as any[];
+    { replacements: { ...replacements, limit, offset }, type: QueryTypes.SELECT },
+  )) as any[];
 
-  const countResult = await sequelize.query(
+  const countResult = (await sequelize.query(
     `SELECT COUNT(*) as total
      FROM ai_action_audit_log al
      LEFT JOIN ai_action_approvals aa ON al.action_approval_id = aa.id
      WHERE ${where}`,
-    { replacements, type: QueryTypes.SELECT }
-  ) as any[];
+    { replacements, type: QueryTypes.SELECT },
+  )) as any[];
 
   return { rows, total: Number(countResult[0]?.total || 0) };
 }

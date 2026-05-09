@@ -25,10 +25,10 @@ export const READINESS_THRESHOLDS = {
 
 export interface ReadinessInput {
   evidence_quality: number; // avg quality score of linked evidence (0-100)
-  evidence_count: number;   // normalized count score (0-100)
+  evidence_count: number; // normalized count score (0-100)
   evidence_recency: number; // freshness of evidence (0-100)
-  task_completion: number;  // % of linked tasks completed (0-100)
-  risk_mitigation: number;  // % of linked risks mitigated (0-100)
+  task_completion: number; // % of linked tasks completed (0-100)
+  risk_mitigation: number; // % of linked risks mitigated (0-100)
 }
 
 export interface ReadinessResult {
@@ -65,10 +65,10 @@ export function calculateReadinessScore(input: ReadinessInput): ReadinessResult 
 
   const overall = Math.round(
     eq * READINESS_WEIGHTS.evidence_quality +
-    ec * READINESS_WEIGHTS.evidence_count +
-    er * READINESS_WEIGHTS.evidence_recency +
-    tc * READINESS_WEIGHTS.task_completion +
-    rm * READINESS_WEIGHTS.risk_mitigation
+      ec * READINESS_WEIGHTS.evidence_count +
+      er * READINESS_WEIGHTS.evidence_recency +
+      tc * READINESS_WEIGHTS.task_completion +
+      rm * READINESS_WEIGHTS.risk_mitigation,
   );
 
   return {
@@ -127,8 +127,12 @@ export interface FrameworkAggregation {
  * Aggregate per-control scores into framework-level summary.
  */
 export function aggregateFrameworkScores(
-  controlScores: Array<{ control_id: number; overall_score: number; readiness_level: ReadinessLevel }>,
-  frameworkType: string
+  controlScores: Array<{
+    control_id: number;
+    overall_score: number;
+    readiness_level: ReadinessLevel;
+  }>,
+  frameworkType: string,
 ): FrameworkAggregation {
   const total = controlScores.length;
   if (total === 0) {

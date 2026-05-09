@@ -115,7 +115,7 @@ export async function approveApprovalCtrl(req: Request, res: Response) {
         confidenceScore: 100,
         promptSummary: `Approved approval ${id}`,
       },
-      userId
+      userId,
     ).catch(() => {});
 
     logStructured("successful", `approval ${id} approved`, functionName, fileName);
@@ -124,7 +124,7 @@ export async function approveApprovalCtrl(req: Request, res: Response) {
         approval_id: id,
         status: "approved",
         result: result.result,
-      })
+      }),
     );
   } catch (error) {
     logStructured("error", "failed to approve", functionName, fileName);
@@ -157,7 +157,7 @@ export async function rejectApprovalCtrl(req: Request, res: Response) {
       STATUS_CODE[200]({
         approval_id: id,
         status: "rejected",
-      })
+      }),
     );
   } catch (error) {
     logStructured("error", "failed to reject", functionName, fileName);

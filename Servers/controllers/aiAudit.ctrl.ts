@@ -89,11 +89,24 @@ export async function exportAuditLog(req: Request, res: Response) {
     });
 
     if (format === "csv") {
-      const headers = ["id", "tool_name", "action_type", "risk_level", "state", "rule_matched", "error_message", "created_at", "approved_at", "executed_at", "requested_by_name", "approved_by_name"];
+      const headers = [
+        "id",
+        "tool_name",
+        "action_type",
+        "risk_level",
+        "state",
+        "rule_matched",
+        "error_message",
+        "created_at",
+        "approved_at",
+        "executed_at",
+        "requested_by_name",
+        "approved_by_name",
+      ];
       const csv = [
         headers.join(","),
         ...data.map((row: any) =>
-          headers.map((h) => `"${(row[h] ?? "").toString().replace(/"/g, '""')}"`).join(",")
+          headers.map((h) => `"${(row[h] ?? "").toString().replace(/"/g, '""')}"`).join(","),
         ),
       ].join("\n");
 

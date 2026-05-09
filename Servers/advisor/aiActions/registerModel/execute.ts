@@ -10,10 +10,7 @@
 
 import { sequelize } from "../../../database/db";
 import logger from "../../../utils/logger/fileLogger";
-import type {
-  AiActionExecuteContext,
-  AiActionExecuteResult,
-} from "../types";
+import type { AiActionExecuteContext, AiActionExecuteResult } from "../types";
 import type { AgentRegisterModelInput } from "./schema";
 
 export async function executeRegisterModel(
@@ -131,9 +128,7 @@ export async function executeRegisterModel(
     {
       replacements: {
         organization_id: ctx.organizationId,
-        provider_model: input.model_type
-          ? `${input.model_type} / ${input.name}`
-          : input.name,
+        provider_model: input.model_type ? `${input.model_type} / ${input.name}` : input.name,
         provider: input.model_type ?? "",
         model: input.name,
         version: input.version ?? "",
@@ -148,9 +143,7 @@ export async function executeRegisterModel(
 
   const created = insertRows[0];
   if (!created?.id) {
-    logger.error(
-      `[executeRegisterModel] INSERT returned no id! input=${JSON.stringify(input)}`,
-    );
+    logger.error(`[executeRegisterModel] INSERT returned no id! input=${JSON.stringify(input)}`);
     throw new Error(
       "model_inventories INSERT returned no id — refusing to record an empty execution result.",
     );

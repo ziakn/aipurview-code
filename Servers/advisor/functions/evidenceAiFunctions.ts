@@ -32,7 +32,7 @@ export interface DetectGapsParams {
  */
 const analyzeDocument = async (
   params: AnalyzeDocumentParams,
-  _organizationId: number
+  _organizationId: number,
 ): Promise<any> => {
   try {
     const { file_id, document_text } = params;
@@ -41,14 +41,31 @@ const analyzeDocument = async (
 
     // Extract basic compliance keywords from text
     const complianceKeywords = [
-      "risk", "audit", "compliance", "control", "policy", "regulation",
-      "GDPR", "ISO", "NIST", "EU AI Act", "security", "privacy",
-      "assessment", "monitoring", "incident", "training", "transparency",
-      "accountability", "fairness", "robustness", "data protection",
+      "risk",
+      "audit",
+      "compliance",
+      "control",
+      "policy",
+      "regulation",
+      "GDPR",
+      "ISO",
+      "NIST",
+      "EU AI Act",
+      "security",
+      "privacy",
+      "assessment",
+      "monitoring",
+      "incident",
+      "training",
+      "transparency",
+      "accountability",
+      "fairness",
+      "robustness",
+      "data protection",
     ];
 
-    const foundAreas = complianceKeywords.filter(
-      (kw) => document_text.toLowerCase().includes(kw.toLowerCase())
+    const foundAreas = complianceKeywords.filter((kw) =>
+      document_text.toLowerCase().includes(kw.toLowerCase()),
     );
 
     // Create a summary from the first ~500 chars
@@ -59,7 +76,8 @@ const analyzeDocument = async (
 
     // Extract sentences that seem like findings (contain key verbs)
     const sentences = document_text.split(/[.!?]+/).filter((s) => s.trim().length > 20);
-    const findingPatterns = /\b(must|shall|should|require|recommend|ensure|implement|maintain|document|verify)\b/i;
+    const findingPatterns =
+      /\b(must|shall|should|require|recommend|ensure|implement|maintain|document|verify)\b/i;
     const keyFindings = sentences
       .filter((s) => findingPatterns.test(s))
       .slice(0, 10)
@@ -79,7 +97,7 @@ const analyzeDocument = async (
   } catch (error) {
     logger.error("Error analyzing document:", error);
     throw new Error(
-      `Failed to analyze document: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to analyze document: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 };
@@ -89,7 +107,7 @@ const analyzeDocument = async (
  */
 const scoreEvidenceQuality = async (
   params: ScoreQualityParams,
-  _organizationId: number
+  _organizationId: number,
 ): Promise<any> => {
   try {
     const { file_id, summary, key_findings, compliance_areas } = params;
@@ -98,20 +116,31 @@ const scoreEvidenceQuality = async (
     let areas: string[] = [];
     try {
       if (key_findings) findings = JSON.parse(key_findings);
-    } catch { /* use empty */ }
+    } catch {
+      /* use empty */
+    }
     try {
       if (compliance_areas) areas = JSON.parse(compliance_areas);
-    } catch { /* use empty */ }
+    } catch {
+      /* use empty */
+    }
 
     // Heuristic scoring based on content analysis
     const relevance = Math.min(100, areas.length * 15 + 10);
     const completeness = Math.min(100, findings.length * 10 + (summary.length > 200 ? 20 : 0));
     const recency = 70; // Default — would check file upload date in full implementation
-    const reliability = Math.min(100, (findings.length > 3 ? 40 : 20) + (areas.length > 2 ? 30 : 10) + 20);
+    const reliability = Math.min(
+      100,
+      (findings.length > 3 ? 40 : 20) + (areas.length > 2 ? 30 : 10) + 20,
+    );
     const specificity = Math.min(100, findings.filter((f) => f.length > 50).length * 15 + 10);
 
     const overall = Math.round(
-      relevance * 0.25 + completeness * 0.25 + recency * 0.2 + reliability * 0.15 + specificity * 0.15
+      relevance * 0.25 +
+        completeness * 0.25 +
+        recency * 0.2 +
+        reliability * 0.15 +
+        specificity * 0.15,
     );
 
     return {
@@ -128,7 +157,7 @@ const scoreEvidenceQuality = async (
   } catch (error) {
     logger.error("Error scoring evidence quality:", error);
     throw new Error(
-      `Failed to score evidence quality: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to score evidence quality: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 };
@@ -138,7 +167,7 @@ const scoreEvidenceQuality = async (
  */
 const matchControls = async (
   params: MatchControlsParams,
-  _organizationId: number
+  _organizationId: number,
 ): Promise<any> => {
   try {
     const { file_id, compliance_areas, framework_type } = params;
@@ -146,7 +175,9 @@ const matchControls = async (
     let areas: string[] = [];
     try {
       if (compliance_areas) areas = JSON.parse(compliance_areas);
-    } catch { /* use empty */ }
+    } catch {
+      /* use empty */
+    }
 
     // Query controls from the relevant framework tables
     let controls: any[] = [];
@@ -177,12 +208,8 @@ const matchControls = async (
     const suggestions = controls
       .map((control: any) => {
         const controlText = `${control.title || ""} ${control.description || ""}`.toLowerCase();
-        const matchedAreas = areas.filter((area) =>
-          controlText.includes(area.toLowerCase())
-        );
-        const score = matchedAreas.length > 0
-          ? Math.min(100, matchedAreas.length * 30 + 20)
-          : 0;
+        const matchedAreas = areas.filter((area) => controlText.includes(area.toLowerCase()));
+        const score = matchedAreas.length > 0 ? Math.min(100, matchedAreas.length * 30 + 20) : 0;
 
         return {
           control_id: control.id,
@@ -205,7 +232,7 @@ const matchControls = async (
   } catch (error) {
     logger.error("Error matching controls:", error);
     throw new Error(
-      `Failed to match controls: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to match controls: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 };
@@ -215,10 +242,14 @@ const matchControls = async (
  */
 const detectEvidenceGaps = async (
   params: DetectGapsParams,
-  organizationId: number
+  organizationId: number,
 ): Promise<any> => {
   try {
-    const { framework_type: _framework_type, project_id: _project_id, quality_threshold = 50 } = params;
+    const {
+      framework_type: _framework_type,
+      project_id: _project_id,
+      quality_threshold = 50,
+    } = params;
 
     // Get controls with their evidence counts and quality scores
     const [gaps] = await sequelize.query(
@@ -244,7 +275,7 @@ const detectEvidenceGaps = async (
        WHERE cs.title IS NOT NULL
        ORDER BY COALESCE(ea.avg_quality, 0) ASC, COALESCE(ea.evidence_count, 0) ASC
        LIMIT 20`,
-      { replacements: { organizationId } }
+      { replacements: { organizationId } },
     );
 
     const gapResults = (gaps as any[]).map((g) => ({
@@ -257,14 +288,14 @@ const detectEvidenceGaps = async (
         parseInt(g.evidence_count, 10) === 0
           ? "no_evidence"
           : parseFloat(g.avg_quality) < quality_threshold
-          ? "low_quality"
-          : "adequate",
+            ? "low_quality"
+            : "adequate",
       recommendation:
         parseInt(g.evidence_count, 10) === 0
           ? `Upload evidence documents for "${g.control_title}"`
           : parseFloat(g.avg_quality) < quality_threshold
-          ? `Improve evidence quality for "${g.control_title}" (current avg: ${Math.round(parseFloat(g.avg_quality))})`
-          : null,
+            ? `Improve evidence quality for "${g.control_title}" (current avg: ${Math.round(parseFloat(g.avg_quality))})`
+            : null,
     }));
 
     const noEvidence = gapResults.filter((g) => g.gap_type === "no_evidence");
@@ -281,7 +312,7 @@ const detectEvidenceGaps = async (
   } catch (error) {
     logger.error("Error detecting evidence gaps:", error);
     throw new Error(
-      `Failed to detect evidence gaps: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to detect evidence gaps: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 };

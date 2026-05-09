@@ -29,7 +29,7 @@ export function registerAgent(agent: RegisteredAgent): void {
     "successful",
     `registered agent: ${agent.name} (${agent.capabilities.tools.length} tools, domains: ${agent.capabilities.domains.join(", ")})`,
     "registerAgent",
-    fileName
+    fileName,
   );
 }
 
@@ -70,7 +70,7 @@ export function getHealthyAgents(): RegisteredAgent[] {
  */
 export function findAgentsByDomain(domain: string): RegisteredAgent[] {
   return getAllAgents().filter((a) =>
-    a.capabilities.domains.some((d) => d.toLowerCase() === domain.toLowerCase())
+    a.capabilities.domains.some((d) => d.toLowerCase() === domain.toLowerCase()),
   );
 }
 
@@ -80,13 +80,15 @@ export function findAgentsByDomain(domain: string): RegisteredAgent[] {
 export function findAgentsByKeywords(message: string): RegisteredAgent[] {
   const lowerMessage = message.toLowerCase();
   return getAllAgents()
-    .filter((a) =>
-      a.capabilities.keywords.some((kw) => lowerMessage.includes(kw.toLowerCase()))
-    )
+    .filter((a) => a.capabilities.keywords.some((kw) => lowerMessage.includes(kw.toLowerCase())))
     .sort((a, b) => {
       // Score by number of matching keywords
-      const scoreA = a.capabilities.keywords.filter((kw) => lowerMessage.includes(kw.toLowerCase())).length;
-      const scoreB = b.capabilities.keywords.filter((kw) => lowerMessage.includes(kw.toLowerCase())).length;
+      const scoreA = a.capabilities.keywords.filter((kw) =>
+        lowerMessage.includes(kw.toLowerCase()),
+      ).length;
+      const scoreB = b.capabilities.keywords.filter((kw) =>
+        lowerMessage.includes(kw.toLowerCase()),
+      ).length;
       return scoreB - scoreA;
     });
 }

@@ -23,12 +23,70 @@ export interface RoutingDecision {
  * Domain keyword mappings for intent classification.
  */
 const DOMAIN_KEYWORDS: Record<string, string[]> = {
-  risk: ["risk", "threat", "vulnerability", "likelihood", "severity", "mitigation", "risk score", "risk matrix", "heat map", "risk owner"],
-  compliance: ["compliance", "framework", "eu ai act", "iso 42001", "iso 27001", "nist", "control", "audit", "gap analysis", "regulation", "requirement"],
-  vendor: ["vendor", "supplier", "third-party", "third party", "vendor risk", "due diligence", "sla", "contract"],
-  policy: ["policy", "policies", "procedure", "regulation", "governance", "review workflow", "policy template"],
-  incident: ["incident", "breach", "security event", "root cause", "remediation", "post-mortem", "outage"],
-  model: ["model", "model inventory", "ai model", "machine learning", "deployment", "model risk", "dataset", "training data", "foundation model"],
+  risk: [
+    "risk",
+    "threat",
+    "vulnerability",
+    "likelihood",
+    "severity",
+    "mitigation",
+    "risk score",
+    "risk matrix",
+    "heat map",
+    "risk owner",
+  ],
+  compliance: [
+    "compliance",
+    "framework",
+    "eu ai act",
+    "iso 42001",
+    "iso 27001",
+    "nist",
+    "control",
+    "audit",
+    "gap analysis",
+    "regulation",
+    "requirement",
+  ],
+  vendor: [
+    "vendor",
+    "supplier",
+    "third-party",
+    "third party",
+    "vendor risk",
+    "due diligence",
+    "sla",
+    "contract",
+  ],
+  policy: [
+    "policy",
+    "policies",
+    "procedure",
+    "regulation",
+    "governance",
+    "review workflow",
+    "policy template",
+  ],
+  incident: [
+    "incident",
+    "breach",
+    "security event",
+    "root cause",
+    "remediation",
+    "post-mortem",
+    "outage",
+  ],
+  model: [
+    "model",
+    "model inventory",
+    "ai model",
+    "machine learning",
+    "deployment",
+    "model risk",
+    "dataset",
+    "training data",
+    "foundation model",
+  ],
 };
 
 /**
@@ -62,8 +120,7 @@ export function classifyIntent(message: string): RoutingDecision {
   }
 
   // Sort domains by score
-  const sortedDomains = Object.entries(domainScores)
-    .sort(([, a], [, b]) => b - a);
+  const sortedDomains = Object.entries(domainScores).sort(([, a], [, b]) => b - a);
 
   // Single domain match
   if (sortedDomains.length === 1) {
@@ -97,7 +154,7 @@ export function classifyIntent(message: string): RoutingDecision {
         "successful",
         `multi-agent routing: ${targetAgents.join(", ")} for domains: ${sortedDomains.map(([d]) => d).join(", ")}`,
         functionName,
-        fileName
+        fileName,
       );
       return {
         agents: targetAgents,
@@ -135,7 +192,7 @@ export function classifyIntent(message: string): RoutingDecision {
  */
 export async function executeMultiAgent(
   agents: RegisteredAgent[],
-  request: import("./messageProtocol").AgentRequest
+  request: import("./messageProtocol").AgentRequest,
 ): Promise<import("./messageProtocol").AgentResponse[]> {
   const promises = agents.map(async (agent) => {
     try {

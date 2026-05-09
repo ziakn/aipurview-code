@@ -51,10 +51,7 @@ const fetchUsers = async (
   }
 };
 
-const getUserDetail = async (
-  params: { user_id: number },
-  organizationId: number,
-): Promise<any> => {
+const getUserDetail = async (params: { user_id: number }, organizationId: number): Promise<any> => {
   try {
     const user = await getUserByIdQuery(params.user_id);
     if (!user) {
@@ -62,7 +59,7 @@ const getUserDetail = async (
     }
 
     // Get user's projects
-    const projects = await sequelize.query(
+    const projects = (await sequelize.query(
       `SELECT p.id, p.project_title, p.status
        FROM projects p
        INNER JOIN projects_members pm ON p.id = pm.project_id AND pm.organization_id = :organization_id
@@ -71,7 +68,7 @@ const getUserDetail = async (
         replacements: { user_id: params.user_id, organization_id: organizationId },
         type: QueryTypes.SELECT,
       },
-    ) as any[];
+    )) as any[];
 
     // Get role name
     const roles = await getAllRolesQuery();
@@ -107,7 +104,7 @@ const getUserProgress = async (
 ): Promise<any> => {
   try {
     // Get task stats for user
-    const taskStats = await sequelize.query(
+    const taskStats = (await sequelize.query(
       `SELECT
          COUNT(*) as total_tasks,
          COUNT(CASE WHEN status = 'Completed' THEN 1 END) as completed_tasks,
@@ -118,10 +115,10 @@ const getUserProgress = async (
         replacements: { user_id: params.user_id, organization_id: organizationId },
         type: QueryTypes.SELECT,
       },
-    ) as any[];
+    )) as any[];
 
     // Get risks owned by user
-    const riskStats = await sequelize.query(
+    const riskStats = (await sequelize.query(
       `SELECT
          COUNT(*) as total_risks,
          COUNT(CASE WHEN mitigation_status = 'Completed' THEN 1 END) as mitigated_risks
@@ -132,17 +129,17 @@ const getUserProgress = async (
         replacements: { user_id: params.user_id, organization_id: organizationId },
         type: QueryTypes.SELECT,
       },
-    ) as any[];
+    )) as any[];
 
     // Get project count
-    const projectCount = await sequelize.query(
+    const projectCount = (await sequelize.query(
       `SELECT COUNT(*) as count FROM projects_members
        WHERE user_id = :user_id AND organization_id = :organization_id`,
       {
         replacements: { user_id: params.user_id, organization_id: organizationId },
         type: QueryTypes.SELECT,
       },
-    ) as any[];
+    )) as any[];
 
     const tasks = taskStats[0] || {};
     const risks = riskStats[0] || {};
@@ -153,9 +150,12 @@ const getUserProgress = async (
         total: parseInt(tasks.total_tasks || "0"),
         completed: parseInt(tasks.completed_tasks || "0"),
         overdue: parseInt(tasks.overdue_tasks || "0"),
-        completion_rate: parseInt(tasks.total_tasks || "0") > 0
-          ? Math.round((parseInt(tasks.completed_tasks || "0") / parseInt(tasks.total_tasks || "0")) * 100)
-          : 0,
+        completion_rate:
+          parseInt(tasks.total_tasks || "0") > 0
+            ? Math.round(
+                (parseInt(tasks.completed_tasks || "0") / parseInt(tasks.total_tasks || "0")) * 100,
+              )
+            : 0,
       },
       risks: {
         owned: parseInt(risks.total_risks || "0"),
@@ -171,10 +171,7 @@ const getUserProgress = async (
   }
 };
 
-const fetchRoles = async (
-  _params: {},
-  _organizationId: number,
-): Promise<any> => {
+const fetchRoles = async (_params: {}, _organizationId: number): Promise<any> => {
   try {
     const roles = await getAllRolesQuery();
     return {
@@ -193,10 +190,7 @@ const fetchRoles = async (
   }
 };
 
-const getOrganizationDetail = async (
-  _params: {},
-  organizationId: number,
-): Promise<any> => {
+const getOrganizationDetail = async (_params: {}, organizationId: number): Promise<any> => {
   try {
     const org = await getOrganizationByIdQuery(organizationId);
     if (!org) {
@@ -204,16 +198,16 @@ const getOrganizationDetail = async (
     }
 
     // Get member count
-    const memberCount = await sequelize.query(
+    const memberCount = (await sequelize.query(
       `SELECT COUNT(*) as count FROM users WHERE organization_id = :organization_id`,
       {
         replacements: { organization_id: organizationId },
         type: QueryTypes.SELECT,
       },
-    ) as any[];
+    )) as any[];
 
     // Get project count
-    const projectCount = await sequelize.query(
+    const projectCount = (await sequelize.query(
       `SELECT COUNT(*) as count FROM projects
        WHERE organization_id = :organization_id
        AND (is_organizational = false OR is_organizational IS NULL)`,
@@ -221,7 +215,7 @@ const getOrganizationDetail = async (
         replacements: { organization_id: organizationId },
         type: QueryTypes.SELECT,
       },
-    ) as any[];
+    )) as any[];
 
     return {
       id: org.id,
@@ -254,7 +248,7 @@ const fetchInvitations = async (
     const limit = params.limit || 50;
     replacements.limit = limit;
 
-    const rows = await sequelize.query(
+    const rows = (await sequelize.query(
       `SELECT id, email, role_id, status, invited_by, created_at, expires_at
        FROM invitations
        WHERE ${conditions.join(" AND ")}
@@ -264,7 +258,7 @@ const fetchInvitations = async (
         replacements,
         type: QueryTypes.SELECT,
       },
-    ) as any[];
+    )) as any[];
 
     return {
       invitations: rows.map((r: any) => ({
@@ -286,15 +280,10 @@ const fetchInvitations = async (
   }
 };
 
-const getSubscriptionInfo = async (
-  _params: {},
-  organizationId: number,
-): Promise<any> => {
+const getSubscriptionInfo = async (_params: {}, organizationId: number): Promise<any> => {
   try {
     const subscriptions = await getSubscription();
-    const orgSubscription = subscriptions.find(
-      (s) => s.organization_id === organizationId,
-    );
+    const orgSubscription = subscriptions.find((s) => s.organization_id === organizationId);
 
     if (!orgSubscription) {
       return { message: "No subscription found for this organization" };
@@ -323,7 +312,7 @@ const fetchAutoDrivers = async (
   try {
     const limit = params.limit || 50;
 
-    const rows = await sequelize.query(
+    const rows = (await sequelize.query(
       `SELECT id, name, description, driver_type, status, last_run_at, created_at
        FROM auto_drivers
        WHERE organization_id = :organization_id
@@ -333,7 +322,7 @@ const fetchAutoDrivers = async (
         replacements: { organization_id: organizationId, limit },
         type: QueryTypes.SELECT,
       },
-    ) as any[];
+    )) as any[];
 
     return {
       auto_drivers: rows.map((r: any) => ({
@@ -355,13 +344,10 @@ const fetchAutoDrivers = async (
   }
 };
 
-const fetchSlackWebhooks = async (
-  _params: {},
-  organizationId: number,
-): Promise<any> => {
+const fetchSlackWebhooks = async (_params: {}, organizationId: number): Promise<any> => {
   try {
     // Query directly since the util uses userId, not organizationId
-    const rows = await sequelize.query(
+    const rows = (await sequelize.query(
       `SELECT sw.id, sw.channel, sw.team_name, sw.team_id, sw.is_active, sw.routing_type, sw.created_at
        FROM slack_webhooks sw
        INNER JOIN users u ON sw.user_id = u.id
@@ -371,7 +357,7 @@ const fetchSlackWebhooks = async (
         replacements: { organization_id: organizationId },
         type: QueryTypes.SELECT,
       },
-    ) as any[];
+    )) as any[];
 
     return {
       slack_webhooks: rows.map((r: any) => ({
@@ -421,7 +407,12 @@ const agentSendInvitation = createWriteToolFn({
       },
     );
     const row = (result as any[])[0]?.[0] || (result as any[])[0];
-    return { id: row.id, email: row.email, status: "pending", message: "Invitation sent successfully" };
+    return {
+      id: row.id,
+      email: row.email,
+      status: "pending",
+      message: "Invitation sent successfully",
+    };
   },
 });
 
@@ -449,11 +440,10 @@ const agentRunAutoDriver = createWriteToolFn({
 const agentSendSlackTestMessage = createWriteToolFn({
   toolName: "agent_send_slack_test_message",
   warningLevel: "info",
-  descriptionFn: (params) =>
-    `Send test message to Slack webhook #${params.webhook_id}`,
+  descriptionFn: (params) => `Send test message to Slack webhook #${params.webhook_id}`,
   executeFn: async (params, organizationId) => {
     // Get webhook details
-    const webhooks = await sequelize.query(
+    const webhooks = (await sequelize.query(
       `SELECT sw.id, sw.url, sw.url_iv, sw.channel
        FROM slack_webhooks sw
        INNER JOIN users u ON sw.user_id = u.id
@@ -462,14 +452,15 @@ const agentSendSlackTestMessage = createWriteToolFn({
         replacements: { webhook_id: params.webhook_id, organization_id: organizationId },
         type: QueryTypes.SELECT,
       },
-    ) as any[];
+    )) as any[];
 
     if (!webhooks || webhooks.length === 0) {
       throw new Error("Slack webhook not found or not accessible");
     }
 
     const webhook = webhooks[0];
-    const message = (params.message as string) || "This is a test message from VerifyWise AI Advisor.";
+    const message =
+      (params.message as string) || "This is a test message from VerifyWise AI Advisor.";
 
     // Note: Actual Slack message sending requires decrypting the URL and making an HTTP request.
     // This is a simplified version that records the test attempt.
@@ -477,7 +468,8 @@ const agentSendSlackTestMessage = createWriteToolFn({
       webhook_id: params.webhook_id,
       channel: webhook.channel,
       message_sent: message,
-      message: "Test message request recorded. The actual delivery depends on webhook configuration.",
+      message:
+        "Test message request recorded. The actual delivery depends on webhook configuration.",
     };
   },
 });

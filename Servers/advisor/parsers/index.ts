@@ -9,10 +9,7 @@ const PARSERS: Record<string, (buffer: Buffer) => Promise<ParsedDocument>> = {
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document": parseDocx,
 };
 
-export async function parseDocument(
-  buffer: Buffer,
-  mimeType: string
-): Promise<ParsedDocument> {
+export async function parseDocument(buffer: Buffer, mimeType: string): Promise<ParsedDocument> {
   const parser = PARSERS[mimeType];
   if (!parser) {
     throw new Error(`Unsupported document type: ${mimeType}`);

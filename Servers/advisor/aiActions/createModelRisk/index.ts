@@ -9,23 +9,19 @@ import type { AiActionHandler } from "../types";
 import type { AgentCreateModelRiskInput } from "./schema";
 import { AgentCreateModelRiskSchema } from "./schema";
 import { createModelRiskToolDefinition } from "./definition";
-import {
-  CREATE_MODEL_RISK_TOOL_NAME,
-  fileCreateModelRisk,
-} from "./file";
+import { CREATE_MODEL_RISK_TOOL_NAME, fileCreateModelRisk } from "./file";
 import { executeCreateModelRisk } from "./execute";
 import { renderCreateModelRiskPreview } from "./preview";
 
-export const createModelRiskHandler: AiActionHandler<AgentCreateModelRiskInput> =
-  {
-    toolName: CREATE_MODEL_RISK_TOOL_NAME,
-    label: "Create model risk",
-    toolDefinition: createModelRiskToolDefinition,
-    schema: AgentCreateModelRiskSchema,
-    file: fileCreateModelRisk,
-    execute: executeCreateModelRisk,
-    renderPreview: renderCreateModelRiskPreview,
-  };
+export const createModelRiskHandler: AiActionHandler<AgentCreateModelRiskInput> = {
+  toolName: CREATE_MODEL_RISK_TOOL_NAME,
+  label: "Create model risk",
+  toolDefinition: createModelRiskToolDefinition,
+  schema: AgentCreateModelRiskSchema,
+  file: fileCreateModelRisk,
+  execute: executeCreateModelRisk,
+  renderPreview: renderCreateModelRiskPreview,
+};
 
 export type { AgentCreateModelRiskInput } from "./schema";
 export { AgentCreateModelRiskSchema } from "./schema";

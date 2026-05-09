@@ -44,7 +44,12 @@ const globalSearch = async (
 };
 
 const searchWithinEntity = async (
-  params: { entity_type: string; query: string; filters?: { review_status?: string }; limit?: number },
+  params: {
+    entity_type: string;
+    query: string;
+    filters?: { review_status?: string };
+    limit?: number;
+  },
   organizationId: number,
 ): Promise<any> => {
   try {

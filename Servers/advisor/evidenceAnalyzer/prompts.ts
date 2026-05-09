@@ -58,8 +58,7 @@ export const RUBRIC = {
     {
       tier: 0,
       label: "Off-topic / unreadable",
-      anchor:
-        "No compliance content, garbled OCR, or document is empty/too short to evaluate.",
+      anchor: "No compliance content, garbled OCR, or document is empty/too short to evaluate.",
     },
   ],
   completeness: [
@@ -78,8 +77,7 @@ export const RUBRIC = {
     {
       tier: 70,
       label: "Operational",
-      anchor:
-        "Policy + procedures with named roles, missing explicit measurement criteria.",
+      anchor: "Policy + procedures with named roles, missing explicit measurement criteria.",
     },
     {
       tier: 50,
@@ -89,8 +87,7 @@ export const RUBRIC = {
     {
       tier: 30,
       label: "Stub",
-      anchor:
-        "Mentions the topic but no procedures, no roles, no implementation details.",
+      anchor: "Mentions the topic but no procedures, no roles, no implementation details.",
     },
     {
       tier: 0,
@@ -195,9 +192,7 @@ export function buildAnalyzerSystemPrompt(): string {
 }
 
 function formatRubric(dim: keyof typeof RUBRIC): string {
-  return RUBRIC[dim]
-    .map((r) => `- tier ${r.tier} (${r.label}): ${r.anchor}`)
-    .join("\n");
+  return RUBRIC[dim].map((r) => `- tier ${r.tier} (${r.label}): ${r.anchor}`).join("\n");
 }
 
 /**
@@ -281,9 +276,7 @@ export function buildControlMatcherUserPrompt(input: {
     .map(
       (c) =>
         `- id=${c.control_id} [${c.framework_type}] ${c.control_title}${
-          c.control_description
-            ? `: ${c.control_description.slice(0, 180)}`
-            : ""
+          c.control_description ? `: ${c.control_description.slice(0, 180)}` : ""
         }`,
     )
     .join("\n");

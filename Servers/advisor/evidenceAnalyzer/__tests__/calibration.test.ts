@@ -25,10 +25,7 @@ import {
   countNumericalThresholds,
   hasExecutionEvidence,
 } from "../analyzer.service";
-import {
-  cosineSimilarity,
-  buildQueryTextForEmbedding,
-} from "../embeddingMatcher";
+import { cosineSimilarity, buildQueryTextForEmbedding } from "../embeddingMatcher";
 import type { LLMAnalysisOutput } from "../schema";
 
 /* ------------------------------------------------------------------ */
@@ -189,14 +186,12 @@ describe("evidenceAnalyzer / reliability", () => {
 
 describe("evidenceAnalyzer / countNumericalThresholds", () => {
   it("counts comparison percentages", () => {
-    const text =
-      "Bias rate must be < 5% and accuracy >= 99.5%. Drift threshold ≤ 2%.";
+    const text = "Bias rate must be < 5% and accuracy >= 99.5%. Drift threshold ≤ 2%.";
     expect(countNumericalThresholds(text)).toBeGreaterThanOrEqual(2);
   });
 
   it("counts time SLAs", () => {
-    const text =
-      "Response within 24 hours. Maximum 100 ms latency. Less than 30 days retention.";
+    const text = "Response within 24 hours. Maximum 100 ms latency. Less than 30 days retention.";
     expect(countNumericalThresholds(text)).toBeGreaterThanOrEqual(2);
   });
 
@@ -206,14 +201,12 @@ describe("evidenceAnalyzer / countNumericalThresholds", () => {
   });
 
   it("does not count qualitative scales as thresholds", () => {
-    const text =
-      "Risk levels: High, Medium, Low. Likelihood and Impact assessed qualitatively.";
+    const text = "Risk levels: High, Medium, Low. Likelihood and Impact assessed qualitatively.";
     expect(countNumericalThresholds(text)).toBe(0);
   });
 
   it("does not count years or document IDs", () => {
-    const text =
-      "Effective date: 2026-01-15. Document ID: VW-AIG-POL-001 v3.2. Approved 2026.";
+    const text = "Effective date: 2026-01-15. Document ID: VW-AIG-POL-001 v3.2. Approved 2026.";
     expect(countNumericalThresholds(text)).toBe(0);
   });
 });
@@ -224,31 +217,23 @@ describe("evidenceAnalyzer / countNumericalThresholds", () => {
 
 describe("evidenceAnalyzer / hasExecutionEvidence", () => {
   it("returns true when audit was performed on a date", () => {
-    expect(
-      hasExecutionEvidence(
-        "DPIA performed on January 15, 2026 by the privacy team.",
-      ),
-    ).toBe(true);
+    expect(hasExecutionEvidence("DPIA performed on January 15, 2026 by the privacy team.")).toBe(
+      true,
+    );
   });
 
   it("returns true when an audit log block is referenced", () => {
     expect(
-      hasExecutionEvidence(
-        "See audit log below for past reviews. The review history shows...",
-      ),
+      hasExecutionEvidence("See audit log below for past reviews. The review history shows..."),
     ).toBe(true);
   });
 
   it("returns true with past-tense action and date", () => {
-    expect(
-      hasExecutionEvidence("System was reviewed on March 10 by the AI lead."),
-    ).toBe(true);
+    expect(hasExecutionEvidence("System was reviewed on March 10 by the AI lead.")).toBe(true);
   });
 
   it("returns true with measured numerical outcome", () => {
-    expect(
-      hasExecutionEvidence("Achieved 99.7% uptime in production for Q1 2026."),
-    ).toBe(true);
+    expect(hasExecutionEvidence("Achieved 99.7% uptime in production for Q1 2026.")).toBe(true);
   });
 
   it("returns false for forward-looking 'shall' policy language", () => {
@@ -261,9 +246,7 @@ describe("evidenceAnalyzer / hasExecutionEvidence", () => {
 
   it("returns false for static 'Approved By' header alone", () => {
     expect(
-      hasExecutionEvidence(
-        "Approved By: Board of Directors. Effective Date: March 15, 2026.",
-      ),
+      hasExecutionEvidence("Approved By: Board of Directors. Effective Date: March 15, 2026."),
     ).toBe(false);
   });
 });

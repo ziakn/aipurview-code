@@ -28,7 +28,7 @@ interface SpanHandle {
 export function startTrace(
   userId: number,
   sessionId: string,
-  metadata?: Record<string, unknown>
+  metadata?: Record<string, unknown>,
 ): TraceHandle | null {
   const langfuse = getLangfuse();
   if (!langfuse) return null;
@@ -54,7 +54,7 @@ export function startTrace(
 export function startSpan(
   traceHandle: TraceHandle | null,
   name: string,
-  metadata?: Record<string, unknown>
+  metadata?: Record<string, unknown>,
 ): SpanHandle | null {
   if (!traceHandle) return null;
 
@@ -82,7 +82,7 @@ export function endSpan(
     cost?: number;
     status?: "success" | "error";
     error?: string;
-  }
+  },
 ): void {
   if (!spanHandle) return;
 
@@ -112,7 +112,7 @@ export function endTrace(
     output?: string;
     status?: "success" | "error";
     tokensUsed?: { input: number; output: number; total: number };
-  }
+  },
 ): void {
   if (!traceHandle) return;
 
@@ -144,7 +144,7 @@ export function logGeneration(
     tokensOutput: number;
     cost?: number;
     duration?: number;
-  }
+  },
 ): void {
   if (!traceHandle) return;
 

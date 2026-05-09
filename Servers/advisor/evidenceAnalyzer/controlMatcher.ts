@@ -15,10 +15,7 @@ import { sequelize } from "../../database/db";
 import logger from "../../utils/logger/fileLogger";
 import { controlMatchListSchema, type ControlMatchOutput } from "./schema";
 import { generateObjectWithSelfCorrection } from "../llmSelfCorrect";
-import {
-  buildControlMatcherSystemPrompt,
-  buildControlMatcherUserPrompt,
-} from "./prompts";
+import { buildControlMatcherSystemPrompt, buildControlMatcherUserPrompt } from "./prompts";
 import {
   rankControlsByEmbedding,
   buildQueryTextForEmbedding,
@@ -116,9 +113,7 @@ function keywordPreFilter(
   complianceAreas: string[],
   perFramework: number,
 ): ControlCandidate[] {
-  const areaTerms = complianceAreas
-    .map((a) => a.toLowerCase().trim())
-    .filter((a) => a.length >= 3);
+  const areaTerms = complianceAreas.map((a) => a.toLowerCase().trim()).filter((a) => a.length >= 3);
 
   const byFramework = new Map<string, ControlCandidate[]>();
   for (const c of controls) {
@@ -244,10 +239,7 @@ export async function matchControlsSemantic(
       );
     }
   } catch (err) {
-    logger.warn(
-      "[evidenceAnalyzer] semantic control matching failed, returning empty",
-      err,
-    );
+    logger.warn("[evidenceAnalyzer] semantic control matching failed, returning empty", err);
     return [];
   }
 

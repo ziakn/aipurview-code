@@ -31,10 +31,15 @@ export async function getBadges(req: Request, res: Response) {
       parsedEntityId,
       req.organizationId!,
       req.userId ? Number(req.userId) : null,
-      visFilter
+      visFilter,
     );
 
-    logStructured("successful", `badges fetched for ${entityType}:${entityId}`, functionName, fileName);
+    logStructured(
+      "successful",
+      `badges fetched for ${entityType}:${entityId}`,
+      functionName,
+      fileName,
+    );
     return res.status(200).json(STATUS_CODE[200](badges));
   } catch (error) {
     logStructured("error", "failed to get badges", functionName, fileName);
@@ -57,9 +62,9 @@ export async function reviewContent(req: Request, res: Response) {
 
   const { review_action } = req.body;
   if (!review_action || !["approved", "modified", "rejected"].includes(review_action)) {
-    return res.status(400).json(
-      STATUS_CODE[400]("review_action must be 'approved', 'modified', or 'rejected'")
-    );
+    return res
+      .status(400)
+      .json(STATUS_CODE[400]("review_action must be 'approved', 'modified', or 'rejected'"));
   }
 
   logStructured("processing", `reviewing AI content ${id}`, functionName, fileName);
@@ -75,7 +80,12 @@ export async function reviewContent(req: Request, res: Response) {
       return res.status(404).json(STATUS_CODE[404]("AI content not found"));
     }
 
-    logStructured("successful", `AI content ${id} marked as ${review_action}`, functionName, fileName);
+    logStructured(
+      "successful",
+      `AI content ${id} marked as ${review_action}`,
+      functionName,
+      fileName,
+    );
     return res.status(200).json(STATUS_CODE[200](result));
   } catch (error) {
     logStructured("error", "failed to review AI content", functionName, fileName);
@@ -96,9 +106,20 @@ export async function getUnreviewed(req: Request, res: Response) {
     const offset = req.query.offset ? Number(req.query.offset) : 0;
 
     const visFilter = req.query.visibility ? String(req.query.visibility) : undefined;
-    const result = await getUnreviewedQuery(req.organizationId!, limit, offset, req.userId ? Number(req.userId) : null, visFilter);
+    const result = await getUnreviewedQuery(
+      req.organizationId!,
+      limit,
+      offset,
+      req.userId ? Number(req.userId) : null,
+      visFilter,
+    );
 
-    logStructured("successful", `${result.items.length} unreviewed items fetched`, functionName, fileName);
+    logStructured(
+      "successful",
+      `${result.items.length} unreviewed items fetched`,
+      functionName,
+      fileName,
+    );
     return res.status(200).json(STATUS_CODE[200](result));
   } catch (error) {
     logStructured("error", "failed to get unreviewed content", functionName, fileName);
@@ -116,7 +137,11 @@ export async function getStats(req: Request, res: Response) {
 
   try {
     const visFilter = req.query.visibility ? String(req.query.visibility) : undefined;
-    const stats = await getStatsQuery(req.organizationId!, req.userId ? Number(req.userId) : null, visFilter);
+    const stats = await getStatsQuery(
+      req.organizationId!,
+      req.userId ? Number(req.userId) : null,
+      visFilter,
+    );
 
     logStructured("successful", "AI content stats fetched", functionName, fileName);
     return res.status(200).json(STATUS_CODE[200](stats));

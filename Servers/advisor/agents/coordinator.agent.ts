@@ -27,7 +27,7 @@ export async function coordinatorHandleMessage(
   message: string,
   organizationId: number,
   userId: number,
-  sessionId?: string
+  sessionId?: string,
 ): Promise<{
   response: string;
   agentsUsed: string[];
@@ -45,7 +45,7 @@ export async function coordinatorHandleMessage(
     "successful",
     `routing decision: ${routing.agents.join(", ")} (intent: ${routing.intent}, confidence: ${routing.confidence})`,
     functionName,
-    fileName
+    fileName,
   );
 
   // 2. If coordinator should handle directly (no specialized agent matched)
@@ -74,7 +74,12 @@ export async function coordinatorHandleMessage(
 
   // If no agents resolved, fall back to coordinator
   if (resolvedAgents.length === 0) {
-    logStructured("error", "no healthy agents found for routing, falling back", functionName, fileName);
+    logStructured(
+      "error",
+      "no healthy agents found for routing, falling back",
+      functionName,
+      fileName,
+    );
     return {
       response: "",
       agentsUsed: [AGENT_NAME],
@@ -96,7 +101,7 @@ export async function coordinatorHandleMessage(
     message,
     organizationId,
     userId,
-    { sessionId }
+    { sessionId },
   );
 
   // 5. Execute: single agent or multi-agent
@@ -108,7 +113,12 @@ export async function coordinatorHandleMessage(
       const response = await resolvedAgents[0].handleMessage(request);
       responses = [response];
     } catch (error) {
-      logStructured("error", `agent ${resolvedAgents[0].name} failed: ${error}`, functionName, fileName);
+      logStructured(
+        "error",
+        `agent ${resolvedAgents[0].name} failed: ${error}`,
+        functionName,
+        fileName,
+      );
       return {
         response: "",
         agentsUsed: [AGENT_NAME],
@@ -129,18 +139,21 @@ export async function coordinatorHandleMessage(
     return {
       response: "",
       agentsUsed: [AGENT_NAME],
-      routing: { intent: routing.intent, isMultiAgent: routing.isMultiAgent, confidence: routing.confidence },
+      routing: {
+        intent: routing.intent,
+        isMultiAgent: routing.isMultiAgent,
+        confidence: routing.confidence,
+      },
       totalTokens: 0,
       duration: Date.now() - startTime,
     };
   }
 
   // Merge multi-agent responses
-  const mergedContent = successResponses.length === 1
-    ? successResponses[0].result.content
-    : successResponses
-        .map((r) => `**${r.from}:**\n${r.result.content}`)
-        .join("\n\n---\n\n");
+  const mergedContent =
+    successResponses.length === 1
+      ? successResponses[0].result.content
+      : successResponses.map((r) => `**${r.from}:**\n${r.result.content}`).join("\n\n---\n\n");
 
   const totalTokens = successResponses.reduce((sum, r) => sum + r.tokensUsed.total, 0);
 
@@ -148,7 +161,7 @@ export async function coordinatorHandleMessage(
     "successful",
     `routed to ${resolvedAgents.map((a) => a.name).join(", ")} — ${totalTokens} tokens`,
     functionName,
-    fileName
+    fileName,
   );
 
   return {
@@ -186,7 +199,7 @@ export function registerCoordinatorAgent(): void {
         request.correlationId,
         "Routing to appropriate agent...",
         { input: 0, output: 0, total: 0 },
-        0
+        0,
       );
     },
     status: {

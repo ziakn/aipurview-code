@@ -34,8 +34,7 @@ export const AgentUpdateTaskSchema = z
       return keys.length > 0;
     },
     {
-      message:
-        "At least one field besides task_id must be provided — nothing to update",
+      message: "At least one field besides task_id must be provided — nothing to update",
       path: [],
     },
   );

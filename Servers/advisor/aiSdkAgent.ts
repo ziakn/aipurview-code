@@ -162,9 +162,7 @@ const generateChartTool = tool({
  * client, so this hydration only kicks in for legacy `/advisor` and
  * `/advisor/stream` callers that don't track conversation history client-side.
  */
-async function selectMessages(
-  params: AiSdkAdvisorParams
-): Promise<ModelMessage[]> {
+async function selectMessages(params: AiSdkAdvisorParams): Promise<ModelMessage[]> {
   if (params.messages && params.messages.length > 0) {
     return params.messages;
   }
@@ -178,30 +176,20 @@ async function selectMessages(
         params.tenant,
         params.agentName || "advisor",
         params.sessionId!,
-        20
+        20,
       );
       const hydrated: ModelMessage[] = prior
-        .filter((m) =>
-          ["user", "assistant", "system"].includes(m.role.toLowerCase())
-        )
+        .filter((m) => ["user", "assistant", "system"].includes(m.role.toLowerCase()))
         .map((m) => ({
           role: m.role.toLowerCase() as "user" | "assistant" | "system",
           content: m.content,
         }));
       if (hydrated.length > 0) {
-        logger.debug(
-          `[AI-SDK] hydrated ${hydrated.length} prior messages from agent memory`
-        );
-        return [
-          ...hydrated,
-          { role: "user", content: params.userPrompt },
-        ];
+        logger.debug(`[AI-SDK] hydrated ${hydrated.length} prior messages from agent memory`);
+        return [...hydrated, { role: "user", content: params.userPrompt }];
       }
     } catch (err) {
-      logger.warn(
-        "[AI-SDK] memory hydration failed, falling back to single turn",
-        err
-      );
+      logger.warn("[AI-SDK] memory hydration failed, falling back to single turn", err);
     }
   }
 
@@ -244,9 +232,7 @@ async function buildRoutedTools(params: AiSdkAdvisorParams): Promise<ToolSet> {
   // Embedding requires an OpenAI-compatible endpoint. Anthropic doesn't
   // expose embeddings via @ai-sdk/anthropic; for those orgs we keep keyword.
   const embeddingKey =
-    params.provider === "OpenAI" ||
-    params.provider === "OpenRouter" ||
-    params.provider === "Custom"
+    params.provider === "OpenAI" || params.provider === "OpenRouter" || params.provider === "Custom"
       ? {
           apiKey: params.apiKey,
           baseURL: params.baseURL,
@@ -271,12 +257,7 @@ async function buildRoutedTools(params: AiSdkAdvisorParams): Promise<ToolSet> {
     `[AI-SDK] tool routing: ${routed.reason} · agents=[${routed.selectedAgents.join(", ") || "—"}] · ${routed.metrics.activeCount}/${routed.metrics.fullCount} tools (universal=${routed.metrics.universalCount})${simSummary}`,
   );
 
-  return buildTools(
-    routed.toolsDefinition,
-    routed.availableTools,
-    params.tenant,
-    params.userId,
-  );
+  return buildTools(routed.toolsDefinition, routed.availableTools, params.tenant, params.userId);
 }
 
 /* ------------------------------------------------------------------ */
@@ -308,7 +289,7 @@ async function safeSaveMessage(
   params: AiSdkAdvisorParams,
   role: "user" | "assistant" | "system" | "tool",
   content: string,
-  metadata?: Record<string, unknown>
+  metadata?: Record<string, unknown>,
 ): Promise<void> {
   if (!memoryEnabled(params)) return;
   try {
@@ -319,7 +300,7 @@ async function safeSaveMessage(
       params.sessionId!,
       role,
       content,
-      metadata
+      metadata,
     );
   } catch (err) {
     logger.warn("[AI-SDK] memory save failed (non-critical):", err);
@@ -348,7 +329,7 @@ export function extractLatestUserContent(params: AiSdkAdvisorParams): string {
                 ? p
                 : p?.type === "text" && typeof p.text === "string"
                   ? p.text
-                  : ""
+                  : "",
             )
             .filter(Boolean)
             .join("\n");
@@ -402,12 +383,10 @@ export async function* streamAdvisorAiSdk(
             typeof (tc as any).input === "string"
               ? (tc as any).input
               : JSON.stringify((tc as any).input ?? {}).slice(0, 800);
-          void safeSaveMessage(
-            params,
-            "tool",
-            `${tc.toolName}: ${inputPreview}`,
-            { toolCallId: (tc as any).toolCallId, toolName: tc.toolName }
-          );
+          void safeSaveMessage(params, "tool", `${tc.toolName}: ${inputPreview}`, {
+            toolCallId: (tc as any).toolCallId,
+            toolName: tc.toolName,
+          });
         }
       } else {
         logger.debug(`[AI-SDK] Text step completed, text length: ${text?.length || 0}`);
@@ -490,12 +469,10 @@ export async function runAdvisorAiSdk(params: AiSdkAdvisorParams): Promise<strin
             typeof (tc as any).input === "string"
               ? (tc as any).input
               : JSON.stringify((tc as any).input ?? {}).slice(0, 800);
-          void safeSaveMessage(
-            params,
-            "tool",
-            `${tc.toolName}: ${inputPreview}`,
-            { toolCallId: (tc as any).toolCallId, toolName: tc.toolName }
-          );
+          void safeSaveMessage(params, "tool", `${tc.toolName}: ${inputPreview}`, {
+            toolCallId: (tc as any).toolCallId,
+            toolName: tc.toolName,
+          });
         }
       }
     },
@@ -524,7 +501,9 @@ export async function runAdvisorAiSdk(params: AiSdkAdvisorParams): Promise<strin
  * Used by the controller when serving the native AI SDK streaming protocol.
  */
 export async function getStreamTextResult(params: AiSdkAdvisorParams) {
-  logger.debug(`[AI-SDK] getStreamTextResult started for ${params.provider} with model ${params.model}`);
+  logger.debug(
+    `[AI-SDK] getStreamTextResult started for ${params.provider} with model ${params.model}`,
+  );
 
   const model = createModel(params);
   const tools = await buildRoutedTools(params);
@@ -557,12 +536,10 @@ export async function getStreamTextResult(params: AiSdkAdvisorParams) {
             typeof (tc as any).input === "string"
               ? (tc as any).input
               : JSON.stringify((tc as any).input ?? {}).slice(0, 800);
-          void safeSaveMessage(
-            params,
-            "tool",
-            `${tc.toolName}: ${inputPreview}`,
-            { toolCallId: (tc as any).toolCallId, toolName: tc.toolName }
-          );
+          void safeSaveMessage(params, "tool", `${tc.toolName}: ${inputPreview}`, {
+            toolCallId: (tc as any).toolCallId,
+            toolName: tc.toolName,
+          });
         }
       }
     },

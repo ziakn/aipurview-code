@@ -17,7 +17,10 @@ import { QueryTypes } from "sequelize";
 import { v4 as uuidv4 } from "uuid";
 import { logStructured } from "../../utils/logger/fileLogger";
 import { createNotificationQuery } from "../../utils/notification.utils";
-import { NotificationType, NotificationEntityType } from "../../domain.layer/interfaces/i.notification";
+import {
+  NotificationType,
+  NotificationEntityType,
+} from "../../domain.layer/interfaces/i.notification";
 import { logStateHistory } from "../../services/aiAuditTrail.service";
 
 const fileName = "approvalGateway.ts";
@@ -60,7 +63,8 @@ export interface ApprovalSubmitResult {
 function deriveActionType(toolName: string): string {
   if (toolName.includes("delete") || toolName.includes("remove")) return "delete";
   if (toolName.includes("archive")) return "archive";
-  if (toolName.includes("create") || toolName.includes("register") || toolName.includes("add")) return "create";
+  if (toolName.includes("create") || toolName.includes("register") || toolName.includes("add"))
+    return "create";
   return "update";
 }
 
@@ -76,7 +80,7 @@ async function insertApprovalRecord(
     approvedBy?: number;
     approvedAt?: string;
     executedAt?: string;
-  }
+  },
 ): Promise<void> {
   await sequelize.query(
     `INSERT INTO ai_action_approvals
@@ -106,14 +110,14 @@ async function insertApprovalRecord(
         stateHistory: JSON.stringify(stateHistory),
       },
       type: QueryTypes.INSERT,
-    }
+    },
   );
 }
 
 async function updateApprovalRecord(
   id: string,
   organizationId: number,
-  updates: Record<string, unknown>
+  updates: Record<string, unknown>,
 ): Promise<void> {
   const setClauses: string[] = ["updated_at = NOW()"];
   const replacements: Record<string, unknown> = { id, organizationId };
@@ -131,7 +135,7 @@ async function updateApprovalRecord(
   await sequelize.query(
     `UPDATE ai_action_approvals SET ${setClauses.join(", ")}
      WHERE id = :id AND organization_id = :organizationId`,
-    { replacements, type: QueryTypes.UPDATE }
+    { replacements, type: QueryTypes.UPDATE },
   );
 }
 
@@ -142,7 +146,7 @@ async function updateApprovalRecord(
  * Uses the rule engine to evaluate, then routes through XState machine.
  */
 export async function submitForApproval(
-  config: SubmitForApprovalConfig
+  config: SubmitForApprovalConfig,
 ): Promise<ApprovalSubmitResult> {
   const functionName = "submitForApproval";
   const id = uuidv4();
@@ -169,14 +173,24 @@ export async function submitForApproval(
       ruleMatched = ruleResult.matchedRule || undefined;
     } catch {
       // Rule engine failure → safe default: require approval
-      logStructured("error", "rule engine failed, defaulting to require-approval", functionName, fileName);
+      logStructured(
+        "error",
+        "rule engine failed, defaulting to require-approval",
+        functionName,
+        fileName,
+      );
     }
   }
 
   // Build state history
   const stateHistory: StateHistoryEntry[] = [
     { state: "idle", timestamp: new Date().toISOString(), actor: "system" },
-    { state: "evaluate", timestamp: new Date().toISOString(), actor: "system", reason: "evaluating rules" },
+    {
+      state: "evaluate",
+      timestamp: new Date().toISOString(),
+      actor: "system",
+      reason: "evaluating rules",
+    },
   ];
 
   // Determine the effective decision
@@ -198,9 +212,12 @@ export async function submitForApproval(
   }
 
   stateHistory.push({
-    state: effectiveDecision === "auto-reject" ? "auto_reject"
-      : effectiveDecision === "auto-approve" ? "auto_approve"
-      : "pending_approval",
+    state:
+      effectiveDecision === "auto-reject"
+        ? "auto_reject"
+        : effectiveDecision === "auto-approve"
+          ? "auto_approve"
+          : "pending_approval",
     timestamp: new Date().toISOString(),
     actor: "system",
     reason: effectiveRuleMatched || effectiveDecision,
@@ -216,7 +233,12 @@ export async function submitForApproval(
       ruleMatched: effectiveRuleMatched,
       errorMessage,
     });
-    logStructured("successful", `auto-rejected ${config.toolName}: ${errorMessage}`, functionName, fileName);
+    logStructured(
+      "successful",
+      `auto-rejected ${config.toolName}: ${errorMessage}`,
+      functionName,
+      fileName,
+    );
     logStateHistory(config.organizationId, id, stateHistory, config.toolName).catch(() => {});
     return {
       outcome: "rejected",
@@ -231,7 +253,12 @@ export async function submitForApproval(
 
     const executor = writeToolExecutors.get(config.toolName);
     if (!executor) {
-      stateHistory.push({ state: "failed", timestamp: new Date().toISOString(), actor: "system", reason: "no executor" });
+      stateHistory.push({
+        state: "failed",
+        timestamp: new Date().toISOString(),
+        actor: "system",
+        reason: "no executor",
+      });
       await insertApprovalRecord(id, config, "failed", stateHistory, {
         ruleMatched: effectiveRuleMatched,
         errorMessage: "Executor disappeared after auto-approve",
@@ -245,7 +272,12 @@ export async function submitForApproval(
       result = await executor(paramsWithUser, config.organizationId);
     } catch (execError) {
       const errorMsg = execError instanceof Error ? execError.message : "Unknown error";
-      stateHistory.push({ state: "failed", timestamp: new Date().toISOString(), actor: "system", reason: errorMsg });
+      stateHistory.push({
+        state: "failed",
+        timestamp: new Date().toISOString(),
+        actor: "system",
+        reason: errorMsg,
+      });
       await insertApprovalRecord(id, config, "failed", stateHistory, {
         ruleMatched: effectiveRuleMatched,
         errorMessage: errorMsg,
@@ -255,7 +287,12 @@ export async function submitForApproval(
       return { outcome: "rejected", approvalId: id, errorMessage: errorMsg };
     }
 
-    stateHistory.push({ state: "completed", timestamp: new Date().toISOString(), actor: "system", reason: "execution succeeded" });
+    stateHistory.push({
+      state: "completed",
+      timestamp: new Date().toISOString(),
+      actor: "system",
+      reason: "execution succeeded",
+    });
     await insertApprovalRecord(id, config, "completed", stateHistory, {
       ruleMatched: effectiveRuleMatched,
       result,
@@ -263,7 +300,12 @@ export async function submitForApproval(
       approvedAt: new Date().toISOString(),
       executedAt: new Date().toISOString(),
     });
-    logStructured("successful", `auto-approved and executed ${config.toolName}`, functionName, fileName);
+    logStructured(
+      "successful",
+      `auto-approved and executed ${config.toolName}`,
+      functionName,
+      fileName,
+    );
     logStateHistory(config.organizationId, id, stateHistory, config.toolName).catch(() => {});
     return { outcome: "completed", approvalId: id, executionResult: result };
   }
@@ -291,21 +333,36 @@ export async function submitForApproval(
     try {
       await storeConfirmation(redisRequest);
     } catch (redisError) {
-      logStructured("error", `Redis store failed (non-fatal): ${redisError}`, functionName, fileName);
+      logStructured(
+        "error",
+        `Redis store failed (non-fatal): ${redisError}`,
+        functionName,
+        fileName,
+      );
     }
 
     // Bridge: Create approval_request for the existing workflow system (non-fatal)
     try {
       await bridgeToApprovalWorkflow(id, config);
     } catch (bridgeError) {
-      logStructured("error", `approval workflow bridge failed (non-fatal): ${bridgeError}`, functionName, fileName);
+      logStructured(
+        "error",
+        `approval workflow bridge failed (non-fatal): ${bridgeError}`,
+        functionName,
+        fileName,
+      );
     }
 
     // Send notification to admins (non-fatal)
     try {
       await notifyPendingApproval(config);
     } catch (notifyError) {
-      logStructured("error", `notification failed (non-fatal): ${notifyError}`, functionName, fileName);
+      logStructured(
+        "error",
+        `notification failed (non-fatal): ${notifyError}`,
+        functionName,
+        fileName,
+      );
     }
 
     const confirmationResult: ConfirmationToolResult = {
@@ -331,16 +388,16 @@ export async function submitForApproval(
 export async function approveAction(
   organizationId: number,
   id: string,
-  userId: number
+  userId: number,
 ): Promise<{ success: boolean; result?: unknown; error?: string }> {
   const functionName = "approveAction";
 
   // Read from DB
-  const records = await sequelize.query(
+  const records = (await sequelize.query(
     `SELECT * FROM ai_action_approvals
      WHERE id = :id AND organization_id = :organizationId`,
-    { replacements: { id, organizationId }, type: QueryTypes.SELECT }
-  ) as any[];
+    { replacements: { id, organizationId }, type: QueryTypes.SELECT },
+  )) as any[];
 
   const record = records[0];
 
@@ -351,14 +408,20 @@ export async function approveAction(
     return { success: false, error: `Approval already ${record.state}` };
   }
 
-  const stateHistory: StateHistoryEntry[] = typeof record.state_history === "string"
-    ? JSON.parse(record.state_history)
-    : record.state_history || [];
+  const stateHistory: StateHistoryEntry[] =
+    typeof record.state_history === "string"
+      ? JSON.parse(record.state_history)
+      : record.state_history || [];
 
   // Look up executor
   const executor = writeToolExecutors.get(record.tool_name);
   if (!executor) {
-    stateHistory.push({ state: "failed", timestamp: new Date().toISOString(), actor: "system", reason: "no executor" });
+    stateHistory.push({
+      state: "failed",
+      timestamp: new Date().toISOString(),
+      actor: "system",
+      reason: "no executor",
+    });
     await updateApprovalRecord(id, organizationId, {
       state: "failed",
       stateHistory,
@@ -368,7 +431,11 @@ export async function approveAction(
   }
 
   // Transition: pending_approval → approved → executing
-  stateHistory.push({ state: "approved", timestamp: new Date().toISOString(), actor: `user:${userId}` });
+  stateHistory.push({
+    state: "approved",
+    timestamp: new Date().toISOString(),
+    actor: `user:${userId}`,
+  });
   stateHistory.push({ state: "executing", timestamp: new Date().toISOString(), actor: "system" });
   await updateApprovalRecord(id, organizationId, {
     state: "executing",
@@ -378,9 +445,8 @@ export async function approveAction(
   });
 
   // Execute — re-inject _userId so executors that need author_id/created_by can use it
-  const inputParams = typeof record.input_params === "string"
-    ? JSON.parse(record.input_params)
-    : record.input_params;
+  const inputParams =
+    typeof record.input_params === "string" ? JSON.parse(record.input_params) : record.input_params;
   inputParams._userId = userId;
 
   let result: unknown;
@@ -418,7 +484,12 @@ export async function approveAction(
       return { success: false, error: errorMsg };
     }
 
-    stateHistory.push({ state: "failed", timestamp: new Date().toISOString(), actor: "system", reason: errorMsg });
+    stateHistory.push({
+      state: "failed",
+      timestamp: new Date().toISOString(),
+      actor: "system",
+      reason: errorMsg,
+    });
     await updateApprovalRecord(id, organizationId, {
       state: "failed",
       stateHistory,
@@ -429,7 +500,9 @@ export async function approveAction(
     // Also resolve in Redis for backward compat
     try {
       await resolveConfirmation(organizationId, id, "rejected", userId, undefined, errorMsg);
-    } catch { /* non-fatal */ }
+    } catch {
+      /* non-fatal */
+    }
 
     logStateHistory(organizationId, id, stateHistory, record.tool_name).catch(() => {});
     logStructured("error", `execution failed after approval: ${errorMsg}`, functionName, fileName);
@@ -437,7 +510,12 @@ export async function approveAction(
   }
 
   // Transition: executing → completed
-  stateHistory.push({ state: "completed", timestamp: new Date().toISOString(), actor: "system", reason: "execution succeeded" });
+  stateHistory.push({
+    state: "completed",
+    timestamp: new Date().toISOString(),
+    actor: "system",
+    reason: "execution succeeded",
+  });
   await updateApprovalRecord(id, organizationId, {
     state: "completed",
     stateHistory,
@@ -448,7 +526,9 @@ export async function approveAction(
   // Also resolve in Redis
   try {
     await resolveConfirmation(organizationId, id, "approved", userId, result);
-  } catch { /* non-fatal */ }
+  } catch {
+    /* non-fatal */
+  }
 
   // Log audit trail for approve + execute + complete
   logStateHistory(organizationId, id, stateHistory, record.tool_name).catch(() => {});
@@ -464,15 +544,15 @@ export async function rejectAction(
   organizationId: number,
   id: string,
   userId: number,
-  reason?: string
+  reason?: string,
 ): Promise<{ success: boolean; error?: string }> {
   const functionName = "rejectAction";
 
-  const records = await sequelize.query(
+  const records = (await sequelize.query(
     `SELECT * FROM ai_action_approvals
      WHERE id = :id AND organization_id = :organizationId`,
-    { replacements: { id, organizationId }, type: QueryTypes.SELECT }
-  ) as any[];
+    { replacements: { id, organizationId }, type: QueryTypes.SELECT },
+  )) as any[];
 
   const record = records[0];
   if (!record) {
@@ -482,9 +562,10 @@ export async function rejectAction(
     return { success: false, error: `Approval already ${record.state}` };
   }
 
-  const stateHistory: StateHistoryEntry[] = typeof record.state_history === "string"
-    ? JSON.parse(record.state_history)
-    : record.state_history || [];
+  const stateHistory: StateHistoryEntry[] =
+    typeof record.state_history === "string"
+      ? JSON.parse(record.state_history)
+      : record.state_history || [];
 
   stateHistory.push({
     state: "rejected",
@@ -501,7 +582,9 @@ export async function rejectAction(
   // Also resolve in Redis
   try {
     await resolveConfirmation(organizationId, id, "rejected", userId);
-  } catch { /* non-fatal */ }
+  } catch {
+    /* non-fatal */
+  }
 
   logStateHistory(organizationId, id, stateHistory, record.tool_name).catch(() => {});
   logStructured("successful", `rejected ${record.tool_name}`, functionName, fileName);
@@ -515,13 +598,13 @@ export async function rejectAction(
  */
 export async function getApproval(
   organizationId: number,
-  id: string
+  id: string,
 ): Promise<Record<string, unknown> | null> {
-  const records = await sequelize.query(
+  const records = (await sequelize.query(
     `SELECT * FROM ai_action_approvals
      WHERE id = :id AND organization_id = :organizationId`,
-    { replacements: { id, organizationId }, type: QueryTypes.SELECT }
-  ) as any[];
+    { replacements: { id, organizationId }, type: QueryTypes.SELECT },
+  )) as any[];
   return records[0] || null;
 }
 
@@ -537,7 +620,7 @@ export async function listApprovals(
     dateTo?: string;
     limit?: number;
     offset?: number;
-  }
+  },
 ): Promise<{ rows: Record<string, unknown>[]; total: number }> {
   const conditions = ["organization_id = :organizationId"];
   const replacements: Record<string, unknown> = { organizationId };
@@ -563,16 +646,16 @@ export async function listApprovals(
   const limit = filters?.limit || 50;
   const offset = filters?.offset || 0;
 
-  const rows = await sequelize.query(
+  const rows = (await sequelize.query(
     `SELECT * FROM ai_action_approvals WHERE ${where}
      ORDER BY created_at DESC LIMIT :limit OFFSET :offset`,
-    { replacements: { ...replacements, limit, offset }, type: QueryTypes.SELECT }
-  ) as any[];
+    { replacements: { ...replacements, limit, offset }, type: QueryTypes.SELECT },
+  )) as any[];
 
-  const countResult = await sequelize.query(
+  const countResult = (await sequelize.query(
     `SELECT COUNT(*) as total FROM ai_action_approvals WHERE ${where}`,
-    { replacements, type: QueryTypes.SELECT }
-  ) as any[];
+    { replacements, type: QueryTypes.SELECT },
+  )) as any[];
 
   return { rows, total: Number(countResult[0]?.total || 0) };
 }
@@ -580,10 +663,8 @@ export async function listApprovals(
 /**
  * Get approval statistics for an organization.
  */
-export async function getApprovalStats(
-  organizationId: number
-): Promise<Record<string, unknown>> {
-  const [stats] = await sequelize.query(
+export async function getApprovalStats(organizationId: number): Promise<Record<string, unknown>> {
+  const [stats] = (await sequelize.query(
     `SELECT
        COUNT(*) as total,
        COUNT(*) FILTER (WHERE state = 'completed' AND rule_matched LIKE 'auto_approve%') as auto_approved,
@@ -605,8 +686,8 @@ export async function getApprovalStats(
        ) as rejection_rate_pct
      FROM ai_action_approvals
      WHERE organization_id = :organizationId`,
-    { replacements: { organizationId }, type: QueryTypes.SELECT }
-  ) as any[];
+    { replacements: { organizationId }, type: QueryTypes.SELECT },
+  )) as any[];
 
   return stats || {};
 }
@@ -620,17 +701,17 @@ export async function getApprovalStats(
  */
 async function bridgeToApprovalWorkflow(
   aiApprovalId: string,
-  config: SubmitForApprovalConfig
+  config: SubmitForApprovalConfig,
 ): Promise<void> {
   // Find the default ai_action workflow for this organization
-  const workflows = await sequelize.query(
+  const workflows = (await sequelize.query(
     `SELECT id FROM approval_workflows
      WHERE organization_id = :organizationId
        AND entity_type = 'ai_action'
        AND is_active = true
      LIMIT 1`,
-    { replacements: { organizationId: config.organizationId }, type: QueryTypes.SELECT }
-  ) as any[];
+    { replacements: { organizationId: config.organizationId }, type: QueryTypes.SELECT },
+  )) as any[];
 
   if (!workflows[0]) {
     // No ai_action workflow configured — skip bridging
@@ -640,7 +721,7 @@ async function bridgeToApprovalWorkflow(
   const workflowId = workflows[0].id;
 
   // Create the approval request
-  const requests = await sequelize.query(
+  const requests = (await sequelize.query(
     `INSERT INTO approval_requests
       (organization_id, request_name, workflow_id, entity_id, entity_type, entity_data, status, requested_by, current_step, created_at, updated_at)
      VALUES
@@ -662,8 +743,8 @@ async function bridgeToApprovalWorkflow(
         requestedBy: config.userId,
       },
       type: QueryTypes.INSERT,
-    }
-  ) as any;
+    },
+  )) as any;
 
   const approvalRequestId = requests?.[0]?.[0]?.id || requests?.[0]?.id;
   if (!approvalRequestId) return;
@@ -674,12 +755,15 @@ async function bridgeToApprovalWorkflow(
   });
 
   // Create the first step from the workflow
-  const steps = await sequelize.query(
+  const steps = (await sequelize.query(
     `SELECT * FROM approval_workflow_steps
      WHERE workflow_id = :workflowId AND organization_id = :organizationId
      ORDER BY step_number ASC`,
-    { replacements: { workflowId, organizationId: config.organizationId }, type: QueryTypes.SELECT }
-  ) as any[];
+    {
+      replacements: { workflowId, organizationId: config.organizationId },
+      type: QueryTypes.SELECT,
+    },
+  )) as any[];
 
   for (const step of steps) {
     await sequelize.query(
@@ -694,7 +778,7 @@ async function bridgeToApprovalWorkflow(
           stepName: step.step_name,
         },
         type: QueryTypes.INSERT,
-      }
+      },
     );
   }
 }
@@ -704,13 +788,13 @@ async function bridgeToApprovalWorkflow(
  */
 async function notifyPendingApproval(config: SubmitForApprovalConfig): Promise<void> {
   // Find admin users for this organization
-  const admins = await sequelize.query(
+  const admins = (await sequelize.query(
     `SELECT u.id FROM users u
      JOIN roles r ON u.role_id = r.id
      WHERE u.organization_id = :organizationId
        AND r.name = 'Admin'`,
-    { replacements: { organizationId: config.organizationId }, type: QueryTypes.SELECT }
-  ) as any[];
+    { replacements: { organizationId: config.organizationId }, type: QueryTypes.SELECT },
+  )) as any[];
 
   for (const admin of admins) {
     await createNotificationQuery(
@@ -725,7 +809,7 @@ async function notifyPendingApproval(config: SubmitForApprovalConfig): Promise<v
         action_url: "/settings/ai-approval-rules",
         created_by: config.userId,
       },
-      config.organizationId
+      config.organizationId,
     );
   }
 }

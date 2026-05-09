@@ -10,7 +10,7 @@ export async function getBadgesByEntityQuery(
   entityId: number,
   organizationId: number,
   userId?: number | null,
-  visibility?: string
+  visibility?: string,
 ): Promise<any[]> {
   try {
     const vis = buildVisibilityFilter(userId ?? null, visibility);
@@ -21,7 +21,7 @@ export async function getBadgesByEntityQuery(
          AND organization_id = :organizationId
          ${vis.clause}
        ORDER BY created_at DESC`,
-      { replacements: { entityType, entityId, organizationId, ...vis.replacements } }
+      { replacements: { entityType, entityId, organizationId, ...vis.replacements } },
     );
     return rows as any[];
   } catch (error) {
@@ -40,7 +40,7 @@ export async function markReviewedQuery(
     review_action: string;
     reviewed_by: number;
     review_notes?: string;
-  }
+  },
 ): Promise<any | null> {
   try {
     const [rows] = await sequelize.query(
@@ -59,7 +59,7 @@ export async function markReviewedQuery(
           reviewAction: data.review_action,
           reviewedBy: data.reviewed_by,
         },
-      }
+      },
     );
     return (rows as any[])[0] || null;
   } catch (error) {
@@ -76,7 +76,7 @@ export async function getUnreviewedQuery(
   limit: number = 50,
   offset: number = 0,
   userId?: number | null,
-  visibility?: string
+  visibility?: string,
 ): Promise<{ items: any[]; total: number }> {
   try {
     const vis = buildVisibilityFilter(userId ?? null, visibility);
@@ -85,7 +85,7 @@ export async function getUnreviewedQuery(
        WHERE human_reviewed = false
          AND organization_id = :organizationId
          ${vis.clause}`,
-      { replacements: { organizationId, ...vis.replacements } }
+      { replacements: { organizationId, ...vis.replacements } },
     );
     const total = parseInt((countResult as any[])[0]?.total, 10) || 0;
 
@@ -96,7 +96,7 @@ export async function getUnreviewedQuery(
          ${vis.clause}
        ORDER BY created_at DESC
        LIMIT :limit OFFSET :offset`,
-      { replacements: { organizationId, limit, offset, ...vis.replacements } }
+      { replacements: { organizationId, limit, offset, ...vis.replacements } },
     );
 
     return { items: rows as any[], total };
@@ -112,7 +112,7 @@ export async function getUnreviewedQuery(
 export async function getStatsQuery(
   organizationId: number,
   userId?: number | null,
-  visibility?: string
+  visibility?: string,
 ): Promise<any> {
   try {
     const vis = buildVisibilityFilter(userId ?? null, visibility);
@@ -132,7 +132,7 @@ export async function getStatsQuery(
        FROM ai_content_metadata
        WHERE organization_id = :organizationId
          ${vis.clause}`,
-      { replacements: { organizationId, ...vis.replacements } }
+      { replacements: { organizationId, ...vis.replacements } },
     );
 
     const stats = (rows as any[])[0] || {};

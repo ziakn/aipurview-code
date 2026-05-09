@@ -11,10 +11,7 @@
  */
 
 import { describe, expect, it } from "@jest/globals";
-import {
-  cosineSimilarity,
-  buildAgentSourceText,
-} from "../agentEmbeddingMatcher";
+import { cosineSimilarity, buildAgentSourceText } from "../agentEmbeddingMatcher";
 import { AGENT_TOOL_MAP } from "../agentToolMap";
 
 /* ------------------------------------------------------------------ */
@@ -50,9 +47,7 @@ describe("agentEmbeddingMatcher / cosineSimilarity", () => {
     const target = [1, 1, 0];
     const closer = [1, 0.95, 0.1];
     const orthogonal = [0, 0, 1];
-    expect(cosineSimilarity(target, closer)).toBeGreaterThan(
-      cosineSimilarity(target, orthogonal),
-    );
+    expect(cosineSimilarity(target, closer)).toBeGreaterThan(cosineSimilarity(target, orthogonal));
   });
 
   it("is symmetric", () => {
@@ -107,12 +102,8 @@ describe("agentEmbeddingMatcher / buildAgentSourceText", () => {
   });
 
   it("produces distinct text for different agents", () => {
-    const vendor = buildAgentSourceText(
-      AGENT_TOOL_MAP.find((a) => a.name === "vendor-agent")!,
-    );
-    const risk = buildAgentSourceText(
-      AGENT_TOOL_MAP.find((a) => a.name === "risk-agent")!,
-    );
+    const vendor = buildAgentSourceText(AGENT_TOOL_MAP.find((a) => a.name === "vendor-agent")!);
+    const risk = buildAgentSourceText(AGENT_TOOL_MAP.find((a) => a.name === "risk-agent")!);
     expect(vendor).not.toBe(risk);
   });
 });

@@ -58,7 +58,7 @@ export async function flushCosts(): Promise<void> {
             timestamp: entry.timestamp,
           },
           type: QueryTypes.INSERT,
-        }
+        },
       );
     }
   } catch (error) {
@@ -74,7 +74,7 @@ export async function flushCosts(): Promise<void> {
 export async function getCostSummary(
   organizationId: number,
   dateFrom?: string,
-  dateTo?: string
+  dateTo?: string,
 ): Promise<Record<string, unknown>> {
   const conditions = ["organization_id = :organizationId", "to_state = 'cost_record'"];
   const replacements: Record<string, unknown> = { organizationId };
@@ -90,7 +90,7 @@ export async function getCostSummary(
 
   const where = conditions.join(" AND ");
 
-  const rows = await sequelize.query(
+  const rows = (await sequelize.query(
     `SELECT
        metadata->>'agent' as agent,
        metadata->>'model' as model,
@@ -102,8 +102,8 @@ export async function getCostSummary(
      WHERE ${where}
      GROUP BY metadata->>'agent', metadata->>'model'
      ORDER BY total_cost DESC`,
-    { replacements, type: QueryTypes.SELECT }
-  ) as any[];
+    { replacements, type: QueryTypes.SELECT },
+  )) as any[];
 
   return { breakdown: rows };
 }

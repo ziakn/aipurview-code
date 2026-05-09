@@ -10,10 +10,7 @@ import logger from "../../utils/logger/fileLogger";
 // Read Tools
 // ============================================================================
 
-const fetchVirtualFolders = async (
-  params: { limit?: number },
-  organizationId: number,
-) => {
+const fetchVirtualFolders = async (params: { limit?: number }, organizationId: number) => {
   try {
     let folders = await getAllFoldersQuery(organizationId);
 
@@ -33,10 +30,7 @@ const fetchVirtualFolders = async (
   }
 };
 
-const getFolderTree = async (
-  _params: Record<string, unknown>,
-  organizationId: number,
-) => {
+const getFolderTree = async (_params: Record<string, unknown>, organizationId: number) => {
   try {
     const tree = await getFolderTreeQuery(organizationId);
     return {
@@ -75,10 +69,7 @@ const getFolderFiles = async (
   }
 };
 
-const getUncategorizedFiles = async (
-  params: { limit?: number },
-  organizationId: number,
-) => {
+const getUncategorizedFiles = async (params: { limit?: number }, organizationId: number) => {
   try {
     let files = await getUncategorizedFilesQuery(organizationId);
 

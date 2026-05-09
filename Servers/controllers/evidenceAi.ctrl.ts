@@ -12,10 +12,7 @@ import {
 } from "../utils/evidenceAi.utils";
 import { parseDocument, isSupportedMimeType } from "../advisor/parsers";
 import { trackAIContent } from "../middleware/aiContentTracker.middleware";
-import {
-  analyzeEvidence,
-  type AnalyzerResult,
-} from "../advisor/evidenceAnalyzer/analyzer.service";
+import { analyzeEvidence, type AnalyzerResult } from "../advisor/evidenceAnalyzer/analyzer.service";
 import { getLLMKeysWithKeyQuery, getLLMProviderUrl } from "../utils/llmKey.utils";
 import type { LLMProvider } from "../domain.layer/interfaces/i.llmKey";
 
@@ -72,9 +69,7 @@ function buildHeuristicResult(documentText: string): {
   const foundAreas = complianceKeywords.filter((kw) =>
     documentText.toLowerCase().includes(kw.toLowerCase()),
   );
-  const sentences = documentText
-    .split(/[.!?]+/)
-    .filter((s) => s.trim().length > 20);
+  const sentences = documentText.split(/[.!?]+/).filter((s) => s.trim().length > 20);
   const findingPatterns =
     /\b(must|shall|should|require|recommend|ensure|implement|maintain|document|verify)\b/i;
   const keyFindings = sentences
@@ -82,26 +77,16 @@ function buildHeuristicResult(documentText: string): {
     .slice(0, 10)
     .map((s) => s.trim());
   const summary =
-    documentText.length > 500
-      ? documentText.substring(0, 500).trim() + "..."
-      : documentText.trim();
+    documentText.length > 500 ? documentText.substring(0, 500).trim() + "..." : documentText.trim();
 
   const relevance = Math.min(100, foundAreas.length * 15 + 10);
-  const completeness = Math.min(
-    100,
-    keyFindings.length * 10 + (summary.length > 200 ? 20 : 0),
-  );
+  const completeness = Math.min(100, keyFindings.length * 10 + (summary.length > 200 ? 20 : 0));
   const recency = 70;
   const reliability = Math.min(
     100,
-    (keyFindings.length > 3 ? 40 : 20) +
-      (foundAreas.length > 2 ? 30 : 10) +
-      20,
+    (keyFindings.length > 3 ? 40 : 20) + (foundAreas.length > 2 ? 30 : 10) + 20,
   );
-  const specificity = Math.min(
-    100,
-    keyFindings.filter((f) => f.length > 50).length * 15 + 10,
-  );
+  const specificity = Math.min(100, keyFindings.filter((f) => f.length > 50).length * 15 + 10);
   const overall = Math.round(
     relevance * 0.25 +
       completeness * 0.25 +
@@ -128,9 +113,7 @@ function buildHeuristicResult(documentText: string): {
 /**
  * Map mime type → parse fidelity hint for reliability scoring.
  */
-function inferParseFidelity(
-  fileType: string,
-): "high" | "medium" | "low" | undefined {
+function inferParseFidelity(fileType: string): "high" | "medium" | "low" | undefined {
   const t = fileType.toLowerCase();
   if (
     t.includes("officedocument.wordprocessing") ||
@@ -161,12 +144,7 @@ export async function analyzeFile(req: Request, res: Response) {
     return res.status(400).json(STATUS_CODE[400]("Invalid file ID"));
   }
 
-  logStructured(
-    "processing",
-    `analyzing file ${fileId}`,
-    functionName,
-    fileName,
-  );
+  logStructured("processing", `analyzing file ${fileId}`, functionName, fileName);
 
   try {
     const organizationId = req.organizationId!;
@@ -222,9 +200,7 @@ export async function analyzeFile(req: Request, res: Response) {
       }
     }
     if (!documentText || documentText.trim().length === 0) {
-      return res
-        .status(422)
-        .json(STATUS_CODE[422]("File has no extractable text content"));
+      return res.status(422).json(STATUS_CODE[422]("File has no extractable text content"));
     }
 
     // ---- Pick LLM key for the org --------------------------------
@@ -239,8 +215,7 @@ export async function analyzeFile(req: Request, res: Response) {
         fallbackReason = "no LLM key configured";
       } else {
         const apiKey = clients[0];
-        const baseURL =
-          apiKey.url || getLLMProviderUrl(apiKey.name as LLMProvider);
+        const baseURL = apiKey.url || getLLMProviderUrl(apiKey.name as LLMProvider);
         analyzerResult = await analyzeEvidence({
           documentText,
           filename: file.filename,
@@ -253,20 +228,13 @@ export async function analyzeFile(req: Request, res: Response) {
             apiKey: apiKey.key || "",
             baseURL,
             model: apiKey.model,
-            provider: apiKey.name as
-              | "Anthropic"
-              | "OpenAI"
-              | "OpenRouter"
-              | "Custom",
+            provider: apiKey.name as "Anthropic" | "OpenAI" | "OpenRouter" | "Custom",
             headers: apiKey.custom_headers || undefined,
           },
         });
       }
     } catch (llmErr) {
-      logger.warn(
-        "[evidenceAnalyzer] LLM analysis failed, falling back to heuristic-v1",
-        llmErr,
-      );
+      logger.warn("[evidenceAnalyzer] LLM analysis failed, falling back to heuristic-v1", llmErr);
       usedFallback = true;
       fallbackReason = (llmErr as Error).message || "LLM error";
     }
@@ -300,9 +268,7 @@ export async function analyzeFile(req: Request, res: Response) {
       qualityScore = h.qualityScore;
       overall = h.overall;
       suggestions = h.suggestions;
-      modelLabel = `heuristic-v1${
-        fallbackReason ? ` (fallback: ${fallbackReason})` : ""
-      }`;
+      modelLabel = `heuristic-v1${fallbackReason ? ` (fallback: ${fallbackReason})` : ""}`;
       // Heuristic path leaves audit_metadata null — no rationales available.
     }
 
@@ -334,10 +300,7 @@ export async function analyzeFile(req: Request, res: Response) {
           userId ?? undefined,
         );
       } catch (linkErr) {
-        logger.warn(
-          "Auto-apply suggestions failed (non-critical):",
-          linkErr,
-        );
+        logger.warn("Auto-apply suggestions failed (non-critical):", linkErr);
       }
     }
 
@@ -359,12 +322,7 @@ export async function analyzeFile(req: Request, res: Response) {
       userId,
     ).catch(() => {});
 
-    logStructured(
-      "successful",
-      `file ${fileId} analyzed (${modelLabel})`,
-      functionName,
-      fileName,
-    );
+    logStructured("successful", `file ${fileId} analyzed (${modelLabel})`, functionName, fileName);
     return res.status(200).json(STATUS_CODE[200](analysis));
   } catch (error) {
     logStructured("error", "failed to analyze file", functionName, fileName);
@@ -380,7 +338,7 @@ export async function analyzeFile(req: Request, res: Response) {
 export async function getAnalysis(req: Request, res: Response) {
   const functionName = "getAnalysis";
   const fileId = parseInt(
-    Array.isArray(req.params.fileId) ? req.params.fileId[0] : req.params.fileId
+    Array.isArray(req.params.fileId) ? req.params.fileId[0] : req.params.fileId,
   );
 
   if (isNaN(fileId)) {
@@ -389,7 +347,12 @@ export async function getAnalysis(req: Request, res: Response) {
 
   try {
     const visFilter = req.query.visibility ? String(req.query.visibility) : undefined;
-    const analysis = await getAnalysisByFileIdQuery(fileId, req.organizationId!, req.userId ? Number(req.userId) : null, visFilter);
+    const analysis = await getAnalysisByFileIdQuery(
+      fileId,
+      req.organizationId!,
+      req.userId ? Number(req.userId) : null,
+      visFilter,
+    );
 
     if (!analysis) {
       return res.status(204).json(STATUS_CODE[204](null));
@@ -413,7 +376,11 @@ export async function getQualityScores(req: Request, res: Response) {
 
   try {
     const visFilter = req.query.visibility ? String(req.query.visibility) : undefined;
-    const scores = await getQualityScoresQuery(req.organizationId!, req.userId ? Number(req.userId) : null, visFilter);
+    const scores = await getQualityScoresQuery(
+      req.organizationId!,
+      req.userId ? Number(req.userId) : null,
+      visFilter,
+    );
 
     logStructured("successful", "quality scores fetched", functionName, fileName);
     return res.status(200).json(STATUS_CODE[200](scores));
@@ -433,17 +400,21 @@ export async function getGaps(req: Request, res: Response) {
 
   try {
     const frameworkType = req.query.framework_type
-      ? String(Array.isArray(req.query.framework_type) ? req.query.framework_type[0] : req.query.framework_type)
+      ? String(
+          Array.isArray(req.query.framework_type)
+            ? req.query.framework_type[0]
+            : req.query.framework_type,
+        )
       : undefined;
     const qualityThreshold = req.query.quality_threshold
-      ? Number(Array.isArray(req.query.quality_threshold) ? req.query.quality_threshold[0] : req.query.quality_threshold)
+      ? Number(
+          Array.isArray(req.query.quality_threshold)
+            ? req.query.quality_threshold[0]
+            : req.query.quality_threshold,
+        )
       : 50;
 
-    const gaps = await getEvidenceGapsQuery(
-      req.organizationId!,
-      frameworkType,
-      qualityThreshold
-    );
+    const gaps = await getEvidenceGapsQuery(req.organizationId!, frameworkType, qualityThreshold);
 
     const noEvidence = gaps.filter((g: any) => g.gap_type === "no_evidence");
     const lowQuality = gaps.filter((g: any) => g.gap_type === "low_quality");
@@ -457,7 +428,7 @@ export async function getGaps(req: Request, res: Response) {
         controls_adequate: gaps.length - noEvidence.length - lowQuality.length,
         quality_threshold: qualityThreshold,
         gaps: gaps.filter((g: any) => g.gap_type !== "adequate"),
-      })
+      }),
     );
   } catch (error) {
     logStructured("error", "failed to get evidence gaps", functionName, fileName);
@@ -473,7 +444,7 @@ export async function getGaps(req: Request, res: Response) {
 export async function getSuggestions(req: Request, res: Response) {
   const functionName = "getSuggestions";
   const fileId = parseInt(
-    Array.isArray(req.params.fileId) ? req.params.fileId[0] : req.params.fileId
+    Array.isArray(req.params.fileId) ? req.params.fileId[0] : req.params.fileId,
   );
 
   if (isNaN(fileId)) {
@@ -503,7 +474,7 @@ export async function getSuggestions(req: Request, res: Response) {
 export async function applySuggestions(req: Request, res: Response) {
   const functionName = "applySuggestions";
   const fileId = parseInt(
-    Array.isArray(req.params.fileId) ? req.params.fileId[0] : req.params.fileId
+    Array.isArray(req.params.fileId) ? req.params.fileId[0] : req.params.fileId,
   );
 
   if (isNaN(fileId)) {
@@ -514,24 +485,17 @@ export async function applySuggestions(req: Request, res: Response) {
     const { suggestions } = req.body;
 
     if (!suggestions || !Array.isArray(suggestions) || suggestions.length === 0) {
-      return res
-        .status(400)
-        .json(STATUS_CODE[400]("Suggestions array is required"));
+      return res.status(400).json(STATUS_CODE[400]("Suggestions array is required"));
     }
 
     const userId = req.userId ? Number(req.userId) : undefined;
-    const result = await applySuggestionsQuery(
-      fileId,
-      req.organizationId!,
-      suggestions,
-      userId
-    );
+    const result = await applySuggestionsQuery(fileId, req.organizationId!, suggestions, userId);
 
     logStructured(
       "successful",
       `applied ${result.applied_count} suggestions for file ${fileId}`,
       functionName,
-      fileName
+      fileName,
     );
     return res.status(200).json(STATUS_CODE[200](result));
   } catch (error) {

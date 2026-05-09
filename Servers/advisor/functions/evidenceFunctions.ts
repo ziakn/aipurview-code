@@ -187,8 +187,7 @@ const getEvidenceExecutiveSummary = async (
 const agentCreateEvidence = createWriteToolFn({
   toolName: "agent_create_evidence",
   warningLevel: "warning",
-  descriptionFn: (params) =>
-    `Create evidence "${params.name}" of type "${params.type}"`,
+  descriptionFn: (params) => `Create evidence "${params.name}" of type "${params.type}"`,
   executeFn: async (params, organizationId) => {
     const transaction = await sequelize.transaction();
     try {
@@ -199,11 +198,7 @@ const agentCreateEvidence = createWriteToolFn({
         expiry_date: params.expiry_date || null,
         mapped_model_ids: params.model_id ? [params.model_id] : [],
       };
-      const result = await createNewEvidenceQuery(
-        evidenceData,
-        organizationId,
-        transaction,
-      );
+      const result = await createNewEvidenceQuery(evidenceData, organizationId, transaction);
       await transaction.commit();
       return {
         id: result.id,
@@ -231,17 +226,10 @@ const agentUpdateEvidence = createWriteToolFn({
       const updateData: any = {};
       if (params.name !== undefined) updateData.evidence_name = params.name;
       if (params.type !== undefined) updateData.evidence_type = params.type;
-      if (params.description !== undefined)
-        updateData.description = params.description;
-      if (params.expiry_date !== undefined)
-        updateData.expiry_date = params.expiry_date || null;
+      if (params.description !== undefined) updateData.description = params.description;
+      if (params.expiry_date !== undefined) updateData.expiry_date = params.expiry_date || null;
 
-      await updateEvidenceByIdQuery(
-        evidenceId,
-        updateData,
-        organizationId,
-        transaction,
-      );
+      await updateEvidenceByIdQuery(evidenceId, updateData, organizationId, transaction);
       await transaction.commit();
       return {
         id: evidenceId,

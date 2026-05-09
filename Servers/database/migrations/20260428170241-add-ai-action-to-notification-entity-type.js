@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Extend `enum_notification_entity_type` to include `'ai_action'`.

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Phase 0 — Shared Infrastructure
@@ -117,9 +117,17 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    await queryInterface.sequelize.query('DROP TABLE IF EXISTS verifywise.ai_content_metadata CASCADE');
-    await queryInterface.sequelize.query('DROP TABLE IF EXISTS verifywise.framework_readiness_scores CASCADE');
-    await queryInterface.sequelize.query('DROP TABLE IF EXISTS verifywise.control_readiness_scores CASCADE');
-    await queryInterface.sequelize.query('DROP TABLE IF EXISTS verifywise.evidence_ai_analysis CASCADE');
-  }
+    await queryInterface.sequelize.query(
+      "DROP TABLE IF EXISTS verifywise.ai_content_metadata CASCADE",
+    );
+    await queryInterface.sequelize.query(
+      "DROP TABLE IF EXISTS verifywise.framework_readiness_scores CASCADE",
+    );
+    await queryInterface.sequelize.query(
+      "DROP TABLE IF EXISTS verifywise.control_readiness_scores CASCADE",
+    );
+    await queryInterface.sequelize.query(
+      "DROP TABLE IF EXISTS verifywise.evidence_ai_analysis CASCADE",
+    );
+  },
 };

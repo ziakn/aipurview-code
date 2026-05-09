@@ -50,8 +50,7 @@ export async function fileCreateRisk(
   // 1. Strict schema validation — rejects unknown keys and enum drift.
   // Strip the bridge-injected `_userId` (and `_organizationId`) before
   // strict-parsing — see toolBridge.ts which always appends `_userId`.
-  const { _userId: _u, _organizationId: _o, ...userParams } =
-    params as Record<string, unknown>;
+  const { _userId: _u, _organizationId: _o, ...userParams } = params as Record<string, unknown>;
   void _u;
   void _o;
   const parsed = AgentCreateRiskSchema.safeParse(userParams);
@@ -60,9 +59,7 @@ export async function fileCreateRisk(
       path: i.path.join("."),
       message: i.message,
     }));
-    const errorList = errors
-      .map((e) => `- ${e.path}: ${e.message}`)
-      .join("\n");
+    const errorList = errors.map((e) => `- ${e.path}: ${e.message}`).join("\n");
     // Throw so the LLM treats this as a hard failure and surfaces it to
     // the user. Returning a soft `validation_failed` object had a habit of
     // being silently summarized away — the bland message did not force the

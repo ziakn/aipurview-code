@@ -11,7 +11,7 @@ const getPolicyLinkedObjects = async (
 ): Promise<any> => {
   try {
     // Get all linked objects for the policy
-    const linkedObjects = await sequelize.query(
+    const linkedObjects = (await sequelize.query(
       `SELECT id, policy_id, object_type, object_id, created_at
        FROM policy_linked_objects
        WHERE policy_id = :policy_id AND organization_id = :organization_id
@@ -20,7 +20,7 @@ const getPolicyLinkedObjects = async (
         replacements: { policy_id: params.policy_id, organization_id: organizationId },
         type: QueryTypes.SELECT,
       },
-    ) as any[];
+    )) as any[];
 
     // Group by object type
     const grouped: Record<string, any[]> = {};

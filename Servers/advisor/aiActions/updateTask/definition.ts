@@ -45,7 +45,8 @@ export const updateTaskToolDefinition: AiActionToolDefinition = {
         assignees: {
           type: "array",
           items: { type: "number" },
-          description: "Replacement assignee list (user ids). Optional. Replaces all current assignees.",
+          description:
+            "Replacement assignee list (user ids). Optional. Replaces all current assignees.",
         },
         categories: {
           type: "array",

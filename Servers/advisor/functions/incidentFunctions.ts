@@ -53,20 +53,31 @@ const fetchIncidents = async (
 
     // Case-insensitive severity mapping (LLM may send "high", "critical", etc.)
     const severityMap: Record<string, string> = {
-      low: "Minor", minor: "Minor",
-      medium: "Serious", moderate: "Serious", serious: "Serious", high: "Serious",
-      critical: "Very serious", "very serious": "Very serious", major: "Very serious",
+      low: "Minor",
+      minor: "Minor",
+      medium: "Serious",
+      moderate: "Serious",
+      serious: "Serious",
+      high: "Serious",
+      critical: "Very serious",
+      "very serious": "Very serious",
+      major: "Very serious",
     };
     const statusMap: Record<string, string> = {
-      open: "Open", investigating: "Investigating",
-      mitigated: "Mitigated", closed: "Closed", resolved: "Mitigated",
+      open: "Open",
+      investigating: "Investigating",
+      mitigated: "Mitigated",
+      closed: "Closed",
+      resolved: "Mitigated",
     };
 
     // Skip empty string filters (LLM sometimes sends "" as default)
     const hasValue = (v: unknown) => v !== undefined && v !== null && v !== "";
 
     if (hasValue(params.type)) {
-      incidents = incidents.filter((i) => i.type?.toLowerCase() === (params.type as string).toLowerCase());
+      incidents = incidents.filter(
+        (i) => i.type?.toLowerCase() === (params.type as string).toLowerCase(),
+      );
     }
     if (hasValue(params.severity)) {
       const mapped = severityMap[(params.severity as string).toLowerCase()] || params.severity;
@@ -77,7 +88,10 @@ const fetchIncidents = async (
       incidents = incidents.filter((i) => i.status === mapped);
     }
     if (hasValue(params.approval_status)) {
-      incidents = incidents.filter((i) => i.approval_status?.toLowerCase() === (params.approval_status as string).toLowerCase());
+      incidents = incidents.filter(
+        (i) =>
+          i.approval_status?.toLowerCase() === (params.approval_status as string).toLowerCase(),
+      );
     }
     if (hasValue(params.ai_project)) {
       incidents = incidents.filter(
@@ -441,7 +455,8 @@ const getIncidentExecutiveSummary = async (
 const agentCreateIncident = createWriteToolFn({
   toolName: "agent_create_incident",
   warningLevel: "warning",
-  descriptionFn: (params) => `Create incident "${params.title}"${params.severity ? ` (${params.severity})` : ""}`,
+  descriptionFn: (params) =>
+    `Create incident "${params.title}"${params.severity ? ` (${params.severity})` : ""}`,
   executeFn: async (params, organizationId) => {
     const transaction = await sequelize.transaction();
     try {
@@ -482,7 +497,8 @@ const agentCreateIncident = createWriteToolFn({
 const agentUpdateIncident = createWriteToolFn({
   toolName: "agent_update_incident",
   warningLevel: "warning",
-  descriptionFn: (params) => `Update incident #${params.incident_id}${params.title ? ` title to "${params.title}"` : ""}`,
+  descriptionFn: (params) =>
+    `Update incident #${params.incident_id}${params.title ? ` title to "${params.title}"` : ""}`,
   executeFn: async (params, organizationId) => {
     const transaction = await sequelize.transaction();
     try {
@@ -495,7 +511,8 @@ const agentUpdateIncident = createWriteToolFn({
       const incidentData = {
         ...existing.dataValues,
         ai_project: params.title !== undefined ? (params.title as string) : existing.ai_project,
-        description: params.description !== undefined ? (params.description as string) : existing.description,
+        description:
+          params.description !== undefined ? (params.description as string) : existing.description,
         type: params.type !== undefined ? (params.type as string) : existing.type,
         severity: params.severity !== undefined ? (params.severity as string) : existing.severity,
         status: params.status !== undefined ? (params.status as string) : existing.status,
@@ -505,7 +522,7 @@ const agentUpdateIncident = createWriteToolFn({
         params.incident_id as number,
         incidentData,
         organizationId,
-        transaction
+        transaction,
       );
       await transaction.commit();
       return { id: result.id, ai_project: result.ai_project, status: result.status };
@@ -537,7 +554,7 @@ const agentUpdateIncidentStatus = createWriteToolFn({
         params.incident_id as number,
         incidentData,
         organizationId,
-        transaction
+        transaction,
       );
       await transaction.commit();
       return { id: result.id, ai_project: result.ai_project, status: result.status };
@@ -558,7 +575,7 @@ const agentArchiveIncident = createWriteToolFn({
       const result = await archiveIncidentByIdQuery(
         params.incident_id as number,
         organizationId,
-        transaction
+        transaction,
       );
       await transaction.commit();
       return { id: result.id, ai_project: result.ai_project, archived: true };
@@ -579,7 +596,7 @@ const agentDeleteIncident = createWriteToolFn({
       const result = await deleteIncidentByIdQuery(
         params.incident_id as number,
         organizationId,
-        transaction
+        transaction,
       );
       await transaction.commit();
       return { deleted: true, incident_id: params.incident_id, ai_project: result?.ai_project };

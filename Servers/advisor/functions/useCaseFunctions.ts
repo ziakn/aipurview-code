@@ -188,7 +188,7 @@ const agentCreateUseCase = createWriteToolFn({
       // Generate next UC ID
       const ucIdResult = await sequelize.query<{ next_id: number }>(
         `SELECT nextval('project_uc_id_seq') AS next_id`,
-        { type: QueryTypes.SELECT, transaction }
+        { type: QueryTypes.SELECT, transaction },
       );
       const ucId = `UC-${ucIdResult[0].next_id}`;
 
@@ -217,7 +217,7 @@ const agentCreateUseCase = createWriteToolFn({
             created_at: now,
           },
           transaction,
-        }
+        },
       );
       await transaction.commit();
       const created = (result as any)[0]?.[0] || (result as any)[0];
@@ -266,7 +266,7 @@ const agentUpdateUseCase = createWriteToolFn({
 
     const result = await sequelize.query(
       `UPDATE projects SET ${setClauses.join(", ")} WHERE organization_id = :organizationId AND id = :id RETURNING *`,
-      { replacements }
+      { replacements },
     );
     const updated = (result as any)[0]?.[0] || (result as any)[0];
     return { success: true, use_case: updated };
@@ -276,8 +276,7 @@ const agentUpdateUseCase = createWriteToolFn({
 const agentUpdateUseCaseStatus = createWriteToolFn({
   toolName: "agent_update_use_case_status",
   warningLevel: "warning",
-  descriptionFn: (params) =>
-    `Update use case #${params.use_case_id} status to "${params.status}"`,
+  descriptionFn: (params) => `Update use case #${params.use_case_id} status to "${params.status}"`,
   executeFn: async (params, organizationId) => {
     const result = await sequelize.query(
       `UPDATE projects SET status = :status, last_updated = :last_updated WHERE organization_id = :organizationId AND id = :id RETURNING *`,
@@ -288,7 +287,7 @@ const agentUpdateUseCaseStatus = createWriteToolFn({
           status: params.status,
           last_updated: new Date(),
         },
-      }
+      },
     );
     const updated = (result as any)[0]?.[0] || (result as any)[0];
     return { success: true, use_case: updated };
@@ -311,7 +310,7 @@ const agentAddMemberToUseCase = createWriteToolFn({
           user_id: params.user_id,
         },
         type: QueryTypes.SELECT,
-      }
+      },
     );
 
     if ((existing as any[]).length > 0) {
@@ -326,9 +325,12 @@ const agentAddMemberToUseCase = createWriteToolFn({
           project_id: params.use_case_id,
           user_id: params.user_id,
         },
-      }
+      },
     );
-    return { success: true, message: `User #${params.user_id} added to use case #${params.use_case_id}` };
+    return {
+      success: true,
+      message: `User #${params.user_id} added to use case #${params.use_case_id}`,
+    };
   },
 });
 
@@ -343,20 +345,20 @@ const agentDeleteUseCase = createWriteToolFn({
       // Delete dependent records first
       await sequelize.query(
         `DELETE FROM projects_members WHERE organization_id = :organizationId AND project_id = :id`,
-        { replacements: { organizationId, id: params.use_case_id }, transaction }
+        { replacements: { organizationId, id: params.use_case_id }, transaction },
       );
       await sequelize.query(
         `DELETE FROM files WHERE organization_id = :organizationId AND project_id = :id`,
-        { replacements: { organizationId, id: params.use_case_id }, transaction }
+        { replacements: { organizationId, id: params.use_case_id }, transaction },
       );
       await sequelize.query(
         `DELETE FROM projects_risks WHERE organization_id = :organizationId AND project_id = :id`,
-        { replacements: { organizationId, id: params.use_case_id }, transaction }
+        { replacements: { organizationId, id: params.use_case_id }, transaction },
       );
 
       const result = await sequelize.query(
         `DELETE FROM projects WHERE organization_id = :organizationId AND id = :id RETURNING id, project_title`,
-        { replacements: { organizationId, id: params.use_case_id }, transaction }
+        { replacements: { organizationId, id: params.use_case_id }, transaction },
       );
       await transaction.commit();
       const deleted = (result as any)[0]?.[0] || (result as any)[0];

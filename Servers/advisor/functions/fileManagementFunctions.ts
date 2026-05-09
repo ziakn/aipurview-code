@@ -1,7 +1,4 @@
-import {
-  getFileById,
-  getFileMetadataByProjectId,
-} from "../../utils/fileUpload.utils";
+import { getFileById, getFileMetadataByProjectId } from "../../utils/fileUpload.utils";
 import {
   createFolderQuery,
   assignFilesToFolderQuery,
@@ -25,7 +22,7 @@ const fetchFiles = async (
     if (params.project_id) {
       files = await getFileMetadataByProjectId(params.project_id, organizationId);
     } else {
-      const [result] = await sequelize.query(
+      const [result] = (await sequelize.query(
         `SELECT
           f.id, f.filename, f.project_id, f.uploaded_time, f.source, f.size, f.type,
           u.name AS uploader_name, u.surname AS uploader_surname,
@@ -36,12 +33,12 @@ const fetchFiles = async (
         WHERE f.organization_id = :organizationId
         ORDER BY f.uploaded_time DESC`,
         { replacements: { organizationId } },
-      ) as [any[], number];
+      )) as [any[], number];
       files = result || [];
     }
 
     if (params.entity_type) {
-      const [entityFiles] = await sequelize.query(
+      const [entityFiles] = (await sequelize.query(
         `SELECT
           f.id, f.filename, f.project_id, f.uploaded_time, f.source, f.size, f.type,
           u.name AS uploader_name, u.surname AS uploader_surname
@@ -50,7 +47,7 @@ const fetchFiles = async (
         WHERE f.organization_id = :organizationId AND f.source = :entity_type
         ORDER BY f.uploaded_time DESC`,
         { replacements: { organizationId, entity_type: params.entity_type } },
-      ) as [any[], number];
+      )) as [any[], number];
       files = entityFiles || [];
     }
 
@@ -70,10 +67,7 @@ const fetchFiles = async (
   }
 };
 
-const getFileDetail = async (
-  params: { file_id: number },
-  organizationId: number,
-) => {
+const getFileDetail = async (params: { file_id: number }, organizationId: number) => {
   try {
     const file = await getFileById(params.file_id, organizationId);
     if (!file) {
@@ -104,7 +98,7 @@ const getFilesByEntity = async (
   organizationId: number,
 ) => {
   try {
-    const [files] = await sequelize.query(
+    const [files] = (await sequelize.query(
       `SELECT
         f.id, f.filename, f.project_id, f.uploaded_time, f.source, f.size, f.type,
         u.name AS uploader_name, u.surname AS uploader_surname
@@ -120,7 +114,7 @@ const getFilesByEntity = async (
           entity_id: params.entity_id,
         },
       },
-    ) as [any[], number];
+    )) as [any[], number];
 
     return {
       entity_type: params.entity_type,
@@ -136,10 +130,7 @@ const getFilesByEntity = async (
   }
 };
 
-const getFileChangeHistory = async (
-  params: { file_id: number },
-  organizationId: number,
-) => {
+const getFileChangeHistory = async (params: { file_id: number }, organizationId: number) => {
   try {
     const file = await getFileById(params.file_id, organizationId);
     if (!file) {
@@ -147,7 +138,7 @@ const getFileChangeHistory = async (
     }
 
     // Get folder assignment history
-    const [folderHistory] = await sequelize.query(
+    const [folderHistory] = (await sequelize.query(
       `SELECT
         ffm.folder_id, vf.name as folder_name, ffm.assigned_at, ffm.assigned_by,
         u.name as assigned_by_name
@@ -157,7 +148,7 @@ const getFileChangeHistory = async (
       WHERE ffm.organization_id = :organizationId AND ffm.file_id = :file_id
       ORDER BY ffm.assigned_at DESC`,
       { replacements: { organizationId, file_id: params.file_id } },
-    ) as [any[], number];
+    )) as [any[], number];
 
     return {
       file_id: params.file_id,
@@ -173,21 +164,18 @@ const getFileChangeHistory = async (
   }
 };
 
-const getFileAnalytics = async (
-  _params: Record<string, unknown>,
-  organizationId: number,
-) => {
+const getFileAnalytics = async (_params: Record<string, unknown>, organizationId: number) => {
   try {
-    const [totalResult] = await sequelize.query(
+    const [totalResult] = (await sequelize.query(
       `SELECT
         COUNT(*)::INTEGER as total_files,
         COALESCE(SUM(size), 0)::BIGINT as total_size_bytes
       FROM files
       WHERE organization_id = :organizationId`,
       { replacements: { organizationId } },
-    ) as [any[], number];
+    )) as [any[], number];
 
-    const [byProject] = await sequelize.query(
+    const [byProject] = (await sequelize.query(
       `SELECT p.project_title, COUNT(f.id)::INTEGER as file_count, COALESCE(SUM(f.size), 0)::BIGINT as total_size
       FROM files f
       LEFT JOIN projects p ON f.project_id = p.id AND p.organization_id = :organizationId
@@ -195,27 +183,27 @@ const getFileAnalytics = async (
       GROUP BY p.project_title
       ORDER BY file_count DESC`,
       { replacements: { organizationId } },
-    ) as [any[], number];
+    )) as [any[], number];
 
-    const [byType] = await sequelize.query(
+    const [byType] = (await sequelize.query(
       `SELECT type, COUNT(*)::INTEGER as count
       FROM files
       WHERE organization_id = :organizationId
       GROUP BY type
       ORDER BY count DESC`,
       { replacements: { organizationId } },
-    ) as [any[], number];
+    )) as [any[], number];
 
-    const [bySource] = await sequelize.query(
+    const [bySource] = (await sequelize.query(
       `SELECT source, COUNT(*)::INTEGER as count
       FROM files
       WHERE organization_id = :organizationId
       GROUP BY source
       ORDER BY count DESC`,
       { replacements: { organizationId } },
-    ) as [any[], number];
+    )) as [any[], number];
 
-    const [uncategorizedResult] = await sequelize.query(
+    const [uncategorizedResult] = (await sequelize.query(
       `SELECT COUNT(*)::INTEGER as uncategorized_count
       FROM files f
       WHERE f.organization_id = :organizationId AND NOT EXISTS (
@@ -223,7 +211,7 @@ const getFileAnalytics = async (
         WHERE ffm.organization_id = :organizationId AND ffm.file_id = f.id
       )`,
       { replacements: { organizationId } },
-    ) as [any[], number];
+    )) as [any[], number];
 
     return {
       totals: totalResult[0] || { total_files: 0, total_size_bytes: 0 },
@@ -245,7 +233,7 @@ const getFileExecutiveSummary = async (
   organizationId: number,
 ) => {
   try {
-    const [summary] = await sequelize.query(
+    const [summary] = (await sequelize.query(
       `SELECT
         (SELECT COUNT(*)::INTEGER FROM files WHERE organization_id = :organizationId) as total_files,
         (SELECT COALESCE(SUM(size), 0)::BIGINT FROM files WHERE organization_id = :organizationId) as total_storage_bytes,
@@ -255,9 +243,9 @@ const getFileExecutiveSummary = async (
         (SELECT COUNT(*)::INTEGER FROM files WHERE organization_id = :organizationId AND uploaded_time >= NOW() - INTERVAL '7 days') as recent_uploads_7d,
         (SELECT COUNT(*)::INTEGER FROM virtual_folders WHERE organization_id = :organizationId) as total_folders`,
       { replacements: { organizationId } },
-    ) as [any[], number];
+    )) as [any[], number];
 
-    const [topUploaders] = await sequelize.query(
+    const [topUploaders] = (await sequelize.query(
       `SELECT u.name, u.surname, COUNT(f.id)::INTEGER as upload_count
       FROM files f
       JOIN users u ON f.uploaded_by = u.id
@@ -266,10 +254,16 @@ const getFileExecutiveSummary = async (
       ORDER BY upload_count DESC
       LIMIT 5`,
       { replacements: { organizationId } },
-    ) as [any[], number];
+    )) as [any[], number];
 
     return {
-      ...(summary[0] || { total_files: 0, total_storage_bytes: 0, uncategorized_files: 0, recent_uploads_7d: 0, total_folders: 0 }),
+      ...(summary[0] || {
+        total_files: 0,
+        total_storage_bytes: 0,
+        uncategorized_files: 0,
+        recent_uploads_7d: 0,
+        total_folders: 0,
+      }),
       top_uploaders: topUploaders || [],
     };
   } catch (error) {
@@ -301,10 +295,20 @@ const agentAttachFileToEntity = createWriteToolFn({
        model_id = CASE WHEN :entity_type = 'model' THEN :entity_id ELSE model_id END
        WHERE organization_id = :organizationId AND id = :file_id`,
       {
-        replacements: { organizationId, file_id: fileId, entity_type: entityType, entity_id: entityId },
+        replacements: {
+          organizationId,
+          file_id: fileId,
+          entity_type: entityType,
+          entity_id: entityId,
+        },
       },
     );
-    return { file_id: fileId, entity_type: entityType, entity_id: entityId, message: "File attached to entity successfully" };
+    return {
+      file_id: fileId,
+      entity_type: entityType,
+      entity_id: entityId,
+      message: "File attached to entity successfully",
+    };
   },
 });
 
@@ -326,10 +330,20 @@ const agentDetachFileFromEntity = createWriteToolFn({
        model_id = CASE WHEN :entity_type = 'model' AND model_id = :entity_id THEN NULL ELSE model_id END
        WHERE organization_id = :organizationId AND id = :file_id`,
       {
-        replacements: { organizationId, file_id: fileId, entity_type: entityType, entity_id: entityId },
+        replacements: {
+          organizationId,
+          file_id: fileId,
+          entity_type: entityType,
+          entity_id: entityId,
+        },
       },
     );
-    return { file_id: fileId, entity_type: entityType, entity_id: entityId, message: "File detached from entity successfully" };
+    return {
+      file_id: fileId,
+      entity_type: entityType,
+      entity_id: entityId,
+      message: "File detached from entity successfully",
+    };
   },
 });
 
@@ -354,8 +368,7 @@ const agentCreateVirtualFolder = createWriteToolFn({
 const agentAssignFileToFolder = createWriteToolFn({
   toolName: "agent_assign_file_to_folder",
   warningLevel: "warning",
-  descriptionFn: (params) =>
-    `Assign file #${params.file_id} to folder #${params.folder_id}`,
+  descriptionFn: (params) => `Assign file #${params.file_id} to folder #${params.folder_id}`,
   executeFn: async (params, organizationId) => {
     const fileId = params.file_id as number;
     const folderId = params.folder_id as number;
@@ -366,21 +379,30 @@ const agentAssignFileToFolder = createWriteToolFn({
       [fileId],
       (params._userId as number) || 0,
     );
-    return { file_id: fileId, folder_id: folderId, assigned: count > 0, message: "File assigned to folder successfully" };
+    return {
+      file_id: fileId,
+      folder_id: folderId,
+      assigned: count > 0,
+      message: "File assigned to folder successfully",
+    };
   },
 });
 
 const agentRemoveFileFromFolder = createWriteToolFn({
   toolName: "agent_remove_file_from_folder",
   warningLevel: "warning",
-  descriptionFn: (params) =>
-    `Remove file #${params.file_id} from folder #${params.folder_id}`,
+  descriptionFn: (params) => `Remove file #${params.file_id} from folder #${params.folder_id}`,
   executeFn: async (params, organizationId) => {
     const fileId = params.file_id as number;
     const folderId = params.folder_id as number;
 
     const removed = await removeFileFromFolderQuery(organizationId, folderId, fileId);
-    return { file_id: fileId, folder_id: folderId, removed, message: "File removed from folder successfully" };
+    return {
+      file_id: fileId,
+      folder_id: folderId,
+      removed,
+      message: "File removed from folder successfully",
+    };
   },
 });
 

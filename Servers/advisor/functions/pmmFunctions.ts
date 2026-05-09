@@ -21,17 +21,14 @@ import logger from "../../utils/logger/fileLogger";
 // Read Tools
 // ============================================================================
 
-const getPmmConfig = async (
-  params: { project_id: number },
-  organizationId: number,
-) => {
+const getPmmConfig = async (params: { project_id: number }, organizationId: number) => {
   try {
-    const config = await getPMMConfigByProjectIdQuery(
-      params.project_id,
-      organizationId,
-    );
+    const config = await getPMMConfigByProjectIdQuery(params.project_id, organizationId);
     if (!config) {
-      return { message: "No PMM configuration found for this project.", project_id: params.project_id };
+      return {
+        message: "No PMM configuration found for this project.",
+        project_id: params.project_id,
+      };
     }
     return config;
   } catch (error) {
@@ -42,17 +39,14 @@ const getPmmConfig = async (
   }
 };
 
-const getPmmActiveCycle = async (
-  params: { project_id: number },
-  organizationId: number,
-) => {
+const getPmmActiveCycle = async (params: { project_id: number }, organizationId: number) => {
   try {
-    const cycle = await getActiveCycleByProjectIdQuery(
-      params.project_id,
-      organizationId,
-    );
+    const cycle = await getActiveCycleByProjectIdQuery(params.project_id, organizationId);
     if (!cycle) {
-      return { message: "No active PMM cycle found for this project.", project_id: params.project_id };
+      return {
+        message: "No active PMM cycle found for this project.",
+        project_id: params.project_id,
+      };
     }
     return cycle;
   } catch (error) {
@@ -63,10 +57,7 @@ const getPmmActiveCycle = async (
   }
 };
 
-const getPmmCycleDetail = async (
-  params: { cycle_id: number },
-  organizationId: number,
-) => {
+const getPmmCycleDetail = async (params: { cycle_id: number }, organizationId: number) => {
   try {
     const cycle = await getCycleByIdQuery(params.cycle_id, organizationId);
     if (!cycle) {
@@ -81,10 +72,7 @@ const getPmmCycleDetail = async (
   }
 };
 
-const getPmmCycleResponses = async (
-  params: { cycle_id: number },
-  organizationId: number,
-) => {
+const getPmmCycleResponses = async (params: { cycle_id: number }, organizationId: number) => {
   try {
     const responses = await getPMMResponsesQuery(params.cycle_id, organizationId);
     return {
@@ -100,10 +88,7 @@ const getPmmCycleResponses = async (
   }
 };
 
-const getPmmQuestions = async (
-  params: { config_id?: number },
-  organizationId: number,
-) => {
+const getPmmQuestions = async (params: { config_id?: number }, organizationId: number) => {
   try {
     if (!params.config_id) {
       return { message: "config_id is required to fetch PMM questions." };
@@ -147,13 +132,10 @@ const fetchPmmReports = async (
   }
 };
 
-const getPmmAnalytics = async (
-  _params: Record<string, unknown>,
-  organizationId: number,
-) => {
+const getPmmAnalytics = async (_params: Record<string, unknown>, organizationId: number) => {
   try {
     // Aggregate analytics across all PMM configs
-    const [configsResult] = await sequelize.query(
+    const [configsResult] = (await sequelize.query(
       `SELECT
         COUNT(*)::INTEGER as total_configs,
         COUNT(*) FILTER (WHERE is_active = true)::INTEGER as active_configs,
@@ -161,9 +143,9 @@ const getPmmAnalytics = async (
       FROM post_market_monitoring_configs
       WHERE organization_id = :organizationId`,
       { replacements: { organizationId } },
-    ) as [any[], number];
+    )) as [any[], number];
 
-    const [cyclesResult] = await sequelize.query(
+    const [cyclesResult] = (await sequelize.query(
       `SELECT
         COUNT(*)::INTEGER as total_cycles,
         COUNT(*) FILTER (WHERE status = 'pending')::INTEGER as pending_cycles,
@@ -173,27 +155,33 @@ const getPmmAnalytics = async (
       FROM post_market_monitoring_cycles
       WHERE organization_id = :organizationId`,
       { replacements: { organizationId } },
-    ) as [any[], number];
+    )) as [any[], number];
 
-    const [flaggedResult] = await sequelize.query(
+    const [flaggedResult] = (await sequelize.query(
       `SELECT COUNT(*)::INTEGER as flagged_count
       FROM post_market_monitoring_responses
       WHERE organization_id = :organizationId AND is_flagged = true`,
       { replacements: { organizationId } },
-    ) as [any[], number];
+    )) as [any[], number];
 
-    const [frequencyResult] = await sequelize.query(
+    const [frequencyResult] = (await sequelize.query(
       `SELECT frequency_unit, frequency_value, COUNT(*)::INTEGER as count
       FROM post_market_monitoring_configs
       WHERE organization_id = :organizationId AND is_active = true
       GROUP BY frequency_unit, frequency_value
       ORDER BY count DESC`,
       { replacements: { organizationId } },
-    ) as [any[], number];
+    )) as [any[], number];
 
     return {
       configs: configsResult[0] || { total_configs: 0, active_configs: 0, inactive_configs: 0 },
-      cycles: cyclesResult[0] || { total_cycles: 0, pending_cycles: 0, in_progress_cycles: 0, completed_cycles: 0, overdue_cycles: 0 },
+      cycles: cyclesResult[0] || {
+        total_cycles: 0,
+        pending_cycles: 0,
+        in_progress_cycles: 0,
+        completed_cycles: 0,
+        overdue_cycles: 0,
+      },
       flagged_concerns: (flaggedResult[0] as any)?.flagged_count || 0,
       frequency_distribution: frequencyResult || [],
     };
@@ -205,21 +193,18 @@ const getPmmAnalytics = async (
   }
 };
 
-const getPmmExecutiveSummary = async (
-  _params: Record<string, unknown>,
-  organizationId: number,
-) => {
+const getPmmExecutiveSummary = async (_params: Record<string, unknown>, organizationId: number) => {
   try {
-    const [summaryResult] = await sequelize.query(
+    const [summaryResult] = (await sequelize.query(
       `SELECT
         (SELECT COUNT(*)::INTEGER FROM post_market_monitoring_configs WHERE organization_id = :organizationId AND is_active = true) as active_monitors,
         (SELECT COUNT(*)::INTEGER FROM post_market_monitoring_cycles WHERE organization_id = :organizationId AND status = 'pending') as pending_cycles,
         (SELECT COUNT(*)::INTEGER FROM post_market_monitoring_cycles WHERE organization_id = :organizationId AND status = 'overdue') as overdue_cycles,
         (SELECT COUNT(*)::INTEGER FROM post_market_monitoring_responses WHERE organization_id = :organizationId AND is_flagged = true) as total_flagged_concerns`,
       { replacements: { organizationId } },
-    ) as [any[], number];
+    )) as [any[], number];
 
-    const [recentCycles] = await sequelize.query(
+    const [recentCycles] = (await sequelize.query(
       `SELECT c.id, c.cycle_number, c.status, c.due_date, cfg.project_id, p.project_title
       FROM post_market_monitoring_cycles c
       JOIN post_market_monitoring_configs cfg ON c.config_id = cfg.id AND cfg.organization_id = :organizationId
@@ -228,9 +213,9 @@ const getPmmExecutiveSummary = async (
       ORDER BY c.created_at DESC
       LIMIT 5`,
       { replacements: { organizationId } },
-    ) as [any[], number];
+    )) as [any[], number];
 
-    const [overdueCycleDetails] = await sequelize.query(
+    const [overdueCycleDetails] = (await sequelize.query(
       `SELECT c.id, c.cycle_number, c.due_date, cfg.project_id, p.project_title
       FROM post_market_monitoring_cycles c
       JOIN post_market_monitoring_configs cfg ON c.config_id = cfg.id AND cfg.organization_id = :organizationId
@@ -239,10 +224,15 @@ const getPmmExecutiveSummary = async (
       ORDER BY c.due_date ASC
       LIMIT 5`,
       { replacements: { organizationId } },
-    ) as [any[], number];
+    )) as [any[], number];
 
     return {
-      ...(summaryResult[0] || { active_monitors: 0, pending_cycles: 0, overdue_cycles: 0, total_flagged_concerns: 0 }),
+      ...(summaryResult[0] || {
+        active_monitors: 0,
+        pending_cycles: 0,
+        overdue_cycles: 0,
+        total_flagged_concerns: 0,
+      }),
       recent_cycles: recentCycles || [],
       overdue_cycle_details: overdueCycleDetails || [],
     };
@@ -269,9 +259,8 @@ const agentCreatePmmConfig = createWriteToolFn({
       const frequencyValue = params.frequency
         ? parseInt(String(params.frequency).replace(/\D/g, ""), 10) || 30
         : 30;
-      const frequencyUnit = params.frequency && String(params.frequency).includes("day")
-        ? "days"
-        : "days";
+      const frequencyUnit =
+        params.frequency && String(params.frequency).includes("day") ? "days" : "days";
 
       const config = await createPMMConfigQuery(
         {
@@ -285,7 +274,11 @@ const agentCreatePmmConfig = createWriteToolFn({
         transaction,
       );
       await transaction.commit();
-      return { id: config.id, project_id: params.project_id, message: "PMM configuration created successfully" };
+      return {
+        id: config.id,
+        project_id: params.project_id,
+        message: "PMM configuration created successfully",
+      };
     } catch (error) {
       await transaction.rollback();
       throw error;
@@ -307,7 +300,8 @@ const agentUpdatePmmConfig = createWriteToolFn({
       const updateData: Record<string, any> = {};
 
       if (params.frequency !== undefined) {
-        updateData.frequency_value = parseInt(String(params.frequency).replace(/\D/g, ""), 10) || 30;
+        updateData.frequency_value =
+          parseInt(String(params.frequency).replace(/\D/g, ""), 10) || 30;
         updateData.frequency_unit = "days";
       }
       if (params.stakeholder_id !== undefined) {
@@ -345,7 +339,11 @@ const agentAddPmmQuestion = createWriteToolFn({
         transaction,
       );
       await transaction.commit();
-      return { id: question.id, config_id: params.config_id, message: "PMM question added successfully" };
+      return {
+        id: question.id,
+        config_id: params.config_id,
+        message: "PMM question added successfully",
+      };
     } catch (error) {
       await transaction.rollback();
       throw error;
@@ -377,7 +375,12 @@ const agentStartPmmCycle = createWriteToolFn({
         transaction,
       );
       await transaction.commit();
-      return { id: cycle.id, config_id: configId, cycle_number: cycle.cycle_number, message: "PMM cycle started successfully" };
+      return {
+        id: cycle.id,
+        config_id: configId,
+        cycle_number: cycle.cycle_number,
+        message: "PMM cycle started successfully",
+      };
     } catch (error) {
       await transaction.rollback();
       throw error;
@@ -408,7 +411,11 @@ const agentSubmitPmmResponses = createWriteToolFn({
         transaction,
       );
       await transaction.commit();
-      return { cycle_id: cycleId, responses_saved: responses.length, message: "PMM responses submitted successfully" };
+      return {
+        cycle_id: cycleId,
+        responses_saved: responses.length,
+        message: "PMM responses submitted successfully",
+      };
     } catch (error) {
       await transaction.rollback();
       throw error;
@@ -434,7 +441,12 @@ const agentFlagPmmConcern = createWriteToolFn({
         replacements: { organizationId, cycleId, questionId, concern_text: concernText },
       },
     );
-    return { cycle_id: cycleId, question_id: questionId, flagged: true, message: "PMM concern flagged successfully" };
+    return {
+      cycle_id: cycleId,
+      question_id: questionId,
+      flagged: true,
+      message: "PMM concern flagged successfully",
+    };
   },
 });
 

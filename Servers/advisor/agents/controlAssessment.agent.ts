@@ -22,13 +22,17 @@ Always prioritize the weakest dimensions and provide concrete next steps.`;
 export function registerControlAssessmentAgent(tenant: number) {
   const tools = bridgeTools(
     readinessToolsDefinition,
-    availableReadinessTools as Record<string, (params: Record<string, unknown>, tenant: number) => Promise<unknown>>,
-    tenant
+    availableReadinessTools as Record<
+      string,
+      (params: Record<string, unknown>, tenant: number) => Promise<unknown>
+    >,
+    tenant,
   );
 
   registerAgent({
     name: "control-assessment-agent",
-    description: "Evaluates audit readiness per control, aggregates to framework level, and generates recommendations",
+    description:
+      "Evaluates audit readiness per control, aggregates to framework level, and generates recommendations",
     systemPrompt: CONTROL_ASSESSMENT_PROMPT,
     tools,
     maxSteps: 8,

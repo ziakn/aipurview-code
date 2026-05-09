@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Create `agent_embeddings` table for the Phase-2 embedding-based agent

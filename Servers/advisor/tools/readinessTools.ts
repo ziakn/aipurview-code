@@ -14,8 +14,7 @@ export const toolsDefinition: any[] = [
           },
           framework_type: {
             type: "string",
-            description:
-              "The framework type (e.g., 'eu_ai_act', 'iso_42001').",
+            description: "The framework type (e.g., 'eu_ai_act', 'iso_42001').",
           },
         },
         required: ["control_id", "framework_type"],
@@ -37,8 +36,7 @@ export const toolsDefinition: any[] = [
           },
           framework_type: {
             type: "string",
-            description:
-              "The framework type (e.g., 'eu_ai_act', 'iso_42001').",
+            description: "The framework type (e.g., 'eu_ai_act', 'iso_42001').",
           },
         },
         required: ["control_id", "framework_type"],
@@ -60,8 +58,7 @@ export const toolsDefinition: any[] = [
           },
           framework_type: {
             type: "string",
-            description:
-              "The framework type (e.g., 'eu_ai_act', 'iso_42001').",
+            description: "The framework type (e.g., 'eu_ai_act', 'iso_42001').",
           },
         },
         required: ["control_id", "framework_type"],
@@ -79,8 +76,7 @@ export const toolsDefinition: any[] = [
         properties: {
           framework_type: {
             type: "string",
-            description:
-              "The framework type to generate recommendations for.",
+            description: "The framework type to generate recommendations for.",
           },
           project_id: {
             type: "number",
@@ -88,8 +84,7 @@ export const toolsDefinition: any[] = [
           },
           limit: {
             type: "number",
-            description:
-              "Maximum number of recommendations to generate (default: 10).",
+            description: "Maximum number of recommendations to generate (default: 10).",
           },
         },
         required: ["framework_type"],

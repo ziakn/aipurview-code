@@ -95,23 +95,16 @@ async function fetchCachedEmbeddings(
      FROM control_embeddings
      WHERE embedding_model = :model
        AND (framework_type, control_id) IN (
-         ${controls
-           .map(
-             (_, i) => `(:fw${i}, :id${i})`,
-           )
-           .join(", ")}
+         ${controls.map((_, i) => `(:fw${i}, :id${i})`).join(", ")}
        )`,
     {
       replacements: {
         model: EMBEDDING_MODEL,
-        ...controls.reduce<Record<string, string | number>>(
-          (acc, c, i) => {
-            acc[`fw${i}`] = c.framework_type;
-            acc[`id${i}`] = c.control_id;
-            return acc;
-          },
-          {},
-        ),
+        ...controls.reduce<Record<string, string | number>>((acc, c, i) => {
+          acc[`fw${i}`] = c.framework_type;
+          acc[`id${i}`] = c.control_id;
+          return acc;
+        }, {}),
       },
     },
   );
@@ -119,10 +112,7 @@ async function fetchCachedEmbeddings(
   const map = new Map<string, CachedEmbedding>();
   for (const row of rows as any[]) {
     const key = `${row.framework_type}|${row.control_id}`;
-    const embedding =
-      typeof row.embedding === "string"
-        ? JSON.parse(row.embedding)
-        : row.embedding;
+    const embedding = typeof row.embedding === "string" ? JSON.parse(row.embedding) : row.embedding;
     map.set(key, {
       control_id: row.control_id,
       framework_type: row.framework_type,
@@ -247,10 +237,7 @@ export async function rankControlsByEmbedding(params: {
     ranked.sort((a, b) => b.similarity - a.similarity);
     return ranked.slice(0, topK);
   } catch (err) {
-    logger.warn(
-      "[evidenceAnalyzer/embeddingMatcher] failed; caller should fall back",
-      err,
-    );
+    logger.warn("[evidenceAnalyzer/embeddingMatcher] failed; caller should fall back", err);
     return null;
   }
 }

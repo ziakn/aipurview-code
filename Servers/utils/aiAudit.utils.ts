@@ -12,7 +12,10 @@ interface AnalyticsFilters {
   dateTo?: string;
 }
 
-function dateCondition(alias: string, filters?: AnalyticsFilters): { sql: string; replacements: Record<string, unknown> } {
+function dateCondition(
+  alias: string,
+  filters?: AnalyticsFilters,
+): { sql: string; replacements: Record<string, unknown> } {
   const conditions: string[] = [];
   const replacements: Record<string, unknown> = {};
   if (filters?.dateFrom) {
@@ -31,12 +34,12 @@ function dateCondition(alias: string, filters?: AnalyticsFilters): { sql: string
  */
 export async function getAIAuditAnalytics(
   organizationId: number,
-  filters?: AnalyticsFilters
+  filters?: AnalyticsFilters,
 ): Promise<Record<string, unknown>> {
   const dc = dateCondition("aa", filters);
 
   // Summary stats
-  const [summary] = await sequelize.query(
+  const [summary] = (await sequelize.query(
     `SELECT
        COUNT(*) as total_actions,
        COUNT(*) FILTER (WHERE state = 'completed' AND rule_matched LIKE 'auto_approve%') as auto_approved,
@@ -49,20 +52,20 @@ export async function getAIAuditAnalytics(
        ROUND(100.0 * COUNT(*) FILTER (WHERE state = 'rejected') / NULLIF(COUNT(*), 0), 2) as rejection_rate_pct
      FROM ai_action_approvals aa
      WHERE organization_id = :organizationId ${dc.sql}`,
-    { replacements: { organizationId, ...dc.replacements }, type: QueryTypes.SELECT }
-  ) as any[];
+    { replacements: { organizationId, ...dc.replacements }, type: QueryTypes.SELECT },
+  )) as any[];
 
   // Actions by state
-  const byState = await sequelize.query(
+  const byState = (await sequelize.query(
     `SELECT state, COUNT(*) as count
      FROM ai_action_approvals aa
      WHERE organization_id = :organizationId ${dc.sql}
      GROUP BY state ORDER BY count DESC`,
-    { replacements: { organizationId, ...dc.replacements }, type: QueryTypes.SELECT }
-  ) as any[];
+    { replacements: { organizationId, ...dc.replacements }, type: QueryTypes.SELECT },
+  )) as any[];
 
   // Actions by tool category (derived from tool_name)
-  const byCategory = await sequelize.query(
+  const byCategory = (await sequelize.query(
     `SELECT
        CASE
          WHEN tool_name LIKE '%risk%' THEN 'Risk'
@@ -81,38 +84,38 @@ export async function getAIAuditAnalytics(
      FROM ai_action_approvals aa
      WHERE organization_id = :organizationId ${dc.sql}
      GROUP BY category ORDER BY count DESC`,
-    { replacements: { organizationId, ...dc.replacements }, type: QueryTypes.SELECT }
-  ) as any[];
+    { replacements: { organizationId, ...dc.replacements }, type: QueryTypes.SELECT },
+  )) as any[];
 
   // Top rules matched
-  const topRules = await sequelize.query(
+  const topRules = (await sequelize.query(
     `SELECT rule_matched, COUNT(*) as count
      FROM ai_action_approvals aa
      WHERE organization_id = :organizationId AND rule_matched IS NOT NULL ${dc.sql}
      GROUP BY rule_matched ORDER BY count DESC LIMIT 10`,
-    { replacements: { organizationId, ...dc.replacements }, type: QueryTypes.SELECT }
-  ) as any[];
+    { replacements: { organizationId, ...dc.replacements }, type: QueryTypes.SELECT },
+  )) as any[];
 
   // Daily volume (last 30 days)
-  const dailyVolume = await sequelize.query(
+  const dailyVolume = (await sequelize.query(
     `SELECT DATE(created_at) as date, COUNT(*) as count
      FROM ai_action_approvals aa
      WHERE organization_id = :organizationId
        AND created_at >= NOW() - INTERVAL '30 days' ${dc.sql}
      GROUP BY DATE(created_at) ORDER BY date ASC`,
-    { replacements: { organizationId, ...dc.replacements }, type: QueryTypes.SELECT }
-  ) as any[];
+    { replacements: { organizationId, ...dc.replacements }, type: QueryTypes.SELECT },
+  )) as any[];
 
   // Top users
-  const topUsers = await sequelize.query(
+  const topUsers = (await sequelize.query(
     `SELECT aa.requested_by as user_id, u.name, u.surname, COUNT(*) as count
      FROM ai_action_approvals aa
      LEFT JOIN users u ON aa.requested_by = u.id
      WHERE aa.organization_id = :organizationId ${dc.sql}
      GROUP BY aa.requested_by, u.name, u.surname
      ORDER BY count DESC LIMIT 10`,
-    { replacements: { organizationId, ...dc.replacements }, type: QueryTypes.SELECT }
-  ) as any[];
+    { replacements: { organizationId, ...dc.replacements }, type: QueryTypes.SELECT },
+  )) as any[];
 
   return {
     summary: summary || {},
@@ -129,11 +132,11 @@ export async function getAIAuditAnalytics(
  */
 export async function getAuditExportData(
   organizationId: number,
-  filters?: AnalyticsFilters
+  filters?: AnalyticsFilters,
 ): Promise<Record<string, unknown>[]> {
   const dc = dateCondition("aa", filters);
 
-  return await sequelize.query(
+  return (await sequelize.query(
     `SELECT
        aa.id, aa.tool_name, aa.action_type, aa.risk_level, aa.state,
        aa.rule_matched, aa.error_message,
@@ -146,6 +149,6 @@ export async function getAuditExportData(
      WHERE aa.organization_id = :organizationId ${dc.sql}
      ORDER BY aa.created_at DESC
      LIMIT 10000`,
-    { replacements: { organizationId, ...dc.replacements }, type: QueryTypes.SELECT }
-  ) as any[];
+    { replacements: { organizationId, ...dc.replacements }, type: QueryTypes.SELECT },
+  )) as any[];
 }

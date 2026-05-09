@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Upgrade-safe migration: adds project-scoped unique indexes and readiness_history table.
@@ -53,9 +53,15 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.sequelize.query(`DROP INDEX IF EXISTS verifywise.uq_ctrl_readiness_control_fw_proj_org`);
-    await queryInterface.sequelize.query(`DROP INDEX IF EXISTS verifywise.uq_fw_readiness_fw_proj_org`);
-    await queryInterface.sequelize.query(`DROP TABLE IF EXISTS verifywise.readiness_history CASCADE`);
+    await queryInterface.sequelize.query(
+      `DROP INDEX IF EXISTS verifywise.uq_ctrl_readiness_control_fw_proj_org`,
+    );
+    await queryInterface.sequelize.query(
+      `DROP INDEX IF EXISTS verifywise.uq_fw_readiness_fw_proj_org`,
+    );
+    await queryInterface.sequelize.query(
+      `DROP TABLE IF EXISTS verifywise.readiness_history CASCADE`,
+    );
 
     // Restore old org-only indexes
     await queryInterface.sequelize.query(`
@@ -66,5 +72,5 @@ module.exports = {
       CREATE UNIQUE INDEX IF NOT EXISTS uq_fw_readiness_fw_org
         ON verifywise.framework_readiness_scores(framework_type, organization_id)
     `);
-  }
+  },
 };

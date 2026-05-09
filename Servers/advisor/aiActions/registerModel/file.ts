@@ -45,8 +45,7 @@ export async function fileRegisterModel(
   // Strip the bridge-injected `_userId` (and any future `_organizationId`)
   // before strict-parsing — the schema is `.strict()` so unknown keys are
   // rejected. See toolBridge.ts which always appends `_userId` to params.
-  const { _userId: _u, _organizationId: _o, ...userParams } =
-    params as Record<string, unknown>;
+  const { _userId: _u, _organizationId: _o, ...userParams } = params as Record<string, unknown>;
   void _u;
   void _o;
   const parsed = AgentRegisterModelSchema.safeParse(userParams);
@@ -96,8 +95,7 @@ export async function fileRegisterModel(
 
     const dup = existing[0]?.[0];
     if (dup?.id) {
-      const dupPreview =
-        dup.entity_data?.preview ?? renderRegisterModelPreview(parsed.data);
+      const dupPreview = dup.entity_data?.preview ?? renderRegisterModelPreview(parsed.data);
       logger.info(
         `[fileRegisterModel] duplicate suppressed — re-using pending approval #${dup.id} for "${parsed.data.name}" (org=${organizationId}, user=${userId})`,
       );
@@ -135,22 +133,12 @@ export async function fileRegisterModel(
 
   const transaction = await sequelize.transaction();
   try {
-    const workflow = await ensureAiActionWorkflow(
-      organizationId,
-      userId,
-      transaction,
-    );
+    const workflow = await ensureAiActionWorkflow(organizationId, userId, transaction);
 
-    const workflowSteps = await getWorkflowStepsQuery(
-      workflow.id!,
-      organizationId,
-      transaction,
-    );
+    const workflowSteps = await getWorkflowStepsQuery(workflow.id!, organizationId, transaction);
 
     if (!workflowSteps || workflowSteps.length === 0) {
-      throw new Error(
-        "AI Action workflow has no steps — cannot file approval request",
-      );
+      throw new Error("AI Action workflow has no steps — cannot file approval request");
     }
 
     const preview = renderRegisterModelPreview(parsed.data);
@@ -191,10 +179,7 @@ export async function fileRegisterModel(
     };
   } catch (error) {
     await transaction.rollback();
-    logger.error(
-      `[${REGISTER_MODEL_TOOL_NAME}] failed to file approval request`,
-      error,
-    );
+    logger.error(`[${REGISTER_MODEL_TOOL_NAME}] failed to file approval request`, error);
     return {
       status: "error",
       message: `Failed to file approval request: ${error instanceof Error ? error.message : "unknown error"}`,

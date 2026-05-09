@@ -1,11 +1,6 @@
 import express from "express";
 import authenticateJWT from "../middleware/auth.middleware";
-import {
-  getBadges,
-  reviewContent,
-  getUnreviewed,
-  getStats,
-} from "../controllers/aiContent.ctrl";
+import { getBadges, reviewContent, getUnreviewed, getStats } from "../controllers/aiContent.ctrl";
 
 const router = express.Router();
 

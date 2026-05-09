@@ -620,7 +620,7 @@ const agentCreatePolicy = createWriteToolFn({
           last_updated_at: new Date(),
         },
         type: QueryTypes.SELECT,
-      }
+      },
     );
 
     return result;
@@ -631,7 +631,9 @@ const agentUpdatePolicy = createWriteToolFn({
   toolName: "agent_update_policy",
   warningLevel: "warning",
   descriptionFn: (params) => {
-    const fields = Object.keys(params).filter((k) => k !== "policy_id" && k !== "_userId" && k !== "_organizationId");
+    const fields = Object.keys(params).filter(
+      (k) => k !== "policy_id" && k !== "_userId" && k !== "_organizationId",
+    );
     return `Update policy #${params.policy_id} — fields: ${fields.join(", ")}`;
   },
   executeFn: async (params, organizationId) => {
@@ -675,7 +677,7 @@ const agentUpdatePolicy = createWriteToolFn({
       {
         replacements,
         type: QueryTypes.SELECT,
-      }
+      },
     );
 
     if (!result) {
@@ -689,8 +691,7 @@ const agentUpdatePolicy = createWriteToolFn({
 const agentSubmitPolicyForReview = createWriteToolFn({
   toolName: "agent_submit_policy_for_review",
   warningLevel: "warning",
-  descriptionFn: (params) =>
-    `Submit policy #${params.policy_id} for review`,
+  descriptionFn: (params) => `Submit policy #${params.policy_id} for review`,
   executeFn: async (params, organizationId) => {
     const policyId = params.policy_id as number;
     const userId = (params._userId as number) || 0;
@@ -706,7 +707,7 @@ const agentSubmitPolicyForReview = createWriteToolFn({
           now: new Date(),
         },
         type: QueryTypes.SELECT,
-      }
+      },
     );
 
     if (!result) {
@@ -738,7 +739,7 @@ const agentApprovePolicyReview = createWriteToolFn({
           comment: (params.approval_notes as string) || null,
         },
         type: QueryTypes.SELECT,
-      }
+      },
     );
 
     if (!result) {
@@ -752,15 +753,14 @@ const agentApprovePolicyReview = createWriteToolFn({
 const agentDeletePolicy = createWriteToolFn({
   toolName: "agent_delete_policy",
   warningLevel: "danger",
-  descriptionFn: (params) =>
-    `Delete policy #${params.policy_id}`,
+  descriptionFn: (params) => `Delete policy #${params.policy_id}`,
   executeFn: async (params, organizationId) => {
     const policyId = params.policy_id as number;
 
     // Delete reviewer mappings first
     await sequelize.query(
       `DELETE FROM policy_manager__assigned_reviewer_ids WHERE organization_id = :organizationId AND policy_manager_id = :policyId`,
-      { replacements: { organizationId, policyId } }
+      { replacements: { organizationId, policyId } },
     );
 
     // Delete the policy
@@ -769,7 +769,7 @@ const agentDeletePolicy = createWriteToolFn({
       {
         replacements: { organizationId, policyId },
         type: QueryTypes.SELECT,
-      }
+      },
     );
 
     if (!result || result.length === 0) {

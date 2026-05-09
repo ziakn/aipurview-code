@@ -29,7 +29,10 @@ import {
   withdrawApprovalRequestQuery,
 } from "../utils/approvalRequest.utils";
 import { TransientApprovalError } from "../advisor/approval/approvalGateway";
-import { getApprovalWorkflowByIdQuery, getWorkflowStepsQuery } from "../utils/approvalWorkflow.utils";
+import {
+  getApprovalWorkflowByIdQuery,
+  getWorkflowStepsQuery,
+} from "../utils/approvalWorkflow.utils";
 import { ApprovalResult } from "../domain.layer/enums/approval-workflow.enum";
 import {
   notifyApprovalRequested,
@@ -452,7 +455,7 @@ export async function approveRequest(req: Request, res: Response): Promise<any> 
             // of always "Use case fully approved").
             const [entityRow] = await sequelize.query<{ entity_type: string | null }>(
               `SELECT entity_type FROM approval_requests WHERE organization_id = :organizationId AND id = :requestId`,
-              { replacements: { organizationId, requestId }, type: QueryTypes.SELECT }
+              { replacements: { organizationId, requestId }, type: QueryTypes.SELECT },
             );
 
             await notifyApprovalComplete(
@@ -483,7 +486,7 @@ export async function approveRequest(req: Request, res: Response): Promise<any> 
         "processing",
         `transient approval failure — keeping request pending: ${error.message}`,
         "approveRequest",
-        "approvalRequest.ctrl.ts"
+        "approvalRequest.ctrl.ts",
       );
       return res.status(409).json(STATUS_CODE[409](error.message));
     }

@@ -14,8 +14,7 @@ export const toolsDefinition: any[] = [
           },
           document_text: {
             type: "string",
-            description:
-              "The extracted text content of the document to analyze.",
+            description: "The extracted text content of the document to analyze.",
           },
         },
         required: ["file_id", "document_text"],
@@ -41,13 +40,11 @@ export const toolsDefinition: any[] = [
           },
           key_findings: {
             type: "string",
-            description:
-              "Key findings from the document as a JSON string array.",
+            description: "Key findings from the document as a JSON string array.",
           },
           compliance_areas: {
             type: "string",
-            description:
-              "Identified compliance areas as a JSON string array.",
+            description: "Identified compliance areas as a JSON string array.",
           },
         },
         required: ["file_id", "summary"],
@@ -69,13 +66,11 @@ export const toolsDefinition: any[] = [
           },
           compliance_areas: {
             type: "string",
-            description:
-              "Identified compliance areas as a JSON string array.",
+            description: "Identified compliance areas as a JSON string array.",
           },
           framework_type: {
             type: "string",
-            description:
-              "Filter to a specific framework type (e.g., 'eu_ai_act', 'iso_42001').",
+            description: "Filter to a specific framework type (e.g., 'eu_ai_act', 'iso_42001').",
           },
         },
         required: ["file_id"],
@@ -93,8 +88,7 @@ export const toolsDefinition: any[] = [
         properties: {
           framework_type: {
             type: "string",
-            description:
-              "Filter to a specific framework type (e.g., 'eu_ai_act', 'iso_42001').",
+            description: "Filter to a specific framework type (e.g., 'eu_ai_act', 'iso_42001').",
           },
           project_id: {
             type: "number",
@@ -102,8 +96,7 @@ export const toolsDefinition: any[] = [
           },
           quality_threshold: {
             type: "number",
-            description:
-              "Minimum quality score to consider evidence adequate (default: 50).",
+            description: "Minimum quality score to consider evidence adequate (default: 50).",
           },
         },
         required: [],

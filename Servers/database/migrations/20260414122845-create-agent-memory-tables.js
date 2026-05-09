@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Phase 3 — Agent Memory System
@@ -81,5 +81,5 @@ module.exports = {
     await queryInterface.sequelize.query(`DROP TABLE IF EXISTS verifywise.agent_semantic_memory;`);
     await queryInterface.sequelize.query(`DROP TABLE IF EXISTS verifywise.agent_working_memory;`);
     await queryInterface.sequelize.query(`DROP TABLE IF EXISTS verifywise.agent_message_history;`);
-  }
+  },
 };

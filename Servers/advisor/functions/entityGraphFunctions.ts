@@ -3,13 +3,8 @@ import {
   getAnnotationByEntityQuery,
   deleteAnnotationByIdQuery,
 } from "../../utils/entityGraphAnnotations.utils";
-import {
-  getViewsByUserQuery,
-} from "../../utils/entityGraphViews.utils";
-import {
-  getGapRulesByUserQuery,
-  getDefaultGapRules,
-} from "../../utils/entityGraphGapRules.utils";
+import { getViewsByUserQuery } from "../../utils/entityGraphViews.utils";
+import { getGapRulesByUserQuery, getDefaultGapRules } from "../../utils/entityGraphGapRules.utils";
 import { createWriteToolFn } from "../confirmation/createWriteTool";
 import { sequelize } from "../../database/db";
 import logger from "../../utils/logger/fileLogger";
@@ -39,9 +34,7 @@ const fetchEntityAnnotations = async (
       let annotations = rows as any[];
 
       if (params.entity_type) {
-        annotations = annotations.filter(
-          (a: any) => a.entity_type === params.entity_type,
-        );
+        annotations = annotations.filter((a: any) => a.entity_type === params.entity_type);
       }
       if (params.limit && params.limit > 0) {
         annotations = annotations.slice(0, params.limit);
@@ -57,15 +50,10 @@ const fetchEntityAnnotations = async (
       }));
     }
 
-    let annotations = await getAnnotationsByUserQuery(
-      params.user_id,
-      organizationId,
-    );
+    let annotations = await getAnnotationsByUserQuery(params.user_id, organizationId);
 
     if (params.entity_type) {
-      annotations = annotations.filter(
-        (a) => a.entity_type === params.entity_type,
-      );
+      annotations = annotations.filter((a) => a.entity_type === params.entity_type);
     }
     if (params.limit && params.limit > 0) {
       annotations = annotations.slice(0, params.limit);
@@ -208,10 +196,7 @@ export interface GetGapRulesParams {
   user_id?: number;
 }
 
-const getGapRules = async (
-  params: GetGapRulesParams,
-  organizationId: number,
-): Promise<any> => {
+const getGapRules = async (params: GetGapRulesParams, organizationId: number): Promise<any> => {
   try {
     if (!params.user_id) {
       // Return all gap rules for the organization
@@ -234,10 +219,7 @@ const getGapRules = async (
       return null;
     }
 
-    const gapRules = await getGapRulesByUserQuery(
-      params.user_id,
-      organizationId,
-    );
+    const gapRules = await getGapRulesByUserQuery(params.user_id, organizationId);
 
     if (!gapRules) return null;
 
@@ -274,8 +256,7 @@ const getDefaultGapRulesHandler = async (
 const agentCreateEntityAnnotation = createWriteToolFn({
   toolName: "agent_create_entity_annotation",
   warningLevel: "warning",
-  descriptionFn: (params) =>
-    `Create annotation on ${params.entity_type} #${params.entity_id}`,
+  descriptionFn: (params) => `Create annotation on ${params.entity_type} #${params.entity_id}`,
   executeFn: async (params, organizationId) => {
     const [rows] = await sequelize.query(
       `INSERT INTO entity_graph_annotations
@@ -294,7 +275,12 @@ const agentCreateEntityAnnotation = createWriteToolFn({
       },
     );
     const row = (rows as any[])[0];
-    return { id: row.id, entity_type: row.entity_type, entity_id: row.entity_id, message: "Annotation created successfully" };
+    return {
+      id: row.id,
+      entity_type: row.entity_type,
+      entity_id: row.entity_id,
+      message: "Annotation created successfully",
+    };
   },
 });
 

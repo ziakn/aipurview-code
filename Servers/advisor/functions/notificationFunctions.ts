@@ -24,15 +24,11 @@ const fetchNotifications = async (
   try {
     const userId = params._userId || 0;
 
-    const notifications = await getNotificationsQuery(
-      userId,
-      organizationId,
-      {
-        is_read: params.is_read,
-        limit: params.limit || 50,
-        offset: params.offset || 0,
-      },
-    );
+    const notifications = await getNotificationsQuery(userId, organizationId, {
+      is_read: params.is_read,
+      limit: params.limit || 50,
+      offset: params.offset || 0,
+    });
 
     // Return lightweight projections
     return notifications.map((n) => ({
@@ -146,9 +142,7 @@ const getNotificationAnalytics = async (
 
     const readCount = totalNotifications - unreadCount;
     const readRate =
-      totalNotifications > 0
-        ? Math.round((readCount / totalNotifications) * 100)
-        : 0;
+      totalNotifications > 0 ? Math.round((readCount / totalNotifications) * 100) : 0;
 
     // By entity type
     const entityCounts = await sequelize.query<{
@@ -206,22 +200,15 @@ const getNotificationAnalytics = async (
 const agentMarkNotificationRead = createWriteToolFn({
   toolName: "agent_mark_notification_read",
   warningLevel: "info",
-  descriptionFn: (params) =>
-    `Mark notification #${params.notification_id} as read`,
+  descriptionFn: (params) => `Mark notification #${params.notification_id} as read`,
   executeFn: async (params, organizationId) => {
     const notificationId = params.notification_id as number;
     const userId = (params._userId as number) || 0;
 
-    const result = await markNotificationAsReadQuery(
-      notificationId,
-      userId,
-      organizationId,
-    );
+    const result = await markNotificationAsReadQuery(notificationId, userId, organizationId);
 
     if (!result) {
-      throw new Error(
-        `Notification #${notificationId} not found or already read`,
-      );
+      throw new Error(`Notification #${notificationId} not found or already read`);
     }
 
     return {
@@ -239,10 +226,7 @@ const agentMarkAllNotificationsRead = createWriteToolFn({
   executeFn: async (params, organizationId) => {
     const userId = (params._userId as number) || 0;
 
-    const count = await markAllNotificationsAsReadQuery(
-      userId,
-      organizationId,
-    );
+    const count = await markAllNotificationsAsReadQuery(userId, organizationId);
 
     return {
       marked_read: count,

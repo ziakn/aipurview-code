@@ -12,10 +12,7 @@ import {
   processApprovalQuery,
   withdrawApprovalRequestQuery,
 } from "../../utils/approvalRequest.utils";
-import {
-  ApprovalResult,
-  EntityType,
-} from "../../domain.layer/enums/approval-workflow.enum";
+import { ApprovalResult, EntityType } from "../../domain.layer/enums/approval-workflow.enum";
 import { createWriteToolFn } from "../confirmation/createWriteTool";
 import { sequelize } from "../../database/db";
 import logger from "../../utils/logger/fileLogger";
@@ -60,10 +57,7 @@ const getApprovalWorkflowDetail = async (
   organizationId: number,
 ): Promise<any> => {
   try {
-    const workflow = await getApprovalWorkflowByIdQuery(
-      params.workflow_id,
-      organizationId,
-    );
+    const workflow = await getApprovalWorkflowByIdQuery(params.workflow_id, organizationId);
 
     if (!workflow) {
       return { error: `Workflow #${params.workflow_id} not found` };
@@ -84,10 +78,7 @@ const fetchPendingApprovals = async (
 ): Promise<any[]> => {
   try {
     if (params.user_id) {
-      let results = await getPendingApprovalsQuery(
-        params.user_id,
-        organizationId,
-      );
+      let results = await getPendingApprovalsQuery(params.user_id, organizationId);
       if (params.limit && params.limit > 0) {
         results = results.slice(0, params.limit);
       }
@@ -153,10 +144,7 @@ const getApprovalRequestDetail = async (
   organizationId: number,
 ): Promise<any> => {
   try {
-    const request = await getApprovalRequestByIdQuery(
-      params.request_id,
-      organizationId,
-    );
+    const request = await getApprovalRequestByIdQuery(params.request_id, organizationId);
 
     if (!request) {
       return { error: `Approval request #${params.request_id} not found` };
@@ -288,12 +276,9 @@ const getApprovalExecutiveSummary = async (
     const summary = (counts as any[])[0] || {};
 
     // Approval rate
-    const totalDecided =
-      (summary.approved_count || 0) + (summary.rejected_count || 0);
+    const totalDecided = (summary.approved_count || 0) + (summary.rejected_count || 0);
     const approvalRate =
-      totalDecided > 0
-        ? Math.round(((summary.approved_count || 0) / totalDecided) * 100)
-        : 0;
+      totalDecided > 0 ? Math.round(((summary.approved_count || 0) / totalDecided) * 100) : 0;
 
     // Active workflows count
     const [workflowCount] = await sequelize.query(
@@ -460,16 +445,11 @@ const agentRejectApprovalStep = createWriteToolFn({
 const agentWithdrawApprovalRequest = createWriteToolFn({
   toolName: "agent_withdraw_approval_request",
   warningLevel: "warning",
-  descriptionFn: (params) =>
-    `Withdraw approval request #${params.request_id}`,
+  descriptionFn: (params) => `Withdraw approval request #${params.request_id}`,
   executeFn: async (params, organizationId) => {
     const transaction = await sequelize.transaction();
     try {
-      await withdrawApprovalRequestQuery(
-        params.request_id as number,
-        organizationId,
-        transaction,
-      );
+      await withdrawApprovalRequestQuery(params.request_id as number, organizationId, transaction);
       await transaction.commit();
       return {
         id: params.request_id,
@@ -503,9 +483,7 @@ const agentCreateApprovalWorkflow = createWriteToolFn({
             description: s.description,
             approver_ids: s.approver_ids || [],
             requires_all_approvers:
-              s.requires_all_approvers !== undefined
-                ? s.requires_all_approvers
-                : true,
+              s.requires_all_approvers !== undefined ? s.requires_all_approvers : true,
           })),
         },
         organizationId,

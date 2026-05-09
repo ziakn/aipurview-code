@@ -405,7 +405,9 @@ const agentUpdateModel = createWriteToolFn({
     setClauses.push("updated_at = NOW()");
     // Update provider_model if provider or model changed
     if (params.name !== undefined || params.model_type !== undefined) {
-      setClauses.push("provider_model = COALESCE(:pm_provider, provider) || ' / ' || COALESCE(:pm_model, model)");
+      setClauses.push(
+        "provider_model = COALESCE(:pm_provider, provider) || ' / ' || COALESCE(:pm_model, model)",
+      );
       replacements.pm_provider = params.model_type !== undefined ? params.model_type : null;
       replacements.pm_model = params.name !== undefined ? params.name : null;
     }
@@ -473,8 +475,7 @@ const agentDeleteModel = createWriteToolFn({
 const agentLinkModelToProject = createWriteToolFn({
   toolName: "agent_link_model_to_project",
   warningLevel: "warning",
-  descriptionFn: (params) =>
-    `Link model #${params.model_id} to project #${params.project_id}`,
+  descriptionFn: (params) => `Link model #${params.model_id} to project #${params.project_id}`,
   executeFn: async (params, organizationId) => {
     const modelId = params.model_id as number;
     const projectId = params.project_id as number;
@@ -490,7 +491,11 @@ const agentLinkModelToProject = createWriteToolFn({
         },
       },
     );
-    return { model_id: modelId, project_id: projectId, message: "Model linked to project successfully" };
+    return {
+      model_id: modelId,
+      project_id: projectId,
+      message: "Model linked to project successfully",
+    };
   },
 });
 
@@ -554,8 +559,7 @@ const listUseCasesForModel = async (
 const agentUnlinkModelFromUseCase = createWriteToolFn({
   toolName: "agent_unlink_model_from_use_case",
   warningLevel: "warning",
-  descriptionFn: (params) =>
-    `Unlink model #${params.model_id} from use case #${params.project_id}`,
+  descriptionFn: (params) => `Unlink model #${params.model_id} from use case #${params.project_id}`,
   executeFn: async (params, organizationId) => {
     const modelId = params.model_id as number;
     const projectId = params.project_id as number;
@@ -712,8 +716,7 @@ const listFilesForModel = async (
     //   1) `file_entity_links` polymorphic table (entity_type='model_inventory') — used by framework/evidence flows
     //   2) `files.model_id` direct column — used by the FileManagerUpload UI
     // Both are populated in practice; UNION returns the merged set.
-    const limitClause =
-      params.limit && params.limit > 0 ? `LIMIT ${Math.floor(params.limit)}` : "";
+    const limitClause = params.limit && params.limit > 0 ? `LIMIT ${Math.floor(params.limit)}` : "";
     const [rows] = (await sequelize.query(
       `SELECT id, filename, type, size, version, review_status,
               uploaded_time, uploaded_by, link_type, project_id, linked_at, source
@@ -799,8 +802,7 @@ const agentAttachFileToModel = createWriteToolFn({
 const agentDetachFileFromModel = createWriteToolFn({
   toolName: "agent_detach_file_from_model",
   warningLevel: "warning",
-  descriptionFn: (params) =>
-    `Detach file #${params.file_id} from model #${params.model_id}`,
+  descriptionFn: (params) => `Detach file #${params.file_id} from model #${params.model_id}`,
   executeFn: async (params, organizationId) => {
     const modelId = params.model_id as number;
     const fileId = params.file_id as number;
@@ -830,8 +832,7 @@ const listDatasetsForModel = async (
   organizationId: number,
 ): Promise<Array<Record<string, unknown>>> => {
   try {
-    const limitClause =
-      params.limit && params.limit > 0 ? `LIMIT ${Math.floor(params.limit)}` : "";
+    const limitClause = params.limit && params.limit > 0 ? `LIMIT ${Math.floor(params.limit)}` : "";
     const [rows] = (await sequelize.query(
       `SELECT d.id, d.name, d.version, d.owner, d.type, d.source, d.classification,
               d.contains_pii, d.status, d.created_at,
@@ -873,9 +874,7 @@ const agentLinkModelToDataset = createWriteToolFn({
       { replacements: { dataset_id: datasetId, organization_id: organizationId } },
     )) as [Array<{ id: number }>, unknown];
     if (!datasetRows || datasetRows.length === 0) {
-      throw new Error(
-        `Dataset #${datasetId} not found or does not belong to this organization`,
-      );
+      throw new Error(`Dataset #${datasetId} not found or does not belong to this organization`);
     }
 
     const [modelRows] = (await sequelize.query(
@@ -883,9 +882,7 @@ const agentLinkModelToDataset = createWriteToolFn({
       { replacements: { model_id: modelId, organization_id: organizationId } },
     )) as [Array<{ id: number }>, unknown];
     if (!modelRows || modelRows.length === 0) {
-      throw new Error(
-        `Model #${modelId} not found or does not belong to this organization`,
-      );
+      throw new Error(`Model #${modelId} not found or does not belong to this organization`);
     }
 
     const [existing] = (await sequelize.query(
@@ -935,8 +932,7 @@ const agentLinkModelToDataset = createWriteToolFn({
 const agentUnlinkModelFromDataset = createWriteToolFn({
   toolName: "agent_unlink_model_from_dataset",
   warningLevel: "warning",
-  descriptionFn: (params) =>
-    `Unlink model #${params.model_id} from dataset #${params.dataset_id}`,
+  descriptionFn: (params) => `Unlink model #${params.model_id} from dataset #${params.dataset_id}`,
   executeFn: async (params, organizationId) => {
     const modelId = params.model_id as number;
     const datasetId = params.dataset_id as number;

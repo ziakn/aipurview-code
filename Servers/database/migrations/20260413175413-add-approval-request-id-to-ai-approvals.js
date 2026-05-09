@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Phase 2 — Bridge AI Action Approvals with Approval Requests
@@ -25,5 +25,5 @@ module.exports = {
       ALTER TABLE verifywise.ai_action_approvals
         DROP COLUMN IF EXISTS approval_request_id;
     `);
-  }
+  },
 };

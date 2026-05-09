@@ -151,15 +151,11 @@ export async function executeAiAction(
   organizationId: number,
   transaction: Transaction,
 ): Promise<void> {
-  logger.info(
-    `[aiActionExecutor] START — approval_request_id=${requestId} org=${organizationId}`,
-  );
+  logger.info(`[aiActionExecutor] START — approval_request_id=${requestId} org=${organizationId}`);
 
   const data = await loadEntityData(requestId, organizationId, transaction);
   if (!data) {
-    logger.error(
-      `[aiActionExecutor] entity_data MISSING for request ${requestId}`,
-    );
+    logger.error(`[aiActionExecutor] entity_data MISSING for request ${requestId}`);
     throw new Error(
       `[aiActionExecutor] approval_requests.entity_data is missing for request ${requestId}`,
     );
@@ -172,9 +168,7 @@ export async function executeAiAction(
   if (!handler) {
     throw new Error(`[aiActionExecutor] unknown AI action tool: ${data.tool_name}`);
   }
-  logger.info(
-    `[aiActionExecutor] handler resolved for tool_name=${data.tool_name}`,
-  );
+  logger.info(`[aiActionExecutor] handler resolved for tool_name=${data.tool_name}`);
 
   // 2. Re-validate the stored input at execute time. The LLM's input was
   //    validated when the approval was filed, but the schema may have

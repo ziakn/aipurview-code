@@ -74,10 +74,7 @@ export function computeRecency(input: RecencyInput): RecencyResult {
   const rationaleParts: string[] = [];
 
   if (uploadDate) {
-    ageDays = Math.max(
-      0,
-      Math.floor((now.getTime() - uploadDate.getTime()) / DAY_MS),
-    );
+    ageDays = Math.max(0, Math.floor((now.getTime() - uploadDate.getTime()) / DAY_MS));
     score = baseRecencyByAge(ageDays);
     rationaleParts.push(`age ${ageDays}d (${ageBucketLabel(ageDays)})`);
   } else {
@@ -86,19 +83,13 @@ export function computeRecency(input: RecencyInput): RecencyResult {
   }
 
   if (expiryDate) {
-    daysToExpiry = Math.floor(
-      (expiryDate.getTime() - now.getTime()) / DAY_MS,
-    );
+    daysToExpiry = Math.floor((expiryDate.getTime() - now.getTime()) / DAY_MS);
     if (daysToExpiry < 0) {
       score = Math.round(score * 0.4);
-      rationaleParts.push(
-        `expired ${Math.abs(daysToExpiry)}d ago — penalty ×0.4`,
-      );
+      rationaleParts.push(`expired ${Math.abs(daysToExpiry)}d ago — penalty ×0.4`);
     } else if (daysToExpiry <= 30) {
       score = Math.round(score * 0.85);
-      rationaleParts.push(
-        `expires in ${daysToExpiry}d — penalty ×0.85`,
-      );
+      rationaleParts.push(`expires in ${daysToExpiry}d — penalty ×0.85`);
     } else {
       rationaleParts.push(`expires in ${daysToExpiry}d`);
     }

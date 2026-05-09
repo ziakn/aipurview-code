@@ -12,10 +12,7 @@ import {
   getToolTopUsersQuery,
   updateToolStatusQuery,
 } from "../../utils/shadowAiTools.utils";
-import {
-  getAlertHistoryQuery,
-  createRuleQuery,
-} from "../../utils/shadowAiRules.utils";
+import { getAlertHistoryQuery, createRuleQuery } from "../../utils/shadowAiRules.utils";
 import { createWriteToolFn } from "../confirmation/createWriteTool";
 import { sequelize } from "../../database/db";
 import logger from "../../utils/logger/fileLogger";
@@ -98,8 +95,8 @@ const getShadowAiUsersByDepartment = async (
     let departments = await getUsersByDepartmentQuery(organizationId);
 
     if (params.department) {
-      departments = departments.filter(
-        (d) => d.department.toLowerCase().includes(params.department!.toLowerCase()),
+      departments = departments.filter((d) =>
+        d.department.toLowerCase().includes(params.department!.toLowerCase()),
       );
     }
 

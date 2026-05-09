@@ -9,7 +9,7 @@
 export function buildVisibilityFilter(
   userId: number | null,
   visibility?: string,
-  alias?: string
+  alias?: string,
 ): { clause: string; replacements: Record<string, any> } {
   const a = alias ? `${alias}.` : "";
 
@@ -48,7 +48,7 @@ export function buildVisibilityFilter(
 export function buildVisibilityFilterForEvidence(
   userId: number | null,
   visibility?: string,
-  alias?: string
+  alias?: string,
 ): { clause: string; replacements: Record<string, any> } {
   const a = alias ? `${alias}.` : "";
 

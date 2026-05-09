@@ -38,7 +38,7 @@ const fetchEventLogs = async (
     const limit = params.limit || 50;
     replacements.limit = limit;
 
-    const rows = await sequelize.query(
+    const rows = (await sequelize.query(
       `SELECT id, entry_type, user_id, occurred_at, event_type, entity_type,
               entity_id, action, field_name, old_value, new_value, description
        FROM audit_ledger
@@ -49,7 +49,7 @@ const fetchEventLogs = async (
         replacements,
         type: QueryTypes.SELECT,
       },
-    ) as any[];
+    )) as any[];
 
     return {
       event_logs: rows.map((r: any) => ({
@@ -87,7 +87,7 @@ const getAuditTrailForEntity = async (
   try {
     const limit = params.limit || 100;
 
-    const rows = await sequelize.query(
+    const rows = (await sequelize.query(
       `SELECT id, entry_type, user_id, occurred_at, event_type, entity_type,
               entity_id, action, field_name, old_value, new_value, description
        FROM audit_ledger
@@ -105,7 +105,7 @@ const getAuditTrailForEntity = async (
         },
         type: QueryTypes.SELECT,
       },
-    ) as any[];
+    )) as any[];
 
     // Build a summary of changes
     const actionCounts: Record<string, number> = {};

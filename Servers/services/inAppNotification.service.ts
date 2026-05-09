@@ -779,7 +779,9 @@ export const notifyApprovalComplete = async (
   // Map approval_requests.entity_type → user-facing label + action url.
   // Keep this as a small flat map; if more entity types start using the
   // approval workflow, just add a row here.
-  const labelFor = (et?: string): { label: string; entity: NotificationEntityType; url: string } => {
+  const labelFor = (
+    et?: string,
+  ): { label: string; entity: NotificationEntityType; url: string } => {
     switch (et) {
       case "ai_action":
         return {

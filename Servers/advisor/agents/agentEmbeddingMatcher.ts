@@ -125,10 +125,7 @@ async function fetchCachedAgentEmbeddings(
 
   const map = new Map<string, CachedAgentEmbedding>();
   for (const row of rows as any[]) {
-    const embedding =
-      typeof row.embedding === "string"
-        ? JSON.parse(row.embedding)
-        : row.embedding;
+    const embedding = typeof row.embedding === "string" ? JSON.parse(row.embedding) : row.embedding;
     map.set(row.agent_name, {
       agent_name: row.agent_name,
       embedding,
@@ -203,9 +200,7 @@ export async function rankAgentsByEmbedding(
     const model = provider.textEmbeddingModel(EMBEDDING_MODEL);
 
     // 1. Cache lookup.
-    const cache = await fetchCachedAgentEmbeddings(
-      agents.map((a) => a.name),
-    );
+    const cache = await fetchCachedAgentEmbeddings(agents.map((a) => a.name));
 
     // 2. Identify what needs (re)computing.
     const toCompute: Array<{ agent: AgentToolEntry; sourceHash: string }> = [];
@@ -254,10 +249,7 @@ export async function rankAgentsByEmbedding(
     ranked.sort((a, b) => b.similarity - a.similarity);
     return ranked.slice(0, params.topK);
   } catch (err) {
-    logger.warn(
-      "[agentEmbeddingMatcher] failed; caller should fall back to keyword scoring",
-      err,
-    );
+    logger.warn("[agentEmbeddingMatcher] failed; caller should fall back to keyword scoring", err);
     return null;
   }
 }

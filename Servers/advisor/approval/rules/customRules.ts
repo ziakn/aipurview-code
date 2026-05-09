@@ -30,24 +30,21 @@ interface DbRule {
  */
 async function loadCustomRules(organizationId: number): Promise<RuleDefinition[]> {
   try {
-    const rows = await sequelize.query(
+    const rows = (await sequelize.query(
       `SELECT * FROM ai_approval_rules
        WHERE organization_id = :organizationId AND is_active = true
        ORDER BY priority DESC`,
-      { replacements: { organizationId }, type: QueryTypes.SELECT }
-    ) as DbRule[];
+      { replacements: { organizationId }, type: QueryTypes.SELECT },
+    )) as DbRule[];
 
     return rows.map((row) => ({
       name: row.name,
       description: row.description || "",
       priority: row.priority,
-      conditions: typeof row.conditions === "string"
-        ? JSON.parse(row.conditions)
-        : row.conditions,
+      conditions: typeof row.conditions === "string" ? JSON.parse(row.conditions) : row.conditions,
       eventType: row.event_type as RuleDefinition["eventType"],
-      eventParams: typeof row.event_params === "string"
-        ? JSON.parse(row.event_params)
-        : row.event_params,
+      eventParams:
+        typeof row.event_params === "string" ? JSON.parse(row.event_params) : row.event_params,
     }));
   } catch (error) {
     logStructured("error", `failed to load custom rules: ${error}`, "loadCustomRules", fileName);
@@ -67,10 +64,7 @@ export async function getMergedRules(organizationId: number): Promise<RuleDefini
   const customNames = new Set(custom.map((r) => r.name));
 
   // Start with custom rules, then add defaults that aren't overridden
-  const merged = [
-    ...custom,
-    ...defaultRules.filter((d) => !customNames.has(d.name)),
-  ];
+  const merged = [...custom, ...defaultRules.filter((d) => !customNames.has(d.name))];
 
   // Sort by priority descending (highest first = evaluated first)
   merged.sort((a, b) => b.priority - a.priority);
@@ -100,13 +94,27 @@ export function validateRuleConditions(conditions: Record<string, unknown>): str
   }
 
   const validFacts = [
-    "operation_type", "entity_type", "entity_count", "risk_level",
-    "tool_category", "user_role", "is_bulk", "affected_fields", "tool_name",
+    "operation_type",
+    "entity_type",
+    "entity_count",
+    "risk_level",
+    "tool_category",
+    "user_role",
+    "is_bulk",
+    "affected_fields",
+    "tool_name",
   ];
 
   const validOperators = [
-    "equal", "notEqual", "greaterThan", "greaterThanInclusive",
-    "lessThan", "lessThanInclusive", "in", "notIn", "contains",
+    "equal",
+    "notEqual",
+    "greaterThan",
+    "greaterThanInclusive",
+    "lessThan",
+    "lessThanInclusive",
+    "in",
+    "notIn",
+    "contains",
   ];
 
   for (const cond of conditionArray) {

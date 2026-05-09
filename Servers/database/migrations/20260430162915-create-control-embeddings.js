@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Create `control_embeddings` table for the embedding-based control matcher.

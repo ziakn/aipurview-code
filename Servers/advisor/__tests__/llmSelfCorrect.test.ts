@@ -94,18 +94,14 @@ describe("llmSelfCorrect / buildCorrectionDirective", () => {
   });
 
   it("formats single issue with backticks around path", () => {
-    const out = buildCorrectionDirective([
-      { path: "summary", message: "must be 40 chars" },
-    ]);
+    const out = buildCorrectionDirective([{ path: "summary", message: "must be 40 chars" }]);
     expect(out).toContain("SELF-CORRECTION REQUIRED");
     expect(out).toContain("`summary`");
     expect(out).toContain("must be 40 chars");
   });
 
   it("renders root path as (root) when path is empty", () => {
-    const out = buildCorrectionDirective([
-      { path: "", message: "bad shape" },
-    ]);
+    const out = buildCorrectionDirective([{ path: "", message: "bad shape" }]);
     expect(out).toContain("`(root)`");
   });
 
@@ -151,9 +147,7 @@ describe("llmSelfCorrect / generateObjectWithSelfCorrection", () => {
     const calls: Array<Record<string, unknown>> = [];
     const valid: Sample = { name: "Bob", count: 2 };
     let invocation = 0;
-    const mock: GenerateObjectImpl = (async (
-      params: Record<string, unknown>,
-    ) => {
+    const mock: GenerateObjectImpl = (async (params: Record<string, unknown>) => {
       calls.push(params);
       invocation += 1;
       if (invocation === 1) {
@@ -247,9 +241,7 @@ describe("llmSelfCorrect / generateObjectWithSelfCorrection", () => {
 
   it("forwards extra params (like maxOutputTokens) to the inner call", async () => {
     let captured: Record<string, unknown> | null = null;
-    const mock: GenerateObjectImpl = (async (
-      p: Record<string, unknown>,
-    ) => {
+    const mock: GenerateObjectImpl = (async (p: Record<string, unknown>) => {
       captured = p;
       return { object: { name: "Carol", count: 0 } };
     }) as unknown as GenerateObjectImpl;
@@ -271,9 +263,7 @@ describe("llmSelfCorrect / generateObjectWithSelfCorrection", () => {
 
   it("temperature defaults to 0", async () => {
     let captured: Record<string, unknown> | null = null;
-    const mock: GenerateObjectImpl = (async (
-      p: Record<string, unknown>,
-    ) => {
+    const mock: GenerateObjectImpl = (async (p: Record<string, unknown>) => {
       captured = p;
       return { object: { name: "Dave", count: 1 } };
     }) as unknown as GenerateObjectImpl;

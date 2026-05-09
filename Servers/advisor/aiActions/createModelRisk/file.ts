@@ -36,8 +36,7 @@ export async function fileCreateModelRisk(
 
   // Strip the bridge-injected `_userId` (and `_organizationId`) before
   // strict-parsing — see toolBridge.ts:148.
-  const { _userId: _u, _organizationId: _o, ...userParams } =
-    params as Record<string, unknown>;
+  const { _userId: _u, _organizationId: _o, ...userParams } = params as Record<string, unknown>;
   void _u;
   void _o;
   const parsed = AgentCreateModelRiskSchema.safeParse(userParams);
@@ -52,10 +51,7 @@ export async function fileCreateModelRisk(
 
   // model_id and pending_model_approval_id are mutually exclusive paths.
   // Tell the LLM which to use loudly if it passes both.
-  if (
-    parsed.data.model_id !== undefined &&
-    parsed.data.pending_model_approval_id !== undefined
-  ) {
+  if (parsed.data.model_id !== undefined && parsed.data.pending_model_approval_id !== undefined) {
     throw new Error(
       "agent_create_model_risk: pass either model_id (for an existing model) OR pending_model_approval_id (for a model being registered in the same turn), not both. Drop one and retry.",
     );
@@ -109,22 +105,12 @@ export async function fileCreateModelRisk(
 
   const transaction = await sequelize.transaction();
   try {
-    const workflow = await ensureAiActionWorkflow(
-      organizationId,
-      userId,
-      transaction,
-    );
+    const workflow = await ensureAiActionWorkflow(organizationId, userId, transaction);
 
-    const workflowSteps = await getWorkflowStepsQuery(
-      workflow.id!,
-      organizationId,
-      transaction,
-    );
+    const workflowSteps = await getWorkflowStepsQuery(workflow.id!, organizationId, transaction);
 
     if (!workflowSteps || workflowSteps.length === 0) {
-      throw new Error(
-        "AI Action workflow has no steps — cannot file approval request",
-      );
+      throw new Error("AI Action workflow has no steps — cannot file approval request");
     }
 
     const preview = renderCreateModelRiskPreview(parsed.data);
@@ -158,10 +144,7 @@ export async function fileCreateModelRisk(
     };
   } catch (error) {
     await transaction.rollback();
-    logger.error(
-      `[${CREATE_MODEL_RISK_TOOL_NAME}] failed to file approval request`,
-      error,
-    );
+    logger.error(`[${CREATE_MODEL_RISK_TOOL_NAME}] failed to file approval request`, error);
     return {
       status: "error",
       message: `Failed to file approval request: ${error instanceof Error ? error.message : "unknown error"}`,

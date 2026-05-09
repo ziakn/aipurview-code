@@ -32,13 +32,18 @@ interface DaytonaResult {
  */
 export async function executeInDaytona(
   taskFn: () => Promise<unknown>,
-  config?: DaytonaConfig
+  config?: DaytonaConfig,
 ): Promise<DaytonaResult | null> {
   const apiKey = process.env.DAYTONA_API_KEY;
   const serverUrl = process.env.DAYTONA_SERVER_URL;
 
   if (!apiKey || !serverUrl) {
-    logStructured("successful", "Daytona not configured, executing locally", "executeInDaytona", fileName);
+    logStructured(
+      "successful",
+      "Daytona not configured, executing locally",
+      "executeInDaytona",
+      fileName,
+    );
 
     // Fallback: execute locally without container isolation
     const startTime = Date.now();
@@ -80,7 +85,7 @@ export async function executeInDaytona(
     try {
       const response = await sandbox.process.executeCommand(
         `node -e "${JSON.stringify(taskFn.toString())}"`,
-        { timeout: config?.timeoutMs || 60000 }
+        { timeout: config?.timeoutMs || 60000 },
       );
 
       return {

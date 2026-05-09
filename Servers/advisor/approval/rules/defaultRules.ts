@@ -55,9 +55,7 @@ export const defaultRules: RuleDefinition[] = [
     description: "Administrative and configuration operations require admin approval",
     priority: 700,
     conditions: {
-      all: [
-        { fact: "tool_category", operator: "equal", value: "admin" },
-      ],
+      all: [{ fact: "tool_category", operator: "equal", value: "admin" }],
     },
     eventType: "require-approval",
     eventParams: { approver_role: "Admin" },
@@ -80,9 +78,7 @@ export const defaultRules: RuleDefinition[] = [
     description: "High-risk (danger-level) operations always require approval",
     priority: 500,
     conditions: {
-      all: [
-        { fact: "risk_level", operator: "equal", value: "danger" },
-      ],
+      all: [{ fact: "risk_level", operator: "equal", value: "danger" }],
     },
     eventType: "require-approval",
   },
@@ -91,9 +87,7 @@ export const defaultRules: RuleDefinition[] = [
     description: "Medium-risk (warning-level) operations require approval",
     priority: 400,
     conditions: {
-      all: [
-        { fact: "risk_level", operator: "equal", value: "warning" },
-      ],
+      all: [{ fact: "risk_level", operator: "equal", value: "warning" }],
     },
     eventType: "require-approval",
   },
@@ -105,9 +99,7 @@ export const defaultRules: RuleDefinition[] = [
     description: "Read operations are always auto-approved",
     priority: 300,
     conditions: {
-      all: [
-        { fact: "operation_type", operator: "equal", value: "read" },
-      ],
+      all: [{ fact: "operation_type", operator: "equal", value: "read" }],
     },
     eventType: "auto-approve",
   },
@@ -129,9 +121,7 @@ export const defaultRules: RuleDefinition[] = [
     description: "Info-level (low impact) operations are auto-approved",
     priority: 100,
     conditions: {
-      all: [
-        { fact: "risk_level", operator: "equal", value: "info" },
-      ],
+      all: [{ fact: "risk_level", operator: "equal", value: "info" }],
     },
     eventType: "auto-approve",
   },

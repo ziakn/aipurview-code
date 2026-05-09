@@ -22,9 +22,7 @@ const fetchAutomations = async (
     let automations = await getAllAutomationsQuery(organizationId);
 
     if (params.is_active !== undefined) {
-      automations = automations.filter(
-        (a: any) => a.is_active === params.is_active,
-      );
+      automations = automations.filter((a: any) => a.is_active === params.is_active);
     }
 
     if (params.limit && params.limit > 0) {
@@ -52,10 +50,7 @@ const getAutomationDetail = async (
   organizationId: number,
 ): Promise<any> => {
   try {
-    const automation = await getAutomationByIdQuery(
-      params.automation_id,
-      organizationId,
-    );
+    const automation = await getAutomationByIdQuery(params.automation_id, organizationId);
 
     if (!automation) {
       return { error: `Automation #${params.automation_id} not found` };
@@ -181,8 +176,7 @@ const getAutomationAnalytics = async (
     const automations = await getAllAutomationsQuery(organizationId);
 
     // Trigger type distribution
-    const triggerDist: Record<number, { trigger_id: number; count: number }> =
-      {};
+    const triggerDist: Record<number, { trigger_id: number; count: number }> = {};
     automations.forEach((a: any) => {
       if (!triggerDist[a.trigger_id]) {
         triggerDist[a.trigger_id] = { trigger_id: a.trigger_id, count: 0 };
@@ -238,10 +232,7 @@ const getAutomationExecutiveSummary = async (
     // Most used triggers
     const triggerCounts = new Map<number, number>();
     automations.forEach((a: any) => {
-      triggerCounts.set(
-        a.trigger_id,
-        (triggerCounts.get(a.trigger_id) || 0) + 1,
-      );
+      triggerCounts.set(a.trigger_id, (triggerCounts.get(a.trigger_id) || 0) + 1);
     });
 
     const topTriggers = Array.from(triggerCounts.entries())
@@ -326,9 +317,7 @@ const agentUpdateAutomation = createWriteToolFn({
   toolName: "agent_update_automation",
   warningLevel: "warning",
   descriptionFn: (params) => {
-    const fields = Object.keys(params).filter(
-      (k) => k !== "automation_id" && !k.startsWith("_"),
-    );
+    const fields = Object.keys(params).filter((k) => k !== "automation_id" && !k.startsWith("_"));
     return `Update automation #${params.automation_id} — fields: ${fields.join(", ")}`;
   },
   executeFn: async (params, organizationId) => {
@@ -338,10 +327,8 @@ const agentUpdateAutomation = createWriteToolFn({
       const updateData: any = {};
 
       if (params.name !== undefined) updateData.name = params.name;
-      if (params.trigger_id !== undefined)
-        updateData.trigger_id = params.trigger_id;
-      if (params.is_active !== undefined)
-        updateData.is_active = params.is_active;
+      if (params.trigger_id !== undefined) updateData.trigger_id = params.trigger_id;
+      if (params.is_active !== undefined) updateData.is_active = params.is_active;
 
       const actions = params.actions
         ? ((params.actions as any[]) || []).map((a: any) => ({

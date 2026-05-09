@@ -15,7 +15,7 @@ function appendHistory(
   history: StateHistoryEntry[],
   state: string,
   actor?: string,
-  reason?: string
+  reason?: string,
 ): StateHistoryEntry[] {
   return [
     ...history,
@@ -51,17 +51,33 @@ export const approvalMachine = setup({
     }),
     logAutoApprove: assign({
       stateHistory: ({ context }) =>
-        appendHistory(context.stateHistory, "auto_approve", "system", `rule: risk_level=${context.riskLevel}`),
-      ruleMatched: ({ context }) => context.ruleMatched || `auto_approve:risk_level=${context.riskLevel}`,
+        appendHistory(
+          context.stateHistory,
+          "auto_approve",
+          "system",
+          `rule: risk_level=${context.riskLevel}`,
+        ),
+      ruleMatched: ({ context }) =>
+        context.ruleMatched || `auto_approve:risk_level=${context.riskLevel}`,
     }),
     logAutoReject: assign({
       stateHistory: ({ context }) =>
-        appendHistory(context.stateHistory, "auto_reject", "system", context.ruleMatched || "no_executor"),
+        appendHistory(
+          context.stateHistory,
+          "auto_reject",
+          "system",
+          context.ruleMatched || "no_executor",
+        ),
       errorMessage: ({ context }) => context.ruleMatched || "Auto-rejected: no executor registered",
     }),
     logPendingApproval: assign({
       stateHistory: ({ context }) =>
-        appendHistory(context.stateHistory, "pending_approval", "system", "awaiting human approval"),
+        appendHistory(
+          context.stateHistory,
+          "pending_approval",
+          "system",
+          "awaiting human approval",
+        ),
     }),
     logApproved: assign({
       stateHistory: ({ context, event }) =>
@@ -69,7 +85,7 @@ export const approvalMachine = setup({
           context.stateHistory,
           "approved",
           `user:${(event as { type: "APPROVE"; userId: number }).userId}`,
-          "human approved"
+          "human approved",
         ),
       approvedAt: () => new Date().toISOString(),
     }),
@@ -79,7 +95,7 @@ export const approvalMachine = setup({
           context.stateHistory,
           "rejected",
           `user:${(event as { type: "REJECT"; userId: number }).userId}`,
-          (event as { type: "REJECT"; reason?: string }).reason || "human rejected"
+          (event as { type: "REJECT"; reason?: string }).reason || "human rejected",
         ),
     }),
     logExecuting: assign({

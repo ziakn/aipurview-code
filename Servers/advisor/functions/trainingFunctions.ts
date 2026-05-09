@@ -177,7 +177,7 @@ const agentCreateTrainingRecord = createWriteToolFn({
           status: (params.status as string) || "Planned",
           duration: (params.due_date as string) || null,
         },
-      }
+      },
     );
     const created = (result as any)[0]?.[0] || (result as any)[0];
     return { success: true, training_record: created };
@@ -218,7 +218,7 @@ const agentUpdateTrainingRecord = createWriteToolFn({
 
     const result = await sequelize.query(
       `UPDATE trainingregistar SET ${setClauses.join(", ")} WHERE organization_id = :organizationId AND id = :id RETURNING *`,
-      { replacements }
+      { replacements },
     );
     const updated = (result as any)[0]?.[0] || (result as any)[0];
     return { success: true, training_record: updated };
@@ -228,8 +228,7 @@ const agentUpdateTrainingRecord = createWriteToolFn({
 const agentAssignTrainingToUser = createWriteToolFn({
   toolName: "agent_assign_training_to_user",
   warningLevel: "info",
-  descriptionFn: (params) =>
-    `Assign training #${params.training_id} to user #${params.user_id}`,
+  descriptionFn: (params) => `Assign training #${params.training_id} to user #${params.user_id}`,
   executeFn: async (params, organizationId) => {
     // Check if assignment already exists
     const existing = await sequelize.query(
@@ -241,7 +240,7 @@ const agentAssignTrainingToUser = createWriteToolFn({
           user_id: params.user_id,
         },
         type: QueryTypes.SELECT,
-      }
+      },
     );
 
     if ((existing as any[]).length > 0) {
@@ -257,23 +256,25 @@ const agentAssignTrainingToUser = createWriteToolFn({
           training_id: params.training_id,
           user_id: params.user_id,
         },
-      }
+      },
     );
-    return { success: true, message: `Training #${params.training_id} assigned to user #${params.user_id}` };
+    return {
+      success: true,
+      message: `Training #${params.training_id} assigned to user #${params.user_id}`,
+    };
   },
 });
 
 const agentDeleteTrainingRecord = createWriteToolFn({
   toolName: "agent_delete_training_record",
   warningLevel: "danger",
-  descriptionFn: (params) =>
-    `Permanently delete training record #${params.training_id}`,
+  descriptionFn: (params) => `Permanently delete training record #${params.training_id}`,
   executeFn: async (params, organizationId) => {
     const result = await sequelize.query(
       `DELETE FROM trainingregistar WHERE organization_id = :organizationId AND id = :id RETURNING id, training_name`,
       {
         replacements: { organizationId, id: params.training_id },
-      }
+      },
     );
     const deleted = (result as any)[0]?.[0] || (result as any)[0];
     return { success: true, deleted_training_record: deleted };

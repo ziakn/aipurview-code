@@ -384,12 +384,7 @@ const ModelRiskCategorySchema = z.enum([
   "Compliance",
 ]);
 const ModelRiskLevelSchema = z.enum(["Low", "Medium", "High", "Critical"]);
-const ModelRiskStatusSchema = z.enum([
-  "Open",
-  "In Progress",
-  "Resolved",
-  "Accepted",
-]);
+const ModelRiskStatusSchema = z.enum(["Open", "In Progress", "Resolved", "Accepted"]);
 const isoDateString = z
   .string()
   .min(1)
@@ -459,9 +454,7 @@ function throwOnValidationFailure(
 ): void {
   const errorList = issues
     .map((i) => {
-      const pathStr = i.path
-        .filter((p): p is string | number => typeof p !== "symbol")
-        .join(".");
+      const pathStr = i.path.filter((p): p is string | number => typeof p !== "symbol").join(".");
       return `- ${pathStr || "(root)"}: ${i.message}`;
     })
     .join("\n");
@@ -491,8 +484,7 @@ const _agentSuggestModelRiskInner = createWriteToolFn({
     // `approvalGateway.ts:226,366`. Strip those internal fields before
     // running strict Zod validation, otherwise `.strict()` rejects them
     // as unknown keys.
-    const { _userId: _u, _organizationId: _o, ...userParams } =
-      params as Record<string, unknown>;
+    const { _userId: _u, _organizationId: _o, ...userParams } = params as Record<string, unknown>;
     void _u;
     void _o;
     const parsed = AgentSuggestModelRiskSchema.safeParse(userParams);
@@ -520,10 +512,7 @@ const _agentSuggestModelRiskInner = createWriteToolFn({
             organization_id: organizationId,
           },
         },
-      )) as [
-        Array<{ status: string; entity_id: number | null }>,
-        unknown,
-      ];
+      )) as [Array<{ status: string; entity_id: number | null }>, unknown];
 
       if (!approvalRows || approvalRows.length === 0) {
         throw new Error(
@@ -617,8 +606,7 @@ const agentUpdateModelRisk = createWriteToolFn({
   descriptionFn: (params) =>
     `Update model risk #${params.model_risk_id}${params.risk_name ? ` ("${params.risk_name}")` : ""}`,
   executeFn: async (params, organizationId) => {
-    const { _userId: _u, _organizationId: _o, ...userParams } =
-      params as Record<string, unknown>;
+    const { _userId: _u, _organizationId: _o, ...userParams } = params as Record<string, unknown>;
     void _u;
     void _o;
     const parsed = AgentUpdateModelRiskSchema.safeParse(userParams);
@@ -648,15 +636,9 @@ const agentUpdateModelRisk = createWriteToolFn({
       }
     }
 
-    const result = await updateModelRiskByIdQuery(
-      id,
-      updateData as any,
-      organizationId,
-    );
+    const result = await updateModelRiskByIdQuery(id, updateData as any, organizationId);
     if (!result) {
-      throw new Error(
-        `Model risk #${id} not found or does not belong to this organization`,
-      );
+      throw new Error(`Model risk #${id} not found or does not belong to this organization`);
     }
     return result;
   },
@@ -671,15 +653,9 @@ const agentChangeModelRiskStatus = createWriteToolFn({
     const id = params.model_risk_id as number;
     const status = params.status as string;
 
-    const result = await updateModelRiskByIdQuery(
-      id,
-      { status } as any,
-      organizationId,
-    );
+    const result = await updateModelRiskByIdQuery(id, { status } as any, organizationId);
     if (!result) {
-      throw new Error(
-        `Model risk #${id} not found or does not belong to this organization`,
-      );
+      throw new Error(`Model risk #${id} not found or does not belong to this organization`);
     }
     return result;
   },
@@ -688,15 +664,12 @@ const agentChangeModelRiskStatus = createWriteToolFn({
 const agentDeleteModelRisk = createWriteToolFn({
   toolName: "agent_delete_model_risk",
   warningLevel: "danger",
-  descriptionFn: (params) =>
-    `Delete model risk #${params.model_risk_id}`,
+  descriptionFn: (params) => `Delete model risk #${params.model_risk_id}`,
   executeFn: async (params, organizationId) => {
     const id = params.model_risk_id as number;
     const deleted = await deleteModelRiskByIdQuery(id, organizationId);
     if (!deleted) {
-      throw new Error(
-        `Model risk #${id} not found or already deleted`,
-      );
+      throw new Error(`Model risk #${id} not found or already deleted`);
     }
     return { success: true, deleted_id: id };
   },
@@ -747,20 +720,12 @@ const agentAttachModelRiskToModel = createWriteToolFn({
       { replacements: { model_id: modelId, organization_id: organizationId } },
     )) as [Array<{ id: number }>, unknown];
     if (!modelRows || modelRows.length === 0) {
-      throw new Error(
-        `Model #${modelId} not found or does not belong to this organization`,
-      );
+      throw new Error(`Model #${modelId} not found or does not belong to this organization`);
     }
 
-    const result = await updateModelRiskByIdQuery(
-      id,
-      { model_id: modelId } as any,
-      organizationId,
-    );
+    const result = await updateModelRiskByIdQuery(id, { model_id: modelId } as any, organizationId);
     if (!result) {
-      throw new Error(
-        `Model risk #${id} not found or does not belong to this organization`,
-      );
+      throw new Error(`Model risk #${id} not found or does not belong to this organization`);
     }
     return {
       id,
@@ -777,15 +742,9 @@ const agentDetachModelRiskFromModel = createWriteToolFn({
     `Detach model risk #${params.model_risk_id} from its model (set model_id = NULL)`,
   executeFn: async (params, organizationId) => {
     const id = params.model_risk_id as number;
-    const result = await updateModelRiskByIdQuery(
-      id,
-      { model_id: null } as any,
-      organizationId,
-    );
+    const result = await updateModelRiskByIdQuery(id, { model_id: null } as any, organizationId);
     if (!result) {
-      throw new Error(
-        `Model risk #${id} not found or does not belong to this organization`,
-      );
+      throw new Error(`Model risk #${id} not found or does not belong to this organization`);
     }
     return {
       id,

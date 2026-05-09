@@ -54,23 +54,11 @@ const fetchChangeHistory = async (
   }
 };
 
-const getRiskChangeHistory = async (
-  params: ChangeHistoryParams,
-  organizationId: number,
-) => {
-  return fetchChangeHistory(
-    "risk",
-    params.risk_id!,
-    organizationId,
-    params.limit,
-    params.offset,
-  );
+const getRiskChangeHistory = async (params: ChangeHistoryParams, organizationId: number) => {
+  return fetchChangeHistory("risk", params.risk_id!, organizationId, params.limit, params.offset);
 };
 
-const getVendorChangeHistory = async (
-  params: ChangeHistoryParams,
-  organizationId: number,
-) => {
+const getVendorChangeHistory = async (params: ChangeHistoryParams, organizationId: number) => {
   return fetchChangeHistory(
     "vendor",
     params.vendor_id!,
@@ -80,10 +68,7 @@ const getVendorChangeHistory = async (
   );
 };
 
-const getModelChangeHistory = async (
-  params: ChangeHistoryParams,
-  organizationId: number,
-) => {
+const getModelChangeHistory = async (params: ChangeHistoryParams, organizationId: number) => {
   return fetchChangeHistory(
     "model_inventory",
     params.model_id!,
@@ -93,10 +78,7 @@ const getModelChangeHistory = async (
   );
 };
 
-const getPolicyChangeHistory = async (
-  params: ChangeHistoryParams,
-  organizationId: number,
-) => {
+const getPolicyChangeHistory = async (params: ChangeHistoryParams, organizationId: number) => {
   return fetchChangeHistory(
     "policy",
     params.policy_id!,
@@ -106,10 +88,7 @@ const getPolicyChangeHistory = async (
   );
 };
 
-const getIncidentChangeHistory = async (
-  params: ChangeHistoryParams,
-  organizationId: number,
-) => {
+const getIncidentChangeHistory = async (params: ChangeHistoryParams, organizationId: number) => {
   return fetchChangeHistory(
     "incident",
     params.incident_id!,
@@ -119,17 +98,8 @@ const getIncidentChangeHistory = async (
   );
 };
 
-const getTaskChangeHistory = async (
-  params: ChangeHistoryParams,
-  organizationId: number,
-) => {
-  return fetchChangeHistory(
-    "task",
-    params.task_id!,
-    organizationId,
-    params.limit,
-    params.offset,
-  );
+const getTaskChangeHistory = async (params: ChangeHistoryParams, organizationId: number) => {
+  return fetchChangeHistory("task", params.task_id!, organizationId, params.limit, params.offset);
 };
 
 const availableChangeHistoryTools: any = {

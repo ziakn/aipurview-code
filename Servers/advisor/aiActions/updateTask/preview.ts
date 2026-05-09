@@ -31,9 +31,7 @@ export function renderUpdateTaskDiffPreview(
   }
 
   if (input.assignees !== undefined) {
-    changes.push(
-      `assignees replaced with [${input.assignees.join(", ")}]`,
-    );
+    changes.push(`assignees replaced with [${input.assignees.join(", ")}]`);
   }
 
   if (changes.length === 0) {

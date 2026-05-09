@@ -9,10 +9,7 @@ import { Request, Response } from "express";
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import logger, { logStructured } from "../utils/logger/fileLogger";
 import { listPendingConfirmations } from "../advisor/confirmation/confirmationStore";
-import {
-  approveAction,
-  rejectAction,
-} from "../advisor/approval/approvalGateway";
+import { approveAction, rejectAction } from "../advisor/approval/approvalGateway";
 import { trackAIContent } from "../middleware/aiContentTracker.middleware";
 
 const fileName = "aiConfirmation.ctrl.ts";
@@ -48,7 +45,7 @@ export async function approveConfirmation(req: Request, res: Response) {
         confidenceScore: 100,
         promptSummary: `Approved: ${id}`,
       },
-      userId
+      userId,
     ).catch(() => {});
 
     logStructured("successful", `confirmation ${id} approved`, functionName, fileName);
@@ -57,7 +54,7 @@ export async function approveConfirmation(req: Request, res: Response) {
         confirmation_id: id,
         status: "approved",
         result: result.result,
-      })
+      }),
     );
   } catch (error) {
     logStructured("error", "failed to approve confirmation", functionName, fileName);
@@ -89,7 +86,7 @@ export async function rejectConfirmation(req: Request, res: Response) {
       STATUS_CODE[200]({
         confirmation_id: id,
         status: "rejected",
-      })
+      }),
     );
   } catch (error) {
     logStructured("error", "failed to reject confirmation", functionName, fileName);
@@ -109,7 +106,12 @@ export async function getPendingConfirmations(req: Request, res: Response) {
   try {
     const pending = await listPendingConfirmations(organizationId);
 
-    logStructured("successful", `fetched ${pending.length} pending confirmations`, functionName, fileName);
+    logStructured(
+      "successful",
+      `fetched ${pending.length} pending confirmations`,
+      functionName,
+      fileName,
+    );
     return res.status(200).json(STATUS_CODE[200](pending));
   } catch (error) {
     logStructured("error", "failed to list pending confirmations", functionName, fileName);

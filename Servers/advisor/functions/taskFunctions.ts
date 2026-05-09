@@ -467,7 +467,7 @@ const agentCreateTask = createWriteToolFn({
           },
           type: QueryTypes.SELECT,
           transaction,
-        }
+        },
       );
 
       // Handle assignee
@@ -481,7 +481,7 @@ const agentCreateTask = createWriteToolFn({
               user_id: params.assigned_to as number,
             },
             transaction,
-          }
+          },
         );
       }
 
@@ -496,7 +496,9 @@ const agentUpdateTask = createWriteToolFn({
   toolName: "agent_update_task",
   warningLevel: "warning",
   descriptionFn: (params) => {
-    const fields = Object.keys(params).filter((k) => k !== "task_id" && k !== "_userId" && k !== "_organizationId");
+    const fields = Object.keys(params).filter(
+      (k) => k !== "task_id" && k !== "_userId" && k !== "_organizationId",
+    );
     return `Update task #${params.task_id} — fields: ${fields.join(", ")}`;
   },
   executeFn: async (params, organizationId) => {
@@ -538,7 +540,7 @@ const agentUpdateTask = createWriteToolFn({
       {
         replacements: { ...replacements, deletedStatus: TaskStatus.DELETED },
         type: QueryTypes.SELECT,
-      }
+      },
     );
 
     if (!result) {
@@ -552,8 +554,7 @@ const agentUpdateTask = createWriteToolFn({
 const agentAssignTask = createWriteToolFn({
   toolName: "agent_assign_task",
   warningLevel: "info",
-  descriptionFn: (params) =>
-    `Assign task #${params.task_id} to user #${params.assigned_to}`,
+  descriptionFn: (params) => `Assign task #${params.task_id} to user #${params.assigned_to}`,
   executeFn: async (params, organizationId) => {
     const taskId = params.task_id as number;
     const userId = params.assigned_to as number;
@@ -564,7 +565,7 @@ const agentAssignTask = createWriteToolFn({
       {
         replacements: { organizationId, taskId, deletedStatus: TaskStatus.DELETED },
         type: QueryTypes.SELECT,
-      }
+      },
     );
     if (!task) {
       throw new Error(`Task #${taskId} not found`);
@@ -573,11 +574,11 @@ const agentAssignTask = createWriteToolFn({
     // Remove existing assignment for this user if any, then insert
     await sequelize.query(
       `DELETE FROM task_assignees WHERE organization_id = :organizationId AND task_id = :taskId AND user_id = :userId`,
-      { replacements: { organizationId, taskId, userId } }
+      { replacements: { organizationId, taskId, userId } },
     );
     await sequelize.query(
       `INSERT INTO task_assignees (organization_id, task_id, user_id) VALUES (:organizationId, :taskId, :userId)`,
-      { replacements: { organizationId, taskId, userId } }
+      { replacements: { organizationId, taskId, userId } },
     );
 
     return { task_id: taskId, assigned_to: userId, success: true };
@@ -587,8 +588,7 @@ const agentAssignTask = createWriteToolFn({
 const agentUpdateTaskStatus = createWriteToolFn({
   toolName: "agent_update_task_status",
   warningLevel: "warning",
-  descriptionFn: (params) =>
-    `Change status of task #${params.task_id} to "${params.status}"`,
+  descriptionFn: (params) => `Change status of task #${params.task_id} to "${params.status}"`,
   executeFn: async (params, organizationId) => {
     const taskId = params.task_id as number;
     const status = params.status as string;
@@ -598,7 +598,7 @@ const agentUpdateTaskStatus = createWriteToolFn({
       {
         replacements: { organizationId, id: taskId, status, deletedStatus: TaskStatus.DELETED },
         type: QueryTypes.SELECT,
-      }
+      },
     );
 
     if (!result) {
@@ -612,8 +612,7 @@ const agentUpdateTaskStatus = createWriteToolFn({
 const agentSetTaskPriority = createWriteToolFn({
   toolName: "agent_set_task_priority",
   warningLevel: "info",
-  descriptionFn: (params) =>
-    `Set priority of task #${params.task_id} to "${params.priority}"`,
+  descriptionFn: (params) => `Set priority of task #${params.task_id} to "${params.priority}"`,
   executeFn: async (params, organizationId) => {
     const taskId = params.task_id as number;
     const priority = params.priority as string;
@@ -623,7 +622,7 @@ const agentSetTaskPriority = createWriteToolFn({
       {
         replacements: { organizationId, id: taskId, priority, deletedStatus: TaskStatus.DELETED },
         type: QueryTypes.SELECT,
-      }
+      },
     );
 
     if (!result) {
@@ -637,8 +636,7 @@ const agentSetTaskPriority = createWriteToolFn({
 const agentDeleteTask = createWriteToolFn({
   toolName: "agent_delete_task",
   warningLevel: "danger",
-  descriptionFn: (params) =>
-    `Delete (archive) task #${params.task_id}`,
+  descriptionFn: (params) => `Delete (archive) task #${params.task_id}`,
   executeFn: async (params, organizationId) => {
     const taskId = params.task_id as number;
 
@@ -647,7 +645,7 @@ const agentDeleteTask = createWriteToolFn({
       {
         replacements: { organizationId, id: taskId, deletedStatus: TaskStatus.DELETED },
         type: QueryTypes.SELECT,
-      }
+      },
     );
 
     if (!result) {
@@ -661,17 +659,21 @@ const agentDeleteTask = createWriteToolFn({
 const agentRestoreTask = createWriteToolFn({
   toolName: "agent_restore_task",
   warningLevel: "info",
-  descriptionFn: (params) =>
-    `Restore archived task #${params.task_id} back to Open status`,
+  descriptionFn: (params) => `Restore archived task #${params.task_id} back to Open status`,
   executeFn: async (params, organizationId) => {
     const taskId = params.task_id as number;
 
     const [result] = await sequelize.query(
       `UPDATE tasks SET status = :openStatus WHERE organization_id = :organizationId AND id = :id AND status = :deletedStatus RETURNING *`,
       {
-        replacements: { organizationId, id: taskId, openStatus: TaskStatus.OPEN, deletedStatus: TaskStatus.DELETED },
+        replacements: {
+          organizationId,
+          id: taskId,
+          openStatus: TaskStatus.OPEN,
+          deletedStatus: TaskStatus.DELETED,
+        },
         type: QueryTypes.SELECT,
-      }
+      },
     );
 
     if (!result) {

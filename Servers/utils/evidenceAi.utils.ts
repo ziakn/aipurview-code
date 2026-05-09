@@ -22,7 +22,7 @@ export const upsertAnalysisQuery = async (
     analyzed_by: number | null;
     visibility?: string;
     audit_metadata?: any | null;
-  }
+  },
 ) => {
   const auditMetadataJson =
     data.audit_metadata != null ? JSON.stringify(data.audit_metadata) : null;
@@ -32,7 +32,7 @@ export const upsertAnalysisQuery = async (
     `SELECT id FROM evidence_ai_analysis
      WHERE file_id = :fileId AND organization_id = :organizationId
      LIMIT 1`,
-    { replacements: { fileId, organizationId } }
+    { replacements: { fileId, organizationId } },
   );
 
   if ((existing as any[]).length > 0) {
@@ -68,7 +68,7 @@ export const upsertAnalysisQuery = async (
           visibility: data.visibility || "public",
           audit_metadata: auditMetadataJson,
         },
-      }
+      },
     );
     return (updated as any[])[0];
   }
@@ -100,7 +100,7 @@ export const upsertAnalysisQuery = async (
         visibility: data.visibility || "public",
         audit_metadata: auditMetadataJson,
       },
-    }
+    },
   );
   return (created as any[])[0];
 };
@@ -112,7 +112,7 @@ export const getAnalysisByFileIdQuery = async (
   fileId: number,
   organizationId: number,
   userId?: number | null,
-  visibility?: string
+  visibility?: string,
 ) => {
   const vis = buildVisibilityFilterForEvidence(userId ?? null, visibility, "eaa");
   const [rows] = await sequelize.query(
@@ -121,7 +121,7 @@ export const getAnalysisByFileIdQuery = async (
      ${vis.clause}
      ORDER BY eaa.analyzed_at DESC
      LIMIT 1`,
-    { replacements: { fileId, organizationId, ...vis.replacements } }
+    { replacements: { fileId, organizationId, ...vis.replacements } },
   );
   return (rows as any[])[0] || null;
 };
@@ -132,7 +132,7 @@ export const getAnalysisByFileIdQuery = async (
 export const getQualityScoresQuery = async (
   organizationId: number,
   userId?: number | null,
-  visibility?: string
+  visibility?: string,
 ) => {
   const vis = buildVisibilityFilterForEvidence(userId ?? null, visibility, "eaa");
   const [rows] = await sequelize.query(
@@ -142,7 +142,7 @@ export const getQualityScoresQuery = async (
      WHERE eaa.organization_id = :organizationId
      ${vis.clause}
      ORDER BY eaa.overall_quality_score ASC`,
-    { replacements: { organizationId, ...vis.replacements } }
+    { replacements: { organizationId, ...vis.replacements } },
   );
   return rows as any[];
 };
@@ -153,7 +153,7 @@ export const getQualityScoresQuery = async (
 export const getEvidenceGapsQuery = async (
   organizationId: number,
   frameworkType?: string,
-  qualityThreshold: number = 50
+  qualityThreshold: number = 50,
 ) => {
   const fwTypes = frameworkType ? [frameworkType] : ["eu_ai_act", "iso_42001"];
   const allGaps: any[] = [];
@@ -191,7 +191,7 @@ export const getEvidenceGapsQuery = async (
        ) stats ON stats.entity_id = cs.id
        WHERE cs.${controlTitleCol} IS NOT NULL
        ORDER BY COALESCE(stats.evidence_count, 0) ASC, COALESCE(stats.avg_quality, 0) ASC`,
-      { replacements: { organizationId, fwType: fw } }
+      { replacements: { organizationId, fwType: fw } },
     );
 
     allGaps.push(...(gaps as any[]));
@@ -203,18 +203,15 @@ export const getEvidenceGapsQuery = async (
       g.evidence_count === 0
         ? "no_evidence"
         : g.avg_quality < qualityThreshold
-        ? "low_quality"
-        : "adequate",
+          ? "low_quality"
+          : "adequate",
   }));
 };
 
 /**
  * Get suggested control links for a file.
  */
-export const getSuggestionsQuery = async (
-  fileId: number,
-  organizationId: number
-) => {
+export const getSuggestionsQuery = async (fileId: number, organizationId: number) => {
   const analysis = await getAnalysisByFileIdQuery(fileId, organizationId);
   if (!analysis) return null;
 
@@ -238,7 +235,7 @@ export const applySuggestionsQuery = async (
     control_id: number;
     framework_type: string;
   }>,
-  createdBy?: number
+  createdBy?: number,
 ) => {
   const applied: any[] = [];
 
@@ -259,7 +256,7 @@ export const applySuggestionsQuery = async (
           entityId: suggestion.control_id,
           createdBy: createdBy || null,
         },
-      }
+      },
     );
     if ((result as any[]).length > 0) {
       applied.push((result as any[])[0]);

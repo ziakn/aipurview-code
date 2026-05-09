@@ -13,10 +13,21 @@ import { sequelize } from "../../database/db";
 import logger from "../../utils/logger/fileLogger";
 
 const VALID_RISK_CATEGORIES = [
-  "Strategic risk", "Operational risk", "Compliance risk", "Financial risk",
-  "Cybersecurity risk", "Reputational risk", "Legal risk", "Technological risk",
-  "Third-party/vendor risk", "Environmental risk", "Human resources risk",
-  "Geopolitical risk", "Fraud risk", "Data privacy risk", "Health and safety risk",
+  "Strategic risk",
+  "Operational risk",
+  "Compliance risk",
+  "Financial risk",
+  "Cybersecurity risk",
+  "Reputational risk",
+  "Legal risk",
+  "Technological risk",
+  "Third-party/vendor risk",
+  "Environmental risk",
+  "Human resources risk",
+  "Geopolitical risk",
+  "Fraud risk",
+  "Data privacy risk",
+  "Health and safety risk",
 ];
 
 function validateRiskCategory(category: string): string {
@@ -27,7 +38,9 @@ function validateRiskCategory(category: string): string {
   const found = VALID_RISK_CATEGORIES.find((c) => c.toLowerCase() === lower);
   if (found) return found;
   // Partial match
-  const partial = VALID_RISK_CATEGORIES.find((c) => c.toLowerCase().includes(lower) || lower.includes(c.toLowerCase()));
+  const partial = VALID_RISK_CATEGORIES.find(
+    (c) => c.toLowerCase().includes(lower) || lower.includes(c.toLowerCase()),
+  );
   if (partial) return partial;
   // Default fallback
   return "Operational risk";
@@ -409,7 +422,8 @@ const agentCreateRisk = createWriteToolFn({
         likelihood: params.likelihood || "Possible",
         impact: params.impact || "",
         risk_category: params.category ? [validateRiskCategory(params.category as string)] : [],
-        risk_owner: (params.risk_owner && Number(params.risk_owner)) ? Number(params.risk_owner) : null,
+        risk_owner:
+          params.risk_owner && Number(params.risk_owner) ? Number(params.risk_owner) : null,
         mitigation_status: "Not Started",
         risk_level_autocalculated: "Medium risk",
         ai_lifecycle_phase: "Problem definition & planning",
@@ -454,13 +468,15 @@ const agentUpdateRisk = createWriteToolFn({
       const riskId = params.risk_id as number;
       const updateData: any = {};
       if (params.risk_name !== undefined) updateData.risk_name = params.risk_name;
-      if (params.risk_description !== undefined) updateData.risk_description = params.risk_description;
+      if (params.risk_description !== undefined)
+        updateData.risk_description = params.risk_description;
       if (params.severity !== undefined) updateData.severity = params.severity;
       if (params.likelihood !== undefined) updateData.likelihood = params.likelihood;
       if (params.impact !== undefined) updateData.impact = params.impact;
       if (params.category !== undefined) updateData.risk_category = [params.category];
       if (params.risk_owner !== undefined) updateData.risk_owner = params.risk_owner;
-      if (params.mitigation_status !== undefined) updateData.mitigation_status = params.mitigation_status;
+      if (params.mitigation_status !== undefined)
+        updateData.mitigation_status = params.mitigation_status;
       if (params.mitigation_plan !== undefined) updateData.mitigation_plan = params.mitigation_plan;
 
       await updateRiskByIdQuery(riskId, updateData, organizationId, transaction);
@@ -502,7 +518,11 @@ const agentAssignRiskOwner = createWriteToolFn({
     await sequelize.query(
       `UPDATE risks SET risk_owner = :owner_user_id, updated_at = NOW() WHERE id = :risk_id AND organization_id = :organization_id AND is_deleted = false`,
       {
-        replacements: { owner_user_id: ownerUserId, risk_id: riskId, organization_id: organizationId },
+        replacements: {
+          owner_user_id: ownerUserId,
+          risk_id: riskId,
+          organization_id: organizationId,
+        },
       },
     );
     return { id: riskId, risk_owner: ownerUserId, message: "Risk owner assigned successfully" };
@@ -512,8 +532,7 @@ const agentAssignRiskOwner = createWriteToolFn({
 const agentChangeRiskStatus = createWriteToolFn({
   toolName: "agent_change_risk_status",
   warningLevel: "warning",
-  descriptionFn: (params) =>
-    `Change status of risk #${params.risk_id} to "${params.status}"`,
+  descriptionFn: (params) => `Change status of risk #${params.risk_id} to "${params.status}"`,
   executeFn: async (params, organizationId) => {
     const riskId = params.risk_id as number;
     const status = params.status as string;
@@ -543,15 +562,18 @@ const agentBulkUpdateRiskStatus = createWriteToolFn({
         replacements: { status, risk_ids: riskIds, organization_id: organizationId },
       },
     );
-    return { updated_ids: riskIds, mitigation_status: status, message: `${riskIds.length} risk(s) updated successfully` };
+    return {
+      updated_ids: riskIds,
+      mitigation_status: status,
+      message: `${riskIds.length} risk(s) updated successfully`,
+    };
   },
 });
 
 const agentLinkRiskToProject = createWriteToolFn({
   toolName: "agent_link_risk_to_project",
   warningLevel: "warning",
-  descriptionFn: (params) =>
-    `Link risk #${params.risk_id} to project #${params.project_id}`,
+  descriptionFn: (params) => `Link risk #${params.risk_id} to project #${params.project_id}`,
   executeFn: async (params, organizationId) => {
     const riskId = params.risk_id as number;
     const projectId = params.project_id as number;
@@ -563,7 +585,11 @@ const agentLinkRiskToProject = createWriteToolFn({
         replacements: { organization_id: organizationId, risk_id: riskId, project_id: projectId },
       },
     );
-    return { risk_id: riskId, project_id: projectId, message: "Risk linked to project successfully" };
+    return {
+      risk_id: riskId,
+      project_id: projectId,
+      message: "Risk linked to project successfully",
+    };
   },
 });
 

@@ -13,19 +13,13 @@
  */
 
 import { describe, expect, it } from "@jest/globals";
-import {
-  memoryEnabled,
-  extractLatestUserContent,
-  AiSdkAdvisorParams,
-} from "../aiSdkAgent";
+import { memoryEnabled, extractLatestUserContent, AiSdkAdvisorParams } from "../aiSdkAgent";
 
 /**
  * Build a minimal valid params object so tests only express the deltas
  * they care about.
  */
-function makeParams(
-  overrides: Partial<AiSdkAdvisorParams> = {},
-): AiSdkAdvisorParams {
+function makeParams(overrides: Partial<AiSdkAdvisorParams> = {}): AiSdkAdvisorParams {
   return {
     apiKey: "test-key",
     baseURL: "https://example.test",
@@ -79,11 +73,9 @@ describe("aiSdkAgent / memoryEnabled", () => {
 
 describe("aiSdkAgent / extractLatestUserContent", () => {
   it("falls back to userPrompt when no messages array provided", () => {
-    expect(
-      extractLatestUserContent(
-        makeParams({ userPrompt: "What is my risk score?" }),
-      ),
-    ).toBe("What is my risk score?");
+    expect(extractLatestUserContent(makeParams({ userPrompt: "What is my risk score?" }))).toBe(
+      "What is my risk score?",
+    );
   });
 
   it("returns empty string when neither userPrompt nor messages provided", () => {

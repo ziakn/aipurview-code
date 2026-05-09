@@ -27,7 +27,15 @@ export interface RuleEvaluationResult {
  * Fact schema for the rule engine.
  */
 export interface ApprovalFacts {
-  operation_type: "read" | "create" | "update" | "delete" | "archive" | "approve" | "review" | "submit";
+  operation_type:
+    | "read"
+    | "create"
+    | "update"
+    | "delete"
+    | "archive"
+    | "approve"
+    | "review"
+    | "submit";
   entity_type?: string;
   entity_count: number;
   risk_level: "info" | "warning" | "danger";
@@ -72,14 +80,23 @@ export function deriveFacts(params: {
   let operationType: ApprovalFacts["operation_type"] = "update";
   if (toolName.includes("delete") || toolName.includes("remove")) operationType = "delete";
   else if (toolName.includes("archive")) operationType = "archive";
-  else if (toolName.includes("create") || toolName.includes("register") || toolName.includes("add")) operationType = "create";
+  else if (toolName.includes("create") || toolName.includes("register") || toolName.includes("add"))
+    operationType = "create";
   else if (toolName.includes("approve")) operationType = "approve";
   else if (toolName.includes("review") || toolName.includes("submit")) operationType = "submit";
-  else if (toolName.startsWith("get_") || toolName.startsWith("fetch_") || toolName.startsWith("list_") || toolName.startsWith("search_") || toolName.startsWith("count_")) operationType = "read";
+  else if (
+    toolName.startsWith("get_") ||
+    toolName.startsWith("fetch_") ||
+    toolName.startsWith("list_") ||
+    toolName.startsWith("search_") ||
+    toolName.startsWith("count_")
+  )
+    operationType = "read";
 
   // Derive tool category from tool name
   let toolCategory = "general";
-  if (toolName.includes("admin") || toolName.includes("config") || toolName.includes("setting")) toolCategory = "admin";
+  if (toolName.includes("admin") || toolName.includes("config") || toolName.includes("setting"))
+    toolCategory = "admin";
   else if (toolName.includes("policy")) toolCategory = "policy";
   else if (toolName.includes("risk")) toolCategory = "risk";
   else if (toolName.includes("vendor")) toolCategory = "vendor";
@@ -97,7 +114,12 @@ export function deriveFacts(params: {
 
   return {
     operation_type: operationType,
-    entity_type: toolName.replace(/^agent_/, "").split("_").slice(1).join("_") || "unknown",
+    entity_type:
+      toolName
+        .replace(/^agent_/, "")
+        .split("_")
+        .slice(1)
+        .join("_") || "unknown",
     entity_count: entityCount,
     risk_level: riskLevel,
     tool_category: toolCategory,
@@ -114,7 +136,7 @@ export function deriveFacts(params: {
  */
 export async function evaluateRules(
   organizationId: number,
-  facts: ApprovalFacts
+  facts: ApprovalFacts,
 ): Promise<RuleEvaluationResult> {
   const functionName = "evaluateRules";
 
@@ -141,7 +163,12 @@ export async function evaluateRules(
 
     if (allMatches.length === 0) {
       // No rule matched — default to require-approval (safe default)
-      logStructured("successful", `no rules matched for ${facts.tool_name}, defaulting to require-approval`, functionName, fileName);
+      logStructured(
+        "successful",
+        `no rules matched for ${facts.tool_name}, defaulting to require-approval`,
+        functionName,
+        fileName,
+      );
       return {
         decision: "require-approval",
         matchedRule: null,
@@ -151,15 +178,13 @@ export async function evaluateRules(
     }
 
     const topMatch = allMatches[0];
-    const topEvent = result.events.find(
-      (e) => (e.params as any)?.ruleName === topMatch.name
-    );
+    const topEvent = result.events.find((e) => (e.params as any)?.ruleName === topMatch.name);
 
     logStructured(
       "successful",
       `rule "${topMatch.name}" matched for ${facts.tool_name} → ${topMatch.decision}`,
       functionName,
-      fileName
+      fileName,
     );
 
     return {
@@ -186,7 +211,7 @@ export async function evaluateRules(
  */
 export async function testRule(
   rule: RuleDefinition,
-  facts: ApprovalFacts
+  facts: ApprovalFacts,
 ): Promise<{ matched: boolean; decision?: RuleDecision }> {
   const engine = new Engine([], { allowUndefinedFacts: true });
   engine.addRule(toEngineRule(rule));

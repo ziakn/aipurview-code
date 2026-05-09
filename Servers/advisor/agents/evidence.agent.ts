@@ -19,13 +19,17 @@ a document supports and why.`;
 export function registerEvidenceAgent(tenant: number) {
   const tools = bridgeTools(
     evidenceAiToolsDefinition,
-    availableEvidenceAiTools as Record<string, (params: Record<string, unknown>, tenant: number) => Promise<unknown>>,
-    tenant
+    availableEvidenceAiTools as Record<
+      string,
+      (params: Record<string, unknown>, tenant: number) => Promise<unknown>
+    >,
+    tenant,
   );
 
   registerAgent({
     name: "evidence-agent",
-    description: "Analyzes documents, scores evidence quality, suggests control links, and detects evidence gaps",
+    description:
+      "Analyzes documents, scores evidence quality, suggests control links, and detects evidence gaps",
     systemPrompt: EVIDENCE_AGENT_PROMPT,
     tools,
     maxSteps: 5,

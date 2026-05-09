@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Add visibility control (public/private) to all Phase 0 AI tables.
@@ -70,28 +70,38 @@ module.exports = {
 
   async down(queryInterface) {
     // Drop visibility indexes
-    await queryInterface.sequelize.query('DROP INDEX IF EXISTS idx_ai_content_vis');
-    await queryInterface.sequelize.query('DROP INDEX IF EXISTS idx_ctrl_readiness_vis');
-    await queryInterface.sequelize.query('DROP INDEX IF EXISTS idx_evidence_ai_vis');
+    await queryInterface.sequelize.query("DROP INDEX IF EXISTS idx_ai_content_vis");
+    await queryInterface.sequelize.query("DROP INDEX IF EXISTS idx_ctrl_readiness_vis");
+    await queryInterface.sequelize.query("DROP INDEX IF EXISTS idx_evidence_ai_vis");
 
     // Restore original unique indexes
-    await queryInterface.sequelize.query('DROP INDEX IF EXISTS uq_fw_readiness_full');
+    await queryInterface.sequelize.query("DROP INDEX IF EXISTS uq_fw_readiness_full");
     await queryInterface.sequelize.query(`
       CREATE UNIQUE INDEX IF NOT EXISTS uq_fw_readiness_fw_proj_org
         ON verifywise.framework_readiness_scores(framework_type, COALESCE(project_id, 0), organization_id)
     `);
 
-    await queryInterface.sequelize.query('DROP INDEX IF EXISTS uq_ctrl_readiness_full');
+    await queryInterface.sequelize.query("DROP INDEX IF EXISTS uq_ctrl_readiness_full");
     await queryInterface.sequelize.query(`
       CREATE UNIQUE INDEX IF NOT EXISTS uq_ctrl_readiness_control_fw_proj_org
         ON verifywise.control_readiness_scores(control_id, framework_type, COALESCE(project_id, 0), organization_id)
     `);
 
     // Remove columns
-    await queryInterface.sequelize.query('ALTER TABLE verifywise.ai_content_metadata DROP COLUMN IF EXISTS visibility');
-    await queryInterface.sequelize.query('ALTER TABLE verifywise.readiness_history DROP COLUMN IF EXISTS visibility, DROP COLUMN IF EXISTS created_by');
-    await queryInterface.sequelize.query('ALTER TABLE verifywise.framework_readiness_scores DROP COLUMN IF EXISTS visibility, DROP COLUMN IF EXISTS created_by');
-    await queryInterface.sequelize.query('ALTER TABLE verifywise.control_readiness_scores DROP COLUMN IF EXISTS visibility, DROP COLUMN IF EXISTS created_by');
-    await queryInterface.sequelize.query('ALTER TABLE verifywise.evidence_ai_analysis DROP COLUMN IF EXISTS visibility');
-  }
+    await queryInterface.sequelize.query(
+      "ALTER TABLE verifywise.ai_content_metadata DROP COLUMN IF EXISTS visibility",
+    );
+    await queryInterface.sequelize.query(
+      "ALTER TABLE verifywise.readiness_history DROP COLUMN IF EXISTS visibility, DROP COLUMN IF EXISTS created_by",
+    );
+    await queryInterface.sequelize.query(
+      "ALTER TABLE verifywise.framework_readiness_scores DROP COLUMN IF EXISTS visibility, DROP COLUMN IF EXISTS created_by",
+    );
+    await queryInterface.sequelize.query(
+      "ALTER TABLE verifywise.control_readiness_scores DROP COLUMN IF EXISTS visibility, DROP COLUMN IF EXISTS created_by",
+    );
+    await queryInterface.sequelize.query(
+      "ALTER TABLE verifywise.evidence_ai_analysis DROP COLUMN IF EXISTS visibility",
+    );
+  },
 };

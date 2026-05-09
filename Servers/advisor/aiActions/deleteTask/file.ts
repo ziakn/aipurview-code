@@ -32,8 +32,7 @@ export async function fileDeleteTask(
 
   // Strip the bridge-injected `_userId` (and `_organizationId`) before
   // strict-parsing — see toolBridge.ts which always appends `_userId`.
-  const { _userId: _u, _organizationId: _o, ...userParams } =
-    params as Record<string, unknown>;
+  const { _userId: _u, _organizationId: _o, ...userParams } = params as Record<string, unknown>;
   void _u;
   void _o;
   const parsed = AgentDeleteTaskSchema.safeParse(userParams);

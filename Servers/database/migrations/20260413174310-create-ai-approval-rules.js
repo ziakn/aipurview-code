@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Phase 2 — Auto-Approve Rule Engine
@@ -41,5 +41,5 @@ module.exports = {
     await queryInterface.sequelize.query(`
       DROP TABLE IF EXISTS verifywise.ai_approval_rules;
     `);
-  }
+  },
 };

@@ -21,9 +21,7 @@ const dimensionScoreSchema = z
       .number()
       .min(0)
       .max(100)
-      .describe(
-        "Score on the 0-100 ladder, anchored to the rubric tiers (0,30,50,70,90,100).",
-      ),
+      .describe("Score on the 0-100 ladder, anchored to the rubric tiers (0,30,50,70,90,100)."),
     rationale: z
       .string()
       .min(10)
@@ -40,11 +38,7 @@ const dimensionScoreSchema = z
  */
 const keyFindingSchema = z
   .object({
-    text: z
-      .string()
-      .min(15)
-      .max(220)
-      .describe("Plain-language summary of the finding."),
+    text: z.string().min(15).max(220).describe("Plain-language summary of the finding."),
     evidence_quote: z
       .string()
       .min(8)
@@ -81,14 +75,10 @@ const documentSignalsSchema = z
       .describe("Best-fit document classification."),
     has_explicit_dates: z
       .boolean()
-      .describe(
-        "True if the document contains specific dates (created/reviewed/effective).",
-      ),
+      .describe("True if the document contains specific dates (created/reviewed/effective)."),
     has_named_owner: z
       .boolean()
-      .describe(
-        "True if a specific role, team, or individual is named as owner/approver.",
-      ),
+      .describe("True if a specific role, team, or individual is named as owner/approver."),
     has_version: z
       .boolean()
       .describe("True if a version identifier (v1.0, rev-2, etc.) is present."),
@@ -99,9 +89,7 @@ const documentSignalsSchema = z
       ),
     is_draft: z
       .boolean()
-      .describe(
-        "True if the document is marked as draft, work-in-progress, or unsigned.",
-      ),
+      .describe("True if the document is marked as draft, work-in-progress, or unsigned."),
     authority_signal: z
       .number()
       .min(0)
@@ -122,16 +110,12 @@ export const llmAnalysisSchema = z
       .string()
       .min(40)
       .max(600)
-      .describe(
-        "Two- or three-sentence neutral summary of what the evidence demonstrates.",
-      ),
+      .describe("Two- or three-sentence neutral summary of what the evidence demonstrates."),
     key_findings: z
       .array(keyFindingSchema)
       .min(0)
       .max(7)
-      .describe(
-        "Up to 7 most important findings. May be empty for stub documents.",
-      ),
+      .describe("Up to 7 most important findings. May be empty for stub documents."),
     compliance_areas: z
       .array(z.string().min(2).max(50))
       .min(0)
@@ -146,9 +130,7 @@ export const llmAnalysisSchema = z
         specificity: dimensionScoreSchema,
       })
       .strict()
-      .describe(
-        "LLM-scored semantic dimensions. Recency and reliability are computed in code.",
-      ),
+      .describe("LLM-scored semantic dimensions. Recency and reliability are computed in code."),
     document_signals: documentSignalsSchema,
     abstain_reason: z
       .string()
@@ -166,10 +148,7 @@ export type LLMAnalysisOutput = z.infer<typeof llmAnalysisSchema>;
  */
 const controlMatchSchema = z
   .object({
-    control_id: z
-      .number()
-      .int()
-      .describe("Exact control id provided in the candidate list."),
+    control_id: z.number().int().describe("Exact control id provided in the candidate list."),
     match_score: z
       .number()
       .min(0)

@@ -27,7 +27,7 @@ export function getLangfuse(): Langfuse | null {
       "successful",
       "Langfuse not configured (missing LANGFUSE_PUBLIC_KEY/LANGFUSE_SECRET_KEY), tracing disabled",
       "getLangfuse",
-      fileName
+      fileName,
     );
     return null;
   }

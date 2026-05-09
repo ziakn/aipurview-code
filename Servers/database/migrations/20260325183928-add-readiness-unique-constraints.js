@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Add initial unique constraints to readiness tables for upsert support.
@@ -25,5 +25,5 @@ module.exports = {
     await queryInterface.sequelize.query(`
       DROP INDEX IF EXISTS uq_fw_readiness_fw_org
     `);
-  }
+  },
 };

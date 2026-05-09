@@ -107,10 +107,7 @@ interface ScoredAgent {
   matchedKeywords: string[];
 }
 
-function scoreAgentsByKeywords(
-  message: string,
-  agents: AgentToolEntry[],
-): ScoredAgent[] {
+function scoreAgentsByKeywords(message: string, agents: AgentToolEntry[]): ScoredAgent[] {
   const m = message.toLowerCase();
   return agents
     .map((agent) => {
@@ -150,9 +147,7 @@ function buildSubset<
   const universalNames = new Set<string>();
   const allDefNames = new Set<string>();
   for (const def of params.toolsDefinition) {
-    const name = (def?.function?.name || (def as { name?: string }).name) as
-      | string
-      | undefined;
+    const name = (def?.function?.name || (def as { name?: string }).name) as string | undefined;
     if (!name) continue;
     allDefNames.add(name);
     if (!claimedByAll.has(name)) universalNames.add(name);
@@ -168,15 +163,12 @@ function buildSubset<
   const activeAvailableTools = {} as TAvailable;
   for (const key of Object.keys(params.availableTools) as Array<keyof TAvailable>) {
     if (activeNames.has(key as string)) {
-      (activeAvailableTools as Record<string, unknown>)[key as string] =
-        params.availableTools[key];
+      (activeAvailableTools as Record<string, unknown>)[key as string] = params.availableTools[key];
     }
   }
 
   const activeToolsDefinition = params.toolsDefinition.filter((def) => {
-    const name = (def?.function?.name || (def as { name?: string }).name) as
-      | string
-      | undefined;
+    const name = (def?.function?.name || (def as { name?: string }).name) as string | undefined;
     return !!name && activeNames.has(name);
   });
 
@@ -191,9 +183,7 @@ function buildSubset<
 export async function selectActiveTools<
   TAvailable extends Record<string, unknown>,
   TDef extends { function?: { name?: string }; name?: string },
->(
-  params: SelectActiveToolsParams<TAvailable, TDef>,
-): Promise<RoutingResult<TAvailable, TDef>> {
+>(params: SelectActiveToolsParams<TAvailable, TDef>): Promise<RoutingResult<TAvailable, TDef>> {
   const fullCount = params.toolsDefinition.length;
   const enabled = params.enabled !== false;
   const topK = params.topK ?? 3;
@@ -218,10 +208,7 @@ export async function selectActiveTools<
     return fullResult("fallback_disabled");
   }
 
-  if (
-    !params.message ||
-    params.message.trim().length < MIN_USEFUL_MESSAGE_CHARS
-  ) {
+  if (!params.message || params.message.trim().length < MIN_USEFUL_MESSAGE_CHARS) {
     return fullResult("fallback_empty_message");
   }
 
@@ -281,10 +268,7 @@ export async function selectActiveTools<
       similarities,
     };
   } catch (err) {
-    logger.warn(
-      "[routing] selectActiveTools failed; falling back to full catalogue",
-      err,
-    );
+    logger.warn("[routing] selectActiveTools failed; falling back to full catalogue", err);
     return fullResult("fallback_error");
   }
 }

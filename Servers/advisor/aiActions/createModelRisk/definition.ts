@@ -70,8 +70,7 @@ export const createModelRiskToolDefinition: AiActionToolDefinition = {
         },
         target_date: {
           type: "string",
-          description:
-            "Target date for risk review or mitigation (ISO 8601, e.g. 2026-04-15).",
+          description: "Target date for risk review or mitigation (ISO 8601, e.g. 2026-04-15).",
         },
         mitigation_plan: {
           type: "string",
@@ -84,8 +83,7 @@ export const createModelRiskToolDefinition: AiActionToolDefinition = {
         },
         likelihood: {
           type: "string",
-          description:
-            "Likelihood of the risk occurring (free-form). Max 255 characters.",
+          description: "Likelihood of the risk occurring (free-form). Max 255 characters.",
         },
       },
       required: ["risk_name"],

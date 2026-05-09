@@ -20,12 +20,12 @@ export async function listRulesCtrl(req: Request, res: Response) {
 
   try {
     // Get custom rules from DB
-    const customRules = await sequelize.query(
+    const customRules = (await sequelize.query(
       `SELECT * FROM ai_approval_rules
        WHERE organization_id = :organizationId
        ORDER BY priority DESC`,
-      { replacements: { organizationId }, type: QueryTypes.SELECT }
-    ) as any[];
+      { replacements: { organizationId }, type: QueryTypes.SELECT },
+    )) as any[];
 
     // Merge with defaults
     const customNames = new Set(customRules.map((r: any) => r.name));
@@ -45,7 +45,7 @@ export async function listRulesCtrl(req: Request, res: Response) {
       }));
 
     const allRules = [...customRules, ...defaults].sort(
-      (a: any, b: any) => (b.priority || 0) - (a.priority || 0)
+      (a: any, b: any) => (b.priority || 0) - (a.priority || 0),
     );
 
     logStructured("successful", `listed ${allRules.length} rules`, functionName, fileName);
@@ -71,12 +71,16 @@ export async function createRuleCtrl(req: Request, res: Response) {
 
     // Validate required fields
     if (!name || !conditions || !event_type) {
-      return res.status(400).json(STATUS_CODE[400]("name, conditions, and event_type are required"));
+      return res
+        .status(400)
+        .json(STATUS_CODE[400]("name, conditions, and event_type are required"));
     }
 
     const validEventTypes = ["auto-approve", "require-approval", "auto-reject"];
     if (!validEventTypes.includes(event_type)) {
-      return res.status(400).json(STATUS_CODE[400](`event_type must be one of: ${validEventTypes.join(", ")}`));
+      return res
+        .status(400)
+        .json(STATUS_CODE[400](`event_type must be one of: ${validEventTypes.join(", ")}`));
     }
 
     // Validate conditions structure
@@ -85,7 +89,7 @@ export async function createRuleCtrl(req: Request, res: Response) {
       return res.status(400).json(STATUS_CODE[400](validationError));
     }
 
-    const [result] = await sequelize.query(
+    const [result] = (await sequelize.query(
       `INSERT INTO ai_approval_rules
         (organization_id, name, description, conditions, event_type, event_params, priority, is_active, is_default, created_by, created_at, updated_at)
        VALUES
@@ -103,8 +107,8 @@ export async function createRuleCtrl(req: Request, res: Response) {
           createdBy: userId,
         },
         type: QueryTypes.INSERT,
-      }
-    ) as any;
+      },
+    )) as any;
 
     logStructured("successful", `created rule "${name}"`, functionName, fileName);
     return res.status(201).json(STATUS_CODE[200](result));
@@ -126,19 +130,26 @@ export async function updateRuleCtrl(req: Request, res: Response) {
 
   try {
     // Check exists and not a default
-    const existing = await sequelize.query(
+    const existing = (await sequelize.query(
       `SELECT * FROM ai_approval_rules WHERE id = :ruleId AND organization_id = :organizationId`,
-      { replacements: { ruleId, organizationId }, type: QueryTypes.SELECT }
-    ) as any[];
+      { replacements: { ruleId, organizationId }, type: QueryTypes.SELECT },
+    )) as any[];
 
     if (!existing[0]) {
       return res.status(404).json(STATUS_CODE[404]("Rule not found"));
     }
     if (existing[0].is_default) {
-      return res.status(400).json(STATUS_CODE[400]("Cannot modify default rules. Create a custom rule with the same name to override."));
+      return res
+        .status(400)
+        .json(
+          STATUS_CODE[400](
+            "Cannot modify default rules. Create a custom rule with the same name to override.",
+          ),
+        );
     }
 
-    const { name, description, conditions, event_type, event_params, priority, is_active } = req.body;
+    const { name, description, conditions, event_type, event_params, priority, is_active } =
+      req.body;
 
     // Validate conditions if provided
     if (conditions) {
@@ -151,31 +162,54 @@ export async function updateRuleCtrl(req: Request, res: Response) {
     if (event_type) {
       const validEventTypes = ["auto-approve", "require-approval", "auto-reject"];
       if (!validEventTypes.includes(event_type)) {
-        return res.status(400).json(STATUS_CODE[400](`event_type must be one of: ${validEventTypes.join(", ")}`));
+        return res
+          .status(400)
+          .json(STATUS_CODE[400](`event_type must be one of: ${validEventTypes.join(", ")}`));
       }
     }
 
     const setClauses: string[] = ["updated_at = NOW()"];
     const replacements: Record<string, unknown> = { ruleId, organizationId };
 
-    if (name !== undefined) { setClauses.push("name = :name"); replacements.name = name; }
-    if (description !== undefined) { setClauses.push("description = :description"); replacements.description = description; }
-    if (conditions !== undefined) { setClauses.push("conditions = :conditions"); replacements.conditions = JSON.stringify(conditions); }
-    if (event_type !== undefined) { setClauses.push("event_type = :eventType"); replacements.eventType = event_type; }
-    if (event_params !== undefined) { setClauses.push("event_params = :eventParams"); replacements.eventParams = JSON.stringify(event_params); }
-    if (priority !== undefined) { setClauses.push("priority = :priority"); replacements.priority = priority; }
-    if (is_active !== undefined) { setClauses.push("is_active = :isActive"); replacements.isActive = is_active; }
+    if (name !== undefined) {
+      setClauses.push("name = :name");
+      replacements.name = name;
+    }
+    if (description !== undefined) {
+      setClauses.push("description = :description");
+      replacements.description = description;
+    }
+    if (conditions !== undefined) {
+      setClauses.push("conditions = :conditions");
+      replacements.conditions = JSON.stringify(conditions);
+    }
+    if (event_type !== undefined) {
+      setClauses.push("event_type = :eventType");
+      replacements.eventType = event_type;
+    }
+    if (event_params !== undefined) {
+      setClauses.push("event_params = :eventParams");
+      replacements.eventParams = JSON.stringify(event_params);
+    }
+    if (priority !== undefined) {
+      setClauses.push("priority = :priority");
+      replacements.priority = priority;
+    }
+    if (is_active !== undefined) {
+      setClauses.push("is_active = :isActive");
+      replacements.isActive = is_active;
+    }
 
     await sequelize.query(
       `UPDATE ai_approval_rules SET ${setClauses.join(", ")}
        WHERE id = :ruleId AND organization_id = :organizationId`,
-      { replacements, type: QueryTypes.UPDATE }
+      { replacements, type: QueryTypes.UPDATE },
     );
 
-    const [updated] = await sequelize.query(
+    const [updated] = (await sequelize.query(
       `SELECT * FROM ai_approval_rules WHERE id = :ruleId AND organization_id = :organizationId`,
-      { replacements: { ruleId, organizationId }, type: QueryTypes.SELECT }
-    ) as any[];
+      { replacements: { ruleId, organizationId }, type: QueryTypes.SELECT },
+    )) as any[];
 
     logStructured("successful", `updated rule ${ruleId}`, functionName, fileName);
     return res.status(200).json(STATUS_CODE[200](updated));
@@ -196,10 +230,10 @@ export async function deleteRuleCtrl(req: Request, res: Response) {
   const ruleId = Number(req.params.id);
 
   try {
-    const existing = await sequelize.query(
+    const existing = (await sequelize.query(
       `SELECT * FROM ai_approval_rules WHERE id = :ruleId AND organization_id = :organizationId`,
-      { replacements: { ruleId, organizationId }, type: QueryTypes.SELECT }
-    ) as any[];
+      { replacements: { ruleId, organizationId }, type: QueryTypes.SELECT },
+    )) as any[];
 
     if (!existing[0]) {
       return res.status(404).json(STATUS_CODE[404]("Rule not found"));
@@ -210,7 +244,7 @@ export async function deleteRuleCtrl(req: Request, res: Response) {
 
     await sequelize.query(
       `DELETE FROM ai_approval_rules WHERE id = :ruleId AND organization_id = :organizationId`,
-      { replacements: { ruleId, organizationId }, type: QueryTypes.DELETE }
+      { replacements: { ruleId, organizationId }, type: QueryTypes.DELETE },
     );
 
     logStructured("successful", `deleted rule ${ruleId}`, functionName, fileName);
@@ -264,11 +298,18 @@ export async function testRuleCtrl(req: Request, res: Response) {
 
     const result = await testRule(ruleDef, mergedFacts);
 
-    logStructured("successful", `tested rule "${ruleDef.name}": matched=${result.matched}`, functionName, fileName);
-    return res.status(200).json(STATUS_CODE[200]({
-      ...result,
-      evaluatedFacts: mergedFacts,
-    }));
+    logStructured(
+      "successful",
+      `tested rule "${ruleDef.name}": matched=${result.matched}`,
+      functionName,
+      fileName,
+    );
+    return res.status(200).json(
+      STATUS_CODE[200]({
+        ...result,
+        evaluatedFacts: mergedFacts,
+      }),
+    );
   } catch (error) {
     logStructured("error", "failed to test rule", functionName, fileName);
     logger.error("Error in testRuleCtrl:", error);

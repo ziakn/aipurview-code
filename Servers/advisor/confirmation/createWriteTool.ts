@@ -11,7 +11,7 @@ import type { WarningLevel, ConfirmationToolResult } from "./types";
 
 export type WriteExecuteFn = (
   params: Record<string, unknown>,
-  organizationId: number
+  organizationId: number,
 ) => Promise<unknown>;
 
 interface WriteToolConfig {
@@ -35,14 +35,17 @@ export const writeToolExecutors = new Map<string, WriteExecuteFn>();
  * - no executor: auto-rejected
  */
 export function createWriteToolFn(
-  config: WriteToolConfig
-): (params: Record<string, unknown>, organizationId: number) => Promise<ConfirmationToolResult | unknown> {
+  config: WriteToolConfig,
+): (
+  params: Record<string, unknown>,
+  organizationId: number,
+) => Promise<ConfirmationToolResult | unknown> {
   // Register the executor so the gateway can find it
   writeToolExecutors.set(config.toolName, config.executeFn);
 
   return async (
     params: Record<string, unknown>,
-    organizationId: number
+    organizationId: number,
   ): Promise<ConfirmationToolResult | unknown> => {
     const userId = (params._userId as number) || 0;
     const sanitized = sanitizeParams(params);
@@ -83,16 +86,15 @@ export function createWriteToolFn(
 function deriveActionType(toolName: string): string {
   if (toolName.includes("delete") || toolName.includes("remove")) return "delete";
   if (toolName.includes("archive")) return "archive";
-  if (toolName.includes("create") || toolName.includes("register") || toolName.includes("add")) return "create";
+  if (toolName.includes("create") || toolName.includes("register") || toolName.includes("add"))
+    return "create";
   return "update";
 }
 
 /**
  * Remove internal/sensitive fields from params before showing to user.
  */
-function sanitizeParams(
-  params: Record<string, unknown>
-): Record<string, unknown> {
+function sanitizeParams(params: Record<string, unknown>): Record<string, unknown> {
   const sanitized = { ...params };
   delete sanitized._userId;
   delete sanitized._organizationId;

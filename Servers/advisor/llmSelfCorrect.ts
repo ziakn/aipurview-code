@@ -89,9 +89,7 @@ export interface ValidationIssue {
  * a ZodError. Returns the issue list or null when the error isn't a schema
  * validation failure.
  */
-export function extractValidationIssues(
-  err: unknown,
-): ValidationIssue[] | null {
+export function extractValidationIssues(err: unknown): ValidationIssue[] | null {
   const visited = new Set<unknown>();
   const queue: unknown[] = [err];
 
@@ -134,10 +132,7 @@ export function buildCorrectionDirective(issues: ValidationIssue[]): string {
   if (issues.length === 0) return "";
   const numbered = issues
     .slice(0, 8) // truncate runaway issue lists
-    .map(
-      (i, n) =>
-        `${n + 1}. path \`${i.path || "(root)"}\` — ${i.message}`,
-    )
+    .map((i, n) => `${n + 1}. path \`${i.path || "(root)"}\` — ${i.message}`)
     .join("\n");
 
   return [
@@ -167,16 +162,13 @@ export function buildCorrectionDirective(issues: ValidationIssue[]): string {
  * Inject a different generateObject impl for tests.
  * The signature mirrors the AI SDK's; parameters are passed through.
  */
-export type GenerateObjectImpl = (
-  params: GenerateObjectParams,
-) => Promise<GenerateObjectResult>;
+export type GenerateObjectImpl = (params: GenerateObjectParams) => Promise<GenerateObjectResult>;
 
 export async function generateObjectWithSelfCorrection<T>(
   params: SelfCorrectingParams<T>,
   generateImpl?: GenerateObjectImpl,
 ): Promise<SelfCorrectingResult<T>> {
-  const gen = (generateImpl ??
-    (generateObject as unknown as GenerateObjectImpl));
+  const gen = generateImpl ?? (generateObject as unknown as GenerateObjectImpl);
   const maxAttempts = Math.max(0, params.maxSelfCorrectionAttempts ?? 2);
   const innerMaxRetries = params.innerMaxRetries ?? 2;
 
@@ -231,7 +223,5 @@ export async function generateObjectWithSelfCorrection<T>(
   }
 
   // Defensive fallback — the loop above always returns or throws.
-  throw new Error(
-    "[llmSelfCorrect] reached unreachable path — please file a bug",
-  );
+  throw new Error("[llmSelfCorrect] reached unreachable path — please file a bug");
 }

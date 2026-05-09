@@ -26,7 +26,7 @@ export async function trackAIContent(
   entityType: string,
   entityId: number,
   options: Partial<AIContentTrackOptions> & { badgeType: BadgeType; visibility?: string },
-  createdBy?: number | null
+  createdBy?: number | null,
 ): Promise<any> {
   try {
     const [rows] = await sequelize.query(
@@ -56,7 +56,7 @@ export async function trackAIContent(
           visibility: options.visibility || "public",
           organizationId,
         },
-      }
+      },
     );
     return (rows as any[])[0];
   } catch (error) {
@@ -97,7 +97,7 @@ export function aiContentTrackerMiddleware(options: {
               modelUsed: options.modelUsed ?? "heuristic-v1",
               modelProvider: options.modelProvider ?? "verifywise",
             },
-            req.userId ? Number(req.userId) : null
+            req.userId ? Number(req.userId) : null,
           ).catch(() => {});
         }
       }

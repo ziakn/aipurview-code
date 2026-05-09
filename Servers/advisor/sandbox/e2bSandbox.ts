@@ -27,11 +27,16 @@ export async function executeInE2B(
   code: string,
   language: "python" | "javascript" = "python",
   timeoutMs: number = 30000,
-  memoryMb: number = 256
+  memoryMb: number = 256,
 ): Promise<SandboxResult | null> {
   const apiKey = process.env.E2B_API_KEY;
   if (!apiKey) {
-    logStructured("successful", "E2B not configured (missing E2B_API_KEY), skipping sandbox", "executeInE2B", fileName);
+    logStructured(
+      "successful",
+      "E2B not configured (missing E2B_API_KEY), skipping sandbox",
+      "executeInE2B",
+      fileName,
+    );
     return null;
   }
 

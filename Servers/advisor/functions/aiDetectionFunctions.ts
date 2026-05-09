@@ -10,9 +10,7 @@ import {
   updateScanProgressQuery,
   updateFindingGovernanceStatusQuery,
 } from "../../utils/aiDetection.utils";
-import {
-  getRepositoryByIdQuery,
-} from "../../utils/aiDetectionRepository.utils";
+import { getRepositoryByIdQuery } from "../../utils/aiDetectionRepository.utils";
 import { createWriteToolFn } from "../confirmation/createWriteTool";
 import { sequelize } from "../../database/db";
 import logger from "../../utils/logger/fileLogger";
@@ -27,12 +25,7 @@ const fetchAiDetectionScans = async (
 ): Promise<unknown> => {
   try {
     const limit = params.limit || 20;
-    const result = await getScansListQuery(
-      organizationId,
-      1,
-      limit,
-      params.status as any,
-    );
+    const result = await getScansListQuery(organizationId, 1, limit, params.status as any);
     return result;
   } catch (error) {
     logger.error("Error fetching AI Detection scans:", error);
@@ -221,7 +214,8 @@ const getAiDetectionComplianceMapping = async (
       framework_relevance: {
         eu_ai_act: {
           relevant: findings.total > 0,
-          ai_components_detected: findings.by_finding_type.library + findings.by_finding_type.api_call,
+          ai_components_detected:
+            findings.by_finding_type.library + findings.by_finding_type.api_call,
           transparency_items: findings.by_finding_type.model_ref + findings.by_finding_type.agent,
           data_processing_items: findings.by_finding_type.rag_component,
         },
@@ -229,9 +223,10 @@ const getAiDetectionComplianceMapping = async (
           relevant: findings.total > 0,
           inventory_items: findings.total,
           high_risk_items: findings.by_confidence.high,
-          governance_coverage: governance.total > 0
-            ? Math.round(((governance.reviewed + governance.approved) / governance.total) * 100)
-            : 0,
+          governance_coverage:
+            governance.total > 0
+              ? Math.round(((governance.reviewed + governance.approved) / governance.total) * 100)
+              : 0,
         },
       },
     };
@@ -300,8 +295,7 @@ const agentStartAiDetectionScan = createWriteToolFn({
 const agentCancelAiDetectionScan = createWriteToolFn({
   toolName: "agent_cancel_ai_detection_scan",
   warningLevel: "warning",
-  descriptionFn: (params) =>
-    `Cancel AI Detection scan #${params.scan_id}`,
+  descriptionFn: (params) => `Cancel AI Detection scan #${params.scan_id}`,
   executeFn: async (params, organizationId) => {
     const scanId = params.scan_id as number;
 

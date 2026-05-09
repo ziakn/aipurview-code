@@ -83,7 +83,7 @@ const getComplianceDetails = async (
     }
 
     // Get project-specific stats
-    const riskCount = await sequelize.query(
+    const riskCount = (await sequelize.query(
       `SELECT COUNT(*) as count FROM risks
        WHERE organization_id = :organization_id
        AND (is_deleted = false OR is_deleted IS NULL)
@@ -92,7 +92,7 @@ const getComplianceDetails = async (
         replacements: { organization_id: organizationId, project_id: params.project_id },
         type: QueryTypes.SELECT,
       },
-    ) as { count: string }[];
+    )) as { count: string }[];
 
     return {
       project_id: params.project_id,
@@ -109,10 +109,7 @@ const getComplianceDetails = async (
   }
 };
 
-const getDashboardOverview = async (
-  _params: {},
-  organizationId: number,
-): Promise<any> => {
+const getDashboardOverview = async (_params: {}, organizationId: number): Promise<any> => {
   try {
     // Use a default userId/role for the dashboard query since this is an advisor tool
     const dashboard = await getDashboardDataQuery(organizationId, 0, "Admin");
@@ -139,7 +136,7 @@ const getProjectComplianceProgress = async (
 ): Promise<any> => {
   try {
     // Get frameworks for project
-    const frameworks = await sequelize.query(
+    const frameworks = (await sequelize.query(
       `SELECT pf.framework_id, f.name as framework_name
        FROM projects_frameworks pf
        LEFT JOIN frameworks f ON f.id = pf.framework_id
@@ -148,10 +145,10 @@ const getProjectComplianceProgress = async (
         replacements: { project_id: params.project_id, organization_id: organizationId },
         type: QueryTypes.SELECT,
       },
-    ) as any[];
+    )) as any[];
 
     // Get control completion stats
-    const controlStats = await sequelize.query(
+    const controlStats = (await sequelize.query(
       `SELECT
          COUNT(*) as total_controls,
          COUNT(CASE WHEN status = 'Completed' THEN 1 END) as completed_controls
@@ -161,10 +158,10 @@ const getProjectComplianceProgress = async (
         replacements: { project_id: params.project_id, organization_id: organizationId },
         type: QueryTypes.SELECT,
       },
-    ) as any[];
+    )) as any[];
 
     // Get assessment progress
-    const assessmentStats = await sequelize.query(
+    const assessmentStats = (await sequelize.query(
       `SELECT COUNT(*) as total_assessments
        FROM assessments
        WHERE project_id = :project_id`,
@@ -172,7 +169,7 @@ const getProjectComplianceProgress = async (
         replacements: { project_id: params.project_id },
         type: QueryTypes.SELECT,
       },
-    ) as any[];
+    )) as any[];
 
     const totalControls = parseInt(controlStats[0]?.total_controls || "0");
     const completedControls = parseInt(controlStats[0]?.completed_controls || "0");
@@ -199,13 +196,10 @@ const getProjectComplianceProgress = async (
   }
 };
 
-const getAllProjectsCompliance = async (
-  _params: {},
-  organizationId: number,
-): Promise<any> => {
+const getAllProjectsCompliance = async (_params: {}, organizationId: number): Promise<any> => {
   try {
     // Get all projects
-    const projects = await sequelize.query(
+    const projects = (await sequelize.query(
       `SELECT id, project_title, status, created_at
        FROM projects
        WHERE organization_id = :organization_id
@@ -215,10 +209,10 @@ const getAllProjectsCompliance = async (
         replacements: { organization_id: organizationId },
         type: QueryTypes.SELECT,
       },
-    ) as any[];
+    )) as any[];
 
     // Get framework counts per project
-    const frameworkCounts = await sequelize.query(
+    const frameworkCounts = (await sequelize.query(
       `SELECT project_id, COUNT(*) as framework_count
        FROM projects_frameworks
        WHERE organization_id = :organization_id
@@ -227,7 +221,7 @@ const getAllProjectsCompliance = async (
         replacements: { organization_id: organizationId },
         type: QueryTypes.SELECT,
       },
-    ) as any[];
+    )) as any[];
 
     const frameworkMap = new Map(
       frameworkCounts.map((f: any) => [f.project_id, parseInt(f.framework_count)]),

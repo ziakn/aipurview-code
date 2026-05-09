@@ -65,7 +65,7 @@ export function createAgentRequest(
   message: string,
   organizationId: number,
   userId: number,
-  context?: Record<string, unknown>
+  context?: Record<string, unknown>,
 ): AgentRequest {
   return {
     from,
@@ -89,7 +89,7 @@ export function createAgentResponse(
   content: string,
   tokensUsed: { input: number; output: number; total: number },
   duration: number,
-  status: "success" | "error" | "partial" = "success"
+  status: "success" | "error" | "partial" = "success",
 ): AgentResponse {
   return {
     from,

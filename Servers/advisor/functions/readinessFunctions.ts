@@ -1,9 +1,6 @@
 import { sequelize } from "../../database/db";
 import logger from "../../utils/logger/fileLogger";
-import {
-  normalizeEvidenceCount,
-  normalizeRecency,
-} from "../scoring/readinessCalculator";
+import { normalizeEvidenceCount, normalizeRecency } from "../scoring/readinessCalculator";
 
 export interface EvaluateEvidenceParams {
   control_id: number;
@@ -34,7 +31,7 @@ export interface GenerateRecommendationsParams {
  */
 const evaluateEvidence = async (
   params: EvaluateEvidenceParams,
-  organizationId: number
+  organizationId: number,
 ): Promise<any> => {
   try {
     const { control_id, framework_type } = params;
@@ -50,13 +47,14 @@ const evaluateEvidence = async (
        WHERE fel.entity_id = :controlId
          AND fel.framework_type = :frameworkType
          AND fel.organization_id = :organizationId`,
-      { replacements: { controlId: control_id, frameworkType: framework_type, organizationId } }
+      { replacements: { controlId: control_id, frameworkType: framework_type, organizationId } },
     );
 
     const row = (rows as any[])[0] || {};
     const evidenceCount = parseInt(row.evidence_count, 10) || 0;
     const avgQuality = parseFloat(row.avg_quality) || 0;
-    const daysSinceLatest = row.days_since_latest !== null ? parseInt(row.days_since_latest, 10) : null;
+    const daysSinceLatest =
+      row.days_since_latest !== null ? parseInt(row.days_since_latest, 10) : null;
 
     return {
       control_id,
@@ -70,7 +68,7 @@ const evaluateEvidence = async (
   } catch (error) {
     logger.error("Error evaluating evidence:", error);
     throw new Error(
-      `Failed to evaluate evidence: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to evaluate evidence: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 };
@@ -81,7 +79,7 @@ const evaluateEvidence = async (
  */
 const checkTaskCompletion = async (
   params: CheckTaskCompletionParams,
-  organizationId: number
+  organizationId: number,
 ): Promise<any> => {
   try {
     const { control_id, framework_type } = params;
@@ -105,7 +103,7 @@ const checkTaskCompletion = async (
                  AND fel_c.organization_id = :organizationId
              )
          )`,
-      { replacements: { controlId: control_id, frameworkType: framework_type, organizationId } }
+      { replacements: { controlId: control_id, frameworkType: framework_type, organizationId } },
     );
 
     const row = (rows as any[])[0] || {};
@@ -123,7 +121,7 @@ const checkTaskCompletion = async (
   } catch (error) {
     logger.error("Error checking task completion:", error);
     throw new Error(
-      `Failed to check task completion: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to check task completion: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 };
@@ -133,7 +131,7 @@ const checkTaskCompletion = async (
  */
 const analyzeRiskStatus = async (
   params: AnalyzeRiskStatusParams,
-  organizationId: number
+  organizationId: number,
 ): Promise<any> => {
   try {
     const { control_id, framework_type } = params;
@@ -158,7 +156,7 @@ const analyzeRiskStatus = async (
                  AND fel_c.organization_id = :organizationId
              )
          )`,
-      { replacements: { controlId: control_id, frameworkType: framework_type, organizationId } }
+      { replacements: { controlId: control_id, frameworkType: framework_type, organizationId } },
     );
 
     const row = (rows as any[])[0] || {};
@@ -177,7 +175,7 @@ const analyzeRiskStatus = async (
   } catch (error) {
     logger.error("Error analyzing risk status:", error);
     throw new Error(
-      `Failed to analyze risk status: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to analyze risk status: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 };
@@ -188,7 +186,7 @@ const analyzeRiskStatus = async (
  */
 const generateRecommendations = async (
   params: GenerateRecommendationsParams,
-  organizationId: number
+  organizationId: number,
 ): Promise<any> => {
   try {
     const { framework_type, project_id, limit = 10 } = params;
@@ -214,7 +212,7 @@ const generateRecommendations = async (
           ...(project_id ? { projectId: project_id } : {}),
           limit,
         },
-      }
+      },
     );
 
     const controls = weakest as any[];
@@ -244,7 +242,8 @@ const generateRecommendations = async (
         control_id: ctrl.control_id,
         overall_score: ctrl.overall_score,
         readiness_level: ctrl.readiness_level,
-        priority: ctrl.overall_score < 30 ? "critical" : ctrl.overall_score < 60 ? "high" : "medium",
+        priority:
+          ctrl.overall_score < 30 ? "critical" : ctrl.overall_score < 60 ? "high" : "medium",
         actions,
         weakest_dimension: getWeakestDimension(ctrl),
       };
@@ -258,7 +257,7 @@ const generateRecommendations = async (
   } catch (error) {
     logger.error("Error generating recommendations:", error);
     throw new Error(
-      `Failed to generate recommendations: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to generate recommendations: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 };

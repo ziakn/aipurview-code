@@ -19,20 +19,13 @@ interface FetchNotesParams {
   limit?: number;
 }
 
-const fetchNotes = async (
-  params: FetchNotesParams,
-  organizationId: number,
-): Promise<any[]> => {
+const fetchNotes = async (params: FetchNotesParams, organizationId: number): Promise<any[]> => {
   try {
     let notes: any[] = [];
 
     if (params.entity_type && params.entity_id) {
       // Fetch by entity
-      notes = await getNotesByEntityQuery(
-        params.entity_type,
-        params.entity_id,
-        organizationId,
-      );
+      notes = await getNotesByEntityQuery(params.entity_type, params.entity_id, organizationId);
     } else if (params.author_id) {
       // Fetch by author
       notes = await getNotesByAuthorQuery(params.author_id, organizationId);
@@ -55,8 +48,7 @@ const fetchNotes = async (
     // Apply additional filters
     if (params.entity_type && !params.entity_id) {
       notes = notes.filter(
-        (n: any) =>
-          (n.attached_to || n.dataValues?.attached_to) === params.entity_type,
+        (n: any) => (n.attached_to || n.dataValues?.attached_to) === params.entity_type,
       );
     }
 
@@ -97,11 +89,7 @@ const getNotesForEntity = async (
   organizationId: number,
 ): Promise<any[]> => {
   try {
-    const notes = await getNotesByEntityQuery(
-      params.entity_type,
-      params.entity_id,
-      organizationId,
-    );
+    const notes = await getNotesByEntityQuery(params.entity_type, params.entity_id, organizationId);
 
     return notes.map((n: any) => {
       const data = n.dataValues || n;
@@ -127,10 +115,7 @@ const getNotesForEntity = async (
   }
 };
 
-const getNoteDetail = async (
-  params: { note_id: number },
-  organizationId: number,
-): Promise<any> => {
+const getNoteDetail = async (params: { note_id: number }, organizationId: number): Promise<any> => {
   try {
     const note = await getNoteByIdQuery(params.note_id, organizationId);
 
@@ -226,8 +211,7 @@ const getNotesAnalytics = async (
 const agentCreateNote = createWriteToolFn({
   toolName: "agent_create_note",
   warningLevel: "warning",
-  descriptionFn: (params) =>
-    `Create note for ${params.entity_type} #${params.entity_id}`,
+  descriptionFn: (params) => `Create note for ${params.entity_type} #${params.entity_id}`,
   executeFn: async (params, organizationId) => {
     const noteData = NotesModel.build({
       content: params.content as string,
@@ -265,11 +249,7 @@ const agentUpdateNote = createWriteToolFn({
       updated_at: new Date(),
     } as any);
 
-    const result = await updateNoteContentQuery(
-      noteId,
-      noteData,
-      organizationId,
-    );
+    const result = await updateNoteContentQuery(noteId, noteData, organizationId);
     const data = (result as any).dataValues || result;
     return {
       id: data.id,

@@ -47,15 +47,7 @@ router.delete("/conversations/:domain/:id", authenticateJWT, deleteConversation)
 // DELETE /advisor/memory/admin/agent/:agentName     — admin: clear ALL memory for agent (org-wide)
 router.get("/memory", authenticateJWT, getMemorySummary);
 router.delete("/memory", authenticateJWT, deleteMyMemory);
-router.get(
-  "/memory/admin/agent/:agentName",
-  authenticateJWT,
-  adminListAgentMessages,
-);
-router.delete(
-  "/memory/admin/agent/:agentName",
-  authenticateJWT,
-  adminClearAgentMemory,
-);
+router.get("/memory/admin/agent/:agentName", authenticateJWT, adminListAgentMessages);
+router.delete("/memory/admin/agent/:agentName", authenticateJWT, adminClearAgentMemory);
 
 export default router;

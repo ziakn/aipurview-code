@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Phase 2 — XState Approval State Machine
@@ -49,5 +49,5 @@ module.exports = {
     await queryInterface.sequelize.query(`
       DROP TABLE IF EXISTS verifywise.ai_action_approvals;
     `);
-  }
+  },
 };

@@ -15,16 +15,14 @@ import logger from "../../utils/logger/fileLogger";
 // --- Helper: resolve project_id to projects_frameworks.id for EU AI Act (framework_id=1) ---
 const getProjectFrameworkId = async (
   projectId: number,
-  organizationId: number
+  organizationId: number,
 ): Promise<number> => {
   const result = (await sequelize.query(
     `SELECT id FROM projects_frameworks WHERE organization_id = :organizationId AND project_id = :project_id AND framework_id = 1`,
-    { replacements: { organizationId, project_id: projectId } }
+    { replacements: { organizationId, project_id: projectId } },
   )) as [{ id: number }[], number];
   if (!result[0] || result[0].length === 0) {
-    throw new Error(
-      `EU AI Act framework not found for project #${projectId}`
-    );
+    throw new Error(`EU AI Act framework not found for project #${projectId}`);
   }
   return result[0][0].id;
 };
@@ -33,7 +31,7 @@ const getProjectFrameworkId = async (
 
 const getEuAiActControlCategories = async (
   _params: Record<string, unknown>,
-  organizationId: number
+  organizationId: number,
 ) => {
   try {
     const categories = await getAllControlCategoriesQuery(organizationId);
@@ -45,88 +43,70 @@ const getEuAiActControlCategories = async (
   } catch (error) {
     logger.error("Error fetching EU AI Act control categories:", error);
     throw new Error(
-      `Failed to fetch EU AI Act control categories: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to fetch EU AI Act control categories: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 };
 
 const getEuAiActControlsByCategory = async (
   params: { category_id: number },
-  _organizationId: number
+  _organizationId: number,
 ) => {
   try {
-    const controls = await getControlStructByControlCategoryIdQuery(
-      params.category_id
-    );
+    const controls = await getControlStructByControlCategoryIdQuery(params.category_id);
     return controls.map((c: any) => ({
       id: c.id ?? c.dataValues?.id,
       title: c.title ?? c.dataValues?.title,
       description: c.description ?? c.dataValues?.description,
       order_no: c.order_no ?? c.dataValues?.order_no,
-      control_category_id:
-        c.control_category_id ?? c.dataValues?.control_category_id,
+      control_category_id: c.control_category_id ?? c.dataValues?.control_category_id,
     }));
   } catch (error) {
     logger.error("Error fetching EU AI Act controls by category:", error);
     throw new Error(
-      `Failed to fetch EU AI Act controls by category: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to fetch EU AI Act controls by category: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 };
 
 const getEuAiActProjectCompliance = async (
   params: { project_id: number },
-  organizationId: number
+  organizationId: number,
 ) => {
   try {
-    const projectFrameworkId = await getProjectFrameworkId(
-      params.project_id,
-      organizationId
-    );
-    const compliance = await getComplianceEUByProjectIdQuery(
-      projectFrameworkId,
-      organizationId
-    );
+    const projectFrameworkId = await getProjectFrameworkId(params.project_id, organizationId);
+    const compliance = await getComplianceEUByProjectIdQuery(projectFrameworkId, organizationId);
     return compliance;
   } catch (error) {
     logger.error("Error fetching EU AI Act project compliance:", error);
     throw new Error(
-      `Failed to fetch EU AI Act project compliance: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to fetch EU AI Act project compliance: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 };
 
 const getEuAiActProjectAssessment = async (
   params: { project_id: number },
-  organizationId: number
+  organizationId: number,
 ) => {
   try {
-    const projectFrameworkId = await getProjectFrameworkId(
-      params.project_id,
-      organizationId
-    );
-    const assessments = await getAssessmentsEUByProjectIdQuery(
-      projectFrameworkId,
-      organizationId
-    );
+    const projectFrameworkId = await getProjectFrameworkId(params.project_id, organizationId);
+    const assessments = await getAssessmentsEUByProjectIdQuery(projectFrameworkId, organizationId);
     return assessments;
   } catch (error) {
     logger.error("Error fetching EU AI Act project assessment:", error);
     throw new Error(
-      `Failed to fetch EU AI Act project assessment: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to fetch EU AI Act project assessment: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 };
 
 const getEuAiActComplianceProgress = async (
   params: { project_id: number },
-  organizationId: number
+  organizationId: number,
 ) => {
   try {
-    const projectFrameworkId = await getProjectFrameworkId(
-      params.project_id,
-      organizationId
-    );
+    const projectFrameworkId = await getProjectFrameworkId(params.project_id, organizationId);
     const [subControlCounts, answerCounts] = await Promise.all([
       countSubControlsEUByProjectId(projectFrameworkId, organizationId),
       countAnswersEUByProjectId(projectFrameworkId, organizationId),
@@ -140,7 +120,7 @@ const getEuAiActComplianceProgress = async (
             ? Math.round(
                 (parseInt(subControlCounts.doneSubcontrols) /
                   parseInt(subControlCounts.totalSubcontrols)) *
-                  100
+                  100,
               )
             : 0,
       },
@@ -152,7 +132,7 @@ const getEuAiActComplianceProgress = async (
             ? Math.round(
                 (parseInt(answerCounts.answeredAssessments) /
                   parseInt(answerCounts.totalAssessments)) *
-                  100
+                  100,
               )
             : 0,
       },
@@ -160,7 +140,7 @@ const getEuAiActComplianceProgress = async (
   } catch (error) {
     logger.error("Error fetching EU AI Act compliance progress:", error);
     throw new Error(
-      `Failed to fetch EU AI Act compliance progress: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to fetch EU AI Act compliance progress: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 };
@@ -178,15 +158,9 @@ const agentSaveEuAiActControl = createWriteToolFn({
       const controlId = params.control_id as number;
       const updateData: any = {};
       if (params.status !== undefined) updateData.status = params.status;
-      if (params.notes !== undefined)
-        updateData.implementation_details = params.notes;
+      if (params.notes !== undefined) updateData.implementation_details = params.notes;
 
-      await updateControlEUByIdQuery(
-        controlId,
-        updateData,
-        organizationId,
-        transaction
-      );
+      await updateControlEUByIdQuery(controlId, updateData, organizationId, transaction);
       await transaction.commit();
       return {
         id: controlId,
@@ -213,12 +187,7 @@ const agentSaveEuAiActAssessmentAnswer = createWriteToolFn({
       if (params.answer !== undefined) updateData.answer = params.answer;
       updateData.status = "Done";
 
-      await updateQuestionEUByIdQuery(
-        answerId,
-        updateData,
-        organizationId,
-        transaction
-      );
+      await updateQuestionEUByIdQuery(answerId, updateData, organizationId, transaction);
       await transaction.commit();
       return {
         id: answerId,

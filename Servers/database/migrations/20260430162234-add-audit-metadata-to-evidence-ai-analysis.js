@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Add `audit_metadata JSONB` column to evidence_ai_analysis.

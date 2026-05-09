@@ -259,11 +259,11 @@ export async function runAdvisor(req: Request, res: Response) {
 
     // sessionId for agent memory: same plumbing as the streaming endpoints.
     const memorySessionId =
-      (typeof req.body?.sessionId === "string" && req.body.sessionId.trim().length > 0
+      typeof req.body?.sessionId === "string" && req.body.sessionId.trim().length > 0
         ? req.body.sessionId
         : userId
           ? `user-${userId}-${new Date().toISOString().slice(0, 10)}`
-          : undefined);
+          : undefined;
 
     const agentParams = {
       apiKey: apiKey.key || "",
@@ -681,11 +681,11 @@ export async function streamAdvisor(req: Request, res: Response) {
     // legacy callers. Memory writes are skipped entirely when userId or
     // sessionId are missing — see memoryEnabled() in aiSdkAgent.ts.
     const memorySessionId =
-      (typeof req.body?.sessionId === "string" && req.body.sessionId.trim().length > 0
+      typeof req.body?.sessionId === "string" && req.body.sessionId.trim().length > 0
         ? req.body.sessionId
         : userId
           ? `user-${userId}-${new Date().toISOString().slice(0, 10)}`
-          : undefined);
+          : undefined;
 
     const agentParams = {
       apiKey: apiKey.key || "",
@@ -811,7 +811,7 @@ export async function streamAdvisorV2(req: Request, res: Response) {
     // chat persistence). Use that when present; otherwise synthesize a
     // per-user / per-day grouping for legacy callers.
     const memorySessionId =
-      (typeof (req.body as any)?.conversationId === "string" &&
+      typeof (req.body as any)?.conversationId === "string" &&
       (req.body as any).conversationId.trim().length > 0
         ? (req.body as any).conversationId
         : typeof (req.body as any)?.sessionId === "string" &&
@@ -819,7 +819,7 @@ export async function streamAdvisorV2(req: Request, res: Response) {
           ? (req.body as any).sessionId
           : userId
             ? `user-${userId}-${new Date().toISOString().slice(0, 10)}`
-            : undefined);
+            : undefined;
 
     const result = await getStreamTextResult({
       apiKey: apiKey.key || "",
@@ -850,18 +850,12 @@ export async function streamAdvisorV2(req: Request, res: Response) {
       sendSources: true,
       onError: (error: unknown) => {
         logger.error("❌ AI SDK stream error:", error);
-        logStructured(
-          "error",
-          "AI SDK stream error",
-          functionName,
-          fileName,
-        );
+        logStructured("error", "AI SDK stream error", functionName, fileName);
 
         // Extract the provider's HTTP status if present — Anthropic/OpenAI
         // errors from @ai-sdk/* providers expose `statusCode` on the error.
         const statusCode = (error as { statusCode?: number })?.statusCode;
-        const message =
-          error instanceof Error ? error.message : String(error);
+        const message = error instanceof Error ? error.message : String(error);
 
         // Friendly mapping for the common failure modes so the user has
         // an actionable hint, not just a stack-trace substring.
@@ -954,9 +948,7 @@ export async function deleteMyMemory(req: Request, res: Response) {
 
     const rawAgent = req.query.agentName;
     const agentName =
-      typeof rawAgent === "string" && rawAgent.trim().length > 0
-        ? rawAgent.trim()
-        : undefined;
+      typeof rawAgent === "string" && rawAgent.trim().length > 0 ? rawAgent.trim() : undefined;
     const rawSession = req.query.sessionId;
     const sessionId =
       typeof rawSession === "string" && rawSession.trim().length > 0
@@ -966,11 +958,7 @@ export async function deleteMyMemory(req: Request, res: Response) {
     let removed = 0;
     if (sessionId) {
       // Per-session clear is finer-grained: drop just one conversation.
-      await clearAgentSession(
-        organizationId,
-        agentName ?? "advisor",
-        sessionId,
-      );
+      await clearAgentSession(organizationId, agentName ?? "advisor", sessionId);
       // clearSession doesn't return a count in the existing helper, so we
       // surface a sentinel value. The caller can re-fetch the summary.
       removed = -1;
@@ -1020,9 +1008,7 @@ export async function adminClearAgentMemory(req: Request, res: Response) {
       return res.status(400).json(STATUS_CODE[400]("Auth context required"));
     }
     if (req.role !== "Admin" && !req.isSuperAdmin) {
-      return res
-        .status(403)
-        .json(STATUS_CODE[403]("Admin role required to clear agent memory"));
+      return res.status(403).json(STATUS_CODE[403]("Admin role required to clear agent memory"));
     }
     if (!agentName || agentName.trim().length === 0) {
       return res.status(400).json(STATUS_CODE[400]("agentName is required"));
@@ -1034,9 +1020,7 @@ export async function adminClearAgentMemory(req: Request, res: Response) {
       functionName,
       fileName,
     );
-    return res.status(200).json(
-      STATUS_CODE[200]({ cleared: true, agent_name: agentName }),
-    );
+    return res.status(200).json(STATUS_CODE[200]({ cleared: true, agent_name: agentName }));
   } catch (error) {
     logStructured("error", "admin clear failed", functionName, fileName);
     logger.error("Error in adminClearAgentMemory:", error);
@@ -1070,9 +1054,7 @@ export async function adminListAgentMessages(req: Request, res: Response) {
       return res.status(400).json(STATUS_CODE[400]("Auth context required"));
     }
     if (req.role !== "Admin" && !req.isSuperAdmin) {
-      return res
-        .status(403)
-        .json(STATUS_CODE[403]("Admin role required"));
+      return res.status(403).json(STATUS_CODE[403]("Admin role required"));
     }
     if (!agentName || agentName.trim().length === 0) {
       return res.status(400).json(STATUS_CODE[400]("agentName is required"));

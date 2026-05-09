@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Phase 2 — AI Action Audit Trail
@@ -43,5 +43,5 @@ module.exports = {
     await queryInterface.sequelize.query(`
       DROP TABLE IF EXISTS verifywise.ai_action_audit_log;
     `);
-  }
+  },
 };

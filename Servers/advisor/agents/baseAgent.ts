@@ -50,7 +50,7 @@ export function createDomainAgent(config: AgentConfig): RegisteredAgent {
           request.correlationId,
           `[${config.name}] Processing: ${request.payload.message}`,
           { input: 0, output: 0, total: 0 },
-          Date.now() - startTime
+          Date.now() - startTime,
         );
 
         agent.status.totalProcessed++;
@@ -66,7 +66,7 @@ export function createDomainAgent(config: AgentConfig): RegisteredAgent {
           `Error in ${config.name}: ${error instanceof Error ? error.message : "Unknown error"}`,
           { input: 0, output: 0, total: 0 },
           Date.now() - startTime,
-          "error"
+          "error",
         );
       }
     },

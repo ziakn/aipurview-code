@@ -4,10 +4,7 @@
  */
 
 import { deleteTaskByIdQuery } from "../../../utils/task.utils";
-import type {
-  AiActionExecuteContext,
-  AiActionExecuteResult,
-} from "../types";
+import type { AiActionExecuteContext, AiActionExecuteResult } from "../types";
 import type { AgentDeleteTaskInput } from "./schema";
 
 export async function executeDeleteTask(

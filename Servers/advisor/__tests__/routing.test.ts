@@ -23,8 +23,14 @@ const MASTER_DEF = [
   { type: "function", function: { name: "fetch_vendors", description: "", parameters: {} } },
   { type: "function", function: { name: "get_vendor_analytics", description: "", parameters: {} } },
   // Compliance agent
-  { type: "function", function: { name: "get_compliance_overview", description: "", parameters: {} } },
-  { type: "function", function: { name: "fetch_eu_ai_act_categories", description: "", parameters: {} } },
+  {
+    type: "function",
+    function: { name: "get_compliance_overview", description: "", parameters: {} },
+  },
+  {
+    type: "function",
+    function: { name: "fetch_eu_ai_act_categories", description: "", parameters: {} },
+  },
   // Universal — not claimed by any agent in AGENT_TOOL_MAP
   { type: "function", function: { name: "global_search", description: "", parameters: {} } },
   { type: "function", function: { name: "create_note", description: "", parameters: {} } },
@@ -103,9 +109,7 @@ describe("routing / selectActiveTools — multi-agent overlap", () => {
       toolsDefinition: MASTER_DEF,
     });
     expect(result.reason).toBe("subset_keyword_match");
-    expect(result.selectedAgents).toEqual(
-      expect.arrayContaining(["vendor-agent", "risk-agent"]),
-    );
+    expect(result.selectedAgents).toEqual(expect.arrayContaining(["vendor-agent", "risk-agent"]));
     const activeNames = names(result.toolsDefinition);
     expect(activeNames).toContain("fetch_vendors");
     expect(activeNames).toContain("fetch_risks");

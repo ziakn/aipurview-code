@@ -37,11 +37,7 @@ export interface ReliabilityResult {
 
 function fileTypeScore(fileType: string): number {
   const t = fileType.toLowerCase();
-  if (
-    t.includes("pdf") ||
-    t.includes("officedocument.wordprocessing") ||
-    t.includes("msword")
-  ) {
+  if (t.includes("pdf") || t.includes("officedocument.wordprocessing") || t.includes("msword")) {
     return 90;
   }
   if (t.includes("officedocument.spreadsheet") || t.includes("excel")) {
@@ -91,9 +87,7 @@ export function computeReliability(input: ReliabilityInput): ReliabilityResult {
   reasons.push(
     `signals owner=${sig.has_named_owner ? "✓" : "✗"} version=${
       sig.has_version ? "✓" : "✗"
-    } dates=${sig.has_explicit_dates ? "✓" : "✗"} metrics=${
-      sig.has_metrics ? "✓" : "✗"
-    }`,
+    } dates=${sig.has_explicit_dates ? "✓" : "✗"} metrics=${sig.has_metrics ? "✓" : "✗"}`,
   );
   reasons.push(`format ${ft}/100`);
 

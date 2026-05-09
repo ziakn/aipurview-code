@@ -1,8 +1,6 @@
 import type { AgentCreateModelRiskInput } from "./schema";
 
-export function renderCreateModelRiskPreview(
-  input: AgentCreateModelRiskInput,
-): string {
+export function renderCreateModelRiskPreview(input: AgentCreateModelRiskInput): string {
   const qualifierParts: string[] = [];
   if (input.risk_level) qualifierParts.push(input.risk_level);
   if (input.risk_category) qualifierParts.push(input.risk_category);
