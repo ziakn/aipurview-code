@@ -95,7 +95,9 @@
       "Bash(git --no-pager diff --staged --stat)",
       "Bash(xargs basename *)",
       "Bash(pg_isready)",
-      "Bash(redis-cli ping *)"
+      "Bash(redis-cli ping *)",
+      "Bash(node scripts/i18n-audit.mjs --json)",
+      "Read(//tmp/**)"
     ]
   }
 }

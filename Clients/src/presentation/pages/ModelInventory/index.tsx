@@ -1940,17 +1940,17 @@ const ModelInventory: React.FC = () => {
             e.preventDefault();
           }}
           sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 450,
-            bgcolor: theme.palette.background.modal,
-            border: 1,
-            borderColor: theme.palette.border.dark,
-            borderRadius: theme.shape.borderRadius,
-            boxShadow: 24,
-            p: theme.spacing(15),
+            "position": "absolute",
+            "top": "50%",
+            "left": "50%",
+            "transform": "translate(-50%, -50%)",
+            "width": 450,
+            "bgcolor": theme.palette.background.modal,
+            "border": 1,
+            "borderColor": theme.palette.border.dark,
+            "borderRadius": theme.shape.borderRadius,
+            "boxShadow": 24,
+            "p": theme.spacing(15),
             "&:focus": {
               outline: "none",
             },
@@ -1977,9 +1977,9 @@ const ModelInventory: React.FC = () => {
               text="Cancel"
               onClick={() => setShowReplaceConfirmation(false)}
               sx={{
-                width: 100,
-                fontSize: 13,
-                color: "inherit",
+                "width": 100,
+                "fontSize": 13,
+                "color": "inherit",
                 "&:hover": {
                   backgroundColor: "transparent",
                 },
@@ -2148,12 +2148,12 @@ const ModelInventory: React.FC = () => {
                   onClick={() => setIsAnalyticsDrawerOpen(true)}
                   aria-label="Analytics"
                   sx={{
-                    height: "34px",
-                    width: "34px",
-                    padding: "8px",
-                    borderRadius: "4px",
-                    border: `1px solid ${palette.border.light}`,
-                    backgroundColor: palette.background.main,
+                    "height": "34px",
+                    "width": "34px",
+                    "padding": "8px",
+                    "borderRadius": "4px",
+                    "border": `1px solid ${palette.border.light}`,
+                    "backgroundColor": palette.background.main,
                     "&:hover": {
                       backgroundColor: palette.background.accent,
                     },

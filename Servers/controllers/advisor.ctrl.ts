@@ -105,6 +105,7 @@ import { toolsDefinition as adminToolsDefinition } from "../advisor/tools/adminT
 import { toolsDefinition as userToolsDefinition } from "../advisor/tools/userTools";
 import { toolsDefinition as projectToolsDefinition } from "../advisor/tools/projectTools";
 import { toolsDefinition as frameworkLookupToolsDefinition } from "../advisor/tools/frameworkLookupTools";
+import { translateError } from "../utils/i18n.utils";
 import { aiActionToolDefinitions, aiActionFilers } from "../advisor/aiActions";
 
 const fileName = "advisor.ctrl.ts";
@@ -235,11 +236,11 @@ export async function runAdvisor(req: Request, res: Response) {
 
     // Validate required parameters
     if (!prompt) {
-      return res.status(400).json({ error: "Prompt is required" });
+      return res.status(400).json({ error: req.t!("Prompt is required") });
     }
 
     if (!organizationId) {
-      return res.status(400).json({ error: "Organization context is required" });
+      return res.status(400).json({ error: req.t!("Organization context is required") });
     }
 
     logger.debug(
@@ -294,7 +295,7 @@ export async function runAdvisor(req: Request, res: Response) {
   } catch (error) {
     logStructured("error", "failed to get VerifyWise advisor response", functionName, fileName);
     logger.error("❌ Error in getting VerifyWise advisor response:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -337,11 +338,11 @@ export async function listConversations(req: Request, res: Response) {
     const domain = getDomainParam(req);
 
     if (!userId) {
-      return res.status(400).json({ error: "User context is required" });
+      return res.status(400).json({ error: req.t!("User context is required") });
     }
 
     if (!domain) {
-      return res.status(400).json({ error: "Domain is required" });
+      return res.status(400).json({ error: req.t!("Domain is required") });
     }
 
     logger.debug(
@@ -361,7 +362,7 @@ export async function listConversations(req: Request, res: Response) {
   } catch (error) {
     logStructured("error", "Failed to list conversations", functionName, fileName);
     logger.error("❌ Error listing conversations:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -380,15 +381,15 @@ export async function getConversationById(req: Request, res: Response) {
     const id = getIdParam(req);
 
     if (!userId) {
-      return res.status(400).json({ error: "User context is required" });
+      return res.status(400).json({ error: req.t!("User context is required") });
     }
 
     if (!domain) {
-      return res.status(400).json({ error: "Domain is required" });
+      return res.status(400).json({ error: req.t!("Domain is required") });
     }
 
     if (id === null) {
-      return res.status(400).json({ error: "Valid conversation id is required" });
+      return res.status(400).json({ error: req.t!("Valid conversation id is required") });
     }
 
     logger.debug(
@@ -398,14 +399,14 @@ export async function getConversationById(req: Request, res: Response) {
     const conversation = await getConversationByIdQuery(organizationId, userId, id);
 
     if (!conversation) {
-      return res.status(404).json({ error: "Conversation not found" });
+      return res.status(404).json({ error: req.t!("Conversation not found") });
     }
 
     // The row is fetched by id + user + org, but we still verify the domain
     // matches what the client asked for. This catches frontend bugs early
     // (wrong domain in the URL) and keeps responses predictable.
     if (conversation.domain !== domain) {
-      return res.status(404).json({ error: "Conversation not found" });
+      return res.status(404).json({ error: req.t!("Conversation not found") });
     }
 
     logStructured(
@@ -429,7 +430,7 @@ export async function getConversationById(req: Request, res: Response) {
   } catch (error) {
     logStructured("error", "Failed to get conversation by id", functionName, fileName);
     logger.error("❌ Error getting conversation by id:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -446,11 +447,11 @@ export async function createConversation(req: Request, res: Response) {
     const domain = getDomainParam(req);
 
     if (!userId) {
-      return res.status(400).json({ error: "User context is required" });
+      return res.status(400).json({ error: req.t!("User context is required") });
     }
 
     if (!domain) {
-      return res.status(400).json({ error: "Domain is required" });
+      return res.status(400).json({ error: req.t!("Domain is required") });
     }
 
     logger.debug(
@@ -480,7 +481,7 @@ export async function createConversation(req: Request, res: Response) {
   } catch (error) {
     logStructured("error", "Failed to create conversation", functionName, fileName);
     logger.error("❌ Error creating conversation:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -500,19 +501,19 @@ export async function updateConversation(req: Request, res: Response) {
     const messages: IAdvisorMessage[] = req.body.messages;
 
     if (!userId) {
-      return res.status(400).json({ error: "User context is required" });
+      return res.status(400).json({ error: req.t!("User context is required") });
     }
 
     if (!domain) {
-      return res.status(400).json({ error: "Domain is required" });
+      return res.status(400).json({ error: req.t!("Domain is required") });
     }
 
     if (id === null) {
-      return res.status(400).json({ error: "Valid conversation id is required" });
+      return res.status(400).json({ error: req.t!("Valid conversation id is required") });
     }
 
     if (!Array.isArray(messages)) {
-      return res.status(400).json({ error: "Messages array is required" });
+      return res.status(400).json({ error: req.t!("Messages array is required") });
     }
 
     logger.debug(
@@ -524,10 +525,10 @@ export async function updateConversation(req: Request, res: Response) {
     // a conversation from a different domain. Reject that explicitly.
     const existing = await getConversationByIdQuery(organizationId, userId, id);
     if (!existing) {
-      return res.status(404).json({ error: "Conversation not found" });
+      return res.status(404).json({ error: req.t!("Conversation not found") });
     }
     if (existing.domain !== domain) {
-      return res.status(404).json({ error: "Conversation not found" });
+      return res.status(404).json({ error: req.t!("Conversation not found") });
     }
 
     const conversation = await updateConversationMessagesQuery(
@@ -538,7 +539,7 @@ export async function updateConversation(req: Request, res: Response) {
     );
 
     if (!conversation) {
-      return res.status(404).json({ error: "Conversation not found" });
+      return res.status(404).json({ error: req.t!("Conversation not found") });
     }
 
     logStructured(
@@ -562,7 +563,7 @@ export async function updateConversation(req: Request, res: Response) {
   } catch (error) {
     logStructured("error", "Failed to update conversation", functionName, fileName);
     logger.error("❌ Error updating conversation:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -579,28 +580,28 @@ export async function deleteConversation(req: Request, res: Response) {
     const id = getIdParam(req);
 
     if (!userId) {
-      return res.status(400).json({ error: "User context is required" });
+      return res.status(400).json({ error: req.t!("User context is required") });
     }
 
     if (!domain) {
-      return res.status(400).json({ error: "Domain is required" });
+      return res.status(400).json({ error: req.t!("Domain is required") });
     }
 
     if (id === null) {
-      return res.status(400).json({ error: "Valid conversation id is required" });
+      return res.status(400).json({ error: req.t!("Valid conversation id is required") });
     }
 
     // Confirm the row exists in this domain before deleting so we never
     // delete a conversation from a different domain via a crafted URL.
     const existing = await getConversationByIdQuery(organizationId, userId, id);
     if (!existing || existing.domain !== domain) {
-      return res.status(404).json({ error: "Conversation not found" });
+      return res.status(404).json({ error: req.t!("Conversation not found") });
     }
 
     const deleted = await deleteConversationQuery(organizationId, userId, id);
 
     if (!deleted) {
-      return res.status(404).json({ error: "Conversation not found" });
+      return res.status(404).json({ error: req.t!("Conversation not found") });
     }
 
     logStructured(
@@ -614,7 +615,7 @@ export async function deleteConversation(req: Request, res: Response) {
   } catch (error) {
     logStructured("error", "Failed to delete conversation", functionName, fileName);
     logger.error("❌ Error deleting conversation:", error);
-    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+    return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }
 
@@ -635,12 +636,12 @@ export async function streamAdvisor(req: Request, res: Response) {
       : undefined;
 
     if (!prompt) {
-      res.status(400).json({ error: "Prompt is required" });
+      res.status(400).json({ error: req.t!("Prompt is required") });
       return;
     }
 
     if (!organizationId) {
-      res.status(400).json({ error: "Organization context is required" });
+      res.status(400).json({ error: req.t!("Organization context is required") });
       return;
     }
 
@@ -651,7 +652,7 @@ export async function streamAdvisor(req: Request, res: Response) {
     const clients = await getLLMKeysWithKeyQuery(organizationId);
 
     if (clients.length === 0) {
-      res.status(400).json({ error: "No LLM keys configured for this organization." });
+      res.status(400).json({ error: req.t!("No LLM keys configured for this organization.") });
       return;
     }
 
@@ -741,7 +742,7 @@ export async function streamAdvisor(req: Request, res: Response) {
 
     // If headers haven't been sent yet, send JSON error
     if (!res.headersSent) {
-      res.status(500).json(STATUS_CODE[500]((error as Error).message));
+      res.status(500).json(STATUS_CODE[500](translateError(req, error)));
       return;
     }
 
@@ -771,7 +772,7 @@ export async function streamAdvisorV2(req: Request, res: Response) {
     // Guard: must end on a user turn so the model has something to respond to.
     const lastMessage = messages[messages.length - 1];
     if (!lastMessage || lastMessage.role !== "user") {
-      res.status(400).json({ error: "Last message must be from the user" });
+      res.status(400).json({ error: req.t!("Last message must be from the user") });
       return;
     }
 
@@ -782,12 +783,12 @@ export async function streamAdvisorV2(req: Request, res: Response) {
     const modelMessages = await convertToModelMessages(messages);
 
     if (modelMessages.length === 0) {
-      res.status(400).json({ error: "No renderable messages found" });
+      res.status(400).json({ error: req.t!("No renderable messages found") });
       return;
     }
 
     if (!organizationId) {
-      res.status(400).json({ error: "Organization context is required" });
+      res.status(400).json({ error: req.t!("Organization context is required") });
       return;
     }
 
@@ -798,7 +799,7 @@ export async function streamAdvisorV2(req: Request, res: Response) {
     const clients = await getLLMKeysWithKeyQuery(organizationId);
 
     if (clients.length === 0) {
-      res.status(400).json({ error: "No LLM keys configured for this organization." });
+      res.status(400).json({ error: req.t!("No LLM keys configured for this organization.") });
       return;
     }
 
@@ -892,7 +893,7 @@ export async function streamAdvisorV2(req: Request, res: Response) {
     logger.error("❌ Error in AI SDK streaming advisor response:", error);
 
     if (!res.headersSent) {
-      res.status(500).json(STATUS_CODE[500]((error as Error).message));
+      res.status(500).json(STATUS_CODE[500](translateError(req, error)));
     }
   }
 }

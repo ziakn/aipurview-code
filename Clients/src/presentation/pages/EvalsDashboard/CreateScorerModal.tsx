@@ -47,12 +47,12 @@ import { ReactComponent as OpenRouterLogo } from "../../assets/icons/openrouter_
 import { ReactComponent as OllamaLogo } from "../../assets/icons/ollama_logo.svg";
 
 const PROVIDER_ICONS: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
-  openai: OpenAILogo,
-  anthropic: AnthropicLogo,
-  google: GeminiLogo,
-  mistral: MistralLogo,
-  xai: XAILogo,
-  openrouter: OpenRouterLogo,
+  "openai": OpenAILogo,
+  "anthropic": AnthropicLogo,
+  "google": GeminiLogo,
+  "mistral": MistralLogo,
+  "xai": XAILogo,
+  "openrouter": OpenRouterLogo,
   "self-hosted": OllamaLogo,
 };
 
@@ -139,7 +139,7 @@ function ScoreInput({ value, onChange }: { value: number; onChange: (val: number
       onChange={handleChange}
       onBlur={handleBlur}
       sx={{
-        width: 100,
+        "width": 100,
         "& .MuiInputBase-input": {
           fontSize: "13px",
           textAlign: "center",
@@ -236,14 +236,14 @@ function ModelSelector({
     return (
       <Box
         sx={{
-          width: size,
-          height: size,
-          minWidth: size,
-          minHeight: size,
-          flexShrink: 0,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          "width": size,
+          "height": size,
+          "minWidth": size,
+          "minHeight": size,
+          "flexShrink": 0,
+          "display": "flex",
+          "alignItems": "center",
+          "justifyContent": "center",
           "& svg": {
             width: "100%",
             height: "100%",
@@ -264,17 +264,17 @@ function ModelSelector({
         ref={anchorRef}
         onClick={() => setOpen(!open)}
         sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          px: 1.5,
-          py: 1.25,
-          border: "1px solid",
-          borderColor: open ? palette.brand.primary : palette.border.dark,
-          borderRadius: "8px",
-          backgroundColor: palette.background.main,
-          cursor: "pointer",
-          transition: "all 0.15s ease",
+          "display": "flex",
+          "alignItems": "center",
+          "justifyContent": "space-between",
+          "px": 1.5,
+          "py": 1.25,
+          "border": "1px solid",
+          "borderColor": open ? palette.brand.primary : palette.border.dark,
+          "borderRadius": "8px",
+          "backgroundColor": palette.background.main,
+          "cursor": "pointer",
+          "transition": "all 0.15s ease",
           "&:hover": {
             borderColor: palette.border.dark,
           },
@@ -348,9 +348,9 @@ function ModelSelector({
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                    fontSize: 13,
-                    borderRadius: "8px",
-                    backgroundColor: palette.background.accent,
+                    "fontSize": 13,
+                    "borderRadius": "8px",
+                    "backgroundColor": palette.background.accent,
                     "& fieldset": { borderColor: palette.border.dark },
                     "&:hover fieldset": { borderColor: palette.border.dark },
                     "&.Mui-focused fieldset": { borderColor: palette.brand.primary },
@@ -380,14 +380,16 @@ function ModelSelector({
                         key={p.provider}
                         onClick={() => handleProviderSelect(p.provider)}
                         sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          px: 1.5,
-                          height: 38,
-                          minHeight: 38,
-                          cursor: "pointer",
-                          backgroundColor: isSelected ? palette.brand.primaryLight : "transparent",
+                          "display": "flex",
+                          "alignItems": "center",
+                          "justifyContent": "space-between",
+                          "px": 1.5,
+                          "height": 38,
+                          "minHeight": 38,
+                          "cursor": "pointer",
+                          "backgroundColor": isSelected
+                            ? palette.brand.primaryLight
+                            : "transparent",
                           "&:hover": {
                             backgroundColor: isSelected
                               ? palette.brand.primaryLight
@@ -445,14 +447,14 @@ function ModelSelector({
                       onNavigateToSettings();
                     }}
                     sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1.5,
-                      px: 1.5,
-                      py: 1,
-                      borderRadius: "8px",
-                      cursor: "pointer",
-                      backgroundColor: palette.brand.primaryLight,
+                      "display": "flex",
+                      "alignItems": "center",
+                      "gap": 1.5,
+                      "px": 1.5,
+                      "py": 1,
+                      "borderRadius": "8px",
+                      "cursor": "pointer",
+                      "backgroundColor": palette.brand.primaryLight,
                       "&:hover": {
                         backgroundColor: palette.brand.primaryLight,
                       },
@@ -506,7 +508,7 @@ function ModelSelector({
                       onKeyDown={(e) => e.stopPropagation()}
                       autoComplete="off"
                       sx={{
-                        mb: 1.5,
+                        "mb": 1.5,
                         "& .MuiOutlinedInput-root": {
                           fontSize: 13,
                           borderRadius: "8px",
@@ -536,7 +538,7 @@ function ModelSelector({
                       }}
                       autoComplete="off"
                       sx={{
-                        mb: 1.5,
+                        "mb": 1.5,
                         "& .MuiOutlinedInput-root": {
                           fontSize: 13,
                           borderRadius: "8px",
@@ -561,7 +563,7 @@ function ModelSelector({
                       onKeyDown={(e) => e.stopPropagation()}
                       autoComplete="off"
                       sx={{
-                        mb: 2,
+                        "mb": 2,
                         "& .MuiOutlinedInput-root": {
                           fontSize: 13,
                           borderRadius: "8px",
@@ -578,26 +580,26 @@ function ModelSelector({
                         }
                       }}
                       sx={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 1,
-                        px: 2,
-                        py: 1,
-                        borderRadius: "6px",
-                        cursor:
+                        "display": "inline-flex",
+                        "alignItems": "center",
+                        "gap": 1,
+                        "px": 2,
+                        "py": 1,
+                        "borderRadius": "6px",
+                        "cursor":
                           customModel.trim() && (endpointUrl || "").trim()
                             ? "pointer"
                             : "not-allowed",
-                        backgroundColor:
+                        "backgroundColor":
                           customModel.trim() && (endpointUrl || "").trim()
                             ? palette.brand.primary
                             : palette.border.dark,
-                        color:
+                        "color":
                           customModel.trim() && (endpointUrl || "").trim()
                             ? palette.background.main
                             : palette.text.disabled,
-                        fontSize: 12,
-                        fontWeight: 500,
+                        "fontSize": 12,
+                        "fontWeight": 500,
                         "&:hover": {
                           backgroundColor:
                             customModel.trim() && (endpointUrl || "").trim()
@@ -653,17 +655,17 @@ function ModelSelector({
                           onNavigateToSettings();
                         }}
                         sx={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: 1,
-                          px: 3,
-                          py: 1.5,
-                          borderRadius: "8px",
-                          cursor: "pointer",
-                          backgroundColor: palette.brand.primary,
-                          color: palette.background.main,
-                          fontSize: 13,
-                          fontWeight: 500,
+                          "display": "inline-flex",
+                          "alignItems": "center",
+                          "gap": 1,
+                          "px": 3,
+                          "py": 1.5,
+                          "borderRadius": "8px",
+                          "cursor": "pointer",
+                          "backgroundColor": palette.brand.primary,
+                          "color": palette.background.main,
+                          "fontSize": 13,
+                          "fontWeight": 500,
                           "&:hover": {
                             backgroundColor: palette.brand.primaryHover,
                           },
@@ -702,7 +704,7 @@ function ModelSelector({
                       onClick={(e) => e.stopPropagation()}
                       autoComplete="off"
                       sx={{
-                        mb: 1.5,
+                        "mb": 1.5,
                         "& .MuiOutlinedInput-root": {
                           fontSize: 13,
                           borderRadius: "8px",
@@ -717,19 +719,21 @@ function ModelSelector({
                         }
                       }}
                       sx={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 1,
-                        px: 2,
-                        py: 1,
-                        borderRadius: "6px",
-                        cursor: customModel.trim() ? "pointer" : "not-allowed",
-                        backgroundColor: customModel.trim()
+                        "display": "inline-flex",
+                        "alignItems": "center",
+                        "gap": 1,
+                        "px": 2,
+                        "py": 1,
+                        "borderRadius": "6px",
+                        "cursor": customModel.trim() ? "pointer" : "not-allowed",
+                        "backgroundColor": customModel.trim()
                           ? palette.brand.primary
                           : palette.border.dark,
-                        color: customModel.trim() ? palette.background.main : palette.text.disabled,
-                        fontSize: 12,
-                        fontWeight: 500,
+                        "color": customModel.trim()
+                          ? palette.background.main
+                          : palette.text.disabled,
+                        "fontSize": 12,
+                        "fontWeight": 500,
                         "&:hover": {
                           backgroundColor: customModel.trim()
                             ? palette.brand.primaryHover
@@ -769,14 +773,14 @@ function ModelSelector({
                           setOpen(false);
                         }}
                         sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          px: 1.5,
-                          py: 0.75,
-                          borderRadius: "6px",
-                          cursor: "pointer",
-                          backgroundColor:
+                          "display": "flex",
+                          "alignItems": "center",
+                          "justifyContent": "space-between",
+                          "px": 1.5,
+                          "py": 0.75,
+                          "borderRadius": "6px",
+                          "cursor": "pointer",
+                          "backgroundColor":
                             model === m.id ? palette.brand.primaryLight : "transparent",
                           "&:hover": {
                             backgroundColor:
@@ -823,14 +827,16 @@ function ModelSelector({
                         key={m.id}
                         onClick={() => handleModelSelect(m.id)}
                         sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1.5,
-                          pl: 2.5,
-                          pr: 1.5,
-                          py: 1,
-                          cursor: "pointer",
-                          backgroundColor: isSelected ? palette.brand.primaryLight : "transparent",
+                          "display": "flex",
+                          "alignItems": "center",
+                          "gap": 1.5,
+                          "pl": 2.5,
+                          "pr": 1.5,
+                          "py": 1,
+                          "cursor": "pointer",
+                          "backgroundColor": isSelected
+                            ? palette.brand.primaryLight
+                            : "transparent",
                           "&:hover": {
                             backgroundColor: isSelected
                               ? palette.brand.primaryLight
@@ -1198,18 +1204,18 @@ export default function CreateScorerModal({
                     ref={paramsButtonRef}
                     onClick={() => setParamsPopoverOpen(!paramsPopoverOpen)}
                     sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 0.75,
-                      px: 1.5,
-                      height: 38,
-                      border: `1px solid ${palette.border.dark}`,
-                      borderRadius: "8px",
-                      cursor: "pointer",
-                      backgroundColor: paramsPopoverOpen
+                      "display": "flex",
+                      "alignItems": "center",
+                      "gap": 0.75,
+                      "px": 1.5,
+                      "height": 38,
+                      "border": `1px solid ${palette.border.dark}`,
+                      "borderRadius": "8px",
+                      "cursor": "pointer",
+                      "backgroundColor": paramsPopoverOpen
                         ? palette.background.hover
                         : palette.background.main,
-                      transition: "all 0.15s ease",
+                      "transition": "all 0.15s ease",
                       "&:hover": {
                         borderColor: palette.text.disabled,
                         backgroundColor: palette.background.accent,
@@ -1286,8 +1292,8 @@ export default function CreateScorerModal({
                             max={2}
                             step={0.1}
                             sx={{
-                              color: palette.brand.primary,
-                              height: 4,
+                              "color": palette.brand.primary,
+                              "height": 4,
                               "& .MuiSlider-thumb": {
                                 width: 14,
                                 height: 14,
@@ -1323,8 +1329,8 @@ export default function CreateScorerModal({
                             fullWidth
                             sx={{
                               "& .MuiOutlinedInput-root": {
-                                fontSize: "13px",
-                                height: 36,
+                                "fontSize": "13px",
+                                "height": 36,
                                 "& fieldset": { borderColor: palette.border.dark },
                                 "&:hover fieldset": { borderColor: palette.border.dark },
                                 "&.Mui-focused fieldset": { borderColor: palette.brand.primary },
@@ -1367,8 +1373,8 @@ export default function CreateScorerModal({
                             max={1}
                             step={0.05}
                             sx={{
-                              color: palette.brand.primary,
-                              height: 4,
+                              "color": palette.brand.primary,
+                              "height": 4,
                               "& .MuiSlider-thumb": {
                                 width: 14,
                                 height: 14,
@@ -1436,9 +1442,9 @@ export default function CreateScorerModal({
                     variant="standard"
                     disableUnderline
                     sx={{
-                      fontSize: "12px",
-                      fontWeight: 500,
-                      minWidth: 80,
+                      "fontSize": "12px",
+                      "fontWeight": 500,
+                      "minWidth": 80,
                       "& .MuiSelect-select": { py: 0 },
                     }}
                   >
@@ -1470,7 +1476,7 @@ export default function CreateScorerModal({
                   onChange={(e) => handleUpdateMessage(index, "content", e.target.value)}
                   sx={{
                     "& .MuiOutlinedInput-root": {
-                      border: "none",
+                      "border": "none",
                       "& fieldset": { border: "none" },
                     },
                     "& .MuiInputBase-input": {
@@ -1488,11 +1494,11 @@ export default function CreateScorerModal({
               icon={<Plus size={14} />}
               onClick={handleAddMessage}
               sx={{
-                alignSelf: "flex-start",
-                color: palette.brand.primary,
-                fontSize: "13px",
-                fontWeight: 600,
-                textTransform: "none",
+                "alignSelf": "flex-start",
+                "color": palette.brand.primary,
+                "fontSize": "13px",
+                "fontWeight": 600,
+                "textTransform": "none",
                 "&:hover": { backgroundColor: palette.brand.primaryLight },
               }}
             />
@@ -1545,7 +1551,7 @@ export default function CreateScorerModal({
                     value={cs.label}
                     onChange={(e) => handleUpdateChoiceScore(index, "label", e.target.value)}
                     sx={{
-                      flex: 1,
+                      "flex": 1,
                       "& .MuiInputBase-input": { fontSize: "13px" },
                     }}
                   />
@@ -1577,11 +1583,11 @@ export default function CreateScorerModal({
                 icon={<Plus size={14} />}
                 onClick={handleAddChoiceScore}
                 sx={{
-                  alignSelf: "flex-start",
-                  color: palette.brand.primary,
-                  fontSize: "12px",
-                  fontWeight: 600,
-                  textTransform: "none",
+                  "alignSelf": "flex-start",
+                  "color": palette.brand.primary,
+                  "fontSize": "12px",
+                  "fontWeight": 600,
+                  "textTransform": "none",
                   "&:hover": { backgroundColor: palette.brand.primaryLight },
                 }}
               />
@@ -1619,8 +1625,8 @@ export default function CreateScorerModal({
                 step={0.05}
                 valueLabelDisplay="auto"
                 sx={{
-                  flex: 1,
-                  color: palette.brand.primary,
+                  "flex": 1,
+                  "color": palette.brand.primary,
                   "& .MuiSlider-thumb": {
                     backgroundColor: palette.background.main,
                     border: `2px solid ${palette.brand.primary}`,

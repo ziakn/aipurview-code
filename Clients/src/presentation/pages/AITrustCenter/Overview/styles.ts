@@ -64,7 +64,7 @@ export const styles = {
 
   checkbox: {
     "& .MuiCheckbox-root": {
-      color: "brand.primary",
+      "color": "brand.primary",
       "&.Mui-checked": {
         color: "brand.primary",
       },
@@ -75,14 +75,14 @@ export const styles = {
   },
 
   badge: {
-    background: "background.accent",
-    borderRadius: 2,
-    p: 0,
-    m: 0,
-    mr: 0,
-    minWidth: 160,
-    flex: "0 0 160px",
-    fontWeight: 500,
+    "background": "background.accent",
+    "borderRadius": 2,
+    "p": 0,
+    "m": 0,
+    "mr": 0,
+    "minWidth": 160,
+    "flex": "0 0 160px",
+    "fontWeight": 500,
     "& .MuiFormControlLabel-label": {
       fontSize: 13,
     },
@@ -94,12 +94,12 @@ export const styles = {
 
   // TextField styles moved from inline
   textField: {
-    width: "100%",
-    height: "100%",
+    "width": "100%",
+    "height": "100%",
     "& .MuiOutlinedInput-root": {
-      border: "none",
-      backgroundColor: "transparent",
-      height: "100%",
+      "border": "none",
+      "backgroundColor": "transparent",
+      "height": "100%",
       "& fieldset": {
         border: "none",
       },
@@ -111,11 +111,11 @@ export const styles = {
       },
     },
     "& .MuiInputBase-input": {
-      padding: 0,
-      height: "100% !important",
-      resize: "none",
-      fontSize: 13,
-      overflowY: "auto",
+      "padding": 0,
+      "height": "100% !important",
+      "resize": "none",
+      "fontSize": 13,
+      "overflowY": "auto",
       "&::-webkit-scrollbar": {
         width: "8px",
       },
@@ -124,15 +124,15 @@ export const styles = {
         borderRadius: "4px",
       },
       "&::-webkit-scrollbar-thumb": {
-        background: "#c1c1c1",
-        borderRadius: "4px",
+        "background": "#c1c1c1",
+        "borderRadius": "4px",
         "&:hover": {
           background: "#a8a8a8",
         },
       },
     },
     "& .MuiInputBase-root.Mui-disabled": {
-      backgroundColor: "background.surface",
+      "backgroundColor": "background.surface",
       "& .MuiInputBase-input": {
         color: "#666",
         cursor: "not-allowed",
@@ -149,7 +149,7 @@ export const styles = {
 
   // Field styles for privacy section
   privacyField: {
-    backgroundColor: "background.main",
+    "backgroundColor": "background.main",
     "& input": {
       padding: "0 14px",
     },
@@ -157,7 +157,7 @@ export const styles = {
 };
 
 export const getFormControlLabelStyles = (theme: Theme) => ({
-  margin: 0,
+  "margin": 0,
   "& .MuiFormControlLabel-label": {
     marginLeft: 8,
     marginRight: 0,
