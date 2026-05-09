@@ -10,7 +10,6 @@ import {
   Select as MuiSelect,
   MenuItem,
   TextField,
-  useTheme,
   CircularProgress,
   Popper,
   Paper,
@@ -27,6 +26,7 @@ import {
   ChevronDown,
   Key,
   HelpCircle,
+  Settings,
 } from "lucide-react";
 import StandardModal from "../../components/Modals/StandardModal";
 import Field from "../../components/Inputs/Field";
@@ -891,7 +891,6 @@ export default function CreateScorerModal({
   projectId,
 }: CreateScorerModalProps) {
   void _isEditing; // Reserved for future use
-  const theme = useTheme();
   const navigate = useNavigate();
 
   const [config, setConfig] = useState<ScorerConfig>({

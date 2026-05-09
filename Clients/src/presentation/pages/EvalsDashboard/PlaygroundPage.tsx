@@ -83,23 +83,6 @@ function getModelIcon(model: SavedModel): AnyIcon | null {
   return DIRECT_PROVIDER_ICON[provider] ?? null;
 }
 
-const PROVIDER_OPTIONS = [
-  "openai", "anthropic", "google", "mistral", "xai",
-  "openrouter", "huggingface", "ollama", "groq", "deepseek",
-];
-
-const PROVIDER_DISPLAY: Record<string, string> = {
-  openai:      "OpenAI",
-  anthropic:   "Anthropic",
-  google:      "Google",
-  mistral:     "Mistral",
-  xai:         "xAI",
-  openrouter:  "OpenRouter",
-  huggingface: "HuggingFace",
-  ollama:      "Ollama",
-  groq:        "Groq",
-  deepseek:    "DeepSeek",
-};
 
 // Models that support image inputs
 const VISION_PATTERNS = [

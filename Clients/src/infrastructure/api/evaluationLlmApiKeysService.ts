@@ -80,9 +80,6 @@ function dedupeLatestPerProvider(keys: LLMApiKey[]): LLMApiKey[] {
 }
 
 class EvaluationLlmApiKeysService {
-  private static readonly MANAGE_KEYS_MESSAGE =
-    "Provider API keys for LLM Evals are managed in AI Gateway → Settings → API keys.";
-
   /**
    * Masked keys from AI Gateway for providers that LLM Evals supports.
    */
