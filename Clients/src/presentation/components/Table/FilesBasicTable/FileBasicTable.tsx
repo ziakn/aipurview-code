@@ -138,7 +138,7 @@ const SortableTableHead: React.FC<{
                 isIndeterminate={selection.someSelected && !selection.allSelected}
                 onChange={selection.onToggleAll}
                 ariaLabel="Select all files on this page"
-                sx={{ "p": 0, "& svg": { display: "block" } }}
+                sx={{ p: 0 }}
               />
             </Box>
           </TableCell>
@@ -606,18 +606,16 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                   key={`${row.id}-${row.fileName}`}
                   sx={{
                     ...singleTheme.tableStyles.primary.body.row,
-                    "height": "36px",
                     "&:hover": { backgroundColor: "background.surface" },
                   }}
                 >
                   {canRunBulkActions && (
                     <TableCell
-                      padding="checkbox"
                       sx={{
                         width: 48,
                         minWidth: 48,
                         maxWidth: 48,
-                        padding: "14px 8px",
+                        padding: "16px 8px",
                       }}
                       onClick={(e) => e.stopPropagation()}
                     >
@@ -626,7 +624,6 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          lineHeight: 0,
                           width: "100%",
                         }}
                       >
@@ -636,7 +633,7 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                           isChecked={isSelected(Number(row.id))}
                           onChange={() => toggleSelection(Number(row.id))}
                           ariaLabel={`Select file ${row.fileName}`}
-                          sx={{ "p": 0, "& svg": { display: "block" } }}
+                          sx={{ p: 0 }}
                         />
                       </Box>
                     </TableCell>
