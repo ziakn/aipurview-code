@@ -4,7 +4,8 @@
  */
 
 import React from "react";
-import { Box, Typography, Stack, CircularProgress, useTheme, Avatar } from "@mui/material";
+import { Box, Typography, Stack, CircularProgress, useTheme } from "@mui/material";
+import VWAvatar from "../../../components/Avatar/VWAvatar";
 import { Clock } from "lucide-react";
 import {
   useEntityChangeHistory,
@@ -221,19 +222,15 @@ const Activity: React.FC<ActivityProps> = ({ entityType, entityId }) => {
         }}
       >
         <Stack direction="row" gap="12px" alignItems="center" marginBottom="16px">
-          <Avatar
-            src={avatarUrls[firstEntry.changed_by_user_id] || undefined}
-            alt={userName}
-            sx={{
-              width: 36,
-              height: 36,
-              backgroundColor: theme.palette.primary.main,
-              fontSize: 14,
-              fontWeight: 600,
+          <VWAvatar
+            user={{
+              firstname: firstEntry.user_name || userName,
+              lastname: firstEntry.user_surname || "",
+              pathToImage: avatarUrls[firstEntry.changed_by_user_id] || undefined,
             }}
-          >
-            {userName.charAt(0).toUpperCase()}
-          </Avatar>
+            size="small"
+            showBorder={false}
+          />
           <Box sx={{ flex: 1 }}>
             <Typography
               sx={{

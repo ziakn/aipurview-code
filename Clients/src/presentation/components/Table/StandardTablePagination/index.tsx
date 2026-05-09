@@ -64,6 +64,7 @@ const StandardTablePagination: React.FC<StandardTablePaginationProps> = memo(
                   fontSize: 12,
                   opacity: 0.7,
                   color: theme.palette.text.secondary,
+                  whiteSpace: "nowrap",
                 }}
               >
                 Showing {getRange} of {totalCount} {totalCount !== 1 ? plural : entityLabel}
