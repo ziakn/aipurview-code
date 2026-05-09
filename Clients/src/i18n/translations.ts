@@ -7570,6 +7570,36 @@ export const translations: Record<string, Record<string, string>> = {
     "Set owner": "Eigentümer festlegen",
     "Set tags": "Tags festlegen",
     "Type a category and press Enter": "Kategorie eingeben und Eingabetaste drücken",
+    // LLM Evals additions
+    "A URL-safe identifier used internally. Auto-generated from the name.":
+      "Ein URL-sicherer Bezeichner, der intern verwendet wird. Wird automatisch aus dem Namen generiert.",
+    "A human-readable name for this scorer, shown in dropdowns and reports.":
+      "Ein lesbarer Name für diesen Bewerter, der in Dropdown-Menüs und Berichten angezeigt wird.",
+    "AI Gateway is not running": "KI-Gateway läuft nicht",
+    "Add choice": "Auswahl hinzufügen",
+    "Add model": "Modell hinzufügen",
+    "An unexpected error occurred": "Ein unerwarteter Fehler ist aufgetreten",
+    "Choice label": "Auswahlbezeichnung",
+    "Clear conversation": "Gespräch löschen",
+    "Controls the diversity of the judge": "Steuert die Vielfalt des Bewerters",
+    "DATE ADDED": "HINZUGEFÜGT AM",
+    "Google": "Google",
+    "Groq": "Groq",
+    "LAST RUN": "ZULETZT AUSGEFÜHRT",
+    "Meta": "Meta",
+    "Microsoft": "Microsoft",
+    "Moonshot AI": "Moonshot AI",
+    "No saved models yet": "Noch keine gespeicherten Modelle",
+    "Nous Research": "Nous Research",
+    "Perplexity": "Perplexity",
+    "Project settings": "Projekteinstellungen",
+    "Qwen": "Qwen",
+    "Samples with a score at or above this value will be marked as passing. Adjust based on how strict you want the evaluation to be.":
+      "Stichproben mit einem Wert ab diesem Schwellenwert werden als bestanden markiert. Passen Sie diesen Wert je nach gewünschter Strenge der Bewertung an.",
+    "Saved Models": "Gespeicherte Modelle",
+    "The LLM that will act as the evaluator. It reads your prompt and returns one of the choice scores you define below.":
+      "Das LLM, das als Bewerter fungiert. Es liest Ihren Prompt und gibt eine der unten definierten Auswahlbewertungen zurück.",
+    "The type of LLM application being evaluated": "Der Typ der zu bewertenden LLM-Anwendung",
   },
 
   fr: {
@@ -15067,5 +15097,35 @@ export const translations: Record<string, Record<string, string>> = {
     "Set owner": "Définir le propriétaire",
     "Set tags": "Définir les balises",
     "Type a category and press Enter": "Saisissez une catégorie et appuyez sur Entrée",
+    // LLM Evals additions
+    "A URL-safe identifier used internally. Auto-generated from the name.":
+      "Un identifiant sûr pour les URL, utilisé en interne. Généré automatiquement à partir du nom.",
+    "A human-readable name for this scorer, shown in dropdowns and reports.":
+      "Un nom lisible pour ce notateur, affiché dans les menus déroulants et les rapports.",
+    "AI Gateway is not running": "La passerelle IA ne fonctionne pas",
+    "Add choice": "Ajouter un choix",
+    "Add model": "Ajouter un modèle",
+    "An unexpected error occurred": "Une erreur inattendue s'est produite",
+    "Choice label": "Libellé du choix",
+    "Clear conversation": "Effacer la conversation",
+    "Controls the diversity of the judge": "Contrôle la diversité de l'évaluateur",
+    "DATE ADDED": "DATE D'AJOUT",
+    "Google": "Google",
+    "Groq": "Groq",
+    "LAST RUN": "DERNIÈRE EXÉCUTION",
+    "Meta": "Meta",
+    "Microsoft": "Microsoft",
+    "Moonshot AI": "Moonshot AI",
+    "No saved models yet": "Aucun modèle enregistré pour l'instant",
+    "Nous Research": "Nous Research",
+    "Perplexity": "Perplexity",
+    "Project settings": "Paramètres du projet",
+    "Qwen": "Qwen",
+    "Samples with a score at or above this value will be marked as passing. Adjust based on how strict you want the evaluation to be.":
+      "Les échantillons avec un score égal ou supérieur à cette valeur seront marqués comme réussis. Ajustez en fonction de la rigueur souhaitée de l'évaluation.",
+    "Saved Models": "Modèles enregistrés",
+    "The LLM that will act as the evaluator. It reads your prompt and returns one of the choice scores you define below.":
+      "Le LLM qui agira en tant qu'évaluateur. Il lit votre invite et renvoie l'un des scores de choix que vous définissez ci-dessous.",
+    "The type of LLM application being evaluated": "Le type d'application LLM évalué",
   },
 };
