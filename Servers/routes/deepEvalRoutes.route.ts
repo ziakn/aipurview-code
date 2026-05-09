@@ -294,11 +294,9 @@ function deepEvalRoutes() {
       }
 
       if (!apiKey) {
-        res
-          .status(400)
-          .json({
-            error: `No API key found for provider "${normalizedProvider}". Add one in Settings → API Keys.`,
-          });
+        res.status(400).json({
+          error: `No API key found for provider "${normalizedProvider}". Add one in Settings → API Keys.`,
+        });
         return;
       }
 

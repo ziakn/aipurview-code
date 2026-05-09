@@ -1032,16 +1032,16 @@ export default function EvalsDashboard() {
   // Tab label and icon mapping for breadcrumbs
   const getTabInfo = (tabValue: string): { label: string; icon: React.ReactNode } => {
     const tabMap: Record<string, { label: string; icon: React.ReactNode }> = {
-      overview: { label: "Overview", icon: <LayoutDashboard size={14} strokeWidth={1.5} /> },
-      experiments: { label: "Experiments", icon: <FlaskConical size={14} strokeWidth={1.5} /> },
-      datasets: { label: "Datasets", icon: <Database size={14} strokeWidth={1.5} /> },
-      models: { label: "Models", icon: <Cpu size={14} strokeWidth={1.5} /> },
-      scorers: { label: "Scorers", icon: <Award size={14} strokeWidth={1.5} /> },
+      "overview": { label: "Overview", icon: <LayoutDashboard size={14} strokeWidth={1.5} /> },
+      "experiments": { label: "Experiments", icon: <FlaskConical size={14} strokeWidth={1.5} /> },
+      "datasets": { label: "Datasets", icon: <Database size={14} strokeWidth={1.5} /> },
+      "models": { label: "Models", icon: <Cpu size={14} strokeWidth={1.5} /> },
+      "scorers": { label: "Scorers", icon: <Award size={14} strokeWidth={1.5} /> },
       "bias-audits": { label: "Bias audits", icon: <Scale size={14} strokeWidth={1.5} /> },
-      arena: { label: "Arena", icon: <Swords size={14} strokeWidth={1.5} /> },
-      playground: { label: "Playground", icon: <MessageSquare size={14} strokeWidth={1.5} /> },
-      reports: { label: "Reports", icon: <FileText size={14} strokeWidth={1.5} /> },
-      settings: { label: "Settings", icon: <Settings size={14} strokeWidth={1.5} /> },
+      "arena": { label: "Arena", icon: <Swords size={14} strokeWidth={1.5} /> },
+      "playground": { label: "Playground", icon: <MessageSquare size={14} strokeWidth={1.5} /> },
+      "reports": { label: "Reports", icon: <FileText size={14} strokeWidth={1.5} /> },
+      "settings": { label: "Settings", icon: <Settings size={14} strokeWidth={1.5} /> },
     };
     return tabMap[tabValue] || { label: tabValue, icon: <Workflow size={14} strokeWidth={1.5} /> };
   };
@@ -1209,7 +1209,7 @@ export default function EvalsDashboard() {
 
   return (
     <Stack className="vwhome" gap={"16px"}>
-      <PageBreadcrumbs items={breadcrumbItems} sx={{ mb: 0, "& > hr": { mb: 0 } }} />
+      <PageBreadcrumbs items={breadcrumbItems} sx={{ "mb": 0, "& > hr": { mb: 0 } }} />
 
       {/* Server Connection Error Banner */}
       {serverConnectionError && (
@@ -1255,9 +1255,9 @@ export default function EvalsDashboard() {
             onClick={handleRetryConnection}
             disabled={initialLoading}
             sx={{
-              textTransform: "none",
-              borderColor: palette.status.error.text,
-              color: palette.status.error.text,
+              "textTransform": "none",
+              "borderColor": palette.status.error.text,
+              "color": palette.status.error.text,
               "&:hover": {
                 borderColor: palette.status.error.text,
                 backgroundColor: palette.status.error.bg,
@@ -1323,8 +1323,8 @@ export default function EvalsDashboard() {
                     }}
                     isDisabled={!canManageApiKeys}
                     sx={{
-                      backgroundColor: palette.brand.primary,
-                      color: palette.background.main,
+                      "backgroundColor": palette.brand.primary,
+                      "color": palette.background.main,
                       "&:hover": { backgroundColor: palette.brand.primaryHover },
                     }}
                   />
@@ -1380,8 +1380,8 @@ export default function EvalsDashboard() {
                     }}
                     isDisabled={!canManageApiKeys}
                     sx={{
-                      backgroundColor: palette.brand.primary,
-                      color: palette.background.main,
+                      "backgroundColor": palette.brand.primary,
+                      "color": palette.background.main,
                       "&:hover": { backgroundColor: palette.brand.primaryHover },
                     }}
                   />
@@ -1434,12 +1434,12 @@ export default function EvalsDashboard() {
                             >
                               <Box
                                 sx={{
-                                  position: "absolute",
-                                  top: "50%",
-                                  left: "50%",
-                                  transform: "translate(-50%, -50%)",
-                                  width: 32,
-                                  height: 32,
+                                  "position": "absolute",
+                                  "top": "50%",
+                                  "left": "50%",
+                                  "transform": "translate(-50%, -50%)",
+                                  "width": 32,
+                                  "height": 32,
                                   "& svg": {
                                     width: "32px !important",
                                     height: "32px !important",
@@ -1520,8 +1520,8 @@ export default function EvalsDashboard() {
                               }}
                               disabled={!canManageApiKeys}
                               sx={{
-                                color: palette.text.tertiary,
-                                padding: "8px",
+                                "color": palette.text.tertiary,
+                                "padding": "8px",
                                 "&:hover": {
                                   backgroundColor: palette.background.hover,
                                   color: palette.text.secondary,
@@ -1552,8 +1552,8 @@ export default function EvalsDashboard() {
                               }}
                               disabled={!canManageApiKeys}
                               sx={{
-                                color: palette.status.error.text,
-                                padding: "8px",
+                                "color": palette.status.error.text,
+                                "padding": "8px",
                                 "&:hover": {
                                   backgroundColor: palette.status.error.bg,
                                   color: palette.status.error.text,
@@ -1612,10 +1612,10 @@ export default function EvalsDashboard() {
                     icon={<PlusIcon size={16} />}
                     onClick={() => setLocalProviderModalOpen(true)}
                     sx={{
-                      backgroundColor: palette.brand.primary,
-                      color: palette.background.main,
-                      whiteSpace: "nowrap",
-                      flexShrink: 0,
+                      "backgroundColor": palette.brand.primary,
+                      "color": palette.background.main,
+                      "whiteSpace": "nowrap",
+                      "flexShrink": 0,
                       "&:hover": { backgroundColor: palette.brand.primaryHover },
                     }}
                   />
@@ -1721,8 +1721,8 @@ export default function EvalsDashboard() {
                           >
                             <Box
                               sx={{
-                                width: 32,
-                                height: 32,
+                                "width": 32,
+                                "height": 32,
                                 "& svg": { width: "32px !important", height: "32px !important" },
                               }}
                             >
@@ -1769,8 +1769,8 @@ export default function EvalsDashboard() {
                         <IconButton
                           onClick={() => handleDeleteLocalProvider(provider.id)}
                           sx={{
-                            color: palette.status.error.text,
-                            padding: "8px",
+                            "color": palette.status.error.text,
+                            "padding": "8px",
                             "&:hover": {
                               backgroundColor: palette.status.error.bg,
                               color: palette.status.error.text,
@@ -1789,7 +1789,9 @@ export default function EvalsDashboard() {
             {/* ── Project settings section ── */}
             {currentProject && (
               <>
-                <Typography sx={{ fontWeight: 600, fontSize: 15, color: palette.text.secondary, mt: 2 }}>
+                <Typography
+                  sx={{ fontWeight: 600, fontSize: 15, color: palette.text.secondary, mt: 2 }}
+                >
                   Project settings
                 </Typography>
 
@@ -1807,10 +1809,16 @@ export default function EvalsDashboard() {
                     direction="row"
                     alignItems="center"
                     justifyContent="space-between"
-                    sx={{ px: "20px", py: "14px", borderBottom: `1px solid ${palette.border.dark}` }}
+                    sx={{
+                      px: "20px",
+                      py: "14px",
+                      borderBottom: `1px solid ${palette.border.dark}`,
+                    }}
                   >
                     <Box>
-                      <Typography sx={{ fontSize: 13, fontWeight: 500, color: palette.text.secondary }}>
+                      <Typography
+                        sx={{ fontSize: 13, fontWeight: 500, color: palette.text.secondary }}
+                      >
                         Use case type
                       </Typography>
                       <Typography sx={{ fontSize: 12, color: palette.text.tertiary, mt: 0.25 }}>
@@ -1830,17 +1838,27 @@ export default function EvalsDashboard() {
                       }}
                       size="small"
                       sx={{
-                        minWidth: 160,
-                        fontSize: 13,
+                        "minWidth": 160,
+                        "fontSize": 13,
                         "& .MuiOutlinedInput-notchedOutline": { borderColor: palette.border.dark },
-                        "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: palette.border.dark },
-                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: palette.brand.primary },
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                          borderColor: palette.border.dark,
+                        },
+                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: palette.brand.primary,
+                        },
                         "&.Mui-disabled": { opacity: 0.6 },
                       }}
                     >
-                      <MenuItem value="chatbot" sx={{ fontSize: 13 }}>Chatbot</MenuItem>
-                      <MenuItem value="rag" sx={{ fontSize: 13 }}>RAG</MenuItem>
-                      <MenuItem value="agent" sx={{ fontSize: 13 }}>Agent</MenuItem>
+                      <MenuItem value="chatbot" sx={{ fontSize: 13 }}>
+                        Chatbot
+                      </MenuItem>
+                      <MenuItem value="rag" sx={{ fontSize: 13 }}>
+                        RAG
+                      </MenuItem>
+                      <MenuItem value="agent" sx={{ fontSize: 13 }}>
+                        Agent
+                      </MenuItem>
                     </Select>
                   </Stack>
 
@@ -1854,19 +1872,24 @@ export default function EvalsDashboard() {
                   >
                     {experimentsCount > 0 && (
                       <Typography sx={{ fontSize: 12, color: palette.status.warning.text }}>
-                        Use case is locked — this project has {experimentsCount} experiment{experimentsCount !== 1 ? "s" : ""}.
+                        Use case is locked — this project has {experimentsCount} experiment
+                        {experimentsCount !== 1 ? "s" : ""}.
                       </Typography>
                     )}
                     {experimentsCount === 0 && (
                       <CustomizableButton
                         sx={{
-                          width: "fit-content",
-                          gap: 1,
-                          backgroundColor: hasUseCaseChanged ? palette.brand.primary : palette.border.dark,
-                          border: hasUseCaseChanged
+                          "width": "fit-content",
+                          "gap": 1,
+                          "backgroundColor": hasUseCaseChanged
+                            ? palette.brand.primary
+                            : palette.border.dark,
+                          "border": hasUseCaseChanged
                             ? `1px solid ${palette.brand.primary}`
                             : `1px solid ${palette.border.dark}`,
-                          "&:hover": hasUseCaseChanged ? { backgroundColor: palette.brand.primaryHover } : {},
+                          "&:hover": hasUseCaseChanged
+                            ? { backgroundColor: palette.brand.primaryHover }
+                            : {},
                         }}
                         icon={<Save size={14} />}
                         variant="contained"
@@ -1927,12 +1950,24 @@ export default function EvalsDashboard() {
               <ProjectScorers projectId={projectId} orgId={orgId || currentProject?.orgId || ""} />
             )}
 
-            {tab === "models" && <ModelsPage orgId={orgId || currentProject?.orgId || ""} openAddModal={openModelsAddModal} onAddModalConsumed={() => setOpenModelsAddModal(false)} />}
+            {tab === "models" && (
+              <ModelsPage
+                orgId={orgId || currentProject?.orgId || ""}
+                openAddModal={openModelsAddModal}
+                onAddModalConsumed={() => setOpenModelsAddModal(false)}
+              />
+            )}
 
             {tab === "arena" && <ArenaPage orgId={orgId || currentProject?.orgId || ""} />}
 
             {tab === "playground" && (
-              <PlaygroundPage orgId={orgId || currentProject?.orgId || ""} onNavigateToModels={() => { setOpenModelsAddModal(true); setTab("models"); }} />
+              <PlaygroundPage
+                orgId={orgId || currentProject?.orgId || ""}
+                onNavigateToModels={() => {
+                  setOpenModelsAddModal(true);
+                  setTab("models");
+                }}
+              />
             )}
 
             {tab === "bias-audits" &&
@@ -1955,7 +1990,6 @@ export default function EvalsDashboard() {
                 orgId={orgId || currentProject?.orgId || ""}
               />
             )}
-
           </>
         )}
       </Box>
@@ -2174,14 +2208,14 @@ export default function EvalsDashboard() {
                       <Card
                         onClick={() => handleProviderSelect(provider._id)}
                         sx={{
-                          cursor: "pointer",
-                          border: "1px solid",
-                          borderColor: isSelected ? palette.brand.primary : palette.border.dark,
-                          backgroundColor: palette.background.main,
-                          boxShadow: "none",
-                          transition: "all 0.2s ease",
-                          position: "relative",
-                          height: "100%",
+                          "cursor": "pointer",
+                          "border": "1px solid",
+                          "borderColor": isSelected ? palette.brand.primary : palette.border.dark,
+                          "backgroundColor": palette.background.main,
+                          "boxShadow": "none",
+                          "transition": "all 0.2s ease",
+                          "position": "relative",
+                          "height": "100%",
                           "&:hover": {
                             borderColor: palette.brand.primary,
                             boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
@@ -2190,14 +2224,14 @@ export default function EvalsDashboard() {
                       >
                         <CardContent
                           sx={{
-                            textAlign: "center",
-                            py: 3,
-                            px: 2,
-                            height: "100%",
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            justifyContent: "center",
+                            "textAlign": "center",
+                            "py": 3,
+                            "px": 2,
+                            "height": "100%",
+                            "display": "flex",
+                            "flexDirection": "column",
+                            "alignItems": "center",
+                            "justifyContent": "center",
                             "&:last-child": { pb: 3 },
                           }}
                         >
@@ -2249,12 +2283,12 @@ export default function EvalsDashboard() {
                           {/* Provider Logo */}
                           <Box
                             sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              width: 40,
-                              height: 40,
-                              mb: 1.5,
+                              "display": "flex",
+                              "alignItems": "center",
+                              "justifyContent": "center",
+                              "width": 40,
+                              "height": 40,
+                              "mb": 1.5,
                               "& svg": {
                                 width: 32,
                                 height: 32,
@@ -2444,17 +2478,17 @@ export default function EvalsDashboard() {
                   setLocalProviderUrl("http://localhost:11434");
                 }}
                 sx={{
-                  flex: 1,
-                  cursor: "pointer",
-                  border: "1px solid",
-                  borderColor:
+                  "flex": 1,
+                  "cursor": "pointer",
+                  "border": "1px solid",
+                  "borderColor":
                     selectedLocalProviderType === "ollama"
                       ? palette.brand.primary
                       : palette.border.dark,
-                  backgroundColor: palette.background.main,
-                  boxShadow: "none",
-                  transition: "all 0.2s ease",
-                  position: "relative",
+                  "backgroundColor": palette.background.main,
+                  "boxShadow": "none",
+                  "transition": "all 0.2s ease",
+                  "position": "relative",
                   "&:hover": {
                     borderColor: palette.brand.primary,
                     boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
@@ -2524,17 +2558,17 @@ export default function EvalsDashboard() {
                   setLocalProviderUrl("http://localhost:8000/api/generate");
                 }}
                 sx={{
-                  flex: 1,
-                  cursor: "pointer",
-                  border: "1px solid",
-                  borderColor:
+                  "flex": 1,
+                  "cursor": "pointer",
+                  "border": "1px solid",
+                  "borderColor":
                     selectedLocalProviderType === "local"
                       ? palette.brand.primary
                       : palette.border.dark,
-                  backgroundColor: palette.background.main,
-                  boxShadow: "none",
-                  transition: "all 0.2s ease",
-                  position: "relative",
+                  "backgroundColor": palette.background.main,
+                  "boxShadow": "none",
+                  "transition": "all 0.2s ease",
+                  "position": "relative",
                   "&:hover": {
                     borderColor: palette.brand.primary,
                     boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
