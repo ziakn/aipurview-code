@@ -69,43 +69,46 @@ import * as ProviderIcons from "../../ProviderIcons";
 type ProviderIconComponent = React.FC<any>;
 
 // Map from OpenRouter sub-provider prefix → { display name, icon component }
-const OPENROUTER_PROVIDER_MAP: Record<string, { name: string; Icon: ProviderIconComponent | null }> = {
-  anthropic:    { name: "Anthropic",    Icon: ProviderIcons.Anthropic },
-  openai:       { name: "OpenAI",       Icon: ProviderIcons.OpenAI },
-  "meta-llama": { name: "Meta",         Icon: ProviderIcons.Meta },
-  meta:         { name: "Meta",         Icon: ProviderIcons.Meta },
-  google:       { name: "Google",       Icon: ProviderIcons.Google },
-  mistralai:    { name: "Mistral",      Icon: ProviderIcons.Mistral },
-  mistral:      { name: "Mistral",      Icon: ProviderIcons.Mistral },
-  deepseek:     { name: "DeepSeek",     Icon: ProviderIcons.DeepSeek },
-  microsoft:    { name: "Microsoft",    Icon: ProviderIcons.Microsoft },
-  cohere:       { name: "Cohere",       Icon: ProviderIcons.Cohere },
-  perplexity:   { name: "Perplexity",   Icon: ProviderIcons.Perplexity },
-  nvidia:       { name: "NVIDIA",       Icon: ProviderIcons.Nvidia },
-  together:     { name: "Together AI",  Icon: ProviderIcons.Together },
-  groq:         { name: "Groq",         Icon: ProviderIcons.Groq },
-  moonshotai:   { name: "Moonshot AI",  Icon: ProviderIcons.Moonshot },
-  qwen:         { name: "Qwen",         Icon: ProviderIcons.Qwen },
-  "01-ai":      { name: "01.AI",        Icon: null },
-  nousresearch: { name: "Nous Research",Icon: null },
-  "x-ai":       { name: "xAI",         Icon: ProviderIcons.XAI },
+const OPENROUTER_PROVIDER_MAP: Record<
+  string,
+  { name: string; Icon: ProviderIconComponent | null }
+> = {
+  "anthropic": { name: "Anthropic", Icon: ProviderIcons.Anthropic },
+  "openai": { name: "OpenAI", Icon: ProviderIcons.OpenAI },
+  "meta-llama": { name: "Meta", Icon: ProviderIcons.Meta },
+  "meta": { name: "Meta", Icon: ProviderIcons.Meta },
+  "google": { name: "Google", Icon: ProviderIcons.Google },
+  "mistralai": { name: "Mistral", Icon: ProviderIcons.Mistral },
+  "mistral": { name: "Mistral", Icon: ProviderIcons.Mistral },
+  "deepseek": { name: "DeepSeek", Icon: ProviderIcons.DeepSeek },
+  "microsoft": { name: "Microsoft", Icon: ProviderIcons.Microsoft },
+  "cohere": { name: "Cohere", Icon: ProviderIcons.Cohere },
+  "perplexity": { name: "Perplexity", Icon: ProviderIcons.Perplexity },
+  "nvidia": { name: "NVIDIA", Icon: ProviderIcons.Nvidia },
+  "together": { name: "Together AI", Icon: ProviderIcons.Together },
+  "groq": { name: "Groq", Icon: ProviderIcons.Groq },
+  "moonshotai": { name: "Moonshot AI", Icon: ProviderIcons.Moonshot },
+  "qwen": { name: "Qwen", Icon: ProviderIcons.Qwen },
+  "01-ai": { name: "01.AI", Icon: null },
+  "nousresearch": { name: "Nous Research", Icon: null },
+  "x-ai": { name: "xAI", Icon: ProviderIcons.XAI },
 };
 
 // First-party provider → icon component map
 const PROVIDER_ICON_MAP: Record<string, ProviderIconComponent> = {
-  openai:       ProviderIcons.OpenAI,
-  anthropic:    ProviderIcons.Anthropic,
-  google:       ProviderIcons.Google,
-  mistral:      ProviderIcons.Mistral,
-  ollama:       ProviderIcons.Ollama,
-  huggingface:  ProviderIcons.HuggingFace,
-  openrouter:   ProviderIcons.OpenRouter,
-  deepseek:     ProviderIcons.DeepSeek,
-  nvidia:       ProviderIcons.Nvidia,
-  cohere:       ProviderIcons.Cohere,
-  perplexity:   ProviderIcons.Perplexity,
-  together:     ProviderIcons.Together,
-  groq:         ProviderIcons.Groq,
+  openai: ProviderIcons.OpenAI,
+  anthropic: ProviderIcons.Anthropic,
+  google: ProviderIcons.Google,
+  mistral: ProviderIcons.Mistral,
+  ollama: ProviderIcons.Ollama,
+  huggingface: ProviderIcons.HuggingFace,
+  openrouter: ProviderIcons.OpenRouter,
+  deepseek: ProviderIcons.DeepSeek,
+  nvidia: ProviderIcons.Nvidia,
+  cohere: ProviderIcons.Cohere,
+  perplexity: ProviderIcons.Perplexity,
+  together: ProviderIcons.Together,
+  groq: ProviderIcons.Groq,
 };
 
 interface EffectiveProvider {
@@ -115,21 +118,21 @@ interface EffectiveProvider {
 }
 
 const PROVIDER_DISPLAY_NAMES: Record<string, string> = {
-  openrouter:   "OpenRouter",
-  openai:       "OpenAI",
-  anthropic:    "Anthropic",
-  google:       "Google",
-  mistral:      "Mistral",
-  ollama:       "Ollama",
-  huggingface:  "Hugging Face",
-  deepseek:     "DeepSeek",
-  nvidia:       "NVIDIA",
-  cohere:       "Cohere",
-  perplexity:   "Perplexity",
-  together:     "Together AI",
-  groq:         "Groq",
-  bedrock:      "AWS Bedrock",
-  xai:          "xAI",
+  openrouter: "OpenRouter",
+  openai: "OpenAI",
+  anthropic: "Anthropic",
+  google: "Google",
+  mistral: "Mistral",
+  ollama: "Ollama",
+  huggingface: "Hugging Face",
+  deepseek: "DeepSeek",
+  nvidia: "NVIDIA",
+  cohere: "Cohere",
+  perplexity: "Perplexity",
+  together: "Together AI",
+  groq: "Groq",
+  bedrock: "AWS Bedrock",
+  xai: "xAI",
 };
 
 // Returns the actual stored provider (never resolves sub-provider)
@@ -137,7 +140,8 @@ const getDirectProvider = (provider: string): EffectiveProvider => {
   const key = provider.toLowerCase();
   return {
     key,
-    displayName: PROVIDER_DISPLAY_NAMES[key] ?? provider.charAt(0).toUpperCase() + provider.slice(1),
+    displayName:
+      PROVIDER_DISPLAY_NAMES[key] ?? provider.charAt(0).toUpperCase() + provider.slice(1),
     Icon: PROVIDER_ICON_MAP[key] ?? null,
   };
 };
@@ -161,7 +165,10 @@ const getEffectiveProvider = (provider: string, modelName: string): EffectivePro
   return { key: "openrouter", displayName: "OpenRouter", Icon: ProviderIcons.OpenRouter };
 };
 
-const ProviderChipIcon: React.FC<{ Icon: ProviderIconComponent | null; size?: number }> = ({ Icon, size = 14 }) => {
+const ProviderChipIcon: React.FC<{ Icon: ProviderIconComponent | null; size?: number }> = ({
+  Icon,
+  size = 14,
+}) => {
   if (!Icon) return null;
   return <Icon width={size} height={size} style={{ flexShrink: 0 }} />;
 };
@@ -222,7 +229,9 @@ const ModelsTableBody: React.FC<ModelsTableBodyProps> = ({
                 textAlign: "center",
               }}
             >
-              <Box sx={{ display: "inline-flex", alignItems: "center", gap: "8px", textAlign: "left" }}>
+              <Box
+                sx={{ display: "inline-flex", alignItems: "center", gap: "8px", textAlign: "left" }}
+              >
                 <Box
                   sx={{
                     width: 24,

@@ -144,14 +144,14 @@ const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({ onEnabled
                 onClick={handleEnable}
                 startIcon={<Lightbulb size={18} />}
                 sx={{
-                  textTransform: "none",
-                  fontWeight: 600,
-                  fontSize: 15,
-                  borderRadius: 2,
-                  px: 4,
-                  py: 1,
-                  boxShadow: "none",
-                  backgroundColor: palette.brand.primary,
+                  "textTransform": "none",
+                  "fontWeight": 600,
+                  "fontSize": 15,
+                  "borderRadius": 2,
+                  "px": 4,
+                  "py": 1,
+                  "boxShadow": "none",
+                  "backgroundColor": palette.brand.primary,
                   "&:hover": {
                     backgroundColor: palette.brand.primaryHover,
                     boxShadow: "none",
@@ -168,10 +168,10 @@ const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({ onEnabled
             size="small"
             onClick={() => openUserGuide("governance-os")}
             sx={{
-              textTransform: "none",
-              fontWeight: 500,
-              fontSize: 13,
-              color: palette.brand.primary,
+              "textTransform": "none",
+              "fontWeight": 500,
+              "fontSize": 13,
+              "color": palette.brand.primary,
               "&:hover": {
                 backgroundColor: palette.brand.primaryLight,
               },

@@ -616,8 +616,8 @@ export default function ReportPage({
                       size="small"
                       onClick={(e) => handleMenuOpen(e, report)}
                       sx={{
-                        color: theme.palette.text.secondary,
-                        padding: "6px",
+                        "color": theme.palette.text.secondary,
+                        "padding": "6px",
                         "&:hover": { backgroundColor: palette.background.accent },
                       }}
                     >
@@ -664,13 +664,13 @@ export default function ReportPage({
             }}
             startIcon={<Download size={14} />}
             sx={{
-              height: "34px",
-              fontSize: "13px",
-              fontWeight: 500,
-              color: palette.text.secondary,
-              borderColor: palette.border.dark,
-              backgroundColor: "transparent",
-              justifyContent: "flex-start",
+              "height": "34px",
+              "fontSize": "13px",
+              "fontWeight": 500,
+              "color": palette.text.secondary,
+              "borderColor": palette.border.dark,
+              "backgroundColor": "transparent",
+              "justifyContent": "flex-start",
               "&:hover": {
                 backgroundColor: palette.background.accent,
                 borderColor: palette.border.dark,
@@ -687,13 +687,13 @@ export default function ReportPage({
             }}
             startIcon={<Trash2 size={14} />}
             sx={{
-              height: "34px",
-              fontSize: "13px",
-              fontWeight: 500,
-              color: "#DC2626",
-              borderColor: palette.border.dark,
-              backgroundColor: "transparent",
-              justifyContent: "flex-start",
+              "height": "34px",
+              "fontSize": "13px",
+              "fontWeight": 500,
+              "color": "#DC2626",
+              "borderColor": palette.border.dark,
+              "backgroundColor": "transparent",
+              "justifyContent": "flex-start",
               "&:hover": {
                 backgroundColor: "#FEF2F2",
                 borderColor: "#DC2626",

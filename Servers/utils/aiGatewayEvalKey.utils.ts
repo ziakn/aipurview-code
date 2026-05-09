@@ -5,9 +5,12 @@
  * google (eval UI) and gemini (gateway UI) are treated as aliases.
  */
 
-import { sequelize } from '../database/db';
-import { decrypt } from './encryption.utils';
-import { LLMProvider, VALID_PROVIDERS } from '../domain.layer/models/evaluationLlmApiKey/evaluationLlmApiKey.model';
+import { sequelize } from "../database/db";
+import { decrypt } from "./encryption.utils";
+import {
+  LLMProvider,
+  VALID_PROVIDERS,
+} from "../domain.layer/models/evaluationLlmApiKey/evaluationLlmApiKey.model";
 
 /**
  * Latest active gateway key for the eval provider (by updated_at).
@@ -24,7 +27,7 @@ export async function getDecryptedAiGatewayKeyForProviderQuery(
 
   let result: [{ encrypted_key: string }[], unknown];
   try {
-    result = await sequelize.query(
+    result = (await sequelize.query(
       `SELECT encrypted_key
        FROM ai_gateway_api_keys
        WHERE organization_id = :organizationId
@@ -36,10 +39,10 @@ export async function getDecryptedAiGatewayKeyForProviderQuery(
        ORDER BY updated_at DESC NULLS LAST, id DESC
        LIMIT 1`,
       { replacements: { organizationId, evalProvider } },
-    ) as [{ encrypted_key: string }[], unknown];
+    )) as [{ encrypted_key: string }[], unknown];
   } catch (err: any) {
     // Table does not exist yet (AIGateway not initialised) — return null gracefully
-    if (err?.parent?.code === '42P01' || err?.original?.code === '42P01') {
+    if (err?.parent?.code === "42P01" || err?.original?.code === "42P01") {
       return null;
     }
     throw err;
@@ -53,7 +56,7 @@ export async function getDecryptedAiGatewayKeyForProviderQuery(
   try {
     return decrypt(row.encrypted_key);
   } catch (err) {
-    console.error('[aiGatewayEvalKey] Failed to decrypt gateway key for provider:', provider, err);
+    console.error("[aiGatewayEvalKey] Failed to decrypt gateway key for provider:", provider, err);
     return null;
   }
 }

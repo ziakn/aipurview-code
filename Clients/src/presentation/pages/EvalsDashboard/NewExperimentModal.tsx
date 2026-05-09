@@ -604,7 +604,7 @@ export default function NewExperimentModal({
 
       // Resolve model name/provider for validation (saved model takes precedence)
       const savedModelForValidation = selectedSavedModelId
-        ? savedModels.find((m) => m.id === selectedSavedModelId) ?? null
+        ? (savedModels.find((m) => m.id === selectedSavedModelId) ?? null)
         : null;
       const modelName = savedModelForValidation?.name || config.model.name;
       const modelProvider = savedModelForValidation
@@ -692,7 +692,7 @@ export default function NewExperimentModal({
       // Prepare experiment configuration
       // Resolve model: prefer saved model record over manual config
       const savedModelRecord = selectedSavedModelId
-        ? savedModels.find((m) => m.id === selectedSavedModelId) ?? null
+        ? (savedModels.find((m) => m.id === selectedSavedModelId) ?? null)
         : null;
       const resolvedModel = savedModelRecord
         ? {
@@ -1120,7 +1120,14 @@ export default function NewExperimentModal({
     const loadForProvider = async (provider: string) => {
       if (!provider || gatewayModelsLoaded.current.has(provider)) return;
       // Only cloud providers — local/custom providers don't have a LiteLLM catalog entry
-      const cloudProviders = new Set(["openai", "anthropic", "google", "mistral", "xai", "openrouter"]);
+      const cloudProviders = new Set([
+        "openai",
+        "anthropic",
+        "google",
+        "mistral",
+        "xai",
+        "openrouter",
+      ]);
       if (!cloudProviders.has(provider)) return;
       gatewayModelsLoaded.current.add(provider); // mark before fetch to prevent concurrent calls
       try {
@@ -1138,7 +1145,14 @@ export default function NewExperimentModal({
   useEffect(() => {
     const loadForProvider = async (provider: string) => {
       if (!provider || gatewayModelsLoaded.current.has(provider)) return;
-      const cloudProviders = new Set(["openai", "anthropic", "google", "mistral", "xai", "openrouter"]);
+      const cloudProviders = new Set([
+        "openai",
+        "anthropic",
+        "google",
+        "mistral",
+        "xai",
+        "openrouter",
+      ]);
       if (!cloudProviders.has(provider)) return;
       gatewayModelsLoaded.current.add(provider);
       try {
@@ -1354,16 +1368,18 @@ export default function NewExperimentModal({
                           setSelectedSavedModelId(isSelected ? null : m.id);
                         }}
                         sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          px: 2,
-                          py: 1.25,
-                          borderRadius: "8px",
-                          border: `1.5px solid ${isSelected ? palette.brand.primary : palette.border.light}`,
-                          backgroundColor: isSelected ? palette.brand.primaryLight : "transparent",
-                          cursor: "pointer",
-                          transition: "all 0.15s ease",
+                          "display": "flex",
+                          "alignItems": "center",
+                          "justifyContent": "space-between",
+                          "px": 2,
+                          "py": 1.25,
+                          "borderRadius": "8px",
+                          "border": `1.5px solid ${isSelected ? palette.brand.primary : palette.border.light}`,
+                          "backgroundColor": isSelected
+                            ? palette.brand.primaryLight
+                            : "transparent",
+                          "cursor": "pointer",
+                          "transition": "all 0.15s ease",
                           "&:hover": {
                             borderColor: palette.brand.primary,
                             backgroundColor: palette.brand.primaryLight,
@@ -1372,7 +1388,15 @@ export default function NewExperimentModal({
                       >
                         <Stack direction="row" alignItems="center" spacing={1.5}>
                           {ProviderLogo && (
-                            <Box sx={{ width: 20, height: 20, flexShrink: 0, display: "flex", alignItems: "center" }}>
+                            <Box
+                              sx={{
+                                width: 20,
+                                height: 20,
+                                flexShrink: 0,
+                                display: "flex",
+                                alignItems: "center",
+                              }}
+                            >
                               <ProviderLogo style={{ width: 20, height: 20 }} />
                             </Box>
                           )}
@@ -1402,7 +1426,13 @@ export default function NewExperimentModal({
                         >
                           {isSelected && (
                             <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                              <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                              <path
+                                d="M1 4L3.5 6.5L9 1"
+                                stroke="white"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
                             </svg>
                           )}
                         </Box>
@@ -3061,7 +3091,6 @@ export default function NewExperimentModal({
                             helperText="Your key will be saved securely for future experiments"
                           />
                         ))}
-
                     </Stack>
                   </Box>
                 )}

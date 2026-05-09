@@ -90,11 +90,31 @@ export const Vercel = VercelIcon;
 export const Vllm = VllmIcon;
 export const Voyage = VoyageIcon;
 export const XAI = XAIIcon;
-export const Moonshot: React.FC<{ width?: number; height?: number; style?: React.CSSProperties }> = ({ width = 14, height = 14, style }) => (
-  <img src={moonshotUrl} width={width} height={height} style={{ objectFit: "contain", ...style }} alt="Moonshot AI" />
+export const Moonshot: React.FC<{
+  width?: number;
+  height?: number;
+  style?: React.CSSProperties;
+}> = ({ width = 14, height = 14, style }) => (
+  <img
+    src={moonshotUrl}
+    width={width}
+    height={height}
+    style={{ objectFit: "contain", ...style }}
+    alt="Moonshot AI"
+  />
 );
-export const Qwen: React.FC<{ width?: number; height?: number; style?: React.CSSProperties }> = ({ width = 14, height = 14, style }) => (
-  <img src={qwenUrl} width={width} height={height} style={{ objectFit: "contain", ...style }} alt="Qwen" />
+export const Qwen: React.FC<{ width?: number; height?: number; style?: React.CSSProperties }> = ({
+  width = 14,
+  height = 14,
+  style,
+}) => (
+  <img
+    src={qwenUrl}
+    width={width}
+    height={height}
+    style={{ objectFit: "contain", ...style }}
+    alt="Qwen"
+  />
 );
 
 // Provider icon mapping for easy lookup

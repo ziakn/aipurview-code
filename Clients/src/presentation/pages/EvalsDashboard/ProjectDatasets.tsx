@@ -1968,38 +1968,104 @@ export function ProjectDatasets({ projectId, orgId }: ProjectDatasetsProps) {
         anchorEl={actionAnchor}
         open={Boolean(actionAnchor)}
         onClose={handleActionMenuClose}
-        slotProps={{ paper: { sx: { ...singleTheme.dropDownStyles.primary, p: "8px", minWidth: 200 } } }}
+        slotProps={{
+          paper: { sx: { ...singleTheme.dropDownStyles.primary, p: "8px", minWidth: 200 } },
+        }}
       >
         <Stack spacing={1}>
           <CustomizableButton
             variant="outlined"
-            onClick={() => { actionDataset && handleViewPrompts(actionDataset); handleActionMenuClose(); }}
+            onClick={() => {
+              actionDataset && handleViewPrompts(actionDataset);
+              handleActionMenuClose();
+            }}
             startIcon={<Eye size={14} />}
-            sx={{ "height": "34px", "fontSize": "13px", "fontWeight": 500, "color": palette.text.secondary, "borderColor": palette.border.dark, "backgroundColor": "transparent", "justifyContent": "flex-start", "&:hover": { backgroundColor: palette.status.success.bg, borderColor: palette.brand.primary, color: palette.brand.primary } }}
+            sx={{
+              "height": "34px",
+              "fontSize": "13px",
+              "fontWeight": 500,
+              "color": palette.text.secondary,
+              "borderColor": palette.border.dark,
+              "backgroundColor": "transparent",
+              "justifyContent": "flex-start",
+              "&:hover": {
+                backgroundColor: palette.status.success.bg,
+                borderColor: palette.brand.primary,
+                color: palette.brand.primary,
+              },
+            }}
           >
             View prompts
           </CustomizableButton>
           <CustomizableButton
             variant="outlined"
-            onClick={() => { actionDataset && handleOpenInEditor(actionDataset); handleActionMenuClose(); }}
+            onClick={() => {
+              actionDataset && handleOpenInEditor(actionDataset);
+              handleActionMenuClose();
+            }}
             startIcon={<Edit3 size={14} />}
-            sx={{ "height": "34px", "fontSize": "13px", "fontWeight": 500, "color": palette.text.secondary, "borderColor": palette.border.dark, "backgroundColor": "transparent", "justifyContent": "flex-start", "&:hover": { backgroundColor: palette.status.success.bg, borderColor: palette.brand.primary, color: palette.brand.primary } }}
+            sx={{
+              "height": "34px",
+              "fontSize": "13px",
+              "fontWeight": 500,
+              "color": palette.text.secondary,
+              "borderColor": palette.border.dark,
+              "backgroundColor": "transparent",
+              "justifyContent": "flex-start",
+              "&:hover": {
+                backgroundColor: palette.status.success.bg,
+                borderColor: palette.brand.primary,
+                color: palette.brand.primary,
+              },
+            }}
           >
             Open in editor
           </CustomizableButton>
           <CustomizableButton
             variant="outlined"
-            onClick={() => { actionDataset && handleDownloadDataset(actionDataset); handleActionMenuClose(); }}
+            onClick={() => {
+              actionDataset && handleDownloadDataset(actionDataset);
+              handleActionMenuClose();
+            }}
             startIcon={<Download size={14} />}
-            sx={{ "height": "34px", "fontSize": "13px", "fontWeight": 500, "color": palette.text.secondary, "borderColor": palette.border.dark, "backgroundColor": "transparent", "justifyContent": "flex-start", "&:hover": { backgroundColor: palette.status.success.bg, borderColor: palette.brand.primary, color: palette.brand.primary } }}
+            sx={{
+              "height": "34px",
+              "fontSize": "13px",
+              "fontWeight": 500,
+              "color": palette.text.secondary,
+              "borderColor": palette.border.dark,
+              "backgroundColor": "transparent",
+              "justifyContent": "flex-start",
+              "&:hover": {
+                backgroundColor: palette.status.success.bg,
+                borderColor: palette.brand.primary,
+                color: palette.brand.primary,
+              },
+            }}
           >
             Download
           </CustomizableButton>
           <CustomizableButton
             variant="outlined"
-            onClick={() => { actionDataset && handleRemoveDataset(actionDataset); handleActionMenuClose(); }}
+            onClick={() => {
+              actionDataset && handleRemoveDataset(actionDataset);
+              handleActionMenuClose();
+            }}
             startIcon={<Trash2 size={14} />}
-            sx={{ "height": "34px", "fontSize": "13px", "fontWeight": 500, "color": palette.status.error.text, "borderColor": palette.border.dark, "backgroundColor": "transparent", "justifyContent": "flex-start", "&:hover": { backgroundColor: palette.status.error.bg, borderColor: palette.status.error.text, color: palette.status.error.text } }}
+            sx={{
+              "height": "34px",
+              "fontSize": "13px",
+              "fontWeight": 500,
+              "color": palette.status.error.text,
+              "borderColor": palette.border.dark,
+              "backgroundColor": "transparent",
+              "justifyContent": "flex-start",
+              "&:hover": {
+                backgroundColor: palette.status.error.bg,
+                borderColor: palette.status.error.text,
+                color: palette.status.error.text,
+              },
+            }}
           >
             Delete
           </CustomizableButton>

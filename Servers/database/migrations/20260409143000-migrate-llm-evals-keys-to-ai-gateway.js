@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Copy LLM Evals provider keys into AI Gateway key storage so a single
@@ -23,8 +23,8 @@ module.exports = {
 
     if (!gatewayTableExists) {
       console.log(
-        '[migrate-llm-evals-keys-to-ai-gateway] ai_gateway_api_keys does not exist yet ' +
-        '(AIGateway not initialised) — skipping data copy.',
+        "[migrate-llm-evals-keys-to-ai-gateway] ai_gateway_api_keys does not exist yet " +
+          "(AIGateway not initialised) — skipping data copy.",
       );
       return;
     }
@@ -39,7 +39,7 @@ module.exports = {
 
     if (!evalsTableExists) {
       console.log(
-        '[migrate-llm-evals-keys-to-ai-gateway] llm_evals_api_keys does not exist — nothing to migrate.',
+        "[migrate-llm-evals-keys-to-ai-gateway] llm_evals_api_keys does not exist — nothing to migrate.",
       );
       return;
     }

@@ -323,26 +323,93 @@ const DatasetsTableBody: React.FC<DatasetsTableBodyProps> = ({
       >
         <Stack spacing={1}>
           {onView && (
-            <CustomizableButton variant="outlined" onClick={handleViewClick} startIcon={<Eye size={14} />}
-              sx={{ "height": "34px", "fontSize": "13px", "fontWeight": 500, "color": palette.text.secondary, "borderColor": palette.border.dark, "backgroundColor": "transparent", "justifyContent": "flex-start", "&:hover": { backgroundColor: palette.status.success.bg, borderColor: palette.brand.primary, color: palette.brand.primary } }}>
+            <CustomizableButton
+              variant="outlined"
+              onClick={handleViewClick}
+              startIcon={<Eye size={14} />}
+              sx={{
+                "height": "34px",
+                "fontSize": "13px",
+                "fontWeight": 500,
+                "color": palette.text.secondary,
+                "borderColor": palette.border.dark,
+                "backgroundColor": "transparent",
+                "justifyContent": "flex-start",
+                "&:hover": {
+                  backgroundColor: palette.status.success.bg,
+                  borderColor: palette.brand.primary,
+                  color: palette.brand.primary,
+                },
+              }}
+            >
               View prompts
             </CustomizableButton>
           )}
           {onEdit && (
-            <CustomizableButton variant="outlined" onClick={handleEditClick} startIcon={<Edit3 size={14} />}
-              sx={{ "height": "34px", "fontSize": "13px", "fontWeight": 500, "color": palette.text.secondary, "borderColor": palette.border.dark, "backgroundColor": "transparent", "justifyContent": "flex-start", "&:hover": { backgroundColor: palette.status.success.bg, borderColor: palette.brand.primary, color: palette.brand.primary } }}>
+            <CustomizableButton
+              variant="outlined"
+              onClick={handleEditClick}
+              startIcon={<Edit3 size={14} />}
+              sx={{
+                "height": "34px",
+                "fontSize": "13px",
+                "fontWeight": 500,
+                "color": palette.text.secondary,
+                "borderColor": palette.border.dark,
+                "backgroundColor": "transparent",
+                "justifyContent": "flex-start",
+                "&:hover": {
+                  backgroundColor: palette.status.success.bg,
+                  borderColor: palette.brand.primary,
+                  color: palette.brand.primary,
+                },
+              }}
+            >
               Open in editor
             </CustomizableButton>
           )}
           {onDownload && (
-            <CustomizableButton variant="outlined" onClick={handleDownloadClick} startIcon={<Download size={14} />}
-              sx={{ "height": "34px", "fontSize": "13px", "fontWeight": 500, "color": palette.text.secondary, "borderColor": palette.border.dark, "backgroundColor": "transparent", "justifyContent": "flex-start", "&:hover": { backgroundColor: palette.status.success.bg, borderColor: palette.brand.primary, color: palette.brand.primary } }}>
+            <CustomizableButton
+              variant="outlined"
+              onClick={handleDownloadClick}
+              startIcon={<Download size={14} />}
+              sx={{
+                "height": "34px",
+                "fontSize": "13px",
+                "fontWeight": 500,
+                "color": palette.text.secondary,
+                "borderColor": palette.border.dark,
+                "backgroundColor": "transparent",
+                "justifyContent": "flex-start",
+                "&:hover": {
+                  backgroundColor: palette.status.success.bg,
+                  borderColor: palette.brand.primary,
+                  color: palette.brand.primary,
+                },
+              }}
+            >
               Download
             </CustomizableButton>
           )}
           {onDelete && (
-            <CustomizableButton variant="outlined" onClick={handleDeleteClick} startIcon={<Trash2 size={14} />}
-              sx={{ "height": "34px", "fontSize": "13px", "fontWeight": 500, "color": palette.status.error.text, "borderColor": palette.border.dark, "backgroundColor": "transparent", "justifyContent": "flex-start", "&:hover": { backgroundColor: palette.status.error.bg, borderColor: palette.status.error.text } }}>
+            <CustomizableButton
+              variant="outlined"
+              onClick={handleDeleteClick}
+              startIcon={<Trash2 size={14} />}
+              sx={{
+                "height": "34px",
+                "fontSize": "13px",
+                "fontWeight": 500,
+                "color": palette.status.error.text,
+                "borderColor": palette.border.dark,
+                "backgroundColor": "transparent",
+                "justifyContent": "flex-start",
+                "&:hover": {
+                  backgroundColor: palette.status.error.bg,
+                  borderColor: palette.status.error.text,
+                },
+              }}
+            >
               Delete
             </CustomizableButton>
           )}

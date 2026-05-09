@@ -1,7 +1,10 @@
 import { createProxyMiddleware, fixRequestBody } from "http-proxy-middleware";
 import authenticateJWT from "../middleware/auth.middleware";
 import express, { NextFunction, Request, Response, Router } from "express";
-import { LLMProvider, VALID_PROVIDERS } from "../domain.layer/models/evaluationLlmApiKey/evaluationLlmApiKey.model";
+import {
+  LLMProvider,
+  VALID_PROVIDERS,
+} from "../domain.layer/models/evaluationLlmApiKey/evaluationLlmApiKey.model";
 import { getDecryptedAiGatewayKeyForProviderQuery } from "../utils/aiGatewayEvalKey.utils";
 
 // JSON body parser for routes that need to inspect/modify the body before proxying
@@ -48,7 +51,10 @@ async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
         const provider = contestant.hyperparameters?.provider?.toLowerCase();
         if (provider && VALID_PROVIDERS.includes(provider as LLMProvider) && !apiKeys[provider]) {
           try {
-            const apiKey = await getDecryptedAiGatewayKeyForProviderQuery(orgId, provider as LLMProvider);
+            const apiKey = await getDecryptedAiGatewayKeyForProviderQuery(
+              orgId,
+              provider as LLMProvider,
+            );
             if (apiKey) {
               apiKeys[provider] = apiKey;
             }
@@ -63,12 +69,16 @@ async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
       let judgeProvider = "openai";
       if (judgeModel.includes("claude")) judgeProvider = "anthropic";
       else if (judgeModel.includes("gemini")) judgeProvider = "google";
-      else if (judgeModel.includes("mistral") || judgeModel.includes("magistral")) judgeProvider = "mistral";
+      else if (judgeModel.includes("mistral") || judgeModel.includes("magistral"))
+        judgeProvider = "mistral";
       else if (judgeModel.includes("grok")) judgeProvider = "xai";
 
       if (!apiKeys[judgeProvider]) {
         try {
-          const apiKey = await getDecryptedAiGatewayKeyForProviderQuery(orgId, judgeProvider as LLMProvider);
+          const apiKey = await getDecryptedAiGatewayKeyForProviderQuery(
+            orgId,
+            judgeProvider as LLMProvider,
+          );
           if (apiKey) {
             apiKeys[judgeProvider] = apiKey;
           }
@@ -89,7 +99,10 @@ async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
       const judgeProvider = (body.judgeProvider || "").toLowerCase();
       if (judgeProvider && VALID_PROVIDERS.includes(judgeProvider as LLMProvider)) {
         try {
-          const apiKey = await getDecryptedAiGatewayKeyForProviderQuery(orgId, judgeProvider as LLMProvider);
+          const apiKey = await getDecryptedAiGatewayKeyForProviderQuery(
+            orgId,
+            judgeProvider as LLMProvider,
+          );
           if (apiKey) {
             req.body.apiKey = apiKey;
           }
@@ -125,16 +138,25 @@ async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
 
       if (Object.keys(scorerApiKeys).length > 0) {
         req.body.config.scorerApiKeys = scorerApiKeys;
-        console.log(`[DeepEval Proxy] Injecting API keys for scorer providers: ${Object.keys(scorerApiKeys).join(", ")}`);
+        console.log(
+          `[DeepEval Proxy] Injecting API keys for scorer providers: ${Object.keys(scorerApiKeys).join(", ")}`,
+        );
       }
     }
 
     // 2. Inject API key for standard judge LLM (standard or both mode)
     if ((evaluationMode === "standard" || evaluationMode === "both") && body?.config?.judgeLlm) {
       const judgeProvider = body.config.judgeLlm.provider?.toLowerCase();
-      const hasJudgeApiKey = body.config.judgeLlm.apiKey && body.config.judgeLlm.apiKey !== "***" && body.config.judgeLlm.apiKey !== "";
+      const hasJudgeApiKey =
+        body.config.judgeLlm.apiKey &&
+        body.config.judgeLlm.apiKey !== "***" &&
+        body.config.judgeLlm.apiKey !== "";
 
-      if (judgeProvider && !hasJudgeApiKey && VALID_PROVIDERS.includes(judgeProvider as LLMProvider)) {
+      if (
+        judgeProvider &&
+        !hasJudgeApiKey &&
+        VALID_PROVIDERS.includes(judgeProvider as LLMProvider)
+      ) {
         try {
           const apiKey = await getDecryptedAiGatewayKeyForProviderQuery(
             orgId,
@@ -152,10 +174,21 @@ async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
     // 3. Inject API key for the model being tested (if it's a cloud provider)
     if (body?.config?.model) {
       // accessMethod tells us the provider (openai, anthropic, google, etc.)
-      const modelProvider = (body.config.model.provider || body.config.model.accessMethod || "").toLowerCase();
-      const hasModelApiKey = body.config.model.apiKey && body.config.model.apiKey !== "***" && body.config.model.apiKey !== "";
+      const modelProvider = (
+        body.config.model.provider ||
+        body.config.model.accessMethod ||
+        ""
+      ).toLowerCase();
+      const hasModelApiKey =
+        body.config.model.apiKey &&
+        body.config.model.apiKey !== "***" &&
+        body.config.model.apiKey !== "";
 
-      if (modelProvider && !hasModelApiKey && VALID_PROVIDERS.includes(modelProvider as LLMProvider)) {
+      if (
+        modelProvider &&
+        !hasModelApiKey &&
+        VALID_PROVIDERS.includes(modelProvider as LLMProvider)
+      ) {
         try {
           const apiKey = await getDecryptedAiGatewayKeyForProviderQuery(
             orgId,
@@ -176,7 +209,10 @@ async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
 
     // 4. Inject judge provider's key into scorerApiKeys for DeepEval metrics (G-Eval, etc.)
     // Only inject the specific key needed - the judge LLM provider
-    if ((evaluationMode === "standard" || evaluationMode === "both") && body?.config?.judgeLlm?.provider) {
+    if (
+      (evaluationMode === "standard" || evaluationMode === "both") &&
+      body?.config?.judgeLlm?.provider
+    ) {
       const judgeProvider = body.config.judgeLlm.provider.toLowerCase();
 
       if (VALID_PROVIDERS.includes(judgeProvider as LLMProvider)) {
@@ -218,8 +254,7 @@ async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
 function deepEvalRoutes() {
   const router = Router();
 
-  const targetUrl =
-    process.env.LLM_EVALS_URL || "http://127.0.0.1:8000";
+  const targetUrl = process.env.LLM_EVALS_URL || "http://127.0.0.1:8000";
 
   const AI_GATEWAY_URL = process.env.AI_GATEWAY_URL || "http://127.0.0.1:8100";
   const AI_GATEWAY_KEY = process.env.AI_GATEWAY_INTERNAL_KEY || "";
@@ -251,14 +286,19 @@ function deepEvalRoutes() {
       let apiKey = "";
       if (VALID_PROVIDERS.includes(normalizedProvider)) {
         try {
-          apiKey = (await getDecryptedAiGatewayKeyForProviderQuery(orgId, normalizedProvider)) || "";
+          apiKey =
+            (await getDecryptedAiGatewayKeyForProviderQuery(orgId, normalizedProvider)) || "";
         } catch {
           // Proceed without key — will fail at gateway with a clear error
         }
       }
 
       if (!apiKey) {
-        res.status(400).json({ error: `No API key found for provider "${normalizedProvider}". Add one in Settings → API Keys.` });
+        res
+          .status(400)
+          .json({
+            error: `No API key found for provider "${normalizedProvider}". Add one in Settings → API Keys.`,
+          });
         return;
       }
 
@@ -266,7 +306,8 @@ function deepEvalRoutes() {
       const toLiteLLMModel = (prov: string, mdl: string): string => {
         const p = prov.toLowerCase();
         if (p === "openrouter") return mdl.startsWith("openrouter/") ? mdl : `openrouter/${mdl}`;
-        if (p === "google" || p === "gemini") return mdl.startsWith("gemini/") ? mdl : `gemini/${mdl}`;
+        if (p === "google" || p === "gemini")
+          return mdl.startsWith("gemini/") ? mdl : `gemini/${mdl}`;
         if (p === "anthropic" && !mdl.startsWith("anthropic/")) return `anthropic/${mdl}`;
         if (p === "mistral" && !mdl.startsWith("mistral/")) return `mistral/${mdl}`;
         if (p === "xai" && !mdl.startsWith("xai/")) return `xai/${mdl}`;
@@ -290,10 +331,19 @@ function deepEvalRoutes() {
         // Gateway may return non-JSON on errors (FastAPI HTML, plain text, etc.)
         const rawText = await gatewayRes.text();
         let data: any = null;
-        try { data = JSON.parse(rawText); } catch { /* not JSON */ }
+        try {
+          data = JSON.parse(rawText);
+        } catch {
+          /* not JSON */
+        }
 
         if (!gatewayRes.ok) {
-          const errMsg = data?.detail || data?.error?.message || data?.message || rawText.slice(0, 300) || `Gateway error ${gatewayRes.status}`;
+          const errMsg =
+            data?.detail ||
+            data?.error?.message ||
+            data?.message ||
+            rawText.slice(0, 300) ||
+            `Gateway error ${gatewayRes.status}`;
           res.status(gatewayRes.status).json({ error: errMsg });
           return;
         }
@@ -306,7 +356,6 @@ function deepEvalRoutes() {
     },
   );
   // ── End playground chat ───────────────────────────────────────────────────
-
 
   const proxy = createProxyMiddleware({
     target: targetUrl,
@@ -337,7 +386,7 @@ function deepEvalRoutes() {
         const errAny = err as any;
         console.error(
           `[DeepEval Proxy] Error for ${req.url}:`,
-          errAny.message || errAny.code || errAny
+          errAny.message || errAny.code || errAny,
         );
         if (res && "writeHead" in res) {
           (res as any).writeHead(502, { "Content-Type": "application/json" });
@@ -345,7 +394,7 @@ function deepEvalRoutes() {
             JSON.stringify({
               error: "Proxy error",
               message: errAny.message || errAny.code || "Unknown error",
-            })
+            }),
           );
         }
       },

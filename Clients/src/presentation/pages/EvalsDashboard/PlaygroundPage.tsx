@@ -40,38 +40,38 @@ interface PlaygroundPageProps {
 type AnyIcon = React.FC<any>;
 
 const DIRECT_PROVIDER_ICON: Record<string, AnyIcon> = {
-  openai:      ProviderIcons.OpenAI,
-  anthropic:   ProviderIcons.Anthropic,
-  google:      ProviderIcons.Google,
-  mistral:     ProviderIcons.Mistral,
-  xai:         ProviderIcons.XAI,
-  openrouter:  ProviderIcons.OpenRouter,
+  openai: ProviderIcons.OpenAI,
+  anthropic: ProviderIcons.Anthropic,
+  google: ProviderIcons.Google,
+  mistral: ProviderIcons.Mistral,
+  xai: ProviderIcons.XAI,
+  openrouter: ProviderIcons.OpenRouter,
   huggingface: ProviderIcons.HuggingFace,
-  ollama:      ProviderIcons.Ollama,
-  groq:        ProviderIcons.Groq,
-  deepseek:    ProviderIcons.DeepSeek,
-  moonshot:    ProviderIcons.Moonshot,
-  qwen:        ProviderIcons.Qwen,
+  ollama: ProviderIcons.Ollama,
+  groq: ProviderIcons.Groq,
+  deepseek: ProviderIcons.DeepSeek,
+  moonshot: ProviderIcons.Moonshot,
+  qwen: ProviderIcons.Qwen,
 };
 
 const OPENROUTER_SUB_ICON: Record<string, AnyIcon | null> = {
-  anthropic:    ProviderIcons.Anthropic,
-  openai:       ProviderIcons.OpenAI,
+  "anthropic": ProviderIcons.Anthropic,
+  "openai": ProviderIcons.OpenAI,
   "meta-llama": ProviderIcons.Meta,
-  meta:         ProviderIcons.Meta,
-  google:       ProviderIcons.Google,
-  mistralai:    ProviderIcons.Mistral,
-  mistral:      ProviderIcons.Mistral,
-  deepseek:     ProviderIcons.DeepSeek,
-  microsoft:    ProviderIcons.Microsoft,
-  cohere:       ProviderIcons.Cohere,
-  perplexity:   ProviderIcons.Perplexity,
-  nvidia:       ProviderIcons.Nvidia,
-  together:     ProviderIcons.Together,
-  groq:         ProviderIcons.Groq,
-  moonshotai:   ProviderIcons.Moonshot,
-  qwen:         ProviderIcons.Qwen,
-  "x-ai":       ProviderIcons.XAI,
+  "meta": ProviderIcons.Meta,
+  "google": ProviderIcons.Google,
+  "mistralai": ProviderIcons.Mistral,
+  "mistral": ProviderIcons.Mistral,
+  "deepseek": ProviderIcons.DeepSeek,
+  "microsoft": ProviderIcons.Microsoft,
+  "cohere": ProviderIcons.Cohere,
+  "perplexity": ProviderIcons.Perplexity,
+  "nvidia": ProviderIcons.Nvidia,
+  "together": ProviderIcons.Together,
+  "groq": ProviderIcons.Groq,
+  "moonshotai": ProviderIcons.Moonshot,
+  "qwen": ProviderIcons.Qwen,
+  "x-ai": ProviderIcons.XAI,
 };
 
 function getModelIcon(model: SavedModel): AnyIcon | null {
@@ -83,13 +83,17 @@ function getModelIcon(model: SavedModel): AnyIcon | null {
   return DIRECT_PROVIDER_ICON[provider] ?? null;
 }
 
-
 // Models that support image inputs
 const VISION_PATTERNS = [
-  /gpt-4o/i, /gpt-4.*vision/i,
+  /gpt-4o/i,
+  /gpt-4.*vision/i,
   /claude-3/i,
   /gemini/i,
-  /vision/i, /pixtral/i, /llava/i, /qwen.*vl/i, /idefics/i,
+  /vision/i,
+  /pixtral/i,
+  /llava/i,
+  /qwen.*vl/i,
+  /idefics/i,
 ];
 
 function isVisionCapable(model: SavedModel | undefined): boolean {
@@ -127,7 +131,9 @@ export default function PlaygroundPage({ orgId, onNavigateToModels }: Playground
         const models = await evalModelsService.listModels(orgId);
         setSavedModels(models);
         if (models.length > 0) setSelectedModelId(models[0].id);
-      } catch { /* silent */ }
+      } catch {
+        /* silent */
+      }
     };
     load();
   }, [orgId]);
@@ -162,13 +168,22 @@ export default function PlaygroundPage({ orgId, onNavigateToModels }: Playground
         const reader = new FileReader();
         if (file.type.startsWith("image/")) {
           reader.onload = () => {
-            newAttachments.push({ name: file.name, type: "image", dataUrl: reader.result as string, preview: reader.result as string });
+            newAttachments.push({
+              name: file.name,
+              type: "image",
+              dataUrl: reader.result as string,
+              preview: reader.result as string,
+            });
             resolve();
           };
           reader.readAsDataURL(file);
         } else {
           reader.onload = () => {
-            newAttachments.push({ name: file.name, type: "document", dataUrl: reader.result as string });
+            newAttachments.push({
+              name: file.name,
+              type: "document",
+              dataUrl: reader.result as string,
+            });
             resolve();
           };
           reader.readAsText(file);
@@ -180,11 +195,13 @@ export default function PlaygroundPage({ orgId, onNavigateToModels }: Playground
     textareaRef.current?.focus();
   };
 
-  const removeAttachment = (idx: number) => setAttachments((prev) => prev.filter((_, i) => i !== idx));
+  const removeAttachment = (idx: number) =>
+    setAttachments((prev) => prev.filter((_, i) => i !== idx));
 
   // Dictation
   const toggleDictation = () => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) return;
 
     if (dictating && recognitionRef.current) {
@@ -203,14 +220,21 @@ export default function PlaygroundPage({ orgId, onNavigateToModels }: Playground
       let interim = "";
       for (let i = event.resultIndex; i < event.results.length; i++) {
         const t = event.results[i][0].transcript;
-        if (event.results[i].isFinal) { finalTranscript += t + " "; } else { interim = t; }
+        if (event.results[i].isFinal) {
+          finalTranscript += t + " ";
+        } else {
+          interim = t;
+        }
       }
       setInput((prev) => {
         const base = prev.replace(/\s*\[.*?\]$/, "").trimEnd();
         return (base + " " + finalTranscript + (interim ? `[${interim}]` : "")).trimStart();
       });
     };
-    recognition.onerror = () => { setDictating(false); textareaRef.current?.focus(); };
+    recognition.onerror = () => {
+      setDictating(false);
+      textareaRef.current?.focus();
+    };
     recognition.onend = () => {
       setDictating(false);
       setInput((prev) => prev.replace(/\s*\[.*?\]$/, "").trimEnd());
@@ -229,14 +253,21 @@ export default function PlaygroundPage({ orgId, onNavigateToModels }: Playground
 
     let userText = trimmed;
     // Append document text as context
-    attachments.filter((a) => a.type === "document").forEach((d) => {
-      userText = userText ? `${userText}\n\n[Document: ${d.name}]\n${d.dataUrl}` : `[Document: ${d.name}]\n${d.dataUrl}`;
-    });
+    attachments
+      .filter((a) => a.type === "document")
+      .forEach((d) => {
+        userText = userText
+          ? `${userText}\n\n[Document: ${d.name}]\n${d.dataUrl}`
+          : `[Document: ${d.name}]\n${d.dataUrl}`;
+      });
 
     // Collect image previews to display in the bubble; mention names in text for the model
     const imagePreviews = attachments.filter((a) => a.type === "image").map((a) => a.preview!);
     if (imagePreviews.length > 0) {
-      const imgNote = attachments.filter((a) => a.type === "image").map((a) => `[Image: ${a.name}]`).join(", ");
+      const imgNote = attachments
+        .filter((a) => a.type === "image")
+        .map((a) => `[Image: ${a.name}]`)
+        .join(", ");
       userText = userText ? `${userText}\n${imgNote}` : imgNote;
     }
 
@@ -271,40 +302,64 @@ export default function PlaygroundPage({ orgId, onNavigateToModels }: Playground
       });
       setMessages((prev) => [...prev, { role: "assistant", content: res.data?.content ?? "" }]);
     } catch (err: any) {
-      setError(err?.response?.data?.error || err?.response?.data?.message || err?.message || "Something went wrong");
+      setError(
+        err?.response?.data?.error ||
+          err?.response?.data?.message ||
+          err?.message ||
+          "Something went wrong",
+      );
     } finally {
       setLoading(false);
     }
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
   };
 
   const hasMessages = messages.length > 0;
-  const canSend = (input.trim().length > 0 || attachments.length > 0) && !!selectedModelId && !loading;
+  const canSend =
+    (input.trim().length > 0 || attachments.length > 0) && !!selectedModelId && !loading;
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", height: "calc(100vh - 155px)", minHeight: 480 }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        height: "calc(100vh - 155px)",
+        minHeight: 480,
+      }}
+    >
       {/* Inject pulse keyframes */}
       <style>{pulseKeyframes}</style>
 
       {/* ── Top bar: left-aligned model picker ─────────────────────────── */}
-      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: "16px", flexShrink: 0 }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          mb: "16px",
+          flexShrink: 0,
+        }}
+      >
         {/* Model picker */}
         <Box
           component="button"
           onClick={(e) => setAnchorEl(e.currentTarget)}
           sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            background: "none",
-            border: `1px solid ${palette.border.light}`,
-            borderRadius: "8px",
-            px: "12px",
-            py: "7px",
-            cursor: "pointer",
+            "display": "flex",
+            "alignItems": "center",
+            "gap": "8px",
+            "background": "none",
+            "border": `1px solid ${palette.border.light}`,
+            "borderRadius": "8px",
+            "px": "12px",
+            "py": "7px",
+            "cursor": "pointer",
             "&:hover": { borderColor: palette.text.tertiary },
           }}
         >
@@ -321,19 +376,35 @@ export default function PlaygroundPage({ orgId, onNavigateToModels }: Playground
           open={Boolean(anchorEl)}
           onClose={() => setAnchorEl(null)}
           PaperProps={{
-            sx: { mt: "4px", minWidth: 260, borderRadius: "8px", border: `1px solid ${palette.border.light}`, boxShadow: "0 4px 20px rgba(0,0,0,0.08)" },
+            sx: {
+              mt: "4px",
+              minWidth: 260,
+              borderRadius: "8px",
+              border: `1px solid ${palette.border.light}`,
+              boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+            },
           }}
           transformOrigin={{ horizontal: "left", vertical: "top" }}
           anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
         >
           <Box sx={{ px: "12px", py: "8px" }}>
-            <Typography sx={{ fontSize: 11, fontWeight: 600, color: palette.text.tertiary, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+            <Typography
+              sx={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: palette.text.tertiary,
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
+              }}
+            >
               Saved Models
             </Typography>
           </Box>
           <Divider />
           {savedModels.length === 0 && (
-            <MenuItem disabled sx={{ fontSize: 13, color: palette.text.tertiary }}>No saved models yet</MenuItem>
+            <MenuItem disabled sx={{ fontSize: 13, color: palette.text.tertiary }}>
+              No saved models yet
+            </MenuItem>
           )}
           {savedModels.map((m) => {
             const Icon = getModelIcon(m);
@@ -342,25 +413,58 @@ export default function PlaygroundPage({ orgId, onNavigateToModels }: Playground
               <MenuItem
                 key={m.id}
                 selected={isSelected}
-                onClick={() => { setSelectedModelId(m.id); setMessages([]); setError(null); setAnchorEl(null); }}
-                sx={{ gap: "10px", py: "8px", px: "12px", "&.Mui-selected": { backgroundColor: `${palette.brand.primary}12` } }}
+                onClick={() => {
+                  setSelectedModelId(m.id);
+                  setMessages([]);
+                  setError(null);
+                  setAnchorEl(null);
+                }}
+                sx={{
+                  "gap": "10px",
+                  "py": "8px",
+                  "px": "12px",
+                  "&.Mui-selected": { backgroundColor: `${palette.brand.primary}12` },
+                }}
               >
-                {Icon ? <Icon width={16} height={16} style={{ flexShrink: 0 }} /> : <Box sx={{ width: 16 }} />}
+                {Icon ? (
+                  <Icon width={16} height={16} style={{ flexShrink: 0 }} />
+                ) : (
+                  <Box sx={{ width: 16 }} />
+                )}
                 <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography fontSize={13} fontWeight={isSelected ? 500 : 400} noWrap>{m.name}</Typography>
-                  <Typography fontSize={11} color={palette.text.tertiary}>{m.provider}</Typography>
+                  <Typography fontSize={13} fontWeight={isSelected ? 500 : 400} noWrap>
+                    {m.name}
+                  </Typography>
+                  <Typography fontSize={11} color={palette.text.tertiary}>
+                    {m.provider}
+                  </Typography>
                 </Box>
-                {isSelected && <Box sx={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: palette.brand.primary, flexShrink: 0 }} />}
+                {isSelected && (
+                  <Box
+                    sx={{
+                      width: 6,
+                      height: 6,
+                      borderRadius: "50%",
+                      backgroundColor: palette.brand.primary,
+                      flexShrink: 0,
+                    }}
+                  />
+                )}
               </MenuItem>
             );
           })}
           <Divider />
           <MenuItem
-            onClick={() => { setAnchorEl(null); onNavigateToModels(); }}
+            onClick={() => {
+              setAnchorEl(null);
+              onNavigateToModels();
+            }}
             sx={{ gap: "8px", py: "8px", px: "12px", color: palette.brand.primary }}
           >
             <Plus size={14} strokeWidth={1.5} />
-            <Typography fontSize={13} fontWeight={500} color={palette.brand.primary}>Add model</Typography>
+            <Typography fontSize={13} fontWeight={500} color={palette.brand.primary}>
+              Add model
+            </Typography>
           </MenuItem>
         </Menu>
 
@@ -369,8 +473,19 @@ export default function PlaygroundPage({ orgId, onNavigateToModels }: Playground
           <Tooltip title="Clear conversation">
             <IconButton
               size="small"
-              onClick={() => { setMessages([]); setError(null); }}
-              sx={{ "color": palette.text.tertiary, "borderRadius": "6px", "p": "6px", "&:hover": { backgroundColor: palette.background.fill, color: palette.text.secondary } }}
+              onClick={() => {
+                setMessages([]);
+                setError(null);
+              }}
+              sx={{
+                "color": palette.text.tertiary,
+                "borderRadius": "6px",
+                "p": "6px",
+                "&:hover": {
+                  backgroundColor: palette.background.fill,
+                  color: palette.text.secondary,
+                },
+              }}
             >
               <Trash2 size={15} strokeWidth={1.5} />
             </IconButton>
@@ -383,15 +498,42 @@ export default function PlaygroundPage({ orgId, onNavigateToModels }: Playground
 
       {/* ── Empty state ──────────────────────────────────────────────────── */}
       {!hasMessages && !loading && (
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px", pb: "28px" }}>
-          <Box sx={{ width: 48, height: 48, borderRadius: "12px", backgroundColor: palette.background.fill, border: `1px solid ${palette.border.light}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            {ModelIcon ? <ModelIcon width={22} height={22} /> : <Bot size={22} color={palette.text.tertiary} strokeWidth={1.2} />}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "10px",
+            pb: "28px",
+          }}
+        >
+          <Box
+            sx={{
+              width: 48,
+              height: 48,
+              borderRadius: "12px",
+              backgroundColor: palette.background.fill,
+              border: `1px solid ${palette.border.light}`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {ModelIcon ? (
+              <ModelIcon width={22} height={22} />
+            ) : (
+              <Bot size={22} color={palette.text.tertiary} strokeWidth={1.2} />
+            )}
           </Box>
           <Typography fontSize={15} fontWeight={500} color={palette.text.secondary}>
-            {savedModels.length === 0 ? "Add a model first" : `Chat with ${selectedModel?.name ?? "your model"}`}
+            {savedModels.length === 0
+              ? "Add a model first"
+              : `Chat with ${selectedModel?.name ?? "your model"}`}
           </Typography>
           <Typography fontSize={13} color={palette.text.tertiary} textAlign="center" maxWidth={320}>
-            {savedModels.length === 0 ? 'Click "Add model" above to save a model, then start chatting.' : "Send a message or attach a file below."}
+            {savedModels.length === 0
+              ? 'Click "Add model" above to save a model, then start chatting.'
+              : "Send a message or attach a file below."}
           </Typography>
         </Box>
       )}
@@ -403,20 +545,57 @@ export default function PlaygroundPage({ orgId, onNavigateToModels }: Playground
             <Box key={idx} sx={{ py: "10px" }}>
               {msg.role === "user" ? (
                 <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                  <Box sx={{ maxWidth: "75%", display: "flex", flexDirection: "column", gap: "6px", alignItems: "flex-end" }}>
+                  <Box
+                    sx={{
+                      maxWidth: "75%",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "6px",
+                      alignItems: "flex-end",
+                    }}
+                  >
                     {/* Image previews */}
                     {msg.images && msg.images.length > 0 && (
-                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: "6px", justifyContent: "flex-end" }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: "6px",
+                          justifyContent: "flex-end",
+                        }}
+                      >
                         {msg.images.map((src, i) => (
-                          <Box key={i} component="img" src={src} alt={`attachment-${i}`}
-                            sx={{ maxWidth: 220, maxHeight: 180, borderRadius: "12px 12px 4px 12px", objectFit: "cover", border: `2px solid ${palette.brand.primary}`, display: "block" }}
+                          <Box
+                            key={i}
+                            component="img"
+                            src={src}
+                            alt={`attachment-${i}`}
+                            sx={{
+                              maxWidth: 220,
+                              maxHeight: 180,
+                              borderRadius: "12px 12px 4px 12px",
+                              objectFit: "cover",
+                              border: `2px solid ${palette.brand.primary}`,
+                              display: "block",
+                            }}
                           />
                         ))}
                       </Box>
                     )}
                     {/* Text — strip [Image: …] markers since image is shown above */}
                     {msg.content.replace(/\[Image:[^\]]*\]/g, "").trim() && (
-                      <Box sx={{ backgroundColor: palette.brand.primary, color: "#fff", borderRadius: "18px 18px 4px 18px", px: "16px", py: "10px", fontSize: 13, lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
+                      <Box
+                        sx={{
+                          backgroundColor: palette.brand.primary,
+                          color: "#fff",
+                          borderRadius: "18px 18px 4px 18px",
+                          px: "16px",
+                          py: "10px",
+                          fontSize: 13,
+                          lineHeight: 1.6,
+                          whiteSpace: "pre-wrap",
+                        }}
+                      >
                         {msg.content.replace(/\[Image:[^\]]*\]/g, "").trim()}
                       </Box>
                     )}
@@ -424,10 +603,54 @@ export default function PlaygroundPage({ orgId, onNavigateToModels }: Playground
                 </Box>
               ) : (
                 <Box sx={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
-                  <Box sx={{ width: 28, height: 28, borderRadius: "8px", backgroundColor: palette.background.fill, border: `1px solid ${palette.border.light}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, mt: "2px" }}>
-                    {ModelIcon ? <ModelIcon width={14} height={14} /> : <Bot size={14} color={palette.text.tertiary} strokeWidth={1.5} />}
+                  <Box
+                    sx={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: "8px",
+                      backgroundColor: palette.background.fill,
+                      border: `1px solid ${palette.border.light}`,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                      mt: "2px",
+                    }}
+                  >
+                    {ModelIcon ? (
+                      <ModelIcon width={14} height={14} />
+                    ) : (
+                      <Bot size={14} color={palette.text.tertiary} strokeWidth={1.5} />
+                    )}
                   </Box>
-                  <Box sx={{ flex: 1, fontSize: 13, lineHeight: 1.7, color: palette.text.primary, "& p": { margin: 0, mb: "10px" }, "& p:last-child": { mb: 0 }, "& pre": { backgroundColor: palette.background.hover, p: "12px 14px", borderRadius: "6px", overflowX: "auto", fontSize: 12, my: "10px" }, "& code": { backgroundColor: palette.background.hover, px: "4px", py: "1px", borderRadius: "4px", fontSize: 12 }, "& h1,& h2,& h3": { mt: "14px", mb: "6px", fontWeight: 600 }, "& ul,& ol": { pl: "20px", mb: "10px", mt: 0 }, "& li": { mb: "4px" } }}>
+                  <Box
+                    sx={{
+                      "flex": 1,
+                      "fontSize": 13,
+                      "lineHeight": 1.7,
+                      "color": palette.text.primary,
+                      "& p": { margin: 0, mb: "10px" },
+                      "& p:last-child": { mb: 0 },
+                      "& pre": {
+                        backgroundColor: palette.background.hover,
+                        p: "12px 14px",
+                        borderRadius: "6px",
+                        overflowX: "auto",
+                        fontSize: 12,
+                        my: "10px",
+                      },
+                      "& code": {
+                        backgroundColor: palette.background.hover,
+                        px: "4px",
+                        py: "1px",
+                        borderRadius: "4px",
+                        fontSize: 12,
+                      },
+                      "& h1,& h2,& h3": { mt: "14px", mb: "6px", fontWeight: 600 },
+                      "& ul,& ol": { pl: "20px", mb: "10px", mt: 0 },
+                      "& li": { mb: "4px" },
+                    }}
+                  >
                     <ReactMarkdown>{msg.content}</ReactMarkdown>
                   </Box>
                 </Box>
@@ -437,19 +660,48 @@ export default function PlaygroundPage({ orgId, onNavigateToModels }: Playground
 
           {loading && (
             <Box sx={{ display: "flex", gap: "10px", alignItems: "center", py: "10px" }}>
-              <Box sx={{ width: 28, height: 28, borderRadius: "8px", backgroundColor: palette.background.fill, border: `1px solid ${palette.border.light}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                {ModelIcon ? <ModelIcon width={14} height={14} /> : <Bot size={14} color={palette.text.tertiary} strokeWidth={1.5} />}
+              <Box
+                sx={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: "8px",
+                  backgroundColor: palette.background.fill,
+                  border: `1px solid ${palette.border.light}`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                {ModelIcon ? (
+                  <ModelIcon width={14} height={14} />
+                ) : (
+                  <Bot size={14} color={palette.text.tertiary} strokeWidth={1.5} />
+                )}
               </Box>
               <Stack direction="row" alignItems="center" gap="6px">
                 <CircularProgress size={12} sx={{ color: palette.brand.primary }} />
-                <Typography fontSize={12} color={palette.text.tertiary}>Thinking…</Typography>
+                <Typography fontSize={12} color={palette.text.tertiary}>
+                  Thinking…
+                </Typography>
               </Stack>
             </Box>
           )}
 
           {error && (
-            <Box sx={{ mt: "6px", px: "14px", py: "10px", borderRadius: "8px", border: "1px solid #FECACA", backgroundColor: "#FFF5F5" }}>
-              <Typography fontSize={12} color="#DC2626">{error}</Typography>
+            <Box
+              sx={{
+                mt: "6px",
+                px: "14px",
+                py: "10px",
+                borderRadius: "8px",
+                border: "1px solid #FECACA",
+                backgroundColor: "#FFF5F5",
+              }}
+            >
+              <Typography fontSize={12} color="#DC2626">
+                {error}
+              </Typography>
             </Box>
           )}
         </Box>
@@ -461,7 +713,6 @@ export default function PlaygroundPage({ orgId, onNavigateToModels }: Playground
 
       {/* ── Composer ─────────────────────────────────────────────────────── */}
       <Box sx={{ flexShrink: 0, pt: "12px", maxWidth: 760, width: "100%", mx: "auto", px: "2px" }}>
-
         {/* Attachment previews with grey container */}
         {attachments.length > 0 && (
           <Box
@@ -490,22 +741,47 @@ export default function PlaygroundPage({ orgId, onNavigateToModels }: Playground
                   overflow: "hidden",
                   ...(att.type === "image"
                     ? { width: 64, height: 64 }
-                    : { px: "10px", py: "6px", maxWidth: 180 }
-                  ),
+                    : { px: "10px", py: "6px", maxWidth: 180 }),
                 }}
               >
                 {att.type === "image" ? (
-                  <img src={att.preview} alt={att.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  <img
+                    src={att.preview}
+                    alt={att.name}
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
                 ) : (
                   <>
-                    <FileText size={14} color={palette.text.tertiary} strokeWidth={1.5} style={{ flexShrink: 0 }} />
-                    <Typography fontSize={11} color={palette.text.secondary} noWrap sx={{ maxWidth: 120 }}>{att.name}</Typography>
+                    <FileText
+                      size={14}
+                      color={palette.text.tertiary}
+                      strokeWidth={1.5}
+                      style={{ flexShrink: 0 }}
+                    />
+                    <Typography
+                      fontSize={11}
+                      color={palette.text.secondary}
+                      noWrap
+                      sx={{ maxWidth: 120 }}
+                    >
+                      {att.name}
+                    </Typography>
                   </>
                 )}
                 <IconButton
                   size="small"
                   onClick={() => removeAttachment(idx)}
-                  sx={{ position: "absolute", top: 2, right: 2, width: 18, height: 18, backgroundColor: "rgba(0,0,0,0.45)", color: "#fff", p: 0, "&:hover": { backgroundColor: "rgba(0,0,0,0.65)" } }}
+                  sx={{
+                    "position": "absolute",
+                    "top": 2,
+                    "right": 2,
+                    "width": 18,
+                    "height": 18,
+                    "backgroundColor": "rgba(0,0,0,0.45)",
+                    "color": "#fff",
+                    "p": 0,
+                    "&:hover": { backgroundColor: "rgba(0,0,0,0.65)" },
+                  }}
                 >
                   <X size={10} />
                 </IconButton>
@@ -517,23 +793,42 @@ export default function PlaygroundPage({ orgId, onNavigateToModels }: Playground
         {/* Input box */}
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: "6px",
-            border: `1.5px solid ${dictating ? "#EF4444" : palette.border.light}`,
-            borderRadius: "14px",
-            px: "10px",
-            py: "8px",
-            backgroundColor: palette.background.main,
-            transition: "border-color 0.15s",
+            "display": "flex",
+            "alignItems": "center",
+            "gap": "6px",
+            "border": `1.5px solid ${dictating ? "#EF4444" : palette.border.light}`,
+            "borderRadius": "14px",
+            "px": "10px",
+            "py": "8px",
+            "backgroundColor": palette.background.main,
+            "transition": "border-color 0.15s",
             "&:focus-within": { borderColor: dictating ? "#EF4444" : palette.brand.primary },
           }}
         >
           {/* Attach */}
-          <Tooltip title={!selectedModelId ? "Select a model first" : !visionOk ? "This model is text-only — images not supported" : "Attach image or document"}>
+          <Tooltip
+            title={
+              !selectedModelId
+                ? "Select a model first"
+                : !visionOk
+                  ? "This model is text-only — images not supported"
+                  : "Attach image or document"
+            }
+          >
             <span>
-              <IconButton size="small" onClick={() => fileInputRef.current?.click()} disabled={loading || !selectedModelId || !visionOk}
-                sx={{ "color": palette.text.tertiary, "borderRadius": "6px", "p": "4px", "flexShrink": 0, "&:hover": { backgroundColor: palette.background.fill }, "&:disabled": { opacity: 0.35 } }}>
+              <IconButton
+                size="small"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={loading || !selectedModelId || !visionOk}
+                sx={{
+                  "color": palette.text.tertiary,
+                  "borderRadius": "6px",
+                  "p": "4px",
+                  "flexShrink": 0,
+                  "&:hover": { backgroundColor: palette.background.fill },
+                  "&:disabled": { opacity: 0.35 },
+                }}
+              >
                 <Paperclip size={16} strokeWidth={1.5} />
               </IconButton>
             </span>
@@ -547,12 +842,12 @@ export default function PlaygroundPage({ orgId, onNavigateToModels }: Playground
                 onClick={toggleDictation}
                 disabled={loading || !selectedModelId}
                 sx={{
-                  color: dictating ? "#EF4444" : palette.text.tertiary,
-                  borderRadius: "50%",
-                  p: "4px",
-                  flexShrink: 0,
-                  transition: "color 0.15s",
-                  animation: dictating ? "vw-mic-pulse 1.2s ease-out infinite" : "none",
+                  "color": dictating ? "#EF4444" : palette.text.tertiary,
+                  "borderRadius": "50%",
+                  "p": "4px",
+                  "flexShrink": 0,
+                  "transition": "color 0.15s",
+                  "animation": dictating ? "vw-mic-pulse 1.2s ease-out infinite" : "none",
                   "&:hover": { backgroundColor: palette.background.fill },
                   "&:disabled": { opacity: 0.35 },
                 }}
@@ -568,10 +863,29 @@ export default function PlaygroundPage({ orgId, onNavigateToModels }: Playground
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={dictating ? "Listening…" : savedModels.length === 0 ? "Add a model first…" : "Message…"}
+            placeholder={
+              dictating
+                ? "Listening…"
+                : savedModels.length === 0
+                  ? "Add a model first…"
+                  : "Message…"
+            }
             disabled={loading || !selectedModelId || savedModels.length === 0}
             rows={1}
-            style={{ flex: 1, resize: "none", border: "none", outline: "none", fontFamily: "inherit", fontSize: 13, lineHeight: 1.6, backgroundColor: "transparent", color: palette.text.primary, padding: 0, minHeight: 22, overflow: "hidden" }}
+            style={{
+              flex: 1,
+              resize: "none",
+              border: "none",
+              outline: "none",
+              fontFamily: "inherit",
+              fontSize: 13,
+              lineHeight: 1.6,
+              backgroundColor: "transparent",
+              color: palette.text.primary,
+              padding: 0,
+              minHeight: 22,
+              overflow: "hidden",
+            }}
           />
 
           {/* Send */}
@@ -581,23 +895,38 @@ export default function PlaygroundPage({ orgId, onNavigateToModels }: Playground
             sx={{
               "backgroundColor": canSend ? palette.brand.primary : palette.background.fill,
               "color": canSend ? "#fff" : palette.text.disabled,
-              "width": 32, "height": 32, "borderRadius": "8px", "flexShrink": 0,
+              "width": 32,
+              "height": 32,
+              "borderRadius": "8px",
+              "flexShrink": 0,
               "transition": "background-color 0.15s",
-              "&:hover": { backgroundColor: canSend ? palette.brand.primaryHover : palette.background.fill },
+              "&:hover": {
+                backgroundColor: canSend ? palette.brand.primaryHover : palette.background.fill,
+              },
             }}
           >
             <Send size={14} strokeWidth={1.5} />
           </IconButton>
         </Box>
 
-        <Typography sx={{ fontSize: 11, color: palette.text.tertiary, textAlign: "center", mt: "6px" }}>
-          {selectedModel ? `${selectedModel.provider} · ${selectedModel.name}` : "Select a model to start"}
+        <Typography
+          sx={{ fontSize: 11, color: palette.text.tertiary, textAlign: "center", mt: "6px" }}
+        >
+          {selectedModel
+            ? `${selectedModel.provider} · ${selectedModel.name}`
+            : "Select a model to start"}
         </Typography>
       </Box>
 
       {/* Hidden file input */}
-      <input ref={fileInputRef} type="file" multiple accept="image/*,.pdf,.txt,.md,.csv,.json" style={{ display: "none" }} onChange={handleFileChange} />
-
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        accept="image/*,.pdf,.txt,.md,.csv,.json"
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+      />
     </Box>
   );
 }

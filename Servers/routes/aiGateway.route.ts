@@ -48,8 +48,7 @@ function aiGatewayRoutes() {
       },
       error: (err, req, res) => {
         const errAny = err as any;
-        const isConnectionRefused =
-          errAny.code === "ECONNREFUSED" || errAny.code === "ECONNRESET";
+        const isConnectionRefused = errAny.code === "ECONNREFUSED" || errAny.code === "ECONNRESET";
 
         // For read-only GET endpoints, return a graceful empty response when the
         // AI Gateway service is not running, so the UI degrades silently.

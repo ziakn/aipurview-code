@@ -1020,8 +1020,7 @@ export default function ExperimentDetailContent({
               };
 
             // Lower-is-better metrics: hallucination, bias, toxicity
-            const isInverse =
-              metricKey && lowerIsBetter(metricKey);
+            const isInverse = metricKey && lowerIsBetter(metricKey);
 
             if (isInverse) {
               // For inverse metrics: low = good (green), high = bad (red)
@@ -1620,9 +1619,8 @@ export default function ExperimentDetailContent({
                                   Object.keys(ms).find(
                                     (k) =>
                                       k.toLowerCase() === metric.toLowerCase() ||
-                                      k
-                                        .replace(/^G-Eval\s*\((.+)\)$/i, "$1")
-                                        .toLowerCase() === metric.toLowerCase(),
+                                      k.replace(/^G-Eval\s*\((.+)\)$/i, "$1").toLowerCase() ===
+                                        metric.toLowerCase(),
                                   ) ?? ""
                                 ]
                               );
@@ -1638,8 +1636,12 @@ export default function ExperimentDetailContent({
                             const passed =
                               score !== null &&
                               (backendPassedRaw !== undefined
-                                ? lowerIsBetter(metric) ? !backendPassedRaw : backendPassedRaw
-                                : lowerIsBetter(metric) ? score <= 0.5 : score >= 0.5);
+                                ? lowerIsBetter(metric)
+                                  ? !backendPassedRaw
+                                  : backendPassedRaw
+                                : lowerIsBetter(metric)
+                                  ? score <= 0.5
+                                  : score >= 0.5);
                             return (
                               <td
                                 key={metric}
@@ -1720,7 +1722,9 @@ export default function ExperimentDetailContent({
                   }
                   const score =
                     typeof data === "number" ? data : (data as { score?: number })?.score;
-                  return typeof score === "number" && (lowerIsBetter(name) ? score <= 0.5 : score >= 0.5);
+                  return (
+                    typeof score === "number" && (lowerIsBetter(name) ? score <= 0.5 : score >= 0.5)
+                  );
                 }).length;
 
                 return (
@@ -2010,7 +2014,9 @@ export default function ExperimentDetailContent({
                                     : undefined;
                                 const passed =
                                   backendPassed !== undefined
-                                    ? lowerIsBetter(metricName) ? !backendPassed : backendPassed
+                                    ? lowerIsBetter(metricName)
+                                      ? !backendPassed
+                                      : backendPassed
                                     : typeof score === "number" &&
                                       (lowerIsBetter(metricName) ? score <= 0.5 : score >= 0.5);
                                 const rawReason =

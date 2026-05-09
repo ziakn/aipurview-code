@@ -105,16 +105,12 @@ class EvaluationLlmApiKeysService {
 
   async addKey(request: AddKeyRequest): Promise<LLMApiKey> {
     const gwProvider = evalProviderToGatewayVerify(request.provider);
-    const providerLabel =
-      gwProvider.charAt(0).toUpperCase() + gwProvider.slice(1);
-    const response = await CustomAxios.post<{ data: GatewayKeyRow }>(
-      "/ai-gateway/keys",
-      {
-        provider: gwProvider,
-        key_name: `${providerLabel} Evals Key`,
-        api_key: request.apiKey,
-      },
-    );
+    const providerLabel = gwProvider.charAt(0).toUpperCase() + gwProvider.slice(1);
+    const response = await CustomAxios.post<{ data: GatewayKeyRow }>("/ai-gateway/keys", {
+      provider: gwProvider,
+      key_name: `${providerLabel} Evals Key`,
+      api_key: request.apiKey,
+    });
     const r = response.data?.data;
     return {
       id: r?.id,
@@ -128,9 +124,7 @@ class EvaluationLlmApiKeysService {
 
   async deleteKey(_provider: LLMProvider, id?: number): Promise<void> {
     if (!id) {
-      throw new Error(
-        "Cannot delete key: key ID not found. Refresh the page and try again.",
-      );
+      throw new Error("Cannot delete key: key ID not found. Refresh the page and try again.");
     }
     await CustomAxios.delete(`/ai-gateway/keys/${id}`);
   }

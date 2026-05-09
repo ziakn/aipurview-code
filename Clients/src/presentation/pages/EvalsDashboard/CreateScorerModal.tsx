@@ -49,12 +49,12 @@ import { ReactComponent as OpenRouterLogo } from "../../assets/icons/openrouter_
 import { ReactComponent as OllamaLogo } from "../../assets/icons/ollama_logo.svg";
 
 const PROVIDER_ICONS: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
-  openai: OpenAILogo,
-  anthropic: AnthropicLogo,
-  google: GeminiLogo,
-  mistral: MistralLogo,
-  xai: XAILogo,
-  openrouter: OpenRouterLogo,
+  "openai": OpenAILogo,
+  "anthropic": AnthropicLogo,
+  "google": GeminiLogo,
+  "mistral": MistralLogo,
+  "xai": XAILogo,
+  "openrouter": OpenRouterLogo,
   "self-hosted": OllamaLogo,
 };
 
@@ -155,7 +155,7 @@ function ScoreInput({ value, onChange }: { value: number; onChange: (val: number
       onChange={handleChange}
       onBlur={handleBlur}
       sx={{
-        width: 100,
+        "width": 100,
         "& .MuiInputBase-input": {
           fontSize: "13px",
           textAlign: "center",
@@ -256,14 +256,14 @@ function ModelSelector({
     return (
       <Box
         sx={{
-          width: size,
-          height: size,
-          minWidth: size,
-          minHeight: size,
-          flexShrink: 0,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          "width": size,
+          "height": size,
+          "minWidth": size,
+          "minHeight": size,
+          "flexShrink": 0,
+          "display": "flex",
+          "alignItems": "center",
+          "justifyContent": "center",
           "& svg": {
             width: "100%",
             height: "100%",
@@ -284,17 +284,17 @@ function ModelSelector({
         ref={anchorRef}
         onClick={() => setOpen(!open)}
         sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          px: 1.5,
-          py: 1.25,
-          border: "1px solid",
-          borderColor: open ? palette.brand.primary : palette.border.dark,
-          borderRadius: "8px",
-          backgroundColor: palette.background.main,
-          cursor: "pointer",
-          transition: "all 0.15s ease",
+          "display": "flex",
+          "alignItems": "center",
+          "justifyContent": "space-between",
+          "px": 1.5,
+          "py": 1.25,
+          "border": "1px solid",
+          "borderColor": open ? palette.brand.primary : palette.border.dark,
+          "borderRadius": "8px",
+          "backgroundColor": palette.background.main,
+          "cursor": "pointer",
+          "transition": "all 0.15s ease",
           "&:hover": {
             borderColor: palette.border.dark,
           },
@@ -368,9 +368,9 @@ function ModelSelector({
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                    fontSize: 13,
-                    borderRadius: "8px",
-                    backgroundColor: palette.background.accent,
+                    "fontSize": 13,
+                    "borderRadius": "8px",
+                    "backgroundColor": palette.background.accent,
                     "& fieldset": { borderColor: palette.border.dark },
                     "&:hover fieldset": { borderColor: palette.border.dark },
                     "&.Mui-focused fieldset": { borderColor: palette.brand.primary },
@@ -400,14 +400,16 @@ function ModelSelector({
                         key={p.provider}
                         onClick={() => handleProviderSelect(p.provider)}
                         sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          px: 1.5,
-                          height: 38,
-                          minHeight: 38,
-                          cursor: "pointer",
-                          backgroundColor: isSelected ? palette.brand.primaryLight : "transparent",
+                          "display": "flex",
+                          "alignItems": "center",
+                          "justifyContent": "space-between",
+                          "px": 1.5,
+                          "height": 38,
+                          "minHeight": 38,
+                          "cursor": "pointer",
+                          "backgroundColor": isSelected
+                            ? palette.brand.primaryLight
+                            : "transparent",
                           "&:hover": {
                             backgroundColor: isSelected
                               ? palette.brand.primaryLight
@@ -465,14 +467,14 @@ function ModelSelector({
                       onNavigateToSettings();
                     }}
                     sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1.5,
-                      px: 1.5,
-                      py: 1,
-                      borderRadius: "8px",
-                      cursor: "pointer",
-                      backgroundColor: palette.brand.primaryLight,
+                      "display": "flex",
+                      "alignItems": "center",
+                      "gap": 1.5,
+                      "px": 1.5,
+                      "py": 1,
+                      "borderRadius": "8px",
+                      "cursor": "pointer",
+                      "backgroundColor": palette.brand.primaryLight,
                       "&:hover": {
                         backgroundColor: palette.brand.primaryLight,
                       },
@@ -526,7 +528,7 @@ function ModelSelector({
                       onKeyDown={(e) => e.stopPropagation()}
                       autoComplete="off"
                       sx={{
-                        mb: 1.5,
+                        "mb": 1.5,
                         "& .MuiOutlinedInput-root": {
                           fontSize: 13,
                           borderRadius: "8px",
@@ -556,7 +558,7 @@ function ModelSelector({
                       }}
                       autoComplete="off"
                       sx={{
-                        mb: 1.5,
+                        "mb": 1.5,
                         "& .MuiOutlinedInput-root": {
                           fontSize: 13,
                           borderRadius: "8px",
@@ -581,7 +583,7 @@ function ModelSelector({
                       onKeyDown={(e) => e.stopPropagation()}
                       autoComplete="off"
                       sx={{
-                        mb: 2,
+                        "mb": 2,
                         "& .MuiOutlinedInput-root": {
                           fontSize: 13,
                           borderRadius: "8px",
@@ -598,26 +600,26 @@ function ModelSelector({
                         }
                       }}
                       sx={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 1,
-                        px: 2,
-                        py: 1,
-                        borderRadius: "6px",
-                        cursor:
+                        "display": "inline-flex",
+                        "alignItems": "center",
+                        "gap": 1,
+                        "px": 2,
+                        "py": 1,
+                        "borderRadius": "6px",
+                        "cursor":
                           customModel.trim() && (endpointUrl || "").trim()
                             ? "pointer"
                             : "not-allowed",
-                        backgroundColor:
+                        "backgroundColor":
                           customModel.trim() && (endpointUrl || "").trim()
                             ? palette.brand.primary
                             : palette.border.dark,
-                        color:
+                        "color":
                           customModel.trim() && (endpointUrl || "").trim()
                             ? palette.background.main
                             : palette.text.disabled,
-                        fontSize: 12,
-                        fontWeight: 500,
+                        "fontSize": 12,
+                        "fontWeight": 500,
                         "&:hover": {
                           backgroundColor:
                             customModel.trim() && (endpointUrl || "").trim()
@@ -673,17 +675,17 @@ function ModelSelector({
                           onNavigateToSettings();
                         }}
                         sx={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: 1,
-                          px: 3,
-                          py: 1.5,
-                          borderRadius: "8px",
-                          cursor: "pointer",
-                          backgroundColor: palette.brand.primary,
-                          color: palette.background.main,
-                          fontSize: 13,
-                          fontWeight: 500,
+                          "display": "inline-flex",
+                          "alignItems": "center",
+                          "gap": 1,
+                          "px": 3,
+                          "py": 1.5,
+                          "borderRadius": "8px",
+                          "cursor": "pointer",
+                          "backgroundColor": palette.brand.primary,
+                          "color": palette.background.main,
+                          "fontSize": 13,
+                          "fontWeight": 500,
                           "&:hover": {
                             backgroundColor: palette.brand.primaryHover,
                           },
@@ -722,7 +724,7 @@ function ModelSelector({
                       onClick={(e) => e.stopPropagation()}
                       autoComplete="off"
                       sx={{
-                        mb: 1.5,
+                        "mb": 1.5,
                         "& .MuiOutlinedInput-root": {
                           fontSize: 13,
                           borderRadius: "8px",
@@ -737,19 +739,21 @@ function ModelSelector({
                         }
                       }}
                       sx={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 1,
-                        px: 2,
-                        py: 1,
-                        borderRadius: "6px",
-                        cursor: customModel.trim() ? "pointer" : "not-allowed",
-                        backgroundColor: customModel.trim()
+                        "display": "inline-flex",
+                        "alignItems": "center",
+                        "gap": 1,
+                        "px": 2,
+                        "py": 1,
+                        "borderRadius": "6px",
+                        "cursor": customModel.trim() ? "pointer" : "not-allowed",
+                        "backgroundColor": customModel.trim()
                           ? palette.brand.primary
                           : palette.border.dark,
-                        color: customModel.trim() ? palette.background.main : palette.text.disabled,
-                        fontSize: 12,
-                        fontWeight: 500,
+                        "color": customModel.trim()
+                          ? palette.background.main
+                          : palette.text.disabled,
+                        "fontSize": 12,
+                        "fontWeight": 500,
                         "&:hover": {
                           backgroundColor: customModel.trim()
                             ? palette.brand.primaryHover
@@ -789,14 +793,14 @@ function ModelSelector({
                           setOpen(false);
                         }}
                         sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          px: 1.5,
-                          py: 0.75,
-                          borderRadius: "6px",
-                          cursor: "pointer",
-                          backgroundColor:
+                          "display": "flex",
+                          "alignItems": "center",
+                          "justifyContent": "space-between",
+                          "px": 1.5,
+                          "py": 0.75,
+                          "borderRadius": "6px",
+                          "cursor": "pointer",
+                          "backgroundColor":
                             model === m.id ? palette.brand.primaryLight : "transparent",
                           "&:hover": {
                             backgroundColor:
@@ -843,14 +847,16 @@ function ModelSelector({
                         key={m.id}
                         onClick={() => handleModelSelect(m.id)}
                         sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1.5,
-                          pl: 2.5,
-                          pr: 1.5,
-                          py: 1,
-                          cursor: "pointer",
-                          backgroundColor: isSelected ? palette.brand.primaryLight : "transparent",
+                          "display": "flex",
+                          "alignItems": "center",
+                          "gap": 1.5,
+                          "pl": 2.5,
+                          "pr": 1.5,
+                          "py": 1,
+                          "cursor": "pointer",
+                          "backgroundColor": isSelected
+                            ? palette.brand.primaryLight
+                            : "transparent",
                           "&:hover": {
                             backgroundColor: isSelected
                               ? palette.brand.primaryLight
@@ -917,7 +923,10 @@ export default function CreateScorerModal({
       },
     ],
     useChainOfThought: initialConfig?.useChainOfThought ?? true,
-    choiceScores: initialConfig?.choiceScores || [{ label: "PASS", score: 1 }, { label: "FAIL", score: 0 }],
+    choiceScores: initialConfig?.choiceScores || [
+      { label: "PASS", score: 1 },
+      { label: "FAIL", score: 0 },
+    ],
     passThreshold: initialConfig?.passThreshold ?? 0.5,
     endpointUrl: initialConfig?.endpointUrl || "",
     apiKey: initialConfig?.apiKey || "",
@@ -957,7 +966,10 @@ export default function CreateScorerModal({
           },
         ],
         useChainOfThought: initialConfig.useChainOfThought ?? true,
-        choiceScores: initialConfig.choiceScores || [{ label: "PASS", score: 1 }, { label: "FAIL", score: 0 }],
+        choiceScores: initialConfig.choiceScores || [
+          { label: "PASS", score: 1 },
+          { label: "FAIL", score: 0 },
+        ],
         passThreshold: initialConfig.passThreshold ?? 0.5,
         endpointUrl: initialConfig.endpointUrl || "",
         apiKey: initialConfig.apiKey || "",
@@ -989,7 +1001,10 @@ export default function CreateScorerModal({
           },
         ],
         useChainOfThought: true,
-        choiceScores: [{ label: "PASS", score: 1 }, { label: "FAIL", score: 0 }],
+        choiceScores: [
+          { label: "PASS", score: 1 },
+          { label: "FAIL", score: 0 },
+        ],
         passThreshold: 0.5,
         endpointUrl: "",
         apiKey: "",
@@ -1029,15 +1044,26 @@ export default function CreateScorerModal({
   }, [isOpen, initialConfig]);
 
   // Fetch LiteLLM gateway models for the current provider
-  const CLOUD_PROVIDERS = new Set(["openai", "anthropic", "google", "mistral", "xai", "openrouter"]);
+  const CLOUD_PROVIDERS = new Set([
+    "openai",
+    "anthropic",
+    "google",
+    "mistral",
+    "xai",
+    "openrouter",
+  ]);
   useEffect(() => {
     const provider = config.provider;
-    if (!provider || !CLOUD_PROVIDERS.has(provider) || gatewayModelsLoaded.current.has(provider)) return;
+    if (!provider || !CLOUD_PROVIDERS.has(provider) || gatewayModelsLoaded.current.has(provider))
+      return;
     gatewayModelsLoaded.current.add(provider);
-    evalModelsService.getGatewayModelsForProvider(provider).then((models) => {
-      if (models.length > 0) setGatewayModels((prev) => ({ ...prev, [provider]: models }));
-    }).catch(() => {});
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    evalModelsService
+      .getGatewayModelsForProvider(provider)
+      .then((models) => {
+        if (models.length > 0) setGatewayModels((prev) => ({ ...prev, [provider]: models }));
+      })
+      .catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config.provider]);
 
   // Auto-generate slug from name
@@ -1050,24 +1076,30 @@ export default function CreateScorerModal({
   }, []);
 
   // Handle provider change - reset model when provider changes
-  const handleProviderChange = useCallback((providerId: string) => {
-    const live = gatewayModels[providerId];
-    const models = live && live.length > 0 ? live : getModelsForProvider(providerId);
-    setConfig((prev) => ({
-      ...prev,
-      provider: providerId,
-      model: models.length > 0 ? models[0].id : "",
-      ...(providerId !== "self-hosted" ? { endpointUrl: "", apiKey: "" } : {}),
-    }));
-    // Lazy-fetch gateway models for this provider if not yet loaded
-    if (CLOUD_PROVIDERS.has(providerId) && !gatewayModelsLoaded.current.has(providerId)) {
-      gatewayModelsLoaded.current.add(providerId);
-      evalModelsService.getGatewayModelsForProvider(providerId).then((m) => {
-        if (m.length > 0) setGatewayModels((prev) => ({ ...prev, [providerId]: m }));
-      }).catch(() => {});
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gatewayModels]);
+  const handleProviderChange = useCallback(
+    (providerId: string) => {
+      const live = gatewayModels[providerId];
+      const models = live && live.length > 0 ? live : getModelsForProvider(providerId);
+      setConfig((prev) => ({
+        ...prev,
+        provider: providerId,
+        model: models.length > 0 ? models[0].id : "",
+        ...(providerId !== "self-hosted" ? { endpointUrl: "", apiKey: "" } : {}),
+      }));
+      // Lazy-fetch gateway models for this provider if not yet loaded
+      if (CLOUD_PROVIDERS.has(providerId) && !gatewayModelsLoaded.current.has(providerId)) {
+        gatewayModelsLoaded.current.add(providerId);
+        evalModelsService
+          .getGatewayModelsForProvider(providerId)
+          .then((m) => {
+            if (m.length > 0) setGatewayModels((prev) => ({ ...prev, [providerId]: m }));
+          })
+          .catch(() => {});
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [gatewayModels],
+  );
 
   // Handle model change
   const handleModelChange = useCallback((modelId: string) => {
@@ -1174,7 +1206,6 @@ export default function CreateScorerModal({
       maxWidth="780px"
     >
       <Stack spacing={0}>
-
         {/* ── Name & Slug ── */}
         <Stack direction="row" spacing={2} mb={3}>
           <Box sx={{ flex: 1 }}>
@@ -1182,7 +1213,11 @@ export default function CreateScorerModal({
               <Typography sx={{ fontSize: 13, fontWeight: 500, color: palette.text.secondary }}>
                 Name <span style={{ color: palette.status.error.text }}>*</span>
               </Typography>
-              <Tooltip title="A human-readable name for this scorer, shown in dropdowns and reports." placement="right" arrow>
+              <Tooltip
+                title="A human-readable name for this scorer, shown in dropdowns and reports."
+                placement="right"
+                arrow
+              >
                 <HelpCircle size={13} color={palette.text.disabled} style={{ cursor: "help" }} />
               </Tooltip>
             </Stack>
@@ -1198,7 +1233,11 @@ export default function CreateScorerModal({
               <Typography sx={{ fontSize: 13, fontWeight: 500, color: palette.text.secondary }}>
                 Slug <span style={{ color: palette.status.error.text }}>*</span>
               </Typography>
-              <Tooltip title="A URL-safe identifier used internally. Auto-generated from the name." placement="right" arrow>
+              <Tooltip
+                title="A URL-safe identifier used internally. Auto-generated from the name."
+                placement="right"
+                arrow
+              >
                 <HelpCircle size={13} color={palette.text.disabled} style={{ cursor: "help" }} />
               </Tooltip>
             </Stack>
@@ -1255,45 +1294,106 @@ export default function CreateScorerModal({
             tooltip="The messages sent to the judge LLM. Use {{input}}, {{output}}, and {{expected}} to inject test-case values. The judge should return one of your choice labels."
           />
           <Typography sx={{ fontSize: 12, color: palette.text.tertiary, mb: 1.5 }}>
-            Variables: <code style={{ background: palette.background.accent, padding: "1px 5px", borderRadius: 3 }}>{"{{input}}"}</code>{" "}
-            <code style={{ background: palette.background.accent, padding: "1px 5px", borderRadius: 3 }}>{"{{output}}"}</code>{" "}
-            <code style={{ background: palette.background.accent, padding: "1px 5px", borderRadius: 3 }}>{"{{expected}}"}</code>
+            Variables:{" "}
+            <code
+              style={{ background: palette.background.accent, padding: "1px 5px", borderRadius: 3 }}
+            >
+              {"{{input}}"}
+            </code>{" "}
+            <code
+              style={{ background: palette.background.accent, padding: "1px 5px", borderRadius: 3 }}
+            >
+              {"{{output}}"}
+            </code>{" "}
+            <code
+              style={{ background: palette.background.accent, padding: "1px 5px", borderRadius: 3 }}
+            >
+              {"{{expected}}"}
+            </code>
           </Typography>
           <Stack spacing={1.5}>
             {config.messages.map((msg, index) => (
-              <Box key={index} sx={{ border: `1px solid ${palette.border.dark}`, borderRadius: "6px", overflow: "hidden" }}>
+              <Box
+                key={index}
+                sx={{
+                  border: `1px solid ${palette.border.dark}`,
+                  borderRadius: "6px",
+                  overflow: "hidden",
+                }}
+              >
                 <Stack
-                  direction="row" alignItems="center" justifyContent="space-between"
-                  sx={{ px: 1.5, py: 0.75, backgroundColor: palette.background.accent, borderBottom: `1px solid ${palette.border.dark}` }}
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  sx={{
+                    px: 1.5,
+                    py: 0.75,
+                    backgroundColor: palette.background.accent,
+                    borderBottom: `1px solid ${palette.border.dark}`,
+                  }}
                 >
                   <MuiSelect
-                    size="small" value={msg.role}
+                    size="small"
+                    value={msg.role}
                     onChange={(e) => handleUpdateMessage(index, "role", e.target.value)}
-                    variant="standard" disableUnderline
-                    sx={{ fontSize: 12, fontWeight: 500, minWidth: 80, "& .MuiSelect-select": { py: 0 } }}
+                    variant="standard"
+                    disableUnderline
+                    sx={{
+                      "fontSize": 12,
+                      "fontWeight": 500,
+                      "minWidth": 80,
+                      "& .MuiSelect-select": { py: 0 },
+                    }}
                   >
                     <MenuItem value="system">System</MenuItem>
                     <MenuItem value="user">User</MenuItem>
                     <MenuItem value="assistant">Assistant</MenuItem>
                   </MuiSelect>
                   {config.messages.length > 1 && (
-                    <IconButton size="small" onClick={() => handleRemoveMessage(index)} sx={{ p: 0.5 }}>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleRemoveMessage(index)}
+                      sx={{ p: 0.5 }}
+                    >
                       <Trash2 size={14} color={palette.text.disabled} />
                     </IconButton>
                   )}
                 </Stack>
                 <TextField
-                  multiline minRows={2} maxRows={6} fullWidth
-                  placeholder={msg.role === "system" ? "You are a helpful assistant that evaluates..." : "Use {{input}}, {{output}}, {{expected}} to reference test case data"}
+                  multiline
+                  minRows={2}
+                  maxRows={6}
+                  fullWidth
+                  placeholder={
+                    msg.role === "system"
+                      ? "You are a helpful assistant that evaluates..."
+                      : "Use {{input}}, {{output}}, {{expected}} to reference test case data"
+                  }
                   value={msg.content}
                   onChange={(e) => handleUpdateMessage(index, "content", e.target.value)}
-                  sx={{ "& .MuiOutlinedInput-root": { border: "none", "& fieldset": { border: "none" } }, "& .MuiInputBase-input": { fontSize: 13, p: 1.5 } }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "border": "none",
+                      "& fieldset": { border: "none" },
+                    },
+                    "& .MuiInputBase-input": { fontSize: 13, p: 1.5 },
+                  }}
                 />
               </Box>
             ))}
             <CustomizableButton
-              variant="text" text="Add message" icon={<Plus size={14} />} onClick={handleAddMessage}
-              sx={{ alignSelf: "flex-start", color: palette.brand.primary, fontSize: 13, fontWeight: 600, textTransform: "none", "&:hover": { backgroundColor: palette.brand.primaryLight } }}
+              variant="text"
+              text="Add message"
+              icon={<Plus size={14} />}
+              onClick={handleAddMessage}
+              sx={{
+                "alignSelf": "flex-start",
+                "color": palette.brand.primary,
+                "fontSize": 13,
+                "fontWeight": 600,
+                "textTransform": "none",
+                "&:hover": { backgroundColor: palette.brand.primaryLight },
+              }}
             />
           </Stack>
         </Box>
@@ -1308,26 +1408,57 @@ export default function CreateScorerModal({
           />
           <Stack spacing={1.5}>
             <Stack direction="row" spacing={2}>
-              <Typography sx={{ flex: 1, fontSize: 12, color: palette.text.tertiary }}>Choice label</Typography>
-              <Typography sx={{ width: 100, fontSize: 12, color: palette.text.tertiary, textAlign: "center" }}>Score (0–1)</Typography>
+              <Typography sx={{ flex: 1, fontSize: 12, color: palette.text.tertiary }}>
+                Choice label
+              </Typography>
+              <Typography
+                sx={{ width: 100, fontSize: 12, color: palette.text.tertiary, textAlign: "center" }}
+              >
+                Score (0–1)
+              </Typography>
               <Box sx={{ width: 32 }} />
             </Stack>
             {config.choiceScores.map((cs, index) => (
               <Stack key={index} direction="row" spacing={2} alignItems="center">
                 <TextField
-                  size="small" placeholder="e.g. PASS" value={cs.label}
+                  size="small"
+                  placeholder="e.g. PASS"
+                  value={cs.label}
                   onChange={(e) => handleUpdateChoiceScore(index, "label", e.target.value)}
-                  sx={{ flex: 1, "& .MuiInputBase-input": { fontSize: 13 } }}
+                  sx={{ "flex": 1, "& .MuiInputBase-input": { fontSize: 13 } }}
                 />
-                <ScoreInput value={cs.score} onChange={(v) => handleUpdateChoiceScore(index, "score", v)} />
-                <IconButton size="small" onClick={() => handleRemoveChoiceScore(index)} disabled={config.choiceScores.length === 1} sx={{ p: 0.5 }}>
-                  <Trash2 size={16} color={config.choiceScores.length === 1 ? palette.border.dark : palette.text.disabled} />
+                <ScoreInput
+                  value={cs.score}
+                  onChange={(v) => handleUpdateChoiceScore(index, "score", v)}
+                />
+                <IconButton
+                  size="small"
+                  onClick={() => handleRemoveChoiceScore(index)}
+                  disabled={config.choiceScores.length === 1}
+                  sx={{ p: 0.5 }}
+                >
+                  <Trash2
+                    size={16}
+                    color={
+                      config.choiceScores.length === 1 ? palette.border.dark : palette.text.disabled
+                    }
+                  />
                 </IconButton>
               </Stack>
             ))}
             <CustomizableButton
-              variant="text" text="Add choice" icon={<Plus size={14} />} onClick={handleAddChoiceScore}
-              sx={{ alignSelf: "flex-start", color: palette.brand.primary, fontSize: 12, fontWeight: 600, textTransform: "none", "&:hover": { backgroundColor: palette.brand.primaryLight } }}
+              variant="text"
+              text="Add choice"
+              icon={<Plus size={14} />}
+              onClick={handleAddChoiceScore}
+              sx={{
+                "alignSelf": "flex-start",
+                "color": palette.brand.primary,
+                "fontSize": 12,
+                "fontWeight": 600,
+                "textTransform": "none",
+                "&:hover": { backgroundColor: palette.brand.primaryLight },
+              }}
             />
           </Stack>
         </Box>
@@ -1344,10 +1475,28 @@ export default function CreateScorerModal({
             <Slider
               value={config.passThreshold}
               onChange={(_, v) => setConfig((prev) => ({ ...prev, passThreshold: v as number }))}
-              min={0} max={1} step={0.05} valueLabelDisplay="auto"
-              sx={{ flex: 1, color: palette.brand.primary, "& .MuiSlider-thumb": { backgroundColor: palette.background.main, border: `2px solid ${palette.brand.primary}` } }}
+              min={0}
+              max={1}
+              step={0.05}
+              valueLabelDisplay="auto"
+              sx={{
+                "flex": 1,
+                "color": palette.brand.primary,
+                "& .MuiSlider-thumb": {
+                  backgroundColor: palette.background.main,
+                  border: `2px solid ${palette.brand.primary}`,
+                },
+              }}
             />
-            <Typography sx={{ fontSize: 13, fontWeight: 600, minWidth: 36, textAlign: "right", color: palette.text.secondary }}>
+            <Typography
+              sx={{
+                fontSize: 13,
+                fontWeight: 600,
+                minWidth: 36,
+                textAlign: "right",
+                color: palette.text.secondary,
+              }}
+            >
               {config.passThreshold.toFixed(2)}
             </Typography>
           </Stack>
@@ -1360,11 +1509,37 @@ export default function CreateScorerModal({
             <Slider
               size="small"
               value={config.modelParams.topP}
-              onChange={(_, v) => setConfig((prev) => ({ ...prev, modelParams: { ...prev.modelParams, topP: v as number } }))}
-              min={0} max={1} step={0.05}
-              sx={{ flex: 1, color: palette.brand.primary, height: 4, "& .MuiSlider-thumb": { width: 14, height: 14, backgroundColor: palette.background.main, border: `2px solid ${palette.brand.primary}` }, "& .MuiSlider-track": { border: "none" } }}
+              onChange={(_, v) =>
+                setConfig((prev) => ({
+                  ...prev,
+                  modelParams: { ...prev.modelParams, topP: v as number },
+                }))
+              }
+              min={0}
+              max={1}
+              step={0.05}
+              sx={{
+                "flex": 1,
+                "color": palette.brand.primary,
+                "height": 4,
+                "& .MuiSlider-thumb": {
+                  width: 14,
+                  height: 14,
+                  backgroundColor: palette.background.main,
+                  border: `2px solid ${palette.brand.primary}`,
+                },
+                "& .MuiSlider-track": { border: "none" },
+              }}
             />
-            <Typography sx={{ fontSize: 13, fontWeight: 600, minWidth: 36, textAlign: "right", color: palette.text.secondary }}>
+            <Typography
+              sx={{
+                fontSize: 13,
+                fontWeight: 600,
+                minWidth: 36,
+                textAlign: "right",
+                color: palette.text.secondary,
+              }}
+            >
               {config.modelParams.topP.toFixed(2)}
             </Typography>
           </Stack>

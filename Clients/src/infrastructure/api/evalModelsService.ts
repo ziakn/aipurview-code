@@ -162,8 +162,7 @@ class EvalModelsService {
 
     try {
       if (!_gatewayModelsCache || Date.now() > _gatewayModelsCacheExpiry) {
-        const response =
-          await CustomAxios.get<GatewayModelsResponse>("/ai-gateway/v1/models");
+        const response = await CustomAxios.get<GatewayModelsResponse>("/ai-gateway/v1/models");
         _gatewayModelsCache = response.data;
         _gatewayModelsCacheExpiry = Date.now() + GATEWAY_MODELS_TTL_MS;
       }
