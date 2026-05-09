@@ -196,13 +196,17 @@ function CustomizableMultiSelect({
         multiple
         displayEmpty
         renderValue={renderValue}
-        IconComponent={() => <ChevronDown size={16} />}
+        IconComponent={(iconProps) => <ChevronDown size={16} {...iconProps} />}
         error={!!error}
         sx={{
           ...sx,
           "& .MuiOutlinedInput-input": {
             paddingTop: "16.5px",
             paddingBottom: "16.5px",
+            paddingRight: "36px",
+          },
+          "& .MuiSelect-icon": {
+            right: 12,
           },
         }}
         MenuProps={{
@@ -212,6 +216,7 @@ function CustomizableMultiSelect({
               "borderRadius": theme.shape.borderRadius,
               "boxShadow": theme.boxShadow,
               "mt": 1,
+              "maxHeight": 280,
               "& .MuiMenuItem-root": {
                 "fontSize": 13,
                 "color": theme.palette.text.primary,

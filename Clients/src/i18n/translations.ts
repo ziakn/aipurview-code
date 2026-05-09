@@ -7816,6 +7816,122 @@ export const translations: Record<string, Record<string, string>> = {
       "You now have multiple frameworks assigned. Enable Governance OS to explore cross-framework mappings, get smart recommendations, and analyze coverage across all your frameworks.",
     "Your compliance dashboard will prioritize tasks from the primary framework first":
       "Your compliance dashboard will prioritize tasks from the primary framework first",
+
+    // ── develop's curated German translations (override fallbacks above) ──
+    "Active Frameworks": "Aktive Rahmenwerke",
+    "Additional details": "Weitere Details",
+    "All Governance Scenarios": "Alle Governance-Szenarien",
+    "Asia-Pacific": "Asien-Pazifik",
+    "Average Coverage": "Durchschnittliche Abdeckung",
+    "Best suited for": "Am besten geeignet für",
+    "Check Unified Insights tab": "Reiter Einheitliche Einblicke prüfen",
+    "Choose a project": "Projekt auswählen",
+    "Confidence score": "Konfidenzwert",
+    "Control Mapping Details": "Details der Kontrollzuordnung",
+    "Core Governance OS": "Core Governance OS",
+    "Coverage analysis identifies gaps and synergies per project.":
+      "Die Abdeckungsanalyse identifiziert Lücken und Synergien je Projekt.",
+    "Coverage analysis will measure your progress against the prioritized frameworks":
+      "Die Abdeckungsanalyse misst Ihren Fortschritt anhand der priorisierten Rahmenwerke",
+    "Cross-framework intelligence layer with control mappings, governance scenarios, and unified coverage analysis.":
+      "Übergreifende Intelligenzschicht mit Kontrollzuordnungen, Governance-Szenarien und einheitlicher Abdeckungsanalyse.",
+    "Cross-framework mappings reveal shared compliance effort.":
+      "Übergreifende Zuordnungen zeigen gemeinsamen Compliance-Aufwand.",
+    "Direct": "Direkt",
+    "Direct Mappings": "Direkte Zuordnungen",
+    "Dismiss prompt": "Hinweis schließen",
+    "Don": "Don",
+    "Education": "Bildung",
+    "Enable Governance OS?": "Governance OS aktivieren?",
+    "Energy": "Energie",
+    "European Union": "Europäische Union",
+    "Explore control-to-control mappings between any two frameworks. See direct equivalents, partial overlaps, and related controls.":
+      "Erkunden Sie Kontroll-zu-Kontroll-Zuordnungen zwischen je zwei Rahmenwerken. Direkte Entsprechungen, teilweise Überschneidungen und verwandte Kontrollen anzeigen.",
+    "Explore cross-framework control mappings": "Übergreifende Kontrollzuordnungen erkunden",
+    "Financial Services": "Finanzdienstleistungen",
+    "Framework Mapper": "Framework Mapper",
+    "Framework priority order": "Framework-Priorisierungsreihenfolge",
+    "General-Purpose AI": "Allzweck-KI",
+    "Get Recommendations": "Empfehlungen erhalten",
+    "Get framework recommendations based on your context":
+      "Erhalten Sie Framework-Empfehlungen basierend auf Ihrem Kontext",
+    "Get personalized framework recommendations based on your industry, region, risk level, and use case type.":
+      "Erhalten Sie personalisierte Framework-Empfehlungen basierend auf Ihrer Branche, Region, Risikostufe und Anwendungsfallart.",
+    "Go to Framework page": "Zur Framework-Seite gehen",
+    "Governance Domains": "Governance-Domänen",
+    "Governance OS": "Governance OS",
+    "Governance domain": "Governance-Domäne",
+    "Governance domains group controls by topic area.":
+      "Governance-Domänen gruppieren Kontrollen nach Themenbereich.",
+    "Governance scenario details": "Details zum Governance-Szenario",
+    "Healthcare": "Gesundheitswesen",
+    "High Risk": "Hohes Risiko",
+    "High-Risk AI System": "Hochrisiko-KI-System",
+    "Learn more in the user guide": "Mehr im Benutzerhandbuch erfahren",
+    "Limited Risk": "Begrenztes Risiko",
+    "Limited Risk AI": "KI mit begrenztem Risiko",
+    "Manufacturing": "Fertigung",
+    "Mapped Controls": "Zugeordnete Kontrollen",
+    "Mapping relationship": "Zuordnungsbeziehung",
+    "Mapping strength": "Zuordnungsstärke",
+    "Minimal Risk": "Minimales Risiko",
+    "New projects will inherit this framework priority order as a recommendation":
+      "Neue Projekte übernehmen diese Framework-Priorisierung als Empfehlung",
+    "Next steps after selecting this scenario": "Nächste Schritte nach Auswahl dieses Szenarios",
+    "No coverage data available. Assign frameworks to a project first.":
+      "Keine Abdeckungsdaten verfügbar. Weisen Sie zunächst einem Projekt Frameworks zu.",
+    "No governance scenarios available.": "Keine Governance-Szenarien verfügbar.",
+    "No mappings found for the selected frameworks and filters.":
+      "Keine Zuordnungen für die ausgewählten Frameworks und Filter gefunden.",
+    "No strong matches found. Try adjusting your criteria or browse the scenarios below.":
+      "Keine starken Übereinstimmungen gefunden. Passen Sie Ihre Kriterien an oder durchsuchen Sie die Szenarien unten.",
+    "Not now": "Jetzt nicht",
+    "Partial": "Teilweise",
+    "Per-project coverage analysis showing how well each project satisfies its assigned frameworks, with gap and synergy detection.":
+      "Projektbezogene Abdeckungsanalyse, die zeigt, wie gut jedes Projekt seine zugewiesenen Frameworks erfüllt, einschließlich Lücken- und Synergieerkennung.",
+    "Per-project coverage and gap analysis": "Projektbezogene Abdeckungs- und Lückenanalyse",
+    "Primary framework (highest priority)": "Primäres Framework (höchste Priorität)",
+    "Public Sector": "Öffentlicher Sektor",
+    "Rationale": "Begründung",
+    "Recommendation match": "Empfehlungsübereinstimmung",
+    "Recommended Scenarios": "Empfohlene Szenarien",
+    "Related": "Verwandt",
+    "Retail": "Einzelhandel",
+    "Review controls": "Kontrollen prüfen",
+    "Scenario Builder": "Szenario-Builder",
+    "Scenario recommendations match frameworks to your context.":
+      "Szenario-Empfehlungen passen Frameworks zu Ihrem Kontext.",
+    "Scenarios": "Szenarien",
+    "Secondary framework(s)": "Sekundäre(s) Framework(s)",
+    "Select Project": "Projekt auswählen",
+    "Select a project to view its cross-framework coverage analysis.":
+      "Wählen Sie ein Projekt, um seine übergreifende Abdeckungsanalyse anzuzeigen.",
+    "Set as active governance strategy": "Als aktive Governance-Strategie festlegen",
+    "Source Framework": "Quell-Framework",
+    "Source control": "Quellkontrolle",
+    "Supplementary framework(s)": "Ergänzende(s) Framework(s)",
+    "Target Framework": "Ziel-Framework",
+    "Target control": "Zielkontrolle",
+    "Technology": "Technologie",
+    "This scenario scored": "Dieses Szenario erreichte",
+    "Total Controls": "Kontrollen gesamt",
+    "Total Mappings": "Zuordnungen gesamt",
+    "Track progress on Dashboard": "Fortschritt im Dashboard verfolgen",
+    "Unified Insights": "Einheitliche Einblicke",
+    "United Kingdom": "Vereinigtes Königreich",
+    "United States": "Vereinigte Staaten",
+    "Use Case Type": "Anwendungsfall-Typ",
+    "Use Framework Mapper": "Framework Mapper verwenden",
+    "What happens when you select this scenario?":
+      "Was passiert, wenn Sie dieses Szenario auswählen?",
+    "What is this scenario?": "Was ist dieses Szenario?",
+    "What this means for you": "Was das für Sie bedeutet",
+    "You can change your active scenario at any time without losing progress":
+      "Sie können Ihr aktives Szenario jederzeit ändern, ohne Fortschritt zu verlieren",
+    "You now have multiple frameworks assigned. Enable Governance OS to explore cross-framework mappings, get smart recommendations, and analyze coverage across all your frameworks.":
+      "Sie haben jetzt mehrere Frameworks zugewiesen. Aktivieren Sie Governance OS, um übergreifende Zuordnungen zu erkunden, intelligente Empfehlungen zu erhalten und die Abdeckung über alle Frameworks hinweg zu analysieren.",
+    "Your compliance dashboard will prioritize tasks from the primary framework first":
+      "Ihr Compliance-Dashboard priorisiert zuerst Aufgaben aus dem primären Framework",
   },
 
   fr: {
@@ -15559,5 +15675,123 @@ export const translations: Record<string, Record<string, string>> = {
       "You now have multiple frameworks assigned. Enable Governance OS to explore cross-framework mappings, get smart recommendations, and analyze coverage across all your frameworks.",
     "Your compliance dashboard will prioritize tasks from the primary framework first":
       "Your compliance dashboard will prioritize tasks from the primary framework first",
+
+    // ── develop's curated French translations (override fallbacks above) ──
+    "Active Frameworks": "Référentiels actifs",
+    "Additional details": "Détails supplémentaires",
+    "All Governance Scenarios": "Tous les scénarios de gouvernance",
+    "Asia-Pacific": "Asie-Pacifique",
+    "Average Coverage": "Couverture moyenne",
+    "Best suited for": "Le mieux adapté à",
+    "Check Unified Insights tab": "Consulter l'onglet Insights unifiés",
+    "Choose a project": "Choisir un projet",
+    "Confidence score": "Score de confiance",
+    "Control Mapping Details": "Détails de la correspondance des contrôles",
+    "Core Governance OS": "Core Governance OS",
+    "Coverage analysis identifies gaps and synergies per project.":
+      "L'analyse de couverture identifie les lacunes et synergies par projet.",
+    "Coverage analysis will measure your progress against the prioritized frameworks":
+      "L'analyse de couverture mesurera votre progression par rapport aux référentiels priorisés",
+    "Cross-framework intelligence layer with control mappings, governance scenarios, and unified coverage analysis.":
+      "Couche d'intelligence inter-référentiels avec correspondances de contrôles, scénarios de gouvernance et analyse de couverture unifiée.",
+    "Cross-framework mappings reveal shared compliance effort.":
+      "Les correspondances inter-référentiels révèlent l'effort de conformité partagé.",
+    "Direct": "Direct",
+    "Direct Mappings": "Correspondances directes",
+    "Dismiss prompt": "Fermer l'invite",
+    "Don": "Don",
+    "Education": "Éducation",
+    "Enable Governance OS?": "Activer Governance OS ?",
+    "Energy": "Énergie",
+    "European Union": "Union européenne",
+    "Explore control-to-control mappings between any two frameworks. See direct equivalents, partial overlaps, and related controls.":
+      "Explorez les correspondances contrôle à contrôle entre deux référentiels. Voyez les équivalents directs, les chevauchements partiels et les contrôles connexes.",
+    "Explore cross-framework control mappings":
+      "Explorer les correspondances de contrôles inter-référentiels",
+    "Financial Services": "Services financiers",
+    "Framework Mapper": "Framework Mapper",
+    "Framework priority order": "Ordre de priorité des référentiels",
+    "General-Purpose AI": "IA à usage général",
+    "Get Recommendations": "Obtenir des recommandations",
+    "Get framework recommendations based on your context":
+      "Obtenez des recommandations de référentiels basées sur votre contexte",
+    "Get personalized framework recommendations based on your industry, region, risk level, and use case type.":
+      "Obtenez des recommandations de référentiels personnalisées en fonction de votre secteur, région, niveau de risque et type de cas d'usage.",
+    "Go to Framework page": "Aller à la page Référentiel",
+    "Governance Domains": "Domaines de gouvernance",
+    "Governance OS": "Governance OS",
+    "Governance domain": "Domaine de gouvernance",
+    "Governance domains group controls by topic area.":
+      "Les domaines de gouvernance regroupent les contrôles par thématique.",
+    "Governance scenario details": "Détails du scénario de gouvernance",
+    "Healthcare": "Santé",
+    "High Risk": "Risque élevé",
+    "High-Risk AI System": "Système d'IA à haut risque",
+    "Learn more in the user guide": "En savoir plus dans le guide utilisateur",
+    "Limited Risk": "Risque limité",
+    "Limited Risk AI": "IA à risque limité",
+    "Manufacturing": "Fabrication",
+    "Mapped Controls": "Contrôles mappés",
+    "Mapping relationship": "Relation de correspondance",
+    "Mapping strength": "Force de correspondance",
+    "Minimal Risk": "Risque minimal",
+    "New projects will inherit this framework priority order as a recommendation":
+      "Les nouveaux projets hériteront de cet ordre de priorité comme recommandation",
+    "Next steps after selecting this scenario":
+      "Étapes suivantes après la sélection de ce scénario",
+    "No coverage data available. Assign frameworks to a project first.":
+      "Aucune donnée de couverture. Affectez d'abord des référentiels à un projet.",
+    "No governance scenarios available.": "Aucun scénario de gouvernance disponible.",
+    "No mappings found for the selected frameworks and filters.":
+      "Aucune correspondance trouvée pour les référentiels et filtres sélectionnés.",
+    "No strong matches found. Try adjusting your criteria or browse the scenarios below.":
+      "Aucune correspondance forte trouvée. Ajustez vos critères ou parcourez les scénarios ci-dessous.",
+    "Not now": "Pas maintenant",
+    "Partial": "Partiel",
+    "Per-project coverage analysis showing how well each project satisfies its assigned frameworks, with gap and synergy detection.":
+      "Analyse de couverture par projet montrant dans quelle mesure chaque projet satisfait ses référentiels assignés, avec détection des lacunes et synergies.",
+    "Per-project coverage and gap analysis": "Analyse de couverture et de lacunes par projet",
+    "Primary framework (highest priority)": "Référentiel principal (priorité la plus élevée)",
+    "Public Sector": "Secteur public",
+    "Rationale": "Justification",
+    "Recommendation match": "Correspondance de recommandation",
+    "Recommended Scenarios": "Scénarios recommandés",
+    "Related": "Connexe",
+    "Retail": "Commerce de détail",
+    "Review controls": "Examiner les contrôles",
+    "Scenario Builder": "Constructeur de scénarios",
+    "Scenario recommendations match frameworks to your context.":
+      "Les recommandations de scénarios font correspondre les référentiels à votre contexte.",
+    "Scenarios": "Scénarios",
+    "Secondary framework(s)": "Référentiel(s) secondaire(s)",
+    "Select Project": "Sélectionner un projet",
+    "Select a project to view its cross-framework coverage analysis.":
+      "Sélectionnez un projet pour voir son analyse de couverture inter-référentiels.",
+    "Set as active governance strategy": "Définir comme stratégie de gouvernance active",
+    "Source Framework": "Référentiel source",
+    "Source control": "Contrôle source",
+    "Supplementary framework(s)": "Référentiel(s) complémentaire(s)",
+    "Target Framework": "Référentiel cible",
+    "Target control": "Contrôle cible",
+    "Technology": "Technologie",
+    "This scenario scored": "Ce scénario a obtenu",
+    "Total Controls": "Total des contrôles",
+    "Total Mappings": "Total des correspondances",
+    "Track progress on Dashboard": "Suivre la progression dans le Tableau de bord",
+    "Unified Insights": "Insights unifiés",
+    "United Kingdom": "Royaume-Uni",
+    "United States": "États-Unis",
+    "Use Case Type": "Type de cas d'usage",
+    "Use Framework Mapper": "Utiliser Framework Mapper",
+    "What happens when you select this scenario?":
+      "Que se passe-t-il lorsque vous sélectionnez ce scénario ?",
+    "What is this scenario?": "Qu'est-ce que ce scénario ?",
+    "What this means for you": "Ce que cela signifie pour vous",
+    "You can change your active scenario at any time without losing progress":
+      "Vous pouvez changer de scénario actif à tout moment sans perdre votre progression",
+    "You now have multiple frameworks assigned. Enable Governance OS to explore cross-framework mappings, get smart recommendations, and analyze coverage across all your frameworks.":
+      "Vous avez désormais plusieurs référentiels assignés. Activez Governance OS pour explorer les correspondances inter-référentiels, obtenir des recommandations intelligentes et analyser la couverture sur l'ensemble de vos référentiels.",
+    "Your compliance dashboard will prioritize tasks from the primary framework first":
+      "Votre tableau de bord de conformité priorisera d'abord les tâches du référentiel principal",
   },
 };

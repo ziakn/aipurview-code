@@ -1,10 +1,6 @@
 import {
   Box,
   Stack,
-  Select,
-  MenuItem,
-  ListItemText,
-  Checkbox as MuiCheckbox,
   Table,
   TableBody,
   TableCell,
@@ -36,6 +32,8 @@ import { text } from "../../../themes/palette";
 import Checkbox from "../../Inputs/Checkbox";
 import ConfirmationModal from "../../Dialogs/ConfirmationModal";
 import BulkActionsToolbar, { type BulkAction } from "../BulkActionsToolbar";
+import CustomizableMultiSelect from "../../Inputs/Select/Multi";
+import VWSelect from "../../Inputs/Select";
 import { useBulkSelection } from "../../../../application/hooks/useBulkSelection";
 import { useBulkUpdateProjectRisks } from "../../../../application/hooks/useBulkUpdateProjectRisks";
 import useUsers from "../../../../application/hooks/useUsers";
@@ -665,23 +663,18 @@ const VWProjectRisksTable = ({
           title={`Set owner on ${selectionCount} project risk${selectionCount === 1 ? "" : "s"}`}
           body={
             <Stack gap={2}>
-              <Select
-                size="small"
+              <VWSelect
+                id="bulk-set-owner"
+                placeholder="Choose an owner…"
                 value={pendingOwnerId}
                 onChange={(e) => setPendingOwnerId(String(e.target.value))}
-                displayEmpty
-                sx={{ width: 280, fontSize: 13 }}
-                MenuProps={{ PaperProps: { sx: { maxHeight: 280 } } }}
-              >
-                <MenuItem value="" dense sx={{ py: 0.5, fontSize: 13 }}>
-                  Choose an owner…
-                </MenuItem>
-                {users.map((u: { id: number; name: string; surname: string }) => (
-                  <MenuItem key={u.id} value={String(u.id)} dense sx={{ py: 0.5, fontSize: 13 }}>
-                    {u.name} {u.surname}
-                  </MenuItem>
-                ))}
-              </Select>
+                items={users.map((u: { id: number; name: string; surname: string }) => ({
+                  _id: String(u.id),
+                  name: u.name,
+                  surname: u.surname,
+                }))}
+                sx={{ width: 280 }}
+              />
             </Stack>
           }
           cancelText="Cancel"
@@ -711,37 +704,20 @@ const VWProjectRisksTable = ({
               <Typography variant="body2" sx={{ color: "text.secondary", fontSize: 12 }}>
                 Replaces existing categories. Leave empty to clear.
               </Typography>
-              <Select
-                size="small"
-                multiple
+              <CustomizableMultiSelect
+                label=""
+                placeholder="Choose categories…"
+                isHidden
                 value={pendingCategories}
-                onChange={(e) =>
+                onChange={(e) => {
+                  const v = e.target.value;
                   setPendingCategories(
-                    typeof e.target.value === "string"
-                      ? e.target.value.split(",")
-                      : (e.target.value as string[]),
-                  )
-                }
-                renderValue={(values) =>
-                  (values as string[]).length === 0
-                    ? "Choose categories…"
-                    : (values as string[]).join(", ")
-                }
-                displayEmpty
-                sx={{ width: 320, fontSize: 13 }}
-                MenuProps={{ PaperProps: { sx: { maxHeight: 280 } } }}
-              >
-                {PROJECT_RISK_CATEGORIES.map((c) => (
-                  <MenuItem key={c} value={c} dense sx={{ py: 0.25 }}>
-                    <MuiCheckbox
-                      checked={pendingCategories.includes(c)}
-                      size="small"
-                      sx={{ "p": 0.25, "mr": 1, "& svg": { fontSize: 16 } }}
-                    />
-                    <ListItemText primary={c} primaryTypographyProps={{ fontSize: 13 }} />
-                  </MenuItem>
-                ))}
-              </Select>
+                    typeof v === "string" ? v.split(",") : (v as (string | number)[]).map(String),
+                  );
+                }}
+                items={PROJECT_RISK_CATEGORIES.map((c) => ({ _id: c, name: c }))}
+                width={320}
+              />
             </Stack>
           }
           cancelText="Cancel"
