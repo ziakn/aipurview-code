@@ -81,6 +81,8 @@ const MODEL_PROVIDERS = [
 
 export interface ModelsPageProps {
   orgId: string;
+  openAddModal?: boolean;
+  onAddModalConsumed?: () => void;
 }
 
 interface AlertState {
@@ -95,7 +97,7 @@ interface NewModelConfig {
   apiKey: string;
 }
 
-export default function ModelsPage({ orgId }: ModelsPageProps) {
+export default function ModelsPage({ orgId, openAddModal, onAddModalConsumed }: ModelsPageProps) {
   const [models, setModels] = useState<SavedModel[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -113,6 +115,12 @@ export default function ModelsPage({ orgId }: ModelsPageProps) {
 
   // New model modal state
   const [addModalOpen, setAddModalOpen] = useState(false);
+  useEffect(() => {
+    if (openAddModal) {
+      setAddModalOpen(true);
+      onAddModalConsumed?.(); // reset the flag in the parent so returning later doesn't re-open
+    }
+  }, [openAddModal, onAddModalConsumed]);
   const [isSaving, setIsSaving] = useState(false);
   const [newModel, setNewModel] = useState<NewModelConfig>({
     accessMethod: "",

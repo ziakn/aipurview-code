@@ -23,6 +23,10 @@ import {
   Save,
   Workflow,
   Swords,
+  MessageSquare,
+  FileText,
+  Scale,
+  Cpu,
 } from "lucide-react";
 import { PageBreadcrumbs } from "../../components/breadcrumbs/PageBreadcrumbs";
 import { PageHeader } from "../../components/Layout/PageHeader";
@@ -225,6 +229,7 @@ export default function EvalsDashboard() {
   const canManageApiKeys = allowedRoles.evals.manageApiKeys.includes(userRoleName);
 
   // Determine tab from URL hash or default
+  const [openModelsAddModal, setOpenModelsAddModal] = useState(false);
   const [tab, setTab] = useState(() => {
     const hash = location.hash.replace("#", "");
     // When no projectId, default to "overview" to show projects list
@@ -1030,10 +1035,12 @@ export default function EvalsDashboard() {
       overview: { label: "Overview", icon: <LayoutDashboard size={14} strokeWidth={1.5} /> },
       experiments: { label: "Experiments", icon: <FlaskConical size={14} strokeWidth={1.5} /> },
       datasets: { label: "Datasets", icon: <Database size={14} strokeWidth={1.5} /> },
-      models: { label: "Models", icon: <Bot size={14} strokeWidth={1.5} /> },
+      models: { label: "Models", icon: <Cpu size={14} strokeWidth={1.5} /> },
       scorers: { label: "Scorers", icon: <Award size={14} strokeWidth={1.5} /> },
-      "bias-audits": { label: "Bias audits", icon: <FileSearch size={14} strokeWidth={1.5} /> },
+      "bias-audits": { label: "Bias audits", icon: <Scale size={14} strokeWidth={1.5} /> },
       arena: { label: "Arena", icon: <Swords size={14} strokeWidth={1.5} /> },
+      playground: { label: "Playground", icon: <MessageSquare size={14} strokeWidth={1.5} /> },
+      reports: { label: "Reports", icon: <FileText size={14} strokeWidth={1.5} /> },
       settings: { label: "Settings", icon: <Settings size={14} strokeWidth={1.5} /> },
     };
     return tabMap[tabValue] || { label: tabValue, icon: <Workflow size={14} strokeWidth={1.5} /> };
@@ -1920,12 +1927,12 @@ export default function EvalsDashboard() {
               <ProjectScorers projectId={projectId} orgId={orgId || currentProject?.orgId || ""} />
             )}
 
-            {tab === "models" && <ModelsPage orgId={orgId || currentProject?.orgId || ""} />}
+            {tab === "models" && <ModelsPage orgId={orgId || currentProject?.orgId || ""} openAddModal={openModelsAddModal} onAddModalConsumed={() => setOpenModelsAddModal(false)} />}
 
             {tab === "arena" && <ArenaPage orgId={orgId || currentProject?.orgId || ""} />}
 
             {tab === "playground" && (
-              <PlaygroundPage orgId={orgId || currentProject?.orgId || ""} />
+              <PlaygroundPage orgId={orgId || currentProject?.orgId || ""} onNavigateToModels={() => { setOpenModelsAddModal(true); setTab("models"); }} />
             )}
 
             {tab === "bias-audits" &&

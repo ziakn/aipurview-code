@@ -710,19 +710,12 @@ export default function NewExperimentModal({
             modelPath: config.model.modelPath,
           };
 
-      // Create experiment name with model name + date/time
+      // Create experiment name: model - DD/MM/YY
       const now = new Date();
-      const dateStr = now.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      });
-      const timeStr = now.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      });
-      const dateTimeStr = `${dateStr}, ${timeStr}`;
+      const dd = String(now.getDate()).padStart(2, "0");
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const yy = String(now.getFullYear()).slice(-2);
+      const dateTimeStr = `${dd}/${mm}/${yy}`;
       const experimentModelName = resolvedModel.name || modelName || "Unknown Model";
 
       const experimentConfig = {

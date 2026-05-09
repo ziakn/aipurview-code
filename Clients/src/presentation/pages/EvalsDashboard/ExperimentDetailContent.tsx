@@ -52,11 +52,14 @@ const preprocessLatex = (text: string): string => {
   return processed;
 };
 
-// Bias and Toxicity are stored as score=1 meaning "no bias / non-toxic" (pass), but users
-// read the number as a level where 0 = none = best. Invert the display percentage for them.
-const getDisplayScore = (score: number, metricName: string): number => {
+// For bias and toxicity the raw score IS the level (0 = none = best, 1 = worst).
+// Display it directly — no inversion needed.
+const getDisplayScore = (score: number, _metricName: string): number => score;
+
+// Metrics where a lower displayed score is better (green = low, red = high)
+const lowerIsBetter = (metricName: string): boolean => {
   const n = metricName.toLowerCase();
-  return n.includes("bias") || n.includes("toxicity") ? 1 - score : score;
+  return n.includes("bias") || n.includes("toxicity") || n.includes("hallucination");
 };
 
 // Convert camelCase or concatenated metric names to proper display format
@@ -1016,9 +1019,9 @@ export default function ExperimentDetailContent({
                 icon: palette.status.default.text,
               };
 
-            // Only Hallucination is inverse (lower score = better result)
+            // Lower-is-better metrics: hallucination, bias, toxicity
             const isInverse =
-              metricKey && metricKey.toLowerCase() === "hallucination";
+              metricKey && lowerIsBetter(metricKey);
 
             if (isInverse) {
               // For inverse metrics: low = good (green), high = bad (red)
@@ -1624,13 +1627,19 @@ export default function ExperimentDetailContent({
                                 ]
                               );
                             })();
-                            const passed =
-                              score !== null &&
-                              (typeof rawMetricData === "object" &&
+                            const backendPassedRaw =
+                              typeof rawMetricData === "object" &&
                               rawMetricData !== null &&
                               "passed" in rawMetricData
-                                ? (rawMetricData as { passed?: boolean }).passed === true
-                                : score >= 0.5);
+                                ? (rawMetricData as { passed?: boolean }).passed
+                                : undefined;
+                            // For lower-is-better metrics the backend's passed flag is inverted
+                            // (it uses score >= threshold). Flip it so green = low = good.
+                            const passed =
+                              score !== null &&
+                              (backendPassedRaw !== undefined
+                                ? lowerIsBetter(metric) ? !backendPassedRaw : backendPassedRaw
+                                : lowerIsBetter(metric) ? score <= 0.5 : score >= 0.5);
                             return (
                               <td
                                 key={metric}
@@ -1703,15 +1712,15 @@ export default function ExperimentDetailContent({
                 // Calculate overall pass/fail for this sample
                 const metricScores = selectedLog.metadata?.metric_scores || {};
                 const scoreEntries = Object.entries(metricScores);
-                const passedCount = scoreEntries.filter(([_name, data]) => {
-                  // Use the backend-computed `passed` field when present; it already
-                  // handles per-metric thresholds and inverse semantics correctly.
+                const passedCount = scoreEntries.filter(([name, data]) => {
                   if (typeof data === "object" && data !== null && "passed" in (data as object)) {
-                    return (data as { passed?: boolean }).passed === true;
+                    const bp = (data as { passed?: boolean }).passed;
+                    // Backend uses score >= threshold for all metrics — flip for lower-is-better ones
+                    return lowerIsBetter(name) ? bp === false : bp === true;
                   }
                   const score =
                     typeof data === "number" ? data : (data as { score?: number })?.score;
-                  return typeof score === "number" && score >= 0.5;
+                  return typeof score === "number" && (lowerIsBetter(name) ? score <= 0.5 : score >= 0.5);
                 }).length;
 
                 return (
@@ -2001,8 +2010,9 @@ export default function ExperimentDetailContent({
                                     : undefined;
                                 const passed =
                                   backendPassed !== undefined
-                                    ? backendPassed
-                                    : typeof score === "number" && score >= 0.5;
+                                    ? lowerIsBetter(metricName) ? !backendPassed : backendPassed
+                                    : typeof score === "number" &&
+                                      (lowerIsBetter(metricName) ? score <= 0.5 : score >= 0.5);
                                 const rawReason =
                                   typeof metricData === "object" && metricData !== null
                                     ? (metricData as { reason?: string }).reason

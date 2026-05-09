@@ -10,15 +10,6 @@ import {
   MenuItem,
   Divider,
   Tooltip,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  TextField,
-  Select,
-  FormControl,
-  InputLabel,
 } from "@mui/material";
 import { Send, Bot, ChevronDown, Trash2, Paperclip, X, FileText, Mic, Plus } from "lucide-react";
 import ReactMarkdown from "react-markdown";
@@ -30,6 +21,7 @@ import palette from "../../themes/palette";
 interface Message {
   role: "user" | "assistant";
   content: string;
+  images?: string[]; // base64 data URLs — shown inline in the bubble
 }
 
 interface Attachment {
@@ -41,6 +33,7 @@ interface Attachment {
 
 interface PlaygroundPageProps {
   orgId: string;
+  onNavigateToModels: () => void;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -95,6 +88,32 @@ const PROVIDER_OPTIONS = [
   "openrouter", "huggingface", "ollama", "groq", "deepseek",
 ];
 
+const PROVIDER_DISPLAY: Record<string, string> = {
+  openai:      "OpenAI",
+  anthropic:   "Anthropic",
+  google:      "Google",
+  mistral:     "Mistral",
+  xai:         "xAI",
+  openrouter:  "OpenRouter",
+  huggingface: "HuggingFace",
+  ollama:      "Ollama",
+  groq:        "Groq",
+  deepseek:    "DeepSeek",
+};
+
+// Models that support image inputs
+const VISION_PATTERNS = [
+  /gpt-4o/i, /gpt-4.*vision/i,
+  /claude-3/i,
+  /gemini/i,
+  /vision/i, /pixtral/i, /llava/i, /qwen.*vl/i, /idefics/i,
+];
+
+function isVisionCapable(model: SavedModel | undefined): boolean {
+  if (!model) return false;
+  return VISION_PATTERNS.some((p) => p.test(model.name));
+}
+
 // Pulse keyframe for mic animation
 const pulseKeyframes = `
 @keyframes vw-mic-pulse {
@@ -104,7 +123,7 @@ const pulseKeyframes = `
 }
 `;
 
-export default function PlaygroundPage({ orgId }: PlaygroundPageProps) {
+export default function PlaygroundPage({ orgId, onNavigateToModels }: PlaygroundPageProps) {
   const [savedModels, setSavedModels] = useState<SavedModel[]>([]);
   const [selectedModelId, setSelectedModelId] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -114,10 +133,6 @@ export default function PlaygroundPage({ orgId }: PlaygroundPageProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [dictating, setDictating] = useState(false);
-  const [addModelOpen, setAddModelOpen] = useState(false);
-  const [newModelName, setNewModelName] = useState("");
-  const [newModelProvider, setNewModelProvider] = useState("openrouter");
-  const [addingModel, setAddingModel] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -138,6 +153,11 @@ export default function PlaygroundPage({ orgId }: PlaygroundPageProps) {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
+  // Auto-focus the textarea whenever it becomes interactive
+  useEffect(() => {
+    if (!loading && selectedModelId) textareaRef.current?.focus();
+  }, [loading, selectedModelId]);
+
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -147,6 +167,7 @@ export default function PlaygroundPage({ orgId }: PlaygroundPageProps) {
 
   const selectedModel = savedModels.find((m) => m.id === selectedModelId);
   const ModelIcon = selectedModel ? getModelIcon(selectedModel) : null;
+  const visionOk = isVisionCapable(selectedModel);
 
   // File attachment
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -173,6 +194,7 @@ export default function PlaygroundPage({ orgId }: PlaygroundPageProps) {
     }
     setAttachments((prev) => [...prev, ...newAttachments]);
     e.target.value = "";
+    textareaRef.current?.focus();
   };
 
   const removeAttachment = (idx: number) => setAttachments((prev) => prev.filter((_, i) => i !== idx));
@@ -205,32 +227,16 @@ export default function PlaygroundPage({ orgId }: PlaygroundPageProps) {
         return (base + " " + finalTranscript + (interim ? `[${interim}]` : "")).trimStart();
       });
     };
-    recognition.onerror = () => setDictating(false);
+    recognition.onerror = () => { setDictating(false); textareaRef.current?.focus(); };
     recognition.onend = () => {
       setDictating(false);
       setInput((prev) => prev.replace(/\s*\[.*?\]$/, "").trimEnd());
+      textareaRef.current?.focus();
     };
 
     recognitionRef.current = recognition;
     recognition.start();
     setDictating(true);
-  };
-
-  // Add model
-  const handleAddModel = async () => {
-    if (!newModelName.trim()) return;
-    setAddingModel(true);
-    try {
-      const created = await evalModelsService.createModel({ name: newModelName.trim(), provider: newModelProvider, orgId });
-      setSavedModels((prev) => [...prev, created]);
-      setSelectedModelId(created.id);
-      setMessages([]);
-      setNewModelName("");
-      setNewModelProvider("openrouter");
-      setAddModelOpen(false);
-    } catch { /* ignore */ } finally {
-      setAddingModel(false);
-    }
   };
 
   // Send
@@ -239,14 +245,24 @@ export default function PlaygroundPage({ orgId }: PlaygroundPageProps) {
     if ((!trimmed && !attachments.length) || loading || !selectedModel) return;
 
     let userText = trimmed;
+    // Append document text as context
     attachments.filter((a) => a.type === "document").forEach((d) => {
       userText = userText ? `${userText}\n\n[Document: ${d.name}]\n${d.dataUrl}` : `[Document: ${d.name}]\n${d.dataUrl}`;
     });
-    attachments.filter((a) => a.type === "image").forEach((i) => {
-      userText = userText ? `${userText}\n\n[Image: ${i.name}]` : `[Image: ${i.name}]`;
-    });
 
-    const newMessages: Message[] = [...messages, { role: "user", content: userText }];
+    // Collect image previews to display in the bubble; mention names in text for the model
+    const imagePreviews = attachments.filter((a) => a.type === "image").map((a) => a.preview!);
+    if (imagePreviews.length > 0) {
+      const imgNote = attachments.filter((a) => a.type === "image").map((a) => `[Image: ${a.name}]`).join(", ");
+      userText = userText ? `${userText}\n${imgNote}` : imgNote;
+    }
+
+    const userMessage: Message = {
+      role: "user",
+      content: userText,
+      ...(imagePreviews.length > 0 ? { images: imagePreviews } : {}),
+    };
+    const newMessages: Message[] = [...messages, userMessage];
     setMessages(newMessages);
     setInput("");
     setAttachments([]);
@@ -254,10 +270,21 @@ export default function PlaygroundPage({ orgId }: PlaygroundPageProps) {
     setError(null);
 
     try {
+      // Build API messages — for vision messages use the OpenAI multimodal content array format
+      const apiMessages = newMessages.map(({ role, content, images }) => {
+        if (images && images.length > 0) {
+          const parts: Array<{ type: string; [k: string]: any }> = [];
+          const textOnly = content.replace(/\[Image:[^\]]*\]/g, "").trim();
+          if (textOnly) parts.push({ type: "text", text: textOnly });
+          images.forEach((url) => parts.push({ type: "image_url", image_url: { url } }));
+          return { role, content: parts };
+        }
+        return { role, content };
+      });
       const res = await CustomAxios.post<{ content: string }>("/deepeval/playground/chat", {
         model: selectedModel.name,
         provider: selectedModel.provider,
-        messages: newMessages,
+        messages: apiMessages,
       });
       setMessages((prev) => [...prev, { role: "assistant", content: res.data?.content ?? "" }]);
     } catch (err: any) {
@@ -346,7 +373,7 @@ export default function PlaygroundPage({ orgId }: PlaygroundPageProps) {
           })}
           <Divider />
           <MenuItem
-            onClick={() => { setAnchorEl(null); setAddModelOpen(true); }}
+            onClick={() => { setAnchorEl(null); onNavigateToModels(); }}
             sx={{ gap: "8px", py: "8px", px: "12px", color: palette.brand.primary }}
           >
             <Plus size={14} strokeWidth={1.5} />
@@ -368,29 +395,48 @@ export default function PlaygroundPage({ orgId }: PlaygroundPageProps) {
         )}
       </Box>
 
-      {/* ── Chat thread ──────────────────────────────────────────────────── */}
-      <Box sx={{ flex: 1, overflowY: "auto" }}>
-        {!hasMessages && !loading && (
-          <Box sx={{ height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "10px", pb: "80px" }}>
-            <Box sx={{ width: 48, height: 48, borderRadius: "12px", backgroundColor: palette.background.fill, border: `1px solid ${palette.border.light}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              {ModelIcon ? <ModelIcon width={22} height={22} /> : <Bot size={22} color={palette.text.tertiary} strokeWidth={1.2} />}
-            </Box>
-            <Typography fontSize={15} fontWeight={500} color={palette.text.secondary}>
-              {savedModels.length === 0 ? "Add a model first" : `Chat with ${selectedModel?.name ?? "your model"}`}
-            </Typography>
-            <Typography fontSize={13} color={palette.text.tertiary} textAlign="center" maxWidth={320}>
-              {savedModels.length === 0 ? 'Click "Add model" above to save a model, then start chatting.' : "Send a message or attach a file below."}
-            </Typography>
-          </Box>
-        )}
+      {/* ── Spacer above (empty state only) — pushes content to center ─── */}
+      {!hasMessages && <Box sx={{ flex: 1 }} />}
 
+      {/* ── Empty state ──────────────────────────────────────────────────── */}
+      {!hasMessages && !loading && (
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px", pb: "28px" }}>
+          <Box sx={{ width: 48, height: 48, borderRadius: "12px", backgroundColor: palette.background.fill, border: `1px solid ${palette.border.light}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            {ModelIcon ? <ModelIcon width={22} height={22} /> : <Bot size={22} color={palette.text.tertiary} strokeWidth={1.2} />}
+          </Box>
+          <Typography fontSize={15} fontWeight={500} color={palette.text.secondary}>
+            {savedModels.length === 0 ? "Add a model first" : `Chat with ${selectedModel?.name ?? "your model"}`}
+          </Typography>
+          <Typography fontSize={13} color={palette.text.tertiary} textAlign="center" maxWidth={320}>
+            {savedModels.length === 0 ? 'Click "Add model" above to save a model, then start chatting.' : "Send a message or attach a file below."}
+          </Typography>
+        </Box>
+      )}
+
+      {/* ── Chat thread (only while conversation is active) ───────────────── */}
+      <Box sx={{ flex: hasMessages ? 1 : 0, overflowY: hasMessages ? "auto" : "hidden" }}>
         <Box sx={{ maxWidth: 760, mx: "auto", px: "2px" }}>
           {messages.map((msg, idx) => (
             <Box key={idx} sx={{ py: "10px" }}>
               {msg.role === "user" ? (
                 <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                  <Box sx={{ maxWidth: "75%", backgroundColor: palette.brand.primary, color: "#fff", borderRadius: "18px 18px 4px 18px", px: "16px", py: "10px", fontSize: 13, lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
-                    {msg.content}
+                  <Box sx={{ maxWidth: "75%", display: "flex", flexDirection: "column", gap: "6px", alignItems: "flex-end" }}>
+                    {/* Image previews */}
+                    {msg.images && msg.images.length > 0 && (
+                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: "6px", justifyContent: "flex-end" }}>
+                        {msg.images.map((src, i) => (
+                          <Box key={i} component="img" src={src} alt={`attachment-${i}`}
+                            sx={{ maxWidth: 220, maxHeight: 180, borderRadius: "12px 12px 4px 12px", objectFit: "cover", border: `2px solid ${palette.brand.primary}`, display: "block" }}
+                          />
+                        ))}
+                      </Box>
+                    )}
+                    {/* Text — strip [Image: …] markers since image is shown above */}
+                    {msg.content.replace(/\[Image:[^\]]*\]/g, "").trim() && (
+                      <Box sx={{ backgroundColor: palette.brand.primary, color: "#fff", borderRadius: "18px 18px 4px 18px", px: "16px", py: "10px", fontSize: 13, lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
+                        {msg.content.replace(/\[Image:[^\]]*\]/g, "").trim()}
+                      </Box>
+                    )}
                   </Box>
                 </Box>
               ) : (
@@ -426,6 +472,9 @@ export default function PlaygroundPage({ orgId }: PlaygroundPageProps) {
         </Box>
         <div ref={bottomRef} />
       </Box>
+
+      {/* ── Spacer below (empty state only) — keeps composer slightly above center ── */}
+      {!hasMessages && <Box sx={{ flex: 1.4 }} />}
 
       {/* ── Composer ─────────────────────────────────────────────────────── */}
       <Box sx={{ flexShrink: 0, pt: "12px", maxWidth: 760, width: "100%", mx: "auto", px: "2px" }}>
@@ -498,9 +547,9 @@ export default function PlaygroundPage({ orgId }: PlaygroundPageProps) {
           }}
         >
           {/* Attach */}
-          <Tooltip title="Attach image or document">
+          <Tooltip title={!selectedModelId ? "Select a model first" : !visionOk ? "This model is text-only — images not supported" : "Attach image or document"}>
             <span>
-              <IconButton size="small" onClick={() => fileInputRef.current?.click()} disabled={loading || !selectedModelId}
+              <IconButton size="small" onClick={() => fileInputRef.current?.click()} disabled={loading || !selectedModelId || !visionOk}
                 sx={{ "color": palette.text.tertiary, "borderRadius": "6px", "p": "4px", "flexShrink": 0, "&:hover": { backgroundColor: palette.background.fill }, "&:disabled": { opacity: 0.35 } }}>
                 <Paperclip size={16} strokeWidth={1.5} />
               </IconButton>
@@ -566,65 +615,6 @@ export default function PlaygroundPage({ orgId }: PlaygroundPageProps) {
       {/* Hidden file input */}
       <input ref={fileInputRef} type="file" multiple accept="image/*,.pdf,.txt,.md,.csv,.json" style={{ display: "none" }} onChange={handleFileChange} />
 
-      {/* ── Add Model Dialog ─────────────────────────────────────────────── */}
-      <Dialog
-        open={addModelOpen}
-        onClose={() => setAddModelOpen(false)}
-        PaperProps={{ sx: { borderRadius: "12px", width: 400, p: "4px" } }}
-      >
-        <DialogTitle sx={{ fontSize: 15, fontWeight: 600, pb: "4px" }}>Add model</DialogTitle>
-        <DialogContent>
-          <Stack gap="16px" mt="4px">
-            <FormControl fullWidth size="small">
-              <InputLabel sx={{ fontSize: 13 }}>Provider</InputLabel>
-              <Select
-                value={newModelProvider}
-                label="Provider"
-                onChange={(e) => setNewModelProvider(e.target.value as string)}
-                sx={{ fontSize: 13 }}
-              >
-                {PROVIDER_OPTIONS.map((p) => {
-                  const Icon = DIRECT_PROVIDER_ICON[p] ?? null;
-                  return (
-                    <MenuItem key={p} value={p} sx={{ gap: "8px", fontSize: 13 }}>
-                      {Icon && <Icon width={14} height={14} style={{ flexShrink: 0 }} />}
-                      {p.charAt(0).toUpperCase() + p.slice(1)}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
-            <TextField
-              label="Model name / ID"
-              placeholder="e.g. moonshotai/kimi-k2.6"
-              value={newModelName}
-              onChange={(e) => setNewModelName(e.target.value)}
-              size="small"
-              fullWidth
-              inputProps={{ style: { fontSize: 13 } }}
-              InputLabelProps={{ style: { fontSize: 13 } }}
-              onKeyDown={(e) => { if (e.key === "Enter") handleAddModel(); }}
-            />
-            <Typography fontSize={12} color={palette.text.tertiary}>
-              This model will be saved to your Models table and available for experiments.
-            </Typography>
-          </Stack>
-        </DialogContent>
-        <DialogActions sx={{ px: "20px", pb: "16px", gap: "8px" }}>
-          <Button onClick={() => setAddModelOpen(false)} size="small" sx={{ fontSize: 13, color: palette.text.secondary, textTransform: "none" }}>
-            Cancel
-          </Button>
-          <Button
-            onClick={handleAddModel}
-            disabled={!newModelName.trim() || addingModel}
-            size="small"
-            variant="contained"
-            sx={{ fontSize: 13, textTransform: "none", borderRadius: "6px", backgroundColor: palette.brand.primary, "&:hover": { backgroundColor: palette.brand.primaryHover } }}
-          >
-            {addingModel ? "Saving…" : "Save model"}
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   );
 }

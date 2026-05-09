@@ -237,7 +237,7 @@ function deepEvalRoutes() {
       const { model, provider, messages } = req.body as {
         model: string;
         provider: string;
-        messages: { role: string; content: string }[];
+        messages: { role: string; content: string | Array<{ type: string; [k: string]: any }> }[];
       };
 
       if (!model || !messages?.length) {
