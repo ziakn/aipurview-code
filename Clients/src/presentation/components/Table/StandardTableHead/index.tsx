@@ -29,10 +29,10 @@ const StandardTableHead: React.FC<StandardTableHeadProps> = memo(
           {selection && (
             <TableCell
               sx={{
-                width: 48,
-                minWidth: 48,
-                maxWidth: 48,
-                padding: "16px 8px",
+                width: 40,
+                minWidth: 40,
+                maxWidth: 40,
+                padding: 0,
                 borderBottom: "1px solid #d0d5dd",
               }}
             >
@@ -41,7 +41,7 @@ const StandardTableHead: React.FC<StandardTableHeadProps> = memo(
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  width: "100%",
+                  height: "100%",
                 }}
               >
                 <Checkbox

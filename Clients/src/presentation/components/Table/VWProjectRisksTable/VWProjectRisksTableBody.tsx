@@ -166,10 +166,10 @@ const VWProjectRisksTableBody = ({
                   <TableCell
                     padding="checkbox"
                     sx={{
-                      width: 48,
-                      minWidth: 48,
-                      maxWidth: 48,
-                      padding: "14px 8px",
+                      width: 40,
+                      minWidth: 40,
+                      maxWidth: 40,
+                      padding: 0,
                     }}
                     onClick={(e) => e.stopPropagation()}
                   >
@@ -178,7 +178,7 @@ const VWProjectRisksTableBody = ({
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        width: "100%",
+                        height: "100%",
                       }}
                     >
                       <Checkbox
@@ -188,7 +188,8 @@ const VWProjectRisksTableBody = ({
                         onChange={() => selection.onToggle(Number(row.id))}
                         isDisabled={row.is_deleted}
                         ariaLabel={`Select project risk ${row.risk_name}`}
-                        sx={{ "p": 0, "& svg": { display: "block" } }}
+                        size="small"
+                        sx={{ p: 0 }}
                       />
                     </Box>
                   </TableCell>
