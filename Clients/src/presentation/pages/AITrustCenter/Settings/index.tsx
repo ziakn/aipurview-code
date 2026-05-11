@@ -110,9 +110,9 @@ const AITrustCenterSettings: React.FC = () => {
         ...formData,
         info: formData.info
           ? {
-            ...formData.info,
-            logo_url: undefined,
-          }
+              ...formData.info,
+              logo_url: undefined,
+            }
           : undefined,
       };
 
@@ -120,9 +120,9 @@ const AITrustCenterSettings: React.FC = () => {
         ...originalData,
         info: originalData.info
           ? {
-            ...originalData.info,
-            logo_url: undefined,
-          }
+              ...originalData.info,
+              logo_url: undefined,
+            }
           : undefined,
       };
 
