@@ -16,12 +16,7 @@ interface BottomChipProps {
  * on the wrapper so the rest of the page stays interactive everywhere except on
  * the pill itself. Drop any content in as `children`.
  */
-const BottomChip: React.FC<BottomChipProps> = ({
-  children,
-  role,
-  ariaLabel,
-  sx,
-}) => {
+const BottomChip: React.FC<BottomChipProps> = ({ children, role, ariaLabel, sx }) => {
   const theme = useTheme();
 
   return (
