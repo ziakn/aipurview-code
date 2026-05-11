@@ -15,7 +15,6 @@ import {
   useTheme,
   IconButton,
   Menu,
-  MenuItem,
 } from "@mui/material";
 import {
   Upload,
@@ -33,6 +32,7 @@ import {
   Check,
   MessageSquare,
   GitBranch,
+  Eye,
 } from "lucide-react";
 import { CustomizableButton } from "../../components/button/customizable-button";
 import TabContext from "@mui/lab/TabContext";
@@ -1969,26 +1969,107 @@ export function ProjectDatasets({ projectId, orgId }: ProjectDatasetsProps) {
         open={Boolean(actionAnchor)}
         onClose={handleActionMenuClose}
         slotProps={{
-          paper: {
-            sx: singleTheme.dropDownStyles.primary,
-          },
+          paper: { sx: { ...singleTheme.dropDownStyles.primary, p: "8px", minWidth: 200 } },
         }}
       >
-        <MenuItem onClick={() => actionDataset && handleViewPrompts(actionDataset)}>
-          View prompts
-        </MenuItem>
-        <MenuItem onClick={() => actionDataset && handleOpenInEditor(actionDataset)}>
-          Open in editor
-        </MenuItem>
-        <MenuItem onClick={() => actionDataset && handleDownloadDataset(actionDataset)}>
-          Download
-        </MenuItem>
-        <MenuItem
-          onClick={() => actionDataset && handleRemoveDataset(actionDataset)}
-          sx={{ color: palette.status.error.text }}
-        >
-          Remove
-        </MenuItem>
+        <Stack spacing={1}>
+          <CustomizableButton
+            variant="outlined"
+            onClick={() => {
+              actionDataset && handleViewPrompts(actionDataset);
+              handleActionMenuClose();
+            }}
+            startIcon={<Eye size={14} />}
+            sx={{
+              "height": "34px",
+              "fontSize": "13px",
+              "fontWeight": 500,
+              "color": palette.text.secondary,
+              "borderColor": palette.border.dark,
+              "backgroundColor": "transparent",
+              "justifyContent": "flex-start",
+              "&:hover": {
+                backgroundColor: palette.status.success.bg,
+                borderColor: palette.brand.primary,
+                color: palette.brand.primary,
+              },
+            }}
+          >
+            View prompts
+          </CustomizableButton>
+          <CustomizableButton
+            variant="outlined"
+            onClick={() => {
+              actionDataset && handleOpenInEditor(actionDataset);
+              handleActionMenuClose();
+            }}
+            startIcon={<Edit3 size={14} />}
+            sx={{
+              "height": "34px",
+              "fontSize": "13px",
+              "fontWeight": 500,
+              "color": palette.text.secondary,
+              "borderColor": palette.border.dark,
+              "backgroundColor": "transparent",
+              "justifyContent": "flex-start",
+              "&:hover": {
+                backgroundColor: palette.status.success.bg,
+                borderColor: palette.brand.primary,
+                color: palette.brand.primary,
+              },
+            }}
+          >
+            Open in editor
+          </CustomizableButton>
+          <CustomizableButton
+            variant="outlined"
+            onClick={() => {
+              actionDataset && handleDownloadDataset(actionDataset);
+              handleActionMenuClose();
+            }}
+            startIcon={<Download size={14} />}
+            sx={{
+              "height": "34px",
+              "fontSize": "13px",
+              "fontWeight": 500,
+              "color": palette.text.secondary,
+              "borderColor": palette.border.dark,
+              "backgroundColor": "transparent",
+              "justifyContent": "flex-start",
+              "&:hover": {
+                backgroundColor: palette.status.success.bg,
+                borderColor: palette.brand.primary,
+                color: palette.brand.primary,
+              },
+            }}
+          >
+            Download
+          </CustomizableButton>
+          <CustomizableButton
+            variant="outlined"
+            onClick={() => {
+              actionDataset && handleRemoveDataset(actionDataset);
+              handleActionMenuClose();
+            }}
+            startIcon={<Trash2 size={14} />}
+            sx={{
+              "height": "34px",
+              "fontSize": "13px",
+              "fontWeight": 500,
+              "color": palette.status.error.text,
+              "borderColor": palette.border.dark,
+              "backgroundColor": "transparent",
+              "justifyContent": "flex-start",
+              "&:hover": {
+                backgroundColor: palette.status.error.bg,
+                borderColor: palette.status.error.text,
+                color: palette.status.error.text,
+              },
+            }}
+          >
+            Delete
+          </CustomizableButton>
+        </Stack>
       </Menu>
 
       {/* Delete confirmation modal */}

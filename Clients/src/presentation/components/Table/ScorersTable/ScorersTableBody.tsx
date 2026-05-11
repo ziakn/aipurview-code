@@ -150,7 +150,7 @@ const ScorersTableBody: React.FC<ScorersTableBodyProps> = ({
             {scorer.config?.choiceScores?.length ?? "-"}
           </TableCell>
 
-          {/* DATE - center aligned */}
+          {/* LAST RUN - center aligned; shows updatedAt if available (reflects most recent experiment run) */}
           <TableCell
             sx={{
               ...singleTheme.tableStyles.primary.body.cell,
@@ -159,7 +159,7 @@ const ScorersTableBody: React.FC<ScorersTableBodyProps> = ({
             }}
           >
             <Typography sx={{ fontSize: "12px", color: `${status.default.text}` }}>
-              {formatDate(scorer.createdAt)}
+              {formatDate(scorer.updatedAt || scorer.createdAt)}
             </Typography>
           </TableCell>
 
