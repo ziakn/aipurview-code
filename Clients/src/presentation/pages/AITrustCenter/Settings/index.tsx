@@ -604,7 +604,7 @@ const AITrustCenterSettings: React.FC = () => {
             placeholder="Company's AI Trust Center"
             value={formData?.info?.title}
             onChange={(e) => handleFieldChange("info", "title", e.target.value)}
-            sx={styles.trustTitleInput}
+            width={340}
           />
         </Box>
       </Box>

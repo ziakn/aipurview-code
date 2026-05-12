@@ -48,6 +48,8 @@ interface FieldProps extends OriginalFieldProps {
   autoFocus?: boolean;
   multiline?: boolean;
   minRows?: number;
+  maxRows?: number;
+  borderless?: boolean;
 }
 
 const Field = forwardRef(
@@ -81,6 +83,8 @@ const Field = forwardRef(
       max,
       multiline: multilineProp,
       minRows,
+      maxRows,
+      borderless,
     }: FieldProps,
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
@@ -93,7 +97,7 @@ const Field = forwardRef(
     return (
       <Stack
         gap={theme.spacing(2)}
-        className={`field field-${type}`}
+        className={`field field-${type}${borderless ? " field-borderless" : ""}`}
         sx={{
           ...getInputStyles(theme, { hasError: !!error }),
           width: width,
@@ -137,6 +141,7 @@ const Field = forwardRef(
           placeholder={placeholder}
           multiline={multilineProp || type === "description" || (rows !== undefined && rows > 1)}
           minRows={minRows}
+          maxRows={maxRows}
           rows={multilineProp ? undefined : type === "description" ? rows || 4 : rows || 1}
           value={value}
           onInput={onInput as React.FormEventHandler<HTMLDivElement>}
