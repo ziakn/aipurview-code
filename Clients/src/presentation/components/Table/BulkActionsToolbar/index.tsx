@@ -1,8 +1,9 @@
 import { useCallback, useState } from "react";
-import { Box, Divider, Stack, Typography, useTheme } from "@mui/material";
+import { Box, Divider, Typography, useTheme } from "@mui/material";
 import { Check, X } from "lucide-react";
 import { CustomizableButton } from "../../button/customizable-button";
 import ConfirmationModal from "../../Dialogs/ConfirmationModal";
+import BottomChip from "../../BottomChip";
 
 export interface BulkActionConfirm {
   title: string;
@@ -87,114 +88,82 @@ const BulkActionsToolbar: React.FC<BulkActionsToolbarProps> = ({
 
   return (
     <>
-      <Box
-        sx={{
-          position: "fixed",
-          left: 0,
-          right: 0,
-          bottom: theme.spacing(6),
-          display: "flex",
-          justifyContent: "center",
-          zIndex: 1200,
-          pointerEvents: "none",
-          px: theme.spacing(4),
-        }}
-      >
-        <Stack
-          role="toolbar"
-          aria-label="Bulk actions"
-          direction="row"
-          alignItems="center"
+      <BottomChip role="toolbar" ariaLabel="Bulk actions">
+        <Typography
           sx={{
-            pointerEvents: "auto",
-            gap: theme.spacing(3),
-            pl: theme.spacing(6),
-            pr: theme.spacing(4),
-            py: theme.spacing(2),
-            backgroundColor: theme.palette.background.main,
-            border: `1px solid ${theme.palette.border.light}`,
-            borderRadius: 999,
-            maxWidth: "calc(100vw - 32px)",
-            flexWrap: "wrap",
-            rowGap: theme.spacing(1),
+            fontWeight: 600,
+            fontSize: 13,
+            color: theme.palette.text.primary,
+            whiteSpace: "nowrap",
           }}
         >
-          <Typography
-            sx={{
-              fontWeight: 600,
-              fontSize: 13,
-              color: theme.palette.text.primary,
-              whiteSpace: "nowrap",
-            }}
-          >
-            {count} selected
-          </Typography>
+          {count} selected
+        </Typography>
 
-          {hasMoreToSelect && (
-            <CustomizableButton
-              text={`Select all ${selectAll!.totalCount}`}
-              variant="text"
-              size="small"
-              startIcon={<Check size={14} />}
-              onClick={selectAll!.onSelectAll}
-              sx={{
-                color: theme.palette.text.secondary,
-                fontSize: 13,
-                whiteSpace: "nowrap",
-              }}
-              ariaLabel={`Select all ${selectAll!.totalCount}`}
-            />
-          )}
-
+        {hasMoreToSelect && (
           <CustomizableButton
-            text="Clear selection"
+            text={`Select all ${selectAll!.totalCount}`}
             variant="text"
             size="small"
-            startIcon={<X size={14} />}
-            onClick={onClear}
+            startIcon={<Check size={14} />}
+            onClick={selectAll!.onSelectAll}
             sx={{
               color: theme.palette.text.secondary,
               fontSize: 13,
               whiteSpace: "nowrap",
             }}
-            ariaLabel="Clear selection"
+            ariaLabel={`Select all ${selectAll!.totalCount}`}
           />
+        )}
 
-          {actions.length > 0 && (
-            <Divider orientation="vertical" flexItem sx={{ mx: theme.spacing(1) }} />
-          )}
+        <CustomizableButton
+          text="Clear selection"
+          variant="text"
+          size="small"
+          startIcon={<X size={14} />}
+          onClick={onClear}
+          sx={{
+            color: theme.palette.text.secondary,
+            fontSize: 13,
+            whiteSpace: "nowrap",
+          }}
+          ariaLabel="Clear selection"
+        />
 
-          <Box
-            component="ul"
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              gap: theme.spacing(1),
-              m: 0,
-              p: 0,
-              listStyle: "none",
-              flexWrap: "wrap",
-              rowGap: theme.spacing(1),
-            }}
-          >
-            {actions.map((action) => (
-              <li key={action.id}>
-                <CustomizableButton
-                  text={action.label}
-                  variant="text"
-                  size="small"
-                  color={action.confirm?.danger ? "error" : "primary"}
-                  startIcon={action.icon}
-                  onClick={() => handleActionClick(action)}
-                  isDisabled={action.disabled}
-                  sx={{ fontSize: 13, whiteSpace: "nowrap" }}
-                  ariaLabel={action.label}
-                />
-              </li>
-            ))}
-          </Box>
-        </Stack>
-      </Box>
+        {actions.length > 0 && (
+          <Divider orientation="vertical" flexItem sx={{ mx: theme.spacing(1) }} />
+        )}
+
+        <Box
+          component="ul"
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            gap: theme.spacing(1),
+            m: 0,
+            p: 0,
+            listStyle: "none",
+            flexWrap: "wrap",
+            rowGap: theme.spacing(1),
+          }}
+        >
+          {actions.map((action) => (
+            <li key={action.id}>
+              <CustomizableButton
+                text={action.label}
+                variant="text"
+                size="small"
+                color={action.confirm?.danger ? "error" : "primary"}
+                startIcon={action.icon}
+                onClick={() => handleActionClick(action)}
+                isDisabled={action.disabled}
+                sx={{ fontSize: 13, whiteSpace: "nowrap" }}
+                ariaLabel={action.label}
+              />
+            </li>
+          ))}
+        </Box>
+      </BottomChip>
 
       {pendingAction?.confirm && (
         <ConfirmationModal

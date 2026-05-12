@@ -21,7 +21,6 @@ import { CheckboxProps } from "../../../types/widget.types";
 
 // Soft unchecked square icon with thin border
 function SoftSquare({ size = 24 }: { size?: number }) {
-  const theme = useTheme();
   return (
     <svg
       width={size}
@@ -32,14 +31,14 @@ function SoftSquare({ size = 24 }: { size?: number }) {
       style={{ width: size, height: size, display: "block", flexShrink: 0 }}
     >
       <rect
-        x="3.5"
-        y="3.5"
-        width="17"
-        height="17"
-        rx="2"
-        stroke={theme.palette.text.accent}
-        strokeWidth="1"
-        fill="none"
+        x="3"
+        y="3"
+        width="18"
+        height="18"
+        rx="4"
+        stroke="#D0D5DD"
+        strokeWidth="1.5"
+        fill="white"
       />
     </svg>
   );
@@ -57,9 +56,9 @@ function FilledCheckSquare({ size = 24 }: { size?: number }) {
       xmlns="http://www.w3.org/2000/svg"
       style={{ width: size, height: size, display: "block", flexShrink: 0 }}
     >
-      <rect x="3" y="3" width="18" height="18" rx="2" fill={theme.palette.primary.main} />
+      <rect x="3" y="3" width="18" height="18" rx="4" fill={theme.palette.primary.main} />
       <path
-        d="M9 12l2 2 4-4"
+        d="M8 12.5L10.5 15L16 9"
         stroke="white"
         strokeWidth="2"
         strokeLinecap="round"
@@ -80,7 +79,7 @@ function IndeterminateSquare({ size = 24 }: { size?: number }) {
       xmlns="http://www.w3.org/2000/svg"
       style={{ width: size, height: size, display: "block", flexShrink: 0 }}
     >
-      <rect x="3" y="3" width="18" height="18" rx="2" fill={theme.palette.primary.main} />
+      <rect x="3" y="3" width="18" height="18" rx="4" fill={theme.palette.primary.main} />
       <path d="M8 12h8" stroke="white" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );

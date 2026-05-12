@@ -116,10 +116,10 @@ const SortableTableHead: React.FC<{
         {selection && (
           <TableCell
             sx={{
-              width: 48,
-              minWidth: 48,
-              maxWidth: 48,
-              padding: "16px 8px",
+              width: 40,
+              minWidth: 40,
+              maxWidth: 40,
+              padding: 0,
               borderBottom: "1px solid #d0d5dd",
             }}
           >
@@ -128,7 +128,7 @@ const SortableTableHead: React.FC<{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                width: "100%",
+                height: "100%",
               }}
             >
               <Checkbox
@@ -138,6 +138,7 @@ const SortableTableHead: React.FC<{
                 isIndeterminate={selection.someSelected && !selection.allSelected}
                 onChange={selection.onToggleAll}
                 ariaLabel="Select all files on this page"
+                size="small"
                 sx={{ p: 0 }}
               />
             </Box>
@@ -612,10 +613,10 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                   {canRunBulkActions && (
                     <TableCell
                       sx={{
-                        width: 48,
-                        minWidth: 48,
-                        maxWidth: 48,
-                        padding: "16px 8px",
+                        width: 40,
+                        minWidth: 40,
+                        maxWidth: 40,
+                        padding: 0,
                       }}
                       onClick={(e) => e.stopPropagation()}
                     >
@@ -624,7 +625,7 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          width: "100%",
+                          height: "100%",
                         }}
                       >
                         <Checkbox
@@ -633,6 +634,7 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                           isChecked={isSelected(Number(row.id))}
                           onChange={() => toggleSelection(Number(row.id))}
                           ariaLabel={`Select file ${row.fileName}`}
+                          size="small"
                           sx={{ p: 0 }}
                         />
                       </Box>
@@ -851,8 +853,8 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                     fontSize: 12,
                     opacity: 0.7,
                     whiteSpace: "nowrap",
-                    width: 1,
                   }}
+                  colSpan={canRunBulkActions ? 2 : 1}
                 >
                   Showing {page * rowsPerPage + 1} -{" "}
                   {Math.min(page * rowsPerPage + rowsPerPage, sortedBodyData.length)} of{" "}
@@ -868,6 +870,7 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                   ActionsComponent={TablePaginationActions as React.ComponentType<any>}
                   labelRowsPerPage="Rows per page"
                   sx={{ mt: theme.spacing(6) }}
+                  colSpan={visibleColumnKeys.length - 1}
                 />
               </TableRow>
             </TableFooter>

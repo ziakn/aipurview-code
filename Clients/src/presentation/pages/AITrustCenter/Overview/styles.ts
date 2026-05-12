@@ -92,54 +92,6 @@ export const styles = {
     maxWidth: 700,
   },
 
-  // TextField styles moved from inline
-  textField: {
-    "width": "100%",
-    "height": "100%",
-    "& .MuiOutlinedInput-root": {
-      "border": "none",
-      "backgroundColor": "transparent",
-      "height": "100%",
-      "& fieldset": {
-        border: "none",
-      },
-      "&:hover fieldset": {
-        border: "none",
-      },
-      "&.Mui-focused fieldset": {
-        border: "none",
-      },
-    },
-    "& .MuiInputBase-input": {
-      "padding": 0,
-      "height": "100% !important",
-      "resize": "none",
-      "fontSize": 13,
-      "overflowY": "auto",
-      "&::-webkit-scrollbar": {
-        width: "8px",
-      },
-      "&::-webkit-scrollbar-track": {
-        background: "#f1f1f1",
-        borderRadius: "4px",
-      },
-      "&::-webkit-scrollbar-thumb": {
-        "background": "#c1c1c1",
-        "borderRadius": "4px",
-        "&:hover": {
-          background: "#a8a8a8",
-        },
-      },
-    },
-    "& .MuiInputBase-root.Mui-disabled": {
-      "backgroundColor": "background.surface",
-      "& .MuiInputBase-input": {
-        color: "#666",
-        cursor: "not-allowed",
-      },
-    },
-  },
-
   // Save button styles
   saveButton: {
     alignSelf: "flex-end",
