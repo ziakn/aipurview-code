@@ -25,6 +25,8 @@ router = APIRouter(prefix="/keys", tags=["API Keys"])
 
 FRONTEND_URL = "http://localhost:5173"  # overridable via env if needed
 
+VALID_PROVIDERS = {"openai", "anthropic", "gemini", "xai", "mistral", "openrouter"}
+
 # Provider verification endpoints (matches Express controller)
 PROVIDER_VERIFY_ENDPOINTS: dict[str, dict] = {
     "openai": {
@@ -101,6 +103,11 @@ async def list_api_keys(request: Request):
     return {"data": keys}
 
 
+def _safe_key(key: dict) -> dict:
+    """Strip encrypted_key from a key row before returning to the client."""
+    return {k: v for k, v in key.items() if k != "encrypted_key"}
+
+
 @router.post("")
 async def create_key(request: Request):
     """Create a new provider API key."""
@@ -110,13 +117,19 @@ async def create_key(request: Request):
     user_id = get_user_id(request)
 
     body = await request.json()
-    provider = body.get("provider")
+    provider = body.get("provider", "").lower()
     key_name = body.get("key_name")
     api_key = body.get("api_key")
 
     if not provider or not key_name or not api_key:
         raise HTTPException(
             status_code=400, detail="provider, key_name, and api_key are required"
+        )
+
+    if provider not in VALID_PROVIDERS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid provider '{provider}'. Must be one of: {', '.join(sorted(VALID_PROVIDERS))}",
         )
 
     key = await create_api_key(org_id, provider, key_name, api_key)
@@ -131,7 +144,7 @@ async def create_key(request: Request):
         "actionLabel": "View settings",
     })
 
-    return {"data": key}
+    return {"data": _safe_key(key)}
 
 
 @router.patch("/{key_id}")
@@ -147,7 +160,7 @@ async def update_key(key_id: int, request: Request):
     if not updated:
         raise HTTPException(status_code=404, detail="API key not found")
 
-    return {"data": updated}
+    return {"data": _safe_key(updated)}
 
 
 @router.delete("/{key_id}")
