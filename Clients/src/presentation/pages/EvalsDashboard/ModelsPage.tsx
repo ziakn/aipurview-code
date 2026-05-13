@@ -104,9 +104,9 @@ export default function ModelsPage({ orgId, openAddModal, onAddModalConsumed }: 
   const [alert, setAlert] = useState<AlertState | null>(null);
 
   // RBAC permissions
-  const { userRoleName } = useAuth();
-  const canDeleteModel = allowedRoles.evals.deleteScorer?.includes(userRoleName) ?? true;
-  const canCreateModel = allowedRoles.evals.createScorer?.includes(userRoleName) ?? true;
+  const { userRoleName, isSuperAdmin } = useAuth();
+  const canDeleteModel = (allowedRoles.evals.deleteScorer?.includes(userRoleName) ?? true) && !isSuperAdmin;
+  const canCreateModel = (allowedRoles.evals.createScorer?.includes(userRoleName) ?? true) && !isSuperAdmin;
 
   // Delete confirmation modal state
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
