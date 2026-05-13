@@ -537,7 +537,11 @@ function ModelSelector({
                         InputProps={{
                           onClick: (e) => e.stopPropagation(),
                           onKeyDown: (e) => {
-                            if (e.key === "Enter" && customModel.trim() && (endpointUrl || "").trim()) {
+                            if (
+                              e.key === "Enter" &&
+                              customModel.trim() &&
+                              (endpointUrl || "").trim()
+                            ) {
                               onModelChange(customModel.trim());
                               setOpen(false);
                             }
