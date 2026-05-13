@@ -163,7 +163,8 @@ export default function ProjectOverview({
 
   // RBAC permissions
   const { userRoleName, isSuperAdmin } = useAuth();
-  const canCreateExperiment = allowedRoles.evals.createExperiment.includes(userRoleName) && !isSuperAdmin;
+  const canCreateExperiment =
+    allowedRoles.evals.createExperiment.includes(userRoleName) && !isSuperAdmin;
 
   const loadOverviewData = useCallback(async () => {
     try {

@@ -67,7 +67,10 @@ async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
       // Use explicit judgeProvider when available; fall back to model-name inference
       const judgeModel = body.judgeModel || "gpt-4o";
       let judgeProvider: string;
-      if (body.judgeProvider && VALID_PROVIDERS.includes(body.judgeProvider.toLowerCase() as LLMProvider)) {
+      if (
+        body.judgeProvider &&
+        VALID_PROVIDERS.includes(body.judgeProvider.toLowerCase() as LLMProvider)
+      ) {
         judgeProvider = body.judgeProvider.toLowerCase();
       } else {
         judgeProvider = "openai";
