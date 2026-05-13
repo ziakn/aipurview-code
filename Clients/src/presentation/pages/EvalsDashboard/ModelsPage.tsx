@@ -580,7 +580,6 @@ export default function ModelsPage({ orgId, openAddModal, onAddModalConsumed }: 
                       options.
                     </Typography>
                     <Field
-                      label=""
                       value={newModel.modelName}
                       onChange={(e) =>
                         setNewModel((prev) => ({ ...prev, modelName: e.target.value }))
@@ -647,7 +646,6 @@ export default function ModelsPage({ orgId, openAddModal, onAddModalConsumed }: 
                         : "Enter the model identifier for your custom endpoint."}
                     </Typography>
                     <Field
-                      label=""
                       value={newModel.modelName}
                       onChange={(e) =>
                         setNewModel((prev) => ({ ...prev, modelName: e.target.value }))
@@ -660,18 +658,8 @@ export default function ModelsPage({ orgId, openAddModal, onAddModalConsumed }: 
                     />
                     {newModel.accessMethod === "custom" && (
                       <Box sx={{ mt: 2 }}>
-                        <Typography
-                          sx={{
-                            fontSize: "13px",
-                            fontWeight: 500,
-                            color: palette.text.secondary,
-                            mb: 1,
-                          }}
-                        >
-                          Endpoint URL
-                        </Typography>
                         <Field
-                          label=""
+                          label="Endpoint URL"
                           value={newModel.endpointUrl}
                           onChange={(e) =>
                             setNewModel((prev) => ({ ...prev, endpointUrl: e.target.value }))
@@ -713,7 +701,6 @@ export default function ModelsPage({ orgId, openAddModal, onAddModalConsumed }: 
                 ) : (
                   /* Fallback text input */
                   <Field
-                    label=""
                     value={newModel.modelName}
                     onChange={(e) =>
                       setNewModel((prev) => ({ ...prev, modelName: e.target.value }))
@@ -745,22 +732,15 @@ export default function ModelsPage({ orgId, openAddModal, onAddModalConsumed }: 
                 </Box>
               ) : (
                 <Box>
-                  <Typography
-                    sx={{ fontSize: "13px", fontWeight: 500, color: palette.text.secondary, mb: 1 }}
-                  >
-                    API Key
-                  </Typography>
                   <Field
-                    label=""
+                    label="API Key"
                     type="password"
                     value={newModel.apiKey}
                     onChange={(e) => setNewModel((prev) => ({ ...prev, apiKey: e.target.value }))}
                     placeholder={`Enter your ${MODEL_PROVIDERS.find((p) => p.id === newModel.accessMethod)?.name || newModel.accessMethod} API key`}
                     autoComplete="off"
+                    helperText="Your key will be saved securely for future experiments"
                   />
-                  <Typography sx={{ fontSize: "11px", color: palette.text.tertiary, mt: 0.5 }}>
-                    Your key will be saved securely for future experiments
-                  </Typography>
                 </Box>
               ))}
           </Stack>
