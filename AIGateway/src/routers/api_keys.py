@@ -138,7 +138,7 @@ async def create_key(request: Request):
 async def update_key(key_id: int, request: Request):
     """Update an existing API key."""
     verify_internal_key(request)
-    require_admin_or_editor(request)
+    require_admin(request)
     org_id = get_org_id(request)
 
     body = await request.json()
@@ -154,7 +154,7 @@ async def update_key(key_id: int, request: Request):
 async def delete_key(key_id: int, request: Request):
     """Delete an API key."""
     verify_internal_key(request)
-    require_admin_or_editor(request)
+    require_admin(request)
     org_id = get_org_id(request)
     user_id = get_user_id(request)
 
