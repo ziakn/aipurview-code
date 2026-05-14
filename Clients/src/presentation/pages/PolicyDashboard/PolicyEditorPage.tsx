@@ -523,7 +523,7 @@ export default function PolicyEditorPage() {
   const validators = useMemo(
     () => ({
       title: (v: unknown) => {
-        const r = checkStringValidation("Policy title", v as string, 1, 64);
+        const r = checkStringValidation("Policy title", v as string, 1, 128);
         return r.accepted ? "" : r.message;
       },
       status: (v: unknown) => (!v ? "Status is required." : ""),
