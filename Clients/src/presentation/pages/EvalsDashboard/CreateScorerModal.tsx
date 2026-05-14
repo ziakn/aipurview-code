@@ -682,7 +682,6 @@ function ModelSelector({
                     </Typography>
                     <Box sx={{ mb: 1.5 }}>
                       <Field
-                        label="Model ID"
                         placeholder="e.g., openai/gpt-4o, anthropic/claude-3-opus"
                         value={customModel}
                         onChange={(e) => setCustomModel(e.target.value)}
