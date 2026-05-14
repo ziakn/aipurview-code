@@ -47,6 +47,7 @@ const SsoConfigTab: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isEnabling, setIsEnabling] = useState(false);
+  const [hasSavedConfig, setHasSavedConfig] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -65,6 +66,7 @@ const SsoConfigTab: React.FC = () => {
             cloudEnvironment: data.config_data?.cloud_environment || "AzurePublic",
             isEnabled: !!data.is_enabled,
           });
+          setHasSavedConfig(true);
         }
       } catch {
         // empty form on error
@@ -146,6 +148,7 @@ const SsoConfigTab: React.FC = () => {
         },
       });
       setConfig((prev) => ({ ...prev, clientSecret: "" }));
+      setHasSavedConfig(true);
     } finally {
       setIsSaving(false);
     }
@@ -303,7 +306,7 @@ const SsoConfigTab: React.FC = () => {
           <Button
             variant={config.isEnabled ? "outlined" : "contained"}
             onClick={handleToggle}
-            disabled={isEnabling}
+            disabled={isEnabling || !hasSavedConfig}
             sx={{ height: "34px", fontSize: 13, fontWeight: 400, textTransform: "none" }}
           >
             {isEnabling ? "Processing..." : config.isEnabled ? "Disable SSO" : "Enable SSO"}
