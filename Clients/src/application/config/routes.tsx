@@ -20,6 +20,9 @@ const SetNewPassword = lazyRoute(
 const ResetPasswordContinue = lazyRoute(
   () => import("../../presentation/pages/Authentication/ResetPasswordContinue"),
 );
+const MicrosoftCallback = lazyRoute(
+  () => import("../../presentation/pages/Authentication/MicrosoftCallback"),
+);
 const RegisterUser = lazyRoute(
   () => import("../../presentation/pages/Authentication/RegisterUser"),
 );
@@ -940,6 +943,15 @@ export const createRoutes = (
     element={
       <Suspense fallback={<LazyFallback />}>
         <ProtectedRoute Component={Login} />
+      </Suspense>
+    }
+  />,
+  <Route
+    key="microsoft-callback"
+    path="/auth/microsoft/callback"
+    element={
+      <Suspense fallback={<LazyFallback />}>
+        <MicrosoftCallback />
       </Suspense>
     }
   />,
