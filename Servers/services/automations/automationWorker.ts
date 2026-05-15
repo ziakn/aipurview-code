@@ -77,7 +77,6 @@ import { readFileSync } from "fs";
 import { join } from "path";
 import { notifyVendorReviewDue, notifyPolicyDueSoon } from "../inAppNotification.service";
 import { getAllPoliciesDueSoonQuery } from "../../utils/policyManager.utils";
-import { PolicyManagerModel } from "../../domain.layer/models/policy/policy.model";
 
 const handlers = {
   send_email: sendEmail,
@@ -103,14 +102,14 @@ async function sendVendorReviewDateNotification() {
       ORDER BY aa."order" ASC;`,
       { replacements: { organizationId } },
     )) as [
-      (TenantAutomationActionModel & {
-        trigger_key: string;
-        action_key: string;
-        automation_id: number;
-        automation_params: { daysBefore: number };
-      })[],
-      number,
-    ];
+        (TenantAutomationActionModel & {
+          trigger_key: string;
+          action_key: string;
+          automation_id: number;
+          automation_params: { daysBefore: number };
+        })[],
+        number,
+      ];
     if (automations[0].length === 0) {
       continue;
     }
@@ -153,10 +152,10 @@ async function sendVendorReviewDateNotification() {
         try {
           const reviewDateStr = vendor.review_date
             ? new Date(vendor.review_date).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })
             : "Not set";
           await notifyVendorReviewDue(
             organizationId,
@@ -189,31 +188,33 @@ async function sendPolicyDueSoonEmailNotification() {
   for (const org of organizations) {
     const organizationId = org.id!;
     try {
-      const policies: PolicyManagerModel[] = await getAllPoliciesDueSoonQuery(organizationId);
+      const policies = await getAllPoliciesDueSoonQuery(organizationId);
 
       for (const policy of policies) {
         if (!policy.author_id) continue;
 
         const reviewDate = policy.next_review_date
           ? new Date(policy.next_review_date).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })
           : "Not set";
 
         try {
-          await notifyPolicyDueSoon(
-            organizationId,
-            policy.author_id,
-            {
-              id: policy.id!,
-              name: policy.title,
-              projectName: "",
-              dueDate: reviewDate,
-            },
-            baseUrl,
-          );
+          for (let user_id of policy.reviewer_ids || []) {
+            await notifyPolicyDueSoon(
+              organizationId,
+              user_id,
+              {
+                id: policy.id!,
+                name: policy.title,
+                projectName: "",
+                dueDate: reviewDate,
+              },
+              baseUrl,
+            );
+          }
         } catch (notifyError) {
           console.error(
             `Failed to send policy due soon notification for policy ${policy.id}:`,
@@ -299,23 +300,23 @@ async function sendReportNotification() {
       ORDER BY aa."order" ASC;`,
       { replacements: { organizationId } },
     )) as [
-      (TenantAutomationActionModel & {
-        trigger_key: string;
-        action_key: string;
-        automation_id: number;
-        automation_params: {
-          projectId: string;
-          reportType: string[];
-          frequency: string;
-          hour?: number;
-          minute?: number;
-          dayOfWeek?: number;
-          dayOfMonth?: number;
-        };
-        user_id: number;
-      })[],
-      number,
-    ];
+        (TenantAutomationActionModel & {
+          trigger_key: string;
+          action_key: string;
+          automation_id: number;
+          automation_params: {
+            projectId: string;
+            reportType: string[];
+            frequency: string;
+            hour?: number;
+            minute?: number;
+            dayOfWeek?: number;
+            dayOfMonth?: number;
+          };
+          user_id: number;
+        })[],
+        number,
+      ];
     if (automations[0].length === 0) {
       continue;
     }
@@ -337,14 +338,14 @@ async function sendReportNotification() {
           replacements: { organizationId, projectId: parseInt(params.projectId) },
         },
       )) as [
-        {
-          project_title: string;
-          owner: number;
-          framework_id: number;
-          project_framework_id: number;
-        }[],
-        number,
-      ];
+          {
+            project_title: string;
+            owner: number;
+            framework_id: number;
+            project_framework_id: number;
+          }[],
+          number,
+        ];
       const [[{ full_name }]] = (await sequelize.query(
         `SELECT name || ' ' || surname AS full_name FROM users WHERE id = :userId;`,
         {
