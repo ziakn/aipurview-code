@@ -7718,8 +7718,7 @@ export const translations: Record<string, Record<string, string>> = {
     "All AI-related training programs": "Alle KI-bezogenen Schulungsprogramme",
     "Assessment Result": "Bewertungsergebnis",
     "Attendance Record": "Anwesenheitsnachweis",
-    "Compliance evidence linked to trainings":
-      "Mit Schulungen verknüpfte Compliance-Nachweise",
+    "Compliance evidence linked to trainings": "Mit Schulungen verknüpfte Compliance-Nachweise",
     "Course Completion": "Kursabschluss",
     "Delete evidence": "Nachweis löschen",
     "Failed to load evidence details. Please try again.":
@@ -7730,8 +7729,7 @@ export const translations: Record<string, Record<string, string>> = {
     "No evidence uploaded yet for this training.":
       "Für diese Schulung wurden noch keine Nachweise hochgeladen.",
     "No files uploaded yet.": "Noch keine Dateien hochgeladen.",
-    "Optional notes about this evidence":
-      "Optionale Notizen zu diesem Nachweis",
+    "Optional notes about this evidence": "Optionale Notizen zu diesem Nachweis",
     "Policy owner": "Richtlinienverantwortlicher",
     "Previous file": "Vorherige Datei",
     "Quarter (year)": "Quartal (Jahr)",
@@ -15388,12 +15386,10 @@ export const translations: Record<string, Record<string, string>> = {
       "Vous avez désormais plusieurs référentiels assignés. Activez Governance OS pour explorer les correspondances inter-référentiels, obtenir des recommandations intelligentes et analyser la couverture sur l'ensemble de vos référentiels.",
     "Your compliance dashboard will prioritize tasks from the primary framework first":
       "Votre tableau de bord de conformité priorisera d'abord les tâches du référentiel principal",
-    "All AI-related training programs":
-      "Tous les programmes de formation liés à l'IA",
+    "All AI-related training programs": "Tous les programmes de formation liés à l'IA",
     "Assessment Result": "Résultat d'évaluation",
     "Attendance Record": "Registre de présence",
-    "Compliance evidence linked to trainings":
-      "Preuves de conformité liées aux formations",
+    "Compliance evidence linked to trainings": "Preuves de conformité liées aux formations",
     "Course Completion": "Achèvement du cours",
     "Delete evidence": "Supprimer la preuve",
     "Failed to load evidence details. Please try again.":
@@ -15404,8 +15400,7 @@ export const translations: Record<string, Record<string, string>> = {
     "No evidence uploaded yet for this training.":
       "Aucune preuve n'a encore été téléversée pour cette formation.",
     "No files uploaded yet.": "Aucun fichier téléversé pour le moment.",
-    "Optional notes about this evidence":
-      "Notes facultatives concernant cette preuve",
+    "Optional notes about this evidence": "Notes facultatives concernant cette preuve",
     "Policy owner": "Responsable de la politique",
     "Previous file": "Fichier précédent",
     "Quarter (year)": "Trimestre (année)",
