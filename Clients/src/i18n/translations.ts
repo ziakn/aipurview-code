@@ -7715,6 +7715,35 @@ export const translations: Record<string, Record<string, string>> = {
       "Sie haben jetzt mehrere Frameworks zugewiesen. Aktivieren Sie Governance OS, um übergreifende Zuordnungen zu erkunden, intelligente Empfehlungen zu erhalten und die Abdeckung über alle Frameworks hinweg zu analysieren.",
     "Your compliance dashboard will prioritize tasks from the primary framework first":
       "Ihr Compliance-Dashboard priorisiert zuerst Aufgaben aus dem primären Framework",
+    "All AI-related training programs": "Alle KI-bezogenen Schulungsprogramme",
+    "Assessment Result": "Bewertungsergebnis",
+    "Attendance Record": "Anwesenheitsnachweis",
+    "Compliance evidence linked to trainings":
+      "Mit Schulungen verknüpfte Compliance-Nachweise",
+    "Course Completion": "Kursabschluss",
+    "Delete evidence": "Nachweis löschen",
+    "Failed to load evidence details. Please try again.":
+      "Nachweisdetails konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "MAPPED TRAININGS": "ZUGEORDNETE SCHULUNGEN",
+    "Mapped trainings": "Zugeordnete Schulungen",
+    "Next file": "Nächste Datei",
+    "No evidence uploaded yet for this training.":
+      "Für diese Schulung wurden noch keine Nachweise hochgeladen.",
+    "No files uploaded yet.": "Noch keine Dateien hochgeladen.",
+    "Optional notes about this evidence":
+      "Optionale Notizen zu diesem Nachweis",
+    "Policy owner": "Richtlinienverantwortlicher",
+    "Previous file": "Vorherige Datei",
+    "Quarter (year)": "Quartal (Jahr)",
+    "Select a training": "Schulung auswählen",
+    "Select a type": "Typ auswählen",
+    "Select policy owner": "Richtlinienverantwortlichen auswählen",
+    "This evidence has no file attached to preview.":
+      "Diesem Nachweis ist keine Datei zur Vorschau angehängt.",
+    "Training Certificate": "Schulungszertifikat",
+    "Training Evidence Hub": "Schulungsnachweiszentrale",
+    "Upload certificates, attendance proofs, or other compliance evidence for this training.":
+      "Laden Sie Zertifikate, Anwesenheitsnachweise oder andere Compliance-Nachweise für diese Schulung hoch.",
   },
 
   fr: {
@@ -15359,5 +15388,35 @@ export const translations: Record<string, Record<string, string>> = {
       "Vous avez désormais plusieurs référentiels assignés. Activez Governance OS pour explorer les correspondances inter-référentiels, obtenir des recommandations intelligentes et analyser la couverture sur l'ensemble de vos référentiels.",
     "Your compliance dashboard will prioritize tasks from the primary framework first":
       "Votre tableau de bord de conformité priorisera d'abord les tâches du référentiel principal",
+    "All AI-related training programs":
+      "Tous les programmes de formation liés à l'IA",
+    "Assessment Result": "Résultat d'évaluation",
+    "Attendance Record": "Registre de présence",
+    "Compliance evidence linked to trainings":
+      "Preuves de conformité liées aux formations",
+    "Course Completion": "Achèvement du cours",
+    "Delete evidence": "Supprimer la preuve",
+    "Failed to load evidence details. Please try again.":
+      "Échec du chargement des détails de la preuve. Veuillez réessayer.",
+    "MAPPED TRAININGS": "FORMATIONS ASSOCIÉES",
+    "Mapped trainings": "Formations associées",
+    "Next file": "Fichier suivant",
+    "No evidence uploaded yet for this training.":
+      "Aucune preuve n'a encore été téléversée pour cette formation.",
+    "No files uploaded yet.": "Aucun fichier téléversé pour le moment.",
+    "Optional notes about this evidence":
+      "Notes facultatives concernant cette preuve",
+    "Policy owner": "Responsable de la politique",
+    "Previous file": "Fichier précédent",
+    "Quarter (year)": "Trimestre (année)",
+    "Select a training": "Sélectionner une formation",
+    "Select a type": "Sélectionner un type",
+    "Select policy owner": "Sélectionner le responsable de la politique",
+    "This evidence has no file attached to preview.":
+      "Aucun fichier n'est attaché à cette preuve pour l'aperçu.",
+    "Training Certificate": "Certificat de formation",
+    "Training Evidence Hub": "Centre de preuves de formation",
+    "Upload certificates, attendance proofs, or other compliance evidence for this training.":
+      "Téléversez des certificats, des justificatifs de présence ou d'autres preuves de conformité pour cette formation.",
   },
 };
