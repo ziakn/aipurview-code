@@ -279,24 +279,21 @@ const Training: React.FC = () => {
     setIsEvidenceHubModalOpen(true);
   }, []);
 
-  const handleEditEvidence = useCallback(
-    async (id: number) => {
-      try {
-        const response = await getEntityById({ routeUrl: `/evidenceHub/${id}` });
-        if (response?.data) {
-          setSelectedEvidenceHub(response.data);
-          setIsEvidenceHubModalOpen(true);
-        }
-      } catch (error) {
-        logEngine({ type: "error", message: `Failed to load evidence: ${error}` });
-        setAlert({
-          variant: "error",
-          body: "Failed to load evidence details. Please try again.",
-        });
+  const handleEditEvidence = useCallback(async (id: number) => {
+    try {
+      const response = await getEntityById({ routeUrl: `/evidenceHub/${id}` });
+      if (response?.data) {
+        setSelectedEvidenceHub(response.data);
+        setIsEvidenceHubModalOpen(true);
       }
-    },
-    [],
-  );
+    } catch (error) {
+      logEngine({ type: "error", message: `Failed to load evidence: ${error}` });
+      setAlert({
+        variant: "error",
+        body: "Failed to load evidence details. Please try again.",
+      });
+    }
+  }, []);
 
   const handleDeleteEvidence = useCallback(
     async (id: number) => {
@@ -366,8 +363,7 @@ const Training: React.FC = () => {
         const filename = rawFile.filename ?? rawFile.fileName;
         const uploadDate = rawFile.upload_date ?? rawFile.uploaded_time;
         const sizeRaw = rawFile.size;
-        const size =
-          typeof sizeRaw === "string" ? parseInt(sizeRaw, 10) || 0 : (sizeRaw ?? 0);
+        const size = typeof sizeRaw === "string" ? parseInt(sizeRaw, 10) || 0 : (sizeRaw ?? 0);
         const mimetype: string | undefined = rawFile.mimetype;
         const uploader = evidenceUsers.find(
           (u: any) => String(u.id) === String(rawFile.uploaded_by),
@@ -745,9 +741,7 @@ const Training: React.FC = () => {
       case "quarter": {
         // created_at is included in the API response but absent from the client model class.
         const raw =
-          (training as any).created_at ??
-          (training as any).createdAt ??
-          (training as any).created;
+          (training as any).created_at ?? (training as any).createdAt ?? (training as any).created;
         return getQuarterLabel(raw);
       }
       default:
@@ -768,9 +762,10 @@ const Training: React.FC = () => {
     let result = filterEvidenceData(evidenceHubData);
     if (evidenceSearchTerm.trim()) {
       const q = evidenceSearchTerm.toLowerCase();
-      result = result.filter((e) =>
-        (e.evidence_name || "").toLowerCase().includes(q) ||
-        (e.evidence_type || "").toLowerCase().includes(q),
+      result = result.filter(
+        (e) =>
+          (e.evidence_name || "").toLowerCase().includes(q) ||
+          (e.evidence_type || "").toLowerCase().includes(q),
       );
     }
     return result;
@@ -852,13 +847,9 @@ const Training: React.FC = () => {
       evidence_name: e.evidence_name || "-",
       evidence_type: e.evidence_type || "-",
       mapped_trainings: e.mapped_training_ids?.length
-        ? e.mapped_training_ids
-            .map((id) => trainingNameById.get(id) || `Training ${id}`)
-            .join(", ")
+        ? e.mapped_training_ids.map((id) => trainingNameById.get(id) || `Training ${id}`).join(", ")
         : "-",
-      expiry_date: e.expiry_date
-        ? new Date(e.expiry_date as any).toLocaleDateString()
-        : "-",
+      expiry_date: e.expiry_date ? new Date(e.expiry_date as any).toLocaleDateString() : "-",
     }));
   }, [filteredEvidence, trainingNameById]);
 

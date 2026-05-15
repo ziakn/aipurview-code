@@ -102,14 +102,14 @@ async function sendVendorReviewDateNotification() {
       ORDER BY aa."order" ASC;`,
       { replacements: { organizationId } },
     )) as [
-        (TenantAutomationActionModel & {
-          trigger_key: string;
-          action_key: string;
-          automation_id: number;
-          automation_params: { daysBefore: number };
-        })[],
-        number,
-      ];
+      (TenantAutomationActionModel & {
+        trigger_key: string;
+        action_key: string;
+        automation_id: number;
+        automation_params: { daysBefore: number };
+      })[],
+      number,
+    ];
     if (automations[0].length === 0) {
       continue;
     }
@@ -152,10 +152,10 @@ async function sendVendorReviewDateNotification() {
         try {
           const reviewDateStr = vendor.review_date
             ? new Date(vendor.review_date).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })
             : "Not set";
           await notifyVendorReviewDue(
             organizationId,
@@ -195,10 +195,10 @@ async function sendPolicyDueSoonEmailNotification() {
 
         const reviewDate = policy.next_review_date
           ? new Date(policy.next_review_date).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })
           : "Not set";
 
         try {
@@ -300,23 +300,23 @@ async function sendReportNotification() {
       ORDER BY aa."order" ASC;`,
       { replacements: { organizationId } },
     )) as [
-        (TenantAutomationActionModel & {
-          trigger_key: string;
-          action_key: string;
-          automation_id: number;
-          automation_params: {
-            projectId: string;
-            reportType: string[];
-            frequency: string;
-            hour?: number;
-            minute?: number;
-            dayOfWeek?: number;
-            dayOfMonth?: number;
-          };
-          user_id: number;
-        })[],
-        number,
-      ];
+      (TenantAutomationActionModel & {
+        trigger_key: string;
+        action_key: string;
+        automation_id: number;
+        automation_params: {
+          projectId: string;
+          reportType: string[];
+          frequency: string;
+          hour?: number;
+          minute?: number;
+          dayOfWeek?: number;
+          dayOfMonth?: number;
+        };
+        user_id: number;
+      })[],
+      number,
+    ];
     if (automations[0].length === 0) {
       continue;
     }
@@ -338,14 +338,14 @@ async function sendReportNotification() {
           replacements: { organizationId, projectId: parseInt(params.projectId) },
         },
       )) as [
-          {
-            project_title: string;
-            owner: number;
-            framework_id: number;
-            project_framework_id: number;
-          }[],
-          number,
-        ];
+        {
+          project_title: string;
+          owner: number;
+          framework_id: number;
+          project_framework_id: number;
+        }[],
+        number,
+      ];
       const [[{ full_name }]] = (await sequelize.query(
         `SELECT name || ' ' || surname AS full_name FROM users WHERE id = :userId;`,
         {

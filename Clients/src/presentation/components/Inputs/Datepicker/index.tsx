@@ -47,9 +47,7 @@ function DatePicker({
   const sxWithoutLayoutProps =
     sx && isRecordSx(sx)
       ? Object.fromEntries(
-          Object.entries(sx).filter(
-            ([key]) => !(LAYOUT_KEYS as readonly string[]).includes(key),
-          ),
+          Object.entries(sx).filter(([key]) => !(LAYOUT_KEYS as readonly string[]).includes(key)),
         )
       : sx;
 

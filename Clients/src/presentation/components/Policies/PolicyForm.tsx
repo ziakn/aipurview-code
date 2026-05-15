@@ -200,9 +200,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({
           ) || []
         }
         noOptionsText={
-          formData.assignedReviewers.length === users.length
-            ? "All members selected"
-            : "No options"
+          formData.assignedReviewers.length === users.length ? "All members selected" : "No options"
         }
         onChange={handleOnMultiSelect("assignedReviewers")}
         getOptionLabel={(user) => `${user.name} ${user.surname}`}

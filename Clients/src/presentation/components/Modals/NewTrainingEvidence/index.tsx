@@ -230,14 +230,10 @@ const NewTrainingEvidence: FC<NewTrainingEvidenceProps> = ({
 
           {/* Files block */}
           <Stack spacing={1.5}>
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="space-between"
-              spacing={2}
-            >
+            <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
               <Typography sx={{ fontSize: 13, fontWeight: 600, color: "text.primary" }}>
-                Files {errors.files && (
+                Files{" "}
+                {errors.files && (
                   <Box component="span" sx={{ color: "error.text", fontWeight: 400, ml: 1 }}>
                     {errors.files}
                   </Box>

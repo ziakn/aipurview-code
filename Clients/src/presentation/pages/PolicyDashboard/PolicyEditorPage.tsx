@@ -1675,9 +1675,7 @@ export default function PolicyEditorPage() {
                   </>
                 ) : (
                   <>
-                    <Typography
-                      sx={{ fontSize: 16, color: "text.secondary", fontWeight: 600 }}
-                    >
+                    <Typography sx={{ fontSize: 16, color: "text.secondary", fontWeight: 600 }}>
                       {pageTitle}
                     </Typography>
                     <IconButton

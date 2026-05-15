@@ -237,10 +237,7 @@ const NewEvidenceHub: FC<NewEvidenceHubProps> = ({
       uploaded_by: file.uploaded_by,
       upload_date: file.upload_date,
     }));
-    console.log(
-      "[NewEvidenceHub.handleUploadSuccess] mapped into evidence_files shape:",
-      mapped,
-    );
+    console.log("[NewEvidenceHub.handleUploadSuccess] mapped into evidence_files shape:", mapped);
     setValues((prev) => {
       const next = {
         ...prev,
@@ -332,10 +329,7 @@ const NewEvidenceHub: FC<NewEvidenceHubProps> = ({
 
     setIsSubmitting(true);
     try {
-      console.log(
-        "[NewEvidenceHub.handleSubmit] submitting evidence values:",
-        values,
-      );
+      console.log("[NewEvidenceHub.handleSubmit] submitting evidence values:", values);
       console.log(
         "[NewEvidenceHub.handleSubmit] evidence_files count:",
         values.evidence_files?.length,

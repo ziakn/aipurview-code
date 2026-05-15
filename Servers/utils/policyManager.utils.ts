@@ -69,7 +69,7 @@ export const getAllPoliciesQuery = async (organizationId: number) => {
 };
 
 export const getAllPoliciesDueSoonQuery = async (organizationId: number, daysAhead: number = 7) => {
-  const result = await sequelize.query(
+  const result = (await sequelize.query(
     `SELECT 
         pm.*,
         array_agg(pm_rev.user_id) AS reviewer_ids
@@ -85,7 +85,7 @@ export const getAllPoliciesDueSoonQuery = async (organizationId: number, daysAhe
     {
       replacements: { organizationId },
     },
-  ) as [(PolicyManagerModel & { reviewer_ids: number[] })[], number];
+  )) as [(PolicyManagerModel & { reviewer_ids: number[] })[], number];
 
   return result[0];
 };

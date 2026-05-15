@@ -1094,12 +1094,9 @@ const ModelInventory: React.FC = () => {
         const filename = rawFile.filename ?? rawFile.fileName;
         const uploadDate = rawFile.upload_date ?? rawFile.uploaded_time;
         const sizeRaw = rawFile.size;
-        const size =
-          typeof sizeRaw === "string" ? parseInt(sizeRaw, 10) || 0 : (sizeRaw ?? 0);
+        const size = typeof sizeRaw === "string" ? parseInt(sizeRaw, 10) || 0 : (sizeRaw ?? 0);
         const mimetype: string | undefined = rawFile.mimetype;
-        const uploader = users.find(
-          (u: any) => String(u.id) === String(rawFile.uploaded_by),
-        );
+        const uploader = users.find((u: any) => String(u.id) === String(rawFile.uploaded_by));
         return {
           id: String(rawFile.id),
           filename: filename || "Unknown file",
@@ -1754,10 +1751,7 @@ const ModelInventory: React.FC = () => {
 
   const handleEvidenceUploadModalSuccess = async (formData: EvidenceHubModel) => {
     try {
-      console.log(
-        "[ModelInventory.handleEvidenceUploadModalSuccess] formData received:",
-        formData,
-      );
+      console.log("[ModelInventory.handleEvidenceUploadModalSuccess] formData received:", formData);
       console.log(
         "[ModelInventory.handleEvidenceUploadModalSuccess] evidence_files in payload:",
         formData?.evidence_files,

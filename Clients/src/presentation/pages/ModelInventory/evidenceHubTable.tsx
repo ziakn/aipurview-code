@@ -336,13 +336,13 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
         case "uploaded_on": {
           const aDate =
             a.evidence_files && a.evidence_files.length > 0
-              ? (a.evidence_files[0] as any).upload_date ??
-                (a.evidence_files[0] as any).uploaded_time
+              ? ((a.evidence_files[0] as any).upload_date ??
+                (a.evidence_files[0] as any).uploaded_time)
               : null;
           const bDate =
             b.evidence_files && b.evidence_files.length > 0
-              ? (b.evidence_files[0] as any).upload_date ??
-                (b.evidence_files[0] as any).uploaded_time
+              ? ((b.evidence_files[0] as any).upload_date ??
+                (b.evidence_files[0] as any).uploaded_time)
               : null;
           aValue = aDate ? new Date(aDate).getTime() : 0;
           bValue = bDate ? new Date(bDate).getTime() : 0;
@@ -412,9 +412,9 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
                         <FileIcon
                           fileName={
                             evidence.evidence_files && evidence.evidence_files.length > 0
-                              ? (evidence.evidence_files[0] as any).filename ??
+                              ? ((evidence.evidence_files[0] as any).filename ??
                                 (evidence.evidence_files[0] as any).fileName ??
-                                ""
+                                "")
                               : ""
                           }
                         />
@@ -442,9 +442,9 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
                                     onPreview?.(evidence.id || 0, idx);
                                   }}
                                   sx={{
-                                    height: 20,
-                                    fontSize: 11,
-                                    maxWidth: 180,
+                                    "height": 20,
+                                    "fontSize": 11,
+                                    "maxWidth": 180,
                                     "& .MuiChip-label": {
                                       overflow: "hidden",
                                       textOverflow: "ellipsis",
@@ -571,11 +571,7 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
                       onEdit={() => {
                         onEdit?.(evidence.id || 0);
                       }}
-                      onPreview={
-                        onPreview
-                          ? () => onPreview(evidence.id || 0)
-                          : undefined
-                      }
+                      onPreview={onPreview ? () => onPreview(evidence.id || 0) : undefined}
                       type=""
                       warningTitle="Delete this evidence?"
                       warningMessage="When you delete this evidence, all data related to this evidence will be removed. This action is non-recoverable."

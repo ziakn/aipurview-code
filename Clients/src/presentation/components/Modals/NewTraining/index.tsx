@@ -427,12 +427,7 @@ const NewTraining: FC<NewTrainingProps> = ({
           {activeTab === "details" && formContent}
           {activeTab === "evidence" && (
             <Stack spacing={2}>
-              <Stack
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-                spacing={2}
-              >
+              <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
                 <Typography
                   sx={{
                     fontSize: 13,
@@ -441,8 +436,8 @@ const NewTraining: FC<NewTrainingProps> = ({
                     minWidth: 0,
                   }}
                 >
-                  Upload certificates, attendance proofs, or other compliance evidence
-                  for this training.
+                  Upload certificates, attendance proofs, or other compliance evidence for this
+                  training.
                 </Typography>
                 <Box sx={{ flexShrink: 0 }}>
                   <CustomizableButton
@@ -536,9 +531,7 @@ const NewTraining: FC<NewTrainingProps> = ({
                                   <IconButton
                                     size="small"
                                     disabled={deletingEvidenceId === evidence.id}
-                                    onClick={() =>
-                                      evidence.id && handleDeleteEvidence(evidence.id)
-                                    }
+                                    onClick={() => evidence.id && handleDeleteEvidence(evidence.id)}
                                     sx={{ color: "text.icon" }}
                                   >
                                     {deletingEvidenceId === evidence.id ? (
