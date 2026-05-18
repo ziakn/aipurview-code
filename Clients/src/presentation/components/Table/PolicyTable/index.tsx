@@ -183,10 +183,10 @@ const CustomizablePolicyTable = ({
         {selection && (
           <TableCell
             sx={{
-              width: 48,
-              minWidth: 48,
-              maxWidth: 48,
-              padding: "16px 8px",
+              width: 40,
+              minWidth: 40,
+              maxWidth: 40,
+              padding: 0,
               borderBottom: "1px solid #d0d5dd",
             }}
           >
@@ -195,7 +195,7 @@ const CustomizablePolicyTable = ({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                width: "100%",
+                height: "100%",
               }}
             >
               <Checkbox
@@ -205,7 +205,8 @@ const CustomizablePolicyTable = ({
                 isIndeterminate={selection.someSelected && !selection.allSelected}
                 onChange={selection.onToggleAll}
                 ariaLabel={selection.ariaLabel ?? "Select all policies on this page"}
-                sx={{ "p": 0, "& svg": { display: "block" } }}
+                size="small"
+                sx={{ p: 0 }}
               />
             </Box>
           </TableCell>
@@ -349,8 +350,8 @@ const CustomizablePolicyTable = ({
                       fontSize: 12,
                       opacity: 0.7,
                       whiteSpace: "nowrap",
-                      width: 1,
                     }}
+                    colSpan={selection ? 2 : 1}
                   >
                     Showing {page * rowsPerPage + 1} -{" "}
                     {Math.min(page * rowsPerPage + rowsPerPage, sortedData.length)} of{" "}
@@ -365,6 +366,7 @@ const CustomizablePolicyTable = ({
                     onRowsPerPageChange={handleChangeRowsPerPage}
                     ActionsComponent={TablePaginationActions as React.ComponentType<any>}
                     labelRowsPerPage="Rows per page"
+                    colSpan={data.cols.length - 1}
                     slotProps={{
                       select: {
                         MenuProps: {

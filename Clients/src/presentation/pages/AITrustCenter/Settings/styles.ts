@@ -99,11 +99,6 @@ export const useStyles = () => {
       border: `1.5px solid ${theme.palette.border.light}`,
       display: "inline-block",
     }),
-    trustTitleInput: {
-      width: 340,
-      fontSize: 13,
-      marginTop: 0,
-    },
     toggleRow: {
       display: "flex",
       alignItems: "center",
@@ -151,10 +146,6 @@ export const useStyles = () => {
       "&:hover": {
         background: theme.palette.background.accent,
       },
-    },
-    disabledInput: {
-      background: theme.palette.background.default,
-      color: theme.palette.text.disabled,
     },
   };
 };

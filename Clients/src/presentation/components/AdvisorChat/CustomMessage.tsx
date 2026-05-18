@@ -1,6 +1,6 @@
 import { FC, useContext, useEffect, useState, useRef, useCallback, memo } from "react";
 import { Stack, Box, useTheme, Avatar, Typography, Theme } from "@mui/material";
-import { MessagePrimitive, useMessagePartText, useAssistantState } from "@assistant-ui/react";
+import { MessagePrimitive, useMessagePartText, useAuiState } from "@assistant-ui/react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -233,7 +233,7 @@ const useAssistantTurnHasVisibleOutput = (): boolean => {
 
 const MessageTimestamp: FC = () => {
   const theme = useTheme();
-  const message = useAssistantState(({ message }) => message);
+  const message = useAuiState((s) => s.message);
 
   // Skip welcome message (id: 'welcome') which is generated client-side
   if (!message?.createdAt || message.id === "welcome") {
@@ -263,7 +263,7 @@ const MessageTimestamp: FC = () => {
 const CopyButton: FC<{ bubbleRef: React.RefObject<HTMLDivElement | null> }> = ({ bubbleRef }) => {
   const theme = useTheme();
   const [copied, setCopied] = useState(false);
-  const message = useAssistantState(({ message }) => message);
+  const message = useAuiState((s) => s.message);
 
   // Don't show while message is still generating or for welcome message
   if (message.status?.type === "running" || message.id === "welcome") {

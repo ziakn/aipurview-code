@@ -7818,6 +7818,37 @@ export const translations: Record<string, Record<string, string>> = {
       "Your compliance dashboard will prioritize tasks from the primary framework first",
 
     // ── develop's curated German translations (override fallbacks above) ──
+    // LLM Evals additions
+    "A URL-safe identifier used internally. Auto-generated from the name.":
+      "Ein URL-sicherer Bezeichner, der intern verwendet wird. Wird automatisch aus dem Namen generiert.",
+    "A human-readable name for this scorer, shown in dropdowns and reports.":
+      "Ein lesbarer Name für diesen Bewerter, der in Dropdown-Menüs und Berichten angezeigt wird.",
+    "AI Gateway is not running": "KI-Gateway läuft nicht",
+    "Add choice": "Auswahl hinzufügen",
+    "Add model": "Modell hinzufügen",
+    "An unexpected error occurred": "Ein unerwarteter Fehler ist aufgetreten",
+    "Choice label": "Auswahlbezeichnung",
+    "Clear conversation": "Gespräch löschen",
+    "Controls the diversity of the judge": "Steuert die Vielfalt des Bewerters",
+    "DATE ADDED": "HINZUGEFÜGT AM",
+    "Google": "Google",
+    "Groq": "Groq",
+    "LAST RUN": "ZULETZT AUSGEFÜHRT",
+    "Meta": "Meta",
+    "Microsoft": "Microsoft",
+    "Moonshot AI": "Moonshot AI",
+    "No saved models yet": "Noch keine gespeicherten Modelle",
+    "Nous Research": "Nous Research",
+    "Perplexity": "Perplexity",
+    "Project settings": "Projekteinstellungen",
+    "Qwen": "Qwen",
+    "Samples with a score at or above this value will be marked as passing. Adjust based on how strict you want the evaluation to be.":
+      "Stichproben mit einem Wert ab diesem Schwellenwert werden als bestanden markiert. Passen Sie diesen Wert je nach gewünschter Strenge der Bewertung an.",
+    "Saved Models": "Gespeicherte Modelle",
+    "The LLM that will act as the evaluator. It reads your prompt and returns one of the choice scores you define below.":
+      "Das LLM, das als Bewerter fungiert. Es liest Ihren Prompt und gibt eine der unten definierten Auswahlbewertungen zurück.",
+    "The type of LLM application being evaluated": "Der Typ der zu bewertenden LLM-Anwendung",
+    // Governance OS additions
     "Active Frameworks": "Aktive Rahmenwerke",
     "Additional details": "Weitere Details",
     "All Governance Scenarios": "Alle Governance-Szenarien",
@@ -7932,6 +7963,33 @@ export const translations: Record<string, Record<string, string>> = {
       "Sie haben jetzt mehrere Frameworks zugewiesen. Aktivieren Sie Governance OS, um übergreifende Zuordnungen zu erkunden, intelligente Empfehlungen zu erhalten und die Abdeckung über alle Frameworks hinweg zu analysieren.",
     "Your compliance dashboard will prioritize tasks from the primary framework first":
       "Ihr Compliance-Dashboard priorisiert zuerst Aufgaben aus dem primären Framework",
+    "All AI-related training programs": "Alle KI-bezogenen Schulungsprogramme",
+    "Assessment Result": "Bewertungsergebnis",
+    "Attendance Record": "Anwesenheitsnachweis",
+    "Compliance evidence linked to trainings": "Mit Schulungen verknüpfte Compliance-Nachweise",
+    "Course Completion": "Kursabschluss",
+    "Delete evidence": "Nachweis löschen",
+    "Failed to load evidence details. Please try again.":
+      "Nachweisdetails konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "MAPPED TRAININGS": "ZUGEORDNETE SCHULUNGEN",
+    "Mapped trainings": "Zugeordnete Schulungen",
+    "Next file": "Nächste Datei",
+    "No evidence uploaded yet for this training.":
+      "Für diese Schulung wurden noch keine Nachweise hochgeladen.",
+    "No files uploaded yet.": "Noch keine Dateien hochgeladen.",
+    "Optional notes about this evidence": "Optionale Notizen zu diesem Nachweis",
+    "Policy owner": "Richtlinienverantwortlicher",
+    "Previous file": "Vorherige Datei",
+    "Quarter (year)": "Quartal (Jahr)",
+    "Select a training": "Schulung auswählen",
+    "Select a type": "Typ auswählen",
+    "Select policy owner": "Richtlinienverantwortlichen auswählen",
+    "This evidence has no file attached to preview.":
+      "Diesem Nachweis ist keine Datei zur Vorschau angehängt.",
+    "Training Certificate": "Schulungszertifikat",
+    "Training Evidence Hub": "Schulungsnachweiszentrale",
+    "Upload certificates, attendance proofs, or other compliance evidence for this training.":
+      "Laden Sie Zertifikate, Anwesenheitsnachweise oder andere Compliance-Nachweise für diese Schulung hoch.",
   },
 
   fr: {
@@ -15677,6 +15735,37 @@ export const translations: Record<string, Record<string, string>> = {
       "Your compliance dashboard will prioritize tasks from the primary framework first",
 
     // ── develop's curated French translations (override fallbacks above) ──
+    // LLM Evals additions
+    "A URL-safe identifier used internally. Auto-generated from the name.":
+      "Un identifiant sûr pour les URL, utilisé en interne. Généré automatiquement à partir du nom.",
+    "A human-readable name for this scorer, shown in dropdowns and reports.":
+      "Un nom lisible pour ce notateur, affiché dans les menus déroulants et les rapports.",
+    "AI Gateway is not running": "La passerelle IA ne fonctionne pas",
+    "Add choice": "Ajouter un choix",
+    "Add model": "Ajouter un modèle",
+    "An unexpected error occurred": "Une erreur inattendue s'est produite",
+    "Choice label": "Libellé du choix",
+    "Clear conversation": "Effacer la conversation",
+    "Controls the diversity of the judge": "Contrôle la diversité de l'évaluateur",
+    "DATE ADDED": "DATE D'AJOUT",
+    "Google": "Google",
+    "Groq": "Groq",
+    "LAST RUN": "DERNIÈRE EXÉCUTION",
+    "Meta": "Meta",
+    "Microsoft": "Microsoft",
+    "Moonshot AI": "Moonshot AI",
+    "No saved models yet": "Aucun modèle enregistré pour l'instant",
+    "Nous Research": "Nous Research",
+    "Perplexity": "Perplexity",
+    "Project settings": "Paramètres du projet",
+    "Qwen": "Qwen",
+    "Samples with a score at or above this value will be marked as passing. Adjust based on how strict you want the evaluation to be.":
+      "Les échantillons avec un score égal ou supérieur à cette valeur seront marqués comme réussis. Ajustez en fonction de la rigueur souhaitée de l'évaluation.",
+    "Saved Models": "Modèles enregistrés",
+    "The LLM that will act as the evaluator. It reads your prompt and returns one of the choice scores you define below.":
+      "Le LLM qui agira en tant qu'évaluateur. Il lit votre invite et renvoie l'un des scores de choix que vous définissez ci-dessous.",
+    "The type of LLM application being evaluated": "Le type d'application LLM évalué",
+    // Governance OS additions
     "Active Frameworks": "Référentiels actifs",
     "Additional details": "Détails supplémentaires",
     "All Governance Scenarios": "Tous les scénarios de gouvernance",
@@ -15793,5 +15882,32 @@ export const translations: Record<string, Record<string, string>> = {
       "Vous avez désormais plusieurs référentiels assignés. Activez Governance OS pour explorer les correspondances inter-référentiels, obtenir des recommandations intelligentes et analyser la couverture sur l'ensemble de vos référentiels.",
     "Your compliance dashboard will prioritize tasks from the primary framework first":
       "Votre tableau de bord de conformité priorisera d'abord les tâches du référentiel principal",
+    "All AI-related training programs": "Tous les programmes de formation liés à l'IA",
+    "Assessment Result": "Résultat d'évaluation",
+    "Attendance Record": "Registre de présence",
+    "Compliance evidence linked to trainings": "Preuves de conformité liées aux formations",
+    "Course Completion": "Achèvement du cours",
+    "Delete evidence": "Supprimer la preuve",
+    "Failed to load evidence details. Please try again.":
+      "Échec du chargement des détails de la preuve. Veuillez réessayer.",
+    "MAPPED TRAININGS": "FORMATIONS ASSOCIÉES",
+    "Mapped trainings": "Formations associées",
+    "Next file": "Fichier suivant",
+    "No evidence uploaded yet for this training.":
+      "Aucune preuve n'a encore été téléversée pour cette formation.",
+    "No files uploaded yet.": "Aucun fichier téléversé pour le moment.",
+    "Optional notes about this evidence": "Notes facultatives concernant cette preuve",
+    "Policy owner": "Responsable de la politique",
+    "Previous file": "Fichier précédent",
+    "Quarter (year)": "Trimestre (année)",
+    "Select a training": "Sélectionner une formation",
+    "Select a type": "Sélectionner un type",
+    "Select policy owner": "Sélectionner le responsable de la politique",
+    "This evidence has no file attached to preview.":
+      "Aucun fichier n'est attaché à cette preuve pour l'aperçu.",
+    "Training Certificate": "Certificat de formation",
+    "Training Evidence Hub": "Centre de preuves de formation",
+    "Upload certificates, attendance proofs, or other compliance evidence for this training.":
+      "Téléversez des certificats, des justificatifs de présence ou d'autres preuves de conformité pour cette formation.",
   },
 };

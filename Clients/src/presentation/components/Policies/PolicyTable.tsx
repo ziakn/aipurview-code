@@ -317,10 +317,10 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
               <TableCell
                 padding="checkbox"
                 sx={{
-                  width: 48,
-                  minWidth: 48,
-                  maxWidth: 48,
-                  padding: "14px 8px",
+                  width: 40,
+                  minWidth: 40,
+                  maxWidth: 40,
+                  padding: 0,
                 }}
                 onClick={(e) => e.stopPropagation()}
               >
@@ -329,7 +329,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    width: "100%",
+                    height: "100%",
                   }}
                 >
                   <Checkbox
@@ -338,7 +338,8 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
                     isChecked={isSelected(Number(policy.id))}
                     onChange={() => toggleSelection(Number(policy.id))}
                     ariaLabel={`Select policy ${policy.title}`}
-                    sx={{ "p": 0, "& svg": { display: "block" } }}
+                    size="small"
+                    sx={{ p: 0 }}
                   />
                 </Box>
               </TableCell>

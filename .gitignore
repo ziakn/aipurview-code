@@ -16,6 +16,7 @@
 
 # -------------------- Dependencies --------------------
 node_modules/
+**/node_modules/
 .pnp/
 .pnp.js
 .yarn/cache
@@ -25,13 +26,21 @@ node_modules/
 # Python
 venv/
 .venv/
+**/venv/
+**/.venv/
+env/
+ENV/
 __pycache__/
 **/__pycache__/
 *.py[cod]
+*$py.class
+*.so
 *.pyo
 *.egg-info/
-dist/
 *.egg
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
 # -------------------- Build Outputs --------------------
 Clients/dist/
