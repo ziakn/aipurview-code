@@ -12,7 +12,9 @@ export interface MockRequestOverrides {
   file?: any;
 }
 
-export function createMockReq(overrides: MockRequestOverrides = {}): Partial<Request> & MockRequestOverrides {
+export function createMockReq(
+  overrides: MockRequestOverrides = {},
+): Partial<Request> & MockRequestOverrides {
   return {
     userId: 1,
     organizationId: 1,

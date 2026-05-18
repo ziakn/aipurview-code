@@ -71,16 +71,39 @@ import {
   getModelByFrameworkIdQuery,
 } from "../../utils/modelInventory.utils";
 
-const mockGetAll = getAllModelInventoriesQuery as jest.MockedFunction<typeof getAllModelInventoriesQuery>;
-const mockGetById = getModelInventoryByIdQuery as jest.MockedFunction<typeof getModelInventoryByIdQuery>;
-const mockCreate = createNewModelInventoryQuery as jest.MockedFunction<typeof createNewModelInventoryQuery>;
-const mockUpdate = updateModelInventoryByIdQuery as jest.MockedFunction<typeof updateModelInventoryByIdQuery>;
-const mockDelete = deleteModelInventoryByIdQuery as jest.MockedFunction<typeof deleteModelInventoryByIdQuery>;
-const mockGetByProject = getModelByProjectIdQuery as jest.MockedFunction<typeof getModelByProjectIdQuery>;
-const mockGetByFramework = getModelByFrameworkIdQuery as jest.MockedFunction<typeof getModelByFrameworkIdQuery>;
+const mockGetAll = getAllModelInventoriesQuery as jest.MockedFunction<
+  typeof getAllModelInventoriesQuery
+>;
+const mockGetById = getModelInventoryByIdQuery as jest.MockedFunction<
+  typeof getModelInventoryByIdQuery
+>;
+const mockCreate = createNewModelInventoryQuery as jest.MockedFunction<
+  typeof createNewModelInventoryQuery
+>;
+const mockUpdate = updateModelInventoryByIdQuery as jest.MockedFunction<
+  typeof updateModelInventoryByIdQuery
+>;
+const mockDelete = deleteModelInventoryByIdQuery as jest.MockedFunction<
+  typeof deleteModelInventoryByIdQuery
+>;
+const mockGetByProject = getModelByProjectIdQuery as jest.MockedFunction<
+  typeof getModelByProjectIdQuery
+>;
+const mockGetByFramework = getModelByFrameworkIdQuery as jest.MockedFunction<
+  typeof getModelByFrameworkIdQuery
+>;
 
 function createReq(overrides?: Partial<Request>): any {
-  return { userId: 1, organizationId: 1, role: "Admin", t: (k: string) => k, body: {}, params: {}, query: {}, ...overrides };
+  return {
+    userId: 1,
+    organizationId: 1,
+    role: "Admin",
+    t: (k: string) => k,
+    body: {},
+    params: {},
+    query: {},
+    ...overrides,
+  };
 }
 function createRes(): any {
   const res: any = {};
@@ -190,7 +213,9 @@ describe("modelInventory.ctrl", () => {
   describe("createNewModelInventory", () => {
     it("should return 201 when model is created", async () => {
       mockCreate.mockResolvedValue(mockModel({ id: 1, model: "M1" }) as any);
-      const req = createReq({ body: { provider_model: "pm", provider: "p", model: "M1", version: "1", approver: null } });
+      const req = createReq({
+        body: { provider_model: "pm", provider: "p", model: "M1", version: "1", approver: null },
+      });
       const res = createRes();
       await createNewModelInventory(req, res);
       expect(res.status).toHaveBeenCalledWith(201);

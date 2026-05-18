@@ -50,7 +50,7 @@ jest.mock("../../domain.layer/models/vendor/vendor.model", () => ({
         validateVendorData: jest.fn().mockResolvedValue(undefined),
         canBeModified: jest.fn().mockReturnValue(undefined),
       })),
-    }
+    },
   ),
 }));
 jest.mock("../../utils/vendorChangeHistory.utils", () => ({
@@ -81,13 +81,24 @@ import {
 
 const mockGetAll = getAllVendorsQuery as jest.MockedFunction<typeof getAllVendorsQuery>;
 const mockGetById = getVendorByIdQuery as jest.MockedFunction<typeof getVendorByIdQuery>;
-const mockGetByProject = getVendorByProjectIdQuery as jest.MockedFunction<typeof getVendorByProjectIdQuery>;
+const mockGetByProject = getVendorByProjectIdQuery as jest.MockedFunction<
+  typeof getVendorByProjectIdQuery
+>;
 const mockCreate = createNewVendorQuery as jest.MockedFunction<typeof createNewVendorQuery>;
 const mockUpdate = updateVendorByIdQuery as jest.MockedFunction<typeof updateVendorByIdQuery>;
 const mockDelete = deleteVendorByIdQuery as jest.MockedFunction<typeof deleteVendorByIdQuery>;
 
 function createReq(overrides?: Partial<Request>): any {
-  return { userId: 1, organizationId: 1, role: "Admin", t: (k: string) => k, body: {}, params: {}, query: {}, ...overrides };
+  return {
+    userId: 1,
+    organizationId: 1,
+    role: "Admin",
+    t: (k: string) => k,
+    body: {},
+    params: {},
+    query: {},
+    ...overrides,
+  };
 }
 function createRes(): any {
   const res: any = {};
@@ -181,7 +192,27 @@ describe("vendor.ctrl", () => {
     it("should return 201 when vendor is created successfully", async () => {
       const vendor = { id: 1, vendor_name: "V1", assignee: null, reviewer: null };
       mockCreate.mockResolvedValue(vendor as any);
-      const req = createReq({ body: { vendor_name: "V1", vendor_provides: "P", assignee: null, website: "", vendor_contact_person: "", review_result: "", review_status: "", reviewer: null, review_date: "", order_no: "", is_demo: false, projects: [], data_sensitivity: "", business_criticality: "", past_issues: "", regulatory_exposure: "", risk_score: 0 } });
+      const req = createReq({
+        body: {
+          vendor_name: "V1",
+          vendor_provides: "P",
+          assignee: null,
+          website: "",
+          vendor_contact_person: "",
+          review_result: "",
+          review_status: "",
+          reviewer: null,
+          review_date: "",
+          order_no: "",
+          is_demo: false,
+          projects: [],
+          data_sensitivity: "",
+          business_criticality: "",
+          past_issues: "",
+          regulatory_exposure: "",
+          risk_score: 0,
+        },
+      });
       const res = createRes();
       await createVendor(req, res);
       expect(res.status).toHaveBeenCalledWith(201);
@@ -205,7 +236,12 @@ describe("vendor.ctrl", () => {
 
   describe("updateVendorById", () => {
     it("should return 401 when userId or role is missing", async () => {
-      const req = createReq({ params: { id: "1" }, body: { vendor_name: "V2" }, userId: undefined, role: undefined });
+      const req = createReq({
+        params: { id: "1" },
+        body: { vendor_name: "V2" },
+        userId: undefined,
+        role: undefined,
+      });
       const res = createRes();
       await updateVendorById(req, res);
       expect(res.status).toHaveBeenCalledWith(401);

@@ -93,10 +93,21 @@ const mockGetById = getTaskByIdQuery as jest.MockedFunction<typeof getTaskByIdQu
 const mockUpdate = updateTaskByIdQuery as jest.MockedFunction<typeof updateTaskByIdQuery>;
 const mockDelete = deleteTaskByIdQuery as jest.MockedFunction<typeof deleteTaskByIdQuery>;
 const mockRestore = restoreTaskByIdQuery as jest.MockedFunction<typeof restoreTaskByIdQuery>;
-const mockHardDelete = hardDeleteTaskByIdQuery as jest.MockedFunction<typeof hardDeleteTaskByIdQuery>;
+const mockHardDelete = hardDeleteTaskByIdQuery as jest.MockedFunction<
+  typeof hardDeleteTaskByIdQuery
+>;
 
 function createReq(overrides?: Partial<Request>): any {
-  return { userId: 1, organizationId: 1, role: "Admin", t: (k: string) => k, body: {}, params: {}, query: {}, ...overrides };
+  return {
+    userId: 1,
+    organizationId: 1,
+    role: "Admin",
+    t: (k: string) => k,
+    body: {},
+    params: {},
+    query: {},
+    ...overrides,
+  };
 }
 function createRes(): any {
   const res: any = {};
@@ -207,7 +218,12 @@ describe("task.ctrl", () => {
 
   describe("updateTask", () => {
     it("should return 401 when userId or role is missing", async () => {
-      const req = createReq({ params: { id: "1" }, body: { title: "T2" }, userId: undefined, role: undefined });
+      const req = createReq({
+        params: { id: "1" },
+        body: { title: "T2" },
+        userId: undefined,
+        role: undefined,
+      });
       const res = createRes();
       await updateTask(req, res);
       expect(res.status).toHaveBeenCalledWith(401);
@@ -348,7 +364,9 @@ describe("task.ctrl", () => {
     });
     it("should return 500 on unexpected error", async () => {
       const { parseBulkIds } = require("../../utils/bulkAction.utils");
-      (parseBulkIds as jest.Mock).mockImplementationOnce(() => { throw new Error("boom"); });
+      (parseBulkIds as jest.Mock).mockImplementationOnce(() => {
+        throw new Error("boom");
+      });
       const req = createReq({ body: { ids: [1], action: "mark_complete" } });
       const res = createRes();
       await bulkUpdateTasks(req, res);

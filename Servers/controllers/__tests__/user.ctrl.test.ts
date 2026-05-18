@@ -18,7 +18,14 @@ jest.mock("bcrypt", () => ({
 }));
 jest.mock("../../utils/jwt.utils", () => ({
   generateToken: jest.fn().mockReturnValue("token"),
-  getRefreshTokenPayload: jest.fn().mockReturnValue({ id: 1, email: "a@b.com", roleName: "Admin", tenantId: 1, organizationId: 1, expire: Date.now() + 10000 }),
+  getRefreshTokenPayload: jest.fn().mockReturnValue({
+    id: 1,
+    email: "a@b.com",
+    roleName: "Admin",
+    tenantId: 1,
+    organizationId: 1,
+    expire: Date.now() + 10000,
+  }),
 }));
 jest.mock("../../utils/auth.utils", () => ({
   generateUserTokens: jest.fn().mockReturnValue({ accessToken: "token" }),
@@ -75,7 +82,7 @@ jest.mock("../../domain.layer/models/user/user.model", () => ({
         password_hash: "hash",
       }),
       validateEmailUniqueness: jest.fn().mockResolvedValue(true),
-    }
+    },
   ),
 }));
 jest.mock("../../services/slack/slackNotificationService", () => ({
@@ -133,7 +140,18 @@ const mockUpdate = updateUserByIdQuery as jest.MockedFunction<typeof updateUserB
 const mockDelete = deleteUserByIdQuery as jest.MockedFunction<typeof deleteUserByIdQuery>;
 
 function createReq(overrides?: Partial<Request>): any {
-  return { userId: 1, organizationId: 1, role: "Admin", t: (k: string) => k, body: {}, params: {}, query: {}, cookies: {}, isSuperAdmin: false, ...overrides };
+  return {
+    userId: 1,
+    organizationId: 1,
+    role: "Admin",
+    t: (k: string) => k,
+    body: {},
+    params: {},
+    query: {},
+    cookies: {},
+    isSuperAdmin: false,
+    ...overrides,
+  };
 }
 function createRes(): any {
   const res: any = {};
@@ -164,7 +182,9 @@ describe("user.ctrl", () => {
 
   describe("getAllUsers", () => {
     it("should return 200 with users", async () => {
-      mockGetAll.mockResolvedValue([mockUser({ id: 1, email: "a@b.com", organization_id: 1 })] as any);
+      mockGetAll.mockResolvedValue([
+        mockUser({ id: 1, email: "a@b.com", organization_id: 1 }),
+      ] as any);
       const req = createReq();
       const res = createRes();
       await getAllUsers(req, res);
@@ -245,21 +265,48 @@ describe("user.ctrl", () => {
     it("should return 201 when user is created", async () => {
       mockGetByEmail.mockResolvedValue(null as any);
       mockCreate.mockResolvedValue(mockUser({ id: 1, email: "a@b.com" }) as any);
-      const req = createReq({ body: { name: "A", surname: "B", email: "a@b.com", password: "pass", roleId: 1, organizationId: 1 } });
+      const req = createReq({
+        body: {
+          name: "A",
+          surname: "B",
+          email: "a@b.com",
+          password: "pass",
+          roleId: 1,
+          organizationId: 1,
+        },
+      });
       const res = createRes();
       await createNewUser(req, res);
       expect(res.status).toHaveBeenCalledWith(201);
     });
     it("should return 409 when user already exists", async () => {
       mockGetByEmail.mockResolvedValue(mockUser({ id: 1, email: "a@b.com" }) as any);
-      const req = createReq({ body: { name: "A", surname: "B", email: "a@b.com", password: "pass", roleId: 1, organizationId: 1 } });
+      const req = createReq({
+        body: {
+          name: "A",
+          surname: "B",
+          email: "a@b.com",
+          password: "pass",
+          roleId: 1,
+          organizationId: 1,
+        },
+      });
       const res = createRes();
       await createNewUser(req, res);
       expect(res.status).toHaveBeenCalledWith(409);
     });
     it("should return 500 on error", async () => {
       mockGetByEmail.mockRejectedValue(new Error("DB error"));
-      const req = createReq({ body: { name: "A", surname: "B", email: "a@b.com", password: "pass", roleId: 1, organizationId: 1 } });
+      const req = createReq({
+        body: {
+          name: "A",
+          surname: "B",
+          email: "a@b.com",
+          password: "pass",
+          roleId: 1,
+          organizationId: 1,
+        },
+      });
       const res = createRes();
       await createNewUser(req, res);
       expect(res.status).toHaveBeenCalledWith(500);
@@ -268,14 +315,29 @@ describe("user.ctrl", () => {
 
   describe("loginUser", () => {
     it("should return 202 on successful login", async () => {
-      mockGetByEmail.mockResolvedValue(mockUser({ id: 1, email: "a@b.com", password_hash: "hash", role_id: 1, organization_id: 1, role_name: "Admin" }) as any);
+      mockGetByEmail.mockResolvedValue(
+        mockUser({
+          id: 1,
+          email: "a@b.com",
+          password_hash: "hash",
+          role_id: 1,
+          organization_id: 1,
+          role_name: "Admin",
+        }) as any,
+      );
       const req = createReq({ body: { email: "a@b.com", password: "pass" } });
       const res = createRes();
       await loginUser(req, res);
       expect(res.status).toHaveBeenCalledWith(202);
     });
     it("should return 401 when password is invalid", async () => {
-      const u = mockUser({ id: 1, email: "a@b.com", password_hash: "hash", role_id: 1, organization_id: 1 });
+      const u = mockUser({
+        id: 1,
+        email: "a@b.com",
+        password_hash: "hash",
+        role_id: 1,
+        organization_id: 1,
+      });
       u.comparePassword = jest.fn().mockResolvedValue(false);
       mockGetByEmail.mockResolvedValue(u as any);
       const req = createReq({ body: { email: "a@b.com", password: "wrong" } });
@@ -301,10 +363,22 @@ describe("user.ctrl", () => {
 
   describe("resetPassword", () => {
     it("should return 202 on success", async () => {
-      const userMock = mockUser({ id: 1, email: "a@b.com", name: "A", surname: "B", password_hash: "old", role_id: 1, organization_id: 1 });
+      const userMock = mockUser({
+        id: 1,
+        email: "a@b.com",
+        name: "A",
+        surname: "B",
+        password_hash: "old",
+        role_id: 1,
+        organization_id: 1,
+      });
       mockGetByEmail.mockResolvedValue(userMock as any);
       const UserModel = require("../../domain.layer/models/user/user.model").UserModel;
-      UserModel.createNewUser.mockResolvedValueOnce({ ...userMock, updatePassword: jest.fn().mockResolvedValue(undefined), password_hash: "newhash" });
+      UserModel.createNewUser.mockResolvedValueOnce({
+        ...userMock,
+        updatePassword: jest.fn().mockResolvedValue(undefined),
+        password_hash: "newhash",
+      });
       const resetMock = resetPasswordQuery as jest.MockedFunction<typeof resetPasswordQuery>;
       resetMock.mockResolvedValue(mockUser({ id: 1, email: "a@b.com" }) as any);
       const req = createReq({ body: { email: "a@b.com", newPassword: "newpass" } });
@@ -328,7 +402,6 @@ describe("user.ctrl", () => {
     });
   });
 
-
   describe("updateUserById", () => {
     it("should return 403 when org mismatch", async () => {
       mockGetById.mockResolvedValue(mockUser({ id: 2, organization_id: 99 }) as any);
@@ -338,7 +411,14 @@ describe("user.ctrl", () => {
       expect(res.status).toHaveBeenCalledWith(403);
     });
     it("should return 202 when user is updated", async () => {
-      const u = mockUser({ id: 1, organization_id: 1, role_id: 1, name: "A", surname: "B", email: "a@b.com" });
+      const u = mockUser({
+        id: 1,
+        organization_id: 1,
+        role_id: 1,
+        name: "A",
+        surname: "B",
+        email: "a@b.com",
+      });
       mockGetById.mockResolvedValue(u as any);
       mockUpdate.mockResolvedValue(mockUser({ id: 1, email: "a@b.com" }) as any);
       const req = createReq({ params: { id: "1" }, body: { name: "X" } });
@@ -437,7 +517,9 @@ describe("user.ctrl", () => {
     });
     it("should return 500 on error", async () => {
       const { getRefreshTokenPayload } = require("../../utils/jwt.utils");
-      (getRefreshTokenPayload as jest.Mock).mockImplementationOnce(() => { throw new Error("boom"); });
+      (getRefreshTokenPayload as jest.Mock).mockImplementationOnce(() => {
+        throw new Error("boom");
+      });
       const req = createReq({ cookies: { refresh_token: "valid" } });
       const res = createRes();
       await refreshAccessToken(req, res);
@@ -513,7 +595,9 @@ describe("user.ctrl", () => {
     });
     it("should return 200 when photo exists", async () => {
       mockGetById.mockResolvedValue(mockUser({ id: 1, organization_id: 1 }) as any);
-      const mockPhoto = getUserProfilePhotoQuery as jest.MockedFunction<typeof getUserProfilePhotoQuery>;
+      const mockPhoto = getUserProfilePhotoQuery as jest.MockedFunction<
+        typeof getUserProfilePhotoQuery
+      >;
       mockPhoto.mockResolvedValue("photo-data" as any);
       const req = createReq({ params: { id: "1" } });
       const res = createRes();
@@ -522,7 +606,9 @@ describe("user.ctrl", () => {
     });
     it("should return 200 when no photo exists", async () => {
       mockGetById.mockResolvedValue(mockUser({ id: 1, organization_id: 1 }) as any);
-      const mockPhoto = getUserProfilePhotoQuery as jest.MockedFunction<typeof getUserProfilePhotoQuery>;
+      const mockPhoto = getUserProfilePhotoQuery as jest.MockedFunction<
+        typeof getUserProfilePhotoQuery
+      >;
       mockPhoto.mockResolvedValue(null as any);
       const req = createReq({ params: { id: "1" } });
       const res = createRes();
@@ -548,7 +634,9 @@ describe("user.ctrl", () => {
     });
     it("should return 200 when photo is deleted", async () => {
       mockGetById.mockResolvedValue(mockUser({ id: 1, organization_id: 1 }) as any);
-      const mockDelPhoto = deleteUserProfilePhotoQuery as jest.MockedFunction<typeof deleteUserProfilePhotoQuery>;
+      const mockDelPhoto = deleteUserProfilePhotoQuery as jest.MockedFunction<
+        typeof deleteUserProfilePhotoQuery
+      >;
       mockDelPhoto.mockResolvedValue(true as any);
       const req = createReq({ params: { id: "1" } });
       const res = createRes();
@@ -557,7 +645,9 @@ describe("user.ctrl", () => {
     });
     it("should return 500 when deletion fails", async () => {
       mockGetById.mockResolvedValue(mockUser({ id: 1, organization_id: 1 }) as any);
-      const mockDelPhoto = deleteUserProfilePhotoQuery as jest.MockedFunction<typeof deleteUserProfilePhotoQuery>;
+      const mockDelPhoto = deleteUserProfilePhotoQuery as jest.MockedFunction<
+        typeof deleteUserProfilePhotoQuery
+      >;
       mockDelPhoto.mockResolvedValue(false as any);
       const req = createReq({ params: { id: "1" } });
       const res = createRes();

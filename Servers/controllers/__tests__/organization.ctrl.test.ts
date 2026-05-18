@@ -81,21 +81,47 @@ import {
 import { OrganizationModel } from "../../domain.layer/models/organization/organization.model";
 import { createNewUserWrapper } from "../user.ctrl";
 import { generateUserTokens } from "../../utils/auth.utils";
-import { ValidationException, BusinessLogicException } from "../../domain.layer/exceptions/custom.exception";
+import {
+  ValidationException,
+  BusinessLogicException,
+} from "../../domain.layer/exceptions/custom.exception";
 
 const mockGetAll = getAllOrganizationsQuery as jest.MockedFunction<typeof getAllOrganizationsQuery>;
-const mockGetExists = getOrganizationsExistsQuery as jest.MockedFunction<typeof getOrganizationsExistsQuery>;
-const mockGetById = getOrganizationByIdQuery as jest.MockedFunction<typeof getOrganizationByIdQuery>;
-const mockCreateQuery = createOrganizationQuery as jest.MockedFunction<typeof createOrganizationQuery>;
-const mockUpdateQuery = updateOrganizationByIdQuery as jest.MockedFunction<typeof updateOrganizationByIdQuery>;
-const mockDeleteQuery = deleteOrganizationByIdQuery as jest.MockedFunction<typeof deleteOrganizationByIdQuery>;
-const mockOrgCreate = OrganizationModel.createNewOrganization as jest.MockedFunction<typeof OrganizationModel.createNewOrganization>;
-const mockFindById = OrganizationModel.findByIdWithValidation as jest.MockedFunction<typeof OrganizationModel.findByIdWithValidation>;
+const mockGetExists = getOrganizationsExistsQuery as jest.MockedFunction<
+  typeof getOrganizationsExistsQuery
+>;
+const mockGetById = getOrganizationByIdQuery as jest.MockedFunction<
+  typeof getOrganizationByIdQuery
+>;
+const mockCreateQuery = createOrganizationQuery as jest.MockedFunction<
+  typeof createOrganizationQuery
+>;
+const mockUpdateQuery = updateOrganizationByIdQuery as jest.MockedFunction<
+  typeof updateOrganizationByIdQuery
+>;
+const mockDeleteQuery = deleteOrganizationByIdQuery as jest.MockedFunction<
+  typeof deleteOrganizationByIdQuery
+>;
+const mockOrgCreate = OrganizationModel.createNewOrganization as jest.MockedFunction<
+  typeof OrganizationModel.createNewOrganization
+>;
+const mockFindById = OrganizationModel.findByIdWithValidation as jest.MockedFunction<
+  typeof OrganizationModel.findByIdWithValidation
+>;
 const mockCreateUser = createNewUserWrapper as jest.MockedFunction<typeof createNewUserWrapper>;
 const mockGenTokens = generateUserTokens as jest.MockedFunction<typeof generateUserTokens>;
 
 function createReq(overrides?: Partial<Request>): any {
-  return { userId: 1, organizationId: 1, role: "Admin", t: (k: string) => k, body: {}, params: {}, query: {}, ...overrides };
+  return {
+    userId: 1,
+    organizationId: 1,
+    role: "Admin",
+    t: (k: string) => k,
+    body: {},
+    params: {},
+    query: {},
+    ...overrides,
+  };
 }
 function createRes(): any {
   const res: any = {};
@@ -186,13 +212,29 @@ describe("organization.ctrl", () => {
       };
       mockOrgCreate.mockReturnValue(orgModel as any);
       mockCreateQuery.mockResolvedValue(org as any);
-      mockCreateUser.mockResolvedValue({ id: 2, toSafeJSON: () => ({ id: 2, email: "a@b.com" }) } as any);
+      mockCreateUser.mockResolvedValue({
+        id: 2,
+        toSafeJSON: () => ({ id: 2, email: "a@b.com" }),
+      } as any);
       mockGenTokens.mockReturnValue({ accessToken: "tok" } as any);
-      const req = createReq({ body: { name: "NewOrg", logo: "", userEmail: "a@b.com", userName: "A", userSurname: "B", userPassword: "pass" } });
+      const req = createReq({
+        body: {
+          name: "NewOrg",
+          logo: "",
+          userEmail: "a@b.com",
+          userName: "A",
+          userSurname: "B",
+          userPassword: "pass",
+        },
+      });
       const res = createRes();
       await createOrganization(req, res);
       expect(res.status).toHaveBeenCalledWith(201);
-      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ organization: { id: 1, name: "NewOrg" } }) }));
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ organization: { id: 1, name: "NewOrg" } }),
+        }),
+      );
     });
     it("should return 400 when creation returns null", async () => {
       const orgModel = {
@@ -200,7 +242,16 @@ describe("organization.ctrl", () => {
       };
       mockOrgCreate.mockReturnValue(orgModel as any);
       mockCreateQuery.mockResolvedValue(null as any);
-      const req = createReq({ body: { name: "NewOrg", logo: "", userEmail: "a@b.com", userName: "A", userSurname: "B", userPassword: "pass" } });
+      const req = createReq({
+        body: {
+          name: "NewOrg",
+          logo: "",
+          userEmail: "a@b.com",
+          userName: "A",
+          userSurname: "B",
+          userPassword: "pass",
+        },
+      });
       const res = createRes();
       await createOrganization(req, res);
       expect(res.status).toHaveBeenCalledWith(400);
@@ -210,24 +261,55 @@ describe("organization.ctrl", () => {
         validateOrganizationData: jest.fn().mockRejectedValue(new ValidationException("invalid")),
       };
       mockOrgCreate.mockReturnValue(orgModel as any);
-      const req = createReq({ body: { name: "NewOrg", logo: "", userEmail: "a@b.com", userName: "A", userSurname: "B", userPassword: "pass" } });
+      const req = createReq({
+        body: {
+          name: "NewOrg",
+          logo: "",
+          userEmail: "a@b.com",
+          userName: "A",
+          userSurname: "B",
+          userPassword: "pass",
+        },
+      });
       const res = createRes();
       await createOrganization(req, res);
       expect(res.status).toHaveBeenCalledWith(400);
     });
     it("should return 403 on BusinessLogicException", async () => {
       const orgModel = {
-        validateOrganizationData: jest.fn().mockRejectedValue(new BusinessLogicException("forbidden")),
+        validateOrganizationData: jest
+          .fn()
+          .mockRejectedValue(new BusinessLogicException("forbidden")),
       };
       mockOrgCreate.mockReturnValue(orgModel as any);
-      const req = createReq({ body: { name: "NewOrg", logo: "", userEmail: "a@b.com", userName: "A", userSurname: "B", userPassword: "pass" } });
+      const req = createReq({
+        body: {
+          name: "NewOrg",
+          logo: "",
+          userEmail: "a@b.com",
+          userName: "A",
+          userSurname: "B",
+          userPassword: "pass",
+        },
+      });
       const res = createRes();
       await createOrganization(req, res);
       expect(res.status).toHaveBeenCalledWith(403);
     });
     it("should return 500 on unexpected error", async () => {
-      mockOrgCreate.mockImplementation(() => { throw new Error("boom"); });
-      const req = createReq({ body: { name: "NewOrg", logo: "", userEmail: "a@b.com", userName: "A", userSurname: "B", userPassword: "pass" } });
+      mockOrgCreate.mockImplementation(() => {
+        throw new Error("boom");
+      });
+      const req = createReq({
+        body: {
+          name: "NewOrg",
+          logo: "",
+          userEmail: "a@b.com",
+          userName: "A",
+          userSurname: "B",
+          userPassword: "pass",
+        },
+      });
       const res = createRes();
       await createOrganization(req, res);
       expect(res.status).toHaveBeenCalledWith(500);
@@ -320,7 +402,9 @@ describe("organization.ctrl", () => {
       const res = createRes();
       await updateOnboardingStatus(req, res);
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ data: { onboarding_status: "completed" } }));
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ data: { onboarding_status: "completed" } }),
+      );
     });
     it("should return 403 when user does not belong to organization", async () => {
       const req = createReq({ params: { id: "2" }, organizationId: 1 });

@@ -124,21 +124,41 @@ import {
   hasPendingApprovalQuery,
 } from "../../utils/project.utils";
 import { getUserByIdQuery } from "../../utils/user.utils";
-import { getPendingApprovalRequestIdQuery, withdrawApprovalRequestQuery } from "../../utils/approvalRequest.utils";
+import {
+  getPendingApprovalRequestIdQuery,
+  withdrawApprovalRequestQuery,
+} from "../../utils/approvalRequest.utils";
 
 const mockGetAll = getAllProjectsQuery as jest.MockedFunction<typeof getAllProjectsQuery>;
 const mockGetById = getProjectByIdQuery as jest.MockedFunction<typeof getProjectByIdQuery>;
 const mockCreate = createNewProjectQuery as jest.MockedFunction<typeof createNewProjectQuery>;
 const mockUpdate = updateProjectByIdQuery as jest.MockedFunction<typeof updateProjectByIdQuery>;
 const mockDelete = deleteProjectByIdQuery as jest.MockedFunction<typeof deleteProjectByIdQuery>;
-const mockGetMembers = getCurrentProjectMembers as jest.MockedFunction<typeof getCurrentProjectMembers>;
-const mockHasPending = hasPendingApprovalQuery as jest.MockedFunction<typeof hasPendingApprovalQuery>;
+const mockGetMembers = getCurrentProjectMembers as jest.MockedFunction<
+  typeof getCurrentProjectMembers
+>;
+const mockHasPending = hasPendingApprovalQuery as jest.MockedFunction<
+  typeof hasPendingApprovalQuery
+>;
 const mockGetUser = getUserByIdQuery as jest.MockedFunction<typeof getUserByIdQuery>;
-const mockGetPendingApproval = getPendingApprovalRequestIdQuery as jest.MockedFunction<typeof getPendingApprovalRequestIdQuery>;
-const mockWithdrawApproval = withdrawApprovalRequestQuery as jest.MockedFunction<typeof withdrawApprovalRequestQuery>;
+const mockGetPendingApproval = getPendingApprovalRequestIdQuery as jest.MockedFunction<
+  typeof getPendingApprovalRequestIdQuery
+>;
+const mockWithdrawApproval = withdrawApprovalRequestQuery as jest.MockedFunction<
+  typeof withdrawApprovalRequestQuery
+>;
 
 function createReq(overrides?: Partial<Request>): any {
-  return { userId: 1, organizationId: 1, role: "Admin", t: (k: string) => k, body: {}, params: {}, query: {}, ...overrides };
+  return {
+    userId: 1,
+    organizationId: 1,
+    role: "Admin",
+    t: (k: string) => k,
+    body: {},
+    params: {},
+    query: {},
+    ...overrides,
+  };
 }
 function createRes(): any {
   const res: any = {};
@@ -209,24 +229,44 @@ describe("project.ctrl", () => {
       mockGetUser.mockResolvedValue({ id: 1, name: "A", surname: "B" } as any);
     });
     it("should return 201 when project is created successfully", async () => {
-      const project = { id: 1, project_title: "P1", owner: 1, approval_workflow_id: null, members: [] };
+      const project = {
+        id: 1,
+        project_title: "P1",
+        owner: 1,
+        approval_workflow_id: null,
+        members: [],
+      };
       mockCreate.mockResolvedValue(project as any);
-      const req = createReq({ body: { project_title: "P1", owner: 1, framework: [], members: [], enable_ai_data_insertion: false } });
+      const req = createReq({
+        body: {
+          project_title: "P1",
+          owner: 1,
+          framework: [],
+          members: [],
+          enable_ai_data_insertion: false,
+        },
+      });
       const res = createRes();
       await createProject(req, res);
       expect(res.status).toHaveBeenCalledWith(201);
-      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ project }) }));
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ data: expect.objectContaining({ project }) }),
+      );
     });
     it("should return 500 when creation returns null due to premature access on null", async () => {
       mockCreate.mockResolvedValue(null as any);
-      const req = createReq({ body: { project_title: "P1", owner: 1, framework: [], members: [] } });
+      const req = createReq({
+        body: { project_title: "P1", owner: 1, framework: [], members: [] },
+      });
       const res = createRes();
       await createProject(req, res);
       expect(res.status).toHaveBeenCalledWith(500);
     });
     it("should return 500 on unexpected error", async () => {
       mockCreate.mockRejectedValue(new Error("boom"));
-      const req = createReq({ body: { project_title: "P1", owner: 1, framework: [], members: [] } });
+      const req = createReq({
+        body: { project_title: "P1", owner: 1, framework: [], members: [] },
+      });
       const res = createRes();
       await createProject(req, res);
       expect(res.status).toHaveBeenCalledWith(500);
@@ -235,7 +275,12 @@ describe("project.ctrl", () => {
 
   describe("updateProjectById", () => {
     it("should return 401 when userId or role is missing", async () => {
-      const req = createReq({ params: { id: "1" }, body: { project_title: "P2" }, userId: undefined, role: undefined });
+      const req = createReq({
+        params: { id: "1" },
+        body: { project_title: "P2" },
+        userId: undefined,
+        role: undefined,
+      });
       const res = createRes();
       await updateProjectById(req, res);
       expect(res.status).toHaveBeenCalledWith(401);

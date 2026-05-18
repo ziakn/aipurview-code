@@ -103,21 +103,43 @@ import {
   bulkArchiveProjectRisksQuery,
 } from "../../utils/risk.utils";
 import { createRiskService } from "../../services/risk.service";
-import { ValidationException, ForbiddenException } from "../../domain.layer/exceptions/custom.exception";
+import {
+  ValidationException,
+  ForbiddenException,
+} from "../../domain.layer/exceptions/custom.exception";
 
 const mockGetAll = getAllRisksQuery as jest.MockedFunction<typeof getAllRisksQuery>;
 const mockGetById = getRiskByIdQuery as jest.MockedFunction<typeof getRiskByIdQuery>;
-const mockGetByFramework = getRisksByFrameworkQuery as jest.MockedFunction<typeof getRisksByFrameworkQuery>;
-const mockGetByProject = getRisksByProjectQuery as jest.MockedFunction<typeof getRisksByProjectQuery>;
+const mockGetByFramework = getRisksByFrameworkQuery as jest.MockedFunction<
+  typeof getRisksByFrameworkQuery
+>;
+const mockGetByProject = getRisksByProjectQuery as jest.MockedFunction<
+  typeof getRisksByProjectQuery
+>;
 const mockUpdate = updateRiskByIdQuery as jest.MockedFunction<typeof updateRiskByIdQuery>;
 const mockDelete = deleteRiskByIdQuery as jest.MockedFunction<typeof deleteRiskByIdQuery>;
 const mockCreateService = createRiskService as jest.MockedFunction<typeof createRiskService>;
-const mockBulkOwner = bulkSetProjectRisksOwnerQuery as jest.MockedFunction<typeof bulkSetProjectRisksOwnerQuery>;
-const mockBulkCategory = bulkSetProjectRisksCategoryQuery as jest.MockedFunction<typeof bulkSetProjectRisksCategoryQuery>;
-const mockBulkArchive = bulkArchiveProjectRisksQuery as jest.MockedFunction<typeof bulkArchiveProjectRisksQuery>;
+const mockBulkOwner = bulkSetProjectRisksOwnerQuery as jest.MockedFunction<
+  typeof bulkSetProjectRisksOwnerQuery
+>;
+const mockBulkCategory = bulkSetProjectRisksCategoryQuery as jest.MockedFunction<
+  typeof bulkSetProjectRisksCategoryQuery
+>;
+const mockBulkArchive = bulkArchiveProjectRisksQuery as jest.MockedFunction<
+  typeof bulkArchiveProjectRisksQuery
+>;
 
 function createReq(overrides?: Partial<Request>): any {
-  return { userId: 1, organizationId: 1, role: "Admin", t: (k: string) => k, body: {}, params: {}, query: {}, ...overrides };
+  return {
+    userId: 1,
+    organizationId: 1,
+    role: "Admin",
+    t: (k: string) => k,
+    body: {},
+    params: {},
+    query: {},
+    ...overrides,
+  };
 }
 function createRes(): any {
   const res: any = {};
@@ -325,14 +347,18 @@ describe("risks.ctrl", () => {
       const res = createRes();
       await bulkUpdateProjectRisks(req, res);
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ data: { updated: 2, action: "set_owner" } }));
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ data: { updated: 2, action: "set_owner" } }),
+      );
     });
     it("should return 200 for archive action", async () => {
       const req = createReq({ body: { ids: [1], action: "archive" } });
       const res = createRes();
       await bulkUpdateProjectRisks(req, res);
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ data: { updated: 1, action: "archive" } }));
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ data: { updated: 1, action: "archive" } }),
+      );
     });
     it("should return 400 for invalid action", async () => {
       const req = createReq({ body: { ids: [1], action: "invalid" } });
@@ -356,7 +382,9 @@ describe("risks.ctrl", () => {
     });
     it("should return 500 on unexpected error", async () => {
       const { parseBulkIds } = require("../../utils/bulkAction.utils");
-      (parseBulkIds as jest.Mock).mockImplementationOnce(() => { throw new Error("boom"); });
+      (parseBulkIds as jest.Mock).mockImplementationOnce(() => {
+        throw new Error("boom");
+      });
       const req = createReq({ body: { ids: [1], action: "archive" } });
       const res = createRes();
       await bulkUpdateProjectRisks(req, res);

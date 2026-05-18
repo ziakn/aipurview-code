@@ -54,12 +54,22 @@ import {
   updateAssessmentById,
   deleteAssessmentById,
 } from "../assessment.ctrl";
-import { getAllAssessmentsQuery, getAssessmentByIdQuery, deleteAssessmentByIdQuery } from "../../utils/assessment.utils";
+import {
+  getAllAssessmentsQuery,
+  getAssessmentByIdQuery,
+  deleteAssessmentByIdQuery,
+} from "../../utils/assessment.utils";
 import { AssessmentModel } from "../../domain.layer/models/assessment/assessment.model";
 
-const mockGetAllAssessmentsQuery = getAllAssessmentsQuery as jest.MockedFunction<typeof getAllAssessmentsQuery>;
-const mockGetAssessmentByIdQuery = getAssessmentByIdQuery as jest.MockedFunction<typeof getAssessmentByIdQuery>;
-const mockDeleteAssessmentByIdQuery = deleteAssessmentByIdQuery as jest.MockedFunction<typeof deleteAssessmentByIdQuery>;
+const mockGetAllAssessmentsQuery = getAllAssessmentsQuery as jest.MockedFunction<
+  typeof getAllAssessmentsQuery
+>;
+const mockGetAssessmentByIdQuery = getAssessmentByIdQuery as jest.MockedFunction<
+  typeof getAssessmentByIdQuery
+>;
+const mockDeleteAssessmentByIdQuery = deleteAssessmentByIdQuery as jest.MockedFunction<
+  typeof deleteAssessmentByIdQuery
+>;
 const mockAssessmentModel = AssessmentModel as jest.Mocked<typeof AssessmentModel>;
 
 function createReq(overrides?: Partial<Request>): Partial<Request> {

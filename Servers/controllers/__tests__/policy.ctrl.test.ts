@@ -93,7 +93,17 @@ const mockUpdate = updatePolicyByIdQuery as jest.MockedFunction<typeof updatePol
 const mockDelete = deletePolicyByIdQuery as jest.MockedFunction<typeof deletePolicyByIdQuery>;
 
 function createReq(overrides?: Partial<Request>): any {
-  return { userId: 1, organizationId: 1, role: "Admin", t: (k: string) => k, body: {}, params: {}, query: {}, file: undefined, ...overrides };
+  return {
+    userId: 1,
+    organizationId: 1,
+    role: "Admin",
+    t: (k: string) => k,
+    body: {},
+    params: {},
+    query: {},
+    file: undefined,
+    ...overrides,
+  };
 }
 function createRes(): any {
   const res: any = {};
@@ -277,20 +287,38 @@ describe("policy.ctrl", () => {
       expect(res.status).toHaveBeenCalledWith(400);
     });
     it("should return 400 for invalid mime type", async () => {
-      const req = createReq({ file: { originalname: "test.txt", mimetype: "text/plain", buffer: Buffer.from("hi") } as any });
+      const req = createReq({
+        file: {
+          originalname: "test.txt",
+          mimetype: "text/plain",
+          buffer: Buffer.from("hi"),
+        } as any,
+      });
       const res = createRes();
       await PolicyController.importDocx(req, res);
       expect(res.status).toHaveBeenCalledWith(400);
     });
     it("should return 200 on successful import", async () => {
-      const req = createReq({ file: { originalname: "test.docx", mimetype: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", buffer: Buffer.from("docx") } as any });
+      const req = createReq({
+        file: {
+          originalname: "test.docx",
+          mimetype: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          buffer: Buffer.from("docx"),
+        } as any,
+      });
       const res = createRes();
       await PolicyController.importDocx(req, res);
       expect(res.status).toHaveBeenCalledWith(200);
     });
     it("should return 500 on error", async () => {
       (convertDocxToHtml as jest.Mock).mockRejectedValueOnce(new Error("parse error"));
-      const req = createReq({ file: { originalname: "test.docx", mimetype: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", buffer: Buffer.from("docx") } as any });
+      const req = createReq({
+        file: {
+          originalname: "test.docx",
+          mimetype: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          buffer: Buffer.from("docx"),
+        } as any,
+      });
       const res = createRes();
       await PolicyController.importDocx(req, res);
       expect(res.status).toHaveBeenCalledWith(500);
@@ -428,7 +456,9 @@ describe("policy.ctrl", () => {
     });
     it("should return 500 on unexpected error", async () => {
       const { parseBulkIds } = require("../../utils/bulkAction.utils");
-      (parseBulkIds as jest.Mock).mockImplementationOnce(() => { throw new Error("boom"); });
+      (parseBulkIds as jest.Mock).mockImplementationOnce(() => {
+        throw new Error("boom");
+      });
       const req = createReq({ body: { ids: [1], action: "archive" } });
       const res = createRes();
       await PolicyController.bulkUpdatePolicies(req, res);

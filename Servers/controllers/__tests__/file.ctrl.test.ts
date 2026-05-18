@@ -72,23 +72,43 @@ import {
   attachFileToEntity,
   detachFileFromEntity,
 } from "../file.ctrl";
-import { getFileById, getFileMetadataByProjectId, canUserAccessFile, uploadFile, deleteFileById } from "../../utils/fileUpload.utils";
+import {
+  getFileById,
+  getFileMetadataByProjectId,
+  canUserAccessFile,
+  uploadFile,
+  deleteFileById,
+} from "../../utils/fileUpload.utils";
 import getUserFilesMetaDataQuery from "../../utils/files/getUserFilesMetaData.utils";
 import { addFileToAnswerEU } from "../../utils/eu.utils";
 import { createFileEntityLink, deleteFileEntityLink } from "../../repositories/file.repository";
 
 const mockGetFile = getFileById as jest.MockedFunction<typeof getFileById>;
-const mockGetFileMeta = getFileMetadataByProjectId as jest.MockedFunction<typeof getFileMetadataByProjectId>;
+const mockGetFileMeta = getFileMetadataByProjectId as jest.MockedFunction<
+  typeof getFileMetadataByProjectId
+>;
 const mockCanAccess = canUserAccessFile as jest.MockedFunction<typeof canUserAccessFile>;
 const mockUpload = uploadFile as jest.MockedFunction<typeof uploadFile>;
 const mockDeleteFile = deleteFileById as jest.MockedFunction<typeof deleteFileById>;
-const mockGetUserFiles = getUserFilesMetaDataQuery as jest.MockedFunction<typeof getUserFilesMetaDataQuery>;
+const mockGetUserFiles = getUserFilesMetaDataQuery as jest.MockedFunction<
+  typeof getUserFilesMetaDataQuery
+>;
 const mockAddFile = addFileToAnswerEU as jest.MockedFunction<typeof addFileToAnswerEU>;
 const mockCreateLink = createFileEntityLink as jest.MockedFunction<typeof createFileEntityLink>;
 const mockDeleteLink = deleteFileEntityLink as jest.MockedFunction<typeof deleteFileEntityLink>;
 
 function createReq(overrides?: Partial<Request>): any {
-  return { userId: 1, organizationId: 1, role: "Admin", t: (k: string) => k, body: {}, params: {}, query: {}, files: [], ...overrides };
+  return {
+    userId: 1,
+    organizationId: 1,
+    role: "Admin",
+    t: (k: string) => k,
+    body: {},
+    params: {},
+    query: {},
+    files: [],
+    ...overrides,
+  };
 }
 function createRes(): any {
   const res: any = {};
@@ -132,7 +152,12 @@ describe("file.ctrl", () => {
     });
     it("should return 200 with file content when found", async () => {
       mockCanAccess.mockResolvedValue(true);
-      mockGetFile.mockResolvedValue({ id: 1, filename: "test.txt", type: "text/plain", content: Buffer.from("hello") } as any);
+      mockGetFile.mockResolvedValue({
+        id: 1,
+        filename: "test.txt",
+        type: "text/plain",
+        content: Buffer.from("hello"),
+      } as any);
       const req = createReq({ params: { id: "1" } });
       const res = createRes();
       await getFileContentById(req, res);
@@ -199,16 +224,30 @@ describe("file.ctrl", () => {
 
   describe("postFileContent", () => {
     it("should return 201 when files are uploaded", async () => {
-      mockUpload.mockResolvedValue({ id: 1, filename: "test.txt", project_id: 1, uploaded_by: 1, uploaded_time: new Date(), type: "text/plain", source: "upload" } as any);
+      mockUpload.mockResolvedValue({
+        id: 1,
+        filename: "test.txt",
+        project_id: 1,
+        uploaded_by: 1,
+        uploaded_time: new Date(),
+        type: "text/plain",
+        source: "upload",
+      } as any);
       mockAddFile.mockResolvedValue({ evidence_files: [{ id: 1 }] } as any);
-      const req = createReq({ body: { question_id: "1", project_id: 1, user_id: 1, delete: "[]" }, files: [{ originalname: "test.txt", buffer: Buffer.from("hello") }] });
+      const req = createReq({
+        body: { question_id: "1", project_id: 1, user_id: 1, delete: "[]" },
+        files: [{ originalname: "test.txt", buffer: Buffer.from("hello") }],
+      });
       const res = createRes();
       await postFileContent(req, res);
       expect(res.status).toHaveBeenCalledWith(201);
     });
     it("should return 500 on error", async () => {
       mockUpload.mockRejectedValue(new Error("DB error"));
-      const req = createReq({ body: { question_id: "1", project_id: 1, user_id: 1, delete: "[]" }, files: [{ originalname: "test.txt", buffer: Buffer.from("hello") }] });
+      const req = createReq({
+        body: { question_id: "1", project_id: 1, user_id: 1, delete: "[]" },
+        files: [{ originalname: "test.txt", buffer: Buffer.from("hello") }],
+      });
       const res = createRes();
       await postFileContent(req, res);
       expect(res.status).toHaveBeenCalledWith(500);
@@ -223,28 +262,37 @@ describe("file.ctrl", () => {
       expect(res.status).toHaveBeenCalledWith(400);
     });
     it("should return 401 when userId is missing", async () => {
-      const req = createReq({ body: { file_id: 1, framework_type: "eu", entity_type: "control", entity_id: 1 }, userId: undefined });
+      const req = createReq({
+        body: { file_id: 1, framework_type: "eu", entity_type: "control", entity_id: 1 },
+        userId: undefined,
+      });
       const res = createRes();
       await attachFileToEntity(req, res);
       expect(res.status).toHaveBeenCalledWith(401);
     });
     it("should return 201 when file is attached", async () => {
       mockCreateLink.mockResolvedValue({ id: 1 } as any);
-      const req = createReq({ body: { file_id: 1, framework_type: "eu", entity_type: "control", entity_id: 1 } });
+      const req = createReq({
+        body: { file_id: 1, framework_type: "eu", entity_type: "control", entity_id: 1 },
+      });
       const res = createRes();
       await attachFileToEntity(req, res);
       expect(res.status).toHaveBeenCalledWith(201);
     });
     it("should return 200 when file already attached", async () => {
       mockCreateLink.mockResolvedValue(null as any);
-      const req = createReq({ body: { file_id: 1, framework_type: "eu", entity_type: "control", entity_id: 1 } });
+      const req = createReq({
+        body: { file_id: 1, framework_type: "eu", entity_type: "control", entity_id: 1 },
+      });
       const res = createRes();
       await attachFileToEntity(req, res);
       expect(res.status).toHaveBeenCalledWith(200);
     });
     it("should return 500 on error", async () => {
       mockCreateLink.mockRejectedValue(new Error("DB error"));
-      const req = createReq({ body: { file_id: 1, framework_type: "eu", entity_type: "control", entity_id: 1 } });
+      const req = createReq({
+        body: { file_id: 1, framework_type: "eu", entity_type: "control", entity_id: 1 },
+      });
       const res = createRes();
       await attachFileToEntity(req, res);
       expect(res.status).toHaveBeenCalledWith(500);
@@ -260,21 +308,27 @@ describe("file.ctrl", () => {
     });
     it("should return 200 when file is detached", async () => {
       mockDeleteLink.mockResolvedValue(true as any);
-      const req = createReq({ body: { file_id: 1, framework_type: "eu", entity_type: "control", entity_id: 1 } });
+      const req = createReq({
+        body: { file_id: 1, framework_type: "eu", entity_type: "control", entity_id: 1 },
+      });
       const res = createRes();
       await detachFileFromEntity(req, res);
       expect(res.status).toHaveBeenCalledWith(200);
     });
     it("should return 404 when link is not found", async () => {
       mockDeleteLink.mockResolvedValue(false as any);
-      const req = createReq({ body: { file_id: 1, framework_type: "eu", entity_type: "control", entity_id: 1 } });
+      const req = createReq({
+        body: { file_id: 1, framework_type: "eu", entity_type: "control", entity_id: 1 },
+      });
       const res = createRes();
       await detachFileFromEntity(req, res);
       expect(res.status).toHaveBeenCalledWith(404);
     });
     it("should return 500 on error", async () => {
       mockDeleteLink.mockRejectedValue(new Error("DB error"));
-      const req = createReq({ body: { file_id: 1, framework_type: "eu", entity_type: "control", entity_id: 1 } });
+      const req = createReq({
+        body: { file_id: 1, framework_type: "eu", entity_type: "control", entity_id: 1 },
+      });
       const res = createRes();
       await detachFileFromEntity(req, res);
       expect(res.status).toHaveBeenCalledWith(500);
