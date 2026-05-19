@@ -27,14 +27,8 @@ export const calculateComplianceScore = async (
   organizationId: number,
   weights: IComplianceWeights = DEFAULT_COMPLIANCE_WEIGHTS,
 ): Promise<IComplianceScore> => {
-  console.log("[compliance-score] calculateComplianceScore start", {
-    organizationId,
-    weights,
-  });
-
   // Validate weights sum to 1.0
   const weightSum = Object.values(weights).reduce((sum, w) => sum + w, 0);
-  console.log("[compliance-score] weightSum", weightSum);
   if (Math.abs(weightSum - 1.0) > 0.001) {
     throw new Error(`Compliance module weights must sum to 1.0, got ${weightSum.toFixed(3)}`);
   }
@@ -47,13 +41,6 @@ export const calculateComplianceScore = async (
     getModelLifecycleData(organizationId),
     getPolicyDocumentationData(organizationId),
   ]);
-  console.log("[compliance-score] raw module data", {
-    riskData,
-    vendorData,
-    projectData,
-    modelData,
-    policyData,
-  });
 
   // Calculate module scores
   const riskScore = calculateRiskManagementScore(riskData);
@@ -61,13 +48,6 @@ export const calculateComplianceScore = async (
   const projectScore = calculateProjectGovernanceScore(projectData);
   const modelScore = calculateModelLifecycleScore(modelData);
   const policyScore = calculatePolicyDocumentationScore(policyData);
-  console.log("[compliance-score] module scores", {
-    risk: riskScore.score,
-    vendor: vendorScore.score,
-    project: projectScore.score,
-    model: modelScore.score,
-    policy: policyScore.score,
-  });
 
   // Calculate weighted overall score
   const weightedContributions = {
@@ -84,8 +64,6 @@ export const calculateComplianceScore = async (
     weightedContributions.model +
     weightedContributions.policy;
   const overallScore = Math.round(overallScoreRaw);
-  console.log("[compliance-score] weighted contributions", weightedContributions);
-  console.log("[compliance-score] overall", { raw: overallScoreRaw, rounded: overallScore });
 
   // Build metadata
   const metadata: IComplianceMetadata = {
