@@ -4995,6 +4995,10 @@ export const translations: Record<string, Record<string, string>> = {
     "AI Chatbot for Customer Support": "KI-Chatbot für den Kundensupport",
     "AI Gateway": "AI Gateway",
     "AI Gateway, Policy Radar, and CI/CD scanning": "AI Gateway, Policy Radar und CI/CD-Scanning",
+    "EU AI Act control workflow, clearable selects, and AI advisor fix":
+      "EU-KI-Verordnungs-Kontroll-Workflow, löschbare Auswahlfelder und KI-Berater-Fix",
+    "Training evidence uploads, governance score helper, and policy ownership":
+      "Schulungsnachweis-Uploads, Governance-Punktzahl-Helfer und Richtlinien-Verantwortliche",
     "AI Lifecycle Risk Management": "Risikomanagement im KI-Lebenszyklus",
     "AI Literacy and Responsible AI Training": "KI-Kompetenz- und Responsible-AI-Schulung",
     "AI Management System": "KI-Managementsystem",
@@ -12690,6 +12694,10 @@ export const translations: Record<string, Record<string, string>> = {
     "AI Chatbot for Customer Support": "Chatbot IA pour le support client",
     "AI Gateway": "AI Gateway",
     "AI Gateway, Policy Radar, and CI/CD scanning": "AI Gateway, Policy Radar et analyse CI/CD",
+    "EU AI Act control workflow, clearable selects, and AI advisor fix":
+      "Workflow des contrôles du Règlement IA de l'UE, sélections effaçables et correctif de l'assistant IA",
+    "Training evidence uploads, governance score helper, and policy ownership":
+      "Téléversement des preuves de formation, assistant du score de gouvernance et propriété des politiques",
     "AI Lifecycle Risk Management": "Gestion des risques du cycle de vie IA",
     "AI Literacy and Responsible AI Training": "Formation à la culture IA et à l'IA responsable",
     "AI Management System": "Système de management de l'IA",
