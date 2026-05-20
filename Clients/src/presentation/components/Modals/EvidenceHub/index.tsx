@@ -228,20 +228,27 @@ const NewEvidenceHub: FC<NewEvidenceHubProps> = ({
   }, []);
 
   const handleUploadSuccess = (files: FileResponse[]) => {
-    setValues((prev) => ({
-      ...prev,
-      evidence_files: [
-        ...prev.evidence_files,
-        ...files.map((file) => ({
-          id: file.id,
-          filename: file.filename,
-          size: file.size,
-          mimetype: file.mimetype,
-          uploaded_by: file.uploaded_by,
-          upload_date: file.upload_date,
-        })),
-      ],
+    console.log("[NewEvidenceHub.handleUploadSuccess] received files:", files);
+    const mapped = files.map((file) => ({
+      id: file.id,
+      filename: file.filename,
+      size: file.size,
+      mimetype: file.mimetype,
+      uploaded_by: file.uploaded_by,
+      upload_date: file.upload_date,
     }));
+    console.log("[NewEvidenceHub.handleUploadSuccess] mapped into evidence_files shape:", mapped);
+    setValues((prev) => {
+      const next = {
+        ...prev,
+        evidence_files: [...prev.evidence_files, ...mapped],
+      };
+      console.log(
+        "[NewEvidenceHub.handleUploadSuccess] evidence_files after merge:",
+        next.evidence_files,
+      );
+      return next;
+    });
     setErrors((prev) => ({ ...prev, files: "" }));
     setIsUploadModalOpen(false);
   };
@@ -322,9 +329,17 @@ const NewEvidenceHub: FC<NewEvidenceHubProps> = ({
 
     setIsSubmitting(true);
     try {
+      console.log("[NewEvidenceHub.handleSubmit] submitting evidence values:", values);
+      console.log(
+        "[NewEvidenceHub.handleSubmit] evidence_files count:",
+        values.evidence_files?.length,
+        "files:",
+        values.evidence_files,
+      );
       if (onSuccess) onSuccess(values);
       setIsOpen(false);
     } catch (error) {
+      console.error("[NewEvidenceHub.handleSubmit] error:", error);
       setIsSubmitting(false);
       if (onError) onError(error);
     }
@@ -384,7 +399,7 @@ const NewEvidenceHub: FC<NewEvidenceHubProps> = ({
                         size="small"
                         aria-label="Remove file"
                         sx={{
-                          padding: "4px",
+                          "padding": "4px",
                           "&:hover": { bgcolor: theme.palette.background.fill },
                         }}
                       >
@@ -523,17 +538,17 @@ const NewEvidenceHub: FC<NewEvidenceHubProps> = ({
                       label={framework}
                       onClick={() => toggleFramework(framework)}
                       sx={{
-                        height: "30px",
-                        fontSize: 13,
-                        fontWeight: 500,
-                        cursor: "pointer",
-                        backgroundColor: isSelected
+                        "height": "30px",
+                        "fontSize": 13,
+                        "fontWeight": 500,
+                        "cursor": "pointer",
+                        "backgroundColor": isSelected
                           ? theme.palette.status.success.bg
                           : theme.palette.background.accent,
-                        color: isSelected
+                        "color": isSelected
                           ? theme.palette.status.success.text
                           : theme.palette.text.secondary,
-                        border: `1px solid ${
+                        "border": `1px solid ${
                           isSelected
                             ? theme.palette.status.success.border
                             : theme.palette.border.light

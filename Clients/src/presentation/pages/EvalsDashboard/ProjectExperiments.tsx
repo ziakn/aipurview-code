@@ -97,9 +97,11 @@ export default function ProjectExperiments({
   const prevRunningIdsRef = useRef<Set<string>>(new Set());
 
   // RBAC permissions
-  const { userRoleName } = useAuth();
-  const canCreateExperiment = allowedRoles.evals.createExperiment.includes(userRoleName);
-  const canDeleteExperiment = allowedRoles.evals.deleteExperiment.includes(userRoleName);
+  const { userRoleName, isSuperAdmin } = useAuth();
+  const canCreateExperiment =
+    allowedRoles.evals.createExperiment.includes(userRoleName) && !isSuperAdmin;
+  const canDeleteExperiment =
+    allowedRoles.evals.deleteExperiment.includes(userRoleName) && !isSuperAdmin;
 
   // GroupBy state
   const { groupBy, groupSortOrder, handleGroupChange } = useGroupByState();
@@ -748,8 +750,8 @@ export default function ProjectExperiments({
                 value={chartTimeRange}
                 onChange={(e) => setChartTimeRange(e.target.value as TimeRange)}
                 sx={{
-                  fontSize: "12px",
-                  height: "28px",
+                  "fontSize": "12px",
+                  "height": "28px",
                   "& .MuiSelect-select": { py: 0.5, px: 1.5 },
                   "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E5E7EB" },
                   "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#D1D5DB" },

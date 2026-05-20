@@ -45,6 +45,7 @@ import {
   Popover,
   Snackbar,
   Alert,
+  TextField,
 } from "@mui/material";
 import {
   Underline as UnderlineIcon,
@@ -84,6 +85,7 @@ import {
   SuperscriptIcon,
   SubscriptIcon,
   Check,
+  Pencil,
   Palette,
   ChevronDown as ChevronDownIcon,
   ChevronUp as ChevronUpIcon,
@@ -109,7 +111,7 @@ import {
 } from "../../../application/repository/policy.repository";
 import useUsers from "../../../application/hooks/useUsers";
 import { User } from "../../../domain/types/User";
-import { PolicyFormData, PolicyFormErrors } from "../../types/interfaces/i.policy";
+import { PolicyFormData, PolicyFormErrors, PolicyInput } from "../../types/interfaces/i.policy";
 import { PolicyManagerModel } from "../../../domain/models/Common/policy/policyManager.model";
 import { checkStringValidation } from "../../../application/validations/stringValidation";
 import { useFormValidation } from "../../../application/hooks/useFormValidation";
@@ -293,29 +295,29 @@ type ToolbarKey =
   | "search";
 
 const defaultToolbarState: Record<ToolbarKey, boolean> = {
-  bold: false,
-  italic: false,
-  underline: false,
-  undo: false,
-  redo: false,
-  strike: false,
-  ol: false,
-  ul: false,
+  "bold": false,
+  "italic": false,
+  "underline": false,
+  "undo": false,
+  "redo": false,
+  "strike": false,
+  "ol": false,
+  "ul": false,
   "align-left": false,
   "align-center": false,
   "align-right": false,
-  link: false,
-  image: false,
-  highlight: false,
-  blockquote: false,
-  table: false,
-  code: false,
-  hr: false,
-  taskList: false,
-  superscript: false,
-  subscript: false,
-  color: false,
-  search: false,
+  "link": false,
+  "image": false,
+  "highlight": false,
+  "blockquote": false,
+  "table": false,
+  "code": false,
+  "hr": false,
+  "taskList": false,
+  "superscript": false,
+  "subscript": false,
+  "color": false,
+  "search": false,
 };
 
 // ── Normalize legacy Slate HTML ───────────────────────────────────────
@@ -504,6 +506,10 @@ export default function PolicyEditorPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [serverErrors, setServerErrors] = useState<PolicyFormErrors>({});
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editedTitle, setEditedTitle] = useState("");
+  const [isSavingTitle, setIsSavingTitle] = useState(false);
+  const [titleSaveError, setTitleSaveError] = useState<string | null>(null);
   const [toolbarState, setToolbarState] = useState(defaultToolbarState);
   const [currentBlockType, setCurrentBlockType] = useState<string>("p");
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -523,7 +529,7 @@ export default function PolicyEditorPage() {
   const validators = useMemo(
     () => ({
       title: (v: unknown) => {
-        const r = checkStringValidation("Policy title", v as string, 1, 64);
+        const r = checkStringValidation("Policy title", v as string, 1, 128);
         return r.accepted ? "" : r.message;
       },
       status: (v: unknown) => (!v ? "Status is required." : ""),
@@ -564,9 +570,62 @@ export default function PolicyEditorPage() {
     status: "Under Review",
     tags: [],
     nextReviewDate: "",
+    policyOwner: null,
     assignedReviewers: [],
     content: "",
   });
+
+  const handleStartEditTitle = useCallback(() => {
+    setEditedTitle(formData.title);
+    setIsEditingTitle(true);
+  }, [formData.title]);
+
+  const handleSaveTitle = useCallback(async () => {
+    const trimmed = editedTitle.trim();
+    if (!trimmed) return;
+
+    // Reuse the same title validator for consistency with the main save flow.
+    const titleError = validators.title(trimmed);
+    if (titleError) {
+      setServerErrors((prev) => ({ ...prev, title: titleError }));
+      return;
+    }
+
+    // New policy: no row to update yet — commit to local form state only.
+    if (!policy?.id) {
+      setFormData((prev) => ({ ...prev, title: trimmed }));
+      clearFieldError("title");
+      setServerErrors((prev) => ({ ...prev, title: undefined }));
+      setIsEditingTitle(false);
+      return;
+    }
+
+    setIsSavingTitle(true);
+    try {
+      const updated = await updatePolicy(policy.id, { title: trimmed } as PolicyInput);
+      setFormData((prev) => ({ ...prev, title: trimmed }));
+      setPolicy((prev) => (prev ? { ...prev, ...updated, title: trimmed } : updated));
+      clearFieldError("title");
+      setServerErrors((prev) => ({ ...prev, title: undefined }));
+      setIsEditingTitle(false);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (err: any) {
+      const errorData = err?.originalError?.response || err?.response?.data || err?.response;
+      const fieldErr = errorData?.errors?.find((e: any) => e.field === "title")?.message;
+      setTitleSaveError(fieldErr || "Failed to save title");
+      if (fieldErr) {
+        setServerErrors((prev) => ({ ...prev, title: fieldErr }));
+      }
+    } finally {
+      setIsSavingTitle(false);
+    }
+  }, [editedTitle, validators, policy?.id, clearFieldError]);
+
+  const handleCancelEditTitle = useCallback(() => {
+    setIsEditingTitle(false);
+    setEditedTitle("");
+  }, []);
 
   // Resolve template from query param (memoized to avoid new object each render)
   const template = useMemo(() => {
@@ -623,6 +682,10 @@ export default function PolicyEditorPage() {
         nextReviewDate: policy.next_review_date
           ? new Date(policy.next_review_date).toISOString().slice(0, 10)
           : "",
+        policyOwner:
+          policy.policy_owner_id != null
+            ? (users.find((u) => u.id === policy.policy_owner_id) ?? null)
+            : null,
         assignedReviewers: policy.assigned_reviewer_ids
           ? policy.assigned_reviewer_ids
               .map((i) => users.find((u) => u.id === i))
@@ -652,29 +715,29 @@ export default function PolicyEditorPage() {
 
       setCurrentBlockType(blockType);
       setToolbarState({
-        bold: editor.isActive("bold"),
-        italic: editor.isActive("italic"),
-        underline: editor.isActive("underline"),
-        strike: editor.isActive("strike"),
-        ol: editor.isActive("orderedList"),
-        ul: editor.isActive("bulletList"),
+        "bold": editor.isActive("bold"),
+        "italic": editor.isActive("italic"),
+        "underline": editor.isActive("underline"),
+        "strike": editor.isActive("strike"),
+        "ol": editor.isActive("orderedList"),
+        "ul": editor.isActive("bulletList"),
         "align-left": editor.isActive({ textAlign: "left" }),
         "align-center": editor.isActive({ textAlign: "center" }),
         "align-right": editor.isActive({ textAlign: "right" }),
-        link: editor.isActive("link"),
-        highlight: editor.isActive("highlight"),
-        blockquote: blockType === "blockquote",
-        code: editor.isActive("codeBlock"),
-        undo: false,
-        redo: false,
-        image: false,
-        table: editor.isActive("table"),
-        hr: false,
-        taskList: editor.isActive("taskList"),
-        superscript: editor.isActive("superscript"),
-        subscript: editor.isActive("subscript"),
-        color: false,
-        search: false,
+        "link": editor.isActive("link"),
+        "highlight": editor.isActive("highlight"),
+        "blockquote": blockType === "blockquote",
+        "code": editor.isActive("codeBlock"),
+        "undo": false,
+        "redo": false,
+        "image": false,
+        "table": editor.isActive("table"),
+        "hr": false,
+        "taskList": editor.isActive("taskList"),
+        "superscript": editor.isActive("superscript"),
+        "subscript": editor.isActive("subscript"),
+        "color": false,
+        "search": false,
       });
     } catch {
       // ignore
@@ -1267,6 +1330,10 @@ export default function PolicyEditorPage() {
     if (!validateAll(formData)) {
       formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       setValidationSnackbar(true);
+      if (!formData.title.trim()) {
+        setEditedTitle(formData.title);
+        setIsEditingTitle(true);
+      }
       return;
     }
     setIsSaving(true);
@@ -1278,7 +1345,10 @@ export default function PolicyEditorPage() {
       tags: formData.tags,
       content_html: html,
       next_review_date: formData.nextReviewDate ? new Date(formData.nextReviewDate) : undefined,
-      assigned_reviewer_ids: formData.assignedReviewers.map((u) => u.id),
+      policy_owner_id: formData.policyOwner?.id ?? null,
+      assigned_reviewer_ids: formData.assignedReviewers
+        .map((u) => u.id)
+        .filter((id) => id !== formData.policyOwner?.id),
     };
 
     try {
@@ -1313,6 +1383,7 @@ export default function PolicyEditorPage() {
           else if (error.field === "next_review_date") apiErrors.nextReviewDate = error.message;
           else if (error.field === "assigned_reviewer_ids")
             apiErrors.assignedReviewers = error.message;
+          else if (error.field === "policy_owner_id") apiErrors.policyOwner = error.message;
         });
         setServerErrors(apiErrors);
       }
@@ -1537,18 +1608,95 @@ export default function PolicyEditorPage() {
                   onClick={() => navigate("/policies")}
                   size="small"
                   sx={{
-                    padding: "4px",
-                    borderRadius: "4px",
-                    color: "text.muted",
+                    "padding": "4px",
+                    "borderRadius": "4px",
+                    "color": "text.muted",
                     "&:hover": { backgroundColor: "#F2F4F7", color: "text.secondary" },
                   }}
                 >
                   <ArrowLeft size={18} />
                 </IconButton>
               </Tooltip>
-              <Typography sx={{ fontSize: 16, color: "text.secondary", fontWeight: 600 }}>
-                {pageTitle}
-              </Typography>
+              <Box
+                sx={{
+                  "display": "inline-flex",
+                  "alignItems": "center",
+                  "gap": 0.5,
+                  "&:hover .edit-title-icon": {
+                    opacity: 1,
+                  },
+                }}
+              >
+                {isEditingTitle ? (
+                  <>
+                    <TextField
+                      value={editedTitle}
+                      onChange={(e) => setEditedTitle(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleSaveTitle();
+                        if (e.key === "Escape") handleCancelEditTitle();
+                      }}
+                      placeholder="Policy title"
+                      variant="outlined"
+                      size="small"
+                      autoFocus
+                      disabled={isSavingTitle}
+                      error={!!displayErrors.title}
+                      helperText={displayErrors.title}
+                      inputProps={{ maxLength: 128 }}
+                      sx={{
+                        "minWidth": "400px",
+                        "& .MuiOutlinedInput-root": {
+                          fontSize: "16px",
+                          fontWeight: 600,
+                        },
+                      }}
+                    />
+                    <IconButton
+                      size="small"
+                      onClick={handleSaveTitle}
+                      disabled={!editedTitle.trim() || isSavingTitle}
+                      sx={{ color: "brand.primary" }}
+                    >
+                      {isSavingTitle ? (
+                        <Loader2 size={18} style={{ animation: "spin 1s linear infinite" }} />
+                      ) : (
+                        <Check size={18} />
+                      )}
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      onClick={handleCancelEditTitle}
+                      disabled={isSavingTitle}
+                      sx={{ color: "text.disabled" }}
+                    >
+                      <X size={18} />
+                    </IconButton>
+                  </>
+                ) : (
+                  <>
+                    <Typography sx={{ fontSize: 16, color: "text.secondary", fontWeight: 600 }}>
+                      {pageTitle}
+                    </Typography>
+                    <IconButton
+                      size="small"
+                      onClick={handleStartEditTitle}
+                      className="edit-title-icon"
+                      sx={{
+                        // "opacity": 0,
+                        "transition": "opacity 0.2s",
+                        "color": "text.disabled",
+                        "&:hover": {
+                          color: "brand.primary",
+                          backgroundColor: "rgba(19, 113, 91, 0.1)",
+                        },
+                      }}
+                    >
+                      <Pencil size={14} />
+                    </IconButton>
+                  </>
+                )}
+              </Box>
             </Stack>
 
             <Stack direction="row" gap="8px" alignItems="center">
@@ -1575,10 +1723,10 @@ export default function PolicyEditorPage() {
                     onClick={() => setIsHistorySidebarOpen((prev) => !prev)}
                     size="small"
                     sx={{
-                      color: isHistorySidebarOpen ? "brand.primary" : "text.muted",
-                      padding: "4px",
-                      borderRadius: "4px",
-                      backgroundColor: isHistorySidebarOpen ? "#E6F4F1" : "transparent",
+                      "color": isHistorySidebarOpen ? "brand.primary" : "text.muted",
+                      "padding": "4px",
+                      "borderRadius": "4px",
+                      "backgroundColor": isHistorySidebarOpen ? "#E6F4F1" : "transparent",
                       "&:hover": {
                         backgroundColor: isHistorySidebarOpen ? "#D1EDE6" : "#F2F4F7",
                       },
@@ -1603,11 +1751,11 @@ export default function PolicyEditorPage() {
                     }
                     isDisabled={isExportingPDF || isExportingDOCX}
                     sx={{
-                      backgroundColor: "background.main",
-                      border: "1px solid #d0d5dd",
-                      color: "text.secondary",
-                      gap: 1,
-                      minWidth: "90px",
+                      "backgroundColor": "background.main",
+                      "border": "1px solid #d0d5dd",
+                      "color": "text.secondary",
+                      "gap": 1,
+                      "minWidth": "90px",
                       "&:hover": {
                         backgroundColor: "background.accent",
                         borderColor: "text.muted",
@@ -1670,19 +1818,19 @@ export default function PolicyEditorPage() {
                           downloadExport(format);
                         }}
                         sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                          px: 1.5,
-                          py: 1,
-                          border: "none",
-                          background: "none",
-                          cursor: "pointer",
-                          borderRadius: "4px",
-                          fontSize: 13,
-                          color: "text.secondary",
-                          width: "100%",
-                          textAlign: "left",
+                          "display": "flex",
+                          "alignItems": "center",
+                          "gap": 1,
+                          "px": 1.5,
+                          "py": 1,
+                          "border": "none",
+                          "background": "none",
+                          "cursor": "pointer",
+                          "borderRadius": "4px",
+                          "fontSize": 13,
+                          "color": "text.secondary",
+                          "width": "100%",
+                          "textAlign": "left",
                           "&:hover": { backgroundColor: "#F2F4F7" },
                         }}
                       >
@@ -1700,11 +1848,11 @@ export default function PolicyEditorPage() {
                 text={isImporting ? "Importing..." : "Import"}
                 isDisabled={isImporting}
                 sx={{
-                  backgroundColor: "background.main",
-                  border: "1px solid #d0d5dd",
-                  color: "text.secondary",
-                  gap: 1,
-                  minWidth: "90px",
+                  "backgroundColor": "background.main",
+                  "border": "1px solid #d0d5dd",
+                  "color": "text.secondary",
+                  "gap": 1,
+                  "minWidth": "90px",
                   "&:hover": {
                     backgroundColor: "background.accent",
                     borderColor: "text.muted",
@@ -1746,9 +1894,9 @@ export default function PolicyEditorPage() {
                 }
                 isDisabled={isSaving}
                 sx={{
-                  backgroundColor: saveSuccess ? "#079455" : "brand.primary",
-                  border: `1px solid ${saveSuccess ? "#079455" : "#13715B"}`,
-                  gap: 2,
+                  "backgroundColor": saveSuccess ? "#079455" : "brand.primary",
+                  "border": `1px solid ${saveSuccess ? "#079455" : "#13715B"}`,
+                  "gap": 2,
                   "&:hover": {
                     backgroundColor: saveSuccess ? "#079455" : "#0F5B4D",
                     borderColor: saveSuccess ? "#079455" : "#0F5B4D",
@@ -1773,7 +1921,16 @@ export default function PolicyEditorPage() {
           </Stack>
 
           {/* ── Metadata form ────────────────────────────────────────── */}
-          <Box ref={formRef} sx={{ flexShrink: 0, mb: "8px" }}>
+          <Box
+            ref={formRef}
+            sx={{
+              flexShrink: 0,
+              mb: "8px",
+              overflow: "visible",
+              position: "relative",
+              zIndex: 1,
+            }}
+          >
             <PolicyForm
               formData={formData}
               setFormData={setFormData}
@@ -1827,11 +1984,11 @@ export default function PolicyEditorPage() {
                   }}
                   size="small"
                   sx={{
-                    padding: "6px",
-                    borderRadius: "3px",
-                    backgroundColor: toolbarState[key] ? "#E0F7FA" : "background.main",
-                    border: "1px solid",
-                    borderColor: toolbarState[key] ? "brand.primary" : "transparent",
+                    "padding": "6px",
+                    "borderRadius": "3px",
+                    "backgroundColor": toolbarState[key] ? "#E0F7FA" : "background.main",
+                    "border": "1px solid",
+                    "borderColor": toolbarState[key] ? "brand.primary" : "transparent",
                     "&:hover": { backgroundColor: "background.surface" },
                   }}
                 >
@@ -1880,12 +2037,12 @@ export default function PolicyEditorPage() {
                     setColorAnchorEl(null);
                   }}
                   sx={{
-                    width: 24,
-                    height: 24,
-                    borderRadius: "4px",
-                    backgroundColor: c,
-                    cursor: "pointer",
-                    border: "1px solid rgba(0,0,0,0.1)",
+                    "width": 24,
+                    "height": 24,
+                    "borderRadius": "4px",
+                    "backgroundColor": c,
+                    "cursor": "pointer",
+                    "border": "1px solid rgba(0,0,0,0.1)",
                     "&:hover": { transform: "scale(1.15)", transition: "transform 0.1s" },
                   }}
                 />
@@ -1897,11 +2054,11 @@ export default function PolicyEditorPage() {
                 setColorAnchorEl(null);
               }}
               sx={{
-                mt: 1,
-                textAlign: "center",
-                fontSize: 11,
-                color: "text.icon",
-                cursor: "pointer",
+                "mt": 1,
+                "textAlign": "center",
+                "fontSize": 11,
+                "color": "text.icon",
+                "cursor": "pointer",
                 "&:hover": { color: "text.secondary" },
               }}
             >
@@ -1959,10 +2116,10 @@ export default function PolicyEditorPage() {
                     disabled={searchMatchCount === 0}
                     size="small"
                     sx={{
-                      padding: "6px",
-                      borderRadius: "4px",
-                      border: "1px solid #d0d5dd",
-                      color: "text.secondary",
+                      "padding": "6px",
+                      "borderRadius": "4px",
+                      "border": "1px solid #d0d5dd",
+                      "color": "text.secondary",
                       "&:hover": { backgroundColor: "background.accent" },
                       "&:disabled": { color: "border.dark", borderColor: "border.light" },
                     }}
@@ -1976,10 +2133,10 @@ export default function PolicyEditorPage() {
                     disabled={searchMatchCount === 0}
                     size="small"
                     sx={{
-                      padding: "6px",
-                      borderRadius: "4px",
-                      border: "1px solid #d0d5dd",
-                      color: "text.secondary",
+                      "padding": "6px",
+                      "borderRadius": "4px",
+                      "border": "1px solid #d0d5dd",
+                      "color": "text.secondary",
                       "&:hover": { backgroundColor: "background.accent" },
                       "&:disabled": { color: "border.dark", borderColor: "border.light" },
                     }}
@@ -2023,14 +2180,14 @@ export default function PolicyEditorPage() {
                       onClick={handleReplaceCurrent}
                       isDisabled={searchMatchCount === 0}
                       sx={{
-                        minWidth: "auto",
-                        height: 34,
-                        px: "10px",
-                        fontSize: 12,
-                        backgroundColor: "background.main",
-                        border: "1px solid #d0d5dd",
-                        color: "text.secondary",
-                        whiteSpace: "nowrap",
+                        "minWidth": "auto",
+                        "height": 34,
+                        "px": "10px",
+                        "fontSize": 12,
+                        "backgroundColor": "background.main",
+                        "border": "1px solid #d0d5dd",
+                        "color": "text.secondary",
+                        "whiteSpace": "nowrap",
                         "&:hover": { backgroundColor: "background.accent" },
                       }}
                     />
@@ -2046,14 +2203,14 @@ export default function PolicyEditorPage() {
                   onClick={handleReplaceAll}
                   isDisabled={searchMatchCount === 0}
                   sx={{
-                    minWidth: "auto",
-                    height: 34,
-                    px: "10px",
-                    fontSize: 12,
-                    backgroundColor: "background.main",
-                    border: "1px solid #d0d5dd",
-                    color: "text.secondary",
-                    whiteSpace: "nowrap",
+                    "minWidth": "auto",
+                    "height": 34,
+                    "px": "10px",
+                    "fontSize": 12,
+                    "backgroundColor": "background.main",
+                    "border": "1px solid #d0d5dd",
+                    "color": "text.secondary",
+                    "whiteSpace": "nowrap",
                     "&:hover": { backgroundColor: "background.accent" },
                   }}
                 />
@@ -2106,9 +2263,9 @@ export default function PolicyEditorPage() {
                             }}
                             size="small"
                             sx={{
-                              padding: "5px",
-                              borderRadius: "4px",
-                              color: danger ? "#dc2626" : "#374151",
+                              "padding": "5px",
+                              "borderRadius": "4px",
+                              "color": danger ? "#dc2626" : "#374151",
                               "&:hover": {
                                 backgroundColor: danger ? "#fef2f2" : "background.hover",
                               },
@@ -2363,6 +2520,18 @@ export default function PolicyEditorPage() {
         </Alert>
       </Snackbar>
 
+      {/* Title save error snackbar */}
+      <Snackbar
+        open={Boolean(titleSaveError)}
+        autoHideDuration={4000}
+        onClose={() => setTitleSaveError(null)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={() => setTitleSaveError(null)} severity="error" sx={{ width: "100%" }}>
+          {titleSaveError}
+        </Alert>
+      </Snackbar>
+
       {/* Import confirmation dialog */}
       <ConfirmationModal
         isOpen={pendingImportFile !== null}
@@ -2380,7 +2549,7 @@ export default function PolicyEditorPage() {
         onCancel={cancelImport}
         onProceed={confirmImport}
         confirmBtnSx={{
-          backgroundColor: "brand.primary",
+          "backgroundColor": "brand.primary",
           "&:hover": { backgroundColor: "brand.primaryHover" },
         }}
       />

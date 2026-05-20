@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Box, IconButton, TextField, Typography } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
+import Field from "../Inputs/Field";
 import type { SxProps, Theme } from "@mui/material";
 import { Check, Pencil, X } from "lucide-react";
 import { palette } from "../../themes/palette";
@@ -79,8 +80,9 @@ export default function EditableText({
   if (isEditing) {
     return (
       <Box sx={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
-        <TextField
-          inputRef={inputRef}
+        <Field
+          ref={inputRef}
+          autoFocus
           value={draft}
           onChange={(e) => setDraft(e.target.value.slice(0, maxLength))}
           onKeyDown={(e) => {
@@ -92,12 +94,9 @@ export default function EditableText({
               handleCancel();
             }
           }}
-          variant="outlined"
-          size="small"
-          autoFocus
           disabled={saving}
           sx={{
-            minWidth: inputMinWidth,
+            "minWidth": inputMinWidth,
             "& .MuiOutlinedInput-root": textSx as object,
           }}
         />
@@ -126,9 +125,9 @@ export default function EditableText({
   return (
     <Box
       sx={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: "4px",
+        "display": "inline-flex",
+        "alignItems": "center",
+        "gap": "4px",
         "&:hover .editable-text-icon": { opacity: disabled ? 0 : 1 },
       }}
     >
@@ -140,9 +139,9 @@ export default function EditableText({
           className="editable-text-icon"
           aria-label={editAriaLabel}
           sx={{
-            opacity: 0,
-            transition: "opacity 0.15s",
-            color: palette.text.disabled,
+            "opacity": 0,
+            "transition": "opacity 0.15s",
+            "color": palette.text.disabled,
             "&:hover": {
               color: palette.brand.primary,
               backgroundColor: "rgba(19, 113, 91, 0.1)",

@@ -20,6 +20,7 @@ interface AutoCompleteFieldProps<
   label?: string;
   placeholder?: string;
   error?: string;
+  helperText?: string;
   isRequired?: boolean;
   isOptional?: boolean;
   optionalLabel?: string;
@@ -35,6 +36,7 @@ function AutoCompleteField<
   label,
   placeholder,
   error,
+  helperText,
   isRequired,
   isOptional,
   optionalLabel,
@@ -44,28 +46,42 @@ function AutoCompleteField<
 }: AutoCompleteFieldProps<T, Multiple, DisableClearable, FreeSolo>) {
   const theme = useTheme();
 
-  // Extract layout props from sx to apply to wrapper Stack
+  const LAYOUT_KEYS = [
+    "width",
+    "flex",
+    "flexGrow",
+    "flexShrink",
+    "flexBasis",
+    "minWidth",
+    "maxWidth",
+  ] as const;
+
   const extractedLayoutProps = (() => {
     if (!sx || typeof sx !== "object" || Array.isArray(sx)) return {};
     const s = sx as Record<string, unknown>;
-    return {
-      width: s.width as string | number | undefined,
-      flexGrow: s.flexGrow as number | undefined,
-      minWidth: s.minWidth as string | number | undefined,
-      maxWidth: s.maxWidth as string | number | undefined,
-    };
+    const props: Record<string, unknown> = {};
+    LAYOUT_KEYS.forEach((key) => {
+      if (s[key] !== undefined) props[key] = s[key];
+    });
+    return props;
   })();
 
-  // Pass remaining sx props to the Autocomplete (excluding layout props already on wrapper)
   const sxWithoutLayoutProps = (() => {
     if (!sx || typeof sx !== "object" || Array.isArray(sx)) return sx;
     const s = sx as Record<string, unknown>;
     return Object.fromEntries(
-      Object.entries(s).filter(
-        ([key]) => !["width", "flexGrow", "minWidth", "maxWidth"].includes(key),
-      ),
+      Object.entries(s).filter(([key]) => !(LAYOUT_KEYS as readonly string[]).includes(key)),
     );
   })();
+
+  if (import.meta.env?.DEV) {
+    // eslint-disable-next-line no-console
+    console.debug("[AutoCompleteField] layout", {
+      label,
+      extractedLayoutProps,
+      sxKeysOnAutocomplete: Object.keys(sxWithoutLayoutProps ?? {}),
+    });
+  }
 
   return (
     <Stack gap={theme.spacing(2)} sx={extractedLayoutProps}>
@@ -104,6 +120,8 @@ function AutoCompleteField<
             {...params}
             size="small"
             placeholder={placeholder}
+            error={!!error || !!helperText}
+            helperText={helperText}
             sx={{
               "& .MuiOutlinedInput-root": {
                 minHeight: "34px",
@@ -118,7 +136,7 @@ function AutoCompleteField<
         )}
         sx={{
           ...getAutocompleteStyles(theme, { hasError: !!error }),
-          backgroundColor: theme.palette.background.main,
+          "backgroundColor": theme.palette.background.main,
           "& .MuiOutlinedInput-root": {
             ...getAutocompleteStyles(theme, { hasError: !!error })["& .MuiOutlinedInput-root"],
             borderRadius: theme.shape.borderRadius,
@@ -136,9 +154,9 @@ function AutoCompleteField<
             sx: {
               "& ul": { p: 0 },
               "& li": {
-                fontSize: 13,
-                borderRadius: theme.shape.borderRadius,
-                transition: "color 0.2s ease, background-color 0.2s ease",
+                "fontSize": 13,
+                "borderRadius": theme.shape.borderRadius,
+                "transition": "color 0.2s ease, background-color 0.2s ease",
                 "&:hover": {
                   color: theme.palette.primary.main,
                   backgroundColor: theme.palette.background.accent,

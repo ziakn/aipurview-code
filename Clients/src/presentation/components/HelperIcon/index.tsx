@@ -6,15 +6,17 @@ import { useUserGuideSidebarContext } from "../UserGuide";
 interface HelperIconProps {
   /** Path to the User Guide article (e.g., "ai-governance/model-inventory") */
   articlePath: string;
+  /** Optional heading block id to scroll to once the article opens (e.g., "governance-score") */
+  sectionId?: string;
   size?: "small" | "medium" | "large";
 }
 
-function HelperIcon({ articlePath, size = "small" }: HelperIconProps) {
+function HelperIcon({ articlePath, sectionId, size = "small" }: HelperIconProps) {
   const theme = useTheme();
   const userGuideSidebar = useUserGuideSidebarContext();
 
   const handleClick = () => {
-    userGuideSidebar.open(articlePath);
+    userGuideSidebar.open(sectionId ? `${articlePath}#${sectionId}` : articlePath);
   };
 
   return (
@@ -24,9 +26,9 @@ function HelperIcon({ articlePath, size = "small" }: HelperIconProps) {
       aria-label="Open help information"
       size={size}
       sx={{
-        color: theme.palette.text.secondary,
-        backgroundColor: "transparent",
-        padding: 0.5,
+        "color": theme.palette.text.secondary,
+        "backgroundColor": "transparent",
+        "padding": 0.5,
         "&:hover": {
           backgroundColor: alpha(theme.palette.text.secondary, 0.1),
         },

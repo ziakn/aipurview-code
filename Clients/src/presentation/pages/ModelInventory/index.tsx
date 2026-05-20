@@ -56,6 +56,8 @@ import { EvidenceHubModel } from "../../../domain/models/Common/evidenceHub/evid
 import NewEvidenceHub from "../../components/Modals/EvidenceHub";
 import { createEvidenceHub } from "../../../application/repository/evidenceHub.repository";
 import EvidenceHubTable from "./evidenceHubTable";
+import FilePreviewPanel from "../FileManager/components/FilePreviewPanel";
+import { FileMetadata } from "../../../application/repository/file.repository";
 import ModelEvaluationsTab from "./ModelEvaluationsTab";
 import ShareButton from "../../components/ShareViewDropdown/ShareButton";
 import ShareViewDropdown, { ShareViewSettings } from "../../components/ShareViewDropdown";
@@ -460,6 +462,12 @@ const ModelInventory: React.FC = () => {
   // Modal open/close flag
   const [isEvidenceHubModalOpen, setIsEvidenceHubModalOpen] = useState(false);
 
+  // Evidence preview drawer state
+  const [previewFile, setPreviewFile] = useState<FileMetadata | null>(null);
+  const [previewFiles, setPreviewFiles] = useState<FileMetadata[]>([]);
+  const [previewIndex, setPreviewIndex] = useState<number>(0);
+  const [isEvidencePreviewOpen, setIsEvidencePreviewOpen] = useState(false);
+
   // Search term for Evidence Hub
   const [searchTypeTerm, setSearchTypeTerm] = useState("");
 
@@ -770,7 +778,10 @@ const ModelInventory: React.FC = () => {
     try {
       const response = await getAllEntities({ routeUrl: "/evidenceHub" });
       if (response?.data) {
-        setEvidenceHubData(response.data);
+        const modelScoped = (response.data as EvidenceHubModel[]).filter(
+          (e) => Array.isArray(e.mapped_model_ids) && e.mapped_model_ids.length > 0,
+        );
+        setEvidenceHubData(modelScoped);
         if (showLoading) {
           setTableKey((prev) => prev + 1);
         }
@@ -1058,6 +1069,66 @@ const ModelInventory: React.FC = () => {
       });
     }
   };
+
+  const handlePreviewEvidence = useCallback(
+    (id: number, fileIndex: number = 0) => {
+      const evidence = evidenceHubData.find((e) => e.id === id);
+      const rawFiles: any[] = Array.isArray(evidence?.evidence_files)
+        ? (evidence!.evidence_files as any[])
+        : [];
+      const fileCount = rawFiles.length;
+
+      if (fileCount === 0) {
+        setAlert({
+          variant: "info",
+          body: "This evidence has no file attached to preview.",
+        });
+        return;
+      }
+
+      // Backend SQL returns evidence files via file_entity_links with shape
+      // { id, fileName, size, mimetype, uploaded_by, uploaded_time, source };
+      // the upload-time FE shape is { id, filename, size, mimetype, uploaded_by, upload_date }.
+      // Support both.
+      const fileMetas: FileMetadata[] = rawFiles.map((rawFile) => {
+        const filename = rawFile.filename ?? rawFile.fileName;
+        const uploadDate = rawFile.upload_date ?? rawFile.uploaded_time;
+        const sizeRaw = rawFile.size;
+        const size = typeof sizeRaw === "string" ? parseInt(sizeRaw, 10) || 0 : (sizeRaw ?? 0);
+        const mimetype: string | undefined = rawFile.mimetype;
+        const uploader = users.find((u: any) => String(u.id) === String(rawFile.uploaded_by));
+        return {
+          id: String(rawFile.id),
+          filename: filename || "Unknown file",
+          size,
+          mimetype: mimetype || "application/octet-stream",
+          upload_date: uploadDate,
+          uploaded_by: String(rawFile.uploaded_by),
+          uploader_name: uploader?.name,
+          uploader_surname: uploader?.surname,
+          tags: evidence?.tags,
+          expiry_date: evidence?.expiry_date
+            ? new Date(evidence.expiry_date).toISOString()
+            : undefined,
+          description: evidence?.description ?? undefined,
+        };
+      });
+
+      const safeIndex = Math.max(0, Math.min(fileIndex, fileCount - 1));
+      setPreviewFiles(fileMetas);
+      setPreviewIndex(safeIndex);
+      setPreviewFile(fileMetas[safeIndex]);
+      setIsEvidencePreviewOpen(true);
+    },
+    [evidenceHubData, users],
+  );
+
+  const handleCloseEvidencePreview = useCallback(() => {
+    setIsEvidencePreviewOpen(false);
+    setPreviewFile(null);
+    setPreviewFiles([]);
+    setPreviewIndex(0);
+  }, []);
 
   // Fetch model risk data when modal opens with an ID
   useEffect(() => {
@@ -1680,12 +1751,21 @@ const ModelInventory: React.FC = () => {
 
   const handleEvidenceUploadModalSuccess = async (formData: EvidenceHubModel) => {
     try {
+      console.log("[ModelInventory.handleEvidenceUploadModalSuccess] formData received:", formData);
+      console.log(
+        "[ModelInventory.handleEvidenceUploadModalSuccess] evidence_files in payload:",
+        formData?.evidence_files,
+      );
       if (selectedEvidenceHub) {
         // Update existing Evidence
-        await updateEntityById({
+        const updateRes = await updateEntityById({
           routeUrl: `/evidenceHub/${selectedEvidenceHub.id}`,
           body: formData,
         });
+        console.log(
+          "[ModelInventory.handleEvidenceUploadModalSuccess] PATCH /evidenceHub response:",
+          updateRes,
+        );
 
         setEvidenceHubData((prev) =>
           prev.map((item) => (item.id === selectedEvidenceHub.id ? formData : item)),
@@ -1698,6 +1778,14 @@ const ModelInventory: React.FC = () => {
       } else {
         // Create new Evidence
         const response = await createEvidenceHub("/evidenceHub", formData);
+        console.log(
+          "[ModelInventory.handleEvidenceUploadModalSuccess] POST /evidenceHub response:",
+          response,
+        );
+        console.log(
+          "[ModelInventory.handleEvidenceUploadModalSuccess] response.data.evidence_files:",
+          (response as any)?.data?.evidence_files,
+        );
 
         if (response?.data) {
           setEvidenceHubData((prev) => [...prev, response.data]);
@@ -1888,17 +1976,17 @@ const ModelInventory: React.FC = () => {
             e.preventDefault();
           }}
           sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 450,
-            bgcolor: theme.palette.background.modal,
-            border: 1,
-            borderColor: theme.palette.border.dark,
-            borderRadius: theme.shape.borderRadius,
-            boxShadow: 24,
-            p: theme.spacing(15),
+            "position": "absolute",
+            "top": "50%",
+            "left": "50%",
+            "transform": "translate(-50%, -50%)",
+            "width": 450,
+            "bgcolor": theme.palette.background.modal,
+            "border": 1,
+            "borderColor": theme.palette.border.dark,
+            "borderRadius": theme.shape.borderRadius,
+            "boxShadow": 24,
+            "p": theme.spacing(15),
             "&:focus": {
               outline: "none",
             },
@@ -1925,9 +2013,9 @@ const ModelInventory: React.FC = () => {
               text="Cancel"
               onClick={() => setShowReplaceConfirmation(false)}
               sx={{
-                width: 100,
-                fontSize: 13,
-                color: "inherit",
+                "width": 100,
+                "fontSize": 13,
+                "color": "inherit",
                 "&:hover": {
                   backgroundColor: "transparent",
                 },
@@ -2096,12 +2184,12 @@ const ModelInventory: React.FC = () => {
                   onClick={() => setIsAnalyticsDrawerOpen(true)}
                   aria-label="Analytics"
                   sx={{
-                    height: "34px",
-                    width: "34px",
-                    padding: "8px",
-                    borderRadius: "4px",
-                    border: `1px solid ${palette.border.light}`,
-                    backgroundColor: palette.background.main,
+                    "height": "34px",
+                    "width": "34px",
+                    "padding": "8px",
+                    "borderRadius": "4px",
+                    "border": `1px solid ${palette.border.light}`,
+                    "backgroundColor": palette.background.main,
                     "&:hover": {
                       backgroundColor: palette.background.accent,
                     },
@@ -2320,6 +2408,7 @@ const ModelInventory: React.FC = () => {
                   data={data}
                   onEdit={handleEditEvidence}
                   onDelete={handleDeleteEvidence}
+                  onPreview={handlePreviewEvidence}
                   modelInventoryData={modelInventoryData}
                   deletingId={deletingEvidenceId}
                   hidePagination={options?.hidePagination}
@@ -2422,6 +2511,19 @@ const ModelInventory: React.FC = () => {
           isEdit={!!selectedEvidenceHub}
           initialData={selectedEvidenceHub || undefined}
           preselectedModelId={preselectedModelId}
+        />
+
+        <FilePreviewPanel
+          isOpen={isEvidencePreviewOpen}
+          onClose={handleCloseEvidencePreview}
+          file={previewFile}
+          files={previewFiles}
+          currentIndex={previewIndex}
+          onNavigate={(newIndex: number) => {
+            if (newIndex < 0 || newIndex >= previewFiles.length) return;
+            setPreviewIndex(newIndex);
+            setPreviewFile(previewFiles[newIndex]);
+          }}
         />
 
         <PageTour steps={ModelInventorySteps} run={true} tourKey="model-inventory-tour" />
