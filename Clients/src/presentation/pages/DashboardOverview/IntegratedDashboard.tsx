@@ -3,6 +3,7 @@ import { Box, Typography, Stack, IconButton, Fade } from "@mui/material";
 import TabContext from "@mui/lab/TabContext";
 import DashboardTabs from "../../components/DashboardTabs";
 import type { DashboardTabConfig } from "../../components/DashboardTabs";
+import HelperIcon from "../../components/HelperIcon";
 import ReadinessDashboard from "../ReadinessDashboard";
 import AIContentReview from "../AIContentReview";
 import AIAuditDashboard from "../AIAuditDashboard";
@@ -573,7 +574,15 @@ const IntegratedDashboard: React.FC = () => {
                     mb: "16px",
                   }}
                 >
-                  <DashboardCard title="AI governance score">
+                  <DashboardCard
+                    title="AI governance score"
+                    action={
+                      <HelperIcon
+                        articlePath="getting-started/dashboard"
+                        sectionId="governance-score"
+                      />
+                    }
+                  >
                     {governanceScoreMetrics && governanceScoreMetrics?.score > 0 ? (
                       <GovernanceScoreCard
                         score={governanceScoreMetrics?.score}
@@ -943,7 +952,15 @@ const IntegratedDashboard: React.FC = () => {
                     mb: "16px",
                   }}
                 >
-                  <DashboardCard title="AI governance score">
+                  <DashboardCard
+                    title="AI governance score"
+                    action={
+                      <HelperIcon
+                        articlePath="getting-started/dashboard"
+                        sectionId="governance-score"
+                      />
+                    }
+                  >
                     {governanceScoreMetrics && governanceScoreMetrics?.score > 0 ? (
                       <GovernanceScoreCard
                         score={governanceScoreMetrics.score}

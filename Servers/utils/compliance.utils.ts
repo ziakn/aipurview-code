@@ -27,14 +27,8 @@ export const calculateComplianceScore = async (
   organizationId: number,
   weights: IComplianceWeights = DEFAULT_COMPLIANCE_WEIGHTS,
 ): Promise<IComplianceScore> => {
-  console.log("[compliance-score] calculateComplianceScore start", {
-    organizationId,
-    weights,
-  });
-
   // Validate weights sum to 1.0
   const weightSum = Object.values(weights).reduce((sum, w) => sum + w, 0);
-  console.log("[compliance-score] weightSum", weightSum);
   if (Math.abs(weightSum - 1.0) > 0.001) {
     throw new Error(`Compliance module weights must sum to 1.0, got ${weightSum.toFixed(3)}`);
   }
@@ -47,13 +41,6 @@ export const calculateComplianceScore = async (
     getModelLifecycleData(organizationId),
     getPolicyDocumentationData(organizationId),
   ]);
-  console.log("[compliance-score] raw module data", {
-    riskData,
-    vendorData,
-    projectData,
-    modelData,
-    policyData,
-  });
 
   // Calculate module scores
   const riskScore = calculateRiskManagementScore(riskData);
@@ -61,13 +48,6 @@ export const calculateComplianceScore = async (
   const projectScore = calculateProjectGovernanceScore(projectData);
   const modelScore = calculateModelLifecycleScore(modelData);
   const policyScore = calculatePolicyDocumentationScore(policyData);
-  console.log("[compliance-score] module scores", {
-    risk: riskScore.score,
-    vendor: vendorScore.score,
-    project: projectScore.score,
-    model: modelScore.score,
-    policy: policyScore.score,
-  });
 
   // Calculate weighted overall score
   const weightedContributions = {
@@ -84,8 +64,6 @@ export const calculateComplianceScore = async (
     weightedContributions.model +
     weightedContributions.policy;
   const overallScore = Math.round(overallScoreRaw);
-  console.log("[compliance-score] weighted contributions", weightedContributions);
-  console.log("[compliance-score] overall", { raw: overallScoreRaw, rounded: overallScore });
 
   // Build metadata
   const metadata: IComplianceMetadata = {
@@ -131,7 +109,7 @@ async function getRiskManagementData(organizationId: number): Promise<RiskManage
   try {
     // Total risks (excluding soft deleted)
     const totalResult = (await sequelize.query(
-      `SELECT COUNT(*) as count FROM project_risks
+      `SELECT COUNT(*) as count FROM risks
        WHERE organization_id = :organizationId
        AND (is_deleted = false OR is_deleted IS NULL)`,
       { type: QueryTypes.SELECT, replacements: { organizationId } },
@@ -139,7 +117,7 @@ async function getRiskManagementData(organizationId: number): Promise<RiskManage
 
     // Mitigated risks
     const mitigatedResult = (await sequelize.query(
-      `SELECT COUNT(*) as count FROM project_risks
+      `SELECT COUNT(*) as count FROM risks
        WHERE organization_id = :organizationId
        AND (is_deleted = false OR is_deleted IS NULL)
        AND mitigation_status = 'Completed'`,
@@ -148,7 +126,7 @@ async function getRiskManagementData(organizationId: number): Promise<RiskManage
 
     // High risks (unmitigated)
     const highResult = (await sequelize.query(
-      `SELECT COUNT(*) as count FROM project_risks
+      `SELECT COUNT(*) as count FROM risks
        WHERE organization_id = :organizationId
        AND (is_deleted = false OR is_deleted IS NULL)
        AND mitigation_status != 'Completed'
@@ -158,7 +136,7 @@ async function getRiskManagementData(organizationId: number): Promise<RiskManage
 
     // Critical risks
     const criticalResult = (await sequelize.query(
-      `SELECT COUNT(*) as count FROM project_risks
+      `SELECT COUNT(*) as count FROM risks
        WHERE organization_id = :organizationId
        AND (is_deleted = false OR is_deleted IS NULL)
        AND mitigation_status != 'Completed'
@@ -188,8 +166,7 @@ async function getVendorManagementData(organizationId: number): Promise<VendorMa
     // Total vendors
     const totalResult = (await sequelize.query(
       `SELECT COUNT(*) as count FROM vendors
-       WHERE organization_id = :organizationId
-       AND (is_deleted = false OR is_deleted IS NULL)`,
+       WHERE organization_id = :organizationId`,
       { type: QueryTypes.SELECT, replacements: { organizationId } },
     )) as { count: string }[];
 
@@ -197,17 +174,15 @@ async function getVendorManagementData(organizationId: number): Promise<VendorMa
     const assessedResult = (await sequelize.query(
       `SELECT COUNT(*) as count FROM vendors
        WHERE organization_id = :organizationId
-       AND (is_deleted = false OR is_deleted IS NULL)
        AND review_status = 'Reviewed'`,
       { type: QueryTypes.SELECT, replacements: { organizationId } },
     )) as { count: string }[];
 
-    // High risk vendors (based on risk_score)
+    // High risk vendors (based on risk_score; review_result is a free-text field, not a category)
     const highRiskResult = (await sequelize.query(
       `SELECT COUNT(*) as count FROM vendors
        WHERE organization_id = :organizationId
-       AND (is_deleted = false OR is_deleted IS NULL)
-       AND (risk_score >= 70 OR review_result = 'High risk')`,
+       AND risk_score >= 70`,
       { type: QueryTypes.SELECT, replacements: { organizationId } },
     )) as { count: string }[];
 
@@ -281,8 +256,7 @@ async function getModelLifecycleData(organizationId: number): Promise<ModelLifec
     // Total models
     const totalResult = (await sequelize.query(
       `SELECT COUNT(*) as count FROM model_inventories
-       WHERE organization_id = :organizationId
-       AND (is_deleted = false OR is_deleted IS NULL)`,
+       WHERE organization_id = :organizationId`,
       { type: QueryTypes.SELECT, replacements: { organizationId } },
     )) as { count: string }[];
 
@@ -290,7 +264,6 @@ async function getModelLifecycleData(organizationId: number): Promise<ModelLifec
     const approvedResult = (await sequelize.query(
       `SELECT COUNT(*) as count FROM model_inventories
        WHERE organization_id = :organizationId
-       AND (is_deleted = false OR is_deleted IS NULL)
        AND status = 'Approved'`,
       { type: QueryTypes.SELECT, replacements: { organizationId } },
     )) as { count: string }[];
@@ -299,7 +272,6 @@ async function getModelLifecycleData(organizationId: number): Promise<ModelLifec
     const pendingResult = (await sequelize.query(
       `SELECT COUNT(*) as count FROM model_inventories
        WHERE organization_id = :organizationId
-       AND (is_deleted = false OR is_deleted IS NULL)
        AND status = 'Pending'`,
       { type: QueryTypes.SELECT, replacements: { organizationId } },
     )) as { count: string }[];
@@ -308,7 +280,6 @@ async function getModelLifecycleData(organizationId: number): Promise<ModelLifec
     const blockedResult = (await sequelize.query(
       `SELECT COUNT(*) as count FROM model_inventories
        WHERE organization_id = :organizationId
-       AND (is_deleted = false OR is_deleted IS NULL)
        AND status = 'Blocked'`,
       { type: QueryTypes.SELECT, replacements: { organizationId } },
     )) as { count: string }[];
@@ -341,19 +312,20 @@ async function getPolicyDocumentationData(
       { type: QueryTypes.SELECT, replacements: { organizationId } },
     )) as { count: string }[];
 
-    // Active policies
+    // Active policies (i.e. published — "Active" is not a valid policy_manager.status value)
     const activeResult = (await sequelize.query(
       `SELECT COUNT(*) as count FROM policy_manager
        WHERE organization_id = :organizationId
-       AND status = 'Active'`,
+       AND status = 'Published'`,
       { type: QueryTypes.SELECT, replacements: { organizationId } },
     )) as { count: string }[];
 
-    // Overdue policies
+    // Overdue policies — past review date and not currently published
     const overdueResult = (await sequelize.query(
       `SELECT COUNT(*) as count FROM policy_manager
        WHERE organization_id = :organizationId
-       AND (status = 'Overdue' OR (next_review_date < NOW() AND status != 'Active'))`,
+       AND next_review_date < NOW()
+       AND status != 'Published'`,
       { type: QueryTypes.SELECT, replacements: { organizationId } },
     )) as { count: string }[];
 

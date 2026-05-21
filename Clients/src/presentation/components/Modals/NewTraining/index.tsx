@@ -15,8 +15,7 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { Suspense, lazy } from "react";
-const Field = lazy(() => import("../../Inputs/Field"));
+import Field from "../../Inputs/Field";
 import Select from "../../Inputs/Select";
 import { CirclePlus as AddCircleOutlineIcon, Trash2 } from "lucide-react";
 
@@ -286,110 +285,96 @@ const NewTraining: FC<NewTrainingProps> = ({
     <Stack spacing={6}>
       <Stack direction="row" spacing={6}>
         <Box sx={{ width: "350px" }}>
-          <Suspense fallback={<div>Loading...</div>}>
-            <Field
-              id="training-name"
-              label="Training name"
-              value={values.training_name}
-              onChange={handleOnTextFieldChange("training_name")}
-              error={errors.training_name}
-              isRequired
-              sx={fieldStyle}
-              placeholder="e.g., Introduction to AI Ethics"
-            />
-          </Suspense>
+          <Field
+            id="training-name"
+            label="Training name"
+            value={values.training_name}
+            onChange={handleOnTextFieldChange("training_name")}
+            error={errors.training_name}
+            isRequired
+            sx={fieldStyle}
+            placeholder="e.g., Introduction to AI Ethics"
+          />
         </Box>
         <Box sx={{ width: "350px" }}>
-          <Suspense fallback={<div>Loading...</div>}>
-            <Field
-              id="duration"
-              label="Duration"
-              value={values.duration}
-              onChange={handleOnTextFieldChange("duration")}
-              error={errors.duration}
-              isRequired
-              sx={fieldStyle}
-              type="text"
-              placeholder="e.g., 2 hours, 3 days, 6 weeks"
-            />
-          </Suspense>
+          <Field
+            id="duration"
+            label="Duration"
+            value={values.duration}
+            onChange={handleOnTextFieldChange("duration")}
+            error={errors.duration}
+            isRequired
+            sx={fieldStyle}
+            type="text"
+            placeholder="e.g., 2 hours, 3 days, 6 weeks"
+          />
         </Box>
       </Stack>
       <Stack direction="row" spacing={6}>
         <Box sx={{ width: "350px" }}>
-          <Suspense fallback={<div>Loading...</div>}>
-            <Field
-              id="provider"
-              label="Provider"
-              value={values.provider}
-              onChange={handleOnTextFieldChange("provider")}
-              error={errors.provider}
-              isRequired
-              sx={fieldStyle}
-              placeholder="e.g., VerifyWise, External Vendor, Internal Team"
-            />
-          </Suspense>
+          <Field
+            id="provider"
+            label="Provider"
+            value={values.provider}
+            onChange={handleOnTextFieldChange("provider")}
+            error={errors.provider}
+            isRequired
+            sx={fieldStyle}
+            placeholder="e.g., VerifyWise, External Vendor, Internal Team"
+          />
         </Box>
         <Box sx={{ width: "350px" }}>
-          <Suspense fallback={<div>Loading...</div>}>
-            <Field
-              id="department"
-              label="Department"
-              value={values.department}
-              onChange={handleOnTextFieldChange("department")}
-              error={errors.department}
-              isRequired
-              sx={fieldStyle}
-              placeholder="e.g., Compliance, Engineering, HR"
-            />
-          </Suspense>
+          <Field
+            id="department"
+            label="Department"
+            value={values.department}
+            onChange={handleOnTextFieldChange("department")}
+            error={errors.department}
+            isRequired
+            sx={fieldStyle}
+            placeholder="e.g., Compliance, Engineering, HR"
+          />
         </Box>
       </Stack>
       <Stack direction="row" spacing={6}>
         <Box sx={{ width: "350px" }}>
-          <Suspense fallback={<div>Loading...</div>}>
-            <Select
-              items={statusOptions}
-              value={values.status}
-              error={errors.status}
-              sx={{ width: "100%" }}
-              id="status"
-              label="Status"
-              isRequired
-              onChange={handleOnSelectChange("status")}
-              placeholder="Select status"
-            />
-          </Suspense>
+          <Select
+            items={statusOptions}
+            value={values.status}
+            error={errors.status}
+            sx={{ width: "100%" }}
+            id="status"
+            label="Status"
+            isRequired
+            onChange={handleOnSelectChange("status")}
+            placeholder="Select status"
+          />
         </Box>
         <Box sx={{ width: "350px" }}>
-          <Suspense fallback={<div>Loading...</div>}>
-            <Field
-              id="number-of-people"
-              label="Number of people"
-              value={values.numberOfPeople?.toString() || ""}
-              onChange={handleOnTextFieldChange("numberOfPeople")}
-              error={errors.numberOfPeople}
-              isRequired
-              sx={fieldStyle}
-              type="number"
-              placeholder="Enter total participants (e.g., 25)"
-            />
-          </Suspense>
+          <Field
+            id="number-of-people"
+            label="Number of people"
+            value={values.numberOfPeople?.toString() || ""}
+            onChange={handleOnTextFieldChange("numberOfPeople")}
+            error={errors.numberOfPeople}
+            isRequired
+            sx={fieldStyle}
+            type="number"
+            placeholder="Enter total participants (e.g., 25)"
+          />
         </Box>
       </Stack>
       <Box sx={{ width: "100%" }}>
-        <Suspense fallback={<div>Loading...</div>}>
-          <Field
-            id="description"
-            label="Description"
-            type="description"
-            value={values.description}
-            onChange={handleOnTextFieldChange("description")}
-            error={errors.description}
-            sx={fieldStyle}
-            placeholder="Provide a short overview of the training goals and content"
-          />
-        </Suspense>
+        <Field
+          id="description"
+          label="Description"
+          type="description"
+          value={values.description}
+          onChange={handleOnTextFieldChange("description")}
+          error={errors.description}
+          sx={fieldStyle}
+          placeholder="Provide a short overview of the training goals and content"
+        />
       </Box>
     </Stack>
   );
