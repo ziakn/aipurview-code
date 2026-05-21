@@ -1,11 +1,4 @@
-import React, {
-  FC,
-  useState,
-  useCallback,
-  useRef,
-  useContext,
-  useEffect,
-} from "react";
+import React, { FC, useState, useCallback, useRef, useContext, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Box, Stack, Tab, Typography, useTheme } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";

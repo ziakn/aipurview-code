@@ -292,8 +292,7 @@ export function CreateProjectForm({ closePopup, onNewProject }: CreateProjectFor
               options={
                 users
                   ?.filter(
-                    (user) =>
-                      !values.members.some((selectedUser) => selectedUser._id === user.id),
+                    (user) => !values.members.some((selectedUser) => selectedUser._id === user.id),
                   )
                   .map(
                     (user) =>

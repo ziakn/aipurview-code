@@ -327,9 +327,7 @@ const CreateTask: FC<ICreateTaskProps> = ({
             );
           }}
           noOptionsText={
-            values.assignees.length === (users?.length ?? 0)
-              ? "All members selected"
-              : "No options"
+            values.assignees.length === (users?.length ?? 0) ? "All members selected" : "No options"
           }
           popupIcon={<GreyDownArrowIcon size={16} />}
           sx={{ width: "350px" }}
