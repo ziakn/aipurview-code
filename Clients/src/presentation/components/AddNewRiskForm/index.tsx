@@ -3,8 +3,6 @@ import React, {
   useState,
   useCallback,
   useRef,
-  lazy,
-  Suspense,
   useContext,
   useEffect,
 } from "react";
@@ -47,8 +45,8 @@ import QuantitativeRiskForm, {
 } from "../QuantitativeRiskForm";
 import { useRiskAssessmentMode } from "../../../application/hooks/useRiskAssessmentMode";
 
-const RiskSection = lazy(() => import("./RisksSection"));
-const MitigationSection = lazy(() => import("./MitigationSection"));
+import RiskSection from "./RisksSection";
+import MitigationSection from "./MitigationSection";
 
 // Constants
 const COMPONENT_CONSTANTS = {
@@ -710,65 +708,63 @@ const AddNewRiskForm: FC<AddNewRiskFormProps> = ({
             )}
           </TabList>
         </Box>
-        <Suspense fallback={<div>Loading...</div>}>
+        <TabPanel
+          value="risks"
+          keepMounted
+          sx={{
+            p: COMPONENT_CONSTANTS.TAB_PADDING,
+            // Only set maxHeight when not in StandardModal (no onSubmitRef)
+            ...(onSubmitRef ? {} : { maxHeight: COMPONENT_CONSTANTS.MAX_HEIGHT }),
+          }}
+        >
+          <RiskSection
+            riskValues={riskValues}
+            setRiskValues={setRiskValues}
+            validateRef={riskValidateRef}
+            userRoleName={userRoleName}
+            disableInternalScroll={!!onSubmitRef}
+            compactMode={compactMode}
+          />
+        </TabPanel>
+        <TabPanel
+          value="mitigation"
+          keepMounted
+          sx={{
+            p: COMPONENT_CONSTANTS.TAB_PADDING,
+            // Only set maxHeight when not in StandardModal (no onSubmitRef)
+            ...(onSubmitRef ? {} : { maxHeight: COMPONENT_CONSTANTS.MAX_HEIGHT }),
+          }}
+        >
+          <MitigationSection
+            mitigationValues={mitigationValues}
+            setMitigationValues={setMitigationValues}
+            validateRef={mitigateValidateRef}
+            userRoleName={userRoleName}
+            disableInternalScroll={!!onSubmitRef}
+            compactMode={compactMode}
+          />
+        </TabPanel>
+        {isQuantitative && (
           <TabPanel
-            value="risks"
-            keepMounted
+            value="quantitative"
             sx={{
               p: COMPONENT_CONSTANTS.TAB_PADDING,
-              // Only set maxHeight when not in StandardModal (no onSubmitRef)
               ...(onSubmitRef ? {} : { maxHeight: COMPONENT_CONSTANTS.MAX_HEIGHT }),
+              overflowY: "auto",
             }}
           >
-            <RiskSection
-              riskValues={riskValues}
-              setRiskValues={setRiskValues}
-              validateRef={riskValidateRef}
-              userRoleName={userRoleName}
-              disableInternalScroll={!!onSubmitRef}
-              compactMode={compactMode}
+            <QuantitativeRiskForm
+              values={quantitativeValues}
+              onChange={setQuantitativeValues}
+              disabled={popupStatus === "new" ? isCreatingDisabled : isEditingDisabled}
             />
           </TabPanel>
-          <TabPanel
-            value="mitigation"
-            keepMounted
-            sx={{
-              p: COMPONENT_CONSTANTS.TAB_PADDING,
-              // Only set maxHeight when not in StandardModal (no onSubmitRef)
-              ...(onSubmitRef ? {} : { maxHeight: COMPONENT_CONSTANTS.MAX_HEIGHT }),
-            }}
-          >
-            <MitigationSection
-              mitigationValues={mitigationValues}
-              setMitigationValues={setMitigationValues}
-              validateRef={mitigateValidateRef}
-              userRoleName={userRoleName}
-              disableInternalScroll={!!onSubmitRef}
-              compactMode={compactMode}
-            />
+        )}
+        {popupStatus === "edit" && entityId && (
+          <TabPanel value="activity" sx={{ p: 0 }}>
+            <HistorySidebar inline isOpen={true} entityType="risk" entityId={entityId} />
           </TabPanel>
-          {isQuantitative && (
-            <TabPanel
-              value="quantitative"
-              sx={{
-                p: COMPONENT_CONSTANTS.TAB_PADDING,
-                ...(onSubmitRef ? {} : { maxHeight: COMPONENT_CONSTANTS.MAX_HEIGHT }),
-                overflowY: "auto",
-              }}
-            >
-              <QuantitativeRiskForm
-                values={quantitativeValues}
-                onChange={setQuantitativeValues}
-                disabled={popupStatus === "new" ? isCreatingDisabled : isEditingDisabled}
-              />
-            </TabPanel>
-          )}
-          {popupStatus === "edit" && entityId && (
-            <TabPanel value="activity" sx={{ p: 0 }}>
-              <HistorySidebar inline isOpen={true} entityType="risk" entityId={entityId} />
-            </TabPanel>
-          )}
-        </Suspense>
+        )}
         {/* Only show internal button when not using StandardModal pattern (no onSubmitRef) */}
         {!onSubmitRef && (
           <Box sx={{ display: "flex" }}>
