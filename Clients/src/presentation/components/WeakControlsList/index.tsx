@@ -7,7 +7,6 @@ import {
   text as textColors,
   border as borderPalette,
   background,
-  brand,
 } from "../../themes/palette";
 
 interface WeakControl {

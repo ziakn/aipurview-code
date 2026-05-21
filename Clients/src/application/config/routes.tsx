@@ -71,8 +71,6 @@ const ModelLifecycleDetail = lazyRoute(
 );
 const Datasets = lazyRoute(() => import("../../presentation/pages/Datasets"));
 const AITrustCenter = lazyRoute(() => import("../../presentation/pages/AITrustCenter"));
-const ReadinessDashboard = lazyRoute(() => import("../../presentation/pages/ReadinessDashboard"));
-const AIContentReview = lazyRoute(() => import("../../presentation/pages/AIContentReview"));
 
 // ── AI Detection & Shadow AI routes ───────────────────────────────────
 const ScanPage = lazyRoute(() => import("../../presentation/pages/AIDetection/ScanPage"));

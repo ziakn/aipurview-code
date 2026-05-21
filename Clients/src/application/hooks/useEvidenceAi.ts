@@ -81,7 +81,8 @@ export const useTriggerAnalysis = () => {
       const res = await triggerAnalysis(fileId, visibility);
       return res?.data;
     },
-    onSuccess: (_data, fileId) => {
+    onSuccess: (_data, input) => {
+      const fileId = typeof input === "number" ? input : input.fileId;
       queryClient.invalidateQueries({ queryKey: evidenceAiQueryKeys.analysis(fileId) });
       queryClient.invalidateQueries({ queryKey: evidenceAiQueryKeys.qualityScores() });
       queryClient.invalidateQueries({ queryKey: evidenceAiQueryKeys.suggestions(fileId) });

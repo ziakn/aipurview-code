@@ -903,9 +903,9 @@ function SignalChip({
   neutral?: boolean;
   invertSemantic?: boolean;
 }) {
-  let bg = background.accent;
-  let textColor = textColors.tertiary;
-  let borderColor = borderPalette.light;
+  let bg: string = background.accent;
+  let textColor: string = textColors.tertiary;
+  let borderColor: string = borderPalette.light;
 
   if (!neutral) {
     if (invertSemantic) {

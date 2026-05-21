@@ -1,5 +1,5 @@
 import { Box, Typography, LinearProgress, Stack } from "@mui/material";
-import { status, accent, text as textColors, border, background } from "../../themes/palette";
+import { status, text as textColors, border, background } from "../../themes/palette";
 
 interface GapItem {
   framework_type: string;

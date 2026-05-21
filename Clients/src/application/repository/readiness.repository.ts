@@ -12,7 +12,7 @@ function buildQuery(params: Record<string, string | number | undefined>): string
 }
 
 export async function triggerCalculateAll(projectId?: number, visibility?: string) {
-  const response = await apiServices.post(`${BASE_URL}/calculate`, {
+  const response = await apiServices.post<any>(`${BASE_URL}/calculate`, {
     project_id: projectId,
     visibility,
   });
@@ -24,7 +24,7 @@ export async function triggerCalculateFramework(
   projectId?: number,
   visibility?: string,
 ) {
-  const response = await apiServices.post(`${BASE_URL}/calculate/${frameworkType}`, {
+  const response = await apiServices.post<any>(`${BASE_URL}/calculate/${frameworkType}`, {
     project_id: projectId,
     visibility,
   });
@@ -33,7 +33,7 @@ export async function triggerCalculateFramework(
 
 export async function getReadinessScores(projectId?: number, visibility?: string) {
   const query = buildQuery({ project_id: projectId, visibility });
-  const response = await apiServices.get(`${BASE_URL}/scores${query}`);
+  const response = await apiServices.get<any>(`${BASE_URL}/scores${query}`);
   return response.data;
 }
 
@@ -43,7 +43,7 @@ export async function getReadinessScoresByFramework(
   visibility?: string,
 ) {
   const query = buildQuery({ project_id: projectId, visibility });
-  const response = await apiServices.get(`${BASE_URL}/scores/${frameworkType}${query}`);
+  const response = await apiServices.get<any>(`${BASE_URL}/scores/${frameworkType}${query}`);
   return response.data;
 }
 
@@ -53,19 +53,19 @@ export async function getControlScores(
   visibility?: string,
 ) {
   const query = buildQuery({ project_id: projectId, visibility });
-  const response = await apiServices.get(`${BASE_URL}/controls/${frameworkType}${query}`);
+  const response = await apiServices.get<any>(`${BASE_URL}/controls/${frameworkType}${query}`);
   return response.data;
 }
 
 export async function getWeakestControls(limit?: number, projectId?: number, visibility?: string) {
   const query = buildQuery({ limit, project_id: projectId, visibility });
-  const response = await apiServices.get(`${BASE_URL}/weakest${query}`);
+  const response = await apiServices.get<any>(`${BASE_URL}/weakest${query}`);
   return response.data;
 }
 
 export async function getRecommendations(limit?: number, projectId?: number, visibility?: string) {
   const query = buildQuery({ limit, project_id: projectId, visibility });
-  const response = await apiServices.get(`${BASE_URL}/recommendations${query}`);
+  const response = await apiServices.get<any>(`${BASE_URL}/recommendations${query}`);
   return response.data;
 }
 
@@ -75,6 +75,6 @@ export async function getReadinessHistory(
   visibility?: string,
 ) {
   const query = buildQuery({ framework_type: frameworkType, project_id: projectId, visibility });
-  const response = await apiServices.get(`${BASE_URL}/history${query}`);
+  const response = await apiServices.get<any>(`${BASE_URL}/history${query}`);
   return response.data;
 }

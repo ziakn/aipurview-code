@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Box,
   IconButton,
@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import TabList from "@mui/lab/TabList";
-import { Plus, X, GripVertical } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { LucideIcon } from "lucide-react";
 import { brand } from "../../themes/palette";

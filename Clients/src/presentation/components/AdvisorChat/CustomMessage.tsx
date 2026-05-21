@@ -207,7 +207,7 @@ const DefaultToolFallback: FC<{ result?: unknown }> = ({ result }) => {
  * output-available / output-error / output-denied.
  */
 const useAssistantTurnHasVisibleOutput = (): boolean => {
-  return useAssistantState(({ message }) => {
+  return useAuiState(({ message }) => {
     const content = message.content as unknown as
       | ReadonlyArray<Record<string, unknown>>
       | undefined;
@@ -444,7 +444,7 @@ const AssistantBody: FC<{
   // executing tool calls between LLM steps — that's exactly the in-flight
   // gap where we want the thinking indicator to stay up. See
   // node_modules/@assistant-ui/core/dist/types/message.d.ts → MessageStatus.
-  const isWorking = useAssistantState(({ message }) => {
+  const isWorking = useAuiState(({ message }) => {
     const t = message.status?.type;
     return t === "running" || t === "requires-action";
   });

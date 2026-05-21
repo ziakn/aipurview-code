@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Stack,
@@ -20,7 +20,7 @@ import {
   InputLabel,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { Shield, Trash2, Plus, Edit2, FlaskConical, Info } from "lucide-react";
+import { Shield, Trash2, Plus, Edit2, Info } from "lucide-react";
 import {
   listApprovalRules,
   createApprovalRule,

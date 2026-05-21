@@ -48,7 +48,6 @@ import { text as textColors, border as borderPalette } from "../../themes/palett
 import {
   loadingContainerStyle,
   paginationMenuProps,
-  paginationSelectStyle,
   paginationStyle,
   showingTextCellStyle,
   tableFooterRowStyle,
@@ -68,8 +67,6 @@ type SortConfig = {
   key: string;
   direction: SortDirection;
 };
-
-const SelectorVertical = (props: any) => <ChevronsUpDown size={16} {...props} />;
 
 const TABLE_COLUMNS = [
   { id: "evidence_name", label: "EVIDENCE NAME", sortable: true },

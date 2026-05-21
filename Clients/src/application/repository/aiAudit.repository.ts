@@ -22,12 +22,12 @@ export async function getAuditLog(filters?: AuditLogFilters) {
   if (filters?.limit) params.set("limit", String(filters.limit));
   if (filters?.offset) params.set("offset", String(filters.offset));
 
-  const response = await apiServices.get(`/ai-audit/log?${params.toString()}`);
+  const response = await apiServices.get<any>(`/ai-audit/log?${params.toString()}`);
   return response.data?.data || response.data;
 }
 
 export async function getActionAuditTrail(actionId: string) {
-  const response = await apiServices.get(`/ai-audit/log/${actionId}`);
+  const response = await apiServices.get<any>(`/ai-audit/log/${actionId}`);
   return response.data?.data || response.data;
 }
 
@@ -36,7 +36,7 @@ export async function getAuditAnalytics(dateFrom?: string, dateTo?: string) {
   if (dateFrom) params.set("dateFrom", dateFrom);
   if (dateTo) params.set("dateTo", dateTo);
 
-  const response = await apiServices.get(`/ai-audit/analytics?${params.toString()}`);
+  const response = await apiServices.get<any>(`/ai-audit/analytics?${params.toString()}`);
   return response.data?.data || response.data;
 }
 
@@ -47,7 +47,7 @@ export async function exportAuditLog(format: "csv" | "json", dateFrom?: string, 
   if (dateTo) params.set("dateTo", dateTo);
 
   if (format === "csv") {
-    const response = await apiServices.get(`/ai-audit/export?${params.toString()}`, {
+    const response = await apiServices.get<any>(`/ai-audit/export?${params.toString()}`, {
       responseType: "blob",
     });
     const blob = new Blob([response.data], { type: "text/csv" });
@@ -60,6 +60,6 @@ export async function exportAuditLog(format: "csv" | "json", dateFrom?: string, 
     return;
   }
 
-  const response = await apiServices.get(`/ai-audit/export?${params.toString()}`);
+  const response = await apiServices.get<any>(`/ai-audit/export?${params.toString()}`);
   return response.data?.data || response.data;
 }

@@ -44,7 +44,6 @@ const BADGE_COLORS: Record<string, { label: string; color: string }> = {
 export default function AIContentReview() {
   const [tab, setTab] = useState(0);
   const [visFilter, setVisFilter] = useState<VisibilityFilterValue>("all");
-  const filterParam = visFilter === "all" ? undefined : visFilter;
   const { data: statsData, isLoading: statsLoading } = useAIContentStats();
   const { data: unreviewedData, isLoading: unreviewedLoading } = useUnreviewedContent(50);
   const reviewMutation = useReviewContent();
