@@ -22,8 +22,7 @@ const jsonParser = express.json({ limit: "50mb" });
 export const toLiteLLMModel = (prov: string, mdl: string): string => {
   const p = (prov || "").toLowerCase();
   if (p === "openrouter") return mdl.startsWith("openrouter/") ? mdl : `openrouter/${mdl}`;
-  if (p === "google" || p === "gemini")
-    return mdl.startsWith("gemini/") ? mdl : `gemini/${mdl}`;
+  if (p === "google" || p === "gemini") return mdl.startsWith("gemini/") ? mdl : `gemini/${mdl}`;
   if (p === "anthropic" && !mdl.startsWith("anthropic/")) return `anthropic/${mdl}`;
   if (p === "mistral" && !mdl.startsWith("mistral/")) return `mistral/${mdl}`;
   if (p === "xai" && !mdl.startsWith("xai/")) return `xai/${mdl}`;

@@ -66,19 +66,16 @@ describe("getDecryptedAiGatewayKeyForProviderQuery — valid providers", () => {
     ["mistral"],
     ["openrouter"],
     ["huggingface"],
-  ] as const)(
-    "queries with the provider name lowercased: %s",
-    async (provider) => {
-      mockQuery.mockResolvedValueOnce([[{ encrypted_key: `enc-${provider}` }], 1] as any);
-      mockDecrypt.mockReturnValueOnce(`plain-${provider}`);
+  ] as const)("queries with the provider name lowercased: %s", async (provider) => {
+    mockQuery.mockResolvedValueOnce([[{ encrypted_key: `enc-${provider}` }], 1] as any);
+    mockDecrypt.mockReturnValueOnce(`plain-${provider}`);
 
-      const result = await getDecryptedAiGatewayKeyForProviderQuery(7, provider);
+    const result = await getDecryptedAiGatewayKeyForProviderQuery(7, provider);
 
-      expect(result).toBe(`plain-${provider}`);
-      const [, opts] = mockQuery.mock.calls[0];
-      expect((opts as any).replacements.evalProvider).toBe(provider);
-    },
-  );
+    expect(result).toBe(`plain-${provider}`);
+    const [, opts] = mockQuery.mock.calls[0];
+    expect((opts as any).replacements.evalProvider).toBe(provider);
+  });
 });
 
 describe("getDecryptedAiGatewayKeyForProviderQuery — google/gemini alias", () => {
@@ -110,9 +107,7 @@ describe("getDecryptedAiGatewayKeyForProviderQuery — invalid provider", () => 
   it("returns null without DB lookup for an unknown provider", async () => {
     const result = await getDecryptedAiGatewayKeyForProviderQuery(
       1,
-      "totally-fake" as unknown as Parameters<
-        typeof getDecryptedAiGatewayKeyForProviderQuery
-      >[1],
+      "totally-fake" as unknown as Parameters<typeof getDecryptedAiGatewayKeyForProviderQuery>[1],
     );
     expect(result).toBeNull();
     expect(mockQuery).not.toHaveBeenCalled();
@@ -160,9 +155,9 @@ describe("getDecryptedAiGatewayKeyForProviderQuery — DB errors", () => {
     err.parent = { code: "ECONNREFUSED" };
     mockQuery.mockRejectedValueOnce(err);
 
-    await expect(
-      getDecryptedAiGatewayKeyForProviderQuery(1, "openai"),
-    ).rejects.toThrow("connection refused");
+    await expect(getDecryptedAiGatewayKeyForProviderQuery(1, "openai")).rejects.toThrow(
+      "connection refused",
+    );
   });
 });
 

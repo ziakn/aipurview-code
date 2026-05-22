@@ -64,8 +64,16 @@ beforeEach(() => {
 describe("toLiteLLMModel", () => {
   const cases: Array<[string, string, string]> = [
     // [provider, input, expected]
-    ["openrouter", "meta-llama/llama-3.1-70b-instruct", "openrouter/meta-llama/llama-3.1-70b-instruct"],
-    ["openrouter", "openrouter/meta-llama/llama-3.1-70b-instruct", "openrouter/meta-llama/llama-3.1-70b-instruct"],
+    [
+      "openrouter",
+      "meta-llama/llama-3.1-70b-instruct",
+      "openrouter/meta-llama/llama-3.1-70b-instruct",
+    ],
+    [
+      "openrouter",
+      "openrouter/meta-llama/llama-3.1-70b-instruct",
+      "openrouter/meta-llama/llama-3.1-70b-instruct",
+    ],
     ["openrouter", "anthropic/claude-3-opus", "openrouter/anthropic/claude-3-opus"],
     ["openrouter", "gpt-4o", "openrouter/gpt-4o"],
     ["google", "gemini-1.5-pro", "gemini/gemini-1.5-pro"],
