@@ -862,18 +862,14 @@ const PluginManagement: React.FC = () => {
                                 onClick={handleTestConnection}
                                 isDisabled={isTestingConnection || isSavingConfig}
                                 sx={testConnectionButton}
-                                text={
-                                  isTestingConnection ? "Testing..." : "Test Connection"
-                                }
+                                text={isTestingConnection ? "Testing..." : "Test Connection"}
                               />
                               <CustomizableButton
                                 variant="contained"
                                 onClick={handleSaveConfiguration}
                                 isDisabled={isSavingConfig || isTestingConnection}
                                 sx={saveConfigButton}
-                                text={
-                                  isSavingConfig ? "Saving..." : "Save Configuration"
-                                }
+                                text={isSavingConfig ? "Saving..." : "Save Configuration"}
                               />
                             </Box>
                           </>
