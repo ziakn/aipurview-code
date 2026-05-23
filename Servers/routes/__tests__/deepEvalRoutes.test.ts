@@ -21,6 +21,14 @@
 import { describe, it, expect, beforeEach, jest } from "@jest/globals";
 import type { NextFunction, Request, Response } from "express";
 
+// `http-proxy-middleware` ships ESM and Jest can't transform it without extra
+// config; we don't exercise the proxy here so a no-op mock is fine.
+jest.mock("http-proxy-middleware", () => ({
+  __esModule: true,
+  createProxyMiddleware: jest.fn(() => (_req: unknown, _res: unknown, next: () => void) => next()),
+  fixRequestBody: jest.fn(),
+}));
+
 jest.mock("../../utils/aiGatewayEvalKey.utils", () => ({
   __esModule: true,
   getDecryptedAiGatewayKeyForProviderQuery: jest.fn(),
