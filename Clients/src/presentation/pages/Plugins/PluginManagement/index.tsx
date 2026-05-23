@@ -612,9 +612,12 @@ const PluginManagement: React.FC = () => {
                       variant="outlined"
                       color="error"
                       onClick={handleUninstallClick}
-                      loading={uninstalling === plugin.installationId}
                       isDisabled={uninstalling === plugin.installationId}
-                      text="Uninstall Plugin"
+                      text={
+                        uninstalling === plugin.installationId
+                          ? "Uninstalling..."
+                          : "Uninstall Plugin"
+                      }
                     />
                   </Box>
                 )}
@@ -857,18 +860,20 @@ const PluginManagement: React.FC = () => {
                               <CustomizableButton
                                 variant="outlined"
                                 onClick={handleTestConnection}
-                                loading={isTestingConnection}
                                 isDisabled={isTestingConnection || isSavingConfig}
                                 sx={testConnectionButton}
-                                text="Test Connection"
+                                text={
+                                  isTestingConnection ? "Testing..." : "Test Connection"
+                                }
                               />
                               <CustomizableButton
                                 variant="contained"
                                 onClick={handleSaveConfiguration}
-                                loading={isSavingConfig}
                                 isDisabled={isSavingConfig || isTestingConnection}
                                 sx={saveConfigButton}
-                                text="Save Configuration"
+                                text={
+                                  isSavingConfig ? "Saving..." : "Save Configuration"
+                                }
                               />
                             </Box>
                           </>
