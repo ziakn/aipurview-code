@@ -101,6 +101,7 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
   const [selectedRiskForView, setSelectedRiskForView] = useState<LinkedRisk | null>(null);
   const [riskFormData, setRiskFormData] = useState<RiskFormValues | undefined>(undefined);
   const onRiskSubmitRef = useRef<(() => void) | null>(null);
+  const prevSubcategoryIdRef = useRef<number | undefined>(undefined);
 
   const { userRoleName, userId } = useAuth();
   const { users } = useUsers();
@@ -118,11 +119,20 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
 
   // Load evidence files when subcategory changes
   useEffect(() => {
+    const currentId = subcategory?.id;
+    const prevId = prevSubcategoryIdRef.current;
+
     if (subcategory?.evidence_links) {
+      // Always use evidence_links when the prop provides it
       setEvidenceFiles(subcategory.evidence_links as unknown as FileData[]);
-    } else {
+    } else if (currentId !== prevId) {
+      // Only clear evidence files when the subcategory ID actually changed
+      // (prevents parent re-fetch from wiping files after save)
       setEvidenceFiles([]);
     }
+
+    prevSubcategoryIdRef.current = currentId;
+
     // Reset upload and deleted files
     setUploadFiles([]);
     setPendingAttachFiles([]);
