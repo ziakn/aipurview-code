@@ -53,6 +53,11 @@ const columnWidths: Record<string, string> = {
   "ACTION": "60px",
 };
 
+// EXPERIMENT NAME body cell is left-aligned (default); every other body cell
+// uses textAlign: "center". StandardTableHead defaults to left when `align`
+// is omitted, so headers must match here or they drift off their column.
+const LEFT_ALIGNED_LABELS = new Set<string>(["EXPERIMENT NAME"]);
+
 const toStandardColumns = (labels: string[]): StandardColumn[] =>
   labels.map((label) => ({
     id: columnSortKeys[label] || label.toLowerCase(),
@@ -60,6 +65,7 @@ const toStandardColumns = (labels: string[]): StandardColumn[] =>
     sortable: !!columnSortKeys[label],
     width: columnWidths[label],
     minWidth: label === "ACTION" ? "60px" : undefined,
+    align: LEFT_ALIGNED_LABELS.has(label) ? "left" : "center",
   }));
 
 const EvaluationTable: React.FC<IEvaluationTableProps> = ({
