@@ -542,6 +542,9 @@ export default function ProjectOverview({
           onClose={() => setNewExperimentModalOpen(false)}
           projectId={projectId}
           orgId={orgId}
+          existingExperimentNames={experiments
+            .map((e) => e.name)
+            .filter((n): n is string => Boolean(n))}
           onSuccess={handleExperimentSuccess}
           useCase={project.useCase as "chatbot" | "rag" | "agent"}
         />
