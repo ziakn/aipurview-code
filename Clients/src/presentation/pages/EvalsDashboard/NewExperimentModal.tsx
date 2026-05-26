@@ -153,7 +153,11 @@ const generateDefaultExperimentName = (
  */
 const datasetNameFromPresetPath = (path?: string | null): string => {
   if (!path) return "";
-  const fileName = path.split("/").pop()?.replace(/\.json$/i, "") || "";
+  const fileName =
+    path
+      .split("/")
+      .pop()
+      ?.replace(/\.json$/i, "") || "";
   return fileName
     .split("_")
     .filter(Boolean)
@@ -409,11 +413,7 @@ export default function NewExperimentModal({
 
   const defaultExperimentName = useMemo(
     () =>
-      generateDefaultExperimentName(
-        resolvedModelName,
-        datasetDisplayName,
-        existingExperimentNames,
-      ),
+      generateDefaultExperimentName(resolvedModelName, datasetDisplayName, existingExperimentNames),
     [resolvedModelName, datasetDisplayName, existingExperimentNames],
   );
 
