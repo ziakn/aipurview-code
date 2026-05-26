@@ -15,10 +15,7 @@ import singleTheme from "../../../themes/v1SingleTheme";
 import { palette } from "../../../themes/palette";
 import ConfirmationModal from "../../Dialogs/ConfirmationModal";
 import { CustomizableButton } from "../../button/customizable-button";
-import type {
-  IExperimentRow,
-  IExperimentTableBodyProps,
-} from "../../../types/interfaces/i.table";
+import type { IExperimentRow, IExperimentTableBodyProps } from "../../../types/interfaces/i.table";
 
 // Pulse animation for "Running..." text in the experiment name cell.
 const pulse = keyframes`
@@ -147,9 +144,7 @@ const ExperimentTableBody: React.FC<IExperimentTableBodyProps> = ({
                   Failed
                 </Typography>
               ) : (
-                <Typography sx={{ fontSize: 13, fontWeight: 500 }}>
-                  {row.name || row.id}
-                </Typography>
+                <Typography sx={{ fontSize: 13, fontWeight: 500 }}>{row.name || row.id}</Typography>
               )}
             </TableCell>
 

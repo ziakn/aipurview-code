@@ -50,46 +50,49 @@ const ExperimentTable: React.FC<IExperimentTableProps> = ({
     [compact],
   );
 
-  const sortComparator = useCallback((a: IExperimentRow, b: IExperimentRow, key: string): number => {
-    let aValue: string | number;
-    let bValue: string | number;
+  const sortComparator = useCallback(
+    (a: IExperimentRow, b: IExperimentRow, key: string): number => {
+      let aValue: string | number;
+      let bValue: string | number;
 
-    switch (key) {
-      case "name":
-        aValue = (a.name || a.id).toLowerCase();
-        bValue = (b.name || b.id).toLowerCase();
-        break;
-      case "model":
-        aValue = a.model.toLowerCase();
-        bValue = b.model.toLowerCase();
-        break;
-      case "judge":
-        aValue = (a.judge || "").toLowerCase();
-        bValue = (b.judge || "").toLowerCase();
-        break;
-      case "prompts":
-        aValue = a.prompts ?? 0;
-        bValue = b.prompts ?? 0;
-        break;
-      case "dataset":
-        aValue = a.dataset.toLowerCase();
-        bValue = b.dataset.toLowerCase();
-        break;
-      case "date":
-        aValue = a.date ? new Date(a.date).getTime() : 0;
-        bValue = b.date ? new Date(b.date).getTime() : 0;
-        break;
-      default:
-        return 0;
-    }
+      switch (key) {
+        case "name":
+          aValue = (a.name || a.id).toLowerCase();
+          bValue = (b.name || b.id).toLowerCase();
+          break;
+        case "model":
+          aValue = a.model.toLowerCase();
+          bValue = b.model.toLowerCase();
+          break;
+        case "judge":
+          aValue = (a.judge || "").toLowerCase();
+          bValue = (b.judge || "").toLowerCase();
+          break;
+        case "prompts":
+          aValue = a.prompts ?? 0;
+          bValue = b.prompts ?? 0;
+          break;
+        case "dataset":
+          aValue = a.dataset.toLowerCase();
+          bValue = b.dataset.toLowerCase();
+          break;
+        case "date":
+          aValue = a.date ? new Date(a.date).getTime() : 0;
+          bValue = b.date ? new Date(b.date).getTime() : 0;
+          break;
+        default:
+          return 0;
+      }
 
-    if (typeof aValue === "string" && typeof bValue === "string") {
-      return aValue.localeCompare(bValue);
-    }
-    if (aValue < bValue) return -1;
-    if (aValue > bValue) return 1;
-    return 0;
-  }, []);
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        return aValue.localeCompare(bValue);
+      }
+      if (aValue < bValue) return -1;
+      if (aValue > bValue) return 1;
+      return 0;
+    },
+    [],
+  );
 
   const {
     sortConfig,
