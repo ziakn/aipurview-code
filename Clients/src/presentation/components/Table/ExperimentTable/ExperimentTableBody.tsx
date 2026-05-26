@@ -11,40 +11,49 @@ import {
   keyframes,
 } from "@mui/material";
 import { MoreVertical, RotateCcw, Download, Copy, Trash2, Loader2 } from "lucide-react";
+import singleTheme from "../../../themes/v1SingleTheme";
+import { palette } from "../../../themes/palette";
+import ConfirmationModal from "../../Dialogs/ConfirmationModal";
+import { CustomizableButton } from "../../button/customizable-button";
+import type {
+  IExperimentRow,
+  IExperimentTableBodyProps,
+} from "../../../types/interfaces/i.table";
 
-// Pulse animation for running text
+// Pulse animation for "Running..." text in the experiment name cell.
 const pulse = keyframes`
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
 `;
 
-// Spin animation for loader icon
+// Spin animation for loader icon next to "Running..." text.
 const spin = keyframes`
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 `;
-import singleTheme from "../../../../themes/v1SingleTheme";
-import { palette } from "../../../../themes/palette";
-import ConfirmationModal from "../../../Dialogs/ConfirmationModal";
-import { CustomizableButton } from "../../../button/customizable-button";
-import { IEvaluationTableBodyProps, IEvaluationRow } from "../../../../types/interfaces/i.table";
 
-const EvaluationTableBody: React.FC<IEvaluationTableBodyProps> = ({
+const RUNNING_STATUSES = new Set<IExperimentRow["status"]>(["Running", "In Progress", "Pending"]);
+
+const ExperimentTableBody: React.FC<IExperimentTableBodyProps> = ({
   rows,
   page,
   rowsPerPage,
-  onShowDetails,
-  onRemoveModel,
+  onRowClick,
   onRerun,
   onDownload,
   onCopy,
+  onDelete,
+  compact = false,
 }) => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [rowToDelete, setRowToDelete] = useState<IEvaluationRow | null>(null);
+  const [rowToDelete, setRowToDelete] = useState<IExperimentRow | null>(null);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const [menuRow, setMenuRow] = useState<IEvaluationRow | null>(null);
+  const [menuRow, setMenuRow] = useState<IExperimentRow | null>(null);
 
-  const handleMenuOpen = (e: React.MouseEvent<HTMLElement>, row: IEvaluationRow) => {
+  const showActionsColumn = !compact && Boolean(onRerun || onDelete || onDownload || onCopy);
+  const showLinkedModelColumn = !compact;
+
+  const handleMenuOpen = (e: React.MouseEvent<HTMLElement>, row: IExperimentRow) => {
     e.stopPropagation();
     setMenuAnchorEl(e.currentTarget);
     setMenuRow(row);
@@ -56,23 +65,17 @@ const EvaluationTableBody: React.FC<IEvaluationTableBodyProps> = ({
   };
 
   const handleRerunClick = () => {
-    if (menuRow && onRerun) {
-      onRerun(menuRow);
-    }
+    if (menuRow && onRerun) onRerun(menuRow);
     handleMenuClose();
   };
 
   const handleDownloadClick = () => {
-    if (menuRow && onDownload) {
-      onDownload(menuRow);
-    }
+    if (menuRow && onDownload) onDownload(menuRow);
     handleMenuClose();
   };
 
   const handleCopyClick = () => {
-    if (menuRow && onCopy) {
-      onCopy(menuRow);
-    }
+    if (menuRow && onCopy) onCopy(menuRow);
     handleMenuClose();
   };
 
@@ -85,8 +88,8 @@ const EvaluationTableBody: React.FC<IEvaluationTableBodyProps> = ({
   };
 
   const handleConfirmDelete = () => {
-    if (rowToDelete && onRemoveModel) {
-      onRemoveModel.onConfirm(String(rowToDelete.id));
+    if (rowToDelete && onDelete) {
+      onDelete(String(rowToDelete.id));
       setDeleteModalOpen(false);
       setRowToDelete(null);
     }
@@ -95,13 +98,12 @@ const EvaluationTableBody: React.FC<IEvaluationTableBodyProps> = ({
   return (
     <TableBody>
       {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-        const isRunning =
-          row.status === "Running" || row.status === "In Progress" || row.status === "Pending";
+        const isRunning = RUNNING_STATUSES.has(row.status);
 
         return (
           <TableRow
             key={row.id}
-            onClick={() => onShowDetails(row)}
+            onClick={() => onRowClick(row)}
             sx={{
               ...singleTheme.tableStyles.primary.body.row,
               "cursor": "pointer",
@@ -114,10 +116,7 @@ const EvaluationTableBody: React.FC<IEvaluationTableBodyProps> = ({
             <TableCell
               sx={{
                 ...singleTheme.tableStyles.primary.body.cell,
-                paddingLeft: "12px",
-                paddingRight: "12px",
                 textTransform: "none",
-                width: "20%",
               }}
             >
               {isRunning ? (
@@ -148,80 +147,63 @@ const EvaluationTableBody: React.FC<IEvaluationTableBodyProps> = ({
                   Failed
                 </Typography>
               ) : (
-                row.name || row.id
+                <Typography sx={{ fontSize: 13, fontWeight: 500 }}>
+                  {row.name || row.id}
+                </Typography>
               )}
             </TableCell>
 
-            {/* MODEL - center aligned */}
+            {/* MODEL */}
             <TableCell
               sx={{
                 ...singleTheme.tableStyles.primary.body.cell,
-                paddingLeft: "12px",
-                paddingRight: "12px",
-                textTransform: "none",
                 textAlign: "center",
-                width: "10%",
+                textTransform: "none",
               }}
             >
               {row.model}
             </TableCell>
 
-            {/* JUDGE - center aligned */}
-            {row.judge !== undefined && (
-              <TableCell
-                sx={{
-                  ...singleTheme.tableStyles.primary.body.cell,
-                  paddingLeft: "12px",
-                  paddingRight: "12px",
-                  textTransform: "none",
-                  textAlign: "center",
-                  width: "14%",
-                }}
-              >
-                {row.judge || "-"}
-              </TableCell>
-            )}
-
-            {/* # PROMPTS - center aligned */}
-            {row.prompts !== undefined && (
-              <TableCell
-                sx={{
-                  ...singleTheme.tableStyles.primary.body.cell,
-                  paddingLeft: "12px",
-                  paddingRight: "12px",
-                  textTransform: "none",
-                  textAlign: "center",
-                  width: "7%",
-                }}
-              >
-                {row.prompts}
-              </TableCell>
-            )}
-
-            {/* DATASET - center aligned */}
+            {/* JUDGE/SCORER */}
             <TableCell
               sx={{
                 ...singleTheme.tableStyles.primary.body.cell,
-                paddingLeft: "12px",
-                paddingRight: "12px",
-                textTransform: "none",
                 textAlign: "center",
-                width: "14%",
+                textTransform: "none",
+              }}
+            >
+              {row.judge || "-"}
+            </TableCell>
+
+            {/* # PROMPTS */}
+            <TableCell
+              sx={{
+                ...singleTheme.tableStyles.primary.body.cell,
+                textAlign: "center",
+                textTransform: "none",
+              }}
+            >
+              {row.prompts ?? "-"}
+            </TableCell>
+
+            {/* DATASET */}
+            <TableCell
+              sx={{
+                ...singleTheme.tableStyles.primary.body.cell,
+                textAlign: "center",
+                textTransform: "none",
               }}
             >
               {row.dataset}
             </TableCell>
 
-            {/* LINKED MODEL - center aligned */}
-            {row.linkedModel !== undefined && (
+            {/* LINKED MODEL */}
+            {showLinkedModelColumn && (
               <TableCell
                 sx={{
                   ...singleTheme.tableStyles.primary.body.cell,
-                  paddingLeft: "12px",
-                  paddingRight: "12px",
-                  textTransform: "none",
                   textAlign: "center",
-                  width: "10%",
+                  textTransform: "none",
                 }}
               >
                 {row.linkedModel ? (
@@ -248,34 +230,26 @@ const EvaluationTableBody: React.FC<IEvaluationTableBodyProps> = ({
               </TableCell>
             )}
 
-            {/* DATE - center aligned */}
-            {row.date !== undefined && (
-              <TableCell
-                sx={{
-                  ...singleTheme.tableStyles.primary.body.cell,
-                  paddingLeft: "12px",
-                  paddingRight: "12px",
-                  textTransform: "none",
-                  textAlign: "center",
-                  width: "14%",
-                  fontSize: "12px",
-                }}
-              >
-                {row.date}
-              </TableCell>
-            )}
+            {/* DATE */}
+            <TableCell
+              sx={{
+                ...singleTheme.tableStyles.primary.body.cell,
+                textAlign: "center",
+                textTransform: "none",
+                fontSize: "12px",
+              }}
+            >
+              {row.date ?? "-"}
+            </TableCell>
 
             {/* ACTION */}
-            {(onRerun || onRemoveModel) && (
+            {showActionsColumn && (
               <TableCell
                 sx={{
                   ...singleTheme.tableStyles.primary.body.cell,
-                  paddingLeft: "12px",
-                  paddingRight: "12px",
-                  width: "60px",
+                  textAlign: "center",
                   minWidth: "60px",
                   maxWidth: "60px",
-                  textAlign: "center",
                 }}
                 onClick={(e) => e.stopPropagation()}
               >
@@ -323,11 +297,7 @@ const EvaluationTableBody: React.FC<IEvaluationTableBodyProps> = ({
             <CustomizableButton
               variant="outlined"
               onClick={handleRerunClick}
-              isDisabled={
-                menuRow?.status === "Running" ||
-                menuRow?.status === "In Progress" ||
-                menuRow?.status === "Pending"
-              }
+              isDisabled={menuRow ? RUNNING_STATUSES.has(menuRow.status) : false}
               startIcon={<RotateCcw size={14} />}
               sx={{
                 "height": "34px",
@@ -393,7 +363,7 @@ const EvaluationTableBody: React.FC<IEvaluationTableBodyProps> = ({
               Copy results to clipboard
             </CustomizableButton>
           )}
-          {onRemoveModel && (
+          {onDelete && (
             <CustomizableButton
               variant="outlined"
               onClick={handleDeleteClick}
@@ -421,10 +391,10 @@ const EvaluationTableBody: React.FC<IEvaluationTableBodyProps> = ({
       {/* Delete Confirmation Modal */}
       {deleteModalOpen && rowToDelete && (
         <ConfirmationModal
-          title="Delete this evaluation?"
+          title="Delete this experiment?"
           body={
             <Typography fontSize={13}>
-              Are you sure you want to delete evaluation "{rowToDelete.name || rowToDelete.id}"?
+              Are you sure you want to delete experiment "{rowToDelete.name || rowToDelete.id}"?
               This action cannot be undone.
             </Typography>
           }
@@ -443,4 +413,4 @@ const EvaluationTableBody: React.FC<IEvaluationTableBodyProps> = ({
   );
 };
 
-export default EvaluationTableBody;
+export default ExperimentTableBody;
