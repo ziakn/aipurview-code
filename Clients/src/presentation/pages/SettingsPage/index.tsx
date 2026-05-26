@@ -12,6 +12,7 @@ import allowedRoles from "../../../application/constants/permissions";
 import { useAuth } from "../../../application/hooks/useAuth";
 import ApiKeys from "./ApiKeys";
 import AuditLedger from "./AuditLedger";
+import AIApprovalRules from "./AIApprovalRules";
 import TabBar, { TabItem } from "../../components/TabBar";
 import { PageHeaderExtended } from "../../components/Layout/PageHeaderExtended";
 import { usePluginRegistry } from "../../../application/contexts/PluginRegistry.context";
@@ -28,6 +29,7 @@ const BUILT_IN_TABS = [
   "features",
   "apikeys",
   "audit-ledger",
+  "ai-approval-rules",
 ];
 
 export default function ProfilePage() {
@@ -189,6 +191,17 @@ export default function ProfilePage() {
                   },
                 ]
               : []),
+            ...(!isAuditLedgerDisabled
+              ? [
+                  {
+                    label: "AI Approval Rules",
+                    value: "ai-approval-rules",
+                    icon: "Shield" as TabItem["icon"],
+                    tooltip:
+                      "Configure auto-approve, require-approval, and auto-reject rules for AI operations",
+                  },
+                ]
+              : []),
             // Dynamically add plugin tabs
             ...pluginTabs.map((tab) => ({
               label: tab.label,
@@ -235,6 +248,12 @@ export default function ProfilePage() {
         {!isAuditLedgerDisabled && (
           <TabPanel sx={{ p: 0 }} value="audit-ledger">
             <AuditLedger />
+          </TabPanel>
+        )}
+
+        {!isAuditLedgerDisabled && (
+          <TabPanel sx={{ p: 0 }} value="ai-approval-rules">
+            <AIApprovalRules />
           </TabPanel>
         )}
 

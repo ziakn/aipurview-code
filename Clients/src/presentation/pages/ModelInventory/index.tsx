@@ -15,6 +15,7 @@ import {
   createNewUser,
 } from "../../../application/repository/entity.repository";
 import { createModelInventory } from "../../../application/repository/modelInventory.repository";
+import { onAiActionCompleted } from "../../../application/events/aiActionEvents";
 import { getShareLinksForResource } from "../../../application/repository/share.repository";
 import { useAuth } from "../../../application/hooks/useAuth";
 import { usePluginRegistry } from "../../../application/contexts/PluginRegistry.context";
@@ -129,6 +130,7 @@ type EvidenceHubColumn =
   | "uploaded_by"
   | "uploaded_on"
   | "expiry_date"
+  | "quality"
   | "actions";
 
 const EVIDENCE_HUB_COLUMNS: ColumnConfig<EvidenceHubColumn>[] = [
@@ -138,6 +140,7 @@ const EVIDENCE_HUB_COLUMNS: ColumnConfig<EvidenceHubColumn>[] = [
   { key: "uploaded_by", label: "Uploaded by", defaultVisible: true },
   { key: "uploaded_on", label: "Uploaded on", defaultVisible: true },
   { key: "expiry_date", label: "Expiry", defaultVisible: true },
+  { key: "quality", label: "AI Quality", defaultVisible: true },
   { key: "actions", label: "Actions", defaultVisible: true, alwaysVisible: true },
 ];
 
@@ -903,6 +906,55 @@ const ModelInventory: React.FC = () => {
     fetchModelRisksData();
     fetchUsersData();
     fetchEvidenceData();
+  }, []);
+
+  // Refresh whenever an AI write action completes — both the dedicated
+  // Pending Approvals modal (RequestorApprovalModal dispatches via
+  // dispatchAiActionCompleted) and the inline chat approval cards
+  // (ConfirmationToolUI dispatches the same event after success). The
+  // approval UI is an in-page modal, so window.focus /
+  // visibilitychange listeners don't fire on click — we need an
+  // explicit dispatch hook.
+  //
+  // Scoped by tool_name so we only refetch when the action actually
+  // touches model_inventories or model_risks. We refresh both tables
+  // because some tools touch both (e.g. agent_register_model creates
+  // a model row that bumps the model count; agent_suggest_model_risk
+  // creates a model_risk row that bumps the model risks tab count).
+  useEffect(() => {
+    const MODEL_INVENTORY_TOOLS = new Set([
+      "agent_register_model",
+      "agent_update_model",
+      "agent_update_model_lifecycle_phase",
+      "agent_retire_model",
+      "agent_delete_model",
+      "agent_link_model_to_project",
+      "agent_unlink_model_from_use_case",
+      "agent_link_model_to_framework",
+      "agent_unlink_model_from_framework",
+    ]);
+    const MODEL_RISK_TOOLS = new Set([
+      "agent_create_model_risk",
+      "agent_suggest_model_risk",
+      "agent_update_model_risk",
+      "agent_change_model_risk_status",
+      "agent_delete_model_risk",
+      "agent_restore_model_risk",
+      "agent_attach_model_risk_to_model",
+      "agent_detach_model_risk_from_model",
+    ]);
+    return onAiActionCompleted((detail) => {
+      if (detail?.status !== "approved") return;
+      const tool = detail?.toolName;
+      if (!tool) return;
+      if (MODEL_INVENTORY_TOOLS.has(tool)) {
+        fetchModelInventoryData(false);
+        // Some inventory tools (delete, retire) can also affect risks.
+        fetchModelRisksData(false);
+      } else if (MODEL_RISK_TOOLS.has(tool)) {
+        fetchModelRisksData(false);
+      }
+    });
   }, []);
 
   // Refetch model risks when filter changes
