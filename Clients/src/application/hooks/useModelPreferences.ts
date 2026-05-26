@@ -100,9 +100,7 @@ export function useModelPreferences(projectId: string, orgId?: string | null) {
                   latestJudge.config?.provider ||
                   "openai",
                 model:
-                  latestJudge.config?.judgeModel?.name ||
-                  latestJudge.config?.model ||
-                  "gpt-4o",
+                  latestJudge.config?.judgeModel?.name || latestJudge.config?.model || "gpt-4o",
                 endpointUrl:
                   latestJudge.config?.judgeModel?.endpointUrl ||
                   latestJudge.config?.endpointUrl ||
