@@ -1194,25 +1194,27 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
                       </Stack>
                     )}
 
-                    {evidenceFiles.length === 0 && uploadFiles.length === 0 && pendingAttachFiles.length === 0 && (
-                      <Box
-                        sx={{
-                          textAlign: "center",
-                          py: 4,
-                          color: "text.tertiary",
-                          border: `2px dashed ${theme.palette.border.dark}`,
-                          borderRadius: 1,
-                          backgroundColor: "background.accent",
-                        }}
-                      >
-                        <Typography variant="body2" sx={{ mb: 1 }}>
-                          No evidence files uploaded yet
-                        </Typography>
-                        <Typography variant="caption" color={text.disabled}>
-                          Click "Add evidence files" to upload documentation for this subcategory
-                        </Typography>
-                      </Box>
-                    )}
+                    {evidenceFiles.length === 0 &&
+                      uploadFiles.length === 0 &&
+                      pendingAttachFiles.length === 0 && (
+                        <Box
+                          sx={{
+                            textAlign: "center",
+                            py: 4,
+                            color: "text.tertiary",
+                            border: `2px dashed ${theme.palette.border.dark}`,
+                            borderRadius: 1,
+                            backgroundColor: "background.accent",
+                          }}
+                        >
+                          <Typography variant="body2" sx={{ mb: 1 }}>
+                            No evidence files uploaded yet
+                          </Typography>
+                          <Typography variant="caption" color={text.disabled}>
+                            Click "Add evidence files" to upload documentation for this subcategory
+                          </Typography>
+                        </Box>
+                      )}
                   </Stack>
                 </TabPanel>
 

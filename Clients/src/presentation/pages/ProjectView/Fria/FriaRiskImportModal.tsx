@@ -74,10 +74,10 @@ const FriaRiskImportModal = ({
   // Normalize 5-level project risk values to FRIA's 3-level scale
   const normalizeLikelihood = (value?: string): string => {
     const map: Record<string, string> = {
-      Rare: "Low",
-      Unlikely: "Low",
-      Possible: "Medium",
-      Likely: "High",
+      "Rare": "Low",
+      "Unlikely": "Low",
+      "Possible": "Medium",
+      "Likely": "High",
       "Almost Certain": "High",
     };
     return map[value || ""] || value || "Medium";
