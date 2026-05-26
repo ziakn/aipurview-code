@@ -139,6 +139,28 @@ const NISTAIRMFDrawerDialog: React.FC<NISTAIRMFDrawerProps> = ({
     setDeletedFiles([]);
   }, [subcategory]);
 
+  // Fetch full subcategory details (including evidence files) when drawer opens
+  useEffect(() => {
+    const fetchSubcategoryDetails = async () => {
+      if (open && subcategory?.id && !subcategory?.evidence_links) {
+        try {
+          const response = await getEntityById({
+            routeUrl: `/nist-ai-rmf/subcategories/byId/${subcategory.id}`,
+          });
+          if (response.data?.evidence_links) {
+            setEvidenceFiles(response.data.evidence_links as unknown as FileData[]);
+          }
+        } catch (error) {
+          if (process.env.NODE_ENV === "development") {
+            console.error("Error fetching subcategory details:", error);
+          }
+        }
+      }
+    };
+
+    fetchSubcategoryDetails();
+  }, [open, subcategory?.id]);
+
   // Fetch linked risks when subcategory changes
   useEffect(() => {
     const fetchLinkedRisks = async () => {
