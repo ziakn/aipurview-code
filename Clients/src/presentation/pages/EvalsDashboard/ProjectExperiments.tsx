@@ -864,6 +864,9 @@ export default function ProjectExperiments({
         onClose={() => setNewEvalModalOpen(false)}
         projectId={projectId}
         orgId={orgId}
+        existingExperimentNames={experiments
+          .map((e) => e.name)
+          .filter((n): n is string => Boolean(n))}
         onSuccess={() => {
           setNewEvalModalOpen(false);
           loadExperiments();
