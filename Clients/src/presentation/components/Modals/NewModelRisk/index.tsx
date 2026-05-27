@@ -241,7 +241,7 @@ const NewModelRisk: FC<NewModelRiskProps> = ({
     onClose: handleClose,
   });
 
-  const handleSubmit = () => {
+  const handleSaveModelRisk = () => {
     if (validateAll(values)) {
       setIsSubmitting(true);
       if (onSuccess) {
@@ -414,7 +414,7 @@ const NewModelRisk: FC<NewModelRiskProps> = ({
           ? "Update risk details, mitigation plan, and tracking information"
           : "Document and track potential risks associated with AI models"
       }
-      onSubmit={activeTab === "details" ? handleSubmit : undefined}
+      onSubmit={activeTab === "details" ? handleSaveModelRisk : undefined}
       submitButtonText={isEdit ? "Update risk" : "Save"}
       isSubmitting={isSubmitting}
       maxWidth="760px"

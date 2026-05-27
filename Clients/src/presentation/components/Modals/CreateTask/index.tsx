@@ -222,7 +222,7 @@ const CreateTask: FC<ICreateTaskProps> = ({
     setActiveTab("details");
   };
 
-  const handleSubmit = async (event?: React.FormEvent) => {
+  const handleSaveTask = async (event?: React.FormEvent) => {
     if (event) event.preventDefault();
 
     if (validateAll(values)) {
@@ -468,7 +468,7 @@ const CreateTask: FC<ICreateTaskProps> = ({
           ? "Update task details and assign team members."
           : "Create a new task by filling in the following details."
       }
-      onSubmit={activeTab === "details" ? handleSubmit : undefined}
+      onSubmit={activeTab === "details" ? handleSaveTask : undefined}
       submitButtonText={isEditMode ? "Update task" : "Create task"}
       isSubmitting={isSubmitting}
       maxWidth="800px"
