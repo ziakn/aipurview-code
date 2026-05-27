@@ -428,7 +428,7 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
     onClose: handleClose,
   });
 
-  const handleSubmit = async (event?: React.FormEvent) => {
+  const handleSaveModelInventory = async (event?: React.FormEvent) => {
     if (event) event.preventDefault();
     if (validateAll(values)) {
       setIsSubmitting(true);
@@ -939,7 +939,7 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
           ? "Update model details, approval status, and metadata"
           : "Register a new AI model with comprehensive metadata and approval tracking"
       }
-      onSubmit={activeTab === "details" ? handleSubmit : undefined}
+      onSubmit={activeTab === "details" ? handleSaveModelInventory : undefined}
       submitButtonText={isEdit ? "Update model" : "Save"}
       isSubmitting={isButtonDisabled}
       maxWidth="760px"

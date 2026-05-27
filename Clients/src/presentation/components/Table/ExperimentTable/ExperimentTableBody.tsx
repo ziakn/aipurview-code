@@ -50,38 +50,38 @@ const ExperimentTableBody: React.FC<IExperimentTableBodyProps> = ({
   const showActionsColumn = !compact && Boolean(onRerun || onDelete || onDownload || onCopy);
   const showLinkedModelColumn = !compact;
 
-  const handleMenuOpen = (e: React.MouseEvent<HTMLElement>, row: IExperimentRow) => {
+  const openExperimentMenu = (e: React.MouseEvent<HTMLElement>, row: IExperimentRow) => {
     e.stopPropagation();
     setMenuAnchorEl(e.currentTarget);
     setMenuRow(row);
   };
 
-  const handleMenuClose = () => {
+  const closeExperimentMenu = () => {
     setMenuAnchorEl(null);
     setMenuRow(null);
   };
 
   const handleRerunClick = () => {
     if (menuRow && onRerun) onRerun(menuRow);
-    handleMenuClose();
+    closeExperimentMenu();
   };
 
   const handleDownloadClick = () => {
     if (menuRow && onDownload) onDownload(menuRow);
-    handleMenuClose();
+    closeExperimentMenu();
   };
 
   const handleCopyClick = () => {
     if (menuRow && onCopy) onCopy(menuRow);
-    handleMenuClose();
+    closeExperimentMenu();
   };
 
-  const handleDeleteClick = () => {
+  const deleteExperimentRow = () => {
     if (menuRow) {
       setRowToDelete(menuRow);
       setDeleteModalOpen(true);
     }
-    handleMenuClose();
+    closeExperimentMenu();
   };
 
   const handleConfirmDelete = () => {
@@ -250,7 +250,7 @@ const ExperimentTableBody: React.FC<IExperimentTableBodyProps> = ({
               >
                 <IconButton
                   size="small"
-                  onClick={(e) => handleMenuOpen(e, row)}
+                  onClick={(e) => openExperimentMenu(e, row)}
                   sx={{
                     "color": palette.text.tertiary,
                     "padding": "6px",
@@ -271,7 +271,7 @@ const ExperimentTableBody: React.FC<IExperimentTableBodyProps> = ({
       <Popover
         open={Boolean(menuAnchorEl)}
         anchorEl={menuAnchorEl}
-        onClose={handleMenuClose}
+        onClose={closeExperimentMenu}
         onClick={(e) => e.stopPropagation()}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         transformOrigin={{ horizontal: "right", vertical: "top" }}
@@ -361,7 +361,7 @@ const ExperimentTableBody: React.FC<IExperimentTableBodyProps> = ({
           {onDelete && (
             <CustomizableButton
               variant="outlined"
-              onClick={handleDeleteClick}
+              onClick={deleteExperimentRow}
               startIcon={<Trash2 size={14} />}
               sx={{
                 "height": "34px",
