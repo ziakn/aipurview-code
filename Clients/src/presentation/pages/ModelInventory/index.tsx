@@ -1857,29 +1857,34 @@ const ModelInventory: React.FC = () => {
 
   const handleModelRiskSuccess = async (formData: IModelRiskFormData) => {
     try {
+      let savedId: number | undefined;
       if (selectedModelRisk) {
         // Update existing model risk
         await updateEntityById({
           routeUrl: `/modelRisks/${selectedModelRisk.id}`,
           body: formData,
         });
+        savedId = selectedModelRisk.id ?? undefined;
         setAlert({
           variant: "success",
           body: "Model risk updated successfully!",
         });
       } else {
         // Create new model risk using apiServices
-        await createNewUser({
+        const response: any = await createNewUser({
           routeUrl: "/modelRisks",
           body: formData,
         });
+        savedId = response?.data?.id;
         setAlert({
           variant: "success",
           body: "New model risk added successfully!",
         });
       }
       await fetchModelRisksData();
-      handleCloseModelRiskModal();
+      // Return the id so NewModelRisk can flush staged custom field values
+      // against it. The modal closes itself once the flush completes.
+      return { id: savedId };
     } catch (error) {
       setAlert({
         variant: "error",
@@ -1887,6 +1892,8 @@ const ModelInventory: React.FC = () => {
           ? "Failed to update model risk. Please try again."
           : "Failed to add model risk. Please try again.",
       });
+      // Re-throw so the modal skips the flush + stays open for retry.
+      throw error;
     }
   };
 

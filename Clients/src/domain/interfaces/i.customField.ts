@@ -14,7 +14,8 @@ export type CustomFieldEntityType =
   | "project_risk"
   | "vendor_risk"
   | "model_inventory"
-  | "task";
+  | "task"
+  | "model_risk";
 
 export interface ICustomFieldDefinition {
   id: number;
@@ -61,6 +62,7 @@ export const CUSTOM_FIELD_ENTITY_LABELS: Record<CustomFieldEntityType, string> =
   vendor_risk: "Vendor risk",
   model_inventory: "Model Inventory",
   task: "Task",
+  model_risk: "Model risk",
 };
 
 export const CUSTOM_FIELD_TYPE_LABELS: Record<CustomFieldType, string> = {

@@ -25,12 +25,13 @@ export type CustomFieldEntityType =
   | "project_risk"
   | "vendor_risk"
   | "model_inventory"
-  | "task";
+  | "task"
+  | "model_risk";
 // NOTE: Scope is intentionally limited to the core governance entities listed
-// above. Other entities (model_risk, dataset, ai_incident, training, fria,
-// pmm_config, evidence, assessment, file, approval_workflow, automation,
-// intake_form, governance_scenario, ai_detection_repository, shadow_ai_tool)
-// are out of scope for custom fields at this time.
+// above. Other entities (dataset, ai_incident, training, fria, pmm_config,
+// evidence, assessment, file, approval_workflow, automation, intake_form,
+// governance_scenario, ai_detection_repository, shadow_ai_tool) are out of
+// scope for custom fields at this time.
 //
 // "control" and "subcontrol" are also excluded: controls are split per
 // framework (controls_eu, annexcontrols_iso27001, ...), not a single table —
@@ -93,6 +94,7 @@ export const ENTITY_TYPE_TO_TABLE: Record<CustomFieldEntityType, string> = {
   vendor_risk: "vendorrisks",
   model_inventory: "model_inventories",
   task: "tasks",
+  model_risk: "model_risks",
 };
 
 // ---------- Internal validators ----------
