@@ -30,6 +30,8 @@ import allowedRoles from "../../../application/constants/permissions";
 import { CustomizableButton } from "../button/customizable-button";
 import { RiskCalculator } from "../../tools/riskCalculator";
 import { HistorySidebar } from "../Common/HistorySidebar";
+import CustomFieldsSection, { type CustomFieldsSectionHandle } from "../CustomFieldsSection";
+import { useRequiredCustomFieldsGate } from "../CustomFieldsSection/RequiredCustomFieldsGate";
 import { getTabStyle } from "./style";
 import "./styles.module.css";
 import QuantitativeRiskForm, {
@@ -147,6 +149,11 @@ const AddNewRiskForm: FC<AddNewRiskFormProps> = ({
   const [originalQuantitativeValues, setOriginalQuantitativeValues] =
     useState<QuantitativeRiskFormValues>(quantitativeInitialState);
   const [value, setValue] = useState("risks");
+  const customFieldsRef = useRef<CustomFieldsSectionHandle | null>(null);
+  const customFieldsGate = useRequiredCustomFieldsGate(
+    "project_risk",
+    popupStatus === "edit" ? (entityId ?? null) : null,
+  );
   const handleChange = useCallback((_: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   }, []);
@@ -468,6 +475,7 @@ const AddNewRiskForm: FC<AddNewRiskFormProps> = ({
   );
 
   const riskFormSubmitHandler = async () => {
+    if (customFieldsGate.blocked) return;
     const { isValid, riskValid } = validateForm();
     const selectedRiskLikelihood = likelihoodItems.find((r) => r._id === riskValues.likelihood);
     const selectedRiskSeverity = riskSeverityItems.find((r) => r._id === riskValues.riskSeverity);
@@ -581,13 +589,51 @@ const AddNewRiskForm: FC<AddNewRiskFormProps> = ({
             : await createProjectRisk({ body: formData });
 
         if (response && response.status === 201) {
+          const newRiskId = response.data?.data?.id as number | undefined;
+          let cfFlushFailed = false;
+          if (newRiskId && customFieldsRef.current?.hasPendingValues()) {
+            try {
+              await customFieldsRef.current.flush(newRiskId);
+            } catch (cfError) {
+              cfFlushFailed = true;
+              console.error(
+                "Project risk created, but custom field values failed to save:",
+                cfError,
+              );
+            }
+          }
+          onSuccess();
+          if (cfFlushFailed) {
+            // Risk is created. Keep popup open so the inline warning from
+            // CustomFieldsSection stays visible.
+            return;
+          }
           // risk create success
           closePopup();
-          onSuccess();
         } else if (response && response.status === 200) {
           // risk update success
-          closePopup();
+          let cfFlushFailed = false;
+          const existingId = Number(inputValues.id);
+          if (
+            Number.isFinite(existingId) &&
+            existingId > 0 &&
+            customFieldsRef.current?.hasPendingValues()
+          ) {
+            try {
+              await customFieldsRef.current.flush(existingId);
+            } catch (cfError) {
+              cfFlushFailed = true;
+              console.error(
+                "Project risk updated, but custom field values failed to save:",
+                cfError,
+              );
+            }
+          }
           onSuccess();
+          if (cfFlushFailed) {
+            return;
+          }
+          closePopup();
         } else {
           const responseData = response?.data as ApiResponse;
           let errorMessage = responseData?.message || "Unknown error occurred";
@@ -696,6 +742,12 @@ const AddNewRiskForm: FC<AddNewRiskFormProps> = ({
                 disableRipple={disableRipple}
               />
             )}
+            <Tab
+              label="Custom fields"
+              value="custom-fields"
+              sx={tabStyle}
+              disableRipple={disableRipple}
+            />
             {popupStatus === "edit" && entityId && (
               <Tab label="Activity" value="activity" sx={tabStyle} disableRipple={disableRipple} />
             )}
@@ -753,6 +805,13 @@ const AddNewRiskForm: FC<AddNewRiskFormProps> = ({
             />
           </TabPanel>
         )}
+        <TabPanel value="custom-fields" sx={{ p: 0 }}>
+          <CustomFieldsSection
+            ref={customFieldsRef}
+            entityType="project_risk"
+            entityId={popupStatus === "edit" ? (entityId ?? null) : null}
+          />
+        </TabPanel>
         {popupStatus === "edit" && entityId && (
           <TabPanel value="activity" sx={{ p: 0 }}>
             <HistorySidebar inline isOpen={true} entityType="risk" entityId={entityId} />
@@ -783,7 +842,10 @@ const AddNewRiskForm: FC<AddNewRiskFormProps> = ({
               variant="contained"
               onClick={riskFormSubmitHandler}
               text={popupStatus === "new" ? "Save" : "Update"}
-              isDisabled={popupStatus === "new" ? isCreatingDisabled : isEditingDisabled}
+              isDisabled={
+                customFieldsGate.blocked ||
+                (popupStatus === "new" ? isCreatingDisabled : isEditingDisabled)
+              }
               aria-label={popupStatus === "new" ? "Save new risk" : "Update risk"}
             />
           </Box>

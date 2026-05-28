@@ -12,6 +12,7 @@ import allowedRoles from "../../../application/constants/permissions";
 import { useAuth } from "../../../application/hooks/useAuth";
 import ApiKeys from "./ApiKeys";
 import AuditLedger from "./AuditLedger";
+import CustomFieldsTab from "./CustomFields";
 import AIApprovalRules from "./AIApprovalRules";
 import TabBar, { TabItem } from "../../components/TabBar";
 import { PageHeaderExtended } from "../../components/Layout/PageHeaderExtended";
@@ -29,6 +30,7 @@ const BUILT_IN_TABS = [
   "features",
   "apikeys",
   "audit-ledger",
+  "custom-fields",
   "ai-approval-rules",
 ];
 
@@ -43,6 +45,9 @@ export default function ProfilePage() {
     !isSuperAdmin && !allowedRoles.features?.manage?.includes(userRoleName);
   // Audit ledger: Admin-only (or super admin)
   const isAuditLedgerDisabled = !isSuperAdmin && userRoleName !== "Admin";
+  // Custom fields: strictly Admin role only (not SuperAdmin) — defining
+  // per-org custom fields is an org admin's concern, not a system-level one.
+  const isCustomFieldsDisabled = userRoleName !== "Admin";
 
   // Get plugin tabs dynamically from the plugin registry
   const { getPluginTabs, installedPlugins, isLoading: pluginsLoading } = usePluginRegistry();
@@ -191,6 +196,17 @@ export default function ProfilePage() {
                   },
                 ]
               : []),
+            ...(!isCustomFieldsDisabled
+              ? [
+                  {
+                    label: "Custom fields",
+                    value: "custom-fields",
+                    icon: "Settings" as TabItem["icon"],
+                    tooltip:
+                      "Define organization-specific fields on entities like Vendors, Policies, etc.",
+                  },
+                ]
+              : []),
             ...(!isAuditLedgerDisabled
               ? [
                   {
@@ -211,6 +227,7 @@ export default function ProfilePage() {
           ]}
           activeTab={activeTab}
           onChange={handleTabChange}
+          scrollable
         />
 
         {!isSuperAdmin && (
@@ -251,6 +268,11 @@ export default function ProfilePage() {
           </TabPanel>
         )}
 
+        {!isCustomFieldsDisabled && (
+          <TabPanel sx={{ p: 0 }} value="custom-fields">
+            <CustomFieldsTab />
+          </TabPanel>
+        )}
         {!isAuditLedgerDisabled && (
           <TabPanel sx={{ p: 0 }} value="ai-approval-rules">
             <AIApprovalRules />

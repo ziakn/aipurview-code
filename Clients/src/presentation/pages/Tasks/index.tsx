@@ -402,7 +402,11 @@ const Tasks: React.FC = () => {
           body: "Your new task has been added.",
         });
         setTimeout(() => setAlert(null), 4000);
+
+        // Return the new id so CreateTask can flush staged custom field values.
+        return { id: newTaskId as number };
       }
+      return undefined;
     } catch (error) {
       console.error("Error creating task:", error);
       setAlert({
@@ -411,6 +415,7 @@ const Tasks: React.FC = () => {
         body: "Failed to create the task. Please try again.",
       });
       setTimeout(() => setAlert(null), 4000);
+      return undefined;
     }
   };
 
