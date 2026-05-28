@@ -7910,6 +7910,21 @@ export const translations: Record<string, Record<string, string>> = {
     "All members selected": "Alle Mitglieder ausgewählt",
     "No options": "Keine Optionen",
     "All tags selected": "Alle Tags ausgewählt",
+
+    // Custom fields
+    "Custom fields": "Benutzerdefinierte Felder",
+    "Define organization-specific fields on entities like Vendors, Policies, etc.":
+      "Definieren Sie organisationsspezifische Felder für Entitäten wie Anbieter, Richtlinien usw.",
+    "Only Admins can manage custom fields.":
+      "Nur Administratoren können benutzerdefinierte Felder verwalten.",
+    "Edit field": "Feld bearbeiten",
+    "Delete custom field": "Benutzerdefiniertes Feld löschen",
+    "Field key": "Feldschlüssel",
+    "Field type": "Feldtyp",
+    "Options (one per line)": "Optionen (eine pro Zeile)",
+    "Clear value": "Wert löschen",
+    "Failed to load custom fields.": "Benutzerdefinierte Felder konnten nicht geladen werden.",
+    "Required custom fields missing": "Erforderliche benutzerdefinierte Felder fehlen",
   },
 
   fr: {
@@ -15749,5 +15764,20 @@ export const translations: Record<string, Record<string, string>> = {
     "All members selected": "Tous les membres sélectionnés",
     "No options": "Aucune option",
     "All tags selected": "Toutes les étiquettes sélectionnées",
+
+    // Custom fields
+    "Custom fields": "Champs personnalisés",
+    "Define organization-specific fields on entities like Vendors, Policies, etc.":
+      "Définissez des champs propres à votre organisation sur des entités telles que les fournisseurs, les politiques, etc.",
+    "Only Admins can manage custom fields.":
+      "Seuls les administrateurs peuvent gérer les champs personnalisés.",
+    "Edit field": "Modifier le champ",
+    "Delete custom field": "Supprimer le champ personnalisé",
+    "Field key": "Clé du champ",
+    "Field type": "Type de champ",
+    "Options (one per line)": "Options (une par ligne)",
+    "Clear value": "Effacer la valeur",
+    "Failed to load custom fields.": "Échec du chargement des champs personnalisés.",
+    "Required custom fields missing": "Champs personnalisés obligatoires manquants",
   },
 };
