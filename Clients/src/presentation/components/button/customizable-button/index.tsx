@@ -4,6 +4,22 @@ import { ButtonProps, SxProps, Theme } from "@mui/material";
 import singleTheme from "../../../themes/v1SingleTheme";
 import { CustomizableButtonProps } from "../../../types/button.types";
 
+/** Size dimensions applied after theme appearance (medium matches app standard 34px). */
+const BUTTON_SIZE_STYLES: Record<"small" | "medium", SxProps<Theme>> = {
+  small: {
+    height: 28,
+    minHeight: 28,
+    fontSize: "12px",
+    padding: "6px 12px",
+  },
+  medium: {
+    height: 34,
+    minHeight: 34,
+    fontSize: "13px",
+    padding: "10px 16px",
+  },
+};
+
 /**
  * CustomizableButton component
  *
@@ -138,9 +154,9 @@ const CustomizableButton = memo(
         data-testid={testId}
         sx={[
           appearance,
+          BUTTON_SIZE_STYLES[size === "small" ? "small" : "medium"],
           {
             "position": "relative",
-            "minHeight": "34px",
             "&.Mui-disabled": {
               pointerEvents: loading ? "none" : "auto",
             },

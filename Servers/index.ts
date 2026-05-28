@@ -88,6 +88,14 @@ import invitationRoutes from "./routes/invitation.route";
 import intakeFormRoutes from "./routes/intakeForm.route";
 import versionRoutes from "./routes/version.route";
 import auditLedgerRoutes from "./routes/auditLedger.route";
+import evidenceAiRoutes from "./routes/evidenceAi.route";
+import readinessRoutes from "./routes/readiness.route";
+import aiContentRoutes from "./routes/aiContent.route";
+import aiConfirmationRoutes from "./routes/aiConfirmation.route";
+import aiApprovalRoutes from "./routes/aiApproval.route";
+import aiApprovalRulesRoutes from "./routes/aiApprovalRules.route";
+import aiAuditRoutes from "./routes/aiAudit.route";
+import { startTimeoutHandler } from "./advisor/approval/timeoutHandler";
 import featureSettingsRoutes from "./routes/featureSettings.route";
 import friaRoutes from "./routes/fria.route";
 import riskBenchmarkRoutes from "./routes/riskBenchmark.route";
@@ -276,6 +284,13 @@ try {
   app.use("/api/llm-keys", llmKeyRouter);
   app.use("/api/nist-ai-rmf", nistAiRmfRoutes);
   app.use("/api/evidenceHub", evidenceHubRouter);
+  app.use("/api/evidence-ai", evidenceAiRoutes);
+  app.use("/api/readiness", readinessRoutes);
+  app.use("/api/ai-content", aiContentRoutes);
+  app.use("/api/ai-confirmation", aiConfirmationRoutes);
+  app.use("/api/ai-approvals", aiApprovalRoutes);
+  app.use("/api/ai-approval-rules", aiApprovalRulesRoutes);
+  app.use("/api/ai-audit", aiAuditRoutes);
   app.use("/api/advisor", advisorRouter);
   app.use("/api/policy-linked", policyLinkedObjects);
 
@@ -385,6 +400,9 @@ try {
       }
     }
   })();
+
+  // Start approval timeout handler (expires pending approvals past TTL)
+  startTimeoutHandler();
 
   const server = app.listen(port, () => {
     console.log(`Server running on port http://${host}:${port}/`);

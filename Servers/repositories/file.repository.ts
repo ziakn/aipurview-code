@@ -515,7 +515,6 @@ export async function getOrganizationFiles(
     FROM files f
     JOIN users u ON f.uploaded_by = u.id
     WHERE f.organization_id = :organizationId
-      AND f.project_id IS NULL
       AND (f.source IS NULL OR f.source != 'policy_editor')
     ORDER BY f.uploaded_time DESC`;
 
@@ -531,7 +530,6 @@ export async function getOrganizationFiles(
     SELECT COUNT(*) as count
     FROM files
     WHERE organization_id = :organizationId
-      AND project_id IS NULL
       AND (source IS NULL OR source != 'policy_editor')`;
 
   const countResult = await sequelize.query(countQuery, {
@@ -913,7 +911,6 @@ export async function getOrganizationFilesWithMetadata(
     LEFT JOIN users m ON f.last_modified_by = m.id
     LEFT JOIN approval_workflows aw ON aw.organization_id = f.organization_id AND f.approval_workflow_id = aw.id
     WHERE f.organization_id = :organizationId
-      AND f.project_id IS NULL
       AND (f.source IS NULL OR f.source != 'policy_editor')
     ORDER BY f.uploaded_time DESC`;
 
@@ -929,7 +926,6 @@ export async function getOrganizationFilesWithMetadata(
     SELECT COUNT(*) as count
     FROM files
     WHERE organization_id = :organizationId
-      AND project_id IS NULL
       AND (source IS NULL OR source != 'policy_editor')`;
 
   const countResult = await sequelize.query(countQuery, {
@@ -1273,7 +1269,7 @@ export async function createFileEntityLink(
       (organization_id, file_id, framework_type, entity_type, entity_id, project_id, link_type, created_by, created_at)
     VALUES
       (:organizationId, :fileId, :frameworkType, :entityType, :entityId, :projectId, :linkType, :createdBy, NOW())
-    ON CONFLICT (organization_id, file_id, framework_type, entity_type, entity_id) DO NOTHING
+    ON CONFLICT (file_id, framework_type, entity_type, entity_id) DO NOTHING
     RETURNING *`;
 
   const result = await sequelize.query(query, {

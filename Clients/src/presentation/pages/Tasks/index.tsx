@@ -179,13 +179,20 @@ const Tasks: React.FC = () => {
     fetchTasks();
   }, [includeArchived, refreshKey]);
 
-  // Listen for AI action approvals (e.g. agent_create_task). When an
-  // approval is granted in the RequestorApprovalModal, the executor runs
-  // inside the approve transaction so the new task row already exists by
-  // the time the event fires — bumping refreshKey is enough to pull it in.
+  // Listen for AI action approvals for any task-lifecycle tool. Covers
+  // create, update, and delete — all trigger a table refresh.
   useEffect(() => {
+    const TASK_TOOL_NAMES = new Set([
+      "agent_create_task",
+      "agent_update_task",
+      "agent_delete_task",
+    ]);
     return onAiActionCompleted((detail) => {
-      if (detail?.status === "approved" && detail?.toolName === "agent_create_task") {
+      if (
+        detail?.status === "approved" &&
+        detail?.toolName &&
+        TASK_TOOL_NAMES.has(detail.toolName)
+      ) {
         setRefreshKey((k) => k + 1);
       }
     });

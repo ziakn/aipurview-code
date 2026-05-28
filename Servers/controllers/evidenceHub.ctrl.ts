@@ -27,7 +27,7 @@ export async function getAllEvidences(req: Request, res: Response) {
   logger.debug("🔍 Fetching all evidences");
 
   try {
-    const evidences = (await getAllEvidencesQuery(req.organizationId!)) as EvidenceHubModel[];
+    const evidences = await getAllEvidencesQuery(req.organizationId!);
 
     if (evidences && evidences.length > 0) {
       logStructured(
@@ -36,7 +36,7 @@ export async function getAllEvidences(req: Request, res: Response) {
         "getAllEvidences",
         "evidenceHub.controller.ts",
       );
-      return res.status(200).json(STATUS_CODE[200](evidences.map((e) => e.toSafeJSON())));
+      return res.status(200).json(STATUS_CODE[200](evidences));
     }
 
     logStructured(
