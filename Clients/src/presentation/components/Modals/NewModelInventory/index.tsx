@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { FC, useState, useMemo, useCallback, useEffect, useRef, Suspense } from "react";
+import React, { FC, useState, useMemo, useCallback, useEffect, useRef } from "react";
 import {
   useTheme,
   Stack,

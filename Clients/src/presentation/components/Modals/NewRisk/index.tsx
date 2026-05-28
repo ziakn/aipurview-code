@@ -16,7 +16,7 @@ import TabContext from "@mui/lab/TabContext";
 import { Autocomplete, Box, Stack, TextField, Typography, Divider } from "@mui/material";
 import Field from "../../Inputs/Field";
 import Select from "../../Inputs/Select";
-import { Suspense, useEffect, useRef, useState, useMemo, lazy, useCallback } from "react";
+import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import Alert from "../../Alert";
 import { checkStringValidation } from "../../../../application/validations/stringValidation";
 import useUsers from "../../../../application/hooks/useUsers";

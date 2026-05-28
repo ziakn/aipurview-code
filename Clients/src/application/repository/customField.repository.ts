@@ -7,6 +7,9 @@ import type {
   IUpdateCustomFieldDefinitionInput,
 } from "../../domain/interfaces/i.customField";
 
+// Backend wraps every payload in STATUS_CODE[xxx](...) → { message, data }.
+type Envelope<T> = { data: T; message?: string };
+
 export async function listCustomFieldDefinitions({
   entityType,
   signal,
@@ -14,15 +17,21 @@ export async function listCustomFieldDefinitions({
   entityType: CustomFieldEntityType;
   signal?: AbortSignal;
 }): Promise<ICustomFieldDefinition[]> {
-  const response = await apiServices.get(`/custom-fields/definitions/${entityType}`, { signal });
-  return (response.data?.data ?? []) as ICustomFieldDefinition[];
+  const response = await apiServices.get<Envelope<ICustomFieldDefinition[]>>(
+    `/custom-fields/definitions/${entityType}`,
+    { signal },
+  );
+  return response.data?.data ?? [];
 }
 
 export async function createCustomFieldDefinition(
   body: ICreateCustomFieldDefinitionInput,
 ): Promise<ICustomFieldDefinition> {
-  const response = await apiServices.post("/custom-fields/definitions", body);
-  return response.data?.data as ICustomFieldDefinition;
+  const response = await apiServices.post<Envelope<ICustomFieldDefinition>>(
+    "/custom-fields/definitions",
+    body,
+  );
+  return response.data.data;
 }
 
 export async function updateCustomFieldDefinition({
@@ -32,8 +41,11 @@ export async function updateCustomFieldDefinition({
   id: number;
   body: IUpdateCustomFieldDefinitionInput;
 }): Promise<ICustomFieldDefinition> {
-  const response = await apiServices.patch(`/custom-fields/definitions/${id}`, body);
-  return response.data?.data as ICustomFieldDefinition;
+  const response = await apiServices.patch<Envelope<ICustomFieldDefinition>>(
+    `/custom-fields/definitions/${id}`,
+    body,
+  );
+  return response.data.data;
 }
 
 export async function deleteCustomFieldDefinition(id: number): Promise<void> {
@@ -49,10 +61,11 @@ export async function getCustomFieldValuesForEntity({
   entityId: number;
   signal?: AbortSignal;
 }): Promise<ICustomFieldValueRow[]> {
-  const response = await apiServices.get(`/custom-fields/values/${entityType}/${entityId}`, {
-    signal,
-  });
-  return (response.data?.data ?? []) as ICustomFieldValueRow[];
+  const response = await apiServices.get<Envelope<ICustomFieldValueRow[]>>(
+    `/custom-fields/values/${entityType}/${entityId}`,
+    { signal },
+  );
+  return response.data?.data ?? [];
 }
 
 export async function setCustomFieldValue(body: {
@@ -82,13 +95,8 @@ export async function getMissingRequiredCustomFields({
   entityId: number;
   signal?: AbortSignal;
 }): Promise<Array<{ id: number; field_key: string; label: string }>> {
-  const response = await apiServices.get(
-    `/custom-fields/values/${entityType}/${entityId}/missing-required`,
-    { signal },
-  );
-  return (response.data?.data ?? []) as Array<{
-    id: number;
-    field_key: string;
-    label: string;
-  }>;
+  const response = await apiServices.get<
+    Envelope<Array<{ id: number; field_key: string; label: string }>>
+  >(`/custom-fields/values/${entityType}/${entityId}/missing-required`, { signal });
+  return response.data?.data ?? [];
 }

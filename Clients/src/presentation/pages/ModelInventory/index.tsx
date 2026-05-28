@@ -1427,10 +1427,12 @@ const ModelInventory: React.FC = () => {
     }
 
     // Return the new id on create so NewModelInventory can flush staged
-    // custom field values against it.
+    // custom field values against it. Update paths return undefined — the
+    // modal already has the id via initialData.
     if (!selectedModelInventory && modelId) {
       return { id: modelId };
     }
+    return undefined;
   };
 
   const handleModelInventoryError = (error: any) => {

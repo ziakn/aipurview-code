@@ -23,6 +23,7 @@ import { useFormValidation } from "../../../../application/hooks/useFormValidati
 import { checkStringValidation } from "../../../../application/validations/stringValidation";
 import CustomFieldsSection, { type CustomFieldsSectionHandle } from "../../CustomFieldsSection";
 import { useRequiredCustomFieldsGate } from "../../CustomFieldsSection/RequiredCustomFieldsGate";
+import type { TabItem } from "../../TabBar";
 import { logEngine } from "../../../../application/tools/log.engine";
 
 interface NewModelRiskProps {
@@ -443,7 +444,7 @@ const NewModelRisk: FC<NewModelRiskProps> = ({
 
   const isEditMode = isEdit && !!entityId;
 
-  const tabs = isEditMode
+  const tabs: TabItem[] = isEditMode
     ? [
         { label: "Risk details", value: "details", icon: "ShieldAlert" },
         { label: "Custom fields", value: "custom-fields", icon: "Settings" },

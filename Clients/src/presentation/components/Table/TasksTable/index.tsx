@@ -38,7 +38,6 @@ import StandardTablePagination from "../StandardTablePagination";
 import type { StandardColumn } from "../../../../domain/types/standardTable";
 import { useCustomFieldDefinitions } from "../../../../application/hooks/useCustomFields";
 import { formatCustomFieldValue } from "../../CustomFieldsSection/formatCustomFieldValue";
-import useUsers from "../../../../application/hooks/useUsers";
 
 // Status display mapping
 const STATUS_DISPLAY_MAP: Record<string, string> = {
@@ -149,7 +148,6 @@ const TasksTable: React.FC<ITasksTableProps> = ({
     [visibleColumns],
   );
 
-  const { users } = useUsers();
   const { data: customFieldDefs = [] } = useCustomFieldDefinitions("task");
 
   // Filtered column list for the header — built-ins + custom-field columns
