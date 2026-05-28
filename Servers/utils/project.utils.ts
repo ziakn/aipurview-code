@@ -16,6 +16,10 @@ import {
   buildProjectReplacements,
   buildProjectUpdateReplacements,
 } from "./automation/project.automation.utils";
+import {
+  deleteAllCustomFieldValuesForEntityQuery,
+  fetchCustomFieldsForEntities,
+} from "./customField.utils";
 
 // Function to generate the next sequential UC ID
 // Using a database sequence to fetch the next value
@@ -90,6 +94,15 @@ export const getAllProjectsQuery = async (
 
   if (!projects || projects.length === 0) return [];
 
+  const projectIds = projects
+    .map((p) => p.id)
+    .filter((id): id is number => typeof id === "number");
+  const customFieldsByProject = await fetchCustomFieldsForEntities(
+    "project",
+    projectIds,
+    organizationId,
+  );
+
   for (let project of projects) {
     const projectFramework = (await sequelize.query(
       `
@@ -117,6 +130,8 @@ export const getAllProjectsQuery = async (
       },
     );
     (project.dataValues as any)["members"] = members.map((m) => m.user_id);
+    (project.dataValues as any)["custom_fields"] =
+      customFieldsByProject.get(project.id!) ?? [];
   }
 
   return projects;
@@ -724,6 +739,13 @@ export const deleteProjectByIdQuery = async (
       }
       return deleteFunction(id, organizationId, transaction);
     }),
+  );
+
+  await deleteAllCustomFieldValuesForEntityQuery(
+    "project",
+    id,
+    organizationId,
+    transaction,
   );
 
   const result = await sequelize.query(

@@ -1,6 +1,19 @@
 import { Alert, Box, SelectChangeEvent, Stack, Typography, useTheme } from "@mui/material";
+import { TabContext } from "@mui/lab";
 import { X as ClearIcon } from "lucide-react";
-import { Suspense, useCallback, useContext, useMemo, useState, useEffect } from "react";
+import {
+  Suspense,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+  useEffect,
+} from "react";
+import CustomFieldsSection, {
+  type CustomFieldsSectionHandle,
+} from "../../CustomFieldsSection";
+import TabBar from "../../TabBar";
 import { CustomizableButton } from "../../../components/button/customizable-button";
 import { PlusCircle as AddCircleOutlineIcon } from "lucide-react";
 import Field from "../../../components/Inputs/Field";
@@ -99,6 +112,8 @@ export const ProjectForm = ({
   const { users } = useUsers();
   const { allFrameworks } = useFrameworks({ listOfFrameworks: [] });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState<"details" | "custom-fields">("details");
+  const customFieldsRef = useRef<CustomFieldsSectionHandle | null>(null);
   const [approvalWorkflows, setApprovalWorkflows] = useState<Array<{ _id: number; name: string }>>(
     [],
   );
@@ -325,7 +340,12 @@ export const ProjectForm = ({
     const userInfo = extractUserToken(authState.authToken);
     const teamMember = values.members.map((user) => String(user._id));
 
-    if (validateAll(values)) {
+    if (!validateAll(values)) {
+      // Surface validation errors that live on the Details tab.
+      setActiveTab("details");
+      return;
+    }
+    {
       setIsSubmitting(true);
       try {
         const body: any = {
@@ -372,6 +392,7 @@ export const ProjectForm = ({
         }
 
         if (res.status === 201 || res.status === 200 || res.status === 202) {
+          let targetId: number | undefined;
           if (projectToEdit) {
             // Update the project in the projects list
             setProjects((prevProjects: Project[]) =>
@@ -379,12 +400,35 @@ export const ProjectForm = ({
                 project.id === projectToEdit.id ? (res.data.data as Project) : project,
               ),
             );
+            targetId = projectToEdit.id;
           } else {
             // Add new project to the projects list
+            const newProject = res.data.data.project as Project;
             setProjects((prevProjects: Project[]) => [
               ...prevProjects,
-              res.data.data.project as Project,
+              newProject,
             ]);
+            targetId = (newProject as { id?: number })?.id;
+          }
+          // Flush any staged custom field changes (create OR update).
+          let cfFlushFailed = false;
+          if (targetId && customFieldsRef.current?.hasPendingValues()) {
+            try {
+              await customFieldsRef.current.flush(targetId);
+            } catch (cfError) {
+              cfFlushFailed = true;
+              console.error(
+                "Project saved, but custom field values failed to save:",
+                cfError,
+              );
+            }
+          }
+          if (cfFlushFailed) {
+            // Entity is saved. Switch to the custom fields tab so the
+            // inline warning is visible.
+            setActiveTab("custom-fields");
+            setIsSubmitting(false);
+            return;
           }
           setTimeout(() => {
             setIsSubmitting(false);
@@ -512,6 +556,19 @@ export const ProjectForm = ({
         </Alert>
       )}
 
+      <TabContext value={activeTab}>
+        <Box>
+          <TabBar
+            tabs={[
+              { label: "Details", value: "details", icon: "FileText" },
+              { label: "Custom fields", value: "custom-fields", icon: "Settings" },
+            ]}
+            activeTab={activeTab}
+            onChange={(_, newValue) => setActiveTab(newValue as "details" | "custom-fields")}
+          />
+        </Box>
+
+      <Box sx={{ display: activeTab === "details" ? "block" : "none" }}>
       <Stack className="vwproject-form-body" sx={{ display: "flex", flexDirection: "row", gap: 6 }}>
         <Stack className="vwproject-form-body-start" sx={{ gap: 6, flex: 1 }}>
           <Field
@@ -892,6 +949,17 @@ export const ProjectForm = ({
           />
         </Stack>
       )}
+      </Box>
+
+      <Box sx={{ display: activeTab === "custom-fields" ? "block" : "none" }}>
+        <CustomFieldsSection
+          ref={customFieldsRef}
+          entityType="project"
+          entityId={projectToEdit?.id ?? null}
+        />
+      </Box>
+      </TabContext>
+
       {!useStandardModal && (
         <Stack
           sx={{

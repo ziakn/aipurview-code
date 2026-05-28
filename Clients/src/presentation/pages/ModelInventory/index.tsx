@@ -1373,6 +1373,12 @@ const ModelInventory: React.FC = () => {
       setFlashRowId(modelId);
       setTimeout(() => setFlashRowId(null), 3000);
     }
+
+    // Return the new id on create so NewModelInventory can flush staged
+    // custom field values against it.
+    if (!selectedModelInventory && modelId) {
+      return { id: modelId };
+    }
   };
 
   const handleModelInventoryError = (error: any) => {

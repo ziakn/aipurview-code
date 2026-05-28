@@ -93,6 +93,7 @@ import friaRoutes from "./routes/fria.route";
 import riskBenchmarkRoutes from "./routes/riskBenchmark.route";
 import quantitativeRiskRoutes from "./routes/quantitativeRisk.route";
 import aiGatewayRoutes from "./routes/aiGateway.route";
+import customFieldRoutes from "./routes/customField.route";
 import virtualKeyProxyRoutes from "./routes/virtualKeyProxy.route";
 import internalRoutes from "./routes/internal.route";
 import superAdminRoutes from "./routes/superAdmin.route";
@@ -322,6 +323,7 @@ try {
   app.use("/api/risk-benchmarks", riskBenchmarkRoutes);
   app.use("/api/quantitative-risks", quantitativeRiskRoutes);
   app.use("/api/ai-gateway", aiGatewayRoutes());
+  app.use("/api/custom-fields", customFieldRoutes);
 
   // Super-admin routes (authenticated + super-admin only)
   app.use("/api/super-admin", superAdminRoutes);
