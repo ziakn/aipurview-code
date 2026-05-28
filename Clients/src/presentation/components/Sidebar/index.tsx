@@ -17,8 +17,8 @@ import {
   Bot,
   Database,
   Rocket,
-  Workflow,
-  Sparkles,
+  // Workflow,
+  // Sparkles,
   GitCompareArrows,
 } from "lucide-react";
 import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.context";
@@ -216,23 +216,23 @@ const Sidebar: React.FC<SidebarProps> = ({
         },
       ],
     },
-    {
-      name: "AI AGENTIC",
-      items: [
-        {
-          id: "workflows",
-          label: "Workflows",
-          icon: <Workflow size={16} strokeWidth={1.5} />,
-          path: "/workflows",
-        },
-        {
-          id: "skills",
-          label: "AI Skills",
-          icon: <Sparkles size={16} strokeWidth={1.5} />,
-          path: "/skills",
-        },
-      ],
-    },
+    // {
+    //   name: "AI AGENTIC",
+    //   items: [
+    //     {
+    //       id: "workflows",
+    //       label: "Workflows",
+    //       icon: <Workflow size={16} strokeWidth={1.5} />,
+    //       path: "/workflows",
+    //     },
+    //     {
+    //       id: "skills",
+    //       label: "AI Skills",
+    //       icon: <Sparkles size={16} strokeWidth={1.5} />,
+    //       path: "/skills",
+    //     },
+    //   ],
+    // },
   ];
 
   // Check if item is active based on current path
