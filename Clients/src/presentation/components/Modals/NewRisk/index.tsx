@@ -35,9 +35,7 @@ import {
 } from "../../../../application/hooks/useVendorRiskMutations";
 import { useAuth } from "../../../../application/hooks/useAuth";
 import { HistorySidebar } from "../../Common/HistorySidebar";
-import CustomFieldsSection, {
-  type CustomFieldsSectionHandle,
-} from "../../CustomFieldsSection";
+import CustomFieldsSection, { type CustomFieldsSectionHandle } from "../../CustomFieldsSection";
 import { useRequiredCustomFieldsGate } from "../../CustomFieldsSection/RequiredCustomFieldsGate";
 import { useVendorRiskChangeHistory } from "../../../../application/hooks/useVendorRiskChangeHistory";
 import { VendorModel } from "../../../../domain/models/Common/vendor/vendor.model";
@@ -132,10 +130,7 @@ const AddNewRisk: React.FC<AddNewRiskProps> = ({
   } | null>(null);
   const [activeTab, setActiveTab] = useState("details");
   const customFieldsRef = useRef<CustomFieldsSectionHandle | null>(null);
-  const customFieldsGate = useRequiredCustomFieldsGate(
-    "vendor_risk",
-    existingRisk?.id ?? null,
-  );
+  const customFieldsGate = useRequiredCustomFieldsGate("vendor_risk", existingRisk?.id ?? null);
   const [selectedFrameworks, setSelectedFrameworks] = useState<number[]>([]);
 
   const { allFrameworks: frameworks, loading: frameworksLoading } = useFrameworks({
@@ -642,15 +637,9 @@ const AddNewRisk: React.FC<AddNewRiskProps> = ({
             ? "Update risk details including description, impact assessment, and mitigation plan."
             : "Document and assess a potential risk associated with your vendor. Provide details of the risk, its impact, and your mitigation plan."
         }
-        onSubmit={
-          customFieldsGate.blocked || activeTab === "activity"
-            ? undefined
-            : handleSave
-        }
+        onSubmit={customFieldsGate.blocked || activeTab === "activity" ? undefined : handleSave}
         submitButtonText="Save"
-        isSubmitting={
-          isSubmitting || isEditingDisabled || customFieldsGate.blocked
-        }
+        isSubmitting={isSubmitting || isEditingDisabled || customFieldsGate.blocked}
         maxWidth="1000px"
       >
         <TabContext value={activeTab}>
@@ -672,9 +661,7 @@ const AddNewRisk: React.FC<AddNewRiskProps> = ({
               onChange={(_, newValue) => setActiveTab(newValue)}
             />
           </Box>
-          <Box sx={{ display: activeTab === "details" ? "block" : "none" }}>
-            {risksPanel}
-          </Box>
+          <Box sx={{ display: activeTab === "details" ? "block" : "none" }}>{risksPanel}</Box>
           <Box sx={{ display: activeTab === "custom-fields" ? "block" : "none" }}>
             <CustomFieldsSection
               ref={customFieldsRef}

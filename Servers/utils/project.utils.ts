@@ -94,9 +94,7 @@ export const getAllProjectsQuery = async (
 
   if (!projects || projects.length === 0) return [];
 
-  const projectIds = projects
-    .map((p) => p.id)
-    .filter((id): id is number => typeof id === "number");
+  const projectIds = projects.map((p) => p.id).filter((id): id is number => typeof id === "number");
   const customFieldsByProject = await fetchCustomFieldsForEntities(
     "project",
     projectIds,
@@ -130,8 +128,7 @@ export const getAllProjectsQuery = async (
       },
     );
     (project.dataValues as any)["members"] = members.map((m) => m.user_id);
-    (project.dataValues as any)["custom_fields"] =
-      customFieldsByProject.get(project.id!) ?? [];
+    (project.dataValues as any)["custom_fields"] = customFieldsByProject.get(project.id!) ?? [];
   }
 
   return projects;
@@ -741,12 +738,7 @@ export const deleteProjectByIdQuery = async (
     }),
   );
 
-  await deleteAllCustomFieldValuesForEntityQuery(
-    "project",
-    id,
-    organizationId,
-    transaction,
-  );
+  await deleteAllCustomFieldValuesForEntityQuery("project", id, organizationId, transaction);
 
   const result = await sequelize.query(
     `DELETE FROM projects WHERE organization_id = :organizationId AND id = :id RETURNING *`,

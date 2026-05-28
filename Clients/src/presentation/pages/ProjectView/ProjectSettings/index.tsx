@@ -667,19 +667,12 @@ const ProjectSettings = React.memo(
 
           let cfFlushFailed = false;
           const pid = Number(projectId);
-          if (
-            Number.isFinite(pid) &&
-            pid > 0 &&
-            customFieldsRef.current?.hasPendingValues()
-          ) {
+          if (Number.isFinite(pid) && pid > 0 && customFieldsRef.current?.hasPendingValues()) {
             try {
               await customFieldsRef.current.flush(pid);
             } catch (cfError) {
               cfFlushFailed = true;
-              console.error(
-                "Project saved, but custom field values failed to save:",
-                cfError,
-              );
+              console.error("Project saved, but custom field values failed to save:", cfError);
             }
           }
           if (cfFlushFailed) {

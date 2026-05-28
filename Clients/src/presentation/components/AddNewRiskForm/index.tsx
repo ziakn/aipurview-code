@@ -30,9 +30,7 @@ import allowedRoles from "../../../application/constants/permissions";
 import { CustomizableButton } from "../button/customizable-button";
 import { RiskCalculator } from "../../tools/riskCalculator";
 import { HistorySidebar } from "../Common/HistorySidebar";
-import CustomFieldsSection, {
-  type CustomFieldsSectionHandle,
-} from "../CustomFieldsSection";
+import CustomFieldsSection, { type CustomFieldsSectionHandle } from "../CustomFieldsSection";
 import { useRequiredCustomFieldsGate } from "../CustomFieldsSection/RequiredCustomFieldsGate";
 import { getTabStyle } from "./style";
 import "./styles.module.css";
@@ -154,7 +152,7 @@ const AddNewRiskForm: FC<AddNewRiskFormProps> = ({
   const customFieldsRef = useRef<CustomFieldsSectionHandle | null>(null);
   const customFieldsGate = useRequiredCustomFieldsGate(
     "project_risk",
-    popupStatus === "edit" ? entityId ?? null : null,
+    popupStatus === "edit" ? (entityId ?? null) : null,
   );
   const handleChange = useCallback((_: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -808,12 +806,12 @@ const AddNewRiskForm: FC<AddNewRiskFormProps> = ({
           </TabPanel>
         )}
         <TabPanel value="custom-fields" sx={{ p: 0 }}>
-            <CustomFieldsSection
-              ref={customFieldsRef}
-              entityType="project_risk"
-              entityId={popupStatus === "edit" ? entityId ?? null : null}
-            />
-          </TabPanel>
+          <CustomFieldsSection
+            ref={customFieldsRef}
+            entityType="project_risk"
+            entityId={popupStatus === "edit" ? (entityId ?? null) : null}
+          />
+        </TabPanel>
         {popupStatus === "edit" && entityId && (
           <TabPanel value="activity" sx={{ p: 0 }}>
             <HistorySidebar inline isOpen={true} entityType="risk" entityId={entityId} />

@@ -1,13 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, {
-  FC,
-  useState,
-  useMemo,
-  useCallback,
-  useEffect,
-  useRef,
-  Suspense,
-} from "react";
+import React, { FC, useState, useMemo, useCallback, useEffect, useRef, Suspense } from "react";
 import {
   useTheme,
   Stack,
@@ -23,9 +15,7 @@ import DatePicker from "../../Inputs/Datepicker";
 import SelectComponent from "../../Inputs/Select";
 import { ChevronDown, DownloadIcon } from "lucide-react";
 import StandardModal from "../StandardModal";
-import CustomFieldsSection, {
-  type CustomFieldsSectionHandle,
-} from "../../CustomFieldsSection";
+import CustomFieldsSection, { type CustomFieldsSectionHandle } from "../../CustomFieldsSection";
 import { useRequiredCustomFieldsGate } from "../../CustomFieldsSection/RequiredCustomFieldsGate";
 import { ModelInventoryStatus } from "../../../../domain/enums/modelInventory.enum";
 import { HistorySidebar } from "../../Common/HistorySidebar";
@@ -334,7 +324,7 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
 
   const customFieldsGate = useRequiredCustomFieldsGate(
     "model_inventory",
-    isEdit ? (selectedModelInventoryId as number) ?? null : null,
+    isEdit ? ((selectedModelInventoryId as number) ?? null) : null,
   );
   // Button should be enabled for new items or always enabled during edit
   // Simplified: only disable during submission
@@ -469,21 +459,13 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
             result && typeof result === "object" && "id" in result
               ? (result as { id?: number }).id
               : undefined;
-          const targetId = isEdit
-            ? (selectedModelInventoryId as number | undefined)
-            : newId;
-          if (
-            targetId &&
-            customFieldsRef.current?.hasPendingValues()
-          ) {
+          const targetId = isEdit ? (selectedModelInventoryId as number | undefined) : newId;
+          if (targetId && customFieldsRef.current?.hasPendingValues()) {
             try {
               await customFieldsRef.current.flush(targetId);
             } catch (cfError) {
               cfFlushFailed = true;
-              console.error(
-                "Model saved, but custom field values failed to save:",
-                cfError,
-              );
+              console.error("Model saved, but custom field values failed to save:", cfError);
             }
           }
         }
@@ -1043,9 +1025,7 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
             <CustomFieldsSection
               ref={customFieldsRef}
               entityType="model_inventory"
-              entityId={
-                isEdit ? (selectedModelInventoryId as number) ?? null : null
-              }
+              entityId={isEdit ? ((selectedModelInventoryId as number) ?? null) : null}
             />
           </Box>
           {activeTab === "activity" && isEdit && (

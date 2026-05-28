@@ -1,9 +1,4 @@
-import React, {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useState,
-} from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import {
   Alert,
   Box,
@@ -53,189 +48,173 @@ interface CustomFieldsSectionProps {
   entityId: number | null;
 }
 
-const CustomFieldsSection = forwardRef<
-  CustomFieldsSectionHandle,
-  CustomFieldsSectionProps
->(({ entityType, entityId }, ref) => {
-  const theme = useTheme();
-  const queryClient = useQueryClient();
-  const isCreateMode = entityId === null || entityId <= 0;
+const CustomFieldsSection = forwardRef<CustomFieldsSectionHandle, CustomFieldsSectionProps>(
+  ({ entityType, entityId }, ref) => {
+    const theme = useTheme();
+    const queryClient = useQueryClient();
+    const isCreateMode = entityId === null || entityId <= 0;
 
-  const {
-    data: definitions,
-    isLoading: defsLoading,
-    isError: defsError,
-  } = useCustomFieldDefinitions(entityType);
-  const { data: values, isLoading: valuesLoading } = useCustomFieldValues(
-    entityType,
-    entityId,
-  );
+    const {
+      data: definitions,
+      isLoading: defsLoading,
+      isError: defsError,
+    } = useCustomFieldDefinitions(entityType);
+    const { data: values, isLoading: valuesLoading } = useCustomFieldValues(entityType, entityId);
 
-  // Pending changes: values the user has set/changed, plus defs the user
-  // wants cleared. Both apply in create AND edit mode — the parent's main
-  // Save commits everything in one flush().
-  const [stagedValues, setStagedValues] = useState<Map<number, unknown>>(
-    () => new Map(),
-  );
-  const [clearedDefs, setClearedDefs] = useState<Set<number>>(() => new Set());
-  // Set when the most recent flush() call failed.
-  const [flushError, setFlushError] = useState<string | null>(null);
+    // Pending changes: values the user has set/changed, plus defs the user
+    // wants cleared. Both apply in create AND edit mode — the parent's main
+    // Save commits everything in one flush().
+    const [stagedValues, setStagedValues] = useState<Map<number, unknown>>(() => new Map());
+    const [clearedDefs, setClearedDefs] = useState<Set<number>>(() => new Set());
+    // Set when the most recent flush() call failed.
+    const [flushError, setFlushError] = useState<string | null>(null);
 
-  useImperativeHandle(
-    ref,
-    () => ({
-      flush: async (id: number) => {
-        if (stagedValues.size === 0 && clearedDefs.size === 0) return;
-        setFlushError(null);
-        try {
-          await Promise.all([
-            ...Array.from(stagedValues.entries()).map(([definitionId, value]) =>
-              setCustomFieldValueAPI({
-                definition_id: definitionId,
-                entity_id: id,
-                value,
-              }),
-            ),
-            ...Array.from(clearedDefs).map((definitionId) =>
-              deleteCustomFieldValueAPI({
-                definitionId,
-                entityId: id,
-              }),
-            ),
-          ]);
-          setStagedValues(new Map());
-          setClearedDefs(new Set());
-          queryClient.invalidateQueries({
-            queryKey: customFieldsKeys.values(entityType, id),
-          });
-          queryClient.invalidateQueries({
-            queryKey: customFieldsKeys.missingRequired(entityType, id),
-          });
-        } catch (err) {
-          setFlushError(extractErrorMessage(err));
-          throw err;
-        }
-      },
-      hasPendingValues: () => stagedValues.size > 0 || clearedDefs.size > 0,
-    }),
-    [stagedValues, clearedDefs, queryClient, entityType],
-  );
-
-  const stageValue = (definitionId: number, value: unknown) => {
-    setStagedValues((prev) => {
-      const next = new Map(prev);
-      next.set(definitionId, value);
-      return next;
-    });
-    setClearedDefs((prev) => {
-      if (!prev.has(definitionId)) return prev;
-      const next = new Set(prev);
-      next.delete(definitionId);
-      return next;
-    });
-  };
-
-  const clearValue = (definitionId: number) => {
-    setClearedDefs((prev) => {
-      const next = new Set(prev);
-      next.add(definitionId);
-      return next;
-    });
-    setStagedValues((prev) => {
-      if (!prev.has(definitionId)) return prev;
-      const next = new Map(prev);
-      next.delete(definitionId);
-      return next;
-    });
-  };
-
-  const resetValue = (definitionId: number) => {
-    setStagedValues((prev) => {
-      if (!prev.has(definitionId)) return prev;
-      const next = new Map(prev);
-      next.delete(definitionId);
-      return next;
-    });
-    setClearedDefs((prev) => {
-      if (!prev.has(definitionId)) return prev;
-      const next = new Set(prev);
-      next.delete(definitionId);
-      return next;
-    });
-  };
-
-  if (defsLoading || (!isCreateMode && valuesLoading)) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          py: theme.spacing(4),
-          px: theme.spacing(2),
-        }}
-      >
-        <CircularProgress size={20} />
-      </Box>
+    useImperativeHandle(
+      ref,
+      () => ({
+        flush: async (id: number) => {
+          if (stagedValues.size === 0 && clearedDefs.size === 0) return;
+          setFlushError(null);
+          try {
+            await Promise.all([
+              ...Array.from(stagedValues.entries()).map(([definitionId, value]) =>
+                setCustomFieldValueAPI({
+                  definition_id: definitionId,
+                  entity_id: id,
+                  value,
+                }),
+              ),
+              ...Array.from(clearedDefs).map((definitionId) =>
+                deleteCustomFieldValueAPI({
+                  definitionId,
+                  entityId: id,
+                }),
+              ),
+            ]);
+            setStagedValues(new Map());
+            setClearedDefs(new Set());
+            queryClient.invalidateQueries({
+              queryKey: customFieldsKeys.values(entityType, id),
+            });
+            queryClient.invalidateQueries({
+              queryKey: customFieldsKeys.missingRequired(entityType, id),
+            });
+          } catch (err) {
+            setFlushError(extractErrorMessage(err));
+            throw err;
+          }
+        },
+        hasPendingValues: () => stagedValues.size > 0 || clearedDefs.size > 0,
+      }),
+      [stagedValues, clearedDefs, queryClient, entityType],
     );
-  }
 
-  if (defsError) {
-    return (
-      <Box sx={{ py: theme.spacing(4), px: theme.spacing(2) }}>
-        <Typography sx={{ fontSize: 13, color: theme.palette.error.main }}>
-          Failed to load custom fields.
-        </Typography>
-      </Box>
-    );
-  }
+    const stageValue = (definitionId: number, value: unknown) => {
+      setStagedValues((prev) => {
+        const next = new Map(prev);
+        next.set(definitionId, value);
+        return next;
+      });
+      setClearedDefs((prev) => {
+        if (!prev.has(definitionId)) return prev;
+        const next = new Set(prev);
+        next.delete(definitionId);
+        return next;
+      });
+    };
 
-  if (!definitions || definitions.length === 0) {
-    return (
-      <Box sx={{ py: theme.spacing(4), px: theme.spacing(2) }}>
-        <Typography sx={{ fontSize: 13, color: theme.palette.text.secondary }}>
-          No custom fields defined for this entity. An admin can add them in
-          Settings &rsaquo; Custom fields.
-        </Typography>
-      </Box>
-    );
-  }
+    const clearValue = (definitionId: number) => {
+      setClearedDefs((prev) => {
+        const next = new Set(prev);
+        next.add(definitionId);
+        return next;
+      });
+      setStagedValues((prev) => {
+        if (!prev.has(definitionId)) return prev;
+        const next = new Map(prev);
+        next.delete(definitionId);
+        return next;
+      });
+    };
 
-  const storedValueMap = new Map<number, unknown>();
-  (values ?? []).forEach((v) => storedValueMap.set(v.definition_id, v.value));
+    const resetValue = (definitionId: number) => {
+      setStagedValues((prev) => {
+        if (!prev.has(definitionId)) return prev;
+        const next = new Map(prev);
+        next.delete(definitionId);
+        return next;
+      });
+      setClearedDefs((prev) => {
+        if (!prev.has(definitionId)) return prev;
+        const next = new Set(prev);
+        next.delete(definitionId);
+        return next;
+      });
+    };
 
-  return (
-    <Stack
-      spacing={6}
-      sx={{ py: theme.spacing(4), px: theme.spacing(2) }}
-    >
-      {flushError && (
-        <Alert
-          severity="warning"
-          onClose={() => setFlushError(null)}
-          sx={{ fontSize: 13 }}
+    if (defsLoading || (!isCreateMode && valuesLoading)) {
+      return (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            py: theme.spacing(4),
+            px: theme.spacing(2),
+          }}
         >
-          Custom field values could not be saved: {flushError}.
-        </Alert>
-      )}
-      {!isCreateMode && (
-        <RequiredCustomFieldsBanner
-          entityType={entityType}
-          entityId={entityId as number}
-        />
-      )}
-      {definitions.map((def) => (
-        <CustomFieldRow
-          key={def.id}
-          definition={def}
-          storedValue={storedValueMap.get(def.id)}
-          onStage={stageValue}
-          onClear={clearValue}
-          onReset={resetValue}
-        />
-      ))}
-    </Stack>
-  );
-});
+          <CircularProgress size={20} />
+        </Box>
+      );
+    }
+
+    if (defsError) {
+      return (
+        <Box sx={{ py: theme.spacing(4), px: theme.spacing(2) }}>
+          <Typography sx={{ fontSize: 13, color: theme.palette.error.main }}>
+            Failed to load custom fields.
+          </Typography>
+        </Box>
+      );
+    }
+
+    if (!definitions || definitions.length === 0) {
+      return (
+        <Box sx={{ py: theme.spacing(4), px: theme.spacing(2) }}>
+          <Typography sx={{ fontSize: 13, color: theme.palette.text.secondary }}>
+            No custom fields defined for this entity. An admin can add them in Settings &rsaquo;
+            Custom fields.
+          </Typography>
+        </Box>
+      );
+    }
+
+    const storedValueMap = new Map<number, unknown>();
+    (values ?? []).forEach((v) => storedValueMap.set(v.definition_id, v.value));
+
+    return (
+      <Stack spacing={6} sx={{ py: theme.spacing(4), px: theme.spacing(2) }}>
+        {flushError && (
+          <Alert severity="warning" onClose={() => setFlushError(null)} sx={{ fontSize: 13 }}>
+            Custom field values could not be saved: {flushError}.
+          </Alert>
+        )}
+        {!isCreateMode && (
+          <RequiredCustomFieldsBanner entityType={entityType} entityId={entityId as number} />
+        )}
+        {definitions.map((def) => (
+          <CustomFieldRow
+            key={def.id}
+            definition={def}
+            storedValue={storedValueMap.get(def.id)}
+            onStage={stageValue}
+            onClear={clearValue}
+            onReset={resetValue}
+          />
+        ))}
+      </Stack>
+    );
+  },
+);
 
 CustomFieldsSection.displayName = "CustomFieldsSection";
 
@@ -260,11 +239,7 @@ function normalize(value: unknown, type: ICustomFieldDefinition["field_type"]): 
   return value;
 }
 
-function valuesEqual(
-  a: unknown,
-  b: unknown,
-  type: ICustomFieldDefinition["field_type"],
-): boolean {
+function valuesEqual(a: unknown, b: unknown, type: ICustomFieldDefinition["field_type"]): boolean {
   if (type === "multiselect") {
     const av = Array.isArray(a) ? [...(a as string[])].sort() : [];
     const bv = Array.isArray(b) ? [...(b as string[])].sort() : [];
@@ -274,10 +249,7 @@ function valuesEqual(
   return a === b;
 }
 
-function isEmpty(
-  value: unknown,
-  type: ICustomFieldDefinition["field_type"],
-): boolean {
+function isEmpty(value: unknown, type: ICustomFieldDefinition["field_type"]): boolean {
   if (value === null || value === undefined) return true;
   if (type === "multiselect") return !Array.isArray(value) || value.length === 0;
   if (type === "text") return typeof value === "string" && value.trim() === "";
@@ -351,11 +323,7 @@ const CustomFieldRow: React.FC<CustomFieldRowProps> = ({
       >
         {definition.label}
         {definition.required && (
-          <Typography
-            component="span"
-            ml={theme.spacing(1)}
-            color={theme.palette.error.text}
-          >
+          <Typography component="span" ml={theme.spacing(1)} color={theme.palette.error.text}>
             *
           </Typography>
         )}
@@ -440,8 +408,7 @@ const NumberInput: React.FC<InputProps> = ({ definition, draft, setDraft, disabl
 );
 
 const DateInput: React.FC<InputProps> = ({ draft, setDraft, disabled }) => {
-  const value =
-    typeof draft === "string" && draft ? dayjs(draft.slice(0, 10)) : null;
+  const value = typeof draft === "string" && draft ? dayjs(draft.slice(0, 10)) : null;
   return (
     <DatePicker
       date={value as Dayjs | null}
@@ -466,12 +433,7 @@ const BooleanInput: React.FC<InputProps> = ({ draft, setDraft, disabled }) => (
   />
 );
 
-const SelectInput: React.FC<InputProps> = ({
-  definition,
-  draft,
-  setDraft,
-  disabled,
-}) => {
+const SelectInput: React.FC<InputProps> = ({ definition, draft, setDraft, disabled }) => {
   const items = (definition.options ?? []).map((opt) => ({
     _id: opt,
     name: opt,
@@ -488,12 +450,7 @@ const SelectInput: React.FC<InputProps> = ({
   );
 };
 
-const MultiSelectInput: React.FC<InputProps> = ({
-  definition,
-  draft,
-  setDraft,
-  disabled,
-}) => {
+const MultiSelectInput: React.FC<InputProps> = ({ definition, draft, setDraft, disabled }) => {
   const selected = Array.isArray(draft) ? (draft as string[]) : [];
   const options = definition.options ?? [];
   return (
@@ -510,12 +467,7 @@ const MultiSelectInput: React.FC<InputProps> = ({
   );
 };
 
-const UserInput: React.FC<InputProps> = ({
-  definition,
-  draft,
-  setDraft,
-  disabled,
-}) => {
+const UserInput: React.FC<InputProps> = ({ definition, draft, setDraft, disabled }) => {
   const { users, loading } = useUsers();
   const items = users.map((u) => ({
     _id: u.id,
@@ -545,10 +497,7 @@ const UserInput: React.FC<InputProps> = ({
 
 function extractErrorMessage(err: any): string {
   return (
-    err?.response?.data?.error ||
-    err?.response?.data?.message ||
-    err?.message ||
-    "Failed to save"
+    err?.response?.data?.error || err?.response?.data?.message || err?.message || "Failed to save"
   );
 }
 

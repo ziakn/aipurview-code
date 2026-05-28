@@ -465,7 +465,6 @@ export default function AddRepositoryModal({
               </Stack>
             </Stack>
           )}
-
         </Stack>
       </Stack>
     </StandardModal>

@@ -1218,12 +1218,7 @@ export const deleteRiskByIdQuery = async (
   organizationId: number,
   transaction: Transaction,
 ): Promise<Boolean> => {
-  await deleteAllCustomFieldValuesForEntityQuery(
-    "project_risk",
-    id,
-    organizationId,
-    transaction,
-  );
+  await deleteAllCustomFieldValuesForEntityQuery("project_risk", id, organizationId, transaction);
   const result = (await sequelize.query(
     `UPDATE risks SET is_deleted = true, deleted_at = NOW(), updated_at = NOW() WHERE id = :id AND organization_id = :organizationId AND is_deleted = false RETURNING *`,
     {

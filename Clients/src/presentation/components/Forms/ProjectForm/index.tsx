@@ -1,18 +1,8 @@
 import { Alert, Box, SelectChangeEvent, Stack, Typography, useTheme } from "@mui/material";
 import { TabContext } from "@mui/lab";
 import { X as ClearIcon } from "lucide-react";
-import {
-  Suspense,
-  useCallback,
-  useContext,
-  useMemo,
-  useRef,
-  useState,
-  useEffect,
-} from "react";
-import CustomFieldsSection, {
-  type CustomFieldsSectionHandle,
-} from "../../CustomFieldsSection";
+import { Suspense, useCallback, useContext, useMemo, useRef, useState, useEffect } from "react";
+import CustomFieldsSection, { type CustomFieldsSectionHandle } from "../../CustomFieldsSection";
 import TabBar from "../../TabBar";
 import { CustomizableButton } from "../../../components/button/customizable-button";
 import { PlusCircle as AddCircleOutlineIcon } from "lucide-react";
@@ -404,10 +394,7 @@ export const ProjectForm = ({
           } else {
             // Add new project to the projects list
             const newProject = res.data.data.project as Project;
-            setProjects((prevProjects: Project[]) => [
-              ...prevProjects,
-              newProject,
-            ]);
+            setProjects((prevProjects: Project[]) => [...prevProjects, newProject]);
             targetId = (newProject as { id?: number })?.id;
           }
           // Flush any staged custom field changes (create OR update).
@@ -417,10 +404,7 @@ export const ProjectForm = ({
               await customFieldsRef.current.flush(targetId);
             } catch (cfError) {
               cfFlushFailed = true;
-              console.error(
-                "Project saved, but custom field values failed to save:",
-                cfError,
-              );
+              console.error("Project saved, but custom field values failed to save:", cfError);
             }
           }
           if (cfFlushFailed) {
@@ -568,396 +552,400 @@ export const ProjectForm = ({
           />
         </Box>
 
-      <Box sx={{ display: activeTab === "details" ? "block" : "none" }}>
-      <Stack className="vwproject-form-body" sx={{ display: "flex", flexDirection: "row", gap: 6 }}>
-        <Stack className="vwproject-form-body-start" sx={{ gap: 6, flex: 1 }}>
-          <Field
-            id="project-title-input"
-            label={
-              values.framework_type === FrameworkTypeEnum.OrganizationWide
-                ? "Framework title"
-                : "Use case title"
-            }
-            width="100%"
-            value={values.project_title}
-            onChange={handleOnTextFieldChange("project_title")}
-            error={errors.project_title}
-            sx={textfieldStyle}
-            isRequired
-          />
-          <Select
-            id="owner-input"
-            label="Owner"
-            placeholder="Select owner"
-            value={values.owner || ""}
-            onChange={handleOnSelectChange("owner")}
-            items={
-              users?.map((user: any) => ({
-                _id: user.id,
-                name: `${user.name} ${user.surname}`,
-                email: user.email,
-              })) || []
-            }
-            sx={{
-              width: "100%",
-              backgroundColor: theme.palette.background.main,
-            }}
-            error={errors.owner}
-            isRequired
-          />
-          <Select
-            id="project-status-input"
-            label={
-              values.framework_type === FrameworkTypeEnum.OrganizationWide
-                ? "Framework status"
-                : "Use case status"
-            }
-            placeholder="Select status"
-            value={values.status || ""}
-            onChange={handleOnSelectChange("status")}
-            items={projectStatusItems}
-            sx={{
-              width: "100%",
-              backgroundColor: theme.palette.background.main,
-            }}
-            error={errors.status}
-          />
-          {values.framework_type === FrameworkTypeEnum.ProjectBased && (
-            <Select
-              id="approval-workflow-input"
-              label="Approval workflow"
-              placeholder="Select workflow"
-              value={values.approval_workflow_id || ""}
-              onChange={handleOnSelectChange("approval_workflow_id")}
-              items={approvalWorkflows}
-              sx={{
-                width: "100%",
-                backgroundColor: theme.palette.background.main,
-              }}
-              error={errors.approval_workflow_id}
-            />
-          )}
-          {values.framework_type === FrameworkTypeEnum.ProjectBased && (
-            <>
-              <Select
-                id="risk-classification-input"
-                label="AI risk classification"
-                placeholder="Select an option"
-                value={values.ai_risk_classification || ""}
-                onChange={handleOnSelectChange("ai_risk_classification")}
-                items={riskClassificationItems}
-                sx={{
-                  width: "100%",
-                  backgroundColor: theme.palette.background.main,
-                }}
-                error={errors.ai_risk_classification}
+        <Box sx={{ display: activeTab === "details" ? "block" : "none" }}>
+          <Stack
+            className="vwproject-form-body"
+            sx={{ display: "flex", flexDirection: "row", gap: 6 }}
+          >
+            <Stack className="vwproject-form-body-start" sx={{ gap: 6, flex: 1 }}>
+              <Field
+                id="project-title-input"
+                label={
+                  values.framework_type === FrameworkTypeEnum.OrganizationWide
+                    ? "Framework title"
+                    : "Use case title"
+                }
+                width="100%"
+                value={values.project_title}
+                onChange={handleOnTextFieldChange("project_title")}
+                error={errors.project_title}
+                sx={textfieldStyle}
                 isRequired
               />
               <Select
-                id="type-of-high-risk-role-input"
-                label="Type of high risk role"
-                placeholder="Select an option"
-                value={values.type_of_high_risk_role || ""}
-                onChange={handleOnSelectChange("type_of_high_risk_role")}
-                items={highRiskRoleItems}
-                sx={{
-                  width: "100%",
-                  backgroundColor: theme.palette.background.main,
-                }}
-                isRequired
-                error={errors.type_of_high_risk_role}
-              />
-            </>
-          )}
-        </Stack>
-        <Stack className="vwproject-form-body-end" sx={{ gap: 6, flex: 1 }}>
-          <Suspense fallback={<div>Loading...</div>}>
-            <AutoCompleteField
-              label="Team members"
-              multiple
-              id="users-input"
-              value={values.members.map((user) => ({
-                _id: Number(user._id),
-                name: user.name,
-                surname: user.surname,
-                email: user.email,
-              }))}
-              options={
-                users
-                  ?.filter(
-                    (user) =>
-                      !values.members.some(
-                        (selectedUser) => String(selectedUser._id) === String(user.id),
-                      ) && values.owner !== user.id,
-                  )
-                  .map((user) => ({
+                id="owner-input"
+                label="Owner"
+                placeholder="Select owner"
+                value={values.owner || ""}
+                onChange={handleOnSelectChange("owner")}
+                items={
+                  users?.map((user: any) => ({
                     _id: user.id,
-                    name: user.name,
-                    surname: user.surname,
+                    name: `${user.name} ${user.surname}`,
                     email: user.email,
                   })) || []
-              }
-              noOptionsText={
-                values.members.length === users.length ? "All members selected" : "No options"
-              }
-              onChange={handleOnMultiSelect("members")}
-              getOptionLabel={(user) => `${user.name} ${user.surname}`}
-              renderOption={(props, option) => {
-                const { key, ...optionProps } = props;
-                const userEmail =
-                  option.email.length > 30 ? `${option.email.slice(0, 30)}...` : option.email;
-                return (
-                  <Box key={key} component="li" {...optionProps}>
-                    <Typography sx={{ fontSize: "13px" }}>
-                      {option.name} {option.surname}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: "11px",
-                        color: theme.palette.text.accent,
-                        position: "absolute",
-                        right: "9px",
-                      }}
-                    >
-                      {userEmail}
-                    </Typography>
-                  </Box>
-                );
-              }}
-              filterSelectedOptions
-              popupIcon={<GreyDownArrowIcon size={16} />}
-              placeholder="Select users"
-              error={errors.members}
-              sx={{
-                "cursor": "pointer",
-                ...teamMembersSxStyle,
-                "& .MuiOutlinedInput-root fieldset": {
-                  borderRadius: "3px",
-                },
-              }}
-              slotProps={teamMembersSlotProps}
-            />
-            <Stack sx={{ display: "flex", flexDirection: "row", gap: 6, width: "100%" }}>
-              <Box sx={{ flex: 1 }}>
-                <DatePicker
-                  label="Start date"
-                  date={values.start_date ? dayjs(values.start_date) : dayjs(new Date())}
-                  handleDateChange={handleDateChange}
-                  sx={{
-                    width: "100%",
-                  }}
-                  isRequired
-                  error={errors.start_date}
-                />
-              </Box>
-              <Box sx={{ flex: 1 }}>
+                }
+                sx={{
+                  width: "100%",
+                  backgroundColor: theme.palette.background.main,
+                }}
+                error={errors.owner}
+                isRequired
+              />
+              <Select
+                id="project-status-input"
+                label={
+                  values.framework_type === FrameworkTypeEnum.OrganizationWide
+                    ? "Framework status"
+                    : "Use case status"
+                }
+                placeholder="Select status"
+                value={values.status || ""}
+                onChange={handleOnSelectChange("status")}
+                items={projectStatusItems}
+                sx={{
+                  width: "100%",
+                  backgroundColor: theme.palette.background.main,
+                }}
+                error={errors.status}
+              />
+              {values.framework_type === FrameworkTypeEnum.ProjectBased && (
                 <Select
-                  id="geography-type-input"
-                  label="Geography"
-                  placeholder="Select an option"
-                  value={values.geography === 0 ? "" : values.geography}
-                  onChange={handleOnSelectChange("geography")}
-                  items={geographyItems}
+                  id="approval-workflow-input"
+                  label="Approval workflow"
+                  placeholder="Select workflow"
+                  value={values.approval_workflow_id || ""}
+                  onChange={handleOnSelectChange("approval_workflow_id")}
+                  items={approvalWorkflows}
                   sx={{
                     width: "100%",
                     backgroundColor: theme.palette.background.main,
                   }}
-                  isRequired
-                  error={errors.geography}
+                  error={errors.approval_workflow_id}
                 />
-              </Box>
+              )}
+              {values.framework_type === FrameworkTypeEnum.ProjectBased && (
+                <>
+                  <Select
+                    id="risk-classification-input"
+                    label="AI risk classification"
+                    placeholder="Select an option"
+                    value={values.ai_risk_classification || ""}
+                    onChange={handleOnSelectChange("ai_risk_classification")}
+                    items={riskClassificationItems}
+                    sx={{
+                      width: "100%",
+                      backgroundColor: theme.palette.background.main,
+                    }}
+                    error={errors.ai_risk_classification}
+                    isRequired
+                  />
+                  <Select
+                    id="type-of-high-risk-role-input"
+                    label="Type of high risk role"
+                    placeholder="Select an option"
+                    value={values.type_of_high_risk_role || ""}
+                    onChange={handleOnSelectChange("type_of_high_risk_role")}
+                    items={highRiskRoleItems}
+                    sx={{
+                      width: "100%",
+                      backgroundColor: theme.palette.background.main,
+                    }}
+                    isRequired
+                    error={errors.type_of_high_risk_role}
+                  />
+                </>
+              )}
             </Stack>
-            {!projectToEdit && values.framework_type !== FrameworkTypeEnum.OrganizationWide && (
-              <AutoCompleteField
-                label="Applicable regulations"
-                isRequired
-                multiple
-                id="monitored-regulations-and-standards-input"
-                value={values.monitored_regulations_and_standards}
-                options={filteredFrameworks}
-                onChange={handleOnMultiSelect("monitored_regulations_and_standards")}
-                getOptionLabel={(item) => item.name}
-                noOptionsText={
-                  values.monitored_regulations_and_standards.length === filteredFrameworks.length
-                    ? "All regulations selected"
-                    : "No options"
-                }
-                renderOption={(props, option) => {
-                  const { key, ...optionProps } = props;
-                  const isComingSoon = option.name.includes("coming soon");
-                  return (
-                    <Box
-                      key={key}
-                      component="li"
-                      {...optionProps}
+            <Stack className="vwproject-form-body-end" sx={{ gap: 6, flex: 1 }}>
+              <Suspense fallback={<div>Loading...</div>}>
+                <AutoCompleteField
+                  label="Team members"
+                  multiple
+                  id="users-input"
+                  value={values.members.map((user) => ({
+                    _id: Number(user._id),
+                    name: user.name,
+                    surname: user.surname,
+                    email: user.email,
+                  }))}
+                  options={
+                    users
+                      ?.filter(
+                        (user) =>
+                          !values.members.some(
+                            (selectedUser) => String(selectedUser._id) === String(user.id),
+                          ) && values.owner !== user.id,
+                      )
+                      .map((user) => ({
+                        _id: user.id,
+                        name: user.name,
+                        surname: user.surname,
+                        email: user.email,
+                      })) || []
+                  }
+                  noOptionsText={
+                    values.members.length === users.length ? "All members selected" : "No options"
+                  }
+                  onChange={handleOnMultiSelect("members")}
+                  getOptionLabel={(user) => `${user.name} ${user.surname}`}
+                  renderOption={(props, option) => {
+                    const { key, ...optionProps } = props;
+                    const userEmail =
+                      option.email.length > 30 ? `${option.email.slice(0, 30)}...` : option.email;
+                    return (
+                      <Box key={key} component="li" {...optionProps}>
+                        <Typography sx={{ fontSize: "13px" }}>
+                          {option.name} {option.surname}
+                        </Typography>
+                        <Typography
+                          sx={{
+                            fontSize: "11px",
+                            color: theme.palette.text.accent,
+                            position: "absolute",
+                            right: "9px",
+                          }}
+                        >
+                          {userEmail}
+                        </Typography>
+                      </Box>
+                    );
+                  }}
+                  filterSelectedOptions
+                  popupIcon={<GreyDownArrowIcon size={16} />}
+                  placeholder="Select users"
+                  error={errors.members}
+                  sx={{
+                    "cursor": "pointer",
+                    ...teamMembersSxStyle,
+                    "& .MuiOutlinedInput-root fieldset": {
+                      borderRadius: "3px",
+                    },
+                  }}
+                  slotProps={teamMembersSlotProps}
+                />
+                <Stack sx={{ display: "flex", flexDirection: "row", gap: 6, width: "100%" }}>
+                  <Box sx={{ flex: 1 }}>
+                    <DatePicker
+                      label="Start date"
+                      date={values.start_date ? dayjs(values.start_date) : dayjs(new Date())}
+                      handleDateChange={handleDateChange}
                       sx={{
-                        "opacity": isComingSoon ? 0.5 : 1,
-                        "cursor": isComingSoon ? "not-allowed" : "pointer",
-                        "&:hover": {
-                          backgroundColor: isComingSoon ? "transparent" : undefined,
-                        },
+                        width: "100%",
                       }}
-                    >
-                      <Typography
+                      isRequired
+                      error={errors.start_date}
+                    />
+                  </Box>
+                  <Box sx={{ flex: 1 }}>
+                    <Select
+                      id="geography-type-input"
+                      label="Geography"
+                      placeholder="Select an option"
+                      value={values.geography === 0 ? "" : values.geography}
+                      onChange={handleOnSelectChange("geography")}
+                      items={geographyItems}
+                      sx={{
+                        width: "100%",
+                        backgroundColor: theme.palette.background.main,
+                      }}
+                      isRequired
+                      error={errors.geography}
+                    />
+                  </Box>
+                </Stack>
+                {!projectToEdit && values.framework_type !== FrameworkTypeEnum.OrganizationWide && (
+                  <AutoCompleteField
+                    label="Applicable regulations"
+                    isRequired
+                    multiple
+                    id="monitored-regulations-and-standards-input"
+                    value={values.monitored_regulations_and_standards}
+                    options={filteredFrameworks}
+                    onChange={handleOnMultiSelect("monitored_regulations_and_standards")}
+                    getOptionLabel={(item) => item.name}
+                    noOptionsText={
+                      values.monitored_regulations_and_standards.length ===
+                      filteredFrameworks.length
+                        ? "All regulations selected"
+                        : "No options"
+                    }
+                    renderOption={(props, option) => {
+                      const { key, ...optionProps } = props;
+                      const isComingSoon = option.name.includes("coming soon");
+                      return (
+                        <Box
+                          key={key}
+                          component="li"
+                          {...optionProps}
+                          sx={{
+                            "opacity": isComingSoon ? 0.5 : 1,
+                            "cursor": isComingSoon ? "not-allowed" : "pointer",
+                            "&:hover": {
+                              backgroundColor: isComingSoon ? "transparent" : undefined,
+                            },
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              fontSize: "13px",
+                              color: isComingSoon ? "text.secondary" : "text.primary",
+                            }}
+                          >
+                            {option.name}
+                          </Typography>
+                        </Box>
+                      );
+                    }}
+                    isOptionEqualToValue={(option, value) => option._id === value._id}
+                    getOptionDisabled={(option) => option.name.includes("coming soon")}
+                    filterSelectedOptions
+                    popupIcon={<GreyDownArrowIcon size={16} />}
+                    placeholder="Select regulations and standards"
+                    error={errors.monitored_regulations_and_standards}
+                    sx={{ ...teamMembersSxStyle }}
+                    slotProps={teamMembersSlotProps}
+                  />
+                )}
+              </Suspense>
+              {/* Goal field - only for project-based frameworks */}
+              {values.framework_type === FrameworkTypeEnum.ProjectBased && (
+                <Field
+                  id="goal-input"
+                  label="Goal"
+                  type="description"
+                  value={values.goal}
+                  onChange={handleOnTextFieldChange("goal")}
+                  sx={{
+                    backgroundColor: theme.palette.background.main,
+                    marginTop: "1px",
+                    ...(projectToEdit && { width: "350px" }), // Fix width when editing
+                  }}
+                  rows={8}
+                  isRequired
+                  error={errors.goal}
+                />
+              )}
+            </Stack>
+          </Stack>
+
+          {/* Goal field - full width only for organization-wide frameworks */}
+          {values.framework_type === FrameworkTypeEnum.OrganizationWide && (
+            <Stack>
+              {!projectToEdit && (
+                <AutoCompleteField
+                  label="Applicable regulations"
+                  isRequired
+                  multiple
+                  id="monitored-regulations-and-standards-input"
+                  value={values.monitored_regulations_and_standards}
+                  options={filteredFrameworks}
+                  onChange={handleOnMultiSelect("monitored_regulations_and_standards")}
+                  getOptionLabel={(item) => item.name}
+                  noOptionsText={
+                    values.monitored_regulations_and_standards.length === filteredFrameworks.length
+                      ? "All regulations selected"
+                      : "No options"
+                  }
+                  renderOption={(props, option) => {
+                    const { key, ...optionProps } = props;
+                    const isComingSoon = option.name.includes("coming soon");
+                    return (
+                      <Box
+                        key={key}
+                        component="li"
+                        {...optionProps}
                         sx={{
-                          fontSize: "13px",
-                          color: isComingSoon ? "text.secondary" : "text.primary",
+                          "opacity": isComingSoon ? 0.5 : 1,
+                          "cursor": isComingSoon ? "not-allowed" : "pointer",
+                          "&:hover": {
+                            backgroundColor: isComingSoon ? "transparent" : undefined,
+                          },
                         }}
                       >
-                        {option.name}
-                      </Typography>
-                    </Box>
-                  );
+                        <Typography
+                          sx={{
+                            fontSize: "13px",
+                            color: isComingSoon ? "text.secondary" : "text.primary",
+                          }}
+                        >
+                          {option.name}
+                        </Typography>
+                      </Box>
+                    );
+                  }}
+                  isOptionEqualToValue={(option, value) => option._id === value._id}
+                  getOptionDisabled={(option) => option.name.includes("coming soon")}
+                  filterSelectedOptions
+                  popupIcon={<GreyDownArrowIcon size={16} />}
+                  placeholder="Select regulations and standards"
+                  error={errors.monitored_regulations_and_standards}
+                  sx={{ ...teamMembersSxStyle, width: "100%" }}
+                  slotProps={teamMembersSlotProps}
+                />
+              )}
+              <Field
+                id="goal-input"
+                label="Goal"
+                type="description"
+                value={values.goal}
+                onChange={handleOnTextFieldChange("goal")}
+                sx={{
+                  backgroundColor: theme.palette.background.main,
+                  width: "100%",
                 }}
-                isOptionEqualToValue={(option, value) => option._id === value._id}
-                getOptionDisabled={(option) => option.name.includes("coming soon")}
-                filterSelectedOptions
-                popupIcon={<GreyDownArrowIcon size={16} />}
-                placeholder="Select regulations and standards"
-                error={errors.monitored_regulations_and_standards}
-                sx={{ ...teamMembersSxStyle }}
-                slotProps={teamMembersSlotProps}
+                isRequired
+                error={errors.goal}
               />
-            )}
-          </Suspense>
-          {/* Goal field - only for project-based frameworks */}
-          {values.framework_type === FrameworkTypeEnum.ProjectBased && (
-            <Field
-              id="goal-input"
-              label="Goal"
-              type="description"
-              value={values.goal}
-              onChange={handleOnTextFieldChange("goal")}
-              sx={{
-                backgroundColor: theme.palette.background.main,
-                marginTop: "1px",
-                ...(projectToEdit && { width: "350px" }), // Fix width when editing
-              }}
-              rows={8}
-              isRequired
-              error={errors.goal}
-            />
+            </Stack>
           )}
-        </Stack>
-      </Stack>
-
-      {/* Goal field - full width only for organization-wide frameworks */}
-      {values.framework_type === FrameworkTypeEnum.OrganizationWide && (
-        <Stack>
-          {!projectToEdit && (
-            <AutoCompleteField
-              label="Applicable regulations"
-              isRequired
-              multiple
-              id="monitored-regulations-and-standards-input"
-              value={values.monitored_regulations_and_standards}
-              options={filteredFrameworks}
-              onChange={handleOnMultiSelect("monitored_regulations_and_standards")}
-              getOptionLabel={(item) => item.name}
-              noOptionsText={
-                values.monitored_regulations_and_standards.length === filteredFrameworks.length
-                  ? "All regulations selected"
-                  : "No options"
-              }
-              renderOption={(props, option) => {
-                const { key, ...optionProps } = props;
-                const isComingSoon = option.name.includes("coming soon");
-                return (
-                  <Box
-                    key={key}
-                    component="li"
-                    {...optionProps}
-                    sx={{
-                      "opacity": isComingSoon ? 0.5 : 1,
-                      "cursor": isComingSoon ? "not-allowed" : "pointer",
-                      "&:hover": {
-                        backgroundColor: isComingSoon ? "transparent" : undefined,
-                      },
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        fontSize: "13px",
-                        color: isComingSoon ? "text.secondary" : "text.primary",
-                      }}
-                    >
-                      {option.name}
-                    </Typography>
-                  </Box>
-                );
-              }}
-              isOptionEqualToValue={(option, value) => option._id === value._id}
-              getOptionDisabled={(option) => option.name.includes("coming soon")}
-              filterSelectedOptions
-              popupIcon={<GreyDownArrowIcon size={16} />}
-              placeholder="Select regulations and standards"
-              error={errors.monitored_regulations_and_standards}
-              sx={{ ...teamMembersSxStyle, width: "100%" }}
-              slotProps={teamMembersSlotProps}
-            />
+          {!projectToEdit && values.framework_type === FrameworkTypeEnum.ProjectBased && (
+            <Stack>
+              <Stack sx={{ display: "flex", flexDirection: "row", gap: 6, mb: 4 }}>
+                <Field
+                  id="target-industry-input"
+                  label="Target industry"
+                  type="description"
+                  value={values.target_industry}
+                  onChange={handleOnTextFieldChange("target_industry")}
+                  sx={{
+                    flex: 1,
+                    backgroundColor: theme.palette.background.main,
+                  }}
+                  error={errors.target_industry}
+                />
+                <Field
+                  id="description-input"
+                  label="Description"
+                  type="description"
+                  value={values.description}
+                  onChange={handleOnTextFieldChange("description")}
+                  sx={{
+                    flex: 1,
+                    backgroundColor: theme.palette.background.main,
+                  }}
+                  error={errors.description}
+                />
+              </Stack>
+              <Checkbox
+                size="small"
+                id="auto-fill"
+                onChange={handleCheckboxChange}
+                isChecked={values.enable_ai_data_insertion}
+                value={values.enable_ai_data_insertion.toString()}
+                label="Enable this option to automatically fill in the Requirements and Controls questions with AI-generated answers, helping you save time. You can review and edit these answers anytime."
+              />
+            </Stack>
           )}
-          <Field
-            id="goal-input"
-            label="Goal"
-            type="description"
-            value={values.goal}
-            onChange={handleOnTextFieldChange("goal")}
-            sx={{
-              backgroundColor: theme.palette.background.main,
-              width: "100%",
-            }}
-            isRequired
-            error={errors.goal}
-          />
-        </Stack>
-      )}
-      {!projectToEdit && values.framework_type === FrameworkTypeEnum.ProjectBased && (
-        <Stack>
-          <Stack sx={{ display: "flex", flexDirection: "row", gap: 6, mb: 4 }}>
-            <Field
-              id="target-industry-input"
-              label="Target industry"
-              type="description"
-              value={values.target_industry}
-              onChange={handleOnTextFieldChange("target_industry")}
-              sx={{
-                flex: 1,
-                backgroundColor: theme.palette.background.main,
-              }}
-              error={errors.target_industry}
-            />
-            <Field
-              id="description-input"
-              label="Description"
-              type="description"
-              value={values.description}
-              onChange={handleOnTextFieldChange("description")}
-              sx={{
-                flex: 1,
-                backgroundColor: theme.palette.background.main,
-              }}
-              error={errors.description}
-            />
-          </Stack>
-          <Checkbox
-            size="small"
-            id="auto-fill"
-            onChange={handleCheckboxChange}
-            isChecked={values.enable_ai_data_insertion}
-            value={values.enable_ai_data_insertion.toString()}
-            label="Enable this option to automatically fill in the Requirements and Controls questions with AI-generated answers, helping you save time. You can review and edit these answers anytime."
-          />
-        </Stack>
-      )}
-      </Box>
+        </Box>
 
-      <Box sx={{ display: activeTab === "custom-fields" ? "block" : "none" }}>
-        <CustomFieldsSection
-          ref={customFieldsRef}
-          entityType="project"
-          entityId={projectToEdit?.id ?? null}
-        />
-      </Box>
+        <Box sx={{ display: activeTab === "custom-fields" ? "block" : "none" }}>
+          <CustomFieldsSection
+            ref={customFieldsRef}
+            entityType="project"
+            entityId={projectToEdit?.id ?? null}
+          />
+        </Box>
       </TabContext>
 
       {!useStandardModal && (

@@ -14,10 +14,7 @@ export async function listCustomFieldDefinitions({
   entityType: CustomFieldEntityType;
   signal?: AbortSignal;
 }): Promise<ICustomFieldDefinition[]> {
-  const response = await apiServices.get(
-    `/custom-fields/definitions/${entityType}`,
-    { signal },
-  );
+  const response = await apiServices.get(`/custom-fields/definitions/${entityType}`, { signal });
   return (response.data?.data ?? []) as ICustomFieldDefinition[];
 }
 
@@ -35,10 +32,7 @@ export async function updateCustomFieldDefinition({
   id: number;
   body: IUpdateCustomFieldDefinitionInput;
 }): Promise<ICustomFieldDefinition> {
-  const response = await apiServices.patch(
-    `/custom-fields/definitions/${id}`,
-    body,
-  );
+  const response = await apiServices.patch(`/custom-fields/definitions/${id}`, body);
   return response.data?.data as ICustomFieldDefinition;
 }
 
@@ -55,10 +49,9 @@ export async function getCustomFieldValuesForEntity({
   entityId: number;
   signal?: AbortSignal;
 }): Promise<ICustomFieldValueRow[]> {
-  const response = await apiServices.get(
-    `/custom-fields/values/${entityType}/${entityId}`,
-    { signal },
-  );
+  const response = await apiServices.get(`/custom-fields/values/${entityType}/${entityId}`, {
+    signal,
+  });
   return (response.data?.data ?? []) as ICustomFieldValueRow[];
 }
 

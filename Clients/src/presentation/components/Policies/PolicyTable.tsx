@@ -64,11 +64,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
     }));
     const actionsIdx = builtIns.findIndex((c) => c.id === "actions");
     if (actionsIdx === -1) return [...builtIns, ...customCols];
-    return [
-      ...builtIns.slice(0, actionsIdx),
-      ...customCols,
-      ...builtIns.slice(actionsIdx),
-    ];
+    return [...builtIns.slice(0, actionsIdx), ...customCols, ...builtIns.slice(actionsIdx)];
   }, [isVisible, customFieldDefs]);
 
   const { users } = useUsers();
@@ -451,8 +447,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
             )}
             {customFieldDefs.map((def) => {
               const match = (policy as any).custom_fields?.find(
-                (cf: { definition_id: number; value: unknown }) =>
-                  cf.definition_id === def.id,
+                (cf: { definition_id: number; value: unknown }) => cf.definition_id === def.id,
               );
               return (
                 <TableCell key={`cf_${def.id}`} sx={cellStyle}>

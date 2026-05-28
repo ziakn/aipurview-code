@@ -330,8 +330,7 @@ const VWProjectRisksTableBody = ({
                 )}
                 {customFieldDefs.map((def) => {
                   const match = (row as any).custom_fields?.find(
-                    (cf: { definition_id: number; value: unknown }) =>
-                      cf.definition_id === def.id,
+                    (cf: { definition_id: number; value: unknown }) => cf.definition_id === def.id,
                   );
                   return (
                     <TableCell
@@ -339,9 +338,7 @@ const VWProjectRisksTableBody = ({
                       sx={{
                         ...singleTheme.tableStyles.primary.body.cell,
                         backgroundColor:
-                          flashRow === row.id
-                            ? singleTheme.flashColors.background
-                            : "",
+                          flashRow === row.id ? singleTheme.flashColors.background : "",
                       }}
                     >
                       {formatCustomFieldValue(def, match?.value, users as User[])}

@@ -79,8 +79,7 @@ const LABEL_MIN = 1;
 const LABEL_MAX = 255;
 const OPTION_MIN = 1;
 const OPTION_MAX = 255;
-const ISO_DATE_PATTERN =
-  /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})?)?$/;
+const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})?)?$/;
 
 // entity_type -> the SQL table that owns the entity. Used to verify the
 // parent row belongs to the calling org BEFORE writing a value. Keep this
@@ -107,11 +106,7 @@ const isFieldType = (v: unknown): v is CustomFieldType =>
 
 const assertPositiveInt = (n: unknown, name: string): number => {
   if (typeof n !== "number" || !Number.isInteger(n) || n <= 0) {
-    throw new ValidationException(
-      `${name} must be a positive integer`,
-      name,
-      n,
-    );
+    throw new ValidationException(`${name} must be a positive integer`, name, n);
   }
   return n;
 };
@@ -123,10 +118,7 @@ const assertEntityType = (v: unknown): CustomFieldEntityType => {
   return v;
 };
 
-const validateOptionsForType = (
-  fieldType: CustomFieldType,
-  options: unknown,
-): string[] | null => {
+const validateOptionsForType = (fieldType: CustomFieldType, options: unknown): string[] | null => {
   const needsOptions = fieldType === "select" || fieldType === "multiselect";
 
   if (!needsOptions) {
@@ -160,11 +152,7 @@ const validateOptionsForType = (
       );
     }
     if (seen.has(trimmed)) {
-      throw new ValidationException(
-        "option values must be unique",
-        "options",
-        trimmed,
-      );
+      throw new ValidationException("option values must be unique", "options", trimmed);
     }
     seen.add(trimmed);
     normalized.push(trimmed);
@@ -178,10 +166,7 @@ const validateLabel = (label: unknown): string => {
   }
   const trimmed = label.trim();
   if (trimmed.length < LABEL_MIN || trimmed.length > LABEL_MAX) {
-    throw new ValidationException(
-      `label must be ${LABEL_MIN}..${LABEL_MAX} characters`,
-      "label",
-    );
+    throw new ValidationException(`label must be ${LABEL_MIN}..${LABEL_MAX} characters`, "label");
   }
   return trimmed;
 };
@@ -204,17 +189,10 @@ const validateDefinitionInput = (input: {
   const entity_type = assertEntityType(input.entity_type);
 
   if (!isFieldType(input.field_type)) {
-    throw new ValidationException(
-      "Invalid field_type",
-      "field_type",
-      input.field_type,
-    );
+    throw new ValidationException("Invalid field_type", "field_type", input.field_type);
   }
 
-  if (
-    typeof input.field_key !== "string" ||
-    !FIELD_KEY_PATTERN.test(input.field_key)
-  ) {
+  if (typeof input.field_key !== "string" || !FIELD_KEY_PATTERN.test(input.field_key)) {
     throw new ValidationException(
       "field_key must match ^[a-z][a-z0-9_]{0,63}$",
       "field_key",
@@ -224,8 +202,7 @@ const validateDefinitionInput = (input: {
 
   const label = validateLabel(input.label);
   const options = validateOptionsForType(input.field_type, input.options ?? null);
-  const required =
-    input.required === undefined ? false : Boolean(input.required);
+  const required = input.required === undefined ? false : Boolean(input.required);
 
   return {
     entity_type,
@@ -255,10 +232,7 @@ const validateValueForDefinition = async (
         throw new ValidationException("Expected string value", "value");
       }
       if (raw.length > 10_000) {
-        throw new ValidationException(
-          "Text value exceeds 10000 characters",
-          "value",
-        );
+        throw new ValidationException("Text value exceeds 10000 characters", "value");
       }
       return raw;
     }
@@ -276,10 +250,7 @@ const validateValueForDefinition = async (
     }
     case "date": {
       if (typeof raw !== "string" || !ISO_DATE_PATTERN.test(raw)) {
-        throw new ValidationException(
-          "Expected ISO date or date-time string",
-          "value",
-        );
+        throw new ValidationException("Expected ISO date or date-time string", "value");
       }
       const ts = Date.parse(raw);
       if (Number.isNaN(ts)) {
@@ -289,36 +260,21 @@ const validateValueForDefinition = async (
     }
     case "select": {
       if (typeof raw !== "string" || !def.options?.includes(raw)) {
-        throw new ValidationException(
-          "Value must be one of the allowed options",
-          "value",
-          raw,
-        );
+        throw new ValidationException("Value must be one of the allowed options", "value", raw);
       }
       return raw;
     }
     case "multiselect": {
       if (!Array.isArray(raw) || raw.length === 0) {
-        throw new ValidationException(
-          "Value must be a non-empty array of options",
-          "value",
-        );
+        throw new ValidationException("Value must be a non-empty array of options", "value");
       }
       const seen = new Set<string>();
       for (const v of raw) {
         if (typeof v !== "string" || !def.options?.includes(v)) {
-          throw new ValidationException(
-            "All values must match the allowed options",
-            "value",
-            v,
-          );
+          throw new ValidationException("All values must match the allowed options", "value", v);
         }
         if (seen.has(v)) {
-          throw new ValidationException(
-            "Duplicate value in multiselect",
-            "value",
-            v,
-          );
+          throw new ValidationException("Duplicate value in multiselect", "value", v);
         }
         seen.add(v);
       }
@@ -481,17 +437,11 @@ export const updateCustomFieldDefinitionQuery = async (
   // would invalidate existing values. Force a create + delete instead.
   const existing = await getCustomFieldDefinitionByIdQuery(id, organizationId);
   if (!existing) {
-    throw new NotFoundException(
-      "Custom field definition not found",
-      "custom_field_definition",
-      id,
-    );
+    throw new NotFoundException("Custom field definition not found", "custom_field_definition", id);
   }
 
-  const label =
-    patch.label !== undefined ? validateLabel(patch.label) : existing.label;
-  const required =
-    patch.required !== undefined ? Boolean(patch.required) : existing.required;
+  const label = patch.label !== undefined ? validateLabel(patch.label) : existing.label;
+  const required = patch.required !== undefined ? Boolean(patch.required) : existing.required;
   const options =
     patch.options !== undefined
       ? validateOptionsForType(existing.field_type, patch.options)
@@ -555,10 +505,7 @@ export const setCustomFieldValueQuery = async (
   const definitionId = assertPositiveInt(args.definition_id, "definition_id");
   const entityId = assertPositiveInt(args.entity_id, "entity_id");
 
-  const definition = await getCustomFieldDefinitionByIdQuery(
-    definitionId,
-    organizationId,
-  );
+  const definition = await getCustomFieldDefinitionByIdQuery(definitionId, organizationId);
   if (!definition) {
     throw new NotFoundException(
       "Custom field definition not found",
@@ -567,17 +514,9 @@ export const setCustomFieldValueQuery = async (
     );
   }
 
-  await assertEntityBelongsToOrg(
-    definition.entity_type,
-    entityId,
-    organizationId,
-  );
+  await assertEntityBelongsToOrg(definition.entity_type, entityId, organizationId);
 
-  const validated = await validateValueForDefinition(
-    definition,
-    args.value,
-    organizationId,
-  );
+  const validated = await validateValueForDefinition(definition, args.value, organizationId);
 
   const rows = (await sequelize.query(
     `INSERT INTO custom_field_values

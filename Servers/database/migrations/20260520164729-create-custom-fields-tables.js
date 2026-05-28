@@ -28,15 +28,7 @@ const ALLOWED_ENTITY_TYPES = [
 // annexcontrols_iso27001, ...), not as one table, so the cross-org FK +
 // parent-entity guard can't honor them.
 
-const ALLOWED_FIELD_TYPES = [
-  "text",
-  "number",
-  "date",
-  "boolean",
-  "select",
-  "multiselect",
-  "user",
-];
+const ALLOWED_FIELD_TYPES = ["text", "number", "date", "boolean", "select", "multiselect", "user"];
 
 const entityTypeList = ALLOWED_ENTITY_TYPES.map((t) => `'${t}'`).join(",");
 const fieldTypeList = ALLOWED_FIELD_TYPES.map((t) => `'${t}'`).join(",");
@@ -164,10 +156,9 @@ module.exports = {
   async down(queryInterface) {
     const transaction = await queryInterface.sequelize.transaction();
     try {
-      await queryInterface.sequelize.query(
-        `DROP TABLE IF EXISTS verifywise.custom_field_values;`,
-        { transaction },
-      );
+      await queryInterface.sequelize.query(`DROP TABLE IF EXISTS verifywise.custom_field_values;`, {
+        transaction,
+      });
       await queryInterface.sequelize.query(
         `DROP TABLE IF EXISTS verifywise.custom_field_definitions;`,
         { transaction },

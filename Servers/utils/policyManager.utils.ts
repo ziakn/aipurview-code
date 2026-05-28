@@ -69,14 +69,8 @@ export const getAllPoliciesQuery = async (organizationId: number) => {
     },
   )) as any[];
 
-  const ids = result
-    .map((p) => p.id)
-    .filter((id): id is number => typeof id === "number");
-  const customFieldsByPolicy = await fetchCustomFieldsForEntities(
-    "policy",
-    ids,
-    organizationId,
-  );
+  const ids = result.map((p) => p.id).filter((id): id is number => typeof id === "number");
+  const customFieldsByPolicy = await fetchCustomFieldsForEntities("policy", ids, organizationId);
   for (const p of result) {
     p.custom_fields = customFieldsByPolicy.get(p.id) ?? [];
   }
@@ -444,12 +438,7 @@ export const deletePolicyByIdQuery = async (
 
   const deletedPolicyData = policyToDelete[0] as any;
 
-  await deleteAllCustomFieldValuesForEntityQuery(
-    "policy",
-    id,
-    organizationId,
-    transaction,
-  );
+  await deleteAllCustomFieldValuesForEntityQuery("policy", id, organizationId, transaction);
 
   // Delete the policy (CASCADE will handle mapping table deletion)
   await sequelize.query(

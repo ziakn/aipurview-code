@@ -206,11 +206,7 @@ const ProjectTableView: React.FC<IProjectTableViewProps> = ({
     }));
     const actionsIdx = filtered.findIndex((c) => c.id === "actions");
     if (actionsIdx === -1) return [...filtered, ...customCols];
-    return [
-      ...filtered.slice(0, actionsIdx),
-      ...customCols,
-      ...filtered.slice(actionsIdx),
-    ];
+    return [...filtered.slice(0, actionsIdx), ...customCols, ...filtered.slice(actionsIdx)];
   }, [visibleColumns, customFieldDefs]);
 
   // Helper to check if column is visible (defaults to true if no visibility set)
@@ -558,8 +554,7 @@ const ProjectTableView: React.FC<IProjectTableViewProps> = ({
 
                 {customFieldDefs.map((def) => {
                   const match = (project as any).custom_fields?.find(
-                    (cf: { definition_id: number; value: unknown }) =>
-                      cf.definition_id === def.id,
+                    (cf: { definition_id: number; value: unknown }) => cf.definition_id === def.id,
                   );
                   return (
                     <TableCell

@@ -491,10 +491,7 @@ export default function PolicyEditorPage() {
   // Data loading state
   const [policy, setPolicy] = useState<PolicyManagerModel | null>(null);
   const customFieldsRef = useRef<CustomFieldsSectionHandle | null>(null);
-  const customFieldsGate = useRequiredCustomFieldsGate(
-    "policy",
-    policy?.id ?? null,
-  );
+  const customFieldsGate = useRequiredCustomFieldsGate("policy", policy?.id ?? null);
   const [tags, setTags] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -1371,18 +1368,12 @@ export default function PolicyEditorPage() {
 
       // Flush any locally-staged custom field changes (create OR update).
       let cfFlushFailed = false;
-      if (
-        savedPolicy?.id &&
-        customFieldsRef.current?.hasPendingValues()
-      ) {
+      if (savedPolicy?.id && customFieldsRef.current?.hasPendingValues()) {
         try {
           await customFieldsRef.current.flush(savedPolicy.id);
         } catch (cfError) {
           cfFlushFailed = true;
-          console.error(
-            "Policy saved, but custom field values failed to save:",
-            cfError,
-          );
+          console.error("Policy saved, but custom field values failed to save:", cfError);
         }
       }
 
@@ -1968,13 +1959,13 @@ export default function PolicyEditorPage() {
               clearFieldError={clearFieldError}
             />
           </Box>
-          
+
           <Stack>
             {/* Custom fields — staging in create mode, write-through in edit */}
             <CustomFieldsSection
               ref={customFieldsRef}
               entityType="policy"
-              entityId={isNew ? null : policy?.id ?? null}
+              entityId={isNew ? null : (policy?.id ?? null)}
             />
           </Stack>
 

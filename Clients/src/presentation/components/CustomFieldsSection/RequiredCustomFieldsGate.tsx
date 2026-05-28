@@ -12,10 +12,7 @@ export const RequiredCustomFieldsBanner: React.FC<{
   entityType: CustomFieldEntityType;
   entityId: number | null;
 }> = ({ entityType, entityId }) => {
-  const { data: missing = [], isLoading } = useMissingRequiredCustomFields(
-    entityType,
-    entityId,
-  );
+  const { data: missing = [], isLoading } = useMissingRequiredCustomFields(entityType, entityId);
   if (isLoading || missing.length === 0) return null;
 
   return (
@@ -23,8 +20,8 @@ export const RequiredCustomFieldsBanner: React.FC<{
       <Alert severity="warning">
         <AlertTitle>Required custom fields missing</AlertTitle>
         Save is blocked until you set values for:{" "}
-        <strong>{missing.map((m) => m.label).join(", ")}</strong>. Use the Custom
-        fields tab to set them.
+        <strong>{missing.map((m) => m.label).join(", ")}</strong>. Use the Custom fields tab to set
+        them.
       </Alert>
     </Box>
   );
@@ -42,10 +39,7 @@ export function useRequiredCustomFieldsGate(
   entityType: CustomFieldEntityType,
   entityId: number | null,
 ): { blocked: boolean; reason: string | null; missingLabels: string[] } {
-  const { data: missing = [], isLoading } = useMissingRequiredCustomFields(
-    entityType,
-    entityId,
-  );
+  const { data: missing = [], isLoading } = useMissingRequiredCustomFields(entityType, entityId);
   if (isLoading || missing.length === 0) {
     return { blocked: false, reason: null, missingLabels: [] };
   }

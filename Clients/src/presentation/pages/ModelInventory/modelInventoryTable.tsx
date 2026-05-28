@@ -136,11 +136,7 @@ const ModelInventoryTable: React.FC<ModelInventoryTableProps> = ({
     }));
     const actionsIdx = filtered.findIndex((c) => c.id === "actions");
     if (actionsIdx === -1) return [...filtered, ...customCols];
-    return [
-      ...filtered.slice(0, actionsIdx),
-      ...customCols,
-      ...filtered.slice(actionsIdx),
-    ];
+    return [...filtered.slice(0, actionsIdx), ...customCols, ...filtered.slice(actionsIdx)];
   }, [visibleColumns, customFieldDefs]);
 
   // Helper to check if a column is visible
@@ -445,14 +441,10 @@ const ModelInventoryTable: React.FC<ModelInventoryTableProps> = ({
                 )}
                 {customFieldDefs.map((def) => {
                   const match = (modelInventory as any).custom_fields?.find(
-                    (cf: { definition_id: number; value: unknown }) =>
-                      cf.definition_id === def.id,
+                    (cf: { definition_id: number; value: unknown }) => cf.definition_id === def.id,
                   );
                   return (
-                    <TableCell
-                      key={`cf_${def.id}`}
-                      sx={singleTheme.tableStyles.primary.body.cell}
-                    >
+                    <TableCell key={`cf_${def.id}`} sx={singleTheme.tableStyles.primary.body.cell}>
                       {formatCustomFieldValue(def, match?.value, users as any)}
                     </TableCell>
                   );

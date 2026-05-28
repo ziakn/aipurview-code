@@ -47,13 +47,15 @@ const TABLE_COLUMNS = [
   { id: "actions", label: "" },
 ];
 
-const ENTITY_ITEMS = Object.entries(CUSTOM_FIELD_ENTITY_LABELS).map(
-  ([value, label]) => ({ _id: value, name: label }),
-);
+const ENTITY_ITEMS = Object.entries(CUSTOM_FIELD_ENTITY_LABELS).map(([value, label]) => ({
+  _id: value,
+  name: label,
+}));
 
-const FIELD_TYPE_ITEMS = Object.entries(CUSTOM_FIELD_TYPE_LABELS).map(
-  ([value, label]) => ({ _id: value, name: label }),
-);
+const FIELD_TYPE_ITEMS = Object.entries(CUSTOM_FIELD_TYPE_LABELS).map(([value, label]) => ({
+  _id: value,
+  name: label,
+}));
 
 const CustomFieldsTab: React.FC = () => {
   const theme = useTheme();
@@ -63,15 +65,10 @@ const CustomFieldsTab: React.FC = () => {
   const [entityType, setEntityType] = useState<CustomFieldEntityType>("vendor");
   const [editing, setEditing] = useState<ICustomFieldDefinition | null>(null);
   const [creating, setCreating] = useState(false);
-  const [confirmDelete, setConfirmDelete] =
-    useState<ICustomFieldDefinition | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<ICustomFieldDefinition | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
 
-  const {
-    data: definitions,
-    isLoading,
-    isError,
-  } = useCustomFieldDefinitions(entityType);
+  const { data: definitions, isLoading, isError } = useCustomFieldDefinitions(entityType);
   const createMutation = useCreateCustomFieldDefinition();
   const updateMutation = useUpdateCustomFieldDefinition(entityType);
   const deleteMutation = useDeleteCustomFieldDefinition(entityType);
@@ -90,174 +87,159 @@ const CustomFieldsTab: React.FC = () => {
 
   return (
     <Stack sx={{ mt: 3, width: "100%" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          mb: 3,
+        }}
+      >
+        <Box>
+          <Typography sx={{ fontSize: 15, fontWeight: 600, color: "text.black" }}>
+            Custom fields
+          </Typography>
+          <Typography sx={{ fontSize: 13, color: "#666666", mt: 0.5 }}>
+            Define additional fields that appear on records across your organization. Choose an
+            entity and add fields. Field keys are permanent once created.
+          </Typography>
+        </Box>
+        <CustomizableButton
+          variant="contained"
+          text="Add field"
+          icon={<PlusIcon size={16} />}
+          onClick={() => {
+            setServerError(null);
+            setCreating(true);
+          }}
+          sx={{
+            backgroundColor: "brand.primary",
+            border: "1px solid brand.primary",
+            gap: 2,
+          }}
+        />
+      </Box>
+
+      <Stack sx={{ mb: 3, maxWidth: theme.spacing(120) }}>
+        <Select
+          id="custom-field-entity"
+          label="Entity"
+          value={entityType}
+          items={ENTITY_ITEMS}
+          onChange={(e) => setEntityType(e.target.value as CustomFieldEntityType)}
+          placeholder="Select entity"
+        />
+      </Stack>
+
+      {isLoading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
+          <CircularProgress size={20} />
+        </Box>
+      ) : isError ? (
+        <Typography sx={{ fontSize: 13, color: theme.palette.error.main }}>
+          Failed to load custom fields.
+        </Typography>
+      ) : !definitions || definitions.length === 0 ? (
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            mb: 3,
+            p: 6,
+            border: `1px dashed ${theme.palette.border.light}`,
+            borderRadius: theme.shape.borderRadius,
+            textAlign: "center",
           }}
         >
-          <Box>
-            <Typography sx={{ fontSize: 15, fontWeight: 600, color: "text.black" }}>
-              Custom fields
-            </Typography>
-            <Typography sx={{ fontSize: 13, color: "#666666", mt: 0.5 }}>
-              Define additional fields that appear on records across your organization.
-              Choose an entity and add fields. Field keys are permanent once created.
-            </Typography>
-          </Box>
-          <CustomizableButton
-            variant="contained"
-            text="Add field"
-            icon={<PlusIcon size={16} />}
-            onClick={() => {
-              setServerError(null);
-              setCreating(true);
-            }}
-            sx={{
-              backgroundColor: "brand.primary",
-              border: "1px solid brand.primary",
-              gap: 2,
-            }}
-          />
-        </Box>
-
-        <Stack sx={{ mb: 3, maxWidth: theme.spacing(120) }}>
-          <Select
-            id="custom-field-entity"
-            label="Entity"
-            value={entityType}
-            items={ENTITY_ITEMS}
-            onChange={(e) =>
-              setEntityType(e.target.value as CustomFieldEntityType)
-            }
-            placeholder="Select entity"
-          />
-        </Stack>
-
-        {isLoading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
-            <CircularProgress size={20} />
-          </Box>
-        ) : isError ? (
-          <Typography sx={{ fontSize: 13, color: theme.palette.error.main }}>
-            Failed to load custom fields.
+          <Typography sx={{ fontSize: 13, color: "text.secondary" }}>
+            No custom fields for {CUSTOM_FIELD_ENTITY_LABELS[entityType].toLowerCase()} yet.
           </Typography>
-        ) : !definitions || definitions.length === 0 ? (
-          <Box
-            sx={{
-              p: 6,
-              border: `1px dashed ${theme.palette.border.light}`,
-              borderRadius: theme.shape.borderRadius,
-              textAlign: "center",
-            }}
-          >
-            <Typography sx={{ fontSize: 13, color: "text.secondary" }}>
-              No custom fields for{" "}
-              {CUSTOM_FIELD_ENTITY_LABELS[entityType].toLowerCase()} yet.
-            </Typography>
-          </Box>
-        ) : (
-          <TableContainer sx={{ overflowX: "auto", mt: 1 }}>
-            <Table sx={{ ...singleTheme.tableStyles.primary.frame }}>
-              <TableHead
-                sx={{
-                  backgroundColor:
-                    singleTheme.tableStyles.primary.header.backgroundColors,
-                }}
-              >
-                <TableRow>
-                  {TABLE_COLUMNS.map((column) => (
-                    <TableCell
-                      key={column.id}
-                      sx={singleTheme.tableStyles.primary.header.cell}
-                      align={column.id === "actions" ? "right" : "left"}
-                    >
-                      <Typography
-                        variant="body2"
-                        sx={{ fontWeight: 500, fontSize: "13px" }}
-                      >
-                        {column.label}
-                      </Typography>
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {definitions.map((def) => (
-                  <TableRow
-                    key={def.id}
-                    sx={singleTheme.tableStyles.primary.body.row}
+        </Box>
+      ) : (
+        <TableContainer sx={{ overflowX: "auto", mt: 1 }}>
+          <Table sx={{ ...singleTheme.tableStyles.primary.frame }}>
+            <TableHead
+              sx={{
+                backgroundColor: singleTheme.tableStyles.primary.header.backgroundColors,
+              }}
+            >
+              <TableRow>
+                {TABLE_COLUMNS.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    sx={singleTheme.tableStyles.primary.header.cell}
+                    align={column.id === "actions" ? "right" : "left"}
                   >
-                    <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                      {def.label}
-                    </TableCell>
-                    <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                      <Typography
-                        component="code"
-                        sx={{
-                          fontSize: "12px",
-                          fontFamily: "monospace",
-                          color: "text.secondary",
-                        }}
-                      >
-                        {def.field_key}
-                      </Typography>
-                    </TableCell>
-                    <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                      {CUSTOM_FIELD_TYPE_LABELS[def.field_type]}
-                    </TableCell>
-                    <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                      {def.required ? "Yes" : "No"}
-                    </TableCell>
-                    <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                      <Stack direction="row" spacing={0.5} flexWrap="wrap">
-                        {(def.options ?? []).map((o) => (
-                          <Chip
-                            key={o}
-                            label={o}
-                            sx={{
-                              fontSize: "11px",
-                              height: "20px",
-                              borderRadius: "4px",
-                            }}
-                          />
-                        ))}
-                      </Stack>
-                    </TableCell>
-                    <TableCell
-                      sx={singleTheme.tableStyles.primary.body.cell}
-                      align="right"
-                    >
-                      <Stack direction="row" spacing={0.5} justifyContent="flex-end">
-                        <IconButton
-                          size="small"
-                          disableRipple
-                          onClick={() => {
-                            setServerError(null);
-                            setEditing(def);
-                          }}
-                          title="Edit field"
-                        >
-                          <Pencil size={16} />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          disableRipple
-                          onClick={() => setConfirmDelete(def)}
-                          title="Delete field"
-                        >
-                          <Trash2 size={16} />
-                        </IconButton>
-                      </Stack>
-                    </TableCell>
-                  </TableRow>
+                    <Typography variant="body2" sx={{ fontWeight: 500, fontSize: "13px" }}>
+                      {column.label}
+                    </Typography>
+                  </TableCell>
                 ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {definitions.map((def) => (
+                <TableRow key={def.id} sx={singleTheme.tableStyles.primary.body.row}>
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>{def.label}</TableCell>
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    <Typography
+                      component="code"
+                      sx={{
+                        fontSize: "12px",
+                        fontFamily: "monospace",
+                        color: "text.secondary",
+                      }}
+                    >
+                      {def.field_key}
+                    </Typography>
+                  </TableCell>
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    {CUSTOM_FIELD_TYPE_LABELS[def.field_type]}
+                  </TableCell>
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    {def.required ? "Yes" : "No"}
+                  </TableCell>
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    <Stack direction="row" spacing={0.5} flexWrap="wrap">
+                      {(def.options ?? []).map((o) => (
+                        <Chip
+                          key={o}
+                          label={o}
+                          sx={{
+                            fontSize: "11px",
+                            height: "20px",
+                            borderRadius: "4px",
+                          }}
+                        />
+                      ))}
+                    </Stack>
+                  </TableCell>
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell} align="right">
+                    <Stack direction="row" spacing={0.5} justifyContent="flex-end">
+                      <IconButton
+                        size="small"
+                        disableRipple
+                        onClick={() => {
+                          setServerError(null);
+                          setEditing(def);
+                        }}
+                        title="Edit field"
+                      >
+                        <Pencil size={16} />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        disableRipple
+                        onClick={() => setConfirmDelete(def)}
+                        title="Delete field"
+                      >
+                        <Trash2 size={16} />
+                      </IconButton>
+                    </Stack>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
 
       {creating && (
         <DefinitionFormModal
@@ -319,8 +301,8 @@ const CustomFieldsTab: React.FC = () => {
           title="Delete custom field"
           body={
             <Typography fontSize={13}>
-              This will permanently remove "{confirmDelete.label}" and all values
-              stored on existing records. This action cannot be undone.
+              This will permanently remove "{confirmDelete.label}" and all values stored on existing
+              records. This action cannot be undone.
             </Typography>
           }
           cancelText="Cancel"
@@ -367,13 +349,9 @@ const DefinitionFormModal: React.FC<DefinitionFormModalProps> = ({
 }) => {
   const [label, setLabel] = useState(existing?.label ?? "");
   const [fieldKey, setFieldKey] = useState(existing?.field_key ?? "");
-  const [fieldType, setFieldType] = useState<CustomFieldType>(
-    existing?.field_type ?? "text",
-  );
+  const [fieldType, setFieldType] = useState<CustomFieldType>(existing?.field_type ?? "text");
   const [required, setRequired] = useState<boolean>(existing?.required ?? false);
-  const [optionsText, setOptionsText] = useState<string>(
-    (existing?.options ?? []).join("\n"),
-  );
+  const [optionsText, setOptionsText] = useState<string>((existing?.options ?? []).join("\n"));
   const [localError, setLocalError] = useState<string | null>(null);
 
   const needsOptions = fieldType === "select" || fieldType === "multiselect";
@@ -479,13 +457,8 @@ const DefinitionFormModal: React.FC<DefinitionFormModalProps> = ({
         )}
 
         <Stack direction="row" alignItems="center" spacing={4}>
-          <Toggle
-            checked={required}
-            onChange={(_e, checked) => setRequired(checked)}
-          />
-          <Typography sx={{ fontSize: 13, color: "text.primary" }}>
-            Required
-          </Typography>
+          <Toggle checked={required} onChange={(_e, checked) => setRequired(checked)} />
+          <Typography sx={{ fontSize: 13, color: "text.primary" }}>Required</Typography>
         </Stack>
 
         {(localError || serverError) && (
@@ -537,10 +510,7 @@ const LabelWithInfo: React.FC<{
 
 function extractErrorMessage(err: any): string {
   return (
-    err?.response?.data?.error ||
-    err?.response?.data?.message ||
-    err?.message ||
-    "Operation failed"
+    err?.response?.data?.error || err?.response?.data?.message || err?.message || "Operation failed"
   );
 }
 

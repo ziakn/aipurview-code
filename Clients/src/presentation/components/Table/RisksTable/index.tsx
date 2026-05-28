@@ -120,10 +120,7 @@ const RiskTable: React.FC<IRiskTableProps> = ({
 
   const visibleTableColumns = useMemo(() => {
     const builtIns = titleOfTableColumns.filter(
-      (col) =>
-        col.id === "risk_description" ||
-        col.id === "actions" ||
-        isVisible(col.id),
+      (col) => col.id === "risk_description" || col.id === "actions" || isVisible(col.id),
     );
     const customCols: StandardColumn[] = customFieldDefs.map((d) => ({
       id: `cf_${d.id}`,
@@ -132,11 +129,7 @@ const RiskTable: React.FC<IRiskTableProps> = ({
     }));
     const actionsIdx = builtIns.findIndex((c) => c.id === "actions");
     if (actionsIdx === -1) return [...builtIns, ...customCols];
-    return [
-      ...builtIns.slice(0, actionsIdx),
-      ...customCols,
-      ...builtIns.slice(actionsIdx),
-    ];
+    return [...builtIns.slice(0, actionsIdx), ...customCols, ...builtIns.slice(actionsIdx)];
   }, [isVisible, customFieldDefs]);
 
   const getCellStyle = (row: VendorRisk) => ({
@@ -398,8 +391,7 @@ const RiskTable: React.FC<IRiskTableProps> = ({
                 )}
                 {customFieldDefs.map((def) => {
                   const match = (row as any).custom_fields?.find(
-                    (cf: { definition_id: number; value: unknown }) =>
-                      cf.definition_id === def.id,
+                    (cf: { definition_id: number; value: unknown }) => cf.definition_id === def.id,
                   );
                   return (
                     <TableCell key={`cf_${def.id}`} sx={getCellStyle(row)}>

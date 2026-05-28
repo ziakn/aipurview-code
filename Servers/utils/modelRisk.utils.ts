@@ -36,14 +36,8 @@ export async function getAllModelRisksQuery(
     },
   );
 
-  const ids = modelRisks
-    .map((r) => r.id)
-    .filter((id): id is number => typeof id === "number");
-  const customFieldsByRisk = await fetchCustomFieldsForEntities(
-    "model_risk",
-    ids,
-    organizationId,
-  );
+  const ids = modelRisks.map((r) => r.id).filter((id): id is number => typeof id === "number");
+  const customFieldsByRisk = await fetchCustomFieldsForEntities("model_risk", ids, organizationId);
   for (const r of modelRisks as any[]) {
     r.custom_fields = customFieldsByRisk.get(r.id) ?? [];
   }
@@ -177,12 +171,7 @@ export async function deleteModelRiskByIdQuery(
   organizationId: number,
   transaction?: Transaction,
 ): Promise<boolean> {
-  await deleteAllCustomFieldValuesForEntityQuery(
-    "model_risk",
-    id,
-    organizationId,
-    transaction,
-  );
+  await deleteAllCustomFieldValuesForEntityQuery("model_risk", id, organizationId, transaction);
   const result = await sequelize.query(
     `UPDATE model_risks SET is_deleted = true, deleted_at = NOW(), updated_at = NOW() WHERE organization_id = :organizationId AND id = :id AND is_deleted = false RETURNING *`,
     {

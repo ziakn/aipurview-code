@@ -208,9 +208,7 @@ const VWProjectRisksTable = ({
   const { data: customFieldDefs = [] } = useCustomFieldDefinitions("project_risk");
 
   const filteredColumns = useMemo(() => {
-    const base = visibleColumns
-      ? columns.filter((col) => visibleColumns.has(col.id))
-      : columns;
+    const base = visibleColumns ? columns.filter((col) => visibleColumns.has(col.id)) : columns;
     const customCols = customFieldDefs.map((d) => ({
       id: `cf_${d.id}`,
       label: d.label.toUpperCase(),

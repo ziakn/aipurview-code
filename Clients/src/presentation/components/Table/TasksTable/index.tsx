@@ -165,11 +165,7 @@ const TasksTable: React.FC<ITasksTableProps> = ({
     }));
     const actionsIdx = builtIns.findIndex((c) => c.id === "actions");
     if (actionsIdx === -1) return [...builtIns, ...customCols];
-    return [
-      ...builtIns.slice(0, actionsIdx),
-      ...customCols,
-      ...builtIns.slice(actionsIdx),
-    ];
+    return [...builtIns.slice(0, actionsIdx), ...customCols, ...builtIns.slice(actionsIdx)];
   }, [isVisible, customFieldDefs]);
 
   // Slice that's actually rendered — used for both the body and bulk-selection scope.
@@ -519,14 +515,10 @@ const TasksTable: React.FC<ITasksTableProps> = ({
 
               {customFieldDefs.map((def) => {
                 const match = (task as any).custom_fields?.find(
-                  (cf: { definition_id: number; value: unknown }) =>
-                    cf.definition_id === def.id,
+                  (cf: { definition_id: number; value: unknown }) => cf.definition_id === def.id,
                 );
                 return (
-                  <TableCell
-                    key={`cf_${def.id}`}
-                    sx={singleTheme.tableStyles.primary.body.cell}
-                  >
+                  <TableCell key={`cf_${def.id}`} sx={singleTheme.tableStyles.primary.body.cell}>
                     {formatCustomFieldValue(def, match?.value, users)}
                   </TableCell>
                 );

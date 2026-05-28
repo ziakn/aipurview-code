@@ -34,8 +34,7 @@ export function useCustomFieldDefinitions(entityType: CustomFieldEntityType) {
 export function useCreateCustomFieldDefinition() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (body: ICreateCustomFieldDefinitionInput) =>
-      createCustomFieldDefinition(body),
+    mutationFn: (body: ICreateCustomFieldDefinitionInput) => createCustomFieldDefinition(body),
     onSuccess: (created) => {
       qc.invalidateQueries({
         queryKey: customFieldsKeys.definitions(created.entity_type),
@@ -44,18 +43,11 @@ export function useCreateCustomFieldDefinition() {
   });
 }
 
-export function useUpdateCustomFieldDefinition(
-  entityType: CustomFieldEntityType,
-) {
+export function useUpdateCustomFieldDefinition(entityType: CustomFieldEntityType) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      id,
-      body,
-    }: {
-      id: number;
-      body: IUpdateCustomFieldDefinitionInput;
-    }) => updateCustomFieldDefinition({ id, body }),
+    mutationFn: ({ id, body }: { id: number; body: IUpdateCustomFieldDefinitionInput }) =>
+      updateCustomFieldDefinition({ id, body }),
     onSuccess: () => {
       qc.invalidateQueries({
         queryKey: customFieldsKeys.definitions(entityType),
@@ -64,9 +56,7 @@ export function useUpdateCustomFieldDefinition(
   });
 }
 
-export function useDeleteCustomFieldDefinition(
-  entityType: CustomFieldEntityType,
-) {
+export function useDeleteCustomFieldDefinition(entityType: CustomFieldEntityType) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: number) => deleteCustomFieldDefinition(id),
@@ -78,10 +68,7 @@ export function useDeleteCustomFieldDefinition(
   });
 }
 
-export function useCustomFieldValues(
-  entityType: CustomFieldEntityType,
-  entityId: number | null,
-) {
+export function useCustomFieldValues(entityType: CustomFieldEntityType, entityId: number | null) {
   return useQuery<ICustomFieldValueRow[]>({
     queryKey: customFieldsKeys.values(entityType, entityId),
     queryFn: ({ signal }) =>
@@ -109,4 +96,3 @@ export function useMissingRequiredCustomFields(
     enabled: entityId !== null && entityId > 0,
   });
 }
-

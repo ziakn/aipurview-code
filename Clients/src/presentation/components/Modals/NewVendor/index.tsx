@@ -33,9 +33,7 @@ import useUsers from "../../../../application/hooks/useUsers";
 import CustomizableToast from "../../Toast";
 import { logEngine } from "../../../../application/tools/log.engine";
 import StandardModal from "../StandardModal";
-import CustomFieldsSection, {
-  type CustomFieldsSectionHandle,
-} from "../../CustomFieldsSection";
+import CustomFieldsSection, { type CustomFieldsSectionHandle } from "../../CustomFieldsSection";
 import { useRequiredCustomFieldsGate } from "../../CustomFieldsSection/RequiredCustomFieldsGate";
 import TabBar from "../../TabBar";
 import { EnhancedTooltip } from "../../EnhancedTooltip";
@@ -194,10 +192,7 @@ const AddNewVendor: React.FC<AddNewVendorProps> = ({
   useEntityChangeHistory("vendor", existingVendor?.id);
 
   const isEditingDisabled = !allowedRoles.vendors.edit.includes(userRoleName);
-  const customFieldsGate = useRequiredCustomFieldsGate(
-    "vendor",
-    existingVendor?.id ?? null,
-  );
+  const customFieldsGate = useRequiredCustomFieldsGate("vendor", existingVendor?.id ?? null);
 
   const formattedUsers = users?.map((user: User) => ({
     _id: user.id,
@@ -895,16 +890,10 @@ const AddNewVendor: React.FC<AddNewVendorProps> = ({
             : "Use this form to register a new vendor. Include details about what they provide, who is responsible, and the outcome of your review. Provide enough details so your team can assess risks, responsibilities, and compliance requirements."
         }
         onSubmit={
-          customFieldsGate.blocked
-            ? undefined
-            : activeTab === "activity"
-              ? undefined
-              : handleSave
+          customFieldsGate.blocked ? undefined : activeTab === "activity" ? undefined : handleSave
         }
         submitButtonText="Save"
-        isSubmitting={
-          isSubmitting || isEditingDisabled || customFieldsGate.blocked
-        }
+        isSubmitting={isSubmitting || isEditingDisabled || customFieldsGate.blocked}
         maxWidth="734px"
       >
         <TabContext value={activeTab}>

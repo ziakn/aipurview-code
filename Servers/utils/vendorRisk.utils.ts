@@ -192,12 +192,7 @@ export const deleteVendorRiskByIdQuery = async (
   organizationId: number,
   transaction: Transaction,
 ): Promise<Boolean> => {
-  await deleteAllCustomFieldValuesForEntityQuery(
-    "vendor_risk",
-    id,
-    organizationId,
-    transaction,
-  );
+  await deleteAllCustomFieldValuesForEntityQuery("vendor_risk", id, organizationId, transaction);
   const result = await sequelize.query(
     `UPDATE vendorrisks SET is_deleted = true, deleted_at = NOW(), updated_at = NOW() WHERE organization_id = :organizationId AND id = :id AND is_deleted = false RETURNING *`,
     {
@@ -279,17 +274,9 @@ export const getAllVendorRisksAllProjectsQuery = async (
   )) as any[];
 
   const ids = Array.from(
-    new Set(
-      risks
-        .map((r) => r.risk_id)
-        .filter((id): id is number => typeof id === "number"),
-    ),
+    new Set(risks.map((r) => r.risk_id).filter((id): id is number => typeof id === "number")),
   );
-  const customFieldsByRisk = await fetchCustomFieldsForEntities(
-    "vendor_risk",
-    ids,
-    organizationId,
-  );
+  const customFieldsByRisk = await fetchCustomFieldsForEntities("vendor_risk", ids, organizationId);
   for (const r of risks) {
     r.custom_fields = customFieldsByRisk.get(r.risk_id) ?? [];
   }

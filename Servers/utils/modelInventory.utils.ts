@@ -48,8 +48,7 @@ export const getAllModelInventoriesQuery = async (organizationId: number) => {
         (model.dataValues as any).projects.push(pf.project_id);
       }
     }
-    (model.dataValues as any).custom_fields =
-      customFieldsByModel.get(model.id!) ?? [];
+    (model.dataValues as any).custom_fields = customFieldsByModel.get(model.id!) ?? [];
   }
   return modelInventories;
 };

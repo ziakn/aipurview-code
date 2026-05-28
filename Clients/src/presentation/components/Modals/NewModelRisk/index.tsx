@@ -21,9 +21,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { useModalKeyHandling } from "../../../../application/hooks/useModalKeyHandling";
 import { useFormValidation } from "../../../../application/hooks/useFormValidation";
 import { checkStringValidation } from "../../../../application/validations/stringValidation";
-import CustomFieldsSection, {
-  type CustomFieldsSectionHandle,
-} from "../../CustomFieldsSection";
+import CustomFieldsSection, { type CustomFieldsSectionHandle } from "../../CustomFieldsSection";
 import { useRequiredCustomFieldsGate } from "../../CustomFieldsSection/RequiredCustomFieldsGate";
 import { logEngine } from "../../../../application/tools/log.engine";
 
@@ -33,9 +31,7 @@ interface NewModelRiskProps {
   // On create, the parent should return `{ id }` so the modal can flush staged
   // custom field values against the newly created entity. On update, returning
   // the id is optional (we fall back to `entityId`).
-  onSuccess?: (
-    data: IModelRiskFormData,
-  ) => void | Promise<{ id?: number } | void>;
+  onSuccess?: (data: IModelRiskFormData) => void | Promise<{ id?: number } | void>;
   initialData?: IModelRiskFormData;
   isEdit?: boolean;
   entityId?: number;
@@ -92,10 +88,7 @@ const NewModelRisk: FC<NewModelRiskProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState("details");
   const customFieldsRef = useRef<CustomFieldsSectionHandle | null>(null);
-  const customFieldsGate = useRequiredCustomFieldsGate(
-    "model_risk",
-    entityId ?? null,
-  );
+  const customFieldsGate = useRequiredCustomFieldsGate("model_risk", entityId ?? null);
 
   useEffect(() => {
     if (initialData) {
@@ -269,9 +262,8 @@ const NewModelRisk: FC<NewModelRiskProps> = ({
         return;
       }
       const targetId =
-        (result && typeof result === "object" && "id" in result
-          ? result.id
-          : undefined) ?? entityId;
+        (result && typeof result === "object" && "id" in result ? result.id : undefined) ??
+        entityId;
 
       let cfFlushFailed = false;
       if (targetId && customFieldsRef.current?.hasPendingValues()) {
@@ -473,9 +465,7 @@ const NewModelRisk: FC<NewModelRiskProps> = ({
           : "Document and track potential risks associated with AI models"
       }
       onSubmit={
-        activeTab === "activity" || customFieldsGate.blocked
-          ? undefined
-          : handleSaveModelRisk
+        activeTab === "activity" || customFieldsGate.blocked ? undefined : handleSaveModelRisk
       }
       submitButtonText={isEdit ? "Update risk" : "Save"}
       isSubmitting={isSubmitting || customFieldsGate.blocked}
@@ -491,9 +481,7 @@ const NewModelRisk: FC<NewModelRiskProps> = ({
         </Box>
         {/* Render details + custom-fields always (display-toggle) so the
             staged-values Map inside CustomFieldsSection survives tab switches. */}
-        <Box sx={{ display: activeTab === "details" ? "block" : "none" }}>
-          {formContent}
-        </Box>
+        <Box sx={{ display: activeTab === "details" ? "block" : "none" }}>{formContent}</Box>
         <Box sx={{ display: activeTab === "custom-fields" ? "block" : "none" }}>
           <CustomFieldsSection
             ref={customFieldsRef}

@@ -486,12 +486,7 @@ export const deleteVendorByIdQuery = async (
   transaction: Transaction,
 ): Promise<Boolean> => {
   await deleteVendorRisksForVendorQuery(id, organizationId, transaction);
-  await deleteAllCustomFieldValuesForEntityQuery(
-    "vendor",
-    id,
-    organizationId,
-    transaction,
-  );
+  await deleteAllCustomFieldValuesForEntityQuery("vendor", id, organizationId, transaction);
   await updateProjectUpdatedByIdQuery(id, "vendors", organizationId, transaction);
   await sequelize.query(
     `DELETE FROM vendors_projects WHERE organization_id = :organizationId AND vendor_id = :id`,

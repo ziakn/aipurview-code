@@ -1,13 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, {
-  FC,
-  useState,
-  useCallback,
-  useEffect,
-  useRef,
-  Suspense,
-  useMemo,
-} from "react";
+import React, { FC, useState, useCallback, useEffect, useRef, Suspense, useMemo } from "react";
 import { useTheme, Stack, Typography, Box } from "@mui/material";
 import Field from "../../Inputs/Field";
 import DatePicker from "../../Inputs/Datepicker";
@@ -19,9 +11,7 @@ import StandardModal from "../StandardModal";
 import TabBar from "../../TabBar";
 import { TabContext } from "@mui/lab";
 import { HistorySidebar } from "../../Common/HistorySidebar";
-import CustomFieldsSection, {
-  type CustomFieldsSectionHandle,
-} from "../../CustomFieldsSection";
+import CustomFieldsSection, { type CustomFieldsSectionHandle } from "../../CustomFieldsSection";
 import { useRequiredCustomFieldsGate } from "../../CustomFieldsSection/RequiredCustomFieldsGate";
 import { ICreateTaskFormValues, ICreateTaskProps } from "../../../types/interfaces/i.task";
 import { useFormValidation } from "../../../../application/hooks/useFormValidation";
@@ -98,10 +88,7 @@ const CreateTask: FC<ICreateTaskProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState("details");
   const customFieldsRef = useRef<CustomFieldsSectionHandle | null>(null);
-  const customFieldsGate = useRequiredCustomFieldsGate(
-    "task",
-    initialData?.id ?? null,
-  );
+  const customFieldsGate = useRequiredCustomFieldsGate("task", initialData?.id ?? null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -261,18 +248,12 @@ const CreateTask: FC<ICreateTaskProps> = ({
               ? (result as { id?: number }).id
               : undefined;
           const targetId = mode === "edit" ? initialData?.id : newId;
-          if (
-            targetId &&
-            customFieldsRef.current?.hasPendingValues()
-          ) {
+          if (targetId && customFieldsRef.current?.hasPendingValues()) {
             try {
               await customFieldsRef.current.flush(targetId);
             } catch (cfError) {
               cfFlushFailed = true;
-              console.error(
-                "Task saved, but custom field values failed to save:",
-                cfError,
-              );
+              console.error("Task saved, but custom field values failed to save:", cfError);
             }
           }
         }
@@ -537,9 +518,7 @@ const CreateTask: FC<ICreateTaskProps> = ({
             onChange={(_, newValue) => setActiveTab(newValue)}
           />
         </Box>
-        <Box sx={{ display: activeTab === "details" ? "block" : "none" }}>
-          {formContent}
-        </Box>
+        <Box sx={{ display: activeTab === "details" ? "block" : "none" }}>{formContent}</Box>
         <Box sx={{ display: activeTab === "custom-fields" ? "block" : "none" }}>
           <CustomFieldsSection
             ref={customFieldsRef}

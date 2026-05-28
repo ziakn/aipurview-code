@@ -231,7 +231,6 @@ export const FileMetadataEditor: React.FC<FileMetadataEditorProps> = ({
             </Typography>
           )}
         </Box>
-
       </Stack>
     </StandardModal>
   );

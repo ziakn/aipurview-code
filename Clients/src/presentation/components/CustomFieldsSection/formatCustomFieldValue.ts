@@ -25,8 +25,7 @@ export function formatCustomFieldValue(
 ): string {
   if (raw === null || raw === undefined || raw === "") return "—";
   if (def.field_type === "boolean") return raw ? "Yes" : "No";
-  if (def.field_type === "multiselect" && Array.isArray(raw))
-    return raw.join(", ");
+  if (def.field_type === "multiselect" && Array.isArray(raw)) return raw.join(", ");
   if (def.field_type === "date") {
     const s = String(raw);
     return s ? displayFormattedDate(s) : "—";

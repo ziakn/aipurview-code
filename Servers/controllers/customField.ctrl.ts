@@ -2,11 +2,7 @@ import { Request, Response } from "express";
 
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import { sequelize } from "../database/db";
-import {
-  logFailure,
-  logProcessing,
-  logSuccess,
-} from "../utils/logger/logHelper";
+import { logFailure, logProcessing, logSuccess } from "../utils/logger/logHelper";
 import { translateError } from "../utils/i18n.utils";
 import {
   CustomFieldEntityType,
@@ -30,11 +26,7 @@ const parseIntParam = (raw: unknown): number => {
 
 // Map our CustomException subclasses to HTTP status, mirroring the
 // aiDetectionRepository pattern. Falls back to 500 for unknown errors.
-const respondWithError = (
-  req: Request,
-  res: Response,
-  error: unknown,
-): Response => {
+const respondWithError = (req: Request, res: Response, error: unknown): Response => {
   const statusCode =
     error instanceof Error && "statusCode" in error
       ? (error as Error & { statusCode: number }).statusCode
@@ -48,10 +40,7 @@ const respondWithError = (
 
 // ---------- Definitions ----------
 
-export async function listCustomFieldDefinitions(
-  req: Request,
-  res: Response,
-): Promise<any> {
+export async function listCustomFieldDefinitions(req: Request, res: Response): Promise<any> {
   const entityType = req.params.entityType as CustomFieldEntityType;
 
   logProcessing({
@@ -63,10 +52,7 @@ export async function listCustomFieldDefinitions(
   });
 
   try {
-    const defs = await listCustomFieldDefinitionsQuery(
-      req.organizationId!,
-      entityType,
-    );
+    const defs = await listCustomFieldDefinitionsQuery(req.organizationId!, entityType);
     await logSuccess({
       eventType: "Read",
       description: `Retrieved ${defs.length} custom field definitions for ${entityType}`,
@@ -90,10 +76,7 @@ export async function listCustomFieldDefinitions(
   }
 }
 
-export async function getCustomFieldDefinitionById(
-  req: Request,
-  res: Response,
-): Promise<any> {
+export async function getCustomFieldDefinitionById(req: Request, res: Response): Promise<any> {
   const id = parseIntParam(req.params.id);
 
   logProcessing({
@@ -105,10 +88,7 @@ export async function getCustomFieldDefinitionById(
   });
 
   try {
-    const def = await getCustomFieldDefinitionByIdQuery(
-      id,
-      req.organizationId!,
-    );
+    const def = await getCustomFieldDefinitionByIdQuery(id, req.organizationId!);
     if (!def) {
       return res.status(404).json(STATUS_CODE[404]({}));
     }
@@ -135,10 +115,7 @@ export async function getCustomFieldDefinitionById(
   }
 }
 
-export async function createCustomFieldDefinition(
-  req: Request,
-  res: Response,
-): Promise<any> {
+export async function createCustomFieldDefinition(req: Request, res: Response): Promise<any> {
   logProcessing({
     description: "starting createCustomFieldDefinition",
     functionName: "createCustomFieldDefinition",
@@ -148,11 +125,7 @@ export async function createCustomFieldDefinition(
   });
 
   try {
-    const def = await createCustomFieldDefinitionQuery(
-      req.body,
-      req.organizationId!,
-      req.userId!,
-    );
+    const def = await createCustomFieldDefinitionQuery(req.body, req.organizationId!, req.userId!);
     await logSuccess({
       eventType: "Create",
       description: `Created custom field definition ${def.id} (${def.entity_type}.${def.field_key})`,
@@ -176,10 +149,7 @@ export async function createCustomFieldDefinition(
   }
 }
 
-export async function updateCustomFieldDefinition(
-  req: Request,
-  res: Response,
-): Promise<any> {
+export async function updateCustomFieldDefinition(req: Request, res: Response): Promise<any> {
   const id = parseIntParam(req.params.id);
 
   logProcessing({
@@ -191,11 +161,7 @@ export async function updateCustomFieldDefinition(
   });
 
   try {
-    const def = await updateCustomFieldDefinitionQuery(
-      id,
-      req.organizationId!,
-      req.body ?? {},
-    );
+    const def = await updateCustomFieldDefinitionQuery(id, req.organizationId!, req.body ?? {});
     await logSuccess({
       eventType: "Update",
       description: `Updated custom field definition ${id}`,
@@ -219,10 +185,7 @@ export async function updateCustomFieldDefinition(
   }
 }
 
-export async function deleteCustomFieldDefinition(
-  req: Request,
-  res: Response,
-): Promise<any> {
+export async function deleteCustomFieldDefinition(req: Request, res: Response): Promise<any> {
   const id = parseIntParam(req.params.id);
 
   logProcessing({
@@ -234,10 +197,7 @@ export async function deleteCustomFieldDefinition(
   });
 
   try {
-    const deleted = await deleteCustomFieldDefinitionQuery(
-      id,
-      req.organizationId!,
-    );
+    const deleted = await deleteCustomFieldDefinitionQuery(id, req.organizationId!);
     if (!deleted) {
       return res.status(404).json(STATUS_CODE[404]({}));
     }
@@ -266,10 +226,7 @@ export async function deleteCustomFieldDefinition(
 
 // ---------- Values ----------
 
-export async function getCustomFieldValuesForEntity(
-  req: Request,
-  res: Response,
-): Promise<any> {
+export async function getCustomFieldValuesForEntity(req: Request, res: Response): Promise<any> {
   const entityType = req.params.entityType as CustomFieldEntityType;
   const entityId = parseIntParam(req.params.entityId);
 
@@ -310,10 +267,7 @@ export async function getCustomFieldValuesForEntity(
   }
 }
 
-export async function getMissingRequiredCustomFields(
-  req: Request,
-  res: Response,
-): Promise<any> {
+export async function getMissingRequiredCustomFields(req: Request, res: Response): Promise<any> {
   const entityType = req.params.entityType as CustomFieldEntityType;
   const entityId = parseIntParam(req.params.entityId);
 
@@ -338,10 +292,7 @@ export async function getMissingRequiredCustomFields(
   }
 }
 
-export async function setCustomFieldValue(
-  req: Request,
-  res: Response,
-): Promise<any> {
+export async function setCustomFieldValue(req: Request, res: Response): Promise<any> {
   const transaction = await sequelize.transaction();
 
   logProcessing({
@@ -353,11 +304,7 @@ export async function setCustomFieldValue(
   });
 
   try {
-    const row = await setCustomFieldValueQuery(
-      req.body,
-      req.organizationId!,
-      transaction,
-    );
+    const row = await setCustomFieldValueQuery(req.body, req.organizationId!, transaction);
     await transaction.commit();
     await logSuccess({
       eventType: "Update",
@@ -383,10 +330,7 @@ export async function setCustomFieldValue(
   }
 }
 
-export async function deleteCustomFieldValue(
-  req: Request,
-  res: Response,
-): Promise<any> {
+export async function deleteCustomFieldValue(req: Request, res: Response): Promise<any> {
   const definitionId = parseIntParam(req.params.definitionId);
   const entityId = parseIntParam(req.params.entityId);
   const transaction = await sequelize.transaction();

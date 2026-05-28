@@ -228,11 +228,7 @@ const TableWithPlaceholder: React.FC<ITableWithPlaceholderProps> = ({
       sortable: false,
     }));
     if (actionsIdx === -1) return [...builtIns, ...customCols];
-    return [
-      ...builtIns.slice(0, actionsIdx),
-      ...customCols,
-      ...builtIns.slice(actionsIdx),
-    ];
+    return [...builtIns.slice(0, actionsIdx), ...customCols, ...builtIns.slice(actionsIdx)];
   }, [isVisible, customFieldDefs]);
 
   const formatCfValue = useCallback(
@@ -522,9 +518,7 @@ const TableWithPlaceholder: React.FC<ITableWithPlaceholderProps> = ({
                   </TableCell>
                 )}
                 {customFieldDefs.map((def) => {
-                  const match = row.custom_fields?.find(
-                    (cf) => cf.definition_id === def.id,
-                  );
+                  const match = row.custom_fields?.find((cf) => cf.definition_id === def.id);
                   return (
                     <TableCell key={`cf_${def.id}`} sx={cellStyle}>
                       {formatCfValue(def, match?.value)}
