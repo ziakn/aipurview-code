@@ -20,6 +20,24 @@ const BUTTON_SIZE_STYLES: Record<"small" | "medium", SxProps<Theme>> = {
   },
 };
 
+/** Compact square sizing for icon-only buttons (matches small/medium heights). */
+const ICON_ONLY_SIZE_STYLES: Record<"small" | "medium", SxProps<Theme>> = {
+  small: {
+    minWidth: 0,
+    width: 28,
+    height: 28,
+    minHeight: 28,
+    padding: "5px",
+  },
+  medium: {
+    minWidth: 0,
+    width: 34,
+    height: 34,
+    minHeight: 34,
+    padding: "5px",
+  },
+};
+
 /**
  * CustomizableButton component
  *
@@ -30,6 +48,7 @@ const BUTTON_SIZE_STYLES: Record<"small" | "medium", SxProps<Theme>> = {
  * - Theme-based styling with customizable variants
  * - Loading state with spinner
  * - Icon positioning with proper spacing
+ * - Icon-only mode for compact toolbar/close actions
  * - Full accessibility support with ARIA attributes
  * - Keyboard navigation support
  * - Performance optimized with memoization
@@ -81,6 +100,7 @@ const CustomizableButton = memo(
       title,
       indicator,
       textColor,
+      iconOnly = false,
       ...rest
     },
     ref,
@@ -116,19 +136,24 @@ const CustomizableButton = memo(
       [handleClick, loading, isDisabled],
     );
 
+    const sizeKey = size === "small" ? "small" : "medium";
+
     // Get theme-based appearance - ensure proper typing for MUI sx prop
     const appearance = (singleTheme.buttons?.[color]?.[variant] || {}) as SxProps<Theme>;
 
-    // Determine button content
-    const buttonText = children || text || "CustomizableButton";
-    const resolvedStartIcon = startIcon || icon;
+    const iconContent = children || startIcon || icon;
+    const buttonText = iconOnly ? null : children || text || "CustomizableButton";
+    const resolvedStartIcon = iconOnly ? undefined : startIcon || icon;
+    const resolvedEndIcon = iconOnly ? undefined : endIcon;
+    const showCenteredSpinner =
+      loading && (iconOnly ? !iconContent : !resolvedStartIcon && !resolvedEndIcon);
 
     // Custom loading indicator or default spinner
     const spinner = loadingIndicator || (
       <CircularProgress
         size={16}
         color="inherit"
-        sx={{ mr: resolvedStartIcon || endIcon ? 1 : 0 }}
+        sx={{ mr: !iconOnly && (resolvedStartIcon || resolvedEndIcon) ? 1 : 0 }}
       />
     );
 
@@ -154,9 +179,14 @@ const CustomizableButton = memo(
         data-testid={testId}
         sx={[
           appearance,
-          BUTTON_SIZE_STYLES[size === "small" ? "small" : "medium"],
+          iconOnly ? ICON_ONLY_SIZE_STYLES[sizeKey] : BUTTON_SIZE_STYLES[sizeKey],
           {
             "position": "relative",
+            ...(iconOnly && {
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }),
             "&.Mui-disabled": {
               pointerEvents: loading ? "none" : "auto",
             },
@@ -165,9 +195,7 @@ const CustomizableButton = memo(
         ]}
         disableElevation={variant === "contained" && !isLink}
         startIcon={
-          // Show spinner as startIcon if loading AND (has original startIcon OR has endIcon)
-          // If no icons at all, we'll show a centered spinner instead
-          loading && (resolvedStartIcon || endIcon) ? (
+          iconOnly ? undefined : loading && (resolvedStartIcon || resolvedEndIcon) ? (
             <Box component="span" sx={{ display: "flex", alignItems: "center" }}>
               {spinner}
             </Box>
@@ -175,11 +203,10 @@ const CustomizableButton = memo(
             (resolvedStartIcon as React.ReactNode)
           )
         }
-        endIcon={!loading ? (endIcon as React.ReactNode) : undefined}
+        endIcon={!loading && !iconOnly ? (resolvedEndIcon as React.ReactNode) : undefined}
         {...filteredRest}
       >
-        {/* Show centered spinner only when loading and NO icons at all */}
-        {loading && !resolvedStartIcon && !endIcon && (
+        {showCenteredSpinner && (
           <Box
             component="span"
             sx={{
@@ -195,11 +222,16 @@ const CustomizableButton = memo(
         <Box
           component="span"
           sx={{
-            opacity: loading && !resolvedStartIcon && !endIcon ? 0 : 1,
+            opacity: showCenteredSpinner ? 0 : 1,
             transition: "opacity 0.2s ease",
+            ...(iconOnly && {
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }),
           }}
         >
-          {buttonText as React.ReactNode}
+          {iconOnly ? (iconContent as React.ReactNode) : (buttonText as React.ReactNode)}
         </Box>
       </Button>
     );
