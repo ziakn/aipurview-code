@@ -7,7 +7,14 @@ import {
 
 type CustomizableButtonSharedProps = Omit<
   CustomizableButtonCoreProps,
-  "icon" | "startIcon" | "endIcon" | "children" | "loadingIndicator" | "onClick" | "iconOnly" | "ariaLabel"
+  | "icon"
+  | "startIcon"
+  | "endIcon"
+  | "children"
+  | "loadingIndicator"
+  | "onClick"
+  | "iconOnly"
+  | "ariaLabel"
 > & {
   /** Icon element (overrides domain unknown type) */
   icon?: React.ReactNode;
