@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { Box, Stack, Tab, Typography, useTheme } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Save as SaveIcon, RotateCcw as UpdateIconSVGWhite } from "lucide-react";
@@ -60,11 +60,9 @@ const AddNewRiskForm: FC<AddNewRiskFormProps> = (props) => {
     isEditingDisabled,
     isCreatingDisabled,
     isQuantitative,
-    onSubmitRef,
-    popupStatus,
-    entityId,
-    compactMode,
   } = useRiskForm(props);
+
+  const { onSubmitRef, popupStatus, entityId, compactMode } = props;
 
   // Show loading state while users are being fetched
   if (usersLoading) {
