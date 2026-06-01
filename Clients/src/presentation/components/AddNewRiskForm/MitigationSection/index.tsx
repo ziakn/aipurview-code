@@ -98,7 +98,7 @@ const MitigationSection: FC<MitigationSectionProps> = ({
     display: "flex",
     flexDirection: "row" as const,
     justifyContent: "flex-start",
-    flexWrap: "wrap" as const,
+    flexWrap: "nowrap" as const,
     gap: `${LAYOUT.HORIZONTAL_GAP}px`,
     width: "100%",
     maxWidth: contentWidth,
@@ -171,10 +171,10 @@ const MitigationSection: FC<MitigationSectionProps> = ({
 
   const formFieldStyles = useMemo(
     () => ({
-      width: fieldWidth,
+      flex: 1,
       backgroundColor: theme.palette.background.main,
     }),
-    [theme.palette.background.main, fieldWidth],
+    [theme.palette.background.main],
   );
 
   const handleOnSelectChange = useCallback(
@@ -270,7 +270,7 @@ const MitigationSection: FC<MitigationSectionProps> = ({
                   mitigationValues.deadline ? dayjs(mitigationValues.deadline) : dayjs(new Date())
                 }
                 handleDateChange={(e) => handleDateChange("deadline", e)}
-                sx={{ width: fieldWidth }}
+                sx={{ flex: 1 }}
                 isRequired
                 error={errors.deadline}
                 disabled={isEditingDisabled}
@@ -286,7 +286,7 @@ const MitigationSection: FC<MitigationSectionProps> = ({
                 rows={3}
                 value={mitigationValues.mitigationPlan}
                 onChange={handleOnTextFieldChange("mitigationPlan")}
-                sx={{ width: fieldWidth }}
+                sx={{ flex: 1 }}
                 isRequired
                 error={errors.mitigationPlan}
                 disabled={isEditingDisabled}
@@ -300,7 +300,7 @@ const MitigationSection: FC<MitigationSectionProps> = ({
                 rows={3}
                 value={mitigationValues.implementationStrategy}
                 onChange={handleOnTextFieldChange("implementationStrategy")}
-                sx={{ width: twoColumnWidth }}
+                sx={{ flex: 1 }}
                 isRequired
                 error={errors.implementationStrategy}
                 disabled={isEditingDisabled}
@@ -377,7 +377,7 @@ const MitigationSection: FC<MitigationSectionProps> = ({
                 : dayjs(new Date())
             }
             handleDateChange={(e) => handleDateChange("dateOfAssessment", e)}
-            sx={{ width: fieldWidth }}
+            sx={{ flex: 1 }}
             isRequired
             error={errors.dateOfAssessment}
             disabled={isEditingDisabled}

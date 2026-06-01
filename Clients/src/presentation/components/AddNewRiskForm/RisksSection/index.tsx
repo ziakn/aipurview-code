@@ -98,7 +98,7 @@ const RiskSection: FC<RiskSectionProps> = ({
     display: "flex",
     flexDirection: "row" as const,
     justifyContent: "flex-start",
-    flexWrap: "wrap" as const,
+    flexWrap: "nowrap" as const,
     gap: `${LAYOUT.HORIZONTAL_GAP}px`,
     width: "100%",
     maxWidth: contentWidth,
@@ -408,7 +408,7 @@ const RiskSection: FC<RiskSectionProps> = ({
                 isRequired
                 error={errors.riskName}
                 sx={{
-                  width: fieldWidth,
+                  flex: 1,
                 }}
                 disabled={isEditingDisabled}
               />
@@ -433,7 +433,7 @@ const RiskSection: FC<RiskSectionProps> = ({
                 // isRequired
                 // error={errors.actionOwner}
                 sx={{
-                  width: fieldWidth,
+                  flex: 1,
                 }}
                 disabled={isEditingDisabled || usersLoading}
               />
@@ -447,7 +447,7 @@ const RiskSection: FC<RiskSectionProps> = ({
                 isRequired
                 error={errors.aiLifecyclePhase}
                 sx={{
-                  width: fieldWidth,
+                  flex: 1,
                 }}
                 disabled={isEditingDisabled}
               />
@@ -464,7 +464,7 @@ const RiskSection: FC<RiskSectionProps> = ({
                 isRequired
                 error={errors.riskDescription}
                 sx={{
-                  width: fieldWidth,
+                  flex: 1,
                 }}
                 disabled={isEditingDisabled}
               />
@@ -492,7 +492,7 @@ const RiskSection: FC<RiskSectionProps> = ({
                 placeholder="Select risk categories"
                 onChange={handleOnMultiselectChange("riskCategory")}
                 sx={{
-                  "width": fieldWidth,
+                  "flex": 1,
                   "& .MuiChip-root": {
                     "borderRadius": "4px",
                     "& .MuiChip-deleteIcon": {
@@ -538,7 +538,7 @@ const RiskSection: FC<RiskSectionProps> = ({
                 isRequired
                 error={errors.potentialImpact}
                 sx={{
-                  width: fieldWidth,
+                  flex: 1,
                 }}
                 disabled={isEditingDisabled}
               />

@@ -91,7 +91,7 @@ const AddNewRiskForm: FC<AddNewRiskFormProps> = (props) => {
     <Stack
       className="AddNewRiskForm"
       aria-label="Risk form"
-      sx={{ width: "100%", maxWidth: tabBarWidth, overflowX: "hidden" }}
+      sx={{ width: "100%", maxWidth: tabBarWidth }}
     >
       <TabContext value={value}>
         <Box sx={{ borderBottom: 1, borderColor: "divider", width: `${tabBarWidth}px` }}>
