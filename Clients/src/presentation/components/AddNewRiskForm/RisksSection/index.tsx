@@ -20,7 +20,6 @@ import useUsers from "../../../../application/hooks/useUsers";
 import { useProjects } from "../../../../application/hooks/useProjects";
 import useFrameworks from "../../../../application/hooks/useFrameworks";
 import allowedRoles from "../../../../application/constants/permissions";
-import styles from "../styles.module.css";
 import AutoCompleteField from "../../Inputs/Autocomplete";
 import { useFormValidation } from "../../../../application/hooks/useFormValidation";
 import { checkStringValidation } from "../../../../application/validations/stringValidation";
@@ -89,7 +88,6 @@ const RiskSection: FC<RiskSectionProps> = ({
   const isEditingDisabled = !allowedRoles.projectRisks.edit.includes(userRoleName);
 
   // Dynamic layout based on compactMode - squeeze into 990px when sidebar is open
-  const fieldWidth = compactMode ? `${LAYOUT.COMPACT_FIELD_WIDTH}px` : FORM_CONSTANTS.FIELD_WIDTH;
   const contentWidth = compactMode
     ? `${LAYOUT.COMPACT_CONTENT_WIDTH}px`
     : `${LAYOUT.TOTAL_CONTENT_WIDTH}px`;
