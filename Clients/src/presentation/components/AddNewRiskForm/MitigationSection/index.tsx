@@ -100,7 +100,8 @@ const MitigationSection: FC<MitigationSectionProps> = ({
     justifyContent: "flex-start",
     flexWrap: "wrap" as const,
     gap: `${LAYOUT.HORIZONTAL_GAP}px`,
-    width: contentWidth,
+    width: "100%",
+    maxWidth: contentWidth,
   };
 
   const validators = useMemo(
@@ -217,11 +218,7 @@ const MitigationSection: FC<MitigationSectionProps> = ({
   );
 
   return (
-    <Stack
-      sx={{
-        ...(disableInternalScroll ? {} : { minHeight: MIN_HEIGHT, maxHeight: MAX_HEIGHT }),
-      }}
-    >
+    <Stack>
       {alert && (
         <Alert
           variant={alert.variant}
@@ -231,20 +228,8 @@ const MitigationSection: FC<MitigationSectionProps> = ({
           onClick={() => setAlert(null)}
         />
       )}
-      <Stack
-        className={disableInternalScroll ? undefined : styles.popupBody}
-        sx={{
-          width: "100%",
-          ...(disableInternalScroll
-            ? {}
-            : {
-                maxHeight: "fit-content",
-                overflowY: "auto",
-                overflowX: "hidden",
-              }),
-        }}
-      >
-        <Stack sx={{ width: contentWidth }}>
+      <Stack sx={{ width: "100%", ...(disableInternalScroll ? {} : { p: "10px" }) }}>
+        <Stack sx={{ width: "100%", maxWidth: contentWidth }}>
           <Stack sx={{ gap: `${LAYOUT.VERTICAL_GAP}px` }}>
             {/* Row 1: Three columns */}
             <Stack sx={formRowStyles}>
@@ -329,7 +314,8 @@ const MitigationSection: FC<MitigationSectionProps> = ({
           sx={{
             gap: `${LAYOUT.HORIZONTAL_GAP}px`,
             mt: `${LAYOUT.VERTICAL_GAP}px`,
-            width: contentWidth,
+            width: "100%",
+            maxWidth: contentWidth,
           }}
         >
           <Typography sx={{ fontSize: 16, fontWeight: 600 }}>
@@ -340,7 +326,7 @@ const MitigationSection: FC<MitigationSectionProps> = ({
             assigning these scores, the risk level will be determined based on your inputs.
           </Typography>
         </Stack>
-        <Stack sx={{ mt: `${LAYOUT.VERTICAL_GAP}px`, width: contentWidth }}>
+        <Stack sx={{ mt: `${LAYOUT.VERTICAL_GAP}px`, width: "100%", maxWidth: contentWidth }}>
           <RiskLevel
             likelihood={mitigationValues.likelihood}
             riskSeverity={mitigationValues.riskSeverity}
@@ -397,7 +383,7 @@ const MitigationSection: FC<MitigationSectionProps> = ({
             disabled={isEditingDisabled}
           />
         </Stack>
-        <Stack sx={{ mt: `${LAYOUT.VERTICAL_GAP}px`, width: contentWidth }}>
+        <Stack sx={{ mt: `${LAYOUT.VERTICAL_GAP}px`, width: "100%", maxWidth: contentWidth }}>
           <Field
             id="recommendations-input"
             label="Recommendations"

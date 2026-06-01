@@ -100,7 +100,7 @@ const RiskSection: FC<RiskSectionProps> = ({
     justifyContent: "flex-start",
     flexWrap: "wrap" as const,
     gap: `${LAYOUT.HORIZONTAL_GAP}px`,
-    width: contentWidth,
+    width: "100%",
     maxWidth: contentWidth,
     boxSizing: "border-box" as const,
   };
@@ -196,17 +196,7 @@ const RiskSection: FC<RiskSectionProps> = ({
   );
 
   return (
-    <Stack
-      sx={{
-        ...(disableInternalScroll
-          ? {}
-          : {
-              minHeight: FORM_CONSTANTS.MIN_HEIGHT,
-              maxHeight: FORM_CONSTANTS.MAX_HEIGHT,
-            }),
-        gap: 3,
-      }}
-    >
+    <Stack sx={{ gap: 3 }}>
       {alert && (
         <Alert
           variant={alert.variant}
@@ -217,22 +207,14 @@ const RiskSection: FC<RiskSectionProps> = ({
         />
       )}
       <Stack
-        className={disableInternalScroll ? "AddNewRiskForm" : `AddNewRiskForm ${styles.popupBody}`}
-        sx={{
-          width: "100%",
-          ...(disableInternalScroll
-            ? {}
-            : {
-                maxHeight: FORM_CONSTANTS.CONTENT_MAX_HEIGHT,
-                overflowY: "auto",
-                overflowX: "hidden",
-              }),
-        }}
+        className="AddNewRiskForm"
+        sx={{ width: "100%", ...(disableInternalScroll ? {} : { p: "10px" }) }}
       >
         {/* Risk Scope & Frameworks Section - Moved to top */}
         <Stack
           sx={{
-            width: contentWidth,
+            width: "100%",
+            maxWidth: contentWidth,
             boxSizing: "border-box",
           }}
         >
@@ -413,7 +395,7 @@ const RiskSection: FC<RiskSectionProps> = ({
           </Stack>
         </Stack>
 
-        <Stack sx={{ width: contentWidth, mt: `${LAYOUT.VERTICAL_GAP}px` }}>
+        <Stack sx={{ width: "100%", maxWidth: contentWidth, mt: `${LAYOUT.VERTICAL_GAP}px` }}>
           <Stack sx={{ gap: `${LAYOUT.VERTICAL_GAP}px` }}>
             {/* Row 1 */}
             <Stack sx={formRowStyles}>
@@ -585,7 +567,7 @@ const RiskSection: FC<RiskSectionProps> = ({
             assigning these scores, the risk level will be determined based on your inputs.
           </Typography>
         </Stack>
-        <Stack sx={{ mt: `${LAYOUT.VERTICAL_GAP}px`, width: contentWidth }}>
+        <Stack sx={{ mt: `${LAYOUT.VERTICAL_GAP}px`, width: "100%", maxWidth: contentWidth }}>
           <RiskLevel
             likelihood={riskValues.likelihood}
             riskSeverity={riskValues.riskSeverity}
@@ -593,7 +575,7 @@ const RiskSection: FC<RiskSectionProps> = ({
             disabled={isEditingDisabled}
           />
         </Stack>
-        <Stack sx={{ mt: `${LAYOUT.VERTICAL_GAP}px`, width: contentWidth }}>
+        <Stack sx={{ mt: `${LAYOUT.VERTICAL_GAP}px`, width: "100%", maxWidth: contentWidth }}>
           <Field
             id="review-notes-input"
             label="Review notes"

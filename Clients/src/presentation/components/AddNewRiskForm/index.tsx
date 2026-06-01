@@ -88,7 +88,11 @@ const AddNewRiskForm: FC<AddNewRiskFormProps> = (props) => {
   const tabStyle = getTabStyle(theme);
 
   return (
-    <Stack className="AddNewRiskForm" aria-label="Risk form">
+    <Stack
+      className="AddNewRiskForm"
+      aria-label="Risk form"
+      sx={{ width: "100%", maxWidth: tabBarWidth, overflowX: "hidden" }}
+    >
       <TabContext value={value}>
         <Box sx={{ borderBottom: 1, borderColor: "divider", width: `${tabBarWidth}px` }}>
           <TabList
@@ -135,7 +139,9 @@ const AddNewRiskForm: FC<AddNewRiskFormProps> = (props) => {
           keepMounted
           sx={{
             p: COMPONENT_CONSTANTS.TAB_PADDING,
-            ...(onSubmitRef ? {} : { maxHeight: COMPONENT_CONSTANTS.MAX_HEIGHT }),
+            ...(onSubmitRef
+              ? {}
+              : { maxHeight: COMPONENT_CONSTANTS.MAX_HEIGHT, overflowY: "auto" }),
           }}
         >
           <RiskSection
@@ -152,7 +158,9 @@ const AddNewRiskForm: FC<AddNewRiskFormProps> = (props) => {
           keepMounted
           sx={{
             p: COMPONENT_CONSTANTS.TAB_PADDING,
-            ...(onSubmitRef ? {} : { maxHeight: COMPONENT_CONSTANTS.MAX_HEIGHT }),
+            ...(onSubmitRef
+              ? {}
+              : { maxHeight: COMPONENT_CONSTANTS.MAX_HEIGHT, overflowY: "auto" }),
           }}
         >
           <MitigationSection
