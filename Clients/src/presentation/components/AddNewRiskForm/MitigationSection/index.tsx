@@ -13,7 +13,6 @@ import { MitigationFormValues } from "../interface";
 import { useFormValidation } from "../../../../application/hooks/useFormValidation";
 import { checkStringValidation } from "../../../../application/validations/stringValidation";
 import selectValidation from "../../../../application/validations/selectValidation";
-import styles from "../styles.module.css";
 import useUsers from "../../../../application/hooks/useUsers";
 import { mitigationStatusItems, riskLevelItems, approvalStatusItems } from "../projectRiskValue";
 import { alertState } from "../../../../domain/interfaces/i.alert";
@@ -36,11 +35,6 @@ const LAYOUT = {
     return this.COMPACT_FIELD_WIDTH * 2 + this.HORIZONTAL_GAP; // 644px
   },
 } as const;
-
-// Constants
-const FORM_FIELD_WIDTH = LAYOUT.FIELD_WIDTH;
-const MIN_HEIGHT = 500;
-const MAX_HEIGHT = 500;
 
 import Select from "../../Inputs/Select";
 import Field from "../../Inputs/Field";
@@ -86,13 +80,9 @@ const MitigationSection: FC<MitigationSectionProps> = ({
   const { users, loading: usersLoading } = useUsers();
 
   // Dynamic layout based on compactMode - squeeze into 990px when sidebar is open
-  const fieldWidth = compactMode ? `${LAYOUT.COMPACT_FIELD_WIDTH}px` : `${FORM_FIELD_WIDTH}px`;
   const contentWidth = compactMode
     ? `${LAYOUT.COMPACT_CONTENT_WIDTH}px`
     : `${LAYOUT.TOTAL_CONTENT_WIDTH}px`;
-  const twoColumnWidth = compactMode
-    ? `${LAYOUT.COMPACT_TWO_COLUMN_WIDTH}px`
-    : `${LAYOUT.TWO_COLUMN_WIDTH}px`;
 
   const formRowStyles = {
     display: "flex",
