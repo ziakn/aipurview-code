@@ -73,7 +73,7 @@
     "pg-pool": "^3.7.0",
     "pickleparser": "^0.2.1",
     "playwright": "^1.59.1",
-    "redis": "^5.12.1",
+    "redis": "^6.0.0",
     "reflect-metadata": "^0.2.2",
     "resend": "^6.12.3",
     "sanitize-filename": "^1.6.4",
