@@ -1,7 +1,5 @@
 import { useState, useCallback, useRef, useContext, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import dayjs from "dayjs";
-
 import { Likelihood, Severity } from "../../RiskLevel/constants";
 import { RiskLikelihood, RiskSeverity } from "../../RiskLevel/riskValues";
 import { RiskFormValues, MitigationFormValues } from "../interface";
@@ -43,18 +41,6 @@ const riskInitialState: RiskFormValues = {
   reviewNotes: "",
   applicableProjects: [],
   applicableFrameworks: [],
-};
-
-/**
- * Safely parses a date value to ISO string format.
- * Handles string, Date objects, and falsy values.
- */
-const parseDateValue = (value: unknown): string => {
-  if (!value) return "";
-  if (typeof value === "string" || value instanceof Date) {
-    return dayjs(value).toISOString();
-  }
-  return "";
 };
 
 export interface UseRiskFormReturn {
