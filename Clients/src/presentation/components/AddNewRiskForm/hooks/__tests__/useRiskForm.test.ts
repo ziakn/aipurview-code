@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import React from "react";
 import { useRiskForm } from "../useRiskForm";
-import { AddNewRiskFormProps } from "../../../types/riskForm.types";
+import { AddNewRiskFormProps } from "../../../../types/riskForm.types";
 import authReducer from "../../../../../application/redux/auth/authSlice";
 import uiReducer from "../../../../../application/redux/ui/uiSlice";
 import fileReducer from "../../../../../application/redux/file/fileSlice";
@@ -155,7 +155,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
   const queryClient = createTestQueryClient();
   return React.createElement(
     Provider,
-    { store },
+    { store } as any,
     React.createElement(QueryClientProvider, { client: queryClient }, children),
   );
 };
