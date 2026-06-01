@@ -550,7 +550,8 @@ const RiskSection: FC<RiskSectionProps> = ({
           sx={{
             gap: `${LAYOUT.HORIZONTAL_GAP}px`,
             mt: `${LAYOUT.VERTICAL_GAP}px`,
-            width: contentWidth,
+            width: "100%",
+            maxWidth: contentWidth,
           }}
         >
           <Typography sx={{ fontSize: 16, fontWeight: 600, color: theme.palette.text.primary }}>

@@ -94,7 +94,7 @@ const AddNewRiskForm: FC<AddNewRiskFormProps> = (props) => {
       sx={{ width: "100%", maxWidth: tabBarWidth }}
     >
       <TabContext value={value}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider", width: `${tabBarWidth}px` }}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider", width: "100%" }}>
           <TabList
             onChange={handleTabChange}
             aria-label="Add new risk tabs"
