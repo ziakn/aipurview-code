@@ -21,7 +21,10 @@ import { ENV_VARs } from "../../../../../env.vars";
 import { loginUser } from "../../../../application/repository/user.repository";
 import { getOrganizations } from "../../../../application/repository/superAdmin.repository";
 import { checkOrganizationExists } from "../../../../application/repository/organization.repository";
-import { CheckSsoStatus, GetSsoOrgs } from "../../../../application/repository/ssoConfig.repository";
+import {
+  CheckSsoStatus,
+  GetSsoOrgs,
+} from "../../../../application/repository/ssoConfig.repository";
 import { useSsoFeatureEnabled } from "../../../../application/hooks/useSsoFeatureEnabled";
 import { MicrosoftSignIn } from "../../../components/MicrosoftSignIn";
 import Select from "../../../components/Inputs/Select";
@@ -140,9 +143,9 @@ const Login: React.FC = () => {
   } | null>(null);
   const [showSetupBanner, setShowSetupBanner] = useState(false);
   const ssoFeatureEnabled = useSsoFeatureEnabled();
-  const [ssoOrgs, setSsoOrgs] = useState<
-    Array<{ id: number; name: string; ssoEnabled: boolean }>
-  >([]);
+  const [ssoOrgs, setSsoOrgs] = useState<Array<{ id: number; name: string; ssoEnabled: boolean }>>(
+    [],
+  );
   const [selectedSsoOrgId, setSelectedSsoOrgId] = useState<number | "">("");
   const [ssoConfig, setSsoConfig] = useState<{
     tenantId?: string;

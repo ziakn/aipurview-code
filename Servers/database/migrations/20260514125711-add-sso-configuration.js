@@ -85,10 +85,9 @@ module.exports = {
            DROP COLUMN IF EXISTS sso_provider;`,
         { transaction },
       );
-      await queryInterface.sequelize.query(
-        `DROP TABLE IF EXISTS verifywise.sso_configurations;`,
-        { transaction },
-      );
+      await queryInterface.sequelize.query(`DROP TABLE IF EXISTS verifywise.sso_configurations;`, {
+        transaction,
+      });
       await queryInterface.sequelize.query(
         `DROP TYPE IF EXISTS verifywise.enum_sso_configuration_providers;`,
         { transaction },

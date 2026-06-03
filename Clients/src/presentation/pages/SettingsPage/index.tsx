@@ -210,7 +210,7 @@ export default function ProfilePage() {
                     value: "sso",
                     icon: "Shield" as TabItem["icon"],
                     tooltip: "Configure Microsoft Entra ID single sign-on",
-                    },
+                  },
                 ]
               : []),
             ...(!isCustomFieldsDisabled

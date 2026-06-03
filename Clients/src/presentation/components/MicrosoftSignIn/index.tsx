@@ -77,15 +77,15 @@ export const MicrosoftSignIn: React.FC<MicrosoftSignInProps> = ({
       disableRipple
       variant="contained"
       sx={{
-        height: 34,
-        fontSize: "13px",
-        backgroundColor: "#2f2f2f",
-        color: "#ffffff",
-        boxShadow: "none",
-        textTransform: "none",
-        borderRadius: "4px",
-        position: "relative",
-        paddingLeft: theme.spacing(6),
+        "height": 34,
+        "fontSize": "13px",
+        "backgroundColor": "#2f2f2f",
+        "color": "#ffffff",
+        "boxShadow": "none",
+        "textTransform": "none",
+        "borderRadius": "4px",
+        "position": "relative",
+        "paddingLeft": theme.spacing(6),
         "&:hover": { backgroundColor: "#1a1a1a", boxShadow: "none" },
         "&:disabled": { backgroundColor: "#cccccc", color: "#666666" },
       }}

@@ -68,10 +68,7 @@ import { getRoleByIdQuery } from "../utils/role.utils";
 import { uploadFile } from "../utils/fileUpload.utils";
 import { markInvitationAcceptedQuery } from "../utils/invitation.utils";
 import { ConfidentialClientApplication } from "@azure/msal-node";
-import {
-  getAzureADConfigForLoginQuery,
-  isSSOFeatureEnabled,
-} from "../utils/ssoConfig.utils";
+import { getAzureADConfigForLoginQuery, isSSOFeatureEnabled } from "../utils/ssoConfig.utils";
 
 import { translateError } from "../utils/i18n.utils";
 /**
@@ -595,9 +592,7 @@ async function loginUserWithMicrosoft(req: Request, res: Response): Promise<any>
         "loginUserWithMicrosoft",
         "user.ctrl.ts",
       );
-      return res
-        .status(401)
-        .json(STATUS_CODE[401]("Failed to acquire token from Microsoft"));
+      return res.status(401).json(STATUS_CODE[401]("Failed to acquire token from Microsoft"));
     }
 
     const userInfoResponse = await fetch("https://graph.microsoft.com/v1.0/me", {

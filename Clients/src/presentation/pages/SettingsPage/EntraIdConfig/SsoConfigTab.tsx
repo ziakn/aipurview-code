@@ -219,11 +219,7 @@ const SsoConfigTab: React.FC = () => {
                 isRequired
                 sx={{ width: "100%" }}
               />
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ mt: 1, fontSize: "12px" }}
-              >
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1, fontSize: "12px" }}>
                 Found in Azure Portal &gt; Microsoft Entra ID &gt; Overview &gt; Tenant ID
               </Typography>
             </Box>
@@ -237,12 +233,9 @@ const SsoConfigTab: React.FC = () => {
                 isRequired
                 sx={{ width: "100%" }}
               />
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ mt: 1, fontSize: "12px" }}
-              >
-                Found in Azure Portal &gt; App registrations &gt; [Your App] &gt; Application (client) ID
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1, fontSize: "12px" }}>
+                Found in Azure Portal &gt; App registrations &gt; [Your App] &gt; Application
+                (client) ID
               </Typography>
             </Box>
           </Stack>
@@ -276,7 +269,6 @@ const SsoConfigTab: React.FC = () => {
               />
             </Box>
           </Stack>
-
         </Stack>
 
         <Stack direction="row" justifyContent="flex-end" spacing={2}>
@@ -299,7 +291,8 @@ const SsoConfigTab: React.FC = () => {
         </Typography>
         <Box sx={{ marginBottom: theme.spacing(3) }}>
           <Typography variant="body2" color="text.secondary" sx={{ fontSize: "13px" }}>
-            Enable SSO authentication for this organization. Configuration must be saved before enabling.
+            Enable SSO authentication for this organization. Configuration must be saved before
+            enabling.
           </Typography>
         </Box>
         <Stack direction="row" justifyContent="flex-end">

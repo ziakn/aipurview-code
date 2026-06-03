@@ -208,7 +208,16 @@ export const createNewUserQuery = async (
   transaction: Transaction,
   is_demo: boolean = false,
 ): Promise<UserModel> => {
-  const { name, surname, email, password_hash, role_id, organization_id, sso_provider, sso_user_id } = user;
+  const {
+    name,
+    surname,
+    email,
+    password_hash,
+    role_id,
+    organization_id,
+    sso_provider,
+    sso_user_id,
+  } = user;
   const created_at = new Date();
   const last_login = new Date();
 
