@@ -151,3 +151,4 @@ nul
 *.tar.gz
 *.zip
 .dfmt/
+**/inventory.ini
