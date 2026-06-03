@@ -109,7 +109,8 @@
       "Bash(xargs basename)",
       "Bash(xargs -I{} grep -n \"organization_id\" {})",
       "Bash(npx jest *)",
-      "Bash(xargs cat)"
+      "Bash(xargs cat)",
+      "Bash(npm test *)"
     ]
   }
 }
