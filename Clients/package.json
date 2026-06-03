@@ -133,6 +133,7 @@
     "concurrently": "^9.2.1",
     "dotenv-webpack": "^9.0.0",
     "jsdom": "^29.1.1",
+    "msw": "^2.14.6",
     "prettier": "^3.3.3",
     "typescript": "^6.0.3",
     "url-loader": "^4.1.1",
