@@ -12,6 +12,8 @@ import allowedRoles from "../../../application/constants/permissions";
 import { useAuth } from "../../../application/hooks/useAuth";
 import ApiKeys from "./ApiKeys";
 import AuditLedger from "./AuditLedger";
+import EntraIdConfig from "./EntraIdConfig";
+import { useSsoFeatureEnabled } from "../../../application/hooks/useSsoFeatureEnabled";
 import CustomFieldsTab from "./CustomFields";
 import AIApprovalRules from "./AIApprovalRules";
 import TabBar, { TabItem } from "../../components/TabBar";
@@ -30,12 +32,14 @@ const BUILT_IN_TABS = [
   "features",
   "apikeys",
   "audit-ledger",
+  "sso",
   "custom-fields",
   "ai-approval-rules",
 ];
 
 export default function ProfilePage() {
   const { userRoleName, isSuperAdmin } = useAuth();
+  const ssoFeatureEnabled = useSsoFeatureEnabled();
   const location = useLocation();
   const navigate = useNavigate();
   const isTeamManagementDisabled =
@@ -63,8 +67,11 @@ export default function ProfilePage() {
     if (isSuperAdmin) {
       tabs = tabs.filter((t) => !["profile", "password", "preferences"].includes(t));
     }
+    if (!ssoFeatureEnabled) {
+      tabs = tabs.filter((t) => t !== "sso");
+    }
     return [...tabs, ...pluginTabs.map((t) => t.value)];
-  }, [pluginTabs, isSuperAdmin]);
+  }, [pluginTabs, isSuperAdmin, ssoFeatureEnabled]);
 
   // keep state synced with URL
   useEffect(() => {
@@ -196,6 +203,16 @@ export default function ProfilePage() {
                   },
                 ]
               : []),
+            ...(ssoFeatureEnabled
+              ? [
+                  {
+                    label: "SSO",
+                    value: "sso",
+                    icon: "Shield" as TabItem["icon"],
+                    tooltip: "Configure Microsoft Entra ID single sign-on",
+                  },
+                ]
+              : []),
             ...(!isCustomFieldsDisabled
               ? [
                   {
@@ -268,6 +285,11 @@ export default function ProfilePage() {
           </TabPanel>
         )}
 
+        {ssoFeatureEnabled && (
+          <TabPanel sx={{ p: 0 }} value="sso">
+            <EntraIdConfig />
+          </TabPanel>
+        )}
         {!isCustomFieldsDisabled && (
           <TabPanel sx={{ p: 0 }} value="custom-fields">
             <CustomFieldsTab />

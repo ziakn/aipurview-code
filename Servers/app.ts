@@ -105,6 +105,7 @@ import superAdminRoutes from "./routes/superAdmin.route";
 import { i18nMiddleware } from "./middleware/i18n.middleware";
 import { sequelize } from "./database/db";
 import redisClient from "./database/redis";
+import ssoConfigRoutes from "./routes/ssoConfig.route";
 
 const swaggerDoc = YAML.load("./swagger.yaml");
 
@@ -305,6 +306,7 @@ export function createApp(preRoutesMiddleware?: RequestHandler[]): express.Appli
   app.use("/api/super-admin", superAdminRoutes);
   app.use("/api/internal", internalRoutes);
   app.use("/v1", virtualKeyProxyRoutes());
+  app.use("/api/ssoConfig", ssoConfigRoutes);
 
   return app;
 }
