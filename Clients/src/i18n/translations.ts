@@ -7928,7 +7928,8 @@ export const translations: Record<string, Record<string, string>> = {
 
     // Microsoft Entra ID SSO
     "Sign in with Microsoft": "Mit Microsoft anmelden",
-    "Configure Microsoft Entra ID single sign-on": "Microsoft Entra ID Single Sign-on konfigurieren",
+    "Configure Microsoft Entra ID single sign-on":
+      "Microsoft Entra ID Single Sign-on konfigurieren",
     "Entra ID SSO configuration": "Entra ID SSO-Konfiguration",
     "Enable Entra ID SSO": "Entra ID SSO aktivieren",
     "Cloud environment": "Cloud-Umgebung",
