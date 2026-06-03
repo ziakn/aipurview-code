@@ -7925,6 +7925,26 @@ export const translations: Record<string, Record<string, string>> = {
     "Clear value": "Wert löschen",
     "Failed to load custom fields.": "Benutzerdefinierte Felder konnten nicht geladen werden.",
     "Required custom fields missing": "Erforderliche benutzerdefinierte Felder fehlen",
+
+    // Microsoft Entra ID SSO
+    "Sign in with Microsoft": "Mit Microsoft anmelden",
+    "Configure Microsoft Entra ID single sign-on": "Microsoft Entra ID Single Sign-on konfigurieren",
+    "Entra ID SSO configuration": "Entra ID SSO-Konfiguration",
+    "Enable Entra ID SSO": "Entra ID SSO aktivieren",
+    "Cloud environment": "Cloud-Umgebung",
+    "Azure Public Cloud": "Azure Public Cloud",
+    "Azure Government": "Azure Government",
+    "Tenant id": "Mandanten-ID",
+    "Enter your Azure AD Tenant ID": "Geben Sie Ihre Azure AD-Mandanten-ID ein",
+    "Found in Azure Portal &gt; Microsoft Entra ID &gt; Overview &gt; Tenant ID":
+      "Zu finden im Azure-Portal &gt; Microsoft Entra ID &gt; Übersicht &gt; Mandanten-ID",
+    "Client id": "Client-ID",
+    "Enter your Application (client) ID": "Geben Sie Ihre Anwendungs-(Client-)ID ein",
+    "Client secret": "Client-Geheimnis",
+    "Enter your client secret": "Geben Sie Ihr Client-Geheimnis ein",
+    "Select your organization": "Wählen Sie Ihre Organisation aus",
+    "Completing sign in...": "Anmeldung wird abgeschlossen...",
+    "Redirecting to login...": "Weiterleitung zur Anmeldung...",
   },
 
   fr: {
@@ -15779,5 +15799,26 @@ export const translations: Record<string, Record<string, string>> = {
     "Clear value": "Effacer la valeur",
     "Failed to load custom fields.": "Échec du chargement des champs personnalisés.",
     "Required custom fields missing": "Champs personnalisés obligatoires manquants",
+
+    // Microsoft Entra ID SSO
+    "Sign in with Microsoft": "Se connecter avec Microsoft",
+    "Configure Microsoft Entra ID single sign-on":
+      "Configurer l'authentification unique Microsoft Entra ID",
+    "Entra ID SSO configuration": "Configuration SSO Entra ID",
+    "Enable Entra ID SSO": "Activer la connexion unique Entra ID",
+    "Cloud environment": "Environnement cloud",
+    "Azure Public Cloud": "Azure Public Cloud",
+    "Azure Government": "Azure Government",
+    "Tenant id": "ID de tenant",
+    "Enter your Azure AD Tenant ID": "Saisissez l'ID de tenant Azure AD",
+    "Found in Azure Portal &gt; Microsoft Entra ID &gt; Overview &gt; Tenant ID":
+      "Disponible dans le portail Azure &gt; Microsoft Entra ID &gt; Vue d'ensemble &gt; ID de tenant",
+    "Client id": "ID client",
+    "Enter your Application (client) ID": "Saisissez l'ID de votre application (client)",
+    "Client secret": "Secret client",
+    "Enter your client secret": "Saisissez votre secret client",
+    "Select your organization": "Sélectionnez votre organisation",
+    "Completing sign in...": "Finalisation de la connexion...",
+    "Redirecting to login...": "Redirection vers la page de connexion...",
   },
 };
