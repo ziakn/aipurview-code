@@ -10,6 +10,10 @@ import {
   createConversation,
   updateConversation,
   deleteConversation,
+  getMemorySummary,
+  deleteMyMemory,
+  adminClearAgentMemory,
+  adminListAgentMessages,
 } from "../controllers/advisor.ctrl";
 
 // Run advisor query
@@ -33,5 +37,17 @@ router.post("/conversations/:domain", authenticateJWT, createConversation);
 router.get("/conversations/:domain/:id", authenticateJWT, getConversationById);
 router.put("/conversations/:domain/:id", authenticateJWT, updateConversation);
 router.delete("/conversations/:domain/:id", authenticateJWT, deleteConversation);
+
+// Agent memory — inspection + GDPR right-to-erasure
+//
+// GET    /advisor/memory                            — summary of stored data for the calling user
+// DELETE /advisor/memory                            — purge calling user's messages
+//                                                    (?agentName=advisor & ?sessionId=foo to scope)
+// GET    /advisor/memory/admin/agent/:agentName     — admin: latest messages for agent (org-wide)
+// DELETE /advisor/memory/admin/agent/:agentName     — admin: clear ALL memory for agent (org-wide)
+router.get("/memory", authenticateJWT, getMemorySummary);
+router.delete("/memory", authenticateJWT, deleteMyMemory);
+router.get("/memory/admin/agent/:agentName", authenticateJWT, adminListAgentMessages);
+router.delete("/memory/admin/agent/:agentName", authenticateJWT, adminClearAgentMemory);
 
 export default router;

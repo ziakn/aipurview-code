@@ -13,11 +13,28 @@ const jsonParser = express.json({ limit: "50mb" });
 // Headers are now set directly in the proxyReq handler to ensure they're forwarded
 
 /**
+ * Build the LiteLLM model string from a (provider, model) pair.
+ *
+ * Mirrors the Python ``to_litellm_model`` helper in
+ * ``EvalServer/src/utils/gateway_litellm_client.py``. Exported so unit tests
+ * can guarantee parity between the Node proxy and the Python eval server.
+ */
+export const toLiteLLMModel = (prov: string, mdl: string): string => {
+  const p = (prov || "").toLowerCase();
+  if (p === "openrouter") return mdl.startsWith("openrouter/") ? mdl : `openrouter/${mdl}`;
+  if (p === "google" || p === "gemini") return mdl.startsWith("gemini/") ? mdl : `gemini/${mdl}`;
+  if (p === "anthropic" && !mdl.startsWith("anthropic/")) return `anthropic/${mdl}`;
+  if (p === "mistral" && !mdl.startsWith("mistral/")) return `mistral/${mdl}`;
+  if (p === "xai" && !mdl.startsWith("xai/")) return `xai/${mdl}`;
+  return mdl;
+};
+
+/**
  * Middleware to inject API keys for experiment creation and arena comparisons
  * Handles both custom scorers and standard judge LLM
  * This modifies req.body before the proxy forwards it
  */
-async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
+export async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
   // Only process POST requests to experiments, arena, or report endpoints
   const isExperiment = req.method === "POST" && req.url.includes("/experiments");
   const isArena = req.method === "POST" && req.url.includes("/arena/compare");
@@ -64,14 +81,23 @@ async function injectApiKeys(req: Request, _res: Response, next: NextFunction) {
         }
       }
 
-      // Get provider for judge model (default to openai if not specified)
+      // Use explicit judgeProvider when available; fall back to model-name inference
       const judgeModel = body.judgeModel || "gpt-4o";
-      let judgeProvider = "openai";
-      if (judgeModel.includes("claude")) judgeProvider = "anthropic";
-      else if (judgeModel.includes("gemini")) judgeProvider = "google";
-      else if (judgeModel.includes("mistral") || judgeModel.includes("magistral"))
-        judgeProvider = "mistral";
-      else if (judgeModel.includes("grok")) judgeProvider = "xai";
+      let judgeProvider: string;
+      if (
+        body.judgeProvider &&
+        VALID_PROVIDERS.includes(body.judgeProvider.toLowerCase() as LLMProvider)
+      ) {
+        judgeProvider = body.judgeProvider.toLowerCase();
+      } else {
+        judgeProvider = "openai";
+        if (judgeModel.includes("claude")) judgeProvider = "anthropic";
+        else if (judgeModel.includes("gemini")) judgeProvider = "google";
+        else if (judgeModel.includes("mistral") || judgeModel.includes("magistral"))
+          judgeProvider = "mistral";
+        else if (judgeModel.includes("grok")) judgeProvider = "xai";
+        else if (judgeModel.includes("/")) judgeProvider = "openrouter";
+      }
 
       if (!apiKeys[judgeProvider]) {
         try {
@@ -300,17 +326,6 @@ function deepEvalRoutes() {
         return;
       }
 
-      // Build the LiteLLM model string (same logic as gateway_litellm_client.py)
-      const toLiteLLMModel = (prov: string, mdl: string): string => {
-        const p = prov.toLowerCase();
-        if (p === "openrouter") return mdl.startsWith("openrouter/") ? mdl : `openrouter/${mdl}`;
-        if (p === "google" || p === "gemini")
-          return mdl.startsWith("gemini/") ? mdl : `gemini/${mdl}`;
-        if (p === "anthropic" && !mdl.startsWith("anthropic/")) return `anthropic/${mdl}`;
-        if (p === "mistral" && !mdl.startsWith("mistral/")) return `mistral/${mdl}`;
-        if (p === "xai" && !mdl.startsWith("xai/")) return `xai/${mdl}`;
-        return mdl;
-      };
       const litellmModel = toLiteLLMModel(normalizedProvider, model);
 
       try {

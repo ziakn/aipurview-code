@@ -27,7 +27,7 @@ export async function getAllEvidences(req: Request, res: Response) {
   logger.debug("🔍 Fetching all evidences");
 
   try {
-    const evidences = (await getAllEvidencesQuery(req.organizationId!)) as EvidenceHubModel[];
+    const evidences = await getAllEvidencesQuery(req.organizationId!);
 
     if (evidences && evidences.length > 0) {
       logStructured(
@@ -36,7 +36,7 @@ export async function getAllEvidences(req: Request, res: Response) {
         "getAllEvidences",
         "evidenceHub.controller.ts",
       );
-      return res.status(200).json(STATUS_CODE[200](evidences.map((e) => e.toSafeJSON())));
+      return res.status(200).json(STATUS_CODE[200](evidences));
     }
 
     logStructured(
@@ -121,11 +121,13 @@ export async function createNewEvidence(req: Request, res: Response) {
   try {
     const evidence = new EvidenceHubModel({
       ...req.body,
-      // evidence_files: JSON.stringify(req.body.evidence_files),
       uploaded_at: new Date(),
       created_at: new Date(),
       updated_at: new Date(),
     });
+    // evidence_files is not a @Column — Sequelize's constructor strips it.
+    // Re-attach so createNewEvidenceQuery can create file_entity_links rows.
+    (evidence as any).evidence_files = req.body.evidence_files;
 
     const savedEvidence = await createNewEvidenceQuery(evidence, req.organizationId!, transaction);
 

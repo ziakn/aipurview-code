@@ -14,6 +14,8 @@ import ApiKeys from "./ApiKeys";
 import AuditLedger from "./AuditLedger";
 import EntraIdConfig from "./EntraIdConfig";
 import { useSsoFeatureEnabled } from "../../../application/hooks/useSsoFeatureEnabled";
+import CustomFieldsTab from "./CustomFields";
+import AIApprovalRules from "./AIApprovalRules";
 import TabBar, { TabItem } from "../../components/TabBar";
 import { PageHeaderExtended } from "../../components/Layout/PageHeaderExtended";
 import { usePluginRegistry } from "../../../application/contexts/PluginRegistry.context";
@@ -31,6 +33,8 @@ const BUILT_IN_TABS = [
   "apikeys",
   "audit-ledger",
   "sso",
+  "custom-fields",
+  "ai-approval-rules",
 ];
 
 export default function ProfilePage() {
@@ -45,6 +49,9 @@ export default function ProfilePage() {
     !isSuperAdmin && !allowedRoles.features?.manage?.includes(userRoleName);
   // Audit ledger: Admin-only (or super admin)
   const isAuditLedgerDisabled = !isSuperAdmin && userRoleName !== "Admin";
+  // Custom fields: strictly Admin role only (not SuperAdmin) — defining
+  // per-org custom fields is an org admin's concern, not a system-level one.
+  const isCustomFieldsDisabled = userRoleName !== "Admin";
 
   // Get plugin tabs dynamically from the plugin registry
   const { getPluginTabs, installedPlugins, isLoading: pluginsLoading } = usePluginRegistry();
@@ -203,6 +210,28 @@ export default function ProfilePage() {
                     value: "sso",
                     icon: "Shield" as TabItem["icon"],
                     tooltip: "Configure Microsoft Entra ID single sign-on",
+                    },
+                ]
+              : []),
+            ...(!isCustomFieldsDisabled
+              ? [
+                  {
+                    label: "Custom fields",
+                    value: "custom-fields",
+                    icon: "Settings" as TabItem["icon"],
+                    tooltip:
+                      "Define organization-specific fields on entities like Vendors, Policies, etc.",
+                  },
+                ]
+              : []),
+            ...(!isAuditLedgerDisabled
+              ? [
+                  {
+                    label: "AI Approval Rules",
+                    value: "ai-approval-rules",
+                    icon: "Shield" as TabItem["icon"],
+                    tooltip:
+                      "Configure auto-approve, require-approval, and auto-reject rules for AI operations",
                   },
                 ]
               : []),
@@ -215,6 +244,7 @@ export default function ProfilePage() {
           ]}
           activeTab={activeTab}
           onChange={handleTabChange}
+          scrollable
         />
 
         {!isSuperAdmin && (
@@ -258,6 +288,16 @@ export default function ProfilePage() {
         {ssoFeatureEnabled && (
           <TabPanel sx={{ p: 0 }} value="sso">
             <EntraIdConfig />
+          </TabPanel>
+        )}
+        {!isCustomFieldsDisabled && (
+          <TabPanel sx={{ p: 0 }} value="custom-fields">
+            <CustomFieldsTab />
+          </TabPanel>
+        )}
+        {!isAuditLedgerDisabled && (
+          <TabPanel sx={{ p: 0 }} value="ai-approval-rules">
+            <AIApprovalRules />
           </TabPanel>
         )}
 

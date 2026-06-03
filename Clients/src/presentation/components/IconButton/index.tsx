@@ -70,7 +70,7 @@ function IconButton({
     setAnchorEl(event.currentTarget);
   };
 
-  function closeDropDownMenu(e: React.SyntheticEvent) {
+  function closeActionMenu(e: React.SyntheticEvent) {
     e.stopPropagation();
     setAnchorEl(null);
   }
@@ -82,7 +82,7 @@ function IconButton({
     setIsOpenRemoveModal(false);
 
     if (e) {
-      closeDropDownMenu(e);
+      closeActionMenu(e);
     }
 
     try {
@@ -112,7 +112,7 @@ function IconButton({
       }
       setIsOpenRemoveModal(false);
       if (e) {
-        closeDropDownMenu(e);
+        closeActionMenu(e);
       }
     } else {
       await handleDelete(e);
@@ -132,7 +132,7 @@ function IconButton({
   const handleEdit = (e?: React.SyntheticEvent) => {
     onEdit();
     if (e) {
-      closeDropDownMenu(e);
+      closeActionMenu(e);
       onMouseEvent?.(e);
     }
   };
@@ -141,7 +141,7 @@ function IconButton({
     if (onView) {
       onView();
       if (e) {
-        closeDropDownMenu(e);
+        closeActionMenu(e);
         onMouseEvent?.(e);
       }
     }
@@ -151,7 +151,7 @@ function IconButton({
     if (openLinkedPolicies) {
       openLinkedPolicies();
       if (e) {
-        closeDropDownMenu(e);
+        closeActionMenu(e);
       }
     }
   };
@@ -161,7 +161,7 @@ function IconButton({
       onMakeVisible();
     }
     if (e) {
-      closeDropDownMenu(e);
+      closeActionMenu(e);
     }
   };
 
@@ -179,7 +179,7 @@ function IconButton({
       });
     } finally {
       if (e) {
-        closeDropDownMenu(e);
+        closeActionMenu(e);
       }
     }
   };
@@ -189,7 +189,7 @@ function IconButton({
       await onSendTest();
     }
     if (e) {
-      closeDropDownMenu(e);
+      closeActionMenu(e);
     }
   };
 
@@ -198,7 +198,7 @@ function IconButton({
       await onToggleEnable();
     }
     if (e) {
-      closeDropDownMenu(e);
+      closeActionMenu(e);
     }
   };
 
@@ -207,7 +207,7 @@ function IconButton({
       onRestore();
     }
     if (e) {
-      closeDropDownMenu(e);
+      closeActionMenu(e);
     }
   };
 
@@ -216,7 +216,7 @@ function IconButton({
       onLinkedObjects();
     }
     if (e) {
-      closeDropDownMenu(e);
+      closeActionMenu(e);
     }
   };
 
@@ -226,7 +226,7 @@ function IconButton({
     }
     setIsOpenHardDeleteModal(false);
     if (e) {
-      closeDropDownMenu(e);
+      closeActionMenu(e);
     }
   };
 
@@ -235,7 +235,7 @@ function IconButton({
       await onDownloadPDF();
     }
     if (e) {
-      closeDropDownMenu(e);
+      closeActionMenu(e);
     }
   };
 
@@ -244,14 +244,14 @@ function IconButton({
       await onDownloadDOCX();
     }
     if (e) {
-      closeDropDownMenu(e);
+      closeActionMenu(e);
     }
   };
 
   function handleCancel(e?: React.SyntheticEvent) {
     setIsOpenRemoveModal(false);
     if (e) {
-      closeDropDownMenu(e);
+      closeActionMenu(e);
     }
   }
 
@@ -321,7 +321,7 @@ function IconButton({
       return BUTTONS_BY_TYPE[normalizedType as ButtonType];
     }
 
-    return ["edit", "remove"];
+    return onPreview ? ["preview", "edit", "remove"] : ["edit", "remove"];
   };
 
   const listOfButtons = getListOfButtons();
@@ -377,7 +377,7 @@ function IconButton({
     <Menu
       anchorEl={anchorEl}
       open={Boolean(anchorEl)}
-      onClose={(e: React.SyntheticEvent) => closeDropDownMenu(e)}
+      onClose={(e: React.SyntheticEvent) => closeActionMenu(e)}
       slotProps={{
         paper: {
           sx: dropDownStyle,
@@ -438,9 +438,9 @@ function IconButton({
                   if (onAssignToFolder) {
                     onAssignToFolder();
                   }
-                  if (e) closeDropDownMenu(e);
+                  if (e) closeActionMenu(e);
                 } else if (item === "preview") {
-                  if (e) closeDropDownMenu(e);
+                  if (e) closeActionMenu(e);
                   if (onPreview) {
                     try {
                       await onPreview();
@@ -449,7 +449,7 @@ function IconButton({
                     }
                   }
                 } else if (item === "edit_metadata") {
-                  if (e) closeDropDownMenu(e);
+                  if (e) closeActionMenu(e);
                   if (onEditMetadata) {
                     try {
                       await onEditMetadata();
@@ -461,12 +461,12 @@ function IconButton({
                   if (onViewHistory) {
                     onViewHistory();
                   }
-                  if (e) closeDropDownMenu(e);
+                  if (e) closeActionMenu(e);
                 } else if (item === "delete" && (type === "Task" || type === "task")) {
                   // Task hard delete action
                   if (hardDeleteWarningTitle && hardDeleteWarningMessage) {
                     setIsOpenHardDeleteModal(true);
-                    if (e) closeDropDownMenu(e);
+                    if (e) closeActionMenu(e);
                   } else {
                     handleHardDelete(e);
                   }
@@ -474,14 +474,14 @@ function IconButton({
                   // Task archive action (soft delete)
                   if (warningTitle && warningMessage) {
                     setIsOpenRemoveModal(true);
-                    if (e) closeDropDownMenu(e);
+                    if (e) closeActionMenu(e);
                   } else {
                     handleDelete(e);
                   }
                 } else if (item === "remove" || item === "archive") {
                   if (warningTitle && warningMessage) {
                     setIsOpenRemoveModal(true);
-                    if (e) closeDropDownMenu(e);
+                    if (e) closeActionMenu(e);
                   } else {
                     if (checkForRisks && onDeleteWithRisks) {
                       handleDeleteWithRiskCheck(e);

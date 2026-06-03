@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { FC, useState, useMemo, useCallback, useEffect, Suspense } from "react";
+import React, { FC, useState, useMemo, useCallback, useEffect, useRef } from "react";
 import {
   useTheme,
   Stack,
@@ -10,12 +10,13 @@ import {
   Tooltip,
 } from "@mui/material";
 import Toggle from "../../Inputs/Toggle";
-import { lazy } from "react";
-const Field = lazy(() => import("../../Inputs/Field"));
-const DatePicker = lazy(() => import("../../Inputs/Datepicker"));
+import Field from "../../Inputs/Field";
+import DatePicker from "../../Inputs/Datepicker";
 import SelectComponent from "../../Inputs/Select";
 import { ChevronDown, DownloadIcon } from "lucide-react";
 import StandardModal from "../StandardModal";
+import CustomFieldsSection, { type CustomFieldsSectionHandle } from "../../CustomFieldsSection";
+import { useRequiredCustomFieldsGate } from "../../CustomFieldsSection/RequiredCustomFieldsGate";
 import { ModelInventoryStatus } from "../../../../domain/enums/modelInventory.enum";
 import { HistorySidebar } from "../../Common/HistorySidebar";
 import { useModelInventoryChangeHistory } from "../../../../application/hooks/useModelInventoryChangeHistory";
@@ -49,7 +50,13 @@ dayjs.extend(utc);
 interface NewModelInventoryProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  onSuccess?: (data: NewModelInventoryFormValues) => void;
+  /**
+   * On create, return `{ id }` of the newly-created model so the modal can
+   * persist staged custom field values against it. Return void on edit.
+   */
+  onSuccess?: (
+    data: NewModelInventoryFormValues,
+  ) => void | Promise<void> | Promise<{ id?: number } | void>;
   onError?: (error: any) => void;
   initialData?: NewModelInventoryFormValues;
   isEdit?: boolean;
@@ -152,6 +159,7 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("details");
   const [isEvidenceLoading] = useState(false);
+  const customFieldsRef = useRef<CustomFieldsSectionHandle | null>(null);
 
   const validators = useMemo(
     () => ({
@@ -222,10 +230,12 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
     }
   }, [isOpen, initialData, isEdit, resetErrors]);
 
-  // Fetch users when modal opens
+  // Fetch users when modal opens; reset tab to default when it closes.
   useEffect(() => {
     if (isOpen) {
       fetchUsers();
+    } else {
+      setActiveTab("details");
     }
   }, [isOpen]);
 
@@ -312,9 +322,13 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
     }));
   }, []);
 
+  const customFieldsGate = useRequiredCustomFieldsGate(
+    "model_inventory",
+    isEdit ? ((selectedModelInventoryId as number) ?? null) : null,
+  );
   // Button should be enabled for new items or always enabled during edit
   // Simplified: only disable during submission
-  const isButtonDisabled = isSubmitting;
+  const isButtonDisabled = isSubmitting || customFieldsGate.blocked;
 
   const handleOnTextFieldChange = useCallback(
     (prop: keyof NewModelInventoryFormValues) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -429,17 +443,37 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
     onClose: handleClose,
   });
 
-  const handleSubmit = async (event?: React.FormEvent) => {
+  const handleSaveModelInventory = async (event?: React.FormEvent) => {
     if (event) event.preventDefault();
     if (validateAll(values)) {
       setIsSubmitting(true);
       try {
+        let cfFlushFailed = false;
         if (onSuccess) {
-          await onSuccess({
+          const result = await onSuccess({
             ...values,
             capabilities: values.capabilities,
             security_assessment: values.security_assessment,
           });
+          const newId =
+            result && typeof result === "object" && "id" in result
+              ? (result as { id?: number }).id
+              : undefined;
+          const targetId = isEdit ? (selectedModelInventoryId as number | undefined) : newId;
+          if (targetId && customFieldsRef.current?.hasPendingValues()) {
+            try {
+              await customFieldsRef.current.flush(targetId);
+            } catch (cfError) {
+              cfFlushFailed = true;
+              console.error("Model saved, but custom field values failed to save:", cfError);
+            }
+          }
+        }
+        if (cfFlushFailed) {
+          // Entity is saved. Keep modal open so the inline warning from
+          // CustomFieldsSection stays visible.
+          setIsSubmitting(false);
+          return;
         }
         handleClose();
       } catch (error: any) {
@@ -503,85 +537,79 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
     <Stack spacing={3}>
       {/* First Row: Provider, Model, Version */}
       <Stack direction={"row"} justifyContent={"space-between"} spacing={6}>
-        <Suspense fallback={<div>Loading...</div>}>
-          <Field
-            id="provider"
-            label="Provider"
-            width={220}
-            value={values.provider}
-            onChange={handleOnTextFieldChange("provider")}
-            error={errors.provider}
-            isRequired
-            sx={fieldStyle}
-            placeholder="eg. OpenAI"
-          />
-        </Suspense>
-        <Suspense fallback={<div>Loading...</div>}>
-          <AutoCompleteField<
-            { _id: string; name: string; surname: string; email: string },
-            false,
-            false,
-            true
-          >
-            id="model-input"
-            label="Model"
-            isRequired
-            freeSolo
-            value={values.model}
-            options={modelInventoryList || []}
-            getOptionLabel={(option) => (typeof option === "string" ? option : option.name)}
-            onChange={(_event, newValue) => {
-              if (typeof newValue === "string") {
-                setValues((prev) => ({ ...prev, model: newValue }));
-              } else if (newValue && typeof newValue === "object") {
-                setValues((prev) => ({ ...prev, model: newValue.name }));
-              } else {
-                setValues((prev) => ({ ...prev, model: "" }));
-              }
+        <Field
+          id="provider"
+          label="Provider"
+          width={220}
+          value={values.provider}
+          onChange={handleOnTextFieldChange("provider")}
+          error={errors.provider}
+          isRequired
+          sx={fieldStyle}
+          placeholder="eg. OpenAI"
+        />
+        <AutoCompleteField<
+          { _id: string; name: string; surname: string; email: string },
+          false,
+          false,
+          true
+        >
+          id="model-input"
+          label="Model"
+          isRequired
+          freeSolo
+          value={values.model}
+          options={modelInventoryList || []}
+          getOptionLabel={(option) => (typeof option === "string" ? option : option.name)}
+          onChange={(_event, newValue) => {
+            if (typeof newValue === "string") {
+              setValues((prev) => ({ ...prev, model: newValue }));
+            } else if (newValue && typeof newValue === "object") {
+              setValues((prev) => ({ ...prev, model: newValue.name }));
+            } else {
+              setValues((prev) => ({ ...prev, model: "" }));
+            }
+            clearFieldError("model");
+          }}
+          onInputChange={(_event, newInputValue, reason) => {
+            if (reason === "input") {
+              setValues((prev) => ({ ...prev, model: newInputValue }));
               clearFieldError("model");
-            }}
-            onInputChange={(_event, newInputValue, reason) => {
-              if (reason === "input") {
-                setValues((prev) => ({ ...prev, model: newInputValue }));
-                clearFieldError("model");
-              }
-            }}
-            renderOption={(props, option) => {
-              const { key, ...otherProps } = props;
-              return (
-                <Box component="li" key={key} {...otherProps}>
-                  <Typography sx={{ fontSize: 13, color: theme.palette.text.primary }}>
-                    {option.name}
-                  </Typography>
-                </Box>
-              );
-            }}
-            popupIcon={<ChevronDown size={16} />}
-            filterOptions={(options, state) => {
-              const filtered = options.filter((option) =>
-                option.name.toLowerCase().includes(state.inputValue.toLowerCase()),
-              );
-              return filtered.length === 0 ? [] : filtered;
-            }}
-            placeholder="Select or enter model"
-            error={errors.model}
-            disabled={isLoadingUsers}
-            sx={{ width: 220 }}
-          />
-        </Suspense>
-        <Suspense fallback={<div>Loading...</div>}>
-          <Field
-            id="version"
-            label="Version"
-            width={220}
-            value={values.version}
-            onChange={handleOnTextFieldChange("version")}
-            error={errors.version}
-            isRequired
-            sx={fieldStyle}
-            placeholder="e.g., 4.0, 1.5"
-          />
-        </Suspense>
+            }
+          }}
+          renderOption={(props, option) => {
+            const { key, ...otherProps } = props;
+            return (
+              <Box component="li" key={key} {...otherProps}>
+                <Typography sx={{ fontSize: 13, color: theme.palette.text.primary }}>
+                  {option.name}
+                </Typography>
+              </Box>
+            );
+          }}
+          popupIcon={<ChevronDown size={16} />}
+          filterOptions={(options, state) => {
+            const filtered = options.filter((option) =>
+              option.name.toLowerCase().includes(state.inputValue.toLowerCase()),
+            );
+            return filtered.length === 0 ? [] : filtered;
+          }}
+          placeholder="Select or enter model"
+          error={errors.model}
+          disabled={isLoadingUsers}
+          sx={{ width: 220 }}
+        />
+        <Field
+          id="version"
+          label="Version"
+          width={220}
+          value={values.version}
+          onChange={handleOnTextFieldChange("version")}
+          error={errors.version}
+          isRequired
+          sx={fieldStyle}
+          placeholder="e.g., 4.0, 1.5"
+        />
       </Stack>
 
       {/* Second Row: Approver, Status, Status Date */}
@@ -608,19 +636,17 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
           onChange={handleOnSelectChange("status")}
           placeholder="Select status"
         />
-        <Suspense fallback={<div>Loading...</div>}>
-          <DatePicker
-            label="Status date"
-            date={values.status_date ? dayjs(values.status_date) : dayjs(new Date())}
-            handleDateChange={handleDateChange}
-            sx={{
-              width: 220,
-              backgroundColor: theme.palette.background.main,
-            }}
-            isRequired
-            error={errors.status_date}
-          />
-        </Suspense>
+        <DatePicker
+          label="Status date"
+          date={values.status_date ? dayjs(values.status_date) : dayjs(new Date())}
+          handleDateChange={handleDateChange}
+          sx={{
+            width: 220,
+            backgroundColor: theme.palette.background.main,
+          }}
+          isRequired
+          error={errors.status_date}
+        />
       </Stack>
 
       {/* Capabilities Section */}
@@ -719,53 +745,45 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
       />
 
       <Stack direction={"row"} spacing={6}>
-        <Suspense fallback={<div>Loading...</div>}>
-          <Field
-            id="reference_link"
-            label="Reference link"
-            width={"50%"}
-            value={values.reference_link}
-            onChange={handleOnTextFieldChange("reference_link")}
-            sx={fieldStyle}
-            placeholder="eg. www.org.ca"
-          />
-        </Suspense>
-        <Suspense fallback={<div>Loading...</div>}>
-          <Field
-            id="biases"
-            label="Biases"
-            width={"50%"}
-            value={values.biases}
-            onChange={handleOnTextFieldChange("biases")}
-            sx={fieldStyle}
-            placeholder="Biases"
-          />
-        </Suspense>
+        <Field
+          id="reference_link"
+          label="Reference link"
+          width={"50%"}
+          value={values.reference_link}
+          onChange={handleOnTextFieldChange("reference_link")}
+          sx={fieldStyle}
+          placeholder="eg. www.org.ca"
+        />
+        <Field
+          id="biases"
+          label="Biases"
+          width={"50%"}
+          value={values.biases}
+          onChange={handleOnTextFieldChange("biases")}
+          sx={fieldStyle}
+          placeholder="Biases"
+        />
       </Stack>
 
       <Stack direction={"row"} spacing={6}>
-        <Suspense fallback={<div>Loading...</div>}>
-          <Field
-            id="hosting_provider"
-            label="Hosting provider"
-            value={values.hosting_provider}
-            width={"50%"}
-            onChange={handleOnTextFieldChange("hosting_provider")}
-            sx={fieldStyle}
-            placeholder="eg. OpenAI"
-          />
-        </Suspense>
-        <Suspense fallback={<div>Loading...</div>}>
-          <Field
-            id="limitations"
-            label="Limitations"
-            width={"50%"}
-            value={values.limitations}
-            onChange={handleOnTextFieldChange("limitations")}
-            sx={fieldStyle}
-            placeholder="Limitation"
-          />
-        </Suspense>
+        <Field
+          id="hosting_provider"
+          label="Hosting provider"
+          value={values.hosting_provider}
+          width={"50%"}
+          onChange={handleOnTextFieldChange("hosting_provider")}
+          sx={fieldStyle}
+          placeholder="eg. OpenAI"
+        />
+        <Field
+          id="limitations"
+          label="Limitations"
+          width={"50%"}
+          value={values.limitations}
+          onChange={handleOnTextFieldChange("limitations")}
+          sx={fieldStyle}
+          placeholder="Limitation"
+        />
       </Stack>
 
       {/* Security Assessment Section */}
@@ -956,64 +974,70 @@ const NewModelInventory: FC<NewModelInventoryProps> = ({
           ? "Update model details, approval status, and metadata"
           : "Register a new AI model with comprehensive metadata and approval tracking"
       }
-      onSubmit={activeTab === "details" ? handleSubmit : undefined}
+      onSubmit={activeTab === "details" ? handleSaveModelInventory : undefined}
       submitButtonText={isEdit ? "Update model" : "Save"}
       isSubmitting={isButtonDisabled}
       maxWidth="760px"
       expandedHeight={values.security_assessment}
     >
-      {/* ----------------- TABS ONLY IN EDIT MODE ----------------- */}
-      {isEdit ? (
-        <TabContext value={activeTab}>
-          {/* TAB BAR */}
-          <Box sx={{ marginBottom: 3 }}>
-            <TabBar
-              tabs={[
-                {
-                  label: "Model details",
-                  value: "details",
-                  icon: "Box",
-                },
-                {
-                  label: "Evidence",
-                  value: "evidence",
-                  icon: "Database",
-                },
-                {
-                  label: "Activity",
-                  value: "activity",
-                  icon: "History",
-                },
-              ]}
-              activeTab={activeTab}
-              onChange={(_, newValue) => setActiveTab(newValue)}
-              dataJoyrideId="model-tabs"
+      <TabContext value={activeTab}>
+        <Box sx={{ marginBottom: 3 }}>
+          <TabBar
+            tabs={
+              isEdit
+                ? [
+                    { label: "Model details", value: "details", icon: "Box" },
+                    { label: "Evidence", value: "evidence", icon: "Database" },
+                    {
+                      label: "Custom fields",
+                      value: "custom-fields",
+                      icon: "Settings",
+                    },
+                    { label: "Activity", value: "activity", icon: "History" },
+                  ]
+                : [
+                    { label: "Model details", value: "details", icon: "Box" },
+                    {
+                      label: "Custom fields",
+                      value: "custom-fields",
+                      icon: "Settings",
+                    },
+                  ]
+            }
+            activeTab={activeTab}
+            onChange={(_, newValue) => setActiveTab(newValue)}
+            dataJoyrideId="model-tabs"
+          />
+        </Box>
+
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Box sx={{ display: activeTab === "details" ? "block" : "none" }}>
+            {modelDetailsSection}
+          </Box>
+          {activeTab === "evidence" && isEdit && evidenceSection}
+          <Box sx={{ display: activeTab === "custom-fields" ? "block" : "none" }}>
+            <CustomFieldsSection
+              ref={customFieldsRef}
+              entityType="model_inventory"
+              entityId={isEdit ? ((selectedModelInventoryId as number) ?? null) : null}
             />
           </Box>
-
-          {/* Tab Content Wrapper */}
-          <Box
-            sx={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            {activeTab === "details" && modelDetailsSection}
-            {activeTab === "evidence" && evidenceSection}
-            {activeTab === "activity" && (
-              <HistorySidebar
-                inline
-                isOpen={true}
-                entityType="model_inventory"
-                entityId={selectedModelInventoryId as number}
-              />
-            )}
-          </Box>
-        </TabContext>
-      ) : (
-        modelDetailsSection
-      )}
+          {activeTab === "activity" && isEdit && (
+            <HistorySidebar
+              inline
+              isOpen={true}
+              entityType="model_inventory"
+              entityId={selectedModelInventoryId as number}
+            />
+          )}
+        </Box>
+      </TabContext>
     </StandardModal>
   );
 };

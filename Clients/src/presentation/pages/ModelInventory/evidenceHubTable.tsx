@@ -15,6 +15,10 @@ import {
   Tooltip,
   Box,
   Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  IconButton as MuiIconButton,
 } from "@mui/material";
 import TablePaginationActions from "../../components/TablePagination";
 import CustomIconButton from "../../components/IconButton";
@@ -26,6 +30,8 @@ import {
   FolderOpen,
   Shield,
   Clock,
+  Sparkles,
+  X,
 } from "lucide-react";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -35,10 +41,13 @@ import { getAllEntities } from "../../../application/repository/entity.repositor
 import { EmptyState } from "../../components/EmptyState";
 import EmptyStateTip from "../../components/EmptyState/EmptyStateTip";
 import { FileIcon } from "../../components/FileIcon";
+import EvidenceQualityBadge from "../../components/EvidenceQualityBadge";
+import EvidenceAnalysisPanel from "../../components/EvidenceAnalysisPanel";
+import { useQualityScores, useTriggerAnalysis } from "../../../application/hooks/useEvidenceAi";
+import { text as textColors, border as borderPalette } from "../../themes/palette";
 import {
   loadingContainerStyle,
   paginationMenuProps,
-  paginationSelectStyle,
   paginationStyle,
   showingTextCellStyle,
   tableFooterRowStyle,
@@ -59,12 +68,11 @@ type SortConfig = {
   direction: SortDirection;
 };
 
-const SelectorVertical = (props: any) => <ChevronsUpDown size={16} {...props} />;
-
 const TABLE_COLUMNS = [
   { id: "evidence_name", label: "EVIDENCE NAME", sortable: true },
   { id: "evidence_type", label: "TYPE", sortable: true },
   { id: "mapped_models", label: "MAPPED MODELS", sortable: false },
+  { id: "mapped_trainings", label: "MAPPED TRAININGS", sortable: false },
   { id: "tags", label: "TAGS", sortable: false },
   { id: "frameworks", label: "FRAMEWORKS", sortable: false },
   { id: "reviewer", label: "REVIEWER", sortable: true },
@@ -72,6 +80,7 @@ const TABLE_COLUMNS = [
   { id: "uploaded_by", label: "UPLOADED BY", sortable: true },
   { id: "uploaded_on", label: "UPLOADED ON", sortable: true },
   { id: "expiry_date", label: "EXPIRY", sortable: true },
+  { id: "quality", label: "QUALITY", sortable: true },
   { id: "actions", label: "", sortable: false },
 ];
 
@@ -168,16 +177,21 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
   isLoading,
   onEdit,
   onDelete,
+  onPreview,
   paginated = true,
   deletingId,
   modelInventoryData,
+  trainingData,
   hidePagination = false,
   visibleColumns,
 }) => {
   const theme = useTheme();
   const [users, setUsers] = useState<User[]>([]);
   const [page, setPage] = useState(0);
+  const { data: qualityScoresData } = useQualityScores();
+  const triggerAnalysis = useTriggerAnalysis();
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selectedAnalysis, setSelectedAnalysis] = useState<any | null>(null);
 
   // Filter columns based on visibleColumns prop
   const visibleTableColumns = useMemo(() => {
@@ -250,6 +264,42 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
     return map;
   }, [modelInventoryData]);
 
+  // Build a map of file_id → quality score from AI analysis data
+  const qualityMap = useMemo(() => {
+    const map = new Map<number, number>();
+    if (qualityScoresData && Array.isArray(qualityScoresData)) {
+      qualityScoresData.forEach((item: any) => {
+        if (item.file_id && item.overall_quality_score != null) {
+          map.set(item.file_id, item.overall_quality_score);
+        }
+      });
+    }
+    return map;
+  }, [qualityScoresData]);
+
+  // Full analysis map: file_id → AI analysis object (used by detail dialog)
+  const qualityAnalysisMap = useMemo(() => {
+    const map = new Map<number, any>();
+    if (qualityScoresData && Array.isArray(qualityScoresData)) {
+      qualityScoresData.forEach((item: any) => {
+        if (item.file_id) {
+          map.set(item.file_id, item);
+        }
+      });
+    }
+    return map;
+  }, [qualityScoresData]);
+  const trainingMap = useMemo(() => {
+    const map = new Map<number, string>();
+    (trainingData ?? []).forEach((t) => {
+      const idNum = typeof t.id === "string" ? Number(t.id) : t.id;
+      if (typeof idNum === "number" && !Number.isNaN(idNum)) {
+        map.set(idNum, t.training_name || `Training ${idNum}`);
+      }
+    });
+    return map;
+  }, [trainingData]);
+
   const handleChangePage = useCallback((_: unknown, newPage: number) => {
     setPage(newPage);
   }, []);
@@ -319,16 +369,21 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
               : "";
           break;
 
-        case "uploaded_on":
-          aValue =
+        case "uploaded_on": {
+          const aDate =
             a.evidence_files && a.evidence_files.length > 0
-              ? new Date(a.evidence_files[0].upload_date).getTime()
-              : 0;
-          bValue =
+              ? ((a.evidence_files[0] as any).upload_date ??
+                (a.evidence_files[0] as any).uploaded_time)
+              : null;
+          const bDate =
             b.evidence_files && b.evidence_files.length > 0
-              ? new Date(b.evidence_files[0].upload_date).getTime()
-              : 0;
+              ? ((b.evidence_files[0] as any).upload_date ??
+                (b.evidence_files[0] as any).uploaded_time)
+              : null;
+          aValue = aDate ? new Date(aDate).getTime() : 0;
+          bValue = bDate ? new Date(bDate).getTime() : 0;
           break;
+        }
 
         case "expiry_date":
           aValue = a.expiry_date ? new Date(a.expiry_date).getTime() : 0;
@@ -375,29 +430,69 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
                   ...tableRowHoverStyle,
                   ...(deletingId === evidence.id && tableRowDeletingStyle),
                 }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEdit?.(Number(evidence.id));
-                }}
+                // onClick={(e) => {
+                //   e.stopPropagation();
+                //   onEdit?.(Number(evidence.id));
+                // }}
               >
                 {isColVisible("evidence_name") && (
                   <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <FileIcon
-                        fileName={
-                          evidence.evidence_files && evidence.evidence_files.length > 0
-                            ? evidence.evidence_files[0].filename
-                            : ""
-                        }
-                      />
-                      {evidence.evidence_name}
-                    </Box>
+                    <Stack direction="column" spacing={0.5}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                        }}
+                      >
+                        <FileIcon
+                          fileName={
+                            evidence.evidence_files && evidence.evidence_files.length > 0
+                              ? ((evidence.evidence_files[0] as any).filename ??
+                                (evidence.evidence_files[0] as any).fileName ??
+                                "")
+                              : ""
+                          }
+                        />
+                        {evidence.evidence_name}
+                      </Box>
+                      {evidence.evidence_files && evidence.evidence_files.length > 1 && (
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                            gap: "4px",
+                            pl: "24px",
+                          }}
+                        >
+                          {evidence.evidence_files.map((f: any, idx: number) => {
+                            const name = f.filename ?? f.fileName ?? `File ${idx + 1}`;
+                            return (
+                              <Tooltip key={`${f.id}-${idx}`} title={`Preview ${name}`}>
+                                <Chip
+                                  label={name}
+                                  size="small"
+                                  clickable
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onPreview?.(evidence.id || 0, idx);
+                                  }}
+                                  sx={{
+                                    "height": 20,
+                                    "fontSize": 11,
+                                    "maxWidth": 180,
+                                    "& .MuiChip-label": {
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                    },
+                                  }}
+                                />
+                              </Tooltip>
+                            );
+                          })}
+                        </Box>
+                      )}
+                    </Stack>
                   </TableCell>
                 )}
                 {isColVisible("evidence_type") && (
@@ -412,6 +507,19 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
                         evidence.mapped_model_ids?.length
                           ? evidence.mapped_model_ids
                               .map((id) => modelMap.get(id) || `Model ${id}`)
+                              .join(", ")
+                          : "-"
+                      }
+                    />
+                  </TableCell>
+                )}
+                {isColVisible("mapped_trainings") && (
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    <TooltipCell
+                      value={
+                        evidence.mapped_training_ids?.length
+                          ? evidence.mapped_training_ids
+                              .map((id) => trainingMap.get(id) || `Training ${id}`)
                               .join(", ")
                           : "-"
                       }
@@ -479,9 +587,11 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
                 )}
                 {isColVisible("uploaded_on") && (
                   <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                    {evidence.evidence_files && evidence.evidence_files.length > 0
-                      ? displayFormattedDate(evidence.evidence_files[0].upload_date)
-                      : "-"}
+                    {(() => {
+                      const f = evidence.evidence_files?.[0] as any;
+                      const d = f?.upload_date ?? f?.uploaded_time;
+                      return d ? displayFormattedDate(d) : "-";
+                    })()}
                   </TableCell>
                 )}
                 {isColVisible("expiry_date") && (
@@ -489,14 +599,79 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
                     {evidence.expiry_date ? displayFormattedDate(evidence.expiry_date) : "-"}
                   </TableCell>
                 )}
+                {isColVisible("quality") && (
+                  <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                    {(() => {
+                      const fileId = evidence.evidence_files?.[0]?.id;
+                      const score = fileId ? qualityMap.get(Number(fileId)) : undefined;
+                      const analysis = fileId ? qualityAnalysisMap.get(Number(fileId)) : undefined;
+                      return score != null ? (
+                        <EvidenceQualityBadge
+                          score={score}
+                          onClick={
+                            analysis
+                              ? (e) => {
+                                  e.stopPropagation();
+                                  setSelectedAnalysis(analysis);
+                                }
+                              : undefined
+                          }
+                        />
+                      ) : (
+                        <Typography sx={{ fontSize: 11, color: palette.text.disabled }}>
+                          -
+                        </Typography>
+                      );
+                    })()}
+                  </TableCell>
+                )}
                 <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
                   <Stack direction="row" spacing={1}>
+                    {evidence.evidence_files?.[0]?.id && (
+                      <Tooltip
+                        title={
+                          qualityMap.has(Number(evidence.evidence_files[0].id))
+                            ? "Re-analyze with AI"
+                            : "Analyze with AI"
+                        }
+                      >
+                        <Box
+                          component="button"
+                          onClick={(e: React.MouseEvent) => {
+                            e.stopPropagation();
+                            const fileId = Number(evidence.evidence_files[0].id);
+                            if (fileId) triggerAnalysis.mutate(fileId);
+                          }}
+                          sx={{
+                            "display": "flex",
+                            "alignItems": "center",
+                            "justifyContent": "center",
+                            "width": 28,
+                            "height": 28,
+                            "borderRadius": "6px",
+                            "border": "1px solid",
+                            "borderColor": triggerAnalysis.isPending ? "#ccc" : "#7C3AED",
+                            "backgroundColor": triggerAnalysis.isPending ? "#f5f5f5" : "#F5F3FF",
+                            "color": triggerAnalysis.isPending ? "#999" : "#7C3AED",
+                            "cursor": triggerAnalysis.isPending ? "wait" : "pointer",
+                            "padding": 0,
+                            "&:hover": {
+                              backgroundColor: triggerAnalysis.isPending ? "#f5f5f5" : "#EDE9FE",
+                            },
+                          }}
+                          disabled={triggerAnalysis.isPending}
+                        >
+                          <Sparkles size={14} />
+                        </Box>
+                      </Tooltip>
+                    )}
                     <CustomIconButton
                       id={evidence.id || 0}
                       onDelete={() => onDelete?.(evidence.id || 0)}
                       onEdit={() => {
                         onEdit?.(evidence.id || 0);
                       }}
+                      onPreview={onPreview ? () => onPreview(evidence.id || 0) : undefined}
                       type=""
                       warningTitle="Delete this evidence?"
                       warningMessage="When you delete this evidence, all data related to this evidence will be removed. This action is non-recoverable."
@@ -541,10 +716,15 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
       deletingId,
       userMap,
       onEdit,
+      onPreview,
       modelMap,
       onDelete,
       isColVisible,
       visibleTableColumns,
+      qualityMap,
+      qualityAnalysisMap,
+      triggerAnalysis,
+      hidePagination,
     ],
   );
 
@@ -557,50 +737,115 @@ const EvidenceHubTable: React.FC<EvidenceHubTableProps> = ({
   }
 
   return (
-    <TableContainer sx={{ overflowX: "auto" }}>
-      <Table sx={singleTheme.tableStyles.primary.frame}>
-        <SortableTableHead
-          columns={visibleTableColumns}
-          sortConfig={sortConfig}
-          onSort={handleSort}
-          theme={theme}
-        />
-        {tableBody}
-        {paginated && !hidePagination && data && data.length > 0 && (
-          <TableFooter>
-            <TableRow sx={tableFooterRowStyle(theme)}>
-              <TableCell sx={showingTextCellStyle(theme)}>
-                Showing {getRange} of {sortedData?.length} model(s)
-              </TableCell>
-              <TablePagination
-                count={sortedData?.length ?? 0}
-                page={page}
-                onPageChange={handleChangePage}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={[5, 10, 15, 25]}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                ActionsComponent={(props) => <TablePaginationActions {...props} />}
-                labelRowsPerPage="Rows per page"
-                labelDisplayedRows={({ page, count }) =>
-                  `Page ${page + 1} of ${Math.max(0, Math.ceil(count / rowsPerPage))}`
-                }
-                slotProps={{
-                  select: {
-                    MenuProps: paginationMenuProps(theme),
-                    inputProps: {
-                      id: "pagination-dropdown",
+    <>
+      <TableContainer sx={{ overflowX: "auto" }}>
+        <Table sx={singleTheme.tableStyles.primary.frame}>
+          <SortableTableHead
+            columns={visibleTableColumns}
+            sortConfig={sortConfig}
+            onSort={handleSort}
+            theme={theme}
+          />
+          {tableBody}
+          {paginated && !hidePagination && data && data.length > 0 && (
+            <TableFooter>
+              <TableRow sx={tableFooterRowStyle(theme)}>
+                <TableCell sx={showingTextCellStyle(theme)}>
+                  Showing {getRange} of {sortedData?.length} model(s)
+                </TableCell>
+                <TablePagination
+                  count={sortedData?.length ?? 0}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  rowsPerPage={rowsPerPage}
+                  rowsPerPageOptions={[5, 10, 15, 25]}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  ActionsComponent={(props) => <TablePaginationActions {...props} />}
+                  labelRowsPerPage="Rows per page"
+                  labelDisplayedRows={({ page, count }) =>
+                    `Page ${page + 1} of ${Math.max(0, Math.ceil(count / rowsPerPage))}`
+                  }
+                  slotProps={{
+                    select: {
+                      MenuProps: paginationMenuProps(theme),
+                      inputProps: {
+                        id: "pagination-dropdown",
+                      },
                     },
-                    IconComponent: SelectorVertical,
-                    sx: paginationSelectStyle(theme),
-                  },
-                }}
-                sx={paginationStyle(theme)}
-              />
-            </TableRow>
-          </TableFooter>
-        )}
-      </Table>
-    </TableContainer>
+                  }}
+                  sx={paginationStyle(theme)}
+                />
+              </TableRow>
+            </TableFooter>
+          )}
+        </Table>
+      </TableContainer>
+
+      {/* Quality Score Detail Dialog — AIAuditDashboard pattern */}
+      <Dialog
+        open={selectedAnalysis !== null}
+        onClose={() => setSelectedAnalysis(null)}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: "4px",
+            border: `1px solid ${borderPalette.dark}`,
+            backgroundColor: "transparent",
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            fontSize: 16,
+            fontWeight: 600,
+            color: textColors.primary,
+            fontFamily: "'Red Hat Display', 'Geist', sans-serif",
+            borderBottom: `1px solid ${borderPalette.light}`,
+            backgroundColor: "#FFFFFF",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            py: 1.75,
+            px: 3,
+          }}
+        >
+          <Box>
+            <Typography
+              sx={{
+                fontSize: 16,
+                fontWeight: 600,
+                color: textColors.primary,
+                fontFamily: "'Red Hat Display', 'Geist', sans-serif",
+                lineHeight: 1.3,
+              }}
+            >
+              Evidence Quality Details
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: 12,
+                color: textColors.secondary,
+                mt: 0.25,
+                fontWeight: 400,
+              }}
+            >
+              AI-derived score breakdown across 5 dimensions
+            </Typography>
+          </Box>
+          <MuiIconButton
+            onClick={() => setSelectedAnalysis(null)}
+            size="small"
+            sx={{ color: textColors.secondary }}
+          >
+            <X size={18} />
+          </MuiIconButton>
+        </DialogTitle>
+        <DialogContent sx={{ p: 0 }}>
+          {selectedAnalysis && <EvidenceAnalysisPanel analysis={selectedAnalysis} />}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

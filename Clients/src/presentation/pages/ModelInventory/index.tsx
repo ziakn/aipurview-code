@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect, Suspense, useMemo, useCallback, useRef } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { Box, Stack, Fade, Modal, Typography, useTheme, IconButton } from "@mui/material";
 import { CirclePlus as AddCircleOutlineIcon, BarChart3 } from "lucide-react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
@@ -15,6 +15,7 @@ import {
   createNewUser,
 } from "../../../application/repository/entity.repository";
 import { createModelInventory } from "../../../application/repository/modelInventory.repository";
+import { onAiActionCompleted } from "../../../application/events/aiActionEvents";
 import { getShareLinksForResource } from "../../../application/repository/share.repository";
 import { useAuth } from "../../../application/hooks/useAuth";
 import { usePluginRegistry } from "../../../application/contexts/PluginRegistry.context";
@@ -56,6 +57,8 @@ import { EvidenceHubModel } from "../../../domain/models/Common/evidenceHub/evid
 import NewEvidenceHub from "../../components/Modals/EvidenceHub";
 import { createEvidenceHub } from "../../../application/repository/evidenceHub.repository";
 import EvidenceHubTable from "./evidenceHubTable";
+import FilePreviewPanel from "../FileManager/components/FilePreviewPanel";
+import { FileMetadata } from "../../../application/repository/file.repository";
 import ModelEvaluationsTab from "./ModelEvaluationsTab";
 import ShareButton from "../../components/ShareViewDropdown/ShareButton";
 import ShareViewDropdown, { ShareViewSettings } from "../../components/ShareViewDropdown";
@@ -70,7 +73,7 @@ import { ColumnSelector } from "../../components/Table/ColumnSelector";
 import { useColumnVisibility, ColumnConfig } from "../../../application/hooks/useColumnVisibility";
 import { palette } from "../../themes/palette";
 
-const Alert = React.lazy(() => import("../../components/Alert"));
+import Alert from "../../components/Alert";
 
 // Constants
 const REDIRECT_DELAY_MS = 2000;
@@ -127,6 +130,7 @@ type EvidenceHubColumn =
   | "uploaded_by"
   | "uploaded_on"
   | "expiry_date"
+  | "quality"
   | "actions";
 
 const EVIDENCE_HUB_COLUMNS: ColumnConfig<EvidenceHubColumn>[] = [
@@ -136,6 +140,7 @@ const EVIDENCE_HUB_COLUMNS: ColumnConfig<EvidenceHubColumn>[] = [
   { key: "uploaded_by", label: "Uploaded by", defaultVisible: true },
   { key: "uploaded_on", label: "Uploaded on", defaultVisible: true },
   { key: "expiry_date", label: "Expiry", defaultVisible: true },
+  { key: "quality", label: "AI Quality", defaultVisible: true },
   { key: "actions", label: "Actions", defaultVisible: true, alwaysVisible: true },
 ];
 
@@ -460,6 +465,12 @@ const ModelInventory: React.FC = () => {
   // Modal open/close flag
   const [isEvidenceHubModalOpen, setIsEvidenceHubModalOpen] = useState(false);
 
+  // Evidence preview drawer state
+  const [previewFile, setPreviewFile] = useState<FileMetadata | null>(null);
+  const [previewFiles, setPreviewFiles] = useState<FileMetadata[]>([]);
+  const [previewIndex, setPreviewIndex] = useState<number>(0);
+  const [isEvidencePreviewOpen, setIsEvidencePreviewOpen] = useState(false);
+
   // Search term for Evidence Hub
   const [searchTypeTerm, setSearchTypeTerm] = useState("");
 
@@ -770,7 +781,10 @@ const ModelInventory: React.FC = () => {
     try {
       const response = await getAllEntities({ routeUrl: "/evidenceHub" });
       if (response?.data) {
-        setEvidenceHubData(response.data);
+        const modelScoped = (response.data as EvidenceHubModel[]).filter(
+          (e) => Array.isArray(e.mapped_model_ids) && e.mapped_model_ids.length > 0,
+        );
+        setEvidenceHubData(modelScoped);
         if (showLoading) {
           setTableKey((prev) => prev + 1);
         }
@@ -892,6 +906,55 @@ const ModelInventory: React.FC = () => {
     fetchModelRisksData();
     fetchUsersData();
     fetchEvidenceData();
+  }, []);
+
+  // Refresh whenever an AI write action completes — both the dedicated
+  // Pending Approvals modal (RequestorApprovalModal dispatches via
+  // dispatchAiActionCompleted) and the inline chat approval cards
+  // (ConfirmationToolUI dispatches the same event after success). The
+  // approval UI is an in-page modal, so window.focus /
+  // visibilitychange listeners don't fire on click — we need an
+  // explicit dispatch hook.
+  //
+  // Scoped by tool_name so we only refetch when the action actually
+  // touches model_inventories or model_risks. We refresh both tables
+  // because some tools touch both (e.g. agent_register_model creates
+  // a model row that bumps the model count; agent_suggest_model_risk
+  // creates a model_risk row that bumps the model risks tab count).
+  useEffect(() => {
+    const MODEL_INVENTORY_TOOLS = new Set([
+      "agent_register_model",
+      "agent_update_model",
+      "agent_update_model_lifecycle_phase",
+      "agent_retire_model",
+      "agent_delete_model",
+      "agent_link_model_to_project",
+      "agent_unlink_model_from_use_case",
+      "agent_link_model_to_framework",
+      "agent_unlink_model_from_framework",
+    ]);
+    const MODEL_RISK_TOOLS = new Set([
+      "agent_create_model_risk",
+      "agent_suggest_model_risk",
+      "agent_update_model_risk",
+      "agent_change_model_risk_status",
+      "agent_delete_model_risk",
+      "agent_restore_model_risk",
+      "agent_attach_model_risk_to_model",
+      "agent_detach_model_risk_from_model",
+    ]);
+    return onAiActionCompleted((detail) => {
+      if (detail?.status !== "approved") return;
+      const tool = detail?.toolName;
+      if (!tool) return;
+      if (MODEL_INVENTORY_TOOLS.has(tool)) {
+        fetchModelInventoryData(false);
+        // Some inventory tools (delete, retire) can also affect risks.
+        fetchModelRisksData(false);
+      } else if (MODEL_RISK_TOOLS.has(tool)) {
+        fetchModelRisksData(false);
+      }
+    });
   }, []);
 
   // Refetch model risks when filter changes
@@ -1058,6 +1121,66 @@ const ModelInventory: React.FC = () => {
       });
     }
   };
+
+  const handlePreviewEvidence = useCallback(
+    (id: number, fileIndex: number = 0) => {
+      const evidence = evidenceHubData.find((e) => e.id === id);
+      const rawFiles: any[] = Array.isArray(evidence?.evidence_files)
+        ? (evidence!.evidence_files as any[])
+        : [];
+      const fileCount = rawFiles.length;
+
+      if (fileCount === 0) {
+        setAlert({
+          variant: "info",
+          body: "This evidence has no file attached to preview.",
+        });
+        return;
+      }
+
+      // Backend SQL returns evidence files via file_entity_links with shape
+      // { id, fileName, size, mimetype, uploaded_by, uploaded_time, source };
+      // the upload-time FE shape is { id, filename, size, mimetype, uploaded_by, upload_date }.
+      // Support both.
+      const fileMetas: FileMetadata[] = rawFiles.map((rawFile) => {
+        const filename = rawFile.filename ?? rawFile.fileName;
+        const uploadDate = rawFile.upload_date ?? rawFile.uploaded_time;
+        const sizeRaw = rawFile.size;
+        const size = typeof sizeRaw === "string" ? parseInt(sizeRaw, 10) || 0 : (sizeRaw ?? 0);
+        const mimetype: string | undefined = rawFile.mimetype;
+        const uploader = users.find((u: any) => String(u.id) === String(rawFile.uploaded_by));
+        return {
+          id: String(rawFile.id),
+          filename: filename || "Unknown file",
+          size,
+          mimetype: mimetype || "application/octet-stream",
+          upload_date: uploadDate,
+          uploaded_by: String(rawFile.uploaded_by),
+          uploader_name: uploader?.name,
+          uploader_surname: uploader?.surname,
+          tags: evidence?.tags,
+          expiry_date: evidence?.expiry_date
+            ? new Date(evidence.expiry_date).toISOString()
+            : undefined,
+          description: evidence?.description ?? undefined,
+        };
+      });
+
+      const safeIndex = Math.max(0, Math.min(fileIndex, fileCount - 1));
+      setPreviewFiles(fileMetas);
+      setPreviewIndex(safeIndex);
+      setPreviewFile(fileMetas[safeIndex]);
+      setIsEvidencePreviewOpen(true);
+    },
+    [evidenceHubData, users],
+  );
+
+  const handleCloseEvidencePreview = useCallback(() => {
+    setIsEvidencePreviewOpen(false);
+    setPreviewFile(null);
+    setPreviewFiles([]);
+    setPreviewIndex(0);
+  }, []);
 
   // Fetch model risk data when modal opens with an ID
   useEffect(() => {
@@ -1302,6 +1425,14 @@ const ModelInventory: React.FC = () => {
       setFlashRowId(modelId);
       setTimeout(() => setFlashRowId(null), 3000);
     }
+
+    // Return the new id on create so NewModelInventory can flush staged
+    // custom field values against it. Update paths return undefined — the
+    // modal already has the id via initialData.
+    if (!selectedModelInventory && modelId) {
+      return { id: modelId };
+    }
+    return undefined;
   };
 
   const handleModelInventoryError = (error: any) => {
@@ -1728,29 +1859,34 @@ const ModelInventory: React.FC = () => {
 
   const handleModelRiskSuccess = async (formData: IModelRiskFormData) => {
     try {
+      let savedId: number | undefined;
       if (selectedModelRisk) {
         // Update existing model risk
         await updateEntityById({
           routeUrl: `/modelRisks/${selectedModelRisk.id}`,
           body: formData,
         });
+        savedId = selectedModelRisk.id ?? undefined;
         setAlert({
           variant: "success",
           body: "Model risk updated successfully!",
         });
       } else {
         // Create new model risk using apiServices
-        await createNewUser({
+        const response: any = await createNewUser({
           routeUrl: "/modelRisks",
           body: formData,
         });
+        savedId = response?.data?.id;
         setAlert({
           variant: "success",
           body: "New model risk added successfully!",
         });
       }
       await fetchModelRisksData();
-      handleCloseModelRiskModal();
+      // Return the id so NewModelRisk can flush staged custom field values
+      // against it. The modal closes itself once the flush completes.
+      return { id: savedId };
     } catch (error) {
       setAlert({
         variant: "error",
@@ -1758,6 +1894,8 @@ const ModelInventory: React.FC = () => {
           ? "Failed to update model risk. Please try again."
           : "Failed to add model risk. Please try again.",
       });
+      // Re-throw so the modal skips the flush + stays open for retry.
+      throw error;
     }
   };
 
@@ -1969,22 +2107,20 @@ const ModelInventory: React.FC = () => {
         summaryCardsJoyrideId={activeTab === "models" ? "model-summary-cards" : undefined}
         alert={
           alert && (
-            <Suspense fallback={<div>Loading...</div>}>
-              <Fade in={showAlert} timeout={300} style={toastFadeStyle}>
-                <Box mb={2}>
-                  <Alert
-                    variant={alert.variant}
-                    title={alert.title}
-                    body={alert.body}
-                    isToast={true}
-                    onClick={() => {
-                      setShowAlert(false);
-                      setTimeout(() => setAlert(null), 300);
-                    }}
-                  />
-                </Box>
-              </Fade>
-            </Suspense>
+            <Fade in={showAlert} timeout={300} style={toastFadeStyle}>
+              <Box mb={2}>
+                <Alert
+                  variant={alert.variant}
+                  title={alert.title}
+                  body={alert.body}
+                  isToast={true}
+                  onClick={() => {
+                    setShowAlert(false);
+                    setTimeout(() => setAlert(null), 300);
+                  }}
+                />
+              </Box>
+            </Fade>
           )
         }
       >
@@ -2320,6 +2456,7 @@ const ModelInventory: React.FC = () => {
                   data={data}
                   onEdit={handleEditEvidence}
                   onDelete={handleDeleteEvidence}
+                  onPreview={handlePreviewEvidence}
                   modelInventoryData={modelInventoryData}
                   deletingId={deletingEvidenceId}
                   hidePagination={options?.hidePagination}
@@ -2422,6 +2559,19 @@ const ModelInventory: React.FC = () => {
           isEdit={!!selectedEvidenceHub}
           initialData={selectedEvidenceHub || undefined}
           preselectedModelId={preselectedModelId}
+        />
+
+        <FilePreviewPanel
+          isOpen={isEvidencePreviewOpen}
+          onClose={handleCloseEvidencePreview}
+          file={previewFile}
+          files={previewFiles}
+          currentIndex={previewIndex}
+          onNavigate={(newIndex: number) => {
+            if (newIndex < 0 || newIndex >= previewFiles.length) return;
+            setPreviewIndex(newIndex);
+            setPreviewFile(previewFiles[newIndex]);
+          }}
         />
 
         <PageTour steps={ModelInventorySteps} run={true} tourKey="model-inventory-tour" />

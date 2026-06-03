@@ -45,6 +45,7 @@ import {
   Popover,
   Snackbar,
   Alert,
+  TextField,
 } from "@mui/material";
 import {
   Underline as UnderlineIcon,
@@ -84,6 +85,7 @@ import {
   SuperscriptIcon,
   SubscriptIcon,
   Check,
+  Pencil,
   Palette,
   ChevronDown as ChevronDownIcon,
   ChevronUp as ChevronUpIcon,
@@ -95,6 +97,10 @@ import Select from "../../components/Inputs/Select";
 import Field from "../../components/Inputs/Field";
 import { CustomizableButton } from "../../components/button/customizable-button";
 import { HistorySidebar } from "../../components/Common/HistorySidebar";
+import CustomFieldsSection, {
+  type CustomFieldsSectionHandle,
+} from "../../components/CustomFieldsSection";
+import { useRequiredCustomFieldsGate } from "../../components/CustomFieldsSection/RequiredCustomFieldsGate";
 import { usePolicyChangeHistory } from "../../../application/hooks/usePolicyChangeHistory";
 import PolicyForm from "../../components/Policies/PolicyForm";
 import InsertLinkModal from "../../components/Modals/InsertLinkModal/InsertLinkModal";
@@ -109,7 +115,7 @@ import {
 } from "../../../application/repository/policy.repository";
 import useUsers from "../../../application/hooks/useUsers";
 import { User } from "../../../domain/types/User";
-import { PolicyFormData, PolicyFormErrors } from "../../types/interfaces/i.policy";
+import { PolicyFormData, PolicyFormErrors, PolicyInput } from "../../types/interfaces/i.policy";
 import { PolicyManagerModel } from "../../../domain/models/Common/policy/policyManager.model";
 import { checkStringValidation } from "../../../application/validations/stringValidation";
 import { useFormValidation } from "../../../application/hooks/useFormValidation";
@@ -484,6 +490,8 @@ export default function PolicyEditorPage() {
 
   // Data loading state
   const [policy, setPolicy] = useState<PolicyManagerModel | null>(null);
+  const customFieldsRef = useRef<CustomFieldsSectionHandle | null>(null);
+  const customFieldsGate = useRequiredCustomFieldsGate("policy", policy?.id ?? null);
   const [tags, setTags] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -504,6 +512,10 @@ export default function PolicyEditorPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [serverErrors, setServerErrors] = useState<PolicyFormErrors>({});
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editedTitle, setEditedTitle] = useState("");
+  const [isSavingTitle, setIsSavingTitle] = useState(false);
+  const [titleSaveError, setTitleSaveError] = useState<string | null>(null);
   const [toolbarState, setToolbarState] = useState(defaultToolbarState);
   const [currentBlockType, setCurrentBlockType] = useState<string>("p");
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -564,9 +576,62 @@ export default function PolicyEditorPage() {
     status: "Under Review",
     tags: [],
     nextReviewDate: "",
+    policyOwner: null,
     assignedReviewers: [],
     content: "",
   });
+
+  const handleStartEditTitle = useCallback(() => {
+    setEditedTitle(formData.title);
+    setIsEditingTitle(true);
+  }, [formData.title]);
+
+  const handleSaveTitle = useCallback(async () => {
+    const trimmed = editedTitle.trim();
+    if (!trimmed) return;
+
+    // Reuse the same title validator for consistency with the main save flow.
+    const titleError = validators.title(trimmed);
+    if (titleError) {
+      setServerErrors((prev) => ({ ...prev, title: titleError }));
+      return;
+    }
+
+    // New policy: no row to update yet — commit to local form state only.
+    if (!policy?.id) {
+      setFormData((prev) => ({ ...prev, title: trimmed }));
+      clearFieldError("title");
+      setServerErrors((prev) => ({ ...prev, title: undefined }));
+      setIsEditingTitle(false);
+      return;
+    }
+
+    setIsSavingTitle(true);
+    try {
+      const updated = await updatePolicy(policy.id, { title: trimmed } as PolicyInput);
+      setFormData((prev) => ({ ...prev, title: trimmed }));
+      setPolicy((prev) => (prev ? { ...prev, ...updated, title: trimmed } : updated));
+      clearFieldError("title");
+      setServerErrors((prev) => ({ ...prev, title: undefined }));
+      setIsEditingTitle(false);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (err: any) {
+      const errorData = err?.originalError?.response || err?.response?.data || err?.response;
+      const fieldErr = errorData?.errors?.find((e: any) => e.field === "title")?.message;
+      setTitleSaveError(fieldErr || "Failed to save title");
+      if (fieldErr) {
+        setServerErrors((prev) => ({ ...prev, title: fieldErr }));
+      }
+    } finally {
+      setIsSavingTitle(false);
+    }
+  }, [editedTitle, validators, policy?.id, clearFieldError]);
+
+  const handleCancelEditTitle = useCallback(() => {
+    setIsEditingTitle(false);
+    setEditedTitle("");
+  }, []);
 
   // Resolve template from query param (memoized to avoid new object each render)
   const template = useMemo(() => {
@@ -623,6 +688,10 @@ export default function PolicyEditorPage() {
         nextReviewDate: policy.next_review_date
           ? new Date(policy.next_review_date).toISOString().slice(0, 10)
           : "",
+        policyOwner:
+          policy.policy_owner_id != null
+            ? (users.find((u) => u.id === policy.policy_owner_id) ?? null)
+            : null,
         assignedReviewers: policy.assigned_reviewer_ids
           ? policy.assigned_reviewer_ids
               .map((i) => users.find((u) => u.id === i))
@@ -1267,6 +1336,10 @@ export default function PolicyEditorPage() {
     if (!validateAll(formData)) {
       formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       setValidationSnackbar(true);
+      if (!formData.title.trim()) {
+        setEditedTitle(formData.title);
+        setIsEditingTitle(true);
+      }
       return;
     }
     setIsSaving(true);
@@ -1278,7 +1351,10 @@ export default function PolicyEditorPage() {
       tags: formData.tags,
       content_html: html,
       next_review_date: formData.nextReviewDate ? new Date(formData.nextReviewDate) : undefined,
-      assigned_reviewer_ids: formData.assignedReviewers.map((u) => u.id),
+      policy_owner_id: formData.policyOwner?.id ?? null,
+      assigned_reviewer_ids: formData.assignedReviewers
+        .map((u) => u.id)
+        .filter((id) => id !== formData.policyOwner?.id),
     };
 
     try {
@@ -1290,14 +1366,28 @@ export default function PolicyEditorPage() {
         savedPolicy = await updatePolicy(policy!.id, payload);
       }
 
-      setIsSaving(false);
-      setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 3000);
+      // Flush any locally-staged custom field changes (create OR update).
+      let cfFlushFailed = false;
+      if (savedPolicy?.id && customFieldsRef.current?.hasPendingValues()) {
+        try {
+          await customFieldsRef.current.flush(savedPolicy.id);
+        } catch (cfError) {
+          cfFlushFailed = true;
+          console.error("Policy saved, but custom field values failed to save:", cfError);
+        }
+      }
 
-      // For new policies, navigate to the edit URL so subsequent saves work as updates
+      setIsSaving(false);
+
+      // For new policies, navigate to the edit URL so subsequent saves work as updates.
+      // Skip the success banner when flush failed so the inline warning is the
+      // dominant signal.
       if (isNew && savedPolicy?.id) {
         navigate(`/policies/${savedPolicy.id}/edit`, { replace: true });
       }
+      if (cfFlushFailed) return;
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err: any) {
       setIsSaving(false);
 
@@ -1313,6 +1403,7 @@ export default function PolicyEditorPage() {
           else if (error.field === "next_review_date") apiErrors.nextReviewDate = error.message;
           else if (error.field === "assigned_reviewer_ids")
             apiErrors.assignedReviewers = error.message;
+          else if (error.field === "policy_owner_id") apiErrors.policyOwner = error.message;
         });
         setServerErrors(apiErrors);
       }
@@ -1546,9 +1637,86 @@ export default function PolicyEditorPage() {
                   <ArrowLeft size={18} />
                 </IconButton>
               </Tooltip>
-              <Typography sx={{ fontSize: 16, color: "text.secondary", fontWeight: 600 }}>
-                {pageTitle}
-              </Typography>
+              <Box
+                sx={{
+                  "display": "inline-flex",
+                  "alignItems": "center",
+                  "gap": 0.5,
+                  "&:hover .edit-title-icon": {
+                    opacity: 1,
+                  },
+                }}
+              >
+                {isEditingTitle ? (
+                  <>
+                    <TextField
+                      value={editedTitle}
+                      onChange={(e) => setEditedTitle(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleSaveTitle();
+                        if (e.key === "Escape") handleCancelEditTitle();
+                      }}
+                      placeholder="Policy title"
+                      variant="outlined"
+                      size="small"
+                      autoFocus
+                      disabled={isSavingTitle}
+                      error={!!displayErrors.title}
+                      helperText={displayErrors.title}
+                      inputProps={{ maxLength: 128 }}
+                      sx={{
+                        "minWidth": "400px",
+                        "& .MuiOutlinedInput-root": {
+                          fontSize: "16px",
+                          fontWeight: 600,
+                        },
+                      }}
+                    />
+                    <IconButton
+                      size="small"
+                      onClick={handleSaveTitle}
+                      disabled={!editedTitle.trim() || isSavingTitle}
+                      sx={{ color: "brand.primary" }}
+                    >
+                      {isSavingTitle ? (
+                        <Loader2 size={18} style={{ animation: "spin 1s linear infinite" }} />
+                      ) : (
+                        <Check size={18} />
+                      )}
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      onClick={handleCancelEditTitle}
+                      disabled={isSavingTitle}
+                      sx={{ color: "text.disabled" }}
+                    >
+                      <X size={18} />
+                    </IconButton>
+                  </>
+                ) : (
+                  <>
+                    <Typography sx={{ fontSize: 16, color: "text.secondary", fontWeight: 600 }}>
+                      {pageTitle}
+                    </Typography>
+                    <IconButton
+                      size="small"
+                      onClick={handleStartEditTitle}
+                      className="edit-title-icon"
+                      sx={{
+                        // "opacity": 0,
+                        "transition": "opacity 0.2s",
+                        "color": "text.disabled",
+                        "&:hover": {
+                          color: "brand.primary",
+                          backgroundColor: "rgba(19, 113, 91, 0.1)",
+                        },
+                      }}
+                    >
+                      <Pencil size={14} />
+                    </IconButton>
+                  </>
+                )}
+              </Box>
             </Stack>
 
             <Stack direction="row" gap="8px" alignItems="center">
@@ -1744,7 +1912,7 @@ export default function PolicyEditorPage() {
                         ? "Save in organizational policies"
                         : "Save"
                 }
-                isDisabled={isSaving}
+                isDisabled={isSaving || customFieldsGate.blocked}
                 sx={{
                   "backgroundColor": saveSuccess ? "#079455" : "brand.primary",
                   "border": `1px solid ${saveSuccess ? "#079455" : "#13715B"}`,
@@ -1773,7 +1941,16 @@ export default function PolicyEditorPage() {
           </Stack>
 
           {/* ── Metadata form ────────────────────────────────────────── */}
-          <Box ref={formRef} sx={{ flexShrink: 0, mb: "8px" }}>
+          <Box
+            ref={formRef}
+            sx={{
+              flexShrink: 0,
+              mb: "8px",
+              overflow: "visible",
+              position: "relative",
+              zIndex: 1,
+            }}
+          >
             <PolicyForm
               formData={formData}
               setFormData={setFormData}
@@ -1782,6 +1959,15 @@ export default function PolicyEditorPage() {
               clearFieldError={clearFieldError}
             />
           </Box>
+
+          <Stack>
+            {/* Custom fields — staging in create mode, write-through in edit */}
+            <CustomFieldsSection
+              ref={customFieldsRef}
+              entityType="policy"
+              entityId={isNew ? null : (policy?.id ?? null)}
+            />
+          </Stack>
 
           {/* ── Toolbar ──────────────────────────────────────────────── */}
           <Box
@@ -2360,6 +2546,18 @@ export default function PolicyEditorPage() {
       >
         <Alert onClose={() => setImportError(null)} severity="error" sx={{ width: "100%" }}>
           {importError}
+        </Alert>
+      </Snackbar>
+
+      {/* Title save error snackbar */}
+      <Snackbar
+        open={Boolean(titleSaveError)}
+        autoHideDuration={4000}
+        onClose={() => setTitleSaveError(null)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={() => setTitleSaveError(null)} severity="error" sx={{ width: "100%" }}>
+          {titleSaveError}
         </Alert>
       </Snackbar>
 

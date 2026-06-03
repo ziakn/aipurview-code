@@ -89,11 +89,20 @@ import invitationRoutes from "./routes/invitation.route";
 import intakeFormRoutes from "./routes/intakeForm.route";
 import versionRoutes from "./routes/version.route";
 import auditLedgerRoutes from "./routes/auditLedger.route";
+import evidenceAiRoutes from "./routes/evidenceAi.route";
+import readinessRoutes from "./routes/readiness.route";
+import aiContentRoutes from "./routes/aiContent.route";
+import aiConfirmationRoutes from "./routes/aiConfirmation.route";
+import aiApprovalRoutes from "./routes/aiApproval.route";
+import aiApprovalRulesRoutes from "./routes/aiApprovalRules.route";
+import aiAuditRoutes from "./routes/aiAudit.route";
+import { startTimeoutHandler } from "./advisor/approval/timeoutHandler";
 import featureSettingsRoutes from "./routes/featureSettings.route";
 import friaRoutes from "./routes/fria.route";
 import riskBenchmarkRoutes from "./routes/riskBenchmark.route";
 import quantitativeRiskRoutes from "./routes/quantitativeRisk.route";
 import aiGatewayRoutes from "./routes/aiGateway.route";
+import customFieldRoutes from "./routes/customField.route";
 import virtualKeyProxyRoutes from "./routes/virtualKeyProxy.route";
 import internalRoutes from "./routes/internal.route";
 import superAdminRoutes from "./routes/superAdmin.route";
@@ -276,6 +285,13 @@ try {
   app.use("/api/llm-keys", llmKeyRouter);
   app.use("/api/nist-ai-rmf", nistAiRmfRoutes);
   app.use("/api/evidenceHub", evidenceHubRouter);
+  app.use("/api/evidence-ai", evidenceAiRoutes);
+  app.use("/api/readiness", readinessRoutes);
+  app.use("/api/ai-content", aiContentRoutes);
+  app.use("/api/ai-confirmation", aiConfirmationRoutes);
+  app.use("/api/ai-approvals", aiApprovalRoutes);
+  app.use("/api/ai-approval-rules", aiApprovalRulesRoutes);
+  app.use("/api/ai-audit", aiAuditRoutes);
   app.use("/api/advisor", advisorRouter);
   app.use("/api/policy-linked", policyLinkedObjects);
   app.use("/api/ssoConfig", ssoConfigRoutes);
@@ -324,6 +340,7 @@ try {
   app.use("/api/risk-benchmarks", riskBenchmarkRoutes);
   app.use("/api/quantitative-risks", quantitativeRiskRoutes);
   app.use("/api/ai-gateway", aiGatewayRoutes());
+  app.use("/api/custom-fields", customFieldRoutes);
 
   // Super-admin routes (authenticated + super-admin only)
   app.use("/api/super-admin", superAdminRoutes);
@@ -385,6 +402,9 @@ try {
       }
     }
   })();
+
+  // Start approval timeout handler (expires pending approvals past TTL)
+  startTimeoutHandler();
 
   const server = app.listen(port, () => {
     console.log(`Server running on port http://${host}:${port}/`);

@@ -11,6 +11,10 @@ import {
   ForbiddenException,
   ValidationException,
 } from "../domain.layer/exceptions/custom.exception";
+import {
+  deleteAllCustomFieldValuesForEntityQuery,
+  fetchCustomFieldsForEntities,
+} from "./customField.utils";
 import { TenantAutomationActionModel } from "../domain.layer/models/tenantAutomationAction/tenantAutomationAction.model";
 import {
   buildTaskReplacements,
@@ -363,6 +367,11 @@ export const getTasksQuery = async (
     type: QueryTypes.SELECT,
   });
 
+  const taskIds = (tasks as TasksModel[])
+    .map((t) => t.id)
+    .filter((id): id is number => typeof id === "number");
+  const customFieldsByTask = await fetchCustomFieldsForEntities("task", taskIds, organizationId);
+
   // Add assignees and entity links to each task following the project members pattern
   for (const task of tasks) {
     const assignees = await sequelize.query(
@@ -383,6 +392,8 @@ export const getTasksQuery = async (
       entity_type: link.entity_type,
       entity_name: link.entity_name,
     }));
+
+    (task.dataValues as any)["custom_fields"] = customFieldsByTask.get(task.id!) ?? [];
   }
 
   return tasks as TasksModel[];
@@ -744,6 +755,8 @@ export const deleteTaskByIdQuery = async ({
     throw new ForbiddenException("Only task creator or admin can delete tasks", "task", "delete");
   }
 
+  await deleteAllCustomFieldValuesForEntityQuery("task", id, organizationId, transaction);
+
   // Soft delete by setting status to DELETED
   const result = (await sequelize.query(
     `UPDATE tasks SET status = :status WHERE organization_id = :organizationId AND id = :id RETURNING *;`,
@@ -936,6 +949,8 @@ export const hardDeleteTaskByIdQuery = async ({
       transaction,
     },
   );
+
+  await deleteAllCustomFieldValuesForEntityQuery("task", id, organizationId, transaction);
 
   // Then hard delete the task
   await sequelize.query(

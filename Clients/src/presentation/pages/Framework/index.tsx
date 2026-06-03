@@ -159,23 +159,23 @@ const Framework = () => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMenuClose = () => {
+  const closeFrameworkMenu = () => {
     setAnchorEl(null);
   };
 
   const handleManageFrameworksClick = () => {
     setIsFrameworkModalOpen(true);
-    handleMenuClose();
+    closeFrameworkMenu();
   };
 
   const handleEditProjectClick = () => {
     setIsEditProjectModalOpen(true);
-    handleMenuClose();
+    closeFrameworkMenu();
   };
 
   const handleDeleteProjectClick = () => {
     setIsDeleteModalOpen(true);
-    handleMenuClose();
+    closeFrameworkMenu();
   };
 
   // Function to handle project deletion
@@ -846,7 +846,7 @@ const Framework = () => {
                 <Popover
                   anchorEl={anchorEl}
                   open={isMenuOpen}
-                  onClose={handleMenuClose}
+                  onClose={closeFrameworkMenu}
                   anchorOrigin={{
                     vertical: "bottom",
                     horizontal: "right",

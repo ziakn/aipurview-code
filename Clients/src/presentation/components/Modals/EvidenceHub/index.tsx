@@ -228,19 +228,17 @@ const NewEvidenceHub: FC<NewEvidenceHubProps> = ({
   }, []);
 
   const handleUploadSuccess = (files: FileResponse[]) => {
+    const mapped = files.map((file) => ({
+      id: file.id,
+      filename: file.filename,
+      size: file.size,
+      mimetype: file.mimetype,
+      uploaded_by: file.uploaded_by,
+      upload_date: file.upload_date,
+    }));
     setValues((prev) => ({
       ...prev,
-      evidence_files: [
-        ...prev.evidence_files,
-        ...files.map((file) => ({
-          id: file.id,
-          filename: file.filename,
-          size: file.size,
-          mimetype: file.mimetype,
-          uploaded_by: file.uploaded_by,
-          upload_date: file.upload_date,
-        })),
-      ],
+      evidence_files: [...prev.evidence_files, ...mapped],
     }));
     setErrors((prev) => ({ ...prev, files: "" }));
     setIsUploadModalOpen(false);
@@ -317,7 +315,7 @@ const NewEvidenceHub: FC<NewEvidenceHubProps> = ({
     setActiveStep((prev) => prev - 1);
   };
 
-  const handleSubmit = async () => {
+  const handleSaveEvidence = async () => {
     if (!validateCurrentStep()) return;
 
     setIsSubmitting(true);
@@ -325,6 +323,7 @@ const NewEvidenceHub: FC<NewEvidenceHubProps> = ({
       if (onSuccess) onSuccess(values);
       setIsOpen(false);
     } catch (error) {
+      console.error("[NewEvidenceHub.handleSaveEvidence] error:", error);
       setIsSubmitting(false);
       if (onError) onError(error);
     }
@@ -619,7 +618,7 @@ const NewEvidenceHub: FC<NewEvidenceHubProps> = ({
       activeStep={activeStep}
       onNext={handleNext}
       onBack={handleBack}
-      onSubmit={handleSubmit}
+      onSubmit={handleSaveEvidence}
       canProceed={canProceed()}
       isSubmitting={isSubmitting}
       submitButtonText={isEdit ? "Update" : "Save"}

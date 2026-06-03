@@ -4,8 +4,6 @@ import React, {
   useCallback,
   useMemo,
   useEffect,
-  lazy,
-  Suspense,
   Dispatch,
   SetStateAction,
 } from "react";
@@ -15,7 +13,6 @@ import { MitigationFormValues } from "../interface";
 import { useFormValidation } from "../../../../application/hooks/useFormValidation";
 import { checkStringValidation } from "../../../../application/validations/stringValidation";
 import selectValidation from "../../../../application/validations/selectValidation";
-import styles from "../styles.module.css";
 import useUsers from "../../../../application/hooks/useUsers";
 import { mitigationStatusItems, riskLevelItems, approvalStatusItems } from "../projectRiskValue";
 import { alertState } from "../../../../domain/interfaces/i.alert";
@@ -39,17 +36,11 @@ const LAYOUT = {
   },
 } as const;
 
-// Constants
-const FORM_FIELD_WIDTH = LAYOUT.FIELD_WIDTH;
-const MIN_HEIGHT = 500;
-const MAX_HEIGHT = 500;
-
-// Lazy load components
-const Select = lazy(() => import("../../Inputs/Select"));
-const Field = lazy(() => import("../../Inputs/Field"));
-const DatePicker = lazy(() => import("../../Inputs/Datepicker"));
-const RiskLevel = lazy(() => import("../../RiskLevel"));
-const Alert = lazy(() => import("../../Alert"));
+import Select from "../../Inputs/Select";
+import Field from "../../Inputs/Field";
+import DatePicker from "../../Inputs/Datepicker";
+import RiskLevel from "../../RiskLevel";
+import Alert from "../../Alert";
 
 interface MitigationSectionProps {
   mitigationValues: MitigationFormValues;
@@ -89,21 +80,18 @@ const MitigationSection: FC<MitigationSectionProps> = ({
   const { users, loading: usersLoading } = useUsers();
 
   // Dynamic layout based on compactMode - squeeze into 990px when sidebar is open
-  const fieldWidth = compactMode ? `${LAYOUT.COMPACT_FIELD_WIDTH}px` : `${FORM_FIELD_WIDTH}px`;
   const contentWidth = compactMode
     ? `${LAYOUT.COMPACT_CONTENT_WIDTH}px`
     : `${LAYOUT.TOTAL_CONTENT_WIDTH}px`;
-  const twoColumnWidth = compactMode
-    ? `${LAYOUT.COMPACT_TWO_COLUMN_WIDTH}px`
-    : `${LAYOUT.TWO_COLUMN_WIDTH}px`;
 
   const formRowStyles = {
     display: "flex",
     flexDirection: "row" as const,
     justifyContent: "flex-start",
-    flexWrap: "wrap" as const,
+    flexWrap: "nowrap" as const,
     gap: `${LAYOUT.HORIZONTAL_GAP}px`,
-    width: contentWidth,
+    width: "100%",
+    maxWidth: contentWidth,
   };
 
   const validators = useMemo(
@@ -173,10 +161,10 @@ const MitigationSection: FC<MitigationSectionProps> = ({
 
   const formFieldStyles = useMemo(
     () => ({
-      width: fieldWidth,
+      flex: 1,
       backgroundColor: theme.palette.background.main,
     }),
-    [theme.palette.background.main, fieldWidth],
+    [theme.palette.background.main],
   );
 
   const handleOnSelectChange = useCallback(
@@ -220,203 +208,184 @@ const MitigationSection: FC<MitigationSectionProps> = ({
   );
 
   return (
-    <Stack
-      sx={{
-        ...(disableInternalScroll ? {} : { minHeight: MIN_HEIGHT, maxHeight: MAX_HEIGHT }),
-      }}
-    >
+    <Stack>
       {alert && (
-        <Suspense fallback={<div>Loading...</div>}>
-          <Alert
-            variant={alert.variant}
-            title={alert.title}
-            body={alert.body}
-            isToast={true}
-            onClick={() => setAlert(null)}
-          />
-        </Suspense>
+        <Alert
+          variant={alert.variant}
+          title={alert.title}
+          body={alert.body}
+          isToast={true}
+          onClick={() => setAlert(null)}
+        />
       )}
-      <Suspense fallback={<div>Loading form components...</div>}>
-        <Stack
-          className={disableInternalScroll ? undefined : styles.popupBody}
-          sx={{
-            width: "100%",
-            ...(disableInternalScroll
-              ? {}
-              : {
-                  maxHeight: "fit-content",
-                  overflowY: "auto",
-                  overflowX: "hidden",
-                }),
-          }}
-        >
-          <Stack sx={{ width: contentWidth }}>
-            <Stack sx={{ gap: `${LAYOUT.VERTICAL_GAP}px` }}>
-              {/* Row 1: Three columns */}
-              <Stack sx={formRowStyles}>
-                {/* Mitigation Status */}
-                <Select
-                  id="mitigation-status-input"
-                  label="Mitigation status"
-                  placeholder="Select status"
-                  value={
-                    mitigationValues.mitigationStatus === 0 ? "" : mitigationValues.mitigationStatus
-                  }
-                  onChange={handleOnSelectChange("mitigationStatus")}
-                  items={mitigationStatusItems}
-                  sx={formFieldStyles}
-                  isRequired
-                  error={errors.mitigationStatus}
-                  disabled={isEditingDisabled}
-                />
-                {/* Current Risk Level */}
-                <Select
-                  id="current-risk-level-input"
-                  label="Current risk level"
-                  placeholder="Select risk level"
-                  value={
-                    mitigationValues.currentRiskLevel === 0 ? "" : mitigationValues.currentRiskLevel
-                  }
-                  onChange={handleOnSelectChange("currentRiskLevel")}
-                  items={riskLevelItems}
-                  sx={formFieldStyles}
-                  isRequired
-                  error={errors.currentRiskLevel}
-                  disabled={isEditingDisabled}
-                />
-                {/* Deadline */}
-                <DatePicker
-                  label="Deadline"
-                  date={
-                    mitigationValues.deadline ? dayjs(mitigationValues.deadline) : dayjs(new Date())
-                  }
-                  handleDateChange={(e) => handleDateChange("deadline", e)}
-                  sx={{ width: fieldWidth }}
-                  isRequired
-                  error={errors.deadline}
-                  disabled={isEditingDisabled}
-                />
-              </Stack>
-              {/* Row 2: Mitigation Plan and Implementation Strategy */}
-              <Stack sx={formRowStyles}>
-                {/* Mitigation Plan */}
-                <Field
-                  id="mitigation-plan-input"
-                  label="Mitigation plan"
-                  type="description"
-                  rows={3}
-                  value={mitigationValues.mitigationPlan}
-                  onChange={handleOnTextFieldChange("mitigationPlan")}
-                  sx={{ width: fieldWidth }}
-                  isRequired
-                  error={errors.mitigationPlan}
-                  disabled={isEditingDisabled}
-                  placeholder="Write mitigation plan"
-                />
-                {/* Implementation Strategy */}
-                <Field
-                  id="implementation-strategy-input"
-                  label="Implementation strategy"
-                  type="description"
-                  rows={3}
-                  value={mitigationValues.implementationStrategy}
-                  onChange={handleOnTextFieldChange("implementationStrategy")}
-                  sx={{ width: twoColumnWidth }}
-                  isRequired
-                  error={errors.implementationStrategy}
-                  disabled={isEditingDisabled}
-                  placeholder="Write implementation strategy"
-                />
-              </Stack>
+      <Stack sx={{ width: "100%", ...(disableInternalScroll ? {} : { p: "10px" }) }}>
+        <Stack sx={{ width: "100%", maxWidth: contentWidth }}>
+          <Stack sx={{ gap: `${LAYOUT.VERTICAL_GAP}px` }}>
+            {/* Row 1: Three columns */}
+            <Stack sx={formRowStyles}>
+              {/* Mitigation Status */}
+              <Select
+                id="mitigation-status-input"
+                label="Mitigation status"
+                placeholder="Select status"
+                value={
+                  mitigationValues.mitigationStatus === 0 ? "" : mitigationValues.mitigationStatus
+                }
+                onChange={handleOnSelectChange("mitigationStatus")}
+                items={mitigationStatusItems}
+                sx={formFieldStyles}
+                isRequired
+                error={errors.mitigationStatus}
+                disabled={isEditingDisabled}
+              />
+              {/* Current Risk Level */}
+              <Select
+                id="current-risk-level-input"
+                label="Current risk level"
+                placeholder="Select risk level"
+                value={
+                  mitigationValues.currentRiskLevel === 0 ? "" : mitigationValues.currentRiskLevel
+                }
+                onChange={handleOnSelectChange("currentRiskLevel")}
+                items={riskLevelItems}
+                sx={formFieldStyles}
+                isRequired
+                error={errors.currentRiskLevel}
+                disabled={isEditingDisabled}
+              />
+              {/* Deadline */}
+              <DatePicker
+                label="Deadline"
+                date={
+                  mitigationValues.deadline ? dayjs(mitigationValues.deadline) : dayjs(new Date())
+                }
+                handleDateChange={(e) => handleDateChange("deadline", e)}
+                sx={{ flex: 1 }}
+                isRequired
+                error={errors.deadline}
+                disabled={isEditingDisabled}
+              />
+            </Stack>
+            {/* Row 2: Mitigation Plan and Implementation Strategy */}
+            <Stack sx={formRowStyles}>
+              {/* Mitigation Plan */}
+              <Field
+                id="mitigation-plan-input"
+                label="Mitigation plan"
+                type="description"
+                rows={3}
+                value={mitigationValues.mitigationPlan}
+                onChange={handleOnTextFieldChange("mitigationPlan")}
+                sx={{ flex: 1 }}
+                isRequired
+                error={errors.mitigationPlan}
+                disabled={isEditingDisabled}
+                placeholder="Write mitigation plan"
+              />
+              {/* Implementation Strategy */}
+              <Field
+                id="implementation-strategy-input"
+                label="Implementation strategy"
+                type="description"
+                rows={3}
+                value={mitigationValues.implementationStrategy}
+                onChange={handleOnTextFieldChange("implementationStrategy")}
+                sx={{ flex: 1 }}
+                isRequired
+                error={errors.implementationStrategy}
+                disabled={isEditingDisabled}
+                placeholder="Write implementation strategy"
+              />
             </Stack>
           </Stack>
-          <Divider sx={{ mt: `${LAYOUT.VERTICAL_GAP}px` }} />
-          <Stack
-            sx={{
-              gap: `${LAYOUT.HORIZONTAL_GAP}px`,
-              mt: `${LAYOUT.VERTICAL_GAP}px`,
-              width: contentWidth,
-            }}
-          >
-            <Typography sx={{ fontSize: 16, fontWeight: 600 }}>
-              Calculate residual risk level
-            </Typography>
-            <Typography sx={{ fontSize: theme.typography.fontSize }}>
-              The Risk Level is calculated by multiplying the Likelihood and Severity scores. By
-              assigning these scores, the risk level will be determined based on your inputs.
-            </Typography>
-          </Stack>
-          <Stack sx={{ mt: `${LAYOUT.VERTICAL_GAP}px`, width: contentWidth }}>
-            <RiskLevel
-              likelihood={mitigationValues.likelihood}
-              riskSeverity={mitigationValues.riskSeverity}
-              handleOnSelectChange={handleOnSelectChange}
-              disabled={isEditingDisabled}
-            />
-          </Stack>
-          <Divider sx={{ mt: `${LAYOUT.VERTICAL_GAP}px` }} />
-          <Typography sx={{ fontSize: 16, fontWeight: 600, mt: `${LAYOUT.VERTICAL_GAP}px` }}>
-            Risk approval
-          </Typography>
-          <Stack sx={{ ...formRowStyles, mt: `${LAYOUT.VERTICAL_GAP}px` }}>
-            <Select
-              id="approver-input"
-              label="Approver"
-              placeholder="Select approver"
-              value={
-                usersLoading || !users?.length
-                  ? ""
-                  : mitigationValues.approver === 0
-                    ? ""
-                    : mitigationValues.approver
-              }
-              onChange={handleOnSelectChange("approver")}
-              items={userOptions}
-              sx={formFieldStyles}
-              isRequired
-              error={errors.approver}
-              disabled={isEditingDisabled || usersLoading}
-            />
-            <Select
-              id="approval-status-input"
-              label="Approval status"
-              placeholder="Select status"
-              value={mitigationValues.approvalStatus === 0 ? "" : mitigationValues.approvalStatus}
-              onChange={handleOnSelectChange("approvalStatus")}
-              items={approvalStatusItems}
-              sx={formFieldStyles}
-              isRequired
-              error={errors.approvalStatus}
-              disabled={isEditingDisabled}
-            />
-            <DatePicker
-              label="Assessment date"
-              date={
-                mitigationValues.dateOfAssessment
-                  ? dayjs(mitigationValues.dateOfAssessment)
-                  : dayjs(new Date())
-              }
-              handleDateChange={(e) => handleDateChange("dateOfAssessment", e)}
-              sx={{ width: fieldWidth }}
-              isRequired
-              error={errors.dateOfAssessment}
-              disabled={isEditingDisabled}
-            />
-          </Stack>
-          <Stack sx={{ mt: `${LAYOUT.VERTICAL_GAP}px`, width: contentWidth }}>
-            <Field
-              id="recommendations-input"
-              label="Recommendations"
-              type="description"
-              rows={3}
-              value={mitigationValues.recommendations}
-              onChange={handleOnTextFieldChange("recommendations")}
-              sx={{ width: "100%" }}
-              disabled={isEditingDisabled}
-            />
-          </Stack>
         </Stack>
-      </Suspense>
+        <Divider sx={{ mt: `${LAYOUT.VERTICAL_GAP}px` }} />
+        <Stack
+          sx={{
+            gap: `${LAYOUT.HORIZONTAL_GAP}px`,
+            mt: `${LAYOUT.VERTICAL_GAP}px`,
+            width: "100%",
+            maxWidth: contentWidth,
+          }}
+        >
+          <Typography sx={{ fontSize: 16, fontWeight: 600 }}>
+            Calculate residual risk level
+          </Typography>
+          <Typography sx={{ fontSize: theme.typography.fontSize }}>
+            The Risk Level is calculated by multiplying the Likelihood and Severity scores. By
+            assigning these scores, the risk level will be determined based on your inputs.
+          </Typography>
+        </Stack>
+        <Stack sx={{ mt: `${LAYOUT.VERTICAL_GAP}px`, width: "100%", maxWidth: contentWidth }}>
+          <RiskLevel
+            likelihood={mitigationValues.likelihood}
+            riskSeverity={mitigationValues.riskSeverity}
+            handleOnSelectChange={handleOnSelectChange}
+            disabled={isEditingDisabled}
+          />
+        </Stack>
+        <Divider sx={{ mt: `${LAYOUT.VERTICAL_GAP}px` }} />
+        <Typography sx={{ fontSize: 16, fontWeight: 600, mt: `${LAYOUT.VERTICAL_GAP}px` }}>
+          Risk approval
+        </Typography>
+        <Stack sx={{ ...formRowStyles, mt: `${LAYOUT.VERTICAL_GAP}px` }}>
+          <Select
+            id="approver-input"
+            label="Approver"
+            placeholder="Select approver"
+            value={
+              usersLoading || !users?.length
+                ? ""
+                : mitigationValues.approver === 0
+                  ? ""
+                  : mitigationValues.approver
+            }
+            onChange={handleOnSelectChange("approver")}
+            items={userOptions}
+            sx={formFieldStyles}
+            isRequired
+            error={errors.approver}
+            disabled={isEditingDisabled || usersLoading}
+          />
+          <Select
+            id="approval-status-input"
+            label="Approval status"
+            placeholder="Select status"
+            value={mitigationValues.approvalStatus === 0 ? "" : mitigationValues.approvalStatus}
+            onChange={handleOnSelectChange("approvalStatus")}
+            items={approvalStatusItems}
+            sx={formFieldStyles}
+            isRequired
+            error={errors.approvalStatus}
+            disabled={isEditingDisabled}
+          />
+          <DatePicker
+            label="Assessment date"
+            date={
+              mitigationValues.dateOfAssessment
+                ? dayjs(mitigationValues.dateOfAssessment)
+                : dayjs(new Date())
+            }
+            handleDateChange={(e) => handleDateChange("dateOfAssessment", e)}
+            sx={{ flex: 1 }}
+            isRequired
+            error={errors.dateOfAssessment}
+            disabled={isEditingDisabled}
+          />
+        </Stack>
+        <Stack sx={{ mt: `${LAYOUT.VERTICAL_GAP}px`, width: "100%", maxWidth: contentWidth }}>
+          <Field
+            id="recommendations-input"
+            label="Recommendations"
+            type="description"
+            rows={3}
+            value={mitigationValues.recommendations}
+            onChange={handleOnTextFieldChange("recommendations")}
+            sx={{ width: "100%" }}
+            disabled={isEditingDisabled}
+          />
+        </Stack>
+      </Stack>
     </Stack>
   );
 };
