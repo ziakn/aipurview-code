@@ -6,6 +6,9 @@ import {
   getAllMappingsQuery,
   getMappingsBetweenFrameworksQuery,
   getMappingsForControlQuery,
+  createMappingQuery,
+  updateMappingQuery,
+  deleteMappingQuery,
   getAllScenariosQuery,
   getScenarioByIdQuery,
   getScenarioRulesQuery,
@@ -76,6 +79,68 @@ export async function getMappingsForControl(req: Request, res: Response): Promis
     return res.status(200).json(STATUS_CODE[200](mappings));
   } catch (error) {
     logStructured("error", "failed to fetch control mappings", FN, FILE_NAME);
+    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+  }
+}
+
+export async function createMapping(req: Request, res: Response): Promise<any> {
+  const FN = "createMapping";
+  logStructured("processing", "creating governance mapping", FN, FILE_NAME);
+  try {
+    const { organizationId } = req;
+    if (!organizationId) {
+      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+    }
+
+    const mapping = await createMappingQuery(req.body);
+    logStructured("successful", `created mapping ${mapping.id}`, FN, FILE_NAME);
+    return res.status(201).json(STATUS_CODE[201](mapping));
+  } catch (error) {
+    logStructured("error", "failed to create mapping", FN, FILE_NAME);
+    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+  }
+}
+
+export async function updateMapping(req: Request, res: Response): Promise<any> {
+  const FN = "updateMapping";
+  logStructured("processing", "updating governance mapping", FN, FILE_NAME);
+  try {
+    const { organizationId } = req;
+    if (!organizationId) {
+      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+    }
+
+    const { id } = req.params;
+    const mapping = await updateMappingQuery(Number(id), req.body);
+    if (!mapping) {
+      return res.status(404).json(STATUS_CODE[404]("Mapping not found"));
+    }
+    logStructured("successful", `updated mapping ${id}`, FN, FILE_NAME);
+    return res.status(200).json(STATUS_CODE[200](mapping));
+  } catch (error) {
+    logStructured("error", "failed to update mapping", FN, FILE_NAME);
+    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+  }
+}
+
+export async function deleteMapping(req: Request, res: Response): Promise<any> {
+  const FN = "deleteMapping";
+  logStructured("processing", "deleting governance mapping", FN, FILE_NAME);
+  try {
+    const { organizationId } = req;
+    if (!organizationId) {
+      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+    }
+
+    const { id } = req.params;
+    const deleted = await deleteMappingQuery(Number(id));
+    if (!deleted) {
+      return res.status(404).json(STATUS_CODE[404]("Mapping not found"));
+    }
+    logStructured("successful", `deleted mapping ${id}`, FN, FILE_NAME);
+    return res.status(200).json(STATUS_CODE[200]({ message: "Mapping deleted" }));
+  } catch (error) {
+    logStructured("error", "failed to delete mapping", FN, FILE_NAME);
     return res.status(500).json(STATUS_CODE[500]((error as Error).message));
   }
 }

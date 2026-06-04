@@ -5,6 +5,9 @@ import {
   getAllMappings,
   getMappingsBetween,
   getMappingsForControl,
+  createMapping,
+  updateMapping,
+  deleteMapping,
   getAllScenarios,
   getScenarioById,
   createScenario,
@@ -22,10 +25,13 @@ import {
 import authenticateJWT from "../middleware/auth.middleware";
 import authorize from "../middleware/accessControl.middleware";
 
-// Mappings (read-only, all authenticated users)
+// Mappings
 router.get("/mappings", authenticateJWT, getAllMappings);
 router.get("/mappings/between/:sourceId/:targetId", authenticateJWT, getMappingsBetween);
 router.get("/mappings/control/:controlType/:controlId", authenticateJWT, getMappingsForControl);
+router.post("/mappings", authenticateJWT, authorize(["Admin", "Editor"]), createMapping);
+router.put("/mappings/:id", authenticateJWT, authorize(["Admin", "Editor"]), updateMapping);
+router.delete("/mappings/:id", authenticateJWT, authorize(["Admin"]), deleteMapping);
 
 // Scenarios
 router.get("/scenarios", authenticateJWT, getAllScenarios);

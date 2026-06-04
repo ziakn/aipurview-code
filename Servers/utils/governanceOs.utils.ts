@@ -6,6 +6,7 @@ import { GovernanceScenarioRuleModel } from "../domain.layer/models/governanceOs
 import { GovernanceOrgPreferencesModel } from "../domain.layer/models/governanceOs/governanceOrgPreferences.model";
 import { GovernanceCoverageCacheModel } from "../domain.layer/models/governanceOs/governanceCoverageCache.model";
 import {
+  IGovernanceControlMappingAttributes,
   IGovernanceScenarioAttributes,
   IGovernanceOrgPreferencesAttributes,
 } from "../domain.layer/interfaces/i.governanceOs";
@@ -77,6 +78,89 @@ export const getMappingsForControlQuery = async (
       model: GovernanceControlMappingModel,
     },
   );
+};
+
+export const createMappingQuery = async (
+  data: Partial<IGovernanceControlMappingAttributes>,
+): Promise<GovernanceControlMappingModel> => {
+  const [results] = await sequelize.query(
+    `INSERT INTO governance_control_mappings
+      (source_framework_id, source_control_type, source_control_identifier, source_control_id,
+       target_framework_id, target_control_type, target_control_identifier, target_control_id,
+       mapping_strength, mapping_direction, domain_tag, rationale, confidence_score)
+     VALUES
+      (:source_framework_id, :source_control_type, :source_control_identifier, :source_control_id,
+       :target_framework_id, :target_control_type, :target_control_identifier, :target_control_id,
+       :mapping_strength, :mapping_direction, :domain_tag, :rationale, :confidence_score)
+     RETURNING *`,
+    {
+      replacements: {
+        source_framework_id: data.source_framework_id,
+        source_control_type: data.source_control_type || "clause",
+        source_control_identifier: data.source_control_identifier || "",
+        source_control_id: data.source_control_id || null,
+        target_framework_id: data.target_framework_id,
+        target_control_type: data.target_control_type || "clause",
+        target_control_identifier: data.target_control_identifier || "",
+        target_control_id: data.target_control_id || null,
+        mapping_strength: data.mapping_strength || "related",
+        mapping_direction: data.mapping_direction || "bidirectional",
+        domain_tag: data.domain_tag || null,
+        rationale: data.rationale || null,
+        confidence_score: data.confidence_score ?? 0.8,
+      },
+    },
+  );
+  return (results as any[])[0] as GovernanceControlMappingModel;
+};
+
+export const updateMappingQuery = async (
+  id: number,
+  data: Partial<IGovernanceControlMappingAttributes>,
+): Promise<GovernanceControlMappingModel | null> => {
+  const setClauses: string[] = [];
+  const replacements: Record<string, unknown> = { id };
+
+  if (data.mapping_strength !== undefined) {
+    setClauses.push("mapping_strength = :mapping_strength");
+    replacements.mapping_strength = data.mapping_strength;
+  }
+  if (data.mapping_direction !== undefined) {
+    setClauses.push("mapping_direction = :mapping_direction");
+    replacements.mapping_direction = data.mapping_direction;
+  }
+  if (data.domain_tag !== undefined) {
+    setClauses.push("domain_tag = :domain_tag");
+    replacements.domain_tag = data.domain_tag;
+  }
+  if (data.rationale !== undefined) {
+    setClauses.push("rationale = :rationale");
+    replacements.rationale = data.rationale;
+  }
+  if (data.confidence_score !== undefined) {
+    setClauses.push("confidence_score = :confidence_score");
+    replacements.confidence_score = data.confidence_score;
+  }
+
+  if (setClauses.length === 0) return null;
+
+  setClauses.push("updated_at = NOW()");
+
+  const [results] = await sequelize.query(
+    `UPDATE governance_control_mappings SET ${setClauses.join(", ")}
+     WHERE id = :id
+     RETURNING *`,
+    { replacements },
+  );
+  return ((results as any[])[0] as GovernanceControlMappingModel) || null;
+};
+
+export const deleteMappingQuery = async (id: number): Promise<boolean> => {
+  const [, metadata] = await sequelize.query(
+    `DELETE FROM governance_control_mappings WHERE id = :id`,
+    { replacements: { id } },
+  );
+  return (metadata as any).rowCount > 0;
 };
 
 // ============================================
