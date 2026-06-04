@@ -136,6 +136,12 @@ const MCPGuardrailsPage = lazyRoute(
 // ── Governance OS routes ─────────────────────────────────────────────
 const GovernanceOS = lazyRoute(() => import("../../presentation/pages/GovernanceOS"));
 
+// ── Governance Intelligence module routes ─────────────────────────────
+const GovernanceHub = lazyRoute(() => import("../../presentation/pages/GovernanceOS/Hub"));
+const FrameworkMapperModule = lazyRoute(() => import("../../presentation/pages/GovernanceOS/FrameworkMapperModule"));
+const ScenarioBuilderModule = lazyRoute(() => import("../../presentation/pages/GovernanceOS/ScenarioBuilderModule"));
+const UnifiedInsightsModule = lazyRoute(() => import("../../presentation/pages/GovernanceOS/UnifiedInsightsModule"));
+
 // ── Remaining routes ──────────────────────────────────────────────────
 const Plugins = lazyRoute(() => import("../../presentation/pages/Plugins"));
 const PluginManagement = lazyRoute(
@@ -351,6 +357,39 @@ export const createRoutes = (
         </Suspense>
       }
     />
+    <Route
+      path="/governance"
+      element={
+        <Suspense fallback={<LazyFallback />}>
+          <GovernanceHub />
+        </Suspense>
+      }
+    />
+    <Route
+      path="/governance/framework-mapper"
+      element={
+        <Suspense fallback={<LazyFallback />}>
+          <FrameworkMapperModule />
+        </Suspense>
+      }
+    />
+    <Route
+      path="/governance/scenarios"
+      element={
+        <Suspense fallback={<LazyFallback />}>
+          <ScenarioBuilderModule />
+        </Suspense>
+      }
+    />
+    <Route
+      path="/governance/insights"
+      element={
+        <Suspense fallback={<LazyFallback />}>
+          <UnifiedInsightsModule />
+        </Suspense>
+      }
+    />
+    <Route path="/governance-os/*" element={<Navigate to="/governance" replace />} />
     <Route
       path="/project-view"
       element={
