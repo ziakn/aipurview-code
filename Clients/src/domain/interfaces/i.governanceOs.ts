@@ -105,6 +105,8 @@ export interface IScenarioCardProps {
   matchedRules?: string[];
   isSelected?: boolean;
   onSelect?: (scenario: IGovernanceScenario) => void;
+  onEdit?: (scenario: IGovernanceScenario) => void;
+  onDelete?: (scenario: IGovernanceScenario) => void;
 }
 
 export interface ICoverageChartProps {

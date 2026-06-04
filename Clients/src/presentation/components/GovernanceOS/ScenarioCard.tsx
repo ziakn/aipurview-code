@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Box, Typography, Stack, Chip, Button, IconButton } from "@mui/material";
-import { Check, Info } from "lucide-react";
+import { Check, Info, Pencil, Trash2 } from "lucide-react";
 import VWTooltip from "../VWTooltip";
 import StandardModal from "../Modals/StandardModal";
 import { IScenarioCardProps } from "../../../domain/interfaces/i.governanceOs";
@@ -19,6 +19,8 @@ const ScenarioCard = ({
   matchedRules,
   isSelected,
   onSelect,
+  onEdit,
+  onDelete,
 }: IScenarioCardProps) => {
   const [detailOpen, setDetailOpen] = useState(false);
 
@@ -78,6 +80,34 @@ const ScenarioCard = ({
                 <Info size={16} />
               </IconButton>
             </VWTooltip>
+            {onEdit && !scenario.is_builtin && (
+              <VWTooltip content="Edit scenario" placement="top">
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit(scenario);
+                  }}
+                  sx={{ "color": text.muted, "&:hover": { color: text.primary } }}
+                >
+                  <Pencil size={14} />
+                </IconButton>
+              </VWTooltip>
+            )}
+            {onDelete && !scenario.is_builtin && (
+              <VWTooltip content="Delete scenario" placement="top">
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(scenario);
+                  }}
+                  sx={{ "color": text.muted, "&:hover": { color: "#D32F2F" } }}
+                >
+                  <Trash2 size={14} />
+                </IconButton>
+              </VWTooltip>
+            )}
             {onSelect && (
               <VWTooltip
                 header="Set as active governance strategy"
