@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { Stack, Typography, CircularProgress, Button } from "@mui/material";
-import { GitCompareArrows, Plus } from "lucide-react";
+import { Stack, Typography, CircularProgress, Button, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { GitCompareArrows, Plus, List, Grid3X3, Download } from "lucide-react";
 import FrameworkSelector from "../../components/GovernanceOS/FrameworkSelector";
 import MappingCard from "../../components/GovernanceOS/MappingCard";
 import { EmptyState } from "../../components/EmptyState";
 import { StatusTileCards, StatusTileItem } from "../../components/Cards/StatusTileCards";
 import ConfirmationModal from "../../components/Dialogs/ConfirmationModal";
 import {
+  useMappings,
   useMappingsBetween,
   useCreateMapping,
   useUpdateMapping,
@@ -14,6 +15,7 @@ import {
 } from "../../../application/hooks/useGovernanceOs";
 import { IGovernanceControlMapping } from "../../../domain/interfaces/i.governanceOs";
 import MappingFormModal from "./FrameworkMapperModule/MappingFormModal";
+import MappingMatrixView from "./FrameworkMapperModule/MappingMatrixView";
 
 const FrameworkMapper = () => {
   const [sourceId, setSourceId] = useState(1);
@@ -24,10 +26,16 @@ const FrameworkMapper = () => {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [mappingToDelete, setMappingToDelete] = useState<IGovernanceControlMapping | null>(null);
 
-  const { data: mappings, isLoading } = useMappingsBetween(sourceId, targetId);
+  const [viewMode, setViewMode] = useState<"list" | "matrix">("list");
+
+  const { data: allMappings, isLoading: allMappingsLoading } = useMappings();
+  const { data: pairwiseMappings, isLoading: pairwiseLoading } = useMappingsBetween(sourceId, targetId);
   const createMappingMutation = useCreateMapping();
   const updateMappingMutation = useUpdateMapping();
   const deleteMappingMutation = useDeleteMapping();
+
+  const mappings = viewMode === "matrix" ? allMappings : pairwiseMappings;
+  const isLoading = viewMode === "matrix" ? allMappingsLoading : pairwiseLoading;
 
   const handleCreateMapping = () => {
     setEditingMapping(null);
@@ -94,15 +102,54 @@ const FrameworkMapper = () => {
           onSourceChange={setSourceId}
           onTargetChange={setTargetId}
         />
-        <Button
-          variant="outlined"
-          size="small"
-          startIcon={<Plus size={14} />}
-          onClick={handleCreateMapping}
-          sx={{ textTransform: "none", fontSize: 12, height: 34 }}
-        >
-          New Mapping
-        </Button>
+        <Stack direction="row" spacing={1} alignItems="center">
+          <ToggleButtonGroup
+            value={viewMode}
+            exclusive
+            onChange={(_, value) => value && setViewMode(value)}
+            size="small"
+            sx={{ height: 34 }}
+          >
+            <ToggleButton value="list" sx={{ px: 1.5 }}>
+              <List size={14} />
+            </ToggleButton>
+            <ToggleButton value="matrix" sx={{ px: 1.5 }}>
+              <Grid3X3 size={14} />
+            </ToggleButton>
+          </ToggleButtonGroup>
+          <Button
+            variant="outlined"
+            size="small"
+            startIcon={<Download size={14} />}
+            onClick={() => {
+              const rows = [
+                ["ID", "Source Framework", "Source Control", "Target Framework", "Target Control", "Strength", "Domain", "Confidence"].join(","),
+                ...(pairwiseMappings || []).map((m) =>
+                  [m.id, m.source_framework_id, m.source_control_identifier, m.target_framework_id, m.target_control_identifier, m.mapping_strength, m.domain_tag || "", m.confidence_score || ""].join(",")
+                ),
+              ];
+              const blob = new Blob([rows.join("\n")], { type: "text/csv" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `mappings-${sourceId}-${targetId}.csv`;
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+            sx={{ textTransform: "none", fontSize: 12, height: 34 }}
+          >
+            Export
+          </Button>
+          <Button
+            variant="outlined"
+            size="small"
+            startIcon={<Plus size={14} />}
+            onClick={handleCreateMapping}
+            sx={{ textTransform: "none", fontSize: 12, height: 34 }}
+          >
+            New Mapping
+          </Button>
+        </Stack>
       </Stack>
 
       {domainTileItems.length > 0 && (
