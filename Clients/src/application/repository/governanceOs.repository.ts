@@ -69,6 +69,11 @@ export async function deleteMapping({ id }: { id: number }): Promise<any> {
   return response.data;
 }
 
+export async function createBulkMappings({ body }: { body: { mappings: any[] } }): Promise<any> {
+  const response = await apiServices.post(`${BASE}/mappings/bulk`, body);
+  return response.data;
+}
+
 // Scenarios
 export async function getAllScenarios({ signal }: { signal?: AbortSignal } = {}): Promise<any> {
   const response = await apiServices.get(`${BASE}/scenarios`, { signal });

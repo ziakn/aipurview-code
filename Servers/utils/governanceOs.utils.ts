@@ -163,6 +163,50 @@ export const deleteMappingQuery = async (id: number): Promise<boolean> => {
   return (metadata as any).rowCount > 0;
 };
 
+export const createBulkMappingsQuery = async (
+  mappings: Partial<IGovernanceControlMappingAttributes>[],
+): Promise<number> => {
+  if (mappings.length === 0) return 0;
+
+  const values = mappings
+    .map(
+      (_, i) =>
+        `(:source_framework_id_${i}, :source_control_type_${i}, :source_control_identifier_${i}, :source_control_id_${i},
+      :target_framework_id_${i}, :target_control_type_${i}, :target_control_identifier_${i}, :target_control_id_${i},
+      :mapping_strength_${i}, :mapping_direction_${i}, :domain_tag_${i}, :rationale_${i}, :confidence_score_${i})`,
+    )
+    .join(", ");
+
+  const replacements: Record<string, unknown> = {};
+  mappings.forEach((m, i) => {
+    replacements[`source_framework_id_${i}`] = m.source_framework_id;
+    replacements[`source_control_type_${i}`] = m.source_control_type || "clause";
+    replacements[`source_control_identifier_${i}`] = m.source_control_identifier || "";
+    replacements[`source_control_id_${i}`] = m.source_control_id || null;
+    replacements[`target_framework_id_${i}`] = m.target_framework_id;
+    replacements[`target_control_type_${i}`] = m.target_control_type || "clause";
+    replacements[`target_control_identifier_${i}`] = m.target_control_identifier || "";
+    replacements[`target_control_id_${i}`] = m.target_control_id || null;
+    replacements[`mapping_strength_${i}`] = m.mapping_strength || "related";
+    replacements[`mapping_direction_${i}`] = m.mapping_direction || "bidirectional";
+    replacements[`domain_tag_${i}`] = m.domain_tag || null;
+    replacements[`rationale_${i}`] = m.rationale || null;
+    replacements[`confidence_score_${i}`] = m.confidence_score ?? 0.8;
+  });
+
+  const [results] = await sequelize.query(
+    `INSERT INTO governance_control_mappings
+      (source_framework_id, source_control_type, source_control_identifier, source_control_id,
+       target_framework_id, target_control_type, target_control_identifier, target_control_id,
+       mapping_strength, mapping_direction, domain_tag, rationale, confidence_score)
+     VALUES ${values}
+     RETURNING *`,
+    { replacements },
+  );
+
+  return (results as any[]).length;
+};
+
 // ============================================
 // SCENARIOS
 // ============================================

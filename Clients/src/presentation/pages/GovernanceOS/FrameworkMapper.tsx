@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Stack, Typography, CircularProgress, Button, ToggleButton, ToggleButtonGroup } from "@mui/material";
-import { GitCompareArrows, Plus, List, Grid3X3, Download } from "lucide-react";
+import { GitCompareArrows, Plus, List, Grid3X3, Download, Upload } from "lucide-react";
 import FrameworkSelector from "../../components/GovernanceOS/FrameworkSelector";
 import MappingCard from "../../components/GovernanceOS/MappingCard";
 import { EmptyState } from "../../components/EmptyState";
@@ -12,10 +12,12 @@ import {
   useCreateMapping,
   useUpdateMapping,
   useDeleteMapping,
+  useBulkCreateMappings,
 } from "../../../application/hooks/useGovernanceOs";
 import { IGovernanceControlMapping } from "../../../domain/interfaces/i.governanceOs";
 import MappingFormModal from "./FrameworkMapperModule/MappingFormModal";
 import MappingMatrixView from "./FrameworkMapperModule/MappingMatrixView";
+import BulkImportModal from "./FrameworkMapperModule/BulkImportModal";
 
 const FrameworkMapper = () => {
   const [sourceId, setSourceId] = useState(1);
@@ -27,12 +29,14 @@ const FrameworkMapper = () => {
   const [mappingToDelete, setMappingToDelete] = useState<IGovernanceControlMapping | null>(null);
 
   const [viewMode, setViewMode] = useState<"list" | "matrix">("list");
+  const [bulkImportOpen, setBulkImportOpen] = useState(false);
 
   const { data: allMappings, isLoading: allMappingsLoading } = useMappings();
   const { data: pairwiseMappings, isLoading: pairwiseLoading } = useMappingsBetween(sourceId, targetId);
   const createMappingMutation = useCreateMapping();
   const updateMappingMutation = useUpdateMapping();
   const deleteMappingMutation = useDeleteMapping();
+  const bulkCreateMutation = useBulkCreateMappings();
 
   const mappings = viewMode === "matrix" ? allMappings : pairwiseMappings;
   const isLoading = viewMode === "matrix" ? allMappingsLoading : pairwiseLoading;
@@ -143,6 +147,15 @@ const FrameworkMapper = () => {
           <Button
             variant="outlined"
             size="small"
+            startIcon={<Upload size={14} />}
+            onClick={() => setBulkImportOpen(true)}
+            sx={{ textTransform: "none", fontSize: 12, height: 34 }}
+          >
+            Import
+          </Button>
+          <Button
+            variant="outlined"
+            size="small"
             startIcon={<Plus size={14} />}
             onClick={handleCreateMapping}
             sx={{ textTransform: "none", fontSize: 12, height: 34 }}
@@ -201,6 +214,17 @@ const FrameworkMapper = () => {
         proceedButtonVariant="contained"
         proceedButtonColor="error"
         isLoading={deleteMappingMutation.isPending}
+      />
+
+      <BulkImportModal
+        open={bulkImportOpen}
+        onClose={() => setBulkImportOpen(false)}
+        onImport={(mappings) => {
+          bulkCreateMutation.mutate(mappings, {
+            onSuccess: () => setBulkImportOpen(false),
+          });
+        }}
+        isSubmitting={bulkCreateMutation.isPending}
       />
     </Stack>
   );

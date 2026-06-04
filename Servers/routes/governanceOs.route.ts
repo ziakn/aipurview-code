@@ -8,6 +8,7 @@ import {
   createMapping,
   updateMapping,
   deleteMapping,
+  createBulkMappings,
   getAllScenarios,
   getScenarioById,
   createScenario,
@@ -32,6 +33,7 @@ router.get("/mappings/control/:controlType/:controlId", authenticateJWT, getMapp
 router.post("/mappings", authenticateJWT, authorize(["Admin", "Editor"]), createMapping);
 router.put("/mappings/:id", authenticateJWT, authorize(["Admin", "Editor"]), updateMapping);
 router.delete("/mappings/:id", authenticateJWT, authorize(["Admin"]), deleteMapping);
+router.post("/mappings/bulk", authenticateJWT, authorize(["Admin", "Editor"]), createBulkMappings);
 
 // Scenarios
 router.get("/scenarios", authenticateJWT, getAllScenarios);

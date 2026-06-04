@@ -9,6 +9,7 @@ import {
   createMappingQuery,
   updateMappingQuery,
   deleteMappingQuery,
+  createBulkMappingsQuery,
   getAllScenariosQuery,
   getScenarioByIdQuery,
   getScenarioRulesQuery,
@@ -141,6 +142,29 @@ export async function deleteMapping(req: Request, res: Response): Promise<any> {
     return res.status(200).json(STATUS_CODE[200]({ message: "Mapping deleted" }));
   } catch (error) {
     logStructured("error", "failed to delete mapping", FN, FILE_NAME);
+    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+  }
+}
+
+export async function createBulkMappings(req: Request, res: Response): Promise<any> {
+  const FN = "createBulkMappings";
+  logStructured("processing", "creating bulk governance mappings", FN, FILE_NAME);
+  try {
+    const { organizationId } = req;
+    if (!organizationId) {
+      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+    }
+
+    const { mappings } = req.body;
+    if (!Array.isArray(mappings) || mappings.length === 0) {
+      return res.status(400).json(STATUS_CODE[400]("mappings array is required"));
+    }
+
+    const count = await createBulkMappingsQuery(mappings);
+    logStructured("successful", `created ${count} mappings in bulk`, FN, FILE_NAME);
+    return res.status(201).json(STATUS_CODE[201]({ created: count }));
+  } catch (error) {
+    logStructured("error", "failed to create bulk mappings", FN, FILE_NAME);
     return res.status(500).json(STATUS_CODE[500]((error as Error).message));
   }
 }

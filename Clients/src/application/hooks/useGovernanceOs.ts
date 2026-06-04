@@ -5,6 +5,7 @@ import {
   createMapping,
   updateMapping,
   deleteMapping,
+  createBulkMappings,
   getAllScenarios,
   getScenarioById,
   createScenario,
@@ -69,6 +70,17 @@ export const useDeleteMapping = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: number) => deleteMapping({ id }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: governanceOsQueryKeys.mappings() });
+    },
+  });
+};
+
+export const useBulkCreateMappings = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (mappings: Partial<IGovernanceControlMapping>[]) =>
+      createBulkMappings({ body: { mappings } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: governanceOsQueryKeys.mappings() });
     },
