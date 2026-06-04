@@ -1,18 +1,67 @@
 import { useState } from "react";
-import { Stack, Typography, CircularProgress } from "@mui/material";
-import { GitCompareArrows } from "lucide-react";
+import { Stack, Typography, CircularProgress, Button } from "@mui/material";
+import { GitCompareArrows, Plus } from "lucide-react";
 import FrameworkSelector from "../../components/GovernanceOS/FrameworkSelector";
 import MappingCard from "../../components/GovernanceOS/MappingCard";
 import { EmptyState } from "../../components/EmptyState";
 import { StatusTileCards, StatusTileItem } from "../../components/Cards/StatusTileCards";
-import { useMappingsBetween } from "../../../application/hooks/useGovernanceOs";
+import ConfirmationModal from "../../components/Dialogs/ConfirmationModal";
+import {
+  useMappingsBetween,
+  useCreateMapping,
+  useUpdateMapping,
+  useDeleteMapping,
+} from "../../../application/hooks/useGovernanceOs";
+import { IGovernanceControlMapping } from "../../../domain/interfaces/i.governanceOs";
+import MappingFormModal from "./FrameworkMapperModule/MappingFormModal";
 
 const FrameworkMapper = () => {
   const [sourceId, setSourceId] = useState(1);
   const [targetId, setTargetId] = useState(2);
   const [selectedDomain, setSelectedDomain] = useState<string | null>(null);
+  const [formModalOpen, setFormModalOpen] = useState(false);
+  const [editingMapping, setEditingMapping] = useState<IGovernanceControlMapping | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [mappingToDelete, setMappingToDelete] = useState<IGovernanceControlMapping | null>(null);
 
   const { data: mappings, isLoading } = useMappingsBetween(sourceId, targetId);
+  const createMappingMutation = useCreateMapping();
+  const updateMappingMutation = useUpdateMapping();
+  const deleteMappingMutation = useDeleteMapping();
+
+  const handleCreateMapping = () => {
+    setEditingMapping(null);
+    setFormModalOpen(true);
+  };
+
+  const handleEditMapping = (mapping: IGovernanceControlMapping) => {
+    setEditingMapping(mapping);
+    setFormModalOpen(true);
+  };
+
+  const handleDeleteMapping = (mapping: IGovernanceControlMapping) => {
+    setMappingToDelete(mapping);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (mappingToDelete) {
+      deleteMappingMutation.mutate(mappingToDelete.id!);
+      setDeleteConfirmOpen(false);
+      setMappingToDelete(null);
+    }
+  };
+
+  const handleFormSubmit = (data: Partial<IGovernanceControlMapping>) => {
+    if (editingMapping) {
+      updateMappingMutation.mutate(
+        { id: editingMapping.id!, body: data },
+        { onSuccess: () => setFormModalOpen(false) }
+      );
+    } else {
+      createMappingMutation.mutate(data, { onSuccess: () => setFormModalOpen(false) });
+    }
+  };
 
   const filteredMappings = (mappings || []).filter((m) => {
     if (selectedDomain && m.domain_tag !== selectedDomain) return false;
@@ -38,12 +87,23 @@ const FrameworkMapper = () => {
         controls align.
       </Typography>
 
-      <FrameworkSelector
-        sourceId={sourceId}
-        targetId={targetId}
-        onSourceChange={setSourceId}
-        onTargetChange={setTargetId}
-      />
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <FrameworkSelector
+          sourceId={sourceId}
+          targetId={targetId}
+          onSourceChange={setSourceId}
+          onTargetChange={setTargetId}
+        />
+        <Button
+          variant="outlined"
+          size="small"
+          startIcon={<Plus size={14} />}
+          onClick={handleCreateMapping}
+          sx={{ textTransform: "none", fontSize: 12, height: 34 }}
+        >
+          New Mapping
+        </Button>
+      </Stack>
 
       {domainTileItems.length > 0 && (
         <StatusTileCards
@@ -75,6 +135,26 @@ const FrameworkMapper = () => {
           ))}
         </Stack>
       )}
+      <MappingFormModal
+        open={formModalOpen}
+        mapping={editingMapping}
+        onClose={() => setFormModalOpen(false)}
+        onSubmit={handleFormSubmit}
+        isSubmitting={createMappingMutation.isPending || updateMappingMutation.isPending}
+      />
+
+      <ConfirmationModal
+        isOpen={deleteConfirmOpen}
+        onCancel={() => setDeleteConfirmOpen(false)}
+        onProceed={confirmDelete}
+        title="Delete Mapping"
+        body={`Are you sure you want to delete the mapping from "${mappingToDelete?.source_control_identifier}" to "${mappingToDelete?.target_control_identifier}"? This action cannot be undone.`}
+        proceedText="Delete"
+        cancelText="Cancel"
+        proceedButtonVariant="contained"
+        proceedButtonColor="error"
+        isLoading={deleteMappingMutation.isPending}
+      />
     </Stack>
   );
 };

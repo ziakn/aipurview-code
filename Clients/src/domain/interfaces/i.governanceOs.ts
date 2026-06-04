@@ -97,6 +97,8 @@ export interface IGovernanceOsPageProps {
 export interface IMappingCardProps {
   mapping: IGovernanceControlMapping;
   frameworkNames?: Record<number, string>;
+  onEdit?: (mapping: IGovernanceControlMapping) => void;
+  onDelete?: (mapping: IGovernanceControlMapping) => void;
 }
 
 export interface IScenarioCardProps {

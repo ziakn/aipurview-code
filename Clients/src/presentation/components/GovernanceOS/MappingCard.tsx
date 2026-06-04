@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Box, Typography, Stack, Chip } from "@mui/material";
-import { ArrowRight, Info } from "lucide-react";
+import { Box, Typography, Stack, Chip, IconButton } from "@mui/material";
+import { ArrowRight, Info, Pencil, Trash2 } from "lucide-react";
 import MappingStrengthBadge from "./MappingStrengthBadge";
 import StandardModal from "../Modals/StandardModal";
 import { IMappingCardProps } from "../../../domain/interfaces/i.governanceOs";
@@ -22,7 +22,7 @@ const STRENGTH_DESCRIPTIONS: Record<string, string> = {
     "These controls cover similar governance topics but from different angles. Understanding one helps inform the other, but they are not interchangeable.",
 };
 
-const MappingCard = ({ mapping, frameworkNames }: IMappingCardProps) => {
+const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCardProps) => {
   const names = frameworkNames || FRAMEWORK_NAMES;
   const [detailOpen, setDetailOpen] = useState(false);
 
@@ -87,7 +87,33 @@ const MappingCard = ({ mapping, frameworkNames }: IMappingCardProps) => {
             </Typography>
           )}
 
-          <Info size={14} color={text.muted} style={{ marginLeft: "auto" }} />
+          <Stack direction="row" spacing={0.5} alignItems="center" sx={{ ml: "auto" }}>
+            {onEdit && (
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(mapping);
+                }}
+                sx={{ "color": text.muted, "&:hover": { color: text.primary } }}
+              >
+                <Pencil size={14} />
+              </IconButton>
+            )}
+            {onDelete && (
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(mapping);
+                }}
+                sx={{ "color": text.muted, "&:hover": { color: "#D32F2F" } }}
+              >
+                <Trash2 size={14} />
+              </IconButton>
+            )}
+            <Info size={14} color={text.muted} />
+          </Stack>
         </Stack>
 
         {mapping.rationale && (

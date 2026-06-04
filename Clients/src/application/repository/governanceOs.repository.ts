@@ -54,6 +54,21 @@ export async function getMappingsForControl({
   return response.data;
 }
 
+export async function createMapping({ body }: { body: any }): Promise<any> {
+  const response = await apiServices.post(`${BASE}/mappings`, body);
+  return response.data;
+}
+
+export async function updateMapping({ id, body }: { id: number; body: any }): Promise<any> {
+  const response = await apiServices.put(`${BASE}/mappings/${id}`, body);
+  return response.data;
+}
+
+export async function deleteMapping({ id }: { id: number }): Promise<any> {
+  const response = await apiServices.delete(`${BASE}/mappings/${id}`);
+  return response.data;
+}
+
 // Scenarios
 export async function getAllScenarios({ signal }: { signal?: AbortSignal } = {}): Promise<any> {
   const response = await apiServices.get(`${BASE}/scenarios`, { signal });

@@ -2,6 +2,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getAllMappings,
   getMappingsBetween,
+  createMapping,
+  updateMapping,
+  deleteMapping,
   getAllScenarios,
   getScenarioById,
   createScenario,
@@ -39,6 +42,37 @@ export const governanceOsQueryKeys = {
     [...governanceOsQueryKeys.all, "unified-view", projectId] as const,
   preferences: () => [...governanceOsQueryKeys.all, "preferences"] as const,
   eligibility: () => [...governanceOsQueryKeys.all, "eligibility"] as const,
+};
+
+export const useCreateMapping = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (body: Partial<IGovernanceControlMapping>) => createMapping({ body }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: governanceOsQueryKeys.mappings() });
+    },
+  });
+};
+
+export const useUpdateMapping = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, body }: { id: number; body: Partial<IGovernanceControlMapping> }) =>
+      updateMapping({ id, body }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: governanceOsQueryKeys.mappings() });
+    },
+  });
+};
+
+export const useDeleteMapping = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => deleteMapping({ id }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: governanceOsQueryKeys.mappings() });
+    },
+  });
 };
 
 export const useMappings = (filters?: {
