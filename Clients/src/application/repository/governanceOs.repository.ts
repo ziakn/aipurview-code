@@ -106,6 +106,16 @@ export async function deleteScenario({ id }: { id: number }): Promise<any> {
   return response.data;
 }
 
+export async function activateScenario({ id, body }: { id: number; body: any }): Promise<any> {
+  const response = await apiServices.post(`${BASE}/scenarios/${id}/activate`, body);
+  return response.data;
+}
+
+export async function simulateScenario({ body }: { body: any }): Promise<any> {
+  const response = await apiServices.post(`${BASE}/scenarios/simulate`, body);
+  return response.data;
+}
+
 // Recommendations
 export async function getRecommendations({ body }: { body: IRecommendationRequest }): Promise<any> {
   const response = await apiServices.post(`${BASE}/recommend`, body);
