@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Box, Typography, Stack, Chip, Button, IconButton } from "@mui/material";
-import { Check, Info, Pencil, Trash2 } from "lucide-react";
+import { Check, Info, Pencil, Trash2, Zap } from "lucide-react";
 import VWTooltip from "../VWTooltip";
 import StandardModal from "../Modals/StandardModal";
 import { IScenarioCardProps } from "../../../domain/interfaces/i.governanceOs";
@@ -21,6 +21,7 @@ const ScenarioCard = ({
   onSelect,
   onEdit,
   onDelete,
+  onActivate,
 }: IScenarioCardProps) => {
   const [detailOpen, setDetailOpen] = useState(false);
 
@@ -106,6 +107,38 @@ const ScenarioCard = ({
                 >
                   <Trash2 size={14} />
                 </IconButton>
+              </VWTooltip>
+            )}
+            {onActivate && (
+              <VWTooltip
+                header="Activate this scenario"
+                content={
+                  <p>
+                    Activation creates real tasks for each prioritized framework across selected
+                    projects. Tasks are assigned with staggered due dates based on priority.
+                  </p>
+                }
+                placement="left"
+              >
+                <Button
+                  size="small"
+                  variant="contained"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onActivate(scenario);
+                  }}
+                  startIcon={<Zap size={14} />}
+                  sx={{
+                    fontSize: 12,
+                    textTransform: "none",
+                    boxShadow: "none",
+                    backgroundColor: brand.primary,
+                    color: "#fff",
+                    "&:hover": { backgroundColor: brand.primaryHover, boxShadow: "none" },
+                  }}
+                >
+                  Activate
+                </Button>
               </VWTooltip>
             )}
             {onSelect && (
