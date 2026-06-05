@@ -11,6 +11,8 @@ import {
   createScenario,
   updateScenario,
   deleteScenario,
+  activateScenario,
+  simulateScenario,
   getRecommendations,
   getCoverage,
   refreshCoverage,
@@ -84,6 +86,23 @@ export const useBulkCreateMappings = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: governanceOsQueryKeys.mappings() });
     },
+  });
+};
+
+export const useActivateScenario = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, body }: { id: number; body: any }) => activateScenario({ id, body }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: governanceOsQueryKeys.scenarios() });
+      queryClient.invalidateQueries({ queryKey: governanceOsQueryKeys.preferences() });
+    },
+  });
+};
+
+export const useSimulateScenario = () => {
+  return useMutation({
+    mutationFn: (body: any) => simulateScenario({ body }),
   });
 };
 
