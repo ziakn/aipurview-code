@@ -16,6 +16,7 @@ import {
   createScenarioQuery,
   updateScenarioQuery,
   deleteScenarioQuery,
+  createScenarioActivationQuery,
   getOrgPreferencesQuery,
   upsertOrgPreferencesQuery,
   getMappingStatsQuery,
@@ -165,6 +166,131 @@ export async function createBulkMappings(req: Request, res: Response): Promise<a
     return res.status(201).json(STATUS_CODE[201]({ created: count }));
   } catch (error) {
     logStructured("error", "failed to create bulk mappings", FN, FILE_NAME);
+    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+  }
+}
+
+export async function activateScenario(req: Request, res: Response): Promise<any> {
+  const FN = "activateScenario";
+  logStructured("processing", "activating governance scenario", FN, FILE_NAME);
+  try {
+    const { organizationId, userId } = req;
+    if (!organizationId || !userId) {
+      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+    }
+
+    const { id } = req.params;
+    const scenario = await getScenarioByIdQuery(Number(id));
+    if (!scenario) {
+      return res.status(404).json(STATUS_CODE[404]("Scenario not found"));
+    }
+
+    const priorityOrder = (scenario.priority_order || {}) as {
+      primary?: number;
+      secondary?: number[];
+      supplementary?: number[];
+    };
+
+    const { projectIds, ownerAssignments } = req.body;
+
+    const result = await createScenarioActivationQuery({
+      organizationId,
+      scenarioId: Number(id),
+      activatedBy: userId,
+      priorityOrder,
+      projectIds,
+      ownerAssignments,
+    });
+
+    // Update preferences to set this as the active scenario
+    await upsertOrgPreferencesQuery(organizationId, {
+      selected_scenario_id: Number(id),
+    });
+
+    logStructured(
+      "successful",
+      `activated scenario ${id}, created ${result.tasksCreated} tasks`,
+      FN,
+      FILE_NAME,
+    );
+    return res.status(200).json(
+      STATUS_CODE[200]({
+        activationId: result.activationId,
+        tasksCreated: result.tasksCreated,
+        scenarioId: Number(id),
+      }),
+    );
+  } catch (error) {
+    logStructured("error", "failed to activate scenario", FN, FILE_NAME);
+    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+  }
+}
+
+export async function simulateScenario(req: Request, res: Response): Promise<any> {
+  const FN = "simulateScenario";
+  logStructured("processing", "simulating governance scenario", FN, FILE_NAME);
+  try {
+    const { organizationId } = req;
+    if (!organizationId) {
+      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+    }
+
+    const { frameworkIds, priorityOrder } = req.body;
+    if (!Array.isArray(frameworkIds) || frameworkIds.length === 0) {
+      return res.status(400).json(STATUS_CODE[400]("frameworkIds array is required"));
+    }
+
+    // Count total controls across selected frameworks
+    const [frameworkResults] = await sequelize.query(
+      `SELECT f.id, f.name, COUNT(c.id) as control_count
+       FROM frameworks f
+       LEFT JOIN LATERAL (
+         SELECT id FROM iso42001_clauses WHERE framework_id = f.id
+         UNION ALL
+         SELECT id FROM iso27001_clauses WHERE framework_id = f.id
+         UNION ALL
+         SELECT id FROM nist_ai_rmf_functions WHERE framework_id = f.id
+         UNION ALL
+         SELECT id FROM eu_ai_act_articles WHERE framework_id = f.id
+       ) c ON true
+       WHERE f.id = ANY(:frameworkIds)
+       GROUP BY f.id, f.name`,
+      { replacements: { frameworkIds } },
+    );
+
+    const breakdown = (frameworkResults as any[]).map((row) => ({
+      frameworkId: row.id,
+      frameworkName: row.name,
+      controlCount: parseInt(row.control_count, 10),
+      priority:
+        priorityOrder?.primary === row.id
+          ? "primary"
+          : priorityOrder?.secondary?.includes(row.id)
+            ? "secondary"
+            : priorityOrder?.supplementary?.includes(row.id)
+              ? "supplementary"
+              : "unprioritized",
+    }));
+
+    const totalControls = breakdown.reduce((sum, f) => sum + f.controlCount, 0);
+    // Estimate 80% coverage achievable with selected frameworks
+    const estimatedCoveragePercent = Math.min(85, 40 + frameworkIds.length * 12);
+    const estimatedEffortHours = totalControls * 4;
+    const timelineWeeks = Math.max(4, Math.ceil(totalControls / 20));
+
+    logStructured("successful", "computed scenario simulation", FN, FILE_NAME);
+    return res.status(200).json(
+      STATUS_CODE[200]({
+        frameworkIds,
+        totalControls,
+        estimatedCoveragePercent,
+        estimatedEffortHours,
+        timelineWeeks,
+        frameworkBreakdown: breakdown,
+      }),
+    );
+  } catch (error) {
+    logStructured("error", "failed to simulate scenario", FN, FILE_NAME);
     return res.status(500).json(STATUS_CODE[500]((error as Error).message));
   }
 }
