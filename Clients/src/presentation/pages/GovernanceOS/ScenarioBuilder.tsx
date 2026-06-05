@@ -22,13 +22,20 @@ import {
   useRecommendations,
   useGovernancePreferences,
   useUpdatePreferences,
+  useActivateScenario,
+  useSimulateScenario,
 } from "../../../application/hooks/useGovernanceOs";
+import { useProjects } from "../../../application/hooks/useProjects";
+import useUsers from "../../../application/hooks/useUsers";
 import {
   IRecommendationRequest,
   IGovernanceScenario,
 } from "../../../domain/interfaces/i.governanceOs";
 import { border as borderPalette, background } from "../../themes/palette";
 import ScenarioFormModal from "./ScenarioBuilderModule/ScenarioFormModal";
+import ActivationWizard from "../../components/GovernanceOS/ActivationWizard";
+import WhatIfSimulator from "../../components/GovernanceOS/WhatIfSimulator";
+import ScenarioComparison from "../../components/GovernanceOS/ScenarioComparison";
 
 const INDUSTRIES = [
   { _id: "technology", name: "Technology" },
@@ -69,6 +76,10 @@ const ScenarioBuilder = () => {
   const createScenarioMutation = useCreateScenario();
   const updateScenarioMutation = useUpdateScenario();
   const deleteScenarioMutation = useDeleteScenario();
+  const activateScenarioMutation = useActivateScenario();
+  const simulateScenarioMutation = useSimulateScenario();
+  const { approvedProjects, isLoading: projectsLoading } = useProjects();
+  const { users, loading: usersLoading } = useUsers();
 
   const [formModalOpen, setFormModalOpen] = useState(false);
   const [editingScenario, setEditingScenario] = useState<IGovernanceScenario | null>(null);
@@ -82,6 +93,10 @@ const ScenarioBuilder = () => {
     useCaseType: "",
     deploymentScale: "",
   });
+
+  const [activationWizardOpen, setActivationWizardOpen] = useState(false);
+  const [activatingScenario, setActivatingScenario] = useState<IGovernanceScenario | null>(null);
+  const [compareSelectedIds, setCompareSelectedIds] = useState<number[]>([]);
 
   const selectedScenarioId = preferences?.selected_scenario_id ?? null;
 
@@ -125,6 +140,33 @@ const ScenarioBuilder = () => {
     } else {
       createScenarioMutation.mutate(data, { onSuccess: () => setFormModalOpen(false) });
     }
+  };
+
+  const handleActivateClick = (scenario: IGovernanceScenario) => {
+    setActivatingScenario(scenario);
+    setActivationWizardOpen(true);
+  };
+
+  const handleActivate = ({
+    projectIds,
+    ownerAssignments,
+  }: {
+    projectIds: number[];
+    ownerAssignments: Record<number, number>;
+  }) => {
+    if (!activatingScenario) return;
+    activateScenarioMutation.mutate(
+      {
+        id: activatingScenario.id,
+        body: { projectIds, ownerAssignments },
+      },
+      {
+        onSuccess: () => {
+          setActivationWizardOpen(false);
+          setActivatingScenario(null);
+        },
+      }
+    );
   };
 
   const canRecommend =
@@ -224,6 +266,7 @@ const ScenarioBuilder = () => {
                 matchedRules={result.matchedRules}
                 isSelected={selectedScenarioId === result.scenario.id}
                 onSelect={handleSelectScenario}
+                onActivate={handleActivateClick}
               />
             ))}
           </Stack>
@@ -235,6 +278,20 @@ const ScenarioBuilder = () => {
           No strong matches found. Try adjusting your criteria or browse the scenarios below.
         </Alert>
       )}
+
+      <WhatIfSimulator
+        scenarios={scenarios || []}
+        result={simulateScenarioMutation.data || null}
+        isSimulating={simulateScenarioMutation.isPending}
+        error={simulateScenarioMutation.error}
+        onSimulate={(body) => simulateScenarioMutation.mutate(body)}
+      />
+
+      <ScenarioComparison
+        scenarios={scenarios || []}
+        selectedIds={compareSelectedIds}
+        onChangeSelectedIds={setCompareSelectedIds}
+      />
 
       <Divider />
 
@@ -271,6 +328,7 @@ const ScenarioBuilder = () => {
                 onSelect={handleSelectScenario}
                 onEdit={handleEditScenario}
                 onDelete={handleDeleteScenario}
+                onActivate={handleActivateClick}
               />
             ))}
           </Stack>
@@ -295,6 +353,19 @@ const ScenarioBuilder = () => {
         proceedButtonVariant="contained"
         proceedButtonColor="error"
         isLoading={deleteScenarioMutation.isPending}
+      />
+
+      <ActivationWizard
+        open={activationWizardOpen}
+        scenario={activatingScenario}
+        projects={approvedProjects || []}
+        users={users || []}
+        isLoading={activateScenarioMutation.isPending || projectsLoading || usersLoading}
+        onClose={() => {
+          setActivationWizardOpen(false);
+          setActivatingScenario(null);
+        }}
+        onActivate={handleActivate}
       />
     </Stack>
   );
