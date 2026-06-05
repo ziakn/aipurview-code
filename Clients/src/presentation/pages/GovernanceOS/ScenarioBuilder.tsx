@@ -36,6 +36,7 @@ import ScenarioFormModal from "./ScenarioBuilderModule/ScenarioFormModal";
 import ActivationWizard from "../../components/GovernanceOS/ActivationWizard";
 import WhatIfSimulator from "../../components/GovernanceOS/WhatIfSimulator";
 import ScenarioComparison from "../../components/GovernanceOS/ScenarioComparison";
+import ActiveScenarioPanel from "../../components/GovernanceOS/ActiveScenarioPanel";
 
 const INDUSTRIES = [
   { _id: "technology", name: "Technology" },
@@ -179,7 +180,12 @@ const ScenarioBuilder = () => {
         governance scenarios.
       </Typography>
 
-      {/* Recommendation form */}
+      <ActiveScenarioPanel
+        activeScenario={scenarios?.find((s) => s.id === selectedScenarioId)}
+        onActivate={handleActivateClick}
+      />
+
+      {/* Recommendation form -->
       <Box
         sx={{
           border: `1px solid ${borderPalette.dark}`,
