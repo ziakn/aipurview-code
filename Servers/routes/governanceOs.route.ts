@@ -14,6 +14,8 @@ import {
   createScenario,
   updateScenario,
   deleteScenario,
+  activateScenario,
+  simulateScenario,
   getRecommendations,
   getCoverage,
   refreshCoverage,
@@ -41,6 +43,13 @@ router.get("/scenarios/:id", authenticateJWT, getScenarioById);
 router.post("/scenarios", authenticateJWT, authorize(["Admin", "Editor"]), createScenario);
 router.put("/scenarios/:id", authenticateJWT, authorize(["Admin", "Editor"]), updateScenario);
 router.delete("/scenarios/:id", authenticateJWT, authorize(["Admin"]), deleteScenario);
+router.post(
+  "/scenarios/:id/activate",
+  authenticateJWT,
+  authorize(["Admin", "Editor"]),
+  activateScenario,
+);
+router.post("/scenarios/simulate", authenticateJWT, simulateScenario);
 
 // Recommendations
 router.post("/recommend", authenticateJWT, getRecommendations);
