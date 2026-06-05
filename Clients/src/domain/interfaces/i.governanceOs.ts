@@ -109,6 +109,7 @@ export interface IScenarioCardProps {
   onSelect?: (scenario: IGovernanceScenario) => void;
   onEdit?: (scenario: IGovernanceScenario) => void;
   onDelete?: (scenario: IGovernanceScenario) => void;
+  onActivate?: (scenario: IGovernanceScenario) => void;
 }
 
 export interface ICoverageChartProps {
