@@ -1,21 +1,52 @@
-import { useContext, useState } from "react";
-import { Typography, CircularProgress, Button, Stack } from "@mui/material";
+import { useContext, useState, useMemo } from "react";
+import { Typography, CircularProgress, Button, Stack, Box, Alert } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
-import { BarChart3 } from "lucide-react";
+import { BarChart3, Download, Target } from "lucide-react";
 import Select from "../../components/Inputs/Select";
 import CoverageChart from "../../components/GovernanceOS/CoverageChart";
+import MappingStatsPanel from "../../components/GovernanceOS/MappingStatsPanel";
 import { DashboardHeaderCard } from "../../components/Cards/DashboardHeaderCard";
 import { EmptyState } from "../../components/EmptyState";
-import { useCoverage, useRefreshCoverage } from "../../../application/hooks/useGovernanceOs";
+import CreateTask from "../../components/Modals/CreateTask";
+import {
+  useCoverage,
+  useRefreshCoverage,
+  useScenarios,
+  useGovernancePreferences,
+} from "../../../application/hooks/useGovernanceOs";
+import { createTask } from "../../../application/repository/task.repository";
 import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.context";
+import { ITask } from "../../../domain/interfaces/i.task";
+import { TaskPriority, TaskStatus } from "../../../domain/enums/task.enum";
+import { border as borderPalette, background, text, brand } from "../../themes/palette";
 
 const UnifiedInsights = () => {
-  const { projects } = useContext(VerifyWiseContext);
+  const { projects, userId, organizationId } = useContext(VerifyWiseContext);
   const [selectedProjectId, setSelectedProjectId] = useState<number | "">("");
   const { data: coverage, isLoading } = useCoverage(
     typeof selectedProjectId === "number" ? selectedProjectId : 0,
   );
   const refreshMutation = useRefreshCoverage();
+  const { data: scenarios } = useScenarios();
+  const { data: preferences } = useGovernancePreferences();
+
+  const [taskModalOpen, setTaskModalOpen] = useState(false);
+  const [taskInitialData, setTaskInitialData] = useState<Partial<ITask> | undefined>(undefined);
+  const [alert, setAlert] = useState<{
+    variant: "success" | "error" | "info";
+    title: string;
+  } | null>(null);
+
+  const activeScenario = useMemo(() => {
+    if (!preferences?.selected_scenario_id || !scenarios) return null;
+    return scenarios.find((s) => s.id === preferences.selected_scenario_id) || null;
+  }, [preferences, scenarios]);
+
+  const activeScenarioPrimaryId = useMemo(() => {
+    if (!activeScenario) return null;
+    const po = activeScenario.priority_order as { primary?: number } | null;
+    return po?.primary || null;
+  }, [activeScenario]);
 
   const totalMapped = (coverage || []).reduce((sum, c) => sum + c.mapped_controls, 0);
   const totalControls = (coverage || []).reduce((sum, c) => sum + c.total_controls, 0);
@@ -29,12 +60,120 @@ const UnifiedInsights = () => {
     name: p.project_title,
   }));
 
+  const handleExportCsv = () => {
+    if (!coverage || coverage.length === 0) return;
+    const headers = [
+      "Framework",
+      "Total Controls",
+      "Mapped Controls",
+      "Coverage %",
+      "Gaps Count",
+      "Synergies Count",
+      "Gap Identifiers",
+    ];
+    const rows = coverage.map((fw) => [
+      fw.framework_name || `Framework ${fw.framework_id}`,
+      fw.total_controls,
+      fw.mapped_controls,
+      fw.coverage_percentage,
+      fw.gap_details.unmapped_controls.length,
+      fw.synergy_details.multi_framework_controls.length,
+      fw.gap_details.unmapped_controls.join("; "),
+    ]);
+    const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `coverage-report-project-${selectedProjectId}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const openTaskModalForGap = (frameworkName: string, controlId: string) => {
+    setTaskInitialData({
+      title: `Map ${controlId} for ${frameworkName}`,
+      description: `This control (${controlId}) in ${frameworkName} is currently unmapped against other project frameworks. Review overlapping requirements and create cross-framework mappings where applicable.`,
+      priority: TaskPriority.MEDIUM,
+      status: TaskStatus.OPEN,
+      categories: ["governance", "coverage-gap", frameworkName.toLowerCase().replace(/\s+/g, "-")],
+    } as Partial<ITask>);
+    setTaskModalOpen(true);
+  };
+
+  const openTaskModalForBulkGaps = (frameworkName: string, controlIds: string[]) => {
+    setTaskInitialData({
+      title: `Map ${controlIds.length} unmapped controls for ${frameworkName}`,
+      description: `Bulk task to address ${controlIds.length} unmapped controls in ${frameworkName}: ${controlIds.join(", ")}. Review each control for cross-framework mapping opportunities.`,
+      priority: TaskPriority.MEDIUM,
+      status: TaskStatus.OPEN,
+      categories: ["governance", "coverage-gap", frameworkName.toLowerCase().replace(/\s+/g, "-")],
+    } as Partial<ITask>);
+    setTaskModalOpen(true);
+  };
+
+  const handleTaskCreated = async (formData: any) => {
+    try {
+      const { entity_links, ...taskData } = formData;
+      const response = await createTask({
+        body: {
+          ...taskData,
+          creator_id: userId,
+          organization_id: organizationId,
+          entity_links: entity_links || [],
+        },
+      });
+      if (response && response.data) {
+        setAlert({
+          variant: "success",
+          title: "Task created successfully",
+        });
+        setTimeout(() => setAlert(null), 4000);
+        return { id: response.data.id as number };
+      }
+      return undefined;
+    } catch (error) {
+      console.error("Error creating task:", error);
+      setAlert({
+        variant: "error",
+        title: "Failed to create task. Please try again.",
+      });
+      setTimeout(() => setAlert(null), 4000);
+      return undefined;
+    }
+  };
+
   return (
     <Stack spacing={3}>
       <Typography variant="body2" sx={{ color: "#475467" }}>
         View cross-framework coverage analysis per project. Identify gaps and synergies across your
         active frameworks.
       </Typography>
+
+      {/* Active scenario banner */}
+      {activeScenario && (
+        <Box
+          sx={{
+            border: `1px solid ${brand.primary}`,
+            borderRadius: 2,
+            p: 2,
+            background: `linear-gradient(135deg, ${background.main} 0%, rgba(19, 113, 91, 0.06) 100%)`,
+          }}
+        >
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Target size={18} color={brand.primary} />
+            <Typography sx={{ fontSize: 13, color: text.primary }}>
+              Coverage aligned with active scenario: <strong>{activeScenario.name}</strong>
+              {activeScenarioPrimaryId && (
+                <span style={{ color: text.muted, fontWeight: 400 }}>
+                  {" "}
+                  — primary framework highlighted below
+                </span>
+              )}
+            </Typography>
+          </Stack>
+        </Box>
+      )}
 
       <Stack direction="row" spacing={2} alignItems="flex-end">
         <Select
@@ -51,17 +190,35 @@ const UnifiedInsights = () => {
         />
 
         {typeof selectedProjectId === "number" && selectedProjectId > 0 && (
-          <Button
-            size="small"
-            variant="outlined"
-            onClick={() => refreshMutation.mutate(selectedProjectId)}
-            disabled={refreshMutation.isPending}
-            sx={{ height: 34 }}
-          >
-            {refreshMutation.isPending ? "Refreshing..." : "Refresh Coverage"}
-          </Button>
+          <>
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => refreshMutation.mutate(selectedProjectId)}
+              disabled={refreshMutation.isPending}
+              sx={{ height: 34 }}
+            >
+              {refreshMutation.isPending ? "Refreshing..." : "Refresh Coverage"}
+            </Button>
+            <Button
+              size="small"
+              variant="outlined"
+              startIcon={<Download size={14} />}
+              onClick={handleExportCsv}
+              disabled={!coverage || coverage.length === 0}
+              sx={{ height: 34, textTransform: "none" }}
+            >
+              Export CSV
+            </Button>
+          </>
         )}
       </Stack>
+
+      {alert && (
+        <Alert severity={alert.variant} sx={{ fontSize: 13 }}>
+          {alert.title}
+        </Alert>
+      )}
 
       {selectedProjectId === "" ? (
         <EmptyState
@@ -92,9 +249,26 @@ const UnifiedInsights = () => {
           </Stack>
 
           {/* Coverage breakdown */}
-          <CoverageChart coverage={coverage || []} />
+          <CoverageChart
+            coverage={coverage || []}
+            onCreateTaskForGap={openTaskModalForGap}
+            onCreateTasksForGaps={openTaskModalForBulkGaps}
+            activeScenarioFrameworkId={activeScenarioPrimaryId}
+          />
+
+          {/* Mapping statistics */}
+          {typeof selectedProjectId === "number" && selectedProjectId > 0 && (
+            <MappingStatsPanel projectId={selectedProjectId} />
+          )}
         </Stack>
       )}
+
+      <CreateTask
+        isOpen={taskModalOpen}
+        setIsOpen={setTaskModalOpen}
+        onSuccess={handleTaskCreated}
+        initialData={taskInitialData as ITask | undefined}
+      />
     </Stack>
   );
 };
