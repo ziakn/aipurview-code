@@ -116,6 +116,28 @@ export async function simulateScenario({ body }: { body: any }): Promise<any> {
   return response.data;
 }
 
+// Activations
+export async function getActivationHistory({ signal }: { signal?: AbortSignal } = {}): Promise<any> {
+  const response = await apiServices.get(`${BASE}/activations`, { signal });
+  return response.data;
+}
+
+export async function deactivateScenario({ id }: { id: number }): Promise<any> {
+  const response = await apiServices.post(`${BASE}/activations/${id}/deactivate`, {});
+  return response.data;
+}
+
+export async function getScenarioProgress({
+  id,
+  signal,
+}: {
+  id: number;
+  signal?: AbortSignal;
+}): Promise<any> {
+  const response = await apiServices.get(`${BASE}/activations/${id}/progress`, { signal });
+  return response.data;
+}
+
 // Recommendations
 export async function getRecommendations({ body }: { body: IRecommendationRequest }): Promise<any> {
   const response = await apiServices.post(`${BASE}/recommend`, body);
