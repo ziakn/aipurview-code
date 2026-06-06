@@ -60,6 +60,14 @@ const UnifiedInsights = () => {
     name: p.project_title,
   }));
 
+  const escapeCsv = (value: unknown): string => {
+    const str = String(value ?? "");
+    if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+  };
+
   const handleExportCsv = () => {
     if (!coverage || coverage.length === 0) return;
     const headers = [
@@ -72,13 +80,13 @@ const UnifiedInsights = () => {
       "Gap Identifiers",
     ];
     const rows = coverage.map((fw) => [
-      fw.framework_name || `Framework ${fw.framework_id}`,
-      fw.total_controls,
-      fw.mapped_controls,
-      fw.coverage_percentage,
-      fw.gap_details.unmapped_controls.length,
-      fw.synergy_details.multi_framework_controls.length,
-      fw.gap_details.unmapped_controls.join("; "),
+      escapeCsv(fw.framework_name || `Framework ${fw.framework_id}`),
+      escapeCsv(fw.total_controls),
+      escapeCsv(fw.mapped_controls),
+      escapeCsv(fw.coverage_percentage),
+      escapeCsv(fw.gap_details.unmapped_controls.length),
+      escapeCsv(fw.synergy_details.multi_framework_controls.length),
+      escapeCsv(fw.gap_details.unmapped_controls.join("; ")),
     ]);
     const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -91,22 +99,30 @@ const UnifiedInsights = () => {
   };
 
   const openTaskModalForGap = (frameworkName: string, controlId: string) => {
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 14);
     setTaskInitialData({
       title: `Map ${controlId} for ${frameworkName}`,
       description: `This control (${controlId}) in ${frameworkName} is currently unmapped against other project frameworks. Review overlapping requirements and create cross-framework mappings where applicable.`,
       priority: TaskPriority.MEDIUM,
       status: TaskStatus.OPEN,
+      due_date: dueDate,
+      assignees: userId ? [{ user_id: userId }] : [],
       categories: ["governance", "coverage-gap", frameworkName.toLowerCase().replace(/\s+/g, "-")],
     } as Partial<ITask>);
     setTaskModalOpen(true);
   };
 
   const openTaskModalForBulkGaps = (frameworkName: string, controlIds: string[]) => {
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 21);
     setTaskInitialData({
       title: `Map ${controlIds.length} unmapped controls for ${frameworkName}`,
       description: `Bulk task to address ${controlIds.length} unmapped controls in ${frameworkName}: ${controlIds.join(", ")}. Review each control for cross-framework mapping opportunities.`,
       priority: TaskPriority.MEDIUM,
       status: TaskStatus.OPEN,
+      due_date: dueDate,
+      assignees: userId ? [{ user_id: userId }] : [],
       categories: ["governance", "coverage-gap", frameworkName.toLowerCase().replace(/\s+/g, "-")],
     } as Partial<ITask>);
     setTaskModalOpen(true);
