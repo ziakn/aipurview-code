@@ -14,18 +14,12 @@ import { ChevronDown, ChevronUp, Plus, CheckSquare, Square } from "lucide-react"
 import { ICoverageChartProps } from "../../../domain/interfaces/i.governanceOs";
 import { border as borderPalette, background, text, status, brand } from "../../themes/palette";
 
-interface ExtendedCoverageChartProps extends ICoverageChartProps {
-  onCreateTaskForGap?: (frameworkName: string, controlId: string) => void;
-  onCreateTasksForGaps?: (frameworkName: string, controlIds: string[]) => void;
-  activeScenarioFrameworkId?: number | null;
-}
-
 const CoverageChart = ({
   coverage,
   onCreateTaskForGap,
   onCreateTasksForGaps,
   activeScenarioFrameworkId,
-}: ExtendedCoverageChartProps) => {
+}: ICoverageChartProps) => {
   const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
   const [selectedGapsByFramework, setSelectedGapsByFramework] = useState<Record<number, Set<string>>>({});
 

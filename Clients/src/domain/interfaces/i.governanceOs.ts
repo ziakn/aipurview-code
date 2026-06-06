@@ -114,4 +114,7 @@ export interface IScenarioCardProps {
 
 export interface ICoverageChartProps {
   coverage: IGovernanceCoverage[];
+  onCreateTaskForGap?: (frameworkName: string, controlId: string) => void;
+  onCreateTasksForGaps?: (frameworkName: string, controlIds: string[]) => void;
+  activeScenarioFrameworkId?: number | null;
 }
