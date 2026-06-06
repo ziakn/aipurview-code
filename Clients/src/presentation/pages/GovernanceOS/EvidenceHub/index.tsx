@@ -1,0 +1,45 @@
+import React from "react";
+import { Stack, Typography, Box } from "@mui/material";
+import { FileCheck, Clock } from "lucide-react";
+import GovernanceWorkspaceShell from "../shared/GovernanceWorkspaceShell";
+import { background, text } from "../../../themes/palette";
+
+const EvidenceHub: React.FC = () => {
+  return (
+    <GovernanceWorkspaceShell
+      title="Evidence Hub"
+      subtitle="Centralize and manage compliance evidence across all frameworks and projects."
+    >
+      <Stack spacing={3} alignItems="center" sx={{ py: 8 }}>
+        <Box
+          sx={{
+            width: 64,
+            height: 64,
+            borderRadius: "50%",
+            backgroundColor: "rgba(19, 113, 91, 0.08)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <FileCheck size={28} color="#13715B" />
+        </Box>
+        <Typography variant="h6" sx={{ fontWeight: 600, color: text.primary }}>
+          Evidence Hub
+        </Typography>
+        <Stack direction="row" spacing={1} alignItems="center">
+          <Clock size={16} color={text.muted} />
+          <Typography sx={{ fontSize: 14, color: text.muted }}>
+            Coming soon — automated evidence collection and centralized storage.
+          </Typography>
+        </Stack>
+        <Typography sx={{ fontSize: 13, color: text.accent, maxWidth: 480, textAlign: "center" }}>
+          The Evidence Hub will connect to your existing evidence sources, auto-collect compliance
+          artifacts, and provide a unified view of evidence coverage across frameworks.
+        </Typography>
+      </Stack>
+    </GovernanceWorkspaceShell>
+  );
+};
+
+export default EvidenceHub;
