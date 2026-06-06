@@ -136,7 +136,6 @@ const GovernanceHub: React.FC = () => {
   const { data: scenarios } = useScenarios();
   const { data: preferences } = useGovernancePreferences();
 
-  const isEnabled = preferences?.is_enabled ?? false;
   const totalMappings = mappings?.length || 0;
   const totalScenarios = scenarios?.length || 0;
 
