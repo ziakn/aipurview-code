@@ -1,0 +1,140 @@
+import React from "react";
+import {
+  Box,
+  Typography,
+  Stack,
+  Chip,
+  CircularProgress,
+  Button,
+} from "@mui/material";
+import { History, XCircle } from "lucide-react";
+import {
+  useActivationHistory,
+  useDeactivateScenario,
+} from "../../../application/hooks/useGovernanceOs";
+import { border as borderPalette, background, text, brand, status } from "../../themes/palette";
+
+const ActivationHistory: React.FC = () => {
+  const { data: activations, isLoading } = useActivationHistory();
+  const deactivateMutation = useDeactivateScenario();
+
+  const handleDeactivate = (id: number) => {
+    deactivateMutation.mutate(id);
+  };
+
+  if (isLoading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+        <CircularProgress size={24} />
+      </Box>
+    );
+  }
+
+  if (!activations || activations.length === 0) {
+    return (
+      <Box
+        sx={{
+          border: `1px dashed ${borderPalette.light}`,
+          borderRadius: 2,
+          p: 3,
+          background: background.main,
+        }}
+      >
+        <Stack direction="row" spacing={2} alignItems="center">
+          <History size={18} color={text.muted} />
+          <Typography sx={{ fontSize: 13, color: text.muted }}>
+            No activations yet. Activate a scenario to see its history here.
+          </Typography>
+        </Stack>
+      </Box>
+    );
+  }
+
+  return (
+    <Box
+      sx={{
+        border: `1px solid ${borderPalette.dark}`,
+        borderRadius: 2,
+        p: 3,
+        background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
+      }}
+    >
+      <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+        <History size={20} color={brand.primary} />
+        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+          Activation History
+        </Typography>
+      </Stack>
+
+      <Stack spacing={1.5}>
+        {activations.slice(0, 5).map((activation: any) => {
+          const isActive = activation.status === "active";
+          const date = activation.activated_at
+            ? new Date(activation.activated_at).toLocaleDateString()
+            : "—";
+
+          return (
+            <Box
+              key={activation.id}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                p: 1.5,
+                borderRadius: 1.5,
+                border: `1px solid ${borderPalette.light}`,
+                background: isActive ? "rgba(19, 113, 91, 0.04)" : background.main,
+              }}
+            >
+              <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
+                <Typography sx={{ fontSize: 13, fontWeight: 500, color: text.primary }}>
+                  {activation.scenario_name || `Scenario #${activation.scenario_id}`}
+                </Typography>
+                <Chip
+                  label={isActive ? "Active" : "Inactive"}
+                  size="small"
+                  sx={{
+                    fontSize: 11,
+                    height: 20,
+                    backgroundColor: isActive
+                      ? "rgba(19, 113, 91, 0.12)"
+                      : background.hover,
+                    color: isActive ? brand.primary : text.muted,
+                    fontWeight: isActive ? 500 : 400,
+                  }}
+                />
+                <Typography sx={{ fontSize: 12, color: text.muted }}>{date}</Typography>
+                <Typography sx={{ fontSize: 12, color: text.secondary }}>
+                  {activation.tasks_created} task(s)
+                </Typography>
+                <Typography sx={{ fontSize: 12, color: text.secondary }}>
+                  {activation.frameworks_assigned} framework(s)
+                </Typography>
+              </Stack>
+
+              {isActive && (
+                <Button
+                  size="small"
+                  variant="text"
+                  startIcon={<XCircle size={14} />}
+                  onClick={() => handleDeactivate(activation.id)}
+                  disabled={deactivateMutation.isPending}
+                  sx={{
+                    fontSize: 12,
+                    textTransform: "none",
+                    color: status.error.text,
+                    minWidth: 0,
+                  }}
+                >
+                  Deactivate
+                </Button>
+              )}
+            </Box>
+          );
+        })}
+      </Stack>
+    </Box>
+  );
+};
+
+export default ActivationHistory;
