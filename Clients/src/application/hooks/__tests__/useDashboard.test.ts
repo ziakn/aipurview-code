@@ -89,4 +89,22 @@ describe("useDashboard", () => {
     // Dashboard stays null on error
     expect(result.current.dashboard).toBeNull();
   });
+
+  it("should invalidate cache when fetchDashboard is called", async () => {
+    mockGetAllEntities.mockResolvedValue({ data: { projects: 0 } });
+
+    const { result } = renderHook(() => useDashboard(), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    // Call fetchDashboard to invalidate cache (covers line 21)
+    await result.current.fetchDashboard();
+
+    // The query is now invalidated, so the next access should refetch
+    expect(mockGetAllEntities).toHaveBeenCalledTimes(2);
+  });
 });
