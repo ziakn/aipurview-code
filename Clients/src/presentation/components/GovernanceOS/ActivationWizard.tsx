@@ -16,7 +16,7 @@ interface ActivationWizardProps {
   users: User[];
   isLoading: boolean;
   onClose: () => void;
-  onActivate: (params: { projectIds: number[]; ownerAssignments: Record<number, number> }) => void;
+  onActivate: (params: { projectIds: number[]; ownerAssignments: Record<number, number | undefined> }) => void;
 }
 
 const STEPS = ["Select projects", "Assign owners", "Review & activate"];
@@ -39,7 +39,7 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
 }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [selectedProjectIds, setSelectedProjectIds] = useState<number[]>([]);
-  const [ownerAssignments, setOwnerAssignments] = useState<Record<number, number>>({});
+  const [ownerAssignments, setOwnerAssignments] = useState<Record<number, number | undefined>>({});
 
   useEffect(() => {
     if (open && scenario) {
