@@ -29,6 +29,7 @@ import { getOrComputeCoverage } from "../utils/governanceCoverage.utils";
 import {
   validateScenarioInput,
   validateRecommendationInput,
+  validateMappingInput,
 } from "../domain.layer/validations/governanceOs.valid";
 
 const FILE_NAME = "governanceOs.ctrl.ts";
@@ -97,6 +98,11 @@ export async function createMapping(req: Request, res: Response): Promise<any> {
       return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
     }
 
+    const validation = validateMappingInput(req.body);
+    if (!validation.valid) {
+      return res.status(400).json(STATUS_CODE[400](validation.errors.join("; ")));
+    }
+
     const mapping = await createMappingQuery(req.body);
     logStructured("successful", `created mapping ${mapping.id}`, FN, FILE_NAME);
     return res.status(201).json(STATUS_CODE[201](mapping));
@@ -113,6 +119,11 @@ export async function updateMapping(req: Request, res: Response): Promise<any> {
     const { organizationId } = req;
     if (!organizationId) {
       return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+    }
+
+    const validation = validateMappingInput(req.body);
+    if (!validation.valid) {
+      return res.status(400).json(STATUS_CODE[400](validation.errors.join("; ")));
     }
 
     const { id } = req.params;
@@ -196,6 +207,28 @@ export async function activateScenario(req: Request, res: Response): Promise<any
 
     const { projectIds, ownerAssignments } = req.body;
 
+    if (
+      projectIds !== undefined &&
+      (!Array.isArray(projectIds) ||
+        !projectIds.every((id: unknown) => typeof id === "number" && id > 0))
+    ) {
+      return res
+        .status(400)
+        .json(STATUS_CODE[400]("projectIds must be an array of positive integers"));
+    }
+    if (
+      ownerAssignments !== undefined &&
+      (typeof ownerAssignments !== "object" ||
+        ownerAssignments === null ||
+        Array.isArray(ownerAssignments))
+    ) {
+      return res
+        .status(400)
+        .json(
+          STATUS_CODE[400]("ownerAssignments must be an object mapping framework IDs to user IDs"),
+        );
+    }
+
     const result = await createScenarioActivationQuery({
       organizationId,
       scenarioId: Number(id),
@@ -239,8 +272,14 @@ export async function simulateScenario(req: Request, res: Response): Promise<any
     }
 
     const { frameworkIds, priorityOrder } = req.body;
-    if (!Array.isArray(frameworkIds) || frameworkIds.length === 0) {
-      return res.status(400).json(STATUS_CODE[400]("frameworkIds array is required"));
+    if (
+      !Array.isArray(frameworkIds) ||
+      frameworkIds.length === 0 ||
+      !frameworkIds.every((id: unknown) => typeof id === "number" && id > 0)
+    ) {
+      return res
+        .status(400)
+        .json(STATUS_CODE[400]("frameworkIds must be a non-empty array of positive integers"));
     }
 
     // Count total controls across selected frameworks
@@ -381,10 +420,15 @@ export async function getScenarioById(req: Request, res: Response): Promise<any>
   const FN = "getScenarioById";
   logStructured("processing", "fetching scenario by id", FN, FILE_NAME);
   try {
+    const { organizationId } = req;
     const { id } = req.params;
     const scenario = await getScenarioByIdQuery(Number(id));
     if (!scenario) {
       return res.status(404).json(STATUS_CODE[404]("Scenario not found"));
+    }
+    // Built-in scenarios are visible to all; custom scenarios must belong to the org
+    if (!scenario.is_builtin && scenario.organization_id !== organizationId) {
+      return res.status(403).json(STATUS_CODE[403]("Access denied to this scenario"));
     }
     const rules = await getScenarioRulesQuery(scenario.id!);
     const result = { ...scenario.get({ plain: true }), rules };
@@ -584,7 +628,9 @@ export async function getEligibility(req: Request, res: Response): Promise<any> 
     const [result] = await sequelize.query(
       `SELECT COUNT(DISTINCT pf.framework_id) as framework_count
        FROM projects_frameworks pf
-       JOIN projects p ON pf.project_id = p.id`,
+       JOIN projects p ON pf.project_id = p.id
+       WHERE p.organization_id = :organizationId`,
+      { replacements: { organizationId } },
     );
 
     const frameworkCount = parseInt((result as any[])[0]?.framework_count || "0", 10);
