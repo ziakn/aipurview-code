@@ -16,6 +16,9 @@ import {
   deleteScenario,
   activateScenario,
   simulateScenario,
+  getActivationHistory,
+  deactivateScenario,
+  getScenarioProgress,
   getRecommendations,
   getCoverage,
   refreshCoverage,
@@ -50,6 +53,16 @@ router.post(
   activateScenario,
 );
 router.post("/scenarios/simulate", authenticateJWT, simulateScenario);
+
+// Activations
+router.get("/activations", authenticateJWT, getActivationHistory);
+router.post(
+  "/activations/:id/deactivate",
+  authenticateJWT,
+  authorize(["Admin", "Editor"]),
+  deactivateScenario,
+);
+router.get("/activations/:id/progress", authenticateJWT, getScenarioProgress);
 
 // Recommendations
 router.post("/recommend", authenticateJWT, getRecommendations);
