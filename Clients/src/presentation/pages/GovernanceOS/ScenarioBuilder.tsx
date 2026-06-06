@@ -19,7 +19,7 @@ import {
   useCreateScenario,
   useUpdateScenario,
   useDeleteScenario,
-  useRecommendations,
+  useGovernanceRecommendations,
   useGovernancePreferences,
   useUpdatePreferences,
   useActivateScenario,
@@ -74,7 +74,7 @@ const ScenarioBuilder = () => {
   const { data: scenarios, isLoading: scenariosLoading } = useScenarios();
   const { data: preferences } = useGovernancePreferences();
   const updatePreferencesMutation = useUpdatePreferences();
-  const recommendMutation = useRecommendations();
+  const recommendMutation = useGovernanceRecommendations();
   const createScenarioMutation = useCreateScenario();
   const updateScenarioMutation = useUpdateScenario();
   const deleteScenarioMutation = useDeleteScenario();

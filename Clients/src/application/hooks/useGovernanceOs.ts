@@ -181,6 +181,7 @@ export const useScenarios = () => {
   });
 };
 
+/** @deprecated Not currently used by any component. Kept for potential future use. */
 export const useScenario = (id: number) => {
   return useQuery<IGovernanceScenario>({
     queryKey: governanceOsQueryKeys.scenario(id),
@@ -223,7 +224,7 @@ export const useDeleteScenario = () => {
   });
 };
 
-export const useRecommendations = () => {
+export const useGovernanceRecommendations = () => {
   return useMutation<IRecommendationResult[], Error, IRecommendationRequest>({
     mutationFn: (body: IRecommendationRequest) =>
       getRecommendations({ body }).then((r) => r?.data || []),
@@ -265,6 +266,7 @@ export const useUnifiedView = (projectId: number) => {
   });
 };
 
+/** @deprecated Not currently used by any component. Kept for potential future use. */
 export const useGovernanceOsEligibility = () => {
   return useQuery<{ eligible: boolean; frameworkCount: number }>({
     queryKey: governanceOsQueryKeys.eligibility(),
