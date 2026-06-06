@@ -13,6 +13,9 @@ import {
   deleteScenario,
   activateScenario,
   simulateScenario,
+  getActivationHistory,
+  deactivateScenario,
+  getScenarioProgress,
   getRecommendations,
   getCoverage,
   refreshCoverage,
@@ -103,6 +106,40 @@ export const useActivateScenario = () => {
 export const useSimulateScenario = () => {
   return useMutation({
     mutationFn: (body: any) => simulateScenario({ body }),
+  });
+};
+
+export const useActivationHistory = () => {
+  return useQuery({
+    queryKey: [...governanceOsQueryKeys.all, "activations"],
+    queryFn: async () => {
+      const response = await getActivationHistory();
+      return response?.data?.activations || [];
+    },
+    staleTime: 2 * 60 * 1000,
+  });
+};
+
+export const useDeactivateScenario = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => deactivateScenario({ id }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [...governanceOsQueryKeys.all, "activations"] });
+      queryClient.invalidateQueries({ queryKey: governanceOsQueryKeys.preferences() });
+    },
+  });
+};
+
+export const useScenarioProgress = (activationId: number) => {
+  return useQuery({
+    queryKey: [...governanceOsQueryKeys.all, "progress", activationId],
+    queryFn: async () => {
+      const response = await getScenarioProgress({ id: activationId });
+      return response?.data?.frameworks || [];
+    },
+    enabled: activationId > 0,
+    staleTime: 1 * 60 * 1000,
   });
 };
 
