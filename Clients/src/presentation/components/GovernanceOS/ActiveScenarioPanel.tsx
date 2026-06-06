@@ -1,8 +1,13 @@
-import React from "react";
-import { Box, Typography, Stack, Chip, Button } from "@mui/material";
-import { Target, Zap, ArrowRight } from "lucide-react";
+import React, { useMemo } from "react";
+import { Box, Typography, Stack, Chip, Button, LinearProgress } from "@mui/material";
+import { Target, Zap, ArrowRight, XCircle } from "lucide-react";
 import { IGovernanceScenario } from "../../../domain/interfaces/i.governanceOs";
-import { border as borderPalette, background, text, accent, brand } from "../../themes/palette";
+import {
+  useActivationHistory,
+  useDeactivateScenario,
+  useScenarioProgress,
+} from "../../../application/hooks/useGovernanceOs";
+import { border as borderPalette, background, text, accent, brand, status } from "../../themes/palette";
 
 interface ActiveScenarioPanelProps {
   activeScenario: IGovernanceScenario | null | undefined;
@@ -20,6 +25,20 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
   activeScenario,
   onActivate,
 }) => {
+  const { data: activations } = useActivationHistory();
+  const deactivateMutation = useDeactivateScenario();
+
+  const latestActivation = useMemo(() => {
+    if (!activations || !activeScenario) return null;
+    return (
+      activations.find(
+        (a: any) => a.scenario_id === activeScenario.id && a.status === "active"
+      ) || null
+    );
+  }, [activations, activeScenario]);
+
+  const { data: progress } = useScenarioProgress(latestActivation?.id || 0);
+
   if (!activeScenario) {
     return (
       <Box
@@ -57,6 +76,10 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
     ...(priorityOrder?.supplementary || []),
   ].filter(Boolean) as number[];
 
+  const activationDate = latestActivation?.activated_at
+    ? new Date(latestActivation.activated_at).toLocaleDateString()
+    : null;
+
   return (
     <Box
       sx={{
@@ -93,7 +116,7 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
                 Active scenario
               </Typography>
               <Chip
-                label="Selected"
+                label={latestActivation ? "Activated" : "Selected"}
                 size="small"
                 sx={{
                   fontSize: 11,
@@ -110,6 +133,14 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
             {activeScenario.description && (
               <Typography sx={{ fontSize: 12, color: text.accent, mt: 0.5 }}>
                 {activeScenario.description}
+              </Typography>
+            )}
+            {activationDate && (
+              <Typography sx={{ fontSize: 11, color: text.muted, mt: 0.5 }}>
+                Activated on {activationDate}
+                {latestActivation?.tasks_created
+                  ? ` · ${latestActivation.tasks_created} task(s) created`
+                  : ""}
               </Typography>
             )}
             <Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mt: 1.5 }}>
@@ -154,17 +185,83 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
           </Box>
         </Stack>
 
-        <Button
-          variant="contained"
-          size="small"
-          startIcon={<Zap size={14} />}
-          endIcon={<ArrowRight size={14} />}
-          onClick={() => onActivate(activeScenario)}
-          sx={{ textTransform: "none", fontSize: 13, flexShrink: 0 }}
-        >
-          Activate now
-        </Button>
+        <Stack direction="row" spacing={1} sx={{ flexShrink: 0 }}>
+          {latestActivation && (
+            <Button
+              size="small"
+              variant="outlined"
+              color="error"
+              startIcon={<XCircle size={14} />}
+              onClick={() => deactivateMutation.mutate(latestActivation.id)}
+              disabled={deactivateMutation.isPending}
+              sx={{ textTransform: "none", fontSize: 12 }}
+            >
+              Deactivate
+            </Button>
+          )}
+          <Button
+            variant="contained"
+            size="small"
+            startIcon={<Zap size={14} />}
+            endIcon={<ArrowRight size={14} />}
+            onClick={() => onActivate(activeScenario)}
+            sx={{ textTransform: "none", fontSize: 13, boxShadow: "none" }}
+          >
+            {latestActivation ? "Re-activate" : "Activate now"}
+          </Button>
+        </Stack>
       </Stack>
+
+      {/* Framework progress */}
+      {progress && progress.length > 0 && (
+        <Box sx={{ mt: 2, pt: 2, borderTop: `1px solid ${borderPalette.light}` }}>
+          <Typography sx={{ fontSize: 12, fontWeight: 600, color: text.primary, mb: 1.5 }}>
+            Task progress by framework
+          </Typography>
+          <Stack spacing={1.5}>
+            {progress.map((fw: any) => {
+              const percent =
+                fw.totalTasks > 0 ? Math.round((fw.completedTasks / fw.totalTasks) * 100) : 0;
+              return (
+                <Box key={fw.frameworkId}>
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    sx={{ mb: 0.5 }}
+                  >
+                    <Typography sx={{ fontSize: 12, color: text.primary }}>
+                      {fw.frameworkName}
+                    </Typography>
+                    <Typography sx={{ fontSize: 11, color: text.muted }}>
+                      {fw.completedTasks}/{fw.totalTasks} done
+                      {fw.inProgressTasks > 0 ? ` · ${fw.inProgressTasks} in progress` : ""}
+                    </Typography>
+                  </Stack>
+                  <LinearProgress
+                    variant="determinate"
+                    value={percent}
+                    sx={{
+                      height: 6,
+                      borderRadius: 3,
+                      backgroundColor: background.hover,
+                      "& .MuiLinearProgress-bar": {
+                        backgroundColor:
+                          percent >= 70
+                            ? status.success.text
+                            : percent >= 40
+                              ? status.warning.text
+                              : status.error.text,
+                        borderRadius: 3,
+                      },
+                    }}
+                  />
+                </Box>
+              );
+            })}
+          </Stack>
+        </Box>
+      )}
     </Box>
   );
 };
