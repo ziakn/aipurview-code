@@ -141,6 +141,7 @@ const GovernanceHub = lazyRoute(() => import("../../presentation/pages/Governanc
 const FrameworkMapperModule = lazyRoute(() => import("../../presentation/pages/GovernanceOS/FrameworkMapperModule"));
 const ScenarioBuilderModule = lazyRoute(() => import("../../presentation/pages/GovernanceOS/ScenarioBuilderModule"));
 const UnifiedInsightsModule = lazyRoute(() => import("../../presentation/pages/GovernanceOS/UnifiedInsightsModule"));
+const GovernanceSettings = lazyRoute(() => import("../../presentation/pages/GovernanceOS/Settings"));
 
 // ── Remaining routes ──────────────────────────────────────────────────
 const Plugins = lazyRoute(() => import("../../presentation/pages/Plugins"));
@@ -386,6 +387,14 @@ export const createRoutes = (
       element={
         <Suspense fallback={<LazyFallback />}>
           <UnifiedInsightsModule />
+        </Suspense>
+      }
+    />
+    <Route
+      path="/governance/settings"
+      element={
+        <Suspense fallback={<LazyFallback />}>
+          <GovernanceSettings />
         </Suspense>
       }
     />
