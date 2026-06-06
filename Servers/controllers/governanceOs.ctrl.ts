@@ -17,6 +17,9 @@ import {
   updateScenarioQuery,
   deleteScenarioQuery,
   createScenarioActivationQuery,
+  getActivationHistoryQuery,
+  deactivateScenarioQuery,
+  getTaskProgressByFrameworkQuery,
   getOrgPreferencesQuery,
   upsertOrgPreferencesQuery,
   getMappingStatsQuery,
@@ -291,6 +294,67 @@ export async function simulateScenario(req: Request, res: Response): Promise<any
     );
   } catch (error) {
     logStructured("error", "failed to simulate scenario", FN, FILE_NAME);
+    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+  }
+}
+
+export async function getActivationHistory(req: Request, res: Response): Promise<any> {
+  const FN = "getActivationHistory";
+  logStructured("processing", "fetching activation history", FN, FILE_NAME);
+  try {
+    const { organizationId } = req;
+    if (!organizationId) {
+      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+    }
+    const activations = await getActivationHistoryQuery(organizationId);
+    logStructured("successful", `fetched ${activations.length} activations`, FN, FILE_NAME);
+    return res.status(200).json(STATUS_CODE[200]({ activations }));
+  } catch (error) {
+    logStructured("error", "failed to fetch activation history", FN, FILE_NAME);
+    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+  }
+}
+
+export async function deactivateScenario(req: Request, res: Response): Promise<any> {
+  const FN = "deactivateScenario";
+  logStructured("processing", "deactivating scenario", FN, FILE_NAME);
+  try {
+    const { organizationId } = req;
+    if (!organizationId) {
+      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+    }
+    const { id } = req.params;
+    const result = await deactivateScenarioQuery(Number(id), organizationId);
+    if (!result) {
+      return res.status(404).json(STATUS_CODE[404]("Activation not found"));
+    }
+    logStructured("successful", "deactivated scenario activation", FN, FILE_NAME);
+    return res.status(200).json(STATUS_CODE[200](result));
+  } catch (error) {
+    logStructured("error", "failed to deactivate scenario", FN, FILE_NAME);
+    return res.status(500).json(STATUS_CODE[500]((error as Error).message));
+  }
+}
+
+export async function getScenarioProgress(req: Request, res: Response): Promise<any> {
+  const FN = "getScenarioProgress";
+  logStructured("processing", "fetching scenario progress", FN, FILE_NAME);
+  try {
+    const { organizationId } = req;
+    if (!organizationId) {
+      return res.status(401).json(STATUS_CODE[401]("Unauthorized"));
+    }
+    const { id } = req.params;
+    const frameworks = await getTaskProgressByFrameworkQuery(Number(id), organizationId);
+    logStructured(
+      "successful",
+      `fetched progress for ${frameworks.length} frameworks`,
+      FN,
+      FILE_NAME,
+    );
+    return res.status(200).json(STATUS_CODE[200]({ activationId: Number(id), frameworks }));
+  } catch (error) {
+    logStructured("error", "failed to fetch scenario progress", FN, FILE_NAME);
     return res.status(500).json(STATUS_CODE[500]((error as Error).message));
   }
 }
