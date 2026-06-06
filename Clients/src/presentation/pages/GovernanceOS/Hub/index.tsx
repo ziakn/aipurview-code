@@ -254,7 +254,6 @@ const GovernanceHub: React.FC = () => {
       path: "/governance/evidence",
       stat: "Coming soon",
       color: "#00695C",
-      disabled: true,
     },
     {
       title: "Knowledge Graph",
@@ -263,7 +262,6 @@ const GovernanceHub: React.FC = () => {
       path: "/governance/knowledge-graph",
       stat: "Coming soon",
       color: "#5E35B1",
-      disabled: true,
     },
     {
       title: "Regulatory Radar",
@@ -272,7 +270,6 @@ const GovernanceHub: React.FC = () => {
       path: "/governance/regulatory-radar",
       stat: "Coming soon",
       color: "#E65100",
-      disabled: true,
     },
   ];
 
