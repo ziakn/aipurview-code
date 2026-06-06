@@ -91,18 +91,22 @@ import {
 
 const mockGetCompanyLogoQuery = getCompanyLogoQuery as jest.MockedFunction<any>;
 const mockGetPublicPageQuery = getAITrustCentrePublicPageQuery as jest.MockedFunction<any>;
-const mockGetPublicResourceQuery = getAITrustCentrePublicResourceByIdQuery as jest.MockedFunction<any>;
+const mockGetPublicResourceQuery =
+  getAITrustCentrePublicResourceByIdQuery as jest.MockedFunction<any>;
 const mockGetOverviewQuery = getAITrustCentreOverviewQuery as jest.MockedFunction<any>;
 const mockGetResourcesQuery = getAITrustCentreResourcesQuery as jest.MockedFunction<any>;
 const mockGetSubprocessorsQuery = getAITrustCentreSubprocessorsQuery as jest.MockedFunction<any>;
 const mockCreateResourceQuery = createAITrustCentreResourceQuery as jest.MockedFunction<any>;
-const mockCreateSubprocessorQuery = createAITrustCentreSubprocessorQuery as jest.MockedFunction<any>;
+const mockCreateSubprocessorQuery =
+  createAITrustCentreSubprocessorQuery as jest.MockedFunction<any>;
 const mockUploadLogoQuery = uploadCompanyLogoQuery as jest.MockedFunction<any>;
 const mockUpdateOverviewQuery = updateAITrustCentreOverviewQuery as jest.MockedFunction<any>;
 const mockUpdateResourceQuery = updateAITrustCentreResourceQuery as jest.MockedFunction<any>;
-const mockUpdateSubprocessorQuery = updateAITrustCentreSubprocessorQuery as jest.MockedFunction<any>;
+const mockUpdateSubprocessorQuery =
+  updateAITrustCentreSubprocessorQuery as jest.MockedFunction<any>;
 const mockDeleteResourceQuery = deleteAITrustCentreResourceQuery as jest.MockedFunction<any>;
-const mockDeleteSubprocessorQuery = deleteAITrustCentreSubprocessorQuery as jest.MockedFunction<any>;
+const mockDeleteSubprocessorQuery =
+  deleteAITrustCentreSubprocessorQuery as jest.MockedFunction<any>;
 const mockDeleteLogoQuery = deleteCompanyLogoQuery as jest.MockedFunction<any>;
 const mockUploadFile = uploadFile as jest.MockedFunction<any>;
 const mockGetOrgByHash = getOrganizationByTenantHashQuery as jest.MockedFunction<any>;
@@ -146,8 +150,12 @@ function makeUploadedFile(overrides?: any) {
 }
 
 describe("aiTrustCentre.ctrl", () => {
-  beforeEach(() => { jest.clearAllMocks(); });
-  afterEach(() => { jest.restoreAllMocks(); });
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
 
   describe("getCompanyLogo", () => {
     it("should return 404 when organization not found", async () => {
@@ -169,7 +177,10 @@ describe("aiTrustCentre.ctrl", () => {
 
     it("should return 200 with logo", async () => {
       mockGetOrgByHash.mockResolvedValue({ id: 1 });
-      mockGetCompanyLogoQuery.mockResolvedValue({ content: Buffer.from("logo"), type: "image/png" });
+      mockGetCompanyLogoQuery.mockResolvedValue({
+        content: Buffer.from("logo"),
+        type: "image/png",
+      });
       const req = createReq({ params: { hash: "test-hash" } });
       const res = createRes();
       await getCompanyLogo(req, res);
@@ -241,7 +252,10 @@ describe("aiTrustCentre.ctrl", () => {
       const res = createRes();
       await getAITrustCentrePublicResource(req, res);
       expect(res.setHeader).toHaveBeenCalledWith("Content-Type", "application/pdf");
-      expect(res.setHeader).toHaveBeenCalledWith("Content-Disposition", 'attachment; filename="doc.pdf"');
+      expect(res.setHeader).toHaveBeenCalledWith(
+        "Content-Disposition",
+        'attachment; filename="doc.pdf"',
+      );
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.end).toHaveBeenCalledWith(Buffer.from("data"));
     });
@@ -372,7 +386,12 @@ describe("aiTrustCentre.ctrl", () => {
     it("should return 201 on successful creation", async () => {
       mockCreateSubprocessorQuery.mockResolvedValue({ id: 1, name: "Subprocessor" });
       const req = createReq({
-        body: { name: "Subprocessor", purpose: "Processing", location: "EU", url: "https://example.com" },
+        body: {
+          name: "Subprocessor",
+          purpose: "Processing",
+          location: "EU",
+          url: "https://example.com",
+        },
       });
       const res = createRes();
       await createAITrustSubprocessor(req, res);
@@ -384,7 +403,12 @@ describe("aiTrustCentre.ctrl", () => {
     it("should return 503 when creation fails", async () => {
       mockCreateSubprocessorQuery.mockResolvedValue(null);
       const req = createReq({
-        body: { name: "Subprocessor", purpose: "Processing", location: "EU", url: "https://example.com" },
+        body: {
+          name: "Subprocessor",
+          purpose: "Processing",
+          location: "EU",
+          url: "https://example.com",
+        },
       });
       const res = createRes();
       await createAITrustSubprocessor(req, res);
@@ -515,7 +539,13 @@ describe("aiTrustCentre.ctrl", () => {
       const res = createRes();
       await updateAITrustResource(req, res);
       expect(mockUploadFile).toHaveBeenCalled();
-      expect(mockUpdateResourceQuery).toHaveBeenCalledWith(1, expect.any(Object), 1, 1, expect.any(Object));
+      expect(mockUpdateResourceQuery).toHaveBeenCalledWith(
+        1,
+        expect.any(Object),
+        1,
+        1,
+        expect.any(Object),
+      );
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
@@ -548,7 +578,12 @@ describe("aiTrustCentre.ctrl", () => {
       mockUpdateSubprocessorQuery.mockResolvedValue({ id: 1, name: "Updated" });
       const req = createReq({
         params: { id: "1" },
-        body: { name: "Updated", purpose: "New purpose", location: "US", url: "https://example.com" },
+        body: {
+          name: "Updated",
+          purpose: "New purpose",
+          location: "US",
+          url: "https://example.com",
+        },
       });
       const res = createRes();
       await updateAITrustSubprocessor(req, res);

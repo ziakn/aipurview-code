@@ -421,9 +421,7 @@ describe("approvalRequest.ctrl", () => {
     });
 
     it("should return 200 with pending approvals", async () => {
-      const mockApprovals = [
-        { id: 1, request_name: "Pending Request 1", status: "Pending" },
-      ];
+      const mockApprovals = [{ id: 1, request_name: "Pending Request 1", status: "Pending" }];
       mockGetPendingApprovalsQuery.mockResolvedValue(mockApprovals as any);
 
       const req = createReq();
@@ -606,9 +604,7 @@ describe("approvalRequest.ctrl", () => {
         rollback: jest.fn(),
       };
       (sequelize.transaction as any).mockResolvedValue(mockTransaction);
-      mockProcessApprovalQuery.mockRejectedValue(
-        new TransientApprovalError("Transient error"),
-      );
+      mockProcessApprovalQuery.mockRejectedValue(new TransientApprovalError("Transient error"));
 
       await approveRequest(req as Request, res as Response);
 

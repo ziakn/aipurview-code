@@ -157,8 +157,12 @@ function createRes(): any {
 }
 
 describe("postMarketMonitoring.ctrl", () => {
-  beforeEach(() => { jest.clearAllMocks(); });
-  afterEach(() => { jest.restoreAllMocks(); });
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
 
   describe("getConfigByProjectId", () => {
     it("should return 400 for invalid project id", async () => {
@@ -461,12 +465,20 @@ describe("postMarketMonitoring.ctrl", () => {
 
     it("should return 200 on success", async () => {
       const req = createReq({
-        body: { orders: [{ id: 1, display_order: 2 }, { id: 2, display_order: 1 }] },
+        body: {
+          orders: [
+            { id: 1, display_order: 2 },
+            { id: 2, display_order: 1 },
+          ],
+        },
       });
       const res = createRes();
       await reorderQuestions(req, res);
       expect(mockReorderQuestions).toHaveBeenCalledWith(
-        [{ id: 1, display_order: 2 }, { id: 2, display_order: 1 }],
+        [
+          { id: 1, display_order: 2 },
+          { id: 2, display_order: 1 },
+        ],
         1,
       );
       expect(res.status).toHaveBeenCalledWith(200);
@@ -639,7 +651,11 @@ describe("postMarketMonitoring.ctrl", () => {
       });
       const res = createRes();
       await saveResponses(req, res);
-      expect(mockSaveResponses).toHaveBeenCalledWith(1, [{ question_id: 1, response_value: "Yes" }], 1);
+      expect(mockSaveResponses).toHaveBeenCalledWith(
+        1,
+        [{ question_id: 1, response_value: "Yes" }],
+        1,
+      );
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
@@ -994,7 +1010,14 @@ describe("postMarketMonitoring.ctrl", () => {
       const req = createReq({ params: { projectId: "1" } });
       const res = createRes();
       await startNewCycle(req, res);
-      expect(mockCreateCycle).toHaveBeenCalledWith(1, 3, expect.any(Date), 5, 1, expect.any(Object));
+      expect(mockCreateCycle).toHaveBeenCalledWith(
+        1,
+        3,
+        expect.any(Date),
+        5,
+        1,
+        expect.any(Object),
+      );
       expect(res.status).toHaveBeenCalledWith(201);
     });
 
@@ -1007,7 +1030,14 @@ describe("postMarketMonitoring.ctrl", () => {
       const req = createReq({ params: { projectId: "2" } });
       const res = createRes();
       await startNewCycle(req, res);
-      expect(mockCreateCycle).toHaveBeenCalledWith(2, 1, expect.any(Date), null, 1, expect.any(Object));
+      expect(mockCreateCycle).toHaveBeenCalledWith(
+        2,
+        1,
+        expect.any(Date),
+        null,
+        1,
+        expect.any(Object),
+      );
       expect(res.status).toHaveBeenCalledWith(201);
     });
 

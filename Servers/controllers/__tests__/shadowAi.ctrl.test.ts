@@ -172,8 +172,12 @@ function createRes(): any {
 }
 
 describe("shadowAi.ctrl", () => {
-  beforeEach(() => { jest.clearAllMocks(); });
-  afterEach(() => { jest.restoreAllMocks(); });
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
 
   describe("getInsightsSummary", () => {
     it("should return 200 with summary using default period", async () => {
@@ -331,18 +335,26 @@ describe("shadowAi.ctrl", () => {
       const res = createRes();
       await getUsers(req, res);
       expect(mockGetUserActivity).toHaveBeenCalledWith("t1", {
-        page: 1, limit: 20, sort: undefined, department: undefined,
+        page: 1,
+        limit: 20,
+        sort: undefined,
+        department: undefined,
       });
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
     it("should return 200 with query params", async () => {
       mockGetUserActivity.mockResolvedValue({ users: [{ email: "a@b.com" }], total: 1 });
-      const req = createReq({ query: { page: "2", limit: "10", sort: "email", department: "Engineering" } });
+      const req = createReq({
+        query: { page: "2", limit: "10", sort: "email", department: "Engineering" },
+      });
       const res = createRes();
       await getUsers(req, res);
       expect(mockGetUserActivity).toHaveBeenCalledWith("t1", {
-        page: 2, limit: 10, sort: "email", department: "Engineering",
+        page: 2,
+        limit: 10,
+        sort: "email",
+        department: "Engineering",
       });
       expect(res.status).toHaveBeenCalledWith(200);
     });
@@ -412,7 +424,10 @@ describe("shadowAi.ctrl", () => {
       const res = createRes();
       await getTools(req, res);
       expect(mockGetAllTools).toHaveBeenCalledWith("t1", {
-        status: undefined, sort: undefined, page: 1, limit: 20,
+        status: undefined,
+        sort: undefined,
+        page: 1,
+        limit: 20,
       });
       expect(res.status).toHaveBeenCalledWith(200);
     });
@@ -423,7 +438,10 @@ describe("shadowAi.ctrl", () => {
       const res = createRes();
       await getTools(req, res);
       expect(mockGetAllTools).toHaveBeenCalledWith("t1", {
-        status: "detected", sort: "name", page: 1, limit: 20,
+        status: "detected",
+        sort: "name",
+        page: 1,
+        limit: 20,
       });
       expect(res.status).toHaveBeenCalledWith(200);
     });
@@ -547,7 +565,10 @@ describe("shadowAi.ctrl", () => {
 
     it("should return 400 when required fields missing", async () => {
       mockGetToolById.mockResolvedValue({ id: 1 });
-      const req = createReq({ params: { id: "1" }, body: { model_inventory: { provider: "OpenAI" } } });
+      const req = createReq({
+        params: { id: "1" },
+        body: { model_inventory: { provider: "OpenAI" } },
+      });
       const res = createRes();
       await startGovernance(req, res);
       expect(res.status).toHaveBeenCalledWith(400);
@@ -576,7 +597,12 @@ describe("shadowAi.ctrl", () => {
       const req = createReq({
         params: { id: "1" },
         body: {
-          model_inventory: { provider: "OpenAI", model: "GPT-4", version: "1.0", status: "Pending" },
+          model_inventory: {
+            provider: "OpenAI",
+            model: "GPT-4",
+            version: "1.0",
+            status: "Pending",
+          },
           governance_owner_id: "2",
         },
       });
@@ -777,7 +803,11 @@ describe("shadowAi.ctrl", () => {
       const req = createReq();
       const res = createRes();
       await getAlertHistory(req, res);
-      expect(mockGetAlertHistory).toHaveBeenCalledWith("t1", { page: 1, limit: 20, ruleId: undefined });
+      expect(mockGetAlertHistory).toHaveBeenCalledWith("t1", {
+        page: 1,
+        limit: 20,
+        ruleId: undefined,
+      });
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
@@ -835,7 +865,10 @@ describe("shadowAi.ctrl", () => {
 
   describe("createSyslogConfig", () => {
     it("should return 403 for non-admin", async () => {
-      const req = createReq({ role: "Editor", body: { source_identifier: "fw-01", parser_type: "zscaler" } });
+      const req = createReq({
+        role: "Editor",
+        body: { source_identifier: "fw-01", parser_type: "zscaler" },
+      });
       const res = createRes();
       await createSyslogConfig(req, res);
       expect(res.status).toHaveBeenCalledWith(403);
@@ -856,8 +889,14 @@ describe("shadowAi.ctrl", () => {
     });
 
     it("should return 201 on success", async () => {
-      mockCreateSyslogConfig.mockResolvedValue({ id: 1, source_identifier: "fw-01", parser_type: "zscaler" });
-      const req = createReq({ body: { source_identifier: "fw-01", parser_type: "zscaler", is_active: true } });
+      mockCreateSyslogConfig.mockResolvedValue({
+        id: 1,
+        source_identifier: "fw-01",
+        parser_type: "zscaler",
+      });
+      const req = createReq({
+        body: { source_identifier: "fw-01", parser_type: "zscaler", is_active: true },
+      });
       const res = createRes();
       await createSyslogConfig(req, res);
       expect(mockCreateSyslogConfig).toHaveBeenCalled();
@@ -911,7 +950,9 @@ describe("shadowAi.ctrl", () => {
       const req = createReq({ params: { id: "1" }, body: { source_identifier: "fw-01-updated" } });
       const res = createRes();
       await updateSyslogConfig(req, res);
-      expect(mockUpdateSyslogConfig).toHaveBeenCalledWith("t1", 1, { source_identifier: "fw-01-updated" });
+      expect(mockUpdateSyslogConfig).toHaveBeenCalledWith("t1", 1, {
+        source_identifier: "fw-01-updated",
+      });
       expect(res.status).toHaveBeenCalledWith(200);
     });
 

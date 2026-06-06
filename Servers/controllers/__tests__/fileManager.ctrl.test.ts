@@ -79,10 +79,16 @@ import {
 } from "../../repositories/file.repository";
 import { extractText, normalizeText } from "../../services/fileIngestion/textExtractor";
 import { notifyRequesterRejected, notifyStepApprovers } from "../../services/notification.service";
-import { createApprovalRequestQuery, rejectApprovalRequestOnEntityDelete } from "../../utils/approvalRequest.utils";
+import {
+  createApprovalRequestQuery,
+  rejectApprovalRequestOnEntityDelete,
+} from "../../utils/approvalRequest.utils";
 import { getProjectByIdQuery } from "../../utils/project.utils";
 import { getUserProjects } from "../../utils/user.utils";
-import { formatFileSize, validateFileUpload } from "../../utils/validations/fileManagerValidation.utils";
+import {
+  formatFileSize,
+  validateFileUpload,
+} from "../../utils/validations/fileManagerValidation.utils";
 import {
   downloadFile,
   getFileMetadata,
@@ -97,23 +103,35 @@ import {
   uploadFile,
 } from "../fileManager.ctrl";
 
-const mockUploadOrgFile = uploadOrganizationFile as jest.MockedFunction<typeof uploadOrganizationFile>;
+const mockUploadOrgFile = uploadOrganizationFile as jest.MockedFunction<
+  typeof uploadOrganizationFile
+>;
 const mockGetFileById = getFileById as jest.MockedFunction<typeof getFileById>;
 const mockGetOrgFiles = getOrganizationFiles as jest.MockedFunction<typeof getOrganizationFiles>;
-const mockGetOrgFilesMeta = getOrganizationFilesWithMetadata as jest.MockedFunction<typeof getOrganizationFilesWithMetadata>;
+const mockGetOrgFilesMeta = getOrganizationFilesWithMetadata as jest.MockedFunction<
+  typeof getOrganizationFilesWithMetadata
+>;
 const mockDeleteFile = deleteFileById as jest.MockedFunction<typeof deleteFileById>;
 const mockUpdateMeta = updateFileMetadata as jest.MockedFunction<typeof updateFileMetadata>;
 const mockGetFileMeta = getFileWithMetadata as jest.MockedFunction<typeof getFileWithMetadata>;
 const mockGetHighlighted = getHighlightedFiles as jest.MockedFunction<typeof getHighlightedFiles>;
 const mockGetPreview = getFilePreview as jest.MockedFunction<typeof getFilePreview>;
-const mockGetVersions = getFileVersionHistoryRepo as jest.MockedFunction<typeof getFileVersionHistoryRepo>;
+const mockGetVersions = getFileVersionHistoryRepo as jest.MockedFunction<
+  typeof getFileVersionHistoryRepo
+>;
 const mockSearchFiles = searchFilesByContent as jest.MockedFunction<typeof searchFilesByContent>;
 const mockValidateUpload = validateFileUpload as jest.MockedFunction<typeof validateFileUpload>;
 const mockFormatSize = formatFileSize as jest.MockedFunction<typeof formatFileSize>;
-const mockCreateApprovalReq = createApprovalRequestQuery as jest.MockedFunction<typeof createApprovalRequestQuery>;
-const mockRejectApproval = rejectApprovalRequestOnEntityDelete as jest.MockedFunction<typeof rejectApprovalRequestOnEntityDelete>;
+const mockCreateApprovalReq = createApprovalRequestQuery as jest.MockedFunction<
+  typeof createApprovalRequestQuery
+>;
+const mockRejectApproval = rejectApprovalRequestOnEntityDelete as jest.MockedFunction<
+  typeof rejectApprovalRequestOnEntityDelete
+>;
 const mockNotifyApprovers = notifyStepApprovers as jest.MockedFunction<typeof notifyStepApprovers>;
-const mockNotifyRejected = notifyRequesterRejected as jest.MockedFunction<typeof notifyRequesterRejected>;
+const mockNotifyRejected = notifyRequesterRejected as jest.MockedFunction<
+  typeof notifyRequesterRejected
+>;
 const mockGetUserProjects = getUserProjects as jest.MockedFunction<typeof getUserProjects>;
 const mockGetProject = getProjectByIdQuery as jest.MockedFunction<typeof getProjectByIdQuery>;
 const mockExtractText = extractText as jest.MockedFunction<typeof extractText>;
@@ -188,8 +206,12 @@ function makeDbFile(overrides?: any) {
 }
 
 describe("fileManager.ctrl", () => {
-  beforeEach(() => { jest.clearAllMocks(); });
-  afterEach(() => { jest.restoreAllMocks(); });
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
 
   describe("uploadFile", () => {
     it("should return 400 when no file is provided", async () => {
@@ -278,7 +300,17 @@ describe("fileManager.ctrl", () => {
       const mockQuery = sequelize.query as jest.Mock<any>;
       mockQuery
         .mockResolvedValueOnce([{ id: 1, workflow_title: "Test WF", entity_type: "file" }])
-        .mockResolvedValueOnce([[{ id: 10, step_number: 1, workflow_id: 1, organization_id: 1, approvers: [{ approver_id: 2 }] }]]);
+        .mockResolvedValueOnce([
+          [
+            {
+              id: 10,
+              step_number: 1,
+              workflow_id: 1,
+              organization_id: 1,
+              approvers: [{ approver_id: 2 }],
+            },
+          ],
+        ]);
       mockCreateApprovalReq.mockResolvedValue({ id: 100 } as any);
       const req = createReq({
         file: makeFile(),
