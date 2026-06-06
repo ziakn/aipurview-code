@@ -514,6 +514,145 @@ export const createScenarioActivationQuery = async ({
 };
 
 // ============================================
+// ACTIVATION TRACKING
+// ============================================
+
+export const getActivationHistoryQuery = async (
+  organizationId: number,
+): Promise<
+  {
+    id: number;
+    scenario_id: number;
+    scenario_name: string;
+    activated_by: number;
+    activated_at: Date;
+    tasks_created: number;
+    frameworks_assigned: number;
+    status: string;
+  }[]
+> => {
+  const results = await sequelize.query(
+    `SELECT
+       a.id,
+       a.scenario_id,
+       s.name as scenario_name,
+       a.activated_by,
+       a.activated_at,
+       a.tasks_created,
+       a.frameworks_assigned,
+       a.status
+     FROM governance_scenario_activations a
+     JOIN governance_scenarios s ON s.id = a.scenario_id
+     WHERE a.organization_id = :organizationId
+     ORDER BY a.activated_at DESC
+     LIMIT 50`,
+    {
+      replacements: { organizationId },
+    },
+  );
+  return results[0] as any[];
+};
+
+export const deactivateScenarioQuery = async (
+  activationId: number,
+  organizationId: number,
+): Promise<{ id: number; status: string; deactivated_at: Date } | null> => {
+  const [results] = await sequelize.query(
+    `UPDATE governance_scenario_activations
+     SET status = 'inactive', deactivated_at = NOW()
+     WHERE id = :activationId AND organization_id = :organizationId
+     RETURNING id, status, deactivated_at`,
+    {
+      replacements: { activationId, organizationId },
+    },
+  );
+  const row = (results as any[])[0];
+  if (!row) return null;
+  return {
+    id: row.id as number,
+    status: row.status as string,
+    deactivated_at: row.deactivated_at as Date,
+  };
+};
+
+const FRAMEWORK_SLUGS: Record<number, string> = {
+  1: "eu-ai-act",
+  2: "iso-42001",
+  3: "iso-27001",
+  4: "nist-ai-rmf",
+};
+
+export const getTaskProgressByFrameworkQuery = async (
+  activationId: number,
+  organizationId: number,
+): Promise<
+  {
+    frameworkId: number;
+    frameworkName: string;
+    totalTasks: number;
+    completedTasks: number;
+    inProgressTasks: number;
+    openTasks: number;
+  }[]
+> => {
+  // Get activation timestamp
+  const [activationResult] = await sequelize.query(
+    `SELECT activated_at FROM governance_scenario_activations
+     WHERE id = :activationId AND organization_id = :organizationId`,
+    {
+      replacements: { activationId, organizationId },
+    },
+  );
+  const activatedAt = (activationResult as any[])[0]?.activated_at;
+  if (!activatedAt) return [];
+
+  const frameworkIds = [1, 2, 3, 4];
+  const progress: ReturnType<typeof getTaskProgressByFrameworkQuery> extends Promise<infer T>
+    ? T
+    : never = [];
+
+  for (const fwId of frameworkIds) {
+    const slug = FRAMEWORK_SLUGS[fwId];
+    const [taskResult] = await sequelize.query(
+      `SELECT
+         COUNT(*) FILTER (WHERE status = 'Completed') as completed,
+         COUNT(*) FILTER (WHERE status = 'In progress') as in_progress,
+         COUNT(*) FILTER (WHERE status = 'Open') as open,
+         COUNT(*) as total
+       FROM tasks
+       WHERE organization_id = :organizationId
+         AND categories::jsonb ? 'governance'
+         AND categories::jsonb ? :slug
+         AND created_at >= :activatedAt`,
+      {
+        replacements: { organizationId, slug, activatedAt },
+      },
+    );
+    const row = (taskResult as any[])[0];
+    const total = parseInt(row?.total || "0", 10);
+    if (total > 0) {
+      progress.push({
+        frameworkId: fwId,
+        frameworkName:
+          fwId === 1
+            ? "EU AI Act"
+            : fwId === 2
+              ? "ISO 42001"
+              : fwId === 3
+                ? "ISO 27001"
+                : "NIST AI RMF",
+        totalTasks: total,
+        completedTasks: parseInt(row?.completed || "0", 10),
+        inProgressTasks: parseInt(row?.in_progress || "0", 10),
+        openTasks: parseInt(row?.open || "0", 10),
+      });
+    }
+  }
+
+  return progress;
+};
+
+// ============================================
 // PREFERENCES
 // ============================================
 
