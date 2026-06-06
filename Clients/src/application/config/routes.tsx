@@ -142,6 +142,9 @@ const FrameworkMapperModule = lazyRoute(() => import("../../presentation/pages/G
 const ScenarioBuilderModule = lazyRoute(() => import("../../presentation/pages/GovernanceOS/ScenarioBuilderModule"));
 const UnifiedInsightsModule = lazyRoute(() => import("../../presentation/pages/GovernanceOS/UnifiedInsightsModule"));
 const GovernanceSettings = lazyRoute(() => import("../../presentation/pages/GovernanceOS/Settings"));
+const EvidenceHub = lazyRoute(() => import("../../presentation/pages/GovernanceOS/EvidenceHub"));
+const KnowledgeGraph = lazyRoute(() => import("../../presentation/pages/GovernanceOS/KnowledgeGraph"));
+const RegulatoryRadar = lazyRoute(() => import("../../presentation/pages/GovernanceOS/RegulatoryRadar"));
 
 // ── Remaining routes ──────────────────────────────────────────────────
 const Plugins = lazyRoute(() => import("../../presentation/pages/Plugins"));
@@ -395,6 +398,30 @@ export const createRoutes = (
       element={
         <Suspense fallback={<LazyFallback />}>
           <GovernanceSettings />
+        </Suspense>
+      }
+    />
+    <Route
+      path="/governance/evidence"
+      element={
+        <Suspense fallback={<LazyFallback />}>
+          <EvidenceHub />
+        </Suspense>
+      }
+    />
+    <Route
+      path="/governance/knowledge-graph"
+      element={
+        <Suspense fallback={<LazyFallback />}>
+          <KnowledgeGraph />
+        </Suspense>
+      }
+    />
+    <Route
+      path="/governance/regulatory-radar"
+      element={
+        <Suspense fallback={<LazyFallback />}>
+          <RegulatoryRadar />
         </Suspense>
       }
     />
