@@ -153,4 +153,55 @@ describe("CustomizableBasicTable", () => {
     renderWithProviders(<CustomizableBasicTable {...defaultProps} />);
     expect(screen.queryByText(/Showing/)).not.toBeInTheDocument();
   });
+
+  describe("riskLevelChecker", () => {
+    it("renders Low risk for score <= 3", () => {
+      const rows = [{ ...mockRows[0], id: 10, risk_level_autocalculated: "2" }];
+      renderWithProviders(
+        <CustomizableBasicTable {...defaultProps} data={{ rows, cols: mockColumns }} bodyData={rows} />,
+      );
+      expect(screen.getByText("Low risk")).toBeInTheDocument();
+    });
+
+    it("renders Medium risk for score 4-6", () => {
+      const rows = [{ ...mockRows[0], id: 11, risk_level_autocalculated: "5" }];
+      renderWithProviders(
+        <CustomizableBasicTable {...defaultProps} data={{ rows, cols: mockColumns }} bodyData={rows} />,
+      );
+      expect(screen.getByText("Medium risk")).toBeInTheDocument();
+    });
+
+    it("renders High risk for score 7-9", () => {
+      const rows = [{ ...mockRows[0], id: 12, risk_level_autocalculated: "8" }];
+      renderWithProviders(
+        <CustomizableBasicTable {...defaultProps} data={{ rows, cols: mockColumns }} bodyData={rows} />,
+      );
+      expect(screen.getByText("High risk")).toBeInTheDocument();
+    });
+
+    it("renders Very high risk for score >= 10", () => {
+      const rows = [{ ...mockRows[0], id: 13, risk_level_autocalculated: "10" }];
+      renderWithProviders(
+        <CustomizableBasicTable {...defaultProps} data={{ rows, cols: mockColumns }} bodyData={rows} />,
+      );
+      expect(screen.getByText("Very high risk")).toBeInTheDocument();
+    });
+  });
+
+  describe("localStorage pagination", () => {
+    beforeEach(() => {
+      localStorage.clear();
+    });
+
+    it("persists rowsPerPage to localStorage", () => {
+      renderWithProviders(<CustomizableBasicTable {...defaultProps} paginated />);
+      expect(localStorage.getItem("verifywise_risks_rows_per_page")).toBe("10");
+    });
+
+    it("reads rowsPerPage from localStorage when available", () => {
+      localStorage.setItem("verifywise_risks_rows_per_page", "5");
+      renderWithProviders(<CustomizableBasicTable {...defaultProps} paginated />);
+      expect(screen.getByText(/Rows per page/)).toBeInTheDocument();
+    });
+  });
 });

@@ -94,4 +94,17 @@ describe("InfoBox Component", () => {
 
     expect(screen.getByText("Warning message")).toBeInTheDocument();
   });
+
+  it("applies custom backgroundColor and borderColor", () => {
+    renderWithProviders(
+      <InfoBox
+        message="Custom colors"
+        storageKey="test-custom-colors"
+        backgroundColor="#ff0000"
+        borderColor="#00ff00"
+      />,
+    );
+
+    expect(screen.getByText("Custom colors")).toBeInTheDocument();
+  });
 });

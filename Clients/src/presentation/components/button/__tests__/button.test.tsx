@@ -41,4 +41,28 @@ describe("Button", () => {
     renderWithProviders(<Button testId="my-btn">Test</Button>);
     expect(screen.getByTestId("my-btn")).toBeInTheDocument();
   });
+
+  it("passes className to the button", () => {
+    renderWithProviders(<Button className="custom-class">Styled</Button>);
+    const button = screen.getByRole("button", { name: "Styled" });
+    expect(button.className).toContain("custom-class");
+  });
+
+  it("merges sx prop with default styles", () => {
+    renderWithProviders(
+      <Button sx={{ backgroundColor: "red" }}>Sx Button</Button>,
+    );
+    const button = screen.getByRole("button", { name: "Sx Button" });
+    expect(button).toBeInTheDocument();
+  });
+
+  it("falls back to children string for aria-label when label not provided", () => {
+    renderWithProviders(<Button>Aria Fallback</Button>);
+    expect(screen.getByRole("button", { name: "Aria Fallback" })).toBeInTheDocument();
+  });
+
+  it("uses children as aria-label when no explicit aria-label given", () => {
+    renderWithProviders(<Button>Child text</Button>);
+    expect(screen.getByRole("button", { name: "Child text" })).toBeInTheDocument();
+  });
 });
