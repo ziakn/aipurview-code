@@ -9,6 +9,7 @@ import {
   FileCheck,
   Network,
   Radio,
+  Settings,
 } from "lucide-react";
 import { brand } from "../../../themes/palette";
 
@@ -61,6 +62,12 @@ const MODULES: ModuleItem[] = [
     label: "Regulatory Radar",
     path: "/governance/regulatory-radar",
     icon: <Radio size={16} strokeWidth={1.5} />,
+  },
+  {
+    id: "settings",
+    label: "Settings",
+    path: "/governance/settings",
+    icon: <Settings size={16} strokeWidth={1.5} />,
   },
 ];
 
