@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Box, Typography, Stack, Chip, Button, LinearProgress } from "@mui/material";
+import { Box, Typography, Stack, LinearProgress, alpha, useTheme } from "@mui/material";
 import { Target, Zap, ArrowRight, XCircle } from "lucide-react";
 import { IGovernanceScenario } from "../../../domain/interfaces/i.governanceOs";
 import {
@@ -7,6 +7,8 @@ import {
   useDeactivateScenario,
   useScenarioProgress,
 } from "../../../application/hooks/useGovernanceOs";
+import FrameworkChip from "./FrameworkChip";
+import CustomizableButton from "../button/customizable-button";
 import { border as borderPalette, background, text, accent, brand, status } from "../../themes/palette";
 
 interface ActiveScenarioPanelProps {
@@ -25,6 +27,7 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
   activeScenario,
   onActivate,
 }) => {
+  const theme = useTheme();
   const { data: activations } = useActivationHistory();
   const deactivateMutation = useDeactivateScenario();
 
@@ -86,7 +89,7 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
         border: `1px solid ${brand.primary}`,
         borderRadius: 2,
         p: 3,
-        background: `linear-gradient(135deg, ${background.main} 0%, rgba(19, 113, 91, 0.06) 100%)`,
+        background: `linear-gradient(135deg, ${background.main} 0%, ${alpha(brand.primary, 0.06)} 100%)`,
       }}
     >
       <Stack
@@ -101,7 +104,7 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
               width: 36,
               height: 36,
               borderRadius: "50%",
-              backgroundColor: "rgba(19, 113, 91, 0.12)",
+              backgroundColor: alpha(brand.primary, 0.12),
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -115,17 +118,22 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
               <Typography sx={{ fontSize: 14, fontWeight: 600, color: text.primary }}>
                 Active scenario
               </Typography>
-              <Chip
-                label={latestActivation ? "Activated" : "Selected"}
-                size="small"
+              <Box
+                component="span"
                 sx={{
-                  fontSize: 11,
+                  display: "inline-flex",
+                  alignItems: "center",
                   height: 20,
-                  backgroundColor: "rgba(19, 113, 91, 0.12)",
-                  color: brand.primary,
+                  px: 1,
+                  borderRadius: "4px",
+                  fontSize: 11,
                   fontWeight: 500,
+                  backgroundColor: alpha(brand.primary, 0.12),
+                  color: brand.primary,
                 }}
-              />
+              >
+                {latestActivation ? "Activated" : "Selected"}
+              </Box>
             </Stack>
             <Typography sx={{ fontSize: 13, color: text.primary, fontWeight: 500 }}>
               {activeScenario.name}
@@ -152,32 +160,11 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
                       ? "secondary"
                       : "supplementary";
                 return (
-                  <Chip
+                  <FrameworkChip
                     key={id}
-                    label={FRAMEWORK_NAMES[id] || `Framework ${id}`}
+                    frameworkName={FRAMEWORK_NAMES[id] || `Framework ${id}`}
+                    priority={priority}
                     size="small"
-                    sx={{
-                      fontSize: 11,
-                      height: 20,
-                      backgroundColor:
-                        priority === "primary"
-                          ? accent.primary.bg
-                          : priority === "secondary"
-                            ? accent.indigo.bg
-                            : background.hover,
-                      color:
-                        priority === "primary"
-                          ? accent.primary.text
-                          : priority === "secondary"
-                            ? accent.indigo.text
-                            : text.tertiary,
-                      border:
-                        priority === "primary"
-                          ? `1px solid ${accent.primary.border}`
-                          : priority === "secondary"
-                            ? `1px solid ${accent.indigo.border}`
-                            : `1px solid ${borderPalette.light}`,
-                    }}
                   />
                 );
               })}
@@ -187,28 +174,33 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
 
         <Stack direction="row" spacing={1} sx={{ flexShrink: 0 }}>
           {latestActivation && (
-            <Button
+            <CustomizableButton
               size="small"
               variant="outlined"
               color="error"
               startIcon={<XCircle size={14} />}
+              text="Deactivate"
               onClick={() => deactivateMutation.mutate(latestActivation.id)}
-              disabled={deactivateMutation.isPending}
+              isDisabled={deactivateMutation.isPending}
               sx={{ textTransform: "none", fontSize: 12 }}
-            >
-              Deactivate
-            </Button>
+            />
           )}
-          <Button
+          <CustomizableButton
             variant="contained"
             size="small"
             startIcon={<Zap size={14} />}
             endIcon={<ArrowRight size={14} />}
             onClick={() => onActivate(activeScenario)}
-            sx={{ textTransform: "none", fontSize: 13, boxShadow: "none" }}
-          >
-            {latestActivation ? "Re-activate" : "Activate now"}
-          </Button>
+            text={latestActivation ? "Re-activate" : "Activate now"}
+            sx={{
+              textTransform: "none",
+              fontSize: 13,
+              boxShadow: "none",
+              backgroundColor: brand.primary,
+              color: theme.palette.common.white,
+              "&:hover": { backgroundColor: brand.primaryHover, boxShadow: "none" },
+            }}
+          />
         </Stack>
       </Stack>
 
