@@ -1,8 +1,8 @@
 import React from "react";
-import { Box, Typography, Stack, Chip, CircularProgress } from "@mui/material";
+import { Box, Typography, Stack, CircularProgress, alpha } from "@mui/material";
 import { Network } from "lucide-react";
 import { useUnifiedView } from "../../../application/hooks/useGovernanceOs";
-import { border as borderPalette, background, text, brand } from "../../themes/palette";
+import { border as borderPalette, background, text, brand, accent } from "../../themes/palette";
 
 interface MappingStatsPanelProps {
   projectId: number;
@@ -15,8 +15,8 @@ const STRENGTH_LABELS: Record<string, string> = {
 };
 
 const STRENGTH_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  direct: { bg: "rgba(19, 113, 91, 0.12)", text: brand.primary, border: "rgba(19, 113, 91, 0.3)" },
-  partial: { bg: "rgba(99, 102, 241, 0.12)", text: "#4338ca", border: "rgba(99, 102, 241, 0.3)" },
+  direct: { bg: alpha(brand.primary, 0.12), text: brand.primary, border: alpha(brand.primary, 0.3) },
+  partial: { bg: alpha(accent.indigo.text, 0.12), text: accent.indigo.text, border: alpha(accent.indigo.text, 0.3) },
   related: { bg: background.hover, text: text.secondary, border: borderPalette.light },
 };
 
@@ -101,19 +101,25 @@ const MappingStatsPanel: React.FC<MappingStatsPanelProps> = ({ projectId }) => {
             </Typography>
             <Stack direction="row" flexWrap="wrap" gap={1}>
               {domainEntries.map(([domain, count]) => (
-                <Chip
+                <Box
                   key={domain}
-                  label={`${domain}: ${count}`}
-                  size="small"
+                  component="span"
                   sx={{
-                    fontSize: 12,
+                    display: "inline-flex",
+                    alignItems: "center",
                     height: 24,
+                    px: "8px",
+                    borderRadius: "4px",
+                    fontSize: 12,
+                    fontWeight: 400,
+                    textTransform: "capitalize",
                     backgroundColor: background.hover,
                     color: text.secondary,
                     border: `1px solid ${borderPalette.light}`,
-                    textTransform: "capitalize",
                   }}
-                />
+                >
+                  {domain}: {count}
+                </Box>
               ))}
             </Stack>
           </Box>
@@ -129,20 +135,25 @@ const MappingStatsPanel: React.FC<MappingStatsPanelProps> = ({ projectId }) => {
               {strengthEntries.map(([strength, count]) => {
                 const colors = STRENGTH_COLORS[strength] || STRENGTH_COLORS.related;
                 return (
-                  <Chip
+                  <Box
                     key={strength}
-                    label={`${STRENGTH_LABELS[strength] || strength}: ${count}`}
-                    size="small"
+                    component="span"
                     sx={{
-                      fontSize: 12,
+                      display: "inline-flex",
+                      alignItems: "center",
                       height: 24,
+                      px: "8px",
+                      borderRadius: "4px",
+                      fontSize: 12,
+                      fontWeight: 500,
+                      textTransform: "capitalize",
                       backgroundColor: colors.bg,
                       color: colors.text,
                       border: `1px solid ${colors.border}`,
-                      textTransform: "capitalize",
-                      fontWeight: 500,
                     }}
-                  />
+                  >
+                    {STRENGTH_LABELS[strength] || strength}: {count}
+                  </Box>
                 );
               })}
             </Stack>
