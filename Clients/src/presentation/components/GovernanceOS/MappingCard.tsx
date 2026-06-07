@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Box, Typography, Stack, Chip, IconButton } from "@mui/material";
+import { Box, Typography, Stack, IconButton, alpha } from "@mui/material";
 import { ArrowRight, Info, Pencil, Trash2 } from "lucide-react";
 import MappingStrengthBadge from "./MappingStrengthBadge";
 import StandardModal from "../Modals/StandardModal";
 import { IMappingCardProps } from "../../../domain/interfaces/i.governanceOs";
-import { border as borderPalette, background, text } from "../../themes/palette";
+import { border as borderPalette, background, text, accent, brand, status } from "../../themes/palette";
 
 const FRAMEWORK_NAMES: Record<number, string> = {
   1: "EU AI Act",
@@ -68,17 +68,23 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
           <MappingStrengthBadge strength={mapping.mapping_strength} />
 
           {mapping.domain_tag && (
-            <Chip
-              label={mapping.domain_tag.replace(/_/g, " ")}
-              size="small"
+            <Box
+              component="span"
               sx={{
-                fontSize: 11,
+                display: "inline-flex",
+                alignItems: "center",
                 height: 22,
+                px: "8px",
+                borderRadius: "4px",
+                fontSize: 11,
                 textTransform: "capitalize",
-                backgroundColor: "#E6F0EC",
-                color: "#13715B",
+                backgroundColor: accent.primary.bg,
+                color: accent.primary.text,
+                border: `1px solid ${accent.primary.border}`,
               }}
-            />
+            >
+              {mapping.domain_tag.replace(/_/g, " ")}
+            </Box>
           )}
 
           {mapping.confidence_score !== undefined && (
@@ -91,11 +97,12 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
             {onEdit && (
               <IconButton
                 size="small"
+                disableRipple
                 onClick={(e) => {
                   e.stopPropagation();
                   onEdit(mapping);
                 }}
-                sx={{ "color": text.muted, "&:hover": { color: text.primary } }}
+                sx={{ color: text.muted, "&:hover": { color: text.primary } }}
               >
                 <Pencil size={14} />
               </IconButton>
@@ -103,11 +110,12 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
             {onDelete && (
               <IconButton
                 size="small"
+                disableRipple
                 onClick={(e) => {
                   e.stopPropagation();
                   onDelete(mapping);
                 }}
-                sx={{ "color": text.muted, "&:hover": { color: "#D32F2F" } }}
+                sx={{ color: text.muted, "&:hover": { color: status.error.text } }}
               >
                 <Trash2 size={14} />
               </IconButton>
@@ -222,17 +230,23 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
                     <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
                       Governance domain
                     </Typography>
-                    <Chip
-                      label={mapping.domain_tag.replace(/_/g, " ")}
-                      size="small"
+                    <Box
+                      component="span"
                       sx={{
-                        fontSize: 12,
+                        display: "inline-flex",
+                        alignItems: "center",
                         height: 24,
+                        px: "10px",
+                        borderRadius: "4px",
+                        fontSize: 12,
                         textTransform: "capitalize",
-                        backgroundColor: "#E6F0EC",
-                        color: "#13715B",
+                        backgroundColor: accent.primary.bg,
+                        color: accent.primary.text,
+                        border: `1px solid ${accent.primary.border}`,
                       }}
-                    />
+                    >
+                      {mapping.domain_tag.replace(/_/g, " ")}
+                    </Box>
                   </Box>
                 )}
                 {mapping.confidence_score !== undefined && (
