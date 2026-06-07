@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import { Play, Calculator } from "lucide-react";
 import Select from "../Inputs/Select";
-import FrameworkChip from "./FrameworkChip";
 import CustomizableButton from "../button/customizable-button";
 import { IGovernanceScenario } from "../../../domain/interfaces/i.governanceOs";
 import { border as borderPalette, background, text, accent, brand } from "../../themes/palette";
@@ -359,11 +358,33 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
                       {fw.frameworkName}
                     </Typography>
                     <Stack direction="row" spacing={1} alignItems="center">
-                      <FrameworkChip
-                        frameworkName={fw.priority}
-                        priority={fw.priority as "primary" | "secondary" | "supplementary"}
-                        size="small"
-                      />
+                      <Box
+                        component="span"
+                        sx={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          height: 20,
+                          px: "8px",
+                          borderRadius: "4px",
+                          fontSize: 11,
+                          fontWeight: 500,
+                          textTransform: "capitalize",
+                          backgroundColor:
+                            fw.priority === "primary"
+                              ? alpha(brand.primary, 0.12)
+                              : fw.priority === "secondary"
+                                ? alpha(accent.indigo.text, 0.12)
+                                : background.hover,
+                          color:
+                            fw.priority === "primary"
+                              ? brand.primary
+                              : fw.priority === "secondary"
+                                ? accent.indigo.text
+                                : text.secondary,
+                        }}
+                      >
+                        {fw.priority}
+                      </Box>
                       <Typography sx={{ fontSize: 13, color: text.secondary, minWidth: 80 }}>
                         {fw.controlCount} controls
                       </Typography>
