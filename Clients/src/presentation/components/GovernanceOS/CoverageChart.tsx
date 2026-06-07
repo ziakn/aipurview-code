@@ -4,14 +4,14 @@ import {
   Typography,
   LinearProgress,
   Stack,
-  Chip,
-  Button,
-  Collapse,
   IconButton,
+  Collapse,
   Divider,
+  alpha,
 } from "@mui/material";
 import { ChevronDown, ChevronUp, Plus, CheckSquare, Square } from "lucide-react";
 import { ICoverageChartProps } from "../../../domain/interfaces/i.governanceOs";
+import CustomizableButton from "../button/customizable-button";
 import { border as borderPalette, background, text, status, brand } from "../../themes/palette";
 
 const CoverageChart = ({
@@ -95,7 +95,7 @@ const CoverageChart = ({
               "border": `1px solid ${isPrimary ? brand.primary : borderPalette.light}`,
               "borderRadius": 2,
               "p": 2,
-              "background": isPrimary ? "rgba(19, 113, 91, 0.04)" : background.main,
+              "background": isPrimary ? alpha(brand.primary, 0.04) : background.main,
               "transition": "all 0.2s ease",
               "&:hover": {
                 borderColor: isPrimary ? brand.primary : borderPalette.dark,
@@ -118,17 +118,22 @@ const CoverageChart = ({
                   {fw.framework_name || `Framework ${fw.framework_id}`}
                 </Typography>
                 {isPrimary && (
-                  <Chip
-                    label="Primary"
-                    size="small"
+                  <Box
+                    component="span"
                     sx={{
-                      fontSize: 10,
+                      display: "inline-flex",
+                      alignItems: "center",
                       height: 18,
-                      backgroundColor: "rgba(19, 113, 91, 0.12)",
-                      color: brand.primary,
+                      px: "6px",
+                      borderRadius: "4px",
+                      fontSize: 10,
                       fontWeight: 500,
+                      backgroundColor: alpha(brand.primary, 0.12),
+                      color: brand.primary,
                     }}
-                  />
+                  >
+                    Primary
+                  </Box>
                 )}
               </Stack>
 
@@ -137,7 +142,7 @@ const CoverageChart = ({
                   {fw.coverage_percentage}%
                 </Typography>
                 {(hasGaps || hasSynergies) && (
-                  <IconButton size="small" sx={{ color: text.muted }}>
+                  <IconButton size="small" disableRipple sx={{ color: text.muted }}>
                     {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                   </IconButton>
                 )}
@@ -154,7 +159,7 @@ const CoverageChart = ({
                 "mb": 1,
                 "backgroundColor": background.hover,
                 "& .MuiLinearProgress-bar": {
-                  backgroundColor: isPrimary ? brand.primary : brand.primary,
+                  backgroundColor: brand.primary,
                   borderRadius: 3,
                 },
               }}
@@ -166,31 +171,43 @@ const CoverageChart = ({
               </Typography>
               <Box>
                 {hasGaps && (
-                  <Chip
-                    label={`${gapIds.length} gaps`}
-                    size="small"
+                  <Box
+                    component="span"
                     sx={{
-                      fontSize: 10,
+                      display: "inline-flex",
+                      alignItems: "center",
                       height: 20,
+                      px: "6px",
+                      borderRadius: "4px",
+                      fontSize: 10,
+                      fontWeight: 500,
                       mr: 0.5,
                       backgroundColor: status.warning.bg,
                       color: status.warning.text,
                       border: `1px solid ${status.warning.border}`,
                     }}
-                  />
+                  >
+                    {gapIds.length} gaps
+                  </Box>
                 )}
                 {hasSynergies && (
-                  <Chip
-                    label={`${synergyIds.length} synergies`}
-                    size="small"
+                  <Box
+                    component="span"
                     sx={{
-                      fontSize: 10,
+                      display: "inline-flex",
+                      alignItems: "center",
                       height: 20,
+                      px: "6px",
+                      borderRadius: "4px",
+                      fontSize: 10,
+                      fontWeight: 500,
                       backgroundColor: status.success.bg,
                       color: status.success.text,
                       border: `1px solid ${status.success.border}`,
                     }}
-                  />
+                  >
+                    {synergyIds.length} synergies
+                  </Box>
                 )}
               </Box>
             </Stack>
@@ -212,20 +229,18 @@ const CoverageChart = ({
                       Unmapped controls ({gapIds.length})
                     </Typography>
                     <Stack direction="row" spacing={0.5}>
-                      <Button
+                      <CustomizableButton
                         size="small"
                         onClick={() => selectAllGaps(fw.framework_id, gapIds)}
+                        text="Select all"
                         sx={{ fontSize: 11, textTransform: "none", minWidth: 0, px: 1 }}
-                      >
-                        Select all
-                      </Button>
-                      <Button
+                      />
+                      <CustomizableButton
                         size="small"
                         onClick={() => clearAllGaps(fw.framework_id)}
+                        text="Clear"
                         sx={{ fontSize: 11, textTransform: "none", minWidth: 0, px: 1 }}
-                      >
-                        Clear
-                      </Button>
+                      />
                     </Stack>
                   </Stack>
 
@@ -253,7 +268,7 @@ const CoverageChart = ({
                                 ? `1px solid ${borderPalette.light}`
                                 : "none",
                             backgroundColor: isSelected
-                              ? "rgba(19, 113, 91, 0.04)"
+                              ? alpha(brand.primary, 0.04)
                               : background.main,
                           }}
                         >
@@ -274,7 +289,7 @@ const CoverageChart = ({
                             </Typography>
                           </Stack>
                           {onCreateTaskForGap && (
-                            <Button
+                            <CustomizableButton
                               size="small"
                               variant="text"
                               startIcon={<Plus size={12} />}
@@ -285,6 +300,7 @@ const CoverageChart = ({
                                   controlId
                                 );
                               }}
+                              text="Task"
                               sx={{
                                 fontSize: 11,
                                 textTransform: "none",
@@ -292,9 +308,7 @@ const CoverageChart = ({
                                 minWidth: 0,
                                 px: 1,
                               }}
-                            >
-                              Task
-                            </Button>
+                            />
                           )}
                         </Box>
                       );
@@ -303,14 +317,13 @@ const CoverageChart = ({
 
                   {selectedGaps.size > 0 && onCreateTasksForGaps && (
                     <Box sx={{ mt: 1, display: "flex", justifyContent: "flex-end" }}>
-                      <Button
+                      <CustomizableButton
                         size="small"
                         variant="contained"
                         onClick={() => handleBulkCreate(fw)}
+                        text={`Create tasks for ${selectedGaps.size} gap(s)`}
                         sx={{ fontSize: 11, textTransform: "none" }}
-                      >
-                        Create tasks for {selectedGaps.size} gap(s)
-                      </Button>
+                      />
                     </Box>
                   )}
                 </Box>
@@ -324,19 +337,24 @@ const CoverageChart = ({
                   </Typography>
                   <Stack direction="row" flexWrap="wrap" gap={0.75}>
                     {synergyIds.map((controlId) => (
-                      <Chip
+                      <Box
                         key={controlId}
-                        label={controlId}
-                        size="small"
+                        component="span"
                         sx={{
-                          fontSize: 11,
+                          display: "inline-flex",
+                          alignItems: "center",
                           height: 22,
+                          px: "8px",
+                          borderRadius: "4px",
+                          fontSize: 11,
                           fontFamily: "monospace",
                           backgroundColor: status.success.bg,
                           color: status.success.text,
                           border: `1px solid ${status.success.border}`,
                         }}
-                      />
+                      >
+                        {controlId}
+                      </Box>
                     ))}
                   </Stack>
                 </Box>
