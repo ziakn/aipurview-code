@@ -3,15 +3,15 @@ import {
   Box,
   Typography,
   Stack,
-  Chip,
   CircularProgress,
-  Button,
+  alpha,
 } from "@mui/material";
 import { History, XCircle } from "lucide-react";
 import {
   useActivationHistory,
   useDeactivateScenario,
 } from "../../../application/hooks/useGovernanceOs";
+import CustomizableButton from "../button/customizable-button";
 import { border as borderPalette, background, text, brand, status } from "../../themes/palette";
 
 const ActivationHistory: React.FC = () => {
@@ -83,26 +83,32 @@ const ActivationHistory: React.FC = () => {
                 p: 1.5,
                 borderRadius: 1.5,
                 border: `1px solid ${borderPalette.light}`,
-                background: isActive ? "rgba(19, 113, 91, 0.04)" : background.main,
+                background: isActive ? alpha(brand.primary, 0.04) : background.main,
               }}
             >
               <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
                 <Typography sx={{ fontSize: 13, fontWeight: 500, color: text.primary }}>
                   {activation.scenario_name || `Scenario #${activation.scenario_id}`}
                 </Typography>
-                <Chip
-                  label={isActive ? "Active" : "Inactive"}
-                  size="small"
+                <Box
+                  component="span"
                   sx={{
-                    fontSize: 11,
+                    display: "inline-flex",
+                    alignItems: "center",
                     height: 20,
-                    backgroundColor: isActive
-                      ? "rgba(19, 113, 91, 0.12)"
-                      : background.hover,
-                    color: isActive ? brand.primary : text.muted,
+                    px: 1,
+                    borderRadius: "4px",
+                    fontSize: 11,
                     fontWeight: isActive ? 500 : 400,
+                    backgroundColor: isActive
+                      ? status.success.bg
+                      : background.hover,
+                    color: isActive ? status.success.text : text.muted,
+                    border: `1px solid ${isActive ? status.success.border : borderPalette.light}`,
                   }}
-                />
+                >
+                  {isActive ? "Active" : "Inactive"}
+                </Box>
                 <Typography sx={{ fontSize: 12, color: text.muted }}>{date}</Typography>
                 <Typography sx={{ fontSize: 12, color: text.secondary }}>
                   {activation.tasks_created} task(s)
@@ -113,21 +119,19 @@ const ActivationHistory: React.FC = () => {
               </Stack>
 
               {isActive && (
-                <Button
+                <CustomizableButton
                   size="small"
                   variant="text"
                   startIcon={<XCircle size={14} />}
+                  text="Deactivate"
                   onClick={() => handleDeactivate(activation.id)}
-                  disabled={deactivateMutation.isPending}
+                  isDisabled={deactivateMutation.isPending}
                   sx={{
                     fontSize: 12,
-                    textTransform: "none",
                     color: status.error.text,
                     minWidth: 0,
                   }}
-                >
-                  Deactivate
-                </Button>
+                />
               )}
             </Box>
           );
