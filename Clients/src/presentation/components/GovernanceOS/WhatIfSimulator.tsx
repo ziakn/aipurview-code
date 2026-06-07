@@ -3,16 +3,17 @@ import {
   Box,
   Typography,
   Stack,
-  Button,
-  Chip,
   CircularProgress,
   Alert,
   LinearProgress,
+  alpha,
 } from "@mui/material";
 import { Play, Calculator } from "lucide-react";
 import Select from "../Inputs/Select";
+import FrameworkChip from "./FrameworkChip";
+import CustomizableButton from "../button/customizable-button";
 import { IGovernanceScenario } from "../../../domain/interfaces/i.governanceOs";
-import { border as borderPalette, background, text, brand } from "../../themes/palette";
+import { border as borderPalette, background, text, accent, brand } from "../../themes/palette";
 
 const FRAMEWORK_OPTIONS = [
   { id: 1, name: "EU AI Act" },
@@ -53,6 +54,7 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
   error,
   onSimulate,
 }) => {
+  const theme = useTheme();
   const [baseScenarioId, setBaseScenarioId] = useState<string>("");
   const [primaryId, setPrimaryId] = useState<string>("");
   const [secondaryIds, setSecondaryIds] = useState<number[]>([]);
@@ -187,29 +189,35 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
             </Typography>
             <Stack direction="row" flexWrap="wrap" gap={1}>
               {availableForSecondary.map((fw) => (
-                <Chip
+                <Box
                   key={fw.id}
-                  label={fw.name}
-                  size="small"
-                  clickable
+                  component="span"
                   onClick={() => toggleSecondary(fw.id)}
                   sx={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    height: 24,
+                    px: "10px",
+                    borderRadius: "4px",
                     fontSize: 12,
-                    backgroundColor: secondaryIds.includes(fw.id)
-                      ? "rgba(99, 102, 241, 0.12)"
-                      : background.hover,
-                    color: secondaryIds.includes(fw.id) ? "#4338ca" : text.secondary,
-                    border: `1px solid ${
-                      secondaryIds.includes(fw.id) ? "#4338ca" : borderPalette.light
-                    }`,
+                    cursor: "pointer",
                     fontWeight: secondaryIds.includes(fw.id) ? 500 : 400,
+                    backgroundColor: secondaryIds.includes(fw.id)
+                      ? alpha(accent.indigo.text, 0.12)
+                      : background.hover,
+                    color: secondaryIds.includes(fw.id) ? accent.indigo.text : text.secondary,
+                    border: `1px solid ${
+                      secondaryIds.includes(fw.id) ? accent.indigo.text : borderPalette.light
+                    }`,
                     "&:hover": {
                       backgroundColor: secondaryIds.includes(fw.id)
-                        ? "rgba(99, 102, 241, 0.2)"
+                        ? alpha(accent.indigo.text, 0.2)
                         : background.hover,
                     },
                   }}
-                />
+                >
+                  {fw.name}
+                </Box>
               ))}
               {availableForSecondary.length === 0 && (
                 <Typography sx={{ fontSize: 12, color: text.muted }}>
@@ -233,14 +241,19 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
             </Typography>
             <Stack direction="row" flexWrap="wrap" gap={1}>
               {availableForSupplementary.map((fw) => (
-                <Chip
+                <Box
                   key={fw.id}
-                  label={fw.name}
-                  size="small"
-                  clickable
+                  component="span"
                   onClick={() => toggleSupplementary(fw.id)}
                   sx={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    height: 24,
+                    px: "10px",
+                    borderRadius: "4px",
                     fontSize: 12,
+                    cursor: "pointer",
+                    fontWeight: supplementaryIds.includes(fw.id) ? 500 : 400,
                     backgroundColor: supplementaryIds.includes(fw.id)
                       ? background.hover
                       : background.hover,
@@ -248,9 +261,13 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
                     border: `1px solid ${
                       supplementaryIds.includes(fw.id) ? borderPalette.dark : borderPalette.light
                     }`,
-                    fontWeight: supplementaryIds.includes(fw.id) ? 500 : 400,
+                    "&:hover": {
+                      backgroundColor: background.hover,
+                    },
                   }}
-                />
+                >
+                  {fw.name}
+                </Box>
               ))}
               {availableForSupplementary.length === 0 && (
                 <Typography sx={{ fontSize: 12, color: text.muted }}>
@@ -262,16 +279,15 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
         </Box>
 
         <Box>
-          <Button
+          <CustomizableButton
             variant="contained"
             size="small"
             startIcon={isSimulating ? <CircularProgress size={16} color="inherit" /> : <Play size={16} />}
             onClick={handleRun}
-            disabled={isSimulating || allSelectedIds.length === 0}
+            isDisabled={isSimulating || allSelectedIds.length === 0}
+            text={isSimulating ? "Simulating..." : "Run simulation"}
             sx={{ textTransform: "none", fontSize: 13 }}
-          >
-            {isSimulating ? "Simulating..." : "Run simulation"}
-          </Button>
+          />
         </Box>
 
         {error && (
@@ -343,26 +359,10 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
                       {fw.frameworkName}
                     </Typography>
                     <Stack direction="row" spacing={1} alignItems="center">
-                      <Chip
-                        label={fw.priority}
+                      <FrameworkChip
+                        frameworkName={fw.priority}
+                        priority={fw.priority as "primary" | "secondary" | "supplementary"}
                         size="small"
-                        sx={{
-                          fontSize: 11,
-                          height: 20,
-                          textTransform: "capitalize",
-                          backgroundColor:
-                            fw.priority === "primary"
-                              ? "rgba(19, 113, 91, 0.12)"
-                              : fw.priority === "secondary"
-                                ? "rgba(99, 102, 241, 0.12)"
-                                : background.hover,
-                          color:
-                            fw.priority === "primary"
-                              ? brand.primary
-                              : fw.priority === "secondary"
-                                ? "#4338ca"
-                                : text.secondary,
-                        }}
                       />
                       <Typography sx={{ fontSize: 13, color: text.secondary, minWidth: 80 }}>
                         {fw.controlCount} controls
