@@ -6,9 +6,9 @@ import {
   Card,
   CardContent,
   Grid,
-  Chip,
-  Button,
   LinearProgress,
+  alpha,
+  useTheme,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import {
@@ -27,6 +27,8 @@ import {
 } from "lucide-react";
 import GovernanceWorkspaceShell from "../shared/GovernanceWorkspaceShell";
 import { DashboardHeaderCard } from "../../../components/Cards/DashboardHeaderCard";
+import FrameworkChip from "../../../components/GovernanceOS/FrameworkChip";
+import CustomizableButton from "../../../components/button/customizable-button";
 import {
   brand,
   border as borderPalette,
@@ -72,6 +74,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
   disabled,
 }) => {
   const navigate = useNavigate();
+  const theme = useTheme();
 
   return (
     <Card
@@ -85,7 +88,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
         transition: "all 200ms ease",
         "&:hover": {
           borderColor: disabled ? borderPalette.light : color,
-          boxShadow: disabled ? "none" : `0 4px 12px ${color}20`,
+          boxShadow: disabled ? "none" : `0 4px 12px ${alpha(color, 0.12)}`,
           transform: disabled ? "none" : "translateY(-2px)",
         },
       }}
@@ -100,13 +103,13 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
               width: 40,
               height: 40,
               borderRadius: 2,
-              backgroundColor: `${color}15`,
+              backgroundColor: alpha(color, 0.08),
               color: color,
             }}
           >
             {icon}
           </Box>
-          {!disabled && <ArrowRight size={16} color="#9CA3AF" />}
+          {!disabled && <ArrowRight size={16} color={text.muted} />}
         </Stack>
         <Typography variant="subtitle2" sx={{ mt: 2, fontWeight: 600 }}>
           {title}
@@ -131,6 +134,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
 
 const GovernanceHub: React.FC = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
   const { projects, currentProjectId } = useContext(VerifyWiseContext);
   const { data: mappings } = useMappings();
   const { data: scenarios } = useScenarios();
@@ -223,7 +227,7 @@ const GovernanceHub: React.FC = () => {
       path: "/governance/framework-mapper",
       stat: `${totalMappings} mappings`,
       subStat: topDomain ? `Top domain: ${topDomain[0]} (${topDomain[1]})` : undefined,
-      color: "#13715B",
+      color: brand.primary,
     },
     {
       title: "Scenario Builder",
@@ -231,7 +235,7 @@ const GovernanceHub: React.FC = () => {
       icon: <Compass size={20} />,
       path: "/governance/scenarios",
       stat: activeScenario ? `Active: ${activeScenario.name}` : `${totalScenarios} scenarios`,
-      color: "#3949AB",
+      color: accent.indigo.text,
     },
     {
       title: "Unified Insights",
@@ -244,7 +248,7 @@ const GovernanceHub: React.FC = () => {
           : "Coverage analysis",
       subStat:
         coverageStats != null ? `${coverageStats.totalGaps} gaps across frameworks` : undefined,
-      color: "#1565C0",
+      color: accent.blue.text,
     },
     {
       title: "Evidence Hub",
@@ -252,7 +256,7 @@ const GovernanceHub: React.FC = () => {
       icon: <FileCheck size={20} />,
       path: "/governance/evidence",
       stat: "Coming soon",
-      color: "#00695C",
+      color: accent.teal.text,
     },
     {
       title: "Knowledge Graph",
@@ -260,7 +264,7 @@ const GovernanceHub: React.FC = () => {
       icon: <Network size={20} />,
       path: "/governance/knowledge-graph",
       stat: "Coming soon",
-      color: "#5E35B1",
+      color: accent.purple.text,
     },
     {
       title: "Regulatory Radar",
@@ -268,7 +272,7 @@ const GovernanceHub: React.FC = () => {
       icon: <Radio size={20} />,
       path: "/governance/regulatory-radar",
       stat: "Coming soon",
-      color: "#E65100",
+      color: accent.orange.text,
     },
   ];
 
@@ -285,7 +289,7 @@ const GovernanceHub: React.FC = () => {
               border: `1px solid ${brand.primary}`,
               borderRadius: 2,
               p: 3,
-              background: `linear-gradient(135deg, ${background.main} 0%, rgba(19, 113, 91, 0.06) 100%)`,
+              background: `linear-gradient(135deg, ${background.main} 0%, ${alpha(brand.primary, 0.06)} 100%)`,
             }}
           >
             <Stack
@@ -300,7 +304,7 @@ const GovernanceHub: React.FC = () => {
                     width: 40,
                     height: 40,
                     borderRadius: "50%",
-                    backgroundColor: "rgba(19, 113, 91, 0.12)",
+                    backgroundColor: alpha(brand.primary, 0.12),
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -330,32 +334,11 @@ const GovernanceHub: React.FC = () => {
                             ? "secondary"
                             : "supplementary";
                       return (
-                        <Chip
+                        <FrameworkChip
                           key={id}
-                          label={FRAMEWORK_NAMES[id] || `Framework ${id}`}
+                          frameworkName={FRAMEWORK_NAMES[id] || `Framework ${id}`}
+                          priority={priority}
                           size="small"
-                          sx={{
-                            fontSize: 11,
-                            height: 20,
-                            backgroundColor:
-                              priority === "primary"
-                                ? accent.primary.bg
-                                : priority === "secondary"
-                                  ? accent.indigo.bg
-                                  : background.hover,
-                            color:
-                              priority === "primary"
-                                ? accent.primary.text
-                                : priority === "secondary"
-                                  ? accent.indigo.text
-                                  : text.tertiary,
-                            border:
-                              priority === "primary"
-                                ? `1px solid ${accent.primary.border}`
-                                : priority === "secondary"
-                                  ? `1px solid ${accent.indigo.border}`
-                                  : `1px solid ${borderPalette.light}`,
-                          }}
                         />
                       );
                     })}
@@ -364,23 +347,28 @@ const GovernanceHub: React.FC = () => {
               </Stack>
 
               <Stack direction="row" spacing={1} sx={{ flexShrink: 0 }}>
-                <Button
+                <CustomizableButton
                   size="small"
                   variant="outlined"
                   onClick={() => navigate("/governance/scenarios")}
+                  text="View Scenario"
                   sx={{ textTransform: "none", fontSize: 12 }}
-                >
-                  View Scenario
-                </Button>
-                <Button
+                />
+                <CustomizableButton
                   size="small"
                   variant="contained"
                   startIcon={<Zap size={14} />}
                   onClick={() => navigate("/governance/insights")}
-                  sx={{ textTransform: "none", fontSize: 12, boxShadow: "none" }}
-                >
-                  Run Coverage
-                </Button>
+                  text="Run Coverage"
+                  sx={{
+                    textTransform: "none",
+                    fontSize: 12,
+                    boxShadow: "none",
+                    backgroundColor: brand.primary,
+                    color: theme.palette.common.white,
+                    "&:hover": { backgroundColor: brand.primaryHover, boxShadow: "none" },
+                  }}
+                />
               </Stack>
             </Stack>
           </Box>
@@ -403,14 +391,20 @@ const GovernanceHub: React.FC = () => {
                   Select a governance scenario to prioritize frameworks and guide compliance planning.
                 </Typography>
               </Box>
-              <Button
+              <CustomizableButton
                 size="small"
                 variant="contained"
                 onClick={() => navigate("/governance/scenarios")}
-                sx={{ textTransform: "none", fontSize: 12, boxShadow: "none" }}
-              >
-                Choose scenario
-              </Button>
+                text="Choose scenario"
+                sx={{
+                  textTransform: "none",
+                  fontSize: 12,
+                  boxShadow: "none",
+                  backgroundColor: brand.primary,
+                  color: theme.palette.common.white,
+                  "&:hover": { backgroundColor: brand.primaryHover, boxShadow: "none" },
+                }}
+              />
             </Stack>
           </Box>
         )}
@@ -512,42 +506,38 @@ const GovernanceHub: React.FC = () => {
 
         {/* Quick actions */}
         <Stack direction="row" spacing={2} flexWrap="wrap">
-          <Button
+          <CustomizableButton
             size="small"
             variant="outlined"
             startIcon={<Compass size={14} />}
             onClick={() => navigate("/governance/scenarios")}
+            text="Get Recommendations"
             sx={{ textTransform: "none", fontSize: 13 }}
-          >
-            Get Recommendations
-          </Button>
-          <Button
+          />
+          <CustomizableButton
             size="small"
             variant="outlined"
             startIcon={<BarChart3 size={14} />}
             onClick={() => navigate("/governance/insights")}
+            text="Run Coverage Analysis"
             sx={{ textTransform: "none", fontSize: 13 }}
-          >
-            Run Coverage Analysis
-          </Button>
-          <Button
+          />
+          <CustomizableButton
             size="small"
             variant="outlined"
             startIcon={<GitCompareArrows size={14} />}
             onClick={() => navigate("/governance/framework-mapper")}
+            text="View Mappings"
             sx={{ textTransform: "none", fontSize: 13 }}
-          >
-            View Mappings
-          </Button>
-          <Button
+          />
+          <CustomizableButton
             size="small"
             variant="outlined"
             startIcon={<Plus size={14} />}
             onClick={() => navigate("/governance/scenarios")}
+            text="New Scenario"
             sx={{ textTransform: "none", fontSize: 13 }}
-          >
-            New Scenario
-          </Button>
+          />
         </Stack>
 
         {/* Module cards grid */}
@@ -603,29 +593,34 @@ const GovernanceHub: React.FC = () => {
                     <Typography sx={{ fontSize: 13, fontWeight: 500, color: text.primary }}>
                       {fw.framework_name || `Framework ${fw.framework_id}`}
                     </Typography>
-                    <Chip
-                      label={`${fw.gap_details.unmapped_controls.length} gaps`}
-                      size="small"
+                    <Box
+                      component="span"
                       sx={{
-                        fontSize: 11,
+                        display: "inline-flex",
+                        alignItems: "center",
                         height: 20,
+                        px: "8px",
+                        borderRadius: "4px",
+                        fontSize: 11,
+                        fontWeight: 500,
                         backgroundColor: status.warning.bg,
                         color: status.warning.text,
                         border: `1px solid ${status.warning.border}`,
                       }}
-                    />
+                    >
+                      {fw.gap_details.unmapped_controls.length} gaps
+                    </Box>
                     <Typography sx={{ fontSize: 12, color: text.muted }}>
                       {fw.coverage_percentage}% coverage
                     </Typography>
                   </Stack>
-                  <Button
+                  <CustomizableButton
                     size="small"
                     variant="text"
                     onClick={() => navigate("/governance/insights")}
+                    text="View"
                     sx={{ fontSize: 12, textTransform: "none", color: brand.primary }}
-                  >
-                    View
-                  </Button>
+                  />
                 </Box>
               ))}
             </Stack>
