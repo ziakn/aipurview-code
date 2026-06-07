@@ -1,12 +1,12 @@
 import React from "react";
-import { Stack, Typography, Button, Tooltip, Paper } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import { Stack, Typography, Paper, Tooltip, useTheme } from "@mui/material";
 import { GitCompareArrows, X as CloseIcon } from "lucide-react";
 import { useAuth } from "../../../application/hooks/useAuth";
 import {
   useGovernancePreferences,
   useUpdatePreferences,
 } from "../../../application/hooks/useGovernanceOs";
+import CustomizableButton from "../button/customizable-button";
 import { palette } from "../../themes/palette";
 
 interface GovernanceOsBannerProps {
@@ -57,7 +57,7 @@ const GovernanceOsBanner: React.FC<GovernanceOsBannerProps> = ({ frameworkCount,
           <GitCompareArrows size={20} color={palette.brand.primary} style={{ flexShrink: 0 }} />
           <Typography
             sx={{
-              fontSize: 13,
+              fontSize: theme.typography.pxToRem(13),
               fontWeight: 500,
               color: theme.palette.text.secondary,
               lineHeight: 1.5,
@@ -71,50 +71,50 @@ const GovernanceOsBanner: React.FC<GovernanceOsBannerProps> = ({ frameworkCount,
         <Stack direction="row" gap={theme.spacing(4)} alignItems="center" sx={{ flexShrink: 0 }}>
           <Tooltip title={!isAdmin ? "Contact your admin to enable Governance OS" : ""} arrow>
             <span>
-              <Button
+              <CustomizableButton
                 variant="contained"
-                size="small"
-                disabled={!isAdmin || updatePreferences.isPending}
+                size="medium"
+                isDisabled={!isAdmin || updatePreferences.isPending}
                 onClick={handleEnable}
+                text={updatePreferences.isPending ? "Enabling..." : "Enable Governance OS"}
                 sx={{
-                  "textTransform": "none",
-                  "fontWeight": 600,
-                  "fontSize": 13,
-                  "borderRadius": theme.spacing(2),
-                  "boxShadow": "none",
-                  "px": theme.spacing(6),
-                  "py": theme.spacing(3),
-                  "height": 32,
-                  "backgroundColor": palette.brand.primary,
+                  textTransform: "none",
+                  fontWeight: 600,
+                  fontSize: theme.typography.pxToRem(13),
+                  borderRadius: theme.spacing(2),
+                  boxShadow: "none",
+                  px: theme.spacing(6),
+                  py: theme.spacing(3),
+                  height: 32,
+                  backgroundColor: palette.brand.primary,
                   "&:hover": {
                     backgroundColor: palette.brand.primaryHover,
                     boxShadow: "none",
                   },
                 }}
-              >
-                {updatePreferences.isPending ? "Enabling..." : "Enable Governance OS"}
-              </Button>
+              />
             </span>
           </Tooltip>
 
           {onDismiss && (
-            <Button
+            <CustomizableButton
               size="small"
+              iconOnly
+              ariaLabel="Dismiss banner"
               onClick={onDismiss}
+              icon={<CloseIcon size={16} />}
               sx={{
-                "minWidth": 28,
-                "width": 28,
-                "height": 28,
-                "p": 0,
-                "color": palette.text.muted,
+                minWidth: 28,
+                width: 28,
+                height: 28,
+                p: 0,
+                color: palette.text.muted,
                 "&:hover": {
                   color: palette.text.primary,
                   backgroundColor: "transparent",
                 },
               }}
-            >
-              <CloseIcon size={16} />
-            </Button>
+            />
           )}
         </Stack>
       </Stack>
