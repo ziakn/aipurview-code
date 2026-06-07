@@ -1,6 +1,5 @@
 import React from "react";
-import { Stack, Box, Typography, Divider } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Stack, Box, Divider, useTheme } from "@mui/material";
 import ModuleHorizontalBar from "./ModuleHorizontalBar";
 import ModuleBreadcrumb from "./ModuleBreadcrumb";
 import { PageHeader } from "../../../components/Layout/PageHeader";
@@ -18,6 +17,8 @@ const GovernanceWorkspaceShell: React.FC<GovernanceWorkspaceShellProps> = ({
   actionButton,
   children,
 }) => {
+  const theme = useTheme();
+
   return (
     <Stack className="vwhome" gap={0}>
       {/* Breadcrumb with module switcher */}
@@ -27,7 +28,7 @@ const GovernanceWorkspaceShell: React.FC<GovernanceWorkspaceShellProps> = ({
       <ModuleHorizontalBar />
 
       {/* Page header */}
-      <Box sx={{ mt: "8px" }}>
+      <Box sx={{ mt: theme.spacing(4) }}>
         <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
           <PageHeader
             title={title}
@@ -37,10 +38,10 @@ const GovernanceWorkspaceShell: React.FC<GovernanceWorkspaceShellProps> = ({
         </Stack>
       </Box>
 
-      <Divider sx={{ my: "16px" }} />
+      <Divider sx={{ my: theme.spacing(8) }} />
 
       {/* Module content */}
-      <Stack gap="16px" sx={{ mt: "8px" }}>
+      <Stack gap={theme.spacing(8)} sx={{ mt: theme.spacing(4) }}>
         {children}
       </Stack>
     </Stack>
