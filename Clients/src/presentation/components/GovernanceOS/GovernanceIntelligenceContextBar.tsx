@@ -1,14 +1,13 @@
 import React from "react";
-import { Stack, Typography, Button, Paper } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import { Stack, Typography, Paper, alpha, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import {
   GitCompareArrows,
   BarChart3,
-  Compass,
   ArrowRight,
 } from "lucide-react";
 import { useGovernancePreferences } from "../../../application/hooks/useGovernanceOs";
+import CustomizableButton from "../button/customizable-button";
 import { palette } from "../../themes/palette";
 
 interface GovernanceIntelligenceContextBarProps {
@@ -33,7 +32,7 @@ const GovernanceIntelligenceContextBar: React.FC<GovernanceIntelligenceContextBa
         p: theme.spacing(2, 3),
         borderRadius: theme.spacing(2),
         border: `1px solid ${palette.brand.primaryLight}`,
-        backgroundColor: `${palette.brand.primaryLight}80`,
+        backgroundColor: alpha(palette.brand.primaryLight, 0.5),
         boxShadow: "none",
       }}
     >
@@ -57,7 +56,7 @@ const GovernanceIntelligenceContextBar: React.FC<GovernanceIntelligenceContextBa
           />
           <Typography
             sx={{
-              fontSize: 13,
+              fontSize: theme.typography.pxToRem(13),
               fontWeight: 500,
               color: theme.palette.text.secondary,
               lineHeight: 1.5,
@@ -73,15 +72,16 @@ const GovernanceIntelligenceContextBar: React.FC<GovernanceIntelligenceContextBa
           alignItems="center"
           sx={{ flexShrink: 0 }}
         >
-          <Button
+          <CustomizableButton
             variant="outlined"
             size="small"
             onClick={() => navigate("/governance/framework-mapper")}
             startIcon={<GitCompareArrows size={14} />}
+            text="View Mappings"
             sx={{
               textTransform: "none",
               fontWeight: 500,
-              fontSize: 12,
+              fontSize: theme.typography.pxToRem(12),
               borderRadius: theme.spacing(1.5),
               borderColor: palette.brand.primary,
               color: palette.brand.primary,
@@ -92,18 +92,17 @@ const GovernanceIntelligenceContextBar: React.FC<GovernanceIntelligenceContextBa
                 borderColor: palette.brand.primary,
               },
             }}
-          >
-            View Mappings
-          </Button>
-          <Button
+          />
+          <CustomizableButton
             variant="outlined"
             size="small"
             onClick={() => navigate("/governance/insights")}
             startIcon={<BarChart3 size={14} />}
+            text="Analyze Coverage"
             sx={{
               textTransform: "none",
               fontWeight: 500,
-              fontSize: 12,
+              fontSize: theme.typography.pxToRem(12),
               borderRadius: theme.spacing(1.5),
               borderColor: palette.brand.primary,
               color: palette.brand.primary,
@@ -114,18 +113,17 @@ const GovernanceIntelligenceContextBar: React.FC<GovernanceIntelligenceContextBa
                 borderColor: palette.brand.primary,
               },
             }}
-          >
-            Analyze Coverage
-          </Button>
-          <Button
+          />
+          <CustomizableButton
             variant="text"
             size="small"
             onClick={() => navigate("/governance")}
             endIcon={<ArrowRight size={14} />}
+            text="Hub"
             sx={{
               textTransform: "none",
               fontWeight: 500,
-              fontSize: 12,
+              fontSize: theme.typography.pxToRem(12),
               color: palette.brand.primary,
               height: 28,
               px: theme.spacing(1),
@@ -134,9 +132,7 @@ const GovernanceIntelligenceContextBar: React.FC<GovernanceIntelligenceContextBa
                 textDecoration: "underline",
               },
             }}
-          >
-            Hub
-          </Button>
+          />
         </Stack>
       </Stack>
     </Paper>
