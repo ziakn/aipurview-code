@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Box, Button, Menu, MenuItem, Typography } from "@mui/material";
+import { Box, alpha, Menu, MenuItem, useTheme } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { PageBreadcrumbs } from "../../../components/breadcrumbs/PageBreadcrumbs";
+import CustomizableButton from "../../../components/button/customizable-button";
 import { brand } from "../../../themes/palette";
 
 interface BreadcrumbItem {
@@ -23,6 +24,7 @@ const MODULE_PATHS: Record<string, { label: string; path: string }> = {
 const ModuleBreadcrumb: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const currentModule = MODULE_PATHS[location.pathname] || { label: "Hub", path: "/governance" };
@@ -46,7 +48,7 @@ const ModuleBreadcrumb: React.FC = () => {
   ];
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 1 }}>
+    <Box sx={{ display: "flex", alignItems: "center", gap: theme.spacing(1), mb: theme.spacing(2) }}>
       <PageBreadcrumbs
         items={breadcrumbItems}
         autoGenerate={false}
@@ -54,23 +56,24 @@ const ModuleBreadcrumb: React.FC = () => {
         showDivider={false}
         sx={{ mb: 0, "& > hr": { mb: 0 } }}
       />
-      <Button
+      <CustomizableButton
         onClick={handleOpen}
         endIcon={<ChevronDown size={14} />}
+        text={currentModule.label}
+        variant="text"
+        size="small"
         sx={{
           textTransform: "none",
-          fontSize: "13px",
+          fontSize: theme.typography.pxToRem(13),
           fontWeight: 500,
           color: brand.primary,
-          py: 0.5,
-          px: 1,
+          py: theme.spacing(1),
+          px: theme.spacing(2),
           minWidth: "auto",
           ml: -1,
-          "&:hover": { backgroundColor: `${brand.primary}10` },
+          "&:hover": { backgroundColor: alpha(brand.primary, 0.06) },
         }}
-      >
-        {currentModule.label}
-      </Button>
+      />
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -78,16 +81,18 @@ const ModuleBreadcrumb: React.FC = () => {
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         transformOrigin={{ vertical: "top", horizontal: "left" }}
         PaperProps={{
-          sx: { minWidth: 200, mt: 0.5 },
+          sx: { minWidth: 200, mt: theme.spacing(2) },
         }}
+        disableRipple
       >
         {Object.values(MODULE_PATHS).map((module) => (
           <MenuItem
             key={module.path}
             onClick={() => handleNavigate(module.path)}
             selected={location.pathname === module.path}
+            disableRipple
             sx={{
-              fontSize: "14px",
+              fontSize: theme.typography.pxToRem(14),
               fontWeight: location.pathname === module.path ? 600 : 400,
               color: location.pathname === module.path ? brand.primary : "inherit",
             }}
