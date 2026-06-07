@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Box, Button, useTheme } from "@mui/material";
+import { Box, alpha, useTheme } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -11,6 +11,7 @@ import {
   Radio,
   Settings,
 } from "lucide-react";
+import CustomizableButton from "../../../components/button/customizable-button";
 import { brand } from "../../../themes/palette";
 
 export interface ModuleItem {
@@ -86,7 +87,7 @@ const ModuleHorizontalBar: React.FC = () => {
       sx={{
         display: "flex",
         alignItems: "center",
-        gap: "4px",
+        gap: theme.spacing(2),
         borderBottom: `1px solid ${theme.palette.divider}`,
         mb: 2,
         overflowX: "auto",
@@ -97,36 +98,37 @@ const ModuleHorizontalBar: React.FC = () => {
       {MODULES.map((module) => {
         const isActive = module.id === activeModuleId;
         return (
-          <Button
+          <CustomizableButton
             key={module.id}
             onClick={() => navigate(module.path)}
             startIcon={module.icon}
+            text={module.label}
+            variant="text"
+            size="small"
             sx={{
               textTransform: "none",
               fontWeight: isActive ? 600 : 400,
-              fontSize: "13px",
+              fontSize: theme.typography.pxToRem(13),
               color: isActive ? brand.primary : theme.palette.text.secondary,
               backgroundColor: isActive
-                ? `${brand.primary}08`
+                ? alpha(brand.primary, 0.03)
                 : "transparent",
               borderRadius: "6px 6px 0 0",
               borderBottom: isActive
                 ? `2px solid ${brand.primary}`
                 : "2px solid transparent",
-              py: "8px",
-              px: "14px",
+              py: theme.spacing(4),
+              px: theme.spacing(7),
               minWidth: "auto",
               whiteSpace: "nowrap",
               transition: "all 150ms ease",
               "&:hover": {
                 backgroundColor: isActive
-                  ? `${brand.primary}12`
+                  ? alpha(brand.primary, 0.05)
                   : theme.palette.action.hover,
               },
             }}
-          >
-            {module.label}
-          </Button>
+          />
         );
       })}
     </Box>
