@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Box, Typography, Stack, Chip, Button, IconButton } from "@mui/material";
+import { Box, Typography, Stack, IconButton, alpha, useTheme } from "@mui/material";
 import { Check, Info, Pencil, Trash2, Zap } from "lucide-react";
 import VWTooltip from "../VWTooltip";
 import StandardModal from "../Modals/StandardModal";
+import FrameworkChip from "./FrameworkChip";
+import CustomizableButton from "../button/customizable-button";
 import { IScenarioCardProps } from "../../../domain/interfaces/i.governanceOs";
-import { border as borderPalette, background, text, accent, brand } from "../../themes/palette";
+import { border as borderPalette, background, text, accent, brand, status } from "../../themes/palette";
 
 const FRAMEWORK_NAMES: Record<number, string> = {
   1: "EU AI Act",
@@ -23,6 +25,7 @@ const ScenarioCard = ({
   onDelete,
   onActivate,
 }: IScenarioCardProps) => {
+  const theme = useTheme();
   const [detailOpen, setDetailOpen] = useState(false);
 
   const priorityOrder = scenario.priority_order as {
@@ -72,11 +75,12 @@ const ScenarioCard = ({
             >
               <IconButton
                 size="small"
+                disableRipple
                 onClick={(e) => {
                   e.stopPropagation();
                   setDetailOpen(true);
                 }}
-                sx={{ "color": text.muted, "&:hover": { color: text.primary } }}
+                sx={{ color: text.muted, "&:hover": { color: text.primary } }}
               >
                 <Info size={16} />
               </IconButton>
@@ -85,11 +89,12 @@ const ScenarioCard = ({
               <VWTooltip content="Edit scenario" placement="top">
                 <IconButton
                   size="small"
+                  disableRipple
                   onClick={(e) => {
                     e.stopPropagation();
                     onEdit(scenario);
                   }}
-                  sx={{ "color": text.muted, "&:hover": { color: text.primary } }}
+                  sx={{ color: text.muted, "&:hover": { color: text.primary } }}
                 >
                   <Pencil size={14} />
                 </IconButton>
@@ -99,11 +104,12 @@ const ScenarioCard = ({
               <VWTooltip content="Delete scenario" placement="top">
                 <IconButton
                   size="small"
+                  disableRipple
                   onClick={(e) => {
                     e.stopPropagation();
                     onDelete(scenario);
                   }}
-                  sx={{ "color": text.muted, "&:hover": { color: "#D32F2F" } }}
+                  sx={{ color: text.muted, "&:hover": { color: status.error.text } }}
                 >
                   <Trash2 size={14} />
                 </IconButton>
@@ -120,25 +126,24 @@ const ScenarioCard = ({
                 }
                 placement="left"
               >
-                <Button
+                <CustomizableButton
                   size="small"
                   variant="contained"
-                  onClick={(e) => {
+                  onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                     e.stopPropagation();
                     onActivate(scenario);
                   }}
                   startIcon={<Zap size={14} />}
+                  text="Activate"
                   sx={{
                     fontSize: 12,
                     textTransform: "none",
                     boxShadow: "none",
                     backgroundColor: brand.primary,
-                    color: "#fff",
+                    color: theme.palette.common.white,
                     "&:hover": { backgroundColor: brand.primaryHover, boxShadow: "none" },
                   }}
-                >
-                  Activate
-                </Button>
+                />
               </VWTooltip>
             )}
             {onSelect && (
@@ -154,17 +159,18 @@ const ScenarioCard = ({
                 placement="left"
               >
                 <span>
-                  <Button
+                  <CustomizableButton
                     size="small"
                     variant="outlined"
                     onClick={() => onSelect(scenario)}
-                    disabled={isSelected}
+                    isDisabled={isSelected}
                     startIcon={isSelected ? <Check size={14} /> : undefined}
+                    text={isSelected ? "Selected" : "Select"}
                     sx={{
-                      "fontSize": 12,
-                      "textTransform": "none",
-                      "borderColor": isSelected ? brand.primary : borderPalette.dark,
-                      "color": isSelected ? brand.primary : text.secondary,
+                      fontSize: 12,
+                      textTransform: "none",
+                      borderColor: isSelected ? brand.primary : borderPalette.dark,
+                      color: isSelected ? brand.primary : text.secondary,
                       "&:hover": {
                         borderColor: brand.primary,
                         color: brand.primary,
@@ -175,9 +181,7 @@ const ScenarioCard = ({
                         opacity: 0.8,
                       },
                     }}
-                  >
-                    {isSelected ? "Selected" : "Select"}
-                  </Button>
+                  />
                 </span>
               </VWTooltip>
             )}
@@ -193,44 +197,26 @@ const ScenarioCard = ({
         {priorityOrder && (
           <Stack direction="row" spacing={1} sx={{ mt: 2 }} flexWrap="wrap" useFlexGap>
             {priorityOrder.primary && (
-              <Chip
-                label={`Primary: ${FRAMEWORK_NAMES[priorityOrder.primary] || priorityOrder.primary}`}
+              <FrameworkChip
+                frameworkName={FRAMEWORK_NAMES[priorityOrder.primary] || String(priorityOrder.primary)}
+                priority="primary"
                 size="small"
-                sx={{
-                  fontSize: 11,
-                  height: 22,
-                  backgroundColor: accent.primary.bg,
-                  color: accent.primary.text,
-                  border: `1px solid ${accent.primary.border}`,
-                }}
               />
             )}
             {priorityOrder.secondary?.map((id) => (
-              <Chip
+              <FrameworkChip
                 key={id}
-                label={`Secondary: ${FRAMEWORK_NAMES[id] || id}`}
+                frameworkName={FRAMEWORK_NAMES[id] || String(id)}
+                priority="secondary"
                 size="small"
-                sx={{
-                  fontSize: 11,
-                  height: 22,
-                  backgroundColor: accent.indigo.bg,
-                  color: accent.indigo.text,
-                  border: `1px solid ${accent.indigo.border}`,
-                }}
               />
             ))}
             {priorityOrder.supplementary?.map((id) => (
-              <Chip
+              <FrameworkChip
                 key={id}
-                label={`Supplementary: ${FRAMEWORK_NAMES[id] || id}`}
+                frameworkName={FRAMEWORK_NAMES[id] || String(id)}
+                priority="supplementary"
                 size="small"
-                sx={{
-                  fontSize: 11,
-                  height: 22,
-                  backgroundColor: background.hover,
-                  color: text.tertiary,
-                  border: `1px solid ${borderPalette.light}`,
-                }}
               />
             ))}
           </Stack>
@@ -238,45 +224,63 @@ const ScenarioCard = ({
 
         <Stack direction="row" spacing={1} sx={{ mt: 1.5 }} flexWrap="wrap" useFlexGap>
           {scenario.industry && (
-            <Chip
-              label={scenario.industry}
-              size="small"
+            <Box
+              component="span"
               sx={{
-                fontSize: 11,
+                display: "inline-flex",
+                alignItems: "center",
                 height: 22,
+                px: "8px",
+                borderRadius: "4px",
+                fontSize: 11,
+                fontWeight: 400,
+                textTransform: "capitalize",
                 backgroundColor: background.hover,
                 color: text.tertiary,
                 border: `1px solid ${borderPalette.light}`,
-                textTransform: "capitalize",
               }}
-            />
+            >
+              {scenario.industry}
+            </Box>
           )}
           {scenario.region && (
-            <Chip
-              label={scenario.region.toUpperCase()}
-              size="small"
+            <Box
+              component="span"
               sx={{
-                fontSize: 11,
+                display: "inline-flex",
+                alignItems: "center",
                 height: 22,
+                px: "8px",
+                borderRadius: "4px",
+                fontSize: 11,
+                fontWeight: 400,
                 backgroundColor: background.hover,
                 color: text.tertiary,
                 border: `1px solid ${borderPalette.light}`,
               }}
-            />
+            >
+              {scenario.region.toUpperCase()}
+            </Box>
           )}
           {scenario.use_case_type && (
-            <Chip
-              label={scenario.use_case_type.replace(/_/g, " ")}
-              size="small"
+            <Box
+              component="span"
               sx={{
-                fontSize: 11,
+                display: "inline-flex",
+                alignItems: "center",
                 height: 22,
+                px: "8px",
+                borderRadius: "4px",
+                fontSize: 11,
+                fontWeight: 400,
+                textTransform: "capitalize",
                 backgroundColor: background.hover,
                 color: text.tertiary,
                 border: `1px solid ${borderPalette.light}`,
-                textTransform: "capitalize",
               }}
-            />
+            >
+              {scenario.use_case_type.replace(/_/g, " ")}
+            </Box>
           )}
         </Stack>
 
