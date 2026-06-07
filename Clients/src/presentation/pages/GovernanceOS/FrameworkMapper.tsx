@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Stack, Typography, CircularProgress, Button, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Stack, Typography, CircularProgress, ToggleButton, ToggleButtonGroup, useTheme } from "@mui/material";
 import { GitCompareArrows, Plus, List, Grid3X3, Download, Upload } from "lucide-react";
 import FrameworkSelector from "../../components/GovernanceOS/FrameworkSelector";
 import MappingCard from "../../components/GovernanceOS/MappingCard";
 import { EmptyState } from "../../components/EmptyState";
 import { StatusTileCards, StatusTileItem } from "../../components/Cards/StatusTileCards";
 import ConfirmationModal from "../../components/Dialogs/ConfirmationModal";
+import CustomizableButton from "../../components/button/customizable-button";
 import {
   useMappings,
   useMappingsBetween,
@@ -18,8 +19,10 @@ import { IGovernanceControlMapping } from "../../../domain/interfaces/i.governan
 import MappingFormModal from "./FrameworkMapperModule/MappingFormModal";
 import MappingMatrixView from "./FrameworkMapperModule/MappingMatrixView";
 import BulkImportModal from "./FrameworkMapperModule/BulkImportModal";
+import { text, brand } from "../../themes/palette";
 
 const FrameworkMapper = () => {
+  const theme = useTheme();
   const [sourceId, setSourceId] = useState(1);
   const [targetId, setTargetId] = useState(2);
   const [selectedDomain, setSelectedDomain] = useState<string | null>(null);
@@ -88,13 +91,13 @@ const FrameworkMapper = () => {
       key: domain as string,
       label: (domain as string).replace(/_/g, " "),
       count,
-      color: "#13715B",
+      color: brand.primary,
     };
   });
 
   return (
     <Stack spacing={3}>
-      <Typography variant="body2" sx={{ color: "#475467" }}>
+      <Typography variant="body2" sx={{ color: text.tertiary }}>
         Explore cross-framework control mappings. Select source and target frameworks to see how
         controls align.
       </Typography>
@@ -114,14 +117,14 @@ const FrameworkMapper = () => {
             size="small"
             sx={{ height: 34 }}
           >
-            <ToggleButton value="list" sx={{ px: 1.5 }}>
+            <ToggleButton value="list" sx={{ px: 1.5 }} disableRipple>
               <List size={14} />
             </ToggleButton>
-            <ToggleButton value="matrix" sx={{ px: 1.5 }}>
+            <ToggleButton value="matrix" sx={{ px: 1.5 }} disableRipple>
               <Grid3X3 size={14} />
             </ToggleButton>
           </ToggleButtonGroup>
-          <Button
+          <CustomizableButton
             variant="outlined"
             size="small"
             startIcon={<Download size={14} />}
@@ -140,28 +143,25 @@ const FrameworkMapper = () => {
               a.click();
               URL.revokeObjectURL(url);
             }}
+            text="Export"
             sx={{ textTransform: "none", fontSize: 12, height: 34 }}
-          >
-            Export
-          </Button>
-          <Button
+          />
+          <CustomizableButton
             variant="outlined"
             size="small"
             startIcon={<Upload size={14} />}
             onClick={() => setBulkImportOpen(true)}
+            text="Import"
             sx={{ textTransform: "none", fontSize: 12, height: 34 }}
-          >
-            Import
-          </Button>
-          <Button
+          />
+          <CustomizableButton
             variant="outlined"
             size="small"
             startIcon={<Plus size={14} />}
             onClick={handleCreateMapping}
+            text="New Mapping"
             sx={{ textTransform: "none", fontSize: 12, height: 34 }}
-          >
-            New Mapping
-          </Button>
+          />
         </Stack>
       </Stack>
 
@@ -187,7 +187,7 @@ const FrameworkMapper = () => {
         />
       ) : (
         <Stack spacing={2}>
-          <Typography variant="caption" sx={{ color: "#8594AC" }}>
+          <Typography variant="caption" sx={{ color: text.muted }}>
             {filteredMappings.length} mapping(s) found
           </Typography>
           {filteredMappings.map((mapping) => (
