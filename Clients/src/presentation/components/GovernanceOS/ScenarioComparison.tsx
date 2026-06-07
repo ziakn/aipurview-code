@@ -1,7 +1,8 @@
 import React, { useMemo } from "react";
-import { Box, Typography, Stack, Chip } from "@mui/material";
+import { Box, Typography, Stack, alpha } from "@mui/material";
 import { Scale } from "lucide-react";
 import Checkbox from "../Inputs/Checkbox";
+import FrameworkChip from "./FrameworkChip";
 import { IGovernanceScenario } from "../../../domain/interfaces/i.governanceOs";
 import { border as borderPalette, background, text, accent, brand } from "../../themes/palette";
 
@@ -109,7 +110,7 @@ const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
                 py: 0.75,
                 borderRadius: 1.5,
                 border: `1px solid ${isSelected ? brand.primary : borderPalette.light}`,
-                backgroundColor: isSelected ? "rgba(19, 113, 91, 0.08)" : background.main,
+                backgroundColor: isSelected ? alpha(brand.primary, 0.08) : background.main,
                 opacity: disabled ? 0.5 : 1,
               }}
             >
@@ -195,11 +196,11 @@ const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
                   <Cell key={`f-${scenario.id}`}>
                     <Stack direction="row" flexWrap="wrap" gap={0.5}>
                       {fwIds.map((id) => (
-                        <Chip
+                        <FrameworkChip
                           key={id}
-                          label={FRAMEWORK_NAMES[id] || `FW ${id}`}
+                          frameworkName={FRAMEWORK_NAMES[id] || `FW ${id}`}
+                          priority="supplementary"
                           size="small"
-                          sx={{ fontSize: 11, height: 20 }}
                         />
                       ))}
                       {fwIds.length === 0 && (
@@ -276,16 +277,22 @@ const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
             <ComparisonRow label="Source" isLast>
               {comparedScenarios.map((scenario) => (
                 <Cell key={`b-${scenario.id}`}>
-                  <Chip
-                    label={scenario.is_builtin ? "Built-in" : "Custom"}
-                    size="small"
+                  <Box
+                    component="span"
                     sx={{
-                      fontSize: 11,
+                      display: "inline-flex",
+                      alignItems: "center",
                       height: 20,
+                      px: "8px",
+                      borderRadius: "4px",
+                      fontSize: 11,
+                      fontWeight: 500,
                       backgroundColor: scenario.is_builtin ? background.hover : accent.indigo.bg,
                       color: scenario.is_builtin ? text.secondary : accent.indigo.text,
                     }}
-                  />
+                  >
+                    {scenario.is_builtin ? "Built-in" : "Custom"}
+                  </Box>
                 </Cell>
               ))}
             </ComparisonRow>
@@ -359,21 +366,27 @@ const PriorityBadge: React.FC<{ priority: string }> = ({ priority }) => {
   const isPrimary = priority === "Primary";
   const isSecondary = priority === "Secondary";
   return (
-    <Chip
-      label={priority}
-      size="small"
+    <Box
+      component="span"
       sx={{
-        fontSize: 11,
+        display: "inline-flex",
+        alignItems: "center",
         height: 20,
+        px: "8px",
+        borderRadius: "4px",
+        fontSize: 11,
+        fontWeight: 500,
         textTransform: "capitalize",
         backgroundColor: isPrimary
-          ? "rgba(19, 113, 91, 0.12)"
+          ? alpha(brand.primary, 0.12)
           : isSecondary
-            ? "rgba(99, 102, 241, 0.12)"
+            ? alpha(accent.indigo.text, 0.12)
             : background.hover,
-        color: isPrimary ? brand.primary : isSecondary ? "#4338ca" : text.secondary,
+        color: isPrimary ? brand.primary : isSecondary ? accent.indigo.text : text.secondary,
       }}
-    />
+    >
+      {priority}
+    </Box>
   );
 };
 
