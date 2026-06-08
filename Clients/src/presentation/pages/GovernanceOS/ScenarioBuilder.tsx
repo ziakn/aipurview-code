@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   Box,
   Typography,
-  Button,
   Stack,
   CircularProgress,
   Divider,
@@ -14,6 +13,7 @@ import Select from "../../components/Inputs/Select";
 import ScenarioCard from "../../components/GovernanceOS/ScenarioCard";
 import { EmptyState } from "../../components/EmptyState";
 import ConfirmationModal from "../../components/Dialogs/ConfirmationModal";
+import CustomizableButton from "../../components/button/customizable-button";
 import {
   useScenarios,
   useCreateScenario,
@@ -31,7 +31,7 @@ import {
   IRecommendationRequest,
   IGovernanceScenario,
 } from "../../../domain/interfaces/i.governanceOs";
-import { border as borderPalette, background } from "../../themes/palette";
+import { border as borderPalette, background, text } from "../../themes/palette";
 import ScenarioFormModal from "./ScenarioBuilderModule/ScenarioFormModal";
 import ActivationWizard from "../../components/GovernanceOS/ActivationWizard";
 import WhatIfSimulator from "../../components/GovernanceOS/WhatIfSimulator";
@@ -176,7 +176,7 @@ const ScenarioBuilder = () => {
 
   return (
     <Stack spacing={3}>
-      <Typography variant="body2" sx={{ color: "#475467" }}>
+      <Typography variant="body2" sx={{ color: text.tertiary }}>
         Get framework recommendations based on your organization context, or browse pre-built
         governance scenarios.
       </Typography>
@@ -188,7 +188,7 @@ const ScenarioBuilder = () => {
 
       <ActivationHistory />
 
-      {/* Recommendation form -->
+      {/* Recommendation form */}
       <Box
         sx={{
           border: `1px solid ${borderPalette.dark}`,
@@ -249,14 +249,13 @@ const ScenarioBuilder = () => {
             sx={{ minWidth: 170 }}
           />
 
-          <Button
+          <CustomizableButton
             variant="contained"
             onClick={handleRecommend}
-            disabled={recommendMutation.isPending || !canRecommend}
+            isDisabled={recommendMutation.isPending || !canRecommend}
+            text={recommendMutation.isPending ? "Getting..." : "Get Recommendations"}
             sx={{ alignSelf: "flex-end", minWidth: 140, height: 34 }}
-          >
-            {recommendMutation.isPending ? <CircularProgress size={20} /> : "Get Recommendations"}
-          </Button>
+          />
         </Stack>
       </Box>
 
@@ -310,15 +309,14 @@ const ScenarioBuilder = () => {
           <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
             All Governance Scenarios
           </Typography>
-          <Button
+          <CustomizableButton
             variant="outlined"
             size="small"
             startIcon={<Plus size={14} />}
             onClick={handleCreateScenario}
+            text="New Scenario"
             sx={{ textTransform: "none", fontSize: 12 }}
-          >
-            New Scenario
-          </Button>
+          />
         </Stack>
 
         {scenariosLoading ? (
