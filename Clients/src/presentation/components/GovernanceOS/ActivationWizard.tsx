@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Box, Typography, Stack, Alert } from "@mui/material";
-import { Zap } from "lucide-react";
+import { Zap, Info, CheckCircle2 } from "lucide-react";
 import StepperModal from "../Modals/StepperModal";
 import Checkbox from "../Inputs/Checkbox";
 import Select from "../Inputs/Select";
@@ -107,10 +107,12 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
     if (activeStep === 0) {
       return (
         <Stack gap="16px">
-          <Typography sx={{ fontSize: 13, color: text.accent }}>
-            Choose the projects where this scenario should be activated. A task set will be created
-            for each selected project based on the scenario&apos;s framework priority order.
-          </Typography>
+          <Alert severity="info" icon={<Info size={18} />}>
+            <Typography sx={{ fontSize: 13 }}>
+              Choose the projects where this scenario should be activated. A task set will be created
+              for each selected project based on the scenario&apos;s framework priority order.
+            </Typography>
+          </Alert>
 
           {projects.length === 0 ? (
             <Alert severity="info">No approved projects available. Create a project first.</Alert>
@@ -173,10 +175,12 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
     if (activeStep === 1) {
       return (
         <Stack gap="16px">
-          <Typography sx={{ fontSize: 13, color: text.accent }}>
-            Assign an owner for each framework. Owners will receive the tasks created during
-            activation.
-          </Typography>
+          <Alert severity="info" icon={<Info size={18} />}>
+            <Typography sx={{ fontSize: 13 }}>
+              Assign an owner for each framework. These owners will be set as assignees on the tasks
+              created during activation and will be responsible for implementing the framework controls.
+            </Typography>
+          </Alert>
 
           <Box
             sx={{
