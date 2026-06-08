@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { Box, Typography, Stack, Chip } from "@mui/material";
+import { Box, Typography, Stack } from "@mui/material";
 import { IGovernanceControlMapping } from "../../../../domain/interfaces/i.governanceOs";
-import { border as borderPalette, background, text, accent, chart } from "../../../themes/palette";
+import { border as borderPalette, background, text, chart } from "../../../themes/palette";
 
 interface MappingMatrixViewProps {
   mappings: IGovernanceControlMapping[];
@@ -77,18 +77,24 @@ const MappingMatrixView: React.FC<MappingMatrixViewProps> = ({ mappings, onCellC
                   flexShrink: 0,
                 }}
               >
-                <Chip
-                  label={fw.name}
-                  size="small"
+                <Box
+                  component="span"
                   sx={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    height: 22,
+                    px: "8px",
+                    borderRadius: "4px",
                     fontSize: 11,
                     fontWeight: 600,
+                    maxWidth: 100,
                     backgroundColor: `${fw.color}15`,
                     color: fw.color,
                     border: `1px solid ${fw.color}30`,
-                    maxWidth: 100,
                   }}
-                />
+                >
+                  {fw.name}
+                </Box>
               </Box>
             ))}
           </Stack>
@@ -108,18 +114,24 @@ const MappingMatrixView: React.FC<MappingMatrixViewProps> = ({ mappings, onCellC
                   flexShrink: 0,
                 }}
               >
-                <Chip
-                  label={rowFw.name}
-                  size="small"
+                <Box
+                  component="span"
                   sx={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    height: 22,
+                    px: "8px",
+                    borderRadius: "4px",
                     fontSize: 11,
                     fontWeight: 600,
+                    maxWidth: 130,
                     backgroundColor: `${rowFw.color}15`,
                     color: rowFw.color,
                     border: `1px solid ${rowFw.color}30`,
-                    maxWidth: 130,
                   }}
-                />
+                >
+                  {rowFw.name}
+                </Box>
               </Box>
 
               {/* Cells */}
