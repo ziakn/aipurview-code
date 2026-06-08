@@ -386,10 +386,10 @@ export const createScenarioActivationQuery = async ({
 
     const projectQuery =
       projectIds && projectIds.length > 0
-        ? `SELECT p.id, p.project_title, p.project_owner_id
+        ? `SELECT p.id, p.project_title, p.owner
          FROM projects p
          WHERE p.organization_id = :organizationId AND p.id = ANY(ARRAY[:projectIds]::INTEGER[])`
-        : `SELECT DISTINCT p.id, p.project_title, p.project_owner_id
+        : `SELECT DISTINCT p.id, p.project_title, p.owner
          FROM projects p
          JOIN projects_frameworks pf ON pf.project_id = p.id
          WHERE p.organization_id = :organizationId
@@ -459,7 +459,7 @@ export const createScenarioActivationQuery = async ({
     for (const project of projects as any[]) {
       const projectId = project.id as number;
       const projectTitle = (project.project_title as string) || "Untitled Project";
-      const defaultOwnerId = (project.project_owner_id as number) || 0;
+      const defaultOwnerId = (project.owner as number) || 0;
 
       if (priorityOrder.primary) {
         await createTaskForFramework(
