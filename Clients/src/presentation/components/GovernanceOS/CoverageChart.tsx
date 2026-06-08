@@ -78,7 +78,7 @@ const CoverageChart = ({
   }
 
   return (
-    <Stack spacing={2}>
+    <Stack gap="16px">
       {coverage.map((fw) => {
         const isExpanded = expandedIds.has(fw.framework_id);
         const isPrimary = activeScenarioFrameworkId === fw.framework_id;
@@ -93,8 +93,8 @@ const CoverageChart = ({
             key={fw.framework_id}
             sx={{
               "border": `1px solid ${isPrimary ? brand.primary : borderPalette.light}`,
-              "borderRadius": 2,
-              "p": 2,
+              "borderRadius": "4px",
+              "p": "16px",
               "background": isPrimary ? alpha(brand.primary, 0.04) : background.main,
               "transition": "all 0.2s ease",
               "&:hover": {
@@ -113,7 +113,7 @@ const CoverageChart = ({
                 if (hasGaps || hasSynergies) toggleExpand(fw.framework_id);
               }}
             >
-              <Stack direction="row" spacing={1} alignItems="center">
+              <Stack direction="row" gap="8px" alignItems="center">
                 <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary }}>
                   {fw.framework_name || `Framework ${fw.framework_id}`}
                 </Typography>
@@ -137,7 +137,7 @@ const CoverageChart = ({
                 )}
               </Stack>
 
-              <Stack direction="row" spacing={1} alignItems="center">
+              <Stack direction="row" gap="8px" alignItems="center">
                 <Typography sx={{ fontSize: 13, fontWeight: 600, color: brand.primary }}>
                   {fw.coverage_percentage}%
                 </Typography>
@@ -154,9 +154,9 @@ const CoverageChart = ({
               value={fw.coverage_percentage}
               sx={{
                 "height": 6,
-                "borderRadius": 3,
-                "mt": 1,
-                "mb": 1,
+                "borderRadius": "4px",
+                "mt": "8px",
+                "mb": "8px",
                 "backgroundColor": background.hover,
                 "& .MuiLinearProgress-bar": {
                   backgroundColor: brand.primary,
@@ -165,7 +165,7 @@ const CoverageChart = ({
               }}
             />
 
-            <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center">
+            <Stack direction="row" gap="8px" justifyContent="space-between" alignItems="center">
               <Typography sx={{ fontSize: 11, color: text.muted }}>
                 {fw.mapped_controls}/{fw.total_controls} controls mapped
               </Typography>
@@ -181,7 +181,7 @@ const CoverageChart = ({
                       borderRadius: "4px",
                       fontSize: 10,
                       fontWeight: 500,
-                      mr: 0.5,
+                      mr: "4px",
                       backgroundColor: status.warning.bg,
                       color: status.warning.text,
                       border: `1px solid ${status.warning.border}`,
@@ -214,21 +214,21 @@ const CoverageChart = ({
 
             {/* Expandable detail section */}
             <Collapse in={isExpanded} timeout="auto" unmountOnExit>
-              <Divider sx={{ my: 1.5, borderColor: borderPalette.light }} />
+              <Divider sx={{ my: "12px", borderColor: borderPalette.light }} />
 
               {/* Gaps section */}
               {hasGaps && (
-                <Box sx={{ mb: 2 }}>
+                <Box sx={{ mb: "16px" }}>
                   <Stack
                     direction="row"
                     justifyContent="space-between"
                     alignItems="center"
-                    sx={{ mb: 1 }}
+                    sx={{ mb: "8px" }}
                   >
                     <Typography sx={{ fontSize: 12, fontWeight: 600, color: status.warning.text }}>
                       Unmapped controls ({gapIds.length})
                     </Typography>
-                    <Stack direction="row" spacing={0.5}>
+                    <Stack direction="row" gap="4px">
                       <CustomizableButton
                         size="small"
                         onClick={() => selectAllGaps(fw.framework_id, gapIds)}
@@ -261,8 +261,8 @@ const CoverageChart = ({
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "space-between",
-                            px: 1.5,
-                            py: 1,
+                            px: "12px",
+                            py: "8px",
                             borderBottom:
                               idx < gapIds.length - 1
                                 ? `1px solid ${borderPalette.light}`
@@ -272,7 +272,7 @@ const CoverageChart = ({
                               : background.main,
                           }}
                         >
-                          <Stack direction="row" spacing={1} alignItems="center">
+                          <Stack direction="row" gap="8px" alignItems="center">
                             <Box
                               component="span"
                               sx={{ cursor: "pointer", display: "flex", alignItems: "center" }}
@@ -314,7 +314,7 @@ const CoverageChart = ({
                   </Box>
 
                   {selectedGaps.size > 0 && onCreateTasksForGaps && (
-                    <Box sx={{ mt: 1, display: "flex", justifyContent: "flex-end" }}>
+                    <Box sx={{ mt: "8px", display: "flex", justifyContent: "flex-end" }}>
                       <CustomizableButton
                         size="small"
                         variant="contained"
@@ -330,10 +330,10 @@ const CoverageChart = ({
               {/* Synergies section */}
               {hasSynergies && (
                 <Box>
-                  <Typography sx={{ fontSize: 12, fontWeight: 600, color: status.success.text, mb: 1 }}>
+                  <Typography sx={{ fontSize: 12, fontWeight: 600, color: status.success.text, mb: "8px" }}>
                     Multi-framework controls ({synergyIds.length})
                   </Typography>
-                  <Stack direction="row" flexWrap="wrap" gap={0.75}>
+                  <Stack direction="row" flexWrap="wrap" gap="6px">
                     {synergyIds.map((controlId) => (
                       <Box
                         key={controlId}
