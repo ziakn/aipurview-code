@@ -36,11 +36,11 @@ const ActivationHistory: React.FC = () => {
         sx={{
           border: `1px dashed ${borderPalette.light}`,
           borderRadius: "4px",
-          p: 3,
+          p: "16px",
           background: background.main,
         }}
       >
-        <Stack direction="row" spacing={2} alignItems="center">
+        <Stack direction="row" gap="16px" alignItems="center">
           <History size={18} color={text.muted} />
           <Typography sx={{ fontSize: 13, color: text.muted }}>
             No activations yet. Activate a scenario to see its history here.
@@ -55,18 +55,18 @@ const ActivationHistory: React.FC = () => {
       sx={{
         border: `1px solid ${borderPalette.dark}`,
         borderRadius: "4px",
-        p: 3,
+        p: "16px",
         background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
       }}
     >
-      <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+      <Stack direction="row" gap="16px" alignItems="center" sx={{ mb: "16px" }}>
         <History size={20} color={brand.primary} />
         <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
           Activation History
         </Typography>
       </Stack>
 
-      <Stack spacing={1.5}>
+      <Stack gap="12px">
         {activations.slice(0, 5).map((activation: any) => {
           const isActive = activation.status === "active";
           const date = activation.activated_at
@@ -80,13 +80,13 @@ const ActivationHistory: React.FC = () => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                p: 1.5,
+                p: "12px",
                 borderRadius: "4px",
                 border: `1px solid ${borderPalette.light}`,
                 background: isActive ? alpha(brand.primary, 0.04) : background.main,
               }}
             >
-              <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
+              <Stack direction="row" gap="16px" alignItems="center" flexWrap="wrap">
                 <Typography sx={{ fontSize: 13, fontWeight: 500, color: text.primary }}>
                   {activation.scenario_name || `Scenario #${activation.scenario_id}`}
                 </Typography>
