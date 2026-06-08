@@ -61,9 +61,9 @@ const MappingMatrixView: React.FC<MappingMatrixViewProps> = ({ mappings, onCellC
       </Typography>
 
       <Box sx={{ overflowX: "auto" }}>
-        <Stack direction="column" spacing={0.5}>
+        <Stack direction="column" gap="4px">
           {/* Header row */}
-          <Stack direction="row" spacing={0.5} alignItems="center">
+          <Stack direction="row" gap="4px" alignItems="center">
             <Box sx={{ width: 140, flexShrink: 0 }} />
             {FRAMEWORKS.map((fw) => (
               <Box
@@ -101,7 +101,7 @@ const MappingMatrixView: React.FC<MappingMatrixViewProps> = ({ mappings, onCellC
 
           {/* Data rows */}
           {FRAMEWORKS.map((rowFw) => (
-            <Stack key={rowFw.id} direction="row" spacing={0.5} alignItems="center">
+            <Stack key={rowFw.id} direction="row" gap="4px" alignItems="center">
               {/* Row label */}
               <Box
                 sx={{
@@ -110,7 +110,7 @@ const MappingMatrixView: React.FC<MappingMatrixViewProps> = ({ mappings, onCellC
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "flex-end",
-                  pr: 1.5,
+                  pr: "12px",
                   flexShrink: 0,
                 }}
               >
@@ -183,11 +183,11 @@ const MappingMatrixView: React.FC<MappingMatrixViewProps> = ({ mappings, onCellC
       </Box>
 
       {/* Legend */}
-      <Stack direction="row" spacing={2} alignItems="center" sx={{ mt: 2 }}>
+      <Stack direction="row" gap="16px" alignItems="center" sx={{ mt: "16px" }}>
         <Typography sx={{ fontSize: 12, color: text.muted }}>
           Density:
         </Typography>
-        <Stack direction="row" spacing={0.5} alignItems="center">
+        <Stack direction="row" gap="4px" alignItems="center">
           {[0, 0.25, 0.5, 0.75, 1].map((intensity, i) => (
             <Box
               key={i}
