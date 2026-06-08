@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Stack, TextField, Typography, Box, Chip, Slider } from "@mui/material";
+import { Stack, TextField, Typography, Box, Slider } from "@mui/material";
 import StandardModal from "../../../components/Modals/StandardModal";
 import { IGovernanceControlMapping } from "../../../../domain/interfaces/i.governanceOs";
 import { border as borderPalette, background, text, accent } from "../../../themes/palette";
@@ -18,7 +18,7 @@ const FRAMEWORK_OPTIONS = [
   { id: 1, name: "EU AI Act" },
   { id: 2, name: "ISO 42001" },
   { id: 3, name: "ISO 27001" },
-  { id: 4, name: "NIST AI RMF" },
+  { id: 4, "name": "NIST AI RMF" },
 ];
 
 const MappingFormModal: React.FC<MappingFormModalProps> = ({
@@ -99,22 +99,29 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
           </Typography>
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
             {FRAMEWORK_OPTIONS.map((fw) => (
-              <Chip
+              <Box
                 key={fw.id}
-                label={fw.name}
-                size="small"
+                component="span"
                 onClick={() => setSourceFrameworkId(fw.id)}
                 sx={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  height: 24,
+                  px: "10px",
+                  borderRadius: "4px",
+                  fontSize: 12,
+                  cursor: "pointer",
+                  fontWeight: sourceFrameworkId === fw.id ? 600 : 400,
                   backgroundColor: sourceFrameworkId === fw.id ? accent.primary.bg : background.hover,
                   color: sourceFrameworkId === fw.id ? accent.primary.text : text.tertiary,
                   border: `1px solid ${sourceFrameworkId === fw.id ? accent.primary.border : borderPalette.light}`,
-                  cursor: "pointer",
-                  fontWeight: sourceFrameworkId === fw.id ? 600 : 400,
                   "&:hover": {
                     backgroundColor: sourceFrameworkId === fw.id ? accent.primary.bg : background.accent,
                   },
                 }}
-              />
+              >
+                {fw.name}
+              </Box>
             ))}
           </Stack>
         </Box>
@@ -135,22 +142,29 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
           </Typography>
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
             {FRAMEWORK_OPTIONS.map((fw) => (
-              <Chip
+              <Box
                 key={fw.id}
-                label={fw.name}
-                size="small"
+                component="span"
                 onClick={() => setTargetFrameworkId(fw.id)}
                 sx={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  height: 24,
+                  px: "10px",
+                  borderRadius: "4px",
+                  fontSize: 12,
+                  cursor: "pointer",
+                  fontWeight: targetFrameworkId === fw.id ? 600 : 400,
                   backgroundColor: targetFrameworkId === fw.id ? accent.indigo.bg : background.hover,
                   color: targetFrameworkId === fw.id ? accent.indigo.text : text.tertiary,
                   border: `1px solid ${targetFrameworkId === fw.id ? accent.indigo.border : borderPalette.light}`,
-                  cursor: "pointer",
-                  fontWeight: targetFrameworkId === fw.id ? 600 : 400,
                   "&:hover": {
                     backgroundColor: targetFrameworkId === fw.id ? accent.indigo.bg : background.accent,
                   },
                 }}
-              />
+              >
+                {fw.name}
+              </Box>
             ))}
           </Stack>
         </Box>
@@ -171,23 +185,30 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
           </Typography>
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
             {STRENGTH_OPTIONS.map((s) => (
-              <Chip
+              <Box
                 key={s}
-                label={s}
-                size="small"
+                component="span"
                 onClick={() => setStrength(s)}
                 sx={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  height: 24,
+                  px: "10px",
+                  borderRadius: "4px",
+                  fontSize: 12,
+                  cursor: "pointer",
                   textTransform: "capitalize",
+                  fontWeight: strength === s ? 600 : 400,
                   backgroundColor: strength === s ? accent.teal.bg : background.hover,
                   color: strength === s ? accent.teal.text : text.tertiary,
                   border: `1px solid ${strength === s ? accent.teal.border : borderPalette.light}`,
-                  cursor: "pointer",
-                  fontWeight: strength === s ? 600 : 400,
                   "&:hover": {
                     backgroundColor: strength === s ? accent.teal.bg : background.accent,
                   },
                 }}
-              />
+              >
+                {s}
+              </Box>
             ))}
           </Stack>
         </Box>
