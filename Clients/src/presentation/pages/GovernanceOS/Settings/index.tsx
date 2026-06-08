@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { Settings, Power, Bell, Target, Filter, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import GovernanceWorkspaceShell from "../shared/GovernanceWorkspaceShell";
+import GovernanceLayout from "../shared/GovernanceLayout";
 import Toggle from "../../../components/Inputs/Toggle";
 import Checkbox from "../../../components/Inputs/Checkbox";
 import FrameworkChip from "../../../components/GovernanceOS/FrameworkChip";
@@ -74,16 +74,16 @@ const GovernanceSettings: React.FC = () => {
 
   if (prefsLoading) {
     return (
-      <GovernanceWorkspaceShell title="Settings" subtitle="Manage Governance Intelligence configuration">
+      <GovernanceLayout title="Settings" subtitle="Manage Governance Intelligence configuration">
         <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
           <CircularProgress size={32} />
         </Box>
-      </GovernanceWorkspaceShell>
+      </GovernanceLayout>
     );
   }
 
   return (
-    <GovernanceWorkspaceShell
+    <GovernanceLayout
       title="Settings"
       subtitle="Manage Governance Intelligence configuration, preferences, and defaults."
     >
@@ -107,7 +107,7 @@ const GovernanceSettings: React.FC = () => {
               justifyContent: "space-between",
               p: 2,
               border: `1px solid ${borderPalette.light}`,
-              borderRadius: 2,
+              borderRadius: "4px",
               background: background.main,
             }}
           >
@@ -147,7 +147,7 @@ const GovernanceSettings: React.FC = () => {
             sx={{
               p: 2,
               border: `1px solid ${borderPalette.light}`,
-              borderRadius: 2,
+              borderRadius: "4px",
               background: background.main,
             }}
           >
@@ -181,7 +181,6 @@ const GovernanceSettings: React.FC = () => {
                     variant="outlined"
                     onClick={() => navigate("/governance/scenarios")}
                     text="Change scenario"
-                    sx={{ textTransform: "none", fontSize: 12 }}
                   />
                 </Box>
               </Stack>
@@ -195,7 +194,6 @@ const GovernanceSettings: React.FC = () => {
                   variant="contained"
                   onClick={() => navigate("/governance/scenarios")}
                   text="Choose scenario"
-                  sx={{ textTransform: "none", fontSize: 12, boxShadow: "none" }}
                 />
               </Stack>
             )}
@@ -212,7 +210,7 @@ const GovernanceSettings: React.FC = () => {
             sx={{
               p: 2,
               border: `1px solid ${borderPalette.light}`,
-              borderRadius: 2,
+              borderRadius: "4px",
               background: background.main,
             }}
           >
@@ -234,7 +232,6 @@ const GovernanceSettings: React.FC = () => {
                 onClick={() => setDontAskAgain(false)}
                 isDisabled={!dontAskAgain}
                 text="Reset prompt preference"
-                sx={{ textTransform: "none", fontSize: 12 }}
               />
             </Box>
           </Box>
@@ -250,7 +247,7 @@ const GovernanceSettings: React.FC = () => {
             sx={{
               p: 2,
               border: `1px solid ${borderPalette.light}`,
-              borderRadius: 2,
+              borderRadius: "4px",
               background: background.main,
             }}
           >
@@ -269,7 +266,6 @@ const GovernanceSettings: React.FC = () => {
                 variant="outlined"
                 onClick={() => navigate("/governance/framework-mapper")}
                 text="Open Framework Mapper"
-                sx={{ textTransform: "none", fontSize: 12 }}
               />
             </Box>
           </Box>
@@ -284,11 +280,10 @@ const GovernanceSettings: React.FC = () => {
             onClick={handleSave}
             isDisabled={updatePrefsMutation.isPending}
             text={updatePrefsMutation.isPending ? "Saving..." : "Save changes"}
-            sx={{ textTransform: "none", fontSize: 13, boxShadow: "none" }}
           />
         </Box>
       </Stack>
-    </GovernanceWorkspaceShell>
+    </GovernanceLayout>
   );
 };
 

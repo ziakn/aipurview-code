@@ -1,12 +1,12 @@
 import React from "react";
 import { Stack, Typography, Box, alpha } from "@mui/material";
 import { Network, Clock } from "lucide-react";
-import GovernanceWorkspaceShell from "../shared/GovernanceWorkspaceShell";
+import GovernanceLayout from "../shared/GovernanceLayout";
 import { text, accent } from "../../../themes/palette";
 
 const KnowledgeGraph: React.FC = () => {
   return (
-    <GovernanceWorkspaceShell
+    <GovernanceLayout
       title="Knowledge Graph"
       subtitle="Visual exploration of governance relationships, controls, and compliance dependencies."
     >
@@ -22,9 +22,9 @@ const KnowledgeGraph: React.FC = () => {
             justifyContent: "center",
           }}
         >
-          <Network size={28} color={accent.purple.text} />
+          <Network size={24} color={accent.purple.text} />
         </Box>
-        <Typography variant="h6" sx={{ fontWeight: 600, color: text.primary }}>
+        <Typography sx={{ fontSize: 16, fontWeight: 600, color: text.primary }}>
           Knowledge Graph
         </Typography>
         <Stack direction="row" spacing={1} alignItems="center">
@@ -39,7 +39,7 @@ const KnowledgeGraph: React.FC = () => {
           glance.
         </Typography>
       </Stack>
-    </GovernanceWorkspaceShell>
+    </GovernanceLayout>
   );
 };
 

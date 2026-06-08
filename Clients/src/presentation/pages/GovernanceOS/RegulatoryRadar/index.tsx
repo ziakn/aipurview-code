@@ -1,12 +1,12 @@
 import React from "react";
 import { Stack, Typography, Box, alpha } from "@mui/material";
 import { Radio, Clock } from "lucide-react";
-import GovernanceWorkspaceShell from "../shared/GovernanceWorkspaceShell";
+import GovernanceLayout from "../shared/GovernanceLayout";
 import { text, accent } from "../../../themes/palette";
 
 const RegulatoryRadar: React.FC = () => {
   return (
-    <GovernanceWorkspaceShell
+    <GovernanceLayout
       title="Regulatory Radar"
       subtitle="Monitor regulatory changes, track compliance deadlines, and receive alerts."
     >
@@ -22,9 +22,9 @@ const RegulatoryRadar: React.FC = () => {
             justifyContent: "center",
           }}
         >
-          <Radio size={28} color={accent.orange.text} />
+          <Radio size={24} color={accent.orange.text} />
         </Box>
-        <Typography variant="h6" sx={{ fontWeight: 600, color: text.primary }}>
+        <Typography sx={{ fontSize: 16, fontWeight: 600, color: text.primary }}>
           Regulatory Radar
         </Typography>
         <Stack direction="row" spacing={1} alignItems="center">
@@ -38,7 +38,7 @@ const RegulatoryRadar: React.FC = () => {
           alerting you to new requirements, deadlines, and gaps in your compliance posture.
         </Typography>
       </Stack>
-    </GovernanceWorkspaceShell>
+    </GovernanceLayout>
   );
 };
 

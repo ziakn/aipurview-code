@@ -1,12 +1,12 @@
 import React from "react";
 import { Stack, Typography, Box, alpha } from "@mui/material";
 import { FileCheck, Clock } from "lucide-react";
-import GovernanceWorkspaceShell from "../shared/GovernanceWorkspaceShell";
+import GovernanceLayout from "../shared/GovernanceLayout";
 import { text, brand } from "../../../themes/palette";
 
 const EvidenceHub: React.FC = () => {
   return (
-    <GovernanceWorkspaceShell
+    <GovernanceLayout
       title="Evidence Hub"
       subtitle="Centralize and manage compliance evidence across all frameworks and projects."
     >
@@ -22,9 +22,9 @@ const EvidenceHub: React.FC = () => {
             justifyContent: "center",
           }}
         >
-          <FileCheck size={28} color={brand.primary} />
+          <FileCheck size={24} color={brand.primary} />
         </Box>
-        <Typography variant="h6" sx={{ fontWeight: 600, color: text.primary }}>
+        <Typography sx={{ fontSize: 16, fontWeight: 600, color: text.primary }}>
           Evidence Hub
         </Typography>
         <Stack direction="row" spacing={1} alignItems="center">
@@ -38,7 +38,7 @@ const EvidenceHub: React.FC = () => {
           artifacts, and provide a unified view of evidence coverage across frameworks.
         </Typography>
       </Stack>
-    </GovernanceWorkspaceShell>
+    </GovernanceLayout>
   );
 };
 

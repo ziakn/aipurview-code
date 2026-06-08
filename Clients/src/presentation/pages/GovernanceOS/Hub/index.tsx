@@ -8,7 +8,6 @@ import {
   Grid,
   LinearProgress,
   alpha,
-  useTheme,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import {
@@ -25,7 +24,7 @@ import {
   Plus,
   AlertTriangle,
 } from "lucide-react";
-import GovernanceWorkspaceShell from "../shared/GovernanceWorkspaceShell";
+import GovernanceLayout from "../shared/GovernanceLayout";
 import { DashboardHeaderCard } from "../../../components/Cards/DashboardHeaderCard";
 import FrameworkChip from "../../../components/GovernanceOS/FrameworkChip";
 import { CustomizableButton } from "../../../components/button/customizable-button";
@@ -74,26 +73,31 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
   disabled,
 }) => {
   const navigate = useNavigate();
-  const theme = useTheme();
+  const [isHovered, setIsHovered] = React.useState(false);
 
   return (
     <Card
+      elevation={0}
       onClick={() => !disabled && navigate(path)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       sx={{
         cursor: disabled ? "default" : "pointer",
-        borderRadius: 2,
-        border: "1px solid",
-        borderColor: disabled ? borderPalette.light : "divider",
+        borderRadius: "4px",
+        border: `1px solid ${borderPalette.dark}`,
+        background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
         opacity: disabled ? 0.6 : 1,
-        transition: "all 200ms ease",
-        "&:hover": {
-          borderColor: disabled ? borderPalette.light : color,
-          boxShadow: disabled ? "none" : `0 4px 12px ${alpha(color, 0.12)}`,
-          transform: disabled ? "none" : "translateY(-2px)",
-        },
+        transition: "all 0.2s ease",
+        height: "100%",
+        "&:hover": disabled
+          ? {}
+          : {
+              background: `linear-gradient(135deg, ${background.accent} 0%, ${background.gradientStop} 100%)`,
+              borderColor: borderPalette.light,
+            },
       }}
     >
-      <CardContent sx={{ p: 2.5 }}>
+      <CardContent sx={{ p: "16px", "&:last-child": { pb: "16px" } }}>
         <Stack direction="row" alignItems="flex-start" justifyContent="space-between">
           <Box
             sx={{
@@ -102,28 +106,38 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
               justifyContent: "center",
               width: 40,
               height: 40,
-              borderRadius: 2,
+              borderRadius: "4px",
               backgroundColor: alpha(color, 0.08),
               color: color,
             }}
           >
             {icon}
           </Box>
-          {!disabled && <ArrowRight size={16} color={text.muted} />}
+          {!disabled && (
+            <ArrowRight
+              size={16}
+              color={text.muted}
+              style={{
+                opacity: isHovered ? 1 : 0.3,
+                transition: "opacity 0.2s ease",
+                flexShrink: 0,
+              }}
+            />
+          )}
         </Stack>
-        <Typography variant="subtitle2" sx={{ mt: 2, fontWeight: 600 }}>
+        <Typography sx={{ mt: "16px", fontSize: 14, fontWeight: 600, color: "#1F2937" }}>
           {title}
         </Typography>
-        <Typography variant="caption" sx={{ color: "text.secondary", mt: 0.5, display: "block" }}>
+        <Typography sx={{ fontSize: 13, color: text.secondary, mt: 0.5, display: "block" }}>
           {description}
         </Typography>
         {stat && (
-          <Typography variant="body2" sx={{ mt: 1.5, fontWeight: 600, color }}>
+          <Typography sx={{ mt: 1.5, fontSize: 13, fontWeight: 600, color }}>
             {stat}
           </Typography>
         )}
         {subStat && (
-          <Typography variant="caption" sx={{ color: text.muted, display: "block" }}>
+          <Typography sx={{ fontSize: 12, color: text.muted, display: "block" }}>
             {subStat}
           </Typography>
         )}
@@ -134,7 +148,6 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
 
 const GovernanceHub: React.FC = () => {
   const navigate = useNavigate();
-  const theme = useTheme();
   const { projects, currentProjectId } = useContext(VerifyWiseContext);
   const { data: mappings } = useMappings();
   const { data: scenarios } = useScenarios();
@@ -277,7 +290,7 @@ const GovernanceHub: React.FC = () => {
   ];
 
   return (
-    <GovernanceWorkspaceShell
+    <GovernanceLayout
       title="Governance Intelligence"
       subtitle="Your central command center for cross-framework governance, compliance mapping, and coverage analysis."
     >
@@ -287,7 +300,7 @@ const GovernanceHub: React.FC = () => {
           <Box
             sx={{
               border: `1px solid ${brand.primary}`,
-              borderRadius: 2,
+              borderRadius: "4px",
               p: 3,
               background: `linear-gradient(135deg, ${background.main} 0%, ${alpha(brand.primary, 0.06)} 100%)`,
             }}
@@ -317,7 +330,7 @@ const GovernanceHub: React.FC = () => {
                   <Typography sx={{ fontSize: 12, color: text.muted, mb: 0.5 }}>
                     Active governance scenario
                   </Typography>
-                  <Typography sx={{ fontSize: 15, fontWeight: 600, color: text.primary }}>
+                  <Typography sx={{ fontSize: 16, fontWeight: 600, color: text.primary }}>
                     {activeScenario.name}
                   </Typography>
                   {activeScenario.description && (
@@ -352,7 +365,6 @@ const GovernanceHub: React.FC = () => {
                   variant="outlined"
                   onClick={() => navigate("/governance/scenarios")}
                   text="View Scenario"
-                  sx={{ textTransform: "none", fontSize: 12 }}
                 />
                 <CustomizableButton
                   size="small"
@@ -360,14 +372,6 @@ const GovernanceHub: React.FC = () => {
                   startIcon={<Zap size={14} />}
                   onClick={() => navigate("/governance/insights")}
                   text="Run Coverage"
-                  sx={{
-                    textTransform: "none",
-                    fontSize: 12,
-                    boxShadow: "none",
-                    backgroundColor: brand.primary,
-                    color: theme.palette.common.white,
-                    "&:hover": { backgroundColor: brand.primaryHover, boxShadow: "none" },
-                  }}
                 />
               </Stack>
             </Stack>
@@ -376,7 +380,7 @@ const GovernanceHub: React.FC = () => {
           <Box
             sx={{
               border: `1px dashed ${borderPalette.light}`,
-              borderRadius: 2,
+              borderRadius: "4px",
               p: 3,
               background: background.main,
             }}
@@ -396,14 +400,6 @@ const GovernanceHub: React.FC = () => {
                 variant="contained"
                 onClick={() => navigate("/governance/scenarios")}
                 text="Choose scenario"
-                sx={{
-                  textTransform: "none",
-                  fontSize: 12,
-                  boxShadow: "none",
-                  backgroundColor: brand.primary,
-                  color: theme.palette.common.white,
-                  "&:hover": { backgroundColor: brand.primaryHover, boxShadow: "none" },
-                }}
               />
             </Stack>
           </Box>
@@ -420,16 +416,16 @@ const GovernanceHub: React.FC = () => {
           >
             <Box
               sx={{
-                p: 2,
-                borderRadius: 2,
-                background: coverageBg,
-                border: `1px solid ${coverageBg}`,
+                p: "14px",
+                borderRadius: "4px",
+                border: `1px solid ${borderPalette.dark}`,
+                background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
               }}
             >
-              <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+              <Typography sx={{ fontSize: 13, color: "#8594AC", mb: "2px" }}>
                 Avg Coverage
               </Typography>
-              <Typography sx={{ fontSize: 22, fontWeight: 600, color: coverageColor }}>
+              <Typography sx={{ fontSize: 16, fontWeight: 600, color: coverageColor, mt: 1, minHeight: 32 }}>
                 {coverageStats.avg}%
               </Typography>
               <LinearProgress
@@ -437,19 +433,28 @@ const GovernanceHub: React.FC = () => {
                 value={coverageStats.avg}
                 sx={{
                   height: 4,
-                  borderRadius: 2,
+                  borderRadius: "4px",
                   mt: 1,
                   backgroundColor: background.hover,
-                  "& .MuiLinearProgress-bar": { backgroundColor: coverageColor, borderRadius: 2 },
+                  "& .MuiLinearProgress-bar": { backgroundColor: coverageColor, borderRadius: "4px" },
                 }}
               />
             </Box>
 
-            <Box sx={{ p: 2, borderRadius: 2, background: background.hover }}>
-              <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>Total Gaps</Typography>
+            <Box
+              sx={{
+                p: "14px",
+                borderRadius: "4px",
+                border: `1px solid ${borderPalette.dark}`,
+                background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
+              }}
+            >
+              <Typography sx={{ fontSize: 13, color: "#8594AC", mb: "2px" }}>Total Gaps</Typography>
               <Typography
                 sx={{
-                  fontSize: 22,
+                  mt: 1,
+                  minHeight: 32,
+                  fontSize: 16,
                   fontWeight: 600,
                   color: coverageStats.totalGaps > 0 ? status.warning.text : status.success.text,
                 }}
@@ -461,11 +466,18 @@ const GovernanceHub: React.FC = () => {
               </Typography>
             </Box>
 
-            <Box sx={{ p: 2, borderRadius: 2, background: background.hover }}>
-              <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+            <Box
+              sx={{
+                p: "14px",
+                borderRadius: "4px",
+                border: `1px solid ${borderPalette.dark}`,
+                background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
+              }}
+            >
+              <Typography sx={{ fontSize: 13, color: "#8594AC", mb: "2px" }}>
                 Active Frameworks
               </Typography>
-              <Typography sx={{ fontSize: 22, fontWeight: 600, color: brand.primary }}>
+              <Typography sx={{ mt: 1, minHeight: 32, fontSize: 16, fontWeight: 600, color: brand.primary }}>
                 {coverageStats.frameworkCount}
               </Typography>
               <Typography sx={{ fontSize: 11, color: text.muted }}>
@@ -473,11 +485,18 @@ const GovernanceHub: React.FC = () => {
               </Typography>
             </Box>
 
-            <Box sx={{ p: 2, borderRadius: 2, background: background.hover }}>
-              <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+            <Box
+              sx={{
+                p: "14px",
+                borderRadius: "4px",
+                border: `1px solid ${borderPalette.dark}`,
+                background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
+              }}
+            >
+              <Typography sx={{ fontSize: 13, color: "#8594AC", mb: "2px" }}>
                 Total Mappings
               </Typography>
-              <Typography sx={{ fontSize: 22, fontWeight: 600, color: brand.primary }}>
+              <Typography sx={{ mt: 1, minHeight: 32, fontSize: 16, fontWeight: 600, color: brand.primary }}>
                 {totalMappings}
               </Typography>
               <Typography sx={{ fontSize: 11, color: text.muted }}>
@@ -512,7 +531,6 @@ const GovernanceHub: React.FC = () => {
             startIcon={<Compass size={14} />}
             onClick={() => navigate("/governance/scenarios")}
             text="Get Recommendations"
-            sx={{ textTransform: "none", fontSize: 13 }}
           />
           <CustomizableButton
             size="small"
@@ -520,7 +538,6 @@ const GovernanceHub: React.FC = () => {
             startIcon={<BarChart3 size={14} />}
             onClick={() => navigate("/governance/insights")}
             text="Run Coverage Analysis"
-            sx={{ textTransform: "none", fontSize: 13 }}
           />
           <CustomizableButton
             size="small"
@@ -528,7 +545,6 @@ const GovernanceHub: React.FC = () => {
             startIcon={<GitCompareArrows size={14} />}
             onClick={() => navigate("/governance/framework-mapper")}
             text="View Mappings"
-            sx={{ textTransform: "none", fontSize: 13 }}
           />
           <CustomizableButton
             size="small"
@@ -536,18 +552,17 @@ const GovernanceHub: React.FC = () => {
             startIcon={<Plus size={14} />}
             onClick={() => navigate("/governance/scenarios")}
             text="New Scenario"
-            sx={{ textTransform: "none", fontSize: 13 }}
           />
         </Stack>
 
         {/* Module cards grid */}
         <Box>
-          <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600 }}>
+          <Typography sx={{ mb: 2, fontSize: 14, fontWeight: 600 }}>
             Modules
           </Typography>
           <Grid container spacing={2}>
             {modules.map((module) => (
-              <Grid item xs={12} sm={6} md={4} key={module.title}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={module.title}>
                 <ModuleCard {...module} />
               </Grid>
             ))}
@@ -559,14 +574,14 @@ const GovernanceHub: React.FC = () => {
           <Box
             sx={{
               border: `1px solid ${borderPalette.dark}`,
-              borderRadius: 2,
+              borderRadius: "4px",
               p: 3,
               background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
             }}
           >
             <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
               <AlertTriangle size={18} color={status.warning.text} />
-              <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+              <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
                 Gap Hotspots
               </Typography>
             </Stack>
@@ -583,7 +598,7 @@ const GovernanceHub: React.FC = () => {
                     alignItems: "center",
                     justifyContent: "space-between",
                     p: 1.5,
-                    borderRadius: 1.5,
+                    borderRadius: "4px",
                     border: `1px solid ${borderPalette.light}`,
                     background: background.main,
                     "&:hover": { background: background.accent },
@@ -619,7 +634,7 @@ const GovernanceHub: React.FC = () => {
                     variant="text"
                     onClick={() => navigate("/governance/insights")}
                     text="View"
-                    sx={{ fontSize: 12, textTransform: "none", color: brand.primary }}
+                    sx={{ color: brand.primary }}
                   />
                 </Box>
               ))}
@@ -627,7 +642,7 @@ const GovernanceHub: React.FC = () => {
           </Box>
         )}
       </Stack>
-    </GovernanceWorkspaceShell>
+    </GovernanceLayout>
   );
 };
 
