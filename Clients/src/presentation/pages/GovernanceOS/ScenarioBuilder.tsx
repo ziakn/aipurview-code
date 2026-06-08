@@ -175,12 +175,7 @@ const ScenarioBuilder = () => {
     formData.industry || formData.region || formData.riskLevel || formData.useCaseType;
 
   return (
-    <Stack spacing={3}>
-      <Typography sx={{ fontSize: 13, color: text.tertiary }}>
-        Get framework recommendations based on your organization context, or browse pre-built
-        governance scenarios.
-      </Typography>
-
+    <Stack gap="16px">
       <ActiveScenarioPanel
         activeScenario={scenarios?.find((s) => s.id === selectedScenarioId)}
         onActivate={handleActivateClick}
@@ -193,14 +188,14 @@ const ScenarioBuilder = () => {
         sx={{
           border: `1px solid ${borderPalette.dark}`,
           borderRadius: "4px",
-          p: 3,
+          p: "16px",
           background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
         }}
       >
-        <Typography sx={{ mb: 3, fontSize: 14, fontWeight: 600 }}>
+        <Typography sx={{ mb: "16px", fontSize: 14, fontWeight: 600 }}>
           Get Recommendations
         </Typography>
-        <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap alignItems="flex-end">
+        <Stack direction="row" gap="16px" flexWrap="wrap" useFlexGap alignItems="flex-end">
           <Select
             id="industry-select"
             label="Industry"
@@ -261,11 +256,11 @@ const ScenarioBuilder = () => {
 
       {/* Recommendation results */}
       {recommendMutation.data && recommendMutation.data.length > 0 && (
-        <Stack spacing={2}>
+        <Stack gap="16px">
           <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
             Recommended Scenarios
           </Typography>
-          <Stack spacing={2}>
+          <Stack gap="8px">
             {recommendMutation.data.map((result) => (
               <ScenarioCard
                 key={result.scenario.id}
@@ -304,7 +299,7 @@ const ScenarioBuilder = () => {
       <Divider />
 
       {/* All scenarios */}
-      <Stack spacing={2}>
+      <Stack gap="16px">
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
             All Governance Scenarios
@@ -319,13 +314,13 @@ const ScenarioBuilder = () => {
         </Stack>
 
         {scenariosLoading ? (
-          <Stack alignItems="center" sx={{ py: 6 }}>
+          <Stack alignItems="center" sx={{ py: "48px" }}>
             <CircularProgress size={32} />
           </Stack>
         ) : !scenarios || scenarios.length === 0 ? (
           <EmptyState message="No governance scenarios available." icon={Compass} showBorder />
         ) : (
-          <Stack spacing={2}>
+          <Stack gap="8px">
             {scenarios.map((scenario) => (
               <ScenarioCard
                 key={scenario.id}
