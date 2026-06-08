@@ -1,8 +1,9 @@
 import React from "react";
-import { Box, Stack, Typography, Button, Paper, Tooltip } from "@mui/material";
+import { Box, Stack, Typography, Paper, Tooltip } from "@mui/material";
 import { GitCompareArrows, Layers, Compass, BarChart3, Lightbulb } from "lucide-react";
 import { useAuth } from "../../../application/hooks/useAuth";
 import { useUpdatePreferences } from "../../../application/hooks/useGovernanceOs";
+import CustomizableButton from "../../components/button/customizable-button";
 import { palette } from "../../themes/palette";
 import { useUserGuideSidebarContext } from "../../components/UserGuide";
 
@@ -137,48 +138,46 @@ const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({ onEnabled
         <Stack spacing={2} alignItems="center">
           <Tooltip title={!isAdmin ? "Contact your admin to enable Governance OS" : ""} arrow>
             <span>
-              <Button
+              <CustomizableButton
                 variant="contained"
-                size="large"
-                disabled={!isAdmin || updatePreferences.isPending}
+                size="medium"
+                isDisabled={!isAdmin || updatePreferences.isPending}
                 onClick={handleEnable}
                 startIcon={<Lightbulb size={18} />}
+                text={updatePreferences.isPending ? "Enabling..." : "Enable Governance OS"}
                 sx={{
-                  "textTransform": "none",
-                  "fontWeight": 600,
-                  "fontSize": 15,
-                  "borderRadius": 2,
-                  "px": 4,
-                  "py": 1,
-                  "boxShadow": "none",
-                  "backgroundColor": palette.brand.primary,
+                  textTransform: "none",
+                  fontWeight: 600,
+                  fontSize: 15,
+                  borderRadius: 2,
+                  px: 4,
+                  py: 1,
+                  boxShadow: "none",
+                  backgroundColor: palette.brand.primary,
                   "&:hover": {
                     backgroundColor: palette.brand.primaryHover,
                     boxShadow: "none",
                   },
                 }}
-              >
-                {updatePreferences.isPending ? "Enabling..." : "Enable Governance OS"}
-              </Button>
+              />
             </span>
           </Tooltip>
 
-          <Button
+          <CustomizableButton
             variant="text"
             size="small"
             onClick={() => openUserGuide("governance-os")}
+            text="Learn more in the user guide"
             sx={{
-              "textTransform": "none",
-              "fontWeight": 500,
-              "fontSize": 13,
-              "color": palette.brand.primary,
+              textTransform: "none",
+              fontWeight: 500,
+              fontSize: 13,
+              color: palette.brand.primary,
               "&:hover": {
                 backgroundColor: palette.brand.primaryLight,
               },
             }}
-          >
-            Learn more in the user guide
-          </Button>
+          />
         </Stack>
       </Stack>
     </Box>
