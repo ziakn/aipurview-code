@@ -160,15 +160,17 @@ export const createNewTaskQuery = async (
           transaction,
         },
       )) as [{ full_name: string }[], number];
-      const assignee_names = (await sequelize.query(
-        `SELECT name || ' ' || surname AS full_name FROM users WHERE id IN (:assignee_ids);`,
-        {
-          replacements: {
-            assignee_ids: (createdTask.dataValues as any)["assignees"],
-          },
-          transaction,
-        },
-      )) as [{ full_name: string }[], number];
+      const assigneeIds = (createdTask.dataValues as any)["assignees"] as number[];
+      const assignee_names =
+        assigneeIds && assigneeIds.length > 0
+          ? ((await sequelize.query(
+              `SELECT name || ' ' || surname AS full_name FROM users WHERE id = ANY(ARRAY[:assignee_ids]::INTEGER[]);`,
+              {
+                replacements: { assignee_ids: assigneeIds },
+                transaction,
+              },
+            )) as [{ full_name: string }[], number])
+          : [[], 0];
 
       const params = automation.params!;
 
@@ -452,12 +454,16 @@ export const getTaskByIdQuery = async (
       },
     )) as [{ full_name: string }[], number];
     (task.dataValues as any)["creator_name"] = creator_name[0][0].full_name;
-    const assignee_names = (await sequelize.query(
-      `SELECT name || ' ' || surname AS full_name FROM users WHERE id IN (:assignee_ids);`,
-      {
-        replacements: { assignee_ids: (task.dataValues as any)["assignees"] },
-      },
-    )) as [{ full_name: string }[], number];
+    const assigneeIds = (task.dataValues as any)["assignees"] as number[];
+    const assignee_names =
+      assigneeIds && assigneeIds.length > 0
+        ? ((await sequelize.query(
+            `SELECT name || ' ' || surname AS full_name FROM users WHERE id = ANY(ARRAY[:assignee_ids]::INTEGER[]);`,
+            {
+              replacements: { assignee_ids: assigneeIds },
+            },
+          )) as [{ full_name: string }[], number])
+        : [[], 0];
     (task.dataValues as any)["assignee_names"] = assignee_names[0].map((a) => a.full_name);
 
     // Fetch entity links for this task
@@ -637,15 +643,17 @@ export const updateTaskByIdQuery = async (
           transaction,
         },
       )) as [{ full_name: string }[], number];
-      const assignee_names = (await sequelize.query(
-        `SELECT name || ' ' || surname AS full_name FROM users WHERE id IN (:assignee_ids);`,
-        {
-          replacements: {
-            assignee_ids: (updatedTask.dataValues as any)["assignees"],
-          },
-          transaction,
-        },
-      )) as [{ full_name: string }[], number];
+      const assigneeIds = (updatedTask.dataValues as any)["assignees"] as number[];
+      const assignee_names =
+        assigneeIds && assigneeIds.length > 0
+          ? ((await sequelize.query(
+              `SELECT name || ' ' || surname AS full_name FROM users WHERE id = ANY(ARRAY[:assignee_ids]::INTEGER[]);`,
+              {
+                replacements: { assignee_ids: assigneeIds },
+                transaction,
+              },
+            )) as [{ full_name: string }[], number])
+          : [[], 0];
 
       const params = automation.params!;
 
@@ -806,13 +814,17 @@ export const deleteTaskByIdQuery = async ({
           transaction,
         },
       )) as [{ full_name: string }[], number];
-      const assignee_names = (await sequelize.query(
-        `SELECT name || ' ' || surname AS full_name FROM users WHERE id IN (:assignee_ids);`,
-        {
-          replacements: { assignee_ids: (deletedTask as any)["assignees"] },
-          transaction,
-        },
-      )) as [{ full_name: string }[], number];
+      const assigneeIds = (deletedTask as any)["assignees"] as number[];
+      const assignee_names =
+        assigneeIds && assigneeIds.length > 0
+          ? ((await sequelize.query(
+              `SELECT name || ' ' || surname AS full_name FROM users WHERE id = ANY(ARRAY[:assignee_ids]::INTEGER[]);`,
+              {
+                replacements: { assignee_ids: assigneeIds },
+                transaction,
+              },
+            )) as [{ full_name: string }[], number])
+          : [[], 0];
 
       const params = automation.params!;
 
