@@ -1,8 +1,8 @@
 import React from "react";
-import { Stack, Typography, Box } from "@mui/material";
+import { Stack, Typography, Box, alpha } from "@mui/material";
 import { Radio, Clock } from "lucide-react";
 import GovernanceWorkspaceShell from "../shared/GovernanceWorkspaceShell";
-import { text } from "../../../themes/palette";
+import { text, accent } from "../../../themes/palette";
 
 const RegulatoryRadar: React.FC = () => {
   return (
@@ -16,13 +16,13 @@ const RegulatoryRadar: React.FC = () => {
             width: 64,
             height: 64,
             borderRadius: "50%",
-            backgroundColor: "rgba(230, 81, 0, 0.08)",
+            backgroundColor: alpha(accent.orange.text, 0.08),
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
           }}
         >
-          <Radio size={28} color="#E65100" />
+          <Radio size={28} color={accent.orange.text} />
         </Box>
         <Typography variant="h6" sx={{ fontWeight: 600, color: text.primary }}>
           Regulatory Radar
