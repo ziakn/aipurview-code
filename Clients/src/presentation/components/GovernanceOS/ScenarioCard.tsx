@@ -47,8 +47,8 @@ const ScenarioCard = ({
       <Box
         sx={{
           "border": `1px solid ${isSelected ? brand.primary : borderPalette.light}`,
-          "borderRadius": 2,
-          "p": 2.5,
+          "borderRadius": "4px",
+          "p": "16px",
           "background": isSelected ? background.accent : background.main,
           "transition": "all 0.2s ease",
           "&:hover": {
@@ -68,7 +68,7 @@ const ScenarioCard = ({
               </Typography>
             )}
           </Box>
-          <Stack direction="row" spacing={1} alignItems="center">
+          <Stack direction="row" gap="8px" alignItems="center">
             <VWTooltip
               content="View details about what selecting this scenario means"
               placement="top"
@@ -180,13 +180,13 @@ const ScenarioCard = ({
         </Stack>
 
         {scenario.description && (
-          <Typography sx={{ fontSize: 13, color: text.accent, mt: 1 }}>
+          <Typography sx={{ fontSize: 13, color: text.accent, mt: "8px" }}>
             {scenario.description}
           </Typography>
         )}
 
         {priorityOrder && (
-          <Stack direction="row" spacing={1} sx={{ mt: 2 }} flexWrap="wrap" useFlexGap>
+          <Stack direction="row" gap="8px" sx={{ mt: "16px" }} flexWrap="wrap" useFlexGap>
             {priorityOrder.primary && (
               <FrameworkChip
                 frameworkName={FRAMEWORK_NAMES[priorityOrder.primary] || String(priorityOrder.primary)}
@@ -213,7 +213,7 @@ const ScenarioCard = ({
           </Stack>
         )}
 
-        <Stack direction="row" spacing={1} sx={{ mt: 1.5 }} flexWrap="wrap" useFlexGap>
+        <Stack direction="row" gap="8px" sx={{ mt: "12px" }} flexWrap="wrap" useFlexGap>
           {scenario.industry && (
             <Box
               component="span"
@@ -276,13 +276,13 @@ const ScenarioCard = ({
         </Stack>
 
         {matchedRules && matchedRules.length > 0 && (
-          <Typography sx={{ fontSize: 11, color: text.muted, mt: 1.5 }}>
+          <Typography sx={{ fontSize: 11, color: text.muted, mt: "12px" }}>
             Matched: {matchedRules.join(", ")}
           </Typography>
         )}
 
         {scenario.rationale && (
-          <Typography sx={{ fontSize: 12, color: text.accent, mt: 1 }}>
+          <Typography sx={{ fontSize: 12, color: text.accent, mt: "8px" }}>
             {scenario.rationale}
           </Typography>
         )}
@@ -297,9 +297,9 @@ const ScenarioCard = ({
         hideFooter
         fitContent
       >
-        <Stack spacing={6}>
+        <Stack gap="16px">
           {/* What is this scenario */}
-          <Stack spacing={2}>
+          <Stack gap="16px">
             <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary }}>
               What is this scenario?
             </Typography>
@@ -310,7 +310,7 @@ const ScenarioCard = ({
           </Stack>
 
           {/* What happens when you select it */}
-          <Stack spacing={2}>
+          <Stack gap="16px">
             <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary }}>
               What happens when you select this scenario?
             </Typography>
@@ -338,7 +338,7 @@ const ScenarioCard = ({
           </Stack>
 
           {/* Next steps after selecting */}
-          <Stack spacing={2}>
+          <Stack gap="16px">
             <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary }}>
               Next steps after selecting this scenario
             </Typography>
@@ -379,7 +379,7 @@ const ScenarioCard = ({
 
           {/* Framework priority breakdown */}
           {priorityOrder && (
-            <Stack spacing={2}>
+            <Stack gap="16px">
               <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary }}>
                 Framework priority order
               </Typography>
@@ -387,19 +387,19 @@ const ScenarioCard = ({
               {primaryName && (
                 <Box
                   sx={{
-                    p: 2,
+                    p: "16px",
                     borderRadius: "4px",
                     border: `1px solid ${accent.primary.border}`,
                     background: accent.primary.bg,
                   }}
                 >
-                  <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+                  <Typography sx={{ fontSize: 11, color: text.muted, mb: "4px" }}>
                     Primary framework (highest priority)
                   </Typography>
                   <Typography sx={{ fontSize: 14, fontWeight: 600, color: accent.primary.text }}>
                     {primaryName}
                   </Typography>
-                  <Typography sx={{ fontSize: 12, color: text.accent, mt: 0.5 }}>
+                  <Typography sx={{ fontSize: 12, color: text.accent, mt: "4px" }}>
                     This is your main compliance target. Tasks and controls from this framework will
                     be prioritized above all others.
                   </Typography>
@@ -409,19 +409,19 @@ const ScenarioCard = ({
               {secondaryNames.length > 0 && (
                 <Box
                   sx={{
-                    p: 2,
+                    p: "16px",
                     borderRadius: "4px",
                     border: `1px solid ${accent.indigo.border}`,
                     background: accent.indigo.bg,
                   }}
                 >
-                  <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+                  <Typography sx={{ fontSize: 11, color: text.muted, mb: "4px" }}>
                     Secondary framework(s)
                   </Typography>
                   <Typography sx={{ fontSize: 14, fontWeight: 600, color: accent.indigo.text }}>
                     {secondaryNames.join(", ")}
                   </Typography>
-                  <Typography sx={{ fontSize: 12, color: text.accent, mt: 0.5 }}>
+                  <Typography sx={{ fontSize: 12, color: text.accent, mt: "4px" }}>
                     Supporting frameworks that complement your primary target. Work on these after
                     primary controls are in place.
                   </Typography>
@@ -431,19 +431,19 @@ const ScenarioCard = ({
               {supplementaryNames.length > 0 && (
                 <Box
                   sx={{
-                    p: 2,
+                    p: "16px",
                     borderRadius: "4px",
                     border: `1px solid ${borderPalette.light}`,
                     background: background.hover,
                   }}
                 >
-                  <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+                  <Typography sx={{ fontSize: 11, color: text.muted, mb: "4px" }}>
                     Supplementary framework(s)
                   </Typography>
                   <Typography sx={{ fontSize: 14, fontWeight: 600, color: text.tertiary }}>
                     {supplementaryNames.join(", ")}
                   </Typography>
-                  <Typography sx={{ fontSize: 12, color: text.accent, mt: 0.5 }}>
+                  <Typography sx={{ fontSize: 12, color: text.accent, mt: "4px" }}>
                     Nice-to-have frameworks that provide additional governance coverage. Address
                     these once primary and secondary are well-established.
                   </Typography>
@@ -454,14 +454,14 @@ const ScenarioCard = ({
 
           {/* Who is this for */}
           {(scenario.industry || scenario.region || scenario.use_case_type) && (
-            <Stack spacing={2}>
+            <Stack gap="16px">
               <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary }}>
                 Best suited for
               </Typography>
-              <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
+              <Stack direction="row" gap="16px" flexWrap="wrap" useFlexGap>
                 {scenario.industry && (
                   <Box>
-                    <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+                    <Typography sx={{ fontSize: 11, color: text.muted, mb: "4px" }}>
                       Industry
                     </Typography>
                     <Typography
@@ -478,7 +478,7 @@ const ScenarioCard = ({
                 )}
                 {scenario.region && (
                   <Box>
-                    <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+                    <Typography sx={{ fontSize: 11, color: text.muted, mb: "4px" }}>
                       Region
                     </Typography>
                     <Typography sx={{ fontSize: 13, fontWeight: 500, color: text.primary }}>
@@ -488,7 +488,7 @@ const ScenarioCard = ({
                 )}
                 {scenario.use_case_type && (
                   <Box>
-                    <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+                    <Typography sx={{ fontSize: 11, color: text.muted, mb: "4px" }}>
                       Use case type
                     </Typography>
                     <Typography
@@ -509,7 +509,7 @@ const ScenarioCard = ({
 
           {/* Match score explanation */}
           {score !== undefined && (
-            <Stack spacing={2}>
+            <Stack gap="16px">
               <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary }}>
                 Recommendation match
               </Typography>
@@ -525,7 +525,7 @@ const ScenarioCard = ({
 
           {/* Rationale */}
           {scenario.rationale && (
-            <Stack spacing={2}>
+            <Stack gap="16px">
               <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary }}>
                 Rationale
               </Typography>
