@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Stack, Typography, CircularProgress, ToggleButton, ToggleButtonGroup, useTheme } from "@mui/material";
+import { Stack, Typography, CircularProgress, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { GitCompareArrows, Plus, List, Grid3X3, Download, Upload } from "lucide-react";
 import FrameworkSelector from "../../components/GovernanceOS/FrameworkSelector";
 import MappingCard from "../../components/GovernanceOS/MappingCard";
@@ -22,7 +22,6 @@ import BulkImportModal from "./FrameworkMapperModule/BulkImportModal";
 import { text, brand } from "../../themes/palette";
 
 const FrameworkMapper = () => {
-  const theme = useTheme();
   const [sourceId, setSourceId] = useState(1);
   const [targetId, setTargetId] = useState(2);
   const [selectedDomain, setSelectedDomain] = useState<string | null>(null);
@@ -96,12 +95,7 @@ const FrameworkMapper = () => {
   });
 
   return (
-    <Stack spacing={3}>
-      <Typography sx={{ fontSize: 13, color: text.tertiary }}>
-        Explore cross-framework control mappings. Select source and target frameworks to see how
-        controls align.
-      </Typography>
-
+    <Stack gap="16px">
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <FrameworkSelector
           sourceId={sourceId}
@@ -109,7 +103,7 @@ const FrameworkMapper = () => {
           onSourceChange={setSourceId}
           onTargetChange={setTargetId}
         />
-        <Stack direction="row" spacing={1} alignItems="center">
+        <Stack direction="row" gap="8px" alignItems="center">
           <ToggleButtonGroup
             value={viewMode}
             exclusive
@@ -172,7 +166,7 @@ const FrameworkMapper = () => {
       )}
 
       {isLoading ? (
-        <Stack alignItems="center" sx={{ py: 6 }}>
+        <Stack alignItems="center" sx={{ py: "48px" }}>
           <CircularProgress size={32} />
         </Stack>
       ) : filteredMappings.length === 0 ? (
@@ -182,13 +176,15 @@ const FrameworkMapper = () => {
           showBorder
         />
       ) : (
-        <Stack spacing={2}>
+        <Stack gap="16px">
           <Typography sx={{ fontSize: 12, color: text.muted }}>
             {filteredMappings.length} mapping(s) found
           </Typography>
-          {filteredMappings.map((mapping) => (
-            <MappingCard key={mapping.id} mapping={mapping} />
-          ))}
+          <Stack gap="8px">
+            {filteredMappings.map((mapping) => (
+              <MappingCard key={mapping.id} mapping={mapping} />
+            ))}
+          </Stack>
         </Stack>
       )}
       <MappingFormModal
