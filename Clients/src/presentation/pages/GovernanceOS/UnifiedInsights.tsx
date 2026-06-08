@@ -1,5 +1,5 @@
 import { useContext, useState, useMemo } from "react";
-import { Typography, CircularProgress, Button, Stack, Box, Alert } from "@mui/material";
+import { Typography, CircularProgress, Stack, Box, Alert, alpha } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { BarChart3, Download, Target } from "lucide-react";
 import Select from "../../components/Inputs/Select";
@@ -8,6 +8,7 @@ import MappingStatsPanel from "../../components/GovernanceOS/MappingStatsPanel";
 import { DashboardHeaderCard } from "../../components/Cards/DashboardHeaderCard";
 import { EmptyState } from "../../components/EmptyState";
 import CreateTask from "../../components/Modals/CreateTask";
+import CustomizableButton from "../../components/button/customizable-button";
 import {
   useCoverage,
   useRefreshCoverage,
@@ -161,7 +162,7 @@ const UnifiedInsights = () => {
 
   return (
     <Stack spacing={3}>
-      <Typography variant="body2" sx={{ color: "#475467" }}>
+      <Typography variant="body2" sx={{ color: text.tertiary }}>
         View cross-framework coverage analysis per project. Identify gaps and synergies across your
         active frameworks.
       </Typography>
@@ -173,7 +174,7 @@ const UnifiedInsights = () => {
             border: `1px solid ${brand.primary}`,
             borderRadius: 2,
             p: 2,
-            background: `linear-gradient(135deg, ${background.main} 0%, rgba(19, 113, 91, 0.06) 100%)`,
+            background: `linear-gradient(135deg, ${background.main} 0%, ${alpha(brand.primary, 0.06)} 100%)`,
           }}
         >
           <Stack direction="row" spacing={2} alignItems="center">
@@ -207,25 +208,23 @@ const UnifiedInsights = () => {
 
         {typeof selectedProjectId === "number" && selectedProjectId > 0 && (
           <>
-            <Button
+            <CustomizableButton
               size="small"
               variant="outlined"
               onClick={() => refreshMutation.mutate(selectedProjectId)}
-              disabled={refreshMutation.isPending}
+              isDisabled={refreshMutation.isPending}
+              text={refreshMutation.isPending ? "Refreshing..." : "Refresh Coverage"}
               sx={{ height: 34 }}
-            >
-              {refreshMutation.isPending ? "Refreshing..." : "Refresh Coverage"}
-            </Button>
-            <Button
+            />
+            <CustomizableButton
               size="small"
               variant="outlined"
               startIcon={<Download size={14} />}
               onClick={handleExportCsv}
-              disabled={!coverage || coverage.length === 0}
+              isDisabled={!coverage || coverage.length === 0}
+              text="Export CSV"
               sx={{ height: 34, textTransform: "none" }}
-            >
-              Export CSV
-            </Button>
+            />
           </>
         )}
       </Stack>
