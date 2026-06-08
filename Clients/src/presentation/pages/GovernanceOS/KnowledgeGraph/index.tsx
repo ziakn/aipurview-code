@@ -1,8 +1,8 @@
 import React from "react";
-import { Stack, Typography, Box } from "@mui/material";
+import { Stack, Typography, Box, alpha } from "@mui/material";
 import { Network, Clock } from "lucide-react";
 import GovernanceWorkspaceShell from "../shared/GovernanceWorkspaceShell";
-import { text } from "../../../themes/palette";
+import { text, accent } from "../../../themes/palette";
 
 const KnowledgeGraph: React.FC = () => {
   return (
@@ -16,13 +16,13 @@ const KnowledgeGraph: React.FC = () => {
             width: 64,
             height: 64,
             borderRadius: "50%",
-            backgroundColor: "rgba(94, 53, 177, 0.08)",
+            backgroundColor: alpha(accent.purple.text, 0.08),
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
           }}
         >
-          <Network size={28} color="#5E35B1" />
+          <Network size={28} color={accent.purple.text} />
         </Box>
         <Typography variant="h6" sx={{ fontWeight: 600, color: text.primary }}>
           Knowledge Graph
