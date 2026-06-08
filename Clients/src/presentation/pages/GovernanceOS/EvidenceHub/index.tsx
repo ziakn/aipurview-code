@@ -1,8 +1,8 @@
 import React from "react";
-import { Stack, Typography, Box } from "@mui/material";
+import { Stack, Typography, Box, alpha } from "@mui/material";
 import { FileCheck, Clock } from "lucide-react";
 import GovernanceWorkspaceShell from "../shared/GovernanceWorkspaceShell";
-import { background, text } from "../../../themes/palette";
+import { text, brand } from "../../../themes/palette";
 
 const EvidenceHub: React.FC = () => {
   return (
@@ -16,13 +16,13 @@ const EvidenceHub: React.FC = () => {
             width: 64,
             height: 64,
             borderRadius: "50%",
-            backgroundColor: "rgba(19, 113, 91, 0.08)",
+            backgroundColor: alpha(brand.primary, 0.08),
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
           }}
         >
-          <FileCheck size={28} color="#13715B" />
+          <FileCheck size={28} color={brand.primary} />
         </Box>
         <Typography variant="h6" sx={{ fontWeight: 600, color: text.primary }}>
           Evidence Hub
