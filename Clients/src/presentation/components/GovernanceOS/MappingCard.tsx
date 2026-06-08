@@ -150,7 +150,7 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
                 sx={{
                   flex: 1,
                   p: 2,
-                  borderRadius: 2,
+                  borderRadius: "4px",
                   border: `1px solid ${borderPalette.light}`,
                   background: background.accent,
                 }}
@@ -172,7 +172,7 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
                 sx={{
                   flex: 1,
                   p: 2,
-                  borderRadius: 2,
+                  borderRadius: "4px",
                   border: `1px solid ${borderPalette.light}`,
                   background: background.accent,
                 }}

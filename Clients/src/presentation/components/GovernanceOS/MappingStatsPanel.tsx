@@ -38,7 +38,7 @@ const MappingStatsPanel: React.FC<MappingStatsPanelProps> = ({ projectId }) => {
       <Box
         sx={{
           border: `1px dashed ${borderPalette.light}`,
-          borderRadius: 2,
+          borderRadius: "4px",
           p: 2,
           background: background.main,
         }}
@@ -57,14 +57,14 @@ const MappingStatsPanel: React.FC<MappingStatsPanelProps> = ({ projectId }) => {
     <Box
       sx={{
         border: `1px solid ${borderPalette.dark}`,
-        borderRadius: 2,
+        borderRadius: "4px",
         p: 3,
         background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
       }}
     >
       <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
         <Network size={20} color={brand.primary} />
-        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+        <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
           Mapping Statistics
         </Typography>
       </Stack>
@@ -82,7 +82,7 @@ const MappingStatsPanel: React.FC<MappingStatsPanelProps> = ({ projectId }) => {
             sx={{
               p: 2,
               background: background.hover,
-              borderRadius: 2,
+              borderRadius: "4px",
               textAlign: "center",
             }}
           >

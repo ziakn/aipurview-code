@@ -134,7 +134,7 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
         />
 
         <Box>
-          <Typography variant="caption" sx={{ color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}>
+          <Typography sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}>
             Industry
           </Typography>
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
@@ -167,7 +167,7 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
         </Box>
 
         <Box>
-          <Typography variant="caption" sx={{ color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}>
+          <Typography sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}>
             Region
           </Typography>
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
@@ -199,7 +199,7 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
         </Box>
 
         <Box>
-          <Typography variant="caption" sx={{ color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}>
+          <Typography sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}>
             Frameworks *
           </Typography>
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
@@ -252,7 +252,7 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
             })}
           </Stack>
           {selectedFrameworks.length > 1 && (
-            <Typography variant="caption" sx={{ color: text.muted, mt: 0.5, display: "block" }}>
+            <Typography sx={{ fontSize: 12, color: text.muted, mt: 0.5, display: "block" }}>
               First selected framework becomes primary. Click a selected framework to set it as primary.
             </Typography>
           )}

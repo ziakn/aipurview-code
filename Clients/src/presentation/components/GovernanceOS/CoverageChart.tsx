@@ -160,7 +160,7 @@ const CoverageChart = ({
                 "backgroundColor": background.hover,
                 "& .MuiLinearProgress-bar": {
                   backgroundColor: brand.primary,
-                  borderRadius: 3,
+                  borderRadius: "4px",
                 },
               }}
             />
@@ -233,13 +233,13 @@ const CoverageChart = ({
                         size="small"
                         onClick={() => selectAllGaps(fw.framework_id, gapIds)}
                         text="Select all"
-                        sx={{ fontSize: 11, textTransform: "none", minWidth: 0, px: 1 }}
+                        sx={{ minWidth: 0, px: 1 }}
                       />
                       <CustomizableButton
                         size="small"
                         onClick={() => clearAllGaps(fw.framework_id)}
                         text="Clear"
-                        sx={{ fontSize: 11, textTransform: "none", minWidth: 0, px: 1 }}
+                        sx={{ minWidth: 0, px: 1 }}
                       />
                     </Stack>
                   </Stack>
@@ -247,7 +247,7 @@ const CoverageChart = ({
                   <Box
                     sx={{
                       border: `1px solid ${borderPalette.light}`,
-                      borderRadius: 1.5,
+                      borderRadius: "4px",
                       maxHeight: 200,
                       overflow: "auto",
                     }}
@@ -292,7 +292,7 @@ const CoverageChart = ({
                             <CustomizableButton
                               size="small"
                               variant="text"
-                              startIcon={<Plus size={12} />}
+                              startIcon={<Plus size={14} />}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 onCreateTaskForGap(
@@ -302,8 +302,6 @@ const CoverageChart = ({
                               }}
                               text="Task"
                               sx={{
-                                fontSize: 11,
-                                textTransform: "none",
                                 color: brand.primary,
                                 minWidth: 0,
                                 px: 1,
@@ -322,7 +320,7 @@ const CoverageChart = ({
                         variant="contained"
                         onClick={() => handleBulkCreate(fw)}
                         text={`Create tasks for ${selectedGaps.size} gap(s)`}
-                        sx={{ fontSize: 11, textTransform: "none" }}
+                        sx={{}}
                       />
                     </Box>
                   )}

@@ -56,7 +56,7 @@ const MappingMatrixView: React.FC<MappingMatrixViewProps> = ({ mappings, onCellC
 
   return (
     <Box>
-      <Typography variant="caption" sx={{ color: text.secondary, mb: 2, display: "block" }}>
+      <Typography sx={{ fontSize: 12, color: text.secondary, mb: 2, display: "block" }}>
         Click any cell to view mappings between those frameworks
       </Typography>
 
@@ -150,7 +150,7 @@ const MappingMatrixView: React.FC<MappingMatrixViewProps> = ({ mappings, onCellC
                       justifyContent: "center",
                       backgroundColor: isDiagonal ? background.hover : getCellColor(count, matrix.maxCount),
                       border: `1px solid ${borderPalette.light}`,
-                      borderRadius: 1,
+                      borderRadius: "4px",
                       cursor: !isDiagonal && count > 0 ? "pointer" : "default",
                       transition: "all 150ms ease",
                       flexShrink: 0,
@@ -184,7 +184,7 @@ const MappingMatrixView: React.FC<MappingMatrixViewProps> = ({ mappings, onCellC
 
       {/* Legend */}
       <Stack direction="row" spacing={2} alignItems="center" sx={{ mt: 2 }}>
-        <Typography variant="caption" sx={{ color: text.muted }}>
+        <Typography sx={{ fontSize: 12, color: text.muted }}>
           Density:
         </Typography>
         <Stack direction="row" spacing={0.5} alignItems="center">
@@ -196,12 +196,12 @@ const MappingMatrixView: React.FC<MappingMatrixViewProps> = ({ mappings, onCellC
                 height: 16,
                 backgroundColor: getCellColor(intensity * matrix.maxCount, matrix.maxCount || 1),
                 border: `1px solid ${borderPalette.light}`,
-                borderRadius: 0.5,
+                borderRadius: "4px",
               }}
             />
           ))}
         </Stack>
-        <Typography variant="caption" sx={{ color: text.muted }}>
+        <Typography sx={{ fontSize: 12, color: text.muted }}>
           Low → High
         </Typography>
       </Stack>

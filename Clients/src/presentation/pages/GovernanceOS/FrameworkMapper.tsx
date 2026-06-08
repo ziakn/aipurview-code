@@ -97,7 +97,7 @@ const FrameworkMapper = () => {
 
   return (
     <Stack spacing={3}>
-      <Typography variant="body2" sx={{ color: text.tertiary }}>
+      <Typography sx={{ fontSize: 13, color: text.tertiary }}>
         Explore cross-framework control mappings. Select source and target frameworks to see how
         controls align.
       </Typography>
@@ -115,12 +115,11 @@ const FrameworkMapper = () => {
             exclusive
             onChange={(_, value) => value && setViewMode(value)}
             size="small"
-            sx={{ height: 34 }}
           >
-            <ToggleButton value="list" sx={{ px: 1.5 }} disableRipple>
+            <ToggleButton value="list" disableRipple>
               <List size={14} />
             </ToggleButton>
-            <ToggleButton value="matrix" sx={{ px: 1.5 }} disableRipple>
+            <ToggleButton value="matrix" disableRipple>
               <Grid3X3 size={14} />
             </ToggleButton>
           </ToggleButtonGroup>
@@ -144,7 +143,6 @@ const FrameworkMapper = () => {
               URL.revokeObjectURL(url);
             }}
             text="Export"
-            sx={{ textTransform: "none", fontSize: 12, height: 34 }}
           />
           <CustomizableButton
             variant="outlined"
@@ -152,7 +150,6 @@ const FrameworkMapper = () => {
             startIcon={<Upload size={14} />}
             onClick={() => setBulkImportOpen(true)}
             text="Import"
-            sx={{ textTransform: "none", fontSize: 12, height: 34 }}
           />
           <CustomizableButton
             variant="outlined"
@@ -160,7 +157,6 @@ const FrameworkMapper = () => {
             startIcon={<Plus size={14} />}
             onClick={handleCreateMapping}
             text="New Mapping"
-            sx={{ textTransform: "none", fontSize: 12, height: 34 }}
           />
         </Stack>
       </Stack>
@@ -187,7 +183,7 @@ const FrameworkMapper = () => {
         />
       ) : (
         <Stack spacing={2}>
-          <Typography variant="caption" sx={{ color: text.muted }}>
+          <Typography sx={{ fontSize: 12, color: text.muted }}>
             {filteredMappings.length} mapping(s) found
           </Typography>
           {filteredMappings.map((mapping) => (

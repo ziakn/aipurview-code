@@ -118,7 +118,7 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
             <Box
               sx={{
                 border: `1px solid ${borderPalette.light}`,
-                borderRadius: 2,
+                borderRadius: "4px",
                 maxHeight: 320,
                 overflow: "auto",
               }}
@@ -181,7 +181,7 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
           <Box
             sx={{
               border: `1px solid ${borderPalette.light}`,
-              borderRadius: 2,
+              borderRadius: "4px",
               p: 2,
               background: background.main,
             }}
@@ -230,7 +230,7 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
         <Box
           sx={{
             border: `1px solid ${borderPalette.light}`,
-            borderRadius: 2,
+            borderRadius: "4px",
             p: 2,
             background: background.main,
           }}

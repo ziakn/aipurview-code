@@ -1,5 +1,5 @@
 import React from "react";
-import { Stack, Typography, Paper, Tooltip, useTheme } from "@mui/material";
+import { Stack, Typography, Box, Tooltip, useTheme } from "@mui/material";
 import { GitCompareArrows, X as CloseIcon } from "lucide-react";
 import { useAuth } from "../../../application/hooks/useAuth";
 import {
@@ -31,33 +31,31 @@ const GovernanceOsBanner: React.FC<GovernanceOsBannerProps> = ({ frameworkCount,
   };
 
   return (
-    <Paper
-      elevation={0}
+    <Box
       sx={{
-        mb: theme.spacing(12),
-        p: theme.spacing(6, 8),
-        borderRadius: theme.spacing(2),
+        mb: 3,
+        p: "12px 16px",
+        borderRadius: "4px",
         border: `1px solid ${palette.brand.primaryLight}`,
         backgroundColor: palette.brand.primaryLight,
-        boxShadow: "none",
       }}
     >
       <Stack
         direction="row"
-        gap={theme.spacing(8)}
+        gap={2}
         alignItems="center"
         justifyContent="space-between"
       >
         <Stack
           direction="row"
-          gap={theme.spacing(6)}
+          gap={1.5}
           alignItems="center"
           sx={{ flex: 1, minWidth: 0 }}
         >
           <GitCompareArrows size={20} color={palette.brand.primary} style={{ flexShrink: 0 }} />
           <Typography
             sx={{
-              fontSize: theme.typography.pxToRem(13),
+              fontSize: 13,
               fontWeight: 500,
               color: theme.palette.text.secondary,
               lineHeight: 1.5,
@@ -68,30 +66,16 @@ const GovernanceOsBanner: React.FC<GovernanceOsBannerProps> = ({ frameworkCount,
           </Typography>
         </Stack>
 
-        <Stack direction="row" gap={theme.spacing(4)} alignItems="center" sx={{ flexShrink: 0 }}>
+        <Stack direction="row" gap={1} alignItems="center" sx={{ flexShrink: 0 }}>
           <Tooltip title={!isAdmin ? "Contact your admin to enable Governance OS" : ""} arrow>
             <span>
               <CustomizableButton
                 variant="contained"
                 size="medium"
+                color="primary"
                 isDisabled={!isAdmin || updatePreferences.isPending}
                 onClick={handleEnable}
                 text={updatePreferences.isPending ? "Enabling..." : "Enable Governance OS"}
-                sx={{
-                  textTransform: "none",
-                  fontWeight: 600,
-                  fontSize: theme.typography.pxToRem(13),
-                  borderRadius: theme.spacing(2),
-                  boxShadow: "none",
-                  px: theme.spacing(6),
-                  py: theme.spacing(3),
-                  height: 32,
-                  backgroundColor: palette.brand.primary,
-                  "&:hover": {
-                    backgroundColor: palette.brand.primaryHover,
-                    boxShadow: "none",
-                  },
-                }}
               />
             </span>
           </Tooltip>
@@ -118,7 +102,7 @@ const GovernanceOsBanner: React.FC<GovernanceOsBannerProps> = ({ frameworkCount,
           )}
         </Stack>
       </Stack>
-    </Paper>
+    </Box>
   );
 };
 

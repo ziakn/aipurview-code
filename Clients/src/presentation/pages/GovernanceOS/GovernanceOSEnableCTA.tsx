@@ -68,17 +68,15 @@ const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({ onEnabled
             <Layers size={32} color={palette.brand.primary} />
           </Box>
           <Typography
-            variant="h5"
             sx={{
               fontWeight: 600,
               color: palette.text.primary,
-              fontSize: 22,
+              fontSize: 24,
             }}
           >
             Core Governance OS
           </Typography>
           <Typography
-            variant="body1"
             sx={{
               color: palette.text.tertiary,
               maxWidth: 520,
@@ -100,7 +98,7 @@ const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({ onEnabled
               elevation={0}
               sx={{
                 p: 2.5,
-                borderRadius: 2,
+                borderRadius: "4px",
                 border: `1px solid ${palette.border.light}`,
                 backgroundColor: palette.background.alt,
               }}
@@ -109,7 +107,6 @@ const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({ onEnabled
                 <Box sx={{ mt: 0.25, flexShrink: 0 }}>{feature.icon}</Box>
                 <Stack spacing={0.5}>
                   <Typography
-                    variant="subtitle2"
                     sx={{
                       fontWeight: 600,
                       color: palette.text.primary,
@@ -119,7 +116,6 @@ const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({ onEnabled
                     {feature.title}
                   </Typography>
                   <Typography
-                    variant="body2"
                     sx={{
                       color: palette.text.tertiary,
                       fontSize: 13,
@@ -141,24 +137,11 @@ const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({ onEnabled
               <CustomizableButton
                 variant="contained"
                 size="medium"
+                color="primary"
                 isDisabled={!isAdmin || updatePreferences.isPending}
                 onClick={handleEnable}
-                startIcon={<Lightbulb size={18} />}
+                startIcon={<Lightbulb size={16} />}
                 text={updatePreferences.isPending ? "Enabling..." : "Enable Governance OS"}
-                sx={{
-                  textTransform: "none",
-                  fontWeight: 600,
-                  fontSize: 15,
-                  borderRadius: 2,
-                  px: 4,
-                  py: 1,
-                  boxShadow: "none",
-                  backgroundColor: palette.brand.primary,
-                  "&:hover": {
-                    backgroundColor: palette.brand.primaryHover,
-                    boxShadow: "none",
-                  },
-                }}
               />
             </span>
           </Tooltip>
@@ -166,17 +149,9 @@ const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({ onEnabled
           <CustomizableButton
             variant="text"
             size="small"
+            color="primary"
             onClick={() => openUserGuide("governance-os")}
             text="Learn more in the user guide"
-            sx={{
-              textTransform: "none",
-              fontWeight: 500,
-              fontSize: 13,
-              color: palette.brand.primary,
-              "&:hover": {
-                backgroundColor: palette.brand.primaryLight,
-              },
-            }}
           />
         </Stack>
       </Stack>

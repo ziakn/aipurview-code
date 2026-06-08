@@ -135,14 +135,7 @@ const ScenarioCard = ({
                   }}
                   startIcon={<Zap size={14} />}
                   text="Activate"
-                  sx={{
-                    fontSize: 12,
-                    textTransform: "none",
-                    boxShadow: "none",
-                    backgroundColor: brand.primary,
-                    color: theme.palette.common.white,
-                    "&:hover": { backgroundColor: brand.primaryHover, boxShadow: "none" },
-                  }}
+                  sx={{}}
                 />
               </VWTooltip>
             )}
@@ -167,8 +160,6 @@ const ScenarioCard = ({
                     startIcon={isSelected ? <Check size={14} /> : undefined}
                     text={isSelected ? "Selected" : "Select"}
                     sx={{
-                      fontSize: 12,
-                      textTransform: "none",
                       borderColor: isSelected ? brand.primary : borderPalette.dark,
                       color: isSelected ? brand.primary : text.secondary,
                       "&:hover": {
@@ -397,7 +388,7 @@ const ScenarioCard = ({
                 <Box
                   sx={{
                     p: 2,
-                    borderRadius: 2,
+                    borderRadius: "4px",
                     border: `1px solid ${accent.primary.border}`,
                     background: accent.primary.bg,
                   }}
@@ -419,7 +410,7 @@ const ScenarioCard = ({
                 <Box
                   sx={{
                     p: 2,
-                    borderRadius: 2,
+                    borderRadius: "4px",
                     border: `1px solid ${accent.indigo.border}`,
                     background: accent.indigo.bg,
                   }}
@@ -441,7 +432,7 @@ const ScenarioCard = ({
                 <Box
                   sx={{
                     p: 2,
-                    borderRadius: 2,
+                    borderRadius: "4px",
                     border: `1px solid ${borderPalette.light}`,
                     background: background.hover,
                   }}

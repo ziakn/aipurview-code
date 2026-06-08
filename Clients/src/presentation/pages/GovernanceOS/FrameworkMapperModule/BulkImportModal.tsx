@@ -144,7 +144,7 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
             justifyContent: "center",
             p: 4,
             border: `2px dashed ${borderPalette.dark}`,
-            borderRadius: 2,
+            borderRadius: "4px",
             backgroundColor: background.accent,
             cursor: "pointer",
             transition: "all 150ms ease",
@@ -169,24 +169,24 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
         {parsedRows.length > 0 && (
           <>
             <Stack direction="row" spacing={2} alignItems="center">
-              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+              <Typography sx={{ fontSize: 13, fontWeight: 600 }}>
                 Preview
               </Typography>
               {validCount > 0 && (
                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, color: accent.primary.text }}>
                   <Check size={14} />
-                  <Typography variant="caption">{validCount} valid</Typography>
+                  <Typography sx={{ fontSize: 12 }}>{validCount} valid</Typography>
                 </Box>
               )}
               {invalidCount > 0 && (
                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, color: status.error.text }}>
                   <X size={14} />
-                  <Typography variant="caption">{invalidCount} invalid</Typography>
+                  <Typography sx={{ fontSize: 12 }}>{invalidCount} invalid</Typography>
                 </Box>
               )}
             </Stack>
 
-            <Box sx={{ maxHeight: 300, overflow: "auto", border: `1px solid ${borderPalette.light}`, borderRadius: 1 }}>
+            <Box sx={{ maxHeight: 300, overflow: "auto", border: `1px solid ${borderPalette.light}`, borderRadius: "4px" }}>
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ backgroundColor: background.accent }}>

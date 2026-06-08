@@ -162,7 +162,7 @@ const UnifiedInsights = () => {
 
   return (
     <Stack spacing={3}>
-      <Typography variant="body2" sx={{ color: text.tertiary }}>
+      <Typography sx={{ fontSize: 13, color: text.tertiary }}>
         View cross-framework coverage analysis per project. Identify gaps and synergies across your
         active frameworks.
       </Typography>
@@ -172,7 +172,7 @@ const UnifiedInsights = () => {
         <Box
           sx={{
             border: `1px solid ${brand.primary}`,
-            borderRadius: 2,
+            borderRadius: "4px",
             p: 2,
             background: `linear-gradient(135deg, ${background.main} 0%, ${alpha(brand.primary, 0.06)} 100%)`,
           }}
@@ -214,7 +214,7 @@ const UnifiedInsights = () => {
               onClick={() => refreshMutation.mutate(selectedProjectId)}
               isDisabled={refreshMutation.isPending}
               text={refreshMutation.isPending ? "Refreshing..." : "Refresh Coverage"}
-              sx={{ height: 34 }}
+              sx={{}}
             />
             <CustomizableButton
               size="small"
@@ -223,7 +223,7 @@ const UnifiedInsights = () => {
               onClick={handleExportCsv}
               isDisabled={!coverage || coverage.length === 0}
               text="Export CSV"
-              sx={{ height: 34, textTransform: "none" }}
+              sx={{}}
             />
           </>
         )}

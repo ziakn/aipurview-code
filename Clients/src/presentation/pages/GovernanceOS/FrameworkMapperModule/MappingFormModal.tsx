@@ -94,7 +94,7 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
       <Stack spacing={3} sx={{ minWidth: 520 }}>
         {/* Source Framework */}
         <Box>
-          <Typography variant="caption" sx={{ color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}>
+          <Typography sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}>
             Source Framework *
           </Typography>
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
@@ -137,7 +137,7 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
 
         {/* Target Framework */}
         <Box>
-          <Typography variant="caption" sx={{ color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}>
+          <Typography sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}>
             Target Framework *
           </Typography>
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
@@ -180,7 +180,7 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
 
         {/* Mapping Strength */}
         <Box>
-          <Typography variant="caption" sx={{ color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}>
+          <Typography sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}>
             Mapping Strength
           </Typography>
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
@@ -235,7 +235,7 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
 
         {/* Confidence Score */}
         <Box>
-          <Typography variant="caption" sx={{ color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}>
+          <Typography sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}>
             Confidence Score: {Math.round(confidenceScore * 100)}%
           </Typography>
           <Slider

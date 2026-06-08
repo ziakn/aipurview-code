@@ -53,7 +53,6 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
   error,
   onSimulate,
 }) => {
-  const theme = useTheme();
   const [baseScenarioId, setBaseScenarioId] = useState<string>("");
   const [primaryId, setPrimaryId] = useState<string>("");
   const [secondaryIds, setSecondaryIds] = useState<number[]>([]);
@@ -116,14 +115,14 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
     <Box
       sx={{
         border: `1px solid ${borderPalette.dark}`,
-        borderRadius: 2,
+        borderRadius: "4px",
         p: 3,
         background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
       }}
     >
       <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
         <Calculator size={20} color={brand.primary} />
-        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+        <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
           What-If Simulator
         </Typography>
       </Stack>
@@ -155,7 +154,7 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
           <Box
             sx={{
               border: `1px solid ${borderPalette.light}`,
-              borderRadius: 2,
+              borderRadius: "4px",
               p: 2,
               background: background.main,
             }}
@@ -178,7 +177,7 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
           <Box
             sx={{
               border: `1px solid ${borderPalette.light}`,
-              borderRadius: 2,
+              borderRadius: "4px",
               p: 2,
               background: background.main,
             }}
@@ -230,7 +229,7 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
           <Box
             sx={{
               border: `1px solid ${borderPalette.light}`,
-              borderRadius: 2,
+              borderRadius: "4px",
               p: 2,
               background: background.main,
             }}
@@ -285,7 +284,7 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
             onClick={handleRun}
             isDisabled={isSimulating || allSelectedIds.length === 0}
             text={isSimulating ? "Simulating..." : "Run simulation"}
-            sx={{ textTransform: "none", fontSize: 13 }}
+            sx={{}}
           />
         </Box>
 
@@ -299,7 +298,7 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
           <Box
             sx={{
               border: `1px solid ${borderPalette.light}`,
-              borderRadius: 2,
+              borderRadius: "4px",
               p: 2,
               background: background.main,
             }}
@@ -333,11 +332,11 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
               value={result.estimatedCoveragePercent}
               sx={{
                 height: 8,
-                borderRadius: 4,
+                borderRadius: "4px",
                 backgroundColor: background.hover,
                 "& .MuiLinearProgress-bar": {
                   backgroundColor: brand.primary,
-                  borderRadius: 4,
+                  borderRadius: "4px",
                 },
               }}
             />
@@ -401,7 +400,7 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
 };
 
 const MetricBox: React.FC<{ label: string; value: string }> = ({ label, value }) => (
-  <Box sx={{ textAlign: "center", p: 1.5, background: background.hover, borderRadius: 2 }}>
+  <Box sx={{ textAlign: "center", p: 1.5, background: background.hover, borderRadius: "4px" }}>
     <Typography sx={{ fontSize: 18, fontWeight: 600, color: brand.primary }}>{value}</Typography>
     <Typography sx={{ fontSize: 11, color: text.muted }}>{label}</Typography>
   </Box>

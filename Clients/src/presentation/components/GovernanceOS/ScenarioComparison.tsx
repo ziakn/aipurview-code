@@ -77,14 +77,14 @@ const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
     <Box
       sx={{
         border: `1px solid ${borderPalette.dark}`,
-        borderRadius: 2,
+        borderRadius: "4px",
         p: 3,
         background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
       }}
     >
       <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
         <Scale size={20} color={brand.primary} />
-        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+        <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
           Scenario Comparison
         </Typography>
       </Stack>
@@ -108,7 +108,7 @@ const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
                 gap: 1,
                 px: 1.5,
                 py: 0.75,
-                borderRadius: 1.5,
+                borderRadius: "4px",
                 border: `1px solid ${isSelected ? brand.primary : borderPalette.light}`,
                 backgroundColor: isSelected ? alpha(brand.primary, 0.08) : background.main,
                 opacity: disabled ? 0.5 : 1,
@@ -135,7 +135,7 @@ const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
               gridTemplateColumns: `140px repeat(${comparedScenarios.length}, minmax(180px, 1fr))`,
               minWidth: comparedScenarios.length * 200 + 140,
               border: `1px solid ${borderPalette.light}`,
-              borderRadius: 2,
+              borderRadius: "4px",
               overflow: "hidden",
             }}
           >
@@ -304,7 +304,7 @@ const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
             p: 4,
             textAlign: "center",
             border: `1px dashed ${borderPalette.light}`,
-            borderRadius: 2,
+            borderRadius: "4px",
             background: background.main,
           }}
         >

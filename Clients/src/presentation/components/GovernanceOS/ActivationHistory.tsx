@@ -35,7 +35,7 @@ const ActivationHistory: React.FC = () => {
       <Box
         sx={{
           border: `1px dashed ${borderPalette.light}`,
-          borderRadius: 2,
+          borderRadius: "4px",
           p: 3,
           background: background.main,
         }}
@@ -54,14 +54,14 @@ const ActivationHistory: React.FC = () => {
     <Box
       sx={{
         border: `1px solid ${borderPalette.dark}`,
-        borderRadius: 2,
+        borderRadius: "4px",
         p: 3,
         background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
       }}
     >
       <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
         <History size={20} color={brand.primary} />
-        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+        <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
           Activation History
         </Typography>
       </Stack>
@@ -81,7 +81,7 @@ const ActivationHistory: React.FC = () => {
                 alignItems: "center",
                 justifyContent: "space-between",
                 p: 1.5,
-                borderRadius: 1.5,
+                borderRadius: "4px",
                 border: `1px solid ${borderPalette.light}`,
                 background: isActive ? alpha(brand.primary, 0.04) : background.main,
               }}

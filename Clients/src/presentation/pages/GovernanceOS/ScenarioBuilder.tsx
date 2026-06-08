@@ -176,7 +176,7 @@ const ScenarioBuilder = () => {
 
   return (
     <Stack spacing={3}>
-      <Typography variant="body2" sx={{ color: text.tertiary }}>
+      <Typography sx={{ fontSize: 13, color: text.tertiary }}>
         Get framework recommendations based on your organization context, or browse pre-built
         governance scenarios.
       </Typography>
@@ -192,12 +192,12 @@ const ScenarioBuilder = () => {
       <Box
         sx={{
           border: `1px solid ${borderPalette.dark}`,
-          borderRadius: 2,
+          borderRadius: "4px",
           p: 3,
           background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
         }}
       >
-        <Typography variant="subtitle2" sx={{ mb: 3, fontWeight: 600 }}>
+        <Typography sx={{ mb: 3, fontSize: 14, fontWeight: 600 }}>
           Get Recommendations
         </Typography>
         <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap alignItems="flex-end">
@@ -254,7 +254,7 @@ const ScenarioBuilder = () => {
             onClick={handleRecommend}
             isDisabled={recommendMutation.isPending || !canRecommend}
             text={recommendMutation.isPending ? "Getting..." : "Get Recommendations"}
-            sx={{ alignSelf: "flex-end", minWidth: 140, height: 34 }}
+            sx={{ alignSelf: "flex-end", minWidth: 140 }}
           />
         </Stack>
       </Box>
@@ -262,7 +262,7 @@ const ScenarioBuilder = () => {
       {/* Recommendation results */}
       {recommendMutation.data && recommendMutation.data.length > 0 && (
         <Stack spacing={2}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+          <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
             Recommended Scenarios
           </Typography>
           <Stack spacing={2}>
@@ -306,7 +306,7 @@ const ScenarioBuilder = () => {
       {/* All scenarios */}
       <Stack spacing={2}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+          <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
             All Governance Scenarios
           </Typography>
           <CustomizableButton
@@ -315,7 +315,6 @@ const ScenarioBuilder = () => {
             startIcon={<Plus size={14} />}
             onClick={handleCreateScenario}
             text="New Scenario"
-            sx={{ textTransform: "none", fontSize: 12 }}
           />
         </Stack>
 

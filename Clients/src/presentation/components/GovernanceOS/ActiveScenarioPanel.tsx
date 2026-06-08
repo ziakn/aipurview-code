@@ -47,7 +47,7 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
       <Box
         sx={{
           border: `1px dashed ${borderPalette.light}`,
-          borderRadius: 2,
+          borderRadius: "4px",
           p: 3,
           background: background.main,
         }}
@@ -87,7 +87,7 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
     <Box
       sx={{
         border: `1px solid ${brand.primary}`,
-        borderRadius: 2,
+        borderRadius: "4px",
         p: 3,
         background: `linear-gradient(135deg, ${background.main} 0%, ${alpha(brand.primary, 0.06)} 100%)`,
       }}
@@ -182,7 +182,7 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
               text="Deactivate"
               onClick={() => deactivateMutation.mutate(latestActivation.id)}
               isDisabled={deactivateMutation.isPending}
-              sx={{ textTransform: "none", fontSize: 12 }}
+              sx={{}}
             />
           )}
           <CustomizableButton
@@ -192,14 +192,7 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
             endIcon={<ArrowRight size={14} />}
             onClick={() => onActivate(activeScenario)}
             text={latestActivation ? "Re-activate" : "Activate now"}
-            sx={{
-              textTransform: "none",
-              fontSize: 13,
-              boxShadow: "none",
-              backgroundColor: brand.primary,
-              color: theme.palette.common.white,
-              "&:hover": { backgroundColor: brand.primaryHover, boxShadow: "none" },
-            }}
+            sx={{}}
           />
         </Stack>
       </Stack>
@@ -235,7 +228,7 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
                     value={percent}
                     sx={{
                       height: 6,
-                      borderRadius: 3,
+                      borderRadius: "4px",
                       backgroundColor: background.hover,
                       "& .MuiLinearProgress-bar": {
                         backgroundColor:
@@ -244,7 +237,7 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
                             : percent >= 40
                               ? status.warning.text
                               : status.error.text,
-                        borderRadius: 3,
+                        borderRadius: "4px",
                       },
                     }}
                   />
