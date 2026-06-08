@@ -75,7 +75,7 @@ const GovernanceSettings: React.FC = () => {
   if (prefsLoading) {
     return (
       <GovernanceLayout title="Settings" subtitle="Manage Governance Intelligence configuration">
-        <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", py: "48px" }}>
           <CircularProgress size={32} />
         </Box>
       </GovernanceLayout>
@@ -87,7 +87,7 @@ const GovernanceSettings: React.FC = () => {
       title="Settings"
       subtitle="Manage Governance Intelligence configuration, preferences, and defaults."
     >
-      <Stack spacing={3}>
+      <Stack gap="16px">
         {alert && (
           <Alert severity={alert.variant} sx={{ fontSize: 13 }}>
             {alert.message}
@@ -105,7 +105,7 @@ const GovernanceSettings: React.FC = () => {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              p: 2,
+              p: "16px",
               border: `1px solid ${borderPalette.light}`,
               borderRadius: "4px",
               background: background.main,
@@ -131,7 +131,7 @@ const GovernanceSettings: React.FC = () => {
             />
           </Box>
           {!isAdmin && (
-            <Typography sx={{ fontSize: 11, color: text.muted, mt: 0.5 }}>
+            <Typography sx={{ fontSize: 11, color: text.muted, mt: "4px" }}>
               Only admins can change module status.
             </Typography>
           )}
@@ -145,19 +145,19 @@ const GovernanceSettings: React.FC = () => {
         >
           <Box
             sx={{
-              p: 2,
+              p: "16px",
               border: `1px solid ${borderPalette.light}`,
               borderRadius: "4px",
               background: background.main,
             }}
           >
             {activeScenarioId ? (
-              <Stack spacing={1.5}>
+              <Stack gap="12px">
                 <Typography sx={{ fontSize: 13, fontWeight: 500, color: text.primary }}>
                   Scenario ID: {activeScenarioId}
                 </Typography>
                 {customPriority && (
-                  <Stack direction="row" flexWrap="wrap" gap={0.75}>
+                  <Stack direction="row" flexWrap="wrap" gap="6px">
                     {customPriority.primary && (
                       <FrameworkChip
                         frameworkName={FRAMEWORK_NAMES[customPriority.primary] || String(customPriority.primary)}
@@ -185,7 +185,7 @@ const GovernanceSettings: React.FC = () => {
                 </Box>
               </Stack>
             ) : (
-              <Stack spacing={1.5}>
+              <Stack gap="12px">
                 <Typography sx={{ fontSize: 13, color: text.accent }}>
                   No active scenario selected.
                 </Typography>
@@ -208,13 +208,13 @@ const GovernanceSettings: React.FC = () => {
         >
           <Box
             sx={{
-              p: 2,
+              p: "16px",
               border: `1px solid ${borderPalette.light}`,
               borderRadius: "4px",
               background: background.main,
             }}
           >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <Checkbox
                 id="dont-ask-governance-os"
                 isChecked={dontAskAgain}
@@ -225,7 +225,7 @@ const GovernanceSettings: React.FC = () => {
                 Don&apos;t ask me again about enabling Governance Intelligence
               </Typography>
             </Box>
-            <Box sx={{ mt: 1.5 }}>
+            <Box sx={{ mt: "12px" }}>
               <CustomizableButton
                 size="small"
                 variant="text"
@@ -260,7 +260,7 @@ const GovernanceSettings: React.FC = () => {
                 No default filters configured. Filters are set per-session in the Framework Mapper.
               </Typography>
             )}
-            <Box sx={{ mt: 1.5 }}>
+            <Box sx={{ mt: "12px" }}>
               <CustomizableButton
                 size="small"
                 variant="outlined"
@@ -294,7 +294,7 @@ const SettingsSection: React.FC<{
   children: React.ReactNode;
 }> = ({ icon, title, description, children }) => (
   <Box>
-    <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 1.5 }}>
+    <Stack direction="row" gap="12px" alignItems="center" sx={{ mb: "12px" }}>
       <Box
         sx={{
           width: 32,
