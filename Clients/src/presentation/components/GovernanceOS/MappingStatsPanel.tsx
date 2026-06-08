@@ -25,7 +25,7 @@ const MappingStatsPanel: React.FC<MappingStatsPanelProps> = ({ projectId }) => {
 
   if (isLoading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}>
+      <Box sx={{ display: "flex", justifyContent: "center", py: "24px" }}>
         <CircularProgress size={24} />
       </Box>
     );
@@ -39,7 +39,7 @@ const MappingStatsPanel: React.FC<MappingStatsPanelProps> = ({ projectId }) => {
         sx={{
           border: `1px dashed ${borderPalette.light}`,
           borderRadius: "4px",
-          p: 2,
+          p: "16px",
           background: background.main,
         }}
       >
@@ -58,29 +58,29 @@ const MappingStatsPanel: React.FC<MappingStatsPanelProps> = ({ projectId }) => {
       sx={{
         border: `1px solid ${borderPalette.dark}`,
         borderRadius: "4px",
-        p: 3,
+        p: "16px",
         background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
       }}
     >
-      <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+      <Stack direction="row" gap="16px" alignItems="center" sx={{ mb: "16px" }}>
         <Network size={20} color={brand.primary} />
         <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
           Mapping Statistics
         </Typography>
       </Stack>
 
-      <Stack spacing={3}>
+      <Stack gap="16px">
         {/* Total mappings */}
         <Box
           sx={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
-            gap: 2,
+            gap: "16px",
           }}
         >
           <Box
             sx={{
-              p: 2,
+              p: "16px",
               background: background.hover,
               borderRadius: "4px",
               textAlign: "center",
@@ -96,10 +96,10 @@ const MappingStatsPanel: React.FC<MappingStatsPanelProps> = ({ projectId }) => {
         {/* By domain */}
         {domainEntries.length > 0 && (
           <Box>
-            <Typography sx={{ fontSize: 12, fontWeight: 600, color: text.primary, mb: 1 }}>
+            <Typography sx={{ fontSize: 12, fontWeight: 600, color: text.primary, mb: "8px" }}>
               By domain
             </Typography>
-            <Stack direction="row" flexWrap="wrap" gap={1}>
+            <Stack direction="row" flexWrap="wrap" gap="8px">
               {domainEntries.map(([domain, count]) => (
                 <Box
                   key={domain}
@@ -128,10 +128,10 @@ const MappingStatsPanel: React.FC<MappingStatsPanelProps> = ({ projectId }) => {
         {/* By strength */}
         {strengthEntries.length > 0 && (
           <Box>
-            <Typography sx={{ fontSize: 12, fontWeight: 600, color: text.primary, mb: 1 }}>
+            <Typography sx={{ fontSize: 12, fontWeight: 600, color: text.primary, mb: "8px" }}>
               By mapping strength
             </Typography>
-            <Stack direction="row" flexWrap="wrap" gap={1}>
+            <Stack direction="row" flexWrap="wrap" gap="8px">
               {strengthEntries.map(([strength, count]) => {
                 const colors = STRENGTH_COLORS[strength] || STRENGTH_COLORS.related;
                 return (
