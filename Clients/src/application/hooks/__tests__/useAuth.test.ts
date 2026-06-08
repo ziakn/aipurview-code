@@ -18,7 +18,7 @@ function fakeJwt(payload: Record<string, unknown>): string {
   return `${header}.${body}.fake-signature`;
 }
 
-function createWrapper(authToken: string) {
+function createWrapper(authToken: string, overrides?: Record<string, unknown>) {
   const store = configureStore({
     reducer: { auth: authReducer, ui: uiReducer, files: fileReducer },
     preloadedState: {
@@ -34,6 +34,7 @@ function createWrapper(authToken: string) {
         isOrgCreator: false,
         isSuperAdmin: false,
         activeOrganizationId: null,
+        ...overrides,
       },
     },
   });
@@ -103,5 +104,24 @@ describe("useAuth", () => {
     });
 
     expect(result.current.userId).toBeNaN(); // parseInt("not-a-number") is NaN
+  });
+
+  it("should return activeOrganizationId when user is super admin", () => {
+    const token = fakeJwt({
+      id: "1",
+      roleName: "SuperAdmin",
+      organizationId: "7",
+    });
+
+    const { result } = renderHook(() => useAuth(), {
+      wrapper: createWrapper(token, {
+        isSuperAdmin: true,
+        activeOrganizationId: 99,
+      }),
+    });
+
+    expect(result.current.isSuperAdmin).toBe(true);
+    // When super admin, organizationId should come from activeOrganizationId, not the token
+    expect(result.current.organizationId).toBe(99);
   });
 });

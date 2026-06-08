@@ -204,4 +204,48 @@ describe("CustomizableBasicTable", () => {
       expect(screen.getByText(/Rows per page/)).toBeInTheDocument();
     });
   });
+
+  it("calls onRowClick when a row is clicked", async () => {
+    const onRowClick = vi.fn();
+    const user = userEvent.setup();
+    renderWithProviders(
+      <CustomizableBasicTable {...defaultProps} onRowClick={onRowClick} />,
+    );
+
+    const row = screen.getByText("Data Breach Risk").closest("tr")!;
+    await user.click(row);
+
+    expect(onRowClick).toHaveBeenCalledWith(mockRows[0].id);
+  });
+
+  it("returns empty string from riskLevelChecker for undefined score", () => {
+    const rows = [{ ...mockRows[0], id: 20, risk_level_autocalculated: undefined }];
+    renderWithProviders(
+      <CustomizableBasicTable
+        {...defaultProps}
+        data={{ rows, cols: mockColumns }}
+        bodyData={rows}
+      />,
+    );
+    // Cell should be empty
+    const cells = document.querySelectorAll("td");
+    expect(cells[3].textContent).toBe("");
+  });
+
+  it("returns raw score from riskLevelChecker for non-numeric score", () => {
+    const rows = [{ ...mockRows[0], id: 21, risk_level_autocalculated: "Pending" }];
+    renderWithProviders(
+      <CustomizableBasicTable
+        {...defaultProps}
+        data={{ rows, cols: mockColumns }}
+        bodyData={rows}
+      />,
+    );
+    expect(screen.getAllByText("Pending").length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("shows pagination range text when paginated", () => {
+    renderWithProviders(<CustomizableBasicTable {...defaultProps} paginated />);
+    expect(screen.getByText(/Showing 1 - 2 of 2 items/)).toBeInTheDocument();
+  });
 });

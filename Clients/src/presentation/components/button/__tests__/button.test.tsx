@@ -1,7 +1,9 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { ThemeProvider } from "@mui/material/styles";
 import { renderWithProviders } from "../../../../test/renderWithProviders";
 import { Button } from "../index";
+import light from "../../../themes/light";
 
 describe("Button", () => {
   it("renders button text", () => {
@@ -31,8 +33,6 @@ describe("Button", () => {
     );
 
     const button = screen.getByRole("button", { name: "No click" });
-    // Disabled MUI buttons have pointer-events: none, so we verify
-    // the button is disabled rather than attempting a click
     expect(button).toBeDisabled();
     expect(handleClick).not.toHaveBeenCalled();
   });
@@ -56,13 +56,36 @@ describe("Button", () => {
     expect(button).toBeInTheDocument();
   });
 
-  it("falls back to children string for aria-label when label not provided", () => {
-    renderWithProviders(<Button>Aria Fallback</Button>);
-    expect(screen.getByRole("button", { name: "Aria Fallback" })).toBeInTheDocument();
+  it("sets aria-label to undefined when children is not a string", () => {
+    renderWithProviders(
+      <Button>
+        <span>Complex child</span>
+      </Button>,
+    );
+    const button = screen.getByRole("button");
+    expect(button).not.toHaveAttribute("aria-label");
   });
 
-  it("uses children as aria-label when no explicit aria-label given", () => {
-    renderWithProviders(<Button>Child text</Button>);
-    expect(screen.getByRole("button", { name: "Child text" })).toBeInTheDocument();
+  it("uses fallback values when theme colors are empty", () => {
+    const emptyPrimaryTheme = {
+      ...light,
+      alpha: () => "rgba(0,0,0,0.5)",
+      palette: {
+        ...light.palette,
+        primary: {
+          ...light.palette.primary,
+          main: "",
+          dark: "",
+          contrastText: "",
+        },
+      },
+    };
+
+    renderWithProviders(
+      <ThemeProvider theme={emptyPrimaryTheme}>
+        <Button>Fallback</Button>
+      </ThemeProvider>,
+    );
+    expect(screen.getByRole("button", { name: "Fallback" })).toBeInTheDocument();
   });
 });
