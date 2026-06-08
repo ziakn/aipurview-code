@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { Play, Calculator } from "lucide-react";
 import Select from "../Inputs/Select";
-import CustomizableButton from "../button/customizable-button";
+import { CustomizableButton } from "../button/customizable-button";
 import { IGovernanceScenario } from "../../../domain/interfaces/i.governanceOs";
 import { border as borderPalette, background, text, accent, brand } from "../../themes/palette";
 

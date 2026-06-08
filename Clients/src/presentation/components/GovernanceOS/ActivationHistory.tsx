@@ -11,7 +11,7 @@ import {
   useActivationHistory,
   useDeactivateScenario,
 } from "../../../application/hooks/useGovernanceOs";
-import CustomizableButton from "../button/customizable-button";
+import { CustomizableButton } from "../button/customizable-button";
 import { border as borderPalette, background, text, brand, status } from "../../themes/palette";
 
 const ActivationHistory: React.FC = () => {

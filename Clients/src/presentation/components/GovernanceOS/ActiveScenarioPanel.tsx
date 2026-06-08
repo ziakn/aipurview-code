@@ -8,7 +8,7 @@ import {
   useScenarioProgress,
 } from "../../../application/hooks/useGovernanceOs";
 import FrameworkChip from "./FrameworkChip";
-import CustomizableButton from "../button/customizable-button";
+import { CustomizableButton } from "../button/customizable-button";
 import { border as borderPalette, background, text, accent, brand, status } from "../../themes/palette";
 
 interface ActiveScenarioPanelProps {

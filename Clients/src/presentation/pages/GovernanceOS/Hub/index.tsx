@@ -28,7 +28,7 @@ import {
 import GovernanceWorkspaceShell from "../shared/GovernanceWorkspaceShell";
 import { DashboardHeaderCard } from "../../../components/Cards/DashboardHeaderCard";
 import FrameworkChip from "../../../components/GovernanceOS/FrameworkChip";
-import CustomizableButton from "../../../components/button/customizable-button";
+import { CustomizableButton } from "../../../components/button/customizable-button";
 import {
   brand,
   border as borderPalette,

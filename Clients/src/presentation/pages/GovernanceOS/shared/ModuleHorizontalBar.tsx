@@ -11,7 +11,7 @@ import {
   Radio,
   Settings,
 } from "lucide-react";
-import CustomizableButton from "../../../components/button/customizable-button";
+import { CustomizableButton } from "../../../components/button/customizable-button";
 import { brand } from "../../../themes/palette";
 
 export interface ModuleItem {

@@ -3,7 +3,7 @@ import { Box, Stack, Typography, Paper, Tooltip } from "@mui/material";
 import { GitCompareArrows, Layers, Compass, BarChart3, Lightbulb } from "lucide-react";
 import { useAuth } from "../../../application/hooks/useAuth";
 import { useUpdatePreferences } from "../../../application/hooks/useGovernanceOs";
-import CustomizableButton from "../../components/button/customizable-button";
+import { CustomizableButton } from "../../components/button/customizable-button";
 import { palette } from "../../themes/palette";
 import { useUserGuideSidebarContext } from "../../components/UserGuide";
 

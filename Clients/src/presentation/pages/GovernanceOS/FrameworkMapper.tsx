@@ -6,7 +6,7 @@ import MappingCard from "../../components/GovernanceOS/MappingCard";
 import { EmptyState } from "../../components/EmptyState";
 import { StatusTileCards, StatusTileItem } from "../../components/Cards/StatusTileCards";
 import ConfirmationModal from "../../components/Dialogs/ConfirmationModal";
-import CustomizableButton from "../../components/button/customizable-button";
+import { CustomizableButton } from "../../components/button/customizable-button";
 import {
   useMappings,
   useMappingsBetween,

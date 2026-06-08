@@ -4,7 +4,7 @@ import { Check, Info, Pencil, Trash2, Zap } from "lucide-react";
 import VWTooltip from "../VWTooltip";
 import StandardModal from "../Modals/StandardModal";
 import FrameworkChip from "./FrameworkChip";
-import CustomizableButton from "../button/customizable-button";
+import { CustomizableButton } from "../button/customizable-button";
 import { IScenarioCardProps } from "../../../domain/interfaces/i.governanceOs";
 import { border as borderPalette, background, text, accent, brand, status } from "../../themes/palette";
 

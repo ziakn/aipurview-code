@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { ChevronDown, ChevronUp, Plus, CheckSquare, Square } from "lucide-react";
 import { ICoverageChartProps } from "../../../domain/interfaces/i.governanceOs";
-import CustomizableButton from "../button/customizable-button";
+import { CustomizableButton } from "../button/customizable-button";
 import { border as borderPalette, background, text, status, brand } from "../../themes/palette";
 
 const CoverageChart = ({

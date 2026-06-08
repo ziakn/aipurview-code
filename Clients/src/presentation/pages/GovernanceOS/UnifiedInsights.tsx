@@ -8,7 +8,7 @@ import MappingStatsPanel from "../../components/GovernanceOS/MappingStatsPanel";
 import { DashboardHeaderCard } from "../../components/Cards/DashboardHeaderCard";
 import { EmptyState } from "../../components/EmptyState";
 import CreateTask from "../../components/Modals/CreateTask";
-import CustomizableButton from "../../components/button/customizable-button";
+import { CustomizableButton } from "../../components/button/customizable-button";
 import {
   useCoverage,
   useRefreshCoverage,

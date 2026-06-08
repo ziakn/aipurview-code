@@ -3,7 +3,7 @@ import { Box, alpha, Menu, MenuItem, useTheme } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { PageBreadcrumbs } from "../../../components/breadcrumbs/PageBreadcrumbs";
-import CustomizableButton from "../../../components/button/customizable-button";
+import { CustomizableButton } from "../../../components/button/customizable-button";
 import { brand } from "../../../themes/palette";
 
 interface BreadcrumbItem {

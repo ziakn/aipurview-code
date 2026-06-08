@@ -7,7 +7,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useGovernancePreferences } from "../../../application/hooks/useGovernanceOs";
-import CustomizableButton from "../button/customizable-button";
+import { CustomizableButton } from "../button/customizable-button";
 import { palette } from "../../themes/palette";
 
 interface GovernanceIntelligenceContextBarProps {

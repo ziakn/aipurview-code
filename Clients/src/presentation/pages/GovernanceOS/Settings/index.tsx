@@ -14,7 +14,7 @@ import GovernanceWorkspaceShell from "../shared/GovernanceWorkspaceShell";
 import Toggle from "../../../components/Inputs/Toggle";
 import Checkbox from "../../../components/Inputs/Checkbox";
 import FrameworkChip from "../../../components/GovernanceOS/FrameworkChip";
-import CustomizableButton from "../../../components/button/customizable-button";
+import { CustomizableButton } from "../../../components/button/customizable-button";
 import {
   useGovernancePreferences,
   useUpdatePreferences,

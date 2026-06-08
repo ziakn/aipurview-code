@@ -13,7 +13,7 @@ import Select from "../../components/Inputs/Select";
 import ScenarioCard from "../../components/GovernanceOS/ScenarioCard";
 import { EmptyState } from "../../components/EmptyState";
 import ConfirmationModal from "../../components/Dialogs/ConfirmationModal";
-import CustomizableButton from "../../components/button/customizable-button";
+import { CustomizableButton } from "../../components/button/customizable-button";
 import {
   useScenarios,
   useCreateScenario,
