@@ -78,24 +78,24 @@ const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
       sx={{
         border: `1px solid ${borderPalette.dark}`,
         borderRadius: "4px",
-        p: 3,
+        p: "16px",
         background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
       }}
     >
-      <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+      <Stack direction="row" gap="16px" alignItems="center" sx={{ mb: "16px" }}>
         <Scale size={20} color={brand.primary} />
         <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
           Scenario Comparison
         </Typography>
       </Stack>
 
-      <Typography sx={{ fontSize: 13, color: text.accent, mb: 2 }}>
+      <Typography sx={{ fontSize: 13, color: text.accent, mb: "16px" }}>
         Select up to {MAX_COMPARE} scenarios to compare frameworks, priorities, and context side by
         side.
       </Typography>
 
       {/* Scenario selectors */}
-      <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mb: 3 }}>
+      <Stack direction="row" gap="8px" flexWrap="wrap" sx={{ mb: "16px" }}>
         {scenarios.map((scenario) => {
           const isSelected = selectedIds.includes(scenario.id);
           const disabled = !isSelected && selectedIds.length >= MAX_COMPARE;
@@ -142,7 +142,7 @@ const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
             {/* Header row */}
             <Box
               sx={{
-                p: 1.5,
+                p: "12px",
                 background: background.hover,
                 borderRight: `1px solid ${borderPalette.light}`,
                 fontWeight: 600,
@@ -156,7 +156,7 @@ const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
               <Box
                 key={`h-${scenario.id}`}
                 sx={{
-                  p: 1.5,
+                  p: "12px",
                   background: background.hover,
                   borderRight: `1px solid ${borderPalette.light}`,
                   fontWeight: 600,
@@ -194,7 +194,7 @@ const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
                 ].filter(Boolean) as number[];
                 return (
                   <Cell key={`f-${scenario.id}`}>
-                    <Stack direction="row" flexWrap="wrap" gap={0.5}>
+                    <Stack direction="row" flexWrap="wrap" gap="4px">
                       {fwIds.map((id) => (
                         <FrameworkChip
                           key={id}
