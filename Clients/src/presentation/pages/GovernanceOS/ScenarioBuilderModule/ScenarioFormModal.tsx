@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Stack, TextField, Typography, Box, Chip } from "@mui/material";
+import { Stack, TextField, Typography, Box } from "@mui/material";
 import StandardModal from "../../../components/Modals/StandardModal";
 import { IGovernanceScenario } from "../../../../domain/interfaces/i.governanceOs";
 import { border as borderPalette, background, text, accent } from "../../../themes/palette";
@@ -139,22 +139,29 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
           </Typography>
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
             {INDUSTRY_OPTIONS.map((ind) => (
-              <Chip
+              <Box
                 key={ind}
-                label={ind.replace(/_/g, " ")}
-                size="small"
+                component="span"
                 onClick={() => setIndustry(industry === ind ? "" : ind)}
                 sx={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  height: 24,
+                  px: "10px",
+                  borderRadius: "4px",
+                  fontSize: 12,
+                  cursor: "pointer",
                   textTransform: "capitalize",
                   backgroundColor: industry === ind ? accent.primary.bg : background.hover,
                   color: industry === ind ? accent.primary.text : text.tertiary,
                   border: `1px solid ${industry === ind ? accent.primary.border : borderPalette.light}`,
-                  cursor: "pointer",
                   "&:hover": {
                     backgroundColor: industry === ind ? accent.primary.bg : background.accent,
                   },
                 }}
-              />
+              >
+                {ind.replace(/_/g, " ")}
+              </Box>
             ))}
           </Stack>
         </Box>
@@ -165,21 +172,28 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
           </Typography>
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
             {REGION_OPTIONS.map((reg) => (
-              <Chip
+              <Box
                 key={reg}
-                label={reg.toUpperCase()}
-                size="small"
+                component="span"
                 onClick={() => setRegion(region === reg ? "" : reg)}
                 sx={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  height: 24,
+                  px: "10px",
+                  borderRadius: "4px",
+                  fontSize: 12,
+                  cursor: "pointer",
                   backgroundColor: region === reg ? accent.indigo.bg : background.hover,
                   color: region === reg ? accent.indigo.text : text.tertiary,
                   border: `1px solid ${region === reg ? accent.indigo.border : borderPalette.light}`,
-                  cursor: "pointer",
                   "&:hover": {
                     backgroundColor: region === reg ? accent.indigo.bg : background.accent,
                   },
                 }}
-              />
+              >
+                {reg.toUpperCase()}
+              </Box>
             ))}
           </Stack>
         </Box>
@@ -193,12 +207,19 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
               const isSelected = selectedFrameworks.includes(fw.id);
               const isPrimary = primaryFramework === fw.id;
               return (
-                <Chip
+                <Box
                   key={fw.id}
-                  label={fw.name}
-                  size="small"
+                  component="span"
                   onClick={() => toggleFramework(fw.id)}
                   sx={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    height: 24,
+                    px: "10px",
+                    borderRadius: "4px",
+                    fontSize: 12,
+                    cursor: "pointer",
+                    fontWeight: isPrimary ? 600 : 400,
                     backgroundColor: isSelected
                       ? isPrimary
                         ? accent.primary.bg
@@ -216,8 +237,6 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
                           : accent.indigo.border
                         : borderPalette.light
                     }`,
-                    cursor: "pointer",
-                    fontWeight: isPrimary ? 600 : 400,
                     "&:hover": {
                       backgroundColor: isSelected
                         ? isPrimary
@@ -226,7 +245,9 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
                         : background.accent,
                     },
                   }}
-                />
+                >
+                  {fw.name}
+                </Box>
               );
             })}
           </Stack>
