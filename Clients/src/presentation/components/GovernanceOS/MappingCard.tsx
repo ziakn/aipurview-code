@@ -37,8 +37,8 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
         onClick={() => setDetailOpen(true)}
         sx={{
           "border": `1px solid ${borderPalette.light}`,
-          "borderRadius": 2,
-          "p": 2,
+          "borderRadius": "4px",
+          "p": "16px",
           "background": background.main,
           "cursor": "pointer",
           "transition": "all 0.2s ease",
@@ -48,7 +48,7 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
           },
         }}
       >
-        <Stack direction="row" alignItems="center" spacing={2} flexWrap="wrap" useFlexGap>
+        <Stack direction="row" alignItems="center" gap="16px" flexWrap="wrap" useFlexGap>
           <Box sx={{ minWidth: 140 }}>
             <Typography sx={{ fontSize: 11, color: text.muted }}>{sourceName}</Typography>
             <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary }}>
@@ -93,7 +93,7 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
             </Typography>
           )}
 
-          <Stack direction="row" spacing={0.5} alignItems="center" sx={{ ml: "auto" }}>
+          <Stack direction="row" gap="4px" alignItems="center" sx={{ ml: "auto" }}>
             {onEdit && (
               <IconButton
                 size="small"
@@ -139,17 +139,17 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
         description={`${sourceName} \u2192 ${targetName}`}
         hideFooter
       >
-        <Stack spacing={6}>
+        <Stack gap="16px">
           {/* Source and Target */}
-          <Stack spacing={3}>
+          <Stack gap="16px">
             <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary }}>
               Mapping relationship
             </Typography>
-            <Stack direction="row" spacing={3} alignItems="flex-start">
+            <Stack direction="row" gap="16px" alignItems="flex-start">
               <Box
                 sx={{
                   flex: 1,
-                  p: 2,
+                  p: "16px",
                   borderRadius: "4px",
                   border: `1px solid ${borderPalette.light}`,
                   background: background.accent,
@@ -171,7 +171,7 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
               <Box
                 sx={{
                   flex: 1,
-                  p: 2,
+                  p: "16px",
                   borderRadius: "4px",
                   border: `1px solid ${borderPalette.light}`,
                   background: background.accent,
@@ -191,8 +191,8 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
           </Stack>
 
           {/* Mapping Strength Explanation */}
-          <Stack spacing={2}>
-            <Stack direction="row" spacing={1} alignItems="center">
+          <Stack gap="16px">
+            <Stack direction="row" gap="8px" alignItems="center">
               <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary }}>
                 Mapping strength
               </Typography>
@@ -205,7 +205,7 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
           </Stack>
 
           {/* What this means */}
-          <Stack spacing={2}>
+          <Stack gap="16px">
             <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary }}>
               What this means for you
             </Typography>
@@ -220,11 +220,11 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
 
           {/* Domain & Confidence */}
           {(mapping.domain_tag || mapping.confidence_score !== undefined) && (
-            <Stack spacing={2}>
+            <Stack gap="16px">
               <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary }}>
                 Additional details
               </Typography>
-              <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
+              <Stack direction="row" gap="16px" flexWrap="wrap" useFlexGap>
                 {mapping.domain_tag && (
                   <Box>
                     <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
@@ -265,7 +265,7 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
 
           {/* Rationale */}
           {mapping.rationale && (
-            <Stack spacing={2}>
+            <Stack gap="16px">
               <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary }}>
                 Rationale
               </Typography>
