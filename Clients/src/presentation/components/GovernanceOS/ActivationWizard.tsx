@@ -106,7 +106,7 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
 
     if (activeStep === 0) {
       return (
-        <Stack spacing={3}>
+        <Stack gap="16px">
           <Typography sx={{ fontSize: 13, color: text.accent }}>
             Choose the projects where this scenario should be activated. A task set will be created
             for each selected project based on the scenario&apos;s framework priority order.
@@ -130,8 +130,8 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    px: 2,
-                    py: 1.5,
+                    px: "16px",
+                    py: "12px",
                     borderBottom:
                       idx < projects.length - 1 ? `1px solid ${borderPalette.light}` : "none",
                     backgroundColor: selectedProjectIds.includes(project.id)
@@ -161,7 +161,7 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
             </Box>
           )}
 
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <Typography sx={{ fontSize: 12, color: text.muted }}>
               {selectedProjectIds.length} project(s) selected
             </Typography>
@@ -172,7 +172,7 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
 
     if (activeStep === 1) {
       return (
-        <Stack spacing={3}>
+        <Stack gap="16px">
           <Typography sx={{ fontSize: 13, color: text.accent }}>
             Assign an owner for each framework. Owners will receive the tasks created during
             activation.
@@ -182,15 +182,15 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
             sx={{
               border: `1px solid ${borderPalette.light}`,
               borderRadius: "4px",
-              p: 2,
+              p: "16px",
               background: background.main,
             }}
           >
-            <Stack spacing={2}>
+            <Stack gap="16px">
               {frameworkIds.map((fwId) => (
                 <Box key={fwId}>
                   <Typography
-                    sx={{ fontSize: 12, fontWeight: 500, color: text.primary, mb: 0.5 }}
+                    sx={{ fontSize: 12, fontWeight: 500, color: text.primary, mb: "4px" }}
                   >
                     {FRAMEWORK_NAMES[fwId] || `Framework ${fwId}`}
                   </Typography>
@@ -218,7 +218,7 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
     }
 
     return (
-      <Stack spacing={3}>
+      <Stack gap="16px">
         <Alert severity="info" icon={<Zap size={18} />}>
           <Typography sx={{ fontSize: 13 }}>
             You are about to activate <strong>{scenario.name}</strong>. This will create real tasks
@@ -231,24 +231,24 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
           sx={{
             border: `1px solid ${borderPalette.light}`,
             borderRadius: "4px",
-            p: 2,
+            p: "16px",
             background: background.main,
           }}
         >
-          <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary, mb: 2 }}>
+          <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary, mb: "16px" }}>
             Activation summary
           </Typography>
 
-          <Stack spacing={2}>
+          <Stack gap="16px">
             <Box>
-              <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+              <Typography sx={{ fontSize: 11, color: text.muted, mb: "4px" }}>
                 Scenario
               </Typography>
               <Typography sx={{ fontSize: 13, color: text.primary }}>{scenario.name}</Typography>
             </Box>
 
             <Box>
-              <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+              <Typography sx={{ fontSize: 11, color: text.muted, mb: "4px" }}>
                 Projects ({selectedProjects.length})
               </Typography>
               <Typography sx={{ fontSize: 13, color: text.primary }}>
@@ -257,10 +257,10 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
             </Box>
 
             <Box>
-              <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+              <Typography sx={{ fontSize: 11, color: text.muted, mb: "4px" }}>
                 Framework owners
               </Typography>
-              <Stack spacing={0.5}>
+              <Stack gap="4px">
                 {frameworkIds.map((fwId) => {
                   const user = users.find((u) => u.id === ownerAssignments[fwId]);
                   return (
@@ -274,10 +274,10 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
             </Box>
 
             <Box>
-              <Typography sx={{ fontSize: 11, color: text.muted, mb: 0.5 }}>
+              <Typography sx={{ fontSize: 11, color: text.muted, mb: "4px" }}>
                 Staggered due dates
               </Typography>
-              <Stack spacing={0.5}>
+              <Stack gap="4px">
                 <Typography sx={{ fontSize: 13, color: text.primary }}>
                   Primary framework: 14 days
                 </Typography>
