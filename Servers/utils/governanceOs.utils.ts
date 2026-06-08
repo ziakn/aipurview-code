@@ -414,8 +414,9 @@ export const createScenarioActivationQuery = async ({
       frameworkId: number,
       priority: string,
       daysUntilDue: number,
-      assigneeUserId: number,
+      defaultOwnerId: number,
     ) => {
+      const assigneeUserId = ownerAssignments?.[frameworkId] || defaultOwnerId;
       const frameworkName =
         frameworkId === 1
           ? "EU AI Act"
@@ -459,7 +460,6 @@ export const createScenarioActivationQuery = async ({
       const projectId = project.id as number;
       const projectTitle = (project.project_title as string) || "Untitled Project";
       const defaultOwnerId = (project.project_owner_id as number) || 0;
-      const assignedOwnerId = ownerAssignments?.[frameworkId] || defaultOwnerId;
 
       if (priorityOrder.primary) {
         await createTaskForFramework(
@@ -468,7 +468,7 @@ export const createScenarioActivationQuery = async ({
           priorityOrder.primary,
           "primary",
           14,
-          assignedOwnerId,
+          defaultOwnerId,
         );
       }
       for (const fwId of priorityOrder.secondary || []) {
@@ -478,7 +478,7 @@ export const createScenarioActivationQuery = async ({
           fwId,
           "secondary",
           30,
-          assignedOwnerId,
+          defaultOwnerId,
         );
       }
       for (const fwId of priorityOrder.supplementary || []) {
@@ -488,7 +488,7 @@ export const createScenarioActivationQuery = async ({
           fwId,
           "supplementary",
           60,
-          assignedOwnerId,
+          defaultOwnerId,
         );
       }
     }
