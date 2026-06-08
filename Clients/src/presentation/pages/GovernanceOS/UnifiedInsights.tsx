@@ -161,23 +161,18 @@ const UnifiedInsights = () => {
   };
 
   return (
-    <Stack spacing={3}>
-      <Typography sx={{ fontSize: 13, color: text.tertiary }}>
-        View cross-framework coverage analysis per project. Identify gaps and synergies across your
-        active frameworks.
-      </Typography>
-
+    <Stack gap="16px">
       {/* Active scenario banner */}
       {activeScenario && (
         <Box
           sx={{
             border: `1px solid ${brand.primary}`,
             borderRadius: "4px",
-            p: 2,
+            p: "16px",
             background: `linear-gradient(135deg, ${background.main} 0%, ${alpha(brand.primary, 0.06)} 100%)`,
           }}
         >
-          <Stack direction="row" spacing={2} alignItems="center">
+          <Stack direction="row" gap="16px" alignItems="center">
             <Target size={18} color={brand.primary} />
             <Typography sx={{ fontSize: 13, color: text.primary }}>
               Coverage aligned with active scenario: <strong>{activeScenario.name}</strong>
@@ -192,7 +187,7 @@ const UnifiedInsights = () => {
         </Box>
       )}
 
-      <Stack direction="row" spacing={2} alignItems="flex-end">
+      <Stack direction="row" gap="16px" alignItems="flex-end">
         <Select
           id="project-select"
           label="Select Project"
@@ -246,9 +241,9 @@ const UnifiedInsights = () => {
           <CircularProgress size={32} />
         </Stack>
       ) : (
-        <Stack spacing={3}>
+        <Stack gap="16px">
           {/* Summary cards */}
-          <Stack direction="row" spacing={2} sx={{ width: "100%" }}>
+          <Stack direction="row" gap="16px" sx={{ width: "100%" }}>
             <DashboardHeaderCard
               title="Average Coverage"
               count={`${avgCoverage}%`}
