@@ -125,7 +125,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
             />
           )}
         </Stack>
-        <Typography sx={{ mt: "16px", fontSize: 14, fontWeight: 600, color: "#1F2937" }}>
+        <Typography sx={{ mt: "12px", fontSize: 14, fontWeight: 600, color: "#1F2937" }}>
           {title}
         </Typography>
         <Typography sx={{ fontSize: 13, color: text.secondary, mt: 0.5, display: "block" }}>
@@ -294,14 +294,14 @@ const GovernanceHub: React.FC = () => {
       title="Governance Intelligence"
       subtitle="Your central command center for cross-framework governance, compliance mapping, and coverage analysis."
     >
-      <Stack spacing={3}>
+      <Stack gap="16px">
         {/* Active scenario preview */}
         {activeScenario ? (
           <Box
             sx={{
               border: `1px solid ${brand.primary}`,
               borderRadius: "4px",
-              p: 3,
+              p: "16px",
               background: `linear-gradient(135deg, ${background.main} 0%, ${alpha(brand.primary, 0.06)} 100%)`,
             }}
           >
@@ -381,7 +381,7 @@ const GovernanceHub: React.FC = () => {
             sx={{
               border: `1px dashed ${borderPalette.light}`,
               borderRadius: "4px",
-              p: 3,
+              p: "16px",
               background: background.main,
             }}
           >
@@ -411,12 +411,12 @@ const GovernanceHub: React.FC = () => {
             sx={{
               display: "grid",
               gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" },
-              gap: 2,
+              gap: "16px",
             }}
           >
             <Box
               sx={{
-                p: "14px",
+                p: "12px 14px 14px 14px",
                 borderRadius: "4px",
                 border: `1px solid ${borderPalette.dark}`,
                 background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
@@ -443,7 +443,7 @@ const GovernanceHub: React.FC = () => {
 
             <Box
               sx={{
-                p: "14px",
+                p: "12px 14px 14px 14px",
                 borderRadius: "4px",
                 border: `1px solid ${borderPalette.dark}`,
                 background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
@@ -468,7 +468,7 @@ const GovernanceHub: React.FC = () => {
 
             <Box
               sx={{
-                p: "14px",
+                p: "12px 14px 14px 14px",
                 borderRadius: "4px",
                 border: `1px solid ${borderPalette.dark}`,
                 background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
@@ -487,7 +487,7 @@ const GovernanceHub: React.FC = () => {
 
             <Box
               sx={{
-                p: "14px",
+                p: "12px 14px 14px 14px",
                 borderRadius: "4px",
                 border: `1px solid ${borderPalette.dark}`,
                 background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
@@ -509,7 +509,7 @@ const GovernanceHub: React.FC = () => {
             sx={{
               display: "grid",
               gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" },
-              gap: 2,
+              gap: "16px",
             }}
           >
             <DashboardHeaderCard title="Avg Coverage" count="—" disableNavigation />
@@ -524,7 +524,7 @@ const GovernanceHub: React.FC = () => {
         )}
 
         {/* Quick actions */}
-        <Stack direction="row" spacing={2} flexWrap="wrap">
+        <Stack direction="row" gap="8px" flexWrap="wrap">
           <CustomizableButton
             size="small"
             variant="outlined"
@@ -557,7 +557,7 @@ const GovernanceHub: React.FC = () => {
 
         {/* Module cards grid */}
         <Box>
-          <Typography sx={{ mb: 2, fontSize: 14, fontWeight: 600 }}>
+          <Typography sx={{ mb: "12px", fontSize: 14, fontWeight: 600 }}>
             Modules
           </Typography>
           <Grid container spacing={2}>
@@ -575,21 +575,21 @@ const GovernanceHub: React.FC = () => {
             sx={{
               border: `1px solid ${borderPalette.dark}`,
               borderRadius: "4px",
-              p: 3,
+              p: "16px",
               background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
             }}
           >
-            <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+            <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: "12px" }}>
               <AlertTriangle size={18} color={status.warning.text} />
               <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
                 Gap Hotspots
               </Typography>
             </Stack>
-            <Typography sx={{ fontSize: 13, color: text.accent, mb: 2 }}>
+            <Typography sx={{ fontSize: 13, color: text.accent, mb: "12px" }}>
               Frameworks with the most unmapped controls. Address these first for the biggest coverage
               improvement.
             </Typography>
-            <Stack spacing={1.5}>
+            <Stack gap="8px">
               {coverageStats.topGapFrameworks.map((fw) => (
                 <Box
                   key={fw.framework_id}
@@ -597,7 +597,7 @@ const GovernanceHub: React.FC = () => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    p: 1.5,
+                    p: "12px",
                     borderRadius: "4px",
                     border: `1px solid ${borderPalette.light}`,
                     background: background.main,
@@ -634,7 +634,6 @@ const GovernanceHub: React.FC = () => {
                     variant="text"
                     onClick={() => navigate("/governance/insights")}
                     text="View"
-                    sx={{ color: brand.primary }}
                   />
                 </Box>
               ))}
