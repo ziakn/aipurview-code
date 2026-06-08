@@ -48,11 +48,11 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
         sx={{
           border: `1px dashed ${borderPalette.light}`,
           borderRadius: "4px",
-          p: 3,
+          p: "16px",
           background: background.main,
         }}
       >
-        <Stack direction="row" spacing={2} alignItems="center">
+        <Stack direction="row" gap="16px" alignItems="center">
           <Target size={20} color={text.muted} />
           <Box>
             <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary }}>
@@ -88,17 +88,17 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
       sx={{
         border: `1px solid ${brand.primary}`,
         borderRadius: "4px",
-        p: 3,
+        p: "16px",
         background: `linear-gradient(135deg, ${background.main} 0%, ${alpha(brand.primary, 0.06)} 100%)`,
       }}
     >
       <Stack
         direction={{ xs: "column", md: "row" }}
-        spacing={2}
+        gap="16px"
         justifyContent="space-between"
         alignItems={{ xs: "flex-start", md: "center" }}
       >
-        <Stack direction="row" spacing={2} alignItems="flex-start">
+        <Stack direction="row" gap="16px" alignItems="flex-start">
           <Box
             sx={{
               width: 36,
@@ -114,7 +114,7 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
             <Target size={18} color={brand.primary} />
           </Box>
           <Box>
-            <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
+            <Stack direction="row" gap="8px" alignItems="center" sx={{ mb: "4px" }}>
               <Typography sx={{ fontSize: 14, fontWeight: 600, color: text.primary }}>
                 Active scenario
               </Typography>
@@ -139,19 +139,19 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
               {activeScenario.name}
             </Typography>
             {activeScenario.description && (
-              <Typography sx={{ fontSize: 12, color: text.accent, mt: 0.5 }}>
+              <Typography sx={{ fontSize: 12, color: text.accent, mt: "4px" }}>
                 {activeScenario.description}
               </Typography>
             )}
             {activationDate && (
-              <Typography sx={{ fontSize: 11, color: text.muted, mt: 0.5 }}>
+              <Typography sx={{ fontSize: 11, color: text.muted, mt: "4px" }}>
                 Activated on {activationDate}
                 {latestActivation?.tasks_created
                   ? ` · ${latestActivation.tasks_created} task(s) created`
                   : ""}
               </Typography>
             )}
-            <Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mt: 1.5 }}>
+            <Stack direction="row" flexWrap="wrap" gap="6px" sx={{ mt: "12px" }}>
               {frameworkIds.map((id) => {
                 const priority =
                   id === priorityOrder?.primary
@@ -172,7 +172,7 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
           </Box>
         </Stack>
 
-        <Stack direction="row" spacing={1} sx={{ flexShrink: 0 }}>
+        <Stack direction="row" gap="8px" sx={{ flexShrink: 0 }}>
           {latestActivation && (
             <CustomizableButton
               size="small"
@@ -199,11 +199,11 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
 
       {/* Framework progress */}
       {progress && progress.length > 0 && (
-        <Box sx={{ mt: 2, pt: 2, borderTop: `1px solid ${borderPalette.light}` }}>
+        <Box sx={{ mt: "16px", pt: "16px", borderTop: `1px solid ${borderPalette.light}` }}>
           <Typography sx={{ fontSize: 12, fontWeight: 600, color: text.primary, mb: 1.5 }}>
             Task progress by framework
           </Typography>
-          <Stack spacing={1.5}>
+          <Stack gap="12px">
             {progress.map((fw: any) => {
               const percent =
                 fw.totalTasks > 0 ? Math.round((fw.completedTasks / fw.totalTasks) * 100) : 0;
@@ -213,7 +213,7 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
                     direction="row"
                     justifyContent="space-between"
                     alignItems="center"
-                    sx={{ mb: 0.5 }}
+                    sx={{ mb: "4px" }}
                   >
                     <Typography sx={{ fontSize: 12, color: text.primary }}>
                       {fw.frameworkName}
