@@ -116,23 +116,23 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
       sx={{
         border: `1px solid ${borderPalette.dark}`,
         borderRadius: "4px",
-        p: 3,
+        p: "16px",
         background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
       }}
     >
-      <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+      <Stack direction="row" gap="16px" alignItems="center" sx={{ mb: "16px" }}>
         <Calculator size={20} color={brand.primary} />
         <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
           What-If Simulator
         </Typography>
       </Stack>
 
-      <Typography sx={{ fontSize: 13, color: text.accent, mb: 3 }}>
+      <Typography sx={{ fontSize: 13, color: text.accent, mb: "16px" }}>
         Pick a base scenario and adjust framework priorities to simulate effort, coverage, and
         timeline before activating.
       </Typography>
 
-      <Stack spacing={3}>
+      <Stack gap="16px">
         <Select
           id="base-scenario"
           label="Base scenario"
@@ -155,11 +155,11 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
             sx={{
               border: `1px solid ${borderPalette.light}`,
               borderRadius: "4px",
-              p: 2,
+              p: "16px",
               background: background.main,
             }}
           >
-            <Typography sx={{ fontSize: 12, fontWeight: 600, color: text.primary, mb: 1 }}>
+            <Typography sx={{ fontSize: 12, fontWeight: 600, color: text.primary, mb: "8px" }}>
               Primary
             </Typography>
             <Select
@@ -178,14 +178,14 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
             sx={{
               border: `1px solid ${borderPalette.light}`,
               borderRadius: "4px",
-              p: 2,
+              p: "16px",
               background: background.main,
             }}
           >
-            <Typography sx={{ fontSize: 12, fontWeight: 600, color: text.primary, mb: 1 }}>
+            <Typography sx={{ fontSize: 12, fontWeight: 600, color: text.primary, mb: "8px" }}>
               Secondary
             </Typography>
-            <Stack direction="row" flexWrap="wrap" gap={1}>
+            <Stack direction="row" flexWrap="wrap" gap="8px">
               {availableForSecondary.map((fw) => (
                 <Box
                   key={fw.id}
@@ -230,14 +230,14 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
             sx={{
               border: `1px solid ${borderPalette.light}`,
               borderRadius: "4px",
-              p: 2,
+              p: "16px",
               background: background.main,
             }}
           >
-            <Typography sx={{ fontSize: 12, fontWeight: 600, color: text.primary, mb: 1 }}>
+            <Typography sx={{ fontSize: 12, fontWeight: 600, color: text.primary, mb: "8px" }}>
               Supplementary
             </Typography>
-            <Stack direction="row" flexWrap="wrap" gap={1}>
+            <Stack direction="row" flexWrap="wrap" gap="8px">
               {availableForSupplementary.map((fw) => (
                 <Box
                   key={fw.id}
@@ -299,11 +299,11 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
             sx={{
               border: `1px solid ${borderPalette.light}`,
               borderRadius: "4px",
-              p: 2,
+              p: "16px",
               background: background.main,
             }}
           >
-            <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary, mb: 2 }}>
+            <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary, mb: "16px" }}>
               Simulation results
             </Typography>
 
@@ -311,7 +311,7 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
               sx={{
                 display: "grid",
                 gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" },
-                gap: 2,
+                gap: "16px",
                 mb: 2,
               }}
             >
@@ -342,7 +342,7 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
             />
 
             {result.frameworkBreakdown?.length > 0 && (
-              <Stack spacing={1} sx={{ mt: 2 }}>
+              <Stack gap="8px" sx={{ mt: "16px" }}>
                 {result.frameworkBreakdown.map((fw) => (
                   <Box
                     key={fw.frameworkId}
@@ -350,13 +350,13 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
-                      py: 0.5,
+                      py: "4px",
                     }}
                   >
                     <Typography sx={{ fontSize: 13, color: text.primary }}>
                       {fw.frameworkName}
                     </Typography>
-                    <Stack direction="row" spacing={1} alignItems="center">
+                    <Stack direction="row" gap="8px" alignItems="center">
                       <Box
                         component="span"
                         sx={{
@@ -400,7 +400,7 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
 };
 
 const MetricBox: React.FC<{ label: string; value: string }> = ({ label, value }) => (
-  <Box sx={{ textAlign: "center", p: 1.5, background: background.hover, borderRadius: "4px" }}>
+  <Box sx={{ textAlign: "center", p: "12px", background: background.hover, borderRadius: "4px" }}>
     <Typography sx={{ fontSize: 18, fontWeight: 600, color: brand.primary }}>{value}</Typography>
     <Typography sx={{ fontSize: 11, color: text.muted }}>{label}</Typography>
   </Box>
