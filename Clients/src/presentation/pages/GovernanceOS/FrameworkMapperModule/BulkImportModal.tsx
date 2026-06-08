@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from "react";
-import { Stack, Typography, Box, Button, Table, TableHead, TableRow, TableCell, TableBody, Alert } from "@mui/material";
+import { Stack, Typography, Box, Table, TableHead, TableRow, TableCell, TableBody, Alert } from "@mui/material";
 import { Upload, FileSpreadsheet, Check, X } from "lucide-react";
 import StandardModal from "../../../components/Modals/StandardModal";
 import { IGovernanceControlMapping } from "../../../../domain/interfaces/i.governanceOs";
-import { border as borderPalette, background, text, accent } from "../../../themes/palette";
+import { border as borderPalette, background, text, accent, status } from "../../../themes/palette";
 
 interface BulkImportModalProps {
   open: boolean;
@@ -179,7 +179,7 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
                 </Box>
               )}
               {invalidCount > 0 && (
-                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, color: "#D32F2F" }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, color: status.error.text }}>
                   <X size={14} />
                   <Typography variant="caption">{invalidCount} invalid</Typography>
                 </Box>
@@ -199,12 +199,12 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
                 </TableHead>
                 <TableBody>
                   {parsedRows.map((row, i) => (
-                    <TableRow key={i} sx={{ backgroundColor: row.valid ? "transparent" : "#FFF5F5" }}>
+                    <TableRow key={i} sx={{ backgroundColor: row.valid ? "transparent" : status.error.bg }}>
                       <TableCell>
                         {row.valid ? (
                           <Check size={14} color={accent.primary.text} />
                         ) : (
-                          <X size={14} color="#D32F2F" />
+                          <X size={14} color={status.error.text} />
                         )}
                       </TableCell>
                       <TableCell sx={{ fontSize: 12 }}>
@@ -214,7 +214,7 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
                         {row.target_framework_id}: {row.target_control_identifier}
                       </TableCell>
                       <TableCell sx={{ fontSize: 12, textTransform: "capitalize" }}>{row.mapping_strength}</TableCell>
-                      <TableCell sx={{ fontSize: 11, color: "#D32F2F" }}>{row.errors.join(", ")}</TableCell>
+                      <TableCell sx={{ fontSize: 11, color: status.error.text }}>{row.errors.join(", ")}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
