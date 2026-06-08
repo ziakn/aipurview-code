@@ -3,23 +3,24 @@ import {
   Box,
   Typography,
   Stack,
-  Button,
   Alert,
-  Chip,
   FormControlLabel,
   CircularProgress,
+  alpha,
 } from "@mui/material";
 import { Settings, Power, Bell, Target, Filter, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import GovernanceWorkspaceShell from "../shared/GovernanceWorkspaceShell";
 import Toggle from "../../../components/Inputs/Toggle";
 import Checkbox from "../../../components/Inputs/Checkbox";
+import FrameworkChip from "../../../components/GovernanceOS/FrameworkChip";
+import CustomizableButton from "../../../components/button/customizable-button";
 import {
   useGovernancePreferences,
   useUpdatePreferences,
 } from "../../../../application/hooks/useGovernanceOs";
 import { useIsAdmin } from "../../../../application/hooks/useIsAdmin";
-import { border as borderPalette, background, text, brand, accent } from "../../../themes/palette";
+import { border as borderPalette, background, text, brand } from "../../../themes/palette";
 
 const FRAMEWORK_NAMES: Record<number, string> = {
   1: "EU AI Act",
@@ -158,43 +159,30 @@ const GovernanceSettings: React.FC = () => {
                 {customPriority && (
                   <Stack direction="row" flexWrap="wrap" gap={0.75}>
                     {customPriority.primary && (
-                      <Chip
-                        label={`Primary: ${FRAMEWORK_NAMES[customPriority.primary] || customPriority.primary}`}
+                      <FrameworkChip
+                        frameworkName={FRAMEWORK_NAMES[customPriority.primary] || String(customPriority.primary)}
+                        priority="primary"
                         size="small"
-                        sx={{
-                          fontSize: 11,
-                          height: 20,
-                          backgroundColor: accent.primary.bg,
-                          color: accent.primary.text,
-                          border: `1px solid ${accent.primary.border}`,
-                        }}
                       />
                     )}
                     {customPriority.secondary?.map((id: number) => (
-                      <Chip
+                      <FrameworkChip
                         key={id}
-                        label={`Secondary: ${FRAMEWORK_NAMES[id] || id}`}
+                        frameworkName={FRAMEWORK_NAMES[id] || String(id)}
+                        priority="secondary"
                         size="small"
-                        sx={{
-                          fontSize: 11,
-                          height: 20,
-                          backgroundColor: accent.indigo.bg,
-                          color: accent.indigo.text,
-                          border: `1px solid ${accent.indigo.border}`,
-                        }}
                       />
                     ))}
                   </Stack>
                 )}
                 <Box>
-                  <Button
+                  <CustomizableButton
                     size="small"
                     variant="outlined"
                     onClick={() => navigate("/governance/scenarios")}
+                    text="Change scenario"
                     sx={{ textTransform: "none", fontSize: 12 }}
-                  >
-                    Change scenario
-                  </Button>
+                  />
                 </Box>
               </Stack>
             ) : (
@@ -202,14 +190,13 @@ const GovernanceSettings: React.FC = () => {
                 <Typography sx={{ fontSize: 13, color: text.accent }}>
                   No active scenario selected.
                 </Typography>
-                <Button
+                <CustomizableButton
                   size="small"
                   variant="contained"
                   onClick={() => navigate("/governance/scenarios")}
+                  text="Choose scenario"
                   sx={{ textTransform: "none", fontSize: 12, boxShadow: "none" }}
-                >
-                  Choose scenario
-                </Button>
+                />
               </Stack>
             )}
           </Box>
@@ -241,15 +228,14 @@ const GovernanceSettings: React.FC = () => {
               </Typography>
             </Box>
             <Box sx={{ mt: 1.5 }}>
-              <Button
+              <CustomizableButton
                 size="small"
                 variant="text"
                 onClick={() => setDontAskAgain(false)}
-                disabled={!dontAskAgain}
+                isDisabled={!dontAskAgain}
+                text="Reset prompt preference"
                 sx={{ textTransform: "none", fontSize: 12 }}
-              >
-                Reset prompt preference
-              </Button>
+              />
             </Box>
           </Box>
         </SettingsSection>
@@ -278,30 +264,28 @@ const GovernanceSettings: React.FC = () => {
               </Typography>
             )}
             <Box sx={{ mt: 1.5 }}>
-              <Button
+              <CustomizableButton
                 size="small"
                 variant="outlined"
                 onClick={() => navigate("/governance/framework-mapper")}
+                text="Open Framework Mapper"
                 sx={{ textTransform: "none", fontSize: 12 }}
-              >
-                Open Framework Mapper
-              </Button>
+              />
             </Box>
           </Box>
         </SettingsSection>
 
         {/* Save */}
         <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-          <Button
+          <CustomizableButton
             variant="contained"
             size="small"
             startIcon={<Save size={14} />}
             onClick={handleSave}
-            disabled={updatePrefsMutation.isPending}
+            isDisabled={updatePrefsMutation.isPending}
+            text={updatePrefsMutation.isPending ? "Saving..." : "Save changes"}
             sx={{ textTransform: "none", fontSize: 13, boxShadow: "none" }}
-          >
-            {updatePrefsMutation.isPending ? "Saving..." : "Save changes"}
-          </Button>
+          />
         </Box>
       </Stack>
     </GovernanceWorkspaceShell>
@@ -321,7 +305,7 @@ const SettingsSection: React.FC<{
           width: 32,
           height: 32,
           borderRadius: "50%",
-          backgroundColor: "rgba(19, 113, 91, 0.08)",
+          backgroundColor: alpha(brand.primary, 0.08),
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
