@@ -374,27 +374,37 @@ export const createScenarioActivationQuery = async ({
 
   try {
     // Get projects that have the relevant frameworks assigned
-    const projectQuery =
-      projectIds && projectIds.length > 0
-        ? `SELECT p.id, p.project_title, p.project_owner_id
-         FROM projects p
-         WHERE p.organization_id = :organizationId AND p.id = ANY(:projectIds)`
-        : `SELECT DISTINCT p.id, p.project_title, p.project_owner_id
-         FROM projects p
-         JOIN projects_frameworks pf ON pf.project_id = p.id
-         WHERE p.organization_id = :organizationId
-           AND pf.framework_id = ANY(:frameworkIds)`;
-
     const frameworkIds = [
       priorityOrder.primary,
       ...(priorityOrder.secondary || []),
       ...(priorityOrder.supplementary || []),
     ].filter(Boolean) as number[];
 
+    if (frameworkIds.length === 0) {
+      throw new Error("Scenario has no frameworks assigned. Cannot activate.");
+    }
+
+    const projectQuery =
+      projectIds && projectIds.length > 0
+        ? `SELECT p.id, p.project_title, p.project_owner_id
+         FROM projects p
+         WHERE p.organization_id = :organizationId AND p.id = ANY(ARRAY[:projectIds]::INTEGER[])`
+        : `SELECT DISTINCT p.id, p.project_title, p.project_owner_id
+         FROM projects p
+         JOIN projects_frameworks pf ON pf.project_id = p.id
+         WHERE p.organization_id = :organizationId
+           AND pf.framework_id = ANY(ARRAY[:frameworkIds]::INTEGER[])`;
+
     const [projects] = await sequelize.query(projectQuery, {
       replacements: { organizationId, projectIds: projectIds || [], frameworkIds },
       transaction,
     });
+
+    if ((projects as any[]).length === 0) {
+      throw new Error(
+        "No eligible projects found for activation. Ensure projects have the required frameworks assigned.",
+      );
+    }
 
     let tasksCreated = 0;
 
@@ -449,7 +459,7 @@ export const createScenarioActivationQuery = async ({
       const projectId = project.id as number;
       const projectTitle = (project.project_title as string) || "Untitled Project";
       const defaultOwnerId = (project.project_owner_id as number) || 0;
-      const assignedOwnerId = ownerAssignments?.[projectId] || defaultOwnerId;
+      const assignedOwnerId = ownerAssignments?.[frameworkId] || defaultOwnerId;
 
       if (priorityOrder.primary) {
         await createTaskForFramework(
