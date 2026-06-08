@@ -114,7 +114,7 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
       isLoading={isSubmitting}
       fitContent
     >
-      <Stack spacing={3} sx={{ minWidth: 480 }}>
+      <Stack gap="16px" sx={{ minWidth: 480 }}>
         <TextField
           label="Name"
           value={name}
@@ -134,10 +134,10 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
         />
 
         <Box>
-          <Typography sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}>
+          <Typography sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: "8px" }}>
             Industry
           </Typography>
-          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+          <Stack direction="row" gap="8px" flexWrap="wrap" useFlexGap>
             {INDUSTRY_OPTIONS.map((ind) => (
               <Box
                 key={ind}
@@ -167,10 +167,10 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
         </Box>
 
         <Box>
-          <Typography sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}>
+          <Typography sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: "8px" }}>
             Region
           </Typography>
-          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+          <Stack direction="row" gap="8px" flexWrap="wrap" useFlexGap>
             {REGION_OPTIONS.map((reg) => (
               <Box
                 key={reg}
@@ -199,10 +199,10 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
         </Box>
 
         <Box>
-          <Typography sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}>
+          <Typography sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: "8px" }}>
             Frameworks *
           </Typography>
-          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+          <Stack direction="row" gap="8px" flexWrap="wrap" useFlexGap>
             {FRAMEWORK_OPTIONS.map((fw) => {
               const isSelected = selectedFrameworks.includes(fw.id);
               const isPrimary = primaryFramework === fw.id;
@@ -252,7 +252,7 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
             })}
           </Stack>
           {selectedFrameworks.length > 1 && (
-            <Typography sx={{ fontSize: 12, color: text.muted, mt: 0.5, display: "block" }}>
+            <Typography sx={{ fontSize: 12, color: text.muted, mt: "4px", display: "block" }}>
               First selected framework becomes primary. Click a selected framework to set it as primary.
             </Typography>
           )}
