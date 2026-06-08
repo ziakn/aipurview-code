@@ -161,7 +161,7 @@ export const createNewTaskQuery = async (
         },
       )) as [{ full_name: string }[], number];
       const assigneeIds = (createdTask.dataValues as any)["assignees"] as number[];
-      const assignee_names =
+      const assignee_names: [{ full_name: string }[], number] =
         assigneeIds && assigneeIds.length > 0
           ? ((await sequelize.query(
               `SELECT name || ' ' || surname AS full_name FROM users WHERE id = ANY(ARRAY[:assignee_ids]::INTEGER[]);`,
@@ -455,7 +455,7 @@ export const getTaskByIdQuery = async (
     )) as [{ full_name: string }[], number];
     (task.dataValues as any)["creator_name"] = creator_name[0][0].full_name;
     const assigneeIds = (task.dataValues as any)["assignees"] as number[];
-    const assignee_names =
+    const assignee_names: [{ full_name: string }[], number] =
       assigneeIds && assigneeIds.length > 0
         ? ((await sequelize.query(
             `SELECT name || ' ' || surname AS full_name FROM users WHERE id = ANY(ARRAY[:assignee_ids]::INTEGER[]);`,
@@ -644,7 +644,7 @@ export const updateTaskByIdQuery = async (
         },
       )) as [{ full_name: string }[], number];
       const assigneeIds = (updatedTask.dataValues as any)["assignees"] as number[];
-      const assignee_names =
+      const assignee_names: [{ full_name: string }[], number] =
         assigneeIds && assigneeIds.length > 0
           ? ((await sequelize.query(
               `SELECT name || ' ' || surname AS full_name FROM users WHERE id = ANY(ARRAY[:assignee_ids]::INTEGER[]);`,
@@ -815,7 +815,7 @@ export const deleteTaskByIdQuery = async ({
         },
       )) as [{ full_name: string }[], number];
       const assigneeIds = (deletedTask as any)["assignees"] as number[];
-      const assignee_names =
+      const assignee_names: [{ full_name: string }[], number] =
         assigneeIds && assigneeIds.length > 0
           ? ((await sequelize.query(
               `SELECT name || ' ' || surname AS full_name FROM users WHERE id = ANY(ARRAY[:assignee_ids]::INTEGER[]);`,
