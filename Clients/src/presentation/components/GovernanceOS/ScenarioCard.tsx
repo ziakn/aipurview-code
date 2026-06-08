@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Box, Typography, Stack, IconButton, useTheme } from "@mui/material";
-import { Check, Info, Pencil, Trash2, Zap } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Check, Info, Pencil, Trash2, Zap, LayoutDashboard, BarChart3, GitCompareArrows, ArrowRight } from "lucide-react";
 import VWTooltip from "../VWTooltip";
 import StandardModal from "../Modals/StandardModal";
 import FrameworkChip from "./FrameworkChip";
@@ -26,6 +27,7 @@ const ScenarioCard = ({
   onActivate,
 }: IScenarioCardProps) => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const [detailOpen, setDetailOpen] = useState(false);
 
   const priorityOrder = scenario.priority_order as {
@@ -374,6 +376,33 @@ const ScenarioCard = ({
                 <strong>Track progress on Dashboard</strong> &mdash; Your main dashboard will
                 reflect compliance progress based on the active scenario&apos;s priority order.
               </li>
+            </Stack>
+
+            <Stack direction="row" gap="8px" flexWrap="wrap" useFlexGap>
+              <CustomizableButton
+                size="small"
+                variant="outlined"
+                startIcon={<LayoutDashboard size={14} />}
+                endIcon={<ArrowRight size={14} />}
+                onClick={() => navigate("/")}
+                text="Dashboard"
+              />
+              <CustomizableButton
+                size="small"
+                variant="outlined"
+                startIcon={<BarChart3 size={14} />}
+                endIcon={<ArrowRight size={14} />}
+                onClick={() => navigate("/governance/insights")}
+                text="Unified Insights"
+              />
+              <CustomizableButton
+                size="small"
+                variant="outlined"
+                startIcon={<GitCompareArrows size={14} />}
+                endIcon={<ArrowRight size={14} />}
+                onClick={() => navigate("/governance/framework-mapper")}
+                text="Framework Mapper"
+              />
             </Stack>
           </Stack>
 
