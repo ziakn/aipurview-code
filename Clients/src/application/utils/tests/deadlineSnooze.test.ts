@@ -1,10 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import {
-  getSnoozeExpiry,
-  isSnoozed,
-  setSnooze,
-  clearSnooze,
-} from "../deadlineSnooze";
+import { getSnoozeExpiry, isSnoozed, setSnooze, clearSnooze } from "../deadlineSnooze";
 
 const USER_ID = 42;
 const STORAGE_KEY = `verifywise_deadline_snooze_${USER_ID}`;

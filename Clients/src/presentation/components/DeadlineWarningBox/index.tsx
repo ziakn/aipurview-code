@@ -147,10 +147,7 @@ const DeadlineWarningBox = () => {
               "&:hover": { backgroundColor: `${background.accent} !important` },
             }}
           >
-            <ListItemText
-              primary={option.label}
-              primaryTypographyProps={{ fontSize: "13px" }}
-            />
+            <ListItemText primary={option.label} primaryTypographyProps={{ fontSize: "13px" }} />
           </MenuItem>
         ))}
       </Menu>

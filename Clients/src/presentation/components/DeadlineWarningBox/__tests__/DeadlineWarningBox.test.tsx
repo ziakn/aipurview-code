@@ -52,9 +52,7 @@ describe("DeadlineWarningBox", () => {
   it("shows only the due-soon segment when there are no overdue tasks", () => {
     mockWarnings.mockReturnValue({ ...baseWarnings, dueSoon: 1 });
     renderWithProviders(<DeadlineWarningBox />);
-    expect(
-      screen.getByText("You have 1 task due in the next 7 days."),
-    ).toBeInTheDocument();
+    expect(screen.getByText("You have 1 task due in the next 7 days.")).toBeInTheDocument();
   });
 
   it("renders nothing when the banner is already snoozed", () => {

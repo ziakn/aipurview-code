@@ -17,8 +17,7 @@ export async function getDeadlinesSummary(req: Request, res: Response) {
 
   try {
     const parsedDays = parseInt(req.query.days as string);
-    const days =
-      Number.isFinite(parsedDays) && parsedDays > 0 ? parsedDays : DEFAULT_DUE_SOON_DAYS;
+    const days = Number.isFinite(parsedDays) && parsedDays > 0 ? parsedDays : DEFAULT_DUE_SOON_DAYS;
 
     const summary = await getDeadlineSummaryQuery(req.organizationId!, days);
 
