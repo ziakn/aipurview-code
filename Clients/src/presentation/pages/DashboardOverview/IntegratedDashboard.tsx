@@ -522,6 +522,7 @@ const IntegratedDashboard: React.FC = () => {
                                     e.stopPropagation();
                                     handlePrevView(framework.projectFrameworkId, views.length);
                                   }}
+                                  aria-label={`Previous ${framework.frameworkName} view`}
                                   sx={navIconButtonSx}
                                 >
                                   <ChevronLeft size={18} />
@@ -543,6 +544,7 @@ const IntegratedDashboard: React.FC = () => {
                                     e.stopPropagation();
                                     handleNextView(framework.projectFrameworkId, views.length);
                                   }}
+                                  aria-label={`Next ${framework.frameworkName} view`}
                                   sx={navIconButtonSx}
                                 >
                                   <ChevronRight size={18} />
@@ -1245,6 +1247,7 @@ const IntegratedDashboard: React.FC = () => {
                                     e.stopPropagation();
                                     handlePrevView(framework.projectFrameworkId, views.length);
                                   }}
+                                  aria-label={`Previous ${framework.frameworkName} view`}
                                   sx={navIconButtonSx}
                                 >
                                   <ChevronLeft size={18} />
@@ -1266,6 +1269,7 @@ const IntegratedDashboard: React.FC = () => {
                                     e.stopPropagation();
                                     handleNextView(framework.projectFrameworkId, views.length);
                                   }}
+                                  aria-label={`Next ${framework.frameworkName} view`}
                                   sx={navIconButtonSx}
                                 >
                                   <ChevronRight size={18} />
