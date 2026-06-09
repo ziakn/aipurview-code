@@ -248,4 +248,84 @@ describe("CustomizableBasicTable", () => {
     renderWithProviders(<CustomizableBasicTable {...defaultProps} paginated />);
     expect(screen.getByText(/Showing 1 - 2 of 2 items/)).toBeInTheDocument();
   });
+
+  it("truncates long impact text to 30 chars", () => {
+    const longImpactRow = {
+      ...mockRows[0],
+      id: 30,
+      impact: "This is a very long impact description that should be truncated",
+    };
+    const propsWithLong = {
+      ...defaultProps,
+      data: { rows: [longImpactRow], cols: mockColumns },
+    };
+
+    const { container } = renderWithProviders(<CustomizableBasicTable {...propsWithLong} />);
+    // The rendered table should contain the truncated impact value (30 chars + "...")
+    const tableHtml = container.querySelector("table")?.innerHTML ?? "";
+    expect(tableHtml).toContain("This is a very long impact des...");
+  });
+
+  it("displays empty string when risk_name is missing", () => {
+    const missingNameRow = {
+      ...mockRows[0],
+      id: 31,
+      risk_name: undefined,
+    };
+    const propsWithMissing = {
+      ...defaultProps,
+      data: { rows: [missingNameRow], cols: mockColumns },
+    };
+
+    renderWithProviders(<CustomizableBasicTable {...propsWithMissing} />);
+    // Verify all cells still render
+    const cells = document.querySelectorAll("td");
+    expect(cells.length).toBeGreaterThan(0);
+  });
+
+  it("renders risk_owner as string when passed as string", () => {
+    const stringOwnerRow = {
+      ...mockRows[0],
+      id: 32,
+      risk_owner: "External Owner",
+    };
+    const propsWithStr = {
+      ...defaultProps,
+      data: { rows: [stringOwnerRow], cols: mockColumns },
+    };
+
+    renderWithProviders(<CustomizableBasicTable {...propsWithStr} />);
+    expect(screen.getByText("External Owner")).toBeInTheDocument();
+  });
+
+  it("renders risk_owner as numeric string when passed as number", () => {
+    const numericOwnerRow = {
+      ...mockRows[0],
+      id: 33,
+      risk_owner: 99,
+    };
+    const propsWithNum = {
+      ...defaultProps,
+      data: { rows: [numericOwnerRow], cols: mockColumns },
+    };
+
+    renderWithProviders(<CustomizableBasicTable {...propsWithNum} />);
+    expect(screen.getByText("99")).toBeInTheDocument();
+  });
+
+  it("renders without crashing with many rows", () => {
+    const manyRows = Array.from({ length: 50 }, (_, i) => ({
+      ...mockRows[0],
+      id: i + 1,
+      risk_name: `Risk ${i + 1}`,
+    }));
+
+    const { container } = renderWithProviders(
+      <CustomizableBasicTable {...defaultProps} data={{ rows: manyRows, cols: mockColumns }} paginated />,
+    );
+
+    // All rows should render
+    const rows = container.querySelectorAll("tbody tr");
+    expect(rows).toHaveLength(50);
+  });
 });

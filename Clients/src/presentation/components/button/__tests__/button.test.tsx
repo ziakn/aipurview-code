@@ -1,3 +1,4 @@
+import React from "react";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ThemeProvider } from "@mui/material/styles";
@@ -87,5 +88,17 @@ describe("Button", () => {
       </ThemeProvider>,
     );
     expect(screen.getByRole("button", { name: "Fallback" })).toBeInTheDocument();
+  });
+
+  it("forwards ref to the underlying MUI button", () => {
+    const ref = React.createRef<HTMLButtonElement>();
+    renderWithProviders(<Button ref={ref}>Ref button</Button>);
+
+    expect(ref.current).toBeInstanceOf(HTMLButtonElement);
+    expect(ref.current?.textContent).toBe("Ref button");
+  });
+
+  it("sets displayName for debugging", () => {
+    expect(Button.displayName).toBe("Button");
   });
 });
