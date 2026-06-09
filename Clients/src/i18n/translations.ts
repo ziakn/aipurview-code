@@ -25,6 +25,7 @@ export type Lang = "en" | "de" | "fr";
 
 export const translations: Record<string, Record<string, string>> = {
   de: {
+    "Snooze": "Schlummern",
     // Sidebar / nav
     "Start here": "Hier starten",
     "Dashboard": "Dashboard",
@@ -7949,6 +7950,7 @@ export const translations: Record<string, Record<string, string>> = {
   },
 
   fr: {
+    "Snooze": "Différer",
     // Sidebar / nav
     "Start here": "Commencer ici",
     "Dashboard": "Tableau de bord",
