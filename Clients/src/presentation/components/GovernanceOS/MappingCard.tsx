@@ -1,17 +1,10 @@
 import { useState } from "react";
-import { Box, Typography, Stack, IconButton, alpha } from "@mui/material";
+import { Box, Typography, Stack, IconButton } from "@mui/material";
 import { ArrowRight, Info, Pencil, Trash2 } from "lucide-react";
 import MappingStrengthBadge from "./MappingStrengthBadge";
 import StandardModal from "../Modals/StandardModal";
 import { IMappingCardProps } from "../../../domain/interfaces/i.governanceOs";
-import {
-  border as borderPalette,
-  background,
-  text,
-  accent,
-  brand,
-  status,
-} from "../../themes/palette";
+import { border as borderPalette, background, text, accent, status } from "../../themes/palette";
 
 const FRAMEWORK_NAMES: Record<number, string> = {
   1: "EU AI Act",
