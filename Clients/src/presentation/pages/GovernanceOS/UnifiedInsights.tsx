@@ -19,7 +19,7 @@ import { createTask } from "../../../application/repository/task.repository";
 import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.context";
 import { ITask } from "../../../domain/interfaces/i.task";
 import { TaskPriority, TaskStatus } from "../../../domain/enums/task.enum";
-import { border as borderPalette, background, text, brand } from "../../themes/palette";
+import { background, text, brand } from "../../themes/palette";
 
 const UnifiedInsights = () => {
   const { projects, userId, organizationId } = useContext(VerifyWiseContext);
