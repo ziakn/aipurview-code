@@ -108,12 +108,10 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
       description={
         isEdit ? "Update your governance scenario" : "Create a custom governance scenario"
       }
-      primaryLabel={isEdit ? "Save Changes" : "Create Scenario"}
-      secondaryLabel="Cancel"
-      onPrimaryAction={handleSubmit}
-      onSecondaryAction={onClose}
-      disabledPrimary={!isValid || isSubmitting}
-      isLoading={isSubmitting}
+      submitButtonText={isEdit ? "Save Changes" : "Create Scenario"}
+      cancelButtonText="Cancel"
+      onSubmit={handleSubmit}
+      isSubmitting={!isValid || isSubmitting}
       fitContent
     >
       <Stack gap="16px" sx={{ minWidth: 480 }}>
