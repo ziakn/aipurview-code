@@ -106,9 +106,9 @@ const GovernanceSettings: React.FC = () => {
               alignItems: "center",
               justifyContent: "space-between",
               p: "16px",
-              border: `1px solid ${borderPalette.light}`,
+              border: `1px solid ${borderPalette.dark}`,
               borderRadius: "4px",
-              background: background.main,
+              background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
             }}
           >
             <Box>
@@ -146,9 +146,9 @@ const GovernanceSettings: React.FC = () => {
           <Box
             sx={{
               p: "16px",
-              border: `1px solid ${borderPalette.light}`,
+              border: `1px solid ${borderPalette.dark}`,
               borderRadius: "4px",
-              background: background.main,
+              background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
             }}
           >
             {activeScenarioId ? (
@@ -209,9 +209,9 @@ const GovernanceSettings: React.FC = () => {
           <Box
             sx={{
               p: "16px",
-              border: `1px solid ${borderPalette.light}`,
+              border: `1px solid ${borderPalette.dark}`,
               borderRadius: "4px",
-              background: background.main,
+              background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -245,10 +245,10 @@ const GovernanceSettings: React.FC = () => {
         >
           <Box
             sx={{
-              p: 2,
-              border: `1px solid ${borderPalette.light}`,
+              p: "16px",
+              border: `1px solid ${borderPalette.dark}`,
               borderRadius: "4px",
-              background: background.main,
+              background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
             }}
           >
             {preferences?.active_mapping_filters ? (

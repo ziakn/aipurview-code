@@ -156,8 +156,6 @@ const MappingMatrixView: React.FC<MappingMatrixViewProps> = ({ mappings, onCellC
                       flexShrink: 0,
                       "&:hover": {
                         borderColor: !isDiagonal && count > 0 ? rowFw.color : borderPalette.light,
-                        transform: !isDiagonal && count > 0 ? "scale(1.05)" : "none",
-                        boxShadow: !isDiagonal && count > 0 ? `0 2px 8px ${rowFw.color}30` : "none",
                       },
                     }}
                   >
