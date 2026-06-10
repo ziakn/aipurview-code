@@ -282,25 +282,44 @@ export async function simulateScenario(req: Request, res: Response): Promise<any
         .json(STATUS_CODE[400]("frameworkIds must be a non-empty array of positive integers"));
     }
 
-    // Count total controls across selected frameworks
-    const [frameworkResults] = await sequelize.query(
-      `SELECT f.id, f.name, COUNT(c.id) as control_count
-       FROM frameworks f
-       LEFT JOIN LATERAL (
-         SELECT id FROM iso42001_clauses WHERE framework_id = f.id
-         UNION ALL
-         SELECT id FROM iso27001_clauses WHERE framework_id = f.id
-         UNION ALL
-         SELECT id FROM nist_ai_rmf_functions WHERE framework_id = f.id
-         UNION ALL
-         SELECT id FROM eu_ai_act_articles WHERE framework_id = f.id
-       ) c ON true
-       WHERE f.id = ANY(ARRAY[:frameworkIds]::INTEGER[])
-       GROUP BY f.id, f.name`,
+    // Count total controls across selected frameworks using struct tables
+    const frameworkControlQueries: Record<number, string> = {
+      1: `SELECT COUNT(*) as cnt FROM subcontrols_struct_eu sc
+          JOIN controls_struct_eu c ON sc.control_id = c.id
+          JOIN controlcategories_struct_eu cc ON c.control_category_id = cc.id
+          WHERE cc.framework_id = 1`,
+      2: `SELECT COUNT(*) as cnt FROM subclauses_struct_iso s
+          JOIN clauses_struct_iso c ON s.clause_id = c.id
+          WHERE c.framework_id = 2`,
+      3: `SELECT COUNT(*) as cnt FROM subclauses_struct_iso27001 s
+          JOIN clauses_struct_iso27001 c ON s.clause_id = c.id
+          WHERE c.framework_id = 3`,
+      4: `SELECT COUNT(*) as cnt FROM nist_ai_rmf_subcategories_struct s
+          JOIN nist_ai_rmf_categories_struct c ON s.category_struct_id = c.id
+          WHERE c.framework_id = 4`,
+    };
+
+    const [frameworkRows] = await sequelize.query(
+      `SELECT id, name FROM frameworks WHERE id = ANY(ARRAY[:frameworkIds]::INTEGER[])`,
       { replacements: { frameworkIds } },
     );
 
-    const breakdown = (frameworkResults as any[]).map((row) => ({
+    const frameworkResults = await Promise.all(
+      (frameworkRows as any[]).map(async (fw) => {
+        const query = frameworkControlQueries[fw.id];
+        if (!query) {
+          return { id: fw.id, name: fw.name, control_count: "0" };
+        }
+        const [result] = await sequelize.query(query);
+        return {
+          id: fw.id,
+          name: fw.name,
+          control_count: String((result as any)?.cnt || 0),
+        };
+      }),
+    );
+
+    const breakdown = frameworkResults.map((row) => ({
       frameworkId: row.id,
       frameworkName: row.name,
       controlCount: parseInt(row.control_count, 10),
