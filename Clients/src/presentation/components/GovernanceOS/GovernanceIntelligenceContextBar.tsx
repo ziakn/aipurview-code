@@ -1,13 +1,10 @@
 import React from "react";
-import { Stack, Typography, Box, useTheme } from "@mui/material";
+import { Stack, Typography, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import {
-  GitCompareArrows,
-  BarChart3,
-  ArrowRight,
-} from "lucide-react";
+import { GitCompareArrows, BarChart3, ArrowRight, Sparkles } from "lucide-react";
 import { useGovernancePreferences } from "../../../application/hooks/useGovernanceOs";
 import { CustomizableButton } from "../button/customizable-button";
+import { text, brand, background, border as borderPalette } from "../../themes/palette";
 
 interface GovernanceIntelligenceContextBarProps {
   frameworkCount: number;
@@ -16,7 +13,6 @@ interface GovernanceIntelligenceContextBarProps {
 const GovernanceIntelligenceContextBar: React.FC<GovernanceIntelligenceContextBarProps> = ({
   frameworkCount,
 }) => {
-  const theme = useTheme();
   const navigate = useNavigate();
   const { data: preferences } = useGovernancePreferences();
   const isEnabled = preferences?.is_enabled ?? false;
@@ -26,49 +22,52 @@ const GovernanceIntelligenceContextBar: React.FC<GovernanceIntelligenceContextBa
   return (
     <Box
       sx={{
-        mb: 3,
-        p: "12px 16px",
+        mb: "16px",
+        p: "16px",
         borderRadius: "4px",
-        border: `1px solid ${theme.palette.border.light}`,
-        backgroundColor: theme.palette.background.accent,
+        border: `1px solid ${borderPalette.dark}`,
+        background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
       }}
     >
       <Stack
-        direction="row"
-        gap={2}
-        alignItems="center"
+        direction={{ xs: "column", md: "row" }}
+        gap="16px"
+        alignItems={{ xs: "flex-start", md: "center" }}
         justifyContent="space-between"
-        flexWrap="wrap"
       >
         <Stack
           direction="row"
-          gap={1.5}
+          gap="12px"
           alignItems="center"
           sx={{ flex: 1, minWidth: 0 }}
         >
-          <GitCompareArrows
-            size={18}
-            color={theme.palette.primary.main}
-            style={{ flexShrink: 0 }}
-          />
+          <Box
+            sx={{
+              width: 32,
+              height: 32,
+              borderRadius: "50%",
+              backgroundColor: brand.primaryLight,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            <Sparkles size={16} color={brand.primary} />
+          </Box>
           <Typography
             sx={{
               fontSize: 13,
               fontWeight: 500,
-              color: theme.palette.text.secondary,
+              color: text.primary,
               lineHeight: 1.5,
             }}
           >
-            Governance Intelligence: {frameworkCount} frameworks mapped
+            Governance Intelligence is active — {frameworkCount} frameworks mapped
           </Typography>
         </Stack>
 
-        <Stack
-          direction="row"
-          gap={1}
-          alignItems="center"
-          sx={{ flexShrink: 0 }}
-        >
+        <Stack direction="row" gap="8px" alignItems="center" sx={{ flexShrink: 0 }}>
           <CustomizableButton
             variant="outlined"
             size="small"
@@ -91,7 +90,7 @@ const GovernanceIntelligenceContextBar: React.FC<GovernanceIntelligenceContextBa
             color="primary"
             onClick={() => navigate("/governance")}
             endIcon={<ArrowRight size={14} />}
-            text="Hub"
+            text="Open Hub"
           />
         </Stack>
       </Stack>
