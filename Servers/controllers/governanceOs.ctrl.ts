@@ -295,7 +295,7 @@ export async function simulateScenario(req: Request, res: Response): Promise<any
          UNION ALL
          SELECT id FROM eu_ai_act_articles WHERE framework_id = f.id
        ) c ON true
-       WHERE f.id = ANY(:frameworkIds)
+       WHERE f.id = ANY(ARRAY[:frameworkIds]::INTEGER[])
        GROUP BY f.id, f.name`,
       { replacements: { frameworkIds } },
     );
