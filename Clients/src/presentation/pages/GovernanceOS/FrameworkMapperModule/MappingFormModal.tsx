@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Stack, TextField, Typography, Box, Slider } from "@mui/material";
 import StandardModal from "../../../components/Modals/StandardModal";
-import { IGovernanceControlMapping } from "../../../../domain/interfaces/i.governanceOs";
+import {
+  IGovernanceControlMapping,
+  MappingStrength,
+} from "../../../../domain/interfaces/i.governanceOs";
 import { border as borderPalette, background, text, accent } from "../../../themes/palette";
 
 interface MappingFormModalProps {
@@ -34,7 +37,7 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
   const [sourceControlIdentifier, setSourceControlIdentifier] = useState("");
   const [targetFrameworkId, setTargetFrameworkId] = useState<number>(2);
   const [targetControlIdentifier, setTargetControlIdentifier] = useState("");
-  const [strength, setStrength] = useState<string>("related");
+  const [strength, setStrength] = useState<MappingStrength>("related");
   const [domainTag, setDomainTag] = useState("");
   const [rationale, setRationale] = useState("");
   const [confidenceScore, setConfidenceScore] = useState<number>(0.8);
@@ -85,12 +88,10 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
       description={
         isEdit ? "Update this control mapping" : "Create a new cross-framework control mapping"
       }
-      primaryLabel={isEdit ? "Save Changes" : "Create Mapping"}
-      secondaryLabel="Cancel"
-      onPrimaryAction={handleSubmit}
-      onSecondaryAction={onClose}
-      disabledPrimary={!isValid || isSubmitting}
-      isLoading={isSubmitting}
+      submitButtonText={isEdit ? "Save Changes" : "Create Mapping"}
+      cancelButtonText="Cancel"
+      onSubmit={handleSubmit}
+      isSubmitting={!isValid || isSubmitting}
       fitContent
     >
       <Stack spacing={3} sx={{ minWidth: 520 }}>
