@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Stack, Typography, CircularProgress, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import {
+  Stack,
+  Typography,
+  CircularProgress,
+  ToggleButton,
+  ToggleButtonGroup,
+} from "@mui/material";
 import { GitCompareArrows, Plus, List, Grid3X3, Download, Upload } from "lucide-react";
 import FrameworkSelector from "../../components/GovernanceOS/FrameworkSelector";
 import MappingCard from "../../components/GovernanceOS/MappingCard";
@@ -34,7 +40,10 @@ const FrameworkMapper = () => {
   const [bulkImportOpen, setBulkImportOpen] = useState(false);
 
   const { data: allMappings, isLoading: allMappingsLoading } = useMappings();
-  const { data: pairwiseMappings, isLoading: pairwiseLoading } = useMappingsBetween(sourceId, targetId);
+  const { data: pairwiseMappings, isLoading: pairwiseLoading } = useMappingsBetween(
+    sourceId,
+    targetId,
+  );
   const createMappingMutation = useCreateMapping();
   const updateMappingMutation = useUpdateMapping();
   const deleteMappingMutation = useDeleteMapping();
@@ -70,7 +79,7 @@ const FrameworkMapper = () => {
     if (editingMapping) {
       updateMappingMutation.mutate(
         { id: editingMapping.id!, body: data },
-        { onSuccess: () => setFormModalOpen(false) }
+        { onSuccess: () => setFormModalOpen(false) },
       );
     } else {
       createMappingMutation.mutate(data, { onSuccess: () => setFormModalOpen(false) });
@@ -123,9 +132,27 @@ const FrameworkMapper = () => {
             startIcon={<Download size={14} />}
             onClick={() => {
               const rows = [
-                ["ID", "Source Framework", "Source Control", "Target Framework", "Target Control", "Strength", "Domain", "Confidence"].join(","),
+                [
+                  "ID",
+                  "Source Framework",
+                  "Source Control",
+                  "Target Framework",
+                  "Target Control",
+                  "Strength",
+                  "Domain",
+                  "Confidence",
+                ].join(","),
                 ...(pairwiseMappings || []).map((m) =>
-                  [m.id, m.source_framework_id, m.source_control_identifier, m.target_framework_id, m.target_control_identifier, m.mapping_strength, m.domain_tag || "", m.confidence_score || ""].join(",")
+                  [
+                    m.id,
+                    m.source_framework_id,
+                    m.source_control_identifier,
+                    m.target_framework_id,
+                    m.target_control_identifier,
+                    m.mapping_strength,
+                    m.domain_tag || "",
+                    m.confidence_score || "",
+                  ].join(","),
                 ),
               ];
               const blob = new Blob([rows.join("\n")], { type: "text/csv" });

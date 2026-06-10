@@ -1,7 +1,15 @@
 import React, { useMemo } from "react";
 import { Box, Typography, Stack, LinearProgress, alpha, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { Target, Zap, ArrowRight, XCircle, LayoutDashboard, BarChart3, GitCompareArrows } from "lucide-react";
+import {
+  Target,
+  Zap,
+  ArrowRight,
+  XCircle,
+  LayoutDashboard,
+  BarChart3,
+  GitCompareArrows,
+} from "lucide-react";
 import { IGovernanceScenario } from "../../../domain/interfaces/i.governanceOs";
 import {
   useActivationHistory,
@@ -10,7 +18,14 @@ import {
 } from "../../../application/hooks/useGovernanceOs";
 import FrameworkChip from "./FrameworkChip";
 import { CustomizableButton } from "../button/customizable-button";
-import { border as borderPalette, background, text, accent, brand, status } from "../../themes/palette";
+import {
+  border as borderPalette,
+  background,
+  text,
+  accent,
+  brand,
+  status,
+} from "../../themes/palette";
 
 interface ActiveScenarioPanelProps {
   activeScenario: IGovernanceScenario | null | undefined;
@@ -36,9 +51,8 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
   const latestActivation = useMemo(() => {
     if (!activations || !activeScenario) return null;
     return (
-      activations.find(
-        (a: any) => a.scenario_id === activeScenario.id && a.status === "active"
-      ) || null
+      activations.find((a: any) => a.scenario_id === activeScenario.id && a.status === "active") ||
+      null
     );
   }, [activations, activeScenario]);
 
@@ -238,9 +252,9 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
                     variant="determinate"
                     value={percent}
                     sx={{
-                      height: 6,
-                      borderRadius: "4px",
-                      backgroundColor: background.hover,
+                      "height": 6,
+                      "borderRadius": "4px",
+                      "backgroundColor": background.hover,
                       "& .MuiLinearProgress-bar": {
                         backgroundColor:
                           percent >= 70

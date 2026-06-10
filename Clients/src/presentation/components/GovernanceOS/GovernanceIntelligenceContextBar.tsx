@@ -35,12 +35,7 @@ const GovernanceIntelligenceContextBar: React.FC<GovernanceIntelligenceContextBa
         alignItems={{ xs: "flex-start", md: "center" }}
         justifyContent="space-between"
       >
-        <Stack
-          direction="row"
-          gap="12px"
-          alignItems="center"
-          sx={{ flex: 1, minWidth: 0 }}
-        >
+        <Stack direction="row" gap="12px" alignItems="center" sx={{ flex: 1, minWidth: 0 }}>
           <Box
             sx={{
               width: 32,

@@ -4,7 +4,14 @@ import { ArrowRight, Info, Pencil, Trash2 } from "lucide-react";
 import MappingStrengthBadge from "./MappingStrengthBadge";
 import StandardModal from "../Modals/StandardModal";
 import { IMappingCardProps } from "../../../domain/interfaces/i.governanceOs";
-import { border as borderPalette, background, text, accent, brand, status } from "../../themes/palette";
+import {
+  border as borderPalette,
+  background,
+  text,
+  accent,
+  brand,
+  status,
+} from "../../themes/palette";
 
 const FRAMEWORK_NAMES: Record<number, string> = {
   1: "EU AI Act",
@@ -102,7 +109,7 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
                   e.stopPropagation();
                   onEdit(mapping);
                 }}
-                sx={{ color: text.muted, "&:hover": { color: text.primary } }}
+                sx={{ "color": text.muted, "&:hover": { color: text.primary } }}
               >
                 <Pencil size={14} />
               </IconButton>
@@ -115,7 +122,7 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
                   e.stopPropagation();
                   onDelete(mapping);
                 }}
-                sx={{ color: text.muted, "&:hover": { color: status.error.text } }}
+                sx={{ "color": text.muted, "&:hover": { color: status.error.text } }}
               >
                 <Trash2 size={14} />
               </IconButton>

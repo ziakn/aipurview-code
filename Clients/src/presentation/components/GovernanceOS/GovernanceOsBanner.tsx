@@ -45,12 +45,7 @@ const GovernanceOsBanner: React.FC<GovernanceOsBannerProps> = ({ frameworkCount,
         alignItems={{ xs: "flex-start", md: "center" }}
         justifyContent="space-between"
       >
-        <Stack
-          direction="row"
-          gap="12px"
-          alignItems="flex-start"
-          sx={{ flex: 1, minWidth: 0 }}
-        >
+        <Stack direction="row" gap="12px" alignItems="flex-start" sx={{ flex: 1, minWidth: 0 }}>
           <Box
             sx={{
               width: 36,
@@ -104,7 +99,9 @@ const GovernanceOsBanner: React.FC<GovernanceOsBannerProps> = ({ frameworkCount,
                 isDisabled={!isAdmin || updatePreferences.isPending}
                 onClick={handleEnable}
                 startIcon={<GitCompareArrows size={14} />}
-                text={updatePreferences.isPending ? "Enabling..." : "Enable Governance Intelligence"}
+                text={
+                  updatePreferences.isPending ? "Enabling..." : "Enable Governance Intelligence"
+                }
               />
             </span>
           </Tooltip>
@@ -117,13 +114,13 @@ const GovernanceOsBanner: React.FC<GovernanceOsBannerProps> = ({ frameworkCount,
               onClick={onDismiss}
               icon={<CloseIcon size={16} />}
               sx={{
-                minWidth: 28,
-                width: 28,
-                height: 28,
-                p: 0,
-                color: text.muted,
-                border: `1px solid ${borderPalette.light}`,
-                borderRadius: "4px",
+                "minWidth": 28,
+                "width": 28,
+                "height": 28,
+                "p": 0,
+                "color": text.muted,
+                "border": `1px solid ${borderPalette.light}`,
+                "borderRadius": "4px",
                 "&:hover": {
                   color: text.primary,
                   backgroundColor: background.hover,

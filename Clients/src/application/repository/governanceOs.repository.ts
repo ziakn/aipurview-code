@@ -117,7 +117,9 @@ export async function simulateScenario({ body }: { body: any }): Promise<any> {
 }
 
 // Activations
-export async function getActivationHistory({ signal }: { signal?: AbortSignal } = {}): Promise<any> {
+export async function getActivationHistory({
+  signal,
+}: { signal?: AbortSignal } = {}): Promise<any> {
   const response = await apiServices.get(`${BASE}/activations`, { signal });
   return response.data;
 }

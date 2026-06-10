@@ -138,13 +138,25 @@ const GovernanceOS = lazyRoute(() => import("../../presentation/pages/Governance
 
 // ── Governance Intelligence module routes ─────────────────────────────
 const GovernanceHub = lazyRoute(() => import("../../presentation/pages/GovernanceOS/Hub"));
-const FrameworkMapperModule = lazyRoute(() => import("../../presentation/pages/GovernanceOS/FrameworkMapperModule"));
-const ScenarioBuilderModule = lazyRoute(() => import("../../presentation/pages/GovernanceOS/ScenarioBuilderModule"));
-const UnifiedInsightsModule = lazyRoute(() => import("../../presentation/pages/GovernanceOS/UnifiedInsightsModule"));
-const GovernanceSettings = lazyRoute(() => import("../../presentation/pages/GovernanceOS/Settings"));
+const FrameworkMapperModule = lazyRoute(
+  () => import("../../presentation/pages/GovernanceOS/FrameworkMapperModule"),
+);
+const ScenarioBuilderModule = lazyRoute(
+  () => import("../../presentation/pages/GovernanceOS/ScenarioBuilderModule"),
+);
+const UnifiedInsightsModule = lazyRoute(
+  () => import("../../presentation/pages/GovernanceOS/UnifiedInsightsModule"),
+);
+const GovernanceSettings = lazyRoute(
+  () => import("../../presentation/pages/GovernanceOS/Settings"),
+);
 const EvidenceHub = lazyRoute(() => import("../../presentation/pages/GovernanceOS/EvidenceHub"));
-const KnowledgeGraph = lazyRoute(() => import("../../presentation/pages/GovernanceOS/KnowledgeGraph"));
-const RegulatoryRadar = lazyRoute(() => import("../../presentation/pages/GovernanceOS/RegulatoryRadar"));
+const KnowledgeGraph = lazyRoute(
+  () => import("../../presentation/pages/GovernanceOS/KnowledgeGraph"),
+);
+const RegulatoryRadar = lazyRoute(
+  () => import("../../presentation/pages/GovernanceOS/RegulatoryRadar"),
+);
 
 // ── Remaining routes ──────────────────────────────────────────────────
 const Plugins = lazyRoute(() => import("../../presentation/pages/Plugins"));

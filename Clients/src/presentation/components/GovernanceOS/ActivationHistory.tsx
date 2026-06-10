@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Box,
-  Typography,
-  Stack,
-  CircularProgress,
-  alpha,
-} from "@mui/material";
+import { Box, Typography, Stack, CircularProgress, alpha } from "@mui/material";
 import { History, XCircle } from "lucide-react";
 import {
   useActivationHistory,
@@ -61,9 +55,7 @@ const ActivationHistory: React.FC = () => {
     >
       <Stack direction="row" gap="16px" alignItems="center" sx={{ mb: "16px" }}>
         <History size={20} color={brand.primary} />
-        <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
-          Activation History
-        </Typography>
+        <Typography sx={{ fontSize: 14, fontWeight: 600 }}>Activation History</Typography>
       </Stack>
 
       <Stack gap="12px">
@@ -100,9 +92,7 @@ const ActivationHistory: React.FC = () => {
                     borderRadius: "4px",
                     fontSize: 11,
                     fontWeight: isActive ? 500 : 400,
-                    backgroundColor: isActive
-                      ? status.success.bg
-                      : background.hover,
+                    backgroundColor: isActive ? status.success.bg : background.hover,
                     color: isActive ? status.success.text : text.muted,
                     border: `1px solid ${isActive ? status.success.border : borderPalette.light}`,
                   }}

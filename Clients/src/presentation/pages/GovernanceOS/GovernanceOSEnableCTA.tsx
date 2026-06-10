@@ -131,7 +131,10 @@ const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({ onEnabled
 
         {/* CTA */}
         <Stack gap="16px" alignItems="center" sx={{ mt: "8px" }}>
-          <Tooltip title={!isAdmin ? "Contact your admin to enable Governance Intelligence" : ""} arrow>
+          <Tooltip
+            title={!isAdmin ? "Contact your admin to enable Governance Intelligence" : ""}
+            arrow
+          >
             <span>
               <CustomizableButton
                 variant="contained"
@@ -140,7 +143,9 @@ const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({ onEnabled
                 isDisabled={!isAdmin || updatePreferences.isPending}
                 onClick={handleEnable}
                 startIcon={<Sparkles size={16} />}
-                text={updatePreferences.isPending ? "Enabling..." : "Enable Governance Intelligence"}
+                text={
+                  updatePreferences.isPending ? "Enabling..." : "Enable Governance Intelligence"
+                }
               />
             </span>
           </Tooltip>

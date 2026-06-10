@@ -1,5 +1,15 @@
 import React, { useState, useCallback } from "react";
-import { Stack, Typography, Box, Table, TableHead, TableRow, TableCell, TableBody, Alert } from "@mui/material";
+import {
+  Stack,
+  Typography,
+  Box,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Alert,
+} from "@mui/material";
 import { Upload, FileSpreadsheet, Check, X } from "lucide-react";
 import StandardModal from "../../../components/Modals/StandardModal";
 import { IGovernanceControlMapping } from "../../../../domain/interfaces/i.governanceOs";
@@ -49,7 +59,12 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
         }
 
         const headers = lines[0].split(",").map((h) => h.trim().toLowerCase());
-        const requiredCols = ["source_framework_id", "source_control_identifier", "target_framework_id", "target_control_identifier"];
+        const requiredCols = [
+          "source_framework_id",
+          "source_control_identifier",
+          "target_framework_id",
+          "target_control_identifier",
+        ];
         const missing = requiredCols.filter((c) => !headers.includes(c));
         if (missing.length > 0) {
           setParseError(`Missing required columns: ${missing.join(", ")}`);
@@ -74,7 +89,8 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
           if (!targetFw || targetFw < 1 || targetFw > 4) errors.push("Invalid target_framework_id");
           if (!sourceCtrl) errors.push("Missing source_control_identifier");
           if (!targetCtrl) errors.push("Missing target_control_identifier");
-          if (!["direct", "partial", "related"].includes(strength)) errors.push("Invalid mapping_strength");
+          if (!["direct", "partial", "related"].includes(strength))
+            errors.push("Invalid mapping_strength");
 
           rows.push({
             source_framework_id: sourceFw,
@@ -138,16 +154,16 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
         <Box
           component="label"
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            p: 4,
-            border: `2px dashed ${borderPalette.dark}`,
-            borderRadius: "4px",
-            backgroundColor: background.accent,
-            cursor: "pointer",
-            transition: "all 150ms ease",
+            "display": "flex",
+            "flexDirection": "column",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "p": 4,
+            "border": `2px dashed ${borderPalette.dark}`,
+            "borderRadius": "4px",
+            "backgroundColor": background.accent,
+            "cursor": "pointer",
+            "transition": "all 150ms ease",
             "&:hover": {
               borderColor: accent.primary.border,
               backgroundColor: accent.primary.bg,
@@ -160,7 +176,8 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
             Click to upload CSV file
           </Typography>
           <Typography sx={{ fontSize: 11, color: text.muted }}>
-            Required columns: source_framework_id, source_control_identifier, target_framework_id, target_control_identifier
+            Required columns: source_framework_id, source_control_identifier, target_framework_id,
+            target_control_identifier
           </Typography>
         </Box>
 
@@ -169,24 +186,38 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
         {parsedRows.length > 0 && (
           <>
             <Stack direction="row" spacing={2} alignItems="center">
-              <Typography sx={{ fontSize: 13, fontWeight: 600 }}>
-                Preview
-              </Typography>
+              <Typography sx={{ fontSize: 13, fontWeight: 600 }}>Preview</Typography>
               {validCount > 0 && (
-                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, color: accent.primary.text }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.5,
+                    color: accent.primary.text,
+                  }}
+                >
                   <Check size={14} />
                   <Typography sx={{ fontSize: 12 }}>{validCount} valid</Typography>
                 </Box>
               )}
               {invalidCount > 0 && (
-                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, color: status.error.text }}>
+                <Box
+                  sx={{ display: "flex", alignItems: "center", gap: 0.5, color: status.error.text }}
+                >
                   <X size={14} />
                   <Typography sx={{ fontSize: 12 }}>{invalidCount} invalid</Typography>
                 </Box>
               )}
             </Stack>
 
-            <Box sx={{ maxHeight: 300, overflow: "auto", border: `1px solid ${borderPalette.light}`, borderRadius: "4px" }}>
+            <Box
+              sx={{
+                maxHeight: 300,
+                overflow: "auto",
+                border: `1px solid ${borderPalette.light}`,
+                borderRadius: "4px",
+              }}
+            >
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ backgroundColor: background.accent }}>
@@ -199,7 +230,10 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
                 </TableHead>
                 <TableBody>
                   {parsedRows.map((row, i) => (
-                    <TableRow key={i} sx={{ backgroundColor: row.valid ? "transparent" : status.error.bg }}>
+                    <TableRow
+                      key={i}
+                      sx={{ backgroundColor: row.valid ? "transparent" : status.error.bg }}
+                    >
                       <TableCell>
                         {row.valid ? (
                           <Check size={14} color={accent.primary.text} />
@@ -213,8 +247,12 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
                       <TableCell sx={{ fontSize: 12 }}>
                         {row.target_framework_id}: {row.target_control_identifier}
                       </TableCell>
-                      <TableCell sx={{ fontSize: 12, textTransform: "capitalize" }}>{row.mapping_strength}</TableCell>
-                      <TableCell sx={{ fontSize: 11, color: status.error.text }}>{row.errors.join(", ")}</TableCell>
+                      <TableCell sx={{ fontSize: 12, textTransform: "capitalize" }}>
+                        {row.mapping_strength}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: 11, color: status.error.text }}>
+                        {row.errors.join(", ")}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

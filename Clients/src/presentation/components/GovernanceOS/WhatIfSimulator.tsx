@@ -60,7 +60,7 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
 
   const baseScenario = useMemo(
     () => scenarios.find((s) => String(s.id) === baseScenarioId) || null,
-    [scenarios, baseScenarioId]
+    [scenarios, baseScenarioId],
   );
 
   useEffect(() => {
@@ -85,10 +85,10 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
   }, [primaryId, secondaryIds, supplementaryIds]);
 
   const availableForSecondary = FRAMEWORK_OPTIONS.filter(
-    (fw) => fw.id !== Number(primaryId) && !supplementaryIds.includes(fw.id)
+    (fw) => fw.id !== Number(primaryId) && !supplementaryIds.includes(fw.id),
   );
   const availableForSupplementary = FRAMEWORK_OPTIONS.filter(
-    (fw) => fw.id !== Number(primaryId) && !secondaryIds.includes(fw.id)
+    (fw) => fw.id !== Number(primaryId) && !secondaryIds.includes(fw.id),
   );
 
   const toggleSecondary = (id: number) => {
@@ -96,7 +96,9 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
   };
 
   const toggleSupplementary = (id: number) => {
-    setSupplementaryIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    setSupplementaryIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+    );
   };
 
   const handleRun = () => {
@@ -122,9 +124,7 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
     >
       <Stack direction="row" gap="16px" alignItems="center" sx={{ mb: "16px" }}>
         <Calculator size={20} color={brand.primary} />
-        <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
-          What-If Simulator
-        </Typography>
+        <Typography sx={{ fontSize: 14, fontWeight: 600 }}>What-If Simulator</Typography>
       </Stack>
 
       <Typography sx={{ fontSize: 13, color: text.accent, mb: "16px" }}>
@@ -192,19 +192,19 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
                   component="span"
                   onClick={() => toggleSecondary(fw.id)}
                   sx={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    height: 24,
-                    px: "10px",
-                    borderRadius: "4px",
-                    fontSize: 12,
-                    cursor: "pointer",
-                    fontWeight: secondaryIds.includes(fw.id) ? 500 : 400,
-                    backgroundColor: secondaryIds.includes(fw.id)
+                    "display": "inline-flex",
+                    "alignItems": "center",
+                    "height": 24,
+                    "px": "10px",
+                    "borderRadius": "4px",
+                    "fontSize": 12,
+                    "cursor": "pointer",
+                    "fontWeight": secondaryIds.includes(fw.id) ? 500 : 400,
+                    "backgroundColor": secondaryIds.includes(fw.id)
                       ? alpha(accent.indigo.text, 0.12)
                       : background.hover,
-                    color: secondaryIds.includes(fw.id) ? accent.indigo.text : text.secondary,
-                    border: `1px solid ${
+                    "color": secondaryIds.includes(fw.id) ? accent.indigo.text : text.secondary,
+                    "border": `1px solid ${
                       secondaryIds.includes(fw.id) ? accent.indigo.text : borderPalette.light
                     }`,
                     "&:hover": {
@@ -244,19 +244,19 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
                   component="span"
                   onClick={() => toggleSupplementary(fw.id)}
                   sx={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    height: 24,
-                    px: "10px",
-                    borderRadius: "4px",
-                    fontSize: 12,
-                    cursor: "pointer",
-                    fontWeight: supplementaryIds.includes(fw.id) ? 500 : 400,
-                    backgroundColor: supplementaryIds.includes(fw.id)
+                    "display": "inline-flex",
+                    "alignItems": "center",
+                    "height": 24,
+                    "px": "10px",
+                    "borderRadius": "4px",
+                    "fontSize": 12,
+                    "cursor": "pointer",
+                    "fontWeight": supplementaryIds.includes(fw.id) ? 500 : 400,
+                    "backgroundColor": supplementaryIds.includes(fw.id)
                       ? background.hover
                       : background.hover,
-                    color: supplementaryIds.includes(fw.id) ? text.primary : text.secondary,
-                    border: `1px solid ${
+                    "color": supplementaryIds.includes(fw.id) ? text.primary : text.secondary,
+                    "border": `1px solid ${
                       supplementaryIds.includes(fw.id) ? borderPalette.dark : borderPalette.light
                     }`,
                     "&:hover": {
@@ -280,7 +280,9 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
           <CustomizableButton
             variant="contained"
             size="small"
-            startIcon={isSimulating ? <CircularProgress size={16} color="inherit" /> : <Play size={16} />}
+            startIcon={
+              isSimulating ? <CircularProgress size={16} color="inherit" /> : <Play size={16} />
+            }
             onClick={handleRun}
             isDisabled={isSimulating || allSelectedIds.length === 0}
             text={isSimulating ? "Simulating..." : "Run simulation"}
@@ -289,9 +291,7 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
         </Box>
 
         {error && (
-          <Alert severity="error">
-            Simulation failed: {error.message || "Please try again."}
-          </Alert>
+          <Alert severity="error">Simulation failed: {error.message || "Please try again."}</Alert>
         )}
 
         {result && (
@@ -315,10 +315,7 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
                 mb: 2,
               }}
             >
-              <MetricBox
-                label="Est. coverage"
-                value={`${result.estimatedCoveragePercent}%`}
-              />
+              <MetricBox label="Est. coverage" value={`${result.estimatedCoveragePercent}%`} />
               <MetricBox label="Total controls" value={String(result.totalControls)} />
               <MetricBox
                 label="Est. effort"
@@ -331,9 +328,9 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
               variant="determinate"
               value={result.estimatedCoveragePercent}
               sx={{
-                height: 8,
-                borderRadius: "4px",
-                backgroundColor: background.hover,
+                "height": 8,
+                "borderRadius": "4px",
+                "backgroundColor": background.hover,
                 "& .MuiLinearProgress-bar": {
                   backgroundColor: brand.primary,
                   borderRadius: "4px",

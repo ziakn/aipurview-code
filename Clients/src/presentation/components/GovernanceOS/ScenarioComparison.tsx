@@ -28,7 +28,7 @@ const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
 }) => {
   const comparedScenarios = useMemo(
     () => scenarios.filter((s) => selectedIds.includes(s.id)),
-    [scenarios, selectedIds]
+    [scenarios, selectedIds],
   );
 
   const toggleScenario = (id: number) => {
@@ -37,7 +37,7 @@ const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
         ? selectedIds.filter((x) => x !== id)
         : selectedIds.length < MAX_COMPARE
           ? [...selectedIds, id]
-          : selectedIds
+          : selectedIds,
     );
   };
 
@@ -58,7 +58,7 @@ const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
 
   const getPriorityForFramework = (
     scenario: IGovernanceScenario,
-    frameworkId: number
+    frameworkId: number,
   ): string | null => {
     const po = scenario.priority_order as {
       primary?: number;
@@ -84,9 +84,7 @@ const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
     >
       <Stack direction="row" gap="16px" alignItems="center" sx={{ mb: "16px" }}>
         <Scale size={20} color={brand.primary} />
-        <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
-          Scenario Comparison
-        </Typography>
+        <Typography sx={{ fontSize: 14, fontWeight: 600 }}>Scenario Comparison</Typography>
       </Stack>
 
       <Typography sx={{ fontSize: 13, color: text.accent, mb: "16px" }}>

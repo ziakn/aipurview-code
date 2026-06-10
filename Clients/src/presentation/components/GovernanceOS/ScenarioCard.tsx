@@ -1,13 +1,30 @@
 import { useState } from "react";
 import { Box, Typography, Stack, IconButton, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { Check, Info, Pencil, Trash2, Zap, LayoutDashboard, BarChart3, GitCompareArrows, ArrowRight } from "lucide-react";
+import {
+  Check,
+  Info,
+  Pencil,
+  Trash2,
+  Zap,
+  LayoutDashboard,
+  BarChart3,
+  GitCompareArrows,
+  ArrowRight,
+} from "lucide-react";
 import VWTooltip from "../VWTooltip";
 import StandardModal from "../Modals/StandardModal";
 import FrameworkChip from "./FrameworkChip";
 import { CustomizableButton } from "../button/customizable-button";
 import { IScenarioCardProps } from "../../../domain/interfaces/i.governanceOs";
-import { border as borderPalette, background, text, accent, brand, status } from "../../themes/palette";
+import {
+  border as borderPalette,
+  background,
+  text,
+  accent,
+  brand,
+  status,
+} from "../../themes/palette";
 
 const FRAMEWORK_NAMES: Record<number, string> = {
   1: "EU AI Act",
@@ -82,7 +99,7 @@ const ScenarioCard = ({
                   e.stopPropagation();
                   setDetailOpen(true);
                 }}
-                sx={{ color: text.muted, "&:hover": { color: text.primary } }}
+                sx={{ "color": text.muted, "&:hover": { color: text.primary } }}
               >
                 <Info size={16} />
               </IconButton>
@@ -96,7 +113,7 @@ const ScenarioCard = ({
                     e.stopPropagation();
                     onEdit(scenario);
                   }}
-                  sx={{ color: text.muted, "&:hover": { color: text.primary } }}
+                  sx={{ "color": text.muted, "&:hover": { color: text.primary } }}
                 >
                   <Pencil size={14} />
                 </IconButton>
@@ -111,7 +128,7 @@ const ScenarioCard = ({
                     e.stopPropagation();
                     onDelete(scenario);
                   }}
-                  sx={{ color: text.muted, "&:hover": { color: status.error.text } }}
+                  sx={{ "color": text.muted, "&:hover": { color: status.error.text } }}
                 >
                   <Trash2 size={14} />
                 </IconButton>
@@ -162,8 +179,8 @@ const ScenarioCard = ({
                     startIcon={isSelected ? <Check size={14} /> : undefined}
                     text={isSelected ? "Selected" : "Select"}
                     sx={{
-                      borderColor: isSelected ? brand.primary : borderPalette.dark,
-                      color: isSelected ? brand.primary : text.secondary,
+                      "borderColor": isSelected ? brand.primary : borderPalette.dark,
+                      "color": isSelected ? brand.primary : text.secondary,
                       "&:hover": {
                         borderColor: brand.primary,
                         color: brand.primary,
@@ -191,7 +208,9 @@ const ScenarioCard = ({
           <Stack direction="row" gap="8px" sx={{ mt: "16px" }} flexWrap="wrap" useFlexGap>
             {priorityOrder.primary && (
               <FrameworkChip
-                frameworkName={FRAMEWORK_NAMES[priorityOrder.primary] || String(priorityOrder.primary)}
+                frameworkName={
+                  FRAMEWORK_NAMES[priorityOrder.primary] || String(priorityOrder.primary)
+                }
                 priority="primary"
                 size="small"
               />

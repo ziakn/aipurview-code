@@ -18,7 +18,7 @@ const FRAMEWORK_OPTIONS = [
   { id: 1, name: "EU AI Act" },
   { id: 2, name: "ISO 42001" },
   { id: 3, name: "ISO 27001" },
-  { id: 4, "name": "NIST AI RMF" },
+  { id: 4, name: "NIST AI RMF" },
 ];
 
 const MappingFormModal: React.FC<MappingFormModalProps> = ({
@@ -82,7 +82,9 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
       isOpen={open}
       onClose={onClose}
       title={isEdit ? "Edit Mapping" : "New Mapping"}
-      description={isEdit ? "Update this control mapping" : "Create a new cross-framework control mapping"}
+      description={
+        isEdit ? "Update this control mapping" : "Create a new cross-framework control mapping"
+      }
       primaryLabel={isEdit ? "Save Changes" : "Create Mapping"}
       secondaryLabel="Cancel"
       onPrimaryAction={handleSubmit}
@@ -94,7 +96,9 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
       <Stack spacing={3} sx={{ minWidth: 520 }}>
         {/* Source Framework */}
         <Box>
-          <Typography sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}>
+          <Typography
+            sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}
+          >
             Source Framework *
           </Typography>
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
@@ -104,19 +108,21 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
                 component="span"
                 onClick={() => setSourceFrameworkId(fw.id)}
                 sx={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  height: 24,
-                  px: "10px",
-                  borderRadius: "4px",
-                  fontSize: 12,
-                  cursor: "pointer",
-                  fontWeight: sourceFrameworkId === fw.id ? 600 : 400,
-                  backgroundColor: sourceFrameworkId === fw.id ? accent.primary.bg : background.hover,
-                  color: sourceFrameworkId === fw.id ? accent.primary.text : text.tertiary,
-                  border: `1px solid ${sourceFrameworkId === fw.id ? accent.primary.border : borderPalette.light}`,
+                  "display": "inline-flex",
+                  "alignItems": "center",
+                  "height": 24,
+                  "px": "10px",
+                  "borderRadius": "4px",
+                  "fontSize": 12,
+                  "cursor": "pointer",
+                  "fontWeight": sourceFrameworkId === fw.id ? 600 : 400,
+                  "backgroundColor":
+                    sourceFrameworkId === fw.id ? accent.primary.bg : background.hover,
+                  "color": sourceFrameworkId === fw.id ? accent.primary.text : text.tertiary,
+                  "border": `1px solid ${sourceFrameworkId === fw.id ? accent.primary.border : borderPalette.light}`,
                   "&:hover": {
-                    backgroundColor: sourceFrameworkId === fw.id ? accent.primary.bg : background.accent,
+                    backgroundColor:
+                      sourceFrameworkId === fw.id ? accent.primary.bg : background.accent,
                   },
                 }}
               >
@@ -137,7 +143,9 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
 
         {/* Target Framework */}
         <Box>
-          <Typography sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}>
+          <Typography
+            sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}
+          >
             Target Framework *
           </Typography>
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
@@ -147,19 +155,21 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
                 component="span"
                 onClick={() => setTargetFrameworkId(fw.id)}
                 sx={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  height: 24,
-                  px: "10px",
-                  borderRadius: "4px",
-                  fontSize: 12,
-                  cursor: "pointer",
-                  fontWeight: targetFrameworkId === fw.id ? 600 : 400,
-                  backgroundColor: targetFrameworkId === fw.id ? accent.indigo.bg : background.hover,
-                  color: targetFrameworkId === fw.id ? accent.indigo.text : text.tertiary,
-                  border: `1px solid ${targetFrameworkId === fw.id ? accent.indigo.border : borderPalette.light}`,
+                  "display": "inline-flex",
+                  "alignItems": "center",
+                  "height": 24,
+                  "px": "10px",
+                  "borderRadius": "4px",
+                  "fontSize": 12,
+                  "cursor": "pointer",
+                  "fontWeight": targetFrameworkId === fw.id ? 600 : 400,
+                  "backgroundColor":
+                    targetFrameworkId === fw.id ? accent.indigo.bg : background.hover,
+                  "color": targetFrameworkId === fw.id ? accent.indigo.text : text.tertiary,
+                  "border": `1px solid ${targetFrameworkId === fw.id ? accent.indigo.border : borderPalette.light}`,
                   "&:hover": {
-                    backgroundColor: targetFrameworkId === fw.id ? accent.indigo.bg : background.accent,
+                    backgroundColor:
+                      targetFrameworkId === fw.id ? accent.indigo.bg : background.accent,
                   },
                 }}
               >
@@ -180,7 +190,9 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
 
         {/* Mapping Strength */}
         <Box>
-          <Typography sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}>
+          <Typography
+            sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}
+          >
             Mapping Strength
           </Typography>
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
@@ -190,18 +202,18 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
                 component="span"
                 onClick={() => setStrength(s)}
                 sx={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  height: 24,
-                  px: "10px",
-                  borderRadius: "4px",
-                  fontSize: 12,
-                  cursor: "pointer",
-                  textTransform: "capitalize",
-                  fontWeight: strength === s ? 600 : 400,
-                  backgroundColor: strength === s ? accent.teal.bg : background.hover,
-                  color: strength === s ? accent.teal.text : text.tertiary,
-                  border: `1px solid ${strength === s ? accent.teal.border : borderPalette.light}`,
+                  "display": "inline-flex",
+                  "alignItems": "center",
+                  "height": 24,
+                  "px": "10px",
+                  "borderRadius": "4px",
+                  "fontSize": 12,
+                  "cursor": "pointer",
+                  "textTransform": "capitalize",
+                  "fontWeight": strength === s ? 600 : 400,
+                  "backgroundColor": strength === s ? accent.teal.bg : background.hover,
+                  "color": strength === s ? accent.teal.text : text.tertiary,
+                  "border": `1px solid ${strength === s ? accent.teal.border : borderPalette.light}`,
                   "&:hover": {
                     backgroundColor: strength === s ? accent.teal.bg : background.accent,
                   },
@@ -235,7 +247,9 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
 
         {/* Confidence Score */}
         <Box>
-          <Typography sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}>
+          <Typography
+            sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}
+          >
             Confidence Score: {Math.round(confidenceScore * 100)}%
           </Typography>
           <Slider

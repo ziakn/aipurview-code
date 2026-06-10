@@ -137,7 +137,7 @@ const ScenarioBuilder = () => {
     if (editingScenario) {
       updateScenarioMutation.mutate(
         { id: editingScenario.id, body: data },
-        { onSuccess: () => setFormModalOpen(false) }
+        { onSuccess: () => setFormModalOpen(false) },
       );
     } else {
       createScenarioMutation.mutate(data, { onSuccess: () => setFormModalOpen(false) });
@@ -167,7 +167,7 @@ const ScenarioBuilder = () => {
           setActivationWizardOpen(false);
           setActivatingScenario(null);
         },
-      }
+      },
     );
   };
 
@@ -257,9 +257,7 @@ const ScenarioBuilder = () => {
       {/* Recommendation results */}
       {recommendMutation.data && recommendMutation.data.length > 0 && (
         <Stack gap="16px">
-          <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
-            Recommended Scenarios
-          </Typography>
+          <Typography sx={{ fontSize: 14, fontWeight: 600 }}>Recommended Scenarios</Typography>
           <Stack gap="8px">
             {recommendMutation.data.map((result) => (
               <ScenarioCard
@@ -301,9 +299,7 @@ const ScenarioBuilder = () => {
       {/* All scenarios */}
       <Stack gap="16px">
         <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
-            All Governance Scenarios
-          </Typography>
+          <Typography sx={{ fontSize: 14, fontWeight: 600 }}>All Governance Scenarios</Typography>
           <CustomizableButton
             variant="outlined"
             size="small"

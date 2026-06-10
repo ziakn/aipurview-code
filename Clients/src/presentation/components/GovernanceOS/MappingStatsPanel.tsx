@@ -15,8 +15,16 @@ const STRENGTH_LABELS: Record<string, string> = {
 };
 
 const STRENGTH_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  direct: { bg: alpha(brand.primary, 0.12), text: brand.primary, border: alpha(brand.primary, 0.3) },
-  partial: { bg: alpha(accent.indigo.text, 0.12), text: accent.indigo.text, border: alpha(accent.indigo.text, 0.3) },
+  direct: {
+    bg: alpha(brand.primary, 0.12),
+    text: brand.primary,
+    border: alpha(brand.primary, 0.3),
+  },
+  partial: {
+    bg: alpha(accent.indigo.text, 0.12),
+    text: accent.indigo.text,
+    border: alpha(accent.indigo.text, 0.3),
+  },
   related: { bg: background.hover, text: text.secondary, border: borderPalette.light },
 };
 
@@ -64,9 +72,7 @@ const MappingStatsPanel: React.FC<MappingStatsPanelProps> = ({ projectId }) => {
     >
       <Stack direction="row" gap="16px" alignItems="center" sx={{ mb: "16px" }}>
         <Network size={20} color={brand.primary} />
-        <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
-          Mapping Statistics
-        </Typography>
+        <Typography sx={{ fontSize: 14, fontWeight: 600 }}>Mapping Statistics</Typography>
       </Stack>
 
       <Stack gap="16px">

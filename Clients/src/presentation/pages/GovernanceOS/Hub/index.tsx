@@ -82,13 +82,13 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       sx={{
-        cursor: disabled ? "default" : "pointer",
-        borderRadius: "4px",
-        border: `1px solid ${borderPalette.dark}`,
-        background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
-        opacity: disabled ? 0.6 : 1,
-        transition: "all 0.2s ease",
-        height: "100%",
+        "cursor": disabled ? "default" : "pointer",
+        "borderRadius": "4px",
+        "border": `1px solid ${borderPalette.dark}`,
+        "background": `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
+        "opacity": disabled ? 0.6 : 1,
+        "transition": "all 0.2s ease",
+        "height": "100%",
         "&:hover": disabled
           ? {}
           : {
@@ -97,7 +97,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
             },
       }}
     >
-      <CardContent sx={{ p: "16px", "&:last-child": { pb: "16px" } }}>
+      <CardContent sx={{ "p": "16px", "&:last-child": { pb: "16px" } }}>
         <Stack direction="row" alignItems="flex-start" justifyContent="space-between">
           <Box
             sx={{
@@ -132,9 +132,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
           {description}
         </Typography>
         {stat && (
-          <Typography sx={{ mt: 1.5, fontSize: 13, fontWeight: 600, color }}>
-            {stat}
-          </Typography>
+          <Typography sx={{ mt: 1.5, fontSize: 13, fontWeight: 600, color }}>{stat}</Typography>
         )}
         {subStat && (
           <Typography sx={{ fontSize: 12, color: text.muted, display: "block" }}>
@@ -182,7 +180,7 @@ const GovernanceHub: React.FC = () => {
       if (!isNaN(parsed) && parsed > 0) return parsed;
     }
     const projectWithFrameworks = (projects || []).find(
-      (p: any) => p.framework && p.framework.length > 0
+      (p: any) => p.framework && p.framework.length > 0,
     );
     return projectWithFrameworks?.id || 0;
   }, [currentProjectId, projects]);
@@ -192,16 +190,12 @@ const GovernanceHub: React.FC = () => {
   const coverageStats = useMemo(() => {
     if (!coverage || coverage.length === 0) return null;
     const avg = Math.round(
-      coverage.reduce((sum, c) => sum + c.coverage_percentage, 0) / coverage.length
+      coverage.reduce((sum, c) => sum + c.coverage_percentage, 0) / coverage.length,
     );
-    const totalGaps = coverage.reduce(
-      (sum, c) => sum + c.gap_details.unmapped_controls.length,
-      0
-    );
+    const totalGaps = coverage.reduce((sum, c) => sum + c.gap_details.unmapped_controls.length, 0);
     const topGapFrameworks = [...coverage]
       .sort(
-        (a, b) =>
-          b.gap_details.unmapped_controls.length - a.gap_details.unmapped_controls.length
+        (a, b) => b.gap_details.unmapped_controls.length - a.gap_details.unmapped_controls.length,
       )
       .slice(0, 3);
     return { avg, totalGaps, frameworkCount: coverage.length, topGapFrameworks };
@@ -255,10 +249,7 @@ const GovernanceHub: React.FC = () => {
       description: "Analyze coverage, gaps, and synergies across projects",
       icon: <BarChart3 size={20} />,
       path: "/governance/insights",
-      stat:
-        coverageStats != null
-          ? `${coverageStats.avg}% avg coverage`
-          : "Coverage analysis",
+      stat: coverageStats != null ? `${coverageStats.avg}% avg coverage` : "Coverage analysis",
       subStat:
         coverageStats != null ? `${coverageStats.totalGaps} gaps across frameworks` : undefined,
       color: accent.blue.text,
@@ -392,7 +383,8 @@ const GovernanceHub: React.FC = () => {
                   No active scenario selected
                 </Typography>
                 <Typography sx={{ fontSize: 12, color: text.muted }}>
-                  Select a governance scenario to prioritize frameworks and guide compliance planning.
+                  Select a governance scenario to prioritize frameworks and guide compliance
+                  planning.
                 </Typography>
               </Box>
               <CustomizableButton
@@ -425,18 +417,23 @@ const GovernanceHub: React.FC = () => {
               <Typography sx={{ fontSize: 13, color: "#8594AC", mb: "2px" }}>
                 Avg Coverage
               </Typography>
-              <Typography sx={{ fontSize: 16, fontWeight: 600, color: coverageColor, mt: 1, minHeight: 32 }}>
+              <Typography
+                sx={{ fontSize: 16, fontWeight: 600, color: coverageColor, mt: 1, minHeight: 32 }}
+              >
                 {coverageStats.avg}%
               </Typography>
               <LinearProgress
                 variant="determinate"
                 value={coverageStats.avg}
                 sx={{
-                  height: 4,
-                  borderRadius: "4px",
-                  mt: 1,
-                  backgroundColor: background.hover,
-                  "& .MuiLinearProgress-bar": { backgroundColor: coverageColor, borderRadius: "4px" },
+                  "height": 4,
+                  "borderRadius": "4px",
+                  "mt": 1,
+                  "backgroundColor": background.hover,
+                  "& .MuiLinearProgress-bar": {
+                    backgroundColor: coverageColor,
+                    borderRadius: "4px",
+                  },
                 }}
               />
             </Box>
@@ -461,9 +458,7 @@ const GovernanceHub: React.FC = () => {
               >
                 {coverageStats.totalGaps}
               </Typography>
-              <Typography sx={{ fontSize: 11, color: text.muted }}>
-                unmapped controls
-              </Typography>
+              <Typography sx={{ fontSize: 11, color: text.muted }}>unmapped controls</Typography>
             </Box>
 
             <Box
@@ -477,7 +472,9 @@ const GovernanceHub: React.FC = () => {
               <Typography sx={{ fontSize: 13, color: "#8594AC", mb: "2px" }}>
                 Active Frameworks
               </Typography>
-              <Typography sx={{ mt: 1, minHeight: 32, fontSize: 16, fontWeight: 600, color: brand.primary }}>
+              <Typography
+                sx={{ mt: 1, minHeight: 32, fontSize: 16, fontWeight: 600, color: brand.primary }}
+              >
                 {coverageStats.frameworkCount}
               </Typography>
               <Typography sx={{ fontSize: 11, color: text.muted }}>
@@ -496,7 +493,9 @@ const GovernanceHub: React.FC = () => {
               <Typography sx={{ fontSize: 13, color: "#8594AC", mb: "2px" }}>
                 Total Mappings
               </Typography>
-              <Typography sx={{ mt: 1, minHeight: 32, fontSize: 16, fontWeight: 600, color: brand.primary }}>
+              <Typography
+                sx={{ mt: 1, minHeight: 32, fontSize: 16, fontWeight: 600, color: brand.primary }}
+              >
                 {totalMappings}
               </Typography>
               <Typography sx={{ fontSize: 11, color: text.muted }}>
@@ -515,11 +514,7 @@ const GovernanceHub: React.FC = () => {
             <DashboardHeaderCard title="Avg Coverage" count="—" disableNavigation />
             <DashboardHeaderCard title="Total Gaps" count="—" disableNavigation />
             <DashboardHeaderCard title="Active Frameworks" count="—" disableNavigation />
-            <DashboardHeaderCard
-              title="Total Mappings"
-              count={totalMappings}
-              disableNavigation
-            />
+            <DashboardHeaderCard title="Total Mappings" count={totalMappings} disableNavigation />
           </Box>
         )}
 
@@ -557,9 +552,7 @@ const GovernanceHub: React.FC = () => {
 
         {/* Module cards grid */}
         <Box>
-          <Typography sx={{ mb: "12px", fontSize: 14, fontWeight: 600 }}>
-            Modules
-          </Typography>
+          <Typography sx={{ mb: "12px", fontSize: 14, fontWeight: 600 }}>Modules</Typography>
           <Grid container spacing={2}>
             {modules.map((module) => (
               <Grid size={{ xs: 12, sm: 6, md: 4 }} key={module.title}>
@@ -581,26 +574,24 @@ const GovernanceHub: React.FC = () => {
           >
             <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: "12px" }}>
               <AlertTriangle size={18} color={status.warning.text} />
-              <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
-                Gap Hotspots
-              </Typography>
+              <Typography sx={{ fontSize: 14, fontWeight: 600 }}>Gap Hotspots</Typography>
             </Stack>
             <Typography sx={{ fontSize: 13, color: text.accent, mb: "12px" }}>
-              Frameworks with the most unmapped controls. Address these first for the biggest coverage
-              improvement.
+              Frameworks with the most unmapped controls. Address these first for the biggest
+              coverage improvement.
             </Typography>
             <Stack gap="8px">
               {coverageStats.topGapFrameworks.map((fw) => (
                 <Box
                   key={fw.framework_id}
                   sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    p: "12px",
-                    borderRadius: "4px",
-                    border: `1px solid ${borderPalette.light}`,
-                    background: background.main,
+                    "display": "flex",
+                    "alignItems": "center",
+                    "justifyContent": "space-between",
+                    "p": "12px",
+                    "borderRadius": "4px",
+                    "border": `1px solid ${borderPalette.light}`,
+                    "background": background.main,
                     "&:hover": { background: background.accent },
                   }}
                 >

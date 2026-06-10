@@ -16,7 +16,10 @@ interface ActivationWizardProps {
   users: User[];
   isLoading: boolean;
   onClose: () => void;
-  onActivate: (params: { projectIds: number[]; ownerAssignments: Record<number, number | undefined> }) => void;
+  onActivate: (params: {
+    projectIds: number[];
+    ownerAssignments: Record<number, number | undefined>;
+  }) => void;
 }
 
 const STEPS = ["Select projects", "Assign owners", "Review & activate"];
@@ -65,7 +68,7 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
 
   const toggleProject = (projectId: number) => {
     setSelectedProjectIds((prev) =>
-      prev.includes(projectId) ? prev.filter((id) => id !== projectId) : [...prev, projectId]
+      prev.includes(projectId) ? prev.filter((id) => id !== projectId) : [...prev, projectId],
     );
   };
 
@@ -109,8 +112,9 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
         <Stack gap="16px">
           <Alert severity="info" icon={<Info size={18} />}>
             <Typography sx={{ fontSize: 13 }}>
-              Choose the projects where this scenario should be activated. A task set will be created
-              for each selected project based on the scenario&apos;s framework priority order.
+              Choose the projects where this scenario should be activated. A task set will be
+              created for each selected project based on the scenario&apos;s framework priority
+              order.
             </Typography>
           </Alert>
 
@@ -129,14 +133,14 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
                 <Box
                   key={project.id}
                   sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    px: "16px",
-                    py: "12px",
-                    borderBottom:
+                    "display": "flex",
+                    "alignItems": "center",
+                    "justifyContent": "space-between",
+                    "px": "16px",
+                    "py": "12px",
+                    "borderBottom":
                       idx < projects.length - 1 ? `1px solid ${borderPalette.light}` : "none",
-                    backgroundColor: selectedProjectIds.includes(project.id)
+                    "backgroundColor": selectedProjectIds.includes(project.id)
                       ? background.accent
                       : background.main,
                     "&:hover": { backgroundColor: background.accent },
@@ -178,7 +182,8 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
           <Alert severity="info" icon={<Info size={18} />}>
             <Typography sx={{ fontSize: 13 }}>
               Assign an owner for each framework. These owners will be set as assignees on the tasks
-              created during activation and will be responsible for implementing the framework controls.
+              created during activation and will be responsible for implementing the framework
+              controls.
             </Typography>
           </Alert>
 
@@ -203,7 +208,10 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
                     label="Owner"
                     placeholder="Select owner"
                     value={ownerAssignments[fwId] ? String(ownerAssignments[fwId]) : ""}
-                    items={users.map((u) => ({ _id: String(u.id), name: `${u.name} ${u.surname}` }))}
+                    items={users.map((u) => ({
+                      _id: String(u.id),
+                      name: `${u.name} ${u.surname}`,
+                    }))}
                     onChange={(e) => handleOwnerChange(fwId, e.target.value as string)}
                     sx={{ minWidth: 260 }}
                   />
@@ -245,9 +253,7 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
 
           <Stack gap="16px">
             <Box>
-              <Typography sx={{ fontSize: 11, color: text.muted, mb: "4px" }}>
-                Scenario
-              </Typography>
+              <Typography sx={{ fontSize: 11, color: text.muted, mb: "4px" }}>Scenario</Typography>
               <Typography sx={{ fontSize: 13, color: text.primary }}>{scenario.name}</Typography>
             </Box>
 
@@ -269,7 +275,7 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
                   const user = users.find((u) => u.id === ownerAssignments[fwId]);
                   return (
                     <Typography key={fwId} sx={{ fontSize: 13, color: text.primary }}>
-                      {FRAMEWORK_NAMES[fwId] || `Framework ${fwId}`}: {" "}
+                      {FRAMEWORK_NAMES[fwId] || `Framework ${fwId}`}:{" "}
                       {user ? `${user.name} ${user.surname}` : "—"}
                     </Typography>
                   );

@@ -105,7 +105,9 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
       isOpen={open}
       onClose={onClose}
       title={isEdit ? "Edit Scenario" : "New Scenario"}
-      description={isEdit ? "Update your governance scenario" : "Create a custom governance scenario"}
+      description={
+        isEdit ? "Update your governance scenario" : "Create a custom governance scenario"
+      }
       primaryLabel={isEdit ? "Save Changes" : "Create Scenario"}
       secondaryLabel="Cancel"
       onPrimaryAction={handleSubmit}
@@ -134,7 +136,15 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
         />
 
         <Box>
-          <Typography sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: "8px" }}>
+          <Typography
+            sx={{
+              fontSize: 12,
+              color: text.secondary,
+              fontWeight: 500,
+              display: "block",
+              mb: "8px",
+            }}
+          >
             Industry
           </Typography>
           <Stack direction="row" gap="8px" flexWrap="wrap" useFlexGap>
@@ -144,17 +154,17 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
                 component="span"
                 onClick={() => setIndustry(industry === ind ? "" : ind)}
                 sx={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  height: 24,
-                  px: "10px",
-                  borderRadius: "4px",
-                  fontSize: 12,
-                  cursor: "pointer",
-                  textTransform: "capitalize",
-                  backgroundColor: industry === ind ? accent.primary.bg : background.hover,
-                  color: industry === ind ? accent.primary.text : text.tertiary,
-                  border: `1px solid ${industry === ind ? accent.primary.border : borderPalette.light}`,
+                  "display": "inline-flex",
+                  "alignItems": "center",
+                  "height": 24,
+                  "px": "10px",
+                  "borderRadius": "4px",
+                  "fontSize": 12,
+                  "cursor": "pointer",
+                  "textTransform": "capitalize",
+                  "backgroundColor": industry === ind ? accent.primary.bg : background.hover,
+                  "color": industry === ind ? accent.primary.text : text.tertiary,
+                  "border": `1px solid ${industry === ind ? accent.primary.border : borderPalette.light}`,
                   "&:hover": {
                     backgroundColor: industry === ind ? accent.primary.bg : background.accent,
                   },
@@ -167,7 +177,15 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
         </Box>
 
         <Box>
-          <Typography sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: "8px" }}>
+          <Typography
+            sx={{
+              fontSize: 12,
+              color: text.secondary,
+              fontWeight: 500,
+              display: "block",
+              mb: "8px",
+            }}
+          >
             Region
           </Typography>
           <Stack direction="row" gap="8px" flexWrap="wrap" useFlexGap>
@@ -177,16 +195,16 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
                 component="span"
                 onClick={() => setRegion(region === reg ? "" : reg)}
                 sx={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  height: 24,
-                  px: "10px",
-                  borderRadius: "4px",
-                  fontSize: 12,
-                  cursor: "pointer",
-                  backgroundColor: region === reg ? accent.indigo.bg : background.hover,
-                  color: region === reg ? accent.indigo.text : text.tertiary,
-                  border: `1px solid ${region === reg ? accent.indigo.border : borderPalette.light}`,
+                  "display": "inline-flex",
+                  "alignItems": "center",
+                  "height": 24,
+                  "px": "10px",
+                  "borderRadius": "4px",
+                  "fontSize": 12,
+                  "cursor": "pointer",
+                  "backgroundColor": region === reg ? accent.indigo.bg : background.hover,
+                  "color": region === reg ? accent.indigo.text : text.tertiary,
+                  "border": `1px solid ${region === reg ? accent.indigo.border : borderPalette.light}`,
                   "&:hover": {
                     backgroundColor: region === reg ? accent.indigo.bg : background.accent,
                   },
@@ -199,7 +217,15 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
         </Box>
 
         <Box>
-          <Typography sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: "8px" }}>
+          <Typography
+            sx={{
+              fontSize: 12,
+              color: text.secondary,
+              fontWeight: 500,
+              display: "block",
+              mb: "8px",
+            }}
+          >
             Frameworks *
           </Typography>
           <Stack direction="row" gap="8px" flexWrap="wrap" useFlexGap>
@@ -212,25 +238,25 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
                   component="span"
                   onClick={() => toggleFramework(fw.id)}
                   sx={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    height: 24,
-                    px: "10px",
-                    borderRadius: "4px",
-                    fontSize: 12,
-                    cursor: "pointer",
-                    fontWeight: isPrimary ? 600 : 400,
-                    backgroundColor: isSelected
+                    "display": "inline-flex",
+                    "alignItems": "center",
+                    "height": 24,
+                    "px": "10px",
+                    "borderRadius": "4px",
+                    "fontSize": 12,
+                    "cursor": "pointer",
+                    "fontWeight": isPrimary ? 600 : 400,
+                    "backgroundColor": isSelected
                       ? isPrimary
                         ? accent.primary.bg
                         : accent.indigo.bg
                       : background.hover,
-                    color: isSelected
+                    "color": isSelected
                       ? isPrimary
                         ? accent.primary.text
                         : accent.indigo.text
                       : text.tertiary,
-                    border: `1px solid ${
+                    "border": `1px solid ${
                       isSelected
                         ? isPrimary
                           ? accent.primary.border
@@ -253,7 +279,8 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
           </Stack>
           {selectedFrameworks.length > 1 && (
             <Typography sx={{ fontSize: 12, color: text.muted, mt: "4px", display: "block" }}>
-              First selected framework becomes primary. Click a selected framework to set it as primary.
+              First selected framework becomes primary. Click a selected framework to set it as
+              primary.
             </Typography>
           )}
         </Box>

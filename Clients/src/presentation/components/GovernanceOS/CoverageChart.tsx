@@ -21,7 +21,9 @@ const CoverageChart = ({
   activeScenarioFrameworkId,
 }: ICoverageChartProps) => {
   const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
-  const [selectedGapsByFramework, setSelectedGapsByFramework] = useState<Record<number, Set<string>>>({});
+  const [selectedGapsByFramework, setSelectedGapsByFramework] = useState<
+    Record<number, Set<string>>
+  >({});
 
   const toggleExpand = (frameworkId: number) => {
     setExpandedIds((prev) => {
@@ -264,9 +266,7 @@ const CoverageChart = ({
                             px: "12px",
                             py: "8px",
                             borderBottom:
-                              idx < gapIds.length - 1
-                                ? `1px solid ${borderPalette.light}`
-                                : "none",
+                              idx < gapIds.length - 1 ? `1px solid ${borderPalette.light}` : "none",
                             backgroundColor: isSelected
                               ? alpha(brand.primary, 0.04)
                               : background.main,
@@ -284,7 +284,9 @@ const CoverageChart = ({
                                 <Square size={16} color={text.muted} />
                               )}
                             </Box>
-                            <Typography sx={{ fontSize: 12, color: text.primary, fontFamily: "monospace" }}>
+                            <Typography
+                              sx={{ fontSize: 12, color: text.primary, fontFamily: "monospace" }}
+                            >
                               {controlId}
                             </Typography>
                           </Stack>
@@ -297,7 +299,7 @@ const CoverageChart = ({
                                 e.stopPropagation();
                                 onCreateTaskForGap(
                                   fw.framework_name || `Framework ${fw.framework_id}`,
-                                  controlId
+                                  controlId,
                                 );
                               }}
                               text="Task"
@@ -330,7 +332,9 @@ const CoverageChart = ({
               {/* Synergies section */}
               {hasSynergies && (
                 <Box>
-                  <Typography sx={{ fontSize: 12, fontWeight: 600, color: status.success.text, mb: "8px" }}>
+                  <Typography
+                    sx={{ fontSize: 12, fontWeight: 600, color: status.success.text, mb: "8px" }}
+                  >
                     Multi-framework controls ({synergyIds.length})
                   </Typography>
                   <Stack direction="row" flexWrap="wrap" gap="6px">
