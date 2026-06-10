@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Box, Typography, Stack, Alert } from "@mui/material";
-import { Zap, Info, CheckCircle2 } from "lucide-react";
+import { Zap, Info } from "lucide-react";
 import StepperModal from "../Modals/StepperModal";
 import Checkbox from "../Inputs/Checkbox";
 import Select from "../Inputs/Select";
