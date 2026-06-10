@@ -1,7 +1,7 @@
 import { Box, Tooltip } from "@mui/material";
 import { Link2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { accent, text } from "../../themes/palette";
+import { accent } from "../../themes/palette";
 
 interface CrossMappingBadgeProps {
   mappingCount: number;
