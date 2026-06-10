@@ -37,7 +37,9 @@ const GovernanceSettings: React.FC = () => {
 
   const [isEnabled, setIsEnabled] = useState(false);
   const [dontAskAgain, setDontAskAgain] = useState(false);
-  const [alert, setAlert] = useState<{ variant: "success" | "error"; message: string } | null>(null);
+  const [alert, setAlert] = useState<{ variant: "success" | "error"; message: string } | null>(
+    null,
+  );
 
   useEffect(() => {
     if (preferences) {
@@ -61,7 +63,7 @@ const GovernanceSettings: React.FC = () => {
           setAlert({ variant: "error", message: "Failed to save settings. Please try again." });
           setTimeout(() => setAlert(null), 4000);
         },
-      }
+      },
     );
   };
 
@@ -116,7 +118,9 @@ const GovernanceSettings: React.FC = () => {
                 Governance Intelligence
               </Typography>
               <Typography sx={{ fontSize: 12, color: text.muted }}>
-                {isEnabled ? "Module is enabled and visible." : "Module is disabled and hidden from sidebar."}
+                {isEnabled
+                  ? "Module is enabled and visible."
+                  : "Module is disabled and hidden from sidebar."}
               </Typography>
             </Box>
             <FormControlLabel
@@ -160,7 +164,9 @@ const GovernanceSettings: React.FC = () => {
                   <Stack direction="row" flexWrap="wrap" gap="6px">
                     {customPriority.primary && (
                       <FrameworkChip
-                        frameworkName={FRAMEWORK_NAMES[customPriority.primary] || String(customPriority.primary)}
+                        frameworkName={
+                          FRAMEWORK_NAMES[customPriority.primary] || String(customPriority.primary)
+                        }
                         priority="primary"
                         size="small"
                       />
