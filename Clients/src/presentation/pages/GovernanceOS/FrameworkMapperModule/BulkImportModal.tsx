@@ -10,9 +10,12 @@ import {
   TableBody,
   Alert,
 } from "@mui/material";
-import { Upload, FileSpreadsheet, Check, X } from "lucide-react";
+import { Upload, Check, X } from "lucide-react";
 import StandardModal from "../../../components/Modals/StandardModal";
-import { IGovernanceControlMapping } from "../../../../domain/interfaces/i.governanceOs";
+import {
+  IGovernanceControlMapping,
+  MappingStrength,
+} from "../../../../domain/interfaces/i.governanceOs";
 import { border as borderPalette, background, text, accent, status } from "../../../themes/palette";
 
 interface BulkImportModalProps {
@@ -124,7 +127,7 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
         source_control_identifier: r.source_control_identifier,
         target_framework_id: r.target_framework_id,
         target_control_identifier: r.target_control_identifier,
-        mapping_strength: r.mapping_strength,
+        mapping_strength: r.mapping_strength as MappingStrength,
         domain_tag: r.domain_tag,
         rationale: r.rationale,
         confidence_score: r.confidence_score,
@@ -141,12 +144,10 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
       onClose={onClose}
       title="Bulk Import Mappings"
       description="Upload a CSV file to import multiple mappings at once"
-      primaryLabel={validCount > 0 ? `Import ${validCount} Mappings` : "Import"}
-      secondaryLabel="Cancel"
-      onPrimaryAction={handleImport}
-      onSecondaryAction={onClose}
-      disabledPrimary={validCount === 0 || isSubmitting}
-      isLoading={isSubmitting}
+      submitButtonText={validCount > 0 ? `Import ${validCount} Mappings` : "Import"}
+      cancelButtonText="Cancel"
+      onSubmit={handleImport}
+      isSubmitting={validCount === 0 || isSubmitting}
       fitContent
     >
       <Stack spacing={3} sx={{ minWidth: 600, maxWidth: 800 }}>
