@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Box, Typography, Stack, LinearProgress, alpha, useTheme } from "@mui/material";
+import { Box, Typography, Stack, LinearProgress, alpha } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import {
   Target,
@@ -18,14 +18,7 @@ import {
 } from "../../../application/hooks/useGovernanceOs";
 import FrameworkChip from "./FrameworkChip";
 import { CustomizableButton } from "../button/customizable-button";
-import {
-  border as borderPalette,
-  background,
-  text,
-  accent,
-  brand,
-  status,
-} from "../../themes/palette";
+import { border as borderPalette, background, text, brand, status } from "../../themes/palette";
 
 interface ActiveScenarioPanelProps {
   activeScenario: IGovernanceScenario | null | undefined;
@@ -43,7 +36,6 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
   activeScenario,
   onActivate,
 }) => {
-  const theme = useTheme();
   const navigate = useNavigate();
   const { data: activations } = useActivationHistory();
   const deactivateMutation = useDeactivateScenario();
