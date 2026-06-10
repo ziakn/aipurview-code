@@ -1,13 +1,13 @@
 import React from "react";
-import { Stack, Typography, Box, Tooltip, useTheme } from "@mui/material";
-import { GitCompareArrows, X as CloseIcon } from "lucide-react";
+import { Stack, Typography, Box, Tooltip } from "@mui/material";
+import { GitCompareArrows, X as CloseIcon, Sparkles } from "lucide-react";
 import { useAuth } from "../../../application/hooks/useAuth";
 import {
   useGovernancePreferences,
   useUpdatePreferences,
 } from "../../../application/hooks/useGovernanceOs";
 import { CustomizableButton } from "../button/customizable-button";
-import { palette } from "../../themes/palette";
+import { text, brand, background, border as borderPalette } from "../../themes/palette";
 
 interface GovernanceOsBannerProps {
   frameworkCount: number;
@@ -15,7 +15,6 @@ interface GovernanceOsBannerProps {
 }
 
 const GovernanceOsBanner: React.FC<GovernanceOsBannerProps> = ({ frameworkCount, onDismiss }) => {
-  const theme = useTheme();
   const { userRoleName } = useAuth();
   const { data: preferences } = useGovernancePreferences();
   const updatePreferences = useUpdatePreferences();
@@ -33,49 +32,79 @@ const GovernanceOsBanner: React.FC<GovernanceOsBannerProps> = ({ frameworkCount,
   return (
     <Box
       sx={{
-        mb: 3,
-        p: "12px 16px",
+        mb: "16px",
+        p: "16px",
         borderRadius: "4px",
-        border: `1px solid ${palette.brand.primaryLight}`,
-        backgroundColor: palette.brand.primaryLight,
+        border: `1px solid ${brand.primary}`,
+        background: `linear-gradient(135deg, ${background.main} 0%, ${background.accent} 100%)`,
       }}
     >
       <Stack
-        direction="row"
-        gap={2}
-        alignItems="center"
+        direction={{ xs: "column", md: "row" }}
+        gap="16px"
+        alignItems={{ xs: "flex-start", md: "center" }}
         justifyContent="space-between"
       >
         <Stack
           direction="row"
-          gap={1.5}
-          alignItems="center"
+          gap="12px"
+          alignItems="flex-start"
           sx={{ flex: 1, minWidth: 0 }}
         >
-          <GitCompareArrows size={20} color={palette.brand.primary} style={{ flexShrink: 0 }} />
-          <Typography
+          <Box
             sx={{
-              fontSize: 13,
-              fontWeight: 500,
-              color: theme.palette.text.secondary,
-              lineHeight: 1.5,
+              width: 36,
+              height: 36,
+              borderRadius: "50%",
+              backgroundColor: brand.primaryLight,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
             }}
           >
-            You have {frameworkCount} frameworks assigned. Enable Governance OS to explore
-            cross-framework mappings and unified coverage analysis.
-          </Typography>
+            <Sparkles size={18} color={brand.primary} />
+          </Box>
+          <Stack gap="4px">
+            <Typography
+              sx={{
+                fontSize: 14,
+                fontWeight: 600,
+                color: text.primary,
+                lineHeight: 1.4,
+              }}
+            >
+              Unlock Governance Intelligence
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: 13,
+                fontWeight: 400,
+                color: text.accent,
+                lineHeight: 1.5,
+              }}
+            >
+              You have {frameworkCount} frameworks assigned. Enable Governance Intelligence to map
+              controls across frameworks, build scenario-based compliance strategies, and analyze
+              per-project coverage — all in one place.
+            </Typography>
+          </Stack>
         </Stack>
 
-        <Stack direction="row" gap={1} alignItems="center" sx={{ flexShrink: 0 }}>
-          <Tooltip title={!isAdmin ? "Contact your admin to enable Governance OS" : ""} arrow>
+        <Stack direction="row" gap="8px" alignItems="center" sx={{ flexShrink: 0 }}>
+          <Tooltip
+            title={!isAdmin ? "Contact your admin to enable Governance Intelligence" : ""}
+            arrow
+          >
             <span>
               <CustomizableButton
                 variant="contained"
-                size="medium"
+                size="small"
                 color="primary"
                 isDisabled={!isAdmin || updatePreferences.isPending}
                 onClick={handleEnable}
-                text={updatePreferences.isPending ? "Enabling..." : "Enable Governance OS"}
+                startIcon={<GitCompareArrows size={14} />}
+                text={updatePreferences.isPending ? "Enabling..." : "Enable Governance Intelligence"}
               />
             </span>
           </Tooltip>
@@ -92,10 +121,12 @@ const GovernanceOsBanner: React.FC<GovernanceOsBannerProps> = ({ frameworkCount,
                 width: 28,
                 height: 28,
                 p: 0,
-                color: palette.text.muted,
+                color: text.muted,
+                border: `1px solid ${borderPalette.light}`,
+                borderRadius: "4px",
                 "&:hover": {
-                  color: palette.text.primary,
-                  backgroundColor: "transparent",
+                  color: text.primary,
+                  backgroundColor: background.hover,
                 },
               }}
             />
