@@ -105,7 +105,10 @@ export const useActivateScenario = () => {
 
 export const useSimulateScenario = () => {
   return useMutation({
-    mutationFn: (body: any) => simulateScenario({ body }),
+    mutationFn: async (body: any) => {
+      const response = await simulateScenario({ body });
+      return response?.data ?? response;
+    },
   });
 };
 
