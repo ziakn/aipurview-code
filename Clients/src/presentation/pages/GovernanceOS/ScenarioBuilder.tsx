@@ -31,7 +31,7 @@ import {
   IRecommendationRequest,
   IGovernanceScenario,
 } from "../../../domain/interfaces/i.governanceOs";
-import { border as borderPalette, background, text } from "../../themes/palette";
+import { border as borderPalette, background } from "../../themes/palette";
 import ScenarioFormModal from "./ScenarioBuilderModule/ScenarioFormModal";
 import ActivationWizard from "../../components/GovernanceOS/ActivationWizard";
 import WhatIfSimulator from "../../components/GovernanceOS/WhatIfSimulator";
@@ -154,7 +154,7 @@ const ScenarioBuilder = () => {
     ownerAssignments,
   }: {
     projectIds: number[];
-    ownerAssignments: Record<number, number>;
+    ownerAssignments: Record<number, number | undefined>;
   }) => {
     if (!activatingScenario) return;
     activateScenarioMutation.mutate(
