@@ -1,10 +1,10 @@
 import React from "react";
 import { Box, Stack, Typography, Paper, Tooltip } from "@mui/material";
-import { GitCompareArrows, Layers, Compass, BarChart3, Lightbulb } from "lucide-react";
+import { GitCompareArrows, Layers, Compass, BarChart3, Sparkles } from "lucide-react";
 import { useAuth } from "../../../application/hooks/useAuth";
 import { useUpdatePreferences } from "../../../application/hooks/useGovernanceOs";
 import { CustomizableButton } from "../../components/button/customizable-button";
-import { palette } from "../../themes/palette";
+import { text, brand, background, border as borderPalette } from "../../themes/palette";
 import { useUserGuideSidebarContext } from "../../components/UserGuide";
 
 interface GovernanceOSEnableCTAProps {
@@ -30,19 +30,19 @@ const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({ onEnabled
 
   const features = [
     {
-      icon: <GitCompareArrows size={20} color={palette.brand.primary} />,
+      icon: <GitCompareArrows size={20} color={brand.primary} />,
       title: "Framework Mapper",
       description:
         "Explore control-to-control mappings between any two frameworks. See direct equivalents, partial overlaps, and related controls.",
     },
     {
-      icon: <Compass size={20} color={palette.brand.primary} />,
+      icon: <Compass size={20} color={brand.primary} />,
       title: "Scenario Builder",
       description:
-        "Get personalized framework recommendations based on your industry, region, risk level, and use case type.",
+        "Get personalized framework recommendations and activate scenario-based compliance strategies across your projects.",
     },
     {
-      icon: <BarChart3 size={20} color={palette.brand.primary} />,
+      icon: <BarChart3 size={20} color={brand.primary} />,
       title: "Unified Insights",
       description:
         "Per-project coverage analysis showing how well each project satisfies its assigned frameworks, with gap and synergy detection.",
@@ -50,27 +50,27 @@ const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({ onEnabled
   ];
 
   return (
-    <Box sx={{ py: 4, px: { xs: 2, md: 4 } }}>
-      <Stack spacing={4} alignItems="center" maxWidth={720} mx="auto">
+    <Box sx={{ py: "48px", px: { xs: "16px", md: "24px" } }}>
+      <Stack gap="16px" alignItems="center" maxWidth={720} mx="auto">
         {/* Header */}
-        <Stack spacing={2} alignItems="center" textAlign="center">
+        <Stack gap="16px" alignItems="center" textAlign="center">
           <Box
             sx={{
               width: 64,
               height: 64,
               borderRadius: "50%",
-              backgroundColor: palette.brand.primaryLight,
+              backgroundColor: brand.primaryLight,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            <Layers size={32} color={palette.brand.primary} />
+            <Layers size={32} color={brand.primary} />
           </Box>
           <Typography
             sx={{
               fontWeight: 600,
-              color: palette.text.primary,
+              color: text.primary,
               fontSize: 24,
             }}
           >
@@ -78,38 +78,37 @@ const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({ onEnabled
           </Typography>
           <Typography
             sx={{
-              color: palette.text.tertiary,
+              color: text.accent,
               maxWidth: 520,
               lineHeight: 1.6,
               fontSize: 14,
             }}
           >
-            Cross-framework intelligence layer that connects your compliance frameworks into a
-            unified governance view. Reduce duplicate work, prioritize intelligently, and measure
-            progress holistically.
+            Governance Intelligence connects your compliance frameworks into a unified workspace.
+            Map controls, build scenarios, and measure per-project coverage — all in one place.
           </Typography>
         </Stack>
 
         {/* Feature cards */}
-        <Stack spacing={2} width="100%">
+        <Stack gap="16px" width="100%">
           {features.map((feature) => (
             <Paper
               key={feature.title}
               elevation={0}
               sx={{
-                p: 2.5,
+                p: "16px",
                 borderRadius: "4px",
-                border: `1px solid ${palette.border.light}`,
-                backgroundColor: palette.background.alt,
+                border: `1px solid ${borderPalette.dark}`,
+                background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
               }}
             >
-              <Stack direction="row" spacing={2} alignItems="flex-start">
-                <Box sx={{ mt: 0.25, flexShrink: 0 }}>{feature.icon}</Box>
-                <Stack spacing={0.5}>
+              <Stack direction="row" gap="16px" alignItems="flex-start">
+                <Box sx={{ mt: "4px", flexShrink: 0 }}>{feature.icon}</Box>
+                <Stack gap="4px">
                   <Typography
                     sx={{
                       fontWeight: 600,
-                      color: palette.text.primary,
+                      color: text.primary,
                       fontSize: 14,
                     }}
                   >
@@ -117,7 +116,7 @@ const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({ onEnabled
                   </Typography>
                   <Typography
                     sx={{
-                      color: palette.text.tertiary,
+                      color: text.accent,
                       fontSize: 13,
                       lineHeight: 1.5,
                     }}
@@ -131,8 +130,8 @@ const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({ onEnabled
         </Stack>
 
         {/* CTA */}
-        <Stack spacing={2} alignItems="center">
-          <Tooltip title={!isAdmin ? "Contact your admin to enable Governance OS" : ""} arrow>
+        <Stack gap="16px" alignItems="center" sx={{ mt: "8px" }}>
+          <Tooltip title={!isAdmin ? "Contact your admin to enable Governance Intelligence" : ""} arrow>
             <span>
               <CustomizableButton
                 variant="contained"
@@ -140,8 +139,8 @@ const GovernanceOSEnableCTA: React.FC<GovernanceOSEnableCTAProps> = ({ onEnabled
                 color="primary"
                 isDisabled={!isAdmin || updatePreferences.isPending}
                 onClick={handleEnable}
-                startIcon={<Lightbulb size={16} />}
-                text={updatePreferences.isPending ? "Enabling..." : "Enable Governance OS"}
+                startIcon={<Sparkles size={16} />}
+                text={updatePreferences.isPending ? "Enabling..." : "Enable Governance Intelligence"}
               />
             </span>
           </Tooltip>
