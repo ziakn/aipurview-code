@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Typography, Stack, IconButton, useTheme } from "@mui/material";
+import { Box, Typography, Stack, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import {
   Check,
@@ -43,7 +43,6 @@ const ScenarioCard = ({
   onDelete,
   onActivate,
 }: IScenarioCardProps) => {
-  const theme = useTheme();
   const navigate = useNavigate();
   const [detailOpen, setDetailOpen] = useState(false);
 
