@@ -23,7 +23,7 @@ import {
 } from "../../../application/hooks/useGovernanceOs";
 import { IGovernanceControlMapping } from "../../../domain/interfaces/i.governanceOs";
 import MappingFormModal from "./FrameworkMapperModule/MappingFormModal";
-import MappingMatrixView from "./FrameworkMapperModule/MappingMatrixView";
+
 import BulkImportModal from "./FrameworkMapperModule/BulkImportModal";
 import { text, brand } from "../../themes/palette";
 
@@ -55,16 +55,6 @@ const FrameworkMapper = () => {
   const handleCreateMapping = () => {
     setEditingMapping(null);
     setFormModalOpen(true);
-  };
-
-  const handleEditMapping = (mapping: IGovernanceControlMapping) => {
-    setEditingMapping(mapping);
-    setFormModalOpen(true);
-  };
-
-  const handleDeleteMapping = (mapping: IGovernanceControlMapping) => {
-    setMappingToDelete(mapping);
-    setDeleteConfirmOpen(true);
   };
 
   const confirmDelete = () => {
