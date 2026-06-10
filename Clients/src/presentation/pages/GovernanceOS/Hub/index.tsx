@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import {
-  LayoutDashboard,
   GitCompareArrows,
   Compass,
   BarChart3,
@@ -218,13 +217,6 @@ const GovernanceHub: React.FC = () => {
       : coverageStats && coverageStats.avg >= 40
         ? status.warning.text
         : status.error.text;
-
-  const coverageBg =
-    coverageStats && coverageStats.avg >= 70
-      ? status.success.bg
-      : coverageStats && coverageStats.avg >= 40
-        ? status.warning.bg
-        : status.error.bg;
 
   const modules: ModuleCardProps[] = [
     {
