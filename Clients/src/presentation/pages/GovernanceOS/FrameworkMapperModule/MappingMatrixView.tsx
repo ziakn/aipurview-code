@@ -143,17 +143,19 @@ const MappingMatrixView: React.FC<MappingMatrixViewProps> = ({ mappings, onCellC
                     key={colFw.id}
                     onClick={() => !isDiagonal && count > 0 && onCellClick(rowFw.id, colFw.id)}
                     sx={{
-                      width: 100,
-                      height: 60,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      backgroundColor: isDiagonal ? background.hover : getCellColor(count, matrix.maxCount),
-                      border: `1px solid ${borderPalette.light}`,
-                      borderRadius: "4px",
-                      cursor: !isDiagonal && count > 0 ? "pointer" : "default",
-                      transition: "all 150ms ease",
-                      flexShrink: 0,
+                      "width": 100,
+                      "height": 60,
+                      "display": "flex",
+                      "alignItems": "center",
+                      "justifyContent": "center",
+                      "backgroundColor": isDiagonal
+                        ? background.hover
+                        : getCellColor(count, matrix.maxCount),
+                      "border": `1px solid ${borderPalette.light}`,
+                      "borderRadius": "4px",
+                      "cursor": !isDiagonal && count > 0 ? "pointer" : "default",
+                      "transition": "all 150ms ease",
+                      "flexShrink": 0,
                       "&:hover": {
                         borderColor: !isDiagonal && count > 0 ? rowFw.color : borderPalette.light,
                       },
@@ -182,9 +184,7 @@ const MappingMatrixView: React.FC<MappingMatrixViewProps> = ({ mappings, onCellC
 
       {/* Legend */}
       <Stack direction="row" gap="16px" alignItems="center" sx={{ mt: "16px" }}>
-        <Typography sx={{ fontSize: 12, color: text.muted }}>
-          Density:
-        </Typography>
+        <Typography sx={{ fontSize: 12, color: text.muted }}>Density:</Typography>
         <Stack direction="row" gap="4px" alignItems="center">
           {[0, 0.25, 0.5, 0.75, 1].map((intensity, i) => (
             <Box
@@ -199,9 +199,7 @@ const MappingMatrixView: React.FC<MappingMatrixViewProps> = ({ mappings, onCellC
             />
           ))}
         </Stack>
-        <Typography sx={{ fontSize: 12, color: text.muted }}>
-          Low → High
-        </Typography>
+        <Typography sx={{ fontSize: 12, color: text.muted }}>Low → High</Typography>
       </Stack>
     </Box>
   );
