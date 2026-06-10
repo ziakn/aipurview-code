@@ -8,7 +8,7 @@ import {
   CircularProgress,
   alpha,
 } from "@mui/material";
-import { Settings, Power, Bell, Target, Filter, Save } from "lucide-react";
+import { Power, Bell, Target, Filter, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import GovernanceLayout from "../shared/GovernanceLayout";
 import Toggle from "../../../components/Inputs/Toggle";
