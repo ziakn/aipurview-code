@@ -7759,6 +7759,7 @@ export const translations: Record<string, Record<string, string>> = {
       "Die Abdeckungsanalyse identifiziert Lücken und Synergien je Projekt.",
     "Coverage analysis will measure your progress against the prioritized frameworks":
       "Die Abdeckungsanalyse misst Ihren Fortschritt anhand der priorisierten Rahmenwerke",
+    "Cross-framework control mappings": "Framework-übergreifende Kontrollzuordnungen",
     "Cross-framework intelligence layer with control mappings, governance scenarios, and unified coverage analysis.":
       "Übergreifende Intelligenzschicht mit Kontrollzuordnungen, Governance-Szenarien und einheitlicher Abdeckungsanalyse.",
     "Cross-framework mappings reveal shared compliance effort.":
@@ -7981,6 +7982,7 @@ export const translations: Record<string, Record<string, string>> = {
       "Steuern, ob das System Sie auffordert, Governance Intelligence zu aktivieren, wenn die Bedingungen erfüllt sind.",
     "Coverage aligned with active scenario:": "Abdeckung abgestimmt auf aktives Szenario:",
     "Coverage analysis and gap detection": "Abdeckungsanalyse und Lückenerkennung",
+    "Coverage analysis and gaps": "Abdeckungsanalyse und Lücken",
     "Deactivate": "Deaktivieren",
     "Default filters applied to the Framework Mapper view.":
       "Standardfilter, die auf die Framework-Mapper-Ansicht angewendet werden.",
@@ -8012,9 +8014,12 @@ export const translations: Record<string, Record<string, string>> = {
     "Get recommendations and manage governance scenarios":
       "Empfehlungen erhalten und Governance-Szenarien verwalten",
     "Governance Intelligence": "Governance Intelligence",
+    "Governance Intelligence Hub": "Governance Intelligence Hub",
     "Governance overview and module navigation": "Governance-Übersicht und Modulnavigation",
     "Governance preferences": "Governance-Einstellungen",
+    "Governance scenario recommendations": "Governance-Szenario-Empfehlungen",
     "Governance scenarios and recommendations": "Governance-Szenarien und Empfehlungen",
+    "Governance workspace dashboard": "Governance-Arbeitsbereich-Dashboard",
     "Hub": "Hub",
     "Import": "Importieren",
     "Knowledge Graph": "Wissensgraph",
@@ -15788,6 +15793,7 @@ export const translations: Record<string, Record<string, string>> = {
       "L'analyse de couverture identifie les lacunes et synergies par projet.",
     "Coverage analysis will measure your progress against the prioritized frameworks":
       "L'analyse de couverture mesurera votre progression par rapport aux référentiels priorisés",
+    "Cross-framework control mappings": "Correspondances de contrôles inter-référentiels",
     "Cross-framework intelligence layer with control mappings, governance scenarios, and unified coverage analysis.":
       "Couche d'intelligence inter-référentiels avec correspondances de contrôles, scénarios de gouvernance et analyse de couverture unifiée.",
     "Cross-framework mappings reveal shared compliance effort.":
@@ -16012,6 +16018,7 @@ export const translations: Record<string, Record<string, string>> = {
       "Contrôler si le système vous invite à activer Governance Intelligence lorsque les conditions sont remplies.",
     "Coverage aligned with active scenario:": "Couverture alignée avec le scénario actif:",
     "Coverage analysis and gap detection": "Analyse de couverture et détection des lacunes",
+    "Coverage analysis and gaps": "Analyse de couverture et lacunes",
     "Deactivate": "Désactiver",
     "Default filters applied to the Framework Mapper view.":
       "Filtres par défaut appliqués à la vue Framework Mapper.",
@@ -16043,10 +16050,13 @@ export const translations: Record<string, Record<string, string>> = {
     "Get recommendations and manage governance scenarios":
       "Obtenir des recommandations et gérer les scénarios de gouvernance",
     "Governance Intelligence": "Governance Intelligence",
+    "Governance Intelligence Hub": "Governance Intelligence Hub",
     "Governance overview and module navigation":
       "Vue d'ensemble de la gouvernance et navigation des modules",
     "Governance preferences": "Préférences de gouvernance",
+    "Governance scenario recommendations": "Recommandations de scénarios de gouvernance",
     "Governance scenarios and recommendations": "Scénarios et recommandances de gouvernance",
+    "Governance workspace dashboard": "Tableau de bord de l'espace de gouvernance",
     "Hub": "Hub",
     "Import": "Importer",
     "Knowledge Graph": "Graphe de connaissances",
