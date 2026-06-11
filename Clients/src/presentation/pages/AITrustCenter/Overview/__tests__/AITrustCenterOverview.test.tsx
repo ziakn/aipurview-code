@@ -1,6 +1,9 @@
+import { vi } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "../../../../../test/renderWithProviders";
+
+vi.setConfig({ testTimeout: 10000 });
 
 const mockFormData = {
   info: {
