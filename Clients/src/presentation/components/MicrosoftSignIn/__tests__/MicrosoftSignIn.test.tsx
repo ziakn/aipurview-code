@@ -1,4 +1,4 @@
-import { screen, act, fireEvent } from "@testing-library/react";
+import { screen, act } from "@testing-library/react";
 import { renderWithProviders } from "../../../../test/renderWithProviders";
 import { MicrosoftSignIn } from "../index";
 

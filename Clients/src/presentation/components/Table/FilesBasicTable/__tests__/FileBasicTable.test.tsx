@@ -7,7 +7,7 @@ import type { IColumn } from "../../../../types/interfaces/i.table";
 
 const mockBulkState = vi.hoisted(() => ({
   selectedIds: [] as number[],
-  isSelected: () => false,
+  isSelected: (_id: number): boolean => false,
   toggle: () => {},
   toggleAll: () => {},
   setAll: () => {},
@@ -106,7 +106,7 @@ vi.mock("../../../Inputs/ChipInput", () => ({
 }));
 
 vi.mock("../../../Inputs/Select", () => ({
-  default: ({ id, placeholder, value, onChange, items, sx }: any) => (
+  default: ({ id, placeholder, value, onChange, items }: any) => (
     <select data-testid="vw-select" data-select-id={id} value={value} onChange={onChange}>
       <option value="">{placeholder}</option>
       {items.map((item: any) => (
@@ -119,7 +119,7 @@ vi.mock("../../../Inputs/Select", () => ({
 }));
 
 vi.mock("../../../Inputs/Select/Multi", () => ({
-  default: ({ label, placeholder, value, onChange, items, width }: any) => (
+  default: ({ label, value, onChange, items }: any) => (
     <div data-testid="multi-select">
       <label>{label}</label>
       <select multiple data-testid="multi-select-field" value={value} onChange={onChange}>
@@ -512,18 +512,13 @@ describe("FileBasicTable", () => {
     const onFileDeleted = vi.fn();
     const user = userEvent.setup();
 
-    const { deleteFileFromManager } = await vi.importActual<
-      typeof import("../../../../../application/repository/file.repository")
-    >("../../../../../application/repository/file.repository");
-
     renderWithProviders(<FileBasicTable {...defaultProps} onFileDeleted={onFileDeleted} />);
 
     const deleteBtns = screen.getAllByTestId(/delete-file-/);
     await user.click(deleteBtns[0]);
   });
 
-  it("renders linked policies dialog when evidence has linked source", async () => {
-    const user = userEvent.setup();
+  it("renders linked policies dialog when evidence has linked source", () => {
     renderWithProviders(<FileBasicTable {...defaultProps} />);
 
     const iconButtons = screen.getAllByTestId("icon-button");

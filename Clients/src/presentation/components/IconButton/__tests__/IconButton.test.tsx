@@ -37,7 +37,7 @@ vi.mock("../../../themes/v1SingleTheme", () => ({
 }));
 
 vi.mock("../../Alert", () => ({
-  default: ({ variant, body, isToast, onClick }: any) =>
+  default: ({ variant, body, onClick }: any) =>
     variant ? (
       <div data-testid="alert" data-variant={variant} onClick={onClick}>
         {body}

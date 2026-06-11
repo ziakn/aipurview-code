@@ -1,5 +1,4 @@
 import { screen, fireEvent } from "@testing-library/react";
-import { renderWithProviders } from "../../../../../test/renderWithProviders";
 import {
   runDrawerCommonTests,
   runDrawerDetailsTabTests,
@@ -7,7 +6,6 @@ import {
   runDrawerCrossMappingsTabTests,
   runDrawerNotesTabTests,
   runDrawerSaveTests,
-  resetDrawerMocks,
 } from "../../../../../test/drawerTestFactory";
 import NISTAIRMFDrawerDialog from "../index";
 import { NISTAIRMFStatus, NISTAIRMFFunction } from "../../../../pages/Framework/NIST-AI-RMF/types";

@@ -52,11 +52,15 @@ describe("useBulkUpdateFiles", () => {
     await act(async () => {
       await result.current.mutateAsync({
         type: "update_tags",
-        payload: { fileIds: [1], tags: ["important"] },
+        payload: { ids: [1], tags: ["important"], mode: "set" },
       });
     });
 
-    expect(mockBulkUpdateFileTags).toHaveBeenCalledWith({ fileIds: [1], tags: ["important"] });
+    expect(mockBulkUpdateFileTags).toHaveBeenCalledWith({
+      ids: [1],
+      tags: ["important"],
+      mode: "set",
+    });
     expect(mockAssignFilesToFolder).not.toHaveBeenCalled();
   });
 
@@ -85,7 +89,10 @@ describe("useBulkUpdateFiles", () => {
       wrapper: createWrapper(),
     });
 
-    const action = { type: "update_tags" as const, payload: { fileIds: [1], tags: ["test"] } };
+    const action = {
+      type: "update_tags" as const,
+      payload: { ids: [1], tags: ["test"], mode: "set" as const },
+    };
     await act(async () => {
       try {
         await result.current.mutateAsync(action);

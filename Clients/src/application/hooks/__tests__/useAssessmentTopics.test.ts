@@ -36,9 +36,9 @@ describe("useAssessmentTopics", () => {
 
   it("does not update state when signal is aborted before resolution", async () => {
     mockGetAll.mockImplementation(
-      ({ signal }: { signal: AbortSignal }) =>
+      (args_0?: { signal?: AbortSignal }) =>
         new Promise((resolve) => {
-          signal.addEventListener("abort", () => {
+          args_0?.signal?.addEventListener("abort", () => {
             resolve([]);
           });
         }),

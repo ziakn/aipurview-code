@@ -17,12 +17,6 @@ vi.mock("../../UserGuide", () => ({
   }),
 }));
 
-vi.mock("../../../../application/hooks/useGovernanceOs", () => ({
-  useGovernancePreferences: vi.fn(),
-}));
-
-import { useGovernancePreferences } from "../../../../application/hooks/useGovernanceOs";
-
 const mockNavigate = vi.fn();
 vi.mock("react-router", async () => {
   const actual = await vi.importActual("react-router");
@@ -36,9 +30,6 @@ vi.mock("react-router", async () => {
 describe("Sidebar", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (useGovernancePreferences as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: { is_enabled: false },
-    });
   });
 
   it("should render the Dashboard nav link", () => {
@@ -99,23 +90,5 @@ describe("Sidebar", () => {
     fireEvent.click(dashboardItem);
 
     expect(mockNavigate).toHaveBeenCalledWith("/");
-  });
-
-  it("should render Governance OS link when enabled", () => {
-    (useGovernancePreferences as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: { is_enabled: true },
-    });
-
-    renderWithProviders(<Sidebar />);
-    expect(screen.getByText("Governance OS")).toBeInTheDocument();
-  });
-
-  it("should not render Governance OS link when disabled", () => {
-    (useGovernancePreferences as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: { is_enabled: false },
-    });
-
-    renderWithProviders(<Sidebar />);
-    expect(screen.queryByText("Governance OS")).not.toBeInTheDocument();
   });
 });

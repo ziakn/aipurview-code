@@ -38,7 +38,6 @@ import fileSlice from "../../redux/file/fileSlice";
 import { apiServices } from "../../../infrastructure/api/networkServices";
 import { showAlert } from "../../../infrastructure/api/customAxios";
 import * as storeModule from "../../redux/store";
-import { ENV_VARs } from "../../../../env.vars";
 
 // ---- Helpers ----
 
@@ -66,11 +65,9 @@ function createTestStore(authToken = "mock-token") {
 
 function createWrapper(authToken = "mock-token") {
   const testStore = createTestStore(authToken);
-  return {
-    wrapper: ({ children }: { children: React.ReactNode }) =>
-      React.createElement(Provider, { store: testStore }, children),
-    store: testStore,
-  };
+  const Wrapper = ({ children }: { children: React.ReactNode }) =>
+    React.createElement(Provider, { store: testStore, children: children as any }, children);
+  return { wrapper: Wrapper, store: testStore };
 }
 
 function createImmediateStream() {
@@ -78,7 +75,7 @@ function createImmediateStream() {
     ok: true,
     body: {
       getReader: () => ({
-        read: vi.fn().mockResolvedValue({ done: true, value: undefined } as const),
+        read: vi.fn().mockResolvedValue({ done: true, value: undefined } as any),
       }),
     },
   };
@@ -86,11 +83,11 @@ function createImmediateStream() {
 
 function createEventStream(...events: string[]) {
   const encoder = new TextEncoder();
-  const reads = events.map((e) => ({
-    done: false as const,
+  const reads: { done: boolean; value: any }[] = events.map((e) => ({
+    done: false,
     value: encoder.encode(e + "\n\n"),
   }));
-  reads.push({ done: true as const, value: undefined });
+  reads.push({ done: true, value: undefined });
   const mockRead = vi.fn();
   reads.forEach((r) => mockRead.mockResolvedValueOnce(r));
   return {
@@ -447,8 +444,20 @@ describe("useNotifications", () => {
 
     it("includes X-Organization-Id header when activeOrganizationId is set", async () => {
       vi.mocked(storeModule.store.getState).mockReturnValue({
-        auth: { activeOrganizationId: 5 },
-      });
+        auth: {
+          isLoading: false,
+          authToken: "mock-token",
+          user: "test@test.com",
+          userExists: true,
+          success: null,
+          message: null,
+          expirationDate: null,
+          onboardingStatus: "completed",
+          isOrgCreator: false,
+          isSuperAdmin: false,
+          activeOrganizationId: 5,
+        },
+      } as any);
 
       const { wrapper } = createWrapper();
       renderHook(() => useNotifications({ autoReconnect: false, fetchOnMount: false }), {

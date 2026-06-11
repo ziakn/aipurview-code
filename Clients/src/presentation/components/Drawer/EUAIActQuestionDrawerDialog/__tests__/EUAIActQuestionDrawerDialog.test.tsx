@@ -1,6 +1,5 @@
 import { screen, fireEvent } from "@testing-library/react";
-import { renderWithProviders } from "../../../../../test/renderWithProviders";
-import { runDrawerTests, resetDrawerMocks } from "../../../../../test/drawerTestFactory";
+import { runDrawerTests } from "../../../../../test/drawerTestFactory";
 import EUAIActQuestionDrawerDialog from "../index";
 
 const mockQuestion = {

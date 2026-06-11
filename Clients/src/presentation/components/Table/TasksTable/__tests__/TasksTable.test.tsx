@@ -24,7 +24,7 @@ const mockRows: ITask[] = [
     priority: TaskPriority.MEDIUM,
     status: TaskStatus.IN_PROGRESS,
     due_date: new Date("2025-11-15"),
-    assignees: [2],
+    assignees: [2] as any,
     isOverdue: false,
     categories: [],
   },
@@ -45,7 +45,7 @@ const mockRows: ITask[] = [
     priority: TaskPriority.HIGH,
     status: TaskStatus.OVERDUE,
     due_date: new Date("2024-01-01"),
-    assignees: [1, 2, 3, 4],
+    assignees: [1, 2, 3, 4] as any,
     isOverdue: true,
   },
 ];
@@ -223,7 +223,7 @@ vi.mock("../../../Chip", () => ({
 }));
 
 vi.mock("../../../Chip/DaysChip", () => ({
-  DaysChip: ({ dueDate }: any) => <span data-testid="days-chip">Days remaining</span>,
+  DaysChip: (_props: any) => <span data-testid="days-chip">Days remaining</span>,
 }));
 
 vi.mock("../../../Dialogs/ConfirmationModal", () => ({
@@ -255,9 +255,9 @@ vi.mock("../../../Inputs/Checkbox", () => ({
 }));
 
 const users = [
-  { id: 1, name: "Alice", surname: "Smith" },
-  { id: 2, name: "Bob", surname: "Jones" },
-  { id: 3, name: "Charlie", surname: "Brown" },
+  { id: 1, name: "Alice", surname: "Smith", email: "alice@test.com" },
+  { id: 2, name: "Bob", surname: "Jones", email: "bob@test.com" },
+  { id: 3, name: "Charlie", surname: "Brown", email: "charlie@test.com" },
 ];
 
 const defaultProps = {

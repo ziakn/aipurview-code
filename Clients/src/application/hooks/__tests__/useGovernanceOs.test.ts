@@ -255,12 +255,12 @@ describe("useGovernancePreferences", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("fetches preferences", async () => {
-    mockGetPreferences.mockResolvedValue({ data: { id: 1, theme: "dark" } });
+    mockGetPreferences.mockResolvedValue({ data: { id: 1, organization_id: 1 } });
     const { result } = renderHook(() => useGovernancePreferences(), {
       wrapper: createWrapper(),
     });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual({ id: 1, theme: "dark" });
+    expect(result.current.data).toEqual({ id: 1, organization_id: 1 });
   });
 
   it("returns null when no data", async () => {
@@ -277,11 +277,11 @@ describe("useUpdatePreferences", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("updates preferences", async () => {
-    mockUpdatePreferences.mockResolvedValue({ data: { id: 1, theme: "light" } });
+    mockUpdatePreferences.mockResolvedValue({ data: { id: 1, organization_id: 1 } });
     const { result } = renderHook(() => useUpdatePreferences(), { wrapper: createWrapper() });
     await act(async () => {
-      result.current.mutateAsync({ theme: "light" });
+      result.current.mutateAsync({ organization_id: 1 });
     });
-    expect(mockUpdatePreferences).toHaveBeenCalledWith({ body: { theme: "light" } });
+    expect(mockUpdatePreferences).toHaveBeenCalledWith({ body: { organization_id: 1 } });
   });
 });

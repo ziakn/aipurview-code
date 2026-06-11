@@ -46,7 +46,7 @@ describe("EvidenceAnalysisPanel", () => {
       analyzer_version: "2.1.0",
       rationales: {
         relevance: "Good alignment with the control objective",
-        completeness: null,
+        completeness: undefined,
       },
       abstain_reason: null,
       document_signals: {
@@ -213,7 +213,7 @@ describe("EvidenceAnalysisPanel", () => {
     it("renders when abstain_reason is present", () => {
       const analysis = {
         ...mockAnalysis,
-        audit_metadata: { abstain_reason: "Insufficient information to analyze" },
+        audit_metadata: { abstain_reason: "Insufficient information to analyze" } as any,
       };
       renderWithProviders(<EvidenceAnalysisPanel analysis={analysis} />);
       expect(screen.getByText("Analyzer abstained")).toBeInTheDocument();
@@ -284,7 +284,7 @@ describe("EvidenceAnalysisPanel", () => {
         ...mockAnalysis,
         audit_metadata: JSON.stringify({
           abstain_reason: "Not enough data",
-        }),
+        }) as any,
       };
       renderWithProviders(<EvidenceAnalysisPanel analysis={analysis as any} />);
       expect(screen.getByText("Not enough data")).toBeInTheDocument();

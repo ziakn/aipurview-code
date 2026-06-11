@@ -1,7 +1,5 @@
 import { vi } from "vitest";
 
-const mockSetSelectedTopLevel = vi.fn();
-
 vi.mock("../../Inputs/Select", () => ({
   default: ({ id, value, items, onChange, disabled, placeholder }: any) => {
     const needsNumberConversion = id !== "entity-type-select" && id !== "framework-select";
@@ -39,7 +37,7 @@ vi.mock("../../../../application/repository/policy.repository", () => ({
   getAllPolicies: vi.fn(),
 }));
 
-import { screen, within } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "../../../../test/renderWithProviders";
 import EntityLinkSelector from "../index";
@@ -152,7 +150,7 @@ describe("EntityLinkSelector", () => {
     renderWithProviders(<EntityLinkSelector value={[]} onChange={defaultOnChange} />);
     const typeSelect = screen.getByTestId("entity-type-select");
     await userEvent.selectOptions(typeSelect, "use_case");
-    const selects = screen.getAllByRole("combobox");
+    screen.getAllByRole("combobox");
     expect(screen.getByText("No use-cases available")).toBeInTheDocument();
   });
 

@@ -15,13 +15,13 @@ export interface DrawerTestConfig {
   /** Required props for the component */
   props: Record<string, any>;
   /** Expected title text in header */
-  titleMatcher: string | RegExp;
+  titleMatcher?: string | RegExp;
   /** Close button label: "Close" typically, some use X icon */
   closeButtonLabel?: string;
   /** Custom function to find and click close button (for drawers without aria-label) */
   clickCloseButton?: () => void;
   /** Tab values to test switching */
-  tabs: string[];
+  tabs?: string[];
   /** Evidence tab testid (defaults to "tab-evidence", NIST uses "tab-evidences") */
   evidenceTabTestId?: string;
   /** Whether the Details tab has RichTextEditor (needs mock) */
@@ -294,7 +294,9 @@ export {
 // ============================================================================
 
 export function runDrawerCommonTests(config: DrawerTestConfig) {
-  const { name, Component, props, titleMatcher, closeButtonLabel = "Close", tabs } = config;
+  const titleMatcher = config.titleMatcher!;
+  const tabs = config.tabs!;
+  const { name, Component, props, closeButtonLabel = "Close" } = config;
 
   describe(`${name} - Drawer Common Tests`, () => {
     beforeEach(() => {

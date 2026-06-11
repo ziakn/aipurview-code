@@ -23,7 +23,7 @@ function renderHead(overrides?: {
   columns?: StandardColumn[];
   selection?: SelectionColumnConfig;
 }) {
-  const { onSort: _onSort, selection, sortConfig: sc, cols } = overrides ?? {};
+  const { selection, sortConfig: sc, columns: cols } = overrides ?? {};
   return renderWithProviders(
     <Table>
       <StandardTableHead
@@ -116,7 +116,7 @@ describe("StandardTableHead", () => {
     const colsWithWidth: StandardColumn[] = [
       { id: "name", label: "Name", sortable: true, width: "200px", minWidth: "100px" },
     ];
-    renderHead({ cols: colsWithWidth });
+    renderHead({ columns: colsWithWidth });
 
     const nameHeader = screen.getByText("Name").closest("th");
     expect(nameHeader).toBeInTheDocument();
@@ -127,7 +127,7 @@ describe("StandardTableHead", () => {
       { id: "name", label: "Name", sortable: false },
       { id: "score", label: "Score", sortable: false, align: "center" },
     ];
-    renderHead({ cols: colsWithAlign });
+    renderHead({ columns: colsWithAlign });
 
     const scoreCell = screen.getByText("Score").closest("th");
     expect(scoreCell).toHaveStyle("text-align: center");

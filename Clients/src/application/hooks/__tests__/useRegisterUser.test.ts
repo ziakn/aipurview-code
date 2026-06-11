@@ -1,4 +1,4 @@
-import { renderHook, act, waitFor } from "@testing-library/react";
+import { renderHook, act } from "@testing-library/react";
 import useRegisterUser from "../useRegisterUser";
 
 const mockCreateNewUser = vi.fn();
@@ -37,9 +37,10 @@ describe("useRegisterUser", () => {
         {
           values: {
             email: "test@example.com",
-            firstname: "John",
-            lastname: "Doe",
+            name: "John",
+            surname: "Doe",
             password: "pass",
+            confirmPassword: "pass",
           },
           user: defaultUser,
           setIsSubmitting,
@@ -52,9 +53,10 @@ describe("useRegisterUser", () => {
       {
         userData: {
           email: "test@example.com",
-          firstname: "John",
-          lastname: "Doe",
+          name: "John",
+          surname: "Doe",
           password: "pass",
+          confirmPassword: "pass",
           role_id: 2,
         },
       },
@@ -139,7 +141,13 @@ describe("useRegisterUser", () => {
     await act(async () => {
       await result.current.registerUser(
         {
-          values: { email: "test@example.com", firstname: "A", lastname: "B" },
+          values: {
+            email: "test@example.com",
+            name: "A",
+            surname: "B",
+            password: "",
+            confirmPassword: "",
+          },
           user: { id: "u1", firstname: "A", lastname: "B", roleId: 0 },
           setIsSubmitting: vi.fn(),
         },
@@ -148,7 +156,16 @@ describe("useRegisterUser", () => {
     });
 
     expect(mockCreateNewUser).toHaveBeenCalledWith(
-      { userData: { email: "test@example.com", firstname: "A", lastname: "B", role_id: 1 } },
+      {
+        userData: {
+          email: "test@example.com",
+          name: "A",
+          surname: "B",
+          password: "",
+          confirmPassword: "",
+          role_id: 1,
+        },
+      },
       { Authorization: "Bearer " },
     );
   });

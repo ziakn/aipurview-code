@@ -134,7 +134,13 @@ describe("ReadinessScoreCard", () => {
       <ReadinessScoreCard
         frameworkType="eu_ai_act"
         overallScore={70}
-        breakdown={{ evidence_quality: 80 }}
+        breakdown={{
+          evidence_quality: 80,
+          evidence_count: 60,
+          evidence_recency: 40,
+          task_completion: 90,
+          risk_mitigation: 20,
+        }}
       />,
     );
     expect(screen.getByText(/\(30%\)/)).toBeInTheDocument();
@@ -145,7 +151,13 @@ describe("ReadinessScoreCard", () => {
       <ReadinessScoreCard
         frameworkType="eu_ai_act"
         overallScore={70}
-        breakdown={{ evidence_quality: 75 }}
+        breakdown={{
+          evidence_quality: 75,
+          evidence_count: 60,
+          evidence_recency: 40,
+          task_completion: 90,
+          risk_mitigation: 20,
+        }}
       />,
     );
     expect(screen.getByText("75")).toBeInTheDocument();

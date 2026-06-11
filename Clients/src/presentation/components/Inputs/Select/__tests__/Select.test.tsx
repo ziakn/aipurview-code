@@ -1,4 +1,4 @@
-import { screen, within } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "../../../../../test/renderWithProviders";
 import Select from "../index";
@@ -145,7 +145,7 @@ describe("Select Component", () => {
         label="Pick"
         value={1}
         items={baseItems}
-        customRenderValue={(value, item) => <span>Custom: {item.name}</span>}
+        customRenderValue={(_value, item) => <span>Custom: {item.name}</span>}
         onChange={vi.fn()}
       />,
     );

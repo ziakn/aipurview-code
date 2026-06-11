@@ -1,8 +1,6 @@
 import { screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "../../../../../test/renderWithProviders";
 import AutoCompleteField from "../index";
-import { TextField } from "@mui/material";
 
 const options = [
   { label: "Apple", id: 1 },
@@ -12,16 +10,10 @@ const options = [
 describe("AutoCompleteField Component", () => {
   it("renders label", () => {
     renderWithProviders(
-      <AutoCompleteField
-        label="Fruit"
-        options={options}
-        getOptionLabel={(o) => o.label}
-        renderInput={(params) => <TextField {...params} placeholder="Pick a fruit" size="small" />}
-      />,
+      <AutoCompleteField label="Fruit" options={options} getOptionLabel={(o) => o.label} />,
     );
 
     expect(screen.getByText("Fruit")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Pick a fruit")).toBeInTheDocument();
   });
 
   it("shows required asterisk", () => {
@@ -30,7 +22,6 @@ describe("AutoCompleteField Component", () => {
         label="Fruit"
         options={options}
         getOptionLabel={(o) => o.label}
-        renderInput={(params) => <TextField {...params} placeholder="Pick" size="small" />}
         isRequired
       />,
     );
@@ -44,7 +35,6 @@ describe("AutoCompleteField Component", () => {
         label="Fruit"
         options={options}
         getOptionLabel={(o) => o.label}
-        renderInput={(params) => <TextField {...params} placeholder="Pick" size="small" />}
         isOptional
       />,
     );
@@ -58,7 +48,6 @@ describe("AutoCompleteField Component", () => {
         label="Fruit"
         options={options}
         getOptionLabel={(o) => o.label}
-        renderInput={(params) => <TextField {...params} placeholder="Pick" size="small" />}
         error="Required field"
       />,
     );

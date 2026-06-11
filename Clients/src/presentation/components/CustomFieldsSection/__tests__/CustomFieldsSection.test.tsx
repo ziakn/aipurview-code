@@ -69,13 +69,13 @@ vi.mock("../../Inputs/Datepicker", () => ({
       data-testid="datepicker"
       disabled={disabled}
       value={date ? date.format("YYYY-MM-DD") : ""}
-      onChange={(e) => handleDateChange?.(null)}
+      onChange={() => handleDateChange?.(null)}
     />
   ),
 }));
 
 vi.mock("../../Inputs/Field", () => ({
-  default: ({ id, value, placeholder, disabled, onChange }: any) => (
+  default: ({ id, value, onChange, placeholder, disabled }: any) => (
     <input
       id={id}
       data-testid="field"
@@ -113,7 +113,7 @@ vi.mock("../../Inputs/Toggle", () => ({
 }));
 
 vi.mock("../../Inputs/Autocomplete", () => ({
-  default: ({ value, onChange, options, multiple, disabled, placeholder }: any) => (
+  default: ({ value, onChange, options, placeholder }: any) => (
     <div data-testid="autocomplete">
       {options.map((opt: string) => (
         <button key={opt} onClick={() => onChange?.({}, [opt])}>

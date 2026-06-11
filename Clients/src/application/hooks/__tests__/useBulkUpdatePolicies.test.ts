@@ -30,10 +30,10 @@ describe("useBulkUpdatePolicies", () => {
     });
 
     await act(async () => {
-      await result.current.mutateAsync({ policyIds: [1, 2], updates: {} });
+      await result.current.mutateAsync({ ids: [1, 2], action: "archive" });
     });
 
-    expect(mockBulkUpdatePolicies).toHaveBeenCalledWith({ policyIds: [1, 2], updates: {} });
+    expect(mockBulkUpdatePolicies).toHaveBeenCalledWith({ ids: [1, 2], action: "archive" });
   });
 
   it("should call onSuccess callback when mutation succeeds", async () => {
@@ -45,10 +45,10 @@ describe("useBulkUpdatePolicies", () => {
     });
 
     await act(async () => {
-      await result.current.mutateAsync({ policyIds: [1], updates: {} });
+      await result.current.mutateAsync({ ids: [1], action: "archive" });
     });
 
-    expect(onSuccess).toHaveBeenCalledWith({ policyIds: [1], updates: {} });
+    expect(onSuccess).toHaveBeenCalledWith({ ids: [1], action: "archive" });
   });
 
   it("should call onError callback when mutation fails", async () => {
@@ -62,12 +62,12 @@ describe("useBulkUpdatePolicies", () => {
 
     await act(async () => {
       try {
-        await result.current.mutateAsync({ policyIds: [1], updates: {} });
+        await result.current.mutateAsync({ ids: [1], action: "archive" });
       } catch {
         // expected
       }
     });
 
-    expect(onError).toHaveBeenCalledWith(testError, { policyIds: [1], updates: {} });
+    expect(onError).toHaveBeenCalledWith(testError, { ids: [1], action: "archive" });
   });
 });

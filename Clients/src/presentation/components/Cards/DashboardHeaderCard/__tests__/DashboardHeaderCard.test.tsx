@@ -33,7 +33,7 @@ describe("DashboardHeaderCard", () => {
       route: "/",
     });
     const user = userEvent.setup();
-    const card = container.querySelector("Stack") || container.firstChild!;
+    const card = container.querySelector("Stack") || (container.firstChild as HTMLElement);
     if (card && "click" in card) {
       await user.click(card);
     }
