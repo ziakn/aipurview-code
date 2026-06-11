@@ -8,6 +8,7 @@ import { SearchBox } from "../../components/Search";
 import TasksTable from "../../components/Table/TasksTable";
 import { CustomizableButton } from "../../components/button/customizable-button";
 import { PageHeaderExtended } from "../../components/Layout/PageHeaderExtended";
+import DeadlineWarningBox from "../../components/DeadlineWarningBox";
 import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.context";
 import { ITask, TaskSummary } from "../../../domain/interfaces/i.task";
 import {
@@ -779,6 +780,7 @@ const Tasks: React.FC = () => {
           : "Showing tasks you created or are assigned to. You can create and manage your tasks here."
       }
       helpArticlePath="ai-governance/task-management"
+      warningBanner={<DeadlineWarningBox />}
       tipBoxEntity="tasks"
       summaryCards={
         <TaskSummaryCards
