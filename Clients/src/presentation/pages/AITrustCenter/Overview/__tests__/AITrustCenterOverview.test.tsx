@@ -138,7 +138,7 @@ describe("AITrustCenterOverview", () => {
   });
 
   it("enables save button after making a change", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderWithProviders(<AITrustCenterOverview />);
     await waitFor(() => {
       expect(screen.getByDisplayValue("Purpose of our trust center")).toBeInTheDocument();
@@ -153,7 +153,7 @@ describe("AITrustCenterOverview", () => {
   });
 
   it("shows validation error for empty terms text when terms are visible", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderWithProviders(<AITrustCenterOverview />);
     await waitFor(() => {
       expect(
@@ -173,7 +173,7 @@ describe("AITrustCenterOverview", () => {
   });
 
   it("shows validation error for invalid email", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderWithProviders(<AITrustCenterOverview />);
     await waitFor(() => {
       expect(screen.getByDisplayValue("contact@company.com")).toBeInTheDocument();
@@ -189,7 +189,7 @@ describe("AITrustCenterOverview", () => {
   });
 
   it("calls mutateAsync and shows success alert on save", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderWithProviders(<AITrustCenterOverview />);
     await waitFor(() => {
       expect(screen.getByDisplayValue("Purpose of our trust center")).toBeInTheDocument();
