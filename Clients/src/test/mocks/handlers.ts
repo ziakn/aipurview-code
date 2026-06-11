@@ -3,12 +3,7 @@ import { mockProjects, createMockProject } from "./data/projects";
 import { mockRisks, createMockRisk } from "./data/risks";
 import { mockVendors, createMockVendor } from "./data/vendors";
 import { mockAssessments, createMockAssessment } from "./data/assessments";
-import {
-  createMockLoginResponse,
-  createMockUserProfile,
-  mockLoginResponse,
-  mockUserProfile,
-} from "./data/auth";
+import { mockLoginResponse } from "./data/auth";
 import { mockTasks, createMockTask } from "./data/tasks";
 import { mockUsers, createMockUser } from "./data/users";
 
@@ -28,10 +23,7 @@ export const handlers = [
   }),
   http.post("/api/users/register", async ({ request }) => {
     const body = (await request.json()) as Record<string, unknown>;
-    return HttpResponse.json(
-      { data: createMockUser(body as any) },
-      { status: 201 },
-    );
+    return HttpResponse.json({ data: createMockUser(body as any) }, { status: 201 });
   }),
   http.post("/api/users/refresh-token", () =>
     HttpResponse.json({ data: { token: "refreshed-mock-jwt-token" } }),
@@ -41,9 +33,7 @@ export const handlers = [
     const email = url.searchParams.get("email");
     return HttpResponse.json({ exists: email === "existing@test.com" });
   }),
-  http.post("/api/users/login-microsoft", async ({ request }) => {
-    return HttpResponse.json({ data: mockLoginResponse });
-  }),
+  http.post("/api/users/login-microsoft", () => HttpResponse.json({ data: mockLoginResponse })),
   http.post("/api/mail/reset-password", () =>
     HttpResponse.json({ message: "Password reset email sent" }),
   ),
@@ -217,9 +207,7 @@ export const handlers = [
     if (!task) return new HttpResponse(null, { status: 404 });
     return HttpResponse.json({ message: "Task permanently deleted" });
   }),
-  http.patch("/api/tasks/bulk", () =>
-    HttpResponse.json({ message: "Bulk update applied" }),
-  ),
+  http.patch("/api/tasks/bulk", () => HttpResponse.json({ message: "Bulk update applied" })),
 
   // ==================== Model Inventory ====================
   http.post("/api/model-inventory", async ({ request }) => {
@@ -248,19 +236,21 @@ export const handlers = [
 
   // ==================== AI Gateway ====================
   http.get("/api/ai-gateway/keys", () =>
-    HttpResponse.json({ data: [{ id: 1, name: "Test Key", provider: "openai", key_preview: "sk-***abc" }] }),
+    HttpResponse.json({
+      data: [{ id: 1, name: "Test Key", provider: "openai", key_preview: "sk-***abc" }],
+    }),
   ),
   http.post("/api/ai-gateway/keys", async ({ request }) => {
     const body = (await request.json()) as Record<string, unknown>;
     return HttpResponse.json({ data: { id: 2, ...body } }, { status: 201 });
   }),
-  http.delete("/api/ai-gateway/keys/:id", () =>
-    HttpResponse.json({ success: true }),
-  ),
+  http.delete("/api/ai-gateway/keys/:id", () => HttpResponse.json({ success: true })),
   http.post("/api/ai-gateway/keys/verify", async ({ request }) => {
     const body = (await request.json()) as Record<string, unknown>;
     const valid = (body as any)?.key?.startsWith("sk-");
-    return HttpResponse.json({ data: { valid, message: valid ? "Key is valid" : "Invalid key format" } });
+    return HttpResponse.json({
+      data: { valid, message: valid ? "Key is valid" : "Invalid key format" },
+    });
   }),
 
   // ==================== DeepEval — Models ====================
@@ -275,9 +265,7 @@ export const handlers = [
     const body = (await request.json()) as Record<string, unknown>;
     return HttpResponse.json({ model: { id: "gpt-4", ...body } });
   }),
-  http.delete("/api/deepeval/models/:id", () =>
-    HttpResponse.json({ message: "deleted" }),
-  ),
+  http.delete("/api/deepeval/models/:id", () => HttpResponse.json({ message: "deleted" })),
   http.post("/api/deepeval/models/validate", async ({ request }) => {
     const body = (await request.json()) as Record<string, unknown>;
     return HttpResponse.json({ valid: true, model_name: (body as any)?.model_name || "gpt-4" });
@@ -295,9 +283,7 @@ export const handlers = [
     const body = (await request.json()) as Record<string, unknown>;
     return HttpResponse.json({ id: 1, ...body });
   }),
-  http.delete("/api/deepeval/scorers/:id", () =>
-    HttpResponse.json({ message: "deleted", id: 1 }),
-  ),
+  http.delete("/api/deepeval/scorers/:id", () => HttpResponse.json({ message: "deleted", id: 1 })),
   http.post("/api/deepeval/scorers/:id/test", () =>
     HttpResponse.json({ scorerId: 1, score: 0.92, passed: true }),
   ),
@@ -320,7 +306,7 @@ export const handlers = [
   }),
   http.delete("/api/deepeval/orgs/:id", () => HttpResponse.json({})),
   http.get("/api/deepeval/orgs/:id/projects", () =>
-    HttpResponse.json({ projectIds: [1, 2, 3] }),
+    HttpResponse.json({ projectIds: ["p1", "p2", "p3"] }),
   ),
 
   // ==================== DeepEval — Projects ====================
@@ -342,7 +328,7 @@ export const handlers = [
     HttpResponse.json({ message: "deleted", projectId: 1 }),
   ),
   http.get("/api/deepeval/projects/:id/stats", () =>
-    HttpResponse.json({ stats: { totalTests: 100, passed: 85, failed: 15 } }),
+    HttpResponse.json({ stats: { totalExperiments: 100, passed: 85, failed: 15 } }),
   ),
   http.get("/api/deepeval/projects/:id/monitor/dashboard", ({ params }) =>
     HttpResponse.json({ data: { project_id: params.id } }),
@@ -367,19 +353,21 @@ export const handlers = [
     HttpResponse.json({ message: "deleted", deleted: 1 }),
   ),
   http.post("/api/deepeval/datasets/upload", () =>
-    HttpResponse.json({ message: "Uploaded", path: "/uploads/dataset.csv", filename: "dataset.csv", size: 1024, tenant: "test" }),
+    HttpResponse.json({
+      message: "Uploaded",
+      path: "/uploads/dataset.csv",
+      filename: "dataset.csv",
+      size: 1024,
+      tenant: "test",
+    }),
   ),
 
   // ==================== DeepEval — Logs ====================
   http.get("/api/deepeval/logs", () =>
     HttpResponse.json({ logs: [{ id: 1, level: "info", message: "Test log" }] }),
   ),
-  http.post("/api/deepeval/logs", () =>
-    HttpResponse.json({ id: 1 }, { status: 201 }),
-  ),
-  http.get("/api/deepeval/logs/:id", ({ params }) =>
-    HttpResponse.json({ id: params.id }),
-  ),
+  http.post("/api/deepeval/logs", () => HttpResponse.json({ id: 1 }, { status: 201 })),
+  http.get("/api/deepeval/logs/:id", ({ params }) => HttpResponse.json({ id: params.id })),
   http.get("/api/deepeval/logs/trace/:traceId", ({ params }) =>
     HttpResponse.json({ logs: [{ id: 1, traceId: params.traceId }] }),
   ),
@@ -388,35 +376,23 @@ export const handlers = [
   http.get("/api/deepeval/metrics", () =>
     HttpResponse.json({ metrics: [{ id: 1, name: "Accuracy" }] }),
   ),
-  http.post("/api/deepeval/metrics", () =>
-    HttpResponse.json({ id: 1 }, { status: 201 }),
-  ),
-  http.get("/api/deepeval/metrics/aggregates", () =>
-    HttpResponse.json({ average: 0.85 }),
-  ),
+  http.post("/api/deepeval/metrics", () => HttpResponse.json({ id: 1 }, { status: 201 })),
+  http.get("/api/deepeval/metrics/aggregates", () => HttpResponse.json({ average: 0.85 })),
 
   // ==================== DeepEval — Experiments ====================
   http.get("/api/deepeval/experiments", () =>
     HttpResponse.json({ experiments: [{ id: "exp-1", name: "Experiment 1" }] }),
   ),
-  http.post("/api/deepeval/experiments", () =>
-    HttpResponse.json({ id: "exp-2" }, { status: 201 }),
-  ),
+  http.post("/api/deepeval/experiments", () => HttpResponse.json({ id: "exp-2" }, { status: 201 })),
   http.get("/api/deepeval/experiments/all", () =>
     HttpResponse.json({ experiments: [{ id: "exp-1", name: "Experiment 1" }] }),
   ),
-  http.get("/api/deepeval/experiments/:id", ({ params }) =>
-    HttpResponse.json({ id: params.id }),
-  ),
-  http.patch("/api/deepeval/experiments/:id", ({ params }) =>
-    HttpResponse.json({ id: params.id }),
-  ),
+  http.get("/api/deepeval/experiments/:id", ({ params }) => HttpResponse.json({ id: params.id })),
+  http.patch("/api/deepeval/experiments/:id", ({ params }) => HttpResponse.json({ id: params.id })),
   http.put("/api/deepeval/experiments/:id/status", ({ params }) =>
     HttpResponse.json({ id: params.id }),
   ),
-  http.delete("/api/deepeval/experiments/:id", () =>
-    HttpResponse.json({ message: "deleted" }),
-  ),
+  http.delete("/api/deepeval/experiments/:id", () => HttpResponse.json({ message: "deleted" })),
 
   // ==================== DeepEval — Arena ====================
   http.get("/api/deepeval/arena/comparisons", () =>
@@ -424,13 +400,24 @@ export const handlers = [
   ),
   http.post("/api/deepeval/arena/compare", async ({ request }) => {
     const body = (await request.json()) as Record<string, unknown>;
-    return HttpResponse.json({ id: 2, status: "pending", message: "Comparison created", contestants: (body as any)?.contestants || [] }, { status: 201 });
+    return HttpResponse.json(
+      {
+        id: 2,
+        status: "pending",
+        message: "Comparison created",
+        contestants: (body as any)?.contestants || [],
+      },
+      { status: 201 },
+    );
   }),
   http.get("/api/deepeval/arena/comparisons/:id", ({ params }) =>
     HttpResponse.json({ id: params.id, status: "completed", contestants: ["gpt-4", "claude-3"] }),
   ),
   http.get("/api/deepeval/arena/comparisons/:id/results", ({ params }) =>
-    HttpResponse.json({ id: params.id, results: { winner: "gpt-4", winCounts: { "gpt-4": 10, "claude-3": 5 }, detailedResults: [] } }),
+    HttpResponse.json({
+      id: params.id,
+      results: { winner: "gpt-4", winCounts: { "gpt-4": 10, "claude-3": 5 }, detailedResults: [] },
+    }),
   ),
   http.delete("/api/deepeval/arena/comparisons/:id", () =>
     HttpResponse.json({ message: "deleted", id: 1 }),
@@ -462,10 +449,12 @@ export const handlers = [
     const body = (await request.json()) as Record<string, unknown>;
     return HttpResponse.json({ auditId: 1, systemName: (body as any)?.systemName || "System" });
   }),
-  http.get("/api/deepeval/bias-audits/:id/report.pdf", () =>
-    new HttpResponse("PDF content", {
-      headers: { "Content-Type": "application/pdf" },
-    }),
+  http.get(
+    "/api/deepeval/bias-audits/:id/report.pdf",
+    () =>
+      new HttpResponse("PDF content", {
+        headers: { "Content-Type": "application/pdf" },
+      }),
   ),
   http.post("/api/deepeval/bias-audits/parse-headers", () =>
     HttpResponse.json({ headers: [{ name: "Test", value: "Value" }] }),
@@ -503,7 +492,7 @@ export const handlers = [
     if (String(params.id) === "999") {
       return HttpResponse.json(null, { status: 404 });
     }
-    return HttpResponse.json({ data: { id: 1, configId: params.id, status: "active" } });
+    return HttpResponse.json({ data: { id: "1", configId: params.id, status: "active" } });
   }),
   http.get("/api/pmm/cycles/:id", ({ params }) =>
     HttpResponse.json({ data: { id: params.id, status: "active" } }),
@@ -520,7 +509,9 @@ export const handlers = [
     const url = new URL(request.url);
     const projectId = url.searchParams.get("project_id");
     const flaggedOnly = url.searchParams.get("flagged_only");
-    return HttpResponse.json({ data: { reports: [{ id: 1, projectId: Number(projectId), flagged: flaggedOnly === "true" }] } });
+    return HttpResponse.json({
+      data: { reports: [{ id: 1, projectId: Number(projectId), flagged: flaggedOnly === "true" }] },
+    });
   }),
   http.post("/api/pmm/cycles/:id/reassign", () => HttpResponse.json({})),
   http.post("/api/pmm/projects/:id/start-cycle", ({ params }) =>
@@ -548,6 +539,13 @@ export const handlers = [
   ),
 
   // ==================== Automations ====================
+  // Specific routes MUST precede parameterized /:id routes
+  http.get("/api/automations/triggers", () =>
+    HttpResponse.json({ data: [{ id: 1, name: "Schedule", type: "cron" }] }),
+  ),
+  http.get("/api/automations/actions/by-triggerId/:id", ({ params }) =>
+    HttpResponse.json({ data: [{ id: 1, triggerId: params.id, name: "Send Email" }] }),
+  ),
   http.get("/api/automations", () =>
     HttpResponse.json({ data: [{ id: 1, name: "Daily Report", triggerId: 1, actionId: 1 }] }),
   ),
@@ -563,19 +561,15 @@ export const handlers = [
     return HttpResponse.json({ data: { id: 1, ...body } });
   }),
   http.delete("/api/automations/:id", () => HttpResponse.json({})),
-  http.get("/api/automations/triggers", () =>
-    HttpResponse.json({ data: [{ id: 1, name: "Schedule", type: "cron" }] }),
-  ),
-  http.get("/api/automations/actions/by-triggerId/:id", ({ params }) =>
-    HttpResponse.json({ data: [{ id: 1, triggerId: params.id, name: "Send Email" }] }),
-  ),
   http.get("/api/automations/:id/history", ({ request }) => {
     const url = new URL(request.url);
     const total = parseInt(url.searchParams.get("total") || "10", 10);
     return HttpResponse.json({ data: { logs: [{ id: 1, status: "success" }], total } });
   }),
   http.get("/api/automations/:id/stats", () =>
-    HttpResponse.json({ data: { total_executions: 50, successful_executions: 45, failed_executions: 5 } }),
+    HttpResponse.json({
+      data: { total_executions: 50, successful_executions: 45, failed_executions: 5 },
+    }),
   ),
 
   // ==================== Search ====================
@@ -585,11 +579,13 @@ export const handlers = [
     const limit = parseInt(url.searchParams.get("limit") || "10", 10);
     const offset = parseInt(url.searchParams.get("offset") || "0", 10);
     return HttpResponse.json({
-      results: [],
-      totalCount: 0,
-      query: q,
-      limit,
-      offset,
+      data: {
+        results: [],
+        totalCount: 0,
+        query: q,
+        limit,
+        offset,
+      },
     });
   }),
 ];

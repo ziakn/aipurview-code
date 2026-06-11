@@ -28,9 +28,7 @@ export function createMockLoginResponse(
   };
 }
 
-export function createMockUserProfile(
-  overrides: Partial<MockUserProfile> = {},
-): MockUserProfile {
+export function createMockUserProfile(overrides: Partial<MockUserProfile> = {}): MockUserProfile {
   return {
     id: 1,
     name: "John",
