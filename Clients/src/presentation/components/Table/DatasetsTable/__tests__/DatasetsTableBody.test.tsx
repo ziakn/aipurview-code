@@ -245,11 +245,13 @@ describe("DatasetsTableBody", () => {
   });
 
   it("renders loading spinner in prompt count when metadata.loading is true", () => {
-    const loadingRow = [{
-      ...mockRows[0],
-      key: "ds-loading",
-      metadata: { loading: true, promptCount: 0 },
-    }];
+    const loadingRow = [
+      {
+        ...mockRows[0],
+        key: "ds-loading",
+        metadata: { loading: true, promptCount: 0 },
+      },
+    ];
     renderWithProviders(
       <table>
         <DatasetsTableBody {...defaultProps} rows={loadingRow} />
@@ -259,11 +261,13 @@ describe("DatasetsTableBody", () => {
   });
 
   it("renders loading spinner in difficulty when metadata.loading is true", () => {
-    const loadingRow = [{
-      ...mockRows[0],
-      key: "ds-loading2",
-      metadata: { loading: true },
-    }];
+    const loadingRow = [
+      {
+        ...mockRows[0],
+        key: "ds-loading2",
+        metadata: { loading: true },
+      },
+    ];
     renderWithProviders(
       <table>
         <DatasetsTableBody {...defaultProps} rows={loadingRow} />

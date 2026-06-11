@@ -184,11 +184,7 @@ describe("ArenaTableBody", () => {
     const user = userEvent.setup();
     renderWithProviders(
       <table>
-        <ArenaTableBody
-          {...defaultProps}
-          onDownload={vi.fn()}
-          onCopy={vi.fn()}
-        />
+        <ArenaTableBody {...defaultProps} onDownload={vi.fn()} onCopy={vi.fn()} />
       </table>,
     );
     const buttons = screen.getAllByRole("button");

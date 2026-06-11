@@ -9,9 +9,9 @@ describe("isOfficeFile", () => {
   });
 
   it("returns true for XLSX mimetype", () => {
-    expect(
-      isOfficeFile("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
-    ).toBe(true);
+    expect(isOfficeFile("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")).toBe(
+      true,
+    );
   });
 
   it("returns true for PPTX mimetype", () => {
@@ -48,7 +48,9 @@ describe("getOfficeFileLabel", () => {
 
   it('returns "PowerPoint presentation" for presentationml mimetype', () => {
     expect(
-      getOfficeFileLabel("application/vnd.openxmlformats-officedocument.presentationml.presentation"),
+      getOfficeFileLabel(
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      ),
     ).toBe("PowerPoint presentation");
   });
 

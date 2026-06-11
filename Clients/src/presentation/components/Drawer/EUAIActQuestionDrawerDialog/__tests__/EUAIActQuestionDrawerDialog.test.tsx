@@ -41,7 +41,8 @@ runDrawerTests({
   clickCloseButton: () => {
     const buttons = screen.getAllByRole("button");
     const closeBtn = buttons.find(
-      (btn) => btn.querySelector("svg") && btn.closest("[class*='eu-ai-act-question-drawer-dialog']"),
+      (btn) =>
+        btn.querySelector("svg") && btn.closest("[class*='eu-ai-act-question-drawer-dialog']"),
     );
     if (closeBtn) fireEvent.click(closeBtn);
   },

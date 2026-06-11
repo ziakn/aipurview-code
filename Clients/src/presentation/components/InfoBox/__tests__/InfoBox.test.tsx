@@ -173,9 +173,7 @@ describe("InfoBox Component", () => {
 
     vi.useFakeTimers({ shouldAdvanceTime: true });
 
-    renderWithProviders(
-      <InfoBox message="Remember me" storageKey="test-remember" />,
-    );
+    renderWithProviders(<InfoBox message="Remember me" storageKey="test-remember" />);
 
     await user.click(screen.getByRole("button", { name: /dismiss/i }));
 

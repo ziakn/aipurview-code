@@ -14,9 +14,7 @@ describe("EmptyStateTip", () => {
   });
 
   it("renders the icon", () => {
-    renderWithProviders(
-      <EmptyStateTip icon={Info} title="Icon Tip" description="With an icon" />,
-    );
+    renderWithProviders(<EmptyStateTip icon={Info} title="Icon Tip" description="With an icon" />);
     const details = screen.getByText("Icon Tip").closest("details");
     expect(details).toBeInTheDocument();
   });

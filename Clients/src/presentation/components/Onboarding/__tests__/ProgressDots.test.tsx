@@ -16,9 +16,7 @@ describe("ProgressDots", () => {
   });
 
   it("marks current step as active", () => {
-    const { container } = renderWithProviders(
-      <ProgressDots totalSteps={3} currentStep={1} />,
-    );
+    const { container } = renderWithProviders(<ProgressDots totalSteps={3} currentStep={1} />);
     const dots = container.firstChild?.childNodes;
     expect(dots?.length).toBe(3);
   });

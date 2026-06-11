@@ -22,16 +22,12 @@ describe("StatsCard", () => {
   });
 
   it("handles NaN completed gracefully", () => {
-    renderWithProviders(
-      <StatsCard title="tasks" completed={NaN} total={10} />,
-    );
+    renderWithProviders(<StatsCard title="tasks" completed={NaN} total={10} />);
     expect(screen.getByText("0 tasks out of 10 is completed")).toBeInTheDocument();
   });
 
   it("handles negative values gracefully", () => {
-    renderWithProviders(
-      <StatsCard title="tasks" completed={-5} total={10} />,
-    );
+    renderWithProviders(<StatsCard title="tasks" completed={-5} total={10} />);
     expect(screen.getByText("0 tasks out of 10 is completed")).toBeInTheDocument();
   });
 

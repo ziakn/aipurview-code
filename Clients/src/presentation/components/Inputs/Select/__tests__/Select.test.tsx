@@ -20,7 +20,14 @@ describe("Select Component", () => {
 
   it("shows required asterisk", () => {
     renderWithProviders(
-      <Select id="test" label="Required" value="" items={baseItems} isRequired onChange={vi.fn()} />,
+      <Select
+        id="test"
+        label="Required"
+        value=""
+        items={baseItems}
+        isRequired
+        onChange={vi.fn()}
+      />,
     );
 
     expect(screen.getByText("*")).toBeInTheDocument();

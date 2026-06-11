@@ -216,7 +216,7 @@ describe("tableExport", () => {
       aoa_to_sheet.mockReturnValue({});
       book_new.mockReturnValue({});
 
-      exportToExcel([{ name: "A", note: "B" }] as any, columns as any, 'bad<file?name');
+      exportToExcel([{ name: "A", note: "B" }] as any, columns as any, "bad<file?name");
 
       expect(writeFile).toHaveBeenCalledWith(expect.anything(), "bad_file_name.xlsx");
     });
@@ -308,7 +308,7 @@ describe("tableExport", () => {
     });
 
     it("sanitizes special characters in PDF filename", () => {
-      exportToPDF([{ name: "A", note: "B" }] as any, columns as any, 'bad/name:file');
+      exportToPDF([{ name: "A", note: "B" }] as any, columns as any, "bad/name:file");
 
       const instances = (jsPDFModule as any).__instances as any[];
       const doc = instances[instances.length - 1];

@@ -49,9 +49,7 @@ describe("CustomizableButton", () => {
 
   it("renders endIcon", () => {
     renderWithProviders(
-      <CustomizableButton endIcon={<span data-testid="end-icon">→</span>}>
-        Next
-      </CustomizableButton>,
+      <CustomizableButton endIcon={<span data-testid="end-icon">→</span>}>Next</CustomizableButton>,
     );
     expect(screen.getByTestId("end-icon")).toBeInTheDocument();
   });

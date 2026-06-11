@@ -5,9 +5,7 @@ import ChipInput from "../index";
 
 describe("ChipInput Component", () => {
   it("renders label", () => {
-    renderWithProviders(
-      <ChipInput id="test" label="Tags" value={[]} onChange={vi.fn()} />,
-    );
+    renderWithProviders(<ChipInput id="test" label="Tags" value={[]} onChange={vi.fn()} />);
 
     expect(screen.getByText("Tags")).toBeInTheDocument();
   });
@@ -33,9 +31,7 @@ describe("ChipInput Component", () => {
     const handleChange = vi.fn();
     const user = userEvent.setup();
 
-    renderWithProviders(
-      <ChipInput id="test" label="Tags" value={[]} onChange={handleChange} />,
-    );
+    renderWithProviders(<ChipInput id="test" label="Tags" value={[]} onChange={handleChange} />);
 
     const input = screen.getByRole("combobox");
     await user.click(input);
@@ -69,13 +65,7 @@ describe("ChipInput Component", () => {
 
   it("renders placeholder", () => {
     renderWithProviders(
-      <ChipInput
-        id="test"
-        label="Tags"
-        value={[]}
-        onChange={vi.fn()}
-        placeholder="Type here"
-      />,
+      <ChipInput id="test" label="Tags" value={[]} onChange={vi.fn()} placeholder="Type here" />,
     );
 
     expect(screen.getByPlaceholderText("Type here")).toBeInTheDocument();

@@ -11,7 +11,11 @@ describe("DescriptionCard", () => {
 
   it("renders icon when provided", () => {
     renderWithProviders(
-      <DescriptionCard title="With Icon" body="Has an icon" icon={<span data-testid="test-icon">*</span>} />,
+      <DescriptionCard
+        title="With Icon"
+        body="Has an icon"
+        icon={<span data-testid="test-icon">*</span>}
+      />,
     );
     expect(screen.getByTestId("test-icon")).toBeInTheDocument();
   });

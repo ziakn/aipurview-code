@@ -9,16 +9,12 @@ vi.mock("recharts", () => ({
   BarChart: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="bar-chart">{children}</div>
   ),
-  Bar: ({ children }: { children?: React.ReactNode }) => (
-    <div data-testid="bar">{children}</div>
-  ),
+  Bar: ({ children }: { children?: React.ReactNode }) => <div data-testid="bar">{children}</div>,
   XAxis: () => <div data-testid="x-axis" />,
   YAxis: () => <div data-testid="y-axis" />,
   CartesianGrid: () => <div data-testid="cartesian-grid" />,
   Tooltip: () => <div data-testid="chart-tooltip" />,
-  Cell: ({ children }: { children?: React.ReactNode }) => (
-    <div data-testid="cell">{children}</div>
-  ),
+  Cell: ({ children }: { children?: React.ReactNode }) => <div data-testid="cell">{children}</div>,
 }));
 
 describe("TaskRadarCard", () => {

@@ -29,8 +29,18 @@ vi.mock("../../../../application/repository/mail.repository", () => ({
 }));
 
 vi.mock("../../button/customizable-button", () => ({
-  CustomizableButton: ({ text, onClick, isDisabled }: { text: string; onClick?: () => void; isDisabled?: boolean }) => (
-    <button onClick={onClick} disabled={isDisabled} data-testid="customizable-button">{text}</button>
+  CustomizableButton: ({
+    text,
+    onClick,
+    isDisabled,
+  }: {
+    text: string;
+    onClick?: () => void;
+    isDisabled?: boolean;
+  }) => (
+    <button onClick={onClick} disabled={isDisabled} data-testid="customizable-button">
+      {text}
+    </button>
   ),
 }));
 
@@ -39,7 +49,9 @@ vi.mock("../../Inputs/Select", () => ({
     <select data-testid="select" value={value} onChange={onChange}>
       <option value="">{placeholder}</option>
       {items.map((item: any) => (
-        <option key={item._id} value={item._id}>{item.name}</option>
+        <option key={item._id} value={item._id}>
+          {item.name}
+        </option>
       ))}
     </select>
   ),
@@ -78,22 +90,14 @@ describe("SampleProjectStep", () => {
 
   it("renders the heading", () => {
     renderWithProviders(
-      <SampleProjectStep
-        {...defaultStepProps}
-        sampleProject={{}}
-        updateSampleProject={vi.fn()}
-      />,
+      <SampleProjectStep {...defaultStepProps} sampleProject={{}} updateSampleProject={vi.fn()} />,
     );
     expect(screen.getByText("Create your first demo project")).toBeInTheDocument();
   });
 
   it("renders the demo project banner", () => {
     renderWithProviders(
-      <SampleProjectStep
-        {...defaultStepProps}
-        sampleProject={{}}
-        updateSampleProject={vi.fn()}
-      />,
+      <SampleProjectStep {...defaultStepProps} sampleProject={{}} updateSampleProject={vi.fn()} />,
     );
     expect(
       screen.getByText("This is a demo project - you can delete it anytime"),
@@ -102,22 +106,14 @@ describe("SampleProjectStep", () => {
 
   it("renders use case select", () => {
     renderWithProviders(
-      <SampleProjectStep
-        {...defaultStepProps}
-        sampleProject={{}}
-        updateSampleProject={vi.fn()}
-      />,
+      <SampleProjectStep {...defaultStepProps} sampleProject={{}} updateSampleProject={vi.fn()} />,
     );
     expect(screen.getByText(/Demo use case/)).toBeInTheDocument();
   });
 
   it("renders framework checkboxes", () => {
     renderWithProviders(
-      <SampleProjectStep
-        {...defaultStepProps}
-        sampleProject={{}}
-        updateSampleProject={vi.fn()}
-      />,
+      <SampleProjectStep {...defaultStepProps} sampleProject={{}} updateSampleProject={vi.fn()} />,
     );
     expect(screen.getByText("EU AI Act")).toBeInTheDocument();
     expect(screen.getByText("ISO 42001")).toBeInTheDocument();
@@ -125,11 +121,7 @@ describe("SampleProjectStep", () => {
 
   it("shows validation message when no selections made", () => {
     renderWithProviders(
-      <SampleProjectStep
-        {...defaultStepProps}
-        sampleProject={{}}
-        updateSampleProject={vi.fn()}
-      />,
+      <SampleProjectStep {...defaultStepProps} sampleProject={{}} updateSampleProject={vi.fn()} />,
     );
     expect(
       screen.getByText("Please select both a use case and at least one framework to continue."),
@@ -146,7 +138,9 @@ describe("CompletionStep", () => {
   it("renders the message", () => {
     renderWithProviders(<CompletionStep {...defaultStepProps} />);
     expect(
-      screen.getByText("You are ready to work with VerifyWise and manage your AI governance process"),
+      screen.getByText(
+        "You are ready to work with VerifyWise and manage your AI governance process",
+      ),
     ).toBeInTheDocument();
   });
 
@@ -158,9 +152,7 @@ describe("CompletionStep", () => {
   it("calls onNext when Finish is clicked", async () => {
     const user = userEvent.setup();
     const onNext = vi.fn();
-    renderWithProviders(
-      <CompletionStep {...defaultStepProps} onNext={onNext} />,
-    );
+    renderWithProviders(<CompletionStep {...defaultStepProps} onNext={onNext} />);
     await user.click(screen.getByText("Finish"));
     expect(onNext).toHaveBeenCalledTimes(1);
   });
@@ -178,9 +170,7 @@ describe("InviteTeamStep", () => {
 
   it("renders the description", () => {
     renderWithProviders(<InviteTeamStep {...defaultStepProps} />);
-    expect(
-      screen.getByText(/Invite up to 5 people to your organization/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Invite up to 5 people to your organization/)).toBeInTheDocument();
   });
 
   it("renders email input fields", () => {

@@ -68,7 +68,15 @@ const defaultProps = {
   onDeleteRisk: vi.fn(),
   flashRow: null,
   sortConfig: { key: "risk_name", direction: "asc" as const },
-  visibleColumns: new Set(["risk_owner", "severity", "ale_estimate", "mitigation_status", "risk_level_autocalculated", "deadline", "controls_mapping"]),
+  visibleColumns: new Set([
+    "risk_owner",
+    "severity",
+    "ale_estimate",
+    "mitigation_status",
+    "risk_level_autocalculated",
+    "deadline",
+    "controls_mapping",
+  ]),
 };
 
 const contextValue = {
@@ -77,7 +85,14 @@ const contextValue = {
   setUiValues: vi.fn(),
   authValues: {},
   setAuthValues: vi.fn(),
-  dashboardValues: { dashboard: {}, projects: {}, compliance: {}, assessments: {}, vendors: [], users: [] },
+  dashboardValues: {
+    dashboard: {},
+    projects: {},
+    compliance: {},
+    assessments: {},
+    vendors: [],
+    users: [],
+  },
   setDashboardValues: vi.fn(),
   inputValues: {},
   token: null,
@@ -208,9 +223,7 @@ describe("VWProjectRisksTableBody", () => {
 
   it("renders dash when risk_name is missing", () => {
     const rowsNoName = [{ ...mockRows[0], id: 99, risk_name: null }] as unknown as RiskModel[];
-    renderWithContext(
-      <VWProjectRisksTableBody {...defaultProps} rows={rowsNoName} />,
-    );
+    renderWithContext(<VWProjectRisksTableBody {...defaultProps} rows={rowsNoName} />);
     expect(screen.getByText("-")).toBeInTheDocument();
   });
 
@@ -225,10 +238,7 @@ describe("VWProjectRisksTableBody", () => {
     renderWithContext(
       <VerifyWiseContext.Provider value={{ ...contextValue, setInputValues }}>
         <table>
-          <VWProjectRisksTableBody
-            {...defaultProps}
-            rows={rowsWithAssessment}
-          />
+          <VWProjectRisksTableBody {...defaultProps} rows={rowsWithAssessment} />
         </table>
       </VerifyWiseContext.Provider>,
     );
@@ -242,14 +252,9 @@ describe("VWProjectRisksTableBody", () => {
   });
 
   it("renders custom field columns", () => {
-    const customFieldDefs = [
-      { id: 1, label: "Custom Field 1", field_type: "text" },
-    ];
+    const customFieldDefs = [{ id: 1, label: "Custom Field 1", field_type: "text" }];
     renderWithContext(
-      <VWProjectRisksTableBody
-        {...defaultProps}
-        customFieldDefs={customFieldDefs}
-      />,
+      <VWProjectRisksTableBody {...defaultProps} customFieldDefs={customFieldDefs} />,
     );
   });
 
@@ -287,9 +292,7 @@ describe("VWProjectRisksTableBody", () => {
   });
 
   it("respects rowsPerPage pagination", () => {
-    renderWithContext(
-      <VWProjectRisksTableBody {...defaultProps} page={0} rowsPerPage={1} />,
-    );
+    renderWithContext(<VWProjectRisksTableBody {...defaultProps} page={0} rowsPerPage={1} />);
     expect(screen.getByText("Data Breach Risk")).toBeInTheDocument();
     expect(screen.queryByText("A very long risk name that def...")).not.toBeInTheDocument();
   });
@@ -305,9 +308,7 @@ describe("VWProjectRisksTableBody", () => {
     const rowsWithUnknownOwner = [
       { ...mockRows[0], id: 100, risk_owner: 999 },
     ] as unknown as RiskModel[];
-    renderWithContext(
-      <VWProjectRisksTableBody {...defaultProps} rows={rowsWithUnknownOwner} />,
-    );
+    renderWithContext(<VWProjectRisksTableBody {...defaultProps} rows={rowsWithUnknownOwner} />);
     expect(screen.getByText("-")).toBeInTheDocument();
   });
 });

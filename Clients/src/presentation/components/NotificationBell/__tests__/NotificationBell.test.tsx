@@ -173,9 +173,9 @@ describe("NotificationBell", () => {
 
   it("closes popover on close button click", async () => {
     await openPopover();
-    const closeBtn = screen.getAllByRole("button").find(
-      (b) => b.querySelector("svg") && !b.closest('[data-testid="vwtooltip"]'),
-    );
+    const closeBtn = screen
+      .getAllByRole("button")
+      .find((b) => b.querySelector("svg") && !b.closest('[data-testid="vwtooltip"]'));
     if (closeBtn) {
       await userEvent.click(closeBtn);
     }
@@ -273,7 +273,12 @@ describe("NotificationBell", () => {
   it("renders multiple notifications in a list", async () => {
     mockNotifications = [
       createNotification({ id: 1, title: "First", message: "First msg" }),
-      createNotification({ id: 2, title: "Second", message: "Second msg", type: "review_rejected" }),
+      createNotification({
+        id: 2,
+        title: "Second",
+        message: "Second msg",
+        type: "review_rejected",
+      }),
     ];
     await openPopover();
     expect(screen.getByText("First")).toBeInTheDocument();

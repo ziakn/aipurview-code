@@ -5,9 +5,30 @@ import LinkedRisksTableBody from "../index";
 import type { RiskModel } from "../../../../../../domain/models/Common/risks/risk.model";
 
 const mockRows = [
-  { id: 1, risk_name: "Data Breach", risk_description: "Potential data leak", risk_severity: "High", likelihood: "Likely", risk_category: "Security" },
-  { id: 2, risk_name: "Model Bias", risk_description: "Algorithmic bias in outputs", risk_severity: "Medium", likelihood: "Possible", risk_category: "Fairness" },
-  { id: 3, risk_name: "Third Party Risk", risk_description: "Vendor data handling", risk_severity: "Critical", likelihood: "Unlikely", risk_category: "Vendor" },
+  {
+    id: 1,
+    risk_name: "Data Breach",
+    risk_description: "Potential data leak",
+    risk_severity: "High",
+    likelihood: "Likely",
+    risk_category: "Security",
+  },
+  {
+    id: 2,
+    risk_name: "Model Bias",
+    risk_description: "Algorithmic bias in outputs",
+    risk_severity: "Medium",
+    likelihood: "Possible",
+    risk_category: "Fairness",
+  },
+  {
+    id: 3,
+    risk_name: "Third Party Risk",
+    risk_description: "Vendor data handling",
+    risk_severity: "Critical",
+    likelihood: "Unlikely",
+    risk_category: "Vendor",
+  },
 ] as unknown as RiskModel[];
 
 const defaultProps = {
@@ -108,11 +129,7 @@ describe("LinkedRisksTableBody", () => {
     const user = userEvent.setup();
     renderWithProviders(
       <table>
-        <LinkedRisksTableBody
-          {...defaultProps}
-          checkedRows={[1]}
-          setCheckedRows={setCheckedRows}
-        />
+        <LinkedRisksTableBody {...defaultProps} checkedRows={[1]} setCheckedRows={setCheckedRows} />
       </table>,
     );
     const checkbox = document.querySelectorAll('[type="checkbox"]')[0];
@@ -193,10 +210,7 @@ describe("LinkedRisksTableBody", () => {
     const user = userEvent.setup();
     renderWithProviders(
       <table>
-        <LinkedRisksTableBody
-          {...defaultProps}
-          setCurrentPagingation={setCurrentPagingation}
-        />
+        <LinkedRisksTableBody {...defaultProps} setCurrentPagingation={setCurrentPagingation} />
       </table>,
     );
     const nextButton = document.querySelector('[aria-label="Go to next page"]');

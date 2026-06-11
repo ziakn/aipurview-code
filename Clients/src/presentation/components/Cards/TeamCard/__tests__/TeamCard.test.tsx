@@ -26,9 +26,7 @@ describe("TeamCard", () => {
   });
 
   it("renders icon when provided", () => {
-    renderWithProviders(
-      <TeamCard title="Team" icon={<span data-testid="team-icon">T</span>} />,
-    );
+    renderWithProviders(<TeamCard title="Team" icon={<span data-testid="team-icon">T</span>} />);
     expect(screen.getByTestId("team-icon")).toBeInTheDocument();
   });
 });

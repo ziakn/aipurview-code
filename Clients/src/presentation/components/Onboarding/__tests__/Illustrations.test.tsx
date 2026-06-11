@@ -26,9 +26,7 @@ describe("Illustration", () => {
   });
 
   it("renders IconGrid for ICON_GRID type", () => {
-    const { container } = renderWithProviders(
-      <Illustration type={IllustrationType.ICON_GRID} />,
-    );
+    const { container } = renderWithProviders(<Illustration type={IllustrationType.ICON_GRID} />);
     expect(container.firstChild).toBeInTheDocument();
   });
 

@@ -10,9 +10,7 @@ describe("SearchBox", () => {
   });
 
   it("renders with custom placeholder", () => {
-    renderWithProviders(
-      <SearchBox value="" onChange={vi.fn()} placeholder="Find items..." />,
-    );
+    renderWithProviders(<SearchBox value="" onChange={vi.fn()} placeholder="Find items..." />);
     expect(screen.getByPlaceholderText("Find items...")).toBeInTheDocument();
   });
 
@@ -51,11 +49,7 @@ describe("SearchBox", () => {
 
   it("merges custom inputProps", () => {
     renderWithProviders(
-      <SearchBox
-        value=""
-        onChange={vi.fn()}
-        inputProps={{ "data-testid": "custom-input" }}
-      />,
+      <SearchBox value="" onChange={vi.fn()} inputProps={{ "data-testid": "custom-input" }} />,
     );
     expect(screen.getByTestId("custom-input")).toBeInTheDocument();
   });
@@ -66,9 +60,7 @@ describe("SearchBox", () => {
   });
 
   it("renders search icon", () => {
-    const { container } = renderWithProviders(
-      <SearchBox value="" onChange={vi.fn()} />,
-    );
+    const { container } = renderWithProviders(<SearchBox value="" onChange={vi.fn()} />);
     expect(container.querySelector("svg")).toBeInTheDocument();
   });
 });

@@ -90,18 +90,12 @@ describe("SetupModal", () => {
 
   it("renders description text", () => {
     renderWithProviders(<SetupModal onComplete={vi.fn()} onSkip={vi.fn()} />);
-    expect(
-      screen.getByText(/How would you like to get started/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/How would you like to get started/)).toBeInTheDocument();
   });
 
   it("renders option descriptions", () => {
     renderWithProviders(<SetupModal onComplete={vi.fn()} onSkip={vi.fn()} />);
-    expect(
-      screen.getByText("Explore with sample projects and controls"),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText("Begin with a clean dashboard"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Explore with sample projects and controls")).toBeInTheDocument();
+    expect(screen.getByText("Begin with a clean dashboard")).toBeInTheDocument();
   });
 });

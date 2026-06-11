@@ -20,7 +20,14 @@ describe("MultiSelect Component", () => {
 
   it("shows required asterisk", () => {
     renderWithProviders(
-      <MultiSelect id="test" label="Options" value={[]} items={items} isRequired onChange={vi.fn()} />,
+      <MultiSelect
+        id="test"
+        label="Options"
+        value={[]}
+        items={items}
+        isRequired
+        onChange={vi.fn()}
+      />,
     );
 
     expect(screen.getByText("*")).toBeInTheDocument();

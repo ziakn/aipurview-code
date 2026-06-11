@@ -13,14 +13,12 @@ const data = [
   { name: "Bob", age: 25 },
 ];
 
-const { mockPrintTable, mockExportToCSV, mockExportToExcel, mockExportToPDF } = vi.hoisted(
-  () => ({
-    mockPrintTable: vi.fn(),
-    mockExportToCSV: vi.fn(),
-    mockExportToExcel: vi.fn(),
-    mockExportToPDF: vi.fn(),
-  }),
-);
+const { mockPrintTable, mockExportToCSV, mockExportToExcel, mockExportToPDF } = vi.hoisted(() => ({
+  mockPrintTable: vi.fn(),
+  mockExportToCSV: vi.fn(),
+  mockExportToExcel: vi.fn(),
+  mockExportToPDF: vi.fn(),
+}));
 
 vi.mock("../../../../application/utils/tableExport", () => ({
   printTable: mockPrintTable,

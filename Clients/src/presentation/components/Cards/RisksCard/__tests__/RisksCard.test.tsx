@@ -32,9 +32,7 @@ describe("RisksCard", () => {
   });
 
   it("handles NaN values gracefully", () => {
-    renderWithProviders(
-      <RisksCard risksSummary={{ ...baseSummary, veryHighRisks: NaN }} />,
-    );
+    renderWithProviders(<RisksCard risksSummary={{ ...baseSummary, veryHighRisks: NaN }} />);
     expect(screen.getByText("Total")).toBeInTheDocument();
     expect(screen.getByText("0")).toBeInTheDocument();
   });
@@ -42,9 +40,7 @@ describe("RisksCard", () => {
   it("handles click on Total tile when onCardClick provided", async () => {
     const handleClick = vi.fn();
     const user = userEvent.setup();
-    renderWithProviders(
-      <RisksCard risksSummary={baseSummary} onCardClick={handleClick} />,
-    );
+    renderWithProviders(<RisksCard risksSummary={baseSummary} onCardClick={handleClick} />);
     await user.click(screen.getByText("Total"));
     expect(handleClick).toHaveBeenCalledWith("");
   });
@@ -52,9 +48,7 @@ describe("RisksCard", () => {
   it("handles click on risk level tile", async () => {
     const handleClick = vi.fn();
     const user = userEvent.setup();
-    renderWithProviders(
-      <RisksCard risksSummary={baseSummary} onCardClick={handleClick} />,
-    );
+    renderWithProviders(<RisksCard risksSummary={baseSummary} onCardClick={handleClick} />);
     await user.click(screen.getByText("High"));
     expect(handleClick).toHaveBeenCalledWith("High");
   });
@@ -63,11 +57,7 @@ describe("RisksCard", () => {
     const handleClick = vi.fn();
     const user = userEvent.setup();
     renderWithProviders(
-      <RisksCard
-        risksSummary={baseSummary}
-        onCardClick={handleClick}
-        selectedLevel="High"
-      />,
+      <RisksCard risksSummary={baseSummary} onCardClick={handleClick} selectedLevel="High" />,
     );
     await user.click(screen.getByText("High"));
     expect(handleClick).toHaveBeenCalledWith("");
@@ -92,9 +82,7 @@ describe("RisksCard", () => {
   });
 
   it("shows selected state on a tile", () => {
-    renderWithProviders(
-      <RisksCard risksSummary={baseSummary} selectedLevel="Medium" />,
-    );
+    renderWithProviders(<RisksCard risksSummary={baseSummary} selectedLevel="Medium" />);
     expect(screen.getByText("Medium")).toBeInTheDocument();
   });
 });

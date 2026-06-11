@@ -31,13 +31,9 @@ describe("WelcomeStep", () => {
   it("renders all feature items", () => {
     renderWithProviders(<WelcomeStep {...defaultStepProps} />);
     expect(screen.getByText("How to manage AI use cases and projects")).toBeInTheDocument();
-    expect(
-      screen.getByText("Applying compliance frameworks like EU AI Act"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Applying compliance frameworks like EU AI Act")).toBeInTheDocument();
     expect(screen.getByText("Tracking and mitigating AI risks")).toBeInTheDocument();
-    expect(
-      screen.getByText("Setting up your organization for success"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Setting up your organization for success")).toBeInTheDocument();
   });
 });
 
@@ -82,9 +78,7 @@ describe("AdminSetupStep", () => {
 
   it("renders the description", () => {
     renderWithProviders(<AdminSetupStep {...defaultStepProps} />);
-    expect(
-      screen.getByText(/Configure your organization settings/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Configure your organization settings/)).toBeInTheDocument();
   });
 
   it("renders all setup tasks", () => {

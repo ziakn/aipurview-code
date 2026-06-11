@@ -82,7 +82,9 @@ vi.mock("../../../../../application/hooks/useStandardTable", () => ({
 }));
 
 vi.mock("../../../../../application/hooks/useCustomFields", () => ({
-  useCustomFieldDefinitions: () => ({ data: [{ id: 1, label: "Custom Field 1", field_type: "text" }] }),
+  useCustomFieldDefinitions: () => ({
+    data: [{ id: 1, label: "Custom Field 1", field_type: "text" }],
+  }),
 }));
 
 vi.mock("../../../../../application/hooks/useBulkSelection", () => ({
@@ -97,15 +99,17 @@ vi.mock("../../StandardTableHead", () => ({
   default: ({ columns, selection }: any) => (
     <thead data-testid="mock-table-head">
       <tr>
-        {selection && <th data-testid="select-all-header">
-          <input
-            type="checkbox"
-            data-testid="select-all-checkbox"
-            checked={selection.allSelected}
-            onChange={selection.onToggleAll}
-            aria-label={selection.ariaLabel}
-          />
-        </th>}
+        {selection && (
+          <th data-testid="select-all-header">
+            <input
+              type="checkbox"
+              data-testid="select-all-checkbox"
+              checked={selection.allSelected}
+              onChange={selection.onToggleAll}
+              aria-label={selection.ariaLabel}
+            />
+          </th>
+        )}
         {columns.map((col: any) => (
           <th key={col.id}>{col.label}</th>
         ))}
@@ -139,9 +143,16 @@ vi.mock("../../BulkActionsToolbar", () => ({
   default: ({ count, onClear, actions, selectAll }: any) => (
     <div data-testid="bulk-actions-toolbar">
       <span data-testid="selection-count">{count} selected</span>
-      <button data-testid="clear-selection" onClick={onClear}>Clear</button>
+      <button data-testid="clear-selection" onClick={onClear}>
+        Clear
+      </button>
       {actions.map((action: any) => (
-        <button key={action.id} data-testid={`bulk-action-${action.id}`} onClick={action.onClick} disabled={action.disabled}>
+        <button
+          key={action.id}
+          data-testid={`bulk-action-${action.id}`}
+          onClick={action.onClick}
+          disabled={action.disabled}
+        >
           {action.label}
         </button>
       ))}
@@ -157,13 +168,21 @@ vi.mock("../../BulkActionsToolbar", () => ({
 vi.mock("../../../IconButton", () => ({
   default: ({ id, onEdit, onDelete, isArchived, onRestore, onHardDelete }: any) => (
     <div data-testid="icon-button">
-      <button data-testid={`edit-task-${id}`} onClick={() => onEdit({ id })}>Edit</button>
-      <button data-testid={`archive-task-${id}`} onClick={() => onDelete()}>Archive</button>
+      <button data-testid={`edit-task-${id}`} onClick={() => onEdit({ id })}>
+        Edit
+      </button>
+      <button data-testid={`archive-task-${id}`} onClick={() => onDelete()}>
+        Archive
+      </button>
       {isArchived && onRestore && (
-        <button data-testid={`restore-task-${id}`} onClick={() => onRestore()}>Restore</button>
+        <button data-testid={`restore-task-${id}`} onClick={() => onRestore()}>
+          Restore
+        </button>
       )}
       {isArchived && onHardDelete && (
-        <button data-testid={`hard-delete-task-${id}`} onClick={() => onHardDelete()}>Delete permanently</button>
+        <button data-testid={`hard-delete-task-${id}`} onClick={() => onHardDelete()}>
+          Delete permanently
+        </button>
       )}
     </div>
   ),
@@ -178,7 +197,10 @@ vi.mock("../../../CustomSelect", () => ({
       disabled={disabled}
     >
       {options.map((opt: any) => (
-        <option key={typeof opt === "string" ? opt : opt.value} value={typeof opt === "string" ? opt : opt.value}>
+        <option
+          key={typeof opt === "string" ? opt : opt.value}
+          value={typeof opt === "string" ? opt : opt.value}
+        >
           {typeof opt === "string" ? opt : opt.label}
         </option>
       ))}
@@ -194,14 +216,14 @@ vi.mock("../../../Chip/CategoryChip/CategoryChip", () => ({
 
 vi.mock("../../../Chip", () => ({
   default: ({ label, variant }: any) => (
-    <span data-testid="chip" data-variant={variant}>{label}</span>
+    <span data-testid="chip" data-variant={variant}>
+      {label}
+    </span>
   ),
 }));
 
 vi.mock("../../../Chip/DaysChip", () => ({
-  DaysChip: ({ dueDate }: any) => (
-    <span data-testid="days-chip">Days remaining</span>
-  ),
+  DaysChip: ({ dueDate }: any) => <span data-testid="days-chip">Days remaining</span>,
 }));
 
 vi.mock("../../../Dialogs/ConfirmationModal", () => ({
@@ -209,8 +231,12 @@ vi.mock("../../../Dialogs/ConfirmationModal", () => ({
     isOpen ? (
       <div data-testid="confirmation-modal">
         <h3>{title}</h3>
-        <button data-testid="modal-proceed" onClick={onProceed}>{proceedText}</button>
-        <button data-testid="modal-cancel" onClick={onCancel}>{cancelText}</button>
+        <button data-testid="modal-proceed" onClick={onProceed}>
+          {proceedText}
+        </button>
+        <button data-testid="modal-cancel" onClick={onCancel}>
+          {cancelText}
+        </button>
       </div>
     ) : null,
 }));
@@ -289,7 +315,11 @@ describe("TasksTable", () => {
     setTableRows([]);
     renderWithProviders(<TasksTable {...defaultProps} tasks={[]} />);
     expect(screen.getByTestId("empty-state")).toBeInTheDocument();
-    expect(screen.getByText("No tasks yet. Tasks help you track action items across your governance program.")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "No tasks yet. Tasks help you track action items across your governance program.",
+      ),
+    ).toBeInTheDocument();
   });
 
   it("shows empty state when tasks is null", () => {
@@ -366,7 +396,9 @@ describe("TasksTable", () => {
 
   it("shows No due date for tasks without due_date", () => {
     setTableRows(mockRows.map((t) => ({ ...t, due_date: undefined })));
-    renderWithProviders(<TasksTable {...defaultProps} tasks={mockRows.map((t) => ({ ...t, due_date: undefined }))} />);
+    renderWithProviders(
+      <TasksTable {...defaultProps} tasks={mockRows.map((t) => ({ ...t, due_date: undefined }))} />,
+    );
     const noDueDates = screen.getAllByText("No due date");
     expect(noDueDates.length).toBeGreaterThanOrEqual(1);
   });
@@ -374,9 +406,7 @@ describe("TasksTable", () => {
   it("calls onArchive when archive button is clicked", async () => {
     const onArchive = vi.fn();
     const user = userEvent.setup();
-    renderWithProviders(
-      <TasksTable {...defaultProps} onArchive={onArchive} />,
-    );
+    renderWithProviders(<TasksTable {...defaultProps} onArchive={onArchive} />);
 
     await user.click(screen.getAllByTestId(/archive-task-/)[0]);
     expect(onArchive).toHaveBeenCalledWith(1);
@@ -385,22 +415,24 @@ describe("TasksTable", () => {
   it("calls onEdit when edit button is clicked", async () => {
     const onEdit = vi.fn();
     const user = userEvent.setup();
-    renderWithProviders(
-      <TasksTable {...defaultProps} onEdit={onEdit} />,
-    );
+    renderWithProviders(<TasksTable {...defaultProps} onEdit={onEdit} />);
 
     await user.click(screen.getAllByTestId(/edit-task-/)[0]);
     expect(onEdit).toHaveBeenCalledWith(expect.objectContaining({ id: 1 }));
   });
 
   it("shows restore button for archived tasks", () => {
-    renderWithProviders(<TasksTable {...defaultProps} onRestore={vi.fn()} onHardDelete={vi.fn()} />);
+    renderWithProviders(
+      <TasksTable {...defaultProps} onRestore={vi.fn()} onHardDelete={vi.fn()} />,
+    );
     const restoreButtons = screen.getAllByTestId(/restore-task-/);
     expect(restoreButtons.length).toBeGreaterThanOrEqual(1);
   });
 
   it("shows hard delete button for archived tasks", () => {
-    renderWithProviders(<TasksTable {...defaultProps} onRestore={vi.fn()} onHardDelete={vi.fn()} />);
+    renderWithProviders(
+      <TasksTable {...defaultProps} onRestore={vi.fn()} onHardDelete={vi.fn()} />,
+    );
     const hardDeleteButtons = screen.getAllByTestId(/hard-delete-task-/);
     expect(hardDeleteButtons.length).toBeGreaterThanOrEqual(1);
   });
@@ -408,9 +440,7 @@ describe("TasksTable", () => {
   it("calls onRowClick when a non-archived row is clicked", async () => {
     const onRowClick = vi.fn();
     const user = userEvent.setup();
-    renderWithProviders(
-      <TasksTable {...defaultProps} onRowClick={onRowClick} />,
-    );
+    renderWithProviders(<TasksTable {...defaultProps} onRowClick={onRowClick} />);
 
     await user.click(screen.getByText("Review data processing agreement"));
     expect(onRowClick).toHaveBeenCalled();
@@ -418,9 +448,7 @@ describe("TasksTable", () => {
 
   it("hides columns not in visibleColumns", () => {
     const visibleColumns = new Set(["priority", "status"]);
-    renderWithProviders(
-      <TasksTable {...defaultProps} visibleColumns={visibleColumns} />,
-    );
+    renderWithProviders(<TasksTable {...defaultProps} visibleColumns={visibleColumns} />);
     expect(screen.getByText("Priority")).toBeInTheDocument();
     expect(screen.getByText("Status")).toBeInTheDocument();
     expect(screen.queryByText("Assignees")).not.toBeInTheDocument();
@@ -478,7 +506,7 @@ describe("TasksTable", () => {
     renderWithProviders(<TasksTable {...defaultProps} canRunBulkActions />);
     const checkboxes = screen.getAllByTestId("task-checkbox");
     const archivedCheckbox = checkboxes[checkboxes.length - 1];
-    expect(archivedCheckbox.closest('tr')).toBeTruthy();
+    expect(archivedCheckbox.closest("tr")).toBeTruthy();
   });
 
   it("renders with isUpdateDisabled flag", () => {

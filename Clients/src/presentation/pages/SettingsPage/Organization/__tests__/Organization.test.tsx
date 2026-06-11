@@ -126,7 +126,11 @@ describe("Organization Settings", () => {
 
   it("shows loading spinner while logo is being fetched", async () => {
     let resolveLogo!: (val: string | null) => void;
-    mockFetchLogoAsBlobUrl.mockReturnValue(new Promise((r) => { resolveLogo = r; }));
+    mockFetchLogoAsBlobUrl.mockReturnValue(
+      new Promise((r) => {
+        resolveLogo = r;
+      }),
+    );
 
     renderWithProviders(<Organization />);
 
@@ -423,9 +427,7 @@ describe("Organization Settings", () => {
       expect(mockDeleteAITrustCentreLogo).toHaveBeenCalledTimes(1);
     });
     await waitFor(() => {
-      expect(
-        screen.getByText("Organization logo removed successfully"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("Organization logo removed successfully")).toBeInTheDocument();
     });
   });
 
@@ -438,9 +440,7 @@ describe("Organization Settings", () => {
     await userEvent.click(screen.getByText("Delete"));
     await userEvent.click(screen.getByText("Remove"));
     await waitFor(() => {
-      expect(
-        screen.getByText("Failed to remove logo. Please try again."),
-      ).toBeInTheDocument();
+      expect(screen.getByText("Failed to remove logo. Please try again.")).toBeInTheDocument();
     });
   });
 });

@@ -28,7 +28,9 @@ describe("useAITrustCentreSubprocessors", () => {
   });
 
   it("should fetch subprocessors on mount", async () => {
-    mockGetSubprocessors.mockResolvedValue({ data: { data: { subprocessors: mockSubprocessors } } });
+    mockGetSubprocessors.mockResolvedValue({
+      data: { data: { subprocessors: mockSubprocessors } },
+    });
 
     const { result } = renderHook(() => useAITrustCentreSubprocessors());
 
@@ -79,7 +81,9 @@ describe("useAITrustCentreSubprocessors", () => {
   });
 
   it("should create subprocessor and refresh list", async () => {
-    mockGetSubprocessors.mockResolvedValue({ data: { data: { subprocessors: mockSubprocessors } } });
+    mockGetSubprocessors.mockResolvedValue({
+      data: { data: { subprocessors: mockSubprocessors } },
+    });
     mockCreateSubprocessor.mockResolvedValue({});
 
     const { result } = renderHook(() => useAITrustCentreSubprocessors());
@@ -95,12 +99,19 @@ describe("useAITrustCentreSubprocessors", () => {
       await result.current.createSubprocessor("Processor B", "Data", "EU", "https://proc-b.com");
     });
 
-    expect(mockCreateSubprocessor).toHaveBeenCalledWith("Processor B", "Data", "EU", "https://proc-b.com");
+    expect(mockCreateSubprocessor).toHaveBeenCalledWith(
+      "Processor B",
+      "Data",
+      "EU",
+      "https://proc-b.com",
+    );
     await waitFor(() => expect(result.current.subprocessors.length).toBe(2));
   });
 
   it("should delete subprocessor and refresh list", async () => {
-    mockGetSubprocessors.mockResolvedValue({ data: { data: { subprocessors: mockSubprocessors } } });
+    mockGetSubprocessors.mockResolvedValue({
+      data: { data: { subprocessors: mockSubprocessors } },
+    });
     mockDeleteSubprocessor.mockResolvedValue({});
 
     const { result } = renderHook(() => useAITrustCentreSubprocessors());
@@ -119,7 +130,9 @@ describe("useAITrustCentreSubprocessors", () => {
   });
 
   it("should update subprocessor and refresh list", async () => {
-    mockGetSubprocessors.mockResolvedValue({ data: { data: { subprocessors: mockSubprocessors } } });
+    mockGetSubprocessors.mockResolvedValue({
+      data: { data: { subprocessors: mockSubprocessors } },
+    });
     mockUpdateSubprocessor.mockResolvedValue({});
 
     const { result } = renderHook(() => useAITrustCentreSubprocessors());
@@ -132,10 +145,22 @@ describe("useAITrustCentreSubprocessors", () => {
     });
 
     await act(async () => {
-      await result.current.updateSubprocessor(1, "Updated", "New purpose", "EU", "https://updated.com");
+      await result.current.updateSubprocessor(
+        1,
+        "Updated",
+        "New purpose",
+        "EU",
+        "https://updated.com",
+      );
     });
 
-    expect(mockUpdateSubprocessor).toHaveBeenCalledWith(1, "Updated", "New purpose", "EU", "https://updated.com");
+    expect(mockUpdateSubprocessor).toHaveBeenCalledWith(
+      1,
+      "Updated",
+      "New purpose",
+      "EU",
+      "https://updated.com",
+    );
     await waitFor(() => expect(result.current.subprocessors[0].name).toBe("Updated"));
   });
 

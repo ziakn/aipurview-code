@@ -22,16 +22,12 @@ describe("RiskMetricsCard", () => {
   });
 
   it("renders negative risk velocity", () => {
-    renderWithProviders(
-      <RiskMetricsCard metrics={{ ...baseMetrics, riskVelocity: -2 }} />,
-    );
+    renderWithProviders(<RiskMetricsCard metrics={{ ...baseMetrics, riskVelocity: -2 }} />);
     expect(screen.getByText(/↘/)).toBeInTheDocument();
   });
 
   it("renders zero risk velocity as stable", () => {
-    renderWithProviders(
-      <RiskMetricsCard metrics={{ ...baseMetrics, riskVelocity: 0 }} />,
-    );
+    renderWithProviders(<RiskMetricsCard metrics={{ ...baseMetrics, riskVelocity: 0 }} />);
     expect(screen.getByText(/→/)).toBeInTheDocument();
   });
 

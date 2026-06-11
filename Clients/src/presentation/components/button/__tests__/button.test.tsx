@@ -50,9 +50,7 @@ describe("Button", () => {
   });
 
   it("merges sx prop with default styles", () => {
-    renderWithProviders(
-      <Button sx={{ backgroundColor: "red" }}>Sx Button</Button>,
-    );
+    renderWithProviders(<Button sx={{ backgroundColor: "red" }}>Sx Button</Button>);
     const button = screen.getByRole("button", { name: "Sx Button" });
     expect(button).toBeInTheDocument();
   });

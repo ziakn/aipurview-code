@@ -38,7 +38,14 @@ describe("AIContentBadge", () => {
   });
 
   it("renders card variant with model and confidence", () => {
-    render(<AIContentBadge badgeType="generated" variant="card" modelUsed="GPT-4" confidenceScore={85} />);
+    render(
+      <AIContentBadge
+        badgeType="generated"
+        variant="card"
+        modelUsed="GPT-4"
+        confidenceScore={85}
+      />,
+    );
     expect(screen.getByText("Model: GPT-4")).toBeInTheDocument();
     expect(screen.getByText("Confidence: 85%")).toBeInTheDocument();
   });
@@ -49,17 +56,23 @@ describe("AIContentBadge", () => {
   });
 
   it("renders card variant with review action chip when reviewed", () => {
-    render(<AIContentBadge badgeType="generated" variant="card" humanReviewed reviewAction="approved" />);
+    render(
+      <AIContentBadge badgeType="generated" variant="card" humanReviewed reviewAction="approved" />,
+    );
     expect(screen.getByTestId("chip")).toHaveTextContent("Approved");
   });
 
   it("renders card variant with modified chip", () => {
-    render(<AIContentBadge badgeType="generated" variant="card" humanReviewed reviewAction="modified" />);
+    render(
+      <AIContentBadge badgeType="generated" variant="card" humanReviewed reviewAction="modified" />,
+    );
     expect(screen.getByTestId("chip")).toHaveTextContent("Modified");
   });
 
   it("renders card variant with rejected chip", () => {
-    render(<AIContentBadge badgeType="generated" variant="card" humanReviewed reviewAction="rejected" />);
+    render(
+      <AIContentBadge badgeType="generated" variant="card" humanReviewed reviewAction="rejected" />,
+    );
     expect(screen.getByTestId("chip")).toHaveTextContent("Rejected");
   });
 

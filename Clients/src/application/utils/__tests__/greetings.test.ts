@@ -1,8 +1,5 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
-import {
-  getSpecialDayGreeting,
-  getTimeBasedGreeting,
-} from "../greetings";
+import { getSpecialDayGreeting, getTimeBasedGreeting } from "../greetings";
 
 describe("sanitizeDisplayName", () => {
   it("strips angle brackets from names", () => {

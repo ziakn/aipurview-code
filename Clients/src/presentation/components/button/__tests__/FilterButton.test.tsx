@@ -16,9 +16,7 @@ describe("FilterButton", () => {
   });
 
   it("shows badge with count when hasActiveFilters and activeFilterCount provided", () => {
-    renderWithProviders(
-      <FilterButton {...defaultProps} hasActiveFilters activeFilterCount={3} />,
-    );
+    renderWithProviders(<FilterButton {...defaultProps} hasActiveFilters activeFilterCount={3} />);
     expect(screen.getByText("3")).toBeInTheDocument();
   });
 
@@ -50,9 +48,7 @@ describe("FilterButton", () => {
   });
 
   it("applies open state background when isOpen is true", () => {
-    const { container } = renderWithProviders(
-      <FilterButton {...defaultProps} isOpen />,
-    );
+    const { container } = renderWithProviders(<FilterButton {...defaultProps} isOpen />);
     const wrapper = container.firstChild as HTMLElement;
     expect(wrapper).toBeInTheDocument();
   });

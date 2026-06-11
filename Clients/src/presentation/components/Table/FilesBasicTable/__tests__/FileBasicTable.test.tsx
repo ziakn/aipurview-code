@@ -47,10 +47,16 @@ vi.mock("../../../../../application/tools/fileDownload", () => ({
 vi.mock("../../../IconButton", () => ({
   default: ({ id, onDelete, onDownload, onAssignToFolder }: any) => (
     <div data-testid="icon-button" data-file-id={id}>
-      <button data-testid={`download-file-${id}`} onClick={onDownload}>Download</button>
-      <button data-testid={`delete-file-${id}`} onClick={onDelete}>Delete</button>
+      <button data-testid={`download-file-${id}`} onClick={onDownload}>
+        Download
+      </button>
+      <button data-testid={`delete-file-${id}`} onClick={onDelete}>
+        Delete
+      </button>
       {onAssignToFolder && (
-        <button data-testid={`assign-folder-${id}`} onClick={onAssignToFolder}>Assign to folder</button>
+        <button data-testid={`assign-folder-${id}`} onClick={onAssignToFolder}>
+          Assign to folder
+        </button>
       )}
     </div>
   ),
@@ -58,13 +64,17 @@ vi.mock("../../../IconButton", () => ({
 
 vi.mock("../../../FileIcon", () => ({
   FileIcon: ({ fileName }: any) => (
-    <span data-testid="file-icon" data-filename={fileName}>📄</span>
+    <span data-testid="file-icon" data-filename={fileName}>
+      📄
+    </span>
   ),
 }));
 
 vi.mock("../../../Chip", () => ({
   default: ({ label, variant, uppercase }: any) => (
-    <span data-testid="chip" data-variant={variant} data-uppercase={uppercase}>{label}</span>
+    <span data-testid="chip" data-variant={variant} data-uppercase={uppercase}>
+      {label}
+    </span>
   ),
 }));
 
@@ -100,7 +110,9 @@ vi.mock("../../../Inputs/Select", () => ({
     <select data-testid="vw-select" data-select-id={id} value={value} onChange={onChange}>
       <option value="">{placeholder}</option>
       {items.map((item: any) => (
-        <option key={item._id} value={item._id}>{item.name}</option>
+        <option key={item._id} value={item._id}>
+          {item.name}
+        </option>
       ))}
     </select>
   ),
@@ -110,14 +122,11 @@ vi.mock("../../../Inputs/Select/Multi", () => ({
   default: ({ label, placeholder, value, onChange, items, width }: any) => (
     <div data-testid="multi-select">
       <label>{label}</label>
-      <select
-        multiple
-        data-testid="multi-select-field"
-        value={value}
-        onChange={onChange}
-      >
+      <select multiple data-testid="multi-select-field" value={value} onChange={onChange}>
         {items.map((item: any) => (
-          <option key={item._id} value={item._id}>{item.name}</option>
+          <option key={item._id} value={item._id}>
+            {item.name}
+          </option>
         ))}
       </select>
     </div>
@@ -129,8 +138,12 @@ vi.mock("../../../Dialogs/ConfirmationModal", () => ({
     isOpen ? (
       <div data-testid="confirmation-modal" data-loading={isLoading}>
         <h3>{title}</h3>
-        <button data-testid="modal-proceed" onClick={onProceed} disabled={isLoading}>{proceedText}</button>
-        <button data-testid="modal-cancel" onClick={onCancel} disabled={isLoading}>{cancelText}</button>
+        <button data-testid="modal-proceed" onClick={onProceed} disabled={isLoading}>
+          {proceedText}
+        </button>
+        <button data-testid="modal-cancel" onClick={onCancel} disabled={isLoading}>
+          {cancelText}
+        </button>
       </div>
     ) : null,
 }));
@@ -139,7 +152,9 @@ vi.mock("../../BulkActionsToolbar", () => ({
   default: ({ count, onClear, actions, selectAll }: any) => (
     <div data-testid="bulk-actions-toolbar">
       <span data-testid="selection-count">{count} selected</span>
-      <button data-testid="clear-selection" onClick={onClear}>Clear</button>
+      <button data-testid="clear-selection" onClick={onClear}>
+        Clear
+      </button>
       {actions.map((action: any) => (
         <button
           key={action.id}
@@ -163,7 +178,9 @@ vi.mock("../../../ProjectRiskMitigation/ProjectRiskLinkedPolicies", () => ({
   default: ({ isOpen, onClose }: any) =>
     isOpen ? (
       <div data-testid="linked-policies-dialog">
-        <button data-testid="close-linked-policies" onClick={onClose}>Close</button>
+        <button data-testid="close-linked-policies" onClick={onClose}>
+          Close
+        </button>
       </div>
     ) : null,
 }));
@@ -176,10 +193,18 @@ if (
   Object.defineProperty(globalThis, "localStorage", {
     value: {
       getItem: (key: string) => store[key] ?? null,
-      setItem: (key: string, val: string) => { store[key] = val; },
-      removeItem: (key: string) => { delete store[key]; },
-      clear: () => { Object.keys(store).forEach((k) => delete store[k]); },
-      get length() { return Object.keys(store).length; },
+      setItem: (key: string, val: string) => {
+        store[key] = val;
+      },
+      removeItem: (key: string) => {
+        delete store[key];
+      },
+      clear: () => {
+        Object.keys(store).forEach((k) => delete store[k]);
+      },
+      get length() {
+        return Object.keys(store).length;
+      },
       key: (i: number) => Object.keys(store)[i] ?? null,
     },
     writable: true,
@@ -212,9 +237,33 @@ const mockColumns: IColumn[] = [
 ];
 
 const mockFiles = [
-  createFileModel({ id: "1", fileName: "annual-report-2025.pdf", uploaderName: "Alice Smith", uploadDate: new Date(2025, 5, 1), version: "2.1", reviewStatus: "approved", source: "Direct upload" }),
-  createFileModel({ id: "2", fileName: "risk-assessment.xlsx", uploaderName: "Bob Jones", uploadDate: new Date(2025, 4, 15), version: "1.0", reviewStatus: "draft", source: "Assessment tracker group" }),
-  createFileModel({ id: "3", fileName: "compliance-evidence.docx", uploaderName: "Charlie Brown", uploadDate: new Date(2025, 3, 20), version: "3.0", reviewStatus: "pending_review", source: "Compliance tracker group" }),
+  createFileModel({
+    id: "1",
+    fileName: "annual-report-2025.pdf",
+    uploaderName: "Alice Smith",
+    uploadDate: new Date(2025, 5, 1),
+    version: "2.1",
+    reviewStatus: "approved",
+    source: "Direct upload",
+  }),
+  createFileModel({
+    id: "2",
+    fileName: "risk-assessment.xlsx",
+    uploaderName: "Bob Jones",
+    uploadDate: new Date(2025, 4, 15),
+    version: "1.0",
+    reviewStatus: "draft",
+    source: "Assessment tracker group",
+  }),
+  createFileModel({
+    id: "3",
+    fileName: "compliance-evidence.docx",
+    uploaderName: "Charlie Brown",
+    uploadDate: new Date(2025, 3, 20),
+    version: "3.0",
+    reviewStatus: "pending_review",
+    source: "Compliance tracker group",
+  }),
 ];
 
 const defaultProps = {
@@ -390,10 +439,7 @@ describe("FileBasicTable", () => {
 
   it("filters columns by visibleColumnKeys", () => {
     renderWithProviders(
-      <FileBasicTable
-        {...defaultProps}
-        visibleColumnKeys={["file", "uploader", "status"]}
-      />,
+      <FileBasicTable {...defaultProps} visibleColumnKeys={["file", "uploader", "status"]} />,
     );
     expect(screen.getByText("File")).toBeInTheDocument();
     expect(screen.getByText("Uploader")).toBeInTheDocument();
@@ -408,11 +454,7 @@ describe("FileBasicTable", () => {
 
   it("renders with empty bodyData", () => {
     const { container } = renderWithProviders(
-      <FileBasicTable
-        {...defaultProps}
-        bodyData={[]}
-        data={{ rows: [], cols: mockColumns }}
-      />,
+      <FileBasicTable {...defaultProps} bodyData={[]} data={{ rows: [], cols: mockColumns }} />,
     );
     const tbody = container.querySelector("tbody");
     expect(tbody?.children).toHaveLength(0);
@@ -474,9 +516,7 @@ describe("FileBasicTable", () => {
       typeof import("../../../../../application/repository/file.repository")
     >("../../../../../application/repository/file.repository");
 
-    renderWithProviders(
-      <FileBasicTable {...defaultProps} onFileDeleted={onFileDeleted} />,
-    );
+    renderWithProviders(<FileBasicTable {...defaultProps} onFileDeleted={onFileDeleted} />);
 
     const deleteBtns = screen.getAllByTestId(/delete-file-/);
     await user.click(deleteBtns[0]);
@@ -492,9 +532,7 @@ describe("FileBasicTable", () => {
 
   it("handles Assign to folder callback", () => {
     const onAssignToFolder = vi.fn();
-    renderWithProviders(
-      <FileBasicTable {...defaultProps} onAssignToFolder={onAssignToFolder} />,
-    );
+    renderWithProviders(<FileBasicTable {...defaultProps} onAssignToFolder={onAssignToFolder} />);
     expect(screen.getAllByTestId(/assign-folder-/).length).toBeGreaterThanOrEqual(1);
   });
 
@@ -522,32 +560,30 @@ describe("FileBasicTable", () => {
   it("calls onBulkActionSuccess when provided", () => {
     const onBulkActionSuccess = vi.fn();
     renderWithProviders(
-      <FileBasicTable {...defaultProps} canRunBulkActions onBulkActionSuccess={onBulkActionSuccess} />,
+      <FileBasicTable
+        {...defaultProps}
+        canRunBulkActions
+        onBulkActionSuccess={onBulkActionSuccess}
+      />,
     );
     expect(screen.getByTestId("bulk-actions-toolbar")).toBeInTheDocument();
   });
 
   it("calls onPreview when provided", () => {
     const onPreview = vi.fn();
-    renderWithProviders(
-      <FileBasicTable {...defaultProps} onPreview={onPreview} />,
-    );
+    renderWithProviders(<FileBasicTable {...defaultProps} onPreview={onPreview} />);
     expect(screen.getAllByTestId(/download-file-/).length).toBeGreaterThanOrEqual(1);
   });
 
   it("calls onEditMetadata when provided", () => {
     const onEditMetadata = vi.fn();
-    renderWithProviders(
-      <FileBasicTable {...defaultProps} onEditMetadata={onEditMetadata} />,
-    );
+    renderWithProviders(<FileBasicTable {...defaultProps} onEditMetadata={onEditMetadata} />);
     expect(screen.getAllByTestId(/download-file-/).length).toBeGreaterThanOrEqual(1);
   });
 
   it("calls onViewHistory when provided", () => {
     const onViewHistory = vi.fn();
-    renderWithProviders(
-      <FileBasicTable {...defaultProps} onViewHistory={onViewHistory} />,
-    );
+    renderWithProviders(<FileBasicTable {...defaultProps} onViewHistory={onViewHistory} />);
     expect(screen.getAllByTestId(/download-file-/).length).toBeGreaterThanOrEqual(1);
   });
 

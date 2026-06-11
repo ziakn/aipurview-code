@@ -33,15 +33,19 @@ describe("AIContentStats", () => {
   });
 
   it("renders empty state when total is 0", () => {
-    renderWithProviders(<AIContentStats data={{
-      total: 0,
-      reviewed: 0,
-      unreviewed: 0,
-      review_rate: 0,
-      by_badge_type: { generated: 0, assisted: 0, reviewed: 0, suggested: 0 },
-      by_review_action: { approved: 0, modified: 0, rejected: 0 },
-      avg_confidence: null,
-    }} />);
+    renderWithProviders(
+      <AIContentStats
+        data={{
+          total: 0,
+          reviewed: 0,
+          unreviewed: 0,
+          review_rate: 0,
+          by_badge_type: { generated: 0, assisted: 0, reviewed: 0, suggested: 0 },
+          by_review_action: { approved: 0, modified: 0, rejected: 0 },
+          avg_confidence: null,
+        }}
+      />,
+    );
     expect(screen.getByText("No AI-generated content tracked yet.")).toBeInTheDocument();
   });
 
@@ -75,10 +79,14 @@ describe("AIContentStats", () => {
   });
 
   it("does not render review action section when all zero", () => {
-    renderWithProviders(<AIContentStats data={{
-      ...mockData,
-      by_review_action: { approved: 0, modified: 0, rejected: 0 },
-    }} />);
+    renderWithProviders(
+      <AIContentStats
+        data={{
+          ...mockData,
+          by_review_action: { approved: 0, modified: 0, rejected: 0 },
+        }}
+      />,
+    );
     expect(screen.queryByText("Review outcomes")).not.toBeInTheDocument();
   });
 

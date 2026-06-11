@@ -5,25 +5,19 @@ import TagInput from "../index";
 
 describe("TagInput Component", () => {
   it("renders label", () => {
-    renderWithProviders(
-      <TagInput label="Tags" value={[]} onChange={vi.fn()} />,
-    );
+    renderWithProviders(<TagInput label="Tags" value={[]} onChange={vi.fn()} />);
 
     expect(screen.getByText("Tags")).toBeInTheDocument();
   });
 
   it("shows required asterisk", () => {
-    renderWithProviders(
-      <TagInput label="Tags" value={[]} onChange={vi.fn()} isRequired />,
-    );
+    renderWithProviders(<TagInput label="Tags" value={[]} onChange={vi.fn()} isRequired />);
 
     expect(screen.getByText("*")).toBeInTheDocument();
   });
 
   it("renders tags as chips", () => {
-    renderWithProviders(
-      <TagInput label="Tags" value={["alpha", "beta"]} onChange={vi.fn()} />,
-    );
+    renderWithProviders(<TagInput label="Tags" value={["alpha", "beta"]} onChange={vi.fn()} />);
 
     expect(screen.getByText("alpha")).toBeInTheDocument();
     expect(screen.getByText("beta")).toBeInTheDocument();
@@ -33,9 +27,7 @@ describe("TagInput Component", () => {
     const handleChange = vi.fn();
     const user = userEvent.setup();
 
-    renderWithProviders(
-      <TagInput label="Tags" value={[]} onChange={handleChange} />,
-    );
+    renderWithProviders(<TagInput label="Tags" value={[]} onChange={handleChange} />);
 
     const input = screen.getByRole("textbox");
     await user.click(input);
@@ -48,9 +40,7 @@ describe("TagInput Component", () => {
     const handleChange = vi.fn();
     const user = userEvent.setup();
 
-    renderWithProviders(
-      <TagInput label="Tags" value={[]} onChange={handleChange} />,
-    );
+    renderWithProviders(<TagInput label="Tags" value={[]} onChange={handleChange} />);
 
     const input = screen.getByRole("textbox");
     await user.click(input);
@@ -63,9 +53,7 @@ describe("TagInput Component", () => {
     const handleChange = vi.fn();
     const user = userEvent.setup();
 
-    renderWithProviders(
-      <TagInput label="Tags" value={[]} onChange={handleChange} maxLength={5} />,
-    );
+    renderWithProviders(<TagInput label="Tags" value={[]} onChange={handleChange} maxLength={5} />);
 
     const input = screen.getByRole("textbox");
     await user.click(input);
@@ -79,9 +67,7 @@ describe("TagInput Component", () => {
     const handleChange = vi.fn();
     const user = userEvent.setup();
 
-    renderWithProviders(
-      <TagInput label="Tags" value={[]} onChange={handleChange} />,
-    );
+    renderWithProviders(<TagInput label="Tags" value={[]} onChange={handleChange} />);
 
     const input = screen.getByRole("textbox");
     await user.click(input);
@@ -97,9 +83,7 @@ describe("TagInput Component", () => {
     const handleChange = vi.fn();
     const user = userEvent.setup();
 
-    renderWithProviders(
-      <TagInput label="Tags" value={["existing"]} onChange={handleChange} />,
-    );
+    renderWithProviders(<TagInput label="Tags" value={["existing"]} onChange={handleChange} />);
 
     const input = screen.getByRole("textbox");
     await user.click(input);
@@ -204,12 +188,7 @@ describe("TagInput Component", () => {
     const user = userEvent.setup();
 
     renderWithProviders(
-      <TagInput
-        label="Tags"
-        value={[]}
-        onChange={handleChange}
-        suggestions={["suggestion"]}
-      />,
+      <TagInput label="Tags" value={[]} onChange={handleChange} suggestions={["suggestion"]} />,
     );
 
     const input = screen.getByRole("textbox");

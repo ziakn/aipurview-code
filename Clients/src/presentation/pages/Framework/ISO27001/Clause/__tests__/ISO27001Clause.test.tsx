@@ -29,18 +29,14 @@ vi.mock("../../../../../../application/hooks/useModalKeyHandling", () => ({
 
 vi.mock("../../../../../components/StatusDropdown", () => ({
   default: ({ currentStatus, onStatusChange }: any) => (
-    <button
-      data-testid="status-dropdown"
-      onClick={() => onStatusChange("In progress")}
-    >
+    <button data-testid="status-dropdown" onClick={() => onStatusChange("In progress")}>
       {currentStatus}
     </button>
   ),
 }));
 
 vi.mock("../../../../../components/Drawer/ISO27001ClauseDrawerDialog", () => ({
-  default: ({ open }: any) =>
-    open ? <div data-testid="clause-drawer">Drawer Open</div> : null,
+  default: ({ open }: any) => (open ? <div data-testid="clause-drawer">Drawer Open</div> : null),
 }));
 
 vi.mock("../../../../../components/FrameworkFilter/TabFilterBar", () => ({
@@ -67,9 +63,7 @@ const mockClauses = [
     id: 2,
     title: "Normative references",
     order_no: 2,
-    subClauses: [
-      { id: 201, subclause_id: "2.1", title: "Reference 1", status: "Not started" },
-    ],
+    subClauses: [{ id: 201, subclause_id: "2.1", title: "Reference 1", status: "Not started" }],
   },
 ];
 
@@ -207,12 +201,7 @@ describe("ISO27001Clause", () => {
 
   it("shows 'No matching subclauses' when filter matches nothing", async () => {
     const user = userEvent.setup();
-    renderWithProviders(
-      <ISO27001Clause
-        {...defaultProps}
-        statusFilter="Implemented"
-      />,
-    );
+    renderWithProviders(<ISO27001Clause {...defaultProps} statusFilter="Implemented" />);
     await waitFor(() => {
       expect(screen.getByText(/Scope/)).toBeInTheDocument();
     });
@@ -223,12 +212,7 @@ describe("ISO27001Clause", () => {
   });
 
   it("shows filtered count chip when filters are active", async () => {
-    renderWithProviders(
-      <ISO27001Clause
-        {...defaultProps}
-        statusFilter="In progress"
-      />,
-    );
+    renderWithProviders(<ISO27001Clause {...defaultProps} statusFilter="In progress" />);
     await waitFor(() => {
       expect(screen.getByText("1 filtered")).toBeInTheDocument();
     });

@@ -74,9 +74,43 @@ const mockAssessment = {
 
 const defaultFriaData = {
   assessment: mockAssessment,
-  rights: [{ id: 1, right_key: "dignity", right_title: "Dignity", charter_ref: "Art 1", flagged: true, severity: 3, confidence: 80, impact_pathway: null, mitigation: null }],
-  riskItems: [{ id: 1, fria_id: 1, risk_description: "Risk 1", likelihood: null, severity: null, existing_controls: null, further_action: null, linked_project_risk_id: null, linked_risk_name: null, sort_order: 1 }],
-  modelLinks: [{ id: 1, model_id: 10, provider: "OpenAI", model: "GPT-4", version: "1.0", model_status: "active" }],
+  rights: [
+    {
+      id: 1,
+      right_key: "dignity",
+      right_title: "Dignity",
+      charter_ref: "Art 1",
+      flagged: true,
+      severity: 3,
+      confidence: 80,
+      impact_pathway: null,
+      mitigation: null,
+    },
+  ],
+  riskItems: [
+    {
+      id: 1,
+      fria_id: 1,
+      risk_description: "Risk 1",
+      likelihood: null,
+      severity: null,
+      existing_controls: null,
+      further_action: null,
+      linked_project_risk_id: null,
+      linked_risk_name: null,
+      sort_order: 1,
+    },
+  ],
+  modelLinks: [
+    {
+      id: 1,
+      model_id: 10,
+      provider: "OpenAI",
+      model: "GPT-4",
+      version: "1.0",
+      model_status: "active",
+    },
+  ],
 };
 
 describe("useFria", () => {
@@ -281,7 +315,17 @@ describe("useFria", () => {
 
     mockGetFria.mockResolvedValue({
       ...defaultFriaData,
-      modelLinks: [...defaultFriaData.modelLinks, { id: 2, model_id: 20, provider: "Anthropic", model: "Claude", version: "2.0", model_status: "active" }],
+      modelLinks: [
+        ...defaultFriaData.modelLinks,
+        {
+          id: 2,
+          model_id: 20,
+          provider: "Anthropic",
+          model: "Claude",
+          version: "2.0",
+          model_status: "active",
+        },
+      ],
     });
 
     await act(async () => {

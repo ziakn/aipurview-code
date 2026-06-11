@@ -97,11 +97,7 @@ describe("AuditRiskTableBody", () => {
     const user = userEvent.setup();
     renderWithProviders(
       <table>
-        <AuditRiskTableBody
-          {...defaultProps}
-          checkedRows={[1]}
-          setCheckedRows={setCheckedRows}
-        />
+        <AuditRiskTableBody {...defaultProps} checkedRows={[1]} setCheckedRows={setCheckedRows} />
       </table>,
     );
     const checkbox = document.querySelectorAll('[type="checkbox"]')[0];
@@ -114,11 +110,7 @@ describe("AuditRiskTableBody", () => {
     const user = userEvent.setup();
     renderWithProviders(
       <table>
-        <AuditRiskTableBody
-          {...defaultProps}
-          deletedRisks={[1]}
-          setCheckedRows={setCheckedRows}
-        />
+        <AuditRiskTableBody {...defaultProps} deletedRisks={[1]} setCheckedRows={setCheckedRows} />
       </table>,
     );
     const checkbox = document.querySelectorAll('[type="checkbox"]')[0];
@@ -129,11 +121,7 @@ describe("AuditRiskTableBody", () => {
   it("shows deleted risk checkbox as checked", () => {
     renderWithProviders(
       <table>
-        <AuditRiskTableBody
-          {...defaultProps}
-          deletedRisks={[1]}
-          checkedRows={[2]}
-        />
+        <AuditRiskTableBody {...defaultProps} deletedRisks={[1]} checkedRows={[2]} />
       </table>,
     );
     const checkboxes = document.querySelectorAll('[type="checkbox"]');
@@ -167,12 +155,14 @@ describe("AuditRiskTableBody", () => {
   });
 
   it("truncates long titles to 30 chars", () => {
-    const rowsLongTitle = [{
-      id: 4,
-      title: "Data breach risk in training pipeline",
-      status: "Open",
-      severity: "High",
-    }];
+    const rowsLongTitle = [
+      {
+        id: 4,
+        title: "Data breach risk in training pipeline",
+        status: "Open",
+        severity: "High",
+      },
+    ];
     renderWithProviders(
       <table>
         <AuditRiskTableBody {...defaultProps} rows={rowsLongTitle} page={0} />
@@ -205,10 +195,7 @@ describe("AuditRiskTableBody", () => {
     const user = userEvent.setup();
     renderWithProviders(
       <table>
-        <AuditRiskTableBody
-          {...defaultProps}
-          setCurrentPagingation={setCurrentPagingation}
-        />
+        <AuditRiskTableBody {...defaultProps} setCurrentPagingation={setCurrentPagingation} />
       </table>,
     );
     const nextButton = document.querySelector('[aria-label="Go to next page"]');

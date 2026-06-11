@@ -39,7 +39,14 @@ const defaultProps: IReportTableProps = {
   page: 0,
   rowsPerPage: 10,
   sortConfig: { key: "", direction: null },
-  visibleColumns: new Set(["reportName", "typeOfReport", "project", "dateGenerated", "generatedBy", "action"]),
+  visibleColumns: new Set([
+    "reportName",
+    "typeOfReport",
+    "project",
+    "dateGenerated",
+    "generatedBy",
+    "action",
+  ]),
 };
 
 describe("ReportTableBody", () => {
@@ -143,9 +150,13 @@ describe("ReportTableBody", () => {
   });
 
   it("renders NA for missing date", () => {
-    const rowsNoDate = [{
-      ...mockRows[0], id: 99, uploaded_time: undefined,
-    }];
+    const rowsNoDate = [
+      {
+        ...mockRows[0],
+        id: 99,
+        uploaded_time: undefined,
+      },
+    ];
     renderWithProviders(
       <table>
         <ReportTableBody {...defaultProps} rows={rowsNoDate} />
@@ -155,9 +166,13 @@ describe("ReportTableBody", () => {
   });
 
   it("renders dash for missing filename", () => {
-    const rowsNoFile = [{
-      ...mockRows[0], id: 100, filename: "",
-    }];
+    const rowsNoFile = [
+      {
+        ...mockRows[0],
+        id: 100,
+        filename: "",
+      },
+    ];
     renderWithProviders(
       <table>
         <ReportTableBody {...defaultProps} rows={rowsNoFile} />
@@ -194,10 +209,7 @@ describe("ReportTableBody", () => {
   it("hides columns not in visibleColumns set", () => {
     renderWithProviders(
       <table>
-        <ReportTableBody
-          {...defaultProps}
-          visibleColumns={new Set(["reportName", "action"])}
-        />
+        <ReportTableBody {...defaultProps} visibleColumns={new Set(["reportName", "action"])} />
       </table>,
     );
     expect(screen.getByText("Q4_AI_Assessment_Report.pdf")).toBeInTheDocument();

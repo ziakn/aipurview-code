@@ -55,8 +55,10 @@ describe("getInputStyles", () => {
 
   it("skips focus ring when disableFocusRing is true", () => {
     const styles = getInputStyles(mockTheme, { disableFocusRing: true });
-    const fieldset =
-      styles["& .MuiOutlinedInput-root.Mui-focused fieldset"] as Record<string, unknown>;
+    const fieldset = styles["& .MuiOutlinedInput-root.Mui-focused fieldset"] as Record<
+      string,
+      unknown
+    >;
     expect(fieldset).not.toHaveProperty("boxShadow");
   });
 
@@ -79,9 +81,7 @@ describe("getSelectStyles", () => {
   it("returns default select styles", () => {
     const styles = getSelectStyles(mockTheme);
     expect(styles).toHaveProperty("& .MuiOutlinedInput-notchedOutline");
-    expect(
-      styles["& .MuiOutlinedInput-notchedOutline"],
-    ).toMatchObject({
+    expect(styles["& .MuiOutlinedInput-notchedOutline"]).toMatchObject({
       borderColor: "#d0d5dd",
       borderRadius: 2,
     });
@@ -89,9 +89,7 @@ describe("getSelectStyles", () => {
 
   it("applies error border when hasError is true", () => {
     const styles = getSelectStyles(mockTheme, { hasError: true });
-    expect(
-      styles["& .MuiOutlinedInput-notchedOutline"],
-    ).toMatchObject({
+    expect(styles["& .MuiOutlinedInput-notchedOutline"]).toMatchObject({
       borderColor: "#F5B8B8",
     });
   });
@@ -112,9 +110,7 @@ describe("getSelectStyles", () => {
     const styles = getSelectStyles(mockTheme, {
       focusBorderColor: "#00FF00",
     });
-    expect(
-      styles["&.Mui-focused .MuiOutlinedInput-notchedOutline"],
-    ).toMatchObject({
+    expect(styles["&.Mui-focused .MuiOutlinedInput-notchedOutline"]).toMatchObject({
       borderColor: "#00FF00 !important",
     });
   });
@@ -148,9 +144,7 @@ describe("getAutocompleteStyles", () => {
   it("applies error border when hasError is true", () => {
     const styles = getAutocompleteStyles(mockTheme, { hasError: true });
     const root = styles["& .MuiOutlinedInput-root"] as Record<string, unknown>;
-    expect((root["& fieldset"] as Record<string, unknown>).borderColor).toBe(
-      "#F5B8B8",
-    );
+    expect((root["& fieldset"] as Record<string, unknown>).borderColor).toBe("#F5B8B8");
   });
 
   it("skips hover when disableHover is true", () => {
@@ -158,9 +152,7 @@ describe("getAutocompleteStyles", () => {
       disableHover: true,
     });
     const root = styles["& .MuiOutlinedInput-root"] as Record<string, unknown>;
-    expect(root).not.toHaveProperty(
-      "&:not(.Mui-disabled):hover fieldset",
-    );
+    expect(root).not.toHaveProperty("&:not(.Mui-disabled):hover fieldset");
   });
 
   it("includes disabled state", () => {

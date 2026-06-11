@@ -4,7 +4,12 @@ import {
   getRiskScoreLevel,
   getRiskScoreColor,
 } from "../vendorScorecard.utils";
-import { DataSensitivity, BusinessCriticality, PastIssues, RegulatoryExposure } from "../../enums/status.enum";
+import {
+  DataSensitivity,
+  BusinessCriticality,
+  PastIssues,
+  RegulatoryExposure,
+} from "../../enums/status.enum";
 
 describe("calculateVendorRiskScore", () => {
   it("returns 0 for null input", () => {

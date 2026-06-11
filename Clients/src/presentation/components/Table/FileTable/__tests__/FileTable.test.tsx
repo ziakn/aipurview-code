@@ -23,9 +23,7 @@ vi.mock("../../FilesBasicTable/FileBasicTable", () => ({
 }));
 
 vi.mock("../../../EmptyState", () => ({
-  EmptyState: ({ message }: { message: string }) => (
-    <div data-testid="empty-state">{message}</div>
-  ),
+  EmptyState: ({ message }: { message: string }) => <div data-testid="empty-state">{message}</div>,
 }));
 
 const mockFile = (overrides: Partial<FileModel> = {}): FileModel =>
@@ -42,11 +40,7 @@ const mockFile = (overrides: Partial<FileModel> = {}): FileModel =>
     ...overrides,
   }) as unknown as FileModel;
 
-const baseCols = [
-  { name: "File Name" },
-  { name: "Upload Date" },
-  { name: "Uploader" },
-];
+const baseCols = [{ name: "File Name" }, { name: "Upload Date" }, { name: "Uploader" }];
 
 describe("FileTable", () => {
   it("renders empty state when files array is empty", () => {
@@ -54,9 +48,7 @@ describe("FileTable", () => {
 
     expect(screen.getByTestId("empty-state")).toBeInTheDocument();
     expect(
-      screen.getByText(
-        "There are currently no pieces of evidence or other documents uploaded.",
-      ),
+      screen.getByText("There are currently no pieces of evidence or other documents uploaded."),
     ).toBeInTheDocument();
   });
 
@@ -92,9 +84,7 @@ describe("FileTable", () => {
   });
 
   it("passes correct row count to FileBasicTable", () => {
-    renderWithProviders(
-      <FileTable cols={baseCols} files={[mockFile(), mockFile({ id: "2" })]} />,
-    );
+    renderWithProviders(<FileTable cols={baseCols} files={[mockFile(), mockFile({ id: "2" })]} />);
 
     expect(screen.getByTestId("row-count").textContent).toBe("2");
   });

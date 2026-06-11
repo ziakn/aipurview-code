@@ -15,7 +15,12 @@ vi.mock("../../repository/aiContent.repository", () => ({
   reviewContent: vi.fn(),
 }));
 
-import { getBadges, getUnreviewed, getStats, reviewContent } from "../../repository/aiContent.repository";
+import {
+  getBadges,
+  getUnreviewed,
+  getStats,
+  reviewContent,
+} from "../../repository/aiContent.repository";
 
 const mockGetBadges = vi.mocked(getBadges);
 const mockGetUnreviewed = vi.mocked(getUnreviewed);

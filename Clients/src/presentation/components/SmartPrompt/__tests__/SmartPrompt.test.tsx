@@ -41,7 +41,12 @@ describe("SmartPrompt", () => {
   });
 
   it("renders when activePrompt is provided", () => {
-    mockActivePrompt = { id: "test-1", type: "info", title: "Test Title", message: "Test message content" };
+    mockActivePrompt = {
+      id: "test-1",
+      type: "info",
+      title: "Test Title",
+      message: "Test message content",
+    };
     renderWithProviders(<SmartPrompt />);
     expect(screen.getByText("Test Title")).toBeInTheDocument();
     expect(screen.getByText("Test message content")).toBeInTheDocument();
@@ -163,7 +168,9 @@ describe("SmartPrompt", () => {
     vi.useFakeTimers();
     mockActivePrompt = { id: "test-10", type: "info", title: "Title", message: "Message" };
     renderWithProviders(<SmartPrompt />);
-    act(() => { vi.advanceTimersByTime(10200); });
+    act(() => {
+      vi.advanceTimersByTime(10200);
+    });
     expect(mockDismissPrompt).toHaveBeenCalledWith("test-10");
   });
 
@@ -177,7 +184,9 @@ describe("SmartPrompt", () => {
       autoDismissMs: 5000,
     };
     renderWithProviders(<SmartPrompt />);
-    act(() => { vi.advanceTimersByTime(5200); });
+    act(() => {
+      vi.advanceTimersByTime(5200);
+    });
     expect(mockDismissPrompt).toHaveBeenCalledWith("test-11");
   });
 });

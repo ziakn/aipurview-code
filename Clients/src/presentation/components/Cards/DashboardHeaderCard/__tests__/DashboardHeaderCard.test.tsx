@@ -29,10 +29,9 @@ describe("DashboardHeaderCard", () => {
   });
 
   it("navigates to training page on click for Trainings title", async () => {
-    const { container } = renderWithProviders(
-      <DashboardHeaderCard title="Trainings" count={3} />,
-      { route: "/" },
-    );
+    const { container } = renderWithProviders(<DashboardHeaderCard title="Trainings" count={3} />, {
+      route: "/",
+    });
     const user = userEvent.setup();
     const card = container.querySelector("Stack") || container.firstChild!;
     if (card && "click" in card) {
@@ -41,23 +40,17 @@ describe("DashboardHeaderCard", () => {
   });
 
   it("does not navigate when disableNavigation is true", () => {
-    renderWithProviders(
-      <DashboardHeaderCard title="Trainings" count={3} disableNavigation />,
-    );
+    renderWithProviders(<DashboardHeaderCard title="Trainings" count={3} disableNavigation />);
     expect(screen.getByText("Trainings")).toBeInTheDocument();
   });
 
   it("navigates to custom path when navigateTo is provided", () => {
-    renderWithProviders(
-      <DashboardHeaderCard title="Custom" count={1} navigateTo="/custom-path" />,
-    );
+    renderWithProviders(<DashboardHeaderCard title="Custom" count={1} navigateTo="/custom-path" />);
     expect(screen.getByText("Custom")).toBeInTheDocument();
   });
 
   it("renders non-clickable when title has no mapping", () => {
-    renderWithProviders(
-      <DashboardHeaderCard title="Unknown" count={0} />,
-    );
+    renderWithProviders(<DashboardHeaderCard title="Unknown" count={0} />);
     expect(screen.getByText("Unknown")).toBeInTheDocument();
   });
 });

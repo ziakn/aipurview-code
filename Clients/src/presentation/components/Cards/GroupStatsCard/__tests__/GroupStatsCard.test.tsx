@@ -32,25 +32,19 @@ describe("GroupStatsCard", () => {
   });
 
   it("handles single item", () => {
-    renderWithProviders(
-      <GroupStatsCard title={["tasks"]} completed={[8]} total={[10]} />,
-    );
+    renderWithProviders(<GroupStatsCard title={["tasks"]} completed={[8]} total={[10]} />);
     expect(screen.getByText("80%")).toBeInTheDocument();
     expect(screen.getByText("8 tasks out of 10 is completed")).toBeInTheDocument();
   });
 
   it("handles NaN and negative values gracefully", () => {
-    renderWithProviders(
-      <GroupStatsCard title={["bad"]} completed={[NaN]} total={[-1]} />,
-    );
+    renderWithProviders(<GroupStatsCard title={["bad"]} completed={[NaN]} total={[-1]} />);
     expect(screen.getByText("0%")).toBeInTheDocument();
     expect(screen.getByText("0 bad out of 0 is completed")).toBeInTheDocument();
   });
 
   it("handles zero totals", () => {
-    renderWithProviders(
-      <GroupStatsCard title={["zero"]} completed={[0]} total={[0]} />,
-    );
+    renderWithProviders(<GroupStatsCard title={["zero"]} completed={[0]} total={[0]} />);
     const percentages = screen.getAllByText("0%");
     expect(percentages.length).toBeGreaterThanOrEqual(1);
   });

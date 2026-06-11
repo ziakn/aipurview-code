@@ -114,10 +114,7 @@ vi.mock("../presentation/components/RichTextEditor", () => ({
     <div data-testid="rich-text-editor">
       <div data-testid="editor-initial">{initialContent}</div>
       <div data-testid="editor-placeholder">{placeholder}</div>
-      <button
-        data-testid="editor-change"
-        onClick={() => onContentChange?.("test content")}
-      >
+      <button data-testid="editor-change" onClick={() => onContentChange?.("test content")}>
         Change content
       </button>
     </div>
@@ -251,11 +248,7 @@ vi.mock("../presentation/components/Inputs/Checkbox", () => ({
   default: ({ label, checked, onChange }: any) => (
     <div data-testid="checkbox-input">
       <label>
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={onChange}
-        />
+        <input type="checkbox" checked={checked} onChange={onChange} />
         {label}
       </label>
     </div>
@@ -301,14 +294,7 @@ export {
 // ============================================================================
 
 export function runDrawerCommonTests(config: DrawerTestConfig) {
-  const {
-    name,
-    Component,
-    props,
-    titleMatcher,
-    closeButtonLabel = "Close",
-    tabs,
-  } = config;
+  const { name, Component, props, titleMatcher, closeButtonLabel = "Close", tabs } = config;
 
   describe(`${name} - Drawer Common Tests`, () => {
     beforeEach(() => {

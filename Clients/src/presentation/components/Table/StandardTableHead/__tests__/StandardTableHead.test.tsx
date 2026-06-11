@@ -18,9 +18,11 @@ const columns: StandardColumn[] = [
 
 const sortConfig: SortConfig = { key: "", direction: null };
 
-function renderHead(
-  overrides?: { sortConfig?: SortConfig; columns?: StandardColumn[]; selection?: SelectionColumnConfig },
-) {
+function renderHead(overrides?: {
+  sortConfig?: SortConfig;
+  columns?: StandardColumn[];
+  selection?: SelectionColumnConfig;
+}) {
   const { onSort: _onSort, selection, sortConfig: sc, cols } = overrides ?? {};
   return renderWithProviders(
     <Table>

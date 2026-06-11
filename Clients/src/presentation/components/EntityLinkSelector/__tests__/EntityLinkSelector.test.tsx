@@ -4,8 +4,7 @@ const mockSetSelectedTopLevel = vi.fn();
 
 vi.mock("../../Inputs/Select", () => ({
   default: ({ id, value, items, onChange, disabled, placeholder }: any) => {
-    const needsNumberConversion =
-      id !== "entity-type-select" && id !== "framework-select";
+    const needsNumberConversion = id !== "entity-type-select" && id !== "framework-select";
     return (
       <select
         data-testid={id || "select"}
@@ -267,9 +266,7 @@ describe("EntityLinkSelector", () => {
     (getAllVendors as any).mockResolvedValue({
       data: [{ id: 1, vendor_name: "Acme Corp" }],
     });
-    renderWithProviders(
-      <EntityLinkSelector value={[]} onChange={defaultOnChange} disabled />,
-    );
+    renderWithProviders(<EntityLinkSelector value={[]} onChange={defaultOnChange} disabled />);
     await vi.waitFor(() => {
       expect(getAllVendors).toHaveBeenCalled();
     });

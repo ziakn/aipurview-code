@@ -39,9 +39,7 @@ describe("Chip", () => {
   });
 
   it("uses custom background and text colors", () => {
-    renderWithTheme(
-      <Chip label="Custom" backgroundColor="#E8F5E9" textColor="#2E7D32" />,
-    );
+    renderWithTheme(<Chip label="Custom" backgroundColor="#E8F5E9" textColor="#2E7D32" />);
     expect(screen.getByText("Custom")).toBeInTheDocument();
   });
 

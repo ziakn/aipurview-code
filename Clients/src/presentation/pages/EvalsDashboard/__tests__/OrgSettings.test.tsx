@@ -22,7 +22,12 @@ vi.mock("../../../../application/repository/deepEval.repository", () => ({
 }));
 
 vi.mock("../../../../application/hooks/useAuth", () => ({
-  useAuth: () => ({ userRoleName: "Admin", userId: 1, isSuperAdmin: false, activeOrganizationId: null }),
+  useAuth: () => ({
+    userRoleName: "Admin",
+    userId: 1,
+    isSuperAdmin: false,
+    activeOrganizationId: null,
+  }),
 }));
 
 vi.mock("../../../../presentation/components/Layout/PageHeaderExtended", () => ({
@@ -79,7 +84,13 @@ describe("OrgSettings", () => {
 
   it("shows all providers configured when all have keys", async () => {
     const allProviders = [
-      "openai", "anthropic", "google", "xai", "mistral", "huggingface", "openrouter",
+      "openai",
+      "anthropic",
+      "google",
+      "xai",
+      "mistral",
+      "huggingface",
+      "openrouter",
     ];
     mockGetAllLlmApiKeys.mockResolvedValue(
       allProviders.map((p, i) => ({ id: i + 1, provider: p, maskedKey: `...${p}` })),

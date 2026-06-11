@@ -40,14 +40,18 @@ describe("EvidenceGapChart", () => {
   });
 
   it("renders empty state when total_controls is 0", () => {
-    renderWithProviders(<EvidenceGapChart data={{
-      total_controls: 0,
-      controls_without_evidence: 0,
-      controls_with_low_quality: 0,
-      controls_adequate: 0,
-      quality_threshold: 70,
-      gaps: [],
-    }} />);
+    renderWithProviders(
+      <EvidenceGapChart
+        data={{
+          total_controls: 0,
+          controls_without_evidence: 0,
+          controls_with_low_quality: 0,
+          controls_adequate: 0,
+          quality_threshold: 70,
+          gaps: [],
+        }}
+      />,
+    );
     expect(screen.getByText("No control data available for gap analysis.")).toBeInTheDocument();
   });
 

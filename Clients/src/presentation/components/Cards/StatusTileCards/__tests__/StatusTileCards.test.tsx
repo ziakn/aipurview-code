@@ -18,9 +18,7 @@ describe("StatusTileCards", () => {
   });
 
   it("renders small variant", () => {
-    const { container } = renderWithProviders(
-      <StatusTileCards items={items} size="small" />,
-    );
+    const { container } = renderWithProviders(<StatusTileCards items={items} size="small" />);
     expect(container.querySelector(".vw-status-tile-cards")).toBeInTheDocument();
   });
 
@@ -33,9 +31,7 @@ describe("StatusTileCards", () => {
   });
 
   it("highlights selected item", () => {
-    renderWithProviders(
-      <StatusTileCards items={items} selectedKey="open" onCardClick={vi.fn()} />,
-    );
+    renderWithProviders(<StatusTileCards items={items} selectedKey="open" onCardClick={vi.fn()} />);
     const tiles = screen.getAllByRole("generic");
     expect(tiles.length).toBeGreaterThan(0);
   });
@@ -62,9 +58,7 @@ describe("StatusTileCards", () => {
   });
 
   it("applies custom cardSx", () => {
-    renderWithProviders(
-      <StatusTileCards items={items} cardSx={{ opacity: 0.5 }} />,
-    );
+    renderWithProviders(<StatusTileCards items={items} cardSx={{ opacity: 0.5 }} />);
     expect(screen.getByText("Open")).toBeInTheDocument();
   });
 });

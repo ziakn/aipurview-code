@@ -3,7 +3,12 @@ import { renderWithProviders } from "../../../../test/renderWithProviders";
 import ReadinessHeatmap from "../index";
 import type { ControlReadinessScore } from "../../../../domain/interfaces/i.readiness";
 
-const makeControl = (id: number, ctrlId: number, level: ControlReadinessScore["readiness_level"], score: number): ControlReadinessScore => ({
+const makeControl = (
+  id: number,
+  ctrlId: number,
+  level: ControlReadinessScore["readiness_level"],
+  score: number,
+): ControlReadinessScore => ({
   id,
   control_id: ctrlId,
   framework_type: "eu_ai_act",
@@ -29,37 +34,27 @@ const mockControls: ControlReadinessScore[] = [
 
 describe("ReadinessHeatmap", () => {
   it("shows loading state", () => {
-    renderWithProviders(
-      <ReadinessHeatmap controls={[]} frameworkType="eu_ai_act" isLoading />,
-    );
+    renderWithProviders(<ReadinessHeatmap controls={[]} frameworkType="eu_ai_act" isLoading />);
     expect(screen.getByText("Loading heatmap...")).toBeInTheDocument();
   });
 
   it("shows empty state when no controls", () => {
-    renderWithProviders(
-      <ReadinessHeatmap controls={[]} frameworkType="eu_ai_act" />,
-    );
+    renderWithProviders(<ReadinessHeatmap controls={[]} frameworkType="eu_ai_act" />);
     expect(screen.getByText("No readiness data. Run a calculation first.")).toBeInTheDocument();
   });
 
   it("renders known framework name in header", () => {
-    renderWithProviders(
-      <ReadinessHeatmap controls={mockControls} frameworkType="iso_42001" />,
-    );
+    renderWithProviders(<ReadinessHeatmap controls={mockControls} frameworkType="iso_42001" />);
     expect(screen.getByText(/ISO 42001/)).toBeInTheDocument();
   });
 
   it("renders unknown framework name as uppercase", () => {
-    renderWithProviders(
-      <ReadinessHeatmap controls={mockControls} frameworkType="custom_fw" />,
-    );
+    renderWithProviders(<ReadinessHeatmap controls={mockControls} frameworkType="custom_fw" />);
     expect(screen.getByText(/CUSTOM FW/)).toBeInTheDocument();
   });
 
   it("renders all control scores", () => {
-    renderWithProviders(
-      <ReadinessHeatmap controls={mockControls} frameworkType="eu_ai_act" />,
-    );
+    renderWithProviders(<ReadinessHeatmap controls={mockControls} frameworkType="eu_ai_act" />);
     expect(screen.getByText("90")).toBeInTheDocument();
     expect(screen.getByText("65")).toBeInTheDocument();
     expect(screen.getByText("45")).toBeInTheDocument();
@@ -67,16 +62,12 @@ describe("ReadinessHeatmap", () => {
   });
 
   it("shows total control count in footer", () => {
-    renderWithProviders(
-      <ReadinessHeatmap controls={mockControls} frameworkType="eu_ai_act" />,
-    );
+    renderWithProviders(<ReadinessHeatmap controls={mockControls} frameworkType="eu_ai_act" />);
     expect(screen.getByText("5 controls evaluated")).toBeInTheDocument();
   });
 
   it("shows legend with all levels", () => {
-    renderWithProviders(
-      <ReadinessHeatmap controls={mockControls} frameworkType="eu_ai_act" />,
-    );
+    renderWithProviders(<ReadinessHeatmap controls={mockControls} frameworkType="eu_ai_act" />);
     expect(screen.getByText("Ready")).toBeInTheDocument();
     expect(screen.getByText("Needs Work")).toBeInTheDocument();
     expect(screen.getByText("At Risk")).toBeInTheDocument();
@@ -84,9 +75,7 @@ describe("ReadinessHeatmap", () => {
   });
 
   it("shows correct legend counts", () => {
-    renderWithProviders(
-      <ReadinessHeatmap controls={mockControls} frameworkType="eu_ai_act" />,
-    );
+    renderWithProviders(<ReadinessHeatmap controls={mockControls} frameworkType="eu_ai_act" />);
     expect(screen.getAllByText("1")).toHaveLength(3);
     expect(screen.getByText("2")).toBeInTheDocument();
   });

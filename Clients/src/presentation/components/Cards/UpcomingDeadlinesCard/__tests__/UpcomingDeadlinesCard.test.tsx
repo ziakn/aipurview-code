@@ -52,9 +52,7 @@ describe("UpcomingDeadlinesCard", () => {
     mockGetDaysUntilDue.mockReturnValue(5);
     mockGetCountdownInfo.mockReturnValue({ label: "5d left", variant: "info" });
 
-    renderWithProviders(
-      <UpcomingDeadlinesCard tasks={[makeTask({ title: "My Task" })]} />,
-    );
+    renderWithProviders(<UpcomingDeadlinesCard tasks={[makeTask({ title: "My Task" })]} />);
     expect(screen.getByText("My Task")).toBeInTheDocument();
   });
 
@@ -77,9 +75,7 @@ describe("UpcomingDeadlinesCard", () => {
     mockGetDaysUntilDue.mockReturnValue(-1);
     mockGetCountdownInfo.mockReturnValue({ label: "1d overdue", variant: "error" });
 
-    renderWithProviders(
-      <UpcomingDeadlinesCard tasks={[makeTask({ title: "Late Task" })]} />,
-    );
+    renderWithProviders(<UpcomingDeadlinesCard tasks={[makeTask({ title: "Late Task" })]} />);
     expect(screen.getByText("1 task overdue")).toBeInTheDocument();
   });
 
@@ -87,9 +83,7 @@ describe("UpcomingDeadlinesCard", () => {
     mockGetDaysUntilDue.mockReturnValue(5);
     mockGetCountdownInfo.mockReturnValue({ label: "5d left", variant: "info" });
 
-    renderWithProviders(
-      <UpcomingDeadlinesCard tasks={[makeTask()]} />,
-    );
+    renderWithProviders(<UpcomingDeadlinesCard tasks={[makeTask()]} />);
     expect(screen.queryByText(/overdue/i)).not.toBeInTheDocument();
   });
 

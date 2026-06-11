@@ -11,58 +11,42 @@ describe("ReadinessScoreCard", () => {
   });
 
   it("renders known framework name", () => {
-    renderWithProviders(
-      <ReadinessScoreCard frameworkType="eu_ai_act" overallScore={85} />,
-    );
+    renderWithProviders(<ReadinessScoreCard frameworkType="eu_ai_act" overallScore={85} />);
     expect(screen.getByText("EU AI Act")).toBeInTheDocument();
   });
 
   it("renders iso framework name", () => {
-    renderWithProviders(
-      <ReadinessScoreCard frameworkType="iso_42001" overallScore={50} />,
-    );
+    renderWithProviders(<ReadinessScoreCard frameworkType="iso_42001" overallScore={50} />);
     expect(screen.getByText("ISO 42001")).toBeInTheDocument();
   });
 
   it("renders unknown framework type as uppercase", () => {
-    renderWithProviders(
-      <ReadinessScoreCard frameworkType="custom_framework" overallScore={50} />,
-    );
+    renderWithProviders(<ReadinessScoreCard frameworkType="custom_framework" overallScore={50} />);
     expect(screen.getByText("CUSTOM FRAMEWORK")).toBeInTheDocument();
   });
 
   it("displays score number", () => {
-    renderWithProviders(
-      <ReadinessScoreCard frameworkType="eu_ai_act" overallScore={72} />,
-    );
+    renderWithProviders(<ReadinessScoreCard frameworkType="eu_ai_act" overallScore={72} />);
     expect(screen.getByText("72")).toBeInTheDocument();
   });
 
   it("displays readiness level label", () => {
-    renderWithProviders(
-      <ReadinessScoreCard frameworkType="eu_ai_act" overallScore={72} />,
-    );
+    renderWithProviders(<ReadinessScoreCard frameworkType="eu_ai_act" overallScore={72} />);
     expect(screen.getByText("Needs Work")).toBeInTheDocument();
   });
 
   it("shows Ready level when score >= 80", () => {
-    renderWithProviders(
-      <ReadinessScoreCard frameworkType="eu_ai_act" overallScore={92} />,
-    );
+    renderWithProviders(<ReadinessScoreCard frameworkType="eu_ai_act" overallScore={92} />);
     expect(screen.getByText("Ready")).toBeInTheDocument();
   });
 
   it("shows At Risk level when score >= 30 and < 60", () => {
-    renderWithProviders(
-      <ReadinessScoreCard frameworkType="eu_ai_act" overallScore={45} />,
-    );
+    renderWithProviders(<ReadinessScoreCard frameworkType="eu_ai_act" overallScore={45} />);
     expect(screen.getByText("At Risk")).toBeInTheDocument();
   });
 
   it("shows Not Started level when score < 30", () => {
-    renderWithProviders(
-      <ReadinessScoreCard frameworkType="eu_ai_act" overallScore={15} />,
-    );
+    renderWithProviders(<ReadinessScoreCard frameworkType="eu_ai_act" overallScore={15} />);
     expect(screen.getByText("Not Started")).toBeInTheDocument();
   });
 
@@ -78,9 +62,7 @@ describe("ReadinessScoreCard", () => {
   });
 
   it("defaults score to 0 when overallScore is null", () => {
-    renderWithProviders(
-      <ReadinessScoreCard frameworkType="eu_ai_act" overallScore={null} />,
-    );
+    renderWithProviders(<ReadinessScoreCard frameworkType="eu_ai_act" overallScore={null} />);
     expect(screen.getByText("0")).toBeInTheDocument();
   });
 
@@ -116,19 +98,13 @@ describe("ReadinessScoreCard", () => {
 
   it("hides control counts section when totalControls is null", () => {
     renderWithProviders(
-      <ReadinessScoreCard
-        frameworkType="eu_ai_act"
-        overallScore={65}
-        totalControls={null}
-      />,
+      <ReadinessScoreCard frameworkType="eu_ai_act" overallScore={65} totalControls={null} />,
     );
     expect(screen.queryByText("0")).not.toBeInTheDocument();
   });
 
   it("hides control counts section when totalControls is undefined", () => {
-    renderWithProviders(
-      <ReadinessScoreCard frameworkType="eu_ai_act" overallScore={65} />,
-    );
+    renderWithProviders(<ReadinessScoreCard frameworkType="eu_ai_act" overallScore={65} />);
     expect(screen.queryByText("0")).not.toBeInTheDocument();
   });
 
@@ -176,9 +152,7 @@ describe("ReadinessScoreCard", () => {
   });
 
   it("hides dimension breakdown when not provided", () => {
-    renderWithProviders(
-      <ReadinessScoreCard frameworkType="eu_ai_act" overallScore={70} />,
-    );
+    renderWithProviders(<ReadinessScoreCard frameworkType="eu_ai_act" overallScore={70} />);
     expect(screen.queryByText("Evidence Quality")).not.toBeInTheDocument();
   });
 });

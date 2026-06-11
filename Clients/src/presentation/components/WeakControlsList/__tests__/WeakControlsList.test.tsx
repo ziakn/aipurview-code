@@ -41,12 +41,16 @@ describe("WeakControlsList", () => {
 
   it("renders empty state when controls is empty", () => {
     renderWithProviders(<WeakControlsList controls={[]} />);
-    expect(screen.getByText("No weak controls found. Your compliance posture looks strong!")).toBeInTheDocument();
+    expect(
+      screen.getByText("No weak controls found. Your compliance posture looks strong!"),
+    ).toBeInTheDocument();
   });
 
   it("renders empty state when controls is null", () => {
     renderWithProviders(<WeakControlsList controls={null as unknown as []} />);
-    expect(screen.getByText("No weak controls found. Your compliance posture looks strong!")).toBeInTheDocument();
+    expect(
+      screen.getByText("No weak controls found. Your compliance posture looks strong!"),
+    ).toBeInTheDocument();
   });
 
   it("renders control details", () => {

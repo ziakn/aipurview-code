@@ -12,7 +12,14 @@ vi.mock("../../RichTextEditor", () => ({
 }));
 
 vi.mock("../../Inputs/FileUpload/FileManagementDialog", () => ({
-  default: ({ onAddFiles, onRemoveFile, onRemovePendingFile, onClose, files, pendingFiles }: any) => (
+  default: ({
+    onAddFiles,
+    onRemoveFile,
+    onRemovePendingFile,
+    onClose,
+    files,
+    pendingFiles,
+  }: any) => (
     <div data-testid="file-management-dialog">
       <button
         onClick={() =>
@@ -43,7 +50,9 @@ vi.mock("../../Alert", () => ({
   default: ({ variant, body, onClick }: any) => (
     <div data-testid="alert" data-variant={variant}>
       {body}
-      <button onClick={onClick} data-testid="dismiss-alert">Dismiss</button>
+      <button onClick={onClick} data-testid="dismiss-alert">
+        Dismiss
+      </button>
     </div>
   ),
 }));

@@ -61,6 +61,8 @@ describe("useAuditAnalytics", () => {
   it("calls repository with date params", async () => {
     mockGetAuditAnalytics.mockResolvedValue({});
     renderHook(() => useAuditAnalytics("2025-06-01", "2025-06-30"), { wrapper: createWrapper() });
-    await waitFor(() => expect(mockGetAuditAnalytics).toHaveBeenCalledWith("2025-06-01", "2025-06-30"));
+    await waitFor(() =>
+      expect(mockGetAuditAnalytics).toHaveBeenCalledWith("2025-06-01", "2025-06-30"),
+    );
   });
 });

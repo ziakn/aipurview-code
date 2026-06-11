@@ -53,7 +53,10 @@ describe("useCustomFieldDefinitions", () => {
     });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toEqual([{ id: 1, label: "Field A" }]);
-    expect(mockListDefinitions).toHaveBeenCalledWith({ entityType: "project", signal: expect.any(AbortSignal) });
+    expect(mockListDefinitions).toHaveBeenCalledWith({
+      entityType: "project",
+      signal: expect.any(AbortSignal),
+    });
   });
 });
 
@@ -105,7 +108,11 @@ describe("useCreateCustomFieldDefinition", () => {
     const { result } = renderHook(() => useCreateCustomFieldDefinition(), {
       wrapper: createWrapper(),
     });
-    await result.current.mutateAsync({ entity_type: "project", field_key: "test", label: "Test" } as any);
+    await result.current.mutateAsync({
+      entity_type: "project",
+      field_key: "test",
+      label: "Test",
+    } as any);
     expect(mockCreateDefinition).toHaveBeenCalledWith({
       entity_type: "project",
       field_key: "test",

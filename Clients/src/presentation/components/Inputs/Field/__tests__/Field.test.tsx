@@ -133,9 +133,7 @@ describe("Field Component", () => {
     const handleFocus = vi.fn();
     const user = userEvent.setup();
 
-    renderWithProviders(
-      <Field label="Name" placeholder="Focus me" onFocus={handleFocus} />,
-    );
+    renderWithProviders(<Field label="Name" placeholder="Focus me" onFocus={handleFocus} />);
 
     await user.click(screen.getByPlaceholderText("Focus me"));
     expect(handleFocus).toHaveBeenCalled();
@@ -145,9 +143,7 @@ describe("Field Component", () => {
     const handleBlur = vi.fn();
     const user = userEvent.setup();
 
-    renderWithProviders(
-      <Field label="Name" placeholder="Blur me" onBlur={handleBlur} />,
-    );
+    renderWithProviders(<Field label="Name" placeholder="Blur me" onBlur={handleBlur} />);
 
     const input = screen.getByPlaceholderText("Blur me");
     await user.click(input);
@@ -159,9 +155,7 @@ describe("Field Component", () => {
     const handleKeyDown = vi.fn();
     const user = userEvent.setup();
 
-    renderWithProviders(
-      <Field label="Name" placeholder="Key me" onKeyDown={handleKeyDown} />,
-    );
+    renderWithProviders(<Field label="Name" placeholder="Key me" onKeyDown={handleKeyDown} />);
 
     await user.type(screen.getByPlaceholderText("Key me"), "{Enter}");
     expect(handleKeyDown).toHaveBeenCalled();

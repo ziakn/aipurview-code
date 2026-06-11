@@ -13,7 +13,16 @@ vi.mock("../../repository/aiTrustCentre.repository", () => ({
   updateAITrustCentreResource: (...args: unknown[]) => mockUpdateResource(...args),
 }));
 
-const mockResources = [{ id: 1, name: "Doc 1", description: "Desc", visible: true, file_id: 10, updated_at: "2024-01-01" }];
+const mockResources = [
+  {
+    id: 1,
+    name: "Doc 1",
+    description: "Desc",
+    visible: true,
+    file_id: 10,
+    updated_at: "2024-01-01",
+  },
+];
 
 describe("useAITrustCentreResources", () => {
   beforeEach(() => {
@@ -84,7 +93,9 @@ describe("useAITrustCentreResources", () => {
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     mockGetResources.mockClear();
-    mockGetResources.mockResolvedValue({ data: { data: { resources: [...mockResources, { id: 2, name: "Doc 2" }] } } });
+    mockGetResources.mockResolvedValue({
+      data: { data: { resources: [...mockResources, { id: 2, name: "Doc 2" }] } },
+    });
 
     await act(async () => {
       await result.current.createResource(new File([""], "doc.pdf"), "Doc 2", "New doc");
@@ -122,13 +133,22 @@ describe("useAITrustCentreResources", () => {
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     mockGetResources.mockClear();
-    mockGetResources.mockResolvedValue({ data: { data: { resources: [{ ...mockResources[0], name: "Updated" }] } } });
+    mockGetResources.mockResolvedValue({
+      data: { data: { resources: [{ ...mockResources[0], name: "Updated" }] } },
+    });
 
     await act(async () => {
       await result.current.updateResource(1, "Updated", "New desc", true);
     });
 
-    expect(mockUpdateResource).toHaveBeenCalledWith(1, "Updated", "New desc", true, undefined, undefined);
+    expect(mockUpdateResource).toHaveBeenCalledWith(
+      1,
+      "Updated",
+      "New desc",
+      true,
+      undefined,
+      undefined,
+    );
     await waitFor(() => expect(result.current.resources[0].name).toBe("Updated"));
   });
 

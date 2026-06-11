@@ -35,7 +35,12 @@ describe("useRegisterUser", () => {
     await act(async () => {
       response = await result.current.registerUser(
         {
-          values: { email: "test@example.com", firstname: "John", lastname: "Doe", password: "pass" },
+          values: {
+            email: "test@example.com",
+            firstname: "John",
+            lastname: "Doe",
+            password: "pass",
+          },
           user: defaultUser,
           setIsSubmitting,
         },
@@ -44,7 +49,15 @@ describe("useRegisterUser", () => {
     });
 
     expect(mockCreateNewUser).toHaveBeenCalledWith(
-      { userData: { email: "test@example.com", firstname: "John", lastname: "Doe", password: "pass", role_id: 2 } },
+      {
+        userData: {
+          email: "test@example.com",
+          firstname: "John",
+          lastname: "Doe",
+          password: "pass",
+          role_id: 2,
+        },
+      },
       { Authorization: "Bearer test-token" },
     );
     expect(mockLogEngine).toHaveBeenCalledWith({

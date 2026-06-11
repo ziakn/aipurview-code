@@ -202,9 +202,7 @@ describe("AITrustCenterOverview", () => {
       expect(mockMutateAsync).toHaveBeenCalledTimes(1);
     });
     await waitFor(() => {
-      expect(
-        screen.getByText("AI Trust Centre data saved successfully!"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("AI Trust Centre data saved successfully!")).toBeInTheDocument();
     });
   });
 });

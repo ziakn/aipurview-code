@@ -158,9 +158,7 @@ describe("MonitoringForm", () => {
       expect(screen.getByText("Post-market monitoring")).toBeInTheDocument();
     });
 
-    expect(
-      screen.getByText("Is the model performing as expected?"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Is the model performing as expected?")).toBeInTheDocument();
     expect(screen.getByText("Which risk categories apply?")).toBeInTheDocument();
     expect(screen.getByText("Describe any issues found:")).toBeInTheDocument();
 
@@ -229,9 +227,7 @@ describe("MonitoringForm", () => {
     const noRadio = screen.getByLabelText("No");
     fireEvent.click(noRadio);
 
-    expect(
-      screen.getByText("If not, consider retraining the model."),
-    ).toBeInTheDocument();
+    expect(screen.getByText("If not, consider retraining the model.")).toBeInTheDocument();
   });
 
   it("updates multi-select checkboxes", async () => {
@@ -353,9 +349,12 @@ describe("MonitoringForm", () => {
       expect(screen.getByText("Monitoring cycle completed successfully")).toBeInTheDocument();
     });
 
-    await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith(-1);
-    }, { timeout: 2000 });
+    await waitFor(
+      () => {
+        expect(mockNavigate).toHaveBeenCalledWith(-1);
+      },
+      { timeout: 2000 },
+    );
   });
 
   it("shows completed banner and no questions when cycle is completed", async () => {
@@ -369,9 +368,7 @@ describe("MonitoringForm", () => {
     renderWithProviders(<MonitoringForm />);
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/This monitoring cycle was completed on/),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/This monitoring cycle was completed on/)).toBeInTheDocument();
     });
 
     expect(screen.getByText(/John Doe/)).toBeInTheDocument();

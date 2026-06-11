@@ -158,7 +158,11 @@ describe("CustomizableBasicTable", () => {
     it("renders Low risk for score <= 3", () => {
       const rows = [{ ...mockRows[0], id: 10, risk_level_autocalculated: "2" }];
       renderWithProviders(
-        <CustomizableBasicTable {...defaultProps} data={{ rows, cols: mockColumns }} bodyData={rows} />,
+        <CustomizableBasicTable
+          {...defaultProps}
+          data={{ rows, cols: mockColumns }}
+          bodyData={rows}
+        />,
       );
       expect(screen.getByText("Low risk")).toBeInTheDocument();
     });
@@ -166,7 +170,11 @@ describe("CustomizableBasicTable", () => {
     it("renders Medium risk for score 4-6", () => {
       const rows = [{ ...mockRows[0], id: 11, risk_level_autocalculated: "5" }];
       renderWithProviders(
-        <CustomizableBasicTable {...defaultProps} data={{ rows, cols: mockColumns }} bodyData={rows} />,
+        <CustomizableBasicTable
+          {...defaultProps}
+          data={{ rows, cols: mockColumns }}
+          bodyData={rows}
+        />,
       );
       expect(screen.getByText("Medium risk")).toBeInTheDocument();
     });
@@ -174,7 +182,11 @@ describe("CustomizableBasicTable", () => {
     it("renders High risk for score 7-9", () => {
       const rows = [{ ...mockRows[0], id: 12, risk_level_autocalculated: "8" }];
       renderWithProviders(
-        <CustomizableBasicTable {...defaultProps} data={{ rows, cols: mockColumns }} bodyData={rows} />,
+        <CustomizableBasicTable
+          {...defaultProps}
+          data={{ rows, cols: mockColumns }}
+          bodyData={rows}
+        />,
       );
       expect(screen.getByText("High risk")).toBeInTheDocument();
     });
@@ -182,7 +194,11 @@ describe("CustomizableBasicTable", () => {
     it("renders Very high risk for score >= 10", () => {
       const rows = [{ ...mockRows[0], id: 13, risk_level_autocalculated: "10" }];
       renderWithProviders(
-        <CustomizableBasicTable {...defaultProps} data={{ rows, cols: mockColumns }} bodyData={rows} />,
+        <CustomizableBasicTable
+          {...defaultProps}
+          data={{ rows, cols: mockColumns }}
+          bodyData={rows}
+        />,
       );
       expect(screen.getByText("Very high risk")).toBeInTheDocument();
     });
@@ -208,9 +224,7 @@ describe("CustomizableBasicTable", () => {
   it("calls onRowClick when a row is clicked", async () => {
     const onRowClick = vi.fn();
     const user = userEvent.setup();
-    renderWithProviders(
-      <CustomizableBasicTable {...defaultProps} onRowClick={onRowClick} />,
-    );
+    renderWithProviders(<CustomizableBasicTable {...defaultProps} onRowClick={onRowClick} />);
 
     const row = screen.getByText("Data Breach Risk").closest("tr")!;
     await user.click(row);
@@ -321,7 +335,11 @@ describe("CustomizableBasicTable", () => {
     }));
 
     const { container } = renderWithProviders(
-      <CustomizableBasicTable {...defaultProps} data={{ rows: manyRows, cols: mockColumns }} paginated />,
+      <CustomizableBasicTable
+        {...defaultProps}
+        data={{ rows: manyRows, cols: mockColumns }}
+        paginated
+      />,
     );
 
     // All rows should render

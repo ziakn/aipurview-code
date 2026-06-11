@@ -17,10 +17,22 @@ describe("EvidenceAnalysisPanel", () => {
     summary: "This evidence shows good compliance",
     key_findings: ["Finding one", "Finding two"],
     compliance_areas: ["GDPR", "EU AI Act"],
-    quality_score: { relevance: 85, completeness: 70, recency: 90, reliability: 65, specificity: 80 },
+    quality_score: {
+      relevance: 85,
+      completeness: 70,
+      recency: 90,
+      reliability: 65,
+      specificity: 80,
+    },
     overall_quality_score: 78,
     suggested_control_links: [
-      { control_id: 1, control_title: "Access Control", framework_type: "iso_27001", match_score: 85, matched_areas: ["area1"] },
+      {
+        control_id: 1,
+        control_title: "Access Control",
+        framework_type: "iso_27001",
+        match_score: 85,
+        matched_areas: ["area1"],
+      },
     ],
     analysis_model: "gpt-4",
     analysis_version: 2,
@@ -49,7 +61,11 @@ describe("EvidenceAnalysisPanel", () => {
       char_count: 15000,
       truncated: true,
       findings_with_quotes: [
-        { text: "Finding one", evidence_quote: "Quote from document", relevance: "primary" as const },
+        {
+          text: "Finding one",
+          evidence_quote: "Quote from document",
+          relevance: "primary" as const,
+        },
       ],
     },
   };
@@ -61,15 +77,11 @@ describe("EvidenceAnalysisPanel", () => {
 
   it("renders empty state when no analysis", () => {
     renderWithProviders(<EvidenceAnalysisPanel analysis={null} />);
-    expect(
-      screen.getByText("No AI analysis available for this evidence yet."),
-    ).toBeInTheDocument();
+    expect(screen.getByText("No AI analysis available for this evidence yet.")).toBeInTheDocument();
   });
 
   it("renders empty state with trigger button when onTriggerAnalysis is provided", () => {
-    renderWithProviders(
-      <EvidenceAnalysisPanel analysis={null} onTriggerAnalysis={vi.fn()} />,
-    );
+    renderWithProviders(<EvidenceAnalysisPanel analysis={null} onTriggerAnalysis={vi.fn()} />);
     expect(screen.getByText("Run AI analysis")).toBeInTheDocument();
   });
 
@@ -144,9 +156,7 @@ describe("EvidenceAnalysisPanel", () => {
   });
 
   it("renders key findings empty state", () => {
-    renderWithProviders(
-      <EvidenceAnalysisPanel analysis={{ ...mockAnalysis, key_findings: [] }} />,
-    );
+    renderWithProviders(<EvidenceAnalysisPanel analysis={{ ...mockAnalysis, key_findings: [] }} />);
     expect(screen.getByText("No key findings extracted.")).toBeInTheDocument();
   });
 
@@ -218,9 +228,7 @@ describe("EvidenceAnalysisPanel", () => {
 
   describe("document signals", () => {
     it("renders when document_signals present", () => {
-      renderWithProviders(
-        <EvidenceAnalysisPanel analysis={mockAnalysisWithAudit} />,
-      );
+      renderWithProviders(<EvidenceAnalysisPanel analysis={mockAnalysisWithAudit} />);
       expect(screen.getByText("Document signals")).toBeInTheDocument();
       expect(screen.getByText("Authority")).toBeInTheDocument();
       expect(screen.getByText("Type")).toBeInTheDocument();
@@ -238,9 +246,7 @@ describe("EvidenceAnalysisPanel", () => {
     });
 
     it("renders truncated signal when truncated is true", () => {
-      renderWithProviders(
-        <EvidenceAnalysisPanel analysis={mockAnalysisWithAudit} />,
-      );
+      renderWithProviders(<EvidenceAnalysisPanel analysis={mockAnalysisWithAudit} />);
       expect(screen.getByText("Truncated")).toBeInTheDocument();
       expect(screen.getByText(/15000 ch/)).toBeInTheDocument();
     });
@@ -249,12 +255,8 @@ describe("EvidenceAnalysisPanel", () => {
   describe("DimensionCard rationale", () => {
     it("expands rationale on click", async () => {
       const user = userEvent.setup();
-      renderWithProviders(
-        <EvidenceAnalysisPanel analysis={mockAnalysisWithAudit} />,
-      );
-      const rationaleBtn = screen.getAllByRole("button").find(
-        (b) => b.querySelector("svg"),
-      );
+      renderWithProviders(<EvidenceAnalysisPanel analysis={mockAnalysisWithAudit} />);
+      const rationaleBtn = screen.getAllByRole("button").find((b) => b.querySelector("svg"));
       if (rationaleBtn) {
         await user.click(rationaleBtn);
       }
@@ -330,9 +332,7 @@ describe("EvidenceAnalysisPanel", () => {
 
   describe("findings with quotes", () => {
     it("renders evidence quote when present", () => {
-      renderWithProviders(
-        <EvidenceAnalysisPanel analysis={mockAnalysisWithAudit} />,
-      );
+      renderWithProviders(<EvidenceAnalysisPanel analysis={mockAnalysisWithAudit} />);
       expect(screen.getByText(/Quote from document/)).toBeInTheDocument();
     });
   });

@@ -216,10 +216,7 @@ describe("useNotifications", () => {
     it("throws on API failure", async () => {
       vi.mocked(apiServices.patch).mockRejectedValueOnce(new Error("API error"));
       const { wrapper } = createWrapper();
-      const { result } = renderHook(
-        () => useNotifications({ fetchOnMount: false }),
-        { wrapper },
-      );
+      const { result } = renderHook(() => useNotifications({ fetchOnMount: false }), { wrapper });
 
       await expect(result.current.markAsRead(1)).rejects.toThrow("API error");
     });
@@ -255,10 +252,7 @@ describe("useNotifications", () => {
     it("throws on API failure", async () => {
       vi.mocked(apiServices.patch).mockRejectedValueOnce(new Error("API error"));
       const { wrapper } = createWrapper();
-      const { result } = renderHook(
-        () => useNotifications({ fetchOnMount: false }),
-        { wrapper },
-      );
+      const { result } = renderHook(() => useNotifications({ fetchOnMount: false }), { wrapper });
 
       await expect(result.current.markAllAsRead()).rejects.toThrow("API error");
     });
@@ -322,10 +316,7 @@ describe("useNotifications", () => {
     it("throws on API failure", async () => {
       vi.mocked(apiServices.delete).mockRejectedValueOnce(new Error("API error"));
       const { wrapper } = createWrapper();
-      const { result } = renderHook(
-        () => useNotifications({ fetchOnMount: false }),
-        { wrapper },
-      );
+      const { result } = renderHook(() => useNotifications({ fetchOnMount: false }), { wrapper });
 
       await expect(result.current.deleteNotification(1)).rejects.toThrow("API error");
     });
@@ -503,9 +494,9 @@ describe("useNotifications", () => {
 
   describe("displayNotification (via SSE events)", () => {
     it("adds notification to state and shows alert on SSE event", async () => {
-      global.fetch = vi.fn().mockResolvedValue(
-        createEventStream(`data: ${JSON.stringify(mockNotification)}`),
-      );
+      global.fetch = vi
+        .fn()
+        .mockResolvedValue(createEventStream(`data: ${JSON.stringify(mockNotification)}`));
 
       const { wrapper } = createWrapper();
       const { result } = renderHook(
@@ -531,9 +522,7 @@ describe("useNotifications", () => {
     });
 
     it("skips connected type notifications", async () => {
-      global.fetch = vi.fn().mockResolvedValue(
-        createEventStream(`data: {"type":"connected"}`),
-      );
+      global.fetch = vi.fn().mockResolvedValue(createEventStream(`data: {"type":"connected"}`));
 
       const { wrapper } = createWrapper();
       const { result } = renderHook(
@@ -549,9 +538,9 @@ describe("useNotifications", () => {
 
     it("calls onNotification callback when provided", async () => {
       const onNotification = vi.fn();
-      global.fetch = vi.fn().mockResolvedValue(
-        createEventStream(`data: ${JSON.stringify(mockNotification)}`),
-      );
+      global.fetch = vi
+        .fn()
+        .mockResolvedValue(createEventStream(`data: ${JSON.stringify(mockNotification)}`));
 
       const { wrapper } = createWrapper();
       renderHook(
@@ -570,12 +559,14 @@ describe("useNotifications", () => {
     });
 
     it("deduplicates notifications by id", async () => {
-      global.fetch = vi.fn().mockResolvedValue(
-        createEventStream(
-          `data: ${JSON.stringify(mockNotification)}`,
-          `data: ${JSON.stringify(mockNotification)}`,
-        ),
-      );
+      global.fetch = vi
+        .fn()
+        .mockResolvedValue(
+          createEventStream(
+            `data: ${JSON.stringify(mockNotification)}`,
+            `data: ${JSON.stringify(mockNotification)}`,
+          ),
+        );
 
       const { wrapper } = createWrapper();
       const { result } = renderHook(
@@ -590,34 +581,30 @@ describe("useNotifications", () => {
 
     it("maps alert variant based on notification type", async () => {
       const errorNotification = { ...mockNotification, type: "approval_rejected", id: 2 };
-      global.fetch = vi.fn().mockResolvedValue(
-        createEventStream(`data: ${JSON.stringify(errorNotification)}`),
-      );
+      global.fetch = vi
+        .fn()
+        .mockResolvedValue(createEventStream(`data: ${JSON.stringify(errorNotification)}`));
 
       const { wrapper } = createWrapper();
-      renderHook(
-        () => useNotifications({ autoReconnect: false, fetchOnMount: false }),
-        { wrapper },
-      );
+      renderHook(() => useNotifications({ autoReconnect: false, fetchOnMount: false }), {
+        wrapper,
+      });
 
       await waitFor(() => {
-        expect(showAlert).toHaveBeenCalledWith(
-          expect.objectContaining({ variant: "error" }),
-        );
+        expect(showAlert).toHaveBeenCalledWith(expect.objectContaining({ variant: "error" }));
       });
     });
 
     it("uses default body when message is empty", async () => {
       const notifNoMsg = { ...mockNotification, message: undefined, id: 3 };
-      global.fetch = vi.fn().mockResolvedValue(
-        createEventStream(`data: ${JSON.stringify(notifNoMsg)}`),
-      );
+      global.fetch = vi
+        .fn()
+        .mockResolvedValue(createEventStream(`data: ${JSON.stringify(notifNoMsg)}`));
 
       const { wrapper } = createWrapper();
-      renderHook(
-        () => useNotifications({ autoReconnect: false, fetchOnMount: false }),
-        { wrapper },
-      );
+      renderHook(() => useNotifications({ autoReconnect: false, fetchOnMount: false }), {
+        wrapper,
+      });
 
       await waitFor(() => {
         expect(showAlert).toHaveBeenCalledWith(
@@ -632,10 +619,9 @@ describe("useNotifications", () => {
       global.fetch = vi.fn().mockResolvedValue(createImmediateStream());
 
       const { wrapper } = createWrapper();
-      renderHook(
-        () => useNotifications({ autoReconnect: false, fetchOnMount: false }),
-        { wrapper },
-      );
+      renderHook(() => useNotifications({ autoReconnect: false, fetchOnMount: false }), {
+        wrapper,
+      });
 
       await waitFor(() => {
         expect(global.fetch).toHaveBeenCalledTimes(1);
@@ -652,10 +638,9 @@ describe("useNotifications", () => {
       global.fetch = vi.fn().mockResolvedValue(createImmediateStream());
 
       const { wrapper } = createWrapper();
-      renderHook(
-        () => useNotifications({ autoReconnect: false, fetchOnMount: false }),
-        { wrapper },
-      );
+      renderHook(() => useNotifications({ autoReconnect: false, fetchOnMount: false }), {
+        wrapper,
+      });
 
       await waitFor(() => {
         expect(global.fetch).toHaveBeenCalledTimes(1);
@@ -671,7 +656,8 @@ describe("useNotifications", () => {
 
   describe("refresh and reconnect", () => {
     it("refresh calls fetchNotifications", async () => {
-      vi.mocked(apiServices.get).mockResolvedValueOnce(defaultSummaryResponse as any)
+      vi.mocked(apiServices.get)
+        .mockResolvedValueOnce(defaultSummaryResponse as any)
         .mockResolvedValueOnce({
           data: {
             data: {
@@ -774,10 +760,7 @@ describe("useNotifications", () => {
   describe("initial state", () => {
     it("returns default values before fetch completes", () => {
       const { wrapper } = createWrapper();
-      const { result } = renderHook(
-        () => useNotifications({ fetchOnMount: false }),
-        { wrapper },
-      );
+      const { result } = renderHook(() => useNotifications({ fetchOnMount: false }), { wrapper });
 
       expect(result.current.notifications).toEqual([]);
       expect(result.current.unreadCount).toBe(0);

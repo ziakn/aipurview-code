@@ -94,9 +94,7 @@ describe("TabBar", () => {
   });
 
   it("renders tab with an icon", () => {
-    const tabsWithIcon = [
-      { label: "Home", value: "home", icon: "Home" as const },
-    ];
+    const tabsWithIcon = [{ label: "Home", value: "home", icon: "Home" as const }];
     renderWithProviders(
       <TabContext value="home">
         <TabBar tabs={tabsWithIcon} activeTab="home" onChange={vi.fn()} />

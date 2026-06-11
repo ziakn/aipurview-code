@@ -38,9 +38,7 @@ vi.mock("../../../ViewRelationshipsButton", () => ({
 }));
 
 vi.mock("../../../ProjectCard/ProgressBar", () => ({
-  default: ({ progress }: { progress: string }) => (
-    <div data-testid="progress-bar">{progress}</div>
-  ),
+  default: ({ progress }: { progress: string }) => <div data-testid="progress-bar">{progress}</div>,
 }));
 
 vi.mock("../../../../../application/hooks/useNavigateSearch", () => ({
@@ -185,9 +183,7 @@ describe("ProjectCard", () => {
   });
 
   it("renders no framework buttons when no frameworks present", () => {
-    renderWithProviders(
-      <ProjectCard project={createMockProject({ framework: [] })} />,
-    );
+    renderWithProviders(<ProjectCard project={createMockProject({ framework: [] })} />);
 
     expect(screen.queryByText("EU AI Act")).not.toBeInTheDocument();
     expect(screen.queryByText("ISO 42001")).not.toBeInTheDocument();

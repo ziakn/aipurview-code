@@ -108,11 +108,16 @@ describe("ExperimentTableBody", () => {
   });
 
   it("renders dash when judge is missing", () => {
-    const rowsNoJudge = [{
-      id: "99", name: "No Judge",
-      model: "gpt-4", dataset: "test.jsonl",
-      prompts: 10, status: "Completed" as const,
-    }];
+    const rowsNoJudge = [
+      {
+        id: "99",
+        name: "No Judge",
+        model: "gpt-4",
+        dataset: "test.jsonl",
+        prompts: 10,
+        status: "Completed" as const,
+      },
+    ];
     renderWithProviders(
       <table>
         <ExperimentTableBody {...defaultProps} rows={rowsNoJudge} />

@@ -70,9 +70,7 @@ describe("AIContentReview", () => {
   it("renders the page title and description", () => {
     renderWithProviders(<AIContentReview />);
     expect(screen.getByText("AI content review")).toBeInTheDocument();
-    expect(
-      screen.getByText(/Review and approve AI-generated content/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Review and approve AI-generated content/)).toBeInTheDocument();
     expect(screen.getByTestId("visibility-chips")).toBeInTheDocument();
   });
 
@@ -106,9 +104,7 @@ describe("AIContentReview", () => {
     });
     renderWithProviders(<AIContentReview />);
     expect(screen.getByText("All caught up!")).toBeInTheDocument();
-    expect(
-      screen.getByText("No AI-generated content pending review."),
-    ).toBeInTheDocument();
+    expect(screen.getByText("No AI-generated content pending review.")).toBeInTheDocument();
   });
 
   it("renders review panels for each unreviewed item", () => {
@@ -138,9 +134,7 @@ describe("AIContentReview", () => {
     expect(tabs).toHaveLength(2);
     await userEvent.click(tabs[1]);
     await waitFor(() => {
-      expect(
-        screen.getByText(/Full AI content history/),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Full AI content history/)).toBeInTheDocument();
     });
   });
 

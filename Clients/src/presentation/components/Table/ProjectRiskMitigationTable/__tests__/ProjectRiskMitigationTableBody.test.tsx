@@ -194,11 +194,14 @@ describe("ProjectRiskMitigationTableBody", () => {
   });
 
   it("truncates long titles to 50 chars", () => {
-    const longTitleRow = [{
-      ...mockRows[0],
-      id: 99,
-      title: "A very long title that definitely exceeds fifty characters and should be truncated at fifty characters exactly",
-    } as unknown as ProjectRiskMitigation];
+    const longTitleRow = [
+      {
+        ...mockRows[0],
+        id: 99,
+        title:
+          "A very long title that definitely exceeds fifty characters and should be truncated at fifty characters exactly",
+      } as unknown as ProjectRiskMitigation,
+    ];
     renderWithProviders(
       <table>
         <ProjectRiskMitigationTableBody {...defaultProps} rows={longTitleRow} />

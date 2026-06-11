@@ -47,7 +47,8 @@ vi.mock("../../../components/TipBox", () => ({
 vi.mock("../../../components/button/customizable-button", () => ({
   CustomizableButton: ({ text, onClick, isDisabled, icon }: any) => (
     <button data-testid="customizable-button" onClick={onClick} disabled={isDisabled}>
-      {icon}{text}
+      {icon}
+      {text}
     </button>
   ),
 }));
@@ -64,13 +65,15 @@ vi.mock("../../../components/Table/ExperimentTable", () => ({
 }));
 
 vi.mock("../NewExperimentModal", () => ({
-  default: ({ isOpen }: any) => (
-    <div data-testid="new-experiment-modal" data-open={isOpen} />
-  ),
+  default: ({ isOpen }: any) => <div data-testid="new-experiment-modal" data-open={isOpen} />,
 }));
 
 import ProjectOverview from "../ProjectOverview";
-import type { Experiment, EvaluationLog, MonitorDashboard } from "../../../../application/repository/deepEval.repository";
+import type {
+  Experiment,
+  EvaluationLog,
+  MonitorDashboard,
+} from "../../../../application/repository/deepEval.repository";
 import type { DeepEvalProject } from "../types";
 
 const mockProject: DeepEvalProject = {
@@ -282,9 +285,7 @@ describe("ProjectOverview", () => {
   it("calls onViewExperiment when provided and row is clicked", async () => {
     const onViewExperiment = vi.fn();
 
-    renderWithProviders(
-      <ProjectOverview {...defaultProps} onViewExperiment={onViewExperiment} />,
-    );
+    renderWithProviders(<ProjectOverview {...defaultProps} onViewExperiment={onViewExperiment} />);
 
     await waitFor(() => {
       expect(screen.getByTestId("experiment-table")).toBeInTheDocument();

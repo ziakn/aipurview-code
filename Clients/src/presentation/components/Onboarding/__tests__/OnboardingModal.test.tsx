@@ -14,7 +14,15 @@ const mockCompleteOnboarding = vi.fn();
 
 vi.mock("../../../../application/hooks/useOnboarding", () => ({
   useOnboarding: () => ({
-    state: { currentStep: mockCurrentStep, completedSteps: [], skippedSteps: [], preferences: {}, sampleProject: {}, isComplete: false, lastUpdated: "" },
+    state: {
+      currentStep: mockCurrentStep,
+      completedSteps: [],
+      skippedSteps: [],
+      preferences: {},
+      sampleProject: {},
+      isComplete: false,
+      lastUpdated: "",
+    },
     isLoading: false,
     isFirstUserInOrg: true,
     isAdmin: true,
@@ -33,8 +41,18 @@ vi.mock("../../../../application/hooks/useOnboarding", () => ({
 }));
 
 vi.mock("../../button/customizable-button", () => ({
-  CustomizableButton: ({ text, onClick, isDisabled }: { text: string; onClick?: () => void; isDisabled?: boolean }) => (
-    <button onClick={onClick} disabled={isDisabled} data-testid="customizable-button">{text}</button>
+  CustomizableButton: ({
+    text,
+    onClick,
+    isDisabled,
+  }: {
+    text: string;
+    onClick?: () => void;
+    isDisabled?: boolean;
+  }) => (
+    <button onClick={onClick} disabled={isDisabled} data-testid="customizable-button">
+      {text}
+    </button>
   ),
 }));
 
@@ -43,13 +61,26 @@ vi.mock("../ProgressDots", () => ({
 }));
 
 vi.mock("../SkipConfirmation", () => ({
-  default: ({ open, onConfirm, onCancel }: { open: boolean; onConfirm: () => void; onCancel: () => void }) => (
-    open ? <div data-testid="skip-confirmation">
-      <span>Skip confirmation</span>
-      <button data-testid="confirm-skip" onClick={onConfirm}>Confirm</button>
-      <button data-testid="cancel-skip" onClick={onCancel}>Cancel</button>
-    </div> : null
-  ),
+  default: ({
+    open,
+    onConfirm,
+    onCancel,
+  }: {
+    open: boolean;
+    onConfirm: () => void;
+    onCancel: () => void;
+  }) =>
+    open ? (
+      <div data-testid="skip-confirmation">
+        <span>Skip confirmation</span>
+        <button data-testid="confirm-skip" onClick={onConfirm}>
+          Confirm
+        </button>
+        <button data-testid="cancel-skip" onClick={onCancel}>
+          Cancel
+        </button>
+      </div>
+    ) : null,
 }));
 
 vi.mock("../steps/WelcomeStep", () => ({
@@ -197,7 +228,9 @@ describe("OnboardingModal", () => {
 
     steps.forEach(({ step, testId }) => {
       mockCurrentStep = step;
-      const { unmount } = renderWithProviders(<OnboardingModal onComplete={vi.fn()} onSkip={vi.fn()} />);
+      const { unmount } = renderWithProviders(
+        <OnboardingModal onComplete={vi.fn()} onSkip={vi.fn()} />,
+      );
       expect(screen.getByTestId(testId)).toBeInTheDocument();
       unmount();
     });

@@ -71,9 +71,7 @@ describe("ReadinessDashboard", () => {
   it("renders the page title and description", () => {
     renderWithProviders(<ReadinessDashboard />);
     expect(screen.getByText("Audit readiness")).toBeInTheDocument();
-    expect(
-      screen.getByText(/Per-control readiness scores/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Per-control readiness scores/)).toBeInTheDocument();
     expect(screen.getByTestId("visibility-chips")).toBeInTheDocument();
   });
 
@@ -94,9 +92,7 @@ describe("ReadinessDashboard", () => {
   it("shows empty state when no scores", () => {
     mockScores.mockReturnValue({ data: [], isLoading: false });
     renderWithProviders(<ReadinessDashboard />);
-    expect(
-      screen.getByText(/No readiness scores yet/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/No readiness scores yet/)).toBeInTheDocument();
   });
 
   it("renders readiness level labels in score cards", () => {
@@ -122,9 +118,7 @@ describe("ReadinessDashboard", () => {
 
   it("renders calculate readiness button", () => {
     renderWithProviders(<ReadinessDashboard />);
-    expect(
-      screen.getByText("Calculate readiness"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Calculate readiness")).toBeInTheDocument();
   });
 
   it("calls triggerCalculate on button click", async () => {

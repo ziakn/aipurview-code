@@ -33,17 +33,13 @@ const baseItem: AIContentMetadata = {
 
 describe("AIContentReviewPanel", () => {
   it("renders formatted entity type and id", () => {
-    renderWithProviders(
-      <AIContentReviewPanel item={baseItem} onReview={vi.fn()} />,
-    );
+    renderWithProviders(<AIContentReviewPanel item={baseItem} onReview={vi.fn()} />);
     expect(screen.getByText(/Risk Assessment/)).toBeInTheDocument();
     expect(screen.getByText(/#42/)).toBeInTheDocument();
   });
 
   it("renders field name chip", () => {
-    renderWithProviders(
-      <AIContentReviewPanel item={baseItem} onReview={vi.fn()} />,
-    );
+    renderWithProviders(<AIContentReviewPanel item={baseItem} onReview={vi.fn()} />);
     expect(screen.getByText("description")).toBeInTheDocument();
   });
 
@@ -55,9 +51,7 @@ describe("AIContentReviewPanel", () => {
   });
 
   it("renders model_used tag", () => {
-    renderWithProviders(
-      <AIContentReviewPanel item={baseItem} onReview={vi.fn()} />,
-    );
+    renderWithProviders(<AIContentReviewPanel item={baseItem} onReview={vi.fn()} />);
     expect(screen.getByText("gpt-4")).toBeInTheDocument();
   });
 
@@ -69,9 +63,7 @@ describe("AIContentReviewPanel", () => {
   });
 
   it("renders model_provider tag", () => {
-    renderWithProviders(
-      <AIContentReviewPanel item={baseItem} onReview={vi.fn()} />,
-    );
+    renderWithProviders(<AIContentReviewPanel item={baseItem} onReview={vi.fn()} />);
     expect(screen.getByText("OpenAI")).toBeInTheDocument();
   });
 
@@ -83,9 +75,7 @@ describe("AIContentReviewPanel", () => {
   });
 
   it("renders tool_name tag", () => {
-    renderWithProviders(
-      <AIContentReviewPanel item={baseItem} onReview={vi.fn()} />,
-    );
+    renderWithProviders(<AIContentReviewPanel item={baseItem} onReview={vi.fn()} />);
     expect(screen.getByText("AITool")).toBeInTheDocument();
   });
 
@@ -97,9 +87,7 @@ describe("AIContentReviewPanel", () => {
   });
 
   it("renders confidence_score as percentage", () => {
-    renderWithProviders(
-      <AIContentReviewPanel item={baseItem} onReview={vi.fn()} />,
-    );
+    renderWithProviders(<AIContentReviewPanel item={baseItem} onReview={vi.fn()} />);
     expect(screen.getByText("92%")).toBeInTheDocument();
   });
 
@@ -111,23 +99,17 @@ describe("AIContentReviewPanel", () => {
   });
 
   it("renders prompt summary", () => {
-    renderWithProviders(
-      <AIContentReviewPanel item={baseItem} onReview={vi.fn()} />,
-    );
+    renderWithProviders(<AIContentReviewPanel item={baseItem} onReview={vi.fn()} />);
     expect(screen.getByText("Generated content for risk assessment")).toBeInTheDocument();
   });
 
   it("renders created date", () => {
-    renderWithProviders(
-      <AIContentReviewPanel item={baseItem} onReview={vi.fn()} />,
-    );
+    renderWithProviders(<AIContentReviewPanel item={baseItem} onReview={vi.fn()} />);
     expect(screen.getByText(/2024/)).toBeInTheDocument();
   });
 
   it("shows review buttons when not human_reviewed", () => {
-    renderWithProviders(
-      <AIContentReviewPanel item={baseItem} onReview={vi.fn()} />,
-    );
+    renderWithProviders(<AIContentReviewPanel item={baseItem} onReview={vi.fn()} />);
     expect(screen.getByRole("button", { name: /approve/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /modified/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /reject/i })).toBeInTheDocument();
@@ -140,9 +122,7 @@ describe("AIContentReviewPanel", () => {
       review_action: "approved",
       reviewed_at: "2024-01-16",
     };
-    renderWithProviders(
-      <AIContentReviewPanel item={reviewedItem} onReview={vi.fn()} />,
-    );
+    renderWithProviders(<AIContentReviewPanel item={reviewedItem} onReview={vi.fn()} />);
     expect(screen.getByText(/Approved/)).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /approve/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /modified/i })).not.toBeInTheDocument();
@@ -152,9 +132,7 @@ describe("AIContentReviewPanel", () => {
   it("calls onReview with approved when approve is clicked", async () => {
     const handleReview = vi.fn();
     const user = userEvent.setup();
-    renderWithProviders(
-      <AIContentReviewPanel item={baseItem} onReview={handleReview} />,
-    );
+    renderWithProviders(<AIContentReviewPanel item={baseItem} onReview={handleReview} />);
     await user.click(screen.getByRole("button", { name: /approve/i }));
     expect(handleReview).toHaveBeenCalledWith(1, "approved", undefined);
   });
@@ -162,9 +140,7 @@ describe("AIContentReviewPanel", () => {
   it("calls onReview with modified when modified is clicked", async () => {
     const handleReview = vi.fn();
     const user = userEvent.setup();
-    renderWithProviders(
-      <AIContentReviewPanel item={baseItem} onReview={handleReview} />,
-    );
+    renderWithProviders(<AIContentReviewPanel item={baseItem} onReview={handleReview} />);
     await user.click(screen.getByRole("button", { name: /modified/i }));
     expect(handleReview).toHaveBeenCalledWith(1, "modified", undefined);
   });
@@ -172,9 +148,7 @@ describe("AIContentReviewPanel", () => {
   it("calls onReview with rejected when reject is clicked", async () => {
     const handleReview = vi.fn();
     const user = userEvent.setup();
-    renderWithProviders(
-      <AIContentReviewPanel item={baseItem} onReview={handleReview} />,
-    );
+    renderWithProviders(<AIContentReviewPanel item={baseItem} onReview={handleReview} />);
     await user.click(screen.getByRole("button", { name: /reject/i }));
     expect(handleReview).toHaveBeenCalledWith(1, "rejected", undefined);
   });
@@ -182,9 +156,7 @@ describe("AIContentReviewPanel", () => {
   it("includes notes when provided before approving", async () => {
     const handleReview = vi.fn();
     const user = userEvent.setup();
-    renderWithProviders(
-      <AIContentReviewPanel item={baseItem} onReview={handleReview} />,
-    );
+    renderWithProviders(<AIContentReviewPanel item={baseItem} onReview={handleReview} />);
     const textarea = screen.getByPlaceholderText(/Add review notes/);
     await user.type(textarea, "Looks good");
     await user.click(screen.getByRole("button", { name: /approve/i }));
@@ -192,9 +164,7 @@ describe("AIContentReviewPanel", () => {
   });
 
   it("disables all buttons when isReviewing is true", () => {
-    renderWithProviders(
-      <AIContentReviewPanel item={baseItem} onReview={vi.fn()} isReviewing />,
-    );
+    renderWithProviders(<AIContentReviewPanel item={baseItem} onReview={vi.fn()} isReviewing />);
     expect(screen.getByRole("button", { name: /approve/i })).toBeDisabled();
     expect(screen.getByRole("button", { name: /modified/i })).toBeDisabled();
     expect(screen.getByRole("button", { name: /reject/i })).toBeDisabled();

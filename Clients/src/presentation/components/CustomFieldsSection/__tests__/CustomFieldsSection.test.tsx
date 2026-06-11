@@ -89,16 +89,12 @@ vi.mock("../../Inputs/Field", () => ({
 
 vi.mock("../../Inputs/Select", () => ({
   default: ({ id, value, items, onChange, disabled, placeholder }: any) => (
-    <select
-      id={id}
-      data-testid="select"
-      value={value}
-      disabled={disabled}
-      onChange={onChange}
-    >
+    <select id={id} data-testid="select" value={value} disabled={disabled} onChange={onChange}>
       <option value="">{placeholder}</option>
       {items.map((item: any) => (
-        <option key={item._id} value={item._id}>{item.name}</option>
+        <option key={item._id} value={item._id}>
+          {item.name}
+        </option>
       ))}
     </select>
   ),
@@ -180,9 +176,7 @@ describe("CustomFieldsSection", () => {
   it("renders empty state when no definitions", () => {
     mockDefsData = [];
     renderWithProviders(<CustomFieldsSection entityType="vendor" entityId={1} />);
-    expect(
-      screen.getByText(/No custom fields defined for this entity/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/No custom fields defined for this entity/)).toBeInTheDocument();
   });
 
   it("renders definition labels", () => {
@@ -258,18 +252,14 @@ describe("CustomFieldsSection", () => {
   describe("flush and hasPendingValues", () => {
     it("hasPendingValues returns false initially", () => {
       const ref = createRef<CustomFieldsSectionHandle>();
-      renderWithProviders(
-        <CustomFieldsSection ref={ref} entityType="vendor" entityId={1} />,
-      );
+      renderWithProviders(<CustomFieldsSection ref={ref} entityType="vendor" entityId={1} />);
       expect(ref.current?.hasPendingValues()).toBe(false);
     });
 
     it("hasPendingValues returns true after staging a value", async () => {
       const user = userEvent.setup();
       const ref = createRef<CustomFieldsSectionHandle>();
-      renderWithProviders(
-        <CustomFieldsSection ref={ref} entityType="vendor" entityId={1} />,
-      );
+      renderWithProviders(<CustomFieldsSection ref={ref} entityType="vendor" entityId={1} />);
       const fields = screen.getAllByTestId("field");
       await user.type(fields[0], "New Value");
       expect(ref.current?.hasPendingValues()).toBe(true);
@@ -278,9 +268,7 @@ describe("CustomFieldsSection", () => {
     it("flush calls setCustomFieldValueAPI and clears pending", async () => {
       const user = userEvent.setup();
       const ref = createRef<CustomFieldsSectionHandle>();
-      renderWithProviders(
-        <CustomFieldsSection ref={ref} entityType="vendor" entityId={null} />,
-      );
+      renderWithProviders(<CustomFieldsSection ref={ref} entityType="vendor" entityId={null} />);
       const fields = screen.getAllByTestId("field");
       await user.type(fields[0], "New Value");
       expect(ref.current?.hasPendingValues()).toBe(true);
@@ -292,23 +280,17 @@ describe("CustomFieldsSection", () => {
 
     it("flush with no pending values is a no-op", async () => {
       const ref = createRef<CustomFieldsSectionHandle>();
-      renderWithProviders(
-        <CustomFieldsSection ref={ref} entityType="vendor" entityId={null} />,
-      );
+      renderWithProviders(<CustomFieldsSection ref={ref} entityType="vendor" entityId={null} />);
       await ref.current!.flush(42);
     });
   });
 
   describe("flush error handling", () => {
     it("shows alert on flush failure", async () => {
-      mockSetCustomFieldValue = vi.fn().mockRejectedValue(
-        new Error("Network error"),
-      );
+      mockSetCustomFieldValue = vi.fn().mockRejectedValue(new Error("Network error"));
       const ref = createRef<CustomFieldsSectionHandle>();
       const user = userEvent.setup();
-      renderWithProviders(
-        <CustomFieldsSection ref={ref} entityType="vendor" entityId={null} />,
-      );
+      renderWithProviders(<CustomFieldsSection ref={ref} entityType="vendor" entityId={null} />);
       const fields = screen.getAllByTestId("field");
       await user.type(fields[0], "New Value");
       try {

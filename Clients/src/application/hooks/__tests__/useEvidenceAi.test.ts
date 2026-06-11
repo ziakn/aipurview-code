@@ -101,12 +101,18 @@ describe("useEvidenceAi", () => {
     it("should fetch evidence gaps with params", async () => {
       mockGetEvidenceGaps.mockResolvedValue({ data: { gaps: [{ id: 1 }], total_controls: 5 } });
 
-      const { result } = renderHook(() => useEvidenceGaps({ framework_type: "iso27001", quality_threshold: 80 }), {
-        wrapper: createWrapper(),
-      });
+      const { result } = renderHook(
+        () => useEvidenceGaps({ framework_type: "iso27001", quality_threshold: 80 }),
+        {
+          wrapper: createWrapper(),
+        },
+      );
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true));
-      expect(mockGetEvidenceGaps).toHaveBeenCalledWith({ framework_type: "iso27001", quality_threshold: 80 });
+      expect(mockGetEvidenceGaps).toHaveBeenCalledWith({
+        framework_type: "iso27001",
+        quality_threshold: 80,
+      });
       expect(result.current.data).toEqual({ gaps: [{ id: 1 }], total_controls: 5 });
     });
 
@@ -197,7 +203,9 @@ describe("useEvidenceAi", () => {
         });
       });
 
-      expect(mockApplySuggestions).toHaveBeenCalledWith(1, [{ control_id: 5, framework_type: "iso27001" }]);
+      expect(mockApplySuggestions).toHaveBeenCalledWith(1, [
+        { control_id: 5, framework_type: "iso27001" },
+      ]);
     });
   });
 });

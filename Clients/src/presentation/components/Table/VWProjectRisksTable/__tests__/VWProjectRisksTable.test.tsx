@@ -67,9 +67,16 @@ vi.mock("../../BulkActionsToolbar", () => ({
   default: ({ count, onClear, actions, selectAll }: any) => (
     <div data-testid="bulk-actions-toolbar">
       <span data-testid="selection-count">{count} selected</span>
-      <button data-testid="clear-selection" onClick={onClear}>Clear</button>
+      <button data-testid="clear-selection" onClick={onClear}>
+        Clear
+      </button>
       {actions.map((action: any) => (
-        <button key={action.id} data-testid={`bulk-action-${action.id}`} onClick={action.onClick} disabled={action.disabled}>
+        <button
+          key={action.id}
+          data-testid={`bulk-action-${action.id}`}
+          onClick={action.onClick}
+          disabled={action.disabled}
+        >
           {action.label}
         </button>
       ))}
@@ -87,8 +94,12 @@ vi.mock("../../../Dialogs/ConfirmationModal", () => ({
     isOpen ? (
       <div data-testid="confirmation-modal">
         <h3>{title}</h3>
-        <button data-testid="modal-proceed" onClick={onProceed}>{proceedText}</button>
-        <button data-testid="modal-cancel" onClick={onCancel}>{cancelText}</button>
+        <button data-testid="modal-proceed" onClick={onProceed}>
+          {proceedText}
+        </button>
+        <button data-testid="modal-cancel" onClick={onCancel}>
+          {cancelText}
+        </button>
       </div>
     ) : null,
 }));
@@ -113,10 +124,18 @@ if (
   Object.defineProperty(globalThis, "localStorage", {
     value: {
       getItem: (key: string) => store[key] ?? null,
-      setItem: (key: string, val: string) => { store[key] = val; },
-      removeItem: (key: string) => { delete store[key]; },
-      clear: () => { Object.keys(store).forEach((k) => delete store[k]); },
-      get length() { return Object.keys(store).length; },
+      setItem: (key: string, val: string) => {
+        store[key] = val;
+      },
+      removeItem: (key: string) => {
+        delete store[key];
+      },
+      clear: () => {
+        Object.keys(store).forEach((k) => delete store[k]);
+      },
+      get length() {
+        return Object.keys(store).length;
+      },
       key: (i: number) => Object.keys(store)[i] ?? null,
     },
     writable: true,
@@ -342,9 +361,7 @@ describe("VWProjectRisksTable", () => {
 
   it("filters columns by visibleColumns", () => {
     const visibleColumns = new Set(["risk_name", "severity"]);
-    renderWithProviders(
-      <VWProjectRisksTable {...defaultProps} visibleColumns={visibleColumns} />,
-    );
+    renderWithProviders(<VWProjectRisksTable {...defaultProps} visibleColumns={visibleColumns} />);
     expect(screen.getByText("RISK NAME")).toBeInTheDocument();
     expect(screen.getByText("SEVERITY")).toBeInTheDocument();
     expect(screen.queryByText("OWNER")).not.toBeInTheDocument();
@@ -368,9 +385,7 @@ describe("VWProjectRisksTable", () => {
   });
 
   it("renders with all risks deleted (empty selectable)", () => {
-    const deletedRows = [
-      { ...mockRows[0], id: 1, is_deleted: true },
-    ] as unknown as RiskModel[];
+    const deletedRows = [{ ...mockRows[0], id: 1, is_deleted: true }] as unknown as RiskModel[];
     renderWithProviders(
       <VWProjectRisksTable {...defaultProps} rows={deletedRows} canRunBulkActions />,
     );

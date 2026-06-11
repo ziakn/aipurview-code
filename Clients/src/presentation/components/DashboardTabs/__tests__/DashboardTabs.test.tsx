@@ -127,9 +127,7 @@ describe("DashboardTabs", () => {
     // Models tab has removable=false, menu item should have disabled checkbox
     const modelsCheckboxes = screen.getAllByText("Models");
     // The menu item is the one with role="menuitem" ancestor
-    const modelsMenuItem = modelsCheckboxes.find(
-      (el) => el.closest('[role="menuitem"]') !== null,
-    );
+    const modelsMenuItem = modelsCheckboxes.find((el) => el.closest('[role="menuitem"]') !== null);
     expect(modelsMenuItem).toBeDefined();
   });
 
