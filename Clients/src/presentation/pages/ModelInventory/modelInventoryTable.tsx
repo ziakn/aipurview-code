@@ -5,7 +5,6 @@ import {
   TableCell,
   TableContainer,
   TableRow,
-  useTheme,
   Stack,
   Typography,
   Tooltip,
@@ -94,7 +93,6 @@ const ModelInventoryTable: React.FC<ModelInventoryTableProps> = ({
   flashRowId,
   visibleColumns,
 }) => {
-  const theme = useTheme();
   const { userRoleName } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
 
