@@ -195,16 +195,7 @@ const StyleGuide: React.FC = () => {
       icon: <Tags size={18} />,
       component: <ChipSection />,
       category: "components",
-      keywords: [
-        "chip",
-        "badge",
-        "risk",
-        "status",
-        "severity",
-        "variant",
-        "pill",
-        "label",
-      ],
+      keywords: ["chip", "badge", "risk", "status", "severity", "variant", "pill", "label"],
     },
     {
       id: "empty-states",

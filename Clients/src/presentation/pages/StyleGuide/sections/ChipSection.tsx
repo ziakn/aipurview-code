@@ -146,11 +146,7 @@ const ChipSection: React.FC = () => {
                 <Chip label="In progress" variant="warning" uppercase={false} />
               </ExampleWithCode>
 
-              <ExampleWithCode
-                label="Custom colors"
-                code={chipSnippets.custom}
-                onCopy={handleCopy}
-              >
+              <ExampleWithCode label="Custom colors" code={chipSnippets.custom} onCopy={handleCopy}>
                 <Chip label="Custom" backgroundColor="#E8F5E9" textColor="#2E7D32" />
               </ExampleWithCode>
             </Stack>
