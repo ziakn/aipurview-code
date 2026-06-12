@@ -37,6 +37,7 @@ import tiersRoutes from "./routes/tiers.route";
 import subscriptionRoutes from "./routes/subscription.route";
 import autoDriverRoutes from "./routes/autoDriver.route";
 import taskRoutes from "./routes/task.route";
+import deadlineRoutes from "./routes/deadline.route";
 import slackWebhookRoutes from "./routes/slackWebhook.route";
 import pluginRoutes from "./routes/plugin.route";
 import tokenRoutes from "./routes/tokens.route";
@@ -239,6 +240,7 @@ export function createApp(preRoutesMiddleware?: RequestHandler[]): express.Appli
   app.use("/api/tiers", tiersRoutes);
   app.use("/api/subscriptions", subscriptionRoutes);
   app.use("/api/tasks", taskRoutes);
+  app.use("/api/deadlines", deadlineRoutes);
   app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
   app.use("/api/policies", policyRoutes);
   app.use("/api/policies", policyFolderRoutes);
