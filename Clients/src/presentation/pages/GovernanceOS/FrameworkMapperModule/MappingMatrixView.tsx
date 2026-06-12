@@ -79,8 +79,8 @@ const MappingMatrixView: React.FC<MappingMatrixViewProps> = ({ mappings, onCellC
                 }}
               >
                 <GovernanceTooltip
-                  header="Governance.Tooltip.MappingMatrix.Header"
-                  description="Governance.Tooltip.MappingMatrix.Header.Desc"
+                  header="Framework axis"
+                  description="Source frameworks as rows and target frameworks as columns"
                 >
                   <Box
                     component="span"
@@ -121,8 +121,8 @@ const MappingMatrixView: React.FC<MappingMatrixViewProps> = ({ mappings, onCellC
                 }}
               >
                 <GovernanceTooltip
-                  header="Governance.Tooltip.MappingMatrix.Header"
-                  description="Governance.Tooltip.MappingMatrix.Header.Desc"
+                  header="Framework axis"
+                  description="Source frameworks as rows and target frameworks as columns"
                 >
                   <Box
                     component="span"
@@ -190,8 +190,8 @@ const MappingMatrixView: React.FC<MappingMatrixViewProps> = ({ mappings, onCellC
                 return !isDiagonal && count > 0 ? (
                   <GovernanceTooltip
                     key={colFw.id}
-                    header="Governance.Tooltip.MappingMatrix.Cell"
-                    description="Governance.Tooltip.MappingMatrix.Cell.Desc"
+                    header="Mapping count"
+                    description="Click to view the mappings between these two frameworks"
                   >
                     {cell}
                   </GovernanceTooltip>
@@ -206,8 +206,8 @@ const MappingMatrixView: React.FC<MappingMatrixViewProps> = ({ mappings, onCellC
 
       {/* Legend */}
       <GovernanceTooltip
-        header="Governance.Tooltip.MappingMatrix.Legend"
-        description="Governance.Tooltip.MappingMatrix.Legend.Desc"
+        header="Density legend"
+        description="Color intensity shows the density of mappings"
       >
         <Stack direction="row" gap="16px" alignItems="center" sx={{ mt: "16px" }}>
           <Typography sx={{ fontSize: 12, color: text.muted }}>Density:</Typography>

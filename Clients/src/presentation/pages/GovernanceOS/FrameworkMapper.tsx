@@ -105,8 +105,8 @@ const FrameworkMapper = () => {
         />
         <Stack direction="row" gap="8px" alignItems="center">
           <GovernanceTooltip
-            header="Governance.Tooltip.FrameworkMapper.ViewMode"
-            description="Governance.Tooltip.FrameworkMapper.ViewMode.Desc"
+            header="View mode"
+            description="Switch between list and matrix views of mappings"
           >
             <span>
               <ToggleButtonGroup
@@ -125,8 +125,8 @@ const FrameworkMapper = () => {
             </span>
           </GovernanceTooltip>
           <GovernanceTooltip
-            header="Governance.Tooltip.FrameworkMapper.Export"
-            description="Governance.Tooltip.FrameworkMapper.Export.Desc"
+            header="Export mappings"
+            description="Download the current pairwise mappings as a CSV file"
           >
             <span>
               <CustomizableButton
@@ -171,8 +171,8 @@ const FrameworkMapper = () => {
             </span>
           </GovernanceTooltip>
           <GovernanceTooltip
-            header="Governance.Tooltip.FrameworkMapper.Import"
-            description="Governance.Tooltip.FrameworkMapper.Import.Desc"
+            header="Import mappings"
+            description="Upload a CSV file to create multiple mappings at once"
           >
             <span>
               <CustomizableButton
@@ -185,8 +185,8 @@ const FrameworkMapper = () => {
             </span>
           </GovernanceTooltip>
           <GovernanceTooltip
-            header="Governance.Tooltip.FrameworkMapper.NewMapping"
-            description="Governance.Tooltip.FrameworkMapper.NewMapping.Desc"
+            header="New mapping"
+            description="Create a new cross-framework control mapping manually"
           >
             <span>
               <CustomizableButton
@@ -203,8 +203,8 @@ const FrameworkMapper = () => {
 
       {domainTileItems.length > 0 && (
         <GovernanceTooltip
-          header="Governance.Tooltip.FrameworkMapper.DomainFilter"
-          description="Governance.Tooltip.FrameworkMapper.DomainFilter.Desc"
+          header="Domain filter"
+          description="Filter mappings by governance domain"
         >
           <span>
             <StatusTileCards

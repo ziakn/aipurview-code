@@ -32,14 +32,19 @@ const FrameworkChip: React.FC<FrameworkChipProps> = ({
   const fontSize = size === "small" ? 11 : 12;
   const padding = size === "small" ? "0 8px" : "0 10px";
 
-  const tooltipKey =
+  const tooltip =
     priority === "supplementary"
-      ? "Governance.Tooltip.FrameworkChip.Inactive"
-      : "Governance.Tooltip.FrameworkChip.Active";
-  const tooltipDescKey = `${tooltipKey}.Desc`;
+      ? {
+          header: "Inactive framework",
+          description: "This framework is not currently assigned to the project",
+        }
+      : {
+          header: "Active framework",
+          description: "This framework is assigned to the project",
+        };
 
   return (
-    <GovernanceTooltip header={tooltipKey} description={tooltipDescKey}>
+    <GovernanceTooltip header={tooltip.header} description={tooltip.description}>
       <Box
         component="span"
         data-framework={FRAMEWORK_SLUGS[frameworkName.toLowerCase()] || frameworkName.toLowerCase()}

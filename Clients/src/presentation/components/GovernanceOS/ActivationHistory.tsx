@@ -84,8 +84,8 @@ const ActivationHistory: React.FC = () => {
                   {activation.scenario_name || `Scenario #${activation.scenario_id}`}
                 </Typography>
                 <GovernanceTooltip
-                  header="Governance.Tooltip.ActivationHistory.Status"
-                  description="Governance.Tooltip.ActivationHistory.Status.Desc"
+                  header="Activation status"
+                  description="Whether this scenario activation is currently active"
                 >
                   <Box
                     component="span"
@@ -116,8 +116,8 @@ const ActivationHistory: React.FC = () => {
 
               {isActive && (
                 <GovernanceTooltip
-                  header="Governance.Tooltip.ActivationHistory.Deactivate"
-                  description="Governance.Tooltip.ActivationHistory.Deactivate.Desc"
+                  header="Deactivate activation"
+                  description="Stop this active activation and remove its tasks"
                 >
                   <span>
                     <CustomizableButton

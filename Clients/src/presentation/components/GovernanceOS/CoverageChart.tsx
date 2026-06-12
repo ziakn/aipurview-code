@@ -118,8 +118,8 @@ const CoverageChart = ({
             >
               <Stack direction="row" gap="8px" alignItems="center">
                 <GovernanceTooltip
-                  header="Governance.Tooltip.CoverageChart.Header"
-                  description="Governance.Tooltip.CoverageChart.Header.Desc"
+                  header="Framework coverage"
+                  description="Overview of how well this framework is mapped to controls"
                 >
                   <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary }}>
                     {fw.framework_name || `Framework ${fw.framework_id}`}
@@ -127,8 +127,8 @@ const CoverageChart = ({
                 </GovernanceTooltip>
                 {isPrimary && (
                   <GovernanceTooltip
-                    header="Governance.Tooltip.CoverageChart.PrimaryBadge"
-                    description="Governance.Tooltip.CoverageChart.PrimaryBadge.Desc"
+                    header="Primary framework"
+                    description="The framework used as the baseline in the active scenario"
                   >
                     <Box
                       component="span"
@@ -163,8 +163,8 @@ const CoverageChart = ({
             </Stack>
 
             <GovernanceTooltip
-              header="Governance.Tooltip.CoverageChart.CoverageBar"
-              description="Governance.Tooltip.CoverageChart.CoverageBar.Desc"
+              header="Coverage progress"
+              description="Mapped controls shown as a percentage of total controls"
             >
               <LinearProgress
                 variant="determinate"
@@ -190,8 +190,8 @@ const CoverageChart = ({
               <Box>
                 {hasGaps && (
                   <GovernanceTooltip
-                    header="Governance.Tooltip.CoverageChart.GapsBadge"
-                    description="Governance.Tooltip.CoverageChart.GapsBadge.Desc"
+                    header="Control gaps"
+                    description="Unmapped controls that need a remediation task"
                   >
                     <Box
                       component="span"
@@ -215,8 +215,8 @@ const CoverageChart = ({
                 )}
                 {hasSynergies && (
                   <GovernanceTooltip
-                    header="Governance.Tooltip.CoverageChart.SynergiesBadge"
-                    description="Governance.Tooltip.CoverageChart.SynergiesBadge.Desc"
+                    header="Multi-framework synergies"
+                    description="Controls that satisfy requirements in multiple frameworks"
                   >
                     <Box
                       component="span"
@@ -258,8 +258,8 @@ const CoverageChart = ({
                     </Typography>
                     <Stack direction="row" gap="4px">
                       <GovernanceTooltip
-                        header="Governance.Tooltip.CoverageChart.SelectAll"
-                        description="Governance.Tooltip.CoverageChart.SelectAll.Desc"
+                        header="Select all gaps"
+                        description="Choose every unmapped control in this framework for bulk action"
                       >
                         <span>
                           <CustomizableButton
@@ -271,8 +271,8 @@ const CoverageChart = ({
                         </span>
                       </GovernanceTooltip>
                       <GovernanceTooltip
-                        header="Governance.Tooltip.CoverageChart.Clear"
-                        description="Governance.Tooltip.CoverageChart.Clear.Desc"
+                        header="Clear selection"
+                        description="Remove all selected gaps from the bulk task list"
                       >
                         <span>
                           <CustomizableButton
@@ -332,8 +332,8 @@ const CoverageChart = ({
                           </Stack>
                           {onCreateTaskForGap && (
                             <GovernanceTooltip
-                              header="Governance.Tooltip.CoverageChart.TaskButton"
-                              description="Governance.Tooltip.CoverageChart.TaskButton.Desc"
+                              header="Create task"
+                              description="Add a remediation task for this unmapped control"
                             >
                               <span>
                                 <CustomizableButton
@@ -365,8 +365,8 @@ const CoverageChart = ({
                   {selectedGaps.size > 0 && onCreateTasksForGaps && (
                     <Box sx={{ mt: "8px", display: "flex", justifyContent: "flex-end" }}>
                       <GovernanceTooltip
-                        header="Governance.Tooltip.CoverageChart.BulkCreate"
-                        description="Governance.Tooltip.CoverageChart.BulkCreate.Desc"
+                        header="Create tasks for selected gaps"
+                        description="Generate remediation tasks for all selected unmapped controls"
                       >
                         <span>
                           <CustomizableButton

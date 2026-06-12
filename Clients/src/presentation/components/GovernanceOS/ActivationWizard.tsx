@@ -112,8 +112,8 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
       return (
         <Stack gap="16px">
           <GovernanceTooltip
-            header="Governance.Tooltip.ActivationWizard.Projects"
-            description="Governance.Tooltip.ActivationWizard.Projects.Desc"
+            header="Select projects"
+            description="Choose the projects where activation tasks will be created"
           >
             <Alert severity="info" icon={<Info size={18} />}>
               <Typography sx={{ fontSize: 13 }}>
@@ -186,8 +186,8 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
       return (
         <Stack gap="16px">
           <GovernanceTooltip
-            header="Governance.Tooltip.ActivationWizard.Owners"
-            description="Governance.Tooltip.ActivationWizard.Owners.Desc"
+            header="Assign owners"
+            description="Choose owners responsible for each framework in the activation"
           >
             <Alert severity="info" icon={<Info size={18} />}>
               <Typography sx={{ fontSize: 13 }}>
@@ -243,8 +243,8 @@ const ActivationWizard: React.FC<ActivationWizardProps> = ({
     return (
       <Stack gap="16px">
         <GovernanceTooltip
-          header="Governance.Tooltip.ActivationWizard.Review"
-          description="Governance.Tooltip.ActivationWizard.Review.Desc"
+          header="Review activation"
+          description="Confirm the scenario activation details before creating tasks"
         >
           <Alert severity="info" icon={<Zap size={18} />}>
             <Typography sx={{ fontSize: 13 }}>

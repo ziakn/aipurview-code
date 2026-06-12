@@ -135,8 +135,8 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
 
       <Stack gap="16px">
         <GovernanceTooltip
-          header="Governance.Tooltip.WhatIfSimulator.BaseScenario"
-          description="Governance.Tooltip.WhatIfSimulator.BaseScenario.Desc"
+          header="Base scenario"
+          description="Starting point for the what-if simulation"
         >
           <span>
             <Select
@@ -168,8 +168,8 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
             }}
           >
             <GovernanceTooltip
-              header="Governance.Tooltip.WhatIfSimulator.Primary"
-              description="Governance.Tooltip.WhatIfSimulator.Primary.Desc"
+              header="Primary framework"
+              description="Baseline framework in the simulation"
             >
               <Typography sx={{ fontSize: 12, fontWeight: 600, color: text.primary, mb: "8px" }}>
                 Primary
@@ -196,8 +196,8 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
             }}
           >
             <GovernanceTooltip
-              header="Governance.Tooltip.WhatIfSimulator.Secondary"
-              description="Governance.Tooltip.WhatIfSimulator.Secondary.Desc"
+              header="Secondary frameworks"
+              description="Supporting frameworks in the simulation"
             >
               <Typography sx={{ fontSize: 12, fontWeight: 600, color: text.primary, mb: "8px" }}>
                 Secondary
@@ -253,8 +253,8 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
             }}
           >
             <GovernanceTooltip
-              header="Governance.Tooltip.WhatIfSimulator.Supplementary"
-              description="Governance.Tooltip.WhatIfSimulator.Supplementary.Desc"
+              header="Supplementary frameworks"
+              description="Optional additional frameworks in the simulation"
             >
               <Typography sx={{ fontSize: 12, fontWeight: 600, color: text.primary, mb: "8px" }}>
                 Supplementary
@@ -301,8 +301,8 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
 
         <Box>
           <GovernanceTooltip
-            header="Governance.Tooltip.WhatIfSimulator.Run"
-            description="Governance.Tooltip.WhatIfSimulator.Run.Desc"
+            header="Run simulation"
+            description="Calculate estimated coverage, effort, and timeline"
           >
             <span>
               <CustomizableButton
@@ -348,22 +348,26 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
               <MetricBox
                 label="Est. coverage"
                 value={`${result.estimatedCoveragePercent}%`}
-                tooltipKey="Governance.Tooltip.WhatIfSimulator.Coverage"
+                header="Estimated coverage"
+                description="Estimated percentage of mapped controls"
               />
               <MetricBox
                 label="Total controls"
                 value={String(result.totalControls)}
-                tooltipKey="Governance.Tooltip.WhatIfSimulator.Controls"
+                header="Total controls"
+                description="Estimated number of controls to address"
               />
               <MetricBox
                 label="Est. effort"
                 value={`${result.estimatedEffortHours.toLocaleString()} hrs`}
-                tooltipKey="Governance.Tooltip.WhatIfSimulator.Effort"
+                header="Estimated effort"
+                description="Estimated hours required to close gaps"
               />
               <MetricBox
                 label="Timeline"
                 value={`${result.timelineWeeks} wks`}
-                tooltipKey="Governance.Tooltip.WhatIfSimulator.Timeline"
+                header="Timeline"
+                description="Estimated weeks to complete the work"
               />
             </Box>
 
@@ -439,12 +443,13 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
   );
 };
 
-const MetricBox: React.FC<{ label: string; value: string; tooltipKey: string }> = ({
+const MetricBox: React.FC<{ label: string; value: string; header: string; description: string }> = ({
   label,
   value,
-  tooltipKey,
+  header,
+  description,
 }) => (
-  <GovernanceTooltip header={tooltipKey} description={`${tooltipKey}.Desc`}>
+  <GovernanceTooltip header={header} description={description}>
     <Box
       sx={{ textAlign: "center", p: "12px", background: background.hover, borderRadius: "4px" }}
     >

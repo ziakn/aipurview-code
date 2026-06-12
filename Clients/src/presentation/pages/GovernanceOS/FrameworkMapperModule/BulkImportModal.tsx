@@ -154,8 +154,8 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
       <Stack spacing={3} sx={{ minWidth: 600, maxWidth: 800 }}>
         {/* Upload area */}
         <GovernanceTooltip
-          header="Governance.Tooltip.BulkImport.Upload"
-          description="Governance.Tooltip.BulkImport.Upload.Desc"
+          header="Upload CSV"
+          description="Select a CSV file containing mapping rows to import"
         >
           <Box
             component="label"

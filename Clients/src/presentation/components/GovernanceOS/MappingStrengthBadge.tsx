@@ -5,25 +5,25 @@ import GovernanceTooltip from "./GovernanceTooltip";
 
 const strengthConfig: Record<
   MappingStrength,
-  { bg: string; text: string; border: string; label: string; headerKey: string; descKey: string }
+  { bg: string; text: string; border: string; label: string; header: string; description: string }
 > = {
   direct: {
     ...status.success,
     label: "Direct",
-    headerKey: "Governance.Tooltip.MappingStrength.Direct",
-    descKey: "Governance.Tooltip.MappingStrength.Direct.Desc",
+    header: "Direct mapping",
+    description: "Source control fully satisfies the target control",
   },
   partial: {
     ...status.warning,
     label: "Partial",
-    headerKey: "Governance.Tooltip.MappingStrength.Partial",
-    descKey: "Governance.Tooltip.MappingStrength.Partial.Desc",
+    header: "Partial mapping",
+    description: "Controls overlap but each has unique requirements",
   },
   related: {
     ...status.info,
     label: "Related",
-    headerKey: "Governance.Tooltip.MappingStrength.Related",
-    descKey: "Governance.Tooltip.MappingStrength.Related.Desc",
+    header: "Related mapping",
+    description: "Similar topics but the controls are not interchangeable",
   },
 };
 
@@ -57,7 +57,7 @@ const MappingStrengthBadge = ({ strength, size = "small" }: MappingStrengthBadge
   );
 
   return (
-    <GovernanceTooltip header={config.headerKey} description={config.descKey}>
+    <GovernanceTooltip header={config.header} description={config.description}>
       <span>{badge}</span>
     </GovernanceTooltip>
   );

@@ -240,8 +240,8 @@ const GovernanceHub: React.FC = () => {
       stat: `${totalMappings} mappings`,
       subStat: topDomain ? `Top domain: ${topDomain[0]} (${topDomain[1]})` : undefined,
       color: brand.primary,
-      tooltipHeader: "Governance.Tooltip.Hub.ViewMappings",
-      tooltipDescription: "Governance.Tooltip.Hub.ViewMappings.Desc",
+      tooltipHeader: "View mappings",
+      tooltipDescription: "Open the Framework Mapper to browse control mappings",
     },
     {
       title: "Scenario Builder",
@@ -250,8 +250,8 @@ const GovernanceHub: React.FC = () => {
       path: "/governance/scenarios",
       stat: activeScenario ? `Active: ${activeScenario.name}` : `${totalScenarios} scenarios`,
       color: accent.indigo.text,
-      tooltipHeader: "Governance.Tooltip.Hub.GetRecommendations",
-      tooltipDescription: "Governance.Tooltip.Hub.GetRecommendations.Desc",
+      tooltipHeader: "Get recommendations",
+      tooltipDescription: "Receive scenario suggestions tailored to the project context",
     },
     {
       title: "Unified Insights",
@@ -262,8 +262,8 @@ const GovernanceHub: React.FC = () => {
       subStat:
         coverageStats != null ? `${coverageStats.totalGaps} gaps across frameworks` : undefined,
       color: accent.blue.text,
-      tooltipHeader: "Governance.Tooltip.Hub.RunCoverageAnalysis",
-      tooltipDescription: "Governance.Tooltip.Hub.RunCoverageAnalysis.Desc",
+      tooltipHeader: "Run coverage analysis",
+      tooltipDescription: "Analyze coverage and gaps across active frameworks",
     },
     {
       title: "Evidence Hub",
@@ -369,8 +369,8 @@ const GovernanceHub: React.FC = () => {
 
               <Stack direction="row" spacing={1} sx={{ flexShrink: 0 }}>
                 <GovernanceTooltip
-                  header="Governance.Tooltip.Hub.ViewScenario"
-                  description="Governance.Tooltip.Hub.ViewScenario.Desc"
+                  header="View scenario"
+                  description="Open the active scenario details"
                 >
                   <span>
                     <CustomizableButton
@@ -382,8 +382,8 @@ const GovernanceHub: React.FC = () => {
                   </span>
                 </GovernanceTooltip>
                 <GovernanceTooltip
-                  header="Governance.Tooltip.Hub.RunCoverage"
-                  description="Governance.Tooltip.Hub.RunCoverage.Desc"
+                  header="Run coverage analysis"
+                  description="Open Unified Insights to analyze coverage and gaps"
                 >
                   <span>
                     <CustomizableButton
@@ -419,8 +419,8 @@ const GovernanceHub: React.FC = () => {
                 </Typography>
               </Box>
               <GovernanceTooltip
-                header="Governance.Tooltip.Hub.ChooseScenario"
-                description="Governance.Tooltip.Hub.ChooseScenario.Desc"
+                header="Choose scenario"
+                description="Select or create a governance scenario for the project"
               >
                 <span>
                   <CustomizableButton
@@ -445,8 +445,8 @@ const GovernanceHub: React.FC = () => {
             }}
           >
             <GovernanceTooltip
-              header="Governance.Tooltip.Hub.AvgCoverage"
-              description="Governance.Tooltip.Hub.AvgCoverage.Desc"
+              header="Average coverage"
+              description="Mean percentage of mapped controls across active frameworks"
             >
               <Box
                 sx={{
@@ -482,8 +482,8 @@ const GovernanceHub: React.FC = () => {
             </GovernanceTooltip>
 
             <GovernanceTooltip
-              header="Governance.Tooltip.Hub.TotalGaps"
-              description="Governance.Tooltip.Hub.TotalGaps.Desc"
+              header="Total gaps"
+              description="Unmapped controls across all active frameworks"
             >
               <Box
                 sx={{
@@ -512,8 +512,8 @@ const GovernanceHub: React.FC = () => {
             </GovernanceTooltip>
 
             <GovernanceTooltip
-              header="Governance.Tooltip.Hub.ActiveFrameworks"
-              description="Governance.Tooltip.Hub.ActiveFrameworks.Desc"
+              header="Active frameworks"
+              description="Frameworks assigned to the current project"
             >
               <Box
                 sx={{
@@ -538,8 +538,8 @@ const GovernanceHub: React.FC = () => {
             </GovernanceTooltip>
 
             <GovernanceTooltip
-              header="Governance.Tooltip.Hub.TotalMappings"
-              description="Governance.Tooltip.Hub.TotalMappings.Desc"
+              header="Total mappings"
+              description="Cross-framework control links created"
             >
               <Box
                 sx={{
@@ -581,8 +581,8 @@ const GovernanceHub: React.FC = () => {
         {/* Quick actions */}
         <Stack direction="row" gap="8px" flexWrap="wrap">
           <GovernanceTooltip
-            header="Governance.Tooltip.Hub.GetRecommendations"
-            description="Governance.Tooltip.Hub.GetRecommendations.Desc"
+            header="Get recommendations"
+            description="Receive scenario suggestions tailored to the project context"
           >
             <span>
               <CustomizableButton
@@ -595,8 +595,8 @@ const GovernanceHub: React.FC = () => {
             </span>
           </GovernanceTooltip>
           <GovernanceTooltip
-            header="Governance.Tooltip.Hub.RunCoverageAnalysis"
-            description="Governance.Tooltip.Hub.RunCoverageAnalysis.Desc"
+            header="Run coverage analysis"
+            description="Analyze coverage and gaps across active frameworks"
           >
             <span>
               <CustomizableButton
@@ -609,8 +609,8 @@ const GovernanceHub: React.FC = () => {
             </span>
           </GovernanceTooltip>
           <GovernanceTooltip
-            header="Governance.Tooltip.Hub.ViewMappings"
-            description="Governance.Tooltip.Hub.ViewMappings.Desc"
+            header="View mappings"
+            description="Open the Framework Mapper to browse control mappings"
           >
             <span>
               <CustomizableButton
@@ -623,8 +623,8 @@ const GovernanceHub: React.FC = () => {
             </span>
           </GovernanceTooltip>
           <GovernanceTooltip
-            header="Governance.Tooltip.Hub.NewScenario"
-            description="Governance.Tooltip.Hub.NewScenario.Desc"
+            header="New scenario"
+            description="Create a custom governance scenario for the project"
           >
             <span>
               <CustomizableButton
@@ -661,8 +661,8 @@ const GovernanceHub: React.FC = () => {
             }}
           >
             <GovernanceTooltip
-              header="Governance.Tooltip.Hub.GapHotspots"
-              description="Governance.Tooltip.Hub.GapHotspots.Desc"
+              header="Gap hotspots"
+              description="Frameworks with the most unmapped controls"
             >
               <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: "12px" }}>
                 <AlertTriangle size={18} color={status.warning.text} />

@@ -89,8 +89,8 @@ const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
       </Stack>
 
       <GovernanceTooltip
-        header="Governance.Tooltip.ScenarioComparison.Selector"
-        description="Governance.Tooltip.ScenarioComparison.Selector.Desc"
+        header="Scenario selector"
+        description="Choose up to three scenarios to compare side by side"
       >
         <Typography sx={{ fontSize: 13, color: text.accent, mb: "16px" }}>
           Select up to {MAX_COMPARE} scenarios to compare frameworks, priorities, and context side
@@ -145,8 +145,8 @@ const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
           >
             {/* Header row */}
             <GovernanceTooltip
-              header="Governance.Tooltip.ScenarioComparison.Attribute"
-              description="Governance.Tooltip.ScenarioComparison.Attribute.Desc"
+              header="Comparison attribute"
+              description="Scenario property being compared across selections"
             >
               <Box
                 sx={{

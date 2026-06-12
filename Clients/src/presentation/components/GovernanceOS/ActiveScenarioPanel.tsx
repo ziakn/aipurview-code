@@ -161,8 +161,8 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
               </Typography>
             )}
             <GovernanceTooltip
-              header="Governance.Tooltip.ScenarioForm.Frameworks"
-              description="Governance.Tooltip.ScenarioForm.Frameworks.Desc"
+              header="Frameworks"
+              description="Frameworks included in this scenario"
             >
               <Stack direction="row" flexWrap="wrap" gap="6px" sx={{ mt: "12px" }}>
                 {frameworkIds.map((id) => {
@@ -188,8 +188,8 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
 
         <Stack direction="row" gap="8px" sx={{ flexShrink: 0 }}>
           <GovernanceTooltip
-            header="Governance.Tooltip.ActiveScenario.ViewInsights"
-            description="Governance.Tooltip.ActiveScenario.ViewInsights.Desc"
+            header="View insights"
+            description="Open Unified Insights for this active scenario"
           >
             <span>
               <CustomizableButton
@@ -205,8 +205,8 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
           </GovernanceTooltip>
           {latestActivation && (
             <GovernanceTooltip
-              header="Governance.Tooltip.ActiveScenario.Deactivate"
-              description="Governance.Tooltip.ActiveScenario.Deactivate.Desc"
+              header="Deactivate scenario"
+              description="Stop the active scenario and remove its generated tasks"
             >
               <span>
                 <CustomizableButton
@@ -223,8 +223,8 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
             </GovernanceTooltip>
           )}
           <GovernanceTooltip
-            header="Governance.Tooltip.ActiveScenario.Activate"
-            description="Governance.Tooltip.ActiveScenario.Activate.Desc"
+            header="Activate scenario"
+            description="Create tasks for the selected projects based on this scenario"
           >
             <span>
               <CustomizableButton
@@ -245,8 +245,8 @@ const ActiveScenarioPanel: React.FC<ActiveScenarioPanelProps> = ({
       {progress && progress.length > 0 && (
         <Box sx={{ mt: "16px", pt: "16px", borderTop: `1px solid ${borderPalette.light}` }}>
           <GovernanceTooltip
-            header="Governance.Tooltip.ActiveScenario.Progress"
-            description="Governance.Tooltip.ActiveScenario.Progress.Desc"
+            header="Task progress"
+            description="Completion status of tasks grouped by framework"
           >
             <Typography sx={{ fontSize: 12, fontWeight: 600, color: text.primary, mb: "12px" }}>
               Task progress by framework

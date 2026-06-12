@@ -117,8 +117,8 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
     >
       <Stack gap="16px" sx={{ minWidth: 480 }}>
         <GovernanceTooltip
-          header="Governance.Tooltip.ScenarioForm.Name"
-          description="Governance.Tooltip.ScenarioForm.Name.Desc"
+          header="Scenario name"
+          description="Short descriptive name for this scenario"
         >
           <TextField
             label="Name"
@@ -130,8 +130,8 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
           />
         </GovernanceTooltip>
         <GovernanceTooltip
-          header="Governance.Tooltip.ScenarioForm.Description"
-          description="Governance.Tooltip.ScenarioForm.Description.Desc"
+          header="Description"
+          description="Context and purpose of this scenario"
         >
           <TextField
             label="Description"
@@ -146,8 +146,8 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
 
         <Box>
           <GovernanceTooltip
-            header="Governance.Tooltip.ScenarioForm.Industry"
-            description="Governance.Tooltip.ScenarioForm.Industry.Desc"
+            header="Industry"
+            description="Sector this scenario applies to"
           >
             <Typography
               sx={{
@@ -192,8 +192,8 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
 
         <Box>
           <GovernanceTooltip
-            header="Governance.Tooltip.ScenarioForm.Region"
-            description="Governance.Tooltip.ScenarioForm.Region.Desc"
+            header="Region"
+            description="Regulatory region this scenario targets"
           >
             <Typography
               sx={{
@@ -237,8 +237,8 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
 
         <Box>
           <GovernanceTooltip
-            header="Governance.Tooltip.ScenarioForm.Frameworks"
-            description="Governance.Tooltip.ScenarioForm.Frameworks.Desc"
+            header="Frameworks"
+            description="Frameworks included in this scenario"
           >
             <Typography
               sx={{

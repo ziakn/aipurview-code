@@ -72,8 +72,8 @@ const MappingStatsPanel: React.FC<MappingStatsPanelProps> = ({ projectId }) => {
       }}
     >
       <GovernanceTooltip
-        header="Governance.Tooltip.MappingStatsPanel.Header"
-        description="Governance.Tooltip.MappingStatsPanel.Header.Desc"
+        header="Mapping statistics"
+        description="Breakdown of cross-framework control mappings"
       >
         <Stack direction="row" gap="16px" alignItems="center" sx={{ mb: "16px" }}>
           <Network size={20} color={brand.primary} />
@@ -91,8 +91,8 @@ const MappingStatsPanel: React.FC<MappingStatsPanelProps> = ({ projectId }) => {
           }}
         >
           <GovernanceTooltip
-            header="Governance.Tooltip.MappingStatsPanel.Total"
-            description="Governance.Tooltip.MappingStatsPanel.Total.Desc"
+            header="Total mappings"
+            description="All mappings created across frameworks"
           >
             <Box
               sx={{
@@ -114,8 +114,8 @@ const MappingStatsPanel: React.FC<MappingStatsPanelProps> = ({ projectId }) => {
         {domainEntries.length > 0 && (
           <Box>
             <GovernanceTooltip
-              header="Governance.Tooltip.MappingStatsPanel.ByDomain"
-              description="Governance.Tooltip.MappingStatsPanel.ByDomain.Desc"
+              header="By domain"
+              description="Mapping count grouped by control domain"
             >
               <Typography sx={{ fontSize: 12, fontWeight: 600, color: text.primary, mb: "8px" }}>
                 By domain
@@ -151,8 +151,8 @@ const MappingStatsPanel: React.FC<MappingStatsPanelProps> = ({ projectId }) => {
         {strengthEntries.length > 0 && (
           <Box>
             <GovernanceTooltip
-              header="Governance.Tooltip.MappingStatsPanel.ByStrength"
-              description="Governance.Tooltip.MappingStatsPanel.ByStrength.Desc"
+              header="By mapping strength"
+              description="Mapping count grouped by relationship strength"
             >
               <Typography sx={{ fontSize: 12, fontWeight: 600, color: text.primary, mb: "8px" }}>
                 By mapping strength
@@ -161,15 +161,27 @@ const MappingStatsPanel: React.FC<MappingStatsPanelProps> = ({ projectId }) => {
             <Stack direction="row" flexWrap="wrap" gap="8px">
               {strengthEntries.map(([strength, count]) => {
                 const colors = STRENGTH_COLORS[strength] || STRENGTH_COLORS.related;
-                const strengthKey =
+                const strengthTooltip =
                   strength === "direct"
-                    ? "Governance.Tooltip.MappingStatsPanel.Direct"
+                    ? {
+                        header: "Direct mapping",
+                        description: "Exact or strong control correspondence",
+                      }
                     : strength === "partial"
-                      ? "Governance.Tooltip.MappingStatsPanel.Partial"
-                      : "Governance.Tooltip.MappingStatsPanel.Related";
-                const strengthDescKey = `${strengthKey}.Desc`;
+                      ? {
+                          header: "Partial mapping",
+                          description: "Control partially satisfies another control",
+                        }
+                      : {
+                          header: "Related mapping",
+                          description: "Loose or tangential correspondence between controls",
+                        };
                 return (
-                  <GovernanceTooltip key={strength} header={strengthKey} description={strengthDescKey}>
+                  <GovernanceTooltip
+                    key={strength}
+                    header={strengthTooltip.header}
+                    description={strengthTooltip.description}
+                  >
                     <Box
                       component="span"
                       sx={{

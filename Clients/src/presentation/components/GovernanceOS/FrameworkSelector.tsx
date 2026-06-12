@@ -28,8 +28,8 @@ const FrameworkSelector = ({
   return (
     <Stack direction="row" spacing={3} sx={{ mb: 3 }} alignItems="flex-end">
       <GovernanceTooltip
-        header="Governance.Tooltip.FrameworkSelector.Source"
-        description="Governance.Tooltip.FrameworkSelector.Source.Desc"
+        header="Source framework"
+        description="Choose the framework to map controls from"
       >
         <span>
           <Select
@@ -46,8 +46,8 @@ const FrameworkSelector = ({
       <ArrowRight size={16} color={text.muted} style={{ marginBottom: theme.spacing(2.5) }} />
 
       <GovernanceTooltip
-        header="Governance.Tooltip.FrameworkSelector.Target"
-        description="Governance.Tooltip.FrameworkSelector.Target.Desc"
+        header="Target framework"
+        description="Choose the framework to map controls into"
       >
         <span>
           <Select

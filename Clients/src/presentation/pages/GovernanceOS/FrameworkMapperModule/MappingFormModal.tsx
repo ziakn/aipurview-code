@@ -99,8 +99,8 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
         {/* Source Framework */}
         <Box>
           <GovernanceTooltip
-            header="Governance.Tooltip.MappingForm.SourceFramework"
-            description="Governance.Tooltip.MappingForm.SourceFramework.Desc"
+            header="Source framework"
+            description="Framework containing the source control"
           >
             <Typography
               sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}
@@ -140,8 +140,8 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
         </Box>
 
         <GovernanceTooltip
-          header="Governance.Tooltip.MappingForm.SourceControl"
-          description="Governance.Tooltip.MappingForm.SourceControl.Desc"
+          header="Source control"
+          description="Identifier of the control being mapped"
         >
           <TextField
             label="Source Control Identifier *"
@@ -156,8 +156,8 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
         {/* Target Framework */}
         <Box>
           <GovernanceTooltip
-            header="Governance.Tooltip.MappingForm.TargetFramework"
-            description="Governance.Tooltip.MappingForm.TargetFramework.Desc"
+            header="Target framework"
+            description="Framework receiving the mapped control"
           >
             <Typography
               sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}
@@ -197,8 +197,8 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
         </Box>
 
         <GovernanceTooltip
-          header="Governance.Tooltip.MappingForm.TargetControl"
-          description="Governance.Tooltip.MappingForm.TargetControl.Desc"
+          header="Target control"
+          description="Identifier of the equivalent control in the target framework"
         >
           <TextField
             label="Target Control Identifier *"
@@ -213,8 +213,8 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
         {/* Mapping Strength */}
         <Box>
           <GovernanceTooltip
-            header="Governance.Tooltip.MappingForm.Strength"
-            description="Governance.Tooltip.MappingForm.Strength.Desc"
+            header="Mapping strength"
+            description="Relationship between the two mapped controls"
           >
             <Typography
               sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}
@@ -253,8 +253,8 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
         </Box>
 
         <GovernanceTooltip
-          header="Governance.Tooltip.MappingForm.DomainTag"
-          description="Governance.Tooltip.MappingForm.DomainTag.Desc"
+          header="Domain tag"
+          description="Optional governance domain category for grouping mappings"
         >
           <TextField
             label="Domain Tag"
@@ -267,8 +267,8 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
         </GovernanceTooltip>
 
         <GovernanceTooltip
-          header="Governance.Tooltip.MappingForm.Rationale"
-          description="Governance.Tooltip.MappingForm.Rationale.Desc"
+          header="Rationale"
+          description="Explanation for why these two controls map to each other"
         >
           <TextField
             label="Rationale"
@@ -285,8 +285,8 @@ const MappingFormModal: React.FC<MappingFormModalProps> = ({
         {/* Confidence Score */}
         <Box>
           <GovernanceTooltip
-            header="Governance.Tooltip.MappingForm.Confidence"
-            description="Governance.Tooltip.MappingForm.Confidence.Desc"
+            header="Confidence score"
+            description="Certainty level for this control mapping"
           >
             <Typography
               sx={{ fontSize: 12, color: text.secondary, fontWeight: 500, display: "block", mb: 1 }}

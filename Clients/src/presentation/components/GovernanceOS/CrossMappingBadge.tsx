@@ -15,8 +15,8 @@ const CrossMappingBadge = ({ mappingCount }: CrossMappingBadgeProps) => {
 
   return (
     <GovernanceTooltip
-      header="Governance.Tooltip.CrossMappingBadge.Count"
-      description="Governance.Tooltip.CrossMappingBadge.Count.Desc"
+      header="Cross-framework mappings"
+      description="Number of mappings linked to this control"
     >
       <Box
         onClick={() => navigate("/governance-os/mapper")}

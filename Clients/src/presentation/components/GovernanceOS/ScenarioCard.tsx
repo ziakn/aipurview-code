@@ -88,8 +88,8 @@ const ScenarioCard = ({
           </Box>
           <Stack direction="row" gap="8px" alignItems="center">
             <GovernanceTooltip
-              header="Governance.Tooltip.ScenarioCard.Details"
-              description="Governance.Tooltip.ScenarioCard.Details.Desc"
+              header="Scenario details"
+              description="View what selecting this scenario means for the project"
             >
               <span>
                 <IconButton
@@ -107,8 +107,8 @@ const ScenarioCard = ({
             </GovernanceTooltip>
             {onEdit && !scenario.is_builtin && (
               <GovernanceTooltip
-                header="Governance.Tooltip.ScenarioCard.Edit"
-                description="Governance.Tooltip.ScenarioCard.Edit.Desc"
+                header="Edit scenario"
+                description="Modify this governance scenario"
               >
                 <span>
                   <IconButton
@@ -127,8 +127,8 @@ const ScenarioCard = ({
             )}
             {onDelete && !scenario.is_builtin && (
               <GovernanceTooltip
-                header="Governance.Tooltip.ScenarioCard.Delete"
-                description="Governance.Tooltip.ScenarioCard.Delete.Desc"
+                header="Delete scenario"
+                description="Remove this governance scenario permanently"
               >
                 <span>
                   <IconButton
@@ -147,8 +147,8 @@ const ScenarioCard = ({
             )}
             {onActivate && (
               <GovernanceTooltip
-                header="Governance.Tooltip.ScenarioCard.Activate"
-                description="Governance.Tooltip.ScenarioCard.Activate.Desc"
+                header="Activate scenario"
+                description="Create tasks across selected projects using this scenario"
                 placement="left"
               >
                 <span>
@@ -168,8 +168,8 @@ const ScenarioCard = ({
             )}
             {onSelect && (
               <GovernanceTooltip
-                header="Governance.Tooltip.ScenarioCard.Select"
-                description="Governance.Tooltip.ScenarioCard.Select.Desc"
+                header="Select scenario"
+                description="Set this scenario as the active governance strategy"
                 placement="left"
               >
                 <span>
