@@ -8197,6 +8197,26 @@ export const translations: Record<string, Record<string, string>> = {
       "Die Gesamtanzahl der Controls über alle aktiven Rahmenwerke im ausgewählten Projekt.",
     "The number of frameworks assigned to the selected project.":
       "Die Anzahl der dem ausgewählten Projekt zugewiesenen Rahmenwerke.",
+
+    // Governance tooltips
+    "Centralize and manage compliance evidence across frameworks and projects. This module is coming soon.":
+      "Compliance-Nachweise über alle Rahmenwerke und Projekte hinweg zentralisieren und verwalten. Dieses Modul ist demnächst verfügbar.",
+    "Visual exploration of governance relationships, controls, and compliance dependencies. This module is coming soon.":
+      "Visuelle Erkundung von Governance-Beziehungen, Controls und Compliance-Abhängigkeiten. Dieses Modul ist demnächst verfügbar.",
+    "Monitor regulatory changes, track compliance deadlines, and receive alerts. This module is coming soon.":
+      "Regulierungsänderungen überwachen, Compliance-Termine verfolgen und Warnungen erhalten. Dieses Modul ist demnächst verfügbar.",
+    "Toggle Governance Intelligence on or off for your organization. Only admins can change this.":
+      "Governance Intelligence für Ihre Organisation ein- oder ausschalten. Nur Administratoren können dies ändern.",
+    "Switch to a different governance scenario to update framework priorities.":
+      "Wechseln Sie zu einem anderen Governance-Szenario, um die Framework-Prioritäten zu aktualisieren.",
+    "Stop the system from prompting you to enable Governance Intelligence in the future.":
+      "Verhindern Sie, dass das System Sie zukünftig auffordert, Governance Intelligence zu aktivieren.",
+    "Re-enable the smart prompt that suggests turning on Governance Intelligence.":
+      "Aktivieren Sie die Smart-Prompt-Eingabeaufforderung erneut, die vorschlägt, Governance Intelligence einzuschalten.",
+    "Go to the Framework Mapper to configure filters for your session.":
+      "Gehen Sie zum Framework Mapper, um Filter für Ihre Sitzung zu konfigurieren.",
+    "Save your Governance Intelligence preferences.":
+      "Speichern Sie Ihre Governance-Intelligence-Einstellungen.",
   },
 
   fr: {
@@ -16326,5 +16346,25 @@ export const translations: Record<string, Record<string, string>> = {
       "Le nombre total de contrôles dans tous les cadres actifs du projet sélectionné.",
     "The number of frameworks assigned to the selected project.":
       "Le nombre de cadres assignés au projet sélectionné.",
+
+    // Governance tooltips
+    "Centralize and manage compliance evidence across frameworks and projects. This module is coming soon.":
+      "Centraliser et gérer les preuves de conformité dans tous les cadres et projets. Ce module arrive bientôt.",
+    "Visual exploration of governance relationships, controls, and compliance dependencies. This module is coming soon.":
+      "Exploration visuelle des relations de gouvernance, des contrôles et des dépendances de conformité. Ce module arrive bientôt.",
+    "Monitor regulatory changes, track compliance deadlines, and receive alerts. This module is coming soon.":
+      "Surveiller les changements réglementaires, suivre les échéances de conformité et recevoir des alertes. Ce module arrive bientôt.",
+    "Toggle Governance Intelligence on or off for your organization. Only admins can change this.":
+      "Activez ou désactivez Governance Intelligence pour votre organisation. Seuls les administrateurs peuvent modifier cela.",
+    "Switch to a different governance scenario to update framework priorities.":
+      "Passez à un scénario de gouvernance différent pour mettre à jour les priorités de cadres.",
+    "Stop the system from prompting you to enable Governance Intelligence in the future.":
+      "Empêchez le système de vous inviter à activer Governance Intelligence à l'avenir.",
+    "Re-enable the smart prompt that suggests turning on Governance Intelligence.":
+      "Réactivez l'invite intelligente qui suggère d'activer Governance Intelligence.",
+    "Go to the Framework Mapper to configure filters for your session.":
+      "Allez au Framework Mapper pour configurer les filtres de votre session.",
+    "Save your Governance Intelligence preferences.":
+      "Enregistrez vos préférences Governance Intelligence.",
   },
 };
