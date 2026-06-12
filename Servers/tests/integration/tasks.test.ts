@@ -52,9 +52,7 @@ describe("Tasks API", () => {
 
     it("returns 400 without auth (no token)", async () => {
       const app = createTestApp();
-      const res = await testRequest(app)
-        .post("/api/tasks")
-        .send({ title: "Unauthorized Task" });
+      const res = await testRequest(app).post("/api/tasks").send({ title: "Unauthorized Task" });
 
       expect(res.status).toBe(400);
     });
@@ -80,9 +78,7 @@ describe("Tasks API", () => {
         mockUser: { userId, organizationId: orgId, role: "Admin" },
       });
 
-      await testRequest(app)
-        .post("/api/tasks")
-        .send({ title: "Listable Task" });
+      await testRequest(app).post("/api/tasks").send({ title: "Listable Task" });
 
       const res = await testRequest(app).get("/api/tasks");
 

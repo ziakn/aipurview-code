@@ -37,9 +37,7 @@ describe("Approval Workflows API", () => {
         mockUser: { userId, organizationId: orgId, role: "Admin" },
       });
 
-      const res = await testRequest(app)
-        .post("/api/approval-workflows")
-        .send(validWorkflowPayload);
+      const res = await testRequest(app).post("/api/approval-workflows").send(validWorkflowPayload);
 
       expect(res.status).toBe(201);
       expect(res.body.data.workflow_title).toBe("Test Approval Workflow");
@@ -53,9 +51,7 @@ describe("Approval Workflows API", () => {
       });
 
       const { workflow_title, ...incompletePayload } = validWorkflowPayload;
-      const res = await testRequest(app)
-        .post("/api/approval-workflows")
-        .send(incompletePayload);
+      const res = await testRequest(app).post("/api/approval-workflows").send(incompletePayload);
 
       expect(res.status).toBe(400);
     });
@@ -132,9 +128,7 @@ describe("Approval Workflows API", () => {
         mockUser: { userId, organizationId: orgId, role: "Admin" },
       });
 
-      const res = await testRequest(app)
-        .post("/api/approval-requests")
-        .send({ workflow_id: 999 });
+      const res = await testRequest(app).post("/api/approval-requests").send({ workflow_id: 999 });
 
       expect(res.status).toBe(400);
     });
