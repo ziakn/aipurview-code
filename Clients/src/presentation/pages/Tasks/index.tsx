@@ -48,6 +48,7 @@ import { useFilterBy } from "../../../application/hooks/useFilterBy";
 import { useColumnVisibility, ColumnConfig } from "../../../application/hooks/useColumnVisibility";
 import { displayFormattedDate } from "../../tools/isoDateToString";
 import Alert from "../../components/Alert";
+import CustomizableSkeleton from "../../components/Skeletons";
 import TabBar from "../../components/TabBar";
 import DeadlineView from "./DeadlineView";
 import { toggleLabelStyle, toggleContainerStyle } from "./style";
@@ -953,9 +954,9 @@ const Tasks: React.FC = () => {
       {/* Content Area */}
       <Box>
         {isLoading && (
-          <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
-            <Typography>Loading tasks...</Typography>
-          </Box>
+          <Stack spacing={2}>
+            <CustomizableSkeleton variant="rectangular" width="100%" height={400} />
+          </Stack>
         )}
 
         {error && (
