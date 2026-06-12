@@ -198,8 +198,8 @@ const ScenarioBuilder = () => {
         </Typography>
         <Stack direction="row" gap="16px" flexWrap="wrap" useFlexGap alignItems="flex-end">
           <GovernanceTooltip
-            header="Industry"
-            description="The industry sector used to tailor governance scenario recommendations."
+            header="Governance.Tooltip.ScenarioBuilder.Industry"
+            description="Governance.Tooltip.ScenarioBuilder.Industry.Desc"
           >
             <span>
               <Select
@@ -217,8 +217,8 @@ const ScenarioBuilder = () => {
           </GovernanceTooltip>
 
           <GovernanceTooltip
-            header="Region"
-            description="The regulatory region used to prioritize relevant frameworks and requirements."
+            header="Governance.Tooltip.ScenarioBuilder.Region"
+            description="Governance.Tooltip.ScenarioBuilder.Region.Desc"
           >
             <span>
               <Select
@@ -236,8 +236,8 @@ const ScenarioBuilder = () => {
           </GovernanceTooltip>
 
           <GovernanceTooltip
-            header="Risk Level"
-            description="The risk classification of your AI use case, based on applicable regulations."
+            header="Governance.Tooltip.ScenarioBuilder.RiskLevel"
+            description="Governance.Tooltip.ScenarioBuilder.RiskLevel.Desc"
           >
             <span>
               <Select
@@ -255,8 +255,8 @@ const ScenarioBuilder = () => {
           </GovernanceTooltip>
 
           <GovernanceTooltip
-            header="Use Case Type"
-            description="The category of AI system you are building or deploying."
+            header="Governance.Tooltip.ScenarioBuilder.UseCaseType"
+            description="Governance.Tooltip.ScenarioBuilder.UseCaseType.Desc"
           >
             <span>
               <Select
@@ -274,8 +274,8 @@ const ScenarioBuilder = () => {
           </GovernanceTooltip>
 
           <GovernanceTooltip
-            header="Get Recommendations"
-            description="Generate scenario recommendations that match the context you provided."
+            header="Governance.Tooltip.ScenarioBuilder.GetRecommendations"
+            description="Governance.Tooltip.ScenarioBuilder.GetRecommendations.Desc"
           >
             <span>
               <CustomizableButton
@@ -337,8 +337,8 @@ const ScenarioBuilder = () => {
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Typography sx={{ fontSize: 14, fontWeight: 600 }}>All Governance Scenarios</Typography>
           <GovernanceTooltip
-            header="New Scenario"
-            description="Create a custom governance scenario to define framework priorities for your organization."
+            header="Governance.Tooltip.ScenarioBuilder.NewScenario"
+            description="Governance.Tooltip.ScenarioBuilder.NewScenario.Desc"
           >
             <span>
               <CustomizableButton

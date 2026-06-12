@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Stack, TextField, Typography, Box } from "@mui/material";
 import StandardModal from "../../../components/Modals/StandardModal";
+import GovernanceTooltip from "../../../components/GovernanceOS/GovernanceTooltip";
 import { IGovernanceScenario } from "../../../../domain/interfaces/i.governanceOs";
 import { border as borderPalette, background, text, accent } from "../../../themes/palette";
 
@@ -115,36 +116,51 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
       fitContent
     >
       <Stack gap="16px" sx={{ minWidth: 480 }}>
-        <TextField
-          label="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          fullWidth
-          size="small"
-          required
-        />
-        <TextField
-          label="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          fullWidth
-          size="small"
-          multiline
-          rows={2}
-        />
+        <GovernanceTooltip
+          header="Governance.Tooltip.ScenarioForm.Name"
+          description="Governance.Tooltip.ScenarioForm.Name.Desc"
+        >
+          <TextField
+            label="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            fullWidth
+            size="small"
+            required
+          />
+        </GovernanceTooltip>
+        <GovernanceTooltip
+          header="Governance.Tooltip.ScenarioForm.Description"
+          description="Governance.Tooltip.ScenarioForm.Description.Desc"
+        >
+          <TextField
+            label="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            fullWidth
+            size="small"
+            multiline
+            rows={2}
+          />
+        </GovernanceTooltip>
 
         <Box>
-          <Typography
-            sx={{
-              fontSize: 12,
-              color: text.secondary,
-              fontWeight: 500,
-              display: "block",
-              mb: "8px",
-            }}
+          <GovernanceTooltip
+            header="Governance.Tooltip.ScenarioForm.Industry"
+            description="Governance.Tooltip.ScenarioForm.Industry.Desc"
           >
-            Industry
-          </Typography>
+            <Typography
+              sx={{
+                fontSize: 12,
+                color: text.secondary,
+                fontWeight: 500,
+                display: "block",
+                mb: "8px",
+              }}
+            >
+              Industry
+            </Typography>
+          </GovernanceTooltip>
           <Stack direction="row" gap="8px" flexWrap="wrap" useFlexGap>
             {INDUSTRY_OPTIONS.map((ind) => (
               <Box
@@ -175,17 +191,22 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
         </Box>
 
         <Box>
-          <Typography
-            sx={{
-              fontSize: 12,
-              color: text.secondary,
-              fontWeight: 500,
-              display: "block",
-              mb: "8px",
-            }}
+          <GovernanceTooltip
+            header="Governance.Tooltip.ScenarioForm.Region"
+            description="Governance.Tooltip.ScenarioForm.Region.Desc"
           >
-            Region
-          </Typography>
+            <Typography
+              sx={{
+                fontSize: 12,
+                color: text.secondary,
+                fontWeight: 500,
+                display: "block",
+                mb: "8px",
+              }}
+            >
+              Region
+            </Typography>
+          </GovernanceTooltip>
           <Stack direction="row" gap="8px" flexWrap="wrap" useFlexGap>
             {REGION_OPTIONS.map((reg) => (
               <Box
@@ -215,17 +236,22 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
         </Box>
 
         <Box>
-          <Typography
-            sx={{
-              fontSize: 12,
-              color: text.secondary,
-              fontWeight: 500,
-              display: "block",
-              mb: "8px",
-            }}
+          <GovernanceTooltip
+            header="Governance.Tooltip.ScenarioForm.Frameworks"
+            description="Governance.Tooltip.ScenarioForm.Frameworks.Desc"
           >
-            Frameworks *
-          </Typography>
+            <Typography
+              sx={{
+                fontSize: 12,
+                color: text.secondary,
+                fontWeight: 500,
+                display: "block",
+                mb: "8px",
+              }}
+            >
+              Frameworks *
+            </Typography>
+          </GovernanceTooltip>
           <Stack direction="row" gap="8px" flexWrap="wrap" useFlexGap>
             {FRAMEWORK_OPTIONS.map((fw) => {
               const isSelected = selectedFrameworks.includes(fw.id);

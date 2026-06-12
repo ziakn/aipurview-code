@@ -155,6 +155,34 @@ const newTooltipKeys = {
   "Governance.Tooltip.UnifiedInsights.ActiveFrameworks": "Active frameworks",
   "Governance.Tooltip.UnifiedInsights.ActiveFrameworks.Desc": "Frameworks assigned to project",
 
+  // Scenario Card
+  "Governance.Tooltip.ScenarioCard.Details": "Scenario details",
+  "Governance.Tooltip.ScenarioCard.Details.Desc": "View what selecting this scenario means",
+  "Governance.Tooltip.ScenarioCard.Edit": "Edit scenario",
+  "Governance.Tooltip.ScenarioCard.Edit.Desc": "Modify this governance scenario",
+  "Governance.Tooltip.ScenarioCard.Delete": "Delete scenario",
+  "Governance.Tooltip.ScenarioCard.Delete.Desc": "Remove this governance scenario",
+  "Governance.Tooltip.ScenarioCard.Activate": "Activate scenario",
+  "Governance.Tooltip.ScenarioCard.Activate.Desc": "Create tasks across selected projects",
+  "Governance.Tooltip.ScenarioCard.Select": "Select scenario",
+  "Governance.Tooltip.ScenarioCard.Select.Desc": "Set as active governance strategy",
+
+  // Mapping Card
+  "Governance.Tooltip.MappingCard.Edit": "Edit mapping",
+  "Governance.Tooltip.MappingCard.Edit.Desc": "Modify this control mapping",
+  "Governance.Tooltip.MappingCard.Delete": "Delete mapping",
+  "Governance.Tooltip.MappingCard.Delete.Desc": "Remove this control mapping",
+  "Governance.Tooltip.MappingCard.Details": "Mapping details",
+  "Governance.Tooltip.MappingCard.Details.Desc": "View full mapping rationale",
+
+  // Mapping Strength Badge
+  "Governance.Tooltip.MappingStrength.Direct": "Direct",
+  "Governance.Tooltip.MappingStrength.Direct.Desc": "Source fully satisfies target control",
+  "Governance.Tooltip.MappingStrength.Partial": "Partial",
+  "Governance.Tooltip.MappingStrength.Partial.Desc": "Controls overlap but have unique needs",
+  "Governance.Tooltip.MappingStrength.Related": "Related",
+  "Governance.Tooltip.MappingStrength.Related.Desc": "Similar topics but not interchangeable",
+
   // Hub
   "Governance.Tooltip.Hub.ViewScenario": "View scenario",
   "Governance.Tooltip.Hub.ViewScenario.Desc": "Open active scenario details",

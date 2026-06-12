@@ -96,7 +96,10 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
 
           <Stack direction="row" gap="4px" alignItems="center" sx={{ ml: "auto" }}>
             {onEdit && (
-              <GovernanceTooltip header="Edit Mapping" description="Modify this control mapping.">
+              <GovernanceTooltip
+              header="Governance.Tooltip.MappingCard.Edit"
+              description="Governance.Tooltip.MappingCard.Edit.Desc"
+            >
                 <span>
                   <IconButton
                     size="small"
@@ -113,7 +116,10 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
               </GovernanceTooltip>
             )}
             {onDelete && (
-              <GovernanceTooltip header="Delete Mapping" description="Remove this control mapping.">
+              <GovernanceTooltip
+                header="Governance.Tooltip.MappingCard.Delete"
+                description="Governance.Tooltip.MappingCard.Delete.Desc"
+              >
                 <span>
                   <IconButton
                     size="small"
@@ -130,8 +136,8 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
               </GovernanceTooltip>
             )}
             <GovernanceTooltip
-              header="Mapping Details"
-              description="Click anywhere on the card to view the full mapping rationale and details."
+              header="Governance.Tooltip.MappingCard.Details"
+              description="Governance.Tooltip.MappingCard.Details.Desc"
             >
               <span>
                 <Info size={14} color={text.muted} />
