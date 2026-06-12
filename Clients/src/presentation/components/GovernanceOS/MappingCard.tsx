@@ -96,10 +96,7 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
 
           <Stack direction="row" gap="4px" alignItems="center" sx={{ ml: "auto" }}>
             {onEdit && (
-              <GovernanceTooltip
-              header="Edit mapping"
-              description="Modify this control mapping"
-            >
+              <GovernanceTooltip header="Edit mapping" description="Modify this control mapping">
                 <span>
                   <IconButton
                     size="small"

@@ -235,10 +235,7 @@ const ScenarioBuilder = () => {
             </span>
           </GovernanceTooltip>
 
-          <GovernanceTooltip
-            header="Risk level"
-            description="AI system risk classification"
-          >
+          <GovernanceTooltip header="Risk level" description="AI system risk classification">
             <span>
               <Select
                 id="risk-level-select"
@@ -254,10 +251,7 @@ const ScenarioBuilder = () => {
             </span>
           </GovernanceTooltip>
 
-          <GovernanceTooltip
-            header="Use case type"
-            description="Category of AI system"
-          >
+          <GovernanceTooltip header="Use case type" description="Category of AI system">
             <span>
               <Select
                 id="use-case-type-select"

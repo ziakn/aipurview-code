@@ -30,7 +30,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Activation status": "[DE] Activation status",
     "Active framework": "[DE] Active framework",
     "Active frameworks": "[DE] Active frameworks",
-    "Add a remediation task for this unmapped control": "[DE] Add a remediation task for this unmapped control",
+    "Add a remediation task for this unmapped control":
+      "[DE] Add a remediation task for this unmapped control",
     "Add framework": "[DE] Add framework",
     "All mappings created across frameworks": "[DE] All mappings created across frameworks",
     "Analyze coverage and gaps across active frameworks": "[DE] Analyze coverage and gaps",
@@ -39,36 +40,48 @@ export const translations: Record<string, Record<string, string>> = {
     "Baseline framework for this scenario": "[DE] Baseline framework for this scenario",
     "Baseline framework in the simulation": "[DE] Baseline framework in simulation",
     "Breakdown of cross-framework control mappings": "[DE] Breakdown of cross-framework mappings",
-    "Calculate estimated coverage, effort, and timeline": "[DE] Calculate estimated coverage and effort",
+    "Calculate estimated coverage, effort, and timeline":
+      "[DE] Calculate estimated coverage and effort",
     "Category of AI system": "[DE] Category of AI system",
     "Certainty level for this control mapping": "[DE] Certainty level for this mapping",
-    "Choose every unmapped control in this framework for bulk action": "[DE] Choose every unmapped control in this framework",
-    "Choose owners responsible for each framework in the activation": "[DE] Owners for each framework",
+    "Choose every unmapped control in this framework for bulk action":
+      "[DE] Choose every unmapped control in this framework",
+    "Choose owners responsible for each framework in the activation":
+      "[DE] Owners for each framework",
     "Choose the framework to map controls from": "[DE] Choose the framework to map from",
     "Choose the framework to map controls into": "[DE] Choose the framework to map into",
-    "Choose the projects where activation tasks will be created": "[DE] Projects where tasks will be created",
-    "Choose up to three scenarios to compare side by side": "[DE] Choose up to three scenarios to compare",
-    "Click to view the mappings between these two frameworks": "[DE] Click to view mappings between these frameworks",
+    "Choose the projects where activation tasks will be created":
+      "[DE] Projects where tasks will be created",
+    "Choose up to three scenarios to compare side by side":
+      "[DE] Choose up to three scenarios to compare",
+    "Click to view the mappings between these two frameworks":
+      "[DE] Click to view mappings between these frameworks",
     "Color intensity shows the density of mappings": "[DE] Color intensity shows mapping density",
     "Comparison attribute": "[DE] Comparison attribute",
     "Completion status of tasks grouped by framework": "[DE] Completion status by framework",
-    "Confirm the scenario activation details before creating tasks": "[DE] Confirm scenario activation details",
+    "Confirm the scenario activation details before creating tasks":
+      "[DE] Confirm scenario activation details",
     "Context and purpose of this scenario": "[DE] Context and purpose of this scenario",
     "Control gaps": "[DE] Gaps",
     "Control partially satisfies another control": "[DE] Control partially satisfies another",
     "Controls across all active frameworks": "[DE] Controls across active frameworks",
     "Controls overlap but are not fully equivalent": "[DE] Related but not exact mapping",
-    "Controls overlap but each has unique requirements": "[DE] Controls overlap but have unique needs",
+    "Controls overlap but each has unique requirements":
+      "[DE] Controls overlap but have unique needs",
     "Controls that have cross-framework mappings": "[DE] Controls with cross-framework mappings",
-    "Controls that satisfy requirements in multiple frameworks": "[DE] Controls mapped to multiple frameworks",
+    "Controls that satisfy requirements in multiple frameworks":
+      "[DE] Controls mapped to multiple frameworks",
     "Coverage progress": "[DE] Coverage progress",
     "Create a custom governance scenario": "[DE] Create a custom governance scenario",
     "Create a custom governance scenario for the project": "[DE] Create a custom scenario",
-    "Create a new cross-framework control mapping manually": "[DE] Create a cross-framework control mapping",
+    "Create a new cross-framework control mapping manually":
+      "[DE] Create a cross-framework control mapping",
     "Create task": "[DE] Create task",
-    "Create tasks across selected projects using this scenario": "[DE] Create tasks across selected projects",
+    "Create tasks across selected projects using this scenario":
+      "[DE] Create tasks across selected projects",
     "Create tasks for selected gaps": "[DE] Create tasks for selected gaps",
-    "Create tasks for the selected projects based on this scenario": "[DE] Create tasks for selected projects",
+    "Create tasks for the selected projects based on this scenario":
+      "[DE] Create tasks for selected projects",
     "Cross-framework control links created": "[DE] Cross-framework links created",
     "Cross-framework mappings": "[DE] Cross-framework mappings",
     "Deactivate activation": "[DE] Deactivate",
@@ -80,7 +93,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Domain filter": "[DE] Domain filter",
     "Domain tag": "[DE] Domain tag",
     "Download the coverage report as a CSV file": "[DE] Download coverage report as CSV",
-    "Download the current pairwise mappings as a CSV file": "[DE] Download pairwise mappings as CSV",
+    "Download the current pairwise mappings as a CSV file":
+      "[DE] Download pairwise mappings as CSV",
     "Edit mapping": "[DE] Edit mapping",
     "Edit scenario": "[DE] Edit scenario",
     "Estimated coverage": "[DE] Est coverage",
@@ -91,7 +105,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Estimated weeks to complete the work": "[DE] Estimated weeks to complete",
     "Exact one-to-one correspondence between controls": "[DE] Exact mapping between frameworks",
     "Exact or strong control correspondence": "[DE] Exact or strong control correspondence",
-    "Explanation for why these two controls map to each other": "[DE] Explanation for why these controls map",
+    "Explanation for why these two controls map to each other":
+      "[DE] Explanation for why these controls map",
     "Export mappings": "[DE] Export mappings",
     "Filter mappings by governance domain": "[DE] Filter mappings by governance domain",
     "Framework axis": "[DE] Framework axis",
@@ -103,21 +118,28 @@ export const translations: Record<string, Record<string, string>> = {
     "Frameworks included in this scenario": "[DE] Frameworks included in this scenario",
     "Frameworks with the most unmapped controls": "[DE] Frameworks with the most unmapped controls",
     "Gap hotspots": "[DE] Gap hotspots",
-    "Generate remediation tasks for all selected unmapped controls": "[DE] Generate remediation tasks for all selected controls",
-    "Generate scenario suggestions matching the project context": "[DE] Generate scenarios matching context",
+    "Generate remediation tasks for all selected unmapped controls":
+      "[DE] Generate remediation tasks for all selected controls",
+    "Generate scenario suggestions matching the project context":
+      "[DE] Generate scenarios matching context",
     "Identifier of the control being mapped": "[DE] Identifier of the control being mapped",
-    "Identifier of the equivalent control in the target framework": "[DE] Identifier of the equivalent control",
+    "Identifier of the equivalent control in the target framework":
+      "[DE] Identifier of the equivalent control",
     "Import mappings": "[DE] Import mappings",
     "Inactive framework": "[DE] Inactive framework",
-    "Loose or tangential correspondence between controls": "[DE] Loose or tangential correspondence",
+    "Loose or tangential correspondence between controls":
+      "[DE] Loose or tangential correspondence",
     "Mapped controls": "[DE] Mapped controls",
-    "Mapped controls shown as a percentage of total controls": "[DE] Mapped controls as a percentage of total controls",
+    "Mapped controls shown as a percentage of total controls":
+      "[DE] Mapped controls as a percentage of total controls",
     "Mapping count": "[DE] Mapping count",
     "Mapping count grouped by control domain": "[DE] Mapping count grouped by control domain",
-    "Mapping count grouped by relationship strength": "[DE] Mapping count grouped by relationship strength",
+    "Mapping count grouped by relationship strength":
+      "[DE] Mapping count grouped by relationship strength",
     "Mapping details": "[DE] Mapping details",
     "Mapping statistics": "[DE] Mapping statistics",
-    "Mean percentage of mapped controls across active frameworks": "[DE] Mean mapped control percentage",
+    "Mean percentage of mapped controls across active frameworks":
+      "[DE] Mean mapped control percentage",
     "Modify this control mapping": "[DE] Modify this control mapping",
     "Modify this governance scenario": "[DE] Modify this governance scenario",
     "Multi-framework synergies": "[DE] Synergies",
@@ -126,20 +148,26 @@ export const translations: Record<string, Record<string, string>> = {
     "No corresponding control was found": "[DE] No mapping between these frameworks",
     "No mapping": "[DE] None",
     "Number of mappings linked to this control": "[DE] Number of mappings linked to this control",
-    "Open Unified Insights for this active scenario": "[DE] Open Unified Insights for this scenario",
+    "Open Unified Insights for this active scenario":
+      "[DE] Open Unified Insights for this scenario",
     "Open Unified Insights to analyze coverage and gaps": "[DE] Open Unified Insights",
     "Open the Framework Mapper to browse control mappings": "[DE] Open Framework Mapper",
     "Open the active scenario details": "[DE] Open active scenario details",
     "Optional additional frameworks in the simulation": "[DE] Optional additional frameworks",
-    "Optional governance domain category for grouping mappings": "[DE] Optional governance domain category",
-    "Overview of how well this framework is mapped to controls": "[DE] Overview of how well this framework is mapped",
+    "Optional governance domain category for grouping mappings":
+      "[DE] Optional governance domain category",
+    "Overview of how well this framework is mapped to controls":
+      "[DE] Overview of how well this framework is mapped",
     "Partial mapping": "[DE] Partial",
     "Project to analyze for coverage and gaps": "[DE] Project to analyze coverage and gaps",
-    "Recalculate coverage and gaps for the selected project": "[DE] Recalculate coverage for selected project",
-    "Receive scenario suggestions tailored to the project context": "[DE] Receive scenario suggestions",
+    "Recalculate coverage and gaps for the selected project":
+      "[DE] Recalculate coverage for selected project",
+    "Receive scenario suggestions tailored to the project context":
+      "[DE] Receive scenario suggestions",
     "Refresh coverage data": "[DE] Refresh coverage",
     "Regulatory region this scenario targets": "[DE] Regulatory region this scenario targets",
-    "Regulatory region used to prioritize frameworks": "[DE] Regulatory region for framework priority",
+    "Regulatory region used to prioritize frameworks":
+      "[DE] Regulatory region for framework priority",
     "Related mapping": "[DE] Related",
     "Relationship between the two mapped controls": "[DE] Relationship between the two controls",
     "Remove all selected gaps from the bulk task list": "[DE] Remove all selected gaps",
@@ -157,18 +185,23 @@ export const translations: Record<string, Record<string, string>> = {
     "Secondary frameworks": "[DE] Secondary frameworks",
     "Sector this scenario applies to": "[DE] Sector this scenario applies to",
     "Sector used to tailor scenario recommendations": "[DE] Sector used to tailor recommendations",
-    "Select a CSV file containing mapping rows to import": "[DE] Select a CSV file with mapping rows",
+    "Select a CSV file containing mapping rows to import":
+      "[DE] Select a CSV file with mapping rows",
     "Select all gaps": "[DE] Select all gaps",
-    "Select or create a governance scenario for the project": "[DE] Select or create a governance scenario",
+    "Select or create a governance scenario for the project":
+      "[DE] Select or create a governance scenario",
     "Select project": "[DE] Select project",
     "Select scenario": "[DE] Select scenario",
     "Set as the baseline for scenario planning": "[DE] Set as the baseline for scenario planning",
     "Set this scenario as the active governance strategy": "[DE] Set as active governance strategy",
     "Short descriptive name for this scenario": "[DE] Short name for this scenario",
-    "Similar topics but the controls are not interchangeable": "[DE] Similar topics but not interchangeable",
-    "Source control fully satisfies the target control": "[DE] Source fully satisfies target control",
+    "Similar topics but the controls are not interchangeable":
+      "[DE] Similar topics but not interchangeable",
+    "Source control fully satisfies the target control":
+      "[DE] Source fully satisfies target control",
     "Source framework": "[DE] Source framework",
-    "Source frameworks as rows and target frameworks as columns": "[DE] Source rows and target columns",
+    "Source frameworks as rows and target frameworks as columns":
+      "[DE] Source rows and target columns",
     "Start here": "Hier starten",
     "Dashboard": "Dashboard",
     "Starting point for the what-if simulation": "[DE] Starting point for simulation",
@@ -182,15 +215,18 @@ export const translations: Record<string, Record<string, string>> = {
     "Tasks": "Aufgaben",
     "Frameworks": "Rahmenwerke",
     "INVENTORY": "INVENTAR",
-    "The framework used as the baseline in the active scenario": "[DE] The framework used as the baseline in the active scenario",
+    "The framework used as the baseline in the active scenario":
+      "[DE] The framework used as the baseline in the active scenario",
     "This framework is assigned to the project": "[DE] This framework is assigned to the project",
-    "This framework is not currently assigned to the project": "[DE] This framework is not currently assigned",
+    "This framework is not currently assigned to the project":
+      "[DE] This framework is not currently assigned",
     "Total gaps": "[DE] Total gaps",
     "Unassign this framework from the project": "[DE] Unassign this framework from the project",
     "Unmapped controls across all active frameworks": "[DE] Unmapped controls across frameworks",
     "Unmapped controls that need a remediation task": "[DE] Unmapped controls that need attention",
     "Upload CSV": "[DE] Upload CSV",
-    "Upload a CSV file to create multiple mappings at once": "[DE] Upload a CSV file to create mappings",
+    "Upload a CSV file to create multiple mappings at once":
+      "[DE] Upload a CSV file to create mappings",
     "Use cases": "Anwendungsfälle",
     "Model inventory": "Modellinventar",
     "Model Inventory": "Modellinventar",
@@ -347,8 +383,10 @@ export const translations: Record<string, Record<string, string>> = {
     "View mode": "[DE] View mode",
     "View scenario": "[DE] View scenario",
     "View the full rationale and metadata for this mapping": "[DE] View full mapping rationale",
-    "View what selecting this scenario means for the project": "[DE] View what selecting this scenario means",
-    "Whether this scenario activation is currently active": "[DE] Whether this activation is active",
+    "View what selecting this scenario means for the project":
+      "[DE] View what selecting this scenario means",
+    "Whether this scenario activation is currently active":
+      "[DE] Whether this activation is active",
     "Yes": "Ja",
     "Later": "Später",
     "Back to policies": "Zurück zu Richtlinien",
@@ -8391,7 +8429,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Activation status": "[FR] Activation status",
     "Active framework": "[FR] Active framework",
     "Active frameworks": "[FR] Active frameworks",
-    "Add a remediation task for this unmapped control": "[FR] Add a remediation task for this unmapped control",
+    "Add a remediation task for this unmapped control":
+      "[FR] Add a remediation task for this unmapped control",
     "Add framework": "[FR] Add framework",
     "All mappings created across frameworks": "[FR] All mappings created across frameworks",
     "Analyze coverage and gaps across active frameworks": "[FR] Analyze coverage and gaps",
@@ -8400,36 +8439,48 @@ export const translations: Record<string, Record<string, string>> = {
     "Baseline framework for this scenario": "[FR] Baseline framework for this scenario",
     "Baseline framework in the simulation": "[FR] Baseline framework in simulation",
     "Breakdown of cross-framework control mappings": "[FR] Breakdown of cross-framework mappings",
-    "Calculate estimated coverage, effort, and timeline": "[FR] Calculate estimated coverage and effort",
+    "Calculate estimated coverage, effort, and timeline":
+      "[FR] Calculate estimated coverage and effort",
     "Category of AI system": "[FR] Category of AI system",
     "Certainty level for this control mapping": "[FR] Certainty level for this mapping",
-    "Choose every unmapped control in this framework for bulk action": "[FR] Choose every unmapped control in this framework",
-    "Choose owners responsible for each framework in the activation": "[FR] Owners for each framework",
+    "Choose every unmapped control in this framework for bulk action":
+      "[FR] Choose every unmapped control in this framework",
+    "Choose owners responsible for each framework in the activation":
+      "[FR] Owners for each framework",
     "Choose the framework to map controls from": "[FR] Choose the framework to map from",
     "Choose the framework to map controls into": "[FR] Choose the framework to map into",
-    "Choose the projects where activation tasks will be created": "[FR] Projects where tasks will be created",
-    "Choose up to three scenarios to compare side by side": "[FR] Choose up to three scenarios to compare",
-    "Click to view the mappings between these two frameworks": "[FR] Click to view mappings between these frameworks",
+    "Choose the projects where activation tasks will be created":
+      "[FR] Projects where tasks will be created",
+    "Choose up to three scenarios to compare side by side":
+      "[FR] Choose up to three scenarios to compare",
+    "Click to view the mappings between these two frameworks":
+      "[FR] Click to view mappings between these frameworks",
     "Color intensity shows the density of mappings": "[FR] Color intensity shows mapping density",
     "Comparison attribute": "[FR] Comparison attribute",
     "Completion status of tasks grouped by framework": "[FR] Completion status by framework",
-    "Confirm the scenario activation details before creating tasks": "[FR] Confirm scenario activation details",
+    "Confirm the scenario activation details before creating tasks":
+      "[FR] Confirm scenario activation details",
     "Context and purpose of this scenario": "[FR] Context and purpose of this scenario",
     "Control gaps": "[FR] Gaps",
     "Control partially satisfies another control": "[FR] Control partially satisfies another",
     "Controls across all active frameworks": "[FR] Controls across active frameworks",
     "Controls overlap but are not fully equivalent": "[FR] Related but not exact mapping",
-    "Controls overlap but each has unique requirements": "[FR] Controls overlap but have unique needs",
+    "Controls overlap but each has unique requirements":
+      "[FR] Controls overlap but have unique needs",
     "Controls that have cross-framework mappings": "[FR] Controls with cross-framework mappings",
-    "Controls that satisfy requirements in multiple frameworks": "[FR] Controls mapped to multiple frameworks",
+    "Controls that satisfy requirements in multiple frameworks":
+      "[FR] Controls mapped to multiple frameworks",
     "Coverage progress": "[FR] Coverage progress",
     "Create a custom governance scenario": "[FR] Create a custom governance scenario",
     "Create a custom governance scenario for the project": "[FR] Create a custom scenario",
-    "Create a new cross-framework control mapping manually": "[FR] Create a cross-framework control mapping",
+    "Create a new cross-framework control mapping manually":
+      "[FR] Create a cross-framework control mapping",
     "Create task": "[FR] Create task",
-    "Create tasks across selected projects using this scenario": "[FR] Create tasks across selected projects",
+    "Create tasks across selected projects using this scenario":
+      "[FR] Create tasks across selected projects",
     "Create tasks for selected gaps": "[FR] Create tasks for selected gaps",
-    "Create tasks for the selected projects based on this scenario": "[FR] Create tasks for selected projects",
+    "Create tasks for the selected projects based on this scenario":
+      "[FR] Create tasks for selected projects",
     "Cross-framework control links created": "[FR] Cross-framework links created",
     "Cross-framework mappings": "[FR] Cross-framework mappings",
     "Deactivate activation": "[FR] Deactivate",
@@ -8441,7 +8492,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Domain filter": "[FR] Domain filter",
     "Domain tag": "[FR] Domain tag",
     "Download the coverage report as a CSV file": "[FR] Download coverage report as CSV",
-    "Download the current pairwise mappings as a CSV file": "[FR] Download pairwise mappings as CSV",
+    "Download the current pairwise mappings as a CSV file":
+      "[FR] Download pairwise mappings as CSV",
     "Edit mapping": "[FR] Edit mapping",
     "Edit scenario": "[FR] Edit scenario",
     "Estimated coverage": "[FR] Est coverage",
@@ -8452,7 +8504,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Estimated weeks to complete the work": "[FR] Estimated weeks to complete",
     "Exact one-to-one correspondence between controls": "[FR] Exact mapping between frameworks",
     "Exact or strong control correspondence": "[FR] Exact or strong control correspondence",
-    "Explanation for why these two controls map to each other": "[FR] Explanation for why these controls map",
+    "Explanation for why these two controls map to each other":
+      "[FR] Explanation for why these controls map",
     "Export mappings": "[FR] Export mappings",
     "Filter mappings by governance domain": "[FR] Filter mappings by governance domain",
     "Framework axis": "[FR] Framework axis",
@@ -8464,21 +8517,28 @@ export const translations: Record<string, Record<string, string>> = {
     "Frameworks included in this scenario": "[FR] Frameworks included in this scenario",
     "Frameworks with the most unmapped controls": "[FR] Frameworks with the most unmapped controls",
     "Gap hotspots": "[FR] Gap hotspots",
-    "Generate remediation tasks for all selected unmapped controls": "[FR] Generate remediation tasks for all selected controls",
-    "Generate scenario suggestions matching the project context": "[FR] Generate scenarios matching context",
+    "Generate remediation tasks for all selected unmapped controls":
+      "[FR] Generate remediation tasks for all selected controls",
+    "Generate scenario suggestions matching the project context":
+      "[FR] Generate scenarios matching context",
     "Identifier of the control being mapped": "[FR] Identifier of the control being mapped",
-    "Identifier of the equivalent control in the target framework": "[FR] Identifier of the equivalent control",
+    "Identifier of the equivalent control in the target framework":
+      "[FR] Identifier of the equivalent control",
     "Import mappings": "[FR] Import mappings",
     "Inactive framework": "[FR] Inactive framework",
-    "Loose or tangential correspondence between controls": "[FR] Loose or tangential correspondence",
+    "Loose or tangential correspondence between controls":
+      "[FR] Loose or tangential correspondence",
     "Mapped controls": "[FR] Mapped controls",
-    "Mapped controls shown as a percentage of total controls": "[FR] Mapped controls as a percentage of total controls",
+    "Mapped controls shown as a percentage of total controls":
+      "[FR] Mapped controls as a percentage of total controls",
     "Mapping count": "[FR] Mapping count",
     "Mapping count grouped by control domain": "[FR] Mapping count grouped by control domain",
-    "Mapping count grouped by relationship strength": "[FR] Mapping count grouped by relationship strength",
+    "Mapping count grouped by relationship strength":
+      "[FR] Mapping count grouped by relationship strength",
     "Mapping details": "[FR] Mapping details",
     "Mapping statistics": "[FR] Mapping statistics",
-    "Mean percentage of mapped controls across active frameworks": "[FR] Mean mapped control percentage",
+    "Mean percentage of mapped controls across active frameworks":
+      "[FR] Mean mapped control percentage",
     "Modify this control mapping": "[FR] Modify this control mapping",
     "Modify this governance scenario": "[FR] Modify this governance scenario",
     "Multi-framework synergies": "[FR] Synergies",
@@ -8487,20 +8547,26 @@ export const translations: Record<string, Record<string, string>> = {
     "No corresponding control was found": "[FR] No mapping between these frameworks",
     "No mapping": "[FR] None",
     "Number of mappings linked to this control": "[FR] Number of mappings linked to this control",
-    "Open Unified Insights for this active scenario": "[FR] Open Unified Insights for this scenario",
+    "Open Unified Insights for this active scenario":
+      "[FR] Open Unified Insights for this scenario",
     "Open Unified Insights to analyze coverage and gaps": "[FR] Open Unified Insights",
     "Open the Framework Mapper to browse control mappings": "[FR] Open Framework Mapper",
     "Open the active scenario details": "[FR] Open active scenario details",
     "Optional additional frameworks in the simulation": "[FR] Optional additional frameworks",
-    "Optional governance domain category for grouping mappings": "[FR] Optional governance domain category",
-    "Overview of how well this framework is mapped to controls": "[FR] Overview of how well this framework is mapped",
+    "Optional governance domain category for grouping mappings":
+      "[FR] Optional governance domain category",
+    "Overview of how well this framework is mapped to controls":
+      "[FR] Overview of how well this framework is mapped",
     "Partial mapping": "[FR] Partial",
     "Project to analyze for coverage and gaps": "[FR] Project to analyze coverage and gaps",
-    "Recalculate coverage and gaps for the selected project": "[FR] Recalculate coverage for selected project",
-    "Receive scenario suggestions tailored to the project context": "[FR] Receive scenario suggestions",
+    "Recalculate coverage and gaps for the selected project":
+      "[FR] Recalculate coverage for selected project",
+    "Receive scenario suggestions tailored to the project context":
+      "[FR] Receive scenario suggestions",
     "Refresh coverage data": "[FR] Refresh coverage",
     "Regulatory region this scenario targets": "[FR] Regulatory region this scenario targets",
-    "Regulatory region used to prioritize frameworks": "[FR] Regulatory region for framework priority",
+    "Regulatory region used to prioritize frameworks":
+      "[FR] Regulatory region for framework priority",
     "Related mapping": "[FR] Related",
     "Relationship between the two mapped controls": "[FR] Relationship between the two controls",
     "Remove all selected gaps from the bulk task list": "[FR] Remove all selected gaps",
@@ -8518,18 +8584,23 @@ export const translations: Record<string, Record<string, string>> = {
     "Secondary frameworks": "[FR] Secondary frameworks",
     "Sector this scenario applies to": "[FR] Sector this scenario applies to",
     "Sector used to tailor scenario recommendations": "[FR] Sector used to tailor recommendations",
-    "Select a CSV file containing mapping rows to import": "[FR] Select a CSV file with mapping rows",
+    "Select a CSV file containing mapping rows to import":
+      "[FR] Select a CSV file with mapping rows",
     "Select all gaps": "[FR] Select all gaps",
-    "Select or create a governance scenario for the project": "[FR] Select or create a governance scenario",
+    "Select or create a governance scenario for the project":
+      "[FR] Select or create a governance scenario",
     "Select project": "[FR] Select project",
     "Select scenario": "[FR] Select scenario",
     "Set as the baseline for scenario planning": "[FR] Set as the baseline for scenario planning",
     "Set this scenario as the active governance strategy": "[FR] Set as active governance strategy",
     "Short descriptive name for this scenario": "[FR] Short name for this scenario",
-    "Similar topics but the controls are not interchangeable": "[FR] Similar topics but not interchangeable",
-    "Source control fully satisfies the target control": "[FR] Source fully satisfies target control",
+    "Similar topics but the controls are not interchangeable":
+      "[FR] Similar topics but not interchangeable",
+    "Source control fully satisfies the target control":
+      "[FR] Source fully satisfies target control",
     "Source framework": "[FR] Source framework",
-    "Source frameworks as rows and target frameworks as columns": "[FR] Source rows and target columns",
+    "Source frameworks as rows and target frameworks as columns":
+      "[FR] Source rows and target columns",
     "Start here": "Commencer ici",
     "Dashboard": "Tableau de bord",
     "Starting point for the what-if simulation": "[FR] Starting point for simulation",
@@ -8543,15 +8614,18 @@ export const translations: Record<string, Record<string, string>> = {
     "Tasks": "Tâches",
     "Frameworks": "Référentiels",
     "INVENTORY": "INVENTAIRE",
-    "The framework used as the baseline in the active scenario": "[FR] The framework used as the baseline in the active scenario",
+    "The framework used as the baseline in the active scenario":
+      "[FR] The framework used as the baseline in the active scenario",
     "This framework is assigned to the project": "[FR] This framework is assigned to the project",
-    "This framework is not currently assigned to the project": "[FR] This framework is not currently assigned",
+    "This framework is not currently assigned to the project":
+      "[FR] This framework is not currently assigned",
     "Total gaps": "[FR] Total gaps",
     "Unassign this framework from the project": "[FR] Unassign this framework from the project",
     "Unmapped controls across all active frameworks": "[FR] Unmapped controls across frameworks",
     "Unmapped controls that need a remediation task": "[FR] Unmapped controls that need attention",
     "Upload CSV": "[FR] Upload CSV",
-    "Upload a CSV file to create multiple mappings at once": "[FR] Upload a CSV file to create mappings",
+    "Upload a CSV file to create multiple mappings at once":
+      "[FR] Upload a CSV file to create mappings",
     "Use cases": "Cas d'usage",
     "Model inventory": "Inventaire des modèles",
     "Model Inventory": "Inventaire des modèles",
@@ -8659,8 +8733,10 @@ export const translations: Record<string, Record<string, string>> = {
     "View mode": "[FR] View mode",
     "View scenario": "[FR] View scenario",
     "View the full rationale and metadata for this mapping": "[FR] View full mapping rationale",
-    "View what selecting this scenario means for the project": "[FR] View what selecting this scenario means",
-    "Whether this scenario activation is currently active": "[FR] Whether this activation is active",
+    "View what selecting this scenario means for the project":
+      "[FR] View what selecting this scenario means",
+    "Whether this scenario activation is currently active":
+      "[FR] Whether this activation is active",
     "Yes": "Oui",
     "Later": "Plus tard",
     "Submit": "Soumettre",

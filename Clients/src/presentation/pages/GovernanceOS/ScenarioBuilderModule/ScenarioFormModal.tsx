@@ -129,10 +129,7 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
             required
           />
         </GovernanceTooltip>
-        <GovernanceTooltip
-          header="Description"
-          description="Context and purpose of this scenario"
-        >
+        <GovernanceTooltip header="Description" description="Context and purpose of this scenario">
           <TextField
             label="Description"
             value={description}
@@ -145,10 +142,7 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
         </GovernanceTooltip>
 
         <Box>
-          <GovernanceTooltip
-            header="Industry"
-            description="Sector this scenario applies to"
-          >
+          <GovernanceTooltip header="Industry" description="Sector this scenario applies to">
             <Typography
               sx={{
                 fontSize: 12,
@@ -191,10 +185,7 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
         </Box>
 
         <Box>
-          <GovernanceTooltip
-            header="Region"
-            description="Regulatory region this scenario targets"
-          >
+          <GovernanceTooltip header="Region" description="Regulatory region this scenario targets">
             <Typography
               sx={{
                 fontSize: 12,
@@ -236,10 +227,7 @@ const ScenarioFormModal: React.FC<ScenarioFormModalProps> = ({
         </Box>
 
         <Box>
-          <GovernanceTooltip
-            header="Frameworks"
-            description="Frameworks included in this scenario"
-          >
+          <GovernanceTooltip header="Frameworks" description="Frameworks included in this scenario">
             <Typography
               sx={{
                 fontSize: 12,

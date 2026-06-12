@@ -160,33 +160,33 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
           <Box
             component="label"
             sx={{
-            "display": "flex",
-            "flexDirection": "column",
-            "alignItems": "center",
-            "justifyContent": "center",
-            "p": 4,
-            "border": `2px dashed ${borderPalette.dark}`,
-            "borderRadius": "4px",
-            "backgroundColor": background.accent,
-            "cursor": "pointer",
-            "transition": "all 150ms ease",
-            "&:hover": {
-              borderColor: accent.primary.border,
-              backgroundColor: accent.primary.bg,
-            },
-          }}
-        >
-          <input type="file" accept=".csv" hidden onChange={handleFileUpload} />
-          <Upload size={24} color={text.muted} />
-          <Typography sx={{ mt: 1, fontSize: 13, color: text.secondary }}>
-            Click to upload CSV file
-          </Typography>
-          <Typography sx={{ fontSize: 11, color: text.muted }}>
-            Required columns: source_framework_id, source_control_identifier, target_framework_id,
-            target_control_identifier
-          </Typography>
-        </Box>
-      </GovernanceTooltip>
+              "display": "flex",
+              "flexDirection": "column",
+              "alignItems": "center",
+              "justifyContent": "center",
+              "p": 4,
+              "border": `2px dashed ${borderPalette.dark}`,
+              "borderRadius": "4px",
+              "backgroundColor": background.accent,
+              "cursor": "pointer",
+              "transition": "all 150ms ease",
+              "&:hover": {
+                borderColor: accent.primary.border,
+                backgroundColor: accent.primary.bg,
+              },
+            }}
+          >
+            <input type="file" accept=".csv" hidden onChange={handleFileUpload} />
+            <Upload size={24} color={text.muted} />
+            <Typography sx={{ mt: 1, fontSize: 13, color: text.secondary }}>
+              Click to upload CSV file
+            </Typography>
+            <Typography sx={{ fontSize: 11, color: text.muted }}>
+              Required columns: source_framework_id, source_control_identifier, target_framework_id,
+              target_control_identifier
+            </Typography>
+          </Box>
+        </GovernanceTooltip>
 
         {parseError && <Alert severity="error">{parseError}</Alert>}
 

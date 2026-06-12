@@ -37,7 +37,9 @@ const FrameworkSelector = ({
             label="Source Framework"
             value={sourceId}
             items={FRAMEWORKS.filter((fw) => fw._id !== targetId)}
-            onChange={(e: SelectChangeEvent<string | number>) => onSourceChange(Number(e.target.value))}
+            onChange={(e: SelectChangeEvent<string | number>) =>
+              onSourceChange(Number(e.target.value))
+            }
             sx={{ minWidth: 200 }}
           />
         </span>
@@ -55,7 +57,9 @@ const FrameworkSelector = ({
             label="Target Framework"
             value={targetId}
             items={FRAMEWORKS.filter((fw) => fw._id !== sourceId)}
-            onChange={(e: SelectChangeEvent<string | number>) => onTargetChange(Number(e.target.value))}
+            onChange={(e: SelectChangeEvent<string | number>) =>
+              onTargetChange(Number(e.target.value))
+            }
             sx={{ minWidth: 200 }}
           />
         </span>

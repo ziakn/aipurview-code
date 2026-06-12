@@ -273,7 +273,8 @@ const GovernanceHub: React.FC = () => {
       stat: "Coming soon",
       color: accent.teal.text,
       tooltipHeader: "Evidence Hub",
-      tooltipDescription: "Centralize and manage compliance evidence across frameworks and projects. This module is coming soon.",
+      tooltipDescription:
+        "Centralize and manage compliance evidence across frameworks and projects. This module is coming soon.",
     },
     {
       title: "Knowledge Graph",
@@ -283,7 +284,8 @@ const GovernanceHub: React.FC = () => {
       stat: "Coming soon",
       color: accent.purple.text,
       tooltipHeader: "Knowledge Graph",
-      tooltipDescription: "Visual exploration of governance relationships, controls, and compliance dependencies. This module is coming soon.",
+      tooltipDescription:
+        "Visual exploration of governance relationships, controls, and compliance dependencies. This module is coming soon.",
     },
     {
       title: "Regulatory Radar",
@@ -293,7 +295,8 @@ const GovernanceHub: React.FC = () => {
       stat: "Coming soon",
       color: accent.orange.text,
       tooltipHeader: "Regulatory Radar",
-      tooltipDescription: "Monitor regulatory changes, track compliance deadlines, and receive alerts. This module is coming soon.",
+      tooltipDescription:
+        "Monitor regulatory changes, track compliance deadlines, and receive alerts. This module is coming soon.",
     },
   ];
 
@@ -459,24 +462,24 @@ const GovernanceHub: React.FC = () => {
                 <Typography sx={{ fontSize: 13, color: "#8594AC", mb: "2px" }}>
                   Avg Coverage
                 </Typography>
-              <Typography
-                sx={{ fontSize: 16, fontWeight: 600, color: coverageColor, mt: 1, minHeight: 32 }}
-              >
-                {coverageStats.avg}%
-              </Typography>
-              <LinearProgress
-                variant="determinate"
-                value={coverageStats.avg}
-                sx={{
-                  "height": 4,
-                  "borderRadius": "4px",
-                  "mt": 1,
-                  "backgroundColor": background.hover,
-                  "& .MuiLinearProgress-bar": {
-                    backgroundColor: coverageColor,
-                    borderRadius: "4px",
-                  },
-                }}
+                <Typography
+                  sx={{ fontSize: 16, fontWeight: 600, color: coverageColor, mt: 1, minHeight: 32 }}
+                >
+                  {coverageStats.avg}%
+                </Typography>
+                <LinearProgress
+                  variant="determinate"
+                  value={coverageStats.avg}
+                  sx={{
+                    "height": 4,
+                    "borderRadius": "4px",
+                    "mt": 1,
+                    "backgroundColor": background.hover,
+                    "& .MuiLinearProgress-bar": {
+                      backgroundColor: coverageColor,
+                      borderRadius: "4px",
+                    },
+                  }}
                 />
               </Box>
             </GovernanceTooltip>
@@ -496,17 +499,17 @@ const GovernanceHub: React.FC = () => {
                 <Typography sx={{ fontSize: 13, color: "#8594AC", mb: "2px" }}>
                   Total Gaps
                 </Typography>
-              <Typography
-                sx={{
-                  mt: 1,
-                  minHeight: 32,
-                  fontSize: 16,
-                  fontWeight: 600,
-                  color: coverageStats.totalGaps > 0 ? status.warning.text : status.success.text,
-                }}
-              >
-                {coverageStats.totalGaps}
-              </Typography>
+                <Typography
+                  sx={{
+                    mt: 1,
+                    minHeight: 32,
+                    fontSize: 16,
+                    fontWeight: 600,
+                    color: coverageStats.totalGaps > 0 ? status.warning.text : status.success.text,
+                  }}
+                >
+                  {coverageStats.totalGaps}
+                </Typography>
                 <Typography sx={{ fontSize: 11, color: text.muted }}>unmapped controls</Typography>
               </Box>
             </GovernanceTooltip>
@@ -526,11 +529,11 @@ const GovernanceHub: React.FC = () => {
                 <Typography sx={{ fontSize: 13, color: "#8594AC", mb: "2px" }}>
                   Active Frameworks
                 </Typography>
-              <Typography
-                sx={{ mt: 1, minHeight: 32, fontSize: 16, fontWeight: 600, color: brand.primary }}
-              >
-                {coverageStats.frameworkCount}
-              </Typography>
+                <Typography
+                  sx={{ mt: 1, minHeight: 32, fontSize: 16, fontWeight: 600, color: brand.primary }}
+                >
+                  {coverageStats.frameworkCount}
+                </Typography>
                 <Typography sx={{ fontSize: 11, color: text.muted }}>
                   in project {projectForCoverage}
                 </Typography>
@@ -552,11 +555,11 @@ const GovernanceHub: React.FC = () => {
                 <Typography sx={{ fontSize: 13, color: "#8594AC", mb: "2px" }}>
                   Total Mappings
                 </Typography>
-              <Typography
-                sx={{ mt: 1, minHeight: 32, fontSize: 16, fontWeight: 600, color: brand.primary }}
-              >
-                {totalMappings}
-              </Typography>
+                <Typography
+                  sx={{ mt: 1, minHeight: 32, fontSize: 16, fontWeight: 600, color: brand.primary }}
+                >
+                  {totalMappings}
+                </Typography>
                 <Typography sx={{ fontSize: 11, color: text.muted }}>
                   cross-framework links
                 </Typography>

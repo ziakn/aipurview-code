@@ -443,16 +443,14 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
   );
 };
 
-const MetricBox: React.FC<{ label: string; value: string; header: string; description: string }> = ({
-  label,
-  value,
-  header,
-  description,
-}) => (
+const MetricBox: React.FC<{
+  label: string;
+  value: string;
+  header: string;
+  description: string;
+}> = ({ label, value, header, description }) => (
   <GovernanceTooltip header={header} description={description}>
-    <Box
-      sx={{ textAlign: "center", p: "12px", background: background.hover, borderRadius: "4px" }}
-    >
+    <Box sx={{ textAlign: "center", p: "12px", background: background.hover, borderRadius: "4px" }}>
       <Typography sx={{ fontSize: 18, fontWeight: 600, color: brand.primary }}>{value}</Typography>
       <Typography sx={{ fontSize: 11, color: text.muted }}>{label}</Typography>
     </Box>
