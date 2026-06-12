@@ -56,6 +56,7 @@ export const translations: Record<string, Record<string, string>> = {
       "[DE] Choose up to three scenarios to compare",
     "Click to view the mappings between these two frameworks":
       "[DE] Click to view mappings between these frameworks",
+    "Close notifications": "[DE] Close notifications",
     "Color intensity shows the density of mappings": "[DE] Color intensity shows mapping density",
     "Comparison attribute": "[DE] Comparison attribute",
     "Completion status of tasks grouped by framework": "[DE] Completion status by framework",
@@ -71,6 +72,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Controls that have cross-framework mappings": "[DE] Controls with cross-framework mappings",
     "Controls that satisfy requirements in multiple frameworks":
       "[DE] Controls mapped to multiple frameworks",
+    "Coverage analysis and gaps": "[DE] Coverage analysis and gaps",
     "Coverage progress": "[DE] Coverage progress",
     "Create a custom governance scenario": "[DE] Create a custom governance scenario",
     "Create a custom governance scenario for the project": "[DE] Create a custom scenario",
@@ -83,6 +85,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Create tasks for the selected projects based on this scenario":
       "[DE] Create tasks for selected projects",
     "Cross-framework control links created": "[DE] Cross-framework links created",
+    "Cross-framework control mappings": "[DE] Cross-framework control mappings",
     "Cross-framework mappings": "[DE] Cross-framework mappings",
     "Deactivate activation": "[DE] Deactivate",
     "Deactivate scenario": "[DE] Deactivate",
@@ -122,6 +125,10 @@ export const translations: Record<string, Record<string, string>> = {
       "[DE] Generate remediation tasks for all selected controls",
     "Generate scenario suggestions matching the project context":
       "[DE] Generate scenarios matching context",
+    "Governance Intelligence Hub": "[DE] Governance Intelligence Hub",
+    "Governance scenario recommendations": "[DE] Governance scenario recommendations",
+    "Governance workspace dashboard": "[DE] Governance workspace dashboard",
+    "Hide demo data button": "[DE] Hide demo data button",
     "Identifier of the control being mapped": "[DE] Identifier of the control being mapped",
     "Identifier of the equivalent control in the target framework":
       "[DE] Identifier of the equivalent control",
@@ -138,6 +145,7 @@ export const translations: Record<string, Record<string, string>> = {
       "[DE] Mapping count grouped by relationship strength",
     "Mapping details": "[DE] Mapping details",
     "Mapping statistics": "[DE] Mapping statistics",
+    "Mark all notifications as read": "[DE] Mark all notifications as read",
     "Mean percentage of mapped controls across active frameworks":
       "[DE] Mean mapped control percentage",
     "Modify this control mapping": "[DE] Modify this control mapping",
@@ -151,14 +159,17 @@ export const translations: Record<string, Record<string, string>> = {
     "Open Unified Insights for this active scenario":
       "[DE] Open Unified Insights for this scenario",
     "Open Unified Insights to analyze coverage and gaps": "[DE] Open Unified Insights",
+    "Open Wise Search": "[DE] Open Wise Search",
     "Open the Framework Mapper to browse control mappings": "[DE] Open Framework Mapper",
     "Open the active scenario details": "[DE] Open active scenario details",
+    "Open user options": "[DE] Open user options",
     "Optional additional frameworks in the simulation": "[DE] Optional additional frameworks",
     "Optional governance domain category for grouping mappings":
       "[DE] Optional governance domain category",
     "Overview of how well this framework is mapped to controls":
       "[DE] Overview of how well this framework is mapped",
     "Partial mapping": "[DE] Partial",
+    "Plugins marketplace": "[DE] Plugins marketplace",
     "Project to analyze for coverage and gaps": "[DE] Project to analyze coverage and gaps",
     "Recalculate coverage and gaps for the selected project":
       "[DE] Recalculate coverage for selected project",
@@ -197,11 +208,14 @@ export const translations: Record<string, Record<string, string>> = {
     "Short descriptive name for this scenario": "[DE] Short name for this scenario",
     "Similar topics but the controls are not interchangeable":
       "[DE] Similar topics but not interchangeable",
+    "Smart Prompt Preference": "[DE] Smart Prompt Preference",
+    "Snooze": "[DE] Snooze",
     "Source control fully satisfies the target control":
       "[DE] Source fully satisfies target control",
     "Source framework": "[DE] Source framework",
     "Source frameworks as rows and target frameworks as columns":
       "[DE] Source rows and target columns",
+    "Spread some love": "[DE] Spread some love",
     "Start here": "Hier starten",
     "Dashboard": "Dashboard",
     "Starting point for the what-if simulation": "[DE] Starting point for simulation",
@@ -8455,6 +8469,7 @@ export const translations: Record<string, Record<string, string>> = {
       "[FR] Choose up to three scenarios to compare",
     "Click to view the mappings between these two frameworks":
       "[FR] Click to view mappings between these frameworks",
+    "Close notifications": "[FR] Close notifications",
     "Color intensity shows the density of mappings": "[FR] Color intensity shows mapping density",
     "Comparison attribute": "[FR] Comparison attribute",
     "Completion status of tasks grouped by framework": "[FR] Completion status by framework",
@@ -8470,6 +8485,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Controls that have cross-framework mappings": "[FR] Controls with cross-framework mappings",
     "Controls that satisfy requirements in multiple frameworks":
       "[FR] Controls mapped to multiple frameworks",
+    "Coverage analysis and gaps": "[FR] Coverage analysis and gaps",
     "Coverage progress": "[FR] Coverage progress",
     "Create a custom governance scenario": "[FR] Create a custom governance scenario",
     "Create a custom governance scenario for the project": "[FR] Create a custom scenario",
@@ -8482,6 +8498,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Create tasks for the selected projects based on this scenario":
       "[FR] Create tasks for selected projects",
     "Cross-framework control links created": "[FR] Cross-framework links created",
+    "Cross-framework control mappings": "[FR] Cross-framework control mappings",
     "Cross-framework mappings": "[FR] Cross-framework mappings",
     "Deactivate activation": "[FR] Deactivate",
     "Deactivate scenario": "[FR] Deactivate",
@@ -8521,6 +8538,10 @@ export const translations: Record<string, Record<string, string>> = {
       "[FR] Generate remediation tasks for all selected controls",
     "Generate scenario suggestions matching the project context":
       "[FR] Generate scenarios matching context",
+    "Governance Intelligence Hub": "[FR] Governance Intelligence Hub",
+    "Governance scenario recommendations": "[FR] Governance scenario recommendations",
+    "Governance workspace dashboard": "[FR] Governance workspace dashboard",
+    "Hide demo data button": "[FR] Hide demo data button",
     "Identifier of the control being mapped": "[FR] Identifier of the control being mapped",
     "Identifier of the equivalent control in the target framework":
       "[FR] Identifier of the equivalent control",
@@ -8537,6 +8558,7 @@ export const translations: Record<string, Record<string, string>> = {
       "[FR] Mapping count grouped by relationship strength",
     "Mapping details": "[FR] Mapping details",
     "Mapping statistics": "[FR] Mapping statistics",
+    "Mark all notifications as read": "[FR] Mark all notifications as read",
     "Mean percentage of mapped controls across active frameworks":
       "[FR] Mean mapped control percentage",
     "Modify this control mapping": "[FR] Modify this control mapping",
@@ -8550,14 +8572,17 @@ export const translations: Record<string, Record<string, string>> = {
     "Open Unified Insights for this active scenario":
       "[FR] Open Unified Insights for this scenario",
     "Open Unified Insights to analyze coverage and gaps": "[FR] Open Unified Insights",
+    "Open Wise Search": "[FR] Open Wise Search",
     "Open the Framework Mapper to browse control mappings": "[FR] Open Framework Mapper",
     "Open the active scenario details": "[FR] Open active scenario details",
+    "Open user options": "[FR] Open user options",
     "Optional additional frameworks in the simulation": "[FR] Optional additional frameworks",
     "Optional governance domain category for grouping mappings":
       "[FR] Optional governance domain category",
     "Overview of how well this framework is mapped to controls":
       "[FR] Overview of how well this framework is mapped",
     "Partial mapping": "[FR] Partial",
+    "Plugins marketplace": "[FR] Plugins marketplace",
     "Project to analyze for coverage and gaps": "[FR] Project to analyze coverage and gaps",
     "Recalculate coverage and gaps for the selected project":
       "[FR] Recalculate coverage for selected project",
@@ -8596,11 +8621,14 @@ export const translations: Record<string, Record<string, string>> = {
     "Short descriptive name for this scenario": "[FR] Short name for this scenario",
     "Similar topics but the controls are not interchangeable":
       "[FR] Similar topics but not interchangeable",
+    "Smart Prompt Preference": "[FR] Smart Prompt Preference",
+    "Snooze": "[FR] Snooze",
     "Source control fully satisfies the target control":
       "[FR] Source fully satisfies target control",
     "Source framework": "[FR] Source framework",
     "Source frameworks as rows and target frameworks as columns":
       "[FR] Source rows and target columns",
+    "Spread some love": "[FR] Spread some love",
     "Start here": "Commencer ici",
     "Dashboard": "Tableau de bord",
     "Starting point for the what-if simulation": "[FR] Starting point for simulation",
