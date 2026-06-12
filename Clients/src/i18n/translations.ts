@@ -8119,6 +8119,48 @@ export const translations: Record<string, Record<string, string>> = {
       "Regulierungsänderungen und Compliance-Termine überwachen.",
     "Manage Governance Intelligence preferences and defaults.":
       "Governance-Intelligence-Einstellungen und -Standards verwalten.",
+
+    // Governance tooltips
+    "Answer a few questions to receive governance scenario recommendations tailored to your context.":
+      "Beantworten Sie einige Fragen, um auf Ihren Kontext zugeschnittene Governance-Szenario-Empfehlungen zu erhalten.",
+    "Open Unified Insights to analyze cross-framework coverage and identify gaps for a selected project.":
+      "Öffnen Sie Unified Insights, um die framework-übergreifende Abdeckung zu analysieren und Lücken für ein ausgewähltes Projekt zu identifizieren.",
+    "Open the Framework Mapper to explore and manage cross-framework control mappings.":
+      "Öffnen Sie den Framework Mapper, um framework-übergreifende Control-Mappings zu erkunden und zu verwalten.",
+    "Create a custom governance scenario to define framework priorities for your organization.":
+      "Erstellen Sie ein benutzerdefiniertes Governance-Szenario, um Framework-Prioritäten für Ihre Organisation festzulegen.",
+    "Open the Scenario Builder to review or edit the currently active governance scenario.":
+      "Öffnen Sie den Szenario-Builder, um das aktuell aktive Governance-Szenario zu prüfen oder zu bearbeiten.",
+    "Open Unified Insights and calculate coverage based on framework priorities in the active scenario.":
+      "Öffnen Sie Unified Insights und berechnen Sie die Abdeckung basierend auf den Framework-Prioritäten des aktiven Szenarios.",
+    "Select or create a governance scenario to activate framework prioritization across projects.":
+      "Wählen Sie ein Governance-Szenario aus oder erstellen Sie eines, um die Framework-Priorisierung über Projekte hinweg zu aktivieren.",
+    "Framework Selector": "Framework-Auswahl",
+    "Choose the source and target frameworks to filter the mappings displayed below.":
+      "Wählen Sie Quell- und Zielframework, um die unten angezeigten Mappings zu filtern.",
+    "View Mode": "Ansichtsmodus",
+    "Switch between list view and a matrix view of all framework mappings.":
+      "Wechseln Sie zwischen Listenansicht und Matrixansicht aller Framework-Mappings.",
+    "Download the current pairwise mappings as a CSV file.":
+      "Laden Sie die aktuellen paarweisen Mappings als CSV-Datei herunter.",
+    "Upload a CSV file to create multiple mappings at once.":
+      "Laden Sie eine CSV-Datei hoch, um mehrere Mappings auf einmal zu erstellen.",
+    "Create a new cross-framework control mapping manually.":
+      "Erstellen Sie manuell ein neues framework-übergreifendes Control-Mapping.",
+
+    // Governance tooltips
+    "Direct mapping: implementing the source control fully satisfies the target control.":
+      "Direktes Mapping: Die Implementierung der Quell-Control erfüllt die Ziel-Control vollständig.",
+    "Partial mapping: the controls overlap but each has unique requirements to address.":
+      "Partielles Mapping: Die Controls überschneiden sich, aber jede hat einzigartige Anforderungen.",
+    "Related mapping: the controls cover similar topics but are not interchangeable.":
+      "Verwandtes Mapping: Die Controls behandeln ähnliche Themen, sind aber nicht austauschbar.",
+    "Edit Mapping": "Mapping bearbeiten",
+    "Modify this control mapping.": "Dieses Control-Mapping bearbeiten.",
+    "Remove this control mapping.": "Dieses Control-Mapping entfernen.",
+    "Mapping Details": "Mapping-Details",
+    "Click anywhere on the card to view the full mapping rationale and details.":
+      "Klicken Sie auf eine beliebige Stelle der Karte, um die vollständige Mapping-Begründung und Details anzuzeigen.",
   },
 
   fr: {
@@ -16170,5 +16212,47 @@ export const translations: Record<string, Record<string, string>> = {
       "Surveiller les changements réglementaires et les échéances de conformité.",
     "Manage Governance Intelligence preferences and defaults.":
       "Gérer les préférences et valeurs par défaut de Governance Intelligence.",
+
+    // Governance tooltips
+    "Answer a few questions to receive governance scenario recommendations tailored to your context.":
+      "Répondez à quelques questions pour recevoir des recommandations de scénarios de gouvernance adaptées à votre contexte.",
+    "Open Unified Insights to analyze cross-framework coverage and identify gaps for a selected project.":
+      "Ouvrez Unified Insights pour analyser la couverture inter-cadres et identifier les lacunes d'un projet sélectionné.",
+    "Open the Framework Mapper to explore and manage cross-framework control mappings.":
+      "Ouvrez le Framework Mapper pour explorer et gérer les mappings de contrôles inter-cadres.",
+    "Create a custom governance scenario to define framework priorities for your organization.":
+      "Créez un scénario de gouvernance personnalisé pour définir les priorités de cadres de votre organisation.",
+    "Open the Scenario Builder to review or edit the currently active governance scenario.":
+      "Ouvrez le Constructeur de scénarios pour examiner ou modifier le scénario de gouvernance actuellement actif.",
+    "Open Unified Insights and calculate coverage based on framework priorities in the active scenario.":
+      "Ouvrez Unified Insights et calculez la couverture en fonction des priorités de cadres du scénario actif.",
+    "Select or create a governance scenario to activate framework prioritization across projects.":
+      "Sélectionnez ou créez un scénario de gouvernance pour activer la priorisation des cadres entre les projets.",
+    "Framework Selector": "Sélecteur de cadres",
+    "Choose the source and target frameworks to filter the mappings displayed below.":
+      "Choisissez les cadres source et cible pour filtrer les mappings affichés ci-dessous.",
+    "View Mode": "Mode d'affichage",
+    "Switch between list view and a matrix view of all framework mappings.":
+      "Basculez entre la vue liste et la vue matricielle de tous les mappings de cadres.",
+    "Download the current pairwise mappings as a CSV file.":
+      "Téléchargez les mappings par paires actuels sous forme de fichier CSV.",
+    "Upload a CSV file to create multiple mappings at once.":
+      "Téléversez un fichier CSV pour créer plusieurs mappings à la fois.",
+    "Create a new cross-framework control mapping manually.":
+      "Créez manuellement un nouveau mapping de contrôle inter-cadres.",
+
+    // Governance tooltips
+    "Direct mapping: implementing the source control fully satisfies the target control.":
+      "Mapping direct : la mise en œuvre du contrôle source satisfait pleinement le contrôle cible.",
+    "Partial mapping: the controls overlap but each has unique requirements to address.":
+      "Mapping partiel : les contrôles se chevauchent mais chacun a des exigences uniques à traiter.",
+    "Related mapping: the controls cover similar topics but are not interchangeable.":
+      "Mapping associé : les contrôles couvrent des sujets similaires mais ne sont pas interchangeables.",
+    "Edit Mapping": "Modifier le mapping",
+    "Modify this control mapping.": "Modifier ce mapping de contrôle.",
+    "Remove this control mapping.": "Supprimer ce mapping de contrôle.",
+    "Mapping Details": "Détails du mapping",
+    "Click anywhere on the card to view the full mapping rationale and details.":
+      "Cliquez n'importe où sur la carte pour voir la justification complète et les détails du mapping.",
   },
 };

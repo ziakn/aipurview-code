@@ -26,6 +26,7 @@ import {
 import GovernanceLayout from "../shared/GovernanceLayout";
 import { DashboardHeaderCard } from "../../../components/Cards/DashboardHeaderCard";
 import FrameworkChip from "../../../components/GovernanceOS/FrameworkChip";
+import GovernanceTooltip from "../../../components/GovernanceOS/GovernanceTooltip";
 import { CustomizableButton } from "../../../components/button/customizable-button";
 import {
   brand,
@@ -343,19 +344,33 @@ const GovernanceHub: React.FC = () => {
               </Stack>
 
               <Stack direction="row" spacing={1} sx={{ flexShrink: 0 }}>
-                <CustomizableButton
-                  size="small"
-                  variant="outlined"
-                  onClick={() => navigate("/governance/scenarios")}
-                  text="View Scenario"
-                />
-                <CustomizableButton
-                  size="small"
-                  variant="contained"
-                  startIcon={<Zap size={14} />}
-                  onClick={() => navigate("/governance/insights")}
-                  text="Run Coverage"
-                />
+                <GovernanceTooltip
+                  header="View Scenario"
+                  description="Open the Scenario Builder to review or edit the currently active governance scenario."
+                >
+                  <span>
+                    <CustomizableButton
+                      size="small"
+                      variant="outlined"
+                      onClick={() => navigate("/governance/scenarios")}
+                      text="View Scenario"
+                    />
+                  </span>
+                </GovernanceTooltip>
+                <GovernanceTooltip
+                  header="Run Coverage"
+                  description="Open Unified Insights and calculate coverage based on framework priorities in the active scenario."
+                >
+                  <span>
+                    <CustomizableButton
+                      size="small"
+                      variant="contained"
+                      startIcon={<Zap size={14} />}
+                      onClick={() => navigate("/governance/insights")}
+                      text="Run Coverage"
+                    />
+                  </span>
+                </GovernanceTooltip>
               </Stack>
             </Stack>
           </Box>
@@ -379,12 +394,19 @@ const GovernanceHub: React.FC = () => {
                   planning.
                 </Typography>
               </Box>
-              <CustomizableButton
-                size="small"
-                variant="contained"
-                onClick={() => navigate("/governance/scenarios")}
-                text="Choose scenario"
-              />
+              <GovernanceTooltip
+                header="Choose scenario"
+                description="Select or create a governance scenario to activate framework prioritization across projects."
+              >
+                <span>
+                  <CustomizableButton
+                    size="small"
+                    variant="contained"
+                    onClick={() => navigate("/governance/scenarios")}
+                    text="Choose scenario"
+                  />
+                </span>
+              </GovernanceTooltip>
             </Stack>
           </Box>
         )}
@@ -512,34 +534,62 @@ const GovernanceHub: React.FC = () => {
 
         {/* Quick actions */}
         <Stack direction="row" gap="8px" flexWrap="wrap">
-          <CustomizableButton
-            size="small"
-            variant="outlined"
-            startIcon={<Compass size={14} />}
-            onClick={() => navigate("/governance/scenarios")}
-            text="Get Recommendations"
-          />
-          <CustomizableButton
-            size="small"
-            variant="outlined"
-            startIcon={<BarChart3 size={14} />}
-            onClick={() => navigate("/governance/insights")}
-            text="Run Coverage Analysis"
-          />
-          <CustomizableButton
-            size="small"
-            variant="outlined"
-            startIcon={<GitCompareArrows size={14} />}
-            onClick={() => navigate("/governance/framework-mapper")}
-            text="View Mappings"
-          />
-          <CustomizableButton
-            size="small"
-            variant="outlined"
-            startIcon={<Plus size={14} />}
-            onClick={() => navigate("/governance/scenarios")}
-            text="New Scenario"
-          />
+          <GovernanceTooltip
+            header="Get Recommendations"
+            description="Answer a few questions to receive governance scenario recommendations tailored to your context."
+          >
+            <span>
+              <CustomizableButton
+                size="small"
+                variant="outlined"
+                startIcon={<Compass size={14} />}
+                onClick={() => navigate("/governance/scenarios")}
+                text="Get Recommendations"
+              />
+            </span>
+          </GovernanceTooltip>
+          <GovernanceTooltip
+            header="Run Coverage Analysis"
+            description="Open Unified Insights to analyze cross-framework coverage and identify gaps for a selected project."
+          >
+            <span>
+              <CustomizableButton
+                size="small"
+                variant="outlined"
+                startIcon={<BarChart3 size={14} />}
+                onClick={() => navigate("/governance/insights")}
+                text="Run Coverage Analysis"
+              />
+            </span>
+          </GovernanceTooltip>
+          <GovernanceTooltip
+            header="View Mappings"
+            description="Open the Framework Mapper to explore and manage cross-framework control mappings."
+          >
+            <span>
+              <CustomizableButton
+                size="small"
+                variant="outlined"
+                startIcon={<GitCompareArrows size={14} />}
+                onClick={() => navigate("/governance/framework-mapper")}
+                text="View Mappings"
+              />
+            </span>
+          </GovernanceTooltip>
+          <GovernanceTooltip
+            header="New Scenario"
+            description="Create a custom governance scenario to define framework priorities for your organization."
+          >
+            <span>
+              <CustomizableButton
+                size="small"
+                variant="outlined"
+                startIcon={<Plus size={14} />}
+                onClick={() => navigate("/governance/scenarios")}
+                text="New Scenario"
+              />
+            </span>
+          </GovernanceTooltip>
         </Stack>
 
         {/* Module cards grid */}
@@ -548,7 +598,11 @@ const GovernanceHub: React.FC = () => {
           <Grid container spacing={2}>
             {modules.map((module) => (
               <Grid size={{ xs: 12, sm: 6, md: 4 }} key={module.title}>
-                <ModuleCard {...module} />
+                <GovernanceTooltip header={module.title} description={module.description}>
+                  <span style={{ display: "block" }}>
+                    <ModuleCard {...module} />
+                  </span>
+                </GovernanceTooltip>
               </Grid>
             ))}
           </Grid>

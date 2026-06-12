@@ -1,14 +1,27 @@
 import { Box } from "@mui/material";
 import { MappingStrength } from "../../../domain/interfaces/i.governanceOs";
 import { status } from "../../themes/palette";
+import GovernanceTooltip from "./GovernanceTooltip";
 
 const strengthConfig: Record<
   MappingStrength,
-  { bg: string; text: string; border: string; label: string }
+  { bg: string; text: string; border: string; label: string; tooltip: string }
 > = {
-  direct: { ...status.success, label: "Direct" },
-  partial: { ...status.warning, label: "Partial" },
-  related: { ...status.info, label: "Related" },
+  direct: {
+    ...status.success,
+    label: "Direct",
+    tooltip: "Direct mapping: implementing the source control fully satisfies the target control.",
+  },
+  partial: {
+    ...status.warning,
+    label: "Partial",
+    tooltip: "Partial mapping: the controls overlap but each has unique requirements to address.",
+  },
+  related: {
+    ...status.info,
+    label: "Related",
+    tooltip: "Related mapping: the controls cover similar topics but are not interchangeable.",
+  },
 };
 
 interface MappingStrengthBadgeProps {
@@ -20,7 +33,7 @@ const MappingStrengthBadge = ({ strength, size = "small" }: MappingStrengthBadge
   const config = strengthConfig[strength] || strengthConfig.related;
   const height = size === "small" ? 22 : 24;
   const fontSize = size === "small" ? 11 : 12;
-  return (
+  const badge = (
     <Box
       component="span"
       sx={{
@@ -38,6 +51,12 @@ const MappingStrengthBadge = ({ strength, size = "small" }: MappingStrengthBadge
     >
       {config.label}
     </Box>
+  );
+
+  return (
+    <GovernanceTooltip header={config.label} description={config.tooltip}>
+      <span>{badge}</span>
+    </GovernanceTooltip>
   );
 };
 

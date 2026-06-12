@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Box, Typography, Stack, IconButton } from "@mui/material";
 import { ArrowRight, Info, Pencil, Trash2 } from "lucide-react";
 import MappingStrengthBadge from "./MappingStrengthBadge";
+import GovernanceTooltip from "./GovernanceTooltip";
 import StandardModal from "../Modals/StandardModal";
 import { IMappingCardProps } from "../../../domain/interfaces/i.governanceOs";
 import { border as borderPalette, background, text, accent, status } from "../../themes/palette";
@@ -95,32 +96,47 @@ const MappingCard = ({ mapping, frameworkNames, onEdit, onDelete }: IMappingCard
 
           <Stack direction="row" gap="4px" alignItems="center" sx={{ ml: "auto" }}>
             {onEdit && (
-              <IconButton
-                size="small"
-                disableRipple
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEdit(mapping);
-                }}
-                sx={{ "color": text.muted, "&:hover": { color: text.primary } }}
-              >
-                <Pencil size={14} />
-              </IconButton>
+              <GovernanceTooltip header="Edit Mapping" description="Modify this control mapping.">
+                <span>
+                  <IconButton
+                    size="small"
+                    disableRipple
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEdit(mapping);
+                    }}
+                    sx={{ "color": text.muted, "&:hover": { color: text.primary } }}
+                  >
+                    <Pencil size={14} />
+                  </IconButton>
+                </span>
+              </GovernanceTooltip>
             )}
             {onDelete && (
-              <IconButton
-                size="small"
-                disableRipple
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete(mapping);
-                }}
-                sx={{ "color": text.muted, "&:hover": { color: status.error.text } }}
-              >
-                <Trash2 size={14} />
-              </IconButton>
+              <GovernanceTooltip header="Delete Mapping" description="Remove this control mapping.">
+                <span>
+                  <IconButton
+                    size="small"
+                    disableRipple
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDelete(mapping);
+                    }}
+                    sx={{ "color": text.muted, "&:hover": { color: status.error.text } }}
+                  >
+                    <Trash2 size={14} />
+                  </IconButton>
+                </span>
+              </GovernanceTooltip>
             )}
-            <Info size={14} color={text.muted} />
+            <GovernanceTooltip
+              header="Mapping Details"
+              description="Click anywhere on the card to view the full mapping rationale and details."
+            >
+              <span>
+                <Info size={14} color={text.muted} />
+              </span>
+            </GovernanceTooltip>
           </Stack>
         </Stack>
 
