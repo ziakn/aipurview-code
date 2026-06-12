@@ -1,6 +1,7 @@
 import { Stack, SelectChangeEvent, useTheme } from "@mui/material";
 import { ArrowRight } from "lucide-react";
 import Select from "../Inputs/Select";
+import GovernanceTooltip from "./GovernanceTooltip";
 import { text } from "../../themes/palette";
 
 const FRAMEWORKS = [
@@ -26,25 +27,39 @@ const FrameworkSelector = ({
   const theme = useTheme();
   return (
     <Stack direction="row" spacing={3} sx={{ mb: 3 }} alignItems="flex-end">
-      <Select
-        id="source-framework"
-        label="Source Framework"
-        value={sourceId}
-        items={FRAMEWORKS.filter((fw) => fw._id !== targetId)}
-        onChange={(e: SelectChangeEvent<string | number>) => onSourceChange(Number(e.target.value))}
-        sx={{ minWidth: 200 }}
-      />
+      <GovernanceTooltip
+        header="Governance.Tooltip.FrameworkSelector.Source"
+        description="Governance.Tooltip.FrameworkSelector.Source.Desc"
+      >
+        <span>
+          <Select
+            id="source-framework"
+            label="Source Framework"
+            value={sourceId}
+            items={FRAMEWORKS.filter((fw) => fw._id !== targetId)}
+            onChange={(e: SelectChangeEvent<string | number>) => onSourceChange(Number(e.target.value))}
+            sx={{ minWidth: 200 }}
+          />
+        </span>
+      </GovernanceTooltip>
 
       <ArrowRight size={16} color={text.muted} style={{ marginBottom: theme.spacing(2.5) }} />
 
-      <Select
-        id="target-framework"
-        label="Target Framework"
-        value={targetId}
-        items={FRAMEWORKS.filter((fw) => fw._id !== sourceId)}
-        onChange={(e: SelectChangeEvent<string | number>) => onTargetChange(Number(e.target.value))}
-        sx={{ minWidth: 200 }}
-      />
+      <GovernanceTooltip
+        header="Governance.Tooltip.FrameworkSelector.Target"
+        description="Governance.Tooltip.FrameworkSelector.Target.Desc"
+      >
+        <span>
+          <Select
+            id="target-framework"
+            label="Target Framework"
+            value={targetId}
+            items={FRAMEWORKS.filter((fw) => fw._id !== sourceId)}
+            onChange={(e: SelectChangeEvent<string | number>) => onTargetChange(Number(e.target.value))}
+            sx={{ minWidth: 200 }}
+          />
+        </span>
+      </GovernanceTooltip>
     </Stack>
   );
 };
