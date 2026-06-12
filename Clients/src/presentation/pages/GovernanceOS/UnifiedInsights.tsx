@@ -4,6 +4,7 @@ import { SelectChangeEvent } from "@mui/material/Select";
 import { BarChart3, Download, Target } from "lucide-react";
 import Select from "../../components/Inputs/Select";
 import CoverageChart from "../../components/GovernanceOS/CoverageChart";
+import GovernanceTooltip from "../../components/GovernanceOS/GovernanceTooltip";
 import MappingStatsPanel from "../../components/GovernanceOS/MappingStatsPanel";
 import { DashboardHeaderCard } from "../../components/Cards/DashboardHeaderCard";
 import { EmptyState } from "../../components/EmptyState";
@@ -188,38 +189,59 @@ const UnifiedInsights = () => {
       )}
 
       <Stack direction="row" gap="16px" alignItems="flex-end">
-        <Select
-          id="project-select"
-          label="Select Project"
-          placeholder="Choose a project"
-          value={selectedProjectId}
-          items={projectItems}
-          onChange={(e: SelectChangeEvent<string | number>) => {
-            const val = e.target.value;
-            setSelectedProjectId(val === "" ? "" : Number(val));
-          }}
-          sx={{ minWidth: 280 }}
-        />
+        <GovernanceTooltip
+          header="Select Project"
+          description="Choose a project to analyze its cross-framework coverage and gaps."
+        >
+          <span>
+            <Select
+              id="project-select"
+              label="Select Project"
+              placeholder="Choose a project"
+              value={selectedProjectId}
+              items={projectItems}
+              onChange={(e: SelectChangeEvent<string | number>) => {
+                const val = e.target.value;
+                setSelectedProjectId(val === "" ? "" : Number(val));
+              }}
+              sx={{ minWidth: 280 }}
+            />
+          </span>
+        </GovernanceTooltip>
 
         {typeof selectedProjectId === "number" && selectedProjectId > 0 && (
           <>
-            <CustomizableButton
-              size="small"
-              variant="outlined"
-              onClick={() => refreshMutation.mutate(selectedProjectId)}
-              isDisabled={refreshMutation.isPending}
-              text={refreshMutation.isPending ? "Refreshing..." : "Refresh Coverage"}
-              sx={{}}
-            />
-            <CustomizableButton
-              size="small"
-              variant="outlined"
-              startIcon={<Download size={14} />}
-              onClick={handleExportCsv}
-              isDisabled={!coverage || coverage.length === 0}
-              text="Export CSV"
-              sx={{}}
-            />
+            <GovernanceTooltip
+              header="Refresh Coverage"
+              description="Recalculate coverage metrics for the selected project using the latest data."
+            >
+              <span>
+                <CustomizableButton
+                  size="small"
+                  variant="outlined"
+                  onClick={() => refreshMutation.mutate(selectedProjectId)}
+                  isDisabled={refreshMutation.isPending}
+                  text={refreshMutation.isPending ? "Refreshing..." : "Refresh Coverage"}
+                  sx={{}}
+                />
+              </span>
+            </GovernanceTooltip>
+            <GovernanceTooltip
+              header="Export CSV"
+              description="Download a CSV report of coverage, gaps, and synergies for the selected project."
+            >
+              <span>
+                <CustomizableButton
+                  size="small"
+                  variant="outlined"
+                  startIcon={<Download size={14} />}
+                  onClick={handleExportCsv}
+                  isDisabled={!coverage || coverage.length === 0}
+                  text="Export CSV"
+                  sx={{}}
+                />
+              </span>
+            </GovernanceTooltip>
           </>
         )}
       </Stack>
@@ -244,18 +266,54 @@ const UnifiedInsights = () => {
         <Stack gap="16px">
           {/* Summary cards */}
           <Stack direction="row" gap="16px" sx={{ width: "100%" }}>
-            <DashboardHeaderCard
-              title="Average Coverage"
-              count={`${avgCoverage}%`}
-              disableNavigation
-            />
-            <DashboardHeaderCard title="Mapped Controls" count={totalMapped} disableNavigation />
-            <DashboardHeaderCard title="Total Controls" count={totalControls} disableNavigation />
-            <DashboardHeaderCard
-              title="Active Frameworks"
-              count={coverage?.length || 0}
-              disableNavigation
-            />
+            <GovernanceTooltip
+              header="Average Coverage"
+              description="The average percentage of controls mapped across all active frameworks in the selected project."
+            >
+              <span style={{ flex: 1 }}>
+                <DashboardHeaderCard
+                  title="Average Coverage"
+                  count={`${avgCoverage}%`}
+                  disableNavigation
+                />
+              </span>
+            </GovernanceTooltip>
+            <GovernanceTooltip
+              header="Mapped Controls"
+              description="The total number of controls that have at least one cross-framework mapping."
+            >
+              <span style={{ flex: 1 }}>
+                <DashboardHeaderCard
+                  title="Mapped Controls"
+                  count={totalMapped}
+                  disableNavigation
+                />
+              </span>
+            </GovernanceTooltip>
+            <GovernanceTooltip
+              header="Total Controls"
+              description="The total number of controls across all active frameworks in the selected project."
+            >
+              <span style={{ flex: 1 }}>
+                <DashboardHeaderCard
+                  title="Total Controls"
+                  count={totalControls}
+                  disableNavigation
+                />
+              </span>
+            </GovernanceTooltip>
+            <GovernanceTooltip
+              header="Active Frameworks"
+              description="The number of frameworks assigned to the selected project."
+            >
+              <span style={{ flex: 1 }}>
+                <DashboardHeaderCard
+                  title="Active Frameworks"
+                  count={coverage?.length || 0}
+                  disableNavigation
+                />
+              </span>
+            </GovernanceTooltip>
           </Stack>
 
           {/* Coverage breakdown */}

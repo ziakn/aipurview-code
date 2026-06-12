@@ -8161,6 +8161,42 @@ export const translations: Record<string, Record<string, string>> = {
     "Mapping Details": "Mapping-Details",
     "Click anywhere on the card to view the full mapping rationale and details.":
       "Klicken Sie auf eine beliebige Stelle der Karte, um die vollständige Mapping-Begründung und Details anzuzeigen.",
+
+    // Governance tooltips
+    "The industry sector used to tailor governance scenario recommendations.":
+      "Der Branchensektor, der zur Anpassung der Governance-Szenario-Empfehlungen verwendet wird.",
+    "The regulatory region used to prioritize relevant frameworks and requirements.":
+      "Die Regulierungsregion, die zur Priorisierung relevanter Rahmenwerke und Anforderungen verwendet wird.",
+    "The risk classification of your AI use case, based on applicable regulations.":
+      "Die Risikoklassifizierung Ihres KI-Anwendungsfalls basierend auf geltenden Vorschriften.",
+    "The category of AI system you are building or deploying.":
+      "Die Kategorie des KI-Systems, das Sie entwickeln oder bereitstellen.",
+    "Generate scenario recommendations that match the context you provided.":
+      "Generieren Sie Szenario-Empfehlungen, die zu dem von Ihnen angegebenen Kontext passen.",
+    "Scenario Details": "Szenario-Details",
+    "View details about what selecting this scenario means.":
+      "Details anzeigen, was die Auswahl dieses Szenarios bedeutet.",
+    "Edit Scenario": "Szenario bearbeiten",
+    "Modify this governance scenario.": "Dieses Governance-Szenario bearbeiten.",
+    "Remove this governance scenario.": "Dieses Governance-Szenario entfernen.",
+    "Activation creates real tasks for each prioritized framework across selected projects. Tasks are assigned with staggered due dates based on priority.":
+      "Die Aktivierung erstellt echte Aufgaben für jedes priorisierte Framework in ausgewählten Projekten. Aufgaben erhalten gestaffelte Fälligkeitstermine basierend auf der Priorität.",
+    "Selecting this scenario sets it as the active governance strategy for your organization. It defines which frameworks to prioritize and guides compliance planning across all projects.":
+      "Die Auswahl dieses Szenarios legt es als aktive Governance-Strategie Ihrer Organisation fest. Es definiert, welche Frameworks priorisiert werden sollen, und leitet die Compliance-Planung über alle Projekte hinweg.",
+    "Choose a project to analyze its cross-framework coverage and gaps.":
+      "Wählen Sie ein Projekt aus, um dessen framework-übergreifende Abdeckung und Lücken zu analysieren.",
+    "Recalculate coverage metrics for the selected project using the latest data.":
+      "Berechnen Sie die Abdeckungsmetriken für das ausgewählte Projekt mit den neuesten Daten neu.",
+    "Download a CSV report of coverage, gaps, and synergies for the selected project.":
+      "Laden Sie einen CSV-Bericht zu Abdeckung, Lücken und Synergien für das ausgewählte Projekt herunter.",
+    "The average percentage of controls mapped across all active frameworks in the selected project.":
+      "Der durchschnittliche Prozentsatz der gemappten Controls über alle aktiven Rahmenwerke im ausgewählten Projekt.",
+    "The total number of controls that have at least one cross-framework mapping.":
+      "Die Gesamtanzahl der Controls, die mindestens ein framework-übergreifendes Mapping haben.",
+    "The total number of controls across all active frameworks in the selected project.":
+      "Die Gesamtanzahl der Controls über alle aktiven Rahmenwerke im ausgewählten Projekt.",
+    "The number of frameworks assigned to the selected project.":
+      "Die Anzahl der dem ausgewählten Projekt zugewiesenen Rahmenwerke.",
   },
 
   fr: {
@@ -16254,5 +16290,41 @@ export const translations: Record<string, Record<string, string>> = {
     "Mapping Details": "Détails du mapping",
     "Click anywhere on the card to view the full mapping rationale and details.":
       "Cliquez n'importe où sur la carte pour voir la justification complète et les détails du mapping.",
+
+    // Governance tooltips
+    "The industry sector used to tailor governance scenario recommendations.":
+      "Le secteur d'activité utilisé pour adapter les recommandations de scénarios de gouvernance.",
+    "The regulatory region used to prioritize relevant frameworks and requirements.":
+      "La réglementation régionale utilisée pour prioriser les cadres et exigences pertinents.",
+    "The risk classification of your AI use case, based on applicable regulations.":
+      "La classification des risques de votre cas d'usage IA, basée sur les réglementations applicables.",
+    "The category of AI system you are building or deploying.":
+      "La catégorie de système d'IA que vous construisez ou déployez.",
+    "Generate scenario recommendations that match the context you provided.":
+      "Générez des recommandations de scénarios correspondant au contexte que vous avez fourni.",
+    "Scenario Details": "Détails du scénario",
+    "View details about what selecting this scenario means.":
+      "Voir les détails sur ce que signifie la sélection de ce scénario.",
+    "Edit Scenario": "Modifier le scénario",
+    "Modify this governance scenario.": "Modifier ce scénario de gouvernance.",
+    "Remove this governance scenario.": "Supprimer ce scénario de gouvernance.",
+    "Activation creates real tasks for each prioritized framework across selected projects. Tasks are assigned with staggered due dates based on priority.":
+      "L'activation crée des tâches réelles pour chaque cadre priorisé dans les projets sélectionnés. Les tâches se voient attribuer des échéances échelonnées en fonction de la priorité.",
+    "Selecting this scenario sets it as the active governance strategy for your organization. It defines which frameworks to prioritize and guides compliance planning across all projects.":
+      "La sélection de ce scénario le définit comme stratégie de gouvernance active de votre organisation. Il définit les cadres à prioriser et guide la planification de conformité dans tous les projets.",
+    "Choose a project to analyze its cross-framework coverage and gaps.":
+      "Choisissez un projet pour analyser sa couverture inter-cadres et ses lacunes.",
+    "Recalculate coverage metrics for the selected project using the latest data.":
+      "Recalculez les métriques de couverture pour le projet sélectionné à l'aide des données les plus récentes.",
+    "Download a CSV report of coverage, gaps, and synergies for the selected project.":
+      "Téléchargez un rapport CSV de couverture, lacunes et synergies pour le projet sélectionné.",
+    "The average percentage of controls mapped across all active frameworks in the selected project.":
+      "Le pourcentage moyen de contrôles mappés dans tous les cadres actifs du projet sélectionné.",
+    "The total number of controls that have at least one cross-framework mapping.":
+      "Le nombre total de contrôles ayant au moins un mapping inter-cadres.",
+    "The total number of controls across all active frameworks in the selected project.":
+      "Le nombre total de contrôles dans tous les cadres actifs du projet sélectionné.",
+    "The number of frameworks assigned to the selected project.":
+      "Le nombre de cadres assignés au projet sélectionné.",
   },
 };
