@@ -190,8 +190,8 @@ const UnifiedInsights = () => {
 
       <Stack direction="row" gap="16px" alignItems="flex-end">
         <GovernanceTooltip
-          header="Select Project"
-          description="Choose a project to analyze its cross-framework coverage and gaps."
+          header="Governance.Tooltip.UnifiedInsights.SelectProject"
+          description="Governance.Tooltip.UnifiedInsights.SelectProject.Desc"
         >
           <span>
             <Select
@@ -212,8 +212,8 @@ const UnifiedInsights = () => {
         {typeof selectedProjectId === "number" && selectedProjectId > 0 && (
           <>
             <GovernanceTooltip
-              header="Refresh Coverage"
-              description="Recalculate coverage metrics for the selected project using the latest data."
+              header="Governance.Tooltip.UnifiedInsights.Refresh"
+              description="Governance.Tooltip.UnifiedInsights.Refresh.Desc"
             >
               <span>
                 <CustomizableButton
@@ -227,8 +227,8 @@ const UnifiedInsights = () => {
               </span>
             </GovernanceTooltip>
             <GovernanceTooltip
-              header="Export CSV"
-              description="Download a CSV report of coverage, gaps, and synergies for the selected project."
+              header="Governance.Tooltip.UnifiedInsights.Export"
+              description="Governance.Tooltip.UnifiedInsights.Export.Desc"
             >
               <span>
                 <CustomizableButton
@@ -267,8 +267,8 @@ const UnifiedInsights = () => {
           {/* Summary cards */}
           <Stack direction="row" gap="16px" sx={{ width: "100%" }}>
             <GovernanceTooltip
-              header="Average Coverage"
-              description="The average percentage of controls mapped across all active frameworks in the selected project."
+              header="Governance.Tooltip.UnifiedInsights.AvgCoverage"
+              description="Governance.Tooltip.UnifiedInsights.AvgCoverage.Desc"
             >
               <span style={{ flex: 1 }}>
                 <DashboardHeaderCard
@@ -279,8 +279,8 @@ const UnifiedInsights = () => {
               </span>
             </GovernanceTooltip>
             <GovernanceTooltip
-              header="Mapped Controls"
-              description="The total number of controls that have at least one cross-framework mapping."
+              header="Governance.Tooltip.UnifiedInsights.MappedControls"
+              description="Governance.Tooltip.UnifiedInsights.MappedControls.Desc"
             >
               <span style={{ flex: 1 }}>
                 <DashboardHeaderCard
@@ -291,8 +291,8 @@ const UnifiedInsights = () => {
               </span>
             </GovernanceTooltip>
             <GovernanceTooltip
-              header="Total Controls"
-              description="The total number of controls across all active frameworks in the selected project."
+              header="Governance.Tooltip.UnifiedInsights.TotalControls"
+              description="Governance.Tooltip.UnifiedInsights.TotalControls.Desc"
             >
               <span style={{ flex: 1 }}>
                 <DashboardHeaderCard
@@ -303,8 +303,8 @@ const UnifiedInsights = () => {
               </span>
             </GovernanceTooltip>
             <GovernanceTooltip
-              header="Active Frameworks"
-              description="The number of frameworks assigned to the selected project."
+              header="Governance.Tooltip.UnifiedInsights.ActiveFrameworks"
+              description="Governance.Tooltip.UnifiedInsights.ActiveFrameworks.Desc"
             >
               <span style={{ flex: 1 }}>
                 <DashboardHeaderCard

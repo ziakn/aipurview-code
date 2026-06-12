@@ -53,6 +53,8 @@ interface ModuleCardProps {
   subStat?: string;
   color: string;
   disabled?: boolean;
+  tooltipHeader: string;
+  tooltipDescription: string;
 }
 
 const FRAMEWORK_NAMES: Record<number, string> = {
@@ -71,11 +73,13 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
   subStat,
   color,
   disabled,
+  tooltipHeader,
+  tooltipDescription,
 }) => {
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = React.useState(false);
 
-  return (
+  const card = (
     <Card
       elevation={0}
       onClick={() => !disabled && navigate(path)}
@@ -141,6 +145,14 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
         )}
       </CardContent>
     </Card>
+  );
+
+  return disabled ? (
+    card
+  ) : (
+    <GovernanceTooltip header={tooltipHeader} description={tooltipDescription}>
+      <span style={{ display: "block" }}>{card}</span>
+    </GovernanceTooltip>
   );
 };
 
@@ -228,6 +240,8 @@ const GovernanceHub: React.FC = () => {
       stat: `${totalMappings} mappings`,
       subStat: topDomain ? `Top domain: ${topDomain[0]} (${topDomain[1]})` : undefined,
       color: brand.primary,
+      tooltipHeader: "Governance.Tooltip.Hub.ViewMappings",
+      tooltipDescription: "Governance.Tooltip.Hub.ViewMappings.Desc",
     },
     {
       title: "Scenario Builder",
@@ -236,6 +250,8 @@ const GovernanceHub: React.FC = () => {
       path: "/governance/scenarios",
       stat: activeScenario ? `Active: ${activeScenario.name}` : `${totalScenarios} scenarios`,
       color: accent.indigo.text,
+      tooltipHeader: "Governance.Tooltip.Hub.GetRecommendations",
+      tooltipDescription: "Governance.Tooltip.Hub.GetRecommendations.Desc",
     },
     {
       title: "Unified Insights",
@@ -246,6 +262,8 @@ const GovernanceHub: React.FC = () => {
       subStat:
         coverageStats != null ? `${coverageStats.totalGaps} gaps across frameworks` : undefined,
       color: accent.blue.text,
+      tooltipHeader: "Governance.Tooltip.Hub.RunCoverageAnalysis",
+      tooltipDescription: "Governance.Tooltip.Hub.RunCoverageAnalysis.Desc",
     },
     {
       title: "Evidence Hub",
@@ -254,6 +272,8 @@ const GovernanceHub: React.FC = () => {
       path: "/governance/evidence",
       stat: "Coming soon",
       color: accent.teal.text,
+      tooltipHeader: "Evidence Hub",
+      tooltipDescription: "Centralize and manage compliance evidence across frameworks and projects. This module is coming soon.",
     },
     {
       title: "Knowledge Graph",
@@ -262,6 +282,8 @@ const GovernanceHub: React.FC = () => {
       path: "/governance/knowledge-graph",
       stat: "Coming soon",
       color: accent.purple.text,
+      tooltipHeader: "Knowledge Graph",
+      tooltipDescription: "Visual exploration of governance relationships, controls, and compliance dependencies. This module is coming soon.",
     },
     {
       title: "Regulatory Radar",
@@ -270,6 +292,8 @@ const GovernanceHub: React.FC = () => {
       path: "/governance/regulatory-radar",
       stat: "Coming soon",
       color: accent.orange.text,
+      tooltipHeader: "Regulatory Radar",
+      tooltipDescription: "Monitor regulatory changes, track compliance deadlines, and receive alerts. This module is coming soon.",
     },
   ];
 
@@ -345,8 +369,8 @@ const GovernanceHub: React.FC = () => {
 
               <Stack direction="row" spacing={1} sx={{ flexShrink: 0 }}>
                 <GovernanceTooltip
-                  header="View Scenario"
-                  description="Open the Scenario Builder to review or edit the currently active governance scenario."
+                  header="Governance.Tooltip.Hub.ViewScenario"
+                  description="Governance.Tooltip.Hub.ViewScenario.Desc"
                 >
                   <span>
                     <CustomizableButton
@@ -358,8 +382,8 @@ const GovernanceHub: React.FC = () => {
                   </span>
                 </GovernanceTooltip>
                 <GovernanceTooltip
-                  header="Run Coverage"
-                  description="Open Unified Insights and calculate coverage based on framework priorities in the active scenario."
+                  header="Governance.Tooltip.Hub.RunCoverage"
+                  description="Governance.Tooltip.Hub.RunCoverage.Desc"
                 >
                   <span>
                     <CustomizableButton
@@ -395,8 +419,8 @@ const GovernanceHub: React.FC = () => {
                 </Typography>
               </Box>
               <GovernanceTooltip
-                header="Choose scenario"
-                description="Select or create a governance scenario to activate framework prioritization across projects."
+                header="Governance.Tooltip.Hub.ChooseScenario"
+                description="Governance.Tooltip.Hub.ChooseScenario.Desc"
               >
                 <span>
                   <CustomizableButton
@@ -420,17 +444,21 @@ const GovernanceHub: React.FC = () => {
               gap: "16px",
             }}
           >
-            <Box
-              sx={{
-                p: "12px 14px 14px 14px",
-                borderRadius: "4px",
-                border: `1px solid ${borderPalette.dark}`,
-                background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
-              }}
+            <GovernanceTooltip
+              header="Governance.Tooltip.Hub.AvgCoverage"
+              description="Governance.Tooltip.Hub.AvgCoverage.Desc"
             >
-              <Typography sx={{ fontSize: 13, color: "#8594AC", mb: "2px" }}>
-                Avg Coverage
-              </Typography>
+              <Box
+                sx={{
+                  p: "12px 14px 14px 14px",
+                  borderRadius: "4px",
+                  border: `1px solid ${borderPalette.dark}`,
+                  background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
+                }}
+              >
+                <Typography sx={{ fontSize: 13, color: "#8594AC", mb: "2px" }}>
+                  Avg Coverage
+                </Typography>
               <Typography
                 sx={{ fontSize: 16, fontWeight: 600, color: coverageColor, mt: 1, minHeight: 32 }}
               >
@@ -449,18 +477,25 @@ const GovernanceHub: React.FC = () => {
                     borderRadius: "4px",
                   },
                 }}
-              />
-            </Box>
+                />
+              </Box>
+            </GovernanceTooltip>
 
-            <Box
-              sx={{
-                p: "12px 14px 14px 14px",
-                borderRadius: "4px",
-                border: `1px solid ${borderPalette.dark}`,
-                background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
-              }}
+            <GovernanceTooltip
+              header="Governance.Tooltip.Hub.TotalGaps"
+              description="Governance.Tooltip.Hub.TotalGaps.Desc"
             >
-              <Typography sx={{ fontSize: 13, color: "#8594AC", mb: "2px" }}>Total Gaps</Typography>
+              <Box
+                sx={{
+                  p: "12px 14px 14px 14px",
+                  borderRadius: "4px",
+                  border: `1px solid ${borderPalette.dark}`,
+                  background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
+                }}
+              >
+                <Typography sx={{ fontSize: 13, color: "#8594AC", mb: "2px" }}>
+                  Total Gaps
+                </Typography>
               <Typography
                 sx={{
                   mt: 1,
@@ -472,50 +507,61 @@ const GovernanceHub: React.FC = () => {
               >
                 {coverageStats.totalGaps}
               </Typography>
-              <Typography sx={{ fontSize: 11, color: text.muted }}>unmapped controls</Typography>
-            </Box>
+                <Typography sx={{ fontSize: 11, color: text.muted }}>unmapped controls</Typography>
+              </Box>
+            </GovernanceTooltip>
 
-            <Box
-              sx={{
-                p: "12px 14px 14px 14px",
-                borderRadius: "4px",
-                border: `1px solid ${borderPalette.dark}`,
-                background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
-              }}
+            <GovernanceTooltip
+              header="Governance.Tooltip.Hub.ActiveFrameworks"
+              description="Governance.Tooltip.Hub.ActiveFrameworks.Desc"
             >
-              <Typography sx={{ fontSize: 13, color: "#8594AC", mb: "2px" }}>
-                Active Frameworks
-              </Typography>
+              <Box
+                sx={{
+                  p: "12px 14px 14px 14px",
+                  borderRadius: "4px",
+                  border: `1px solid ${borderPalette.dark}`,
+                  background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
+                }}
+              >
+                <Typography sx={{ fontSize: 13, color: "#8594AC", mb: "2px" }}>
+                  Active Frameworks
+                </Typography>
               <Typography
                 sx={{ mt: 1, minHeight: 32, fontSize: 16, fontWeight: 600, color: brand.primary }}
               >
                 {coverageStats.frameworkCount}
               </Typography>
-              <Typography sx={{ fontSize: 11, color: text.muted }}>
-                in project {projectForCoverage}
-              </Typography>
-            </Box>
+                <Typography sx={{ fontSize: 11, color: text.muted }}>
+                  in project {projectForCoverage}
+                </Typography>
+              </Box>
+            </GovernanceTooltip>
 
-            <Box
-              sx={{
-                p: "12px 14px 14px 14px",
-                borderRadius: "4px",
-                border: `1px solid ${borderPalette.dark}`,
-                background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
-              }}
+            <GovernanceTooltip
+              header="Governance.Tooltip.Hub.TotalMappings"
+              description="Governance.Tooltip.Hub.TotalMappings.Desc"
             >
-              <Typography sx={{ fontSize: 13, color: "#8594AC", mb: "2px" }}>
-                Total Mappings
-              </Typography>
+              <Box
+                sx={{
+                  p: "12px 14px 14px 14px",
+                  borderRadius: "4px",
+                  border: `1px solid ${borderPalette.dark}`,
+                  background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
+                }}
+              >
+                <Typography sx={{ fontSize: 13, color: "#8594AC", mb: "2px" }}>
+                  Total Mappings
+                </Typography>
               <Typography
                 sx={{ mt: 1, minHeight: 32, fontSize: 16, fontWeight: 600, color: brand.primary }}
               >
                 {totalMappings}
               </Typography>
-              <Typography sx={{ fontSize: 11, color: text.muted }}>
-                cross-framework links
-              </Typography>
-            </Box>
+                <Typography sx={{ fontSize: 11, color: text.muted }}>
+                  cross-framework links
+                </Typography>
+              </Box>
+            </GovernanceTooltip>
           </Box>
         ) : (
           <Box
@@ -535,8 +581,8 @@ const GovernanceHub: React.FC = () => {
         {/* Quick actions */}
         <Stack direction="row" gap="8px" flexWrap="wrap">
           <GovernanceTooltip
-            header="Get Recommendations"
-            description="Answer a few questions to receive governance scenario recommendations tailored to your context."
+            header="Governance.Tooltip.Hub.GetRecommendations"
+            description="Governance.Tooltip.Hub.GetRecommendations.Desc"
           >
             <span>
               <CustomizableButton
@@ -549,8 +595,8 @@ const GovernanceHub: React.FC = () => {
             </span>
           </GovernanceTooltip>
           <GovernanceTooltip
-            header="Run Coverage Analysis"
-            description="Open Unified Insights to analyze cross-framework coverage and identify gaps for a selected project."
+            header="Governance.Tooltip.Hub.RunCoverageAnalysis"
+            description="Governance.Tooltip.Hub.RunCoverageAnalysis.Desc"
           >
             <span>
               <CustomizableButton
@@ -563,8 +609,8 @@ const GovernanceHub: React.FC = () => {
             </span>
           </GovernanceTooltip>
           <GovernanceTooltip
-            header="View Mappings"
-            description="Open the Framework Mapper to explore and manage cross-framework control mappings."
+            header="Governance.Tooltip.Hub.ViewMappings"
+            description="Governance.Tooltip.Hub.ViewMappings.Desc"
           >
             <span>
               <CustomizableButton
@@ -577,8 +623,8 @@ const GovernanceHub: React.FC = () => {
             </span>
           </GovernanceTooltip>
           <GovernanceTooltip
-            header="New Scenario"
-            description="Create a custom governance scenario to define framework priorities for your organization."
+            header="Governance.Tooltip.Hub.NewScenario"
+            description="Governance.Tooltip.Hub.NewScenario.Desc"
           >
             <span>
               <CustomizableButton
@@ -598,11 +644,7 @@ const GovernanceHub: React.FC = () => {
           <Grid container spacing={2}>
             {modules.map((module) => (
               <Grid size={{ xs: 12, sm: 6, md: 4 }} key={module.title}>
-                <GovernanceTooltip header={module.title} description={module.description}>
-                  <span style={{ display: "block" }}>
-                    <ModuleCard {...module} />
-                  </span>
-                </GovernanceTooltip>
+                <ModuleCard {...module} />
               </Grid>
             ))}
           </Grid>
@@ -618,10 +660,15 @@ const GovernanceHub: React.FC = () => {
               background: `linear-gradient(135deg, ${background.main} 0%, ${background.gradientStop} 100%)`,
             }}
           >
-            <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: "12px" }}>
-              <AlertTriangle size={18} color={status.warning.text} />
-              <Typography sx={{ fontSize: 14, fontWeight: 600 }}>Gap Hotspots</Typography>
-            </Stack>
+            <GovernanceTooltip
+              header="Governance.Tooltip.Hub.GapHotspots"
+              description="Governance.Tooltip.Hub.GapHotspots.Desc"
+            >
+              <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: "12px" }}>
+                <AlertTriangle size={18} color={status.warning.text} />
+                <Typography sx={{ fontSize: 14, fontWeight: 600 }}>Gap Hotspots</Typography>
+              </Stack>
+            </GovernanceTooltip>
             <Typography sx={{ fontSize: 13, color: text.accent, mb: "12px" }}>
               Frameworks with the most unmapped controls. Address these first for the biggest
               coverage improvement.
