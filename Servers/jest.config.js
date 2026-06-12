@@ -12,7 +12,6 @@ module.exports = {
   },
   modulePathIgnorePatterns: ["<rootDir>/dist/"],
   testPathIgnorePatterns: ["/helpers/"],
-  globalSetup: "<rootDir>/tests/integration/globalSetup.js",
   moduleNameMapper: {
     "^http-proxy-middleware$": "<rootDir>/tests/integration/__mocks__/http-proxy-middleware.js",
     "^jsdom$": "<rootDir>/tests/integration/__mocks__/jsdom.js",
