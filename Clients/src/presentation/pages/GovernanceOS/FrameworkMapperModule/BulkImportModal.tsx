@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { Upload, Check, X } from "lucide-react";
 import StandardModal from "../../../components/Modals/StandardModal";
+import GovernanceTooltip from "../../../components/GovernanceOS/GovernanceTooltip";
 import {
   IGovernanceControlMapping,
   MappingStrength,
@@ -152,9 +153,13 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
     >
       <Stack spacing={3} sx={{ minWidth: 600, maxWidth: 800 }}>
         {/* Upload area */}
-        <Box
-          component="label"
-          sx={{
+        <GovernanceTooltip
+          header="Governance.Tooltip.BulkImport.Upload"
+          description="Governance.Tooltip.BulkImport.Upload.Desc"
+        >
+          <Box
+            component="label"
+            sx={{
             "display": "flex",
             "flexDirection": "column",
             "alignItems": "center",
@@ -181,6 +186,7 @@ const BulkImportModal: React.FC<BulkImportModalProps> = ({
             target_control_identifier
           </Typography>
         </Box>
+      </GovernanceTooltip>
 
         {parseError && <Alert severity="error">{parseError}</Alert>}
 

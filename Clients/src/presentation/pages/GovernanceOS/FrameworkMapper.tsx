@@ -97,23 +97,16 @@ const FrameworkMapper = () => {
   return (
     <Stack gap="16px">
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <GovernanceTooltip
-          header="Framework Selector"
-          description="Choose the source and target frameworks to filter the mappings displayed below."
-        >
-          <span>
-            <FrameworkSelector
-              sourceId={sourceId}
-              targetId={targetId}
-              onSourceChange={setSourceId}
-              onTargetChange={setTargetId}
-            />
-          </span>
-        </GovernanceTooltip>
+        <FrameworkSelector
+          sourceId={sourceId}
+          targetId={targetId}
+          onSourceChange={setSourceId}
+          onTargetChange={setTargetId}
+        />
         <Stack direction="row" gap="8px" alignItems="center">
           <GovernanceTooltip
-            header="View Mode"
-            description="Switch between list view and a matrix view of all framework mappings."
+            header="Governance.Tooltip.FrameworkMapper.ViewMode"
+            description="Governance.Tooltip.FrameworkMapper.ViewMode.Desc"
           >
             <span>
               <ToggleButtonGroup
@@ -132,8 +125,8 @@ const FrameworkMapper = () => {
             </span>
           </GovernanceTooltip>
           <GovernanceTooltip
-            header="Export"
-            description="Download the current pairwise mappings as a CSV file."
+            header="Governance.Tooltip.FrameworkMapper.Export"
+            description="Governance.Tooltip.FrameworkMapper.Export.Desc"
           >
             <span>
               <CustomizableButton
@@ -178,8 +171,8 @@ const FrameworkMapper = () => {
             </span>
           </GovernanceTooltip>
           <GovernanceTooltip
-            header="Import"
-            description="Upload a CSV file to create multiple mappings at once."
+            header="Governance.Tooltip.FrameworkMapper.Import"
+            description="Governance.Tooltip.FrameworkMapper.Import.Desc"
           >
             <span>
               <CustomizableButton
@@ -192,8 +185,8 @@ const FrameworkMapper = () => {
             </span>
           </GovernanceTooltip>
           <GovernanceTooltip
-            header="New Mapping"
-            description="Create a new cross-framework control mapping manually."
+            header="Governance.Tooltip.FrameworkMapper.NewMapping"
+            description="Governance.Tooltip.FrameworkMapper.NewMapping.Desc"
           >
             <span>
               <CustomizableButton
@@ -209,13 +202,20 @@ const FrameworkMapper = () => {
       </Stack>
 
       {domainTileItems.length > 0 && (
-        <StatusTileCards
-          items={domainTileItems}
-          size="small"
-          entityName="mapping"
-          selectedKey={selectedDomain}
-          onCardClick={(key) => setSelectedDomain(selectedDomain === key ? null : key)}
-        />
+        <GovernanceTooltip
+          header="Governance.Tooltip.FrameworkMapper.DomainFilter"
+          description="Governance.Tooltip.FrameworkMapper.DomainFilter.Desc"
+        >
+          <span>
+            <StatusTileCards
+              items={domainTileItems}
+              size="small"
+              entityName="mapping"
+              selectedKey={selectedDomain}
+              onCardClick={(key) => setSelectedDomain(selectedDomain === key ? null : key)}
+            />
+          </span>
+        </GovernanceTooltip>
       )}
 
       {isLoading ? (
