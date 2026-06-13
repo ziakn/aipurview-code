@@ -264,7 +264,7 @@ const InviteUserModal = ({
       onClose();
       onInvited();
     } catch (err: any) {
-      setError(err?.message || "Failed to invite user");
+      setError(err?.message || "Failed to add user");
     } finally {
       setSubmitting(false);
     }
@@ -283,9 +283,9 @@ const InviteUserModal = ({
         resetForm();
         onClose();
       }}
-      title="Invite user"
-      description="Send an invitation to a new user"
-      submitButtonText="Send invite"
+      title="Add user"
+      description="Create a user directly in an organization"
+      submitButtonText="Add user"
       onSubmit={handleSubmit}
       isSubmitting={submitting}
       maxWidth="480px"

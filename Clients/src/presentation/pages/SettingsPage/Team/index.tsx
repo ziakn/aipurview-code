@@ -399,7 +399,9 @@ const TeamManagement: React.FC = (): JSX.Element => {
       showAlert(
         "success",
         "Success",
-        `Invitation sent to ${email}. Please ask them to check their email and follow the link to create an account.`,
+        link
+          ? `User ${email} was added. Temporary password: ${link}`
+          : `User ${email} was added.`,
       );
     } else if (status === 206) {
       showAlert(
@@ -408,7 +410,7 @@ const TeamManagement: React.FC = (): JSX.Element => {
         `Invitation sent to ${email}. Please use this link: ${link} to create an account.`,
       );
     } else {
-      showAlert("error", "Error", `Failed to send invitation to ${email}. Please try again.`);
+      showAlert("error", "Error", `Failed to add user ${email}. Please try again.`);
     }
 
     setInviteUserModalOpen(false);
@@ -474,7 +476,7 @@ const TeamManagement: React.FC = (): JSX.Element => {
             <Box>
               <CustomizableButton
                 variant="contained"
-                text="Invite team member"
+                text="Add team member"
                 sx={{
                   backgroundColor: "brand.primary",
                   border: "1px solid brand.primary",

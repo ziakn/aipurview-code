@@ -134,11 +134,12 @@ const InviteUserModal: React.FC<InviteUserModalProps> = ({ isOpen, setIsOpen, on
         const data = response.data as {
           message: string;
           error?: string;
+          temporaryPassword?: string;
         };
         if (response.status === 206) {
           onSendInvite(values.email, response.status, data.message);
         } else {
-          onSendInvite(values.email, response.status);
+          onSendInvite(values.email, response.status, data.temporaryPassword);
         }
       } catch (_error) {
         onSendInvite(values.email, -1);
@@ -152,9 +153,9 @@ const InviteUserModal: React.FC<InviteUserModalProps> = ({ isOpen, setIsOpen, on
     <StandardModal
       isOpen={isOpen}
       onClose={() => setIsOpen(false)}
-      title="Invite new team member"
+      title="Add new team member"
       description="Add a new member to give them access to the VerifyWise dashboard"
-      submitButtonText="Send Invite"
+      submitButtonText="Add member"
       onSubmit={handleSendInvitation}
     >
       <Stack gap="16px">

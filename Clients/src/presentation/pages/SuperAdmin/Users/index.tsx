@@ -94,7 +94,7 @@ const Users = () => {
       setInviteRoleId(3);
       await fetchUsers();
     } catch (error: any) {
-      setInviteError(error?.message || "Failed to invite user");
+      setInviteError(error?.message || "Failed to add user");
     } finally {
       setInviting(false);
     }
@@ -280,16 +280,16 @@ const Users = () => {
         </TableContainer>
       )}
 
-      {/* Invite User Modal */}
+      {/* Add User Modal */}
       <StandardModal
         isOpen={inviteOpen}
         onClose={() => {
           setInviteOpen(false);
           setInviteError("");
         }}
-        title="Invite User"
-        description="Send an invitation email to a new user"
-        submitButtonText="Send Invite"
+        title="Add User"
+        description="Create a user directly in this organization"
+        submitButtonText="Add user"
         onSubmit={handleInvite}
         isSubmitting={inviting}
         maxWidth="480px"

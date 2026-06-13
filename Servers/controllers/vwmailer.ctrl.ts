@@ -1,8 +1,13 @@
 import { Request, Response } from "express";
 import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 import logger from "../utils/logger/fileLogger";
-import { createInvitationQuery } from "../utils/invitation.utils";
-import { sendInviteEmail } from "../utils/inviteEmail.utils";
+import { markInvitationAcceptedQuery } from "../utils/invitation.utils";
+import { createNewUserQuery, getUserByEmailQuery } from "../utils/user.utils";
+import { UserModel } from "../domain.layer/models/user/user.model";
+import { sequelize } from "../database/db";
+
+const DEFAULT_INVITED_USER_PASSWORD =
+  process.env.INVITED_USER_DEFAULT_PASSWORD || process.env.SUPERADMIN_PASSWORD || "ChangeMe!Str0ng";
 
 export const invite = async (
   req: Request,
@@ -24,64 +29,64 @@ export const invite = async (
     userId: req.userId!,
     tenantId: req.organizationId!,
   });
-  logger.debug(`📧 Sending invitation email to ${to} for user ${name} ${surname || ""}`);
+  logger.debug(`Creating invited user directly for ${to}: ${name} ${surname || ""}`);
 
+  const transaction = await sequelize.transaction();
+  let transactionFinished = false;
   try {
-    const { link, expiresAt, info } = await sendInviteEmail({
-      email: to,
+    const existingUser = await getUserByEmailQuery(to);
+
+    if (existingUser) {
+      await transaction.rollback();
+      transactionFinished = true;
+      return res.status(409).json({
+        error: req.t!("User with this email already exists"),
+      });
+    }
+
+    const userModel = await UserModel.createNewUser(
       name,
-      surname,
-      roleId,
-      organizationId,
-      lang: req.lang,
+      surname?.trim() || "User",
+      to,
+      DEFAULT_INVITED_USER_PASSWORD,
+      Number(roleId),
+      Number(organizationId),
+    );
+    await userModel.validateUserData();
+
+    const user = await createNewUserQuery(userModel, transaction);
+
+    try {
+      await markInvitationAcceptedQuery(organizationId, to);
+    } catch {
+      // Non-critical; direct-created users should not be blocked by invitation cleanup.
+    }
+
+    await transaction.commit();
+    transactionFinished = true;
+
+    await logSuccess({
+      eventType: "Create",
+      description: `Successfully created user ${to} directly without invitation email`,
+      functionName: "invite",
+      fileName: "vwmailer.ctrl.ts",
+      userId: req.userId!,
+      tenantId: req.organizationId!,
     });
 
-    // Persist invitation record
-    try {
-      await createInvitationQuery(
-        organizationId,
-        to,
-        name,
-        surname || "",
-        roleId,
-        req.userId!,
-        expiresAt,
-      );
-    } catch (invErr) {
-      console.error("Failed to persist invitation record:", invErr);
-    }
-
-    if (info.error) {
-      console.error("Error sending email:", info.error);
-      await logFailure({
-        eventType: "Create",
-        description: `Failed to send invitation email to ${to}: ${info.error.name}: ${info.error.message}`,
-        functionName: "invite",
-        fileName: "vwmailer.ctrl.ts",
-        error: new Error(`${info.error.name}: ${info.error.message}`),
-        userId: req.userId!,
-        tenantId: req.organizationId!,
-      });
-      return res.status(206).json({
-        error: `${info.error.name}: ${info.error.message}`,
-        message: link,
-      });
-    } else {
-      await logSuccess({
-        eventType: "Create",
-        description: `Successfully sent invitation email to ${to} for user ${name}`,
-        functionName: "invite",
-        fileName: "vwmailer.ctrl.ts",
-        userId: req.userId!,
-        tenantId: req.organizationId!,
-      });
-      return res.status(200).json({ message: req.t!("Email sent successfully") });
-    }
+    return res.status(200).json({
+      message: req.t!("User added successfully"),
+      user: user.toSafeJSON(),
+      temporaryPassword: DEFAULT_INVITED_USER_PASSWORD,
+    });
   } catch (error) {
-    console.error("Error sending email:", error);
+    if (!transactionFinished) {
+      await transaction.rollback();
+    }
+    console.error("Error adding user:", error);
     await logFailure({
       eventType: "Create",
-      description: `Failed to send invitation email to ${to}`,
+      description: `Failed to create user directly for ${to}`,
       functionName: "invite",
       fileName: "vwmailer.ctrl.ts",
       error: error as Error,
@@ -89,7 +94,7 @@ export const invite = async (
       tenantId: req.organizationId!,
     });
     return res.status(500).json({
-      error: req.t!("Failed to send email"),
+      error: req.t!("Failed to add user"),
       details: (error as Error).message,
     });
   }
