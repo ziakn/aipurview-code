@@ -72,7 +72,7 @@ if (typeof window !== "undefined") {
   };
 }
 
-const SUPPORTED: Lang[] = ["en", "de", "fr"];
+const SUPPORTED: Lang[] = ["en", "de", "fr", "es"];
 
 const getCurrentLang = (): Lang => {
   const stored = localStorage.getItem(STORAGE_KEY) as Lang | null;
