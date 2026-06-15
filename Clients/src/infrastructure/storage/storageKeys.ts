@@ -33,4 +33,5 @@ export const dynamicKeys = {
   sorting: (storageKey: string) => `${NAMESPACE}${storageKey}_sorting`,
   columns: (tableId: string) => `${NAMESPACE}columns_${tableId}`,
   deadlineSnooze: (userId: number | string) => `${NAMESPACE}deadline_snooze_${userId}`,
+  viewMode: (key: string) => `${NAMESPACE}view_mode_${key}`,
 } as const;
