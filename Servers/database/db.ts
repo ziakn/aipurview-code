@@ -99,10 +99,16 @@ import { GovernanceScenarioModel } from "../domain.layer/models/governanceOs/gov
 import { GovernanceScenarioRuleModel } from "../domain.layer/models/governanceOs/governanceScenarioRule.model";
 import { GovernanceOrgPreferencesModel } from "../domain.layer/models/governanceOs/governanceOrgPreferences.model";
 import { GovernanceCoverageCacheModel } from "../domain.layer/models/governanceOs/governanceCoverageCache.model";
+import { GovernanceScenarioActivationModel } from "../domain.layer/models/governanceOs/governanceScenarioActivation.model";
 
 dotenv.config();
 
-const conf = dbConfig.development;
+if (process.env.NODE_ENV === "test") {
+  dotenv.config({ path: ".env.test", override: true });
+}
+
+const env = process.env.NODE_ENV || "development";
+const conf = (dbConfig as Record<string, any>)[env] || dbConfig.development;
 
 const sequelize = new Sequelize(conf.database!, conf.username!, conf.password, {
   host: conf.host!,
@@ -215,6 +221,7 @@ const sequelize = new Sequelize(conf.database!, conf.username!, conf.password, {
     GovernanceScenarioRuleModel,
     GovernanceOrgPreferencesModel,
     GovernanceCoverageCacheModel,
+    GovernanceScenarioActivationModel,
   ],
 }) as Sequelize;
 

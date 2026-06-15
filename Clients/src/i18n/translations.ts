@@ -26,11 +26,221 @@ export type Lang = "en" | "de" | "fr" | "es";
 export const translations: Record<string, Record<string, string>> = {
   de: {
     // Sidebar / nav
+    "AI system risk classification": "[DE] AI system risk classification",
+    "Activation status": "[DE] Activation status",
+    "Active framework": "[DE] Active framework",
+    "Active frameworks": "[DE] Active frameworks",
+    "Add a remediation task for this unmapped control":
+      "[DE] Add a remediation task for this unmapped control",
+    "Add framework": "[DE] Add framework",
+    "All mappings created across frameworks": "[DE] All mappings created across frameworks",
+    "Analyze coverage and gaps across active frameworks": "[DE] Analyze coverage and gaps",
+    "Assign this framework to the project": "[DE] Assign this framework to the project",
+    "Average coverage": "[DE] Average coverage",
+    "Baseline framework for this scenario": "[DE] Baseline framework for this scenario",
+    "Baseline framework in the simulation": "[DE] Baseline framework in simulation",
+    "Breakdown of cross-framework control mappings": "[DE] Breakdown of cross-framework mappings",
+    "Calculate estimated coverage, effort, and timeline":
+      "[DE] Calculate estimated coverage and effort",
+    "Category of AI system": "[DE] Category of AI system",
+    "Certainty level for this control mapping": "[DE] Certainty level for this mapping",
+    "Choose every unmapped control in this framework for bulk action":
+      "[DE] Choose every unmapped control in this framework",
+    "Choose owners responsible for each framework in the activation":
+      "[DE] Owners for each framework",
+    "Choose the framework to map controls from": "[DE] Choose the framework to map from",
+    "Choose the framework to map controls into": "[DE] Choose the framework to map into",
+    "Choose the projects where activation tasks will be created":
+      "[DE] Projects where tasks will be created",
+    "Choose up to three scenarios to compare side by side":
+      "[DE] Choose up to three scenarios to compare",
+    "Click to view the mappings between these two frameworks":
+      "[DE] Click to view mappings between these frameworks",
+    "Close notifications": "[DE] Close notifications",
+    "Color intensity shows the density of mappings": "[DE] Color intensity shows mapping density",
+    "Comparison attribute": "[DE] Comparison attribute",
+    "Completion status of tasks grouped by framework": "[DE] Completion status by framework",
+    "Confirm the scenario activation details before creating tasks":
+      "[DE] Confirm scenario activation details",
+    "Context and purpose of this scenario": "[DE] Context and purpose of this scenario",
+    "Control gaps": "[DE] Gaps",
+    "Control partially satisfies another control": "[DE] Control partially satisfies another",
+    "Controls across all active frameworks": "[DE] Controls across active frameworks",
+    "Controls overlap but are not fully equivalent": "[DE] Related but not exact mapping",
+    "Controls overlap but each has unique requirements":
+      "[DE] Controls overlap but have unique needs",
+    "Controls that have cross-framework mappings": "[DE] Controls with cross-framework mappings",
+    "Controls that satisfy requirements in multiple frameworks":
+      "[DE] Controls mapped to multiple frameworks",
+    "Coverage analysis and gaps": "[DE] Coverage analysis and gaps",
+    "Coverage progress": "[DE] Coverage progress",
+    "Create a custom governance scenario": "[DE] Create a custom governance scenario",
+    "Create a custom governance scenario for the project": "[DE] Create a custom scenario",
+    "Create a new cross-framework control mapping manually":
+      "[DE] Create a cross-framework control mapping",
+    "Create task": "[DE] Create task",
+    "Create tasks across selected projects using this scenario":
+      "[DE] Create tasks across selected projects",
+    "Create tasks for selected gaps": "[DE] Create tasks for selected gaps",
+    "Create tasks for the selected projects based on this scenario":
+      "[DE] Create tasks for selected projects",
+    "Cross-framework control links created": "[DE] Cross-framework links created",
+    "Cross-framework control mappings": "[DE] Cross-framework control mappings",
+    "Cross-framework mappings": "[DE] Cross-framework mappings",
+    "Deactivate activation": "[DE] Deactivate",
+    "Deactivate scenario": "[DE] Deactivate",
+    "Delete mapping": "[DE] Delete mapping",
+    "Delete scenario": "[DE] Delete scenario",
+    "Density legend": "[DE] Density legend",
+    "Direct mapping": "[DE] Direct",
+    "Domain filter": "[DE] Domain filter",
+    "Domain tag": "[DE] Domain tag",
+    "Download the coverage report as a CSV file": "[DE] Download coverage report as CSV",
+    "Download the current pairwise mappings as a CSV file":
+      "[DE] Download pairwise mappings as CSV",
+    "Edit mapping": "[DE] Edit mapping",
+    "Edit scenario": "[DE] Edit scenario",
+    "Estimated coverage": "[DE] Est coverage",
+    "Estimated effort": "[DE] Est effort",
+    "Estimated hours required to close gaps": "[DE] Estimated hours required",
+    "Estimated number of controls to address": "[DE] Estimated controls to address",
+    "Estimated percentage of mapped controls": "[DE] Estimated mapped control percentage",
+    "Estimated weeks to complete the work": "[DE] Estimated weeks to complete",
+    "Exact one-to-one correspondence between controls": "[DE] Exact mapping between frameworks",
+    "Exact or strong control correspondence": "[DE] Exact or strong control correspondence",
+    "Explanation for why these two controls map to each other":
+      "[DE] Explanation for why these controls map",
+    "Export mappings": "[DE] Export mappings",
+    "Filter mappings by governance domain": "[DE] Filter mappings by governance domain",
+    "Framework axis": "[DE] Framework axis",
+    "Framework containing the source control": "[DE] Framework containing the source control",
+    "Framework coverage": "[DE] Framework coverage",
+    "Framework receiving the mapped control": "[DE] Framework receiving the mapped control",
+    "Frameworks assigned to the current project": "[DE] Frameworks in current project",
+    "Frameworks assigned to the selected project": "[DE] Frameworks assigned to project",
+    "Frameworks included in this scenario": "[DE] Frameworks included in this scenario",
+    "Frameworks with the most unmapped controls": "[DE] Frameworks with the most unmapped controls",
+    "Gap hotspots": "[DE] Gap hotspots",
+    "Generate remediation tasks for all selected unmapped controls":
+      "[DE] Generate remediation tasks for all selected controls",
+    "Generate scenario suggestions matching the project context":
+      "[DE] Generate scenarios matching context",
+    "Governance Intelligence Hub": "[DE] Governance Intelligence Hub",
+    "Governance scenario recommendations": "[DE] Governance scenario recommendations",
+    "Governance workspace dashboard": "[DE] Governance workspace dashboard",
+    "Hide demo data button": "[DE] Hide demo data button",
+    "Identifier of the control being mapped": "[DE] Identifier of the control being mapped",
+    "Identifier of the equivalent control in the target framework":
+      "[DE] Identifier of the equivalent control",
+    "Import mappings": "[DE] Import mappings",
+    "Inactive framework": "[DE] Inactive framework",
+    "Loose or tangential correspondence between controls":
+      "[DE] Loose or tangential correspondence",
+    "Mapped controls": "[DE] Mapped controls",
+    "Mapped controls shown as a percentage of total controls":
+      "[DE] Mapped controls as a percentage of total controls",
+    "Mapping count": "[DE] Mapping count",
+    "Mapping count grouped by control domain": "[DE] Mapping count grouped by control domain",
+    "Mapping count grouped by relationship strength":
+      "[DE] Mapping count grouped by relationship strength",
+    "Mapping details": "[DE] Mapping details",
+    "Mapping statistics": "[DE] Mapping statistics",
+    "Mark all notifications as read": "[DE] Mark all notifications as read",
+    "Mean percentage of mapped controls across active frameworks":
+      "[DE] Mean mapped control percentage",
+    "Modify this control mapping": "[DE] Modify this control mapping",
+    "Modify this governance scenario": "[DE] Modify this governance scenario",
+    "Multi-framework synergies": "[DE] Synergies",
+    "New mapping": "[DE] New mapping",
+    "New scenario": "[DE] New scenario",
+    "No corresponding control was found": "[DE] No mapping between these frameworks",
+    "No mapping": "[DE] None",
+    "Number of mappings linked to this control": "[DE] Number of mappings linked to this control",
+    "Open Unified Insights for this active scenario":
+      "[DE] Open Unified Insights for this scenario",
+    "Open Unified Insights to analyze coverage and gaps": "[DE] Open Unified Insights",
+    "Open Wise Search": "[DE] Open Wise Search",
+    "Open the Framework Mapper to browse control mappings": "[DE] Open Framework Mapper",
+    "Open the active scenario details": "[DE] Open active scenario details",
+    "Open user options": "[DE] Open user options",
+    "Optional additional frameworks in the simulation": "[DE] Optional additional frameworks",
+    "Optional governance domain category for grouping mappings":
+      "[DE] Optional governance domain category",
+    "Overview of how well this framework is mapped to controls":
+      "[DE] Overview of how well this framework is mapped",
+    "Partial mapping": "[DE] Partial",
+    "Plugins marketplace": "[DE] Plugins marketplace",
+    "Project to analyze for coverage and gaps": "[DE] Project to analyze coverage and gaps",
+    "Recalculate coverage and gaps for the selected project":
+      "[DE] Recalculate coverage for selected project",
+    "Receive scenario suggestions tailored to the project context":
+      "[DE] Receive scenario suggestions",
+    "Refresh coverage data": "[DE] Refresh coverage",
+    "Regulatory region this scenario targets": "[DE] Regulatory region this scenario targets",
+    "Regulatory region used to prioritize frameworks":
+      "[DE] Regulatory region for framework priority",
+    "Related mapping": "[DE] Related",
+    "Relationship between the two mapped controls": "[DE] Relationship between the two controls",
+    "Remove all selected gaps from the bulk task list": "[DE] Remove all selected gaps",
+    "Remove framework": "[DE] Remove framework",
+    "Remove this control mapping permanently": "[DE] Remove this control mapping",
+    "Remove this governance scenario permanently": "[DE] Remove this governance scenario",
+    "Review activation": "[DE] Review activation",
+    "Run coverage analysis": "[DE] Run coverage analysis",
+    "Run simulation": "[DE] Run simulation",
+    "Save the valid CSV rows as new control mappings": "[DE] Save valid rows as new mappings",
+    "Scenario details": "[DE] Scenario details",
+    "Scenario name": "[DE] Scenario name",
+    "Scenario property being compared across selections": "[DE] Scenario property being compared",
+    "Scenario selector": "[DE] Scenario selector",
+    "Secondary frameworks": "[DE] Secondary frameworks",
+    "Sector this scenario applies to": "[DE] Sector this scenario applies to",
+    "Sector used to tailor scenario recommendations": "[DE] Sector used to tailor recommendations",
+    "Select a CSV file containing mapping rows to import":
+      "[DE] Select a CSV file with mapping rows",
+    "Select all gaps": "[DE] Select all gaps",
+    "Select or create a governance scenario for the project":
+      "[DE] Select or create a governance scenario",
+    "Select project": "[DE] Select project",
+    "Select scenario": "[DE] Select scenario",
+    "Set as the baseline for scenario planning": "[DE] Set as the baseline for scenario planning",
+    "Set this scenario as the active governance strategy": "[DE] Set as active governance strategy",
+    "Short descriptive name for this scenario": "[DE] Short name for this scenario",
+    "Similar topics but the controls are not interchangeable":
+      "[DE] Similar topics but not interchangeable",
+    "Smart Prompt Preference": "[DE] Smart Prompt Preference",
+    "Snooze": "[DE] Snooze",
+    "Source control fully satisfies the target control":
+      "[DE] Source fully satisfies target control",
+    "Source framework": "[DE] Source framework",
+    "Source frameworks as rows and target frameworks as columns":
+      "[DE] Source rows and target columns",
+    "Spread some love": "[DE] Spread some love",
     "Start here": "Hier starten",
     "Dashboard": "Dashboard",
+    "Starting point for the what-if simulation": "[DE] Starting point for simulation",
+    "Stop the active scenario and remove its generated tasks": "[DE] Stop the active scenario",
+    "Stop this active activation and remove its tasks": "[DE] Stop this active activation",
+    "Supplementary frameworks": "[DE] Supplementary frameworks",
+    "Supporting frameworks in the simulation": "[DE] Supporting frameworks in simulation",
+    "Switch between list and matrix views of mappings": "[DE] Switch between list and matrix views",
+    "Target framework": "[DE] Target framework",
+    "Task progress": "[DE] Task progress",
     "Tasks": "Aufgaben",
     "Frameworks": "Rahmenwerke",
     "INVENTORY": "INVENTAR",
+    "The framework used as the baseline in the active scenario":
+      "[DE] The framework used as the baseline in the active scenario",
+    "This framework is assigned to the project": "[DE] This framework is assigned to the project",
+    "This framework is not currently assigned to the project":
+      "[DE] This framework is not currently assigned",
+    "Total gaps": "[DE] Total gaps",
+    "Unassign this framework from the project": "[DE] Unassign this framework from the project",
+    "Unmapped controls across all active frameworks": "[DE] Unmapped controls across frameworks",
+    "Unmapped controls that need a remediation task": "[DE] Unmapped controls that need attention",
+    "Upload CSV": "[DE] Upload CSV",
+    "Upload a CSV file to create multiple mappings at once":
+      "[DE] Upload a CSV file to create mappings",
     "Use cases": "Anwendungsfälle",
     "Model inventory": "Modellinventar",
     "Model Inventory": "Modellinventar",
@@ -183,6 +393,14 @@ export const translations: Record<string, Record<string, string>> = {
     "Download as Word": "Als Word herunterladen",
     "Share view": "Ansicht teilen",
     "Complete a risk assessment": "Risikobewertung abschließen",
+    "View mappings": "[DE] View mappings",
+    "View mode": "[DE] View mode",
+    "View scenario": "[DE] View scenario",
+    "View the full rationale and metadata for this mapping": "[DE] View full mapping rationale",
+    "View what selecting this scenario means for the project":
+      "[DE] View what selecting this scenario means",
+    "Whether this scenario activation is currently active":
+      "[DE] Whether this activation is active",
     "Yes": "Ja",
     "Later": "Später",
     "Back to policies": "Zurück zu Richtlinien",
@@ -7946,15 +8164,496 @@ export const translations: Record<string, Record<string, string>> = {
     "Select your organization": "Wählen Sie Ihre Organisation aus",
     "Completing sign in...": "Anmeldung wird abgeschlossen...",
     "Redirecting to login...": "Weiterleitung zur Anmeldung...",
+
+    // Governance OS
+    "Activate": "Aktivieren",
+    "Activate scenario": "Szenario aktivieren",
+    "Activate this scenario": "Dieses Szenario aktivieren",
+    "Activation History": "Aktivierungsverlauf",
+    "Activation summary": "Aktivierungszusammenfassung",
+    "Active Scenario": "Aktives Szenario",
+    "Active governance scenario": "Aktives Governance-Szenario",
+    "Active scenario": "Aktives Szenario",
+    "Analyze Coverage": "Abdeckung analysieren",
+    "Analyze coverage, gaps, and synergies across projects":
+      "Abdeckung, Lücken und Synergien über Projekte hinweg analysieren",
+    "Attribute": "Attribut",
+    "Avg Coverage": "Durchschn. Abdeckung",
+    "Base scenario": "Basisszenario",
+    "Bulk Import Mappings": "Mappings massenhaft importieren",
+    "By domain": "Nach Domäne",
+    "By mapping strength": "Nach Mapping-Stärke",
+    "Centralize and manage compliance evidence across all frameworks and projects.":
+      "Compliance-Nachweise über alle Rahmenwerke und Projekte hinweg zentralisieren und verwalten.",
+    "Centralize evidence with automated collection":
+      "Nachweise mit automatisierter Erfassung zentralisieren",
+    "Centralized compliance evidence": "Zentralisierte Compliance-Nachweise",
+    "Change scenario": "Szenario ändern",
+    "Choose a scenario": "Szenario wählen",
+    "Choose scenario": "Szenario wählen",
+    "Clear": "Zurücksetzen",
+    "Click any cell to view mappings between those frameworks":
+      "Auf eine Zelle klicken, um Mappings zwischen diesen Rahmenwerken anzuzeigen",
+    "Continue your governance workflow": "Governance-Workflow fortsetzen",
+    "Control whether the system prompts you to enable Governance Intelligence when conditions are met.":
+      "Steuern, ob das System Sie auffordert, Governance Intelligence zu aktivieren, wenn die Bedingungen erfüllt sind.",
+    "Coverage aligned with active scenario:": "Abdeckung abgestimmt auf aktives Szenario:",
+    "Coverage analysis and gap detection": "Abdeckungsanalyse und Lückenerkennung",
+    "Deactivate": "Deaktivieren",
+    "Default filters applied to the Framework Mapper view.":
+      "Standardfilter, die auf die Framework-Mapper-Ansicht angewendet werden.",
+    "Delete Mapping": "Mapping löschen",
+    "Delete Scenario": "Szenario löschen",
+    "Density:": "Dichte:",
+    "Domain Tag": "Domänen-Tag",
+    "Don&apos;t ask me again about enabling Governance Intelligence":
+      "Nicht erneut nachfragen, ob Governance Intelligence aktiviert werden soll",
+    "Enable or disable the Governance Intelligence module for your organization.":
+      "Governance-Intelligence-Modul für Ihre Organisation aktivieren oder deaktivieren.",
+    "Errors": "Fehler",
+    "Est. coverage": "Geschätzte Abdeckung",
+    "Est. effort": "Geschätzter Aufwand",
+    "Explore and manage cross-framework control mappings":
+      "Framework-übergreifende Control-Mappings erkunden und verwalten",
+    "Explore cross-framework control mappings. Select source and target frameworks to see how controls align.":
+      "Framework-übergreifende Control-Mappings erkunden. Quell- und Zielrahmenwerke auswählen, um die Ausrichtung der Controls zu sehen.",
+    "Failed to create task. Please try again.":
+      "Aufgabe konnte nicht erstellt werden. Bitte erneut versuchen.",
+    "Failed to save settings. Please try again.":
+      "Einstellungen konnten nicht gespeichert werden. Bitte erneut versuchen.",
+    "Framework owners": "Framework-Eigentümer",
+    "Gap Hotspots": "Lücken-Hotspots",
+    "Get framework recommendations based on your organization context, or browse and manage governance scenarios.":
+      "Framework-Empfehlungen basierend auf Ihrem Organisationskontext erhalten oder Governance-Szenarien durchsuchen und verwalten.",
+    "Get personalized framework recommendations and activate scenario-based compliance strategies across your projects.":
+      "Personalisierte Framework-Empfehlungen erhalten und szenarienbasierte Compliance-Strategien in Ihren Projekten aktivieren.",
+    "Get recommendations and manage governance scenarios":
+      "Empfehlungen erhalten und Governance-Szenarien verwalten",
+    "Governance Intelligence": "Governance Intelligence",
+    "Governance overview and module navigation": "Governance-Übersicht und Modulnavigation",
+    "Governance preferences": "Governance-Einstellungen",
+    "Governance scenarios and recommendations": "Governance-Szenarien und Empfehlungen",
+    "Hub": "Hub",
+    "Import": "Importieren",
+    "Knowledge Graph": "Wissensgraph",
+    "Manage Governance Intelligence configuration":
+      "Governance-Intelligence-Konfiguration verwalten",
+    "Manage Governance Intelligence configuration, preferences, and defaults.":
+      "Governance-Intelligence-Konfiguration, -Einstellungen und -Standards verwalten.",
+    "Mapping Filters": "Mapping-Filter",
+    "Mapping Statistics": "Mapping-Statistiken",
+    "Mapping Strength": "Mapping-Stärke",
+    "Module Status": "Modulstatus",
+    "Modules": "Module",
+    "Monitor regulation changes and auto-updates":
+      "Regulierungsänderungen und automatische Updates überwachen",
+    "Monitor regulatory changes": "Regulierungsänderungen überwachen",
+    "Monitor regulatory changes, track compliance deadlines, and receive alerts.":
+      "Regulierungsänderungen überwachen, Compliance-Termine verfolgen und Warnungen erhalten.",
+    "New Mapping": "Neues Mapping",
+    "New Scenario": "Neues Szenario",
+    "No activations yet. Activate a scenario to see its history here.":
+      "Noch keine Aktivierungen. Aktivieren Sie ein Szenario, um den Verlauf hier zu sehen.",
+    "No active scenario": "Kein aktives Szenario",
+    "No active scenario selected": "Kein aktives Szenario ausgewählt",
+    "No active scenario selected.": "Kein aktives Szenario ausgewählt.",
+    "No approved projects available. Create a project first.":
+      "Keine genehmigten Projekte verfügbar. Erstellen Sie zuerst ein Projekt.",
+    "No default filters configured. Filters are set per-session in the Framework Mapper.":
+      "Keine Standardfilter konfiguriert. Filter werden pro Sitzung im Framework Mapper festgelegt.",
+    "No frameworks available": "Keine Rahmenwerke verfügbar",
+    "No mapping statistics available. Add framework mappings to see breakdowns.":
+      "Keine Mapping-Statistiken verfügbar. Fügen Sie Framework-Mappings hinzu, um Aufschlüsselungen zu sehen.",
+    "No users available to assign. Invite team members before activating.":
+      "Keine Benutzer zur Zuweisung verfügbar. Laden Sie Teammitglieder ein, bevor Sie aktivieren.",
+    "None": "Keine",
+    "Only admins can change module status.": "Nur Administratoren können den Modulstatus ändern.",
+    "Open Framework Mapper": "Framework Mapper öffnen",
+    "Open Hub": "Hub öffnen",
+    "Primary": "Primär",
+    "Primary framework": "Primäres Framework",
+    "Primary framework: 14 days": "Primäres Framework: 14 Tage",
+    "Regulatory Radar": "Regulatorischer Radar",
+    "Reset prompt preference": "Eingabeaufforderungseinstellung zurücksetzen",
+    "Run Coverage": "Abdeckung ausführen",
+    "Run Coverage Analysis": "Abdeckungsanalyse ausführen",
+    "Scenario Comparison": "Szenariovergleich",
+    "Secondary": "Sekundär",
+    "Secondary framework(s): 30 days": "Sekundäre(s) Framework(s): 30 Tage",
+    "Select a scenario below to set your organization&apos;s active governance strategy.":
+      "Wählen Sie unten ein Szenario aus, um die aktive Governance-Strategie Ihrer Organisation festzulegen.",
+    "Select at least one scenario above to start comparing.":
+      "Wählen Sie mindestens ein Szenario oben aus, um den Vergleich zu starten.",
+    "Select primary": "Primär auswählen",
+    "Settings saved successfully.": "Einstellungen erfolgreich gespeichert.",
+    "Simulation results": "Simulationsergebnisse",
+    "Smart Prompt Preferences": "Smart-Prompt-Einstellungen",
+    "Source Control Identifier *": "Quell-Control-Identifier *",
+    "Staggered due dates": "Gestaffelte Fälligkeitstermine",
+    "Strength": "Stärke",
+    "Supplementary": "Ergänzend",
+    "Supplementary framework(s): 60 days": "Ergänzende(s) Framework(s): 60 Tage",
+    "Target": "Ziel",
+    "Target Control Identifier *": "Ziel-Control-Identifier *",
+    "Task progress by framework": "Aufgabenfortschritt nach Framework",
+    "The currently selected governance scenario drives framework prioritization across projects.":
+      "Das aktuell ausgewählte Governance-Szenario steuert die Framework-Priorisierung über Projekte hinweg.",
+    "Timeline": "Zeitstrahl",
+    "Total Gaps": "Gesamtlücken",
+    "Total controls": "Gesamtcontrols",
+    "Total mappings": "Gesamtmappings",
+    "Unlock Governance Intelligence": "Governance Intelligence freischalten",
+    "Upload a CSV file to import multiple mappings at once":
+      "CSV-Datei hochladen, um mehrere Mappings auf einmal zu importieren",
+    "View Mappings": "Mappings anzeigen",
+    "View Scenario": "Szenario anzeigen",
+    "View cross-framework coverage analysis per project. Identify gaps and synergies across your active frameworks.":
+      "Framework-übergreifende Abdeckungsanalyse pro Projekt anzeigen. Lücken und Synergien über Ihre aktiven Frameworks hinweg identifizieren.",
+    "View insights": "Einblicke anzeigen",
+    "Visual exploration of governance relationships":
+      "Visuelle Erkundung von Governance-Beziehungen",
+    "Visual exploration of governance relationships, controls, and compliance dependencies.":
+      "Visuelle Erkundung von Governance-Beziehungen, Controls und Compliance-Abhängigkeiten.",
+    "Visual governance relationships": "Visuelle Governance-Beziehungen",
+    "What-If Simulator": "What-If-Simulator",
+    "Why these controls map to each other...": "Warum diese Controls einander zugeordnet sind...",
+    "You are about to activate": "Sie sind dabei, zu aktivieren",
+    "Your central command center for cross-framework governance, compliance mapping, and coverage analysis.":
+      "Ihr zentrales Kommandozentrum für framework-übergreifende Governance, Compliance-Mapping und Abdeckungsanalyse.",
+
+    // Governance tooltips
+    "Governance overview and module navigation.": "Governance-Übersicht und Modulnavigation.",
+    "Explore and manage cross-framework control mappings.":
+      "Framework-übergreifende Control-Mappings erkunden und verwalten.",
+    "Get framework recommendations and manage governance scenarios.":
+      "Framework-Empfehlungen erhalten und Governance-Szenarien verwalten.",
+    "Per-project coverage analysis and gap detection.":
+      "Abdeckungsanalyse und Lückenerkennung pro Projekt.",
+    "Centralize and manage compliance evidence across frameworks.":
+      "Compliance-Nachweise über alle Rahmenwerke hinweg zentralisieren und verwalten.",
+    "Visual exploration of governance relationships and dependencies.":
+      "Visuelle Erkundung von Governance-Beziehungen und Abhängigkeiten.",
+    "Monitor regulatory changes and compliance deadlines.":
+      "Regulierungsänderungen und Compliance-Termine überwachen.",
+    "Manage Governance Intelligence preferences and defaults.":
+      "Governance-Intelligence-Einstellungen und -Standards verwalten.",
+
+    // Governance tooltips
+    "Answer a few questions to receive governance scenario recommendations tailored to your context.":
+      "Beantworten Sie einige Fragen, um auf Ihren Kontext zugeschnittene Governance-Szenario-Empfehlungen zu erhalten.",
+    "Open Unified Insights to analyze cross-framework coverage and identify gaps for a selected project.":
+      "Öffnen Sie Unified Insights, um die framework-übergreifende Abdeckung zu analysieren und Lücken für ein ausgewähltes Projekt zu identifizieren.",
+    "Open the Framework Mapper to explore and manage cross-framework control mappings.":
+      "Öffnen Sie den Framework Mapper, um framework-übergreifende Control-Mappings zu erkunden und zu verwalten.",
+    "Create a custom governance scenario to define framework priorities for your organization.":
+      "Erstellen Sie ein benutzerdefiniertes Governance-Szenario, um Framework-Prioritäten für Ihre Organisation festzulegen.",
+    "Open the Scenario Builder to review or edit the currently active governance scenario.":
+      "Öffnen Sie den Szenario-Builder, um das aktuell aktive Governance-Szenario zu prüfen oder zu bearbeiten.",
+    "Open Unified Insights and calculate coverage based on framework priorities in the active scenario.":
+      "Öffnen Sie Unified Insights und berechnen Sie die Abdeckung basierend auf den Framework-Prioritäten des aktiven Szenarios.",
+    "Select or create a governance scenario to activate framework prioritization across projects.":
+      "Wählen Sie ein Governance-Szenario aus oder erstellen Sie eines, um die Framework-Priorisierung über Projekte hinweg zu aktivieren.",
+    "Framework Selector": "Framework-Auswahl",
+    "Choose the source and target frameworks to filter the mappings displayed below.":
+      "Wählen Sie Quell- und Zielframework, um die unten angezeigten Mappings zu filtern.",
+    "View Mode": "Ansichtsmodus",
+    "Switch between list view and a matrix view of all framework mappings.":
+      "Wechseln Sie zwischen Listenansicht und Matrixansicht aller Framework-Mappings.",
+    "Download the current pairwise mappings as a CSV file.":
+      "Laden Sie die aktuellen paarweisen Mappings als CSV-Datei herunter.",
+    "Upload a CSV file to create multiple mappings at once.":
+      "Laden Sie eine CSV-Datei hoch, um mehrere Mappings auf einmal zu erstellen.",
+    "Create a new cross-framework control mapping manually.":
+      "Erstellen Sie manuell ein neues framework-übergreifendes Control-Mapping.",
+
+    // Governance tooltips
+    "Direct mapping: implementing the source control fully satisfies the target control.":
+      "Direktes Mapping: Die Implementierung der Quell-Control erfüllt die Ziel-Control vollständig.",
+    "Partial mapping: the controls overlap but each has unique requirements to address.":
+      "Partielles Mapping: Die Controls überschneiden sich, aber jede hat einzigartige Anforderungen.",
+    "Related mapping: the controls cover similar topics but are not interchangeable.":
+      "Verwandtes Mapping: Die Controls behandeln ähnliche Themen, sind aber nicht austauschbar.",
+    "Edit Mapping": "Mapping bearbeiten",
+    "Modify this control mapping.": "Dieses Control-Mapping bearbeiten.",
+    "Remove this control mapping.": "Dieses Control-Mapping entfernen.",
+    "Mapping Details": "Mapping-Details",
+    "Click anywhere on the card to view the full mapping rationale and details.":
+      "Klicken Sie auf eine beliebige Stelle der Karte, um die vollständige Mapping-Begründung und Details anzuzeigen.",
+
+    // Governance tooltips
+    "The industry sector used to tailor governance scenario recommendations.":
+      "Der Branchensektor, der zur Anpassung der Governance-Szenario-Empfehlungen verwendet wird.",
+    "The regulatory region used to prioritize relevant frameworks and requirements.":
+      "Die Regulierungsregion, die zur Priorisierung relevanter Rahmenwerke und Anforderungen verwendet wird.",
+    "The risk classification of your AI use case, based on applicable regulations.":
+      "Die Risikoklassifizierung Ihres KI-Anwendungsfalls basierend auf geltenden Vorschriften.",
+    "The category of AI system you are building or deploying.":
+      "Die Kategorie des KI-Systems, das Sie entwickeln oder bereitstellen.",
+    "Generate scenario recommendations that match the context you provided.":
+      "Generieren Sie Szenario-Empfehlungen, die zu dem von Ihnen angegebenen Kontext passen.",
+    "Scenario Details": "Szenario-Details",
+    "View details about what selecting this scenario means.":
+      "Details anzeigen, was die Auswahl dieses Szenarios bedeutet.",
+    "Edit Scenario": "Szenario bearbeiten",
+    "Modify this governance scenario.": "Dieses Governance-Szenario bearbeiten.",
+    "Remove this governance scenario.": "Dieses Governance-Szenario entfernen.",
+    "Activation creates real tasks for each prioritized framework across selected projects. Tasks are assigned with staggered due dates based on priority.":
+      "Die Aktivierung erstellt echte Aufgaben für jedes priorisierte Framework in ausgewählten Projekten. Aufgaben erhalten gestaffelte Fälligkeitstermine basierend auf der Priorität.",
+    "Selecting this scenario sets it as the active governance strategy for your organization. It defines which frameworks to prioritize and guides compliance planning across all projects.":
+      "Die Auswahl dieses Szenarios legt es als aktive Governance-Strategie Ihrer Organisation fest. Es definiert, welche Frameworks priorisiert werden sollen, und leitet die Compliance-Planung über alle Projekte hinweg.",
+    "Choose a project to analyze its cross-framework coverage and gaps.":
+      "Wählen Sie ein Projekt aus, um dessen framework-übergreifende Abdeckung und Lücken zu analysieren.",
+    "Recalculate coverage metrics for the selected project using the latest data.":
+      "Berechnen Sie die Abdeckungsmetriken für das ausgewählte Projekt mit den neuesten Daten neu.",
+    "Download a CSV report of coverage, gaps, and synergies for the selected project.":
+      "Laden Sie einen CSV-Bericht zu Abdeckung, Lücken und Synergien für das ausgewählte Projekt herunter.",
+    "The average percentage of controls mapped across all active frameworks in the selected project.":
+      "Der durchschnittliche Prozentsatz der gemappten Controls über alle aktiven Rahmenwerke im ausgewählten Projekt.",
+    "The total number of controls that have at least one cross-framework mapping.":
+      "Die Gesamtanzahl der Controls, die mindestens ein framework-übergreifendes Mapping haben.",
+    "The total number of controls across all active frameworks in the selected project.":
+      "Die Gesamtanzahl der Controls über alle aktiven Rahmenwerke im ausgewählten Projekt.",
+    "The number of frameworks assigned to the selected project.":
+      "Die Anzahl der dem ausgewählten Projekt zugewiesenen Rahmenwerke.",
+
+    // Governance tooltips
+    "Centralize and manage compliance evidence across frameworks and projects. This module is coming soon.":
+      "Compliance-Nachweise über alle Rahmenwerke und Projekte hinweg zentralisieren und verwalten. Dieses Modul ist demnächst verfügbar.",
+    "Visual exploration of governance relationships, controls, and compliance dependencies. This module is coming soon.":
+      "Visuelle Erkundung von Governance-Beziehungen, Controls und Compliance-Abhängigkeiten. Dieses Modul ist demnächst verfügbar.",
+    "Monitor regulatory changes, track compliance deadlines, and receive alerts. This module is coming soon.":
+      "Regulierungsänderungen überwachen, Compliance-Termine verfolgen und Warnungen erhalten. Dieses Modul ist demnächst verfügbar.",
+    "Toggle Governance Intelligence on or off for your organization. Only admins can change this.":
+      "Governance Intelligence für Ihre Organisation ein- oder ausschalten. Nur Administratoren können dies ändern.",
+    "Switch to a different governance scenario to update framework priorities.":
+      "Wechseln Sie zu einem anderen Governance-Szenario, um die Framework-Prioritäten zu aktualisieren.",
+    "Stop the system from prompting you to enable Governance Intelligence in the future.":
+      "Verhindern Sie, dass das System Sie zukünftig auffordert, Governance Intelligence zu aktivieren.",
+    "Re-enable the smart prompt that suggests turning on Governance Intelligence.":
+      "Aktivieren Sie die Smart-Prompt-Eingabeaufforderung erneut, die vorschlägt, Governance Intelligence einzuschalten.",
+    "Go to the Framework Mapper to configure filters for your session.":
+      "Gehen Sie zum Framework Mapper, um Filter für Ihre Sitzung zu konfigurieren.",
+    "Save your Governance Intelligence preferences.":
+      "Speichern Sie Ihre Governance-Intelligence-Einstellungen.",
   },
 
   fr: {
     // Sidebar / nav
+    "AI system risk classification": "[FR] AI system risk classification",
+    "Activation status": "[FR] Activation status",
+    "Active framework": "[FR] Active framework",
+    "Active frameworks": "[FR] Active frameworks",
+    "Add a remediation task for this unmapped control":
+      "[FR] Add a remediation task for this unmapped control",
+    "Add framework": "[FR] Add framework",
+    "All mappings created across frameworks": "[FR] All mappings created across frameworks",
+    "Analyze coverage and gaps across active frameworks": "[FR] Analyze coverage and gaps",
+    "Assign this framework to the project": "[FR] Assign this framework to the project",
+    "Average coverage": "[FR] Average coverage",
+    "Baseline framework for this scenario": "[FR] Baseline framework for this scenario",
+    "Baseline framework in the simulation": "[FR] Baseline framework in simulation",
+    "Breakdown of cross-framework control mappings": "[FR] Breakdown of cross-framework mappings",
+    "Calculate estimated coverage, effort, and timeline":
+      "[FR] Calculate estimated coverage and effort",
+    "Category of AI system": "[FR] Category of AI system",
+    "Certainty level for this control mapping": "[FR] Certainty level for this mapping",
+    "Choose every unmapped control in this framework for bulk action":
+      "[FR] Choose every unmapped control in this framework",
+    "Choose owners responsible for each framework in the activation":
+      "[FR] Owners for each framework",
+    "Choose the framework to map controls from": "[FR] Choose the framework to map from",
+    "Choose the framework to map controls into": "[FR] Choose the framework to map into",
+    "Choose the projects where activation tasks will be created":
+      "[FR] Projects where tasks will be created",
+    "Choose up to three scenarios to compare side by side":
+      "[FR] Choose up to three scenarios to compare",
+    "Click to view the mappings between these two frameworks":
+      "[FR] Click to view mappings between these frameworks",
+    "Close notifications": "[FR] Close notifications",
+    "Color intensity shows the density of mappings": "[FR] Color intensity shows mapping density",
+    "Comparison attribute": "[FR] Comparison attribute",
+    "Completion status of tasks grouped by framework": "[FR] Completion status by framework",
+    "Confirm the scenario activation details before creating tasks":
+      "[FR] Confirm scenario activation details",
+    "Context and purpose of this scenario": "[FR] Context and purpose of this scenario",
+    "Control gaps": "[FR] Gaps",
+    "Control partially satisfies another control": "[FR] Control partially satisfies another",
+    "Controls across all active frameworks": "[FR] Controls across active frameworks",
+    "Controls overlap but are not fully equivalent": "[FR] Related but not exact mapping",
+    "Controls overlap but each has unique requirements":
+      "[FR] Controls overlap but have unique needs",
+    "Controls that have cross-framework mappings": "[FR] Controls with cross-framework mappings",
+    "Controls that satisfy requirements in multiple frameworks":
+      "[FR] Controls mapped to multiple frameworks",
+    "Coverage analysis and gaps": "[FR] Coverage analysis and gaps",
+    "Coverage progress": "[FR] Coverage progress",
+    "Create a custom governance scenario": "[FR] Create a custom governance scenario",
+    "Create a custom governance scenario for the project": "[FR] Create a custom scenario",
+    "Create a new cross-framework control mapping manually":
+      "[FR] Create a cross-framework control mapping",
+    "Create task": "[FR] Create task",
+    "Create tasks across selected projects using this scenario":
+      "[FR] Create tasks across selected projects",
+    "Create tasks for selected gaps": "[FR] Create tasks for selected gaps",
+    "Create tasks for the selected projects based on this scenario":
+      "[FR] Create tasks for selected projects",
+    "Cross-framework control links created": "[FR] Cross-framework links created",
+    "Cross-framework control mappings": "[FR] Cross-framework control mappings",
+    "Cross-framework mappings": "[FR] Cross-framework mappings",
+    "Deactivate activation": "[FR] Deactivate",
+    "Deactivate scenario": "[FR] Deactivate",
+    "Delete mapping": "[FR] Delete mapping",
+    "Delete scenario": "[FR] Delete scenario",
+    "Density legend": "[FR] Density legend",
+    "Direct mapping": "[FR] Direct",
+    "Domain filter": "[FR] Domain filter",
+    "Domain tag": "[FR] Domain tag",
+    "Download the coverage report as a CSV file": "[FR] Download coverage report as CSV",
+    "Download the current pairwise mappings as a CSV file":
+      "[FR] Download pairwise mappings as CSV",
+    "Edit mapping": "[FR] Edit mapping",
+    "Edit scenario": "[FR] Edit scenario",
+    "Estimated coverage": "[FR] Est coverage",
+    "Estimated effort": "[FR] Est effort",
+    "Estimated hours required to close gaps": "[FR] Estimated hours required",
+    "Estimated number of controls to address": "[FR] Estimated controls to address",
+    "Estimated percentage of mapped controls": "[FR] Estimated mapped control percentage",
+    "Estimated weeks to complete the work": "[FR] Estimated weeks to complete",
+    "Exact one-to-one correspondence between controls": "[FR] Exact mapping between frameworks",
+    "Exact or strong control correspondence": "[FR] Exact or strong control correspondence",
+    "Explanation for why these two controls map to each other":
+      "[FR] Explanation for why these controls map",
+    "Export mappings": "[FR] Export mappings",
+    "Filter mappings by governance domain": "[FR] Filter mappings by governance domain",
+    "Framework axis": "[FR] Framework axis",
+    "Framework containing the source control": "[FR] Framework containing the source control",
+    "Framework coverage": "[FR] Framework coverage",
+    "Framework receiving the mapped control": "[FR] Framework receiving the mapped control",
+    "Frameworks assigned to the current project": "[FR] Frameworks in current project",
+    "Frameworks assigned to the selected project": "[FR] Frameworks assigned to project",
+    "Frameworks included in this scenario": "[FR] Frameworks included in this scenario",
+    "Frameworks with the most unmapped controls": "[FR] Frameworks with the most unmapped controls",
+    "Gap hotspots": "[FR] Gap hotspots",
+    "Generate remediation tasks for all selected unmapped controls":
+      "[FR] Generate remediation tasks for all selected controls",
+    "Generate scenario suggestions matching the project context":
+      "[FR] Generate scenarios matching context",
+    "Governance Intelligence Hub": "[FR] Governance Intelligence Hub",
+    "Governance scenario recommendations": "[FR] Governance scenario recommendations",
+    "Governance workspace dashboard": "[FR] Governance workspace dashboard",
+    "Hide demo data button": "[FR] Hide demo data button",
+    "Identifier of the control being mapped": "[FR] Identifier of the control being mapped",
+    "Identifier of the equivalent control in the target framework":
+      "[FR] Identifier of the equivalent control",
+    "Import mappings": "[FR] Import mappings",
+    "Inactive framework": "[FR] Inactive framework",
+    "Loose or tangential correspondence between controls":
+      "[FR] Loose or tangential correspondence",
+    "Mapped controls": "[FR] Mapped controls",
+    "Mapped controls shown as a percentage of total controls":
+      "[FR] Mapped controls as a percentage of total controls",
+    "Mapping count": "[FR] Mapping count",
+    "Mapping count grouped by control domain": "[FR] Mapping count grouped by control domain",
+    "Mapping count grouped by relationship strength":
+      "[FR] Mapping count grouped by relationship strength",
+    "Mapping details": "[FR] Mapping details",
+    "Mapping statistics": "[FR] Mapping statistics",
+    "Mark all notifications as read": "[FR] Mark all notifications as read",
+    "Mean percentage of mapped controls across active frameworks":
+      "[FR] Mean mapped control percentage",
+    "Modify this control mapping": "[FR] Modify this control mapping",
+    "Modify this governance scenario": "[FR] Modify this governance scenario",
+    "Multi-framework synergies": "[FR] Synergies",
+    "New mapping": "[FR] New mapping",
+    "New scenario": "[FR] New scenario",
+    "No corresponding control was found": "[FR] No mapping between these frameworks",
+    "No mapping": "[FR] None",
+    "Number of mappings linked to this control": "[FR] Number of mappings linked to this control",
+    "Open Unified Insights for this active scenario":
+      "[FR] Open Unified Insights for this scenario",
+    "Open Unified Insights to analyze coverage and gaps": "[FR] Open Unified Insights",
+    "Open Wise Search": "[FR] Open Wise Search",
+    "Open the Framework Mapper to browse control mappings": "[FR] Open Framework Mapper",
+    "Open the active scenario details": "[FR] Open active scenario details",
+    "Open user options": "[FR] Open user options",
+    "Optional additional frameworks in the simulation": "[FR] Optional additional frameworks",
+    "Optional governance domain category for grouping mappings":
+      "[FR] Optional governance domain category",
+    "Overview of how well this framework is mapped to controls":
+      "[FR] Overview of how well this framework is mapped",
+    "Partial mapping": "[FR] Partial",
+    "Plugins marketplace": "[FR] Plugins marketplace",
+    "Project to analyze for coverage and gaps": "[FR] Project to analyze coverage and gaps",
+    "Recalculate coverage and gaps for the selected project":
+      "[FR] Recalculate coverage for selected project",
+    "Receive scenario suggestions tailored to the project context":
+      "[FR] Receive scenario suggestions",
+    "Refresh coverage data": "[FR] Refresh coverage",
+    "Regulatory region this scenario targets": "[FR] Regulatory region this scenario targets",
+    "Regulatory region used to prioritize frameworks":
+      "[FR] Regulatory region for framework priority",
+    "Related mapping": "[FR] Related",
+    "Relationship between the two mapped controls": "[FR] Relationship between the two controls",
+    "Remove all selected gaps from the bulk task list": "[FR] Remove all selected gaps",
+    "Remove framework": "[FR] Remove framework",
+    "Remove this control mapping permanently": "[FR] Remove this control mapping",
+    "Remove this governance scenario permanently": "[FR] Remove this governance scenario",
+    "Review activation": "[FR] Review activation",
+    "Run coverage analysis": "[FR] Run coverage analysis",
+    "Run simulation": "[FR] Run simulation",
+    "Save the valid CSV rows as new control mappings": "[FR] Save valid rows as new mappings",
+    "Scenario details": "[FR] Scenario details",
+    "Scenario name": "[FR] Scenario name",
+    "Scenario property being compared across selections": "[FR] Scenario property being compared",
+    "Scenario selector": "[FR] Scenario selector",
+    "Secondary frameworks": "[FR] Secondary frameworks",
+    "Sector this scenario applies to": "[FR] Sector this scenario applies to",
+    "Sector used to tailor scenario recommendations": "[FR] Sector used to tailor recommendations",
+    "Select a CSV file containing mapping rows to import":
+      "[FR] Select a CSV file with mapping rows",
+    "Select all gaps": "[FR] Select all gaps",
+    "Select or create a governance scenario for the project":
+      "[FR] Select or create a governance scenario",
+    "Select project": "[FR] Select project",
+    "Select scenario": "[FR] Select scenario",
+    "Set as the baseline for scenario planning": "[FR] Set as the baseline for scenario planning",
+    "Set this scenario as the active governance strategy": "[FR] Set as active governance strategy",
+    "Short descriptive name for this scenario": "[FR] Short name for this scenario",
+    "Similar topics but the controls are not interchangeable":
+      "[FR] Similar topics but not interchangeable",
+    "Smart Prompt Preference": "[FR] Smart Prompt Preference",
+    "Snooze": "[FR] Snooze",
+    "Source control fully satisfies the target control":
+      "[FR] Source fully satisfies target control",
+    "Source framework": "[FR] Source framework",
+    "Source frameworks as rows and target frameworks as columns":
+      "[FR] Source rows and target columns",
+    "Spread some love": "[FR] Spread some love",
     "Start here": "Commencer ici",
     "Dashboard": "Tableau de bord",
+    "Starting point for the what-if simulation": "[FR] Starting point for simulation",
+    "Stop the active scenario and remove its generated tasks": "[FR] Stop the active scenario",
+    "Stop this active activation and remove its tasks": "[FR] Stop this active activation",
+    "Supplementary frameworks": "[FR] Supplementary frameworks",
+    "Supporting frameworks in the simulation": "[FR] Supporting frameworks in simulation",
+    "Switch between list and matrix views of mappings": "[FR] Switch between list and matrix views",
+    "Target framework": "[FR] Target framework",
+    "Task progress": "[FR] Task progress",
     "Tasks": "Tâches",
     "Frameworks": "Référentiels",
     "INVENTORY": "INVENTAIRE",
+    "The framework used as the baseline in the active scenario":
+      "[FR] The framework used as the baseline in the active scenario",
+    "This framework is assigned to the project": "[FR] This framework is assigned to the project",
+    "This framework is not currently assigned to the project":
+      "[FR] This framework is not currently assigned",
+    "Total gaps": "[FR] Total gaps",
+    "Unassign this framework from the project": "[FR] Unassign this framework from the project",
+    "Unmapped controls across all active frameworks": "[FR] Unmapped controls across frameworks",
+    "Unmapped controls that need a remediation task": "[FR] Unmapped controls that need attention",
+    "Upload CSV": "[FR] Upload CSV",
+    "Upload a CSV file to create multiple mappings at once":
+      "[FR] Upload a CSV file to create mappings",
     "Use cases": "Cas d'usage",
     "Model inventory": "Inventaire des modèles",
     "Model Inventory": "Inventaire des modèles",
@@ -8058,6 +8757,14 @@ export const translations: Record<string, Record<string, string>> = {
     "Review and govern": "Examiner et gouverner",
     "Download as PDF": "Télécharger en PDF",
     "Download as Word": "Télécharger en Word",
+    "View mappings": "[FR] View mappings",
+    "View mode": "[FR] View mode",
+    "View scenario": "[FR] View scenario",
+    "View the full rationale and metadata for this mapping": "[FR] View full mapping rationale",
+    "View what selecting this scenario means for the project":
+      "[FR] View what selecting this scenario means",
+    "Whether this scenario activation is currently active":
+      "[FR] Whether this activation is active",
     "Yes": "Oui",
     "Later": "Plus tard",
     "Submit": "Soumettre",
@@ -15821,6 +16528,280 @@ export const translations: Record<string, Record<string, string>> = {
     "Select your organization": "Sélectionnez votre organisation",
     "Completing sign in...": "Finalisation de la connexion...",
     "Redirecting to login...": "Redirection vers la page de connexion...",
+
+    // Governance OS
+    "Activate": "Activer",
+    "Activate scenario": "Activer le scénario",
+    "Activate this scenario": "Activer ce scénario",
+    "Activation History": "Historique d'activation",
+    "Activation summary": "Résumé d'activation",
+    "Active Scenario": "Scénario actif",
+    "Active governance scenario": "Scénario de gouvernance actif",
+    "Active scenario": "Scénario actif",
+    "Analyze Coverage": "Analyser la couverture",
+    "Analyze coverage, gaps, and synergies across projects":
+      "Analyser la couverture, les lacunes et les synergies entre les projets",
+    "Attribute": "Attribut",
+    "Avg Coverage": "Couv. moyenne",
+    "Base scenario": "Scénario de base",
+    "Bulk Import Mappings": "Importer les mappings en masse",
+    "By domain": "Par domaine",
+    "By mapping strength": "Par force de mapping",
+    "Centralize and manage compliance evidence across all frameworks and projects.":
+      "Centraliser et gérer les preuves de conformité dans tous les cadres et projets.",
+    "Centralize evidence with automated collection":
+      "Centraliser les preuves avec une collecte automatisée",
+    "Centralized compliance evidence": "Preuves de conformité centralisées",
+    "Change scenario": "Changer de scénario",
+    "Choose a scenario": "Choisir un scénario",
+    "Choose scenario": "Choisir un scénario",
+    "Clear": "Réinitialiser",
+    "Click any cell to view mappings between those frameworks":
+      "Cliquez sur une cellule pour voir les mappings entre ces cadres",
+    "Continue your governance workflow": "Continuer votre workflow de gouvernance",
+    "Control whether the system prompts you to enable Governance Intelligence when conditions are met.":
+      "Contrôler si le système vous invite à activer Governance Intelligence lorsque les conditions sont remplies.",
+    "Coverage aligned with active scenario:": "Couverture alignée avec le scénario actif:",
+    "Coverage analysis and gap detection": "Analyse de couverture et détection des lacunes",
+    "Deactivate": "Désactiver",
+    "Default filters applied to the Framework Mapper view.":
+      "Filtres par défaut appliqués à la vue Framework Mapper.",
+    "Delete Mapping": "Supprimer le mapping",
+    "Delete Scenario": "Supprimer le scénario",
+    "Density:": "Densité:",
+    "Domain Tag": "Tag de domaine",
+    "Don&apos;t ask me again about enabling Governance Intelligence":
+      "Ne me demandez plus si je souhaite activer Governance Intelligence",
+    "Enable or disable the Governance Intelligence module for your organization.":
+      "Activer ou désactiver le module Governance Intelligence pour votre organisation.",
+    "Errors": "Erreurs",
+    "Est. coverage": "Couv. estimée",
+    "Est. effort": "Effort estimé",
+    "Explore and manage cross-framework control mappings":
+      "Explorer et gérer les mappings de contrôles inter-cadres",
+    "Explore cross-framework control mappings. Select source and target frameworks to see how controls align.":
+      "Explorer les mappings de contrôles inter-cadres. Sélectionnez les cadres source et cible pour voir comment les contrôles s'alignent.",
+    "Failed to create task. Please try again.":
+      "Échec de la création de la tâche. Veuillez réessayer.",
+    "Failed to save settings. Please try again.":
+      "Échec de l'enregistrement des paramètres. Veuillez réessayer.",
+    "Framework owners": "Propriétaires du cadre",
+    "Gap Hotspots": "Points chauds de lacunes",
+    "Get framework recommendations based on your organization context, or browse and manage governance scenarios.":
+      "Obtenir des recommandations de cadres basées sur le contexte de votre organisation, ou parcourir et gérer les scénarios de gouvernance.",
+    "Get personalized framework recommendations and activate scenario-based compliance strategies across your projects.":
+      "Obtenir des recommandations de cadres personnalisées et activer des stratégies de conformité basées sur des scénarios dans vos projets.",
+    "Get recommendations and manage governance scenarios":
+      "Obtenir des recommandations et gérer les scénarios de gouvernance",
+    "Governance Intelligence": "Governance Intelligence",
+    "Governance overview and module navigation":
+      "Vue d'ensemble de la gouvernance et navigation des modules",
+    "Governance preferences": "Préférences de gouvernance",
+    "Governance scenarios and recommendations": "Scénarios et recommandances de gouvernance",
+    "Hub": "Hub",
+    "Import": "Importer",
+    "Knowledge Graph": "Graphe de connaissances",
+    "Manage Governance Intelligence configuration":
+      "Gérer la configuration de Governance Intelligence",
+    "Manage Governance Intelligence configuration, preferences, and defaults.":
+      "Gérer la configuration, les préférences et les valeurs par défaut de Governance Intelligence.",
+    "Mapping Filters": "Filtres de mapping",
+    "Mapping Statistics": "Statistiques de mapping",
+    "Mapping Strength": "Force du mapping",
+    "Module Status": "Statut du module",
+    "Modules": "Modules",
+    "Monitor regulation changes and auto-updates":
+      "Surveiller les changements réglementaires et les mises à jour automatiques",
+    "Monitor regulatory changes": "Surveiller les changements réglementaires",
+    "Monitor regulatory changes, track compliance deadlines, and receive alerts.":
+      "Surveiller les changements réglementaires, suivre les échéances de conformité et recevoir des alertes.",
+    "New Mapping": "Nouveau mapping",
+    "New Scenario": "Nouveau scénario",
+    "No activations yet. Activate a scenario to see its history here.":
+      "Aucune activation pour l'instant. Activez un scénario pour voir son historique ici.",
+    "No active scenario": "Aucun scénario actif",
+    "No active scenario selected": "Aucun scénario actif sélectionné",
+    "No active scenario selected.": "Aucun scénario actif sélectionné.",
+    "No approved projects available. Create a project first.":
+      "Aucun projet approuvé disponible. Créez d'abord un projet.",
+    "No default filters configured. Filters are set per-session in the Framework Mapper.":
+      "Aucun filtre par défaut configuré. Les filtres sont définis par session dans le Framework Mapper.",
+    "No frameworks available": "Aucun cadre disponible",
+    "No mapping statistics available. Add framework mappings to see breakdowns.":
+      "Aucune statistique de mapping disponible. Ajoutez des mappings de cadres pour voir les répartitions.",
+    "No users available to assign. Invite team members before activating.":
+      "Aucun utilisateur disponible à assigner. Invitez des membres de l'équipe avant d'activer.",
+    "None": "Aucun",
+    "Only admins can change module status.":
+      "Seuls les administrateurs peuvent modifier le statut du module.",
+    "Open Framework Mapper": "Ouvrir le Framework Mapper",
+    "Open Hub": "Ouvrir le Hub",
+    "Primary": "Primaire",
+    "Primary framework": "Cadre primaire",
+    "Primary framework: 14 days": "Cadre primaire: 14 jours",
+    "Regulatory Radar": "Radar réglementaire",
+    "Reset prompt preference": "Réinitialiser la préférence d'invite",
+    "Run Coverage": "Exécuter la couverture",
+    "Run Coverage Analysis": "Exécuter l'analyse de couverture",
+    "Scenario Comparison": "Comparaison de scénarios",
+    "Secondary": "Secondaire",
+    "Secondary framework(s): 30 days": "Cadre(s) secondaire(s): 30 jours",
+    "Select a scenario below to set your organization&apos;s active governance strategy.":
+      "Sélectionnez un scénario ci-dessous pour définir la stratégie de gouvernance active de votre organisation.",
+    "Select at least one scenario above to start comparing.":
+      "Sélectionnez au moins un scénario ci-dessus pour commencer la comparaison.",
+    "Select primary": "Sélectionner primaire",
+    "Settings saved successfully.": "Paramètres enregistrés avec succès.",
+    "Simulation results": "Résultats de simulation",
+    "Smart Prompt Preferences": "Préférences Smart Prompt",
+    "Source Control Identifier *": "Identifiant de contrôle source *",
+    "Staggered due dates": "Échéances échelonnées",
+    "Strength": "Force",
+    "Supplementary": "Supplémentaire",
+    "Supplementary framework(s): 60 days": "Cadre(s) supplémentaire(s): 60 jours",
+    "Target": "Cible",
+    "Target Control Identifier *": "Identifiant de contrôle cible *",
+    "Task progress by framework": "Progression des tâches par cadre",
+    "The currently selected governance scenario drives framework prioritization across projects.":
+      "Le scénario de gouvernance actuellement sélectionné détermine la priorisation des cadres entre les projets.",
+    "Timeline": "Chronologie",
+    "Total Gaps": "Total des lacunes",
+    "Total controls": "Total des contrôles",
+    "Total mappings": "Total des mappings",
+    "Unlock Governance Intelligence": "Débloquer Governance Intelligence",
+    "Upload a CSV file to import multiple mappings at once":
+      "Téléverser un fichier CSV pour importer plusieurs mappings à la fois",
+    "View Mappings": "Voir les mappings",
+    "View Scenario": "Voir le scénario",
+    "View cross-framework coverage analysis per project. Identify gaps and synergies across your active frameworks.":
+      "Voir l'analyse de couverture inter-cadres par projet. Identifier les lacunes et synergies entre vos cadres actifs.",
+    "View insights": "Voir les insights",
+    "Visual exploration of governance relationships":
+      "Exploration visuelle des relations de gouvernance",
+    "Visual exploration of governance relationships, controls, and compliance dependencies.":
+      "Exploration visuelle des relations de gouvernance, des contrôles et des dépendances de conformité.",
+    "Visual governance relationships": "Relations de gouvernance visuelles",
+    "What-If Simulator": "Simulateur What-If",
+    "Why these controls map to each other...": "Pourquoi ces contrôles se mappent entre eux...",
+    "You are about to activate": "Vous êtes sur le point d'activer",
+    "Your central command center for cross-framework governance, compliance mapping, and coverage analysis.":
+      "Votre centre de commande central pour la gouvernance inter-cadres, le mapping de conformité et l'analyse de couverture.",
+
+    // Governance tooltips
+    "Governance overview and module navigation.":
+      "Vue d'ensemble de la gouvernance et navigation des modules.",
+    "Explore and manage cross-framework control mappings.":
+      "Explorer et gérer les mappings de contrôles inter-cadres.",
+    "Get framework recommendations and manage governance scenarios.":
+      "Obtenir des recommandations de cadres et gérer les scénarios de gouvernance.",
+    "Per-project coverage analysis and gap detection.":
+      "Analyse de couverture et détection de lacunes par projet.",
+    "Centralize and manage compliance evidence across frameworks.":
+      "Centraliser et gérer les preuves de conformité dans tous les cadres.",
+    "Visual exploration of governance relationships and dependencies.":
+      "Exploration visuelle des relations et dépendances de gouvernance.",
+    "Monitor regulatory changes and compliance deadlines.":
+      "Surveiller les changements réglementaires et les échéances de conformité.",
+    "Manage Governance Intelligence preferences and defaults.":
+      "Gérer les préférences et valeurs par défaut de Governance Intelligence.",
+
+    // Governance tooltips
+    "Answer a few questions to receive governance scenario recommendations tailored to your context.":
+      "Répondez à quelques questions pour recevoir des recommandations de scénarios de gouvernance adaptées à votre contexte.",
+    "Open Unified Insights to analyze cross-framework coverage and identify gaps for a selected project.":
+      "Ouvrez Unified Insights pour analyser la couverture inter-cadres et identifier les lacunes d'un projet sélectionné.",
+    "Open the Framework Mapper to explore and manage cross-framework control mappings.":
+      "Ouvrez le Framework Mapper pour explorer et gérer les mappings de contrôles inter-cadres.",
+    "Create a custom governance scenario to define framework priorities for your organization.":
+      "Créez un scénario de gouvernance personnalisé pour définir les priorités de cadres de votre organisation.",
+    "Open the Scenario Builder to review or edit the currently active governance scenario.":
+      "Ouvrez le Constructeur de scénarios pour examiner ou modifier le scénario de gouvernance actuellement actif.",
+    "Open Unified Insights and calculate coverage based on framework priorities in the active scenario.":
+      "Ouvrez Unified Insights et calculez la couverture en fonction des priorités de cadres du scénario actif.",
+    "Select or create a governance scenario to activate framework prioritization across projects.":
+      "Sélectionnez ou créez un scénario de gouvernance pour activer la priorisation des cadres entre les projets.",
+    "Framework Selector": "Sélecteur de cadres",
+    "Choose the source and target frameworks to filter the mappings displayed below.":
+      "Choisissez les cadres source et cible pour filtrer les mappings affichés ci-dessous.",
+    "View Mode": "Mode d'affichage",
+    "Switch between list view and a matrix view of all framework mappings.":
+      "Basculez entre la vue liste et la vue matricielle de tous les mappings de cadres.",
+    "Download the current pairwise mappings as a CSV file.":
+      "Téléchargez les mappings par paires actuels sous forme de fichier CSV.",
+    "Upload a CSV file to create multiple mappings at once.":
+      "Téléversez un fichier CSV pour créer plusieurs mappings à la fois.",
+    "Create a new cross-framework control mapping manually.":
+      "Créez manuellement un nouveau mapping de contrôle inter-cadres.",
+
+    // Governance tooltips
+    "Direct mapping: implementing the source control fully satisfies the target control.":
+      "Mapping direct : la mise en œuvre du contrôle source satisfait pleinement le contrôle cible.",
+    "Partial mapping: the controls overlap but each has unique requirements to address.":
+      "Mapping partiel : les contrôles se chevauchent mais chacun a des exigences uniques à traiter.",
+    "Related mapping: the controls cover similar topics but are not interchangeable.":
+      "Mapping associé : les contrôles couvrent des sujets similaires mais ne sont pas interchangeables.",
+    "Edit Mapping": "Modifier le mapping",
+    "Modify this control mapping.": "Modifier ce mapping de contrôle.",
+    "Remove this control mapping.": "Supprimer ce mapping de contrôle.",
+    "Mapping Details": "Détails du mapping",
+    "Click anywhere on the card to view the full mapping rationale and details.":
+      "Cliquez n'importe où sur la carte pour voir la justification complète et les détails du mapping.",
+
+    // Governance tooltips
+    "The industry sector used to tailor governance scenario recommendations.":
+      "Le secteur d'activité utilisé pour adapter les recommandations de scénarios de gouvernance.",
+    "The regulatory region used to prioritize relevant frameworks and requirements.":
+      "La réglementation régionale utilisée pour prioriser les cadres et exigences pertinents.",
+    "The risk classification of your AI use case, based on applicable regulations.":
+      "La classification des risques de votre cas d'usage IA, basée sur les réglementations applicables.",
+    "The category of AI system you are building or deploying.":
+      "La catégorie de système d'IA que vous construisez ou déployez.",
+    "Generate scenario recommendations that match the context you provided.":
+      "Générez des recommandations de scénarios correspondant au contexte que vous avez fourni.",
+    "Scenario Details": "Détails du scénario",
+    "View details about what selecting this scenario means.":
+      "Voir les détails sur ce que signifie la sélection de ce scénario.",
+    "Edit Scenario": "Modifier le scénario",
+    "Modify this governance scenario.": "Modifier ce scénario de gouvernance.",
+    "Remove this governance scenario.": "Supprimer ce scénario de gouvernance.",
+    "Activation creates real tasks for each prioritized framework across selected projects. Tasks are assigned with staggered due dates based on priority.":
+      "L'activation crée des tâches réelles pour chaque cadre priorisé dans les projets sélectionnés. Les tâches se voient attribuer des échéances échelonnées en fonction de la priorité.",
+    "Selecting this scenario sets it as the active governance strategy for your organization. It defines which frameworks to prioritize and guides compliance planning across all projects.":
+      "La sélection de ce scénario le définit comme stratégie de gouvernance active de votre organisation. Il définit les cadres à prioriser et guide la planification de conformité dans tous les projets.",
+    "Choose a project to analyze its cross-framework coverage and gaps.":
+      "Choisissez un projet pour analyser sa couverture inter-cadres et ses lacunes.",
+    "Recalculate coverage metrics for the selected project using the latest data.":
+      "Recalculez les métriques de couverture pour le projet sélectionné à l'aide des données les plus récentes.",
+    "Download a CSV report of coverage, gaps, and synergies for the selected project.":
+      "Téléchargez un rapport CSV de couverture, lacunes et synergies pour le projet sélectionné.",
+    "The average percentage of controls mapped across all active frameworks in the selected project.":
+      "Le pourcentage moyen de contrôles mappés dans tous les cadres actifs du projet sélectionné.",
+    "The total number of controls that have at least one cross-framework mapping.":
+      "Le nombre total de contrôles ayant au moins un mapping inter-cadres.",
+    "The total number of controls across all active frameworks in the selected project.":
+      "Le nombre total de contrôles dans tous les cadres actifs du projet sélectionné.",
+    "The number of frameworks assigned to the selected project.":
+      "Le nombre de cadres assignés au projet sélectionné.",
+
+    // Governance tooltips
+    "Centralize and manage compliance evidence across frameworks and projects. This module is coming soon.":
+      "Centraliser et gérer les preuves de conformité dans tous les cadres et projets. Ce module arrive bientôt.",
+    "Visual exploration of governance relationships, controls, and compliance dependencies. This module is coming soon.":
+      "Exploration visuelle des relations de gouvernance, des contrôles et des dépendances de conformité. Ce module arrive bientôt.",
+    "Monitor regulatory changes, track compliance deadlines, and receive alerts. This module is coming soon.":
+      "Surveiller les changements réglementaires, suivre les échéances de conformité et recevoir des alertes. Ce module arrive bientôt.",
+    "Toggle Governance Intelligence on or off for your organization. Only admins can change this.":
+      "Activez ou désactivez Governance Intelligence pour votre organisation. Seuls les administrateurs peuvent modifier cela.",
+    "Switch to a different governance scenario to update framework priorities.":
+      "Passez à un scénario de gouvernance différent pour mettre à jour les priorités de cadres.",
+    "Stop the system from prompting you to enable Governance Intelligence in the future.":
+      "Empêchez le système de vous inviter à activer Governance Intelligence à l'avenir.",
+    "Re-enable the smart prompt that suggests turning on Governance Intelligence.":
+      "Réactivez l'invite intelligente qui suggère d'activer Governance Intelligence.",
+    "Go to the Framework Mapper to configure filters for your session.":
+      "Allez au Framework Mapper pour configurer les filtres de votre session.",
+    "Save your Governance Intelligence preferences.":
+      "Enregistrez vos préférences Governance Intelligence.",
   },
   es: {
     "Start here": "Empieza aquí",

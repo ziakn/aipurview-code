@@ -8,6 +8,7 @@ import { SearchBox } from "../../components/Search";
 import TasksTable from "../../components/Table/TasksTable";
 import { CustomizableButton } from "../../components/button/customizable-button";
 import { PageHeaderExtended } from "../../components/Layout/PageHeaderExtended";
+import DeadlineWarningBox from "../../components/DeadlineWarningBox";
 import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.context";
 import { ITask, TaskSummary } from "../../../domain/interfaces/i.task";
 import {
@@ -47,6 +48,7 @@ import { useFilterBy } from "../../../application/hooks/useFilterBy";
 import { useColumnVisibility, ColumnConfig } from "../../../application/hooks/useColumnVisibility";
 import { displayFormattedDate } from "../../tools/isoDateToString";
 import Alert from "../../components/Alert";
+import CustomizableSkeleton from "../../components/Skeletons";
 import TabBar from "../../components/TabBar";
 import DeadlineView from "./DeadlineView";
 import { toggleLabelStyle, toggleContainerStyle } from "./style";
@@ -779,6 +781,7 @@ const Tasks: React.FC = () => {
           : "Showing tasks you created or are assigned to. You can create and manage your tasks here."
       }
       helpArticlePath="ai-governance/task-management"
+      warningBanner={<DeadlineWarningBox />}
       tipBoxEntity="tasks"
       summaryCards={
         <TaskSummaryCards
@@ -951,9 +954,9 @@ const Tasks: React.FC = () => {
       {/* Content Area */}
       <Box>
         {isLoading && (
-          <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
-            <Typography>Loading tasks...</Typography>
-          </Box>
+          <Stack spacing={2}>
+            <CustomizableSkeleton variant="rectangular" width="100%" height={400} />
+          </Stack>
         )}
 
         {error && (
