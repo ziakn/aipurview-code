@@ -45,6 +45,7 @@ import { DashboardHeaderCard } from "../../components/Cards/DashboardHeaderCard"
 import TablePaginationActions from "../../components/TablePagination";
 import GovernanceWizardModal from "./GovernanceWizardModal";
 import { PageHeaderExtended } from "../../components/Layout/PageHeaderExtended";
+import Alert from "../../components/Alert";
 import {
   SelectorVertical,
   SortableColumn,

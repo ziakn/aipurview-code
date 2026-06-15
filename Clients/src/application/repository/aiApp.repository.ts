@@ -27,7 +27,7 @@ export async function getAllAiApps(
   const response = await apiServices.get(`/ai-apps${buildQueryString(filters)}`, {
     signal,
   });
-  return response.data;
+  return response.data as IAIAppListResponse;
 }
 
 export async function getAiAppById(
@@ -35,12 +35,12 @@ export async function getAiAppById(
   signal?: AbortSignal,
 ): Promise<IAIAppDetail> {
   const response = await apiServices.get(`/ai-apps/${id}`, { signal });
-  return response.data;
+  return response.data as IAIAppDetail;
 }
 
 export async function createAiApp(data: IAIAppCreatePayload): Promise<IAIAppDetail> {
   const response = await apiServices.post("/ai-apps", data);
-  return response.data;
+  return response.data as IAIAppDetail;
 }
 
 export async function updateAiApp(
@@ -48,7 +48,7 @@ export async function updateAiApp(
   data: IAIAppUpdatePayload,
 ): Promise<IAIAppDetail> {
   const response = await apiServices.patch(`/ai-apps/${id}`, data);
-  return response.data;
+  return response.data as IAIAppDetail;
 }
 
 export async function updateAiAppStatus(
@@ -56,12 +56,12 @@ export async function updateAiAppStatus(
   status: string,
 ): Promise<IAIAppDetail> {
   const response = await apiServices.patch(`/ai-apps/${id}/status`, { status });
-  return response.data;
+  return response.data as IAIAppDetail;
 }
 
 export async function deleteAiApp(id: number): Promise<{ id: number }> {
   const response = await apiServices.delete(`/ai-apps/${id}`);
-  return response.data;
+  return response.data as { id: number };
 }
 
 export async function linkModelsToAiApp(
@@ -71,7 +71,7 @@ export async function linkModelsToAiApp(
   const response = await apiServices.post(`/ai-apps/${id}/models`, {
     model_inventory_ids: modelInventoryIds,
   });
-  return response.data;
+  return response.data as IAIAppDetail;
 }
 
 export async function setPoliciesForAiApp(
@@ -81,7 +81,7 @@ export async function setPoliciesForAiApp(
   const response = await apiServices.post(`/ai-apps/${id}/policies`, {
     policies,
   });
-  return response.data;
+  return response.data as IAIAppDetail;
 }
 
 export async function setDataExposureForAiApp(
@@ -91,7 +91,7 @@ export async function setDataExposureForAiApp(
   const response = await apiServices.post(`/ai-apps/${id}/data-exposure`, {
     data_exposure: dataExposure,
   });
-  return response.data;
+  return response.data as IAIAppDetail;
 }
 
 export async function getPolicySuggestions(
@@ -102,7 +102,7 @@ export async function getPolicySuggestions(
     `/ai-apps/policy-suggestions?name=${encodeURIComponent(name)}`,
     { signal },
   );
-  return response.data;
+  return response.data as IPolicySuggestion[];
 }
 
 export async function promoteFromShadowAi(
@@ -112,5 +112,5 @@ export async function promoteFromShadowAi(
     `/ai-apps/from-shadow-ai/${shadowAiToolId}`,
     {},
   );
-  return response.data;
+  return response.data as IAIAppDetail;
 }

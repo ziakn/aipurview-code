@@ -16,10 +16,7 @@ import {
   updateAiAppByIdQuery,
 } from "../utils/aiApp.utils";
 import { AiAppStatus, AiAppPolicyStatus } from "../domain.layer/enums/ai-app-status.enum";
-import {
-  ValidationException,
-  NotFoundException,
-} from "../domain.layer/exceptions/custom.exception";
+import { ValidationException } from "../domain.layer/exceptions/custom.exception";
 
 function parseIdParam(req: Request): number {
   const raw = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;

@@ -19,11 +19,9 @@ import {
 } from "../repository/aiApp.repository";
 import {
   IAIAppCreatePayload,
-  IAIAppDetail,
   IAIAppListResponse,
   IAIAppUpdatePayload,
   IGetAiAppsFilters,
-  IPolicySuggestion,
 } from "../../domain/interfaces/i.aiApp";
 
 export const aiAppQueryKeys = {

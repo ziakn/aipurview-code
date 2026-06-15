@@ -1,4 +1,4 @@
-import { QueryTypes, Transaction } from "sequelize";
+import { Transaction } from "sequelize";
 import { sequelize } from "../database/db";
 import { AiAppModel } from "../domain.layer/models/aiApp/aiApp.model";
 import {
@@ -331,7 +331,6 @@ export async function deleteAiAppByIdQuery(
     `DELETE FROM ai_apps WHERE organization_id = :organizationId AND id = :id RETURNING *`,
     {
       replacements: { organizationId, id },
-      type: QueryTypes.DELETE,
       transaction,
     },
   );
@@ -353,7 +352,6 @@ export async function linkModelsToAiAppQuery(
   const validIds = modelInventoryIds.filter((id) => Number.isInteger(id) && id > 0);
   if (validIds.length === 0) return;
 
-  const placeholders = validIds.map(() => "(:aiAppId, :modelId)").join(", ");
   const replacements: Record<string, any> = { aiAppId };
   validIds.forEach((modelId, index) => {
     replacements[`modelId${index}`] = modelId;

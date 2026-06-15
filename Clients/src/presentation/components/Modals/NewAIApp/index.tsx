@@ -97,7 +97,7 @@ export default function NewAIApp({ isOpen, onClose, onSuccess }: NewAIAppProps) 
 
   const vendorOptions: OptionItem[] = useMemo(
     () =>
-      (vendorsData?.data || []).map((vendor: any) => ({
+      (vendorsData || []).map((vendor: any) => ({
         _id: vendor.id,
         name: vendor.vendor_name || `Vendor ${vendor.id}`,
       })),

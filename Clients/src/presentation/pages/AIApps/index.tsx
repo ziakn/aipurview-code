@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Stack, Box, Skeleton } from "@mui/material";
-import { LayoutGrid, List as ListIcon, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import TabContext from "@mui/lab/TabContext";
 
 import { PageHeaderExtended } from "../../components/Layout/PageHeaderExtended";
@@ -33,8 +33,8 @@ const STATUS_OPTIONS = [
 ];
 
 const TABS = [
-  { value: "catalog", label: "Catalog", icon: <LayoutGrid size={16} strokeWidth={1.5} /> },
-  { value: "list", label: "List", icon: <ListIcon size={16} strokeWidth={1.5} /> },
+  { value: "catalog", label: "Catalog", icon: "LayoutGrid" as const },
+  { value: "list", label: "List", icon: "List" as const },
 ];
 
 export default function AIApps() {
@@ -112,7 +112,7 @@ export default function AIApps() {
             <SearchBox
               placeholder="Search AI apps"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(value) => setSearchTerm(value)}
               sx={{ width: 260 }}
             />
             <Select
@@ -135,7 +135,7 @@ export default function AIApps() {
         <TabContext value={activeTab}>
           <TabBar
             tabs={TABS}
-            value={activeTab}
+            activeTab={activeTab}
             onChange={(_event, value) => setActiveTab(value as TabValue)}
           />
         </TabContext>
