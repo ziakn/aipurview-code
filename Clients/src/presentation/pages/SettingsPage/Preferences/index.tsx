@@ -21,6 +21,7 @@ const LANGUAGE_OPTIONS: { _id: Lang; name: string }[] = [
   { _id: "en", name: "English" },
   { _id: "de", name: "Deutsch" },
   { _id: "fr", name: "Français" },
+  { _id: "es", name: "Español" },
 ];
 
 const Preferences: React.FC = () => {
