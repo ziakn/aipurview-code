@@ -7,6 +7,8 @@ import { AiAppStatus } from "../../../../domain/enums/aiApp.enum";
 import Alert from "../../../components/Alert";
 import AIAppApprovalCenter from "./AIAppApprovalCenter";
 import AIAppPolicyMapping from "./AIAppPolicyMapping";
+import AIAppModelDependencies from "./AIAppModelDependencies";
+import AIAppRiskAssessment from "./AIAppRiskAssessment";
 
 export default function AIAppDetail() {
   const navigate = useNavigate();
@@ -70,6 +72,10 @@ export default function AIAppDetail() {
           appName={app.name}
           policies={app.policies || []}
         />
+
+        <AIAppModelDependencies appId={app.id!} models={app.models || []} />
+
+        <AIAppRiskAssessment appId={app.id!} currentRiskScore={app.risk_score} />
 
         {alert && (
           <Alert
