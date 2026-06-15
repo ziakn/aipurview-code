@@ -18,6 +18,7 @@ import Alert from "../../components/Alert";
 import NewAIApp from "../../components/Modals/NewAIApp";
 import AIAppsCatalog from "./AIAppsCatalog";
 import AIAppsTable from "./AIAppsTable";
+import AIAppDetail from "./AIAppDetail";
 import { mainStackStyle, toolbarStyle, filterRowStyle } from "./style";
 
 type TabValue = "catalog" | "list";
@@ -96,12 +97,7 @@ export default function AIApps() {
   const handleCloseAlert = () => setAlert(null);
 
   if (id) {
-    return (
-      <AIAppDetailWrapper
-        appId={parseInt(id, 10)}
-        onBack={() => navigate("/ai-apps")}
-      />
-    );
+    return <AIAppDetail />;
   }
 
   return (
@@ -186,13 +182,4 @@ export default function AIApps() {
   );
 }
 
-// Placeholder for detail wrapper - implemented in Wave 4
-function AIAppDetailWrapper({ appId, onBack }: { appId: number; onBack: () => void }) {
-  return (
-    <PageHeaderExtended title="AI app details" description="Approval center and governance">
-      <Box sx={{ p: 2 }}>
-        <Skeleton variant="rectangular" height={400} sx={{ borderRadius: "8px" }} />
-      </Box>
-    </PageHeaderExtended>
-  );
-}
+
