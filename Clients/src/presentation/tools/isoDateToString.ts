@@ -38,8 +38,7 @@ export const displayFormattedDate = (isoDate: string | Date): string => {
   }
 
   const preferences = storageService.get("preferences", {});
-  const dateFormat =
-    (preferences.date_format as UserDateFormat) || UserDateFormat.DD_MM_YYYY_DASH;
+  const dateFormat = (preferences.date_format as UserDateFormat) || UserDateFormat.DD_MM_YYYY_DASH;
 
   const formattedDate = dayjs(dateStr).format(dateFormat);
   return formattedDate;

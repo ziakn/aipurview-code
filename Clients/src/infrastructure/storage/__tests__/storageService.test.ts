@@ -115,9 +115,7 @@ describe("StorageService", () => {
         riskMetrics: { data: 5, timestamp: 1 },
       });
       // Legacy key is left untouched (canonical already present, no migration).
-      expect(localStorage.getItem("dashboard_metrics_cache")).toBe(
-        JSON.stringify({ stale: true }),
-      );
+      expect(localStorage.getItem("dashboard_metrics_cache")).toBe(JSON.stringify({ stale: true }));
     });
 
     it("returns the fallback when neither the canonical nor the legacy key exists", () => {

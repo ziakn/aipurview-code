@@ -93,14 +93,9 @@ describe("useColumnVisibility", () => {
   });
 
   it("migrates from the legacy colon-style key once", () => {
-    localStorage.setItem(
-      "verifywise:columns:test-legacy",
-      JSON.stringify(["name", "status"]),
-    );
+    localStorage.setItem("verifywise:columns:test-legacy", JSON.stringify(["name", "status"]));
 
-    const { result } = renderHook(() =>
-      useColumnVisibility({ tableId: "test-legacy", columns }),
-    );
+    const { result } = renderHook(() => useColumnVisibility({ tableId: "test-legacy", columns }));
 
     expect(result.current.isColumnVisible("status")).toBe(true);
     expect(result.current.isColumnVisible("email")).toBe(false);
