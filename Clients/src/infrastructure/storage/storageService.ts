@@ -38,38 +38,45 @@ export class StorageService {
     }
   }
 
+  // The backend and the in-memory Map are mutually exclusive: the constructor
+  // probe decides once. When `backend` is null every operation uses `memory`;
+  // otherwise the backend is the single source of truth and transient failures
+  // (e.g. quota) are swallowed with a warning so callers never see a throw.
+
   private readString(key: string): string | null {
-    if (this.backend) {
-      try {
-        return this.backend.getItem(key);
-      } catch (error) {
-        console.warn(`StorageService: failed to read "${key}":`, error);
-      }
+    if (!this.backend) {
+      return this.memory.has(key) ? (this.memory.get(key) as string) : null;
     }
-    return this.memory.has(key) ? (this.memory.get(key) as string) : null;
+    try {
+      return this.backend.getItem(key);
+    } catch (error) {
+      console.warn(`StorageService: failed to read "${key}":`, error);
+      return null;
+    }
   }
 
   private writeString(key: string, value: string): void {
-    if (this.backend) {
-      try {
-        this.backend.setItem(key, value);
-        return;
-      } catch (error) {
-        console.warn(`StorageService: failed to write "${key}":`, error);
-      }
+    if (!this.backend) {
+      this.memory.set(key, value);
+      return;
     }
-    this.memory.set(key, value);
+    try {
+      this.backend.setItem(key, value);
+    } catch (error) {
+      console.warn(`StorageService: failed to write "${key}":`, error);
+    }
   }
 
   private deleteString(key: string): void {
-    if (this.backend) {
-      try {
-        this.backend.removeItem(key);
-      } catch (error) {
-        console.warn(`StorageService: failed to remove "${key}":`, error);
-      }
+    if (!this.backend) {
+      this.memory.delete(key);
+      return;
     }
-    this.memory.delete(key);
+    try {
+      this.backend.removeItem(key);
+    } catch (error) {
+      console.warn(`StorageService: failed to remove "${key}":`, error);
+    }
   }
 
   /** Read `key`, migrating from `opts.legacyKey` on first access if needed. */
