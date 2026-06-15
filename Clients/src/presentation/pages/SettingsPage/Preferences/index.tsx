@@ -60,7 +60,9 @@ const Preferences: React.FC = () => {
 
   useEffect(() => {
     if (userPreferences) {
-      setDateFormat(userPreferences.date_format);
+      // Guard against a null/undefined date_format from the server so the
+      // Select stays controlled (avoids the controlled->uncontrolled warning).
+      setDateFormat(userPreferences.date_format ?? UserDateFormat.DD_MM_YYYY_DASH);
       const serverLang = (userPreferences.language ?? "en") as Lang;
       setLang(serverLang);
       // Server is the source of truth — apply it locally if it differs.
