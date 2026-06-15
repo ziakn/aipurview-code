@@ -14,7 +14,7 @@ from utils.notifications import notify_config_change
 
 router = APIRouter(prefix="/mcp/guardrails", tags=["mcp-guardrails"])
 
-VALID_RULE_TYPES = {"pii", "content_filter", "prompt_injection"}
+VALID_RULE_TYPES = {"pii", "content_filter", "prompt_injection", "require_approval"}
 VALID_ACTIONS = {"block", "mask"}
 
 
@@ -75,18 +75,23 @@ async def create_guardrail(request: Request):
             detail=f"rule_type must be one of: {', '.join(sorted(VALID_RULE_TYPES))}",
         )
 
-    # Validate action
+    # Validate action. require_approval rules have no block/mask action — the
+    # rule type itself is the effect — so action is optional and defaults to
+    # the sentinel "require_approval".
     action = body.get("action")
-    if not action:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="action is required",
-        )
-    if action not in VALID_ACTIONS:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"action must be one of: {', '.join(sorted(VALID_ACTIONS))}",
-        )
+    if rule_type == "require_approval":
+        action = "require_approval"
+    else:
+        if not action:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="action is required",
+            )
+        if action not in VALID_ACTIONS:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"action must be one of: {', '.join(sorted(VALID_ACTIONS))}",
+            )
 
     # Validate config (optional, must be object if provided)
     config = body.get("config")
