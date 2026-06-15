@@ -24,6 +24,7 @@ from services.mcp_audit_service import log_tool_call
 from services.mcp_guardrail_service import scan_tool_input, check_anomaly, CircuitBreaker
 from services.mcp_proxy_service import (
     authenticate_agent_key,
+    extract_agent_key,
     resolve_tool,
     enforce_tool_acls,
     enforce_mcp_rate_limits,
@@ -50,21 +51,10 @@ def _jsonrpc_result(id, result: dict) -> dict:
     return {"jsonrpc": "2.0", "id": id, "result": result}
 
 
-async def _extract_agent_key(request: Request) -> dict:
-    auth = request.headers.get("authorization", "")
-    if not auth.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Missing Authorization: Bearer <agent-key>")
-    token = auth[7:].strip()
-    try:
-        return await authenticate_agent_key(token)
-    except ValueError as e:
-        raise HTTPException(status_code=401, detail=str(e))
-
-
 @router.post("/v1/mcp")
 async def mcp_jsonrpc(request: Request):
     """Handle JSON-RPC 2.0 requests from MCP clients."""
-    agent_key = await _extract_agent_key(request)
+    agent_key = await extract_agent_key(request)
     org_id = agent_key["organization_id"]
 
     try:
@@ -258,7 +248,7 @@ async def mcp_jsonrpc(request: Request):
 @router.get("/v1/mcp/approvals/{request_id}/status")
 async def mcp_approval_status(request: Request, request_id: int):
     """Poll approval status — authenticated via agent key."""
-    agent_key = await _extract_agent_key(request)
+    agent_key = await extract_agent_key(request)
     org_id = agent_key["organization_id"]
 
     approval = await get_approval_status(org_id, request_id)
