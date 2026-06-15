@@ -103,7 +103,12 @@ import { GovernanceScenarioActivationModel } from "../domain.layer/models/govern
 
 dotenv.config();
 
-const conf = dbConfig.development;
+if (process.env.NODE_ENV === "test") {
+  dotenv.config({ path: ".env.test", override: true });
+}
+
+const env = process.env.NODE_ENV || "development";
+const conf = (dbConfig as Record<string, any>)[env] || dbConfig.development;
 
 const sequelize = new Sequelize(conf.database!, conf.username!, conf.password, {
   host: conf.host!,
