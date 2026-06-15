@@ -26,16 +26,21 @@ command -v jq   >/dev/null 2>&1 || fail "jq not found"
 command -v curl >/dev/null 2>&1 || fail "curl not found"
 
 input="$(cat)"
-tool_name="$(printf '%s' "$input" | jq -r '.tool_name // .tool.name // "Bash"')"
+tool_name="$(printf '%s' "$input" | jq -r '.tool_name // .tool.name // "unknown"')"
 arguments="$(printf '%s' "$input" | jq -c '.tool_input // .arguments // {}')"
 
 payload="$(jq -nc --arg t "$tool_name" --argjson a "$arguments" '{tool_name:$t, arguments:$a}')"
 
-resp="$(curl -s --max-time "$TIMEOUT" -X POST "$VW_GATEWAY_URL/v1/mcp/hook" \
+http_code="$(curl -s -o /tmp/vw_hook_resp.$$ -w '%{http_code}' --max-time "$TIMEOUT" \
+  -X POST "$VW_GATEWAY_URL/v1/mcp/hook" \
   -H "Authorization: Bearer $VW_AGENT_KEY" \
   -H "Content-Type: application/json" \
-  -d "$payload")" || fail "gateway unreachable"
+  -d "$payload")" || { rm -f "/tmp/vw_hook_resp.$$"; fail "gateway unreachable"; }
 
+resp="$(cat "/tmp/vw_hook_resp.$$" 2>/dev/null)"
+rm -f "/tmp/vw_hook_resp.$$"
+
+[ "$http_code" = "200" ] || fail "gateway returned HTTP $http_code"
 [ -n "$resp" ] || fail "empty gateway response"
 
 decision="$(printf '%s' "$resp" | jq -r '.decision // "error"')"
