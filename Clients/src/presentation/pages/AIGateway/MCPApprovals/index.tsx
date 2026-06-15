@@ -75,6 +75,24 @@ export default function MCPApprovalsPage() {
     else loadHistory();
   }, [tab, loadPending, loadHistory]);
 
+  // Poll the pending tab so newly-arrived approval requests appear without a
+  // manual refresh. Only runs while the pending tab is active and the browser
+  // tab is visible, so backgrounded tabs don't keep hitting the API.
+  useEffect(() => {
+    if (tab !== "pending") return;
+    const interval = setInterval(() => {
+      if (!document.hidden) loadPending();
+    }, 10000);
+    const onVisible = () => {
+      if (!document.hidden) loadPending();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [tab, loadPending]);
+
   const handleDecision = async () => {
     if (!decisionTarget) return;
     try {
