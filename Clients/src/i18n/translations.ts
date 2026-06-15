@@ -8509,6 +8509,9 @@ export const translations: Record<string, Record<string, string>> = {
     "e.g., Article 9 or A.5.1": "z. B. Article 9 oder A.5.1",
     "e.g., risk_management": "z. B. risk_management",
     "unmapped controls": "nicht zugeordnete Kontrollen",
+    "Too many attempts": "Zu viele Versuche",
+    "Too many requests in a short time. Please wait a moment and refresh the page.":
+      "Zu viele Anfragen in kurzer Zeit. Bitte warten Sie einen Moment und laden Sie die Seite neu.",
   },
 
   fr: {
@@ -16949,6 +16952,9 @@ export const translations: Record<string, Record<string, string>> = {
     "e.g., Article 9 or A.5.1": "p. ex., Article 9 ou A.5.1",
     "e.g., risk_management": "p. ex., risk_management",
     "unmapped controls": "contrôles sans correspondance",
+    "Too many attempts": "Trop de tentatives",
+    "Too many requests in a short time. Please wait a moment and refresh the page.":
+      "Trop de requêtes en peu de temps. Veuillez patienter un instant et actualiser la page.",
   },
   es: {
     "Start here": "Empieza aquí",
@@ -25307,5 +25313,8 @@ export const translations: Record<string, Record<string, string>> = {
     "e.g., Article 9 or A.5.1": "p. ej., Article 9 o A.5.1",
     "e.g., risk_management": "p. ej., risk_management",
     "unmapped controls": "controles sin mapear",
+    "Too many attempts": "Demasiados intentos",
+    "Too many requests in a short time. Please wait a moment and refresh the page.":
+      "Demasiadas solicitudes en poco tiempo. Espera un momento y actualiza la página.",
   },
 };
