@@ -94,6 +94,7 @@ import { ApprovalWorkflowStepModel } from "../domain.layer/models/approvalWorkfl
 import { DatasetModel } from "../domain.layer/models/dataset/dataset.model";
 import { AiActionApprovalModel } from "../domain.layer/models/aiApproval/aiActionApproval.model";
 import { AiApprovalRuleModel } from "../domain.layer/models/aiApproval/aiApprovalRule.model";
+import { AiAppModel } from "../domain.layer/models/aiApp/aiApp.model";
 import { GovernanceControlMappingModel } from "../domain.layer/models/governanceOs/governanceControlMapping.model";
 import { GovernanceScenarioModel } from "../domain.layer/models/governanceOs/governanceScenario.model";
 import { GovernanceScenarioRuleModel } from "../domain.layer/models/governanceOs/governanceScenarioRule.model";
@@ -216,6 +217,7 @@ const sequelize = new Sequelize(conf.database!, conf.username!, conf.password, {
     DatasetModel,
     AiActionApprovalModel,
     AiApprovalRuleModel,
+    AiAppModel,
     GovernanceControlMappingModel,
     GovernanceScenarioModel,
     GovernanceScenarioRuleModel,
