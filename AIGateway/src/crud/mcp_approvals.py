@@ -18,6 +18,7 @@ async def create_approval_request(org_id: int, data: dict) -> dict:
                     tool_id,
                     tool_name,
                     arguments,
+                    arguments_hash,
                     expires_at
                 ) VALUES (
                     :org_id,
@@ -25,6 +26,7 @@ async def create_approval_request(org_id: int, data: dict) -> dict:
                     :tool_id,
                     :tool_name,
                     CAST(:arguments AS jsonb),
+                    :arguments_hash,
                     :expires_at
                 )
                 RETURNING
@@ -47,6 +49,7 @@ async def create_approval_request(org_id: int, data: dict) -> dict:
                 "tool_id": data.get("tool_id"),
                 "tool_name": data.get("tool_name"),
                 "arguments": arguments_json,
+                "arguments_hash": data.get("arguments_hash"),
                 "expires_at": data.get("expires_at"),
             },
         )
@@ -129,8 +132,14 @@ async def get_approval_history(
     return []
 
 
-async def get_pending_request(org_id: int, agent_key_id: int, tool_name: str) -> Optional[dict]:
-    """Return an existing pending, non-expired approval request for this agent+tool."""
+async def get_pending_request(
+    org_id: int, agent_key_id: int, tool_name: str, arguments_hash: str
+) -> Optional[dict]:
+    """Return an existing pending, non-expired approval request for this exact call.
+
+    Scoped to the call's arguments (via arguments_hash) so a pending request for
+    one set of arguments is not reused for a different call.
+    """
     async with get_db() as db:
         result = await db.execute(
             text("""
@@ -139,12 +148,18 @@ async def get_pending_request(org_id: int, agent_key_id: int, tool_name: str) ->
                 WHERE organization_id = :org_id
                   AND agent_key_id = :agent_key_id
                   AND tool_name = :tool_name
+                  AND arguments_hash = :arguments_hash
                   AND status = 'pending'
                   AND expires_at > NOW()
                 ORDER BY created_at DESC
                 LIMIT 1
             """),
-            {"org_id": org_id, "agent_key_id": agent_key_id, "tool_name": tool_name},
+            {
+                "org_id": org_id,
+                "agent_key_id": agent_key_id,
+                "tool_name": tool_name,
+                "arguments_hash": arguments_hash,
+            },
         )
         row = result.mappings().first()
         if row is None:
@@ -152,8 +167,14 @@ async def get_pending_request(org_id: int, agent_key_id: int, tool_name: str) ->
         return dict(row)
 
 
-async def get_approved_request(org_id: int, agent_key_id: int, tool_name: str) -> Optional[dict]:
-    """Check if an approved, non-expired approval request exists for this agent+tool."""
+async def get_approved_request(
+    org_id: int, agent_key_id: int, tool_name: str, arguments_hash: str
+) -> Optional[dict]:
+    """Check if an approved, non-expired approval request exists for this exact call.
+
+    Scoped to the call's arguments (via arguments_hash) so an approval granted for
+    one set of arguments cannot be reused to authorize a different call.
+    """
     async with get_db() as db:
         result = await db.execute(
             text("""
@@ -162,12 +183,18 @@ async def get_approved_request(org_id: int, agent_key_id: int, tool_name: str) -
                 WHERE organization_id = :org_id
                   AND agent_key_id = :agent_key_id
                   AND tool_name = :tool_name
+                  AND arguments_hash = :arguments_hash
                   AND status = 'approved'
                   AND expires_at > NOW()
                 ORDER BY decided_at DESC
                 LIMIT 1
             """),
-            {"org_id": org_id, "agent_key_id": agent_key_id, "tool_name": tool_name},
+            {
+                "org_id": org_id,
+                "agent_key_id": agent_key_id,
+                "tool_name": tool_name,
+                "arguments_hash": arguments_hash,
+            },
         )
         row = result.mappings().first()
         if row is None:
