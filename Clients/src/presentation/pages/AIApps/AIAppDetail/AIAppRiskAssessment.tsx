@@ -73,10 +73,7 @@ function getRiskLevel(score: number): { label: string; color: string } {
   return { label: "Critical", color: palette.status.error.text };
 }
 
-export default function AIAppRiskAssessment({
-  appId,
-  currentRiskScore,
-}: AIAppRiskAssessmentProps) {
+export default function AIAppRiskAssessment({ appId, currentRiskScore }: AIAppRiskAssessmentProps) {
   const [scores, setScores] = useState<Record<string, number>>(() => {
     const initial: Record<string, number> = {};
     RISK_CRITERIA.forEach((c) => {
@@ -122,10 +119,7 @@ export default function AIAppRiskAssessment({
     return Math.max(0, Math.min(100, Math.round(average * 20)));
   }, [scores]);
 
-  const calculatedLevel = useMemo(
-    () => getRiskLevel(calculatedScore),
-    [calculatedScore],
-  );
+  const calculatedLevel = useMemo(() => getRiskLevel(calculatedScore), [calculatedScore]);
 
   const currentLevel = useMemo(
     () => (currentRiskScore != null ? getRiskLevel(currentRiskScore) : null),
@@ -197,7 +191,14 @@ export default function AIAppRiskAssessment({
               />
             )}
           </Box>
-          <Box sx={{ width: 1, height: 1, backgroundColor: palette.border.light, display: { xs: "none", sm: "block" } }} />
+          <Box
+            sx={{
+              width: 1,
+              height: 1,
+              backgroundColor: palette.border.light,
+              display: { xs: "none", sm: "block" },
+            }}
+          />
           <Box>
             <Typography sx={{ fontSize: 12, color: palette.text.secondary, mb: 0.5 }}>
               Calculated risk score
@@ -239,7 +240,7 @@ export default function AIAppRiskAssessment({
                 max={5}
                 valueLabelDisplay="auto"
                 sx={{
-                  color: palette.accent.primary.text,
+                  "color": palette.accent.primary.text,
                   "& .MuiSlider-markLabel": {
                     fontSize: 12,
                     color: palette.text.secondary,
@@ -252,12 +253,7 @@ export default function AIAppRiskAssessment({
       </Grid>
 
       {alert && (
-        <Alert
-          variant={alert.variant}
-          body={alert.body}
-          isToast
-          onClick={() => setAlert(null)}
-        />
+        <Alert variant={alert.variant} body={alert.body} isToast onClick={() => setAlert(null)} />
       )}
     </Box>
   );

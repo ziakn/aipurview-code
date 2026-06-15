@@ -67,11 +67,7 @@ export default function AIAppDetail() {
           isUpdatingStatus={updateStatusMutation.isPending}
         />
 
-        <AIAppPolicyMapping
-          appId={app.id!}
-          appName={app.name}
-          policies={app.policies || []}
-        />
+        <AIAppPolicyMapping appId={app.id!} appName={app.name} policies={app.policies || []} />
 
         <AIAppModelDependencies appId={app.id!} models={app.models || []} />
 

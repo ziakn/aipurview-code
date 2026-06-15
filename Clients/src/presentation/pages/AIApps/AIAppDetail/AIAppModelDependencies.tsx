@@ -34,10 +34,7 @@ interface ModelOption {
   version?: string;
 }
 
-export default function AIAppModelDependencies({
-  appId,
-  models,
-}: AIAppModelDependenciesProps) {
+export default function AIAppModelDependencies({ appId, models }: AIAppModelDependenciesProps) {
   const [localModelIds, setLocalModelIds] = useState<number[]>([]);
   const [alert, setAlert] = useState<{
     variant: "success" | "info" | "warning" | "error";
@@ -48,7 +45,9 @@ export default function AIAppModelDependencies({
   const linkModelsMutation = useLinkModelsToAiApp();
 
   const modelOptions: ModelOption[] = useMemo(() => {
-    const data = (modelInventoryResponse?.data || modelInventoryResponse || []) as IModelInventory[];
+    const data = (modelInventoryResponse?.data ||
+      modelInventoryResponse ||
+      []) as IModelInventory[];
     return data.map((m) => ({
       id: m.id!,
       provider: m.provider || "Unknown",
@@ -133,7 +132,9 @@ export default function AIAppModelDependencies({
           <TableBody>
             {models.map((model) => (
               <TableRow key={model.id} sx={singleTheme.tableStyles.primary.body.row}>
-                <TableCell sx={singleTheme.tableStyles.primary.body.cell}>{model.provider}</TableCell>
+                <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                  {model.provider}
+                </TableCell>
                 <TableCell sx={singleTheme.tableStyles.primary.body.cell}>{model.model}</TableCell>
                 <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
                   {model.version || "—"}
@@ -158,12 +159,7 @@ export default function AIAppModelDependencies({
       </TableContainer>
 
       {alert && (
-        <Alert
-          variant={alert.variant}
-          body={alert.body}
-          isToast
-          onClick={() => setAlert(null)}
-        />
+        <Alert variant={alert.variant} body={alert.body} isToast onClick={() => setAlert(null)} />
       )}
     </Box>
   );
