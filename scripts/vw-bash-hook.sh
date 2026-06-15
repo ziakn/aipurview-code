@@ -31,14 +31,16 @@ arguments="$(printf '%s' "$input" | jq -c '.tool_input // .arguments // {}')"
 
 payload="$(jq -nc --arg t "$tool_name" --argjson a "$arguments" '{tool_name:$t, arguments:$a}')"
 
-http_code="$(curl -s -o /tmp/vw_hook_resp.$$ -w '%{http_code}' --max-time "$TIMEOUT" \
+# Append the HTTP status on its own trailing line so we never write a
+# response file to a predictable /tmp path (symlink-attack surface).
+raw="$(curl -s -w '\n%{http_code}' --max-time "$TIMEOUT" \
   -X POST "$VW_GATEWAY_URL/v1/mcp/hook" \
   -H "Authorization: Bearer $VW_AGENT_KEY" \
   -H "Content-Type: application/json" \
-  -d "$payload")" || { rm -f "/tmp/vw_hook_resp.$$"; fail "gateway unreachable"; }
+  -d "$payload")" || fail "gateway unreachable"
 
-resp="$(cat "/tmp/vw_hook_resp.$$" 2>/dev/null)"
-rm -f "/tmp/vw_hook_resp.$$"
+http_code="${raw##*$'\n'}"   # last line
+resp="${raw%$'\n'*}"         # everything before it
 
 [ "$http_code" = "200" ] || fail "gateway returned HTTP $http_code"
 [ -n "$resp" ] || fail "empty gateway response"
