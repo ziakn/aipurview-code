@@ -18,37 +18,38 @@ const PROBE_KEY = `${NAMESPACE}__probe__`;
  */
 export class StorageService {
   private readonly memory = new Map<string, string>();
-  private readonly backend: Storage | null;
+  private readonly available: boolean;
 
   constructor() {
-    this.backend = StorageService.resolveBackend();
+    this.available = StorageService.probe();
   }
 
-  /** Detect a working `localStorage`, probing once. Returns null if unusable. */
-  private static resolveBackend(): Storage | null {
+  /** Probe once whether a usable `localStorage` exists in this environment. */
+  private static probe(): boolean {
     if (typeof window === "undefined" || !window.localStorage) {
-      return null;
+      return false;
     }
     try {
       window.localStorage.setItem(PROBE_KEY, "1");
       window.localStorage.removeItem(PROBE_KEY);
-      return window.localStorage;
+      return true;
     } catch {
-      return null;
+      return false;
     }
   }
 
-  // The backend and the in-memory Map are mutually exclusive: the constructor
-  // probe decides once. When `backend` is null every operation uses `memory`;
-  // otherwise the backend is the single source of truth and transient failures
+  // `localStorage` and the in-memory Map are mutually exclusive: the constructor
+  // probe decides once whether storage is usable. When it is not, every operation
+  // uses `memory`. When it is, `window.localStorage` is read live on each call (so
+  // the source of truth always reflects the current tab) and transient failures
   // (e.g. quota) are swallowed with a warning so callers never see a throw.
 
   private readString(key: string): string | null {
-    if (!this.backend) {
+    if (!this.available) {
       return this.memory.has(key) ? (this.memory.get(key) as string) : null;
     }
     try {
-      return this.backend.getItem(key);
+      return window.localStorage.getItem(key);
     } catch (error) {
       console.warn(`StorageService: failed to read "${key}":`, error);
       return null;
@@ -56,24 +57,24 @@ export class StorageService {
   }
 
   private writeString(key: string, value: string): void {
-    if (!this.backend) {
+    if (!this.available) {
       this.memory.set(key, value);
       return;
     }
     try {
-      this.backend.setItem(key, value);
+      window.localStorage.setItem(key, value);
     } catch (error) {
       console.warn(`StorageService: failed to write "${key}":`, error);
     }
   }
 
   private deleteString(key: string): void {
-    if (!this.backend) {
+    if (!this.available) {
       this.memory.delete(key);
       return;
     }
     try {
-      this.backend.removeItem(key);
+      window.localStorage.removeItem(key);
     } catch (error) {
       console.warn(`StorageService: failed to remove "${key}":`, error);
     }
@@ -144,10 +145,11 @@ export class StorageService {
    */
   clearNamespace(): void {
     const toDelete: string[] = [];
-    if (this.backend) {
+    if (this.available) {
       try {
-        for (let i = 0; i < this.backend.length; i++) {
-          const k = this.backend.key(i);
+        const ls = window.localStorage;
+        for (let i = 0; i < ls.length; i++) {
+          const k = ls.key(i);
           if (k && k.startsWith(NAMESPACE)) {
             toDelete.push(k);
           }
