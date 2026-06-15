@@ -7,12 +7,16 @@
 # Env:
 #   VW_GATEWAY_URL  (required)  e.g. http://localhost:8100
 #   VW_AGENT_KEY    (required)  sk-mcp-...
-#   VW_FAIL_MODE    (optional)  open | closed   (default: open)
-#   VW_TIMEOUT      (optional)  seconds          (default: 3)
+#   VW_FAIL_MODE          (optional)  open | closed   (default: open)
+#   VW_TIMEOUT            (optional)  seconds          (default: 3)
+#   VW_APPROVAL_WAIT      (optional)  max seconds to block on human approval (default: 120)
+#   VW_APPROVAL_FAIL_MODE (optional)  open | closed — on approval timeout (default: closed)
 set -uo pipefail
 
 FAIL_MODE="${VW_FAIL_MODE:-open}"
 TIMEOUT="${VW_TIMEOUT:-3}"
+APPROVAL_WAIT="${VW_APPROVAL_WAIT:-120}"
+APPROVAL_FAIL_MODE="${VW_APPROVAL_FAIL_MODE:-closed}"
 
 fail() {  # $1 = stderr message
   echo "vw-bash-hook: $1" >&2
@@ -51,6 +55,37 @@ case "$decision" in
   deny)
     reason="$(printf '%s' "$resp" | jq -r '.reason // "policy violation"')"
     echo "Blocked by VerifyWise: $reason" >&2
+    exit 2 ;;
+  rate_limited)
+    # Infra outcome, not policy — follow the general fail-mode.
+    echo "vw-bash-hook: rate limited" >&2
+    if [ "$FAIL_MODE" = "closed" ]; then exit 2; fi
+    exit 0 ;;
+  approval_required)
+    approval_id="$(printf '%s' "$resp" | jq -r '.approval_id')"
+    poll_endpoint="$(printf '%s' "$resp" | jq -r '.poll_endpoint')"
+    echo "vw-bash-hook: awaiting human approval (id=$approval_id, up to ${APPROVAL_WAIT}s)" >&2
+    deadline=$(( $(date +%s) + APPROVAL_WAIT ))
+    while [ "$(date +%s)" -lt "$deadline" ]; do
+      praw="$(curl -s -w '\n%{http_code}' --max-time "$TIMEOUT" \
+        -H "Authorization: Bearer $VW_AGENT_KEY" \
+        "$VW_GATEWAY_URL$poll_endpoint")" || { sleep 2; continue; }
+      pcode="${praw##*$'\n'}"
+      pbody="${praw%$'\n'*}"
+      [ "$pcode" = "200" ] || { sleep 2; continue; }
+      pstatus="$(printf '%s' "$pbody" | jq -r '.status // "pending"')"
+      case "$pstatus" in
+        approved) echo "Approved by VerifyWise" >&2; exit 0 ;;
+        denied)
+          dreason="$(printf '%s' "$pbody" | jq -r '.decision_reason // "denied"')"
+          echo "Denied by VerifyWise: $dreason" >&2
+          exit 2 ;;
+        *) sleep 2 ;;
+      esac
+    done
+    # No decision in time — approval-specific fail mode (default closed = deny).
+    echo "vw-bash-hook: approval timed out" >&2
+    if [ "$APPROVAL_FAIL_MODE" = "open" ]; then exit 0; fi
     exit 2 ;;
   *) fail "unexpected gateway response: $resp" ;;
 esac

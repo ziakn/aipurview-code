@@ -18,6 +18,8 @@ the MCP Audit Log.
    # optional:
    export VW_FAIL_MODE=open   # open (default) | closed
    export VW_TIMEOUT=3        # seconds
+   export VW_APPROVAL_WAIT=120         # max seconds to block on human approval
+   export VW_APPROVAL_FAIL_MODE=closed # closed (default) | open — on approval timeout
    ```
 
 4. Wire the hook in `.claude/settings.json`:
@@ -39,6 +41,9 @@ the MCP Audit Log.
 |---|---|
 | Command passes guardrails | runs (exit 0) |
 | Guardrail blocks (or a mask rule matches) | blocked (exit 2), reason shown to the agent |
+| Command matches a require-approval rule | hook blocks up to `VW_APPROVAL_WAIT`; approved → runs, denied → blocked |
+| Approval not decided in time | `VW_APPROVAL_FAIL_MODE=closed` (default) → blocked; `open` → runs |
+| Gateway rate-limits the call | `VW_FAIL_MODE=open` (default) → runs; `closed` → blocked |
 | Gateway unreachable / timeout | `VW_FAIL_MODE=open` → runs; `closed` → blocked |
 
 Requires `curl` and `jq` on PATH.
