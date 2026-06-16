@@ -95,7 +95,7 @@ export default function AIGatewaySidebar({
 
   const mcpGroups: SidebarMenuGroup[] = [
     {
-      name: "MCP Gateway",
+      name: "Agent Control",
       collapsible: true,
       defaultCollapsed: true,
       items: [
@@ -107,19 +107,19 @@ export default function AIGatewaySidebar({
         },
         {
           id: "mcp-servers",
-          label: "Servers",
+          label: "MCP Servers",
           value: "mcp/servers",
           icon: <Server size={16} strokeWidth={1.5} />,
         },
         {
           id: "mcp-tools",
-          label: "Tools",
+          label: "MCP Tools",
           value: "mcp/tools",
           icon: <Wrench size={16} strokeWidth={1.5} />,
         },
         {
           id: "mcp-audit",
-          label: "Audit Log",
+          label: "Activity",
           value: "mcp/audit",
           icon: <ClipboardList size={16} strokeWidth={1.5} />,
         },
