@@ -12,7 +12,7 @@ from typing import Optional
 from sqlalchemy import text
 
 from database.db import get_db
-from services.guardrail_service import scan_text, ScanResult
+from services.guardrail_service import scan_text, ScanResult, REDOS_SCAN_CAP
 from utils.mcp_tool_content import extract_scannable_content
 from utils.redis import get_redis
 
@@ -39,8 +39,8 @@ def _check_prompt_injection(input_text: str) -> list[str]:
     """Check text for common prompt injection patterns. Returns list of matched pattern names."""
     if not input_text:
         return []
-    # Limit scan length to prevent ReDoS
-    scan_text_str = input_text[:50000] if len(input_text) > 50000 else input_text
+    # Limit scan length to prevent ReDoS (shared cap, same as the other matchers).
+    scan_text_str = input_text[:REDOS_SCAN_CAP] if len(input_text) > REDOS_SCAN_CAP else input_text
     matched: list[str] = []
     for name, pattern in INJECTION_PATTERNS:
         try:

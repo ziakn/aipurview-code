@@ -70,8 +70,15 @@ async def mcp_hook(request: Request):
     # Policy (block / mask / require_approval) is evaluated BEFORE the rate
     # limit so a rate-limited agent cannot burst past its cap to get a
     # policy-violating command allowed (rate_limited fails open by default).
-    # field_aware: native file-write tools are scanned only on written content.
+    # field_aware: native file-write tools are scanned only on written content
+    # (Write.content, Edit.new_string, ...), not old_string/file_path. This applies
+    # to PII, content-filter AND prompt-injection on the hook path — injection in a
+    # removed line or a path is intentionally not scanned (we gate what is written).
     scan_result = await scan_tool_input(org_id, tool_name, arguments, field_aware=True)
+    # A mask rule can't rewrite a command/file the agent itself executes, so on the
+    # hook path a mask detection is escalated to a hard deny. An org that configured
+    # a PII rule as action="mask" (fine on the LLM proxy) therefore BLOCKS matching
+    # native tool calls rather than masking them — intentional, surfaced in the reason.
     mask_hit = any(getattr(d, "action", None) == "mask" for d in scan_result.detections)
     if scan_result.blocked or mask_hit:
         reason = scan_result.block_reason
@@ -87,13 +94,19 @@ async def mcp_hook(request: Request):
 
     # ── require_approval (hook-only matcher): create/reuse approval request ──
     approval_rule = await check_require_approval(org_id, tool_name, arguments)
+    human_approved = False
     if approval_rule:
         args_hash = hash_arguments(arguments)
         # One query returns the latest non-expired approved-or-pending request.
-        active = await get_active_request(org_id, agent_key["id"], tool_name, args_hash)
+        # native=True: only match native-hook approvals (tool_id IS NULL), never a
+        # proxy approval for an upstream tool that happens to share this name+args.
+        active = await get_active_request(org_id, agent_key["id"], tool_name, args_hash, native=True)
 
         if active and active["status"] == "approved":
-            pass  # already approved for this exact call — fall through to allow
+            # Already approved for this exact call. Fall through to allow and skip
+            # the rate limiter: a human said yes, so rate-limiting must not flip an
+            # approved command to rate_limited and silently waste the approval.
+            human_approved = True
         else:
             if active:  # an existing pending request — reuse it, don't re-notify
                 approval = active
@@ -128,13 +141,19 @@ async def mcp_hook(request: Request):
     # Checked last: only a call that already passed every policy gate can be
     # reported as rate_limited, so the adapter's fail-open on rate_limited can
     # never release a command that a guardrail or approval rule would stop.
-    try:
-        await enforce_mcp_rate_limits(agent_key, tool_name)
-    except HTTPException as e:
-        if e.status_code == 429:
-            await _audit("rate_limited", "Hook rate limited")
-            return JSONResponse(content={"decision": "rate_limited", "reason": "rate limit exceeded"})
-        raise
+    # Skipped for a human-approved re-call so an approval is never wasted.
+    if not human_approved:
+        try:
+            await enforce_mcp_rate_limits(agent_key, tool_name)
+        except HTTPException as e:
+            if e.status_code == 429:
+                await _audit("rate_limited", "Hook rate limited")
+                return JSONResponse(content={"decision": "rate_limited", "reason": "rate limit exceeded"})
+            # Any other error while adjudicating must not escape to a 500 (the
+            # adapter treats a non-200 as fail-open and would run the command).
+            # Audit and deny instead.
+            await _audit("error", f"Hook error during rate-limit check: {e.detail}", is_error=True)
+            return JSONResponse(content={"decision": "deny", "reason": "internal error during adjudication"})
 
     await _audit("success", "Hook allow")
     return JSONResponse(content={"decision": "allow"})
