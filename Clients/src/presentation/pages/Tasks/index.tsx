@@ -10,6 +10,7 @@ import { CustomizableButton } from "../../components/button/customizable-button"
 import { PageHeaderExtended } from "../../components/Layout/PageHeaderExtended";
 import DeadlineWarningBox from "../../components/DeadlineWarningBox";
 import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.context";
+import { storageService } from "../../../infrastructure/storage";
 import { ITask, TaskSummary } from "../../../domain/interfaces/i.task";
 import {
   getAllTasks,
@@ -107,15 +108,14 @@ const Tasks: React.FC = () => {
   // Card filter state for status filtering
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
 
-  // Tab state - persisted to localStorage
-  const [activeTab, setActiveTab] = useState<string>(() => {
-    const saved = localStorage.getItem("verifywise_tasks_view_tab");
-    return saved || "list";
-  });
+  // Tab state - persisted via StorageService
+  const [activeTab, setActiveTab] = useState<string>(() =>
+    storageService.get("tasksViewTab", "list"),
+  );
 
-  // Save tab preference to localStorage
+  // Save tab preference
   useEffect(() => {
-    localStorage.setItem("verifywise_tasks_view_tab", activeTab);
+    storageService.set("tasksViewTab", activeTab);
   }, [activeTab]);
 
   const { userRoleName, userId } = useContext(VerifyWiseContext);
