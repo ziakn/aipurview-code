@@ -18,6 +18,9 @@ from typing import Any
 
 # tool_name -> list of argument keys whose values are "written content".
 # Hardcoded: covers the file-write tools coding agents expose today.
+# To gate a new write-like tool, add its tool_name -> written-content field(s)
+# here (MultiEdit is special-cased below because its content lives in a list).
+# A tool not listed here is over-scanned on its full args, never under-scanned.
 FILE_WRITE_CONTENT_FIELDS: dict[str, list[str]] = {
     "Write": ["content"],
     "Edit": ["new_string"],
@@ -31,6 +34,12 @@ def extract_scannable_content(tool_name: str, arguments: dict) -> dict:
     File-write tools -> only the written-content fields.
     MultiEdit -> the new_string of every edit (its content lives in a list).
     Everything else (Bash, MCP, unknown) -> the full arguments, unchanged.
+
+    A call with no written content (a pure deletion, e.g. an Edit with only
+    old_string, or a MultiEdit with no new_string anywhere) returns {}. The
+    scanners treat that as nothing-to-scan and allow it. This is intentional:
+    guardrails (including prompt-injection) gate what is WRITTEN, not what is
+    removed.
     """
     if not isinstance(arguments, dict):
         return {}
@@ -42,6 +51,8 @@ def extract_scannable_content(tool_name: str, arguments: dict) -> dict:
             for edit in edits:
                 if isinstance(edit, dict) and "new_string" in edit:
                     new_strings.append(edit["new_string"])
+        if not new_strings:
+            return {}  # no written content -> nothing to scan
         return {"new_strings": new_strings}
 
     fields = FILE_WRITE_CONTENT_FIELDS.get(tool_name)

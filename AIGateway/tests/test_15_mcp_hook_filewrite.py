@@ -148,4 +148,5 @@ def test_cleanup(api):
     for sid in ("fw_pii_rule_id", "fw_appr_rule_id"):
         rid = get_state(sid)
         if rid:
-            api.delete(f"/mcp/guardrails/{rid}")
+            res = api.delete(f"/mcp/guardrails/{rid}")
+            assert res.status_code in (200, 204), res.text
