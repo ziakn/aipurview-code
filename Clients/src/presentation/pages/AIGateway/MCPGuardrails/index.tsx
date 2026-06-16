@@ -406,8 +406,8 @@ export default function MCPGuardrailsPage() {
                 lineHeight: 1.5,
               }}
             >
-              Matching tool calls will be paused and routed to a human approver before execution.
-              No block or mask action is needed — approval is enforced automatically.
+              Matching tool calls will be paused and routed to a human approver before execution. No
+              block or mask action is needed — approval is enforced automatically.
             </Typography>
           ) : (
             <Select
