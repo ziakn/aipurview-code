@@ -11,7 +11,13 @@ import { useFormValidation } from "../../../../application/hooks/useFormValidati
 import { checkStringValidation } from "../../../../application/validations/stringValidation";
 import { AiAppStatus, AiAppDiscoveredSource } from "../../../../domain/enums/aiApp.enum";
 import { User } from "../../../../domain/types/User";
+import { VendorModel } from "../../../../domain/models/Common/vendor/vendor.model";
+import { STATUS_OPTIONS } from "../../../pages/AIApps/utils";
 import Alert from "../../Alert";
+
+interface ApiErrorResponse {
+  response?: { data?: { message?: string } };
+}
 
 interface NewAIAppProps {
   isOpen: boolean;
@@ -38,14 +44,6 @@ const initialState: FormState = {
   discovered_source: AiAppDiscoveredSource.MANUAL,
   required_training: "",
 };
-
-const STATUS_OPTIONS = [
-  { _id: AiAppStatus.DRAFT, name: "Draft" },
-  { _id: AiAppStatus.UNDER_REVIEW, name: "Under review" },
-  { _id: AiAppStatus.APPROVED, name: "Approved" },
-  { _id: AiAppStatus.RESTRICTED, name: "Restricted" },
-  { _id: AiAppStatus.BANNED, name: "Banned" },
-];
 
 const SOURCE_OPTIONS = [
   { _id: AiAppDiscoveredSource.MANUAL, name: "Manual" },
@@ -97,8 +95,8 @@ export default function NewAIApp({ isOpen, onClose, onSuccess }: NewAIAppProps) 
 
   const vendorOptions: OptionItem[] = useMemo(
     () =>
-      (vendorsData || []).map((vendor: any) => ({
-        _id: vendor.id,
+      (vendorsData || []).map((vendor: VendorModel) => ({
+        _id: vendor.id!,
         name: vendor.vendor_name || `Vendor ${vendor.id}`,
       })),
     [vendorsData],
@@ -123,7 +121,7 @@ export default function NewAIApp({ isOpen, onClose, onSuccess }: NewAIAppProps) 
     [userOptions, values.owner_id],
   );
 
-  const handleChange = (field: keyof FormState, value: any) => {
+  const handleChange = (field: keyof FormState, value: FormState[keyof FormState]) => {
     setValues((prev) => ({ ...prev, [field]: value }));
     clearFieldError(field);
   };
@@ -144,10 +142,12 @@ export default function NewAIApp({ isOpen, onClose, onSuccess }: NewAIAppProps) 
         required_training: values.required_training || undefined,
       });
       onSuccess();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message =
+        (err as ApiErrorResponse)?.response?.data?.message || "Failed to create AI app";
       setAlert({
         variant: "error",
-        body: err?.response?.data?.message || "Failed to create AI App",
+        body: message,
       });
     } finally {
       setIsSubmitting(false);
@@ -165,7 +165,7 @@ export default function NewAIApp({ isOpen, onClose, onSuccess }: NewAIAppProps) 
       isSubmitting={isSubmitting}
       maxWidth="720px"
     >
-      <Stack spacing={6}>
+      <Stack sx={{ gap: "48px" }}>
         <Field
           label="Name"
           placeholder="e.g. ChatGPT Enterprise"
@@ -216,15 +216,17 @@ export default function NewAIApp({ isOpen, onClose, onSuccess }: NewAIAppProps) 
             id="ai-app-status"
             label="Status"
             value={values.status}
-            onChange={(e) => handleChange("status", e.target.value)}
-            items={STATUS_OPTIONS}
+            onChange={(e) => handleChange("status", e.target.value as AiAppStatus)}
+            items={[...STATUS_OPTIONS]}
             sx={{ flex: 1, minWidth: 220 }}
           />
           <Select
             id="ai-app-source"
             label="Discovered source"
             value={values.discovered_source}
-            onChange={(e) => handleChange("discovered_source", e.target.value)}
+            onChange={(e) =>
+              handleChange("discovered_source", e.target.value as AiAppDiscoveredSource)
+            }
             items={SOURCE_OPTIONS}
             sx={{ flex: 1, minWidth: 220 }}
           />

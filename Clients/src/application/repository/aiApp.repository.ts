@@ -7,6 +7,7 @@ import {
   IGetAiAppsFilters,
   IPolicySuggestion,
 } from "../../domain/interfaces/i.aiApp";
+import { AiAppStatus } from "../../domain/enums/aiApp.enum";
 
 function buildQueryString(filters: IGetAiAppsFilters): string {
   const params = new URLSearchParams();
@@ -30,10 +31,7 @@ export async function getAllAiApps(
   return response.data as IAIAppListResponse;
 }
 
-export async function getAiAppById(
-  id: number,
-  signal?: AbortSignal,
-): Promise<IAIAppDetail> {
+export async function getAiAppById(id: number, signal?: AbortSignal): Promise<IAIAppDetail> {
   const response = await apiServices.get(`/ai-apps/${id}`, { signal });
   return response.data as IAIAppDetail;
 }
@@ -43,18 +41,12 @@ export async function createAiApp(data: IAIAppCreatePayload): Promise<IAIAppDeta
   return response.data as IAIAppDetail;
 }
 
-export async function updateAiApp(
-  id: number,
-  data: IAIAppUpdatePayload,
-): Promise<IAIAppDetail> {
+export async function updateAiApp(id: number, data: IAIAppUpdatePayload): Promise<IAIAppDetail> {
   const response = await apiServices.patch(`/ai-apps/${id}`, data);
   return response.data as IAIAppDetail;
 }
 
-export async function updateAiAppStatus(
-  id: number,
-  status: string,
-): Promise<IAIAppDetail> {
+export async function updateAiAppStatus(id: number, status: AiAppStatus): Promise<IAIAppDetail> {
   const response = await apiServices.patch(`/ai-apps/${id}/status`, { status });
   return response.data as IAIAppDetail;
 }
@@ -105,12 +97,7 @@ export async function getPolicySuggestions(
   return response.data as IPolicySuggestion[];
 }
 
-export async function promoteFromShadowAi(
-  shadowAiToolId: number,
-): Promise<IAIAppDetail> {
-  const response = await apiServices.post(
-    `/ai-apps/from-shadow-ai/${shadowAiToolId}`,
-    {},
-  );
+export async function promoteFromShadowAi(shadowAiToolId: number): Promise<IAIAppDetail> {
+  const response = await apiServices.post(`/ai-apps/from-shadow-ai/${shadowAiToolId}`, {});
   return response.data as IAIAppDetail;
 }

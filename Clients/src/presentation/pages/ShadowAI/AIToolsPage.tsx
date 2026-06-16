@@ -117,7 +117,10 @@ export default function AIToolsPage() {
   >(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [governanceModalOpen, setGovernanceModalOpen] = useState(false);
-  const [promoteAlert, setPromoteAlert] = useState<{ variant: "success" | "error"; body: string } | null>(null);
+  const [promoteAlert, setPromoteAlert] = useState<{
+    variant: "success" | "error";
+    body: string;
+  } | null>(null);
   const promoteMutation = usePromoteFromShadowAi();
 
   // ─── Sorting ───
@@ -374,7 +377,10 @@ export default function AIToolsPage() {
                 onClick={async () => {
                   try {
                     const aiApp = await promoteMutation.mutateAsync(selectedTool.id);
-                    setPromoteAlert({ variant: "success", body: `Promoted to AI App: ${aiApp.name}` });
+                    setPromoteAlert({
+                      variant: "success",
+                      body: `Promoted to AI App: ${aiApp.name}`,
+                    });
                   } catch (err: any) {
                     setPromoteAlert({
                       variant: "error",

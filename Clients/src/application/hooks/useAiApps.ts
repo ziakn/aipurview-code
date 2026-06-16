@@ -1,9 +1,4 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  UseQueryResult,
-} from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, UseQueryResult } from "@tanstack/react-query";
 import {
   getAllAiApps,
   getAiAppById,
@@ -23,16 +18,15 @@ import {
   IAIAppUpdatePayload,
   IGetAiAppsFilters,
 } from "../../domain/interfaces/i.aiApp";
+import { AiAppStatus } from "../../domain/enums/aiApp.enum";
 
 export const aiAppQueryKeys = {
   all: ["aiApps"] as const,
   lists: () => [...aiAppQueryKeys.all, "list"] as const,
-  list: (filters: IGetAiAppsFilters) =>
-    [...aiAppQueryKeys.lists(), filters] as const,
+  list: (filters: IGetAiAppsFilters) => [...aiAppQueryKeys.lists(), filters] as const,
   details: () => [...aiAppQueryKeys.all, "detail"] as const,
   detail: (id: number) => [...aiAppQueryKeys.details(), id] as const,
-  policySuggestions: (name: string) =>
-    [...aiAppQueryKeys.all, "policySuggestions", name] as const,
+  policySuggestions: (name: string) => [...aiAppQueryKeys.all, "policySuggestions", name] as const,
 };
 
 export const useAiApps = (
@@ -92,7 +86,7 @@ export const useUpdateAiAppStatus = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, status }: { id: number; status: string }) => {
+    mutationFn: async ({ id, status }: { id: number; status: AiAppStatus }) => {
       return await updateAiAppStatus(id, status);
     },
     onSuccess: (_, { id }) => {

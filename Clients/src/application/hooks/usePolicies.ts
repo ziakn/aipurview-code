@@ -7,15 +7,11 @@ export const policyQueryKeys = {
   lists: () => [...policyQueryKeys.all, "list"] as const,
 };
 
-export const usePolicies = (): UseQueryResult<
-  { data: PolicyManagerModel[] },
-  Error
-> => {
+export const usePolicies = (): UseQueryResult<PolicyManagerModel[], Error> => {
   return useQuery({
     queryKey: policyQueryKeys.lists(),
     queryFn: async () => {
-      const policies = await getAllPolicies();
-      return { data: policies };
+      return await getAllPolicies();
     },
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,

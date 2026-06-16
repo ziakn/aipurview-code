@@ -20,17 +20,9 @@ import AIAppsCatalog from "./AIAppsCatalog";
 import AIAppsTable from "./AIAppsTable";
 import AIAppDetail from "./AIAppDetail";
 import { mainStackStyle, toolbarStyle, filterRowStyle } from "./style";
+import { STATUS_FILTER_OPTIONS } from "./utils";
 
 type TabValue = "catalog" | "list";
-
-const STATUS_OPTIONS = [
-  { _id: "all", name: "All statuses" },
-  { _id: AiAppStatus.DRAFT, name: "Draft" },
-  { _id: AiAppStatus.UNDER_REVIEW, name: "Under review" },
-  { _id: AiAppStatus.APPROVED, name: "Approved" },
-  { _id: AiAppStatus.RESTRICTED, name: "Restricted" },
-  { _id: AiAppStatus.BANNED, name: "Banned" },
-];
 
 const TABS = [
   { value: "catalog", label: "Catalog", icon: "LayoutGrid" as const },
@@ -81,9 +73,9 @@ export default function AIApps() {
     async (appId: number) => {
       try {
         await deleteAiAppMutation.mutateAsync(appId);
-        setAlert({ variant: "success", body: "AI App deleted successfully" });
+        setAlert({ variant: "success", body: "AI app deleted successfully" });
       } catch (err) {
-        setAlert({ variant: "error", body: "Failed to delete AI App" });
+        setAlert({ variant: "error", body: "Failed to delete AI app" });
       }
     },
     [deleteAiAppMutation],
@@ -91,7 +83,7 @@ export default function AIApps() {
 
   const handleNewAppSuccess = useCallback(() => {
     setIsNewModalOpen(false);
-    setAlert({ variant: "success", body: "AI App created successfully" });
+    setAlert({ variant: "success", body: "AI app created successfully" });
   }, []);
 
   const handleCloseAlert = () => setAlert(null);
@@ -119,7 +111,7 @@ export default function AIApps() {
               id="ai-apps-status-filter"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as AiAppStatus | "all")}
-              items={STATUS_OPTIONS}
+              items={[...STATUS_FILTER_OPTIONS]}
               sx={{ width: 160 }}
             />
           </Box>
@@ -141,12 +133,9 @@ export default function AIApps() {
         </TabContext>
 
         {isLoading ? (
-          <Skeleton variant="rectangular" height={300} sx={{ borderRadius: "8px" }} />
+          <Skeleton variant="rectangular" height={300} sx={{ borderRadius: "4px" }} />
         ) : error ? (
-          <EmptyState
-            message="Failed to load AI apps. Please try again."
-            showBorder
-          />
+          <EmptyState message="Failed to load AI apps. Please try again." showBorder />
         ) : filteredApps.length === 0 ? (
           <EmptyState
             message="No AI apps found. Create your first AI app to get started."
@@ -181,5 +170,3 @@ export default function AIApps() {
     </PageHeaderExtended>
   );
 }
-
-

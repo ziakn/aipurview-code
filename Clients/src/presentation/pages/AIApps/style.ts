@@ -29,13 +29,13 @@ export const catalogGridStyle = {
 };
 
 export const catalogCardStyle = {
-  padding: "16px",
-  borderRadius: "8px",
-  border: "1px solid",
-  borderColor: "border.light",
-  backgroundColor: "background.main",
-  cursor: "pointer",
-  transition: "box-shadow 0.2s ease-in-out",
+  "padding": "16px",
+  "borderRadius": "4px",
+  "border": "1px solid",
+  "borderColor": "border.light",
+  "backgroundColor": "background.main",
+  "cursor": "pointer",
+  "transition": "box-shadow 0.2s ease-in-out",
   "&:hover": {
     boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
   },
@@ -46,7 +46,7 @@ export const cardHeaderStyle = {
   alignItems: "center",
   justifyContent: "space-between",
   gap: "12px",
-  mb: 2,
+  mb: "16px",
 };
 
 export const cardTitleStyle = {

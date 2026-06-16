@@ -1,8 +1,4 @@
-import {
-  AiAppDiscoveredSource,
-  AiAppPolicyStatus,
-  AiAppStatus,
-} from "../enums/aiApp.enum";
+import { AiAppDiscoveredSource, AiAppPolicyStatus, AiAppStatus } from "../enums/aiApp.enum";
 
 export interface IAIApp {
   id?: number;

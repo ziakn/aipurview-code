@@ -44,14 +44,16 @@ export async function getAllAiApps(req: Request, res: Response): Promise<any> {
     functionName: "getAllAiApps",
     fileName: "aiApp.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   try {
     const status = req.query.status as AiAppStatus | undefined;
     const vendorId = req.query.vendorId ? parseInt(req.query.vendorId as string, 10) : undefined;
-    const page = req.query.page ? parseInt(req.query.page as string, 10) : undefined;
-    const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined;
+    const parsedPage = req.query.page ? parseInt(req.query.page as string, 10) : NaN;
+    const parsedLimit = req.query.limit ? parseInt(req.query.limit as string, 10) : NaN;
+    const page = Number.isNaN(parsedPage) || parsedPage < 1 ? undefined : parsedPage;
+    const limit = Number.isNaN(parsedLimit) || parsedLimit < 1 ? undefined : parsedLimit;
     const sortBy = req.query.sortBy as string | undefined;
     const order = req.query.order as "asc" | "desc" | undefined;
 
@@ -70,7 +72,7 @@ export async function getAllAiApps(req: Request, res: Response): Promise<any> {
       functionName: "getAllAiApps",
       fileName: "aiApp.ctrl.ts",
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
 
     return res.status(200).json(STATUS_CODE[200](result));
@@ -82,7 +84,7 @@ export async function getAllAiApps(req: Request, res: Response): Promise<any> {
       fileName: "aiApp.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -96,7 +98,7 @@ export async function getAiAppById(req: Request, res: Response): Promise<any> {
     functionName: "getAiAppById",
     fileName: "aiApp.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   try {
@@ -109,9 +111,9 @@ export async function getAiAppById(req: Request, res: Response): Promise<any> {
         functionName: "getAiAppById",
         fileName: "aiApp.ctrl.ts",
         userId: req.userId!,
-        tenantId: req.organizationId!,
+        organizationId: req.organizationId!,
       });
-      return res.status(404).json(STATUS_CODE[404](null));
+      return res.status(404).json(STATUS_CODE[404](req.t!("AI app not found")));
     }
 
     await logSuccess({
@@ -120,7 +122,7 @@ export async function getAiAppById(req: Request, res: Response): Promise<any> {
       functionName: "getAiAppById",
       fileName: "aiApp.ctrl.ts",
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
 
     return res.status(200).json(STATUS_CODE[200](aiApp));
@@ -132,7 +134,7 @@ export async function getAiAppById(req: Request, res: Response): Promise<any> {
       fileName: "aiApp.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -144,7 +146,7 @@ export async function createAiApp(req: Request, res: Response): Promise<any> {
     functionName: "createAiApp",
     fileName: "aiApp.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   const transaction = await sequelize.transaction();
@@ -159,7 +161,7 @@ export async function createAiApp(req: Request, res: Response): Promise<any> {
       functionName: "createAiApp",
       fileName: "aiApp.ctrl.ts",
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
 
     return res.status(201).json(STATUS_CODE[201](aiApp));
@@ -172,7 +174,7 @@ export async function createAiApp(req: Request, res: Response): Promise<any> {
       fileName: "aiApp.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -186,18 +188,20 @@ export async function updateAiAppById(req: Request, res: Response): Promise<any>
     functionName: "updateAiAppById",
     fileName: "aiApp.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   const transaction = await sequelize.transaction();
 
   try {
     const aiApp = await updateAiAppByIdQuery(aiAppId, req.body, req.organizationId!, transaction);
-    await transaction.commit();
 
     if (!aiApp) {
-      return res.status(404).json(STATUS_CODE[404](null));
+      await transaction.rollback();
+      return res.status(404).json(STATUS_CODE[404](req.t!("AI app not found")));
     }
+
+    await transaction.commit();
 
     await logSuccess({
       eventType: "Update",
@@ -205,7 +209,7 @@ export async function updateAiAppById(req: Request, res: Response): Promise<any>
       functionName: "updateAiAppById",
       fileName: "aiApp.ctrl.ts",
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
 
     return res.status(200).json(STATUS_CODE[200](aiApp));
@@ -218,7 +222,7 @@ export async function updateAiAppById(req: Request, res: Response): Promise<any>
       fileName: "aiApp.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -232,7 +236,7 @@ export async function updateAiAppStatus(req: Request, res: Response): Promise<an
     functionName: "updateAiAppStatus",
     fileName: "aiApp.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   const transaction = await sequelize.transaction();
@@ -244,11 +248,13 @@ export async function updateAiAppStatus(req: Request, res: Response): Promise<an
     }
 
     const aiApp = await updateAiAppByIdQuery(aiAppId, { status }, req.organizationId!, transaction);
-    await transaction.commit();
 
     if (!aiApp) {
-      return res.status(404).json(STATUS_CODE[404](null));
+      await transaction.rollback();
+      return res.status(404).json(STATUS_CODE[404](req.t!("AI app not found")));
     }
+
+    await transaction.commit();
 
     await logSuccess({
       eventType: "Update",
@@ -256,7 +262,7 @@ export async function updateAiAppStatus(req: Request, res: Response): Promise<an
       functionName: "updateAiAppStatus",
       fileName: "aiApp.ctrl.ts",
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
 
     return res.status(200).json(STATUS_CODE[200](aiApp));
@@ -269,7 +275,7 @@ export async function updateAiAppStatus(req: Request, res: Response): Promise<an
       fileName: "aiApp.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -283,18 +289,20 @@ export async function deleteAiAppById(req: Request, res: Response): Promise<any>
     functionName: "deleteAiAppById",
     fileName: "aiApp.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   const transaction = await sequelize.transaction();
 
   try {
     const deleted = await deleteAiAppByIdQuery(aiAppId, req.organizationId!, transaction);
-    await transaction.commit();
 
     if (!deleted) {
-      return res.status(404).json(STATUS_CODE[404](null));
+      await transaction.rollback();
+      return res.status(404).json(STATUS_CODE[404](req.t!("AI app not found")));
     }
+
+    await transaction.commit();
 
     await logSuccess({
       eventType: "Delete",
@@ -302,7 +310,7 @@ export async function deleteAiAppById(req: Request, res: Response): Promise<any>
       functionName: "deleteAiAppById",
       fileName: "aiApp.ctrl.ts",
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
 
     return res.status(200).json(STATUS_CODE[200]({ id: aiAppId }));
@@ -315,7 +323,7 @@ export async function deleteAiAppById(req: Request, res: Response): Promise<any>
       fileName: "aiApp.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -329,7 +337,7 @@ export async function linkModelsToAiApp(req: Request, res: Response): Promise<an
     functionName: "linkModelsToAiApp",
     fileName: "aiApp.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   const transaction = await sequelize.transaction();
@@ -347,10 +355,10 @@ export async function linkModelsToAiApp(req: Request, res: Response): Promise<an
     const existingApp = await getAiAppByIdQuery(aiAppId, req.organizationId!);
     if (!existingApp) {
       await transaction.rollback();
-      return res.status(404).json(STATUS_CODE[404](null));
+      return res.status(404).json(STATUS_CODE[404](req.t!("AI app not found")));
     }
 
-    await linkModelsToAiAppQuery(aiAppId, model_inventory_ids, transaction);
+    await linkModelsToAiAppQuery(aiAppId, model_inventory_ids, req.organizationId!, transaction);
     await transaction.commit();
 
     const aiApp = await getAiAppByIdQuery(aiAppId, req.organizationId!);
@@ -361,7 +369,7 @@ export async function linkModelsToAiApp(req: Request, res: Response): Promise<an
       functionName: "linkModelsToAiApp",
       fileName: "aiApp.ctrl.ts",
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
 
     return res.status(200).json(STATUS_CODE[200](aiApp));
@@ -374,7 +382,7 @@ export async function linkModelsToAiApp(req: Request, res: Response): Promise<an
       fileName: "aiApp.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -388,7 +396,7 @@ export async function setPoliciesForAiApp(req: Request, res: Response): Promise<
     functionName: "setPoliciesForAiApp",
     fileName: "aiApp.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   const transaction = await sequelize.transaction();
@@ -402,7 +410,7 @@ export async function setPoliciesForAiApp(req: Request, res: Response): Promise<
     const existingApp = await getAiAppByIdQuery(aiAppId, req.organizationId!);
     if (!existingApp) {
       await transaction.rollback();
-      return res.status(404).json(STATUS_CODE[404](null));
+      return res.status(404).json(STATUS_CODE[404](req.t!("AI app not found")));
     }
 
     await setPoliciesForAiAppQuery(
@@ -411,6 +419,7 @@ export async function setPoliciesForAiApp(req: Request, res: Response): Promise<
         policy_id: p.policy_id,
         status: p.status || AiAppPolicyStatus.APPLICABLE,
       })),
+      req.organizationId!,
       transaction,
     );
     await transaction.commit();
@@ -423,7 +432,7 @@ export async function setPoliciesForAiApp(req: Request, res: Response): Promise<
       functionName: "setPoliciesForAiApp",
       fileName: "aiApp.ctrl.ts",
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
 
     return res.status(200).json(STATUS_CODE[200](aiApp));
@@ -436,7 +445,7 @@ export async function setPoliciesForAiApp(req: Request, res: Response): Promise<
       fileName: "aiApp.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -450,7 +459,7 @@ export async function setDataExposureForAiApp(req: Request, res: Response): Prom
     functionName: "setDataExposureForAiApp",
     fileName: "aiApp.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   const transaction = await sequelize.transaction();
@@ -468,7 +477,7 @@ export async function setDataExposureForAiApp(req: Request, res: Response): Prom
     const existingApp = await getAiAppByIdQuery(aiAppId, req.organizationId!);
     if (!existingApp) {
       await transaction.rollback();
-      return res.status(404).json(STATUS_CODE[404](null));
+      return res.status(404).json(STATUS_CODE[404](req.t!("AI app not found")));
     }
 
     await setDataExposureForAiAppQuery(aiAppId, data_exposure, transaction);
@@ -482,7 +491,7 @@ export async function setDataExposureForAiApp(req: Request, res: Response): Prom
       functionName: "setDataExposureForAiApp",
       fileName: "aiApp.ctrl.ts",
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
 
     return res.status(200).json(STATUS_CODE[200](aiApp));
@@ -495,7 +504,7 @@ export async function setDataExposureForAiApp(req: Request, res: Response): Prom
       fileName: "aiApp.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -507,7 +516,7 @@ export async function getPolicySuggestions(req: Request, res: Response): Promise
     functionName: "getPolicySuggestions",
     fileName: "aiApp.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   try {
@@ -520,7 +529,7 @@ export async function getPolicySuggestions(req: Request, res: Response): Promise
       functionName: "getPolicySuggestions",
       fileName: "aiApp.ctrl.ts",
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
 
     return res.status(200).json(STATUS_CODE[200](suggestions));
@@ -532,7 +541,7 @@ export async function getPolicySuggestions(req: Request, res: Response): Promise
       fileName: "aiApp.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -546,7 +555,7 @@ export async function promoteFromShadowAi(req: Request, res: Response): Promise<
     functionName: "promoteFromShadowAi",
     fileName: "aiApp.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   const transaction = await sequelize.transaction();
@@ -561,7 +570,7 @@ export async function promoteFromShadowAi(req: Request, res: Response): Promise<
       functionName: "promoteFromShadowAi",
       fileName: "aiApp.ctrl.ts",
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
 
     return res.status(201).json(STATUS_CODE[201](aiApp));
@@ -574,7 +583,7 @@ export async function promoteFromShadowAi(req: Request, res: Response): Promise<
       fileName: "aiApp.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }

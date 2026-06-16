@@ -159,24 +159,6 @@ export class AiAppModel extends Model<AiAppModel> implements IAIApp {
   }
 
   /**
-   * Update status with timestamp
-   */
-  async updateStatus(newStatus: AiAppStatus): Promise<void> {
-    if (!Object.values(AiAppStatus).includes(newStatus)) {
-      throw new ValidationException("Invalid status value", "status", newStatus);
-    }
-    this.status = newStatus;
-    this.updated_at = new Date();
-  }
-
-  /**
-   * Get status badge text
-   */
-  getStatusBadge(): string {
-    return this.status;
-  }
-
-  /**
    * Convert AI App to JSON representation
    */
   toJSON(): any {

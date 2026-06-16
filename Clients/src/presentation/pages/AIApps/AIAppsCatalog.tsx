@@ -2,36 +2,13 @@ import { Box, Stack, Typography } from "@mui/material";
 import { Building2, Users, ShieldAlert, Bot } from "lucide-react";
 import Chip from "../../components/Chip";
 import { IAIApp } from "../../../domain/interfaces/i.aiApp";
-import { AiAppStatus } from "../../../domain/enums/aiApp.enum";
 import { palette } from "../../themes/palette";
 import { catalogGridStyle, catalogCardStyle, cardHeaderStyle, cardTitleStyle } from "./style";
+import { statusToChipProps, riskToLabel, formatDiscoveredSource } from "./utils";
 
 interface AIAppsCatalogProps {
   apps: IAIApp[];
   onAppClick: (app: IAIApp) => void;
-}
-
-function statusToChipProps(status: AiAppStatus) {
-  switch (status) {
-    case AiAppStatus.APPROVED:
-      return { label: "Approved", backgroundColor: palette.status.success.bg, textColor: palette.status.success.text };
-    case AiAppStatus.UNDER_REVIEW:
-      return { label: "Under review", backgroundColor: palette.status.warning.bg, textColor: palette.status.warning.text };
-    case AiAppStatus.RESTRICTED:
-      return { label: "Restricted", backgroundColor: palette.accent.orange.bg, textColor: palette.accent.orange.text };
-    case AiAppStatus.BANNED:
-      return { label: "Banned", backgroundColor: palette.status.error.bg, textColor: palette.status.error.text };
-    default:
-      return { label: "Draft", backgroundColor: palette.status.default.bg, textColor: palette.status.default.text };
-  }
-}
-
-function riskToLabel(riskScore: number | null | undefined): string {
-  if (riskScore === null || riskScore === undefined) return "Not scored";
-  if (riskScore >= 75) return "High";
-  if (riskScore >= 50) return "Medium";
-  if (riskScore >= 25) return "Low";
-  return "Very low";
 }
 
 export default function AIAppsCatalog({ apps, onAppClick }: AIAppsCatalogProps) {
@@ -55,7 +32,7 @@ export default function AIAppsCatalog({ apps, onAppClick }: AIAppsCatalogProps) 
           >
             <Box sx={cardHeaderStyle}>
               <Box sx={cardTitleStyle}>
-                <Bot size={20} strokeWidth={1.5} color={palette.text.secondary} />
+                <Bot size={16} strokeWidth={1.5} color={palette.text.secondary} />
                 <Typography sx={{ fontSize: 15, fontWeight: 600 }}>{app.name}</Typography>
               </Box>
               <Chip {...chipProps} size="small" uppercase={false} />
@@ -79,7 +56,7 @@ export default function AIAppsCatalog({ apps, onAppClick }: AIAppsCatalogProps) 
               <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <Users size={14} strokeWidth={1.5} color={palette.text.secondary} />
                 <Typography sx={{ fontSize: 13, color: palette.text.secondary }}>
-                  Source: {app.discovered_source.replace(/_/g, " ")}
+                  Source: {formatDiscoveredSource(app.discovered_source)}
                 </Typography>
               </Box>
             </Stack>

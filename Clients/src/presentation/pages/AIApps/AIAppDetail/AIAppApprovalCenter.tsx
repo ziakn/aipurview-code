@@ -6,6 +6,7 @@ import { DashboardHeaderCard } from "../../../components/Cards/DashboardHeaderCa
 import { IAIAppDetail } from "../../../../domain/interfaces/i.aiApp";
 import { AiAppStatus } from "../../../../domain/enums/aiApp.enum";
 import { palette } from "../../../themes/palette";
+import { STATUS_OPTIONS, statusToChipProps, formatDiscoveredSource } from "../utils";
 
 interface AIAppApprovalCenterProps {
   app: IAIAppDetail;
@@ -14,33 +15,11 @@ interface AIAppApprovalCenterProps {
   isUpdatingStatus: boolean;
 }
 
-const STATUS_OPTIONS = [
-  { _id: AiAppStatus.DRAFT, name: "Draft" },
-  { _id: AiAppStatus.UNDER_REVIEW, name: "Under review" },
-  { _id: AiAppStatus.APPROVED, name: "Approved" },
-  { _id: AiAppStatus.RESTRICTED, name: "Restricted" },
-  { _id: AiAppStatus.BANNED, name: "Banned" },
-];
-
-function statusToChipProps(status: AiAppStatus) {
-  switch (status) {
-    case AiAppStatus.APPROVED:
-      return { label: "Approved", backgroundColor: palette.status.success.bg, textColor: palette.status.success.text };
-    case AiAppStatus.UNDER_REVIEW:
-      return { label: "Under review", backgroundColor: palette.status.warning.bg, textColor: palette.status.warning.text };
-    case AiAppStatus.RESTRICTED:
-      return { label: "Restricted", backgroundColor: palette.accent.orange.bg, textColor: palette.accent.orange.text };
-    case AiAppStatus.BANNED:
-      return { label: "Banned", backgroundColor: palette.status.error.bg, textColor: palette.status.error.text };
-    default:
-      return { label: "Draft", backgroundColor: palette.status.default.bg, textColor: palette.status.default.text };
-  }
-}
-
 export default function AIAppApprovalCenter({
   app,
   onBack,
   onStatusChange,
+  isUpdatingStatus,
 }: AIAppApprovalCenterProps) {
   const chipProps = statusToChipProps(app.status);
 
@@ -50,16 +29,16 @@ export default function AIAppApprovalCenter({
         <IconButton onClick={onBack} size="small">
           <ArrowLeft size={16} strokeWidth={1.5} />
         </IconButton>
-        <Bot size={20} strokeWidth={1.5} color={palette.text.secondary} />
+        <Bot size={16} strokeWidth={1.5} color={palette.text.secondary} />
         <Typography sx={{ fontSize: 15, fontWeight: 600 }}>{app.name}</Typography>
         <Chip {...chipProps} size="small" uppercase={false} />
       </Stack>
 
       <Box
         sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "16px",
+          "display": "flex",
+          "flexWrap": "wrap",
+          "gap": "16px",
           "& > *": {
             flex: "1 1 0",
             minWidth: "140px",
@@ -78,21 +57,13 @@ export default function AIAppApprovalCenter({
         />
         <DashboardHeaderCard
           title="Owner"
-          count={
-            app.owner
-              ? `${app.owner.name} ${app.owner.surname}`.trim()
-              : "—"
-          }
+          count={app.owner ? `${app.owner.name} ${app.owner.surname}`.trim() : "—"}
           disableNavigation
         />
-        <DashboardHeaderCard
-          title="Risk score"
-          count={app.risk_score ?? "—"}
-          disableNavigation
-        />
+        <DashboardHeaderCard title="Risk score" count={app.risk_score ?? "—"} disableNavigation />
         <DashboardHeaderCard
           title="Discovered source"
-          count={app.discovered_source.replace(/_/g, " ")}
+          count={formatDiscoveredSource(app.discovered_source)}
           disableNavigation
         />
         <DashboardHeaderCard
@@ -102,12 +73,7 @@ export default function AIAppApprovalCenter({
         />
       </Box>
 
-      <Stack
-        direction="row"
-        alignItems="center"
-        gap="8px"
-        sx={{ mt: 1 }}
-      >
+      <Stack direction="row" alignItems="center" gap="8px" sx={{ mt: "8px" }}>
         <ShieldAlert size={16} strokeWidth={1.5} color={palette.text.secondary} />
         <Typography sx={{ fontSize: 13, fontWeight: 500, color: palette.text.secondary }}>
           Change status:
@@ -116,14 +82,15 @@ export default function AIAppApprovalCenter({
           id="ai-app-detail-status"
           value={app.status}
           onChange={(e) => onStatusChange(e.target.value as AiAppStatus)}
-          items={STATUS_OPTIONS}
+          items={[...STATUS_OPTIONS]}
+          disabled={isUpdatingStatus}
           sx={{ width: 180 }}
         />
       </Stack>
 
       {app.description && (
-        <Box sx={{ mt: 1 }}>
-          <Typography sx={{ fontSize: 13, fontWeight: 600, mb: 1 }}>Description</Typography>
+        <Box sx={{ mt: "8px" }}>
+          <Typography sx={{ fontSize: 13, fontWeight: 600, mb: "8px" }}>Description</Typography>
           <Typography sx={{ fontSize: 13, color: palette.text.secondary }}>
             {app.description}
           </Typography>
@@ -131,8 +98,8 @@ export default function AIAppApprovalCenter({
       )}
 
       {app.departments.length > 0 && (
-        <Box sx={{ mt: 1 }}>
-          <Typography sx={{ fontSize: 13, fontWeight: 600, mb: 1 }}>Departments</Typography>
+        <Box sx={{ mt: "8px" }}>
+          <Typography sx={{ fontSize: 13, fontWeight: 600, mb: "8px" }}>Departments</Typography>
           <Stack direction="row" gap="8px" flexWrap="wrap">
             {app.departments.map((dept) => (
               <Chip

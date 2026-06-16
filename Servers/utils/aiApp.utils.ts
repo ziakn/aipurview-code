@@ -138,13 +138,14 @@ export async function getAiAppByIdQuery(
   const [vendorRows] = await sequelize.query(
     `SELECT id, vendor_name, review_status, risk_score
      FROM vendors
-     WHERE id = :vendorId`,
-    { replacements: { vendorId: app.vendor_id } },
+     WHERE id = :vendorId AND organization_id = :organizationId`,
+    { replacements: { vendorId: app.vendor_id, organizationId } },
   );
 
   const [ownerRows] = await sequelize.query(
-    `SELECT id, name, surname, email FROM users WHERE id = :ownerId`,
-    { replacements: { ownerId: app.owner_id } },
+    `SELECT id, name, surname, email FROM users
+     WHERE id = :ownerId AND organization_id = :organizationId`,
+    { replacements: { ownerId: app.owner_id, organizationId } },
   );
 
   const [modelRows] = await sequelize.query(
@@ -244,7 +245,12 @@ export async function createAiAppQuery(
 
   const createdApp = (createdRows as any[])[0];
 
-  await linkModelsToAiAppQuery(createdApp.id, data.model_inventory_ids || [], transaction);
+  await linkModelsToAiAppQuery(
+    createdApp.id,
+    data.model_inventory_ids || [],
+    organizationId,
+    transaction,
+  );
   await setDataExposureForAiAppQuery(
     createdApp.id,
     data.data_exposure || DATA_EXPOSURE_DEFAULTS,
@@ -257,6 +263,7 @@ export async function createAiAppQuery(
     await setPoliciesForAiAppQuery(
       createdApp.id,
       policyIds.map((policyId) => ({ policy_id: policyId, status: AiAppPolicyStatus.APPLICABLE })),
+      organizationId,
       transaction,
     );
   }
@@ -340,6 +347,7 @@ export async function deleteAiAppByIdQuery(
 export async function linkModelsToAiAppQuery(
   aiAppId: number,
   modelInventoryIds: number[],
+  organizationId: number,
   transaction: Transaction,
 ): Promise<void> {
   await sequelize.query(`DELETE FROM ai_apps_model_inventories WHERE ai_app_id = :aiAppId`, {
@@ -349,7 +357,24 @@ export async function linkModelsToAiAppQuery(
 
   if (modelInventoryIds.length === 0) return;
 
-  const validIds = modelInventoryIds.filter((id) => Number.isInteger(id) && id > 0);
+  const candidateIds = modelInventoryIds.filter((id) => Number.isInteger(id) && id > 0);
+  if (candidateIds.length === 0) return;
+
+  // Validate that every model inventory belongs to the organization before linking.
+  const candidateReplacements: Record<string, any> = { organizationId };
+  candidateIds.forEach((modelId, index) => {
+    candidateReplacements[`candidateId${index}`] = modelId;
+  });
+  const candidatePlaceholders = candidateIds.map((_, index) => `:candidateId${index}`).join(", ");
+
+  const [ownedRows] = await sequelize.query(
+    `SELECT id FROM model_inventories
+     WHERE id IN (${candidatePlaceholders}) AND organization_id = :organizationId`,
+    { replacements: candidateReplacements, transaction },
+  );
+
+  const ownedIds = new Set((ownedRows as any[]).map((row) => row.id));
+  const validIds = candidateIds.filter((id) => ownedIds.has(id));
   if (validIds.length === 0) return;
 
   const replacements: Record<string, any> = { aiAppId };
@@ -368,6 +393,7 @@ export async function linkModelsToAiAppQuery(
 export async function setPoliciesForAiAppQuery(
   aiAppId: number,
   policies: Array<{ policy_id: number; status: AiAppPolicyStatus }>,
+  organizationId: number,
   transaction: Transaction,
 ): Promise<void> {
   await sequelize.query(`DELETE FROM ai_apps_policy_manager WHERE ai_app_id = :aiAppId`, {
@@ -377,7 +403,28 @@ export async function setPoliciesForAiAppQuery(
 
   if (policies.length === 0) return;
 
-  const validPolicies = policies.filter((p) => Number.isInteger(p.policy_id) && p.policy_id > 0);
+  const candidatePolicies = policies.filter(
+    (p) => Number.isInteger(p.policy_id) && p.policy_id > 0,
+  );
+  if (candidatePolicies.length === 0) return;
+
+  // Validate that every policy belongs to the organization before linking.
+  const candidateReplacements: Record<string, any> = { organizationId };
+  candidatePolicies.forEach((policy, index) => {
+    candidateReplacements[`candidatePolicyId${index}`] = policy.policy_id;
+  });
+  const candidatePlaceholders = candidatePolicies
+    .map((_, index) => `:candidatePolicyId${index}`)
+    .join(", ");
+
+  const [ownedRows] = await sequelize.query(
+    `SELECT id FROM policy_manager
+     WHERE id IN (${candidatePlaceholders}) AND organization_id = :organizationId`,
+    { replacements: candidateReplacements, transaction },
+  );
+
+  const ownedIds = new Set((ownedRows as any[]).map((row) => row.id));
+  const validPolicies = candidatePolicies.filter((p) => ownedIds.has(p.policy_id));
   if (validPolicies.length === 0) return;
 
   const replacements: Record<string, any> = { aiAppId };

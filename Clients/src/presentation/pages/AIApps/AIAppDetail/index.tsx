@@ -1,7 +1,9 @@
 import { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Skeleton, Stack } from "@mui/material";
+import { Bot } from "lucide-react";
 import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtended";
+import { EmptyState } from "../../../components/EmptyState";
 import { useAiApp, useUpdateAiAppStatus } from "../../../../application/hooks/useAiApps";
 import { AiAppStatus } from "../../../../domain/enums/aiApp.enum";
 import Alert from "../../../components/Alert";
@@ -44,7 +46,7 @@ export default function AIAppDetail() {
   if (isLoading) {
     return (
       <PageHeaderExtended title="AI app details" description="Approval center and governance">
-        <Skeleton variant="rectangular" height={400} sx={{ borderRadius: "8px" }} />
+        <Skeleton variant="rectangular" height={400} sx={{ borderRadius: "4px" }} />
       </PageHeaderExtended>
     );
   }
@@ -52,7 +54,7 @@ export default function AIAppDetail() {
   if (error || !app) {
     return (
       <PageHeaderExtended title="AI app details" description="Approval center and governance">
-        <div>AI App not found or failed to load.</div>
+        <EmptyState icon={Bot} message="AI app not found or failed to load." showBorder />
       </PageHeaderExtended>
     );
   }
