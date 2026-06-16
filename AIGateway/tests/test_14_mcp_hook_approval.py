@@ -107,6 +107,46 @@ def test_deny_then_status_denied(api):
     assert res.json()["status"] == "denied"
 
 
+def test_rate_limit_does_not_bypass_policy(api):
+    """A rate-limited key must still get approval_required for a matching command.
+
+    Regression for the ordering bug where the rate-limit check ran before the
+    guardrail scan + approval matcher, letting a rate-limited agent fail-open
+    past policy. Policy must be evaluated first.
+    """
+    # A key capped at 1 rpm so the second call within the minute trips the limit.
+    key_res = api.post("/mcp/agent-keys", json={"name": "E2E RL Key", "rate_limit_rpm": 1})
+    assert key_res.status_code in (200, 201), key_res.text
+    rl_key = key_res.json()["data"]["plain_key"]
+
+    # First call uses the single allowed request for this minute.
+    first = _hook(rl_key, "rm -rf /tmp/rl-a")
+    assert first.status_code == 200, first.text
+    assert first.json()["decision"] == "approval_required"
+
+    # Second call is over the rpm cap. Pre-fix it returned rate_limited (fail
+    # open); post-fix policy runs first, so it must still require approval.
+    second = _hook(rl_key, "rm -rf /tmp/rl-b")
+    assert second.status_code == 200, second.text
+    assert second.json()["decision"] == "approval_required", (
+        f"rate-limited call bypassed policy: {second.text}"
+    )
+
+
+def test_require_approval_rule_is_editable(api):
+    """Regression: a require_approval rule must be PATCH-able while echoing its
+    own action sentinel (previously rejected with 'action must be block/mask')."""
+    rid = get_state("appr_rule_id")
+    if not rid:
+        pytest.skip("no rule")
+    res = api.patch(f"/mcp/guardrails/{rid}", json={
+        "name": "E2E Approve rm -rf (edited)",
+        "rule_type": "require_approval",
+        "action": "require_approval",
+    })
+    assert res.status_code == 200, res.text
+
+
 def test_cleanup(api):
     rid = get_state("appr_rule_id")
     if rid:

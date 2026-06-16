@@ -66,16 +66,10 @@ async def mcp_hook(request: Request):
             session_id=session_id,
         )
 
-    # ── Rate limit (infra, not policy) ──────────────────────────────────────
-    try:
-        await enforce_mcp_rate_limits(agent_key, tool_name)
-    except HTTPException as e:
-        if e.status_code == 429:
-            await _audit("rate_limited", "Hook rate limited")
-            return JSONResponse(content={"decision": "rate_limited", "reason": "rate limit exceeded"})
-        raise
-
     # ── Guardrail scan (UNCHANGED shared path): block / mask -> deny ─────────
+    # Policy (block / mask / require_approval) is evaluated BEFORE the rate
+    # limit so a rate-limited agent cannot burst past its cap to get a
+    # policy-violating command allowed (rate_limited fails open by default).
     scan_result = await scan_tool_input(org_id, tool_name, arguments)
     mask_hit = any(getattr(d, "action", None) == "mask" for d in scan_result.detections)
     if scan_result.blocked or mask_hit:
@@ -126,6 +120,18 @@ async def mcp_hook(request: Request):
                 "expires_at": exp.isoformat() if hasattr(exp, "isoformat") else str(exp),
             })
         # else: already approved for this exact call — fall through to allow
+
+    # ── Rate limit (infra, not policy) ──────────────────────────────────────
+    # Checked last: only a call that already passed every policy gate can be
+    # reported as rate_limited, so the adapter's fail-open on rate_limited can
+    # never release a command that a guardrail or approval rule would stop.
+    try:
+        await enforce_mcp_rate_limits(agent_key, tool_name)
+    except HTTPException as e:
+        if e.status_code == 429:
+            await _audit("rate_limited", "Hook rate limited")
+            return JSONResponse(content={"decision": "rate_limited", "reason": "rate limit exceeded"})
+        raise
 
     await _audit("success", "Hook allow")
     return JSONResponse(content={"decision": "allow"})

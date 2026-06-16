@@ -224,15 +224,23 @@ async def update_guardrail(rule_id: int, request: Request):
             )
         updates["scope"] = scope
 
-    # action
-    if "action" in body:
+    # rule_type carries the effect for require_approval rules, whose stored
+    # action is the "require_approval" sentinel rather than block/mask. Accept
+    # that sentinel here (and when this PATCH sets rule_type=require_approval)
+    # so such rules can be edited by clients that round-trip the action field.
+    if updates.get("rule_type") == "require_approval":
+        updates["action"] = "require_approval"
+    elif "action" in body:
         action = body["action"]
-        if action not in VALID_ACTIONS:
+        if action == "require_approval":
+            updates["action"] = action
+        elif action not in VALID_ACTIONS:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"action must be one of: {', '.join(sorted(VALID_ACTIONS))}",
             )
-        updates["action"] = action
+        else:
+            updates["action"] = action
 
     # applies_to_tools
     if "applies_to_tools" in body:
