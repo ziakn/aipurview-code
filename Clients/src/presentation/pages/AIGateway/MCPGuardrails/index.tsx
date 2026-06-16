@@ -19,8 +19,8 @@ import { useCardSx } from "../shared";
 interface MCPGuardrail {
   id: number;
   name: string;
-  rule_type: "pii" | "content_filter" | "prompt_injection";
-  action: "block" | "mask";
+  rule_type: "pii" | "content_filter" | "prompt_injection" | "require_approval";
+  action: "block" | "mask" | "require_approval";
   scope: string;
   applies_to_tools: string[];
   config: Record<string, any> | null;
@@ -52,6 +52,7 @@ const RULE_TYPE_ITEMS = [
   { _id: "pii", name: "PII detection" },
   { _id: "content_filter", name: "Content filter" },
   { _id: "prompt_injection", name: "Prompt injection" },
+  { _id: "require_approval", name: "Require approval" },
 ];
 
 const ACTION_ITEMS = [
@@ -61,16 +62,18 @@ const ACTION_ITEMS = [
 
 const SCOPE_ITEMS = [{ _id: "tool_input", name: "Tool input" }];
 
-const RULE_TYPE_VARIANTS: Record<string, "info" | "warning" | "success"> = {
+const RULE_TYPE_VARIANTS: Record<string, "info" | "warning" | "success" | "error"> = {
   pii: "info",
   content_filter: "warning",
   prompt_injection: "success",
+  require_approval: "error",
 };
 
 const RULE_TYPE_LABELS: Record<string, string> = {
   pii: "PII",
   content_filter: "Content filter",
   prompt_injection: "Prompt injection",
+  require_approval: "Require approval",
 };
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -123,10 +126,12 @@ export default function MCPGuardrailsPage() {
 
   const openEditModal = (rule: MCPGuardrail) => {
     setEditingId(rule.id);
+    const isApproval = rule.rule_type === "require_approval";
     setForm({
       name: rule.name || "",
       rule_type: rule.rule_type || "pii",
-      action: rule.action || "block",
+      // require_approval rules use a sentinel action; don't seed block/mask for them
+      action: isApproval ? "require_approval" : rule.action || "block",
       scope: rule.scope || "tool_input",
       applies_to_tools: Array.isArray(rule.applies_to_tools)
         ? rule.applies_to_tools.join(", ")
@@ -164,10 +169,13 @@ export default function MCPGuardrailsPage() {
     setIsSubmitting(true);
     setFormError("");
 
+    // require_approval rules use a backend-enforced sentinel; never send block/mask for them
+    const isApprovalRule = form.rule_type === "require_approval";
+
     const payload = {
       name: form.name,
       rule_type: form.rule_type,
-      action: form.action,
+      action: isApprovalRule ? "require_approval" : form.action,
       scope: form.scope,
       applies_to_tools: toolsList,
       config: parsedConfig,
@@ -243,7 +251,9 @@ export default function MCPGuardrailsPage() {
             size="small"
             variant={RULE_TYPE_VARIANTS[rule.rule_type] || "info"}
           />
-          <Chip label={rule.action === "block" ? "Block" : "Mask"} size="small" />
+          {rule.rule_type !== "require_approval" && (
+            <Chip label={rule.action === "block" ? "Block" : "Mask"} size="small" />
+          )}
         </Stack>
         <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
           Scope: {rule.scope || "tool_input"}
@@ -376,19 +386,40 @@ export default function MCPGuardrailsPage() {
             placeholder="Select rule type"
             value={form.rule_type}
             items={RULE_TYPE_ITEMS}
-            onChange={(e) => setForm((p) => ({ ...p, rule_type: e.target.value as string }))}
+            onChange={(e) => {
+              const newType = e.target.value as string;
+              setForm((p) => ({
+                ...p,
+                rule_type: newType,
+                // Reset action: approval uses its own sentinel; others default to block
+                action: newType === "require_approval" ? "require_approval" : "block",
+              }));
+            }}
             getOptionValue={(item) => item._id}
           />
 
-          <Select
-            id="action"
-            label="Action"
-            placeholder="Select action"
-            value={form.action}
-            items={ACTION_ITEMS}
-            onChange={(e) => setForm((p) => ({ ...p, action: e.target.value as string }))}
-            getOptionValue={(item) => item._id}
-          />
+          {form.rule_type === "require_approval" ? (
+            <Typography
+              sx={{
+                fontSize: 12,
+                color: palette.status.warning?.text || palette.text.tertiary,
+                lineHeight: 1.5,
+              }}
+            >
+              Matching tool calls will be paused and routed to a human approver before execution.
+              No block or mask action is needed — approval is enforced automatically.
+            </Typography>
+          ) : (
+            <Select
+              id="action"
+              label="Action"
+              placeholder="Select action"
+              value={form.action}
+              items={ACTION_ITEMS}
+              onChange={(e) => setForm((p) => ({ ...p, action: e.target.value as string }))}
+              getOptionValue={(item) => item._id}
+            />
+          )}
 
           <Select
             id="scope"
