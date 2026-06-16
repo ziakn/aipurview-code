@@ -91,6 +91,24 @@ this pass. **Caveat:** these translations are produced without a native reviewer
 non-English copy is best-effort and should be flagged for a later native-speaker pass.
 English (en) is authoritative.
 
+## Branch / merge ordering (important)
+
+This spec is branched off `develop`, which does **not** yet contain the Phase 1/2
+agentic work (`feat/mcp-bash-hook`, `feat/mcp-hook-approval` — both unmerged). Two
+consequences:
+
+1. **`MCPGuardrails/index.tsx` overlaps.** Phase 2 added the `require_approval` rule
+   type to that file; this rename touches its title/description/empty-state. Whichever
+   merges second must reconcile both. **Recommended order:** merge the Phase 1/2 branches
+   first, then rebase this rename branch on top so the Guardrails page already has the
+   `require_approval` UI when the rename copy lands. If this rename merges first, the
+   Phase 2 branch's edits to the same file will need a manual merge.
+2. **Description accuracy depends on Phase 1/2.** The agent-accurate copy (e.g. "MCP tools
+   **and native tools like Bash**") describes the native-hook capability that only exists
+   once Phase 1/2 ship. If this rename ships to `develop` before them, soften those
+   descriptions to not promise native-tool gating that isn't live yet, or hold the rename
+   until Phase 1/2 merge. Simplest: **gate this rename's merge on Phase 1/2 being merged.**
+
 ## Testing
 
 - `cd Clients && npx tsc --noEmit` clean (string-only changes shouldn't affect types, but a stray key typo in `translations.ts` can).
