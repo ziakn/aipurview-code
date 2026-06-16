@@ -70,7 +70,8 @@ async def mcp_hook(request: Request):
     # Policy (block / mask / require_approval) is evaluated BEFORE the rate
     # limit so a rate-limited agent cannot burst past its cap to get a
     # policy-violating command allowed (rate_limited fails open by default).
-    scan_result = await scan_tool_input(org_id, tool_name, arguments)
+    # field_aware: native file-write tools are scanned only on written content.
+    scan_result = await scan_tool_input(org_id, tool_name, arguments, field_aware=True)
     mask_hit = any(getattr(d, "action", None) == "mask" for d in scan_result.detections)
     if scan_result.blocked or mask_hit:
         reason = scan_result.block_reason

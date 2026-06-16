@@ -25,6 +25,7 @@ def test_setup(api):
     key_res = api.post("/mcp/agent-keys", json={"name": "E2E FileWrite Key"})
     assert key_res.status_code in (200, 201), key_res.text
     set_state("fw_key", key_res.json()["data"]["plain_key"])
+    set_state("fw_key_id", key_res.json()["data"]["id"])
 
     rule_res = api.post("/mcp/guardrails", json={
         "name": "E2E FileWrite PII",
@@ -150,3 +151,8 @@ def test_cleanup(api):
         if rid:
             res = api.delete(f"/mcp/guardrails/{rid}")
             assert res.status_code in (200, 204), res.text
+    # Don't leak the agent key: revoke (keys must be inactive to delete), then delete.
+    key_id = get_state("fw_key_id")
+    if key_id:
+        api.post(f"/mcp/agent-keys/{key_id}/revoke")
+        api.delete(f"/mcp/agent-keys/{key_id}")

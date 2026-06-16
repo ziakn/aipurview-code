@@ -31,33 +31,44 @@ FILE_WRITE_CONTENT_FIELDS: dict[str, list[str]] = {
 def extract_scannable_content(tool_name: str, arguments: dict) -> dict:
     """Return the subset of `arguments` that should be scanned for content.
 
-    File-write tools -> only the written-content fields.
-    MultiEdit -> the new_string of every edit (its content lives in a list).
-    Everything else (Bash, MCP, unknown) -> the full arguments, unchanged.
+    File-write tools -> only the written-content fields, as RAW text. MultiEdit's
+    per-edit new_strings are joined with newlines so a regex matches the same way
+    it would against Write/Edit content (a JSON-list form would escape newlines
+    and quotes and match differently). Non-string values are coerced to str so
+    they cannot slip past the scanner's str-only serialization.
 
-    A call with no written content (a pure deletion, e.g. an Edit with only
-    old_string, or a MultiEdit with no new_string anywhere) returns {}. The
-    scanners treat that as nothing-to-scan and allow it. This is intentional:
-    guardrails (including prompt-injection) gate what is WRITTEN, not what is
-    removed.
+    Everything else (Bash, MCP-proxied, unknown) -> the full arguments, returned
+    as a shallow copy.
+
+    A call with no written content (a pure deletion: an Edit with only old_string,
+    or a MultiEdit with no new_string anywhere) returns {}. The scanners treat
+    that as nothing-to-scan and allow it. This is intentional: guardrails
+    (including prompt-injection) gate what is WRITTEN, not what is removed.
+
+    NOTE: file-write field mapping is opt-in per caller. The native hook calls
+    scan_tool_input(..., field_aware=True); the MCP proxy does NOT, so a proxied
+    tool that happens to be named "Write"/"Edit" is never narrowed by this map.
     """
     if not isinstance(arguments, dict):
         return {}
 
     if tool_name == "MultiEdit":
         edits = arguments.get("edits")
-        new_strings: list[Any] = []
+        new_strings: list[str] = []
         if isinstance(edits, list):
             for edit in edits:
                 if isinstance(edit, dict) and "new_string" in edit:
-                    new_strings.append(edit["new_string"])
+                    new_strings.append(str(edit["new_string"]))
         if not new_strings:
             return {}  # no written content -> nothing to scan
-        return {"new_strings": new_strings}
+        # Raw concatenation, mirroring how Write/Edit content is scanned.
+        return {"content": "\n".join(new_strings)}
 
     fields = FILE_WRITE_CONTENT_FIELDS.get(tool_name)
     if fields is None:
         # Unknown / non-file-write tool: scan everything (preserves Bash + MCP).
-        return arguments
+        return dict(arguments)
 
-    return {k: arguments[k] for k in fields if k in arguments}
+    # Coerce to str so a non-string written value (None/int) is still scanned,
+    # not silently dropped by the scanner's str-only serialization.
+    return {k: str(arguments[k]) for k in fields if k in arguments}

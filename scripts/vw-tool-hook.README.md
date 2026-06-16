@@ -1,7 +1,7 @@
 # VerifyWise tool gate (Claude Code hook)
 
 Gates Claude Code's built-in tools (**Bash**, plus file writes via **Edit**,
-**Write** and **MultiEdit**) through the VerifyWise AI Gateway. Before a tool
+**Write**, **MultiEdit** and **NotebookEdit**) through the VerifyWise AI Gateway. Before a tool
 runs, the gateway scans the call against your org's MCP guardrail rules and the
 call is allowed or denied. For Bash it scans the command; for file writes it
 scans the content being written (not the path or the text being removed). Every
@@ -30,7 +30,7 @@ call is recorded in the MCP Audit Log.
    {
      "hooks": {
        "PreToolUse": [
-         { "matcher": "Bash|Edit|Write|MultiEdit",
+         { "matcher": "Bash|Edit|Write|MultiEdit|NotebookEdit",
            "hooks": [{ "type": "command", "command": "scripts/vw-tool-hook.sh" }] }
        ]
      }
@@ -49,7 +49,7 @@ call is recorded in the MCP Audit Log.
 | Gateway rate-limits the call | `VW_FAIL_MODE=open` (default) runs; `closed` blocks |
 | Gateway unreachable / timeout | `VW_FAIL_MODE=open` runs; `closed` blocks |
 
-File-write tools (Write, Edit, MultiEdit) are gated on the content being written.
+File-write tools (Write, Edit, MultiEdit, NotebookEdit) are gated on the content being written.
 A guardrail or approval rule that matches that content blocks or pauses the write;
 deleting content (an `old_string`) and the file path are not scanned.
 
