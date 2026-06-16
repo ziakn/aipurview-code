@@ -150,12 +150,12 @@ export const routeMapping: Record<string, string> = {
   "/ai-gateway/settings/guardrails": "Guardrail settings",
   "/ai-gateway/settings/risks": "Suggested risks",
 
-  // MCP Gateway
-  "/ai-gateway/mcp": "MCP Gateway",
+  // Agent Control
+  "/ai-gateway/mcp": "Agent Control",
   "/ai-gateway/mcp/agent-keys": "Agent keys",
-  "/ai-gateway/mcp/servers": "Servers",
-  "/ai-gateway/mcp/tools": "Tool catalog",
-  "/ai-gateway/mcp/audit": "Audit log",
+  "/ai-gateway/mcp/servers": "MCP Servers",
+  "/ai-gateway/mcp/tools": "MCP Tools",
+  "/ai-gateway/mcp/audit": "Activity",
   "/ai-gateway/mcp/approvals": "Approvals",
   "/ai-gateway/mcp/guardrails": "Guardrails",
 
