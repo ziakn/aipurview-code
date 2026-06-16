@@ -306,7 +306,7 @@ export default function MCPGuardrailsPage() {
   return (
     <PageHeaderExtended
       title="Guardrails"
-      description="Scan agent tool calls for PII, prohibited content or prompt injection, then block or mask what matches."
+      description="Scan agent tool calls, MCP and native tools like Bash, for PII, prohibited content or prompt injection, then block or mask what matches."
       tipBoxEntity="ai-gateway-mcp-guardrails"
       helpArticlePath="ai-gateway/mcp-guardrails"
       actionButton={
@@ -407,7 +407,7 @@ export default function MCPGuardrailsPage() {
               }}
             >
               Matching tool calls will be paused and routed to a human approver before execution. No
-              block or mask action is needed — approval is enforced automatically.
+              block or mask action is needed. Approval is enforced automatically.
             </Typography>
           ) : (
             <Select
@@ -496,8 +496,8 @@ export default function MCPGuardrailsPage() {
       >
         <Stack gap="8px">
           <Typography sx={{ fontSize: 13, color: palette.text.secondary }}>
-            This action takes effect immediately. Agent tool calls will no longer be checked
-            against this rule.
+            This action takes effect immediately. Agent tool calls will no longer be checked against
+            this rule.
           </Typography>
           <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>
             You can re-create this guardrail at any time.

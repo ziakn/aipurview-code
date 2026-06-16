@@ -1131,6 +1131,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Avg Latency": "Durchschnittliche Latenz",
     "Avg input tokens": "Durchschnittliche Eingabe-Tokens",
     "Avg latency": "Durchschnittliche Latenz",
+    "Avg latency, top 10 tools": "Durchschnittliche Latenz, Top 10 Tools",
     "Avg output tokens": "Durchschnittliche Ausgabe-Tokens",
     "Avg score": "Durchschnittliche Bewertung",
     "Bias (per-turn)": "Verzerrung (pro Runde)",
@@ -2457,8 +2458,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Configure API keys first": "Zuerst API-Schlüssel konfigurieren",
     "Configure endpoints to start tracking":
       "Endpunkte konfigurieren, um mit der Verfolgung zu beginnen",
-    "Scan agent tool calls for PII, prohibited content or prompt injection, then block or mask what matches.":
-      "Durchsuchen Sie Agent-Tool-Aufrufe nach PII, unzulässigen Inhalten oder Prompt-Injection und blockieren oder maskieren Sie dann die Treffer.",
+    "Scan agent tool calls, MCP and native tools like Bash, for PII, prohibited content or prompt injection, then block or mask what matches.":
+      "Durchsuchen Sie Agent-Tool-Aufrufe, MCP- und native Tools wie Bash, nach PII, unzulässigen Inhalten oder Prompt-Injection und blockieren oder maskieren Sie dann die Treffer.",
     "Configure integrations and tokens for AI detection scanning.":
       "Integrationen und Token für KI-Erkennungsscans konfigurieren.",
     "Configure LLM provider API keys for running evaluations across your organization":
@@ -2744,8 +2745,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Review and rank": "Prüfen und einstufen",
     "Review the overall assessment and record the deployment decision.":
       "Die Gesamtbewertung prüfen und die Bereitstellungsentscheidung erfassen.",
-    "Every tool call your AI agents make, with outcome, latency, and which agent.":
-      "Jeder Tool-Aufruf Ihrer KI-Agenten, mit Ergebnis, Latenz und ausführendem Agenten.",
+    "Every tool call your AI agents make, MCP tools and native tools like Bash, with outcome, latency and which agent.":
+      "Jeder Tool-Aufruf Ihrer KI-Agenten, MCP-Tools und native Tools wie Bash, mit Ergebnis, Latenz und ausführendem Agenten.",
     "Route alerts to security teams, managers, or compliance officers. Each rule can have different notification recipients.":
       "Benachrichtigungen an Sicherheitsteams, Manager oder Compliance-Beauftragte weiterleiten. Jede Regel kann unterschiedliche Empfänger haben.",
     "Run a test request through the gateway to complete setup":
@@ -9745,6 +9746,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Avg Latency": "Latence moyenne",
     "Avg input tokens": "Tokens d'entrée moyens",
     "Avg latency": "Latence moyenne",
+    "Avg latency, top 10 tools": "Latence moyenne, top 10 outils",
     "Avg output tokens": "Tokens de sortie moyens",
     "Avg score": "Score moyen",
     "Bias (per-turn)": "Biais (par tour)",
@@ -11037,8 +11039,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Configure API keys first": "Configurez d'abord les clés API",
     "Configure endpoints to start tracking":
       "Configurez des points de terminaison pour commencer le suivi",
-    "Scan agent tool calls for PII, prohibited content or prompt injection, then block or mask what matches.":
-      "Analysez les appels d'outils des agents à la recherche de données personnelles, de contenu interdit ou d'injection de prompt, puis bloquez ou masquez les correspondances.",
+    "Scan agent tool calls, MCP and native tools like Bash, for PII, prohibited content or prompt injection, then block or mask what matches.":
+      "Analysez les appels d'outils des agents, MCP et outils natifs comme Bash, à la recherche de données personnelles, de contenu interdit ou d'injection de prompt, puis bloquez ou masquez les correspondances.",
     "Configure integrations and tokens for AI detection scanning.":
       "Configurer les intégrations et les jetons pour l'analyse de détection IA.",
     "Configure LLM provider API keys for running evaluations across your organization":
@@ -11328,8 +11330,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Review and rank": "Examiner et classer",
     "Review the overall assessment and record the deployment decision.":
       "Examinez l'évaluation globale et enregistrez la décision de déploiement.",
-    "Every tool call your AI agents make, with outcome, latency, and which agent.":
-      "Chaque appel d'outil effectué par vos agents IA, avec le résultat, la latence et l'agent concerné.",
+    "Every tool call your AI agents make, MCP tools and native tools like Bash, with outcome, latency and which agent.":
+      "Chaque appel d'outil effectué par vos agents IA, outils MCP et outils natifs comme Bash, avec le résultat, la latence et l'agent concerné.",
     "Route alerts to security teams, managers, or compliance officers. Each rule can have different notification recipients.":
       "Acheminez les alertes vers les équipes de sécurité, les managers ou les responsables de la conformité. Chaque règle peut avoir des destinataires de notification différents.",
     "Run a test request through the gateway to complete setup":
@@ -17652,6 +17654,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Avg Latency": "Latencia media",
     "Avg input tokens": "Tokens de entrada medios",
     "Avg latency": "Latencia media",
+    "Avg latency, top 10 tools": "Latencia media, 10 herramientas principales",
     "Avg output tokens": "Tokens de salida medios",
     "Avg score": "Puntuación media",
     "Bias (per-turn)": "Sesgo (por turno)",
@@ -21981,8 +21984,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Configure a local model provider. No API key required.":
       "Configure un proveedor de modelos local. No se requiere clave de API.",
     "Configure endpoints to start tracking": "Configure endpoints para empezar a hacer seguimiento",
-    "Scan agent tool calls for PII, prohibited content or prompt injection, then block or mask what matches.":
-      "Analice las llamadas a herramientas de los agentes en busca de PII, contenido prohibido o inyección de prompts y luego bloquee o enmascare las coincidencias.",
+    "Scan agent tool calls, MCP and native tools like Bash, for PII, prohibited content or prompt injection, then block or mask what matches.":
+      "Analice las llamadas a herramientas de los agentes, MCP y herramientas nativas como Bash, en busca de PII, contenido prohibido o inyección de prompts y luego bloquee o enmascare las coincidencias.",
     "Configure integrations and tokens for AI detection scanning.":
       "Configure integraciones y tokens para el análisis de detección de IA.",
     "Configure LLM provider API keys for running evaluations across your organization":
@@ -22137,8 +22140,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Revise y decida sobre las llamadas a herramientas de los agentes que requieren aprobación humana antes de ejecutarse.",
     "Review the overall assessment and record the deployment decision.":
       "Revise la evaluación general y registre la decisión de despliegue.",
-    "Every tool call your AI agents make, with outcome, latency, and which agent.":
-      "Cada llamada a herramienta que hacen sus agentes de IA, con el resultado, la latencia y qué agente.",
+    "Every tool call your AI agents make, MCP tools and native tools like Bash, with outcome, latency and which agent.":
+      "Cada llamada a herramienta que hacen sus agentes de IA, herramientas MCP y herramientas nativas como Bash, con el resultado, la latencia y qué agente.",
     "Route alerts to security teams, managers, or compliance officers. Each rule can have different notification recipients.":
       "Dirija las alertas a los equipos de seguridad, los responsables o los responsables de cumplimiento. Cada regla puede tener diferentes destinatarios de notificaciones.",
     "Run a test request through the gateway to complete setup":
