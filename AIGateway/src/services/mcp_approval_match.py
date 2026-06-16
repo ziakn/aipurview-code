@@ -3,25 +3,32 @@ Hook-only matcher for require_approval guardrail rules.
 
 Imported ONLY by mcp_hook.py — never by the shared scan_text / scan_tool_input.
 Matches the serialized command string against active require_approval rules
-(regex or keyword), reusing the same config shape and ReDoS guard as the
-content-filter scanner.
+(regex or keyword). The pattern compilation (with cache) and the ReDoS length
+guard are SHARED with the content-filter scanner
+(guardrail_service._get_compiled_pattern / _run_regex_safe / REDOS_SCAN_CAP) so
+the two matchers can never diverge on what a pattern means or how far into a
+command they scan.
 """
 
 import json
 import logging
-import re
 from typing import Optional
 
 from sqlalchemy import text
 
 from database.db import get_db
+from services.guardrail_service import (
+    _get_compiled_pattern,
+    _run_regex_safe,
+    REDOS_SCAN_CAP,
+)
 
 logger = logging.getLogger("uvicorn")
 
-_REDOS_CAP = 50000  # mirror guardrail_service._run_regex_safe
-
 
 def _serialize(arguments: dict) -> str:
+    """Flatten tool arguments to scannable text. Mirrors scan_tool_input so the
+    approval matcher and the guardrail scanner see the same string."""
     parts: list[str] = []
     for value in arguments.values():
         if isinstance(value, str):
@@ -36,17 +43,20 @@ def _matches(config: dict, text_in: str) -> bool:
     pattern_str = config.get("pattern", "")
     if not pattern_str:
         return False
-    scan = text_in[:_REDOS_CAP]
-    try:
-        if filter_type == "keyword":
-            escaped = re.escape(pattern_str)
-            raw = r"\b" + escaped + r"\b" if " " not in pattern_str else escaped
-        else:
-            raw = pattern_str
-        return re.search(raw, scan, re.IGNORECASE) is not None
-    except re.error as e:
-        logger.warning(f"Invalid require_approval pattern '{pattern_str[:50]}': {e}")
+    # A command longer than the ReDoS cap is scanned only up to the cap, exactly
+    # like the content filter. Log it so a require_approval bypass via length
+    # padding is observable rather than silent.
+    if len(text_in) > REDOS_SCAN_CAP:
+        logger.warning(
+            "require_approval scan truncated to %d chars (command is %d) — "
+            "a matching token past the cap will not be detected",
+            REDOS_SCAN_CAP,
+            len(text_in),
+        )
+    compiled = _get_compiled_pattern(pattern_str, filter_type)
+    if compiled is None:  # invalid pattern — already logged by the shared helper
         return False
+    return bool(_run_regex_safe(compiled, text_in))
 
 
 async def check_require_approval(org_id: int, tool_name: str, arguments: dict) -> Optional[dict]:
