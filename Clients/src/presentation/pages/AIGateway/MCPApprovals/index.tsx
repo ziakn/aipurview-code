@@ -124,8 +124,8 @@ export default function MCPApprovalsPage() {
 
   return (
     <PageHeaderExtended
-      title="MCP Approvals"
-      description="Review and manage tool invocation approval requests."
+      title="Approvals"
+      description="Review and decide on agent tool calls that require human approval before they run."
     >
       {/* Tab bar */}
       <Box sx={{ px: 3, pt: 1 }}>

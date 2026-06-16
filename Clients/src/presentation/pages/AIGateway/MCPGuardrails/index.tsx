@@ -305,8 +305,8 @@ export default function MCPGuardrailsPage() {
 
   return (
     <PageHeaderExtended
-      title="MCP Guardrails"
-      description="Configure guardrail rules for MCP tool invocations."
+      title="Guardrails"
+      description="Scan agent tool calls, MCP and native tools like Bash, for PII, prohibited content or prompt injection, then block or mask what matches."
       tipBoxEntity="ai-gateway-mcp-guardrails"
       helpArticlePath="ai-gateway/mcp-guardrails"
       actionButton={
@@ -326,7 +326,7 @@ export default function MCPGuardrailsPage() {
       ) : rules.length === 0 ? (
         <EmptyState
           icon={Shield}
-          message="No MCP guardrail rules configured yet. Add rules to scan tool inputs for PII, prohibited content, or prompt injection attempts."
+          message="No guardrail rules configured yet. Add rules to scan agent tool calls for PII, prohibited content, or prompt injection attempts."
           showBorder
         >
           <EmptyStateTip
@@ -364,7 +364,7 @@ export default function MCPGuardrailsPage() {
         description={
           isEditing
             ? "Update this guardrail rule's configuration."
-            : "Configure a new guardrail rule for MCP tool invocations."
+            : "Configure a new guardrail rule for agent tool calls."
         }
         onSubmit={handleSubmit}
         submitButtonText={isEditing ? "Save changes" : "Create guardrail"}
@@ -407,7 +407,7 @@ export default function MCPGuardrailsPage() {
               }}
             >
               Matching tool calls will be paused and routed to a human approver before execution. No
-              block or mask action is needed — approval is enforced automatically.
+              block or mask action is needed. Approval is enforced automatically.
             </Typography>
           ) : (
             <Select
@@ -496,8 +496,8 @@ export default function MCPGuardrailsPage() {
       >
         <Stack gap="8px">
           <Typography sx={{ fontSize: 13, color: palette.text.secondary }}>
-            This action takes effect immediately. MCP tool invocations will no longer be checked
-            against this rule.
+            This action takes effect immediately. Agent tool calls will no longer be checked against
+            this rule.
           </Typography>
           <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>
             You can re-create this guardrail at any time.

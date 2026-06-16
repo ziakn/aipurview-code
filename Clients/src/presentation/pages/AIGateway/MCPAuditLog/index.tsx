@@ -126,8 +126,8 @@ export default function MCPAuditLogPage() {
 
   return (
     <PageHeaderExtended
-      title="MCP Audit Log"
-      description="Review tool invocation history and audit trail."
+      title="Activity"
+      description="Every tool call your AI agents make, MCP tools and native tools like Bash, with outcome, latency and which agent."
       actionButton={
         <Box sx={{ width: 160 }}>
           <Select
@@ -222,9 +222,9 @@ export default function MCPAuditLogPage() {
               </Box>
               <Box sx={{ ...cardSx, flex: 1 }}>
                 <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 1 }}>
-                  <Typography sx={sectionTitleSx}>Avg latency — top 10 tools</Typography>
+                  <Typography sx={sectionTitleSx}>Avg latency, top 10 tools</Typography>
                   <MuiTooltip
-                    title="Average round-trip time per tool call, helping identify slow or bottlenecked tools"
+                    title="Average round-trip time per tool call, useful for spotting slow tools"
                     arrow
                     placement="top"
                   >

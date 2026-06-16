@@ -195,7 +195,7 @@ export const articleContentMap: Record<string, ArticleContent> = {
   'ai-gateway/logs': aiGatewayLogsContent,
   'ai-gateway/prompts': aiGatewayPromptsContent,
   'ai-gateway/models': aiGatewayModelsContent,
-  // MCP Gateway
+  // Agent Control
   'ai-gateway/mcp-overview': mcpOverviewContent,
   'ai-gateway/mcp-servers': mcpServersContent,
   'ai-gateway/mcp-tools': mcpToolsContent,
