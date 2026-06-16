@@ -3,8 +3,7 @@ import { Box, Stack } from "@mui/material";
 import StandardModal from "../StandardModal";
 import Field from "../../Inputs/Field";
 import Select from "../../Inputs/Select";
-import AutoCompleteField from "../../Inputs/Autocomplete";
-import { useCreateAiApp } from "../../../../application/hooks/useAiApps";
+import { useCreateAiApp, useUpdateAiApp } from "../../../../application/hooks/useAiApps";
 import { useVendors } from "../../../../application/hooks/useVendors";
 import useUsers from "../../../../application/hooks/useUsers";
 import { useFormValidation } from "../../../../application/hooks/useFormValidation";
@@ -12,6 +11,7 @@ import { checkStringValidation } from "../../../../application/validations/strin
 import { AiAppStatus, AiAppDiscoveredSource } from "../../../../domain/enums/aiApp.enum";
 import { User } from "../../../../domain/types/User";
 import { VendorModel } from "../../../../domain/models/Common/vendor/vendor.model";
+import { IAIApp, IAIAppDetail } from "../../../../domain/interfaces/i.aiApp";
 import { STATUS_OPTIONS } from "../../../pages/AIApps/utils";
 import Alert from "../../Alert";
 
@@ -23,6 +23,8 @@ interface NewAIAppProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  /** When provided, the modal edits this app instead of creating a new one. */
+  app?: IAIAppDetail | IAIApp | null;
 }
 
 interface FormState {
@@ -45,10 +47,13 @@ const initialState: FormState = {
   required_training: "",
 };
 
+const NONE_OPTION = -1;
+
 const SOURCE_OPTIONS = [
   { _id: AiAppDiscoveredSource.MANUAL, name: "Manual" },
   { _id: AiAppDiscoveredSource.SHADOW_AI, name: "Shadow AI" },
   { _id: AiAppDiscoveredSource.EMPLOYEE_REPORT, name: "Employee report" },
+  { _id: AiAppDiscoveredSource.PROCUREMENT, name: "Procurement" },
   { _id: AiAppDiscoveredSource.SSO, name: "SSO" },
   { _id: AiAppDiscoveredSource.PROXY, name: "Proxy" },
   { _id: AiAppDiscoveredSource.FIREWALL, name: "Firewall" },
@@ -59,7 +64,21 @@ interface OptionItem {
   name: string;
 }
 
-export default function NewAIApp({ isOpen, onClose, onSuccess }: NewAIAppProps) {
+/** Builds the form state from an existing app when editing. */
+function stateFromApp(app: IAIAppDetail | IAIApp): FormState {
+  return {
+    name: app.name ?? "",
+    description: app.description ?? "",
+    vendor_id: app.vendor_id ?? null,
+    owner_id: app.owner_id ?? null,
+    status: app.status ?? AiAppStatus.DRAFT,
+    discovered_source: app.discovered_source ?? AiAppDiscoveredSource.MANUAL,
+    required_training: app.required_training ?? "",
+  };
+}
+
+export default function NewAIApp({ isOpen, onClose, onSuccess, app }: NewAIAppProps) {
+  const isEditing = !!app;
   const [values, setValues] = useState<FormState>(initialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [alert, setAlert] = useState<{
@@ -69,6 +88,7 @@ export default function NewAIApp({ isOpen, onClose, onSuccess }: NewAIAppProps) 
   } | null>(null);
 
   const createAiAppMutation = useCreateAiApp();
+  const updateAiAppMutation = useUpdateAiApp();
   const { data: vendorsData } = useVendors();
   const { users } = useUsers();
 
@@ -87,38 +107,32 @@ export default function NewAIApp({ isOpen, onClose, onSuccess }: NewAIAppProps) 
 
   useEffect(() => {
     if (isOpen) {
-      setValues(initialState);
+      setValues(app ? stateFromApp(app) : initialState);
       resetErrors();
       setAlert(null);
     }
-  }, [isOpen, resetErrors]);
+  }, [isOpen, app, resetErrors]);
 
   const vendorOptions: OptionItem[] = useMemo(
-    () =>
-      (vendorsData || []).map((vendor: VendorModel) => ({
+    () => [
+      { _id: NONE_OPTION, name: "No vendor" },
+      ...(vendorsData || []).map((vendor: VendorModel) => ({
         _id: vendor.id!,
         name: vendor.vendor_name || `Vendor ${vendor.id}`,
       })),
+    ],
     [vendorsData],
   );
 
   const userOptions: OptionItem[] = useMemo(
-    () =>
-      (users || []).map((user: User) => ({
+    () => [
+      { _id: NONE_OPTION, name: "No owner" },
+      ...(users || []).map((user: User) => ({
         _id: user.id,
         name: `${user.name} ${user.surname}`,
       })),
+    ],
     [users],
-  );
-
-  const selectedVendor = useMemo(
-    () => vendorOptions.find((v) => v._id === values.vendor_id) || null,
-    [vendorOptions, values.vendor_id],
-  );
-
-  const selectedOwner = useMemo(
-    () => userOptions.find((u) => u._id === values.owner_id) || null,
-    [userOptions, values.owner_id],
   );
 
   const handleChange = (field: keyof FormState, value: FormState[keyof FormState]) => {
@@ -132,19 +146,35 @@ export default function NewAIApp({ isOpen, onClose, onSuccess }: NewAIAppProps) 
 
     setIsSubmitting(true);
     try {
-      await createAiAppMutation.mutateAsync({
-        name: values.name,
-        description: values.description || undefined,
-        vendor_id: values.vendor_id,
-        owner_id: values.owner_id,
-        status: values.status,
-        discovered_source: values.discovered_source,
-        required_training: values.required_training || undefined,
-      });
+      if (isEditing && app?.id) {
+        await updateAiAppMutation.mutateAsync({
+          id: app.id,
+          data: {
+            name: values.name,
+            description: values.description || null,
+            vendor_id: values.vendor_id,
+            owner_id: values.owner_id,
+            status: values.status,
+            discovered_source: values.discovered_source,
+            required_training: values.required_training || null,
+          },
+        });
+      } else {
+        await createAiAppMutation.mutateAsync({
+          name: values.name,
+          description: values.description || undefined,
+          vendor_id: values.vendor_id,
+          owner_id: values.owner_id,
+          status: values.status,
+          discovered_source: values.discovered_source,
+          required_training: values.required_training || undefined,
+        });
+      }
       onSuccess();
     } catch (err: unknown) {
       const message =
-        (err as ApiErrorResponse)?.response?.data?.message || "Failed to create AI app";
+        (err as ApiErrorResponse)?.response?.data?.message ||
+        (isEditing ? "Failed to update AI app" : "Failed to create AI app");
       setAlert({
         variant: "error",
         body: message,
@@ -158,14 +188,18 @@ export default function NewAIApp({ isOpen, onClose, onSuccess }: NewAIAppProps) 
     <StandardModal
       isOpen={isOpen}
       onClose={onClose}
-      title="New AI app"
-      description="Add an AI application to your governance inventory."
+      title={isEditing ? "Edit AI app" : "New AI app"}
+      description={
+        isEditing
+          ? "Update the details of this AI application in your governance inventory."
+          : "Add an AI application to your governance inventory."
+      }
       onSubmit={handleSubmit}
-      submitButtonText="Create"
+      submitButtonText={isEditing ? "Save" : "Create"}
       isSubmitting={isSubmitting}
       maxWidth="720px"
     >
-      <Stack sx={{ gap: "48px" }}>
+      <Stack sx={{ gap: "16px" }}>
         <Field
           label="Name"
           placeholder="e.g. ChatGPT Enterprise"
@@ -185,28 +219,28 @@ export default function NewAIApp({ isOpen, onClose, onSuccess }: NewAIAppProps) 
         />
 
         <Box sx={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-          <AutoCompleteField<OptionItem>
+          <Select
+            id="ai-app-vendor"
             label="Vendor"
             placeholder="Select vendor"
-            value={selectedVendor}
-            onChange={(_event, newValue) => {
-              handleChange("vendor_id", newValue?._id || null);
+            value={values.vendor_id ?? NONE_OPTION}
+            onChange={(e) => {
+              const next = e.target.value as number;
+              handleChange("vendor_id", next === NONE_OPTION ? null : next);
             }}
-            options={vendorOptions}
-            getOptionLabel={(option) => option.name}
-            isOptionEqualToValue={(option, value) => option._id === value._id}
+            items={vendorOptions}
             sx={{ flex: 1, minWidth: 220 }}
           />
-          <AutoCompleteField<OptionItem>
+          <Select
+            id="ai-app-owner"
             label="Owner"
             placeholder="Select owner"
-            value={selectedOwner}
-            onChange={(_event, newValue) => {
-              handleChange("owner_id", newValue?._id || null);
+            value={values.owner_id ?? NONE_OPTION}
+            onChange={(e) => {
+              const next = e.target.value as number;
+              handleChange("owner_id", next === NONE_OPTION ? null : next);
             }}
-            options={userOptions}
-            getOptionLabel={(option) => option.name}
-            isOptionEqualToValue={(option, value) => option._id === value._id}
+            items={userOptions}
             sx={{ flex: 1, minWidth: 220 }}
           />
         </Box>
@@ -222,7 +256,7 @@ export default function NewAIApp({ isOpen, onClose, onSuccess }: NewAIAppProps) 
           />
           <Select
             id="ai-app-source"
-            label="Discovered source"
+            label="Source"
             value={values.discovered_source}
             onChange={(e) =>
               handleChange("discovered_source", e.target.value as AiAppDiscoveredSource)

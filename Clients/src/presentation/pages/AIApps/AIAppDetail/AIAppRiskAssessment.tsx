@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import { Box, Stack, Typography, Slider, Grid } from "@mui/material";
+import { Box, Stack, Typography, Grid } from "@mui/material";
 import { Gauge } from "lucide-react";
 import { CustomizableButton } from "../../../components/button/customizable-button";
+import Select from "../../../components/Inputs/Select";
 import { useUpdateAiApp } from "../../../../application/hooks/useAiApps";
 import { palette } from "../../../themes/palette";
 import Alert from "../../../components/Alert";
 import Chip from "../../../components/Chip";
 import {
   RISK_CRITERIA,
-  RISK_SLIDER_MARKS,
+  RISK_SCORE_OPTIONS,
+  DEFAULT_CRITERION_SCORE,
   buildDefaultScores,
   calculateRiskScore,
   getRiskLevel,
@@ -29,6 +31,13 @@ export default function AIAppRiskAssessment({ appId, currentRiskScore }: AIAppRi
 
   const updateMutation = useUpdateAiApp();
 
+  // Auto-dismiss toasts after 3s.
+  useEffect(() => {
+    if (!alert) return;
+    const timer = setTimeout(() => setAlert(null), 3000);
+    return () => clearTimeout(timer);
+  }, [alert]);
+
   useEffect(() => {
     setScores(scoresFromRiskScore(currentRiskScore));
   }, [currentRiskScore]);
@@ -40,9 +49,8 @@ export default function AIAppRiskAssessment({ appId, currentRiskScore }: AIAppRi
     [currentRiskScore],
   );
 
-  const handleChange = (key: string, value: number | number[]) => {
-    const numeric = Array.isArray(value) ? value[0] : value;
-    setScores((prev) => ({ ...prev, [key]: numeric }));
+  const handleChange = (key: string, value: number) => {
+    setScores((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleSave = async () => {
@@ -67,7 +75,12 @@ export default function AIAppRiskAssessment({ appId, currentRiskScore }: AIAppRi
         sx={{ mb: "16px" }}
       >
         <Stack direction="row" alignItems="center" gap="8px">
-          <Gauge size={16} strokeWidth={1.5} color={palette.text.secondary} />
+          <Gauge
+            size={16}
+            strokeWidth={1.5}
+            color={palette.text.secondary}
+            style={{ flexShrink: 0, overflow: "visible" }}
+          />
           <Typography sx={{ fontSize: 15, fontWeight: 600 }}>Risk assessment</Typography>
         </Stack>
         <CustomizableButton
@@ -107,8 +120,8 @@ export default function AIAppRiskAssessment({ appId, currentRiskScore }: AIAppRi
           </Box>
           <Box
             sx={{
-              width: 1,
-              height: 1,
+              width: "1px",
+              alignSelf: "stretch",
               backgroundColor: palette.border.light,
               display: { xs: "none", sm: "block" },
             }}
@@ -145,21 +158,12 @@ export default function AIAppRiskAssessment({ appId, currentRiskScore }: AIAppRi
               >
                 {criterion.description}
               </Typography>
-              <Slider
-                color="primary"
-                value={scores[criterion.key] ?? 3}
-                onChange={(_event, value) => handleChange(criterion.key, value)}
-                step={1}
-                marks={RISK_SLIDER_MARKS as { value: number; label: string }[]}
-                min={1}
-                max={5}
-                valueLabelDisplay="auto"
-                sx={{
-                  "& .MuiSlider-markLabel": {
-                    fontSize: 12,
-                    color: palette.text.secondary,
-                  },
-                }}
+              <Select
+                id={`risk-${criterion.key}`}
+                value={scores[criterion.key] ?? DEFAULT_CRITERION_SCORE}
+                onChange={(e) => handleChange(criterion.key, Number(e.target.value))}
+                items={[...RISK_SCORE_OPTIONS]}
+                sx={{ width: "100%" }}
               />
             </Box>
           </Grid>

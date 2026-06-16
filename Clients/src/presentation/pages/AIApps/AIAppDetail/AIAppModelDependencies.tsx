@@ -9,9 +9,10 @@ import {
   TableContainer,
   TableRow,
 } from "@mui/material";
+import type { SelectChangeEvent } from "@mui/material";
 import { Cpu } from "lucide-react";
 import { CustomizableButton } from "../../../components/button/customizable-button";
-import AutoCompleteField from "../../../components/Inputs/Autocomplete";
+import MultiSelect from "../../../components/Inputs/MultiSelect";
 import { useLinkModelsToAiApp } from "../../../../application/hooks/useAiApps";
 import { useModelInventories } from "../../../../application/hooks/useModelInventories";
 import { IAIAppModel } from "../../../../domain/interfaces/i.aiApp";
@@ -29,19 +30,11 @@ interface AIAppModelDependenciesProps {
   models: IAIAppModel[];
 }
 
-interface ModelOption {
-  id: number;
-  provider: string;
-  model: string;
-  version?: string;
-}
-
 const TABLE_COLUMNS: StandardColumn[] = [
   { id: "provider", label: "Provider", sortable: true },
   { id: "model", label: "Model", sortable: true },
   { id: "version", label: "Version", sortable: false },
   { id: "status", label: "Status", sortable: true },
-  { id: "risk_score", label: "Risk score", sortable: true },
 ];
 
 export default function AIAppModelDependencies({ appId, models }: AIAppModelDependenciesProps) {
@@ -51,29 +44,34 @@ export default function AIAppModelDependencies({ appId, models }: AIAppModelDepe
     body: string;
   } | null>(null);
 
+  // Auto-dismiss toasts after 3s.
+  useEffect(() => {
+    if (!alert) return;
+    const timer = setTimeout(() => setAlert(null), 3000);
+    return () => clearTimeout(timer);
+  }, [alert]);
+
   const { data: modelInventories } = useModelInventories();
   const linkModelsMutation = useLinkModelsToAiApp();
 
-  const modelOptions: ModelOption[] = useMemo(() => {
-    return (modelInventories ?? []).map((m) => ({
-      id: m.id!,
-      provider: m.provider || "Unknown",
-      model: m.model || "Unknown",
-      version: m.version,
-    }));
-  }, [modelInventories]);
+  const modelOptions = useMemo(
+    () =>
+      (modelInventories ?? []).map((m) => ({
+        _id: m.id!,
+        name: `${m.provider || "Unknown"} - ${m.model || "Unknown"}${
+          m.version ? ` v${m.version}` : ""
+        }`,
+      })),
+    [modelInventories],
+  );
 
   useEffect(() => {
     setLocalModelIds(models.map((m) => m.id));
   }, [models]);
 
-  const selectedOptions = useMemo(
-    () => modelOptions.filter((option) => localModelIds.includes(option.id)),
-    [modelOptions, localModelIds],
-  );
-
-  const handleChange = (_event: unknown, newValue: ModelOption[]) => {
-    setLocalModelIds(newValue.map((option) => option.id));
+  const handleChange = (event: SelectChangeEvent<number[]>) => {
+    const value = event.target.value;
+    setLocalModelIds(typeof value === "string" ? [] : value);
   };
 
   const handleSave = async () => {
@@ -96,8 +94,6 @@ export default function AIAppModelDependencies({ appId, models }: AIAppModelDepe
         return (a.model || "").localeCompare(b.model || "");
       case "status":
         return (a.status || "").localeCompare(b.status || "");
-      case "risk_score":
-        return (a.risk_score ?? 0) - (b.risk_score ?? 0);
       default:
         return 0;
     }
@@ -143,18 +139,14 @@ export default function AIAppModelDependencies({ appId, models }: AIAppModelDepe
       </Stack>
 
       <Box sx={{ mb: "24px" }}>
-        <AutoCompleteField<ModelOption, true>
+        <MultiSelect
+          id="linked-models"
           label="Linked models"
-          placeholder="Search and select model inventory entries"
-          multiple
-          options={modelOptions}
-          value={selectedOptions}
+          placeholder="Select model inventory entries"
+          value={localModelIds}
+          items={modelOptions}
           onChange={handleChange}
-          getOptionLabel={(option) =>
-            `${option.provider} - ${option.model}${option.version ? ` v${option.version}` : ""}`
-          }
-          isOptionEqualToValue={(option, value) => option.id === value.id}
-          sx={{ maxWidth: 640 }}
+          sx={{ maxWidth: 400 }}
         />
       </Box>
 
@@ -178,9 +170,6 @@ export default function AIAppModelDependencies({ appId, models }: AIAppModelDepe
                     </TableCell>
                     <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
                       <Chip label={model.status || "Unknown"} size="small" uppercase={false} />
-                    </TableCell>
-                    <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                      {model.risk_score ?? "—"}
                     </TableCell>
                   </TableRow>
                 ))

@@ -56,6 +56,7 @@ function parseAiAppRow(row: any): IAIApp {
     name: row.name,
     description: row.description,
     vendor_id: row.vendor_id,
+    vendor_name: row.vendor_name ?? null,
     owner_id: row.owner_id,
     status: row.status,
     risk_score: row.risk_score,
@@ -76,34 +77,44 @@ export async function getAllAiAppsQuery(
   const limit = options.limit || 20;
   const offset = (page - 1) * limit;
 
-  const whereConditions: string[] = ["organization_id = :organizationId"];
+  // Columns are qualified with ai_apps.* because the list query LEFT JOINs vendors,
+  // which also has organization_id (would be ambiguous unqualified).
+  const whereConditions: string[] = ["ai_apps.organization_id = :organizationId"];
   const replacements: Record<string, any> = { organizationId, limit, offset };
 
   if (options.status) {
-    whereConditions.push("status = :status");
+    whereConditions.push("ai_apps.status = :status");
     replacements.status = options.status;
   }
 
   if (options.vendorId) {
-    whereConditions.push("vendor_id = :vendorId");
+    whereConditions.push("ai_apps.vendor_id = :vendorId");
     replacements.vendorId = options.vendorId;
   }
 
   const whereClause = `WHERE ${whereConditions.join(" AND ")}`;
 
+  // Qualified with ai_apps. because the list query joins vendors (shared column names
+  // like created_at/status/risk_score would otherwise be ambiguous in ORDER BY).
   const validSortColumns: Record<string, string> = {
-    name: "name",
-    status: "status",
-    risk_score: "risk_score",
-    created_at: "created_at",
-    updated_at: "updated_at",
+    name: "ai_apps.name",
+    status: "ai_apps.status",
+    risk_score: "ai_apps.risk_score",
+    created_at: "ai_apps.created_at",
+    updated_at: "ai_apps.updated_at",
   };
 
   const sortColumn = validSortColumns[options.sortBy || "created_at"] || "created_at";
   const sortOrder = options.order === "asc" ? "ASC" : "DESC";
 
+  // LEFT JOIN vendors so the list can show the vendor name instead of a raw id.
+  // whereClause/sortColumn reference unqualified ai_apps columns, so alias the table.
+  // The join is also constrained to the same organization so a stray cross-org
+  // vendor_id can never surface another tenant's vendor name.
   const [rows] = await sequelize.query(
-    `SELECT * FROM ai_apps
+    `SELECT ai_apps.*, v.vendor_name
+     FROM ai_apps
+     LEFT JOIN vendors v ON v.id = ai_apps.vendor_id AND v.organization_id = ai_apps.organization_id
      ${whereClause}
      ORDER BY ${sortColumn} ${sortOrder} NULLS LAST
      LIMIT :limit OFFSET :offset`,
@@ -124,10 +135,14 @@ export async function getAllAiAppsQuery(
 export async function getAiAppByIdQuery(
   id: number,
   organizationId: number,
+  transaction?: Transaction,
 ): Promise<IAIAppDetail | null> {
+  // `transaction` is optional: when this runs as a read-your-own-write step inside an
+  // open create/update transaction it must share that transaction to see uncommitted
+  // rows; standalone GET calls pass nothing and read with autocommit as before.
   const [rows] = await sequelize.query(
     `SELECT * FROM ai_apps WHERE organization_id = :organizationId AND id = :id`,
-    { replacements: { organizationId, id } },
+    { replacements: { organizationId, id }, transaction },
   );
 
   const apps = rows as any[];
@@ -139,45 +154,50 @@ export async function getAiAppByIdQuery(
     `SELECT id, vendor_name, review_status, risk_score
      FROM vendors
      WHERE id = :vendorId AND organization_id = :organizationId`,
-    { replacements: { vendorId: app.vendor_id, organizationId } },
+    { replacements: { vendorId: app.vendor_id, organizationId }, transaction },
   );
 
   const [ownerRows] = await sequelize.query(
     `SELECT id, name, surname, email FROM users
      WHERE id = :ownerId AND organization_id = :organizationId`,
-    { replacements: { ownerId: app.owner_id, organizationId } },
+    { replacements: { ownerId: app.owner_id, organizationId }, transaction },
   );
 
+  // model_inventories has no risk_score column (risk there is captured via
+  // security_assessment); the IAIAppDetail.models.risk_score field is optional and
+  // intentionally omitted here rather than mapped from an unrelated column.
+  // The org filter on mi/pm is defense in depth: links can only be created for
+  // same-org models/policies (enforced on write), but the read enforces it too.
   const [modelRows] = await sequelize.query(
-    `SELECT mi.id, mi.provider, mi.model, mi.version, mi.status, mi.risk_score
+    `SELECT mi.id, mi.provider, mi.model, mi.version, mi.status
      FROM model_inventories mi
      JOIN ai_apps_model_inventories j ON j.model_inventory_id = mi.id
-     WHERE j.ai_app_id = :aiAppId
+     WHERE j.ai_app_id = :aiAppId AND mi.organization_id = :organizationId
      ORDER BY mi.provider, mi.model`,
-    { replacements: { aiAppId: id } },
+    { replacements: { aiAppId: id, organizationId }, transaction },
   );
 
   const [policyRows] = await sequelize.query(
     `SELECT pm.id, pm.title, jap.status
      FROM policy_manager pm
      JOIN ai_apps_policy_manager jap ON jap.policy_id = pm.id
-     WHERE jap.ai_app_id = :aiAppId
+     WHERE jap.ai_app_id = :aiAppId AND pm.organization_id = :organizationId
      ORDER BY pm.title`,
-    { replacements: { aiAppId: id } },
+    { replacements: { aiAppId: id, organizationId }, transaction },
   );
 
   const [dataExposureRows] = await sequelize.query(
     `SELECT data_type, allowed FROM ai_apps_data_exposure
      WHERE ai_app_id = :aiAppId
      ORDER BY data_type`,
-    { replacements: { aiAppId: id } },
+    { replacements: { aiAppId: id }, transaction },
   );
 
   const [departmentRows] = await sequelize.query(
     `SELECT department, user_count FROM ai_apps_departments
      WHERE ai_app_id = :aiAppId
      ORDER BY user_count DESC, department`,
-    { replacements: { aiAppId: id } },
+    { replacements: { aiAppId: id }, transaction },
   );
 
   return {
@@ -268,7 +288,7 @@ export async function createAiAppQuery(
     );
   }
 
-  const detail = await getAiAppByIdQuery(createdApp.id, organizationId);
+  const detail = await getAiAppByIdQuery(createdApp.id, organizationId, transaction);
   if (!detail) {
     throw new NotFoundException("AI App not found after creation", "AiApp", createdApp.id);
   }
@@ -315,7 +335,7 @@ export async function updateAiAppByIdQuery(
   }
 
   if (setClauses.length === 0) {
-    return getAiAppByIdQuery(id, organizationId);
+    return getAiAppByIdQuery(id, organizationId, transaction);
   }
 
   setClauses.push("updated_at = NOW()");
@@ -326,7 +346,7 @@ export async function updateAiAppByIdQuery(
     { replacements, transaction },
   );
 
-  return getAiAppByIdQuery(id, organizationId);
+  return getAiAppByIdQuery(id, organizationId, transaction);
 }
 
 export async function deleteAiAppByIdQuery(

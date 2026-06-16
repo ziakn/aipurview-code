@@ -10,6 +10,7 @@ export enum AiAppDiscoveredSource {
   MANUAL = "manual",
   SHADOW_AI = "shadow_ai",
   EMPLOYEE_REPORT = "employee_report",
+  PROCUREMENT = "procurement",
   SSO = "sso",
   PROXY = "proxy",
   FIREWALL = "firewall",

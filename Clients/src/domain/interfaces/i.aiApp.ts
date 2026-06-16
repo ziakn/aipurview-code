@@ -6,6 +6,7 @@ export interface IAIApp {
   name: string;
   description?: string | null;
   vendor_id?: number | null;
+  vendor_name?: string | null;
   owner_id?: number | null;
   status: AiAppStatus;
   risk_score?: number | null;

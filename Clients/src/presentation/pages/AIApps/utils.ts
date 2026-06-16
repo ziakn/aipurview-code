@@ -67,7 +67,14 @@ export function statusToChipProps(status: AiAppStatus): StatusChipProps {
  * label (e.g. "shadow ai") by replacing underscores with spaces.
  */
 export function formatDiscoveredSource(source: string): string {
-  return source.replace(/_/g, " ");
+  // Sentence case with the "AI"/"SSO" acronyms kept uppercase
+  // (e.g. shadow_ai → "Shadow AI", employee_report → "Employee report", sso → "SSO").
+  const words = source.split("_").map((word, index) => {
+    if (word === "ai" || word === "sso") return word.toUpperCase();
+    if (index === 0) return word.charAt(0).toUpperCase() + word.slice(1);
+    return word;
+  });
+  return words.join(" ");
 }
 
 // ---------------------------------------------------------------------------
@@ -121,15 +128,16 @@ export const RISK_CRITERIA: ReadonlyArray<RiskCriterion> = [
 ];
 
 /** Slider marks for each 1-5 criterion score. */
-export const RISK_SLIDER_MARKS: ReadonlyArray<{ value: number; label: string }> = [
-  { value: 1, label: "1" },
-  { value: 2, label: "2" },
-  { value: 3, label: "3" },
-  { value: 4, label: "4" },
-  { value: 5, label: "5" },
+/** Options for the per-criterion score dropdowns (1 lowest to 5 highest). */
+export const RISK_SCORE_OPTIONS: ReadonlyArray<{ _id: number; name: string }> = [
+  { _id: 1, name: "1 - Very low" },
+  { _id: 2, name: "2 - Low" },
+  { _id: 3, name: "3 - Moderate" },
+  { _id: 4, name: "4 - High" },
+  { _id: 5, name: "5 - Very high" },
 ];
 
-/** Default per-criterion slider value used before any score exists. */
+/** Default per-criterion score used before any score exists. */
 export const DEFAULT_CRITERION_SCORE = 3;
 
 export interface RiskLevel {
@@ -184,13 +192,4 @@ export function calculateRiskScore(scores: Record<string, number>): number {
   if (totalWeight === 0) return 0;
   const average = weightedSum / totalWeight;
   return Math.max(0, Math.min(100, Math.round(average * 20)));
-}
-
-/** Maps a 0-100 risk score to a coarse label used in the catalog cards. */
-export function riskToLabel(riskScore: number | null | undefined): string {
-  if (riskScore === null || riskScore === undefined) return "Not scored";
-  if (riskScore >= 75) return "High";
-  if (riskScore >= 50) return "Medium";
-  if (riskScore >= 25) return "Low";
-  return "Very low";
 }

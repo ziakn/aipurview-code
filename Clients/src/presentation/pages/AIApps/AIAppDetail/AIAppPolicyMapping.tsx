@@ -43,7 +43,6 @@ interface LocalPolicy {
 const TABLE_COLUMNS: StandardColumn[] = [
   { id: "title", label: "Policy", sortable: true },
   { id: "applicable", label: "Applicable", sortable: false },
-  { id: "suggested", label: "Suggested", sortable: false },
 ];
 
 export default function AIAppPolicyMapping({ appId, appName, policies }: AIAppPolicyMappingProps) {
@@ -52,6 +51,13 @@ export default function AIAppPolicyMapping({ appId, appName, policies }: AIAppPo
     variant: "success" | "info" | "warning" | "error";
     body: string;
   } | null>(null);
+
+  // Auto-dismiss toasts after 3s.
+  useEffect(() => {
+    if (!alert) return;
+    const timer = setTimeout(() => setAlert(null), 3000);
+    return () => clearTimeout(timer);
+  }, [alert]);
 
   const { data: allPolicies } = usePolicies();
   const { data: suggestions } = usePolicySuggestions(appName);
@@ -187,7 +193,6 @@ export default function AIAppPolicyMapping({ appId, appName, policies }: AIAppPo
                 .slice(validPage * rowsPerPage, validPage * rowsPerPage + rowsPerPage)
                 .map((policy) => {
                   const isApplicable = policy.status === AiAppPolicyStatus.APPLICABLE;
-                  const isSuggested = suggestedTitles.includes(policy.title);
                   return (
                     <TableRow key={policy.policy_id} sx={singleTheme.tableStyles.primary.body.row}>
                       <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
@@ -199,9 +204,6 @@ export default function AIAppPolicyMapping({ appId, appName, policies }: AIAppPo
                           onChange={() => handleToggle(policy.policy_id)}
                           inputProps={{ "aria-label": `Toggle ${policy.title}` }}
                         />
-                      </TableCell>
-                      <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                        {isSuggested ? "Yes" : "—"}
                       </TableCell>
                     </TableRow>
                   );

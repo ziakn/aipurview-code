@@ -170,6 +170,9 @@ export const routeMapping: Record<string, string> = {
   "/shadow-ai/rules/alerts": "Alert history",
   "/shadow-ai/settings": "Settings",
 
+  // AI apps
+  "/ai-apps": "AI apps",
+
   // Intake forms
   "/intake-forms": "Intake forms",
   "/intake-forms/submissions": "Submissions",
@@ -348,6 +351,9 @@ export const routeIconMapping: Record<string, () => React.ReactNode> = {
   "/shadow-ai/rules": () => React.createElement(ShieldAlert, { size: 14, strokeWidth: 1.5 }),
   "/shadow-ai/rules/alerts": () => React.createElement(ShieldAlert, { size: 14, strokeWidth: 1.5 }),
   "/shadow-ai/settings": () => React.createElement(Settings, { size: 14, strokeWidth: 1.5 }),
+
+  // AI apps
+  "/ai-apps": () => React.createElement(Bot, { size: 14, strokeWidth: 1.5 }),
 };
 
 /**
@@ -400,6 +406,12 @@ export const dynamicRoutePatterns = [
     pattern: /\/shadow-ai\/tools\/\d+/,
     label: "Tool details",
     description: "Detailed view of specific AI tool",
+    icon: () => React.createElement(Bot, { size: 14, strokeWidth: 1.5 }),
+  },
+  {
+    pattern: /\/ai-apps\/\d+/,
+    label: "AI app details",
+    description: "Detailed view of a specific AI app",
     icon: () => React.createElement(Bot, { size: 14, strokeWidth: 1.5 }),
   },
   {

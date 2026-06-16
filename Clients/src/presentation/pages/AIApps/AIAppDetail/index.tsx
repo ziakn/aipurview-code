@@ -1,16 +1,24 @@
 import { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Skeleton, Stack } from "@mui/material";
+import { Box, Skeleton, Stack } from "@mui/material";
 import { Bot } from "lucide-react";
 import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtended";
 import { EmptyState } from "../../../components/EmptyState";
 import { useAiApp, useUpdateAiAppStatus } from "../../../../application/hooks/useAiApps";
 import { AiAppStatus } from "../../../../domain/enums/aiApp.enum";
+import { palette } from "../../../themes/palette";
 import Alert from "../../../components/Alert";
 import AIAppApprovalCenter from "./AIAppApprovalCenter";
 import AIAppPolicyMapping from "./AIAppPolicyMapping";
 import AIAppModelDependencies from "./AIAppModelDependencies";
 import AIAppRiskAssessment from "./AIAppRiskAssessment";
+
+const sectionCardStyle = {
+  border: `1px solid ${palette.border.dark}`,
+  borderRadius: "4px",
+  padding: "24px",
+  backgroundColor: palette.background.main,
+};
 
 export default function AIAppDetail() {
   const navigate = useNavigate();
@@ -62,18 +70,26 @@ export default function AIAppDetail() {
   return (
     <PageHeaderExtended title="AI app details" description="Approval center and governance">
       <Stack gap="24px">
-        <AIAppApprovalCenter
-          app={app}
-          onBack={handleBack}
-          onStatusChange={handleStatusChange}
-          isUpdatingStatus={updateStatusMutation.isPending}
-        />
+        <Box sx={sectionCardStyle}>
+          <AIAppApprovalCenter
+            app={app}
+            onBack={handleBack}
+            onStatusChange={handleStatusChange}
+            isUpdatingStatus={updateStatusMutation.isPending}
+          />
+        </Box>
 
-        <AIAppPolicyMapping appId={app.id!} appName={app.name} policies={app.policies || []} />
+        <Box sx={sectionCardStyle}>
+          <AIAppPolicyMapping appId={app.id!} appName={app.name} policies={app.policies || []} />
+        </Box>
 
-        <AIAppModelDependencies appId={app.id!} models={app.models || []} />
+        <Box sx={sectionCardStyle}>
+          <AIAppModelDependencies appId={app.id!} models={app.models || []} />
+        </Box>
 
-        <AIAppRiskAssessment appId={app.id!} currentRiskScore={app.risk_score} />
+        <Box sx={sectionCardStyle}>
+          <AIAppRiskAssessment appId={app.id!} currentRiskScore={app.risk_score} />
+        </Box>
 
         {alert && (
           <Alert

@@ -62,7 +62,7 @@ export default function AIAppApprovalCenter({
         />
         <DashboardHeaderCard title="Risk score" count={app.risk_score ?? "—"} disableNavigation />
         <DashboardHeaderCard
-          title="Discovered source"
+          title="Source"
           count={formatDiscoveredSource(app.discovered_source)}
           disableNavigation
         />
