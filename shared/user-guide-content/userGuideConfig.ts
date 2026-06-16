@@ -627,8 +627,8 @@ export const collections: Collection[] = [
       },
       {
         id: 'mcp-overview',
-        title: 'MCP Gateway overview',
-        description: 'Understand what the MCP Gateway does, how it works, and why you need it for agent governance.',
+        title: 'Agent Control overview',
+        description: 'Understand what Agent Control does, how it works, and why you need it for agent governance.',
         keywords: ['mcp', 'gateway', 'overview', 'agent', 'tool', 'proxy', 'model context protocol', 'json-rpc'],
       },
       {

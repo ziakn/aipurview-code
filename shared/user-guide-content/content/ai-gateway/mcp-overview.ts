@@ -117,7 +117,7 @@ export const mcpOverviewContent: ArticleContent = {
     {
       type: 'ordered-list',
       items: [
-        { text: 'Register an MCP server in **AI Gateway > MCP Gateway > Servers**.' },
+        { text: 'Register an MCP server in **AI Gateway > Agent Control > MCP Servers**.' },
         { text: 'Wait for tool discovery (or trigger it manually once available).' },
         { text: 'Review discovered tools in the **Tools** page. Set risk levels and approval requirements.' },
         { text: 'Create an agent key in **Agent keys**. Scope it to the tools the agent needs.' },
@@ -156,15 +156,15 @@ export const mcpOverviewContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The MCP Gateway section appears as a collapsible group in the AI Gateway sidebar. Click "MCP Gateway" to expand it. You\'ll see six sub-pages:',
+      text: 'The Agent Control section appears as a collapsible group in the AI Gateway sidebar. Click "Agent Control" to expand it. You\'ll see six sub-pages:',
     },
     {
       type: 'bullet-list',
       items: [
         { bold: 'Agent keys', text: 'Create and manage API keys for agents' },
         { bold: 'Servers', text: 'Register and monitor backend MCP servers' },
-        { bold: 'Tools', text: 'View all discovered tools, set risk levels' },
-        { bold: 'Audit log', text: 'Review tool invocation history and stats' },
+        { bold: 'MCP Tools', text: 'View all discovered tools, set risk levels' },
+        { bold: 'Activity', text: 'Review tool invocation history and stats' },
         { bold: 'Approvals', text: 'Approve or deny pending tool calls' },
         { bold: 'Guardrails', text: 'Configure input scanning rules' },
       ],

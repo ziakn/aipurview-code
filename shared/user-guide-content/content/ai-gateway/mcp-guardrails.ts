@@ -14,7 +14,7 @@ export const mcpGuardrailsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'You\'ll find them at **AI Gateway > MCP Gateway > Guardrails**.',
+      text: 'You\'ll find them at **AI Gateway > Agent Control > Guardrails**.',
     },
     {
       type: 'paragraph',
@@ -291,7 +291,7 @@ export const mcpGuardrailsContent: ArticleContent = {
         {
           collectionId: 'ai-gateway',
           articleId: 'mcp-audit',
-          title: 'Audit log',
+          title: 'Activity',
           description: 'Blocked tool calls appear in the audit trail with "blocked" status.',
         },
         {

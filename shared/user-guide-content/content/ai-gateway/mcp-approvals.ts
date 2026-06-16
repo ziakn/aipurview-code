@@ -14,7 +14,7 @@ export const mcpApprovalsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'You\'ll find it at **AI Gateway > MCP Gateway > Approvals**.',
+      text: 'You\'ll find it at **AI Gateway > Agent Control > Approvals**.',
     },
     {
       type: 'heading',
@@ -206,13 +206,13 @@ export const mcpApprovalsContent: ArticleContent = {
         {
           collectionId: 'ai-gateway',
           articleId: 'mcp-audit',
-          title: 'Audit log',
+          title: 'Activity',
           description: 'See approval_required entries in the audit trail.',
         },
         {
           collectionId: 'ai-gateway',
           articleId: 'mcp-overview',
-          title: 'MCP Gateway overview',
+          title: 'Agent Control overview',
           description: 'Understand the full request flow including the approval step.',
         },
       ],

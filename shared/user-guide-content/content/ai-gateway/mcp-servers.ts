@@ -14,7 +14,7 @@ export const mcpServersContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'You\'ll find it at **AI Gateway > MCP Gateway > Servers**.',
+      text: 'You\'ll find it at **AI Gateway > Agent Control > MCP Servers**.',
     },
     {
       type: 'heading',
@@ -245,7 +245,7 @@ export const mcpServersContent: ArticleContent = {
         {
           collectionId: 'ai-gateway',
           articleId: 'mcp-overview',
-          title: 'MCP Gateway overview',
+          title: 'Agent Control overview',
           description: 'Understand how the gateway proxies agent-to-server communication.',
         },
       ],

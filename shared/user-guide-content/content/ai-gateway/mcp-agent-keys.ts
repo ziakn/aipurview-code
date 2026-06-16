@@ -14,7 +14,7 @@ export const mcpAgentKeysContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'You\'ll find them at **AI Gateway > MCP Gateway > Agent keys**.',
+      text: 'You\'ll find them at **AI Gateway > Agent Control > Agent keys**.',
     },
     {
       type: 'paragraph',
@@ -238,13 +238,13 @@ curl -X POST https://your-verifywise-host/v1/mcp \\
         {
           collectionId: 'ai-gateway',
           articleId: 'mcp-overview',
-          title: 'MCP Gateway overview',
+          title: 'Agent Control overview',
           description: 'Understand the full gateway architecture and request flow.',
         },
         {
           collectionId: 'ai-gateway',
           articleId: 'mcp-audit',
-          title: 'Audit log',
+          title: 'Activity',
           description: 'See every tool call made with each agent key.',
         },
         {
