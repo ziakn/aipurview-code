@@ -183,6 +183,22 @@ async def get_audit_stats_by_agent(org_id: int, days: int = 7) -> list[dict]:
         ]
 
 
+async def get_audit_log_by_id(org_id: int, log_id: int) -> dict | None:
+    async with get_db() as db:
+        row = (await db.execute(
+            text("""
+                SELECT id, agent_key_id, server_id, tool_name, arguments,
+                       result_status, result_summary, is_error, latency_ms,
+                       session_id, tool_use_id, result_response, result_truncated,
+                       events, created_at
+                FROM ai_gateway_mcp_audit_logs
+                WHERE organization_id = :org_id AND id = :log_id
+            """),
+            {"org_id": org_id, "log_id": log_id},
+        )).mappings().fetchone()
+        return dict(row) if row else None
+
+
 async def delete_expired_audit_logs(retention_days: int = 30, batch_size: int = 5000) -> int:
     """Delete audit logs older than retention_days in batches. Returns count of deleted rows."""
     from utils.batch_delete import batch_delete_expired
