@@ -49,8 +49,14 @@ export interface RefreshTokenResponse {
  */
 export interface RequestParams {
   signal?: AbortSignal;
-  responseType?: ResponseType;
-  headers?: Record<string, string>;
+  /**
+   * Axios `responseType` accepted as a plain string for caller convenience;
+   * normalized to Axios's `ResponseType` at the request boundary in `get()`.
+   */
+  responseType?: string;
+  // `undefined` values are permitted so callers can drop a default header
+  // (e.g. `"Content-Type": undefined` for multipart uploads).
+  headers?: Record<string, string | undefined>;
   [key: string]: unknown;
 }
 
