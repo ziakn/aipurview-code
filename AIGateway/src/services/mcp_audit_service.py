@@ -91,7 +91,7 @@ async def update_tool_result(
 ) -> str:
     """Update the audit row for (org, session_id, tool_use_id) with the tool result.
     Flips approval_required -> success, stores result_response, appends outcome_event.
-    Returns: "ok" | "no_match" | "forbidden". Fire-and-forget safe."""
+    Returns: "ok" | "no_match" | "forbidden" | "error". Fire-and-forget safe."""
     try:
         async with get_db() as db:
             row = (await db.execute(
@@ -140,4 +140,4 @@ async def update_tool_result(
             return "ok"
     except Exception as e:
         logger.error(f"Failed to update MCP tool result: {e}")
-        return "no_match"
+        return "error"
