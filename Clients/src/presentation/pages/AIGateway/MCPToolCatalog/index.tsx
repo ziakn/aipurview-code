@@ -308,7 +308,7 @@ export default function MCPToolCatalogPage() {
           <EmptyStateTip
             icon={AlertTriangle}
             title="Approval workflows"
-            description="Enable approval requirements on sensitive tools to ensure human review before the AI agent can execute them."
+            description="Require approval on sensitive tools so a person reviews them before the agent runs them."
           />
         </EmptyState>
       ) : filteredTools.length === 0 ? (
@@ -420,8 +420,8 @@ export default function MCPToolCatalogPage() {
                 style={{ flexShrink: 0, marginTop: 2 }}
               />
               <Typography sx={{ fontSize: 12, color: "#93370D", lineHeight: 1.5 }}>
-                This tool is marked as high risk. Consider enabling approval to ensure human review
-                before execution.
+                This tool is marked as high risk. Consider requiring approval so a person reviews it
+                before it runs.
               </Typography>
             </Stack>
           )}
