@@ -19542,7 +19542,6 @@ export const translations: Record<string, Record<string, string>> = {
     "Tools": "Herramientas",
     "Audit Log": "Registro de auditoría",
     "Approvals": "Aprobaciones",
-    "Require approval": "Aprobación requerida",
     "No pending approvals": "No hay aprobaciones pendientes",
     "Pending approvals": "Aprobaciones pendientes",
     "Approved requests": "Solicitudes aprobadas",
