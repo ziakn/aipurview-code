@@ -17156,6 +17156,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Internal": "Interno",
     "Needs rework": "Requiere correcciones",
     "Needs Rework": "Requiere correcciones",
+    "Require approval": "Aprobación requerida",
     "Requires follow-up": "Requiere seguimiento",
     "Awaiting approval": "A la espera de aprobación",
     "Awaiting Approval": "A la espera de aprobación",
