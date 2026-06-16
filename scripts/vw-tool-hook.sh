@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# VerifyWise Bash gate — Claude Code PreToolUse hook.
+# VerifyWise tool gate, a Claude Code PreToolUse hook.
 # Reads the tool call as JSON on stdin, asks the AI Gateway to adjudicate,
 # and exits 0 (allow) or non-zero (deny). Fails open by default so a gateway
 # outage never halts your workflow.
@@ -10,7 +10,7 @@
 #   VW_FAIL_MODE          (optional)  open | closed   (default: open)
 #   VW_TIMEOUT            (optional)  seconds          (default: 3)
 #   VW_APPROVAL_WAIT      (optional)  max seconds to block on human approval (default: 120)
-#   VW_APPROVAL_FAIL_MODE (optional)  open | closed — on approval timeout (default: closed)
+#   VW_APPROVAL_FAIL_MODE (optional)  open | closed, on approval timeout (default: closed)
 set -uo pipefail
 
 FAIL_MODE="${VW_FAIL_MODE:-open}"
@@ -19,7 +19,7 @@ APPROVAL_WAIT="${VW_APPROVAL_WAIT:-120}"
 APPROVAL_FAIL_MODE="${VW_APPROVAL_FAIL_MODE:-closed}"
 
 fail() {  # $1 = stderr message
-  echo "vw-bash-hook: $1" >&2
+  echo "vw-tool-hook: $1" >&2
   if [ "$FAIL_MODE" = "closed" ]; then exit 2; fi
   exit 0   # fail-open
 }
@@ -57,20 +57,20 @@ case "$decision" in
     echo "Blocked by VerifyWise: $reason" >&2
     exit 2 ;;
   rate_limited)
-    # Infra outcome, not policy — follow the general fail-mode.
-    echo "vw-bash-hook: rate limited" >&2
+    # Infra outcome, not policy. Follow the general fail-mode.
+    echo "vw-tool-hook: rate limited" >&2
     if [ "$FAIL_MODE" = "closed" ]; then exit 2; fi
     exit 0 ;;
   approval_required)
     approval_id="$(printf '%s' "$resp" | jq -r '.approval_id // empty')"
     poll_endpoint="$(printf '%s' "$resp" | jq -r '.poll_endpoint // empty')"
-    # A malformed approval_required response (no id/endpoint) is uneitherable —
+    # A malformed approval_required response (no id/endpoint) is unrecoverable,
     # fail fast on the infra fail-mode rather than polling a bad URL for the
     # full APPROVAL_WAIT.
     if [ -z "$approval_id" ] || [ -z "$poll_endpoint" ]; then
       fail "approval_required response missing approval_id/poll_endpoint"
     fi
-    echo "vw-bash-hook: awaiting human approval (id=$approval_id, up to ${APPROVAL_WAIT}s)" >&2
+    echo "vw-tool-hook: awaiting human approval (id=$approval_id, up to ${APPROVAL_WAIT}s)" >&2
     deadline=$(( $(date +%s) + APPROVAL_WAIT ))
     while [ "$(date +%s)" -lt "$deadline" ]; do
       praw="$(curl -s -w '\n%{http_code}' --max-time "$TIMEOUT" \
@@ -87,16 +87,16 @@ case "$decision" in
           echo "Denied by VerifyWise: $dreason" >&2
           exit 2 ;;
         expired)
-          # Server-side expiry: no human can decide it now — stop waiting and
+          # Server-side expiry: no human can decide it now, so stop waiting and
           # apply the approval fail-mode instead of polling to our own deadline.
-          echo "vw-bash-hook: approval request expired" >&2
+          echo "vw-tool-hook: approval request expired" >&2
           if [ "$APPROVAL_FAIL_MODE" = "open" ]; then exit 0; fi
           exit 2 ;;
         *) sleep 2 ;;
       esac
     done
-    # No decision in time — approval-specific fail mode (default closed = deny).
-    echo "vw-bash-hook: approval timed out" >&2
+    # No decision in time. Approval-specific fail mode (default closed = deny).
+    echo "vw-tool-hook: approval timed out" >&2
     if [ "$APPROVAL_FAIL_MODE" = "open" ]; then exit 0; fi
     exit 2 ;;
   *) fail "unexpected gateway response: $resp" ;;

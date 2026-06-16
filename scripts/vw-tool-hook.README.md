@@ -1,0 +1,56 @@
+# VerifyWise tool gate (Claude Code hook)
+
+Gates Claude Code's built-in tools (**Bash**, plus file writes via **Edit**,
+**Write** and **MultiEdit**) through the VerifyWise AI Gateway. Before a tool
+runs, the gateway scans the call against your org's MCP guardrail rules and the
+call is allowed or denied. For Bash it scans the command; for file writes it
+scans the content being written (not the path or the text being removed). Every
+call is recorded in the MCP Audit Log.
+
+## Setup
+
+1. Mint an agent key: VerifyWise, AI Gateway, MCP Gateway, **Agent Keys**,
+   create. Copy the `sk-mcp-...` value (shown once).
+2. Add the guardrail rules you want enforced under MCP Gateway, **Guardrails**.
+3. Set env vars (e.g. in your shell profile):
+
+   ```bash
+   export VW_GATEWAY_URL=http://localhost:8100   # your gateway URL
+   export VW_AGENT_KEY=sk-mcp-...
+   # optional:
+   export VW_FAIL_MODE=open   # open (default) | closed
+   export VW_TIMEOUT=3        # seconds
+   export VW_APPROVAL_WAIT=120         # max seconds to block on human approval
+   export VW_APPROVAL_FAIL_MODE=closed # closed (default) | open, on approval timeout
+   ```
+
+4. Wire the hook in `.claude/settings.json`:
+
+   ```json
+   {
+     "hooks": {
+       "PreToolUse": [
+         { "matcher": "Bash|Edit|Write|MultiEdit",
+           "hooks": [{ "type": "command", "command": "scripts/vw-tool-hook.sh" }] }
+       ]
+     }
+   }
+   ```
+
+## Behavior
+
+| Situation | Result |
+|---|---|
+| Bash command passes guardrails | runs (exit 0) |
+| File-write content passes guardrails | runs (exit 0) |
+| Guardrail blocks (or a mask rule matches) | blocked (exit 2), reason shown to the agent |
+| Call matches a require-approval rule | hook blocks up to `VW_APPROVAL_WAIT`; approved runs, denied blocks |
+| Approval not decided in time | `VW_APPROVAL_FAIL_MODE=closed` (default) blocks; `open` runs |
+| Gateway rate-limits the call | `VW_FAIL_MODE=open` (default) runs; `closed` blocks |
+| Gateway unreachable / timeout | `VW_FAIL_MODE=open` runs; `closed` blocks |
+
+File-write tools (Write, Edit, MultiEdit) are gated on the content being written.
+A guardrail or approval rule that matches that content blocks or pauses the write;
+deleting content (an `old_string`) and the file path are not scanned.
+
+Requires `curl` and `jq` on PATH.
