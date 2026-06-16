@@ -1,4 +1,5 @@
 """E2E: native tool-call result capture (/v1/mcp/hook/result)."""
+import json
 import os
 import httpx
 import pytest
@@ -50,18 +51,45 @@ def test_allow_then_result_attaches():
     assert res.json()["status"] == "ok"
 
 
-def test_result_masks_pii_in_stdout():
+def test_result_masks_pii_in_stdout(api):
     key = get_state("result_agent_key")
     if not key:
         pytest.skip("no key")
     sid, tuid = "sess-B", "toolu_B1"
-    _hook(key, "Bash", {"command": "cat creds"}, sid, tuid)
-    res = _result(key, "Bash", {"stdout": "token for attacker@evil.com", "stderr": "", "interrupted": False, "isImage": False}, sid, tuid)
+
+    # Guard: pre-tool hook must allow the command (no PII in arguments).
+    assert _hook(key, "Bash", {"command": "cat creds"}, sid, tuid).json()["decision"] == "allow"
+
+    # Post-tool result contains an email — masking rule must fire.
+    res = _result(
+        key, "Bash",
+        {"stdout": "token for attacker@evil.com", "stderr": "", "interrupted": False, "isImage": False},
+        sid, tuid,
+    )
     assert res.status_code == 200, res.text
     assert res.json()["status"] == "ok"
-    # Masking is verified at storage; reading the row back requires the internal
-    # key path (GET /mcp/audit/logs/{id}) which the `api` fixture covers. If your
-    # harness exposes the row, assert "attacker@evil.com" not in the stored result.
+
+    # Read the row back and verify PII was masked at storage.
+    #
+    # Strategy: LIST endpoint (GET /mcp/audit/logs) returns `id` and `session_id`
+    # but NOT `tool_use_id`/`result_response`. We find the row by session_id to
+    # get its `id`, then fetch the single-row endpoint which does expose
+    # `tool_use_id` and `result_response`.
+    listed = api.get("/mcp/audit/logs?limit=100")
+    assert listed.status_code == 200, listed.text
+    rows = listed.json().get("data") or []
+    # Locate the row written for this session.
+    match = next((r for r in rows if r.get("session_id") == sid), None)
+    assert match is not None, f"audit row not found for session_id={sid!r}"
+
+    # Fetch single-row endpoint for result_response (not in LIST SELECT).
+    log_id = match["id"]
+    detail = api.get(f"/mcp/audit/logs/{log_id}")
+    assert detail.status_code == 200, detail.text
+    row = detail.json().get("data") or {}
+    assert row.get("tool_use_id") == tuid, "tool_use_id mismatch in stored row"
+    # The raw email must not appear in the stored result (it must have been masked).
+    assert "attacker@evil.com" not in json.dumps(row.get("result_response") or {})
 
 
 def test_result_no_match_returns_ok_status():
