@@ -13,6 +13,7 @@ from sqlalchemy import text
 
 from database.db import get_db
 from services.guardrail_service import scan_text, ScanResult
+from utils.mcp_tool_content import extract_scannable_content
 from utils.redis import get_redis
 
 logger = logging.getLogger("uvicorn")
@@ -60,9 +61,11 @@ async def scan_tool_input(org_id: int, tool_name: str, arguments: dict) -> ScanR
     runs existing scan_text() for PII/content filter checks, and additionally
     checks for prompt injection patterns.
     """
-    # Serialize arguments to scannable text
+    # Scan only the content the tool actually writes (file-write tools expose
+    # written content under specific fields); full args for everything else.
+    scannable = extract_scannable_content(tool_name, arguments)
     text_parts: list[str] = []
-    for value in arguments.values():
+    for value in scannable.values():
         if isinstance(value, str):
             text_parts.append(value)
         elif isinstance(value, (dict, list)):
