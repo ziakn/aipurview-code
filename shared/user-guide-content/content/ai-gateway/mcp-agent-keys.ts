@@ -250,7 +250,7 @@ curl -X POST https://your-verifywise-host/v1/mcp \\
         {
           collectionId: 'ai-gateway',
           articleId: 'mcp-tools',
-          title: 'Tool catalog',
+          title: 'MCP Tools',
           description: 'View the tools that agent keys grant access to.',
         },
       ],

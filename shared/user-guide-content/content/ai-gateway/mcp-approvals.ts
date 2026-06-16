@@ -200,7 +200,7 @@ export const mcpApprovalsContent: ArticleContent = {
         {
           collectionId: 'ai-gateway',
           articleId: 'mcp-tools',
-          title: 'Tool catalog',
+          title: 'MCP Tools',
           description: 'Enable approval requirements on specific tools.',
         },
         {

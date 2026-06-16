@@ -233,7 +233,7 @@ export const mcpServersContent: ArticleContent = {
         {
           collectionId: 'ai-gateway',
           articleId: 'mcp-tools',
-          title: 'Tool catalog',
+          title: 'MCP Tools',
           description: 'View and manage discovered tools across your servers.',
         },
         {

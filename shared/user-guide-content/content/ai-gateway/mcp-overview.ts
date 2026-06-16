@@ -59,7 +59,7 @@ export const mcpOverviewContent: ArticleContent = {
           icon: 'Server',
         },
         {
-          title: 'Tool catalog',
+          title: 'MCP Tools',
           description: 'All discovered tools across your servers, with risk levels and approval requirements you can configure per tool.',
           icon: 'Wrench',
         },
@@ -119,7 +119,7 @@ export const mcpOverviewContent: ArticleContent = {
       items: [
         { text: 'Register an MCP server in **AI Gateway > Agent Control > MCP Servers**.' },
         { text: 'Wait for tool discovery (or trigger it manually once available).' },
-        { text: 'Review discovered tools in the **Tools** page. Set risk levels and approval requirements.' },
+        { text: 'Review discovered tools in the **MCP Tools** page. Set risk levels and approval requirements.' },
         { text: 'Create an agent key in **Agent keys**. Scope it to the tools the agent needs.' },
         { text: 'Point your agent at `POST /v1/mcp` with the key as a Bearer token.' },
       ],
@@ -188,7 +188,7 @@ export const mcpOverviewContent: ArticleContent = {
         {
           collectionId: 'ai-gateway',
           articleId: 'mcp-tools',
-          title: 'Tool catalog',
+          title: 'MCP Tools',
           description: 'Browse discovered tools and configure risk levels.',
         },
       ],

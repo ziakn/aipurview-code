@@ -297,7 +297,7 @@ export const mcpGuardrailsContent: ArticleContent = {
         {
           collectionId: 'ai-gateway',
           articleId: 'mcp-tools',
-          title: 'Tool catalog',
+          title: 'MCP Tools',
           description: 'View which tools your guardrails apply to.',
         },
         {
