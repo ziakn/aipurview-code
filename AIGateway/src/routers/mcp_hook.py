@@ -11,6 +11,7 @@ an approval request and tell the caller to poll. Rate-limit exceed is reported a
 a distinct decision so the adapter can apply its infra fail-mode.
 """
 
+import json
 import logging
 import time
 from datetime import datetime, timezone, timedelta
@@ -188,15 +189,15 @@ async def mcp_hook_result(request: Request):
     if not session_id or not tool_use_id:
         raise HTTPException(status_code=400, detail="session_id and tool_use_id are required")
 
-    import json as _json
-    serialized = _json.dumps(tool_response) if tool_response is not None else "{}"
+    serialized = json.dumps(tool_response) if tool_response is not None else "{}"
     truncated = len(serialized.encode("utf-8")) > MCP_RESULT_CAP_BYTES
     if truncated:
         serialized = serialized.encode("utf-8")[:MCP_RESULT_CAP_BYTES].decode("utf-8", "ignore")
     masked = await scan_result_blob(org_id, serialized)
     try:
-        stored = _json.loads(masked)
+        stored = json.loads(masked)
     except Exception:
+        logger.warning("scan_result_blob produced non-JSON result; storing as _raw")
         stored = {"_raw": masked}
 
     now = datetime.now(timezone.utc).isoformat()
