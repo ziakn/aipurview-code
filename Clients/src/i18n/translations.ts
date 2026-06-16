@@ -1652,8 +1652,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Average round-trip time for tool calls": "Durchschnittliche Antwortzeit für Tool-Aufrufe",
     "Average round-trip time from request to complete response":
       "Durchschnittliche Antwortzeit von der Anfrage bis zur vollständigen Antwort",
-    "Average round-trip time per tool call, helping identify slow or bottlenecked tools":
-      "Durchschnittliche Antwortzeit pro Tool-Aufruf, hilft bei der Identifizierung langsamer Tools",
+    "Average round-trip time per tool call, useful for spotting slow tools":
+      "Durchschnittliche Antwortzeit pro Tool-Aufruf, nützlich um langsame Tools zu erkennen",
     "Background colors": "Hintergrundfarben",
     "Battle name": "Vergleichsname",
     "Bearer token": "Bearer-Token",
@@ -2457,8 +2457,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Configure API keys first": "Zuerst API-Schlüssel konfigurieren",
     "Configure endpoints to start tracking":
       "Endpunkte konfigurieren, um mit der Verfolgung zu beginnen",
-    "Scan agent tool calls for PII, prohibited content, or prompt injection — block or mask matches.":
-      "Durchsuchen Sie Agent-Tool-Aufrufe nach PII, unzulässigen Inhalten oder Prompt-Injection — Treffer blockieren oder maskieren.",
+    "Scan agent tool calls for PII, prohibited content or prompt injection, then block or mask what matches.":
+      "Durchsuchen Sie Agent-Tool-Aufrufe nach PII, unzulässigen Inhalten oder Prompt-Injection und blockieren oder maskieren Sie dann die Treffer.",
     "Configure integrations and tokens for AI detection scanning.":
       "Integrationen und Token für KI-Erkennungsscans konfigurieren.",
     "Configure LLM provider API keys for running evaluations across your organization":
@@ -2523,8 +2523,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Jeder Protokolleintrag zeigt den vollständigen Prompt, der an das LLM gesendet wurde, das Modell",
     "Each task can be assigned to a workspace member with a priority and due date. They":
       "Jede Aufgabe kann einem Mitglied des Arbeitsbereichs mit einer Priorität und einem Fälligkeitsdatum zugewiesen werden. Sie",
-    "Enable approval requirements on sensitive tools to ensure human review before the AI agent can execute them.":
-      "Genehmigungsanforderungen für sensible Tools aktivieren, um eine menschliche Prüfung vor der Ausführung durch den KI-Agenten zu gewährleisten.",
+    "Require approval on sensitive tools so a person reviews them before the agent runs them.":
+      "Verlangen Sie für sensible Tools eine Genehmigung, damit eine Person sie prüft, bevor der Agent sie ausführt.",
     "Enter a descriptive name for this dataset":
       "Geben Sie einen aussagekräftigen Namen für diesen Datensatz ein",
     "Enter a name for the new organization": "Namen für die neue Organisation eingeben",
@@ -10237,8 +10237,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Average round-trip time for tool calls": "Temps aller-retour moyen pour les appels d'outils",
     "Average round-trip time from request to complete response":
       "Temps aller-retour moyen de la requête à la réponse complète",
-    "Average round-trip time per tool call, helping identify slow or bottlenecked tools":
-      "Temps aller-retour moyen par appel d'outil, aidant à identifier les outils lents ou saturés",
+    "Average round-trip time per tool call, useful for spotting slow tools":
+      "Temps aller-retour moyen par appel d'outil, utile pour repérer les outils lents",
     "Background colors": "Couleurs d'arrière-plan",
     "Battle name": "Nom de la comparaison",
     "Bearer token": "Jeton bearer",
@@ -11037,8 +11037,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Configure API keys first": "Configurez d'abord les clés API",
     "Configure endpoints to start tracking":
       "Configurez des points de terminaison pour commencer le suivi",
-    "Scan agent tool calls for PII, prohibited content, or prompt injection — block or mask matches.":
-      "Analysez les appels d'outils des agents à la recherche de données personnelles, de contenu interdit ou d'injection de prompt — bloquez ou masquez les correspondances.",
+    "Scan agent tool calls for PII, prohibited content or prompt injection, then block or mask what matches.":
+      "Analysez les appels d'outils des agents à la recherche de données personnelles, de contenu interdit ou d'injection de prompt, puis bloquez ou masquez les correspondances.",
     "Configure integrations and tokens for AI detection scanning.":
       "Configurer les intégrations et les jetons pour l'analyse de détection IA.",
     "Configure LLM provider API keys for running evaluations across your organization":
@@ -11106,8 +11106,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Chaque tâche peut être assignée à un membre de l'espace de travail avec une priorité et une date d'échéance. Elles",
 
     // Batch 06
-    "Enable approval requirements on sensitive tools to ensure human review before the AI agent can execute them.":
-      "Activez les exigences d'approbation sur les outils sensibles pour garantir une relecture humaine avant que l'agent IA puisse les exécuter.",
+    "Require approval on sensitive tools so a person reviews them before the agent runs them.":
+      "Exigez une approbation sur les outils sensibles pour qu'une personne les relise avant que l'agent ne les exécute.",
     "Enter a descriptive name for this dataset":
       "Saisissez un nom descriptif pour ce jeu de données",
     "Enter a name for the new organization": "Saisissez un nom pour la nouvelle organisation",
@@ -21840,8 +21840,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Genere datos de muestra para explorar las funciones de VerifyWise",
     "Average round-trip time from request to complete response":
       "Tiempo medio de ida y vuelta desde la solicitud hasta la respuesta completa",
-    "Average round-trip time per tool call, helping identify slow or bottlenecked tools":
-      "Tiempo medio de ida y vuelta por llamada a herramienta, lo que ayuda a identificar herramientas lentas o con cuellos de botella",
+    "Average round-trip time per tool call, useful for spotting slow tools":
+      "Tiempo medio de ida y vuelta por llamada a herramienta, útil para detectar herramientas lentas",
     "Browse pre-built guardrails and enable them with one click":
       "Explore barreras de protección predefinidas y actívelas con un solo clic",
     "Combined prompt and completion tokens across all requests":
@@ -21981,8 +21981,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Configure a local model provider. No API key required.":
       "Configure un proveedor de modelos local. No se requiere clave de API.",
     "Configure endpoints to start tracking": "Configure endpoints para empezar a hacer seguimiento",
-    "Scan agent tool calls for PII, prohibited content, or prompt injection — block or mask matches.":
-      "Analice las llamadas a herramientas de los agentes en busca de PII, contenido prohibido o inyección de prompts — bloquee o enmascare las coincidencias.",
+    "Scan agent tool calls for PII, prohibited content or prompt injection, then block or mask what matches.":
+      "Analice las llamadas a herramientas de los agentes en busca de PII, contenido prohibido o inyección de prompts y luego bloquee o enmascare las coincidencias.",
     "Configure integrations and tokens for AI detection scanning.":
       "Configure integraciones y tokens para el análisis de detección de IA.",
     "Configure LLM provider API keys for running evaluations across your organization":
@@ -22021,8 +22021,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Cada entrada de registro muestra el prompt completo enviado al LLM, el modelo",
     "Each task can be assigned to a workspace member with a priority and due date. They":
       "Cada tarea puede asignarse a un miembro del espacio de trabajo con una prioridad y una fecha de vencimiento. Estos",
-    "Enable approval requirements on sensitive tools to ensure human review before the AI agent can execute them.":
-      "Active los requisitos de aprobación en las herramientas sensibles para garantizar la revisión humana antes de que el agente de IA pueda ejecutarlas.",
+    "Require approval on sensitive tools so a person reviews them before the agent runs them.":
+      "Exige aprobación en las herramientas sensibles para que una persona las revise antes de que el agente las ejecute.",
     "Enter a descriptive name for this dataset":
       "Introduzca un nombre descriptivo para este conjunto de datos",
     "Enter a name for your organization to get started.":

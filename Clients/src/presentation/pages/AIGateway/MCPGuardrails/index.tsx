@@ -306,7 +306,7 @@ export default function MCPGuardrailsPage() {
   return (
     <PageHeaderExtended
       title="Guardrails"
-      description="Scan agent tool calls for PII, prohibited content, or prompt injection — block or mask matches."
+      description="Scan agent tool calls for PII, prohibited content or prompt injection, then block or mask what matches."
       tipBoxEntity="ai-gateway-mcp-guardrails"
       helpArticlePath="ai-gateway/mcp-guardrails"
       actionButton={
