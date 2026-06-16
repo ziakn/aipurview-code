@@ -1900,11 +1900,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Masked": "Maskiert",
     "Masked preview:": "Maskierte Vorschau:",
     "Match type": "Abgleichstyp",
-    "MCP Approvals": "MCP-Genehmigungen",
-    "MCP Audit Log": "MCP-Prüfprotokoll",
-    "MCP Guardrails": "MCP-Guardrails",
     "MCP Servers": "MCP-Server",
-    "MCP Tool Catalog": "MCP-Tool-Katalog",
+    "MCP Tools": "MCP-Tools",
     "Medium confidence": "Mittlere Konfidenz",
     "Messages": "Nachrichten",
     "Minimum risk score": "Minimale Risikobewertung",
@@ -2460,8 +2457,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Configure API keys first": "Zuerst API-Schlüssel konfigurieren",
     "Configure endpoints to start tracking":
       "Endpunkte konfigurieren, um mit der Verfolgung zu beginnen",
-    "Configure guardrail rules for MCP tool invocations.":
-      "Guardrail-Regeln für MCP-Tool-Aufrufe konfigurieren.",
+    "Scan agent tool calls for PII, prohibited content, or prompt injection — block or mask matches.":
+      "Durchsuchen Sie Agent-Tool-Aufrufe nach PII, unzulässigen Inhalten oder Prompt-Injection — Treffer blockieren oder maskieren.",
     "Configure integrations and tokens for AI detection scanning.":
       "Integrationen und Token für KI-Erkennungsscans konfigurieren.",
     "Configure LLM provider API keys for running evaluations across your organization":
@@ -2742,13 +2739,13 @@ export const translations: Record<string, Record<string, string>> = {
     "Review and edit the AI-suggested risk before saving.":
       "Prüfen und bearbeiten Sie das von der KI vorgeschlagene Risiko vor dem Speichern.",
     "Review and manage approval requests": "Genehmigungsanfragen prüfen und verwalten",
-    "Review and manage tool invocation approval requests.":
-      "Anfragen zur Genehmigung von Tool-Aufrufen prüfen und verwalten.",
+    "Review and decide on agent tool calls that require human approval before they run.":
+      "Agent-Tool-Aufrufe prüfen und entscheiden, die vor der Ausführung eine menschliche Genehmigung erfordern.",
     "Review and rank": "Prüfen und einstufen",
     "Review the overall assessment and record the deployment decision.":
       "Die Gesamtbewertung prüfen und die Bereitstellungsentscheidung erfassen.",
-    "Review tool invocation history and audit trail.":
-      "Verlauf und Prüfpfad der Tool-Aufrufe prüfen.",
+    "Every tool call your AI agents make, with outcome, latency, and which agent.":
+      "Jeder Tool-Aufruf Ihrer KI-Agenten, mit Ergebnis, Latenz und ausführendem Agenten.",
     "Route alerts to security teams, managers, or compliance officers. Each rule can have different notification recipients.":
       "Benachrichtigungen an Sicherheitsteams, Manager oder Compliance-Beauftragte weiterleiten. Jede Regel kann unterschiedliche Empfänger haben.",
     "Run a test request through the gateway to complete setup":
@@ -3028,8 +3025,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Model / system version": "Modell- / Systemversion",
     "Model/system version": "Modell-/Systemversion",
     "Neutral / Inactive": "Neutral / Inaktiv",
-    "No MCP guardrail rules configured yet. Add rules to scan tool inputs for PII, prohibited content, or prompt injection attempts.":
-      "Noch keine MCP-Guardrail-Regeln konfiguriert. Fügen Sie Regeln hinzu, um Tool-Eingaben auf PII, verbotene Inhalte oder Prompt-Injection-Versuche zu prüfen.",
+    "No guardrail rules configured yet. Add rules to scan agent tool calls for PII, prohibited content, or prompt injection attempts.":
+      "Noch keine Guardrail-Regeln konfiguriert. Fügen Sie Regeln hinzu, um Agent-Tool-Aufrufe auf PII, verbotene Inhalte oder Prompt-Injection-Versuche zu prüfen.",
     "No Organizational Project Found. Create a new organizational project to manage ISO 27001, ISO 42001, and NIST AI RMF frameworks for your organization.":
       "Kein Organisationsprojekt gefunden. Erstellen Sie ein neues Organisationsprojekt, um die Rahmenwerke ISO 27001, ISO 42001 und NIST AI RMF für Ihre Organisation zu verwalten.",
     "Note whether the dataset has been reviewed for bias, completeness, and accuracy. Track any known quality issues or limitations.":
@@ -3891,7 +3888,7 @@ export const translations: Record<string, Record<string, string>> = {
 
     // AI Gateway sidebar — flat items and MCP group
     "Playground": "Playground",
-    "MCP Gateway": "MCP-Gateway",
+    "Agent Control": "Agentensteuerung",
     "Agent Keys": "Agentenschlüssel",
     "Servers": "Server",
     "Tools": "Tools",
@@ -9158,7 +9155,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Playground": "Playground",
     "Prompts": "Prompts",
     "Logs": "Journaux",
-    "MCP Gateway": "Passerelle MCP",
+    "Agent Control": "Contrôle des agents",
     "Agent Keys": "Clés d'agent",
     "Servers": "Serveurs",
     "Tools": "Outils",
@@ -10489,11 +10486,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Masked": "Masqué",
     "Masked preview:": "Aperçu masqué :",
     "Match type": "Type de correspondance",
-    "MCP Approvals": "Approbations MCP",
-    "MCP Audit Log": "Journal d'audit MCP",
-    "MCP Guardrails": "Garde-fous MCP",
     "MCP Servers": "Serveurs MCP",
-    "MCP Tool Catalog": "Catalogue d'outils MCP",
+    "MCP Tools": "Outils MCP",
     "Medium confidence": "Confiance moyenne",
     "Messages": "Messages",
     "Minimum risk score": "Score de risque minimum",
@@ -11043,8 +11037,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Configure API keys first": "Configurez d'abord les clés API",
     "Configure endpoints to start tracking":
       "Configurez des points de terminaison pour commencer le suivi",
-    "Configure guardrail rules for MCP tool invocations.":
-      "Configurer les règles de garde-fous pour les invocations d'outils MCP.",
+    "Scan agent tool calls for PII, prohibited content, or prompt injection — block or mask matches.":
+      "Analysez les appels d'outils des agents à la recherche de données personnelles, de contenu interdit ou d'injection de prompt — bloquez ou masquez les correspondances.",
     "Configure integrations and tokens for AI detection scanning.":
       "Configurer les intégrations et les jetons pour l'analyse de détection IA.",
     "Configure LLM provider API keys for running evaluations across your organization":
@@ -11329,13 +11323,13 @@ export const translations: Record<string, Record<string, string>> = {
     "Review and edit the AI-suggested risk before saving.":
       "Examinez et modifiez le risque suggéré par l'IA avant d'enregistrer.",
     "Review and manage approval requests": "Examiner et gérer les demandes d'approbation",
-    "Review and manage tool invocation approval requests.":
-      "Examiner et gérer les demandes d'approbation d'invocation d'outils.",
+    "Review and decide on agent tool calls that require human approval before they run.":
+      "Examinez et décidez des appels d'outils d'agents qui nécessitent une approbation humaine avant leur exécution.",
     "Review and rank": "Examiner et classer",
     "Review the overall assessment and record the deployment decision.":
       "Examinez l'évaluation globale et enregistrez la décision de déploiement.",
-    "Review tool invocation history and audit trail.":
-      "Examinez l'historique d'invocation des outils et la piste d'audit.",
+    "Every tool call your AI agents make, with outcome, latency, and which agent.":
+      "Chaque appel d'outil effectué par vos agents IA, avec le résultat, la latence et l'agent concerné.",
     "Route alerts to security teams, managers, or compliance officers. Each rule can have different notification recipients.":
       "Acheminez les alertes vers les équipes de sécurité, les managers ou les responsables de la conformité. Chaque règle peut avoir des destinataires de notification différents.",
     "Run a test request through the gateway to complete setup":
@@ -11616,8 +11610,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Model / system version": "Version du modèle / système",
     "Model/system version": "Version du modèle/système",
     "Neutral / Inactive": "Neutre / Inactif",
-    "No MCP guardrail rules configured yet. Add rules to scan tool inputs for PII, prohibited content, or prompt injection attempts.":
-      "Aucune règle de garde-fou MCP configurée pour le moment. Ajoutez des règles pour analyser les entrées d'outils à la recherche de données personnelles, de contenu interdit ou de tentatives d'injection de prompt.",
+    "No guardrail rules configured yet. Add rules to scan agent tool calls for PII, prohibited content, or prompt injection attempts.":
+      "Aucune règle de garde-fou configurée pour le moment. Ajoutez des règles pour analyser les appels d'outils des agents à la recherche de données personnelles, de contenu interdit ou de tentatives d'injection de prompt.",
     "No Organizational Project Found. Create a new organizational project to manage ISO 27001, ISO 42001, and NIST AI RMF frameworks for your organization.":
       "Aucun projet organisationnel trouvé. Créez un nouveau projet organisationnel pour gérer les référentiels ISO 27001, ISO 42001 et NIST AI RMF de votre organisation.",
     "Note whether the dataset has been reviewed for bias, completeness, and accuracy. Track any known quality issues or limitations.":
@@ -18345,11 +18339,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Masked": "Enmascarado",
     "Masked preview:": "Vista previa enmascarada:",
     "Match type": "Tipo de coincidencia",
-    "MCP Approvals": "Aprobaciones de MCP",
-    "MCP Audit Log": "Registro de auditoría de MCP",
-    "MCP Guardrails": "Barreras de protección de MCP",
     "MCP Servers": "Servidores MCP",
-    "MCP Tool Catalog": "Catálogo de herramientas MCP",
+    "MCP Tools": "Herramientas MCP",
     "Medium confidence": "Confianza media",
     "Messages": "Mensajes",
     "Minimum risk score": "Puntuación de riesgo mínima",
@@ -19321,7 +19312,7 @@ export const translations: Record<string, Record<string, string>> = {
     "No API keys configured": "No hay claves de API configuradas",
     "before you can create an endpoint.": "antes de poder crear un endpoint.",
     "Playground": "Playground",
-    "MCP Gateway": "MCP Gateway",
+    "Agent Control": "Control de agentes",
     "Agent Keys": "Claves de agente",
     "Servers": "Servidores",
     "Tools": "Herramientas",
@@ -21990,8 +21981,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Configure a local model provider. No API key required.":
       "Configure un proveedor de modelos local. No se requiere clave de API.",
     "Configure endpoints to start tracking": "Configure endpoints para empezar a hacer seguimiento",
-    "Configure guardrail rules for MCP tool invocations.":
-      "Configure reglas de barreras de protección para las invocaciones de herramientas MCP.",
+    "Scan agent tool calls for PII, prohibited content, or prompt injection — block or mask matches.":
+      "Analice las llamadas a herramientas de los agentes en busca de PII, contenido prohibido o inyección de prompts — bloquee o enmascare las coincidencias.",
     "Configure integrations and tokens for AI detection scanning.":
       "Configure integraciones y tokens para el análisis de detección de IA.",
     "Configure LLM provider API keys for running evaluations across your organization":
@@ -22142,12 +22133,12 @@ export const translations: Record<string, Record<string, string>> = {
       "Registre repositorios y configure programaciones de análisis automatizados.",
     "Review and edit the AI-suggested risk before saving.":
       "Revise y edite el riesgo sugerido por la IA antes de guardar.",
-    "Review and manage tool invocation approval requests.":
-      "Revise y gestione las solicitudes de aprobación de invocación de herramientas.",
+    "Review and decide on agent tool calls that require human approval before they run.":
+      "Revise y decida sobre las llamadas a herramientas de los agentes que requieren aprobación humana antes de ejecutarse.",
     "Review the overall assessment and record the deployment decision.":
       "Revise la evaluación general y registre la decisión de despliegue.",
-    "Review tool invocation history and audit trail.":
-      "Revise el historial de invocaciones de herramientas y el registro de auditoría.",
+    "Every tool call your AI agents make, with outcome, latency, and which agent.":
+      "Cada llamada a herramienta que hacen sus agentes de IA, con el resultado, la latencia y qué agente.",
     "Route alerts to security teams, managers, or compliance officers. Each rule can have different notification recipients.":
       "Dirija las alertas a los equipos de seguridad, los responsables o los responsables de cumplimiento. Cada regla puede tener diferentes destinatarios de notificaciones.",
     "Run a test request through the gateway to complete setup":
@@ -22306,8 +22297,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Realice llamadas a herramientas a través de MCP Gateway utilizando una clave de agente en POST /v1/mcp con el método tools/call.",
     "Manage API keys for syslog integration and configure syslog sources to feed network traffic data into Shadow AI detection.":
       "Gestione las claves de API para la integración con syslog y configure las fuentes de syslog para alimentar la detección de Shadow AI con datos de tráfico de red.",
-    "No MCP guardrail rules configured yet. Add rules to scan tool inputs for PII, prohibited content, or prompt injection attempts.":
-      "Aún no hay reglas de barreras de protección de MCP configuradas. Añada reglas para analizar las entradas de las herramientas en busca de PII, contenido prohibido o intentos de inyección de prompts.",
+    "No guardrail rules configured yet. Add rules to scan agent tool calls for PII, prohibited content, or prompt injection attempts.":
+      "Aún no hay reglas de barreras de protección configuradas. Añada reglas para analizar las llamadas a herramientas de los agentes en busca de PII, contenido prohibido o intentos de inyección de prompts.",
     "No Organizational Project Found. Create a new organizational project to manage ISO 27001, ISO 42001, and NIST AI RMF frameworks for your organization.":
       "No se ha encontrado ningún proyecto organizativo. Cree un nuevo proyecto organizativo para gestionar los marcos ISO 27001, ISO 42001 y NIST AI RMF de su organización.",
     "Note whether the dataset has been reviewed for bias, completeness, and accuracy. Track any known quality issues or limitations.":
