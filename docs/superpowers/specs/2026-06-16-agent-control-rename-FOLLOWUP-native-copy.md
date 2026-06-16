@@ -55,3 +55,46 @@ mirror per the docs workflow.
 - [ ] Browser: Activity + Guardrails descriptions show the native-tool phrasing (en), and de renders translated.
 - [ ] One commit: `feat(ai-gateway): mention native-tool gating in Agent Control copy`.
 - [ ] Delete this follow-up doc (its job is done).
+
+---
+
+# Follow-up B: translate + humanize the Phase 2/3 UI strings
+
+> **Status:** PENDING — same trigger as above (after Phase 1-3 merge + rename rebase).
+> **Why here:** Phases 1/2/3 added new user-facing strings on their own branches. The
+> i18n + humanizer work ran only on this rename branch (off develop), so it never saw
+> them. After the rebase, this branch is the natural home to translate + humanize them
+> in one i18n pass (it already owns translations.ts and the humanizer discipline).
+> **Failure mode if skipped:** these strings render in English for de/fr/es users
+> (the DOM translator falls back to source) — a polish gap, not a crash.
+
+## Strings with NO de/fr/es keys (add them, translated)
+
+In `Clients/src/presentation/pages/AIGateway/MCPGuardrails/index.tsx` (Phase 2 require_approval UI):
+
+1. `"Require approval"` — the rule-type label (appears at lines ~55 and ~76: RULE_TYPE_ITEMS
+   name + RULE_TYPE_LABELS). One key, used twice.
+2. `"Matching tool calls will be paused and routed to a human approver before execution."`
+   — the require_approval explanatory note (line ~409).
+3. `"No block or mask action is needed — approval is enforced automatically."` (line ~410)
+   — **also fix the em dash** (house style: no em dashes). Suggested humanized form:
+   `"No block or mask action is needed. Approval is enforced automatically."`
+
+Add each to the de/fr/es blocks in `Clients/src/i18n/translations.ts` (keyed on the
+English string, per the DOM-translator). Spanish (es) blocks exist repo-wide already.
+
+## Also re-check: Phase 3 description strings
+
+After the rebase, confirm the file-write descriptions on the merged code match the
+humanized English in translations.ts (the rename branch humanized some of these; Phase 3
+may have its own variants). Grep `translations.ts` for any Phase 3 description key whose
+English no longer appears in a component (stale key) or any component description with no
+key (untranslated). Re-key/translate as needed.
+
+## Apply checklist (Follow-up B)
+- [ ] Add the 3 strings above to de/fr/es in translations.ts (translated).
+- [ ] Fix the em dash on MCPGuardrails line ~410.
+- [ ] Reconcile any Phase 3 description key drift.
+- [ ] `cd Clients && npx tsc --noEmit` clean; `npm run build` passes.
+- [ ] Browser: switch to de, confirm the require_approval note renders translated.
+- [ ] Fold into the same rebase commit/PR as Follow-up A.
