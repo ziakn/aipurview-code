@@ -204,19 +204,28 @@ async def scan_result_blob(org_id: int, blob: str) -> str:
             settings_row = settings_result.mappings().fetchone()
             guardrail_settings = dict(settings_row) if settings_row else {}
 
-        transformed_rules = [
-            {
+        transformed_rules = []
+        for r in mcp_rules:
+            rule_type = r.get("rule_type")
+            if rule_type not in ("pii", "content_filter"):
+                continue
+            cfg = dict(r.get("config") or {})
+            # A result has already executed — "block" is meaningless. Force every
+            # configured entity to "mask" so block-action rules still sanitize at rest
+            # instead of short-circuiting scan_text into a blocked result (which would
+            # return masked_text=None and leak the unmasked blob).
+            entities = cfg.get("entities")
+            if isinstance(entities, dict):
+                cfg["entities"] = {k: "mask" for k in entities}
+            transformed_rules.append({
                 "id": r["id"],
-                "guardrail_type": r["rule_type"],
+                "guardrail_type": rule_type,
                 "name": r["name"],
-                "config": r.get("config") or {},
+                "config": cfg,
                 "scope": "output",
                 "action": "mask",
                 "is_active": True,
-            }
-            for r in mcp_rules
-            if r.get("rule_type") in ("pii", "content_filter")
-        ]
+            })
         if not transformed_rules:
             return blob
         result = scan_text(text=blob, guardrail_rules=transformed_rules, settings=guardrail_settings)
