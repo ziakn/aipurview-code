@@ -22,6 +22,7 @@ from services.guardrail_service import (
     _run_regex_safe,
     REDOS_SCAN_CAP,
 )
+from utils.mcp_tool_content import extract_scannable_content
 
 logger = logging.getLogger("uvicorn")
 
@@ -61,7 +62,7 @@ def _matches(config: dict, text_in: str) -> bool:
 
 async def check_require_approval(org_id: int, tool_name: str, arguments: dict) -> Optional[dict]:
     """Return the first active require_approval rule matching the command, else None."""
-    input_text = _serialize(arguments)
+    input_text = _serialize(extract_scannable_content(tool_name, arguments))
     if not input_text.strip():
         return None
 
