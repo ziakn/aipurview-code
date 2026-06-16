@@ -255,7 +255,7 @@ export default function MCPToolCatalogPage() {
 
   return (
     <PageHeaderExtended
-      title="MCP Tool Catalog"
+      title="MCP Tools"
       description="View and manage all discovered MCP tools across your servers."
       tipBoxEntity="ai-gateway-mcp-tools"
       helpArticlePath="ai-gateway/mcp-tools"

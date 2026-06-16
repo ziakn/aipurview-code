@@ -126,8 +126,8 @@ export default function MCPAuditLogPage() {
 
   return (
     <PageHeaderExtended
-      title="MCP Audit Log"
-      description="Review tool invocation history and audit trail."
+      title="Activity"
+      description="Every tool call your AI agents make, with outcome, latency, and which agent."
       actionButton={
         <Box sx={{ width: 160 }}>
           <Select
