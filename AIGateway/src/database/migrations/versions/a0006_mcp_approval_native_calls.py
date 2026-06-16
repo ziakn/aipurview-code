@@ -28,8 +28,22 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    """DESTRUCTIVE: re-applying NOT NULL requires deleting native-call approval
+    rows (those have tool_id IS NULL). This permanently removes the approval
+    history (pending/approved/denied) for every native Bash-hook call. Emit a
+    NOTICE with the count so the loss is not silent."""
     op.execute("SET search_path TO verifywise")
-    # Re-applying NOT NULL fails if NULL rows exist; clear native-call rows first.
+    op.execute("""
+        DO $$
+        DECLARE n integer;
+        BEGIN
+            SELECT count(*) INTO n
+            FROM ai_gateway_mcp_approval_requests WHERE tool_id IS NULL;
+            IF n > 0 THEN
+                RAISE NOTICE 'a0006 downgrade: deleting % native-call approval row(s) (tool_id IS NULL) — this approval history is lost', n;
+            END IF;
+        END $$;
+    """)
     op.execute("""
         DELETE FROM ai_gateway_mcp_approval_requests WHERE tool_id IS NULL
     """)

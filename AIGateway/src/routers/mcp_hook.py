@@ -19,7 +19,7 @@ from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse
 
 from config import settings
-from crud.mcp_approvals import create_approval_request, get_approved_request, get_pending_request
+from crud.mcp_approvals import create_approval_request, get_active_request
 from services.mcp_audit_service import log_tool_call
 from services.mcp_approval_match import check_require_approval
 from services.mcp_guardrail_service import scan_tool_input
@@ -88,11 +88,14 @@ async def mcp_hook(request: Request):
     approval_rule = await check_require_approval(org_id, tool_name, arguments)
     if approval_rule:
         args_hash = hash_arguments(arguments)
-        approved = await get_approved_request(org_id, agent_key["id"], tool_name, args_hash)
-        if not approved:
-            pending = await get_pending_request(org_id, agent_key["id"], tool_name, args_hash)
-            if pending:
-                approval = pending
+        # One query returns the latest non-expired approved-or-pending request.
+        active = await get_active_request(org_id, agent_key["id"], tool_name, args_hash)
+
+        if active and active["status"] == "approved":
+            pass  # already approved for this exact call — fall through to allow
+        else:
+            if active:  # an existing pending request — reuse it, don't re-notify
+                approval = active
             else:
                 expires_at = datetime.now(timezone.utc) + timedelta(
                     seconds=settings.mcp_approval_expiry_seconds
@@ -119,7 +122,6 @@ async def mcp_hook(request: Request):
                 "poll_endpoint": f"/v1/mcp/approvals/{approval.get('id')}/status",
                 "expires_at": exp.isoformat() if hasattr(exp, "isoformat") else str(exp),
             })
-        # else: already approved for this exact call — fall through to allow
 
     # ── Rate limit (infra, not policy) ──────────────────────────────────────
     # Checked last: only a call that already passed every policy gate can be

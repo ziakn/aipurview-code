@@ -202,6 +202,42 @@ async def get_approved_request(
         return dict(row)
 
 
+async def get_active_request(
+    org_id: int, agent_key_id: int, tool_name: str, arguments_hash: str
+) -> Optional[dict]:
+    """Return the latest non-expired approved OR pending request for this exact
+    call, or None. Collapses the separate approved/pending lookups into a single
+    query+connection; the caller branches on row['status'].
+    """
+    async with get_db() as db:
+        result = await db.execute(
+            text("""
+                SELECT id, status, expires_at
+                FROM ai_gateway_mcp_approval_requests
+                WHERE organization_id = :org_id
+                  AND agent_key_id = :agent_key_id
+                  AND tool_name = :tool_name
+                  AND arguments_hash = :arguments_hash
+                  AND status IN ('approved', 'pending')
+                  AND expires_at > NOW()
+                ORDER BY
+                    CASE status WHEN 'approved' THEN 0 ELSE 1 END,
+                    created_at DESC
+                LIMIT 1
+            """),
+            {
+                "org_id": org_id,
+                "agent_key_id": agent_key_id,
+                "tool_name": tool_name,
+                "arguments_hash": arguments_hash,
+            },
+        )
+        row = result.mappings().first()
+        if row is None:
+            return None
+        return dict(row)
+
+
 async def get_approval_status(org_id: int, request_id: int) -> Optional[dict]:
     async with get_db() as db:
         result = await db.execute(
@@ -247,6 +283,7 @@ async def decide_approval(
                 WHERE id = :request_id
                   AND organization_id = :org_id
                   AND status = 'pending'
+                  AND expires_at > NOW()
                 RETURNING
                     id,
                     organization_id,

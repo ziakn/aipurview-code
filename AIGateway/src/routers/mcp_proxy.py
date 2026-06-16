@@ -255,12 +255,20 @@ async def mcp_approval_status(request: Request, request_id: int):
     if not approval:
         raise HTTPException(status_code=404, detail="Approval request not found")
 
+    # A still-pending request whose expiry has passed is dead — it can no longer
+    # be decided (decide_approval requires expires_at > NOW()). Report it as
+    # "expired" so a poller stops waiting instead of seeing "pending" forever.
+    status_value = approval["status"]
+    expires_at = approval.get("expires_at")
+    if status_value == "pending" and expires_at is not None and expires_at <= datetime.now(timezone.utc):
+        status_value = "expired"
+
     return {
         "approval_id": approval["id"],
-        "status": approval["status"],
+        "status": status_value,
         "decided_at": approval["decided_at"].isoformat() if approval.get("decided_at") else None,
         "decision_reason": approval.get("decision_reason"),
-        "expires_at": approval["expires_at"].isoformat() if approval.get("expires_at") else None,
+        "expires_at": expires_at.isoformat() if expires_at else None,
     }
 
 

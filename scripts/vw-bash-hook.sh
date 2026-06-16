@@ -62,8 +62,14 @@ case "$decision" in
     if [ "$FAIL_MODE" = "closed" ]; then exit 2; fi
     exit 0 ;;
   approval_required)
-    approval_id="$(printf '%s' "$resp" | jq -r '.approval_id')"
-    poll_endpoint="$(printf '%s' "$resp" | jq -r '.poll_endpoint')"
+    approval_id="$(printf '%s' "$resp" | jq -r '.approval_id // empty')"
+    poll_endpoint="$(printf '%s' "$resp" | jq -r '.poll_endpoint // empty')"
+    # A malformed approval_required response (no id/endpoint) is uneitherable —
+    # fail fast on the infra fail-mode rather than polling a bad URL for the
+    # full APPROVAL_WAIT.
+    if [ -z "$approval_id" ] || [ -z "$poll_endpoint" ]; then
+      fail "approval_required response missing approval_id/poll_endpoint"
+    fi
     echo "vw-bash-hook: awaiting human approval (id=$approval_id, up to ${APPROVAL_WAIT}s)" >&2
     deadline=$(( $(date +%s) + APPROVAL_WAIT ))
     while [ "$(date +%s)" -lt "$deadline" ]; do
@@ -79,6 +85,12 @@ case "$decision" in
         denied)
           dreason="$(printf '%s' "$pbody" | jq -r '.decision_reason // "denied"')"
           echo "Denied by VerifyWise: $dreason" >&2
+          exit 2 ;;
+        expired)
+          # Server-side expiry: no human can decide it now — stop waiting and
+          # apply the approval fail-mode instead of polling to our own deadline.
+          echo "vw-bash-hook: approval request expired" >&2
+          if [ "$APPROVAL_FAIL_MODE" = "open" ]; then exit 0; fi
           exit 2 ;;
         *) sleep 2 ;;
       esac
