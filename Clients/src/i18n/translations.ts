@@ -25,6 +25,77 @@ export type Lang = "en" | "de" | "fr" | "es";
 
 export const translations: Record<string, Record<string, string>> = {
   de: {
+    // AI Apps (MO-362)
+    "AI app": "KI-App",
+    "AI app deleted successfully": "KI-App erfolgreich gelöscht",
+    "AI app details": "KI-App-Details",
+    "AI app not found or failed to load.":
+      "KI-App nicht gefunden oder konnte nicht geladen werden.",
+    "AI apps": "KI-Apps",
+    "Applicable regulations such as GDPR, HIPAA or sector rules":
+      "Geltende Vorschriften wie DSGVO, HIPAA oder branchenspezifische Regeln",
+    "Approval center and governance": "Freigabezentrum und Governance",
+    "Are you sure you want to delete": "Möchten Sie wirklich löschen",
+    "Banned": "Gesperrt",
+    "Browse, approve and govern the AI applications your employees use.":
+      "Durchsuchen, genehmigen und steuern Sie die KI-Anwendungen, die Ihre Mitarbeitenden nutzen.",
+    "Calculated risk score": "Berechneter Risikowert",
+    "Change status:": "Status ändern:",
+    "Consequences of incorrect or biased outputs on customers or IP":
+      "Folgen fehlerhafter oder verzerrter Ausgaben für Kunden oder geistiges Eigentum",
+    "Current risk score": "Aktueller Risikowert",
+    "Delete AI app": "KI-App löschen",
+    "Detailed view of a specific AI app": "Detailansicht einer bestimmten KI-App",
+    "Employee report": "Mitarbeitermeldung",
+    "Failed to delete AI app": "KI-App konnte nicht gelöscht werden",
+    "Failed to load AI apps. Please try again.":
+      "KI-Apps konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "Failed to save policy mapping": "Richtlinienzuordnung konnte nicht gespeichert werden",
+    "Failed to save risk assessment": "Risikobewertung konnte nicht gespeichert werden",
+    "Failed to update model dependencies": "Modellabhängigkeiten konnten nicht aktualisiert werden",
+    "Firewall": "Firewall",
+    "Impact on operations if the app becomes unavailable or wrong":
+      "Auswirkungen auf den Betrieb, wenn die App ausfällt oder fehlerhaft arbeitet",
+    "Keep one list of every AI app": "Eine zentrale Liste aller KI-Apps führen",
+    "Link each app to the models it runs on, the policies that apply to it and the data types it is allowed to touch, so you have a clear record for every tool.":
+      "Verknüpfen Sie jede App mit den Modellen, auf denen sie läuft, den geltenden Richtlinien und den Datentypen, auf die sie zugreifen darf – so haben Sie für jedes Tool einen klaren Nachweis.",
+    "Manual": "Manuell",
+    "Map models, policies and data access": "Modelle, Richtlinien und Datenzugriff zuordnen",
+    "Model dependencies": "Modellabhängigkeiten",
+    "Model dependencies updated successfully": "Modellabhängigkeiten erfolgreich aktualisiert",
+    "New AI app": "Neue KI-App",
+    "No models linked to this AI app.": "Keine Modelle mit dieser KI-App verknüpft.",
+    "No owner": "Kein Verantwortlicher",
+    "No policies available.": "Keine Richtlinien verfügbar.",
+    "No vendor": "Kein Anbieter",
+    "Number of employees, departments or external users with access":
+      "Anzahl der Mitarbeitenden, Abteilungen oder externen Nutzer mit Zugriff",
+    "Output impact": "Auswirkung der Ausgabe",
+    "Policy mapping": "Richtlinienzuordnung",
+    "Policy mapping saved successfully": "Richtlinienzuordnung erfolgreich gespeichert",
+    "Procurement": "Beschaffung",
+    "Promote to AI app": "Zu KI-App hochstufen",
+    "Proxy": "Proxy",
+    "Record the AI tools your teams use, including shadow AI you promote from a discovered tool, with its owner, vendor and how you found it.":
+      "Erfassen Sie die KI-Tools, die Ihre Teams nutzen – einschließlich Schatten-KI, die Sie aus einem entdeckten Tool hochstufen – mit Verantwortlichem, Anbieter und der Art, wie Sie darauf gestoßen sind.",
+    "Regulatory scope": "Regulatorischer Geltungsbereich",
+    "Required training": "Erforderliche Schulung",
+    "Run approvals and risk assessments": "Freigaben und Risikobewertungen durchführen",
+    "Save assessment": "Bewertung speichern",
+    "Save dependencies": "Abhängigkeiten speichern",
+    "Save mapping": "Zuordnung speichern",
+    "Search AI apps": "KI-Apps durchsuchen",
+    "Select model inventory entries": "Einträge aus dem Modellinventar auswählen",
+    "Sensitivity of data the app can access or process":
+      "Sensibilität der Daten, auf die die App zugreifen oder die sie verarbeiten kann",
+    "Suggested policies": "Empfohlene Richtlinien",
+    "Take an app from draft to approved, score its risk and assign the training people need before they use it.":
+      "Bringen Sie eine App vom Entwurf zur Freigabe, bewerten Sie ihr Risiko und weisen Sie die nötige Schulung zu, bevor Mitarbeitende sie nutzen.",
+    "User exposure": "Nutzerexposition",
+    "Vendor maturity": "Reifegrad des Anbieters",
+    "Vendor security posture, review status and track record":
+      "Sicherheitsniveau, Prüfstatus und Erfolgsbilanz des Anbieters",
+    "What is this app used for?": "Wofür wird diese App verwendet?",
     // Sidebar / nav
     "AI system risk classification": "[DE] AI system risk classification",
     "Activation status": "[DE] Activation status",
@@ -8512,6 +8583,78 @@ export const translations: Record<string, Record<string, string>> = {
   },
 
   fr: {
+    // AI Apps (MO-362)
+    "AI app": "Application IA",
+    "AI app deleted successfully": "Application IA supprimée avec succès",
+    "AI app details": "Détails de l'application IA",
+    "AI app not found or failed to load.": "Application IA introuvable ou impossible à charger.",
+    "AI apps": "Applications IA",
+    "Applicable regulations such as GDPR, HIPAA or sector rules":
+      "Réglementations applicables telles que le RGPD, l'HIPAA ou les règles sectorielles",
+    "Approval center and governance": "Centre d'approbation et gouvernance",
+    "Are you sure you want to delete": "Voulez-vous vraiment supprimer",
+    "Banned": "Interdite",
+    "Browse, approve and govern the AI applications your employees use.":
+      "Parcourez, approuvez et encadrez les applications IA utilisées par vos employés.",
+    "Calculated risk score": "Score de risque calculé",
+    "Change status:": "Changer le statut :",
+    "Consequences of incorrect or biased outputs on customers or IP":
+      "Conséquences de résultats incorrects ou biaisés sur les clients ou la propriété intellectuelle",
+    "Current risk score": "Score de risque actuel",
+    "Delete AI app": "Supprimer l'application IA",
+    "Detailed view of a specific AI app": "Vue détaillée d'une application IA spécifique",
+    "Employee report": "Signalement d'un employé",
+    "Failed to delete AI app": "Échec de la suppression de l'application IA",
+    "Failed to load AI apps. Please try again.":
+      "Échec du chargement des applications IA. Veuillez réessayer.",
+    "Failed to save policy mapping":
+      "Échec de l'enregistrement de la correspondance des politiques",
+    "Failed to save risk assessment": "Échec de l'enregistrement de l'évaluation des risques",
+    "Failed to update model dependencies": "Échec de la mise à jour des dépendances de modèles",
+    "Firewall": "Firewall",
+    "Impact on operations if the app becomes unavailable or wrong":
+      "Impact sur les opérations si l'application devient indisponible ou défaillante",
+    "Keep one list of every AI app": "Tenez une seule liste de toutes les applications IA",
+    "Link each app to the models it runs on, the policies that apply to it and the data types it is allowed to touch, so you have a clear record for every tool.":
+      "Reliez chaque application aux modèles qu'elle utilise, aux politiques qui s'y appliquent et aux types de données auxquels elle peut accéder, afin de disposer d'un enregistrement clair pour chaque outil.",
+    "Manual": "Manuel",
+    "Map models, policies and data access":
+      "Associer les modèles, les politiques et l'accès aux données",
+    "Model dependencies": "Dépendances de modèles",
+    "Model dependencies updated successfully": "Dépendances de modèles mises à jour avec succès",
+    "New AI app": "Nouvelle application IA",
+    "No models linked to this AI app.": "Aucun modèle lié à cette application IA.",
+    "No owner": "Aucun responsable",
+    "No policies available.": "Aucune politique disponible.",
+    "No vendor": "Aucun fournisseur",
+    "Number of employees, departments or external users with access":
+      "Nombre d'employés, de services ou d'utilisateurs externes ayant accès",
+    "Output impact": "Impact des résultats",
+    "Policy mapping": "Correspondance des politiques",
+    "Policy mapping saved successfully": "Correspondance des politiques enregistrée avec succès",
+    "Procurement": "Achats",
+    "Promote to AI app": "Promouvoir en application IA",
+    "Proxy": "Proxy",
+    "Record the AI tools your teams use, including shadow AI you promote from a discovered tool, with its owner, vendor and how you found it.":
+      "Recensez les outils IA utilisés par vos équipes, y compris l'IA fantôme que vous promouvez à partir d'un outil découvert, avec son responsable, son fournisseur et la manière dont vous l'avez identifié.",
+    "Regulatory scope": "Périmètre réglementaire",
+    "Required training": "Formation requise",
+    "Run approvals and risk assessments": "Lancer les approbations et les évaluations des risques",
+    "Save assessment": "Enregistrer l'évaluation",
+    "Save dependencies": "Enregistrer les dépendances",
+    "Save mapping": "Enregistrer la correspondance",
+    "Search AI apps": "Rechercher des applications IA",
+    "Select model inventory entries": "Sélectionner des entrées de l'inventaire des modèles",
+    "Sensitivity of data the app can access or process":
+      "Sensibilité des données auxquelles l'application peut accéder ou qu'elle peut traiter",
+    "Suggested policies": "Politiques suggérées",
+    "Take an app from draft to approved, score its risk and assign the training people need before they use it.":
+      "Faites passer une application du brouillon à l'approbation, évaluez son risque et attribuez la formation nécessaire avant que les utilisateurs ne s'en servent.",
+    "User exposure": "Exposition des utilisateurs",
+    "Vendor maturity": "Maturité du fournisseur",
+    "Vendor security posture, review status and track record":
+      "Posture de sécurité, statut d'examen et antécédents du fournisseur",
+    "What is this app used for?": "À quoi sert cette application ?",
     // Sidebar / nav
     "AI system risk classification": "[FR] AI system risk classification",
     "Activation status": "[FR] Activation status",
@@ -16951,6 +17094,77 @@ export const translations: Record<string, Record<string, string>> = {
     "unmapped controls": "contrôles sans correspondance",
   },
   es: {
+    // AI Apps (MO-362)
+    "AI app": "Aplicación de IA",
+    "AI app deleted successfully": "Aplicación de IA eliminada correctamente",
+    "AI app details": "Detalles de la aplicación de IA",
+    "AI app not found or failed to load.":
+      "No se encontró la aplicación de IA o no se pudo cargar.",
+    "AI apps": "Aplicaciones de IA",
+    "Applicable regulations such as GDPR, HIPAA or sector rules":
+      "Regulaciones aplicables como el RGPD, la HIPAA o normas sectoriales",
+    "Approval center and governance": "Centro de aprobación y gobernanza",
+    "Are you sure you want to delete": "¿Seguro que deseas eliminar",
+    "Banned": "Prohibida",
+    "Browse, approve and govern the AI applications your employees use.":
+      "Explora, aprueba y gobierna las aplicaciones de IA que usan tus empleados.",
+    "Calculated risk score": "Puntuación de riesgo calculada",
+    "Change status:": "Cambiar estado:",
+    "Consequences of incorrect or biased outputs on customers or IP":
+      "Consecuencias de resultados incorrectos o sesgados para los clientes o la propiedad intelectual",
+    "Current risk score": "Puntuación de riesgo actual",
+    "Delete AI app": "Eliminar aplicación de IA",
+    "Detailed view of a specific AI app": "Vista detallada de una aplicación de IA específica",
+    "Employee report": "Reporte de empleado",
+    "Failed to delete AI app": "No se pudo eliminar la aplicación de IA",
+    "Failed to load AI apps. Please try again.":
+      "No se pudieron cargar las aplicaciones de IA. Inténtalo de nuevo.",
+    "Failed to save policy mapping": "No se pudo guardar la asignación de políticas",
+    "Failed to save risk assessment": "No se pudo guardar la evaluación de riesgos",
+    "Failed to update model dependencies": "No se pudieron actualizar las dependencias de modelos",
+    "Firewall": "Firewall",
+    "Impact on operations if the app becomes unavailable or wrong":
+      "Impacto en las operaciones si la aplicación deja de estar disponible o falla",
+    "Keep one list of every AI app": "Mantén una sola lista de todas las aplicaciones de IA",
+    "Link each app to the models it runs on, the policies that apply to it and the data types it is allowed to touch, so you have a clear record for every tool.":
+      "Vincula cada aplicación con los modelos que ejecuta, las políticas que le aplican y los tipos de datos a los que puede acceder, para tener un registro claro de cada herramienta.",
+    "Manual": "Manual",
+    "Map models, policies and data access": "Asignar modelos, políticas y acceso a datos",
+    "Model dependencies": "Dependencias de modelos",
+    "Model dependencies updated successfully": "Dependencias de modelos actualizadas correctamente",
+    "New AI app": "Nueva aplicación de IA",
+    "No models linked to this AI app.": "No hay modelos vinculados a esta aplicación de IA.",
+    "No owner": "Sin responsable",
+    "No policies available.": "No hay políticas disponibles.",
+    "No vendor": "Sin proveedor",
+    "Number of employees, departments or external users with access":
+      "Número de empleados, departamentos o usuarios externos con acceso",
+    "Output impact": "Impacto de los resultados",
+    "Policy mapping": "Asignación de políticas",
+    "Policy mapping saved successfully": "Asignación de políticas guardada correctamente",
+    "Procurement": "Compras",
+    "Promote to AI app": "Promover a aplicación de IA",
+    "Proxy": "Proxy",
+    "Record the AI tools your teams use, including shadow AI you promote from a discovered tool, with its owner, vendor and how you found it.":
+      "Registra las herramientas de IA que usan tus equipos, incluida la IA en la sombra que promueves a partir de una herramienta descubierta, con su responsable, proveedor y cómo la encontraste.",
+    "Regulatory scope": "Alcance regulatorio",
+    "Required training": "Capacitación requerida",
+    "Run approvals and risk assessments": "Ejecutar aprobaciones y evaluaciones de riesgos",
+    "Save assessment": "Guardar evaluación",
+    "Save dependencies": "Guardar dependencias",
+    "Save mapping": "Guardar asignación",
+    "Search AI apps": "Buscar aplicaciones de IA",
+    "Select model inventory entries": "Seleccionar entradas del inventario de modelos",
+    "Sensitivity of data the app can access or process":
+      "Sensibilidad de los datos a los que la aplicación puede acceder o procesar",
+    "Suggested policies": "Políticas sugeridas",
+    "Take an app from draft to approved, score its risk and assign the training people need before they use it.":
+      "Lleva una aplicación de borrador a aprobada, evalúa su riesgo y asigna la capacitación que las personas necesitan antes de usarla.",
+    "User exposure": "Exposición de usuarios",
+    "Vendor maturity": "Madurez del proveedor",
+    "Vendor security posture, review status and track record":
+      "Postura de seguridad, estado de revisión e historial del proveedor",
+    "What is this app used for?": "¿Para qué se usa esta aplicación?",
     "Start here": "Empieza aquí",
     "Dashboard": "Panel",
     "Tasks": "Tareas",
