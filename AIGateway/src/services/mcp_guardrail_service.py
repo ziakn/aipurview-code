@@ -184,8 +184,7 @@ async def scan_result_blob(org_id: int, blob: str) -> str:
         async with get_db() as db:
             rules_result = await db.execute(
                 text("""
-                    SELECT id, name, rule_type, config, scope, action,
-                           applies_to_tools, is_active
+                    SELECT id, name, rule_type, config, scope, action
                     FROM ai_gateway_mcp_guardrail_rules
                     WHERE organization_id = :org_id AND is_active = true
                     ORDER BY created_at
@@ -221,6 +220,7 @@ async def scan_result_blob(org_id: int, blob: str) -> str:
         if not transformed_rules:
             return blob
         result = scan_text(text=blob, guardrail_rules=transformed_rules, settings=guardrail_settings)
+        # masked_text is None when nothing matched — fall back to the original blob
         return result.masked_text or blob
     except Exception as e:
         logger.error(f"scan_result_blob failed, storing unmasked: {e}")
