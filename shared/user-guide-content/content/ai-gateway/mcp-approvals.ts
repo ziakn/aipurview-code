@@ -145,7 +145,7 @@ export const mcpApprovalsContent: ArticleContent = {
       type: 'ordered-list',
       items: [
         { text: 'The agent sends a `tools/call` request to `POST /v1/mcp`.' },
-        { text: 'The gateway returns a JSON-RPC error with code `-32001` and a data payload containing the `approval_id`, `poll_endpoint`, and `expires_at`.' },
+        { text: 'The gateway returns a JSON-RPC error with code `-32001` and a data payload containing the `approval_id`, `poll_endpoint` and `expires_at`.' },
         { text: 'The agent polls `GET /v1/mcp/approvals/{approval_id}/status` periodically to check if the request was approved.' },
         { text: 'Once the status is "approved", the agent retries the original `tools/call` request.' },
         { text: 'If the status is "denied" or "expired", the agent handles the rejection.' },

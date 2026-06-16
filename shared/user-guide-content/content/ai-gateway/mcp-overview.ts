@@ -14,7 +14,7 @@ export const mcpOverviewContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Without a gateway, agents connect directly to MCP servers. That means no central visibility into what tools they\'re calling, no way to block sensitive operations and no audit log. The MCP Gateway solves all three.',
+      text: 'Without a gateway, agents connect directly to MCP servers. That means no central view of what tools they\'re calling, no way to block sensitive operations and no audit log. The MCP Gateway closes all three gaps.',
     },
     {
       type: 'heading',
@@ -55,7 +55,7 @@ export const mcpOverviewContent: ArticleContent = {
       items: [
         {
           title: 'MCP servers',
-          description: 'Backend servers that expose tools (database queries, file operations, search, etc.). You register them in VerifyWise with their URL and auth credentials.',
+          description: 'Backend servers that expose tools (database queries, file operations, search and so on). You register them in VerifyWise with their URL and auth credentials.',
           icon: 'Server',
         },
         {
@@ -70,7 +70,7 @@ export const mcpOverviewContent: ArticleContent = {
         },
         {
           title: 'Guardrails',
-          description: 'Rules that scan tool inputs before execution. Detect PII, filter prohibited content, or block prompt injection attempts.',
+          description: 'Rules that scan tool inputs before execution. Detect PII, filter prohibited content or block prompt injection attempts.',
           icon: 'Shield',
         },
         {
@@ -93,7 +93,7 @@ export const mcpOverviewContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'If your organization runs AI agents that call external tools, you need governance around those calls. The MCP Gateway is built for:',
+      text: 'If your organization runs AI agents that call external tools, you need governance around those calls. The MCP Gateway is for:',
     },
     {
       type: 'bullet-list',
