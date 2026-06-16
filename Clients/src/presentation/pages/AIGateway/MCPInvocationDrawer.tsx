@@ -28,6 +28,7 @@ interface InvocationEvent {
 interface AuditLogDetail {
   id: number;
   tool_name: string;
+  agent_key_name?: string | null;
   result_status: string;
   result_summary: string | null;
   tool_use_id: string | null;
@@ -81,6 +82,9 @@ export default function MCPInvocationDrawer({ logId, open, onClose }: Invocation
               </Typography>
               <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
                 {displayFormattedDate(row.created_at)}
+              </Typography>
+              <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
+                {(row.agent_key_name || "—") + " · " + (row.session_id || "—")}
               </Typography>
             </Box>
             <IconButton size="small" onClick={onClose} aria-label="Close">

@@ -187,12 +187,14 @@ async def get_audit_log_by_id(org_id: int, log_id: int) -> dict | None:
     async with get_db() as db:
         row = (await db.execute(
             text("""
-                SELECT id, agent_key_id, server_id, tool_name, arguments,
-                       result_status, result_summary, is_error, latency_ms,
-                       session_id, tool_use_id, result_response, result_truncated,
-                       events, created_at
-                FROM ai_gateway_mcp_audit_logs
-                WHERE organization_id = :org_id AND id = :log_id
+                SELECT al.id, al.agent_key_id, al.server_id, al.tool_name, al.arguments,
+                       al.result_status, al.result_summary, al.is_error, al.latency_ms,
+                       al.session_id, al.tool_use_id, al.result_response, al.result_truncated,
+                       al.events, al.created_at,
+                       ak.name AS agent_key_name
+                FROM ai_gateway_mcp_audit_logs al
+                LEFT JOIN ai_gateway_mcp_agent_keys ak ON ak.id = al.agent_key_id
+                WHERE al.organization_id = :org_id AND al.id = :log_id
             """),
             {"org_id": org_id, "log_id": log_id},
         )).mappings().fetchone()
