@@ -27,6 +27,8 @@ export async function createModelInventory(routeUrl: string, data: any): Promise
  * @returns {Promise<IModelInventory[]>} The list of model inventory entries.
  */
 export async function getModelInventories(signal?: AbortSignal): Promise<IModelInventory[]> {
-  const response = await apiServices.get<{ data: IModelInventory[] }>("/modelInventory", { signal });
+  const response = await apiServices.get<{ data: IModelInventory[] }>("/modelInventory", {
+    signal,
+  });
   return response.data?.data ?? [];
 }
