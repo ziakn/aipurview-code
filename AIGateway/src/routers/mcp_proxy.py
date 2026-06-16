@@ -24,6 +24,7 @@ from services.mcp_audit_service import log_tool_call
 from services.mcp_guardrail_service import scan_tool_input, check_anomaly, CircuitBreaker
 from services.mcp_proxy_service import (
     authenticate_agent_key,
+    extract_agent_key,
     resolve_tool,
     enforce_tool_acls,
     enforce_mcp_rate_limits,
@@ -50,21 +51,10 @@ def _jsonrpc_result(id, result: dict) -> dict:
     return {"jsonrpc": "2.0", "id": id, "result": result}
 
 
-async def _extract_agent_key(request: Request) -> dict:
-    auth = request.headers.get("authorization", "")
-    if not auth.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Missing Authorization: Bearer <agent-key>")
-    token = auth[7:].strip()
-    try:
-        return await authenticate_agent_key(token)
-    except ValueError as e:
-        raise HTTPException(status_code=401, detail=str(e))
-
-
 @router.post("/v1/mcp")
 async def mcp_jsonrpc(request: Request):
     """Handle JSON-RPC 2.0 requests from MCP clients."""
-    agent_key = await _extract_agent_key(request)
+    agent_key = await extract_agent_key(request)
     org_id = agent_key["organization_id"]
 
     try:
@@ -258,19 +248,27 @@ async def mcp_jsonrpc(request: Request):
 @router.get("/v1/mcp/approvals/{request_id}/status")
 async def mcp_approval_status(request: Request, request_id: int):
     """Poll approval status — authenticated via agent key."""
-    agent_key = await _extract_agent_key(request)
+    agent_key = await extract_agent_key(request)
     org_id = agent_key["organization_id"]
 
     approval = await get_approval_status(org_id, request_id)
     if not approval:
         raise HTTPException(status_code=404, detail="Approval request not found")
 
+    # A still-pending request whose expiry has passed is dead — it can no longer
+    # be decided (decide_approval requires expires_at > NOW()). Report it as
+    # "expired" so a poller stops waiting instead of seeing "pending" forever.
+    status_value = approval["status"]
+    expires_at = approval.get("expires_at")
+    if status_value == "pending" and expires_at is not None and expires_at <= datetime.now(timezone.utc):
+        status_value = "expired"
+
     return {
         "approval_id": approval["id"],
-        "status": approval["status"],
+        "status": status_value,
         "decided_at": approval["decided_at"].isoformat() if approval.get("decided_at") else None,
         "decision_reason": approval.get("decision_reason"),
-        "expires_at": approval["expires_at"].isoformat() if approval.get("expires_at") else None,
+        "expires_at": expires_at.isoformat() if expires_at else None,
     }
 
 

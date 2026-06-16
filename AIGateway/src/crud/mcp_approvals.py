@@ -133,22 +133,27 @@ async def get_approval_history(
 
 
 async def get_pending_request(
-    org_id: int, agent_key_id: int, tool_name: str, arguments_hash: str
+    org_id: int, agent_key_id: int, tool_name: str, arguments_hash: str,
+    native: bool = False,
 ) -> Optional[dict]:
     """Return an existing pending, non-expired approval request for this exact call.
 
     Scoped to the call's arguments (via arguments_hash) so a pending request for
-    one set of arguments is not reused for a different call.
+    one set of arguments is not reused for a different call. `native` restricts
+    to native (tool_id IS NULL) vs proxy (tool_id IS NOT NULL) approvals so the
+    two surfaces never share a row.
     """
+    tool_id_clause = "AND tool_id IS NULL" if native else "AND tool_id IS NOT NULL"
     async with get_db() as db:
         result = await db.execute(
-            text("""
+            text(f"""
                 SELECT id, status, expires_at
                 FROM ai_gateway_mcp_approval_requests
                 WHERE organization_id = :org_id
                   AND agent_key_id = :agent_key_id
                   AND tool_name = :tool_name
                   AND arguments_hash = :arguments_hash
+                  {tool_id_clause}
                   AND status = 'pending'
                   AND expires_at > NOW()
                 ORDER BY created_at DESC
@@ -168,25 +173,74 @@ async def get_pending_request(
 
 
 async def get_approved_request(
-    org_id: int, agent_key_id: int, tool_name: str, arguments_hash: str
+    org_id: int, agent_key_id: int, tool_name: str, arguments_hash: str,
+    native: bool = False,
 ) -> Optional[dict]:
     """Check if an approved, non-expired approval request exists for this exact call.
 
     Scoped to the call's arguments (via arguments_hash) so an approval granted for
-    one set of arguments cannot be reused to authorize a different call.
+    one set of arguments cannot be reused to authorize a different call. `native`
+    restricts to native (tool_id IS NULL) vs proxy (tool_id IS NOT NULL) approvals
+    so the two surfaces never share a row.
     """
+    tool_id_clause = "AND tool_id IS NULL" if native else "AND tool_id IS NOT NULL"
     async with get_db() as db:
         result = await db.execute(
-            text("""
+            text(f"""
                 SELECT id, status, expires_at
                 FROM ai_gateway_mcp_approval_requests
                 WHERE organization_id = :org_id
                   AND agent_key_id = :agent_key_id
                   AND tool_name = :tool_name
                   AND arguments_hash = :arguments_hash
+                  {tool_id_clause}
                   AND status = 'approved'
                   AND expires_at > NOW()
                 ORDER BY decided_at DESC
+                LIMIT 1
+            """),
+            {
+                "org_id": org_id,
+                "agent_key_id": agent_key_id,
+                "tool_name": tool_name,
+                "arguments_hash": arguments_hash,
+            },
+        )
+        row = result.mappings().first()
+        if row is None:
+            return None
+        return dict(row)
+
+
+async def get_active_request(
+    org_id: int, agent_key_id: int, tool_name: str, arguments_hash: str,
+    native: bool = False,
+) -> Optional[dict]:
+    """Return the latest non-expired approved OR pending request for this exact
+    call, or None. Collapses the separate approved/pending lookups into a single
+    query+connection; the caller branches on row['status'].
+
+    native: restrict to native tool-call approvals (tool_id IS NULL) when True,
+    or proxy approvals (tool_id IS NOT NULL) when False. A native hook approval
+    and a proxy approval for the same tool_name+args must never authorize each
+    other, so the two surfaces never share an approval row.
+    """
+    tool_id_clause = "AND tool_id IS NULL" if native else "AND tool_id IS NOT NULL"
+    async with get_db() as db:
+        result = await db.execute(
+            text(f"""
+                SELECT id, status, expires_at
+                FROM ai_gateway_mcp_approval_requests
+                WHERE organization_id = :org_id
+                  AND agent_key_id = :agent_key_id
+                  AND tool_name = :tool_name
+                  AND arguments_hash = :arguments_hash
+                  {tool_id_clause}
+                  AND status IN ('approved', 'pending')
+                  AND expires_at > NOW()
+                ORDER BY
+                    CASE status WHEN 'approved' THEN 0 ELSE 1 END,
+                    created_at DESC
                 LIMIT 1
             """),
             {
@@ -247,6 +301,7 @@ async def decide_approval(
                 WHERE id = :request_id
                   AND organization_id = :org_id
                   AND status = 'pending'
+                  AND expires_at > NOW()
                 RETURNING
                     id,
                     organization_id,

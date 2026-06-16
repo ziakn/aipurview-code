@@ -3897,6 +3897,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Tools": "Tools",
     "Audit Log": "Prüfprotokoll",
     "Approvals": "Genehmigungen",
+    "Require approval": "Genehmigung erforderlich",
 
     // MCP Approvals page
     "No pending approvals": "Keine ausstehenden Genehmigungen",
@@ -9163,6 +9164,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Tools": "Outils",
     "Audit Log": "Journal d'audit",
     "Approvals": "Approbations",
+    "Require approval": "Approbation requise",
     "No pending approvals": "Aucune approbation en attente",
     "No approval history yet": "Aucun historique d'approbation pour le moment",
 

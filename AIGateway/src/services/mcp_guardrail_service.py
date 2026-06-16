@@ -12,7 +12,8 @@ from typing import Optional
 from sqlalchemy import text
 
 from database.db import get_db
-from services.guardrail_service import scan_text, ScanResult
+from services.guardrail_service import scan_text, ScanResult, REDOS_SCAN_CAP
+from utils.mcp_tool_content import extract_scannable_content
 from utils.redis import get_redis
 
 logger = logging.getLogger("uvicorn")
@@ -38,8 +39,8 @@ def _check_prompt_injection(input_text: str) -> list[str]:
     """Check text for common prompt injection patterns. Returns list of matched pattern names."""
     if not input_text:
         return []
-    # Limit scan length to prevent ReDoS
-    scan_text_str = input_text[:50000] if len(input_text) > 50000 else input_text
+    # Limit scan length to prevent ReDoS (shared cap, same as the other matchers).
+    scan_text_str = input_text[:REDOS_SCAN_CAP] if len(input_text) > REDOS_SCAN_CAP else input_text
     matched: list[str] = []
     for name, pattern in INJECTION_PATTERNS:
         try:
@@ -52,17 +53,25 @@ def _check_prompt_injection(input_text: str) -> list[str]:
 
 # ─── MCP Tool Input Scanning ───────────────────────────────────────────────
 
-async def scan_tool_input(org_id: int, tool_name: str, arguments: dict) -> ScanResult:
+async def scan_tool_input(
+    org_id: int, tool_name: str, arguments: dict, field_aware: bool = False
+) -> ScanResult:
     """
     Scan MCP tool call arguments through org guardrail rules.
 
     Fetches active MCP guardrail rules from ai_gateway_mcp_guardrail_rules,
     runs existing scan_text() for PII/content filter checks, and additionally
     checks for prompt injection patterns.
+
+    field_aware: when True (the native tool-call hook), scan only the content
+    a file-write tool actually writes (Write.content, Edit.new_string, ...).
+    Default False keeps the full-argument scan, which the MCP proxy relies on:
+    an upstream MCP tool that happens to be named "Write"/"Edit" must NOT have
+    its arguments narrowed by the file-write field map.
     """
-    # Serialize arguments to scannable text
+    scannable = extract_scannable_content(tool_name, arguments) if field_aware else arguments
     text_parts: list[str] = []
-    for value in arguments.values():
+    for value in scannable.values():
         if isinstance(value, str):
             text_parts.append(value)
         elif isinstance(value, (dict, list)):
