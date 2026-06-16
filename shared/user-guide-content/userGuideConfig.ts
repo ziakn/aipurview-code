@@ -98,6 +98,12 @@ export const collections: Collection[] = [
         keywords: ['model', 'inventory', 'register', 'ai', 'catalog'],
       },
       {
+        id: 'ai-apps',
+        title: 'Managing the AI apps inventory',
+        description: 'Track the AI applications your teams use, with owners, approvals, policies, and risk.',
+        keywords: ['ai app', 'application', 'inventory', 'shadow ai', 'approval', 'governance'],
+      },
+      {
         id: 'model-lifecycle',
         title: 'Model lifecycle management',
         description: 'Track models from development through deployment and retirement.',
