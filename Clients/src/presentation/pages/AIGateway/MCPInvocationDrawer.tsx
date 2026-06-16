@@ -4,7 +4,13 @@ import { useState, useEffect } from "react";
 import Chip from "../../components/Chip";
 import { apiServices } from "../../../infrastructure/api/networkServices";
 import palette from "../../themes/palette";
-import { MCP_STATUS_COLORS, MCP_STATUS_FALLBACK } from "./shared";
+import {
+  MCP_STATUS_COLORS,
+  MCP_STATUS_FALLBACK,
+  KEY_DISPLAY_BG,
+  CODE_BLOCK_BG,
+  CODE_BLOCK_TEXT,
+} from "./shared";
 import { displayFormattedDate } from "../../tools/isoDateToString";
 
 interface InvocationDrawerProps {
@@ -13,8 +19,28 @@ interface InvocationDrawerProps {
   onClose: () => void;
 }
 
+interface InvocationEvent {
+  type: string;
+  at: string;
+  detail?: string;
+}
+
+interface AuditLogDetail {
+  id: number;
+  tool_name: string;
+  result_status: string;
+  result_summary: string | null;
+  tool_use_id: string | null;
+  session_id: string | null;
+  arguments: Record<string, unknown> | null;
+  result_response: Record<string, unknown> | null;
+  result_truncated: boolean;
+  events: InvocationEvent[];
+  created_at: string;
+}
+
 export default function MCPInvocationDrawer({ logId, open, onClose }: InvocationDrawerProps) {
-  const [row, setRow] = useState<any | null>(null);
+  const [row, setRow] = useState<AuditLogDetail | null>(null);
   const [showRaw, setShowRaw] = useState(false);
 
   useEffect(() => {
@@ -23,7 +49,7 @@ export default function MCPInvocationDrawer({ logId, open, onClose }: Invocation
     setShowRaw(false);
     apiServices
       .get<Record<string, any>>(`/ai-gateway/mcp/audit/logs/${logId}`)
-      .then((res) => setRow(res?.data?.data || null))
+      .then((res) => setRow((res?.data?.data as AuditLogDetail) || null))
       .catch(() => setRow(null));
   }, [open, logId]);
 
@@ -79,7 +105,7 @@ export default function MCPInvocationDrawer({ logId, open, onClose }: Invocation
                 fontSize: 12,
                 fontFamily: "monospace",
                 whiteSpace: "pre-wrap",
-                bgcolor: "#F9FAFB",
+                bgcolor: KEY_DISPLAY_BG,
                 p: "8px",
                 borderRadius: "4px",
                 overflow: "auto",
@@ -99,7 +125,7 @@ export default function MCPInvocationDrawer({ logId, open, onClose }: Invocation
                   fontSize: 12,
                   fontFamily: "monospace",
                   whiteSpace: "pre-wrap",
-                  bgcolor: "#F9FAFB",
+                  bgcolor: KEY_DISPLAY_BG,
                   p: "8px",
                   borderRadius: "4px",
                   overflow: "auto",
@@ -119,7 +145,7 @@ export default function MCPInvocationDrawer({ logId, open, onClose }: Invocation
           <Box>
             <Typography sx={labelSx}>EVENTS</Typography>
             <Stack gap="4px" sx={{ mt: "4px" }}>
-              {(row.events || []).map((e: any, i: number) => (
+              {(row.events || []).map((e: InvocationEvent, i: number) => (
                 <Stack key={i} direction="row" justifyContent="space-between">
                   <Typography sx={{ fontSize: 12 }}>
                     {e.type}
@@ -134,12 +160,21 @@ export default function MCPInvocationDrawer({ logId, open, onClose }: Invocation
           </Box>
 
           <Box>
-            <Typography
-              sx={{ fontSize: 12, color: palette.brand.primary, cursor: "pointer" }}
+            <Box
+              component="button"
               onClick={() => setShowRaw((v) => !v)}
+              sx={{
+                fontSize: 12,
+                color: palette.brand.primary,
+                cursor: "pointer",
+                background: "none",
+                border: "none",
+                p: 0,
+                textAlign: "left",
+              }}
             >
               {showRaw ? "Hide raw JSON" : "Show raw JSON"}
-            </Typography>
+            </Box>
             {showRaw && (
               <Box
                 component="pre"
@@ -147,8 +182,8 @@ export default function MCPInvocationDrawer({ logId, open, onClose }: Invocation
                   fontSize: 11,
                   fontFamily: "monospace",
                   whiteSpace: "pre-wrap",
-                  bgcolor: "#1E1E1E",
-                  color: "#D4D4D4",
+                  bgcolor: CODE_BLOCK_BG,
+                  color: CODE_BLOCK_TEXT,
                   p: "8px",
                   borderRadius: "4px",
                   overflow: "auto",
