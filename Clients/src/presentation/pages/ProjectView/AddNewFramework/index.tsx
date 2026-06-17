@@ -48,7 +48,6 @@ const AddFrameworkModal: React.FC<AddFrameworkModalProps> = ({
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
   const [customFrameworkCount, setCustomFrameworkCount] = useState(0);
 
-
   // Listen for custom framework count changes from plugins (event-based communication)
   useEffect(() => {
     const handleCustomFrameworkCount = (event: CustomEvent) => {

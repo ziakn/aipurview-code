@@ -84,8 +84,8 @@ const CoverageChart = ({
   return (
     <Stack gap="16px">
       <Alert severity="info" sx={{ fontSize: 12 }} icon={<Info size={18} />}>
-        Coverage is calculated as distinct mapped source identifiers divided by the framework's
-        full control inventory (sub-controls, sub-clauses, or sub-categories). This gives an honest
+        Coverage is calculated as distinct mapped source identifiers divided by the framework's full
+        control inventory (sub-controls, sub-clauses, or sub-categories). This gives an honest
         baseline instead of measuring coverage against the mappings themselves.
       </Alert>
 
