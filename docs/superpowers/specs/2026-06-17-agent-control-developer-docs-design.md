@@ -8,7 +8,7 @@
 ## 1. Audience and scope (decided)
 
 - **Audience:** an external integrator — a customer's developer connecting their agent (Claude Code, a LangChain/CrewAI app, or a custom agent) to the gateway. NOT the end user clicking the UI, and NOT a VerifyWise platform engineer.
-- **Scope:** Agent Control (the tool-call governance side) now. The LLM-proxy integration guide is a fast-follow that slots into the same collection later — reserved as a stub article, not built now.
+- **Scope:** Agent Control (the tool-call governance side) now. The LLM-proxy integration guide is a fast-follow that slots into the same collection later as a real article when it's written. No placeholder/stub is created now.
 - **Non-goals:** no new doc site, no SDK code, no changes to the existing end-user articles or the internal `docs/technical/domains/agent-control.md`.
 
 ## 2. Home and separation (decided)
@@ -26,7 +26,7 @@ This reuses the same content system as the end-user guide:
 
 ## 3. The articles (task-based, decided)
 
-Five articles, ordered the way an integrator reads them. Collection `articleCount` = 5.
+Four articles, ordered the way an integrator reads them. Collection `articleCount` = 4. (The LLM-proxy guide is added later as a real fifth article when written, not stubbed now.)
 
 1. **Overview & how it works** (`developers/agent-control-overview`)
    What Agent Control governs: the agent's *actions* (its tool calls), not just what it says. The two entry paths in plain terms: the **native hook** (the agent runs its own built-in tool like Bash; the gateway says allow/deny before it runs) and the **MCP proxy** (the agent calls a tool *through* the gateway). The core promise: every tool call is checked before it runs. Defines the vocabulary used by the rest of the guide: agent key, hook, tool call, run.
@@ -51,9 +51,6 @@ Five articles, ordered the way an integrator reads them. Collection `articleCoun
    - JSON-RPC error codes for the proxy path (e.g. `-32001` approval required).
    - Field-aware scanning: for file-write tools only the written content is scanned, in plain terms.
    Each entry has a curl example and a short Python example.
-
-5. **Connect via the LLM proxy** (`developers/connect-llm-proxy`) — **stub for later.**
-   A short placeholder page: one paragraph saying the gateway also proxies model calls (point your OpenAI-compatible client at the gateway with a virtual key), and that the full guide is coming. Exists so the proxy guide slots into this collection later without restructuring. Marked clearly as a preview.
 
 Each article ends with an `article-links` block cross-linking the relevant **end-user** AI Gateway article (e.g. the API reference links to the end-user "Activity" article), so the two doc sets point at each other.
 
@@ -84,9 +81,9 @@ Every claim (a field name, a header, an error code) must match the code. No fabr
 
 ## 7. Build order
 
-1. Write the 4 real articles + 1 stub as content files in `content/developers/`.
-2. Register them: imports + `articleContentMap` entries in `content/index.ts`; new `developers` collection in `userGuideConfig.ts` (`articleCount: 5`).
-3. Humanizer pass over all five.
+1. Write the 4 articles as content files in `content/developers/`.
+2. Register them: imports + `articleContentMap` entries in `content/index.ts`; new `developers` collection in `userGuideConfig.ts` (`articleCount: 4`).
+3. Humanizer pass over all four.
 4. Mirror new/changed files to the website dir.
 5. Verify: `cd Clients && npm run typecheck` (articles are imported by the app), confirm the collection renders in the user-guide sidebar, and that an in-app deep-link to a `developers/*` article resolves.
 
@@ -96,4 +93,4 @@ Every claim (a field name, a header, an error code) must match the code. No fabr
 - **Cross-link target ids:** the `article-links` must reference real `collectionId`/`articleId` pairs (e.g. `ai-gateway`/`mcp-audit`). Verify each link resolves.
 - **Accuracy drift:** the API reference must match the code exactly. The implementer reads the routers, doesn't guess.
 - **Audience bleed:** keep end-user "click here" tone out of the developer collection, and keep curl/JSON out of the end-user collection. They cross-link but don't merge.
-- **Stub honesty:** the LLM-proxy article is explicitly a preview; it must not imply a full guide exists yet.
+- **No empty pages:** the LLM-proxy guide is deliberately not created until it's written. The collection ships with 4 complete articles, no "coming soon" placeholder.
