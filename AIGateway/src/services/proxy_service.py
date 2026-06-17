@@ -305,6 +305,8 @@ async def log_cache_hit(
     original_cost_usd: float,
     latency_ms: int,
     agent_run_id: Optional[str] = None,
+    request_messages: Optional[list] = None,
+    response_text: Optional[str] = None,
 ):
     """Log a cache hit as a spend entry with zero cost and cache metadata."""
     await log_spend(
@@ -320,6 +322,8 @@ async def log_cache_hit(
         latency_ms=latency_ms,
         metadata={"cache_hit": True, "original_cost_usd": original_cost_usd},
         agent_run_id=agent_run_id,
+        request_messages=request_messages,
+        response_text=response_text,
     )
 
 
@@ -397,12 +401,16 @@ async def run_guardrails(
     organization_id: int,
     messages: list[dict],
     endpoint_id: int,
+    config: Optional[tuple] = None,
 ) -> list[dict]:
     """
     Scan all user messages through guardrails. Returns possibly-masked messages.
     Raises HTTPException(400) if any message is blocked.
+
+    `config` is an optional pre-fetched (rules, settings) tuple so the caller can
+    avoid a redundant get_guardrail_config fetch.
     """
-    rules, guardrail_settings = await get_guardrail_config(organization_id)
+    rules, guardrail_settings = config if config is not None else await get_guardrail_config(organization_id)
     if not rules:
         return messages
 

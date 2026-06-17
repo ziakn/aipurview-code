@@ -99,7 +99,9 @@ async def proxy_chat(request: Request, body: ProxyChatRequest):
 
     # Conversation capture is gated on org-level guardrail settings, not the
     # endpoint (the endpoint dict carries no log_request_body/log_response_body).
-    _, _gr_settings = await get_guardrail_config(org_id)
+    # Fetch the guardrail config once and reuse it for run_guardrails below.
+    _gr_config = await get_guardrail_config(org_id)
+    _, _gr_settings = _gr_config
     capture_request = bool(_gr_settings.get("log_request_body"))
     capture_response = bool(_gr_settings.get("log_response_body"))
 
@@ -128,8 +130,8 @@ async def proxy_chat(request: Request, body: ProxyChatRequest):
     if not await check_org_budget(org_id, estimated_cost):
         raise HTTPException(status_code=402, detail="Organization budget limit exceeded")
 
-    # Guardrails
-    scanned_messages = await run_guardrails(org_id, body.messages, endpoint["id"])
+    # Guardrails (reuse the config fetched above)
+    scanned_messages = await run_guardrails(org_id, body.messages, endpoint["id"], config=_gr_config)
 
     # --- Cache check (exact match, after guardrails for security) ---
     prompt_hash = None
@@ -153,6 +155,19 @@ async def proxy_chat(request: Request, body: ProxyChatRequest):
         cache_hit = await check_cache(org_id, endpoint["id"], prompt_hash)
 
     if cache_hit is not None:
+        cached_response = json.loads(cache_hit["response_body"])
+
+        # Capture request/response for the run drawer when the org opts in, so a
+        # served-from-cache call doesn't wrongly show "(body logging disabled)".
+        cache_resp_text = None
+        if capture_response:
+            try:
+                cache_resp_text = cached_response["choices"][0]["message"]["content"]
+            except (KeyError, IndexError, TypeError):
+                cache_resp_text = None
+            if cache_resp_text is not None and not isinstance(cache_resp_text, str):
+                cache_resp_text = json.dumps(cache_resp_text)
+
         await log_cache_hit(
             organization_id=org_id,
             endpoint_id=endpoint["id"],
@@ -165,10 +180,11 @@ async def proxy_chat(request: Request, body: ProxyChatRequest):
             original_cost_usd=float(cache_hit.get("cost_usd", 0)),
             latency_ms=0,
             agent_run_id=agent_run_id,
+            request_messages=scanned_messages if capture_request else None,
+            response_text=cache_resp_text,
         )
         # Reverse the budget estimate (cache hits are free)
         await reconcile_budget(org_id, estimated_cost, 0)
-        cached_response = json.loads(cache_hit["response_body"])
         return JSONResponse(
             content=cached_response,
             headers={"x-vw-cache": "HIT"},
@@ -239,6 +255,10 @@ async def _handle_completion(
                 resp_text = result["choices"][0]["message"]["content"]
             except (KeyError, IndexError, TypeError):
                 resp_text = None
+            # Some providers return content as a list of parts — coerce to a
+            # string so the TEXT column INSERT doesn't break.
+            if resp_text is not None and not isinstance(resp_text, str):
+                resp_text = json.dumps(resp_text)
 
         await log_spend(
             organization_id=org_id,
@@ -335,7 +355,11 @@ async def _handle_stream(
                 if chunk_str.startswith("data: ") and chunk_str.strip() != "data: [DONE]":
                     try:
                         chunk = json.loads(chunk_str[6:])
-                        delta = chunk.get("choices", [{}])[0].get("delta", {}).get("content")
+                        # Usage-only final chunk has "choices": [] (key present but
+                        # empty) — guard against IndexError so usage/cost/model below
+                        # still parse for that chunk.
+                        choices = chunk.get("choices") or []
+                        delta = choices[0].get("delta", {}).get("content") if choices else None
                         if delta and capture_response:
                             acc.append(delta)
                         if "usage" in chunk:
