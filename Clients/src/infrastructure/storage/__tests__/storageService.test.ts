@@ -165,7 +165,7 @@ describe("StorageService", () => {
 
   describe("sandbox / unavailable storage fallback", () => {
     it("falls back to memory when the constructor probe throws, never throwing", () => {
-      vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      vi.spyOn(window.localStorage, "setItem").mockImplementation(() => {
         throw new Error("storage disabled");
       });
 
@@ -188,7 +188,7 @@ describe("StorageService", () => {
 
     it("swallows a mid-session setItem failure (quota) and degrades to the fallback", () => {
       const svc = new StorageService();
-      vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      vi.spyOn(window.localStorage, "setItem").mockImplementation(() => {
         throw new Error("QuotaExceededError");
       });
       // No throw; the write is dropped, so a subsequent read returns the fallback.

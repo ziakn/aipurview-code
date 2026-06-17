@@ -54,6 +54,10 @@ describe("WhatIfSimulator", () => {
       />,
     );
 
+    // Select the base scenario so framework ids are populated and the run button is enabled.
+    fireEvent.mouseDown(screen.getAllByRole("combobox")[0]);
+    fireEvent.click(screen.getByText("EU High-Risk AI Provider"));
+
     fireEvent.click(screen.getByText("Run estimate"));
     expect(onSimulate).toHaveBeenCalled();
   });
