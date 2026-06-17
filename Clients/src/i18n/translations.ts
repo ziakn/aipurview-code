@@ -7245,6 +7245,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Runs": "Läufe",
     "Couldn't load this run.": "Dieser Lauf konnte nicht geladen werden.",
     "Showing the most recent 50 runs.": "Die neuesten 50 Läufe werden angezeigt.",
+    "Reconstruct a full agent turn: the model calls (the conversation) and tool calls (the actions) correlated into one run.":
+      "Setzen Sie eine vollständige Agentenrunde zusammen: die Modellaufrufe (das Gespräch) und die Tool-Aufrufe (die Aktionen) zu einem Lauf verknüpft.",
     "Runs appear when an agent sends the same run id (header":
       "Läufe erscheinen, wenn ein Agent dieselbe Lauf-ID sendet (Header",
     "SOC 2": "SOC 2",
@@ -15797,6 +15799,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Runs": "Exécutions",
     "Couldn't load this run.": "Impossible de charger cette exécution.",
     "Showing the most recent 50 runs.": "Affichage des 50 exécutions les plus récentes.",
+    "Reconstruct a full agent turn: the model calls (the conversation) and tool calls (the actions) correlated into one run.":
+      "Reconstituez un tour complet de l'agent : les appels de modèle (la conversation) et les appels d'outil (les actions) regroupés en une seule exécution.",
     "Runs appear when an agent sends the same run id (header":
       "Les exécutions apparaissent lorsqu'un agent envoie le même identifiant d'exécution (en-tête",
     "SOC 2": "SOC 2",
@@ -21395,6 +21399,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Runs": "Ejecuciones",
     "Couldn't load this run.": "No se pudo cargar esta ejecución.",
     "Showing the most recent 50 runs.": "Mostrando las 50 ejecuciones más recientes.",
+    "Reconstruct a full agent turn: the model calls (the conversation) and tool calls (the actions) correlated into one run.":
+      "Reconstruye un turno completo del agente: las llamadas al modelo (la conversación) y las llamadas a herramientas (las acciones) agrupadas en una sola ejecución.",
     "Runs appear when an agent sends the same run id (header":
       "Las ejecuciones aparecen cuando un agente envía el mismo id de ejecución (encabezado",
     "SOC 2": "SOC 2",
