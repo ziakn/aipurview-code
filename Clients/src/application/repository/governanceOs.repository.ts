@@ -65,17 +65,6 @@ export async function getAllScenarios({ signal }: { signal?: AbortSignal } = {})
   return response.data;
 }
 
-export async function getScenarioById({
-  id,
-  signal,
-}: {
-  id: number;
-  signal?: AbortSignal;
-}): Promise<any> {
-  const response = await apiServices.get(`${BASE}/scenarios/${id}`, { signal });
-  return response.data;
-}
-
 export async function createScenario({ body }: { body: any }): Promise<any> {
   const response = await apiServices.post(`${BASE}/scenarios`, body);
   return response.data;
