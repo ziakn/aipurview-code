@@ -337,15 +337,17 @@ export default function MCPAgentKeysPage() {
           />
           <Field
             label="Allowed tools"
-            placeholder="e.g., search, get_weather, run_query (comma-separated, leave empty for all)"
+            placeholder="e.g., search, get_weather, run_query"
             value={createForm.allowed_tools}
             onChange={(e) => setCreateForm((p) => ({ ...p, allowed_tools: e.target.value }))}
+            helperText="Allowlist for MCP server tools called through the proxy: if set, this key may call only these tools. Comma-separated; leave empty to allow all. (Does not apply to native tools like Bash/Edit/Write — govern those with guardrails.)"
           />
           <Field
             label="Blocked tools"
-            placeholder="e.g., delete_record, drop_table (comma-separated)"
+            placeholder="e.g., delete_record, drop_table"
             value={createForm.blocked_tools}
             onChange={(e) => setCreateForm((p) => ({ ...p, blocked_tools: e.target.value }))}
+            helperText="Denylist for MCP server tools called through the proxy: these are always denied, even if also in the allowlist. Comma-separated; leave empty to block none."
           />
           <Field
             label="Rate limit (requests per minute)"

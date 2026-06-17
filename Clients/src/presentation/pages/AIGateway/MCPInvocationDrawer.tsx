@@ -1,4 +1,4 @@
-import { Box, Drawer, Typography, Stack, IconButton } from "@mui/material";
+import { Box, Drawer, Typography, Stack, IconButton, Divider } from "@mui/material";
 import { X } from "lucide-react";
 import { useState, useEffect } from "react";
 import Chip from "../../components/Chip";
@@ -62,6 +62,17 @@ export default function MCPInvocationDrawer({ logId, open, onClose }: Invocation
     fontWeight: 600,
     color: palette.text.tertiary,
     letterSpacing: "0.5px",
+    mb: "6px",
+  };
+  const codeBlockSx = {
+    fontSize: 12,
+    fontFamily: "monospace",
+    whiteSpace: "pre-wrap" as const,
+    bgcolor: KEY_DISPLAY_BG,
+    p: "12px",
+    borderRadius: "4px",
+    overflow: "auto",
+    m: 0,
   };
 
   return (
@@ -69,73 +80,61 @@ export default function MCPInvocationDrawer({ logId, open, onClose }: Invocation
       anchor="right"
       open={open}
       onClose={onClose}
-      sx={{ "& .MuiDrawer-paper": { width: 520, p: 3 } }}
+      sx={{ "& .MuiDrawer-paper": { width: 520, px: "16px", py: "20px" } }}
     >
       {!row ? (
         <Typography sx={{ fontSize: 13, color: palette.text.tertiary }}>Loading…</Typography>
       ) : (
-        <Stack gap="16px">
-          <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-            <Box>
-              <Typography sx={{ fontSize: 16, fontWeight: 600, fontFamily: "monospace" }}>
-                {row.tool_name}
-              </Typography>
+        <Stack gap="20px">
+          {/* Header */}
+          <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap="8px">
+            <Stack gap="6px" sx={{ minWidth: 0 }}>
+              <Stack direction="row" alignItems="center" gap="8px" flexWrap="wrap">
+                <Typography sx={{ fontSize: 16, fontWeight: 600, fontFamily: "monospace" }}>
+                  {row.tool_name}
+                </Typography>
+                <Chip
+                  label={row.result_status}
+                  backgroundColor={colors.bg}
+                  textColor={colors.text}
+                />
+              </Stack>
               <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
                 {displayFormattedDate(row.created_at)}
               </Typography>
               <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
                 {(row.agent_key_name || "—") + " · " + (row.session_id || "—")}
               </Typography>
-            </Box>
-            <IconButton size="small" onClick={onClose} aria-label="Close">
+            </Stack>
+            <IconButton size="small" onClick={onClose} aria-label="Close" sx={{ flexShrink: 0 }}>
               <X size={16} />
             </IconButton>
           </Stack>
 
-          <Chip label={row.result_status} backgroundColor={colors.bg} textColor={colors.text} />
+          <Divider />
 
           <Box>
             <Typography sx={labelSx}>TOOL USE ID</Typography>
-            <Typography sx={{ fontSize: 12, fontFamily: "monospace" }}>
+            <Typography sx={{ fontSize: 12, fontFamily: "monospace", wordBreak: "break-all" }}>
               {row.tool_use_id || "—"}
             </Typography>
           </Box>
 
+          <Divider />
+
           <Box>
             <Typography sx={labelSx}>ARGUMENTS</Typography>
-            <Box
-              component="pre"
-              sx={{
-                fontSize: 12,
-                fontFamily: "monospace",
-                whiteSpace: "pre-wrap",
-                bgcolor: KEY_DISPLAY_BG,
-                p: "8px",
-                borderRadius: "4px",
-                overflow: "auto",
-                maxHeight: 200,
-              }}
-            >
+            <Box component="pre" sx={{ ...codeBlockSx, maxHeight: 200 }}>
               {JSON.stringify(row.arguments ?? {}, null, 2)}
             </Box>
           </Box>
 
+          <Divider />
+
           <Box>
             <Typography sx={labelSx}>RESULT</Typography>
             {row.result_response ? (
-              <Box
-                component="pre"
-                sx={{
-                  fontSize: 12,
-                  fontFamily: "monospace",
-                  whiteSpace: "pre-wrap",
-                  bgcolor: KEY_DISPLAY_BG,
-                  p: "8px",
-                  borderRadius: "4px",
-                  overflow: "auto",
-                  maxHeight: 280,
-                }}
-              >
+              <Box component="pre" sx={{ ...codeBlockSx, maxHeight: 280 }}>
                 {JSON.stringify(row.result_response, null, 2)}
                 {row.result_truncated ? "\n… (truncated)" : ""}
               </Box>
@@ -146,22 +145,28 @@ export default function MCPInvocationDrawer({ logId, open, onClose }: Invocation
             )}
           </Box>
 
+          <Divider />
+
           <Box>
             <Typography sx={labelSx}>EVENTS</Typography>
-            <Stack gap="4px" sx={{ mt: "4px" }}>
+            <Stack gap="6px">
               {(row.events || []).map((e: InvocationEvent, i: number) => (
-                <Stack key={i} direction="row" justifyContent="space-between">
+                <Stack key={i} direction="row" justifyContent="space-between" gap="12px">
                   <Typography sx={{ fontSize: 12 }}>
                     {e.type}
                     {e.detail ? ` · ${e.detail}` : ""}
                   </Typography>
-                  <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
+                  <Typography
+                    sx={{ fontSize: 12, color: palette.text.tertiary, whiteSpace: "nowrap" }}
+                  >
                     {displayFormattedDate(e.at)}
                   </Typography>
                 </Stack>
               ))}
             </Stack>
           </Box>
+
+          <Divider />
 
           <Box>
             <Box
@@ -183,14 +188,10 @@ export default function MCPInvocationDrawer({ logId, open, onClose }: Invocation
               <Box
                 component="pre"
                 sx={{
-                  fontSize: 11,
-                  fontFamily: "monospace",
-                  whiteSpace: "pre-wrap",
+                  ...codeBlockSx,
+                  mt: "8px",
                   bgcolor: CODE_BLOCK_BG,
                   color: CODE_BLOCK_TEXT,
-                  p: "8px",
-                  borderRadius: "4px",
-                  overflow: "auto",
                   maxHeight: 320,
                 }}
               >

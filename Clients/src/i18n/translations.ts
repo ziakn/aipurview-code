@@ -1443,6 +1443,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Create a password": "Passwort erstellen",
     "Create a use case": "Anwendungsfall erstellen",
     "Create agent key": "Agentenschlüssel erstellen",
+    "Denylist for MCP server tools called through the proxy: these are always denied, even if also in the allowlist. Comma-separated; leave empty to block none.":
+      "Sperrliste für MCP-Server-Tools, die über den Proxy aufgerufen werden: Sie werden immer abgelehnt, auch wenn sie in der Erlaubnisliste stehen. Durch Kommas getrennt; leer lassen, um keine zu blockieren.",
     "Create alert rule": "Benachrichtigungsregel erstellen",
     "Create and manage intake forms for external submissions":
       "Eingangsformulare für externe Einreichungen erstellen und verwalten",
@@ -10172,6 +10174,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Create a password": "Créer un mot de passe",
     "Create a use case": "Créer un cas d'usage",
     "Create agent key": "Créer une clé d'agent",
+    "Denylist for MCP server tools called through the proxy: these are always denied, even if also in the allowlist. Comma-separated; leave empty to block none.":
+      "Liste de blocage pour les outils de serveur MCP appelés via le proxy : ils sont toujours refusés, même s'ils figurent aussi dans la liste d'autorisation. Séparés par des virgules ; laissez vide pour n'en bloquer aucun.",
     "Create alert rule": "Créer une règle d'alerte",
     "Create and manage intake forms for external submissions":
       "Créer et gérer des formulaires d'entrée pour les soumissions externes",
@@ -18110,6 +18114,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Create a password": "Cree una contraseña",
     "Create a use case": "Crear un caso de uso",
     "Create agent key": "Crear clave de agente",
+    "Denylist for MCP server tools called through the proxy: these are always denied, even if also in the allowlist. Comma-separated; leave empty to block none.":
+      "Lista de denegación para herramientas de servidor MCP llamadas a través del proxy: siempre se deniegan, incluso si también están en la lista de permitidos. Separadas por comas; deja vacío para no bloquear ninguna.",
     "Create alert rule": "Crear regla de alerta",
     "Create arena battle": "Crear batalla de arena",
     "Create Configuration": "Crear configuración",
