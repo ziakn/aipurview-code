@@ -55,7 +55,7 @@ export const mcpToolsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Filters work together. Select both a server and a risk level to narrow down to exactly the tools you want.',
+      text: 'Filters work together. Select both a server and a risk level to narrow down to the exact tools you want.',
     },
     {
       type: 'heading',
@@ -82,7 +82,7 @@ export const mcpToolsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'New tools default to "low" risk. You should review and classify them as part of your onboarding process.',
+      text: 'New tools default to "low" risk. Review and classify them as part of your onboarding process.',
     },
     {
       type: 'heading',
@@ -112,7 +112,7 @@ export const mcpToolsContent: ArticleContent = {
       type: 'callout',
       variant: 'warning',
       title: 'High-risk tools without approval',
-      text: 'If you mark a tool as high risk but don\'t enable approval, the edit modal shows a warning. Consider enabling approval for high-risk tools to ensure human oversight.',
+      text: 'If you mark a tool as high risk but don\'t enable approval, the edit modal shows a warning. Enable approval for high-risk tools so a person reviews each call.',
     },
     {
       type: 'heading',

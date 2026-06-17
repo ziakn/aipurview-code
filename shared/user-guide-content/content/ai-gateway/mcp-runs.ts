@@ -10,7 +10,7 @@ export const mcpRunsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'A run groups everything an agent did in a single working session into one view: the model calls it made (the conversation) alongside the tool calls it ran (the actions). Instead of reading model traffic and tool activity in two separate places, Runs lets you reconstruct a whole agent turn in order.',
+      text: 'A run groups everything an agent did in a single working session into one view: the model calls it made (the conversation) alongside the tool calls it ran (the actions). Rather than reading model traffic and tool activity in two separate places, Runs lets you reconstruct a whole agent turn in order.',
     },
     {
       type: 'paragraph',
@@ -37,11 +37,11 @@ export const mcpRunsContent: ArticleContent = {
       type: 'callout',
       variant: 'tip',
       title: 'Use the same id on every call',
-      text: 'Correlation only works when the agent sends the same run id on every call of a turn — both its model calls and its tool calls, including any sub-calls. If the model calls don\'t carry the header, they\'ll be captured and governed as normal but won\'t appear inside the run.',
+      text: 'Correlation only works when the agent sends the same run id on every call of a turn: both its model calls and its tool calls, including any sub-calls. If the model calls don\'t carry the header, they\'ll be captured and governed as normal but won\'t appear inside the run.',
     },
     {
       type: 'paragraph',
-      text: 'A call with no run id is still fully logged and still governed exactly as before — it simply won\'t be grouped into a correlated run. There is no loss of capture or enforcement.',
+      text: 'A call with no run id is still fully logged and governed exactly as before; it just won\'t be grouped into a correlated run. No capture or enforcement is lost.',
     },
     {
       type: 'heading',
@@ -80,7 +80,7 @@ export const mcpRunsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The detail drawer shows every entry in the run, model calls and tool calls interleaved in the order they happened. Each entry is tagged so you can tell the two apart at a glance:',
+      text: 'The detail drawer shows every entry in the run, model calls and tool calls interleaved in the order they happened. Each entry is tagged so you can tell the two apart:',
     },
     {
       type: 'bullet-list',
@@ -102,7 +102,7 @@ export const mcpRunsContent: ArticleContent = {
     {
       type: 'bullet-list',
       items: [
-        { text: 'When the flags are on, the prompt and response shown are the post-guardrail (scanned and masked) versions — never the raw, unmasked text.' },
+        { text: 'When the flags are on, the prompt and response shown are the post-guardrail (scanned and masked) versions, never the raw unmasked text.' },
         { text: 'When the flags are off, model entries show "(body logging disabled)" instead of content. The run, its counts, timing and tool activity are still recorded.' },
       ],
     },
@@ -147,7 +147,7 @@ export const mcpRunsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Runs support record-keeping and human-oversight requirements by making a complete agent turn reconstructable end to end — what the agent was asked, what it answered and what actions it took, with every action still passing through allow, deny or approval before it ran.',
+      text: 'Runs support record-keeping and human-oversight requirements by making a complete agent turn reconstructable end to end: what the agent was asked, what it answered and what actions it took, with every action still passing through allow, deny or approval before it ran.',
     },
     {
       type: 'article-links',

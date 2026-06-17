@@ -10,7 +10,7 @@ export const mcpAuditContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The Audit Log records every tool call that flows through the MCP Gateway. It\'s your compliance trail for agent activity: what was called, who called it, whether it succeeded and how long it took.',
+      text: 'The Audit Log records every tool call that flows through the MCP Gateway. It\'s your compliance trail for agent activity, covering what was called, who called it, whether it succeeded and how long it took.',
     },
     {
       type: 'paragraph',

@@ -10,7 +10,7 @@ export const mcpServersContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The Servers page is where you register the backend MCP servers that your AI agents call through the gateway. Each server exposes one or more tools (database queries, search, file operations and so on) that agents can discover and invoke.',
+      text: 'The Servers page is where you register the backend MCP servers that your agents call through the gateway. Each server exposes one or more tools (database queries, search, file operations and so on) that agents can discover and invoke.',
     },
     {
       type: 'paragraph',
@@ -89,7 +89,7 @@ export const mcpServersContent: ArticleContent = {
       type: 'callout',
       variant: 'warning',
       title: 'Auth credentials are stored encrypted',
-      text: 'Bearer tokens and API keys are encrypted at rest. They\'re only decrypted when the gateway forwards a request to the server. You won\'t see the full credential after saving.',
+      text: 'Bearer tokens and API keys are encrypted at rest, and only decrypted when the gateway forwards a request to the server. You won\'t see the full credential after saving.',
     },
     {
       type: 'heading',
@@ -125,7 +125,7 @@ export const mcpServersContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'This is useful during maintenance windows or when you need to quickly cut off access to a server without deleting it.',
+      text: 'This helps during maintenance windows, or when you need to quickly cut off access to a server without deleting it.',
     },
     {
       type: 'heading',

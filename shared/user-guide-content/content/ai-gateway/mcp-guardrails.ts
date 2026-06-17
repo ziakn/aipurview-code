@@ -18,7 +18,7 @@ export const mcpGuardrailsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'These guardrails are separate from the AI Gateway\'s LLM guardrails. LLM guardrails scan chat completion requests to LLM providers. MCP guardrails scan tool invocation inputs sent by agents to MCP servers.',
+      text: 'These guardrails are separate from the AI Gateway\'s LLM guardrails. LLM guardrails scan chat completion requests to LLM providers, while MCP guardrails scan the tool invocation inputs agents send to MCP servers.',
     },
     {
       type: 'heading',
@@ -94,7 +94,7 @@ export const mcpGuardrailsContent: ArticleContent = {
       type: 'callout',
       variant: 'warning',
       title: 'Masking affects tool results',
-      text: 'When masking is used, the tool receives modified input. This means it may produce less relevant results. For example, masking an email address in a search query means the tool won\'t find results for that address.',
+      text: 'When you mask, the tool receives modified input, so it may produce less relevant results. For example, masking an email address in a search query means the tool won\'t find results for that address.',
     },
     {
       type: 'heading',
@@ -264,7 +264,7 @@ export const mcpGuardrailsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'When no rules are configured, three tips explain the feature:',
+      text: 'When no rules are configured, the page shows a few tips about what guardrails do:',
     },
     {
       type: 'bullet-list',
