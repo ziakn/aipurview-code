@@ -60,7 +60,7 @@ Each article ends with an `article-links` block cross-linking the relevant **end
 - A developer who has never seen VerifyWise can follow it. Assumes general REST/JSON/curl familiarity, nothing VerifyWise-specific.
 - Code blocks carry the detail; prose stays minimal and explains the *why* (especially the same-id-everywhere rule, which must be explained, not just shown).
 - Real API terms are fine but get a one-line definition the first time.
-- After the content is written, run a **humanizer pass** over all five articles (same as the end-user articles got): no em dashes, no rule-of-three padding, no copula avoidance, no signposting, no FATAL negation, no Oxford comma, numbers as digits.
+- After the content is written, run a **humanizer pass** over all four articles (same as the end-user articles got): no em dashes, no rule-of-three padding, no copula avoidance, no signposting, no FATAL negation, no Oxford comma, numbers as digits.
 - Sentence case in all headings and titles.
 
 ## 5. Content-block usage (against the real `contentTypes`)
