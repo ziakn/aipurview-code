@@ -1,7 +1,6 @@
 """Read queries for agent runs — group model calls (spend_logs) and tool calls
 (mcp_audit_logs) by agent_run_id within an organization."""
 
-from typing import Optional
 from sqlalchemy import text
 from database.db import get_db
 
