@@ -7243,6 +7243,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Run": "Lauf",
     "Run and compare model evaluations": "Modellbewertungen ausführen und vergleichen",
     "Runs": "Läufe",
+    "Couldn't load this run.": "Dieser Lauf konnte nicht geladen werden.",
+    "Showing the most recent 50 runs.": "Die neuesten 50 Läufe werden angezeigt.",
     "Runs appear when an agent sends the same run id (header":
       "Läufe erscheinen, wenn ein Agent dieselbe Lauf-ID sendet (Header",
     "SOC 2": "SOC 2",
@@ -15793,6 +15795,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Run": "Exécution",
     "Run and compare model evaluations": "Exécuter et comparer les évaluations de modèles",
     "Runs": "Exécutions",
+    "Couldn't load this run.": "Impossible de charger cette exécution.",
+    "Showing the most recent 50 runs.": "Affichage des 50 exécutions les plus récentes.",
     "Runs appear when an agent sends the same run id (header":
       "Les exécutions apparaissent lorsqu'un agent envoie le même identifiant d'exécution (en-tête",
     "SOC 2": "SOC 2",
@@ -21389,6 +21393,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Run": "Ejecución",
     "Run and compare model evaluations": "Ejecuta y compara evaluaciones de modelos",
     "Runs": "Ejecuciones",
+    "Couldn't load this run.": "No se pudo cargar esta ejecución.",
+    "Showing the most recent 50 runs.": "Mostrando las 50 ejecuciones más recientes.",
     "Runs appear when an agent sends the same run id (header":
       "Las ejecuciones aparecen cuando un agente envía el mismo id de ejecución (encabezado",
     "SOC 2": "SOC 2",

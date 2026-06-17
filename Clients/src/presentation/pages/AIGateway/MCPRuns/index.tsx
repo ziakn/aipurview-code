@@ -5,6 +5,7 @@ import { apiServices } from "../../../../infrastructure/api/networkServices";
 import MCPTable, { MCPTableColumn } from "../MCPTable";
 import { EmptyState } from "../../../components/EmptyState";
 import RunDetailDrawer from "./RunDetailDrawer";
+import palette from "../../../themes/palette";
 
 interface RunRow {
   agent_run_id: string;
@@ -18,7 +19,7 @@ interface RunRow {
   last_at: string;
 }
 
-const PAGE_SIZE = 25;
+const RUNS_LIMIT = 50;
 
 const COLUMNS: MCPTableColumn[] = [
   { label: "Run" },
@@ -38,7 +39,7 @@ export default function MCPRuns() {
     setLoading(true);
     try {
       const res = await apiServices.get<Record<string, any>>(
-        `/ai-gateway/mcp/runs?limit=${PAGE_SIZE}&offset=0`,
+        `/ai-gateway/mcp/runs?limit=${RUNS_LIMIT}&offset=0`,
       );
       setRows(res?.data?.data ?? []);
     } finally {
@@ -62,7 +63,7 @@ export default function MCPRuns() {
   }
 
   return (
-    <Stack spacing={2}>
+    <Stack sx={{ gap: "16px" }}>
       <Typography variant="h6">Runs</Typography>
       <MCPTable<RunRow>
         id="mcp-runs-table"
@@ -79,6 +80,11 @@ export default function MCPRuns() {
           r.denied_count || "—",
         ]}
       />
+      {rows.length >= RUNS_LIMIT && (
+        <Typography variant="caption" sx={{ color: palette.text.tertiary }}>
+          Showing the most recent 50 runs.
+        </Typography>
+      )}
       {selected && <RunDetailDrawer runId={selected} onClose={() => setSelected(null)} />}
     </Stack>
   );
