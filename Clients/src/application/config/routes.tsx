@@ -2,9 +2,10 @@ import { Suspense } from "react";
 import { Route, Navigate } from "react-router-dom";
 import { lazyRoute, LazyFallback } from "../utils/lazyRoute";
 
-// Eager imports — only the app shell and route guard
+// Eager imports — app shell, route guard, and Use cases page (mounts with layout for table skeleton UX)
 import Dashboard from "../../presentation/containers/Dashboard";
 import ProtectedRoute from "../../presentation/components/ProtectedRoute";
+import VWHome from "../../presentation/pages/Home/1.0Home";
 
 // ── Authentication routes ─────────────────────────────────────────────
 const Login = lazyRoute(() => import("../../presentation/pages/Authentication/Login"));
@@ -37,7 +38,6 @@ const IntegratedDashboard = lazyRoute(
   () => import("../../presentation/pages/DashboardOverview/IntegratedDashboard"),
 );
 const StartHere = lazyRoute(() => import("../../presentation/pages/StartHere"));
-const VWHome = lazyRoute(() => import("../../presentation/pages/Home/1.0Home"));
 const VWProjectView = lazyRoute(
   () => import("../../presentation/pages/ProjectView/V1.0ProjectView"),
 );
@@ -350,14 +350,7 @@ export const createRoutes = (
         </Suspense>
       }
     />
-    <Route
-      path="/overview"
-      element={
-        <Suspense fallback={<LazyFallback />}>
-          <VWHome />
-        </Suspense>
-      }
-    />
+    <Route path="/overview" element={<VWHome />} />
     <Route
       path="/framework/:tab?"
       element={
