@@ -25,6 +25,90 @@ export type Lang = "en" | "de" | "fr" | "es";
 
 export const translations: Record<string, Record<string, string>> = {
   de: {
+    // AI Apps (MO-362)
+    "AI app": "KI-App",
+    "AI app deleted successfully": "KI-App erfolgreich gelöscht",
+    "AI app details": "KI-App-Details",
+    "AI app not found or failed to load.":
+      "KI-App nicht gefunden oder konnte nicht geladen werden.",
+    "AI apps": "KI-Apps",
+    "Applicable regulations such as GDPR, HIPAA or sector rules":
+      "Geltende Vorschriften wie DSGVO, HIPAA oder branchenspezifische Regeln",
+    "Approval center and governance": "Freigabezentrum und Governance",
+    "Are you sure you want to delete": "Möchten Sie wirklich löschen",
+    "Banned": "Gesperrt",
+    "Browse, approve and govern the AI applications your employees use.":
+      "Durchsuchen, genehmigen und steuern Sie die KI-Anwendungen, die Ihre Mitarbeitenden nutzen.",
+    "Calculated risk score": "Berechneter Risikowert",
+    "Change status:": "Status ändern:",
+    "Consequences of incorrect or biased outputs on customers or IP":
+      "Folgen fehlerhafter oder verzerrter Ausgaben für Kunden oder geistiges Eigentum",
+    "Current risk score": "Aktueller Risikowert",
+    "Delete AI app": "KI-App löschen",
+    "Detailed view of a specific AI app": "Detailansicht einer bestimmten KI-App",
+    "Employee report": "Mitarbeitermeldung",
+    "Failed to delete AI app": "KI-App konnte nicht gelöscht werden",
+    "Failed to load AI apps. Please try again.":
+      "KI-Apps konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "Failed to save policy mapping": "Richtlinienzuordnung konnte nicht gespeichert werden",
+    "Failed to save risk assessment": "Risikobewertung konnte nicht gespeichert werden",
+    "Failed to update model dependencies": "Modellabhängigkeiten konnten nicht aktualisiert werden",
+    "Firewall": "Firewall",
+    "Impact on operations if the app becomes unavailable or wrong":
+      "Auswirkungen auf den Betrieb, wenn die App ausfällt oder fehlerhaft arbeitet",
+    "Keep one list of every AI app": "Eine zentrale Liste aller KI-Apps führen",
+    "Link each app to the models it runs on, the policies that apply to it and the data types it is allowed to touch, so you have a clear record for every tool.":
+      "Verknüpfen Sie jede App mit den Modellen, auf denen sie läuft, den geltenden Richtlinien und den Datentypen, auf die sie zugreifen darf – so haben Sie für jedes Tool einen klaren Nachweis.",
+    "Manual": "Manuell",
+    "Map models, policies and data access": "Modelle, Richtlinien und Datenzugriff zuordnen",
+    "Model dependencies": "Modellabhängigkeiten",
+    "Add models": "Modelle hinzufügen",
+    "Model dependencies updated": "Modellabhängigkeiten aktualisiert",
+    "Select the model inventory entries this AI app depends on.":
+      "Wählen Sie die Modellinventar-Einträge aus, von denen diese KI-App abhängt.",
+    'No models linked yet. Use "Add model" to link model inventory entries to this app.':
+      "Noch keine Modelle verknüpft. Verwenden Sie „Modell hinzufügen“, um Modellinventar-Einträge mit dieser App zu verknüpfen.",
+    "Model dependencies updated successfully": "Modellabhängigkeiten erfolgreich aktualisiert",
+    "New AI app": "Neue KI-App",
+    "No models linked to this AI app.": "Keine Modelle mit dieser KI-App verknüpft.",
+    "No owner": "Kein Verantwortlicher",
+    "No policies available.": "Keine Richtlinien verfügbar.",
+    "No vendor": "Kein Anbieter",
+    "Number of employees, departments or external users with access":
+      "Anzahl der Mitarbeitenden, Abteilungen oder externen Nutzer mit Zugriff",
+    "Output impact": "Auswirkung der Ausgabe",
+    "Policy mapping": "Richtlinienzuordnung",
+    "Add policy": "Richtlinie hinzufügen",
+    "Add policies": "Richtlinien hinzufügen",
+    "Policy mapping saved": "Richtlinienzuordnung gespeichert",
+    "Select the policies that apply to this AI app.":
+      "Wählen Sie die für diese KI-App geltenden Richtlinien aus.",
+    'No policies linked yet. Use "Add policy" to map applicable policies to this app.':
+      "Noch keine Richtlinien verknüpft. Verwenden Sie „Richtlinie hinzufügen“, um geltende Richtlinien dieser App zuzuordnen.",
+    "Policy mapping saved successfully": "Richtlinienzuordnung erfolgreich gespeichert",
+    "Procurement": "Beschaffung",
+    "Promote to AI app": "Zu KI-App hochstufen",
+    "Proxy": "Proxy",
+    "Record the AI tools your teams use, including shadow AI you promote from a discovered tool, with its owner, vendor and how you found it.":
+      "Erfassen Sie die KI-Tools, die Ihre Teams nutzen – einschließlich Schatten-KI, die Sie aus einem entdeckten Tool hochstufen – mit Verantwortlichem, Anbieter und der Art, wie Sie darauf gestoßen sind.",
+    "Regulatory scope": "Regulatorischer Geltungsbereich",
+    "Required training": "Erforderliche Schulung",
+    "Run approvals and risk assessments": "Freigaben und Risikobewertungen durchführen",
+    "Save assessment": "Bewertung speichern",
+    "Save dependencies": "Abhängigkeiten speichern",
+    "Save mapping": "Zuordnung speichern",
+    "Search AI apps": "KI-Apps durchsuchen",
+    "Select model inventory entries": "Einträge aus dem Modellinventar auswählen",
+    "Sensitivity of data the app can access or process":
+      "Sensibilität der Daten, auf die die App zugreifen oder die sie verarbeiten kann",
+    "Suggested policies": "Empfohlene Richtlinien",
+    "Take an app from draft to approved, score its risk and assign the training people need before they use it.":
+      "Bringen Sie eine App vom Entwurf zur Freigabe, bewerten Sie ihr Risiko und weisen Sie die nötige Schulung zu, bevor Mitarbeitende sie nutzen.",
+    "User exposure": "Nutzerexposition",
+    "Vendor maturity": "Reifegrad des Anbieters",
+    "Vendor security posture, review status and track record":
+      "Sicherheitsniveau, Prüfstatus und Erfolgsbilanz des Anbieters",
+    "What is this app used for?": "Wofür wird diese App verwendet?",
     // Sidebar / nav
     "AI system risk classification": "[DE] AI system risk classification",
     "Activation status": "[DE] Activation status",
@@ -1131,6 +1215,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Avg Latency": "Durchschnittliche Latenz",
     "Avg input tokens": "Durchschnittliche Eingabe-Tokens",
     "Avg latency": "Durchschnittliche Latenz",
+    "Avg latency, top 10 tools": "Durchschnittliche Latenz, Top 10 Tools",
     "Avg output tokens": "Durchschnittliche Ausgabe-Tokens",
     "Avg score": "Durchschnittliche Bewertung",
     "Bias (per-turn)": "Verzerrung (pro Runde)",
@@ -1358,6 +1443,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Create a password": "Passwort erstellen",
     "Create a use case": "Anwendungsfall erstellen",
     "Create agent key": "Agentenschlüssel erstellen",
+    "Denylist for MCP server tools called through the proxy: these are always denied, even if also in the allowlist. Comma-separated; leave empty to block none.":
+      "Sperrliste für MCP-Server-Tools, die über den Proxy aufgerufen werden: Sie werden immer abgelehnt, auch wenn sie in der Erlaubnisliste stehen. Durch Kommas getrennt; leer lassen, um keine zu blockieren.",
     "Create alert rule": "Benachrichtigungsregel erstellen",
     "Create and manage intake forms for external submissions":
       "Eingangsformulare für externe Einreichungen erstellen und verwalten",
@@ -1652,8 +1739,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Average round-trip time for tool calls": "Durchschnittliche Antwortzeit für Tool-Aufrufe",
     "Average round-trip time from request to complete response":
       "Durchschnittliche Antwortzeit von der Anfrage bis zur vollständigen Antwort",
-    "Average round-trip time per tool call, helping identify slow or bottlenecked tools":
-      "Durchschnittliche Antwortzeit pro Tool-Aufruf, hilft bei der Identifizierung langsamer Tools",
+    "Average round-trip time per tool call, useful for spotting slow tools":
+      "Durchschnittliche Antwortzeit pro Tool-Aufruf, nützlich um langsame Tools zu erkennen",
     "Background colors": "Hintergrundfarben",
     "Battle name": "Vergleichsname",
     "Bearer token": "Bearer-Token",
@@ -1900,11 +1987,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Masked": "Maskiert",
     "Masked preview:": "Maskierte Vorschau:",
     "Match type": "Abgleichstyp",
-    "MCP Approvals": "MCP-Genehmigungen",
-    "MCP Audit Log": "MCP-Prüfprotokoll",
-    "MCP Guardrails": "MCP-Guardrails",
     "MCP Servers": "MCP-Server",
-    "MCP Tool Catalog": "MCP-Tool-Katalog",
+    "MCP Tools": "MCP-Tools",
     "Medium confidence": "Mittlere Konfidenz",
     "Messages": "Nachrichten",
     "Minimum risk score": "Minimale Risikobewertung",
@@ -2460,8 +2544,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Configure API keys first": "Zuerst API-Schlüssel konfigurieren",
     "Configure endpoints to start tracking":
       "Endpunkte konfigurieren, um mit der Verfolgung zu beginnen",
-    "Configure guardrail rules for MCP tool invocations.":
-      "Guardrail-Regeln für MCP-Tool-Aufrufe konfigurieren.",
+    "Scan agent tool calls, MCP and native tools like Bash, for PII, prohibited content or prompt injection, then block or mask what matches.":
+      "Durchsuchen Sie Agent-Tool-Aufrufe, MCP- und native Tools wie Bash, nach PII, unzulässigen Inhalten oder Prompt-Injection und blockieren oder maskieren Sie dann die Treffer.",
     "Configure integrations and tokens for AI detection scanning.":
       "Integrationen und Token für KI-Erkennungsscans konfigurieren.",
     "Configure LLM provider API keys for running evaluations across your organization":
@@ -2526,8 +2610,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Jeder Protokolleintrag zeigt den vollständigen Prompt, der an das LLM gesendet wurde, das Modell",
     "Each task can be assigned to a workspace member with a priority and due date. They":
       "Jede Aufgabe kann einem Mitglied des Arbeitsbereichs mit einer Priorität und einem Fälligkeitsdatum zugewiesen werden. Sie",
-    "Enable approval requirements on sensitive tools to ensure human review before the AI agent can execute them.":
-      "Genehmigungsanforderungen für sensible Tools aktivieren, um eine menschliche Prüfung vor der Ausführung durch den KI-Agenten zu gewährleisten.",
+    "Require approval on sensitive tools so a person reviews them before the agent runs them.":
+      "Verlangen Sie für sensible Tools eine Genehmigung, damit eine Person sie prüft, bevor der Agent sie ausführt.",
     "Enter a descriptive name for this dataset":
       "Geben Sie einen aussagekräftigen Namen für diesen Datensatz ein",
     "Enter a name for the new organization": "Namen für die neue Organisation eingeben",
@@ -2742,13 +2826,13 @@ export const translations: Record<string, Record<string, string>> = {
     "Review and edit the AI-suggested risk before saving.":
       "Prüfen und bearbeiten Sie das von der KI vorgeschlagene Risiko vor dem Speichern.",
     "Review and manage approval requests": "Genehmigungsanfragen prüfen und verwalten",
-    "Review and manage tool invocation approval requests.":
-      "Anfragen zur Genehmigung von Tool-Aufrufen prüfen und verwalten.",
+    "Review and decide on agent tool calls that require human approval before they run.":
+      "Agent-Tool-Aufrufe prüfen und entscheiden, die vor der Ausführung eine menschliche Genehmigung erfordern.",
     "Review and rank": "Prüfen und einstufen",
     "Review the overall assessment and record the deployment decision.":
       "Die Gesamtbewertung prüfen und die Bereitstellungsentscheidung erfassen.",
-    "Review tool invocation history and audit trail.":
-      "Verlauf und Prüfpfad der Tool-Aufrufe prüfen.",
+    "Every tool call your AI agents make, MCP tools and native tools like Bash, with outcome, latency and which agent.":
+      "Jeder Tool-Aufruf Ihrer KI-Agenten, MCP-Tools und native Tools wie Bash, mit Ergebnis, Latenz und ausführendem Agenten.",
     "Route alerts to security teams, managers, or compliance officers. Each rule can have different notification recipients.":
       "Benachrichtigungen an Sicherheitsteams, Manager oder Compliance-Beauftragte weiterleiten. Jede Regel kann unterschiedliche Empfänger haben.",
     "Run a test request through the gateway to complete setup":
@@ -3028,8 +3112,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Model / system version": "Modell- / Systemversion",
     "Model/system version": "Modell-/Systemversion",
     "Neutral / Inactive": "Neutral / Inaktiv",
-    "No MCP guardrail rules configured yet. Add rules to scan tool inputs for PII, prohibited content, or prompt injection attempts.":
-      "Noch keine MCP-Guardrail-Regeln konfiguriert. Fügen Sie Regeln hinzu, um Tool-Eingaben auf PII, verbotene Inhalte oder Prompt-Injection-Versuche zu prüfen.",
+    "No guardrail rules configured yet. Add rules to scan agent tool calls for PII, prohibited content, or prompt injection attempts.":
+      "Noch keine Guardrail-Regeln konfiguriert. Fügen Sie Regeln hinzu, um Agent-Tool-Aufrufe auf PII, verbotene Inhalte oder Prompt-Injection-Versuche zu prüfen.",
     "No Organizational Project Found. Create a new organizational project to manage ISO 27001, ISO 42001, and NIST AI RMF frameworks for your organization.":
       "Kein Organisationsprojekt gefunden. Erstellen Sie ein neues Organisationsprojekt, um die Rahmenwerke ISO 27001, ISO 42001 und NIST AI RMF für Ihre Organisation zu verwalten.",
     "Note whether the dataset has been reviewed for bias, completeness, and accuracy. Track any known quality issues or limitations.":
@@ -3891,12 +3975,30 @@ export const translations: Record<string, Record<string, string>> = {
 
     // AI Gateway sidebar — flat items and MCP group
     "Playground": "Playground",
-    "MCP Gateway": "MCP-Gateway",
+    "Agent Control": "Agentensteuerung",
     "Agent Keys": "Agentenschlüssel",
     "Servers": "Server",
     "Tools": "Tools",
     "Audit Log": "Prüfprotokoll",
     "Approvals": "Genehmigungen",
+    "Agent key": "Agent-Schlüssel",
+    "All tools": "Alle Tools",
+    "Arguments": "Argumente",
+    "Decided by": "Entschieden von",
+    "Delete guardrail": "Guardrail löschen",
+    "Edit guardrail": "Guardrail bearbeiten",
+    "Edit server": "Server bearbeiten",
+    "Edit tool": "Tool bearbeiten",
+    "Health": "Status",
+    "MCP servers": "MCP-Server",
+    "MCP tools": "MCP-Tools",
+    "Prefix": "Präfix",
+    "Rate limit": "Ratenlimit",
+    "Time": "Zeit",
+    "Require approval": "Genehmigung erforderlich",
+    "TOOL USE ID": "TOOL-USE-ID",
+    "No result captured (older adapter, or the tool did not report back).":
+      "Kein Ergebnis erfasst (älterer Adapter oder das Tool hat nicht zurückgemeldet).",
 
     // MCP Approvals page
     "No pending approvals": "Keine ausstehenden Genehmigungen",
@@ -8509,9 +8611,97 @@ export const translations: Record<string, Record<string, string>> = {
     "e.g., Article 9 or A.5.1": "z. B. Article 9 oder A.5.1",
     "e.g., risk_management": "z. B. risk_management",
     "unmapped controls": "nicht zugeordnete Kontrollen",
+    "Too many attempts": "Zu viele Versuche",
+    "Too many requests in a short time. Please wait a moment and refresh the page.":
+      "Zu viele Anfragen in kurzer Zeit. Bitte warten Sie einen Moment und laden Sie die Seite neu.",
   },
 
   fr: {
+    // AI Apps (MO-362)
+    "AI app": "Application IA",
+    "AI app deleted successfully": "Application IA supprimée avec succès",
+    "AI app details": "Détails de l'application IA",
+    "AI app not found or failed to load.": "Application IA introuvable ou impossible à charger.",
+    "AI apps": "Applications IA",
+    "Applicable regulations such as GDPR, HIPAA or sector rules":
+      "Réglementations applicables telles que le RGPD, l'HIPAA ou les règles sectorielles",
+    "Approval center and governance": "Centre d'approbation et gouvernance",
+    "Are you sure you want to delete": "Voulez-vous vraiment supprimer",
+    "Banned": "Interdite",
+    "Browse, approve and govern the AI applications your employees use.":
+      "Parcourez, approuvez et encadrez les applications IA utilisées par vos employés.",
+    "Calculated risk score": "Score de risque calculé",
+    "Change status:": "Changer le statut :",
+    "Consequences of incorrect or biased outputs on customers or IP":
+      "Conséquences de résultats incorrects ou biaisés sur les clients ou la propriété intellectuelle",
+    "Current risk score": "Score de risque actuel",
+    "Delete AI app": "Supprimer l'application IA",
+    "Detailed view of a specific AI app": "Vue détaillée d'une application IA spécifique",
+    "Employee report": "Signalement d'un employé",
+    "Failed to delete AI app": "Échec de la suppression de l'application IA",
+    "Failed to load AI apps. Please try again.":
+      "Échec du chargement des applications IA. Veuillez réessayer.",
+    "Failed to save policy mapping":
+      "Échec de l'enregistrement de la correspondance des politiques",
+    "Failed to save risk assessment": "Échec de l'enregistrement de l'évaluation des risques",
+    "Failed to update model dependencies": "Échec de la mise à jour des dépendances de modèles",
+    "Firewall": "Firewall",
+    "Impact on operations if the app becomes unavailable or wrong":
+      "Impact sur les opérations si l'application devient indisponible ou défaillante",
+    "Keep one list of every AI app": "Tenez une seule liste de toutes les applications IA",
+    "Link each app to the models it runs on, the policies that apply to it and the data types it is allowed to touch, so you have a clear record for every tool.":
+      "Reliez chaque application aux modèles qu'elle utilise, aux politiques qui s'y appliquent et aux types de données auxquels elle peut accéder, afin de disposer d'un enregistrement clair pour chaque outil.",
+    "Manual": "Manuel",
+    "Map models, policies and data access":
+      "Associer les modèles, les politiques et l'accès aux données",
+    "Model dependencies": "Dépendances de modèles",
+    "Add models": "Ajouter des modèles",
+    "Model dependencies updated": "Dépendances de modèles mises à jour",
+    "Select the model inventory entries this AI app depends on.":
+      "Sélectionnez les entrées de l'inventaire des modèles dont dépend cette application d'IA.",
+    'No models linked yet. Use "Add model" to link model inventory entries to this app.':
+      "Aucun modèle lié pour l'instant. Utilisez « Ajouter un modèle » pour lier des entrées de l'inventaire des modèles à cette application.",
+    "Model dependencies updated successfully": "Dépendances de modèles mises à jour avec succès",
+    "New AI app": "Nouvelle application IA",
+    "No models linked to this AI app.": "Aucun modèle lié à cette application IA.",
+    "No owner": "Aucun responsable",
+    "No policies available.": "Aucune politique disponible.",
+    "No vendor": "Aucun fournisseur",
+    "Number of employees, departments or external users with access":
+      "Nombre d'employés, de services ou d'utilisateurs externes ayant accès",
+    "Output impact": "Impact des résultats",
+    "Policy mapping": "Correspondance des politiques",
+    "Add policy": "Ajouter une politique",
+    "Add policies": "Ajouter des politiques",
+    "Policy mapping saved": "Correspondance des politiques enregistrée",
+    "Select the policies that apply to this AI app.":
+      "Sélectionnez les politiques qui s'appliquent à cette application d'IA.",
+    'No policies linked yet. Use "Add policy" to map applicable policies to this app.':
+      "Aucune politique liée pour l'instant. Utilisez « Ajouter une politique » pour associer les politiques applicables à cette application.",
+    "Policy mapping saved successfully": "Correspondance des politiques enregistrée avec succès",
+    "Procurement": "Achats",
+    "Promote to AI app": "Promouvoir en application IA",
+    "Proxy": "Proxy",
+    "Record the AI tools your teams use, including shadow AI you promote from a discovered tool, with its owner, vendor and how you found it.":
+      "Recensez les outils IA utilisés par vos équipes, y compris l'IA fantôme que vous promouvez à partir d'un outil découvert, avec son responsable, son fournisseur et la manière dont vous l'avez identifié.",
+    "Regulatory scope": "Périmètre réglementaire",
+    "Required training": "Formation requise",
+    "Run approvals and risk assessments": "Lancer les approbations et les évaluations des risques",
+    "Save assessment": "Enregistrer l'évaluation",
+    "Save dependencies": "Enregistrer les dépendances",
+    "Save mapping": "Enregistrer la correspondance",
+    "Search AI apps": "Rechercher des applications IA",
+    "Select model inventory entries": "Sélectionner des entrées de l'inventaire des modèles",
+    "Sensitivity of data the app can access or process":
+      "Sensibilité des données auxquelles l'application peut accéder ou qu'elle peut traiter",
+    "Suggested policies": "Politiques suggérées",
+    "Take an app from draft to approved, score its risk and assign the training people need before they use it.":
+      "Faites passer une application du brouillon à l'approbation, évaluez son risque et attribuez la formation nécessaire avant que les utilisateurs ne s'en servent.",
+    "User exposure": "Exposition des utilisateurs",
+    "Vendor maturity": "Maturité du fournisseur",
+    "Vendor security posture, review status and track record":
+      "Posture de sécurité, statut d'examen et antécédents du fournisseur",
+    "What is this app used for?": "À quoi sert cette application ?",
     // Sidebar / nav
     "AI system risk classification": "[FR] AI system risk classification",
     "Activation status": "[FR] Activation status",
@@ -9157,12 +9347,30 @@ export const translations: Record<string, Record<string, string>> = {
     "Playground": "Playground",
     "Prompts": "Prompts",
     "Logs": "Journaux",
-    "MCP Gateway": "Passerelle MCP",
+    "Agent Control": "Contrôle des agents",
     "Agent Keys": "Clés d'agent",
     "Servers": "Serveurs",
     "Tools": "Outils",
     "Audit Log": "Journal d'audit",
     "Approvals": "Approbations",
+    "Agent key": "Clé d'agent",
+    "All tools": "Tous les outils",
+    "Arguments": "Arguments",
+    "Decided by": "Décidé par",
+    "Delete guardrail": "Supprimer le garde-fou",
+    "Edit guardrail": "Modifier le garde-fou",
+    "Edit server": "Modifier le serveur",
+    "Edit tool": "Modifier l'outil",
+    "Health": "État",
+    "MCP servers": "Serveurs MCP",
+    "MCP tools": "Outils MCP",
+    "Prefix": "Préfixe",
+    "Rate limit": "Limite de débit",
+    "Time": "Heure",
+    "Require approval": "Approbation requise",
+    "TOOL USE ID": "ID D'UTILISATION D'OUTIL",
+    "No result captured (older adapter, or the tool did not report back).":
+      "Aucun résultat capturé (adaptateur plus ancien ou l'outil n'a rien renvoyé).",
     "No pending approvals": "Aucune approbation en attente",
     "No approval history yet": "Aucun historique d'approbation pour le moment",
 
@@ -9746,6 +9954,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Avg Latency": "Latence moyenne",
     "Avg input tokens": "Tokens d'entrée moyens",
     "Avg latency": "Latence moyenne",
+    "Avg latency, top 10 tools": "Latence moyenne, top 10 outils",
     "Avg output tokens": "Tokens de sortie moyens",
     "Avg score": "Score moyen",
     "Bias (per-turn)": "Biais (par tour)",
@@ -9965,6 +10174,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Create a password": "Créer un mot de passe",
     "Create a use case": "Créer un cas d'usage",
     "Create agent key": "Créer une clé d'agent",
+    "Denylist for MCP server tools called through the proxy: these are always denied, even if also in the allowlist. Comma-separated; leave empty to block none.":
+      "Liste de blocage pour les outils de serveur MCP appelés via le proxy : ils sont toujours refusés, même s'ils figurent aussi dans la liste d'autorisation. Séparés par des virgules ; laissez vide pour n'en bloquer aucun.",
     "Create alert rule": "Créer une règle d'alerte",
     "Create and manage intake forms for external submissions":
       "Créer et gérer des formulaires d'entrée pour les soumissions externes",
@@ -10238,8 +10449,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Average round-trip time for tool calls": "Temps aller-retour moyen pour les appels d'outils",
     "Average round-trip time from request to complete response":
       "Temps aller-retour moyen de la requête à la réponse complète",
-    "Average round-trip time per tool call, helping identify slow or bottlenecked tools":
-      "Temps aller-retour moyen par appel d'outil, aidant à identifier les outils lents ou saturés",
+    "Average round-trip time per tool call, useful for spotting slow tools":
+      "Temps aller-retour moyen par appel d'outil, utile pour repérer les outils lents",
     "Background colors": "Couleurs d'arrière-plan",
     "Battle name": "Nom de la comparaison",
     "Bearer token": "Jeton bearer",
@@ -10487,11 +10698,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Masked": "Masqué",
     "Masked preview:": "Aperçu masqué :",
     "Match type": "Type de correspondance",
-    "MCP Approvals": "Approbations MCP",
-    "MCP Audit Log": "Journal d'audit MCP",
-    "MCP Guardrails": "Garde-fous MCP",
     "MCP Servers": "Serveurs MCP",
-    "MCP Tool Catalog": "Catalogue d'outils MCP",
+    "MCP Tools": "Outils MCP",
     "Medium confidence": "Confiance moyenne",
     "Messages": "Messages",
     "Minimum risk score": "Score de risque minimum",
@@ -11041,8 +11249,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Configure API keys first": "Configurez d'abord les clés API",
     "Configure endpoints to start tracking":
       "Configurez des points de terminaison pour commencer le suivi",
-    "Configure guardrail rules for MCP tool invocations.":
-      "Configurer les règles de garde-fous pour les invocations d'outils MCP.",
+    "Scan agent tool calls, MCP and native tools like Bash, for PII, prohibited content or prompt injection, then block or mask what matches.":
+      "Analysez les appels d'outils des agents, MCP et outils natifs comme Bash, à la recherche de données personnelles, de contenu interdit ou d'injection de prompt, puis bloquez ou masquez les correspondances.",
     "Configure integrations and tokens for AI detection scanning.":
       "Configurer les intégrations et les jetons pour l'analyse de détection IA.",
     "Configure LLM provider API keys for running evaluations across your organization":
@@ -11110,8 +11318,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Chaque tâche peut être assignée à un membre de l'espace de travail avec une priorité et une date d'échéance. Elles",
 
     // Batch 06
-    "Enable approval requirements on sensitive tools to ensure human review before the AI agent can execute them.":
-      "Activez les exigences d'approbation sur les outils sensibles pour garantir une relecture humaine avant que l'agent IA puisse les exécuter.",
+    "Require approval on sensitive tools so a person reviews them before the agent runs them.":
+      "Exigez une approbation sur les outils sensibles pour qu'une personne les relise avant que l'agent ne les exécute.",
     "Enter a descriptive name for this dataset":
       "Saisissez un nom descriptif pour ce jeu de données",
     "Enter a name for the new organization": "Saisissez un nom pour la nouvelle organisation",
@@ -11327,13 +11535,13 @@ export const translations: Record<string, Record<string, string>> = {
     "Review and edit the AI-suggested risk before saving.":
       "Examinez et modifiez le risque suggéré par l'IA avant d'enregistrer.",
     "Review and manage approval requests": "Examiner et gérer les demandes d'approbation",
-    "Review and manage tool invocation approval requests.":
-      "Examiner et gérer les demandes d'approbation d'invocation d'outils.",
+    "Review and decide on agent tool calls that require human approval before they run.":
+      "Examinez et décidez des appels d'outils d'agents qui nécessitent une approbation humaine avant leur exécution.",
     "Review and rank": "Examiner et classer",
     "Review the overall assessment and record the deployment decision.":
       "Examinez l'évaluation globale et enregistrez la décision de déploiement.",
-    "Review tool invocation history and audit trail.":
-      "Examinez l'historique d'invocation des outils et la piste d'audit.",
+    "Every tool call your AI agents make, MCP tools and native tools like Bash, with outcome, latency and which agent.":
+      "Chaque appel d'outil effectué par vos agents IA, outils MCP et outils natifs comme Bash, avec le résultat, la latence et l'agent concerné.",
     "Route alerts to security teams, managers, or compliance officers. Each rule can have different notification recipients.":
       "Acheminez les alertes vers les équipes de sécurité, les managers ou les responsables de la conformité. Chaque règle peut avoir des destinataires de notification différents.",
     "Run a test request through the gateway to complete setup":
@@ -11614,8 +11822,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Model / system version": "Version du modèle / système",
     "Model/system version": "Version du modèle/système",
     "Neutral / Inactive": "Neutre / Inactif",
-    "No MCP guardrail rules configured yet. Add rules to scan tool inputs for PII, prohibited content, or prompt injection attempts.":
-      "Aucune règle de garde-fou MCP configurée pour le moment. Ajoutez des règles pour analyser les entrées d'outils à la recherche de données personnelles, de contenu interdit ou de tentatives d'injection de prompt.",
+    "No guardrail rules configured yet. Add rules to scan agent tool calls for PII, prohibited content, or prompt injection attempts.":
+      "Aucune règle de garde-fou configurée pour le moment. Ajoutez des règles pour analyser les appels d'outils des agents à la recherche de données personnelles, de contenu interdit ou de tentatives d'injection de prompt.",
     "No Organizational Project Found. Create a new organizational project to manage ISO 27001, ISO 42001, and NIST AI RMF frameworks for your organization.":
       "Aucun projet organisationnel trouvé. Créez un nouveau projet organisationnel pour gérer les référentiels ISO 27001, ISO 42001 et NIST AI RMF de votre organisation.",
     "Note whether the dataset has been reviewed for bias, completeness, and accuracy. Track any known quality issues or limitations.":
@@ -16949,8 +17157,95 @@ export const translations: Record<string, Record<string, string>> = {
     "e.g., Article 9 or A.5.1": "p. ex., Article 9 ou A.5.1",
     "e.g., risk_management": "p. ex., risk_management",
     "unmapped controls": "contrôles sans correspondance",
+    "Too many attempts": "Trop de tentatives",
+    "Too many requests in a short time. Please wait a moment and refresh the page.":
+      "Trop de requêtes en peu de temps. Veuillez patienter un instant et actualiser la page.",
   },
   es: {
+    // AI Apps (MO-362)
+    "AI app": "Aplicación de IA",
+    "AI app deleted successfully": "Aplicación de IA eliminada correctamente",
+    "AI app details": "Detalles de la aplicación de IA",
+    "AI app not found or failed to load.":
+      "No se encontró la aplicación de IA o no se pudo cargar.",
+    "AI apps": "Aplicaciones de IA",
+    "Applicable regulations such as GDPR, HIPAA or sector rules":
+      "Regulaciones aplicables como el RGPD, la HIPAA o normas sectoriales",
+    "Approval center and governance": "Centro de aprobación y gobernanza",
+    "Are you sure you want to delete": "¿Seguro que deseas eliminar",
+    "Banned": "Prohibida",
+    "Browse, approve and govern the AI applications your employees use.":
+      "Explora, aprueba y gobierna las aplicaciones de IA que usan tus empleados.",
+    "Calculated risk score": "Puntuación de riesgo calculada",
+    "Change status:": "Cambiar estado:",
+    "Consequences of incorrect or biased outputs on customers or IP":
+      "Consecuencias de resultados incorrectos o sesgados para los clientes o la propiedad intelectual",
+    "Current risk score": "Puntuación de riesgo actual",
+    "Delete AI app": "Eliminar aplicación de IA",
+    "Detailed view of a specific AI app": "Vista detallada de una aplicación de IA específica",
+    "Employee report": "Reporte de empleado",
+    "Failed to delete AI app": "No se pudo eliminar la aplicación de IA",
+    "Failed to load AI apps. Please try again.":
+      "No se pudieron cargar las aplicaciones de IA. Inténtalo de nuevo.",
+    "Failed to save policy mapping": "No se pudo guardar la asignación de políticas",
+    "Failed to save risk assessment": "No se pudo guardar la evaluación de riesgos",
+    "Failed to update model dependencies": "No se pudieron actualizar las dependencias de modelos",
+    "Firewall": "Firewall",
+    "Impact on operations if the app becomes unavailable or wrong":
+      "Impacto en las operaciones si la aplicación deja de estar disponible o falla",
+    "Keep one list of every AI app": "Mantén una sola lista de todas las aplicaciones de IA",
+    "Link each app to the models it runs on, the policies that apply to it and the data types it is allowed to touch, so you have a clear record for every tool.":
+      "Vincula cada aplicación con los modelos que ejecuta, las políticas que le aplican y los tipos de datos a los que puede acceder, para tener un registro claro de cada herramienta.",
+    "Manual": "Manual",
+    "Map models, policies and data access": "Asignar modelos, políticas y acceso a datos",
+    "Model dependencies": "Dependencias de modelos",
+    "Add models": "Agregar modelos",
+    "Model dependencies updated": "Dependencias de modelos actualizadas",
+    "Select the model inventory entries this AI app depends on.":
+      "Selecciona las entradas del inventario de modelos de las que depende esta aplicación de IA.",
+    'No models linked yet. Use "Add model" to link model inventory entries to this app.':
+      'Aún no hay modelos vinculados. Usa "Agregar modelo" para vincular entradas del inventario de modelos a esta aplicación.',
+    "Model dependencies updated successfully": "Dependencias de modelos actualizadas correctamente",
+    "New AI app": "Nueva aplicación de IA",
+    "No models linked to this AI app.": "No hay modelos vinculados a esta aplicación de IA.",
+    "No owner": "Sin responsable",
+    "No policies available.": "No hay políticas disponibles.",
+    "No vendor": "Sin proveedor",
+    "Number of employees, departments or external users with access":
+      "Número de empleados, departamentos o usuarios externos con acceso",
+    "Output impact": "Impacto de los resultados",
+    "Policy mapping": "Asignación de políticas",
+    "Add policy": "Agregar política",
+    "Add policies": "Agregar políticas",
+    "Policy mapping saved": "Asignación de políticas guardada",
+    "Select the policies that apply to this AI app.":
+      "Selecciona las políticas que se aplican a esta aplicación de IA.",
+    'No policies linked yet. Use "Add policy" to map applicable policies to this app.':
+      'Aún no hay políticas vinculadas. Usa "Agregar política" para asignar las políticas aplicables a esta aplicación.',
+    "Policy mapping saved successfully": "Asignación de políticas guardada correctamente",
+    "Procurement": "Compras",
+    "Promote to AI app": "Promover a aplicación de IA",
+    "Proxy": "Proxy",
+    "Record the AI tools your teams use, including shadow AI you promote from a discovered tool, with its owner, vendor and how you found it.":
+      "Registra las herramientas de IA que usan tus equipos, incluida la IA en la sombra que promueves a partir de una herramienta descubierta, con su responsable, proveedor y cómo la encontraste.",
+    "Regulatory scope": "Alcance regulatorio",
+    "Required training": "Capacitación requerida",
+    "Run approvals and risk assessments": "Ejecutar aprobaciones y evaluaciones de riesgos",
+    "Save assessment": "Guardar evaluación",
+    "Save dependencies": "Guardar dependencias",
+    "Save mapping": "Guardar asignación",
+    "Search AI apps": "Buscar aplicaciones de IA",
+    "Select model inventory entries": "Seleccionar entradas del inventario de modelos",
+    "Sensitivity of data the app can access or process":
+      "Sensibilidad de los datos a los que la aplicación puede acceder o procesar",
+    "Suggested policies": "Políticas sugeridas",
+    "Take an app from draft to approved, score its risk and assign the training people need before they use it.":
+      "Lleva una aplicación de borrador a aprobada, evalúa su riesgo y asigna la capacitación que las personas necesitan antes de usarla.",
+    "User exposure": "Exposición de usuarios",
+    "Vendor maturity": "Madurez del proveedor",
+    "Vendor security posture, review status and track record":
+      "Postura de seguridad, estado de revisión e historial del proveedor",
+    "What is this app used for?": "¿Para qué se usa esta aplicación?",
     "Start here": "Empieza aquí",
     "Dashboard": "Panel",
     "Tasks": "Tareas",
@@ -17154,6 +17449,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Internal": "Interno",
     "Needs rework": "Requiere correcciones",
     "Needs Rework": "Requiere correcciones",
+    "Require approval": "Aprobación requerida",
     "Requires follow-up": "Requiere seguimiento",
     "Awaiting approval": "A la espera de aprobación",
     "Awaiting Approval": "A la espera de aprobación",
@@ -17656,6 +17952,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Avg Latency": "Latencia media",
     "Avg input tokens": "Tokens de entrada medios",
     "Avg latency": "Latencia media",
+    "Avg latency, top 10 tools": "Latencia media, 10 herramientas principales",
     "Avg output tokens": "Tokens de salida medios",
     "Avg score": "Puntuación media",
     "Bias (per-turn)": "Sesgo (por turno)",
@@ -17817,6 +18114,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Create a password": "Cree una contraseña",
     "Create a use case": "Crear un caso de uso",
     "Create agent key": "Crear clave de agente",
+    "Denylist for MCP server tools called through the proxy: these are always denied, even if also in the allowlist. Comma-separated; leave empty to block none.":
+      "Lista de denegación para herramientas de servidor MCP llamadas a través del proxy: siempre se deniegan, incluso si también están en la lista de permitidos. Separadas por comas; deja vacío para no bloquear ninguna.",
     "Create alert rule": "Crear regla de alerta",
     "Create arena battle": "Crear batalla de arena",
     "Create Configuration": "Crear configuración",
@@ -18343,11 +18642,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Masked": "Enmascarado",
     "Masked preview:": "Vista previa enmascarada:",
     "Match type": "Tipo de coincidencia",
-    "MCP Approvals": "Aprobaciones de MCP",
-    "MCP Audit Log": "Registro de auditoría de MCP",
-    "MCP Guardrails": "Barreras de protección de MCP",
     "MCP Servers": "Servidores MCP",
-    "MCP Tool Catalog": "Catálogo de herramientas MCP",
+    "MCP Tools": "Herramientas MCP",
     "Medium confidence": "Confianza media",
     "Messages": "Mensajes",
     "Minimum risk score": "Puntuación de riesgo mínima",
@@ -19319,12 +19615,26 @@ export const translations: Record<string, Record<string, string>> = {
     "No API keys configured": "No hay claves de API configuradas",
     "before you can create an endpoint.": "antes de poder crear un endpoint.",
     "Playground": "Playground",
-    "MCP Gateway": "MCP Gateway",
+    "Agent Control": "Control de agentes",
     "Agent Keys": "Claves de agente",
     "Servers": "Servidores",
     "Tools": "Herramientas",
     "Audit Log": "Registro de auditoría",
     "Approvals": "Aprobaciones",
+    "Agent key": "Clave de agente",
+    "All tools": "Todas las herramientas",
+    "Arguments": "Argumentos",
+    "Decided by": "Decidido por",
+    "Delete guardrail": "Eliminar barrera de protección",
+    "Edit guardrail": "Editar barrera de protección",
+    "Edit server": "Editar servidor",
+    "Edit tool": "Editar herramienta",
+    "Health": "Estado",
+    "MCP servers": "Servidores MCP",
+    "MCP tools": "Herramientas MCP",
+    "Prefix": "Prefijo",
+    "Rate limit": "Límite de solicitudes",
+    "Time": "Hora",
     "No pending approvals": "No hay aprobaciones pendientes",
     "Pending approvals": "Aprobaciones pendientes",
     "Approved requests": "Solicitudes aprobadas",
@@ -19339,6 +19649,9 @@ export const translations: Record<string, Record<string, string>> = {
     "Review request": "Revisar solicitud",
     "No approval history yet": "Aún no hay historial de aprobaciones",
     "Approval history": "Historial de aprobaciones",
+    "TOOL USE ID": "ID DE USO DE HERRAMIENTA",
+    "No result captured (older adapter, or the tool did not report back).":
+      "No se capturó ningún resultado (adaptador antiguo o la herramienta no respondió).",
     "Label (optional)": "Etiqueta (opcional)",
     "Name (optional)": "Nombre (opcional)",
     "Description (optional)": "Descripción (opcional)",
@@ -21847,8 +22160,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Genere datos de muestra para explorar las funciones de VerifyWise",
     "Average round-trip time from request to complete response":
       "Tiempo medio de ida y vuelta desde la solicitud hasta la respuesta completa",
-    "Average round-trip time per tool call, helping identify slow or bottlenecked tools":
-      "Tiempo medio de ida y vuelta por llamada a herramienta, lo que ayuda a identificar herramientas lentas o con cuellos de botella",
+    "Average round-trip time per tool call, useful for spotting slow tools":
+      "Tiempo medio de ida y vuelta por llamada a herramienta, útil para detectar herramientas lentas",
     "Browse pre-built guardrails and enable them with one click":
       "Explore barreras de protección predefinidas y actívelas con un solo clic",
     "Combined prompt and completion tokens across all requests":
@@ -21988,8 +22301,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Configure a local model provider. No API key required.":
       "Configure un proveedor de modelos local. No se requiere clave de API.",
     "Configure endpoints to start tracking": "Configure endpoints para empezar a hacer seguimiento",
-    "Configure guardrail rules for MCP tool invocations.":
-      "Configure reglas de barreras de protección para las invocaciones de herramientas MCP.",
+    "Scan agent tool calls, MCP and native tools like Bash, for PII, prohibited content or prompt injection, then block or mask what matches.":
+      "Analice las llamadas a herramientas de los agentes, MCP y herramientas nativas como Bash, en busca de PII, contenido prohibido o inyección de prompts y luego bloquee o enmascare las coincidencias.",
     "Configure integrations and tokens for AI detection scanning.":
       "Configure integraciones y tokens para el análisis de detección de IA.",
     "Configure LLM provider API keys for running evaluations across your organization":
@@ -22028,8 +22341,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Cada entrada de registro muestra el prompt completo enviado al LLM, el modelo",
     "Each task can be assigned to a workspace member with a priority and due date. They":
       "Cada tarea puede asignarse a un miembro del espacio de trabajo con una prioridad y una fecha de vencimiento. Estos",
-    "Enable approval requirements on sensitive tools to ensure human review before the AI agent can execute them.":
-      "Active los requisitos de aprobación en las herramientas sensibles para garantizar la revisión humana antes de que el agente de IA pueda ejecutarlas.",
+    "Require approval on sensitive tools so a person reviews them before the agent runs them.":
+      "Exige aprobación en las herramientas sensibles para que una persona las revise antes de que el agente las ejecute.",
     "Enter a descriptive name for this dataset":
       "Introduzca un nombre descriptivo para este conjunto de datos",
     "Enter a name for your organization to get started.":
@@ -22140,12 +22453,12 @@ export const translations: Record<string, Record<string, string>> = {
       "Registre repositorios y configure programaciones de análisis automatizados.",
     "Review and edit the AI-suggested risk before saving.":
       "Revise y edite el riesgo sugerido por la IA antes de guardar.",
-    "Review and manage tool invocation approval requests.":
-      "Revise y gestione las solicitudes de aprobación de invocación de herramientas.",
+    "Review and decide on agent tool calls that require human approval before they run.":
+      "Revise y decida sobre las llamadas a herramientas de los agentes que requieren aprobación humana antes de ejecutarse.",
     "Review the overall assessment and record the deployment decision.":
       "Revise la evaluación general y registre la decisión de despliegue.",
-    "Review tool invocation history and audit trail.":
-      "Revise el historial de invocaciones de herramientas y el registro de auditoría.",
+    "Every tool call your AI agents make, MCP tools and native tools like Bash, with outcome, latency and which agent.":
+      "Cada llamada a herramienta que hacen sus agentes de IA, herramientas MCP y herramientas nativas como Bash, con el resultado, la latencia y qué agente.",
     "Route alerts to security teams, managers, or compliance officers. Each rule can have different notification recipients.":
       "Dirija las alertas a los equipos de seguridad, los responsables o los responsables de cumplimiento. Cada regla puede tener diferentes destinatarios de notificaciones.",
     "Run a test request through the gateway to complete setup":
@@ -22304,8 +22617,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Realice llamadas a herramientas a través de MCP Gateway utilizando una clave de agente en POST /v1/mcp con el método tools/call.",
     "Manage API keys for syslog integration and configure syslog sources to feed network traffic data into Shadow AI detection.":
       "Gestione las claves de API para la integración con syslog y configure las fuentes de syslog para alimentar la detección de Shadow AI con datos de tráfico de red.",
-    "No MCP guardrail rules configured yet. Add rules to scan tool inputs for PII, prohibited content, or prompt injection attempts.":
-      "Aún no hay reglas de barreras de protección de MCP configuradas. Añada reglas para analizar las entradas de las herramientas en busca de PII, contenido prohibido o intentos de inyección de prompts.",
+    "No guardrail rules configured yet. Add rules to scan agent tool calls for PII, prohibited content, or prompt injection attempts.":
+      "Aún no hay reglas de barreras de protección configuradas. Añada reglas para analizar las llamadas a herramientas de los agentes en busca de PII, contenido prohibido o intentos de inyección de prompts.",
     "No Organizational Project Found. Create a new organizational project to manage ISO 27001, ISO 42001, and NIST AI RMF frameworks for your organization.":
       "No se ha encontrado ningún proyecto organizativo. Cree un nuevo proyecto organizativo para gestionar los marcos ISO 27001, ISO 42001 y NIST AI RMF de su organización.",
     "Note whether the dataset has been reviewed for bias, completeness, and accuracy. Track any known quality issues or limitations.":
@@ -25307,5 +25620,8 @@ export const translations: Record<string, Record<string, string>> = {
     "e.g., Article 9 or A.5.1": "p. ej., Article 9 o A.5.1",
     "e.g., risk_management": "p. ej., risk_management",
     "unmapped controls": "controles sin mapear",
+    "Too many attempts": "Demasiados intentos",
+    "Too many requests in a short time. Please wait a moment and refresh the page.":
+      "Demasiadas solicitudes en poco tiempo. Espera un momento y actualiza la página.",
   },
 };
