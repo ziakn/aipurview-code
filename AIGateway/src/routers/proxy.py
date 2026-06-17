@@ -75,6 +75,16 @@ async def _extract_virtual_key(request: Request) -> dict:
         raise HTTPException(status_code=401, detail=str(e))
 
 
+def _extract_run_id(request: Request) -> Optional[str]:
+    """Read the agent run/session id from the canonical header or accepted aliases.
+    Header wins; falls back to common names other tools already emit."""
+    for h in ("x-vw-agent-run-id", "x-session-id", "helicone-session-id"):
+        v = request.headers.get(h)
+        if v:
+            return v.strip()
+    return None
+
+
 # ─── Chat Completions ────────────────────────────────────────────────────────
 
 @router.post("/v1/chat/completions")
@@ -82,6 +92,7 @@ async def proxy_chat(request: Request, body: ProxyChatRequest):
     """OpenAI-compatible chat completions endpoint with virtual key auth."""
     vk = await _extract_virtual_key(request)
     org_id = vk["organization_id"]
+    agent_run_id = _extract_run_id(request)
     endpoint_slug = body.model  # "model" field is the endpoint slug
 
     try:
@@ -145,6 +156,7 @@ async def proxy_chat(request: Request, body: ProxyChatRequest):
             total_tokens=cache_hit.get("total_tokens", 0),
             original_cost_usd=float(cache_hit.get("cost_usd", 0)),
             latency_ms=0,
+            agent_run_id=agent_run_id,
         )
         # Reverse the budget estimate (cache hits are free)
         await reconcile_budget(org_id, estimated_cost, 0)
@@ -170,15 +182,20 @@ async def proxy_chat(request: Request, body: ProxyChatRequest):
 
     start_time = time.time()
 
+    # Store the SCANNED (post-guardrails) request only when the endpoint opts in
+    stored_request = scanned_messages if endpoint.get("log_request_body") else None
+
     if body.stream:
         return await _handle_stream(
             org_id, vk, endpoint, final_messages, kwargs, estimated_cost, start_time,
+            agent_run_id=agent_run_id, stored_request=stored_request,
         )
 
     return await _handle_completion(
         org_id, vk, endpoint, final_messages, kwargs, estimated_cost, start_time,
         _prompt_hash=prompt_hash,
         _scanned_messages=scanned_messages if prompt_hash else None,
+        agent_run_id=agent_run_id, stored_request=stored_request,
     )
 
 
@@ -189,6 +206,8 @@ async def _handle_completion(
     _depth: int = 0,
     _prompt_hash: Optional[str] = None,
     _scanned_messages: Optional[list[dict]] = None,
+    agent_run_id: Optional[str] = None,
+    stored_request: Optional[list] = None,
 ):
     """Non-streaming completion with fallback support and optional cache store."""
     try:
@@ -203,6 +222,13 @@ async def _handle_completion(
         usage = result.get("usage", {})
         cost = result.get("cost_usd", 0)
 
+        resp_text = None
+        if endpoint.get("log_response_body"):
+            try:
+                resp_text = result["choices"][0]["message"]["content"]
+            except (KeyError, IndexError, TypeError):
+                resp_text = None
+
         await log_spend(
             organization_id=org_id,
             endpoint_id=endpoint["id"],
@@ -215,6 +241,9 @@ async def _handle_completion(
             cost_usd=cost,
             latency_ms=latency_ms,
             metadata={"virtual_key_id": str(vk["id"])},
+            agent_run_id=agent_run_id,
+            request_messages=stored_request,
+            response_text=resp_text,
         )
         await reconcile_budget(org_id, estimated_cost, cost)
 
@@ -245,6 +274,7 @@ async def _handle_completion(
             virtual_key_id=vk["id"], provider=endpoint["provider"],
             model=endpoint["model"], prompt_tokens=0, completion_tokens=0,
             total_tokens=0, cost_usd=0, latency_ms=latency_ms, status_code=500,
+            agent_run_id=agent_run_id,
         )
         await reconcile_budget(org_id, estimated_cost, 0)
 
@@ -256,6 +286,7 @@ async def _handle_completion(
                 return await _handle_completion(
                     org_id, vk, fallback, messages, kwargs, 0, time.time(), _depth + 1,
                     _prompt_hash=None, _scanned_messages=None,
+                    agent_run_id=agent_run_id, stored_request=stored_request,
                 )
 
         logger.error(f"LLM provider error: {e}")
@@ -266,6 +297,8 @@ async def _handle_stream(
     org_id: int, vk: dict, endpoint: dict,
     messages: list[dict], kwargs: dict,
     estimated_cost: float, start_time: float,
+    agent_run_id: Optional[str] = None,
+    stored_request: Optional[list] = None,
 ):
     """Streaming completion — returns SSE response."""
 
@@ -274,6 +307,7 @@ async def _handle_stream(
         total_completion = 0
         total_cost = 0.0
         final_model = endpoint["model"]
+        acc = []
 
         try:
             async for chunk_str in stream_chat_completion(
@@ -288,6 +322,9 @@ async def _handle_stream(
                 if chunk_str.startswith("data: ") and chunk_str.strip() != "data: [DONE]":
                     try:
                         chunk = json.loads(chunk_str[6:])
+                        delta = chunk.get("choices", [{}])[0].get("delta", {}).get("content")
+                        if delta:
+                            acc.append(delta)
                         if "usage" in chunk:
                             total_prompt = chunk["usage"].get("prompt_tokens", total_prompt)
                             total_completion = chunk["usage"].get("completion_tokens", total_completion)
@@ -311,6 +348,9 @@ async def _handle_stream(
                 total_tokens=total_prompt + total_completion,
                 cost_usd=total_cost, latency_ms=latency_ms,
                 metadata={"virtual_key_id": str(vk["id"])},
+                agent_run_id=agent_run_id,
+                request_messages=stored_request,
+                response_text="".join(acc) if (acc and endpoint.get("log_response_body")) else None,
             )
             await reconcile_budget(org_id, estimated_cost, total_cost)
 
@@ -324,6 +364,7 @@ async def proxy_embeddings(request: Request, body: ProxyEmbeddingRequest):
     """OpenAI-compatible embeddings endpoint with virtual key auth."""
     vk = await _extract_virtual_key(request)
     org_id = vk["organization_id"]
+    agent_run_id = _extract_run_id(request)
     endpoint_slug = body.model
 
     try:
@@ -380,6 +421,7 @@ async def proxy_embeddings(request: Request, body: ProxyEmbeddingRequest):
             total_tokens=usage.get("total_tokens", 0),
             cost_usd=cost, latency_ms=latency_ms,
             metadata={"virtual_key_id": str(vk["id"])},
+            agent_run_id=agent_run_id,
         )
         await reconcile_budget(org_id, estimated_cost, cost)
 
@@ -392,6 +434,7 @@ async def proxy_embeddings(request: Request, body: ProxyEmbeddingRequest):
             virtual_key_id=vk["id"], provider=endpoint["provider"],
             model=endpoint["model"], prompt_tokens=0, completion_tokens=0,
             total_tokens=0, cost_usd=0, latency_ms=latency_ms, status_code=500,
+            agent_run_id=agent_run_id,
         )
         await reconcile_budget(org_id, estimated_cost, 0)
         logger.error(f"Embedding error: {e}")
