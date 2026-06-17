@@ -9,10 +9,9 @@ import {
   TableContainer,
   TableRow,
 } from "@mui/material";
-import type { SelectChangeEvent } from "@mui/material";
 import { Cpu } from "lucide-react";
 import { CustomizableButton } from "../../../components/button/customizable-button";
-import MultiSelect from "../../../components/Inputs/MultiSelect";
+import AutoCompleteField from "../../../components/Inputs/Autocomplete";
 import { useLinkModelsToAiApp } from "../../../../application/hooks/useAiApps";
 import { useModelInventories } from "../../../../application/hooks/useModelInventories";
 import { IAIAppModel } from "../../../../domain/interfaces/i.aiApp";
@@ -54,11 +53,16 @@ export default function AIAppModelDependencies({ appId, models }: AIAppModelDepe
   const { data: modelInventories } = useModelInventories();
   const linkModelsMutation = useLinkModelsToAiApp();
 
-  const modelOptions = useMemo(
+  interface ModelOption {
+    id: number;
+    label: string;
+  }
+
+  const modelOptions = useMemo<ModelOption[]>(
     () =>
       (modelInventories ?? []).map((m) => ({
-        _id: m.id!,
-        name: `${m.provider || "Unknown"} - ${m.model || "Unknown"}${
+        id: m.id!,
+        label: `${m.provider || "Unknown"} - ${m.model || "Unknown"}${
           m.version ? ` v${m.version}` : ""
         }`,
       })),
@@ -69,9 +73,13 @@ export default function AIAppModelDependencies({ appId, models }: AIAppModelDepe
     setLocalModelIds(models.map((m) => m.id));
   }, [models]);
 
-  const handleChange = (event: SelectChangeEvent<number[]>) => {
-    const value = event.target.value;
-    setLocalModelIds(typeof value === "string" ? [] : value);
+  const selectedOptions = useMemo<ModelOption[]>(
+    () => modelOptions.filter((o) => localModelIds.includes(o.id)),
+    [modelOptions, localModelIds],
+  );
+
+  const handleChange = (_event: unknown, value: ModelOption[]) => {
+    setLocalModelIds(value.map((v) => v.id));
   };
 
   const handleSave = async () => {
@@ -139,13 +147,15 @@ export default function AIAppModelDependencies({ appId, models }: AIAppModelDepe
       </Stack>
 
       <Box sx={{ mb: "24px" }}>
-        <MultiSelect
-          id="linked-models"
+        <AutoCompleteField<ModelOption, true>
+          multiple
           label="Linked models"
-          placeholder="Select model inventory entries"
-          value={localModelIds}
-          items={modelOptions}
+          placeholder={selectedOptions.length === 0 ? "Select model inventory entries" : ""}
+          options={modelOptions}
+          value={selectedOptions}
           onChange={handleChange}
+          getOptionLabel={(option) => option.label}
+          isOptionEqualToValue={(option, val) => option.id === val.id}
           sx={{ maxWidth: 400 }}
         />
       </Box>
