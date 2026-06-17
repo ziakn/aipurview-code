@@ -662,6 +662,12 @@ export const collections: Collection[] = [
         keywords: ['mcp', 'audit', 'log', 'history', 'tool call', 'latency', 'error rate', 'compliance', 'record-keeping'],
       },
       {
+        id: 'mcp-runs',
+        title: 'Runs',
+        description: 'Reconstruct a full agent turn — model calls and tool calls correlated into one run.',
+        keywords: ['mcp', 'runs', 'run', 'agent run', 'correlation', 'agent_run_id', 'session', 'conversation', 'tool call', 'model call', 'timeline', 'x-vw-agent-run-id'],
+      },
+      {
         id: 'mcp-approvals',
         title: 'MCP approvals',
         description: 'Review and decide on pending tool execution requests that need human sign-off.',
