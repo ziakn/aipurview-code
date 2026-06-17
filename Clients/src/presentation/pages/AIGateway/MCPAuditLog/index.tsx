@@ -131,6 +131,7 @@ export default function MCPAuditLogPage() {
     <PageHeaderExtended
       title="Activity"
       description="Every tool call your AI agents make, MCP tools and native tools like Bash, with outcome, latency and which agent."
+      helpArticlePath="ai-gateway/mcp-audit"
       actionButton={
         <Box sx={{ width: 160 }}>
           <Select
