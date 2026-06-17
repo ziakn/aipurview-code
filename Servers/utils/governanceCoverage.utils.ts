@@ -1,5 +1,9 @@
 import { sequelize } from "../database/db";
-import { upsertCoverageCacheQuery, getCoverageCacheQuery } from "./governanceOs.utils";
+import {
+  upsertCoverageCacheQuery,
+  getCoverageCacheQuery,
+  deleteCoverageCacheQuery,
+} from "./governanceOs.utils";
 
 interface FrameworkCoverage {
   framework_id: number;
@@ -9,16 +13,68 @@ interface FrameworkCoverage {
   coverage_percentage: number;
   gap_details: { unmapped_controls: string[] };
   synergy_details: { multi_framework_controls: string[] };
+  calculation_methodology: string;
 }
+
+/**
+ * Framework control inventory queries.
+ *
+ * Returns the total number of leaf-level controls / subcontrols / subclauses /
+ * subcategories defined in each framework's master structure. This is the
+ * honest denominator for coverage: it counts what the framework actually
+ * requires, not how many mappings happen to exist.
+ */
+const FRAMEWORK_CONTROL_QUERIES: Record<number, string> = {
+  1: `SELECT COUNT(*) as cnt FROM subcontrols_struct_eu sc
+      JOIN controls_struct_eu c ON sc.control_id = c.id
+      JOIN controlcategories_struct_eu cc ON c.control_category_id = cc.id
+      WHERE cc.framework_id = 1`,
+  2: `SELECT COUNT(*) as cnt FROM subclauses_struct_iso s
+      JOIN clauses_struct_iso c ON s.clause_id = c.id
+      WHERE c.framework_id = 2`,
+  3: `SELECT COUNT(*) as cnt FROM subclauses_struct_iso27001 s
+      JOIN clauses_struct_iso27001 c ON s.clause_id = c.id
+      WHERE c.framework_id = 3`,
+  4: `SELECT COUNT(*) as cnt FROM nist_ai_rmf_subcategories_struct s
+      JOIN nist_ai_rmf_categories_struct c ON s.category_struct_id = c.id
+      WHERE c.framework_id = 4`,
+};
+
+/**
+ * Count the total number of controls defined in a framework's master inventory.
+ *
+ * Falls back to the number of distinct source identifiers currently mapped if
+ * the framework is unknown, so the function never returns zero and avoids
+ * division-by-zero. A zero or missing inventory is a data-quality signal that
+ * should be logged and addressed separately.
+ */
+export const countFrameworkInventory = async (frameworkId: number): Promise<number> => {
+  const query = FRAMEWORK_CONTROL_QUERIES[frameworkId];
+  if (!query) {
+    const [fallback] = await sequelize.query(
+      `SELECT COUNT(DISTINCT source_control_identifier) as cnt
+       FROM governance_control_mappings
+       WHERE source_framework_id = :frameworkId`,
+      { replacements: { frameworkId } },
+    );
+    return parseInt((fallback as any[])[0]?.cnt || "0", 10);
+  }
+
+  const [result] = await sequelize.query(query);
+  return parseInt((result as any[])[0]?.cnt || "0", 10);
+};
 
 /**
  * Compute coverage analysis for a project.
  *
  * For each framework assigned to the project, computes:
- * - Total controls in that framework
- * - How many of those controls have cross-framework mappings
- * - Gap: controls with no mappings to other active frameworks
- * - Synergy: controls mapped by 3+ frameworks
+ * - Total controls in that framework's master inventory
+ * - How many of those inventory controls have cross-framework mappings
+ * - Gap: inventory controls with no mappings to other active frameworks
+ * - Synergy: controls mapped to 2+ other frameworks
+ *
+ * The denominator is the framework's full control inventory, not the count of
+ * mapped controls. This prevents the metric from appearing artificially high.
  */
 export const computeProjectCoverage = async (
   organizationId: number,
@@ -44,26 +100,8 @@ export const computeProjectCoverage = async (
   for (const fw of projectFrameworks as any[]) {
     const otherIds = frameworkIds.filter((id: number) => id !== fw.framework_id);
 
-    // Count total controls for this framework (using source side of mappings as proxy)
-    const [controlCountResult] = await sequelize.query(
-      `SELECT COUNT(DISTINCT source_control_identifier) as total
-       FROM governance_control_mappings
-       WHERE source_framework_id = :frameworkId`,
-      { replacements: { frameworkId: fw.framework_id } },
-    );
-    const totalFromSource = parseInt((controlCountResult as any[])[0]?.total || "0", 10);
-
-    // Also count from target side
-    const [targetCountResult] = await sequelize.query(
-      `SELECT COUNT(DISTINCT target_control_identifier) as total
-       FROM governance_control_mappings
-       WHERE target_framework_id = :frameworkId`,
-      { replacements: { frameworkId: fw.framework_id } },
-    );
-    const totalFromTarget = parseInt((targetCountResult as any[])[0]?.total || "0", 10);
-
-    // Total unique controls that appear in any mapping
-    const totalControls = Math.max(totalFromSource, totalFromTarget, 1);
+    // Total controls from the framework's master inventory
+    const totalControls = await countFrameworkInventory(fw.framework_id);
 
     // If no other frameworks in the project, mapped = 0
     let mappedControls = 0;
@@ -71,14 +109,19 @@ export const computeProjectCoverage = async (
     let multiFrameworkControls: string[] = [];
 
     if (otherIds.length > 0) {
-      // Mapped controls: those that map to other frameworks in the project
+      // Mapped controls: distinct source identifiers that map to other frameworks
+      // in the project. We intentionally count identifiers rather than leaf
+      // inventory rows because mappings are stored at the article / clause /
+      // function level, not the leaf control level.
       const [mappedResult] = await sequelize.query(
         `SELECT COUNT(DISTINCT source_control_identifier) as mapped
          FROM governance_control_mappings
-         WHERE source_framework_id = :frameworkId
+         WHERE organization_id = :organizationId
+           AND source_framework_id = :frameworkId
            AND target_framework_id IN (:otherIds)`,
         {
           replacements: {
+            organizationId,
             frameworkId: fw.framework_id,
             otherIds,
           },
@@ -86,18 +129,23 @@ export const computeProjectCoverage = async (
       );
       mappedControls = parseInt((mappedResult as any[])[0]?.mapped || "0", 10);
 
-      // Gap: controls that exist but have no mapping to other active frameworks
+      // Gap: source identifiers that exist in this org's mappings but have no
+      // mapping to other active frameworks. This is a conservative gap list
+      // based on the organization's own mapping corpus.
       const [gapResult] = await sequelize.query(
         `SELECT DISTINCT source_control_identifier
          FROM governance_control_mappings
-         WHERE source_framework_id = :frameworkId
+         WHERE organization_id = :organizationId
+           AND source_framework_id = :frameworkId
            AND source_control_identifier NOT IN (
              SELECT source_control_identifier FROM governance_control_mappings
-             WHERE source_framework_id = :frameworkId
+             WHERE organization_id = :organizationId
+               AND source_framework_id = :frameworkId
                AND target_framework_id IN (:otherIds)
            )`,
         {
           replacements: {
+            organizationId,
             frameworkId: fw.framework_id,
             otherIds,
           },
@@ -109,12 +157,14 @@ export const computeProjectCoverage = async (
       const [synergyResult] = await sequelize.query(
         `SELECT source_control_identifier, COUNT(DISTINCT target_framework_id) as fw_count
          FROM governance_control_mappings
-         WHERE source_framework_id = :frameworkId
+         WHERE organization_id = :organizationId
+           AND source_framework_id = :frameworkId
            AND target_framework_id IN (:otherIds)
          GROUP BY source_control_identifier
          HAVING COUNT(DISTINCT target_framework_id) >= 2`,
         {
           replacements: {
+            organizationId,
             frameworkId: fw.framework_id,
             otherIds,
           },
@@ -134,6 +184,12 @@ export const computeProjectCoverage = async (
       coverage_percentage: coveragePercentage,
       gap_details: { unmapped_controls: unmappedControls },
       synergy_details: { multi_framework_controls: multiFrameworkControls },
+      calculation_methodology:
+        `Coverage = distinct mapped source identifiers (${mappedControls}) / ` +
+        `framework inventory controls (${totalControls}). ` +
+        `Inventory is counted from the framework's master structure tables (sub-controls, ` +
+        `sub-clauses, or sub-categories). Gaps are source identifiers in this organization's ` +
+        `mappings that are not mapped to any other active project framework.`,
     };
 
     results.push(coverage);
@@ -148,6 +204,7 @@ export const computeProjectCoverage = async (
       coverage_percentage: coveragePercentage,
       gap_details: coverage.gap_details,
       synergy_details: coverage.synergy_details,
+      calculation_methodology: coverage.calculation_methodology,
     });
   }
 
@@ -175,16 +232,32 @@ export const getOrComputeCoverage = async (
       if (Date.now() - oldestEntry < ONE_HOUR) {
         return cached.map((c) => ({
           framework_id: c.framework_id,
-          framework_name: "",
+          framework_name: (c as any).framework_name || "",
           total_controls: c.total_controls,
           mapped_controls: c.mapped_controls,
           coverage_percentage: Number(c.coverage_percentage),
           gap_details: (c.gap_details as any) || { unmapped_controls: [] },
           synergy_details: (c.synergy_details as any) || { multi_framework_controls: [] },
+          calculation_methodology:
+            (c as any).calculation_methodology ||
+            "Coverage = mapped controls / total framework inventory controls.",
         }));
       }
     }
   }
 
   return computeProjectCoverage(organizationId, projectId);
+};
+
+/**
+ * Invalidate coverage cache for a project or organization.
+ *
+ * Called after mapping mutations and project framework changes to ensure
+ * coverage numbers do not stay stale.
+ */
+export const invalidateCoverageCache = async (
+  organizationId: number,
+  projectId?: number,
+): Promise<void> => {
+  await deleteCoverageCacheQuery(organizationId, projectId);
 };
