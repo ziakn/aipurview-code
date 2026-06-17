@@ -13,6 +13,7 @@ import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtende
 import { apiServices } from "../../../../infrastructure/api/networkServices";
 import palette from "../../../themes/palette";
 import { useCardSx } from "../shared";
+import MCPTable from "../MCPTable";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -227,79 +228,29 @@ export default function MCPGuardrailsPage() {
 
   // ─── Render helpers ────────────────────────────────────────────────────────
 
-  const renderRuleRow = (rule: MCPGuardrail) => (
-    <Stack
-      key={rule.id}
-      direction="row"
-      justifyContent="space-between"
-      alignItems="center"
-      sx={{
-        "p": "12px 16px",
-        "border": `1px solid ${palette.border.dark}`,
-        "borderRadius": "4px",
-        "opacity": rule.is_active ? 1 : 0.6,
-        "cursor": "pointer",
-        "&:hover": { bgcolor: "action.hover" },
-      }}
-      onClick={() => openEditModal(rule)}
-    >
-      <Stack gap="4px" flex={1} minWidth={0}>
-        <Stack direction="row" alignItems="center" gap="8px" flexWrap="wrap">
-          <Typography sx={{ fontSize: 13, fontWeight: 500 }}>{rule.name}</Typography>
-          <Chip
-            label={RULE_TYPE_LABELS[rule.rule_type] || rule.rule_type}
-            size="small"
-            variant={RULE_TYPE_VARIANTS[rule.rule_type] || "info"}
-          />
-          {rule.rule_type !== "require_approval" && (
-            <Chip label={rule.action === "block" ? "Block" : "Mask"} size="small" />
-          )}
-        </Stack>
-        <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
-          Scope: {rule.scope || "tool_input"}
-          {rule.applies_to_tools && rule.applies_to_tools.length > 0
-            ? ` \u00b7 Tools: ${rule.applies_to_tools.join(", ")}`
-            : " \u00b7 Applies to all tools"}
-        </Typography>
-        {rule.applies_to_tools && rule.applies_to_tools.length > 0 && (
-          <Stack direction="row" gap="4px" flexWrap="wrap">
-            {rule.applies_to_tools.map((tool) => (
-              <Box
-                key={tool}
-                component="span"
-                sx={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  height: 20,
-                  px: "6px",
-                  borderRadius: "4px",
-                  border: `1px solid ${palette.border.light}`,
-                  backgroundColor: palette.background.alt,
-                  fontSize: 11,
-                  color: palette.text.secondary,
-                  whiteSpace: "nowrap",
-                  lineHeight: 1,
-                }}
-              >
-                {tool}
-              </Box>
-            ))}
-          </Stack>
-        )}
-      </Stack>
-      <Stack direction="row" alignItems="center" gap="8px" onClick={(e) => e.stopPropagation()}>
-        <Toggle
-          checked={rule.is_active}
-          onChange={() => handleToggle(rule.id, rule.is_active)}
-          size="small"
-        />
-        <IconButton size="small" onClick={() => openEditModal(rule)} sx={{ p: 0.5 }}>
-          <Pencil size={14} strokeWidth={1.5} color={palette.text.tertiary} />
-        </IconButton>
-        <IconButton size="small" onClick={() => setDeleteTarget(rule)} sx={{ p: 0.5 }}>
-          <Trash2 size={14} strokeWidth={1.5} color={palette.text.tertiary} />
-        </IconButton>
-      </Stack>
+  const renderToolBadges = (tools: string[]) => (
+    <Stack direction="row" gap="4px" flexWrap="wrap">
+      {tools.map((tool) => (
+        <Box
+          key={tool}
+          component="span"
+          sx={{
+            display: "inline-flex",
+            alignItems: "center",
+            height: 20,
+            px: "6px",
+            borderRadius: "4px",
+            border: `1px solid ${palette.border.light}`,
+            backgroundColor: palette.background.alt,
+            fontSize: 11,
+            color: palette.text.secondary,
+            whiteSpace: "nowrap",
+            lineHeight: 1,
+          }}
+        >
+          {tool}
+        </Box>
+      ))}
     </Stack>
   );
 
@@ -346,13 +297,83 @@ export default function MCPGuardrailsPage() {
           />
         </EmptyState>
       ) : (
-        <Box sx={cardSx}>
-          <Stack gap="12px">
-            <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
-              {rules.length} rule{rules.length !== 1 ? "s" : ""} configured, {activeCount} active
-            </Typography>
-            <Stack gap="8px">{rules.map(renderRuleRow)}</Stack>
-          </Stack>
+        <Box sx={{ px: 3, pb: 3 }}>
+          <Typography sx={{ fontSize: 12, color: palette.text.tertiary, mb: "12px" }}>
+            {rules.length} rule{rules.length !== 1 ? "s" : ""} configured, {activeCount} active
+          </Typography>
+          <MCPTable
+            id="mcp-guardrails-table"
+            columns={[
+              { label: "Name", width: 200 },
+              { label: "Type", width: 140 },
+              { label: "Action", width: 90 },
+              { label: "Scope", width: 110 },
+              { label: "Tools" },
+              { label: "Active", width: 80, align: "center" },
+              { label: "", width: 70, align: "right" },
+            ]}
+            rows={rules}
+            rowKey={(rule) => rule.id}
+            onRowClick={(rule) => openEditModal(rule)}
+            rowSx={(rule) => ({ opacity: rule.is_active ? 1 : 0.6 })}
+            renderRow={(rule) => [
+              <Typography sx={{ fontSize: 13, fontWeight: 500 }}>{rule.name}</Typography>,
+              <Chip
+                label={RULE_TYPE_LABELS[rule.rule_type] || rule.rule_type}
+                size="small"
+                variant={RULE_TYPE_VARIANTS[rule.rule_type] || "info"}
+              />,
+              rule.rule_type !== "require_approval" ? (
+                <Chip label={rule.action === "block" ? "Block" : "Mask"} size="small" />
+              ) : (
+                <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>—</Typography>
+              ),
+              <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
+                {rule.scope || "tool_input"}
+              </Typography>,
+              rule.applies_to_tools && rule.applies_to_tools.length > 0 ? (
+                renderToolBadges(rule.applies_to_tools)
+              ) : (
+                <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
+                  All tools
+                </Typography>
+              ),
+              <Box
+                sx={{ display: "flex", justifyContent: "center" }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Toggle
+                  checked={rule.is_active}
+                  onChange={() => handleToggle(rule.id, rule.is_active)}
+                  size="small"
+                />
+              </Box>,
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="flex-end"
+                gap="2px"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <IconButton
+                  size="small"
+                  onClick={() => openEditModal(rule)}
+                  sx={{ p: 0.5 }}
+                  aria-label="Edit guardrail"
+                >
+                  <Pencil size={14} strokeWidth={1.5} color={palette.text.tertiary} />
+                </IconButton>
+                <IconButton
+                  size="small"
+                  onClick={() => setDeleteTarget(rule)}
+                  sx={{ p: 0.5 }}
+                  aria-label="Delete guardrail"
+                >
+                  <Trash2 size={14} strokeWidth={1.5} color={palette.text.tertiary} />
+                </IconButton>
+              </Stack>,
+            ]}
+          />
         </Box>
       )}
 
@@ -444,9 +465,10 @@ export default function MCPGuardrailsPage() {
 
           <Field
             label="Config (JSON)"
-            placeholder='{"entities": {"EMAIL_ADDRESS": "mask"}}'
+            placeholder={'{\n  "entities": {\n    "EMAIL_ADDRESS": "mask"\n  }\n}'}
             value={form.config}
             onChange={(e) => setForm((p) => ({ ...p, config: e.target.value }))}
+            rows={4}
             isOptional
           />
           <Typography sx={{ fontSize: 11, color: palette.text.disabled, mt: "-12px" }}>

@@ -1,8 +1,11 @@
 # Follow-up: upgrade Agent Control copy to mention native tools
 
-> **Status:** PENDING — do NOT apply until the trigger condition is met.
-> **Trigger:** Phase 1/2 (`feat/mcp-bash-hook` + `feat/mcp-hook-approval`) are merged to
-> `develop` AND this rename branch (`feat/agent-control-rename`) has been rebased on top.
+> **Status:** ✅ DONE — applied and merged in PR #4084 (2026-06-16). Both Follow-up A
+> (native-tool copy) and Follow-up B (Phase 2/3 i18n + em dash) are on `develop`. No action
+> remaining; kept for the record. The text below is historical.
+>
+> _Original (now satisfied) trigger:_ Phase 1/2 merged to `develop` AND the rename branch
+> rebased on top.
 > **Why gated:** The fuller copy claims native-tool (Bash) gating. That capability only
 > exists once Phase 1/2 merge. Applying it before then would make `develop` claim a feature
 > it doesn't have. Until then, the truthful copy is "agent tool calls".

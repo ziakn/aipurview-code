@@ -173,6 +173,69 @@ async def scan_tool_input(
     return result
 
 
+async def scan_result_blob(org_id: int, blob: str) -> str:
+    """Mask PII / filtered content in a flat result string (tool stdout/stderr,
+    serialized tool_response). Returns the masked string. Never blocks — a tool
+    result has already been produced; we only sanitize what we store at rest.
+    Fails open (returns the original blob) on any error."""
+    if not blob or not blob.strip():
+        return blob
+    try:
+        async with get_db() as db:
+            rules_result = await db.execute(
+                text("""
+                    SELECT id, name, rule_type, config, scope, action
+                    FROM ai_gateway_mcp_guardrail_rules
+                    WHERE organization_id = :org_id AND is_active = true
+                    ORDER BY created_at
+                """),
+                {"org_id": org_id},
+            )
+            mcp_rules = [dict(r) for r in rules_result.mappings().fetchall()]
+            settings_result = await db.execute(
+                text("""
+                    SELECT pii_on_error, content_filter_on_error,
+                           pii_replacement_format, content_filter_replacement
+                    FROM ai_gateway_guardrail_settings
+                    WHERE organization_id = :org_id
+                """),
+                {"org_id": org_id},
+            )
+            settings_row = settings_result.mappings().fetchone()
+            guardrail_settings = dict(settings_row) if settings_row else {}
+
+        transformed_rules = []
+        for r in mcp_rules:
+            rule_type = r.get("rule_type")
+            if rule_type not in ("pii", "content_filter"):
+                continue
+            cfg = dict(r.get("config") or {})
+            # A result has already executed — "block" is meaningless. Force every
+            # configured entity to "mask" so block-action rules still sanitize at rest
+            # instead of short-circuiting scan_text into a blocked result (which would
+            # return masked_text=None and leak the unmasked blob).
+            entities = cfg.get("entities")
+            if isinstance(entities, dict):
+                cfg["entities"] = {k: "mask" for k in entities}
+            transformed_rules.append({
+                "id": r["id"],
+                "guardrail_type": rule_type,
+                "name": r["name"],
+                "config": cfg,
+                "scope": "output",
+                "action": "mask",
+                "is_active": True,
+            })
+        if not transformed_rules:
+            return blob
+        result = scan_text(text=blob, guardrail_rules=transformed_rules, settings=guardrail_settings)
+        # masked_text is None when nothing matched — fall back to the original blob
+        return result.masked_text or blob
+    except Exception as e:
+        logger.error(f"scan_result_blob failed, storing unmasked: {e}")
+        return blob
+
+
 # ─── Anomaly Detection ──────────────────────────────────────────────────────
 
 ANOMALY_WINDOW = 3600  # 1 hour

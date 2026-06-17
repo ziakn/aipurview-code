@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
-# VerifyWise tool gate, a Claude Code PreToolUse hook.
-# Reads the tool call as JSON on stdin, asks the AI Gateway to adjudicate,
-# and exits 0 (allow) or non-zero (deny). Fails open by default so a gateway
-# outage never halts your workflow.
+# VerifyWise tool gate — Claude Code PreToolUse/PostToolUse hook.
+# PreToolUse: reads the tool call as JSON on stdin, asks the AI Gateway to
+# adjudicate, and exits 0 (allow) or non-zero (deny). Fails open by default
+# so a gateway outage never halts your workflow.
+# PostToolUse: captures the tool result and forwards it to the gateway
+# best-effort; always exits 0 — result capture must never block.
 #
 # Env:
 #   VW_GATEWAY_URL  (required)  e.g. http://localhost:8100
@@ -32,8 +34,28 @@ command -v curl >/dev/null 2>&1 || fail "curl not found"
 input="$(cat)"
 tool_name="$(printf '%s' "$input" | jq -r '.tool_name // .tool.name // "unknown"')"
 arguments="$(printf '%s' "$input" | jq -c '.tool_input // .arguments // {}')"
+session_id="$(printf '%s' "$input" | jq -r '.session_id // empty')"
+tool_use_id="$(printf '%s' "$input" | jq -r '.tool_use_id // empty')"
+hook_event="$(printf '%s' "$input" | jq -r '.hook_event_name // "PreToolUse"')"
 
-payload="$(jq -nc --arg t "$tool_name" --argjson a "$arguments" '{tool_name:$t, arguments:$a}')"
+# PostToolUse: capture the tool result, best-effort. Never blocks — the tool
+# has already run, so any failure here must still exit 0.
+if [ "$hook_event" = "PostToolUse" ]; then
+  tool_response="$(printf '%s' "$input" | jq -c '.tool_response // {}')"
+  rpayload="$(jq -nc --arg t "$tool_name" --argjson r "$tool_response" \
+    --arg s "$session_id" --arg u "$tool_use_id" \
+    '{tool_name:$t, tool_response:$r, session_id:$s, tool_use_id:$u}')"
+  curl -s --max-time "$TIMEOUT" -o /dev/null \
+    -X POST "$VW_GATEWAY_URL/v1/mcp/hook/result" \
+    -H "Authorization: Bearer $VW_AGENT_KEY" \
+    -H "Content-Type: application/json" \
+    -d "$rpayload" 2>/dev/null || true
+  exit 0
+fi
+
+payload="$(jq -nc --arg t "$tool_name" --argjson a "$arguments" \
+  --arg s "$session_id" --arg u "$tool_use_id" \
+  '{tool_name:$t, arguments:$a, session_id:$s, tool_use_id:$u}')"
 
 # Append the HTTP status on its own trailing line so we never write a
 # response file to a predictable /tmp path (symlink-attack surface).

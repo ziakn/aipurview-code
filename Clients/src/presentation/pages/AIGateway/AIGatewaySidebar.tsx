@@ -96,27 +96,11 @@ export default function AIGatewaySidebar({
   const mcpGroups: SidebarMenuGroup[] = [
     {
       name: "Agent Control",
-      collapsible: true,
-      defaultCollapsed: true,
+      collapsible: false,
+      defaultCollapsed: false,
+      // Order: monitor (Activity) → act (Approvals, Guardrails) → divider →
+      // configure (Agent keys, MCP servers, MCP tools).
       items: [
-        {
-          id: "mcp-agent-keys",
-          label: "Agent Keys",
-          value: "mcp/agent-keys",
-          icon: <KeyRound size={16} strokeWidth={1.5} />,
-        },
-        {
-          id: "mcp-servers",
-          label: "MCP Servers",
-          value: "mcp/servers",
-          icon: <Server size={16} strokeWidth={1.5} />,
-        },
-        {
-          id: "mcp-tools",
-          label: "MCP Tools",
-          value: "mcp/tools",
-          icon: <Wrench size={16} strokeWidth={1.5} />,
-        },
         {
           id: "mcp-audit",
           label: "Activity",
@@ -134,6 +118,25 @@ export default function AIGatewaySidebar({
           label: "Guardrails",
           value: "mcp/guardrails",
           icon: <Shield size={16} strokeWidth={1.5} />,
+          dividerAfter: true,
+        },
+        {
+          id: "mcp-agent-keys",
+          label: "Agent keys",
+          value: "mcp/agent-keys",
+          icon: <KeyRound size={16} strokeWidth={1.5} />,
+        },
+        {
+          id: "mcp-servers",
+          label: "MCP servers",
+          value: "mcp/servers",
+          icon: <Server size={16} strokeWidth={1.5} />,
+        },
+        {
+          id: "mcp-tools",
+          label: "MCP tools",
+          value: "mcp/tools",
+          icon: <Wrench size={16} strokeWidth={1.5} />,
         },
       ],
     },
