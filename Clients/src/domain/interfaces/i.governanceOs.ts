@@ -92,10 +92,6 @@ export interface IUnifiedView {
   projectId: number;
 }
 
-export interface IGovernanceOsPageProps {
-  defaultTab?: string;
-}
-
 export interface IMappingCardProps {
   mapping: IGovernanceControlMapping;
   frameworkNames?: Record<number, string>;
