@@ -52,12 +52,14 @@ async def log_tool_call(
                     INSERT INTO ai_gateway_mcp_audit_logs
                         (organization_id, agent_key_id, server_id, tool_name,
                          arguments, result_status, result_summary, is_error,
-                         latency_ms, session_id, metadata, tool_use_id, events)
+                         latency_ms, session_id, metadata, tool_use_id, events,
+                         agent_run_id)
                     VALUES
                         (:org_id, :agent_key_id, :server_id, :tool_name,
                          CAST(:arguments AS jsonb), :result_status, :result_summary, :is_error,
                          :latency_ms, :session_id, CAST(:metadata AS jsonb),
-                         :tool_use_id, CAST(:events AS jsonb))
+                         :tool_use_id, CAST(:events AS jsonb),
+                         :agent_run_id)
                 """),
                 {
                     "org_id": organization_id,
@@ -73,6 +75,7 @@ async def log_tool_call(
                     "metadata": json.dumps(metadata or {}),
                     "tool_use_id": tool_use_id,
                     "events": json.dumps(events or []),
+                    "agent_run_id": session_id,
                 },
             )
             await db.commit()
