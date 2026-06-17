@@ -3,7 +3,7 @@ import type { ArticleContent } from '../../contentTypes';
 export const agentControlOverviewContent: ArticleContent = {
   blocks: [
     { type: 'heading', id: 'overview', level: 2, text: 'What Agent Control does' },
-    { type: 'paragraph', text: 'Agent Control governs what your agent does, not just what it says. Every time an agent runs a tool (a shell command, a file write, an API call through a tool server), the gateway checks that call before it runs and decides whether to allow it, block it, ask a human, or rate-limit it.' },
+    { type: 'paragraph', text: 'Agent Control governs the actions your agent takes, beyond the text it generates. Every time an agent runs a tool (a shell command, a file write, an API call through a tool server), the gateway checks that call before it runs and decides whether to allow it, block it, ask a human or rate-limit it.' },
     { type: 'paragraph', text: 'This guide is for developers connecting their own agent to the gateway. If you just want to use the screens, see the end-user AI Gateway articles instead.' },
     { type: 'heading', id: 'terms', level: 2, text: 'Terms used in this guide' },
     { type: 'bullet-list', items: [
