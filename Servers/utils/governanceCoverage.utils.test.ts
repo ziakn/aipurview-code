@@ -53,18 +53,28 @@ describe("computeProjectCoverage", () => {
         { framework_id: 2, framework_name: "ISO 42001" },
       ],
     ]);
-    // framework 1: count, mapped, gap, synergy
-    mockQuery
-      .mockResolvedValueOnce([[{ cnt: "100" }]])
-      .mockResolvedValueOnce([[{ mapped: "9" }]])
-      .mockResolvedValueOnce([[]])
-      .mockResolvedValueOnce([[]]);
-    // framework 2: count, mapped, gap, synergy
-    mockQuery
-      .mockResolvedValueOnce([[{ cnt: "80" }]])
-      .mockResolvedValueOnce([[{ mapped: "5" }]])
-      .mockResolvedValueOnce([[]])
-      .mockResolvedValueOnce([[]]);
+    // Framework queries run in parallel, so use a content-aware mock instead of
+    // strict call-order mocks.
+    mockQuery.mockImplementation((query: string) => {
+      const sql = typeof query === "string" ? query : "";
+      if (sql.includes("subcontrols_struct_eu")) {
+        return Promise.resolve([[{ cnt: "100" }]]);
+      }
+      if (sql.includes("subclauses_struct_iso")) {
+        return Promise.resolve([[{ cnt: "80" }]]);
+      }
+      if (sql.includes("COUNT(DISTINCT source_control_identifier)")) {
+        return Promise.resolve([[{ mapped: "9" }]]);
+      }
+      if (sql.includes("HAVING COUNT(DISTINCT target_framework_id) >= 2")) {
+        return Promise.resolve([[]]);
+      }
+      // Gap query: DISTINCT source_control_identifier with NOT IN subquery
+      if (sql.includes("SELECT DISTINCT source_control_identifier")) {
+        return Promise.resolve([[]]);
+      }
+      return Promise.resolve([[]]);
+    });
   };
 
   it("returns empty array when project has no frameworks", async () => {
