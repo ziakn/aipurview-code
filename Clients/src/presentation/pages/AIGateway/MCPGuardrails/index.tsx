@@ -465,9 +465,10 @@ export default function MCPGuardrailsPage() {
 
           <Field
             label="Config (JSON)"
-            placeholder='{"entities": {"EMAIL_ADDRESS": "mask"}}'
+            placeholder={'{\n  "entities": {\n    "EMAIL_ADDRESS": "mask"\n  }\n}'}
             value={form.config}
             onChange={(e) => setForm((p) => ({ ...p, config: e.target.value }))}
+            rows={4}
             isOptional
           />
           <Typography sx={{ fontSize: 11, color: palette.text.disabled, mt: "-12px" }}>
