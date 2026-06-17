@@ -57,11 +57,7 @@ export async function getVendorRiskById({
   return response.data;
 }
 
-export async function createVendorRisk({
-  body,
-}: {
-  body: Partial<VendorRiskModel>;
-}): Promise<any> {
+export async function createVendorRisk({ body }: { body: Partial<VendorRiskModel> }): Promise<any> {
   const response = await apiServices.post("/vendorRisks", body);
   return response;
 }
