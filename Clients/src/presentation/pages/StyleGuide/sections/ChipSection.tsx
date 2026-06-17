@@ -1,6 +1,14 @@
 import React, { useState } from "react";
-import { Box, Stack, Typography, useTheme, Divider, Snackbar } from "@mui/material";
-import { Copy } from "lucide-react";
+import {
+  Box,
+  Stack,
+  Typography,
+  useTheme,
+  Divider,
+  Snackbar,
+  Chip as MuiChip,
+} from "@mui/material";
+import { Check, Copy, X } from "lucide-react";
 import Chip from "../../../components/Chip";
 import { ChipVariant } from "../../../types/interfaces/i.chip";
 import CodeBlock from "../components/CodeBlock";
@@ -17,6 +25,113 @@ const chipSnippets = {
   uppercase: `<Chip label="In progress" variant="warning" uppercase={false} />`,
   custom: `<Chip label="Custom" backgroundColor="#E8F5E9" textColor="#2E7D32" />`,
 };
+
+const dosAndDontsExamples = [
+  {
+    do: {
+      title: "Use the unified Chip component for status badges",
+      code: `<Chip label="Approved" />\n<Chip label="High" variant="high" />`,
+      preview: (
+        <Box sx={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+          <Chip label="Approved" />
+          <Chip label="High" variant="high" />
+        </Box>
+      ),
+    },
+    dont: {
+      title: "Don't re-implement inline badge styling",
+      code: `<Box sx={{\n  px: "8px", py: "4px",\n  borderRadius: "4px",\n  backgroundColor: "#E8F5E9",\n  color: "#2E7D32",\n  fontSize: 11,\n}}>\n  Approved\n</Box>`,
+      preview: (
+        <Box sx={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+          <Box
+            sx={{
+              px: "8px",
+              py: "4px",
+              borderRadius: "4px",
+              backgroundColor: "#E8F5E9",
+              color: "#2E7D32",
+              fontSize: 11,
+              textTransform: "uppercase",
+            }}
+          >
+            Approved
+          </Box>
+          <Box
+            sx={{
+              px: "8px",
+              py: "4px",
+              borderRadius: "4px",
+              backgroundColor: "#FEE2E2",
+              color: "#DC2626",
+              fontSize: 11,
+              textTransform: "uppercase",
+            }}
+          >
+            High
+          </Box>
+        </Box>
+      ),
+    },
+  },
+  {
+    do: {
+      title: "Let the variant auto-derive from common labels",
+      code: `<Chip label="In progress" />\n<Chip label="Rejected" />`,
+      preview: (
+        <Box sx={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+          <Chip label="In progress" />
+          <Chip label="Rejected" />
+        </Box>
+      ),
+    },
+    dont: {
+      title: "Don't hardcode hex colors for standard statuses",
+      code: `<Chip\n  label="In progress"\n  backgroundColor="#FEF3C7"\n  textColor="#D97706"\n/>`,
+      preview: (
+        <Box sx={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+          <Chip label="In progress" backgroundColor="#FEF3C7" textColor="#D97706" />
+          <Chip label="Rejected" backgroundColor="#FEE2E2" textColor="#DC2626" />
+        </Box>
+      ),
+    },
+  },
+  {
+    do: {
+      title: "Pass an explicit variant when the label is ambiguous",
+      code: `<Chip label="Stage 2" variant="warning" />\n<Chip label="Tier A" variant="high" />`,
+      preview: (
+        <Box sx={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+          <Chip label="Stage 2" variant="warning" />
+          <Chip label="Tier A" variant="high" />
+        </Box>
+      ),
+    },
+    dont: {
+      title: "Don't rely on auto-variant for custom or unknown labels",
+      code: `<Chip label="Stage 2" />\n<Chip label="Tier A" />`,
+      preview: (
+        <Box sx={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+          <Chip label="Stage 2" />
+          <Chip label="Tier A" />
+        </Box>
+      ),
+    },
+  },
+  {
+    do: {
+      title: "Use Chip for risk levels, statuses, and severities",
+      code: `import Chip from "../components/Chip";\n\n<Chip label="Critical" variant="critical" />`,
+      preview: <Chip label="Critical" variant="critical" />,
+    },
+    dont: {
+      title: "Don't use raw MUI Chip for status badges",
+      code: `import { Chip } from "@mui/material";\n\n<Chip label="Critical" color="error" size="small" />`,
+      preview: (
+        <MuiChip label="Critical" color="error" size="small" sx={{ height: 24, fontSize: 11 }} />
+      ),
+    },
+  },
+];
 
 // Variant groups, mirroring VARIANT_COLORS in Chip.tsx
 const variantGroups: { group: string; variants: ChipVariant[] }[] = [
@@ -205,6 +320,43 @@ const ChipSection: React.FC = () => {
         </Box>
       </SpecSection>
 
+      <Divider sx={{ my: "32px" }} />
+
+      {/* Do's and Don'ts */}
+      <SpecSection title="Do's and don'ts">
+        <Typography sx={{ fontSize: 13, color: theme.palette.text.tertiary, mb: "24px" }}>
+          Follow these patterns when displaying risk levels, statuses, and severities. Use the
+          unified Chip instead of inline styles or raw MUI Chip.
+        </Typography>
+        <Stack spacing="16px">
+          {dosAndDontsExamples.map((item, index) => (
+            <Box
+              key={index}
+              sx={{
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+                gap: "16px",
+              }}
+            >
+              <ChipDoDontCard
+                type="do"
+                title={item.do.title}
+                preview={item.do.preview}
+                code={item.do.code}
+                onCopy={handleCopy}
+              />
+              <ChipDoDontCard
+                type="dont"
+                title={item.dont.title}
+                preview={item.dont.preview}
+                code={item.dont.code}
+                onCopy={handleCopy}
+              />
+            </Box>
+          ))}
+        </Stack>
+      </SpecSection>
+
       {/* Developer Checklist */}
       <Box
         sx={{
@@ -334,6 +486,84 @@ const SpecTable: React.FC<{
           </Box>
         </Box>
       ))}
+    </Box>
+  );
+};
+
+const ChipDoDontCard: React.FC<{
+  type: "do" | "dont";
+  title: string;
+  preview: React.ReactNode;
+  code: string;
+  onCopy: (text: string) => void;
+}> = ({ type, title, preview, code, onCopy }) => {
+  const theme = useTheme();
+  const isDo = type === "do";
+
+  return (
+    <Box
+      sx={{
+        border: `1px solid ${isDo ? theme.palette.status.success.main : theme.palette.status.error.border}`,
+        borderRadius: "4px",
+        overflow: "hidden",
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          p: "8px 12px",
+          backgroundColor: isDo ? theme.palette.status.success.bg : theme.palette.status.error.bg,
+          borderBottom: `1px solid ${isDo ? theme.palette.status.success.main : theme.palette.status.error.border}`,
+        }}
+      >
+        {isDo ? (
+          <Check size={14} color={theme.palette.status.success.text} />
+        ) : (
+          <X size={14} color={theme.palette.status.error.text} />
+        )}
+        <Typography
+          sx={{
+            fontSize: 11,
+            fontWeight: 600,
+            color: isDo ? theme.palette.status.success.text : theme.palette.status.error.text,
+            textTransform: "uppercase",
+            letterSpacing: "0.5px",
+          }}
+        >
+          {isDo ? "Do" : "Don't"}
+        </Typography>
+      </Box>
+
+      <Box sx={{ p: "12px" }}>
+        <Typography
+          sx={{
+            fontSize: 12,
+            fontWeight: 500,
+            color: theme.palette.text.primary,
+            mb: "12px",
+          }}
+        >
+          {title}
+        </Typography>
+
+        <Box
+          sx={{
+            p: "12px",
+            mb: "12px",
+            backgroundColor: theme.palette.background.main,
+            borderRadius: "4px",
+            border: `1px solid ${theme.palette.border.light}`,
+          }}
+        >
+          {preview}
+        </Box>
+
+        <Box sx={{ borderTop: `1px solid ${theme.palette.border.light}` }}>
+          <CodeBlock code={code} language="tsx" onCopy={onCopy} />
+        </Box>
+      </Box>
     </Box>
   );
 };
