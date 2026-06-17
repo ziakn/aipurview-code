@@ -8,10 +8,12 @@ import {
   TableCell,
   TableContainer,
   TableRow,
+  IconButton,
 } from "@mui/material";
-import { Sparkles, ShieldCheck } from "lucide-react";
+import { Sparkles, ShieldCheck, CirclePlus, Trash2 } from "lucide-react";
 import { CustomizableButton } from "../../../components/button/customizable-button";
-import Toggle from "../../../components/Inputs/Toggle";
+import AutoCompleteField from "../../../components/Inputs/Autocomplete";
+import StandardModal from "../../../components/Modals/StandardModal";
 import {
   useSetPoliciesForAiApp,
   usePolicySuggestions,
@@ -34,19 +36,26 @@ interface AIAppPolicyMappingProps {
   policies: IAIAppPolicy[];
 }
 
-interface LocalPolicy {
+interface LinkedPolicy {
   policy_id: number;
   title: string;
-  status: AiAppPolicyStatus;
+}
+
+interface PolicyOption {
+  id: number;
+  label: string;
 }
 
 const TABLE_COLUMNS: StandardColumn[] = [
   { id: "title", label: "Policy", sortable: true },
-  { id: "applicable", label: "Applicable", sortable: false },
+  { id: "actions", label: "", sortable: false },
 ];
 
 export default function AIAppPolicyMapping({ appId, appName, policies }: AIAppPolicyMappingProps) {
-  const [localPolicies, setLocalPolicies] = useState<LocalPolicy[]>([]);
+  // Only the policies linked to this app — not the whole org catalog.
+  const [linkedPolicies, setLinkedPolicies] = useState<LinkedPolicy[]>([]);
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [toAdd, setToAdd] = useState<PolicyOption[]>([]);
   const [alert, setAlert] = useState<{
     variant: "success" | "info" | "warning" | "error";
     body: string;
@@ -63,64 +72,74 @@ export default function AIAppPolicyMapping({ appId, appName, policies }: AIAppPo
   const { data: suggestions } = usePolicySuggestions(appName);
   const setPoliciesMutation = useSetPoliciesForAiApp();
 
-  const allPolicyOptions = useMemo(
-    () =>
-      (allPolicies ?? []).map((policy: PolicyManagerModel) => ({
-        id: policy.id,
-        title: policy.title,
-      })),
-    [allPolicies],
-  );
-
+  // Seed the linked list from the policies already mapped to this app.
   useEffect(() => {
-    const mapped: LocalPolicy[] = allPolicyOptions.map((policy) => {
-      const existing = policies.find((p) => p.id === policy.id);
-      return {
-        policy_id: policy.id,
-        title: policy.title,
-        status: existing?.status || AiAppPolicyStatus.NOT_APPLICABLE,
-      };
-    });
-    setLocalPolicies(mapped);
-  }, [allPolicyOptions, policies]);
+    setLinkedPolicies(policies.map((p) => ({ policy_id: p.id, title: p.title })));
+  }, [policies]);
 
-  const handleToggle = (policyId: number) => {
-    setLocalPolicies((prev) =>
-      prev.map((p) =>
-        p.policy_id === policyId
-          ? {
-              ...p,
-              status:
-                p.status === AiAppPolicyStatus.APPLICABLE
-                  ? AiAppPolicyStatus.NOT_APPLICABLE
-                  : AiAppPolicyStatus.APPLICABLE,
-            }
-          : p,
-      ),
-    );
-  };
+  // Org policies that aren't linked yet — the candidates for the add modal.
+  const addableOptions = useMemo<PolicyOption[]>(() => {
+    const linkedIds = new Set(linkedPolicies.map((p) => p.policy_id));
+    return (allPolicies ?? [])
+      .filter((policy: PolicyManagerModel) => !linkedIds.has(policy.id))
+      .map((policy: PolicyManagerModel) => ({ id: policy.id, label: policy.title }));
+  }, [allPolicies, linkedPolicies]);
 
-  const handleSave = async () => {
-    try {
-      await setPoliciesMutation.mutateAsync({
-        id: appId,
-        policies: localPolicies.map((p) => ({
-          policy_id: p.policy_id,
-          status: p.status,
-        })),
-      });
-      setAlert({ variant: "success", body: "Policy mapping saved successfully" });
-    } catch (err) {
-      setAlert({ variant: "error", body: "Failed to save policy mapping" });
-    }
-  };
-
-  const suggestedTitles = useMemo(
-    () => suggestions?.filter((s) => s.suggested && s.id !== null).map((s) => s.title) || [],
-    [suggestions],
+  const persist = useCallback(
+    async (next: LinkedPolicy[]) => {
+      try {
+        await setPoliciesMutation.mutateAsync({
+          id: appId,
+          policies: next.map((p) => ({
+            policy_id: p.policy_id,
+            status: AiAppPolicyStatus.APPLICABLE,
+          })),
+        });
+        setAlert({ variant: "success", body: "Policy mapping saved" });
+      } catch (err) {
+        setAlert({ variant: "error", body: "Failed to save policy mapping" });
+        // Re-seed from the server-truth prop so the UI doesn't drift on failure.
+        setLinkedPolicies(policies.map((p) => ({ policy_id: p.id, title: p.title })));
+      }
+    },
+    [appId, policies, setPoliciesMutation],
   );
 
-  const sortComparator = useCallback((a: LocalPolicy, b: LocalPolicy, key: string): number => {
+  const handleConfirmAdd = async () => {
+    if (toAdd.length === 0) {
+      setIsAddOpen(false);
+      return;
+    }
+    const next = [...linkedPolicies, ...toAdd.map((o) => ({ policy_id: o.id, title: o.label }))];
+    setLinkedPolicies(next);
+    setIsAddOpen(false);
+    setToAdd([]);
+    await persist(next);
+  };
+
+  const handleRemove = async (policyId: number) => {
+    const next = linkedPolicies.filter((p) => p.policy_id !== policyId);
+    setLinkedPolicies(next);
+    await persist(next);
+  };
+
+  const handleAddSuggested = async (title: string) => {
+    const match = (allPolicies ?? []).find((p: PolicyManagerModel) => p.title === title);
+    if (!match || linkedPolicies.some((p) => p.policy_id === match.id)) return;
+    const next = [...linkedPolicies, { policy_id: match.id, title: match.title }];
+    setLinkedPolicies(next);
+    await persist(next);
+  };
+
+  // Suggested policies that aren't already linked.
+  const suggestedTitles = useMemo(() => {
+    const linkedTitles = new Set(linkedPolicies.map((p) => p.title));
+    return (suggestions ?? [])
+      .filter((s) => s.suggested && s.id !== null && !linkedTitles.has(s.title))
+      .map((s) => s.title);
+  }, [suggestions, linkedPolicies]);
+
+  const sortComparator = useCallback((a: LinkedPolicy, b: LinkedPolicy, key: string): number => {
     if (key === "title") return (a.title || "").localeCompare(b.title || "");
     return 0;
   }, []);
@@ -135,8 +154,8 @@ export default function AIAppPolicyMapping({ appId, appName, policies }: AIAppPo
     handleChangeRowsPerPage,
     getRange,
     totalCount,
-  } = useStandardTable<LocalPolicy>({
-    rows: localPolicies,
+  } = useStandardTable<LinkedPolicy>({
+    rows: linkedPolicies,
     storageKey: "aiAppPolicyMapping",
     defaultSortColumn: "",
     defaultSortDirection: null,
@@ -157,9 +176,13 @@ export default function AIAppPolicyMapping({ appId, appName, policies }: AIAppPo
           <Typography sx={{ fontSize: 15, fontWeight: 600 }}>Policy mapping</Typography>
         </Stack>
         <CustomizableButton
-          text="Save mapping"
+          text="Add policy"
           variant="contained"
-          onClick={handleSave}
+          icon={<CirclePlus size={14} strokeWidth={1.5} />}
+          onClick={() => {
+            setToAdd([]);
+            setIsAddOpen(true);
+          }}
           disabled={setPoliciesMutation.isPending}
         />
       </Stack>
@@ -178,9 +201,18 @@ export default function AIAppPolicyMapping({ appId, appName, policies }: AIAppPo
             <Sparkles size={14} strokeWidth={1.5} color={palette.text.secondary} />
             <Typography sx={{ fontSize: 13, fontWeight: 600 }}>Suggested policies</Typography>
           </Stack>
-          <Typography sx={{ fontSize: 13, color: palette.text.secondary }}>
-            {suggestedTitles.join(", ")}
-          </Typography>
+          <Stack direction="row" gap="8px" flexWrap="wrap">
+            {suggestedTitles.map((title) => (
+              <CustomizableButton
+                key={title}
+                text={`+ ${title}`}
+                variant="outlined"
+                size="small"
+                onClick={() => handleAddSuggested(title)}
+                disabled={setPoliciesMutation.isPending}
+              />
+            ))}
+          </Stack>
         </Box>
       )}
 
@@ -191,30 +223,32 @@ export default function AIAppPolicyMapping({ appId, appName, policies }: AIAppPo
             {totalCount > 0 ? (
               sortedRows
                 .slice(validPage * rowsPerPage, validPage * rowsPerPage + rowsPerPage)
-                .map((policy) => {
-                  const isApplicable = policy.status === AiAppPolicyStatus.APPLICABLE;
-                  return (
-                    <TableRow key={policy.policy_id} sx={singleTheme.tableStyles.primary.body.row}>
-                      <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                        {policy.title}
-                      </TableCell>
-                      <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
-                        <Toggle
-                          checked={isApplicable}
-                          onChange={() => handleToggle(policy.policy_id)}
-                          inputProps={{ "aria-label": `Toggle ${policy.title}` }}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  );
-                })
+                .map((policy) => (
+                  <TableRow key={policy.policy_id} sx={singleTheme.tableStyles.primary.body.row}>
+                    <TableCell sx={singleTheme.tableStyles.primary.body.cell}>
+                      {policy.title}
+                    </TableCell>
+                    <TableCell
+                      sx={{ ...singleTheme.tableStyles.primary.body.cell, textAlign: "right" }}
+                    >
+                      <IconButton
+                        size="small"
+                        onClick={() => handleRemove(policy.policy_id)}
+                        disabled={setPoliciesMutation.isPending}
+                        aria-label={`Remove ${policy.title}`}
+                      >
+                        <Trash2 size={14} strokeWidth={1.5} color={palette.text.tertiary} />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
             ) : (
               <TableRow>
                 <TableCell
                   colSpan={TABLE_COLUMNS.length}
                   sx={singleTheme.tableStyles.primary.body.cell}
                 >
-                  No policies available.
+                  No policies linked yet. Use "Add policy" to map applicable policies to this app.
                 </TableCell>
               </TableRow>
             )}
@@ -234,6 +268,31 @@ export default function AIAppPolicyMapping({ appId, appName, policies }: AIAppPo
           )}
         </Table>
       </TableContainer>
+
+      <StandardModal
+        isOpen={isAddOpen}
+        onClose={() => setIsAddOpen(false)}
+        title="Add policies"
+        description="Select the policies that apply to this AI app."
+        onSubmit={handleConfirmAdd}
+        submitButtonText="Add"
+        isSubmitting={setPoliciesMutation.isPending}
+        maxWidth="480px"
+      >
+        <AutoCompleteField<PolicyOption, true>
+          multiple
+          label="Policies"
+          placeholder={
+            addableOptions.length === 0 ? "All policies are already linked" : "Select policies"
+          }
+          options={addableOptions}
+          value={toAdd}
+          onChange={(_e, value) => setToAdd(value as PolicyOption[])}
+          getOptionLabel={(option) => option.label}
+          isOptionEqualToValue={(option, val) => option.id === val.id}
+          disabled={addableOptions.length === 0}
+        />
+      </StandardModal>
 
       {alert && (
         <Alert variant={alert.variant} body={alert.body} isToast onClick={() => setAlert(null)} />

@@ -62,6 +62,12 @@ export const translations: Record<string, Record<string, string>> = {
     "Manual": "Manuell",
     "Map models, policies and data access": "Modelle, Richtlinien und Datenzugriff zuordnen",
     "Model dependencies": "Modellabhängigkeiten",
+    "Add models": "Modelle hinzufügen",
+    "Model dependencies updated": "Modellabhängigkeiten aktualisiert",
+    "Select the model inventory entries this AI app depends on.":
+      "Wählen Sie die Modellinventar-Einträge aus, von denen diese KI-App abhängt.",
+    'No models linked yet. Use "Add model" to link model inventory entries to this app.':
+      "Noch keine Modelle verknüpft. Verwenden Sie „Modell hinzufügen“, um Modellinventar-Einträge mit dieser App zu verknüpfen.",
     "Model dependencies updated successfully": "Modellabhängigkeiten erfolgreich aktualisiert",
     "New AI app": "Neue KI-App",
     "No models linked to this AI app.": "Keine Modelle mit dieser KI-App verknüpft.",
@@ -72,6 +78,13 @@ export const translations: Record<string, Record<string, string>> = {
       "Anzahl der Mitarbeitenden, Abteilungen oder externen Nutzer mit Zugriff",
     "Output impact": "Auswirkung der Ausgabe",
     "Policy mapping": "Richtlinienzuordnung",
+    "Add policy": "Richtlinie hinzufügen",
+    "Add policies": "Richtlinien hinzufügen",
+    "Policy mapping saved": "Richtlinienzuordnung gespeichert",
+    "Select the policies that apply to this AI app.":
+      "Wählen Sie die für diese KI-App geltenden Richtlinien aus.",
+    'No policies linked yet. Use "Add policy" to map applicable policies to this app.':
+      "Noch keine Richtlinien verknüpft. Verwenden Sie „Richtlinie hinzufügen“, um geltende Richtlinien dieser App zuzuordnen.",
     "Policy mapping saved successfully": "Richtlinienzuordnung erfolgreich gespeichert",
     "Procurement": "Beschaffung",
     "Promote to AI app": "Zu KI-App hochstufen",
@@ -8637,6 +8650,12 @@ export const translations: Record<string, Record<string, string>> = {
     "Map models, policies and data access":
       "Associer les modèles, les politiques et l'accès aux données",
     "Model dependencies": "Dépendances de modèles",
+    "Add models": "Ajouter des modèles",
+    "Model dependencies updated": "Dépendances de modèles mises à jour",
+    "Select the model inventory entries this AI app depends on.":
+      "Sélectionnez les entrées de l'inventaire des modèles dont dépend cette application d'IA.",
+    'No models linked yet. Use "Add model" to link model inventory entries to this app.':
+      "Aucun modèle lié pour l'instant. Utilisez « Ajouter un modèle » pour lier des entrées de l'inventaire des modèles à cette application.",
     "Model dependencies updated successfully": "Dépendances de modèles mises à jour avec succès",
     "New AI app": "Nouvelle application IA",
     "No models linked to this AI app.": "Aucun modèle lié à cette application IA.",
@@ -8647,6 +8666,13 @@ export const translations: Record<string, Record<string, string>> = {
       "Nombre d'employés, de services ou d'utilisateurs externes ayant accès",
     "Output impact": "Impact des résultats",
     "Policy mapping": "Correspondance des politiques",
+    "Add policy": "Ajouter une politique",
+    "Add policies": "Ajouter des politiques",
+    "Policy mapping saved": "Correspondance des politiques enregistrée",
+    "Select the policies that apply to this AI app.":
+      "Sélectionnez les politiques qui s'appliquent à cette application d'IA.",
+    'No policies linked yet. Use "Add policy" to map applicable policies to this app.':
+      "Aucune politique liée pour l'instant. Utilisez « Ajouter une politique » pour associer les politiques applicables à cette application.",
     "Policy mapping saved successfully": "Correspondance des politiques enregistrée avec succès",
     "Procurement": "Achats",
     "Promote to AI app": "Promouvoir en application IA",
@@ -17163,6 +17189,12 @@ export const translations: Record<string, Record<string, string>> = {
     "Manual": "Manual",
     "Map models, policies and data access": "Asignar modelos, políticas y acceso a datos",
     "Model dependencies": "Dependencias de modelos",
+    "Add models": "Agregar modelos",
+    "Model dependencies updated": "Dependencias de modelos actualizadas",
+    "Select the model inventory entries this AI app depends on.":
+      "Selecciona las entradas del inventario de modelos de las que depende esta aplicación de IA.",
+    'No models linked yet. Use "Add model" to link model inventory entries to this app.':
+      'Aún no hay modelos vinculados. Usa "Agregar modelo" para vincular entradas del inventario de modelos a esta aplicación.',
     "Model dependencies updated successfully": "Dependencias de modelos actualizadas correctamente",
     "New AI app": "Nueva aplicación de IA",
     "No models linked to this AI app.": "No hay modelos vinculados a esta aplicación de IA.",
@@ -17173,6 +17205,13 @@ export const translations: Record<string, Record<string, string>> = {
       "Número de empleados, departamentos o usuarios externos con acceso",
     "Output impact": "Impacto de los resultados",
     "Policy mapping": "Asignación de políticas",
+    "Add policy": "Agregar política",
+    "Add policies": "Agregar políticas",
+    "Policy mapping saved": "Asignación de políticas guardada",
+    "Select the policies that apply to this AI app.":
+      "Selecciona las políticas que se aplican a esta aplicación de IA.",
+    'No policies linked yet. Use "Add policy" to map applicable policies to this app.':
+      'Aún no hay políticas vinculadas. Usa "Agregar política" para asignar las políticas aplicables a esta aplicación.',
     "Policy mapping saved successfully": "Asignación de políticas guardada correctamente",
     "Procurement": "Compras",
     "Promote to AI app": "Promover a aplicación de IA",
