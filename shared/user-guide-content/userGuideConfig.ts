@@ -720,6 +720,39 @@ export const collections: Collection[] = [
       },
     ],
   },
+  {
+    id: 'developers',
+    title: 'Developer guide',
+    description: 'Connect your own agent to Agent Control: quickstart, how decisions work and the API reference.',
+    icon: 'Plug',
+    articleCount: 4,
+    articles: [
+      {
+        id: 'agent-control-overview',
+        title: 'Overview and how it works',
+        description: 'What Agent Control governs and the two ways to connect an agent.',
+        keywords: ['developer', 'agent control', 'overview', 'integration', 'hook', 'mcp', 'tool call', 'agent key'],
+      },
+      {
+        id: 'connect-your-agent',
+        title: 'Connect your agent',
+        description: 'Get a tool call governed in about 5 minutes with the bundled hook.',
+        keywords: ['developer', 'quickstart', 'connect', 'hook', 'setup', 'agent key', 'claude code', 'integration'],
+      },
+      {
+        id: 'governing-tool-calls',
+        title: 'Governing tool calls',
+        description: 'The four decisions, approval polling, run correlation and fail-modes.',
+        keywords: ['developer', 'decision', 'allow', 'deny', 'approval', 'rate limit', 'run correlation', 'x-vw-agent-run-id', 'fail mode'],
+      },
+      {
+        id: 'agent-control-api',
+        title: 'API reference',
+        description: 'Endpoints, headers, auth and error codes for the tool-call hook.',
+        keywords: ['developer', 'api', 'reference', 'endpoint', 'hook', 'curl', 'json-rpc', 'authentication', 'agent key'],
+      },
+    ],
+  },
 ];
 
 // Fast Finds - Popular/quick access articles

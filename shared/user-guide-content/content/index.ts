@@ -93,6 +93,10 @@ import { mcpAuditContent } from './ai-gateway/mcp-audit';
 import { mcpRunsContent } from './ai-gateway/mcp-runs';
 import { mcpApprovalsContent } from './ai-gateway/mcp-approvals';
 import { mcpGuardrailsContent } from './ai-gateway/mcp-guardrails';
+import { agentControlOverviewContent } from './developers/agent-control-overview';
+import { connectYourAgentContent } from './developers/connect-your-agent';
+import { governingToolCallsContent } from './developers/governing-tool-calls';
+import { agentControlApiContent } from './developers/agent-control-api';
 
 // Map of article IDs to their content
 // Format: 'collectionId/articleId': ArticleContent
@@ -205,6 +209,11 @@ export const articleContentMap: Record<string, ArticleContent> = {
   'ai-gateway/mcp-runs': mcpRunsContent,
   'ai-gateway/mcp-approvals': mcpApprovalsContent,
   'ai-gateway/mcp-guardrails': mcpGuardrailsContent,
+  // Developers
+  'developers/agent-control-overview': agentControlOverviewContent,
+  'developers/connect-your-agent': connectYourAgentContent,
+  'developers/governing-tool-calls': governingToolCallsContent,
+  'developers/agent-control-api': agentControlApiContent,
 };
 
 // Helper to get article content
