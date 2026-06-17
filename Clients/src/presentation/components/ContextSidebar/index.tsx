@@ -168,6 +168,7 @@ export function ContextSidebar({
         // MCP / Agent Control sub-routes must be checked before the broader
         // matches so a path like /ai-gateway/mcp/audit doesn't fall through.
         if (p.includes("/ai-gateway/mcp/agent-keys")) return "mcp/agent-keys";
+        if (p.includes("/ai-gateway/mcp/runs")) return "mcp/runs";
         if (p.includes("/ai-gateway/mcp/audit")) return "mcp/audit";
         if (p.includes("/ai-gateway/mcp/approvals")) return "mcp/approvals";
         if (p.includes("/ai-gateway/mcp/servers")) return "mcp/servers";

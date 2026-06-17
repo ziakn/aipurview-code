@@ -54,8 +54,8 @@ export default function MCPRuns() {
     return (
       <EmptyState icon={Activity} message="No agent runs yet" showBorder>
         <Typography variant="body2">
-          Runs appear when an agent sends the same run id (header{" "}
-          <code>x-vw-agent-run-id</code> on model calls, or the session id on tool calls).
+          Runs appear when an agent sends the same run id (header <code>x-vw-agent-run-id</code> on
+          model calls, or the session id on tool calls).
         </Typography>
       </EmptyState>
     );

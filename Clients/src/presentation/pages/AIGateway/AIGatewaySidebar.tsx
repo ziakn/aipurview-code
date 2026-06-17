@@ -20,6 +20,7 @@ import {
   ClipboardList,
   CheckCircle,
   Shield,
+  GitBranch,
 } from "lucide-react";
 import SidebarShell, {
   SidebarMenuItem,
@@ -101,6 +102,12 @@ export default function AIGatewaySidebar({
       // Order: monitor (Activity) → act (Approvals, Guardrails) → divider →
       // configure (Agent keys, MCP servers, MCP tools).
       items: [
+        {
+          id: "mcp-runs",
+          label: "Runs",
+          value: "mcp/runs",
+          icon: <GitBranch size={16} strokeWidth={1.5} />,
+        },
         {
           id: "mcp-audit",
           label: "Activity",

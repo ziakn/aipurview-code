@@ -128,6 +128,7 @@ const MCPServersPage = lazyRoute(() => import("../../presentation/pages/AIGatewa
 const MCPToolCatalogPage = lazyRoute(
   () => import("../../presentation/pages/AIGateway/MCPToolCatalog"),
 );
+const MCPRunsPage = lazyRoute(() => import("../../presentation/pages/AIGateway/MCPRuns"));
 const MCPAuditLogPage = lazyRoute(() => import("../../presentation/pages/AIGateway/MCPAuditLog"));
 const MCPApprovalsPage = lazyRoute(() => import("../../presentation/pages/AIGateway/MCPApprovals"));
 const MCPGuardrailsPage = lazyRoute(
@@ -921,6 +922,14 @@ export const createRoutes = (
       element={
         <Suspense fallback={<LazyFallback />}>
           <MCPToolCatalogPage />
+        </Suspense>
+      }
+    />
+    <Route
+      path="/ai-gateway/mcp/runs"
+      element={
+        <Suspense fallback={<LazyFallback />}>
+          <MCPRunsPage />
         </Suspense>
       }
     />
