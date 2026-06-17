@@ -197,7 +197,7 @@ export default function MCPAuditLogPage() {
           )}
 
           {toolStats.length > 0 && (
-            <Stack direction={{ xs: "column", md: "row" }} spacing={2} sx={{ px: 3, pt: 2 }}>
+            <Stack direction={{ xs: "column", md: "row" }} gap="16px" sx={{ px: 3, pt: 2 }}>
               <Box sx={{ ...cardSx, flex: 1 }}>
                 <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 1 }}>
                   <Typography sx={sectionTitleSx}>Top 10 tools by calls</Typography>

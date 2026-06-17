@@ -82,7 +82,14 @@ export default function MCPTable<T>({
                 key={rowKey(row)}
                 sx={{
                   ...singleTheme.tableStyles.primary.body.row,
-                  cursor: onRowClick ? "pointer" : "default",
+                  // The shared row style sets cursor:pointer on hover (for clickable
+                  // tables). When this table has no row click, keep the hover
+                  // background but override the cursor so rows don't look clickable.
+                  "cursor": onRowClick ? "pointer" : "default",
+                  "&:hover": {
+                    ...(singleTheme.tableStyles.primary.body.row as Record<string, any>)["&:hover"],
+                    cursor: onRowClick ? "pointer" : "default",
+                  },
                   ...(rowSx ? rowSx(row) : {}),
                 }}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
