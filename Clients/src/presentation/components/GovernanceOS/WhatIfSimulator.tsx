@@ -34,6 +34,13 @@ interface SimulationResult {
     controlCount: number;
     priority: string;
   }[];
+  isHeuristicEstimate?: boolean;
+  methodology?: {
+    coverage: string;
+    effort: string;
+    timeline: string;
+    disclaimer: string;
+  };
 }
 
 interface WhatIfSimulatorProps {
@@ -125,12 +132,17 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
     >
       <Stack direction="row" gap="16px" alignItems="center" sx={{ mb: "16px" }}>
         <Calculator size={20} color={brand.primary} />
-        <Typography sx={{ fontSize: 14, fontWeight: 600 }}>What-If Simulator</Typography>
+        <Typography sx={{ fontSize: 14, fontWeight: 600 }}>Rough Estimate</Typography>
       </Stack>
 
+      <Alert severity="info" sx={{ mb: "16px", fontSize: 12 }}>
+        These numbers are rough heuristic estimates based on simplified assumptions. They are not
+        predictive analytics and should not be used for final compliance planning.
+      </Alert>
+
       <Typography sx={{ fontSize: 13, color: text.accent, mb: "16px" }}>
-        Pick a base scenario and adjust framework priorities to simulate effort, coverage, and
-        timeline before activating.
+        Pick a base scenario and adjust framework priorities to get a rough idea of effort,
+        coverage, and timeline before activating.
       </Typography>
 
       <Stack gap="16px">
@@ -301,8 +313,8 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
 
         <Box>
           <GovernanceTooltip
-            header="Run simulation"
-            description="Calculate estimated coverage, effort, and timeline"
+            header="Run estimate"
+            description="Calculate rough estimates for coverage, effort, and timeline"
           >
             <span>
               <CustomizableButton
@@ -313,7 +325,7 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
                 }
                 onClick={handleRun}
                 isDisabled={isSimulating || allSelectedIds.length === 0}
-                text={isSimulating ? "Simulating..." : "Run simulation"}
+                text={isSimulating ? "Estimating..." : "Run estimate"}
                 sx={{}}
               />
             </span>
@@ -334,7 +346,7 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
             }}
           >
             <Typography sx={{ fontSize: 13, fontWeight: 600, color: text.primary, mb: "16px" }}>
-              Simulation results
+              Rough estimate results
             </Typography>
 
             <Box
@@ -349,27 +361,39 @@ const WhatIfSimulator: React.FC<WhatIfSimulatorProps> = ({
                 label="Est. coverage"
                 value={`${result.estimatedCoveragePercent}%`}
                 header="Estimated coverage"
-                description="Estimated percentage of mapped controls"
+                description={
+                  result.methodology?.coverage ||
+                  "estimatedCoveragePercent = min(85, 40 + 12 * numberOfFrameworks)"
+                }
               />
               <MetricBox
                 label="Total controls"
                 value={String(result.totalControls)}
                 header="Total controls"
-                description="Estimated number of controls to address"
+                description="Total leaf-level controls from the selected framework inventories"
               />
               <MetricBox
                 label="Est. effort"
                 value={`${result.estimatedEffortHours.toLocaleString()} hrs`}
                 header="Estimated effort"
-                description="Estimated hours required to close gaps"
+                description={
+                  result.methodology?.effort || "estimatedEffortHours = totalControls * 4"
+                }
               />
               <MetricBox
                 label="Timeline"
                 value={`${result.timelineWeeks} wks`}
                 header="Timeline"
-                description="Estimated weeks to complete the work"
+                description={
+                  result.methodology?.timeline || "timelineWeeks = max(4, ceil(totalControls / 20))"
+                }
               />
             </Box>
+
+            <Alert severity="warning" sx={{ mb: "16px", fontSize: 12 }}>
+              {result.methodology?.disclaimer ||
+                "These numbers are rough heuristic estimates based on simplified assumptions. They are not predictive analytics."}
+            </Alert>
 
             <LinearProgress
               variant="determinate"
