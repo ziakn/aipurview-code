@@ -5,7 +5,9 @@ Gates Claude Code's built-in tools (**Bash**, plus file writes via **Edit**,
 runs, the gateway scans the call against your org's MCP guardrail rules and the
 call is allowed or denied. For Bash it scans the command; for file writes it
 scans the content being written (not the path or the text being removed). Every
-call is recorded in the MCP Audit Log.
+call is recorded in the MCP Audit Log. When the PostToolUse hook is also
+configured (below), the gateway records each tool's result and a per-invocation
+events timeline, viewable in the Activity drawer.
 
 ## Setup
 
@@ -32,10 +34,21 @@ call is recorded in the MCP Audit Log.
        "PreToolUse": [
          { "matcher": "Bash|Edit|Write|MultiEdit|NotebookEdit",
            "hooks": [{ "type": "command", "command": "scripts/vw-tool-hook.sh" }] }
+       ],
+       "PostToolUse": [
+         { "matcher": "Bash|Edit|Write",
+           "hooks": [{ "type": "command", "command": "scripts/vw-tool-hook.sh" }] }
        ]
      }
    }
    ```
+
+   The PostToolUse matcher uses `Bash|Edit|Write` because `MultiEdit` and
+   `NotebookEdit` are not confirmed as PostToolUse-matchable tools in the Claude
+   Code docs — test before adding them to the PostToolUse matcher.
+
+   Result capture is best-effort: if the gateway is unreachable the tool still
+   runs and the invocation simply shows "no result captured". It never blocks.
 
 ## Behavior
 
@@ -48,6 +61,7 @@ call is recorded in the MCP Audit Log.
 | Approval not decided in time | `VW_APPROVAL_FAIL_MODE=closed` (default) blocks; `open` runs |
 | Gateway rate-limits the call | `VW_FAIL_MODE=open` (default) runs; `closed` blocks |
 | Gateway unreachable / timeout | `VW_FAIL_MODE=open` runs; `closed` blocks |
+| PostToolUse result capture | best-effort; tool already ran, result POSTed to the gateway, never blocks |
 
 File-write tools (Write, Edit, MultiEdit, NotebookEdit) are gated on the content being written.
 A guardrail or approval rule that matches that content blocks or pauses the write;

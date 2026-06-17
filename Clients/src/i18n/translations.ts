@@ -3994,6 +3994,9 @@ export const translations: Record<string, Record<string, string>> = {
     "Rate limit": "Ratenlimit",
     "Time": "Zeit",
     "Require approval": "Genehmigung erforderlich",
+    "TOOL USE ID": "TOOL-USE-ID",
+    "No result captured (older adapter, or the tool did not report back).":
+      "Kein Ergebnis erfasst (älterer Adapter oder das Tool hat nicht zurückgemeldet).",
 
     // MCP Approvals page
     "No pending approvals": "Keine ausstehenden Genehmigungen",
@@ -9363,6 +9366,9 @@ export const translations: Record<string, Record<string, string>> = {
     "Rate limit": "Limite de débit",
     "Time": "Heure",
     "Require approval": "Approbation requise",
+    "TOOL USE ID": "ID D'UTILISATION D'OUTIL",
+    "No result captured (older adapter, or the tool did not report back).":
+      "Aucun résultat capturé (adaptateur plus ancien ou l'outil n'a rien renvoyé).",
     "No pending approvals": "Aucune approbation en attente",
     "No approval history yet": "Aucun historique d'approbation pour le moment",
 
@@ -19637,6 +19643,9 @@ export const translations: Record<string, Record<string, string>> = {
     "Review request": "Revisar solicitud",
     "No approval history yet": "Aún no hay historial de aprobaciones",
     "Approval history": "Historial de aprobaciones",
+    "TOOL USE ID": "ID DE USO DE HERRAMIENTA",
+    "No result captured (older adapter, or the tool did not report back).":
+      "No se capturó ningún resultado (adaptador antiguo o la herramienta no respondió).",
     "Label (optional)": "Etiqueta (opcional)",
     "Name (optional)": "Nombre (opcional)",
     "Description (optional)": "Descripción (opcional)",

@@ -16,6 +16,7 @@ import { apiServices } from "../../../../infrastructure/api/networkServices";
 import palette from "../../../themes/palette";
 import { sectionTitleSx, useCardSx, MCP_STATUS_COLORS, MCP_STATUS_FALLBACK } from "../shared";
 import MCPTable from "../MCPTable";
+import MCPInvocationDrawer from "../MCPInvocationDrawer";
 import { displayFormattedDate } from "../../../tools/isoDateToString";
 
 interface AuditLog {
@@ -69,6 +70,7 @@ export default function MCPAuditLogPage() {
   const [total, setTotal] = useState(0);
   const [filterTool, setFilterTool] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [drawerLogId, setDrawerLogId] = useState<number | null>(null);
 
   const loadStats = useCallback(async () => {
     try {
@@ -318,6 +320,7 @@ export default function MCPAuditLogPage() {
                   ]}
                   rows={logs}
                   rowKey={(log) => log.id}
+                  onRowClick={(log) => setDrawerLogId(log.id)}
                   renderRow={(log) => {
                     const colors = MCP_STATUS_COLORS[log.result_status] || MCP_STATUS_FALLBACK;
                     return [
@@ -376,6 +379,12 @@ export default function MCPAuditLogPage() {
           </Stack>
         </>
       )}
+
+      <MCPInvocationDrawer
+        logId={drawerLogId}
+        open={drawerLogId !== null}
+        onClose={() => setDrawerLogId(null)}
+      />
     </PageHeaderExtended>
   );
 }
