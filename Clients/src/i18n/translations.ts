@@ -8596,6 +8596,14 @@ export const translations: Record<string, Record<string, string>> = {
     "Too many attempts": "Zu viele Versuche",
     "Too many requests in a short time. Please wait a moment and refresh the page.":
       "Zu viele Anfragen in kurzer Zeit. Bitte warten Sie einen Moment und laden Sie die Seite neu.",
+    "Calculate rough estimates for coverage, effort, and timeline":
+      "Grobe Schätzungen für Abdeckung, Aufwand und Zeitplan berechnen",
+    "Coverage calculation": "Abdeckungsberechnung",
+    "Rough Estimate": "Grobe Schätzung",
+    "Rough estimate results": "Ergebnisse der groben Schätzung",
+    "Run estimate": "Schätzung ausführen",
+    "Total leaf-level controls from the selected framework inventories":
+      "Gesamtzahl der Blattkontrollen aus den ausgewählten Framework-Inventaren",
   },
 
   fr: {
@@ -17124,6 +17132,14 @@ export const translations: Record<string, Record<string, string>> = {
     "Too many attempts": "Trop de tentatives",
     "Too many requests in a short time. Please wait a moment and refresh the page.":
       "Trop de requêtes en peu de temps. Veuillez patienter un instant et actualiser la page.",
+    "Calculate rough estimates for coverage, effort, and timeline":
+      "Calculer des estimations approximatives de couverture, d'effort et de délai",
+    "Coverage calculation": "Calcul de couverture",
+    "Rough Estimate": "Estimation approximative",
+    "Rough estimate results": "Résultats de l'estimation approximative",
+    "Run estimate": "Lancer l'estimation",
+    "Total leaf-level controls from the selected framework inventories":
+      "Total des contrôles feuille des inventaires de cadres sélectionnés",
   },
   es: {
     // AI Apps (MO-362)
@@ -25569,5 +25585,13 @@ export const translations: Record<string, Record<string, string>> = {
     "Too many attempts": "Demasiados intentos",
     "Too many requests in a short time. Please wait a moment and refresh the page.":
       "Demasiadas solicitudes en poco tiempo. Espera un momento y actualiza la página.",
+    "Calculate rough estimates for coverage, effort, and timeline":
+      "Calcular estimaciones aproximadas de cobertura, esfuerzo y plazo",
+    "Coverage calculation": "Cálculo de cobertura",
+    "Rough Estimate": "Estimación aproximada",
+    "Rough estimate results": "Resultados de la estimación aproximada",
+    "Run estimate": "Ejecutar estimación",
+    "Total leaf-level controls from the selected framework inventories":
+      "Total de controles de nivel hoja de los inventarios de marcos seleccionados",
   },
 };
