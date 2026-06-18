@@ -14,8 +14,11 @@ export const hashApiToken = (token: string): string =>
   crypto.createHash("sha256").update(token).digest("hex");
 
 export const getNumberOfApiTokensQuery = async (organizationId: number) => {
+  // Only active (non-revoked) tokens count toward the per-organization limit.
+  // Revoked rows are retained for audit but must not consume a slot, otherwise
+  // revoking a token would permanently reduce the org's creation capacity.
   const numberOfTokens = (await sequelize.query(
-    `SELECT COUNT(*) FROM api_tokens WHERE organization_id = :organizationId;`,
+    `SELECT COUNT(*) FROM api_tokens WHERE organization_id = :organizationId AND revoked = false;`,
     { replacements: { organizationId } },
   )) as [{ count: string }[], number];
   return parseInt(numberOfTokens[0][0].count, 10);
