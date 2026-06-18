@@ -1,7 +1,19 @@
 # Agent Control developer docs — design
 
-> **Date:** 2026-06-17 · **Status:** Design, pending review · **Area:** user-guide content (in-app + website)
+> **Date:** 2026-06-17 · **Status:** Design + multi-agent addendum (2026-06-18) · **Area:** user-guide content (in-app + website)
 > **Goal:** give a customer's engineer a clear, plain-English set of docs for wiring their own agent to Agent Control. Today only end-user docs (click-the-UI) and internal-engineering docs (file paths, `mcp_hook.py`) exist; the integrator has nothing.
+
+## Addendum (2026-06-18): multi-agent support
+
+**Finding:** the gateway is already agent-agnostic. `POST /v1/mcp/hook` and `POST /v1/mcp` (MCP proxy) never check which coding tool is calling; they only validate the `sk-mcp-*` agent key and adjudicate by org/tool/args. The only Claude-Code-specific pieces are (a) the hook-wiring config (`.claude/settings.json`) and (b) the adapter reading Claude Code's stdin JSON shape. The script logic and the deny-via-exit-2 contract are generic.
+
+**Decision (Option 1):** make the docs agent-agnostic.
+- New article **`developers/connect-any-agent`** — the generic integration contract (read the tool call → `POST /v1/mcp/hook` → honor allow/deny) plus the MCP proxy path (any MCP-speaking agent works with zero adapter) plus a "bring your own agent" section for tools without a pre-tool hook (Codex CLI, Aider, Gemini CLI).
+- Extend **`developers/connect-your-agent`** (the quickstart) with two worked examples that share the same `scripts/vw-tool-hook.sh`: Claude Code (`.claude/settings.json`, `PreToolUse`/`PostToolUse`) and Cursor (`.cursor/hooks.json`, `{ "version": 1, "hooks": { "preToolUse": [...] } }`).
+- **Cursor facts (verified from cursor.com/docs/hooks):** Cursor hooks communicate via JSON on stdio. Cursor honors **exit code 2 = block**, **exit 0 = use JSON output** (empty/invalid JSON on exit 0 = fail-open allow). So the existing `vw-tool-hook.sh` already works for Cursor via exit codes: deny exits 2 (blocks), allow exits 0 (proceeds). Cursor's `preToolUse` input uses `tool_name` + `tool_input` (the script already falls back to `tool_input`). Known nuance to document: because the script blocks via exit 2 rather than returning JSON with `agent_message`, Cursor shows its own generic block message, not our reason.
+- **No code change:** `vw-tool-hook.sh` is unchanged; it is already functionally Cursor-compatible. This addendum is docs-only.
+- **Collection count:** adding `connect-any-agent` brings the Developer guide to **6 articles** (overview, connect-your-agent, connect-any-agent, agent-control-overview, governing-tool-calls, agent-control-api).
+- **Out of scope:** building wrappers for agents without hooks (only documenting the contract so users can), and autonomous-agent POST-invocation integrations.
 
 ---
 

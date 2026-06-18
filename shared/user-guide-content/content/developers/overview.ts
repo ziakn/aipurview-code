@@ -10,7 +10,7 @@ export const developersOverviewContent: ArticleContent = {
     { type: 'heading', id: 'whats-here', level: 2, text: "What's covered today" },
     {
       type: 'paragraph',
-      text: 'Right now the guide covers Agent Control: how to connect an agent so its tool calls are checked before they run.',
+      text: 'Right now the guide covers Agent Control: how to connect any terminal agent so its tool calls are checked before they run. Claude Code and Cursor have ready-made wiring, and any other agent can use the generic contract.',
     },
     {
       type: 'callout',
@@ -27,7 +27,8 @@ export const developersOverviewContent: ArticleContent = {
       type: 'bullet-list',
       items: [
         { bold: 'Agent Control: how it works', text: 'What Agent Control governs and the two ways to connect an agent.' },
-        { bold: 'Connect your agent', text: 'Get a tool call checked in about 5 minutes with the bundled hook.' },
+        { bold: 'Connect your agent', text: 'Get a tool call checked in about 5 minutes, with wiring for Claude Code and Cursor.' },
+        { bold: 'Connect any agent', text: 'The generic contract and the MCP proxy path for any other terminal agent.' },
         { bold: 'Governing tool calls', text: 'The four decisions, approval polling, run correlation and fail-modes.' },
         { bold: 'API reference', text: 'Endpoints, headers, auth and error codes for the tool-call hook.' },
       ],

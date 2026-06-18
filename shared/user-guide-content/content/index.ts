@@ -96,6 +96,7 @@ import { mcpGuardrailsContent } from './ai-gateway/mcp-guardrails';
 import { developersOverviewContent } from './developers/overview';
 import { agentControlOverviewContent } from './developers/agent-control-overview';
 import { connectYourAgentContent } from './developers/connect-your-agent';
+import { connectAnyAgentContent } from './developers/connect-any-agent';
 import { governingToolCallsContent } from './developers/governing-tool-calls';
 import { agentControlApiContent } from './developers/agent-control-api';
 
@@ -214,6 +215,7 @@ export const articleContentMap: Record<string, ArticleContent> = {
   'developers/overview': developersOverviewContent,
   'developers/agent-control-overview': agentControlOverviewContent,
   'developers/connect-your-agent': connectYourAgentContent,
+  'developers/connect-any-agent': connectAnyAgentContent,
   'developers/governing-tool-calls': governingToolCallsContent,
   'developers/agent-control-api': agentControlApiContent,
 };

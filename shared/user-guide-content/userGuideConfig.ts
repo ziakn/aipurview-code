@@ -723,9 +723,9 @@ export const collections: Collection[] = [
   {
     id: 'developers',
     title: 'Developer guide',
-    description: 'Build on VerifyWise. Today the guide covers Agent Control: connect an agent, see how decisions work and use the API reference. More developer topics are coming.',
+    description: 'Build on VerifyWise. Today the guide covers Agent Control: connect any terminal agent, see how decisions work and use the API reference. More developer topics are coming.',
     icon: 'Plug',
-    articleCount: 5,
+    articleCount: 6,
     articles: [
       {
         id: 'overview',
@@ -742,8 +742,14 @@ export const collections: Collection[] = [
       {
         id: 'connect-your-agent',
         title: 'Connect your agent',
-        description: 'Get a tool call governed in about 5 minutes with the bundled hook.',
-        keywords: ['developer', 'quickstart', 'connect', 'hook', 'setup', 'agent key', 'claude code', 'integration'],
+        description: 'Get a tool call governed in about 5 minutes with the bundled hook, for Claude Code or Cursor.',
+        keywords: ['developer', 'quickstart', 'connect', 'hook', 'setup', 'agent key', 'claude code', 'cursor', 'integration'],
+      },
+      {
+        id: 'connect-any-agent',
+        title: 'Connect any agent',
+        description: 'The generic contract and the MCP proxy path for any terminal agent, plus bring-your-own.',
+        keywords: ['developer', 'generic', 'any agent', 'cursor', 'codex', 'aider', 'gemini cli', 'mcp proxy', 'hook contract', 'terminal agent', 'integration'],
       },
       {
         id: 'governing-tool-calls',
