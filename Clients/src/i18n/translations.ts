@@ -5466,6 +5466,7 @@ export const translations: Record<string, Record<string, string>> = {
     "An error occured while deleting the project.":
       "Beim Löschen des Projekts ist ein Fehler aufgetreten.",
     "An error occurred": "Ein Fehler ist aufgetreten",
+    "An unknown error occurred": "Ein unbekannter Fehler ist aufgetreten",
     "An error occurred while adding the framework.":
       "Beim Hinzufügen des Rahmenwerks ist ein Fehler aufgetreten.",
     "An error occurred while removing the framework.":
@@ -14027,6 +14028,7 @@ export const translations: Record<string, Record<string, string>> = {
     "An error occured while deleting the project.":
       "Une erreur s'est produite lors de la suppression du projet.",
     "An error occurred": "Une erreur s'est produite",
+    "An unknown error occurred": "Une erreur inconnue s'est produite",
     "An error occurred while adding the framework.":
       "Une erreur s'est produite lors de l'ajout du référentiel.",
     "An error occurred while removing the framework.":
@@ -20529,6 +20531,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Allow request (fail-open)": "Permitir la solicitud (fallo abierto)",
     "Almost there, finalizing score": "Casi listo, finalizando la puntuación",
     "An error occurred": "Se ha producido un error",
+    "An unknown error occurred": "Se ha producido un error desconocido",
     "Annex I product": "Producto del Anexo I",
     "Annex III use case": "Caso de uso del Anexo III",
     "Annex category saved successfully": "Categoría del anexo guardada correctamente",
