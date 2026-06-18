@@ -723,9 +723,9 @@ export const collections: Collection[] = [
   {
     id: 'developers',
     title: 'Developer guide',
-    description: 'Build on VerifyWise. Today the guide covers Agent Control: connect any terminal agent, see how decisions work and use the API reference. More developer topics are coming.',
+    description: 'Build on VerifyWise. The guide covers Agent Control — connect any terminal agent, see how decisions work and use the hook API reference — and the platform REST API for reading and writing your governance data. More developer topics are coming.',
     icon: 'Plug',
-    articleCount: 6,
+    articleCount: 7,
     articles: [
       {
         id: 'overview',
@@ -762,6 +762,12 @@ export const collections: Collection[] = [
         title: 'API reference',
         description: 'Endpoints, headers, auth and error codes for the tool-call hook.',
         keywords: ['developer', 'api', 'reference', 'endpoint', 'hook', 'curl', 'json-rpc', 'authentication', 'agent key'],
+      },
+      {
+        id: 'platform-rest-api',
+        title: 'Platform REST API',
+        description: 'Authenticate with a token and read or write your governance data over REST.',
+        keywords: ['developer', 'api', 'rest', 'platform', 'token', 'bearer', 'authentication', 'endpoint', 'swagger', 'openapi', 'pagination', 'integration', 'curl'],
       },
     ],
   },

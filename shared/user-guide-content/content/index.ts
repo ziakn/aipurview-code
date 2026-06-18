@@ -99,6 +99,7 @@ import { connectYourAgentContent } from './developers/connect-your-agent';
 import { connectAnyAgentContent } from './developers/connect-any-agent';
 import { governingToolCallsContent } from './developers/governing-tool-calls';
 import { agentControlApiContent } from './developers/agent-control-api';
+import { platformRestApiContent } from './developers/platform-rest-api';
 
 // Map of article IDs to their content
 // Format: 'collectionId/articleId': ArticleContent
@@ -218,6 +219,7 @@ export const articleContentMap: Record<string, ArticleContent> = {
   'developers/connect-any-agent': connectAnyAgentContent,
   'developers/governing-tool-calls': governingToolCallsContent,
   'developers/agent-control-api': agentControlApiContent,
+  'developers/platform-rest-api': platformRestApiContent,
 };
 
 // Helper to get article content
