@@ -723,13 +723,19 @@ export const collections: Collection[] = [
   {
     id: 'developers',
     title: 'Developer guide',
-    description: 'Connect your own agent to Agent Control: quickstart, how decisions work and the API reference.',
+    description: 'Build on VerifyWise. Today the guide covers Agent Control: connect an agent, see how decisions work and use the API reference. More developer topics are coming.',
     icon: 'Plug',
-    articleCount: 4,
+    articleCount: 5,
     articles: [
       {
+        id: 'overview',
+        title: 'Developer guide',
+        description: 'What the developer guide covers today and what is coming.',
+        keywords: ['developer', 'guide', 'overview', 'index', 'agent control', 'api', 'integration', 'getting started'],
+      },
+      {
         id: 'agent-control-overview',
-        title: 'Overview and how it works',
+        title: 'Agent Control: how it works',
         description: 'What Agent Control governs and the two ways to connect an agent.',
         keywords: ['developer', 'agent control', 'overview', 'integration', 'hook', 'mcp', 'tool call', 'agent key'],
       },

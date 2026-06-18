@@ -93,6 +93,7 @@ import { mcpAuditContent } from './ai-gateway/mcp-audit';
 import { mcpRunsContent } from './ai-gateway/mcp-runs';
 import { mcpApprovalsContent } from './ai-gateway/mcp-approvals';
 import { mcpGuardrailsContent } from './ai-gateway/mcp-guardrails';
+import { developersOverviewContent } from './developers/overview';
 import { agentControlOverviewContent } from './developers/agent-control-overview';
 import { connectYourAgentContent } from './developers/connect-your-agent';
 import { governingToolCallsContent } from './developers/governing-tool-calls';
@@ -210,6 +211,7 @@ export const articleContentMap: Record<string, ArticleContent> = {
   'ai-gateway/mcp-approvals': mcpApprovalsContent,
   'ai-gateway/mcp-guardrails': mcpGuardrailsContent,
   // Developers
+  'developers/overview': developersOverviewContent,
   'developers/agent-control-overview': agentControlOverviewContent,
   'developers/connect-your-agent': connectYourAgentContent,
   'developers/governing-tool-calls': governingToolCallsContent,
