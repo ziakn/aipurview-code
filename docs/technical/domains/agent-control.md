@@ -1,8 +1,8 @@
 # Agent Control — native tool-call governance
 
-> **Status:** Core shipped to `develop` (PRs #4078, #4083, #4084). Tool result capture +
-> events timeline + invocation drawer in PR #4103 (open). Run correlation on
-> `feat/agent-run-correlation`. Last updated 2026-06-17.
+> **Status:** Shipped to `develop`. Core governance (PRs #4078, #4083, #4084); tool result
+> capture + events timeline + invocation drawer (PR #4103); run correlation, multi-agent
+> wiring (Claude Code + Cursor) and the developer guide (PR #4112). Last updated 2026-06-18.
 
 Agent Control gates a coding agent's tool calls through the AI Gateway's guardrails,
 human-approval and audit machinery. It covers two entry paths that share one governance
@@ -193,13 +193,25 @@ shows the conversation and the tool calls interleaved.
   repo). Genuinely new matching logic.
 - **Decision provenance** — record which rule matched each call (the "RULE" badge and "Create
   rule from this" in comparable products); Server/Decision columns on Activity depend on it.
-- Cursor / non-Claude-Code adapter; an Agent Control overview/landing page; a priority rule
-  engine; tamper-evident audit; metering MCP calls into the existing budgets; an LLM
-  "summarize" for captured results.
+- An Agent Control overview/landing page; a priority rule engine; tamper-evident audit;
+  metering MCP calls into the existing budgets; an LLM "summarize" for captured results.
+- Adapters for agents without a pre-tool hook (Codex CLI, Aider, Gemini CLI). The integration
+  contract is documented (see the developer guide) so users can wire these themselves; no
+  bundled adapter ships yet. Cursor and Claude Code both work today via `scripts/vw-tool-hook.sh`.
 
 ## Design history
 
 The spec/plan trail for each increment lives under `docs/superpowers/`:
 `2026-06-15-mcp-bash-hook-*` (Phase 1), `2026-06-15-mcp-hook-approval-*` (Phase 2),
 `2026-06-16-mcp-hook-filewrite-*` (Phase 3), `2026-06-16-agent-control-rename-*` (rename),
-`2026-06-16-agent-control-tool-results-*` (result capture + events + drawer).
+`2026-06-16-agent-control-tool-results-*` (result capture + events + drawer),
+`2026-06-17-agent-run-correlation-*` (run correlation),
+`2026-06-17-agent-control-developer-docs-*` (developer guide + multi-agent support).
+
+## Integrator-facing docs
+
+Customer developers connecting their own agent use the **Developer guide** collection in the
+in-app user guide (`shared/user-guide-content/content/developers/`): overview, connect your
+agent (Claude Code + Cursor wiring), connect any agent (the generic hook contract + MCP proxy +
+bring-your-own), governing tool calls, and an API reference. Keep that collection in sync when
+the hook request/response shape, the `x-vw-agent-run-id` header, or the endpoints change.
