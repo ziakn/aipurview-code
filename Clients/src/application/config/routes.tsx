@@ -134,6 +134,7 @@ const MCPGuardrailsPage = lazyRoute(
   () => import("../../presentation/pages/AIGateway/MCPGuardrails"),
 );
 
+/*
 // ── Governance OS routes ─────────────────────────────────────────────
 const GovernanceOS = lazyRoute(() => import("../../presentation/pages/GovernanceOS"));
 
@@ -158,6 +159,9 @@ const KnowledgeGraph = lazyRoute(
 const RegulatoryRadar = lazyRoute(
   () => import("../../presentation/pages/GovernanceOS/RegulatoryRadar"),
 );
+
+Governance OS routes are disabled while the module is not broadly released.
+*/
 
 // ── Remaining routes ──────────────────────────────────────────────────
 const Plugins = lazyRoute(() => import("../../presentation/pages/Plugins"));
@@ -366,6 +370,8 @@ export const createRoutes = (
         </Suspense>
       }
     />
+    {/*
+    Governance OS routes are disabled while the module is not broadly released.
     <Route
       path="/governance-os/:tab?"
       element={
@@ -439,6 +445,7 @@ export const createRoutes = (
       }
     />
     <Route path="/governance-os/*" element={<Navigate to="/governance" replace />} />
+    */}
     <Route
       path="/project-view"
       element={

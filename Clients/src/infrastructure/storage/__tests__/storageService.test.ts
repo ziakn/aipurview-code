@@ -165,16 +165,44 @@ describe("StorageService", () => {
 
   describe("sandbox / unavailable storage fallback", () => {
     it("falls back to memory when the constructor probe throws, never throwing", () => {
-      vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
-        throw new Error("storage disabled");
+      const original = window.localStorage;
+      const store: Record<string, string> = {};
+      const throwingStorage = {
+        getItem: (key: string) => store[key] ?? null,
+        setItem: () => {
+          throw new Error("storage disabled");
+        },
+        removeItem: (key: string) => {
+          delete store[key];
+        },
+        key: (i: number) => Object.keys(store)[i] ?? null,
+        clear: () => {
+          for (const k of Object.keys(store)) delete store[k];
+        },
+        get length() {
+          return Object.keys(store).length;
+        },
+      } as Storage;
+      Object.defineProperty(window, "localStorage", {
+        value: throwingStorage,
+        writable: true,
+        configurable: true,
       });
 
-      const svc = new StorageService();
-      expect(() => svc.set("tasksViewTab", "deadline")).not.toThrow();
-      // Round-trips via the in-memory backend.
-      expect(svc.get("tasksViewTab", "list")).toBe("deadline");
-      // Nothing was written to the real (throwing) localStorage.
-      expect(localStorage.getItem(KEYS.tasksViewTab.key)).toBeNull();
+      try {
+        const svc = new StorageService();
+        expect(() => svc.set("tasksViewTab", "deadline")).not.toThrow();
+        // Round-trips via the in-memory backend.
+        expect(svc.get("tasksViewTab", "list")).toBe("deadline");
+        // Nothing was written to the throwing localStorage backend.
+        expect(window.localStorage.getItem(KEYS.tasksViewTab.key)).toBeNull();
+      } finally {
+        Object.defineProperty(window, "localStorage", {
+          value: original,
+          writable: true,
+          configurable: true,
+        });
+      }
     });
 
     it("returns the fallback (no throw) when getItem throws after construction", () => {
@@ -188,14 +216,43 @@ describe("StorageService", () => {
 
     it("swallows a mid-session setItem failure (quota) and degrades to the fallback", () => {
       const svc = new StorageService();
-      vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
-        throw new Error("QuotaExceededError");
+      const original = window.localStorage;
+      const store: Record<string, string> = {};
+      const throwingStorage = {
+        getItem: (key: string) => store[key] ?? null,
+        setItem: () => {
+          throw new Error("QuotaExceededError");
+        },
+        removeItem: (key: string) => {
+          delete store[key];
+        },
+        key: (i: number) => Object.keys(store)[i] ?? null,
+        clear: () => {
+          for (const k of Object.keys(store)) delete store[k];
+        },
+        get length() {
+          return Object.keys(store).length;
+        },
+      } as Storage;
+      Object.defineProperty(window, "localStorage", {
+        value: throwingStorage,
+        writable: true,
+        configurable: true,
       });
-      // No throw; the write is dropped, so a subsequent read returns the fallback.
-      expect(() => svc.set("preferences", { date_format: "X" })).not.toThrow();
-      expect(svc.get("preferences", { date_format: "fallback" })).toEqual({
-        date_format: "fallback",
-      });
+
+      try {
+        // No throw; the write is dropped, so a subsequent read returns the fallback.
+        expect(() => svc.set("preferences", { date_format: "X" })).not.toThrow();
+        expect(svc.get("preferences", { date_format: "fallback" })).toEqual({
+          date_format: "fallback",
+        });
+      } finally {
+        Object.defineProperty(window, "localStorage", {
+          value: original,
+          writable: true,
+          configurable: true,
+        });
+      }
     });
   });
 

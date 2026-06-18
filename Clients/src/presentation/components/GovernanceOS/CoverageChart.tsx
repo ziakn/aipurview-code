@@ -8,8 +8,9 @@ import {
   Collapse,
   Divider,
   alpha,
+  Alert,
 } from "@mui/material";
-import { ChevronDown, ChevronUp, Plus, CheckSquare, Square } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, CheckSquare, Square, Info } from "lucide-react";
 import { ICoverageChartProps } from "../../../domain/interfaces/i.governanceOs";
 import { CustomizableButton } from "../button/customizable-button";
 import GovernanceTooltip from "./GovernanceTooltip";
@@ -82,6 +83,12 @@ const CoverageChart = ({
 
   return (
     <Stack gap="16px">
+      <Alert severity="info" sx={{ fontSize: 12 }} icon={<Info size={18} />}>
+        Coverage is calculated as distinct mapped source identifiers divided by the framework's full
+        control inventory (sub-controls, sub-clauses, or sub-categories). This gives an honest
+        baseline instead of measuring coverage against the mappings themselves.
+      </Alert>
+
       {coverage.map((fw) => {
         const isExpanded = expandedIds.has(fw.framework_id);
         const isPrimary = activeScenarioFrameworkId === fw.framework_id;
@@ -184,9 +191,17 @@ const CoverageChart = ({
             </GovernanceTooltip>
 
             <Stack direction="row" gap="8px" justifyContent="space-between" alignItems="center">
-              <Typography sx={{ fontSize: 11, color: text.muted }}>
-                {fw.mapped_controls}/{fw.total_controls} controls mapped
-              </Typography>
+              <GovernanceTooltip
+                header="Coverage calculation"
+                description={
+                  fw.calculation_methodology ||
+                  "Coverage = mapped controls / total framework inventory controls"
+                }
+              >
+                <Typography sx={{ fontSize: 11, color: text.muted }}>
+                  {fw.mapped_controls}/{fw.total_controls} controls mapped
+                </Typography>
+              </GovernanceTooltip>
               <Box>
                 {hasGaps && (
                   <GovernanceTooltip

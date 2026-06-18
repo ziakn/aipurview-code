@@ -5,14 +5,12 @@ import {
   useMappings,
   useMappingsBetween,
   useScenarios,
-  useScenario,
   useCreateScenario,
   useUpdateScenario,
   useDeleteScenario,
   useCoverage,
   useRefreshCoverage,
   useUnifiedView,
-  useGovernanceOsEligibility,
   useGovernancePreferences,
   useUpdatePreferences,
 } from "../useGovernanceOs";
@@ -21,14 +19,12 @@ vi.mock("../../repository/governanceOs.repository", () => ({
   getAllMappings: vi.fn(),
   getMappingsBetween: vi.fn(),
   getAllScenarios: vi.fn(),
-  getScenarioById: vi.fn(),
   createScenario: vi.fn(),
   updateScenario: vi.fn(),
   deleteScenario: vi.fn(),
   getCoverage: vi.fn(),
   refreshCoverage: vi.fn(),
   getUnifiedView: vi.fn(),
-  getEligibility: vi.fn(),
   getPreferences: vi.fn(),
   updatePreferences: vi.fn(),
   getRecommendations: vi.fn(),
@@ -38,14 +34,12 @@ import {
   getAllMappings,
   getMappingsBetween,
   getAllScenarios,
-  getScenarioById,
   createScenario,
   updateScenario,
   deleteScenario,
   getCoverage,
   refreshCoverage,
   getUnifiedView,
-  getEligibility,
   getPreferences,
   updatePreferences,
 } from "../../repository/governanceOs.repository";
@@ -53,14 +47,12 @@ import {
 const mockGetAllMappings = vi.mocked(getAllMappings);
 const mockGetMappingsBetween = vi.mocked(getMappingsBetween);
 const mockGetAllScenarios = vi.mocked(getAllScenarios);
-const mockGetScenarioById = vi.mocked(getScenarioById);
 const mockCreateScenario = vi.mocked(createScenario);
 const mockUpdateScenario = vi.mocked(updateScenario);
 const mockDeleteScenario = vi.mocked(deleteScenario);
 const mockGetCoverage = vi.mocked(getCoverage);
 const mockRefreshCoverage = vi.mocked(refreshCoverage);
 const mockGetUnifiedView = vi.mocked(getUnifiedView);
-const mockGetEligibility = vi.mocked(getEligibility);
 const mockGetPreferences = vi.mocked(getPreferences);
 const mockUpdatePreferences = vi.mocked(updatePreferences);
 
@@ -126,22 +118,6 @@ describe("useScenarios", () => {
     const { result } = renderHook(() => useScenarios(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toEqual([{ id: 1, name: "Test" }]);
-  });
-});
-
-describe("useScenario", () => {
-  beforeEach(() => vi.clearAllMocks());
-
-  it("fetches a single scenario by ID", async () => {
-    mockGetScenarioById.mockResolvedValue({ data: { id: 5, name: "Scenario 5" } });
-    const { result } = renderHook(() => useScenario(5), { wrapper: createWrapper() });
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(mockGetScenarioById).toHaveBeenCalledWith({ id: 5 });
-  });
-
-  it("is disabled when id is 0", () => {
-    renderHook(() => useScenario(0), { wrapper: createWrapper() });
-    expect(mockGetScenarioById).not.toHaveBeenCalled();
   });
 });
 
@@ -226,28 +202,6 @@ describe("useUnifiedView", () => {
   it("is disabled when projectId is 0", () => {
     renderHook(() => useUnifiedView(0), { wrapper: createWrapper() });
     expect(mockGetUnifiedView).not.toHaveBeenCalled();
-  });
-});
-
-describe("useGovernanceOsEligibility", () => {
-  beforeEach(() => vi.clearAllMocks());
-
-  it("returns eligibility", async () => {
-    mockGetEligibility.mockResolvedValue({ data: { eligible: true, frameworkCount: 3 } });
-    const { result } = renderHook(() => useGovernanceOsEligibility(), {
-      wrapper: createWrapper(),
-    });
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual({ eligible: true, frameworkCount: 3 });
-  });
-
-  it("returns default when no data", async () => {
-    mockGetEligibility.mockResolvedValue({ data: undefined });
-    const { result } = renderHook(() => useGovernanceOsEligibility(), {
-      wrapper: createWrapper(),
-    });
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual({ eligible: false, frameworkCount: 0 });
   });
 });
 

@@ -19,6 +19,39 @@ jest.mock("../../services/inAppNotification.service", () => ({
   ITaskEntityLinkForEmail: {},
 }));
 
+// Mock BullMQ queues/workers so integration tests do not require a running Redis server
+jest.mock("bullmq", () => {
+  class MockQueue {
+    name: string;
+    constructor(name: string) {
+      this.name = name;
+    }
+    add = jest.fn().mockResolvedValue({ id: "mock-job-id" });
+    obliterate = jest.fn().mockResolvedValue(undefined);
+    close = jest.fn().mockResolvedValue(undefined);
+    on = jest.fn().mockReturnThis();
+    once = jest.fn().mockResolvedValue(undefined);
+  }
+  class MockWorker {
+    name: string;
+    constructor(name: string) {
+      this.name = name;
+    }
+    on = jest.fn().mockReturnThis();
+    close = jest.fn().mockResolvedValue(undefined);
+    run = jest.fn().mockResolvedValue(undefined);
+  }
+  class MockJob {
+    id: string;
+    data: any;
+    constructor(id: string, data: any) {
+      this.id = id;
+      this.data = data;
+    }
+  }
+  return { Queue: MockQueue, Worker: MockWorker, Job: MockJob };
+});
+
 import { Application, Request, Response, NextFunction } from "express";
 import supertest, { Agent } from "supertest";
 import { createApp } from "../../app";

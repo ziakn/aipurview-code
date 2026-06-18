@@ -57,7 +57,6 @@ import NISTAIRMFMap from "./NIST-AI-RMF/Map";
 import NISTAIRMFMeasure from "./NIST-AI-RMF/Measure";
 import NISTAIRMFManage from "./NIST-AI-RMF/Manage";
 import { brand } from "../../themes/palette";
-import GovernanceOsBanner from "../../components/GovernanceOS/GovernanceOsBanner";
 import GovernanceIntelligenceContextBar from "../../components/GovernanceOS/GovernanceIntelligenceContextBar";
 
 // Tab styles following ProjectFrameworks pattern
@@ -990,9 +989,6 @@ const Framework = () => {
 
               <TabPanel value="dashboard" sx={tabPanelStyle}>
                 <Box data-joyride-id="framework-dashboard">
-                  <GovernanceOsBanner
-                    frameworkCount={organizationalProject.framework?.length || 0}
-                  />
                   <GovernanceIntelligenceContextBar
                     frameworkCount={organizationalProject.framework?.length || 0}
                   />

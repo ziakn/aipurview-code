@@ -1,5 +1,20 @@
 import { sequelize } from "../../database/db";
 import bcrypt from "bcrypt";
+import { execSync } from "child_process";
+import path from "path";
+
+/**
+ * Run pending Sequelize migrations against the configured test database.
+ * This ensures integration tests see the same schema the application expects
+ * without relying on a manually migrated local database.
+ */
+export function runMigrations(): void {
+  execSync("npx sequelize db:migrate", {
+    cwd: path.join(__dirname, "../.."),
+    stdio: "pipe",
+    env: { ...process.env, NODE_ENV: "test" },
+  });
+}
 
 export async function createTestOrganization(name?: string): Promise<number> {
   const orgName = name || `Test Org ${Date.now()}`;
@@ -51,7 +66,7 @@ export async function cleanupDatabase(): Promise<void> {
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
       await sequelize.query(
-        `TRUNCATE TABLE event_logs, audit_ledger, projects_members, projects_frameworks, projects, users, organizations RESTART IDENTITY CASCADE`,
+        `TRUNCATE TABLE governance_control_mappings, governance_coverage_cache, governance_scenario_rules, governance_scenario_activations, governance_scenarios, event_logs, audit_ledger, projects_members, projects_frameworks, projects, users, organizations RESTART IDENTITY CASCADE`,
       );
       return;
     } catch (err: any) {
