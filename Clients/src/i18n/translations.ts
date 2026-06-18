@@ -1477,6 +1477,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Delete account": "Konto löschen",
     "Delete API key": "API-Schlüssel löschen",
     "Delete API Key": "API-Schlüssel löschen",
+    "Revoke API Key": "API-Schlüssel widerrufen",
     "Delete Arena Battle": "Arena-Vergleich löschen",
     "Delete automation": "Automatisierung löschen",
     "Delete bias audit": "Verzerrungs-Audit löschen",
@@ -10229,6 +10230,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Delete account": "Supprimer le compte",
     "Delete API key": "Supprimer la clé API",
     "Delete API Key": "Supprimer la clé API",
+    "Revoke API Key": "Révoquer la clé API",
     "Delete Arena Battle": "Supprimer la comparaison d'arène",
     "Delete automation": "Supprimer l'automatisation",
 
@@ -18186,6 +18188,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Delete account": "Eliminar cuenta",
     "Delete API key": "Eliminar clave de API",
     "Delete API Key": "Eliminar clave de API",
+    "Revoke API Key": "Revocar clave de API",
     "Delete Arena Battle": "Eliminar batalla de arena",
     "Delete automation": "Eliminar automatización",
     "Delete bias audit": "Eliminar auditoría de sesgo",

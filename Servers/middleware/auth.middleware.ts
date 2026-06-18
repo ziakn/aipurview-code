@@ -34,6 +34,11 @@ import { getTokenPayload } from "../utils/jwt.utils";
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import { doesUserBelongsToOrganizationQuery, getUserByIdQuery } from "../utils/user.utils";
 import { asyncLocalStorage } from "../utils/context/context";
+import {
+  getActiveApiTokenByHashQuery,
+  hashApiToken,
+  touchApiTokenLastUsedQuery,
+} from "../utils/tokens.utils";
 
 /**
  * Role ID to role name mapping for validation
@@ -152,6 +157,25 @@ const authenticateJWT = async (
       return res.status(400).json({ message: req.t!("Invalid token") });
     }
 
+    // API tokens carry a `type: "api_token"` claim and must additionally exist
+    // as an active row in the api_tokens table. This is what makes them
+    // revocable: a correctly-signed, unexpired JWT is still rejected once its
+    // row is revoked or deleted. Session JWTs have no `type` claim and skip
+    // this database round-trip entirely.
+    let apiTokenRowId: number | null = null;
+    if (decoded.type === "api_token") {
+      const tokenHash = hashApiToken(token);
+      const tokenRow = await getActiveApiTokenByHashQuery(decoded.organizationId, tokenHash);
+      if (!tokenRow) {
+        return res.status(401).json(
+          STATUS_CODE[401]({
+            message: req.t!("API token is invalid or has been revoked"),
+          }),
+        );
+      }
+      apiTokenRowId = tokenRow.id;
+    }
+
     // Validate role hasn't changed since token was issued
     const user = await getUserByIdQuery(decoded.id);
     if (decoded.roleName !== roleMap.get(user.role_id)) {
@@ -213,6 +237,17 @@ const authenticateJWT = async (
               req.t!("Super-admin has read-only access when viewing an organization"),
             ),
           );
+      }
+    }
+
+    // Record API token usage on the fully-authenticated path. Best-effort:
+    // a failure to update last_used_at must not block an otherwise valid
+    // request.
+    if (apiTokenRowId !== null) {
+      try {
+        await touchApiTokenLastUsedQuery(apiTokenRowId, decoded.organizationId);
+      } catch {
+        // swallow — usage tracking is non-critical
       }
     }
 
