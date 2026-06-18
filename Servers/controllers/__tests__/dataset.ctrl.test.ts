@@ -53,7 +53,6 @@ const mockGetDatasetByIdQuery = getDatasetByIdQuery as jest.MockedFunction<
 function createMockReq(partial: Partial<Request> = {}): Partial<Request> {
   return {
     organizationId: 1,
-    tenantId: 1,
     userId: 1,
     t: (key: string) => key,
     ...partial,

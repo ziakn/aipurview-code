@@ -742,7 +742,6 @@ async function refreshAccessToken(req: Request, res: Response): Promise<any> {
       id: decoded.id,
       email: decoded.email,
       roleName: decoded.roleName,
-      tenantId: decoded.tenantId,
       organizationId: decoded.organizationId,
     });
 
@@ -952,7 +951,7 @@ async function updateUserById(req: Request, res: Response) {
                 fileName: "user.ctrl.ts",
                 error: emailError as Error,
                 userId: req.userId!,
-                tenantId: req.organizationId!,
+                organizationId: req.organizationId!,
               });
             });
           }
@@ -965,7 +964,7 @@ async function updateUserById(req: Request, res: Response) {
             fileName: "user.ctrl.ts",
             error: projectError as Error,
             userId: req.userId!,
-            tenantId: req.organizationId!,
+            organizationId: req.organizationId!,
           });
         }
       }
@@ -1457,7 +1456,7 @@ async function updateUserRole(req: Request, res: Response) {
               fileName: "user.ctrl.ts",
               error: emailError as Error,
               userId: req.userId!,
-              tenantId: req.organizationId!,
+              organizationId: req.organizationId!,
             });
           });
         }
@@ -1470,7 +1469,7 @@ async function updateUserRole(req: Request, res: Response) {
           fileName: "user.ctrl.ts",
           error: projectError as Error,
           userId: req.userId!,
-          tenantId: req.organizationId!,
+          organizationId: req.organizationId!,
         });
       }
     }

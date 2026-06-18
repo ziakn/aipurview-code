@@ -265,7 +265,7 @@ export async function getAllIntakeForms(req: Request, res: Response) {
     functionName: "getAllIntakeForms",
     fileName: "intakeForm.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   try {
@@ -279,7 +279,7 @@ export async function getAllIntakeForms(req: Request, res: Response) {
       fileName: "intakeForm.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -299,7 +299,7 @@ export async function getIntakeFormById(req: Request, res: Response) {
     functionName: "getIntakeFormById",
     fileName: "intakeForm.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   try {
@@ -318,7 +318,7 @@ export async function getIntakeFormById(req: Request, res: Response) {
       fileName: "intakeForm.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -333,7 +333,7 @@ export async function createIntakeForm(req: Request, res: Response) {
     functionName: "createIntakeForm",
     fileName: "intakeForm.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   const transaction = await sequelize.transaction();
@@ -401,7 +401,7 @@ export async function createIntakeForm(req: Request, res: Response) {
       functionName: "createIntakeForm",
       fileName: "intakeForm.ctrl.ts",
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
 
     return res.status(201).json(STATUS_CODE[201](form));
@@ -414,7 +414,7 @@ export async function createIntakeForm(req: Request, res: Response) {
       fileName: "intakeForm.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -434,7 +434,7 @@ export async function updateIntakeForm(req: Request, res: Response) {
     functionName: "updateIntakeForm",
     fileName: "intakeForm.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   const transaction = await sequelize.transaction();
@@ -504,7 +504,7 @@ export async function updateIntakeForm(req: Request, res: Response) {
       functionName: "updateIntakeForm",
       fileName: "intakeForm.ctrl.ts",
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
 
     return res.status(200).json(STATUS_CODE[200](form));
@@ -517,7 +517,7 @@ export async function updateIntakeForm(req: Request, res: Response) {
       fileName: "intakeForm.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -537,7 +537,7 @@ export async function deleteIntakeForm(req: Request, res: Response) {
     functionName: "deleteIntakeForm",
     fileName: "intakeForm.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   const transaction = await sequelize.transaction();
@@ -566,7 +566,7 @@ export async function deleteIntakeForm(req: Request, res: Response) {
       functionName: "deleteIntakeForm",
       fileName: "intakeForm.ctrl.ts",
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
 
     return res.status(200).json(STATUS_CODE[200]({ message: req.t!("Form deleted successfully") }));
@@ -579,7 +579,7 @@ export async function deleteIntakeForm(req: Request, res: Response) {
       fileName: "intakeForm.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -599,7 +599,7 @@ export async function archiveIntakeForm(req: Request, res: Response) {
     functionName: "archiveIntakeForm",
     fileName: "intakeForm.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   const transaction = await sequelize.transaction();
@@ -621,7 +621,7 @@ export async function archiveIntakeForm(req: Request, res: Response) {
       functionName: "archiveIntakeForm",
       fileName: "intakeForm.ctrl.ts",
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
 
     return res.status(200).json(STATUS_CODE[200](form));
@@ -634,7 +634,7 @@ export async function archiveIntakeForm(req: Request, res: Response) {
       fileName: "intakeForm.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -653,7 +653,7 @@ export async function getPendingSubmissions(req: Request, res: Response) {
     functionName: "getPendingSubmissions",
     fileName: "intakeForm.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   try {
@@ -668,7 +668,7 @@ export async function getPendingSubmissions(req: Request, res: Response) {
       fileName: "intakeForm.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -689,7 +689,7 @@ export async function getFormSubmissions(req: Request, res: Response) {
     functionName: "getFormSubmissions",
     fileName: "intakeForm.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   try {
@@ -703,7 +703,7 @@ export async function getFormSubmissions(req: Request, res: Response) {
       fileName: "intakeForm.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -723,7 +723,7 @@ export async function getSubmissionById(req: Request, res: Response) {
     functionName: "getSubmissionById",
     fileName: "intakeForm.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   try {
@@ -742,7 +742,7 @@ export async function getSubmissionById(req: Request, res: Response) {
       fileName: "intakeForm.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -757,7 +757,7 @@ export async function getSubmissionStats(req: Request, res: Response) {
     functionName: "getSubmissionStats",
     fileName: "intakeForm.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   try {
@@ -771,7 +771,7 @@ export async function getSubmissionStats(req: Request, res: Response) {
       fileName: "intakeForm.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -849,7 +849,7 @@ export async function getSubmissionByEntity(req: Request, res: Response) {
     functionName: "getSubmissionByEntity",
     fileName: "intakeForm.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   try {
@@ -898,7 +898,7 @@ export async function getSubmissionByEntity(req: Request, res: Response) {
       fileName: "intakeForm.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -941,7 +941,7 @@ export async function overrideSubmissionRisk(req: Request, res: Response) {
       functionName: "overrideSubmissionRisk",
       fileName: "intakeForm.ctrl.ts",
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
 
     return res
@@ -967,7 +967,7 @@ export async function approveSubmission(req: Request, res: Response) {
     functionName: "approveSubmission",
     fileName: "intakeForm.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   const transaction = await sequelize.transaction();
@@ -1111,7 +1111,7 @@ export async function approveSubmission(req: Request, res: Response) {
       functionName: "approveSubmission",
       fileName: "intakeForm.ctrl.ts",
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
 
     return res.status(200).json(STATUS_CODE[200](updatedSubmission));
@@ -1124,7 +1124,7 @@ export async function approveSubmission(req: Request, res: Response) {
       fileName: "intakeForm.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
@@ -1144,7 +1144,7 @@ export async function rejectSubmission(req: Request, res: Response) {
     functionName: "rejectSubmission",
     fileName: "intakeForm.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   const transaction = await sequelize.transaction();
@@ -1229,7 +1229,7 @@ export async function rejectSubmission(req: Request, res: Response) {
       functionName: "rejectSubmission",
       fileName: "intakeForm.ctrl.ts",
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
 
     return res.status(200).json(STATUS_CODE[200](updatedSubmission));
@@ -1242,7 +1242,7 @@ export async function rejectSubmission(req: Request, res: Response) {
       fileName: "intakeForm.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
