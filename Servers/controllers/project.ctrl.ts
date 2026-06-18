@@ -112,7 +112,6 @@ export async function getAllProjects(req: Request, res: Response): Promise<any> 
         sequelize,
       );
       if (pluginUseCases.length > 0) {
-        console.log(`[getAllProjects] Merging ${pluginUseCases.length} use-cases from plugins`);
         allProjects = [...projects, ...pluginUseCases];
       }
     } catch (pluginError) {
@@ -290,9 +289,13 @@ export async function createProject(req: Request, res: Response): Promise<any> {
       }
     } else {
       // Approval workflow assigned - defer framework creation until approval
-      console.log("Approval workflow detected - deferring framework creation until approval");
-      console.log("Pending frameworks:", newProject.framework);
-      console.log("enable_ai_data_insertion:", newProject.enable_ai_data_insertion);
+      logProcessing({
+        description: `deferring framework creation pending approval (frameworks=${JSON.stringify(newProject.framework)}, enable_ai_data_insertion=${newProject.enable_ai_data_insertion})`,
+        functionName: "createProject",
+        fileName: "project.ctrl.ts",
+        userId: req.userId!,
+        tenantId: req.organizationId!,
+      });
     }
 
     if (createdProject) {
@@ -752,15 +755,26 @@ export async function deleteProjectById(req: Request, res: Response): Promise<an
     );
 
     if (pendingApprovalRequestId) {
-      console.log(
-        `Withdrawing approval request ${pendingApprovalRequestId} for project ${projectId} before deletion`,
-      );
+      logProcessing({
+        description: `withdrawing approval request ${pendingApprovalRequestId} for project ${projectId} before deletion`,
+        functionName: "deleteProjectById",
+        fileName: "project.ctrl.ts",
+        userId: req.userId!,
+        tenantId: req.organizationId!,
+      });
       await withdrawApprovalRequestQuery(
         pendingApprovalRequestId,
         req.organizationId!,
         transaction,
       );
-      console.log(`Approval request ${pendingApprovalRequestId} withdrawn successfully`);
+      await logSuccess({
+        eventType: "Update",
+        description: `withdrew approval request ${pendingApprovalRequestId} for project ${projectId}`,
+        functionName: "deleteProjectById",
+        fileName: "project.ctrl.ts",
+        userId: req.userId!,
+        tenantId: req.organizationId!,
+      });
     }
 
     // Record deletion in change history BEFORE deleting the project
