@@ -35,9 +35,8 @@ export const createApiToken = async (req: Request, res: Response) => {
     );
     logger.debug(`🔍 Fetched user: ${user.id}`);
 
-    // Generate API token with user-defined expiry
-    // Note: tenantId is no longer included in the token payload.
-    // The auth middleware reconstructs tenantHash from organizationId.
+    // Generate API token with user-defined expiry.
+    // tenantHash is reconstructed from organizationId by the auth middleware.
     const apiToken = generateApiToken(
       {
         id: user.id!,

@@ -12,7 +12,7 @@ export async function getDeadlinesSummary(req: Request, res: Response) {
     functionName: "getDeadlinesSummary",
     fileName: "deadline.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
 
   try {
@@ -27,7 +27,7 @@ export async function getDeadlinesSummary(req: Request, res: Response) {
       functionName: "getDeadlinesSummary",
       fileName: "deadline.ctrl.ts",
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
 
     return res.status(200).json(STATUS_CODE[200](summary));
@@ -39,7 +39,7 @@ export async function getDeadlinesSummary(req: Request, res: Response) {
       fileName: "deadline.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
 
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));

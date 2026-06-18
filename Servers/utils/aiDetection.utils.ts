@@ -651,17 +651,6 @@ export async function createFindingsBatchQuery(
 }
 
 /**
- * Get findings for a scan
- *
- * @param scanId - Scan ID
- * @param tenantId - Tenant schema hash
- * @param page - Page number (1-indexed)
- * @param limit - Items per page
- * @param confidence - Optional confidence filter
- * @returns Findings and total count
- */
-
-/**
  * Create model security findings in batch
  *
  * @param inputs - Array of model security finding inputs
