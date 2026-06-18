@@ -127,18 +127,19 @@ export default function MCPApprovalsPage() {
     <PageHeaderExtended
       title="Approvals"
       description="Review and decide on agent tool calls that require human approval before they run."
+      helpArticlePath="ai-gateway/mcp-approvals"
     >
       {/* Tab bar */}
       <Box sx={{ px: 3, pt: 1 }}>
         <TabContext value={tab}>
           <TabBar
             tabs={[
+              { label: "History", value: "history", icon: "History" as const },
               {
                 label: `Pending${pending.length > 0 ? ` (${pending.length})` : ""}`,
                 value: "pending",
                 icon: "Clock" as const,
               },
-              { label: "History", value: "history", icon: "History" as const },
             ]}
             activeTab={tab}
             onChange={(_, v) => setTab(v as "pending" | "history")}

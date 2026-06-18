@@ -112,7 +112,7 @@ export const mcpOverviewContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Getting started takes about 5 minutes. Here\'s the short version:',
+      text: 'Setup takes about 5 minutes:',
     },
     {
       type: 'ordered-list',
@@ -156,7 +156,7 @@ export const mcpOverviewContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The Agent Control section appears as a collapsible group in the AI Gateway sidebar. Click "Agent Control" to expand it. You\'ll see six sub-pages:',
+      text: 'The Agent Control section appears as a collapsible group in the AI Gateway sidebar. Click "Agent Control" to expand it. You\'ll see 6 sub-pages:',
     },
     {
       type: 'bullet-list',

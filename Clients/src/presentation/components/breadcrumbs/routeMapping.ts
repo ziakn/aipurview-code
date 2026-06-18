@@ -48,6 +48,7 @@ import {
   ShieldCheck,
   KeyRound,
   BookOpen,
+  GitBranch,
 } from "lucide-react";
 
 /**
@@ -155,6 +156,7 @@ export const routeMapping: Record<string, string> = {
   "/ai-gateway/mcp/agent-keys": "Agent keys",
   "/ai-gateway/mcp/servers": "MCP Servers",
   "/ai-gateway/mcp/tools": "MCP Tools",
+  "/ai-gateway/mcp/runs": "Runs",
   "/ai-gateway/mcp/audit": "Activity",
   "/ai-gateway/mcp/approvals": "Approvals",
   "/ai-gateway/mcp/guardrails": "Guardrails",
@@ -329,6 +331,7 @@ export const routeIconMapping: Record<string, () => React.ReactNode> = {
   "/ai-gateway/mcp/agent-keys": () => React.createElement(KeyRound, { size: 14, strokeWidth: 1.5 }),
   "/ai-gateway/mcp/servers": () => React.createElement(Router, { size: 14, strokeWidth: 1.5 }),
   "/ai-gateway/mcp/tools": () => React.createElement(Layers, { size: 14, strokeWidth: 1.5 }),
+  "/ai-gateway/mcp/runs": () => React.createElement(GitBranch, { size: 14, strokeWidth: 1.5 }),
   "/ai-gateway/mcp/audit": () => React.createElement(FileSearch, { size: 14, strokeWidth: 1.5 }),
   "/ai-gateway/mcp/approvals": () =>
     React.createElement(ShieldCheck, { size: 14, strokeWidth: 1.5 }),

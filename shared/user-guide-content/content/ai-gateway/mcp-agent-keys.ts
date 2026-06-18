@@ -130,7 +130,7 @@ export const mcpAgentKeysContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Here\'s how an agent authenticates with the gateway using an agent key:',
+      text: 'An agent authenticates with the gateway by passing its key as a Bearer token:',
     },
     {
       type: 'code',
@@ -195,7 +195,7 @@ curl -X POST https://your-verifywise-host/v1/mcp \\
     },
     {
       type: 'paragraph',
-      text: 'Revocation is instant. The agent will start getting 401 errors on its next request. You can\'t un-revoke a key. Create a new one if needed.',
+      text: 'Revocation is instant, and the agent starts getting 401 errors on its next request. You can\'t un-revoke a key, so create a new one if you need to restore access.',
     },
     {
       type: 'heading',

@@ -114,6 +114,11 @@ async def mcp_jsonrpc(request: Request):
         start_time = time.time()
         tool = None
 
+        # Stable per-session id from the MCP client (set at initialize, carried on
+        # every call). Passed to log_tool_call so proxy tool calls correlate into
+        # the same agent run; may be None for clients that never sent the header.
+        gateway_session_id = request.headers.get("mcp-session-id")
+
         async def _audit(status: str, summary: str | None, is_error: bool):
             await log_tool_call(
                 organization_id=org_id,
@@ -125,6 +130,7 @@ async def mcp_jsonrpc(request: Request):
                 result_summary=summary[:500] if summary else None,
                 is_error=is_error,
                 latency_ms=int((time.time() - start_time) * 1000),
+                session_id=gateway_session_id,
             )
 
         try:

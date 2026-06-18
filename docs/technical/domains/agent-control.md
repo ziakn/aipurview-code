@@ -1,7 +1,8 @@
 # Agent Control — native tool-call governance
 
 > **Status:** Core shipped to `develop` (PRs #4078, #4083, #4084). Tool result capture +
-> events timeline + invocation drawer in PR #4103 (open). Last updated 2026-06-17.
+> events timeline + invocation drawer in PR #4103 (open). Run correlation on
+> `feat/agent-run-correlation`. Last updated 2026-06-17.
 
 Agent Control gates a coding agent's tool calls through the AI Gateway's guardrails,
 human-approval and audit machinery. It covers two entry paths that share one governance
@@ -144,6 +145,47 @@ MCP-protocol concepts).
 (`MCPInvocationDrawer.tsx`) showing the call's status, `tool_use_id`, agent key + session,
 arguments, the captured result (or "no result captured"), the events timeline, and a raw-JSON
 toggle. It reads `GET /ai-gateway/mcp/audit/logs/{id}`.
+
+## Run correlation
+
+The two halves of an agent turn live in separate tables: the **model call** (the conversation
+the agent had with the LLM) lands in `ai_gateway_spend_logs`; the **tool call** (the action it
+took) lands in `ai_gateway_mcp_audit_logs`. Run correlation joins them into one reconstructable
+**run** — what the agent said, then what it did.
+
+**The key.** `agent_run_id` is the correlation key.
+
+- The **native hook** reuses its existing `session_id` as the `agent_run_id`, set at insert in
+  `log_tool_call`. No new identifier is minted.
+- The **model proxy** reads a request header `x-vw-agent-run-id` (accepted aliases:
+  `x-session-id`, `helicone-session-id`) and persists it on the spend log.
+
+**Storage.** `agent_run_id` (nullable `TEXT`) is added to both `ai_gateway_spend_logs` and
+`ai_gateway_mcp_audit_logs` in migration `a0008`. A reserved nullable `agent_run_path` column
+is added alongside it for future run-tree nesting — unused in v1; runs are flat and ordered by
+`created_at`.
+
+**Conversation capture.** The proxy persists `request_messages` / `response_text` on
+`ai_gateway_spend_logs`, gated by the org-level guardrail settings flags `log_request_body` /
+`log_response_body` (both default `false`). Stored content is the **post-guardrails**
+(scanned/masked) messages — never the raw request/response. When a flag is off, the column is
+null and the UI shows "(body logging disabled)".
+
+**Endpoints.**
+
+- `GET /internal/mcp/runs` — lists runs, one row per run with model/tool counts, denied count,
+  total tokens and cost.
+- `GET /internal/mcp/runs/{run_id}` — the run detail: model and tool entries interleaved,
+  ordered by `created_at`.
+
+Both are reachable through the Express proxy under `/ai-gateway/mcp/runs`.
+
+**Graceful degradation.** A call with no run id — a plain OpenAI client, or an un-instrumented
+agent — is still logged and still enforced exactly as before. It simply won't appear inside a
+correlated run. Zero regression.
+
+**UI.** A **Runs** page in Agent Control lists runs; clicking one opens a detail drawer that
+shows the conversation and the tool calls interleaved.
 
 ## Not yet built (Phase 4+)
 

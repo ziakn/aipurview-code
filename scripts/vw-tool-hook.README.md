@@ -68,3 +68,34 @@ A guardrail or approval rule that matches that content blocks or pauses the writ
 deleting content (an `old_string`) and the file path are not scanned.
 
 Requires `curl` and `jq` on PATH.
+
+## Correlating tool calls and model calls into one run
+
+The **Runs** view (AI Gateway, Agent Control, **Runs**) groups a turn's model
+calls (the conversation) and its tool calls (the actions) into a single run, so
+you can reconstruct what the agent was asked, what it answered and what it did.
+
+The join key is a shared run id. This hook already supplies it for tool calls —
+it forwards the Claude Code **session id** (the `session_id` in the hook
+payload), which the gateway stores as the run id automatically. **You do not need
+to do anything for the tool-call side.**
+
+To also pull the **model calls** into the same run, the agent's LLM client must
+send that same id to the gateway proxy on every model request, via the header:
+
+```
+x-vw-agent-run-id: <the same value as the Claude Code session_id>
+```
+
+The aliases `x-session-id` and `helicone-session-id` are also accepted, so a
+client already instrumented for those tools correlates with no change.
+
+> **This hook cannot set that header for you** — Claude Code's model calls don't
+> pass through this script; they go from the agent to your model client. Setting
+> the header is a one-line change in whatever client/proxy config routes your
+> model traffic through the VerifyWise gateway. If the header is absent, model
+> calls are still fully captured and governed — they just won't appear inside the
+> correlated run. Tool-call correlation always works regardless.
+
+If you don't route model calls through the gateway at all, the Runs view will
+show tool-only runs — still useful, but without the conversation half.
