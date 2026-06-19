@@ -32,7 +32,6 @@ import {
   getFileMetadata,
   updateMetadata,
   listFilesWithMetadata,
-  getHighlighted,
   previewFile,
   getFileVersionHistory,
 } from "../controllers/fileManager.ctrl";
@@ -157,25 +156,16 @@ router.get("/search", fileOperationsLimiter, authenticateJWT, searchFiles);
 
 /**
  * @route   GET /file-manager/with-metadata
- * @desc    Get list of all files with full metadata (tags, status, version, etc.)
+ * @desc    Get list of all files with full metadata (tags, status, version, attention flags)
  * @access  All authenticated users
  * @query   page - Page number (optional)
  * @query   pageSize - Items per page (optional)
- * @returns {200} List of files with full metadata and pagination
+ * @query   daysUntilExpiry - Threshold for is_due_for_update flag (default 30, 1-365)
+ * @query   recentDays - Threshold for is_recently_modified flag (default 7, 1-365)
+ * @returns {200} List of files with metadata, attention flags, and pagination
  * @returns {500} Server error
  */
 router.get("/with-metadata", fileOperationsLimiter, authenticateJWT, listFilesWithMetadata);
-
-/**
- * @route   GET /file-manager/highlighted
- * @desc    Get highlighted files (due for update, pending approval, recently modified)
- * @access  All authenticated users
- * @query   daysUntilExpiry - Days before expiry to flag (default 30)
- * @query   recentDays - Days to consider as recent (default 7)
- * @returns {200} Categorized file IDs
- * @returns {500} Server error
- */
-router.get("/highlighted", fileOperationsLimiter, authenticateJWT, getHighlighted);
 
 /**
  * @route   GET /file-manager/:id

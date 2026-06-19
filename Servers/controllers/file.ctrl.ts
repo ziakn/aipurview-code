@@ -566,25 +566,48 @@ export async function getEntityFiles(req: Request, res: Response): Promise<any> 
     organizationId: req.organizationId,
   });
 
+  // Pagination — page defaults to 1, pageSize defaults to 50 (entity evidence
+  // lists are typically small; default kept generous so a single fetch usually
+  // returns everything without needing Load More).
+  const rawPage = req.query.page
+    ? Number(Array.isArray(req.query.page) ? req.query.page[0] : req.query.page)
+    : 1;
+  const rawPageSize = req.query.pageSize
+    ? Number(Array.isArray(req.query.pageSize) ? req.query.pageSize[0] : req.query.pageSize)
+    : 50;
+  const page = Number.isSafeInteger(rawPage) && rawPage > 0 ? rawPage : 1;
+  const pageSize =
+    Number.isSafeInteger(rawPageSize) && rawPageSize > 0 && rawPageSize <= 200 ? rawPageSize : 50;
+  const offset = (page - 1) * pageSize;
+
   try {
     const entityIdStr = Array.isArray(entity_id) ? entity_id[0] : entity_id;
-    const files = await getFilesWithMetadataForEntity(
+    const { files, total } = await getFilesWithMetadataForEntity(
       framework_type as FrameworkType,
       entity_type as EntityType,
       parseInt(entityIdStr, 10),
       req.organizationId!,
+      { limit: pageSize, offset },
     );
 
     await logSuccess({
       eventType: "Read",
-      description: `Retrieved ${files.length} files for ${framework_type}/${entity_type}/${entity_id}`,
+      description: `Retrieved ${files.length} of ${total} files for ${framework_type}/${entity_type}/${entity_id}`,
       functionName: "getEntityFiles",
       fileName: "file.ctrl.ts",
       userId: req.userId,
       organizationId: req.organizationId,
     });
 
-    return res.status(200).json(files);
+    return res.status(200).json({
+      files,
+      pagination: {
+        total,
+        page,
+        pageSize,
+        totalPages: Math.max(1, Math.ceil(total / pageSize)),
+      },
+    });
   } catch (error) {
     await logFailure({
       eventType: "Read",
