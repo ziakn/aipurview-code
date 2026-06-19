@@ -37,7 +37,7 @@ export const streamNotifications = async (req: Request, res: Response): Promise<
       "streamNotifications",
       "notification.ctrl.ts",
     );
-    res.status(401).json({ error: req.t!("Unauthorized") });
+    res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     return;
   }
 
@@ -112,7 +112,7 @@ export const streamNotifications = async (req: Request, res: Response): Promise<
       "streamNotifications",
       "notification.ctrl.ts",
     );
-    res.status(500).json({ error: req.t!("Internal server error") });
+    res.status(500).json(STATUS_CODE[500](req.t!("Internal server error")));
   }
 };
 

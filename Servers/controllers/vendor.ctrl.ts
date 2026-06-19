@@ -370,7 +370,7 @@ export async function updateVendorById(req: Request, res: Response): Promise<any
         userId: req.userId!,
         organizationId: req.organizationId!,
       });
-      return res.status(401).json({ message: req.t!("Unauthorized") });
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     // Find existing vendor

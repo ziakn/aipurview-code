@@ -23,24 +23,32 @@ interface ApiResponse<T> {
   headers?: AxiosResponseHeaders;
 }
 
-// Utility function to handle errors
+/**
+ * Pull the best human-readable message out of an axios error response.
+ *
+ * Priority (matches the backend STATUS_CODE envelope and legacy raw shapes):
+ *   1. data.data (string)             — single-field STATUS_CODE[NNN]("msg")
+ *   2. data.data.message              — multi-field STATUS_CODE[NNN]({ message, ... })
+ *   3. data.data.error                — multi-field STATUS_CODE[NNN]({ error, ... })
+ *   4. data.message                   — legacy raw { message: "msg" } or HTTP phrase
+ *   5. data.error                     — legacy raw { error: "msg" }
+ */
+const extractErrorMessage = (data: any, fallback: string): string => {
+  if (data == null) return fallback;
+  if (typeof data.data === "string") return data.data;
+  if (data.data && typeof data.data === "object") {
+    if (typeof data.data.message === "string") return data.data.message;
+    if (typeof data.data.error === "string") return data.data.error;
+  }
+  if (typeof data.message === "string") return data.message;
+  if (typeof data.error === "string") return data.error;
+  return fallback;
+};
+
 const handleError = (error: any) => {
   try {
     if (axios.isAxiosError(error)) {
-      // Extract the most specific error message available
-      let errorMessage = error.message; // fallback
-
-      if (error.response?.data?.data && typeof error.response.data.data === "string") {
-        // Validation errors from STATUS_CODE[400] put the specific message in data.data
-        errorMessage = error.response.data.data;
-      } else if (error.response?.data?.message) {
-        // Standard error format with message
-        errorMessage = error.response.data.message;
-      } else if (error.response?.data?.error) {
-        // Alternative error format
-        errorMessage = error.response.data.error;
-      }
-
+      const errorMessage = extractErrorMessage(error.response?.data, error.message);
       return new CustomException(errorMessage, error.response?.status, error.response?.data);
     } else {
       return new CustomException(

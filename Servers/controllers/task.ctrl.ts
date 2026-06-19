@@ -50,7 +50,7 @@ export async function createTask(req: Request, res: Response): Promise<any> {
   try {
     const { userId } = req;
     if (!userId) {
-      return res.status(401).json({ message: req.t!("Unauthorized") });
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     const {
@@ -220,7 +220,7 @@ export async function getAllTasks(req: Request, res: Response): Promise<any> {
   try {
     const { userId, role } = req;
     if (!userId || !role) {
-      return res.status(401).json({ message: req.t!("Unauthorized") });
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     // Extract query parameters for filters, sorting, and pagination
@@ -327,7 +327,7 @@ export async function getTaskById(req: Request, res: Response): Promise<any> {
   try {
     const { userId, role } = req;
     if (!userId || !role) {
-      return res.status(401).json({ message: req.t!("Unauthorized") });
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     const task = await getTaskByIdQuery(taskId, { userId, role }, req.organizationId!);
@@ -409,7 +409,7 @@ export async function updateTask(req: Request, res: Response): Promise<any> {
   try {
     const { userId, role } = req;
     if (!userId || !role) {
-      return res.status(401).json({ message: req.t!("Unauthorized") });
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     const updateData: Partial<ITask> = {};
@@ -637,7 +637,7 @@ export async function deleteTask(req: Request, res: Response): Promise<any> {
   try {
     const { userId, role } = req;
     if (!userId || !role) {
-      return res.status(401).json({ message: req.t!("Unauthorized") });
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     const deleted = await deleteTaskByIdQuery({
@@ -718,7 +718,7 @@ export async function restoreTask(req: Request, res: Response): Promise<any> {
   try {
     const { userId, role } = req;
     if (!userId || !role) {
-      return res.status(401).json({ message: req.t!("Unauthorized") });
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     const restoredTask = await restoreTaskByIdQuery({
@@ -837,7 +837,7 @@ export async function hardDeleteTask(req: Request, res: Response): Promise<any> 
   try {
     const { userId, role } = req;
     if (!userId || !role) {
-      return res.status(401).json({ message: req.t!("Unauthorized") });
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     const deleted = await hardDeleteTaskByIdQuery({

@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { STATUS_CODE } from "../utils/statusCode.utils";
 import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 import logger from "../utils/logger/fileLogger";
 import { createInvitationQuery } from "../utils/invitation.utils";
@@ -88,9 +89,11 @@ export const invite = async (
       userId: req.userId!,
       organizationId: req.organizationId!,
     });
-    return res.status(500).json({
-      error: req.t!("Failed to send email"),
-      details: (error as Error).message,
-    });
+    return res.status(500).json(
+      STATUS_CODE[500]({
+        error: req.t!("Failed to send email"),
+        details: (error as Error).message,
+      }),
+    );
   }
 };
