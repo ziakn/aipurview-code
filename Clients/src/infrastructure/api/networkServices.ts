@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * @fileoverview This module provides a set of network services for making HTTP requests using CustomAxios.
  * It includes utility functions for logging requests and responses, as well as error handling.
@@ -9,19 +8,17 @@
 
 import CustomAxios from "./customAxios";
 import CustomException from "../exceptions/customeException";
-import axios, { AxiosResponseHeaders } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponseHeaders, ResponseType } from "axios";
+import type { ApiErrorEnvelope, ApiResponse, RequestParams } from "./api.types";
 
-// Define types for request parameters and response data
-interface RequestParams {
-  [key: string]: any;
-}
-
-interface ApiResponse<T> {
-  data: T;
-  status: number;
-  statusText: string;
-  headers?: AxiosResponseHeaders;
-}
+/**
+ * Normalize the loose `RequestParams` wrapper into an Axios request config,
+ * narrowing the caller-supplied `responseType` string to Axios's union.
+ */
+const toRequestConfig = (config: RequestParams): AxiosRequestConfig => ({
+  ...config,
+  responseType: config.responseType as ResponseType | undefined,
+});
 
 /**
  * Pull the best human-readable message out of an axios error response.
@@ -33,29 +30,31 @@ interface ApiResponse<T> {
  *   4. data.message                   — legacy raw { message: "msg" } or HTTP phrase
  *   5. data.error                     — legacy raw { error: "msg" }
  */
-const extractErrorMessage = (data: any, fallback: string): string => {
+const extractErrorMessage = (
+  data: ApiErrorEnvelope | undefined,
+  fallback: string,
+): string => {
   if (data == null) return fallback;
   if (typeof data.data === "string") return data.data;
   if (data.data && typeof data.data === "object") {
-    if (typeof data.data.message === "string") return data.data.message;
-    if (typeof data.data.error === "string") return data.data.error;
+    const inner = data.data as { message?: unknown; error?: unknown };
+    if (typeof inner.message === "string") return inner.message;
+    if (typeof inner.error === "string") return inner.error;
   }
   if (typeof data.message === "string") return data.message;
   if (typeof data.error === "string") return data.error;
   return fallback;
 };
 
-const handleError = (error: any) => {
+const handleError = (error: unknown): CustomException => {
   try {
     if (axios.isAxiosError(error)) {
-      const errorMessage = extractErrorMessage(error.response?.data, error.message);
+      const responseData = error.response?.data as ApiErrorEnvelope | undefined;
+      const errorMessage = extractErrorMessage(responseData, error.message);
       return new CustomException(errorMessage, error.response?.status, error.response?.data);
     } else {
-      return new CustomException(
-        error.message || "An unknown error occurred",
-        undefined,
-        undefined,
-      );
+      const message = error instanceof Error ? error.message : "An unknown error occurred";
+      return new CustomException(message, undefined, undefined);
     }
   } catch (e) {
     if (process.env.NODE_ENV === "development") {
@@ -66,7 +65,7 @@ const handleError = (error: any) => {
 };
 
 // Logging function - only logs in development mode
-const logRequest = (method: string, endpoint: string, params?: any, data?: any) => {
+const logRequest = (method: string, endpoint: string, params?: unknown, data?: unknown) => {
   if (process.env.NODE_ENV === "development") {
     console.log(`[API Request] ${method.toUpperCase()} ${endpoint}`, {
       params,
@@ -75,11 +74,14 @@ const logRequest = (method: string, endpoint: string, params?: any, data?: any) 
   }
 };
 
-const logResponse = (method: string, endpoint: string, response: any) => {
+const logResponse = (
+  method: string,
+  endpoint: string,
+  response: { status: number; data: { message?: string } },
+) => {
   if (process.env.NODE_ENV === "development") {
     console.table(
-      `[API Response] ${method.toUpperCase()} ${endpoint} ${response.data.message}`,
-      response.status,
+      `[API Response] ${method.toUpperCase()} ${endpoint} ${response.data.message} (status ${response.status})`,
     );
   }
 };
@@ -101,7 +103,8 @@ export const apiServices = {
     try {
       const response = await CustomAxios.get(endpoint, {
         params: queryParams,
-        responseType: responseType ?? "json",
+        // Normalize the caller-supplied string to Axios's ResponseType union.
+        responseType: (responseType ?? "json") as ResponseType,
         signal,
       });
 
@@ -122,18 +125,18 @@ export const apiServices = {
    *
    * @template T - The type of the response data.
    * @param {string} endpoint - The API endpoint to send the request to.
-   * @param {any} [data={}] - Optional data payload to include in the request.
+   * @param {unknown} [data={}] - Optional data payload to include in the request.
    * @param {RequestParams} [config={}] - Optional configuration for the request.
    * @returns {Promise<ApiResponse<T>>} - A promise that resolves to the API response.
    */
   async post<T>(
     endpoint: string,
-    data: any = {},
+    data: unknown = {},
     config: RequestParams = {},
   ): Promise<ApiResponse<T>> {
     logRequest("post", endpoint, undefined, data);
     try {
-      const response = await CustomAxios.post(endpoint, data, config);
+      const response = await CustomAxios.post(endpoint, data, toRequestConfig(config));
       logResponse("post", endpoint, response);
       return {
         data: response.data,
@@ -152,18 +155,18 @@ export const apiServices = {
    *
    * @template T - The type of the response data.
    * @param {string} endpoint - The API endpoint to send the request to.
-   * @param {any} [data={}] - Optional data payload to include in the request.
+   * @param {unknown} [data={}] - Optional data payload to include in the request.
    * @param {RequestParams} [config={}] - Optional configuration for the request.
    * @returns {Promise<ApiResponse<T>>} - A promise that resolves to the API response.
    */
   async patch<T>(
     endpoint: string,
-    data: any = {},
+    data: unknown = {},
     config: RequestParams = {},
   ): Promise<ApiResponse<T>> {
     logRequest("patch", endpoint, undefined, data);
     try {
-      const response = await CustomAxios.patch(endpoint, data, config);
+      const response = await CustomAxios.patch(endpoint, data, toRequestConfig(config));
       logResponse("patch", endpoint, response);
       return {
         data: response.data,
@@ -181,18 +184,18 @@ export const apiServices = {
    *
    * @template T - The type of the response data.
    * @param {string} endpoint - The API endpoint to send the request to.
-   * @param {any} [data={}] - Optional data payload to include in the request.
+   * @param {unknown} [data={}] - Optional data payload to include in the request.
    * @param {RequestParams} [config={}] - Optional configuration for the request.
    * @returns {Promise<ApiResponse<T>>} - A promise that resolves to the API response.
    */
   async put<T>(
     endpoint: string,
-    data: any = {},
+    data: unknown = {},
     config: RequestParams = {},
   ): Promise<ApiResponse<T>> {
     logRequest("put", endpoint, undefined, data);
     try {
-      const response = await CustomAxios.put(endpoint, data, config);
+      const response = await CustomAxios.put(endpoint, data, toRequestConfig(config));
       logResponse("put", endpoint, response);
       return {
         data: response.data,
@@ -216,7 +219,7 @@ export const apiServices = {
   async delete<T>(endpoint: string, config: RequestParams = {}): Promise<ApiResponse<T>> {
     logRequest("delete", endpoint);
     try {
-      const response = await CustomAxios.delete(endpoint, config);
+      const response = await CustomAxios.delete(endpoint, toRequestConfig(config));
       logResponse("delete", endpoint, response);
       return {
         data: response.data.data,

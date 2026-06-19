@@ -35,6 +35,11 @@ import { doesUserBelongsToOrganizationQuery, getUserByIdQuery } from "../utils/u
 import { asyncLocalStorage } from "../utils/context/context";
 import { getTenantHash } from "../tools/getTenantHash";
 import { getRoleNameById } from "../utils/roleMap";
+import {
+  getActiveApiTokenByHashQuery,
+  hashApiToken,
+  touchApiTokenLastUsedQuery,
+} from "../utils/tokens.utils";
 
 /**
  * Express middleware for JWT authentication and authorization
@@ -136,6 +141,25 @@ const authenticateJWT = async (
       return res.status(400).json({ message: req.t!("Invalid token") });
     }
 
+    // API tokens carry a `type: "api_token"` claim and must additionally exist
+    // as an active row in the api_tokens table. This is what makes them
+    // revocable: a correctly-signed, unexpired JWT is still rejected once its
+    // row is revoked or deleted. Session JWTs have no `type` claim and skip
+    // this database round-trip entirely.
+    let apiTokenRowId: number | null = null;
+    if (decoded.type === "api_token") {
+      const tokenHash = hashApiToken(token);
+      const tokenRow = await getActiveApiTokenByHashQuery(decoded.organizationId, tokenHash);
+      if (!tokenRow) {
+        return res.status(401).json(
+          STATUS_CODE[401]({
+            message: req.t!("API token is invalid or has been revoked"),
+          }),
+        );
+      }
+      apiTokenRowId = tokenRow.id;
+    }
+
     // Validate role hasn't changed since token was issued. The expected role
     // name is sourced live from the roles table (cached, TTL 60s, invalidated
     // on role CRUD) so adding/renaming a role doesn't need a code change.
@@ -195,6 +219,17 @@ const authenticateJWT = async (
               req.t!("Super-admin has read-only access when viewing an organization"),
             ),
           );
+      }
+    }
+
+    // Record API token usage on the fully-authenticated path. Best-effort:
+    // a failure to update last_used_at must not block an otherwise valid
+    // request.
+    if (apiTokenRowId !== null) {
+      try {
+        await touchApiTokenLastUsedQuery(apiTokenRowId, decoded.organizationId);
+      } catch {
+        // swallow — usage tracking is non-critical
       }
     }
 
