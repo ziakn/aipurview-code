@@ -10,6 +10,7 @@ import {
 } from "../utils/evidenceHub.utils";
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import logger, { logStructured } from "../utils/logger/fileLogger";
+import { sanitizeUserHtml } from "../utils/sanitizeUserHtml";
 import { translateError } from "../utils/i18n.utils";
 import {
   recordEvidenceAddedToModel,
@@ -123,6 +124,7 @@ export async function createNewEvidence(req: Request, res: Response) {
   try {
     const evidence = new EvidenceHubModel({
       ...req.body,
+      description: sanitizeUserHtml(req.body?.description),
       uploaded_at: new Date(),
       created_at: new Date(),
       updated_at: new Date(),
@@ -206,7 +208,13 @@ export async function updateEvidenceById(req: Request, res: Response) {
     // Track field changes for models that remain mapped
     const continuingModels = newMappedModels.filter((id: number) => oldMappedModels.includes(id));
 
-    Object.assign(existingEvidence, { ...req.body, updated_at: new Date() });
+    Object.assign(existingEvidence, {
+      ...req.body,
+      ...(req.body?.description !== undefined && {
+        description: sanitizeUserHtml(req.body.description),
+      }),
+      updated_at: new Date(),
+    });
     const updatedEvidence = await updateEvidenceByIdQuery(
       evidenceId,
       existingEvidence,

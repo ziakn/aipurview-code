@@ -36,6 +36,7 @@ import { AiRiskClassification } from "../domain.layer/enums/ai-risk-classificati
 import { ModelInventoryModel } from "../domain.layer/models/modelInventory/modelInventory.model";
 import { IIntakeFormSchema } from "../domain.layer/interfaces/i.intakeForm";
 import { STATUS_CODE } from "../utils/statusCode.utils";
+import { sanitizeUserHtml } from "../utils/sanitizeUserHtml";
 import logger from "../utils/logger/fileLogger";
 import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 import {
@@ -374,7 +375,7 @@ export async function createIntakeForm(req: Request, res: Response) {
     const form = await createIntakeFormQuery(
       {
         name,
-        description,
+        description: sanitizeUserHtml(description),
         slug,
         entityType,
         schema,
@@ -478,7 +479,7 @@ export async function updateIntakeForm(req: Request, res: Response) {
       formId,
       {
         name,
-        description,
+        description: sanitizeUserHtml(description),
         slug,
         entityType,
         schema,
