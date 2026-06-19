@@ -916,10 +916,15 @@ const StartHere = () => {
               sx={{ gap: "12px", position: "relative", width: "fit-content" }}
             >
               {[
-                { name: "Ulas Ozguven", photo: "https://verifywise.ai/images/team/ulas.jpeg" },
                 {
-                  name: "David Pinkney",
-                  photo: "https://verifywise.ai/images/avatars/DavidPinkney.jpg",
+                  name: "Ulas Ozguven",
+                  photo: "https://verifywise.ai/images/team/ulas.jpeg",
+                  role: "AI governance expert",
+                },
+                {
+                  name: "Dr. Gorkem Cetin",
+                  photo: "/images/gorkemcetin.png",
+                  role: "AI governance expert",
                 },
               ].map((expert) => (
                 <Stack
@@ -960,7 +965,7 @@ const StartHere = () => {
                   <Typography
                     sx={{ fontSize: 11, color: theme.palette.text.secondary, textAlign: "center" }}
                   >
-                    AI governance expert
+                    {expert.role}
                   </Typography>
                   <Box
                     component="img"
