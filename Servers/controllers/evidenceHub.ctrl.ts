@@ -71,11 +71,13 @@ export async function getEvidenceById(req: Request, res: Response) {
       "getEvidenceById",
       "evidenceHub.controller.ts",
     );
-    return res.status(400).json({
-      status: "error",
-      message: "Invalid evidence ID",
-      code: "INVALID_PARAMETER",
-    });
+    return res.status(400).json(
+      STATUS_CODE[400]({
+        status: "error",
+        message: "Invalid evidence ID",
+        code: "INVALID_PARAMETER",
+      }),
+    );
   }
 
   try {
@@ -173,11 +175,13 @@ export async function createNewEvidence(req: Request, res: Response) {
 export async function updateEvidenceById(req: Request, res: Response) {
   const evidenceId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
   if (isNaN(evidenceId)) {
-    return res.status(400).json({
-      status: "error",
-      message: "Invalid evidence ID",
-      code: "INVALID_PARAMETER",
-    });
+    return res.status(400).json(
+      STATUS_CODE[400]({
+        status: "error",
+        message: "Invalid evidence ID",
+        code: "INVALID_PARAMETER",
+      }),
+    );
   }
 
   const transaction = await sequelize.transaction();
@@ -287,11 +291,13 @@ export async function updateEvidenceById(req: Request, res: Response) {
 export async function deleteEvidenceById(req: Request, res: Response) {
   const evidenceId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
   if (isNaN(evidenceId)) {
-    return res.status(400).json({
-      status: "error",
-      message: "Invalid evidence ID",
-      code: "INVALID_PARAMETER",
-    });
+    return res.status(400).json(
+      STATUS_CODE[400]({
+        status: "error",
+        message: "Invalid evidence ID",
+        code: "INVALID_PARAMETER",
+      }),
+    );
   }
 
   const transaction = await sequelize.transaction();
