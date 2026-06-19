@@ -1,3 +1,4 @@
+import { Request } from "express";
 import { logStructured } from "./fileLogger";
 import { logEvent } from "./dbLogger";
 import logger from "./fileLogger";
@@ -70,4 +71,54 @@ export async function logFailure({
       console.error("Failed to log failure event to database:", dbError);
     }
   }
+}
+
+interface LogRollbackFailureParams {
+  req: Request;
+  functionName: string;
+  fileName: string;
+  eventType: EventType;
+  originalError: unknown;
+  rollbackError: unknown;
+}
+
+/**
+ * Logs a transaction rollback failure with full dual-context:
+ * the rollback error (the secondary failure) goes through the structured
+ * logFailure pipeline, while the original error (the cause that triggered the
+ * rollback) is preserved both in the rollback record's description and as a
+ * separate file-logger entry. Request path and organizationId are included so
+ * the two failures can be correlated to a single inbound request.
+ */
+export async function logRollbackFailure({
+  req,
+  functionName,
+  fileName,
+  eventType,
+  originalError,
+  rollbackError,
+}: LogRollbackFailureParams): Promise<void> {
+  const originalErr =
+    originalError instanceof Error ? originalError : new Error(String(originalError));
+  const rollbackErr =
+    rollbackError instanceof Error ? rollbackError : new Error(String(rollbackError));
+
+  const userId = req.userId ?? 0;
+  const organizationId = req.organizationId;
+  const path = req.originalUrl || req.url || "unknown";
+
+  logger.error(
+    `[rollback] original error in ${functionName} (path=${path}, org=${organizationId ?? "n/a"}):`,
+    originalErr,
+  );
+
+  await logFailure({
+    eventType,
+    description: `transaction rollback failed (path=${path}) after original error: ${originalErr.message}`,
+    functionName,
+    fileName,
+    userId,
+    organizationId,
+    error: rollbackErr,
+  });
 }

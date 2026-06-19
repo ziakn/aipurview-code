@@ -68,7 +68,7 @@ export async function getAllProjects(req: Request, res: Response): Promise<any> 
   try {
     const { userId, role } = req;
     if (!userId || !role) {
-      return res.status(401).json({ message: req.t!("Unauthorized") });
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     const projects = (await getAllProjectsQuery(
@@ -500,7 +500,7 @@ export async function updateProjectById(req: Request, res: Response): Promise<an
         userId: req.userId!,
         organizationId: req.organizationId!,
       });
-      return res.status(401).json({ message: req.t!("Unauthorized") });
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     // Find existing project
@@ -1183,7 +1183,7 @@ export async function allProjectsComplianceProgress(req: Request, res: Response)
   try {
     const { userId, role } = req;
     if (!userId || !role) {
-      return res.status(401).json({ message: req.t!("Unauthorized") });
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     const projects = await getAllProjectsQuery({ userId, role }, req.organizationId!);
@@ -1255,7 +1255,7 @@ export async function allProjectsAssessmentProgress(req: Request, res: Response)
   try {
     const { userId, role } = req;
     if (!userId || !role) {
-      return res.status(401).json({ message: req.t!("Unauthorized") });
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     const projects = await getAllProjectsQuery({ userId, role }, req.organizationId!);

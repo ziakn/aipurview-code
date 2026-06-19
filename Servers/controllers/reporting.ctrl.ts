@@ -117,7 +117,7 @@ export async function getAllGeneratedReports(req: Request, res: Response): Promi
         userId: req.userId!,
         organizationId: req.organizationId!,
       });
-      return res.status(401).json({ message: req.t!("Unauthorized") });
+      return res.status(401).json(STATUS_CODE[401](req.t!("Unauthorized")));
     }
 
     const reports = await getGeneratedReportsQuery({ userId, role }, req.organizationId!);

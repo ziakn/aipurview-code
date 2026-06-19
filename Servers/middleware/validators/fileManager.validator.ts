@@ -44,8 +44,3 @@ export const validatePaginationQuery = [
   handleValidationErrors,
 ];
 
-export const validateHighlightedQuery = [
-  query("daysUntilExpiry").optional().isInt({ min: 1, max: 3650 }),
-  query("recentDays").optional().isInt({ min: 1, max: 3650 }),
-  handleValidationErrors,
-];

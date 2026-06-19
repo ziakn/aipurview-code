@@ -9,7 +9,12 @@ import { Request, Response } from "express";
 import { sequelize } from "../database/db";
 import { Transaction, QueryTypes } from "sequelize";
 import { STATUS_CODE } from "../utils/statusCode.utils";
-import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
+import {
+  logProcessing,
+  logSuccess,
+  logFailure,
+  logRollbackFailure,
+} from "../utils/logger/logHelper";
 import {
   getInsightsSummaryQuery,
   getToolsByEventsQuery,
@@ -765,14 +770,13 @@ export async function startGovernance(req: Request, res: Response) {
         try {
           await transaction.rollback();
         } catch (rbErr) {
-          logFailure({
-            eventType: "Create",
-            description: "governance rollback failed",
+          await logRollbackFailure({
+            req,
             functionName: fn,
             fileName: FILE_NAME,
-            userId,
-            organizationId,
-            error: rbErr as Error,
+            eventType: "Create",
+            originalError: innerError,
+            rollbackError: rbErr,
           });
         }
       }

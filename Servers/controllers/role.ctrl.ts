@@ -40,6 +40,7 @@ import { RoleModel } from "../domain.layer/models/role/role.model";
 import { ValidationException } from "../domain.layer/exceptions/custom.exception";
 import { translateError } from "../utils/i18n.utils";
 import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
+import { invalidateRoleMapCache } from "../utils/roleMap";
 
 /**
  * Retrieves all roles from the system
@@ -230,6 +231,7 @@ export async function createRole(req: Request, res: Response): Promise<any> {
 
     if (createdRole) {
       await transaction.commit();
+      invalidateRoleMapCache();
 
       await logSuccess({
         eventType: "Create",
@@ -332,6 +334,7 @@ export async function updateRoleById(req: Request, res: Response): Promise<any> 
 
     if (role) {
       await transaction.commit();
+      invalidateRoleMapCache();
 
       await logSuccess({
         eventType: "Update",
@@ -424,6 +427,7 @@ export async function deleteRoleById(req: Request, res: Response): Promise<any> 
 
     if (deletedRole) {
       await transaction.commit();
+      invalidateRoleMapCache();
 
       await logSuccess({
         eventType: "Delete",
