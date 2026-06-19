@@ -69,6 +69,7 @@ export const platformRestApiContent: ArticleContent = {
     { type: 'paragraph', text: 'Every request is scoped to the organization of the token that made it. You only ever see and modify your own organization’s data; there is no cross-organization access through these endpoints.' },
 
     { type: 'article-links', title: 'Related articles', items: [
+      { collectionId: 'developers', articleId: 'working-with-resources', title: 'Working with resources', description: 'The CRUD pattern for projects, risks, vendors and more.' },
       { collectionId: 'developers', articleId: 'overview', title: 'Developer guide', description: 'What the developer guide covers today.' },
       { collectionId: 'developers', articleId: 'agent-control-api', title: 'API reference', description: 'The separate hook API for governing an agent’s tool calls.' },
     ]},

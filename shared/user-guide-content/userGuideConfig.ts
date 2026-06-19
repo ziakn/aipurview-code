@@ -723,9 +723,9 @@ export const collections: Collection[] = [
   {
     id: 'developers',
     title: 'Developer guide',
-    description: 'Build on VerifyWise. The guide covers Agent Control — connect any terminal agent, see how decisions work and use the hook API reference — and the platform REST API for reading and writing your governance data. More developer topics are coming.',
+    description: 'Build on VerifyWise. The guide covers Agent Control (connect any terminal agent and govern its tool calls) and the platform REST API for reading and writing your governance data. More developer topics are coming.',
     icon: 'Plug',
-    articleCount: 7,
+    articleCount: 12,
     articles: [
       {
         id: 'overview',
@@ -768,6 +768,36 @@ export const collections: Collection[] = [
         title: 'Platform REST API',
         description: 'Authenticate with a token and read or write your governance data over REST.',
         keywords: ['developer', 'api', 'rest', 'platform', 'token', 'bearer', 'authentication', 'endpoint', 'swagger', 'openapi', 'pagination', 'integration', 'curl'],
+      },
+      {
+        id: 'working-with-resources',
+        title: 'Working with resources',
+        description: 'The CRUD pattern for projects, risks, vendors and other resources, with the few places they differ.',
+        keywords: ['developer', 'api', 'rest', 'crud', 'create', 'update', 'delete', 'list', 'resources', 'projects', 'risks', 'vendors', 'patch', 'put', 'filter', 'curl', 'integration'],
+      },
+      {
+        id: 'bulk-import-datasets',
+        title: 'Bulk importing datasets',
+        description: 'Upload a CSV or spreadsheet to register a dataset through the API.',
+        keywords: ['developer', 'api', 'dataset', 'bulk', 'upload', 'import', 'csv', 'xlsx', 'multipart', 'file', 'plugin', 'metadata', 'integration'],
+      },
+      {
+        id: 'automations-api',
+        title: 'Automations API',
+        description: 'Create and manage automations programmatically, with the list of triggers and actions.',
+        keywords: ['developer', 'api', 'automation', 'trigger', 'action', 'rule', 'email', 'event', 'crud', 'integration'],
+      },
+      {
+        id: 'compliance-and-reports',
+        title: 'Compliance, reports and exports',
+        description: 'Fetch compliance progress, generate reports and use the document export endpoints.',
+        keywords: ['developer', 'api', 'compliance', 'progress', 'report', 'export', 'pdf', 'docx', 'csv', 'grc', 'assessment', 'framework', 'integration'],
+      },
+      {
+        id: 'inbound-integrations',
+        title: 'Inbound integrations',
+        description: 'Create incidents from another system and submit public intake forms.',
+        keywords: ['developer', 'api', 'incident', 'intake', 'form', 'public', 'submission', 'webhook', 'integration', 'monitoring'],
       },
     ],
   },
