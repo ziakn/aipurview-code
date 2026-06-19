@@ -64,12 +64,7 @@ router.get("/departments", authenticateJWT, getDepartmentActivity);
 // ─── Tools ──────────────────────────────────────────────────────────────
 router.get("/tools", authenticateJWT, getTools);
 router.get("/tools/:id", authenticateJWT, validateShadowAiIdParam, getToolById);
-router.patch(
-  "/tools/:id/status",
-  authenticateJWT,
-  validateUpdateToolStatus,
-  updateToolStatus,
-);
+router.patch("/tools/:id/status", authenticateJWT, validateUpdateToolStatus, updateToolStatus);
 router.post(
   "/tools/:id/start-governance",
   authenticateJWT,
@@ -87,18 +82,8 @@ router.get("/rules/alert-history", authenticateJWT, getAlertHistory);
 // ─── Configuration ──────────────────────────────────────────────────────
 router.get("/config/syslog", authenticateJWT, getSyslogConfigs);
 router.post("/config/syslog", authenticateJWT, validateCreateSyslogConfig, createSyslogConfig);
-router.patch(
-  "/config/syslog/:id",
-  authenticateJWT,
-  validateUpdateSyslogConfig,
-  updateSyslogConfig,
-);
-router.delete(
-  "/config/syslog/:id",
-  authenticateJWT,
-  validateShadowAiIdParam,
-  deleteSyslogConfig,
-);
+router.patch("/config/syslog/:id", authenticateJWT, validateUpdateSyslogConfig, updateSyslogConfig);
+router.delete("/config/syslog/:id", authenticateJWT, validateShadowAiIdParam, deleteSyslogConfig);
 
 // ─── Settings (Rate Limiting & Data Retention) ─────────────────────────
 router.get("/settings", authenticateJWT, getSettings);

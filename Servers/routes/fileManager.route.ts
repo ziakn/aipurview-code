@@ -145,13 +145,7 @@ router.post(
  * @returns {429} Too many requests - rate limit exceeded
  * @returns {500} Server error
  */
-router.get(
-  "/",
-  fileOperationsLimiter,
-  authenticateJWT,
-  validatePaginationQuery,
-  listFiles,
-);
+router.get("/", fileOperationsLimiter, authenticateJWT, validatePaginationQuery, listFiles);
 
 /**
  * @route   GET /file-manager/search
@@ -164,13 +158,7 @@ router.get(
  * @returns {400} Validation error
  * @returns {500} Server error
  */
-router.get(
-  "/search",
-  fileOperationsLimiter,
-  authenticateJWT,
-  validateFileSearchQuery,
-  searchFiles,
-);
+router.get("/search", fileOperationsLimiter, authenticateJWT, validateFileSearchQuery, searchFiles);
 
 /**
  * @route   GET /file-manager/with-metadata
@@ -201,13 +189,7 @@ router.get(
  * @returns {404} File not found
  * @returns {500} Server error
  */
-router.get(
-  "/:id",
-  fileOperationsLimiter,
-  authenticateJWT,
-  validateFileIdParam,
-  downloadFile,
-);
+router.get("/:id", fileOperationsLimiter, authenticateJWT, validateFileIdParam, downloadFile);
 
 /**
  * @route   GET /file-manager/:id/metadata

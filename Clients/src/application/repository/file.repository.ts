@@ -488,8 +488,7 @@ export async function getFileVersionHistory({
   // Backend always returns a `pagination` envelope post-PR; old responses
   // (or the no-group-id branch) may not, so default to a single-page shape.
   const paginationRaw = data?.pagination;
-  const total =
-    typeof paginationRaw?.total === "number" ? paginationRaw.total : versions.length;
+  const total = typeof paginationRaw?.total === "number" ? paginationRaw.total : versions.length;
   const pageOut = typeof paginationRaw?.page === "number" ? paginationRaw.page : 1;
   const pageSizeOut =
     typeof paginationRaw?.pageSize === "number" ? paginationRaw.pageSize : versions.length || 20;
@@ -670,13 +669,10 @@ export async function getEntityFiles(
   const rawFiles: any[] = Array.isArray(body) ? body : body?.files || [];
   const paginationRaw = Array.isArray(body) ? null : body?.pagination;
 
-  const total =
-    typeof paginationRaw?.total === "number" ? paginationRaw.total : rawFiles.length;
+  const total = typeof paginationRaw?.total === "number" ? paginationRaw.total : rawFiles.length;
   const pageOut = typeof paginationRaw?.page === "number" ? paginationRaw.page : 1;
   const pageSizeOut =
-    typeof paginationRaw?.pageSize === "number"
-      ? paginationRaw.pageSize
-      : rawFiles.length || 50;
+    typeof paginationRaw?.pageSize === "number" ? paginationRaw.pageSize : rawFiles.length || 50;
   const totalPages =
     typeof paginationRaw?.totalPages === "number"
       ? paginationRaw.totalPages

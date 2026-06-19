@@ -34,7 +34,10 @@ export const validateCreateAITrustSubprocessor = [
   body("name").isString().trim().notEmpty().withMessage("name is required"),
   body("purpose").optional({ nullable: true }).isString(),
   body("location").optional({ nullable: true }).isString(),
-  body("url").optional({ nullable: true, checkFalsy: true }).isURL().withMessage("url must be a valid URL"),
+  body("url")
+    .optional({ nullable: true, checkFalsy: true })
+    .isURL()
+    .withMessage("url must be a valid URL"),
   handleValidationErrors,
 ];
 

@@ -14,7 +14,9 @@ export const validateUpdateFileMetadata = [
   body("review_status")
     .optional({ nullable: true })
     .isIn(["draft", "pending_review", "approved", "rejected", "expired", "superseded"])
-    .withMessage("review_status must be one of: draft, pending_review, approved, rejected, expired, superseded"),
+    .withMessage(
+      "review_status must be one of: draft, pending_review, approved, rejected, expired, superseded",
+    ),
   body("version")
     .optional({ nullable: true })
     .matches(/^[0-9]+\.[0-9]+(\.[0-9]+)?$/)
@@ -43,4 +45,3 @@ export const validatePaginationQuery = [
   query("pageSize").optional().isInt({ min: 1, max: 200 }),
   handleValidationErrors,
 ];
-

@@ -5,12 +5,7 @@ jest.mock("../role.utils", () => ({
 }));
 
 import { getAllRolesQuery } from "../role.utils";
-import {
-  getRoleNameById,
-  hasRoleId,
-  invalidateRoleMapCache,
-  ROLE_MAP_TTL_MS,
-} from "../roleMap";
+import { getRoleNameById, hasRoleId, invalidateRoleMapCache, ROLE_MAP_TTL_MS } from "../roleMap";
 
 const mockGetAllRoles = getAllRolesQuery as jest.MockedFunction<typeof getAllRolesQuery>;
 
@@ -75,12 +70,7 @@ describe("roleMap cache", () => {
     });
     mockGetAllRoles.mockReturnValueOnce(pending as any);
 
-    const calls = Promise.all([
-      getRoleNameById(1),
-      getRoleNameById(2),
-      hasRoleId(1),
-      hasRoleId(3),
-    ]);
+    const calls = Promise.all([getRoleNameById(1), getRoleNameById(2), hasRoleId(1), hasRoleId(3)]);
 
     resolveFn(
       seedRoles([
@@ -129,7 +119,10 @@ describe("roleMap cache", () => {
     // Past TTL — refresh expected
     jest.advanceTimersByTime(2);
     mockGetAllRoles.mockResolvedValueOnce(
-      seedRoles([{ id: 1, name: "Admin" }, { id: 9, name: "NewRole" }]),
+      seedRoles([
+        { id: 1, name: "Admin" },
+        { id: 9, name: "NewRole" },
+      ]),
     );
     await expect(getRoleNameById(9)).resolves.toBe("NewRole");
     expect(mockGetAllRoles).toHaveBeenCalledTimes(2);

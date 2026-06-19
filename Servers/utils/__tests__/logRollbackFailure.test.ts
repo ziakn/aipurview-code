@@ -3,8 +3,16 @@ import { Request } from "express";
 
 const mockLogStructured = jest.fn<(...args: unknown[]) => void>();
 const mockLoggerError = jest.fn<(...args: unknown[]) => void>();
-const mockLogEvent =
-  jest.fn<(eventType: string, description: string, userId: number, organizationId: number) => Promise<void>>().mockResolvedValue(undefined);
+const mockLogEvent = jest
+  .fn<
+    (
+      eventType: string,
+      description: string,
+      userId: number,
+      organizationId: number,
+    ) => Promise<void>
+  >()
+  .mockResolvedValue(undefined);
 
 jest.mock("../logger/fileLogger", () => ({
   __esModule: true,
@@ -51,7 +59,12 @@ describe("logRollbackFailure", () => {
     });
 
     expect(mockLogStructured).toHaveBeenCalledTimes(1);
-    const [logState, description] = mockLogStructured.mock.calls[0] as [string, string, string, string];
+    const [logState, description] = mockLogStructured.mock.calls[0] as [
+      string,
+      string,
+      string,
+      string,
+    ];
     expect(logState).toBe("error");
     expect(description).toContain("transaction rollback failed");
     expect(description).toContain("path=/api/datasets/123");

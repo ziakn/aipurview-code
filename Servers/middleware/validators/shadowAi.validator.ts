@@ -9,7 +9,9 @@ export const validateUpdateToolStatus = [
   idParam,
   body("status")
     .isIn(["detected", "under_review", "approved", "restricted", "blocked", "dismissed"])
-    .withMessage("status must be one of: detected, under_review, approved, restricted, blocked, dismissed"),
+    .withMessage(
+      "status must be one of: detected, under_review, approved, restricted, blocked, dismissed",
+    ),
   handleValidationErrors,
 ];
 
@@ -70,9 +72,9 @@ export const validateCreateSyslogConfig = [
     .trim()
     .notEmpty()
     .withMessage("source_identifier is required"),
-  body("parser_type").isIn(PARSER_TYPES).withMessage(
-    `parser_type must be one of: ${PARSER_TYPES.join(", ")}`,
-  ),
+  body("parser_type")
+    .isIn(PARSER_TYPES)
+    .withMessage(`parser_type must be one of: ${PARSER_TYPES.join(", ")}`),
   body("is_active").optional({ nullable: true }).isBoolean(),
   handleValidationErrors,
 ];

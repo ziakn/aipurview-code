@@ -84,11 +84,7 @@ function makeApp(): express.Express {
   // aiTrustCentre
   app.post("/ai-trust-centre/resources", validateCreateAITrustResource, noopHandler);
   app.post("/ai-trust-centre/subprocessors", validateCreateAITrustSubprocessor, noopHandler);
-  app.put(
-    "/ai-trust-centre/subprocessors/:id",
-    validateUpdateAITrustSubprocessor,
-    noopHandler,
-  );
+  app.put("/ai-trust-centre/subprocessors/:id", validateUpdateAITrustSubprocessor, noopHandler);
 
   // advisor
   app.post("/advisor", validateRunAdvisor, noopHandler);
@@ -144,20 +140,14 @@ describe("controllers reject malformed payloads with 400 + consistent shape", ()
     });
 
     it("POST /:id/approve — non-numeric id", async () => {
-      const res = await supertest(app)
-        .post("/approval-requests/abc/approve")
-        .send({})
-        .expect(400);
+      const res = await supertest(app).post("/approval-requests/abc/approve").send({}).expect(400);
       assertConsistentValidationErrorShape(res.body);
       const fields = res.body.data.errors.map((e: any) => e.field);
       expect(fields).toContain("id");
     });
 
     it("POST /:id/withdraw — non-numeric id", async () => {
-      const res = await supertest(app)
-        .post("/approval-requests/xyz/withdraw")
-        .send({})
-        .expect(400);
+      const res = await supertest(app).post("/approval-requests/xyz/withdraw").send({}).expect(400);
       assertConsistentValidationErrorShape(res.body);
     });
   });
@@ -222,10 +212,7 @@ describe("controllers reject malformed payloads with 400 + consistent shape", ()
     });
 
     it("POST /subprocessors — missing name", async () => {
-      const res = await supertest(app)
-        .post("/ai-trust-centre/subprocessors")
-        .send({})
-        .expect(400);
+      const res = await supertest(app).post("/ai-trust-centre/subprocessors").send({}).expect(400);
       assertConsistentValidationErrorShape(res.body);
     });
 
@@ -252,9 +239,7 @@ describe("controllers reject malformed payloads with 400 + consistent shape", ()
     });
 
     it("DELETE /conversations/:domain/:id — invalid id", async () => {
-      const res = await supertest(app)
-        .delete("/advisor/conversations/finance/not-int")
-        .expect(400);
+      const res = await supertest(app).delete("/advisor/conversations/finance/not-int").expect(400);
       assertConsistentValidationErrorShape(res.body);
     });
   });

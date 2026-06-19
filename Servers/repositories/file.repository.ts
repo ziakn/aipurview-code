@@ -826,10 +826,7 @@ export async function getOrganizationFilesWithMetadata(
   const { limit, offset, daysUntilExpiry, recentDays } = options;
 
   // Clamp threshold inputs (defensive — same bounds the old helper enforced).
-  const safeDaysUntilExpiry = Math.max(
-    1,
-    Math.min(365, Math.floor(Number(daysUntilExpiry) || 30)),
-  );
+  const safeDaysUntilExpiry = Math.max(1, Math.min(365, Math.floor(Number(daysUntilExpiry) || 30)));
   const safeRecentDays = Math.max(1, Math.min(365, Math.floor(Number(recentDays) || 7)));
 
   // Use organization_id for tenant isolation (org_id may be NULL on migrated files)

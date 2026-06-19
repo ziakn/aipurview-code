@@ -30,10 +30,7 @@ const toRequestConfig = (config: RequestParams): AxiosRequestConfig => ({
  *   4. data.message                   — legacy raw { message: "msg" } or HTTP phrase
  *   5. data.error                     — legacy raw { error: "msg" }
  */
-const extractErrorMessage = (
-  data: ApiErrorEnvelope | undefined,
-  fallback: string,
-): string => {
+const extractErrorMessage = (data: ApiErrorEnvelope | undefined, fallback: string): string => {
   if (data == null) return fallback;
   if (typeof data.data === "string") return data.data;
   if (data.data && typeof data.data === "object") {

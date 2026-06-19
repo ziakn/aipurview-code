@@ -6,7 +6,9 @@ export const validateCreateApprovalRequest = [
   body("workflow_id").isInt({ min: 1 }).withMessage("workflow_id must be a positive integer"),
   body("entity_id").optional({ nullable: true }).isInt({ min: 1 }),
   body("entity_type").optional({ nullable: true }).isString(),
-  body("entity_data").optional({ nullable: true }).custom((v) => typeof v === "object"),
+  body("entity_data")
+    .optional({ nullable: true })
+    .custom((v) => typeof v === "object"),
   handleValidationErrors,
 ];
 
