@@ -20,6 +20,7 @@ import {
 } from "../utils/datasetChangeHistory.utils";
 import { STATUS_CODE } from "../utils/statusCode.utils";
 import logger, { logStructured } from "../utils/logger/fileLogger";
+import { logRollbackFailure } from "../utils/logger/logHelper";
 import { ValidationError } from "../utils/validations/validation.utils";
 import { translateError } from "../utils/i18n.utils";
 import {
@@ -286,7 +287,14 @@ export async function createNewDataset(req: Request, res: Response) {
       try {
         await transaction.rollback();
       } catch (rollbackError) {
-        console.warn("Transaction rollback failed:", rollbackError);
+        await logRollbackFailure({
+          req,
+          functionName: "createNewDataset",
+          fileName: "dataset.ctrl.ts",
+          eventType: "Create",
+          originalError: error,
+          rollbackError,
+        });
       }
     }
 
@@ -463,7 +471,14 @@ export async function updateDatasetById(req: Request, res: Response) {
       try {
         await transaction.rollback();
       } catch (rollbackError) {
-        console.warn("Transaction rollback failed:", rollbackError);
+        await logRollbackFailure({
+          req,
+          functionName: "updateDatasetById",
+          fileName: "dataset.ctrl.ts",
+          eventType: "Update",
+          originalError: error,
+          rollbackError,
+        });
       }
     }
 
@@ -528,7 +543,14 @@ export async function deleteDatasetById(req: Request, res: Response) {
       try {
         await transaction.rollback();
       } catch (rollbackError) {
-        console.warn("Transaction rollback failed:", rollbackError);
+        await logRollbackFailure({
+          req,
+          functionName: "deleteDatasetById",
+          fileName: "dataset.ctrl.ts",
+          eventType: "Delete",
+          originalError: error,
+          rollbackError,
+        });
       }
     }
 
