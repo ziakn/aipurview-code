@@ -924,7 +924,7 @@ const StartHere = () => {
                 {
                   name: "Dr. Gorkem Cetin",
                   photo: "/images/gorkemcetin.png",
-                  role: "CEO of VerifyWise",
+                  role: "AI governance expert",
                 },
               ].map((expert) => (
                 <Stack
