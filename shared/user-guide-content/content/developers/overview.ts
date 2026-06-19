@@ -42,6 +42,11 @@ export const developersOverviewContent: ArticleContent = {
       type: 'bullet-list',
       items: [
         { bold: 'Platform REST API', text: 'The base URL, authentication, response shape, status codes and the current limits that apply to every endpoint.' },
+        { bold: 'Working with resources', text: 'The CRUD pattern for projects, risks, vendors and more, with the few places they differ.' },
+        { bold: 'Bulk importing datasets', text: 'Upload a CSV or spreadsheet to register a dataset through the API.' },
+        { bold: 'Automations API', text: 'Create and manage automations programmatically.' },
+        { bold: 'Compliance, reports and exports', text: 'Pull compliance progress, generate reports and use the document exports.' },
+        { bold: 'Inbound integrations', text: 'Create incidents from another system and submit public intake forms.' },
       ],
     },
     {

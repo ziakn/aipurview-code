@@ -100,6 +100,11 @@ import { connectAnyAgentContent } from './developers/connect-any-agent';
 import { governingToolCallsContent } from './developers/governing-tool-calls';
 import { agentControlApiContent } from './developers/agent-control-api';
 import { platformRestApiContent } from './developers/platform-rest-api';
+import { workingWithResourcesContent } from './developers/working-with-resources';
+import { bulkImportDatasetsContent } from './developers/bulk-import-datasets';
+import { automationsApiContent } from './developers/automations-api';
+import { complianceAndReportsContent } from './developers/compliance-and-reports';
+import { inboundIntegrationsContent } from './developers/inbound-integrations';
 
 // Map of article IDs to their content
 // Format: 'collectionId/articleId': ArticleContent
@@ -220,6 +225,11 @@ export const articleContentMap: Record<string, ArticleContent> = {
   'developers/governing-tool-calls': governingToolCallsContent,
   'developers/agent-control-api': agentControlApiContent,
   'developers/platform-rest-api': platformRestApiContent,
+  'developers/working-with-resources': workingWithResourcesContent,
+  'developers/bulk-import-datasets': bulkImportDatasetsContent,
+  'developers/automations-api': automationsApiContent,
+  'developers/compliance-and-reports': complianceAndReportsContent,
+  'developers/inbound-integrations': inboundIntegrationsContent,
 };
 
 // Helper to get article content
