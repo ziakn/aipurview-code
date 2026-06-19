@@ -160,7 +160,10 @@ describe("dataset.ctrl", () => {
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith(
-        expect.objectContaining({ message: "Invalid ID", code: "INVALID_PARAMETER" }),
+        expect.objectContaining({
+          message: "Bad Request",
+          data: expect.objectContaining({ message: "Invalid ID", code: "INVALID_PARAMETER" }),
+        }),
       );
     });
 
