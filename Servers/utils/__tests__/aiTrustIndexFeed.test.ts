@@ -111,7 +111,10 @@ describe("validateFeed", () => {
   });
   it("preserves an app's indicators map through validation", () => {
     const f = feed(12);
-    (f.apps[0] as any).indicators = { "D1.1": { award: "full" }, "D2.2": { award: "zero", subFlag: "SILENT" } };
+    (f.apps[0] as any).indicators = {
+      "D1.1": { award: "full" },
+      "D2.2": { award: "zero", subFlag: "SILENT" },
+    };
     const r = validateFeed(f, null);
     expect(r.ok).toBe(true);
     if (r.ok) {
