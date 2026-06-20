@@ -1,5 +1,7 @@
 import { QueryTypes } from "sequelize";
 import { sequelize } from "../database/db";
+import { computeHashes } from "./aiTrustIndexHash";
+import { ITrustIndexAppData } from "../domain.layer/interfaces/i.aiTrustIndex";
 
 export function normalizeSlug(slug: string): string {
   return String(slug).trim().toLowerCase();
@@ -154,4 +156,138 @@ export async function upsertSettingsQuery(
         emails: JSON.stringify(recipientEmails),
       } }
   );
+}
+
+export function currentIsoWeek(date: Date): string {
+  const d = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+  const dayNum = (d.getUTCDay() + 6) % 7;
+  d.setUTCDate(d.getUTCDate() - dayNum + 3);
+  const firstThursday = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
+  const week =
+    1 + Math.round(((d.getTime() - firstThursday.getTime()) / 86400000 - 3 + ((firstThursday.getUTCDay() + 6) % 7)) / 7);
+  return `${d.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
+}
+
+export async function getMetaQuery() {
+  const rows = (await sequelize.query(
+    `SELECT seeded_at, last_good_count, last_run_week FROM ai_trust_index_meta WHERE id = 1;`,
+    { type: QueryTypes.SELECT }
+  )) as any[];
+  return rows[0] ?? { seeded_at: null, last_good_count: null, last_run_week: null };
+}
+
+export async function upsertFeedTx(apps: ITrustIndexAppData[]): Promise<{
+  materialChanged: string[]; newlyRemoved: string[]; wasFirstSeed: boolean;
+}> {
+  const materialChanged: string[] = [];
+  const newlyRemoved: string[] = [];
+  let wasFirstSeed = false;
+
+  await sequelize.transaction(async (transaction) => {
+    const metaRows = (await sequelize.query(
+      `SELECT seeded_at FROM ai_trust_index_meta WHERE id = 1 FOR UPDATE;`,
+      { type: QueryTypes.SELECT, transaction }
+    )) as any[];
+    wasFirstSeed = !metaRows[0]?.seeded_at;
+
+    const seenSlugs: string[] = [];
+    for (const app of apps) {
+      const slug = normalizeSlug(app.slug);
+      seenSlugs.push(slug);
+      const { materialHash, fullHash } = computeHashes(app);
+      const existing = (await sequelize.query(
+        `SELECT material_hash, full_hash FROM ai_trust_index_apps WHERE slug = :slug;`,
+        { replacements: { slug }, type: QueryTypes.SELECT, transaction }
+      )) as any[];
+
+      if (existing.length) {
+        if (existing[0].material_hash !== materialHash) materialChanged.push(slug);
+        const fullChanged = existing[0].full_hash !== fullHash;
+        await sequelize.query(
+          `UPDATE ai_trust_index_apps SET
+             name = :name, vendor = :vendor, category = :category,
+             letter_grade = :grade, score_out_of_100 = :score,
+             data = :data::jsonb, material_hash = :mh, full_hash = :fh,
+             is_active = TRUE, removed_at = NULL, last_fetched_at = NOW()
+             ${fullChanged ? ", last_changed_at = NOW()" : ""}
+           WHERE slug = :slug;`,
+          { replacements: {
+              slug, name: app.name, vendor: app.vendor ?? null, category: app.category ?? null,
+              grade: app.letterGrade ?? null, score: app.scoreOutOf100 ?? null,
+              data: JSON.stringify(app), mh: materialHash, fh: fullHash,
+            }, transaction }
+        );
+      } else {
+        await sequelize.query(
+          `INSERT INTO ai_trust_index_apps
+             (slug, name, vendor, category, letter_grade, score_out_of_100, data,
+              material_hash, full_hash, is_active, last_changed_at, last_fetched_at)
+           VALUES (:slug, :name, :vendor, :category, :grade, :score, :data::jsonb,
+              :mh, :fh, TRUE, NOW(), NOW());`,
+          { replacements: {
+              slug, name: app.name, vendor: app.vendor ?? null, category: app.category ?? null,
+              grade: app.letterGrade ?? null, score: app.scoreOutOf100 ?? null,
+              data: JSON.stringify(app), mh: materialHash, fh: fullHash,
+            }, transaction }
+        );
+      }
+    }
+
+    const removedRows = (await sequelize.query(
+      `UPDATE ai_trust_index_apps
+         SET is_active = FALSE, removed_at = NOW()
+       WHERE is_active = TRUE AND slug <> ALL(ARRAY[:seen]::varchar[])
+       RETURNING slug;`,
+      { replacements: { seen: seenSlugs }, type: QueryTypes.SELECT, transaction }
+    )) as any[];
+    for (const r of removedRows) newlyRemoved.push(r.slug);
+
+    await sequelize.query(
+      `UPDATE ai_trust_index_meta
+         SET last_good_count = :count, last_run_week = :week
+             ${wasFirstSeed ? ", seeded_at = NOW()" : ""}
+       WHERE id = 1;`,
+      { replacements: { count: apps.length, week: currentIsoWeek(new Date()) }, transaction }
+    );
+  });
+
+  return { materialChanged, newlyRemoved, wasFirstSeed };
+}
+
+export async function getAffectedOrgsBySlugs(slugs: string[]) {
+  if (!slugs.length) return [] as { organization_id: number; app_slug: string }[];
+  return (await sequelize.query(
+    `SELECT DISTINCT organization_id, app_slug
+     FROM ai_trust_index_tracked_apps
+     WHERE app_slug = ANY(ARRAY[:slugs]::varchar[]);`,
+    { replacements: { slugs }, type: QueryTypes.SELECT }
+  )) as { organization_id: number; app_slug: string }[];
+}
+
+export async function resolveRecipients(organizationId: number): Promise<string[]> {
+  const settings = (await sequelize.query(
+    `SELECT recipient_user_ids, recipient_emails FROM ai_trust_index_settings WHERE organization_id = :organizationId;`,
+    { replacements: { organizationId }, type: QueryTypes.SELECT }
+  )) as any[];
+  const userIds: number[] = settings[0]?.recipient_user_ids ?? [];
+  const freeText: string[] = settings[0]?.recipient_emails ?? [];
+
+  let userEmails: string[] = [];
+  const rows = (await sequelize.query(
+    `SELECT email FROM users
+     WHERE organization_id = :organizationId AND id = ANY(ARRAY[:ids]::int[]);`,
+    { replacements: { organizationId, ids: userIds.length ? userIds : [-1] }, type: QueryTypes.SELECT }
+  )) as { email: string }[];
+  userEmails = rows.map((r) => r.email);
+
+  let recipients = Array.from(new Set([...userEmails, ...freeText].map((e) => e.trim().toLowerCase()).filter(Boolean)));
+  if (recipients.length === 0) {
+    const admins = (await sequelize.query(
+      `SELECT u.email FROM users u JOIN roles r ON u.role_id = r.id
+       WHERE u.organization_id = :organizationId AND r.name IN ('Admin','SuperAdmin');`,
+      { replacements: { organizationId }, type: QueryTypes.SELECT }
+    )) as { email: string }[];
+    recipients = Array.from(new Set(admins.map((a) => a.email.trim().toLowerCase()).filter(Boolean)));
+  }
+  return recipients;
 }
