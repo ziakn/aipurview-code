@@ -19,34 +19,38 @@ module.exports = {
     const snapshotPath = path.join(__dirname, "..", "seeds", "ai-trust-index-snapshot.json");
     const feed = JSON.parse(fs.readFileSync(snapshotPath, "utf8"));
     const apps = feed.apps || [];
-    for (const app of apps) {
-      const { materialHash, fullHash } = computeHashes(app);
-      await queryInterface.sequelize.query(
-        `INSERT INTO verifywise.ai_trust_index_apps
-           (slug, name, vendor, category, letter_grade, score_out_of_100, data,
-            material_hash, full_hash, is_active, last_changed_at, last_fetched_at)
-         VALUES (:slug, :name, :vendor, :category, :grade, :score, :data::jsonb,
-            :mh, :fh, TRUE, NOW(), NOW())
-         ON CONFLICT (slug) DO NOTHING;`,
-        {
-          replacements: {
-            slug: app.slug,
-            name: app.name,
-            vendor: app.vendor ?? null,
-            category: app.category ?? null,
-            grade: app.letterGrade ?? null,
-            score: app.scoreOutOf100 ?? null,
-            data: JSON.stringify(app),
-            mh: materialHash,
-            fh: fullHash,
+
+    await queryInterface.sequelize.transaction(async (t) => {
+      for (const app of apps) {
+        const { materialHash, fullHash } = computeHashes(app);
+        await queryInterface.sequelize.query(
+          `INSERT INTO verifywise.ai_trust_index_apps
+             (slug, name, vendor, category, letter_grade, score_out_of_100, data,
+              material_hash, full_hash, is_active, last_changed_at, last_fetched_at)
+           VALUES (:slug, :name, :vendor, :category, :grade, :score, :data::jsonb,
+              :mh, :fh, TRUE, NOW(), NOW())
+           ON CONFLICT (slug) DO NOTHING;`,
+          {
+            replacements: {
+              slug: app.slug,
+              name: app.name,
+              vendor: app.vendor ?? null,
+              category: app.category ?? null,
+              grade: app.letterGrade ?? null,
+              score: app.scoreOutOf100 ?? null,
+              data: JSON.stringify(app),
+              mh: materialHash,
+              fh: fullHash,
+            },
+            transaction: t,
           },
-        },
+        );
+      }
+      await queryInterface.sequelize.query(
+        "UPDATE verifywise.ai_trust_index_meta SET seeded_at = NOW(), last_good_count = :n WHERE id = 1;",
+        { replacements: { n: apps.length }, transaction: t },
       );
-    }
-    await queryInterface.sequelize.query(
-      "UPDATE verifywise.ai_trust_index_meta SET seeded_at = NOW(), last_good_count = :n WHERE id = 1;",
-      { replacements: { n: apps.length } },
-    );
+    });
     console.log(`[seed] inserted ${apps.length} AI Trust Index apps`);
   },
 
