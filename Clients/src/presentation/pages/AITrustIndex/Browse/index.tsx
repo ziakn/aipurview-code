@@ -25,21 +25,16 @@ import {
   useTrackAppsBulk,
 } from "../../../../application/hooks/useAiTrustIndex";
 import { useAITrustIndexSidebarContextSafe } from "../../../../application/contexts/AITrustIndexSidebar.context";
-import { GRADE_COLOR, categoryColor, TrustIndexRow } from "../shared";
+import { gradeVariant, categoryVariant, TrustIndexRow } from "../shared";
 import MCPTable from "../../AIGateway/MCPTable";
 import type { MCPTableColumn } from "../../AIGateway/MCPTable";
 
 const PAGE_SIZE = 25;
-const SORT_OPTIONS = [
-  { value: "score", label: "Highest score" },
-  { value: "name", label: "Name" },
-];
 
 function GradeChip({ grade }: { grade?: string }) {
   if (!grade)
     return <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>—</Typography>;
-  const color = GRADE_COLOR[grade.charAt(0).toUpperCase()] ?? palette.text.tertiary;
-  return <Chip label={grade} backgroundColor={color} textColor="#FFFFFF" />;
+  return <Chip label={grade} variant={gradeVariant(grade)} />;
 }
 
 export default function Browse() {
@@ -50,7 +45,10 @@ export default function Browse() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [grade, setGrade] = useState("");
-  const [sort, setSort] = useState("score");
+  // Header-driven sort. Only columns the backend's getAppsQuery whitelist can
+  // honour are exposed as sortable: name, vendor, category, score.
+  const [sortBy, setSortBy] = useState("score");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [page, setPage] = useState(0);
   const [selected, setSelected] = useState<string[]>([]);
 
@@ -67,7 +65,8 @@ export default function Browse() {
     search,
     category,
     grade,
-    sort,
+    sort: sortBy,
+    dir: sortDir,
     page: page + 1,
     pageSize: PAGE_SIZE,
   });
@@ -114,6 +113,20 @@ export default function Browse() {
     setSelected((prev) => (prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug]));
   }, []);
 
+  const handleSort = useCallback((key: string) => {
+    setSortBy((prevKey) => {
+      if (prevKey === key) {
+        setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+      } else {
+        // New column: start with the natural direction (score highest-first,
+        // text A→Z) so the first click matches the backend's default.
+        setSortDir(key === "score" ? "desc" : "asc");
+      }
+      return key;
+    });
+    setPage(0);
+  }, []);
+
   const handleTrackSelected = useCallback(() => {
     if (selected.length === 0) return;
     trackBulk.mutate(selected, {
@@ -138,13 +151,16 @@ export default function Browse() {
 
   const isEmpty = !isLoading && rows.length === 0;
 
+  // Only name/vendor/category/score are sortable — those are the columns the
+  // backend's getAppsQuery whitelist actually orders by. Grade is intentionally
+  // not sortable (the backend has no grade ordering) to avoid a dead arrow.
   const columns: MCPTableColumn[] = [
     { label: "", width: 48 },
-    { label: "Name" },
-    { label: "Vendor" },
-    { label: "Category" },
+    { label: "Name", sortKey: "name" },
+    { label: "Vendor", sortKey: "vendor" },
+    { label: "Category", sortKey: "category" },
     { label: "Grade" },
-    { label: "Score" },
+    { label: "Score", sortKey: "score" },
     { label: "Action", align: "right" },
   ];
 
@@ -179,15 +195,6 @@ export default function Browse() {
             return true;
           }}
           options={gradeOptions}
-        />
-        <CustomSelect
-          currentValue={sort}
-          onValueChange={async (v) => {
-            setSort(String(v));
-            setPage(0);
-            return true;
-          }}
-          options={SORT_OPTIONS}
         />
         <Box sx={{ flex: 1 }} />
         {/* Select-all checkbox placed in filter bar so it is adjacent to the table */}
@@ -231,6 +238,9 @@ export default function Browse() {
             rows={rows}
             rowKey={(row) => row.slug}
             onRowClick={(row) => navigate(`/ai-trust-index/${row.slug}`)}
+            sortBy={sortBy}
+            sortDir={sortDir}
+            onSort={handleSort}
             renderRow={(row) => [
               // Checkbox cell — stopPropagation so clicking it doesn't trigger row nav
               <span onClick={(e) => e.stopPropagation()} key="cb">
@@ -248,12 +258,11 @@ export default function Browse() {
               </Typography>,
               // Vendor
               row.vendor || "—",
-              // Category — soft tinted chip, a distinct color per category
+              // Category — a real VerifyWise chip, distinct variant per category
               row.category ? (
                 <Chip
                   label={row.category}
-                  backgroundColor={`${categoryColor(row.category)}1A`}
-                  textColor={categoryColor(row.category)}
+                  variant={categoryVariant(row.category)}
                   uppercase={false}
                 />
               ) : (
@@ -268,9 +277,9 @@ export default function Browse() {
                 <CustomizableButton
                   text={row.is_tracked ? "Untrack" : "Track"}
                   variant="outlined"
+                  size="small"
                   onClick={() => handleToggleTrack(row)}
                   isDisabled={trackApp.isPending || untrackApp.isPending}
-                  sx={{ height: 28, mt: 0 }}
                 />
               </span>,
             ]}

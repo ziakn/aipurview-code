@@ -1,4 +1,6 @@
 // Clients/src/presentation/pages/AITrustIndex/shared.ts
+import type { ChipVariant } from "../../types/interfaces/i.chip";
+
 export interface TrustIndexAppData {
   slug: string;
   name: string;
@@ -32,35 +34,44 @@ export interface TrustIndexRow {
   no_longer_in_index?: boolean;
 }
 
-/** Map a letter grade to a theme-aligned chip color (our palette, not the feed's design block). */
-export const GRADE_COLOR: Record<string, string> = {
-  A: "#13715B",
-  B: "#3b82a0",
-  C: "#b7791f",
-  D: "#c2410c",
-  F: "#b42318",
+/**
+ * Map a letter grade to a shared Chip variant so grades render as real
+ * VerifyWise chips. The variants preserve the green→red risk semantic:
+ * A=success (green), B=info (blue), C=warning (amber), D=high (orange),
+ * F=critical (red).
+ */
+export const GRADE_VARIANT: Record<string, ChipVariant> = {
+  A: "success",
+  B: "info",
+  C: "warning",
+  D: "high",
+  F: "critical",
 };
 
-/** Fallback color for categories not in CATEGORY_COLOR (and unknown values). */
-export const CATEGORY_FALLBACK_COLOR = "#475467";
+/** Resolve a (possibly multi-char) grade to its Chip variant via its first letter. */
+export function gradeVariant(grade?: string): ChipVariant {
+  if (!grade) return "default";
+  return GRADE_VARIANT[grade.charAt(0).toUpperCase()] ?? "default";
+}
 
 /**
- * Map a feed category to a distinct, soft-tinted chip color. Mirrors GRADE_COLOR.
- * Rendered as a 10% tint (`${color}1A`) with `color` as the text, so each
- * category reads as visually distinct without being loud.
+ * Map a feed category to one of the shared Chip component's variants, so each
+ * category renders as a real VerifyWise chip (consistent gradient/border/palette)
+ * rather than an ad-hoc custom color. Distinct, non-alarming variants are chosen
+ * so categories are visually separable without implying risk semantics.
  */
-export const CATEGORY_COLOR: Record<string, string> = {
-  "Assistant": "#2563eb", // blue
-  "Image & video": "#7c3aed", // purple
-  "Audio": "#0d9488", // teal
-  "Companion": "#db2777", // pink
-  "Productivity": "#b7791f", // amber
+export const CATEGORY_VARIANT: Record<string, ChipVariant> = {
+  "Assistant": "info", // blue
+  "Image & video": "moderate", // muted yellow/amber
+  "Audio": "success", // green
+  "Companion": "warning", // amber
+  "Productivity": "default", // grey
 };
 
-/** Resolve a category to its chip color, falling back for unknown categories. */
-export function categoryColor(category?: string): string {
-  if (!category) return CATEGORY_FALLBACK_COLOR;
-  return CATEGORY_COLOR[category] ?? CATEGORY_FALLBACK_COLOR;
+/** Resolve a category to its Chip variant, falling back to "default" for unknowns. */
+export function categoryVariant(category?: string): ChipVariant {
+  if (!category) return "default";
+  return CATEGORY_VARIANT[category] ?? "default";
 }
 
 export function faviconUrl(domain: string): string {

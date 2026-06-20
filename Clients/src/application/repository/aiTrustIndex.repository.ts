@@ -11,6 +11,7 @@ export async function getApps(
     page?: number;
     pageSize?: number;
     sort?: string;
+    dir?: "asc" | "desc";
   } = {},
 ): Promise<any> {
   const q = new URLSearchParams();

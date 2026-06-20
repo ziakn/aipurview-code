@@ -16,6 +16,21 @@ describe("normalizeSlug", () => {
 });
 
 describe("getAppsQuery", () => {
+  beforeEach(() => {
+    // Reset then restore the default empty-array resolution so any query call
+    // beyond the explicit per-test mocks (e.g. the categories fan-out) resolves
+    // instead of returning undefined.
+    (sequelize.query as jest.Mock).mockReset().mockResolvedValue([]);
+  });
+
+  /** Find the ORDER BY clause in the generated data query. */
+  function orderByOf(): string {
+    const dataSql = (sequelize.query as jest.Mock).mock.calls
+      .map((c) => c[0] as string)
+      .find((s) => /ORDER BY/.test(s));
+    return dataSql ?? "";
+  }
+
   it("only selects active apps and passes the org id for is_tracked", async () => {
     (sequelize.query as jest.Mock)
       .mockResolvedValueOnce([{ total: "0" }]) // count
@@ -25,6 +40,46 @@ describe("getAppsQuery", () => {
     expect(sql).toMatch(/is_active\s*=\s*true|is_active = TRUE/i);
     const repl = (sequelize.query as jest.Mock).mock.calls[0][1].replacements;
     expect(repl.organizationId).toBe(7);
+  });
+
+  // getAppsQuery fans out three queries via Promise.all: count, data, categories.
+  function mockThreeQueries() {
+    (sequelize.query as jest.Mock)
+      .mockResolvedValueOnce([{ total: "0" }]) // count
+      .mockResolvedValueOnce([]) // data
+      .mockResolvedValueOnce([]); // distinct categories
+  }
+
+  it("defaults to score DESC and never interpolates raw sort/dir input", async () => {
+    mockThreeQueries();
+    await getAppsQuery(7, { page: 1, pageSize: 25, sort: "score" });
+    expect(orderByOf()).toMatch(/ORDER BY score_out_of_100 DESC NULLS LAST/);
+  });
+
+  it("honours a whitelisted column + direction (vendor ASC)", async () => {
+    mockThreeQueries();
+    await getAppsQuery(7, { page: 1, pageSize: 25, sort: "vendor", dir: "asc" });
+    expect(orderByOf()).toMatch(/ORDER BY vendor ASC NULLS LAST/);
+  });
+
+  it("supports name and category sort columns with descending direction", async () => {
+    mockThreeQueries();
+    await getAppsQuery(7, { page: 1, pageSize: 25, sort: "category", dir: "desc" });
+    expect(orderByOf()).toMatch(/ORDER BY category DESC NULLS LAST/);
+  });
+
+  it("falls back to score for an unknown sort column and ignores an invalid dir", async () => {
+    mockThreeQueries();
+    // A SQL-injection-y sort/dir must not reach the query — both fall back.
+    await getAppsQuery(7, {
+      page: 1,
+      pageSize: 25,
+      sort: "score_out_of_100; DROP TABLE",
+      dir: "ASC; DROP TABLE",
+    });
+    const order = orderByOf();
+    expect(order).toMatch(/ORDER BY score_out_of_100 DESC NULLS LAST/);
+    expect(order).not.toMatch(/DROP TABLE/);
   });
 });
 

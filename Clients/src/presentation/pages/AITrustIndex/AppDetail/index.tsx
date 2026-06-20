@@ -19,7 +19,7 @@ import Chip from "../../../components/Chip";
 import { palette } from "../../../themes/palette";
 import { useApp, useTrackApp, useUntrackApp } from "../../../../application/hooks/useAiTrustIndex";
 import { useAITrustIndexSidebarContextSafe } from "../../../../application/contexts/AITrustIndexSidebar.context";
-import { GRADE_COLOR, TrustIndexAppData, faviconUrl } from "../shared";
+import { gradeVariant, TrustIndexAppData, faviconUrl } from "../shared";
 
 interface AppDetailRow {
   slug: string;
@@ -118,9 +118,6 @@ export default function AppDetail() {
   }
 
   const displayedGrade = detail?.displayedGrade || app.letter_grade || "";
-  const gradeColor = displayedGrade
-    ? (GRADE_COLOR[displayedGrade.charAt(0).toUpperCase()] ?? palette.text.tertiary)
-    : palette.text.tertiary;
   const initial = (app.name || "?").charAt(0).toUpperCase();
 
   return (
@@ -177,7 +174,7 @@ export default function AppDetail() {
           <Stack direction="row" alignItems="center" gap="8px" flexWrap="wrap">
             <Typography sx={{ fontSize: "20px", fontWeight: 600 }}>{app.name}</Typography>
             {displayedGrade && (
-              <Chip label={displayedGrade} backgroundColor={gradeColor} textColor="#FFFFFF" />
+              <Chip label={displayedGrade} variant={gradeVariant(displayedGrade)} />
             )}
             {app.no_longer_in_index && (
               <Chip label="No longer in index" variant="warning" uppercase={false} />

@@ -34,6 +34,7 @@ export async function getApps(req: Request, res: Response): Promise<any> {
       page: parseInt(qStr(req.query.page) ?? "1", 10),
       pageSize: parseInt(qStr(req.query.pageSize) ?? "25", 10),
       sort: qStr(req.query.sort) ?? "score",
+      dir: qStr(req.query.dir),
     });
     await logSuccess({
       eventType: "Read",

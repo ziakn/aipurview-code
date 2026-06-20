@@ -7,9 +7,14 @@ export function normalizeSlug(slug: string): string {
   return String(slug).trim().toLowerCase();
 }
 
-const SORT_COLUMNS: Record<string, string> = {
-  score: "score_out_of_100 DESC NULLS LAST",
-  name: "name ASC",
+// Whitelisted sortable columns. Each maps to a fixed SQL expression — user
+// input only ever selects a key here, it is never interpolated into the query.
+// NULL scores/values always sort last regardless of direction.
+const SORT_COLUMNS: Record<string, { expr: string; defaultDir: "ASC" | "DESC" }> = {
+  score: { expr: "score_out_of_100", defaultDir: "DESC" },
+  name: { expr: "name", defaultDir: "ASC" },
+  vendor: { expr: "vendor", defaultDir: "ASC" },
+  category: { expr: "category", defaultDir: "ASC" },
 };
 
 export async function getAppsQuery(
@@ -21,13 +26,18 @@ export async function getAppsQuery(
     page: number;
     pageSize: number;
     sort: string;
+    dir?: string;
   },
 ): Promise<{ apps: any[]; total: number; page: number; pageSize: number; categories: string[] }> {
   const { search, category, grade } = opts;
   const page = Math.max(1, opts.page);
   const pageSize = Math.min(100, Math.max(1, opts.pageSize));
   const offset = (page - 1) * pageSize;
-  const orderBy = SORT_COLUMNS[opts.sort] ?? SORT_COLUMNS.score;
+  const sortCol = SORT_COLUMNS[opts.sort] ?? SORT_COLUMNS.score;
+  // Direction is whitelisted to ASC/DESC; anything else falls back to the
+  // column's default direction. Never interpolate the raw value.
+  const dir = opts.dir === "asc" ? "ASC" : opts.dir === "desc" ? "DESC" : sortCol.defaultDir;
+  const orderBy = `${sortCol.expr} ${dir} NULLS LAST`;
 
   const conditions: string[] = ["a.is_active = TRUE"];
   const replacements: Record<string, unknown> = { organizationId, limit: pageSize, offset };
