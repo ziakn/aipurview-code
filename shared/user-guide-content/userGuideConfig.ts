@@ -12,7 +12,8 @@ export type IconName =
   | 'FlaskConical'
   | 'ScanSearch'
   | 'EyeOff'
-  | 'Router';
+  | 'Router'
+  | 'Gauge';
 
 export interface Article {
   id: string;
@@ -798,6 +799,39 @@ export const collections: Collection[] = [
         title: 'Inbound integrations',
         description: 'Create incidents from another system and submit public intake forms.',
         keywords: ['developer', 'api', 'incident', 'intake', 'form', 'public', 'submission', 'webhook', 'integration', 'monitoring'],
+      },
+    ],
+  },
+  {
+    id: 'ai-trust-index',
+    title: 'AI Trust Index',
+    description: 'Browse independent privacy and transparency scores for AI apps, track the tools your organisation uses, and receive weekly change digests when scores or policies update.',
+    icon: 'Gauge',
+    articleCount: 4,
+    articles: [
+      {
+        id: 'dashboard',
+        title: 'AI Trust Index overview',
+        description: 'How the index works, what scores and grades mean, and how to navigate the module.',
+        keywords: ['ai trust index', 'overview', 'score', 'grade', 'privacy', 'transparency', 'feed', 'weekly', 'digest', 'dealbreaker'],
+      },
+      {
+        id: 'browse',
+        title: 'Browsing and tracking apps',
+        description: 'Search and filter the full app catalog, view details, and track apps individually or in bulk.',
+        keywords: ['browse', 'search', 'filter', 'catalog', 'track', 'bulk', 'grade', 'score', 'category', 'app detail', 'highlights', 'dealbreaker', 'policy url'],
+      },
+      {
+        id: 'tracked',
+        title: 'Your tracked apps',
+        description: 'Manage your organisation\'s tracking list and understand "no longer in index" notices.',
+        keywords: ['tracked', 'watch list', 'no longer in index', 'removed', 'untrack', 'digest', 'material change', 'email', 'notification'],
+      },
+      {
+        id: 'settings',
+        title: 'Configuring email recipients',
+        description: 'Choose which users and email addresses receive the weekly AI Trust Index change digest.',
+        keywords: ['settings', 'recipients', 'email', 'digest', 'admin', 'configure', 'notify', 'weekly', 'fallback', 'user', 'external'],
       },
     ],
   },

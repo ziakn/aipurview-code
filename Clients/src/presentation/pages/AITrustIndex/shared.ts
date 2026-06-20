@@ -7,7 +7,7 @@ export interface TrustIndexAppData {
 }
 
 export interface TrustIndexRow {
-  slug: string; name: string; vendor?: string; category?: string;
+  slug: string; app_slug?: string; name: string; vendor?: string; category?: string;
   letter_grade?: string; score_out_of_100?: number; data: TrustIndexAppData;
   is_tracked?: boolean; is_active?: boolean; no_longer_in_index?: boolean;
 }

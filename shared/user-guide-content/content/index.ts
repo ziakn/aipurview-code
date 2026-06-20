@@ -105,6 +105,10 @@ import { bulkImportDatasetsContent } from './developers/bulk-import-datasets';
 import { automationsApiContent } from './developers/automations-api';
 import { complianceAndReportsContent } from './developers/compliance-and-reports';
 import { inboundIntegrationsContent } from './developers/inbound-integrations';
+import { aiTrustIndexDashboardContent } from './ai-trust-index/dashboard';
+import { aiTrustIndexBrowseContent } from './ai-trust-index/browse';
+import { aiTrustIndexTrackedContent } from './ai-trust-index/tracked';
+import { aiTrustIndexSettingsContent } from './ai-trust-index/settings';
 
 // Map of article IDs to their content
 // Format: 'collectionId/articleId': ArticleContent
@@ -230,6 +234,11 @@ export const articleContentMap: Record<string, ArticleContent> = {
   'developers/automations-api': automationsApiContent,
   'developers/compliance-and-reports': complianceAndReportsContent,
   'developers/inbound-integrations': inboundIntegrationsContent,
+  // AI Trust Index
+  'ai-trust-index/dashboard': aiTrustIndexDashboardContent,
+  'ai-trust-index/browse': aiTrustIndexBrowseContent,
+  'ai-trust-index/tracked': aiTrustIndexTrackedContent,
+  'ai-trust-index/settings': aiTrustIndexSettingsContent,
 };
 
 // Helper to get article content
