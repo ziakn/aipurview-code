@@ -20,11 +20,12 @@ A new (6th) top-level sidebar module, **AI Trust Index**, that consumes the publ
 
 ### In scope (v1)
 - Weekly fetch of the public feed into the app's own Postgres (global mirror).
-- Per-org tracking of apps (browse all, track a subset).
-- Server-side searchable/filterable/paginated browse (built for up to ~500 apps).
+- Per-org tracking of apps (browse all, track a subset) — per-row toggle **and** bulk multi-select.
+- Server-side searchable/filterable/paginated browse (built for up to ~500 apps), default sort **score descending**, 25/page.
 - Full-page app detail at `/ai-trust-index/:slug`.
 - Per-org configurable email recipients (org users **and** free-text emails), Admin-gated.
-- Weekly digest email to recipients when a tracked app's **risk-material** fields change.
+- Weekly digest email to recipients when a tracked app's **risk-material** fields change, **or** when a tracked app is **removed from the index** (no longer assessed).
+- Documentation: technical reference + end-user guide articles (copied to the website content dir).
 
 ### Out of scope (explicit — future extensions, do NOT build now)
 - Linking a tracked app to the **AI Apps inventory** module (planned next, separate spec).
@@ -130,6 +131,7 @@ Migration: raw SQL via `queryInterface.sequelize.query` with explicit `verifywis
 | `material_hash` | CHAR(64) NOT NULL | SHA-256 over canonicalized **risk-material** fields → **drives emails** |
 | `full_hash` | CHAR(64) NOT NULL | SHA-256 over canonicalized full object (minus `iconUrl`) → drives `data` refresh / `last_changed_at` |
 | `is_active` | BOOLEAN DEFAULT true | false = no longer present in the feed (soft delete) |
+| `removed_at` | TIMESTAMPTZ | set on active→inactive transition; cleared on reappearance; one-shot guard for the "removed" email |
 | `last_changed_at` | TIMESTAMPTZ | when `full_hash` last changed |
 | `last_fetched_at` | TIMESTAMPTZ | last weekly run that saw this app |
 
@@ -187,8 +189,10 @@ For each app in the (sanity-gated) feed:
 3. `UPSERT ... ON CONFLICT (slug)`:
    - if existing `material_hash` differs → collect `slug` into `materialChanged[]`.
    - if existing `full_hash` differs → set `last_changed_at = now()`, refresh promoted columns + `data`.
-   - always: `is_active = true`, `last_fetched_at = now()`.
-4. After the loop: any app **not** seen in this feed → `is_active = false` (soft delete) — only ever within a sane feed (see §7).
+   - always: `is_active = true`, `last_fetched_at = now()`, **`removed_at = NULL`** (re-appearance clears the removed marker).
+4. After the loop: any currently-active app **not** seen in this feed → set `is_active = false`, `removed_at = now()`, and collect its `slug` into `newlyRemoved[]` (only apps that were active *before* this run — an app already removed in a prior run is not re-collected). Soft delete only ever happens within a sane feed (see §7).
+
+**`removed_at` column** is added to `ai_trust_index_apps` (TIMESTAMPTZ, nullable) — set when an app transitions active→inactive, cleared on reappearance. It is the one-shot guard so a removed-app email fires **once**, not every week the app stays gone.
 
 ---
 
@@ -228,23 +232,28 @@ Registered as **one** BullMQ repeatable job in the existing automation registry.
 2. fetch feed (axios, timeout + small retry).
 3. sanity-gate (§7). Fail → abort, write nothing, no email, ops log.
 4. BEGIN TRANSACTION
-     upsert all apps (§6.3); collect materialChanged[]; soft-delete missing.
+     upsert all apps (§6.3); collect materialChanged[] and newlyRemoved[]; soft-delete missing.
      if seeded_at IS NULL → set seeded_at = now()  (first seed)
      update last_good_count, last_run_week
    COMMIT
 5. EMAIL PHASE (skipped entirely if this run set seeded_at — first seed is silent):
+     changedSlugs = materialChanged ∪ newlyRemoved      // both drive a digest
      snapshot tracked-apps + settings at phase start (consistent read).
      affected = SELECT DISTINCT organization_id, app_slug
                 FROM ai_trust_index_tracked_apps
-                WHERE app_slug = ANY(materialChanged);
+                WHERE app_slug = ANY(changedSlugs);
      group by organization_id.
      for each org:
         recipients = resolveRecipients(org)   // §9
         if recipients empty → skip (fallback handled in resolveRecipients)
-        render MJML digest of that org's changed tracked apps (old→new grade/score)
-        send via existing send_email action (sendAutomationEmail)
-6. log summary { fetched, materialChanged, orgsEmailed }; release lock.
+        build digest with two sections for that org's tracked apps:
+           - "Changed": apps in materialChanged → old→new grade/score
+           - "No longer assessed": apps in newlyRemoved → left the index
+        render MJML, send via existing send_email action (sendAutomationEmail)
+6. log summary { fetched, materialChanged, newlyRemoved, orgsEmailed }; release lock.
 ```
+
+The `newlyRemoved[]` one-shot guard (`removed_at`, §6.3) ensures a removed tracked app emails **once**, not every subsequent week.
 
 **Crash-safety:** the upsert + seed-marker + meta update are one atomic transaction; a crash rolls back to last-known-good. The email phase is after commit (an email failure never corrupts data; re-send risk is bounded by the weekly singleton).
 
@@ -266,7 +275,7 @@ Registered as **one** BullMQ repeatable job in the existing automation registry.
 
 **Tenancy guarantee:** every recipient query is filtered by `organization_id`; the changed-slug fan-out is grouped per org and never crosses orgs. The Admin fallback resolves admins of that org only.
 
-**Email shape:** one digest per org per run, only if that org tracks ≥1 materially-changed app. Template `Servers/templates/ai-trust-index-digest.mjml`, rendered following the existing PMM templated-email pattern, sent through `sendAutomationEmail`. Lists each changed tracked app with old→new grade/score and a link into the module. Recipients = Admin **selection** (users + free-text), fallback to org Admins.
+**Email shape:** one digest per org per run, only if that org tracks ≥1 app that materially changed **or was newly removed** from the index. Template `Servers/templates/ai-trust-index-digest.mjml`, rendered following the existing PMM templated-email pattern, sent through `sendAutomationEmail`. Two sections: **Changed** (each app with old→new grade/score + link into the module) and **No longer assessed** (apps that left the index). Recipients = Admin **selection** (users + free-text), fallback to org Admins.
 
 ---
 
@@ -280,6 +289,7 @@ Base `/api/ai-trust-index`, mounted in `Servers/app.ts`, every route behind `aut
 | `GET /apps/:slug` | one app detail | full `data` JSONB + `isTracked`. If slug not active but the org tracks it → return with a `noLongerInIndex` flag (don't 404 a tracked-but-removed app). |
 | `GET /tracked` | this org's tracked apps | **LEFT JOIN** tracked→apps so removed-but-tracked rows still appear with a `noLongerInIndex` flag (never INNER-JOIN them away). |
 | `POST /tracked` | track an app | body `{ slug }`. Normalize slug; validate it exists and `is_active`; insert `(org, slug, tracked_by=userId)`. Idempotent via `UNIQUE(org, slug)`. |
+| `POST /tracked/bulk` | track many at once | body `{ slugs: string[] }` (bulk select). Normalize + validate each; insert all in one transaction; skip slugs already tracked or not active. Returns `{ tracked: string[], skipped: string[] }`. Cap list length (e.g. ≤200) to bound the request. |
 | `DELETE /tracked/:slug` | untrack | scoped to caller's org. |
 | `GET /settings` | recipients for the org | returns `{ recipientUserIds, recipientEmails }`. |
 | `PUT /settings` | update recipients | **Admin/SuperAdmin only** (role guard). Validate emails (format) + that `recipientUserIds` belong to the org. Upsert the settings row. |
@@ -311,7 +321,7 @@ All inside the dashboard shell so the sidebar persists.
 
 ### 11.4 Pages (`Clients/src/presentation/pages/AITrustIndex/`)
 - `index.tsx` — shell + tab routing.
-- `Browse/index.tsx` — `SearchBox` (debounced) + category/grade filters (`CustomSelect`) + sort; **server-paginated** `CustomizableBasicTable`; columns: favicon+name, vendor, category, **grade chip (renders `displayedGrade`)**, score, Track toggle. Row click → `navigate('/ai-trust-index/:slug')`. `EmptyState` for empty/error.
+- `Browse/index.tsx` — `SearchBox` (debounced) + category/grade filters (`CustomSelect`) + sort (default **score descending**, 25/page); **server-paginated** `CustomizableBasicTable`; columns: **row checkbox (bulk select)**, favicon+name, vendor, category, **grade chip (renders `displayedGrade`)**, score, Track toggle. Bulk-select state + a **"Track selected (N)"** action bar that calls `POST /tracked/bulk`; clears selection + invalidates queries on success. Row click (outside checkbox/toggle) → `navigate('/ai-trust-index/:slug')`. `EmptyState` for empty/error.
 - `Tracked/index.tsx` — same table filtered to tracked; inline untrack; **"No longer in index"** badge for `noLongerInIndex` rows.
 - `Settings/index.tsx` — Admin-only; user multi-select + free-text email `ChipInput`; auto-save on change (Policy Radar pattern); read-only/hidden for non-admins.
 - `AppDetail/index.tsx` — full page: `PageBreadcrumbs` (AI Trust Index → app name), header (favicon + name + vendor + **displayedGrade** chip + score + Track/Untrack), sections: Summary, Highlights (`{label,text}` cards), Dealbreaker flags (if any), Policy details (policy URL link, `policyLastUpdated`, modalities, biometrics). Handles `noLongerInIndex` and not-found.
@@ -321,8 +331,8 @@ All inside the dashboard shell so the sidebar persists.
 - Derive from `domain` (`https://icons.duckduckgo.com/ip3/{domain}.ico`) rather than depending on the feed's `iconUrl`; render a letter-grade/initial fallback on image load error. (Self-hosting/proxy is a future item for airgapped deployments.)
 
 ### 11.6 Repository + hooks
-- `Clients/src/application/repository/aiTrustIndex.repository.ts` — CustomAxios wrappers: `getApps(filters)`, `getApp(slug)`, `getTracked()`, `trackApp(slug)`, `untrackApp(slug)`, `getSettings()`, `updateSettings(body)`.
-- `Clients/src/application/hooks/useAiTrustIndex.ts` — React Query: `useApps(filters)`, `useApp(slug)`, `useTracked()`, `useTrackApp()`/`useUntrackApp()` (optimistic; invalidate `apps` + `tracked` so sidebar count refreshes), `useSettings()`/`useUpdateSettings()`.
+- `Clients/src/application/repository/aiTrustIndex.repository.ts` — CustomAxios wrappers: `getApps(filters)`, `getApp(slug)`, `getTracked()`, `trackApp(slug)`, `trackAppsBulk(slugs)`, `untrackApp(slug)`, `getSettings()`, `updateSettings(body)`.
+- `Clients/src/application/hooks/useAiTrustIndex.ts` — React Query: `useApps(filters)`, `useApp(slug)`, `useTracked()`, `useTrackApp()`/`useTrackAppsBulk()`/`useUntrackApp()` (optimistic; invalidate `apps` + `tracked` so sidebar count refreshes), `useSettings()`/`useUpdateSettings()`.
 
 ### 11.7 i18n
 - Every new user-facing string (tab labels, table headers, buttons, aria-labels, "No longer in index", settings copy, empty states) gets **de/fr/es** entries in `Clients/src/i18n/translations.ts` (English string is the key). Must pass `npm run i18n:audit:strict`.
@@ -336,7 +346,9 @@ All inside the dashboard shell so the sidebar persists.
   - Material vs full hash: reworded `summary` → `full_hash` changes, `material_hash` unchanged → **no** email candidate; grade change → material change → email candidate.
   - Sanity gates: empty feed / `count` mismatch / `feedVersion: 2` / below-floor count → abort, no writes.
   - First-seed: empty meta → seeds + sets `seeded_at`, **no** emails sent.
-  - Soft delete: app missing from a sane feed → `is_active=false`; reappears → `is_active=true`.
+  - Soft delete: app missing from a sane feed → `is_active=false`, `removed_at` set, `newlyRemoved` collected; reappears → `is_active=true`, `removed_at` cleared.
+  - Removed-app email once-only: app removed → in `newlyRemoved` this run; next run while still gone → **not** re-collected (no repeat email).
+  - Bulk track: `POST /tracked/bulk` inserts new slugs, skips already-tracked + inactive, returns `{tracked, skipped}`; over-cap list rejected.
   - Recipient resolution: users ∪ free-text; empty → Admin fallback; cross-org isolation (org B's change never emails org A).
   - Pagination/search util: filter + LIMIT/OFFSET + total count.
 - **Frontend (Vitest):** Browse renders + filters call the API with params; Track toggle optimistic + invalidation; Settings Admin-gating; AppDetail renders `displayedGrade` and `noLongerInIndex` state.
@@ -355,6 +367,7 @@ All inside the dashboard shell so the sidebar persists.
 | S6 | Tracking/recipient edit mid-run | §8.3 snapshot at email-phase start; changes apply next run |
 | N6 | Favicon hotlink / airgap leak | §11.5 derive from domain + fallback; self-host = future |
 | N7/N8 | Orphan slug; cross-org email leak | normalized slug; LEFT-JOIN read; §9 per-org recipient queries + same-org Admin fallback |
+| Removed-app spam | A removed tracked app could email every week it stays gone | §6.3 `removed_at` one-shot guard; `newlyRemoved` only collects active→inactive transitions |
 
 ---
 
@@ -383,9 +396,12 @@ All inside the dashboard shell so the sidebar persists.
 - *edit* `Clients/src/application/config/routes.tsx` (add routes)
 - *edit* `Clients/src/i18n/translations.ts` (de/fr/es strings)
 
-**Docs:**
-- `docs/technical/domains/ai-trust-index.md` (module reference; created during implementation)
-- User-guide content under `shared/user-guide-content/content/ai-trust-index/` (created during implementation)
+**Docs (full docs in v1):**
+- `docs/technical/domains/ai-trust-index.md` — technical module reference (architecture, schema, change-detection, cron).
+- *edit* root `CLAUDE.md` Detailed-References table — add a row pointing to the new domain doc.
+- User-guide articles under `shared/user-guide-content/content/ai-trust-index/`: `dashboard.ts` (overview), `browse.ts`, `tracked.ts`, `settings.ts` (TypeScript `ArticleContent` exports).
+- *edit* `shared/user-guide-content/content/index.ts` (imports + map) and `shared/user-guide-content/userGuideConfig.ts` (collection + articles + search).
+- **Per the documentation workflow:** copy the changed user-guide files to the website dir `/Users/gorkemcetin/website/verifywise/content/user-guide/` too (both config files updated in both locations). Do **not** commit to the website repo — the user handles that.
 
 ---
 
