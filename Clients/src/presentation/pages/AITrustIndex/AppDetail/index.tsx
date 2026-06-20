@@ -11,7 +11,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Box, Stack, Typography, CircularProgress, Link, useTheme } from "@mui/material";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, ArrowLeft, Gauge } from "lucide-react";
 import { PageBreadcrumbs } from "../../../components/breadcrumbs/PageBreadcrumbs";
 import { CustomizableButton } from "../../../components/button/customizable-button";
 import { EmptyState } from "../../../components/EmptyState";
@@ -75,7 +75,11 @@ export default function AppDetail() {
   }, [app, trackApp, untrackApp, sidebar]);
 
   const breadcrumbItems = [
-    { label: "AI Trust Index", path: "/ai-trust-index/browse" },
+    {
+      label: "AI Trust Index",
+      path: "/ai-trust-index/browse",
+      icon: <Gauge size={14} strokeWidth={1.5} />,
+    },
     { label: app?.name || "App", path: "" },
   ];
 
@@ -91,7 +95,13 @@ export default function AppDetail() {
     return (
       <Box>
         <PageBreadcrumbs
-          items={[{ label: "AI Trust Index", path: "/ai-trust-index/browse" }]}
+          items={[
+            {
+              label: "AI Trust Index",
+              path: "/ai-trust-index/browse",
+              icon: <Gauge size={14} strokeWidth={1.5} />,
+            },
+          ]}
           autoGenerate={false}
           testId="ai-trust-index-detail-breadcrumbs"
         />
@@ -115,6 +125,16 @@ export default function AppDetail() {
 
   return (
     <Box>
+      <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
+        <CustomizableButton
+          text="Back to Browse"
+          onClick={() => navigate("/ai-trust-index/browse")}
+          variant="text"
+          startIcon={<ArrowLeft size={16} />}
+          sx={{ mb: "8px" }}
+        />
+      </Box>
+
       <PageBreadcrumbs
         items={breadcrumbItems}
         autoGenerate={false}
@@ -157,11 +177,7 @@ export default function AppDetail() {
           <Stack direction="row" alignItems="center" gap="8px" flexWrap="wrap">
             <Typography sx={{ fontSize: "20px", fontWeight: 600 }}>{app.name}</Typography>
             {displayedGrade && (
-              <Chip
-                label={displayedGrade}
-                backgroundColor={`${gradeColor}1A`}
-                textColor={gradeColor}
-              />
+              <Chip label={displayedGrade} backgroundColor={gradeColor} textColor="#FFFFFF" />
             )}
             {app.no_longer_in_index && (
               <Chip label="No longer in index" variant="warning" uppercase={false} />
@@ -306,7 +322,7 @@ export default function AppDetail() {
                 </Typography>
                 <Chip
                   label={detail.processesBiometrics ? "Yes" : "No"}
-                  variant={detail.processesBiometrics ? "yes" : "no"}
+                  variant={detail.processesBiometrics ? "warning" : "success"}
                   uppercase={false}
                 />
               </Stack>

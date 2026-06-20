@@ -16,6 +16,7 @@ import { CustomizableButton } from "../../../components/button/customizable-butt
 import { EmptyState } from "../../../components/EmptyState";
 import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtended";
 import Chip from "../../../components/Chip";
+import TablePaginationActions from "../../../components/TablePagination";
 import { palette } from "../../../themes/palette";
 import {
   useApps,
@@ -38,7 +39,7 @@ function GradeChip({ grade }: { grade?: string }) {
   if (!grade)
     return <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>—</Typography>;
   const color = GRADE_COLOR[grade.charAt(0).toUpperCase()] ?? palette.text.tertiary;
-  return <Chip label={grade} backgroundColor={`${color}1A`} textColor={color} />;
+  return <Chip label={grade} backgroundColor={color} textColor="#FFFFFF" />;
 }
 
 export default function Browse() {
@@ -238,6 +239,7 @@ export default function Browse() {
                   checked={selected.includes(row.slug)}
                   onChange={() => toggleRow(row.slug)}
                   inputProps={{ "aria-label": `Select ${row.name}` }}
+                  sx={{ p: 0 }}
                 />
               </span>,
               // Name
@@ -247,7 +249,11 @@ export default function Browse() {
               // Vendor
               row.vendor || "—",
               // Category
-              row.category || "—",
+              row.category ? (
+                <Chip label={row.category} variant="default" uppercase={false} />
+              ) : (
+                "—"
+              ),
               // Grade
               <GradeChip grade={row.data?.displayedGrade || row.letter_grade} />,
               // Score
@@ -272,6 +278,7 @@ export default function Browse() {
               onPageChange={(_, p) => setPage(p)}
               rowsPerPage={PAGE_SIZE}
               rowsPerPageOptions={[PAGE_SIZE]}
+              ActionsComponent={TablePaginationActions as any}
               labelRowsPerPage="Rows per page"
               sx={{ mt: "48px" }}
             />

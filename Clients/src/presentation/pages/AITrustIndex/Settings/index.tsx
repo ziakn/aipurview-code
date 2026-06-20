@@ -9,19 +9,11 @@
  */
 
 import { useState, useEffect, useRef, useMemo } from "react";
-import {
-  Autocomplete,
-  Box,
-  Stack,
-  TextField,
-  Typography,
-  CircularProgress,
-  useTheme,
-} from "@mui/material";
+import { Box, Stack, Typography, CircularProgress } from "@mui/material";
 import ChipInput from "../../../components/Inputs/ChipInput";
+import AutoCompleteField from "../../../components/Inputs/Autocomplete";
 import { EmptyState } from "../../../components/EmptyState";
 import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtended";
-import { getAutocompleteStyles } from "../../../utils/inputStyles";
 import { palette } from "../../../themes/palette";
 import { useSettings, useUpdateSettings } from "../../../../application/hooks/useAiTrustIndex";
 import useUsers from "../../../../application/hooks/useUsers";
@@ -33,7 +25,6 @@ interface UserOption {
 }
 
 export default function Settings() {
-  const theme = useTheme();
   const { userRoleName, isSuperAdmin } = useAuth();
   const isAdmin = isSuperAdmin || userRoleName === "Admin" || userRoleName === "SuperAdmin";
 
@@ -89,7 +80,11 @@ export default function Settings() {
 
   if (!isAdmin) {
     return (
-      <PageHeaderExtended title="Settings" description="AI Trust Index notification settings.">
+      <PageHeaderExtended
+        title="Settings"
+        description="AI Trust Index notification settings."
+        breadcrumbItems={[{ label: "Settings" }]}
+      >
         <EmptyState
           message="Only administrators can change AI Trust Index notification settings."
           showBorder
@@ -102,6 +97,7 @@ export default function Settings() {
     <PageHeaderExtended
       title="Settings"
       description="Choose who receives a notification when a tracked app's assessment changes materially. If no recipients are set, organization admins are notified by default."
+      breadcrumbItems={[{ label: "Settings" }]}
     >
       {settingsLoading ? (
         <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
@@ -109,35 +105,17 @@ export default function Settings() {
         </Box>
       ) : (
         <Stack gap="24px" sx={{ maxWidth: 560 }}>
-          <Stack gap="8px">
-            <Typography
-              sx={{ fontSize: "13px", fontWeight: 500, color: theme.palette.text.secondary }}
-            >
-              Recipients
-            </Typography>
-            <Autocomplete
-              multiple
-              size="small"
-              id="ai-trust-index-recipient-users"
-              options={userOptions}
-              value={selectedUsers}
-              getOptionLabel={(option) => option.label}
-              isOptionEqualToValue={(option, val) => option.id === val.id}
-              onChange={(_e, value) => setRecipientUserIds(value.map((v) => v.id))}
-              filterSelectedOptions
-              renderInput={(params) => <TextField {...params} placeholder="Select team members" />}
-              sx={{
-                ...getAutocompleteStyles(theme),
-                "backgroundColor": theme.palette.background.main,
-                "& .MuiChip-root": {
-                  borderRadius: theme.shape.borderRadius,
-                  height: "22px",
-                  margin: "1px 2px",
-                  fontSize: "13px",
-                },
-              }}
-            />
-          </Stack>
+          <AutoCompleteField
+            multiple
+            label="Recipients"
+            id="ai-trust-index-recipient-users"
+            options={userOptions}
+            value={selectedUsers}
+            getOptionLabel={(option) => option.label}
+            isOptionEqualToValue={(option, val) => option.id === val.id}
+            onChange={(_e, value) => setRecipientUserIds(value.map((v) => v.id))}
+            placeholder="Select team members"
+          />
 
           <ChipInput
             id="ai-trust-index-recipient-emails"
