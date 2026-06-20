@@ -37,7 +37,7 @@ export function ScoreBreakdown({
   const domains = summarizeDomains(indicators);
   return (
     <Box>
-      <Typography sx={{ fontSize: "13px", fontWeight: 600, mb: "12px" }}>
+      <Typography sx={{ fontSize: "15px", fontWeight: 600, mb: "12px" }}>
         {appName ? `${appName} privacy rating` : "Privacy rating"}
       </Typography>
       <Box

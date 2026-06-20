@@ -52,7 +52,7 @@ function SectionCard({ title, children }: { title: string; children: React.React
         p: "16px",
       }}
     >
-      <Typography sx={{ fontSize: "13px", fontWeight: 600, mb: "12px" }}>{title}</Typography>
+      <Typography sx={{ fontSize: "15px", fontWeight: 600, mb: "12px" }}>{title}</Typography>
       {children}
     </Box>
   );
@@ -323,7 +323,7 @@ export default function AppDetail() {
         {detail?.summary && (
           <SectionCard title="Summary">
             <Typography
-              sx={{ fontSize: "13px", color: theme.palette.text.secondary, lineHeight: 1.6 }}
+              sx={{ fontSize: "15px", color: theme.palette.text.secondary, lineHeight: 1.7 }}
             >
               {detail.summary}
             </Typography>

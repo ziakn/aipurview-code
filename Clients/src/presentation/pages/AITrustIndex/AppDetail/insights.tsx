@@ -60,7 +60,7 @@ export function WatchOuts({ indicators }: { indicators?: IndicatorMap | null }) 
         backgroundColor: palette.background.accent,
       }}
     >
-      <Typography sx={{ fontSize: "13px", fontWeight: 600, mb: "12px" }}>
+      <Typography sx={{ fontSize: "15px", fontWeight: 600, mb: "12px" }}>
         What the policy is silent or vague on
       </Typography>
       <Box
@@ -150,7 +150,7 @@ export function RelatedApps({
   return (
     <Box>
       <Typography
-        sx={{ fontSize: "13px", fontWeight: 600, mb: "12px", color: palette.text.tertiary }}
+        sx={{ fontSize: "15px", fontWeight: 600, mb: "12px", color: palette.text.tertiary }}
       >
         Other {app.category.toLowerCase()} apps
       </Typography>
