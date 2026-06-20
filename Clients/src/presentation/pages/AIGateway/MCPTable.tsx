@@ -111,12 +111,20 @@ export default function MCPTable<T>({
                         }
                       }}
                       sx={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "4px",
-                        cursor: "pointer",
-                        userSelect: "none",
-                        justifyContent:
+                        // Match the header cell text style explicitly. The
+                        // parent <td> sets these via the `style` attr, which
+                        // does not reliably cascade into this nested span, so
+                        // the sort label would otherwise render faint.
+                        "display": "inline-flex",
+                        "alignItems": "center",
+                        "gap": "4px",
+                        "cursor": "pointer",
+                        "userSelect": "none",
+                        "color": "#475467",
+                        "fontSize": "13px",
+                        "fontWeight": 400,
+                        "&:hover": { color: "#1d2939" },
+                        "justifyContent":
                           col.align === "right"
                             ? "flex-end"
                             : col.align === "center"
