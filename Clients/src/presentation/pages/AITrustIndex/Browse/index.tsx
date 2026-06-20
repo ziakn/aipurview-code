@@ -26,7 +26,7 @@ import {
 } from "../../../../application/hooks/useAiTrustIndex";
 import { useAITrustIndexSidebarContextSafe } from "../../../../application/contexts/AITrustIndexSidebar.context";
 import { TrustIndexRow } from "../shared";
-import AppCard from "./AppCard";
+import AppCard from "../components/AppCard";
 
 // 24 = 8 rows × 3 columns, so the grid's last row stays even.
 const PAGE_SIZE = 24;
@@ -241,11 +241,19 @@ export default function Browse() {
               <AppCard
                 key={row.slug}
                 row={row}
+                selectable
                 selected={selected.includes(row.slug)}
-                trackPending={trackApp.isPending || untrackApp.isPending}
                 onOpen={(slug) => navigate(`/ai-trust-index/${slug}`)}
                 onToggleSelect={toggleRow}
-                onToggleTrack={handleToggleTrack}
+                actions={
+                  <CustomizableButton
+                    text={row.is_tracked ? "Untrack" : "Track"}
+                    variant="outlined"
+                    size="small"
+                    onClick={() => handleToggleTrack(row)}
+                    isDisabled={trackApp.isPending || untrackApp.isPending}
+                  />
+                }
               />
             ))}
           </Box>

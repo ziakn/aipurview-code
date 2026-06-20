@@ -1,46 +1,62 @@
 /**
- * @fileoverview AI Trust Index — Browse app card.
+ * @fileoverview AI Trust Index — shared app card.
  *
- * A single app tile for the Browse card grid: favicon, name, dealbreaker flag,
- * grade chip, summary, category chip, score, plus the app-only controls a
- * select checkbox and a track/untrack button. Clicking the card body navigates
- * to the detail page; the checkbox and track button stop propagation so they
- * don't trigger navigation.
+ * One app tile used by both Browse and Tracked. The card body (favicon, name,
+ * dealbreaker flag, grade chip, summary, category, score) is common; the parts
+ * that differ between pages are props:
+ *   - `selectable` + `selected` + `onToggleSelect` — Browse's bulk-select checkbox
+ *     (omitted on Tracked).
+ *   - `statusChip` — Tracked's "Tracked" / "No longer in index" chip (omitted on Browse).
+ *   - `actions` — page-specific footer control(s): Browse's Track/Untrack toggle,
+ *     Tracked's Untrack button.
+ *   - `dimmed` — Tracked dims apps removed from the index.
  *
- * @module pages/AITrustIndex/Browse/AppCard
+ * Clicking the card body navigates to the detail page; the checkbox and any
+ * action stop propagation so they don't trigger navigation.
+ *
+ * @module pages/AITrustIndex/components/AppCard
  */
 
+import { ReactNode, useState } from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import { AlertTriangle } from "lucide-react";
-import { useState } from "react";
 import Checkbox from "../../../components/Inputs/Checkbox";
-import { CustomizableButton } from "../../../components/button/customizable-button";
 import Chip from "../../../components/Chip";
 import { palette } from "../../../themes/palette";
 import { gradeVariant, categoryVariant, faviconUrl, TrustIndexRow } from "../shared";
 
 interface AppCardProps {
   row: TrustIndexRow;
-  selected: boolean;
-  trackPending: boolean;
+  /** Navigate to the app's detail page. */
   onOpen: (slug: string) => void;
-  onToggleSelect: (slug: string) => void;
-  onToggleTrack: (row: TrustIndexRow) => void;
+  /** Footer control(s) — e.g. a Track/Untrack button. Stops its own propagation. */
+  actions?: ReactNode;
+  /** Show the bulk-select checkbox (Browse). */
+  selectable?: boolean;
+  selected?: boolean;
+  onToggleSelect?: (slug: string) => void;
+  /** Optional status chip shown in the footer (Tracked). */
+  statusChip?: ReactNode;
+  /** Dim the card (e.g. an app removed from the index). */
+  dimmed?: boolean;
 }
 
 export default function AppCard({
   row,
-  selected,
-  trackPending,
   onOpen,
+  actions,
+  selectable = false,
+  selected = false,
   onToggleSelect,
-  onToggleTrack,
+  statusChip,
+  dimmed = false,
 }: AppCardProps) {
   const [imgFailed, setImgFailed] = useState(false);
   const detail = row.data;
   const grade = detail?.displayedGrade || row.letter_grade;
   const hasFlag = (detail?.dealbreakerFlags?.length ?? 0) > 0;
-  const initial = (row.name || "?").charAt(0).toUpperCase();
+  const name = row.name || row.slug;
+  const initial = (name || "?").charAt(0).toUpperCase();
   const domain = detail?.domain;
 
   return (
@@ -62,6 +78,7 @@ export default function AppCard({
         "backgroundColor": palette.background.main,
         "p": "16px",
         "cursor": "pointer",
+        "opacity": dimmed ? 0.6 : 1,
         "transition": "box-shadow 150ms ease, border-color 150ms ease",
         "&:hover": {
           boxShadow: "0 4px 20px rgba(16,24,40,0.08)",
@@ -69,23 +86,25 @@ export default function AppCard({
         },
       }}
     >
-      {/* Header: select + favicon + name/vendor + grade */}
+      {/* Header: (optional select) + favicon + name/vendor + grade */}
       <Stack direction="row" alignItems="flex-start" gap="8px">
-        <Box
-          component="span"
-          onClick={(e) => e.stopPropagation()}
-          sx={{ display: "flex", alignItems: "center", pt: "2px" }}
-        >
-          <Checkbox
-            id={`ai-trust-index-card-select-${row.slug}`}
-            size="small"
-            value={row.slug}
-            isChecked={selected}
-            onChange={() => onToggleSelect(row.slug)}
-            ariaLabel={`Select ${row.name}`}
-            sx={{ p: 0 }}
-          />
-        </Box>
+        {selectable && (
+          <Box
+            component="span"
+            onClick={(e) => e.stopPropagation()}
+            sx={{ display: "flex", alignItems: "center", pt: "2px" }}
+          >
+            <Checkbox
+              id={`ai-trust-index-card-select-${row.slug}`}
+              size="small"
+              value={row.slug}
+              isChecked={selected}
+              onChange={() => onToggleSelect?.(row.slug)}
+              ariaLabel={`Select ${name}`}
+              sx={{ p: 0 }}
+            />
+          </Box>
+        )}
 
         <Box
           sx={{
@@ -104,7 +123,7 @@ export default function AppCard({
           {domain && !imgFailed ? (
             <img
               src={faviconUrl(domain)}
-              alt={row.name}
+              alt={name}
               width={20}
               height={20}
               onError={() => setImgFailed(true)}
@@ -129,7 +148,7 @@ export default function AppCard({
                 whiteSpace: "nowrap",
               }}
             >
-              {row.name}
+              {name}
             </Typography>
             {hasFlag && (
               <AlertTriangle
@@ -150,7 +169,7 @@ export default function AppCard({
               whiteSpace: "nowrap",
             }}
           >
-            {row.vendor && row.vendor !== row.name ? row.vendor : row.category || "—"}
+            {row.vendor && row.vendor !== name ? row.vendor : row.category || "—"}
           </Typography>
         </Box>
 
@@ -176,7 +195,7 @@ export default function AppCard({
         </Typography>
       )}
 
-      {/* Footer: category chip + score + track button */}
+      {/* Footer: category chip + score + status + actions */}
       <Stack direction="row" alignItems="center" gap="8px" sx={{ mt: "12px", flexWrap: "wrap" }}>
         {row.category && (
           <Chip label={row.category} variant={categoryVariant(row.category)} uppercase={false} />
@@ -186,16 +205,13 @@ export default function AppCard({
             {row.score_out_of_100}/100
           </Typography>
         )}
+        {statusChip}
         <Box sx={{ flex: 1 }} />
-        <Box component="span" onClick={(e) => e.stopPropagation()}>
-          <CustomizableButton
-            text={row.is_tracked ? "Untrack" : "Track"}
-            variant="outlined"
-            size="small"
-            onClick={() => onToggleTrack(row)}
-            isDisabled={trackPending}
-          />
-        </Box>
+        {actions && (
+          <Box component="span" onClick={(e) => e.stopPropagation()}>
+            {actions}
+          </Box>
+        )}
       </Stack>
     </Box>
   );
