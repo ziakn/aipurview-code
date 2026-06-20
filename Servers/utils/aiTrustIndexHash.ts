@@ -49,6 +49,6 @@ export function computeHashes(app: ITrustIndexAppData): {
   };
   // Full = everything that renders/stores, minus derived iconUrl, with policyUrl noise stripped.
   const { iconUrl: _iconUrl, ...rest } = app;
-  const full = { ...rest, policyUrl: stripUrlNoise(app.policyUrl ?? "") };
+  const full = { ...rest, policyUrl: app.policyUrl == null ? null : stripUrlNoise(app.policyUrl) };
   return { materialHash: sha256(material), fullHash: sha256(full) };
 }

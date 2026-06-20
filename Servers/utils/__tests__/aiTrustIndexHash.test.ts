@@ -1,5 +1,5 @@
 // Servers/utils/__tests__/aiTrustIndexHash.test.ts
-import { computeHashes } from "../aiTrustIndexHash";
+import { computeHashes, canonicalize } from "../aiTrustIndexHash";
 import { ITrustIndexAppData } from "../../domain.layer/interfaces/i.aiTrustIndex";
 
 const baseApp: ITrustIndexAppData = {
@@ -8,9 +8,17 @@ const baseApp: ITrustIndexAppData = {
   confidence: "High", dealbreakerFlags: [], summary: "Strong policy.",
   highlights: [{ label: "Training", text: "Opt-out." }, { label: "Deletion", text: "30 days." }],
   policyUrl: "https://anthropic.com/legal/privacy", policyLastUpdated: "2026-06-08",
-  modalities: ["text"], processesBiometrics: false,
+  modalities: ["text", "image"], processesBiometrics: false,
   iconUrl: "https://icons.duckduckgo.com/ip3/claude.ai.ico",
 };
+
+describe("canonicalize", () => {
+  it("sorts arrays of objects deterministically regardless of element/key order", () => {
+    const a = canonicalize([{ label: "B", text: "y" }, { label: "A", text: "x" }]);
+    const b = canonicalize([{ text: "x", label: "A" }, { text: "y", label: "B" }]);
+    expect(JSON.stringify(a)).toBe(JSON.stringify(b));
+  });
+});
 
 describe("computeHashes", () => {
   it("is stable across object key and array ordering (no false 'changed')", () => {
