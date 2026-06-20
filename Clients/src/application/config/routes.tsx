@@ -90,9 +90,7 @@ const ScanDetailsPage = lazyRoute(
 );
 // ── AI Trust Index routes ─────────────────────────────────────────────
 const AITrustIndex = lazyRoute(() => import("../../presentation/pages/AITrustIndex"));
-const AITrustIndexBrowse = lazyRoute(
-  () => import("../../presentation/pages/AITrustIndex/Browse"),
-);
+const AITrustIndexBrowse = lazyRoute(() => import("../../presentation/pages/AITrustIndex/Browse"));
 const AITrustIndexTracked = lazyRoute(
   () => import("../../presentation/pages/AITrustIndex/Tracked"),
 );

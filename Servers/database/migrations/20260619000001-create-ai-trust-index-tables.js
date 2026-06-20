@@ -87,16 +87,16 @@ module.exports = {
 
   async down(queryInterface) {
     await queryInterface.sequelize.query(
-      "DROP TABLE IF EXISTS verifywise.ai_trust_index_tracked_apps CASCADE"
+      "DROP TABLE IF EXISTS verifywise.ai_trust_index_tracked_apps CASCADE",
     );
     await queryInterface.sequelize.query(
-      "DROP TABLE IF EXISTS verifywise.ai_trust_index_settings CASCADE"
+      "DROP TABLE IF EXISTS verifywise.ai_trust_index_settings CASCADE",
     );
     await queryInterface.sequelize.query(
-      "DROP TABLE IF EXISTS verifywise.ai_trust_index_meta CASCADE"
+      "DROP TABLE IF EXISTS verifywise.ai_trust_index_meta CASCADE",
     );
     await queryInterface.sequelize.query(
-      "DROP TABLE IF EXISTS verifywise.ai_trust_index_apps CASCADE"
+      "DROP TABLE IF EXISTS verifywise.ai_trust_index_apps CASCADE",
     );
   },
 };
