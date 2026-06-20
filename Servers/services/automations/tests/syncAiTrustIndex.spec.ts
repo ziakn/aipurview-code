@@ -103,9 +103,21 @@ describe("email HTML escaping", () => {
       "&lt;b&gt;x&lt;/b&gt; &amp; &quot;y&quot; &#39;z&#39;",
     );
   });
-  it("renders slugs HTML-escaped inside the MJML section", () => {
-    const mjml = sectionMjml("Changed", ["<b>evil</b>"]);
+  it("renders an item's name HTML-escaped inside the MJML section", () => {
+    const mjml = sectionMjml("Changed", [{ name: "<b>evil</b>" }]);
     expect(mjml).toContain("&lt;b&gt;evil&lt;/b&gt;");
     expect(mjml).not.toContain("<b>evil</b>");
+  });
+  it("renders the app name with its change detail (name — detail)", () => {
+    const mjml = sectionMjml("Changed", [{ name: "Paxton AI", detail: "now grade B" }]);
+    expect(mjml).toContain("Paxton AI — now grade B");
+  });
+  it("renders just the name when no detail is given", () => {
+    const mjml = sectionMjml("No longer assessed", [{ name: "Leonardo AI" }]);
+    expect(mjml).toContain("Leonardo AI");
+    expect(mjml).not.toContain("—");
+  });
+  it("returns empty string for no items", () => {
+    expect(sectionMjml("Changed", [])).toBe("");
   });
 });

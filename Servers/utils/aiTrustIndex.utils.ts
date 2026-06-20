@@ -175,10 +175,24 @@ export async function getSettingsQuery(organizationId: number) {
     `SELECT recipient_user_ids, recipient_emails FROM ai_trust_index_settings WHERE organization_id = :organizationId;`,
     { replacements: { organizationId }, type: QueryTypes.SELECT },
   )) as any[];
-  if (!rows.length) return { recipientUserIds: [], recipientEmails: [] };
+  // The weekly-sync cadence is org-independent (the meta row is global), but the
+  // Settings page surfaces it per org so an admin can see the index is checked
+  // automatically and when it last ran.
+  const metaRows = (await sequelize.query(
+    `SELECT seeded_at, last_run_week FROM ai_trust_index_meta WHERE id = 1;`,
+    { type: QueryTypes.SELECT },
+  )) as any[];
+  const meta = metaRows[0] ?? {};
+  const base = rows.length
+    ? {
+        recipientUserIds: rows[0].recipient_user_ids ?? [],
+        recipientEmails: rows[0].recipient_emails ?? [],
+      }
+    : { recipientUserIds: [], recipientEmails: [] };
   return {
-    recipientUserIds: rows[0].recipient_user_ids ?? [],
-    recipientEmails: rows[0].recipient_emails ?? [],
+    ...base,
+    lastRunWeek: meta.last_run_week ?? null,
+    seededAt: meta.seeded_at ?? null,
   };
 }
 
@@ -354,13 +368,28 @@ export async function upsertFeedTx(
 }
 
 export async function getAffectedOrgsBySlugs(slugs: string[]) {
-  if (!slugs.length) return [] as { organization_id: number; app_slug: string }[];
+  if (!slugs.length)
+    return [] as {
+      organization_id: number;
+      app_slug: string;
+      name: string | null;
+      letter_grade: string | null;
+    }[];
+  // Join the apps table so the digest can show the human name + current grade
+  // instead of the raw slug. LEFT JOIN keeps a tracked-but-since-removed app in
+  // the result (the apps row is soft-deleted, not deleted, so its name resolves).
   return (await sequelize.query(
-    `SELECT DISTINCT organization_id, app_slug
-     FROM ai_trust_index_tracked_apps
-     WHERE app_slug = ANY(ARRAY[:slugs]::varchar[]);`,
+    `SELECT DISTINCT t.organization_id, t.app_slug, a.name, a.letter_grade
+     FROM ai_trust_index_tracked_apps t
+     LEFT JOIN ai_trust_index_apps a ON a.slug = t.app_slug
+     WHERE t.app_slug = ANY(ARRAY[:slugs]::varchar[]);`,
     { replacements: { slugs }, type: QueryTypes.SELECT },
-  )) as { organization_id: number; app_slug: string }[];
+  )) as {
+    organization_id: number;
+    app_slug: string;
+    name: string | null;
+    letter_grade: string | null;
+  }[];
 }
 
 export async function resolveRecipients(organizationId: number): Promise<string[]> {

@@ -118,6 +118,29 @@ export default function Settings() {
         </Box>
       ) : (
         <Stack gap="24px" sx={{ maxWidth: 560 }}>
+          {/* Cadence note — reassures the admin the index runs automatically and
+              shows when it last ran (from the global sync metadata). */}
+          <Box
+            sx={{
+              border: `1px solid ${palette.border.dark}`,
+              borderRadius: "4px",
+              backgroundColor: palette.background.accent,
+              p: "12px 16px",
+            }}
+          >
+            <Typography sx={{ fontSize: "13px", color: palette.text.secondary, lineHeight: 1.6 }}>
+              The AI Trust Index is checked automatically every week (Monday). Recipients are
+              emailed only when a tracked app&apos;s assessment changes materially — no manual
+              checks needed.
+              {settingsData?.data?.lastRunWeek && (
+                <Box component="span" sx={{ color: palette.text.tertiary }}>
+                  {" "}
+                  Last checked: {settingsData.data.lastRunWeek}.
+                </Box>
+              )}
+            </Typography>
+          </Box>
+
           <AutoCompleteField
             multiple
             label="Recipients"

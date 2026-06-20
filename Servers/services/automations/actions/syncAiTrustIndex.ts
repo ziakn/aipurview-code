@@ -26,18 +26,28 @@ export function escapeHtml(s: string): string {
     .replace(/'/g, "&#39;");
 }
 
-// Build MJML fragments (valid <mj-text> components) injected into the template's {{...}} slots.
-// Exported for unit testing of the escaping path (no behavioral change).
-export function sectionMjml(title: string, slugs: string[]): string {
-  if (!slugs.length) return "";
-  const header = `<mj-text font-size="14px" font-weight="600" color="#344054">${escapeHtml(title)}</mj-text>`;
-  const items = slugs
-    .map((s) => `<mj-text font-size="13px" color="#475467">• ${escapeHtml(s)}</mj-text>`)
-    .join("");
-  return header + items;
+// A single line in a digest section: the human app name plus optional trailing
+// detail (e.g. "now grade B"). Falls back to the slug when no name resolved.
+export interface DigestItem {
+  name: string;
+  detail?: string;
 }
 
-async function renderDigest(orgChanged: string[], orgRemoved: string[]): Promise<string> {
+// Build MJML fragments (valid <mj-text> components) injected into the template's {{...}} slots.
+// Exported for unit testing of the escaping path (no behavioral change).
+export function sectionMjml(title: string, items: DigestItem[]): string {
+  if (!items.length) return "";
+  const header = `<mj-text font-size="14px" font-weight="600" color="#344054">${escapeHtml(title)}</mj-text>`;
+  const lines = items
+    .map((it) => {
+      const label = it.detail ? `${it.name} — ${it.detail}` : it.name;
+      return `<mj-text font-size="13px" color="#475467">• ${escapeHtml(label)}</mj-text>`;
+    })
+    .join("");
+  return header + lines;
+}
+
+async function renderDigest(orgChanged: DigestItem[], orgRemoved: DigestItem[]): Promise<string> {
   const tmplPath = path.join(__dirname, "../../../templates/ai-trust-index-digest.mjml");
   const template = await fs.readFile(tmplPath, "utf8");
   return compileMjmlToHtml(template, {
@@ -114,11 +124,19 @@ export async function syncAiTrustIndex(deps?: { feed?: unknown }): Promise<{
   let orgsEmailed = 0;
   if (changedSlugs.length) {
     const affected = await getAffectedOrgsBySlugs(changedSlugs);
-    const byOrg = new Map<number, { changed: string[]; removed: string[] }>();
+    const byOrg = new Map<number, { changed: DigestItem[]; removed: DigestItem[] }>();
     for (const row of affected) {
       const bucket = byOrg.get(row.organization_id) ?? { changed: [], removed: [] };
-      if (newlyRemoved.includes(row.app_slug)) bucket.removed.push(row.app_slug);
-      else bucket.changed.push(row.app_slug);
+      // Prefer the human name; fall back to the slug if the join found no row.
+      const name = row.name ?? row.app_slug;
+      if (newlyRemoved.includes(row.app_slug)) {
+        bucket.removed.push({ name });
+      } else {
+        bucket.changed.push({
+          name,
+          detail: row.letter_grade ? `now grade ${row.letter_grade}` : undefined,
+        });
+      }
       byOrg.set(row.organization_id, bucket);
     }
     for (const [orgId, { changed, removed }] of byOrg) {
