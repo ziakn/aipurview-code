@@ -1,0 +1,307 @@
+/**
+ * @fileoverview AI Trust Index — App detail.
+ *
+ * Full assessment view for a single app: header (favicon, vendor, grade,
+ * score, track toggle), summary, highlight cards, dealbreaker flags and
+ * policy metadata. Handles removed-from-index and not-found states.
+ *
+ * @module pages/AITrustIndex/AppDetail
+ */
+
+import { useState, useMemo, useCallback } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  Box,
+  Stack,
+  Typography,
+  CircularProgress,
+  Link,
+  useTheme,
+} from "@mui/material";
+import { ExternalLink } from "lucide-react";
+import { PageBreadcrumbs } from "../../../components/breadcrumbs/PageBreadcrumbs";
+import { CustomizableButton } from "../../../components/button/customizable-button";
+import { EmptyState } from "../../../components/EmptyState";
+import Chip from "../../../components/Chip";
+import { palette } from "../../../themes/palette";
+import { useApp, useTrackApp, useUntrackApp } from "../../../../application/hooks/useAiTrustIndex";
+import { useAITrustIndexSidebarContextSafe } from "../../../../application/contexts/AITrustIndexSidebar.context";
+import { GRADE_COLOR, TrustIndexAppData, faviconUrl } from "../shared";
+
+interface AppDetailRow {
+  slug: string;
+  name: string;
+  vendor?: string;
+  category?: string;
+  letter_grade?: string;
+  score_out_of_100?: number;
+  is_tracked?: boolean;
+  no_longer_in_index?: boolean;
+  data: TrustIndexAppData;
+}
+
+function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <Box
+      sx={{
+        border: `1px solid ${palette.border.dark}`,
+        borderRadius: "4px",
+        backgroundColor: palette.background.main,
+        p: "16px",
+      }}
+    >
+      <Typography sx={{ fontSize: "13px", fontWeight: 600, mb: "12px" }}>{title}</Typography>
+      {children}
+    </Box>
+  );
+}
+
+export default function AppDetail() {
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const { slug = "" } = useParams();
+  const sidebar = useAITrustIndexSidebarContextSafe();
+
+  const { data, isLoading, isError } = useApp(slug);
+  const trackApp = useTrackApp();
+  const untrackApp = useUntrackApp();
+
+  const [imgFailed, setImgFailed] = useState(false);
+
+  const app: AppDetailRow | null = useMemo(() => (data?.data ? data.data : null), [data]);
+  const detail: TrustIndexAppData | undefined = app?.data;
+
+  const handleToggleTrack = useCallback(() => {
+    if (!app) return;
+    const onDone = () => sidebar?.refreshTrackedCount();
+    if (app.is_tracked) {
+      untrackApp.mutate(app.slug, { onSuccess: onDone });
+    } else {
+      trackApp.mutate(app.slug, { onSuccess: onDone });
+    }
+  }, [app, trackApp, untrackApp, sidebar]);
+
+  const breadcrumbItems = [
+    { label: "AI Trust Index", path: "/ai-trust-index/browse" },
+    { label: app?.name || "App", path: "" },
+  ];
+
+  if (isLoading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
+        <CircularProgress size={24} sx={{ color: palette.brand.primary }} />
+      </Box>
+    );
+  }
+
+  if (isError || !app) {
+    return (
+      <Box>
+        <PageBreadcrumbs
+          items={[{ label: "AI Trust Index", path: "/ai-trust-index/browse" }]}
+          autoGenerate={false}
+          testId="ai-trust-index-detail-breadcrumbs"
+        />
+        <EmptyState message="We couldn't find this app in the AI Trust Index." showBorder />
+        <Box sx={{ display: "flex", justifyContent: "center", mt: "16px" }}>
+          <CustomizableButton
+            text="Back to Browse"
+            onClick={() => navigate("/ai-trust-index/browse")}
+            sx={{ height: 34 }}
+          />
+        </Box>
+      </Box>
+    );
+  }
+
+  const displayedGrade = detail?.displayedGrade || app.letter_grade || "";
+  const gradeColor = displayedGrade
+    ? GRADE_COLOR[displayedGrade.charAt(0).toUpperCase()] ?? palette.text.tertiary
+    : palette.text.tertiary;
+  const initial = (app.name || "?").charAt(0).toUpperCase();
+
+  return (
+    <Box>
+      <PageBreadcrumbs
+        items={breadcrumbItems}
+        autoGenerate={false}
+        testId="ai-trust-index-detail-breadcrumbs"
+      />
+
+      {/* Header */}
+      <Stack direction="row" alignItems="flex-start" gap="16px" sx={{ mb: "24px" }}>
+        <Box
+          sx={{
+            width: 48,
+            height: 48,
+            borderRadius: "8px",
+            border: `1px solid ${palette.border.dark}`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+            backgroundColor: palette.background.accent,
+            overflow: "hidden",
+          }}
+        >
+          {detail?.domain && !imgFailed ? (
+            <img
+              src={faviconUrl(detail.domain)}
+              alt={app.name}
+              width={28}
+              height={28}
+              onError={() => setImgFailed(true)}
+              style={{ display: "block" }}
+            />
+          ) : (
+            <Typography sx={{ fontSize: "20px", fontWeight: 600, color: palette.text.tertiary }}>
+              {initial}
+            </Typography>
+          )}
+        </Box>
+
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Stack direction="row" alignItems="center" gap="8px" flexWrap="wrap">
+            <Typography sx={{ fontSize: "20px", fontWeight: 600 }}>{app.name}</Typography>
+            {displayedGrade && (
+              <Chip label={displayedGrade} backgroundColor={`${gradeColor}1A`} textColor={gradeColor} />
+            )}
+            {app.no_longer_in_index && (
+              <Chip label="No longer in index" variant="warning" uppercase={false} />
+            )}
+          </Stack>
+          <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, mt: "4px" }}>
+            {[app.vendor, app.category].filter(Boolean).join(" · ")}
+          </Typography>
+          {app.score_out_of_100 != null && (
+            <Typography sx={{ fontSize: "13px", color: theme.palette.text.secondary, mt: "4px" }}>
+              Trust score: <strong>{app.score_out_of_100}/100</strong>
+            </Typography>
+          )}
+        </Box>
+
+        <CustomizableButton
+          text={app.is_tracked ? "Untrack" : "Track"}
+          variant={app.is_tracked ? "outlined" : "contained"}
+          onClick={handleToggleTrack}
+          isDisabled={trackApp.isPending || untrackApp.isPending}
+          sx={{ height: 34, flexShrink: 0 }}
+        />
+      </Stack>
+
+      <Stack gap="16px">
+        {/* Summary */}
+        {detail?.summary && (
+          <SectionCard title="Summary">
+            <Typography sx={{ fontSize: "13px", color: theme.palette.text.secondary, lineHeight: 1.6 }}>
+              {detail.summary}
+            </Typography>
+          </SectionCard>
+        )}
+
+        {/* Highlights */}
+        {detail?.highlights && detail.highlights.length > 0 && (
+          <SectionCard title="Highlights">
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)" },
+                gap: "12px",
+              }}
+            >
+              {detail.highlights.map((h, i) => (
+                <Box
+                  key={`${h.label}-${i}`}
+                  sx={{
+                    border: `1px solid ${palette.border.light}`,
+                    borderRadius: "4px",
+                    p: "12px",
+                    backgroundColor: palette.background.accent,
+                  }}
+                >
+                  <Typography sx={{ fontSize: "12px", fontWeight: 600, color: palette.text.tertiary, mb: "4px" }}>
+                    {h.label}
+                  </Typography>
+                  <Typography sx={{ fontSize: "13px", color: theme.palette.text.secondary, lineHeight: 1.5 }}>
+                    {h.text}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </SectionCard>
+        )}
+
+        {/* Dealbreaker flags */}
+        {detail?.dealbreakerFlags && detail.dealbreakerFlags.length > 0 && (
+          <SectionCard title="Dealbreaker flags">
+            <Stack direction="row" gap="8px" flexWrap="wrap">
+              {detail.dealbreakerFlags.map((flag, i) => (
+                <Chip key={`${flag}-${i}`} label={flag} variant="error" uppercase={false} />
+              ))}
+            </Stack>
+          </SectionCard>
+        )}
+
+        {/* Policy details */}
+        {detail && (
+          <SectionCard title="Policy details">
+            <Stack gap="8px">
+              {detail.policyUrl && (
+                <Stack direction="row" alignItems="center" gap="8px">
+                  <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, minWidth: 140 }}>
+                    Privacy policy
+                  </Typography>
+                  <Link
+                    href={detail.policyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      fontSize: "13px",
+                      color: palette.brand.primary,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    View policy
+                    <ExternalLink size={14} />
+                  </Link>
+                </Stack>
+              )}
+              <Stack direction="row" alignItems="center" gap="8px">
+                <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, minWidth: 140 }}>
+                  Policy last updated
+                </Typography>
+                <Typography sx={{ fontSize: "13px", color: theme.palette.text.secondary }}>
+                  {detail.policyLastUpdated || "Unknown"}
+                </Typography>
+              </Stack>
+              {detail.modalities && detail.modalities.length > 0 && (
+                <Stack direction="row" alignItems="center" gap="8px">
+                  <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, minWidth: 140 }}>
+                    Modalities
+                  </Typography>
+                  <Stack direction="row" gap="6px" flexWrap="wrap">
+                    {detail.modalities.map((m, i) => (
+                      <Chip key={`${m}-${i}`} label={m} variant="default" uppercase={false} />
+                    ))}
+                  </Stack>
+                </Stack>
+              )}
+              <Stack direction="row" alignItems="center" gap="8px">
+                <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, minWidth: 140 }}>
+                  Processes biometrics
+                </Typography>
+                <Chip
+                  label={detail.processesBiometrics ? "Yes" : "No"}
+                  variant={detail.processesBiometrics ? "yes" : "no"}
+                  uppercase={false}
+                />
+              </Stack>
+            </Stack>
+          </SectionCard>
+        )}
+      </Stack>
+    </Box>
+  );
+}

@@ -8636,6 +8636,55 @@ export const translations: Record<string, Record<string, string>> = {
     "Run estimate": "Schätzung ausführen",
     "Total leaf-level controls from the selected framework inventories":
       "Gesamtzahl der Blattkontrollen aus den ausgewählten Framework-Inventaren",
+    // AI Trust Index
+    "AI Trust Index": "KI-Vertrauensindex",
+    "AI Trust Index notification settings.": "Benachrichtigungseinstellungen für den KI-Vertrauensindex.",
+    "AI applications your organization is tracking. We":
+      "KI-Anwendungen, die Ihre Organisation verfolgt. Wir",
+    "Choose who receives a notification when a tracked app":
+      "Wählen Sie, wer eine Benachrichtigung erhält, wenn eine verfolgte App",
+    "We couldn": "Wir konnten",
+    "You": "Sie",
+    "AI applications your organization is tracking. We'll notify recipients when a tracked app's assessment changes materially.":
+      "KI-Anwendungen, die Ihre Organisation verfolgt. Wir benachrichtigen Empfänger, wenn sich die Bewertung einer verfolgten App wesentlich ändert.",
+    "Additional emails": "Weitere E-Mail-Adressen",
+    "All categories": "Alle Kategorien",
+    "All grades": "Alle Bewertungen",
+    "Back to Browse": "Zurück zur Übersicht",
+    "Browse": "Durchsuchen",
+    "Browse AI app risk scores and track the apps you use":
+      "KI-App-Risikobewertungen durchsuchen und genutzte Apps verfolgen",
+    "Browse independently assessed AI applications and track the ones that matter to your organization.":
+      "Unabhängig bewertete KI-Anwendungen durchsuchen und die für Ihre Organisation relevanten verfolgen.",
+    "Choose who receives a notification when a tracked app's assessment changes materially. If no recipients are set, organization admins are notified by default.":
+      "Wählen Sie, wer eine Benachrichtigung erhält, wenn sich die Bewertung einer verfolgten App wesentlich ändert. Wenn keine Empfänger festgelegt sind, werden standardmäßig Organisationsadministratoren benachrichtigt.",
+    "Dealbreaker flags": "Ausschlusskriterien",
+    "Highest score": "Höchste Punktzahl",
+    "Highlights": "Highlights",
+    "Modalities": "Modalitäten",
+    "No apps match your filters.": "Keine Apps entsprechen Ihren Filtern.",
+    "No longer in index": "Nicht mehr im Index",
+    "Only administrators can change AI Trust Index notification settings.":
+      "Nur Administratoren können die Benachrichtigungseinstellungen des KI-Vertrauensindex ändern.",
+    "Policy details": "Richtliniendetails",
+    "Policy last updated": "Richtlinie zuletzt aktualisiert",
+    "Processes biometrics": "Verarbeitet biometrische Daten",
+    "Search apps or vendors": "Apps oder Anbieter suchen",
+    "Select team members": "Teammitglieder auswählen",
+    "Tracked": "Verfolgt",
+    "Tracked apps": "Verfolgte Apps",
+    "Trust score:": "Vertrauenswert:",
+    "Type an email and press Enter": "E-Mail eingeben und Enter drücken",
+    "Untrack": "Nicht mehr verfolgen",
+    "View policy": "Richtlinie anzeigen",
+    "We couldn't find this app in the AI Trust Index.":
+      "Diese App wurde im KI-Vertrauensindex nicht gefunden.",
+    "We couldn't load the AI Trust Index right now. Please try again later.":
+      "Der KI-Vertrauensindex konnte momentan nicht geladen werden. Bitte versuchen Sie es später erneut.",
+    "We couldn't load your tracked apps right now. Please try again later.":
+      "Ihre verfolgten Apps konnten momentan nicht geladen werden. Bitte versuchen Sie es später erneut.",
+    "You're not tracking any apps yet. Track apps from the Browse tab to monitor changes.":
+      "Sie verfolgen noch keine Apps. Fügen Sie Apps über die Registerkarte \"Durchsuchen\" hinzu, um Änderungen zu überwachen.",
   },
 
   fr: {
@@ -17204,6 +17253,55 @@ export const translations: Record<string, Record<string, string>> = {
     "Run estimate": "Lancer l'estimation",
     "Total leaf-level controls from the selected framework inventories":
       "Total des contrôles feuille des inventaires de cadres sélectionnés",
+    // AI Trust Index
+    "AI Trust Index": "Index de confiance IA",
+    "AI Trust Index notification settings.": "Paramètres de notification de l'index de confiance IA.",
+    "AI applications your organization is tracking. We":
+      "Applications IA que votre organisation suit. Nous",
+    "Choose who receives a notification when a tracked app":
+      "Choisissez qui reçoit une notification lorsqu'une application suivie",
+    "We couldn": "Nous n'avons pas pu",
+    "You": "Vous",
+    "AI applications your organization is tracking. We'll notify recipients when a tracked app's assessment changes materially.":
+      "Applications IA que votre organisation suit. Nous notifierons les destinataires lorsque l'évaluation d'une application suivie change de manière significative.",
+    "Additional emails": "E-mails supplémentaires",
+    "All categories": "Toutes les catégories",
+    "All grades": "Toutes les notes",
+    "Back to Browse": "Retour à la navigation",
+    "Browse": "Parcourir",
+    "Browse AI app risk scores and track the apps you use":
+      "Parcourir les scores de risque des applications IA et suivre les applications utilisées",
+    "Browse independently assessed AI applications and track the ones that matter to your organization.":
+      "Parcourir les applications IA évaluées indépendamment et suivre celles qui comptent pour votre organisation.",
+    "Choose who receives a notification when a tracked app's assessment changes materially. If no recipients are set, organization admins are notified by default.":
+      "Choisissez qui reçoit une notification lorsque l'évaluation d'une application suivie change de manière significative. Si aucun destinataire n'est défini, les administrateurs de l'organisation sont notifiés par défaut.",
+    "Dealbreaker flags": "Indicateurs rédhibitoires",
+    "Highest score": "Score le plus élevé",
+    "Highlights": "Points clés",
+    "Modalities": "Modalités",
+    "No apps match your filters.": "Aucune application ne correspond à vos filtres.",
+    "No longer in index": "Plus dans l'index",
+    "Only administrators can change AI Trust Index notification settings.":
+      "Seuls les administrateurs peuvent modifier les paramètres de notification de l'index de confiance IA.",
+    "Policy details": "Détails de la politique",
+    "Policy last updated": "Politique mise à jour le",
+    "Processes biometrics": "Traite des données biométriques",
+    "Search apps or vendors": "Rechercher des applications ou des fournisseurs",
+    "Select team members": "Sélectionner des membres de l'équipe",
+    "Tracked": "Suivis",
+    "Tracked apps": "Applications suivies",
+    "Trust score:": "Score de confiance :",
+    "Type an email and press Enter": "Saisissez un e-mail et appuyez sur Entrée",
+    "Untrack": "Ne plus suivre",
+    "View policy": "Voir la politique",
+    "We couldn't find this app in the AI Trust Index.":
+      "Cette application est introuvable dans l'index de confiance IA.",
+    "We couldn't load the AI Trust Index right now. Please try again later.":
+      "L'index de confiance IA n'a pas pu être chargé pour l'instant. Veuillez réessayer ultérieurement.",
+    "We couldn't load your tracked apps right now. Please try again later.":
+      "Vos applications suivies n'ont pas pu être chargées pour l'instant. Veuillez réessayer ultérieurement.",
+    "You're not tracking any apps yet. Track apps from the Browse tab to monitor changes.":
+      "Vous ne suivez encore aucune application. Ajoutez des applications depuis l'onglet Parcourir pour surveiller les modifications.",
   },
   es: {
     // AI Apps (MO-362)
@@ -25689,5 +25787,54 @@ export const translations: Record<string, Record<string, string>> = {
     "Run estimate": "Ejecutar estimación",
     "Total leaf-level controls from the selected framework inventories":
       "Total de controles de nivel hoja de los inventarios de marcos seleccionados",
+    // AI Trust Index
+    "AI Trust Index": "Índice de confianza de IA",
+    "AI Trust Index notification settings.": "Configuración de notificaciones del índice de confianza de IA.",
+    "AI applications your organization is tracking. We":
+      "Aplicaciones de IA que su organización está siguiendo. Le",
+    "Choose who receives a notification when a tracked app":
+      "Elija quién recibe una notificación cuando una aplicación seguida",
+    "We couldn": "No pudimos",
+    "You": "Usted",
+    "AI applications your organization is tracking. We'll notify recipients when a tracked app's assessment changes materially.":
+      "Aplicaciones de IA que su organización está siguiendo. Notificaremos a los destinatarios cuando la evaluación de una aplicación seguida cambie de forma significativa.",
+    "Additional emails": "Correos electrónicos adicionales",
+    "All categories": "Todas las categorías",
+    "All grades": "Todas las calificaciones",
+    "Back to Browse": "Volver a Explorar",
+    "Browse": "Explorar",
+    "Browse AI app risk scores and track the apps you use":
+      "Explorar las puntuaciones de riesgo de las aplicaciones de IA y seguir las que utiliza",
+    "Browse independently assessed AI applications and track the ones that matter to your organization.":
+      "Explorar aplicaciones de IA evaluadas de forma independiente y seguir las que importan a su organización.",
+    "Choose who receives a notification when a tracked app's assessment changes materially. If no recipients are set, organization admins are notified by default.":
+      "Elija quién recibe una notificación cuando la evaluación de una aplicación seguida cambie de forma significativa. Si no se establecen destinatarios, se notifica a los administradores de la organización de forma predeterminada.",
+    "Dealbreaker flags": "Indicadores decisivos",
+    "Highest score": "Puntuación más alta",
+    "Highlights": "Aspectos destacados",
+    "Modalities": "Modalidades",
+    "No apps match your filters.": "Ninguna aplicación coincide con sus filtros.",
+    "No longer in index": "Ya no está en el índice",
+    "Only administrators can change AI Trust Index notification settings.":
+      "Solo los administradores pueden cambiar la configuración de notificaciones del índice de confianza de IA.",
+    "Policy details": "Detalles de la política",
+    "Policy last updated": "Política actualizada por última vez",
+    "Processes biometrics": "Procesa datos biométricos",
+    "Search apps or vendors": "Buscar aplicaciones o proveedores",
+    "Select team members": "Seleccionar miembros del equipo",
+    "Tracked": "Seguidas",
+    "Tracked apps": "Aplicaciones seguidas",
+    "Trust score:": "Puntuación de confianza:",
+    "Type an email and press Enter": "Escriba un correo electrónico y pulse Intro",
+    "Untrack": "Dejar de seguir",
+    "View policy": "Ver política",
+    "We couldn't find this app in the AI Trust Index.":
+      "No se encontró esta aplicación en el índice de confianza de IA.",
+    "We couldn't load the AI Trust Index right now. Please try again later.":
+      "No se pudo cargar el índice de confianza de IA en este momento. Inténtelo de nuevo más tarde.",
+    "We couldn't load your tracked apps right now. Please try again later.":
+      "No se pudieron cargar las aplicaciones seguidas en este momento. Inténtelo de nuevo más tarde.",
+    "You're not tracking any apps yet. Track apps from the Browse tab to monitor changes.":
+      "Aún no está siguiendo ninguna aplicación. Añada aplicaciones desde la pestaña Explorar para supervisar los cambios.",
   },
 };
