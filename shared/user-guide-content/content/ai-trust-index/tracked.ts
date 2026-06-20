@@ -58,11 +58,11 @@ export const aiTrustIndexTrackedContent: ArticleContent = {
     {
       type: 'bullet-list',
       items: [
-        { text: 'Score change (scoreOutOf100)' },
-        { text: 'Letter grade or displayed grade change' },
-        { text: 'A dealbreaker flag added or removed' },
-        { text: 'Privacy policy date updated (policyLastUpdated)' },
-        { text: 'Biometrics processing status changed (processesBiometrics)' },
+        { text: 'The score changed' },
+        { text: 'The letter grade or displayed grade changed' },
+        { text: 'A dealbreaker flag was added or removed' },
+        { text: 'The privacy policy date was updated' },
+        { text: 'The biometrics processing status changed' },
       ],
     },
     {
