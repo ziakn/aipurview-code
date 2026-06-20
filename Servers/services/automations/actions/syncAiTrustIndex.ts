@@ -12,8 +12,7 @@ import { sendAutomationEmail } from "../../emailService";
 import { compileMjmlToHtml } from "../../../tools/mjmlCompiler";
 import logger from "../../../utils/logger/fileLogger";
 
-const APP_URL =
-  (process.env.FRONTEND_URL ?? "http://localhost:5173") + "/ai-trust-index/tracked";
+const APP_URL = (process.env.FRONTEND_URL ?? "http://localhost:5173") + "/ai-trust-index/tracked";
 
 // Build MJML fragments (valid <mj-text> components) injected into the template's {{...}} slots.
 function sectionMjml(title: string, slugs: string[]): string {
@@ -26,10 +25,7 @@ function sectionMjml(title: string, slugs: string[]): string {
 }
 
 async function renderDigest(orgChanged: string[], orgRemoved: string[]): Promise<string> {
-  const tmplPath = path.join(
-    __dirname,
-    "../../../templates/ai-trust-index-digest.mjml"
-  );
+  const tmplPath = path.join(__dirname, "../../../templates/ai-trust-index-digest.mjml");
   const template = await fs.readFile(tmplPath, "utf8");
   return compileMjmlToHtml(template, {
     changedSection: sectionMjml("Changed", orgChanged),
@@ -38,9 +34,7 @@ async function renderDigest(orgChanged: string[], orgRemoved: string[]): Promise
   });
 }
 
-export async function syncAiTrustIndex(
-  deps?: { feed?: unknown }
-): Promise<{
+export async function syncAiTrustIndex(deps?: { feed?: unknown }): Promise<{
   fetched: number;
   materialChanged: number;
   newlyRemoved: number;
@@ -85,13 +79,11 @@ export async function syncAiTrustIndex(
     };
   }
 
-  const { materialChanged, newlyRemoved, wasFirstSeed } = await upsertFeedTx(
-    validated.apps
-  );
+  const { materialChanged, newlyRemoved, wasFirstSeed } = await upsertFeedTx(validated.apps);
 
   if (wasFirstSeed) {
     logger.info(
-      `[ai-trust-index] first seed complete (${validated.apps.length} apps); emails suppressed`
+      `[ai-trust-index] first seed complete (${validated.apps.length} apps); emails suppressed`,
     );
     return {
       fetched: validated.apps.length,
@@ -122,7 +114,7 @@ export async function syncAiTrustIndex(
   }
 
   logger.info(
-    `[ai-trust-index] sync done: fetched=${validated.apps.length} changed=${materialChanged.length} removed=${newlyRemoved.length} orgsEmailed=${orgsEmailed}`
+    `[ai-trust-index] sync done: fetched=${validated.apps.length} changed=${materialChanged.length} removed=${newlyRemoved.length} orgsEmailed=${orgsEmailed}`,
   );
   return {
     fetched: validated.apps.length,

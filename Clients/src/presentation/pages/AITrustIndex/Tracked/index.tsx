@@ -9,11 +9,7 @@
 
 import { useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Box,
-  Typography,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Typography, CircularProgress } from "@mui/material";
 import { CustomizableButton } from "../../../components/button/customizable-button";
 import { EmptyState } from "../../../components/EmptyState";
 import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtended";
@@ -36,7 +32,8 @@ const COLUMNS: MCPTableColumn[] = [
 ];
 
 function GradeChip({ grade }: { grade?: string }) {
-  if (!grade) return <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>—</Typography>;
+  if (!grade)
+    return <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>—</Typography>;
   const color = GRADE_COLOR[grade.charAt(0).toUpperCase()] ?? palette.text.tertiary;
   return <Chip label={grade} backgroundColor={`${color}1A`} textColor={color} />;
 }

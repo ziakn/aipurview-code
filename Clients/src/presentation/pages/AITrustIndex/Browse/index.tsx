@@ -9,14 +9,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Box,
-  Stack,
-  Typography,
-  TablePagination,
-  Checkbox,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Stack, Typography, TablePagination, Checkbox, CircularProgress } from "@mui/material";
 import { SearchBox } from "../../../components/Search";
 import { CustomSelect } from "../../../components/CustomSelect";
 import { CustomizableButton } from "../../../components/button/customizable-button";
@@ -24,7 +17,12 @@ import { EmptyState } from "../../../components/EmptyState";
 import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtended";
 import Chip from "../../../components/Chip";
 import { palette } from "../../../themes/palette";
-import { useApps, useTrackApp, useUntrackApp, useTrackAppsBulk } from "../../../../application/hooks/useAiTrustIndex";
+import {
+  useApps,
+  useTrackApp,
+  useUntrackApp,
+  useTrackAppsBulk,
+} from "../../../../application/hooks/useAiTrustIndex";
 import { useAITrustIndexSidebarContextSafe } from "../../../../application/contexts/AITrustIndexSidebar.context";
 import { GRADE_COLOR, TrustIndexRow } from "../shared";
 import MCPTable from "../../AIGateway/MCPTable";
@@ -37,7 +35,8 @@ const SORT_OPTIONS = [
 ];
 
 function GradeChip({ grade }: { grade?: string }) {
-  if (!grade) return <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>—</Typography>;
+  if (!grade)
+    return <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>—</Typography>;
   const color = GRADE_COLOR[grade.charAt(0).toUpperCase()] ?? palette.text.tertiary;
   return <Chip label={grade} backgroundColor={`${color}1A`} textColor={color} />;
 }
@@ -82,7 +81,10 @@ export default function Browse() {
   const categories: string[] = useMemo(() => payload?.categories ?? [], [payload]);
 
   const categoryOptions = useMemo(
-    () => [{ value: "", label: "All categories" }, ...categories.map((c) => ({ value: c, label: c }))],
+    () => [
+      { value: "", label: "All categories" },
+      ...categories.map((c) => ({ value: c, label: c })),
+    ],
     [categories],
   );
   const gradeOptions = useMemo(
@@ -151,13 +153,7 @@ export default function Browse() {
       description="Browse independently assessed AI applications and track the ones that matter to your organization."
     >
       {/* Filters */}
-      <Stack
-        direction="row"
-        alignItems="center"
-        gap="8px"
-        flexWrap="wrap"
-        sx={{ mb: "16px" }}
-      >
+      <Stack direction="row" alignItems="center" gap="8px" flexWrap="wrap" sx={{ mb: "16px" }}>
         <SearchBox
           placeholder="Search apps or vendors"
           value={searchInput}
@@ -224,9 +220,7 @@ export default function Browse() {
         />
       )}
 
-      {isEmpty && !isError && (
-        <EmptyState message="No apps match your filters." showBorder />
-      )}
+      {isEmpty && !isError && <EmptyState message="No apps match your filters." showBorder />}
 
       {!isLoading && !isError && rows.length > 0 && (
         <>
@@ -270,12 +264,7 @@ export default function Browse() {
               </span>,
             ]}
           />
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="flex-end"
-            px="32px"
-          >
+          <Stack direction="row" alignItems="center" justifyContent="flex-end" px="32px">
             <TablePagination
               component="div"
               count={total}

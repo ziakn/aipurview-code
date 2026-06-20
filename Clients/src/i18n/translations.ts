@@ -8638,7 +8638,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Gesamtzahl der Blattkontrollen aus den ausgewählten Framework-Inventaren",
     // AI Trust Index
     "AI Trust Index": "KI-Vertrauensindex",
-    "AI Trust Index notification settings.": "Benachrichtigungseinstellungen für den KI-Vertrauensindex.",
+    "AI Trust Index notification settings.":
+      "Benachrichtigungseinstellungen für den KI-Vertrauensindex.",
     "AI applications your organization is tracking. We":
       "KI-Anwendungen, die Ihre Organisation verfolgt. Wir",
     "Choose who receives a notification when a tracked app":
@@ -8684,7 +8685,7 @@ export const translations: Record<string, Record<string, string>> = {
     "We couldn't load your tracked apps right now. Please try again later.":
       "Ihre verfolgten Apps konnten momentan nicht geladen werden. Bitte versuchen Sie es später erneut.",
     "You're not tracking any apps yet. Track apps from the Browse tab to monitor changes.":
-      "Sie verfolgen noch keine Apps. Fügen Sie Apps über die Registerkarte \"Durchsuchen\" hinzu, um Änderungen zu überwachen.",
+      'Sie verfolgen noch keine Apps. Fügen Sie Apps über die Registerkarte "Durchsuchen" hinzu, um Änderungen zu überwachen.',
   },
 
   fr: {
@@ -17255,7 +17256,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Total des contrôles feuille des inventaires de cadres sélectionnés",
     // AI Trust Index
     "AI Trust Index": "Index de confiance IA",
-    "AI Trust Index notification settings.": "Paramètres de notification de l'index de confiance IA.",
+    "AI Trust Index notification settings.":
+      "Paramètres de notification de l'index de confiance IA.",
     "AI applications your organization is tracking. We":
       "Applications IA que votre organisation suit. Nous",
     "Choose who receives a notification when a tracked app":
@@ -25789,7 +25791,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Total de controles de nivel hoja de los inventarios de marcos seleccionados",
     // AI Trust Index
     "AI Trust Index": "Índice de confianza de IA",
-    "AI Trust Index notification settings.": "Configuración de notificaciones del índice de confianza de IA.",
+    "AI Trust Index notification settings.":
+      "Configuración de notificaciones del índice de confianza de IA.",
     "AI applications your organization is tracking. We":
       "Aplicaciones de IA que su organización está siguiendo. Le",
     "Choose who receives a notification when a tracked app":

@@ -8,15 +8,7 @@
  * @module contexts/AITrustIndexSidebar.context
  */
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-  ReactNode,
-  FC,
-} from "react";
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode, FC } from "react";
 import { getTracked } from "../repository/aiTrustIndex.repository";
 
 interface AITrustIndexSidebarContextType {

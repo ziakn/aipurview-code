@@ -1,7 +1,14 @@
 import express from "express";
 import authenticateJWT from "../middleware/auth.middleware";
 import {
-  getApps, getApp, getTracked, trackApp, trackAppsBulk, untrackApp, getSettings, updateSettings,
+  getApps,
+  getApp,
+  getTracked,
+  trackApp,
+  trackAppsBulk,
+  untrackApp,
+  getSettings,
+  updateSettings,
 } from "../controllers/aiTrustIndex.ctrl";
 
 const router = express.Router();

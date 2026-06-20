@@ -1,7 +1,14 @@
 // Clients/src/application/hooks/useAiTrustIndex.ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  getApps, getApp, getTracked, trackApp, trackAppsBulk, untrackApp, getSettings, updateSettings,
+  getApps,
+  getApp,
+  getTracked,
+  trackApp,
+  trackAppsBulk,
+  untrackApp,
+  getSettings,
+  updateSettings,
 } from "../repository/aiTrustIndex.repository";
 
 const KEY = "ai-trust-index";
@@ -19,21 +26,30 @@ export function useTrackApp() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (slug: string) => trackApp(slug),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: [KEY, "apps"] }); qc.invalidateQueries({ queryKey: [KEY, "tracked"] }); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: [KEY, "apps"] });
+      qc.invalidateQueries({ queryKey: [KEY, "tracked"] });
+    },
   });
 }
 export function useTrackAppsBulk() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (slugs: string[]) => trackAppsBulk(slugs),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: [KEY, "apps"] }); qc.invalidateQueries({ queryKey: [KEY, "tracked"] }); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: [KEY, "apps"] });
+      qc.invalidateQueries({ queryKey: [KEY, "tracked"] });
+    },
   });
 }
 export function useUntrackApp() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (slug: string) => untrackApp(slug),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: [KEY, "apps"] }); qc.invalidateQueries({ queryKey: [KEY, "tracked"] }); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: [KEY, "apps"] });
+      qc.invalidateQueries({ queryKey: [KEY, "tracked"] });
+    },
   });
 }
 export function useSettings() {
@@ -42,7 +58,8 @@ export function useSettings() {
 export function useUpdateSettings() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (body: { recipientUserIds: number[]; recipientEmails: string[] }) => updateSettings(body),
+    mutationFn: (body: { recipientUserIds: number[]; recipientEmails: string[] }) =>
+      updateSettings(body),
     onSuccess: () => qc.invalidateQueries({ queryKey: [KEY, "settings"] }),
   });
 }

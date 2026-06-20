@@ -89,10 +89,7 @@ export default function Settings() {
 
   if (!isAdmin) {
     return (
-      <PageHeaderExtended
-        title="Settings"
-        description="AI Trust Index notification settings."
-      >
+      <PageHeaderExtended title="Settings" description="AI Trust Index notification settings.">
         <EmptyState
           message="Only administrators can change AI Trust Index notification settings."
           showBorder
@@ -113,7 +110,9 @@ export default function Settings() {
       ) : (
         <Stack gap="24px" sx={{ maxWidth: 560 }}>
           <Stack gap="8px">
-            <Typography sx={{ fontSize: "13px", fontWeight: 500, color: theme.palette.text.secondary }}>
+            <Typography
+              sx={{ fontSize: "13px", fontWeight: 500, color: theme.palette.text.secondary }}
+            >
               Recipients
             </Typography>
             <Autocomplete
@@ -126,9 +125,7 @@ export default function Settings() {
               isOptionEqualToValue={(option, val) => option.id === val.id}
               onChange={(_e, value) => setRecipientUserIds(value.map((v) => v.id))}
               filterSelectedOptions
-              renderInput={(params) => (
-                <TextField {...params} placeholder="Select team members" />
-              )}
+              renderInput={(params) => <TextField {...params} placeholder="Select team members" />}
               sx={{
                 ...getAutocompleteStyles(theme),
                 "backgroundColor": theme.palette.background.main,

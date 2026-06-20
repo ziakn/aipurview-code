@@ -32,7 +32,9 @@ function stripUrlNoise(url: string): string {
 }
 
 function sha256(input: unknown): string {
-  return createHash("sha256").update(JSON.stringify(canonicalize(input))).digest("hex");
+  return createHash("sha256")
+    .update(JSON.stringify(canonicalize(input)))
+    .digest("hex");
 }
 
 export function computeHashes(app: ITrustIndexAppData): {

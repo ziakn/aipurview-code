@@ -10,14 +10,7 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  Box,
-  Stack,
-  Typography,
-  CircularProgress,
-  Link,
-  useTheme,
-} from "@mui/material";
+import { Box, Stack, Typography, CircularProgress, Link, useTheme } from "@mui/material";
 import { ExternalLink } from "lucide-react";
 import { PageBreadcrumbs } from "../../../components/breadcrumbs/PageBreadcrumbs";
 import { CustomizableButton } from "../../../components/button/customizable-button";
@@ -116,7 +109,7 @@ export default function AppDetail() {
 
   const displayedGrade = detail?.displayedGrade || app.letter_grade || "";
   const gradeColor = displayedGrade
-    ? GRADE_COLOR[displayedGrade.charAt(0).toUpperCase()] ?? palette.text.tertiary
+    ? (GRADE_COLOR[displayedGrade.charAt(0).toUpperCase()] ?? palette.text.tertiary)
     : palette.text.tertiary;
   const initial = (app.name || "?").charAt(0).toUpperCase();
 
@@ -164,7 +157,11 @@ export default function AppDetail() {
           <Stack direction="row" alignItems="center" gap="8px" flexWrap="wrap">
             <Typography sx={{ fontSize: "20px", fontWeight: 600 }}>{app.name}</Typography>
             {displayedGrade && (
-              <Chip label={displayedGrade} backgroundColor={`${gradeColor}1A`} textColor={gradeColor} />
+              <Chip
+                label={displayedGrade}
+                backgroundColor={`${gradeColor}1A`}
+                textColor={gradeColor}
+              />
             )}
             {app.no_longer_in_index && (
               <Chip label="No longer in index" variant="warning" uppercase={false} />
@@ -193,7 +190,9 @@ export default function AppDetail() {
         {/* Summary */}
         {detail?.summary && (
           <SectionCard title="Summary">
-            <Typography sx={{ fontSize: "13px", color: theme.palette.text.secondary, lineHeight: 1.6 }}>
+            <Typography
+              sx={{ fontSize: "13px", color: theme.palette.text.secondary, lineHeight: 1.6 }}
+            >
               {detail.summary}
             </Typography>
           </SectionCard>
@@ -219,10 +218,19 @@ export default function AppDetail() {
                     backgroundColor: palette.background.accent,
                   }}
                 >
-                  <Typography sx={{ fontSize: "12px", fontWeight: 600, color: palette.text.tertiary, mb: "4px" }}>
+                  <Typography
+                    sx={{
+                      fontSize: "12px",
+                      fontWeight: 600,
+                      color: palette.text.tertiary,
+                      mb: "4px",
+                    }}
+                  >
                     {h.label}
                   </Typography>
-                  <Typography sx={{ fontSize: "13px", color: theme.palette.text.secondary, lineHeight: 1.5 }}>
+                  <Typography
+                    sx={{ fontSize: "13px", color: theme.palette.text.secondary, lineHeight: 1.5 }}
+                  >
                     {h.text}
                   </Typography>
                 </Box>
@@ -248,7 +256,9 @@ export default function AppDetail() {
             <Stack gap="8px">
               {detail.policyUrl && (
                 <Stack direction="row" alignItems="center" gap="8px">
-                  <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, minWidth: 140 }}>
+                  <Typography
+                    sx={{ fontSize: "13px", color: palette.text.tertiary, minWidth: 140 }}
+                  >
                     Privacy policy
                   </Typography>
                   <Link
@@ -278,7 +288,9 @@ export default function AppDetail() {
               </Stack>
               {detail.modalities && detail.modalities.length > 0 && (
                 <Stack direction="row" alignItems="center" gap="8px">
-                  <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, minWidth: 140 }}>
+                  <Typography
+                    sx={{ fontSize: "13px", color: palette.text.tertiary, minWidth: 140 }}
+                  >
                     Modalities
                   </Typography>
                   <Stack direction="row" gap="6px" flexWrap="wrap">
