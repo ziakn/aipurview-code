@@ -49,8 +49,15 @@ export function computeHashes(app: ITrustIndexAppData): {
     policyLastUpdated: app.policyLastUpdated ?? null,
     processesBiometrics: app.processesBiometrics,
   };
-  // Full = everything that renders/stores, minus derived iconUrl, with policyUrl noise stripped.
-  const { iconUrl: _iconUrl, ...rest } = app;
+  // Full = everything that renders/stores, minus volatile/derived fields, with policyUrl
+  // noise stripped. Excluded:
+  //  - iconUrl: derived from domain (cosmetic).
+  //  - history (feedVersion 2+): a per-app object with volatile timestamps
+  //    (lastChecked updates on every re-check even with no real change), so including
+  //    it would churn last_changed_at every week. Not part of the current-state snapshot.
+  const { iconUrl: _iconUrl, history: _history, ...rest } = app as ITrustIndexAppData & {
+    history?: unknown;
+  };
   const full = { ...rest, policyUrl: app.policyUrl == null ? null : stripUrlNoise(app.policyUrl) };
   return { materialHash: sha256(material), fullHash: sha256(full) };
 }

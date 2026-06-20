@@ -59,4 +59,27 @@ describe("computeHashes", () => {
     const b = computeHashes({ ...baseApp, letterGrade: "C", displayedGrade: "C", scoreOutOf100: 60 });
     expect(b.materialHash).not.toBe(a.materialHash);
   });
+
+  it("ignores the feedVersion-2 history field in both hashes (volatile metadata)", () => {
+    const a = computeHashes(baseApp);
+    const withHistory = {
+      ...baseApp,
+      history: {
+        firstAssessed: "2026-06-08",
+        lastChecked: "2026-06-19",
+        assessmentCount: 3,
+        scoreHistory: [{ date: "2026-06-19", score: 83, grade: "B" }],
+      },
+    } as ITrustIndexAppData;
+    const b = computeHashes(withHistory);
+    // A later run that only refreshed history's lastChecked must not change either hash.
+    const laterCheck = {
+      ...withHistory,
+      history: { ...(withHistory as any).history, lastChecked: "2026-06-26" },
+    } as ITrustIndexAppData;
+    const c = computeHashes(laterCheck);
+    expect(b.fullHash).toBe(a.fullHash);
+    expect(b.materialHash).toBe(a.materialHash);
+    expect(c.fullHash).toBe(a.fullHash);
+  });
 });

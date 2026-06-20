@@ -4,6 +4,9 @@ import { ITrustIndexAppData } from "../domain.layer/interfaces/i.aiTrustIndex";
 
 export const FEED_URL = "https://verifywise.ai/ai-trust-index.json";
 const ABSOLUTE_FLOOR = 10;
+// feedVersion 2 is backward-compatible with 1 (adds a per-app `history` object;
+// every v1 field is still present). Newer/unknown versions abort the run.
+const SUPPORTED_FEED_VERSIONS = [1, 2];
 
 const REQUIRED_KEYS: (keyof ITrustIndexAppData)[] = [
   "slug",
@@ -29,7 +32,7 @@ export type ValidateResult =
 export function validateFeed(raw: unknown, lastGoodCount: number | null): ValidateResult {
   if (!raw || typeof raw !== "object") return { ok: false, reason: "feed is not an object" };
   const f = raw as Record<string, unknown>;
-  if (f.feedVersion !== 1)
+  if (typeof f.feedVersion !== "number" || !SUPPORTED_FEED_VERSIONS.includes(f.feedVersion))
     return { ok: false, reason: `unsupported feedVersion ${String(f.feedVersion)}` };
   if (!Array.isArray(f.apps)) return { ok: false, reason: "apps is not an array" };
   if (typeof f.count !== "number" || f.count !== f.apps.length)

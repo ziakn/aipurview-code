@@ -17,8 +17,24 @@ describe("validateFeed", () => {
     expect(r.ok).toBe(true);
     if (r.ok) expect(r.apps).toHaveLength(37);
   });
-  it("rejects a non-1 feedVersion", () => {
-    expect(validateFeed(feed(37, { feedVersion: 2 }), 37)).toMatchObject({ ok: false });
+  it("accepts feedVersion 2 (backward-compatible: adds per-app history)", () => {
+    const v2 = feed(37, { feedVersion: 2 });
+    v2.apps.forEach(
+      (a: any) =>
+        (a.history = {
+          firstAssessed: "2026-06-20",
+          lastChecked: "2026-06-20",
+          assessmentCount: 1,
+          scoreHistory: [{ date: "2026-06-20", score: 50, grade: "C" }],
+        }),
+    );
+    const r = validateFeed(v2, 37);
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.apps).toHaveLength(37);
+  });
+  it("rejects an unsupported (newer) feedVersion", () => {
+    expect(validateFeed(feed(37, { feedVersion: 3 }), 37)).toMatchObject({ ok: false });
+    expect(validateFeed(feed(37, { feedVersion: "2" }), 37)).toMatchObject({ ok: false });
   });
   it("rejects when count !== apps.length", () => {
     expect(validateFeed({ feedVersion: 1, count: 99, apps: [app("a")] }, 37)).toMatchObject({ ok: false });
