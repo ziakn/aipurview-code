@@ -61,7 +61,11 @@ export const aiTrustIndexSettingsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Digest emails are sent once per week, on the Monday morning sync (06:00 UTC), and only when at least one tracked app has a material change or has been removed from the public index. If nothing changed among your tracked apps, no email is sent that week.',
+      text: 'The AI Trust Index is checked automatically every week, on the Monday morning sync (06:00 UTC) — no manual action is needed. The Settings page shows a note confirming this, along with the week the index was last checked. A digest email is sent only when at least one tracked app has a material change or has been removed from the public index. If nothing changed among your tracked apps, no email is sent that week.',
+    },
+    {
+      type: 'paragraph',
+      text: 'Each app in the digest is listed by its name, and changed apps show their current grade (for example, "Paxton AI — now grade B") so recipients can see what changed at a glance.',
     },
     {
       type: 'table',

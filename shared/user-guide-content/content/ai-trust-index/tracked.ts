@@ -14,17 +14,17 @@ export const aiTrustIndexTrackedContent: ArticleContent = {
     },
     {
       type: 'heading',
-      id: 'tracked-table',
+      id: 'tracked-cards',
       level: 2,
-      text: 'The tracked apps table',
+      text: 'The tracked apps grid',
     },
     {
       type: 'paragraph',
-      text: 'The table shows the same columns as the Browse catalog — name, vendor, category, displayed grade, and score — filtered to your organisation\'s tracked apps. You can search and sort within the list the same way as in Browse.',
+      text: 'Tracked apps appear as the same cards used in the Browse catalog — favicon, name, vendor, displayed grade, summary, category, and score — filtered to your organisation\'s tracked apps. Use the sort dropdown to order the grid by score, name, category, or tracked status.',
     },
     {
       type: 'paragraph',
-      text: 'To stop tracking an app, use the Track toggle in its row or open the app detail page and click **Untrack**. The app is removed from the list immediately and will no longer be included in digest emails.',
+      text: 'To stop tracking an app, click **Untrack** on its card or open the app detail page and click **Untrack**. The app is removed from the grid immediately and will no longer be included in digest emails.',
     },
     {
       type: 'heading',
@@ -34,7 +34,7 @@ export const aiTrustIndexTrackedContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Occasionally, an app is removed from the public AI Trust Index — because it was discontinued, renamed, or merged into another product. When this happens, VerifyWise does not remove the app from your tracking list. Instead, it marks the row with a **No longer in index** badge.',
+      text: 'Occasionally, an app is removed from the public AI Trust Index — because it was discontinued, renamed, or merged into another product. When this happens, VerifyWise does not remove the app from your tracking list. Instead, it dims the app\'s card and marks it with a **No longer in index** badge.',
     },
     {
       type: 'paragraph',
@@ -82,7 +82,7 @@ export const aiTrustIndexTrackedContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Any member of your organisation can add or remove apps from the tracking list. Tracking changes take effect immediately. To add more apps, go to the Browse tab and use the individual Track toggle or bulk select.',
+      text: 'Any member of your organisation can add or remove apps from the tracking list. Tracking changes take effect immediately. To add more apps, go to the Browse tab and use the Track button on a card or bulk select.',
     },
     {
       type: 'article-links',
