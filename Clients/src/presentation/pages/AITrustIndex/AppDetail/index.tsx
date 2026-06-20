@@ -65,7 +65,10 @@ export default function AppDetail() {
   const sidebar = useAITrustIndexSidebarContextSafe();
 
   const { data, isLoading, isError } = useApp(slug);
-  const { data: appsData } = useApps({});
+  // Fetch the full catalog (not just a page) so the comparison strip can compute
+  // an accurate rank "of N" and a true category average. The backend caps
+  // pageSize, so this asks for the whole set in one page.
+  const { data: appsData } = useApps({ page: 1, pageSize: 1000 });
   const trackApp = useTrackApp();
   const untrackApp = useUntrackApp();
 
@@ -75,7 +78,7 @@ export default function AppDetail() {
   const detail: TrustIndexAppData | undefined = app?.data;
 
   const allApps = useMemo(
-    () => (appsData?.apps ?? []).map((r: any) => r.data as TrustIndexAppData).filter(Boolean),
+    () => (appsData?.data?.apps ?? []).map((r: any) => r.data as TrustIndexAppData).filter(Boolean),
     [appsData],
   );
 

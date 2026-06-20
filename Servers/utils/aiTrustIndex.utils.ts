@@ -32,7 +32,11 @@ export async function getAppsQuery(
 ): Promise<{ apps: any[]; total: number; page: number; pageSize: number; categories: string[] }> {
   const { search, category, grade } = opts;
   const page = Math.max(1, opts.page);
-  const pageSize = Math.min(100, Math.max(1, opts.pageSize));
+  // Cap is generous (the full catalog is low-hundreds) so a consumer can request
+  // the whole set in one page — e.g. the app detail comparison strip needs every
+  // app to compute an accurate rank and category average. Still bounded to guard
+  // against an unbounded query.
+  const pageSize = Math.min(1000, Math.max(1, opts.pageSize));
   const offset = (page - 1) * pageSize;
   const sortCol = SORT_COLUMNS[opts.sort] ?? SORT_COLUMNS.score;
   // Direction is whitelisted to ASC/DESC; anything else falls back to the
