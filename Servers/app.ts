@@ -108,6 +108,7 @@ import { i18nMiddleware } from "./middleware/i18n.middleware";
 import { sequelize } from "./database/db";
 import redisClient from "./database/redis";
 import ssoConfigRoutes from "./routes/ssoConfig.route";
+import aiTrustIndexRoutes from "./routes/aiTrustIndex.route";
 
 const swaggerDoc = YAML.load("./swagger.yaml");
 
@@ -311,6 +312,7 @@ export function createApp(preRoutesMiddleware?: RequestHandler[]): express.Appli
   app.use("/api/internal", internalRoutes);
   app.use("/v1", virtualKeyProxyRoutes());
   app.use("/api/ssoConfig", ssoConfigRoutes);
+  app.use("/api/ai-trust-index", aiTrustIndexRoutes);
 
   return app;
 }
