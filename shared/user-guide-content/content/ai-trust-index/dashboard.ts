@@ -10,11 +10,11 @@ export const aiTrustIndexDashboardContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The AI Trust Index is a VerifyWise module that gives your organisation a continuously-updated view of how AI applications handle privacy, transparency, and user data. It surfaces an independently-maintained public feed of scores and grades for widely-used AI apps, updated weekly, so you always have a current picture of the tools your teams rely on.',
+      text: 'The AI Trust Index is a VerifyWise module that shows how AI applications handle privacy and user data. It reads a public feed of scores and grades for common AI apps, refreshed weekly, so you have a current picture of the tools your teams use.',
     },
     {
       type: 'paragraph',
-      text: 'Each app in the index carries a score out of 100, a letter grade (A through F), and a displayed grade that is capped at B when serious dealbreaker flags are active. The displayed grade is the one that matters for your governance decisions — it accounts for red-line violations even when the underlying score is high.',
+      text: 'Each app in the index has a score out of 100, a letter grade (A through F), and a displayed grade that is capped at B when serious dealbreaker flags are active. Use the displayed grade for governance decisions. It accounts for red-line violations even when the underlying score is high.',
     },
     {
       type: 'heading',
@@ -29,8 +29,8 @@ export const aiTrustIndexDashboardContent: ArticleContent = {
     {
       type: 'bullet-list',
       items: [
-        { bold: 'Material changes', text: 'score, grade, dealbreaker flags, policy date, or biometrics processing — these trigger an email digest to your configured recipients.' },
-        { bold: 'Editorial changes', text: 'reworded summaries or rephrased highlights — these update the stored record silently, with no email.' },
+        { bold: 'Material changes', text: 'a change to the score, grade, dealbreaker flags, policy date, or biometrics processing. These trigger an email digest to your configured recipients.' },
+        { bold: 'Editorial changes', text: 'reworded summaries or rephrased highlights. These update the stored record without sending an email.' },
       ],
     },
     {
@@ -71,7 +71,7 @@ export const aiTrustIndexDashboardContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Each app receives a score from 0 to 100 based on its privacy policy, data handling disclosures, and transparency practices. The score maps to a letter grade. When an app has active dealbreaker flags — serious violations such as selling user data or lacking a privacy policy — the displayed grade is capped at B regardless of the numeric score. Always check the displayed grade, not just the raw score.',
+      text: 'Each app receives a score from 0 to 100 based on its privacy policy, data-handling disclosures, and transparency practices. The score maps to a letter grade. When an app has active dealbreaker flags (serious violations such as selling user data or lacking a privacy policy), the displayed grade is capped at B regardless of the numeric score. Check the displayed grade, not just the raw score.',
     },
     {
       type: 'table',
@@ -82,9 +82,9 @@ export const aiTrustIndexDashboardContent: ArticleContent = {
       rows: [
         { grade: 'A', meaning: 'Strong privacy practices, transparent data handling, no dealbreaker flags' },
         { grade: 'B', meaning: 'Good practices with minor gaps, or capped from higher score due to dealbreaker flags' },
-        { grade: 'C', meaning: 'Moderate concerns — some transparency gaps or limited user control' },
+        { grade: 'C', meaning: 'Moderate concerns, such as transparency gaps or limited user control' },
         { grade: 'D', meaning: 'Significant privacy risks or opaque data practices' },
-        { grade: 'F', meaning: 'Serious violations — selling data, no policy, or actively harmful practices' },
+        { grade: 'F', meaning: 'Serious violations, such as selling data, having no policy, or actively harmful practices' },
       ],
     },
     {

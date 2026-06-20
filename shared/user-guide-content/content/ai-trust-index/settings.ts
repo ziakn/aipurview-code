@@ -36,7 +36,7 @@ export const aiTrustIndexSettingsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'You can combine both recipient types. Changes auto-save as you add or remove entries — there is no separate save button.',
+      text: 'You can combine both recipient types. Changes auto-save as you add or remove entries, so there is no separate save button.',
     },
     {
       type: 'heading',
@@ -51,7 +51,7 @@ export const aiTrustIndexSettingsContent: ArticleContent = {
     {
       type: 'callout',
       variant: 'tip',
-      text: 'To opt out of all digest emails for your organisation, configure at least one recipient and then remove them — the fallback will kick in and email Admins. To truly suppress digests, the cleanest approach is to leave the list empty and ensure no Admin users want the emails, or untrack all apps.',
+      text: 'If you configure a recipient and then remove them, the fallback takes over and emails Admins. To stop digests entirely, leave the list empty and either make sure no Admin needs the emails or untrack all apps.',
     },
     {
       type: 'heading',
@@ -61,7 +61,7 @@ export const aiTrustIndexSettingsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The AI Trust Index is checked automatically every week, on the Monday morning sync (06:00 UTC) — no manual action is needed. The Settings page shows a note confirming this, along with the week the index was last checked. A digest email is sent only when at least one tracked app has a material change or has been removed from the public index. If nothing changed among your tracked apps, no email is sent that week.',
+      text: 'The AI Trust Index is checked automatically every week, on the Monday morning sync (06:00 UTC), so no manual action is needed. The Settings page shows a note confirming this, along with the week the index was last checked. A digest email is sent only when at least one tracked app has a material change or has been removed from the public index. If nothing changed among your tracked apps, no email is sent that week.',
     },
     {
       type: 'paragraph',
@@ -74,10 +74,10 @@ export const aiTrustIndexSettingsContent: ArticleContent = {
         { key: 'email', label: 'Digest email?', width: '50%' },
       ],
       rows: [
-        { trigger: 'Score, grade, or dealbreaker flag changed on a tracked app', email: 'Yes — "Changed apps" section' },
-        { trigger: 'Policy date or biometrics status changed on a tracked app', email: 'Yes — "Changed apps" section' },
-        { trigger: 'Tracked app removed from the public index (first time)', email: 'Yes — "No longer assessed" section' },
-        { trigger: 'Tracked app still absent in a later week', email: 'No — one-time notice only' },
+        { trigger: 'Score, grade, or dealbreaker flag changed on a tracked app', email: 'Yes, in the "Changed apps" section' },
+        { trigger: 'Policy date or biometrics status changed on a tracked app', email: 'Yes, in the "Changed apps" section' },
+        { trigger: 'Tracked app removed from the public index (first time)', email: 'Yes, in the "No longer assessed" section' },
+        { trigger: 'Tracked app still absent in a later week', email: 'No, the notice is sent only once' },
         { trigger: 'Editorial rewording of summary or highlights only', email: 'No' },
         { trigger: 'No tracked apps changed', email: 'No' },
       ],

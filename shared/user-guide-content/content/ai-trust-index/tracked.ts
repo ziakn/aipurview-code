@@ -20,7 +20,7 @@ export const aiTrustIndexTrackedContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Tracked apps appear as the same cards used in the Browse catalog — favicon, name, vendor, displayed grade, summary, category, and score — filtered to your organisation\'s tracked apps. Use the sort dropdown to order the grid by score, name, category, or tracked status.',
+      text: 'Tracked apps appear as the same cards used in the Browse catalog (favicon, name, vendor, displayed grade, summary, category, and score), filtered to your organisation\'s tracked apps. Use the sort dropdown to order the grid by score, name, category, or tracked status.',
     },
     {
       type: 'paragraph',
@@ -34,7 +34,7 @@ export const aiTrustIndexTrackedContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Occasionally, an app is removed from the public AI Trust Index — because it was discontinued, renamed, or merged into another product. When this happens, VerifyWise does not remove the app from your tracking list. Instead, it dims the app\'s card and marks it with a **No longer in index** badge.',
+      text: 'Occasionally, an app is removed from the public AI Trust Index because it was discontinued, renamed, or merged into another product. When this happens, VerifyWise does not remove the app from your tracking list. Instead, it dims the app\'s card and marks it with a **No longer in index** badge.',
     },
     {
       type: 'paragraph',
