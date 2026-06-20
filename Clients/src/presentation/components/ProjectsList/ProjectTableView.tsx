@@ -30,6 +30,7 @@ import {
   Link2,
 } from "lucide-react";
 import EmptyStateTip from "../EmptyState/EmptyStateTip";
+import { TableEmptyStateLayout } from "../Table/TableEmptyStateLayout";
 import { IProjectTableViewProps } from "../../../domain/interfaces/i.project";
 import { Project } from "../../../domain/types/Project";
 import { deleteProject } from "../../../application/repository/project.repository";
@@ -387,45 +388,36 @@ const ProjectTableView: React.FC<IProjectTableViewProps> = ({
 
   if (!projects || projects.length === 0) {
     return (
-      <TableContainer>
-        <Table sx={singleTheme.tableStyles.primary.frame}>
+      <TableEmptyStateLayout
+        header={
           <SortableTableHeader
             columns={visibleColumnsArray}
             sortConfig={sortConfig}
             onSort={handleSort}
           />
-          <TableBody>
-            <TableRow>
-              <TableCell
-                colSpan={visibleColumnsArray.length}
-                align="center"
-                sx={{ border: "none", p: 0 }}
-              >
-                <EmptyState
-                  icon={Briefcase}
-                  message="No use cases yet. A use case describes how an AI system is applied within your organization."
-                >
-                  <EmptyStateTip
-                    icon={PlusCircle}
-                    title="Create a use case"
-                    description="Define the AI system, its purpose, the data it processes, and the people it affects. This forms the basis for risk and compliance tracking."
-                  />
-                  <EmptyStateTip
-                    icon={Target}
-                    title="Scope and classify"
-                    description="Each use case can be classified by risk level (high, limited, minimal) to determine which compliance controls apply."
-                  />
-                  <EmptyStateTip
-                    icon={Link2}
-                    title="Link to governance artifacts"
-                    description="Connect use cases to risks, policies, models, and evidence. This creates full traceability from business need to compliance proof."
-                  />
-                </EmptyState>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
+        }
+      >
+        <EmptyState
+          icon={Briefcase}
+          message="No use cases yet. A use case describes how an AI system is applied within your organization."
+        >
+          <EmptyStateTip
+            icon={PlusCircle}
+            title="Create a use case"
+            description="Define the AI system, its purpose, the data it processes, and the people it affects. This forms the basis for risk and compliance tracking."
+          />
+          <EmptyStateTip
+            icon={Target}
+            title="Scope and classify"
+            description="Each use case can be classified by risk level (high, limited, minimal) to determine which compliance controls apply."
+          />
+          <EmptyStateTip
+            icon={Link2}
+            title="Link to governance artifacts"
+            description="Connect use cases to risks, policies, models, and evidence. This creates full traceability from business need to compliance proof."
+          />
+        </EmptyState>
+      </TableEmptyStateLayout>
     );
   }
 
