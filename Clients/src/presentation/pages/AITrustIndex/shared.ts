@@ -1,5 +1,6 @@
 // Clients/src/presentation/pages/AITrustIndex/shared.ts
 import type { ChipVariant } from "../../types/interfaces/i.chip";
+import type { IndicatorMap } from "./rubric";
 
 export interface TrustIndexAppData {
   slug: string;
@@ -18,6 +19,7 @@ export interface TrustIndexAppData {
   policyLastUpdated: string | null;
   modalities: string[];
   processesBiometrics: boolean;
+  indicators?: IndicatorMap | null;
 }
 
 export interface TrustIndexRow {
