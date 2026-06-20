@@ -25,6 +25,11 @@ export type Lang = "en" | "de" | "fr" | "es";
 
 export const translations: Record<string, Record<string, string>> = {
   de: {
+    // AI Trust Index
+    "App details": "App-Details",
+    "Changes are saved automatically.": "Änderungen werden automatisch gespeichert.",
+    "Full assessment for a specific AI Trust Index app":
+      "Vollständige Bewertung einer bestimmten AI-Trust-Index-App",
     // AI Apps (MO-362)
     "AI app": "KI-App",
     "AI app deleted successfully": "KI-App erfolgreich gelöscht",
@@ -8689,6 +8694,11 @@ export const translations: Record<string, Record<string, string>> = {
   },
 
   fr: {
+    // AI Trust Index
+    "App details": "Détails de l'application",
+    "Changes are saved automatically.": "Les modifications sont enregistrées automatiquement.",
+    "Full assessment for a specific AI Trust Index app":
+      "Évaluation complète d'une application spécifique de l'AI Trust Index",
     // AI Apps (MO-362)
     "AI app": "Application IA",
     "AI app deleted successfully": "Application IA supprimée avec succès",
@@ -17306,6 +17316,11 @@ export const translations: Record<string, Record<string, string>> = {
       "Vous ne suivez encore aucune application. Ajoutez des applications depuis l'onglet Parcourir pour surveiller les modifications.",
   },
   es: {
+    // AI Trust Index
+    "App details": "Detalles de la aplicación",
+    "Changes are saved automatically.": "Los cambios se guardan automáticamente.",
+    "Full assessment for a specific AI Trust Index app":
+      "Evaluación completa de una aplicación específica del AI Trust Index",
     // AI Apps (MO-362)
     "AI app": "Aplicación de IA",
     "AI app deleted successfully": "Aplicación de IA eliminada correctamente",

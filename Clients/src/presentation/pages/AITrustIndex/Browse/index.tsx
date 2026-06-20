@@ -25,7 +25,7 @@ import {
   useTrackAppsBulk,
 } from "../../../../application/hooks/useAiTrustIndex";
 import { useAITrustIndexSidebarContextSafe } from "../../../../application/contexts/AITrustIndexSidebar.context";
-import { GRADE_COLOR, TrustIndexRow } from "../shared";
+import { GRADE_COLOR, categoryColor, TrustIndexRow } from "../shared";
 import MCPTable from "../../AIGateway/MCPTable";
 import type { MCPTableColumn } from "../../AIGateway/MCPTable";
 
@@ -248,9 +248,14 @@ export default function Browse() {
               </Typography>,
               // Vendor
               row.vendor || "—",
-              // Category
+              // Category — soft tinted chip, a distinct color per category
               row.category ? (
-                <Chip label={row.category} variant="default" uppercase={false} />
+                <Chip
+                  label={row.category}
+                  backgroundColor={`${categoryColor(row.category)}1A`}
+                  textColor={categoryColor(row.category)}
+                  uppercase={false}
+                />
               ) : (
                 "—"
               ),

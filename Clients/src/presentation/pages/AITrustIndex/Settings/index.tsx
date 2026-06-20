@@ -39,10 +39,23 @@ export default function Settings() {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Hydrate local state from the saved settings once they arrive.
+  // Guard each setState behind a value comparison so a post-save refetch of
+  // identical settings doesn't produce a fresh array reference that would
+  // re-trigger the auto-save effect (which would echo-loop the "Saving…" state).
   useEffect(() => {
     if (settingsData?.data) {
-      setRecipientUserIds(settingsData.data.recipientUserIds ?? []);
-      setRecipientEmails(settingsData.data.recipientEmails ?? []);
+      const nextUserIds = settingsData.data.recipientUserIds ?? [];
+      const nextEmails = settingsData.data.recipientEmails ?? [];
+      setRecipientUserIds((prev) =>
+        prev.length === nextUserIds.length && prev.every((v, i) => v === nextUserIds[i])
+          ? prev
+          : nextUserIds,
+      );
+      setRecipientEmails((prev) =>
+        prev.length === nextEmails.length && prev.every((v, i) => v === nextEmails[i])
+          ? prev
+          : nextEmails,
+      );
     }
   }, [settingsData]);
 
@@ -125,9 +138,19 @@ export default function Settings() {
             placeholder="Type an email and press Enter"
           />
 
-          <Typography sx={{ fontSize: "12px", color: palette.text.tertiary }}>
-            {updateSettings.isPending ? "Saving…" : "Changes are saved automatically."}
-          </Typography>
+          <Stack direction="row" alignItems="center" gap="8px" sx={{ minHeight: 16 }}>
+            <Typography sx={{ fontSize: "12px", color: palette.text.tertiary }}>
+              Changes are saved automatically.
+            </Typography>
+            {updateSettings.isPending && (
+              <Stack direction="row" alignItems="center" gap="4px">
+                <CircularProgress size={10} sx={{ color: palette.text.tertiary }} />
+                <Typography sx={{ fontSize: "12px", color: palette.text.tertiary }}>
+                  Saving…
+                </Typography>
+              </Stack>
+            )}
+          </Stack>
         </Stack>
       )}
     </PageHeaderExtended>

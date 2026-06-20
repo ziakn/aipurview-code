@@ -79,7 +79,10 @@ export async function syncAiTrustIndex(deps?: { feed?: unknown }): Promise<{
     };
   }
 
-  const { materialChanged, newlyRemoved, wasFirstSeed } = await upsertFeedTx(validated.apps);
+  const { materialChanged, newlyRemoved, wasFirstSeed } = await upsertFeedTx(
+    validated.apps,
+    validated.presentSlugs,
+  );
 
   if (wasFirstSeed) {
     logger.info(

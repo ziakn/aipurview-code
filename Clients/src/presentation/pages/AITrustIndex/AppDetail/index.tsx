@@ -125,6 +125,12 @@ export default function AppDetail() {
 
   return (
     <Box>
+      <PageBreadcrumbs
+        items={breadcrumbItems}
+        autoGenerate={false}
+        testId="ai-trust-index-detail-breadcrumbs"
+      />
+
       <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
         <CustomizableButton
           text="Back to Browse"
@@ -134,12 +140,6 @@ export default function AppDetail() {
           sx={{ mb: "8px" }}
         />
       </Box>
-
-      <PageBreadcrumbs
-        items={breadcrumbItems}
-        autoGenerate={false}
-        testId="ai-trust-index-detail-breadcrumbs"
-      />
 
       {/* Header */}
       <Stack direction="row" alignItems="flex-start" gap="16px" sx={{ mb: "24px" }}>

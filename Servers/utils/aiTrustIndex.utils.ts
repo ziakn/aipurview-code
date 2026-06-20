@@ -215,7 +215,14 @@ export async function getMetaQuery() {
   return rows[0] ?? { seeded_at: null, last_good_count: null, last_run_week: null };
 }
 
-export async function upsertFeedTx(apps: ITrustIndexAppData[]): Promise<{
+export async function upsertFeedTx(
+  apps: ITrustIndexAppData[],
+  // Every slug present in the raw feed, including apps dropped for a missing
+  // required field. The soft-delete excludes these so a transiently-malformed-
+  // but-present app is left untouched (not marked removed). When omitted, the
+  // present set defaults to the upserted apps — i.e. today's behavior.
+  presentSlugs?: string[],
+): Promise<{
   materialChanged: string[];
   newlyRemoved: string[];
   wasFirstSeed: boolean;
@@ -235,10 +242,10 @@ export async function upsertFeedTx(apps: ITrustIndexAppData[]): Promise<{
     )) as any[];
     wasFirstSeed = !metaRows[0]?.seeded_at;
 
-    const seenSlugs: string[] = [];
+    const upsertedSlugs: string[] = [];
     for (const app of apps) {
       const slug = normalizeSlug(app.slug);
-      seenSlugs.push(slug);
+      upsertedSlugs.push(slug);
       const { materialHash, fullHash } = computeHashes(app);
       const existing = (await sequelize.query(
         `SELECT material_hash, full_hash FROM ai_trust_index_apps WHERE slug = :slug;`,
@@ -296,6 +303,13 @@ export async function upsertFeedTx(apps: ITrustIndexAppData[]): Promise<{
       }
     }
 
+    // Soft-delete is keyed on slugs PRESENT IN THE RAW FEED (upserted ∪
+    // dropped-but-present), not just the upserted ones. An app that appeared in
+    // the feed but was dropped for a missing field is left alone — it retains
+    // its prior state until it's either valid again or genuinely absent.
+    const seenSlugs = Array.from(
+      new Set([...upsertedSlugs, ...(presentSlugs ?? []).map(normalizeSlug)]),
+    );
     const removedRows = (await sequelize.query(
       `UPDATE ai_trust_index_apps
          SET is_active = FALSE, removed_at = NOW()

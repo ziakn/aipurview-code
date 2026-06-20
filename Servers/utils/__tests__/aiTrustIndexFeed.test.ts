@@ -2,13 +2,28 @@
 import { validateFeed } from "../aiTrustIndexFeed";
 
 const app = (slug: string) => ({
-  slug, name: slug, vendor: "V", domain: `${slug}.com`, category: "Assistant",
-  scoreOutOf100: 50, letterGrade: "C", displayedGrade: "C", confidence: "High",
-  dealbreakerFlags: [], summary: "s", highlights: [], policyUrl: "https://x.com",
-  policyLastUpdated: null, modalities: ["text"], processesBiometrics: false,
+  slug,
+  name: slug,
+  vendor: "V",
+  domain: `${slug}.com`,
+  category: "Assistant",
+  scoreOutOf100: 50,
+  letterGrade: "C",
+  displayedGrade: "C",
+  confidence: "High",
+  dealbreakerFlags: [],
+  summary: "s",
+  highlights: [],
+  policyUrl: "https://x.com",
+  policyLastUpdated: null,
+  modalities: ["text"],
+  processesBiometrics: false,
 });
 const feed = (n: number, extra = {}) => ({
-  feedVersion: 1, count: n, apps: Array.from({ length: n }, (_, i) => app(`a${i}`)), ...extra,
+  feedVersion: 1,
+  count: n,
+  apps: Array.from({ length: n }, (_, i) => app(`a${i}`)),
+  ...extra,
 });
 
 describe("validateFeed", () => {
@@ -37,7 +52,9 @@ describe("validateFeed", () => {
     expect(validateFeed(feed(37, { feedVersion: "2" }), 37)).toMatchObject({ ok: false });
   });
   it("rejects when count !== apps.length", () => {
-    expect(validateFeed({ feedVersion: 1, count: 99, apps: [app("a")] }, 37)).toMatchObject({ ok: false });
+    expect(validateFeed({ feedVersion: 1, count: 99, apps: [app("a")] }, 37)).toMatchObject({
+      ok: false,
+    });
   });
   it("rejects an empty / below-absolute-floor feed", () => {
     expect(validateFeed(feed(0), 37)).toMatchObject({ ok: false });
@@ -55,5 +72,31 @@ describe("validateFeed", () => {
     const r = validateFeed(bad, null);
     expect(r.ok).toBe(true);
     if (r.ok) expect(r.apps).toHaveLength(11);
+  });
+  it("returns presentSlugs for ALL present apps, including ones dropped for a missing field", () => {
+    // a0 is present but missing a required field (category) — it should be
+    // dropped from `apps` yet still appear in `presentSlugs` so the sync won't
+    // treat it as removed.
+    const bad = feed(12);
+    delete (bad.apps[0] as any).category;
+    const r = validateFeed(bad, null);
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.apps).toHaveLength(11);
+      expect(r.apps.map((a) => a.slug)).not.toContain("a0");
+      expect(r.presentSlugs).toHaveLength(12);
+      expect(r.presentSlugs).toContain("a0"); // dropped-but-present
+    }
+  });
+  it("normalizes presentSlugs (trim + lowercase) and skips non-string slugs", () => {
+    const f = feed(12);
+    (f.apps[1] as any).slug = "  MixedCase  ";
+    delete (f.apps[2] as any).slug; // missing slug entirely → excluded from presentSlugs
+    const r = validateFeed(f, null);
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.presentSlugs).toContain("mixedcase");
+      expect(r.presentSlugs).toHaveLength(11); // a2 had no slug
+    }
   });
 });

@@ -26,8 +26,11 @@ function hasRequired(a: any): a is ITrustIndexAppData {
 }
 
 export type ValidateResult =
-  | { ok: true; apps: ITrustIndexAppData[] }
-  | { ok: false; reason: string };
+  // `presentSlugs` is every normalized slug that appeared in the raw feed —
+  // including apps that were dropped for a missing required field. Callers use
+  // it so a transiently-malformed-but-present app is left untouched rather than
+  // soft-deleted (which would send a false "no longer assessed" notification).
+  { ok: true; apps: ITrustIndexAppData[]; presentSlugs: string[] } | { ok: false; reason: string };
 
 export function validateFeed(raw: unknown, lastGoodCount: number | null): ValidateResult {
   if (!raw || typeof raw !== "object") return { ok: false, reason: "feed is not an object" };
@@ -45,7 +48,18 @@ export function validateFeed(raw: unknown, lastGoodCount: number | null): Valida
       reason: `below 50% of last good count (${f.apps.length} < ${lastGoodCount})`,
     };
   const apps = (f.apps as unknown[]).filter(hasRequired) as ITrustIndexAppData[];
-  return { ok: true, apps };
+  // Collect every present slug (normalized) regardless of whether the app passed
+  // the required-field check, so dropped-but-present apps aren't treated as removed.
+  const presentSlugs = (f.apps as unknown[])
+    .map((a) =>
+      a && typeof a === "object" && typeof (a as Record<string, unknown>).slug === "string"
+        ? String((a as Record<string, unknown>).slug)
+            .trim()
+            .toLowerCase()
+        : null,
+    )
+    .filter((s): s is string => !!s);
+  return { ok: true, apps, presentSlugs };
 }
 
 export async function fetchFeed(deps?: {
