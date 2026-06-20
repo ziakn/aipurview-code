@@ -150,6 +150,7 @@ export default function Browse() {
     <PageHeaderExtended
       title="AI Trust Index"
       description="Browse independently assessed AI applications and track the ones that matter to your organization."
+      helpArticlePath="ai-trust-index/browse"
     >
       {/* Filters */}
       <Stack direction="row" alignItems="center" gap="8px" flexWrap="wrap" sx={{ mb: "16px" }}>

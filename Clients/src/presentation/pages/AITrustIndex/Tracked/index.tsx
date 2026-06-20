@@ -110,6 +110,7 @@ export default function Tracked() {
     <PageHeaderExtended
       title="Tracked apps"
       description="AI applications your organization is tracking. We'll notify recipients when a tracked app's assessment changes materially."
+      helpArticlePath="ai-trust-index/tracked"
     >
       {isLoading && (
         <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>

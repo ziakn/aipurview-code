@@ -290,15 +290,32 @@ export default function AppDetail() {
             >
               Grade scale
             </Typography>
-            {(["A", "B", "C", "D", "F"] as const).map((g) => (
-              <Box key={g} sx={{ opacity: g === detail.displayedGrade ? 1 : 0.5 }}>
-                <Chip
-                  label={`${g} · ${{ A: "85–100", B: "70–84", C: "55–69", D: "40–54", F: "0–39" }[g]}`}
-                  variant={gradeVariant(g)}
-                  uppercase={false}
-                />
-              </Box>
-            ))}
+            {(["A", "B", "C", "D", "F"] as const).map((g) => {
+              const isActive = g === detail.displayedGrade;
+              return (
+                <Box
+                  key={g}
+                  sx={
+                    isActive
+                      ? {
+                          // Mark the app's own band with a solid ring instead of
+                          // dimming the others (dimming made the pastel chips
+                          // unreadable). All bands stay full-contrast.
+                          borderRadius: "16px",
+                          outline: `2px solid ${palette.text.primary}`,
+                          outlineOffset: "1px",
+                        }
+                      : undefined
+                  }
+                >
+                  <Chip
+                    label={`${g} · ${{ A: "85–100", B: "70–84", C: "55–69", D: "40–54", F: "0–39" }[g]}`}
+                    variant={gradeVariant(g)}
+                    uppercase={false}
+                  />
+                </Box>
+              );
+            })}
           </Stack>
         )}
 

@@ -97,6 +97,7 @@ export default function Settings() {
         title="Settings"
         description="AI Trust Index notification settings."
         breadcrumbItems={[{ label: "Settings" }]}
+        helpArticlePath="ai-trust-index/settings"
       >
         <EmptyState
           message="Only administrators can change AI Trust Index notification settings."
@@ -111,6 +112,7 @@ export default function Settings() {
       title="Settings"
       description="Choose who receives a notification when a tracked app's assessment changes materially. If no recipients are set, organization admins are notified by default."
       breadcrumbItems={[{ label: "Settings" }]}
+      helpArticlePath="ai-trust-index/settings"
     >
       {settingsLoading ? (
         <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
