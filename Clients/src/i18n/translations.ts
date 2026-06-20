@@ -8691,6 +8691,14 @@ export const translations: Record<string, Record<string, string>> = {
       "Ihre verfolgten Apps konnten momentan nicht geladen werden. Bitte versuchen Sie es später erneut.",
     "You're not tracking any apps yet. Track apps from the Browse tab to monitor changes.":
       'Sie verfolgen noch keine Apps. Fügen Sie Apps über die Registerkarte "Durchsuchen" hinzu, um Änderungen zu überwachen.',
+    "Data-subject rights": "Rechte der betroffenen Personen",
+    "Grade scale": "Bewertungsskala",
+    "Retention and deletion": "Aufbewahrung und Löschung",
+    "Security and accountability": "Sicherheit und Verantwortlichkeit",
+    "Sensitive data and children": "Sensible Daten und Kinder",
+    "Third-party sharing": "Weitergabe an Dritte",
+    "Training-data use": "Nutzung von Trainingsdaten",
+    "What the policy is silent or vague on": "Worüber die Richtlinie schweigt oder vage bleibt",
   },
 
   fr: {
@@ -17314,6 +17322,14 @@ export const translations: Record<string, Record<string, string>> = {
       "Vos applications suivies n'ont pas pu être chargées pour l'instant. Veuillez réessayer ultérieurement.",
     "You're not tracking any apps yet. Track apps from the Browse tab to monitor changes.":
       "Vous ne suivez encore aucune application. Ajoutez des applications depuis l'onglet Parcourir pour surveiller les modifications.",
+    "Data-subject rights": "Droits des personnes concernées",
+    "Grade scale": "Échelle de notation",
+    "Retention and deletion": "Conservation et suppression",
+    "Security and accountability": "Sécurité et responsabilité",
+    "Sensitive data and children": "Données sensibles et enfants",
+    "Third-party sharing": "Partage avec des tiers",
+    "Training-data use": "Utilisation des données d'entraînement",
+    "What the policy is silent or vague on": "Ce sur quoi la politique est silencieuse ou vague",
   },
   es: {
     // AI Trust Index
@@ -25854,5 +25870,13 @@ export const translations: Record<string, Record<string, string>> = {
       "No se pudieron cargar las aplicaciones seguidas en este momento. Inténtelo de nuevo más tarde.",
     "You're not tracking any apps yet. Track apps from the Browse tab to monitor changes.":
       "Aún no está siguiendo ninguna aplicación. Añada aplicaciones desde la pestaña Explorar para supervisar los cambios.",
+    "Data-subject rights": "Derechos de los interesados",
+    "Grade scale": "Escala de calificación",
+    "Retention and deletion": "Retención y eliminación",
+    "Security and accountability": "Seguridad y responsabilidad",
+    "Sensitive data and children": "Datos sensibles y menores",
+    "Third-party sharing": "Compartición con terceros",
+    "Training-data use": "Uso de datos de entrenamiento",
+    "What the policy is silent or vague on": "En qué la política guarda silencio o es vaga",
   },
 };

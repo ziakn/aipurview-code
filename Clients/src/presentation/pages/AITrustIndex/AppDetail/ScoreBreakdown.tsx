@@ -72,9 +72,7 @@ export function ScoreBreakdown({
                   gap="8px"
                   sx={{ mb: "8px" }}
                 >
-                  <Typography sx={{ fontSize: "13px", fontWeight: 600 }}>
-                    {domain.name}
-                  </Typography>
+                  <Typography sx={{ fontSize: "13px", fontWeight: 600 }}>{domain.name}</Typography>
                   <Typography sx={{ fontSize: "12px", color: palette.text.tertiary }}>
                     {allNa ? "Not scored" : `${d.full} of ${d.applicable} disclosed`}
                   </Typography>

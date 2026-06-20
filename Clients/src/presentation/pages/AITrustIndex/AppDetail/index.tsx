@@ -75,11 +75,8 @@ export default function AppDetail() {
   const detail: TrustIndexAppData | undefined = app?.data;
 
   const allApps = useMemo(
-    () =>
-      (appsData?.apps ?? [])
-        .map((r: any) => r.data as TrustIndexAppData)
-        .filter(Boolean),
-    [appsData]
+    () => (appsData?.apps ?? []).map((r: any) => r.data as TrustIndexAppData).filter(Boolean),
+    [appsData],
   );
 
   const handleToggleTrack = useCallback(() => {
@@ -272,13 +269,7 @@ export default function AppDetail() {
 
         {/* Grade scale */}
         {detail && (
-          <Stack
-            direction="row"
-            flexWrap="wrap"
-            gap="8px"
-            alignItems="center"
-            sx={{ mt: "16px" }}
-          >
+          <Stack direction="row" flexWrap="wrap" gap="8px" alignItems="center" sx={{ mt: "16px" }}>
             <Typography
               sx={{
                 fontSize: "11px",
@@ -291,10 +282,7 @@ export default function AppDetail() {
               Grade scale
             </Typography>
             {(["A", "B", "C", "D", "F"] as const).map((g) => (
-              <Box
-                key={g}
-                sx={{ opacity: g === detail.displayedGrade ? 1 : 0.5 }}
-              >
+              <Box key={g} sx={{ opacity: g === detail.displayedGrade ? 1 : 0.5 }}>
                 <Chip
                   label={`${g} · ${{ A: "85–100", B: "70–84", C: "55–69", D: "40–54", F: "0–39" }[g]}`}
                   variant={gradeVariant(g)}
@@ -361,16 +349,15 @@ export default function AppDetail() {
         {detail && <WatchOuts indicators={detail.indicators} />}
 
         {/* Score breakdown or fallback */}
-        {detail && (
-          detail.indicators && Object.keys(detail.indicators).length > 0 ? (
+        {detail &&
+          (detail.indicators && Object.keys(detail.indicators).length > 0 ? (
             <ScoreBreakdown indicators={detail.indicators} appName={app.name} />
           ) : (
             <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, mt: "8px" }}>
               The area-by-area breakdown for {app.name} is being prepared and will appear after its
               next scoring pass. The summary and highlights above reflect the latest assessment.
             </Typography>
-          )
-        )}
+          ))}
 
         {/* Policy details */}
         {detail && (
