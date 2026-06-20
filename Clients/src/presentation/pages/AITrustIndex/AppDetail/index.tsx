@@ -197,6 +197,12 @@ export default function AppDetail() {
           </Stack>
           <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, mt: "4px" }}>
             {[app.vendor, app.category].filter(Boolean).join(" · ")}
+            {detail?.confidence && (
+              <Box component="span" sx={{ color: palette.text.muted }}>
+                {" · "}
+                {detail.confidence.toLowerCase()} confidence
+              </Box>
+            )}
           </Typography>
 
           {/* Score meter bar */}
