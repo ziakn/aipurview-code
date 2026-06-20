@@ -109,4 +109,15 @@ describe("validateFeed", () => {
       expect(r.presentSlugs).toHaveLength(11); // a2 had no slug
     }
   });
+  it("preserves an app's indicators map through validation", () => {
+    const f = feed(12);
+    (f.apps[0] as any).indicators = { "D1.1": { award: "full" }, "D2.2": { award: "zero", subFlag: "SILENT" } };
+    const r = validateFeed(f, null);
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      const a0 = r.apps.find((a) => a.slug === "a0") as any;
+      expect(a0.indicators["D1.1"].award).toBe("full");
+      expect(a0.indicators["D2.2"].subFlag).toBe("SILENT");
+    }
+  });
 });

@@ -1,5 +1,11 @@
 // Servers/domain.layer/interfaces/i.aiTrustIndex.ts
 
+export type IndicatorAward = {
+  award: "full" | "half" | "zero";
+  subFlag?: "OK" | "SILENT" | "ADVERSE" | "NA";
+};
+export type IndicatorMap = Record<string, IndicatorAward>;
+
 /** One app object as it appears inside the feed's `apps[]` (and our `data` JSONB). */
 export interface ITrustIndexAppData {
   slug: string;
@@ -18,6 +24,7 @@ export interface ITrustIndexAppData {
   policyLastUpdated: string | null;
   modalities: string[];
   processesBiometrics: boolean;
+  indicators?: IndicatorMap | null;
   iconUrl?: string;
 }
 
