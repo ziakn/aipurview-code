@@ -22,11 +22,10 @@ describe("resolveRecipients", () => {
   });
   it("falls back to org Admins when no recipients are configured", async () => {
     q.mockResolvedValueOnce([{ recipient_user_ids: [], recipient_emails: [] }]) // settings
-     .mockResolvedValueOnce([]) // user emails (none)
-     .mockResolvedValueOnce([{ email: "admin@acme.com" }]); // admin fallback
+     .mockResolvedValueOnce([{ email: "admin@acme.com" }]); // admin fallback (user-email query skipped)
     const r = await resolveRecipients(7);
     expect(r).toEqual(["admin@acme.com"]);
-    const adminSql = q.mock.calls[2][0];
+    const adminSql = q.mock.calls[1][0];
     expect(adminSql).toMatch(/role/i);
     expect(adminSql).toMatch(/organization_id\s*=\s*:organizationId/);
   });

@@ -179,6 +179,10 @@ export async function getMetaQuery() {
 export async function upsertFeedTx(apps: ITrustIndexAppData[]): Promise<{
   materialChanged: string[]; newlyRemoved: string[]; wasFirstSeed: boolean;
 }> {
+  if (!apps.length) {
+    return { materialChanged: [], newlyRemoved: [], wasFirstSeed: false };
+  }
+
   const materialChanged: string[] = [];
   const newlyRemoved: string[] = [];
   let wasFirstSeed = false;
@@ -273,12 +277,13 @@ export async function resolveRecipients(organizationId: number): Promise<string[
   const freeText: string[] = settings[0]?.recipient_emails ?? [];
 
   let userEmails: string[] = [];
-  const rows = (await sequelize.query(
-    `SELECT email FROM users
-     WHERE organization_id = :organizationId AND id = ANY(ARRAY[:ids]::int[]);`,
-    { replacements: { organizationId, ids: userIds.length ? userIds : [-1] }, type: QueryTypes.SELECT }
-  )) as { email: string }[];
-  userEmails = rows.map((r) => r.email);
+  if (userIds.length) {
+    const rows = (await sequelize.query(
+      `SELECT email FROM users WHERE organization_id = :organizationId AND id = ANY(ARRAY[:ids]::int[]);`,
+      { replacements: { organizationId, ids: userIds }, type: QueryTypes.SELECT }
+    )) as { email: string }[];
+    userEmails = rows.map((r) => r.email);
+  }
 
   let recipients = Array.from(new Set([...userEmails, ...freeText].map((e) => e.trim().toLowerCase()).filter(Boolean)));
   if (recipients.length === 0) {
