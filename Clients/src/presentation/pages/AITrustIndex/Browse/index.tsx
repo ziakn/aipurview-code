@@ -13,16 +13,9 @@ import {
   Box,
   Stack,
   Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
   TablePagination,
-  TableRow,
   Checkbox,
   CircularProgress,
-  useTheme,
 } from "@mui/material";
 import { SearchBox } from "../../../components/Search";
 import { CustomSelect } from "../../../components/CustomSelect";
@@ -30,11 +23,12 @@ import { CustomizableButton } from "../../../components/button/customizable-butt
 import { EmptyState } from "../../../components/EmptyState";
 import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtended";
 import Chip from "../../../components/Chip";
-import singleTheme from "../../../themes/v1SingleTheme";
 import { palette } from "../../../themes/palette";
 import { useApps, useTrackApp, useUntrackApp, useTrackAppsBulk } from "../../../../application/hooks/useAiTrustIndex";
 import { useAITrustIndexSidebarContextSafe } from "../../../../application/contexts/AITrustIndexSidebar.context";
 import { GRADE_COLOR, TrustIndexRow } from "../shared";
+import MCPTable from "../../AIGateway/MCPTable";
+import type { MCPTableColumn } from "../../AIGateway/MCPTable";
 
 const PAGE_SIZE = 25;
 const SORT_OPTIONS = [
@@ -49,7 +43,6 @@ function GradeChip({ grade }: { grade?: string }) {
 }
 
 export default function Browse() {
-  const theme = useTheme();
   const navigate = useNavigate();
   const sidebar = useAITrustIndexSidebarContextSafe();
 
@@ -140,8 +133,17 @@ export default function Browse() {
     [trackApp, untrackApp, sidebar],
   );
 
-  const headerCellSx = singleTheme.tableStyles.primary.header.cell;
   const isEmpty = !isLoading && rows.length === 0;
+
+  const columns: MCPTableColumn[] = [
+    { label: "", width: 48 },
+    { label: "Name" },
+    { label: "Vendor" },
+    { label: "Category" },
+    { label: "Grade" },
+    { label: "Score" },
+    { label: "Action", align: "right" },
+  ];
 
   return (
     <PageHeaderExtended
@@ -191,6 +193,16 @@ export default function Browse() {
           options={SORT_OPTIONS}
         />
         <Box sx={{ flex: 1 }} />
+        {/* Select-all checkbox placed in filter bar so it is adjacent to the table */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
+          <Checkbox
+            size="small"
+            checked={allOnPageSelected}
+            indeterminate={!allOnPageSelected && someOnPageSelected}
+            onChange={toggleSelectAll}
+            inputProps={{ "aria-label": "Select all on page" }}
+          />
+        </Box>
         <CustomizableButton
           text={`Track selected (${selected.length})`}
           onClick={handleTrackSelected}
@@ -218,78 +230,51 @@ export default function Browse() {
 
       {!isLoading && !isError && rows.length > 0 && (
         <>
-          <TableContainer id="ai-trust-index-browse-table">
-            <Table sx={singleTheme.tableStyles.primary.frame}>
-              <TableHead
-                sx={{ backgroundColor: singleTheme.tableStyles.primary.header.backgroundColors }}
-              >
-                <TableRow sx={singleTheme.tableStyles.primary.header.row}>
-                  <TableCell padding="checkbox" style={headerCellSx}>
-                    <Checkbox
-                      size="small"
-                      checked={allOnPageSelected}
-                      indeterminate={!allOnPageSelected && someOnPageSelected}
-                      onChange={toggleSelectAll}
-                      inputProps={{ "aria-label": "Select all on page" }}
-                    />
-                  </TableCell>
-                  <TableCell style={headerCellSx}>Name</TableCell>
-                  <TableCell style={headerCellSx}>Vendor</TableCell>
-                  <TableCell style={headerCellSx}>Category</TableCell>
-                  <TableCell style={headerCellSx}>Grade</TableCell>
-                  <TableCell style={headerCellSx}>Score</TableCell>
-                  <TableCell style={headerCellSx} align="right">
-                    Action
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row) => (
-                  <TableRow
-                    key={row.slug}
-                    sx={{
-                      ...singleTheme.tableStyles.primary.body.row,
-                      "height": "36px",
-                      "&:hover td": { backgroundColor: palette.background.surface },
-                    }}
-                    onClick={() => navigate(`/ai-trust-index/${row.slug}`)}
-                  >
-                    <TableCell padding="checkbox" onClick={(e) => e.stopPropagation()}>
-                      <Checkbox
-                        size="small"
-                        checked={selected.includes(row.slug)}
-                        onChange={() => toggleRow(row.slug)}
-                        inputProps={{ "aria-label": `Select ${row.name}` }}
-                      />
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: 500 }}>{row.name}</TableCell>
-                    <TableCell>{row.vendor || "—"}</TableCell>
-                    <TableCell>{row.category || "—"}</TableCell>
-                    <TableCell>
-                      <GradeChip grade={row.data?.displayedGrade || row.letter_grade} />
-                    </TableCell>
-                    <TableCell>
-                      {row.score_out_of_100 != null ? `${row.score_out_of_100}/100` : "—"}
-                    </TableCell>
-                    <TableCell align="right" onClick={(e) => e.stopPropagation()}>
-                      <CustomizableButton
-                        text={row.is_tracked ? "Untrack" : "Track"}
-                        variant="outlined"
-                        onClick={() => handleToggleTrack(row)}
-                        isDisabled={trackApp.isPending || untrackApp.isPending}
-                        sx={{ height: 28, mt: 0 }}
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <MCPTable<TrustIndexRow>
+            id="ai-trust-index-browse-table"
+            columns={columns}
+            rows={rows}
+            rowKey={(row) => row.slug}
+            onRowClick={(row) => navigate(`/ai-trust-index/${row.slug}`)}
+            renderRow={(row) => [
+              // Checkbox cell — stopPropagation so clicking it doesn't trigger row nav
+              <span onClick={(e) => e.stopPropagation()} key="cb">
+                <Checkbox
+                  size="small"
+                  checked={selected.includes(row.slug)}
+                  onChange={() => toggleRow(row.slug)}
+                  inputProps={{ "aria-label": `Select ${row.name}` }}
+                />
+              </span>,
+              // Name
+              <Typography component="span" sx={{ fontWeight: 500, fontSize: "inherit" }}>
+                {row.name}
+              </Typography>,
+              // Vendor
+              row.vendor || "—",
+              // Category
+              row.category || "—",
+              // Grade
+              <GradeChip grade={row.data?.displayedGrade || row.letter_grade} />,
+              // Score
+              row.score_out_of_100 != null ? `${row.score_out_of_100}/100` : "—",
+              // Track/Untrack toggle — stopPropagation so clicking it doesn't trigger row nav
+              <span onClick={(e) => e.stopPropagation()} key="track">
+                <CustomizableButton
+                  text={row.is_tracked ? "Untrack" : "Track"}
+                  variant="outlined"
+                  onClick={() => handleToggleTrack(row)}
+                  isDisabled={trackApp.isPending || untrackApp.isPending}
+                  sx={{ height: 28, mt: 0 }}
+                />
+              </span>,
+            ]}
+          />
           <Stack
             direction="row"
             alignItems="center"
             justifyContent="flex-end"
-            px={theme.spacing(4)}
+            px="32px"
           >
             <TablePagination
               component="div"
@@ -299,7 +284,7 @@ export default function Browse() {
               rowsPerPage={PAGE_SIZE}
               rowsPerPageOptions={[PAGE_SIZE]}
               labelRowsPerPage="Rows per page"
-              sx={{ mt: theme.spacing(6) }}
+              sx={{ mt: "48px" }}
             />
           </Stack>
         </>

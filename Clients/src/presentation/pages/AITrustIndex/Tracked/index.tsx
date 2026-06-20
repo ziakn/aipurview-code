@@ -12,23 +12,28 @@ import { useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   CircularProgress,
 } from "@mui/material";
 import { CustomizableButton } from "../../../components/button/customizable-button";
 import { EmptyState } from "../../../components/EmptyState";
 import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtended";
 import Chip from "../../../components/Chip";
-import singleTheme from "../../../themes/v1SingleTheme";
 import { palette } from "../../../themes/palette";
 import { useTracked, useUntrackApp } from "../../../../application/hooks/useAiTrustIndex";
 import { useAITrustIndexSidebarContextSafe } from "../../../../application/contexts/AITrustIndexSidebar.context";
 import { GRADE_COLOR, TrustIndexRow } from "../shared";
+import MCPTable from "../../AIGateway/MCPTable";
+import type { MCPTableColumn } from "../../AIGateway/MCPTable";
+
+const COLUMNS: MCPTableColumn[] = [
+  { label: "Name" },
+  { label: "Vendor" },
+  { label: "Category" },
+  { label: "Grade" },
+  { label: "Score" },
+  { label: "Status" },
+  { label: "Action", align: "right" },
+];
 
 function GradeChip({ grade }: { grade?: string }) {
   if (!grade) return <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>—</Typography>;
@@ -55,7 +60,6 @@ export default function Tracked() {
     [untrackApp, sidebar],
   );
 
-  const headerCellSx = singleTheme.tableStyles.primary.header.cell;
   const isEmpty = !isLoading && rows.length === 0;
 
   return (
@@ -84,64 +88,44 @@ export default function Tracked() {
       )}
 
       {!isLoading && !isError && rows.length > 0 && (
-        <TableContainer id="ai-trust-index-tracked-table">
-          <Table sx={singleTheme.tableStyles.primary.frame}>
-            <TableHead
-              sx={{ backgroundColor: singleTheme.tableStyles.primary.header.backgroundColors }}
-            >
-              <TableRow sx={singleTheme.tableStyles.primary.header.row}>
-                <TableCell style={headerCellSx}>Name</TableCell>
-                <TableCell style={headerCellSx}>Vendor</TableCell>
-                <TableCell style={headerCellSx}>Category</TableCell>
-                <TableCell style={headerCellSx}>Grade</TableCell>
-                <TableCell style={headerCellSx}>Score</TableCell>
-                <TableCell style={headerCellSx}>Status</TableCell>
-                <TableCell style={headerCellSx} align="right">
-                  Action
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow
-                  key={row.slug}
-                  sx={{
-                    ...singleTheme.tableStyles.primary.body.row,
-                    "height": "36px",
-                    "&:hover td": { backgroundColor: palette.background.surface },
-                  }}
-                  onClick={() => navigate(`/ai-trust-index/${row.slug}`)}
-                >
-                  <TableCell sx={{ fontWeight: 500 }}>{row.name || row.slug}</TableCell>
-                  <TableCell>{row.vendor || "—"}</TableCell>
-                  <TableCell>{row.category || "—"}</TableCell>
-                  <TableCell>
-                    <GradeChip grade={row.data?.displayedGrade || row.letter_grade} />
-                  </TableCell>
-                  <TableCell>
-                    {row.score_out_of_100 != null ? `${row.score_out_of_100}/100` : "—"}
-                  </TableCell>
-                  <TableCell>
-                    {row.no_longer_in_index ? (
-                      <Chip label="No longer in index" variant="warning" uppercase={false} />
-                    ) : (
-                      <Chip label="Tracked" variant="success" uppercase={false} />
-                    )}
-                  </TableCell>
-                  <TableCell align="right" onClick={(e) => e.stopPropagation()}>
-                    <CustomizableButton
-                      text="Untrack"
-                      variant="outlined"
-                      onClick={() => handleUntrack(row.slug)}
-                      isDisabled={untrackApp.isPending}
-                      sx={{ height: 28, mt: 0 }}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <MCPTable<TrustIndexRow>
+          id="ai-trust-index-tracked-table"
+          columns={COLUMNS}
+          rows={rows}
+          rowKey={(row) => row.app_slug ?? row.slug}
+          onRowClick={(row) => navigate(`/ai-trust-index/${row.slug}`)}
+          rowSx={(row) => (row.no_longer_in_index ? { opacity: 0.6 } : {})}
+          renderRow={(row) => [
+            // Name
+            <Typography component="span" sx={{ fontWeight: 500, fontSize: "inherit" }}>
+              {row.name || row.slug}
+            </Typography>,
+            // Vendor
+            row.vendor || "—",
+            // Category
+            row.category || "—",
+            // Grade
+            <GradeChip grade={row.data?.displayedGrade || row.letter_grade} />,
+            // Score
+            row.score_out_of_100 != null ? `${row.score_out_of_100}/100` : "—",
+            // Status
+            row.no_longer_in_index ? (
+              <Chip label="No longer in index" variant="warning" uppercase={false} />
+            ) : (
+              <Chip label="Tracked" variant="success" uppercase={false} />
+            ),
+            // Untrack action — stopPropagation so clicking it doesn't trigger row nav
+            <span onClick={(e) => e.stopPropagation()} key="untrack">
+              <CustomizableButton
+                text="Untrack"
+                variant="outlined"
+                onClick={() => handleUntrack(row.slug)}
+                isDisabled={untrackApp.isPending}
+                sx={{ height: 28, mt: 0 }}
+              />
+            </span>,
+          ]}
+        />
       )}
     </PageHeaderExtended>
   );
