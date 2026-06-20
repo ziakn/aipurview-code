@@ -71,7 +71,7 @@
     ],
     "faviconUrlTemplate": "https://icons.duckduckgo.com/ip3/{domain}.ico"
   },
-  "count": 116,
+  "count": 142,
   "apps": [
     {
       "slug": "claude",
@@ -20723,6 +20723,4510 @@
         "D7.3": {
           "award": "full",
           "subFlag": "OK"
+        }
+      }
+    },
+    {
+      "slug": "workday",
+      "name": "Workday",
+      "vendor": "Workday, Inc.",
+      "domain": "workday.com",
+      "category": "HR & recruiting",
+      "audience": "Enterprise",
+      "scoreOutOf100": 61,
+      "letterGrade": "C",
+      "displayedGrade": "C",
+      "confidence": "High",
+      "dealbreakerFlags": [],
+      "summary": "Workday's controller-context privacy statement covers data-subject rights, legal-basis mapping, and named international-transfer safeguards. It never says whether inputs are used to train AI models, and its retention language is vague, so it earns a mid C. The statement governs website visitors, event attendees, and customer or supplier representatives. When people use Workday's HR and finance applications through their employer, Workday acts as a processor and the employer is the controller, so that end-user data is out of scope here.",
+      "highlights": [
+        {
+          "label": "Full rights menu",
+          "text": "The statement grants access, correction, deletion, portability in a structured machine-readable format, objection, and restriction. It describes an online request form and identity verification."
+        },
+        {
+          "label": "Named transfer safeguards",
+          "text": "International transfers from the EEA, UK, and Switzerland rely on standard contractual clauses approved by the European Commission and on the EU-U.S., UK, and Swiss Data Privacy Framework."
+        },
+        {
+          "label": "No data sale, advertising opt-out",
+          "text": "The SaaS model statement says Workday does not sell or monetize users' data. For cookie-based targeted advertising that some laws treat as a sale or share, there is an opt-out via Your Privacy Choices and the Global Privacy Control."
+        },
+        {
+          "label": "Vague retention, silent on training",
+          "text": "Retention is kept for as long as there is a legitimate business need, with no day count and no deletion timeline. The statement never says whether inputs are used to train AI models."
+        }
+      ],
+      "policyUrl": "https://www.workday.com/en-us/privacy.html",
+      "policyLastUpdated": "2026-02-27",
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/workday.com.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 61,
+            "grade": "C"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "full",
+          "subFlag": "OK"
+        }
+      }
+    },
+    {
+      "slug": "gusto",
+      "name": "Gusto",
+      "vendor": "Gusto, Inc.",
+      "domain": "gusto.com",
+      "category": "HR & recruiting",
+      "audience": "Enterprise",
+      "scoreOutOf100": 63,
+      "letterGrade": "C",
+      "displayedGrade": "C",
+      "confidence": "High",
+      "dealbreakerFlags": [],
+      "summary": "Gusto's controller Privacy Notice earns a C. It bars its third-party AI and large language model providers from training on user personal information, grants access, deletion, correction, and consent-withdrawal rights, and honors Global Privacy Control signals. It loses points for vague retention with no day count or deletion timeline, no data portability right, no breach notification commitment, and selling several data categories to advertising partners (an opt-out is offered, so this counts as a conditional practice). It has no dealbreaker reservations.",
+      "highlights": [
+        {
+          "label": "No AI training on your data",
+          "text": "The notice states that Gusto does not permit its third-party AI and large language model providers to use your personal information to train, fine-tune, or improve their AI models. AI-powered integrations are optional and can be disconnected at any time."
+        },
+        {
+          "label": "Strong rights, no portability",
+          "text": "The notice grants access to a copy, deletion, correction, consent withdrawal, and a no-discrimination right, and it honors Global Privacy Control signals. It does not offer a data portability right."
+        },
+        {
+          "label": "Sells to advertisers with an opt-out",
+          "text": "The California chart marks several data categories as sold or shared for targeted advertising. The notice offers an opt-out through the Your Privacy Choices link and the Privacy Request Portal, which makes this a conditional practice."
+        },
+        {
+          "label": "Vague retention, silent on breaches",
+          "text": "Retention is described only as for as long as necessary to fulfill the purposes, with no day count and no deletion timeline. The Security section names administrative, physical, and technical measures but makes no breach notification commitment."
+        }
+      ],
+      "policyUrl": "https://gusto.com/about/privacy",
+      "policyLastUpdated": "2026-06-01",
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/gusto.com.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 63,
+            "grade": "C"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D1.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D6.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        }
+      }
+    },
+    {
+      "slug": "lattice",
+      "name": "Lattice",
+      "vendor": "Degree, Inc. (Lattice)",
+      "domain": "lattice.com",
+      "category": "HR & recruiting",
+      "audience": "Enterprise",
+      "scoreOutOf100": 61,
+      "letterGrade": "C",
+      "displayedGrade": "C",
+      "confidence": "High",
+      "dealbreakerFlags": [],
+      "summary": "Lattice publishes a controller-side privacy policy with a data-subject rights menu, a named Data Protection Officer, an EU representative, Standard Contractual Clauses for international transfers, and a statement that it does not sell personal information. It loses the entire training-data domain because whether content entered into the Services feeds any AI model is covered in a separate AI Use Terms document that is outside this snapshot, and it gives only an as-long-as-necessary retention period with no day-count or deletion timeline. The rights and sharing disclosure together with the missing training answer and the open-ended retention put it in the C band.",
+      "highlights": [
+        {
+          "label": "No automated decisions",
+          "text": "Section 12 states that Lattice does not engage in any automated decision making with User Personal Information, a limit that matters for an HR product."
+        },
+        {
+          "label": "Does not sell, with opt-out",
+          "text": "Lattice declares under the CCPA that it does not sell personal information, and offers a CCPA opt-out portal at preferences.lattice.com/ccpa for the limited advertising sharing it does perform."
+        },
+        {
+          "label": "Full rights menu, DPO, and SCCs",
+          "text": "Section 12 grants access, deletion, correction, portability, objection, and restriction. The policy names a Data Protection Officer at dpo@lattice.com, an EU representative, and Standard Contractual Clauses for transfers outside the EEA and UK."
+        },
+        {
+          "label": "Vague retention and silent on training",
+          "text": "Retention is stated as as long as is necessary, with no day-count and no deletion timeline, and the policy never says whether content entered into the Lattice Services trains any AI models, because that is covered in a separate AI Use Terms document."
+        }
+      ],
+      "policyUrl": "https://lattice.com/trust/privacy-policy",
+      "policyLastUpdated": "2026-05-05",
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/lattice.com.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 61,
+            "grade": "C"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.3": {
+          "award": "full",
+          "subFlag": "OK"
+        }
+      }
+    },
+    {
+      "slug": "bamboohr",
+      "name": "BambooHR",
+      "vendor": "BambooHR LLC",
+      "domain": "bamboohr.com",
+      "category": "HR & recruiting",
+      "audience": "Enterprise",
+      "scoreOutOf100": 64,
+      "letterGrade": "C",
+      "displayedGrade": "C",
+      "confidence": "High",
+      "dealbreakerFlags": [],
+      "summary": "BambooHR's September 2025 privacy notice grants named data-subject rights and lists its international-transfer safeguards, but says nothing about AI model training or breach notification, which places it in the middle of the C band. The transfer mechanisms (EU SCCs, UK IDTA, adequacy, and EU-U.S. Data Privacy Framework certification) are quoted verbatim in the snapshot, so the supporting evidence is genuine and no dealbreaker right is reserved.",
+      "highlights": [
+        {
+          "label": "Full GDPR rights with named channels",
+          "text": "The notice grants access, deletion, portability, rectification, restriction, objection, and consent withdrawal. Users can exercise them through a dedicated request form, a toll-free number, and individualrights@bamboohr.com."
+        },
+        {
+          "label": "Named transfer safeguards",
+          "text": "International transfers rely on EU Standard Contractual Clauses or the UK International Data Transfer Agreement, adequacy decisions, and certified participation in the EU-U.S. Data Privacy Framework."
+        },
+        {
+          "label": "Silent on AI training and breach notice",
+          "text": "The policy never states whether customer or user data trains AI models, and it gives no data-breach notification commitment or timeframe. Both indicators score zero because the policy is silent on them, not because it makes an adverse commitment."
+        },
+        {
+          "label": "Retention anchored to a long, vague standard",
+          "text": "Retention is described as as long as necessary to fulfill the purpose, with payroll data kept for at least ten years. This is a vague standard, and the policy gives no defined deletion timeline."
+        }
+      ],
+      "policyUrl": "https://www.bamboohr.com/privacy-policy/",
+      "policyLastUpdated": "2025-09-01",
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/bamboohr.com.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 64,
+            "grade": "C"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D3.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "full",
+          "subFlag": "OK"
+        }
+      }
+    },
+    {
+      "slug": "hibob",
+      "name": "HiBob",
+      "vendor": "Hi Bob Ltd.",
+      "domain": "hibob.com",
+      "category": "HR & recruiting",
+      "audience": "Enterprise",
+      "scoreOutOf100": 60,
+      "letterGrade": "C",
+      "displayedGrade": "C",
+      "confidence": "High",
+      "dealbreakerFlags": [],
+      "summary": "HiBob's website-facing privacy policy is strong on data-subject rights, international transfers, and legal-basis transparency. It says nothing about model training and gives only vague retention and security commitments. It covers website visitors, admins, and recruiters, and explicitly scopes out employee End User data, which is handled under a separate End Users policy.",
+      "highlights": [
+        {
+          "label": "Full rights menu",
+          "text": "The Your Privacy Rights section names access, rectification, erasure, restriction, objection, portability, and the right to opt out of the sale or sharing of data for targeted advertising, with an authorized-agent route."
+        },
+        {
+          "label": "Named transfer safeguards",
+          "text": "International transfers from the EEA, UK, and Switzerland rely on standard contractual clauses and the EU-US Data Privacy Framework certification for the US subsidiary, all named explicitly."
+        },
+        {
+          "label": "Vague retention",
+          "text": "Retention is committed only as long as it is reasonably necessary, with no day count or deletion timeline, and the policy reserves the right to delete or restrict data with or without notice."
+        },
+        {
+          "label": "Silent on training and breach",
+          "text": "The policy never states whether the covered users' data is used to train models, and it gives no breach-notification commitment. It cites only industry-standard security, including encryption as appropriate."
+        }
+      ],
+      "policyUrl": "https://www.hibob.com/privacy/privacy-policy/",
+      "policyLastUpdated": "2026-02-16",
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/hibob.com.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 60,
+            "grade": "C"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "full",
+          "subFlag": "OK"
+        }
+      }
+    },
+    {
+      "slug": "greenhouse",
+      "name": "Greenhouse",
+      "vendor": "Greenhouse Software, Inc.",
+      "domain": "greenhouse.com",
+      "category": "HR & recruiting",
+      "audience": "Enterprise",
+      "scoreOutOf100": 67,
+      "letterGrade": "C",
+      "displayedGrade": "C",
+      "confidence": "High",
+      "dealbreakerFlags": [
+        "D1.1: the MyGreenhouse section states personal information is used to develop and train AI models with no training-specific opt-out disclosed"
+      ],
+      "summary": "Greenhouse discloses a full data-subject rights slate, names the Data Privacy Framework as its transfer safeguard, lists clear sharing categories, and states plainly that it does not sell personal information. The MyGreenhouse section commits to training AI models on user data and offers an opt-out only for sharing data with potential employers, with no opt-out for model training. Retention is described only as keeping data while a legitimate business need exists, and the security section names no breach notification timeframe.",
+      "highlights": [
+        {
+          "label": "Trains AI without a training opt-out",
+          "text": "The MyGreenhouse section says personal information is used to develop and train artificial intelligence models. The only opt-out offered covers sharing data with potential employers, and it does not cover model training."
+        },
+        {
+          "label": "Full slate of data-subject rights",
+          "text": "Users can access, correct, update, delete, port, object to processing, and restrict processing through the Data Subject Request Portal. The rights are set out for EEA, Swiss, and UK subjects."
+        },
+        {
+          "label": "Named international transfer safeguard",
+          "text": "Greenhouse certifies to the EU-U.S. Data Privacy Framework, the UK Extension, and the Swiss-U.S. DPF. This names a concrete adequacy mechanism rather than a generic transfer claim."
+        },
+        {
+          "label": "Retention and breach handling stay vague",
+          "text": "Retention is described only as keeping data while there is an ongoing legitimate business need, with no day count. The security section gives no breach notification timeframe or process."
+        }
+      ],
+      "policyUrl": "https://www.greenhouse.com/privacy-policy",
+      "policyLastUpdated": "2026-05-28",
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/greenhouse.com.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 67,
+            "grade": "C"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "zero",
+          "subFlag": "ADVERSE"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D3.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "full",
+          "subFlag": "OK"
+        }
+      }
+    },
+    {
+      "slug": "15five",
+      "name": "15Five",
+      "vendor": "15Five, Inc.",
+      "domain": "15five.com",
+      "category": "HR & recruiting",
+      "audience": "Enterprise",
+      "scoreOutOf100": 68,
+      "letterGrade": "C",
+      "displayedGrade": "C",
+      "confidence": "High",
+      "dealbreakerFlags": [],
+      "summary": "15Five's HR-platform privacy policy gives users access, deletion, portability, rectification, and objection rights, names Standard Contractual Clauses for international transfers, commits to no sale of data, and holds a SOC 2 Type II certification. It says nothing about whether user content trains any AI model and gives no day-count for retention, which puts it in the C band.",
+      "highlights": [
+        {
+          "label": "Does not sell data",
+          "text": "The policy states plainly that 15Five does not sell, lease, or rent personal information, and confirms the CCPA opt-out is moot because no sale takes place."
+        },
+        {
+          "label": "Full rights set",
+          "text": "The GDPR and CCPA sections grant access, deletion under the right to be forgotten, portability in a machine-readable format, rectification, and the right to object, each with defined scope."
+        },
+        {
+          "label": "Named transfer safeguard",
+          "text": "International transfers out of the EEA rely on Standard Contractual Clauses executed in response to Schrems II, backed by a linked Data Processing Agreement and a sub-processor list. The firm is SOC 2 Type II certified."
+        },
+        {
+          "label": "Vague retention, silent on AI training",
+          "text": "Retention is framed as keeping data as long as is necessary, with no day-count or concrete deletion timeframe, and the policy never says user content trains an AI model, so both areas score low."
+        }
+      ],
+      "policyUrl": "https://www.15five.com/privacy-policy/",
+      "policyLastUpdated": "2026-02-19",
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/15five.com.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 68,
+            "grade": "C"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.3": {
+          "award": "full",
+          "subFlag": "OK"
+        }
+      }
+    },
+    {
+      "slug": "culture-amp",
+      "name": "Culture Amp",
+      "vendor": "Culture Amp Pty Ltd",
+      "domain": "cultureamp.com",
+      "category": "HR & recruiting",
+      "audience": "Enterprise",
+      "scoreOutOf100": 66,
+      "letterGrade": "C",
+      "displayedGrade": "C",
+      "confidence": "High",
+      "dealbreakerFlags": [],
+      "summary": "Culture Amp publishes a processor-model HR privacy policy that covers data-subject rights, names EU Standard Contractual Clauses, holds ISO27001 certification, and has an AI section sending third-party LLMs through managed infrastructure. Retention periods are vague and the policy commits to no user breach notification, which keeps the score in the C band.",
+      "highlights": [
+        {
+          "label": "AI does not train on user inputs",
+          "text": "Section 8 says Culture Amp integrates third-party LLMs such as Anthropic's Claude and Google's Gemini through AWS or GCP via managed VPCs and an LLM proxy. Section 6(d) limits service-improvement work to de-identified personal information, with no claim that user inputs train Culture Amp's own models."
+        },
+        {
+          "label": "Full set of data-subject rights",
+          "text": "Section 9 names access, correction, deletion, data export in standard CSV format, and the ability to limit or stop use or disclosure, all routed through the Privacy Officer at privacy@cultureamp.com."
+        },
+        {
+          "label": "Named transfer safeguard and subprocessor list",
+          "text": "Section 5(c) commits to European Union Standard Contractual Clauses for transfers to non-adequate countries. The policy links a Subprocessor List and a Data Processing Addendum, backed by signed confidentiality and data processing agreements with service providers."
+        },
+        {
+          "label": "Vague retention and no breach notice",
+          "text": "Section 10 retains data for as long as Culture Amp provides the Services until the Customer requests deletion, with encrypted backups kept up to 90 days. Section 5 names ISO27001 certification but commits to no user breach notification."
+        }
+      ],
+      "policyUrl": "https://www.cultureamp.com/privacy",
+      "policyLastUpdated": "2025-07-02",
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/cultureamp.com.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 66,
+            "grade": "C"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D6.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "full",
+          "subFlag": "OK"
+        }
+      }
+    },
+    {
+      "slug": "betterworks",
+      "name": "Betterworks",
+      "vendor": "Betterworks Systems, Inc.",
+      "domain": "betterworks.com",
+      "category": "HR & recruiting",
+      "audience": "Enterprise",
+      "scoreOutOf100": 89,
+      "letterGrade": "A",
+      "displayedGrade": "A",
+      "confidence": "High",
+      "dealbreakerFlags": [],
+      "summary": "Betterworks discloses a B2B data-governance posture. The privacy notice states that the third-party LLM provider, OpenAI, will not use business data to train its models under the governing business terms, which is the strongest training disclosure available. The notice also lists a full set of data-subject rights, names international transfer safeguards (Data Privacy Framework, Standard Contractual Clauses, and adequacy decisions), confirms that Betterworks does not sell personal data, and describes specific security controls. The main weaknesses are vague retention language (\"as long as needed\"), no specific deletion timeline, and silence on training-tier differences and output ownership.",
+      "highlights": [
+        {
+          "label": "No model training on customer data",
+          "text": "The notice states that the third-party LLM provider OpenAI governs AI features and that under those business terms OpenAI will not use business data to train its models. This is the strongest training disclosure available."
+        },
+        {
+          "label": "Full rights suite with a deadline",
+          "text": "Section 7 lists access, rectification, deletion, portability, object and opt-out, restriction, and withdrawal of consent. Section 8 commits to responding to requests within forty-five days."
+        },
+        {
+          "label": "Named transfer safeguards and no sale",
+          "text": "The policy says Betterworks does not sell personal data and relies on the Data Privacy Framework, Standard Contractual Clauses, and adequacy decisions for international transfers."
+        },
+        {
+          "label": "Concrete security and breach disclosure",
+          "text": "Section 9 names TLS in transit, encryption at rest, and role-based access controls, and commits to notifying the supervisory authority within 72 hours of a qualifying breach under GDPR."
+        }
+      ],
+      "policyUrl": "https://www.betterworks.com/privacy-policy/",
+      "policyLastUpdated": "2026-05-01",
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/betterworks.com.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 89,
+            "grade": "A"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D1.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.3": {
+          "award": "full",
+          "subFlag": "OK"
+        }
+      }
+    },
+    {
+      "slug": "visier",
+      "name": "Visier",
+      "vendor": "Visier Inc.",
+      "domain": "visier.com",
+      "category": "HR & recruiting",
+      "audience": "Enterprise",
+      "scoreOutOf100": 66,
+      "letterGrade": "C",
+      "displayedGrade": "C",
+      "confidence": "High",
+      "dealbreakerFlags": [],
+      "summary": "Visier's processor-oriented statement is strong on data-subject rights, international transfer safeguards, and named security standards, but it stays silent on AI model-training use of inputs, retention periods, and breach notification. Every cited mechanism appears in the snapshot: EC and UK adequacy, EC-approved SCCs, the EU-U.S., UK Extension, and Swiss-U.S. Data Privacy Frameworks, ISO 27001 alignment, and a named DPO. The policy reserves no harmful right. It states it does not sell or share, offers deletion, and assigns no broad content licence, so the C band holds with no dealbreaker.",
+      "highlights": [
+        {
+          "label": "Does not sell or share",
+          "text": "The disclosure section opens with \"We do not sell, share or otherwise disclose information we collect except as described in this Privacy Statement,\" which earns full credit on the advertising-sale indicator."
+        },
+        {
+          "label": "Named transfer safeguards",
+          "text": "International transfers rely on EC and UK adequacy determinations, EC-approved Standard Contractual Clauses, and certification under the EU-U.S., UK Extension, and Swiss-U.S. Data Privacy Frameworks."
+        },
+        {
+          "label": "Broad rights with a named contact",
+          "text": "The rights section covers access, rectification, deletion, restriction, withdrawal of consent, and portability in a structured machine-readable format, all exercisable via privacy@visier.com, with a named DPO at dpo@visier.com."
+        },
+        {
+          "label": "Retention and breach left silent",
+          "text": "Retention is described only as \"for as long as needed to fulfill the purpose for which it is collected,\" with no day-count or deletion timeline, and the statement contains no breach-notification clause."
+        }
+      ],
+      "policyUrl": "https://www.visier.com/privacy/",
+      "policyLastUpdated": "2025-10-07",
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/visier.com.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 66,
+            "grade": "C"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "full",
+          "subFlag": "OK"
+        }
+      }
+    },
+    {
+      "slug": "rippling",
+      "name": "Rippling",
+      "vendor": "Rippling People Center, Inc.",
+      "domain": "rippling.com",
+      "category": "HR & recruiting",
+      "audience": "Enterprise",
+      "scoreOutOf100": 58,
+      "letterGrade": "C",
+      "displayedGrade": "C",
+      "confidence": "High",
+      "dealbreakerFlags": [],
+      "summary": "Rippling's user privacy notice lists a full set of data-subject rights, names an international transfer safeguard, and maps a legal basis to each processing purpose. It says nothing about model training and gives no concrete retention period or deletion timeline, which keeps it in the middle band. The advertising disclosures that CCPA may treat as a sale or share have a named opt-out through Your Privacy Choices, so they avoid a dealbreaker.",
+      "highlights": [
+        {
+          "label": "Full data-subject rights",
+          "text": "Section 9 grants access, correction, deletion, restriction, objection, portability, and consent withdrawal, plus a CCPA opt-out for sale and sharing exercised through Your Privacy Choices."
+        },
+        {
+          "label": "Named transfer safeguard",
+          "text": "The international transfers section commits to adopt approved standard contractual clauses or consent when exporting data from restricted jurisdictions."
+        },
+        {
+          "label": "Retention left vague",
+          "text": "The policy keeps data as long as required to fulfill the relevant purposes and gives no day count or deletion timeline, so retention and deletion timing score low."
+        },
+        {
+          "label": "Silent on training and breach",
+          "text": "The notice never addresses using personal information to train models and states no breach-notification commitment or timeframe."
+        }
+      ],
+      "policyUrl": "https://app.rippling.com/legal/privacy",
+      "policyLastUpdated": "2025-03-14",
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/rippling.com.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 58,
+            "grade": "C"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D3.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "full",
+          "subFlag": "OK"
+        }
+      }
+    },
+    {
+      "slug": "deel",
+      "name": "Deel",
+      "vendor": "Deel, Inc.",
+      "domain": "deel.com",
+      "category": "HR & recruiting",
+      "audience": "Enterprise",
+      "scoreOutOf100": 58,
+      "letterGrade": "C",
+      "displayedGrade": "C",
+      "confidence": "High",
+      "dealbreakerFlags": [],
+      "summary": "Deel states plainly that it does not use personal data to train or develop AI models, and that it does not sell or trade personal information under any circumstances. It offers a full set of data subject rights through a named webform. Its operational details are vague, which keeps the score mid-range: retention is described only as as long as necessary with no day count, there is no stated deletion timeline, breach handling gives a contact address but no notification commitment or timeframe, and international transfers rely on unspecified contractual arrangements instead of a named safeguard such as SCCs, adequacy, or the Data Privacy Framework.",
+      "highlights": [
+        {
+          "label": "No model training on user data",
+          "text": "The policy states that Deel does not use users' personal data to train or develop AI models. It limits itself to anonymised, aggregated platform usage data to improve its AI systems."
+        },
+        {
+          "label": "Does not sell personal information",
+          "text": "Deel states it does not sell or trade any personal information to third parties under any circumstances, and gives an opt-out path for interest-based advertising through the DAA and NAI programs."
+        },
+        {
+          "label": "Full rights, vague retention",
+          "text": "Access, rectification, erasure, restriction, objection, portability, and consent withdrawal are all named, each exercisable through a webform. Retention is described only as as long as necessary, with no deletion timeline and no day count."
+        },
+        {
+          "label": "Transfers and breach left thin",
+          "text": "International transfers rely on unspecified contractual arrangements instead of a named SCC, adequacy, or DPF safeguard. The security section gives a dpo@deel.com contact for breaches but states no notification commitment or timeframe."
+        }
+      ],
+      "policyUrl": "https://www.deel.com/legal/privacy-policy/",
+      "policyLastUpdated": "2026-06-15",
+      "modalities": ["text"],
+      "processesBiometrics": true,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/deel.com.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 58,
+            "grade": "C"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "half",
+          "subFlag": "OK"
+        }
+      }
+    },
+    {
+      "slug": "personio",
+      "name": "Personio",
+      "vendor": "Personio SE",
+      "domain": "personio.com",
+      "category": "HR & recruiting",
+      "audience": "Enterprise",
+      "scoreOutOf100": 58,
+      "letterGrade": "C",
+      "displayedGrade": "C",
+      "confidence": "Medium",
+      "dealbreakerFlags": [],
+      "summary": "Personio's notice is a GDPR-based privacy policy for its website and marketing. It grants data subject rights, names international transfer safeguards including Standard Contractual Clauses and the EU-U.S., UK and Swiss Data Privacy Frameworks with a U.S. Department of Commerce certification, commits not to sell or share data without consent, and gives numeric retention periods. Its main limitation is scope: the policy expressly excludes the Personio HR product and subscriber data, and says nothing about AI training, output ownership or named security controls. The notice also states that Personio does not profile users or make automated decisions using artificial intelligence, so no inputs are described as feeding model training.",
+      "highlights": [
+        {
+          "label": "States it does not use AI or automated decisions",
+          "text": "The notice says \"We do not profile you or make decisions based on automated processes such as artificial intelligence,\" so no user inputs are described as training any model."
+        },
+        {
+          "label": "Named international transfer safeguards",
+          "text": "Transfers rely on adequacy decisions, \"Standard Contractual Clauses\" and the EU-U.S., UK and Swiss Data Privacy Frameworks, with Personio Corp. certified to the U.S. Department of Commerce."
+        },
+        {
+          "label": "Full data subject rights with a route to exercise them",
+          "text": "Access, rectification, erasure, restriction, portability (\"obtain a copy of the data\"), objection and consent withdrawal are all granted, exercised through a named form and the appointed external DPO Bitkom Servicegesellschaft mbH."
+        },
+        {
+          "label": "Does not sell, with numeric retention periods",
+          "text": "Personio states it \"will not disclose your personal data to third parties for purposes other than those specified... without your explicit consent\" and gives concrete retention such as \"up to 30 days\" for web data and \"2 years\" for marketing data."
+        }
+      ],
+      "policyUrl": "https://www.personio.com/privacy-policy/",
+      "policyLastUpdated": "2025-10-01",
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/personio.com.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 58,
+            "grade": "C"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D3.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.5": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "full",
+          "subFlag": "OK"
+        }
+      }
+    },
+    {
+      "slug": "evenup",
+      "name": "EvenUp",
+      "vendor": "EvenUp, Inc.",
+      "domain": "evenuplaw.com",
+      "category": "Legal",
+      "audience": "Enterprise",
+      "scoreOutOf100": 49,
+      "letterGrade": "D",
+      "displayedGrade": "D",
+      "confidence": "High",
+      "dealbreakerFlags": [
+        "D1.1: As an AI business, the policy states EvenUp may use personal information to develop, improve, train, and provide its proprietary AI technologies for all of its customers, and offers no mechanism to opt out of that first-party training (trains by default, no opt-out)."
+      ],
+      "summary": "EvenUp's controller-level privacy policy grants data-subject rights: access in a portable, machine-readable format, correction, deletion, and an opt-out of sale and sharing that honors the Global Privacy Control signal. The policy also reserves the right to train EvenUp's proprietary AI on personal information and offers no opt-out for that first-party training. It says nothing about retention periods, breach notification, named security controls, sub-processor or DPA details, or international transfer safeguards.",
+      "highlights": [
+        {
+          "label": "Trains AI with no opt-out",
+          "text": "The policy states that as an AI business, EvenUp may use personal information to develop, improve, train, and provide its proprietary AI technologies and services for all of its customers, and it offers no way to opt out of that training."
+        },
+        {
+          "label": "Full slate of rights",
+          "text": "The personal information requests section names access to a copy in a portable, machine-readable, readily-usable format, correction, deletion, and an opt-out of sale and sharing that honors the Global Privacy Control signal."
+        },
+        {
+          "label": "Retention left vague",
+          "text": "Retention is described only as for as long as is necessary to fulfill the purposes for which it was collected, with no day count and no concrete deletion timeline."
+        },
+        {
+          "label": "Sale and sharing acknowledged with opt-out",
+          "text": "EvenUp acknowledges that its disclosures to advertising partners may be considered a sale or sharing of personal information, and it provides an opt-out via the Your Privacy Choices link and the Global Privacy Control signal."
+        }
+      ],
+      "policyUrl": "https://www.evenuplaw.com/privacy-policy",
+      "policyLastUpdated": "2026-06-05",
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/evenuplaw.com.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 49,
+            "grade": "D"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "zero",
+          "subFlag": "ADVERSE"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D4.3": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        }
+      }
+    },
+    {
+      "slug": "eve",
+      "name": "Eve",
+      "vendor": "Butler Labs, Inc.",
+      "domain": "eve.legal",
+      "category": "Legal",
+      "audience": "Enterprise",
+      "scoreOutOf100": 42,
+      "letterGrade": "D",
+      "displayedGrade": "D",
+      "confidence": "High",
+      "dealbreakerFlags": [],
+      "summary": "Eve uses a generic CCPA-style template. It confirms it does not sell personal data and gives California residents access and deletion rights, but it says nothing about whether legal-document inputs train any model, names no retention period, and offers no international transfer safeguard. That silence on AI-specific data handling, retention, and security controls holds the score in the D band. No dealbreaker applies: every harmful possibility (training, perpetual licence, deletion refusal, data sale) is simply unaddressed, and the no-sale clause is the one strong point.",
+      "highlights": [
+        {
+          "label": "No sale of data",
+          "text": "The policy states plainly that it does not sell personal data: \"We will not sell your Personal Data, and have not done so over the last 12 months,\" and adds a Nevada do-not-sell contact path."
+        },
+        {
+          "label": "Silent on training",
+          "text": "For a legal AI handling case material, the policy never addresses whether user inputs train any model. Its improvement purpose only references \"testing, research, internal analytics and product development,\" with no opt-out mechanism."
+        },
+        {
+          "label": "No retention period",
+          "text": "The document carries a \"Data Security and Retention\" heading but gives no retention period and no deletion timeline. The only timeline stated is the 45-day window to respond to rights requests."
+        },
+        {
+          "label": "Limited rights coverage",
+          "text": "It grants CCPA access over the past 12 months and deletion subject to exceptions, but says nothing about portability or rectification, and names no specific security control or breach notification commitment."
+        }
+      ],
+      "policyUrl": "https://www.eve.legal/privacy-policy",
+      "policyLastUpdated": "2021-01-01",
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/eve.legal.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 42,
+            "grade": "D"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        }
+      }
+    },
+    {
+      "slug": "garfield-ai",
+      "name": "Garfield AI",
+      "vendor": "Garfield Law Ltd",
+      "domain": "garfield.law",
+      "category": "Legal",
+      "audience": "Enterprise",
+      "scoreOutOf100": 42,
+      "letterGrade": "D",
+      "displayedGrade": "D",
+      "confidence": "High",
+      "dealbreakerFlags": [],
+      "summary": "Garfield AI publishes a short UK GDPR notice. It covers data subject rights and lawful bases, but says nothing about AI training, output ownership, breach notification, or most sharing and transparency questions for a legal AI tool.",
+      "highlights": [
+        {
+          "label": "Full UK GDPR rights",
+          "text": "The policy lists access, rectification, erasure, restriction, objection, and portability rights, with a one month response commitment and no charge to exercise them."
+        },
+        {
+          "label": "Silent on AI training",
+          "text": "The policy does not say whether customer inputs or case data are used to train or improve any AI model, and it describes no opt-out mechanism. For a legal AI tool, the central training question goes unanswered."
+        },
+        {
+          "label": "Twelve year retention",
+          "text": "The policy keeps information for no more than twelve years and then disposes of it by permanently deleting it. That named period is long, and there is no shorter retention for AI interaction logs."
+        },
+        {
+          "label": "Generic security, no breach notice",
+          "text": "Storage is described only as securely stored on appropriately secured databases, with no named controls, and the policy says nothing about notifying users of a data breach."
+        }
+      ],
+      "policyUrl": "https://www.garfield.law/privacy",
+      "policyLastUpdated": null,
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/garfield.law.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 42,
+            "grade": "D"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D4.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D4.5": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D6.1": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        }
+      }
+    },
+    {
+      "slug": "darrow",
+      "name": "Darrow",
+      "vendor": "Darrow AI, Inc.",
+      "domain": "darrow.ai",
+      "category": "Legal",
+      "audience": "Enterprise",
+      "scoreOutOf100": 62,
+      "letterGrade": "C",
+      "displayedGrade": "C",
+      "confidence": "High",
+      "dealbreakerFlags": [
+        "D1.1 trains foundation models on Torch activity history with no named training opt-out"
+      ],
+      "summary": "Darrow's policy gives data-subject rights and CCPA disclosures, but it trains its foundation models on Torch browser activity history with no named opt-out, and it stays vague on retention and breach handling. The training disclosure is written into the policy text, so the dealbreaker comes from a stated practice that the policy admits to. The score lands in the C band, in line with assistants that train without a clear opt-out and disclose no deletion timeline.",
+      "highlights": [
+        {
+          "label": "Trains on browser activity",
+          "text": "Torch transmits your activity history to backend systems and uses it to train foundation models of the Service. The policy lets you disable Torch and delete chats, but it names no way to opt out of that training while you keep using the Service."
+        },
+        {
+          "label": "Full rights toolkit",
+          "text": "The policy grants access, deletion, rectification through account settings, transfer to a third party, and opt-out. It honors GPC and recognized universal opt-out signals within the legal time frame."
+        },
+        {
+          "label": "Does not sell or share for ads",
+          "text": "Darrow states it does not knowingly sell personal information and does not share it for cross-context behavioral advertising, and it treats all collected data as subject to a do-not-sell request."
+        },
+        {
+          "label": "Retention left vague",
+          "text": "Retention is described only as the time period reasonably necessary to achieve the stated purposes, with no day count and no deletion timeline. The security section names no breach-notification commitment."
+        }
+      ],
+      "policyUrl": "https://www.darrow.ai/privacy-policy",
+      "policyLastUpdated": "2026-05-19",
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/darrow.ai.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 62,
+            "grade": "C"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "zero",
+          "subFlag": "ADVERSE"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        }
+      }
+    },
+    {
+      "slug": "legora",
+      "name": "Legora",
+      "vendor": "Legora AB",
+      "domain": "legora.com",
+      "category": "Legal",
+      "audience": "Enterprise",
+      "scoreOutOf100": 64,
+      "letterGrade": "C",
+      "displayedGrade": "C",
+      "confidence": "High",
+      "dealbreakerFlags": [],
+      "summary": "Legora is a legal-tech processor that defines user inputs, outputs and uploaded documents as Subscriber Content outside its privacy policy, governed instead by the Subscriber Agreement, and commits to never collecting or storing data tied to that content outside that agreement, so user content is kept out of model training under this policy. It grants full GDPR data-subject rights and names international transfer safeguards: adequacy decisions, standard contractual clauses and the EU-US Data Privacy Framework. It lists GDPR, AICPA SOC, ISO 27001 and ISO 42001 certifications. It says nothing about whether it sells personal data, breach notification, AI-log retention, or a children age gate, and its general retention relies on a vague \"as long as necessary\" standard.",
+      "highlights": [
+        {
+          "label": "Content kept out of training",
+          "text": "The policy states that Subscriber Content (inputs, outputs and uploaded documents) is processed only as a data processor under the Subscriber Agreement, and that Legora will never collect or store data directly related to Subscriber Content outside that agreement, so user content is not used to train models under this policy."
+        },
+        {
+          "label": "Full data-subject rights",
+          "text": "Section 6 grants access through a data extract, rectification, erasure, restriction, objection, portability in a machine-readable format and withdrawal of consent, each with a described way to exercise it."
+        },
+        {
+          "label": "Named transfer safeguards and certifications",
+          "text": "International transfers rely on adequacy decisions, standard contractual clauses and the EU-US Data Privacy Framework. The site lists GDPR, AICPA SOC, ISO 27001 and ISO 42001 as certifications."
+        },
+        {
+          "label": "Gaps on selling, breaches and AI logs",
+          "text": "The policy never states that it does not sell personal data, makes no breach-notification commitment, and defers retention of AI interaction content to the Subscriber Agreement rather than disclosing a period."
+        }
+      ],
+      "policyUrl": "https://legora.com/legal/privacy-policy",
+      "policyLastUpdated": "2026-06-04",
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/legora.com.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 64,
+            "grade": "C"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D4.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "full",
+          "subFlag": "OK"
+        }
+      }
+    },
+    {
+      "slug": "paxton-ai",
+      "name": "Paxton AI",
+      "vendor": "Paxton AI, Inc.",
+      "domain": "paxton.ai",
+      "category": "Legal",
+      "audience": "Enterprise",
+      "scoreOutOf100": 46,
+      "letterGrade": "D",
+      "displayedGrade": "D",
+      "confidence": "High",
+      "dealbreakerFlags": [],
+      "summary": "Paxton AI publishes a generic website-style privacy notice. It covers data-subject rights, legal bases, and a children age gate, but says nothing about how the legal AI product treats user inputs, model training, retention periods, sub-processors, or international transfer safeguards. These gaps are silence rather than adverse reservations, so no dealbreaker flag applies. The score sits in the D band because the disclosures most relevant to a legal AI tool are absent, including whether inputs feed training and how long data is kept.",
+      "highlights": [
+        {
+          "label": "Silent on AI training",
+          "text": "The notice never says whether user inputs or outputs feed model training or improvement, and it offers no training opt-out. For a legal AI tool this is the central question, and the silence is the main driver of the low score."
+        },
+        {
+          "label": "Strong rights, named delete request",
+          "text": "Section 10 grants access, rectification or erasure, restriction, portability where applicable, and objection. Section 15 routes deletion through a data subject access request, though the rights are framed as applying in some regions such as Canada."
+        },
+        {
+          "label": "Retention stated only in vague terms",
+          "text": "Section 7 keeps data for as long as necessary and no longer than the period in which users have an account. It gives no day-count and no concrete deletion timeline."
+        },
+        {
+          "label": "Generic security, no breach notice",
+          "text": "Section 8 promises appropriate and reasonable technical and organizational security measures but names no specific control such as TLS or AES-256, and the policy contains no breach notification commitment."
+        }
+      ],
+      "policyUrl": "https://www.paxton.ai/legal/privacy-policy",
+      "policyLastUpdated": "2026-02-20",
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/paxton.ai.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 46,
+            "grade": "D"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D4.3": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D4.5": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        }
+      }
+    },
+    {
+      "slug": "supio",
+      "name": "Supio",
+      "vendor": "Supio, Inc.",
+      "domain": "supio.com",
+      "category": "Legal",
+      "audience": "Enterprise",
+      "scoreOutOf100": 55,
+      "letterGrade": "C",
+      "displayedGrade": "C",
+      "confidence": "Medium",
+      "dealbreakerFlags": [],
+      "summary": "Supio's privacy statement covers data-subject rights, international transfer safeguards, and a named data protection officer, but it says nothing about AI or model training, output ownership, or retention periods despite being a legal AI platform.",
+      "highlights": [
+        {
+          "label": "No training disclosure",
+          "text": "The policy never mentions AI or model training. It discloses nothing about whether customer inputs feed model development, which is the indicator that matters most for an AI legal tool."
+        },
+        {
+          "label": "Does not sell data",
+          "text": "It states that Supio does not sell or otherwise disclose information except as set forth, and adds that you can always opt out of future sharing and of marketing messages."
+        },
+        {
+          "label": "International transfers with named safeguard",
+          "text": "For transfers outside your country it relies on either an adequacy decision of the EU commission or appropriate safeguards such as standard contractual clauses."
+        },
+        {
+          "label": "Vague retention, no timeline",
+          "text": "Retention lasts as long as necessary to fulfill the legitimate business need, with no day count or deletion timeline. Deletion requests can be declined where permitted by law."
+        }
+      ],
+      "policyUrl": "https://www.supio.com/privacy-policy",
+      "policyLastUpdated": "2025-03-28",
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/supio.com.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 55,
+            "grade": "C"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "full",
+          "subFlag": "OK"
+        }
+      }
+    },
+    {
+      "slug": "corti",
+      "name": "Corti",
+      "vendor": "Corti ApS",
+      "domain": "corti.ai",
+      "category": "Healthcare",
+      "audience": "Enterprise",
+      "scoreOutOf100": 57,
+      "letterGrade": "C",
+      "displayedGrade": "C",
+      "confidence": "Medium",
+      "dealbreakerFlags": [],
+      "summary": "Corti publishes a detailed GDPR-style policy on data-subject rights and international transfers. It says nothing about whether customer inputs or audio recordings are used to train its models, and it never describes itself as an AI product. Those silences on training and AI disclosure, plus vague retention and no breach-notification clause, keep it in the C band. The major gaps are all silence rather than adverse reservations, so no dealbreaker applies.",
+      "highlights": [
+        {
+          "label": "Strong data-subject rights",
+          "text": "The policy grants access, deletion, portability in a structured machine-readable format, rectification, and objection. It routes self-service access, update, and deletion through account settings."
+        },
+        {
+          "label": "Silent on model training",
+          "text": "This is a healthcare audio platform, yet the policy never states whether inputs or recordings are used to train models and offers no training opt-out. All four training indicators score zero on silence."
+        },
+        {
+          "label": "Named transfer safeguards",
+          "text": "Corti names adherence to the EU-U.S., UK Extension, and Swiss-U.S. Data Privacy Frameworks, certified to the U.S. Department of Commerce. It also commits to a government-access standard limited to valid requests by public authorities."
+        },
+        {
+          "label": "Vague retention and no breach notice",
+          "text": "Retention is described only as for as long as is necessary, with no day count or deletion timeline. The security section commits only to commercially reasonable measures and has no breach-notification clause."
+        }
+      ],
+      "policyUrl": "https://www.corti.ai/legal/privacy-policy",
+      "policyLastUpdated": "2026-06-16",
+      "modalities": ["text", "audio"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/corti.ai.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 57,
+            "grade": "C"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.3": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "half",
+          "subFlag": "OK"
+        }
+      }
+    },
+    {
+      "slug": "navina",
+      "name": "Navina",
+      "vendor": "Navina Technologies Ltd",
+      "domain": "navina.ai",
+      "category": "Healthcare",
+      "audience": "Enterprise",
+      "scoreOutOf100": 41,
+      "letterGrade": "D",
+      "displayedGrade": "D",
+      "confidence": "Medium",
+      "dealbreakerFlags": [],
+      "summary": "Navina's privacy policy grants core data-subject rights and sets a children's age gate. It says nothing about AI model training, retention timeframes, international transfer safeguards, or security specifics, which puts it in the lower D band. Every weak point is a gap in disclosure, not an adverse reservation, so no dealbreaker flags apply.",
+      "highlights": [
+        {
+          "label": "Rights granted with a contact",
+          "text": "The policy grants access, correction, deletion, and the right to object to or opt out of processing. All are exercisable by emailing privacy@navina.ai."
+        },
+        {
+          "label": "Retention stays vague",
+          "text": "Data is stored until Navina no longer needs it, with a promise that it does not retain data perpetually. No concrete period or deletion timeline is given."
+        },
+        {
+          "label": "No transfer safeguard named",
+          "text": "The policy states storage is on AWS in North Virginia in the US but names no SCCs, adequacy decision, or other cross-border safeguard for international users."
+        },
+        {
+          "label": "Silent on AI training and security specifics",
+          "text": "There is no clause on whether data trains models. Security is described only as appropriate technical, organizational and security measures, with no named controls, breach timeframe, or certifications."
+        }
+      ],
+      "policyUrl": "https://www.navina.ai/privacy-policy",
+      "policyLastUpdated": null,
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/navina.ai.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 41,
+            "grade": "D"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        }
+      }
+    },
+    {
+      "slug": "deepscribe",
+      "name": "DeepScribe",
+      "vendor": "DeepScribe, Inc.",
+      "domain": "deepscribe.ai",
+      "category": "Healthcare",
+      "audience": "Enterprise",
+      "scoreOutOf100": 40,
+      "letterGrade": "D",
+      "displayedGrade": "D",
+      "confidence": "High",
+      "dealbreakerFlags": [],
+      "summary": "DeepScribe cites its HIPAA Business Associate role and a clear no-sale stance, and it names the third parties it shares with and the standard it applies to government requests. The policy says nothing about AI model training, user deletion rights, breach notification, or named international transfer safeguards, and its retention language is vague. Those gaps place it at the bottom of the D band. The score comes from real silences, not a harmful reserved right, so no dealbreaker applies.",
+      "highlights": [
+        {
+          "label": "Does not sell data",
+          "text": "The policy states the company \"is not in the business of selling your information,\" which earns full credit on the ad-sale indicator and carries no dealbreaker."
+        },
+        {
+          "label": "HIPAA Business Associate limit",
+          "text": "For Protected Health Information the company acts as a Business Associate under an agreement that \"prohibits us from using or disclosing the Protected Health Information in ways that are not permissible,\" a strong special-category limit."
+        },
+        {
+          "label": "Vague retention, no deletion timeline",
+          "text": "Retention is governed only by keeping data \"for as long as it remains necessary,\" and the company may \"retain or destroy, at our discretion\" with no stated deletion period or user deletion right."
+        },
+        {
+          "label": "Silent on training and transfer safeguards",
+          "text": "The policy never addresses whether inputs or audio train AI models. It confirms data moves to US servers but names no SCCs, adequacy decision, or DPF safeguard for that transfer."
+        }
+      ],
+      "policyUrl": "https://www.deepscribe.ai/privacy",
+      "policyLastUpdated": null,
+      "modalities": ["text", "audio"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/deepscribe.ai.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 40,
+            "grade": "D"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "half",
+          "subFlag": "OK"
+        }
+      }
+    },
+    {
+      "slug": "truewind",
+      "name": "Truewind",
+      "vendor": "Truewind, Inc.",
+      "domain": "truewind.ai",
+      "category": "Finance",
+      "audience": "Enterprise",
+      "scoreOutOf100": 53,
+      "letterGrade": "D",
+      "displayedGrade": "D",
+      "confidence": "High",
+      "dealbreakerFlags": [],
+      "summary": "Truewind's privacy policy is strong on the highest-stakes commitments. It repeatedly states that connected Google Drive, Slack, and Microsoft Teams data is never used to train generalized or non-customer-specific AI models, and it says plainly that the company does not sell personal data and does not use connected data to serve, target, or measure advertising. Users are offered access, correction, deletion, restriction, and the ability to object to processing through a named support address. The gaps are in the detail. Retention is described only as \"for as long as needed,\" with no day counts and no concrete deletion timeline. The policy says nothing about data portability, breach notification, output ownership, certifications or a named data protection officer, and named international transfer safeguards such as standard contractual clauses. No dealbreaker right is reserved, so the grade is not capped, but the missing retention specifics and several data-subject and security disclosures keep the score at the top of the D band.",
+      "highlights": [
+        {
+          "label": "No model training on connected data",
+          "text": "For Google Drive, Slack, and Microsoft Teams data the policy repeatedly states Truewind does not train generalized or non-customer-specific artificial intelligence or machine learning models, and there is no train-by-default clause for general customer content."
+        },
+        {
+          "label": "No sale of personal data",
+          "text": "The sharing section states plainly that Truewind does not sell personal data, and the integration restrictions add that connected data is not used to serve, target, or measure advertisements or build advertising profiles."
+        },
+        {
+          "label": "Retention stays vague",
+          "text": "Data retention is described only as for as long as needed to provide the service, comply with legal obligations, and resolve disputes, with no day counts and no concrete deletion timeline."
+        },
+        {
+          "label": "Rights named, portability and breach notice missing",
+          "text": "Users can access, correct, delete, restrict, or object to processing via support@trytruewind.com. The policy says nothing about data portability, breach notification, or named international transfer safeguards such as standard contractual clauses."
+        }
+      ],
+      "policyUrl": "https://www.truewind.ai/privacy-policy",
+      "policyLastUpdated": "2026-06-02",
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/truewind.ai.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 53,
+            "grade": "D"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D4.5": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        }
+      }
+    },
+    {
+      "slug": "puzzle",
+      "name": "Puzzle",
+      "vendor": "Puzzle Financial, Inc.",
+      "domain": "puzzle.io",
+      "category": "Finance",
+      "audience": "Enterprise",
+      "scoreOutOf100": 44,
+      "letterGrade": "D",
+      "displayedGrade": "D",
+      "confidence": "High",
+      "dealbreakerFlags": [],
+      "summary": "Puzzle's published policy is a website privacy notice, not a product data agreement. It grants core access, deletion, and rectification rights by email, confirms it does not sell personal data, and includes a children's age gate. It says nothing about AI model training, content ownership, concrete retention periods, breach notification, named security standards, or international transfer safeguards. Those gaps in the training-data and security domains keep the score in the D band.",
+      "highlights": [
+        {
+          "label": "Silent on AI training",
+          "text": "The policy never states whether uploaded data or interactions are used to train AI models, and it offers no training opt-out. The entire training-data domain scores zero on documented silence."
+        },
+        {
+          "label": "Core rights granted by email",
+          "text": "You can request access to the personal information held about you and ask that it be amended or deleted by contacting privacy@puzzle.io. That covers access, deletion, and rectification."
+        },
+        {
+          "label": "Vague retention only",
+          "text": "Puzzle says it retains personal information for the length of time needed to fulfill the stated purposes unless a longer period is required. There is no concrete day count and no deletion timeline."
+        },
+        {
+          "label": "Generic security, no breach notice",
+          "text": "The policy warns that information sent electronically may not be secure and that no security measures are impenetrable. It names no TLS or AES standard and includes no breach-notification commitment or certification."
+        }
+      ],
+      "policyUrl": "https://puzzle.io/legal/privacy",
+      "policyLastUpdated": "2025-12-19",
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/puzzle.io.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 44,
+            "grade": "D"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D3.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D7.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        }
+      }
+    },
+    {
+      "slug": "cube",
+      "name": "Cube",
+      "vendor": "Cube Planning, Inc.",
+      "domain": "cubesoftware.com",
+      "category": "Finance",
+      "audience": "Enterprise",
+      "scoreOutOf100": 40,
+      "letterGrade": "D",
+      "displayedGrade": "D",
+      "confidence": "High",
+      "dealbreakerFlags": [],
+      "summary": "Cube's privacy policy is a conventional B2B SaaS document. It lists the categories of data it collects, names its hosting and analytics providers, and states plainly that it does not sell personal information. The weaknesses are real and consistent with a D. Data subjects can ask Cube to act on their rights, but the policy does not guarantee it will. Retention is described only as vague and necessity-based, with no day count or deletion timeline, and the policy says nothing about AI training or named cross-border transfer safeguards.",
+      "highlights": [
+        {
+          "label": "Data rights are discretionary",
+          "text": "The policy says you may submit requests about your personal information, then adds that Cube may not be required by law to honor them and will respond as it has the capacity to do so. Access, deletion, and rectification are conditional, and the policy does not guarantee them."
+        },
+        {
+          "label": "Does not sell personal data",
+          "text": "Cube states it does not sell, rent or lease personal information to third parties. It does run Google remarketing and behavioral targeting, with an opt-out available through Google Analytics controls."
+        },
+        {
+          "label": "Named security controls",
+          "text": "Security is concrete for data in transit. All data moves over encrypted TLS connections, staff need password or cryptographic authentication to access personal data, and infrastructure runs in U.S.-based data centers."
+        },
+        {
+          "label": "Vague retention, no transfer safeguards",
+          "text": "Retention is limited to what Cube needs to comply with legal obligations or deems necessary, with no day count and no deletion timeline. The policy names no SCCs, adequacy decision, or DPF safeguard for cross-border transfers."
+        }
+      ],
+      "policyUrl": "https://www.cubesoftware.com/privacy-policy",
+      "policyLastUpdated": "2025-05-19",
+      "modalities": ["text"],
+      "processesBiometrics": false,
+      "iconUrl": "https://icons.duckduckgo.com/ip3/cubesoftware.com.ico",
+      "history": {
+        "firstAssessed": "2026-06-20",
+        "lastChanged": "2026-06-20",
+        "lastChecked": "2026-06-20",
+        "assessmentCount": 1,
+        "scoreHistory": [
+          {
+            "date": "2026-06-20",
+            "score": 40,
+            "grade": "D"
+          }
+        ],
+        "lastChange": null
+      },
+      "indicators": {
+        "D1.1": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D1.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D2.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D2.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D2.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D2.5": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.1": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D3.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D3.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D4.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D4.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.3": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D4.4": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D4.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.1": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.2": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D5.3": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D5.4": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D5.5": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D6.1": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.2": {
+          "award": "zero",
+          "subFlag": "SILENT"
+        },
+        "D6.3": {
+          "award": "zero",
+          "subFlag": "NA"
+        },
+        "D6.4": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.1": {
+          "award": "full",
+          "subFlag": "OK"
+        },
+        "D7.2": {
+          "award": "half",
+          "subFlag": "OK"
+        },
+        "D7.3": {
+          "award": "zero",
+          "subFlag": "SILENT"
         }
       }
     }
