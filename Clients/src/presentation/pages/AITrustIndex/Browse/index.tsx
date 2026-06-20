@@ -9,14 +9,13 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Stack, Typography, TablePagination, CircularProgress } from "@mui/material";
+import { Box, Stack, TablePagination, CircularProgress } from "@mui/material";
 import Checkbox from "../../../components/Inputs/Checkbox";
 import { SearchBox } from "../../../components/Search";
 import { CustomSelect } from "../../../components/CustomSelect";
 import { CustomizableButton } from "../../../components/button/customizable-button";
 import { EmptyState } from "../../../components/EmptyState";
 import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtended";
-import Chip from "../../../components/Chip";
 import TablePaginationActions from "../../../components/TablePagination";
 import { palette } from "../../../themes/palette";
 import {
@@ -26,17 +25,11 @@ import {
   useTrackAppsBulk,
 } from "../../../../application/hooks/useAiTrustIndex";
 import { useAITrustIndexSidebarContextSafe } from "../../../../application/contexts/AITrustIndexSidebar.context";
-import { gradeVariant, categoryVariant, TrustIndexRow } from "../shared";
-import MCPTable from "../../AIGateway/MCPTable";
-import type { MCPTableColumn } from "../../AIGateway/MCPTable";
+import { TrustIndexRow } from "../shared";
+import AppCard from "./AppCard";
 
-const PAGE_SIZE = 25;
-
-function GradeChip({ grade }: { grade?: string }) {
-  if (!grade)
-    return <Typography sx={{ fontSize: "13px", color: palette.text.tertiary }}>—</Typography>;
-  return <Chip label={grade} variant={gradeVariant(grade)} />;
-}
+// 24 = 8 rows × 3 columns, so the grid's last row stays even.
+const PAGE_SIZE = 24;
 
 export default function Browse() {
   const navigate = useNavigate();
@@ -46,10 +39,9 @@ export default function Browse() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [grade, setGrade] = useState("");
-  // Header-driven sort. Only columns the backend's getAppsQuery whitelist can
-  // honour are exposed as sortable: name, vendor, category, score.
-  const [sortBy, setSortBy] = useState("score");
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  // Sort is dropdown-driven for the card grid. Each option maps to a backend
+  // sort column + direction the getAppsQuery whitelist can honour.
+  const [sortValue, setSortValue] = useState("score-desc");
   const [page, setPage] = useState(0);
   const [selected, setSelected] = useState<string[]>([]);
 
@@ -61,6 +53,11 @@ export default function Browse() {
     }, 300);
     return () => clearTimeout(id);
   }, [searchInput]);
+
+  const [sortBy, sortDir] = useMemo(() => {
+    const [by, dir] = sortValue.split("-");
+    return [by, dir as "asc" | "desc"] as const;
+  }, [sortValue]);
 
   const { data, isLoading, isError } = useApps({
     search,
@@ -95,6 +92,17 @@ export default function Browse() {
     ],
     [],
   );
+  const sortOptions = useMemo(
+    () => [
+      { value: "score-desc", label: "Best score first" },
+      { value: "score-asc", label: "Worst score first" },
+      { value: "name-asc", label: "Name A–Z" },
+      { value: "name-desc", label: "Name Z–A" },
+      { value: "vendor-asc", label: "Vendor A–Z" },
+      { value: "category-asc", label: "Category A–Z" },
+    ],
+    [],
+  );
 
   const allOnPageSelected = rows.length > 0 && rows.every((r) => selected.includes(r.slug));
   const someOnPageSelected = rows.some((r) => selected.includes(r.slug));
@@ -112,20 +120,6 @@ export default function Browse() {
 
   const toggleRow = useCallback((slug: string) => {
     setSelected((prev) => (prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug]));
-  }, []);
-
-  const handleSort = useCallback((key: string) => {
-    setSortBy((prevKey) => {
-      if (prevKey === key) {
-        setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-      } else {
-        // New column: start with the natural direction (score highest-first,
-        // text A→Z) so the first click matches the backend's default.
-        setSortDir(key === "score" ? "desc" : "asc");
-      }
-      return key;
-    });
-    setPage(0);
   }, []);
 
   const handleTrackSelected = useCallback(() => {
@@ -151,19 +145,6 @@ export default function Browse() {
   );
 
   const isEmpty = !isLoading && rows.length === 0;
-
-  // Only name/vendor/category/score are sortable — those are the columns the
-  // backend's getAppsQuery whitelist actually orders by. Grade is intentionally
-  // not sortable (the backend has no grade ordering) to avoid a dead arrow.
-  const columns: MCPTableColumn[] = [
-    { label: "", width: 48 },
-    { label: "Name", sortKey: "name" },
-    { label: "Vendor", sortKey: "vendor" },
-    { label: "Category", sortKey: "category" },
-    { label: "Grade" },
-    { label: "Score", sortKey: "score" },
-    { label: "Action", align: "right" },
-  ];
 
   return (
     <PageHeaderExtended
@@ -196,6 +177,15 @@ export default function Browse() {
             return true;
           }}
           options={gradeOptions}
+        />
+        <CustomSelect
+          currentValue={sortValue}
+          onValueChange={async (v) => {
+            setSortValue(String(v));
+            setPage(0);
+            return true;
+          }}
+          options={sortOptions}
         />
         <Box sx={{ flex: 1 }} />
         {/* Select-all checkbox placed in filter bar so it is adjacent to the table */}
@@ -235,61 +225,31 @@ export default function Browse() {
 
       {!isLoading && !isError && rows.length > 0 && (
         <>
-          <MCPTable<TrustIndexRow>
-            id="ai-trust-index-browse-table"
-            columns={columns}
-            rows={rows}
-            rowKey={(row) => row.slug}
-            onRowClick={(row) => navigate(`/ai-trust-index/${row.slug}`)}
-            sortBy={sortBy}
-            sortDir={sortDir}
-            onSort={handleSort}
-            renderRow={(row) => [
-              // Checkbox cell — stopPropagation so clicking it doesn't trigger row nav
-              <span onClick={(e) => e.stopPropagation()} key="cb">
-                <Checkbox
-                  id={`ai-trust-index-select-${row.slug}`}
-                  size="small"
-                  value={row.slug}
-                  isChecked={selected.includes(row.slug)}
-                  onChange={() => toggleRow(row.slug)}
-                  ariaLabel={`Select ${row.name}`}
-                  sx={{ p: 0 }}
-                />
-              </span>,
-              // Name
-              <Typography component="span" sx={{ fontWeight: 500, fontSize: "inherit" }}>
-                {row.name}
-              </Typography>,
-              // Vendor
-              row.vendor || "—",
-              // Category — a real VerifyWise chip, distinct variant per category
-              row.category ? (
-                <Chip
-                  label={row.category}
-                  variant={categoryVariant(row.category)}
-                  uppercase={false}
-                />
-              ) : (
-                "—"
-              ),
-              // Grade
-              <GradeChip grade={row.data?.displayedGrade || row.letter_grade} />,
-              // Score
-              row.score_out_of_100 != null ? `${row.score_out_of_100}/100` : "—",
-              // Track/Untrack toggle — stopPropagation so clicking it doesn't trigger row nav
-              <span onClick={(e) => e.stopPropagation()} key="track">
-                <CustomizableButton
-                  text={row.is_tracked ? "Untrack" : "Track"}
-                  variant="outlined"
-                  size="small"
-                  onClick={() => handleToggleTrack(row)}
-                  isDisabled={trackApp.isPending || untrackApp.isPending}
-                />
-              </span>,
-            ]}
-          />
-          <Stack direction="row" alignItems="center" justifyContent="flex-end" px="32px">
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "repeat(2, 1fr)",
+                lg: "repeat(3, 1fr)",
+              },
+              gap: "16px",
+              alignItems: "stretch",
+            }}
+          >
+            {rows.map((row) => (
+              <AppCard
+                key={row.slug}
+                row={row}
+                selected={selected.includes(row.slug)}
+                trackPending={trackApp.isPending || untrackApp.isPending}
+                onOpen={(slug) => navigate(`/ai-trust-index/${slug}`)}
+                onToggleSelect={toggleRow}
+                onToggleTrack={handleToggleTrack}
+              />
+            ))}
+          </Box>
+          <Stack direction="row" alignItems="center" justifyContent="flex-end">
             <TablePagination
               component="div"
               count={total}
@@ -299,7 +259,7 @@ export default function Browse() {
               rowsPerPageOptions={[PAGE_SIZE]}
               ActionsComponent={TablePaginationActions as any}
               labelRowsPerPage="Rows per page"
-              sx={{ mt: "48px" }}
+              sx={{ mt: "24px" }}
             />
           </Stack>
         </>

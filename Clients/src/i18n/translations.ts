@@ -8656,6 +8656,9 @@ export const translations: Record<string, Record<string, string>> = {
     "Additional emails": "Weitere E-Mail-Adressen",
     "All categories": "Alle Kategorien",
     "All grades": "Alle Bewertungen",
+    "Best score first": "Beste Bewertung zuerst",
+    "Worst score first": "Schlechteste Bewertung zuerst",
+    "Dealbreaker flag": "Ausschlusskriterium",
     "Back to Browse": "Zurück zur Übersicht",
     "Browse": "Durchsuchen",
     "Browse AI app risk scores and track the apps you use":
@@ -17279,6 +17282,9 @@ export const translations: Record<string, Record<string, string>> = {
     "Additional emails": "E-mails supplémentaires",
     "All categories": "Toutes les catégories",
     "All grades": "Toutes les notes",
+    "Best score first": "Meilleur score d'abord",
+    "Worst score first": "Pire score d'abord",
+    "Dealbreaker flag": "Critère rédhibitoire",
     "Back to Browse": "Retour à la navigation",
     "Browse": "Parcourir",
     "Browse AI app risk scores and track the apps you use":
@@ -25819,6 +25825,9 @@ export const translations: Record<string, Record<string, string>> = {
     "Additional emails": "Correos electrónicos adicionales",
     "All categories": "Todas las categorías",
     "All grades": "Todas las calificaciones",
+    "Best score first": "Mejor puntuación primero",
+    "Worst score first": "Peor puntuación primero",
+    "Dealbreaker flag": "Factor decisivo",
     "Back to Browse": "Volver a Explorar",
     "Browse": "Explorar",
     "Browse AI app risk scores and track the apps you use":
