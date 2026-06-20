@@ -53,7 +53,13 @@ export function useUntrackApp() {
   });
 }
 export function useSettings() {
-  return useQuery({ queryKey: [KEY, "settings"], queryFn: () => getSettings() });
+  // Settings change rarely and the page auto-saves; a 60s staleTime avoids the
+  // global 2s default refetching on every interaction (which made the page churn).
+  return useQuery({
+    queryKey: [KEY, "settings"],
+    queryFn: () => getSettings(),
+    staleTime: 60 * 1000,
+  });
 }
 export function useUpdateSettings() {
   const qc = useQueryClient();

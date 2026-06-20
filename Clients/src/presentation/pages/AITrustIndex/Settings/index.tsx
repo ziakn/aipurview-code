@@ -29,7 +29,7 @@ export default function Settings() {
   const isAdmin = isSuperAdmin || userRoleName === "Admin" || userRoleName === "SuperAdmin";
 
   const { data: settingsData, isLoading: settingsLoading } = useSettings();
-  const { users } = useUsers();
+  const { users, loading: usersLoading } = useUsers();
   const updateSettings = useUpdateSettings();
 
   const [recipientUserIds, setRecipientUserIds] = useState<number[]>([]);
@@ -147,10 +147,11 @@ export default function Settings() {
             id="ai-trust-index-recipient-users"
             options={userOptions}
             value={selectedUsers}
+            loading={usersLoading}
             getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(option, val) => option.id === val.id}
             onChange={(_e, value) => setRecipientUserIds(value.map((v) => v.id))}
-            placeholder="Select team members"
+            placeholder={usersLoading ? "Loading team members…" : "Select team members"}
           />
 
           <ChipInput
