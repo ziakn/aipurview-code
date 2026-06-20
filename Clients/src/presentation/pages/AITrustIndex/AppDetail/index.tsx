@@ -2,8 +2,10 @@
  * @fileoverview AI Trust Index — App detail.
  *
  * Full assessment view for a single app: header (favicon, vendor, grade,
- * score, track toggle), summary, highlight cards, dealbreaker flags and
- * policy metadata. Handles removed-from-index and not-found states.
+ * score meter, track toggle), verdict, comparison strip, grade scale,
+ * summary, highlights, dealbreaker flags, watch-outs, score breakdown,
+ * policy metadata and related apps. Handles removed-from-index and
+ * not-found states.
  *
  * @module pages/AITrustIndex/AppDetail
  */
@@ -17,9 +19,16 @@ import { CustomizableButton } from "../../../components/button/customizable-butt
 import { EmptyState } from "../../../components/EmptyState";
 import Chip from "../../../components/Chip";
 import { palette } from "../../../themes/palette";
-import { useApp, useTrackApp, useUntrackApp } from "../../../../application/hooks/useAiTrustIndex";
+import {
+  useApp,
+  useApps,
+  useTrackApp,
+  useUntrackApp,
+} from "../../../../application/hooks/useAiTrustIndex";
 import { useAITrustIndexSidebarContextSafe } from "../../../../application/contexts/AITrustIndexSidebar.context";
 import { gradeVariant, TrustIndexAppData, faviconUrl } from "../shared";
+import { VerdictLine, WatchOuts, ComparisonStrip, RelatedApps } from "./insights";
+import { ScoreBreakdown } from "./ScoreBreakdown";
 
 interface AppDetailRow {
   slug: string;
@@ -56,6 +65,7 @@ export default function AppDetail() {
   const sidebar = useAITrustIndexSidebarContextSafe();
 
   const { data, isLoading, isError } = useApp(slug);
+  const { data: appsData } = useApps({});
   const trackApp = useTrackApp();
   const untrackApp = useUntrackApp();
 
@@ -63,6 +73,14 @@ export default function AppDetail() {
 
   const app: AppDetailRow | null = useMemo(() => (data?.data ? data.data : null), [data]);
   const detail: TrustIndexAppData | undefined = app?.data;
+
+  const allApps = useMemo(
+    () =>
+      (appsData?.apps ?? [])
+        .map((r: any) => r.data as TrustIndexAppData)
+        .filter(Boolean),
+    [appsData]
+  );
 
   const handleToggleTrack = useCallback(() => {
     if (!app) return;
@@ -183,10 +201,37 @@ export default function AppDetail() {
           <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, mt: "4px" }}>
             {[app.vendor, app.category].filter(Boolean).join(" · ")}
           </Typography>
-          {app.score_out_of_100 != null && (
-            <Typography sx={{ fontSize: "13px", color: theme.palette.text.secondary, mt: "4px" }}>
-              Trust score: <strong>{app.score_out_of_100}/100</strong>
-            </Typography>
+
+          {/* Score meter bar */}
+          {detail && detail.scoreOutOf100 != null && (
+            <Box sx={{ mt: "8px", display: "flex", alignItems: "center", gap: "8px" }}>
+              <Box
+                sx={{
+                  flex: 1,
+                  height: "8px",
+                  borderRadius: "999px",
+                  backgroundColor: "#E5E7EB",
+                  overflow: "hidden",
+                }}
+              >
+                <Box
+                  sx={{
+                    height: "100%",
+                    width: `${detail.scoreOutOf100}%`,
+                    backgroundColor: palette.brand.primary,
+                    borderRadius: "999px",
+                  }}
+                />
+              </Box>
+              <Typography
+                sx={{ fontSize: "13px", fontWeight: 600, color: theme.palette.text.secondary }}
+              >
+                {detail.scoreOutOf100}
+                <Box component="span" sx={{ color: palette.text.tertiary }}>
+                  /100
+                </Box>
+              </Typography>
+            </Box>
           )}
         </Box>
 
@@ -200,6 +245,66 @@ export default function AppDetail() {
       </Stack>
 
       <Stack gap="16px">
+        {/* Verdict */}
+        {detail && <VerdictLine app={detail} />}
+
+        {/* Capped assessment note */}
+        {app.no_longer_in_index && (
+          <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, fontStyle: "italic" }}>
+            This app is no longer in the AI Trust Index. The assessment below reflects its last
+            scored version.
+          </Typography>
+        )}
+
+        {/* Dealbreaker flags */}
+        {detail?.dealbreakerFlags && detail.dealbreakerFlags.length > 0 && (
+          <SectionCard title="Dealbreaker flags">
+            <Stack direction="row" gap="8px" flexWrap="wrap">
+              {detail.dealbreakerFlags.map((flag, i) => (
+                <Chip key={`${flag}-${i}`} label={flag} variant="error" uppercase={false} />
+              ))}
+            </Stack>
+          </SectionCard>
+        )}
+
+        {/* Comparison strip */}
+        {detail && <ComparisonStrip app={detail} allApps={allApps} />}
+
+        {/* Grade scale */}
+        {detail && (
+          <Stack
+            direction="row"
+            flexWrap="wrap"
+            gap="8px"
+            alignItems="center"
+            sx={{ mt: "16px" }}
+          >
+            <Typography
+              sx={{
+                fontSize: "11px",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
+                color: palette.text.tertiary,
+              }}
+            >
+              Grade scale
+            </Typography>
+            {(["A", "B", "C", "D", "F"] as const).map((g) => (
+              <Box
+                key={g}
+                sx={{ opacity: g === detail.displayedGrade ? 1 : 0.5 }}
+              >
+                <Chip
+                  label={`${g} · ${{ A: "85–100", B: "70–84", C: "55–69", D: "40–54", F: "0–39" }[g]}`}
+                  variant={gradeVariant(g)}
+                  uppercase={false}
+                />
+              </Box>
+            ))}
+          </Stack>
+        )}
+
         {/* Summary */}
         {detail?.summary && (
           <SectionCard title="Summary">
@@ -252,15 +357,19 @@ export default function AppDetail() {
           </SectionCard>
         )}
 
-        {/* Dealbreaker flags */}
-        {detail?.dealbreakerFlags && detail.dealbreakerFlags.length > 0 && (
-          <SectionCard title="Dealbreaker flags">
-            <Stack direction="row" gap="8px" flexWrap="wrap">
-              {detail.dealbreakerFlags.map((flag, i) => (
-                <Chip key={`${flag}-${i}`} label={flag} variant="error" uppercase={false} />
-              ))}
-            </Stack>
-          </SectionCard>
+        {/* Watch-outs */}
+        {detail && <WatchOuts indicators={detail.indicators} />}
+
+        {/* Score breakdown or fallback */}
+        {detail && (
+          detail.indicators && Object.keys(detail.indicators).length > 0 ? (
+            <ScoreBreakdown indicators={detail.indicators} appName={app.name} />
+          ) : (
+            <Typography sx={{ fontSize: "13px", color: palette.text.tertiary, mt: "8px" }}>
+              The area-by-area breakdown for {app.name} is being prepared and will appear after its
+              next scoring pass. The summary and highlights above reflect the latest assessment.
+            </Typography>
+          )
         )}
 
         {/* Policy details */}
@@ -326,6 +435,9 @@ export default function AppDetail() {
             </Stack>
           </SectionCard>
         )}
+
+        {/* Related apps */}
+        {detail && <RelatedApps app={detail} allApps={allApps} />}
       </Stack>
     </Box>
   );
