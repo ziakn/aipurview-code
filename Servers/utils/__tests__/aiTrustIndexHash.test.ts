@@ -3,19 +3,38 @@ import { computeHashes, canonicalize } from "../aiTrustIndexHash";
 import { ITrustIndexAppData } from "../../domain.layer/interfaces/i.aiTrustIndex";
 
 const baseApp: ITrustIndexAppData = {
-  slug: "claude", name: "Claude", vendor: "Anthropic", domain: "claude.ai",
-  category: "Assistant", scoreOutOf100: 83, letterGrade: "B", displayedGrade: "B",
-  confidence: "High", dealbreakerFlags: [], summary: "Strong policy.",
-  highlights: [{ label: "Training", text: "Opt-out." }, { label: "Deletion", text: "30 days." }],
-  policyUrl: "https://anthropic.com/legal/privacy", policyLastUpdated: "2026-06-08",
-  modalities: ["text", "image"], processesBiometrics: false,
+  slug: "claude",
+  name: "Claude",
+  vendor: "Anthropic",
+  domain: "claude.ai",
+  category: "Assistant",
+  scoreOutOf100: 83,
+  letterGrade: "B",
+  displayedGrade: "B",
+  confidence: "High",
+  dealbreakerFlags: [],
+  summary: "Strong policy.",
+  highlights: [
+    { label: "Training", text: "Opt-out." },
+    { label: "Deletion", text: "30 days." },
+  ],
+  policyUrl: "https://anthropic.com/legal/privacy",
+  policyLastUpdated: "2026-06-08",
+  modalities: ["text", "image"],
+  processesBiometrics: false,
   iconUrl: "https://icons.duckduckgo.com/ip3/claude.ai.ico",
 };
 
 describe("canonicalize", () => {
   it("sorts arrays of objects deterministically regardless of element/key order", () => {
-    const a = canonicalize([{ label: "B", text: "y" }, { label: "A", text: "x" }]);
-    const b = canonicalize([{ text: "x", label: "A" }, { text: "y", label: "B" }]);
+    const a = canonicalize([
+      { label: "B", text: "y" },
+      { label: "A", text: "x" },
+    ]);
+    const b = canonicalize([
+      { text: "x", label: "A" },
+      { text: "y", label: "B" },
+    ]);
     expect(JSON.stringify(a)).toBe(JSON.stringify(b));
   });
 });
@@ -56,8 +75,20 @@ describe("computeHashes", () => {
 
   it("changes material hash when grade changes", () => {
     const a = computeHashes(baseApp);
-    const b = computeHashes({ ...baseApp, letterGrade: "C", displayedGrade: "C", scoreOutOf100: 60 });
+    const b = computeHashes({
+      ...baseApp,
+      letterGrade: "C",
+      displayedGrade: "C",
+      scoreOutOf100: 60,
+    });
     expect(b.materialHash).not.toBe(a.materialHash);
+  });
+
+  it("normalizes the slug in both hashes (case/whitespace insensitive)", () => {
+    const a = computeHashes({ ...baseApp, slug: "ChatGPT" });
+    const b = computeHashes({ ...baseApp, slug: "  chatgpt  " });
+    expect(b.fullHash).toBe(a.fullHash);
+    expect(b.materialHash).toBe(a.materialHash);
   });
 
   it("ignores the feedVersion-2 history field in both hashes (volatile metadata)", () => {

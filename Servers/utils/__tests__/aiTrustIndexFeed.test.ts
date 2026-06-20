@@ -88,6 +88,16 @@ describe("validateFeed", () => {
       expect(r.presentSlugs).toContain("a0"); // dropped-but-present
     }
   });
+  it("returns rawCount = total raw feed length even when apps are dropped", () => {
+    const bad = feed(12);
+    delete (bad.apps[0] as any).category; // dropped for a missing field
+    const r = validateFeed(bad, null);
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.apps).toHaveLength(11); // one dropped
+      expect(r.rawCount).toBe(12); // but rawCount reflects the full feed
+    }
+  });
   it("normalizes presentSlugs (trim + lowercase) and skips non-string slugs", () => {
     const f = feed(12);
     (f.apps[1] as any).slug = "  MixedCase  ";

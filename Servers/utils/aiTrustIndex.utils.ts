@@ -2,6 +2,7 @@ import { QueryTypes } from "sequelize";
 import { sequelize } from "../database/db";
 import { computeHashes } from "./aiTrustIndexHash";
 import { ITrustIndexAppData } from "../domain.layer/interfaces/i.aiTrustIndex";
+import logger from "./logger/fileLogger";
 
 export function normalizeSlug(slug: string): string {
   return String(slug).trim().toLowerCase();
@@ -42,8 +43,11 @@ export async function getAppsQuery(
   const conditions: string[] = ["a.is_active = TRUE"];
   const replacements: Record<string, unknown> = { organizationId, limit: pageSize, offset };
   if (search) {
-    conditions.push("(a.name ILIKE :search OR a.vendor ILIKE :search)");
-    replacements.search = `%${search}%`;
+    // Escape LIKE metacharacters (\ % _) in user input so they're matched
+    // literally rather than acting as wildcards, then wrap with our own %.
+    const escaped = search.replace(/[\\%_]/g, "\\$&");
+    conditions.push("(a.name ILIKE :search ESCAPE '\\' OR a.vendor ILIKE :search ESCAPE '\\')");
+    replacements.search = `%${escaped}%`;
   }
   if (category) {
     conditions.push("a.category = :category");
@@ -232,6 +236,11 @@ export async function upsertFeedTx(
   // but-present app is left untouched (not marked removed). When omitted, the
   // present set defaults to the upserted apps — i.e. today's behavior.
   presentSlugs?: string[],
+  // Total number of apps in the raw feed (before any were dropped for a missing
+  // required field). Stored as last_good_count so the metric reflects the feed
+  // size, not just the subset that survived validation. Defaults to the upserted
+  // count when omitted — i.e. today's behavior.
+  rawCount?: number,
 ): Promise<{
   materialChanged: string[];
   newlyRemoved: string[];
@@ -334,7 +343,10 @@ export async function upsertFeedTx(
          SET last_good_count = :count, last_run_week = :week
              ${wasFirstSeed ? ", seeded_at = NOW()" : ""}
        WHERE id = 1;`,
-      { replacements: { count: apps.length, week: currentIsoWeek(new Date()) }, transaction },
+      {
+        replacements: { count: rawCount ?? apps.length, week: currentIsoWeek(new Date()) },
+        transaction,
+      },
     );
   });
 
@@ -372,14 +384,25 @@ export async function resolveRecipients(organizationId: number): Promise<string[
     new Set([...userEmails, ...freeText].map((e) => e.trim().toLowerCase()).filter(Boolean)),
   );
   if (recipients.length === 0) {
+    // Fallback when an org has no configured recipients. Org Admins are
+    // org-scoped; SuperAdmins are platform-global stewards (their
+    // organization_id is NULL), so they must be matched by role alone — the
+    // org predicate would otherwise exclude them and leave the org with no
+    // recipient at all.
     const admins = (await sequelize.query(
       `SELECT u.email FROM users u JOIN roles r ON u.role_id = r.id
-       WHERE u.organization_id = :organizationId AND r.name IN ('Admin','SuperAdmin');`,
+       WHERE (u.organization_id = :organizationId AND r.name = 'Admin')
+          OR r.name = 'SuperAdmin';`,
       { replacements: { organizationId }, type: QueryTypes.SELECT },
     )) as { email: string }[];
     recipients = Array.from(
       new Set(admins.map((a) => a.email.trim().toLowerCase()).filter(Boolean)),
     );
+    if (recipients.length === 0) {
+      logger.warn(
+        `[ai-trust-index] org ${organizationId} has a tracked-app change but no resolvable recipients (no configured recipients, no Admin, no SuperAdmin); digest skipped`,
+      );
+    }
   }
   return recipients;
 }

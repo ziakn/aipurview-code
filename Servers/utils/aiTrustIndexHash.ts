@@ -55,9 +55,22 @@ export function computeHashes(app: ITrustIndexAppData): {
   //  - history (feedVersion 2+): a per-app object with volatile timestamps
   //    (lastChecked updates on every re-check even with no real change), so including
   //    it would churn last_changed_at every week. Not part of the current-state snapshot.
-  const { iconUrl: _iconUrl, history: _history, ...rest } = app as ITrustIndexAppData & {
+  const {
+    iconUrl: _iconUrl,
+    history: _history,
+    ...rest
+  } = app as ITrustIndexAppData & {
     history?: unknown;
   };
-  const full = { ...rest, policyUrl: app.policyUrl == null ? null : stripUrlNoise(app.policyUrl) };
+  const full = {
+    ...rest,
+    // Normalize slug the same way it's normalized for the DB key, so a feed
+    // changing only slug casing/whitespace (same app) doesn't churn the hash
+    // and fire a spurious "changed" notification.
+    slug: String(app.slug ?? "")
+      .trim()
+      .toLowerCase(),
+    policyUrl: app.policyUrl == null ? null : stripUrlNoise(app.policyUrl),
+  };
   return { materialHash: sha256(material), fullHash: sha256(full) };
 }

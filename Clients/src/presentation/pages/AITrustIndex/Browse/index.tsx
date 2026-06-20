@@ -9,7 +9,8 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Stack, Typography, TablePagination, Checkbox, CircularProgress } from "@mui/material";
+import { Box, Stack, Typography, TablePagination, CircularProgress } from "@mui/material";
+import Checkbox from "../../../components/Inputs/Checkbox";
 import { SearchBox } from "../../../components/Search";
 import { CustomSelect } from "../../../components/CustomSelect";
 import { CustomizableButton } from "../../../components/button/customizable-button";
@@ -200,11 +201,13 @@ export default function Browse() {
         {/* Select-all checkbox placed in filter bar so it is adjacent to the table */}
         <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
           <Checkbox
+            id="ai-trust-index-select-all"
             size="small"
-            checked={allOnPageSelected}
-            indeterminate={!allOnPageSelected && someOnPageSelected}
+            value="select-all"
+            isChecked={allOnPageSelected}
+            isIndeterminate={!allOnPageSelected && someOnPageSelected}
             onChange={toggleSelectAll}
-            inputProps={{ "aria-label": "Select all on page" }}
+            ariaLabel="Select all on page"
           />
         </Box>
         <CustomizableButton
@@ -245,10 +248,12 @@ export default function Browse() {
               // Checkbox cell — stopPropagation so clicking it doesn't trigger row nav
               <span onClick={(e) => e.stopPropagation()} key="cb">
                 <Checkbox
+                  id={`ai-trust-index-select-${row.slug}`}
                   size="small"
-                  checked={selected.includes(row.slug)}
+                  value={row.slug}
+                  isChecked={selected.includes(row.slug)}
                   onChange={() => toggleRow(row.slug)}
-                  inputProps={{ "aria-label": `Select ${row.name}` }}
+                  ariaLabel={`Select ${row.name}`}
                   sx={{ p: 0 }}
                 />
               </span>,

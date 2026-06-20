@@ -17,6 +17,7 @@ import {
   TableRow,
   SxProps,
   Theme,
+  useTheme,
 } from "@mui/material";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { useTranslation } from "../../../application/hooks/useTranslation";
@@ -73,6 +74,7 @@ export default function MCPTable<T>({
   onSort,
 }: MCPTableProps<T>) {
   const { t } = useTranslation();
+  const theme = useTheme();
   return (
     <TableContainer id={id}>
       <Table sx={singleTheme.tableStyles.primary.frame}>
@@ -120,10 +122,10 @@ export default function MCPTable<T>({
                         "gap": "4px",
                         "cursor": "pointer",
                         "userSelect": "none",
-                        "color": "#475467",
+                        "color": theme.palette.text.tertiary,
                         "fontSize": "13px",
                         "fontWeight": 400,
-                        "&:hover": { color: "#1d2939" },
+                        "&:hover": { color: theme.palette.text.primary },
                         "justifyContent":
                           col.align === "right"
                             ? "flex-end"

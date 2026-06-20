@@ -14,12 +14,25 @@ import logger from "../../../utils/logger/fileLogger";
 
 const APP_URL = (process.env.FRONTEND_URL ?? "http://localhost:5173") + "/ai-trust-index/tracked";
 
+// Escape HTML metacharacters so a slug can never inject markup into the
+// rendered email (defensive — the feed is first-party, but the digest is HTML).
+// Exported for unit testing of the HTML-escaping path (no behavioral change).
+export function escapeHtml(s: string): string {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 // Build MJML fragments (valid <mj-text> components) injected into the template's {{...}} slots.
-function sectionMjml(title: string, slugs: string[]): string {
+// Exported for unit testing of the escaping path (no behavioral change).
+export function sectionMjml(title: string, slugs: string[]): string {
   if (!slugs.length) return "";
-  const header = `<mj-text font-size="14px" font-weight="600" color="#344054">${title}</mj-text>`;
+  const header = `<mj-text font-size="14px" font-weight="600" color="#344054">${escapeHtml(title)}</mj-text>`;
   const items = slugs
-    .map((s) => `<mj-text font-size="13px" color="#475467">• ${s}</mj-text>`)
+    .map((s) => `<mj-text font-size="13px" color="#475467">• ${escapeHtml(s)}</mj-text>`)
     .join("");
   return header + items;
 }
@@ -82,6 +95,7 @@ export async function syncAiTrustIndex(deps?: { feed?: unknown }): Promise<{
   const { materialChanged, newlyRemoved, wasFirstSeed } = await upsertFeedTx(
     validated.apps,
     validated.presentSlugs,
+    validated.rawCount,
   );
 
   if (wasFirstSeed) {

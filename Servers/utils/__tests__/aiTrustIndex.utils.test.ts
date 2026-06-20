@@ -68,6 +68,25 @@ describe("getAppsQuery", () => {
     expect(orderByOf()).toMatch(/ORDER BY category DESC NULLS LAST/);
   });
 
+  it("escapes LIKE metacharacters in search and adds ESCAPE clauses", async () => {
+    mockThreeQueries();
+    await getAppsQuery(7, { page: 1, pageSize: 25, sort: "score", search: "_" });
+    const calls = (sequelize.query as jest.Mock).mock.calls;
+    const searchCall = calls.find((c) => c[1]?.replacements?.search !== undefined);
+    expect(searchCall![1].replacements.search).toBe("%\\_%");
+    const sql = calls.map((c) => c[0]).join("\n");
+    expect(sql).toMatch(/ILIKE :search ESCAPE '\\'/);
+  });
+
+  it("escapes a literal percent in search input", async () => {
+    mockThreeQueries();
+    await getAppsQuery(7, { page: 1, pageSize: 25, sort: "score", search: "50%" });
+    const searchCall = (sequelize.query as jest.Mock).mock.calls.find(
+      (c) => c[1]?.replacements?.search !== undefined,
+    );
+    expect(searchCall![1].replacements.search).toBe("%50\\%%");
+  });
+
   it("falls back to score for an unknown sort column and ignores an invalid dir", async () => {
     mockThreeQueries();
     // A SQL-injection-y sort/dir must not reach the query — both fall back.
@@ -158,5 +177,23 @@ describe("upsertFeedTx soft-delete", () => {
     // a1 is now absent from the present set → soft-deleted (today's behavior).
     expect(newlyRemoved).toEqual(expect.arrayContaining(["a1", "gone"]));
     expect(newlyRemoved).not.toContain("a0");
+  });
+
+  it("stores last_good_count from rawCount (raw feed size), not the upserted count", async () => {
+    // One app survives validation, but the raw feed had 5 — last_good_count
+    // should reflect the raw feed size, not the single upserted app.
+    await upsertFeedTx([feedApp("a0")], ["a0"], 5);
+    const metaCall = (sequelize.query as jest.Mock).mock.calls.find((c) =>
+      /UPDATE ai_trust_index_meta[\s\S]*last_good_count/.test(c[0]),
+    );
+    expect(metaCall![1].replacements.count).toBe(5);
+  });
+
+  it("falls back to the upserted count for last_good_count when rawCount is omitted", async () => {
+    await upsertFeedTx([feedApp("a0")], ["a0"]);
+    const metaCall = (sequelize.query as jest.Mock).mock.calls.find((c) =>
+      /UPDATE ai_trust_index_meta[\s\S]*last_good_count/.test(c[0]),
+    );
+    expect(metaCall![1].replacements.count).toBe(1);
   });
 });

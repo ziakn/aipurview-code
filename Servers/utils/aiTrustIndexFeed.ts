@@ -30,7 +30,11 @@ export type ValidateResult =
   // including apps that were dropped for a missing required field. Callers use
   // it so a transiently-malformed-but-present app is left untouched rather than
   // soft-deleted (which would send a false "no longer assessed" notification).
-  { ok: true; apps: ITrustIndexAppData[]; presentSlugs: string[] } | { ok: false; reason: string };
+  // `rawCount` is the total number of apps in the raw feed (before the
+  // required-field filter). It's stored as `last_good_count` so the weekly
+  // floor check compares like-for-like against the raw feed length.
+  | { ok: true; apps: ITrustIndexAppData[]; presentSlugs: string[]; rawCount: number }
+  | { ok: false; reason: string };
 
 export function validateFeed(raw: unknown, lastGoodCount: number | null): ValidateResult {
   if (!raw || typeof raw !== "object") return { ok: false, reason: "feed is not an object" };
@@ -59,7 +63,7 @@ export function validateFeed(raw: unknown, lastGoodCount: number | null): Valida
         : null,
     )
     .filter((s): s is string => !!s);
-  return { ok: true, apps, presentSlugs };
+  return { ok: true, apps, presentSlugs, rawCount: f.apps.length };
 }
 
 export async function fetchFeed(deps?: {
