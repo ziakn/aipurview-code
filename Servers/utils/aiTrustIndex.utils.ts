@@ -29,7 +29,15 @@ export async function getAppsQuery(
     sort: string;
     dir?: string;
   },
-): Promise<{ apps: any[]; total: number; page: number; pageSize: number; categories: string[] }> {
+): Promise<{
+  apps: any[];
+  total: number;
+  page: number;
+  pageSize: number;
+  categories: string[];
+  categoryCounts: Record<string, number>;
+  gradeCounts: Record<string, number>;
+}> {
   const { search, category, grade } = opts;
   const page = Math.max(1, opts.page);
   // Cap is generous (the full catalog is low-hundreds) so a consumer can request
@@ -72,19 +80,40 @@ export async function getAppsQuery(
     ${where}
     ORDER BY ${orderBy}, a.id ASC
     LIMIT :limit OFFSET :offset;`;
-  const catSql = `SELECT DISTINCT category FROM ai_trust_index_apps WHERE is_active = TRUE AND category IS NOT NULL ORDER BY category;`;
+  // Per-category and per-grade counts are computed over the WHOLE active catalog,
+  // not the current filter, so the dropdowns stay stable pickers (selecting one
+  // category does not zero out the others). Active apps only.
+  const catSql = `SELECT category, COUNT(*) AS n FROM ai_trust_index_apps
+    WHERE is_active = TRUE AND category IS NOT NULL
+    GROUP BY category ORDER BY category;`;
+  const gradeSql = `SELECT letter_grade, COUNT(*) AS n FROM ai_trust_index_apps
+    WHERE is_active = TRUE AND letter_grade IS NOT NULL
+    GROUP BY letter_grade;`;
 
-  const [countRows, dataRows, catRows] = await Promise.all([
+  const [countRows, dataRows, catRows, gradeRows] = await Promise.all([
     sequelize.query(countSql, { replacements, type: QueryTypes.SELECT }),
     sequelize.query(dataSql, { replacements, type: QueryTypes.SELECT }),
     sequelize.query(catSql, { type: QueryTypes.SELECT }),
+    sequelize.query(gradeSql, { type: QueryTypes.SELECT }),
   ]);
+
+  const categoryCounts: Record<string, number> = {};
+  for (const r of catRows as { category: string; n: string }[]) {
+    categoryCounts[r.category] = parseInt(r.n, 10);
+  }
+  const gradeCounts: Record<string, number> = {};
+  for (const r of gradeRows as { letter_grade: string; n: string }[]) {
+    gradeCounts[r.letter_grade] = parseInt(r.n, 10);
+  }
+
   return {
     apps: dataRows as any[],
     total: parseInt((countRows[0] as { total: string }).total, 10),
     page,
     pageSize,
     categories: (catRows as { category: string }[]).map((r) => r.category),
+    categoryCounts,
+    gradeCounts,
   };
 }
 

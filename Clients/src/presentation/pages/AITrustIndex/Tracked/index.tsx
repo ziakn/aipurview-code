@@ -49,6 +49,7 @@ export default function Tracked() {
   const untrackApp = useUntrackApp();
 
   const [sortValueKey, setSortValueKey] = useState("score-desc");
+  const [category, setCategory] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(12);
 
@@ -75,9 +76,29 @@ export default function Tracked() {
     return list.map((r: any) => ({ ...r, slug: r.slug ?? r.app_slug }));
   }, [data]);
 
-  // Client-side sort over the fully-loaded rows.
+  // Category filter, with per-category counts computed from the fully-loaded
+  // tracked list. "All" shows the total tracked count.
+  const categoryOptions = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const r of rows) {
+      if (r.category) counts[r.category] = (counts[r.category] ?? 0) + 1;
+    }
+    return [
+      { value: "", label: `All categories (${rows.length})` },
+      ...Object.keys(counts)
+        .sort()
+        .map((c) => ({ value: c, label: `${c} (${counts[c]})` })),
+    ];
+  }, [rows]);
+
+  const filteredRows = useMemo(
+    () => (category ? rows.filter((r) => r.category === category) : rows),
+    [rows, category],
+  );
+
+  // Client-side sort over the filtered rows.
   const sortedRows = useMemo(() => {
-    const copy = [...rows];
+    const copy = [...filteredRows];
     copy.sort((a, b) => {
       const av = sortValue(a, sortBy);
       const bv = sortValue(b, sortBy);
@@ -90,7 +111,7 @@ export default function Tracked() {
       return sortDir === "asc" ? cmp : -cmp;
     });
     return copy;
-  }, [rows, sortBy, sortDir]);
+  }, [filteredRows, sortBy, sortDir]);
 
   const pagedRows = useMemo(
     () => sortedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
@@ -135,6 +156,15 @@ export default function Tracked() {
       {!isLoading && !isError && rows.length > 0 && (
         <>
           <Stack direction="row" alignItems="center" gap="8px" sx={{ mb: "16px" }}>
+            <CustomSelect
+              currentValue={category}
+              onValueChange={async (v) => {
+                setCategory(String(v));
+                setPage(0);
+                return true;
+              }}
+              options={categoryOptions}
+            />
             <CustomSelect
               currentValue={sortValueKey}
               onValueChange={async (v) => {

@@ -77,20 +77,37 @@ export default function Browse() {
   const rows: TrustIndexRow[] = useMemo(() => payload?.apps ?? [], [payload]);
   const total: number = payload?.total ?? 0;
   const categories: string[] = useMemo(() => payload?.categories ?? [], [payload]);
+  const categoryCounts: Record<string, number> = useMemo(
+    () => payload?.categoryCounts ?? {},
+    [payload],
+  );
+  const gradeCounts: Record<string, number> = useMemo(() => payload?.gradeCounts ?? {}, [payload]);
+  // Total across the whole active catalog, for the "All" options. Counts are
+  // catalog-wide (not filtered), so summing them gives the catalog size.
+  const catalogTotal = useMemo(
+    () => Object.values(categoryCounts).reduce((s, n) => s + n, 0),
+    [categoryCounts],
+  );
 
   const categoryOptions = useMemo(
     () => [
-      { value: "", label: "All categories" },
-      ...categories.map((c) => ({ value: c, label: c })),
+      { value: "", label: catalogTotal ? `All categories (${catalogTotal})` : "All categories" },
+      ...categories.map((c) => ({
+        value: c,
+        label: categoryCounts[c] != null ? `${c} (${categoryCounts[c]})` : c,
+      })),
     ],
-    [categories],
+    [categories, categoryCounts, catalogTotal],
   );
   const gradeOptions = useMemo(
     () => [
-      { value: "", label: "All grades" },
-      ...["A", "B", "C", "D", "F"].map((g) => ({ value: g, label: g })),
+      { value: "", label: catalogTotal ? `All grades (${catalogTotal})` : "All grades" },
+      ...["A", "B", "C", "D", "F"].map((g) => ({
+        value: g,
+        label: gradeCounts[g] != null ? `${g} (${gradeCounts[g]})` : g,
+      })),
     ],
-    [],
+    [gradeCounts, catalogTotal],
   );
   const sortOptions = useMemo(
     () => [
