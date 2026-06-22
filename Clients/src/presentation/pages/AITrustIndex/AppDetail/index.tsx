@@ -281,9 +281,27 @@ export default function AppDetail() {
         {/* Dealbreaker flags */}
         {detail?.dealbreakerFlags && detail.dealbreakerFlags.length > 0 && (
           <SectionCard title="Dealbreaker flags">
-            <Stack direction="row" gap="8px" flexWrap="wrap">
+            <Stack gap="8px">
               {detail.dealbreakerFlags.map((flag, i) => (
-                <Chip key={`${flag}-${i}`} label={flag} variant="error" uppercase={false} />
+                <Box
+                  key={`${flag}-${i}`}
+                  sx={{
+                    // Dealbreaker flags are full sentences (quoted clauses), not
+                    // short labels, so they render as wrapping blocks rather than
+                    // single-line chips that overflow off the card.
+                    backgroundColor: "#FFD6D6",
+                    border: "1px solid #F5B8B8",
+                    borderRadius: "4px",
+                    color: "#D32F2F",
+                    fontSize: "13px",
+                    lineHeight: 1.5,
+                    p: "8px 12px",
+                    whiteSpace: "normal",
+                    overflowWrap: "anywhere",
+                  }}
+                >
+                  {flag}
+                </Box>
               ))}
             </Stack>
           </SectionCard>
@@ -318,15 +336,18 @@ export default function AppDetail() {
                           // Mark the app's own band with a solid ring instead of
                           // dimming the others (dimming made the pastel chips
                           // unreadable). All bands stay full-contrast.
-                          borderRadius: "16px",
-                          outline: `2px solid ${palette.text.primary}`,
-                          outlineOffset: "1px",
+                          // A border (not an outline) hugs the chip flush with no
+                          // gap; radius matches the chip's 4px corners so it stays
+                          // squarish instead of bulging into an ellipse.
+                          display: "inline-flex",
+                          borderRadius: "4px",
+                          border: `2px solid ${palette.text.primary}`,
                         }
                       : undefined
                   }
                 >
                   <Chip
-                    label={`${g} · ${{ A: "85–100", B: "70–84", C: "55–69", D: "40–54", F: "0–39" }[g]}`}
+                    label={`${g} · ${{ A: "70–100", B: "60–69", C: "48–59", D: "35–47", F: "0–34" }[g]}`}
                     variant={gradeVariant(g)}
                     uppercase={false}
                   />
