@@ -1,5 +1,5 @@
 // Clients/src/application/hooks/useAiTrustIndex.ts
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import {
   getApps,
   getApp,
@@ -13,14 +13,32 @@ import {
 
 const KEY = "ai-trust-index";
 
+// keepPreviousData on the read queries: track/untrack invalidates these keys,
+// which triggers a background refetch. Without it, `data` briefly becomes
+// undefined and the page's content (e.g. the detail score meter) unmounts and
+// re-mounts — a visible flicker/"moving bar". Keeping the previous data holds the
+// UI steady while the fresh data loads in the background.
 export function useApps(filters: Record<string, unknown>) {
-  return useQuery({ queryKey: [KEY, "apps", filters], queryFn: () => getApps(filters as any) });
+  return useQuery({
+    queryKey: [KEY, "apps", filters],
+    queryFn: () => getApps(filters as any),
+    placeholderData: keepPreviousData,
+  });
 }
 export function useApp(slug: string) {
-  return useQuery({ queryKey: [KEY, "app", slug], queryFn: () => getApp(slug), enabled: !!slug });
+  return useQuery({
+    queryKey: [KEY, "app", slug],
+    queryFn: () => getApp(slug),
+    enabled: !!slug,
+    placeholderData: keepPreviousData,
+  });
 }
 export function useTracked() {
-  return useQuery({ queryKey: [KEY, "tracked"], queryFn: () => getTracked() });
+  return useQuery({
+    queryKey: [KEY, "tracked"],
+    queryFn: () => getTracked(),
+    placeholderData: keepPreviousData,
+  });
 }
 export function useTrackApp() {
   const qc = useQueryClient();

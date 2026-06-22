@@ -256,7 +256,9 @@ export default function AppDetail() {
           variant={app.is_tracked ? "outlined" : "contained"}
           onClick={handleToggleTrack}
           isDisabled={trackApp.isPending || untrackApp.isPending}
-          sx={{ height: 34, flexShrink: 0 }}
+          // Fixed width so toggling the label "Track" ⇄ "Untrack" doesn't reflow
+          // the header row (which would nudge the score meter beside it).
+          sx={{ height: 34, minWidth: 96, flexShrink: 0 }}
         />
       </Stack>
 
