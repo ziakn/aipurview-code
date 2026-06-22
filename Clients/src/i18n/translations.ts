@@ -8693,8 +8693,14 @@ export const translations: Record<string, Record<string, string>> = {
       "Der KI-Vertrauensindex konnte momentan nicht geladen werden. Bitte versuchen Sie es später erneut.",
     "We couldn't load your tracked apps right now. Please try again later.":
       "Ihre verfolgten Apps konnten momentan nicht geladen werden. Bitte versuchen Sie es später erneut.",
-    "You're not tracking any apps yet. Track apps from the Browse tab to monitor changes.":
-      'Sie verfolgen noch keine Apps. Fügen Sie Apps über die Registerkarte "Durchsuchen" hinzu, um Änderungen zu überwachen.',
+    "You're not tracking any apps yet. Track apps from the Browse tab to monitor changes to their privacy and transparency assessments.":
+      'Sie verfolgen noch keine Apps. Fügen Sie Apps über die Registerkarte "Durchsuchen" hinzu, um Änderungen an ihren Datenschutz- und Transparenzbewertungen zu überwachen.',
+    "Find apps in Browse": "Apps in der Übersicht finden",
+    "Open the Browse tab to explore the full catalogue, then track the apps your teams use with the Track button on each card.":
+      'Öffnen Sie die Registerkarte "Durchsuchen", um den vollständigen Katalog zu erkunden, und verfolgen Sie die von Ihren Teams genutzten Apps über die Schaltfläche "Verfolgen" auf jeder Karte.',
+    "Get notified when assessments change": "Benachrichtigung bei Änderungen der Bewertungen",
+    "Tracked apps are included in the weekly change digest, so configured recipients hear about score, grade, or policy changes.":
+      "Verfolgte Apps sind in der wöchentlichen Änderungsübersicht enthalten, sodass konfigurierte Empfänger über Änderungen an Punktzahl, Note oder Richtlinie informiert werden.",
   },
 
   fr: {
@@ -17320,8 +17326,14 @@ export const translations: Record<string, Record<string, string>> = {
       "L'index de confiance IA n'a pas pu être chargé pour l'instant. Veuillez réessayer ultérieurement.",
     "We couldn't load your tracked apps right now. Please try again later.":
       "Vos applications suivies n'ont pas pu être chargées pour l'instant. Veuillez réessayer ultérieurement.",
-    "You're not tracking any apps yet. Track apps from the Browse tab to monitor changes.":
-      "Vous ne suivez encore aucune application. Ajoutez des applications depuis l'onglet Parcourir pour surveiller les modifications.",
+    "You're not tracking any apps yet. Track apps from the Browse tab to monitor changes to their privacy and transparency assessments.":
+      "Vous ne suivez encore aucune application. Ajoutez des applications depuis l'onglet Parcourir pour surveiller les modifications de leurs évaluations de confidentialité et de transparence.",
+    "Find apps in Browse": "Trouver des applications dans Parcourir",
+    "Open the Browse tab to explore the full catalogue, then track the apps your teams use with the Track button on each card.":
+      "Ouvrez l'onglet Parcourir pour explorer le catalogue complet, puis suivez les applications utilisées par vos équipes à l'aide du bouton Suivre sur chaque carte.",
+    "Get notified when assessments change": "Être averti lorsque les évaluations changent",
+    "Tracked apps are included in the weekly change digest, so configured recipients hear about score, grade, or policy changes.":
+      "Les applications suivies sont incluses dans le récapitulatif hebdomadaire des modifications, afin que les destinataires configurés soient informés des changements de score, de note ou de politique.",
   },
   es: {
     // AI Trust Index
@@ -25864,7 +25876,13 @@ export const translations: Record<string, Record<string, string>> = {
       "No se pudo cargar el índice de confianza de IA en este momento. Inténtelo de nuevo más tarde.",
     "We couldn't load your tracked apps right now. Please try again later.":
       "No se pudieron cargar las aplicaciones seguidas en este momento. Inténtelo de nuevo más tarde.",
-    "You're not tracking any apps yet. Track apps from the Browse tab to monitor changes.":
-      "Aún no está siguiendo ninguna aplicación. Añada aplicaciones desde la pestaña Explorar para supervisar los cambios.",
+    "You're not tracking any apps yet. Track apps from the Browse tab to monitor changes to their privacy and transparency assessments.":
+      "Aún no está siguiendo ninguna aplicación. Añada aplicaciones desde la pestaña Explorar para supervisar los cambios en sus evaluaciones de privacidad y transparencia.",
+    "Find apps in Browse": "Buscar aplicaciones en Explorar",
+    "Open the Browse tab to explore the full catalogue, then track the apps your teams use with the Track button on each card.":
+      "Abra la pestaña Explorar para ver el catálogo completo y, a continuación, siga las aplicaciones que usan sus equipos con el botón Seguir de cada tarjeta.",
+    "Get notified when assessments change": "Reciba avisos cuando cambien las evaluaciones",
+    "Tracked apps are included in the weekly change digest, so configured recipients hear about score, grade, or policy changes.":
+      "Las aplicaciones seguidas se incluyen en el resumen semanal de cambios, de modo que los destinatarios configurados se enteran de los cambios de puntuación, calificación o política.",
   },
 };

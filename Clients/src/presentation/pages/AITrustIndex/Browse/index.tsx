@@ -10,6 +10,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Stack, TablePagination, CircularProgress } from "@mui/material";
+import { SearchX, AlertTriangle } from "lucide-react";
 import Checkbox from "../../../components/Inputs/Checkbox";
 import { SearchBox } from "../../../components/Search";
 import { CustomSelect } from "../../../components/CustomSelect";
@@ -270,12 +271,15 @@ export default function Browse() {
 
       {isError && (
         <EmptyState
+          icon={AlertTriangle}
           message="We couldn't load the AI Trust Index right now. Please try again later."
           showBorder
         />
       )}
 
-      {isEmpty && !isError && <EmptyState message="No apps match your filters." showBorder />}
+      {isEmpty && !isError && (
+        <EmptyState icon={SearchX} message="No apps match your filters." showBorder />
+      )}
 
       {!isLoading && !isError && rows.length > 0 && (
         <>

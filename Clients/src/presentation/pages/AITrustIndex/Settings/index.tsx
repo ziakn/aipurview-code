@@ -12,6 +12,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { Box, Stack, Typography, CircularProgress } from "@mui/material";
 import ChipInput from "../../../components/Inputs/ChipInput";
 import AutoCompleteField from "../../../components/Inputs/Autocomplete";
+import { Lock } from "lucide-react";
 import { EmptyState } from "../../../components/EmptyState";
 import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtended";
 import { palette } from "../../../themes/palette";
@@ -116,6 +117,7 @@ export default function Settings() {
         helpArticlePath="ai-trust-index/settings"
       >
         <EmptyState
+          icon={Lock}
           message="Only administrators can change AI Trust Index notification settings."
           showBorder
         />

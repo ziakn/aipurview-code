@@ -11,9 +11,11 @@
 import { useMemo, useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Stack, TablePagination, CircularProgress } from "@mui/material";
+import { Star, Compass, Bell, AlertTriangle } from "lucide-react";
 import { CustomizableButton } from "../../../components/button/customizable-button";
 import { CustomSelect } from "../../../components/CustomSelect";
 import { EmptyState } from "../../../components/EmptyState";
+import EmptyStateTip from "../../../components/EmptyState/EmptyStateTip";
 import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtended";
 import Chip from "../../../components/Chip";
 import TablePaginationActions from "../../../components/TablePagination";
@@ -155,6 +157,7 @@ export default function Tracked() {
 
       {isError && (
         <EmptyState
+          icon={AlertTriangle}
           message="We couldn't load your tracked apps right now. Please try again later."
           showBorder
         />
@@ -162,9 +165,21 @@ export default function Tracked() {
 
       {isEmpty && !isError && (
         <EmptyState
-          message="You're not tracking any apps yet. Track apps from the Browse tab to monitor changes."
+          icon={Star}
+          message="You're not tracking any apps yet. Track apps from the Browse tab to monitor changes to their privacy and transparency assessments."
           showBorder
-        />
+        >
+          <EmptyStateTip
+            icon={Compass}
+            title="Find apps in Browse"
+            description="Open the Browse tab to explore the full catalogue, then track the apps your teams use with the Track button on each card."
+          />
+          <EmptyStateTip
+            icon={Bell}
+            title="Get notified when assessments change"
+            description="Tracked apps are included in the weekly change digest, so configured recipients hear about score, grade, or policy changes."
+          />
+        </EmptyState>
       )}
 
       {!isLoading && !isError && rows.length > 0 && (

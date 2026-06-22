@@ -13,7 +13,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Box, Stack, Typography, CircularProgress, useTheme } from "@mui/material";
-import { ArrowLeft, Gauge } from "lucide-react";
+import { ArrowLeft, Gauge, SearchX } from "lucide-react";
 import { PageBreadcrumbs } from "../../../components/breadcrumbs/PageBreadcrumbs";
 import { CustomizableButton } from "../../../components/button/customizable-button";
 import { EmptyState } from "../../../components/EmptyState";
@@ -132,7 +132,11 @@ export default function AppDetail() {
           autoGenerate={false}
           testId="ai-trust-index-detail-breadcrumbs"
         />
-        <EmptyState message="We couldn't find this app in the AI Trust Index." showBorder />
+        <EmptyState
+          icon={SearchX}
+          message="We couldn't find this app in the AI Trust Index."
+          showBorder
+        />
         <Box sx={{ display: "flex", justifyContent: "center", mt: "16px" }}>
           <CustomizableButton
             text="Back to Browse"
