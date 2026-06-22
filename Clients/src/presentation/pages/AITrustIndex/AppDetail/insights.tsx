@@ -1,12 +1,50 @@
 // Derived insight blocks for the AI Trust Index app detail page. Ported from the
 // public website (components/ai-trust-index/app-insights.tsx). All blocks derive
 // from data the record already holds (+ the full app list passed in); no fetching.
+import { useState } from "react";
 import { Box, Stack, Typography, useTheme } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import type { TrustIndexAppData } from "../shared";
 import { faviconUrl } from "../shared";
 import { INDICATOR_GAP_LABELS, type IndicatorMap } from "../rubric";
 import { palette } from "../../../themes/palette";
+
+/**
+ * Favicon for a related app that falls back to the app's initial when the icon
+ * service has no entry (some domains 404 on the favicon CDN), matching the
+ * fallback used on the cards and the detail header.
+ */
+function RelatedAppIcon({ domain, name }: { domain: string; name: string }) {
+  const [failed, setFailed] = useState(false);
+  if (domain && !failed) {
+    return (
+      <img
+        src={faviconUrl(domain)}
+        alt={name}
+        width={20}
+        height={20}
+        onError={() => setFailed(true)}
+        style={{ display: "block" }}
+      />
+    );
+  }
+  return (
+    <Box
+      sx={{
+        width: 20,
+        height: 20,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: "12px",
+        fontWeight: 600,
+        color: palette.text.tertiary,
+      }}
+    >
+      {(name || "?").charAt(0).toUpperCase()}
+    </Box>
+  );
+}
 
 const VERDICT_QUALITY: Record<string, string> = {
   A: "discloses its data practices clearly",
@@ -179,13 +217,7 @@ export function RelatedApps({
                 "&:hover": { backgroundColor: palette.background.accent },
               }}
             >
-              <img
-                src={faviconUrl(a.domain)}
-                alt={a.name}
-                width={20}
-                height={20}
-                style={{ display: "block" }}
-              />
+              <RelatedAppIcon domain={a.domain} name={a.name} />
               <Typography
                 sx={{ flex: 1, fontSize: "13px", fontWeight: 500, color: palette.text.tertiary }}
               >

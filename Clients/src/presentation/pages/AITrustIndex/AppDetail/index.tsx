@@ -282,8 +282,9 @@ export default function AppDetail() {
           </SectionCard>
         )}
 
-        {/* Comparison strip */}
-        {detail && <ComparisonStrip app={detail} allApps={allApps} />}
+        {/* Comparison strip — only once the full catalog has loaded, so it never
+            flashes "#0 of 0" / "—" while allApps is still empty. */}
+        {detail && allApps.length > 0 && <ComparisonStrip app={detail} allApps={allApps} />}
 
         {/* Grade scale */}
         {detail && (
@@ -459,7 +460,7 @@ export default function AppDetail() {
         )}
 
         {/* Related apps */}
-        {detail && <RelatedApps app={detail} allApps={allApps} />}
+        {detail && allApps.length > 0 && <RelatedApps app={detail} allApps={allApps} />}
       </Stack>
     </Box>
   );

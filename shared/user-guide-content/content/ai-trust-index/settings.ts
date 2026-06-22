@@ -40,18 +40,18 @@ export const aiTrustIndexSettingsContent: ArticleContent = {
     },
     {
       type: 'heading',
-      id: 'fallback',
+      id: 'no-recipients',
       level: 2,
-      text: 'Default fallback',
+      text: 'When no recipients are configured',
     },
     {
       type: 'paragraph',
-      text: 'If no recipients are configured, VerifyWise falls back to sending the digest to all Admin users in the organisation. This ensures digest emails are never silently dropped. Once you configure at least one recipient (user or email), the fallback is no longer used.',
+      text: 'Digests are sent only to the recipients you configure here. If the recipient list is empty, no digest is sent — VerifyWise does not fall back to emailing Admins. Configuring recipients is the Admin\'s responsibility.',
     },
     {
       type: 'callout',
       variant: 'tip',
-      text: 'If you configure a recipient and then remove them, the fallback takes over and emails Admins. To stop digests entirely, leave the list empty and either make sure no Admin needs the emails or untrack all apps.',
+      text: 'To stop digests entirely, leave the recipient list empty. To resume them, add at least one recipient (a user or an email address).',
     },
     {
       type: 'heading',
@@ -65,7 +65,7 @@ export const aiTrustIndexSettingsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Each app in the digest is listed by its name, and changed apps show their current grade (for example, "Paxton AI — now grade B") so recipients can see what changed at a glance.',
+      text: 'Each app in the digest is listed by its name, and changed apps describe what changed (for example, "Paxton AI — grade B → C, policy updated") so recipients can see at a glance what moved. Grade changes use the displayed grade, the same governance grade shown throughout the module.',
     },
     {
       type: 'table',

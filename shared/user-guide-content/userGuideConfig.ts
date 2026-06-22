@@ -831,7 +831,7 @@ export const collections: Collection[] = [
         id: 'settings',
         title: 'Configuring email recipients',
         description: 'Choose which users and email addresses receive the weekly AI Trust Index change digest.',
-        keywords: ['settings', 'recipients', 'email', 'digest', 'admin', 'configure', 'notify', 'weekly', 'fallback', 'user', 'external'],
+        keywords: ['settings', 'recipients', 'email', 'digest', 'admin', 'configure', 'notify', 'weekly', 'user', 'external'],
       },
     ],
   },

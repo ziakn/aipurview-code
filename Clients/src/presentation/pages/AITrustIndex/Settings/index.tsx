@@ -36,6 +36,14 @@ export default function Settings() {
 
   const [recipientUserIds, setRecipientUserIds] = useState<number[]>([]);
   const [recipientEmails, setRecipientEmails] = useState<string[]>([]);
+  // Brief "Saved" confirmation so a successful auto-save is distinguishable from
+  // nothing happening. Cleared after a couple of seconds.
+  const [justSaved, setJustSaved] = useState(false);
+  useEffect(() => {
+    if (!justSaved) return undefined;
+    const t = setTimeout(() => setJustSaved(false), 2000);
+    return () => clearTimeout(t);
+  }, [justSaved]);
   // Skip the very first auto-save so loading the saved value doesn't trigger a write.
   const hydratedRef = useRef(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -72,7 +80,10 @@ export default function Settings() {
     debounceRef.current = setTimeout(() => {
       updateSettings.mutate(
         { recipientUserIds, recipientEmails },
-        { onError: () => showError("We couldn't save your recipient changes. Please try again.") },
+        {
+          onSuccess: () => setJustSaved(true),
+          onError: () => showError("We couldn't save your recipient changes. Please try again."),
+        },
       );
     }, 600);
     return () => {
@@ -181,6 +192,9 @@ export default function Settings() {
                   Saving…
                 </Typography>
               </Stack>
+            )}
+            {!updateSettings.isPending && justSaved && (
+              <Typography sx={{ fontSize: "12px", color: palette.brand.primary }}>Saved</Typography>
             )}
           </Stack>
         </Stack>
