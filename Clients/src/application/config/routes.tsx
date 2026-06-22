@@ -88,6 +88,19 @@ const RepositoriesPage = lazyRoute(
 const ScanDetailsPage = lazyRoute(
   () => import("../../presentation/pages/AIDetection/ScanDetailsPage"),
 );
+// ── AI Trust Index routes ─────────────────────────────────────────────
+const AITrustIndex = lazyRoute(() => import("../../presentation/pages/AITrustIndex"));
+const AITrustIndexBrowse = lazyRoute(() => import("../../presentation/pages/AITrustIndex/Browse"));
+const AITrustIndexTracked = lazyRoute(
+  () => import("../../presentation/pages/AITrustIndex/Tracked"),
+);
+const AITrustIndexSettings = lazyRoute(
+  () => import("../../presentation/pages/AITrustIndex/Settings"),
+);
+const AITrustIndexDetail = lazyRoute(
+  () => import("../../presentation/pages/AITrustIndex/AppDetail"),
+);
+
 const InsightsPage = lazyRoute(() => import("../../presentation/pages/ShadowAI/InsightsPage"));
 const UserActivityPage = lazyRoute(
   () => import("../../presentation/pages/ShadowAI/UserActivityPage"),
@@ -731,6 +744,46 @@ export const createRoutes = (
       element={
         <Suspense fallback={<LazyFallback />}>
           <ScanDetailsPage />
+        </Suspense>
+      }
+    />
+    <Route
+      path="/ai-trust-index"
+      element={
+        <Suspense fallback={<LazyFallback />}>
+          <AITrustIndex />
+        </Suspense>
+      }
+    />
+    <Route
+      path="/ai-trust-index/browse"
+      element={
+        <Suspense fallback={<LazyFallback />}>
+          <AITrustIndexBrowse />
+        </Suspense>
+      }
+    />
+    <Route
+      path="/ai-trust-index/tracked"
+      element={
+        <Suspense fallback={<LazyFallback />}>
+          <AITrustIndexTracked />
+        </Suspense>
+      }
+    />
+    <Route
+      path="/ai-trust-index/settings"
+      element={
+        <Suspense fallback={<LazyFallback />}>
+          <AITrustIndexSettings />
+        </Suspense>
+      }
+    />
+    <Route
+      path="/ai-trust-index/:slug"
+      element={
+        <Suspense fallback={<LazyFallback />}>
+          <AITrustIndexDetail />
         </Suspense>
       }
     />
