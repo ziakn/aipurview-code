@@ -29,6 +29,9 @@ export function useTrackApp() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: [KEY, "apps"] });
       qc.invalidateQueries({ queryKey: [KEY, "tracked"] });
+      // The detail page reads is_tracked from [KEY, "app", slug]; invalidate the
+      // "app" prefix so its Track/Untrack button reflects the new state.
+      qc.invalidateQueries({ queryKey: [KEY, "app"] });
     },
   });
 }
@@ -39,6 +42,7 @@ export function useTrackAppsBulk() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: [KEY, "apps"] });
       qc.invalidateQueries({ queryKey: [KEY, "tracked"] });
+      qc.invalidateQueries({ queryKey: [KEY, "app"] });
     },
   });
 }
@@ -49,6 +53,7 @@ export function useUntrackApp() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: [KEY, "apps"] });
       qc.invalidateQueries({ queryKey: [KEY, "tracked"] });
+      qc.invalidateQueries({ queryKey: [KEY, "app"] });
     },
   });
 }
