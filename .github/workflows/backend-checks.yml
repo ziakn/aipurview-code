@@ -100,13 +100,16 @@ jobs:
           npm run generate:swagger
           npm run generate:endpoints
 
+      - name: Format generated files
+        run: npx prettier --write swagger.yaml ../docs/api-docs/src/config/endpoints.ts
+
       - name: Check API documentation drift
         run: npm run check:api-drift
 
       - name: Ensure generated files are up to date
         run: |
-          git diff --exit-code swagger.yaml || { echo "swagger.yaml is out of date. Run 'npm run generate:swagger' and commit the result."; exit 1; }
-          git diff --exit-code ../docs/api-docs/src/config/endpoints.ts || { echo "endpoints.ts is out of date. Run 'npm run generate:endpoints' and commit the result."; exit 1; }
+          git diff --exit-code swagger.yaml || { echo "swagger.yaml is out of date. Run 'npm run generate:swagger', format with prettier, and commit the result."; exit 1; }
+          git diff --exit-code ../docs/api-docs/src/config/endpoints.ts || { echo "endpoints.ts is out of date. Run 'npm run generate:endpoints', format with prettier, and commit the result."; exit 1; }
 
   dependency-review:
     name: Dependency Review
