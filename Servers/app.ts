@@ -242,7 +242,9 @@ export function createApp(preRoutesMiddleware?: RequestHandler[]): express.Appli
   app.use("/api/subscriptions", subscriptionRoutes);
   app.use("/api/tasks", taskRoutes);
   app.use("/api/deadlines", deadlineRoutes);
-  app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
+  if (process.env.NODE_ENV !== "production") {
+    app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
+  }
   app.use("/api/policies", policyRoutes);
   app.use("/api/policies", policyFolderRoutes);
   app.use("/api/slackWebhooks", slackWebhookRoutes);
