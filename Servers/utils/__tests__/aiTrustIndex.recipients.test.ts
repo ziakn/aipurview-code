@@ -21,6 +21,7 @@ describe("resolveRecipients", () => {
   beforeEach(() => {
     q.mockReset();
     (logger.warn as jest.Mock).mockReset();
+    (logger.info as jest.Mock).mockReset();
   });
   it("unions configured users and free-text emails", async () => {
     q.mockResolvedValueOnce([{ recipient_user_ids: [1], recipient_emails: ["dpo@acme.com"] }]) // settings
@@ -28,29 +29,23 @@ describe("resolveRecipients", () => {
     const r = await resolveRecipients(7);
     expect(r.sort()).toEqual(["dpo@acme.com", "user1@acme.com"]);
   });
-  it("falls back to org Admins when no recipients are configured", async () => {
-    q.mockResolvedValueOnce([{ recipient_user_ids: [], recipient_emails: [] }]) // settings
-      .mockResolvedValueOnce([{ email: "admin@acme.com" }]); // admin fallback (user-email query skipped)
-    const r = await resolveRecipients(7);
-    expect(r).toEqual(["admin@acme.com"]);
-    const adminSql = q.mock.calls[1][0];
-    expect(adminSql).toMatch(/role/i);
-    expect(adminSql).toMatch(/organization_id\s*=\s*:organizationId/);
-  });
-  it("falls back to a SuperAdmin (org_id NULL) when the org has no Admin", async () => {
-    q.mockResolvedValueOnce([{ recipient_user_ids: [], recipient_emails: [] }]) // settings
-      .mockResolvedValueOnce([{ email: "root@verifywise.ai" }]); // SuperAdmin fallback
-    const r = await resolveRecipients(7);
-    expect(r).toEqual(["root@verifywise.ai"]);
-    const adminSql = q.mock.calls[1][0];
-    expect(adminSql).toMatch(/SuperAdmin/);
-  });
-  it("returns no recipients and warns when nothing resolves", async () => {
-    q.mockResolvedValueOnce([{ recipient_user_ids: [], recipient_emails: [] }]) // settings
-      .mockResolvedValueOnce([]); // no admin, no superadmin
+  it("returns an empty list and does NOT fall back to Admins/SuperAdmins when nothing is configured", async () => {
+    // By design there is no Admin/SuperAdmin fallback: managing recipients is the
+    // admin's duty, and an org with no configured recipients gets no digest.
+    q.mockResolvedValueOnce([{ recipient_user_ids: [], recipient_emails: [] }]); // settings only
     const r = await resolveRecipients(7);
     expect(r).toEqual([]);
-    expect(logger.warn as jest.Mock).toHaveBeenCalledTimes(1);
-    expect((logger.warn as jest.Mock).mock.calls[0][0]).toMatch(/no resolvable recipients/);
+    // Only the settings query ran — no second query for roles/Admins/SuperAdmins.
+    expect(q).toHaveBeenCalledTimes(1);
+    const everySql = q.mock.calls.map((c) => String(c[0])).join("\n");
+    expect(everySql).not.toMatch(/Admin/i);
+    expect(everySql).not.toMatch(/roles/i);
+  });
+  it("logs an info note (not a warning) when an org has changes but no configured recipients", async () => {
+    q.mockResolvedValueOnce([{ recipient_user_ids: [], recipient_emails: [] }]); // settings only
+    await resolveRecipients(7);
+    expect(logger.warn as jest.Mock).not.toHaveBeenCalled();
+    expect(logger.info as jest.Mock).toHaveBeenCalledTimes(1);
+    expect((logger.info as jest.Mock).mock.calls[0][0]).toMatch(/no configured recipients/);
   });
 });

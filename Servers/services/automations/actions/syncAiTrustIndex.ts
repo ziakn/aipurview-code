@@ -12,7 +12,12 @@ import { sendAutomationEmail } from "../../emailService";
 import { compileMjmlToHtml } from "../../../tools/mjmlCompiler";
 import logger from "../../../utils/logger/fileLogger";
 
-const APP_URL = (process.env.FRONTEND_URL ?? "http://localhost:5173") + "/ai-trust-index/tracked";
+const FRONTEND = process.env.FRONTEND_URL ?? "http://localhost:5173";
+// Deep links surfaced in the digest. The module link lands on Browse (the bare
+// /ai-trust-index path redirects there); tracked and settings are direct.
+const MODULE_URL = FRONTEND + "/ai-trust-index/browse";
+const TRACKED_URL = FRONTEND + "/ai-trust-index/tracked";
+const SETTINGS_URL = FRONTEND + "/ai-trust-index/settings";
 
 // Escape HTML metacharacters so a slug can never inject markup into the
 // rendered email (defensive — the feed is first-party, but the digest is HTML).
@@ -27,7 +32,8 @@ export function escapeHtml(s: string): string {
 }
 
 // A single line in a digest section: the human app name plus optional trailing
-// detail (e.g. "now grade B"). Falls back to the slug when no name resolved.
+// detail describing what changed (e.g. "grade B → C, policy updated"). Falls
+// back to the slug when no name resolved.
 export interface DigestItem {
   name: string;
   detail?: string;
@@ -53,7 +59,9 @@ async function renderDigest(orgChanged: DigestItem[], orgRemoved: DigestItem[]):
   return compileMjmlToHtml(template, {
     changedSection: sectionMjml("Changed", orgChanged),
     removedSection: sectionMjml("No longer assessed", orgRemoved),
-    appUrl: APP_URL,
+    moduleUrl: MODULE_URL,
+    trackedUrl: TRACKED_URL,
+    settingsUrl: SETTINGS_URL,
   });
 }
 
@@ -120,7 +128,13 @@ export async function syncAiTrustIndex(deps?: { feed?: unknown }): Promise<{
     };
   }
 
-  const changedSlugs = Array.from(new Set([...materialChanged, ...newlyRemoved]));
+  // Map each changed slug to its human-readable change summary (e.g. "grade B →
+  // C", "policy updated"). These come from upsertFeedTx, which compares the
+  // previous and current records using displayedGrade — the governance grade.
+  const changeBySlug = new Map(materialChanged.map((m) => [m.slug, m.changes]));
+  const changedSlugs = Array.from(
+    new Set([...materialChanged.map((m) => m.slug), ...newlyRemoved]),
+  );
   let orgsEmailed = 0;
   if (changedSlugs.length) {
     const affected = await getAffectedOrgsBySlugs(changedSlugs);
@@ -132,9 +146,10 @@ export async function syncAiTrustIndex(deps?: { feed?: unknown }): Promise<{
       if (newlyRemoved.includes(row.app_slug)) {
         bucket.removed.push({ name });
       } else {
+        const changes = changeBySlug.get(row.app_slug);
         bucket.changed.push({
           name,
-          detail: row.letter_grade ? `now grade ${row.letter_grade}` : undefined,
+          detail: changes && changes.length ? changes.join(", ") : undefined,
         });
       }
       byOrg.set(row.organization_id, bucket);

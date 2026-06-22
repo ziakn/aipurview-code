@@ -5,7 +5,12 @@ jest.mock("../../database/db", () => ({
     transaction: jest.fn((cb: (t: unknown) => unknown) => cb({})),
   },
 }));
-import { normalizeSlug, getAppsQuery, upsertFeedTx } from "../aiTrustIndex.utils";
+import {
+  normalizeSlug,
+  getAppsQuery,
+  upsertFeedTx,
+  describeMaterialChanges,
+} from "../aiTrustIndex.utils";
 import { sequelize } from "../../database/db";
 import { ITrustIndexAppData } from "../../domain.layer/interfaces/i.aiTrustIndex";
 
@@ -195,5 +200,54 @@ describe("upsertFeedTx soft-delete", () => {
       /UPDATE ai_trust_index_meta[\s\S]*last_good_count/.test(c[0]),
     );
     expect(metaCall![1].replacements.count).toBe(1);
+  });
+});
+
+describe("describeMaterialChanges", () => {
+  it("reports a grade change using displayedGrade, not letterGrade", () => {
+    const prev = { ...feedApp("a0"), letterGrade: "A", displayedGrade: "B" };
+    // letterGrade unchanged (A→A) but displayedGrade moved B→C: the digest must
+    // follow the governance grade, so it reports the displayed change.
+    const next = { ...feedApp("a0"), letterGrade: "A", displayedGrade: "C" };
+    expect(describeMaterialChanges(prev, next)).toContain("grade B → C");
+  });
+
+  it("does NOT report a grade transition when only the uncapped letterGrade moved", () => {
+    // letterGrade A→B but displayedGrade stays B and nothing else changed. The
+    // digest must not claim a grade transition ("B → ..."); with no other
+    // material change it falls back to stating the current displayed grade.
+    const prev = { ...feedApp("a0"), letterGrade: "A", displayedGrade: "B" };
+    const next = { ...feedApp("a0"), letterGrade: "B", displayedGrade: "B" };
+    const out = describeMaterialChanges(prev, next);
+    expect(out).toEqual(["grade B"]);
+    expect(out.some((c) => c.includes("→"))).toBe(false);
+  });
+
+  it("reports a score change as old → new", () => {
+    const prev = { ...feedApp("a0"), scoreOutOf100: 78 };
+    const next = { ...feedApp("a0"), scoreOutOf100: 71 };
+    expect(describeMaterialChanges(prev, next)).toContain("score 78 → 71");
+  });
+
+  it("reports a new dealbreaker flag and a policy update together", () => {
+    const prev = { ...feedApp("a0"), dealbreakerFlags: [], policyLastUpdated: "2026-01-01" };
+    const next = {
+      ...feedApp("a0"),
+      dealbreakerFlags: ["sells data with no opt-out"],
+      policyLastUpdated: "2026-06-01",
+    };
+    const out = describeMaterialChanges(prev, next);
+    expect(out).toContain("new dealbreaker flag");
+    expect(out).toContain("policy updated");
+  });
+
+  it("reports biometrics turning on", () => {
+    const prev = { ...feedApp("a0"), processesBiometrics: false };
+    const next = { ...feedApp("a0"), processesBiometrics: true };
+    expect(describeMaterialChanges(prev, next)).toContain("now processes biometrics");
+  });
+
+  it("falls back to the current displayed grade when no previous record exists", () => {
+    expect(describeMaterialChanges(null, feedApp("a0"))).toEqual(["grade B"]);
   });
 });

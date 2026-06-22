@@ -12,15 +12,20 @@
         </mj-text>
         {{changedSection}}
         {{removedSection}}
-        <mj-button background-color="#13715B" href="{{appUrl}}" align="left" border-radius="4px">
+        <mj-button background-color="#13715B" href="{{moduleUrl}}" align="left" border-radius="4px">
           Open AI Trust Index
         </mj-button>
+        <mj-text font-size="13px" color="#475467" padding-top="8px">
+          Or jump straight to your <a href="{{trackedUrl}}" style="color:#13715B;">tracked apps</a>.
+        </mj-text>
       </mj-column>
     </mj-section>
     <mj-section padding="12px">
       <mj-column>
         <mj-text font-size="11px" color="#98a2b3" align="center">
           You receive this because you are a configured recipient for AI Trust Index alerts.
+          An administrator can manage recipients in
+          <a href="{{settingsUrl}}" style="color:#98a2b3;text-decoration:underline;">AI Trust Index settings</a>.
         </mj-text>
       </mj-column>
     </mj-section>

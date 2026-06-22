@@ -276,6 +276,52 @@ export async function getMetaQuery() {
   return rows[0] ?? { seeded_at: null, last_good_count: null, last_run_week: null };
 }
 
+// Human-readable description of what changed on a tracked app, surfaced in the
+// weekly digest. `changes` reads like "grade B → C", "score 78 → 71", "policy
+// updated" — built from the material fields so a recipient sees what moved, not
+// just the current grade. Grade comparisons use displayedGrade (the B-capped,
+// governance-relevant grade), never the raw letterGrade.
+export interface MaterialChange {
+  slug: string;
+  changes: string[];
+}
+
+// Compare the material fields of the previous and current app records and
+// return human-readable change lines. Grade uses displayedGrade (B-capped) so
+// the digest matches the grade shown everywhere else in the product.
+export function describeMaterialChanges(
+  prev: Partial<ITrustIndexAppData> | null | undefined,
+  next: ITrustIndexAppData,
+): string[] {
+  const out: string[] = [];
+  const prevGrade = prev?.displayedGrade ?? null;
+  if (prevGrade && prevGrade !== next.displayedGrade) {
+    out.push(`grade ${prevGrade} → ${next.displayedGrade}`);
+  } else if (!prevGrade && next.displayedGrade) {
+    out.push(`grade ${next.displayedGrade}`);
+  }
+  if (prev?.scoreOutOf100 != null && prev.scoreOutOf100 !== next.scoreOutOf100) {
+    out.push(`score ${prev.scoreOutOf100} → ${next.scoreOutOf100}`);
+  }
+  const prevFlags = (prev?.dealbreakerFlags ?? []).length;
+  const nextFlags = (next.dealbreakerFlags ?? []).length;
+  if (prevFlags !== nextFlags) {
+    out.push(nextFlags > prevFlags ? "new dealbreaker flag" : "dealbreaker flag cleared");
+  }
+  if ((prev?.policyLastUpdated ?? null) !== (next.policyLastUpdated ?? null)) {
+    out.push("policy updated");
+  }
+  if (prev?.processesBiometrics != null && prev.processesBiometrics !== next.processesBiometrics) {
+    out.push(
+      next.processesBiometrics ? "now processes biometrics" : "no longer processes biometrics",
+    );
+  }
+  // Fall back to the current grade if the material hash differed but none of the
+  // mapped fields explain it (defensive — keeps the line meaningful).
+  if (!out.length) out.push(`grade ${next.displayedGrade}`);
+  return out;
+}
+
 export async function upsertFeedTx(
   apps: ITrustIndexAppData[],
   // Every slug present in the raw feed, including apps dropped for a missing
@@ -289,7 +335,7 @@ export async function upsertFeedTx(
   // count when omitted — i.e. today's behavior.
   rawCount?: number,
 ): Promise<{
-  materialChanged: string[];
+  materialChanged: MaterialChange[];
   newlyRemoved: string[];
   wasFirstSeed: boolean;
 }> {
@@ -297,7 +343,7 @@ export async function upsertFeedTx(
     return { materialChanged: [], newlyRemoved: [], wasFirstSeed: false };
   }
 
-  const materialChanged: string[] = [];
+  const materialChanged: MaterialChange[] = [];
   const newlyRemoved: string[] = [];
   let wasFirstSeed = false;
 
@@ -314,12 +360,17 @@ export async function upsertFeedTx(
       upsertedSlugs.push(slug);
       const { materialHash, fullHash } = computeHashes(app);
       const existing = (await sequelize.query(
-        `SELECT material_hash, full_hash FROM ai_trust_index_apps WHERE slug = :slug;`,
+        `SELECT material_hash, full_hash, data FROM ai_trust_index_apps WHERE slug = :slug;`,
         { replacements: { slug }, type: QueryTypes.SELECT, transaction },
       )) as any[];
 
       if (existing.length) {
-        if (existing[0].material_hash !== materialHash) materialChanged.push(slug);
+        if (existing[0].material_hash !== materialHash) {
+          // `data` is JSONB — the driver returns it parsed. Read the previous
+          // material fields from it so the digest can show old → new.
+          const prev = existing[0].data as Partial<ITrustIndexAppData> | null;
+          materialChanged.push({ slug, changes: describeMaterialChanges(prev, app) });
+        }
         const fullChanged = existing[0].full_hash !== fullHash;
         await sequelize.query(
           `UPDATE ai_trust_index_apps SET
@@ -406,13 +457,14 @@ export async function getAffectedOrgsBySlugs(slugs: string[]) {
       organization_id: number;
       app_slug: string;
       name: string | null;
-      letter_grade: string | null;
     }[];
-  // Join the apps table so the digest can show the human name + current grade
-  // instead of the raw slug. LEFT JOIN keeps a tracked-but-since-removed app in
-  // the result (the apps row is soft-deleted, not deleted, so its name resolves).
+  // Join the apps table so the digest can show the human name instead of the raw
+  // slug. LEFT JOIN keeps a tracked-but-since-removed app in the result (the apps
+  // row is soft-deleted, not deleted, so its name still resolves). The grade is
+  // no longer read here — the digest's per-app change summary (built from
+  // displayedGrade in upsertFeedTx) carries the grade now.
   return (await sequelize.query(
-    `SELECT DISTINCT t.organization_id, t.app_slug, a.name, a.letter_grade
+    `SELECT DISTINCT t.organization_id, t.app_slug, a.name
      FROM ai_trust_index_tracked_apps t
      LEFT JOIN ai_trust_index_apps a ON a.slug = t.app_slug
      WHERE t.app_slug = ANY(ARRAY[:slugs]::varchar[]);`,
@@ -421,7 +473,6 @@ export async function getAffectedOrgsBySlugs(slugs: string[]) {
     organization_id: number;
     app_slug: string;
     name: string | null;
-    letter_grade: string | null;
   }[];
 }
 
@@ -442,29 +493,17 @@ export async function resolveRecipients(organizationId: number): Promise<string[
     userEmails = rows.map((r) => r.email);
   }
 
-  let recipients = Array.from(
+  const recipients = Array.from(
     new Set([...userEmails, ...freeText].map((e) => e.trim().toLowerCase()).filter(Boolean)),
   );
+  // No Admin/SuperAdmin fallback by design: digests go only to the recipients an
+  // org explicitly configures. Managing the recipient list is the admin's duty
+  // (via AI Trust Index → Settings). An org with no configured recipients
+  // receives no digest rather than mailing every Admin or platform SuperAdmin.
   if (recipients.length === 0) {
-    // Fallback when an org has no configured recipients. Org Admins are
-    // org-scoped; SuperAdmins are platform-global stewards (their
-    // organization_id is NULL), so they must be matched by role alone — the
-    // org predicate would otherwise exclude them and leave the org with no
-    // recipient at all.
-    const admins = (await sequelize.query(
-      `SELECT u.email FROM users u JOIN roles r ON u.role_id = r.id
-       WHERE (u.organization_id = :organizationId AND r.name = 'Admin')
-          OR r.name = 'SuperAdmin';`,
-      { replacements: { organizationId }, type: QueryTypes.SELECT },
-    )) as { email: string }[];
-    recipients = Array.from(
-      new Set(admins.map((a) => a.email.trim().toLowerCase()).filter(Boolean)),
+    logger.info(
+      `[ai-trust-index] org ${organizationId} has a tracked-app change but no configured recipients; digest skipped`,
     );
-    if (recipients.length === 0) {
-      logger.warn(
-        `[ai-trust-index] org ${organizationId} has a tracked-app change but no resolvable recipients (no configured recipients, no Admin, no SuperAdmin); digest skipped`,
-      );
-    }
   }
   return recipients;
 }

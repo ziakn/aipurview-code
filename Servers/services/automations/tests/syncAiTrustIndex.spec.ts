@@ -41,7 +41,7 @@ describe("syncAiTrustIndex", () => {
       last_run_week: null,
     });
     (utils.upsertFeedTx as jest.Mock).mockResolvedValue({
-      materialChanged: ["a0"],
+      materialChanged: [{ slug: "a0", changes: ["grade A → B"] }],
       newlyRemoved: [],
       wasFirstSeed: true,
     });
@@ -57,13 +57,13 @@ describe("syncAiTrustIndex", () => {
       last_run_week: "2026-W10",
     });
     (utils.upsertFeedTx as jest.Mock).mockResolvedValue({
-      materialChanged: ["a0"],
+      materialChanged: [{ slug: "a0", changes: ["grade A → B", "policy updated"] }],
       newlyRemoved: ["a9"],
       wasFirstSeed: false,
     });
     (utils.getAffectedOrgsBySlugs as jest.Mock).mockResolvedValue([
-      { organization_id: 7, app_slug: "a0" },
-      { organization_id: 7, app_slug: "a9" },
+      { organization_id: 7, app_slug: "a0", name: "App Zero" },
+      { organization_id: 7, app_slug: "a9", name: "App Nine" },
     ]);
     (utils.resolveRecipients as jest.Mock).mockResolvedValue(["admin@acme.com"]);
     const r = await syncAiTrustIndex({ feed });
