@@ -105,9 +105,7 @@
       ],
       "policyUrl": "https://www.anthropic.com/legal/privacy",
       "policyLastUpdated": "2026-07-08",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/claude.ai.ico",
       "history": {
@@ -292,10 +290,7 @@
       ],
       "policyUrl": "https://openai.com/policies/privacy-policy/",
       "policyLastUpdated": "2026-04-28",
-      "modalities": [
-        "text",
-        "image"
-      ],
+      "modalities": ["text", "image"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/openai.com.ico",
       "history": {
@@ -480,9 +475,7 @@
       ],
       "policyUrl": "https://www.perplexity.ai/hub/legal/privacy-policy",
       "policyLastUpdated": "2026-02-05",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/perplexity.ai.ico",
       "history": {
@@ -667,10 +660,7 @@
       ],
       "policyUrl": "https://support.google.com/gemini/answer/13594961",
       "policyLastUpdated": "2026-05-26",
-      "modalities": [
-        "text",
-        "image"
-      ],
+      "modalities": ["text", "image"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/gemini.google.com.ico",
       "history": {
@@ -855,10 +845,7 @@
       ],
       "policyUrl": "https://www.facebook.com/privacy/policy/",
       "policyLastUpdated": "2025-12-16",
-      "modalities": [
-        "text",
-        "image"
-      ],
+      "modalities": ["text", "image"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/meta.ai.ico",
       "history": {
@@ -1043,10 +1030,7 @@
       ],
       "policyUrl": "https://www.canva.com/policies/privacy-policy/",
       "policyLastUpdated": "2026-04-15",
-      "modalities": [
-        "image",
-        "video"
-      ],
+      "modalities": ["image", "video"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/canva.com.ico",
       "history": {
@@ -1228,9 +1212,7 @@
       ],
       "policyUrl": "https://elevenlabs.io/privacy-policy",
       "policyLastUpdated": "2026-05-20",
-      "modalities": [
-        "audio"
-      ],
+      "modalities": ["audio"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/elevenlabs.io.ico",
       "history": {
@@ -1413,9 +1395,7 @@
       ],
       "policyUrl": "https://character.ai/privacy",
       "policyLastUpdated": "2025-08-27",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/character.ai.ico",
       "history": {
@@ -1600,9 +1580,7 @@
       ],
       "policyUrl": "https://cdn.deepseek.com/policies/en-US/deepseek-privacy-policy.html",
       "policyLastUpdated": "2026-02-10",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/deepseek.com.ico",
       "history": {
@@ -1789,10 +1767,7 @@
       ],
       "policyUrl": "https://x.ai/legal/privacy-policy",
       "policyLastUpdated": "2026-04-04",
-      "modalities": [
-        "text",
-        "image"
-      ],
+      "modalities": ["text", "image"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/x.ai.ico",
       "history": {
@@ -1979,9 +1954,7 @@
       ],
       "policyUrl": "https://janitorai.com/policy",
       "policyLastUpdated": "2025-12-11",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/janitorai.com.ico",
       "history": {
@@ -2166,9 +2139,7 @@
       ],
       "policyUrl": "https://leonardo.ai/privacy-policy/",
       "policyLastUpdated": "2026-01-19",
-      "modalities": [
-        "image"
-      ],
+      "modalities": ["image"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/leonardo.ai.ico",
       "history": {
@@ -2353,9 +2324,7 @@
       ],
       "policyUrl": "https://www.notion.com/trust/privacy-policy",
       "policyLastUpdated": "2025-09-29",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/notion.com.ico",
       "history": {
@@ -2542,9 +2511,7 @@
       ],
       "policyUrl": "https://www.photoroom.com/legal/privacy",
       "policyLastUpdated": "2026-03-01",
-      "modalities": [
-        "image"
-      ],
+      "modalities": ["image"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/photoroom.com.ico",
       "history": {
@@ -2729,9 +2696,7 @@
       ],
       "policyUrl": "https://www.grammarly.com/privacy-policy",
       "policyLastUpdated": "2025-10-29",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/grammarly.com.ico",
       "history": {
@@ -2919,10 +2884,7 @@
       ],
       "policyUrl": "https://kling.ai/docs/privacy-policy",
       "policyLastUpdated": "2026-04-21",
-      "modalities": [
-        "image",
-        "video"
-      ],
+      "modalities": ["image", "video"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/klingai.com.ico",
       "history": {
@@ -3107,9 +3069,7 @@
       ],
       "policyUrl": "https://www.faceapp.com/privacy",
       "policyLastUpdated": "2024-11-04",
-      "modalities": [
-        "image"
-      ],
+      "modalities": ["image"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/faceapp.com.ico",
       "history": {
@@ -3272,9 +3232,7 @@
       "letterGrade": "D",
       "displayedGrade": "D",
       "confidence": "Medium",
-      "dealbreakerFlags": [
-        "D1.4: we can give those same rights to others who work on our behalf"
-      ],
+      "dealbreakerFlags": ["D1.4: we can give those same rights to others who work on our behalf"],
       "summary": "Microsoft Copilot discloses basic AI identity and data access rights, but trains on user data with opt-out, grants itself broad perpetual rights to outputs, and lacks specificity on data processors, international safeguards, and children's governance.",
       "highlights": [
         {
@@ -3296,10 +3254,7 @@
       ],
       "policyUrl": "https://privacy.microsoft.com/en-us/privacystatement",
       "policyLastUpdated": "2026-06-12",
-      "modalities": [
-        "text",
-        "image"
-      ],
+      "modalities": ["text", "image"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/copilot.microsoft.com.ico",
       "history": {
@@ -3486,9 +3441,7 @@
       ],
       "policyUrl": "https://docs.midjourney.com/hc/en-us/articles/32083472637453-Privacy-Policy",
       "policyLastUpdated": "2025-06-02",
-      "modalities": [
-        "image"
-      ],
+      "modalities": ["image"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/midjourney.com.ico",
       "history": {
@@ -3675,9 +3628,7 @@
       ],
       "policyUrl": "https://civitai.com/content/privacy",
       "policyLastUpdated": "2024-02-01",
-      "modalities": [
-        "image"
-      ],
+      "modalities": ["image"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/civitai.com.ico",
       "history": {
@@ -3862,9 +3813,7 @@
       ],
       "policyUrl": "https://www.pixelcut.ai/privacy",
       "policyLastUpdated": "2026-05-18",
-      "modalities": [
-        "image"
-      ],
+      "modalities": ["image"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/pixelcut.ai.ico",
       "history": {
@@ -4051,9 +4000,7 @@
       ],
       "policyUrl": "https://www.magnific.com/legal/privacy",
       "policyLastUpdated": "2026-04-01",
-      "modalities": [
-        "image"
-      ],
+      "modalities": ["image"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/magnific.com.ico",
       "history": {
@@ -4241,9 +4188,7 @@
       ],
       "policyUrl": "https://picsart.com/privacy-policy/",
       "policyLastUpdated": "2023-11-16",
-      "modalities": [
-        "image"
-      ],
+      "modalities": ["image"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/picsart.com.ico",
       "history": {
@@ -4430,9 +4375,7 @@
       ],
       "policyUrl": "https://higgsfield.ai/privacy-policy",
       "policyLastUpdated": "2025-08-30",
-      "modalities": [
-        "image"
-      ],
+      "modalities": ["image"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/higgsfield.ai.ico",
       "history": {
@@ -4617,9 +4560,7 @@
       ],
       "policyUrl": "https://ideogram.ai/legal/privacy",
       "policyLastUpdated": "2025-01-15",
-      "modalities": [
-        "image"
-      ],
+      "modalities": ["image"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/ideogram.ai.ico",
       "history": {
@@ -4806,9 +4747,7 @@
       ],
       "policyUrl": "https://manus.im/privacy",
       "policyLastUpdated": "2026-04-30",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/manus.im.ico",
       "history": {
@@ -4993,9 +4932,7 @@
       ],
       "policyUrl": "https://quillbot.com/privacy",
       "policyLastUpdated": "2025-11-08",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/quillbot.com.ico",
       "history": {
@@ -5182,9 +5119,7 @@
       ],
       "policyUrl": "https://www.kimi.com/user/agreement/userPrivacy?version=v2",
       "policyLastUpdated": "2025-07-07",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/kimi.com.ico",
       "history": {
@@ -5369,9 +5304,7 @@
       ],
       "policyUrl": "https://legal.mistral.ai/terms/privacy-policy",
       "policyLastUpdated": "2026-05-27",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/mistral.ai.ico",
       "history": {
@@ -5553,9 +5486,7 @@
       ],
       "policyUrl": "https://node1.cdn2.seaart.ai/mirror/static/upload/policy.html",
       "policyLastUpdated": "2023-07-03",
-      "modalities": [
-        "image"
-      ],
+      "modalities": ["image"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/seaart.ai.ico",
       "history": {
@@ -5743,9 +5674,7 @@
       ],
       "policyUrl": "https://www.talkie-ai.com/static/privacy",
       "policyLastUpdated": "2025-12-09",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/talkie-ai.com.ico",
       "history": {
@@ -5930,9 +5859,7 @@
       ],
       "policyUrl": "https://www.cutout.pro/privacy",
       "policyLastUpdated": null,
-      "modalities": [
-        "image"
-      ],
+      "modalities": ["image"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/cutout.pro.ico",
       "history": {
@@ -6117,9 +6044,7 @@
       ],
       "policyUrl": "https://m.hypic.com/clause/hypic-privacy-policy",
       "policyLastUpdated": "2026-01-22",
-      "modalities": [
-        "image"
-      ],
+      "modalities": ["image"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/hypic.com.ico",
       "history": {
@@ -6306,9 +6231,7 @@
       ],
       "policyUrl": "https://www.facemojikeyboard.com/page/privacy/appstore/privacy.html",
       "policyLastUpdated": "2025-11-11",
-      "modalities": [
-        "image"
-      ],
+      "modalities": ["image"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/facemojikeyboard.com.ico",
       "history": {
@@ -6488,10 +6411,7 @@
       ],
       "policyUrl": "https://gamma.app/privacy",
       "policyLastUpdated": "2025-04-10",
-      "modalities": [
-        "text",
-        "image"
-      ],
+      "modalities": ["text", "image"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/gamma.app.ico",
       "history": {
@@ -6676,10 +6596,7 @@
       ],
       "policyUrl": "https://candy.ai/privacy-policy",
       "policyLastUpdated": "2026-05-27",
-      "modalities": [
-        "text",
-        "image"
-      ],
+      "modalities": ["text", "image"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/candy.ai.ico",
       "history": {
@@ -6864,9 +6781,7 @@
       ],
       "policyUrl": "https://app.remini.ai/privacy-and-cookie-policy",
       "policyLastUpdated": "2026-01-20",
-      "modalities": [
-        "image"
-      ],
+      "modalities": ["image"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/remini.ai.ico",
       "history": {
@@ -7053,10 +6968,7 @@
       ],
       "policyUrl": "https://pixverse.ai/en/privacy-policy",
       "policyLastUpdated": "2026-05-07",
-      "modalities": [
-        "image",
-        "video"
-      ],
+      "modalities": ["image", "video"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/pixverse.ai.ico",
       "history": {
@@ -7237,9 +7149,7 @@
       ],
       "policyUrl": "https://www.veed.io/privacy",
       "policyLastUpdated": "2025-01-06",
-      "modalities": [
-        "video"
-      ],
+      "modalities": ["video"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/veed.io.ico",
       "history": {
@@ -7424,9 +7334,7 @@
       ],
       "policyUrl": "https://huggingface.co/privacy",
       "policyLastUpdated": "2023-03-28",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/huggingface.co.ico",
       "history": {
@@ -7613,9 +7521,7 @@
       ],
       "policyUrl": "https://photomath.com/privacy/",
       "policyLastUpdated": "2023-10-31",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/photomath.com.ico",
       "history": {
@@ -7802,9 +7708,7 @@
       ],
       "policyUrl": "https://brainly.com/pages/privacy_policy",
       "policyLastUpdated": "2026-02-26",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/brainly.com.ico",
       "history": {
@@ -7989,9 +7893,7 @@
       ],
       "policyUrl": "https://support.google.com/notebooklm/answer/17004255",
       "policyLastUpdated": "2026-05-26",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/notebooklm.google.ico",
       "history": {
@@ -8175,9 +8077,7 @@
       ],
       "policyUrl": "https://cohere.com/privacy",
       "policyLastUpdated": "2026-05-01",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/cohere.com.ico",
       "history": {
@@ -8358,9 +8258,7 @@
       ],
       "policyUrl": "https://www.glean.com/privacy",
       "policyLastUpdated": "2026-04-01",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/glean.com.ico",
       "history": {
@@ -8541,9 +8439,7 @@
       ],
       "policyUrl": "https://writer.com/legal/privacy/",
       "policyLastUpdated": "2026-04-17",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/writer.com.ico",
       "history": {
@@ -8724,9 +8620,7 @@
       ],
       "policyUrl": "https://www.synthesia.io/legal/privacy-policy",
       "policyLastUpdated": "2025-01-30",
-      "modalities": [
-        "video"
-      ],
+      "modalities": ["video"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/synthesia.io.ico",
       "history": {
@@ -8907,9 +8801,7 @@
       ],
       "policyUrl": "https://www.harvey.ai/legal/privacy-policy",
       "policyLastUpdated": "2025-12-23",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/harvey.ai.ico",
       "history": {
@@ -9086,10 +8978,7 @@
       ],
       "policyUrl": "https://www.abridge.com/privacy",
       "policyLastUpdated": "2025-08-22",
-      "modalities": [
-        "audio",
-        "text"
-      ],
+      "modalities": ["audio", "text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/abridge.com.ico",
       "history": {
@@ -9268,9 +9157,7 @@
       ],
       "policyUrl": "https://www.databricks.com/legal/privacynotice",
       "policyLastUpdated": "2026-01-09",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/databricks.com.ico",
       "history": {
@@ -9451,9 +9338,7 @@
       ],
       "policyUrl": "https://www.snowflake.com/en/legal/privacy/privacy-policy/",
       "policyLastUpdated": "2025-11-28",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/snowflake.com.ico",
       "history": {
@@ -9634,10 +9519,7 @@
       ],
       "policyUrl": "https://www.granola.ai/privacy",
       "policyLastUpdated": "2025-12-19",
-      "modalities": [
-        "audio",
-        "text"
-      ],
+      "modalities": ["audio", "text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/granola.ai.ico",
       "history": {
@@ -9818,9 +9700,7 @@
       ],
       "policyUrl": "https://www.salesforce.com/company/privacy/full_privacy/",
       "policyLastUpdated": "2026-05-19",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/salesforce.com.ico",
       "history": {
@@ -10001,9 +9881,7 @@
       ],
       "policyUrl": "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement",
       "policyLastUpdated": "2026-04-27",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/github.com.ico",
       "history": {
@@ -10184,10 +10062,7 @@
       ],
       "policyUrl": "https://www.ambiencehealthcare.com/privacy",
       "policyLastUpdated": "2023-12",
-      "modalities": [
-        "audio",
-        "text"
-      ],
+      "modalities": ["audio", "text"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/ambiencehealthcare.com.ico",
       "history": {
@@ -10370,9 +10245,7 @@
       ],
       "policyUrl": "https://www.all-hands.dev/privacy",
       "policyLastUpdated": "2025-11-25",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/all-hands.dev.ico",
       "history": {
@@ -10555,9 +10428,7 @@
       ],
       "policyUrl": "https://www.fyxer.com/privacy-policy",
       "policyLastUpdated": "2024-09-30",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/fyxer.com.ico",
       "history": {
@@ -10738,10 +10609,7 @@
       ],
       "policyUrl": "https://sierra.ai/privacy-policy",
       "policyLastUpdated": "2026-06-17",
-      "modalities": [
-        "text",
-        "audio"
-      ],
+      "modalities": ["text", "audio"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/sierra.ai.ico",
       "history": {
@@ -10922,10 +10790,7 @@
       ],
       "policyUrl": "https://decagon.ai/legal/privacy",
       "policyLastUpdated": "2025-05-06",
-      "modalities": [
-        "text",
-        "audio"
-      ],
+      "modalities": ["text", "audio"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/decagon.ai.ico",
       "history": {
@@ -11107,10 +10972,7 @@
       ],
       "policyUrl": "https://www.alibabacloud.com/help/en/legal/latest/alibaba-cloud-international-website-privacy-policy",
       "policyLastUpdated": "2026-05-19",
-      "modalities": [
-        "text",
-        "image"
-      ],
+      "modalities": ["text", "image"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/qwen.ai.ico",
       "history": {
@@ -11297,10 +11159,7 @@
       ],
       "policyUrl": "https://poe.com/privacy",
       "policyLastUpdated": "2026-04-30",
-      "modalities": [
-        "text",
-        "image"
-      ],
+      "modalities": ["text", "image"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/poe.com.ico",
       "history": {
@@ -11488,10 +11347,7 @@
       ],
       "policyUrl": "https://crushonaiapk.com/privacy-policy/",
       "policyLastUpdated": "2025-07-22",
-      "modalities": [
-        "text",
-        "image"
-      ],
+      "modalities": ["text", "image"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/crushon.ai.ico",
       "history": {
@@ -11676,9 +11532,7 @@
       ],
       "policyUrl": "https://www.cursor.com/privacy",
       "policyLastUpdated": "2025-10-06",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/cursor.com.ico",
       "history": {
@@ -11865,9 +11719,7 @@
       ],
       "policyUrl": "https://lovable.dev/privacy",
       "policyLastUpdated": "2026-04-14",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/lovable.dev.ico",
       "history": {
@@ -12052,9 +11904,7 @@
       ],
       "policyUrl": "https://www.polybuzz.ai/privacy-policy",
       "policyLastUpdated": "2026-06-01",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/polybuzz.ai.ico",
       "history": {
@@ -12239,9 +12089,7 @@
       ],
       "policyUrl": "https://www.genspark.ai/privacy",
       "policyLastUpdated": "2026-03-12",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/genspark.ai.ico",
       "history": {
@@ -12424,9 +12272,7 @@
       ],
       "policyUrl": "https://suno.com/legal/privacy",
       "policyLastUpdated": "2026-03-26",
-      "modalities": [
-        "audio"
-      ],
+      "modalities": ["audio"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/suno.com.ico",
       "history": {
@@ -12611,10 +12457,7 @@
       ],
       "policyUrl": "https://www.capcut.com/privacy-policy",
       "policyLastUpdated": "2026-04-15",
-      "modalities": [
-        "image",
-        "video"
-      ],
+      "modalities": ["image", "video"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/capcut.com.ico",
       "history": {
@@ -12801,9 +12644,7 @@
       ],
       "policyUrl": "https://spicychat.ai/privacy",
       "policyLastUpdated": "2026-06-12",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/spicychat.ai.ico",
       "history": {
@@ -12989,10 +12830,7 @@
       ],
       "policyUrl": "https://otter.ai/privacy-policy",
       "policyLastUpdated": "2026-06-16",
-      "modalities": [
-        "text",
-        "audio"
-      ],
+      "modalities": ["text", "audio"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/otter.ai.ico",
       "history": {
@@ -13173,10 +13011,7 @@
       ],
       "policyUrl": "https://www.gong.io/legal/privacy-policy",
       "policyLastUpdated": "2026-04-01",
-      "modalities": [
-        "text",
-        "audio"
-      ],
+      "modalities": ["text", "audio"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/gong.io.ico",
       "history": {
@@ -13353,9 +13188,7 @@
       ],
       "policyUrl": "https://legal.ironcladapp.com/privacy-policy",
       "policyLastUpdated": "2026-05-15",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/ironcladapp.com.ico",
       "history": {
@@ -13536,9 +13369,7 @@
       ],
       "policyUrl": "https://sanalabs.com/legal/privacy-notice",
       "policyLastUpdated": "2026-04-22",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/sanalabs.com.ico",
       "history": {
@@ -13719,9 +13550,7 @@
       ],
       "policyUrl": "https://www.luminance.com/privacy-policy/",
       "policyLastUpdated": "2023-07-27",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/luminance.com.ico",
       "history": {
@@ -13902,9 +13731,7 @@
       ],
       "policyUrl": "https://www.tabnine.com/privacy-policy/",
       "policyLastUpdated": "2024-09-12",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/tabnine.com.ico",
       "history": {
@@ -14088,9 +13915,7 @@
       ],
       "policyUrl": "https://replit.com/privacy-policy",
       "policyLastUpdated": "2025-02-24",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/replit.com.ico",
       "history": {
@@ -14271,9 +14096,7 @@
       ],
       "policyUrl": "https://sourcegraph.com/terms/privacy",
       "policyLastUpdated": "2026-06-12",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/sourcegraph.com.ico",
       "history": {
@@ -14454,9 +14277,7 @@
       ],
       "policyUrl": "https://windsurf.com/privacy-policy",
       "policyLastUpdated": "2026-03-09",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/windsurf.com.ico",
       "history": {
@@ -14639,9 +14460,7 @@
       ],
       "policyUrl": "https://www.clay.com/privacy",
       "policyLastUpdated": "2025-07-03",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/clay.com.ico",
       "history": {
@@ -14824,9 +14643,7 @@
       ],
       "policyUrl": "https://www.apollo.io/privacy-policy",
       "policyLastUpdated": "2025-09-16",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/apollo.io.ico",
       "history": {
@@ -15009,9 +14826,7 @@
       ],
       "policyUrl": "https://www.copy.ai/privacy-notice",
       "policyLastUpdated": "2023-11-27",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/copy.ai.ico",
       "history": {
@@ -15192,9 +15007,7 @@
       ],
       "policyUrl": "https://www.vanta.com/legal/privacy",
       "policyLastUpdated": "2026-02-25",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/vanta.com.ico",
       "history": {
@@ -15377,9 +15190,7 @@
       ],
       "policyUrl": "https://drata.com/privacy",
       "policyLastUpdated": "2026-06-02",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/drata.com.ico",
       "history": {
@@ -15560,10 +15371,7 @@
       ],
       "policyUrl": "https://fireflies.ai/privacy-policy",
       "policyLastUpdated": "2026-03-06",
-      "modalities": [
-        "text",
-        "audio"
-      ],
+      "modalities": ["text", "audio"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/fireflies.ai.ico",
       "history": {
@@ -15744,10 +15552,7 @@
       ],
       "policyUrl": "https://www.fathom.ai/privacy",
       "policyLastUpdated": "2025-08-11",
-      "modalities": [
-        "text",
-        "audio"
-      ],
+      "modalities": ["text", "audio"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/fathom.ai.ico",
       "history": {
@@ -15928,10 +15733,7 @@
       ],
       "policyUrl": "https://www.read.ai/privacy-policy",
       "policyLastUpdated": "2026-02-26",
-      "modalities": [
-        "text",
-        "audio"
-      ],
+      "modalities": ["text", "audio"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/read.ai.ico",
       "history": {
@@ -16112,10 +15914,7 @@
       ],
       "policyUrl": "https://www.avoma.com/privacy-policy",
       "policyLastUpdated": "2026-01-02",
-      "modalities": [
-        "text",
-        "audio"
-      ],
+      "modalities": ["text", "audio"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/avoma.com.ico",
       "history": {
@@ -16296,9 +16095,7 @@
       ],
       "policyUrl": "https://www.getguru.com/privacy",
       "policyLastUpdated": "2026-03-25",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/getguru.com.ico",
       "history": {
@@ -16479,9 +16276,7 @@
       ],
       "policyUrl": "https://www.dashworks.ai/legal/privacy-policy",
       "policyLastUpdated": "2025-04-03",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/dashworks.ai.ico",
       "history": {
@@ -16662,9 +16457,7 @@
       ],
       "policyUrl": "https://www.hebbia.com/privacy",
       "policyLastUpdated": "2026-05-08",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/hebbia.com.ico",
       "history": {
@@ -16847,9 +16640,7 @@
       ],
       "policyUrl": "https://robinai.com/privacy-policy",
       "policyLastUpdated": null,
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/robinai.com.ico",
       "history": {
@@ -17030,9 +16821,7 @@
       ],
       "policyUrl": "https://forethought.ai/privacy-policy",
       "policyLastUpdated": "2026-05-06",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/forethought.ai.ico",
       "history": {
@@ -17216,9 +17005,7 @@
       ],
       "policyUrl": "https://www.ada.cx/legal/privacy-policy/",
       "policyLastUpdated": "2026-04-21",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/ada.cx.ico",
       "history": {
@@ -17399,9 +17186,7 @@
       ],
       "policyUrl": "https://rogo.ai/privacy-policy",
       "policyLastUpdated": "2025-03-06",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/rogo.ai.ico",
       "history": {
@@ -17582,9 +17367,7 @@
       ],
       "policyUrl": "https://eightfold.ai/privacy-notice/",
       "policyLastUpdated": "2026-05-01",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/eightfold.ai.ico",
       "history": {
@@ -17765,10 +17548,7 @@
       ],
       "policyUrl": "https://legal.hirevue.com/legal-center/privacy-policy",
       "policyLastUpdated": "2025-09-16",
-      "modalities": [
-        "text",
-        "video"
-      ],
+      "modalities": ["text", "video"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/hirevue.com.ico",
       "history": {
@@ -17949,9 +17729,7 @@
       ],
       "policyUrl": "https://www.thoughtspot.com/privacy",
       "policyLastUpdated": "2025-12-15",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/thoughtspot.com.ico",
       "history": {
@@ -18132,9 +17910,7 @@
       ],
       "policyUrl": "https://www.sigmacomputing.com/legal/privacy-policy",
       "policyLastUpdated": "2026-02-11",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/sigmacomputing.com.ico",
       "history": {
@@ -18315,9 +18091,7 @@
       ],
       "policyUrl": "https://www.pigment.com/privacy-policy",
       "policyLastUpdated": "2026-06-01",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/pigment.com.ico",
       "history": {
@@ -18501,9 +18275,7 @@
       ],
       "policyUrl": "https://www.jasper.ai/legal/privacy",
       "policyLastUpdated": "2025-05-30",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/jasper.ai.ico",
       "history": {
@@ -18684,9 +18456,7 @@
       ],
       "policyUrl": "https://www.moveworks.com/content/dam/pdfs/legal/moveworks-privacy-policy.pdf",
       "policyLastUpdated": "2024-04-18",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/moveworks.com.ico",
       "history": {
@@ -18867,9 +18637,7 @@
       ],
       "policyUrl": "https://www.uipath.com/legal/trust-and-security/privacy-policy",
       "policyLastUpdated": null,
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/uipath.com.ico",
       "history": {
@@ -19046,9 +18814,7 @@
       ],
       "policyUrl": "https://zapier.com/privacy",
       "policyLastUpdated": "2026-04-09",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/zapier.com.ico",
       "history": {
@@ -19231,9 +18997,7 @@
       ],
       "policyUrl": "https://n8n.io/legal/privacy/",
       "policyLastUpdated": "2026-04-28",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/n8n.io.ico",
       "history": {
@@ -19412,9 +19176,7 @@
       ],
       "policyUrl": "https://www.lindy.ai/privacy",
       "policyLastUpdated": "2025-03-14",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/lindy.ai.ico",
       "history": {
@@ -19597,9 +19359,7 @@
       ],
       "policyUrl": "https://cline.bot/privacy",
       "policyLastUpdated": "2025-09-25",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/cline.bot.ico",
       "history": {
@@ -19780,9 +19540,7 @@
       ],
       "policyUrl": "https://www.spellbook.legal/legal/privacy-policy",
       "policyLastUpdated": "2026-06-04",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/spellbook.legal.ico",
       "history": {
@@ -19963,10 +19721,7 @@
       ],
       "policyUrl": "https://www.hippocraticai.com/privacy-policy",
       "policyLastUpdated": "2023-09-13",
-      "modalities": [
-        "text",
-        "audio"
-      ],
+      "modalities": ["text", "audio"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/hippocraticai.com.ico",
       "history": {
@@ -20147,10 +19902,7 @@
       ],
       "policyUrl": "https://www.suki.ai/privacy-policy/",
       "policyLastUpdated": "2025-05-16",
-      "modalities": [
-        "text",
-        "audio"
-      ],
+      "modalities": ["text", "audio"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/suki.ai.ico",
       "history": {
@@ -20331,9 +20083,7 @@
       ],
       "policyUrl": "https://www.alpha-sense.com/privacy-policy/",
       "policyLastUpdated": "2025-09-02",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/alpha-sense.com.ico",
       "history": {
@@ -20514,9 +20264,7 @@
       ],
       "policyUrl": "https://www.getdbt.com/cloud/privacy-policy",
       "policyLastUpdated": "2025-06-11",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/getdbt.com.ico",
       "history": {
@@ -20697,9 +20445,7 @@
       ],
       "policyUrl": "https://www.montecarlodata.com/privacy-policy/",
       "policyLastUpdated": "2025-04-10",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/montecarlodata.com.ico",
       "history": {
@@ -20880,9 +20626,7 @@
       ],
       "policyUrl": "https://www.pinecone.io/privacy/",
       "policyLastUpdated": "2024-05-08",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/pinecone.io.ico",
       "history": {
@@ -21066,9 +20810,7 @@
       ],
       "policyUrl": "https://airbyte.com/privacy-policy",
       "policyLastUpdated": "2026-04-14",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/airbyte.com.ico",
       "history": {
@@ -21249,9 +20991,7 @@
       ],
       "policyUrl": "https://atlan.com/privacy-policy/",
       "policyLastUpdated": "2024-06-14",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/atlan.com.ico",
       "history": {
@@ -21432,9 +21172,7 @@
       ],
       "policyUrl": "https://www.fivetran.com/legal/privacy",
       "policyLastUpdated": "2026-05-01",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/fivetran.com.ico",
       "history": {
@@ -21615,9 +21353,7 @@
       ],
       "policyUrl": "https://www.workday.com/en-us/privacy.html",
       "policyLastUpdated": "2026-02-27",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/workday.com.ico",
       "history": {
@@ -21798,9 +21534,7 @@
       ],
       "policyUrl": "https://gusto.com/about/privacy",
       "policyLastUpdated": "2026-06-01",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/gusto.com.ico",
       "history": {
@@ -21981,9 +21715,7 @@
       ],
       "policyUrl": "https://lattice.com/trust/privacy-policy",
       "policyLastUpdated": "2026-05-05",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/lattice.com.ico",
       "history": {
@@ -22164,9 +21896,7 @@
       ],
       "policyUrl": "https://www.bamboohr.com/privacy-policy/",
       "policyLastUpdated": "2025-09-01",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/bamboohr.com.ico",
       "history": {
@@ -22347,9 +22077,7 @@
       ],
       "policyUrl": "https://www.hibob.com/privacy/privacy-policy/",
       "policyLastUpdated": "2026-02-16",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/hibob.com.ico",
       "history": {
@@ -22530,9 +22258,7 @@
       ],
       "policyUrl": "https://www.greenhouse.com/privacy-policy",
       "policyLastUpdated": "2026-05-28",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/greenhouse.com.ico",
       "history": {
@@ -22713,9 +22439,7 @@
       ],
       "policyUrl": "https://www.15five.com/privacy-policy/",
       "policyLastUpdated": "2026-02-19",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/15five.com.ico",
       "history": {
@@ -22896,9 +22620,7 @@
       ],
       "policyUrl": "https://www.cultureamp.com/privacy",
       "policyLastUpdated": "2025-07-02",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/cultureamp.com.ico",
       "history": {
@@ -23079,9 +22801,7 @@
       ],
       "policyUrl": "https://www.betterworks.com/privacy-policy/",
       "policyLastUpdated": "2026-05-01",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/betterworks.com.ico",
       "history": {
@@ -23262,9 +22982,7 @@
       ],
       "policyUrl": "https://www.visier.com/privacy/",
       "policyLastUpdated": "2025-10-07",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/visier.com.ico",
       "history": {
@@ -23445,9 +23163,7 @@
       ],
       "policyUrl": "https://app.rippling.com/legal/privacy",
       "policyLastUpdated": "2025-03-14",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/rippling.com.ico",
       "history": {
@@ -23630,9 +23346,7 @@
       ],
       "policyUrl": "https://www.deel.com/legal/privacy-policy/",
       "policyLastUpdated": "2026-06-15",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/deel.com.ico",
       "history": {
@@ -23813,9 +23527,7 @@
       ],
       "policyUrl": "https://www.personio.com/privacy-policy/",
       "policyLastUpdated": "2025-10-01",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/personio.com.ico",
       "history": {
@@ -23998,9 +23710,7 @@
       ],
       "policyUrl": "https://www.evenuplaw.com/privacy-policy",
       "policyLastUpdated": "2026-06-05",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/evenuplaw.com.ico",
       "history": {
@@ -24181,9 +23891,7 @@
       ],
       "policyUrl": "https://www.eve.legal/privacy-policy",
       "policyLastUpdated": "2025-08-15",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/eve.legal.ico",
       "history": {
@@ -24364,9 +24072,7 @@
       ],
       "policyUrl": "https://www.garfield.law/privacy",
       "policyLastUpdated": null,
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/garfield.law.ico",
       "history": {
@@ -24549,9 +24255,7 @@
       ],
       "policyUrl": "https://www.darrow.ai/privacy-policy",
       "policyLastUpdated": "2026-05-19",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/darrow.ai.ico",
       "history": {
@@ -24732,9 +24436,7 @@
       ],
       "policyUrl": "https://legora.com/legal/privacy-policy",
       "policyLastUpdated": "2026-06-04",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/legora.com.ico",
       "history": {
@@ -24915,9 +24617,7 @@
       ],
       "policyUrl": "https://www.paxton.ai/legal/privacy-policy",
       "policyLastUpdated": "2026-02-20",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/paxton.ai.ico",
       "history": {
@@ -25098,9 +24798,7 @@
       ],
       "policyUrl": "https://www.supio.com/privacy-policy",
       "policyLastUpdated": "2025-03-28",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/supio.com.ico",
       "history": {
@@ -25283,10 +24981,7 @@
       ],
       "policyUrl": "https://www.corti.ai/legal/privacy-policy",
       "policyLastUpdated": "2026-06-16",
-      "modalities": [
-        "text",
-        "audio"
-      ],
+      "modalities": ["text", "audio"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/corti.ai.ico",
       "history": {
@@ -25463,9 +25158,7 @@
       ],
       "policyUrl": "https://www.navina.ai/privacy-policy",
       "policyLastUpdated": null,
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/navina.ai.ico",
       "history": {
@@ -25648,10 +25341,7 @@
       ],
       "policyUrl": "https://www.deepscribe.ai/privacy",
       "policyLastUpdated": "2025-10-08",
-      "modalities": [
-        "text",
-        "audio"
-      ],
+      "modalities": ["text", "audio"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/deepscribe.ai.ico",
       "history": {
@@ -25832,9 +25522,7 @@
       ],
       "policyUrl": "https://www.truewind.ai/privacy-policy",
       "policyLastUpdated": "2026-06-02",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/truewind.ai.ico",
       "history": {
@@ -26011,9 +25699,7 @@
       ],
       "policyUrl": "https://puzzle.io/legal/privacy",
       "policyLastUpdated": "2025-12-19",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/puzzle.io.ico",
       "history": {
@@ -26172,9 +25858,7 @@
       "letterGrade": "F",
       "displayedGrade": "F",
       "confidence": "High",
-      "dealbreakerFlags": [
-        "D1.4: continuous, binding and completely sub-licensable license"
-      ],
+      "dealbreakerFlags": ["D1.4: continuous, binding and completely sub-licensable license"],
       "summary": "Cube's policies disclose named sharing recipients and no-sell commitment, enumerate data categories, and implement basic technical controls, but are silent on training use, data retention periods, international transfer safeguards, breach notification, and most user rights mechanisms.",
       "highlights": [
         {
@@ -26196,9 +25880,7 @@
       ],
       "policyUrl": "https://www.cubesoftware.com/privacy-policy",
       "policyLastUpdated": "2025-05-19",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/cubesoftware.com.ico",
       "history": {
@@ -26378,10 +26060,7 @@
       ],
       "policyUrl": "https://www.augmedix.com/privacy-policy",
       "policyLastUpdated": "2025-11-18",
-      "modalities": [
-        "text",
-        "audio"
-      ],
+      "modalities": ["text", "audio"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/augmedix.com.ico",
       "history": {
@@ -26551,9 +26230,7 @@
       ],
       "policyUrl": "https://browser-use.com/privacy",
       "policyLastUpdated": null,
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/browser-use.com.ico",
       "history": {
@@ -26725,9 +26402,7 @@
       ],
       "policyUrl": "https://www.langchain.com/privacy-policy",
       "policyLastUpdated": "2026-06-02",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/langchain.com.ico",
       "history": {
@@ -26899,9 +26574,7 @@
       ],
       "policyUrl": "https://sift.com/legal-and-compliance/website-privacy-notice/",
       "policyLastUpdated": "2026-04-20",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/sift.com.ico",
       "history": {
@@ -27073,9 +26746,7 @@
       ],
       "policyUrl": "https://scale.com/legal/privacy",
       "policyLastUpdated": "2024-07-01",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/scale.com.ico",
       "history": {
@@ -27249,9 +26920,7 @@
       ],
       "policyUrl": "https://www.warp.dev/legal/privacy-policy",
       "policyLastUpdated": "2025-09-25",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/warp.dev.ico",
       "history": {
@@ -27425,9 +27094,7 @@
       ],
       "policyUrl": "https://abnormal.ai/privacy-notice",
       "policyLastUpdated": "2025-07-03",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/abnormal.ai.ico",
       "history": {
@@ -27599,9 +27266,7 @@
       ],
       "policyUrl": "https://vercel.com/legal/privacy-notice",
       "policyLastUpdated": "2026-06-01",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/v0.app.ico",
       "history": {
@@ -27773,9 +27438,7 @@
       ],
       "policyUrl": "https://weaviate.io/privacy",
       "policyLastUpdated": "2026-03-01",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/weaviate.io.ico",
       "history": {
@@ -27943,9 +27606,7 @@
       ],
       "policyUrl": "https://www.browserbase.com/privacy-policy",
       "policyLastUpdated": "2025-08-01",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/browserbase.com.ico",
       "history": {
@@ -28117,9 +27778,7 @@
       ],
       "policyUrl": "https://www.trychroma.com/privacy",
       "policyLastUpdated": "2024-10-02",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/trychroma.com.ico",
       "history": {
@@ -28291,9 +27950,7 @@
       ],
       "policyUrl": "https://www.truveta.com/privacy-notice/",
       "policyLastUpdated": "2026-03-01",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/truveta.com.ico",
       "history": {
@@ -28465,9 +28122,7 @@
       ],
       "policyUrl": "https://www.coherehealth.com/privacy-policy",
       "policyLastUpdated": "2024-11-18",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/coherehealth.com.ico",
       "history": {
@@ -28635,9 +28290,7 @@
       ],
       "policyUrl": "https://mercury.com/legal/privacy",
       "policyLastUpdated": "2026-06-18",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/mercury.com.ico",
       "history": {
@@ -28809,10 +28462,7 @@
       ],
       "policyUrl": "https://www.veriff.com/privacy-notice",
       "policyLastUpdated": "2026-04-16",
-      "modalities": [
-        "text",
-        "image"
-      ],
+      "modalities": ["text", "image"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/veriff.com.ico",
       "history": {
@@ -28986,9 +28636,7 @@
       ],
       "policyUrl": "https://www.llamaindex.ai/files/privacy-notice.pdf",
       "policyLastUpdated": "2024-03-30",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/llamaindex.ai.ico",
       "history": {
@@ -29160,9 +28808,7 @@
       ],
       "policyUrl": "https://qdrant.tech/legal/privacy-policy/",
       "policyLastUpdated": "2026-07-08",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/qdrant.tech.ico",
       "history": {
@@ -29334,9 +28980,7 @@
       ],
       "policyUrl": "https://stackblitz.com/privacy-policy",
       "policyLastUpdated": "2026-05-12",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/bolt.new.ico",
       "history": {
@@ -29510,10 +29154,7 @@
       ],
       "policyUrl": "https://www.incode.com/privacy-policy",
       "policyLastUpdated": "2026-02-13",
-      "modalities": [
-        "text",
-        "image"
-      ],
+      "modalities": ["text", "image"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/incode.com.ico",
       "history": {
@@ -29687,9 +29328,7 @@
       ],
       "policyUrl": "https://ramp.com/legal/privacy-terms/privacy-terms/privacy-policy",
       "policyLastUpdated": "2026-05-20",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/ramp.com.ico",
       "history": {
@@ -29861,9 +29500,7 @@
       ],
       "policyUrl": "https://www.dropzone.ai/privacy-policy",
       "policyLastUpdated": "2023-08-03",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/dropzone.ai.ico",
       "history": null,
@@ -29903,9 +29540,7 @@
       ],
       "policyUrl": "https://docs.labelbox.com/page/privacy-notice",
       "policyLastUpdated": "2025-10-03",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/labelbox.com.ico",
       "history": {
@@ -30079,9 +29714,7 @@
       ],
       "policyUrl": "https://learn.hex.tech/docs/legal/privacy",
       "policyLastUpdated": "2026-05-14",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/hex.tech.ico",
       "history": {
@@ -30253,9 +29886,7 @@
       ],
       "policyUrl": "https://www.clio.com/privacy/",
       "policyLastUpdated": "2026-02-11",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/clio.com.ico",
       "history": {
@@ -30427,10 +30058,7 @@
       ],
       "policyUrl": "https://www.socure.com/privacy-en",
       "policyLastUpdated": "2026-06-19",
-      "modalities": [
-        "text",
-        "image"
-      ],
+      "modalities": ["text", "image"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/socure.com.ico",
       "history": {
@@ -30606,10 +30234,7 @@
       ],
       "policyUrl": "https://nabla.com/privacy-policy",
       "policyLastUpdated": "2023-05-16",
-      "modalities": [
-        "text",
-        "audio"
-      ],
+      "modalities": ["text", "audio"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/nabla.com.ico",
       "history": null,
@@ -30647,9 +30272,7 @@
       ],
       "policyUrl": "https://www.augmentcode.com/legal/privacy-policy",
       "policyLastUpdated": "2025-08-28",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/augmentcode.com.ico",
       "history": {
@@ -30821,10 +30444,7 @@
       ],
       "policyUrl": "https://withpersona.com/legal/privacy-policy",
       "policyLastUpdated": "2026-04-09",
-      "modalities": [
-        "text",
-        "image"
-      ],
+      "modalities": ["text", "image"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/withpersona.com.ico",
       "history": {
@@ -30996,9 +30616,7 @@
       ],
       "policyUrl": "https://cognition.com/legal/privacy-policy",
       "policyLastUpdated": "2026-03-09",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/devin.ai.ico",
       "history": {
@@ -31170,10 +30788,7 @@
       ],
       "policyUrl": "https://cleerlyhealth.com/privacy-policy",
       "policyLastUpdated": "2025-06-10",
-      "modalities": [
-        "text",
-        "image"
-      ],
+      "modalities": ["text", "image"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/cleerlyhealth.com.ico",
       "history": {
@@ -31345,9 +30960,7 @@
       ],
       "policyUrl": "https://arize.com/privacy-policy/",
       "policyLastUpdated": "2020-02-01",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/arize.com.ico",
       "history": {
@@ -31521,9 +31134,7 @@
       ],
       "policyUrl": "https://www.brex.com/legal/privacy",
       "policyLastUpdated": "2026-04-07",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/brex.com.ico",
       "history": {
@@ -31693,9 +31304,7 @@
       ],
       "policyUrl": "https://www.theagi.company/privacy",
       "policyLastUpdated": "2025-10-05",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/multion.ai.ico",
       "history": {
@@ -31869,9 +31478,7 @@
       ],
       "policyUrl": "https://www.darktrace.com/legal/privacy-policy",
       "policyLastUpdated": "2026-05-06",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/darktrace.com.ico",
       "history": {
@@ -32043,9 +31650,7 @@
       ],
       "policyUrl": "https://www.tempus.com/privacy-policy/",
       "policyLastUpdated": "2024-05-01",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/tempus.com.ico",
       "history": {
@@ -32196,9 +31801,7 @@
       "letterGrade": "F",
       "displayedGrade": "F",
       "confidence": "High",
-      "dealbreakerFlags": [
-        "D1.1: including by training and developing models and/or algorithms"
-      ],
+      "dealbreakerFlags": ["D1.1: including by training and developing models and/or algorithms"],
       "summary": "CrewAI's policy permits training on user inputs with no opt-out mechanism, explicitly handles Google data with a no-sell pledge, provides 30-day retention for deleted data with encrypted backup exception to 180 days, and discloses AI integration and data categories but lacks versioning, consent tier detail, and breach notification timeliness.",
       "highlights": [
         {
@@ -32220,9 +31823,7 @@
       ],
       "policyUrl": "https://crewai.com/privacy-policy",
       "policyLastUpdated": "2025-09-24",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/crewai.com.ico",
       "history": null,
@@ -32263,9 +31864,7 @@
       ],
       "policyUrl": "https://relevanceai.com/privacy-policy",
       "policyLastUpdated": null,
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/relevanceai.com.ico",
       "history": null,
@@ -32306,10 +31905,7 @@
       ],
       "policyUrl": "https://getfreed.ai/privacy-policy",
       "policyLastUpdated": "2025-12-05",
-      "modalities": [
-        "text",
-        "audio"
-      ],
+      "modalities": ["text", "audio"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/getfreed.ai.ico",
       "history": null,
@@ -32348,9 +31944,7 @@
       ],
       "policyUrl": "https://numeric.io/legal/privacy-policy",
       "policyLastUpdated": "2025-09-23",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/numeric.io.ico",
       "history": null,
@@ -32389,9 +31983,7 @@
       ],
       "policyUrl": "https://basis.ai/privacy-policy",
       "policyLastUpdated": "2026-03-04",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/basis.ai.ico",
       "history": null,
@@ -32430,9 +32022,7 @@
       ],
       "policyUrl": "https://hightouch.com/privacy-policy",
       "policyLastUpdated": "2026-04-20",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/hightouch.com.ico",
       "history": null,
@@ -32471,9 +32061,7 @@
       ],
       "policyUrl": "https://omni.co/privacy",
       "policyLastUpdated": "2025-08-14",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/omni.co.ico",
       "history": null,
@@ -32512,9 +32100,7 @@
       ],
       "policyUrl": "https://julius.ai/privacy-policy",
       "policyLastUpdated": "2025-09-23",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/julius.ai.ico",
       "history": null,
@@ -32553,10 +32139,7 @@
       ],
       "policyUrl": "https://getnametag.com/privacy",
       "policyLastUpdated": "2025-04-01",
-      "modalities": [
-        "text",
-        "image"
-      ],
+      "modalities": ["text", "image"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/getnametag.com.ico",
       "history": null,
@@ -32595,9 +32178,7 @@
       ],
       "policyUrl": "https://snyk.io/privacy",
       "policyLastUpdated": "2026-03-09",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/snyk.io.ico",
       "history": null,
@@ -32636,9 +32217,7 @@
       ],
       "policyUrl": "https://cyera.com/privacy",
       "policyLastUpdated": "2026-02-12",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/cyera.com.ico",
       "history": null,
@@ -32679,9 +32258,7 @@
       ],
       "policyUrl": "https://intercom.com/privacy",
       "policyLastUpdated": "2026-04-01",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/intercom.com.ico",
       "history": null,
@@ -32720,10 +32297,7 @@
       ],
       "policyUrl": "https://cresta.com/privacy-policy",
       "policyLastUpdated": "2025-11-27",
-      "modalities": [
-        "text",
-        "audio"
-      ],
+      "modalities": ["text", "audio"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/cresta.com.ico",
       "history": null,
@@ -32762,9 +32336,7 @@
       ],
       "policyUrl": "https://www.regie.ai/privacy-policy",
       "policyLastUpdated": "2025-03-06",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/regie.ai.ico",
       "history": null,
@@ -32803,9 +32375,7 @@
       ],
       "policyUrl": "https://11x.ai/privacy",
       "policyLastUpdated": "2025-09-01",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/11x.ai.ico",
       "history": null,
@@ -32844,9 +32414,7 @@
       ],
       "policyUrl": "https://commonroom.io/privacy-policy",
       "policyLastUpdated": "2021-03-30",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/commonroom.io.ico",
       "history": null,
@@ -32885,10 +32453,7 @@
       ],
       "policyUrl": "https://circleback.ai/privacy",
       "policyLastUpdated": "2024-07-15",
-      "modalities": [
-        "text",
-        "audio"
-      ],
+      "modalities": ["text", "audio"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/circleback.ai.ico",
       "history": null,
@@ -32927,9 +32492,7 @@
       ],
       "policyUrl": "https://dust.tt/home/platform-privacy",
       "policyLastUpdated": null,
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/dust.tt.ico",
       "history": null,
@@ -32968,9 +32531,7 @@
       ],
       "policyUrl": "https://get.mem.ai/privacy-policy",
       "policyLastUpdated": "2026-03-24",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/mem.ai.ico",
       "history": null,
@@ -33009,10 +32570,7 @@
       ],
       "policyUrl": "https://www.heidihealth.com/en-us/legal/privacy-policy",
       "policyLastUpdated": "2024-10-01",
-      "modalities": [
-        "text",
-        "audio"
-      ],
+      "modalities": ["text", "audio"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/heidihealth.com.ico",
       "history": null,
@@ -33051,9 +32609,7 @@
       ],
       "policyUrl": "https://www.outreach.ai/privacy-statement",
       "policyLastUpdated": "2026-02-17",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/outreach.io.ico",
       "history": null,
@@ -33092,9 +32648,7 @@
       ],
       "policyUrl": "https://abacus.ai/privacy-policy",
       "policyLastUpdated": null,
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/abacus.ai.ico",
       "history": null,
@@ -33133,9 +32687,7 @@
       ],
       "policyUrl": "https://docs.tonic.ai/trust-center/privacy-notice",
       "policyLastUpdated": "2026-02-05",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/tonic.ai.ico",
       "history": null,
@@ -33174,9 +32726,7 @@
       ],
       "policyUrl": "https://www.together.ai/privacy",
       "policyLastUpdated": "2025-12-17",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/together.ai.ico",
       "history": null,
@@ -33215,9 +32765,7 @@
       ],
       "policyUrl": "https://www.amplitude.com/privacy",
       "policyLastUpdated": "2026-06-01",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/amplitude.com.ico",
       "history": null,
@@ -33256,10 +32804,7 @@
       ],
       "policyUrl": "https://www.observe.ai/privacy-policy",
       "policyLastUpdated": null,
-      "modalities": [
-        "text",
-        "audio"
-      ],
+      "modalities": ["text", "audio"],
       "processesBiometrics": true,
       "iconUrl": "https://icons.duckduckgo.com/ip3/observe.ai.ico",
       "history": null,
@@ -33298,9 +32843,7 @@
       ],
       "policyUrl": "https://fireworks.ai/privacy-policy",
       "policyLastUpdated": "2025-11-12",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/fireworks.ai.ico",
       "history": null,
@@ -33341,9 +32884,7 @@
       ],
       "policyUrl": "https://www.pendo.io/legal/privacy-policy/",
       "policyLastUpdated": "2024-11-04",
-      "modalities": [
-        "text"
-      ],
+      "modalities": ["text"],
       "processesBiometrics": false,
       "iconUrl": "https://icons.duckduckgo.com/ip3/pendo.io.ico",
       "history": null,
