@@ -28,6 +28,7 @@ import {
 import { useAITrustIndexSidebarContextSafe } from "../../../../application/contexts/AITrustIndexSidebar.context";
 import { gradeVariant, TrustIndexAppData, faviconUrl } from "../shared";
 import { VerdictLine, WatchOuts, ComparisonStrip, RelatedApps } from "./insights";
+import { useTrustIndexAlert } from "../useTrustIndexAlert";
 import { ScoreBreakdown } from "./ScoreBreakdown";
 
 interface AppDetailRow {
@@ -71,6 +72,7 @@ export default function AppDetail() {
   const { data: appsData } = useApps({ page: 1, pageSize: 1000 });
   const trackApp = useTrackApp();
   const untrackApp = useUntrackApp();
+  const { showError, AlertSlot } = useTrustIndexAlert();
 
   const [imgFailed, setImgFailed] = useState(false);
 
@@ -86,11 +88,17 @@ export default function AppDetail() {
     if (!app) return;
     const onDone = () => sidebar?.refreshTrackedCount();
     if (app.is_tracked) {
-      untrackApp.mutate(app.slug, { onSuccess: onDone });
+      untrackApp.mutate(app.slug, {
+        onSuccess: onDone,
+        onError: () => showError(`We couldn't untrack ${app.name}. Please try again.`),
+      });
     } else {
-      trackApp.mutate(app.slug, { onSuccess: onDone });
+      trackApp.mutate(app.slug, {
+        onSuccess: onDone,
+        onError: () => showError(`We couldn't track ${app.name}. Please try again.`),
+      });
     }
-  }, [app, trackApp, untrackApp, sidebar]);
+  }, [app, trackApp, untrackApp, sidebar, showError]);
 
   const breadcrumbItems = [
     {
@@ -140,6 +148,7 @@ export default function AppDetail() {
 
   return (
     <Box>
+      {AlertSlot}
       <PageBreadcrumbs
         items={breadcrumbItems}
         autoGenerate={false}

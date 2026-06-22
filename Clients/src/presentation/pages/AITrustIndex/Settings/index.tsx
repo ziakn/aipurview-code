@@ -18,6 +18,7 @@ import { palette } from "../../../themes/palette";
 import { useSettings, useUpdateSettings } from "../../../../application/hooks/useAiTrustIndex";
 import useUsers from "../../../../application/hooks/useUsers";
 import { useAuth } from "../../../../application/hooks/useAuth";
+import { useTrustIndexAlert } from "../useTrustIndexAlert";
 
 interface UserOption {
   id: number;
@@ -31,6 +32,7 @@ export default function Settings() {
   const { data: settingsData, isLoading: settingsLoading } = useSettings();
   const { users, loading: usersLoading } = useUsers();
   const updateSettings = useUpdateSettings();
+  const { showError, AlertSlot } = useTrustIndexAlert();
 
   const [recipientUserIds, setRecipientUserIds] = useState<number[]>([]);
   const [recipientEmails, setRecipientEmails] = useState<string[]>([]);
@@ -68,7 +70,10 @@ export default function Settings() {
     }
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      updateSettings.mutate({ recipientUserIds, recipientEmails });
+      updateSettings.mutate(
+        { recipientUserIds, recipientEmails },
+        { onError: () => showError("We couldn't save your recipient changes. Please try again.") },
+      );
     }, 600);
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -110,10 +115,11 @@ export default function Settings() {
   return (
     <PageHeaderExtended
       title="Settings"
-      description="Choose who receives a notification when a tracked app's assessment changes materially. If no recipients are set, organization admins are notified by default."
+      description="Choose who receives a notification when a tracked app's assessment changes materially. If no recipients are set, no digest is sent."
       breadcrumbItems={[{ label: "Settings" }]}
       helpArticlePath="ai-trust-index/settings"
     >
+      {AlertSlot}
       {settingsLoading ? (
         <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
           <CircularProgress size={24} sx={{ color: palette.brand.primary }} />

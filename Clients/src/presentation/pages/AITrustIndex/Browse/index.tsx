@@ -27,6 +27,7 @@ import {
 import { useAITrustIndexSidebarContextSafe } from "../../../../application/contexts/AITrustIndexSidebar.context";
 import { TrustIndexRow } from "../shared";
 import AppCard from "../components/AppCard";
+import { useTrustIndexAlert } from "../useTrustIndexAlert";
 
 // 24 = 8 rows × 3 columns, so the grid's last row stays even.
 const PAGE_SIZE = 24;
@@ -34,6 +35,7 @@ const PAGE_SIZE = 24;
 export default function Browse() {
   const navigate = useNavigate();
   const sidebar = useAITrustIndexSidebarContextSafe();
+  const { showError, AlertSlot } = useTrustIndexAlert();
 
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
@@ -76,6 +78,17 @@ export default function Browse() {
   const payload = data?.data;
   const rows: TrustIndexRow[] = useMemo(() => payload?.apps ?? [], [payload]);
   const total: number = payload?.total ?? 0;
+
+  // Clamp the page if the result set shrank below the current page's range
+  // (e.g. after a filter change or an untrack that removed the last row of the
+  // last page). Without this the user is stranded on an empty grid with the
+  // pagination pointing past the end. Guarded on total > 0 so an empty result
+  // (handled by the empty state) does not force page 0 mid-load.
+  useEffect(() => {
+    if (total > 0 && page > 0 && page * PAGE_SIZE >= total) {
+      setPage(Math.max(0, Math.ceil(total / PAGE_SIZE) - 1));
+    }
+  }, [total, page]);
   const categories: string[] = useMemo(() => payload?.categories ?? [], [payload]);
   const categoryCounts: Record<string, number> = useMemo(
     () => payload?.categoryCounts ?? {},
@@ -121,19 +134,34 @@ export default function Browse() {
     [],
   );
 
-  const allOnPageSelected = rows.length > 0 && rows.every((r) => selected.includes(r.slug));
-  const someOnPageSelected = rows.some((r) => selected.includes(r.slug));
+  // Selection only ever concerns rows that can actually be tracked. Already-
+  // tracked apps are excluded from select-all and the "track selected" count so
+  // bulk-track never re-tracks an app or misrepresents how many are new.
+  const selectableSlugs = useMemo(
+    () => rows.filter((r) => !r.is_tracked).map((r) => r.slug),
+    [rows],
+  );
+  const allOnPageSelected =
+    selectableSlugs.length > 0 && selectableSlugs.every((s) => selected.includes(s));
+  const someOnPageSelected = selectableSlugs.some((s) => selected.includes(s));
+
+  // Clear the selection whenever the visible set changes (search, filters, sort,
+  // page). Otherwise slugs selected on a prior page/filter stay in `selected`
+  // and get bulk-tracked even though they are no longer on screen.
+  useEffect(() => {
+    setSelected([]);
+  }, [search, category, grade, sortValue, page]);
 
   const toggleSelectAll = useCallback(() => {
     setSelected((prev) => {
       if (allOnPageSelected) {
-        return prev.filter((s) => !rows.some((r) => r.slug === s));
+        return prev.filter((s) => !selectableSlugs.includes(s));
       }
       const next = new Set(prev);
-      rows.forEach((r) => next.add(r.slug));
+      selectableSlugs.forEach((s) => next.add(s));
       return Array.from(next);
     });
-  }, [allOnPageSelected, rows]);
+  }, [allOnPageSelected, selectableSlugs]);
 
   const toggleRow = useCallback((slug: string) => {
     setSelected((prev) => (prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug]));
@@ -146,19 +174,26 @@ export default function Browse() {
         setSelected([]);
         sidebar?.refreshTrackedCount();
       },
+      onError: () => showError("We couldn't track the selected apps. Please try again."),
     });
-  }, [selected, trackBulk, sidebar]);
+  }, [selected, trackBulk, sidebar, showError]);
 
   const handleToggleTrack = useCallback(
     (row: TrustIndexRow) => {
       const onDone = () => sidebar?.refreshTrackedCount();
       if (row.is_tracked) {
-        untrackApp.mutate(row.slug, { onSuccess: onDone });
+        untrackApp.mutate(row.slug, {
+          onSuccess: onDone,
+          onError: () => showError(`We couldn't untrack ${row.name}. Please try again.`),
+        });
       } else {
-        trackApp.mutate(row.slug, { onSuccess: onDone });
+        trackApp.mutate(row.slug, {
+          onSuccess: onDone,
+          onError: () => showError(`We couldn't track ${row.name}. Please try again.`),
+        });
       }
     },
-    [trackApp, untrackApp, sidebar],
+    [trackApp, untrackApp, sidebar, showError],
   );
 
   const isEmpty = !isLoading && rows.length === 0;
@@ -169,6 +204,7 @@ export default function Browse() {
       description="Browse independently assessed AI applications and track the ones that matter to your organization."
       helpArticlePath="ai-trust-index/browse"
     >
+      {AlertSlot}
       {/* Filters */}
       <Stack direction="row" alignItems="center" gap="8px" flexWrap="wrap" sx={{ mb: "16px" }}>
         <SearchBox
@@ -269,7 +305,12 @@ export default function Browse() {
                     variant="outlined"
                     size="small"
                     onClick={() => handleToggleTrack(row)}
-                    isDisabled={trackApp.isPending || untrackApp.isPending}
+                    // Disable only the row whose track/untrack is in flight, not
+                    // every card in the grid.
+                    isDisabled={
+                      (trackApp.isPending && trackApp.variables === row.slug) ||
+                      (untrackApp.isPending && untrackApp.variables === row.slug)
+                    }
                   />
                 }
               />

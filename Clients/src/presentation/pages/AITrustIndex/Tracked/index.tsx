@@ -8,7 +8,7 @@
  * @module pages/AITrustIndex/Tracked
  */
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Stack, TablePagination, CircularProgress } from "@mui/material";
 import { CustomizableButton } from "../../../components/button/customizable-button";
@@ -22,6 +22,7 @@ import { useTracked, useUntrackApp } from "../../../../application/hooks/useAiTr
 import { useAITrustIndexSidebarContextSafe } from "../../../../application/contexts/AITrustIndexSidebar.context";
 import { TrustIndexRow } from "../shared";
 import AppCard from "../components/AppCard";
+import { useTrustIndexAlert } from "../useTrustIndexAlert";
 
 const ROWS_PER_PAGE_OPTIONS = [12, 24, 48];
 
@@ -47,6 +48,7 @@ export default function Tracked() {
   const sidebar = useAITrustIndexSidebarContextSafe();
   const { data, isLoading, isError } = useTracked();
   const untrackApp = useUntrackApp();
+  const { showError, AlertSlot } = useTrustIndexAlert();
 
   const [sortValueKey, setSortValueKey] = useState("score-desc");
   const [category, setCategory] = useState("");
@@ -119,11 +121,22 @@ export default function Tracked() {
   );
 
   const handleUntrack = useCallback(
-    (slug: string) => {
-      untrackApp.mutate(slug, { onSuccess: () => sidebar?.refreshTrackedCount() });
+    (row: TrustIndexRow) => {
+      untrackApp.mutate(row.slug, {
+        onSuccess: () => sidebar?.refreshTrackedCount(),
+        onError: () => showError(`We couldn't untrack ${row.name}. Please try again.`),
+      });
     },
-    [untrackApp, sidebar],
+    [untrackApp, sidebar, showError],
   );
+
+  // Clamp the page when the tracked list shrinks below the current page's range
+  // (e.g. untracking the last app on the last page). Keeps the user on a page
+  // that has rows instead of an empty grid.
+  useEffect(() => {
+    const lastPage = Math.max(0, Math.ceil(sortedRows.length / rowsPerPage) - 1);
+    if (page > lastPage) setPage(lastPage);
+  }, [sortedRows.length, rowsPerPage, page]);
 
   const isEmpty = !isLoading && rows.length === 0;
 
@@ -133,6 +146,7 @@ export default function Tracked() {
       description="AI applications your organization is tracking. We'll notify recipients when a tracked app's assessment changes materially."
       helpArticlePath="ai-trust-index/tracked"
     >
+      {AlertSlot}
       {isLoading && (
         <Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
           <CircularProgress size={24} sx={{ color: palette.brand.primary }} />
@@ -206,8 +220,8 @@ export default function Tracked() {
                     text="Untrack"
                     variant="outlined"
                     size="small"
-                    onClick={() => handleUntrack(row.slug)}
-                    isDisabled={untrackApp.isPending}
+                    onClick={() => handleUntrack(row)}
+                    isDisabled={untrackApp.isPending && untrackApp.variables === row.slug}
                   />
                 }
               />
