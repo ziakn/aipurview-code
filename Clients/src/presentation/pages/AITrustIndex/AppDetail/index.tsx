@@ -12,12 +12,13 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Box, Stack, Typography, CircularProgress, Link, useTheme } from "@mui/material";
-import { ExternalLink, ArrowLeft, Gauge } from "lucide-react";
+import { Box, Stack, Typography, CircularProgress, useTheme } from "@mui/material";
+import { ArrowLeft, Gauge } from "lucide-react";
 import { PageBreadcrumbs } from "../../../components/breadcrumbs/PageBreadcrumbs";
 import { CustomizableButton } from "../../../components/button/customizable-button";
 import { EmptyState } from "../../../components/EmptyState";
 import Chip from "../../../components/Chip";
+import { VWLink } from "../../../components/Link/VWLink";
 import { palette } from "../../../themes/palette";
 import {
   useApp,
@@ -406,21 +407,14 @@ export default function AppDetail() {
                   >
                     Privacy policy
                   </Typography>
-                  <Link
-                    href={detail.policyUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{
-                      fontSize: "13px",
-                      color: palette.brand.primary,
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "4px",
-                    }}
+                  <VWLink
+                    url={detail.policyUrl}
+                    openInNewTab
+                    showUnderline={false}
+                    sx={{ fontSize: "13px" }}
                   >
                     View policy
-                    <ExternalLink size={14} />
-                  </Link>
+                  </VWLink>
                 </Stack>
               )}
               <Stack direction="row" alignItems="center" gap="8px">
