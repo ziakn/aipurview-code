@@ -3,7 +3,7 @@ import { Drawer, Box, Stack, Typography, Divider, CircularProgress } from "@mui/
 import { apiServices } from "../../../../infrastructure/api/networkServices";
 import Chip from "../../../components/Chip";
 import palette from "../../../themes/palette";
-import { displayFormattedTime } from "src/presentation/tools/isoDateToString";
+import { displayFormattedTime } from "../../../tools/isoDateToString";
 
 interface RunEntry {
   kind: "model" | "tool";

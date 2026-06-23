@@ -44,7 +44,7 @@ import {
   agentPagination,
 } from "./style";
 import { AgentTableProps } from "src/domain/interfaces/i.agentDiscovery";
-import { displayFormattedDate } from "src/presentation/tools/isoDateToString";
+import { displayFormattedDate } from "../../tools/isoDateToString";
 
 const cellStyle = singleTheme.tableStyles.primary.body.cell;
 

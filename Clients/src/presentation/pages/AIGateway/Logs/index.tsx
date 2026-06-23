@@ -39,7 +39,7 @@ import {
   displayFormattedDate,
   displayFormattedDateTime,
   displayFormattedTime,
-} from "src/presentation/tools/isoDateToString";
+} from "../../../tools/isoDateToString";
 
 const AUTO_REFRESH_INTERVAL_MS = 10_000;
 const SEARCH_DEBOUNCE_MS = 300;

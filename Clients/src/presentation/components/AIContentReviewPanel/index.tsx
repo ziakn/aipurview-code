@@ -11,10 +11,7 @@ import {
 import Chip from "../Chip";
 import AIContentBadge from "../AIContentBadge";
 import type { AIContentMetadata, ReviewAction } from "../../../domain/interfaces/i.aiContent";
-import {
-  displayFormattedDate,
-  displayFormattedDateTime,
-} from "src/presentation/tools/isoDateToString";
+import { displayFormattedDate, displayFormattedDateTime } from "../../tools/isoDateToString";
 
 interface AIContentReviewPanelProps {
   item: AIContentMetadata;

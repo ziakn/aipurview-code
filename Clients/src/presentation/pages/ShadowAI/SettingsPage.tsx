@@ -48,7 +48,7 @@ import Select from "../../components/Inputs/Select";
 import { PageHeaderExtended } from "../../components/Layout/PageHeaderExtended";
 import { useUserGuideSidebarContext } from "../../components/UserGuide";
 import { palette } from "../../themes/palette";
-import { displayFormattedDate } from "src/presentation/tools/isoDateToString";
+import { displayFormattedDate } from "../../tools/isoDateToString";
 
 const numberFormatter = new Intl.NumberFormat("en-US");
 

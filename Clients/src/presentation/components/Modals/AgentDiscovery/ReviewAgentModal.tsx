@@ -5,7 +5,7 @@ import VWChip from "../../Chip";
 import { CustomizableButton } from "../../button/customizable-button";
 import { apiServices } from "../../../../infrastructure/api/networkServices";
 import { AgentPrimitiveRow } from "../../../../domain/interfaces/i.agentDiscovery";
-import { displayFormattedDateTime } from "src/presentation/tools/isoDateToString";
+import { displayFormattedDateTime } from "../../../tools/isoDateToString";
 import { getAllEntities } from "../../../../application/repository/entity.repository";
 import LinkModelModal from "./LinkModelModal";
 

@@ -8,7 +8,7 @@ import {
 import GovernanceTooltip from "./GovernanceTooltip";
 import { CustomizableButton } from "../button/customizable-button";
 import { border as borderPalette, background, text, brand, status } from "../../themes/palette";
-import { displayFormattedDate } from "src/presentation/tools/isoDateToString";
+import { displayFormattedDate } from "../../tools/isoDateToString";
 
 const ActivationHistory: React.FC = () => {
   const { data: activations, isLoading } = useActivationHistory();

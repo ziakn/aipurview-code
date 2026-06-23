@@ -16,7 +16,7 @@ import VWTooltip from "../VWTooltip";
 import "../Layout/icon-shake.css";
 
 import { text } from "../../themes/palette";
-import { displayFormattedDate } from "src/presentation/tools/isoDateToString";
+import { displayFormattedDate } from "../../tools/isoDateToString";
 
 /**
  * Rewrite legacy action_url values that were stored in older notifications

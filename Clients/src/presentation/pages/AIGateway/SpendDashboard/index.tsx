@@ -47,7 +47,7 @@ import { sectionTitleSx, useCardSx, GUARDRAIL_ACTION_COLORS, formatEntityType } 
 import { useUserGuideSidebarContext } from "../../../components/UserGuide/UserGuideSidebarContext";
 import MockDashboard from "./MockDashboard";
 import OnboardingOverlay from "./OnboardingOverlay";
-import { displayFormattedDate } from "src/presentation/tools/isoDateToString";
+import { displayFormattedDate } from "../../../tools/isoDateToString";
 
 const numberFormatter = new Intl.NumberFormat("en-US");
 

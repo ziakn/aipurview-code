@@ -51,7 +51,7 @@ import {
   SortableTableHead,
 } from "./constants";
 import { palette } from "../../themes/palette";
-import { displayFormattedDate } from "src/presentation/tools/isoDateToString";
+import { displayFormattedDate } from "../../tools/isoDateToString";
 
 interface UserDetailData {
   email: string;

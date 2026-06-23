@@ -31,7 +31,7 @@ import palette from "../../../themes/palette";
 import { sectionTitleSx, useCardSx, ProviderIcon, TOP_PROVIDERS } from "../shared";
 import VirtualKeysTab from "../VirtualKeys/index";
 import { validateApiKeyFormat } from "../../../../application/utils/apiKeyValidation";
-import { displayFormattedDate } from "src/presentation/tools/isoDateToString";
+import { displayFormattedDate } from "../../../tools/isoDateToString";
 
 const TOP_IDS = new Set(TOP_PROVIDERS.map((p) => p._id));
 

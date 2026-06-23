@@ -26,7 +26,7 @@ import SearchBox from "../../../components/Search/SearchBox";
 import { EmptyState } from "../../../components/EmptyState";
 import { ROLE_OPTIONS, ROLE_COLORS } from "../../../../application/constants/roles";
 import singleTheme from "../../../themes/v1SingleTheme";
-import { displayFormattedDate } from "src/presentation/tools/isoDateToString";
+import { displayFormattedDate } from "../../../tools/isoDateToString";
 
 const Users = () => {
   const { id: orgId } = useParams<{ id: string }>();

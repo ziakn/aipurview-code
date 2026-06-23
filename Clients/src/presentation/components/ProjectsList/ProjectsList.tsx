@@ -21,7 +21,7 @@ import { useColumnVisibility, ColumnConfig } from "../../../application/hooks/us
 import CustomizableSkeleton from "../Skeletons";
 
 import { projectWrapperStyle, noProjectsTextStyle, vwhomeBodyProjectsGrid } from "./style";
-import { displayFormattedDate } from "src/presentation/tools/isoDateToString";
+import { displayFormattedDate } from "../../tools/isoDateToString";
 
 const ProjectList = ({
   projects,

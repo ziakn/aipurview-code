@@ -52,10 +52,7 @@ import AddRepositoryModal from "./AddRepositoryModal";
 import { palette } from "../../themes/palette";
 import singleTheme from "../../themes/v1SingleTheme";
 import { keyframes } from "@mui/system";
-import {
-  displayFormattedDate,
-  displayFormattedDateTime,
-} from "src/presentation/tools/isoDateToString";
+import { displayFormattedDate, displayFormattedDateTime } from "../../tools/isoDateToString";
 
 const spin = keyframes`from { transform: rotate(0deg); } to { transform: rotate(360deg); }`;
 

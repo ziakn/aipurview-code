@@ -8,7 +8,7 @@ import {
   useDeleteShareLink,
 } from "../../../application/hooks/useShare";
 import { brand, text, background } from "../../themes/palette";
-import { displayFormattedDate } from "src/presentation/tools/isoDateToString";
+import { displayFormattedDate } from "../../tools/isoDateToString";
 
 /**
  * Props for the ManageShareLinks component

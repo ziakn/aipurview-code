@@ -18,10 +18,7 @@ import { POLICY_TAGS } from "../../../domain/models/Common/policy/policyManager.
 import { store } from "../../../application/redux/store";
 import { useCustomFieldDefinitions } from "../../../application/hooks/useCustomFields";
 import { formatCustomFieldValue } from "../CustomFieldsSection/formatCustomFieldValue";
-import {
-  displayFormattedDate,
-  displayFormattedDateTime,
-} from "src/presentation/tools/isoDateToString";
+import { displayFormattedDate, displayFormattedDateTime } from "../../tools/isoDateToString";
 
 const tableHeaders = [
   { id: "title", name: "Title" },

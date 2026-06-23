@@ -42,7 +42,7 @@ import {
   type Experiment,
   type EvaluationLog,
 } from "../../../application/repository/deepEval.repository";
-import { displayFormattedDate } from "src/presentation/tools/isoDateToString";
+import { displayFormattedDate } from "../../tools/isoDateToString";
 
 // Preprocess LaTeX delimiters to work with remark-math
 const preprocessLatex = (text: string): string => {

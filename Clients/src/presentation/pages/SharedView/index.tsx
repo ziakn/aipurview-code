@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import { Download, ShieldX } from "lucide-react";
 import { ENV_VARs } from "../../../../env.vars";
-import { displayFormattedDate } from "src/presentation/tools/isoDateToString";
+import { displayFormattedDate } from "../../tools/isoDateToString";
 
 /**
  * SharedView page component for displaying publicly shared data

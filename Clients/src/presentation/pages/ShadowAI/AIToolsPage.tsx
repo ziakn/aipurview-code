@@ -46,7 +46,7 @@ import TablePaginationActions from "../../components/TablePagination";
 import GovernanceWizardModal from "./GovernanceWizardModal";
 import { PageHeaderExtended } from "../../components/Layout/PageHeaderExtended";
 import Alert from "../../components/Alert";
-import { displayFormattedDate } from "src/presentation/tools/isoDateToString";
+import { displayFormattedDate } from "../../tools/isoDateToString";
 import {
   SelectorVertical,
   SortableColumn,

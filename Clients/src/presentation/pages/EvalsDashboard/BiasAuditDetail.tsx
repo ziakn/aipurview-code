@@ -28,7 +28,7 @@ import {
   type ScoreDistributionTable,
 } from "../../../application/repository/deepEval.repository";
 import EditableText from "../../components/EditableText";
-import { displayFormattedDateTime } from "src/presentation/tools/isoDateToString";
+import { displayFormattedDateTime } from "../../tools/isoDateToString";
 
 interface BiasAuditDetailProps {
   auditId: string;

@@ -25,7 +25,7 @@ import { PageHeaderExtended } from "../../../components/Layout/PageHeaderExtende
 import SearchBox from "../../../components/Search/SearchBox";
 import { EmptyState } from "../../../components/EmptyState";
 import singleTheme from "../../../themes/v1SingleTheme";
-import { displayFormattedDate } from "src/presentation/tools/isoDateToString";
+import { displayFormattedDate } from "../../../tools/isoDateToString";
 
 /** Isolated create modal — its input state won't re-render the parent table */
 const CreateOrgModal = ({

@@ -43,7 +43,7 @@ import { FileMetadata } from "../../../application/repository/file.repository";
 import { User } from "../../../domain/types/User";
 
 import Alert from "../../../presentation/components/Alert";
-import { displayFormattedDate } from "src/presentation/tools/isoDateToString";
+import { displayFormattedDate } from "../../tools/isoDateToString";
 
 // Types (Type Safety)
 type AlertVariant = "success" | "info" | "warning" | "error";

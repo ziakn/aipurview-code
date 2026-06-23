@@ -33,7 +33,7 @@ import SearchBox from "../../../components/Search/SearchBox";
 import { EmptyState } from "../../../components/EmptyState";
 import Select from "../../../components/Inputs/Select";
 import singleTheme from "../../../themes/v1SingleTheme";
-import { displayFormattedDate } from "src/presentation/tools/isoDateToString";
+import { displayFormattedDate } from "../../../tools/isoDateToString";
 import { getSelectStyles } from "../../../utils/inputStyles";
 
 const DeleteUserModal = ({

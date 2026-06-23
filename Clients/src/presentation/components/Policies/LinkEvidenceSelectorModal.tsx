@@ -35,7 +35,7 @@ import { paginationStyle } from "../Table/styles";
 import { FileIcon } from "../FileIcon";
 import { getUserFilesMetaData } from "../../../application/repository/file.repository";
 import CustomizableToast from "../../components/Toast";
-import { displayFormattedDate } from "src/presentation/tools/isoDateToString";
+import { displayFormattedDate } from "../../tools/isoDateToString";
 
 const SORT_KEY = "vw_link_evidence_selector_sort";
 
