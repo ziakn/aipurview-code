@@ -3,6 +3,7 @@ import { Drawer, Box, Stack, Typography, Divider, CircularProgress } from "@mui/
 import { apiServices } from "../../../../infrastructure/api/networkServices";
 import Chip from "../../../components/Chip";
 import palette from "../../../themes/palette";
+import { displayFormattedTime } from "src/presentation/tools/isoDateToString";
 
 interface RunEntry {
   kind: "model" | "tool";
@@ -79,9 +80,7 @@ export default function RunDetailDrawer({ runId, onClose }: RunDetailDrawerProps
                   variant={e.kind === "model" ? "success" : "info"}
                   uppercase={false}
                 />
-                <Typography variant="caption">
-                  {new Date(e.created_at).toLocaleTimeString()}
-                </Typography>
+                <Typography variant="caption">{displayFormattedTime(e.created_at)}</Typography>
                 <Typography variant="caption" sx={{ ml: "auto" }}>
                   {e.model}
                 </Typography>
