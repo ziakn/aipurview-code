@@ -191,13 +191,14 @@ export async function assertCreateStampsCallerOrg(
   routes: Pick<ResourceRoutes, "create">,
   buildPayload: (foreignOrgId: number) => Record<string, any>,
   dbTable: string,
+  extractId: (res: Response) => number | undefined = (res) => res.body?.data?.id ?? res.body?.id,
 ): Promise<number> {
   const payload = buildPayload(foreignOrgId);
   const res = await caller.request.post(routes.create).send(payload);
 
   expect([200, 201]).toContain(res.status);
 
-  const id = res.body?.data?.id ?? res.body?.id;
+  const id = extractId(res);
   expect(id).toBeDefined();
 
   const [row] = await sequelize.query(`SELECT organization_id FROM ${dbTable} WHERE id = :id`, {
@@ -207,7 +208,7 @@ export async function assertCreateStampsCallerOrg(
   expect(row).toBeDefined();
   expect((row as any).organization_id).toBe(caller.orgId);
 
-  return id;
+  return id as number;
 }
 
 /**
