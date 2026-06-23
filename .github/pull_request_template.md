@@ -20,3 +20,4 @@ Enter the corresponding issue number after "Fixes #"
 - [ ] If I added or modified an API endpoint, the change is reflected in the generated OpenAPI spec (`npm run generate:swagger`).
 - [ ] If the endpoint requires authentication, it uses `authenticateJWT` and the generated spec declares `bearerAuth` security.
 - [ ] I ran `npm run check:api-drift` and committed the regenerated `swagger.yaml` and `endpoints.ts`.
+- [ ] I ran the tenant-isolation integration matrix (`npm run test:integration -- --testPathPatterns=tenant-isolation`) and all tests pass.
