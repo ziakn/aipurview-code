@@ -11,7 +11,7 @@ export interface OptimisticListMutationContext<TData> {
 }
 
 export interface UseOptimisticListMutationConfig<
-  TItem extends { id: string | number },
+  TItem extends { id?: string | number },
   TData = TItem[],
   TError = Error,
   TVariables = unknown,
@@ -27,7 +27,7 @@ export interface UseOptimisticListMutationConfig<
 }
 
 export function useOptimisticListMutation<
-  TItem extends { id: string | number },
+  TItem extends { id?: string | number },
   TData = TItem[],
   TError = Error,
   TVariables = unknown,
@@ -113,7 +113,7 @@ export function useOptimisticDetailMutation<TData, TError = Error, TVariables = 
   });
 }
 
-export function patchListItemById<T extends { id: string | number }>(
+export function patchListItemById<T extends { id?: string | number }>(
   list: T[] | undefined,
   id: T["id"],
   patch: Partial<T>,
@@ -122,7 +122,7 @@ export function patchListItemById<T extends { id: string | number }>(
   return list.map((item) => (item.id === id ? { ...item, ...patch } : item));
 }
 
-export function patchListItemsByIds<T extends { id: string | number }>(
+export function patchListItemsByIds<T extends { id?: string | number }>(
   list: T[] | undefined,
   ids: T["id"][],
   patch: Partial<T>,
