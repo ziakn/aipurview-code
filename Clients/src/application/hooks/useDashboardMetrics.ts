@@ -1172,34 +1172,42 @@ export const useDashboardMetrics = () => {
       setProgressStep(0);
 
       try {
-        // Group 1: Core - risks, evidence files
-        await Promise.allSettled([fetchRiskMetrics(), fetchEvidenceMetrics()]);
-        setProgressStep(1);
+        // These metric groups are independent of one another, so they run as a
+        // single parallel batch instead of five sequential stages. On first
+        // login (empty cache) this is the difference between waiting on the sum
+        // of each stage's slowest call and waiting on the slowest call overall.
+        // Group 4 (projects -> frameworks -> per-framework progress) is an
+        // internal waterfall and stays the long pole; everything else resolves
+        // underneath it. progressStep still advances per group for the dialog,
+        // updated as each group settles rather than gating the next group.
+        let settledGroups = 0;
+        const totalGroups = 5;
+        const advanceProgress = () => {
+          settledGroups += 1;
+          setProgressStep(settledGroups);
+        };
 
-        // Group 2: Vendors & policies
-        await Promise.allSettled([
+        const group1 = Promise.allSettled([fetchRiskMetrics(), fetchEvidenceMetrics()]).then(
+          advanceProgress,
+        );
+        const group2 = Promise.allSettled([
           fetchVendorRiskMetrics(),
           fetchVendorMetrics(),
           fetchPolicyMetrics(),
           fetchIncidentMetrics(),
-        ]);
-        setProgressStep(2);
-
-        // Group 3: Models - merged model metrics (evidenceHub + modelLifecycle), model risks, training
-        await Promise.allSettled([
+        ]).then(advanceProgress);
+        const group3 = Promise.allSettled([
           fetchModelMetrics(),
           fetchModelRiskMetrics(),
           fetchTrainingMetrics(),
-        ]);
-        setProgressStep(3);
+        ]).then(advanceProgress);
+        const group4 = Promise.allSettled([fetchProjectMetrics()]).then(advanceProgress);
+        const group5 = Promise.allSettled([fetchGovernanceScoreMetrics(), fetchTaskMetrics()]).then(
+          advanceProgress,
+        );
 
-        // Group 4: Frameworks - merged project metrics (useCases + orgFrameworks)
-        await Promise.allSettled([fetchProjectMetrics()]);
-        setProgressStep(4);
-
-        // Group 5: Scores - governance score, tasks
-        await Promise.allSettled([fetchGovernanceScoreMetrics(), fetchTaskMetrics()]);
-        setProgressStep(5);
+        await Promise.all([group1, group2, group3, group4, group5]);
+        setProgressStep(totalGroups);
       } catch (err) {
         setError("Failed to fetch dashboard metrics");
         console.error("Error fetching dashboard metrics:", err);

@@ -1,11 +1,14 @@
 import { apiServices } from "../../infrastructure/api/networkServices";
+import { getDeduped } from "../../infrastructure/api/inflightGet";
 
 export async function getAllProjects({
   signal,
 }: {
   signal?: AbortSignal;
 } = {}): Promise<any> {
-  const response = await apiServices.get("/projects", {
+  // Deduped: the dashboard shell and the metrics hook both request /projects
+  // on first login. Sharing the in-flight promise collapses them into one call.
+  const response = await getDeduped("/projects", {
     signal,
   });
   return response.data;
