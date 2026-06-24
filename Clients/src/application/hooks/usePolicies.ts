@@ -12,7 +12,7 @@ export const policyQueryKeys = {
 
 export const usePolicies = (): UseQueryResult<PolicyManagerModel[], Error> => {
   return useQuery({
-    queryKey: policyQueryKeys.lists(),
+    queryKey: policyQueryKeys.list(),
     queryFn: async () => {
       return await getAllPolicies();
     },
