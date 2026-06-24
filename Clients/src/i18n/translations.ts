@@ -789,10 +789,12 @@ export const translations: Record<string, Record<string, string>> = {
     "SOC2 Type I": "SOC 2 Typ I",
     "SOC2 Type II": "SOC 2 Typ II",
     "AI regulation in the Middle East": "KI-Regulierung im Nahen Osten",
-    "US AI regulations 2026": "KI-Regulierungen in den USA 2026",
-    "EU AI Act omnibus: what changed": "EU-KI-Verordnung Omnibus: Was sich geändert hat",
-    "VerifyWise YouTube channel launched": "VerifyWise YouTube-Kanal gestartet",
-    "Why LLM evaluations matter": "Warum LLM-Evaluierungen wichtig sind",
+    "We graded 205 AI apps on data transparency":
+      "Wir haben 205 KI-Apps zur Datentransparenz bewertet",
+    "OSFI Guideline E-23: AI model risk rules": "OSFI-Leitlinie E-23: Regeln für KI-Modellrisiken",
+    "What we found running GRS across 15 AI models":
+      "Was wir bei der Anwendung von GRS auf 15 KI-Modelle herausfanden",
+    "AI governance salaries 2026": "Gehälter im Bereich KI-Governance 2026",
     "Clauses": "Klauseln",
     "Annexes": "Anhänge",
     "AI models mapped to this framework": "Diesem Rahmenwerk zugeordnete KI-Modelle",
@@ -9744,10 +9746,13 @@ export const translations: Record<string, Record<string, string>> = {
     "SOC2 Type I": "SOC 2 Type I",
     "SOC2 Type II": "SOC 2 Type II",
     "AI regulation in the Middle East": "Réglementation IA au Moyen-Orient",
-    "US AI regulations 2026": "Réglementations IA aux États-Unis en 2026",
-    "EU AI Act omnibus: what changed": "Règlement IA de l'UE — omnibus : ce qui a changé",
-    "VerifyWise YouTube channel launched": "Lancement de la chaîne YouTube VerifyWise",
-    "Why LLM evaluations matter": "Pourquoi les évaluations LLM sont importantes",
+    "We graded 205 AI apps on data transparency":
+      "Nous avons évalué 205 applications d'IA sur la transparence des données",
+    "OSFI Guideline E-23: AI model risk rules":
+      "Ligne directrice E-23 du BSIF : règles sur le risque des modèles d'IA",
+    "What we found running GRS across 15 AI models":
+      "Ce que nous avons constaté en appliquant le GRS à 15 modèles d'IA",
+    "AI governance salaries 2026": "Salaires en gouvernance de l'IA 2026",
     "AI models mapped to this framework": "Modèles IA rattachés à ce référentiel",
     "Organizational Frameworks": "Référentiels organisationnels",
     "Organizational policies": "Politiques organisationnelles",
@@ -17872,10 +17877,13 @@ export const translations: Record<string, Record<string, string>> = {
     "SOC2 Type I": "SOC2 Type I",
     "SOC2 Type II": "SOC2 Type II",
     "AI regulation in the Middle East": "Regulación de la IA en Oriente Medio",
-    "US AI regulations 2026": "Regulaciones de IA en EE. UU. 2026",
-    "EU AI Act omnibus: what changed": "Ómnibus de la EU AI Act: qué ha cambiado",
-    "VerifyWise YouTube channel launched": "Lanzado el canal de YouTube de VerifyWise",
-    "Why LLM evaluations matter": "Por qué importan las evaluaciones de LLM",
+    "We graded 205 AI apps on data transparency":
+      "Evaluamos 205 aplicaciones de IA en transparencia de datos",
+    "OSFI Guideline E-23: AI model risk rules":
+      "Directriz E-23 del OSFI: reglas de riesgo de modelos de IA",
+    "What we found running GRS across 15 AI models":
+      "Lo que encontramos al aplicar GRS a 15 modelos de IA",
+    "AI governance salaries 2026": "Salarios en gobernanza de IA 2026",
     "Clauses": "Cláusulas",
     "Annexes": "Anexos",
     "AI models mapped to this framework": "Modelos de IA mapeados a este marco",
