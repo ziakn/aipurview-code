@@ -59,7 +59,30 @@ const getCachedValue = <T>(
   return { data: entry.data, isFresh, isStale };
 };
 
+// When a bulk fetch is in progress, cache writes accumulate in this in-memory
+// buffer instead of re-serializing the whole localStorage blob on every metric.
+// The parallel batch fires ~18 setCachedValue calls in one tight window; without
+// buffering that is 18 full read-parse-stringify-write cycles of a growing object
+// on the main thread during first paint. While buffering, each write is O(1) in
+// memory and the whole cache is persisted once via flushCacheBuffer().
+let cacheBuffer: MetricsCache | null = null;
+
+const beginCacheBuffering = (): void => {
+  cacheBuffer = getCache();
+};
+
+const flushCacheBuffer = (): void => {
+  if (cacheBuffer) {
+    setCache(cacheBuffer);
+    cacheBuffer = null;
+  }
+};
+
 const setCachedValue = <T>(key: keyof MetricsCache, data: T): void => {
+  if (cacheBuffer) {
+    cacheBuffer[key] = { data, timestamp: Date.now() };
+    return;
+  }
   const cache = getCache();
   cache[key] = { data, timestamp: Date.now() };
   setCache(cache);
@@ -1171,6 +1194,9 @@ export const useDashboardMetrics = () => {
       setError(null);
       setProgressStep(0);
 
+      // Buffer cache writes so the ~18 metric persists collapse into one
+      // localStorage serialization at the end instead of one per metric.
+      beginCacheBuffering();
       try {
         // These metric groups are independent of one another, so they run as a
         // single parallel batch instead of five sequential stages. On first
@@ -1178,40 +1204,51 @@ export const useDashboardMetrics = () => {
         // of each stage's slowest call and waiting on the slowest call overall.
         // Group 4 (projects -> frameworks -> per-framework progress) is an
         // internal waterfall and stays the long pole; everything else resolves
-        // underneath it. progressStep still advances per group for the dialog,
-        // updated as each group settles rather than gating the next group.
-        let settledGroups = 0;
-        const totalGroups = 5;
-        const advanceProgress = () => {
-          settledGroups += 1;
-          setProgressStep(settledGroups);
+        // underneath it.
+        //
+        // The progress dialog labels are stage-ordered with increasing
+        // percentages, so progressStep must stay a monotonic prefix index: it
+        // advances to step i only once every stage 0..i has completed. Tracking
+        // the leading run of completed stages (rather than a raw settle count)
+        // keeps the displayed label honest — it never shows "models" while
+        // risks are still loading, and the percentage never jumps backwards
+        // when groups settle out of order.
+        const groupDone = [false, false, false, false, false];
+        const markDone = (index: number) => () => {
+          groupDone[index] = true;
+          let completedPrefix = 0;
+          while (completedPrefix < groupDone.length && groupDone[completedPrefix]) {
+            completedPrefix += 1;
+          }
+          setProgressStep(completedPrefix);
         };
 
         const group1 = Promise.allSettled([fetchRiskMetrics(), fetchEvidenceMetrics()]).then(
-          advanceProgress,
+          markDone(0),
         );
         const group2 = Promise.allSettled([
           fetchVendorRiskMetrics(),
           fetchVendorMetrics(),
           fetchPolicyMetrics(),
           fetchIncidentMetrics(),
-        ]).then(advanceProgress);
+        ]).then(markDone(1));
         const group3 = Promise.allSettled([
           fetchModelMetrics(),
           fetchModelRiskMetrics(),
           fetchTrainingMetrics(),
-        ]).then(advanceProgress);
-        const group4 = Promise.allSettled([fetchProjectMetrics()]).then(advanceProgress);
+        ]).then(markDone(2));
+        const group4 = Promise.allSettled([fetchProjectMetrics()]).then(markDone(3));
         const group5 = Promise.allSettled([fetchGovernanceScoreMetrics(), fetchTaskMetrics()]).then(
-          advanceProgress,
+          markDone(4),
         );
 
         await Promise.all([group1, group2, group3, group4, group5]);
-        setProgressStep(totalGroups);
+        setProgressStep(groupDone.length);
       } catch (err) {
         setError("Failed to fetch dashboard metrics");
         console.error("Error fetching dashboard metrics:", err);
       } finally {
+        flushCacheBuffer();
         setLoading(false);
         setIsRevalidating(false);
       }

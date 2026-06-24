@@ -23,11 +23,23 @@ function keyFor(url: string, params?: Record<string, any>): string {
  * Issues a GET request, sharing the in-flight promise with any concurrent
  * caller for the same URL+params. Returns the full Axios response so callers
  * can read `.data` exactly as they would from `apiServices.get`.
+ *
+ * Calls that pass an `AbortSignal` are never deduped: they always get their own
+ * isolated request. Sharing one promise across callers would otherwise bind a
+ * second caller to the first caller's signal (aborting one cancels both) and
+ * widen the blast radius of a single rejection. Abortable callers therefore
+ * keep independent fate, and only genuinely fire-and-forget concurrent reads
+ * (the dashboard's first-login burst) share a request.
  */
 export function getDeduped(
   url: string,
   config?: { params?: Record<string, any>; signal?: AbortSignal },
 ): Promise<any> {
+  // Never collapse abortable requests into a shared promise.
+  if (config?.signal) {
+    return apiServices.get(url, config);
+  }
+
   const key = keyFor(url, config?.params);
 
   const existing = inflight.get(key);

@@ -3,14 +3,23 @@ import { getDeduped } from "../../infrastructure/api/inflightGet";
 
 export async function getAllProjects({
   signal,
+  forceFresh = false,
 }: {
   signal?: AbortSignal;
+  /**
+   * Bypass in-flight dedup and always issue a fresh request. Required after a
+   * mutation (project create/edit) so the refresh cannot resolve to an older
+   * /projects request that is still in flight and predates the change.
+   */
+  forceFresh?: boolean;
 } = {}): Promise<any> {
-  // Deduped: the dashboard shell and the metrics hook both request /projects
-  // on first login. Sharing the in-flight promise collapses them into one call.
-  const response = await getDeduped("/projects", {
-    signal,
-  });
+  // Deduped by default: the dashboard shell and the metrics hook both request
+  // /projects on first login, and sharing the in-flight promise collapses them
+  // into one call. Freshness-critical callers opt out with forceFresh.
+  const response =
+    forceFresh || signal
+      ? await apiServices.get("/projects", { signal })
+      : await getDeduped("/projects");
   return response.data;
 }
 
