@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getFilesWithMetadata } from "../repository/file.repository";
 import { transformFilesData } from "../utils/fileTransform.utils";
-import type { FileModel } from "../../domain/models/Common/file/file.model";
 
 export const fileQueryKeys = {
   all: ["files"] as const,
