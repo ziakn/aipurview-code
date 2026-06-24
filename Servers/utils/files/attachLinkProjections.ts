@@ -188,11 +188,7 @@ export async function attachLinkProjections<T extends { id: number | string; sou
       const trainingIds = Array.isArray(ev.mapped_training_ids) ? ev.mapped_training_ids : [];
       evidenceLabelMap.set(
         ev.id,
-        modelIds.length > 0
-          ? "Model inventory"
-          : trainingIds.length > 0
-            ? "Training"
-            : "Evidence",
+        modelIds.length > 0 ? "Model inventory" : trainingIds.length > 0 ? "Training" : "Evidence",
       );
       evidenceMappingsMap.set(ev.id, {
         mapped_model_ids: modelIds,

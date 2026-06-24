@@ -1087,10 +1087,10 @@ const FileBasicTable: React.FC<IFileBasicTableProps> = ({
                   key={`${gi}-${li}-${link.framework_type}-${link.entity_type}-${link.entity_id}`}
                   disableRipple
                   sx={{
-                    pl: 2.5,
-                    py: 0.75,
-                    fontSize: 13,
-                    cursor: "default",
+                    "pl": 2.5,
+                    "py": 0.75,
+                    "fontSize": 13,
+                    "cursor": "default",
                     "&:hover": { backgroundColor: "transparent" },
                   }}
                 >
