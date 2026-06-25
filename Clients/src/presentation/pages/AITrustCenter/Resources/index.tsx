@@ -867,7 +867,7 @@ const TrustCenterResources: React.FC = () => {
       </Box>
 
       {alert && (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<></>}>
           <Alert
             variant={alert.variant}
             title={alert.title}
@@ -880,7 +880,7 @@ const TrustCenterResources: React.FC = () => {
 
       {/* Error notification for add resource */}
       {addResourceError && (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<></>}>
           <Alert
             variant="error"
             body={addResourceError}
@@ -892,7 +892,7 @@ const TrustCenterResources: React.FC = () => {
 
       {/* Error notification for delete resource */}
       {deleteResourceError && (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<></>}>
           <Alert
             variant="error"
             body={deleteResourceError}
@@ -904,7 +904,7 @@ const TrustCenterResources: React.FC = () => {
 
       {/* Error notification for edit resource */}
       {editResourceError && (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<></>}>
           <Alert
             variant="error"
             body={editResourceError}

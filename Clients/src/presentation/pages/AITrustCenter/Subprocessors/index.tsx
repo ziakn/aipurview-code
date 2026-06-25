@@ -701,7 +701,7 @@ const AITrustCenterSubprocessors: React.FC = () => {
       </Box>
 
       {alert && (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<></>}>
           <Alert
             variant={alert.variant}
             title={alert.title}
@@ -714,7 +714,7 @@ const AITrustCenterSubprocessors: React.FC = () => {
 
       {/* Error notification for add subprocessor */}
       {addSubprocessorError && (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<></>}>
           <Alert
             variant="error"
             body={addSubprocessorError}
@@ -726,7 +726,7 @@ const AITrustCenterSubprocessors: React.FC = () => {
 
       {/* Error notification for delete subprocessor */}
       {deleteSubprocessorError && (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<></>}>
           <Alert
             variant="error"
             body={deleteSubprocessorError}
@@ -738,7 +738,7 @@ const AITrustCenterSubprocessors: React.FC = () => {
 
       {/* Error notification for edit subprocessor */}
       {editSubprocessorError && (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<></>}>
           <Alert
             variant="error"
             body={editSubprocessorError}
