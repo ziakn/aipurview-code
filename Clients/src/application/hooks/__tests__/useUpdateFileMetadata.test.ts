@@ -2,21 +2,17 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
-import { useBulkUpdateFiles } from "../useBulkUpdateFiles";
+import { useUpdateFileMetadata } from "../useUpdateFileMetadata";
 import { fileQueryKeys } from "../useFiles";
 import { FileModel } from "../../../domain/models/Common/file/file.model";
 
 vi.mock("../../repository/file.repository", () => ({
-  bulkUpdateFileTags: vi.fn(),
+  updateFileMetadata: vi.fn(),
 }));
 
-vi.mock("../../repository/virtualFolder.repository", () => ({
-  assignFilesToFolder: vi.fn(),
-}));
+import { updateFileMetadata, type FileMetadata } from "../../repository/file.repository";
 
-import { bulkUpdateFileTags } from "../../repository/file.repository";
-
-const mockBulkUpdateFileTags = vi.mocked(bulkUpdateFileTags);
+const mockUpdateFileMetadata = vi.mocked(updateFileMetadata);
 
 function createFile(id: string, tags: string[]): FileModel {
   return FileModel.createNewFile({
@@ -39,14 +35,14 @@ function createWrapper() {
   };
 }
 
-describe("useBulkUpdateFiles", () => {
+describe("useUpdateFileMetadata", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("optimistically updates tags for selected files in set mode", async () => {
-    let resolveMutation: () => void = () => {};
-    mockBulkUpdateFileTags.mockImplementation(
+  it("optimistically updates file metadata in the list cache", async () => {
+    let resolveMutation: (value: FileMetadata) => void = () => {};
+    mockUpdateFileMetadata.mockImplementation(
       () =>
-        new Promise<void>((resolve) => {
+        new Promise<FileMetadata>((resolve) => {
           resolveMutation = resolve;
         }),
     );
@@ -54,68 +50,33 @@ describe("useBulkUpdateFiles", () => {
     const queryKey = fileQueryKeys.list();
     const { queryClient, wrapper } = createWrapper();
 
-    queryClient.setQueryData(queryKey, [createFile("1", ["old"]), createFile("2", ["old"])]);
+    queryClient.setQueryData(queryKey, [createFile("1", ["old"])]);
 
-    const { result } = renderHook(() => useBulkUpdateFiles(), { wrapper });
+    const { result } = renderHook(() => useUpdateFileMetadata(), { wrapper });
 
     act(() => {
-      result.current.mutate({
-        type: "update_tags",
-        payload: { ids: [1], tags: ["new"], mode: "set" },
-      });
+      result.current.mutate({ id: "1", updates: { tags: ["new"] } });
     });
 
     await waitFor(() => {
       const data = queryClient.getQueryData<FileModel[]>(queryKey);
       expect(data?.[0].tags).toEqual(["new"]);
-      expect(data?.[1].tags).toEqual(["old"]);
     });
 
     act(() => {
-      resolveMutation();
+      resolveMutation({ id: "1", filename: "file-1.txt" } as FileMetadata);
     });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(mockUpdateFileMetadata).toHaveBeenCalledWith({
+      id: "1",
+      updates: { tags: ["new"] },
+    });
   });
 
-  it("optimistically adds tags in add mode", async () => {
-    let resolveMutation: () => void = () => {};
-    mockBulkUpdateFileTags.mockImplementation(
-      () =>
-        new Promise<void>((resolve) => {
-          resolveMutation = resolve;
-        }),
-    );
-
-    const queryKey = fileQueryKeys.list();
-    const { queryClient, wrapper } = createWrapper();
-
-    queryClient.setQueryData(queryKey, [createFile("1", ["existing"])]);
-
-    const { result } = renderHook(() => useBulkUpdateFiles(), { wrapper });
-
-    act(() => {
-      result.current.mutate({
-        type: "update_tags",
-        payload: { ids: [1], tags: ["new"], mode: "add" },
-      });
-    });
-
-    await waitFor(() => {
-      const data = queryClient.getQueryData<FileModel[]>(queryKey);
-      expect(data?.[0].tags).toEqual(["existing", "new"]);
-    });
-
-    act(() => {
-      resolveMutation();
-    });
-
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-  });
-
-  it("rolls back tag changes when the mutation fails", async () => {
+  it("rolls back the optimistic update on failure", async () => {
     let rejectMutation: (error: Error) => void = () => {};
-    mockBulkUpdateFileTags.mockImplementation(
+    mockUpdateFileMetadata.mockImplementation(
       () =>
         new Promise<never>((_resolve, reject) => {
           rejectMutation = reject;
@@ -127,13 +88,10 @@ describe("useBulkUpdateFiles", () => {
 
     queryClient.setQueryData(queryKey, [createFile("1", ["old"])]);
 
-    const { result } = renderHook(() => useBulkUpdateFiles(), { wrapper });
+    const { result } = renderHook(() => useUpdateFileMetadata(), { wrapper });
 
     act(() => {
-      result.current.mutate({
-        type: "update_tags",
-        payload: { ids: [1], tags: ["new"], mode: "set" },
-      });
+      result.current.mutate({ id: "1", updates: { tags: ["new"] } });
     });
 
     await waitFor(() => {

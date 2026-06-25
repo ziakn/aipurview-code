@@ -921,6 +921,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Error loading controls": "Fehler beim Laden der Kontrollen",
     "Error restoring task": "Fehler beim Wiederherstellen der Aufgabe",
     "Error updating task": "Fehler beim Aktualisieren der Aufgabe",
+    "Error updating task priority": "Fehler beim Aktualisieren der Aufgabenpriorität",
+    "Error updating task status": "Fehler beim Aktualisieren des Aufgabenstatus",
     "Cannot update training without ID": "Schulung kann ohne ID nicht aktualisiert werden",
     "Please select a project to view assessments":
       "Wählen Sie ein Projekt, um Bewertungen anzuzeigen",
@@ -6313,6 +6315,10 @@ export const translations: Record<string, Record<string, string>> = {
       "Aktualisieren des Status fehlgeschlagen. Bitte erneut versuchen.",
     "Failed to update the task. Please try again.":
       "Aktualisieren der Aufgabe fehlgeschlagen. Bitte erneut versuchen.",
+    "Failed to update the task priority. Please try again.":
+      "Aktualisieren der Aufgabenpriorität fehlgeschlagen. Bitte erneut versuchen.",
+    "Failed to update the task status. Please try again.":
+      "Aktualisieren des Aufgabenstatus fehlgeschlagen. Bitte erneut versuchen.",
     "Failed to update the vendor risk. Please try again.":
       "Aktualisieren des Anbieterrisikos fehlgeschlagen. Bitte erneut versuchen.",
     "Failed to upload": "Hochladen fehlgeschlagen",
@@ -9843,6 +9849,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Error loading controls": "Erreur lors du chargement des contrôles",
     "Error restoring task": "Erreur lors de la restauration de la tâche",
     "Error updating task": "Erreur lors de la mise à jour de la tâche",
+    "Error updating task priority": "Erreur lors de la mise à jour de la priorité de la tâche",
+    "Error updating task status": "Erreur lors de la mise à jour du statut de la tâche",
     "Cannot update training without ID": "Impossible de mettre à jour une formation sans ID",
     "Please select a project to view assessments":
       "Sélectionnez un projet pour voir les évaluations",
@@ -14946,6 +14954,10 @@ export const translations: Record<string, Record<string, string>> = {
       "Échec de la mise à jour du statut. Veuillez réessayer.",
     "Failed to update the task. Please try again.":
       "Échec de la mise à jour de la tâche. Veuillez réessayer.",
+    "Failed to update the task priority. Please try again.":
+      "Échec de la mise à jour de la priorité de la tâche. Veuillez réessayer.",
+    "Failed to update the task status. Please try again.":
+      "Échec de la mise à jour du statut de la tâche. Veuillez réessayer.",
     "Failed to update the vendor risk. Please try again.":
       "Échec de la mise à jour du risque fournisseur. Veuillez réessayer.",
     "Failed to upload": "Échec du téléversement",
@@ -17982,6 +17994,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Error loading controls": "Error al cargar los controles",
     "Error restoring task": "Error al restaurar la tarea",
     "Error updating task": "Error al actualizar la tarea",
+    "Error updating task priority": "Error al actualizar la prioridad de la tarea",
+    "Error updating task status": "Error al actualizar el estado de la tarea",
     "Cannot update training without ID": "No se puede actualizar la formación sin un ID",
     "Welcome to VerifyWise": "Te damos la bienvenida a VerifyWise",
     "Welcome": "Bienvenido",
@@ -24349,6 +24363,10 @@ export const translations: Record<string, Record<string, string>> = {
       "No se pudo actualizar el estado. Inténtelo de nuevo.",
     "Failed to update the task. Please try again.":
       "No se pudo actualizar la tarea. Inténtelo de nuevo.",
+    "Failed to update the task priority. Please try again.":
+      "No se pudo actualizar la prioridad de la tarea. Inténtelo de nuevo.",
+    "Failed to update the task status. Please try again.":
+      "No se pudo actualizar el estado de la tarea. Inténtelo de nuevo.",
     "Failed to update the vendor risk. Please try again.":
       "No se pudo actualizar el riesgo del proveedor. Inténtelo de nuevo.",
     "File marked for deletion. Please save to apply changes.":
