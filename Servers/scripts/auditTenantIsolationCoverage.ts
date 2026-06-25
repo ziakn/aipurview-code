@@ -282,11 +282,6 @@ const deferredScopedTables: SharedTableEntry[] = [
       "Deferred to a future isolation wave; not covered by the first-pass matrix. See runbook section 2.4.",
   },
   {
-    name: "audit_ledger",
-    justification:
-      "Deferred to a future isolation wave; not covered by the first-pass matrix. See runbook section 2.4.",
-  },
-  {
     name: "automation_actions_data",
     justification:
       "Deferred to a future isolation wave; not covered by the first-pass matrix. See runbook section 2.4.",
@@ -422,17 +417,7 @@ const deferredScopedTables: SharedTableEntry[] = [
       "Deferred to a future isolation wave; not covered by the first-pass matrix. See runbook section 2.4.",
   },
   {
-    name: "event_logs",
-    justification:
-      "Deferred to a future isolation wave; not covered by the first-pass matrix. See runbook section 2.4.",
-  },
-  {
     name: "evidence_ai_analysis",
-    justification:
-      "Deferred to a future isolation wave; not covered by the first-pass matrix. See runbook section 2.4.",
-  },
-  {
-    name: "evidence_hub",
     justification:
       "Deferred to a future isolation wave; not covered by the first-pass matrix. See runbook section 2.4.",
   },
@@ -443,16 +428,6 @@ const deferredScopedTables: SharedTableEntry[] = [
   },
   {
     name: "file_access_logs",
-    justification:
-      "Deferred to a future isolation wave; not covered by the first-pass matrix. See runbook section 2.4.",
-  },
-  {
-    name: "file_change_history",
-    justification:
-      "Deferred to a future isolation wave; not covered by the first-pass matrix. See runbook section 2.4.",
-  },
-  {
-    name: "file_entity_links",
     justification:
       "Deferred to a future isolation wave; not covered by the first-pass matrix. See runbook section 2.4.",
   },
