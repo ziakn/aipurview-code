@@ -225,3 +225,145 @@ export async function assignTaskToUser(
     { replacements: { orgId, taskId, userId } },
   );
 }
+
+export interface CreateTestEvidenceHubOptions {
+  evidence_name?: string;
+  evidence_type?: string;
+  description?: string | null;
+}
+
+export async function createTestEvidenceHub(
+  orgId: number,
+  options: CreateTestEvidenceHubOptions = {},
+): Promise<number> {
+  const suffix = Date.now();
+  const [result] = await sequelize.query(
+    `INSERT INTO evidence_hub (organization_id, evidence_name, evidence_type, description, created_at, updated_at)
+     VALUES (:orgId, :name, :type, :description, NOW(), NOW()) RETURNING id`,
+    {
+      replacements: {
+        orgId,
+        name: options.evidence_name ?? `Evidence ${suffix}`,
+        type: options.evidence_type ?? "document",
+        description: options.description ?? null,
+      },
+    },
+  );
+  return (result as any[])[0].id;
+}
+
+export interface CreateTestAuditLedgerOptions {
+  entry_type?: string;
+  event_type?: string;
+  entity_type?: string;
+  entity_id?: number;
+  action?: string;
+}
+
+export async function createTestAuditLedger(
+  orgId: number,
+  userId: number,
+  options: CreateTestAuditLedgerOptions = {},
+): Promise<number> {
+  const hash = "0".repeat(64);
+  const [result] = await sequelize.query(
+    `INSERT INTO audit_ledger (organization_id, entry_type, user_id, event_type, entity_type, entity_id, action, entry_hash, prev_hash, occurred_at)
+     VALUES (:orgId, :entryType, :userId, :eventType, :entityType, :entityId, :action, :entryHash, :prevHash, NOW()) RETURNING id`,
+    {
+      replacements: {
+        orgId,
+        userId,
+        entryType: options.entry_type ?? "Create",
+        eventType: options.event_type ?? "Create",
+        entityType: options.entity_type ?? "project",
+        entityId: options.entity_id ?? null,
+        action: options.action ?? "create",
+        entryHash: hash,
+        prevHash: hash,
+      },
+    },
+  );
+  return (result as any[])[0].id;
+}
+
+export interface CreateTestEventLogOptions {
+  event_type?: string;
+  description?: string;
+}
+
+export async function createTestEventLog(
+  orgId: number,
+  userId: number,
+  options: CreateTestEventLogOptions = {},
+): Promise<number> {
+  const [result] = await sequelize.query(
+    `INSERT INTO event_logs (organization_id, event_type, description, user_id, timestamp)
+     VALUES (:orgId, :eventType, :description, :userId, NOW()) RETURNING id`,
+    {
+      replacements: {
+        orgId,
+        userId,
+        eventType: options.event_type ?? "Read",
+        description: options.description ?? "Test event log",
+      },
+    },
+  );
+  return (result as any[])[0].id;
+}
+
+export interface CreateTestFileEntityLinkOptions {
+  file_id?: number;
+  framework_type?: string;
+  entity_type?: string;
+  entity_id?: number;
+  project_id?: number;
+  created_by?: number;
+}
+
+export async function createTestFileEntityLink(
+  orgId: number,
+  options: CreateTestFileEntityLinkOptions = {},
+): Promise<number> {
+  const suffix = Date.now();
+  const [result] = await sequelize.query(
+    `INSERT INTO file_entity_links (organization_id, file_id, framework_type, entity_type, entity_id, project_id, link_type, created_at)
+     VALUES (:orgId, :fileId, :frameworkType, :entityType, :entityId, :projectId, 'evidence', NOW()) RETURNING id`,
+    {
+      replacements: {
+        orgId,
+        fileId: options.file_id ?? null,
+        frameworkType: options.framework_type ?? "eu-ai-act",
+        entityType: options.entity_type ?? "control",
+        entityId: options.entity_id ?? suffix,
+        projectId: options.project_id ?? null,
+      },
+    },
+  );
+  return (result as any[])[0].id;
+}
+
+export interface CreateTestFileChangeHistoryOptions {
+  file_id?: number;
+  field_name?: string;
+  changed_by_user_id?: number;
+}
+
+export async function createTestFileChangeHistory(
+  orgId: number,
+  options: CreateTestFileChangeHistoryOptions = {},
+): Promise<number> {
+  const suffix = Date.now();
+  const [result] = await sequelize.query(
+    `INSERT INTO file_change_history (organization_id, file_id, field_name, old_value, new_value, action, changed_by_user_id, changed_at, created_at)
+     VALUES (:orgId, :fileId, :fieldName, 'old', 'new', 'update', :changedBy, NOW(), NOW()) RETURNING id`,
+    {
+      replacements: {
+        orgId,
+        fileId: options.file_id ?? suffix,
+        fieldName: options.field_name ?? "filename",
+        changedBy: options.changed_by_user_id ?? null,
+      },
+    },
+  );
+  return (result as any[])[0].id;
+}
