@@ -72,6 +72,31 @@ export const tenantIsolationRegistry: IsolationEntity[] = [
     tables: ["projects_frameworks"],
     baseRoute: "/api/frameworks",
   },
+  {
+    name: "evidence_hub",
+    tables: ["evidence_hub"],
+    baseRoute: "/api/evidenceHub",
+  },
+  {
+    name: "audit_ledger",
+    tables: ["audit_ledger"],
+    baseRoute: "/api/audit-ledger",
+  },
+  {
+    name: "event_logs",
+    tables: ["event_logs"],
+    baseRoute: "/api/logger/events",
+  },
+  {
+    name: "file_entity_links",
+    tables: ["file_entity_links"],
+    baseRoute: "/api/files",
+  },
+  {
+    name: "file_change_history",
+    tables: ["file_change_history"],
+    baseRoute: "/api/file-change-history",
+  },
 ];
 
 /** Flat set of all tenant-scoped tables declared in the registry. */
