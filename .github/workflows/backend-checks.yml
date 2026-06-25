@@ -120,6 +120,16 @@ jobs:
           NODE_ENV: test
         run: npm run test:integration -- --testPathPatterns=tenant-isolation
 
+      - name: Run schema-drift tenant isolation audit
+        env:
+          DB_HOST: localhost
+          DB_PORT: "5432"
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_NAME: verifywise_test
+          NODE_ENV: test
+        run: npx ts-node scripts/auditTenantIsolationCoverage.ts
+
   dependency-review:
     name: Dependency Review
     runs-on: ubuntu-latest
