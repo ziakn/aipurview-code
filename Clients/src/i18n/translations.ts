@@ -4792,6 +4792,7 @@ export const translations: Record<string, Record<string, string>> = {
       "Keine Ordner verfügbar. Erstellen Sie zuerst einen Ordner.",
     "No folders yet": "Noch keine Ordner",
     "No framework plugins available.": "Keine Rahmenwerk-Plugins verfügbar.",
+    "No framework risks yet": "Noch keine Rahmenwerksrisiken",
     "No frameworks available. Please contact support if this issue persists.":
       "Keine Rahmenwerke verfügbar. Bitte wenden Sie sich an den Support, falls das Problem bestehen bleibt.",
     "No frameworks enabled for this organization.":
@@ -13427,6 +13428,7 @@ export const translations: Record<string, Record<string, string>> = {
       "Aucun dossier disponible. Créez d'abord un dossier.",
     "No folders yet": "Pas encore de dossiers",
     "No framework plugins available.": "Aucun plugin de référentiel disponible.",
+    "No framework risks yet": "Pas encore de risques du référentiel",
     "No frameworks available. Please contact support if this issue persists.":
       "Aucun référentiel disponible. Veuillez contacter le support si le problème persiste.",
     "No frameworks enabled for this organization.":
@@ -20307,6 +20309,7 @@ export const translations: Record<string, Record<string, string>> = {
     "No feedback files attached yet": "Aún no hay archivos de comentarios adjuntos",
     "No folders yet": "Aún no hay carpetas",
     "No framework plugins available.": "No hay complementos de marcos disponibles.",
+    "No framework risks yet": "Aún no hay riesgos del marco",
     "No frameworks installed": "No hay marcos instalados",
     "No local providers configured yet": "Aún no hay proveedores locales configurados",
     "No log data available.": "No hay datos de registro disponibles.",
