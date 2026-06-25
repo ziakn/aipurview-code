@@ -18,31 +18,39 @@ Every table that carries an `organization_id` column is tenant-scoped. Every que
 
 The cross-tenant isolation test matrix covers these entities first:
 
-| Entity | Primary table | Base API route | Notes |
-|--------|--------------|----------------|-------|
-| Projects | `projects` | `/api/projects` | Core tenant resource. |
-| Files | `files` | `/api/files` | Metadata and content endpoints. |
-| Users | `users` | `/api/users` | `organization_id` is nullable for SuperAdmin/seed users; all tenant operations still scope by caller org. |
-| Risks | `risks` | `/api/projectRisks` | Linked to projects via `projects_risks`. |
-| Tasks | `tasks` | `/api/tasks` | Assignee linkage must not leak across orgs. |
-| Vendors | `vendors` | `/api/vendors` | Linked to projects via `vendors_projects`. |
-| Assessments | `assessments` | `/api/assessments` | `organization_id` is nullable; project linkage enforces tenancy. |
-| Controls (EU AI Act) | `controls_eu` | `/api/eu-ai-act/*`, `/api/readiness/*` | No standalone CRUD route; tenancy enforced through framework/project lifecycle. |
-| Project frameworks | `projects_frameworks` | `/api/frameworks/*` | Junction between global `frameworks` and tenant projects. |
+| Entity               | Primary table         | Base API route                         | Notes                                                                                                     |
+| -------------------- | --------------------- | -------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Projects             | `projects`            | `/api/projects`                        | Core tenant resource.                                                                                     |
+| Files                | `files`               | `/api/files`                           | Metadata and content endpoints.                                                                           |
+| Users                | `users`               | `/api/users`                           | `organization_id` is nullable for SuperAdmin/seed users; all tenant operations still scope by caller org. |
+| Risks                | `risks`               | `/api/projectRisks`                    | Linked to projects via `projects_risks`.                                                                  |
+| Tasks                | `tasks`               | `/api/tasks`                           | Assignee linkage must not leak across orgs.                                                               |
+| Vendors              | `vendors`             | `/api/vendors`                         | Linked to projects via `vendors_projects`.                                                                |
+| Assessments          | `assessments`         | `/api/assessments`                     | `organization_id` is nullable; project linkage enforces tenancy.                                          |
+| Controls (EU AI Act) | `controls_eu`         | `/api/eu-ai-act/*`, `/api/readiness/*` | No standalone CRUD route; tenancy enforced through framework/project lifecycle.                           |
+| Project frameworks   | `projects_frameworks` | `/api/frameworks/*`                    | Junction between global `frameworks` and tenant projects.                                                 |
 
 ### 2.3 Shared tables (no `organization_id`)
 
 These tables are intentionally global and must **not** be added to the tenant-isolation registry:
 
-| Table | Reason |
-|-------|--------|
-| `organizations` | Tenant root. |
-| `roles` | Global role definitions. |
-| `frameworks` | Global framework catalog; tenant linkage is `projects_frameworks`. |
-| `*_struct_*` | Framework structure tables (shared reference data). |
-| `subscription_*`, `tiers` | Billing metadata. |
+| Table                     | Reason                                                             |
+| ------------------------- | ------------------------------------------------------------------ |
+| `organizations`           | Tenant root.                                                       |
+| `roles`                   | Global role definitions.                                           |
+| `frameworks`              | Global framework catalog; tenant linkage is `projects_frameworks`. |
+| `*_struct_*`              | Framework structure tables (shared reference data).                |
+| `subscription_*`, `tiers` | Billing metadata.                                                  |
 
 If you add a new shared table, document it in the `sharedTables` allow-list in `Servers/scripts/auditTenantIsolationCoverage.ts` with a justification comment.
+
+### 2.4 Deferred scoped tables (first pass)
+
+The first-pass isolation matrix intentionally does **not** cover every tenant-scoped table in the database. The tables listed in `deferredScopedTables` inside `Servers/scripts/auditTenantIsolationCoverage.ts` are acknowledged as tenant-scoped but are deferred to future waves.
+
+- Do **not** add new organization-scoped tables to `deferredScopedTables` without a risk-accepted ticket.
+- When a future wave adds isolation coverage for a deferred table, remove it from `deferredScopedTables` and add it to the tenant-isolation registry.
+- The CI gate will fail if a newly added `organization_id` table is not covered by the registry, the `sharedTables` allow-list, or the `deferredScopedTables` list.
 
 ## 3. SuperAdmin Exception Rules
 
@@ -116,21 +124,21 @@ All raw SQL that touches tenant-scoped tables must include `organization_id` in 
 // CORRECT
 const [rows] = await sequelize.query(
   `SELECT * FROM projects WHERE organization_id = :organizationId AND id = :id`,
-  { replacements: { organizationId, id }, type: QueryTypes.SELECT }
+  { replacements: { organizationId, id }, type: QueryTypes.SELECT },
 );
 
 // CORRECT insert — stamp caller org
 await sequelize.query(
   `INSERT INTO projects (organization_id, project_title, owner)
    VALUES (:organizationId, :title, :ownerId)`,
-  { replacements: { organizationId, title, ownerId } }
+  { replacements: { organizationId, title, ownerId } },
 );
 
 // INCORRECT — missing org filter
-const [rows] = await sequelize.query(
-  `SELECT * FROM projects WHERE id = :id`,
-  { replacements: { id }, type: QueryTypes.SELECT }
-);
+const [rows] = await sequelize.query(`SELECT * FROM projects WHERE id = :id`, {
+  replacements: { id },
+  type: QueryTypes.SELECT,
+});
 
 // INCORRECT — trusting body.organizationId
 const orgId = req.body.organizationId;
@@ -144,11 +152,11 @@ const orgId = req.body.organizationId;
 // CORRECT
 export const getProjectByIdQuery = async (
   organizationId: number,
-  id: number
+  id: number,
 ) => {
   const [project] = await sequelize.query(
     `SELECT * FROM projects WHERE organization_id = :organizationId AND id = :id`,
-    { replacements: { organizationId, id }, type: QueryTypes.SELECT }
+    { replacements: { organizationId, id }, type: QueryTypes.SELECT },
   );
   return project;
 };
@@ -157,7 +165,7 @@ export const getProjectByIdQuery = async (
 export const getProjectByIdQuery = async (id: number) => {
   const [project] = await sequelize.query(
     `SELECT * FROM projects WHERE id = :id`,
-    { replacements: { id }, type: QueryTypes.SELECT }
+    { replacements: { id }, type: QueryTypes.SELECT },
   );
   return project;
 };
@@ -199,18 +207,18 @@ export const createProjectQuery = async (payload: CreateProjectPayload) => {
 // CORRECT
 await sequelize.query(
   `UPDATE projects SET project_title = :title WHERE organization_id = :organizationId AND id = :id`,
-  { replacements: { title, organizationId, id } }
+  { replacements: { title, organizationId, id } },
 );
 
 await sequelize.query(
   `DELETE FROM projects WHERE organization_id = :organizationId AND id = :id`,
-  { replacements: { organizationId, id } }
+  { replacements: { organizationId, id } },
 );
 
 // INCORRECT
 await sequelize.query(
   `UPDATE projects SET project_title = :title WHERE id = :id`,
-  { replacements: { title, id } }
+  { replacements: { title, id } },
 );
 ```
 
@@ -318,16 +326,16 @@ Do not merge a PR that adds a scoped table without also updating the registry.
 
 ## 9. Related Files
 
-| Purpose | Path |
-|---------|------|
-| Isolation test registry | `Servers/tests/integration/tenant-isolation/tenantIsolation.registry.ts` |
-| Isolation test harness | `Servers/tests/integration/tenant-isolation/tenantIsolation.harness.ts` |
-| Schema-drift audit | `Servers/scripts/auditTenantIsolationCoverage.ts` |
-| Integration test setup | `Servers/tests/integration/setup.ts` |
-| Integration test helpers | `Servers/tests/integration/helpers.ts` |
-| Auth middleware | `Servers/middleware/auth.middleware.ts` |
-| Context middleware | `Servers/middleware/context.middleware.ts` |
-| Multi-tenancy architecture | `docs/technical/architecture/multi-tenancy.md` |
+| Purpose                    | Path                                                                     |
+| -------------------------- | ------------------------------------------------------------------------ |
+| Isolation test registry    | `Servers/tests/integration/tenant-isolation/tenantIsolation.registry.ts` |
+| Isolation test harness     | `Servers/tests/integration/tenant-isolation/tenantIsolation.harness.ts`  |
+| Schema-drift audit         | `Servers/scripts/auditTenantIsolationCoverage.ts`                        |
+| Integration test setup     | `Servers/tests/integration/setup.ts`                                     |
+| Integration test helpers   | `Servers/tests/integration/helpers.ts`                                   |
+| Auth middleware            | `Servers/middleware/auth.middleware.ts`                                  |
+| Context middleware         | `Servers/middleware/context.middleware.ts`                               |
+| Multi-tenancy architecture | `docs/technical/architecture/multi-tenancy.md`                           |
 
 ## 10. Python and Other Services
 
