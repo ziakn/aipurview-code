@@ -191,7 +191,7 @@ export async function listOrgUsers(req: Request, res: Response) {
  */
 export async function inviteUserToOrg(req: Request, res: Response) {
   const orgId = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
-  const { email, name, surname, roleId } = req.body;
+  const { email, name, surname, roleId, password } = req.body;
 
   if (!email || !name || !roleId) {
     return res
@@ -221,6 +221,7 @@ export async function inviteUserToOrg(req: Request, res: Response) {
     surname,
     roleId,
     organizationId: orgId,
+    password,
   });
 }
 

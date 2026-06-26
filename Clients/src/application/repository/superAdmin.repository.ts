@@ -61,7 +61,7 @@ export async function getOrgUsers(orgId: number) {
 
 export async function inviteUserToOrg(
   orgId: number,
-  data: { email: string; name: string; surname?: string; roleId: number },
+  data: { email: string; name: string; surname?: string; roleId: number; password?: string },
 ) {
   return apiServices.post(`/super-admin/organizations/${orgId}/invite`, data);
 }

@@ -19,9 +19,10 @@ export const invite = async (
     surname?: string;
     roleId: number;
     organizationId: number;
+    password?: string;
   },
 ) => {
-  const { to, name, surname, roleId, organizationId } = body;
+  const { to, name, surname, roleId, organizationId, password } = body;
 
   logProcessing({
     description: `starting invite email for user: ${to}`,
@@ -45,11 +46,12 @@ export const invite = async (
       });
     }
 
+    const effectivePassword = (password ?? "").trim() || DEFAULT_INVITED_USER_PASSWORD;
     const userModel = await UserModel.createNewUser(
       name,
       surname?.trim() || "User",
       to,
-      DEFAULT_INVITED_USER_PASSWORD,
+      effectivePassword,
       Number(roleId),
       Number(organizationId),
     );
@@ -78,7 +80,7 @@ export const invite = async (
     return res.status(200).json({
       message: req.t!("User added successfully"),
       user: user.toSafeJSON(),
-      temporaryPassword: DEFAULT_INVITED_USER_PASSWORD,
+      temporaryPassword: effectivePassword,
     });
   } catch (error) {
     if (!transactionFinished) {

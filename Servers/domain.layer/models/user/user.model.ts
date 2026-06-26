@@ -245,13 +245,6 @@ export class UserModel extends Model<UserModel> {
       if (!updateData.name || updateData.name.trim().length === 0) {
         throw new ValidationException("Name is required", "name", updateData.name);
       }
-      if (updateData.name.trim().length < 2) {
-        throw new ValidationException(
-          "Name must be at least 2 characters long",
-          "name",
-          updateData.name,
-        );
-      }
       this.name = updateData.name.trim();
     }
 
@@ -259,13 +252,6 @@ export class UserModel extends Model<UserModel> {
     if (updateData.surname !== undefined) {
       if (!updateData.surname || updateData.surname.trim().length === 0) {
         throw new ValidationException("Surname is required", "surname", updateData.surname);
-      }
-      if (updateData.surname.trim().length < 2) {
-        throw new ValidationException(
-          "Surname must be at least 2 characters long",
-          "surname",
-          updateData.surname,
-        );
       }
       this.surname = updateData.surname.trim();
     }
@@ -305,20 +291,8 @@ export class UserModel extends Model<UserModel> {
       throw new ValidationException("Name is required", "name", this.name);
     }
 
-    if (this.name.trim().length < 2) {
-      throw new ValidationException("Name must be at least 2 characters long", "name", this.name);
-    }
-
     if (!this.surname || this.surname.trim().length === 0) {
       throw new ValidationException("Surname is required", "surname", this.surname);
-    }
-
-    if (this.surname.trim().length < 2) {
-      throw new ValidationException(
-        "Surname must be at least 2 characters long",
-        "surname",
-        this.surname,
-      );
     }
 
     if (!this.email || !emailValidation(this.email)) {

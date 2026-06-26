@@ -40,6 +40,7 @@ const Users = () => {
   const [inviteName, setInviteName] = useState("");
   const [inviteSurname, setInviteSurname] = useState("");
   const [inviteRoleId, setInviteRoleId] = useState(3);
+  const [invitePassword, setInvitePassword] = useState("123456");
   const [inviting, setInviting] = useState(false);
   const [inviteError, setInviteError] = useState("");
 
@@ -87,12 +88,14 @@ const Users = () => {
         name: inviteName.trim(),
         surname: inviteSurname.trim() || undefined,
         roleId: inviteRoleId,
+        password: invitePassword.trim() || undefined,
       });
       setInviteOpen(false);
       setInviteEmail("");
       setInviteName("");
       setInviteSurname("");
       setInviteRoleId(3);
+      setInvitePassword("123456");
       await fetchUsers();
     } catch (error: any) {
       setInviteError(error?.message || "Failed to add user");
@@ -277,6 +280,7 @@ const Users = () => {
         onClose={() => {
           setInviteOpen(false);
           setInviteError("");
+          setInvitePassword("123456");
         }}
         title="Add User"
         description="Create a user directly in this organization"
@@ -308,6 +312,15 @@ const Users = () => {
             placeholder="Last name"
             value={inviteSurname}
             onChange={(e) => setInviteSurname(e.target.value)}
+            sx={{ width: "100%" }}
+          />
+          <Field
+            label="Password"
+            isRequired
+            placeholder="Enter password"
+            type="password"
+            value={invitePassword}
+            onChange={(e) => setInvitePassword(e.target.value)}
             sx={{ width: "100%" }}
           />
           <Stack spacing={0.5}>
