@@ -8719,6 +8719,16 @@ export const translations: Record<string, Record<string, string>> = {
     "Get notified when assessments change": "Benachrichtigung bei Änderungen der Bewertungen",
     "Tracked apps are included in the weekly change digest, so configured recipients hear about score, grade, or policy changes.":
       "Verfolgte Apps sind in der wöchentlichen Änderungsübersicht enthalten, sodass konfigurierte Empfänger über Änderungen an Punktzahl, Note oder Richtlinie informiert werden.",
+    // AI Gateway empty/error states
+    "Click Save draft to create your first version.":
+      "Klicken Sie auf Entwurf speichern, um Ihre erste Version zu erstellen.",
+    "Could not load this run.": "Dieser Lauf konnte nicht geladen werden.",
+    "Create your first version": "Erstellen Sie Ihre erste Version",
+    "Error loading AI Trust Center settings. Please try again.":
+      "Fehler beim Laden der AI Trust Center-Einstellungen. Bitte versuchen Sie es erneut.",
+    "Failed to load invocation details.": "Aufrufdetails konnten nicht geladen werden.",
+    "Refresh": "Aktualisieren",
+    "Select a log to view details.": "Wählen Sie ein Protokoll aus, um Details anzuzeigen.",
   },
 
   fr: {
@@ -17371,6 +17381,16 @@ export const translations: Record<string, Record<string, string>> = {
     "Get notified when assessments change": "Être averti lorsque les évaluations changent",
     "Tracked apps are included in the weekly change digest, so configured recipients hear about score, grade, or policy changes.":
       "Les applications suivies sont incluses dans le récapitulatif hebdomadaire des modifications, afin que les destinataires configurés soient informés des changements de score, de note ou de politique.",
+    // AI Gateway empty/error states
+    "Click Save draft to create your first version.":
+      "Cliquez sur Enregistrer le brouillon pour créer votre première version.",
+    "Could not load this run.": "Impossible de charger cette exécution.",
+    "Create your first version": "Créer votre première version",
+    "Error loading AI Trust Center settings. Please try again.":
+      "Erreur lors du chargement des paramètres du AI Trust Center. Veuillez réessayer.",
+    "Failed to load invocation details.": "Échec du chargement des détails de l'invocation.",
+    "Refresh": "Actualiser",
+    "Select a log to view details.": "Sélectionnez un journal pour voir les détails.",
   },
   es: {
     // Settings — help text
@@ -25940,5 +25960,15 @@ export const translations: Record<string, Record<string, string>> = {
     "Get notified when assessments change": "Reciba avisos cuando cambien las evaluaciones",
     "Tracked apps are included in the weekly change digest, so configured recipients hear about score, grade, or policy changes.":
       "Las aplicaciones seguidas se incluyen en el resumen semanal de cambios, de modo que los destinatarios configurados se enteran de los cambios de puntuación, calificación o política.",
+    // AI Gateway empty/error states
+    "Click Save draft to create your first version.":
+      "Haga clic en Guardar borrador para crear su primera versión.",
+    "Could not load this run.": "No se pudo cargar esta ejecución.",
+    "Create your first version": "Crear su primera versión",
+    "Error loading AI Trust Center settings. Please try again.":
+      "Error al cargar la configuración de AI Trust Center. Inténtelo de nuevo.",
+    "Failed to load invocation details.": "No se pudieron cargar los detalles de la invocación.",
+    "Refresh": "Actualizar",
+    "Select a log to view details.": "Seleccione un registro para ver los detalles.",
   },
 };
