@@ -64,7 +64,7 @@ export default function RunDetailDrawer({ runId, onClose }: RunDetailDrawerProps
       {loading ? (
         <CustomizableSkeleton variant="rectangular" width="100%" height={200} />
       ) : error ? (
-        <EmptyState icon={AlertTriangle} message="Couldn't load this run.">
+        <EmptyState icon={AlertTriangle} message="Could not load this run.">
           <CustomizableButton
             variant="outlined"
             text="Retry"

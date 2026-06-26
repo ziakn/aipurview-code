@@ -1283,7 +1283,7 @@ export default function PromptEditorPage() {
                 <EmptyStateTip
                   icon={History}
                   title="Create your first version"
-                  description='Click "Save draft" to create your first version.'
+                  description="Click Save draft to create your first version."
                 />
               </EmptyState>
             )}
