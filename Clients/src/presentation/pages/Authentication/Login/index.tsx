@@ -364,8 +364,8 @@ const Login: React.FC = () => {
               fontSize: 40,
             }}
           >
-            Verify
-            <span style={{ color: singleTheme.textColors.theme }}>Wise</span>
+            AI
+            <span style={{ color: singleTheme.textColors.theme }}>Purview</span>
           </Typography>
           <Typography sx={{ fontSize: 16, fontWeight: "bold" }}>{loginText}</Typography>
           {showSetupBanner && (
