@@ -1,6 +1,6 @@
 # TypeScript Standards
 
-TypeScript standards and best practices for VerifyWise, aligned with our ESLint configuration.
+TypeScript standards and best practices for AIPurview, aligned with our ESLint configuration.
 
 ## ESLint Configuration
 

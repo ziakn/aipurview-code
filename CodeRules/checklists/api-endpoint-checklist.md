@@ -1,6 +1,6 @@
 # API Endpoint Checklist
 
-Checklist for creating and reviewing API endpoints in VerifyWise.
+Checklist for creating and reviewing API endpoints in AIPurview.
 
 ## Route Definition
 

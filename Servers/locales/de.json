@@ -1,5 +1,5 @@
 {
-  "{projectName} is created in VerifyWise": "{projectName} wurde in VerifyWise erstellt",
+  "{projectName} is created in AIPurview": "{projectName} wurde in AIPurview erstellt",
   "{type} with id {id} not found": "{type} mit ID {id} nicht gefunden",
   "A folder with this name already exists in the same location": "Ein Ordner mit diesem Namen existiert bereits am selben Ort",
   "A token with this name already exists. Please use a different name.": "Ein Token mit diesem Namen existiert bereits. Bitte verwenden Sie einen anderen Namen.",
@@ -399,7 +399,7 @@
   "Model risk deleted successfully.": "Modellrisiko erfolgreich gelöscht",
   "Model risk not found.": "Modellrisiko nicht gefunden.",
   "model_id is required": "model_id ist erforderlich",
-  "Multi tenancy is not enabled in this server. Please contact VerifyWise to get a license for multi tenancy option.": "Multi-Tenancy ist auf diesem Server nicht aktiviert. Bitte kontaktieren Sie VerifyWise, um eine Lizenz für die Multi-Tenancy-Option zu erhalten.",
+  "Multi tenancy is not enabled in this server. Please contact AIPurview to get a license for multi tenancy option.": "Multi-Tenancy ist auf diesem Server nicht aktiviert. Bitte kontaktieren Sie AIPurview, um eine Lizenz für die Multi-Tenancy-Option zu erhalten.",
   "Name and entity type are required": "Name und Entitätstyp sind erforderlich",
   "Name and key are required": "Name und Schlüssel sind erforderlich",
   "Name cannot be empty": "Name darf nicht leer sein",

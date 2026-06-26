@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Share Links domain provides secure, tokenized public sharing of VerifyWise resources without requiring authentication. It supports sharing individual records or entire table views with configurable permissions and optional expiration.
+The Share Links domain provides secure, tokenized public sharing of AIPurview resources without requiring authentication. It supports sharing individual records or entire table views with configurable permissions and optional expiration.
 
 ## Key Features
 

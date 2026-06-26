@@ -3,7 +3,7 @@ import { bridgeTools } from "../toolBridge";
 import { toolsDefinition as readinessToolsDefinition } from "../tools/readinessTools";
 import { availableReadinessTools } from "../functions/readinessFunctions";
 
-const CONTROL_ASSESSMENT_PROMPT = `You are the Control Assessment Agent for VerifyWise.
+const CONTROL_ASSESSMENT_PROMPT = `You are the Control Assessment Agent for AIPurview.
 Your role is to evaluate how ready an organization is for compliance audits by
 calculating per-control readiness scores and generating improvement recommendations.
 

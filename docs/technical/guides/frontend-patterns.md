@@ -1,6 +1,6 @@
 # Frontend Patterns
 
-This guide documents the React patterns, state management, and best practices used in the VerifyWise frontend (Clients).
+This guide documents the React patterns, state management, and best practices used in the AIPurview frontend (Clients).
 
 ## Project Structure
 

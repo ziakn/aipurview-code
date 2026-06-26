@@ -1,6 +1,6 @@
 # FastAPI Patterns
 
-Guidelines for building FastAPI services in VerifyWise.
+Guidelines for building FastAPI services in AIPurview.
 
 ## Project Structure
 
@@ -71,8 +71,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="VerifyWise API",
-    description="API for VerifyWise services",
+    title="AIPurview API",
+    description="API for AIPurview services",
     version="1.0.0",
     lifespan=lifespan,
 )
@@ -111,7 +111,7 @@ class Settings(BaseSettings):
     """Application settings."""
 
     # App
-    APP_NAME: str = "VerifyWise API"
+    APP_NAME: str = "AIPurview API"
     DEBUG: bool = False
     ENV: str = "development"
 

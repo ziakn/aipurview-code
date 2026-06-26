@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Evidence & File Management domain provides centralized storage, tracking, and linking of compliance evidence across VerifyWise. It supports file uploads with BLOB storage, evidence categorization, multi-entity linking, and comprehensive audit trails for regulatory compliance documentation.
+The Evidence & File Management domain provides centralized storage, tracking, and linking of compliance evidence across AIPurview. It supports file uploads with BLOB storage, evidence categorization, multi-entity linking, and comprehensive audit trails for regulatory compliance documentation.
 
 ## Key Features
 

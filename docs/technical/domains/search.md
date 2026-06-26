@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Search domain provides global search capabilities across all VerifyWise entities. It uses PostgreSQL ILIKE for case-insensitive full-text search with permission-based filtering and multi-tenant isolation.
+The Search domain provides global search capabilities across all AIPurview entities. It uses PostgreSQL ILIKE for case-insensitive full-text search with permission-based filtering and multi-tenant isolation.
 
 ## Key Features
 

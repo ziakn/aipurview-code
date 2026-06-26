@@ -34,7 +34,7 @@ Tüm hardcoded hex renkleri unified palette'e (`Clients/src/presentation/themes/
 - critical, high, medium, low, very-low — her biri pastel bg + matching text + border
 
 ### Brand
-- primary: `#13715B` (VerifyWise yeşili)
+- primary: `#13715B` (AIPurview yeşili)
 - primaryHover: `#0F5A47`
 - primaryLight: `#E6F0EC`
 

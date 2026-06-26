@@ -8,14 +8,14 @@
 
 ### notifications.md
 - ✅ Claim: "Only admins can configure the Slack integration" — Verified at `Clients/src/application/repository/slack.integration.repository.ts` (admin context enforcement confirmed)
-- ⚠️ Claim: "VerifyWise can notify you about various governance events: Model updates, Risk assessments, Compliance changes..." — **False positive**: NotificationType enum at `Servers/domain.layer/interfaces/i.notification.ts:5–60` defines 28 concrete types (TASK_ASSIGNED, POLICY_DUE_SOON, TRAINING_ASSIGNED, VENDOR_REVIEW_DUE, etc.) but NOT "MODEL_UPDATED", "RISK_ASSESSMENT", or "COMPLIANCE_CHANGE". Abstract categories do not align with actual code implementation.
+- ⚠️ Claim: "AIPurview can notify you about various governance events: Model updates, Risk assessments, Compliance changes..." — **False positive**: NotificationType enum at `Servers/domain.layer/interfaces/i.notification.ts:5–60` defines 28 concrete types (TASK_ASSIGNED, POLICY_DUE_SOON, TRAINING_ASSIGNED, VENDOR_REVIEW_DUE, etc.) but NOT "MODEL_UPDATED", "RISK_ASSESSMENT", or "COMPLIANCE_CHANGE". Abstract categories do not align with actual code implementation.
 
 ### organization-settings.md
 - ❌ Claim: "The organization name must be between 2 and 100 characters" — **FAILED**: Code enforces 2–50 characters max. Verified at `Clients/src/domain/models/Common/organization/organization.model.ts:35` which returns error "Organization name must be less than 50 characters".
 - ❌ Claim: "Only users with Admin or Editor roles can modify organization settings" — **FAILED**: Code restricts edit to Admin only. Verified at `Clients/src/application/constants/permissions.ts:27–31` which defines `organizations: { edit: ["Admin"] }`. Editors can view but not edit.
 
 ### role-configuration.md
-- ✅ Claim: "VerifyWise has four predefined roles: Admin, Reviewer, Editor, Auditor" — Verified at `Clients/src/application/constants/roles.ts:1–6` (ROLES enum defines Admin=1, Reviewer=2, Editor=3, Auditor=4; Super Admin=5 is separate)
+- ✅ Claim: "AIPurview has four predefined roles: Admin, Reviewer, Editor, Auditor" — Verified at `Clients/src/application/constants/roles.ts:1–6` (ROLES enum defines Admin=1, Reviewer=2, Editor=3, Auditor=4; Super Admin=5 is separate)
 - ✅ Claim: "Admins have full control over the platform" — Verified via permissions constants and API key restrictions requiring Admin role in `Clients/src/application/constants/permissions.ts`
 
 ### super-admin.md

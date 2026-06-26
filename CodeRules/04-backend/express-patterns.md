@@ -1,6 +1,6 @@
 # Express Patterns
 
-Guidelines for organizing and securing Express.js applications in VerifyWise.
+Guidelines for organizing and securing Express.js applications in AIPurview.
 
 ## Project Structure
 

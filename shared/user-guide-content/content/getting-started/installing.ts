@@ -14,7 +14,7 @@ export const installingContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: "VerifyWise runs on your infrastructure. Before you start, make sure you have these in place:",
+      text: "AIPurview runs on your infrastructure. Before you start, make sure you have these in place:",
     },
     {
       type: 'requirements',
@@ -216,12 +216,12 @@ cd Clients && npm run dev`,
     },
     {
       type: 'paragraph',
-      text: "VerifyWise ships with no default accounts. The first time you open the app, you'll see a registration page where you create the admin account.",
+      text: "AIPurview ships with no default accounts. The first time you open the app, you'll see a registration page where you create the admin account.",
     },
     {
       type: 'ordered-list',
       items: [
-        { text: 'Open your VerifyWise URL in a browser' },
+        { text: 'Open your AIPurview URL in a browser' },
         { text: 'Fill in the admin registration form' },
         { text: 'Log in with the credentials you just created' },
         { text: "You'll land on the dashboard" },
@@ -241,7 +241,7 @@ cd Clients && npm run dev`,
     },
     {
       type: 'paragraph',
-      text: "For production, put a reverse proxy (Nginx, Caddy, or your cloud load balancer) in front of VerifyWise and terminate TLS there. Free certificates are available through Let's Encrypt.",
+      text: "For production, put a reverse proxy (Nginx, Caddy, or your cloud load balancer) in front of AIPurview and terminate TLS there. Free certificates are available through Let's Encrypt.",
     },
     {
       type: 'ordered-list',

@@ -107,7 +107,7 @@ Scorers (also called evaluators/metrics) are functions that assess LLM outputs a
 
 ---
 
-## Implementation Recommendations for VerifyWise
+## Implementation Recommendations for AIPurview
 
 ### Phase 1: Core UI
 

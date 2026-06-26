@@ -1,6 +1,6 @@
 # FastAPI Router Template
 
-Copy-paste template for creating FastAPI routers in VerifyWise.
+Copy-paste template for creating FastAPI routers in AIPurview.
 
 ## Router File
 

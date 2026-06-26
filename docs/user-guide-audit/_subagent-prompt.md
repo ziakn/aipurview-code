@@ -4,7 +4,7 @@ Substitute `<COLLECTION>`, `<ARTICLE>`, and `<REPORT_PATH>` before dispatching. 
 
 ---
 
-You are auditing one VerifyWise user guide article for truthfulness against the codebase. You will write exactly one markdown findings report and return its path. Do not edit the article. Do not edit any code.
+You are auditing one AIPurview user guide article for truthfulness against the codebase. You will write exactly one markdown findings report and return its path. Do not edit the article. Do not edit any code.
 
 ## Inputs
 
@@ -43,7 +43,7 @@ You are auditing one VerifyWise user guide article for truthfulness against the 
 
 6. **Cluster check.** When you find a discrepancy, scan adjacent claims in the same article — drift clusters. If feature X was renamed, multiple blocks may reference the old name.
 
-7. **Browser escalation.** Only if a claim involves rendered output that cannot be inferred from code (chart shape, toast position, conditional UI gated on data state, multi-step wizard rendering). Do not run the browser unless escalation is genuinely needed; the parent thread is tracking time and tokens. If you escalate, save screenshots to `docs/user-guide-audit/<COLLECTION>/_screenshots/<ARTICLE>-<n>.png` and cite them in evidence. Local dev creds: email `gorkem.cetin@verifywise.ai`, password `Verifywise#1`.
+7. **Browser escalation.** Only if a claim involves rendered output that cannot be inferred from code (chart shape, toast position, conditional UI gated on data state, multi-step wizard rendering). Do not run the browser unless escalation is genuinely needed; the parent thread is tracking time and tokens. If you escalate, save screenshots to `docs/user-guide-audit/<COLLECTION>/_screenshots/<ARTICLE>-<n>.png` and cite them in evidence. Local dev creds: email `gorkem.cetin@verifywise.ai`, password `AIPurview#1`.
 
 8. **Write the findings report** to `<REPORT_PATH>` using exactly the template below. Do not deviate from the template — the parent thread aggregates these reports by parsing them.
 

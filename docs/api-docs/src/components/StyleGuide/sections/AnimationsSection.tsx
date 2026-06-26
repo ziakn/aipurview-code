@@ -10,7 +10,7 @@ transition: "all 0.2s ease-in-out"    // Hover states
 transition: "background-color 0.2s ease-in-out"  // Specific property
 transition: "background-color 0.3s ease-in-out"  // Slower bg change
 transition: "none"                     // Disabled (buttons, ripple)`,
-  noTransition: `// VerifyWise disables transitions on interactive elements
+  noTransition: `// AIPurview disables transitions on interactive elements
 MuiButton: { transition: "none" }
 MuiIconButton: { transition: "none" }
 MuiListItemButton: { transition: "none" }`,
@@ -122,7 +122,7 @@ const AnimationsSection: React.FC = () => {
             maxWidth: 600,
           }}
         >
-          VerifyWise uses subtle, fast transitions. Most button interactions have
+          AIPurview uses subtle, fast transitions. Most button interactions have
           no transition for instant feedback. Animations are reserved for modals
           and loading states.
         </Typography>
@@ -219,7 +219,7 @@ const AnimationsSection: React.FC = () => {
       {/* Disabled Transitions */}
       <SpecSection title="Disabled transitions">
         <Typography sx={{ fontSize: 13, color: theme.palette.text.tertiary, mb: "24px" }}>
-          VerifyWise intentionally disables transitions on buttons and interactive
+          AIPurview intentionally disables transitions on buttons and interactive
           elements for instant visual feedback.
         </Typography>
 

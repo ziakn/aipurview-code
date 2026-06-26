@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: VerifyWise - AI Detection, Trust Centre & Incident Management APIs
+  title: AIPurview - AI Detection, Trust Centre & Incident Management APIs
   description: |
     OpenAPI specification for three API domains:
     1. AI Detection - Repository scanning for AI/ML components

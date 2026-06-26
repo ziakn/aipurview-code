@@ -8,7 +8,7 @@ import { Bot, Copy, Check } from "lucide-react";
 import { ChartRenderer } from "./ChartRenderer";
 import ConfirmationToolUI from "./ConfirmationToolUI";
 import VWAvatar from "../Avatar/VWAvatar";
-import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.context";
+import { AIPurviewContext } from "../../../application/contexts/AIPurview.context";
 import { useProfilePhotoFetch } from "../../../application/hooks/useProfilePhotoFetch";
 import { User } from "../../../domain/types/User";
 
@@ -23,7 +23,7 @@ const formatTimestamp = (date: Date): string => {
   });
 };
 
-// Create markdown styles with theme. Tables follow the VerifyWise list
+// Create markdown styles with theme. Tables follow the AIPurview list
 // conventions (thin borders, subtle header fill, 13/12px type) so an
 // inline GFM table from the LLM reads like a native VW table rather
 // than raw browser defaults.
@@ -499,7 +499,7 @@ const DEFAULT_USER: User = {
 
 const CustomMessageComponent: FC = () => {
   const theme = useTheme();
-  const { userId, users, photoRefreshFlag } = useContext(VerifyWiseContext);
+  const { userId, users, photoRefreshFlag } = useContext(AIPurviewContext);
   const { fetchProfilePhotoAsBlobUrl } = useProfilePhotoFetch();
   const [avatarUrl, setAvatarUrl] = useState<string>("");
   const bubbleRef = useRef<HTMLDivElement>(null);

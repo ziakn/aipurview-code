@@ -1,6 +1,6 @@
 # Code Review
 
-Guidelines for effective code reviews in VerifyWise.
+Guidelines for effective code reviews in AIPurview.
 
 ## Purpose of Code Review
 

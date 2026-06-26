@@ -1,6 +1,6 @@
 # Multi-Tenancy Configuration
 
-This document explains how to configure multi-tenancy for the VerifyWise application.
+This document explains how to configure multi-tenancy for the AIPurview application.
 
 ## Overview
 

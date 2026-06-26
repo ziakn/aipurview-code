@@ -14,7 +14,7 @@ export const modelLifecycleContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'A model in development needs different governance than one serving production traffic. A model being retired needs a transition plan. VerifyWise tracks these phases so you can apply the right controls at the right time.',
+      text: 'A model in development needs different governance than one serving production traffic. A model being retired needs a transition plan. AIPurview tracks these phases so you can apply the right controls at the right time.',
     },
     {
       type: 'heading',
@@ -39,7 +39,7 @@ export const modelLifecycleContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise tracks these phases:',
+      text: 'AIPurview tracks these phases:',
     },
     {
       type: 'icon-cards',
@@ -89,7 +89,7 @@ export const modelLifecycleContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Each AI project in VerifyWise has a status that indicates its current state in the governance workflow:',
+      text: 'Each AI project in AIPurview has a status that indicates its current state in the governance workflow:',
     },
     {
       type: 'table',
@@ -140,7 +140,7 @@ export const modelLifecycleContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'For teams using MLFlow, VerifyWise imports lifecycle stage information directly from your ML platform:',
+      text: 'For teams using MLFlow, AIPurview imports lifecycle stage information directly from your ML platform:',
     },
     {
       type: 'bullet-list',

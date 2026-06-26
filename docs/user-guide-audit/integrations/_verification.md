@@ -24,8 +24,8 @@
 - ✅ "Uninstalling a plugin removes its features from the interface but doesn't delete any data" (verified at plugin uninstall handler in source code) — confirmed: UI uninstall flow calls `uninstall(installationId, pluginKey)` and refetches without explicit data deletion
 
 ### slack-integration.md
-- ✅ "The Slack integration lets VerifyWise send real-time notifications about AI governance activities to your Slack workspace" (verified at `Servers/services/slack/slackNotificationService.ts:49-65`) — confirmed: `sendSlackNotification` uses `Promise.all` with immediate sends via `sendImmediateMessage`
-- ✅ "Notifications go out in real-time as events happen in VerifyWise. There's no batching or delay." (verified at `Servers/services/slack/slackNotificationService.ts:67-103`) — confirmed: implementation uses `sendImmediateMessage` (no batching/queuing), direct `client.chat.postMessage` call with no delay logic
+- ✅ "The Slack integration lets AIPurview send real-time notifications about AI governance activities to your Slack workspace" (verified at `Servers/services/slack/slackNotificationService.ts:49-65`) — confirmed: `sendSlackNotification` uses `Promise.all` with immediate sends via `sendImmediateMessage`
+- ✅ "Notifications go out in real-time as events happen in AIPurview. There's no batching or delay." (verified at `Servers/services/slack/slackNotificationService.ts:67-103`) — confirmed: implementation uses `sendImmediateMessage` (no batching/queuing), direct `client.chat.postMessage` call with no delay logic
 
 ## Summary
 

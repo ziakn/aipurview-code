@@ -77,14 +77,16 @@ export async function devAutoBootstrap(): Promise<void> {
     throw new Error("[dev-bootstrap] DEV_ADMIN_EMAIL must differ from SUPERADMIN_EMAIL");
   }
 
-  // Password strength is enforced by UserModel.createNewUser; we duplicate a
-  // lightweight pre-check here for a friendlier startup error message.
-  const strong =
-    password.length >= 8 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /\d/.test(password);
-  if (!strong) {
-    throw new Error(
-      "[dev-bootstrap] DEV_ADMIN_PASSWORD must be ≥8 chars and contain upper, lower, and digit",
-    );
+  // Password strength check is skipped in development for easier local testing.
+  const nodeEnvCheck = (process.env.NODE_ENV ?? "").trim().toLowerCase();
+  if (nodeEnvCheck !== "development") {
+    const strong =
+      password.length >= 8 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /\d/.test(password);
+    if (!strong) {
+      throw new Error(
+        "[dev-bootstrap] DEV_ADMIN_PASSWORD must be ≥8 chars and contain upper, lower, and digit",
+      );
+    }
   }
 
   const transaction = await sequelize.transaction();

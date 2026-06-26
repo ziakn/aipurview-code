@@ -1,5 +1,5 @@
 /**
- * VerifyWise Reusable Chart Components
+ * AIPurview Reusable Chart Components
  *
  * Thin wrappers around Recharts that enforce consistent styling:
  * - Palette-based axis/grid colors

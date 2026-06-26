@@ -1,11 +1,11 @@
 ---
-title: VerifyWise Wiki — Lint Report
+title: AIPurview Wiki — Lint Report
 tags: [lint, health-check, audit]
 date: 2026-04-30
 status: active
 ---
 
-# VerifyWise Wiki — Lint Report
+# AIPurview Wiki — Lint Report
 
 > Otomatik sağlık taraması. Bu pass'te otomatik düzeltme yapılmadı, sadece raporlama.
 > **Tarih:** 2026-04-30 (Phase 5 lint pass)

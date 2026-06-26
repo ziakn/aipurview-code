@@ -218,7 +218,7 @@ interface IPMMEscalationData extends IPMMNotificationData {
 
 ### Report Contents
 
-- **Header**: Organization logo + VerifyWise branding
+- **Header**: Organization logo + AIPurview branding
 - **Metadata**: Use case, cycle number, date, submitter
 - **Context Snapshot**: Risk/model/vendor counts at report time
 - **Questions & Responses**: With flag indicators

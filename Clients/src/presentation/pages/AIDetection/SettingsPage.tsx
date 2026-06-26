@@ -326,7 +326,7 @@ export default function SettingsPage() {
               </Typography>
               <Typography
                 component="a"
-                href="https://github.com/settings/tokens/new?description=VerifyWise%20Scanner&scopes=repo"
+                href="https://github.com/settings/tokens/new?description=AIPurview%20Scanner&scopes=repo"
                 target="_blank"
                 rel="noopener noreferrer"
                 sx={{
@@ -400,7 +400,7 @@ export default function SettingsPage() {
 
             <Field
               label="Token name (optional)"
-              placeholder="e.g., VerifyWise Scanner Token"
+              placeholder="e.g., AIPurview Scanner Token"
               value={tokenNameInput}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setTokenNameInput(e.target.value)

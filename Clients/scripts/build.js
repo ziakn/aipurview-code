@@ -10,7 +10,7 @@ import path from "path";
 
 const buildTime = new Date().toISOString();
 
-console.log("🏗️  Building VerifyWise application...");
+console.log("🏗️  Building AIPurview application...");
 console.log(`📅 Build time: ${buildTime}`);
 
 try {

@@ -56,8 +56,8 @@ vi.mock("../../../../application/hooks/useColumnVisibility", () => ({
 }));
 
 // Mock context
-vi.mock("../../../../application/contexts/VerifyWise.context", () => ({
-  VerifyWiseContext: {
+vi.mock("../../../../application/contexts/AIPurview.context", () => ({
+  AIPurviewContext: {
     _currentValue: { userRoleName: "Admin", userId: 1 },
     Provider: ({ children }: any) => children,
     Consumer: ({ children }: any) => children({ userRoleName: "Admin", userId: 1 }),

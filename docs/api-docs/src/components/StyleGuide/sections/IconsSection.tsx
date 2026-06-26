@@ -4,7 +4,7 @@ import { Copy, Search } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import CodeBlock from "../CodeBlock";
 
-// Common icons used throughout VerifyWise
+// Common icons used throughout AIPurview
 const COMMON_ICONS = [
   // Navigation & UI
   "ChevronDown", "ChevronUp", "ChevronLeft", "ChevronRight",
@@ -120,7 +120,7 @@ const IconsSection: React.FC = () => {
             maxWidth: 600,
           }}
         >
-          VerifyWise uses lucide-react for all icons. This catalog shows commonly
+          AIPurview uses lucide-react for all icons. This catalog shows commonly
           used icons with their import names. Click any icon to copy its import.
         </Typography>
       </Box>

@@ -1,6 +1,6 @@
 # Git Workflow
 
-Version control guidelines for VerifyWise development.
+Version control guidelines for AIPurview development.
 
 ## Branching Strategy
 

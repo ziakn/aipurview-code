@@ -39,7 +39,7 @@ export const riskAssessmentContent: ArticleContent = {
     {
       type: 'callout',
       variant: 'info',
-      text: 'You can link risks in VerifyWise to both use cases and compliance frameworks, so you can track them across different contexts and regulatory requirements.',
+      text: 'You can link risks in AIPurview to both use cases and compliance frameworks, so you can track them across different contexts and regulatory requirements.',
     },
     {
       type: 'image',
@@ -81,7 +81,7 @@ export const riskAssessmentContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise tracks risks across the full AI system lifecycle:',
+      text: 'AIPurview tracks risks across the full AI system lifecycle:',
     },
     {
       type: 'icon-cards',
@@ -126,7 +126,7 @@ export const riskAssessmentContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Each risk gets analyzed using likelihood and severity. VerifyWise calculates the overall risk level automatically from these inputs.',
+      text: 'Each risk gets analyzed using likelihood and severity. AIPurview calculates the overall risk level automatically from these inputs.',
     },
     {
       type: 'heading',
@@ -184,7 +184,7 @@ export const riskAssessmentContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise calculates the risk level from your likelihood and severity ratings:',
+      text: 'AIPurview calculates the risk level from your likelihood and severity ratings:',
     },
     {
       type: 'table',
@@ -233,7 +233,7 @@ export const riskAssessmentContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise gives you a few ways to monitor your risks:',
+      text: 'AIPurview gives you a few ways to monitor your risks:',
     },
     {
       type: 'bullet-list',

@@ -38,7 +38,7 @@ commonLabels:
 
 # Common annotations
 commonAnnotations:
-  description: "VerifyWise AI Risk & Compliance Platform"
+  description: "AIPurview AI Risk & Compliance Platform"
 
 # Images (can be used to override image tags)
 images:

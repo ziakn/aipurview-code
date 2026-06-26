@@ -1,5 +1,5 @@
 ---
-title: Rakip Gap Analizi — VerifyWise vs 30+ AI GRC Vendor
+title: Rakip Gap Analizi — AIPurview vs 30+ AI GRC Vendor
 tags: [synthesis, gap-analysis, competitor-research, roadmap, phase-8-12]
 source: raw/competitor-research/master-gap-analysis.md
 date: 2026-04-30

@@ -29,8 +29,8 @@ The article contains two significant errors: (1) Organization name character lim
 
 ## Verified claims (sampled)
 
-- Claim: "Organization settings let you configure your organization's identity and branding in VerifyWise" (block 1) — verified at domain model `/Users/gorkemcetin/verifywise/Clients/src/domain/models/Common/organization/organization.model.ts:1–5` (name and logo properties)
-- Claim: "The organization name identifies your company or team across VerifyWise" (block 7) — verified at model definition `organization.model.ts:3` (name field persisted)
+- Claim: "Organization settings let you configure your organization's identity and branding in AIPurview" (block 1) — verified at domain model `/Users/gorkemcetin/verifywise/Clients/src/domain/models/Common/organization/organization.model.ts:1–5` (name and logo properties)
+- Claim: "The organization name identifies your company or team across AIPurview" (block 7) — verified at model definition `organization.model.ts:3` (name field persisted)
 - Claim: "Generated reports show the organization name at the time of generation" (block 11, bullet 3) — model supports this (`name` property stored per organization instance) though report rendering not verified
 - Claim: "The logo appears in various places across the platform" (block 13) — model supports logo field (`logo` property at `organization.model.ts:4`), specific UI placements unverified
 - Claim: "Organization name must be at least 2 characters" (block 10, bullet 1, minimum) — verified at `organization.model.ts:32–34`: `if (this.name.trim().length < 2) { return { accepted: false, ... } }`

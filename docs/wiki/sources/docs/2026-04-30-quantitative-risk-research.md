@@ -10,7 +10,7 @@ status: active
 
 ## Amaç
 
-VerifyWise'ın FAIR (Factor Analysis of Information Risk) tabanlı kantitatif risk değerlendirme özelliğini dokümante et.
+AIPurview'ın FAIR (Factor Analysis of Information Risk) tabanlı kantitatif risk değerlendirme özelliğini dokümante et.
 
 ## Ne yapıldı
 
@@ -44,7 +44,7 @@ VerifyWise'ın FAIR (Factor Analysis of Information Risk) tabanlı kantitatif ri
 ## Açık konular
 
 - FAIR formula chain net değil (TEF/SLE/ARO formal hesaplama)
-- Modulos AI'da "monetary risk quantification" var — VerifyWise rakip için tam parity için formula chain tamamlanmalı
+- Modulos AI'da "monetary risk quantification" var — AIPurview rakip için tam parity için formula chain tamamlanmalı
 
 ## Kaynaklar
 

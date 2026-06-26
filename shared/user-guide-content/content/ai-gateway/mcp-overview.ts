@@ -10,7 +10,7 @@ export const mcpOverviewContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The MCP Gateway is VerifyWise\'s proxy for the Model Context Protocol. It sits between your AI agents and the MCP servers they call, adding authentication, access control, guardrails and a full audit trail to every tool invocation.',
+      text: 'The MCP Gateway is AIPurview\'s proxy for the Model Context Protocol. It sits between your AI agents and the MCP servers they call, adding authentication, access control, guardrails and a full audit trail to every tool invocation.',
     },
     {
       type: 'paragraph',
@@ -55,7 +55,7 @@ export const mcpOverviewContent: ArticleContent = {
       items: [
         {
           title: 'MCP servers',
-          description: 'Backend servers that expose tools (database queries, file operations, search and so on). You register them in VerifyWise with their URL and auth credentials.',
+          description: 'Backend servers that expose tools (database queries, file operations, search and so on). You register them in AIPurview with their URL and auth credentials.',
           icon: 'Server',
         },
         {

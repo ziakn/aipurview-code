@@ -77,7 +77,7 @@ export async function reportScanToGitHub(scan: IScan, organizationId: number): P
         sha: scan.commit_sha,
         state: scan.status === "completed" ? (passed ? "success" : "failure") : "error",
         description,
-        context: "VerifyWise AI Detection",
+        context: "AIPurview AI Detection",
       });
       logger.info(`Posted commit status for ${owner}/${repoName}@${scan.commit_sha.slice(0, 7)}`);
     } catch (err) {
@@ -164,7 +164,7 @@ async function buildPRCommentBody(
   const statusText = passed ? "Passed" : "Failed";
   const grade = scan.risk_score_grade || "N/A";
 
-  return `## ${statusEmoji} VerifyWise AI Detection — ${statusText}
+  return `## ${statusEmoji} AIPurview AI Detection — ${statusText}
 
 | Metric | Value |
 |--------|-------|
@@ -227,7 +227,7 @@ function githubApiRequest(
         Accept: "application/vnd.github+json",
         "Content-Type": "application/json",
         "Content-Length": Buffer.byteLength(data),
-        "User-Agent": "VerifyWise-AI-Detection",
+        "User-Agent": "AIPurview-AI-Detection",
         "X-GitHub-Api-Version": "2022-11-28",
       },
     };

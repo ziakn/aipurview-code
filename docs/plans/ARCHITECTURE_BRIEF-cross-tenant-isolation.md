@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-We will keep VerifyWise's shared-schema, row-level multi-tenancy model and harden it with a reusable Jest + Supertest isolation matrix. The matrix seeds two organizations per test, attempts cross-tenant reads and writes through the real HTTP surface, and asserts that every organization-scoped entity rejects or ignores foreign-organization access. A schema-drift audit will compare tables carrying `organization_id` against a policy registry and fail CI when a new scoped entity is not covered.
+We will keep AIPurview's shared-schema, row-level multi-tenancy model and harden it with a reusable Jest + Supertest isolation matrix. The matrix seeds two organizations per test, attempts cross-tenant reads and writes through the real HTTP surface, and asserts that every organization-scoped entity rejects or ignores foreign-organization access. A schema-drift audit will compare tables carrying `organization_id` against a policy registry and fail CI when a new scoped entity is not covered.
 
 ---
 

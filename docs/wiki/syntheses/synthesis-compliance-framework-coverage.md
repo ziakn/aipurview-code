@@ -1,5 +1,5 @@
 ---
-title: Compliance Framework Coverage — VerifyWise vs Standartlar
+title: Compliance Framework Coverage — AIPurview vs Standartlar
 tags: [synthesis, compliance, eu-ai-act, iso-42001, iso-27001, nist-ai-rmf, owasp, gdpr]
 source: raw/competitor-research/master-gap-analysis.md
 date: 2026-04-30

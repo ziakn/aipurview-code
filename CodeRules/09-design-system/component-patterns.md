@@ -1,6 +1,6 @@
 # UI Component Patterns
 
-Standard patterns for common UI components in VerifyWise.
+Standard patterns for common UI components in AIPurview.
 
 ## Buttons
 

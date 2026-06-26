@@ -10,7 +10,7 @@ vi.mock("../../button/customizable-button", () => ({
   ),
 }));
 
-vi.mock("../../VerifyWiseMultiSelect", () => ({
+vi.mock("../../AIPurviewMultiSelect", () => ({
   default: ({ placeholder }: { placeholder: string }) => (
     <div data-testid="multi-select">{placeholder}</div>
   ),

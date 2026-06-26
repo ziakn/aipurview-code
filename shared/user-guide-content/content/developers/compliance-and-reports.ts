@@ -3,7 +3,7 @@ import type { ArticleContent } from '../../contentTypes';
 export const complianceAndReportsContent: ArticleContent = {
   blocks: [
     { type: 'heading', id: 'overview', level: 2, text: 'Compliance, reports and exports' },
-    { type: 'paragraph', text: 'If you run a separate GRC or reporting tool, you can pull governance data out of VerifyWise over the API: live compliance progress, generated reports and a handful of document exports. This article covers what is available and what is not.' },
+    { type: 'paragraph', text: 'If you run a separate GRC or reporting tool, you can pull governance data out of AIPurview over the API: live compliance progress, generated reports and a handful of document exports. This article covers what is available and what is not.' },
 
     { type: 'heading', id: 'progress', level: 2, text: 'Compliance and assessment progress' },
     { type: 'paragraph', text: 'Progress endpoints return how far a project has come on its controls and assessment questions, as plain JSON. Use these to mirror compliance state in another system.' },
@@ -19,7 +19,7 @@ export const complianceAndReportsContent: ArticleContent = {
     { type: 'code', language: 'bash', code: 'curl "http://localhost:3000/api/projects/compliance/progress/1" \\\n  -H "Authorization: Bearer <your-token>"' },
     { type: 'paragraph', text: 'The compliance response counts subcontrols; the assessment response counts questions:' },
     { type: 'code', language: 'json', code: '{ "message": "OK", "data": { "allsubControls": 45, "allDonesubControls": 23 } }\n\n{ "message": "OK", "data": { "totalQuestions": 120, "answeredQuestions": 87 } }' },
-    { type: 'paragraph', text: 'Framework-specific progress is available under each framework, for example /api/eu-ai-act/compliances/progress/:id and /api/iso-27001/clauses/progress/:id, with matching all/... variants. The frameworks also expose their control structure (control categories, controls, ISO clauses and annexes) as JSON, so you can map VerifyWise controls onto your own framework model.' },
+    { type: 'paragraph', text: 'Framework-specific progress is available under each framework, for example /api/eu-ai-act/compliances/progress/:id and /api/iso-27001/clauses/progress/:id, with matching all/... variants. The frameworks also expose their control structure (control categories, controls, ISO clauses and annexes) as JSON, so you can map AIPurview controls onto your own framework model.' },
 
     { type: 'heading', id: 'reports', level: 2, text: 'Generating reports' },
     { type: 'paragraph', text: 'You can generate a report document on demand and stream it back. This is the same report the Reporting page produces.' },

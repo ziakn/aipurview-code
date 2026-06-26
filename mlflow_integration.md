@@ -1,8 +1,8 @@
-# VerifyWise ↔ MLflow Integration Design
+# AIPurview ↔ MLflow Integration Design
 
 ## Overview
 
-This document describes how **VerifyWise** should integrate with a customer’s remote **MLflow** instance to automatically ingest model metadata, performance evidence, lineage, and compliance signals into VerifyWise’s internal model registry.
+This document describes how **AIPurview** should integrate with a customer’s remote **MLflow** instance to automatically ingest model metadata, performance evidence, lineage, and compliance signals into AIPurview’s internal model registry.
 
 ### Goals
 
@@ -12,7 +12,7 @@ This document describes how **VerifyWise** should integrate with a customer’s 
 4. Support both SaaS and on-prem deployments.
 
 The document defines responsibilities, data flow, authentication, data mapping, normalization rules, and persistence expectations.  
-It assumes VerifyWise already has a persistence layer (database) and background jobs.  
+It assumes AIPurview already has a persistence layer (database) and background jobs.  
 No code examples are included.
 
 ---
@@ -27,7 +27,7 @@ It does **not** mutate MLflow state (no registering, promoting, or deploying mod
 - Enumerate all registered models and versions.
 - For each model version, resolve the linked training run.
 - Extract structured metadata and artifact metadata.
-- Normalize data into VerifyWise’s canonical model schema.
+- Normalize data into AIPurview’s canonical model schema.
 - Persist the normalized data.
 - Maintain audit and compliance traces.
 
@@ -40,11 +40,11 @@ It does **not** mutate MLflow state (no registering, promoting, or deploying mod
    - Fetches raw data from the tracking server and model registry.
 
 2. **Normalizer**
-   - Converts MLflow responses into VerifyWise’s canonical model record.
+   - Converts MLflow responses into AIPurview’s canonical model record.
    - Handles missing fields, naming inconsistencies, and type coercion.
 
 3. **Persistence Layer**
-   - Stores or updates VerifyWise records.
+   - Stores or updates AIPurview records.
    - Tracks last refresh timestamps for incremental sync.
 
 4. **Compliance Layer**
@@ -117,15 +117,15 @@ Each sync cycle should:
    - Get metadata (version, stage, timestamps, run ID, artifact URI).  
    - Resolve linked run and experiment metadata.  
    - Enumerate artifact files (names, sizes, hashes).  
-4. Normalize data into VerifyWise’s canonical schema.  
+4. Normalize data into AIPurview’s canonical schema.  
 5. Persist or update model records.  
 6. Record ingestion event in the audit trail.
 
 ---
 
-## Canonical VerifyWise Model Record
+## Canonical AIPurview Model Record
 
-Each `(model_name, version_number)` combination maps to one canonical VerifyWise record.
+Each `(model_name, version_number)` combination maps to one canonical AIPurview record.
 
 ### Group 1. Model Identity
 | Field | Description | Source |
@@ -184,7 +184,7 @@ Each `(model_name, version_number)` combination maps to one canonical VerifyWise
 | `compliance_approver` | Reviewer or approver | Run tags |
 | `security_assessment_version` | Threat model ref | Run tags |
 
-> Missing fields are treated as **compliance gaps** and flagged by VerifyWise.
+> Missing fields are treated as **compliance gaps** and flagged by AIPurview.
 
 ---
 
@@ -197,9 +197,9 @@ Each `(model_name, version_number)` combination maps to one canonical VerifyWise
 
 ---
 
-## Compliance Logic Inside VerifyWise
+## Compliance Logic Inside AIPurview
 
-Once a record is ingested, VerifyWise should evaluate governance completeness.
+Once a record is ingested, AIPurview should evaluate governance completeness.
 
 ### Example Rules
 
@@ -209,7 +209,7 @@ Once a record is ingested, VerifyWise should evaluate governance completeness.
 - Production or staging models must define a reproducible environment.  
 - Production models must include baseline metrics.
 
-Compliance results are stored with the record and surfaced as badges in the VerifyWise UI.
+Compliance results are stored with the record and surfaced as badges in the AIPurview UI.
 
 ---
 
@@ -217,7 +217,7 @@ Compliance results are stored with the record and surfaced as badges in the Veri
 
 ### Process
 1. Query model versions from MLflow and check timestamps.  
-2. Compare against VerifyWise stored timestamps.  
+2. Compare against AIPurview stored timestamps.  
 3. Only re-ingest models that are new, updated, or have changed stages.
 
 This avoids redundant pulls and reduces server load.
@@ -246,7 +246,7 @@ Historical updates (e.g., Staging → Production) must either:
 ## Security & Isolation
 
 ### Credentials
-- Must be stored in VerifyWise’s secure secrets store.
+- Must be stored in AIPurview’s secure secrets store.
 - Never logged or exposed to other tenants.
 
 ### Artifacts
@@ -274,7 +274,7 @@ Historical updates (e.g., Staging → Production) must either:
 
 ## Benefits
 
-This integration allows VerifyWise to:
+This integration allows AIPurview to:
 
 - Automatically build a live **AI model inventory**.  
 - Maintain verifiable **model lineage** and **evidence trails**.  
@@ -282,5 +282,5 @@ This integration allows VerifyWise to:
 - Support regulatory readiness for **EU AI Act**, **ISO 42001**, and **NIST AI RMF**.  
 - Provide provable, auditable traceability from training to deployment.
 
-By integrating directly with MLflow, VerifyWise becomes the governance layer on top of the existing MLOps workflow — no duplicate tracking, no manual forms, and full compliance visibility.
+By integrating directly with MLflow, AIPurview becomes the governance layer on top of the existing MLOps workflow — no duplicate tracking, no manual forms, and full compliance visibility.
 

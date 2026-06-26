@@ -10,7 +10,7 @@ export const pluginsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Plugins extend VerifyWise with extra compliance frameworks, integrations and features. The marketplace lists everything available. Install the ones you need and they show up in your sidebar and project views.',
+      text: 'Plugins extend AIPurview with extra compliance frameworks, integrations and features. The marketplace lists everything available. Install the ones you need and they show up in your sidebar and project views.',
     },
     {
       type: 'heading',
@@ -52,7 +52,7 @@ export const pluginsContent: ArticleContent = {
       type: 'bullet-list',
       items: [
         { bold: 'Framework plugins', text: 'Add compliance frameworks like SOC 2, GDPR, HIPAA, PCI DSS, NYC Local Law 144 or Saudi PDPL. Browse them on the dedicated **Frameworks** tab on the Plugins page (organized by region). Once installed, these appear as framework options when configuring projects.' },
-        { bold: 'Integration plugins', text: 'Connect VerifyWise to external tools and services (e.g., Azure AI Foundry).' },
+        { bold: 'Integration plugins', text: 'Connect AIPurview to external tools and services (e.g., Azure AI Foundry).' },
         { bold: 'Utility plugins', text: 'Add features like risk import tools or specialized reporting.' },
       ],
     },

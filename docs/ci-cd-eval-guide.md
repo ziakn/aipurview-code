@@ -1,12 +1,12 @@
 # CI/CD LLM Evaluation Pipeline
 
-Run VerifyWise LLM evaluations automatically on every push or pull request using GitHub Actions.
+Run AIPurview LLM evaluations automatically on every push or pull request using GitHub Actions.
 
 ## Overview
 
-The VerifyWise CI/CD pipeline:
+The AIPurview CI/CD pipeline:
 
-1. Creates an evaluation experiment via the VerifyWise API
+1. Creates an evaluation experiment via the AIPurview API
 2. Polls until the experiment completes
 3. Parses metric results and checks against thresholds
 4. Posts a summary comment on the PR (if applicable)
@@ -14,7 +14,7 @@ The VerifyWise CI/CD pipeline:
 
 ## Prerequisites
 
-- A running VerifyWise instance (self-hosted or cloud)
+- A running AIPurview instance (self-hosted or cloud)
 - A project with at least one dataset uploaded
 - API authentication token (JWT)
 - LLM API key for the model provider you're evaluating
@@ -27,7 +27,7 @@ Go to **Settings → Secrets and variables → Actions** and add:
 
 | Secret | Description |
 |--------|-------------|
-| `VW_API_TOKEN` | VerifyWise JWT token for authentication |
+| `VW_API_TOKEN` | AIPurview JWT token for authentication |
 | `LLM_API_KEY` | API key for the LLM provider (OpenAI, Anthropic, etc.) |
 
 ### 2. Create a workflow file
@@ -71,8 +71,8 @@ On your next PR, the workflow will run the evaluation and post results as a comm
 
 | Input | Required | Default | Description |
 |-------|----------|---------|-------------|
-| `api_url` | Yes | — | Base URL of your VerifyWise instance |
-| `project_id` | Yes | — | VerifyWise project UUID |
+| `api_url` | Yes | — | Base URL of your AIPurview instance |
+| `project_id` | Yes | — | AIPurview project UUID |
 | `dataset_id` | Yes | — | Dataset UUID to evaluate against |
 | `metrics` | Yes | — | Comma-separated metric names |
 | `model_name` | Yes | — | Model identifier (e.g., `gpt-4o`, `claude-3.5-sonnet`) |
@@ -264,8 +264,8 @@ llm-evaluation:
 
 **Experiment stuck in "running"**: Increase `timeout_minutes`. Large datasets can take 20+ minutes.
 
-**Authentication errors**: Verify your `VW_API_TOKEN` is a valid JWT and hasn't expired. Generate a new one from the VerifyWise settings.
+**Authentication errors**: Verify your `VW_API_TOKEN` is a valid JWT and hasn't expired. Generate a new one from the AIPurview settings.
 
 **API key errors**: Ensure `LLM_API_KEY` matches the provider specified in `model_provider`. For evaluations, the judge model also needs a valid key.
 
-**Self-hosted models**: Set `model_provider` to `self-hosted`. The VerifyWise instance must have network access to the model's endpoint.
+**Self-hosted models**: Set `model_provider` to `self-hosted`. The AIPurview instance must have network access to the model's endpoint.

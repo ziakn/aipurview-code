@@ -5,7 +5,7 @@ import CodeBlock from "../CodeBlock";
 
 const accessibilitySnippets = {
   altText: `// Always provide alt text for images
-<img src={logo} alt="VerifyWise logo" />
+<img src={logo} alt="AIPurview logo" />
 
 // Empty alt for decorative images
 <img src={decoration} alt="" role="presentation" />
@@ -187,7 +187,7 @@ const AccessibilitySection: React.FC = () => {
           }}
         >
           Guidelines for building accessible interfaces. Follow WCAG 2.1 AA standards
-          to ensure VerifyWise is usable by everyone.
+          to ensure AIPurview is usable by everyone.
         </Typography>
       </Box>
 
@@ -331,7 +331,7 @@ const AccessibilitySection: React.FC = () => {
           </Box>
           <Box sx={{ flex: "1 1 300px", minWidth: 280 }}>
             <Typography sx={{ fontSize: 12, fontWeight: 600, color: theme.palette.text.secondary, mb: "16px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-              VerifyWise color contrast
+              AIPurview color contrast
             </Typography>
             <SpecTable
               onCopy={handleCopy}
@@ -432,7 +432,7 @@ const AccessibilitySection: React.FC = () => {
           ))}
         </Box>
         <Typography sx={{ fontSize: 11, color: theme.palette.text.tertiary, mt: "16px" }}>
-          Items with ✓ are required for VerifyWise. Test with screen readers (VoiceOver, NVDA) regularly.
+          Items with ✓ are required for AIPurview. Test with screen readers (VoiceOver, NVDA) regularly.
         </Typography>
       </Box>
     </Box>

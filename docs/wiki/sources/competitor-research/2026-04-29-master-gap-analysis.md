@@ -10,7 +10,7 @@ status: active
 
 ## Amaç
 
-30+ AI GRC rakibi (Credo AI, Holistic AI, OneTrust, ServiceNow, IBM watsonx, Vanta, Drata, Sprinto, Anecdotes, Cisco AI Defense, Lakera, MetricStream, Archer, LogicGate, Hyperproof, AuditBoard/Optro, Saidot, Trustible, Modulos, Monitaur, Asenion, MS Agent 365, Google Vertex, AWS Bedrock, SAS Viya, Salesforce Agent Fabric, Compliance.ai, Secureframe) tarayıp VerifyWise'ın gerçek gap'lerini çıkarmak.
+30+ AI GRC rakibi (Credo AI, Holistic AI, OneTrust, ServiceNow, IBM watsonx, Vanta, Drata, Sprinto, Anecdotes, Cisco AI Defense, Lakera, MetricStream, Archer, LogicGate, Hyperproof, AuditBoard/Optro, Saidot, Trustible, Modulos, Monitaur, Asenion, MS Agent 365, Google Vertex, AWS Bedrock, SAS Viya, Salesforce Agent Fabric, Compliance.ai, Secureframe) tarayıp AIPurview'ın gerçek gap'lerini çıkarmak.
 
 ## Ne yapıldı
 

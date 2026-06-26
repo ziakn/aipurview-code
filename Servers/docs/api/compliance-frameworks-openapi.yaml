@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: VerifyWise Compliance Frameworks API
+  title: AIPurview Compliance Frameworks API
   description: API endpoints for compliance framework management including ISO 27001, ISO 42001, NIST AI RMF, and compliance scoring.
   version: 1.0.0
 

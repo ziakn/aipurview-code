@@ -12,7 +12,7 @@ The article accurately describes the Slack integration flow and admin permission
 ### Finding 1 — Notification types list is abstract, not tied to code enum
 - **Type:** Quantitative/Reference
 - **Status:** ⚠️ partial
-- **Doc says:** "VerifyWise can notify you about various governance events: Model updates, Risk assessments, Compliance changes, Policy updates, Vendor changes, Training reminders" (block 4)
+- **Doc says:** "AIPurview can notify you about various governance events: Model updates, Risk assessments, Compliance changes, Policy updates, Vendor changes, Training reminders" (block 4)
 - **Reality:** Code defines NotificationType enum with 31 concrete values: TASK_ASSIGNED, TASK_UPDATED, POLICY_DUE_SOON, POLICY_OVERDUE, TRAINING_ASSIGNED, TRAINING_COMPLETED, VENDOR_REVIEW_DUE, REVIEW_REQUESTED, APPROVAL_REQUESTED, SHADOW_AI_ALERT, etc. No MODEL_UPDATED, RISK_ASSESSMENT, or COMPLIANCE_CHANGE types exist.
 - **Evidence:** `Servers/domain.layer/interfaces/i.notification.ts` lines 5–48 (NotificationType enum definition); no model or risk-specific types; policy and training types present at lines 23–25, 28–29, vendor at line 31.
 - **Suggested fix:** Add a note clarifying that these are user-friendly categories; for exact notification types, link to the Notifications settings or add a table mapping categories to specific events (e.g., "Policy updates: Policy due soon, Policy overdue").

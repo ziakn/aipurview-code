@@ -114,7 +114,7 @@ function PoweredByFooter() {
         pb: 4,
       }}
     >
-      Powered by VerifyWise
+      Powered by AIPurview
     </Typography>
   );
 }

@@ -253,7 +253,7 @@ test.describe("Public Intake Form", () => {
 
   // --- Tier 3: Powered by footer ---
 
-  test("shows Powered by VerifyWise footer", async ({ publicFormUrl, page }) => {
+  test("shows Powered by AIPurview footer", async ({ publicFormUrl, page }) => {
     if (!publicFormUrl) {
       test.skip();
       return;

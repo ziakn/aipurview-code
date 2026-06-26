@@ -1,16 +1,16 @@
 ---
-title: Root CLAUDE.md — VerifyWise Development Guide
+title: Root CLAUDE.md — AIPurview Development Guide
 tags: [architecture, multi-tenancy, jwt, roles, conventions]
 source: raw/codebase-claude-md/root-claude.md
 date: 2026-04-30
 status: active
 ---
 
-# Root CLAUDE.md — VerifyWise Development Guide
+# Root CLAUDE.md — AIPurview Development Guide
 
 ## Amaç
 
-VerifyWise codebase için cross-cutting kurallar. Directory-scoped guide'ları (Servers, Clients, EvalServer, AIGateway) tetikleyen üst-düzey kontrol dokümanı. Claude'un projeyi nasıl ele alacağını tanımlar.
+AIPurview codebase için cross-cutting kurallar. Directory-scoped guide'ları (Servers, Clients, EvalServer, AIGateway) tetikleyen üst-düzey kontrol dokümanı. Claude'un projeyi nasıl ele alacağını tanımlar.
 
 ## Ne yapıldı
 

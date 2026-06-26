@@ -13,7 +13,7 @@ import {
   Upload,
 } from "lucide-react";
 import { CustomizableButton } from "../button/customizable-button";
-import VerifyWiseMultiSelect from "../VerifyWiseMultiSelect";
+import AIPurviewMultiSelect from "../AIPurviewMultiSelect";
 import ViewToggle from "../ViewToggle";
 
 function ButtonShowcase() {
@@ -78,13 +78,13 @@ function ButtonShowcase() {
         </Stack>
       </Paper>
 
-      {/* VerifyWiseMultiSelect */}
+      {/* AIPurviewMultiSelect */}
       <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" gutterBottom>
           Multi-Select Components
         </Typography>
         <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
-          <VerifyWiseMultiSelect
+          <AIPurviewMultiSelect
             options={multiSelectOptions}
             selectedValues={multiSelectValues}
             onChange={setMultiSelectValues}
@@ -92,7 +92,7 @@ function ButtonShowcase() {
             icon={<Eye size={14} />}
             height={28}
           />
-          <VerifyWiseMultiSelect
+          <AIPurviewMultiSelect
             options={multiSelectOptions}
             selectedValues={[]}
             onChange={() => {}}

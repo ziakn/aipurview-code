@@ -9,7 +9,7 @@
 
 ## Overview
 
-The SlackWebhook routes define all HTTP endpoints for managing Slack workspace integrations within VerifyWise.
+The SlackWebhook routes define all HTTP endpoints for managing Slack workspace integrations within AIPurview.
 
 **Location:** `Servers/routes/slackWebhook.route.ts`
 
@@ -40,7 +40,7 @@ Retrieves all Slack webhooks for a specific user.
   "data": [
     {
       "id": 123,
-      "team_name": "VerifyWise Team",
+      "team_name": "AIPurview Team",
       "channel": "#notifications",
       "is_active": true
     }
@@ -69,7 +69,7 @@ Retrieves a specific Slack webhook by ID.
   "status": "success",
   "data": {
     "id": 123,
-    "team_name": "VerifyWise Team",
+    "team_name": "AIPurview Team",
     "channel": "#notifications",
     "is_active": true
   }
@@ -102,7 +102,7 @@ Creates a new Slack webhook integration after OAuth authorization.
   "status": "success",
   "data": {
     "id": 123,
-    "team_name": "VerifyWise Team",
+    "team_name": "AIPurview Team",
     "channel": "#notifications",
     "is_active": true
   }
@@ -162,7 +162,7 @@ Sends a test message to a Slack channel.
 ```json
 {
   "title": "Test Notification",
-  "message": "This is a test message from VerifyWise"
+  "message": "This is a test message from AIPurview"
 }
 ```
 

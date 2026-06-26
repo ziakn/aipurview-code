@@ -1,5 +1,5 @@
 ---
-- name: Install VerifyWise on a new server
+- name: Install AIPurview on a new server
   hosts: verifywise
   become: true
 

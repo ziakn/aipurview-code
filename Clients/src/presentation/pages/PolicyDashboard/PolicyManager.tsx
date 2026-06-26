@@ -193,7 +193,7 @@ const PolicyManager: React.FC<PolicyManagerProps> = ({ tags: _tags }) => {
       await deletePolicy(id);
       queryClient.invalidateQueries({ queryKey: policyQueryKeys.lists() });
 
-      // Show success alert using VerifyWise standard pattern
+      // Show success alert using AIPurview standard pattern
       handleAlert({
         variant: "success",
         body: "Policy deleted successfully!",

@@ -28,7 +28,7 @@ import { extractUserToken } from "../../../../application/tools/extractToken";
 import { useSelector } from "react-redux";
 import Checkbox from "../../../components/Inputs/Checkbox";
 import { Project } from "../../../../domain/types/Project";
-import { VerifyWiseContext } from "../../../../application/contexts/VerifyWise.context";
+import { AIPurviewContext } from "../../../../application/contexts/AIPurview.context";
 import { FrameworkTypeEnum } from "./constants";
 import { FormValues } from "./constants";
 import { initialState } from "./constants";
@@ -68,7 +68,7 @@ export const ProjectForm = ({
   onSubmitRef,
 }: ProjectFormProps) => {
   const theme = useTheme();
-  const { setProjects } = useContext(VerifyWiseContext);
+  const { setProjects } = useContext(AIPurviewContext);
 
   // Initialize form values based on whether we're editing or creating
   const [values, setValues] = useState<FormValues>(() => {

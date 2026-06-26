@@ -10,11 +10,11 @@ export const biasAuditsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'A bias audit checks whether an automated decision tool treats demographic groups consistently. You upload records with demographic columns and one of three kinds of outcome data. VerifyWise then calculates per-group rates, cross-group disparities and flags groups that fall below the configured threshold. The tool isn\'t LLM-specific; it works for any system that produces a decision, a score or a classification.',
+      text: 'A bias audit checks whether an automated decision tool treats demographic groups consistently. You upload records with demographic columns and one of three kinds of outcome data. AIPurview then calculates per-group rates, cross-group disparities and flags groups that fall below the configured threshold. The tool isn\'t LLM-specific; it works for any system that produces a decision, a score or a classification.',
     },
     {
       type: 'paragraph',
-      text: 'NYC Local Law 144 requires annual independent bias audits for any automated employment decision tool. EU AI Act Article 9 and the EEOC guidelines set similar expectations. VerifyWise ships with 16 compliance frameworks out of the box (including a Custom option), each pre-configured with the right categories, thresholds and reporting requirements.',
+      text: 'NYC Local Law 144 requires annual independent bias audits for any automated employment decision tool. EU AI Act Article 9 and the EEOC guidelines set similar expectations. AIPurview ships with 16 compliance frameworks out of the box (including a Custom option), each pre-configured with the right categories, thresholds and reporting requirements.',
     },
     {
       type: 'paragraph',
@@ -38,13 +38,13 @@ export const biasAuditsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Before uploading your data, you pick an audit metric. The metric determines what your CSV needs to contain and what the results mean. VerifyWise supports three modes:',
+      text: 'Before uploading your data, you pick an audit metric. The metric determines what your CSV needs to contain and what the results mean. AIPurview supports three modes:',
     },
     {
       type: 'bullet-list',
       items: [
         { bold: 'Selection rate', text: 'The default and the right choice for any tool that produces a binary decision (hire or reject, approve or deny, flag or pass). Your CSV needs one outcome column. The audit computes each group\'s selection rate and an impact ratio against the highest-rate group. NYC Local Law 144 mandates this metric for binary employment decisions.' },
-        { bold: 'Scoring rate', text: 'Use this when your tool outputs a continuous score rather than a yes/no, like a ranker, risk score or suitability score. Your CSV needs one numeric score column. VerifyWise computes each group\'s "above-median rate" (the share of records whose score beats the overall median) and then applies the same impact ratio logic. Local Law 144 explicitly allows this as an alternative to selection rate for scoring tools.' },
+        { bold: 'Scoring rate', text: 'Use this when your tool outputs a continuous score rather than a yes/no, like a ranker, risk score or suitability score. Your CSV needs one numeric score column. AIPurview computes each group\'s "above-median rate" (the share of records whose score beats the overall median) and then applies the same impact ratio logic. Local Law 144 explicitly allows this as an alternative to selection rate for scoring tools.' },
         { bold: 'Fairness metrics', text: 'Pick this when you have both the model\'s prediction and the real answer. Your CSV needs a prediction column and a ground-truth column. You get a confusion matrix per group (true positive rate, false positive rate, precision, accuracy) plus three standard cross-group differences: equal opportunity (TPR gap), equalized odds and predictive parity. This is the most informative mode but it also requires the most data.' },
       ],
     },
@@ -304,7 +304,7 @@ export const biasAuditsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The PDF is built so a reader who\'s never opened VerifyWise can still understand what was audited and what the numbers mean. It starts with a cover page, moves through an executive summary, describes the system and data, walks through the methodology and then presents the results tables with any fairness metrics or score distributions your audit produced. It closes with a limitations section. The PDF doesn\'t offer mitigation advice, that\'s a conversation for qualified counsel.',
+      text: 'The PDF is built so a reader who\'s never opened AIPurview can still understand what was audited and what the numbers mean. It starts with a cover page, moves through an executive summary, describes the system and data, walks through the methodology and then presents the results tables with any fairness metrics or score distributions your audit produced. It closes with a limitations section. The PDF doesn\'t offer mitigation advice, that\'s a conversation for qualified counsel.',
     },
     {
       type: 'paragraph',
@@ -444,7 +444,7 @@ export const biasAuditsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'From these counts VerifyWise derives the standard per-group rates:',
+      text: 'From these counts AIPurview derives the standard per-group rates:',
     },
     {
       type: 'ordered-list',

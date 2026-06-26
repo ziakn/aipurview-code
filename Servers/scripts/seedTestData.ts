@@ -7,7 +7,7 @@
  *
  * This script:
  *   1. Creates a test organization
- *   2. Creates a test user (verifywise@email.com / Verifywise#1)
+ *   2. Creates a test user (verifywise@email.com / AIPurview#1)
  *   3. Creates sample vendors, projects, risks for testing
  *
  * Prerequisites: Database must be migrated first.
@@ -45,7 +45,7 @@ async function seedTestData() {
     console.log(`  Organization ID: ${orgId}`);
 
     // 2. Create test user
-    const hashedPassword = await bcrypt.hash("Verifywise#1", SALT_ROUNDS);
+    const hashedPassword = await bcrypt.hash("AIPurview#1", SALT_ROUNDS);
     await sequelize.query(
       `INSERT INTO users (name, surname, email, password_hash, role_id, organization_id, created_at)
        VALUES ('Test', 'User', 'verifywise@email.com', :password, 1, :orgId, NOW())

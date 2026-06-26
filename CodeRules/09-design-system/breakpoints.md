@@ -1,6 +1,6 @@
 # Breakpoints & Responsive Design
 
-MUI breakpoint values used in VerifyWise.
+MUI breakpoint values used in AIPurview.
 
 ## Breakpoint Values
 

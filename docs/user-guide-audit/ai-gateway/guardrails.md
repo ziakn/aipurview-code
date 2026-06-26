@@ -33,7 +33,7 @@ v2 re-audit caught all three weak verifications from the Phase 1 audit. HTTP sta
 - **Doc says:** "Scanning runs within your gateway infrastructure (the AI Gateway FastAPI service); no data leaves your network for scanning." (block 13, paragraph)
 - **Reality:** Presidio is locally installed and `guardrail_service.py` / `presidio_engine.py` do not make external HTTP calls in the scan path. However, this is necessary-but-not-sufficient evidence for a network isolation claim — Presidio itself or a transitive dependency could still make external calls (e.g., model downloads, telemetry). Per v2 rule, negative claims require a complete code-path trace, which we cannot do without controlled network testing.
 - **Evidence:** `AIGateway/src/services/presidio_engine.py:77-107` (lazy-load local), `AIGateway/src/services/guardrail_service.py:118-127` (no external calls in scan path)
-- **Suggested fix:** Either narrow the claim to "VerifyWise code makes no external API calls during scanning" (verifiable from above evidence), or add a network-trace verification step before re-asserting the broader claim.
+- **Suggested fix:** Either narrow the claim to "AIPurview code makes no external API calls during scanning" (verifiable from above evidence), or add a network-trace verification step before re-asserting the broader claim.
 - **Confidence:** medium (the claim is likely true in practice, but the audit evidence doesn't fully prove it)
 
 ## Verified claims (sampled)

@@ -19,7 +19,7 @@
 
 ## 1. Audience and scope (decided)
 
-- **Audience:** an external integrator — a customer's developer connecting their agent (Claude Code, a LangChain/CrewAI app, or a custom agent) to the gateway. NOT the end user clicking the UI, and NOT a VerifyWise platform engineer.
+- **Audience:** an external integrator — a customer's developer connecting their agent (Claude Code, a LangChain/CrewAI app, or a custom agent) to the gateway. NOT the end user clicking the UI, and NOT a AIPurview platform engineer.
 - **Scope:** Agent Control (the tool-call governance side) now. The LLM-proxy integration guide is a fast-follow that slots into the same collection later as a real article when it's written. No placeholder/stub is created now.
 - **Non-goals:** no new doc site, no SDK code, no changes to the existing end-user articles or the internal `docs/technical/domains/agent-control.md`.
 
@@ -69,7 +69,7 @@ Each article ends with an `article-links` block cross-linking the relevant **end
 ## 4. Writing style (decided: plain technical English)
 
 - Short sentences. Common words. Define every term on first use (agent key, hook, MCP, tool call, run).
-- A developer who has never seen VerifyWise can follow it. Assumes general REST/JSON/curl familiarity, nothing VerifyWise-specific.
+- A developer who has never seen AIPurview can follow it. Assumes general REST/JSON/curl familiarity, nothing AIPurview-specific.
 - Code blocks carry the detail; prose stays minimal and explains the *why* (especially the same-id-everywhere rule, which must be explained, not just shown).
 - Real API terms are fine but get a one-line definition the first time.
 - After the content is written, run a **humanizer pass** over all four articles (same as the end-user articles got): no em dashes, no rule-of-three padding, no copula avoidance, no signposting, no FATAL negation, no Oxford comma, numbers as digits.

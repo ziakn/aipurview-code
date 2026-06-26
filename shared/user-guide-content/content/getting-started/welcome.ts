@@ -6,11 +6,11 @@ export const welcomeContent: ArticleContent = {
       type: 'heading',
       id: 'what-is-verifywise',
       level: 2,
-      text: 'What is VerifyWise?',
+      text: 'What is AIPurview?',
     },
     {
       type: 'paragraph',
-      text: "VerifyWise is an AI governance platform that helps organizations keep track of their AI systems, stay compliant with regulations and manage the risks that come with deploying AI. It covers model inventory, vendor oversight, risk registers, compliance frameworks and policy management in one place.",
+      text: "AIPurview is an AI governance platform that helps organizations keep track of their AI systems, stay compliant with regulations and manage the risks that come with deploying AI. It covers model inventory, vendor oversight, risk registers, compliance frameworks and policy management in one place.",
     },
     {
       type: 'paragraph',
@@ -19,7 +19,7 @@ export const welcomeContent: ArticleContent = {
     {
       type: 'callout',
       variant: 'info',
-      text: "VerifyWise is source-available. You can read every line of code, audit it internally, and modify it to fit your organization's needs.",
+      text: "AIPurview is source-available. You can read every line of code, audit it internally, and modify it to fit your organization's needs.",
     },
     {
       type: 'heading',
@@ -60,7 +60,7 @@ export const welcomeContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise ships with pre-built control sets for these frameworks:',
+      text: 'AIPurview ships with pre-built control sets for these frameworks:',
     },
     {
       type: 'bullet-list',
@@ -133,7 +133,7 @@ export const welcomeContent: ArticleContent = {
         {
           collectionId: 'getting-started',
           articleId: 'installing',
-          title: 'Installing VerifyWise',
+          title: 'Installing AIPurview',
           description: 'Deploy with Docker Compose or set up a development environment',
         },
         {

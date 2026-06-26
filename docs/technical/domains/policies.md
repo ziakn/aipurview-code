@@ -2,7 +2,7 @@
 
 ## Overview
 
-A Policy in VerifyWise is a rich-text governance document for establishing AI governance frameworks, compliance standards, and operational guidelines. Policies support status workflows, reviewer assignments, PDF/DOCX export, and linking to risks and evidence.
+A Policy in AIPurview is a rich-text governance document for establishing AI governance frameworks, compliance standards, and operational guidelines. Policies support status workflows, reviewer assignments, PDF/DOCX export, and linking to risks and evidence.
 
 ## Key Features
 
@@ -207,7 +207,7 @@ onerror, onload, onclick, onmouseover
 
 - Uses Playwright (Chromium) for conversion
 - A4 format, 20mm margins
-- VerifyWise branding
+- AIPurview branding
 - Smart image handling (base64 conversion)
 - Singleton browser instance
 

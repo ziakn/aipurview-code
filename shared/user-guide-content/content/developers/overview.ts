@@ -5,7 +5,7 @@ export const developersOverviewContent: ArticleContent = {
     { type: 'heading', id: 'overview', level: 2, text: 'Developer guide' },
     {
       type: 'paragraph',
-      text: 'These docs are for developers building on top of VerifyWise. They cover how to connect your own systems to the platform, with quickstarts, how things behave and API references. For step-by-step help using the screens, see the product guides instead.',
+      text: 'These docs are for developers building on top of AIPurview. They cover how to connect your own systems to the platform, with quickstarts, how things behave and API references. For step-by-step help using the screens, see the product guides instead.',
     },
     { type: 'heading', id: 'whats-here', level: 2, text: "What's covered today" },
     {

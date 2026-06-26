@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
 const TEST_EMAIL = process.env.E2E_EMAIL || "verifywise@email.com";
-const TEST_PASSWORD = process.env.E2E_PASSWORD || "Verifywise#1";
+const TEST_PASSWORD = process.env.E2E_PASSWORD || "AIPurview#1";
 
 test.describe("Authentication", () => {
   test("login page renders correctly", async ({ page }) => {
@@ -76,7 +76,7 @@ test.describe("Authentication", () => {
     await page.getByRole("button", { name: /sign in/i }).click();
     await expect(page).toHaveURL(/\/(super-admin)?$/, { timeout: 15_000 });
 
-    // Dismiss "Welcome to VerifyWise" dialog if it appears.
+    // Dismiss "Welcome to AIPurview" dialog if it appears.
     // Note: locator.isVisible() does NOT auto-wait, use expect with try/catch.
     const welcomeSkip = page.getByRole("button", { name: /skip for now/i });
     try {

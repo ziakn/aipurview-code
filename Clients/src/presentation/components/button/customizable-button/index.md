@@ -19,7 +19,7 @@ A highly customizable, accessible, and feature-rich button component built on Ma
 
 ## Overview
 
-The CustomizableButton component is designed to provide a consistent, accessible, and feature-rich button experience across the VerifyWise application. It builds upon Material-UI's Button component while adding custom styling, loading states, and enhanced accessibility features.
+The CustomizableButton component is designed to provide a consistent, accessible, and feature-rich button experience across the AIPurview application. It builds upon Material-UI's Button component while adding custom styling, loading states, and enhanced accessibility features.
 
 ### Key Benefits
 
@@ -700,4 +700,4 @@ When contributing to the CustomizableButton component:
 
 ## License
 
-This component is part of the VerifyWise project and follows the project's licensing terms.
+This component is part of the AIPurview project and follows the project's licensing terms.

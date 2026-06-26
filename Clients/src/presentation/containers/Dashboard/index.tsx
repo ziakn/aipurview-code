@@ -3,7 +3,7 @@ import "./index.css";
 import { Outlet, useLocation } from "react-router";
 import { useContext, useEffect, FC, useState } from "react";
 import { useDispatch } from "react-redux";
-import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.context";
+import { AIPurviewContext } from "../../../application/contexts/AIPurview.context";
 import { EvalsSidebarProvider } from "../../../application/contexts/EvalsSidebar.context";
 import { AIDetectionSidebarProvider } from "../../../application/contexts/AIDetectionSidebar.context";
 import { ShadowAISidebarProvider } from "../../../application/contexts/ShadowAISidebar.context";
@@ -35,7 +35,7 @@ interface DashboardProps {
 }
 
 const Dashboard: FC<DashboardProps> = ({ reloadTrigger }) => {
-  const { setDashboardValues, setProjects } = useContext(VerifyWiseContext);
+  const { setDashboardValues, setProjects } = useContext(AIPurviewContext);
   const location = useLocation();
   const { activeModule, setActiveModule } = useActiveModule();
   const { userRoleName, isSuperAdmin, activeOrganizationId } = useAuth();
@@ -369,7 +369,7 @@ const Dashboard: FC<DashboardProps> = ({ reloadTrigger }) => {
                   isOpen={openDemoDataModal}
                   onClose={() => setOpenDemoDataModal(false)}
                   title="Create demo data"
-                  description="Generate sample data to explore VerifyWise features"
+                  description="Generate sample data to explore AIPurview features"
                   submitButtonText="Create demo data"
                   onSubmit={handleCreateDemoData}
                   isSubmitting={showToastNotification}
@@ -377,7 +377,7 @@ const Dashboard: FC<DashboardProps> = ({ reloadTrigger }) => {
                 >
                   <Typography variant="body2" sx={{ color: "text.secondary" }}>
                     This will generate sample projects, risks, vendors, and policies to help you
-                    explore VerifyWise. You can remove this demo data at any time.
+                    explore AIPurview. You can remove this demo data at any time.
                   </Typography>
                 </StandardModal>
 

@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-Add model security scanning to VerifyWise AI Detection to identify malicious code hidden in ML model files found in GitHub repositories.
+Add model security scanning to AIPurview AI Detection to identify malicious code hidden in ML model files found in GitHub repositories.
 
 ---
 

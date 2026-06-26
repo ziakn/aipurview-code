@@ -10,7 +10,7 @@ export const integrationOverviewContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Integrations connect VerifyWise with external tools and services. They help you automate data sync and keep your team informed through channels they already use.',
+      text: 'Integrations connect AIPurview with external tools and services. They help you automate data sync and keep your team informed through channels they already use.',
     },
     {
       type: 'paragraph',
@@ -47,7 +47,7 @@ export const integrationOverviewContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise currently offers the following integrations:',
+      text: 'AIPurview currently offers the following integrations:',
     },
     {
       type: 'icon-cards',
@@ -142,7 +142,7 @@ export const integrationOverviewContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Beyond the built-in integrations, VerifyWise offers API access for custom integrations. API keys let you interact with VerifyWise data and features programmatically from external applications or scripts.',
+      text: 'Beyond the built-in integrations, AIPurview offers API access for custom integrations. API keys let you interact with AIPurview data and features programmatically from external applications or scripts.',
     },
     {
       type: 'paragraph',

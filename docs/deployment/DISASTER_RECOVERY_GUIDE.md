@@ -1,12 +1,12 @@
 # Disaster Recovery and Business Continuity Guide
 
-This guide provides procedures and recommendations for implementing disaster recovery (DR) and business continuity (BC) for VerifyWise deployments.
+This guide provides procedures and recommendations for implementing disaster recovery (DR) and business continuity (BC) for AIPurview deployments.
 
 ---
 
 ## Overview
 
-VerifyWise is designed to integrate with your organization's existing DR/BC infrastructure. This guide covers:
+AIPurview is designed to integrate with your organization's existing DR/BC infrastructure. This guide covers:
 
 - Recovery objectives and planning
 - Database backup and restore procedures
@@ -52,7 +52,7 @@ VerifyWise is designed to integrate with your organization's existing DR/BC infr
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                        VerifyWise Data Architecture                      │
+│                        AIPurview Data Architecture                      │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
 │  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐              │
@@ -735,7 +735,7 @@ docker compose exec postgresdb ls -la /var/lib/postgresql/data
 # Complete disaster recovery script
 # Save as: /opt/verifywise/scripts/disaster-recovery.sh
 
-echo "=== VerifyWise Disaster Recovery ==="
+echo "=== AIPurview Disaster Recovery ==="
 echo "Started at: $(date)"
 
 # 1. Verify backup availability
@@ -903,7 +903,7 @@ gpg --decrypt backup.sql.gz.gpg > backup.sql.gz
 
 ### 11.1 For on-premises deployments
 
-VerifyWise integrates with your existing DR infrastructure:
+AIPurview integrates with your existing DR infrastructure:
 
 1. **Database replication**: Configure PostgreSQL streaming replication to your DR site
 2. **Backup integration**: Schedule backups to your enterprise backup solution

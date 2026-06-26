@@ -14,7 +14,7 @@ export const dashboardContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'You can get back here from anywhere by clicking "Dashboard" in the sidebar or the VerifyWise logo at the top.',
+      text: 'You can get back here from anywhere by clicking "Dashboard" in the sidebar or the AIPurview logo at the top.',
     },
     {
       type: 'heading',

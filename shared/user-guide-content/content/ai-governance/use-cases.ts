@@ -253,7 +253,7 @@ export const useCasesContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'From your answers, VerifyWise calculates a risk level (High, Medium, or Low) and flags the compliance requirements that apply. A system processing personal data, for instance, gets GDPR and DPIA requirements added automatically.',
+      text: 'From your answers, AIPurview calculates a risk level (High, Medium, or Low) and flags the compliance requirements that apply. A system processing personal data, for instance, gets GDPR and DPIA requirements added automatically.',
     },
     {
       type: 'heading',

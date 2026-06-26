@@ -39,7 +39,7 @@ The article describes vendor risk assessment scorecard dimensions and review wor
 ## Verified claims (sampled)
 - Claim: "Update review status to 'In review'" (block 17) — verified at `Clients/src/domain/enums/status.enum.ts:15` (ReviewStatus.InReview = "In review")
 - Claim: "Set status to 'Reviewed' or 'Requires follow-up'" (block 17) — verified at `Clients/src/domain/enums/status.enum.ts:16-17` (ReviewStatus.Reviewed, RequiresFollowUp)
-- Claim: "VerifyWise assesses vendor risk across four dimensions: Data sensitivity, Business criticality, Past issues, Regulatory exposure" (block 5) — verified as present in scorecard; icon-cards structure confirms four-dimension design
+- Claim: "AIPurview assesses vendor risk across four dimensions: Data sensitivity, Business criticality, Past issues, Regulatory exposure" (block 5) — verified as present in scorecard; icon-cards structure confirms four-dimension design
 - Claim: "RegulatoryExposure checklist includes GDPR, HIPAA, SOC 2, ISO 27001, EU AI Act, CCPA" (block 15) — verified at `Clients/src/domain/enums/status.enum.ts:44-49` (all regulatory options present)
 - Claim: "Related articles link to vendor-management, risk-assessment, and risk-mitigation" (block 19) — verified at `vendor-risks.ts:259-276` (all three articleId values present)
 

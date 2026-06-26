@@ -60,7 +60,7 @@ const BUILTIN_PLUGINS: BuiltinPlugin[] = [
       "Each file is stored and linked to an auto-created dataset record with pre-filled metadata that can be " +
       "reviewed and edited before committing. Supports up to 20 files per batch with 30MB per file limit.",
     version: "1.0.0",
-    author: "VerifyWise",
+    author: "AIPurview",
     category: "data_governance",
     iconUrl: "plugins/dataset-bulk-upload/icon.svg",
     isOfficial: true,

@@ -258,7 +258,7 @@ export default function AIGatewayVirtualKeysPage({ embedded }: { embedded?: bool
         keys.length === 0 && (
           <EmptyState
             icon={KeyRound}
-            message="Give your developers a single API key to access any LLM through the gateway — no VerifyWise account needed."
+            message="Give your developers a single API key to access any LLM through the gateway — no AIPurview account needed."
             showBorder
           >
             {endpointCount === 0 && (

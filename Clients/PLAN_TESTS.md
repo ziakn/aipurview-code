@@ -2,7 +2,7 @@
 
 ## 1. Document Control
 
-- **Project:** VerifyWise
+- **Project:** AIPurview
 - **Repository:** https://verifywise.ai/
 - **Version:** 1.0
 

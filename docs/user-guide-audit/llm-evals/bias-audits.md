@@ -11,7 +11,7 @@ The article accurately documents the bias audit feature with correct metric mode
 ### Finding 1 — Framework count mismatch
 - **Type:** Quantitative
 - **Status:** ⚠️ partial
-- **Doc says:** "VerifyWise ships with 15 compliance frameworks out of the box" (block index 2)
+- **Doc says:** "AIPurview ships with 15 compliance frameworks out of the box" (block index 2)
 - **Reality:** EvalServer /presets/bias_audits/ contains 16 .json preset files: nyc_ll144, eeoc_guidelines, california_feha, eu_ai_act, colorado_sb169, colorado_sb205, illinois_hb3773, texas_traiga, new_jersey, brazil_bill2338, south_korea, singapore_wfa, uk_gdpr_equality, iso_42001, nist_ai_rmf, custom
 - **Evidence:** `/Users/gorkemcetin/verifywise/EvalServer/src/presets/bias_audits/` directory listing confirms 16 .json files
 - **Suggested fix:** Update to "16 compliance frameworks out of the box" or clarify why custom is excluded from count

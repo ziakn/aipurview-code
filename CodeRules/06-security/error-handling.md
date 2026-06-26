@@ -1,6 +1,6 @@
 # Error Handling
 
-Secure error handling guidelines for VerifyWise.
+Secure error handling guidelines for AIPurview.
 
 ## Principles
 

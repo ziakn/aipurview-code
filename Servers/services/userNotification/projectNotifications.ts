@@ -63,7 +63,7 @@ const NOTIFICATION_CONFIGS: Record<ProjectNotificationType, NotificationConfig> 
   },
   project_created: {
     template: EMAIL_TEMPLATES.PROJECT_CREATED_ADMIN,
-    getSubject: (projectName) => `${projectName} is created in VerifyWise`,
+    getSubject: (projectName) => `${projectName} is created in AIPurview`,
     getLogMessage: (email) => `Project creation notification sent to ${email}`,
   },
 };

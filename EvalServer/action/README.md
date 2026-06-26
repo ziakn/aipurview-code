@@ -1,6 +1,6 @@
-# VerifyWise LLM Evaluation Action
+# AIPurview LLM Evaluation Action
 
-Run LLM quality and safety evaluations against a [VerifyWise](https://verifywise.ai) instance directly in your CI/CD pipeline.
+Run LLM quality and safety evaluations against a [AIPurview](https://verifywise.ai) instance directly in your CI/CD pipeline.
 
 ## Features
 
@@ -39,13 +39,13 @@ jobs:
 
 | Input | Required | Default | Description |
 |-------|----------|---------|-------------|
-| `api_url` | Yes | — | Base URL of your VerifyWise instance |
-| `project_id` | Yes | — | VerifyWise project ID |
+| `api_url` | Yes | — | Base URL of your AIPurview instance |
+| `project_id` | Yes | — | AIPurview project ID |
 | `dataset_id` | Yes | — | Dataset to evaluate against |
 | `metrics` | Yes | — | Comma-separated metric names |
 | `model_name` | Yes | — | Model to evaluate (e.g. `gpt-4o`) |
 | `model_provider` | Yes | — | Provider: `openai`, `anthropic`, `google`, `mistral`, `xai`, `self-hosted` |
-| `vw_api_token` | Yes | — | VerifyWise JWT token |
+| `vw_api_token` | Yes | — | AIPurview JWT token |
 | `llm_api_key` | Yes | — | API key for the LLM provider |
 | `judge_model` | No | `gpt-4o` | Judge model for metric scoring |
 | `judge_provider` | No | `openai` | Judge model provider |
@@ -65,7 +65,7 @@ jobs:
 
 ## Metrics
 
-VerifyWise supports these built-in metrics:
+AIPurview supports these built-in metrics:
 
 | Metric | Type | Description |
 |--------|------|-------------|
@@ -138,7 +138,7 @@ jobs:
 ## How It Works
 
 1. The action installs Python 3.11 and the `requests` library.
-2. `eval_runner.py` calls the VerifyWise API to create an evaluation experiment.
+2. `eval_runner.py` calls the AIPurview API to create an evaluation experiment.
 3. It polls the experiment status until completion (or timeout).
 4. Results are parsed, checked against thresholds, and written to JSON and Markdown.
 5. The Markdown summary is appended to the GitHub Actions **Job Summary**.

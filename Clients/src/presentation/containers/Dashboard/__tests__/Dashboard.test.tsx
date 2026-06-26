@@ -27,7 +27,7 @@ vi.mock("../../../../application/hooks/useDashboard", () => ({
   }),
 }));
 
-vi.mock("../../../../application/contexts/VerifyWise.context", async () => {
+vi.mock("../../../../application/contexts/AIPurview.context", async () => {
   const React = await import("react");
   const contextValue = {
     setDashboardValues: vi.fn(),
@@ -35,8 +35,8 @@ vi.mock("../../../../application/contexts/VerifyWise.context", async () => {
     dashboardValues: {},
     projects: [],
   };
-  const VerifyWiseContext = React.createContext(contextValue);
-  return { VerifyWiseContext };
+  const AIPurviewContext = React.createContext(contextValue);
+  return { AIPurviewContext };
 });
 
 vi.mock("../../../../application/repository/project.repository", () => ({

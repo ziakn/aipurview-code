@@ -1,6 +1,6 @@
-name: "VerifyWise LLM Evaluation"
-description: "Run LLM quality and safety evaluations against a VerifyWise instance. Checks metric thresholds and reports results."
-author: "VerifyWise"
+name: "AIPurview LLM Evaluation"
+description: "Run LLM quality and safety evaluations against a AIPurview instance. Checks metric thresholds and reports results."
+author: "AIPurview"
 
 branding:
   icon: "check-circle"
@@ -8,10 +8,10 @@ branding:
 
 inputs:
   api_url:
-    description: "Base URL of the VerifyWise instance (e.g. https://app.verifywise.ai)"
+    description: "Base URL of the AIPurview instance (e.g. https://app.verifywise.ai)"
     required: true
   project_id:
-    description: "VerifyWise project ID"
+    description: "AIPurview project ID"
     required: true
   dataset_id:
     description: "Dataset ID to evaluate against"
@@ -54,7 +54,7 @@ inputs:
     required: false
     default: "true"
   vw_api_token:
-    description: "VerifyWise JWT token for authentication"
+    description: "AIPurview JWT token for authentication"
     required: true
   llm_api_key:
     description: "API key for the LLM provider being evaluated"
@@ -131,7 +131,7 @@ runs:
         fi
 
         if [ -f "${{ runner.temp }}/vw_summary.md" ]; then
-          echo "## VerifyWise LLM Evaluation" >> "$GITHUB_STEP_SUMMARY"
+          echo "## AIPurview LLM Evaluation" >> "$GITHUB_STEP_SUMMARY"
           cat "${{ runner.temp }}/vw_summary.md" >> "$GITHUB_STEP_SUMMARY"
         fi
 

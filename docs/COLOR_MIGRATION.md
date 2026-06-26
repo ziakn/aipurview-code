@@ -1,6 +1,6 @@
 # Color Palette Migration Plan
 
-> **Goal**: Replace all hardcoded hex colors across the VerifyWise codebase with imports from the unified palette (`Clients/src/presentation/themes/palette.ts`), creating a coherent, calm, pastel visual identity across all four modules.
+> **Goal**: Replace all hardcoded hex colors across the AIPurview codebase with imports from the unified palette (`Clients/src/presentation/themes/palette.ts`), creating a coherent, calm, pastel visual identity across all four modules.
 
 ---
 

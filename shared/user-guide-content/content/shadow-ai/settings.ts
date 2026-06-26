@@ -20,7 +20,7 @@ export const settingsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'API keys authenticate event ingestion from your network proxy, SIEM, browser extension or any system that forwards traffic data to VerifyWise.',
+      text: 'API keys authenticate event ingestion from your network proxy, SIEM, browser extension or any system that forwards traffic data to AIPurview.',
     },
     {
       type: 'heading',
@@ -104,7 +104,7 @@ export const settingsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'This section documents the exact data formats VerifyWise expects when ingesting Shadow AI events, whether through the REST API or via syslog forwarding.',
+      text: 'This section documents the exact data formats AIPurview expects when ingesting Shadow AI events, whether through the REST API or via syslog forwarding.',
     },
 
     // REST API event schema

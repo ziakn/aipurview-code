@@ -41,7 +41,7 @@ const ColorsSection: React.FC = () => {
             maxWidth: 600,
           }}
         >
-          The VerifyWise color palette. All colors are defined in the theme and should be
+          The AIPurview color palette. All colors are defined in the theme and should be
           accessed via theme.palette. Click any color to copy its hex value.
         </Typography>
       </Box>

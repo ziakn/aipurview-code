@@ -30,7 +30,7 @@ Handles direct communication with Slack Web API for sending messages and managin
 
 #### inviteBotToChannel
 
-Invites the VerifyWise bot to a Slack channel (required for private channels).
+Invites the AIPurview bot to a Slack channel (required for private channels).
 
 **Signature:**
 
@@ -202,7 +202,7 @@ Slack message object with Block Kit formatting:
 
 ```typescript
 {
-  text: "A message from VerifyWise",
+  text: "A message from AIPurview",
   blocks: [
     {
       type: "header",

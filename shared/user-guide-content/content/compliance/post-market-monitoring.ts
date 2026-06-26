@@ -10,7 +10,7 @@ export const postMarketMonitoringContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Post-market monitoring (PMM) tracks how a high-risk AI system behaves after it goes live. EU AI Act Article 72 requires providers of high-risk AI systems to establish and document a monitoring plan. VerifyWise turns this into a repeatable process: you set a schedule, the system creates monitoring cycles, stakeholders answer structured questions and a PDF report gets generated automatically when a cycle is submitted.',
+      text: 'Post-market monitoring (PMM) tracks how a high-risk AI system behaves after it goes live. EU AI Act Article 72 requires providers of high-risk AI systems to establish and document a monitoring plan. AIPurview turns this into a repeatable process: you set a schedule, the system creates monitoring cycles, stakeholders answer structured questions and a PDF report gets generated automatically when a cycle is submitted.',
     },
     {
       type: 'paragraph',
@@ -40,7 +40,7 @@ export const postMarketMonitoringContent: ArticleContent = {
         { text: 'The assigned stakeholder receives an email with a link to the monitoring form.' },
         { text: 'They open the form, answer each question and can flag concerns along the way.' },
         { text: 'Drafts are saved so they can come back later.' },
-        { text: 'When they submit, VerifyWise captures a context snapshot (risk counts, model counts, vendor counts) and generates a PDF report.' },
+        { text: 'When they submit, AIPurview captures a context snapshot (risk counts, model counts, vendor counts) and generates a PDF report.' },
         { text: 'The report is stored in the reports archive for download at any time.' },
         { text: 'If the cycle isn\'t completed by its due date, a reminder goes out. If it stays overdue past the escalation threshold, the escalation contact gets notified.' },
       ],
@@ -63,7 +63,7 @@ export const postMarketMonitoringContent: ArticleContent = {
       type: 'ordered-list',
       items: [
         { text: 'Flip the toggle to enable monitoring.' },
-        { text: 'If this is the first time, VerifyWise creates a configuration and seeds it with seven default questions based on EU AI Act requirements.' },
+        { text: 'If this is the first time, AIPurview creates a configuration and seeds it with seven default questions based on EU AI Act requirements.' },
         { text: 'The schedule and questions sections appear below the toggle.' },
         { text: 'You can flip the toggle off at any time to pause monitoring without deleting your configuration or question set.' },
       ],
@@ -137,7 +137,7 @@ export const postMarketMonitoringContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'When you first enable monitoring, VerifyWise creates seven default questions. Six are yes/no questions mapped to EU AI Act articles. The seventh is a free-text field for additional observations.',
+      text: 'When you first enable monitoring, AIPurview creates seven default questions. Six are yes/no questions mapped to EU AI Act articles. The seventh is a free-text field for additional observations.',
     },
     {
       type: 'table',
@@ -412,7 +412,7 @@ export const postMarketMonitoringContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'When a cycle is submitted, VerifyWise captures a snapshot of the use case\'s current state. This snapshot is stored with the report so you can track how the risk profile changes over time.',
+      text: 'When a cycle is submitted, AIPurview captures a snapshot of the use case\'s current state. This snapshot is stored with the report so you can track how the risk profile changes over time.',
     },
     {
       type: 'paragraph',
@@ -444,7 +444,7 @@ export const postMarketMonitoringContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'A PDF is generated automatically when a cycle is submitted. The report is rendered from an HTML template using Playwright (headless Chromium) and uploaded to VerifyWise\'s file storage.',
+      text: 'A PDF is generated automatically when a cycle is submitted. The report is rendered from an HTML template using Playwright (headless Chromium) and uploaded to AIPurview\'s file storage.',
     },
     {
       type: 'paragraph',

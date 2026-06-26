@@ -340,7 +340,7 @@ export class PluginService {
 
   /**
    * Get data from plugin data providers
-   * This allows plugins to contribute data to core VerifyWise features
+   * This allows plugins to contribute data to core AIPurview features
    * @param providerType - The type of data provider (e.g., "use-cases")
    * @param organizationId - The organization ID
    * @param sequelize - Sequelize instance for database access

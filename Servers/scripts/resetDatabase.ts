@@ -54,7 +54,7 @@ async function resetDatabase() {
     // Create default admin user
     const admin = await createNewUserQuery(
       await UserModel.createNewUser(
-        "VerifyWise",
+        "AIPurview",
         "Admin",
         "verifywise@email.com",
         "MyJH4rTm!@.45L0wm",

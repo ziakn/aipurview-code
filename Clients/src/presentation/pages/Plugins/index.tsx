@@ -241,7 +241,7 @@ const Plugins: React.FC = () => {
   return (
     <PageHeaderExtended
       title="Plugins"
-      description="Discover and manage plugins to extend VerifyWise functionality"
+      description="Discover and manage plugins to extend AIPurview functionality"
       alert={
         toast && toast.visible ? (
           <Suspense fallback={<div>Loading...</div>}>

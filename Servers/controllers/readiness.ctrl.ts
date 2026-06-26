@@ -208,7 +208,7 @@ export async function calculateAll(req: Request, res: Response) {
           {
             badgeType: "generated",
             modelUsed: "readiness-calculator-v1",
-            modelProvider: "verifywise",
+            modelProvider: "aipurview",
             toolName: "readiness-calculation",
             promptSummary: `Readiness calculated for ${fw}: ${agg.avg_score}/100 (${agg.total_controls} controls)`,
           },
@@ -299,7 +299,7 @@ export async function calculateForFramework(req: Request, res: Response) {
         {
           badgeType: "generated",
           modelUsed: "readiness-calculator-v1",
-          modelProvider: "verifywise",
+          modelProvider: "aipurview",
           toolName: "readiness-calculation",
           promptSummary: `Readiness calculated for ${frameworkType}: ${agg.avg_score}/100 (${agg.total_controls} controls)`,
         },

@@ -139,7 +139,7 @@ describe("CompletionStep", () => {
     renderWithProviders(<CompletionStep {...defaultStepProps} />);
     expect(
       screen.getByText(
-        "You are ready to work with VerifyWise and manage your AI governance process",
+        "You are ready to work with AIPurview and manage your AI governance process",
       ),
     ).toBeInTheDocument();
   });

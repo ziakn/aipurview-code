@@ -40,9 +40,9 @@ status: active
 - Three-agent fieldwork chain: Data Analyst → Senior Auditor → Audit Manager
 - Risk-based sampling agents — weeks-to-hours control testing
 
-## VerifyWise için ders
+## AIPurview için ders
 
-| Özellik | VerifyWise Durum |
+| Özellik | AIPurview Durum |
 |---|---|
 | Knowledge graph (controls/risks/evidence) | Kısmı (ilişkiler var ama graph değil) |
 | Multi-agent orchestration | ✅ var (Coordinator + 9 named agents) |

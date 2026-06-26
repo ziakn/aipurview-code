@@ -30,7 +30,7 @@ The article describes mitigation workflows and status tracking with generally so
 ### Finding 3 — Risk level measurements claim
 - **Type:** Behavior
 - **Status:** ❓ unverifiable
-- **Doc says:** "VerifyWise tracks multiple risk level measurements so you can see how well your mitigations are working: Audit risk, Residual risk, Target risk" (block 14-15)
+- **Doc says:** "AIPurview tracks multiple risk level measurements so you can see how well your mitigations are working: Audit risk, Residual risk, Target risk" (block 14-15)
 - **Reality:** Code contains "Current risk level" (a select field in the form) and "Residual risk likelihood/severity" (calculated from likelihood + severity multiplier) but no explicit enum or documentation for "Audit risk" or "Target risk" as distinct, trackable measurements. The form captures "Current risk level" pre-mitigation and residual scores post-mitigation, but terminology differs from the article.
 - **Evidence:** No matching constant/enum found in codebase. References: `/Clients/src/presentation/components/AddNewRiskForm/MitigationSection/index.tsx:356-361` (RiskLevel component) and `/Clients/src/domain/types/riskForm.types.ts:28-41` (no "Audit risk" or "Target risk" properties)
 - **Suggested fix:** Verify product intent: are "Audit risk", "Residual risk", and "Target risk" intended as formal measurement names? If so, surface them as enums or constants in code. If not, rewrite the article to use "Current risk level" (before mitigation) and "Residual risk" (after) with the actual formula.

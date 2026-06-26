@@ -2,7 +2,7 @@
 
 ## Overview
 
-VerifyWise implements a JWT-based authentication system with refresh token rotation, role-based access control (RBAC), and multi-tenant security. The system uses separate secrets for access and refresh tokens, with refresh tokens stored in HTTP-only cookies for XSS protection.
+AIPurview implements a JWT-based authentication system with refresh token rotation, role-based access control (RBAC), and multi-tenant security. The system uses separate secrets for access and refresh tokens, with refresh tokens stored in HTTP-only cookies for XSS protection.
 
 ## Authentication Flow
 

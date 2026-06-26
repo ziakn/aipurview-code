@@ -23,8 +23,8 @@ vi.mock("../../../../../application/validations/selectValidation", () => ({
 vi.mock("../../../../../application/tools/extractToken", () => ({
   extractUserToken: vi.fn().mockReturnValue({ id: 1 }),
 }));
-vi.mock("../../../../../application/contexts/VerifyWise.context", () => ({
-  VerifyWiseContext: React.createContext({
+vi.mock("../../../../../application/contexts/AIPurview.context", () => ({
+  AIPurviewContext: React.createContext({
     inputValues: {},
     dashboardValues: {},
   }),

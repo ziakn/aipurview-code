@@ -10,7 +10,7 @@ status: active
 
 ## Amaç
 
-VerifyWise'ın AI yığınının temel altyapısını kurmak — Phase 1+ için zemin hazırlamak. 3 öncelikli özellik: Evidence Agent (doküman intelligence), Readiness Dashboard (compliance score), AI Content Review (EU AI Act Article 52 transparency).
+AIPurview'ın AI yığınının temel altyapısını kurmak — Phase 1+ için zemin hazırlamak. 3 öncelikli özellik: Evidence Agent (doküman intelligence), Readiness Dashboard (compliance score), AI Content Review (EU AI Act Article 52 transparency).
 
 ## Ne yapıldı
 

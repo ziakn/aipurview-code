@@ -25,11 +25,11 @@ export const ciCdIntegrationContent: ArticleContent = {
     {
       type: 'ordered-list',
       items: [
-        { text: 'Creates an evaluation experiment on your VerifyWise instance.' },
+        { text: 'Creates an evaluation experiment on your AIPurview instance.' },
         { text: 'Runs your model against the dataset you specify.' },
         { text: 'An LLM judge scores each response on the metrics you chose (answer_relevancy, bias, toxicity, faithfulness, hallucination, contextual_relevancy).' },
         { text: 'If any metric falls below the threshold, the CI step fails and the PR is blocked.' },
-        { text: 'Results are posted as a PR comment, uploaded as build artifacts and stored in your VerifyWise dashboard.' },
+        { text: 'Results are posted as a PR comment, uploaded as build artifacts and stored in your AIPurview dashboard.' },
       ],
     },
     {
@@ -92,7 +92,7 @@ jobs:
         { key: 'description', label: 'Where to get it', width: '60%' },
       ],
       rows: [
-        { secret: 'VW_API_TOKEN', required: 'Yes', description: 'VerifyWise dashboard > Settings > API tokens' },
+        { secret: 'VW_API_TOKEN', required: 'Yes', description: 'AIPurview dashboard > Settings > API tokens' },
         { secret: 'LLM_API_KEY', required: 'Yes', description: 'API key for the model being evaluated (OpenAI, Anthropic, etc.)' },
         { secret: 'JUDGE_API_KEY', required: 'No', description: 'API key for the judge LLM. Only needed when the model and judge use different providers.' },
       ],
@@ -117,8 +117,8 @@ jobs:
         { key: 'description', label: 'Description', width: '60%' },
       ],
       rows: [
-        { input: 'api_url', default: '(required)', description: 'Base URL of your VerifyWise instance' },
-        { input: 'project_id', default: '(required)', description: 'Project ID from the VerifyWise dashboard' },
+        { input: 'api_url', default: '(required)', description: 'Base URL of your AIPurview instance' },
+        { input: 'project_id', default: '(required)', description: 'Project ID from the AIPurview dashboard' },
         { input: 'dataset_id', default: '(required)', description: 'Dataset to evaluate against' },
         { input: 'metrics', default: '(required)', description: 'Comma-separated metric names' },
         { input: 'model_name', default: '(required)', description: 'Model to evaluate (e.g. gpt-4o-mini)' },
@@ -205,9 +205,9 @@ python ci_eval_runner.py \\
       language: 'python',
       code: `pip install verifywise
 
-from verifywise import VerifyWiseClient
+from verifywise import AIPurviewClient
 
-client = VerifyWiseClient(
+client = AIPurviewClient(
     api_url="https://your-instance.com",
     token="your-token"
 )
@@ -235,7 +235,7 @@ assert results.passed, f"Failed: {[m.name for m in results.metrics if not m.pass
       items: [
         { text: '**Project ID**: Open LLM Evals in the sidebar, click on your project. The ID is in the URL.' },
         { text: '**Dataset ID**: Go to the Datasets tab in your project. Click any dataset to see its ID.' },
-        { text: '**API token**: Go to Settings > API tokens in the main VerifyWise sidebar.' },
+        { text: '**API token**: Go to Settings > API tokens in the main AIPurview sidebar.' },
       ],
     },
     {
@@ -246,7 +246,7 @@ assert results.passed, f"Failed: {[m.name for m in results.metrics if not m.pass
     },
     {
       type: 'paragraph',
-      text: 'CI-triggered experiments appear in the same Experiments list as manually run ones. You can see the scores, compare against previous runs and drill into individual prompt-level results from the VerifyWise dashboard.',
+      text: 'CI-triggered experiments appear in the same Experiments list as manually run ones. You can see the scores, compare against previous runs and drill into individual prompt-level results from the AIPurview dashboard.',
     },
     {
       type: 'article-links',

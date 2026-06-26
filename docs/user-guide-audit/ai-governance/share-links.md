@@ -34,6 +34,6 @@ The share-links article is substantially accurate, with default settings correct
 - Claim: "Click the **Share** button" (block 3) — verified UI component exists at `Clients/src/presentation/components/ShareViewDropdown/ShareButton.tsx`
 
 ## Skipped / non-verifiable
-- "They don't need a VerifyWise account" (block 5) — opinion/marketing claim, not a verifiable system property
-- "The shared view shows VerifyWise branding and a note that the link was shared by your organization" (block 5) — requires browser/UI test to verify rendering
+- "They don't need a AIPurview account" (block 5) — opinion/marketing claim, not a verifiable system property
+- "The shared view shows AIPurview branding and a note that the link was shared by your organization" (block 5) — requires browser/UI test to verify rendering
 - "Anyone with the link can view the shared data until it expires" (block 7, callout) — security posture opinion; technically true but not a factual claim to audit

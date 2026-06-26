@@ -1,6 +1,6 @@
 # Documentation
 
-Guidelines for writing documentation in VerifyWise.
+Guidelines for writing documentation in AIPurview.
 
 ## Types of Documentation
 
@@ -253,7 +253,7 @@ class UserService:
 ### Project README
 
 ```markdown
-# VerifyWise
+# AIPurview
 
 Brief description of what the project does.
 
@@ -358,9 +358,9 @@ import { UserCard } from '@/components/UserCard';
 # openapi.yaml
 openapi: 3.0.0
 info:
-  title: VerifyWise API
+  title: AIPurview API
   version: 1.0.0
-  description: API for VerifyWise platform
+  description: API for AIPurview platform
 
 paths:
   /users:

@@ -2,7 +2,7 @@
 
 ## 1. Problem Statement
 
-The VerifyWise backend (`Servers/`) maintains API documentation in three places that have diverged:
+The AIPurview backend (`Servers/`) maintains API documentation in three places that have diverged:
 
 - `Servers/swagger.yaml` documents roughly 280 of ~560 registered Express endpoints.
 - `Servers/endpoints.ts` (used by the frontend API layer) covers 187 endpoints and is generated from `swagger.yaml`.
@@ -87,7 +87,7 @@ Explicitly out of scope:
 
 **Adopt Approach A (code-first) with Approach C (Swagger UI) as the delivery layer.**
 
-The VerifyWise backend is already organized around Express route files, controllers, and a generated endpoint registry. Making the route layer the SSOT lets the team continue writing routes normally while a generator produces `swagger.yaml`. That generated spec then feeds the existing `generateEndpointsTs.ts` pipeline. This introduces the least disruption, enforces synchronization through generation, and can be validated in CI by comparing registered routes against generated operations.
+The AIPurview backend is already organized around Express route files, controllers, and a generated endpoint registry. Making the route layer the SSOT lets the team continue writing routes normally while a generator produces `swagger.yaml`. That generated spec then feeds the existing `generateEndpointsTs.ts` pipeline. This introduces the least disruption, enforces synchronization through generation, and can be validated in CI by comparing registered routes against generated operations.
 
 ## 7. Functional Requirements
 

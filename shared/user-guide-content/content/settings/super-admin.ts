@@ -10,7 +10,7 @@ export const superAdminContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The super admin panel is a separate interface for managing the entire VerifyWise installation. It\'s only visible to super admin users and is accessed at /super-admin/settings after login.',
+      text: 'The super admin panel is a separate interface for managing the entire AIPurview installation. It\'s only visible to super admin users and is accessed at /super-admin/settings after login.',
     },
     {
       type: 'callout',

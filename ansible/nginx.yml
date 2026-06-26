@@ -1,5 +1,5 @@
 ---
-# nginx reverse proxy for VerifyWise.
+# nginx reverse proxy for AIPurview.
 #   ssl=true  (default): server_name = host (domain from inventory), runs certbot --nginx
 #   ssl=false          : server_name = ansible_host (the IP), no SSL
 #
@@ -7,7 +7,7 @@
 #   ansible-playbook -i inventory.ini nginx.yml
 #   ansible-playbook -i inventory.ini nginx.yml -e ssl=false
 
-- name: Install/update nginx (+ SSL) for VerifyWise
+- name: Install/update nginx (+ SSL) for AIPurview
   hosts: verifywise
   become: true
 

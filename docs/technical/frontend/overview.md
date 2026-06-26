@@ -2,7 +2,7 @@
 
 ## Overview
 
-VerifyWise uses React 18 with TypeScript, Vite for bundling, and follows Clean Architecture principles. State management is handled by Redux Toolkit (client state) and React Query (server state). The UI is built with Material-UI (MUI) v7 with Emotion styling.
+AIPurview uses React 18 with TypeScript, Vite for bundling, and follows Clean Architecture principles. State management is handled by Redux Toolkit (client state) and React Query (server state). The UI is built with Material-UI (MUI) v7 with Emotion styling.
 
 ## Architecture
 
@@ -136,7 +136,7 @@ createRoot(document.getElementById("root")!).render(
 
 import { ThemeProvider } from "@mui/material";
 import { theme } from "./presentation/themes/light";
-import { VerifyWiseContext } from "./application/contexts/VerifyWise.context";
+import { AIPurviewContext } from "./application/contexts/AIPurview.context";
 import { Routes, Route } from "react-router-dom";
 import { routes } from "./application/config/routes";
 
@@ -148,7 +148,7 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <VerifyWiseContext.Provider value={{
+      <AIPurviewContext.Provider value={{
         dashboardValues,
         setDashboardValues,
         currentProject,
@@ -160,7 +160,7 @@ function App() {
             <Route key={route.path} path={route.path} element={route.element} />
           ))}
         </Routes>
-      </VerifyWiseContext.Provider>
+      </AIPurviewContext.Provider>
     </ThemeProvider>
   );
 }
@@ -336,9 +336,9 @@ export const queryClient = new QueryClient({
 ### Context API
 
 ```typescript
-// File: Clients/src/application/contexts/VerifyWise.context.ts
+// File: Clients/src/application/contexts/AIPurview.context.ts
 
-interface VerifyWiseContextType {
+interface AIPurviewContextType {
   // Dashboard
   dashboardValues: DashboardValues;
   setDashboardValues: Dispatch<SetStateAction<DashboardValues>>;
@@ -359,8 +359,8 @@ interface VerifyWiseContextType {
   setComponentVisible: Dispatch<SetStateAction<ComponentVisible>>;
 }
 
-export const VerifyWiseContext = createContext<VerifyWiseContextType>(
-  {} as VerifyWiseContextType
+export const AIPurviewContext = createContext<AIPurviewContextType>(
+  {} as AIPurviewContextType
 );
 ```
 

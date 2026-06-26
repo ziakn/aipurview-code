@@ -1,6 +1,6 @@
 # Adding a New Feature
 
-This guide walks through the process of adding a new feature to VerifyWise, covering both backend and frontend development with the established patterns.
+This guide walks through the process of adding a new feature to AIPurview, covering both backend and frontend development with the established patterns.
 
 ## Overview
 

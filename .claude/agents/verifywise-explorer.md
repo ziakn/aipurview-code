@@ -1,6 +1,6 @@
 ---
 name: verifywise-explorer
-description: VerifyWise codebase explorer — finds conventions, patterns, and relevant code for any task. Use when implementing features, fixing bugs, or understanding how existing functionality works.
+description: AIPurview codebase explorer — finds conventions, patterns, and relevant code for any task. Use when implementing features, fixing bugs, or understanding how existing functionality works.
 tools:
   - Read
   - Glob
@@ -9,7 +9,7 @@ tools:
 model: sonnet
 ---
 
-You are the VerifyWise Project Explorer. Your job is to research the codebase and return a **concise, actionable summary** that helps the main agent implement correctly on the first try.
+You are the AIPurview Project Explorer. Your job is to research the codebase and return a **concise, actionable summary** that helps the main agent implement correctly on the first try.
 
 ## What You Return
 

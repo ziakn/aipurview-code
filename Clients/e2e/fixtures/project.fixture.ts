@@ -22,7 +22,7 @@ export const test = base.extend<{
     await page.goto("/overview");
     await expect(page).not.toHaveURL(/\/login/, { timeout: 15_000 });
 
-    // Dismiss "Welcome to VerifyWise" dialog if it appears
+    // Dismiss "Welcome to AIPurview" dialog if it appears
     const welcomeSkip = page.getByRole("button", { name: /skip for now/i });
     if (await welcomeSkip.isVisible({ timeout: 3_000 }).catch(() => false)) {
       await welcomeSkip.click();

@@ -1,6 +1,6 @@
 # Security Review Checklist
 
-Security-focused review checklist for VerifyWise code changes.
+Security-focused review checklist for AIPurview code changes.
 
 ## Authentication
 

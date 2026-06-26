@@ -10,7 +10,7 @@ export const shareLinksContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Share links let you give external stakeholders read-only access to specific resources in VerifyWise without requiring them to create an account. Each link is a unique URL with a token that expires after a set period.',
+      text: 'Share links let you give external stakeholders read-only access to specific resources in AIPurview without requiring them to create an account. Each link is a unique URL with a token that expires after a set period.',
     },
     {
       type: 'heading',
@@ -38,7 +38,7 @@ export const shareLinksContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'When someone opens a share link, they see a read-only view of the resource with only the fields you selected. They don\'t need a VerifyWise account. The shared view shows VerifyWise branding and a note that the link was shared by your organization.',
+      text: 'When someone opens a share link, they see a read-only view of the resource with only the fields you selected. They don\'t need a AIPurview account. The shared view shows AIPurview branding and a note that the link was shared by your organization.',
     },
     {
       type: 'callout',

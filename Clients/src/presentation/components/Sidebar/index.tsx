@@ -21,7 +21,7 @@ import {
   // Workflow,
   // Sparkles,
 } from "lucide-react";
-import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.context";
+import { AIPurviewContext } from "../../../application/contexts/AIPurview.context";
 import useMultipleOnScreen from "../../../application/hooks/useMultipleOnScreen";
 import { getAllTasks } from "../../../application/repository/task.repository";
 import { TaskStatus } from "../../../domain/enums/task.enum";
@@ -52,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const location = useLocation();
   const { open: openUserGuide, openTab } = useUserGuideSidebarContext();
   const openReleaseNotes = useCallback(() => openTab("whats-new"), [openTab]);
-  const { changeComponentVisibility } = useContext(VerifyWiseContext);
+  const { changeComponentVisibility } = useContext(AIPurviewContext);
   const { refs: _refs, allVisible } = useMultipleOnScreen<HTMLElement>({
     countToTrigger: 1,
   });

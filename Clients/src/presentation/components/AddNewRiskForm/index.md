@@ -12,7 +12,7 @@ The AddNewRiskForm component is a comprehensive form system designed to facilita
 - **Risk Level Calculation**: Automatic risk level calculation using RiskCalculator utility
 - **API Integration**: Complete CRUD operations with proper error handling and loading states
 - **State Management**: Sophisticated state management for both risk and mitigation data
-- **Context Integration**: Uses VerifyWiseContext for accessing existing risk data in edit mode
+- **Context Integration**: Uses AIPurviewContext for accessing existing risk data in edit mode
 - **Custom Styling**: Theme-aware styling with centralized constants and custom button components
 
 ## Props
@@ -200,7 +200,7 @@ const COMPONENT_CONSTANTS = {
 
 - `useAuth` - Authentication hook for user role
 - `useUsers` - Users data hook
-- `VerifyWiseContext` - Application context for data access
+- `AIPurviewContext` - Application context for data access
 - `allowedRoles` - Permission constants
 
 ### Validation

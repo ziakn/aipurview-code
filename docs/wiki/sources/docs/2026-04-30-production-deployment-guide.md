@@ -10,7 +10,7 @@ status: active
 
 ## Amaç
 
-Docker Compose ile VerifyWise'ı production'da çalıştırma rehberi.
+Docker Compose ile AIPurview'ı production'da çalıştırma rehberi.
 
 ## Ne yapıldı
 

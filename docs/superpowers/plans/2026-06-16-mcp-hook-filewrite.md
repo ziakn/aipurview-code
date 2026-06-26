@@ -390,14 +390,14 @@ def test_cleanup(api):
 
 Restart the running gateway on port 8100 so the new code loads, then:
 ```bash
-cd /Users/gorkemcetin/verifywise/AIGateway && VW_PASSWORD='Verifywise#1' python -m pytest tests/test_15_mcp_hook_filewrite.py -v
+cd /Users/gorkemcetin/verifywise/AIGateway && VW_PASSWORD='AIPurview#1' python -m pytest tests/test_15_mcp_hook_filewrite.py -v
 ```
 Expected: all pass. If `test_edit_deleting_pii_is_allowed` returns `deny`, the extractor isn't being used by the scanner (re-check Task 2). If `test_audit_keeps_full_arguments` fails on the content assertion, the hook is auditing the extracted subset instead of full args (it shouldn't — verify `mcp_hook.py` passes full `arguments` to `log_tool_call`).
 
 - [ ] **Step 3: Regression — Phase 1 + Phase 2 suites still pass**
 
 ```bash
-cd /Users/gorkemcetin/verifywise/AIGateway && VW_PASSWORD='Verifywise#1' python -m pytest tests/test_13_mcp_hook.py tests/test_14_mcp_hook_approval.py -q
+cd /Users/gorkemcetin/verifywise/AIGateway && VW_PASSWORD='AIPurview#1' python -m pytest tests/test_13_mcp_hook.py tests/test_14_mcp_hook_approval.py -q
 ```
 Expected: all pass (proves the full-args fallback preserves Bash + approval behavior).
 
@@ -427,11 +427,11 @@ git mv scripts/vw-bash-hook.README.md scripts/vw-tool-hook.README.md
 
 In `scripts/vw-tool-hook.sh`, change the top comment line:
 ```bash
-# VerifyWise Bash gate — Claude Code PreToolUse hook.
+# AIPurview Bash gate — Claude Code PreToolUse hook.
 ```
 to (no em dash, per house style):
 ```bash
-# VerifyWise tool gate, a Claude Code PreToolUse hook.
+# AIPurview tool gate, a Claude Code PreToolUse hook.
 ```
 Leave all logic and env-var docs unchanged (the script is already tool-agnostic).
 
@@ -468,7 +468,7 @@ echo '{"tool_name":"Write","tool_input":{"file_path":"/tmp/x","content":"hello"}
 # deny: Write with PII
 echo '{"tool_name":"Write","tool_input":{"file_path":"/tmp/x","content":"me@evil.com"}}' | VW_GATEWAY_URL=http://localhost:8100 VW_AGENT_KEY=$KEY scripts/vw-tool-hook.sh; echo "exit=$?"
 ```
-Expected: first `exit=0`; second `exit=2` with `Blocked by VerifyWise: ...` on stderr.
+Expected: first `exit=0`; second `exit=2` with `Blocked by AIPurview: ...` on stderr.
 
 - [ ] **Step 6: Commit**
 

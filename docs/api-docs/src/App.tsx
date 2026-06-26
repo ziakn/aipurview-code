@@ -750,10 +750,10 @@ const EndpointSection: React.FC<{
 const OverviewSection: React.FC = () => (
   <Box sx={{ p: '32px 40px', maxWidth: 900 }}>
     <Typography sx={{ fontSize: 24, fontWeight: 600, color: '#1c2130', mb: '8px' }}>
-      VerifyWise API
+      AIPurview API
     </Typography>
     <Typography sx={{ fontSize: 14, color: '#475467', mb: '32px', lineHeight: 1.6 }}>
-      The VerifyWise API enables programmatic access to AI compliance management features
+      The AIPurview API enables programmatic access to AI compliance management features
       including project management, risk assessments, vendor management, and compliance
       framework implementations (EU AI Act, ISO 42001, ISO 27001).
     </Typography>

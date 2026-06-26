@@ -1,6 +1,6 @@
 # Backend Patterns
 
-This guide documents the architectural patterns, conventions, and best practices used in the VerifyWise backend (Servers).
+This guide documents the architectural patterns, conventions, and best practices used in the AIPurview backend (Servers).
 
 ## Project Structure
 

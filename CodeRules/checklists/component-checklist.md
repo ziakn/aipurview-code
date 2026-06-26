@@ -1,6 +1,6 @@
 # React Component Checklist
 
-Checklist for creating and reviewing React components in VerifyWise.
+Checklist for creating and reviewing React components in AIPurview.
 
 ## Component Structure
 

@@ -1,6 +1,6 @@
 # Database Patterns
 
-Guidelines for working with PostgreSQL and Sequelize in VerifyWise.
+Guidelines for working with PostgreSQL and Sequelize in AIPurview.
 
 ## Sequelize Model Definition
 

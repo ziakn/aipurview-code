@@ -321,7 +321,7 @@ const ModalsSection: React.FC = () => {
       {/* Modal Pattern */}
       <SpecSection title="StandardModal pattern">
         <Typography sx={{ fontSize: 13, color: theme.palette.text.tertiary, mb: "24px" }}>
-          VerifyWise uses a StandardModal component with useStandardModal hook for consistent modal
+          AIPurview uses a StandardModal component with useStandardModal hook for consistent modal
           behavior.
         </Typography>
 

@@ -1,7 +1,7 @@
 /**
  * Data Collector Service for Report Generation
  * Collects and transforms data from various sources into unified report structure
- * Following VerifyWise clean architecture patterns
+ * Following AIPurview clean architecture patterns
  */
 
 import {
@@ -277,13 +277,13 @@ export class ReportDataCollector {
    */
   private async collectBranding(): Promise<ReportBranding> {
     const user = await getUserByIdQuery(this.userId);
-    let organizationName = "VerifyWise";
+    let organizationName = "AIPurview";
     let organizationLogo: string | undefined;
 
     if (user?.organization_id) {
       const organization = await getOrganizationByIdQuery(user.organization_id);
       if (organization) {
-        organizationName = organization.name || "VerifyWise";
+        organizationName = organization.name || "AIPurview";
         // Fetch organization logo if available
         if (organization.logo) {
           organizationLogo = organization.logo;
@@ -294,7 +294,7 @@ export class ReportDataCollector {
     return {
       organizationName,
       organizationLogo,
-      primaryColor: "#13715B", // VerifyWise green
+      primaryColor: "#13715B", // AIPurview green
       secondaryColor: "#1C2130",
     };
   }

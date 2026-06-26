@@ -176,7 +176,7 @@ const FileStructureSection: React.FC = () => {
             maxWidth: 600,
           }}
         >
-          Reference guide for the VerifyWise codebase structure. Know where to find
+          Reference guide for the AIPurview codebase structure. Know where to find
           components and where to add new ones.
         </Typography>
       </Box>

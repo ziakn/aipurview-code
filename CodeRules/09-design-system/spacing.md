@@ -1,6 +1,6 @@
 # Spacing & Layout
 
-VerifyWise uses a **2px base unit** for `theme.spacing()`. This differs from MUI's default 8px.
+AIPurview uses a **2px base unit** for `theme.spacing()`. This differs from MUI's default 8px.
 
 ## Spacing Scale
 

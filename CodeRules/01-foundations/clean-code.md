@@ -1,6 +1,6 @@
 # Clean Code Principles
 
-Based on Robert C. Martin's "Clean Code" - adapted for the VerifyWise tech stack.
+Based on Robert C. Martin's "Clean Code" - adapted for the AIPurview tech stack.
 
 ## Core Philosophy
 

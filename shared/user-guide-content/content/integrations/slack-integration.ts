@@ -10,7 +10,7 @@ export const slackIntegrationContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The Slack integration lets VerifyWise send real-time notifications about AI governance activities to your Slack workspace. Your team can stay on top of model updates, risk assessments, compliance changes and more without leaving Slack.',
+      text: 'The Slack integration lets AIPurview send real-time notifications about AI governance activities to your Slack workspace. Your team can stay on top of model updates, risk assessments, compliance changes and more without leaving Slack.',
     },
     {
       type: 'heading',
@@ -24,7 +24,7 @@ export const slackIntegrationContent: ArticleContent = {
         { bold: 'Receive notifications', text: 'Get real-time alerts about governance events in Slack channels' },
         { bold: 'Route by channel', text: 'Send different notification types to specific channels' },
         { bold: 'Multiple workspaces', text: 'Connect more than one Slack workspace if needed' },
-        { bold: 'Stay informed', text: 'Keep your team updated without requiring them to log into VerifyWise' },
+        { bold: 'Stay informed', text: 'Keep your team updated without requiring them to log into AIPurview' },
       ],
     },
     {
@@ -45,7 +45,7 @@ export const slackIntegrationContent: ArticleContent = {
         { text: 'You\'ll be redirected to Slack to authorize the connection' },
         { text: 'Select the Slack workspace you want to connect' },
         { text: 'Review the permissions and click Allow' },
-        { text: 'You\'ll be sent back to VerifyWise with the connection active' },
+        { text: 'You\'ll be sent back to AIPurview with the connection active' },
       ],
     },
     {
@@ -61,7 +61,7 @@ export const slackIntegrationContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise requests the following Slack permissions:',
+      text: 'AIPurview requests the following Slack permissions:',
     },
     {
       type: 'bullet-list',
@@ -74,7 +74,7 @@ export const slackIntegrationContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'These permissions let VerifyWise send notifications but don\'t give it access to read your messages or user data.',
+      text: 'These permissions let AIPurview send notifications but don\'t give it access to read your messages or user data.',
     },
     {
       type: 'heading',
@@ -222,7 +222,7 @@ export const slackIntegrationContent: ArticleContent = {
       items: [
         { text: 'Check that the Slack connection is active in the integrations table' },
         { text: 'Verify notification routing is set up for the right channel' },
-        { text: 'Make sure the VerifyWise app hasn\'t been removed from your Slack workspace' },
+        { text: 'Make sure the AIPurview app hasn\'t been removed from your Slack workspace' },
         { text: 'Confirm the target channel still exists' },
       ],
     },
@@ -254,7 +254,7 @@ export const slackIntegrationContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Yes, if you grant the appropriate permissions during authorization. The VerifyWise Slack app needs to be invited to private channels before it can send messages there.',
+      text: 'Yes, if you grant the appropriate permissions during authorization. The AIPurview Slack app needs to be invited to private channels before it can send messages there.',
     },
     {
       type: 'heading',
@@ -284,7 +284,7 @@ export const slackIntegrationContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Notifications go out in real-time as events happen in VerifyWise. There\'s no batching or delay.',
+      text: 'Notifications go out in real-time as events happen in AIPurview. There\'s no batching or delay.',
     },
     {
       type: 'article-links',

@@ -11,7 +11,7 @@ import { test as setup, expect } from "@playwright/test";
  */
 
 const TEST_EMAIL = process.env.E2E_EMAIL || "verifywise@email.com";
-const TEST_PASSWORD = process.env.E2E_PASSWORD || "Verifywise#1";
+const TEST_PASSWORD = process.env.E2E_PASSWORD || "AIPurview#1";
 const AUTH_STATE_PATH = "e2e/.auth/user.json";
 
 setup("authenticate", async ({ page }) => {

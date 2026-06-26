@@ -1,6 +1,6 @@
 # Component Guidelines
 
-Guidelines for building React components in VerifyWise, including file structure, Material-UI usage, and accessibility.
+Guidelines for building React components in AIPurview, including file structure, Material-UI usage, and accessibility.
 
 ## Component File Structure
 
@@ -131,7 +131,7 @@ Always use theme values instead of hardcoded values.
 Use theme spacing units.
 
 ```tsx
-// VerifyWise theme spacing: 1 unit = 2px (NOT the MUI default of 8px)
+// AIPurview theme spacing: 1 unit = 2px (NOT the MUI default of 8px)
 // This means theme.spacing(4) = 8px, theme.spacing(8) = 16px
 
 // Shorthand props

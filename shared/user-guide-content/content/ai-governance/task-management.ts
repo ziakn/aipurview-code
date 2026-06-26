@@ -10,7 +10,7 @@ export const taskManagementContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Task management in VerifyWise helps you coordinate AI governance activities and compliance tasks across your teams. Whether it\'s implementation milestones or audit prep, the task system keeps things visible and accountable.',
+      text: 'Task management in AIPurview helps you coordinate AI governance activities and compliance tasks across your teams. Whether it\'s implementation milestones or audit prep, the task system keeps things visible and accountable.',
     },
     {
       type: 'paragraph',

@@ -1,6 +1,6 @@
 # Security Checklist
 
-OWASP-aligned security checklist for VerifyWise development.
+OWASP-aligned security checklist for AIPurview development.
 
 ## Quick Reference Checklist
 

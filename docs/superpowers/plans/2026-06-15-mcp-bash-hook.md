@@ -300,7 +300,7 @@ def test_cleanup(api):
 Start the gateway + backend, then run:
 
 ```bash
-cd AIGateway && VW_PASSWORD='Verifywise#1' python -m pytest tests/test_13_mcp_hook.py -v
+cd AIGateway && VW_PASSWORD='AIPurview#1' python -m pytest tests/test_13_mcp_hook.py -v
 ```
 
 Expected after Task 1: all pass. If `test_hook_denies_command_with_pii` returns `allow`, confirm the PII rule was created (check the response of `test_setup_agent_key_and_rule`) and that Presidio is available in the gateway env. If the agent-keys or guardrails CRUD paths 404, verify the Express proxy is running (`/api/ai-gateway/mcp/*`).
@@ -326,7 +326,7 @@ Create `scripts/vw-bash-hook.sh`:
 
 ```bash
 #!/usr/bin/env bash
-# VerifyWise Bash gate — Claude Code PreToolUse hook.
+# AIPurview Bash gate — Claude Code PreToolUse hook.
 # Reads the tool call as JSON on stdin, asks the AI Gateway to adjudicate,
 # and exits 0 (allow) or non-zero (deny). Fails open by default so a gateway
 # outage never halts your workflow.
@@ -370,7 +370,7 @@ case "$decision" in
   allow) exit 0 ;;
   deny)
     reason="$(printf '%s' "$resp" | jq -r '.reason // "policy violation"')"
-    echo "Blocked by VerifyWise: $reason" >&2
+    echo "Blocked by AIPurview: $reason" >&2
     exit 2 ;;
   *) fail "unexpected gateway response: $resp" ;;
 esac
@@ -404,7 +404,7 @@ Run (requires the PII block rule from Task 2 to exist for this org):
 echo '{"tool_name":"Bash","tool_input":{"command":"echo me@evil.com"}}' | ./scripts/vw-bash-hook.sh ; echo "exit=$?"
 ```
 
-Expected: `exit=2`, stderr line `Blocked by VerifyWise: ...`.
+Expected: `exit=2`, stderr line `Blocked by AIPurview: ...`.
 
 - [ ] **Step 5: Test fail-open (gateway down)**
 
@@ -433,16 +433,16 @@ Expected: `exit=2`.
 Create `scripts/vw-bash-hook.README.md`:
 
 ```markdown
-# VerifyWise Bash gate (Claude Code hook)
+# AIPurview Bash gate (Claude Code hook)
 
-Gates Claude Code's built-in **Bash** tool through the VerifyWise AI Gateway.
+Gates Claude Code's built-in **Bash** tool through the AIPurview AI Gateway.
 Before a shell command runs, the gateway scans it against your org's MCP
 guardrail rules and the call is allowed or denied. Every call is recorded in
 the MCP Audit Log.
 
 ## Setup
 
-1. Mint an agent key: VerifyWise → AI Gateway → MCP Gateway → **Agent Keys** →
+1. Mint an agent key: AIPurview → AI Gateway → MCP Gateway → **Agent Keys** →
    create. Copy the `sk-mcp-...` value (shown once).
 2. Add the guardrail rules you want enforced under MCP Gateway → **Guardrails**.
 3. Set env vars (e.g. in your shell profile):

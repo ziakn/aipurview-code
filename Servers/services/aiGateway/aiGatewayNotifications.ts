@@ -2,7 +2,7 @@
  * AI Gateway Email Notifications
  *
  * Sends in-app + email notifications for budget and guardrail events.
- * Uses the same dual-notification pattern as other VerifyWise modules.
+ * Uses the same dual-notification pattern as other AIPurview modules.
  */
 
 import { sendInAppNotification } from "../inAppNotification.service";

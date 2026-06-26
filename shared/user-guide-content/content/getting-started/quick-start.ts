@@ -65,7 +65,7 @@ export const quickStartContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: "Frameworks define what requirements you need to satisfy. When you attach one, VerifyWise generates the full set of controls and sub-controls for you to work through.",
+      text: "Frameworks define what requirements you need to satisfy. When you attach one, AIPurview generates the full set of controls and sub-controls for you to work through.",
     },
     {
       type: 'grid-cards',
@@ -180,7 +180,7 @@ export const quickStartContent: ArticleContent = {
       type: 'callout',
       variant: 'success',
       title: "You're set up",
-      text: "Governance isn't something you finish in a day. The point of VerifyWise is to track progress over time, so work through it at whatever pace makes sense for your team.",
+      text: "Governance isn't something you finish in a day. The point of AIPurview is to track progress over time, so work through it at whatever pace makes sense for your team.",
     },
   ],
 };

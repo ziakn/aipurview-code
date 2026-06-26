@@ -1,6 +1,6 @@
 # State Management
 
-Guidelines for managing state in VerifyWise React applications.
+Guidelines for managing state in AIPurview React applications.
 
 ## State Categories
 
@@ -460,9 +460,9 @@ const useUser = () => useContext(UserContext);
 const useUserActions = () => useContext(UserActionsContext);
 ```
 
-## Redux Toolkit (VerifyWise Setup)
+## Redux Toolkit (AIPurview Setup)
 
-VerifyWise uses Redux Toolkit with `redux-persist` for client-side state management.
+AIPurview uses Redux Toolkit with `redux-persist` for client-side state management.
 
 ### Store Structure
 
@@ -494,7 +494,7 @@ export type AppDispatch = typeof store.dispatch;
 
 ### Auth Slice (Core Slice)
 
-The auth slice is the primary Redux slice in VerifyWise:
+The auth slice is the primary Redux slice in AIPurview:
 
 ```typescript
 // Auth state shape
@@ -554,7 +554,7 @@ function MyComponent() {
 
 ## Repository Pattern (Data Access)
 
-VerifyWise uses a repository pattern for API calls, located in `application/repository/`.
+AIPurview uses a repository pattern for API calls, located in `application/repository/`.
 
 ### Repository Structure
 

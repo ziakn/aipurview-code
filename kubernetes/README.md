@@ -1,6 +1,6 @@
-# VerifyWise Kubernetes Deployment
+# AIPurview Kubernetes Deployment
 
-This directory contains Kubernetes manifests for deploying the VerifyWise application using Kustomize.
+This directory contains Kubernetes manifests for deploying the AIPurview application using Kustomize.
 
 ## Architecture
 

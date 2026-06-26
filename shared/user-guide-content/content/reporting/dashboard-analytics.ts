@@ -19,7 +19,7 @@ export const dashboardAnalyticsContent: ArticleContent = {
     {
       type: 'image',
       src: '/images/user-guide/dashboard-overview.png',
-      alt: 'VerifyWise dashboard showing widget cards with status charts for models, vendors, policies, trainings, and incidents',
+      alt: 'AIPurview dashboard showing widget cards with status charts for models, vendors, policies, trainings, and incidents',
       caption: 'The dashboard gives you an at-a-glance view of your governance program.',
     },
     {
@@ -263,7 +263,7 @@ export const dashboardAnalyticsContent: ArticleContent = {
           collectionId: 'getting-started',
           articleId: 'quick-start',
           title: 'Quick start guide',
-          description: 'Get started with VerifyWise',
+          description: 'Get started with AIPurview',
         },
       ],
     },

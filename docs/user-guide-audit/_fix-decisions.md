@@ -36,7 +36,7 @@ Capture user decisions made at review gates so they're not lost before the fix p
 
 Each ❓ finding from the audit was traced to source. Summary:
 
-- **ai-gateway/guardrails Finding 3** (no data leaves network) — RESOLVED in ❌ pass: claim narrowed to "VerifyWise code makes no external API calls during scanning".
+- **ai-gateway/guardrails Finding 3** (no data leaves network) — RESOLVED in ❌ pass: claim narrowed to "AIPurview code makes no external API calls during scanning".
 - **ai-governance/datasets Finding 1** (49 PII keywords) — FIXED: actual count is 40, found at `Clients/src/presentation/pages/Datasets/BulkUpload/piiDetection.ts:8-49`. Doc updated to "40 known PII keywords".
 - **compliance/fria Finding 1** (risk score formula) — RESOLVED: formula IS in code at `Servers/utils/fria.utils.ts:540-569` (severity×15 + confidence×5 per flagged right; likelihood×severity×3 per risk item; cap 100; thresholds 30/60). Audit's evidence pointed to wrong file but the doc is accurate.
 - **getting-started/dashboard Finding 2** (Due soon: 7 days) — RESOLVED: confirmed at `Servers/utils/dashboard.utils.ts:81` (`due_date <= CURRENT_DATE + INTERVAL '7 days'`). Doc accurate.

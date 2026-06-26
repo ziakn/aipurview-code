@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
-  title: VerifyWise Tasks API
-  description: Task management endpoints for VerifyWise platform.
+  title: AIPurview Tasks API
+  description: Task management endpoints for AIPurview platform.
   version: 1.0.0
 
 paths:

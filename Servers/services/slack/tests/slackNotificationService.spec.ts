@@ -147,7 +147,7 @@ describe("slackNotificationService", () => {
       expect(mockPostMessage).toHaveBeenCalledWith(
         expect.objectContaining({
           channel: "C123",
-          text: "A message from VerifyWise",
+          text: "A message from AIPurview",
         }),
       );
       expect(result.success).toBe(true);
@@ -204,7 +204,7 @@ describe("slackNotificationService", () => {
     it("should include header, section, and context blocks", () => {
       const result = formatSlackMessage({ title: "Alert", message: "Something happened" });
 
-      expect(result.text).toBe("A message from VerifyWise");
+      expect(result.text).toBe("A message from AIPurview");
       expect(result.blocks).toHaveLength(3);
       expect(result.blocks[0].type).toBe("header");
       expect(result.blocks[0].text.text).toBe("Alert");

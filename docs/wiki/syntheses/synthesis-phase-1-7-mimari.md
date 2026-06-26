@@ -10,7 +10,7 @@ status: active
 
 ## Vizyon
 
-VerifyWise AI Advisor → AI Operating System dönüşümü. Read-only Q&A'dan otonom uyum operasyonlarına geçiş.
+AIPurview AI Advisor → AI Operating System dönüşümü. Read-only Q&A'dan otonom uyum operasyonlarına geçiş.
 
 ## Yığın Görseli
 

@@ -2,7 +2,7 @@
 
 > **Last Updated:** 2026-03-25
 
-Phase 0 delivers three immediate-priority AI features that form the foundation for VerifyWise's AI-powered compliance intelligence.
+Phase 0 delivers three immediate-priority AI features that form the foundation for AIPurview's AI-powered compliance intelligence.
 
 ---
 

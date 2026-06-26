@@ -460,7 +460,7 @@ const agentSendSlackTestMessage = createWriteToolFn({
 
     const webhook = webhooks[0];
     const message =
-      (params.message as string) || "This is a test message from VerifyWise AI Advisor.";
+      (params.message as string) || "This is a test message from AIPurview AI Advisor.";
 
     // Note: Actual Slack message sending requires decrypting the URL and making an HTTP request.
     // This is a simplified version that records the test attempt.

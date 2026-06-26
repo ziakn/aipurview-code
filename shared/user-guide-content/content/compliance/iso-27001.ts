@@ -120,11 +120,11 @@ export const iso27001Content: ArticleContent = {
       type: 'heading',
       id: 'verifywise-support',
       level: 2,
-      text: 'How VerifyWise supports integration',
+      text: 'How AIPurview supports integration',
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise helps you extend your ISO 27001 ISMS to cover AI systems:',
+      text: 'AIPurview helps you extend your ISO 27001 ISMS to cover AI systems:',
     },
     {
       type: 'bullet-list',

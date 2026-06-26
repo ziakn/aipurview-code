@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Dashboard domain provides centralized metrics, visualizations, and analytics across VerifyWise. It aggregates data from risks, vendors, policies, incidents, models, training, tasks, and use cases with time-series tracking and interactive charts.
+The Dashboard domain provides centralized metrics, visualizations, and analytics across AIPurview. It aggregates data from risks, vendors, policies, incidents, models, training, tasks, and use cases with time-series tracking and interactive charts.
 
 ## Key Features
 

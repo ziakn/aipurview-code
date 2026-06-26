@@ -24,7 +24,7 @@ export const managingDatasetsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise maintains a library of curated datasets organized by use case. Each dataset specifies its type (single-turn or multi-turn) and intended use case, helping you quickly find relevant test cases.',
+      text: 'AIPurview maintains a library of curated datasets organized by use case. Each dataset specifies its type (single-turn or multi-turn) and intended use case, helping you quickly find relevant test cases.',
     },
     {
       type: 'heading',

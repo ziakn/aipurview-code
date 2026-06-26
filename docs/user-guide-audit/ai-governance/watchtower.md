@@ -25,6 +25,6 @@ The article describes a feature called "Event Tracker" that largely aligns with 
 - Claim: "Logs are sorted with the most recent entries at the top" (block 9, Logs tab) — verified at `Clients/src/presentation/pages/WatchTower/Loggings/index.tsx:39` (logs array reversed to descending order: `const sortedLogs = [...logsData.data].reverse()`)
 
 ## Skipped / non-verifiable
-- "Event Tracker gives you a live window into VerifyWise…" (block 2) — reason: motivational/descriptive framing, not a verifiable claim
+- "Event Tracker gives you a live window into AIPurview…" (block 2) — reason: motivational/descriptive framing, not a verifiable claim
 - "Use it to see who did what, spot patterns and keep things running smoothly" (block 2) — reason: use-case framing, not verifiable against code
 - "Review who made changes and when for compliance purposes" (block 10, use case) — reason: describes user motivation, not a specific feature behavior

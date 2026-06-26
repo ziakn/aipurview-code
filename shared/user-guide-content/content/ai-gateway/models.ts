@@ -10,7 +10,7 @@ export const aiGatewayModelsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The Models page in the AI Gateway gives you a searchable catalog of every LLM model available through the gateway. It pulls metadata from LiteLLM\'s model registry, so you can browse models across all supported providers without leaving VerifyWise.',
+      text: 'The Models page in the AI Gateway gives you a searchable catalog of every LLM model available through the gateway. It pulls metadata from LiteLLM\'s model registry, so you can browse models across all supported providers without leaving AIPurview.',
     },
     {
       type: 'paragraph',

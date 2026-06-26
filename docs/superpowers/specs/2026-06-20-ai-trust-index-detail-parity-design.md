@@ -6,17 +6,17 @@
 
 ## Goal
 
-Bring the VerifyWise **app** AI Trust Index detail page (`Clients/.../pages/AITrustIndex/AppDetail/index.tsx`)
+Bring the AIPurview **app** AI Trust Index detail page (`Clients/.../pages/AITrustIndex/AppDetail/index.tsx`)
 up to visual + informational parity with the **public website** detail page
 (`website/verifywise/app/ai-trust-index/[slug]/page.tsx`).
 
 The website detail page is rich and lively; the app detail page is a lean card stack. We want the app
-page to show the same set of sections, driven by the same data, rendered with VerifyWise components and
+page to show the same set of sections, driven by the same data, rendered with AIPurview components and
 design tokens.
 
 ## Background — the two implementations
 
-| | Public website | VerifyWise app |
+| | Public website | AIPurview app |
 |---|---|---|
 | Stack | Next.js (static) | React 19 + Vite + MUI |
 | Data source | `lib/ai-trust-index-data.ts` + `ai-safety-index/history/*.json` | DB (`ai_trust_index_apps.data` jsonb), synced weekly from the hosted feed |
@@ -28,7 +28,7 @@ confidence, dealbreakerFlags, summary, highlights, policy meta, modalities, proc
 ### The data chain
 
 ```
-website repo                          published feed                 VerifyWise app
+website repo                          published feed                 AIPurview app
 ai-safety-index/history/*.json   →   verifywise.ai/                →  ai_trust_index_apps.data (jsonb)
   (30-indicator award map)            ai-trust-index.json              →  AppDetail renders
                                        (feedVersion 2)
@@ -121,7 +121,7 @@ Port from the website's `lib/ai-trust-index-rubric.ts` (source of truth):
 **b. Types** — extend `TrustIndexAppData` in `pages/AITrustIndex/shared.ts` with optional
 `indicators?: IndicatorMap | null` (and surface `confidence`, already present in the type but unused).
 
-**c. Rebuild `AppDetail/index.tsx`** to the website section order, mapped to VerifyWise primitives:
+**c. Rebuild `AppDetail/index.tsx`** to the website section order, mapped to AIPurview primitives:
 
 1. Breadcrumbs + "← Back to Browse" (keep existing)
 2. **Grade hero** — large letter grade on its grade-variant color, favicon + name + vendor, **score meter

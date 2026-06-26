@@ -87,9 +87,9 @@ describe("StartHere", () => {
     expect(elements.length).toBeGreaterThanOrEqual(1);
   });
 
-  it("shows the Explore VerifyWise section", () => {
+  it("shows the Explore AIPurview section", () => {
     renderWithProviders(<StartHere />);
-    expect(screen.getByText("Explore VerifyWise")).toBeInTheDocument();
+    expect(screen.getByText("Explore AIPurview")).toBeInTheDocument();
   });
 
   it("shows the Shortcuts section", () => {

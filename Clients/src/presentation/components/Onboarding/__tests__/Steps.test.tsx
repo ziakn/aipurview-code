@@ -18,13 +18,13 @@ const defaultStepProps = {
 describe("WelcomeStep", () => {
   it("renders the welcome heading", () => {
     renderWithProviders(<WelcomeStep {...defaultStepProps} />);
-    expect(screen.getByText("Welcome to VerifyWise")).toBeInTheDocument();
+    expect(screen.getByText("Welcome to AIPurview")).toBeInTheDocument();
   });
 
   it("renders the description", () => {
     renderWithProviders(<WelcomeStep {...defaultStepProps} />);
     expect(
-      screen.getByText(/VerifyWise is your AI governance and compliance platform/),
+      screen.getByText(/AIPurview is your AI governance and compliance platform/),
     ).toBeInTheDocument();
   });
 

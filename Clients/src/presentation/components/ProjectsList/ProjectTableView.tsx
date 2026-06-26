@@ -35,7 +35,7 @@ import { IProjectTableViewProps } from "../../../domain/interfaces/i.project";
 import { Project } from "../../../domain/types/Project";
 import { displayFormattedDate } from "../../tools/isoDateToString";
 import { deleteProject } from "../../../application/repository/project.repository";
-import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.context";
+import { AIPurviewContext } from "../../../application/contexts/AIPurview.context";
 import Alert from "../Alert";
 import allowedRoles from "../../../application/constants/permissions";
 import { useAuth } from "../../../application/hooks/useAuth";
@@ -152,7 +152,7 @@ const ProjectTableView: React.FC<IProjectTableViewProps> = ({
 }) => {
   const theme = useTheme();
   const navigate = useNavigateSearch();
-  const { setProjects } = useContext(VerifyWiseContext);
+  const { setProjects } = useContext(AIPurviewContext);
   const { userRoleName } = useAuth();
   const [page, setPage] = useState(0);
   const [alert, setAlert] = useState<{

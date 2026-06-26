@@ -1,6 +1,6 @@
 import type { StorageKeyConfig, StorageValueMap } from "./storage.types";
 
-/** Namespace prefix for all VerifyWise-owned storage keys. */
+/** Namespace prefix for all AIPurview-owned storage keys. */
 export const NAMESPACE = "verifywise_";
 
 /**

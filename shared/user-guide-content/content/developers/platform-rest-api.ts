@@ -3,17 +3,17 @@ import type { ArticleContent } from '../../contentTypes';
 export const platformRestApiContent: ArticleContent = {
   blocks: [
     { type: 'heading', id: 'overview', level: 2, text: 'Platform REST API' },
-    { type: 'paragraph', text: 'The VerifyWise platform exposes a REST API for reading and writing your governance data: projects, risks, vendors, models, tasks, evidence, policies and more. Every endpoint lives under /api and authenticates with a bearer token you create in the app.' },
+    { type: 'paragraph', text: 'The AIPurview platform exposes a REST API for reading and writing your governance data: projects, risks, vendors, models, tasks, evidence, policies and more. Every endpoint lives under /api and authenticates with a bearer token you create in the app.' },
     { type: 'paragraph', text: 'This article covers the basics that apply to every endpoint: the base URL, how to authenticate, the response shape and the current limits. For the full endpoint catalog, use the interactive API reference described below.' },
     { type: 'callout', variant: 'info', title: 'Agent Control has its own API', text: 'If you are governing an AI agent’s tool calls, you want the Agent Control hook API instead, not these endpoints. See the API reference in this guide.' },
 
     { type: 'heading', id: 'base-url', level: 2, text: 'Base URL' },
-    { type: 'paragraph', text: 'All endpoints are mounted under the /api prefix. The host depends on where VerifyWise runs. For a local install the default is:' },
+    { type: 'paragraph', text: 'All endpoints are mounted under the /api prefix. The host depends on where AIPurview runs. For a local install the default is:' },
     { type: 'code', language: 'bash', code: 'http://localhost:3000/api' },
     { type: 'paragraph', text: 'On a hosted deployment, replace the host with your own domain. Endpoint paths keep their casing exactly as defined. For example, project risks are served at /api/projectRisks, not /api/project-risks.' },
 
     { type: 'heading', id: 'reference', level: 2, text: 'Interactive API reference' },
-    { type: 'paragraph', text: 'VerifyWise serves a live OpenAPI (Swagger) reference that lists every endpoint, its parameters and its response schema. Open it in a browser at:' },
+    { type: 'paragraph', text: 'AIPurview serves a live OpenAPI (Swagger) reference that lists every endpoint, its parameters and its response schema. Open it in a browser at:' },
     { type: 'code', language: 'bash', code: 'http://localhost:3000/api/docs' },
     { type: 'paragraph', text: 'The spec is OpenAPI 3.0. Use it as the source of truth for the full endpoint list; this article only covers the cross-cutting rules.' },
 

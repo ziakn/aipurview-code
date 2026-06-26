@@ -2,7 +2,7 @@
 
 ## Introduction
 
-AI Detection is a VerifyWise module that scans GitHub repositories to detect AI and machine learning libraries, providing organizations with visibility into their AI technology stack. The scanner identifies over 50 AI/ML frameworks including OpenAI, TensorFlow, PyTorch, LangChain, and Hugging Face, while also detecting security vulnerabilities in serialized model files. This helps governance and compliance teams discover "shadow AI"—AI usage that may not be formally documented—and supports regulatory requirements such as the EU AI Act.
+AI Detection is a AIPurview module that scans GitHub repositories to detect AI and machine learning libraries, providing organizations with visibility into their AI technology stack. The scanner identifies over 50 AI/ML frameworks including OpenAI, TensorFlow, PyTorch, LangChain, and Hugging Face, while also detecting security vulnerabilities in serialized model files. This helps governance and compliance teams discover "shadow AI"—AI usage that may not be formally documented—and supports regulatory requirements such as the EU AI Act.
 
 ## Why it matters
 
@@ -10,7 +10,7 @@ Modern organizations often adopt AI tools faster than governance processes can t
 
 ## Prerequisites
 
-Before using AI Detection you need VerifyWise access with any authenticated role. Admin access is required only for configuring GitHub tokens to scan private repositories. For private repository scanning, you will also need a GitHub Personal Access Token with the `repo` scope.
+Before using AI Detection you need AIPurview access with any authenticated role. Admin access is required only for configuring GitHub tokens to scan private repositories. For private repository scanning, you will also need a GitHub Personal Access Token with the `repo` scope.
 
 ## Scanning a repository
 
@@ -50,7 +50,7 @@ To scan private repositories, configure a GitHub Personal Access Token in **AI D
 
 The token is encrypted at rest using AES-256-CBC encryption and is never returned to the frontend after saving—only a masked indicator confirms configuration. The token is used server-side exclusively for git clone operations.
 
-To create a token, visit https://github.com/settings/tokens/new, enter a descriptive name, select the `repo` scope, set an expiration period, and generate the token. Copy it immediately as GitHub will not show it again. In VerifyWise, paste the token in Settings, optionally add a label, click **Test token** to verify it works, then **Save token** to store it.
+To create a token, visit https://github.com/settings/tokens/new, enter a descriptive name, select the `repo` scope, set an expiration period, and generate the token. Copy it immediately as GitHub will not show it again. In AIPurview, paste the token in Settings, optionally add a label, click **Test token** to verify it works, then **Save token** to store it.
 
 For detailed instructions on GitHub token management, see the official documentation at https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token.
 

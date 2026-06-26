@@ -120,7 +120,7 @@ async function run() {
   console.log("  ROW COUNT COMPARISON");
   console.log("-".repeat(70));
   console.log(
-    `${"TABLE".padEnd(45)} ${"VERIFYWISE".padStart(10)} ${"PUBLIC".padStart(10)} ${"STATUS".padStart(8)}`,
+    `${"TABLE".padEnd(45)} ${"AIPURVIEW".padStart(10)} ${"PUBLIC".padStart(10)} ${"STATUS".padStart(8)}`,
   );
   console.log("-".repeat(70));
 
@@ -129,13 +129,13 @@ async function run() {
   let verifyOnlyCount = 0;
 
   for (const table of [...allTablesToCheck].sort()) {
-    const inVerifywise = verifywiseTables.includes(table);
+    const inAIPurview = verifywiseTables.includes(table);
     const inPublic = publicTables.has(table);
 
     let vwCount = 0;
     let pubCount: number | null = null;
 
-    if (inVerifywise) {
+    if (inAIPurview) {
       vwCount = await getRowCount("verifywise", table);
     }
     if (inPublic) {
@@ -145,7 +145,7 @@ async function run() {
     let status: string;
     let match: boolean;
 
-    if (!inVerifywise) {
+    if (!inAIPurview) {
       status = "SKIP";
       match = true;
     } else if (!inPublic) {

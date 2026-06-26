@@ -1,8 +1,8 @@
-# VerifyWise Python SDK
+# AIPurview Python SDK
 
 > **Version:** 0.1.0 | **Python:** >=3.9 | **License:** Apache-2.0
 
-The VerifyWise Python SDK provides programmatic access to the VerifyWise AI governance platform. It covers LLM evaluations, datasets, reports, model-vs-model arena comparisons, bias audits, and project management. The package also ships a `verifywise` CLI for terminal-based workflows and CI/CD integration.
+The AIPurview Python SDK provides programmatic access to the AIPurview AI governance platform. It covers LLM evaluations, datasets, reports, model-vs-model arena comparisons, bias audits, and project management. The package also ships a `verifywise` CLI for terminal-based workflows and CI/CD integration.
 
 ---
 
@@ -65,12 +65,12 @@ Every API call requires two values:
 
 | Value | Description |
 |-------|-------------|
-| **API URL** | Base URL of the VerifyWise instance (e.g. `https://app.verifywise.ai`) |
+| **API URL** | Base URL of the AIPurview instance (e.g. `https://app.verifywise.ai`) |
 | **Token** | A JWT token or API key obtained from the platform |
 
 These can be provided in three ways, in order of precedence:
 
-1. **Constructor arguments** — `api_url` and `token` parameters to `VerifyWiseClient`
+1. **Constructor arguments** — `api_url` and `token` parameters to `AIPurviewClient`
 2. **CLI flags** — `--api-url` and `--token`
 3. **Environment variables** — `VW_API_URL` and `VW_API_TOKEN`
 
@@ -79,9 +79,9 @@ These can be provided in three ways, in order of precedence:
 ## Client Initialization
 
 ```python
-from verifywise import VerifyWiseClient
+from verifywise import AIPurviewClient
 
-client = VerifyWiseClient(
+client = AIPurviewClient(
     api_url="https://your-instance.com",
     token="your-jwt-token",
     timeout=30,  # default request timeout in seconds
@@ -92,7 +92,7 @@ client = VerifyWiseClient(
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `api_url` | `str` | *(required)* | Base URL of the VerifyWise instance. Trailing slash is stripped automatically. |
+| `api_url` | `str` | *(required)* | Base URL of the AIPurview instance. Trailing slash is stripped automatically. |
 | `token` | `str` | *(required)* | JWT token or API key. Sent as `Authorization: Bearer <token>` on every request. |
 | `timeout` | `int` | `30` | Default request timeout in seconds. Individual methods may override this. |
 
@@ -741,7 +741,7 @@ Parsed evaluation results returned by `run_and_wait`. Created via `EvalResults.f
 
 ## Error Handling
 
-All exceptions inherit from `VerifyWiseError` and carry `status_code` and `response_body` attributes.
+All exceptions inherit from `AIPurviewError` and carry `status_code` and `response_body` attributes.
 
 | Exception | HTTP Status | When |
 |-----------|-------------|------|
@@ -750,10 +750,10 @@ All exceptions inherit from `VerifyWiseError` and carry `status_code` and `respo
 | `ValidationError` | 400, 422 | Invalid request body or parameters |
 | `ServerError` | 5xx | Server-side failure |
 | `TimeoutError` | *(n/a)* | Polling exceeded `timeout_minutes` |
-| `VerifyWiseError` | *(any other)* | Catch-all for unexpected HTTP errors |
+| `AIPurviewError` | *(any other)* | Catch-all for unexpected HTTP errors |
 
 ```python
-from verifywise import VerifyWiseClient, AuthenticationError, NotFoundError, TimeoutError
+from verifywise import AIPurviewClient, AuthenticationError, NotFoundError, TimeoutError
 
 try:
     results = client.experiments.run_and_wait(...)
@@ -795,7 +795,7 @@ verifywise [--api-url URL] [--token TOKEN] [--json] <command> <subcommand> [opti
 
 | Flag | Environment Variable | Description |
 |------|---------------------|-------------|
-| `--api-url URL` | `VW_API_URL` | VerifyWise API base URL |
+| `--api-url URL` | `VW_API_URL` | AIPurview API base URL |
 | `--token TOKEN` | `VW_API_TOKEN` | JWT or API key |
 | `--json` | — | Output machine-readable JSON instead of tables |
 | `-V`, `--version` | — | Print SDK version |
@@ -897,11 +897,11 @@ Four integration methods are available, from simplest to most flexible.
 
 ### 1. GitHub Actions — Composite Action (Recommended)
 
-The composite action at `.github/actions/eval/` is the recommended way to integrate VerifyWise evaluations into GitHub Actions. It bundles the runner script, handles Python setup, threshold checking, and artifact uploads in a single step.
+The composite action at `.github/actions/eval/` is the recommended way to integrate AIPurview evaluations into GitHub Actions. It bundles the runner script, handles Python setup, threshold checking, and artifact uploads in a single step.
 
 ```yaml
 steps:
-  - name: Run VerifyWise evaluation
+  - name: Run AIPurview evaluation
     id: eval
     uses: verifywise-ai/verifywise/.github/actions/eval@main
     with:
@@ -926,13 +926,13 @@ steps:
 
 | Input | Required | Default | Description |
 |-------|----------|---------|-------------|
-| `api_url` | **yes** | — | VerifyWise instance URL |
+| `api_url` | **yes** | — | AIPurview instance URL |
 | `project_id` | **yes** | — | Project ID |
 | `dataset_id` | **yes** | — | Dataset ID |
 | `metrics` | **yes** | — | Comma-separated metric names |
 | `model_name` | **yes** | — | Model to evaluate |
 | `model_provider` | **yes** | — | Provider: `openai`, `anthropic`, `google`, `mistral`, `xai`, `self-hosted` |
-| `vw_api_token` | **yes** | — | VerifyWise JWT token or API key |
+| `vw_api_token` | **yes** | — | AIPurview JWT token or API key |
 | `llm_api_key` | **yes** | — | API key for the LLM provider |
 | `judge_model` | no | `gpt-4o` | Judge LLM model |
 | `judge_provider` | no | `openai` | Judge LLM provider |
@@ -954,7 +954,7 @@ steps:
 #### Action Behavior
 
 1. Sets up Python 3.11 and installs `requests`
-2. Runs the bundled `ci_eval_runner.py` against the VerifyWise API
+2. Runs the bundled `ci_eval_runner.py` against the AIPurview API
 3. Writes structured JSON results and a Markdown summary to temp files
 4. Checks each metric against its threshold
 5. Fails the step if `fail_on_threshold` is `true` and any metric is below threshold
@@ -993,9 +993,9 @@ Use the SDK directly in any CI script (GitHub Actions, GitLab CI, Jenkins, etc.)
 
 ```python
 import os, sys
-from verifywise import VerifyWiseClient
+from verifywise import AIPurviewClient
 
-client = VerifyWiseClient(
+client = AIPurviewClient(
     api_url=os.environ["VW_API_URL"],
     token=os.environ["VW_API_TOKEN"],
 )
@@ -1078,7 +1078,7 @@ EvalServer/sdk/
 ├── README.md                   # Quick-start guide
 ├── src/verifywise/
 │   ├── __init__.py             # Public API exports, __version__
-│   ├── client.py               # VerifyWiseClient, _BaseAPI, HTTP layer
+│   ├── client.py               # AIPurviewClient, _BaseAPI, HTTP layer
 │   ├── cli.py                  # CLI (argparse, all commands)
 │   ├── exceptions.py           # Exception hierarchy
 │   ├── models.py               # Dataclasses (Experiment, EvalResults, Dataset, etc.)
@@ -1098,4 +1098,4 @@ EvalServer/sdk/
     └── test_cli.py             # CLI unit tests (35 tests)
 ```
 
-All API modules inherit from `_BaseAPI` which delegates HTTP calls to `VerifyWiseClient._request()`. The client uses `requests.Session` for connection pooling and persistent auth headers. Every API path is prefixed with `/api/deepeval/`.
+All API modules inherit from `_BaseAPI` which delegates HTTP calls to `AIPurviewClient._request()`. The client uses `requests.Session` for connection pooling and persistent auth headers. Every API path is prefixed with `/api/deepeval/`.

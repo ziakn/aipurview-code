@@ -6,7 +6,7 @@
 |-------|-------|
 | **Initiative** | Cross-tenant security review and isolation test matrix |
 | **Classification** | Large |
-| **Goal** | Harden VerifyWise's shared-schema row-level tenancy with a reusable Jest + Supertest isolation matrix, schema-drift CI gate, and documented isolation policy. |
+| **Goal** | Harden AIPurview's shared-schema row-level tenancy with a reusable Jest + Supertest isolation matrix, schema-drift CI gate, and documented isolation policy. |
 | **Target phase** | Phase 3 — Task Decomposition & Assignment |
 | **Output owner** | Technical Lead |
 
@@ -92,7 +92,7 @@ Resolved before Phase 4 implementation:
 |---|----------|
 | 1 | **Scope:** First pass covers the five required entities plus core GRC entities that carry `organization_id`: `vendors`, `assessments`, `controls_eu`, and `projects_frameworks`. (`controls` maps to `controls_eu`; `organizational_frameworks` maps to the `frameworks`↔`projects_frameworks` linkage.) |
 | 2 | **Audit source:** The schema-drift audit runs against the live migrated CI database (`information_schema.columns`) after migrations complete. |
-| 3 | **SuperAdmin bypass:** Enforced via per-controller checks, matching the existing VerifyWise pattern. ISO-011 tests verify bypass only on documented routes. |
+| 3 | **SuperAdmin bypass:** Enforced via per-controller checks, matching the existing AIPurview pattern. ISO-011 tests verify bypass only on documented routes. |
 | 4 | **Python services:** Out of scope for this initiative. Document as future work in the tenant-isolation runbook (ISO-001). |
 | 5 | **Security alerts:** Failed cross-tenant attempts continue to use existing request logs; no dedicated security-event table or SIEM integration in this pass. |
 | 6 | **CI gate enablement:** Enable the gate after Wave 4 remediation is complete and all P0 leaks are fixed or risk-accepted. No fixed calendar date; gate ISO-015 on Wave 4 exit criteria. |

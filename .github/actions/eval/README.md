@@ -1,6 +1,6 @@
-# VerifyWise LLM Evaluation Action
+# AIPurview LLM Evaluation Action
 
-Run LLM evaluations against a [VerifyWise](https://verifywise.ai) instance directly in your CI/CD pipeline. The action creates an experiment, polls until completion, and gates your build on quality thresholds.
+Run LLM evaluations against a [AIPurview](https://verifywise.ai) instance directly in your CI/CD pipeline. The action creates an experiment, polls until completion, and gates your build on quality thresholds.
 
 ## Features
 
@@ -42,7 +42,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run VerifyWise evaluation
+      - name: Run AIPurview evaluation
         id: eval
         uses: verifywise-ai/verifywise/.github/actions/eval@main
         with:
@@ -97,13 +97,13 @@ jobs:
 
 | Input | Required | Default | Description |
 |-------|----------|---------|-------------|
-| `api_url` | **yes** | — | Base URL of the VerifyWise instance |
-| `project_id` | **yes** | — | VerifyWise project ID |
+| `api_url` | **yes** | — | Base URL of the AIPurview instance |
+| `project_id` | **yes** | — | AIPurview project ID |
 | `dataset_id` | **yes** | — | Dataset ID to evaluate against |
 | `metrics` | **yes** | — | Comma-separated metric names |
 | `model_name` | **yes** | — | Model to evaluate (e.g. `gpt-4o-mini`) |
 | `model_provider` | **yes** | — | Provider: `openai`, `anthropic`, `google`, `mistral`, `xai`, `self-hosted` |
-| `vw_api_token` | **yes** | — | VerifyWise JWT token or API key |
+| `vw_api_token` | **yes** | — | AIPurview JWT token or API key |
 | `llm_api_key` | **yes** | — | API key for the LLM provider |
 | `judge_model` | no | `gpt-4o` | Judge LLM model name |
 | `judge_provider` | no | `openai` | Judge LLM provider |
@@ -120,11 +120,11 @@ jobs:
 | `passed` | `true` if all metrics passed, `false` otherwise |
 | `results_path` | Path to the JSON results file |
 | `summary_path` | Path to the Markdown summary file |
-| `experiment_id` | ID of the created experiment on VerifyWise |
+| `experiment_id` | ID of the created experiment on AIPurview |
 
 ## Available Metrics
 
-The exact set of metrics depends on your VerifyWise instance configuration. Common metrics include:
+The exact set of metrics depends on your AIPurview instance configuration. Common metrics include:
 
 | Metric | Type | Description |
 |--------|------|-------------|
@@ -152,7 +152,7 @@ Artifacts are retained for 30 days.
 ## How It Works
 
 1. Installs Python 3.11 and the `requests` library
-2. Runs `ci_eval_runner.py` which calls the VerifyWise API to create an experiment
+2. Runs `ci_eval_runner.py` which calls the AIPurview API to create an experiment
 3. Polls the experiment status until completion or timeout
 4. Parses results and writes JSON + Markdown output files
 5. Checks each metric against its threshold

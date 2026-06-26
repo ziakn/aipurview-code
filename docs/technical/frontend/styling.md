@@ -2,7 +2,7 @@
 
 ## Overview
 
-VerifyWise uses Material-UI (MUI) v7 with Emotion for CSS-in-JS styling. The design system is built around a centralized theme with design tokens, reusable mixins, and component style exports. All styling flows from the theme configuration in `Clients/src/presentation/themes/`.
+AIPurview uses Material-UI (MUI) v7 with Emotion for CSS-in-JS styling. The design system is built around a centralized theme with design tokens, reusable mixins, and component style exports. All styling flows from the theme configuration in `Clients/src/presentation/themes/`.
 
 ## Theme Architecture
 

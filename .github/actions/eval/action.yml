@@ -1,6 +1,6 @@
-name: 'VerifyWise LLM Evaluation'
+name: 'AIPurview LLM Evaluation'
 description: >
-  Run LLM evaluations against a VerifyWise instance and gate CI on quality
+  Run LLM evaluations against a AIPurview instance and gate CI on quality
   thresholds. Supports chatbot, RAG, and agent use cases.
 
 branding:
@@ -24,7 +24,7 @@ branding:
 
 inputs:
   api_url:
-    description: 'VerifyWise instance URL'
+    description: 'AIPurview instance URL'
     required: true
   project_id:
     description: 'Project ID'
@@ -74,7 +74,7 @@ inputs:
     required: false
     default: 'true'
   vw_api_token:
-    description: 'VerifyWise API token'
+    description: 'AIPurview API token'
     required: true
   llm_api_key:
     description: 'API key for the model being evaluated'
@@ -156,10 +156,10 @@ runs:
         FAIL_ON_THRESHOLD: ${{ inputs.fail_on_threshold }}
       run: |
         if [ ! -f "$RESULTS_PATH" ]; then
-          echo "::error title=Evaluation Failed::No results produced. The evaluation may have failed to connect to the VerifyWise instance."
+          echo "::error title=Evaluation Failed::No results produced. The evaluation may have failed to connect to the AIPurview instance."
           echo "passed=false" >> "$GITHUB_OUTPUT"
           {
-            echo "## VerifyWise Evaluation"
+            echo "## AIPurview Evaluation"
             echo ""
             echo "**FAILED** -- No results were produced. The evaluation may have failed to start."
             echo "Check the logs in the \"Run evaluation\" step for details."

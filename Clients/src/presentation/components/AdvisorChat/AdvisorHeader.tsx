@@ -15,7 +15,7 @@ interface AdvisorHeaderProps {
  * Header bar shown at the top of every advisor panel.
  *
  * Styling notes: matches the NotificationBell popover conventions so the
- * advisor's past-chats list feels native to VerifyWise. 8px radius, soft
+ * advisor's past-chats list feels native to AIPurview. 8px radius, soft
  * shadow, `rgba(19, 113, 91, 0.04)` brand tint for the active row with a
  * 3px left accent, 13/12/11px typography, hover-reveal delete action.
  */

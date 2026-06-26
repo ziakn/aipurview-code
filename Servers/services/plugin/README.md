@@ -1,6 +1,6 @@
-# VerifyWise Plugin System
+# AIPurview Plugin System
 
-A comprehensive plugin architecture for extending VerifyWise functionality with third-party integrations.
+A comprehensive plugin architecture for extending AIPurview functionality with third-party integrations.
 
 ## Architecture Overview
 
@@ -151,7 +151,7 @@ export async function configure(
 export const metadata = {
   name: "My Plugin",
   version: "1.0.0",
-  author: "VerifyWise",
+  author: "AIPurview",
   description: "Plugin description",
 };
 ```

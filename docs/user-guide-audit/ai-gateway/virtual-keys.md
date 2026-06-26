@@ -34,5 +34,5 @@ All verifiable claims in the virtual-keys article match backend implementation. 
 
 ## Skipped / non-verifiable
 - "Virtual keys are useful when you want application teams or external services to hit your LLM endpoints while you keep control over what gets spent, what content gets through and what gets logged." (block 1) — reason: motivation/use case framing only; opinion.
-- "No VerifyWise account required." (block 0) — reason: user experience claim; requires UI/auth system test, not backend code.
+- "No AIPurview account required." (block 0) — reason: user experience claim; requires UI/auth system test, not backend code.
 - "Admins get an email when a key's budget runs out" (block 18) — reason: requires testing email system or checking notification service; backend schema shows feature exists but not verified at runtime.

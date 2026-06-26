@@ -15,7 +15,7 @@ Article demonstrates strong accuracy across UI claims, field types, and form lif
 - **Doc says:** "The new entity starts in its default lifecycle state ('Under review' for use cases, 'Pending' for models)" (block ~534)
 - **Reality:** The article statement is correct about entity lifecycle, but could mislead readers into thinking "Under review" is the submission status during review. The submission status is PENDING (in the API). Once approved, it becomes APPROVED and creates the entity, which then enters "Under review" state. The statement is technically accurate but contextually confusing because it appears in a section describing submission flow.
 - **Evidence:** `/Users/gorkemcetin/verifywise/Clients/src/domain/intake/enums.ts:21-26` (IntakeSubmissionStatus enum shows: PENDING, APPROVED, REJECTED, SUPERSEDED)
-- **Suggested fix:** Clarify the distinction: "When a submission is approved, VerifyWise creates the entity, which starts in 'Under review' (for use cases) or 'Pending' (for models) state. The submission itself transitions from Pending → Approved."
+- **Suggested fix:** Clarify the distinction: "When a submission is approved, AIPurview creates the entity, which starts in 'Under review' (for use cases) or 'Pending' (for models) state. The submission itself transitions from Pending → Approved."
 - **Confidence:** high
 
 ## Verified claims (sampled)

@@ -11,7 +11,7 @@ The post-market-monitoring article is accurate, comprehensive, and well-grounded
 No significant issues found. All major technical and compliance claims verified.
 
 ## Verified claims (sampled)
-- Claim: "When you first enable monitoring, VerifyWise creates seven default questions. Six are yes/no questions mapped to EU AI Act articles. The seventh is a free-text field for additional observations." (block 3) — verified at `Servers/services/postMarketMonitoring/defaultQuestions.ts:28` (DEFAULT_PMM_QUESTIONS array contains exactly 7 questions: 6 yes_no + 1 multi_line_text)
+- Claim: "When you first enable monitoring, AIPurview creates seven default questions. Six are yes/no questions mapped to EU AI Act articles. The seventh is a free-text field for additional observations." (block 3) — verified at `Servers/services/postMarketMonitoring/defaultQuestions.ts:28` (DEFAULT_PMM_QUESTIONS array contains exactly 7 questions: 6 yes_no + 1 multi_line_text)
 - Claim: "Risk Review" question maps to Article 9 (block 3, table row 1) — verified at `Servers/services/postMarketMonitoring/defaultQuestions.ts:35` (eu_ai_act_article: "Article 9")
 - Claim: "Vendor Review" question maps to Article 72 (block 3, table row 3) — verified at `Servers/services/postMarketMonitoring/defaultQuestions.ts:51` (eu_ai_act_article: "Article 72")
 - Claim: Question types are "Yes/No", "Multiple choice", and "Text response" — verified at `Servers/domain.layer/models/postMarketMonitoring/pmmQuestion.model.ts:52` (question_type validates against ["yes_no", "multi_select", "multi_line_text"])

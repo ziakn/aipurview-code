@@ -10,7 +10,7 @@ export const watchtowerContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Event Tracker gives you a live window into VerifyWise. It records every user action and system event, then lets you look at the raw logs for troubleshooting. Use it to see who did what, spot patterns and keep things running smoothly.',
+      text: 'Event Tracker gives you a live window into AIPurview. It records every user action and system event, then lets you look at the raw logs for troubleshooting. Use it to see who did what, spot patterns and keep things running smoothly.',
     },
     {
       type: 'paragraph',

@@ -1,5 +1,5 @@
 /**
- * Shared chart enhancement utilities for VerifyWise dashboards.
+ * Shared chart enhancement utilities for AIPurview dashboards.
  *
  * 8 reusable enhancements:
  * 1. ChartCard — consistent card with gradient background + header separator

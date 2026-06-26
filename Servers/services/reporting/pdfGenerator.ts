@@ -1,7 +1,7 @@
 /**
  * PDF Generator Service
  * Uses Playwright to render HTML and generate PDF
- * Following VerifyWise clean architecture patterns
+ * Following AIPurview clean architecture patterns
  */
 
 import { chromium, Browser, Page } from "playwright";

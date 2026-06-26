@@ -2,7 +2,7 @@
 
 ## Overview
 
-VerifyWise stores files directly in the PostgreSQL database as BLOB (bytea) data, not on the filesystem. This approach integrates with multi-tenancy, supports transactions, and simplifies backup/restore. The system uses Multer for upload handling (memory storage) and Uppy on the frontend for advanced upload UX.
+AIPurview stores files directly in the PostgreSQL database as BLOB (bytea) data, not on the filesystem. This approach integrates with multi-tenancy, supports transactions, and simplifies backup/restore. The system uses Multer for upload handling (memory storage) and Uppy on the frontend for advanced upload UX.
 
 ## Architecture
 

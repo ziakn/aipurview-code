@@ -266,7 +266,7 @@ export async function generateReportsV2(req: Request, res: Response): Promise<an
     }
 
     const organization = await getOrganizationByIdQuery(user.organization_id!);
-    const organizationName = organization?.name || "VerifyWise";
+    const organizationName = organization?.name || "AIPurview";
 
     // Generate report using new system
     const result = await generateReportV2(

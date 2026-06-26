@@ -10,7 +10,7 @@ export const integrationGuideContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'This guide walks you through connecting your network infrastructure to VerifyWise Shadow AI detection, from creating your first API key to verifying that events are flowing into the dashboard. There are two integration paths: the REST API (for custom integrations, browser extensions and SIEM webhooks) and syslog forwarding (for network proxies and firewalls).',
+      text: 'This guide walks you through connecting your network infrastructure to AIPurview Shadow AI detection, from creating your first API key to verifying that events are flowing into the dashboard. There are two integration paths: the REST API (for custom integrations, browser extensions and SIEM webhooks) and syslog forwarding (for network proxies and firewalls).',
     },
     {
       type: 'time-estimate',
@@ -25,9 +25,9 @@ export const integrationGuideContent: ArticleContent = {
     {
       type: 'checklist',
       items: [
-        'Admin or Editor role in VerifyWise',
+        'Admin or Editor role in AIPurview',
         'Access to your network proxy, firewall, or SIEM configuration',
-        'Network connectivity from your data source to the VerifyWise server',
+        'Network connectivity from your data source to the AIPurview server',
       ],
     },
 
@@ -194,7 +194,7 @@ export const integrationGuideContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Syslog integration is ideal for network proxies and firewalls that natively support syslog forwarding (Zscaler Internet Access, Netskope, Squid proxy). The VerifyWise server runs a TCP syslog listener that receives log lines, parses them using the configured parser and feeds them into the same event pipeline as the REST API.',
+      text: 'Syslog integration is ideal for network proxies and firewalls that natively support syslog forwarding (Zscaler Internet Access, Netskope, Squid proxy). The AIPurview server runs a TCP syslog listener that receives log lines, parses them using the configured parser and feeds them into the same event pipeline as the REST API.',
     },
 
     {
@@ -205,7 +205,7 @@ export const integrationGuideContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The syslog listener is controlled by the `SHADOW_AI_SYSLOG_PORT` environment variable on the VerifyWise server. By default it listens on port **5514**. Set the variable to `0` to disable it.',
+      text: 'The syslog listener is controlled by the `SHADOW_AI_SYSLOG_PORT` environment variable on the AIPurview server. By default it listens on port **5514**. Set the variable to `0` to disable it.',
     },
     {
       type: 'paragraph',
@@ -216,7 +216,7 @@ export const integrationGuideContent: ArticleContent = {
       type: 'heading',
       id: 'syslog-step-2',
       level: 3,
-      text: 'Step 2: Add a syslog source in VerifyWise',
+      text: 'Step 2: Add a syslog source in AIPurview',
     },
     {
       type: 'ordered-list',
@@ -232,7 +232,7 @@ export const integrationGuideContent: ArticleContent = {
       type: 'callout',
       variant: 'warning',
       title: 'Source identifier must match',
-      text: 'The source identifier must exactly match the IP address that the syslog listener sees for incoming connections. If your proxy routes through a load balancer or NAT, use the IP address that reaches the VerifyWise server, not the proxy\'s internal IP. Messages from unrecognized IPs are silently dropped.',
+      text: 'The source identifier must exactly match the IP address that the syslog listener sees for incoming connections. If your proxy routes through a load balancer or NAT, use the IP address that reaches the AIPurview server, not the proxy\'s internal IP. Messages from unrecognized IPs are silently dropped.',
     },
 
     {
@@ -243,7 +243,7 @@ export const integrationGuideContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Configure your network proxy or firewall to send syslog messages over TCP to the VerifyWise server. Below are configuration notes for each supported source.',
+      text: 'Configure your network proxy or firewall to send syslog messages over TCP to the AIPurview server. Below are configuration notes for each supported source.',
     },
 
     // Zscaler
@@ -259,7 +259,7 @@ export const integrationGuideContent: ArticleContent = {
         { text: 'In the ZIA admin portal, navigate to Administration → Nanolog Streaming Service' },
         { text: 'Add a new NSS feed or edit an existing one' },
         { text: 'Set the feed output type to **Syslog**' },
-        { text: 'Set the syslog destination to your VerifyWise server IP and port (default 5514), protocol TCP' },
+        { text: 'Set the syslog destination to your AIPurview server IP and port (default 5514), protocol TCP' },
         { text: 'In the log format, include at minimum: `user`, `dst`, `method`, `uri`, `action`. Optionally include `department` for department-level reporting' },
         { text: 'Save and activate the feed' },
       ],
@@ -286,7 +286,7 @@ export const integrationGuideContent: ArticleContent = {
       items: [
         { text: 'In the Netskope admin console, navigate to Settings → Tools → SIEM' },
         { text: 'Add a new SIEM profile with type **Syslog**' },
-        { text: 'Set the destination to your VerifyWise server IP and port (default 5514), protocol TCP' },
+        { text: 'Set the destination to your AIPurview server IP and port (default 5514), protocol TCP' },
         { text: 'Set the format to **JSON**' },
         { text: 'Select the event types to forward (at minimum: page events and application events)' },
         { text: 'Save and enable the profile' },
@@ -313,7 +313,7 @@ export const integrationGuideContent: ArticleContent = {
       type: 'ordered-list',
       items: [
         { text: 'Edit your Squid configuration file (`squid.conf`)' },
-        { text: 'Add or modify the `access_log` directive to forward to a syslog destination via TCP: `access_log tcp://VERIFYWISE_IP:5514`' },
+        { text: 'Add or modify the `access_log` directive to forward to a syslog destination via TCP: `access_log tcp://AIPURVIEW_IP:5514`' },
         { text: 'Ensure the log format includes the user identity field (`%un`). Squid must be configured with authentication (LDAP, Kerberos or basic) for user emails to be captured' },
         { text: 'Reload the Squid configuration: `squid -k reconfigure`' },
       ],

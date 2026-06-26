@@ -1,6 +1,6 @@
 # Accessibility
 
-WCAG 2.1 compliance guidelines for VerifyWise.
+WCAG 2.1 compliance guidelines for AIPurview.
 
 ## Compliance Levels
 
@@ -26,7 +26,7 @@ WCAG 2.1 compliance guidelines for VerifyWise.
 - Text contrast ratio: **7:1**
 - Headings in logical order (h1 → h2 → h3)
 
-## Color Contrast (VerifyWise Palette)
+## Color Contrast (AIPurview Palette)
 
 | Token | Color | Contrast vs White | Meets AA? |
 |-------|-------|-------------------|-----------|

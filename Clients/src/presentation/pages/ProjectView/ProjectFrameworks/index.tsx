@@ -12,7 +12,7 @@ import AssessmentTracker from "../../Assessment/1.0AssessmentTracker";
 import useFrameworks from "../../../../application/hooks/useFrameworks";
 import AddFrameworkModal from "../AddNewFramework";
 import useMultipleOnScreen from "../../../../application/hooks/useMultipleOnScreen";
-import { VerifyWiseContext } from "../../../../application/contexts/VerifyWise.context";
+import { AIPurviewContext } from "../../../../application/contexts/AIPurview.context";
 import { ButtonToggle } from "../../../components/button-toggle";
 import { PluginSlot } from "../../../components/PluginSlot";
 import { PLUGIN_SLOTS } from "../../../../domain/constants/pluginSlots";
@@ -59,7 +59,7 @@ const ProjectFrameworks = ({
   const [searchParams, setSearchParams] = useSearchParams();
   const { users } = useUsers();
 
-  const { changeComponentVisibility } = useContext(VerifyWiseContext);
+  const { changeComponentVisibility } = useContext(AIPurviewContext);
   const { userRoleName } = useAuth();
   const { getComponentsForSlot } = usePluginRegistry();
 

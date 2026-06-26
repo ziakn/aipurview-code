@@ -42,7 +42,7 @@ import {
   useGovernancePreferences,
   useCoverage,
 } from "../../../../application/hooks/useGovernanceOs";
-import { VerifyWiseContext } from "../../../../application/contexts/VerifyWise.context";
+import { AIPurviewContext } from "../../../../application/contexts/AIPurview.context";
 
 interface ModuleCardProps {
   title: string;
@@ -158,7 +158,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
 
 const GovernanceHub: React.FC = () => {
   const navigate = useNavigate();
-  const { projects, currentProjectId } = useContext(VerifyWiseContext);
+  const { projects, currentProjectId } = useContext(AIPurviewContext);
   const { data: mappings } = useMappings();
   const { data: scenarios } = useScenarios();
   const { data: preferences } = useGovernancePreferences();

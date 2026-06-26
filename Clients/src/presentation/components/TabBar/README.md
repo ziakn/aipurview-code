@@ -1,6 +1,6 @@
 # TabBar Component
 
-A standardized, easy-to-use tab navigation component for VerifyWise.
+A standardized, easy-to-use tab navigation component for AIPurview.
 
 ## Features
 

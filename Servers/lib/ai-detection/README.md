@@ -14,7 +14,7 @@ A TypeScript library for detecting AI/ML libraries, API calls, and hardcoded sec
 ## Installation
 
 ```typescript
-// Internal import (within VerifyWise)
+// Internal import (within AIPurview)
 import { AIDetector, ALL_PATTERNS } from "./lib/ai-detection";
 
 // Future: npm package
@@ -423,4 +423,4 @@ npx tsx lib/ai-detection/test-patterns.ts
 
 ## License
 
-Part of the VerifyWise platform. See main repository for license details.
+Part of the AIPurview platform. See main repository for license details.

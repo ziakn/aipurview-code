@@ -110,7 +110,7 @@ export async function approveApprovalCtrl(req: Request, res: Response) {
       {
         badgeType: "generated",
         modelUsed: "ai-advisor",
-        modelProvider: "verifywise",
+        modelProvider: "aipurview",
         toolName: id,
         confidenceScore: 100,
         promptSummary: `Approved approval ${id}`,

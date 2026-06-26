@@ -1,6 +1,6 @@
 # Input Validation
 
-Guidelines for validating and sanitizing user input in VerifyWise.
+Guidelines for validating and sanitizing user input in AIPurview.
 
 ## Core Principles
 

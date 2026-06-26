@@ -1,6 +1,6 @@
 # React Patterns
 
-Recommended patterns and practices for React development in VerifyWise.
+Recommended patterns and practices for React development in AIPurview.
 
 ## Function Components
 
@@ -131,7 +131,7 @@ components/
     └── hooks.ts           # Component-specific hooks
 ```
 
-> **Note:** In VerifyWise, components are typically exported directly from `index.tsx`
+> **Note:** In AIPurview, components are typically exported directly from `index.tsx`
 > rather than using a separate re-export file. The component code lives in `index.tsx`.
 
 ## Props Patterns

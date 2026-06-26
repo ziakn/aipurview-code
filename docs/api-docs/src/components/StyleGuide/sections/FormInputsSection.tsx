@@ -3,7 +3,7 @@ import { Box, Stack, Typography, useTheme, Divider, Snackbar, TextField, Select 
 import { Copy, Search, ChevronDown, Eye, EyeOff } from "lucide-react";
 import CodeBlock from "../CodeBlock";
 
-// Mock Components - Standalone versions that mimic VerifyWise components
+// Mock Components - Standalone versions that mimic AIPurview components
 
 interface MockFieldProps {
   id: string;
@@ -539,7 +539,7 @@ const FormInputsSection: React.FC = () => {
             maxWidth: 600,
           }}
         >
-          Text fields, selects, and search boxes used throughout VerifyWise.
+          Text fields, selects, and search boxes used throughout AIPurview.
           All inputs share consistent sizing, spacing, and interaction states.
           Click any value to copy it to clipboard.
         </Typography>

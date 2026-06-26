@@ -64,7 +64,7 @@ const float = keyframes`
 // ── Card background configs ──
 const GS_CARDS = [
   {
-    title: "Welcome to VerifyWise",
+    title: "Welcome to AIPurview",
     desc: "An introduction to the platform and its core capabilities.",
     image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80",
     overlay: "linear-gradient(135deg, rgba(15,90,71,0.82), rgba(19,113,91,0.72))",
@@ -88,8 +88,8 @@ const GS_CARDS = [
     url: "https://verifywise.ai/user-guide/getting-started/dashboard",
   },
   {
-    title: "Installing VerifyWise",
-    desc: "Step-by-step guide to deploy VerifyWise in your environment.",
+    title: "Installing AIPurview",
+    desc: "Step-by-step guide to deploy AIPurview in your environment.",
     image: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=600&q=80",
     overlay: "linear-gradient(135deg, rgba(230,81,0,0.82), rgba(244,81,30,0.72))",
     action: "external" as const,
@@ -656,10 +656,10 @@ const StartHere = () => {
           </Box>
         </Box>
 
-        {/* Row 2: Explore VerifyWise */}
+        {/* Row 2: Explore AIPurview */}
         <Box sx={{ animation: `${fadeInUp} 0.5s ease-out 0.25s both` }}>
           <Typography sx={{ fontSize: 15, fontWeight: 600, mb: "12px" }}>
-            Explore VerifyWise
+            Explore AIPurview
           </Typography>
           <Box sx={{ position: "relative" }}>
             <IconButton
@@ -970,7 +970,7 @@ const StartHere = () => {
                   <Box
                     component="img"
                     src="/verifywise-logo.png"
-                    alt="VerifyWise"
+                    alt="AIPurview"
                     sx={{ height: 16, mt: "2px", opacity: 0.7 }}
                   />
                 </Stack>

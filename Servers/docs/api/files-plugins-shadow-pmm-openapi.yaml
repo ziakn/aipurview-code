@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: VerifyWise - File Manager, Virtual Folders, Plugins, Shadow AI & Post-Market Monitoring
+  title: AIPurview - File Manager, Virtual Folders, Plugins, Shadow AI & Post-Market Monitoring
   version: 1.0.0
   description: |
     OpenAPI specification for File Manager, Virtual Folders, Plugins, Shadow AI,

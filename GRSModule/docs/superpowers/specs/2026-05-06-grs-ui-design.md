@@ -8,7 +8,7 @@
 
 ## Overview
 
-A standalone web UI for the GRS Module that replaces direct CLI and config-file usage. Primary audience: the developer/researcher running the pipeline, with secondary audience of ML teammates. Designed to be easily extracted and integrated into the VerifyWise frontend in the future.
+A standalone web UI for the GRS Module that replaces direct CLI and config-file usage. Primary audience: the developer/researcher running the pipeline, with secondary audience of ML teammates. Designed to be easily extracted and integrated into the AIPurview frontend in the future.
 
 ---
 
@@ -16,7 +16,7 @@ A standalone web UI for the GRS Module that replaces direct CLI and config-file 
 
 | Decision | Choice | Rationale |
 |---|---|---|
-| Deployment model | Standalone now, extractable later | Not integrated into VerifyWise yet; components must be portable |
+| Deployment model | Standalone now, extractable later | Not integrated into AIPurview yet; components must be portable |
 | Primary workflow | Full pipeline runs | Configure → Run → Monitor → Results is the dominant path |
 | Config editing | YAML-based (Monaco editor) | Reproducibility requirement; technical users comfortable with YAML |
 | Config placement | Hybrid — run params inline, YAML in Configs section | Stage pages stay lean; one place for all YAML editing |
@@ -200,7 +200,7 @@ Before spawning any subprocess for `infer`, `judge`, or `validate` (when `provid
 
 ### Tech stack
 
-- **React 19 + TypeScript** — matches VerifyWise frontend
+- **React 19 + TypeScript** — matches AIPurview frontend
 - **Vite** — dev server with HMR and /api proxy
 - **Monaco Editor** (`@monaco-editor/react`) — YAML editing with syntax highlighting
 - **React Query (`@tanstack/react-query`)** — API calls and conditional progress polling
@@ -387,12 +387,12 @@ ui-build:
 
 ---
 
-## VerifyWise Integration Path
+## AIPurview Integration Path
 
-When this UI is eventually integrated into VerifyWise:
+When this UI is eventually integrated into AIPurview:
 
-1. **Frontend**: The React components in `ui/frontend/src/` are moved into the VerifyWise `Clients/` app as a new page/route. No rewrite needed — same React + TypeScript stack.
-2. **Backend**: The FastAPI routes in `ui/backend/routers/` are ported to Express controllers in the VerifyWise `Servers/` app, or the FastAPI service is kept as a microservice behind the VerifyWise API gateway.
+1. **Frontend**: The React components in `ui/frontend/src/` are moved into the AIPurview `Clients/` app as a new page/route. No rewrite needed — same React + TypeScript stack.
+2. **Backend**: The FastAPI routes in `ui/backend/routers/` are ported to Express controllers in the AIPurview `Servers/` app, or the FastAPI service is kept as a microservice behind the AIPurview API gateway.
 3. **Config files**: The YAML configs stay in `GRSModule/configs/` and the backend resolves paths relative to the GRSModule root.
 
 ---

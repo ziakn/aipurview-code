@@ -10,7 +10,7 @@ export const organizationSettingsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Organization settings let you configure your organization\'s identity and branding in VerifyWise. These settings control how your organization appears across the platform and in generated reports.',
+      text: 'Organization settings let you configure your organization\'s identity and branding in AIPurview. These settings control how your organization appears across the platform and in generated reports.',
     },
     {
       type: 'heading',
@@ -42,7 +42,7 @@ export const organizationSettingsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The organization name identifies your company or team across VerifyWise. It shows up in reports, documentation and throughout the platform.',
+      text: 'The organization name identifies your company or team across AIPurview. It shows up in reports, documentation and throughout the platform.',
     },
     {
       type: 'paragraph',
@@ -71,7 +71,7 @@ export const organizationSettingsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Upload your organization\'s logo to brand your VerifyWise instance. The logo appears in various places across the platform.',
+      text: 'Upload your organization\'s logo to brand your AIPurview instance. The logo appears in various places across the platform.',
     },
     {
       type: 'heading',

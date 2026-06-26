@@ -5,14 +5,14 @@
 **Verdict:** ✅ clean
 
 ## Summary
-The article accurately describes VerifyWise's four predefined roles (Admin, Reviewer, Editor, Auditor) and their permissions. Code verification confirms the role model (IDs 1-4), and spot checks of key permissions (API key restrictions to Admin, Auditor read-only, Editor invite capability) align with the documented behavior. All major claims are consistent with the codebase.
+The article accurately describes AIPurview's four predefined roles (Admin, Reviewer, Editor, Auditor) and their permissions. Code verification confirms the role model (IDs 1-4), and spot checks of key permissions (API key restrictions to Admin, Auditor read-only, Editor invite capability) align with the documented behavior. All major claims are consistent with the codebase.
 
 ## Findings
 None — no inaccuracies detected.
 
 ## Verified claims (sampled)
 
-- **"VerifyWise has four predefined roles"** (block 4) — Verified in `Clients/src/application/constants/roles.ts:1-6`, which exports `ROLES` enum with Admin=1, Reviewer=2, Editor=3, Auditor=4. Confirmed in `Servers/middleware/auth.middleware.ts:46-52` with identical role mapping.
+- **"AIPurview has four predefined roles"** (block 4) — Verified in `Clients/src/application/constants/roles.ts:1-6`, which exports `ROLES` enum with Admin=1, Reviewer=2, Editor=3, Auditor=4. Confirmed in `Servers/middleware/auth.middleware.ts:46-52` with identical role mapping.
 
 - **"Admins have full control over the platform"** (block 5) — Verified via API key management checks: `Servers/controllers/shadowAiApiKey.ctrl.ts:41-44` explicitly restricts key creation to Admin role only: `if (req.role !== "Admin" && req.role !== "SuperAdmin") { return 403 }`
 

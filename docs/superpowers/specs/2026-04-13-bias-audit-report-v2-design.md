@@ -10,7 +10,7 @@ The current bias audit PDF report is data-heavy but lacks interpretation. A read
 
 1. No overall verdict — "where am I on the spectrum of passed vs. horrible?"
 2. No call to actions — "what should I do next?"
-3. No VerifyWise branding (logo)
+3. No AIPurview branding (logo)
 4. Flagged rows lack explanation — "flagged because it's high or low?"
 5. No regulatory context — what does LL144 actually require?
 6. No charts or visual data representation
@@ -24,7 +24,7 @@ Enhance `report_generator.py` to produce a professional, self-explanatory report
 
 ### 1. Cover page (enhanced)
 
-- VerifyWise logo top-left (use `EvalServer/src/utils/verifywise_logo.png`)
+- AIPurview logo top-left (use `EvalServer/src/utils/verifywise_logo.png`)
 - Title, system name, compliance framework, metric, audit date, auditor info
 - Self-declared audit warning (existing, keep as-is)
 

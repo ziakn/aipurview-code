@@ -2,7 +2,7 @@
 
 ## Overview
 
-The AI Advisor is a multi-domain conversational interface that provides intelligent insights across VerifyWise data. It uses LLM providers (Anthropic, OpenAI, OpenRouter) with tool-calling capabilities to query and analyze risks, models, vendors, incidents, tasks, and policies.
+The AI Advisor is a multi-domain conversational interface that provides intelligent insights across AIPurview data. It uses LLM providers (Anthropic, OpenAI, OpenRouter) with tool-calling capabilities to query and analyze risks, models, vendors, incidents, tasks, and policies.
 
 ## Key Features
 

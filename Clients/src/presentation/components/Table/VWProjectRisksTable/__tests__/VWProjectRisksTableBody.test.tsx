@@ -2,7 +2,7 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "../../../../../test/renderWithProviders";
 import VWProjectRisksTableBody from "../VWProjectRisksTableBody";
-import { VerifyWiseContext } from "../../../../../application/contexts/VerifyWise.context";
+import { AIPurviewContext } from "../../../../../application/contexts/AIPurview.context";
 import type { RiskModel } from "../../../../../domain/models/Common/risks/risk.model";
 
 vi.mock("../../../../../application/hooks/useAuth", () => ({
@@ -113,9 +113,9 @@ const contextValue = {
 
 function renderWithContext(ui: React.ReactElement) {
   return renderWithProviders(
-    <VerifyWiseContext.Provider value={contextValue}>
+    <AIPurviewContext.Provider value={contextValue}>
       <table>{ui}</table>
-    </VerifyWiseContext.Provider>,
+    </AIPurviewContext.Provider>,
   );
 }
 
@@ -236,11 +236,11 @@ describe("VWProjectRisksTableBody", () => {
     ] as unknown as RiskModel[];
 
     renderWithContext(
-      <VerifyWiseContext.Provider value={{ ...contextValue, setInputValues }}>
+      <AIPurviewContext.Provider value={{ ...contextValue, setInputValues }}>
         <table>
           <VWProjectRisksTableBody {...defaultProps} rows={rowsWithAssessment} />
         </table>
-      </VerifyWiseContext.Provider>,
+      </AIPurviewContext.Provider>,
     );
 
     await user.click(screen.getByText("Data Breach Risk"));

@@ -10,7 +10,7 @@ status: active
 
 ## Amaç
 
-VerifyWise'ın formal dataset tracking eksiğini kapatmak — EU AI Act Article 10 (Data Governance) için zorunlu. OneTrust comparison'da identifie edilmiş gap.
+AIPurview'ın formal dataset tracking eksiğini kapatmak — EU AI Act Article 10 (Data Governance) için zorunlu. OneTrust comparison'da identifie edilmiş gap.
 
 ## Ne yapıldı
 

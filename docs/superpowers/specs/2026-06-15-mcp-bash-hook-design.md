@@ -7,7 +7,7 @@
 
 ## Goal
 
-Let a coding agent (Claude Code first) gate its **Bash** tool calls through VerifyWise's
+Let a coding agent (Claude Code first) gate its **Bash** tool calls through AIPurview's
 AI Gateway before executing them. Before running a shell command, a hook on the dev
 machine POSTs the tool call to a new gateway endpoint. The gateway runs the existing MCP
 **guardrails** and writes an **audit** record, then returns **allow** or **deny**. The
@@ -34,7 +34,7 @@ built-in tools (not just MCP-proxied tools).
 
 - Human approval of tool calls (Phase 2).
 - Gating file writes (Edit/Write), reads, or non-Bash tools.
-- A dedicated "MCP Hooks" management page in the VerifyWise UI. Hook config lives on the
+- A dedicated "MCP Hooks" management page in the AIPurview UI. Hook config lives on the
   dev machine in v1; there is nothing server-side to manage yet.
 - Rewriting/masking the command the agent executes.
 

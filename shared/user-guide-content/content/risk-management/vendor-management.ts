@@ -100,7 +100,7 @@ export const vendorManagementContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise has a built-in review workflow for vendor assessments:',
+      text: 'AIPurview has a built-in review workflow for vendor assessments:',
     },
     {
       type: 'icon-cards',
@@ -147,7 +147,7 @@ export const vendorManagementContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise uses a scorecard to assess vendor risk. Each vendor gets evaluated across several dimensions:',
+      text: 'AIPurview uses a scorecard to assess vendor risk. Each vendor gets evaluated across several dimensions:',
     },
     {
       type: 'heading',
@@ -236,7 +236,7 @@ export const vendorManagementContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Based on the scorecard inputs, VerifyWise calculates an overall risk score for each vendor. Higher scores mean greater risk and more oversight needed.',
+      text: 'Based on the scorecard inputs, AIPurview calculates an overall risk score for each vendor. Higher scores mean greater risk and more oversight needed.',
     },
     {
       type: 'callout',

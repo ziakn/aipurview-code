@@ -117,7 +117,7 @@ const theme = createTheme({
 });
 
 // NOTE: This is a standalone docs app for development/preview.
-// When integrating into the main VerifyWise app, the Resources component (App)
+// When integrating into the main AIPurview app, the Resources component (App)
 // should be imported and rendered at the /resources route within the main app's router.
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

@@ -28,8 +28,8 @@ import {
 import { brand, background, border as borderPalette } from "../../themes/palette";
 import { toggleSidebar } from "../../../application/redux/ui/uiSlice";
 import "../Layout/icon-shake.css";
-import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.context";
-import VerifyWiseLogo from "../../assets/imgs/verifywise-logo.svg";
+import { AIPurviewContext } from "../../../application/contexts/AIPurview.context";
+import AIPurviewLogo from "../../assets/imgs/verifywise-logo.svg";
 import SidebarFooter from "./SidebarFooter";
 import { FlyingHearts } from "../FlyingHearts";
 
@@ -131,8 +131,8 @@ const SidebarShell: FC<SidebarShellProps> = ({
   const [heartReturning, setHeartReturning] = useState(false);
   const heartTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // VerifyWiseContext available for future use
-  useContext(VerifyWiseContext);
+  // AIPurviewContext available for future use
+  useContext(AIPurviewContext);
 
   const collapsed = useSelector((state: any) => state.ui?.sidebar?.collapsed);
 
@@ -621,8 +621,8 @@ const SidebarShell: FC<SidebarShellProps> = ({
               )}
               <RouterLink to="/" style={{ display: "flex", alignItems: "center" }}>
                 <img
-                  src={VerifyWiseLogo}
-                  alt="VerifyWise"
+                  src={AIPurviewLogo}
+                  alt="AIPurview"
                   height={20}
                   className="dark-mode-keep-inverted"
                   style={{ position: "relative", zIndex: 1, display: "block" }}

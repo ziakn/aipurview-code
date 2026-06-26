@@ -25,6 +25,6 @@ The API access article is well-structured and largely accurate. Button labels, k
 - Claim: "Include your API key in the request headers" with "Authorization" header and "Bearer YOUR_API_KEY" format (blocks 161–162) — Bearer format verified in client test repository at `Clients/src/application/repository/tests/*.repository.test.ts` (Authorization: "Bearer token" pattern)
 
 ## Skipped / non-verifiable
-- "API keys give access to VerifyWise API endpoints based on your organization's permissions" (block 269) — opinion/motivation only; no specific endpoint list to verify
+- "API keys give access to AIPurview API endpoints based on your organization's permissions" (block 269) — opinion/motivation only; no specific endpoint list to verify
 - "API requests may be rate-limited to keep the platform stable" (block 279) — external rate-limiting detail; no specific rates documented in article
 - Key naming best-practice examples (blocks 87–89) — non-verifiable; examples of naming conventions are motivational

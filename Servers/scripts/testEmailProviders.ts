@@ -19,7 +19,7 @@ const testTemplate = `
         <mj-text>
           <h1>Email Provider Test</h1>
           <p>Hello {{user_name}},</p>
-          <p>This is a test email from VerifyWise using the {{provider_name}} provider.</p>
+          <p>This is a test email from AIPurview using the {{provider_name}} provider.</p>
           <p>If you received this email, the provider is working correctly!</p>
           <p>Test time: {{test_time}}</p>
         </mj-text>
@@ -59,7 +59,7 @@ async function testProvider(providerType: "resend" | "smtp", testEmail: string) 
 
     const emailOptions: EmailOptions = {
       to: testEmail,
-      subject: `VerifyWise Email Test - ${provider.getProviderName()}`,
+      subject: `AIPurview Email Test - ${provider.getProviderName()}`,
       html: html,
     };
 
@@ -88,7 +88,7 @@ async function testProvider(providerType: "resend" | "smtp", testEmail: string) 
 }
 
 async function main() {
-  console.log("🚀 VerifyWise Email Provider Test Suite");
+  console.log("🚀 AIPurview Email Provider Test Suite");
   console.log("=====================================");
 
   const testEmail = process.argv[2];

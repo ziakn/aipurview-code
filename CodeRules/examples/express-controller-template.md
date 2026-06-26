@@ -1,6 +1,6 @@
 # Express Controller Template
 
-Copy-paste template for creating Express controllers in VerifyWise.
+Copy-paste template for creating Express controllers in AIPurview.
 
 ## Controller File
 

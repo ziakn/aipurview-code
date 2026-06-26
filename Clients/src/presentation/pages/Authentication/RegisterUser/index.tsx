@@ -230,7 +230,7 @@ const RegisterUser: React.FC = () => {
           </Typography>
           {isInvitationValid === true ? (
             <Typography sx={{ fontSize: 16, fontWeight: "bold" }}>
-              Create VerifyWise user account
+              Create AIPurview user account
             </Typography>
           ) : (
             <Typography

@@ -3,10 +3,10 @@ import type { ArticleContent } from '../../contentTypes';
 export const inboundIntegrationsContent: ArticleContent = {
   blocks: [
     { type: 'heading', id: 'overview', level: 2, text: 'Inbound integrations' },
-    { type: 'paragraph', text: 'Two parts of VerifyWise are built to receive data from outside systems: incidents and intake forms. You can raise an incident from your own monitoring stack, and you can submit an intake form from a public website without a login.' },
+    { type: 'paragraph', text: 'Two parts of AIPurview are built to receive data from outside systems: incidents and intake forms. You can raise an incident from your own monitoring stack, and you can submit an intake form from a public website without a login.' },
 
     { type: 'heading', id: 'incidents', level: 2, text: 'Creating incidents from another system' },
-    { type: 'paragraph', text: 'If your monitoring or observability tooling detects an AI problem, it can record an incident in VerifyWise through the API. Incidents have full CRUD, all behind a token.' },
+    { type: 'paragraph', text: 'If your monitoring or observability tooling detects an AI problem, it can record an incident in AIPurview through the API. Incidents have full CRUD, all behind a token.' },
     { type: 'table', columns: [
       { key: 'method', label: 'Method & path', width: '55%' },
       { key: 'desc', label: 'Description', width: '45%' },
@@ -36,7 +36,7 @@ export const inboundIntegrationsContent: ArticleContent = {
     { type: 'callout', variant: 'info', title: 'No token needed here', text: 'The public intake routes are the one part of the platform that does not use a bearer token, because forms are meant to be filled in by people outside your organization. They are rate-limited and CAPTCHA-gated instead. Everything else in the developer guide needs a token.' },
 
     { type: 'heading', id: 'what-is-missing', level: 2, text: 'What is not available' },
-    { type: 'paragraph', text: 'VerifyWise does not send outbound webhooks for these events. Nothing calls your systems when an incident changes or a form is submitted; your side initiates every request. Automations can send email on events, but there is no action that posts to an external URL.' },
+    { type: 'paragraph', text: 'AIPurview does not send outbound webhooks for these events. Nothing calls your systems when an incident changes or a form is submitted; your side initiates every request. Automations can send email on events, but there is no action that posts to an external URL.' },
 
     { type: 'article-links', title: 'Related articles', items: [
       { collectionId: 'developers', articleId: 'platform-rest-api', title: 'Platform REST API', description: 'Auth, base URL, response shape and limits.' },

@@ -246,7 +246,7 @@ export async function testGitHubToken(token: string): Promise<IGitHubTokenTestRe
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: "application/vnd.github.v3+json",
-        "User-Agent": "VerifyWise-AI-Detection",
+        "User-Agent": "AIPurview-AI-Detection",
       },
     });
 

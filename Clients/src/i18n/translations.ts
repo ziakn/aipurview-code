@@ -1,4 +1,4 @@
-// Prototype Turkish translation dictionary for VerifyWise.
+// Prototype Turkish translation dictionary for AIPurview.
 // Maps English source text → Turkish. DOM translator looks up by source string.
 // Missing keys fall back to the English source.
 //
@@ -937,15 +937,15 @@ export const translations: Record<string, Record<string, string>> = {
       "Wählen Sie ein Projekt, um Compliance-Daten anzuzeigen",
 
     // Dashboard / home
-    "Welcome to VerifyWise": "Willkommen bei VerifyWise",
+    "Welcome to AIPurview": "Willkommen bei AIPurview",
     "Welcome": "Willkommen",
     "Getting started": "Erste Schritte",
     "Quick start guide": "Schnellstartanleitung",
     "Quick stats overview": "Schnellübersicht der Statistiken",
     "Quick add menu": "Schnellzugriffsmenü",
     "Navigating the dashboard": "Navigation im Dashboard",
-    "Installing VerifyWise": "VerifyWise installieren",
-    "Explore VerifyWise": "VerifyWise erkunden",
+    "Installing AIPurview": "AIPurview installieren",
+    "Explore AIPurview": "AIPurview erkunden",
     "User guide": "Benutzerhandbuch",
     "API documentation": "API-Dokumentation",
     "Blog": "Blog",
@@ -1362,8 +1362,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Modellkonfigurationen anzeigen und verwalten. Diese Einstellungen werden beim Ausführen eines Experiments automatisch gespeichert und für neue Experimente im selben Projekt automatisch geladen.",
     "When an automation triggers (on schedule, via webhook, or manually), its execution is recorded here with status and duration.":
       "Wenn eine Automatisierung ausgelöst wird (geplant, per Webhook oder manuell), wird ihre Ausführung hier mit Status und Dauer aufgezeichnet.",
-    "You're viewing a public demo of the VerifyWise AI governance platform. Feel free to explore using demo data, but please don't enter any personal or company information.":
-      "Sie sehen eine öffentliche Demo der VerifyWise-KI-Governance-Plattform. Erkunden Sie sie gerne mit Demodaten, geben Sie aber bitte keine personenbezogenen oder unternehmensbezogenen Daten ein.",
+    "You're viewing a public demo of the AIPurview AI governance platform. Feel free to explore using demo data, but please don't enter any personal or company information.":
+      "Sie sehen eine öffentliche Demo der AIPurview-KI-Governance-Plattform. Erkunden Sie sie gerne mit Demodaten, geben Sie aber bitte keine personenbezogenen oder unternehmensbezogenen Daten ein.",
     "Your provider API keys are encrypted using AES-256-CBC before being stored. They are only decrypted when proxying a request and are never exposed in logs.":
       "Ihre Anbieter-API-Schlüssel werden vor der Speicherung mit AES-256-CBC verschlüsselt. Sie werden nur beim Weiterleiten einer Anfrage entschlüsselt und erscheinen nie in Protokollen.",
     "Playground settings": "Playground-Einstellungen",
@@ -1566,8 +1566,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Forward": "Weiterleiten",
     "Generate audit reports": "Prüfberichte erstellen",
     "Generate Evaluation Report": "Bewertungsbericht erstellen",
-    "Generate sample data to explore VerifyWise features":
-      "Beispieldaten erstellen, um VerifyWise-Funktionen zu erkunden",
+    "Generate sample data to explore AIPurview features":
+      "Beispieldaten erstellen, um AIPurview-Funktionen zu erkunden",
     "Generate your first report": "Ersten Bericht erstellen",
     "Get new question": "Neue Frage abrufen",
     "Get support": "Support erhalten",
@@ -2367,7 +2367,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Vendor contact person": "Ansprechpartner beim Anbieter",
     "Vendor risk form": "Formular für Anbieterrisiko",
     "Vendor Risk Score Calculation": "Berechnung der Anbieter-Risikobewertung",
-    "VerifyWise AI gateway": "VerifyWise-KI-Gateway",
+    "AIPurview AI gateway": "AIPurview-KI-Gateway",
     "Version A": "Version A",
     "Version B": "Version B",
     "View mode toggle": "Ansichtsmodus umschalten",
@@ -2518,8 +2518,8 @@ export const translations: Record<string, Record<string, string>> = {
     "A use case is a real-world scenario describing how an AI system is applied within an organization. Currently you don":
       "Ein Anwendungsfall beschreibt ein reales Szenario, in dem ein KI-System in einer Organisation eingesetzt wird. Aktuell haben Sie",
     "About EvalCards": "Über EvalCards",
-    "Add a new member to give them access to the VerifyWise dashboard":
-      "Neues Mitglied hinzufügen, um ihm Zugriff auf das VerifyWise-Dashboard zu geben",
+    "Add a new member to give them access to the AIPurview dashboard":
+      "Neues Mitglied hinzufügen, um ihm Zugriff auf das AIPurview-Dashboard zu geben",
     "Add a new risk from IBM risk database": "Neues Risiko aus der IBM-Risikodatenbank hinzufügen",
     "Add a new risk from risk database": "Neues Risiko aus der Risikodatenbank hinzufügen",
     "Add a provider API key for your gateway endpoints":
@@ -2621,8 +2621,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Direkte API-Aufrufe an KI-Anbieter, die im Code erkannt wurden, einschließlich REST-Endpunkten und SDK-Methodenaufrufen.",
     "Discover AI tools being used without IT approval. Flag tools that may expose sensitive data or violate company policy.":
       "KI-Tools entdecken, die ohne IT-Genehmigung genutzt werden. Tools markieren, die sensible Daten offenlegen oder Unternehmensrichtlinien verletzen könnten.",
-    "Discover and manage plugins to extend VerifyWise functionality":
-      "Plugins entdecken und verwalten, um die VerifyWise-Funktionalität zu erweitern",
+    "Discover and manage plugins to extend AIPurview functionality":
+      "Plugins entdecken und verwalten, um die AIPurview-Funktionalität zu erweitern",
     "Discover tools": "Tools entdecken",
     "Document any known biases": "Bekannte Verzerrungen dokumentieren",
     "Done!": "Fertig!",
@@ -3202,7 +3202,7 @@ export const translations: Record<string, Record<string, string>> = {
       "Vorgefertigte Scorer für gängige Prüfungen wie exakte Übereinstimmung oder Ähnlichkeit nutzen oder eigene Bewertungslogik für domänenspezifische Anforderungen schreiben.",
     "Use the search bar and level filters above to find specific log entries. Filter by severity to focus on warnings or errors.":
       "Nutzen Sie die Suchleiste und Ebenen-Filter oben, um bestimmte Protokolleinträge zu finden. Nach Schweregrad filtern, um sich auf Warnungen oder Fehler zu konzentrieren.",
-    "VerifyWise logo": "VerifyWise-Logo",
+    "AIPurview logo": "AIPurview-Logo",
     "Warning / Pending": "Warnung / Ausstehend",
     "Wide": "Breit",
 
@@ -3256,9 +3256,9 @@ export const translations: Record<string, Record<string, string>> = {
     "e.g., Production agent key": "z. B. Produktions-Agentenschlüssel",
     "e.g., Used by the backend orchestration agent":
       "z. B. Verwendet vom Backend-Orchestrierungs-Agenten",
-    "e.g., VerifyWise Scanner Token": "z. B. VerifyWise-Scanner-Token",
-    "e.g., VerifyWise, External Vendor, Internal Team":
-      "z. B. VerifyWise, Externer Anbieter, Internes Team",
+    "e.g., AIPurview Scanner Token": "z. B. AIPurview-Scanner-Token",
+    "e.g., AIPurview, External Vendor, Internal Team":
+      "z. B. AIPurview, Externer Anbieter, Internes Team",
     "e.g., Web scraping, API, Manual": "z. B. Web-Scraping, API, Manuell",
     "e.g., Zscaler proxy": "z. B. Zscaler-Proxy",
     "e.g., abc1234...": "z. B. abc1234...",
@@ -3467,7 +3467,7 @@ export const translations: Record<string, Record<string, string>> = {
       "Suchen und wählen Sie oben Modelle aus, um ihre Funktionen nebeneinander zu vergleichen.",
 
     // Automations page
-    "Let VerifyWise do work for you": "Lassen Sie VerifyWise die Arbeit für Sie erledigen",
+    "Let AIPurview do work for you": "Lassen Sie AIPurview die Arbeit für Sie erledigen",
     "Automate your most common tasks.": "Automatisieren Sie Ihre häufigsten Aufgaben.",
     "Suggested automations": "Vorgeschlagene Automatisierungen",
     "Send vendor risk alert": "Benachrichtigung zu Anbieterrisiko senden",
@@ -3759,8 +3759,8 @@ export const translations: Record<string, Record<string, string>> = {
     "With many events logged over time, filters help you find what you need. Filter by date range, event type, or related entity to quickly locate specific governance activities. Export filtered events for reports or documentation.":
       "Bei vielen protokollierten Ereignissen helfen Filter, das Gesuchte zu finden. Filtern Sie nach Zeitraum, Ereignistyp oder verknüpfter Entität, um Governance-Aktivitäten schnell zu lokalisieren. Exportieren Sie gefilterte Ereignisse für Berichte oder Dokumentation.",
 
-    "Settings customize VerifyWise to your organization's needs.":
-      "Einstellungen passen VerifyWise an die Anforderungen Ihrer Organisation an.",
+    "Settings customize AIPurview to your organization's needs.":
+      "Einstellungen passen AIPurview an die Anforderungen Ihrer Organisation an.",
     "Configure user roles and system defaults to match your governance workflows. Taking time to properly configure settings upfront saves time and reduces confusion later. Review settings periodically as your organization grows.":
       "Konfigurieren Sie Benutzerrollen und Systemvorgaben passend zu Ihren Governance-Workflows. Eine sorgfältige Einrichtung vorab spart später Zeit und vermeidet Verwirrung. Prüfen Sie die Einstellungen periodisch beim Wachstum Ihrer Organisation.",
     "User roles control access to sensitive information.":
@@ -3888,8 +3888,8 @@ export const translations: Record<string, Record<string, string>> = {
 
     "Give every developer a governed AI endpoint in minutes.":
       "Geben Sie jedem Entwickler in Minuten einen regulierten KI-Endpunkt.",
-    "Create a virtual key, share it with a developer, and they swap their OpenAI base URL to the gateway. Every request flows through your guardrails, budget controls, and audit logs — without anyone needing a VerifyWise account.":
-      "Erstellen Sie einen virtuellen Schlüssel, geben Sie ihn an einen Entwickler weiter — dieser ändert die OpenAI-Basis-URL auf das Gateway. Jede Anfrage läuft durch Ihre Guardrails, Budgetkontrollen und Audit-Protokolle — ohne dass ein VerifyWise-Konto nötig ist.",
+    "Create a virtual key, share it with a developer, and they swap their OpenAI base URL to the gateway. Every request flows through your guardrails, budget controls, and audit logs — without anyone needing a AIPurview account.":
+      "Erstellen Sie einen virtuellen Schlüssel, geben Sie ihn an einen Entwickler weiter — dieser ändert die OpenAI-Basis-URL auf das Gateway. Jede Anfrage läuft durch Ihre Guardrails, Budgetkontrollen und Audit-Protokolle — ohne dass ein AIPurview-Konto nötig ist.",
     "Control costs per team, project, or environment.":
       "Kosten pro Team, Projekt oder Umgebung steuern.",
     "Each virtual key can carry its own monthly budget cap and rate limit. When a key exhausts its budget only that key is blocked — other keys and the Playground keep working. Budgets reset automatically on the 1st of each month.":
@@ -4209,7 +4209,7 @@ export const translations: Record<string, Record<string, string>> = {
     // i18n audit gap fill (auto-applied)
     "A concise name for your AI use case": "Ein prägnanter Name für Ihren KI-Anwendungsfall",
     "A new version is available": "Eine neue Version ist verfügbar",
-    "A new version of VerifyWise is available": "Eine neue Version von VerifyWise ist verfügbar",
+    "A new version of AIPurview is available": "Eine neue Version von AIPurview ist verfügbar",
     "AI Detection onboarding wizard": "Einrichtungsassistent für KI-Erkennung",
     "AI advisor can make mistakes. Please double-check responses.":
       "Der KI-Berater kann Fehler machen. Bitte Antworten gegenprüfen.",
@@ -4417,7 +4417,7 @@ export const translations: Record<string, Record<string, string>> = {
       "Kopieren Sie diesen Schlüssel jetzt. Sie können ihn nicht mehr einsehen.",
     "Core definition test (EU AI Act)": "Kerndefinitionstest (EU-KI-Verordnung)",
     "Create Scorer": "Bewerter erstellen",
-    "Create VerifyWise user account": "VerifyWise-Benutzerkonto erstellen",
+    "Create AIPurview user account": "AIPurview-Benutzerkonto erstellen",
     "Create a custom risk manually": "Manuell ein benutzerdefiniertes Risiko erstellen",
     "Create a new API key for programmatic access to your account.":
       "Erstellen Sie einen neuen API-Schlüssel für programmgesteuerten Zugriff auf Ihr Konto.",
@@ -4488,7 +4488,7 @@ export const translations: Record<string, Record<string, string>> = {
     "EU REGISTRATION ID": "EU-REGISTRIERUNGS-ID",
     "EU registration": "EU-Registrierung",
     "EVIDENCE LINKED TO EU AI ACT REQUIREMENTS": "MIT EU-KI-VERORDNUNG VERKNÜPFTE NACHWEISE",
-    "EXPLORE VERIFYWISE": "VERIFYWISE ERKUNDEN",
+    "EXPLORE AIPURVIEW": "AIPURVIEW ERKUNDEN",
     "Each AI tool receives a risk score from 0 to 100, recalculated nightly. The score is a weighted composite of four factors:":
       "Jedes KI-Tool erhält eine Risikobewertung von 0 bis 100, die nächtlich neu berechnet wird. Die Bewertung ist eine gewichtete Zusammensetzung aus vier Faktoren:",
     "Each save creates a new version. Publish a version to make it active on bound endpoints. Click any version to load it into the editor.":
@@ -4656,8 +4656,8 @@ export const translations: Record<string, Record<string, string>> = {
     "LangChain agents, CrewAI, AutoGen, MCP servers, and other autonomous AI systems will appear here":
       "LangChain-Agenten, CrewAI, AutoGen, MCP-Server und andere autonome KI-Systeme erscheinen hier",
     "Last login": "Letzte Anmeldung",
-    "Let's create a sample project to explore VerifyWise features hands-on.":
-      "Lassen Sie uns ein Beispielprojekt erstellen, um VerifyWise-Funktionen praktisch zu erkunden.",
+    "Let's create a sample project to explore AIPurview features hands-on.":
+      "Lassen Sie uns ein Beispielprojekt erstellen, um AIPurview-Funktionen praktisch zu erkunden.",
     "Link risks from your risk database to track which risks are addressed by this annex category.":
       "Verknüpfen Sie Risiken aus Ihrer Risikodatenbank, um zu verfolgen, welche Risiken durch diese Anhangskategorie adressiert werden.",
     "Linked": "Verknüpft",
@@ -4705,8 +4705,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Manage linked policies": "Verknüpfte Richtlinien verwalten",
     "Manage organizations": "Organisationen verwalten",
     "Manage your AI use cases": "Verwalten Sie Ihre KI-Anwendungsfälle",
-    "Manage your LLM keys for access to VerifyWise Advisor.":
-      "Verwalten Sie Ihre LLM-Schlüssel für den Zugriff auf den VerifyWise-Berater.",
+    "Manage your LLM keys for access to AIPurview Advisor.":
+      "Verwalten Sie Ihre LLM-Schlüssel für den Zugriff auf den AIPurview-Berater.",
     "Management": "Verwaltung",
     "Map your projects to regulations like EU AI Act, ISO 42001, and ISO 27001 to ensure comprehensive compliance.":
       "Ordnen Sie Ihre Projekte Vorschriften wie EU-KI-Verordnung, ISO 42001 und ISO 27001 zu, um umfassende Compliance sicherzustellen.",
@@ -4937,7 +4937,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Post PR comments": "PR-Kommentare posten",
     "Post status checks": "Statusprüfungen posten",
     "Post-market monitoring": "Post-Market-Überwachung",
-    "Powered by VerifyWise": "Bereitgestellt von VerifyWise",
+    "Powered by AIPurview": "Bereitgestellt von AIPurview",
     "Prediction column": "Vorhersagespalte",
     "Preview not available for this file type": "Vorschau für diesen Dateityp nicht verfügbar",
     "Preview the onboarding modal for the AI Detection module.":
@@ -5264,8 +5264,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Vektordatenbanken (Pinecone, Chroma, Qdrant), Dokumentenlader und Einbettungsmodelle erscheinen hier",
     "Vendor scorecard (advanced)": "Anbieter-Scorecard (erweitert)",
     "Verify": "Verifizieren",
-    "VerifyWise is your AI governance and compliance platform. In 3 minutes, we'll help you get started with managing AI risks, compliance frameworks, and building trust.":
-      "VerifyWise ist Ihre KI-Governance- und Compliance-Plattform. In 3 Minuten helfen wir Ihnen beim Einstieg in die Verwaltung von KI-Risiken, Compliance-Rahmenwerken und Vertrauensaufbau.",
+    "AIPurview is your AI governance and compliance platform. In 3 minutes, we'll help you get started with managing AI risks, compliance frameworks, and building trust.":
+      "AIPurview ist Ihre KI-Governance- und Compliance-Plattform. In 3 Minuten helfen wir Ihnen beim Einstieg in die Verwaltung von KI-Risiken, Compliance-Rahmenwerken und Vertrauensaufbau.",
     "Versions": "Versionen",
     "Very high risks": "Sehr hohe Risiken",
     "Very low risks": "Sehr geringe Risiken",
@@ -5301,7 +5301,7 @@ export const translations: Record<string, Record<string, string>> = {
       "Wenn aktiviert, müssen Tool-Aufrufe vor der Ausführung genehmigt werden.",
     "When to begin monitoring": "Wann mit der Überwachung beginnen",
     "Who to notify on escalation": "Wer bei Eskalation benachrichtigt werden soll",
-    "Why VerifyWise?": "Warum VerifyWise?",
+    "Why AIPurview?": "Warum AIPurview?",
     "Win Rate": "Gewinnrate",
     "Winner": "Gewinner",
     "Wins": "Siege",
@@ -5309,8 +5309,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Word (.docx)": "Word (.docx)",
     "Workflow:": "Ablauf:",
     "X-API-Key": "X-API-Key",
-    "You are ready to work with VerifyWise and manage your AI governance process":
-      "Sie sind bereit, mit VerifyWise zu arbeiten und Ihren KI-Governance-Prozess zu verwalten",
+    "You are ready to work with AIPurview and manage your AI governance process":
+      "Sie sind bereit, mit AIPurview zu arbeiten und Ihren KI-Governance-Prozess zu verwalten",
     "You can re-create this guardrail at any time.":
       "Sie können diesen Guardrail jederzeit neu erstellen.",
     "You can skip this step and invite team members later from the organization settings.":
@@ -5440,8 +5440,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Fügen Sie Ihrem Inventar neue KI-Modelle mit umfassenden Metadaten hinzu, einschließlich Anbieter, Version, Fähigkeiten, Sicherheitsbewertung und Nutzungsdetails.",
     "Add observability and monitoring capabilities to track system health and performance.":
       "Fügen Sie Observability- und Überwachungsfunktionen hinzu, um Systemzustand und Leistung zu verfolgen.",
-    "Add your first LLM API key to enable access to your VerifyWise Advisor.":
-      "Fügen Sie Ihren ersten LLM-API-Schlüssel hinzu, um den Zugriff auf den VerifyWise-Berater zu aktivieren.",
+    "Add your first LLM API key to enable access to your AIPurview Advisor.":
+      "Fügen Sie Ihren ersten LLM-API-Schlüssel hinzu, um den Zugriff auf den AIPurview-Berater zu aktivieren.",
     "Address immediately - critical for compliance":
       "Sofort behandeln – entscheidend für die Compliance",
     "Address soon - important for compliance": "Bald behandeln – wichtig für die Compliance",
@@ -5609,8 +5609,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Block request (fail-closed)": "Anfrage blockieren (Fail-Closed)",
     "Body governed by public law": "Einrichtung des öffentlichen Rechts",
     "Bot": "Bot",
-    "Browse all available plugins to extend VerifyWise functionality.":
-      "Durchsuchen Sie alle verfügbaren Plugins, um die Funktionalität von VerifyWise zu erweitern.",
+    "Browse all available plugins to extend AIPurview functionality.":
+      "Durchsuchen Sie alle verfügbaren Plugins, um die Funktionalität von AIPurview zu erweitern.",
     "Browse and install available plugins": "Verfügbare Plugins durchsuchen und installieren",
     "Build evaluation datasets with input/output pairs and golden answers for benchmarking.":
       "Erstellen Sie Bewertungs-Datensätze mit Eingabe/Ausgabe-Paaren und Goldantworten für Benchmarks.",
@@ -5686,8 +5686,8 @@ export const translations: Record<string, Record<string, string>> = {
       'Klicken Sie auf "Nachweisdateien hinzufügen", um Dokumentation für diese Unterkategorie hochzuladen',
     'Click "Add/remove risks" to link risks from your risk database':
       'Klicken Sie auf "Risiken hinzufügen/entfernen", um Risiken aus Ihrer Risikodatenbank zu verknüpfen',
-    'Click "Create use case" below to proceed with setting up this AI use case in VerifyWise.':
-      'Klicken Sie unten auf "Anwendungsfall erstellen", um diesen KI-Anwendungsfall in VerifyWise einzurichten.',
+    'Click "Create use case" below to proceed with setting up this AI use case in AIPurview.':
+      'Klicken Sie unten auf "Anwendungsfall erstellen", um diesen KI-Anwendungsfall in AIPurview einzurichten.',
     "Click the card again or click Total to see all datasets.":
       "Klicken Sie erneut auf die Karte oder auf Gesamt, um alle Datensätze zu sehen.",
     "Click the card again or click Total to see all models.":
@@ -6741,8 +6741,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Regeln verwalten, die übereinstimmende Befunde bei zukünftigen Scans unterdrücken",
     "Manage team members and their roles": "Teammitglieder und ihre Rollen verwalten",
     "Manage vendor relationships": "Anbieterbeziehungen verwalten",
-    "Manage your API keys for programmatic access to VerifyWise features":
-      "Verwalten Sie Ihre API-Schlüssel für den programmatischen Zugriff auf VerifyWise-Funktionen",
+    "Manage your API keys for programmatic access to AIPurview features":
+      "Verwalten Sie Ihre API-Schlüssel für den programmatischen Zugriff auf AIPurview-Funktionen",
     "Manage your documents": "Verwalten Sie Ihre Dokumente",
     "Management System": "Managementsystem",
     "Management of third-party AI related risks":
@@ -7327,8 +7327,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Session Expired": "Sitzung abgelaufen",
     "Set review deadlines with automated due-soon reminders via email and Slack.":
       "Legen Sie Überprüfungsfristen mit automatischen Erinnerungen für demnächst fällige Termine per E-Mail und Slack fest.",
-    "Settings customize VerifyWise to your organization":
-      "Einstellungen passen VerifyWise an Ihre Organisation an",
+    "Settings customize AIPurview to your organization":
+      "Einstellungen passen AIPurview an Ihre Organisation an",
     "Shadow AI, agent discovery, and bias audits": "Schatten-KI, Agentenerkennung und Bias-Audits",
     "Share link copied to clipboard!": "Freigabelink in die Zwischenablage kopiert!",
     "Share link settings updated!": "Einstellungen des Freigabelinks aktualisiert!",
@@ -7484,7 +7484,7 @@ export const translations: Record<string, Record<string, string>> = {
       "Diese Aktion kann nicht rückgängig gemacht werden. Alle Integrationen, die diesen Schlüssel verwenden, funktionieren nicht mehr.",
     "This is a demo project - you can delete it anytime":
       "Dies ist ein Demoprojekt – Sie können es jederzeit löschen",
-    "This is a test message from VerifyWise.": "Dies ist eine Testnachricht von VerifyWise.",
+    "This is a test message from AIPurview.": "Dies ist eine Testnachricht von AIPurview.",
     "This is an automated notification.": "Dies ist eine automatisierte Benachrichtigung.",
     "This provider already has a key configured. Remove it first to add a new one.":
       "Für diesen Anbieter ist bereits ein Schlüssel konfiguriert. Entfernen Sie ihn zuerst, um einen neuen hinzuzufügen.",
@@ -7589,8 +7589,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Unexpected error. Please try again.": "Unerwarteter Fehler. Bitte erneut versuchen.",
     "Unknown error": "Unbekannter Fehler",
     "Unknown error occurred": "Unbekannter Fehler aufgetreten",
-    "Unlock the full potential of VerifyWise AI governance with our premium features.":
-      "Schöpfen Sie das volle Potenzial der VerifyWise-KI-Governance mit unseren Premium-Funktionen aus.",
+    "Unlock the full potential of AIPurview AI governance with our premium features.":
+      "Schöpfen Sie das volle Potenzial der AIPurview-KI-Governance mit unseren Premium-Funktionen aus.",
     "Unsure": "Unsicher",
     "Untitled chat": "Unbenannter Chat",
     "Up-to-date documentation ensures accurate representation of system functionalities and compliance status.":
@@ -7871,7 +7871,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Wednesday": "Mittwoch",
     "Weekly": "Wöchentlich",
     "Weighing risk dimensions": "Risikodimensionen abwägen",
-    "Welcome to Verifywise": "Willkommen bei VerifyWise",
+    "Welcome to AIPurview": "Willkommen bei AIPurview",
     "Well-defined processes enable efficient and accurate responses to regulatory inquiries or audits.":
       "Klar definierte Prozesse ermöglichen effiziente und genaue Reaktionen auf regulatorische Anfragen oder Audits.",
     "What business goal does this serve?": "Welchem Geschäftsziel dient dies?",
@@ -7902,7 +7902,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Workers": "Arbeitnehmer",
     "Workflow": "Ablauf",
     "Yes/No": "Ja/Nein",
-    "You are ready to work with VerifyWise": "Sie sind bereit, mit VerifyWise zu arbeiten",
+    "You are ready to work with AIPurview": "Sie sind bereit, mit AIPurview zu arbeiten",
     "You can always revisit this onboarding from your profile menu.":
       "Sie können dieses Onboarding jederzeit aus Ihrem Profilmenü erneut aufrufen.",
     "Your AI governance and compliance platform. In 3 minutes, we":
@@ -9402,12 +9402,12 @@ export const translations: Record<string, Record<string, string>> = {
     "No use cases created yet": "Aucun cas d'usage créé pour le moment",
 
     // Dashboard / home
-    "Welcome to VerifyWise": "Bienvenue dans VerifyWise",
+    "Welcome to AIPurview": "Bienvenue dans AIPurview",
     "Welcome": "Bienvenue",
     "Getting started": "Pour commencer",
     "Quick start guide": "Guide de démarrage rapide",
     "Navigating the dashboard": "Naviguer dans le tableau de bord",
-    "Explore VerifyWise": "Explorer VerifyWise",
+    "Explore AIPurview": "Explorer AIPurview",
     "User guide": "Guide utilisateur",
     "API documentation": "Documentation API",
     "Blog": "Blog",
@@ -9534,7 +9534,7 @@ export const translations: Record<string, Record<string, string>> = {
     "All files": "Tous les fichiers",
 
     // Automations
-    "Let VerifyWise do work for you": "Laissez VerifyWise travailler pour vous",
+    "Let AIPurview do work for you": "Laissez AIPurview travailler pour vous",
     "Automate your most common tasks.": "Automatisez vos tâches les plus courantes.",
     "Suggested automations": "Automatisations suggérées",
     "Send vendor risk alert": "Envoyer une alerte de risque fournisseur",
@@ -9882,7 +9882,7 @@ export const translations: Record<string, Record<string, string>> = {
       "Sélectionnez un projet pour voir les données de conformité",
     "Quick stats overview": "Vue d'ensemble rapide des statistiques",
     "Quick add menu": "Menu d'ajout rapide",
-    "Installing VerifyWise": "Installer VerifyWise",
+    "Installing AIPurview": "Installer AIPurview",
     "Deadline view": "Vue des échéances",
     "Operations view": "Vue opérationnelle",
     "AI PROJECT": "PROJET IA",
@@ -10218,8 +10218,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Consultez et gérez les configurations de modèles. Ces préférences sont enregistrées automatiquement lors de l'exécution d'une expérience et rechargées pour les nouvelles expériences du même projet.",
     "When an automation triggers (on schedule, via webhook, or manually), its execution is recorded here with status and duration.":
       "Lorsqu'une automatisation se déclenche (planifiée, via webhook ou manuellement), son exécution est enregistrée ici avec son statut et sa durée.",
-    "You're viewing a public demo of the VerifyWise AI governance platform. Feel free to explore using demo data, but please don't enter any personal or company information.":
-      "Vous consultez une démo publique de la plateforme de gouvernance IA VerifyWise. Explorez librement avec les données de démonstration, mais n'y saisissez pas d'informations personnelles ou d'entreprise.",
+    "You're viewing a public demo of the AIPurview AI governance platform. Feel free to explore using demo data, but please don't enter any personal or company information.":
+      "Vous consultez une démo publique de la plateforme de gouvernance IA AIPurview. Explorez librement avec les données de démonstration, mais n'y saisissez pas d'informations personnelles ou d'entreprise.",
     "Your provider API keys are encrypted using AES-256-CBC before being stored. They are only decrypted when proxying a request and are never exposed in logs.":
       "Vos clés API de fournisseurs sont chiffrées avec AES-256-CBC avant stockage. Elles ne sont déchiffrées que pour relayer une requête et ne sont jamais exposées dans les journaux.",
     "Playground settings": "Paramètres du playground",
@@ -10408,8 +10408,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Forward": "Transférer",
     "Generate audit reports": "Générer des rapports d'audit",
     "Generate Evaluation Report": "Générer un rapport d'évaluation",
-    "Generate sample data to explore VerifyWise features":
-      "Générer des données d'exemple pour explorer les fonctionnalités de VerifyWise",
+    "Generate sample data to explore AIPurview features":
+      "Générer des données d'exemple pour explorer les fonctionnalités de AIPurview",
     "Generate your first report": "Générer votre premier rapport",
     "Get new question": "Obtenir une nouvelle question",
     "Get support": "Obtenir de l'aide",
@@ -11190,7 +11190,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Vendor contact person": "Personne de contact chez le fournisseur",
     "Vendor risk form": "Formulaire de risque fournisseur",
     "Vendor Risk Score Calculation": "Calcul du score de risque fournisseur",
-    "VerifyWise AI gateway": "Passerelle IA VerifyWise",
+    "AIPurview AI gateway": "Passerelle IA AIPurview",
     "Version A": "Version A",
     "Version B": "Version B",
     "View mode toggle": "Basculer le mode d'affichage",
@@ -11337,8 +11337,8 @@ export const translations: Record<string, Record<string, string>> = {
     "A use case is a real-world scenario describing how an AI system is applied within an organization. Currently you don":
       "Un cas d'usage est un scénario réel décrivant comment un système IA est utilisé dans une organisation. Actuellement vous n'avez",
     "About EvalCards": "À propos des EvalCards",
-    "Add a new member to give them access to the VerifyWise dashboard":
-      "Ajoutez un nouveau membre pour lui donner accès au tableau de bord VerifyWise",
+    "Add a new member to give them access to the AIPurview dashboard":
+      "Ajoutez un nouveau membre pour lui donner accès au tableau de bord AIPurview",
     "Add a new risk from IBM risk database":
       "Ajouter un nouveau risque depuis la base de risques IBM",
     "Add a new risk from risk database": "Ajouter un nouveau risque depuis la base de risques",
@@ -11443,8 +11443,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Appels API directs à des fournisseurs IA détectés dans le code, y compris points de terminaison REST et invocations de méthodes SDK.",
     "Discover AI tools being used without IT approval. Flag tools that may expose sensitive data or violate company policy.":
       "Découvrez les outils IA utilisés sans validation de la DSI. Signalez les outils susceptibles d'exposer des données sensibles ou de violer la politique de l'entreprise.",
-    "Discover and manage plugins to extend VerifyWise functionality":
-      "Découvrir et gérer les plugins pour étendre les fonctionnalités de VerifyWise",
+    "Discover and manage plugins to extend AIPurview functionality":
+      "Découvrir et gérer les plugins pour étendre les fonctionnalités de AIPurview",
     "Discover tools": "Découvrir des outils",
     "Document any known biases": "Documentez les biais connus",
     "Done!": "Terminé !",
@@ -12028,7 +12028,7 @@ export const translations: Record<string, Record<string, string>> = {
       "Utilisez des scorers prêts à l'emploi pour des vérifications courantes comme la correspondance exacte ou la similarité, ou écrivez votre propre logique de notation pour des besoins spécifiques à votre domaine.",
     "Use the search bar and level filters above to find specific log entries. Filter by severity to focus on warnings or errors.":
       "Utilisez la barre de recherche et les filtres de niveau ci-dessus pour trouver des entrées de journal spécifiques. Filtrez par gravité pour vous concentrer sur les avertissements ou erreurs.",
-    "VerifyWise logo": "Logo VerifyWise",
+    "AIPurview logo": "Logo AIPurview",
     "Warning / Pending": "Avertissement / En attente",
     "Wide": "Large",
     "e.g. 4096": "ex. 4096",
@@ -12083,9 +12083,9 @@ export const translations: Record<string, Record<string, string>> = {
     "e.g., Production agent key": "ex. Clé d'agent de production",
     "e.g., Used by the backend orchestration agent":
       "ex. Utilisé par l'agent d'orchestration backend",
-    "e.g., VerifyWise Scanner Token": "ex. Jeton VerifyWise Scanner",
-    "e.g., VerifyWise, External Vendor, Internal Team":
-      "ex. VerifyWise, fournisseur externe, équipe interne",
+    "e.g., AIPurview Scanner Token": "ex. Jeton AIPurview Scanner",
+    "e.g., AIPurview, External Vendor, Internal Team":
+      "ex. AIPurview, fournisseur externe, équipe interne",
     "e.g., Web scraping, API, Manual": "ex. Web scraping, API, manuel",
     "e.g., Zscaler proxy": "ex. Proxy Zscaler",
     "e.g., abc1234...": "ex. abc1234...",
@@ -12529,8 +12529,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Filtrer les événements pour trouver rapidement les informations pertinentes.",
     "With many events logged over time, filters help you find what you need. Filter by date range, event type, or related entity to quickly locate specific governance activities. Export filtered events for reports or documentation.":
       "Avec de nombreux événements journalisés dans le temps, les filtres vous aident à trouver ce dont vous avez besoin. Filtrez par plage de dates, type d'événement ou entité liée pour localiser rapidement des activités de gouvernance. Exportez les événements filtrés pour les rapports ou la documentation.",
-    "Settings customize VerifyWise to your organization's needs.":
-      "Les paramètres adaptent VerifyWise aux besoins de votre organisation.",
+    "Settings customize AIPurview to your organization's needs.":
+      "Les paramètres adaptent AIPurview aux besoins de votre organisation.",
     "Configure user roles and system defaults to match your governance workflows. Taking time to properly configure settings upfront saves time and reduces confusion later. Review settings periodically as your organization grows.":
       "Configurez les rôles utilisateur et les valeurs par défaut pour correspondre à vos flux de gouvernance. Prendre le temps de bien configurer en amont fait gagner du temps et réduit la confusion par la suite. Revoyez les paramètres périodiquement à mesure que votre organisation grandit.",
     "User roles control access to sensitive information.":
@@ -12647,8 +12647,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Définissez une limite mensuelle de dépenses pour maîtriser les coûts. Lorsque la limite stricte est activée, les requêtes sont rejetées une fois le budget dépassé. Utilisez le seuil d'alerte pour être averti en amont.",
     "Give every developer a governed AI endpoint in minutes.":
       "Donnez à chaque développeur un point de terminaison IA encadré en quelques minutes.",
-    "Create a virtual key, share it with a developer, and they swap their OpenAI base URL to the gateway. Every request flows through your guardrails, budget controls, and audit logs — without anyone needing a VerifyWise account.":
-      "Créez une clé virtuelle, partagez-la avec un développeur, et il remplace son URL de base OpenAI par celle de la passerelle. Chaque requête passe par vos garde-fous, contrôles de budget et journaux d'audit — sans que personne n'ait besoin d'un compte VerifyWise.",
+    "Create a virtual key, share it with a developer, and they swap their OpenAI base URL to the gateway. Every request flows through your guardrails, budget controls, and audit logs — without anyone needing a AIPurview account.":
+      "Créez une clé virtuelle, partagez-la avec un développeur, et il remplace son URL de base OpenAI par celle de la passerelle. Chaque requête passe par vos garde-fous, contrôles de budget et journaux d'audit — sans que personne n'ait besoin d'un compte AIPurview.",
     "Control costs per team, project, or environment.":
       "Contrôler les coûts par équipe, projet ou environnement.",
     "Each virtual key can carry its own monthly budget cap and rate limit. When a key exhausts its budget only that key is blocked — other keys and the Playground keep working. Budgets reset automatically on the 1st of each month.":
@@ -12868,7 +12868,7 @@ export const translations: Record<string, Record<string, string>> = {
     // i18n audit gap fill (auto-applied)
     "A concise name for your AI use case": "Un nom concis pour votre cas d'usage IA",
     "A new version is available": "Une nouvelle version est disponible",
-    "A new version of VerifyWise is available": "Une nouvelle version de VerifyWise est disponible",
+    "A new version of AIPurview is available": "Une nouvelle version de AIPurview est disponible",
     "AI Detection onboarding wizard": "Assistant d'intégration de la détection IA",
     "AI advisor can make mistakes. Please double-check responses.":
       "Le conseiller IA peut faire des erreurs. Vérifiez les réponses.",
@@ -13076,7 +13076,7 @@ export const translations: Record<string, Record<string, string>> = {
       "Copiez cette clé maintenant. Vous ne pourrez plus la voir.",
     "Core definition test (EU AI Act)": "Test de définition centrale (Règlement IA de l'UE)",
     "Create Scorer": "Créer un évaluateur",
-    "Create VerifyWise user account": "Créer un compte utilisateur VerifyWise",
+    "Create AIPurview user account": "Créer un compte utilisateur AIPurview",
     "Create a custom risk manually": "Créer manuellement un risque personnalisé",
     "Create a new API key for programmatic access to your account.":
       "Créez une nouvelle clé API pour un accès programmatique à votre compte.",
@@ -13147,7 +13147,7 @@ export const translations: Record<string, Record<string, string>> = {
     "EU registration": "Enregistrement UE",
     "EVIDENCE LINKED TO EU AI ACT REQUIREMENTS":
       "PREUVES LIÉES AUX EXIGENCES DU RÈGLEMENT IA DE L'UE",
-    "EXPLORE VERIFYWISE": "EXPLORER VERIFYWISE",
+    "EXPLORE AIPURVIEW": "EXPLORER AIPURVIEW",
     "Each AI tool receives a risk score from 0 to 100, recalculated nightly. The score is a weighted composite of four factors:":
       "Chaque outil IA reçoit un score de risque de 0 à 100, recalculé chaque nuit. Le score est une combinaison pondérée de quatre facteurs :",
     "Each save creates a new version. Publish a version to make it active on bound endpoints. Click any version to load it into the editor.":
@@ -13315,8 +13315,8 @@ export const translations: Record<string, Record<string, string>> = {
     "LangChain agents, CrewAI, AutoGen, MCP servers, and other autonomous AI systems will appear here":
       "Les agents LangChain, CrewAI, AutoGen, les serveurs MCP et d'autres systèmes IA autonomes apparaîtront ici",
     "Last login": "Dernière connexion",
-    "Let's create a sample project to explore VerifyWise features hands-on.":
-      "Créons un projet d'exemple pour explorer les fonctionnalités de VerifyWise en pratique.",
+    "Let's create a sample project to explore AIPurview features hands-on.":
+      "Créons un projet d'exemple pour explorer les fonctionnalités de AIPurview en pratique.",
     "Link risks from your risk database to track which risks are addressed by this annex category.":
       "Liez les risques de votre base de risques pour suivre quels risques sont traités par cette catégorie d'annexe.",
     "Linked": "Lié",
@@ -13364,8 +13364,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Manage linked policies": "Gérer les politiques liées",
     "Manage organizations": "Gérer les organisations",
     "Manage your AI use cases": "Gérez vos cas d'usage IA",
-    "Manage your LLM keys for access to VerifyWise Advisor.":
-      "Gérez vos clés LLM pour accéder au VerifyWise Advisor.",
+    "Manage your LLM keys for access to AIPurview Advisor.":
+      "Gérez vos clés LLM pour accéder au AIPurview Advisor.",
     "Management": "Gestion",
     "Map your projects to regulations like EU AI Act, ISO 42001, and ISO 27001 to ensure comprehensive compliance.":
       "Mappez vos projets à des réglementations comme le Règlement IA de l'UE, ISO 42001 et ISO 27001 pour assurer une conformité complète.",
@@ -13597,7 +13597,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Post PR comments": "Publier des commentaires PR",
     "Post status checks": "Publier des vérifications de statut",
     "Post-market monitoring": "Surveillance post-commercialisation",
-    "Powered by VerifyWise": "Propulsé par VerifyWise",
+    "Powered by AIPurview": "Propulsé par AIPurview",
     "Prediction column": "Colonne de prédiction",
     "Preview not available for this file type": "Aperçu non disponible pour ce type de fichier",
     "Preview the onboarding modal for the AI Detection module.":
@@ -13922,8 +13922,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Les bases de données vectorielles (Pinecone, Chroma, Qdrant), les chargeurs de documents et les modèles d'embedding apparaîtront ici",
     "Vendor scorecard (advanced)": "Carte de score fournisseur (avancée)",
     "Verify": "Vérifier",
-    "VerifyWise is your AI governance and compliance platform. In 3 minutes, we'll help you get started with managing AI risks, compliance frameworks, and building trust.":
-      "VerifyWise est votre plateforme de gouvernance et de conformité IA. En 3 minutes, nous vous aiderons à démarrer la gestion des risques IA, des référentiels de conformité et la construction de la confiance.",
+    "AIPurview is your AI governance and compliance platform. In 3 minutes, we'll help you get started with managing AI risks, compliance frameworks, and building trust.":
+      "AIPurview est votre plateforme de gouvernance et de conformité IA. En 3 minutes, nous vous aiderons à démarrer la gestion des risques IA, des référentiels de conformité et la construction de la confiance.",
     "Versions": "Versions",
     "Very high risks": "Risques très élevés",
     "Very low risks": "Risques très faibles",
@@ -13960,7 +13960,7 @@ export const translations: Record<string, Record<string, string>> = {
       "Lorsqu'activé, les invocations d'outils doivent être approuvées avant l'exécution.",
     "When to begin monitoring": "Quand commencer la surveillance",
     "Who to notify on escalation": "Qui notifier en cas d'escalade",
-    "Why VerifyWise?": "Pourquoi VerifyWise ?",
+    "Why AIPurview?": "Pourquoi AIPurview ?",
     "Win Rate": "Taux de victoire",
     "Winner": "Gagnant",
     "Wins": "Victoires",
@@ -13968,8 +13968,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Word (.docx)": "Word (.docx)",
     "Workflow:": "Flux :",
     "X-API-Key": "X-API-Key",
-    "You are ready to work with VerifyWise and manage your AI governance process":
-      "Vous êtes prêt à utiliser VerifyWise et à gérer votre processus de gouvernance IA",
+    "You are ready to work with AIPurview and manage your AI governance process":
+      "Vous êtes prêt à utiliser AIPurview et à gérer votre processus de gouvernance IA",
     "You can re-create this guardrail at any time.":
       "Vous pouvez recréer ce garde-fou à tout moment.",
     "You can skip this step and invite team members later from the organization settings.":
@@ -14096,8 +14096,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Ajoutez de nouveaux modèles IA à votre inventaire avec des métadonnées complètes incluant fournisseur, version, capacités, évaluation de sécurité et détails d'utilisation.",
     "Add observability and monitoring capabilities to track system health and performance.":
       "Ajoutez des capacités d'observabilité et de surveillance pour suivre la santé et les performances du système.",
-    "Add your first LLM API key to enable access to your VerifyWise Advisor.":
-      "Ajoutez votre première clé API LLM pour activer l'accès à votre VerifyWise Advisor.",
+    "Add your first LLM API key to enable access to your AIPurview Advisor.":
+      "Ajoutez votre première clé API LLM pour activer l'accès à votre AIPurview Advisor.",
     "Address immediately - critical for compliance":
       "À traiter immédiatement — critique pour la conformité",
     "Address soon - important for compliance":
@@ -14265,8 +14265,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Block request (fail-closed)": "Bloquer la requête (fail-closed)",
     "Body governed by public law": "Organisme de droit public",
     "Bot": "Bot",
-    "Browse all available plugins to extend VerifyWise functionality.":
-      "Parcourez tous les plugins disponibles pour étendre les fonctionnalités de VerifyWise.",
+    "Browse all available plugins to extend AIPurview functionality.":
+      "Parcourez tous les plugins disponibles pour étendre les fonctionnalités de AIPurview.",
     "Browse and install available plugins": "Parcourir et installer les plugins disponibles",
     "Build evaluation datasets with input/output pairs and golden answers for benchmarking.":
       "Créez des jeux de données d'évaluation avec des paires entrée/sortie et des réponses de référence pour le benchmark.",
@@ -14342,8 +14342,8 @@ export const translations: Record<string, Record<string, string>> = {
       'Cliquez sur "Ajouter des fichiers de preuve" pour téléverser la documentation pour cette sous-catégorie',
     'Click "Add/remove risks" to link risks from your risk database':
       'Cliquez sur "Ajouter/supprimer des risques" pour lier les risques de votre base de risques',
-    'Click "Create use case" below to proceed with setting up this AI use case in VerifyWise.':
-      "Cliquez sur \"Créer un cas d'usage\" ci-dessous pour configurer ce cas d'usage IA dans VerifyWise.",
+    'Click "Create use case" below to proceed with setting up this AI use case in AIPurview.':
+      "Cliquez sur \"Créer un cas d'usage\" ci-dessous pour configurer ce cas d'usage IA dans AIPurview.",
     "Click the card again or click Total to see all datasets.":
       "Cliquez à nouveau sur la carte ou sur Total pour voir tous les jeux de données.",
     "Click the card again or click Total to see all models.":
@@ -15402,8 +15402,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Gérer les règles qui suppriment les résultats correspondants lors des futures analyses",
     "Manage team members and their roles": "Gérer les membres de l'équipe et leurs rôles",
     "Manage vendor relationships": "Gérer les relations fournisseurs",
-    "Manage your API keys for programmatic access to VerifyWise features":
-      "Gérez vos clés API pour l'accès programmatique aux fonctionnalités VerifyWise",
+    "Manage your API keys for programmatic access to AIPurview features":
+      "Gérez vos clés API pour l'accès programmatique aux fonctionnalités AIPurview",
     "Manage your documents": "Gérez vos documents",
     "Management System": "Système de management",
     "Management of third-party AI related risks": "Gestion des risques liés à l'IA tierce",
@@ -15986,8 +15986,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Session Expired": "Session expirée",
     "Set review deadlines with automated due-soon reminders via email and Slack.":
       "Définissez des échéances d'examen avec des rappels automatiques pour les échéances à venir par e-mail et Slack.",
-    "Settings customize VerifyWise to your organization":
-      "Les paramètres personnalisent VerifyWise pour votre organisation",
+    "Settings customize AIPurview to your organization":
+      "Les paramètres personnalisent AIPurview pour votre organisation",
     "Shadow AI, agent discovery, and bias audits":
       "Shadow AI, découverte d'agents et audits de biais",
     "Share link copied to clipboard!": "Lien de partage copié dans le presse-papiers !",
@@ -16144,7 +16144,7 @@ export const translations: Record<string, Record<string, string>> = {
       "Cette action est irréversible. Toute intégration utilisant cette clé cessera de fonctionner.",
     "This is a demo project - you can delete it anytime":
       "Ceci est un projet de démonstration — vous pouvez le supprimer à tout moment",
-    "This is a test message from VerifyWise.": "Ceci est un message de test de VerifyWise.",
+    "This is a test message from AIPurview.": "Ceci est un message de test de AIPurview.",
     "This is an automated notification.": "Ceci est une notification automatique.",
     "This provider already has a key configured. Remove it first to add a new one.":
       "Ce fournisseur a déjà une clé configurée. Supprimez-la d'abord pour en ajouter une nouvelle.",
@@ -16248,8 +16248,8 @@ export const translations: Record<string, Record<string, string>> = {
     "Unexpected error. Please try again.": "Erreur inattendue. Veuillez réessayer.",
     "Unknown error": "Erreur inconnue",
     "Unknown error occurred": "Une erreur inconnue s'est produite",
-    "Unlock the full potential of VerifyWise AI governance with our premium features.":
-      "Débloquez tout le potentiel de la gouvernance IA VerifyWise avec nos fonctionnalités premium.",
+    "Unlock the full potential of AIPurview AI governance with our premium features.":
+      "Débloquez tout le potentiel de la gouvernance IA AIPurview avec nos fonctionnalités premium.",
     "Unsure": "Incertain",
     "Untitled chat": "Chat sans titre",
     "Up-to-date documentation ensures accurate representation of system functionalities and compliance status.":
@@ -16529,7 +16529,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Wednesday": "Mercredi",
     "Weekly": "Hebdomadaire",
     "Weighing risk dimensions": "Pondération des dimensions de risque",
-    "Welcome to Verifywise": "Bienvenue sur VerifyWise",
+    "Welcome to AIPurview": "Bienvenue sur AIPurview",
     "Well-defined processes enable efficient and accurate responses to regulatory inquiries or audits.":
       "Des processus bien définis permettent des réponses efficaces et précises aux demandes ou audits réglementaires.",
     "What business goal does this serve?": "Quel objectif commercial cela sert-il ?",
@@ -16560,7 +16560,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Workers": "Travailleurs",
     "Workflow": "Flux de travail",
     "Yes/No": "Oui/Non",
-    "You are ready to work with VerifyWise": "Vous êtes prêt à utiliser VerifyWise",
+    "You are ready to work with AIPurview": "Vous êtes prêt à utiliser AIPurview",
     "You can always revisit this onboarding from your profile menu.":
       "Vous pouvez toujours revoir cette intégration depuis le menu de votre profil.",
     "Your AI governance and compliance platform. In 3 minutes, we":
@@ -18038,15 +18038,15 @@ export const translations: Record<string, Record<string, string>> = {
     "Error updating task priority": "Error al actualizar la prioridad de la tarea",
     "Error updating task status": "Error al actualizar el estado de la tarea",
     "Cannot update training without ID": "No se puede actualizar la formación sin un ID",
-    "Welcome to VerifyWise": "Te damos la bienvenida a VerifyWise",
+    "Welcome to AIPurview": "Te damos la bienvenida a AIPurview",
     "Welcome": "Bienvenido",
     "Getting started": "Primeros pasos",
     "Quick start guide": "Guía de inicio rápido",
     "Quick stats overview": "Resumen rápido de estadísticas",
     "Quick add menu": "Menú de adición rápida",
     "Navigating the dashboard": "Navegar por el panel",
-    "Installing VerifyWise": "Instalar VerifyWise",
-    "Explore VerifyWise": "Explorar VerifyWise",
+    "Installing AIPurview": "Instalar AIPurview",
+    "Explore AIPurview": "Explorar AIPurview",
     "User guide": "Guía del usuario",
     "API documentation": "Documentación de la API",
     "Blog": "Blog",
@@ -19222,7 +19222,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Vendor contact person": "Persona de contacto del proveedor",
     "Vendor risk form": "Formulario de riesgo del proveedor",
     "Vendor Risk Score Calculation": "Cálculo de la puntuación de riesgo del proveedor",
-    "VerifyWise AI gateway": "VerifyWise AI gateway",
+    "AIPurview AI gateway": "AIPurview AI gateway",
     "Version A": "Versión A",
     "Version B": "Versión B",
     "View mode toggle": "Alternar modo de visualización",
@@ -19584,7 +19584,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Top users": "Usuarios principales",
     "Total AI/ML detections found in this scan":
       "Total de detecciones de IA/ML encontradas en este análisis",
-    "VerifyWise logo": "Logotipo de VerifyWise",
+    "AIPurview logo": "Logotipo de AIPurview",
     "Warning / Pending": "Advertencia / Pendiente",
     "Wide": "Ancho",
     "e.g. 4096": "p. ej. 4096",
@@ -19634,7 +19634,7 @@ export const translations: Record<string, Record<string, string>> = {
     "e.g., Production OpenAI key": "p. ej., Clave de OpenAI de producción",
     "e.g., Production Search Server": "p. ej., Servidor de búsqueda de producción",
     "e.g., Production agent key": "p. ej., Clave de agente de producción",
-    "e.g., VerifyWise Scanner Token": "p. ej., Token del escáner de VerifyWise",
+    "e.g., AIPurview Scanner Token": "p. ej., Token del escáner de AIPurview",
     "e.g., Web scraping, API, Manual": "p. ej., Web scraping, API, Manual",
     "e.g., Zscaler proxy": "p. ej., Proxy de Zscaler",
     "e.g., abc1234...": "p. ej., abc1234...",
@@ -19749,7 +19749,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Nationality/religion/politics": "Nacionalidad/religión/política",
     "Medical license": "Licencia médica",
     "Feature comparison": "Comparación de funciones",
-    "Let VerifyWise do work for you": "Deja que VerifyWise trabaje por ti",
+    "Let AIPurview do work for you": "Deja que AIPurview trabaje por ti",
     "Automate your most common tasks.": "Automatiza tus tareas más habituales.",
     "Suggested automations": "Automatizaciones sugeridas",
     "Send vendor risk alert": "Enviar alerta de riesgo de proveedor",
@@ -19990,7 +19990,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Open marketplace": "Abrir marketplace",
     "A concise name for your AI use case": "Un nombre conciso para tu caso de uso de IA",
     "A new version is available": "Hay una nueva versión disponible",
-    "A new version of VerifyWise is available": "Hay una nueva versión de VerifyWise disponible",
+    "A new version of AIPurview is available": "Hay una nueva versión de AIPurview disponible",
     "AI Detection onboarding wizard": "Asistente de incorporación de detección de IA",
     "AI advisor not configured": "Asesor de IA no configurado",
     "AI assist": "Asistencia de IA",
@@ -20119,7 +20119,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Copy results to clipboard": "Copiar resultados al portapapeles",
     "Core definition test (EU AI Act)": "Prueba de definición básica (EU AI Act)",
     "Create Scorer": "Crear evaluador",
-    "Create VerifyWise user account": "Crear cuenta de usuario de VerifyWise",
+    "Create AIPurview user account": "Crear cuenta de usuario de AIPurview",
     "Create a custom risk manually": "Crear un riesgo personalizado manualmente",
     "Create a new token on GitHub": "Crear un nuevo token en GitHub",
     "Create admin account": "Crear cuenta de administrador",
@@ -20163,7 +20163,7 @@ export const translations: Record<string, Record<string, string>> = {
     "EU registration": "Registro de la UE",
     "EVIDENCE LINKED TO EU AI ACT REQUIREMENTS":
       "EVIDENCIA VINCULADA A LOS REQUISITOS DEL EU AI ACT",
-    "EXPLORE VERIFYWISE": "EXPLORA VERIFYWISE",
+    "EXPLORE AIPURVIEW": "EXPLORA AIPURVIEW",
     "Edit dataset": "Editar conjunto de datos",
     "Edit prompt": "Editar prompt",
     "Edit selection": "Editar selección",
@@ -20438,7 +20438,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Post PR comments": "Publicar comentarios de PR",
     "Post status checks": "Publicar comprobaciones de estado",
     "Post-market monitoring": "Monitorización poscomercialización",
-    "Powered by VerifyWise": "Con tecnología de VerifyWise",
+    "Powered by AIPurview": "Con tecnología de AIPurview",
     "Prediction column": "Columna de predicción",
     "Preview not available for this file type":
       "Vista previa no disponible para este tipo de archivo",
@@ -20635,7 +20635,7 @@ export const translations: Record<string, Record<string, string>> = {
     "What's your primary focus?": "¿Cuál es tu enfoque principal?",
     "When to begin monitoring": "Cuándo comenzar la monitorización",
     "Who to notify on escalation": "A quién notificar en caso de escalada",
-    "Why VerifyWise?": "¿Por qué VerifyWise?",
+    "Why AIPurview?": "¿Por qué AIPurview?",
     "Win Rate": "Tasa de victorias",
     "Winner": "Ganador",
     "Wins": "Victorias",
@@ -21768,7 +21768,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Third-Party Audit Report": "Informe de auditoría de terceros",
     "Third-party relationships": "Relaciones con terceros",
     "Third-party/vendor risk": "Riesgo de terceros/proveedores",
-    "This is a test message from VerifyWise.": "Este es un mensaje de prueba de VerifyWise.",
+    "This is a test message from AIPurview.": "Este es un mensaje de prueba de AIPurview.",
     "This is an automated notification.": "Esta es una notificación automática.",
     "Thursday": "Jueves",
     "Title of the use case/project": "Título del caso de uso/proyecto",
@@ -21867,7 +21867,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Wednesday": "Miércoles",
     "Weekly": "Semanal",
     "Weighing risk dimensions": "Ponderación de las dimensiones de riesgo",
-    "Welcome to Verifywise": "Bienvenido a Verifywise",
+    "Welcome to AIPurview": "Bienvenido a AIPurview",
     "What business goal does this serve?": "¿Qué objetivo de negocio cumple esto?",
     "What does this AI system do?": "¿Qué hace este sistema de IA?",
     "What happens if this AI system fails?": "¿Qué ocurre si este sistema de IA falla?",
@@ -21889,7 +21889,7 @@ export const translations: Record<string, Record<string, string>> = {
     "Workers": "Procesos de trabajo",
     "Workflow": "Flujo de trabajo",
     "Yes/No": "Sí/No",
-    "You are ready to work with VerifyWise": "Ya está listo para trabajar con VerifyWise",
+    "You are ready to work with AIPurview": "Ya está listo para trabajar con AIPurview",
     "Your changes have been saved.": "Sus cambios se han guardado.",
     "Your new task has been added.": "Su nueva tarea se ha añadido.",
     "Your report is being generated.": "Su informe se está generando.",
@@ -22410,8 +22410,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Vea y gestione las configuraciones de los modelos. Estas preferencias se guardan automáticamente al ejecutar un experimento y se cargan de forma automática para nuevos experimentos en el mismo proyecto.",
     "When an automation triggers (on schedule, via webhook, or manually), its execution is recorded here with status and duration.":
       "Cuando se activa una automatización (de forma programada, mediante webhook o manualmente), su ejecución se registra aquí con el estado y la duración.",
-    "You're viewing a public demo of the VerifyWise AI governance platform. Feel free to explore using demo data, but please don't enter any personal or company information.":
-      "Está viendo una demostración pública de la plataforma de gobernanza de IA de VerifyWise. Explore libremente con los datos de demostración, pero no introduzca información personal ni de la empresa.",
+    "You're viewing a public demo of the AIPurview AI governance platform. Feel free to explore using demo data, but please don't enter any personal or company information.":
+      "Está viendo una demostración pública de la plataforma de gobernanza de IA de AIPurview. Explore libremente con los datos de demostración, pero no introduzca información personal ni de la empresa.",
     "Your provider API keys are encrypted using AES-256-CBC before being stored. They are only decrypted when proxying a request and are never exposed in logs.":
       "Las claves de API de su proveedor se cifran con AES-256-CBC antes de almacenarse. Solo se descifran al redirigir una solicitud y nunca se exponen en los registros.",
     "Add data to see your governance score": "Añada datos para ver su puntuación de gobernanza",
@@ -22421,8 +22421,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Cree un nuevo proyecto para organizar sus evaluaciones de LLM",
     "Create and manage intake forms for external submissions":
       "Cree y gestione formularios de admisión para envíos externos",
-    "Generate sample data to explore VerifyWise features":
-      "Genere datos de muestra para explorar las funciones de VerifyWise",
+    "Generate sample data to explore AIPurview features":
+      "Genere datos de muestra para explorar las funciones de AIPurview",
     "Average round-trip time from request to complete response":
       "Tiempo medio de ida y vuelta desde la solicitud hasta la respuesta completa",
     "Average round-trip time per tool call, useful for spotting slow tools":
@@ -22531,8 +22531,8 @@ export const translations: Record<string, Record<string, string>> = {
     "There is currently no data in this table.": "Actualmente no hay datos en esta tabla.",
     "A use case is a real-world scenario describing how an AI system is applied within an organization. Currently you don":
       "Un caso de uso es un escenario del mundo real que describe cómo se aplica un sistema de IA dentro de una organización. Actualmente no",
-    "Add a new member to give them access to the VerifyWise dashboard":
-      "Añada un nuevo miembro para darle acceso al panel de VerifyWise",
+    "Add a new member to give them access to the AIPurview dashboard":
+      "Añada un nuevo miembro para darle acceso al panel de AIPurview",
     "Add a provider API key for your gateway endpoints":
       "Añada una clave de API de proveedor para sus endpoints del gateway",
     "Add or remove AI frameworks or regulations to your platform. Those selected will be integrated into your use case.":
@@ -22600,8 +22600,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Llamadas directas a la API de proveedores de IA detectadas en el código, incluidos endpoints REST e invocaciones de métodos de SDK.",
     "Discover AI tools being used without IT approval. Flag tools that may expose sensitive data or violate company policy.":
       "Descubra las herramientas de IA que se utilizan sin aprobación de TI. Marque las herramientas que puedan exponer datos sensibles o infringir la política de la empresa.",
-    "Discover and manage plugins to extend VerifyWise functionality":
-      "Descubra y gestione plugins para ampliar la funcionalidad de VerifyWise",
+    "Discover and manage plugins to extend AIPurview functionality":
+      "Descubra y gestione plugins para ampliar la funcionalidad de AIPurview",
     "Each log entry shows the complete prompt sent to the LLM, the model":
       "Cada entrada de registro muestra el prompt completo enviado al LLM, el modelo",
     "Each task can be assigned to a workspace member with a priority and due date. They":
@@ -22938,8 +22938,8 @@ export const translations: Record<string, Record<string, string>> = {
       "p. ej., Se añadieron ejemplos de few-shot para casos límite",
     "e.g., Used by the backend orchestration agent":
       "p. ej., Utilizado por el agente de orquestación del backend",
-    "e.g., VerifyWise, External Vendor, Internal Team":
-      "p. ej., VerifyWise, Proveedor externo, Equipo interno",
+    "e.g., AIPurview, External Vendor, Internal Team":
+      "p. ej., AIPurview, Proveedor externo, Equipo interno",
     "e.g., https://github.com/owner/repo or owner/repo":
       "p. ej., https://github.com/owner/repo u owner/repo",
     "Browse and manage plugins from the marketplace.":
@@ -23215,8 +23215,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Filtre los eventos para encontrar rápidamente la información relevante.",
     "With many events logged over time, filters help you find what you need. Filter by date range, event type, or related entity to quickly locate specific governance activities. Export filtered events for reports or documentation.":
       "Con muchos eventos registrados a lo largo del tiempo, los filtros le ayudan a encontrar lo que necesita. Filtre por intervalo de fechas, tipo de evento o entidad relacionada para localizar rápidamente actividades de gobernanza específicas. Exporte los eventos filtrados para informes o documentación.",
-    "Settings customize VerifyWise to your organization's needs.":
-      "La configuración adapta VerifyWise a las necesidades de su organización.",
+    "Settings customize AIPurview to your organization's needs.":
+      "La configuración adapta AIPurview a las necesidades de su organización.",
     "Configure user roles and system defaults to match your governance workflows. Taking time to properly configure settings upfront saves time and reduces confusion later. Review settings periodically as your organization grows.":
       "Configure los roles de usuario y los valores predeterminados del sistema para que se ajusten a sus flujos de trabajo de gobernanza. Dedicar tiempo a configurar correctamente la configuración desde el principio ahorra tiempo y reduce la confusión posterior. Revise la configuración periódicamente a medida que crezca su organización.",
     "User roles control access to sensitive information.":
@@ -23331,8 +23331,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Establezca un límite de gasto mensual para controlar los costes. Cuando el límite estricto está activado, las solicitudes se rechazan una vez superado el presupuesto. Utilice el umbral de alerta para recibir avisos tempranos antes de alcanzar el límite.",
     "Give every developer a governed AI endpoint in minutes.":
       "Ofrezca a cada desarrollador un endpoint de IA gobernado en minutos.",
-    "Create a virtual key, share it with a developer, and they swap their OpenAI base URL to the gateway. Every request flows through your guardrails, budget controls, and audit logs — without anyone needing a VerifyWise account.":
-      "Cree una clave virtual, compártala con un desarrollador y este cambiará su URL base de OpenAI por la de la puerta de enlace. Cada solicitud pasa por sus barreras de protección, controles de presupuesto y registros de auditoría, sin que nadie necesite una cuenta de VerifyWise.",
+    "Create a virtual key, share it with a developer, and they swap their OpenAI base URL to the gateway. Every request flows through your guardrails, budget controls, and audit logs — without anyone needing a AIPurview account.":
+      "Cree una clave virtual, compártala con un desarrollador y este cambiará su URL base de OpenAI por la de la puerta de enlace. Cada solicitud pasa por sus barreras de protección, controles de presupuesto y registros de auditoría, sin que nadie necesite una cuenta de AIPurview.",
     "Control costs per team, project, or environment.":
       "Controle los costes por equipo, proyecto o entorno.",
     "Each virtual key can carry its own monthly budget cap and rate limit. When a key exhausts its budget only that key is blocked — other keys and the Playground keep working. Budgets reset automatically on the 1st of each month.":
@@ -23612,8 +23612,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Invite hasta a 5 personas a su organización para colaborar en la gobernanza y el cumplimiento de la IA.",
     "LangChain agents, CrewAI, AutoGen, MCP servers, and other autonomous AI systems will appear here":
       "Aquí aparecerán los agentes de LangChain, CrewAI, AutoGen, los servidores MCP y otros sistemas de IA autónomos",
-    "Let's create a sample project to explore VerifyWise features hands-on.":
-      "Vamos a crear un proyecto de ejemplo para explorar las funciones de VerifyWise de forma práctica.",
+    "Let's create a sample project to explore AIPurview features hands-on.":
+      "Vamos a crear un proyecto de ejemplo para explorar las funciones de AIPurview de forma práctica.",
     "Link risks from your risk database to track which risks are addressed by this annex category.":
       "Vincule riesgos de su base de datos de riesgos para hacer un seguimiento de qué riesgos aborda esta categoría del anexo.",
     "Local providers are only available for self-hosted deployments":
@@ -23622,8 +23622,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Busque las descripciones emergentes que enlazan con la documentación: se abren dentro del propio producto.",
     "Lower values are more focused, higher values are more creative":
       "Los valores más bajos son más enfocados, los más altos son más creativos",
-    "Manage your LLM keys for access to VerifyWise Advisor.":
-      "Gestione sus claves de LLM para acceder a VerifyWise Advisor.",
+    "Manage your LLM keys for access to AIPurview Advisor.":
+      "Gestione sus claves de LLM para acceder a AIPurview Advisor.",
     "Map your projects to regulations like EU AI Act, ISO 42001, and ISO 27001 to ensure comprehensive compliance.":
       "Asigne sus proyectos a regulaciones como el EU AI Act, ISO 42001 e ISO 27001 para garantizar un cumplimiento integral.",
     "Masking replaces matched content with placeholders before the tool receives the input. The tool may produce less relevant results.":
@@ -23876,8 +23876,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Las variables se sustituyen por valores en el momento de la solicitud. Establezca los valores en el panel de pruebas de la derecha.",
     "Vector databases (Pinecone, Chroma, Qdrant), document loaders, and embedding models will appear here":
       "Aquí aparecerán las bases de datos vectoriales (Pinecone, Chroma, Qdrant), los cargadores de documentos y los modelos de embeddings",
-    "VerifyWise is your AI governance and compliance platform. In 3 minutes, we'll help you get started with managing AI risks, compliance frameworks, and building trust.":
-      "VerifyWise es su plataforma de gobernanza y cumplimiento de IA. En 3 minutos, le ayudaremos a empezar a gestionar los riesgos de la IA, los marcos de cumplimiento y a generar confianza.",
+    "AIPurview is your AI governance and compliance platform. In 3 minutes, we'll help you get started with managing AI risks, compliance frameworks, and building trust.":
+      "AIPurview es su plataforma de gobernanza y cumplimiento de IA. En 3 minutos, le ayudaremos a empezar a gestionar los riesgos de la IA, los marcos de cumplimiento y a generar confianza.",
     "View and download past monitoring cycle reports":
       "Vea y descargue informes de ciclos de supervisión anteriores",
     'What happens when the guardrail scanner itself fails. "Fail-closed" blocks all requests for safety. "Fail-open" allows requests through.':
@@ -23886,8 +23886,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Cuando está activado, los prompts completos de las solicitudes y las respuestas del LLM se almacenan en los registros de gasto. Desactivado de forma predeterminada por privacidad. Los cuerpos se truncan a 2048 caracteres.",
     "When enabled, tool invocations must be approved before execution.":
       "Cuando está activado, las invocaciones de herramientas deben aprobarse antes de su ejecución.",
-    "You are ready to work with VerifyWise and manage your AI governance process":
-      "Ya está listo para trabajar con VerifyWise y gestionar su proceso de gobernanza de IA",
+    "You are ready to work with AIPurview and manage your AI governance process":
+      "Ya está listo para trabajar con AIPurview y gestionar su proceso de gobernanza de IA",
     "You can re-create this guardrail at any time.":
       "Puede volver a crear esta barrera de protección en cualquier momento.",
     "You can skip this step and invite team members later from the organization settings.":
@@ -23941,8 +23941,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Añada nuevos modelos de IA a su inventario con metadatos completos que incluyen proveedor, versión, capacidades, evaluación de seguridad y detalles de uso.",
     "Add observability and monitoring capabilities to track system health and performance.":
       "Añada capacidades de observabilidad y supervisión para hacer un seguimiento del estado y el rendimiento del sistema.",
-    "Add your first LLM API key to enable access to your VerifyWise Advisor.":
-      "Añada su primera clave de API de LLM para habilitar el acceso a su VerifyWise Advisor.",
+    "Add your first LLM API key to enable access to your AIPurview Advisor.":
+      "Añada su primera clave de API de LLM para habilitar el acceso a su AIPurview Advisor.",
     "Address immediately - critical for compliance":
       "Abordar de inmediato: fundamental para el cumplimiento",
     "Address when possible - recommended for compliance":
@@ -24013,8 +24013,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Categorización biométrica que utiliza atributos no sensibles",
     "Biometric verification, one to one check to confirm a claimed identity":
       "Verificación biométrica, comprobación uno a uno para confirmar una identidad declarada",
-    "Browse all available plugins to extend VerifyWise functionality.":
-      "Explore todos los complementos disponibles para ampliar la funcionalidad de VerifyWise.",
+    "Browse all available plugins to extend AIPurview functionality.":
+      "Explore todos los complementos disponibles para ampliar la funcionalidad de AIPurview.",
     "Build evaluation datasets with input/output pairs and golden answers for benchmarking.":
       "Cree conjuntos de datos de evaluación con pares de entrada/salida y respuestas de referencia para la evaluación comparativa.",
     "CE marking confirms that high-risk AI systems meet EU regulatory requirements, ensuring safety and compliance.":
@@ -24061,8 +24061,8 @@ export const translations: Record<string, Record<string, string>> = {
       'Haga clic en "Añadir archivos de evidencia" para cargar documentación de esta subcategoría',
     'Click "Add/remove risks" to link risks from your risk database':
       'Haga clic en "Añadir/eliminar riesgos" para vincular riesgos de su base de datos de riesgos',
-    'Click "Create use case" below to proceed with setting up this AI use case in VerifyWise.':
-      'Haga clic en "Crear caso de uso" abajo para continuar con la configuración de este caso de uso de IA en VerifyWise.',
+    'Click "Create use case" below to proceed with setting up this AI use case in AIPurview.':
+      'Haga clic en "Crear caso de uso" abajo para continuar con la configuración de este caso de uso de IA en AIPurview.',
     "Click the card again or click Total to see all datasets.":
       "Vuelva a hacer clic en la tarjeta o haga clic en Total para ver todos los conjuntos de datos.",
     "Click the card again or click Total to see all models.":
@@ -24601,8 +24601,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Gestione las organizaciones, los usuarios y la configuración a nivel de sistema",
     "Manage rules that suppress matching findings on future scans":
       "Gestione reglas que supriman los hallazgos coincidentes en futuros análisis",
-    "Manage your API keys for programmatic access to VerifyWise features":
-      "Gestione sus claves de API para el acceso programático a las funciones de VerifyWise",
+    "Manage your API keys for programmatic access to AIPurview features":
+      "Gestione sus claves de API para el acceso programático a las funciones de AIPurview",
     "Managing post-market changes ensures continued compliance and alignment with system objectives.":
       "Gestionar los cambios posteriores a la comercialización garantiza el cumplimiento continuado y la alineación con los objetivos del sistema.",
     "Map controls to requirements, answer assessment questions, and track compliance progress.":
@@ -24864,8 +24864,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Datos personales sensibles (salud, biométricos)",
     "Set review deadlines with automated due-soon reminders via email and Slack.":
       "Establece plazos de revisión con recordatorios automáticos de próximo vencimiento por correo electrónico y Slack.",
-    "Settings customize VerifyWise to your organization":
-      "La configuración personaliza VerifyWise para tu organización",
+    "Settings customize AIPurview to your organization":
+      "La configuración personaliza AIPurview para tu organización",
     "Side-by-side model comparison with scored results to find the best model for your use case.":
       "Comparación de modelos en paralelo con resultados puntuados para encontrar el mejor modelo para tu caso de uso.",
     "Special category data (racial, political)":
@@ -24968,8 +24968,8 @@ export const translations: Record<string, Record<string, string>> = {
       "Las herramientas no aprobadas (que no están en el inventario de modelos o no están aprobadas) reciben la puntuación máxima para este factor.",
     "Understanding the needs and expectations of interested parties":
       "Comprender las necesidades y expectativas de las partes interesadas",
-    "Unlock the full potential of VerifyWise AI governance with our premium features.":
-      "Descubre todo el potencial de la gobernanza de IA de VerifyWise con nuestras funciones premium.",
+    "Unlock the full potential of AIPurview AI governance with our premium features.":
+      "Descubre todo el potencial de la gobernanza de IA de AIPurview con nuestras funciones premium.",
     "Up-to-date documentation ensures accurate representation of system functionalities and compliance status.":
       "Una documentación actualizada garantiza una representación precisa de las funcionalidades del sistema y del estado de cumplimiento.",
     "Upload evidence files to document compliance with this question.":

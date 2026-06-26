@@ -2,7 +2,7 @@
 
 ## 1. Problem Statement
 
-VerifyWise stores all tenant data in a single PostgreSQL schema (`verifywise`) and isolates tenants at the row level via an `organization_id` column. A single missing `WHERE organization_id = :organizationId` clause, a service call that omits the tenant context, or a raw SQL query built without scoping can expose one customer's projects, files, risks, users, or tasks to another. Because there is no automated, reusable test matrix that proves isolation for every organization-scoped entity, regressions are only caught by manual review or, worse, in production. The business impact ranges from data-breach liability and compliance failures (EU AI Act, ISO 27001, SOC 2) to loss of customer trust.
+AIPurview stores all tenant data in a single PostgreSQL schema (`verifywise`) and isolates tenants at the row level via an `organization_id` column. A single missing `WHERE organization_id = :organizationId` clause, a service call that omits the tenant context, or a raw SQL query built without scoping can expose one customer's projects, files, risks, users, or tasks to another. Because there is no automated, reusable test matrix that proves isolation for every organization-scoped entity, regressions are only caught by manual review or, worse, in production. The business impact ranges from data-breach liability and compliance failures (EU AI Act, ISO 27001, SOC 2) to loss of customer trust.
 
 ## 2. Goals & Success Metrics
 

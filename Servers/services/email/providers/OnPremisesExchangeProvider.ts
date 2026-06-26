@@ -123,7 +123,7 @@ export class OnPremisesExchangeProvider implements EmailProvider {
         html: options.html,
         // Add headers commonly expected by Exchange servers
         headers: {
-          "X-Mailer": "VerifyWise Enterprise Email Service",
+          "X-Mailer": "AIPurview Enterprise Email Service",
           "X-Priority": "3", // Normal priority
         },
       };

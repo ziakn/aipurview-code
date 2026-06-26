@@ -2,7 +2,7 @@
 
 ## Overview
 
-VerifyWise integrates with external services for AI model management, notifications, repository access, and LLM capabilities. All integrations use encrypted credential storage and follow multi-tenant isolation patterns.
+AIPurview integrates with external services for AI model management, notifications, repository access, and LLM capabilities. All integrations use encrypted credential storage and follow multi-tenant isolation patterns.
 
 ## Integrations Summary
 
@@ -19,7 +19,7 @@ VerifyWise integrates with external services for AI model management, notificati
 
 ### Purpose
 
-Syncs AI/ML model metadata from MLflow tracking servers to VerifyWise model inventory.
+Syncs AI/ML model metadata from MLflow tracking servers to AIPurview model inventory.
 
 ### Database Schema
 
@@ -217,7 +217,7 @@ slack_webhooks (public schema)
 
 ```json
 {
-  "text": "Notification from VerifyWise",
+  "text": "Notification from AIPurview",
   "blocks": [
     { "type": "header", "text": { "type": "plain_text", "text": "Title" } },
     { "type": "section", "text": { "type": "mrkdwn", "text": "Message body" } },

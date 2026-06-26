@@ -1,6 +1,6 @@
 # Pull Request Guidelines
 
-Best practices for creating and managing pull requests in VerifyWise.
+Best practices for creating and managing pull requests in AIPurview.
 
 ## PR Template
 

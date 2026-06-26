@@ -69,7 +69,7 @@ describe("checkMultiTenancy middleware", () => {
     expect(res.status).toHaveBeenCalledWith(403);
     expect(res.json).toHaveBeenCalledWith({
       message:
-        "Multi tenancy is not enabled in this server. Please contact VerifyWise to get a license for multi tenancy option.",
+        "Multi tenancy is not enabled in this server. Please contact AIPurview to get a license for multi tenancy option.",
     });
     expect(next).not.toHaveBeenCalled();
   });

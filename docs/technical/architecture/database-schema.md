@@ -2,7 +2,7 @@
 
 ## Overview
 
-VerifyWise uses PostgreSQL with Sequelize ORM. All data lives in a single `verifywise` schema, with tenant isolation enforced via `organization_id` columns on tenant-scoped tables. There are 60+ Sequelize models covering users, organizations, projects, vendors, risks, approvals, and compliance frameworks.
+AIPurview uses PostgreSQL with Sequelize ORM. All data lives in a single `verifywise` schema, with tenant isolation enforced via `organization_id` columns on tenant-scoped tables. There are 60+ Sequelize models covering users, organizations, projects, vendors, risks, approvals, and compliance frameworks.
 
 ## Schema Architecture
 
@@ -11,7 +11,7 @@ VerifyWise uses PostgreSQL with Sequelize ORM. All data lives in a single `verif
 │                              PostgreSQL Database                              │
 ├──────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
-│  VERIFYWISE SCHEMA (All data)                                                │
+│  AIPURVIEW SCHEMA (All data)                                                │
 │  ┌────────────────────────────────────────────────────────────────────────┐ │
 │  │  Shared tables (no organization_id):                                   │ │
 │  │  organizations  │  users          │  roles         │  frameworks       │ │

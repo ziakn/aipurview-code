@@ -10,7 +10,7 @@ status: active
 
 ## Amaç
 
-VerifyWise'da plugin sistemi nasıl çalışır — frontend slot'ları, backend extension point'leri, plugin marketplace.
+AIPurview'da plugin sistemi nasıl çalışır — frontend slot'ları, backend extension point'leri, plugin marketplace.
 
 ## Ne yapıldı
 

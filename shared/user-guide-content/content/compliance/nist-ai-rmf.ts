@@ -195,11 +195,11 @@ export const nistAiRmfContent: ArticleContent = {
       type: 'heading',
       id: 'verifywise-support',
       level: 2,
-      text: 'How VerifyWise supports NIST AI RMF',
+      text: 'How AIPurview supports NIST AI RMF',
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise gives you a structured place to implement and track your NIST AI RMF activities. The platform organizes the framework into functions, categories and subcategories so you can work through requirements systematically.',
+      text: 'AIPurview gives you a structured place to implement and track your NIST AI RMF activities. The platform organizes the framework into functions, categories and subcategories so you can work through requirements systematically.',
     },
     {
       type: 'bullet-list',
@@ -214,7 +214,7 @@ export const nistAiRmfContent: ArticleContent = {
       type: 'callout',
       variant: 'tip',
       title: 'Best practice',
-      text: 'Use the NIST AI RMF Playbook alongside VerifyWise. The Playbook provides specific suggested actions for each subcategory that you can track in VerifyWise. Download the Playbook from the official NIST website.',
+      text: 'Use the NIST AI RMF Playbook alongside AIPurview. The Playbook provides specific suggested actions for each subcategory that you can track in AIPurview. Download the Playbook from the official NIST website.',
     },
     {
       type: 'heading',
@@ -224,7 +224,7 @@ export const nistAiRmfContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise organizes the NIST AI RMF into a three-level hierarchy that mirrors the framework\'s structure:',
+      text: 'AIPurview organizes the NIST AI RMF into a three-level hierarchy that mirrors the framework\'s structure:',
     },
     {
       type: 'icon-cards',
@@ -254,7 +254,7 @@ export const nistAiRmfContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'When you access NIST AI RMF in VerifyWise, you see the four core functions with their categories and subcategories. Each function shows progress indicators so you can quickly see where you stand:',
+      text: 'When you access NIST AI RMF in AIPurview, you see the four core functions with their categories and subcategories. Each function shows progress indicators so you can quickly see where you stand:',
     },
     {
       type: 'checklist',
@@ -295,7 +295,7 @@ export const nistAiRmfContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'For each subcategory, VerifyWise tracks:',
+      text: 'For each subcategory, AIPurview tracks:',
     },
     {
       type: 'bullet-list',
@@ -342,7 +342,7 @@ export const nistAiRmfContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'There are several ways to monitor your NIST AI RMF implementation in VerifyWise:',
+      text: 'There are several ways to monitor your NIST AI RMF implementation in AIPurview:',
     },
     {
       type: 'bullet-list',

@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: VerifyWise API - Evidence Hub, Datasets, Automations
+  title: AIPurview API - Evidence Hub, Datasets, Automations
   version: 1.0.0
   description: API documentation for Evidence Hub, Datasets, and Automations domains.
 

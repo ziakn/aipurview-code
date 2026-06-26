@@ -1,4 +1,4 @@
-**VerifyWise**
+**AIPurview**
 
 AI Implementation Plan
 
@@ -14,7 +14,7 @@ Last Updated: 2026-03-11  |  Status: Approved
 
 # **Vision**
 
-Transform the VerifyWise AI Advisor from a read-only Q\&A system into an AI Operating System capable of:
+Transform the AIPurview AI Advisor from a read-only Q\&A system into an AI Operating System capable of:
 
 •   	Autonomous compliance operations (read \+ write)
 

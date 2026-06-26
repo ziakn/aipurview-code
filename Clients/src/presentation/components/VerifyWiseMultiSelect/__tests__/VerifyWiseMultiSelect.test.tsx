@@ -1,17 +1,17 @@
 import { screen, fireEvent } from "@testing-library/react";
 import { renderWithProviders } from "../../../../test/renderWithProviders";
-import VerifyWiseMultiSelect, { VerifyWiseMultiSelectOption } from "../index";
+import AIPurviewMultiSelect, { AIPurviewMultiSelectOption } from "../index";
 
-const options: VerifyWiseMultiSelectOption[] = [
+const options: AIPurviewMultiSelectOption[] = [
   { value: "a", label: "Option A" },
   { value: "b", label: "Option B" },
   { value: "c", label: "Option C" },
 ];
 
-describe("VerifyWiseMultiSelect", () => {
+describe("AIPurviewMultiSelect", () => {
   it("renders with placeholder text", () => {
     renderWithProviders(
-      <VerifyWiseMultiSelect
+      <AIPurviewMultiSelect
         options={options}
         selectedValues={[]}
         onChange={vi.fn()}
@@ -24,7 +24,7 @@ describe("VerifyWiseMultiSelect", () => {
 
   it("renders with default placeholder when none is provided", () => {
     renderWithProviders(
-      <VerifyWiseMultiSelect options={options} selectedValues={[]} onChange={vi.fn()} />,
+      <AIPurviewMultiSelect options={options} selectedValues={[]} onChange={vi.fn()} />,
     );
 
     expect(screen.getByText("Select options")).toBeInTheDocument();
@@ -32,7 +32,7 @@ describe("VerifyWiseMultiSelect", () => {
 
   it("opens dropdown and shows options when clicked", () => {
     renderWithProviders(
-      <VerifyWiseMultiSelect options={options} selectedValues={[]} onChange={vi.fn()} />,
+      <AIPurviewMultiSelect options={options} selectedValues={[]} onChange={vi.fn()} />,
     );
 
     // Click the trigger button
@@ -48,7 +48,7 @@ describe("VerifyWiseMultiSelect", () => {
     const handleChange = vi.fn();
 
     renderWithProviders(
-      <VerifyWiseMultiSelect options={options} selectedValues={[]} onChange={handleChange} />,
+      <AIPurviewMultiSelect options={options} selectedValues={[]} onChange={handleChange} />,
     );
 
     // Open dropdown
@@ -64,7 +64,7 @@ describe("VerifyWiseMultiSelect", () => {
     const handleChange = vi.fn();
 
     renderWithProviders(
-      <VerifyWiseMultiSelect
+      <AIPurviewMultiSelect
         options={options}
         selectedValues={["a", "b"]}
         onChange={handleChange}

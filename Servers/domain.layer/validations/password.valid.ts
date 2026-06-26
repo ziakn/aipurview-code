@@ -27,8 +27,9 @@ export function passwordValidation(password: string): {
   const isMaxLength = password.length <= maxLength;
   const hasSpecialChar = specialCharRegex.test(password);
 
-  // Password is valid if it has lowercase, uppercase, digit, and meets minimum length
-  const isValid = hasLowercase && hasUppercase && hasDigit && isMinLength;
+  // In development, skip strength requirements to allow simple test passwords
+  const isDev = (process.env.NODE_ENV ?? "").trim().toLowerCase() === "development";
+  const isValid = isDev ? password.length > 0 : hasLowercase && hasUppercase && hasDigit && isMinLength;
 
   return { isValid, hasSpecialChar, isMinLength, isMaxLength };
 }

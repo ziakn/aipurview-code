@@ -30,7 +30,7 @@ export const modelsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise supports a wide range of model providers:',
+      text: 'AIPurview supports a wide range of model providers:',
     },
     {
       type: 'bullet-list',

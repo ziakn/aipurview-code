@@ -1,7 +1,7 @@
 /**
  * DOCX Generator Service
  * Uses 'docx' library for native Word document generation
- * Following VerifyWise clean architecture patterns
+ * Following AIPurview clean architecture patterns
  */
 
 import {
@@ -29,7 +29,7 @@ import {
   AISummaries,
 } from "../../domain.layer/interfaces/i.reportGeneration";
 
-// Color constants matching VerifyWise theme
+// Color constants matching AIPurview theme
 const COLORS = {
   primary: "13715B",
   secondary: "1C2130",

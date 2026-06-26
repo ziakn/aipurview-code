@@ -10,7 +10,7 @@ export const policyManagementContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The policy manager in VerifyWise helps you create, organize and maintain AI governance policies for your organization. Well-documented policies set the groundwork for how your teams handle AI, and they show regulators and stakeholders that you take governance seriously.',
+      text: 'The policy manager in AIPurview helps you create, organize and maintain AI governance policies for your organization. Well-documented policies set the groundwork for how your teams handle AI, and they show regulators and stakeholders that you take governance seriously.',
     },
     {
       type: 'paragraph',
@@ -152,7 +152,7 @@ export const policyManagementContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise comes with predefined tags to help you categorize policies:',
+      text: 'AIPurview comes with predefined tags to help you categorize policies:',
     },
     {
       type: 'bullet-list',
@@ -214,7 +214,7 @@ export const policyManagementContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Yes. You can paste existing policy content into VerifyWise to centralize your AI governance documentation. Many organizations start by importing what they already have, then use VerifyWise to track status, schedule reviews and keep everything in one place.',
+      text: 'Yes. You can paste existing policy content into AIPurview to centralize your AI governance documentation. Many organizations start by importing what they already have, then use AIPurview to track status, schedule reviews and keep everything in one place.',
     },
     {
       type: 'heading',
@@ -254,7 +254,7 @@ export const policyManagementContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'At least annually, or more often for fast-moving areas. AI regulations and best practices are still evolving, so your policies may need updates more often than traditional corporate ones. Set review dates when you publish a policy and use VerifyWise to track when reviews are due.',
+      text: 'At least annually, or more often for fast-moving areas. AI regulations and best practices are still evolving, so your policies may need updates more often than traditional corporate ones. Set review dates when you publish a policy and use AIPurview to track when reviews are due.',
     },
     {
       type: 'article-links',

@@ -1,6 +1,6 @@
 # Enterprise Email Providers Guide
 
-VerifyWise supports multiple enterprise-grade email providers to meet the diverse needs of organizations. This guide covers the setup and configuration of each supported provider.
+AIPurview supports multiple enterprise-grade email providers to meet the diverse needs of organizations. This guide covers the setup and configuration of each supported provider.
 
 ## Supported Providers
 

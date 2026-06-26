@@ -1,15 +1,15 @@
 ---
-title: VerifyWise Wiki — Kullanım Talimatları
+title: AIPurview Wiki — Kullanım Talimatları
 tags: [meta, instructions]
 date: 2026-04-30
 status: active
 ---
 
-# VerifyWise Wiki — Kullanım Talimatları
+# AIPurview Wiki — Kullanım Talimatları
 
 ## Amaç
 
-VerifyWise için **kalıcı bilgi arşivi**. AI Governance Platform geliştirme tarihçesi — EU AI Act, ISO 42001, ISO 27001, NIST AI RMF uyum desteği. Phase 1-7 AI Agentic stack tasarım kararları, mimari seçimler, bug fix'leri, rakip analizleri ve agent fikirleri tek yerde toplanır.
+AIPurview için **kalıcı bilgi arşivi**. AI Governance Platform geliştirme tarihçesi — EU AI Act, ISO 42001, ISO 27001, NIST AI RMF uyum desteği. Phase 1-7 AI Agentic stack tasarım kararları, mimari seçimler, bug fix'leri, rakip analizleri ve agent fikirleri tek yerde toplanır.
 
 Yeni özellik geliştirirken **"daha önce nasıl yapıldı?"** sorusuna saniyeler içinde cevap verir. Bu wiki:
 
@@ -97,7 +97,7 @@ status: active
 
 ## Üç Operasyon Workflow'u
 
-Bu wiki **llm-wiki** skill'inin VerifyWise'a uyarlanmış versiyonudur. Üç operasyon:
+Bu wiki **llm-wiki** skill'inin AIPurview'a uyarlanmış versiyonudur. Üç operasyon:
 
 ### 1. INGEST (yeni kaynak işle)
 
@@ -150,7 +150,7 @@ Sonuçları `log.md`'e `[LINT]` tipinde tek satır + ekran çıktısına detay y
 
 ---
 
-## INGEST Özel Durumu — VerifyWise Kaynak Tipleri
+## INGEST Özel Durumu — AIPurview Kaynak Tipleri
 
 ### `raw/phase-docs/` — Phase Implementation Plans
 
@@ -179,7 +179,7 @@ Sonuçları `log.md`'e `[LINT]` tipinde tek satır + ekran çıktısına detay y
 
 **Beklenen format:** 12 paralel ajan raporları (Credo AI, Holistic AI, OneTrust, vb.) — markdown.
 
-**Çıkartılacak bilgi:** rakibin sahip olduğu özellikler, VerifyWise'ın eksiği, agent fikirleri (concepts veya syntheses altına).
+**Çıkartılacak bilgi:** rakibin sahip olduğu özellikler, AIPurview'ın eksiği, agent fikirleri (concepts veya syntheses altına).
 
 ---
 
@@ -217,7 +217,7 @@ LINT
 ## Sources
 
 - `/Users/halitozger/.claude/plugins/cache/omc/oh-my-claudecode/4.13.5/skills/wiki/SKILL.md` — llm-wiki temeli
-- VerifyWise codebase — `/Users/halitozger/Desktop/verifywise/.claude/worktrees/practical-euler/`
+- AIPurview codebase — `/Users/halitozger/Desktop/verifywise/.claude/worktrees/practical-euler/`
 
 ## Related
 

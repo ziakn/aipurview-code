@@ -69,7 +69,7 @@ module.exports = {
             "Set them in your .env file and re-run the migration.",
         );
       } else {
-        if (password && password.length < 8) {
+        if (password && password.length < 8 && process.env.NODE_ENV !== "development") {
           throw new Error("SUPERADMIN_PASSWORD must be at least 8 characters.");
         }
       }

@@ -102,7 +102,7 @@ export const sendImmediateMessage = async (integration: ISlackWebhook, message: 
 
 export const formatSlackMessage = (data: any) => {
   return {
-    text: `A message from VerifyWise`,
+    text: `A message from AIPurview`,
     blocks: [
       {
         type: "header",

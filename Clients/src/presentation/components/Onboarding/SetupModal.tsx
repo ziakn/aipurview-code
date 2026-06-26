@@ -179,7 +179,7 @@ const SetupModal: React.FC<SetupModalProps> = ({ onComplete, onSkip }) => {
               marginBottom: "8px",
             }}
           >
-            Welcome to VerifyWise
+            Welcome to AIPurview
           </Typography>
           <Typography
             sx={{

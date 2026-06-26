@@ -10,7 +10,7 @@ export const aiTrustIndexDashboardContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The AI Trust Index is a VerifyWise module that shows how AI applications handle privacy and user data. It reads a public feed of scores and grades for common AI apps, refreshed weekly, so you have a current picture of the tools your teams use.',
+      text: 'The AI Trust Index is a AIPurview module that shows how AI applications handle privacy and user data. It reads a public feed of scores and grades for common AI apps, refreshed weekly, so you have a current picture of the tools your teams use.',
     },
     {
       type: 'paragraph',
@@ -24,7 +24,7 @@ export const aiTrustIndexDashboardContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise pulls the AI Trust Index feed every Monday at 06:00 UTC. The job compares incoming scores and policy details against the last known values and detects two kinds of change:',
+      text: 'AIPurview pulls the AI Trust Index feed every Monday at 06:00 UTC. The job compares incoming scores and policy details against the last known values and detects two kinds of change:',
     },
     {
       type: 'bullet-list',
@@ -35,7 +35,7 @@ export const aiTrustIndexDashboardContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'On the first sync, VerifyWise seeds the full catalog without sending any emails. Digest emails start from the second sync onward, so you only hear about changes, not the initial data load.',
+      text: 'On the first sync, AIPurview seeds the full catalog without sending any emails. Digest emails start from the second sync onward, so you only hear about changes, not the initial data load.',
     },
     {
       type: 'heading',
@@ -100,7 +100,7 @@ export const aiTrustIndexDashboardContent: ArticleContent = {
     {
       type: 'callout',
       variant: 'info',
-      text: 'The AI Trust Index is read-only. VerifyWise displays the public feed but does not modify or curate scores. If you believe a score is inaccurate, refer to the source policy URL linked on each app\'s detail page.',
+      text: 'The AI Trust Index is read-only. AIPurview displays the public feed but does not modify or curate scores. If you believe a score is inaccurate, refer to the source policy URL linked on each app\'s detail page.',
     },
     {
       type: 'article-links',

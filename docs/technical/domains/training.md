@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Training Registry in VerifyWise provides a centralized system for tracking organizational AI training programs. It supports training lifecycle management with status tracking, participant counts, department associations, and integration with reporting and automation systems.
+The Training Registry in AIPurview provides a centralized system for tracking organizational AI training programs. It supports training lifecycle management with status tracking, participant counts, department associations, and integration with reporting and automation systems.
 
 ## Key Features
 

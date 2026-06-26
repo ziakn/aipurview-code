@@ -2,7 +2,7 @@
 
 ## Overview
 
-VerifyWise implements a **shared-schema** multi-tenancy strategy using PostgreSQL. All organizations share a single `verifywise` schema, with data isolation enforced at the application level via `organization_id` columns on all tenant-scoped tables.
+AIPurview implements a **shared-schema** multi-tenancy strategy using PostgreSQL. All organizations share a single `verifywise` schema, with data isolation enforced at the application level via `organization_id` columns on all tenant-scoped tables.
 
 ## Architecture Diagram
 

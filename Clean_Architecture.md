@@ -1,4 +1,4 @@
-# PERN, Docker, Clean Architecture for BlueWave Labs: VerifyWise
+# PERN, Docker, Clean Architecture for BlueWave Labs: AIPurview
 
 **A Suggestion for an Enterprise Application**
 
@@ -92,7 +92,7 @@ Clean Architecture organizes code into distinct layers, each with a specific res
 
 Each layer is independent of the others, allowing for changes in one layer without affecting the others. This makes the system more maintainable and adaptable.
 
-In our project, **VerifyWise**, we will focus on having the following layers:
+In our project, **AIPurview**, we will focus on having the following layers:
 
 - **Presentation Layer:** This layer is responsible for handling the user interface and user interactions. It includes components like views, controllers, and presenters.
 - **Application Layer:** This layer contains the business logic and application-specific rules. It orchestrates the flow of data between the presentation layer and the infrastructure layer.

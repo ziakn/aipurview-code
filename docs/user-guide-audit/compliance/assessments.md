@@ -23,5 +23,5 @@ The article accurately describes the assessment creation workflow: use cases, fr
 
 ## Skipped / non-verifiable
 
-- "VerifyWise creates an assessment with all applicable requirements" (block: ordered list, item 3) — reason: aspirational mapping; no code trace confirms automatic requirement population based on framework selection (system architecture suggests manual/config-driven, not algorithmic inference)
+- "AIPurview creates an assessment with all applicable requirements" (block: ordered list, item 3) — reason: aspirational mapping; no code trace confirms automatic requirement population based on framework selection (system architecture suggests manual/config-driven, not algorithmic inference)
 - "Track progress and link evidence as you work" (block: ordered list, item 5) — reason: opinion-framing; core capability verified, but "as you work" is UX messaging, not verifiable behavior

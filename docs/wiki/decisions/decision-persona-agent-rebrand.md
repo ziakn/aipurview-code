@@ -10,7 +10,7 @@ status: active
 
 ## Bağlam
 
-VerifyWise zaten 10 named domain agent'a sahip — risk, vendor, evidence, incident, model, policy, compliance, control-assessment, coordinator, base. Ama **isimlendirme generic** — rakipler (Vanta "Compliance Agent", Drata "Trust Agent", Diligent "AI Board Member") cesur, persona-bazlı isimler kullanıyor.
+AIPurview zaten 10 named domain agent'a sahip — risk, vendor, evidence, incident, model, policy, compliance, control-assessment, coordinator, base. Ama **isimlendirme generic** — rakipler (Vanta "Compliance Agent", Drata "Trust Agent", Diligent "AI Board Member") cesur, persona-bazlı isimler kullanıyor.
 
 ## Karar
 

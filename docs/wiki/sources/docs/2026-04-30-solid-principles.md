@@ -1,5 +1,5 @@
 ---
-title: SOLID Principles — VerifyWise Code Foundations
+title: SOLID Principles — AIPurview Code Foundations
 tags: [solid, foundations, srp, ocp, lsp, isp, dip, clean-code]
 source: raw/docs/solid-principles.md
 date: 2026-04-30
@@ -10,11 +10,11 @@ status: active
 
 ## Amaç
 
-VerifyWise codebase'inde SOLID prensiplerinin uygulanması.
+AIPurview codebase'inde SOLID prensiplerinin uygulanması.
 
 ## Ne yapıldı
 
-| Prensip | VerifyWise Uygulaması |
+| Prensip | AIPurview Uygulaması |
 |---|---|
 | **S**ingle Responsibility | Her service tek bir domain (`riskService`, `vendorService`, `policyService`) |
 | **O**pen/Closed | Plugin system + AI Skills (Phase 7) — yeni özellik eklemek için core'a dokunmadan extension |

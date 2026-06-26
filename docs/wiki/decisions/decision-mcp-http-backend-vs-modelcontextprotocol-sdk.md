@@ -22,7 +22,7 @@ Phase 7 AI Skills implementasyonunda dış sistemlere bağlanmak için bir proto
 ## Gerekçe
 
 - Hızlı time-to-market (1-2 hafta vs 3-4 hafta)
-- VerifyWise tenant izolasyonu HTTP layer'da daha kolay
+- AIPurview tenant izolasyonu HTTP layer'da daha kolay
 - Approval gateway'e geçiş daha temiz
 - Backward-compat: gerçek MCP protocol Phase 8'de eklenecek
 
@@ -31,7 +31,7 @@ Phase 7 AI Skills implementasyonunda dış sistemlere bağlanmak için bir proto
 ✅ Phase 7 hızlı shipped
 ✅ AI Gateway tarafında MCP UI sayfaları (MCPServers, MCPToolCatalog, MCPAuditLog, MCPApprovals, MCPGuardrails) eklendi
 ⚠️ AI Gateway MCP UI sayfaları için BACKEND eksik — Phase 8'de gerçek protocol bağlanacak
-⚠️ Vanta, Drata, IBM OpenPages gibi rakipler resmi MCP server shipped — VerifyWise rekabette geri kalıyor
+⚠️ Vanta, Drata, IBM OpenPages gibi rakipler resmi MCP server shipped — AIPurview rekabette geri kalıyor
 
 ## Açık konular
 

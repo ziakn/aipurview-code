@@ -10,11 +10,11 @@ export const apiAccessContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise offers API access so you can integrate with external applications, scripts and automation workflows. API keys let you authenticate requests without an interactive login.',
+      text: 'AIPurview offers API access so you can integrate with external applications, scripts and automation workflows. API keys let you authenticate requests without an interactive login.',
     },
     {
       type: 'paragraph',
-      text: 'Use API keys to build custom integrations, automate data sync or connect VerifyWise with your existing tools.',
+      text: 'Use API keys to build custom integrations, automate data sync or connect AIPurview with your existing tools.',
     },
     {
       type: 'heading',

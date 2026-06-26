@@ -34,7 +34,7 @@ export const aiTrustIndexTrackedContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Occasionally, an app is removed from the public AI Trust Index because it was discontinued, renamed, or merged into another product. When this happens, VerifyWise does not remove the app from your tracking list. Instead, it dims the app\'s card and marks it with a **No longer in index** badge.',
+      text: 'Occasionally, an app is removed from the public AI Trust Index because it was discontinued, renamed, or merged into another product. When this happens, AIPurview does not remove the app from your tracking list. Instead, it dims the app\'s card and marks it with a **No longer in index** badge.',
     },
     {
       type: 'paragraph',
@@ -43,7 +43,7 @@ export const aiTrustIndexTrackedContent: ArticleContent = {
     {
       type: 'callout',
       variant: 'info',
-      text: 'When an app is first removed from the index, VerifyWise sends a one-time email to your configured recipients listing it in the "No longer assessed" section of that week\'s digest. Subsequent weekly syncs do not resend this notice for the same app.',
+      text: 'When an app is first removed from the index, AIPurview sends a one-time email to your configured recipients listing it in the "No longer assessed" section of that week\'s digest. Subsequent weekly syncs do not resend this notice for the same app.',
     },
     {
       type: 'heading',
@@ -53,7 +53,7 @@ export const aiTrustIndexTrackedContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Each week, if any of your tracked apps have material changes, VerifyWise sends a digest email to the configured recipients. A material change is one of:',
+      text: 'Each week, if any of your tracked apps have material changes, AIPurview sends a digest email to the configured recipients. A material change is one of:',
     },
     {
       type: 'bullet-list',

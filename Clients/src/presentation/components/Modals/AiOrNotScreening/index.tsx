@@ -337,7 +337,7 @@ const AiOrNotScreening: React.FC<AiOrNotScreeningProps> = ({
             </Stack>
           </Box>
           <Typography sx={{ fontSize: 13, color: theme.palette.text.secondary }}>
-            Click "Create use case" below to proceed with setting up this AI use case in VerifyWise.
+            Click "Create use case" below to proceed with setting up this AI use case in AIPurview.
           </Typography>
         </Stack>
       );

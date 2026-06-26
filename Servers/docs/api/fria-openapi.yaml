@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: VerifyWise FRIA API
+  title: AIPurview FRIA API
   description: >
     Fundamental Rights Impact Assessment (FRIA) endpoints for managing
     EU AI Act Article 27 assessments, rights matrices, risk items, model

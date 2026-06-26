@@ -1,6 +1,6 @@
 # Hooks Guidelines
 
-Guidelines for using React hooks effectively in VerifyWise.
+Guidelines for using React hooks effectively in AIPurview.
 
 ## Rules of Hooks
 

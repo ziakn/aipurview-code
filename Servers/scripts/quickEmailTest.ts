@@ -15,7 +15,7 @@ const testTemplate = `
     <mj-section>
       <mj-column>
         <mj-text>
-          <h1>VerifyWise Email Service Test</h1>
+          <h1>AIPurview Email Service Test</h1>
           <p>Hello {{user_name}},</p>
           <p>This email was sent using the new provider abstraction system.</p>
           <p>Current provider: {{provider_type}}</p>
@@ -29,7 +29,7 @@ const testTemplate = `
 `;
 
 async function main() {
-  console.log("🧪 Testing VerifyWise Email Service");
+  console.log("🧪 Testing AIPurview Email Service");
   console.log("==================================");
 
   const testEmail = process.argv[2];
@@ -52,7 +52,7 @@ async function main() {
 
     const result = await sendEmail(
       testEmail,
-      "VerifyWise Email Service Test",
+      "AIPurview Email Service Test",
       testTemplate,
       templateData,
     );

@@ -121,7 +121,7 @@ export const riskMitigationContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise tracks multiple risk level measurements so you can see how well your mitigations are working:',
+      text: 'AIPurview tracks multiple risk level measurements so you can see how well your mitigations are working:',
     },
     {
       type: 'bullet-list',
@@ -194,7 +194,7 @@ export const riskMitigationContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'For bigger risks, VerifyWise has an approval process:',
+      text: 'For bigger risks, AIPurview has an approval process:',
     },
     {
       type: 'ordered-list',

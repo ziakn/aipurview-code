@@ -1,6 +1,6 @@
 # API Document Generation
 
-This document serves as the persistent blueprint for generating and maintaining the VerifyWise API documentation site.
+This document serves as the persistent blueprint for generating and maintaining the AIPurview API documentation site.
 
 **Version:** 1.7.0
 **Last Updated:** 2024-12-02
@@ -12,7 +12,7 @@ This document serves as the persistent blueprint for generating and maintaining 
 
 The API documentation is a standalone React application that can be:
 1. Deployed independently as a static site
-2. Integrated into the main VerifyWise application
+2. Integrated into the main AIPurview application
 3. Merged with the Resources/Help Center alongside User Documentation and Style Guide
 
 ---
@@ -27,7 +27,7 @@ The API documentation is a standalone React application that can be:
 - **Lucide React** for icons
 
 ### Design System Alignment
-The docs follow the VerifyWise design system from `/style-guide`:
+The docs follow the AIPurview design system from `/style-guide`:
 - Primary color: `#13715B`
 - Border color: `#d0d5dd`
 - Border radius: `4px`
@@ -296,4 +296,4 @@ When running in UPDATE mode:
 - Initial API documentation generation
 - Covers all endpoints from swagger.yaml
 - Interactive "Try it out" functionality
-- Matches VerifyWise design system
+- Matches AIPurview design system

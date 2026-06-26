@@ -1,6 +1,6 @@
 # React Component Template
 
-Copy-paste template for creating React components in VerifyWise.
+Copy-paste template for creating React components in AIPurview.
 
 ## Basic Component
 

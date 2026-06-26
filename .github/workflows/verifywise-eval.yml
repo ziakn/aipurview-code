@@ -1,6 +1,6 @@
-# VerifyWise LLM Evaluation — Reusable GitHub Actions Workflow
+# AIPurview LLM Evaluation — Reusable GitHub Actions Workflow
 #
-# Triggers an LLM evaluation on a VerifyWise instance, polls for results,
+# Triggers an LLM evaluation on a AIPurview instance, polls for results,
 # and optionally posts a summary as a PR comment and/or fails CI if
 # thresholds are not met.
 #
@@ -23,17 +23,17 @@
 #         VW_API_TOKEN: ${{ secrets.VW_API_TOKEN }}
 #         LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
 
-name: VerifyWise LLM Evaluation
+name: AIPurview LLM Evaluation
 
 on:
   workflow_call:
     inputs:
       api_url:
-        description: "Base URL of the VerifyWise instance (e.g. https://app.verifywise.ai)"
+        description: "Base URL of the AIPurview instance (e.g. https://app.verifywise.ai)"
         required: true
         type: string
       project_id:
-        description: "VerifyWise project ID"
+        description: "AIPurview project ID"
         required: true
         type: string
       dataset_id:
@@ -94,7 +94,7 @@ on:
         default: true
     secrets:
       VW_API_TOKEN:
-        description: "VerifyWise JWT token or API key for authentication"
+        description: "AIPurview JWT token or API key for authentication"
         required: true
       LLM_API_KEY:
         description: "API key for the LLM provider being evaluated"

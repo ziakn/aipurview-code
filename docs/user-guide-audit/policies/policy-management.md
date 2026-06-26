@@ -28,5 +28,5 @@ The policy-management article is largely accurate, with references to UI, form f
 
 ## Skipped / non-verifiable
 
-- "The policy manager in VerifyWise helps you create, organize and maintain AI governance policies for your organization." (block 1) — reason: motivational framing, not a verifiable technical claim
+- "The policy manager in AIPurview helps you create, organize and maintain AI governance policies for your organization." (block 1) — reason: motivational framing, not a verifiable technical claim
 - "Well-documented policies set the groundwork for how your teams handle AI, and they show regulators and stakeholders that you take governance seriously." (block 1) — reason: motivational/aspirational statement

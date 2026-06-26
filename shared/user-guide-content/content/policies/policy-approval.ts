@@ -10,7 +10,7 @@ export const policyApprovalContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise comes with a library of pre-built policy templates covering common AI governance topics. They give you a starting point for creating your own organizational policies, saving time and helping you cover the governance areas that matter.',
+      text: 'AIPurview comes with a library of pre-built policy templates covering common AI governance topics. They give you a starting point for creating your own organizational policies, saving time and helping you cover the governance areas that matter.',
     },
     {
       type: 'paragraph',

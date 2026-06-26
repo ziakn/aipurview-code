@@ -81,7 +81,7 @@ export const runningExperimentsContent: ArticleContent = {
       type: 'bullet-list',
       items: [
         { bold: 'My datasets', text: 'Custom datasets you\'ve previously uploaded. These are stored in your project and tailored to your specific use case.' },
-        { bold: 'Built-in datasets', text: 'Curated test suites maintained by VerifyWise. Great for getting started or benchmarking against industry-standard prompts.' },
+        { bold: 'Built-in datasets', text: 'Curated test suites maintained by AIPurview. Great for getting started or benchmarking against industry-standard prompts.' },
         { bold: 'Upload now', text: 'Upload a new JSON file on the spot. The file is saved to your project for future use.' },
       ],
     },

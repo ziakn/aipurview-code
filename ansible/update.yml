@@ -1,5 +1,5 @@
 ---
-- name: Update VerifyWise on all servers (images + compose + env)
+- name: Update AIPurview on all servers (images + compose + env)
   hosts: verifywise
   become: true
   serial: 1  # one server at a time; remove for parallel

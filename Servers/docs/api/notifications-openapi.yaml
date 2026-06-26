@@ -1,9 +1,9 @@
 openapi: 3.0.3
 info:
-  title: VerifyWise Notifications API
+  title: AIPurview Notifications API
   version: 1.0.0
   description: >
-    Real-time and REST endpoints for the VerifyWise notification system.
+    Real-time and REST endpoints for the AIPurview notification system.
     All endpoints require JWT authentication via the Authorization header.
     Responses are wrapped in `{ message: string, data: T }`.
 

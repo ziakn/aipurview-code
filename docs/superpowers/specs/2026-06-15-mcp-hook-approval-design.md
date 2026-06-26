@@ -94,7 +94,7 @@ approval_required:
   while now < deadline:
     GET $VW_GATEWAY_URL$poll_endpoint  (Bearer key, --max-time VW_TIMEOUT, HTTP-status check)
       approved → "Approved by <decider>" >&2 ; exit 0
-      denied   → "Denied by VerifyWise: <reason>" >&2 ; exit 2
+      denied   → "Denied by AIPurview: <reason>" >&2 ; exit 2
       pending / poll-unreachable → sleep 2 ; continue   (transient blip != decision)
   # deadline reached, still pending:
   apply VW_APPROVAL_FAIL_MODE (default closed) → exit 2   (open → exit 0, warn)

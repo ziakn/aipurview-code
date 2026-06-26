@@ -27,9 +27,9 @@
 
 ### welcome.md
 
-- ✅ "VerifyWise ships with pre-built control sets for these frameworks: EU AI Act, ISO 42001, ISO 27001, NIST AI RMF" (verified at database migration `20260302111132-seed-framework-struct-data.js` lines 52–56 and `Clients/src/application/constants/frameworks.ts` lines 12–23`) — confirmed: Claim lists four frameworks. Audit report identifies correct seed migration file and constants file as sources. Framework names are verified as present in both database seed and application constants.
+- ✅ "AIPurview ships with pre-built control sets for these frameworks: EU AI Act, ISO 42001, ISO 27001, NIST AI RMF" (verified at database migration `20260302111132-seed-framework-struct-data.js` lines 52–56 and `Clients/src/application/constants/frameworks.ts` lines 12–23`) — confirmed: Claim lists four frameworks. Audit report identifies correct seed migration file and constants file as sources. Framework names are verified as present in both database seed and application constants.
 
-- ✅ Cross-doc reference to "Installing VerifyWise" article (verified at file exists `shared/user-guide-content/content/getting-started/installing.ts`) — confirmed: Audit report correctly verified article file existence. This is a file system check, not content verification. Cross-reference valid.
+- ✅ Cross-doc reference to "Installing AIPurview" article (verified at file exists `shared/user-guide-content/content/getting-started/installing.ts`) — confirmed: Audit report correctly verified article file existence. This is a file system check, not content verification. Cross-reference valid.
 
 ## Summary
 

@@ -1,6 +1,6 @@
-# VerifyWise Python SDK
+# AIPurview Python SDK
 
-Python SDK for the [VerifyWise](https://verifywise.ai) AI governance platform. Manage LLM evaluations, datasets, reports, arena comparisons, and bias audits programmatically.
+Python SDK for the [AIPurview](https://verifywise.ai) AI governance platform. Manage LLM evaluations, datasets, reports, arena comparisons, and bias audits programmatically.
 
 ## Installation
 
@@ -18,9 +18,9 @@ pip install -e .
 ## Quick Start
 
 ```python
-from verifywise import VerifyWiseClient
+from verifywise import AIPurviewClient
 
-client = VerifyWiseClient(
+client = AIPurviewClient(
     api_url="https://your-instance.com",
     token="your-jwt-token",
 )
@@ -158,9 +158,9 @@ results = client.bias_audits.run_and_wait(
 
 ```python
 import sys
-from verifywise import VerifyWiseClient
+from verifywise import AIPurviewClient
 
-client = VerifyWiseClient(api_url=os.environ["VW_API_URL"], token=os.environ["VW_API_TOKEN"])
+client = AIPurviewClient(api_url=os.environ["VW_API_URL"], token=os.environ["VW_API_TOKEN"])
 
 results = client.experiments.run_and_wait(
     project_id=os.environ["VW_PROJECT_ID"],
@@ -185,7 +185,7 @@ print("Evaluation PASSED")
 ## Error Handling
 
 ```python
-from verifywise import VerifyWiseClient, AuthenticationError, NotFoundError, TimeoutError
+from verifywise import AIPurviewClient, AuthenticationError, NotFoundError, TimeoutError
 
 try:
     results = client.experiments.run_and_wait(...)

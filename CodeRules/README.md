@@ -1,6 +1,6 @@
-# VerifyWise Code Rules & Best Practices
+# AIPurview Code Rules & Best Practices
 
-A comprehensive collection of coding standards, best practices, and guidelines for the VerifyWise project. This documentation is designed to ensure consistency, maintainability, and quality across the entire codebase.
+A comprehensive collection of coding standards, best practices, and guidelines for the AIPurview project. This documentation is designed to ensure consistency, maintainability, and quality across the entire codebase.
 
 ## Tech Stack
 
@@ -83,7 +83,7 @@ Development workflow and collaboration guidelines.
 - [Documentation](./08-workflow/documentation.md) - JSDoc, docstrings, component docs
 
 ### 9. Design System
-Visual design standards extracted from the VerifyWise StyleGuide.
+Visual design standards extracted from the AIPurview StyleGuide.
 
 - [Colors](./09-design-system/colors.md) - Full color palette with theme tokens
 - [Typography](./09-design-system/typography.md) - Font sizes, weights, line heights
@@ -136,7 +136,7 @@ When updating these guidelines:
 2. Provide concrete examples for each guideline
 3. Include both good and bad examples where applicable
 4. Update the relevant checklist if adding new requirements
-5. Keep guidelines actionable and specific to VerifyWise
+5. Keep guidelines actionable and specific to AIPurview
 
 ## Project Standards
 

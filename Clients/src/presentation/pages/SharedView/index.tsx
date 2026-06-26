@@ -445,7 +445,7 @@ const SharedView: React.FC = () => {
               rel="noopener noreferrer"
               style={{ color: "brand.primary", textDecoration: "none", fontWeight: 600 }}
             >
-              VerifyWise
+              AIPurview
             </a>
           </Typography>
         </Box>

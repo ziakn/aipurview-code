@@ -234,7 +234,7 @@ function ArchDiagram() {
             mb: "2px",
           }}
         >
-          VerifyWise AI gateway
+          AIPurview AI gateway
         </Typography>
         <Typography sx={{ fontSize: 10, color: palette.text.disabled, mb: "4px" }}>
           Unified proxy with governance controls

@@ -1,6 +1,6 @@
 # Custom Hook Template
 
-Copy-paste templates for creating custom React hooks in VerifyWise.
+Copy-paste templates for creating custom React hooks in AIPurview.
 
 ## Basic Data Fetching Hook
 

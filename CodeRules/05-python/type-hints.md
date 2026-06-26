@@ -1,6 +1,6 @@
 # Type Hints
 
-Guidelines for using type hints in Python for VerifyWise services.
+Guidelines for using type hints in Python for AIPurview services.
 
 ## Why Type Hints
 

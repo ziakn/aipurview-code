@@ -296,8 +296,8 @@ describe("slack.integration.repository", () => {
 
       expect(apiServices.post).toHaveBeenCalledTimes(1);
       expect(apiServices.post).toHaveBeenCalledWith("/slackWebhooks/1/send", {
-        title: "Welcome to Verifywise",
-        message: "This is a test message from VerifyWise.",
+        title: "Welcome to AIPurview",
+        message: "This is a test message from AIPurview.",
       });
       expect(result).toEqual(mockResponse.data);
     });

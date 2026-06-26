@@ -3,7 +3,7 @@ import type { ArticleContent } from '../../contentTypes';
 export const workingWithResourcesContent: ArticleContent = {
   blocks: [
     { type: 'heading', id: 'overview', level: 2, text: 'Working with resources' },
-    { type: 'paragraph', text: 'Most VerifyWise resources (projects, risks, vendors, models, tasks and more) follow the same REST pattern: list them, fetch one by id, create, update and delete. Once you know the pattern, every resource works the same way. The few places where they differ are listed at the end.' },
+    { type: 'paragraph', text: 'Most AIPurview resources (projects, risks, vendors, models, tasks and more) follow the same REST pattern: list them, fetch one by id, create, update and delete. Once you know the pattern, every resource works the same way. The few places where they differ are listed at the end.' },
     { type: 'paragraph', text: 'This article assumes you already have a token and know the base URL. If not, read the Platform REST API article first.' },
 
     { type: 'heading', id: 'pattern', level: 2, text: 'The CRUD pattern' },

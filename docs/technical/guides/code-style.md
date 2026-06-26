@@ -1,6 +1,6 @@
 # Code Style Guide
 
-This guide documents the TypeScript/JavaScript conventions and coding standards used throughout VerifyWise.
+This guide documents the TypeScript/JavaScript conventions and coding standards used throughout AIPurview.
 
 ## TypeScript Configuration
 
@@ -152,7 +152,7 @@ import type { RootState } from "../redux/store";
 
 // 3. Hooks and contexts
 import { useAuth } from "../hooks/useAuth";
-import { useVerifyWiseContext } from "../contexts/VerifyWise.context";
+import { useAIPurviewContext } from "../contexts/AIPurview.context";
 
 // 4. Components
 import { Button } from "../components/Button";

@@ -1,11 +1,11 @@
 ---
-title: VerifyWise Wiki — İçindekiler
+title: AIPurview Wiki — İçindekiler
 tags: [index, catalog]
 date: 2026-04-30
 status: active
 ---
 
-# VerifyWise Wiki — İçindekiler
+# AIPurview Wiki — İçindekiler
 
 > Bu dosya wiki'nin kategori bazında içerik kataloğudur. Her INGEST sonrası güncellenir.
 
@@ -120,7 +120,7 @@ status: active
 - [root-claude-md](sources/codebase-claude-md/2026-04-30-root-claude-md.md) — Root Development Guide
 - [servers-claude-md](sources/codebase-claude-md/2026-04-30-servers-claude-md.md) — Backend Development Guide
 - [backend-database-patterns](sources/docs/2026-04-30-backend-database-patterns.md) — Sequelize + raw SQL
-- [solid-principles](sources/docs/2026-04-30-solid-principles.md) — VerifyWise SOLID uygulaması
+- [solid-principles](sources/docs/2026-04-30-solid-principles.md) — AIPurview SOLID uygulaması
 
 ---
 

@@ -10,7 +10,7 @@
 
 A new (6th) top-level sidebar module, **AI Trust Index**, that consumes the public AI Trust Index JSON feed published at `https://verifywise.ai/ai-trust-index.json`, lets each organization **browse/search** all assessed AI apps and **track** the ones they actually use, and emails configured recipients **weekly** when a tracked app's risk-material profile changes.
 
-**Product rationale:** Companies don't know the risk of the AI apps they use. The AI Trust Index (public, read-only on verifywise.ai) is the research. This module brings the same data into the VerifyWise app, where a company can select the apps it uses specifically and receive alerts when one of them changes — tying an external risk feed to their own tooling.
+**Product rationale:** Companies don't know the risk of the AI apps they use. The AI Trust Index (public, read-only on verifywise.ai) is the research. This module brings the same data into the AIPurview app, where a company can select the apps it uses specifically and receive alerts when one of them changes — tying an external risk feed to their own tooling.
 
 **Lean by design:** This is "a simple fetcher." No new dependencies, no new service, no scraping, no LLM. It reuses the existing Node/Express + BullMQ + Sequelize + Postgres + MJML/nodemailer + React/React Query stack already on `develop`.
 
@@ -85,7 +85,7 @@ A new (6th) top-level sidebar module, **AI Trust Index**, that consumes the publ
     GET /ai-trust-index.json  ──────────────┐  weekly fetch (BullMQ cron, UTC)
                                             ▼
   ┌──────────────────────────────────────────────────────────────┐
-  │ VerifyWise Servers (Express + BullMQ + Sequelize)             │
+  │ AIPurview Servers (Express + BullMQ + Sequelize)             │
   │                                                              │
   │ Weekly job "ai_trust_index_sync":                            │
   │   sanity-gate feed → upsert apps (canonical hashing) →       │

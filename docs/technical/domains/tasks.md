@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Task Management domain provides comprehensive functionality for creating, assigning, and tracking tasks within VerifyWise. Tasks support multi-assignee collaboration, category tagging, priority levels, and integrate with the automation system for notifications.
+The Task Management domain provides comprehensive functionality for creating, assigning, and tracking tasks within AIPurview. Tasks support multi-assignee collaboration, category tagging, priority levels, and integrate with the automation system for notifications.
 
 ## Key Features
 

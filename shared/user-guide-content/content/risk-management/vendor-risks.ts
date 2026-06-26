@@ -54,7 +54,7 @@ export const vendorRisksContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise assesses vendor risk across four dimensions:',
+      text: 'AIPurview assesses vendor risk across four dimensions:',
     },
     {
       type: 'icon-cards',
@@ -196,7 +196,7 @@ export const vendorRisksContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise calculates an overall risk score from the scorecard inputs. Higher scores mean greater risk. Things that push the score up include:',
+      text: 'AIPurview calculates an overall risk score from the scorecard inputs. Higher scores mean greater risk. Things that push the score up include:',
     },
     {
       type: 'bullet-list',

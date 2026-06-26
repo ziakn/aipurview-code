@@ -14,7 +14,7 @@ export const intakeFormsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Intake forms let anyone in your organization request a new AI use case or register a model without needing a VerifyWise account. You publish a public form, share the link and submissions land in your governance queue for review. When you approve a submission, VerifyWise creates the use case or model inventory entry and carries over the risk score from the intake.',
+      text: 'Intake forms let anyone in your organization request a new AI use case or register a model without needing a AIPurview account. You publish a public form, share the link and submissions land in your governance queue for review. When you approve a submission, AIPurview creates the use case or model inventory entry and carries over the risk score from the intake.',
     },
     {
       type: 'paragraph',
@@ -525,13 +525,13 @@ export const intakeFormsContent: ArticleContent = {
       items: [
         { text: 'Review the entity data preview. These are the field values that will populate the new entity, and you can edit them before confirming.' },
         { text: 'Optionally override the risk tier with a justification.' },
-        { text: 'Click **Approve**. VerifyWise creates the entity (use case or model inventory entry) with the confirmed data.' },
+        { text: 'Click **Approve**. AIPurview creates the entity (use case or model inventory entry) with the confirmed data.' },
         { text: 'If the submitter provided an email, they receive an approval notification.' },
       ],
     },
     {
       type: 'paragraph',
-      text: 'When you approve a submission (which transitions the *submission* status from PENDING to APPROVED), VerifyWise creates the entity. The new entity then starts in its own default lifecycle state ("Under review" for use cases, "Pending" for models) and shows up in your governance dashboards right away.',
+      text: 'When you approve a submission (which transitions the *submission* status from PENDING to APPROVED), AIPurview creates the entity. The new entity then starts in its own default lifecycle state ("Under review" for use cases, "Pending" for models) and shows up in your governance dashboards right away.',
     },
     {
       type: 'heading',

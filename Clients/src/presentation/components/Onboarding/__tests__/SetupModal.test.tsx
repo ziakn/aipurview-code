@@ -27,7 +27,7 @@ describe("SetupModal", () => {
 
   it("renders the welcome header", () => {
     renderWithProviders(<SetupModal onComplete={vi.fn()} onSkip={vi.fn()} />);
-    expect(screen.getByText("Welcome to VerifyWise")).toBeInTheDocument();
+    expect(screen.getByText("Welcome to AIPurview")).toBeInTheDocument();
   });
 
   it("renders both setup options", () => {

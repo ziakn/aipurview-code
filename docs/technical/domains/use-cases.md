@@ -8,7 +8,7 @@ A **Use Case** (internally called a **Project**) represents a discrete AI system
 
 ### What is a Use Case?
 
-A Use Case in VerifyWise represents:
+A Use Case in AIPurview represents:
 - An AI system requiring compliance assessment
 - A container for risks, vendors, and models
 - The primary entity for framework compliance tracking

@@ -406,7 +406,7 @@ export async function insertMockData(
         {
           training_name: "EU AI Act Compliance for HR Professionals",
           duration: "4 hours",
-          provider: "VerifyWise Academy",
+          provider: "AIPurview Academy",
           department: "Human Resources",
           status: "Planned",
           numberOfPeople: 25,

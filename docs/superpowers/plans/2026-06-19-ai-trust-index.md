@@ -20,7 +20,7 @@ Full design: `docs/superpowers/specs/2026-06-19-ai-trust-index-design.md`.
 - **Canonical hashing (the #1 correctness rule):** hash the INCOMING parsed feed object, NEVER re-derive from stored JSONB; deep-sort object keys + sort unordered arrays before hashing.
 - **Two hashes:** `material_hash` (drives emails) over `{scoreOutOf100, letterGrade, displayedGrade, dealbreakerFlags, policyLastUpdated, processesBiometrics}`; `full_hash` (drives `data` refresh / `last_changed_at`) over the full app object minus `iconUrl`, with `policyUrl` stripped of query+fragment.
 - **Cron:** `"0 6 * * 1"` Monday 06:00 **UTC**; scheduler MUST NOT call `automationQueue.obliterate()`; register it LAST in `Servers/jobs/producer.ts`.
-- **UI:** sentence case; VerifyWise components over raw MUI; grade chips render `displayedGrade` (not `letterGrade`); use our theme palette, not the feed's `design` block.
+- **UI:** sentence case; AIPurview components over raw MUI; grade chips render `displayedGrade` (not `letterGrade`); use our theme palette, not the feed's `design` block.
 - **i18n:** every new user-facing string gets de/fr/es entries in `Clients/src/i18n/translations.ts` (English string is the key); must pass `npm run i18n:audit:strict`.
 - **Pre-PR gates:** `cd Servers && npm run build && npm run format-check`; `cd Clients && npm run typecheck && npm run i18n:audit:strict && npm run format-check && npm run build`.
 
@@ -2058,7 +2058,7 @@ With the backend able to reach the internet, run a one-off invocation of the job
 
 - [ ] **Step 3: Exercise the UI**
 
-Run the app (backend + frontend), log in (`gorkem.cetin@verifywise.ai` / `Verifywise#1`), open the new **AI Trust Index** module. Verify: Browse lists apps with grades/scores, search + category/grade filters work, pagination works, bulk-select + "Track selected" works, a row opens the full detail page, Tracked shows tracked apps, Settings (as Admin) saves recipients.
+Run the app (backend + frontend), log in (`gorkem.cetin@verifywise.ai` / `AIPurview#1`), open the new **AI Trust Index** module. Verify: Browse lists apps with grades/scores, search + category/grade filters work, pagination works, bulk-select + "Track selected" works, a row opens the full detail page, Tracked shows tracked apps, Settings (as Admin) saves recipients.
 
 - [ ] **Step 4: Simulate a change → email path (optional but recommended)**
 

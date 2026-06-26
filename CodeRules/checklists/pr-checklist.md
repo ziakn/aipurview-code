@@ -1,6 +1,6 @@
 # Pull Request Checklist
 
-Expanded checklist for pull request submissions in VerifyWise.
+Expanded checklist for pull request submissions in AIPurview.
 
 ## Pre-Submission Checklist
 

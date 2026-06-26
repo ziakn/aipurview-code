@@ -1,6 +1,6 @@
 # Python Standards
 
-Python coding standards for VerifyWise services, following PEP 8 and Python best practices.
+Python coding standards for AIPurview services, following PEP 8 and Python best practices.
 
 ## PEP 8 Compliance
 

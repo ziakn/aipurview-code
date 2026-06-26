@@ -1,6 +1,6 @@
 # Colors
 
-Complete color palette for the VerifyWise design system. Always use theme tokens — never hardcode hex values.
+Complete color palette for the AIPurview design system. Always use theme tokens — never hardcode hex values.
 
 ## Primary
 

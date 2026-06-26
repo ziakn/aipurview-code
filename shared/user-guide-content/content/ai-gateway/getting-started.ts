@@ -25,7 +25,7 @@ export const gettingStartedContent: ArticleContent = {
     {
       type: 'bullet-list',
       items: [
-        { text: 'A VerifyWise account with Admin role' },
+        { text: 'A AIPurview account with Admin role' },
         { text: 'An API key from at least one LLM provider (OpenAI, Anthropic, Google, etc.)' },
         { text: 'About 5 minutes' },
       ],
@@ -126,7 +126,7 @@ export const gettingStartedContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Virtual keys let developers use the gateway without a VerifyWise account. Create one in **AI Gateway > Virtual keys**, copy the key and use it like this:',
+      text: 'Virtual keys let developers use the gateway without a AIPurview account. Create one in **AI Gateway > Virtual keys**, copy the key and use it like this:',
     },
     {
       type: 'code',
@@ -152,7 +152,7 @@ print(response.choices[0].message.content)`,
     },
     {
       type: 'paragraph',
-      text: 'The Playground page in VerifyWise uses your logged-in session. Good for testing prompts and checking costs, but not for production code.',
+      text: 'The Playground page in AIPurview uses your logged-in session. Good for testing prompts and checking costs, but not for production code.',
     },
     {
       type: 'heading',

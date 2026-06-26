@@ -10,11 +10,11 @@ export const assessmentsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise supports multiple compliance frameworks to help you meet regulatory requirements and show responsible AI governance. Each framework gives you a structured way to evaluate your AI systems against specific standards or regulations.',
+      text: 'AIPurview supports multiple compliance frameworks to help you meet regulatory requirements and show responsible AI governance. Each framework gives you a structured way to evaluate your AI systems against specific standards or regulations.',
     },
     {
       type: 'paragraph',
-      text: 'Compliance isn\'t a one-time event. VerifyWise lets you track progress over time, spot gaps and show auditors exactly where you stand on each requirement.',
+      text: 'Compliance isn\'t a one-time event. AIPurview lets you track progress over time, spot gaps and show auditors exactly where you stand on each requirement.',
     },
     {
       type: 'heading',
@@ -24,7 +24,7 @@ export const assessmentsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise includes support for the following compliance frameworks:',
+      text: 'AIPurview includes support for the following compliance frameworks:',
     },
     {
       type: 'icon-cards',
@@ -110,14 +110,14 @@ export const assessmentsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'To begin compliance tracking in VerifyWise:',
+      text: 'To begin compliance tracking in AIPurview:',
     },
     {
       type: 'ordered-list',
       items: [
         { text: 'Create a use case for your AI system' },
         { text: 'Select the compliance framework(s) you need to address' },
-        { text: 'VerifyWise creates an assessment with all applicable requirements' },
+        { text: 'AIPurview creates an assessment with all applicable requirements' },
         { text: 'Assign owners to controls and begin implementation' },
         { text: 'Track progress and link evidence as you work' },
       ],
@@ -136,7 +136,7 @@ export const assessmentsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'While each framework has its own structure and terminology, they share common elements in VerifyWise:',
+      text: 'While each framework has its own structure and terminology, they share common elements in AIPurview:',
     },
     {
       type: 'bullet-list',
@@ -157,7 +157,7 @@ export const assessmentsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Compliance isn\'t something you finish once. VerifyWise supports ongoing compliance management:',
+      text: 'Compliance isn\'t something you finish once. AIPurview supports ongoing compliance management:',
     },
     {
       type: 'bullet-list',

@@ -1,6 +1,6 @@
 # Deployment Documentation
 
-This directory contains comprehensive guides for deploying and securing VerifyWise in production environments.
+This directory contains comprehensive guides for deploying and securing AIPurview in production environments.
 
 ## Documents
 

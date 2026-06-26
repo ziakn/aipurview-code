@@ -10,7 +10,7 @@
 
 ## Overview
 
-The SlackWebhook model represents a Slack workspace integration in the VerifyWise system. It stores encrypted credentials, channel information, and notification routing configuration for sending messages to Slack channels.
+The SlackWebhook model represents a Slack workspace integration in the AIPurview system. It stores encrypted credentials, channel information, and notification routing configuration for sending messages to Slack channels.
 
 **Location:** `Servers/domain.layer/models/slackNotification/slackWebhook.model.ts`
 

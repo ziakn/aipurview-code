@@ -6,8 +6,8 @@ vi.mock("../useAuth", () => ({
   useAuth: () => ({ userId: mockUserId() }),
 }));
 
-vi.mock("../../contexts/VerifyWise.context", () => ({
-  VerifyWiseContext: {
+vi.mock("../../contexts/AIPurview.context", () => ({
+  AIPurviewContext: {
     _currentValue: { users: [{ id: 1 }], organizationId: 1 },
   },
 }));

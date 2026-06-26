@@ -28,8 +28,8 @@ The article describes provider support accurately for most vendors (OpenAI, Anth
 
 ## Verified claims (sampled)
 - Claim: "Models are automatically added to this list when they're used in experiments. You don't need to manually register models before running evaluations." (block 3) — verified at `/Users/gorkemcetin/verifywise/EvalServer/src/crud/deepeval_models.py:create_model()` (automatic insertion into llm_evals_models table on experiment run)
-- Claim: "VerifyWise supports... OpenAI" (block 6, first bullet) — verified at `/Users/gorkemcetin/verifywise/Clients/src/presentation/utils/providers/index.ts:38-40` (openai provider with GPT models)
-- Claim: "VerifyWise supports... Ollama. Locally-hosted models running on your own hardware." (block 6) — verified at `/Users/gorkemcetin/verifywise/Clients/src/presentation/pages/EvalsDashboard/NewExperimentModal.tsx:33, 1163` (Ollama logo imported and configured as self-hosted provider)
+- Claim: "AIPurview supports... OpenAI" (block 6, first bullet) — verified at `/Users/gorkemcetin/verifywise/Clients/src/presentation/utils/providers/index.ts:38-40` (openai provider with GPT models)
+- Claim: "AIPurview supports... Ollama. Locally-hosted models running on your own hardware." (block 6) — verified at `/Users/gorkemcetin/verifywise/Clients/src/presentation/pages/EvalsDashboard/NewExperimentModal.tsx:33, 1163` (Ollama logo imported and configured as self-hosted provider)
 - Claim: "For local models (Ollama), no API key is needed." (block 9, callout) — verified at `/Users/gorkemcetin/verifywise/Clients/src/presentation/pages/EvalsDashboard/NewExperimentModal.tsx:1163` (needsApiKey: false for ollama)
 - Claim: "API keys for cloud providers are configured in the Settings tab of your evals project." (block 8) — partially verified; code shows keys stored in llm_evals_models table with endpoint_url and provider fields; Settings tab UI not fully inspected
 

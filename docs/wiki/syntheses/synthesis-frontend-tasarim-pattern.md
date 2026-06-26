@@ -10,7 +10,7 @@ status: active
 
 ## Altın Standart: AIAuditDashboard
 
-`Clients/src/presentation/pages/AIAuditDashboard/index.tsx` — VerifyWise'ın görsel dilinde **canonical reference**. Tüm list/dashboard sayfaları bu pattern'i kopyalar.
+`Clients/src/presentation/pages/AIAuditDashboard/index.tsx` — AIPurview'ın görsel dilinde **canonical reference**. Tüm list/dashboard sayfaları bu pattern'i kopyalar.
 
 ## 6 Bileşenli Pattern
 
@@ -114,7 +114,7 @@ const cardSx = {
 - **Tek renkli element** workflow definition card'da: yeşil "Run" butonu
 - Geri kalan: muted gri / pastel
 - State chip'leri: `getStateBg(state)` + `getStateColor(state)` helper'ları
-- Brand: `brand.primary = #13715B` (VerifyWise yeşili)
+- Brand: `brand.primary = #13715B` (AIPurview yeşili)
 
 ## Bu Pattern'i Uygulayan Sayfalar
 

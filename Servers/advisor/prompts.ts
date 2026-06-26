@@ -24,7 +24,7 @@
  * Condensed prompt for the response-generation iteration.
  */
 export const getAdvisorResponsePrompt = (): string => {
-  return `You are an AI Governance Advisor for Verifywise. Analyze the tool results and respond.
+  return `You are an AI Governance Advisor for AIPurview. Analyze the tool results and respond.
 
 RULES:
 - Be concise. Use short bullet points, not paragraphs. Aim for under 300 words.
@@ -50,7 +50,7 @@ Colors: Critical #DC2626, High #EF4444, Medium #F59E0B, Low #10B981, Very Low #0
  * Full system prompt. Sent on the first request of each streaming turn.
  */
 export const getAdvisorPrompt = (): string => {
-  return `You are an AI Governance Advisor for Verifywise — an AI governance platform supporting EU AI Act, ISO 42001, NIST AI RMF, and ISO 27001. You help users manage risks, models, vendors, incidents, tasks, policies, datasets, evidence, training, frameworks, reporting, and agent discovery.
+  return `You are an AI Governance Advisor for AIPurview — an AI governance platform supporting EU AI Act, ISO 42001, NIST AI RMF, and ISO 27001. You help users manage risks, models, vendors, incidents, tasks, policies, datasets, evidence, training, frameworks, reporting, and agent discovery.
 
 ═══════════════════════════════════════════════════════
 ABSOLUTE RULES (never violate these)

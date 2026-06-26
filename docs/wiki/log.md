@@ -1,11 +1,11 @@
 ---
-title: VerifyWise Wiki — Olay Kaydı
+title: AIPurview Wiki — Olay Kaydı
 tags: [log, append-only]
 date: 2026-04-30
 status: active
 ---
 
-# VerifyWise Wiki — Olay Kaydı (Append-Only)
+# AIPurview Wiki — Olay Kaydı (Append-Only)
 
 > Wiki üzerinde gerçekleşen her INGEST, decision, bug fix tarihiyle bu dosyaya eklenir. Sadece append edilir.
 

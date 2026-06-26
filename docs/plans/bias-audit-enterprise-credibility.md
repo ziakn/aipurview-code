@@ -142,7 +142,7 @@ This plan is **not** about matching BABL AI's professional-services engagement m
    - Tool name (captured from new field — see 2.2), version, audit date
    - Auditor name + role + independence declaration
    - Scope: "Audit performed for compliance with [preset name]"
-   - VerifyWise logo (optional — treat as internal compliance evidence, not a marketing piece)
+   - AIPurview logo (optional — treat as internal compliance evidence, not a marketing piece)
 
 2. **Executive summary**
    - Total applicants, total selected (or scored), overall rate

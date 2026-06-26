@@ -10,7 +10,7 @@ export const policyVersioningContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Policies in VerifyWise follow a defined lifecycle from creation through publication and eventual retirement. Understanding this lifecycle helps you manage policies well and makes sure stakeholders always know which policies are active.',
+      text: 'Policies in AIPurview follow a defined lifecycle from creation through publication and eventual retirement. Understanding this lifecycle helps you manage policies well and makes sure stakeholders always know which policies are active.',
     },
     {
       type: 'paragraph',
@@ -141,7 +141,7 @@ export const policyVersioningContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise automatically tracks who made changes and when:',
+      text: 'AIPurview automatically tracks who made changes and when:',
     },
     {
       type: 'bullet-list',

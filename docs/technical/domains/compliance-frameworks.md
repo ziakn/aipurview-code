@@ -2,7 +2,7 @@
 
 ## Overview
 
-VerifyWise supports four major compliance frameworks for AI governance: EU AI Act, ISO 42001, ISO 27001, and NIST AI RMF. Each framework has a distinct structure, but all share common patterns for progress tracking, status management, and risk linking.
+AIPurview supports four major compliance frameworks for AI governance: EU AI Act, ISO 42001, ISO 27001, and NIST AI RMF. Each framework has a distinct structure, but all share common patterns for progress tracking, status management, and risk linking.
 
 ## Supported Frameworks
 

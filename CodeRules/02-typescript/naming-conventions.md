@@ -1,6 +1,6 @@
 # Naming Conventions
 
-Consistent naming conventions improve code readability and maintainability across the VerifyWise codebase.
+Consistent naming conventions improve code readability and maintainability across the AIPurview codebase.
 
 ## Overview
 

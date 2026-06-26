@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config({ quiet: true });
 
 /**
- * Playwright configuration for VerifyWise E2E tests.
+ * Playwright configuration for AIPurview E2E tests.
  *
  * Prerequisites:
  *   1. PostgreSQL + Redis running

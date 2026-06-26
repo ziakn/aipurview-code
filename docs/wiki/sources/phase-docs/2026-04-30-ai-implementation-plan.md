@@ -10,7 +10,7 @@ status: active
 
 ## Amaç
 
-VerifyWise AI Advisor'ı **read-only Q&A** sisteminden **AI Operating System**'e dönüştürmek. Otonom uyum operasyonları (read + write), multi-agent kolaborasyon, proaktif uyarı/anomali, doğal dil platform yönetimi, MCP üzerinden self-extending kapasite.
+AIPurview AI Advisor'ı **read-only Q&A** sisteminden **AI Operating System**'e dönüştürmek. Otonom uyum operasyonları (read + write), multi-agent kolaborasyon, proaktif uyarı/anomali, doğal dil platform yönetimi, MCP üzerinden self-extending kapasite.
 
 ## Ne yapıldı
 

@@ -10,7 +10,7 @@ export const policyTemplatesContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise ships with a library of 15 pre-built policy templates covering the most common AI governance topics. Each template is a full policy document you can copy into your organization\'s policy list, customize and publish. Templates save you from starting with a blank page every time you need a new policy.',
+      text: 'AIPurview ships with a library of 15 pre-built policy templates covering the most common AI governance topics. Each template is a full policy document you can copy into your organization\'s policy list, customize and publish. Templates save you from starting with a blank page every time you need a new policy.',
     },
     {
       type: 'paragraph',
@@ -19,7 +19,7 @@ export const policyTemplatesContent: ArticleContent = {
     {
       type: 'callout',
       variant: 'info',
-      text: 'Templates are read-only starting points. When you select a template, VerifyWise creates a copy in your organizational policies. The original template stays unchanged for future use.',
+      text: 'Templates are read-only starting points. When you select a template, AIPurview creates a copy in your organizational policies. The original template stays unchanged for future use.',
     },
     {
       type: 'heading',
@@ -111,7 +111,7 @@ export const policyTemplatesContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Here\'s the full list of templates included with VerifyWise:',
+      text: 'Here\'s the full list of templates included with AIPurview:',
     },
     {
       type: 'table',
@@ -209,7 +209,7 @@ export const policyTemplatesContent: ArticleContent = {
       type: 'ordered-list',
       items: [
         { text: 'Click any row in the templates table' },
-        { text: 'VerifyWise opens the policy editor with the template\'s title, tags and content pre-filled' },
+        { text: 'AIPurview opens the policy editor with the template\'s title, tags and content pre-filled' },
         { text: 'The page title shows "New policy from template" to confirm you\'re working from a template' },
         { text: 'Edit the title to match your organization\'s naming convention' },
         { text: 'Review and customize the content. Replace any placeholder text with your organization\'s specifics' },
@@ -290,7 +290,7 @@ export const policyTemplatesContent: ArticleContent = {
       type: 'bullet-list',
       items: [
         { bold: 'Import DOCX', text: 'Upload an existing Word document to import its content into the editor' },
-        { bold: 'Export', text: 'Download the policy as DOCX for sharing outside VerifyWise' },
+        { bold: 'Export', text: 'Download the policy as DOCX for sharing outside AIPurview' },
         { bold: 'Character count', text: 'Shown at the bottom of the editor' },
         { bold: 'Change history', text: 'Click the history icon to view all changes made to the policy over time' },
         { bold: 'Image upload', text: 'Drag and drop images or use the image button to upload files directly' },

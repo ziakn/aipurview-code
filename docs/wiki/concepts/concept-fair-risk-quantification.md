@@ -23,7 +23,7 @@ FAIR — risk'i **monetary** (parasal) terimlerle ölçen quantitative framework
 | **Residual Risk** | Mevcut control'ler sonrası kalan risk |
 | **Control Effectiveness** | Control'lerin risk azaltma yüzdesi |
 
-## VerifyWise Implementation
+## AIPurview Implementation
 
 ✅ **Var:**
 - `risks.ale_estimate`, `residual_ale`, `total_loss_likely`, `control_effectiveness`
@@ -42,7 +42,7 @@ FAIR — risk'i **monetary** (parasal) terimlerle ölçen quantitative framework
 | Vendor | FAIR Support |
 |---|---|
 | Modulos AI | ✅ "Monetary risk quantification" first-class |
-| VerifyWise | ⚠️ Kısmı (alanlar var, formula yok) |
+| AIPurview | ⚠️ Kısmı (alanlar var, formula yok) |
 | Çoğu rakip | ❌ Sadece qualitative |
 
 ## Phase 12+ Önerisi

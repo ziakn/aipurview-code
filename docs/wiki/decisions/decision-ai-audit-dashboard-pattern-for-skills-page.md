@@ -10,7 +10,7 @@ status: active
 
 ## Bağlam
 
-`AIAuditDashboard` sayfası VerifyWise'ın visual dilinde "altın standart" haline geldi. Diğer list-tarzı sayfalar (Workflows, Skills, vb.) farklı pattern'lerle yazılmıştı — kullanıcı görsel tutarsızlık tespit etti.
+`AIAuditDashboard` sayfası AIPurview'ın visual dilinde "altın standart" haline geldi. Diğer list-tarzı sayfalar (Workflows, Skills, vb.) farklı pattern'lerle yazılmıştı — kullanıcı görsel tutarsızlık tespit etti.
 
 ## Karar
 

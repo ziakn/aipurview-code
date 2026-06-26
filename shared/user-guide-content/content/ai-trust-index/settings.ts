@@ -31,7 +31,7 @@ export const aiTrustIndexSettingsContent: ArticleContent = {
       type: 'bullet-list',
       items: [
         { bold: 'Organisation users', text: 'Select one or more members of your organisation from the user multi-select. Their email addresses are resolved from their accounts at the time each digest is sent, so they stay current even if a user changes their email.' },
-        { bold: 'External email addresses', text: 'Type or paste email addresses directly into the email chip input. Use this for stakeholders who are not VerifyWise users (for example, a privacy officer or external auditor). Each address must be a valid email format.' },
+        { bold: 'External email addresses', text: 'Type or paste email addresses directly into the email chip input. Use this for stakeholders who are not AIPurview users (for example, a privacy officer or external auditor). Each address must be a valid email format.' },
       ],
     },
     {
@@ -46,7 +46,7 @@ export const aiTrustIndexSettingsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Digests are sent only to the recipients you configure here. If the recipient list is empty, no digest is sent — VerifyWise does not fall back to emailing Admins. Configuring recipients is the Admin\'s responsibility.',
+      text: 'Digests are sent only to the recipients you configure here. If the recipient list is empty, no digest is sent — AIPurview does not fall back to emailing Admins. Configuring recipients is the Admin\'s responsibility.',
     },
     {
       type: 'callout',

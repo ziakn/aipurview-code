@@ -1,6 +1,6 @@
 # Email Service Configuration
 
-The VerifyWise email service supports multiple email providers through a simple configuration system.
+The AIPurview email service supports multiple email providers through a simple configuration system.
 
 ## Supported Providers
 
@@ -101,5 +101,5 @@ The email service automatically detects the configured provider and uses it tran
 import { sendEmail } from "../services/emailService";
 
 // This works with any configured provider
-await sendEmail("user@example.com", "Welcome to VerifyWise", templateContent, templateData);
+await sendEmail("user@example.com", "Welcome to AIPurview", templateContent, templateData);
 ```

@@ -10,7 +10,7 @@ status: active
 
 ## Bağlam
 
-VerifyWise multi-tenant SaaS — her organizasyonun verisi izole olmalı. PostgreSQL schema seçenekleri:
+AIPurview multi-tenant SaaS — her organizasyonun verisi izole olmalı. PostgreSQL schema seçenekleri:
 
 1. **Schema-per-tenant** — her org için ayrı schema (`org_123.risks`, `org_456.risks`)
 2. **Shared schema** — tek schema, tüm tablolarda `organization_id` kolonu

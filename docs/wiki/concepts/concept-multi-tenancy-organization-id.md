@@ -10,7 +10,7 @@ status: active
 
 ## Tanım
 
-VerifyWise'ın multi-tenant SaaS izolasyon stratejisi: **shared schema + organization_id** kolonu. Tüm tenant tabloları tek bir PostgreSQL schema'da (`verifywise`) tutulur ve her satır `organization_id` ile izole edilir.
+AIPurview'ın multi-tenant SaaS izolasyon stratejisi: **shared schema + organization_id** kolonu. Tüm tenant tabloları tek bir PostgreSQL schema'da (`verifywise`) tutulur ve her satır `organization_id` ile izole edilir.
 
 ## Pattern
 

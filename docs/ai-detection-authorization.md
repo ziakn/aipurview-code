@@ -4,7 +4,7 @@ This document describes the role-based access control (RBAC) model for the AI De
 
 ## Roles
 
-The AI Detection feature uses the standard VerifyWise role hierarchy:
+The AI Detection feature uses the standard AIPurview role hierarchy:
 
 | Role     | Description                                      |
 |----------|--------------------------------------------------|

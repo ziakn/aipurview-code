@@ -1,6 +1,6 @@
 /**
  * Report Generation Interfaces
- * Following VerifyWise clean architecture patterns
+ * Following AIPurview clean architecture patterns
  */
 
 export type ReportFormat = "pdf" | "docx";

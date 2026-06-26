@@ -15,8 +15,8 @@ vi.mock("../../../../application/repository/vendorRisk.repository", () => ({
   createVendorRisk: vi.fn().mockResolvedValue({}),
   updateVendorRisk: vi.fn().mockResolvedValue({}),
 }));
-vi.mock("../../../../application/contexts/VerifyWise.context", () => ({
-  VerifyWiseContext: React.createContext({
+vi.mock("../../../../application/contexts/AIPurview.context", () => ({
+  AIPurviewContext: React.createContext({
     inputValues: {},
     dashboardValues: {
       vendors: [{ id: 1, vendor_name: "Test Vendor" }],

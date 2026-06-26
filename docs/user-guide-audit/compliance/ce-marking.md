@@ -5,7 +5,7 @@
 **Verdict:** ⚠️ minor issues (2)
 
 ## Summary
-The CE Marking article describes VerifyWise's 7-step conformity assessment workflow with good fidelity to the backend implementation. However, two field-level claims about enumerated status values contradict the actual database/code implementation. The article uses human-friendly Title Case formatting (e.g., "Ready for signature") where the code stores lowercase enum values (e.g., "draft"). These are presentation-layer discrepancies, not logic errors.
+The CE Marking article describes AIPurview's 7-step conformity assessment workflow with good fidelity to the backend implementation. However, two field-level claims about enumerated status values contradict the actual database/code implementation. The article uses human-friendly Title Case formatting (e.g., "Ready for signature") where the code stores lowercase enum values (e.g., "draft"). These are presentation-layer discrepancies, not logic errors.
 
 ## Findings
 ### Finding 1 — Declaration status enum mismatch: article lists Title Case, code uses lowercase

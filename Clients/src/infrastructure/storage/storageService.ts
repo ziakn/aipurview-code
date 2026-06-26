@@ -140,7 +140,7 @@ export class StorageService {
   }
 
   /**
-   * Remove only VerifyWise-namespaced (`verifywise_*`) keys — e.g. on logout —
+   * Remove only AIPurview-namespaced (`verifywise_*`) keys — e.g. on logout —
    * leaving auth (`token`) and redux-persist (`persist:root`) entries intact.
    */
   clearNamespace(): void {

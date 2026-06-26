@@ -1,6 +1,6 @@
-# VerifyWise Plugin System
+# AIPurview Plugin System
 
-This document covers the plugin system architecture in the VerifyWise application.
+This document covers the plugin system architecture in the AIPurview application.
 
 ## Table of Contents
 
@@ -16,7 +16,7 @@ This document covers the plugin system architecture in the VerifyWise applicatio
 
 ## Overview
 
-VerifyWise supports a plugin system that allows extending functionality through:
+AIPurview supports a plugin system that allows extending functionality through:
 
 - **Integration plugins**: Connect external services (Slack, MLflow, Azure AI)
 - **Data plugins**: Import/export capabilities (Risk Import)
@@ -30,7 +30,7 @@ Plugins are hosted in the [plugin-marketplace](https://github.com/bluewave-labs/
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                     VerifyWise App                          │
+│                     AIPurview App                          │
 ├─────────────────────────────────────────────────────────────┤
 │  Frontend (React)                                           │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │

@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: VerifyWise Training API
+  title: AIPurview Training API
   description: >
     Training Registry and Training Change History endpoints.
     All endpoints require JWT authentication via Bearer token.

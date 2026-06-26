@@ -1,5 +1,5 @@
 ---
-title: 171+ Agent Brainstorm — VerifyWise için Yeni Agent Fikirleri
+title: 171+ Agent Brainstorm — AIPurview için Yeni Agent Fikirleri
 tags: [agent-brainstorm, persona-agents, agent-catalog, watchdog, sentinel, red-team]
 source: raw/competitor-research/agent-ideas-brainstorm.md
 date: 2026-04-29
@@ -10,7 +10,7 @@ status: active
 
 ## Amaç
 
-Mevcut 10 named domain agent'ın ötesinde, VerifyWise'a eklenebilecek tüm agent fikirlerini yaratıcı şekilde toplamak. Hem rakipleri kopyala hem yeni türler tasarla.
+Mevcut 10 named domain agent'ın ötesinde, AIPurview'a eklenebilecek tüm agent fikirlerini yaratıcı şekilde toplamak. Hem rakipleri kopyala hem yeni türler tasarla.
 
 ## Ne yapıldı
 

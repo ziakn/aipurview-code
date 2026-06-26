@@ -3,7 +3,7 @@ import "./App.css";
 import { ThemeProvider } from "@emotion/react";
 import light from "./presentation/themes/light";
 import { CssBaseline } from "@mui/material";
-import { VerifyWiseContext } from "./application/contexts/VerifyWise.context";
+import { AIPurviewContext } from "./application/contexts/AIPurview.context";
 import { useCallback, useMemo, useState, useEffect } from "react";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
@@ -264,7 +264,7 @@ function App() {
     <CookiesProvider>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <VerifyWiseContext.Provider value={contextValues}>
+          <AIPurviewContext.Provider value={contextValues}>
             <PluginRegistryProvider>
               <PluginLoader />
               <UserGuideSidebarProvider>
@@ -301,7 +301,7 @@ function App() {
                 </SmartPromptProvider>
               </UserGuideSidebarProvider>
             </PluginRegistryProvider>
-          </VerifyWiseContext.Provider>
+          </AIPurviewContext.Provider>
         </PersistGate>
       </Provider>
 

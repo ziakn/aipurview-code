@@ -1,8 +1,8 @@
-# VerifyWise - Development Guide
+# AIPurview - Development Guide
 
 > **Last Updated:** 2026-06-19
 
-This document contains cross-cutting rules for the VerifyWise codebase. Directory-scoped guides load automatically when working in each area:
+This document contains cross-cutting rules for the AIPurview codebase. Directory-scoped guides load automatically when working in each area:
 
 - **Backend:** `Servers/CLAUDE.md` — multi-tenancy, migrations, backend patterns
 - **Frontend:** `Clients/CLAUDE.md` — clean architecture, component patterns
@@ -39,7 +39,7 @@ Always update the "Last Updated" date when modifying any CLAUDE.md file.
 
 ## Project Overview
 
-VerifyWise is an AI governance platform supporting EU AI Act, ISO 42001, ISO 27001, NIST AI RMF, and plugin frameworks (SOC 2, GDPR, HIPAA, etc.).
+AIPurview is an AI governance platform supporting EU AI Act, ISO 42001, ISO 27001, NIST AI RMF, and plugin frameworks (SOC 2, GDPR, HIPAA, etc.).
 
 ### Tech Stack
 

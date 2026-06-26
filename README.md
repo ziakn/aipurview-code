@@ -8,7 +8,7 @@
 
 <img width="3182" height="2570" alt="github" src="https://github.com/user-attachments/assets/6feb9d3d-19c1-42c2-a9f5-908db8694f8f" />
 
-[VerifyWise](https://verifywise.ai) is a source available AI governance platform designed to help businesses use the power of AI safely and responsibly. Our platform ensures compliance and robust AI management without compromising on security.
+[AIPurview](https://verifywise.ai) is a source available AI governance platform designed to help businesses use the power of AI safely and responsibly. Our platform ensures compliance and robust AI management without compromising on security.
 
 We are democratizing AI best practices with a solution that can be hosted on-premises, giving you complete control over your AI governance.
 
@@ -52,7 +52,7 @@ We are democratizing AI best practices with a solution that can be hosted on-pre
 
 ## Features
 
-![VerifyWise platform](https://github.com/user-attachments/assets/2d05cd1f-f67b-45d2-aca4-1fdcde287a44)
+![AIPurview platform](https://github.com/user-attachments/assets/2d05cd1f-f67b-45d2-aca4-1fdcde287a44)
 
 - Option to host the application on-premises or in a private cloud
 - Source available license (BSL 1.1). Dual licensing is also available for enterprises
@@ -92,7 +92,7 @@ We are democratizing AI best practices with a solution that can be hosted on-pre
 
 ## Installation
 
-The VerifyWise application has two components: a frontend built with React.js and a backend built with Node.js. At present, you can use `npm` (for development) or Docker/Kubernetes (production) to run VerifyWise. A PostgreSQL database is required.
+The AIPurview application has two components: a frontend built with React.js and a backend built with Node.js. At present, you can use `npm` (for development) or Docker/Kubernetes (production) to run AIPurview. A PostgreSQL database is required.
 
 ### Installation using npm (for development)
 
@@ -354,7 +354,7 @@ Note: CORS is automatically configured to allow requests from the same host wher
 
 ### Email configuration
 
-VerifyWise supports multiple email service providers through a provider abstraction layer, enabling administrators to choose the most suitable email service for their organization. The system includes security enhancements such as TLS enforcement, input validation and credential rotation for supported providers.
+AIPurview supports multiple email service providers through a provider abstraction layer, enabling administrators to choose the most suitable email service for their organization. The system includes security enhancements such as TLS enforcement, input validation and credential rotation for supported providers.
 
 Below is a list of supported email providers. You can use [this documentation](https://verifywise.ai/user-guide/settings/email-configuration) to setup the email service of your choice.
 
@@ -366,7 +366,7 @@ Below is a list of supported email providers. You can use [this documentation](h
 
 ### Ports
 
-You’ll need to open ports 80 and 443 so VerifyWise can be accessed from the internet.
+You’ll need to open ports 80 and 443 so AIPurview can be accessed from the internet.
 
 ## Security
 

@@ -1,12 +1,12 @@
 # Security Hardening Guide
 
-This guide provides security best practices and hardening steps for deploying VerifyWise in production environments.
+This guide provides security best practices and hardening steps for deploying AIPurview in production environments.
 
 ---
 
 ## Pre-deployment checklist
 
-Before deploying VerifyWise to production, complete the following security hardening steps:
+Before deploying AIPurview to production, complete the following security hardening steps:
 
 - [ ] Generate unique cryptographic secrets
 - [ ] Configure TLS/HTTPS
@@ -56,7 +56,7 @@ openssl rand -base64 32
 
 ### Reverse proxy setup (recommended)
 
-Deploy a reverse proxy (nginx, Traefik, Caddy) in front of VerifyWise to handle TLS termination.
+Deploy a reverse proxy (nginx, Traefik, Caddy) in front of AIPurview to handle TLS termination.
 
 **Nginx example:**
 
@@ -302,7 +302,7 @@ Passwords must meet these requirements:
 
 ### Audit logging
 
-VerifyWise maintains change history for compliance-relevant entities:
+AIPurview maintains change history for compliance-relevant entities:
 - Model Inventory
 - Vendors
 - Vendor Risks
@@ -487,7 +487,7 @@ Maintain a list of contacts for security incidents:
 
 ## Compliance considerations
 
-VerifyWise supports compliance with various frameworks:
+AIPurview supports compliance with various frameworks:
 
 | Framework | Relevant features |
 |-----------|------------------|

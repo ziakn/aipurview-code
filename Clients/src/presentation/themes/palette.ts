@@ -1,5 +1,5 @@
 /**
- * VerifyWise Unified Color Palette
+ * AIPurview Unified Color Palette
  *
  * Single source of truth for ALL colors across every module:
  * Governance, LLM Evals, AI Detection, Shadow AI, Model Inventory.

@@ -377,7 +377,7 @@ function generateMappings(organizationId) {
       mapping_direction: "bidirectional",
       domain_tag: domain,
       rationale: `Cross-walk between ${frameworkName(sourceFw)} ${source.id} and ${frameworkName(targetFw)} ${target.id} in ${domain.replace("_", " ")}.`,
-      source_reference: "VerifyWise cross-framework mapping seed v2",
+      source_reference: "AIPurview cross-framework mapping seed v2",
       confidence_score: strength === "direct" ? 0.9 : strength === "partial" ? 0.7 : 0.8,
     });
   };

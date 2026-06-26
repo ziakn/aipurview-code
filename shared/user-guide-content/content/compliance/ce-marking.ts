@@ -14,7 +14,7 @@ export const ceMarkingContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The CE Marking tab in VerifyWise walks you through this process step by step. It tracks progress and links the policies, evidence and incidents that support your compliance claim.',
+      text: 'The CE Marking tab in AIPurview walks you through this process step by step. It tracks progress and links the policies, evidence and incidents that support your compliance claim.',
     },
     {
       type: 'heading',
@@ -132,7 +132,7 @@ export const ceMarkingContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'At the bottom of the CE Marking page, you can link supporting resources from other parts of VerifyWise:',
+      text: 'At the bottom of the CE Marking page, you can link supporting resources from other parts of AIPurview:',
     },
     {
       type: 'bullet-list',

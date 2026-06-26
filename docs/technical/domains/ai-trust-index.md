@@ -4,7 +4,7 @@
 > (detail-parity refresh: card-grid UI, feed `indicators`, day-one seed, dropdown counts).
 
 The AI Trust Index is a sixth sidebar module that gives every organisation a read-only window
-into an independently-maintained, public feed of AI-app privacy and transparency scores. VerifyWise
+into an independently-maintained, public feed of AI-app privacy and transparency scores. AIPurview
 pulls the feed on a weekly schedule, detects changes, and emails configured recipients when an
 app they track materially changes. No scraping, no LLM, no new external service.
 
@@ -13,7 +13,7 @@ app they track materially changes. No scraping, no LLM, no new external service.
 ## 1. Data source — the feed contract
 
 **Endpoint:** `GET https://verifywise.ai/ai-trust-index.json`
-CORS-enabled, served by the verifywise.ai Next.js site (hourly revalidate). Read-only — VerifyWise
+CORS-enabled, served by the verifywise.ai Next.js site (hourly revalidate). Read-only — AIPurview
 never writes back to the website.
 
 ### 1.1 Top-level shape

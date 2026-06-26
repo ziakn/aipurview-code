@@ -31,7 +31,7 @@ OWASP'ın **Aralık 2025**'te yayınladığı, autonomous AI agents için top 10
 
 Agent'a verilen yetki, hedefini gerçekleştirmek için **minimum** olmalı. Excessive Agency = ASI06.
 
-## VerifyWise Durum
+## AIPurview Durum
 
 ❌ **Henüz framework module olarak yok** (LLM Top 10 ve ML Top 10 var, Agentic eksik)
 

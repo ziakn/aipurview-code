@@ -208,7 +208,7 @@ describe("dataCollector", () => {
       expect(result.metadata.projectOwner).toBe("Unknown");
     });
 
-    it("should default to VerifyWise branding when org not found", async () => {
+    it("should default to AIPurview branding when org not found", async () => {
       mockGetUser.mockResolvedValue({ name: "Test", surname: "User" } as any);
 
       const collector = createDataCollector(10, 1, 1, 100, 5);

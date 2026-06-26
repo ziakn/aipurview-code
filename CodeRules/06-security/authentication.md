@@ -1,6 +1,6 @@
 # Authentication
 
-Security guidelines for authentication in VerifyWise.
+Security guidelines for authentication in AIPurview.
 
 ## Password Security
 

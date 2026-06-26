@@ -31,7 +31,7 @@ const WatchTower = () => {
   return (
     <PageHeaderExtended
       title="Event Tracker"
-      description="Event Tracker gives you a live window into VerifyWise. It records
+      description="Event Tracker gives you a live window into AIPurview. It records
         every user action and system event, then lets you dive into the raw
         logs for deeper troubleshooting. Use it to see who did what, spot
         patterns, and keep your application healthy"

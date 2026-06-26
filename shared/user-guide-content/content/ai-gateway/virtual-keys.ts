@@ -10,7 +10,7 @@ export const virtualKeysContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Virtual keys are API keys you hand out to developers so they can send LLM requests through the gateway with any OpenAI-compatible SDK. No VerifyWise account required. Your guardrails, budgets and audit logs still apply to every request; the developer doesn\'t need to think about any of that.',
+      text: 'Virtual keys are API keys you hand out to developers so they can send LLM requests through the gateway with any OpenAI-compatible SDK. No AIPurview account required. Your guardrails, budgets and audit logs still apply to every request; the developer doesn\'t need to think about any of that.',
     },
     {
       type: 'paragraph',
@@ -60,7 +60,7 @@ client = OpenAI(
 )
 
 response = client.chat.completions.create(
-    model="my-endpoint-slug",   # matches the endpoint slug in VerifyWise
+    model="my-endpoint-slug",   # matches the endpoint slug in AIPurview
     messages=[
         {"role": "user", "content": "Summarize this document."}
     ],
@@ -87,7 +87,7 @@ print(response.choices[0].message.content)`,
     {
       type: 'bullet-list',
       items: [
-        { bold: 'Prefix', text: '`sk-vw-` identifies it as a VerifyWise virtual key' },
+        { bold: 'Prefix', text: '`sk-vw-` identifies it as a AIPurview virtual key' },
         { bold: 'Storage', text: 'SHA-256 hash only; the raw key is never persisted' },
         { bold: 'Lost key?', text: 'Revoke the old one and create a new key. There\'s no recovery.' },
       ],

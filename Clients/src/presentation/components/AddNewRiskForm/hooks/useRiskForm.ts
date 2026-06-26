@@ -15,7 +15,7 @@ import { createProjectRisk } from "../../../../application/repository/projectRis
 import { useUpdateProjectRisk } from "../../../../application/hooks/useUpdateProjectRisk";
 import useUsers from "../../../../application/hooks/useUsers";
 import { useAuth } from "../../../../application/hooks/useAuth";
-import { VerifyWiseContext } from "../../../../application/contexts/VerifyWise.context";
+import { AIPurviewContext } from "../../../../application/contexts/AIPurview.context";
 import allowedRoles from "../../../../application/constants/permissions";
 import { RiskCalculator } from "../../../tools/riskCalculator";
 import { CustomFieldsSectionHandle } from "../../CustomFieldsSection";
@@ -115,7 +115,7 @@ export function useRiskForm(props: AddNewRiskFormProps): UseRiskFormReturn {
   const users = usersProp || hookData.users;
   const usersLoading = usersLoadingProp !== undefined ? usersLoadingProp : hookData.loading;
 
-  const { inputValues } = useContext(VerifyWiseContext);
+  const { inputValues } = useContext(AIPurviewContext);
   const updateProjectRiskMutation = useUpdateProjectRisk();
 
   const isEditingDisabled = !allowedRoles.projectRisks.edit.includes(userRoleName);

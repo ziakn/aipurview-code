@@ -1,6 +1,6 @@
 # Design Principles
 
-Fundamental design principles that guide software architecture decisions in VerifyWise.
+Fundamental design principles that guide software architecture decisions in AIPurview.
 
 ## DRY - Don't Repeat Yourself
 
@@ -410,7 +410,7 @@ async function saveUser(userData: UserInput): Promise<User> {
 
 ## Clean Architecture
 
-VerifyWise follows Clean Architecture principles to separate concerns and maintain independence between layers.
+AIPurview follows Clean Architecture principles to separate concerns and maintain independence between layers.
 
 ### Layer Structure
 

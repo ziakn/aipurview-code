@@ -2,7 +2,7 @@
 
 ## 1. Executive Summary
 
-Adopt a **code-first, route-as-SSOT** model for the VerifyWise backend: route files in `Servers/routes/*.route.ts` become the authoritative source of endpoint existence, HTTP method, path, and `authenticateJWT` usage. A hardened generator produces `Servers/swagger.yaml`, and the existing `Servers/scripts/generateEndpointsTs.ts` regenerates `docs/api-docs/src/config/endpoints.ts` from that YAML. A CI drift check compares every registered Express route against the generated OpenAPI paths and fails on mismatch.
+Adopt a **code-first, route-as-SSOT** model for the AIPurview backend: route files in `Servers/routes/*.route.ts` become the authoritative source of endpoint existence, HTTP method, path, and `authenticateJWT` usage. A hardened generator produces `Servers/swagger.yaml`, and the existing `Servers/scripts/generateEndpointsTs.ts` regenerates `docs/api-docs/src/config/endpoints.ts` from that YAML. A CI drift check compares every registered Express route against the generated OpenAPI paths and fails on mismatch.
 
 ## 2. Assumptions
 
@@ -69,7 +69,7 @@ Adopt a **code-first, route-as-SSOT** model for the VerifyWise backend: route fi
 
 **Confirm the PRD recommendation: code-first with the route layer as SSOT.**
 
-The existing codebase already organises API surface around Express route files. Choosing the route layer as SSOT has three decisive advantages for VerifyWise:
+The existing codebase already organises API surface around Express route files. Choosing the route layer as SSOT has three decisive advantages for AIPurview:
 
 1. **Least disruption.** The team keeps writing `router.get/post(...)` as today; no workflow inversion to YAML-first is required. The existing `Servers/scripts/generateSwagger.ts` proves the approach is feasible.
 2. **Drift prevention by construction.** Because docs are generated from the same code that registers routes, the CI drift check becomes a simple comparison rather than a manual audit.

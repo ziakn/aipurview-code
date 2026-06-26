@@ -17,13 +17,13 @@ import {
   useGovernancePreferences,
 } from "../../../application/hooks/useGovernanceOs";
 import { createTask } from "../../../application/repository/task.repository";
-import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.context";
+import { AIPurviewContext } from "../../../application/contexts/AIPurview.context";
 import { ITask } from "../../../domain/interfaces/i.task";
 import { TaskPriority, TaskStatus } from "../../../domain/enums/task.enum";
 import { background, text, brand } from "../../themes/palette";
 
 const UnifiedInsights = () => {
-  const { projects, userId, organizationId } = useContext(VerifyWiseContext);
+  const { projects, userId, organizationId } = useContext(AIPurviewContext);
   const [selectedProjectId, setSelectedProjectId] = useState<number | "">("");
   const { data: coverage, isLoading } = useCoverage(
     typeof selectedProjectId === "number" ? selectedProjectId : 0,

@@ -5,7 +5,7 @@
 **Verdict:** ⚠️ minor issues (1)
 
 ## Summary
-The article accurately describes NIST AI RMF framework governance approach and VerifyWise integration. However, one specific quantitative claim about subcategory distribution contradicts the actual implementation. The article uses approximation markers for specific counts that the code structure resolves to exact numbers.
+The article accurately describes NIST AI RMF framework governance approach and AIPurview integration. However, one specific quantitative claim about subcategory distribution contradicts the actual implementation. The article uses approximation markers for specific counts that the code structure resolves to exact numbers.
 
 ## Findings
 
@@ -26,7 +26,7 @@ The article accurately describes NIST AI RMF framework governance approach and V
 
 - Claim: "Govern is cross-cutting and informs how Map, Measure and Manage are performed" (block 118) — verified at `/Users/gorkemcetin/verifywise/shared/user-guide-content/content/compliance/nist-ai-rmf.ts:117-119` explicit statement; structure file supports concurrent rather than sequential implementation.
 
-- Claim: "VerifyWise organizes the NIST AI RMF into a three-level hierarchy: Functions, Categories, Subcategories" (block 227) — verified at `/Users/gorkemcetin/verifywise/Servers/structures/NIST-AI-RMF/nist-ai-rmf.structure.ts:3-173` which defines exactly this structure with functions array containing categories array containing subcategories array.
+- Claim: "AIPurview organizes the NIST AI RMF into a three-level hierarchy: Functions, Categories, Subcategories" (block 227) — verified at `/Users/gorkemcetin/verifywise/Servers/structures/NIST-AI-RMF/nist-ai-rmf.structure.ts:3-173` which defines exactly this structure with functions array containing categories array containing subcategories array.
 
 - Claim: "The NIST AI RMF was published in January 2023" (block 44) — verified as factual claim about external framework; documented in NIST official publications and widely referenced in AI governance literature.
 

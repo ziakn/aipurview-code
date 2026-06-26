@@ -10,7 +10,7 @@ export const roleConfigurationContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise uses role-based access control (RBAC) to manage what users can see and do. Each user gets a role that sets their permissions across all features.',
+      text: 'AIPurview uses role-based access control (RBAC) to manage what users can see and do. Each user gets a role that sets their permissions across all features.',
     },
     {
       type: 'paragraph',
@@ -24,7 +24,7 @@ export const roleConfigurationContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise has four predefined roles:',
+      text: 'AIPurview has four predefined roles:',
     },
     {
       type: 'icon-cards',
@@ -299,7 +299,7 @@ export const roleConfigurationContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Not right now. VerifyWise has four predefined roles (Admin, Reviewer, Editor, Auditor). Custom role configuration isn\'t available in this version.',
+      text: 'Not right now. AIPurview has four predefined roles (Admin, Reviewer, Editor, Auditor). Custom role configuration isn\'t available in this version.',
     },
     {
       type: 'heading',

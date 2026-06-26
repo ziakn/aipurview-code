@@ -2,7 +2,7 @@
 
 ## Overview
 
-VerifyWise uses BullMQ with Redis for background job processing and scheduled tasks. The system supports recurring jobs (cron-based), event-triggered automations, and user-configured workflows. Three separate queues handle different concerns: general automations, Slack notifications, and MLFlow sync.
+AIPurview uses BullMQ with Redis for background job processing and scheduled tasks. The system supports recurring jobs (cron-based), event-triggered automations, and user-configured workflows. Three separate queues handle different concerns: general automations, Slack notifications, and MLFlow sync.
 
 ## Architecture
 

@@ -95,7 +95,7 @@ const SpacingLayoutSection: React.FC = () => {
             maxWidth: 600,
           }}
         >
-          Consistent spacing scale and layout patterns used throughout VerifyWise. Based on MUI
+          Consistent spacing scale and layout patterns used throughout AIPurview. Based on MUI
           theme.spacing() with a 2px base unit.
         </Typography>
       </Box>
@@ -103,7 +103,7 @@ const SpacingLayoutSection: React.FC = () => {
       {/* Spacing Scale */}
       <SpecSection title="Spacing scale">
         <Typography sx={{ fontSize: 13, color: theme.palette.text.tertiary, mb: "24px" }}>
-          VerifyWise uses theme.spacing(n) where the base unit is 2px. Use these consistent values
+          AIPurview uses theme.spacing(n) where the base unit is 2px. Use these consistent values
           instead of arbitrary pixel values.
         </Typography>
 

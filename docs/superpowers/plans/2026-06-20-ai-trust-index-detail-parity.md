@@ -2,15 +2,15 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Bring the VerifyWise app's AI Trust Index detail page to visual + informational parity with the public website detail page.
+**Goal:** Bring the AIPurview app's AI Trust Index detail page to visual + informational parity with the public website detail page.
 
-**Architecture:** The website is upstream. It already grades each app on a 30-indicator rubric whose award map lives in `ai-safety-index/history/*.json`. We thread that map into the published feed, let it flow through the app's existing `data` jsonb (no query/migration change), seed a day-one snapshot so fresh installs show data immediately, and rebuild `AppDetail/index.tsx` into the website's section set using VerifyWise components/tokens — degrading gracefully when the indicator map is absent.
+**Architecture:** The website is upstream. It already grades each app on a 30-indicator rubric whose award map lives in `ai-safety-index/history/*.json`. We thread that map into the published feed, let it flow through the app's existing `data` jsonb (no query/migration change), seed a day-one snapshot so fresh installs show data immediately, and rebuild `AppDetail/index.tsx` into the website's section set using AIPurview components/tokens — degrading gracefully when the indicator map is absent.
 
 **Tech Stack:** React 19 + Vite + MUI 7 + React Query (frontend), Node + Express + Sequelize + Jest (backend), Vitest + @testing-library/react (frontend tests).
 
 ## Global Constraints
 
-- VerifyWise components over raw MUI where one exists (`CustomizableButton`, `Chip`, `EmptyState`, `PageBreadcrumbs`). Raw MUI `Box`/`Stack`/`Typography` are fine for layout.
+- AIPurview components over raw MUI where one exists (`CustomizableButton`, `Chip`, `EmptyState`, `PageBreadcrumbs`). Raw MUI `Box`/`Stack`/`Typography` are fine for layout.
 - Pixel-string spacing only (`gap: "8px"`, `p: "16px"`), never MUI numeric multipliers.
 - Design tokens, never hardcoded hex, where a token exists: border `palette.border.dark` (#d0d5dd), brand `palette.brand.primary` (#13715B), text `palette.text.tertiary` / `theme.palette.text.secondary`. Grade colors come from the feed `design.gradeStyles` block (passed through `data`) or the app's `gradeVariant` Chip variants.
 - Sentence case for all UI copy.

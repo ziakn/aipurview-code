@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-This document outlines the implementation plan for Dataset Inventory functionality in VerifyWise. This feature addresses a critical gap identified in the OneTrust comparison - VerifyWise currently lacks formal dataset tracking, which is required for EU AI Act Article 10 (Data Governance) compliance.
+This document outlines the implementation plan for Dataset Inventory functionality in AIPurview. This feature addresses a critical gap identified in the OneTrust comparison - AIPurview currently lacks formal dataset tracking, which is required for EU AI Act Article 10 (Data Governance) compliance.
 
 ### Why Dataset Inventory Matters
 
@@ -74,19 +74,19 @@ AI Systems → is composed of → Datasets
 
 ---
 
-## 3. VerifyWise Dataset Inventory Design
+## 3. AIPurview Dataset Inventory Design
 
 ### 3.1 Design Principles
 
 **Key Insight from OneTrust:** OneTrust keeps the default fields **simple** (7 fields) and relies on **Custom Attributes** for extensibility. We should follow a similar approach rather than creating 30+ fixed fields.
 
-**VerifyWise Approach:**
+**AIPurview Approach:**
 1. Start with essential core fields
 2. Add EU AI Act Article 10 specific fields that are always relevant
 3. Keep optional fields truly optional
 4. Follow existing Model Inventory patterns exactly
 
-### 3.2 Core Fields (Aligned with VerifyWise Patterns)
+### 3.2 Core Fields (Aligned with AIPurview Patterns)
 
 | Field | Type | Required | Description | OneTrust Equivalent |
 |-------|------|----------|-------------|---------------------|
@@ -421,9 +421,9 @@ POST /datasets
 
 ---
 
-## 7. Comparison: OneTrust vs VerifyWise Plan
+## 7. Comparison: OneTrust vs AIPurview Plan
 
-| Feature | OneTrust | VerifyWise Plan | Notes |
+| Feature | OneTrust | AIPurview Plan | Notes |
 |---------|----------|-----------------|-------|
 | Basic CRUD | ✅ | ✅ | Full parity |
 | Core Fields | 7 default | 22 core | VW has more built-in for Article 10 |

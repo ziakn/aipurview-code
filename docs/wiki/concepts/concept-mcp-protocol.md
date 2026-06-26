@@ -27,7 +27,7 @@ Anthropic'in geliştirdiği standart — LLM'ler ve external sistemler arasında
 - **Resource** — read-only data (`policy/123`, `framework/eu-ai-act`)
 - **Prompt** — parametreli template
 
-## VerifyWise Durum
+## AIPurview Durum
 
 ⚠️ **Phase 7 HTTP-style backend** kullanıyor — gerçek MCP protocol değil.
 - POST `{tool, params}` to `mcp_server_url`

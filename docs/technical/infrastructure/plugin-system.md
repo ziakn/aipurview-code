@@ -2,7 +2,7 @@
 
 ## Overview
 
-VerifyWise implements a remote plugin marketplace system that allows organizations to extend platform functionality. Plugins are fetched from a remote Git repository, downloaded and cached locally, and dynamically loaded at runtime. The system supports multi-tenant isolation, configuration management, and OAuth integrations.
+AIPurview implements a remote plugin marketplace system that allows organizations to extend platform functionality. Plugins are fetched from a remote Git repository, downloaded and cached locally, and dynamically loaded at runtime. The system supports multi-tenant isolation, configuration management, and OAuth integrations.
 
 ## Architecture
 
@@ -81,7 +81,7 @@ Manifest URL: https://raw.githubusercontent.com/bluewave-labs/plugin-marketplace
       "description": "Sync AI/ML models from MLflow tracking server",
       "longDescription": "Full description for detail page...",
       "version": "1.0.0",
-      "author": "VerifyWise",
+      "author": "AIPurview",
       "category": "ml_ops",
       "iconUrl": "https://example.com/mlflow-icon.png",
       "documentationUrl": "https://docs.example.com/mlflow",
@@ -1934,7 +1934,7 @@ npm run build
 
 # Output: dist/bundle.iife.js
 
-# Test: Install plugin in VerifyWise, UI should appear dynamically
+# Test: Install plugin in AIPurview, UI should appear dynamically
 ```
 
 ### Troubleshooting Plugin UI
@@ -2563,7 +2563,7 @@ The `plugins.json` file is the central registry that defines all available plugi
       "description": "Short description (1-2 sentences)",
       "longDescription": "Detailed description for the plugin detail page...",
       "version": "1.0.0",
-      "author": "VerifyWise",
+      "author": "AIPurview",
       "category": "category_id",
       "iconUrl": "/assets/plugin_logo.svg",
       "documentationUrl": "https://docs.verifywise.com/integrations/plugin",
@@ -2730,9 +2730,9 @@ Use this template for plugins that use OAuth authentication and store data in pu
 {
   "name": "@verifywise/plugin-my-service",
   "version": "1.0.0",
-  "description": "My Service integration plugin for VerifyWise",
+  "description": "My Service integration plugin for AIPurview",
   "main": "index.js",
-  "author": "VerifyWise",
+  "author": "AIPurview",
   "license": "MIT",
   "dependencies": {
     "@my-service/web-api": "^1.0.0"
@@ -2745,7 +2745,7 @@ Use this template for plugins that use OAuth authentication and store data in pu
 
 ```typescript
 /**
- * My Service Plugin for VerifyWise
+ * My Service Plugin for AIPurview
  *
  * This plugin provides My Service integration for notifications.
  */
@@ -2958,7 +2958,7 @@ export async function testConnection(
 export const metadata: PluginMetadata = {
   name: "My Service",
   version: "1.0.0",
-  author: "VerifyWise",
+  author: "AIPurview",
   description: "My Service integration for notifications",
 };
 ```
@@ -2975,9 +2975,9 @@ Use this template for plugins that need to store data per organization.
 {
   "name": "@verifywise/plugin-my-data-service",
   "version": "1.0.0",
-  "description": "My Data Service integration plugin for VerifyWise",
+  "description": "My Data Service integration plugin for AIPurview",
   "main": "index.js",
-  "author": "VerifyWise",
+  "author": "AIPurview",
   "license": "MIT",
   "dependencies": {
     "axios": "^1.6.0"
@@ -2990,7 +2990,7 @@ Use this template for plugins that need to store data per organization.
 
 ```typescript
 /**
- * My Data Service Plugin for VerifyWise
+ * My Data Service Plugin for AIPurview
  *
  * This plugin syncs data from an external service and stores it per-tenant.
  */
@@ -3386,7 +3386,7 @@ async function persistRecords(
 export const metadata: PluginMetadata = {
   name: "My Data Service",
   version: "1.0.0",
-  author: "VerifyWise",
+  author: "AIPurview",
   description: "My Data Service integration for data sync",
 };
 ```
@@ -3403,9 +3403,9 @@ Use this template for plugins that import data from files.
 {
   "name": "@verifywise/plugin-data-import",
   "version": "1.0.0",
-  "description": "Data import plugin for VerifyWise",
+  "description": "Data import plugin for AIPurview",
   "main": "index.js",
-  "author": "VerifyWise",
+  "author": "AIPurview",
   "license": "MIT",
   "dependencies": {
     "exceljs": "^4.4.0"
@@ -3418,7 +3418,7 @@ Use this template for plugins that import data from files.
 
 ```typescript
 /**
- * Data Import Plugin for VerifyWise
+ * Data Import Plugin for AIPurview
  *
  * Provides Excel import with dropdown validation.
  */
@@ -3701,7 +3701,7 @@ export async function importData(
 export const metadata: PluginMetadata = {
   name: "Data Import",
   version: "1.0.0",
-  author: "VerifyWise",
+  author: "AIPurview",
   description: "Import data from Excel files",
 };
 ```
@@ -3900,9 +3900,9 @@ mkdir -p plugins/my-plugin/ui/src
 {
   "name": "@verifywise/plugin-my-plugin",
   "version": "1.0.0",
-  "description": "My Plugin for VerifyWise",
+  "description": "My Plugin for AIPurview",
   "main": "index.js",
-  "author": "VerifyWise",
+  "author": "AIPurview",
   "license": "MIT",
   "dependencies": {
     // Add your dependencies here
@@ -3954,7 +3954,7 @@ export async function uninstall(
 export const metadata = {
   name: "My Plugin",
   version: "1.0.0",
-  author: "VerifyWise",
+  author: "AIPurview",
   description: "Description of my plugin",
 };
 ```
@@ -3969,7 +3969,7 @@ export const metadata = {
   "description": "Short description (shown in card)",
   "longDescription": "Detailed description (shown in detail page)...",
   "version": "1.0.0",
-  "author": "VerifyWise",
+  "author": "AIPurview",
   "category": "data_management",
   "iconUrl": "/assets/my_plugin_logo.svg",
   "documentationUrl": "https://docs.verifywise.com/integrations/my-plugin",
@@ -4328,9 +4328,9 @@ const getConfigFields = () => {
 
 3. Test locally:
    - Set `PLUGIN_MARKETPLACE_URL` to local path
-   - Or copy plugins.json and plugin folder to VerifyWise server
+   - Or copy plugins.json and plugin folder to AIPurview server
 
-4. Test in VerifyWise:
+4. Test in AIPurview:
    - Navigate to `/plugins`
    - Find your plugin in Marketplace
    - Install and configure

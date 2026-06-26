@@ -1,10 +1,10 @@
-# VerifyWise License
+# AIPurview License
 
 Business Source License 1.1 (BSL 1.1)
 
 Licensor: BlueWave Labs Inc.
 
-Licensed Work: VerifyWise, including all source code in this repository unless a file header says otherwise.
+Licensed Work: AIPurview, including all source code in this repository unless a file header says otherwise.
 
 Additional Use Grant: Internal use only. See “Additional Use Grant” below.
 

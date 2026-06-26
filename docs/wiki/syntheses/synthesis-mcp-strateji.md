@@ -10,7 +10,7 @@ status: active
 
 ## Mevcut Durum (2026-04)
 
-VerifyWise iki "MCP yüzü" var ama **gerçek MCP protocol kullanılmıyor**:
+AIPurview iki "MCP yüzü" var ama **gerçek MCP protocol kullanılmıyor**:
 
 ### 1. Phase 7 AI Skills Backend
 - `ai_skills` tablosu (skill_key, source, backend, tools JSONB)
@@ -42,13 +42,13 @@ VerifyWise iki "MCP yüzü" var ama **gerçek MCP protocol kullanılmıyor**:
 | Google Cloud | ✅ Cloud API Registry | 2025 |
 | Cisco AI Defense | ✅ MCP traffic monitor | 2025 |
 
-> 8+ rakip MCP server shipped — VerifyWise için gecikme riski yüksek.
+> 8+ rakip MCP server shipped — AIPurview için gecikme riski yüksek.
 
 ## Phase 8 Roadmap (Önerilen)
 
 ### Hafta 1: SDK Entegrasyonu
 - `npm install @modelcontextprotocol/sdk`
-- VerifyWise MCP Server class — frameworks, controls, risks, vendors, evidence, models, incidents, tasks expose
+- AIPurview MCP Server class — frameworks, controls, risks, vendors, evidence, models, incidents, tasks expose
 - Approval gateway tunneling (her tool call onaydan geçer)
 - Tenant isolation (`organization_id` MCP context'inde)
 
@@ -61,8 +61,8 @@ VerifyWise iki "MCP yüzü" var ama **gerçek MCP protocol kullanılmıyor**:
 ## Faydalar
 
 ✅ Vanta/Drata/IBM ile interop  
-✅ Claude Desktop, Cursor, Windsurf'te VerifyWise tools direkt kullanılabilir  
-✅ Marketing wedge ("VerifyWise MCP-native")  
+✅ Claude Desktop, Cursor, Windsurf'te AIPurview tools direkt kullanılabilir  
+✅ Marketing wedge ("AIPurview MCP-native")  
 ✅ Plugin marketplace MCP-native genişleme
 
 ## Risk

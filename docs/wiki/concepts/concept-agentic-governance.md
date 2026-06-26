@@ -30,7 +30,7 @@ Autonomous AI agent'ların yönetişim, izleme ve uyumluluğu için pratikler ve
 7. **Runtime Guardrails** — sub-second LLM/tool filter
 8. **Eval Harness** — pre-deployment + continuous
 
-## VerifyWise'ın Agentic Governance Yığını
+## AIPurview'ın Agentic Governance Yığını
 
 ✅ **Var:**
 - AI Action Approval Gateway (Phase 2 — XState v5 + json-rules-engine)

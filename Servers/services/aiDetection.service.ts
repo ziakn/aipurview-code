@@ -212,7 +212,7 @@ async function checkRepositorySize(
 ): Promise<void> {
   const headers: Record<string, string> = {
     Accept: "application/vnd.github.v3+json",
-    "User-Agent": "VerifyWise-Scanner",
+    "User-Agent": "AIPurview-Scanner",
   };
 
   if (githubToken) {
@@ -283,7 +283,7 @@ async function cloneRepository(
   // Create temp directory
   const tempDir = path.join(
     os.tmpdir(),
-    `verifywise-scan-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+    `aipurview-scan-${Date.now()}-${Math.random().toString(36).substring(7)}`,
   );
   await fs.promises.mkdir(tempDir, { recursive: true });
 
@@ -3010,7 +3010,7 @@ export async function exportScanAsAIBOM(
     version: 1,
     metadata: {
       timestamp: new Date().toISOString(),
-      tools: [{ name: "VerifyWise AI Detection", version: "1.0.0" }],
+      tools: [{ name: "AIPurview AI Detection", version: "1.0.0" }],
       repository: {
         url: scan.repository_url,
         owner: scan.repository_owner,

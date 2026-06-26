@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Approval Workflows domain provides a comprehensive multi-step approval process for use cases and projects in VerifyWise. It supports configurable workflow templates, multiple approval steps, flexible approver requirements, and automatic framework creation upon final approval.
+The Approval Workflows domain provides a comprehensive multi-step approval process for use cases and projects in AIPurview. It supports configurable workflow templates, multiple approval steps, flexible approver requirements, and automatic framework creation upon final approval.
 
 ## Key Features
 

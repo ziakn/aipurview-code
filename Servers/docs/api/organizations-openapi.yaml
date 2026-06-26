@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: VerifyWise Organizations API
+  title: AIPurview Organizations API
   description: RESTful API for organization management with multi-tenant architecture.
   version: 1.0.0
 

@@ -8,13 +8,13 @@ Standalone LLM evaluation system using DeepEval for comprehensive model assessme
 - **Multiple model providers**: OpenAI, Anthropic, Gemini, xAI, Mistral, Ollama, HuggingFace
 - **Built-in dataset** with 11 diverse prompts across 5 categories
 - **Evaluation metrics**: Answer Relevancy, Bias, Toxicity, Faithfulness, Hallucination
-- **Frontend integration** with the VerifyWise dashboard
+- **Frontend integration** with the AIPurview dashboard
 
 ## Quick Start
 
 ### Via Frontend UI
 
-1. Navigate to **LLM Evals** in the VerifyWise dashboard
+1. Navigate to **LLM Evals** in the AIPurview dashboard
 2. Create or select a project
 3. Click **"New Eval"** and follow the 4-step wizard:
    - **Step 1**: Select model to evaluate (Ollama, OpenAI, etc.)
@@ -82,7 +82,7 @@ Edit `configs/deepeval_config.yaml` to customize:
 
 ## API Integration
 
-This module is integrated with the VerifyWise platform:
+This module is integrated with the AIPurview platform:
 
 - **Backend**: `EvalServer` (FastAPI, port 8000)
 - **Frontend**: `Clients/src/presentation/pages/EvalsDashboard`

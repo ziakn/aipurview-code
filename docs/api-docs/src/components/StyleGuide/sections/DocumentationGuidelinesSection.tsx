@@ -92,7 +92,7 @@ const DocumentationGuidelinesSection: React.FC = () => {
           }}
         >
           Standards and best practices for writing clear, consistent, and user-friendly
-          documentation for the VerifyWise User Guide.
+          documentation for the AIPurview User Guide.
         </Typography>
       </Box>
 

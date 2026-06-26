@@ -24,21 +24,21 @@ vi.mock("../../../../application/hooks/useUsers", () => ({
 }));
 
 // Mock contexts
-vi.mock("../../../../application/contexts/VerifyWise.context", () => ({
-  VerifyWiseContext: {
+vi.mock("../../../../application/contexts/AIPurview.context", () => ({
+  AIPurviewContext: {
     Consumer: ({ children }: any) => children({}),
     Provider: ({ children }: any) => children,
   },
 }));
 
-// Override useContext to provide VerifyWiseContext values
+// Override useContext to provide AIPurviewContext values
 const mockUseContext = vi.fn();
 vi.mock("react", async () => {
   const actual = await vi.importActual("react");
   return {
     ...actual,
     useContext: (...args: any[]) => {
-      // Check if it's the VerifyWiseContext
+      // Check if it's the AIPurviewContext
       const result = mockUseContext(...args);
       if (result !== undefined) return result;
       return (actual as any).useContext(...args);

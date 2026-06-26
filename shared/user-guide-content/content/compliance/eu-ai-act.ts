@@ -100,11 +100,11 @@ export const euAiActContent: ArticleContent = {
       type: 'heading',
       id: 'verifywise-support',
       level: 2,
-      text: 'How VerifyWise supports EU AI Act compliance',
+      text: 'How AIPurview supports EU AI Act compliance',
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise gives you structured tools to help meet EU AI Act requirements:',
+      text: 'AIPurview gives you structured tools to help meet EU AI Act requirements:',
     },
     {
       type: 'bullet-list',
@@ -125,12 +125,12 @@ export const euAiActContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'To start working on EU AI Act compliance in VerifyWise:',
+      text: 'To start working on EU AI Act compliance in AIPurview:',
     },
     {
       type: 'ordered-list',
       items: [
-        { text: 'Create a use case for your AI system in VerifyWise' },
+        { text: 'Create a use case for your AI system in AIPurview' },
         { text: 'Select the EU AI Act framework when configuring the use case' },
         { text: 'Classify your AI system according to its risk level' },
         { text: 'Complete the compliance assessment to identify gaps' },
@@ -146,7 +146,7 @@ export const euAiActContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise organizes EU AI Act requirements into manageable controls and subcontrols:',
+      text: 'AIPurview organizes EU AI Act requirements into manageable controls and subcontrols:',
     },
     {
       type: 'bullet-list',
@@ -172,7 +172,7 @@ export const euAiActContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'When you select the EU AI Act framework for a use case, VerifyWise creates an assessment containing all applicable controls. The assessment screen shows your compliance progress at a glance.',
+      text: 'When you select the EU AI Act framework for a use case, AIPurview creates an assessment containing all applicable controls. The assessment screen shows your compliance progress at a glance.',
     },
     {
       type: 'paragraph',
@@ -195,7 +195,7 @@ export const euAiActContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'EU AI Act controls in VerifyWise are organized into categories aligned with the regulation\'s structure:',
+      text: 'EU AI Act controls in AIPurview are organized into categories aligned with the regulation\'s structure:',
     },
     {
       type: 'checklist',
@@ -342,7 +342,7 @@ export const euAiActContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'There are several ways to monitor your EU AI Act compliance progress in VerifyWise:',
+      text: 'There are several ways to monitor your EU AI Act compliance progress in AIPurview:',
     },
     {
       type: 'bullet-list',

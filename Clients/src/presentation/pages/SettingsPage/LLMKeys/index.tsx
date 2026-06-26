@@ -404,7 +404,7 @@ const LLMKeys = () => {
               LLM Keys
             </Typography>
             <Typography sx={{ fontSize: 13, color: "#666666", mt: 0.5, mb: 3 }}>
-              Manage your LLM keys for access to VerifyWise Advisor.
+              Manage your LLM keys for access to AIPurview Advisor.
             </Typography>
           </Box>
           {keys.length > 0 && (
@@ -456,7 +456,7 @@ const LLMKeys = () => {
               No LLM keys yet
             </Typography>
             <Typography sx={{ fontSize: 13, color: "#666666", mb: 3 }}>
-              Add your first LLM API key to enable access to your VerifyWise Advisor.
+              Add your first LLM API key to enable access to your AIPurview Advisor.
             </Typography>
             <CustomizableButton
               text="Add API key"
@@ -598,7 +598,7 @@ const LLMKeys = () => {
         title={isCreateModalOpen ? "Add API key" : "Edit API key"}
         description={
           isCreateModalOpen
-            ? "Connect your LLM provider to enable VerifyWise Advisor."
+            ? "Connect your LLM provider to enable AIPurview Advisor."
             : "Update your API key details below."
         }
         onSubmit={isCreateModalOpen ? handleCreateKey : handleEditKey}

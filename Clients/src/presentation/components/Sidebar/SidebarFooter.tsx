@@ -37,7 +37,7 @@ import {
 } from "lucide-react";
 import Avatar from "../Avatar/VWAvatar";
 import { brand, text, background } from "../../themes/palette";
-import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.context";
+import { AIPurviewContext } from "../../../application/contexts/AIPurview.context";
 import { ROLES } from "../../../application/constants/roles";
 import useLogout from "../../../application/hooks/useLogout";
 import { getUserById } from "../../../application/repository/user.repository";
@@ -124,7 +124,7 @@ const SidebarFooter: FC<SidebarFooterProps> = ({
   const { activeModule } = useActiveModule();
   const managementItems =
     activeModule === "super-admin" ? SUPER_ADMIN_MANAGEMENT_ITEMS : MANAGEMENT_ITEMS;
-  const { userId, users, photoRefreshFlag } = useContext(VerifyWiseContext);
+  const { userId, users, photoRefreshFlag } = useContext(AIPurviewContext);
   const [selfUser, setSelfUser] = useState<User | null>(null);
 
   // Fetch current user directly when not in the org users list (e.g., super-admin)
@@ -1140,7 +1140,7 @@ const SidebarFooter: FC<SidebarFooterProps> = ({
                 </Stack>
               </Box>
 
-              {/* Explore VerifyWise Section */}
+              {/* Explore AIPurview Section */}
               <Box>
                 <Typography
                   variant="overline"
@@ -1153,7 +1153,7 @@ const SidebarFooter: FC<SidebarFooterProps> = ({
                     pb: 1,
                   }}
                 >
-                  EXPLORE VERIFYWISE
+                  EXPLORE AIPURVIEW
                 </Typography>
 
                 <Stack spacing={1}>

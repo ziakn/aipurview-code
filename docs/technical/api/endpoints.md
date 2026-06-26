@@ -2,7 +2,7 @@
 
 ## Overview
 
-VerifyWise exposes a REST API at `http://localhost:3000/api/`. All routes use JWT authentication via `authenticateJWT` middleware unless otherwise specified. The API is organized by domain with consistent patterns for CRUD operations.
+AIPurview exposes a REST API at `http://localhost:3000/api/`. All routes use JWT authentication via `authenticateJWT` middleware unless otherwise specified. The API is organized by domain with consistent patterns for CRUD operations.
 
 ## Authentication
 

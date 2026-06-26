@@ -1,6 +1,6 @@
 # Icons
 
-VerifyWise uses **lucide-react** for all icons. Do NOT use `@mui/icons-material`.
+AIPurview uses **lucide-react** for all icons. Do NOT use `@mui/icons-material`.
 
 ## Import Pattern
 

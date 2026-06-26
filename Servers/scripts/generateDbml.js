@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * DBML Generator for VerifyWise
+ * DBML Generator for AIPurview
  *
  * Parses Sequelize-typescript model files and generates DBML for dbdocs.io
  *
@@ -278,11 +278,11 @@ function parseModelFile(filePath) {
 
 // Generate DBML from tables
 function generateDbml(tables) {
-  let dbml = `// VerifyWise Database Schema
+  let dbml = `// AIPurview Database Schema
 // Generated on ${new Date().toISOString().split("T")[0]}
 // Source: Sequelize-typescript models
 
-Project VerifyWise {
+Project AIPurview {
   database_type: 'PostgreSQL'
   Note: 'AI Governance and Compliance Platform'
 }

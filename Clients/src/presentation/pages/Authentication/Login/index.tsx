@@ -120,7 +120,7 @@ interface FormValues {
 // Initial state for the form
 const initialState: FormValues = {
   email: isDemoApp ? "verifywise@email.com" : "",
-  password: isDemoApp ? "Verifywise#1" : "",
+  password: isDemoApp ? "AIPurview#1" : "",
   rememberMe: false,
 };
 
@@ -388,7 +388,7 @@ const Login: React.FC = () => {
                   flex: 1,
                 }}
               >
-                Welcome to VerifyWise! To get started, log in with your superadmin credentials to
+                Welcome to AIPurview! To get started, log in with your superadmin credentials to
                 create an organization and invite users.
               </Typography>
               <IconButton

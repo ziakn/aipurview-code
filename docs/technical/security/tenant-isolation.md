@@ -1,12 +1,12 @@
 # Tenant Isolation Security Runbook
 
-> **Scope:** VerifyWise Node/TypeScript backend (`Servers/`).  
+> **Scope:** AIPurview Node/TypeScript backend (`Servers/`).  
 > **Policy owner:** Technical Lead / Security reviewer  
 > **Last updated:** 2026-06-22
 
 ## 1. Purpose
 
-This runbook defines the rules for shared-schema, row-level tenant isolation in VerifyWise. All engineers who touch tenant-scoped data must follow these rules. The goal is to prevent cross-tenant data leakage by default and to make any intentional exception explicit, audited, and rare.
+This runbook defines the rules for shared-schema, row-level tenant isolation in AIPurview. All engineers who touch tenant-scoped data must follow these rules. The goal is to prevent cross-tenant data leakage by default and to make any intentional exception explicit, audited, and rare.
 
 ## 2. Isolation Policy
 
@@ -61,7 +61,7 @@ Only the `SuperAdmin` role (`role_id = 5`) may bypass organization scoping, and 
    - Read operations where the SuperAdmin supplies the target organization via the `X-Organization-Id` header and the endpoint explicitly supports cross-org reads.
 2. **No write bypass outside allow-list.** SuperAdmin write, update, and delete operations must target the organization carried in `req.organizationId`.
 3. **Audit expectation.** Every SuperAdmin bypass that reads another organization's data should be recorded in the audit ledger with `actor_user_id`, `target_organization_id`, and `action`.
-4. **Per-controller enforcement.** Bypass checks live in controllers, matching the existing VerifyWise pattern. Do not introduce a central middleware bypass without a dedicated architecture review.
+4. **Per-controller enforcement.** Bypass checks live in controllers, matching the existing AIPurview pattern. Do not introduce a central middleware bypass without a dedicated architecture review.
 
 ## 4. Context Propagation Rules
 

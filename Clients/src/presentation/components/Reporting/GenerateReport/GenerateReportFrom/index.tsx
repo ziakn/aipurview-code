@@ -14,7 +14,7 @@ import { brand } from "../../../../themes/palette";
 import Field from "../../../Inputs/Field";
 import { fieldStyle } from "./styles";
 import Select from "../../../../components/Inputs/Select";
-import { VerifyWiseContext } from "../../../../../application/contexts/VerifyWise.context";
+import { AIPurviewContext } from "../../../../../application/contexts/AIPurview.context";
 import { Project, FrameworkValues } from "../../../../../application/interfaces/appStates";
 import { FileText, FileType, Sparkles } from "lucide-react";
 import { ReportFormat } from "../../../../../domain/interfaces/i.widget";
@@ -54,7 +54,7 @@ const GenerateReportFrom: React.FC<ReportProps> = ({
   onValidateRef,
   hasKeys = false,
 }) => {
-  const { dashboardValues } = useContext(VerifyWiseContext);
+  const { dashboardValues } = useContext(AIPurviewContext);
   const [errors, setErrors] = useState<FormErrors>({});
   const theme = useTheme();
 

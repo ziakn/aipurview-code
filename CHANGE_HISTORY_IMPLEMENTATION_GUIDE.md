@@ -1,6 +1,6 @@
 # Change History Implementation Guide
 
-This guide explains how to add activity history tracking to any entity in the VerifyWise system.
+This guide explains how to add activity history tracking to any entity in the AIPurview system.
 
 ## Overview
 

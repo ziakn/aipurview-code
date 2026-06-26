@@ -52,7 +52,7 @@ const TAB_GAP = "34px";
 const DEFAULT_INDICATOR_COLOR = `${brand.primary}`;
 
 /**
- * Standardized TabBar component for VerifyWise.
+ * Standardized TabBar component for AIPurview.
  *
  * Provides consistent styling and behavior across all tabbed interfaces.
  * Automatically handles icons, counts, loading states, and disabled states.

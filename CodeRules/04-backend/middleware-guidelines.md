@@ -1,6 +1,6 @@
 # Middleware Guidelines
 
-Guidelines for implementing Express.js middleware in VerifyWise.
+Guidelines for implementing Express.js middleware in AIPurview.
 
 ## Middleware Basics
 

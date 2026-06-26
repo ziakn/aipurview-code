@@ -1,7 +1,7 @@
 /**
  * Report Generation Service
  * Main entry point for the new reporting system
- * Following VerifyWise clean architecture patterns
+ * Following AIPurview clean architecture patterns
  */
 
 import {

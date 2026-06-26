@@ -31,7 +31,7 @@ The article correctly describes CI/CD integration workflow, API tokens, and GitH
 
 - Claim: "GitHub Actions out of the box" + "For other CI systems (GitLab, Jenkins, CircleCI), a standalone Python script and CLI are available" (block 2) — verified at `EvalServer/scripts/ci_eval_runner.py:1` (standalone Python script exists); GitHub Actions action referenced as `verifywise-ai/verifywise-eval-action@v1` is the documented entry point.
 
-- Claim: "Creates an evaluation experiment on your VerifyWise instance" (block 4) — verified at `EvalServer/src/routers/deepeval.py:50` (`/evaluate` POST endpoint for creating evaluations); controller handles `create_deepeval_evaluation_controller`.
+- Claim: "Creates an evaluation experiment on your AIPurview instance" (block 4) — verified at `EvalServer/src/routers/deepeval.py:50` (`/evaluate` POST endpoint for creating evaluations); controller handles `create_deepeval_evaluation_controller`.
 
 - Claim: "If any metric falls below the threshold, the CI step fails" (block 4) — verified at `EvalServer/scripts/ci_eval_runner.py:1` (script logic checks `inverted` metric logic; exits with code 0 on pass, 1 on threshold breach, 2 on errors).
 
@@ -43,4 +43,4 @@ The article correctly describes CI/CD integration workflow, API tokens, and GitH
 
 - "This helps you do X" framing and motivation claims ("blocks the merge if quality drops") — opinion/motivation, not quantitative.
 - Cross-reference to "verifywise-ai/verifywise-eval-action@v1" GitHub action repository — external asset, not in audited codebase.
-- Dashboard UI claim ("Results ... stored in your VerifyWise dashboard") — requires browser verification of Clients UI, not covered in EvalServer routes alone.
+- Dashboard UI claim ("Results ... stored in your AIPurview dashboard") — requires browser verification of Clients UI, not covered in EvalServer routes alone.

@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: "VerifyWise API"
+  title: "AIPurview API"
   description: "AI Governance Platform API"
   version: 2.0.0
 servers:

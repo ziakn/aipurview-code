@@ -519,7 +519,7 @@ Place the dropdown in step 2 of the StepperModal (the AEDT information step), ne
 </Box>
 ```
 
-Note: Check the exact `Select` component API — it may use `items` with `{ _id, name }` shape (VerifyWise custom Select pattern). Verify by reading `Clients/src/presentation/components/Inputs/Select/index.tsx`.
+Note: Check the exact `Select` component API — it may use `items` with `{ _id, name }` shape (AIPurview custom Select pattern). Verify by reading `Clients/src/presentation/components/Inputs/Select/index.tsx`.
 
 - [ ] **Step 3: Pass modelInventoryId in the submit config**
 

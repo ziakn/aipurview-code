@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Notifications domain provides real-time and asynchronous notification delivery across VerifyWise. It uses Server-Sent Events (SSE) with Redis Pub/Sub for real-time delivery, email templates for asynchronous notifications, and Slack webhooks for team alerts.
+The Notifications domain provides real-time and asynchronous notification delivery across AIPurview. It uses Server-Sent Events (SSE) with Redis Pub/Sub for real-time delivery, email templates for asynchronous notifications, and Slack webhooks for team alerts.
 
 ## Key Features
 

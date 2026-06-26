@@ -10,7 +10,7 @@ status: active
 
 ## Belirti
 
-VerifyWise'da agent memory için 3 tablo var (`agent_message_history`, `agent_working_memory`, `agent_semantic_memory`) ve `memoryService.ts` dosyası yazılmış. **AMA** `memoryService.ts` HİÇBİR YERDE import edilmiyor — `aiSdkAgent.ts` belleği tamamen bypass ediyor.
+AIPurview'da agent memory için 3 tablo var (`agent_message_history`, `agent_working_memory`, `agent_semantic_memory`) ve `memoryService.ts` dosyası yazılmış. **AMA** `memoryService.ts` HİÇBİR YERDE import edilmiyor — `aiSdkAgent.ts` belleği tamamen bypass ediyor.
 
 ```bash
 grep -r "memoryService" /Users/halitozger/Desktop/verifywise/.claude/worktrees/practical-euler/Servers/

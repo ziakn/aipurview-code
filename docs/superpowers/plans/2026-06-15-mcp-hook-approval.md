@@ -176,7 +176,7 @@ Expected: `ok`.
 
 ```bash
 cd /Users/gorkemcetin/verifywise
-TOKEN=$(curl -s -X POST http://localhost:3000/api/users/login -H "Content-Type: application/json" -d '{"email":"gorkem.cetin@verifywise.ai","password":"Verifywise#1"}' | python3 -c "import sys,json;print(json.load(sys.stdin)['data']['token'])")
+TOKEN=$(curl -s -X POST http://localhost:3000/api/users/login -H "Content-Type: application/json" -d '{"email":"gorkem.cetin@verifywise.ai","password":"AIPurview#1"}' | python3 -c "import sys,json;print(json.load(sys.stdin)['data']['token'])")
 curl -s -X POST http://localhost:3000/api/ai-gateway/mcp/guardrails -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"name":"Approve rm -rf","rule_type":"require_approval","config":{"type":"regex","pattern":"rm\\s+-rf"}}' -w "\nHTTP %{http_code}\n"
 ```
 Expected: `HTTP 201` with a record (no "action is required" error). Note the returned `data.id` and delete it afterward, or leave it for Task 5 tests to reuse.
@@ -489,7 +489,7 @@ Expected: `ok`.
 Restart your running gateway (so the new code loads), then:
 ```bash
 cd /Users/gorkemcetin/verifywise
-TOKEN=$(curl -s -X POST http://localhost:3000/api/users/login -H "Content-Type: application/json" -d '{"email":"gorkem.cetin@verifywise.ai","password":"Verifywise#1"}' | python3 -c "import sys,json;print(json.load(sys.stdin)['data']['token'])")
+TOKEN=$(curl -s -X POST http://localhost:3000/api/users/login -H "Content-Type: application/json" -d '{"email":"gorkem.cetin@verifywise.ai","password":"AIPurview#1"}' | python3 -c "import sys,json;print(json.load(sys.stdin)['data']['token'])")
 KEY=$(curl -s -X POST http://localhost:3000/api/ai-gateway/mcp/agent-keys -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"name":"P2 smoke"}' | python3 -c "import sys,json;print(json.load(sys.stdin)['data']['plain_key'])")
 curl -s -X POST http://localhost:8100/v1/mcp/hook -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" -d '{"tool_name":"Bash","arguments":{"command":"ls /tmp"}}'
 ```
@@ -634,14 +634,14 @@ def test_cleanup(api):
 - [ ] **Step 2: Run the tests** (gateway + backend up, gateway restarted with Task 4 code)
 
 ```bash
-cd /Users/gorkemcetin/verifywise/AIGateway && VW_PASSWORD='Verifywise#1' python -m pytest tests/test_14_mcp_hook_approval.py -v
+cd /Users/gorkemcetin/verifywise/AIGateway && VW_PASSWORD='AIPurview#1' python -m pytest tests/test_14_mcp_hook_approval.py -v
 ```
 Expected: all pass. If `test_matching_command_requires_approval` returns `allow`, the require_approval rule wasn't created (check Task 2) or the gateway wasn't restarted. If `test_approve_then_same_command_allows` returns `approval_required`, the arg-hash reuse path (`get_approved_request`) isn't matching — verify the approve call set status='approved'.
 
 - [ ] **Step 3: Run the Phase 1 suite as a regression guard**
 
 ```bash
-cd /Users/gorkemcetin/verifywise/AIGateway && VW_PASSWORD='Verifywise#1' python -m pytest tests/test_13_mcp_hook.py -v
+cd /Users/gorkemcetin/verifywise/AIGateway && VW_PASSWORD='AIPurview#1' python -m pytest tests/test_13_mcp_hook.py -v
 ```
 Expected: all 7 still pass (proves the shared-auth dedup and new branches didn't break Phase 1 allow/deny).
 
@@ -681,7 +681,7 @@ case "$decision" in
   allow) exit 0 ;;
   deny)
     reason="$(printf '%s' "$resp" | jq -r '.reason // "policy violation"')"
-    echo "Blocked by VerifyWise: $reason" >&2
+    echo "Blocked by AIPurview: $reason" >&2
     exit 2 ;;
   rate_limited)
     # Infra outcome, not policy — follow the general fail-mode.
@@ -702,10 +702,10 @@ case "$decision" in
       [ "$pcode" = "200" ] || { sleep 2; continue; }
       pstatus="$(printf '%s' "$pbody" | jq -r '.status // "pending"')"
       case "$pstatus" in
-        approved) echo "Approved by VerifyWise" >&2; exit 0 ;;
+        approved) echo "Approved by AIPurview" >&2; exit 0 ;;
         denied)
           dreason="$(printf '%s' "$pbody" | jq -r '.decision_reason // "denied"')"
-          echo "Denied by VerifyWise: $dreason" >&2
+          echo "Denied by AIPurview: $dreason" >&2
           exit 2 ;;
         *) sleep 2 ;;
       esac
@@ -749,12 +749,12 @@ cd /Users/gorkemcetin/verifywise
 ( echo '{"tool_name":"Bash","tool_input":{"command":"rm -rf /tmp/zzz"}}' | VW_GATEWAY_URL=http://localhost:8100 VW_AGENT_KEY=$KEY VW_APPROVAL_WAIT=30 scripts/vw-bash-hook.sh; echo "hook exit=$?" ) &
 sleep 3
 # find the pending approval id and approve it via the API, then wait for the hook
-TOKEN=$(curl -s -X POST http://localhost:3000/api/users/login -H "Content-Type: application/json" -d '{"email":"gorkem.cetin@verifywise.ai","password":"Verifywise#1"}' | python3 -c "import sys,json;print(json.load(sys.stdin)['data']['token'])")
+TOKEN=$(curl -s -X POST http://localhost:3000/api/users/login -H "Content-Type: application/json" -d '{"email":"gorkem.cetin@verifywise.ai","password":"AIPurview#1"}' | python3 -c "import sys,json;print(json.load(sys.stdin)['data']['token'])")
 AID=$(curl -s http://localhost:3000/api/ai-gateway/mcp/approvals -H "Authorization: Bearer $TOKEN" | python3 -c "import sys,json;print(json.load(sys.stdin)['data'][0]['id'])")
 curl -s -o /dev/null -X POST http://localhost:3000/api/ai-gateway/mcp/approvals/$AID/approve -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"reason":"ok"}'
 wait
 ```
-Expected: the backgrounded hook prints `Approved by VerifyWise` and `hook exit=0`.
+Expected: the backgrounded hook prints `Approved by AIPurview` and `hook exit=0`.
 
 Also test approval-timeout-denies (no approval given):
 ```bash

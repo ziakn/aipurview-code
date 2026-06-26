@@ -42,7 +42,7 @@ const TypographySection: React.FC = () => {
             maxWidth: 600,
           }}
         >
-          Typography styles and text hierarchy used in VerifyWise. All text uses the Geist font
+          Typography styles and text hierarchy used in AIPurview. All text uses the Geist font
           family with Inter as fallback, with consistent sizing and weights.
         </Typography>
       </Box>

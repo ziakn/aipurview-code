@@ -47,7 +47,7 @@ export const aiDetectionSettingsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Paste your token into the **Personal access token** field. Optionally give it a descriptive name (e.g., "VerifyWise Scanner Token") to help identify it later. Click **Test token** to verify it works, then **Save token** to store it.',
+      text: 'Paste your token into the **Personal access token** field. Optionally give it a descriptive name (e.g., "AIPurview Scanner Token") to help identify it later. Click **Test token** to verify it works, then **Save token** to store it.',
     },
     {
       type: 'heading',

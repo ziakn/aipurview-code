@@ -49,7 +49,7 @@ status: active
 - Auto evidence-to-control mapping = next automation frontier
 - Agent inventory primitives (tools/memory/credentials/authority) emerging schema
 
-## Top 5 VerifyWise için öneri
+## Top 5 AIPurview için öneri
 
 1. **Agent Inventory Primitives** (Modulos)
 2. **Hyperscaler Governance Plugins** (Saidot — Foundry/Bedrock/Vertex)
@@ -59,7 +59,7 @@ status: active
 
 ## Açık konular
 
-- VerifyWise'da henüz "Scout"-tarzı isimli copilot yok — branding eksik
+- AIPurview'da henüz "Scout"-tarzı isimli copilot yok — branding eksik
 - OWASP Agentic Top 10 framework module ekleme — content task
 
 ## Kaynaklar

@@ -14,7 +14,7 @@ export const quantitativeRiskAssessmentContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Once enabled, every risk gains a Quantitative tab. You enter event frequency, loss estimates across four categories, control effectiveness, and mitigation cost. VerifyWise runs the math in real time and shows your Annualized Loss Expectancy, residual exposure, and ROI right at the top of the form.',
+      text: 'Once enabled, every risk gains a Quantitative tab. You enter event frequency, loss estimates across four categories, control effectiveness, and mitigation cost. AIPurview runs the math in real time and shows your Annualized Loss Expectancy, residual exposure, and ROI right at the top of the form.',
     },
     {
       type: 'callout',
@@ -53,7 +53,7 @@ export const quantitativeRiskAssessmentContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'FAIR is a well-known framework for expressing risk in monetary terms. VerifyWise uses a simplified version built around four calculations:',
+      text: 'FAIR is a well-known framework for expressing risk in monetary terms. AIPurview uses a simplified version built around four calculations:',
     },
     {
       type: 'bullet-list',
@@ -92,7 +92,7 @@ export const quantitativeRiskAssessmentContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'You don\'t have to estimate from zero. Pick an industry benchmark from the dropdown and VerifyWise fills in all fifteen frequency and loss fields for you. There are 19 benchmarks across six industries, drawn from published regulatory penalty data and incident reports.',
+      text: 'You don\'t have to estimate from zero. Pick an industry benchmark from the dropdown and AIPurview fills in all fifteen frequency and loss fields for you. There are 19 benchmarks across six industries, drawn from published regulatory penalty data and incident reports.',
     },
     {
       type: 'bullet-list',
@@ -165,7 +165,7 @@ export const quantitativeRiskAssessmentContent: ArticleContent = {
       type: 'bullet-list',
       items: [
         { bold: 'Control effectiveness', text: 'Drag the slider from 0% (no controls at all) to 100% (risk fully contained). This directly shrinks your Residual ALE.' },
-        { bold: 'Annual mitigation cost', text: 'Enter what you spend each year on the controls. VerifyWise uses this to calculate whether the investment pays for itself.' },
+        { bold: 'Annual mitigation cost', text: 'Enter what you spend each year on the controls. AIPurview uses this to calculate whether the investment pays for itself.' },
       ],
     },
     {

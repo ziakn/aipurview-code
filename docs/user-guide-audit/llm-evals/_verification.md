@@ -15,7 +15,7 @@
 
 ### ci-cd-integration.md
 - ✅ "GitHub Actions out of the box" + standalone Python script — verified at ci_eval_runner.py
-- ✅ "Creates an evaluation experiment on your VerifyWise instance" — verified at /evaluate POST endpoint
+- ✅ "Creates an evaluation experiment on your AIPurview instance" — verified at /evaluate POST endpoint
 - ✅ "If any metric falls below the threshold, the CI step fails" — verified at script exit codes 0/1/2
 - ✅ "Results are posted as a PR comment, uploaded as build artifacts" — verified at endpoints + markdown output
 - ✅ "Add these in GitHub repo under Settings > Secrets" — verified at request handling for VW_API_TOKEN
@@ -63,8 +63,8 @@
 
 ### models.md
 - ✅ "Models are automatically added to this list when they're used in experiments" — verified at deepeval_models.py:create_model() auto-insertion
-- ✅ "VerifyWise supports OpenAI" — verified at providers index.ts and NewExperimentModal.tsx
-- ✅ "VerifyWise supports Ollama. Locally-hosted models running on your own hardware" — verified at Ollama provider configuration
+- ✅ "AIPurview supports OpenAI" — verified at providers index.ts and NewExperimentModal.tsx
+- ✅ "AIPurview supports Ollama. Locally-hosted models running on your own hardware" — verified at Ollama provider configuration
 - ✅ "For local models (Ollama), no API key is needed" — verified at needsApiKey: false for ollama
 - ❌ "API keys for cloud providers are configured in the Settings tab of your evals project" — **PARTIAL FAILURE**: code shows keys stored in llm_evals_models table, but Settings UI component interaction not fully verified in provided evidence
 

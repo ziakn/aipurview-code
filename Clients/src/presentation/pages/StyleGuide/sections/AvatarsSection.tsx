@@ -120,7 +120,7 @@ const AvatarsSection: React.FC = () => {
           }}
         >
           User avatars with automatic initials fallback and size support. Uses VWAvatar, the
-          VerifyWise avatar component with built-in color generation and size support.
+          AIPurview avatar component with built-in color generation and size support.
         </Typography>
       </Box>
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-VerifyWise uses Playwright (headless Chromium) and EJS templates to generate PDF reports. The system also supports DOCX generation using the `docx` library. Reports are generated dynamically based on framework type, project data, and selected sections.
+AIPurview uses Playwright (headless Chromium) and EJS templates to generate PDF reports. The system also supports DOCX generation using the `docx` library. Reports are generated dynamically based on framework type, project data, and selected sections.
 
 ## Architecture
 
@@ -434,7 +434,7 @@ async collectBranding(): Promise<ReportBranding> {
   return {
     organizationName: org.name,
     logo: org.logo || null,
-    primaryColor: "#13715B",  // VerifyWise green
+    primaryColor: "#13715B",  // AIPurview green
   };
 }
 

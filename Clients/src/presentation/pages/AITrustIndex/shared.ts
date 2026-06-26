@@ -38,7 +38,7 @@ export interface TrustIndexRow {
 
 /**
  * Map a letter grade to a shared Chip variant so grades render as real
- * VerifyWise chips. The variants preserve the green→red risk semantic:
+ * AIPurview chips. The variants preserve the green→red risk semantic:
  * A=success (green), B=info (blue), C=warning (amber), D=high (orange),
  * F=critical (red).
  */
@@ -58,7 +58,7 @@ export function gradeVariant(grade?: string): ChipVariant {
 
 /**
  * Map a feed category to one of the shared Chip component's variants, so each
- * category renders as a real VerifyWise chip (consistent gradient/border/palette)
+ * category renders as a real AIPurview chip (consistent gradient/border/palette)
  * rather than an ad-hoc custom color. Distinct, non-alarming variants are chosen
  * so categories are visually separable without implying risk semantics.
  */

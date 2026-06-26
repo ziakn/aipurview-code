@@ -1,7 +1,7 @@
-# VerifyWise tool gate (Claude Code hook)
+# AIPurview tool gate (Claude Code hook)
 
 Gates Claude Code's built-in tools (**Bash**, plus file writes via **Edit**,
-**Write**, **MultiEdit** and **NotebookEdit**) through the VerifyWise AI Gateway. Before a tool
+**Write**, **MultiEdit** and **NotebookEdit**) through the AIPurview AI Gateway. Before a tool
 runs, the gateway scans the call against your org's MCP guardrail rules and the
 call is allowed or denied. For Bash it scans the command; for file writes it
 scans the content being written (not the path or the text being removed). Every
@@ -11,7 +11,7 @@ events timeline, viewable in the Activity drawer.
 
 ## Setup
 
-1. Mint an agent key: VerifyWise, AI Gateway, MCP Gateway, **Agent Keys**,
+1. Mint an agent key: AIPurview, AI Gateway, MCP Gateway, **Agent Keys**,
    create. Copy the `sk-mcp-...` value (shown once).
 2. Add the guardrail rules you want enforced under MCP Gateway, **Guardrails**.
 3. Set env vars (e.g. in your shell profile):
@@ -93,7 +93,7 @@ client already instrumented for those tools correlates with no change.
 > **This hook cannot set that header for you** — Claude Code's model calls don't
 > pass through this script; they go from the agent to your model client. Setting
 > the header is a one-line change in whatever client/proxy config routes your
-> model traffic through the VerifyWise gateway. If the header is absent, model
+> model traffic through the AIPurview gateway. If the header is absent, model
 > calls are still fully captured and governed — they just won't appear inside the
 > correlated run. Tool-call correlation always works regardless.
 

@@ -59,12 +59,12 @@ Quick reference for design system rules.
 
 | Do | Don't |
 |----|-------|
-| Use VerifyWise shared components | Create custom wrappers for standard patterns |
+| Use AIPurview shared components | Create custom wrappers for standard patterns |
 | Use `useStandardModal` for modals | Create custom modal wrappers |
 | Use `Popover` for dropdown menus | Use `Menu` for dropdown menus |
 | Use `Chip` for status indicators | Create custom status badges |
 
-## Common VerifyWise Components
+## Common AIPurview Components
 
 Use these shared components instead of building from scratch:
 

@@ -1,6 +1,6 @@
 openapi: "3.0.3"
 info:
-  title: VerifyWise Integrations & Webhooks API
+  title: AIPurview Integrations & Webhooks API
   description: |
     API endpoints for managing Slack integrations, GitHub token management,
     and incoming GitHub webhooks.

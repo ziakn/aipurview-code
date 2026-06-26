@@ -223,8 +223,8 @@ const toolsDefinition = [
 
 export async function runAdvisor(req: Request, res: Response) {
   const functionName = "runAdvisor";
-  logStructured("processing", "Getting VerifyWise advisor response", functionName, fileName);
-  logger.debug(" Getting VerifyWise advisor response");
+  logStructured("processing", "Getting AIPurview advisor response", functionName, fileName);
+  logger.debug(" Getting AIPurview advisor response");
 
   try {
     const prompt = req.body.prompt;
@@ -286,7 +286,7 @@ export async function runAdvisor(req: Request, res: Response) {
 
     logStructured(
       "successful",
-      "Getting VerifyWise advisor response successful",
+      "Getting AIPurview advisor response successful",
       functionName,
       fileName,
     );
@@ -295,8 +295,8 @@ export async function runAdvisor(req: Request, res: Response) {
     // not embedded in the text. The non-streaming endpoint only returns markdown.
     return res.status(200).json({ prompt, response: { markdown: response, chartData: null } });
   } catch (error) {
-    logStructured("error", "failed to get VerifyWise advisor response", functionName, fileName);
-    logger.error("❌ Error in getting VerifyWise advisor response:", error);
+    logStructured("error", "failed to get AIPurview advisor response", functionName, fileName);
+    logger.error("❌ Error in getting AIPurview advisor response:", error);
     return res.status(500).json(STATUS_CODE[500](translateError(req, error)));
   }
 }

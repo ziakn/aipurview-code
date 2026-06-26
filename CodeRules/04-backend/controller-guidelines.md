@@ -1,12 +1,12 @@
 # Controller Guidelines
 
-Guidelines for implementing Express.js controllers in VerifyWise.
+Guidelines for implementing Express.js controllers in AIPurview.
 
 ## Controller Structure
 
-### VerifyWise Controller Pattern
+### AIPurview Controller Pattern
 
-VerifyWise controllers use standalone exported async functions (not controller objects), `STATUS_CODE` response helpers, and structured logging.
+AIPurview controllers use standalone exported async functions (not controller objects), `STATUS_CODE` response helpers, and structured logging.
 
 ```typescript
 // controllers/entity.ctrl.ts
@@ -115,7 +115,7 @@ export async function createEntity(req: Request, res: Response): Promise<any> {
 
 ### Key Differences from Generic Express Patterns
 
-| Generic Express | VerifyWise Pattern |
+| Generic Express | AIPurview Pattern |
 |----------------|-------------------|
 | `next(error)` | `return res.status(xxx).json(STATUS_CODE[xxx](...))` |
 | `{ success: true, data }` | `STATUS_CODE[200](entity)` |

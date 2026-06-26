@@ -10,7 +10,7 @@ status: active
 
 ## Amaç
 
-Production'da VerifyWise'ı güvenli hale getirme — JWT secret rotation, CORS, rate limiting, HTTPS, secret management, container security.
+Production'da AIPurview'ı güvenli hale getirme — JWT secret rotation, CORS, rate limiting, HTTPS, secret management, container security.
 
 ## Ne yapıldı
 

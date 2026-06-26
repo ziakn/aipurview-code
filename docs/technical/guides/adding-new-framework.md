@@ -1,6 +1,6 @@
 # Adding a New Compliance Framework
 
-This guide explains how to add a new compliance framework to VerifyWise. The system currently supports EU AI Act, ISO 42001, ISO 27001, and NIST AI RMF. Follow these steps to add additional frameworks.
+This guide explains how to add a new compliance framework to AIPurview. The system currently supports EU AI Act, ISO 42001, ISO 27001, and NIST AI RMF. Follow these steps to add additional frameworks.
 
 ## Overview
 

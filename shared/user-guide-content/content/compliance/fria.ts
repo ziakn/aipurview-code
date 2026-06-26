@@ -14,7 +14,7 @@ export const friaContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'In VerifyWise, the FRIA is an 8-section assessment. Fields auto-save as you work, risk scores update after each change and you can save snapshots to keep a versioned audit trail.',
+      text: 'In AIPurview, the FRIA is an 8-section assessment. Fields auto-save as you work, risk scores update after each change and you can save snapshots to keep a versioned audit trail.',
     },
     {
       type: 'heading',

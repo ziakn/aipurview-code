@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: VerifyWise Small APIs
+  title: AIPurview Small APIs
   description: >
     OpenAPI specification for smaller API domains: Share Links, Notes, Search,
     Reporting, Dashboard, CE Marking, Roles, Subscriptions, Tiers, API Tokens,

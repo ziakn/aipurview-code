@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * Fix FRIA tables to conform to VerifyWise database schema conventions.
+ * Fix FRIA tables to conform to AIPurview database schema conventions.
  *
  * Fixes:
  * 1. TIMESTAMP WITHOUT TIME ZONE -> WITH TIME ZONE (all 6 tables)

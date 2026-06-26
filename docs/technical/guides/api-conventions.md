@@ -1,6 +1,6 @@
 # API Conventions
 
-This guide documents the REST API conventions and patterns used throughout VerifyWise.
+This guide documents the REST API conventions and patterns used throughout AIPurview.
 
 ## Base URL
 

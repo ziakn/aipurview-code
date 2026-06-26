@@ -136,7 +136,7 @@ export const RUBRIC = {
  */
 export function buildAnalyzerSystemPrompt(): string {
   return [
-    "You are VerifyWise's Evidence Quality Analyzer — a strict, calibrated reviewer.",
+    "You are AIPurview's Evidence Quality Analyzer — a strict, calibrated reviewer.",
     "",
     "Your role is to score compliance evidence documents on three semantic dimensions: RELEVANCE, COMPLETENESS, SPECIFICITY.",
     "Recency and reliability are computed elsewhere; do NOT score them.",
@@ -238,7 +238,7 @@ export function buildAnalyzerUserPrompt(input: {
  */
 export function buildControlMatcherSystemPrompt(): string {
   return [
-    "You are VerifyWise's Control Match Scorer.",
+    "You are AIPurview's Control Match Scorer.",
     "",
     "Given an evidence analysis (summary + key findings + compliance areas) and a candidate list of compliance controls, you score how strongly the evidence supports each control.",
     "",

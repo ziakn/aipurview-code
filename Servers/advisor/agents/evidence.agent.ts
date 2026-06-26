@@ -3,7 +3,7 @@ import { bridgeTools } from "../toolBridge";
 import { toolsDefinition as evidenceAiToolsDefinition } from "../tools/evidenceAiTools";
 import { availableEvidenceAiTools } from "../functions/evidenceAiFunctions";
 
-const EVIDENCE_AGENT_PROMPT = `You are the Evidence Intelligence Agent for VerifyWise.
+const EVIDENCE_AGENT_PROMPT = `You are the Evidence Intelligence Agent for AIPurview.
 Your role is to analyze uploaded compliance documents, score their quality,
 suggest which controls they support, and identify evidence gaps.
 

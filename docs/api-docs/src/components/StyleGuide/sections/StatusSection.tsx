@@ -140,7 +140,7 @@ const StatusSection: React.FC = () => {
             maxWidth: 600,
           }}
         >
-          Color schemes and components for displaying entity statuses across VerifyWise.
+          Color schemes and components for displaying entity statuses across AIPurview.
           Centralized in statusColors.ts for consistency.
         </Typography>
       </Box>

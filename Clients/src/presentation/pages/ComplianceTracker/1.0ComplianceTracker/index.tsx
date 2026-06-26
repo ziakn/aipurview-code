@@ -10,7 +10,7 @@ import ControlCategoryTile from "./ControlCategory";
 import PageTour from "../../../components/PageTour";
 import ComplianceSteps from "./ComplianceSteps";
 import useMultipleOnScreen from "../../../../application/hooks/useMultipleOnScreen";
-import { VerifyWiseContext } from "../../../../application/contexts/VerifyWise.context";
+import { AIPurviewContext } from "../../../../application/contexts/AIPurview.context";
 import { ComplianceData } from "../../../../domain/interfaces/i.compliance";
 import { Project } from "../../../../domain/types/Project";
 import {
@@ -42,7 +42,7 @@ const ComplianceTracker = ({
   const [controlCategories, setControlCategories] = useState<ControlCategoryModel[]>();
   const [error, setError] = useState<unknown>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const { componentsVisible, changeComponentVisibility } = useContext(VerifyWiseContext);
+  const { componentsVisible, changeComponentVisibility } = useContext(AIPurviewContext);
   const [runComplianceTour, setRunComplianceTour] = useState(false);
   const [initialControlCategoryId, setInitialControlCategoryId] = useState<number | null>(null);
 

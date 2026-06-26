@@ -10,7 +10,7 @@ status: active
 
 ## Amaç
 
-VerifyWise frontend'inde React 19 + TypeScript + MUI 7 + Redux Toolkit + React Query stack'i için component tasarım kuralları.
+AIPurview frontend'inde React 19 + TypeScript + MUI 7 + Redux Toolkit + React Query stack'i için component tasarım kuralları.
 
 ## Ne yapıldı
 

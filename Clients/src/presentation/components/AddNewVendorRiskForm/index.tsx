@@ -30,7 +30,7 @@ import {
   createVendorRisk,
   updateVendorRisk,
 } from "../../../application/repository/vendorRisk.repository";
-import { VerifyWiseContext } from "../../../application/contexts/VerifyWise.context";
+import { AIPurviewContext } from "../../../application/contexts/AIPurview.context";
 import useUsers from "../../../application/hooks/useUsers";
 import useFrameworks from "../../../application/hooks/useFrameworks";
 import { handleAlert } from "../../../application/tools/alertUtils";
@@ -121,7 +121,7 @@ const formatErrorMessage = (operation: string, error: unknown): string => {
 
 const AddNewVendorRiskForm: FC<RiskSectionProps> = ({ closePopup, onSuccess, popupStatus }) => {
   const theme = useTheme();
-  const { inputValues, dashboardValues } = useContext(VerifyWiseContext);
+  const { inputValues, dashboardValues } = useContext(AIPurviewContext);
 
   const [searchParams] = useSearchParams();
   const projectId = searchParams.get("projectId");

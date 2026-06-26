@@ -157,7 +157,7 @@ export const evidenceCollectionContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise supports various file formats for evidence. Each uploaded file tracks:',
+      text: 'AIPurview supports various file formats for evidence. Each uploaded file tracks:',
     },
     {
       type: 'bullet-list',
@@ -205,7 +205,7 @@ export const evidenceCollectionContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Evidence in VerifyWise can be organized by the compliance requirement it supports. This helps you quickly identify:',
+      text: 'Evidence in AIPurview can be organized by the compliance requirement it supports. This helps you quickly identify:',
     },
     {
       type: 'checklist',

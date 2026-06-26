@@ -43,20 +43,20 @@ export const collections: Collection[] = [
   {
     id: 'getting-started',
     title: 'Getting started',
-    description: 'Learn the basics of VerifyWise and get up and running quickly with your AI governance journey.',
+    description: 'Learn the basics of AIPurview and get up and running quickly with your AI governance journey.',
     icon: 'Rocket',
     articleCount: 4,
     articles: [
       {
         id: 'welcome',
-        title: 'Welcome to VerifyWise',
-        description: 'An introduction to the VerifyWise platform and its core capabilities.',
+        title: 'Welcome to AIPurview',
+        description: 'An introduction to the AIPurview platform and its core capabilities.',
         keywords: ['welcome', 'introduction', 'overview', 'platform'],
       },
       {
         id: 'installing',
-        title: 'Installing VerifyWise',
-        description: 'Step-by-step guide to deploy VerifyWise in your environment.',
+        title: 'Installing AIPurview',
+        description: 'Step-by-step guide to deploy AIPurview in your environment.',
         keywords: ['install', 'setup', 'deploy', 'docker', 'configuration'],
       },
       {
@@ -484,7 +484,7 @@ export const collections: Collection[] = [
   {
     id: 'integrations',
     title: 'Integrations',
-    description: 'Connect VerifyWise with your existing tools and workflows.',
+    description: 'Connect AIPurview with your existing tools and workflows.',
     icon: 'Plug',
     articleCount: 5,
     articles: [
@@ -515,7 +515,7 @@ export const collections: Collection[] = [
       {
         id: 'plugins',
         title: 'Plugins & marketplace',
-        description: 'Browse, install, and manage plugins that extend VerifyWise with new frameworks and integrations.',
+        description: 'Browse, install, and manage plugins that extend AIPurview with new frameworks and integrations.',
         keywords: ['plugin', 'marketplace', 'install', 'framework', 'soc 2', 'gdpr', 'hipaa', 'extension'],
       },
     ],
@@ -689,7 +689,7 @@ export const collections: Collection[] = [
   {
     id: 'settings',
     title: 'Settings & configuration',
-    description: 'Configure VerifyWise to match your organization\'s needs.',
+    description: 'Configure AIPurview to match your organization\'s needs.',
     icon: 'Settings',
     articleCount: 5,
     articles: [
@@ -720,7 +720,7 @@ export const collections: Collection[] = [
       {
         id: 'super-admin',
         title: 'Super admin panel',
-        description: 'Manage all organizations and users across the entire VerifyWise installation (super admin only).',
+        description: 'Manage all organizations and users across the entire AIPurview installation (super admin only).',
         keywords: ['super admin', 'organizations', 'users', 'invite', 'global', 'system admin'],
       },
     ],
@@ -728,7 +728,7 @@ export const collections: Collection[] = [
   {
     id: 'developers',
     title: 'Developer guide',
-    description: 'Build on VerifyWise. The guide covers Agent Control (connect any terminal agent and govern its tool calls) and the platform REST API for reading and writing your governance data. More developer topics are coming.',
+    description: 'Build on AIPurview. The guide covers Agent Control (connect any terminal agent and govern its tool calls) and the platform REST API for reading and writing your governance data. More developer topics are coming.',
     icon: 'Plug',
     articleCount: 12,
     articles: [

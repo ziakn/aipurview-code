@@ -135,7 +135,7 @@ const AvatarsSection: React.FC = () => {
           }}
         >
           User avatars with automatic color generation and fallback initials.
-          Uses MUI Avatar with VerifyWise styling conventions.
+          Uses MUI Avatar with AIPurview styling conventions.
         </Typography>
       </Box>
 

@@ -3,7 +3,7 @@ import type { ArticleContent } from '../../contentTypes';
 export const automationsApiContent: ArticleContent = {
   blocks: [
     { type: 'heading', id: 'overview', level: 2, text: 'Automations API' },
-    { type: 'paragraph', text: 'An automation runs an action when something happens in VerifyWise: a vendor is added, a risk is updated, a policy is deleted and so on. You can create and manage automations through the REST API as well as in the app, which is useful for provisioning the same rules across environments from a script.' },
+    { type: 'paragraph', text: 'An automation runs an action when something happens in AIPurview: a vendor is added, a risk is updated, a policy is deleted and so on. You can create and manage automations through the REST API as well as in the app, which is useful for provisioning the same rules across environments from a script.' },
     { type: 'callout', variant: 'info', title: 'What automations can do today', text: 'Triggers cover the create, update and delete events for the main resource types, plus scheduled reports. The only action available right now is sending an email. There is no action that calls an external URL, so automations notify people; they do not push events to other systems.' },
 
     { type: 'heading', id: 'shape', level: 2, text: 'How a rule is shaped' },
@@ -44,7 +44,7 @@ export const automationsApiContent: ArticleContent = {
     { type: 'callout', variant: 'warning', title: 'Required fields', text: 'triggerId, name and a non-empty actions array are required. Leaving any of them out returns a 400 with the message "Missing required fields: triggerId, name, actions".' },
 
     { type: 'heading', id: 'execution', level: 2, text: 'How automations run' },
-    { type: 'paragraph', text: 'When a matching event happens, VerifyWise queues the automation\'s actions and runs them in the background. Each run is recorded, so the history and stats endpoints show what fired, whether it succeeded and how long it took. Because runs are queued rather than immediate, an action may complete a moment after the triggering event.' },
+    { type: 'paragraph', text: 'When a matching event happens, AIPurview queues the automation\'s actions and runs them in the background. Each run is recorded, so the history and stats endpoints show what fired, whether it succeeded and how long it took. Because runs are queued rather than immediate, an action may complete a moment after the triggering event.' },
 
     { type: 'heading', id: 'access', level: 2, text: 'Access' },
     { type: 'paragraph', text: 'Every automations endpoint requires a valid token and is scoped to your organization. You only see and manage your own organization\'s automations.' },

@@ -10,7 +10,7 @@ export const notificationsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise sends notifications to keep you informed about governance activities. They help make sure team members know about updates, deadlines and actions that need attention.',
+      text: 'AIPurview sends notifications to keep you informed about governance activities. They help make sure team members know about updates, deadlines and actions that need attention.',
     },
     {
       type: 'heading',
@@ -20,7 +20,7 @@ export const notificationsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise can notify you about various governance events. The categories below are the user-facing groupings; the underlying notification types are managed centrally and routed by the system to the appropriate channel:',
+      text: 'AIPurview can notify you about various governance events. The categories below are the user-facing groupings; the underlying notification types are managed centrally and routed by the system to the appropriate channel:',
     },
     {
       type: 'bullet-list',
@@ -41,7 +41,7 @@ export const notificationsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'The main way to get notifications from VerifyWise is through the Slack integration. When it\'s set up, VerifyWise sends real-time notifications to your Slack workspace.',
+      text: 'The main way to get notifications from AIPurview is through the Slack integration. When it\'s set up, AIPurview sends real-time notifications to your Slack workspace.',
     },
     {
       type: 'paragraph',
@@ -52,7 +52,7 @@ export const notificationsContent: ArticleContent = {
       items: [
         { text: 'Go to Integrations from the main menu' },
         { text: 'Click on the Slack integration card' },
-        { text: 'Authorize VerifyWise to connect to your Slack workspace' },
+        { text: 'Authorize AIPurview to connect to your Slack workspace' },
         { text: 'Pick which channels should receive notifications' },
         { text: 'Set up notification routing for different event types' },
       ],
@@ -93,7 +93,7 @@ export const notificationsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'On top of external notifications, VerifyWise shows visual indicators within the platform to flag items that need attention:',
+      text: 'On top of external notifications, AIPurview shows visual indicators within the platform to flag items that need attention:',
     },
     {
       type: 'bullet-list',
@@ -133,7 +133,7 @@ export const notificationsContent: ArticleContent = {
       type: 'heading',
       id: 'faq-email-notifications',
       level: 3,
-      text: 'Does VerifyWise send email notifications?',
+      text: 'Does AIPurview send email notifications?',
     },
     {
       type: 'paragraph',

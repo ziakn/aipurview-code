@@ -4,7 +4,7 @@ import { Copy, Monitor, Tablet, Smartphone } from "lucide-react";
 import CodeBlock from "../CodeBlock";
 
 const breakpointSnippets = {
-  muiBreakpoints: `// MUI default breakpoints (used in VerifyWise)
+  muiBreakpoints: `// MUI default breakpoints (used in AIPurview)
 xs: 0       // Extra small (phones)
 sm: 600     // Small (tablets portrait)
 md: 900     // Medium (tablets landscape)
@@ -103,7 +103,7 @@ const BreakpointsSection: React.FC = () => {
             maxWidth: 600,
           }}
         >
-          VerifyWise uses MUI's default breakpoint system. Use responsive sx props
+          AIPurview uses MUI's default breakpoint system. Use responsive sx props
           and useMediaQuery for adaptive layouts.
         </Typography>
       </Box>

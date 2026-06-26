@@ -1,6 +1,6 @@
 # Production Deployment Guide
 
-This guide covers deploying VerifyWise in a production environment using Docker Compose.
+This guide covers deploying AIPurview in a production environment using Docker Compose.
 
 ---
 
@@ -52,7 +52,7 @@ docker compose version
 ### 2. Clone the repository
 
 ```bash
-# Clone VerifyWise
+# Clone AIPurview
 git clone https://github.com/bluewave-labs/verifywise.git
 cd verifywise
 
@@ -218,7 +218,7 @@ docker compose logs -f --tail=100
 docker compose exec backend node -e "const {sequelize} = require('./dist/database/db'); sequelize.authenticate().then(() => console.log('DB OK')).catch(e => console.error(e))"
 ```
 
-Note: VerifyWise does not currently have a dedicated health check endpoint. Monitor service health via Docker health checks and logs.
+Note: AIPurview does not currently have a dedicated health check endpoint. Monitor service health via Docker health checks and logs.
 
 ---
 
@@ -272,7 +272,7 @@ Note: VerifyWise does not currently have a dedicated health check endpoint. Moni
 
 ## Multi-tenancy configuration
 
-VerifyWise supports multi-tenant deployments with shared-schema isolation:
+AIPurview supports multi-tenant deployments with shared-schema isolation:
 
 ```bash
 # Enable multi-tenancy

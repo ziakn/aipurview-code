@@ -29,9 +29,9 @@ status: active
 11. **Shadow AI Discovery as a Module** — 82% of orgs found ≥1 ungoverned AI agent
 12. **Agentic Auto-Remediation** — saga + rollback + kill-switch (88% AI-driven remediation today)
 
-## VerifyWise için ders
+## AIPurview için ders
 
-| Trend | VerifyWise Durum |
+| Trend | AIPurview Durum |
 |---|---|
 | Agent Passports (DIDs) | Yok |
 | OPA/Rego policy bundle | json-rules-engine var, OPA yok |

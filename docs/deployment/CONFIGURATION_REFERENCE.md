@@ -1,6 +1,6 @@
 # Configuration Reference
 
-Complete reference for all VerifyWise configuration options.
+Complete reference for all AIPurview configuration options.
 
 ---
 

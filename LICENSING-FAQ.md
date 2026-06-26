@@ -1,15 +1,15 @@
-## VerifyWise Licensing FAQ
+## AIPurview Licensing FAQ
 
-### What license does VerifyWise use?
-VerifyWise uses the Business Source License 1.1 (BSL 1.1) with an Internal-Only Additional Use Grant.
+### What license does AIPurview use?
+AIPurview uses the Business Source License 1.1 (BSL 1.1) with an Internal-Only Additional Use Grant.
 
-### Can my company run VerifyWise internally in production?
-Yes. Internal use is permitted. You can deploy, modify, and run VerifyWise for your own operations.
+### Can my company run AIPurview internally in production?
+Yes. Internal use is permitted. You can deploy, modify, and run AIPurview for your own operations.
 
-### Can we host VerifyWise for our customers?
-Not under BSL. Any third-party hosting, whether single-tenant or multi-tenant, requires a VerifyWise Enterprise License.
+### Can we host AIPurview for our customers?
+Not under BSL. Any third-party hosting, whether single-tenant or multi-tenant, requires a AIPurview Enterprise License.
 
-### Can we sell VerifyWise as part of our products or services?
+### Can we sell AIPurview as part of our products or services?
 Not under BSL. That is an external use and requires the Enterprise License.
 
 ### What happens on the Change Date?
@@ -22,13 +22,13 @@ Yes. Contractors may use it on your behalf for your internal use.
 Yes. Affiliates under common control may use it internally if they follow the same terms.
 
 ### How do we get the Enterprise License?
-Contact [VerifyWise](https://verifywise.ai/contact) to discuss terms and pricing. The Enterprise License grants rights for customer-facing and hosted use, both single-tenant and multi-tenant.
+Contact [AIPurview](https://verifywise.ai/contact) to discuss terms and pricing. The Enterprise License grants rights for customer-facing and hosted use, both single-tenant and multi-tenant.
 
 ### Do we need to keep notices?
 Yes. Preserve copyright, license, and attribution notices in any copies or forks.
 
 ### What about trademarks?
-The code license does not grant trademark rights. Use the “VerifyWise” name only to describe compatibility or attribution. Do not brand your service as VerifyWise without written permission.
+The code license does not grant trademark rights. Use the “AIPurview” name only to describe compatibility or attribution. Do not brand your service as AIPurview without written permission.
 
 ### Where can I find the legal texts?
 See `LICENSE.md` for BSL 1.1 with the Internal-Only Additional Use Grant.

@@ -1,6 +1,6 @@
 # Typography
 
-Typography system for VerifyWise. Use consistent sizes, weights, and line heights.
+Typography system for AIPurview. Use consistent sizes, weights, and line heights.
 
 ## Font Stack
 

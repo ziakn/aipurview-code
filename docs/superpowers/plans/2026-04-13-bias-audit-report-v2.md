@@ -1666,7 +1666,7 @@ def generate_pdf_report(audit: Dict[str, Any]) -> bytes:
         topMargin=0.75 * inch,
         bottomMargin=0.75 * inch,
         title="Bias audit report",
-        author="VerifyWise",
+        author="AIPurview",
     )
 
     # Resolve framework template
@@ -1722,7 +1722,7 @@ git commit -m "feat(bias-audit): refactor report generator into template-aware l
 - Add regulatory context section
 - Add glossary of key terms
 - Rewrite conclusion with actual findings summary
-- Add VerifyWise logo to cover page
+- Add AIPurview logo to cover page
 - Use template architecture for multi-framework support"
 ```
 

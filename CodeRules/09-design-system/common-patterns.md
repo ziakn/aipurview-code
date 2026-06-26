@@ -1,6 +1,6 @@
 # Common Patterns
 
-Reusable code patterns for common UI tasks in VerifyWise.
+Reusable code patterns for common UI tasks in AIPurview.
 
 ## 1. Modal with Form
 

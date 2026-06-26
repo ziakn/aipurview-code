@@ -454,7 +454,7 @@ export function mergeSwagger(endpoints: Endpoint[], existing: any): any {
 
   // Ensure top-level structure
   doc.openapi = doc.openapi || "3.0.0";
-  doc.info = doc.info || { title: "VerifyWise API", version: "2.0.0" };
+  doc.info = doc.info || { title: "AIPurview API", version: "2.0.0" };
   doc.paths = doc.paths || {};
   doc.components = doc.components || {};
   doc.components.securitySchemes = doc.components.securitySchemes || {

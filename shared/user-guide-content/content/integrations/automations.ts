@@ -10,7 +10,7 @@ export const automationsContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'Automations let you set up rules that run when certain conditions are met. Instead of doing repetitive governance tasks by hand, you define a trigger, set conditions and choose an action. VerifyWise handles the rest.',
+      text: 'Automations let you set up rules that run when certain conditions are met. Instead of doing repetitive governance tasks by hand, you define a trigger, set conditions and choose an action. AIPurview handles the rest.',
     },
     {
       type: 'heading',

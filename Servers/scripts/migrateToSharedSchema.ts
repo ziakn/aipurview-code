@@ -41,7 +41,7 @@ import {
 // ============================================================
 
 /**
- * PostgreSQL ARRAY columns in the VERIFYWISE schema that should NOT be JSON.stringify'd
+ * PostgreSQL ARRAY columns in the AIPURVIEW schema that should NOT be JSON.stringify'd
  * These need to stay as JavaScript arrays for Sequelize to convert properly
  *
  * NOTE: Only include columns where BOTH tenant and verifywise schemas use ARRAY type.

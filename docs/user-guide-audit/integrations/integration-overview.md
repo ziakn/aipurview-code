@@ -18,7 +18,7 @@ The article is well-structured with mostly accurate claims about Slack and MLflo
 - **Confidence:** low
 
 ## Verified claims (sampled)
-- Claim: "The Slack integration lets VerifyWise send real-time notifications about AI governance activities to your Slack workspace" (block 15) — verified in `shared/user-guide-content/content/integrations/slack-integration.ts` with matching content.
+- Claim: "The Slack integration lets AIPurview send real-time notifications about AI governance activities to your Slack workspace" (block 15) — verified in `shared/user-guide-content/content/integrations/slack-integration.ts` with matching content.
 - Claim: Cross-doc reference to `slack-integration` article (block 15, articleId field) — article exists at `shared/user-guide-content/content/integrations/slack-integration.ts`.
 - Claim: "Status labels: Not configured, Configured, Error" (block 12) — consistent with integration card UI patterns in Slack integration article.
 - Claim: "Slack integration card shown on Integrations page" (block 10, icon-cards) — verified article structure matches UI schema.

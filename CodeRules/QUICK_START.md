@@ -1,6 +1,6 @@
 # Quick Start Guide
 
-A one-page condensed reference for VerifyWise development standards. For detailed explanations, see the full documentation in [README.md](./README.md).
+A one-page condensed reference for AIPurview development standards. For detailed explanations, see the full documentation in [README.md](./README.md).
 
 ## Essential Rules
 

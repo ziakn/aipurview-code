@@ -39,8 +39,8 @@ vi.mock("../../../application/hooks/useAuth", () => ({
   useAuth: () => ({ userId: 1, roleName: "Admin" }),
 }));
 
-vi.mock("../../../application/contexts/VerifyWise.context", () => ({
-  VerifyWiseContext: { _currentValue: null },
+vi.mock("../../../application/contexts/AIPurview.context", () => ({
+  AIPurviewContext: { _currentValue: null },
 }));
 
 vi.mock("../../../application/constants/permissions", () => ({

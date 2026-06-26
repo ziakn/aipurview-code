@@ -160,7 +160,7 @@ export const modelInventoryContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'If you use MLflow, VerifyWise can pull in model training metadata directly: training timestamps, parameters, metrics and lifecycle stage. This saves you from manually entering data that your ML platform already has.',
+      text: 'If you use MLflow, AIPurview can pull in model training metadata directly: training timestamps, parameters, metrics and lifecycle stage. This saves you from manually entering data that your ML platform already has.',
     },
     {
       type: 'heading',
@@ -170,7 +170,7 @@ export const modelInventoryContent: ArticleContent = {
     },
     {
       type: 'paragraph',
-      text: 'VerifyWise automatically maintains a complete audit trail for every model in your inventory. Each change records:',
+      text: 'AIPurview automatically maintains a complete audit trail for every model in your inventory. Each change records:',
     },
     {
       type: 'bullet-list',

@@ -4,13 +4,13 @@ import { ChevronDown, Eye } from "lucide-react";
 import Checkbox from "../Inputs/Checkbox";
 import { brand, background, status } from "../../themes/palette";
 
-export interface VerifyWiseMultiSelectOption {
+export interface AIPurviewMultiSelectOption {
   value: string;
   label: string;
 }
 
-export interface VerifyWiseMultiSelectProps {
-  options: VerifyWiseMultiSelectOption[];
+export interface AIPurviewMultiSelectProps {
+  options: AIPurviewMultiSelectOption[];
   selectedValues: string[];
   onChange: (values: string[]) => void;
   placeholder?: string;
@@ -20,7 +20,7 @@ export interface VerifyWiseMultiSelectProps {
   width?: number;
 }
 
-const VerifyWiseMultiSelect: React.FC<VerifyWiseMultiSelectProps> = ({
+const AIPurviewMultiSelect: React.FC<AIPurviewMultiSelectProps> = ({
   options,
   selectedValues,
   onChange,
@@ -183,4 +183,4 @@ const VerifyWiseMultiSelect: React.FC<VerifyWiseMultiSelectProps> = ({
   );
 };
 
-export default VerifyWiseMultiSelect;
+export default AIPurviewMultiSelect;

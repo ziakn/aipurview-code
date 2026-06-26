@@ -358,7 +358,7 @@
 ## 16. Settings
 
 ### Tip 1
-**Header:** Settings customize VerifyWise to your organization's needs.
+**Header:** Settings customize AIPurview to your organization's needs.
 
 **Content:** Configure user roles, notification preferences, and system defaults to match your governance workflows. Taking time to properly configure settings upfront saves time and reduces confusion later. Review settings periodically as your organization grows.
 
@@ -373,6 +373,6 @@
 **Content:** Configure notifications for task assignments, approaching deadlines, policy renewals, and high-priority risks. Automated notifications ensure nothing falls through the cracks. Adjust notification frequency to avoid overwhelming team members.
 
 ### Tip 4
-**Header:** Integration settings connect VerifyWise to your existing tools.
+**Header:** Integration settings connect AIPurview to your existing tools.
 
-**Content:** If your organization uses other systems for task management, documentation, or communication, integration settings can connect them to VerifyWise. These connections reduce duplicate data entry and keep information synchronized across platforms.
+**Content:** If your organization uses other systems for task management, documentation, or communication, integration settings can connect them to AIPurview. These connections reduce duplicate data entry and keep information synchronized across platforms.

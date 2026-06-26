@@ -52,7 +52,7 @@ Success (200):
       "id": 123,
       "scope": "chat:write,channels:read",
       "user_id": 1,
-      "team_name": "VerifyWise Team",
+      "team_name": "AIPurview Team",
       "team_id": "T1234567890",
       "channel": "#notifications",
       "channel_id": "C1234567890",
@@ -285,7 +285,7 @@ Sends a test message to a Slack channel via webhook.
 ```json
 {
   "title": "Test Notification",
-  "message": "This is a test message from VerifyWise"
+  "message": "This is a test message from AIPurview"
 }
 ```
 

@@ -1,6 +1,6 @@
 # Testing Strategy
 
-Testing philosophy and strategy for VerifyWise development.
+Testing philosophy and strategy for AIPurview development.
 
 ## Coverage Goals
 

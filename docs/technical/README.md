@@ -1,6 +1,6 @@
-# VerifyWise Technical Documentation
+# AIPurview Technical Documentation
 
-Welcome to the VerifyWise technical documentation. This guide helps developers understand the system architecture, codebase structure, and how to contribute effectively.
+Welcome to the AIPurview technical documentation. This guide helps developers understand the system architecture, codebase structure, and how to contribute effectively.
 
 ## Quick Start
 
