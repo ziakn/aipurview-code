@@ -132,6 +132,9 @@ jobs:
           NODE_ENV: test
           SUPERADMIN_EMAIL: super@local.dev
           SUPERADMIN_PASSWORD: Super123!
+          JWT_SECRET: test-jwt-secret-key-for-testing-only
+          REFRESH_TOKEN_SECRET: test-refresh-secret-key-for-testing-only
+          ENCRYPTION_KEY: default-key-change-this-in-production-32chars!!
         run: npm run test:integration -- --testPathPatterns=tenant-isolation
 
       - name: Run schema-drift tenant isolation audit
@@ -144,6 +147,9 @@ jobs:
           NODE_ENV: test
           SUPERADMIN_EMAIL: super@local.dev
           SUPERADMIN_PASSWORD: Super123!
+          JWT_SECRET: test-jwt-secret-key-for-testing-only
+          REFRESH_TOKEN_SECRET: test-refresh-secret-key-for-testing-only
+          ENCRYPTION_KEY: default-key-change-this-in-production-32chars!!
         run: npx ts-node scripts/auditTenantIsolationCoverage.ts
 
   dependency-review:
