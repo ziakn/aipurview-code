@@ -1,11 +1,24 @@
 import { Client } from "pg";
 
 async function main() {
+  const user = process.env.DB_USER;
+  const password = process.env.DB_PASSWORD;
+  const host = process.env.DB_HOST || "localhost";
+  const port = Number(process.env.DB_PORT || "5432");
+
+  if (!user || !password) {
+    console.error("Error: DB_USER and DB_PASSWORD environment variables must be set.");
+    console.error(
+      "Example: DB_USER=postgres DB_PASSWORD=yourpassword npx ts-node scripts/resetTestDb.ts",
+    );
+    process.exit(1);
+  }
+
   const admin = new Client({
-    user: "postgres",
-    password: "1377",
-    host: "localhost",
-    port: 5432,
+    user,
+    password,
+    host,
+    port,
     database: "postgres",
   });
   await admin.connect();
