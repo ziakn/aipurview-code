@@ -33,6 +33,7 @@ import { sectionTitleSx, useCardSx, ProviderIcon, TOP_PROVIDERS } from "../share
 import CustomizableSkeleton from "../../../components/Skeletons";
 import VirtualKeysTab from "../VirtualKeys/index";
 import { validateApiKeyFormat } from "../../../../application/utils/apiKeyValidation";
+import { displayFormattedDate } from "../../../tools/isoDateToString";
 
 const TOP_IDS = new Set(TOP_PROVIDERS.map((p) => p._id));
 
@@ -1258,7 +1259,7 @@ export default function AIGatewaySettingsPage() {
                               )}
                               {s.reviewed_at && (
                                 <Typography sx={{ fontSize: 12, color: palette.text.tertiary }}>
-                                  {new Date(s.reviewed_at).toLocaleDateString()}
+                                  {displayFormattedDate(s.reviewed_at)}
                                 </Typography>
                               )}
                             </Stack>

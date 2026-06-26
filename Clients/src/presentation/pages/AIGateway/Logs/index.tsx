@@ -38,10 +38,16 @@ import { getPaginationRowCount, setPaginationRowCount } from "../../../../applic
 import palette from "../../../themes/palette";
 import { sectionTitleSx, useCardSx, formatEntityType } from "../shared";
 import CustomizableSkeleton from "../../../components/Skeletons";
+import {
+  displayFormattedDate,
+  displayFormattedDateTime,
+  displayFormattedTime,
+} from "../../../tools/isoDateToString";
 
 const AUTO_REFRESH_INTERVAL_MS = 10_000;
 const SEARCH_DEBOUNCE_MS = 300;
 const GR_DEFAULT_PAGE_SIZE = 25;
+const numberFormatter = new Intl.NumberFormat("en-US");
 
 type StatusFilter = "all" | "success" | "error";
 type SourceFilter = "all" | "playground" | "virtual-key";
@@ -94,7 +100,7 @@ function formatDateHeader(dateStr: string): string {
   if (date.toDateString() === todayStr) return "Today";
   if (date.toDateString() === yesterday.toDateString()) return "Yesterday";
 
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  return displayFormattedDate(date);
 }
 
 function getDayKey(dateStr: string): string {
@@ -418,7 +424,7 @@ export default function LogsPage() {
               </MuiTooltip>
               <Box sx={{ flex: 1 }} />
               <Typography sx={{ fontSize: 11, color: palette.text.disabled }}>
-                {total.toLocaleString()} total
+                {numberFormatter.format(total)} total
               </Typography>
             </Stack>
 
@@ -510,7 +516,7 @@ export default function LogsPage() {
                       />
 
                       <Typography sx={{ fontSize: 11, color: palette.text.disabled, minWidth: 65 }}>
-                        {new Date(log.created_at).toLocaleTimeString()}
+                        {displayFormattedTime(log.created_at)}
                       </Typography>
                     </Stack>
                   </Stack>
@@ -787,7 +793,7 @@ export default function LogsPage() {
                       }}
                     >
                       <Typography sx={{ flex: 0.8, fontSize: 12, color: palette.text.tertiary }}>
-                        {new Date(log.created_at).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                        {displayFormattedDateTime(log.created_at)}
                       </Typography>
                       <Typography sx={{ flex: 0.7, fontSize: 12 }}>
                         {log.guardrail_type === "pii" ? "PII" : "Filter"}
