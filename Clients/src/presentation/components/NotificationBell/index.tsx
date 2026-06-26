@@ -16,6 +16,7 @@ import VWTooltip from "../VWTooltip";
 import "../Layout/icon-shake.css";
 
 import { text } from "../../themes/palette";
+import { displayFormattedDate } from "../../tools/isoDateToString";
 
 /**
  * Rewrite legacy action_url values that were stored in older notifications
@@ -60,7 +61,7 @@ const formatRelativeTime = (dateString: string): string => {
   if (minutes < 60) return `${minutes}m ago`;
   if (hours < 24) return `${hours}h ago`;
   if (days < 7) return `${days}d ago`;
-  return date.toLocaleDateString();
+  return displayFormattedDate(date);
 };
 
 /**
@@ -324,7 +325,14 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
         placement="bottom"
         maxWidth={200}
       >
-        <IconButton size="small" onClick={handleOpen} sx={{ ...baseStyles, ...sx }}>
+        <IconButton
+          size="small"
+          onClick={handleOpen}
+          aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : "Notifications"}
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          sx={{ ...baseStyles, ...sx }}
+        >
           <Badge
             badgeContent={unreadCount}
             max={99}
@@ -412,6 +420,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
                 <IconButton
                   size="small"
                   onClick={handleMarkAllAsRead}
+                  aria-label="Mark all notifications as read"
                   sx={{
                     "width": "28px",
                     "height": "28px",
@@ -428,6 +437,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ sx }) => {
             <IconButton
               size="small"
               onClick={handleClose}
+              aria-label="Close notifications"
               sx={{
                 "width": "28px",
                 "height": "28px",

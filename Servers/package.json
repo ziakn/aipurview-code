@@ -3,8 +3,9 @@
   "version": "1.7.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest --detectOpenHandles --forceExit",
+    "test": "jest --testPathIgnorePatterns='/tests/integration/|/helpers/' --detectOpenHandles --forceExit",
     "test:watch": "jest --watch",
+    "test:integration": "jest --config jest.config.js --globalSetup=\"<rootDir>/tests/integration/globalSetup.js\" --testMatch=\"**/tests/integration/**/*.test.ts\" --runInBand",
     "build": "tsc",
     "start": "npm run migrate-db && node dist/index.js",
     "postbuild": "node scripts/copyFiles.js",
@@ -14,6 +15,9 @@
     "watch": "tsc-watch --noClear --onSuccess \"npm-run-all postbuild start\"",
     "reset-db": "ts-node scripts/resetDatabase.ts",
     "generate-dbml": "node scripts/generateDbml.js",
+    "generate:swagger": "ts-node scripts/generateSwagger.ts",
+    "generate:endpoints": "ts-node scripts/generateEndpointsTs.ts",
+    "check:api-drift": "ts-node scripts/checkApiDrift.ts",
     "migrate:shared-schema": "ts-node scripts/migrateToSharedSchema.ts",
     "i18n:extract": "node scripts/extract-i18n-keys.mjs",
     "i18n:translate": "node scripts/translate-with-glossary.mjs",
@@ -26,6 +30,9 @@
   "author": "",
   "license": "ISC",
   "description": "",
+  "engines": {
+    "node": ">=22.13.0"
+  },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.76",
     "@ai-sdk/openai": "^3.0.63",

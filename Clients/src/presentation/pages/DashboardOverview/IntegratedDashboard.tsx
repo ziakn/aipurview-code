@@ -15,6 +15,7 @@ import {
   ScrollText,
   GraduationCap,
   AlertCircle,
+  GitCompareArrows,
 } from "lucide-react";
 import useNavigateSearch from "../../../application/hooks/useNavigateSearch";
 import { useDashboard } from "../../../application/hooks/useDashboard";
@@ -23,6 +24,7 @@ import {
   hasDashboardCache,
 } from "../../../application/hooks/useDashboardMetrics";
 import { useAuth } from "../../../application/hooks/useAuth";
+import { useGovernancePreferences } from "../../../application/hooks/useGovernanceOs";
 import { formatRelativeDate } from "../../../application/utils/dateFormatter";
 import { PageBreadcrumbs } from "../../components/breadcrumbs/PageBreadcrumbs";
 import PageTour from "../../components/PageTour";
@@ -98,13 +100,23 @@ const AVAILABLE_DASHBOARD_TABS: DashboardTabConfig[] = [
   },
 ];
 
-const DEFAULT_TABS = ["overview", "readiness", "ai-content", "ai-audit"];
+// Feature flag: the AI Agent dashboard tabs (Audit readiness, AI content review,
+// AI audit) and the customizable tab bar are hidden from end users for now. The
+// underlying pages, hooks, and APIs stay in the codebase; flip this to true to
+// surface them again.
+const SHOW_AI_AGENT_DASHBOARD_TABS = false;
+
+const DEFAULT_TABS = SHOW_AI_AGENT_DASHBOARD_TABS
+  ? ["overview", "readiness", "ai-content", "ai-audit"]
+  : ["overview"];
 
 const IntegratedDashboard: React.FC = () => {
   const navigateSearch = useNavigateSearch();
   const { userId, isSuperAdmin, activeOrganizationId } = useAuth();
   const isSuperAdminWithoutOrg = isSuperAdmin && !activeOrganizationId;
   const { dashboard, loading: dashboardLoading, fetchDashboard } = useDashboard();
+  const { data: governancePrefs } = useGovernancePreferences();
+  const isGovernanceEnabled = governancePrefs?.is_enabled ?? false;
 
   const [contentReady, setContentReady] = useState(false);
 
@@ -419,17 +431,19 @@ const IntegratedDashboard: React.FC = () => {
         </Stack>
 
         {/* Dashboard Tab Bar */}
-        <TabContext value={dashboardTab}>
-          <Box sx={{ mb: 1 }}>
-            <DashboardTabs
-              availableTabs={AVAILABLE_DASHBOARD_TABS}
-              activeTabs={activeTabs}
-              activeTab={dashboardTab}
-              onTabChange={handleDashboardTabChange}
-              onTabsChange={handleActiveTabsChange}
-            />
-          </Box>
-        </TabContext>
+        {SHOW_AI_AGENT_DASHBOARD_TABS && (
+          <TabContext value={dashboardTab}>
+            <Box sx={{ mb: 1 }}>
+              <DashboardTabs
+                availableTabs={AVAILABLE_DASHBOARD_TABS}
+                activeTabs={activeTabs}
+                activeTab={dashboardTab}
+                onTabChange={handleDashboardTabChange}
+                onTabsChange={handleActiveTabsChange}
+              />
+            </Box>
+          </TabContext>
+        )}
 
         {/* Tab: Readiness Dashboard */}
         {dashboardTab === "readiness" && <ReadinessDashboard />}
@@ -486,6 +500,14 @@ const IntegratedDashboard: React.FC = () => {
                 icon={<AlertCircle size={18} />}
                 navigateTo="/ai-incident-managements"
               />
+              {isGovernanceEnabled && (
+                <DashboardHeaderCard
+                  title="Governance Intelligence"
+                  count="Open"
+                  icon={<GitCompareArrows size={18} />}
+                  navigateTo="/governance"
+                />
+              )}
             </Box>
 
             {/* Conditional rows based on dashboard view */}
@@ -522,6 +544,7 @@ const IntegratedDashboard: React.FC = () => {
                                     e.stopPropagation();
                                     handlePrevView(framework.projectFrameworkId, views.length);
                                   }}
+                                  aria-label={`Previous ${framework.frameworkName} view`}
                                   sx={navIconButtonSx}
                                 >
                                   <ChevronLeft size={18} />
@@ -543,6 +566,7 @@ const IntegratedDashboard: React.FC = () => {
                                     e.stopPropagation();
                                     handleNextView(framework.projectFrameworkId, views.length);
                                   }}
+                                  aria-label={`Next ${framework.frameworkName} view`}
                                   sx={navIconButtonSx}
                                 >
                                   <ChevronRight size={18} />
@@ -1245,6 +1269,7 @@ const IntegratedDashboard: React.FC = () => {
                                     e.stopPropagation();
                                     handlePrevView(framework.projectFrameworkId, views.length);
                                   }}
+                                  aria-label={`Previous ${framework.frameworkName} view`}
                                   sx={navIconButtonSx}
                                 >
                                   <ChevronLeft size={18} />
@@ -1266,6 +1291,7 @@ const IntegratedDashboard: React.FC = () => {
                                     e.stopPropagation();
                                     handleNextView(framework.projectFrameworkId, views.length);
                                   }}
+                                  aria-label={`Next ${framework.frameworkName} view`}
                                   sx={navIconButtonSx}
                                 >
                                   <ChevronRight size={18} />

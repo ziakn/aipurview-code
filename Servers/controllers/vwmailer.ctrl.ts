@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { STATUS_CODE } from "../utils/statusCode.utils";
 import { logProcessing, logSuccess, logFailure } from "../utils/logger/logHelper";
 import logger from "../utils/logger/fileLogger";
 import { markInvitationAcceptedQuery } from "../utils/invitation.utils";
@@ -27,7 +28,7 @@ export const invite = async (
     functionName: "invite",
     fileName: "vwmailer.ctrl.ts",
     userId: req.userId!,
-    tenantId: req.organizationId!,
+    organizationId: req.organizationId!,
   });
   logger.debug(`Creating invited user directly for ${to}: ${name} ${surname || ""}`);
 
@@ -71,7 +72,7 @@ export const invite = async (
       functionName: "invite",
       fileName: "vwmailer.ctrl.ts",
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
 
     return res.status(200).json({
@@ -91,11 +92,13 @@ export const invite = async (
       fileName: "vwmailer.ctrl.ts",
       error: error as Error,
       userId: req.userId!,
-      tenantId: req.organizationId!,
+      organizationId: req.organizationId!,
     });
-    return res.status(500).json({
-      error: req.t!("Failed to add user"),
-      details: (error as Error).message,
-    });
+    return res.status(500).json(
+      STATUS_CODE[500]({
+        error: req.t!("Failed to add user"),
+        details: (error as Error).message,
+      }),
+    );
   }
 };

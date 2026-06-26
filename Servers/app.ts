@@ -37,6 +37,7 @@ import tiersRoutes from "./routes/tiers.route";
 import subscriptionRoutes from "./routes/subscription.route";
 import autoDriverRoutes from "./routes/autoDriver.route";
 import taskRoutes from "./routes/task.route";
+import deadlineRoutes from "./routes/deadline.route";
 import slackWebhookRoutes from "./routes/slackWebhook.route";
 import pluginRoutes from "./routes/plugin.route";
 import tokenRoutes from "./routes/tokens.route";
@@ -92,6 +93,7 @@ import aiContentRoutes from "./routes/aiContent.route";
 import aiConfirmationRoutes from "./routes/aiConfirmation.route";
 import aiApprovalRoutes from "./routes/aiApproval.route";
 import aiApprovalRulesRoutes from "./routes/aiApprovalRules.route";
+import aiAppRoutes from "./routes/aiApp.route";
 import aiAuditRoutes from "./routes/aiAudit.route";
 import featureSettingsRoutes from "./routes/featureSettings.route";
 import friaRoutes from "./routes/fria.route";
@@ -106,6 +108,7 @@ import { i18nMiddleware } from "./middleware/i18n.middleware";
 import { sequelize } from "./database/db";
 import redisClient from "./database/redis";
 import ssoConfigRoutes from "./routes/ssoConfig.route";
+import aiTrustIndexRoutes from "./routes/aiTrustIndex.route";
 
 const swaggerDoc = YAML.load("./swagger.yaml");
 
@@ -239,7 +242,10 @@ export function createApp(preRoutesMiddleware?: RequestHandler[]): express.Appli
   app.use("/api/tiers", tiersRoutes);
   app.use("/api/subscriptions", subscriptionRoutes);
   app.use("/api/tasks", taskRoutes);
-  app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
+  app.use("/api/deadlines", deadlineRoutes);
+  if (process.env.NODE_ENV !== "production") {
+    app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
+  }
   app.use("/api/policies", policyRoutes);
   app.use("/api/policies", policyFolderRoutes);
   app.use("/api/slackWebhooks", slackWebhookRoutes);
@@ -258,6 +264,7 @@ export function createApp(preRoutesMiddleware?: RequestHandler[]): express.Appli
   app.use("/api/ai-confirmation", aiConfirmationRoutes);
   app.use("/api/ai-approvals", aiApprovalRoutes);
   app.use("/api/ai-approval-rules", aiApprovalRulesRoutes);
+  app.use("/api/ai-apps", aiAppRoutes);
   app.use("/api/ai-audit", aiAuditRoutes);
   app.use("/api/advisor", advisorRouter);
   app.use("/api/policy-linked", policyLinkedObjects);
@@ -307,6 +314,7 @@ export function createApp(preRoutesMiddleware?: RequestHandler[]): express.Appli
   app.use("/api/internal", internalRoutes);
   app.use("/v1", virtualKeyProxyRoutes());
   app.use("/api/ssoConfig", ssoConfigRoutes);
+  app.use("/api/ai-trust-index", aiTrustIndexRoutes);
 
   return app;
 }

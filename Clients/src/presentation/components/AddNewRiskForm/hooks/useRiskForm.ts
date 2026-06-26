@@ -11,10 +11,8 @@ import {
 } from "../projectRiskValue";
 import { AddNewRiskFormProps } from "../../../types/riskForm.types";
 import { ApiResponse } from "../../../../domain/interfaces/i.response";
-import {
-  createProjectRisk,
-  updateProjectRisk,
-} from "../../../../application/repository/projectRisk.repository";
+import { createProjectRisk } from "../../../../application/repository/projectRisk.repository";
+import { useUpdateProjectRisk } from "../../../../application/hooks/useUpdateProjectRisk";
 import useUsers from "../../../../application/hooks/useUsers";
 import { useAuth } from "../../../../application/hooks/useAuth";
 import { VerifyWiseContext } from "../../../../application/contexts/VerifyWise.context";
@@ -58,7 +56,10 @@ export interface UseRiskFormReturn {
   riskValidateRef: React.MutableRefObject<((values: RiskFormValues) => boolean) | null>;
   mitigateValidateRef: React.MutableRefObject<((values: MitigationFormValues) => boolean) | null>;
   customFieldsRef: React.MutableRefObject<CustomFieldsSectionHandle | null>;
-  customFieldsGate: { blocked: boolean };
+  customFieldsGate: {
+    blocked: boolean;
+    onPendingChange: (ids: ReadonlySet<number>) => void;
+  };
   riskFormSubmitHandler: () => Promise<void>;
   users: import("../../../../domain/types/User").User[] | undefined;
   usersLoading: boolean;
@@ -115,6 +116,7 @@ export function useRiskForm(props: AddNewRiskFormProps): UseRiskFormReturn {
   const usersLoading = usersLoadingProp !== undefined ? usersLoadingProp : hookData.loading;
 
   const { inputValues } = useContext(VerifyWiseContext);
+  const updateProjectRiskMutation = useUpdateProjectRisk();
 
   const isEditingDisabled = !allowedRoles.projectRisks.edit.includes(userRoleName);
   const isCreatingDisabled = !allowedRoles.projectRisks.create.includes(userRoleName);
@@ -482,7 +484,11 @@ export function useRiskForm(props: AddNewRiskFormProps): UseRiskFormReturn {
       try {
         const response =
           popupStatus !== "new"
-            ? await updateProjectRisk({ id: Number(inputValues.id), body: formData })
+            ? await updateProjectRiskMutation.mutateAsync({
+                id: Number(inputValues.id),
+                projectId: projectId ? Number(projectId) : undefined,
+                body: formData,
+              })
             : await createProjectRisk({ body: formData });
 
         if (response && response.status === 201) {

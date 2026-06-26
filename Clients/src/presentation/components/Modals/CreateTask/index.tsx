@@ -96,12 +96,12 @@ const CreateTask: FC<ICreateTaskProps> = ({
       resetErrors();
       setIsSubmitting(false);
       setActiveTab("details");
-    } else if (isOpen && mode === "edit" && initialData) {
+    } else if (isOpen && initialData) {
       setValues({
-        title: initialData.title,
+        title: initialData.title || "",
         description: initialData.description || "",
-        priority: initialData.priority,
-        status: initialData.status,
+        priority: initialData.priority || TaskPriority.MEDIUM,
+        status: initialData.status || TaskStatus.OPEN,
         due_date: initialData.due_date ? dayjs(initialData.due_date).format("YYYY-MM-DD") : "",
         assignees: (() => {
           if (!initialData.assignees || !users) return [];
@@ -229,6 +229,7 @@ const CreateTask: FC<ICreateTaskProps> = ({
 
   const handleSaveTask = async (event?: React.FormEvent) => {
     if (event) event.preventDefault();
+    if (customFieldsGate.blocked) return;
 
     if (validateAll(values)) {
       setIsSubmitting(true);
@@ -524,6 +525,7 @@ const CreateTask: FC<ICreateTaskProps> = ({
             ref={customFieldsRef}
             entityType="task"
             entityId={taskEntityId ?? null}
+            onPendingChange={customFieldsGate.onPendingChange}
           />
         </Box>
         {activeTab === "activity" && isEditMode && taskEntityId && (

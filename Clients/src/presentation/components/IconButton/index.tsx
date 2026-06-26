@@ -18,6 +18,25 @@ import { IconButtonProps } from "../../types/widget.types";
 import { AlertProps } from "../../types/alert.types";
 import { useIsAdmin } from "../../../application/hooks/useIsAdmin";
 
+const ROW_ACTIONS_LABEL_BY_TYPE: Record<string, string> = {
+  task: "Task actions",
+  incident: "Incident actions",
+  model: "Model actions",
+  vendor: "Vendor actions",
+  policy: "Policy actions",
+  resource: "Resource actions",
+  file: "File actions",
+  risk: "Risk actions",
+  training: "Training actions",
+  project: "Project actions",
+};
+
+function getRowActionsAriaLabel(type?: string): string {
+  if (!type) return "Row actions";
+  const normalized = type.toLowerCase();
+  return ROW_ACTIONS_LABEL_BY_TYPE[normalized] ?? `${type} actions`;
+}
+
 function IconButton({
   id,
   onDelete,
@@ -529,6 +548,9 @@ function IconButton({
     <MuiIconButton
       disableRipple={theme.components?.MuiIconButton?.defaultProps?.disableRipple}
       sx={singleTheme.iconButtons}
+      aria-label={getRowActionsAriaLabel(type)}
+      aria-haspopup="menu"
+      aria-expanded={Boolean(anchorEl)}
       onClick={(event) => {
         event.stopPropagation();
         openMenu(event, id, "someUrl");
